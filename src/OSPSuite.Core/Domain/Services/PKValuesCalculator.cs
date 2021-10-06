@@ -471,6 +471,8 @@ namespace OSPSuite.Core.Domain.Services
                      return doseNormalizedValue(AucTendInf);
                   case StandardPKParameter.MRT:
                      return Mrt;
+                  case StandardPKParameter.CL:
+                     return CL;
                   case StandardPKParameter.FractionAucEndToInf:
                      return FractionAucEndToInf;
                   case StandardPKParameter.Thalf:

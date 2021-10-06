@@ -7,6 +7,7 @@ namespace OSPSuite.Core.Domain
    public abstract class concern_for_NotInContainerCondition : ContextSpecification<NotInContainerCondition>
    {
       protected EntityDescriptor _entityCriteria;
+      protected NotInContainerCondition _self;
       protected NotInContainerCondition _match;
       protected NotInContainerCondition _doNotMatch;
       protected NotInContainerCondition _alsoMatch;
@@ -27,7 +28,8 @@ namespace OSPSuite.Core.Domain
          grandParentContainer.AddTag("DUDE");
          _entityCriteria = new EntityDescriptor(entity);
 
-         _match = new NotInContainerCondition("Kidney");
+         _self = new NotInContainerCondition("Kidney");
+         _match = new NotInContainerCondition("VenousBlood");
          _doNotMatch = new NotInContainerCondition("Liver");
          _alsoMatch = new NotInContainerCondition("HELLO");
       }
@@ -38,13 +40,13 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void check_that_string_representation_is_accurate()
       {
-         _match.ToString().ShouldBeEqualTo("NOT IN CONTAINER Kidney");
+         _match.ToString().ShouldBeEqualTo("NOT IN CONTAINER VenousBlood");
       }
 
       [Observation]
-      public void should_return_true_if_the_container_tag_does_not_contain_the_matching_element()
+      public void should_return_false_if_the_container_tag_is_the_matching_element()
       {
-         _match.IsSatisfiedBy(_entityCriteria).ShouldBeTrue();
+         _self.IsSatisfiedBy(_entityCriteria).ShouldBeFalse();
       }
 
       [Observation]

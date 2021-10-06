@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Utility.Collections;
@@ -112,11 +111,18 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public IDimension DimensionForUnit(string unitName)
       {
-         var matches = Dimensions.Where(x => x.Units.Any(unit => string.Equals(unitName, unit.Name, StringComparison.OrdinalIgnoreCase))).ToList();
+         var matches = Dimensions.Where(x => x.SupportsUnit(unitName, ignoreCase: true)).ToList();
          if (!matches.Any())
             return null;
 
-         return matches.FirstOrDefault(x => x.Units.Any(unit => string.Equals(unitName, unit.Name, StringComparison.Ordinal))) ?? matches.First();
+         //Try to find the first one that matches EXACTLY 
+         return matches.FirstOrDefault(x => x.SupportsUnit(unitName, ignoreCase: false)) ?? matches.First();
+      }
+
+      public (IDimension dimension, Unit unit) FindUnit(string unitName)
+      {
+         var dimension = DimensionForUnit(unitName);
+         return (dimension, dimension?.FindUnit(unitName, ignoreCase: true));
       }
 
       public IDimension CreateUserDefinedDimension(string dimensionName, string unit)

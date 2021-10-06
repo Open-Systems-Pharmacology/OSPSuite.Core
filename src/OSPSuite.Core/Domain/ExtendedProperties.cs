@@ -1,3 +1,4 @@
+using System.Linq;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
@@ -21,5 +22,7 @@ namespace OSPSuite.Core.Domain
          Clear();
          extendedProperties.Each(ep => Add(ep.Clone()));
       }
+
+      public IExtendedProperty[] All => this.ToArray();
    }
 }

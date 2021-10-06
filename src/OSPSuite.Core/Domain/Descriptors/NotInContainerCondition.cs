@@ -5,7 +5,7 @@ namespace OSPSuite.Core.Domain.Descriptors
    public class NotInContainerCondition : TagCondition
    {
       [Obsolete("For serialization")]
-      public NotInContainerCondition():base(Constants.NOT_IN_CONTAINER)
+      public NotInContainerCondition() : base(Constants.NOT_IN_CONTAINER)
       {
       }
 
@@ -17,7 +17,7 @@ namespace OSPSuite.Core.Domain.Descriptors
 
       public override bool IsSatisfiedBy(EntityDescriptor entityDescriptor)
       {
-         return !entityDescriptor.ParentContainerTags.Contains(Tag);
+         return !entityDescriptor.Tags.Contains(Tag) && !entityDescriptor.ParentContainerTags.Contains(Tag);
       }
    }
 }

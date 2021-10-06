@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Domain
          Children.ToList().Each(child => child.AcceptVisitor(visitor));
       }
 
-      public IEnumerable<IEntity> Children => _container.Children;
+      public IReadOnlyList<IEntity> Children => _container.Children;
 
       public ContainerMode Mode
       {
@@ -46,50 +46,23 @@ namespace OSPSuite.Core.Domain
          newChild.ParentContainer = this;
       }
 
-      public void RemoveChild(IEntity childToRemove)
-      {
-         _container.RemoveChild(childToRemove);
-      }
+      public void RemoveChild(IEntity childToRemove) => _container.RemoveChild(childToRemove);
 
-      public void RemoveChildren()
-      {
-         _container.RemoveChildren();
-      }
+      public void RemoveChildren() => _container.RemoveChildren();
 
-      public IReadOnlyList<T> GetAllChildren<T>() where T : class, IEntity
-      {
-         return _container.GetAllChildren<T>();
-      }
+      public IReadOnlyList<T> GetAllChildren<T>() where T : class, IEntity => _container.GetAllChildren<T>();
 
-      public IReadOnlyList<T> GetAllChildren<T>(Func<T, bool> predicate) where T : class, IEntity
-      {
-         return _container.GetAllChildren(predicate);
-      }
+      public IReadOnlyList<T> GetAllChildren<T>(Func<T, bool> predicate) where T : class, IEntity => _container.GetAllChildren(predicate);
 
-      public IEnumerable<T> GetChildren<T>(Func<T, bool> predicate) where T : class, IEntity
-      {
-         return _container.GetChildren(predicate);
-      }
+      public IEnumerable<T> GetChildren<T>(Func<T, bool> predicate) where T : class, IEntity => _container.GetChildren(predicate);
 
-      public IEnumerable<T> GetChildren<T>() where T : class, IEntity
-      {
-         return _container.GetChildren<T>();
-      }
+      public IEnumerable<T> GetChildren<T>() where T : class, IEntity => _container.GetChildren<T>();
 
-      public IEnumerable<IContainer> GetNeighborsFrom(IEnumerable<INeighborhood> neighborhoods)
-      {
-         return _container.GetNeighborsFrom(neighborhoods);
-      }
+      public IEnumerable<IContainer> GetNeighborsFrom(IEnumerable<INeighborhood> neighborhoods) => _container.GetNeighborsFrom(neighborhoods);
 
-      public IEnumerable<INeighborhood> GetNeighborhoods(IEnumerable<INeighborhood> neighborhoods)
-      {
-         return _container.GetNeighborhoods(neighborhoods);
-      }
+      public IEnumerable<INeighborhood> GetNeighborhoods(IEnumerable<INeighborhood> neighborhoods) => _container.GetNeighborhoods(neighborhoods);
 
-      public IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>() where TContainer : class, IContainer
-      {
-         return GetAllContainersAndSelf<TContainer>(x => true);
-      }
+      public IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>() where TContainer : class, IContainer => GetAllContainersAndSelf<TContainer>(x => true);
 
       public IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>(Func<TContainer, bool> predicate) where TContainer : class, IContainer
       {

@@ -40,7 +40,7 @@ namespace OSPSuite.Core.Commands
 
    public class When_retrieving_inverse_command_for_add : concern_for_AddObservedDataRowCommand
    {
-      private IReversibleCommand<IOSPSuiteExecutionContext> _result;
+      private ICommand<IOSPSuiteExecutionContext> _result;
 
       [Observation]
       public void must_be_of_correct_type()

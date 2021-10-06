@@ -406,6 +406,23 @@ namespace OSPSuite.Core
          bone_cell_E.ScaleDivisor.ShouldBeEqualTo(2.5);
       }
 
+
+      [Observation] 
+      public void should_have_removed_local_molecule_parameters_with_a_NAN_value()
+      {
+         var bone_cell_E = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "E");
+         bone_cell_E.Parameter("NaNParam").ShouldBeNull();
+         bone_cell_E.Parameter("OtherNaNParam").ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_have_not_removed_global_nan_parameters()
+      {
+         var global_container = _model.Root.EntityAt<IContainer>("E");
+         global_container.Parameter("GlobalNaNParam").ShouldNotBeNull();
+      }
+
+
       [Observation]
       public void should_have_added_the_local_transporter_process_parameters_in_the_local_transporter_process_container()
       {

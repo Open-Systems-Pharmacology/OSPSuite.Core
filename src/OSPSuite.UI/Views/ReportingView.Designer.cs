@@ -31,11 +31,11 @@
       {
          this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
          this.chkOpenReportAfterCreation = new OSPSuite.UI.Controls.UxCheckEdit();
-         this.cbFont = new DevExpress.XtraEditors.ComboBoxEdit();
+         this.cbFont = new OSPSuite.UI.Controls.UxComboBoxEdit();
          this.chkDraft = new OSPSuite.UI.Controls.UxCheckEdit();
          this.chkDeleteWorkingFolder = new OSPSuite.UI.Controls.UxCheckEdit();
          this.lblTemplateDescription = new DevExpress.XtraEditors.LabelControl();
-         this.cbReportTemplates = new DevExpress.XtraEditors.ComboBoxEdit();
+         this.cbReportTemplates = new OSPSuite.UI.Controls.UxComboBoxEdit();
          this.chkSaveReportArtifacts = new OSPSuite.UI.Controls.UxCheckEdit();
          this.rgColor = new DevExpress.XtraEditors.RadioGroup();
          this.chkVerbose = new OSPSuite.UI.Controls.UxCheckEdit();
@@ -545,7 +545,7 @@
       private DevExpress.XtraEditors.CheckEdit chkSaveReportArtifacts;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemSaveReportArtifacts;
       private DevExpress.XtraEditors.LabelControl lblTemplateDescription;
-      private DevExpress.XtraEditors.ComboBoxEdit cbReportTemplates;
+      private OSPSuite.UI.Controls.UxComboBoxEdit cbReportTemplates;
       private DevExpress.XtraLayout.LayoutControlGroup layoutGroupTemplate;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemDescription;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemTemplate;
@@ -553,7 +553,7 @@
       private DevExpress.XtraLayout.LayoutControlItem layoutItemDeleteWorkingFolder;
       private DevExpress.XtraEditors.CheckEdit chkDraft;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
-      private DevExpress.XtraEditors.ComboBoxEdit cbFont;
+      private OSPSuite.UI.Controls.UxComboBoxEdit cbFont;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemFont;
       private DevExpress.XtraEditors.CheckEdit chkOpenReportAfterCreation;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem3;

@@ -24,6 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Services\ParameterIdentifications\ParameterIdentificationExportTemplate.m" />
     <None Remove="Services\ParameterIdentifications\ParameterIdentificationExportTemplate.r" />
   </ItemGroup>
 
@@ -32,16 +33,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Services\ParameterIdentifications\ParameterIdentificationExportTemplate.m" />
     <EmbeddedResource Include="Services\ParameterIdentifications\ParameterIdentificationExportTemplate.r" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="csmpfit" Version="1.1.1" />
-    <PackageReference Include="MathNet.Numerics" Version="4.9.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
+    <PackageReference Include="MathNet.Numerics" Version="4.15.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
     <PackageReference Include="OSPSuite.Serializer" Version="3.0.0.1" />
     <PackageReference Include="OSPSuite.FuncParser" Version="4.0.0.50" GeneratePathProperty="true" />
-    <PackageReference Include="OSPSuite.SimModel" Version="4.0.0.42" GeneratePathProperty="true" />
+    <PackageReference Include="OSPSuite.SimModel" Version="4.0.0.45" GeneratePathProperty="true" />
     <PackageReference Include="OSPSuite.Utility" Version="4.0.0.4" />
   </ItemGroup>
 

@@ -1,10 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Core.Domain.UnitSystem
 {
    public class Unit
    {
+      private string _name;
+
       internal string FactorFormula { get; set; }
 
       /// <summary>
@@ -21,13 +26,56 @@ namespace OSPSuite.Core.Domain.UnitSystem
       /// <summary>
       ///    Name of unit. Should be unique in the dimension containing this unit
       /// </summary>
-      public virtual string Name { get; }
+      public virtual string Name
+      {
+         get => _name;
+         internal set
+         {
+            _name = value;
+            addDefaultUnitSynonyms();
+         }
+      }
+
+      private void addDefaultUnitSynonyms()
+      {
+         addMuSynonyms();
+         addExponentSynonyms();
+      }
+
+      private void addMuSynonyms()
+      {
+         if (!Name.Contains("µ"))
+            return;
+
+         AddUnitSynonym(Name.Replace("µ", "u"));
+         AddUnitSynonym(Name.Replace("µ", "mc"));
+      }
+
+      private void addExponentSynonyms()
+      {
+         if (!(Name.Contains("²") || Name.Contains("³")))
+            return;
+
+         AddUnitSynonym(Name.Replace("²", "2").Replace("³", "3"));
+      }
 
       /// <summary>
       ///    Gets or sets if a unit should be displayed or not (some kernel unit are typically hidden)
       ///    Default is false
       /// </summary>
       public virtual bool Visible { get; set; }
+
+      /// <summary>
+      ///    Returns the list of unit synonyms defined for this unit
+      /// </summary>
+      public virtual IReadOnlyCollection<UnitSynonym> UnitSynonyms => _unitSynonyms;
+
+      /// <summary>
+      ///    Returns the list of unit synonym names defined for this unit
+      /// </summary>
+      public virtual IReadOnlyCollection<string> UnitSynonymNames => _unitSynonyms.Keys.ToList();
+
+      private readonly Cache<string, UnitSynonym> _unitSynonyms = new Cache<string, UnitSynonym>(x => x.Name);
 
       [Obsolete("For deserialization")]
       public Unit()
@@ -48,19 +96,28 @@ namespace OSPSuite.Core.Domain.UnitSystem
          FactorFormula = factor.ToString(NumberFormatInfo.InvariantInfo);
       }
 
-      public virtual double BaseUnitValueToUnitValue(double baseUnitValue)
+      public virtual bool HasSynonym(string name) => name != null && _unitSynonyms.Contains(name);
+
+      internal virtual void AddUnitSynonym(string name) => AddUnitSynonym(new UnitSynonym(name));
+
+      internal virtual void AddUnitSynonym(UnitSynonym unitSynonym)
       {
-         return baseUnitValue / Factor - Offset;
+         if (HasSynonym(unitSynonym.Name))
+            return;
+
+         _unitSynonyms.Add(unitSynonym);
       }
 
-      public virtual double UnitValueToBaseUnitValue(double unitValue)
-      {
-         return (unitValue + Offset) * Factor;
-      }
+      public virtual double BaseUnitValueToUnitValue(double baseUnitValue) => baseUnitValue / Factor - Offset;
 
-      public override string ToString()
+      public virtual double UnitValueToBaseUnitValue(double unitValue) => (unitValue + Offset) * Factor;
+
+      public override string ToString() => Name;
+
+      public virtual bool SupportsName(string nameToCheck, StringComparison comparisonStrategy = StringComparison.Ordinal)
       {
-         return Name;
+         return string.Equals(Name, nameToCheck, comparisonStrategy) ||
+                UnitSynonymNames.Any(syn => string.Equals(syn, nameToCheck, comparisonStrategy));
       }
    }
 }

@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Utility;
-using DevExpress.XtraEditors;
 using OSPSuite.Core.Chart;
 
 namespace OSPSuite.UI.Controls
 {
-   public class UxYAxisTypeEdit : ComboBoxEdit
+   public class UxYAxisTypeEdit : UxComboBoxEdit
    {
       public IEnumerable<AxisTypes> GetValidValues()
       {

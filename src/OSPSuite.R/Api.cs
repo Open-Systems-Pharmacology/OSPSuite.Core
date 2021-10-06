@@ -1,12 +1,16 @@
 ﻿using System;
+using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
 using OSPSuite.R.Bootstrap;
+using OSPSuite.R.Domain;
 using OSPSuite.R.Services;
 using OSPSuite.Utility.Extensions;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 using IContainerTask = OSPSuite.R.Services.IContainerTask;
+using IDataRepositoryTask = OSPSuite.R.Services.IDataRepositoryTask;
 
 namespace OSPSuite.R
 {
@@ -18,11 +22,11 @@ namespace OSPSuite.R
 
    public static class Api
    {
-      private static IContainer _container;
+      public static IContainer Container { get; private set; }
 
       public static void InitializeOnce(ApiConfig apiConfig)
       {
-         _container = ApplicationStartup.Initialize(apiConfig);
+         Container = ApplicationStartup.Initialize(apiConfig);
       }
 
       public static IContainerTask GetContainerTask() => resolveTask<IContainerTask>();
@@ -39,23 +43,33 @@ namespace OSPSuite.R
 
       public static IOutputIntervalFactory GetOutputIntervalFactory() => resolveTask<IOutputIntervalFactory>();
 
+      public static ISimulationBatchFactory GetSimulationBatchFactory() => resolveTask<ISimulationBatchFactory>();
+
       public static ISensitivityAnalysisRunner GetSensitivityAnalysisRunner() => resolveTask<ISensitivityAnalysisRunner>();
 
       public static ISensitivityAnalysisTask GetSensitivityAnalysisTask() => resolveTask<ISensitivityAnalysisTask>();
 
       public static IDimensionTask GetDimensionTask() => resolveTask<IDimensionTask>();
 
+      public static IDimensionFactory GetDimensionFactory() => resolveTask<IDimensionFactory>();
+
       public static IPKParameterTask GetPKParameterTask() => resolveTask<IPKParameterTask>();
 
       public static IFullPathDisplayResolver GetFullPathDisplayResolver() => resolveTask<IFullPathDisplayResolver>();
 
-      public static ILogger GetLogger() => resolveTask<ILogger>();
+      public static IDataRepositoryTask GetDataRepositoryTask() => resolveTask<IDataRepositoryTask>();
+
+      public static IOSPSuiteLogger GetLogger() => resolveTask<IOSPSuiteLogger>();
+
+      public static IConcurrentSimulationRunner GetConcurrentSimulationRunner() => resolveTask<IConcurrentSimulationRunner>();
+
+      public static IDataImporterTask GetDataImporterTask() => resolveTask<IDataImporterTask>();
 
       private static T resolveTask<T>()
       {
          try
          {
-            return _container.Resolve<T>();
+            return Container.Resolve<T>();
          }
          catch (Exception e)
          {

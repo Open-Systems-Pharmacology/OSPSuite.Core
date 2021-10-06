@@ -18,6 +18,7 @@ namespace OSPSuite.Core.Serializers
       {
          base.GlobalContext();
          _unitSystemXmlRepository = new UnitSystemXmlSerializerRepository();
+         _unitSystemXmlRepository.PerformMapping();
          _serializationContext = SerializationTransaction.Create(A.Fake<IContainer>());
       }
 
@@ -62,8 +63,7 @@ namespace OSPSuite.Core.Serializers
       protected override void Context()
       {
          base.Context();
-         _unit = new Unit("unit", 1.0/60, -1);
-         _unit.FactorFormula = "1/60";
+         _unit = new Unit("unit", 1.0 / 60, -1) {FactorFormula = "1/60"};
       }
 
       protected override void Because()
@@ -77,6 +77,34 @@ namespace OSPSuite.Core.Serializers
       {
          _deserializedUnit.Factor.ShouldBeEqualTo(_unit.Factor);
          _deserializedUnit.FactorFormula.ShouldBeEqualTo(_unit.FactorFormula);
+      }
+   }
+
+   public class When_serializing_a_unit_defined_with_a_synonyms : concern_for_UnitXmlSerializer
+   {
+      private Unit _unit;
+      private Unit _deserializedUnit;
+
+      protected override void Context()
+      {
+         base.Context();
+         _unit = new Unit("unit", 1.0 / 60, -1);
+         _unit.AddUnitSynonym("syn1");
+         _unit.AddUnitSynonym("syn2");
+      }
+
+      protected override void Because()
+      {
+         var serializationString = sut.Serialize(_unit, _serializationContext);
+         _deserializedUnit = sut.Deserialize<Unit>(serializationString, _serializationContext);
+
+      }
+      [Observation]
+      public void should_be_able_to_deserialize_it_and_retrieve_the_synonyms()
+      {
+         _deserializedUnit.HasSynonym("syn1").ShouldBeTrue();
+         _deserializedUnit.HasSynonym("syn2").ShouldBeTrue();
+         _deserializedUnit.HasSynonym("syn3").ShouldBeFalse();
       }
    }
 }	

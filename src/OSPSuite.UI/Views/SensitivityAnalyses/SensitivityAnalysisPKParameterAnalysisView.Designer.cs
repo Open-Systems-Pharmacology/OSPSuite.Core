@@ -39,9 +39,9 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          DevExpress.XtraCharts.ChartTitle chartTitle6 = new DevExpress.XtraCharts.ChartTitle();
          this.chartControl = new UxChartControl();
          this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
-         this.cbOutputPathSelection = new DevExpress.XtraEditors.ComboBoxEdit();
+         this.cbOutputPathSelection = new OSPSuite.UI.Controls.UxComboBoxEdit();
          this.lblSensitivityNotCalculated = new DevExpress.XtraEditors.LabelControl();
-         this.cbPKParameter = new DevExpress.XtraEditors.ComboBoxEdit();
+         this.cbPKParameter = new OSPSuite.UI.Controls.UxComboBoxEdit();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.labelLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.outputPathSelectionLayoutItem = new DevExpress.XtraLayout.LayoutControlItem();
@@ -218,11 +218,11 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
 
       private DevExpress.XtraLayout.LayoutControl layoutControl1;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
-      private DevExpress.XtraEditors.ComboBoxEdit cbPKParameter;
+      private OSPSuite.UI.Controls.UxComboBoxEdit cbPKParameter;
       private DevExpress.XtraLayout.LayoutControlItem pKParameterSelectionLayoutItem;
       private DevExpress.XtraEditors.LabelControl lblSensitivityNotCalculated;
       private DevExpress.XtraLayout.LayoutControlItem labelLayoutControlItem;
-      private DevExpress.XtraEditors.ComboBoxEdit cbOutputPathSelection;
+      private OSPSuite.UI.Controls.UxComboBoxEdit cbOutputPathSelection;
       private DevExpress.XtraLayout.LayoutControlItem outputPathSelectionLayoutItem;
       private UxChartControl chartControl;
       private DevExpress.XtraLayout.LayoutControlItem chartLayoutControlItem;

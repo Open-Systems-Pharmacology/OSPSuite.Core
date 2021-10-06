@@ -291,10 +291,92 @@ namespace OSPSuite.Infrastructure.Export
       }
 
       [Observation]
-      public void should_have_troncated_the_name_as_expected()
+      public void should_have_truncated_the_name_as_expected()
       {
          _dataTable = _results.ElementAt(0);
          _dataTable.TableName.ShouldBeEqualTo("aaaaaaaaaaaaaaaaaaaaaaaaaaaab");
+      }
+   }
+
+   public class When_converting_a_data_repository_ending_in_single_quote : concern_for_DataRepositoryExportTask
+   {
+      private DataColumn _col1;
+      private DataTable _dataTable;
+      private IEnumerable<DataTable> _results;
+
+      protected override void Context()
+      {
+         base.Context();
+         _col1 = new DataColumn("col2", _mass, _baseGrid1) { Values = new float[] { 10, 20, 30 } };
+         _dataRepository.Name = "'aaaaaaaaaaaaaaaaaaaaaaaaaaa'";
+         _dataRepository.Add(_col1);
+      }
+
+      protected override void Because()
+      {
+         _results = sut.ToDataTable(_dataRepository);
+      }
+
+      [Observation]
+      public void should_have_truncated_the_quote_in_the_end_and_beginning()
+      {
+         _dataTable = _results.ElementAt(0);
+         _dataTable.TableName.ShouldBeEqualTo("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
+      }
+   }
+
+
+   public class When_converting_a_data_repository_with_only_single_quotes : concern_for_DataRepositoryExportTask
+   {
+      private DataColumn _col1;
+      private DataTable _dataTable;
+      private IEnumerable<DataTable> _results;
+
+      protected override void Context()
+      {
+         base.Context();
+         _col1 = new DataColumn("col2", _mass, _baseGrid1) { Values = new float[] { 10, 20, 30 } };
+         _dataRepository.Name = "'''";
+         _dataRepository.Add(_col1);
+      }
+
+      protected override void Because()
+      {
+         _results = sut.ToDataTable(_dataRepository);
+      }
+
+      [Observation]
+      public void should_have_truncated_the_quote_in_the_end_and_beginning()
+      {
+         _dataTable = _results.ElementAt(0);
+         _dataTable.TableName.ShouldBeEqualTo("");
+      }
+   }
+
+   public class When_converting_a_data_repository_with_brackets_inthe_name : concern_for_DataRepositoryExportTask
+   {
+      private DataColumn _col1;
+      private DataTable _dataTable;
+      private IEnumerable<DataTable> _results;
+
+      protected override void Context()
+      {
+         base.Context();
+         _col1 = new DataColumn("col2", _mass, _baseGrid1) { Values = new float[] { 10, 20, 30 } };
+         _dataRepository.Name = "ab]v f[g";
+         _dataRepository.Add(_col1);
+      }
+
+      protected override void Because()
+      {
+         _results = sut.ToDataTable(_dataRepository);
+      }
+
+      [Observation]
+      public void should_have_truncated_the_quote_in_the_end_and_beginning()
+      {
+         _dataTable = _results.ElementAt(0);
+         _dataTable.TableName.ShouldBeEqualTo("abv fg");
       }
    }
 }

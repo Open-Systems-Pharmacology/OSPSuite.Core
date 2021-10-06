@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.R.Services
 {
@@ -31,12 +34,47 @@ namespace OSPSuite.R.Services
       }
    }
 
+   public class When_converting_a_double_array_from_mass_unit_to_mass_unit_using_another_case : concern_for_DimensionTask
+   {
+      protected override void Because()
+      {
+         _result = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "G", new[] {1d, 2d, 3d});
+      }
+
+      [Observation]
+      public void should_be_able_to_convert_the_array()
+      {
+         _result.ShouldOnlyContainInOrder(1000, 2000, 3000d);
+      }
+   }
+
+   public class When_converting_a_double_array_from_mass_unit_to_mass_unit_using_a_micro_unit : concern_for_DimensionTask
+   {
+      private double[] _result_u;
+      private double[] _result_mc;
+
+      protected override void Because()
+      {
+         _result = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "µg", new[] {1e-3, 2e-3});
+         _result_u = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "ug", new[] {1e-3, 2e-3});
+         _result_mc = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "mcg", new[] {1e-3, 2e-3});
+      }
+
+      [Observation]
+      public void should_be_able_to_convert_the_array()
+      {
+         _result.ShouldOnlyContainInOrder(1000000, 2000000);
+         _result_u.ShouldOnlyContainInOrder(1000000, 2000000);
+         _result_mc.ShouldOnlyContainInOrder(1000000, 2000000);
+      }
+   }
+
    public class When_converting_a_double_array_from_molar_unit_to_mass_unit : concern_for_DimensionTask
    {
       protected override void Because()
       {
          //20 µmol/kg
-         _result = sut.ConvertToUnit(Constants.Dimension.MOLAR_AMOUNT, "kg", new[] { 1d, 2d, 3d }, molWeight: 20);
+         _result = sut.ConvertToUnit(Constants.Dimension.MOLAR_AMOUNT, "kg", new[] {1d, 2d, 3d}, molWeight: 20);
       }
 
       [Observation]
@@ -45,7 +83,6 @@ namespace OSPSuite.R.Services
          _result.ShouldOnlyContainInOrder(20, 40, 60d);
       }
    }
-
 
    public class When_converting_a_double_value_from_molar_unit_to_mass_unit : concern_for_DimensionTask
    {
@@ -77,11 +114,42 @@ namespace OSPSuite.R.Services
       }
    }
 
+   public class When_converting_a_double_value_from_mass_unit_to_molar_unit_using_another_case : concern_for_DimensionTask
+   {
+      protected override void Because()
+      {
+         //50 kg/mol
+         _result = sut.ConvertToBaseUnit(Constants.Dimension.MOLAR_AMOUNT, "KG", 500, molWeight: 50);
+      }
+
+      [Observation]
+      public void should_be_able_to_convert_the_array()
+      {
+         _result.ShouldOnlyContainInOrder(10);
+      }
+   }
+
+   public class When_converting_a_double_value_from_mass_unit_to_molar_unit_using_a_unit_that_does_not_4exist : concern_for_DimensionTask
+   {
+      [Observation]
+      public void should_throw_an_exception_containing_the_name_of_the_unit_and_the_dimension()
+      {
+         try
+         {
+            sut.ConvertToBaseUnit(Constants.Dimension.MOLAR_AMOUNT, "TOTO", 500);
+         }
+         catch (Exception e)
+         {
+            e.Message.ShouldBeEqualTo(Error.UnitIsNotDefinedInDimension("TOTO", Constants.Dimension.MOLAR_AMOUNT));
+         } 
+      }
+   }
+
    public class When_converting_a_double_value_from_mg_to_kg_unit : concern_for_DimensionTask
    {
       protected override void Because()
       {
-         _result = sut.ConvertToBaseUnit(Constants.Dimension.MASS_AMOUNT, "g", new []{1, 2, 3.0});
+         _result = sut.ConvertToBaseUnit(Constants.Dimension.MASS_AMOUNT, "g", new[] {1, 2, 3.0});
       }
 
       [Observation]
@@ -96,7 +164,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_throw_an_exception()
       {
-        The.Action(() =>sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "µmol", new[] { 1d, 2d, 3d })).ShouldThrowAn<UnableToResolveParametersException>();
+         The.Action(() => sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "µmol", new[] {1d, 2d, 3d})).ShouldThrowAn<UnableToResolveParametersException>();
       }
    }
 
@@ -105,13 +173,13 @@ namespace OSPSuite.R.Services
       protected override void Because()
       {
          //20 µmol/kg
-         _result = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "µmol", new[] { 1d }, molWeight: 20);
+         _result = sut.ConvertToUnit(Constants.Dimension.MASS_AMOUNT, "µmol", new[] {1d}, molWeight: 20);
       }
 
       [Observation]
       public void should_be_able_to_convert_the_array()
       {
-         _result.ShouldOnlyContainInOrder(1/20d);
+         _result.ShouldOnlyContainInOrder(1 / 20d);
       }
    }
 
@@ -123,10 +191,96 @@ namespace OSPSuite.R.Services
       {
          _dimensionNames = sut.AllAvailableDimensionNames();
       }
+
       [Observation]
       public void should_return_the_dimensions_names_sorted()
       {
          _dimensionNames[0].StartsWith("A").ShouldBeTrue();
+      }
+   }
+
+   public class When_retrieving_all_unit_names_defined_for_a_given_dimension : concern_for_DimensionTask
+   {
+      private string[] _unitNames;
+
+      protected override void Because()
+      {
+         _unitNames = sut.AllAvailableUnitNamesFor("Mass");
+      }
+
+      [Observation]
+      public void should_return_the_expected_units()
+      {
+         _unitNames.ShouldOnlyContain("kg", "g", "mg", "µg", "ng", "pg");
+      }
+   }
+
+   public class When_retrieving_all_unit_names_defined_for_a_dimension_that_does_not_exist : concern_for_DimensionTask
+   {
+      [Observation]
+      public void should_throw_an_exception()
+      {
+         The.Action(() => sut.AllAvailableUnitNamesFor("DOES_NOT_EXIST")).ShouldThrowAn<KeyNotFoundException>();
+      }
+   }
+
+   public class When_retrieving_the_base_for_a_given_dimension : concern_for_DimensionTask
+   {
+      [Observation]
+      public void should_return_the_expected_unit()
+      {
+         sut.BaseUnitFor("Mass").ShouldBeEqualTo("kg");
+      }
+   }
+
+   public class When_retrieving_the_base_unit_for_an_unknown_dimension : concern_for_DimensionTask
+   {
+      [Observation]
+      public void should_throw_an_exception()
+      {
+         The.Action(() => sut.BaseUnitFor("DOES_NOT_EXIST")).ShouldThrowAn<KeyNotFoundException>();
+      }
+   }
+
+   public class When_checking_if_a_dimension_has_a_unit : concern_for_DimensionTask
+   {
+      [Observation]
+      public void should_return_the_true_if_the_dimension_has_unit()
+      {
+         sut.HasUnit("Mass", "kg").ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_return_the_true_if_the_dimension_has_unit_written_in_a_different_case()
+      {
+         sut.HasUnit("Mass", "KG").ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_return_the_false_if_the_dimension_does_not_have_the_unit()
+      {
+         sut.HasUnit("Mass", "cm").ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_throw_an_exception_if_the_dimension_is_not_found()
+      {
+         The.Action(() => sut.HasUnit("TOTO", "cm")).ShouldThrowAn<KeyNotFoundException>();
+      }
+   }
+
+   public class When_checking_if_a_dimension_exists_by_name : concern_for_DimensionTask
+   {
+      [Observation]
+      public void should_return_true_if_it_exists()
+      {
+         sut.HasDimension("Mass").ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_return_false_otherwise()
+      {
+         sut.HasDimension("NOPE").ShouldBeFalse();
       }
    }
 

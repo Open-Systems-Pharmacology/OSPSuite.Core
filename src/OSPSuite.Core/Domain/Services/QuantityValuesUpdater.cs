@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Domain.Services
       public void UpdateQuantitiesValues(IModel model, IBuildConfiguration buildConfiguration)
       {
          updateParameterValueFromParameterStartValues(model, buildConfiguration);
-         updateMoleculeAmoutFromMoleculeStartValues(model, buildConfiguration);
+         updateMoleculeAmountFromMoleculeStartValues(model, buildConfiguration);
       }
 
       private void updateParameterValueFromParameterStartValues(IModel model, IBuildConfiguration buildConfiguration)
@@ -83,7 +83,7 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private void updateMoleculeAmoutFromMoleculeStartValues(IModel model, IBuildConfiguration buildConfiguration)
+      private void updateMoleculeAmountFromMoleculeStartValues(IModel model, IBuildConfiguration buildConfiguration)
       {
          foreach (var moleculeStartValue in buildConfiguration.AllPresentMoleculeValues())
          {

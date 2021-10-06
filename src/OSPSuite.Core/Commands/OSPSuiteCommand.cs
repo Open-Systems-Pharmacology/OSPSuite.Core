@@ -35,14 +35,14 @@ namespace OSPSuite.Core.Commands
 
       public string BuildingBlockType
       {
-         get { return ExtendedPropertyValueFor(Constants.Command.BUILDING_BLOCK_TYPE); }
-         set { AddExtendedProperty(Constants.Command.BUILDING_BLOCK_TYPE, value); }
+         get => ExtendedPropertyValueFor(Constants.Command.BUILDING_BLOCK_TYPE);
+         set => AddExtendedProperty(Constants.Command.BUILDING_BLOCK_TYPE, value);
       }
 
       public string BuildingBlockName
       {
-         get { return ExtendedPropertyValueFor(Constants.Command.BUILDING_BLOCK_NAME); }
-         set { AddExtendedProperty(Constants.Command.BUILDING_BLOCK_NAME, value); }
+         get => ExtendedPropertyValueFor(Constants.Command.BUILDING_BLOCK_NAME);
+         set => AddExtendedProperty(Constants.Command.BUILDING_BLOCK_NAME, value);
       }
 
       protected abstract void ExecuteWith(TContext context);
@@ -51,7 +51,7 @@ namespace OSPSuite.Core.Commands
 
    public abstract class OSPSuiteReversibleCommand<TContext> : OSPSuiteCommand<TContext>, IReversibleCommand<TContext> where TContext : IOSPSuiteExecutionContext
    {
-      public IReversibleCommand<TContext> InverseCommand(TContext context)
+      public ICommand<TContext> InverseCommand(TContext context)
       {
          var inverse = GetInverseCommand(context);
          inverse.Visible = Visible;
@@ -59,7 +59,7 @@ namespace OSPSuite.Core.Commands
          return inverse;
       }
 
-      protected abstract IReversibleCommand<TContext> GetInverseCommand(TContext context);
+      protected abstract ICommand<TContext> GetInverseCommand(TContext context);
       public abstract void RestoreExecutionData(TContext context);
    }
 
@@ -77,14 +77,14 @@ namespace OSPSuite.Core.Commands
 
       public string BuildingBlockType
       {
-         get { return ExtendedPropertyValueFor(Constants.Command.BUILDING_BLOCK_TYPE); }
-         set { AddExtendedProperty(Constants.Command.BUILDING_BLOCK_TYPE, value); }
+         get => ExtendedPropertyValueFor(Constants.Command.BUILDING_BLOCK_TYPE);
+         set => AddExtendedProperty(Constants.Command.BUILDING_BLOCK_TYPE, value);
       }
 
       public string BuildingBlockName
       {
-         get { return ExtendedPropertyValueFor(Constants.Command.BUILDING_BLOCK_NAME); }
-         set { AddExtendedProperty(Constants.Command.BUILDING_BLOCK_NAME, value); }
+         get => ExtendedPropertyValueFor(Constants.Command.BUILDING_BLOCK_NAME);
+         set => AddExtendedProperty(Constants.Command.BUILDING_BLOCK_NAME, value);
       }
 
       public new IEnumerable<IOSPSuiteCommmand<TContext>> All()

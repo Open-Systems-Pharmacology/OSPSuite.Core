@@ -40,7 +40,7 @@ namespace OSPSuite.Core.Commands
       [Observation]
       public void the_macro_command_should_not_be_empty()
       {
-         sut.IsEmtpy.ShouldBeFalse();
+         sut.IsEmpty.ShouldBeFalse();
       }
 
       [Observation]
@@ -61,7 +61,7 @@ namespace OSPSuite.Core.Commands
          base.Context();
          _commandToAdd1 = A.Fake<ICommand<MyContext>>();
          _commandToAdd2 = A.Fake<ICommand<MyContext>>();
-         MacroCommandExtensions.Add(sut, _commandToAdd1, _commandToAdd2);
+         sut.Add(_commandToAdd1, _commandToAdd2);
       }
 
       protected override void Because()

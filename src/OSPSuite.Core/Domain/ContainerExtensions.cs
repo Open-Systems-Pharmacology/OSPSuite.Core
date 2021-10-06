@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Descriptors;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
@@ -10,10 +11,7 @@ namespace OSPSuite.Core.Domain
    {
       public static IParameter Parameter(this IContainer container, string parameterName)
       {
-         if (container == null)
-            return null;
-
-         return container.GetSingleChildByName<IParameter>(parameterName);
+         return container?.GetSingleChildByName<IParameter>(parameterName);
       }
 
       public static IEnumerable<IParameter> AllParameters(this IContainer container)
@@ -60,7 +58,7 @@ namespace OSPSuite.Core.Domain
       /// <param name="neighborhood">parent neighborhood container</param>
       /// <param name="criteriaForFirstContainer">criteria that should be met by the first container of the neighborhood</param>
       /// <param name="criteriaForSecondContainer">criteria that should be met by the second container of the neighborhood</param>
-      internal static IEnumerable<INeighborhood> AllNeighboorhoodsFor(this IContainer neighborhood, DescriptorCriteria criteriaForFirstContainer, DescriptorCriteria criteriaForSecondContainer)
+      internal static IEnumerable<INeighborhood> AllNeighborhoodsFor(this IContainer neighborhood, DescriptorCriteria criteriaForFirstContainer, DescriptorCriteria criteriaForSecondContainer)
       {
          return neighborhood.GetChildren<INeighborhood>(n => n.StrictlySatisfies(criteriaForFirstContainer, criteriaForSecondContainer));
       }
@@ -125,14 +123,21 @@ namespace OSPSuite.Core.Domain
          if (!path.Any())
             return null;
 
-         var current = container;
-         //-1 since last entry is the actual entity to return
-         for (int i = 0; i < path.Length - 1; i++)
+         var pathToUse = path;
+         //This happens to be a path given as string (or a IObjectPath)
+         if (pathToUse.Length == 1 && pathToUse[0].Contains(ObjectPath.PATH_DELIMITER))
          {
-            current = current.Container(path[i]);
+            pathToUse = pathToUse[0].ToPathArray();
          }
 
-         return current?.GetSingleChildByName<T>(path.Last());
+         var current = container;
+         //-1 since last entry is the actual entity to return
+         for (int i = 0; i < pathToUse.Length - 1; i++)
+         {
+            current = current.Container(pathToUse[i]);
+         }
+
+         return current?.GetSingleChildByName<T>(pathToUse.Last());
       }
 
       /// <summary>
@@ -177,10 +182,7 @@ namespace OSPSuite.Core.Domain
 
       public static TChild GetSingleChild<TChild>(this IContainer container) where TChild : class, IEntity
       {
-         if (container == null)
-            return null;
-
-         return container.GetSingleChild<TChild>(x => true);
+         return container?.GetSingleChild<TChild>(x => true);
       }
    }
 }

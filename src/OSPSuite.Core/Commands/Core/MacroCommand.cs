@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Commands.Core
    public interface IMacroCommand : ICommand, ICommandCollector
    {
       int Count { get; }
-      bool IsEmtpy { get; }
+      bool IsEmpty { get; }
       void Clear();
       void Add(ICommand command);
       void AddRange(IEnumerable<ICommand> commandsToAdd);
@@ -61,15 +61,9 @@ namespace OSPSuite.Core.Commands.Core
          _subCommands.Clear();
       }
 
-      public int Count
-      {
-         get { return _subCommands.Count; }
-      }
+      public int Count => _subCommands.Count;
 
-      public bool IsEmtpy
-      {
-         get { return Count <= 0; }
-      }
+      public bool IsEmpty => Count <= 0;
 
       public virtual void Execute(TExecutionContext context)
       {
@@ -88,13 +82,12 @@ namespace OSPSuite.Core.Commands.Core
          }
       }
 
-      public IReversibleCommand<TExecutionContext> InverseCommand(TExecutionContext context)
+      public ICommand<TExecutionContext> InverseCommand(TExecutionContext context)
       {
          var undoableCommand = new MacroCommand<TExecutionContext>().AsInverseFor(this);
          for (int i = _subCommands.Count - 1; i >= 0; i--)
          {
-            var reverseCommand = _subCommands[i] as IReversibleCommand<TExecutionContext>;
-            if (reverseCommand == null)
+            if (!(_subCommands[i] is IReversibleCommand<TExecutionContext> reverseCommand))
                throw new CreateInverseCommandException();
 
             undoableCommand.Add(reverseCommand.InverseCommand(context));

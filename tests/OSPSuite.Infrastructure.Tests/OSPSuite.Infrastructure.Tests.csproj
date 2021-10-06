@@ -14,13 +14,13 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.60.6" />
-    <PackageReference Include="FakeItEasy" Version="6.0.0" />
+    <PackageReference Include="FakeItEasy" Version="6.2.1" />
     <PackageReference Include="nunit" Version="3.12.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1">
+    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.0.1" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.112" />
   </ItemGroup>
@@ -30,10 +30,12 @@
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Export\OSPSuite.Infrastructure.Export.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Import\OSPSuite.Infrastructure.Import.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Serialization\OSPSuite.Infrastructure.Serialization.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Infrastructure\OSPSuite.Infrastructure.csproj" />
     <ProjectReference Include="..\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Data\ExcelImport\" />
     <Folder Include="Data\PKAnalysesFiles\" />
     <Folder Include="Data\SensitivityAnalysisResultsFiles\" />
   </ItemGroup>

@@ -1,9 +1,9 @@
 ﻿using System.Xml.Linq;
-using OSPSuite.Serializer.Xml;
-using OSPSuite.Serializer.Xml.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Serializer.Xml;
+using OSPSuite.Serializer.Xml.Extensions;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -24,6 +24,7 @@ namespace OSPSuite.Core.Serialization.Xml
          //Do not map Factor as double since value might be saved as formula which needs to be evaluated when deserializing
          Map(x => x.Offset);
          Map(x => x.Visible);
+         MapEnumerable(x => x.UnitSynonyms, x => x.AddUnitSynonym);
       }
 
       protected override XElement TypedSerialize(Unit unit, SerializationContext serializationContext)
@@ -71,7 +72,7 @@ namespace OSPSuite.Core.Serialization.Xml
 
       protected override XElement TypedSerialize(Dimension dimension, SerializationContext serializationContext)
       {
-         var objectNode = base.TypedSerialize(dimension,serializationContext);
+         var objectNode = base.TypedSerialize(dimension, serializationContext);
 
          objectNode.AddAttribute(Constants.Serialization.Attribute.BASE_UNIT, dimension.BaseUnit.Name);
          objectNode.AddAttribute(Constants.Serialization.Attribute.DEFAULT_UNIT, dimension.DefaultUnit.Name);
@@ -81,7 +82,7 @@ namespace OSPSuite.Core.Serialization.Xml
 
       protected override void TypedDeserialize(Dimension dimension, XElement element, SerializationContext serializationContext)
       {
-         base.TypedDeserialize(dimension, element,serializationContext);
+         base.TypedDeserialize(dimension, element, serializationContext);
 
          var baseUnitName = element.GetAttribute(Constants.Serialization.Attribute.BASE_UNIT);
          dimension.BaseUnit = dimension.Unit(baseUnitName);

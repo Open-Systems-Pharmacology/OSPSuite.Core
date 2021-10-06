@@ -31,8 +31,12 @@ namespace OSPSuite.Core.Domain
       public const int NOT_FOUND_INDEX = -1;
 
       public const string ACTIVE = "Active";
+      public const string INFLUX = "Influx";
+      public const string NOT_INFLUX = "NotInflux";
       public const string PASSIVE = "Passive";
       public const string TIME = "Time";
+      public const string MEASUREMENT = "Measurement";
+      public const string ERROR = "Error";
       public const string ROOT_CONTAINER_TAG = "RootContainer";
       public const string ALL_TAG = "All";
       public const string CONCENTRATION_FORMULA = "ConcFormula";
@@ -73,7 +77,7 @@ namespace OSPSuite.Core.Domain
       public const string PRODUCT_SITE = "www.open-systems-pharmacology.org";
       public const string PRODUCT_SITE_DOWNLOAD = "http://setup.open-systems-pharmacology.org";
       public const string HELP_NAMESPACE = "http://docs.open-systems-pharmacology.org";
-      public const string FORUM_SITE = "forum.open-systems-pharmacology.org";
+      public const string FORUM_SITE = "http://forum.open-systems-pharmacology.org";
       public const string SUITE_NAME = "Open Systems Pharmacology Suite";
 
       public const float DEFAULT_WEIGHT = 1;
@@ -99,7 +103,7 @@ namespace OSPSuite.Core.Domain
       public const string STD_DEV_GEOMETRIC = "Geometric Standard Deviation";
       public const string STD_DEV_ARITHMETIC = "Arithmetic Standard Deviation";
       public const string AUXILIARY_TYPE = "AuxiliaryType";
-      public const string FILE = "File";
+      public const string FILE = "Source";
       public const string SHEET = "Sheet";
       public const string DEFAULT_WATERMARK_TEXT = "DRAFT";
 
@@ -234,6 +238,7 @@ namespace OSPSuite.Core.Domain
          public const string XML_EXTENSION = ".xml";
          public const string JOURNAL_EXTENSION = ".sbj";
          public const string CSV_EXTENSION = ".csv";
+         public const string NONMEM_EXTENSION = ".nmdat";
          public const string PDF_EXTENSION = ".pdf";
          public const string PKML_EXTENSION = ".pkml";
          public const string XLS_EXTENSION = ".xls";
@@ -442,6 +447,23 @@ namespace OSPSuite.Core.Domain
          public const int WARNING_THRESHOLD = 5;
       }
 
+      public static class ObservedData
+      {
+         public static readonly string ORGAN = "Organ";
+         public static readonly string COMPARTMENT = "Compartment";
+         public static readonly string MOLECULE = "Molecule";
+         public static readonly string MOLECULAR_WEIGHT = "Molecular Weight";
+         public static readonly string SPECIES = "Species";
+         public static readonly string STUDY_ID = "Study Id";
+         public static readonly string SUBJECT_ID = "Subject Id";
+         public static readonly string ROUTE = "Route";
+         public static readonly string GENDER = "Gender";
+         public static readonly string DOSE = "Dose";
+         public static readonly string PLASMA_COMPARTMENT = "Plasma";
+         public static readonly string PERIPHERAL_VENOUS_BLOOD_ORGAN = "Peripheral Venous Blood";
+         public static readonly string VENOUS_BLOOD_ORGAN = "VenousBlood";
+      }
+
       public static class LLOQModes
       {
          public const string ONLY_OBSERVED_DATA = "OnlyObservedData";
@@ -596,6 +618,17 @@ namespace OSPSuite.Core.Domain
 
 
          public static readonly Color DEFAULT_FONT_COLOR_WATERMARK = Color.Black;
+      }
+
+      public static class ImporterConstants
+      {
+         public static readonly string[] NAMING_PATTERN_SEPARATORS = { ".", ",", "-", "_" };
+         public static readonly string Undefined = "Undefined";
+      }
+
+      public static class LoggerConstants
+      {
+         public const string DEFAULT_LOG_ENTRY_TEMPLATE = "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {SourceContext:l} {Level:u}] {Message:l} {NewLine:l} {Exception}";
       }
    }
 }

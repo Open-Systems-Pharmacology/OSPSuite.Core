@@ -55,9 +55,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSPSuite.DevExpress" Version="19.2.4.1" />
+    <PackageReference Include="OSPSuite.DevExpress" Version="20.1.6" />
     <PackageReference Include="OSPSuite.FuncParser" Version="4.0.0.50" GeneratePathProperty="true" />
-    <PackageReference Include="OSPSuite.SimModel" Version="4.0.0.42" GeneratePathProperty="true" />
+    <PackageReference Include="OSPSuite.SimModel" Version="4.0.0.45" GeneratePathProperty="true" />
     <PackageReference Include="OSPSuite.SimModelSolver_CVODES" Version="4.1.0.8" GeneratePathProperty="true" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.112" GeneratePathProperty="true" />
   </ItemGroup>
@@ -73,10 +73,8 @@
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Reporting\OSPSuite.Infrastructure.Reporting.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Serialization\OSPSuite.Infrastructure.Serialization.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure\OSPSuite.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\src\OSPSuite.Presentation.Importer\OSPSuite.Presentation.Importer.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Presentation.Serialization\OSPSuite.Presentation.Serialization.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
-    <ProjectReference Include="..\..\src\OSPSuite.UI.Importer\OSPSuite.UI.Importer.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.UI\OSPSuite.UI.csproj" />
     <ProjectReference Include="..\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
   </ItemGroup>

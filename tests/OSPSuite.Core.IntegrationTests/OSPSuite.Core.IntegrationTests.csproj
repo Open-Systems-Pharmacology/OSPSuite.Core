@@ -38,19 +38,20 @@
 
   <ItemGroup>
     <PackageReference Include="nunit" Version="3.12.0" />
-    <PackageReference Include="FakeItEasy" Version="6.0.0" />
+    <PackageReference Include="FakeItEasy" Version="6.2.1" />
     <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.0.1" />
-    <PackageReference Include="OSPSuite.SmartXLS" Version="2.7.4.7" />
     <PackageReference Include="OSPSuite.Utility" Version="4.0.0.4" />
     <PackageReference Include="OSPSuite.FuncParser" Version="4.0.0.50" GeneratePathProperty="true" />
-    <PackageReference Include="OSPSuite.SimModel" Version="4.0.0.42" GeneratePathProperty="true" />
+    <PackageReference Include="OSPSuite.SimModel" Version="4.0.0.45" GeneratePathProperty="true" />
     <PackageReference Include="OSPSuite.SimModelSolver_CVODES" Version="4.1.0.8" GeneratePathProperty="true" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Castle\OSPSuite.Infrastructure.Castle.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Infrastructure.Import\OSPSuite.Infrastructure.Import.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Infrastructure\OSPSuite.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
     <ProjectReference Include="..\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
   </ItemGroup>
 
@@ -71,6 +72,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Data\SingleDosing_IV_30.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\tag_reactions.pkml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Data\Test1.xls">

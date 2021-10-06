@@ -50,6 +50,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private static void updateErrorsAndStatus(ParameterIdentificationRunState runState, MultiOptimizationRunResultDTO runStatusDTO)
       {
          runStatusDTO.Status = runState.Status;
+         runStatusDTO.Message = runState.Message;
          runStatusDTO.BestError = runState.BestResult.TotalError;
          runStatusDTO.CurrentError = runState.CurrentResult.TotalError;
          runStatusDTO.Description = runState.RunResult.Description;

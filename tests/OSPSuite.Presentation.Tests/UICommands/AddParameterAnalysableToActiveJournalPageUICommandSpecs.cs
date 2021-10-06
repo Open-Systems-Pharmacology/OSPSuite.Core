@@ -48,7 +48,7 @@ namespace OSPSuite.Presentation.UICommands
       }
    }
 
-   public class When_executing_the_add_parmaeter_analysable_to_journal_commmand : concern_for_AddParameterAnalysableToActiveJournalPageUICommand
+   public class When_executing_the_add_paraeter_analysable_to_journal_command : concern_for_AddParameterAnalysableToActiveJournalPageUICommand
    {
       private IReadOnlyList<IObjectBase> _allRelatedItems;
 
@@ -65,7 +65,7 @@ namespace OSPSuite.Presentation.UICommands
       }
 
       [Observation]
-      public void shoould_load_the_parameter_analyzable()
+      public void should_load_the_parameter_analyzable()
       {
          A.CallTo(() => _executionContext.Load(_parameterIdentification)).MustHaveHappened();
       }

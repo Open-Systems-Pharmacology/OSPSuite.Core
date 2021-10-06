@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Reflection;
-using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Domain.Data
 {
@@ -19,7 +19,6 @@ namespace OSPSuite.Core.Domain.Data
    /// </remarks>
    public class DataColumn : IWithId, IWithName, IWithDisplayUnit
    {
-      private readonly Cache<AuxiliaryType, DataColumn> _relatedColumnsCache = new Cache<AuxiliaryType, DataColumn>(x => x.DataInfo.AuxiliaryType);
       public QuantityInfo QuantityInfo { get; set; }
       public DataInfo DataInfo { get; set; }
       public string Id { get; set; }
@@ -29,10 +28,8 @@ namespace OSPSuite.Core.Domain.Data
       protected List<float> _values;
       public IDimension Dimension { get; set; }
 
-      public bool ColumnValueIsBelowLLOQ(int rowIndex)
-      {
-         return rowIndex < Values.Count &&  DataInfo.LLOQ != null && this[rowIndex] < DataInfo.LLOQ.Value;
-      }
+      internal Cache<AuxiliaryType, DataColumn> RelatedColumnsCache { get; } = new Cache<AuxiliaryType, DataColumn>(x => x.DataInfo.AuxiliaryType);
+
       /// <summary>
       ///    Indicates whether the column should be displayed by default or is use for internal use only
       /// </summary>
@@ -59,6 +56,11 @@ namespace OSPSuite.Core.Domain.Data
          var defaultUnitName = dimension != null ? dimension.DefaultUnitName : string.Empty;
          DataInfo = new DataInfo(ColumnOrigins.Undefined) {DisplayUnitName = defaultUnitName};
          IsInternal = false;
+      }
+
+      public bool ColumnValueIsBelowLLOQ(int rowIndex)
+      {
+         return rowIndex < Values.Count && DataInfo.LLOQ != null && this[rowIndex] < DataInfo.LLOQ.Value;
       }
 
       public DataRepository Repository
@@ -108,7 +110,7 @@ namespace OSPSuite.Core.Domain.Data
             //2nd case: constant array. create array with the same size as base grid
             //          and fill it with the (only) value
 
-            if (_values.Count != 1) 
+            if (_values.Count != 1)
                throw new OSPSuiteException(Error.WrongColumnDimensions(Name, _values.Count, BaseGrid.Count));
 
             if (_cachedValues == null)
@@ -124,6 +126,15 @@ namespace OSPSuite.Core.Domain.Data
             _values = value?.ToList();
             _cachedValues = null;
          }
+      }
+
+      /// <summary>
+      ///    Required for R
+      /// </summary>
+      public virtual double[] ValuesAsArray
+      {
+         get => Values?.ToDoubleArray() ?? Array.Empty<double>();
+         set => Values = value?.ToFloatArray();
       }
 
       /// <summary>
@@ -154,11 +165,12 @@ namespace OSPSuite.Core.Domain.Data
                validateDimensionIs(AuxiliaryType.ArithmeticMeanPop, relatedColumn.Dimension, Dimension);
                break;
             case AuxiliaryType.GeometricMeanPop:
-               if(!Dimension.IsEquivalentTo(Constants.Dimension.NO_DIMENSION))
+               if (!Dimension.IsEquivalentTo(Constants.Dimension.NO_DIMENSION))
                   validateDimensionIs(AuxiliaryType.GeometricMeanPop, relatedColumn.Dimension, Dimension);
                break;
          }
-         _relatedColumnsCache.Add(relatedColumn);
+
+         RelatedColumnsCache.Add(relatedColumn);
       }
 
       private static void validateDimensionIsDimensionsLess(AuxiliaryType auxiliaryType, IDimension dimension)
@@ -175,20 +187,20 @@ namespace OSPSuite.Core.Domain.Data
 
       public virtual void RemoveRelatedColumn(AuxiliaryType auxiliaryType)
       {
-         _relatedColumnsCache.Remove(auxiliaryType);
+         RelatedColumnsCache.Remove(auxiliaryType);
       }
 
       public virtual bool ContainsRelatedColumn(AuxiliaryType auxiliaryType)
       {
-         return _relatedColumnsCache.Contains(auxiliaryType);
+         return RelatedColumnsCache.Contains(auxiliaryType);
       }
 
       public virtual DataColumn GetRelatedColumn(AuxiliaryType auxiliaryType)
       {
-         return _relatedColumnsCache[auxiliaryType];
+         return RelatedColumnsCache[auxiliaryType];
       }
 
-      public virtual IReadOnlyCollection<DataColumn> RelatedColumns => _relatedColumnsCache;
+      public virtual IReadOnlyCollection<DataColumn> RelatedColumns => RelatedColumnsCache;
 
       public virtual float GetValue(float baseValue)
       {
@@ -216,12 +228,7 @@ namespace OSPSuite.Core.Domain.Data
                 (BaseGrid[rightIndex] - BaseGrid[leftIndex]);
       }
 
-      internal Cache<AuxiliaryType, DataColumn> RelatedColumnsCache => _relatedColumnsCache;
-
-      public override string ToString()   
-      {
-         return Name;
-      }
+      public override string ToString() => Name;
 
       internal void InsertValueAt(int index, float value)
       {

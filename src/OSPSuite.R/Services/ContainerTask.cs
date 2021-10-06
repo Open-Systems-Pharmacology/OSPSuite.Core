@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Core.Services;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using static OSPSuite.Core.Domain.Constants;
@@ -35,12 +37,48 @@ namespace OSPSuite.R.Services
       string[] AllContainerPathsIn(IContainer container);
       string[] AllMoleculesPathsIn(IContainer container);
       string[] AllParameterPathsIn(IContainer container);
+      string[] AllStateVariableParameterPathsIn(IContainer container);
 
       string[] AllQuantityPathsIn(IModelCoreSimulation simulation);
       string[] AllContainerPathsIn(IModelCoreSimulation simulation);
       string[] AllMoleculesPathsIn(IModelCoreSimulation simulation);
       string[] AllParameterPathsIn(IModelCoreSimulation simulation);
+      string[] AllStateVariableParameterPathsIn(IModelCoreSimulation simulation);
 
+      /// <summary>
+      ///    Returns names of base units of entities with given path.
+      /// </summary>
+      /// <param name="simulation">Simulation to use to find the quantity by path</param>
+      /// <param name="path">Absolute path of the quantity</param>
+      string BaseUnitNameByPath(IModelCoreSimulation simulation, string path);
+
+      /// <summary>
+      ///    Returns names of dimension of entities with given path (may contain wildcards)
+      /// </summary>
+      /// <param name="simulation">Simulation to use to find the quantity by path</param>
+      /// <param name="path">Absolute path of the quantity</param>
+      string DimensionNameByPath(IModelCoreSimulation simulation, string path);
+
+      /// <summary>
+      ///    Returns if the start values of entities with given path (may contain wildcards) are defined by an explicit formula
+      /// </summary>
+      /// <param name="simulation">Simulation to use to find the quantity by path</param>
+      /// <param name="path">Absolute path of the quantity</param>
+      bool IsExplicitFormulaByPath(IModelCoreSimulation simulation, string path);
+
+      /// <summary>
+      ///    Adds quantities with given path (may contain wildcards) to output selections of the simulation.
+      /// </summary>
+      void AddQuantitiesToSimulationOutputByPath(IModelCoreSimulation simulation, string path);
+
+      /// <summary>
+      ///    Sets the value of the quantity by path
+      /// </summary>
+      /// <param name="simulation">Simulation containing the value to set</param>
+      /// <param name="path">Full path. Wild card not allowed</param>
+      /// <param name="value">Value to set in base unit</param>
+      /// <param name="throwIfNotFound">Should an error be thrown if the quantity by path is not found?</param>
+      void SetValueByPath(IModelCoreSimulation simulation, string path, double value, bool throwIfNotFound);
    }
 
    public class ContainerTask : IContainerTask
@@ -48,6 +86,7 @@ namespace OSPSuite.R.Services
       private readonly IEntityPathResolver _entityPathResolver;
       private readonly ISensitivityAnalysisTask _sensitivityAnalysisTask;
       private readonly ICoreContainerTask _coreContainerTask;
+      private readonly IOSPSuiteLogger _logger;
       private static readonly string ALL_BUT_PATH_DELIMITER = $"[^{ObjectPath.PATH_DELIMITER}]*";
       private static readonly string PATH_DELIMITER = $"\\{ObjectPath.PATH_DELIMITER}";
       private static readonly string OPTIONAL_PATH_DELIMITER = $"(\\{PATH_DELIMITER})?";
@@ -55,11 +94,13 @@ namespace OSPSuite.R.Services
       public ContainerTask(
          IEntityPathResolver entityPathResolver,
          ISensitivityAnalysisTask sensitivityAnalysisTask,
-         ICoreContainerTask coreContainerTask)
+         ICoreContainerTask coreContainerTask,
+         IOSPSuiteLogger logger)
       {
          _entityPathResolver = entityPathResolver;
          _sensitivityAnalysisTask = sensitivityAnalysisTask;
          _coreContainerTask = coreContainerTask;
+         _logger = logger;
       }
 
       public IParameter[] AllParametersMatching(IModelCoreSimulation simulation, string path) =>
@@ -102,7 +143,9 @@ namespace OSPSuite.R.Services
 
       public string[] AllParameterPathsIn(IContainer container) => allEntityPathIn<IParameter>(container);
 
-      public string[] AllQuantityPathsIn(IModelCoreSimulation simulation) =>  AllQuantityPathsIn(simulation?.Model?.Root);
+      public string[] AllStateVariableParameterPathsIn(IContainer container) => allEntityPathIn<IParameter>(container, isStateVariableParameter);
+
+      public string[] AllQuantityPathsIn(IModelCoreSimulation simulation) => AllQuantityPathsIn(simulation?.Model?.Root);
 
       public string[] AllContainerPathsIn(IModelCoreSimulation simulation) => AllContainerPathsIn(simulation?.Model?.Root);
 
@@ -110,12 +153,57 @@ namespace OSPSuite.R.Services
 
       public string[] AllParameterPathsIn(IModelCoreSimulation simulation) => AllParameterPathsIn(simulation?.Model?.Root);
 
+      public string[] AllStateVariableParameterPathsIn(IModelCoreSimulation simulation) => AllStateVariableParameterPathsIn(simulation?.Model?.Root);
+
+      public string BaseUnitNameByPath(IModelCoreSimulation simulation, string path) => singleQuantityByPath(simulation, path).BaseUnitName();
+
+      public string DimensionNameByPath(IModelCoreSimulation simulation, string path) => singleQuantityByPath(simulation, path).DimensionName();
+
+      public bool IsExplicitFormulaByPath(IModelCoreSimulation simulation, string path) => singleQuantityByPath(simulation, path).Formula.IsExplicit();
+
+      public void AddQuantitiesToSimulationOutputByPath(IModelCoreSimulation simulation, string path) =>
+         AllQuantitiesMatching(simulation, path).Each(simulation.OutputSelections.AddQuantity);
+
+      public void SetValueByPath(IModelCoreSimulation simulation, string path, double value, bool throwIfNotFound)
+      {
+         if (path.Contains(WILD_CARD))
+            throw new OSPSuiteException(Error.CannotSetValueByPathUsingWildCard(path));
+         
+         var pathArray = path.ToPathArray();
+         var quantity = simulation.Model.Root.EntityAt<IQuantity>(pathArray);
+         if (quantity != null)
+         {
+            quantity.Value = value;
+            return;
+         }
+
+         if (throwIfNotFound)
+            throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path));
+
+         _logger.AddWarning(Error.CouldNotFindQuantityWithPath(path));
+      }
+
+      private IQuantity singleQuantityByPath(IModelCoreSimulation simulation, string path)
+      {
+         if (path.Contains(WILD_CARD))
+            throw new OSPSuiteException(Error.CannotSetValueByPathUsingWildCard(path));
+
+         var pathArray = path.ToPathArray();
+         var quantity = simulation.Model.Root.EntityAt<IQuantity>(pathArray);
+         if (quantity == null)
+            throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path));
+
+         return quantity;
+      }
+
       private string[] allEntityPathIn<T>(IContainer container, Func<T, bool> filterFunc = null) where T : class, IEntity
       {
          return _coreContainerTask.CacheAllChildrenSatisfying(container, filterFunc ?? (x => true)).Keys.ToArray();
       }
 
       private bool isRealContainer(IContainer container) => !container.IsAnImplementationOf<IDistributedParameter>() && !container.IsAnImplementationOf<IMoleculeAmount>();
+
+      private bool isStateVariableParameter(IParameter parameter) => parameter.RHSFormula != null;
 
       private T[] allEntitiesMatching<T>(IContainer container, string path) where T : class, IEntity
       {
@@ -155,7 +243,7 @@ namespace OSPSuite.R.Services
          {
             if (string.Equals(entry, WILD_CARD))
             {
-               // At least one occurence of a path entry => anything except ObjectPath.PATH_DELIMITER, repeated once
+               // At least one occurrence of a path entry => anything except ObjectPath.PATH_DELIMITER, repeated once
                pattern.Add($"{ALL_BUT_PATH_DELIMITER}?");
                pattern.Add(PATH_DELIMITER);
             }
@@ -166,7 +254,10 @@ namespace OSPSuite.R.Services
             }
             else
             {
-               pattern.Add(entry.Replace(WILD_CARD, ALL_BUT_PATH_DELIMITER));
+               pattern.Add(entry
+                  .Replace(WILD_CARD, ALL_BUT_PATH_DELIMITER)
+                  .Replace("(", "\\(")
+                  .Replace(")", "\\)"));
                pattern.Add(PATH_DELIMITER);
             }
          }

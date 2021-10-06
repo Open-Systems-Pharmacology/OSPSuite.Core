@@ -1,15 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using FakeItEasy;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Helpers;
 using OSPSuite.SimModel;
 using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core
 {
@@ -19,13 +25,14 @@ namespace OSPSuite.Core
       protected ISimModelExporter _simModelExporter;
 
       protected string[] _variableParameterPaths;
+      protected string[]_variableSpeciesPath;
+
       protected ISimModelSimulationFactory _simModelSimulationFactory;
       protected Simulation _simModelSimulation;
       protected string _simModelXmlString;
       private IObjectPathFactory _objectPathFactory;
       protected IModelCoreSimulation _modelCoreSimulation;
       private SimModelManagerForSpecs _simModelManagerForSpecs;
-      protected IEnumerable<ParameterProperties> _variableParameters;
 
       public override void GlobalContext()
       {
@@ -46,6 +53,11 @@ namespace OSPSuite.Core
             _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.TableParameter1).PathAsString,
          };
 
+         _variableSpeciesPath = new []
+         {
+            _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.ArterialBlood, ConstantsForSpecs.Plasma, "A").PathAsString,
+            _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "B").PathAsString,
+         };
 
          sut = new SimModelBatch(simModelExporter, simModelSimulationFactory, _dataFactory);
       }
@@ -53,15 +65,22 @@ namespace OSPSuite.Core
 
    public class When_initializing_the_sim_model_batch_with_a_simulation_and_a_list_of_variable_parameters : concern_for_SimModelBatch
    {
+
       protected override void Because()
       {
-         sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths);
+         sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths, _variableSpeciesPath);
       }
 
       [Observation]
       public void should_set_the_parameter_to_be_varied()
       {
          _simModelSimulation.VariableParameters.Count().ShouldBeEqualTo(2);
+      }
+
+      [Observation]
+      public void should_set_the_species_to_be_varied()
+      {
+         _simModelSimulation.VariableSpecies.Count().ShouldBeEqualTo(2);
       }
    }
 
@@ -70,16 +89,22 @@ namespace OSPSuite.Core
       private SimulationRunResults _simulationResult;
       private DataRepository _result;
       private string _simulationResultsName;
+      private IEnumerable<ParameterProperties> _variableParameters;
+      private IEnumerable<SpeciesProperties> _variableSpecies;
 
       protected override void Context()
       {
          base.Context();
          _simulationResultsName = "TTT";
-         sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths, false, _simulationResultsName);
+         sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths,_variableSpeciesPath,  false, _simulationResultsName);
 
          _variableParameters = _simModelSimulation.VariableParameters;
          sut.UpdateParameterValue(_variableParameterPaths[0], 10);
          sut.UpdateParameterValue(_variableParameterPaths[1], 20);
+
+         _variableSpecies = _simModelSimulation.VariableSpecies;
+         sut.UpdateInitialValue(_variableSpeciesPath[0], 5);
+         sut.UpdateInitialValue(_variableSpeciesPath[1], 6);
 
          _result = new DataRepository("SIM");
          A.CallTo(() => _dataFactory.CreateRepository(_modelCoreSimulation, _simModelSimulation, _simulationResultsName)).Returns(_result);
@@ -98,10 +123,44 @@ namespace OSPSuite.Core
       }
 
       [Observation]
+      public void should_update_the_initial_values()
+      {
+         _variableSpecies.ElementAt(0).InitialValue.ShouldBeEqualTo(5);
+         _variableSpecies.ElementAt(1).InitialValue.ShouldBeEqualTo(6);
+      }
+
+      [Observation]
       public void should_return_a_simulation_result_containing_the_output_of_the_simulation_run()
       {
-         _simulationResult.Success.ShouldBeTrue();
+         _simulationResult.Success.ShouldBeTrue(_simulationResult.Error);
          _simulationResult.Results.ShouldBeEqualTo(_result);
       }
    }
+
+   public class When_exporting_the_sim_model_simulation_to_c_plusplus_code : concern_for_SimModelBatch
+   {
+      private string _exportFolder;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut.KeepXMLNodeInSimModelSimulation = true;
+         sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths, _variableSpeciesPath, false);
+         _exportFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+      }
+
+      protected override void Because()
+      {
+         Directory.CreateDirectory(_exportFolder);
+         sut.ExportToCPPCode(_exportFolder, CodeExportMode.Values);
+      }
+
+      [Observation]
+      public void should_export_cpp_code()
+      {
+         File.Exists(Path.Combine(_exportFolder, "Standard.cpp")).ShouldBeTrue();
+      }
+
+   }
+
 }

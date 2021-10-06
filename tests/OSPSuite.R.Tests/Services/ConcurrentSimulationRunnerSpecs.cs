@@ -1,0 +1,263 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core;
+using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Extensions;
+using OSPSuite.R.Domain;
+
+namespace OSPSuite.R.Services
+{
+   class CoreUserSettings : ICoreUserSettings
+   {
+      public int MaximumNumberOfCoresToUse { get; set; } = 4;
+      public int NumberOfBins { get; set; }
+      public int NumberOfIndividualsPerBin { get; set; }
+   }
+
+   public abstract class concern_for_ConcurrentSimulationRunner : ContextForIntegration<IConcurrentSimulationRunner>
+   {
+      protected ISimulationPersister _simulationPersister;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _simulationPersister = Api.GetSimulationPersister();
+         sut = Api.GetConcurrentSimulationRunner();
+      }
+   }
+
+   public class When_running_simulations_concurrently : concern_for_ConcurrentSimulationRunner
+   {
+      private ConcurrencyManagerResult<SimulationResults>[] _results;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         sut.AddSimulation(_simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml")));
+         sut.AddSimulation(_simulationPersister.LoadSimulation(HelperForSpecs.DataFile("simple.pkml")));
+         sut.AddSimulation(_simulationPersister.LoadSimulation(HelperForSpecs.DataFile("simple.pkml")));
+         sut.AddSimulation(_simulationPersister.LoadSimulation(HelperForSpecs.DataFile("multiple_dosing.pkml")));
+      }
+
+      protected override void Because()
+      {
+         _results = sut.RunConcurrently();
+      }
+
+      [Observation]
+      public void should_run_the_simulations()
+      {
+         _results.ShouldNotBeNull();
+         _results.All(r => r.Result.ElementAt(0).AllValues.SelectMany(v => v.Values).Any()).ShouldBeTrue();
+      }
+   }
+
+   public class When_running_a_batch_simulation_run_concurrently : concern_for_ConcurrentSimulationRunner
+   {
+      private ConcurrentRunSimulationBatch _concurrentRunSimulationBatch;
+      private ConcurrencyManagerResult<SimulationResults>[] _results;
+      private IModelCoreSimulation _simulation;
+      private readonly List<string> _ids = new List<string>();
+      private readonly List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml"));
+
+         _concurrentRunSimulationBatch = new ConcurrentRunSimulationBatch
+         (
+            _simulation,
+            new SimulationBatchOptions
+            {
+               VariableMolecules = new[]
+               {
+                  new[] {"Organism", "Kidney", "Intracellular", "Caffeine"}.ToPathString()
+               },
+
+               VariableParameters = new[]
+               {
+                  new[] {"Organism", "Liver", "Volume"}.ToPathString(),
+                  new[] {"Organism", "Hematocrit"}.ToPathString(),
+               }
+            }
+         );
+
+         sut.AddSimulationBatch(_concurrentRunSimulationBatch);
+      }
+
+      protected override void Because()
+      {
+         _simulationBatchRunValues.Add(new SimulationBatchRunValues
+         {
+            InitialValues = new[] {10.0},
+            ParameterValues = new[] {3.5, 0.53}
+         });
+         _simulationBatchRunValues.Add(new SimulationBatchRunValues
+         {
+            InitialValues = new[] {9.0},
+            ParameterValues = new[] {3.4, 0.50}
+         });
+         _simulationBatchRunValues.Add(new SimulationBatchRunValues
+         {
+            InitialValues = new[] {10.5},
+            ParameterValues = new[] {3.6, 0.55}
+         });
+         _ids.Add(_concurrentRunSimulationBatch.AddSimulationBatchRunValues(_simulationBatchRunValues[0]));
+         _ids.Add(_concurrentRunSimulationBatch.AddSimulationBatchRunValues(_simulationBatchRunValues[1]));
+         _ids.Add(_concurrentRunSimulationBatch.AddSimulationBatchRunValues(_simulationBatchRunValues[2]));
+
+         _results = sut.RunConcurrently();
+      }
+
+      [Observation]
+      public void should_be_able_to_simulate_the_simulation_for_multiple_runes()
+      {
+         foreach (var id in _ids)
+         {
+            var result = Api.GetSimulationBatchFactory().Create(_simulation, _concurrentRunSimulationBatch.SimulationBatchOptions).Run(_simulationBatchRunValues.FirstOrDefault(v => v.Id == id));
+            var concurrentResult = _results.First(r => r.Id == id);
+            result.Time.Values.ShouldBeEqualTo(concurrentResult.Result.Time.Values);
+            result.ResultsFor(0).ValuesAsArray().Select(qv => qv.Values).ShouldBeEqualTo(concurrentResult.Result.ResultsFor(0).ValuesAsArray().Select(qv => qv.Values));
+         }
+      }
+   }
+
+   public class When_running_some_simulation_concurrently_and_then_adding_some_new_parameters : concern_for_ConcurrentSimulationRunner
+   {
+      private Simulation _simulation;
+      private ConcurrentRunSimulationBatch _simulationBatch;
+      private SimulationBatchRunValues _parValues1;
+      private SimulationBatchRunValues _parValues2;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml"));
+
+         _simulationBatch = new ConcurrentRunSimulationBatch
+         (
+            _simulation,
+            new SimulationBatchOptions
+            {
+               VariableParameters = new[]
+               {
+                  new[] {"Organism", "Liver", "Volume"}.ToPathString(),
+                  new[] {"Organism", "Hematocrit"}.ToPathString(),
+               }
+            }
+         );
+
+         _parValues1 = new SimulationBatchRunValues
+         {
+            ParameterValues = new[] {3.5, 0.53}
+         };
+         _parValues2 = new SimulationBatchRunValues
+         {
+            ParameterValues = new[] {3.4, 0.50}
+         };
+
+         _simulationBatch.AddSimulationBatchRunValues(_parValues1);
+         sut.AddSimulationBatch(_simulationBatch);
+         sut.RunConcurrently();
+         sut.Dispose();
+      }
+
+      protected override void Because()
+      {
+         _simulationBatch.AddSimulationBatchRunValues(_parValues2);
+      }
+      
+      [Observation]
+      public void should_not_crash()
+      {
+         sut = Api.GetConcurrentSimulationRunner();
+         sut.AddSimulationBatch(_simulationBatch);
+         var res =  sut.RunConcurrently();
+         res[0].Succeeded.ShouldBeTrue();
+      }
+   }
+
+   public class When_running_some_simulation_concurrently : concern_for_ConcurrentSimulationRunner
+   {
+      private Simulation _simulation;
+      private ConcurrentRunSimulationBatch _simulationBatch1;
+      private SimulationBatchRunValues _parValues1;
+      private SimulationBatchRunValues _parValues2;
+      private ConcurrentRunSimulationBatch _simulationBatch2;
+      private ConcurrentRunSimulationBatch _simulationBatch3;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml"));
+
+         _simulationBatch1 = new ConcurrentRunSimulationBatch
+         (
+            _simulation,
+            new SimulationBatchOptions
+            {
+               VariableParameters = new[]
+               {
+                  new[] {"Organism", "Liver", "Volume"}.ToPathString(),
+                  new[] {"Organism", "Hematocrit"}.ToPathString(),
+               }
+            }
+         );
+
+         _simulationBatch2 = new ConcurrentRunSimulationBatch
+         (
+            _simulation,
+            new SimulationBatchOptions
+            {
+               VariableParameters = new[]
+               {
+                  new[] {"Organism", "Liver", "Volume"}.ToPathString(),
+                  new[] {"Organism", "Hematocrit"}.ToPathString(),
+               }
+            }
+         );
+
+         _simulationBatch3 = new ConcurrentRunSimulationBatch
+         (
+            _simulation,
+            new SimulationBatchOptions
+            {
+               VariableParameters = new[]
+               {
+                  new[] {"Organism", "Liver", "Volume"}.ToPathString(),
+                  new[] {"Organism", "Hematocrit"}.ToPathString(),
+               }
+            }
+         );
+
+
+         _parValues1 = new SimulationBatchRunValues
+         {
+            ParameterValues = new[] { 3.5, 0.53 }
+         };
+    
+
+         _simulationBatch1.AddSimulationBatchRunValues(_parValues1);
+         _simulationBatch2.AddSimulationBatchRunValues(_parValues1);
+         _simulationBatch3.AddSimulationBatchRunValues(_parValues1);
+         sut.AddSimulationBatch(_simulationBatch1);
+         sut.AddSimulationBatch(_simulationBatch2);
+         sut.AddSimulationBatch(_simulationBatch3);
+      }
+
+    
+      [Observation]
+      public void should_initialize_the_batch_in_parallel()
+      {
+         var res = sut.RunConcurrently();
+         res[0].Succeeded.ShouldBeTrue();
+      }
+   }
+
+}

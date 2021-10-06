@@ -18,6 +18,7 @@ namespace OSPSuite.Assets
 
    public static class Captions
    {
+      public static readonly string ConfirmationDialog = "Confirmation";
       public static readonly string Excel = "Excel®";
       public static readonly string EmptyColumn = " ";
       public static readonly string EmptyName = "Empty";
@@ -145,6 +146,7 @@ namespace OSPSuite.Assets
       public static readonly string SensitivityAnalysisFolder = "Sensitivity Analyses";
       public static readonly string QualificationPlanFolder = "Qualification Plans";
       public static readonly string LLOQ = "LLOQ";
+      public static readonly string ErrorType = "Error type";
       public static readonly string Delete = "Delete";
       public static readonly string Clear = "Clear";
       public static readonly string SelectSimulations = "Select Simulations";
@@ -188,6 +190,8 @@ namespace OSPSuite.Assets
       public static readonly string CalculationMethod = "Calculation Method";
       public static readonly string MoleculeObserver = "Molecule Observer";
       public static readonly string ContainerObserver = "Container Observer";
+      public static readonly string UnitsEditorCaption = "Unit Settings";
+      public static readonly string EditManually = "Edit manually";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
@@ -353,6 +357,157 @@ namespace OSPSuite.Assets
          public static readonly string UnitInformation = "Unit Information";
          public static readonly string TheUnitInformationMustBeEnteredOrConfirmed = "The unit information must be entered or confirmed.";
          public static readonly string TheMetaDataInformationMustBeEnteredOrConfirmed = "The meta data must be entered or confirmed.";
+         public static readonly string ResetMapping = "Reset Mapping";
+         public static readonly string ResetMappingBasedOnCurrentSheet = "Reset Mapping based on current sheet";
+         public static readonly string ClearMapping = "Clear Mapping";
+         public static readonly string Format = "Format: ";
+         public static readonly string AddKeys = "Add Keys";
+         public static readonly string Columns = "Columns";
+         public static readonly string Mappings = "Mappings";
+         public static readonly string FormatPlain = "Format";
+         public static readonly string DataMapping = "Data Mapping";
+         public static readonly string Confirmation = "Import preview";
+         public static readonly string ThreeDots = "...";
+         public static readonly string File = "File:";
+         public static readonly string ManualInput = "Manual input";
+         public static readonly string LloqColumnEditorTitle = "Please select the lloq column.";
+         public static readonly string ConfirmationImport = "Import";
+         public static readonly string NanAction = "Action";
+         public static readonly string NanActionThrowsError = "Prevent the import";
+         public static readonly string NanActionIgnoreRow = "Ignore the row";
+         public static readonly string NanActionHint = "Defines what to do when an invalid measurement is found (invalid measurements are NaN or the number indicated in the NaN indicator). \"Ignore the row\" will import the data ignoring the currently invalid row. \"Prevent the import\" will throw an error and halt the import process";
+         public static readonly string NanIndicator = "NaN indicator";
+         public static readonly string NanIndicatorHint = "Set a string to indicate how NaN should be detected";
+         public static readonly string OpenFileConfirmation = "Opening a new file will drop your currently imported data. Are you sure you want to open a new file?";
+         public static readonly string ExcelColumn = "Data Column/Value";
+         public static readonly string MappingName = "Mapping Name";
+         public static readonly string MappingSettings = "Mapping Settings";
+         public static readonly string UnitColumn = "Unit";
+         public static readonly string ExtraColumn = "Edit Extra Fields";
+         public static readonly string ErrorColumn = "Error";
+         public static readonly string ErrorType = "Error type";
+         public static readonly string LoadAllSheets = "Add All Sheets";
+         public static readonly string SourceTab = "Source";
+         public static readonly string ConfirmationTab = "Confirmation";
+         public static readonly string PreviewLayout = "Preview";
+         public static readonly string SourceLayout = "Source";
+         public static readonly string Separator = "Separator";
+         public static readonly string DataSets = "Data Sets";
+         public static readonly string NamingElement = "Naming Element";
+         public static readonly string CreateNamingPattern = "Create Naming Pattern";
+         public static readonly string Dimension = "Dimension";
+         public static readonly string Unit = "Unit";
+         public static readonly string ImportLLOQFromColumn = "Import LLOQ from a column";
+         public static readonly string ImportUnitFromColumn = "Import unit from a column";
+         public static readonly string Column = "Column";
+         public static readonly string LoadCurrentSheet = "Add Current Sheet";
+         public static readonly string AllSheetsAlreadyImported = "All imported";
+         public static readonly string SheetsAlreadyImported = "Imported";
+         public static readonly string CloseAllTabsButThis = "Close all tabs but this";
+         public static readonly string CloseAllTabsToTheRight = "Close all tabs to the right";
+         public static readonly string ResetAllTabs = "Reopen all sheets";
+         public static readonly string UseFilterForImport = "Use the filters selected not only for visualization but also for importing the data";
+         public static readonly string Title = "Import Observed Data";
+         public static readonly string LLOQ = "LLOQ";
+         public static readonly string LloqDescription = "LLOQ values will be imported from the measurement column if values are written in the form < xxx (eg <0.001)";
+         public static readonly string SaveConfiguration = "Save Configuration";
+         public static readonly string ApplyConfiguration = "Load Configuration";
+         public static readonly string ActionWillEraseLoadedData = "This action will result in dropping all the loaded sheets. Do you want to continue?";
+         public static readonly string OpenFile = "Select the file you would like to apply configuration on";
+         public static readonly string GroupByTitle = "Group By";
+         public static readonly string SelectToAdd = "Select to add";
+         public static readonly string MappingTitle = "Mapping";
+         public static readonly string ReloadWillCauseChangeOfDataSets =
+            "Reloading will cause the following changes in observed data. Do you really want to reload?";
+         public static readonly string UnexpectedExceptionWhenLoading =
+            "An unexpected error occurred while loading the file. The file format is probably not supported. Please check the <href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats >documentation</href> for more details";
+
+         public static readonly string DataSetsWillBeOverwritten = "Datasets that will be overwritten";
+         public static readonly string NewDataStetsWillBeImported = "New datasets that will be imported";
+         public static readonly string ReloadData = "Reload Data";
+         public static readonly string SeparatorSelection = "Separator Selection";
+         public static string LLOQInconsistentValuesAt(string dataRepositoryName) => $"There were different LLOQ values detected for the data from a single source. Please check data under name {dataRepositoryName}. Are you sure you want to continue with import?";
+         public static string CsvSeparatorDescription(string fileName) => $"Please select the separator for the file \r\n'{fileName}':";
+
+         public static readonly string SheetFormatNotSupported = "The format of the sheet you are trying to use is not supported.You can find a documentation of the supported formats<href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats > here </href>";
+         public static string ConfirmDroppingExcelColumns(string listOfExcelColumns)
+         {
+            var sb = new StringBuilder();
+            sb.AppendLine($"The following excel columns do not exist in the current file. \n \n'{listOfExcelColumns}' ");
+            sb.AppendLine();
+            sb.AppendLine("The corresponding mappings from the configuration will be lost. Do you want to continue?");
+            return sb.ToString();
+         }
+
+         public static string SheetsNotFound(List<string> listOfSheetNames)
+         {
+            var sb = new StringBuilder();
+            sb.AppendLine("The following excel sheets were not found in the file and will not be imported ");
+            sb.AppendLine();
+            listOfSheetNames.ForEach(item => sb.AppendLine(item));
+            return sb.ToString();
+         }
+
+         public static readonly string UseFiltersForImport = "Use filters for importing data";
+         public static readonly string UseFiltersForImportTooltip = "When selected, the filter will apply to the data during the import process. When deselected, the filter only affects this view. Check documentation for more information on defining filters: <href=https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering>https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering</href>";
+
+         public static readonly string AddGroupByTitle = "Add Group By";
+         public static readonly string MetaDataTitle = "Meta data";
+         public static readonly string IgnoredParameterTitle = "Ignored parameter";
+         public static readonly string NotConfiguredField = "Field not configured yet";
+         public static readonly string AddGroupBy = "Add a new grouping by";
+         public static readonly string MissingMandatoryMapping = "Field is mandatory and has not configured yet";
+         public static readonly string MissingUnit = "Field must contain a valid unit description";
+         public static string MappingHint(string parameter, string target, string unit)
+         {
+            return $"The column {parameter} will be mapped into {target} with units as {unit}";
+         }
+         public static string MappingHintUnitColumn(string parameter, string target, string unitColumn)
+         {
+            return $"The column {parameter} will be mapped into {target} and column {unitColumn} will be mapped into unit";
+         }
+         public static string MappingHintNoUnit(string parameter, string target)
+         {
+            return $"The column {parameter} will be mapped into {target}";
+         }
+         public static string GroupByHint(string parameter)
+         {
+            return $"The column {parameter} will be used for grouping by";
+         }
+
+         public static string MappingHintGeometricError = "Geometric standard deviation";
+
+         public static string AddGroupByHint = "Configure the parameters and click the add button to add a new grouping by field";
+
+         public static string NamingPatternDescription = "Automatically generates names replacing words surrounded by <b>{}</b> with like named meta data values.";
+
+         public static string NamingPatternPanelDescription = "Select one or more names from the list and the separator between them. " +
+                                                              "By clicking the <b>Add keys</b> button, " +
+                                                              "keys will be added to the naming pattern, separated by the selected separator";
+
+         public static string MetaDataHint(string parameter, string target)
+         {
+            return $"The column {parameter} will be used as meta data to extract the following data: {target}";
+         }
+         public static readonly string IgnoredParameterHint = "This parameter will be ignored";
+
+         public static readonly string GroupByDescription = "Group by";
+
+         public static string MetaDataDescription(string metaDataId)
+         {
+            return $"{metaDataId}";
+         }
+
+         public static string MappingDescription(string parameter, string unit)
+         {
+            return $"{parameter}({unit})";
+         }
+
+         public static readonly string UnitInformationCaption = "Unit Information";
+         public static readonly string UnitInformationDescription = "Here you can enter unit information which will be used for all created import data table columns";
+         public static readonly string AddInformationDescription = "Add a new grouping by field";
+         public static readonly string LloqInformationDescription = "Here you can enter lloq information which will be used for all created import data table columns";
+         public static readonly string ErrorTypeInformationDescription = "Here you can enter error type information which will be used for all created import data table columns";
 
          public class ToolTips
          {
@@ -361,15 +516,6 @@ namespace OSPSuite.Assets
          }
 
          public static readonly string ImportFileFilter = "Excel Files (*.xls, *.xlsx)|*.xls;*.xlsx|Comma Separated Value Files (*.csv)|*.csv|NonMem Files (*.NMdat)|*.NMdat|All Files (*.*)|*.*";
-
-         public static string NamingPatternDescription(string token)
-         {
-            const string sampleMetaDataName = "File";
-            var sb = new StringBuilder();
-            sb.AppendFormat("Automatically generates names replacing words surrounded by <b>{0}</b> with like named meta data values. \n", string.Format(token, string.Empty));
-            sb.AppendFormat("The pattern <b>{0}</b> would be replaced with the meta data value for {1}", string.Format(token, sampleMetaDataName), sampleMetaDataName);
-            return sb.ToString();
-         }
       }
 
       public static class Diff
@@ -1119,8 +1265,50 @@ namespace OSPSuite.Assets
       public static readonly string CannotConvertYAxisUnits = "Cannot convert to Y axis unit";
       public static readonly string MolWeightNotAvailable = "Molecular Weight not available.";
       public static readonly string NoResultsAvailableForExportToCSV = "No results available for export to CSV";
+      public static readonly string NamingConventionEmpty = "Column naming conventions cannot be empty.";
+      public static readonly string NamingConventionNull = "Column naming conventions cannot be null.";
+      public static readonly string InvalidMappingColumn = "An invalid mapping column has been used. Check your import configuration and data file";
+      public static readonly string InvalidErrorDimension = "The dimension of the error units must be the same as the dimension of the measurement units.";
+      public static readonly string NaNOnData = "Data contains NaN values at imported columns. Select a different action for NaN values or clean your data.";
+      public static readonly string UnsupportedFileType = "The type of file that you are trying to open is not currently supported";
+      public static readonly string CannotRemoveBaseGridColumnStillInUse = "Cannot remove base grid column still used by other columns";
 
-      public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification paramter '{identificationParameterName}'";
+      public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) => $"Plotting data set number:{sheetName} produced the following error: {exceptionMessage}";
+
+      public static string InvalidObservedDataFile(string exceptionMessage)
+      {
+         var sb = new StringBuilder();
+         sb.AppendLine("An error occurred while reading the file. Please check the content.");
+
+         if (exceptionMessage.IsNullOrEmpty()) return sb.ToString();
+         sb.AppendLine("The exception thrown was:");
+         sb.AppendLine();
+         sb.AppendLine(exceptionMessage);
+
+         return sb.ToString();
+      }
+
+      public static string UnsupportedFileFormat(string fileName)
+      {
+         var sb = new StringBuilder();
+         sb.AppendLine($"The file: \n \n'{fileName}' \n ");
+         sb.AppendLine("that you are trying to load does not comply to one of the supported formats.");
+         sb.AppendLine("You can find a documentation of the supported formats <href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats > here </href>");
+         return sb.ToString();
+      }
+
+      public static readonly string InconsistentMoleculeAndMolWeightException = "Molecule and Molecular Weight do not match. Please either edit your Molecule or your Molecular Weight in your project or remove the Molecular Weight from your mappings";
+      public static readonly string InvalidMixOfSimulationAndSimulationBatch = "You already have Simulation and SimulationBatch objects and should not mix, please invoke Clear to start adding objects from a fresh start";
+      public static readonly string MismatchingArrayLengths = "Arrays should have the same length";
+      public static string ColumnNotFound(string columnName) => $"Column {columnName} unexpectedly not found.";
+      public static string BaseGridColumnNotFoundException(string columnName) => $"BaseGrid Column {columnName} unexpectedly not found.";
+      public static string EmptyDataSet(string dataSetName) => $"Your settings ended up with following empty datasets: '{dataSetName}'. Please remove the data set from your data, filter it out or add at least one observation for it.";
+
+      public static string MissingColumnException(string missingColumn) => $"The mapped column '{missingColumn}' is missing from at least one of the sheets being loaded.";
+
+      public static string InvalidDimensionException(string invalidUnit, string mappingName) => $"The unit '{invalidUnit}' you are trying to assign to the mapping '{mappingName}' does not belong to a supported dimension of this mapping.";
+      public static string InconsistentDimensionBetweenUnitsException(string mappingName) => $"For the mapping '{mappingName}' not all units in the mapped column belong to the same dimension.";
+      public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification parameter '{identificationParameterName}'";
 
       public static string CannotDeleteBuildingBlockUsedBy(string buildingBlockType, string buildingBlockName, IReadOnlyList<string> usersOfBuildingBlock)
       {
@@ -1252,6 +1440,7 @@ namespace OSPSuite.Assets
       public static readonly string TransportMoleculeNamesNotSet = "Transport molecule names object passed is not set";
       public static readonly string TransportMoleculeNamesBothListsNonEmpty = "Molecule names to transport and molecule names not to transport are both nonempty";
       public static readonly string InvalidFile = "Invalid File";
+      public static readonly string InvalidAuxiliaryType = "The error type is invalid. Valid types are 'ArithmeticStdDev' and 'GeometricStdDev'";
 
       public static string UserDefinedPKParameterNotFound(string pkParameterName) => $"PK-Parameter '{pkParameterName}' not found";
 
@@ -1301,14 +1490,16 @@ namespace OSPSuite.Assets
          return $"Alias '{alias}' is already used in formula '{formula}'";
       }
 
-      public static string CouldNotLoadSimulationFromFile(string pkmlFileFullPath)
+      public static string CouldNotLoadSimulationFromFile(string pkmlFileFullPath) => CouldNotLoadObjectFromFile(pkmlFileFullPath, ObjectTypes.Simulation);
+
+      public static string CouldNotLoadObjectFromFile(string pkmlFileFullPath, string objectType)
       {
-         return $"Could not load simulation. Make sure that the file '{pkmlFileFullPath}' is a simulation file.";
+         return $"Could not load {objectType.ToLowerInvariant()}. Make sure that the file '{pkmlFileFullPath}' is a {objectType.ToLowerInvariant()} file.";
       }
 
-      public static string CannotLoadRelatedItemCreatedWithAnotherApplication(string relatedItemType, string relatedItemName, string realtedItemApplication, string currentApplication)
+      public static string CannotLoadRelatedItemCreatedWithAnotherApplication(string relatedItemType, string relatedItemName, string relatedItemApplication, string currentApplication)
       {
-         return $"{relatedItemType} '{relatedItemName}' was created with {realtedItemApplication} and cannot be loaded in {currentApplication}.";
+         return $"{relatedItemType} '{relatedItemName}' was created with {relatedItemApplication} and cannot be loaded in {currentApplication}.";
       }
 
       public static string CouldNotLoadTemplateFromFile(string templateFilePath)
@@ -1477,6 +1668,10 @@ namespace OSPSuite.Assets
       }
 
       public static string IndividualWithIdNotFound(int individualId) => $"Individual with id `{individualId}` not found.";
+
+      public static string TypeNotSupported(string typeName) => $"{typeName} is not currently been handled";
+
+      public static string CannotSetValueByPathUsingWildCard(string path) => $"Setting value by path is not supported for path containing wildcard ({path})";
    }
 
    public static class Validation
@@ -1752,6 +1947,7 @@ namespace OSPSuite.Assets
       public static readonly string FeedbackView = "Show Visual Feedback";
       public static readonly string ReplaceSimulation = "Replace Simulation";
       public static readonly string ExportForR = "Export for R";
+      public static readonly string ExportForMatlab = AsDeveloperOnly("Export for Matlab®");
       public static readonly string ExportForCpp = AsDeveloperOnly("Export to C++ code");
       public static readonly string ExportSimModelXml = AsDeveloperOnly("Export SimModel Xml");
       public static readonly string ExportODEForR = "Export Simulation to R Differential Equations";
@@ -2012,6 +2208,7 @@ namespace OSPSuite.Assets
       public static readonly string InteractionContainer = "Interaction Container";
       public static readonly string BuildingBlock = "Building Block";
       public static readonly string ObservedData = "Observed Data";
+      public static readonly string ImporterConfiguration = "Importer Configuration";
       public static readonly string CurveTemplate = "Curve Template";
       public static readonly string DataTable = "DataTable";
       public static readonly string JournalPage = "Page";
@@ -2139,9 +2336,7 @@ namespace OSPSuite.Assets
       public static readonly string ObservedDataOrganDescription = "Organ where the data was measured";
       public static readonly string ObservedDataCompartmentDescription = "Compartment where the data was measured";
       public static readonly string ObservedDataMoleculeDescription = "Molecule for which the data was measured";
-      public static readonly string ORGAN = "Organ";
-      public static readonly string COMPARTMENT = "Compartment";
-      public static readonly string MOLECULE = "Molecule";
+      public static readonly string MoleculeNameDescription = "Name of the molecule for which the data were measured";
    }
 
    public static class Colors
@@ -2161,14 +2356,14 @@ namespace OSPSuite.Assets
       /// <summary>
       ///    Color used for a plot back color (everything but diagram)
       /// </summary>
-      public static Color ChartBack = Color.Transparent;
+      public static Color ChartBack = Color.White;
 
       /// <summary>
       ///    Color used for a diagram back color
       /// </summary>
       public static Color ChartDiagramBack = Color.White;
 
-      public static readonly Color Disabled = Color.LightGray;
+      public static Color Disabled = Color.FromArgb(255, 247, 247, 249);
 
       public static Color BelowLLOQ => Color.LightSkyBlue;
       public static Color DefaultRowColor => Color.White;

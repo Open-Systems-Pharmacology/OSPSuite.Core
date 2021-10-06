@@ -12,7 +12,7 @@ namespace OSPSuite.Helpers
 {
    public static class DomainHelperForSpecs
    {
-      private static string PATH_TO_DATA = "..\\..\\..\\Data\\";
+      private static readonly string PATH_TO_DATA = "..\\..\\..\\Data\\";
 
       private static Dimension _lengthDimension;
       private static Dimension _concentrationDimension;
@@ -23,9 +23,10 @@ namespace OSPSuite.Helpers
       {
          if (_timeDimension == null)
          {
-            _timeDimension = new Dimension(new BaseDimensionRepresentation { TimeExponent = 1 }, Constants.Dimension.TIME, "min");
+            _timeDimension = new Dimension(new BaseDimensionRepresentation {TimeExponent = 1}, Constants.Dimension.TIME, "min");
             _timeDimension.AddUnit(new Unit("h", 60, 0));
          }
+
          return _timeDimension;
       }
 
@@ -33,9 +34,10 @@ namespace OSPSuite.Helpers
       {
          if (_concentrationDimension == null)
          {
-            _concentrationDimension = new Dimension(new BaseDimensionRepresentation { AmountExponent = 3, LengthExponent = -1 }, Constants.Dimension.MOLAR_CONCENTRATION, "µmol/l");
+            _concentrationDimension = new Dimension(new BaseDimensionRepresentation {AmountExponent = 3, LengthExponent = -1}, Constants.Dimension.MOLAR_CONCENTRATION, "µmol/l");
             _concentrationDimension.AddUnit(new Unit("mol/l", 1E6, 0));
          }
+
          return _concentrationDimension;
       }
 
@@ -43,10 +45,11 @@ namespace OSPSuite.Helpers
       {
          if (_lengthDimension == null)
          {
-            _lengthDimension = new Dimension(new BaseDimensionRepresentation { LengthExponent = 1 }, "Length", "m");
+            _lengthDimension = new Dimension(new BaseDimensionRepresentation {LengthExponent = 1}, "Length", "m");
             _lengthDimension.AddUnit(new Unit("cm", 0.01, 0));
             _lengthDimension.AddUnit(new Unit("mm", 0.001, 0));
          }
+
          return _lengthDimension;
       }
 
@@ -70,13 +73,13 @@ namespace OSPSuite.Helpers
          var parameter = new DistributedParameter().WithId("P1");
          parameter.IsDefault = isDefault;
          var pathFactory = new ObjectPathFactoryForSpecs();
-         var meanParameter = new Parameter { Name = Constants.Distribution.MEAN }.WithFormula(new ConstantFormula(defaultMean).WithId("MeanFormula")).WithId("Mean");
+         var meanParameter = new Parameter {Name = Constants.Distribution.MEAN}.WithFormula(new ConstantFormula(defaultMean).WithId("MeanFormula")).WithId("Mean");
          meanParameter.IsDefault = distributionParameterIsDefault;
          addDimensionTo(meanParameter);
-         var stdParameter = new Parameter { Name = Constants.Distribution.DEVIATION }.WithFormula(new ConstantFormula(defaultDeviation).WithId("DeviationFormula")).WithId("Deviation");
+         var stdParameter = new Parameter {Name = Constants.Distribution.DEVIATION}.WithFormula(new ConstantFormula(defaultDeviation).WithId("DeviationFormula")).WithId("Deviation");
          stdParameter.IsDefault = distributionParameterIsDefault;
          addDimensionTo(stdParameter);
-         var percentileParameter = new Parameter { Name = Constants.Distribution.PERCENTILE }.WithFormula(new ConstantFormula(defaultPercentile).WithId("PercentileFormula")).WithId("Percentile");
+         var percentileParameter = new Parameter {Name = Constants.Distribution.PERCENTILE}.WithFormula(new ConstantFormula(defaultPercentile).WithId("PercentileFormula")).WithId("Percentile");
          percentileParameter.IsDefault = distributionParameterIsDefault;
          addDimensionTo(percentileParameter);
          parameter.Add(meanParameter);
@@ -89,10 +92,9 @@ namespace OSPSuite.Helpers
          return parameter;
       }
 
-
       public static IdentificationParameter IdentificationParameter(string name = "IdentificationParameter", double min = 0, double max = 10, double startValue = 5, bool isFixed = false)
       {
-         var identificationParameter=  new IdentificationParameter
+         var identificationParameter = new IdentificationParameter
          {
             ConstantParameterWithValue(min).WithName(Constants.Parameters.MIN_VALUE),
             ConstantParameterWithValue(startValue).WithName(Constants.Parameters.START_VALUE),
@@ -103,24 +105,24 @@ namespace OSPSuite.Helpers
          return identificationParameter;
       }
 
-      public static DataRepository ObservedData(string id = "TestData")
+      public static DataRepository ObservedData(string id = "TestData", IDimension timeDimension = null, IDimension concentrationDimension = null)
       {
          var observedData = new DataRepository(id).WithName(id);
-         var baseGrid = new BaseGrid("Time", TimeDimensionForSpecs())
+         var baseGrid = new BaseGrid("Time", timeDimension ?? TimeDimensionForSpecs())
          {
-            Values = new[] { 1.0f, 2.0f, 3.0f }
+            Values = new[] {1.0f, 2.0f, 3.0f}
          };
          observedData.Add(baseGrid);
 
-         var data = ConcentrationColumnForObservedData(baseGrid);
+         var data = ConcentrationColumnForObservedData(baseGrid, concentrationDimension);
          observedData.Add(data);
 
          return observedData;
       }
 
-      public static DataColumn ConcentrationColumnForObservedData(BaseGrid baseGrid)
+      public static DataColumn ConcentrationColumnForObservedData(BaseGrid baseGrid, IDimension concentrationDimension = null)
       {
-         var data = new DataColumn("Col", ConcentrationDimensionForSpecs(), baseGrid)
+         var data = new DataColumn("Col", concentrationDimension ?? ConcentrationDimensionForSpecs(), baseGrid)
          {
             Values = new[] {10f, 20f, 30f},
             DataInfo = {Origin = ColumnOrigins.Observation}
@@ -131,9 +133,9 @@ namespace OSPSuite.Helpers
       public static DataRepository ObservedDataWithLLOQ(string id = "TestDataWithLLOQ")
       {
          var observedData = ObservedData(id);
-         observedData.BaseGrid.Values = new[] { 0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f, 10f };
+         observedData.BaseGrid.Values = new[] {0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f, 10f};
          var data = observedData.ObservationColumns().First();
-         data.Values = new[] { 0.05f, 0.05f, 5f, 10f, 4f, 1f, 0.05f, 0.2f, 0.1f, 0.05f, 0.05f };
+         data.Values = new[] {0.05f, 0.05f, 5f, 10f, 4f, 1f, 0.05f, 0.2f, 0.1f, 0.05f, 0.05f};
          data.DataInfo.LLOQ = 0.1F;
          return observedData;
       }
@@ -141,9 +143,9 @@ namespace OSPSuite.Helpers
       public static DataRepository ObservedDataRepository2WithLLOQ(string id = "TestData2WithLLOQ")
       {
          var observedData = ObservedData(id);
-         observedData.BaseGrid.Values = new[] { 1f, 2f, 3f };
+         observedData.BaseGrid.Values = new[] {1f, 2f, 3f};
          var data = observedData.ObservationColumns().First();
-         data.Values = new[] { 2f, 1.1f, 0.5f };
+         data.Values = new[] {2f, 1.1f, 0.5f};
          data.DataInfo.LLOQ = 1F;
          return observedData;
       }
@@ -153,15 +155,15 @@ namespace OSPSuite.Helpers
          var simulationResults = new DataRepository("Results");
          var baseGrid = new BaseGrid("Time", TimeDimensionForSpecs())
          {
-            Values = new[] { 0f, 1f, 2f, 3f, 4f }
+            Values = new[] {0f, 1f, 2f, 3f, 4f}
          };
          simulationResults.Add(baseGrid);
 
          var data = new DataColumn("Col", ConcentrationDimensionForSpecs(), baseGrid)
          {
-            Values = new[] { 0f, 2.5f, 0.9f, 0.9f, 0.5f },
-            DataInfo = { Origin = ColumnOrigins.Calculation },
-            QuantityInfo = new QuantityInfo("Concentration", new[] { simulationName, "Organism", "Blood", "Plasma", "Concentration" }, QuantityType.Drug)
+            Values = new[] {0f, 2.5f, 0.9f, 0.9f, 0.5f},
+            DataInfo = {Origin = ColumnOrigins.Calculation},
+            QuantityInfo = new QuantityInfo("Concentration", new[] {simulationName, "Organism", "Blood", "Plasma", "Concentration"}, QuantityType.Drug)
          };
 
          simulationResults.Add(data);
@@ -176,6 +178,7 @@ namespace OSPSuite.Helpers
             _fractionDimension = new Dimension(new BaseDimensionRepresentation(), Constants.Dimension.FRACTION, "");
             _fractionDimension.AddUnit(new Unit("%", 1e-2, 0));
          }
+
          return _fractionDimension;
       }
 
@@ -184,7 +187,7 @@ namespace OSPSuite.Helpers
          var simulationResults = new DataRepository("Results");
          var baseGrid = new BaseGrid("Time", TimeDimensionForSpecs())
          {
-            Values = new[] { 1.0f, 2.0f, 3.0f }
+            Values = new[] {1.0f, 2.0f, 3.0f}
          };
          simulationResults.Add(baseGrid);
 
@@ -218,7 +221,6 @@ namespace OSPSuite.Helpers
             ConstantParameterWithValue(range).WithName(Constants.Parameters.VARIATION_RANGE),
             ConstantParameterWithValue(steps).WithName(Constants.Parameters.NUMBER_OF_STEPS),
          }.WithName(name);
-
       }
 
       public static string SimulationResultsFilePathFor(string fileNameWithoutExtension)
@@ -235,6 +237,11 @@ namespace OSPSuite.Helpers
       {
          return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PATH_TO_DATA, "PKAnalysesFiles", fileNameWithoutExtension + ".csv");
       }
+
+      public static string ExcelImportFilePathFor(string fileNameWithoutExtension)
+      {
+         return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, PATH_TO_DATA, "ExcelImport", fileNameWithoutExtension + ".xlsx");
+      }
    }
 
    public class PathCacheForSpecs<T> : PathCache<T> where T : class, IEntity
@@ -243,6 +250,4 @@ namespace OSPSuite.Helpers
       {
       }
    }
-
-
 }

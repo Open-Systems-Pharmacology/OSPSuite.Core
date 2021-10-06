@@ -23,7 +23,9 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_swapping_a_simulation_reference_in_an_identification_parameter_and_the_old_simulation_is_not_being_replaced : concern_for_IdentificationParameter
+   public class
+      When_swapping_a_simulation_reference_in_an_identification_parameter_and_the_old_simulation_is_not_being_replaced :
+         concern_for_IdentificationParameter
    {
       private ISimulation _oldSimulation;
       private ISimulation _newSimulation;
@@ -75,7 +77,8 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_adding_a_linked_parameter_to_an_identification_parameter_that_does_not_have_a_dimension_defined : concern_for_IdentificationParameter
+   public class
+      When_adding_a_linked_parameter_to_an_identification_parameter_that_does_not_have_a_dimension_defined : concern_for_IdentificationParameter
    {
       protected override void Because()
       {
@@ -110,7 +113,8 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_retrieving_the_linked_path_for_an_identification_parameter_linking_two_parameters_with_the_same_path : concern_for_IdentificationParameter
+   public class
+      When_retrieving_the_linked_path_for_an_identification_parameter_linking_two_parameters_with_the_same_path : concern_for_IdentificationParameter
    {
       private ParameterSelection _anotherLinkedParameter;
 
@@ -132,7 +136,8 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_retrieving_the_linked_path_for_an_identification_parameter_linking_two_parameters_with_different_path : concern_for_IdentificationParameter
+   public class
+      When_retrieving_the_linked_path_for_an_identification_parameter_linking_two_parameters_with_different_path : concern_for_IdentificationParameter
    {
       private ParameterSelection _anotherLinkedParameter;
 
@@ -188,7 +193,8 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_checking_if_an_identification_parameter_is_linking_a_parameter_selection_with_an_undefined_simulation : concern_for_IdentificationParameter
+   public class
+      When_checking_if_an_identification_parameter_is_linking_a_parameter_selection_with_an_undefined_simulation : concern_for_IdentificationParameter
    {
       protected override void Context()
       {
@@ -220,7 +226,9 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_validating_an_identification_parameter_where_the_linked_parameters_have_inconsistent_maximum_and_are_used_as_factor : concern_for_IdentificationParameter
+   public class
+      When_validating_an_identification_parameter_where_the_linked_parameters_have_inconsistent_maximum_and_are_used_as_factor :
+         concern_for_IdentificationParameter
    {
       private Parameter _parameter;
 
@@ -247,7 +255,8 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_validating_an_identification_parameter_where_the_linked_parameters_have_inconsistent_maximum : When_validating_identification_parameters_for_consistency_with_linked_parameters
+   public class When_validating_an_identification_parameter_where_the_linked_parameters_have_inconsistent_maximum :
+      When_validating_identification_parameters_for_consistency_with_linked_parameters
    {
       protected override void Context()
       {
@@ -270,7 +279,8 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_validating_an_identification_parameter_where_the_linked_parameters_have_inconsistent_minimum : When_validating_identification_parameters_for_consistency_with_linked_parameters
+   public class When_validating_an_identification_parameter_where_the_linked_parameters_have_inconsistent_minimum :
+      When_validating_identification_parameters_for_consistency_with_linked_parameters
    {
       protected override void Context()
       {
@@ -348,7 +358,9 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_validating_an_identification_parameter_with_a_parameter_selection_max_set_to_a_value_higher_than_the_underlying_parameter_max : concern_for_IdentificationParameter
+   public class
+      When_validating_an_identification_parameter_with_a_parameter_selection_max_set_to_a_value_higher_than_the_underlying_parameter_max :
+         concern_for_IdentificationParameter
    {
       public NumericFormatter<double> _numericFormatter = new NumericFormatter<double>(NumericFormatterOptions.Instance);
 
@@ -390,7 +402,8 @@ namespace OSPSuite.Core.Domain
       public void should_return_the_optimized_parameter_value_itself_if_the_flag_use_as_factor_is_disabled()
       {
          sut.UseAsFactor = false;
-         sut.OptimizedParameterValueFor(new OptimizedParameterValue("P", 10, 20), _parameterSelection).ShouldBeEqualTo(10);
+         sut.OptimizedParameterValueFor(new OptimizedParameterValue("P", 10, 20.0, 10, 200, Scalings.Linear), _parameterSelection)
+            .ShouldBeEqualTo(10);
       }
 
       [Observation]
@@ -398,7 +411,8 @@ namespace OSPSuite.Core.Domain
       {
          sut.UseAsFactor = true;
          _parameterSelection.Parameter.Value = 50;
-         sut.OptimizedParameterValueFor(new OptimizedParameterValue("P", 10, 20), _parameterSelection).ShouldBeEqualTo(500);
+         sut.OptimizedParameterValueFor(new OptimizedParameterValue("P" ,10, 120, 10, 200, Scalings.Linear), _parameterSelection)
+            .ShouldBeEqualTo(500);
       }
    }
 }

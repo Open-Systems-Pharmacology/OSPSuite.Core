@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Commands.Core
         {
             _reversibleCommands = reversibleCommands;
             CommandType = "Rollback";
-            Description = string.Format("Rollback to state {0}", state);
+            Description = $"Rollback to state {state}";
         }
 
         public override void Execute(TExecutionContext context)

@@ -1,19 +1,18 @@
 configuration: Debug
 image: Visual Studio 2019
 
-environment:
-  app_version: '9.0'
+version: '{build}'
 
-version: '$(app_version).{build}'
+init:
+- ps: Update-AppveyorBuild -Version "$($env:ospsuite_version).$($env:appveyor_build_version)"
 
-assembly_info:
+dotnet_csproj:
   patch: true
-  file: SolutionInfo.*
-  assembly_version: "{version}"
-  assembly_file_version: "{version}"	
-
-cache:
-  packages -> **\packages.config  
+  file: '**\*.csproj'
+  version: '$(ospsuite_version).$(build_number)'
+  assembly_version: '$(ospsuite_version).$(build_number)'
+  file_version: '$(ospsuite_version).$(build_number)'
+  informational_version: '$(ospsuite_version).$(build_number)'
 
 before_build:
   - nuget sources add -name bddhelper -source https://ci.appveyor.com/nuget/ospsuite-bddhelper 
@@ -25,7 +24,6 @@ before_build:
   - nuget sources add -name funcparser -source https://ci.appveyor.com/nuget/ospsuite-funcparser 
   - nuget sources add -name simmodel -source https://ci.appveyor.com/nuget/ospsuite-simmodel
   - nuget sources add -name cvodes -source https://ci.appveyor.com/nuget/ospsuite-simmodel-solver-cvodes
-  - nuget sources add -name smartxls -source https://ci.appveyor.com/nuget/ospsuite-smartxls
   - nuget install opencover -OutputDirectory packages
   - nuget restore
 
@@ -39,4 +37,3 @@ test_script:
 install:  
  - set PATH=C:\Ruby22\bin;C:\\Python34;C:\\Python34\\Scripts;%PATH%"
  - pip install codecov
- - git submodule update --init --recursive

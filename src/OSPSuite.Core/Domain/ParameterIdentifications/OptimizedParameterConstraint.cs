@@ -7,18 +7,26 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
       public string Name { get; }
       public double Value { get; set; }
       public double StartValue { get; }
+      public double Min { get; internal set; }
+      public double Max { get; internal set; }
+      public Scalings Scaling { get; internal set; }
 
       [Obsolete("For serialization")]
       public OptimizedParameterValue()
       {
       }
 
-      public OptimizedParameterValue(string name, double value, double startValue)
+      public OptimizedParameterValue(string name, double value, double startValue, double min, double max, Scalings scaling)
       {
          Name = name;
          Value = value;
          StartValue = startValue;
+         Min = min;
+         Max = max;
+         Scaling = scaling;
       }
+
+      public OptimizedParameterValue Clone() => new OptimizedParameterValue(Name, Value, StartValue, Min, Max, Scaling);
 
       public override string ToString()
       {
@@ -28,16 +36,9 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
    public class OptimizedParameterConstraint : OptimizedParameterValue
    {
-      public Scalings Scaling { get; }
-      public double Min { get; }
-      public double Max { get; }
-
-      public OptimizedParameterConstraint(string name, double min, double max, double startValue, Scalings scaling) : base(name, startValue, startValue)
+      public OptimizedParameterConstraint(string name, double min, double max, double startValue, Scalings scaling) : base(name, startValue,
+         startValue, min, max, scaling)
       {
-         Scaling = scaling;
-         Min = min;
-         Max = max;
-         Value = startValue;
       }
    }
 
@@ -52,7 +53,8 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
       }
 
       public MonteCarloOptimizedParameterConstraint(OptimizedParameterConstraint baseOptimizedParameterConstraint, double alpha)
-         : this(baseOptimizedParameterConstraint.Name, baseOptimizedParameterConstraint.Min, baseOptimizedParameterConstraint.Max, baseOptimizedParameterConstraint.StartValue, baseOptimizedParameterConstraint.Scaling, alpha)
+         : this(baseOptimizedParameterConstraint.Name, baseOptimizedParameterConstraint.Min, baseOptimizedParameterConstraint.Max,
+            baseOptimizedParameterConstraint.StartValue, baseOptimizedParameterConstraint.Scaling, alpha)
       {
       }
    }

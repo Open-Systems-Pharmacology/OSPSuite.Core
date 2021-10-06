@@ -19,7 +19,6 @@ namespace OSPSuite.R.MinimalImplementations
 
          yield return PathElementId.Molecule;
 
-         //Container is defined? no need to use TopContainer
          if (shouldDisplayTopContainer(pathElements))
             yield return PathElementId.TopContainer;
 

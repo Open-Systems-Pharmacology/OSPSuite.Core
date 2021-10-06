@@ -2,13 +2,8 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using Autofac;
 using Castle.Facilities.TypedFactory;
-using DevExpress.LookAndFeel;
-using DevExpress.XtraBars;
-using DevExpress.XtraBars.Ribbon;
-using DevExpress.XtraEditors;
-using DevExpress.XtraTabbedMdi;
+using Microsoft.Extensions.Logging;
 using OSPSuite.Core;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
@@ -17,21 +12,17 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
-using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Infrastructure;
-using OSPSuite.Infrastructure.Container.Autofac;
 using OSPSuite.Infrastructure.Container.Castle;
 using OSPSuite.Infrastructure.Export;
+using OSPSuite.Infrastructure.Import;
 using OSPSuite.Infrastructure.Serialization;
+using OSPSuite.Infrastructure.Services;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.Core;
-using OSPSuite.Presentation.Importer;
-using OSPSuite.Presentation.Regions;
 using OSPSuite.Starter.Presenters;
-using OSPSuite.Starter.Services;
 using OSPSuite.UI;
-using OSPSuite.UI.Controls;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Events;
 using IContainer = OSPSuite.Utility.Container.IContainer;
@@ -45,6 +36,19 @@ namespace OSPSuite.Starter.Bootstrapping
          initializeDependency();
          fillDimensions(IoC.Resolve<IDimensionFactory>());
          loadPKParameterRepository(IoC.Container);
+         configureLogger(IoC.Container, LogLevel.Critical);
+      }
+
+      private static void configureLogger(IContainer container, LogLevel logLevel)
+      {
+         var loggerCreator = container.Resolve<ILoggerCreator>();
+
+         loggerCreator
+            .AddLoggingBuilderConfiguration(builder =>
+               builder
+                  .SetMinimumLevel(logLevel)
+                  .AddFile("log.txt", logLevel, false)
+            );
       }
 
       private static void loadPKParameterRepository(IContainer container)
@@ -95,15 +99,13 @@ namespace OSPSuite.Starter.Bootstrapping
             container.AddRegister(x => x.FromType<TestRegister>());
             container.AddRegister(x => x.FromType<InfrastructureRegister>());
             container.AddRegister(x => x.FromType<InfrastructureExportRegister>());
-            container.AddRegister(x => x.FromType<UIImporterRegister>());
-            container.AddRegister(x => x.FromType<PresentationImporterRegister>());
             container.AddRegister(x => x.FromType<InfrastructureSerializationRegister>());
+            container.AddRegister(x => x.FromType<InfrastructureImportRegister>());
             container.AddRegister(x => x.FromInstance(serializerRegister));
 
             container.Register<IDimensionFactory, DimensionFactory>(LifeStyle.Singleton);
             container.Register<IApplicationController, ApplicationController>(LifeStyle.Singleton);
             container.Register<IEventPublisher, EventPublisher>(LifeStyle.Singleton);
-            container.Register<ILogger, OSPLogger>(LifeStyle.Singleton);
             container.RegisterImplementationOf(getCurrentContext());
             container.Register<IHistoryManager, HistoryManager<MyContext>>();
             container.Register<IFullPathDisplayResolver, FullPathDisplayResolver>();

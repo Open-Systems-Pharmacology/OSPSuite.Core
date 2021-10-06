@@ -6,12 +6,12 @@ namespace OSPSuite.Core.Commands.Core
    public interface ICommand
    {
       /// <summary>
-      ///   Internal id used to idenfity a command uniquely. This is not the id of the command, since two commands could have the same Id (inverse of inverse)
+      ///   Internal id used to identify a command uniquely. This is not the id of the command, since two commands could have the same Id (inverse of inverse)
       /// </summary>
       string InternalId { get; set; }
 
       /// <summary>
-      ///   Id of the command identifing the action being performed
+      ///   Id of the command identifying the action being performed
       /// </summary>
       CommandId Id { get; set; }
 
@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Commands.Core
       bool IsInverseFor(ICommand command);
 
       /// <summary>
-      ///   Return true if the command should be diplayed in the browser, otherwise false
+      ///   Return true if the command should be displayed in the browser, otherwise false
       /// </summary>
       bool Visible { get; set; }
 
@@ -93,7 +93,7 @@ namespace OSPSuite.Core.Commands.Core
       /// <summary>
       ///   Create an inverse for the current command
       /// </summary>
-      IReversibleCommand<TExecutionContext> InverseCommand(TExecutionContext context);
+      ICommand<TExecutionContext> InverseCommand(TExecutionContext context);
    }
 
    public abstract class Command : ICommand
@@ -136,10 +136,7 @@ namespace OSPSuite.Core.Commands.Core
          _extendedProperties[propertyName] = propertyValue;
       }
 
-      public IEnumerable<string> AllExtendedProperties
-      {
-         get { return _extendedProperties.Keys; }
-      }
+      public IEnumerable<string> AllExtendedProperties => _extendedProperties.Keys;
 
       public bool IsInverseFor(ICommand command)
       {

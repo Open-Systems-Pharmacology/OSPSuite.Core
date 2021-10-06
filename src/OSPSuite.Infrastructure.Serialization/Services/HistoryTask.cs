@@ -71,6 +71,7 @@ namespace OSPSuite.Infrastructure.Serialization.Services
          connection.ExecuteNonQuery("DELETE FROM HISTORY_ITEMS;");
          connection.ExecuteNonQuery("DELETE FROM COMMAND_PROPERTIES;");
          connection.ExecuteNonQuery("DELETE FROM COMMANDS;");
+         connection.ExecuteNonQuery("VACUUM;");
       }
    }
 }

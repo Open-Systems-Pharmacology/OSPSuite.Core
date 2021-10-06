@@ -25,8 +25,10 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
       public virtual void AddSimulation(ISimulation simulation)
       {
-         if (simulation == null) return;
-         if (UsesSimulation(simulation))
+         if (simulation == null) 
+            return;
+
+         if (_allSimulations.Contains(simulation))
             return;
 
          _allSimulations.Add(simulation);
@@ -53,7 +55,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
       public virtual bool UsesSimulation(ISimulation simulation)
       {
-         return (simulation != null && _allSimulations.Contains(simulation)) || AnyOutputOfSimulationMapped(simulation);
+         return (simulation != null && _allSimulations.Contains(simulation)) || AnyOutputOfSimulationMapped(simulation) || AnyIdentificationParametersUsing(simulation);
       }
 
       public virtual void RemoveSimulation(ISimulation simulation)
@@ -118,6 +120,8 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
       {
          return OutputMappings.UsesSimulation(simulation);
       }
+
+      public virtual bool AnyIdentificationParametersUsing(ISimulation simulation) => AllIdentificationParameters.Any(x => x.UsesSimulation(simulation));
 
       public virtual IdentificationParameter IdentificationParameterByName(string name)
       {
@@ -231,7 +235,8 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
       public virtual void SwapSimulations(ISimulation oldSimulation, ISimulation newSimulation)
       {
-         AllOutputMappings.Where(x => x.UsesSimulation(oldSimulation)).Each(outputMapping => outputMapping.UpdateSimulation(newSimulation));
+         //Use ToList() here as the collection might be modified as we iterate
+         AllOutputMappings.Where(x => x.UsesSimulation(oldSimulation)).ToList().Each(x => x.UpdateSimulation(newSimulation));
          AllIdentificationParameters.Each(identificationParameter => identificationParameter.SwapSimulation(oldSimulation, newSimulation));
          _allSimulations.Remove(oldSimulation);
          _allSimulations.Add(newSimulation);

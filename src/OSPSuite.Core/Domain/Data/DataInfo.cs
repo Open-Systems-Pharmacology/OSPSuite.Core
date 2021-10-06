@@ -57,7 +57,7 @@ namespace OSPSuite.Core.Domain.Data
       public string DisplayUnitName { get; set; }
 
       /// <summary>
-      ///    Full Date corrsponding to the time when the column was created. Only useful for simulated data
+      ///    Full Date corresponding to the time when the column was created. Only useful for simulated data
       /// </summary>
       public DateTime Date { get; set; }
 
@@ -68,7 +68,7 @@ namespace OSPSuite.Core.Domain.Data
       public string Source { get; set; }
 
       /// <summary>
-      ///    Extra infotmation that can be used to group the data in a project specific fashion. (only displayed in
+      ///    Extra information that can be used to group the data in a project specific fashion. (only displayed in
       ///    DataColumn.Category)
       /// </summary>
       public string Category { get; set; }
@@ -86,6 +86,15 @@ namespace OSPSuite.Core.Domain.Data
       public ExtendedProperties ExtendedProperties { get; }
 
       public float? LLOQ { get; set; }
+
+      /// <summary>
+      /// Wrapper around the LLOQ Value defined as float so that it can be set via R (float not available in rClr)
+      /// </summary>
+      public double? LLOQAsDouble
+      {
+         get => LLOQ;
+         set => LLOQ = (float)value;
+      }
 
       /// <summary>
       ///    Indicates the threshold that should be used to compare two output columns. This will only be set for calculate

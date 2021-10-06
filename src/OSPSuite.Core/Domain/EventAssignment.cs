@@ -36,14 +36,12 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Defines whether the formula itself or the VALUE of the formula
       ///    <para></para>
-      ///    at the timepoint when event fires
+      ///    at the time point when event fires
       /// </summary>
       public bool UseAsValue { get; set; }
 
       public void ResolveChangedEntity()
       {
-         if (ChangedEntity != null) return;
-
          if (ObjectPath == null)
             throw new InvalidOperationException("Cannot resolve changed entity. Object path is null");
 

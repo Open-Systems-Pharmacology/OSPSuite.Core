@@ -121,7 +121,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private static bool isCalculationOrCalculationAuxiliaryColumn(DataColumn column)
       {
-         return column.IsCalculationColumn() || column.IsCalculationAuxiliaryColumn();
+         return column.IsCalculation() || column.IsCalculationAuxiliary();
       }
    }
 }

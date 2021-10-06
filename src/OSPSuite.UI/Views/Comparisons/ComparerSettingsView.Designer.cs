@@ -33,7 +33,7 @@
          this.chkCompareHiddenEntities = new OSPSuite.UI.Controls.UxCheckEdit();
          this.lblFormulaComparisonModeDescription = new DevExpress.XtraEditors.LabelControl();
          this.lblRelativeToleranceDescription = new DevExpress.XtraEditors.LabelControl();
-         this.cbFormulaComparisonMode = new DevExpress.XtraEditors.ComboBoxEdit();
+         this.cbFormulaComparisonMode = new OSPSuite.UI.Controls.UxComboBoxEdit();
          this.chkOnlyComputeModelRelevantProperties = new OSPSuite.UI.Controls.UxCheckEdit();
          this.tbRelativeTolerance = new DevExpress.XtraEditors.TextEdit();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
@@ -295,7 +295,7 @@
 
       #endregion
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
-      private DevExpress.XtraEditors.ComboBoxEdit cbFormulaComparisonMode;
+      private OSPSuite.UI.Controls.UxComboBoxEdit cbFormulaComparisonMode;
       private DevExpress.XtraEditors.TextEdit tbRelativeTolerance;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemRelativeTolerance;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemOnlyComputeModelRelevantProperties;

@@ -40,7 +40,7 @@ namespace OSPSuite.Core.Commands
          return unitFormatter.Format(_molWeightDimension.BaseUnitValueToUnitValue(displayUnit, value));
       }
 
-      protected override IReversibleCommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
+      protected override ICommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
       {
          return new UpdateObservedDataMolWeightCommand(_observedData, _molWeightDimension, _newValue, _oldValue).AsInverseFor(this);
       }

@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    Creates and returns a new parameter start value based on <paramref name="parameter">parameter</paramref>
       /// </summary>
       /// <param name="parameterPath">The path of the parameter</param>
-      /// <param name="parameter">The IParameter object that has the start value and dimension to use</param>
+      /// <param name="parameter">The Parameter object that has the start value and dimension to use</param>
       /// <returns>A new IParameterStartValue</returns>
       IParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, IParameter parameter);
 
@@ -35,9 +35,9 @@ namespace OSPSuite.Core.Domain.Services
       ///    Creates and returns a new parameter start value with <paramref name="startValue">startValue</paramref> as StartValue
       ///    and <paramref name="dimension">dimension</paramref> as dimension
       /// </summary>
-      /// <param name="parameterPath">the path of the startvalue</param>
+      /// <param name="parameterPath">the path of the parameter</param>
       /// <param name="startValue">the value to be used as StartValue</param>
-      /// <param name="dimension">the dimension of the startvalue</param>
+      /// <param name="dimension">the dimension of the parameter</param>
       /// <param name="displayUnit">
       ///    The display unit of the start value. If not set, the default unit of the
       ///    <paramref name="dimension" />will be used
@@ -45,7 +45,8 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="valueOrigin">Value origin for this parameter start value</param>
       /// <param name="isDefault">Value indicating if the value stored is the default value from the parameter.</param>
       /// <returns>A new IParameterStartValue</returns>
-      IParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, double startValue, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null, bool isDefault = false);
+      IParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, double startValue, IDimension dimension, Unit displayUnit = null,
+         ValueOrigin valueOrigin = null, bool isDefault = false);
    }
 
    internal class ParameterStartValuesCreator : IParameterStartValuesCreator
@@ -78,7 +79,8 @@ namespace OSPSuite.Core.Domain.Services
          return paramsStartValues;
       }
 
-      private void addGlobalMoleculeParameterValues(IParameterStartValuesBuildingBlock parameterStartValuesBuildingBlock, IContainer globalMoleculeDependentProperties, IMoleculeBuildingBlock moleculeBuildingBlock)
+      private void addGlobalMoleculeParameterValues(IParameterStartValuesBuildingBlock parameterStartValuesBuildingBlock,
+         IContainer globalMoleculeDependentProperties, IMoleculeBuildingBlock moleculeBuildingBlock)
       {
          var globalParameter = globalMoleculeDependentProperties.GetChildren<IParameter>(parameterValueShouldBeSet);
          foreach (var parameter in globalParameter)
@@ -114,15 +116,18 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private void addTopContainersParameterValues(IParameterStartValuesBuildingBlock parameterStartValuesBuildingBlock, IEnumerable<IContainer> topContainers, IMoleculeBuildingBlock moleculeBuildingBlock)
+      private void addTopContainersParameterValues(IParameterStartValuesBuildingBlock parameterStartValuesBuildingBlock,
+         IEnumerable<IContainer> topContainers, IMoleculeBuildingBlock moleculeBuildingBlock)
       {
-         topContainers.Each(c => addContainerListParameterValue(parameterStartValuesBuildingBlock, c.GetAllContainersAndSelf<IContainer>(child => !child.IsNamed(Constants.MOLECULE_PROPERTIES)), moleculeBuildingBlock));
+         topContainers.Each(c => addContainerListParameterValue(parameterStartValuesBuildingBlock,
+            c.GetAllContainersAndSelf<IContainer>(child => !child.IsNamed(Constants.MOLECULE_PROPERTIES)), moleculeBuildingBlock));
       }
 
       private void addMoleculeParameterValues(IParameterStartValuesBuildingBlock parameterStartValuesBuildingBlock,
          ISpatialStructure spatialStructure, IEnumerable<IMoleculeBuilder> moleculeBuilderCollection)
       {
-         foreach (var paramValue in moleculeBuilderCollection.SelectMany(moleculeBuilder => getMoleculeParameterValues(spatialStructure, moleculeBuilder)))
+         foreach (var paramValue in moleculeBuilderCollection.SelectMany(moleculeBuilder =>
+            getMoleculeParameterValues(spatialStructure, moleculeBuilder)))
          {
             parameterStartValuesBuildingBlock.Add(paramValue);
          }
@@ -178,7 +183,8 @@ namespace OSPSuite.Core.Domain.Services
          return CreateParameterStartValue(parameterPath, parameter);
       }
 
-      public IParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, double startValue, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null, bool isDefault = false)
+      public IParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, double startValue, IDimension dimension,
+         Unit displayUnit = null, ValueOrigin valueOrigin = null, bool isDefault = false)
       {
          var psv = new ParameterStartValue
          {
@@ -196,7 +202,8 @@ namespace OSPSuite.Core.Domain.Services
 
       public IParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, IParameter parameter)
       {
-         return CreateParameterStartValue(parameterPath, parameter.Value, parameter.Dimension, parameter.DisplayUnit, parameter.ValueOrigin, parameter.IsDefault);
+         return CreateParameterStartValue(parameterPath, parameter.Value, parameter.Dimension, parameter.DisplayUnit, parameter.ValueOrigin,
+            parameter.IsDefault);
       }
 
       private IParameterStartValue localMoleculeParameterValueFor(IMoleculeBuilder moleculeBuilder, IParameter parameter, IContainer container)
@@ -216,15 +223,10 @@ namespace OSPSuite.Core.Domain.Services
 
       /// <summary>
       ///    Check if parameter value should be set in the parameter start values.
+      ///    A parameter is created in the PSV if the formula is constant and the default value is not NaN
       /// </summary>
-      private bool parameterValueShouldBeSet(IParameter parameter)
-      {
-         return parameter.Formula.IsConstant();
-      }
+      private bool parameterValueShouldBeSet(IParameter parameter) => parameter.Formula.IsConstant() && !double.IsNaN(parameter.Value);
 
-      public IParameterStartValue CreateEmptyStartValue(IDimension dimension)
-      {
-         return CreateParameterStartValue(ObjectPath.Empty, 0.0, dimension);
-      }
+      public IParameterStartValue CreateEmptyStartValue(IDimension dimension) => CreateParameterStartValue(ObjectPath.Empty, 0.0, dimension);
    }
 }

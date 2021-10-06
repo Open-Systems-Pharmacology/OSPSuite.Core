@@ -89,4 +89,13 @@ namespace OSPSuite.Core.Domain
          input.StripUnit().ShouldBeEqualTo(result);
       }
    }
+
+   public class When_returning_a_string_in_quotes : StaticContextSpecification
+   {
+      [Observation]
+      public void should_return_the_expected_string()
+      {
+         "text".InQuotes().ShouldBeEqualTo("\"text\"");
+      }
+   }
 }	

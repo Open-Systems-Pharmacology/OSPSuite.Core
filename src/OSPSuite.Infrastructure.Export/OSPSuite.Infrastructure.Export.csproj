@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Version>1.0.0</Version>
     <PackageVersion>1.0.0</PackageVersion>
     <AssemblyVersion>1.0.0</AssemblyVersion>
@@ -13,7 +13,7 @@
     <PackageIconUrl>https://raw.githubusercontent.com/Open-Systems-Pharmacology/Suite/master/logo.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</RepositoryUrl>
     <PackageTags>open-systems-pharmacology, ospsuite-components</PackageTags>
-    <Description>Export functionalities (e.g. to Excel) for the Open Systems Pharmacology Suite</Description>
+    <Description>OSPSuite Core Import Components</Description>
     <Authors>Open-Systems-Pharmacology</Authors>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSPSuite.SmartXLS" Version="2.7.4.7" />
+     <PackageReference Include="NPOI" Version="2.5.4" />
     <PackageReference Include="OSPSuite.Utility" Version="4.0.0.4" />
   </ItemGroup>
 

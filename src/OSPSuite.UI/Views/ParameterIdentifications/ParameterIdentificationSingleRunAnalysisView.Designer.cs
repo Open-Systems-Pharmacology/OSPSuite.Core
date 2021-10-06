@@ -30,7 +30,7 @@
       private void InitializeComponent()
       {
          this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
-         this.cbRunSelection = new DevExpress.XtraEditors.ComboBoxEdit();
+         this.cbRunSelection = new OSPSuite.UI.Controls.UxComboBoxEdit();
          this.panelAnalysis = new DevExpress.XtraEditors.PanelControl();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemChartControl = new DevExpress.XtraLayout.LayoutControlItem();
@@ -125,7 +125,7 @@
       #endregion
 
       private DevExpress.XtraLayout.LayoutControl layoutControl;
-      private DevExpress.XtraEditors.ComboBoxEdit cbRunSelection;
+      private OSPSuite.UI.Controls.UxComboBoxEdit cbRunSelection;
       private DevExpress.XtraEditors.PanelControl panelAnalysis;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemChartControl;

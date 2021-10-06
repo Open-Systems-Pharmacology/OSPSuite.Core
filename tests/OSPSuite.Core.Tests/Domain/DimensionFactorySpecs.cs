@@ -19,11 +19,11 @@ namespace OSPSuite.Core.Domain
          sut = new DimensionFactory();
 
          _drugMassDimension = new Dimension(new BaseDimensionRepresentation(), "DrugMass", "g");
-         _volumeDimension = new Dimension(new BaseDimensionRepresentation { MassExponent = 3 }, "Volume", "l");
-         _anotherDimensionThatLooksLikeVolumeWithADifferentUnit = new Dimension(new BaseDimensionRepresentation { MassExponent = 3, TimeExponent = -1 }, "01_OTHER", "");
-         _flowDimension = new Dimension(new BaseDimensionRepresentation { MassExponent = 3, TimeExponent = -1 }, "flow", "l/min");
-         _timeDimension = new Dimension(new BaseDimensionRepresentation { TimeExponent = 1 }, "Time", "min");
-         _inversedTimeDimension = new Dimension(new BaseDimensionRepresentation { TimeExponent = -1 }, "InversedTime", "1/min");
+         _volumeDimension = new Dimension(new BaseDimensionRepresentation {MassExponent = 3}, "Volume", "l");
+         _anotherDimensionThatLooksLikeVolumeWithADifferentUnit = new Dimension(new BaseDimensionRepresentation {MassExponent = 3, TimeExponent = -1}, "01_OTHER", "");
+         _flowDimension = new Dimension(new BaseDimensionRepresentation {MassExponent = 3, TimeExponent = -1}, "flow", "l/min");
+         _timeDimension = new Dimension(new BaseDimensionRepresentation {TimeExponent = 1}, "Time", "min");
+         _inversedTimeDimension = new Dimension(new BaseDimensionRepresentation {TimeExponent = -1}, "InversedTime", "1/min");
 
          sut.AddDimension(_drugMassDimension);
          sut.AddDimension(_volumeDimension);
@@ -32,6 +32,36 @@ namespace OSPSuite.Core.Domain
          sut.AddDimension(_timeDimension);
          sut.AddDimension(_inversedTimeDimension);
          sut.AddDimension(Constants.Dimension.NO_DIMENSION);
+      }
+   }
+
+   public class When_retrieving_the_dimension_and_unit_for_an_existing_unit : concern_for_DimensionFactory
+   {
+      [Observation]
+      public void should_return_the_expected_dimension_for_a_real_match()
+      {
+         var (dim, unit) = sut.FindUnit("g");
+         dim.ShouldBeEqualTo(_drugMassDimension);
+         unit.ShouldBeEqualTo(_drugMassDimension.Unit("g"));
+      }
+
+      [Observation]
+      public void should_return_the_expected_dimension_for_a_case_match()
+      {
+         var (dim, unit) = sut.FindUnit("G");
+         dim.ShouldBeEqualTo(_drugMassDimension);
+         unit.ShouldBeEqualTo(_drugMassDimension.Unit("g"));
+      }
+   }
+
+   public class When_retrieving_the_dimension_and_unit_for_a_unit_that_does_not_exist : concern_for_DimensionFactory
+   {
+      [Observation]
+      public void should_return_the_expected_dimension()
+      {
+         var (dim, unit) = sut.FindUnit("nope");
+         dim.ShouldBeNull();
+         unit.ShouldBeNull();
       }
    }
 
@@ -73,7 +103,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_return_the_dimension_in_the_expected_order()
       {
-         sut.DimensionsSortedByName.ShouldOnlyContainInOrder(_anotherDimensionThatLooksLikeVolumeWithADifferentUnit,  Constants.Dimension.NO_DIMENSION, _drugMassDimension, _flowDimension, _inversedTimeDimension, _timeDimension, _volumeDimension);
+         sut.DimensionsSortedByName.ShouldOnlyContainInOrder(_anotherDimensionThatLooksLikeVolumeWithADifferentUnit, Constants.Dimension.NO_DIMENSION, _drugMassDimension, _flowDimension, _inversedTimeDimension, _timeDimension, _volumeDimension);
       }
    }
 
@@ -99,7 +129,6 @@ namespace OSPSuite.Core.Domain
          The.Action(() => sut.Dimension("TOTO")).ShouldThrowAn<KeyNotFoundException>();
       }
    }
-
 
    public class When_told_to_retrieve_the_RHS_dimension_for_the_dimensionless_dimension : concern_for_DimensionFactory
    {

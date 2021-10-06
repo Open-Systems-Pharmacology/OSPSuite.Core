@@ -23,7 +23,7 @@ namespace OSPSuite.Core.Commands
 
    public class When_asking_for_inverse_command : concern_for_ChangeObservedDataMetaDataCommand
    {
-      private IReversibleCommand<IOSPSuiteExecutionContext> _result;
+      private ICommand<IOSPSuiteExecutionContext> _result;
 
       [Observation]
       public void command_should_be_appropriate_type()

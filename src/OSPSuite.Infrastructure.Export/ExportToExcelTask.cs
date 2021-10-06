@@ -1,10 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 using OSPSuite.Utility;
-using SmartXLS;
 
 namespace OSPSuite.Infrastructure.Export
 {
@@ -16,10 +16,10 @@ namespace OSPSuite.Infrastructure.Export
       /// <param name="dataTable">Data Table to export</param>
       /// <param name="fileName">Target file</param>
       /// <param name="openExcel">If set to true, excel will be launched with the exported file</param>
-      /// <param name="workbookConfiguration">Specifies some configuration for the workbook (e.g. layout)</param>
-      public static void ExportDataTableToExcel(DataTable dataTable, string fileName, bool openExcel, Action<WorkBook> workbookConfiguration = null)
+      /// <param name="workBookConfiguration"></param>
+      public static void ExportDataTableToExcel(DataTable dataTable, string fileName, bool openExcel, IWorkbookConfiguration workBookConfiguration = null)
       {
-         ExportDataTablesToExcel(new[] {dataTable}, fileName, openExcel, workbookConfiguration);
+         ExportDataTablesToExcel(new[] {dataTable}, fileName, openExcel, workBookConfiguration);
       }
 
       /// <summary>
@@ -28,62 +28,92 @@ namespace OSPSuite.Infrastructure.Export
       /// <param name="dataTables">Data Tables to export</param>
       /// <param name="fileName">Target file</param>
       /// <param name="openExcel">If set to true, excel will be launched with the exported file</param>
-      /// <param name="workbookConfiguration">Specifies some configuration for the workbook (e.g. layout)</param>
-      public static void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel, Action<WorkBook, DataTable> workbookConfiguration)
+      /// <param name="workBookConfiguration"></param>
+      public static void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel, IWorkbookConfiguration workBookConfiguration = null)
       {
          var tables = dataTables.ToList();
-         using (var workBook = new WorkBook())
+         if (workBookConfiguration == null)
+            workBookConfiguration = new WorkbookConfiguration();
+
+         for (var i = 0; i < tables.Count(); i++)
          {
-            if (tables.Count > 1)
-               workBook.insertSheets(0, tables.Count - 1); //-1 because one is always available by default
-
-            for (var i = 0; i < tables.Count(); i++)
-            {
-               var dataTable = tables.ElementAt(i);
-               exportDataTableToWorkBook(workBook, dataTable, i);
-
-               workbookConfiguration?.Invoke(workBook, dataTable);
-            }
-
-            SaveWorkbook(fileName, workBook);
+            var dataTable = tables.ElementAt(i);
+            exportDataTableToWorkBook(workBookConfiguration, dataTable);
          }
+
+         saveWorkbook(fileName, workBookConfiguration.WorkBook);
 
          if (openExcel)
             FileHelper.TryOpenFile(fileName);
       }
 
-      public static void SaveWorkbook(string fileName, WorkBook workBook)
+      private static void saveWorkbook(string fileName, XSSFWorkbook workBook)
       {
          FileHelper.TrySaveFile(fileName, () =>
          {
-            var fileInfo = new FileInfo(fileName);
-            if (fileInfo.Extension.Contains("xlsx"))
-               workBook.writeXLSX(fileName);
-            else
-               workBook.write(fileName);
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            {
+               workBook.Write(stream);
+            }
          });
       }
 
-      /// <summary>
-      ///    Exports the given dataTables to the file given as parameter. One sheet will be created per table
-      /// </summary>
-      /// <param name="dataTables">Data Tables to export</param>
-      /// <param name="fileName">Target file</param>
-      /// <param name="openExcel">If set to true, excel will be launched with the exported file</param>
-      /// <param name="workbookConfiguration">Specifies some configuration for the workbook (e.g. layout)</param>
-      public static void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel, Action<WorkBook> workbookConfiguration = null)
+      private static void exportDataTableToWorkBook(IWorkbookConfiguration workBookConfiguration, DataTable dataTable)
       {
-         ExportDataTablesToExcel(dataTables, fileName, openExcel, (wb, dt) =>
+         // Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator = ".";
+
+         var workBook = workBookConfiguration.WorkBook;
+
+         ISheet sheet;
+
+         if (!dataTable.TableName.Equals(""))
          {
-            workbookConfiguration?.Invoke(wb);
-         });
-      }
+            sheet = workBook.CreateSheet(dataTable.TableName);
+         }
+         else
+         {
+            sheet = workBook.CreateSheet("Sheet1");
+         }
 
-      private static void exportDataTableToWorkBook(WorkBook workBook, DataTable dataTable, int sheetIndex)
-      {
-         workBook.Sheet = sheetIndex;
-         workBook.ImportDataTable(dataTable, true, 0, 0, dataTable.Rows.Count, dataTable.Columns.Count);
-         workBook.setSheetName(sheetIndex, dataTable.TableName);
+         var rowCount = dataTable.Rows.Count;
+         var columnCount = dataTable.Columns.Count;
+
+         var row = sheet.CreateRow(0);
+
+         for (var c = 0; c < columnCount; c++)
+         {
+            var cell = row.CreateCell(c);
+            cell.SetCellValue(dataTable.Columns[c].ColumnName);
+            cell.CellStyle = workBookConfiguration.HeadersStyle;
+         }
+
+         //        row.RowStyle = style;
+
+         for (var i = 0; i < rowCount; i++)
+         {
+            row = sheet.CreateRow(i + 1);
+            for (var j = 0; j < columnCount; j++)
+            {
+               var cell = row.CreateCell(j);
+
+               if (double.TryParse(dataTable.Rows[i][j].ToString(), out var value))
+               {
+                  cell.SetCellType(CellType.Numeric);
+                  cell.SetCellValue(value);
+                  cell.CellStyle = workBookConfiguration.BodyStyle;
+               }
+               else
+               {
+                  cell.SetCellValue(dataTable.Rows[i][j].ToString());
+                  cell.CellStyle = workBookConfiguration.BodyStyle;
+               }
+            }
+         }
+
+         for (var c = 0; c < columnCount; c++)
+         {
+            sheet.AutoSizeColumn(c);
+         }
       }
    }
 }

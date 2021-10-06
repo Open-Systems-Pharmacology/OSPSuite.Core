@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Serialization.Xml.Extensions
       {
          var formulasSerializer = serializerRepository.SerializerFor(serializationContext.Formulas);
          var formulaCacheElement = formulasSerializer.Serialize(serializationContext.Formulas, serializationContext);
-         serializationContext.ClearFomulaCache();
+         serializationContext.ClearFormulaCache();
          if (!formulaCacheElement.HasElements)
             return;
 

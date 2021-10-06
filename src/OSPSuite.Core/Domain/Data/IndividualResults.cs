@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Domain.Data
       public virtual int Id { get; set; }
 
       /// <summary>
-      ///    Id of the individual for which the results were calculated
+      ///    Id of the individual for which the results were calculated (0-based)
       /// </summary>
       public virtual int IndividualId { get; set; }
 

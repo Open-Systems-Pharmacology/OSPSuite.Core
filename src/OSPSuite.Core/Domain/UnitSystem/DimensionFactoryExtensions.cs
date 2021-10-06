@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
    {
       public static IEnumerable<IDimension> AllDimensionsForEditors(this IDimensionFactory dimensionFactory, IDimension defaultDimension)
       {
-         return getMergedDimensions(dimensionFactory, defaultDimension).OrderBy(dimension => dimension.Name);
+         return getMergedDimensions(dimensionFactory, defaultDimension).OrderBy(dimension => dimension.DisplayName);
       }
 
       public static IDimension OptimalDimension(this IDimensionFactory dimensionFactory, IDimension defaultDimension)

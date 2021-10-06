@@ -6,40 +6,25 @@ namespace OSPSuite.Core.Domain.Builder
    public class TransporterMoleculeContainer : Container, IContainsParameters
    {
       /// <summary>
-      ///    Name of transport process trigerring the transport
+      ///    Name of transport process triggering the transport
       /// </summary>
       public virtual string TransportName { get; set; }
 
       /// <summary>
       ///    Specific localized realizations of the transport process
       /// </summary>
-      public virtual IEnumerable<ITransportBuilder> ActiveTransportRealizations
-      {
-         get { return GetChildren<ITransportBuilder>(); }
-      }
+      public virtual IEnumerable<ITransportBuilder> ActiveTransportRealizations => GetChildren<ITransportBuilder>();
 
-      public virtual IEnumerable<IParameter> Parameters
-      {
-         get { return GetChildren<IParameter>(); }
-      }
+      public virtual IEnumerable<IParameter> Parameters => GetChildren<IParameter>();
 
-      public virtual void AddParameter(IParameter newParameter)
-      {
-         Add(newParameter);
-      }
+      public virtual void AddParameter(IParameter newParameter) => Add(newParameter);
 
-      public virtual void RemoveParameter(IParameter toRemove)
-      {
-         RemoveChild(toRemove);
-      }
+      public virtual void RemoveParameter(IParameter toRemove) => RemoveChild(toRemove);
 
       /// <summary>
       ///    Add a new localized realization of the transport process
       /// </summary>
-      public virtual void AddActiveTransportRealization(ITransportBuilder activeTransportBuilder)
-      {
-         Add(activeTransportBuilder);
-      }
+      public virtual void AddActiveTransportRealization(ITransportBuilder activeTransportBuilder) => Add(activeTransportBuilder);
 
       /// <summary>
       ///    Remove a localized realization of the transport process

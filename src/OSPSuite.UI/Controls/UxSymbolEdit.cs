@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Utility;
-using DevExpress.XtraEditors;
 using OSPSuite.Core.Chart;
 
 namespace OSPSuite.UI.Controls
 {
-   public class UxSymbolEdit : ComboBoxEdit
+   public class UxSymbolEdit : UxComboBoxEdit
    {
       public IEnumerable<Symbols> GetValidValues()
       {

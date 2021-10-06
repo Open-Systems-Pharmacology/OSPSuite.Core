@@ -16,7 +16,6 @@ namespace OSPSuite.R.Services
    public class CalculatePKAnalysisArgs
    {
       public IModelCoreSimulation Simulation { get; set; }
-      public int NumberOfIndividuals { get; set; }
       public SimulationResults SimulationResults { get; set; }
    }
 
@@ -66,7 +65,8 @@ namespace OSPSuite.R.Services
 
       public PopulationSimulationPKAnalyses CalculateFor(CalculatePKAnalysisArgs args)
       {
-         return _corePKAnalysesTask.CalculateFor(args.Simulation, args.NumberOfIndividuals, args.SimulationResults);
+         var numberOfIndividuals = args.SimulationResults.NumberOfIndividuals;
+         return _corePKAnalysesTask.CalculateFor(args.Simulation, numberOfIndividuals, args.SimulationResults);
       }
 
       public DataTable ConvertToDataTable(PopulationSimulationPKAnalyses pkAnalyses, IModelCoreSimulation simulation)

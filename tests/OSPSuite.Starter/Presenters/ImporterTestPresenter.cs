@@ -1,13 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using DevExpress.XtraEditors;
+using System.Xml.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Importer;
+using OSPSuite.Core.Serialization;
+using OSPSuite.Core.Serialization.Xml;
+using OSPSuite.Core.Services;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Starter.Tasks;
 using OSPSuite.Starter.Views;
+using OSPSuite.Utility.Extensions;
+using IContainer = OSPSuite.Utility.Container.IContainer;
+using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Starter.Presenters
 {
@@ -19,49 +25,136 @@ namespace OSPSuite.Starter.Presenters
       void StartPKSimSingleMode();
       void StartWithOntogenySettings();
       void StartWithMoBiSettings();
+      void ReloadWithPKSimSettings();
+      void LoadWithPKSimSettings();
    }
 
    public class ImporterTestPresenter : AbstractPresenter<IImporterTestView, IImporterTestPresenter>, IImporterTestPresenter
    {
-      private readonly IDataImporter _importer;
+      private readonly IDialogCreator _dialogCreator;
       private readonly IImporterConfigurationDataGenerator _dataGenerator;
-
-      public ImporterTestPresenter(IImporterTestView view, IDataImporter importer, IImporterConfigurationDataGenerator dataGenerator)
+      private readonly IDataImporter _dataImporter;
+      private readonly IContainer _container;
+      private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
+      public ImporterTestPresenter(IImporterTestView view, IImporterConfigurationDataGenerator dataGenerator, IDialogCreator dialogCreator, IDataImporter dataImporter,
+         IContainer container, IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository)
          : base(view)
       {
-         _importer = importer;
          _dataGenerator = dataGenerator;
+         _dialogCreator = dialogCreator;
+         _dataImporter = dataImporter;
+         _container = container;
+         _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
+      }
+
+      private void StartImporterExcelView(IReadOnlyList<MetaDataCategory> categories, IReadOnlyList<ColumnInfo> columns, DataImporterSettings settings)
+      {
+         settings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
+         settings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
+         _dialogCreator.MessageBoxInfo(_dataImporter.ImportDataSets
+         (
+            categories,
+            columns,
+            settings,
+            _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
+         ).DataRepositories?.Count() + " data sets successfully imported");
       }
 
       public void StartWithTestForGroupBySettings()
       {
-         promptForImports(_importer.ImportDataSets(
-            _dataGenerator.DefaultGroupByTestMetaDataCategories(),
+         StartImporterExcelView
+         (
+            _dataGenerator.DefaultGroupByTestMetaDataCategories(), 
             _dataGenerator.DefaultGroupByConcentrationImportConfiguration(),
-            new DataImporterSettings()).ToList());
+            new DataImporterSettings()
+         );
       }
 
       public void StartWithTestSettings()
       {
-         promptForImports(_importer.ImportDataSets(
+         StartImporterExcelView(
             _dataGenerator.DefaultTestMetaDataCategories(),
             _dataGenerator.DefaultTestConcentrationImportConfiguration(),
-            new DataImporterSettings()).ToList());
+            new DataImporterSettings()
+         );
       }
 
       public void StartWithMoBiSettings()
       {
          var dataImporterSettings = new DataImporterSettings();
+         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE);
 
+         StartImporterExcelView(
+            _dataGenerator.DefaultMoBiMetaDataCategories(),
+            _dataGenerator.DefaultMoBiConcentrationImportConfiguration(),
+            dataImporterSettings
+         );
+
+         //promptForImports(dataSets);
+      }
+
+      public void ReloadWithPKSimSettings()
+      {
+         var dataImporterSettings = new DataImporterSettings();
+         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
+         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
+         using (var serializationContext = SerializationTransaction.Create(_container))
+         {
+            var serializer = _modelingXmlSerializerRepository.SerializerFor<ImporterConfiguration>();
+
+            var fileName = _dialogCreator.AskForFileToOpen("Save configuration", "xml files (*.xml)|*.xml|All files (*.*)|*.*",
+               Constants.DirectoryKey.PROJECT);
+
+            if (fileName.IsNullOrEmpty()) return;
+
+            var xel = XElement.Load(fileName); // We have to correctly handle the case of cancellation
+            var configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
+
+            dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
+            dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
+
+            _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
+            (
+               configuration,
+               (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories(),
+               _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+               dataImporterSettings,
+               _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
+            )?.Count() + " data sets successfully imported");
+         }
+      }
+
+      public void LoadWithPKSimSettings()
+      {
+         var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
 
-         var dataSets = _importer.ImportDataSets(
-            _dataGenerator.DefaultMoBiMetaDataCategories(),
-            _dataGenerator.DefaultMoBiConcentrationImportConfiguration(),
-            dataImporterSettings).ToList();
+         using (var serializationContext = SerializationTransaction.Create(_container))
+         {
+            var serializer = _modelingXmlSerializerRepository.SerializerFor<ImporterConfiguration>();
 
-         promptForImports(dataSets);
+            var fileName = _dialogCreator.AskForFileToOpen("Load configuration", "xml files (*.xml)|*.xml|All files (*.*)|*.*",
+               Constants.DirectoryKey.PROJECT);
+
+            if (fileName.IsNullOrEmpty()) return;
+
+            var xel = XElement.Load(fileName); // We have to correctly handle the case of cancellation
+            var configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
+
+            dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
+            dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
+            dataImporterSettings.PromptForConfirmation = true;
+
+            _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
+            (
+               configuration,
+               (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories(),
+               _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+               dataImporterSettings,
+               _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
+            )?.Count() + " data sets successfully imported");
+         }
       }
 
       public void StartWithPKSimSettings()
@@ -69,12 +162,15 @@ namespace OSPSuite.Starter.Presenters
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         var dataSets = _importer.ImportDataSets(
-            _dataGenerator.DefaultPKSimMetaDataCategories(),
+         var metaDataCategories = _dataImporter.DefaultMetaDataCategories().ToList();
+         _dataGenerator.AddMoleculeValuesToMetaDataList(metaDataCategories);
+         _dataGenerator.AddOrganValuesToMetaDataList(metaDataCategories);
+         StartImporterExcelView
+         (
+            metaDataCategories,
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
-            dataImporterSettings).ToList();
-
-         promptForImports(dataSets);
+            dataImporterSettings
+         );
       }
 
       public void StartPKSimSingleMode()
@@ -82,30 +178,27 @@ namespace OSPSuite.Starter.Presenters
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         var dataSet = _importer.ImportDataSet(
-            _dataGenerator.DefaultPKSimMetaDataCategories(),
+         var metaDataCategories = _dataImporter.DefaultMetaDataCategories().ToList();
+         _dataGenerator.AddMoleculeValuesToMetaDataList(metaDataCategories);
+         StartImporterExcelView(
+            metaDataCategories,
             _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
-            dataImporterSettings);
-
-         promptForImports(new List<DataRepository> { dataSet });
+            dataImporterSettings
+         );
       }
-
-      private static void promptForImports(List<DataRepository> dataSets)
-      {
-         if (dataSets.Any())
-            XtraMessageBox.Show($"Transferred {dataSets.Count} Data Sets!");
-      }
-
 
       public void StartWithOntogenySettings()
       {
          var dataImporterSettings = new DataImporterSettings
          {
-            Caption = "PK-Sim - Import Ontogeny"
+            Caption = "PK-Sim - LoadCurrentSheet Ontogeny"
          };
 
-         var dataSets = _importer.ImportDataSets(new List<MetaDataCategory>(), _dataGenerator.GetOntogenyColumnInfo(), dataImporterSettings);
-         promptForImports(dataSets.ToList());
+         StartImporterExcelView(
+            new List<MetaDataCategory>(), 
+            _dataGenerator.GetOntogenyColumnInfo(), 
+            dataImporterSettings
+         );
       }
    }
 }

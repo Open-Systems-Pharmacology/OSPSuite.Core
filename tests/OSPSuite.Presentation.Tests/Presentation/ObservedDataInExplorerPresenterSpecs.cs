@@ -178,7 +178,7 @@ namespace OSPSuite.Presentation.Presentation
          _observedDataFolder.AddChild(new ObservedDataNode(new ClassifiableObservedData {Subject = _repo2}));
          _observedDataFolder.AddChild(_anotherNode);
 
-         A.CallTo(() => _observedDataTask.Delete(A<IEnumerable<DataRepository>>._))
+         A.CallTo(() => _observedDataTask.Delete(A<IEnumerable<DataRepository>>._, false))
             .Invokes(x => _allObservedData = x.GetArgument<IEnumerable<DataRepository>>(0).ToList())
             .Returns(true);
       }

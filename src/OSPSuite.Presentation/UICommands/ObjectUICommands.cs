@@ -12,7 +12,7 @@ namespace OSPSuite.Presentation.UICommands
    {
       public virtual T Subject { get; set; }
       
-      public void Execute()
+      public virtual void Execute()
       {
          PerformExecute();
          Subject = null;

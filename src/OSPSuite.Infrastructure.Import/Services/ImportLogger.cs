@@ -5,11 +5,10 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
-using ILogger = OSPSuite.Core.Services.ILogger;
 
 namespace OSPSuite.Infrastructure.Import.Services
 {
-   public interface IImportLogger : ILogger
+   public interface IImportLogger : IOSPSuiteLogger
    {
       IEnumerable<LogEntry> Entries { get; }
       IEnumerable<string> Log { get; }
@@ -28,6 +27,8 @@ namespace OSPSuite.Infrastructure.Import.Services
       {
          _entries = new List<LogEntry>();
       }
+
+      public string DefaultCategoryName { get; set; }
 
       public void AddToLog(string message, LogLevel logLevel, string categoryName)
       {

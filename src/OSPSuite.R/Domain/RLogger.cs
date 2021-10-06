@@ -4,12 +4,13 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Extensions;
-using ILogger = OSPSuite.Core.Services.ILogger;
 
 namespace OSPSuite.R.Domain
 {
-   public class RLogger : ILogger
+   public class RLogger : IOSPSuiteLogger
    {
+      public string DefaultCategoryName { get; set; }
+
       public void AddToLog(string message, LogLevel logLevel, string categoryName)
       {
          Console.WriteLine($"{logLevel} - {message}");

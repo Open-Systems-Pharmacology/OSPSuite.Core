@@ -42,7 +42,7 @@ namespace OSPSuite.Core.Domain
       void Replace(string entry, IEnumerable<string> replacements);
 
       /// <summary>
-      ///    Removes the first occurence of specified <paramref name="entry" />.
+      ///    Removes the first occurrence of specified <paramref name="entry" />.
       /// </summary>
       /// <param name="entry">The entry to be removed.</param>
       void Remove(string entry);

@@ -38,7 +38,7 @@ namespace OSPSuite.Core.Services
       }
    }
 
-   public class When_the_observed_data_task_is_deleting_some_observed_data_that_are_used_in_different_analyzable_of_the_project  : concern_for_ObservedDataTask
+   public class When_the_observed_data_task_is_deleting_some_observed_data_that_are_used_in_different_analyzable_of_the_project : concern_for_ObservedDataTask
    {
       private IUsesObservedData _userOfObservedData1;
       private IUsesObservedData _userOfObservedData2;
@@ -60,12 +60,11 @@ namespace OSPSuite.Core.Services
       [Observation]
       public void should_throw_an_exception_notifying_the_user_that_no_observed_data_can_be_deleted()
       {
-         The.Action(() => sut.Delete(new[] { _obsData1, _obsData2 })).ShouldThrowAn<CannotDeleteObservedDataException>();
+         The.Action(() => sut.Delete(new[] {_obsData1, _obsData2})).ShouldThrowAn<CannotDeleteObservedDataException>();
       }
    }
 
-
-   public class When_the_observed_data_task_is_deleting_some_observed_data_and_only_a_subset_of_which_can_be_deleted: concern_for_ObservedDataTask
+   public class When_the_observed_data_task_is_deleting_some_observed_data_and_only_a_subset_of_which_can_be_deleted : concern_for_ObservedDataTask
    {
       private IUsesObservedData _userOfObservedData1;
       private IUsesObservedData _userOfObservedData2;
@@ -102,13 +101,49 @@ namespace OSPSuite.Core.Services
       }
    }
 
+   public class When_the_observed_data_task_is_deleting_some_observed_data_and_the_silent_mode_is_activated : concern_for_ObservedDataTask
+   {
+      private IUsesObservedData _userOfObservedData1;
+      private IUsesObservedData _userOfObservedData2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _userOfObservedData1 = A.Fake<IUsesObservedData>().WithName("USER_OF_DATA_1");
+         _userOfObservedData2 = A.Fake<IUsesObservedData>().WithName("USER_OF_DATA_2");
+         A.CallTo(() => _objectTypeResolver.TypeFor(_userOfObservedData1)).Returns("THE USER TYPE 1");
+         A.CallTo(() => _objectTypeResolver.TypeFor(_userOfObservedData2)).Returns("THE USER TYPE 2");
+         _allUserOfObservedData.Add(_userOfObservedData1);
+         _allUserOfObservedData.Add(_userOfObservedData2);
+         A.CallTo(() => _userOfObservedData1.UsesObservedData(_obsData1)).Returns(true);
+         A.CallTo(() => _userOfObservedData2.UsesObservedData(_obsData1)).Returns(true);
+         A.CallTo(() => _userOfObservedData1.UsesObservedData(_obsData2)).Returns(false);
+      }
+
+      protected override void Because()
+      {
+         sut.Delete(new[] {_obsData1, _obsData2}, silent: true);
+      }
+
+      [Observation]
+      public void should_not_prompt_the_user_to_confirm()
+      {
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, ViewResult.Yes)).MustNotHaveHappened();
+      }
+   }
+
    internal class ObservedDataTaskForSpecs : ObservedDataTask
    {
-      public ObservedDataTaskForSpecs(IDialogCreator dialogCreator, IOSPSuiteExecutionContext executionContext, IDataRepositoryExportTask dataRepositoryTask, IContainerTask containerTask, IObjectTypeResolver objectTypeResolver) : base(dialogCreator, executionContext, dataRepositoryTask, containerTask, objectTypeResolver)
+      public ObservedDataTaskForSpecs(IDialogCreator dialogCreator, IOSPSuiteExecutionContext executionContext, IDataRepositoryExportTask dataRepositoryTask, IContainerTask containerTask, IObjectTypeResolver objectTypeResolver) : base(dialogCreator, executionContext, dataRepositoryTask,
+         containerTask, objectTypeResolver)
       {
       }
 
       public override void Rename(DataRepository observedData)
+      {
+      }
+
+      public override void UpdateMolWeight(DataRepository observedData)
       {
       }
    }

@@ -9,6 +9,9 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.Name);
          Map(x => x.Value);
          Map(x => x.StartValue);
+         Map(x => x.Min);
+         Map(x => x.Max);
+         Map(x => x.Scaling);
       }
    }
 }

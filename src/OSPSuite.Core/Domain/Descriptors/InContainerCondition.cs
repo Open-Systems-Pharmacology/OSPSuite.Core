@@ -17,7 +17,7 @@ namespace OSPSuite.Core.Domain.Descriptors
 
       public override bool IsSatisfiedBy(EntityDescriptor entityDescriptor)
       {
-         return entityDescriptor.ParentContainerTags.Contains(Tag);
+         return entityDescriptor.Tags.Contains(Tag) || entityDescriptor.ParentContainerTags.Contains(Tag);
       }
    }
 }

@@ -106,10 +106,28 @@ namespace OSPSuite.Infrastructure.Export
       {
          const string defaultTableName = "Table";
          var tableName = baseGrid.Repository != null ? baseGrid.Repository.Name : defaultTableName;
-         if (string.IsNullOrEmpty(tableName))
-            tableName = defaultTableName;
 
-         return new string(FileHelper.RemoveIllegalCharactersFrom(tableName).Take(Constants.MAX_NUMBER_OF_CHAR_IN_TABLE_NAME).ToArray());
+         if (string.IsNullOrEmpty(tableName))
+            return defaultTableName;
+         
+         var correctedTableName = new string(FileHelper.RemoveIllegalCharactersFrom(tableName).Take(Constants.MAX_NUMBER_OF_CHAR_IN_TABLE_NAME).ToArray());
+
+         correctedTableName = removeCharactersIllegalForExcelSheets(correctedTableName);
+
+         return correctedTableName;
+      }
+
+      private static string removeCharactersIllegalForExcelSheets(string correctedTableName)
+      {
+         var charsToRemove = new List<char>() {'[', ']'};
+         charsToRemove.ForEach(c => correctedTableName = correctedTableName.Replace(c.ToString(), string.Empty));
+
+         while (correctedTableName.EndsWith("'"))
+            correctedTableName = correctedTableName.Substring(0, correctedTableName.Length - 1);
+
+         while (correctedTableName.StartsWith("'"))
+            correctedTableName = correctedTableName.Substring(1);
+         return correctedTableName;
       }
 
       private DataTable createTableFor(

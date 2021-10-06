@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Mappers
 {
@@ -51,7 +53,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
       private void addLocalParameters(ITransport transport, ITransportBuilder transportBuilder, IBuildConfiguration buildConfiguration)
       {
-         transport.AddChildren( _parameterMapper.MapLocalFrom(transportBuilder, buildConfiguration));
+         transport.AddChildren(_parameterMapper.MapLocalFrom(transportBuilder, buildConfiguration));
       }
 
       private IParameter processRateParameterFor(ITransportBuilder transportBuilder, IBuildConfiguration buildConfiguration)
@@ -60,13 +62,17 @@ namespace OSPSuite.Core.Domain.Mappers
 
          parameter.AddTag(ObjectPathKeywords.MOLECULE);
          parameter.AddTag(ObjectPathKeywords.NEIGHBORHOOD);
-         parameter.AddTag(transportTypeTagFor(transportBuilder));
+         transportTypeTagsFor(transportBuilder).Each(parameter.AddTag);
          return parameter;
       }
 
-      private string transportTypeTagFor(ITransportBuilder transportBuilder)
+      private IReadOnlyList<string> transportTypeTagsFor(ITransportBuilder transportBuilder)
       {
-         return transportBuilder.TransportType.Is(TransportType.Active) ? Constants.ACTIVE : Constants.PASSIVE;
+         if (!transportBuilder.TransportType.Is(TransportType.Active))
+            return new[] {Constants.PASSIVE};
+
+         var activeType = transportBuilder.TransportType.Is(TransportType.Influx) ? Constants.INFLUX : Constants.NOT_INFLUX;
+         return new[] {Constants.ACTIVE, activeType};
       }
    }
 }

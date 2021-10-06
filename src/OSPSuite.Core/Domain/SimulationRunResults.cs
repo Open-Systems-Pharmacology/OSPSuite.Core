@@ -25,7 +25,7 @@ namespace OSPSuite.Core.Domain
       public DataRepository Results { get; }
 
       /// <summary>
-      ///    Possible external errors that may have occured
+      ///    Possible external errors that may have occurred
       /// </summary>
       public string Error { get; }
 

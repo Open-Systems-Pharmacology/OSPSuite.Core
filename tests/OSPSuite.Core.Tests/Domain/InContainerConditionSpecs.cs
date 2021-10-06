@@ -10,11 +10,11 @@ namespace OSPSuite.Core.Domain
       protected InContainerCondition _match;
       protected InContainerCondition _doNotMatch;
       protected InContainerCondition _alsoMatch;
+      protected InContainerCondition _matchSelf;
 
       protected override void Context()
       {
-         var entity = new Parameter();
-         entity.AddTag("Parameter");
+         var entity = new Container();
          entity.AddTag("Kidney");
 
          var parentContainer = new Container().WithName("Liver");
@@ -28,8 +28,9 @@ namespace OSPSuite.Core.Domain
          _entityCriteria = new EntityDescriptor(entity);
 
          _match = new InContainerCondition("Liver");
-         _doNotMatch = new InContainerCondition("Kidney");
+         _doNotMatch = new InContainerCondition("DOES_NOT_MATCH");
          _alsoMatch = new InContainerCondition("DUDE");
+         _matchSelf = new InContainerCondition("Kidney");
       }
    }
 
@@ -51,6 +52,12 @@ namespace OSPSuite.Core.Domain
       public void should_return_true_if_the_grand_parent_container_tag_contain_the_matching_element()
       {
          _alsoMatch.IsSatisfiedBy(_entityCriteria).ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_return_true_if_the_container_tag_matches_the_container_itself()
+      {
+         _matchSelf.IsSatisfiedBy(_entityCriteria).ShouldBeTrue();
       }
 
       [Observation]
