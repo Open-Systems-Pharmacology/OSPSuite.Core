@@ -42,7 +42,7 @@ namespace OSPSuite.Presentation.Binders
                return observedDataNodesWithFolderPathFromClassificationNodes(treeNodes);
 
 
-         return new Cache<string, List<ObservedDataNode>>();
+         return new Cache<string, List<DataRepository>>();
       }
 
       private DragEffect dragEffectForConditionalType(IDragEvent e)
