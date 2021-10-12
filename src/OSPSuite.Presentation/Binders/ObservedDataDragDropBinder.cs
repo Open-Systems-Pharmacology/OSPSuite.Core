@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters.Nodes;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Binders
@@ -22,6 +23,26 @@ namespace OSPSuite.Presentation.Binders
       public IReadOnlyList<DataRepository> DroppedObservedDataFrom(IDragEvent e)
       {
          return getObservedDataNodesFrom(e).Select(observedDataNode => observedDataNode.Tag.Subject).ToList();
+      }
+
+      public Cache<string, List<DataRepository>> DroppedObservedDataFromWithFolderPath(IDragEvent e)
+      {
+         var dataNodes = e.Data<IEnumerable<ITreeNode>>();
+
+         if (dataNodes == null)
+            return new Cache<string, List<DataRepository>>();
+
+         var treeNodes = dataNodes as IList<ITreeNode> ?? dataNodes.ToList();
+         //ask Michael: any reason that in the existing code we do not use else if?
+         //we could spare one comparison
+         if (areAllObservedDataNodes(treeNodes))
+            return observedDataNodesWithFolderPathFromObservedDataNodes(treeNodes);
+
+         if (areAllObservedDataClassificationNodes(treeNodes) || areAllRootNodes(treeNodes))
+               return observedDataNodesWithFolderPathFromClassificationNodes(treeNodes);
+
+
+         return new Cache<string, List<ObservedDataNode>>();
       }
 
       private DragEffect dragEffectForConditionalType(IDragEvent e)
@@ -78,6 +99,40 @@ namespace OSPSuite.Presentation.Binders
                observedDataList.AddRange(classificationNode.AllLeafNodes.OfType<ObservedDataNode>());
          });
          return observedDataList;
+      }
+
+      private Cache<string, List<DataRepository>> observedDataNodesWithFolderPathFromClassificationNodes(IEnumerable<ITreeNode> treeNodes)
+      {
+         var observedDataWithFolderAddressCache = new Cache<string, List<DataRepository>>();
+         treeNodes.Each(treeNode =>
+         {
+            var classificationNode = getClassificationNodeFrom(treeNode);
+            classificationNode.AllLeafNodes.OfType<ObservedDataNode>().Each(observedDataNode =>
+            {
+               if (observedDataWithFolderAddressCache.Contains(observedDataNode.ParentNode.Id))
+                  observedDataWithFolderAddressCache[observedDataNode.ParentNode.Id].Add(observedDataNode.Tag.Subject);
+               else
+                  observedDataWithFolderAddressCache.Add(observedDataNode.ParentNode.Id, new List<DataRepository> { observedDataNode.Tag.Subject });
+            });
+         });
+         return observedDataWithFolderAddressCache;
+      }
+
+      private static Cache<string, List<DataRepository>> observedDataNodesWithFolderPathFromObservedDataNodes(IEnumerable<ITreeNode> treeNodes)
+      {
+         var observedDataWithFolderAddressCache = new Cache<string, List<DataRepository>>();
+         treeNodes.Each(node =>
+         {
+            var observedDataNode = node as ObservedDataNode;
+            if (observedDataNode != null)
+            {
+               if (observedDataWithFolderAddressCache.Contains(observedDataNode.ParentNode.Id))
+                  observedDataWithFolderAddressCache[observedDataNode.ParentNode.Id].Add(observedDataNode.Tag.Subject);
+               else
+                  observedDataWithFolderAddressCache.Add(observedDataNode.ParentNode.Id, new List<DataRepository> { observedDataNode.Tag.Subject });
+            }
+         });
+         return observedDataWithFolderAddressCache;
       }
 
       private static IReadOnlyList<ObservedDataNode> observedDataNodesFromObservedDataNodes(IEnumerable<ITreeNode> treeNodes)

@@ -6,6 +6,7 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Extensions;
@@ -473,6 +474,28 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _curveNameDefinition = curveNameDefinition;
          _curveSettingsPresenter.CurveNameDefinition = curveNameDefinition;
       }
+
+      public void AddCurvesWithSameColorForColumn(IReadOnlyList<DataColumn> dataColumnList, CurveOptions defaultCurveOptions = null)
+      {
+         var groupColor = Chart.SelectNewColor();
+         foreach (var dataColumn in dataColumnList)
+         {
+            var curve = Chart.CreateCurve(dataColumn.BaseGrid, dataColumn, _curveNameDefinition(dataColumn), _dimensionFactory);
+
+            if (Chart.HasCurve(curve.Id))
+               continue;
+
+            curve.Color = groupColor;
+            curve.UpdateStyleForObservedData();
+            
+            //do we even need defaultOptions here?
+            if (defaultCurveOptions != null)
+               curve.CurveOptions.UpdateFrom(defaultCurveOptions);
+
+            Chart.AddCurve(curve);
+         }
+      }
+
 
       public Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null)
       {
