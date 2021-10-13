@@ -103,11 +103,60 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
-      public void should_spread_the_data_to_run_as_expected()
+      public void should_not_exceed_cores()
       {
-         // we expect some data to not be equal to their id as we add the core index
          var outputs = _results.Values.Select(x => x.Result).OrderBy(x => x).ToArray();
          (outputs.Last() < Environment.ProcessorCount).ShouldBeTrue();
+      }
+   }
+
+   public class When_running_several_times_less_tasks_than_cores : concern_for_ConcurrencyManager
+   {
+      private int[] _data;
+      private IReadOnlyDictionary<int, ConcurrencyManagerResult<int>> _results1;
+      private IReadOnlyDictionary<int, ConcurrencyManagerResult<int>> _results2;
+      private IReadOnlyDictionary<int, ConcurrencyManagerResult<int>> _results3;
+
+      protected override async Task Context()
+      {
+         await base.Context();
+         _data = Enumerable.Range(0, Environment.ProcessorCount / 2).ToArray();
+      }
+
+      protected override async Task Because()
+      {
+         _results1 = await sut.RunAsync(_data.Length, _data, x => x.ToString(), actionToRun, CancellationToken.None);
+         _results2 = await sut.RunAsync(_data.Length, _data, x => x.ToString(), actionToRun, CancellationToken.None);
+         _results3 = await sut.RunAsync(_data.Length, _data, x => x.ToString(), actionToRun, CancellationToken.None);
+      }
+
+      private Task<int> actionToRun(int coreIndex, int data, CancellationToken token)
+      {
+         return Task.Run(() => {
+            Thread.Sleep(100);
+            return coreIndex;
+         }, token);
+      }
+
+      [Observation]
+      public void should_use_free_cores_on_the_second_run()
+      {
+         var outputs1 = _results1.Values.Select(x => x.Result).OrderBy(x => x).ToArray();
+         var outputs2 = _results2.Values.Select(x => x.Result).OrderBy(x => x).ToArray();
+         (outputs2.Last() > outputs1.Last()).ShouldBeTrue();
+      }
+
+      [Observation]
+      public void but_should_not_exceed_cores()
+      {
+         var max = Math.Max(
+            Math.Max(
+               _results1.Values.Select(x => x.Result).OrderBy(x => x).Last(),
+               _results2.Values.Select(x => x.Result).OrderBy(x => x).Last()
+            ),
+            _results3.Values.Select(x => x.Result).OrderBy(x => x).Last()
+         );
+         (max < Environment.ProcessorCount).ShouldBeTrue();
       }
    }
 }
