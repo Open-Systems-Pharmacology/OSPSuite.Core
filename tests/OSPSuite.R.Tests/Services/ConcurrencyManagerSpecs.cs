@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -74,6 +75,39 @@ namespace OSPSuite.R.Services
          // we expect some data to not be equal to their id as we add the core index
          var outputs = _results.Values.Select(x => x.Result).OrderBy(x => x).ToArray();
          outputs.ShouldNotBeEqualTo(_data);
+      }
+   }
+
+   public class When_running_more_tasks_than_cores : concern_for_ConcurrencyManager
+   {
+      private int[] _data;
+      private IReadOnlyDictionary<int, ConcurrencyManagerResult<int>> _results;
+
+      protected override async Task Context()
+      {
+         await base.Context();
+         _data = Enumerable.Range(0, 3 * Environment.ProcessorCount).ToArray();
+      }
+
+      protected override async Task Because()
+      {
+         _results = await sut.RunAsync(_data.Length, _data, x => x.ToString(), actionToRun, CancellationToken.None);
+      }
+
+      private Task<int> actionToRun(int coreIndex, int data, CancellationToken token)
+      {
+         return Task.Run(() => {
+            Thread.Sleep(100);
+            return coreIndex;
+            }, token);
+      }
+
+      [Observation]
+      public void should_spread_the_data_to_run_as_expected()
+      {
+         // we expect some data to not be equal to their id as we add the core index
+         var outputs = _results.Values.Select(x => x.Result).OrderBy(x => x).ToArray();
+         (outputs.Last() < Environment.ProcessorCount).ShouldBeTrue();
       }
    }
 }

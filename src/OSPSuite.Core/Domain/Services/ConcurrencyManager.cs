@@ -69,6 +69,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          if (numberOfCoresToUse <= 0)
             numberOfCoresToUse = _maximumNumberOfCoresToUse;
+         numberOfCoresToUse = Math.Min(_maximumNumberOfCoresToUse, numberOfCoresToUse);
 
          var concurrentData = new ConcurrentQueue<TData>(data);
          numberOfCoresToUse = Math.Min(numberOfCoresToUse, concurrentData.Count);
