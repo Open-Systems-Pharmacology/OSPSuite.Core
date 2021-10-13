@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Qualification;
+using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
@@ -50,6 +52,37 @@ namespace OSPSuite.Core.Extensions
             return IsOSPSuiteException(ex.InnerException);
 
          return ex.IsAnImplementationOf<OSPSuiteException>();
+      }
+
+      public static  Task DoWithinExceptionHandler(this object callerObject, Func<Task> actionToExecute) 
+         => DoWithinExceptionHandler(actionToExecute);
+
+      public static async Task DoWithinExceptionHandler(this Func<Task> actionToExecute)
+      {
+         try
+         {
+            await actionToExecute();
+         }
+         catch (Exception ex)
+         {
+            IoC.Resolve<IExceptionManager>().LogException(ex);
+         }
+      }
+
+      public static Task<TResult> DoWithinExceptionHandler<TResult>(this object callerObject, Func<Task<TResult>> actionToExecute) 
+         => DoWithinExceptionHandler(actionToExecute);
+
+      public static async Task<TResult> DoWithinExceptionHandler<TResult>(this Func<Task<TResult>> actionToExecute)
+      {
+         try
+         {
+            return await actionToExecute();
+         }
+         catch (Exception ex)
+         {
+            IoC.Resolve<IExceptionManager>().LogException(ex);
+            return await Task.FromResult(default(TResult));
+         }
       }
    }
 }
