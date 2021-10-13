@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Extensions
          return ex.IsAnImplementationOf<OSPSuiteException>();
       }
 
-      public static  Task DoWithinExceptionHandler(this object callerObject, Func<Task> actionToExecute) 
+      public static Task DoWithinExceptionHandler(this object callerObject, Func<Task> actionToExecute)
          => DoWithinExceptionHandler(actionToExecute);
 
       public static async Task DoWithinExceptionHandler(this Func<Task> actionToExecute)
@@ -69,20 +69,22 @@ namespace OSPSuite.Core.Extensions
          }
       }
 
-      public static Task<TResult> DoWithinExceptionHandler<TResult>(this object callerObject, Func<Task<TResult>> actionToExecute) 
+      public static Task<TResult> DoWithinExceptionHandler<TResult>(this object callerObject, Func<Task<TResult>> actionToExecute)
          => DoWithinExceptionHandler(actionToExecute);
 
       public static async Task<TResult> DoWithinExceptionHandler<TResult>(this Func<Task<TResult>> actionToExecute)
       {
+         var result = default(TResult);
          try
          {
-            return await actionToExecute();
+            result = await actionToExecute();
          }
          catch (Exception ex)
          {
             IoC.Resolve<IExceptionManager>().LogException(ex);
-            return await Task.FromResult(default(TResult));
          }
+
+         return result;
       }
    }
 }

@@ -11,9 +11,6 @@ namespace OSPSuite.Presentation.UICommands
          _activeSubjectRetriever = activeSubjectRetriever;
       }
 
-      public override T Subject
-      {
-         get { return base.Subject ?? _activeSubjectRetriever.Active<T>(); }
-      }
+      public override T Subject => base.Subject ?? _activeSubjectRetriever.Active<T>();
    }
 }

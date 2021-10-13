@@ -12,37 +12,23 @@ namespace OSPSuite.Core.Extensions
          task.ContinueWith(continuationAction, TaskContinuationOptions.NotOnFaulted);
          task.ContinueWith(t => IoC.Resolve<IExceptionManager>().LogException(t.Exception), TaskContinuationOptions.OnlyOnFaulted);
       }
-      
+
       public static void SecureContinueWith<TResult>(this Task<TResult> task, Action<Task<TResult>> continuationAction)
       {
          task.ContinueWith(continuationAction, TaskContinuationOptions.NotOnFaulted);
          task.ContinueWith(t => IoC.Resolve<IExceptionManager>().LogException(t.Exception), TaskContinuationOptions.OnlyOnFaulted);
       }
-      
-      public static async Task SecureAwait<TObject>(this TObject caller, Func<TObject, Task> func)
+
+      public static Task SecureAwait<TObject>(this TObject caller, Func<TObject, Task> func)
       {
-         try
-         {
-            await func(caller);
-         }
-         catch (Exception ex)
-         {
-            IoC.Resolve<IExceptionManager>().LogException(ex);
-         }
+         Func<Task> fun = () => func(caller);
+         return fun.DoWithinExceptionHandler();
       }
 
-      public static async Task<TResult> SecureAwait<TObject, TResult>(this TObject caller, Func<TObject, Task<TResult>> func)
+      public static Task<TResult> SecureAwait<TObject, TResult>(this TObject caller, Func<TObject, Task<TResult>> func)
       {
-         var result = default(TResult);
-         try
-         {
-            result = await func(caller);
-         }
-         catch (Exception ex)
-         {
-            IoC.Resolve<IExceptionManager>().LogException(ex);
-         }
-         return result;
+         Func<Task<TResult>> fun = () => func(caller);
+         return fun.DoWithinExceptionHandler();
       }
    }
 }
