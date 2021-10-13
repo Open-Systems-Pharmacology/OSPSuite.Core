@@ -43,9 +43,6 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
          try
          {
-            if (IsRunning)
-               throw new OSPSuiteException(Error.CannotStartTwoConcurrentParameterIdentifications);
-
             using (_parameterIdentificationEngine = _parameterIdentificationEngineFactory.Create())
             {
                var begin = SystemTime.UtcNow();

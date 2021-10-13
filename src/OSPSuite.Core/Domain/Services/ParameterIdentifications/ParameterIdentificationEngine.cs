@@ -23,46 +23,47 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private readonly IEventPublisher _eventPublisher;
       private readonly IParameterIdentificationRunFactory _parameterIdentificationRunFactory;
       private readonly ICoreUserSettings _coreUserSettings;
-      private ParameterIdentification _parameterIdentification;
       private readonly CancellationTokenSource _cancellationTokenSource;
+      private readonly IConcurrencyManager _concurrencyManager;
 
-      public ParameterIdentificationEngine(IEventPublisher eventPublisher, IParameterIdentificationRunFactory parameterIdentificationRunFactory, ICoreUserSettings coreUserSettings)
+      public ParameterIdentificationEngine(IEventPublisher eventPublisher, IParameterIdentificationRunFactory parameterIdentificationRunFactory, ICoreUserSettings coreUserSettings, IConcurrencyManager concurrentManager)
       {
          _eventPublisher = eventPublisher;
          _parameterIdentificationRunFactory = parameterIdentificationRunFactory;
          _coreUserSettings = coreUserSettings;
          _cancellationTokenSource = new CancellationTokenSource();
+         _concurrencyManager = concurrentManager;
       }
 
       public async Task StartAsync(ParameterIdentification parameterIdentification)
       {
          var token = _cancellationTokenSource.Token;
-         _parameterIdentification = parameterIdentification;
          _eventPublisher.PublishEvent(new ParameterIdentificationStartedEvent(parameterIdentification));
 
-         var results = new ConcurrentBag<ParameterIdentificationRunResult>();
          var parameterIdentificationRuns = new List<IParameterIdentificationRun>();
          try
          {
-            parameterIdentificationRuns.AddRange(await createParameterIdentificationRuns(token));
-            parameterIdentificationRuns.Each(notifyRun);
+            parameterIdentificationRuns.AddRange(await createParameterIdentificationRuns(parameterIdentification, token));
+            parameterIdentificationRuns.Each((pir) => notifyRun(parameterIdentification, pir));
             var parallelOptions = createParallelOptions(token);
 
-            await Task.Run(() => Parallel.ForEach(parameterIdentificationRuns, parallelOptions,
-               run =>
-               {
-                  parallelOptions.CancellationToken.ThrowIfCancellationRequested();
-                  results.Add(run.Run(token));
-               }), token);
-
-            updateParameterIdentificationResults(results);
+            var results = (await 
+               _concurrencyManager.RunAsync(
+                  _coreUserSettings.MaximumNumberOfCoresToUse, 
+                  parameterIdentificationRuns, 
+                  run => Guid.NewGuid().ToString(), 
+                  (core, run, ct) => Task.Run(() => run.Run(ct), ct), 
+                  token
+               )).Select(r => r.Value.Result);
+               
+            updateParameterIdentificationResults(parameterIdentification, results);
          }
-         catch (OperationCanceledException)
+         /*catch (OperationCanceledException)
          {
             var finishedResults = results.Where(runShouldBeKept);
-            updateParameterIdentificationResults(finishedResults);
+            updateParameterIdentificationResults(parameterIdentification, finishedResults);
             throw;
-         }
+         }*/
          finally
          {
             parameterIdentificationRuns.Each(x => x.Dispose());
@@ -70,10 +71,10 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          }
       }
 
-      private void notifyRun(IParameterIdentificationRun parameterIdentificationRun)
+      private void notifyRun(ParameterIdentification parameterIdentification, IParameterIdentificationRun parameterIdentificationRun)
       {
          var state = new ParameterIdentificationRunState(parameterIdentificationRun.RunResult, parameterIdentificationRun.BestResult, parameterIdentificationRun.TotalErrorHistory, parameterIdentificationRun.ParametersHistory);
-         runStatusChanged(new ParameterIdentificationRunStatusEventArgs(state));
+         runStatusChanged(parameterIdentification, new ParameterIdentificationRunStatusEventArgs(state));
       }
 
       private bool runShouldBeKept(ParameterIdentificationRunResult runResult)
@@ -81,10 +82,10 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          return runResult != null && runResult.Status.IsOneOf(RunStatus.RanToCompletion, RunStatus.Canceled);
       }
 
-      private void updateParameterIdentificationResults(IEnumerable<ParameterIdentificationRunResult> finishedResults)
+      private void updateParameterIdentificationResults(ParameterIdentification parameterIdentification, IEnumerable<ParameterIdentificationRunResult> finishedResults)
       {
-         _parameterIdentification.UpdateResultsWith(finishedResults);
-         _eventPublisher.PublishEvent(new ParameterIdentificationResultsUpdatedEvent(_parameterIdentification));
+         parameterIdentification.UpdateResultsWith(finishedResults);
+         _eventPublisher.PublishEvent(new ParameterIdentificationResultsUpdatedEvent(parameterIdentification));
       }
 
       private ParallelOptions createParallelOptions(CancellationToken token)
@@ -101,24 +102,23 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          _cancellationTokenSource.Cancel();
       }
 
-      private async Task<IReadOnlyList<IParameterIdentificationRun>> createParameterIdentificationRuns(CancellationToken cancellationToken)
+      private async Task<IReadOnlyList<IParameterIdentificationRun>> createParameterIdentificationRuns(ParameterIdentification parameterIdentification, CancellationToken cancellationToken)
       {
-         var parameterIdentificationRuns = await Task.Run(() => _parameterIdentificationRunFactory.CreateFor(_parameterIdentification, cancellationToken), cancellationToken);
+         var parameterIdentificationRuns = await Task.Run(() => _parameterIdentificationRunFactory.CreateFor(parameterIdentification, cancellationToken), cancellationToken);
 
-         parameterIdentificationRuns.Each(run => { run.RunStatusChanged += (o, e) => runStatusChanged(e); });
+         parameterIdentificationRuns.Each(run => { run.RunStatusChanged += (o, e) => runStatusChanged(parameterIdentification, e); });
 
          return parameterIdentificationRuns;
       }
 
-      private void runStatusChanged(ParameterIdentificationRunStatusEventArgs e)
+      private void runStatusChanged(ParameterIdentification parameterIdentification, ParameterIdentificationRunStatusEventArgs e)
       {
-         _eventPublisher.PublishEvent(new ParameterIdentificationIntermediateResultsUpdatedEvent(_parameterIdentification, e.State));
+         _eventPublisher.PublishEvent(new ParameterIdentificationIntermediateResultsUpdatedEvent(parameterIdentification, e.State));
       }
 
       protected virtual void Cleanup()
       {
          _cancellationTokenSource.Dispose();
-         _parameterIdentification = null;
       }
 
       #region Disposable properties
