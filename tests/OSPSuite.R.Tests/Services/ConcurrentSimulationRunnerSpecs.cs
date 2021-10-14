@@ -260,4 +260,52 @@ namespace OSPSuite.R.Services
       }
    }
 
+
+   public class When_running_simulation_crashing_in_R_concurrently : concern_for_ConcurrentSimulationRunner
+   {
+      private Simulation _simulation;
+      private ConcurrentRunSimulationBatch _simulationBatch;
+      private SimulationBatchRunValues _parValues;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("not_ok_sim.pkml"));
+
+         var containerTask = Api.GetContainerTask();
+         containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|skin_compartment|SC_skin_sublayer|comp10_1|layer1|permeant");
+         _simulationBatch = new ConcurrentRunSimulationBatch
+         (
+            _simulation,
+            new SimulationBatchOptions
+            {
+               VariableParameters = new[]
+               {
+                 "DERMAL_APPLICATION_AREA|skin_compartment|SC_skin_sublayer|SC_total_thickness",
+               }
+            }
+         );
+
+         
+         _parValues = new SimulationBatchRunValues
+         {
+            ParameterValues = new[] { 0.0002 }
+         };
+
+
+         _simulationBatch.AddSimulationBatchRunValues(_parValues);
+         sut.AddSimulationBatch(_simulationBatch);
+      }
+
+
+      [Observation]
+      public void should_initialize_the_batch_in_parallel()
+      {
+         var res = sut.RunConcurrently();
+         res[0].Succeeded.ShouldBeTrue();
+         res[0].Result.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+
 }
