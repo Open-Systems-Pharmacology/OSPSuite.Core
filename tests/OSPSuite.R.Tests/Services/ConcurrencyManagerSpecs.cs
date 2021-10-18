@@ -94,39 +94,6 @@ namespace OSPSuite.R.Services
       }
    }
 
-   public class When_running_more_tasks_than_cores : concern_for_ConcurrencyManager
-   {
-      private int[] _data;
-      private ConcurrentDictionary<AccessCounter, ConcurrencyManagerResult<int>> _results = new ConcurrentDictionary<AccessCounter, ConcurrencyManagerResult<int>>();
-      private AccessCounter _accessCounter;
-
-      protected override async Task Context()
-      {
-         await base.Context();
-         _data = Enumerable.Range(0, 3 * Environment.ProcessorCount).ToArray();
-         _accessCounter = new AccessCounter();
-      }
-
-      protected override async Task Because()
-      {
-         await sut.RunAsync(_data.Length, _data.Select(x => _accessCounter).ToList(), x => Guid.NewGuid().ToString(), actionToRun, CancellationToken.None, _results);
-      }
-
-      private int actionToRun(int coreIndex, AccessCounter data, CancellationToken token)
-      {
-         data.Enter();
-         Thread.Sleep(100);
-         data.Leave();
-         return coreIndex;
-      }
-
-      [Observation]
-      public void should_not_exceed_cores()
-      {
-         _accessCounter.Max.ShouldBeSmallerThan(Environment.ProcessorCount);
-      }
-   }
-
    public class When_running_several_times_less_tasks_than_cores : concern_for_ConcurrencyManager
    {
       private int[] _data;
@@ -164,12 +131,6 @@ namespace OSPSuite.R.Services
       public void should_use_free_cores_on_the_second_run()
       {
          _accessCounter.Max.ShouldBeGreaterThan(_data.Length);
-      }
-
-      [Observation]
-      public void but_should_not_exceed_cores()
-      {
-         _accessCounter.Max.ShouldBeSmallerThanOrEqualTo(Environment.ProcessorCount);
       }
    }
 }
