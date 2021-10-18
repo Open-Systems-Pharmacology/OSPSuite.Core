@@ -188,7 +188,6 @@ namespace OSPSuite.R.Services
       private Simulation _simulation;
       private ConcurrentRunSimulationBatch _simulationBatch1;
       private SimulationBatchRunValues _parValues1;
-      private SimulationBatchRunValues _parValues2;
       private ConcurrentRunSimulationBatch _simulationBatch2;
       private ConcurrentRunSimulationBatch _simulationBatch3;
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -108,7 +109,9 @@ namespace OSPSuite.R.Services
                settings => Enumerable.Range(0, settings.MissingBatchesCount).Select(_ => settings)
             ).ToList(),
             data => new Guid().ToString(),
-            (core, settings, ct) => Task.Run(settings.AddNewBatch, ct), _cancellationTokenSource.Token);
+            (core, settings, ct) => settings.AddNewBatch(), 
+            _cancellationTokenSource.Token,
+            new ConcurrentDictionary<ConcurrentRunSimulationBatch, ConcurrencyManagerResult<SimulationBatch>>());
       }
 
       public async Task<IEnumerable<ConcurrencyManagerResult<SimulationResults>>> RunConcurrentlyAsync()
@@ -120,11 +123,14 @@ namespace OSPSuite.R.Services
          _cancellationTokenSource = new CancellationTokenSource();
          if (_simulations.Count > 0)
          {
-            var results = await _concurrencyManager.RunAsync(
+            var results = new ConcurrentDictionary<IModelCoreSimulation, ConcurrencyManagerResult<SimulationResults>>();
+            await _concurrencyManager.RunAsync(
                numberOfCores(),
                _simulations,
                simulation => simulation.Id,
-               runSimulation, _cancellationTokenSource.Token);
+               runSimulation, 
+               _cancellationTokenSource.Token,
+               results);
             return results.Values;
          }
 
@@ -132,7 +138,8 @@ namespace OSPSuite.R.Services
          {
             await initializeBatches();
 
-            var results = await _concurrencyManager.RunAsync(
+            var results = new ConcurrentDictionary<SimulationBatchRunOptions, ConcurrencyManagerResult<SimulationResults>>();
+            await _concurrencyManager.RunAsync(
                numberOfCores(),
                _listOfConcurrentRunSimulationBatch.SelectMany(sb => sb.SimulationBatchRunValues.Select((rv, i) => new SimulationBatchRunOptions()
                {
@@ -142,7 +149,9 @@ namespace OSPSuite.R.Services
                   SimulationBatchRunValues = rv
                })).ToList(),
                sb => sb.SimulationBatchRunValues.Id,
-               runSimulationBatch, _cancellationTokenSource.Token);
+               runSimulationBatch, 
+               _cancellationTokenSource.Token,
+               results);
 
             //After one RunConcurrently call, we need to forget the SimulationBatchRunValues and expect the new set of values. So the caller has to
             //specify new SimulationBatchRunValues before each RunConcurrently call.
@@ -155,15 +164,15 @@ namespace OSPSuite.R.Services
 
       public ConcurrencyManagerResult<SimulationResults>[] RunConcurrently() => RunConcurrentlyAsync().Result.ToArray();
 
-      private Task<SimulationResults> runSimulation(int coreIndex, IModelCoreSimulation simulation, CancellationToken cancellationToken)
+      private SimulationResults runSimulation(int coreIndex, IModelCoreSimulation simulation, CancellationToken cancellationToken)
       {
          //We want a new instance every time that's why we are not injecting SimulationRunner in constructor
-         return Api.GetSimulationRunner().RunAsync(new SimulationRunArgs {Simulation = simulation, SimulationRunOptions = SimulationRunOptions});
+         return Api.GetSimulationRunner().Run(new SimulationRunArgs {Simulation = simulation, SimulationRunOptions = SimulationRunOptions});
       }
 
-      private Task<SimulationResults> runSimulationBatch(int coreIndex, SimulationBatchRunOptions simulationBatchWithOptions, CancellationToken cancellationToken)
+      private SimulationResults runSimulationBatch(int coreIndex, SimulationBatchRunOptions simulationBatchWithOptions, CancellationToken cancellationToken)
       {
-         return simulationBatchWithOptions.SimulationBatch.RunAsync(simulationBatchWithOptions.SimulationBatchRunValues);
+         return simulationBatchWithOptions.SimulationBatch.Run(simulationBatchWithOptions.SimulationBatchRunValues);
       }
 
       #region Disposable properties

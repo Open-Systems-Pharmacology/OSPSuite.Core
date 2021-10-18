@@ -6,6 +6,7 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Events;
 using OSPSuite.Utility.Events;
@@ -18,6 +19,7 @@ namespace OSPSuite.Core.Domain
       protected ParameterIdentification _parameterIdentification;
       protected IParameterIdentificationRunFactory _parameterIdentificationRunFactory;
       protected ICoreUserSettings _coreUserSettings;
+      protected IConcurrencyManager _concurrencyManager;
 
       protected override void Context()
       {
@@ -26,8 +28,9 @@ namespace OSPSuite.Core.Domain
          _coreUserSettings = A.Fake<ICoreUserSettings>();
          A.CallTo(() => _coreUserSettings.MaximumNumberOfCoresToUse).Returns(2);
          _parameterIdentification = new ParameterIdentification().WithId("PI");
+         _concurrencyManager = new ConcurrencyManager();
 
-         sut = new ParameterIdentificationEngine(_eventPublisher, _parameterIdentificationRunFactory, _coreUserSettings);
+         sut = new ParameterIdentificationEngine(_eventPublisher, _parameterIdentificationRunFactory, _coreUserSettings, _concurrencyManager);
       }
    }
 

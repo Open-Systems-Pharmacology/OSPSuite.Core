@@ -39,6 +39,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       {
          var token = _cancellationTokenSource.Token;
          _eventPublisher.PublishEvent(new ParameterIdentificationStartedEvent(parameterIdentification));
+         ConcurrentDictionary<IParameterIdentificationRun, ConcurrencyManagerResult<ParameterIdentificationRunResult>> results = new ConcurrentDictionary<IParameterIdentificationRun, ConcurrencyManagerResult<ParameterIdentificationRunResult>>();
 
          var parameterIdentificationRuns = new List<IParameterIdentificationRun>();
          try
@@ -47,23 +48,23 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
             parameterIdentificationRuns.Each((pir) => notifyRun(parameterIdentification, pir));
             var parallelOptions = createParallelOptions(token);
 
-            var results = (await 
-               _concurrencyManager.RunAsync(
-                  _coreUserSettings.MaximumNumberOfCoresToUse, 
-                  parameterIdentificationRuns, 
-                  run => Guid.NewGuid().ToString(), 
-                  (core, run, ct) => Task.Run(() => run.Run(ct), ct), 
-                  token
-               )).Select(r => r.Value.Result);
+            await _concurrencyManager.RunAsync(
+               _coreUserSettings.MaximumNumberOfCoresToUse, 
+               parameterIdentificationRuns, 
+               run => Guid.NewGuid().ToString(), 
+               (core, run, ct) => run.Run(ct), 
+               token,
+               results
+            );
                
-            updateParameterIdentificationResults(parameterIdentification, results);
+            updateParameterIdentificationResults(parameterIdentification, results.Select(r => r.Value.Result));
          }
-         /*catch (OperationCanceledException)
+         catch (OperationCanceledException)
          {
-            var finishedResults = results.Where(runShouldBeKept);
+            var finishedResults = results.Select(r => r.Value.Result).Where(runShouldBeKept);
             updateParameterIdentificationResults(parameterIdentification, finishedResults);
             throw;
-         }*/
+         }
          finally
          {
             parameterIdentificationRuns.Each(x => x.Dispose());
