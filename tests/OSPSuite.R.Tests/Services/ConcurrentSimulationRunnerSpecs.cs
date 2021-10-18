@@ -318,9 +318,7 @@ namespace OSPSuite.R.Services
          base.GlobalContext();
          _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("sc_model_2c.pkml"));
          _simulationRunner = Api.GetSimulationRunner();
-         // values = 100,
-         // unit = ospsuite::ospUnits$`Mass per area`$`µg / cm²`),
-
+        
          _containerTask = Api.GetContainerTask();
          _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Mass_balance_observer");
          _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Stratum_corneum_observer");
