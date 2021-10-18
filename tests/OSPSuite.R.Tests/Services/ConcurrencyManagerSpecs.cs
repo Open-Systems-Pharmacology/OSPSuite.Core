@@ -66,30 +66,34 @@ namespace OSPSuite.R.Services
    public class When_running_some_tasks_using_the_concurrency_manager_on_multiple_cores_and_tasks_are_not_running_on_different_thread : concern_for_ConcurrencyManager
    {
       private int[] _data;
-      private ConcurrentDictionary<int, ConcurrencyManagerResult<int>> _results = new ConcurrentDictionary<int, ConcurrencyManagerResult<int>>();
+      private ConcurrentDictionary<AccessCounter, ConcurrencyManagerResult<int>> _results = new ConcurrentDictionary<AccessCounter, ConcurrencyManagerResult<int>>();
+      AccessCounter _counter;
 
       protected override async Task Context()
       {
          await base.Context();
          _data = new[] { 10, 20, 30, 40, 50 };
+         _counter = new AccessCounter();
       }
 
       protected override async Task Because()
       {
-         await sut.RunAsync(3, _data, x => x.ToString(), actionToRun, CancellationToken.None, _results);
+         await sut.RunAsync(3, _data.Select(x => _counter).ToArray(), x => Guid.NewGuid().ToString(), actionToRun, CancellationToken.None, _results);
       }
 
-      private int actionToRun(int coreIndex, int data, CancellationToken token)
+      private int actionToRun(int coreIndex, AccessCounter data, CancellationToken token)
       {
-         return coreIndex + data;
+         data.Enter();
+         Thread.Sleep(100);
+         data.Leave();
+         return coreIndex;
+
       }
 
       [Observation]
       public void should_spread_the_data_to_run_as_expected()
       {
-         // we expect some data to not be equal to their id as we add the core index
-         var outputs = _results.Values.Select(x => x.Result).OrderBy(x => x).ToArray();
-         outputs.ShouldNotBeEqualTo(_data);
+         _counter.Max.ShouldBeEqualTo(3);
       }
    }
 
