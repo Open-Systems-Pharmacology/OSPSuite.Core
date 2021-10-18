@@ -12,6 +12,7 @@ using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presentation
 {
@@ -30,6 +31,7 @@ namespace OSPSuite.Presentation.Presentation
       protected CurveChart _chart;
       protected BaseGrid _baseGrid;
       protected DataColumn _standardColumn;
+      protected DataColumn _standardColumn2;
 
       protected override void Context()
       {
@@ -52,6 +54,10 @@ namespace OSPSuite.Presentation.Presentation
 
          _baseGrid = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
          _standardColumn = new DataColumn("Standard", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
+         {
+            DataInfo = new DataInfo(ColumnOrigins.Calculation),
+         };
+         _standardColumn2 = new DataColumn("Standard_2", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
          {
             DataInfo = new DataInfo(ColumnOrigins.Calculation),
          };
@@ -158,6 +164,23 @@ namespace OSPSuite.Presentation.Presentation
          _newCurve.CurveOptions.VisibleInLegend.ShouldBeEqualTo(false);
          _newCurve.CurveOptions.Symbol.ShouldBeEqualTo(Symbols.Diamond);
          _newCurve.CurveOptions.LineStyle.ShouldBeEqualTo(LineStyles.DashDot);
+      }
+   }
+   public class When_adding_a_curve_for_a_columns_grouped_for_the_same_color : concern_for_ChartEditorPresenter
+   {
+      private Curve _curve;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut.AddCurvesWithSameColorForColumn(new List<DataColumn>() {_standardColumn, _standardColumn2});
+      }
+
+      [Observation]
+      public void both_curves_should_have_the_same_value()
+      {
+         sut.Chart.Curves.Count.ShouldBeEqualTo(2);
+         sut.Chart.Curves.Each(elem => elem.Color.ShouldBeEqualTo(sut.Chart.Curves.First().Color));
       }
    }
 
