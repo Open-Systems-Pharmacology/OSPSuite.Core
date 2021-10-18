@@ -168,7 +168,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void but_should_not_exceed_cores()
       {
-         _accessCounter.Max.ShouldBeSmallerThan(Environment.ProcessorCount);
+         _accessCounter.Max.ShouldBeSmallerThanOrEqualTo(Environment.ProcessorCount);
       }
    }
 }
