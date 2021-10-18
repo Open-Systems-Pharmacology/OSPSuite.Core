@@ -74,6 +74,7 @@ namespace OSPSuite.R.Domain
 
       public void Initialize(IModelCoreSimulation simulation, SimulationBatchOptions simulationBatchOptions)
       {
+         _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
          //SimModel optionally caches XML used for loading a simulation as string.
          //This XML string was used e.g. by the old Matlab-/R-Toolbox when saving a simulation to XML.
          //C++ export also depends on the original XML string at the moment (not quite clear why).
@@ -82,7 +83,6 @@ namespace OSPSuite.R.Domain
          _simModelBatch.InitializeWith(simulation, simulationBatchOptions.Parameters, simulationBatchOptions.Molecules, simulationBatchOptions.CalculateSensitivity);
          //This needs to be done after initialization of the SimModelBatch so that we can check parameters
          validate(simulationBatchOptions);
-         _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
          _simulationBatchOptions = simulationBatchOptions;
       }
 

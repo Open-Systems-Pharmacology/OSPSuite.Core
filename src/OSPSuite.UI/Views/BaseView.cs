@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OSPSuite.DataBinding;
 using OSPSuite.Utility.Extensions;
@@ -107,6 +108,21 @@ namespace OSPSuite.UI.Views
          this.DoWithinExceptionHandler(() =>
          {
             action();
+            if (notifyViewChanged)
+               NotifyViewChanged();
+         });
+      }
+
+      /// <summary>
+      ///    Encapsulate the call to <c>DoWithinExceptionHandler</c> for events to ease readability
+      ///    and ensures that the <see cref="NotifyViewChanged" /> methods is being called if the
+      ///    <paramref name="notifyViewChanged" /> is set to true
+      /// </summary>
+      protected virtual void OnEvent(Func<Task> action, bool notifyViewChanged = false)
+      {
+         this.DoWithinExceptionHandler(async () =>
+         {
+            await action();
             if (notifyViewChanged)
                NotifyViewChanged();
          });
