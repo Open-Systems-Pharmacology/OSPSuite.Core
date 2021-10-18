@@ -365,4 +365,65 @@ namespace OSPSuite.R.Services
             expectedResults.AllValuesFor("DERMAL_APPLICATION_AREA|permeant|Vehicle_observer").Last());
       }
    }
+
+   public class When_running_simulation_giving_different_results_in_R_with_another_order : concern_for_ConcurrentSimulationRunner
+   {
+      private Simulation _simulation;
+      private ConcurrentRunSimulationBatch _simulationBatch;
+      private SimulationBatchRunValues _parValues;
+      private ISimulationRunner _simulationRunner;
+      private IContainerTask _containerTask;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("sc_model_2c.pkml"));
+         _simulationRunner = Api.GetSimulationRunner();
+
+         _containerTask = Api.GetContainerTask();
+         _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Mass_balance_observer");
+         _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Stratum_corneum_observer");
+         _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Vehicle_observer");
+
+         _simulationBatch = new ConcurrentRunSimulationBatch
+         (
+            _simulation,
+            new SimulationBatchOptions
+            {
+               VariableParameters = new[]
+               {
+                  "DERMAL_APPLICATION_AREA|skin_compartment|SC_skin_sublayer|SC_total_thickness",
+                  "DERMAL_APPLICATION_AREA|skin_compartment|Hydrated SC",
+               }
+            }
+         );
+
+
+         _parValues = new SimulationBatchRunValues
+         {
+            ParameterValues = new[]
+            {
+               0.0002,1
+            }
+         };
+
+
+         _simulationBatch.AddSimulationBatchRunValues(_parValues);
+         sut.AddSimulationBatch(_simulationBatch);
+      }
+
+      [Observation]
+      public void should_calculate_the_value_properly()
+      {
+         var res = sut.RunConcurrently();
+         var asyncRes = res[0].Result;
+         _containerTask.SetValueByPath(_simulation, "DERMAL_APPLICATION_AREA|skin_compartment|SC_skin_sublayer|SC_total_thickness", 0.0002, throwIfNotFound: true);
+         _containerTask.SetValueByPath(_simulation, "DERMAL_APPLICATION_AREA|skin_compartment|Hydrated SC", 1, throwIfNotFound: true);
+         var expectedResults = _simulationRunner.Run(new SimulationRunArgs { Simulation = _simulation });
+         res[0].Succeeded.ShouldBeTrue();
+         asyncRes.Count.ShouldBeEqualTo(1);
+         asyncRes.AllValuesFor("DERMAL_APPLICATION_AREA|permeant|Vehicle_observer").Last().ShouldBeEqualTo(
+            expectedResults.AllValuesFor("DERMAL_APPLICATION_AREA|permeant|Vehicle_observer").Last());
+      }
+   }
 }

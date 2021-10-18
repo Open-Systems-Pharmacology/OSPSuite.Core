@@ -87,19 +87,20 @@ namespace OSPSuite.R.Domain
       }
 
       /// <summary>
-      /// Export model as C++ code; keep parameters and initial values set in InitializeWith as variable
+      ///    Export model as C++ code; keep parameters and initial values set in InitializeWith as variable
       /// </summary>
       /// <param name="outputFolder">Model .cpp file will be created here</param>
       /// <param name="fullMode">
-      ///   If true: all parameters will be set as to be varied before export (will only have effect if SimModel simulation was not finalized yet
-      ///   If false: parameters will be simplified (where possible)
+      ///    If true: all parameters will be set as to be varied before export (will only have effect if SimModel simulation was
+      ///    not finalized yet
+      ///    If false: parameters will be simplified (where possible)
       /// </param>
       /// <param name="modelName">
-      ///   If empty (default): model will be named Standard and exported to Standard.cpp
-      ///   Otherwise: model will be named to "modelName" in the C++ code and exported to modelName.cpp.
-      ///              modelName must be both valid file name AND valid C++ identifier in such a case
+      ///    If empty (default): model will be named Standard and exported to Standard.cpp
+      ///    Otherwise: model will be named to "modelName" in the C++ code and exported to modelName.cpp.
+      ///    modelName must be both valid file name AND valid C++ identifier in such a case
       /// </param>
-      public void ExportToCPPCode(string outputFolder, bool fullMode, string modelName="")
+      public void ExportToCPPCode(string outputFolder, bool fullMode, string modelName = "")
       {
          var exportMode = fullMode ? CodeExportMode.Formula : CodeExportMode.Values;
          _simModelBatch.ExportToCPPCode(outputFolder, exportMode, modelName);
