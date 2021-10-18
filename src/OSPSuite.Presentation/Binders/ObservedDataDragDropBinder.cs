@@ -25,7 +25,7 @@ namespace OSPSuite.Presentation.Binders
          return getObservedDataNodesFrom(e).Select(observedDataNode => observedDataNode.Tag.Subject).ToList();
       }
 
-      public Cache<string, List<DataRepository>> DroppedObservedDataFromWithFolderPath(IDragEvent e)
+      public Cache<string, List<DataRepository>> DroppedObservedDataWithFolderPathFrom(IDragEvent e)
       {
          var dataNodes = e.Data<IEnumerable<ITreeNode>>();
 
@@ -33,8 +33,7 @@ namespace OSPSuite.Presentation.Binders
             return new Cache<string, List<DataRepository>>();
 
          var treeNodes = dataNodes as IList<ITreeNode> ?? dataNodes.ToList();
-         //ask Michael: any reason that in the existing code we do not use else if?
-         //we could spare one comparison
+
          if (areAllObservedDataNodes(treeNodes))
             return observedDataNodesWithFolderPathFromObservedDataNodes(treeNodes);
 
@@ -118,6 +117,7 @@ namespace OSPSuite.Presentation.Binders
          return observedDataWithFolderAddressCache;
       }
 
+      //when dragging and dropping just a selection of observed data and not folders, each one should get a different color
       private static Cache<string, List<DataRepository>> observedDataNodesWithFolderPathFromObservedDataNodes(IEnumerable<ITreeNode> treeNodes)
       {
          var observedDataWithFolderAddressCache = new Cache<string, List<DataRepository>>();
@@ -126,10 +126,7 @@ namespace OSPSuite.Presentation.Binders
             var observedDataNode = node as ObservedDataNode;
             if (observedDataNode != null)
             {
-               if (observedDataWithFolderAddressCache.Contains(observedDataNode.ParentNode.Id))
-                  observedDataWithFolderAddressCache[observedDataNode.ParentNode.Id].Add(observedDataNode.Tag.Subject);
-               else
-                  observedDataWithFolderAddressCache.Add(observedDataNode.ParentNode.Id, new List<DataRepository> { observedDataNode.Tag.Subject });
+               observedDataWithFolderAddressCache.Add(observedDataNode.Id, new List<DataRepository> { observedDataNode.Tag.Subject });
             }
          });
          return observedDataWithFolderAddressCache;

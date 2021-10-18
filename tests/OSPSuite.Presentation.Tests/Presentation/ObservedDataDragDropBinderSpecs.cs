@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using FakeItEasy;
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
@@ -251,6 +252,95 @@ namespace OSPSuite.Presentation.Presentation
       public void should_return_all_underlying_observed_data()
       {
          sut.DroppedObservedDataFrom(_dragEventArgs).ShouldOnlyContainInOrder(_repository1, _repository2);
+      }
+   }
+
+   public class When_retrieving_the_dropped_observed_data_color_grouped_for_an_observed_data_node : concern_for_ObservedDataDragDropBinder
+   {
+      private DataRepository _repository;
+
+      protected override void Context()
+      {
+         _repository = A.Fake<DataRepository>();
+         _data = new DragDropInfo(
+            new List<ITreeNode>
+            {
+               new ObservedDataNode(new ClassifiableObservedData { Subject = _repository })
+            });
+         base.Context();
+      }
+
+      [Observation]
+      public void should_return_the_underlying_observed_data_with_its_ID_as_key()
+      {
+         var result = sut.DroppedObservedDataWithFolderPathFrom(_dragEventArgs);
+         result.Count.ShouldBeEqualTo(1);
+         result[((_data.Subject as List<ITreeNode>)[0] as ObservedDataNode).Id].ShouldOnlyContain(_repository);
+      }
+   }
+
+   public class When_retrieving_the_dropped_observed_data_color_grouped_for_a_classification_node : concern_for_ObservedDataDragDropBinder
+   {
+      private DataRepository _repository1;
+      private DataRepository _repository2;
+
+      protected override void Context()
+      {
+         _repository1 = new DataRepository();
+         _repository2 = new DataRepository();
+         var classificationNode = new ClassificationNode(new Classification { ClassificationType = ClassificationType.ObservedData });
+         classificationNode.AddChild(new ObservedDataNode(new ClassifiableObservedData { Subject = _repository1 }));
+         classificationNode.AddChild(new ObservedDataNode(new ClassifiableObservedData { Subject = _repository2 }));
+
+         _data = new DragDropInfo(
+            new List<ITreeNode>
+            {
+               classificationNode
+            });
+         base.Context();
+      }
+
+      [Observation]
+      public void should_return_all_underlying_observed_data()
+      {
+         var result = sut.DroppedObservedDataWithFolderPathFrom(_dragEventArgs);
+         result.Count.ShouldBeEqualTo(1);
+         result[((_data.Subject as List<ITreeNode>)[0] as ClassificationNode).Id].ShouldOnlyContain(_repository1, _repository2);
+      }
+   }
+
+   public class When_retrieving_the_dropped_observed_data_color_grouped_for_the_observed_data_folder : concern_for_ObservedDataDragDropBinder
+   {
+      private DataRepository _repository1;
+      private DataRepository _repository2;
+
+      protected override void Context()
+      {
+         _repository1 = A.Fake<DataRepository>();
+         _repository2 = A.Fake<DataRepository>();
+         var rootNode = new RootNode(new RootNodeType("ObservedDataFolder", ApplicationIcons.ObservedDataFolder, ClassificationType.ObservedData));
+         var classificationNode = new ClassificationNode(new Classification());
+         classificationNode.AddChild(new ObservedDataNode(new ClassifiableObservedData { Subject = _repository2 }));
+         rootNode.AddChild(classificationNode);
+         rootNode.AddChild(new ObservedDataNode(new ClassifiableObservedData { Subject = _repository1 }));
+         _data = new DragDropInfo(
+            new List<ITreeNode>
+            {
+               rootNode
+            });
+         base.Context();
+      }
+
+      [Observation]
+      public void should_return_all_underlying_observed_data()
+      {
+         var result = sut.DroppedObservedDataWithFolderPathFrom(_dragEventArgs);
+         result.Count.ShouldBeEqualTo(2);
+         
+         var rootNode = (_data.Subject as List<ITreeNode>)[0] as RootNode;
+         result[rootNode.Id].ShouldOnlyContain(_repository1);
+         var classificationNode = rootNode.AllNodes.FirstOrDefault(node => (node as ClassificationNode) != null);
+         result[classificationNode.Id].ShouldOnlyContain(_repository2);
       }
    }
 }
