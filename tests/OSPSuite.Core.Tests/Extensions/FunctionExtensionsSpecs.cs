@@ -4,7 +4,7 @@ using System;
 
 namespace OSPSuite.Core.Extensions
 {
-   public abstract class concern_for_FunctioExtensions : ContextSpecification<Func<int, int>>
+   public abstract class concern_for_FunctionExtensions : ContextSpecification<Func<int, int>>
    {
       protected Func<int, int> inc;
       protected Func<int, int> dup;
@@ -15,7 +15,7 @@ namespace OSPSuite.Core.Extensions
       }
    }
 
-   public class FunctionComposition_inc_dup : concern_for_FunctioExtensions
+   public class FunctionComposition_inc_dup : concern_for_FunctionExtensions
    {
       protected override void Because()
       {
@@ -29,7 +29,7 @@ namespace OSPSuite.Core.Extensions
       }
    }
 
-   public class FunctionComposition_dup_inc : concern_for_FunctioExtensions
+   public class FunctionComposition_dup_inc : concern_for_FunctionExtensions
    {
       protected override void Because()
       {
