@@ -32,7 +32,7 @@ namespace OSPSuite.R.Services
 
    public class When_running_simulations_concurrently : concern_for_ConcurrentSimulationRunner
    {
-      private ConcurrencyManagerResult<SimulationResults>[] _results;
+      private ConcurrentResult<SimulationResults>[] _results;
 
       protected override void Context()
       {
@@ -60,7 +60,7 @@ namespace OSPSuite.R.Services
    public class When_running_a_batch_simulation_run_concurrently : concern_for_ConcurrentSimulationRunner
    {
       private ConcurrentRunSimulationBatch _concurrentRunSimulationBatch;
-      private ConcurrencyManagerResult<SimulationResults>[] _results;
+      private ConcurrentResult<SimulationResults>[] _results;
       private IModelCoreSimulation _simulation;
       private readonly List<string> _ids = new List<string>();
       private readonly List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
