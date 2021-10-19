@@ -62,8 +62,12 @@ namespace OSPSuite.Core.Domain.Services
          if (variableParameterPaths == null)
             return Array.Empty<ParameterProperties>();
          
-         var allParameters = simulation.ParameterProperties;
-         var parametersToBeVaried = allParameters.Where(p => variableParameterPaths.Contains(p.Path)).ToList();
+         var parametersToBeVaried = variableParameterPaths.Join(
+            simulation.ParameterProperties,
+            path => path,
+            p => p.Path,
+            (path, p) => p
+         ).ToList();
 
          parametersToBeVaried.Each(p => p.CalculateSensitivity = calculateSensitivities);
 
@@ -77,8 +81,12 @@ namespace OSPSuite.Core.Domain.Services
          if (variableMoleculePaths == null)
             return Array.Empty<SpeciesProperties>();
 
-         var allMolecules = simulation.SpeciesProperties;
-         var moleculeToBeVaried = allMolecules.Where(p => variableMoleculePaths.Contains(p.Path)).ToList();
+         var moleculeToBeVaried = variableMoleculePaths.Join(
+            simulation.SpeciesProperties,
+            path => path,
+            m => m.Path,
+            (path, m) => m
+         ).ToList();
          simulation.VariableSpecies = moleculeToBeVaried;
          return moleculeToBeVaried;
       }
