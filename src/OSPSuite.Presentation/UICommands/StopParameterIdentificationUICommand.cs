@@ -15,7 +15,7 @@ namespace OSPSuite.Presentation.UICommands
 
       protected override void PerformExecute()
       {
-         _parameterIdentificationRunner.Stop();
+         _parameterIdentificationRunner.Stop(Subject);
       }
    }
 }

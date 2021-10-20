@@ -30,7 +30,7 @@ namespace OSPSuite.Core.Domain
          _parameterIdentification = new ParameterIdentification().WithId("PI");
          _concurrencyManager = new ConcurrencyManager();
 
-         sut = new ParameterIdentificationEngine(_eventPublisher, _parameterIdentificationRunFactory, _coreUserSettings, _concurrencyManager);
+         sut = new ParameterIdentificationEngine(_eventPublisher, _parameterIdentificationRunFactory, _coreUserSettings);
       }
    }
 

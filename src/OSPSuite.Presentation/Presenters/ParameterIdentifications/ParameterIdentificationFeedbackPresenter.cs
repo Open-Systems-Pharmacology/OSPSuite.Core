@@ -88,9 +88,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
             showParameterIdentificationFeedback();
             return;
          }
-
-         _parameterIdentification = null;
-         clearFeedbackReferences();
       }
 
       private void showParameterIdentificationFeedback()
