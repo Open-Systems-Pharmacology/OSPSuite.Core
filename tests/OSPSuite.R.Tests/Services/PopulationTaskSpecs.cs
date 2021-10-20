@@ -111,7 +111,7 @@ namespace OSPSuite.R.Services
 
       protected override void Because()
       {
-         _result = sut.SplitPopulation(_populationFile, _numberOfCores, _outputFolder, "PopFile");
+         _result = sut.SplitPopulation(_populationFile, _outputFolder, "PopFile");
       }
 
       [Observation]
@@ -146,7 +146,7 @@ namespace OSPSuite.R.Services
 
       protected override void Because()
       {
-         _result = sut.SplitPopulation(_populationFile, _numberOfCores, _outputFolder, "PopFile");
+         _result = sut.SplitPopulation(_populationFile, _outputFolder, "PopFile");
       }
 
       [Observation]
@@ -183,7 +183,7 @@ namespace OSPSuite.R.Services
 
       protected override void Because()
       {
-         _result = sut.SplitPopulation(_populationFile, _numberOfCores, _outputFolder, "PopFile");
+         _result = sut.SplitPopulation(_populationFile, _outputFolder, "PopFile");
       }
 
       [Observation]

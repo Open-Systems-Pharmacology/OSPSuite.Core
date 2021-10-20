@@ -43,7 +43,7 @@ namespace OSPSuite.Core.Domain.Services
             if (numberOfCoresToUse < 1)
                numberOfCoresToUse = 1;
 
-            _populationDataSplitter = new PopulationDataSplitter(numberOfCoresToUse, populationData, agingData, initialValues);
+            _populationDataSplitter = new PopulationDataSplitter(populationData, agingData, initialValues);
             _cancellationTokenSource = new CancellationTokenSource();
             _populationRunResults = new PopulationRunResults();
 
@@ -56,11 +56,17 @@ namespace OSPSuite.Core.Domain.Services
             //create simmodel-XML
             var simulationExport = await CreateSimulationExportAsync(simulation, SimModelExportMode.Optimized);
 
-            //Starts one task per core
-            var tasks = Enumerable.Range(0, numberOfCoresToUse)
-               .Select(coreIndex => runSimulation(coreIndex, simulationExport, _cancellationTokenSource.Token)).ToList();
+            var parallelOptions = new ParallelOptions()
+            {
+               CancellationToken = _cancellationTokenSource.Token,
+               MaxDegreeOfParallelism = numberOfCoresToUse
+            };
 
-            await Task.WhenAll(tasks);
+            await Task.Run(() => Parallel.ForEach(Enumerable.Range(0, _numberOfSimulationsToRun), parallelOptions, (index) =>
+            {
+               parallelOptions.CancellationToken.ThrowIfCancellationRequested();
+               runSimulation(index, simulationExport, parallelOptions.CancellationToken);
+            }));
             //all tasks are completed. Can return results
 
             _populationRunResults.SynchronizeResults();
@@ -76,60 +82,54 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private Task runSimulation(int coreIndex, string simulationExport, CancellationToken cancellationToken)
+      private void runSimulation(int index, string simulationExport, CancellationToken cancellationToken)
       {
-         return Task.Run(() =>
+         using (var sim = createAndFinalizeSimulation(simulationExport, cancellationToken))
          {
-            using (var sim = createAndFinalizeSimulation(simulationExport, cancellationToken))
-            {
-               simulate(sim, coreIndex, cancellationToken);
-            }
-         }, cancellationToken);
+            simulate(sim, index, cancellationToken);
+         }
       }
 
       /// <summary>
       ///    Perform single simulation run
       /// </summary>
       /// <param name="simulation">SimModel simulation (loaded and finalized)</param>
-      /// <param name="coreIndex">0..NumberOfCores-1</param>
+      /// <param name="index">0..NumberOfCores-1</param>
       /// <param name="cancellationToken">Token used to cancel the action if required</param>
-      private void simulate(Simulation simulation, int coreIndex, CancellationToken cancellationToken)
+      private void simulate(Simulation simulation, int index, CancellationToken cancellationToken)
       {
-         var allIndividuals = _populationDataSplitter.GetIndividualIdsFor(coreIndex);
+         var individualId = _populationDataSplitter.GetIndividualIdsFor(index);
 
          var variableParameters = simulation.VariableParameters.ToList();
          var variableSpecies = simulation.VariableSpecies.ToList();
 
-         foreach (var individualId in allIndividuals)
+         cancellationToken.ThrowIfCancellationRequested();
+
+         //get row indices for the simulations on current core
+         _populationDataSplitter.UpdateParametersAndSpeciesValuesForIndividual(individualId, variableParameters, variableSpecies, _parameterCache);
+
+
+         //set new parameter values into SimModel
+         simulation.SetParameterValues();
+
+         //set new initial values into SimModel
+         simulation.SetSpeciesValues();
+
+         try
          {
-            cancellationToken.ThrowIfCancellationRequested();
+            simulation.RunSimulation();
+            _populationRunResults.Add(individualResultsFrom(simulation, individualId));
+         }
+         catch (Exception ex)
+         {
+            _populationRunResults.AddFailure(individualId, ex.FullMessage());
+         }
+         finally
+         {
+            _populationRunResults.AddWarnings(individualId, WarningsFrom(simulation));
 
-            //get row indices for the simulations on current core
-            _populationDataSplitter.UpdateParametersAndSpeciesValuesForIndividual(individualId, variableParameters, variableSpecies, _parameterCache);
-
-
-            //set new parameter values into SimModel
-            simulation.SetParameterValues();
-
-            //set new initial values into SimModel
-            simulation.SetSpeciesValues();
-
-            try
-            {
-               simulation.RunSimulation();
-               _populationRunResults.Add(individualResultsFrom(simulation, individualId));
-            }
-            catch (Exception ex)
-            {
-               _populationRunResults.AddFailure(individualId, ex.FullMessage());
-            }
-            finally
-            {
-               _populationRunResults.AddWarnings(individualId, WarningsFrom(simulation));
-
-               //Could lead to a wrong progress if two threads are accessing the value at the same time
-               SimulationProgress(this, new MultipleSimulationsProgressEventArgs(++_numberOfProcessedSimulations, _numberOfSimulationsToRun));
-            }
+            //Could lead to a wrong progress if two threads are accessing the value at the same time
+            SimulationProgress(this, new MultipleSimulationsProgressEventArgs(++_numberOfProcessedSimulations, _numberOfSimulationsToRun));
          }
       }
 

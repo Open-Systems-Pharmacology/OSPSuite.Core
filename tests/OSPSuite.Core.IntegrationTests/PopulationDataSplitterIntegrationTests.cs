@@ -18,7 +18,6 @@ namespace OSPSuite.Core
       protected DataTable _agingData;
       protected DataTable _populationData;
       protected DataTable _initialValuesData;
-      protected const int _numberOfCores = 2;
       protected string _nonAgingPath = new[] {ConstantsForSpecs.Organism, ConstantsForSpecs.BW}.ToPathString();
       private IModelCoreSimulation _simulation;
       protected IObjectPathFactory _objectPathFactory;
@@ -43,7 +42,7 @@ namespace OSPSuite.Core
          _agingData = createPopAgingParameters();
          _initialValuesData = createPopInitialValues();
          _parameterCache = entityInSimulationRetriever.ParametersFrom(_simulation);
-         sut = new PopulationDataSplitter(_numberOfCores, _populationData, _agingData, _initialValuesData );
+         sut = new PopulationDataSplitter(_populationData, _agingData, _initialValuesData );
 
          _variableParameters = _simModelManagerForSpecs.SetVariableParameters(_simModelSimulation, sut.ParameterPathsToBeVaried());
          _variableSpecies = _simModelManagerForSpecs.SetVariableSpecies(_simModelSimulation, sut.InitialValuesPathsToBeVaried());
@@ -243,7 +242,7 @@ namespace OSPSuite.Core
          base.Context();
 
          _initialValuesData = createEmptyInitialValuesData();
-         sut = new PopulationDataSplitter(_numberOfCores, _populationData, _agingData, _initialValuesData);
+         sut = new PopulationDataSplitter(_populationData, _agingData, _initialValuesData);
 
          _variableParameters = _simModelManagerForSpecs.SetVariableParameters(_simModelSimulation, sut.ParameterPathsToBeVaried());
          _variableSpecies = _simModelManagerForSpecs.SetVariableSpecies(_simModelSimulation, sut.InitialValuesPathsToBeVaried());
@@ -265,38 +264,6 @@ namespace OSPSuite.Core
       [Observation]
       public void should_not_crash_with_empty_table()
       {
-      }
-   }
-
-   internal class When_getting_Individual_id_s_for_first_core : concern_for_PopulationDataSplitterSpecs
-   {
-      private IEnumerable<int> _result;
-
-      protected override void Because()
-      {
-         _result = sut.GetIndividualIdsFor(0);
-      }
-
-      [Observation]
-      public void should_return_the_First_IDs()
-      {
-         _result.ShouldOnlyContain(0, 1);
-      }
-   }
-
-   internal class When_getting_Individual_id_s_for_last_core : concern_for_PopulationDataSplitterSpecs
-   {
-      private IEnumerable<int> _result;
-
-      protected override void Because()
-      {
-         _result = sut.GetIndividualIdsFor(1);
-      }
-
-      [Observation]
-      public void should_return_the_Last_IDs()
-      {
-         _result.ShouldOnlyContain(2);
       }
    }
 }

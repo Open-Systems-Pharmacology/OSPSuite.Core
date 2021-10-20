@@ -12,16 +12,12 @@ namespace OSPSuite.Core.Domain.Services
       private readonly DataTable _populationData;
       private readonly DataTable _agingData;
       private readonly DataTable _initialValues;
-      private readonly int _numberOfCores;
-      private readonly int _numberOfSimulationsPerCore;
 
-      public PopulationDataSplitter(int numberOfCores, DataTable populationData, DataTable agingData = null, DataTable initialValues = null)
+      public PopulationDataSplitter(DataTable populationData, DataTable agingData = null, DataTable initialValues = null)
       {
          _populationData = populationData;
          _agingData = agingData ?? undefinedAgingData();
          _initialValues = initialValues ?? undefinedInitialValues();
-         _numberOfCores = numberOfCores;
-         _numberOfSimulationsPerCore = getNumberOfSimulationsPerCore();
       }
 
       private DataTable undefinedAgingData()
@@ -45,40 +41,12 @@ namespace OSPSuite.Core.Domain.Services
          fillParameterAndSpeciesInitialValuesFor(individualId, parameterProperties, speciesProperties, parameterCache);
       }
 
-      public IReadOnlyList<int> GetIndividualIdsFor(int coreIndex)
+      public int GetIndividualIdsFor(int index)
       {
-         var rowIndices = GetRowIndices(coreIndex);
-         return rowIndices.Select(rowIndex => _populationData.Rows[rowIndex])
-            .Select(individualIdFrom).ToList();
-      }
-
-      private int getNumberOfSimulationsPerCore()
-      {
-         int numberOfJobs = NumberOfIndividuals;
-
-         //cannot use more cores than jobs
-         int numberOfCoresToUse = Math.Min(numberOfJobs, _numberOfCores);
-
-         int rowsPerCore = numberOfJobs / numberOfCoresToUse;
-
-         if (rowsPerCore * _numberOfCores < numberOfJobs)
-            rowsPerCore += 1;
-
-         return rowsPerCore;
+         return individualIdFrom(_populationData.Rows[index]);
       }
 
       public int NumberOfIndividuals => _populationData.Rows.Count;
-
-      public IEnumerable<int> GetRowIndices(int coreIndex)
-      {
-         int firstRow = _numberOfSimulationsPerCore * coreIndex;
-
-         //Zero based index
-         int lastRow = Math.Min(NumberOfIndividuals - 1, firstRow + _numberOfSimulationsPerCore - 1);
-
-         for (int i = firstRow; i <= lastRow; i++)
-            yield return i;
-      }
 
       private static int individualIdFrom(DataRow popParametersDataRow)
       {

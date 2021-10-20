@@ -45,7 +45,7 @@ namespace OSPSuite.R.Services
          var tmpFile = FileHelper.GenerateTemporaryFileName();
          _outputFolder = new FileInfo(tmpFile).DirectoryName;
          //Take the 3 out of 5 which would have indices 6 and 7 
-         _subPopulationFile = _populationTask.SplitPopulation(_populationFile, 5, _outputFolder, "TestSplit")[3];
+         _subPopulationFile = _populationTask.SplitPopulation(_populationFile, _outputFolder, "TestSplit")[3];
          _subPopulation = _populationTask.ImportPopulation(_subPopulationFile);
       }
 

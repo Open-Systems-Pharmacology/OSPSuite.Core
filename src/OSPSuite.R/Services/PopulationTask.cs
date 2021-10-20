@@ -20,12 +20,11 @@ namespace OSPSuite.R.Services
       DataTable PopulationTableFrom(IndividualValuesCache population, IModelCoreSimulation simulation = null);
 
       /// <summary>
-      /// Loads the population from the <paramref name="populationFile"/> and split the loaded population according to the <paramref name="numberOfCores"/>.
       /// Resulting files will be exported in the <paramref name="outputFolder"/>. File names will be constructed using the <paramref name="outputFileName"/>
       /// concatenated with the core index.
       /// Returns an array of string containing the full path of the population files created
       /// </summary>
-      string[] SplitPopulation(string populationFile, int numberOfCores, string outputFolder, string outputFileName);
+      string[] SplitPopulation(string populationFile, string outputFolder, string outputFileName);
    }
 
    public class PopulationTask : IPopulationTask
@@ -78,37 +77,29 @@ namespace OSPSuite.R.Services
          return dataTable;
       }
 
-      public string[] SplitPopulation(string populationFile, int numberOfCores, string outputFolder, string outputFileName)
+      public string[] SplitPopulation(string populationFile, string outputFolder, string outputFileName)
       {
          var population = ImportPopulation(populationFile);
          var populationData = PopulationTableFrom(population);
-         var dataSplitter = new PopulationDataSplitter(numberOfCores, populationData);
+         var dataSplitter = new PopulationDataSplitter(populationData);
          DirectoryHelper.CreateDirectory(outputFolder);
          var outputFiles = new List<string>();
 
-         for (int i = 0; i < numberOfCores; i++)
+         population.IndividualIds.Each(id => 
          {
-            var outputFile = Path.Combine(outputFolder, $"{outputFileName}_{i + 1}{Constants.Filter.CSV_EXTENSION}");
-            var rowIndices = dataSplitter.GetRowIndices(i).ToList();
+            var outputFile = Path.Combine(outputFolder, $"{outputFileName}_{id + 1}{Constants.Filter.CSV_EXTENSION}");
 
-            //This is potentially empty if the number of individuals in the population is less than the number of cores provided
-            if(!rowIndices.Any())
-               continue;
-            
             outputFiles.Add(outputFile);
-            exportSplitPopulation(populationData, rowIndices, outputFile);
-         }
+            exportSplitPopulation(populationData, id, outputFile);
+         });
 
          return outputFiles.ToArray();
       }
 
-      private void exportSplitPopulation(DataTable populationData, IReadOnlyList<int> rowIndices, string outputFile)
+      private void exportSplitPopulation(DataTable populationData, int rowIndex, string outputFile)
       {
          var dataTable = populationData.Clone();
-         rowIndices.Each(index =>
-         {
-            dataTable.ImportRow(populationData.Rows[index]);
-         });
+         dataTable.ImportRow(populationData.Rows[rowIndex]);
          dataTable.ExportToCSV(outputFile);
       }
 
