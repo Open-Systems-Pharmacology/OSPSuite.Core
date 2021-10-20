@@ -147,7 +147,7 @@ namespace OSPSuite.R.Services
       {
          var (simulation, population, agingData, simulationRunOptions) = simulationRunArgs;
          if (population != null)
-            throw new OSPSuiteException(Error.SettingsOnlyAvailableAsync);
+            return runAsync(simulation, population, agingData, simulationRunOptions).Result; //Not really without a task
          return run(simulation, simulationRunOptions);
       }
    }
