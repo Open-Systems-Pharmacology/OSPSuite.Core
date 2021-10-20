@@ -4,6 +4,7 @@ using OSPSuite.Utility.Events;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using System.Collections.Generic;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
@@ -25,6 +26,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
    public interface IParameterIdentificationFeedbackPresenter : IPresenter<IParameterIdentificationFeedbackView>,
       IToogleablePresenter,
       IListener<ParameterIdentificationStartedEvent>,
+      IListener<ParameterIdentificationSelectedEvent>,
       IListener<ParameterIdentificationTerminatedEvent>,
       IListener<ParameterIdentificationIntermediateResultsUpdatedEvent>,
       IListener<ProjectClosedEvent>
@@ -39,6 +41,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private readonly IMultipleParameterIdentificationFeedbackPresenter _multipleFeedbackPresenter;
       private ParameterIdentification _parameterIdentification;
       private IParameterIdentificationRunFeedbackPresenter _activeFeedbackPresenter;
+      private List<string> _currentPIs;
       public bool ShouldRefreshFeedback { get; set; }
       private ParameterIdentificationFeedbackEditorSettings feedbackEditorSettings => _presenterUserSettings.ParameterIdentificationFeedbackEditorSettings;
 
@@ -54,6 +57,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.BindToProperties();
          _view.NoFeedbackAvailable();
          _activeFeedbackPresenter = null;
+         _currentPIs = new List<string>();
       }
 
       public override void Display()
@@ -69,9 +73,24 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(ParameterIdentificationStartedEvent eventToHandle)
       {
+         _currentPIs.Add(eventToHandle.ParameterIdentification.Id);
          _parameterIdentification = eventToHandle.ParameterIdentification;
          _view.Caption = Captions.ParameterIdentification.FeedbackViewFor(_parameterIdentification.Name);
          showParameterIdentificationFeedback();
+      }
+
+      public void Handle(ParameterIdentificationSelectedEvent eventToHandle)
+      {
+         if (_currentPIs.Contains(eventToHandle.ParameterIdentification.Id))
+         {
+            _parameterIdentification = eventToHandle.ParameterIdentification;
+            _view.Caption = Captions.ParameterIdentification.FeedbackViewFor(_parameterIdentification.Name);
+            showParameterIdentificationFeedback();
+            return;
+         }
+
+         _parameterIdentification = null;
+         clearFeedbackReferences();
       }
 
       private void showParameterIdentificationFeedback()
