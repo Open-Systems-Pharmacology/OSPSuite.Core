@@ -121,7 +121,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    Adds a curves to the chart for all dataColumns in <paramref name="dataColumnList" /> if they do not already exist.
       ///    Curve options will be applied if they are specified and a new curve is created.All the created curves will have
-      ///    the same color.
+      ///    the same color. 
       /// </summary>
       void AddCurvesWithSameColorForColumn(IReadOnlyList<DataColumn> dataColumnList, CurveOptions defaultCurveOptions = null);
 
