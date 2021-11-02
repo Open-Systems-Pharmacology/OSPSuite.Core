@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OSPSuite.Assets;
+using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
@@ -85,8 +86,11 @@ namespace OSPSuite.R.Services
 
    public class ConcurrentSimulationRunner : IConcurrentSimulationRunner
    {
-      public ConcurrentSimulationRunner()
-      { }
+      private readonly ICoreUserSettings _coreUserSettings;
+      public ConcurrentSimulationRunner(ICoreUserSettings coreUserSettings)
+      {
+         _coreUserSettings = coreUserSettings;
+      }
 
       public SimulationRunOptions SimulationRunOptions { get; set; }
 
@@ -111,7 +115,7 @@ namespace OSPSuite.R.Services
          _cancellationTokenSource?.Cancel();
       }
 
-      private int numberOfCores() => SimulationRunOptions?.NumberOfCoresToUse ?? Math.Max(1, Environment.ProcessorCount);
+      private int numberOfCores() => SimulationRunOptions?.NumberOfCoresToUse ?? Math.Max(1, _coreUserSettings.MaximumNumberOfCoresToUse);
 
       private async Task initializeBatches()
       {
