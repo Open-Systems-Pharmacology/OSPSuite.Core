@@ -65,7 +65,7 @@ namespace OSPSuite.Core.Domain.Services
       private void setVariableParameters(Simulation simulation, IReadOnlyList<string> variableParameterPaths)
       {
          _allVariableParameters = SetVariableParameters(simulation, variableParameterPaths, _calculateSensitivities);
-         VariableParameterPaths = _allVariableParameters.Select(x => x.Path).ToList();
+         VariableParameterPaths =  _allVariableParameters.Select(x => x.Path).ToList();
       }
 
       private void setVariableMolecules(Simulation simulation, IReadOnlyList<string> variableMoleculePaths)
