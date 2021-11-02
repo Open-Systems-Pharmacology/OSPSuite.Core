@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using OSPSuite.Assets;
 using OSPSuite.Utility;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Extensions;
@@ -24,7 +23,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private readonly IDialogCreator _dialogCreator;
       private readonly IEntityValidationTask _entityValidationTask;
       private readonly IOSPSuiteExecutionContext _executionContext;
-      private Cache<string, IParameterIdentificationEngine> _parameterIdentificationEngines;
+      private readonly Cache<string, IParameterIdentificationEngine> _parameterIdentificationEngines = new Cache<string, IParameterIdentificationEngine>(onMissingKey: x => null);
 
       public bool IsRunning => _parameterIdentificationEngines.Count > 0;
 
@@ -35,7 +34,6 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          _dialogCreator = dialogCreator;
          _entityValidationTask = entityValidationTask;
          _executionContext = executionContext;
-         _parameterIdentificationEngines = new Cache<string, IParameterIdentificationEngine>();
       }
 
       public async Task Run(ParameterIdentification parameterIdentification)
@@ -68,8 +66,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
       public void Stop(ParameterIdentification parameterIdentification)
       {
-         if (_parameterIdentificationEngines.Contains(parameterIdentification.Id))
-            _parameterIdentificationEngines[parameterIdentification.Id].Stop();
+         _parameterIdentificationEngines[parameterIdentification.Id]?.Stop();
       }
    }
 }
