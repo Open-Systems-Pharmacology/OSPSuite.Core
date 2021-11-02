@@ -128,13 +128,13 @@ namespace OSPSuite.R.Services
          await Task.Run(() =>
             Parallel.ForEach(_listOfConcurrentRunSimulationBatch.SelectMany
             (
-               settings => Enumerable.Range(0, settings.MissingBatchesCount).Select(_ => settings)
+               concurrentSimulationBatch => Enumerable.Range(0, concurrentSimulationBatch.MissingBatchesCount).Select(_ => concurrentSimulationBatch)
             ),
             createParallelOptions(_cancellationTokenSource.Token),
-            settings =>
+            concurrentSimulationBatch =>
             {
                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
-               settings.AddNewBatch();
+               concurrentSimulationBatch.AddNewBatch();
             }),
             _cancellationTokenSource.Token
          );
