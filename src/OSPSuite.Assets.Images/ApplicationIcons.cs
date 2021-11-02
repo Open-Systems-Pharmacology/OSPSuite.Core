@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -535,6 +536,8 @@ namespace OSPSuite.Assets
          //TODO remove when all icons are available as SVG
          if (iconAsBytes == null)
          {
+            //TODO remote debug
+            System.Diagnostics.Debug.WriteLine($"{resName} svg icon not found");
             var icon = _allIcons["PLACENTA"];
             _allIcons.Add(name, icon);
             return icon;
