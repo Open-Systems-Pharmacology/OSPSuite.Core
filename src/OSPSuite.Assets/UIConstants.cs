@@ -941,7 +941,7 @@ namespace OSPSuite.Assets
 
          public static string ParameterIdentificationCanceled(string parameterIdentificationName)
          {
-            return $"Parameter identification \"{parameterIdentificationName}\" canceled";
+            return $"Parameter identification '{parameterIdentificationName}' canceled";
          }
          public static readonly string Best = "Best";
          public static readonly string Current = "Current";
@@ -949,7 +949,7 @@ namespace OSPSuite.Assets
 
          public static string ParameterIdentificationFinished(string parameterIdentificationName, string duration)
          {
-            return $"Parameter identification \"{parameterIdentificationName}\" finished in {duration}";
+            return $"Parameter identification '{parameterIdentificationName}' finished in {duration}";
          }
 
          public static string LinkedParametersIn(string name)
