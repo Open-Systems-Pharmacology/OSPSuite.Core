@@ -81,14 +81,13 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(ParameterIdentificationSelectedEvent eventToHandle)
       {
-         if (_currentPIs.Contains(eventToHandle.ParameterIdentification.Id))
-         {
-            _parameterIdentification = eventToHandle.ParameterIdentification;
-            _view.Caption = Captions.ParameterIdentification.FeedbackViewFor(_parameterIdentification.Name);
-            showParameterIdentificationFeedback();
+         if (!_currentPIs.Contains(eventToHandle.ParameterIdentification.Id))
             return;
-         }
-      }
+
+         _parameterIdentification = eventToHandle.ParameterIdentification;
+         _view.Caption = Captions.ParameterIdentification.FeedbackViewFor(_parameterIdentification.Name);
+         showParameterIdentificationFeedback();
+     }
 
       private void showParameterIdentificationFeedback()
       {
