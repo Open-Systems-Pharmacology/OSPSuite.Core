@@ -56,6 +56,12 @@ namespace OSPSuite.Presentation
       Color ChartDiagramBackColor { get; set; }
 
       /// <summary>
+      ///    When dragging and dropping observed data folders to a chart
+      ///    assign the same color to curves coming from the same folder
+      /// </summary>
+      bool ColorGroupObservedDataFromSameFolder { get; set; }
+
+      /// <summary>
       ///    Default display units defined at the user level
       /// </summary>
       DisplayUnitsManager DisplayUnits { get; set; }

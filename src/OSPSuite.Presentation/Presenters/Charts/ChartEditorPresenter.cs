@@ -6,6 +6,7 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Extensions;
@@ -116,6 +117,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    The new curve or existing if chart already contains a curve for the specified <paramref name="dataColumn" />
       /// </returns>
       Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null);
+
+      /// <summary>
+      ///    Adds a curves to the chart for all dataColumns in <paramref name="dataColumnList" /> if they do not already exist.
+      ///    Curve options will be applied if they are specified and a new curve is created.All the created curves will have
+      ///    the same color. 
+      /// </summary>
+      void AddCurvesWithSameColorForColumn(IReadOnlyList<DataColumn> dataColumnList, CurveOptions defaultCurveOptions = null);
 
       /// <summary>
       ///    Add Button to ChartEditor.
@@ -474,21 +482,50 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _curveSettingsPresenter.CurveNameDefinition = curveNameDefinition;
       }
 
+      public void AddCurvesWithSameColorForColumn(IReadOnlyList<DataColumn> dataColumnList, CurveOptions defaultCurveOptions = null)
+      {
+         var groupColor = Chart.SelectNewColor();
+         foreach (var dataColumn in dataColumnList)
+         {
+            var (exists, curve) = createAndConfigureCurve(dataColumn, defaultCurveOptions);
+
+            if (exists) continue;
+
+            if (defaultCurveOptions != null)
+               curve.CurveOptions.UpdateFrom(defaultCurveOptions);
+
+            curve.Color = groupColor;
+            curve.UpdateStyleForObservedData();
+
+            Chart.AddCurve(curve);
+         }
+      }
+
+
       public Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null)
       {
-         var curve = Chart.CreateCurve(dataColumn.BaseGrid, dataColumn, _curveNameDefinition(dataColumn), _dimensionFactory);
+         var (exists, curve) = createAndConfigureCurve(dataColumn, defaultCurveOptions);
 
-         if (Chart.HasCurve(curve.Id))
-            return Chart.CurveBy(curve.Id);
+         if (exists) return curve;
 
          Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns);
 
          if (defaultCurveOptions != null)
             curve.CurveOptions.UpdateFrom(defaultCurveOptions);
-
+         
          Chart.AddCurve(curve);
 
          return curve;
+      }
+
+      private (bool exists, Curve curve) createAndConfigureCurve (DataColumn dataColumn, CurveOptions defaultCurveOptions)
+      {
+         var curve = Chart.CreateCurve(dataColumn.BaseGrid, dataColumn, _curveNameDefinition(dataColumn), _dimensionFactory);
+
+         if (Chart.HasCurve(curve.Id))
+            return ( true, Chart.CurveBy(curve.Id));
+
+         return (false, curve);
       }
 
       private void addCurvesForColumns(IEnumerable<DataColumn> columns, CurveOptions defaultCurveOptions = null)
