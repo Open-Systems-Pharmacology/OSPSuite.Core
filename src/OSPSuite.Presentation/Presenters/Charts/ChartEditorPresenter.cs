@@ -487,17 +487,15 @@ namespace OSPSuite.Presentation.Presenters.Charts
          var groupColor = Chart.SelectNewColor();
          foreach (var dataColumn in dataColumnList)
          {
-            var curve = Chart.CreateCurve(dataColumn.BaseGrid, dataColumn, _curveNameDefinition(dataColumn), _dimensionFactory);
+            var (exists, curve) = createAndConfigureCurve(dataColumn, defaultCurveOptions);
 
-            if (Chart.HasCurve(curve.Id))
-               continue;
+            if (exists) continue;
+
+            if (defaultCurveOptions != null)
+               curve.CurveOptions.UpdateFrom(defaultCurveOptions);
 
             curve.Color = groupColor;
             curve.UpdateStyleForObservedData();
-            
-            //do we even need defaultOptions here?
-            if (defaultCurveOptions != null)
-               curve.CurveOptions.UpdateFrom(defaultCurveOptions);
 
             Chart.AddCurve(curve);
          }
@@ -506,19 +504,28 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null)
       {
-         var curve = Chart.CreateCurve(dataColumn.BaseGrid, dataColumn, _curveNameDefinition(dataColumn), _dimensionFactory);
+         var (exists, curve) = createAndConfigureCurve(dataColumn, defaultCurveOptions);
 
-         if (Chart.HasCurve(curve.Id))
-            return Chart.CurveBy(curve.Id);
+         if (exists) return curve;
 
          Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns);
 
          if (defaultCurveOptions != null)
             curve.CurveOptions.UpdateFrom(defaultCurveOptions);
-
+         
          Chart.AddCurve(curve);
 
          return curve;
+      }
+
+      private (bool exists, Curve curve) createAndConfigureCurve (DataColumn dataColumn, CurveOptions defaultCurveOptions)
+      {
+         var curve = Chart.CreateCurve(dataColumn.BaseGrid, dataColumn, _curveNameDefinition(dataColumn), _dimensionFactory);
+
+         if (Chart.HasCurve(curve.Id))
+            return ( true, Chart.CurveBy(curve.Id));
+
+         return (false, curve);
       }
 
       private void addCurvesForColumns(IEnumerable<DataColumn> columns, CurveOptions defaultCurveOptions = null)

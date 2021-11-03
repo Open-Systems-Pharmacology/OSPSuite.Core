@@ -275,7 +275,7 @@ namespace OSPSuite.Presentation.Presentation
       {
          var result = sut.DroppedObservedDataWithFolderPathFrom(_dragEventArgs);
          result.Count.ShouldBeEqualTo(1);
-         result[((_data.Subject as List<ITreeNode>)[0] as ObservedDataNode).Id].ShouldOnlyContain(_repository);
+         result[0].ShouldOnlyContain(_repository);
       }
    }
 
@@ -305,7 +305,7 @@ namespace OSPSuite.Presentation.Presentation
       {
          var result = sut.DroppedObservedDataWithFolderPathFrom(_dragEventArgs);
          result.Count.ShouldBeEqualTo(1);
-         result[((_data.Subject as List<ITreeNode>)[0] as ClassificationNode).Id].ShouldOnlyContain(_repository1, _repository2);
+         result[0].ShouldOnlyContain(_repository1, _repository2);
       }
    }
 
@@ -338,9 +338,9 @@ namespace OSPSuite.Presentation.Presentation
          result.Count.ShouldBeEqualTo(2);
          
          var rootNode = (_data.Subject as List<ITreeNode>)[0] as RootNode;
-         result[rootNode.Id].ShouldOnlyContain(_repository1);
+         result[1].ShouldOnlyContain(_repository1);
          var classificationNode = rootNode.AllNodes.FirstOrDefault(node => (node as ClassificationNode) != null);
-         result[classificationNode.Id].ShouldOnlyContain(_repository2);
+         result[0].ShouldOnlyContain(_repository2);
       }
    }
 }
