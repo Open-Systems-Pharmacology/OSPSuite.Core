@@ -68,9 +68,9 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       private bool convertParsedDataColumnAndReturnWarningFlag(DataRepository dataRepository, KeyValuePair<ExtendedColumn, IList<SimulationPoint>> columnAndData, string fileName)
       {
          DataColumn dataColumn;
-         var unit = columnAndData.Value.First().Unit;
+         var unit = columnAndData.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit)).Unit;
          var warningFlag = false;
-         var dimension = columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.SupportedDimensions.FirstOrDefault(x => x.HasUnit(unit));
+         var dimension = columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.SupportedDimensions.FirstOrDefault(x => x.FindUnit(unit, true) != null);
 
          if (columnAndData.Key.ColumnInfo.IsBase())
             dataColumn = new BaseGrid(columnAndData.Key.ColumnInfo.Name, dimension);

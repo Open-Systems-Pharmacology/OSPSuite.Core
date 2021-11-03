@@ -213,7 +213,8 @@ namespace OSPSuite.Infrastructure.Import.Core
                   //if unit comes from a column
                   if (column.Key.Column.Dimension == null)
                   {
-                     var dimensionOfFirstUnit = columnInfo.SupportedDimensions.FirstOrDefault(x => x.HasUnit(column.Value.ElementAt(0).Unit));
+                     var firstNonEmptyUnit = column.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit));
+                     var dimensionOfFirstUnit = columnInfo.SupportedDimensions.FirstOrDefault(x => x.FindUnit(firstNonEmptyUnit.Unit, true) != null);
 
                      for (var i = 0; i < column.Value.Count(); i++)
                      {
@@ -221,11 +222,11 @@ namespace OSPSuite.Infrastructure.Import.Core
                            continue;
 
                         //if the unit specified does not belong to one of the supported dimensions of the mapping
-                        if (!columnInfo.SupportedDimensions.Any(x => x.HasUnit(column.Value.ElementAt(i).Unit)))
+                        if (!columnInfo.SupportedDimensions.Any(x => x.FindUnit(column.Value.ElementAt(i).Unit, true) != null))
                            throw new InvalidDimensionException(column.Value.ElementAt(i).Unit, columnInfo.DisplayName);
 
                         //if the unit specified is not of the same dimension as the other units of the same data set
-                        if (columnInfo.SupportedDimensions.First(x => x.HasUnit(column.Value.ElementAt(i).Unit)) != dimensionOfFirstUnit)
+                        if (columnInfo.SupportedDimensions.First(x => x.FindUnit(column.Value.ElementAt(i).Unit, true) != null) != dimensionOfFirstUnit)
                            throw new InconsistentDimensionBetweenUnitsException(columnInfo.DisplayName);
                      }
                   }
