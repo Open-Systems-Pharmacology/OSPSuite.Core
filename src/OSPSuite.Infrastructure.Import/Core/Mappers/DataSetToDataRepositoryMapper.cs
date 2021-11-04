@@ -70,7 +70,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          DataColumn dataColumn;
          var unit = columnAndData.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit)).Unit;
          var warningFlag = false;
-         var dimension = columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.SupportedDimensions.FirstOrDefault(x => x.FindUnit(unit, true) != null);
+         var dimension = columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.SupportedDimensions.FirstOrDefault(x => x.FindUnit(unit, ignoreCase: true) != null);
 
          if (columnAndData.Key.ColumnInfo.IsBase())
             dataColumn = new BaseGrid(columnAndData.Key.ColumnInfo.Name, dimension);

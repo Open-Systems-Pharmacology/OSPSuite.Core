@@ -43,6 +43,7 @@ namespace OSPSuite.Infrastructure.Import
          _columnInfos.First(x => x.DisplayName == "Concentration").SupportedDimensions.Add(_fakedConcentrationDimensionMolar);
          _columnInfos.First(x => x.DisplayName == "Concentration").SupportedDimensions.Add(_fakedConcentrationDimensionMass);
          _columnInfos.First(x => x.DisplayName == "Error").SupportedDimensions.Add(_fakedErrorDimension);
+         _columnInfos.First(x => x.DisplayName == "Error").SupportedDimensions.Add(_fakedConcentrationDimensionMass);
          var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
          {
             {
@@ -147,6 +148,12 @@ namespace OSPSuite.Infrastructure.Import
          A.CallTo(() => _fakedConcentrationDimensionMolar.HasUnit("pmol/l")).Returns(true);
          A.CallTo(() => _fakedConcentrationDimensionMass.HasUnit("ng/ml")).Returns(true);
          A.CallTo(() => _fakedErrorDimension.HasUnit("pmol/l")).Returns(true);
+
+         A.CallTo(() => _fakedConcentrationDimensionMolar.FindUnit("no unit", true)).Returns(null);
+         A.CallTo(() => _fakedConcentrationDimensionMass.FindUnit("no unit", true)).Returns(null);
+         A.CallTo(() => _fakedErrorDimension.FindUnit("no unit", true)).Returns(null);
+         A.CallTo(() => _fakedConcentrationDimensionMolar.FindUnit("ng/ml", true)).Returns(null);
+         A.CallTo(() => _fakedConcentrationDimensionMass.FindUnit("pmol/l", true)).Returns(null);
 
          _fakeDataSet.AddData(new List<ParsedDataSet>() {new ParsedDataSet(new List<(string, IList<string>)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(),
             parsedData)});
@@ -346,7 +353,6 @@ namespace OSPSuite.Infrastructure.Import
 
       protected override void Because()
       {
-         base.Because();
          sut.DataSets.Add("sheet1", _dataSet);
       }
 
@@ -473,7 +479,6 @@ namespace OSPSuite.Infrastructure.Import
 
       protected override void Because()
       {
-         base.Because();
          sut.DataSets.Add("sheet1", _dataSet);
       }
 
@@ -596,7 +601,6 @@ namespace OSPSuite.Infrastructure.Import
       }
       protected override void Because()
       {
-         base.Because();
          sut.DataSets.Add("sheet1", _dataSet);
       }
 
@@ -663,19 +667,19 @@ namespace OSPSuite.Infrastructure.Import
                {
                   new SimulationPoint()
                   {
-                     Unit = "pmol/l",
+                     Unit = "no unit",
                      Measurement = 10,
                      Lloq = 1
                   },
                   new SimulationPoint()
                   {
-                     Unit = "pmol/l",
+                     Unit = "no unit",
                      Measurement = 0.1,
                      Lloq = 1
                   },
                   new SimulationPoint()
                   {
-                     Unit = "pmol/l",
+                     Unit = "no unit",
                      Measurement = double.NaN,
                      Lloq = 1
                   }
@@ -720,7 +724,6 @@ namespace OSPSuite.Infrastructure.Import
       }
       protected override void Because()
       {
-         base.Because();
          sut.DataSets.Add("sheet1", _dataSet);
       }
 
@@ -811,7 +814,6 @@ namespace OSPSuite.Infrastructure.Import
       }
       protected override void Because()
       {
-         base.Because();
          sut.DataSets.Add("sheet1", _dataSet);
       }
 
@@ -885,7 +887,6 @@ namespace OSPSuite.Infrastructure.Import
       }
       protected override void Because()
       {
-         base.Because();
          sut.DataSets.Add("sheet1", _dataSet);
       }
 
@@ -946,7 +947,7 @@ namespace OSPSuite.Infrastructure.Import
                   },
                   new SimulationPoint()
                   {
-                     Unit = "ng/ml",
+                     Unit = "no unit",
                      Measurement = 10,
                      Lloq = 1
                   }
@@ -959,7 +960,6 @@ namespace OSPSuite.Infrastructure.Import
       }
       protected override void Because()
       {
-         base.Because();
          sut.DataSets.Add("sheet1", _dataSet);
       }
 
