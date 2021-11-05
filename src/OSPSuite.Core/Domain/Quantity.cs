@@ -1,6 +1,8 @@
-﻿using OSPSuite.Core.Domain.Formulas;
+﻿using System;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -39,6 +41,12 @@ namespace OSPSuite.Core.Domain
       double ValueInDisplayUnit { get; set; }
 
       /// <summary>
+      ///    The value in the displayed unit
+      /// </summary>
+      bool TryGetValueInDisplayUnit(out double result);
+
+      
+      /// <summary>
       ///    Specifies whether negative values are allowed or not for this quantity
       /// </summary>
       bool NegativeValuesAllowed { get; set; }
@@ -61,6 +69,8 @@ namespace OSPSuite.Core.Domain
 
       /// <inheritdoc />
       public QuantityType QuantityType { get; set; }
+
+    
 
       /// <inheritdoc />
       public bool NegativeValuesAllowed { get; set; }
@@ -135,6 +145,21 @@ namespace OSPSuite.Core.Domain
       {
          get => this.ConvertToDisplayUnit(Value);
          set => Value = this.ConvertToBaseUnit(value);
+      }
+
+      public virtual bool TryGetValueInDisplayUnit(out double result)
+      {
+         try
+         {
+            result = ValueInDisplayUnit;
+            return true;
+         }
+         catch (OSPSuiteException)
+         {
+           //Formula could not be parsed. In that case, we save the value as double.NaN so that next time, the value will be NaN
+           result = double.NaN;
+           return false;
+         }
       }
 
       /// <inheritdoc />
