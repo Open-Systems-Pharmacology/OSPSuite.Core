@@ -53,6 +53,13 @@ namespace OSPSuite.Core.Domain
       }
 
       public string ValueDescription { get; set; }
+
+      public bool TryGetValueInDisplayUnit(out double result)
+      {
+         result = ValueInDisplayUnit;
+         return true;
+      }
+
       public bool NegativeValuesAllowed { get; set; }
 
       public TimeParameter()

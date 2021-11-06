@@ -193,7 +193,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_be_able_to_retrieve_the_dislay_unit()
+      public void should_be_able_to_retrieve_the_display_unit()
       {
          sut.DisplayUnit.ShouldBeEqualTo(_displayUnit);
       }
@@ -233,7 +233,24 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_have_set_the_rhs_formula_to_null()
       {
-         sut.RHSFormula.ShouldBeNull();   
+         sut.RHSFormula.ShouldBeNull();
+      }
+   }
+
+   public class When_retrieving_the_value_of_a_parameter_for_which_the_formula_throws_an_exception : concern_for_Parameter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Formula = new ExplicitFormula("1/P");
+      }
+
+      [Observation]
+      public void should_return_nan_and_ensures_that_calls_is_not_successful()
+      {
+         var res = sut.TryGetValueInDisplayUnit(out var result);
+         res.ShouldBeFalse();
+         result.ShouldBeEqualTo(double.NaN);
       }
    }
 }
