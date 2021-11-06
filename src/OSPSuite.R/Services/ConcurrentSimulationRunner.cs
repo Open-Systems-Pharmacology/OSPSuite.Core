@@ -128,13 +128,13 @@ namespace OSPSuite.R.Services
          await Task.Run(() =>
             Parallel.ForEach(_listOfConcurrentRunSimulationBatch.SelectMany
             (
-               concurrentSimulationBatch => Enumerable.Range(0, concurrentSimulationBatch.MissingBatchesCount).Select(_ => concurrentSimulationBatch)
+               x => Enumerable.Range(0, x.MissingBatchesCount).Select(_ => x)
             ),
             createParallelOptions(_cancellationTokenSource.Token),
-            concurrentSimulationBatch =>
+            x =>
             {
                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
-               concurrentSimulationBatch.AddNewBatch();
+               x.AddNewBatch();
             }),
             _cancellationTokenSource.Token
          );
@@ -182,25 +182,25 @@ namespace OSPSuite.R.Services
          {
             await initializeBatches();
             
-            var simulationBatches = _listOfConcurrentRunSimulationBatch.SelectMany(sb => sb.SimulationBatchRunValues.Select((rv, i) => new SimulationBatchRunOptions()
+            var simulationBatches = _listOfConcurrentRunSimulationBatch.SelectMany(x => x.SimulationBatchRunValues.Select((rv, i) => new SimulationBatchRunOptions()
             {
-               Simulation = sb.Simulation,
-               SimulationBatch = sb.SimulationBatches.ElementAt(i),
-               SimulationBatchOptions = sb.SimulationBatchOptions,
+               Simulation = x.Simulation,
+               SimulationBatch = x.SimulationBatches.ElementAt(i),
+               SimulationBatchOptions = x.SimulationBatchOptions,
                SimulationBatchRunValues = rv
             }));
 
             await Task.Run(() =>
-               Parallel.ForEach(simulationBatches, createParallelOptions(_cancellationTokenSource.Token), simulationBatch =>
+               Parallel.ForEach(simulationBatches, createParallelOptions(_cancellationTokenSource.Token), x =>
                {
                   _cancellationTokenSource.Token.ThrowIfCancellationRequested();
                   try
                   {
-                     results.Add(new ConcurrentResult<SimulationResults>(simulationBatch.SimulationBatchRunValues.Id, runSimulationBatch(simulationBatch)));
+                     results.Add(new ConcurrentResult<SimulationResults>(x.SimulationBatchRunValues.Id, runSimulationBatch(x)));
                   }
                   catch (Exception e)
                   {
-                     results.Add(new ConcurrentResult<SimulationResults>(simulationBatch.SimulationBatchRunValues.Id, e.Message));
+                     results.Add(new ConcurrentResult<SimulationResults>(x.SimulationBatchRunValues.Id, e.Message));
                   }
                }),
                _cancellationTokenSource.Token
