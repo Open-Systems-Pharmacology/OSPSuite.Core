@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using OSPSuite.Assets;
+using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
@@ -63,10 +64,9 @@ namespace OSPSuite.R.Services
    public class ConcurrentSimulationRunner : IConcurrentSimulationRunner
    {
       private readonly IConcurrencyManager _concurrencyManager;
-
-      public ConcurrentSimulationRunner(IConcurrencyManager concurrentManager)
+      public ConcurrentSimulationRunner(IConcurrencyManager concurrencyManager)
       {
-         _concurrencyManager = concurrentManager;
+         _concurrencyManager = concurrencyManager;
       }
 
       public SimulationRunOptions SimulationRunOptions { get; set; }
@@ -118,6 +118,7 @@ namespace OSPSuite.R.Services
             throw new OSPSuiteException(Error.InvalidMixOfSimulationAndSimulationBatch);
 
          _cancellationTokenSource = new CancellationTokenSource();
+
          if (_simulations.Count > 0)
          {
             var results = new ConcurrentDictionary<IModelCoreSimulation, ConcurrencyManagerResult<SimulationResults>>();
