@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Domain
          _coreUserSettings = A.Fake<ICoreUserSettings>();
          A.CallTo(() => _coreUserSettings.MaximumNumberOfCoresToUse).Returns(2);
          _parameterIdentification = new ParameterIdentification().WithId("PI");
-         _concurrencyManager = new ConcurrencyManager();
+         _concurrencyManager = new ConcurrencyManager(_coreUserSettings);
 
          sut = new ParameterIdentificationEngine(_eventPublisher, _parameterIdentificationRunFactory, _coreUserSettings);
       }
