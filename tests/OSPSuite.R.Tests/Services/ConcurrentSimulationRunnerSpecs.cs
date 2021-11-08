@@ -21,12 +21,16 @@ namespace OSPSuite.R.Services
    public abstract class concern_for_ConcurrentSimulationRunner : ContextForIntegration<IConcurrentSimulationRunner>
    {
       protected ISimulationPersister _simulationPersister;
+      protected IConcurrencyManager _concurrencyManager;
+      protected ICoreUserSettings _coreUserSettings;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
          _simulationPersister = Api.GetSimulationPersister();
-         sut = Api.GetConcurrentSimulationRunner();
+         _coreUserSettings = new CoreUserSettings();
+         _concurrencyManager = new ConcurrencyManager(_coreUserSettings);
+         sut = new ConcurrentSimulationRunner(_concurrencyManager);
       }
    }
 
@@ -116,7 +120,7 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
-      public void should_be_able_to_simulate_the_simulation_for_multiple_runes()
+      public void should_be_able_to_simulate_the_simulation_for_multiple_runs()
       {
          foreach (var id in _ids)
          {
@@ -176,7 +180,6 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_not_crash()
       {
-         sut = Api.GetConcurrentSimulationRunner();
          sut.AddSimulationBatch(_simulationBatch);
          var res = sut.RunConcurrently();
          res[0].Succeeded.ShouldBeTrue();
@@ -188,7 +191,6 @@ namespace OSPSuite.R.Services
       private Simulation _simulation;
       private ConcurrentRunSimulationBatch _simulationBatch1;
       private SimulationBatchRunValues _parValues1;
-      private SimulationBatchRunValues _parValues2;
       private ConcurrentRunSimulationBatch _simulationBatch2;
       private ConcurrentRunSimulationBatch _simulationBatch3;
 
