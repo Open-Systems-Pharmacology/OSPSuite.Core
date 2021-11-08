@@ -41,7 +41,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private readonly IMultipleParameterIdentificationFeedbackPresenter _multipleFeedbackPresenter;
       private ParameterIdentification _parameterIdentification;
       private IParameterIdentificationRunFeedbackPresenter _activeFeedbackPresenter;
-      private List<string> _currentPIs;
+      private List<ParameterIdentification> _currentPIs;
       public bool ShouldRefreshFeedback { get; set; }
       private ParameterIdentificationFeedbackEditorSettings feedbackEditorSettings => _presenterUserSettings.ParameterIdentificationFeedbackEditorSettings;
 
@@ -57,7 +57,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.BindToProperties();
          _view.NoFeedbackAvailable();
          _activeFeedbackPresenter = null;
-         _currentPIs = new List<string>();
+         _currentPIs = new List<ParameterIdentification>();
       }
 
       public override void Display()
@@ -73,7 +73,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(ParameterIdentificationStartedEvent eventToHandle)
       {
-         _currentPIs.Add(eventToHandle.ParameterIdentification.Id);
+         _currentPIs.Add(eventToHandle.ParameterIdentification);
          _parameterIdentification = eventToHandle.ParameterIdentification;
          _view.Caption = Captions.ParameterIdentification.FeedbackViewFor(_parameterIdentification.Name);
          showParameterIdentificationFeedback();
@@ -81,7 +81,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(ParameterIdentificationSelectedEvent eventToHandle)
       {
-         if (!_currentPIs.Contains(eventToHandle.ParameterIdentification.Id))
+         if (!_currentPIs.Contains(eventToHandle.ParameterIdentification))
             return;
 
          _parameterIdentification = eventToHandle.ParameterIdentification;

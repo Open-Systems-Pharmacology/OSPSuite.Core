@@ -23,7 +23,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private readonly IDialogCreator _dialogCreator;
       private readonly IEntityValidationTask _entityValidationTask;
       private readonly IOSPSuiteExecutionContext _executionContext;
-      private readonly Cache<string, IParameterIdentificationEngine> _parameterIdentificationEngines = new Cache<string, IParameterIdentificationEngine>(onMissingKey: x => null);
+      private readonly Cache<ParameterIdentification, IParameterIdentificationEngine> _parameterIdentificationEngines = new Cache<ParameterIdentification, IParameterIdentificationEngine>(onMissingKey: x => null);
 
       public bool IsRunning => _parameterIdentificationEngines.Count > 0;
 
@@ -45,7 +45,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          {
             using (var parameterIdentificationEngine = _parameterIdentificationEngineFactory.Create())
             {
-               _parameterIdentificationEngines.Add(parameterIdentification.Id, parameterIdentificationEngine);
+               _parameterIdentificationEngines.Add(parameterIdentification, parameterIdentificationEngine);
                var begin = SystemTime.UtcNow();
                await parameterIdentificationEngine.StartAsync(parameterIdentification);
                var end = SystemTime.UtcNow();
@@ -60,13 +60,13 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          finally
          {
             _executionContext.ProjectChanged();
-            _parameterIdentificationEngines.Remove(parameterIdentification.Id);
+            _parameterIdentificationEngines.Remove(parameterIdentification);
          }
       }
 
       public void Stop(ParameterIdentification parameterIdentification)
       {
-         _parameterIdentificationEngines[parameterIdentification.Id]?.Stop();
+         _parameterIdentificationEngines[parameterIdentification]?.Stop();
       }
    }
 }
