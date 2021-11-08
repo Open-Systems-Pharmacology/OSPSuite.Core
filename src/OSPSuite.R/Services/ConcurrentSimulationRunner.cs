@@ -158,13 +158,13 @@ namespace OSPSuite.R.Services
 
       public ConcurrencyManagerResult<SimulationResults>[] RunConcurrently() => RunConcurrentlyAsync().Result.ToArray();
 
-      private SimulationResults runSimulation(IModelCoreSimulation simulation, CancellationToken token)
+      private SimulationResults runSimulation(IModelCoreSimulation simulation, CancellationToken cancellationToken)
       {
          //We want a new instance every time that's why we are not injecting SimulationRunner in constructor
          return Api.GetSimulationRunner().Run(new SimulationRunArgs {Simulation = simulation, SimulationRunOptions = SimulationRunOptions});
       }
 
-      private SimulationResults runSimulationBatch(SimulationBatchRunOptions simulationBatchWithOptions, CancellationToken token)
+      private SimulationResults runSimulationBatch(SimulationBatchRunOptions simulationBatchWithOptions, CancellationToken cancellationToken)
       {
          return simulationBatchWithOptions.SimulationBatch.Run(simulationBatchWithOptions.SimulationBatchRunValues);
       }
