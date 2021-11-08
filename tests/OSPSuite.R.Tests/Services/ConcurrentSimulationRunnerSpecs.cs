@@ -180,7 +180,6 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_not_crash()
       {
-         sut = Api.GetConcurrentSimulationRunner();
          sut.AddSimulationBatch(_simulationBatch);
          var res = sut.RunConcurrently();
          res[0].Succeeded.ShouldBeTrue();
