@@ -42,14 +42,12 @@ namespace OSPSuite.Core.Domain.Services
       ///    own thread
       /// </param>
       /// <param name="cancellationToken">Cancellation token to cancel the threads</param>
-      /// <param name="results">A concurrent dictionary holding the results after execution</param>
       /// <param name="numberOfCoresToUse">Number of cores to use. Use 0 or negative to take all cores</param>
       /// <returns>Dictionary binding a result for each input data after running the action on it</returns>
-      Task RunAsync<TData, TResult>(
+      Task<IDictionary<TData, ConcurrencyManagerResult<TResult>>> RunAsync<TData, TResult>(
          IReadOnlyList<TData> data,
          Func<TData, CancellationToken, TResult> action,
          CancellationToken cancellationToken,
-         ConcurrentDictionary<TData, ConcurrencyManagerResult<TResult>> results,
          int numberOfCoresToUse = 0
       ) where TData : IWithId;
    }
@@ -63,19 +61,20 @@ namespace OSPSuite.Core.Domain.Services
          _maximumNumberOfCoresToUse = Math.Max(1, coreUserSettings.MaximumNumberOfCoresToUse);
       }
 
-      public async Task RunAsync<TData, TResult>
+      public async Task<IDictionary<TData, ConcurrencyManagerResult<TResult>>> RunAsync<TData, TResult>
       (
          IReadOnlyList<TData> data,
          Func<TData, CancellationToken, TResult> action,
          CancellationToken cancellationToken,
-         ConcurrentDictionary<TData, ConcurrencyManagerResult<TResult>> results,
          int numberOfCoresToUse = 0
       ) where TData : IWithId
       {
-         if (data.Count == 0) return;
+         if (data.Count == 0) return new Dictionary<TData, ConcurrencyManagerResult<TResult>>();
 
          if (numberOfCoresToUse <= 0)
             numberOfCoresToUse = _maximumNumberOfCoresToUse;
+
+         var results = new ConcurrentDictionary<TData, ConcurrencyManagerResult<TResult>>();
 
          await Task.Run(() => Parallel.ForEach(data, createParallelOptions(cancellationToken),
                datum =>
@@ -97,6 +96,7 @@ namespace OSPSuite.Core.Domain.Services
                   }
                   
                }), cancellationToken);
+         return results;
       }
 
       private ParallelOptions createParallelOptions(CancellationToken token)

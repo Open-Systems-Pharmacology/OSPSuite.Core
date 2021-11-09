@@ -107,8 +107,7 @@ namespace OSPSuite.R.Services
                settings => Enumerable.Range(0, settings.MissingBatchesCount).Select(_ => settings)
             ).ToList(),
             (settings, ct) => settings.AddNewBatch(), 
-            _cancellationTokenSource.Token,
-            new ConcurrentDictionary<ConcurrentRunSimulationBatch, ConcurrencyManagerResult<SimulationBatch>>());
+            _cancellationTokenSource.Token);
       }
 
       public async Task<IEnumerable<ConcurrencyManagerResult<SimulationResults>>> RunConcurrentlyAsync()
@@ -120,12 +119,10 @@ namespace OSPSuite.R.Services
          _cancellationTokenSource = new CancellationTokenSource();
          if (_simulations.Count > 0)
          {
-            var results = new ConcurrentDictionary<IModelCoreSimulation, ConcurrencyManagerResult<SimulationResults>>();
-            await _concurrencyManager.RunAsync(
+            var results = await _concurrencyManager.RunAsync(
                _simulations,
                runSimulation, 
-               _cancellationTokenSource.Token,
-               results);
+               _cancellationTokenSource.Token);
             return results.Values;
          }
 
@@ -133,8 +130,7 @@ namespace OSPSuite.R.Services
          {
             await initializeBatches();
 
-            var results = new ConcurrentDictionary<SimulationBatchRunOptions, ConcurrencyManagerResult<SimulationResults>>();
-            await _concurrencyManager.RunAsync(
+            var results = await _concurrencyManager.RunAsync(
                _listOfConcurrentRunSimulationBatch.SelectMany(sb => sb.SimulationBatchRunValues.Select((rv, i) => new SimulationBatchRunOptions()
                {
                   Simulation = sb.Simulation,
@@ -143,8 +139,7 @@ namespace OSPSuite.R.Services
                   SimulationBatchRunValues = rv
                })).ToList(),
                runSimulationBatch, 
-               _cancellationTokenSource.Token,
-               results);
+               _cancellationTokenSource.Token);
 
             //After one RunConcurrently call, we need to forget the SimulationBatchRunValues and expect the new set of values. So the caller has to
             //specify new SimulationBatchRunValues before each RunConcurrently call.
