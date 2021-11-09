@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Collections;
+using System.Linq;
 
 namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 {
@@ -25,7 +26,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private readonly IOSPSuiteExecutionContext _executionContext;
       private readonly Cache<ParameterIdentification, IParameterIdentificationEngine> _parameterIdentificationEngines = new Cache<ParameterIdentification, IParameterIdentificationEngine>(onMissingKey: x => null);
 
-      public bool IsRunning => _parameterIdentificationEngines.Count > 0;
+      public bool IsRunning => _parameterIdentificationEngines.Any();
 
       public ParameterIdentificationRunner(IParameterIdentificationEngineFactory parameterIdentificationEngineFactory,  IDialogCreator dialogCreator, 
          IEntityValidationTask entityValidationTask, IOSPSuiteExecutionContext executionContext)
