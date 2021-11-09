@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -69,12 +70,12 @@ namespace OSPSuite.Core.Domain.Services
          int numberOfCoresToUse = 0
       ) where TData : IWithId
       {
-         if (data.Count == 0) return new Dictionary<TData, ConcurrencyManagerResult<TResult>>();
+         var results = new ConcurrentDictionary<TData, ConcurrencyManagerResult<TResult>>();
+         if (!data.Any())
+            return results;
 
          if (numberOfCoresToUse <= 0)
             numberOfCoresToUse = _maximumNumberOfCoresToUse;
-
-         var results = new ConcurrentDictionary<TData, ConcurrencyManagerResult<TResult>>();
 
          await Task.Run(() => Parallel.ForEach(data, createParallelOptions(cancellationToken),
                datum =>
