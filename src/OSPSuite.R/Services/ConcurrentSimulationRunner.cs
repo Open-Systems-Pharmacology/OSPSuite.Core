@@ -22,7 +22,11 @@ namespace OSPSuite.R.Services
       public SimulationBatch SimulationBatch { get; set; }
       public SimulationBatchRunValues SimulationBatchRunValues { get; set; }
       public SimulationBatchOptions SimulationBatchOptions { get; set; }
-      public string Id { get => SimulationBatchRunValues.Id; set => SimulationBatchRunValues.Id = value; }
+      public string Id 
+      { 
+         get => SimulationBatchRunValues.Id; 
+         set => SimulationBatchRunValues.Id = value; 
+      }
    }
 
    public interface IConcurrentSimulationRunner : IDisposable
