@@ -73,7 +73,12 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       PathCache<TChildren> CacheAllChildren<TChildren>(IContainer parentContainer) where TChildren : class, IEntity;
 
-
+      /// <summary>
+      /// Returns a cache of all elements in the <paramref name="enumerable"/>
+      /// </summary>
+      /// <typeparam name="T"></typeparam>
+      /// <param name="enumerable"></param>
+      /// <returns></returns>
       PathCache<T> PathCacheFor<T>(IEnumerable<T> enumerable) where T : class, IEntity;
    }
 
