@@ -43,13 +43,13 @@ namespace OSPSuite.Core.Domain.Services
       ///    own thread
       /// </param>
       /// <param name="cancellationToken">Cancellation token to cancel the threads</param>
-      /// <param name="numberOfCoresToUse">Number of cores to use. Use 0 or negative to take all cores</param>
+      /// <param name="numberOfCoresToUse">Number of cores to use. Use null to take all cores</param>
       /// <returns>Dictionary binding a result for each input data after running the action on it</returns>
       Task<IDictionary<TData, ConcurrencyManagerResult<TResult>>> RunAsync<TData, TResult>(
          IReadOnlyList<TData> data,
          Func<TData, CancellationToken, TResult> action,
          CancellationToken cancellationToken,
-         int numberOfCoresToUse = 0
+         uint? numberOfCoresToUse = null
       ) where TData : IWithId;
    }
 
@@ -67,17 +67,12 @@ namespace OSPSuite.Core.Domain.Services
          IReadOnlyList<TData> data,
          Func<TData, CancellationToken, TResult> action,
          CancellationToken cancellationToken,
-         int numberOfCoresToUse = 0
+         uint? numberOfCoresToUse = null
       ) where TData : IWithId
       {
          var results = new ConcurrentDictionary<TData, ConcurrencyManagerResult<TResult>>();
-         if (!data.Any())
-            return results;
 
-         if (numberOfCoresToUse <= 0)
-            numberOfCoresToUse = _maximumNumberOfCoresToUse;
-
-         await Task.Run(() => Parallel.ForEach(data, createParallelOptions(cancellationToken),
+         await Task.Run(() => Parallel.ForEach(data, createParallelOptions(cancellationToken, numberOfCoresToUse == null ? _maximumNumberOfCoresToUse : Convert.ToInt32(numberOfCoresToUse)),
                datum =>
                {
                   cancellationToken.ThrowIfCancellationRequested();
@@ -100,12 +95,12 @@ namespace OSPSuite.Core.Domain.Services
          return results;
       }
 
-      private ParallelOptions createParallelOptions(CancellationToken token)
+      private ParallelOptions createParallelOptions(CancellationToken token, int maximumNumberOfCoresToUse)
       {
          return new ParallelOptions()
          {
             CancellationToken = token,
-            MaxDegreeOfParallelism = _maximumNumberOfCoresToUse
+            MaxDegreeOfParallelism = maximumNumberOfCoresToUse
          };
       }
    }

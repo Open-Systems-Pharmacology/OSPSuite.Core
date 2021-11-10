@@ -122,13 +122,12 @@ namespace OSPSuite.R.Services
 
          _cancellationTokenSource = new CancellationTokenSource();
 
-         if (_simulations.Count > 0)
+         if (_simulations.Any())
          {
-            var results = await _concurrencyManager.RunAsync(
+            return (await _concurrencyManager.RunAsync(
                _simulations,
                runSimulation, 
-               _cancellationTokenSource.Token);
-            return results.Values;
+               _cancellationTokenSource.Token)).Values;
          }
 
          if (_listOfConcurrentRunSimulationBatch.Count > 0)
