@@ -72,6 +72,9 @@ namespace OSPSuite.Core.Domain.Services
       ///    Returns a cache of all children by path defined in the <paramref name="parentContainer" />
       /// </summary>
       PathCache<TChildren> CacheAllChildren<TChildren>(IContainer parentContainer) where TChildren : class, IEntity;
+
+
+      PathCache<T> PathCacheFor<T>(IEnumerable<T> enumerable) where T : class, IEntity;
    }
 
    public class ContainerTask : IContainerTask
@@ -161,13 +164,18 @@ namespace OSPSuite.Core.Domain.Services
 
       public PathCache<TChildren> CacheAllChildrenSatisfying<TChildren>(IContainer parentContainer, Func<TChildren, bool> predicate) where TChildren : class, IEntity
       {
-         var pathCache = new PathCache<TChildren>(_entityPathResolver);
-         return parentContainer == null ? pathCache : pathCache.For(parentContainer.GetAllChildren(predicate));
+         return PathCacheFor(parentContainer?.GetAllChildren(predicate));
       }
 
       public PathCache<TChildren> CacheAllChildren<TChildren>(IContainer parentContainer) where TChildren : class, IEntity
       {
          return CacheAllChildrenSatisfying<TChildren>(parentContainer, x => true);
+      }
+
+      public PathCache<T> PathCacheFor<T>(IEnumerable<T> enumerable) where T : class, IEntity
+      {
+         var pathCache = new PathCache<T>(_entityPathResolver);
+         return pathCache.For(enumerable);
       }
    }
 }
