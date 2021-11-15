@@ -8,6 +8,7 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
+using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Events;
@@ -28,6 +29,7 @@ namespace OSPSuite.Presentation.Presentation
       protected IChartUpdater _chartUpdater;
       protected IEventPublisher _eventPublisher;
       private IDimensionFactory _dimensionFactory;
+      private IApplicationController _applicationController;
       protected CurveChart _chart;
       protected BaseGrid _baseGrid;
       protected DataColumn _standardColumn;
@@ -45,7 +47,8 @@ namespace OSPSuite.Presentation.Presentation
          _chartUpdater = A.Fake<IChartUpdater>();
          _eventPublisher = A.Fake<IEventPublisher>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
-         sut = new ChartEditorPresenter(_view, _axisSettingsPresenter, _chartSettingsPresenter, _chartExportSettingsPresenter, _curveSettingsPresenter, _dataBrowserPresenter, _chartTemplateMenuPresenter, _chartUpdater, _eventPublisher, _dimensionFactory);
+         _applicationController = A.Fake<IApplicationController>();
+         sut = new ChartEditorPresenter(_view, _axisSettingsPresenter, _chartSettingsPresenter, _chartExportSettingsPresenter, _curveSettingsPresenter, _dataBrowserPresenter, _chartTemplateMenuPresenter, _chartUpdater, _eventPublisher, _dimensionFactory, _applicationController);
 
          sut.SetCurveNameDefinition(x => x.QuantityInfo.PathAsString);
 

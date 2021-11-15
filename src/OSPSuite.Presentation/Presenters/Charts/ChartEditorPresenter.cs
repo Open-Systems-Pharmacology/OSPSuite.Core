@@ -8,7 +8,6 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Core;
-using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Settings;
@@ -182,6 +181,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       void Refresh();
 
+      void ColorGroupByMetaData();
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -199,6 +199,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly IDimensionFactory _dimensionFactory;
       private Func<DataColumn, string> _curveNameDefinition;
       private readonly List<IPresenterWithColumnSettings> _presentersWithColumnSettings;
+      private readonly IApplicationController _applicationController;
       public CurveChart Chart { get; private set; }
       public event Action ChartChanged = delegate { };
       public event Action<IReadOnlyCollection<GridColumnSettings>> ColumnSettingsChanged = delegate { };
@@ -209,7 +210,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          IChartSettingsPresenter chartSettingsPresenter, IChartExportSettingsPresenter chartExportSettingsPresenter,
          ICurveSettingsPresenter curveSettingsPresenter, IDataBrowserPresenter dataBrowserPresenter,
          IChartTemplateMenuPresenter chartTemplateMenuPresenter, IChartUpdater chartUpdater, IEventPublisher eventPublisher,
-         IDimensionFactory dimensionFactory)
+         IDimensionFactory dimensionFactory, IApplicationController applicationController)
          : base(view)
       {
          _showDataColumnInDataBrowserDefinition = col => col.DataInfo.Origin != ColumnOrigins.BaseGrid;
@@ -223,6 +224,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _chartUpdater = chartUpdater;
          _eventPublisher = eventPublisher;
          _dimensionFactory = dimensionFactory;
+         _applicationController = applicationController;
          _presentersWithColumnSettings = new List<IPresenterWithColumnSettings> {_dataBrowserPresenter, _curveSettingsPresenter, _axisSettingsPresenter};
          initPresentersWithColumnSettings();
 
@@ -562,6 +564,24 @@ namespace OSPSuite.Presentation.Presenters.Charts
          updateUsedColumns();
       }
 
+      public void ColorGroupByMetaData()
+      {
+         foreach (var curve in Chart.Curves)
+         {
+            var namesOfMetaData = curve.xData.Repository.ExtendedProperties.Keys.ToList();
+         }
+
+         using (var curveColorGroupingPresenter = _applicationController.Start<ICurveColorGroupingPresenter>())
+         {
+            curveColorGroupingPresenter.SetMetadata(new List<string> { "Species", "Organ", "Compartment", "ID", "Patient ID" });
+            curveColorGroupingPresenter.Show();
+
+            if (curveColorGroupingPresenter.Canceled())
+               return;
+
+            var selected = curveColorGroupingPresenter.GetSelectedItems();
+         }
+      }
       private bool canHandle(ChartEvent chartEvent)
       {
          return Equals(chartEvent.Chart, Chart);
