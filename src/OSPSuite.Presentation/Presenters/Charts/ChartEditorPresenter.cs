@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using Org.BouncyCastle.Math.EC.Rfc7748;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.MenuAndBars;
+using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Events;
@@ -580,9 +584,35 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          var activeObservedData = allObservedData.Where(x => activeDataColumns.Any(column => column.Id == x.Id));
 
-         var temp = activeObservedData.Count();
-         var sdf = 1;
-         sdf ++;
+         if (activeObservedData == null || !activeObservedData.Any())
+            return;
+
+         var commonMetaData = activeObservedData.First().ExtendedProperties.Keys.ToList();
+
+         foreach (var column in activeObservedData) //we are checking the first one twice
+         {
+            foreach (var extendedPropertyName in commonMetaData.Where(extendedPropertyName => !column.ExtendedProperties.Keys.Contains(extendedPropertyName)))
+            {
+               commonMetaData.Remove(extendedPropertyName);
+            }
+         }
+
+         var firstMetaData = activeObservedData.First().ExtendedProperties.Keys.ToList();
+
+         var commonMetaDataTest = firstMetaData.Where(x => activeObservedData.All(observedData => observedData.ExtendedProperties.Keys.Contains(x)));
+
+
+         using (var curveColorGroupingPresenter = _applicationController.Start<ICurveColorGroupingPresenter>())
+         {
+            curveColorGroupingPresenter.SetMetadata(commonMetaDataTest.ToList());
+            curveColorGroupingPresenter.Show();
+
+            if (curveColorGroupingPresenter.Canceled())
+               return;
+
+            var selected = curveColorGroupingPresenter.GetSelectedItems();
+         }
+
          /*
          foreach (var curve in Chart.Curves)
          {
