@@ -181,7 +181,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       void Refresh();
 
-      void ColorGroupByMetaData();
+      void OnColorGroupButtonClicked();
+
+      event EventHandler<EventArgs> ColorGroupButtonClicked;
+      void ColorGroupByMetaData(IEnumerable<DataRepository> allObservedData);
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -205,6 +208,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public event Action<IReadOnlyCollection<GridColumnSettings>> ColumnSettingsChanged = delegate { };
       public event EventHandler<IDragEvent> DragOver = delegate { };
       public event EventHandler<IDragEvent> DragDrop = delegate { };
+      public event EventHandler<EventArgs> ColorGroupButtonClicked = delegate { };
+
 
       public ChartEditorPresenter(IChartEditorView view, IAxisSettingsPresenter axisSettingsPresenter,
          IChartSettingsPresenter chartSettingsPresenter, IChartExportSettingsPresenter chartExportSettingsPresenter,
@@ -564,8 +569,21 @@ namespace OSPSuite.Presentation.Presenters.Charts
          updateUsedColumns();
       }
 
-      public void ColorGroupByMetaData()
+      public void OnColorGroupButtonClicked()
       {
+         ColorGroupButtonClicked.Invoke(this, new EventArgs());
+      }
+
+      public void ColorGroupByMetaData(IEnumerable<DataRepository> allObservedData)
+      {
+         var activeDataColumns = _dataBrowserPresenter.GetAllUsedDataColumns();
+
+         var activeObservedData = allObservedData.Where(x => activeDataColumns.Any(column => column.Id == x.Id));
+
+         var temp = activeObservedData.Count();
+         var sdf = 1;
+         sdf ++;
+         /*
          foreach (var curve in Chart.Curves)
          {
             var namesOfMetaData = curve.xData.Repository.ExtendedProperties.Keys.ToList();
@@ -573,6 +591,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          using (var curveColorGroupingPresenter = _applicationController.Start<ICurveColorGroupingPresenter>())
          {
+            List<string> temp = _dataBrowserPresenter.GetAllUsedDataColumns();
             curveColorGroupingPresenter.SetMetadata(new List<string> { "Species", "Organ", "Compartment", "ID", "Patient ID" });
             curveColorGroupingPresenter.Show();
 
@@ -581,6 +600,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
             var selected = curveColorGroupingPresenter.GetSelectedItems();
          }
+*/
       }
       private bool canHandle(ChartEvent chartEvent)
       {

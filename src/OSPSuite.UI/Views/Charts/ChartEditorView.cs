@@ -179,7 +179,7 @@ namespace OSPSuite.UI.Views.Charts
 
       private void ColorGroupByMetaData(object sender, EventArgs e)
       {
-         _presenter.ColorGroupByMetaData();
+         _presenter.OnColorGroupButtonClicked();
       }
    }
 }
