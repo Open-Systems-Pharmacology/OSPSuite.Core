@@ -582,11 +582,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          var activeDataColumns = _dataBrowserPresenter.GetAllUsedDataColumns();
 
-         var activeObservedData = allObservedData.Where(x => activeDataColumns.Any(column => column.Id == x.Id));
+         //var activeObservedData = allObservedData.Where(x => activeDataColumns.Any(column => column.Id == x.Id));
+         var activeObservedData = allObservedData.Where(x => activeDataColumns.Any(column => column.Repository.Name == x.Name));
 
          if (activeObservedData == null || !activeObservedData.Any())
             return;
 
+         /*
          var commonMetaData = activeObservedData.First().ExtendedProperties.Keys.ToList();
 
          foreach (var column in activeObservedData) //we are checking the first one twice
@@ -596,7 +598,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
                commonMetaData.Remove(extendedPropertyName);
             }
          }
-
+*/
          var firstMetaData = activeObservedData.First().ExtendedProperties.Keys.ToList();
 
          var commonMetaDataTest = firstMetaData.Where(x => activeObservedData.All(observedData => observedData.ExtendedProperties.Keys.Contains(x)));
@@ -611,6 +613,55 @@ namespace OSPSuite.Presentation.Presenters.Charts
                return;
 
             var selected = curveColorGroupingPresenter.GetSelectedItems();
+
+            //=========
+
+            //like this we can get the repositories grouped according to the selected MetaData
+            var groupedDataRepositories = new List<List<DataRepository>>();
+            foreach (var groupingMetaData in selected)
+            {
+               var dataReposGroupedBySingleMetaData = activeObservedData.GroupBy(x => x.ExtendedProperties[groupingMetaData].ValueAsObject).Select(group => group.ToList()).ToList();
+               groupedDataRepositories.AddRange(dataReposGroupedBySingleMetaData);
+            }
+
+
+            /*
+            var test = activeObservedData.GroupBy(x => x.ExtendedProperties[selected.First()].ValueAsObject);
+
+            var flatList = test.Select(group => group.ToList()).ToList();
+
+            //var test_2 = test.GroupBy(x => ) .GroupBy(x => x.ExtendedProperties[selected.First()].ValueAsObject);
+
+            foreach (var groupingMetaData in selected)
+            {
+               activeObservedData.GroupBy(x => x.ExtendedProperties[groupingMetaData].ValueAsObject);
+            }
+*/
+            var testColor = Chart.SelectNewColor();
+
+            //then we work through them and assign colors. The thing is it would be a bit more effective if we do not go through everything too many times. 
+            foreach (var curve in Chart.Curves)
+            {
+               if (curve.Name.StartsWith(activeObservedData.First().Name))
+                  curve.Color = testColor;   
+            }
+            /*
+            Chart.Curves.Find().
+            foreach (var dataColumn in dataColumnList)
+            {
+               var (exists, curve) = createAndConfigureCurve(dataColumn, defaultCurveOptions);
+
+               if (exists) continue;
+
+               if (defaultCurveOptions != null)
+                  curve.CurveOptions.UpdateFrom(defaultCurveOptions);
+
+               curve.Color = groupColor;
+               curve.UpdateStyleForObservedData();
+
+               Chart.AddCurve(curve);
+            }
+*/
          }
 
          /*
