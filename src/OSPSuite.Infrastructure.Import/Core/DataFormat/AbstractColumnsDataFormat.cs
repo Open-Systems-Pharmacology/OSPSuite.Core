@@ -47,7 +47,43 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          ExtractGeneralParameters(keys, data, metaDataCategories, ref totalRank);
          ExtractNonQualifiedHeadings(keys, missingKeys, columnInfos, data, ref totalRank);
          setSecondaryColumnUnit(columnInfos);
+         setDimensionsForMappings(columnInfos);
          return totalRank;
+      }
+
+      private void setDimensionsForMappings(IReadOnlyList<ColumnInfo> columnInfos)
+      {
+         foreach (var parameter in _parameters.OfType<MappingDataFormatParameter>())
+         {
+            var mappingColumn = parameter.MappedColumn;
+
+            if (mappingColumn?.Unit == null || mappingColumn.Dimension != null)
+               continue;
+
+            var concreteColumnInfo = columnInfos.FirstOrDefault(x => x.Name == parameter.MappedColumn.Name);
+            //initial settings for fraction dimension
+            if (concreteColumnInfo.DefaultDimension?.Name == Constants.Dimension.FRACTION &&
+                mappingColumn.Unit.ColumnName.IsNullOrEmpty() &&
+                mappingColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit)
+            {
+               mappingColumn.Dimension = concreteColumnInfo.DefaultDimension;
+               mappingColumn.Unit = new UnitDescription(mappingColumn.Dimension.BaseUnit.Name);
+               continue;
+            }
+
+            if (!mappingColumn.Unit.ColumnName.IsNullOrEmpty())
+               mappingColumn.Dimension = null;
+            else
+            {
+               var supportedDimensions = concreteColumnInfo.SupportedDimensions;
+               var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.HasUnit(mappingColumn.Unit.SelectedUnit));
+
+               if (dimensionForUnit == null)
+                  mappingColumn.Unit = new UnitDescription(UnitDescription.InvalidUnit);
+               else
+                  mappingColumn.Dimension = dimensionForUnit;
+            }
+         }
       }
 
       private void setSecondaryColumnUnit(IReadOnlyList<ColumnInfo> columnInfos)

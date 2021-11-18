@@ -109,52 +109,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.SetMappingSource(_mappings);
          ValidateMapping();
          InitializeErrorUnit();
-         setDimensionsForMappings();
+         //setDimensionsForMappings();
       }
-
-      private void setDimensionsForMappings()
-      {
-         foreach (var mapping in _mappings)
-         {
-            var mappingColumn = (mapping.Source as MappingDataFormatParameter)?.MappedColumn;
-
-            //we also check whether dimension is already set, since this function is used also when a 
-            //groupBy parameter is being set, and in that case we do not want to reset the dimension
-            //based on the selected unit
-            if (mappingColumn?.Unit == null || mappingColumn.Dimension != null)
-               continue;
-
-            //initial settings for fraction dimension
-            if (mapping.ColumnInfo.DefaultDimension?.Name == Constants.Dimension.FRACTION &&
-                mappingColumn.Unit.ColumnName.IsNullOrEmpty() &&
-                mappingColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit)
-            {
-               mappingColumn.Dimension = mapping.ColumnInfo.DefaultDimension;
-               mappingColumn.Unit = new UnitDescription(mappingColumn.Dimension.BaseUnit.Name);
-               continue;
-            }
-
-            if (!mappingColumn.Unit.ColumnName.IsNullOrEmpty())
-               mappingColumn.Dimension = null;
-            else
-            {
-               var supportedDimensions = _columnInfos.First(i => i.DisplayName == mapping.MappingName).SupportedDimensions;
-               var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.HasUnit(mappingColumn.Unit.SelectedUnit));
-
-               if (dimensionForUnit ==  null)
-                  mappingColumn.Unit = new UnitDescription(UnitDescription.InvalidUnit);
-               else
-                  mappingColumn.Dimension = dimensionForUnit;
-            }
-         }
-      }
-
-      private IDimension selectDimensionThatHasUnit(IList<IDimension> dimensions, string unit)
-      {
-         return dimensions.FirstOrDefault(x => x.HasUnit(unit));
-      }
-
-
 
       public void InitializeErrorUnit()
       {
