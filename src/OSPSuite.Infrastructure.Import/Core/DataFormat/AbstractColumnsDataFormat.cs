@@ -60,7 +60,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             if (mappedColumn?.Unit == null || mappedColumn?.Dimension != null)
                continue;
 
-            var concreteColumnInfo = columnInfos.First(x => x.Name == mappedColumn.Name);
+            var concreteColumnInfo = columnInfos.First(x => x.DisplayName == mappedColumn.Name);
             //initial settings for fraction dimension
             if (concreteColumnInfo.DefaultDimension?.Name == Constants.Dimension.FRACTION &&
                 mappedColumn.Unit.ColumnName.IsNullOrEmpty() &&
