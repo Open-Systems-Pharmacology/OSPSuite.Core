@@ -109,7 +109,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.SetMappingSource(_mappings);
          ValidateMapping();
          InitializeErrorUnit();
-         //setDimensionsForMappings();
       }
 
       public void InitializeErrorUnit()
