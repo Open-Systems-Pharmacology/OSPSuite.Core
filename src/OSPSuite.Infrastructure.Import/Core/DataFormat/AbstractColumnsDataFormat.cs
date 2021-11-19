@@ -47,7 +47,43 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          ExtractGeneralParameters(keys, data, metaDataCategories, ref totalRank);
          ExtractNonQualifiedHeadings(keys, missingKeys, columnInfos, data, ref totalRank);
          setSecondaryColumnUnit(columnInfos);
+         setDimensionsForMappings(columnInfos);
          return totalRank;
+      }
+
+      private void setDimensionsForMappings(IReadOnlyList<ColumnInfo> columnInfos)
+      {
+         foreach (var parameter in _parameters.OfType<MappingDataFormatParameter>())
+         {
+            var mappedColumn = parameter.MappedColumn;
+
+            if (mappedColumn?.Unit == null || mappedColumn?.Dimension != null)
+               continue;
+
+            var concreteColumnInfo = columnInfos.First(x => x.DisplayName == mappedColumn.Name);
+            //initial settings for fraction dimension
+            if (concreteColumnInfo.DefaultDimension?.Name == Constants.Dimension.FRACTION &&
+                mappedColumn.Unit.ColumnName.IsNullOrEmpty() &&
+                mappedColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit)
+            {
+               mappedColumn.Dimension = concreteColumnInfo.DefaultDimension;
+               mappedColumn.Unit = new UnitDescription(mappedColumn.Dimension.DefaultUnitName);
+               continue;
+            }
+
+            if (!mappedColumn.Unit.ColumnName.IsNullOrEmpty())
+               mappedColumn.Dimension = null;
+            else
+            {
+               var supportedDimensions = concreteColumnInfo.SupportedDimensions;
+               var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.HasUnit(mappedColumn.Unit.SelectedUnit));
+
+               if (dimensionForUnit == null)
+                  mappedColumn.Unit = new UnitDescription(UnitDescription.InvalidUnit);
+               else
+                  mappedColumn.Dimension = dimensionForUnit;
+            }
+         }
       }
 
       private void setSecondaryColumnUnit(IReadOnlyList<ColumnInfo> columnInfos)

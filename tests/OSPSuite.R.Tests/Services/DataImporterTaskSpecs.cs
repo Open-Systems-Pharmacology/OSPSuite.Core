@@ -172,6 +172,18 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
+      public void should_create_configuration_with_correct_dimension_from_data()
+      {
+         var configuration = sut.CreateConfigurationFor(getFileFullName("sample_header_dimensions_test.xlsx"));
+         var dimension = (configuration.Parameters[1] as MappingDataFormatParameter).MappedColumn.Dimension;
+         dimension.DisplayName.ShouldBeEqualTo("Time");
+         dimension = (configuration.Parameters[2] as MappingDataFormatParameter).MappedColumn.Dimension;
+         dimension.DisplayName.ShouldBeEqualTo("Concentration (mass)");
+         dimension = (configuration.Parameters[0] as MappingDataFormatParameter).MappedColumn.Dimension;
+         dimension.DisplayName.ShouldBeEqualTo("Concentration (mass)");
+      }
+
+      [Observation]
       public void should_save_configuration()
       {
          var tempFileName = FileHelper.GenerateTemporaryFileName();
