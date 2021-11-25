@@ -637,6 +637,20 @@ namespace OSPSuite.Presentation.Presenters.Charts
                activeObservedData.GroupBy(x => x.ExtendedProperties[groupingMetaData].ValueAsObject);
             }
 */
+            foreach (var group in groupedDataRepositories)
+            {
+               var groupColor = Chart.SelectNewColor();
+
+               foreach (var curve in Chart.Curves)
+               {
+                  if (group.Any(x => curve.Name.StartsWith(x.Name)))
+                     curve.Color = groupColor;
+               }
+            }
+
+            Refresh();
+
+            /*
             var testColor = Chart.SelectNewColor();
 
             //then we work through them and assign colors. The thing is it would be a bit more effective if we do not go through everything too many times. 
@@ -645,6 +659,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
                if (curve.Name.StartsWith(activeObservedData.First().Name))
                   curve.Color = testColor;   
             }
+*/
             /*
             Chart.Curves.Find().
             foreach (var dataColumn in dataColumnList)
