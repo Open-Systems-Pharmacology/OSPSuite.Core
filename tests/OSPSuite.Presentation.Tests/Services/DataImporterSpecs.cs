@@ -156,7 +156,7 @@ namespace OSPSuite.Presentation.Services
                   Unit = new UnitDescription("mg/l")
                }),
             new MetaDataFormatParameter("VenousBlood", "Organ", false),
-            new MetaDataFormatParameter(null, "Molecule", false)
+            new MetaDataFormatParameter("TestInputMolecule", "Molecule", false)
          };
          var parameterListMolecularWeight = parameterList;
          parameterListMolecularWeight.Add(new MetaDataFormatParameter("Molecular Weight", "Molecular Weight", true));
@@ -323,7 +323,7 @@ namespace OSPSuite.Presentation.Services
                   Unit = new UnitDescription("mg/l")
                }),
             new MetaDataFormatParameter("VenousBlood", "Organ", false),
-            new MetaDataFormatParameter(null, "Molecule", false)
+            new MetaDataFormatParameter("TestInputMolecule", "Molecule", false)
          };
          _importerConfiguration.CloneParametersFrom(parameterList);
       }
@@ -358,7 +358,7 @@ namespace OSPSuite.Presentation.Services
                   Unit = new UnitDescription("mg/l")
                }),
             new MetaDataFormatParameter("VenousBlood", "Organ", false),
-            new MetaDataFormatParameter(null, "Molecule", false)
+            new MetaDataFormatParameter("TestInputMolecule", "Molecule", false)
          };
          _importerConfiguration.CloneParametersFrom(parameterList);
       }
