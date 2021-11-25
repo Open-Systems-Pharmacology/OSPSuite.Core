@@ -175,9 +175,14 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       {
          var groupingCriteria =
             Parameters
-               .Where(p => p is GroupByDataFormatParameter || p is MetaDataFormatParameter && p.ColumnName != null)//this last check makes sure that a MetaDataFormatParameter with manual input (eg molecule)
-                                                                                                                   // does not get added to the groupByParams if it is not set
-               .Select(p => (p.ColumnName, p is GroupByDataFormatParameter || (p as MetaDataFormatParameter).IsColumn ? (data.GetColumnDescription(p.ColumnName).ExistingValues) as IList<string> : new List<string>() { p.ColumnName }));
+               //the last check makes sure that a MetaDataFormatParameter with manual input (eg molecule) does not get added to the groupByParams if it is not set
+               .Where(p => p is GroupByDataFormatParameter || p is MetaDataFormatParameter && p.ColumnName != null)
+               .Select(p =>
+                  (p.ColumnName,
+                     p is GroupByDataFormatParameter || (p as MetaDataFormatParameter).IsColumn
+                        ? (data.GetColumnDescription(p.ColumnName).ExistingValues) as IList<string>
+                        : new List<string>() { p.ColumnName }));
+         
          return buildDataSets(data, groupingCriteria, columnInfos);
       }
 
