@@ -644,11 +644,18 @@ namespace OSPSuite.Presentation.Presenters.Charts
                foreach (var curve in Chart.Curves)
                {
                   if (group.Any(x => curve.Name.StartsWith(x.Name)))
-                     curve.Color = groupColor;
+                     //curve.Color = groupColor;
+                     _curveSettingsPresenter.UpdateColorForCurve(curve, groupColor); //not sure I actually like teh naming
+                  //since we also have the other color updating function
+
+                  //if we end up doing it like this we have to write a function to get the curve and
+                  //pass the DTO as argument
+                  //_curveSettingsPresenter.UpdateCurveColor(curve, groupColor);
                }
             }
 
-            Refresh();
+            //this refresh does not work, it actually just rebinds, without notifying change
+            //_curveSettingsPresenter.Refresh();
 
             /*
             var testColor = Chart.SelectNewColor();

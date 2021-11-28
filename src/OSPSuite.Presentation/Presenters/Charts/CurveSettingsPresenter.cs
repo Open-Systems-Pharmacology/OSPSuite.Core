@@ -59,6 +59,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void NotifyCurvePropertyChange(CurveDTO curveDTO);
       event EventHandler<CurveEventArgs> CurvePropertyChanged;
       void UpdateCurveColor(CurveDTO curveDTO, Color color);
+      void UpdateColorForCurve(Curve curve, Color color);
    }
 
    public class CurveSettingsPresenter : PresenterWithColumnSettings<ICurveSettingsView, ICurveSettingsPresenter>, ICurveSettingsPresenter, ILatchable
@@ -174,6 +175,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          return _allCurvesDTOs.Any(x => Equals(x.Curve, curve));
       }
 
+      private CurveDTO findCurveDTOFor(Curve curve)
+      {
+         return _allCurvesDTOs.FirstOrDefault(x => Equals(x.Curve, curve));
+      }
+
       public void SetCurveXData(CurveDTO curveDTO, DataColumn dataColumn)
       {
          _chart.SetxData(curveDTO.Curve, dataColumn, _dimensionFactory);
@@ -188,6 +194,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void UpdateCurveColor(CurveDTO curveDTO, Color color)
       {
+         curveDTO.Color = color;
+         NotifyCurvePropertyChange(curveDTO);
+      }
+
+      public void UpdateColorForCurve(Curve curve, Color color)
+      {
+         var curveDTO = findCurveDTOFor(curve);
          curveDTO.Color = color;
          NotifyCurvePropertyChange(curveDTO);
       }
