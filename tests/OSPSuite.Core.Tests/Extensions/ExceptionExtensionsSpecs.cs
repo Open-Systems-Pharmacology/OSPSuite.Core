@@ -36,7 +36,9 @@ namespace OSPSuite.Core.Extensions
             if (true)
                throw new OSPSuiteException("ERROR");
 
+#pragma warning disable 162
             return 5;
+#pragma warning restore 162
          });
       }
 
