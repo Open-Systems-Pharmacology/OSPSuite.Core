@@ -24,12 +24,12 @@ namespace OSPSuite.Presentation.Presentation
       protected IChartSettingsPresenter _chartSettingsPresenter;
       protected IChartExportSettingsPresenter _chartExportSettingsPresenter;
       protected ICurveSettingsPresenter _curveSettingsPresenter;
+      protected ICurveColorGroupingPresenter _curveColorGroupingPresenter;
       protected IDataBrowserPresenter _dataBrowserPresenter;
       protected IChartTemplateMenuPresenter _chartTemplateMenuPresenter;
       protected IChartUpdater _chartUpdater;
       protected IEventPublisher _eventPublisher;
       private IDimensionFactory _dimensionFactory;
-      private IApplicationController _applicationController;
       protected CurveChart _chart;
       protected BaseGrid _baseGrid;
       protected DataColumn _standardColumn;
@@ -47,8 +47,8 @@ namespace OSPSuite.Presentation.Presentation
          _chartUpdater = A.Fake<IChartUpdater>();
          _eventPublisher = A.Fake<IEventPublisher>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
-         _applicationController = A.Fake<IApplicationController>();
-         sut = new ChartEditorPresenter(_view, _axisSettingsPresenter, _chartSettingsPresenter, _chartExportSettingsPresenter, _curveSettingsPresenter, _dataBrowserPresenter, _chartTemplateMenuPresenter, _chartUpdater, _eventPublisher, _dimensionFactory, _applicationController);
+         _curveColorGroupingPresenter = A.Fake<ICurveColorGroupingPresenter>();
+         sut = new ChartEditorPresenter(_view, _axisSettingsPresenter, _chartSettingsPresenter, _chartExportSettingsPresenter, _curveSettingsPresenter, _dataBrowserPresenter, _chartTemplateMenuPresenter, _chartUpdater, _eventPublisher, _dimensionFactory, _curveColorGroupingPresenter);
 
          sut.SetCurveNameDefinition(x => x.QuantityInfo.PathAsString);
 

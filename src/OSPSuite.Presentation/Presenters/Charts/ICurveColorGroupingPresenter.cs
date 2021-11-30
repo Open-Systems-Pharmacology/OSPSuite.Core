@@ -1,30 +1,43 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Presentation.Views.Charts;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
+   public class CurveColorGroupingEventArgs : EventArgs
+   {
+      /// <summary>
+      ///    Selected observed data metaData according to which curves should be assigned the same color
+      /// </summary>
+      public IEnumerable<string> SelectedMetaData { get; }
+
+      public CurveColorGroupingEventArgs(IEnumerable<string> selectedMetaData)
+      {
+         SelectedMetaData = selectedMetaData;
+      }
+   }
+
    public interface ICurveColorGroupingPresenter : IPresenter<ICurveColorGroupingView>, IDisposablePresenter
    {
       void SetMetadata(IEnumerable<string> metaDataCategories);
-      void Show();
-      bool Canceled();
 
       IEnumerable<string> GetSelectedItems();
+
+      event EventHandler<CurveColorGroupingEventArgs> ApplySelectedColorGrouping;
+
+      void ApplyColorGroupingClicked(IEnumerable<string> selectedMetaData);
    }
 
    public class CurveColorGroupingPresenter : AbstractDisposablePresenter<ICurveColorGroupingView, ICurveColorGroupingPresenter>, ICurveColorGroupingPresenter
    {
-      public CurveColorGroupingPresenter(ICurveColorGroupingView view) : base(view)
+      public event EventHandler<CurveColorGroupingEventArgs> ApplySelectedColorGrouping = delegate { };
+      void ICurveColorGroupingPresenter.ApplyColorGroupingClicked(IEnumerable<string> selectedMetaData)
       {
-      }
-      public void Show()
-      {
-         _view.Display();
+         ApplySelectedColorGrouping.Invoke(this, new CurveColorGroupingEventArgs(selectedMetaData));
       }
 
-      public bool Canceled()
+      public CurveColorGroupingPresenter(ICurveColorGroupingView view) : base(view)
       {
-         return _view.Canceled;
       }
 
       public IEnumerable<string> GetSelectedItems()

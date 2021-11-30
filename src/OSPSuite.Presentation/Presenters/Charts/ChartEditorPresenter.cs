@@ -189,6 +189,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       event EventHandler<EventArgs> ColorGroupButtonClicked;
       void ColorGroupByMetaData(IEnumerable<DataRepository> allObservedData);
+      void SetAvailableColorGroupingMetaData(IEnumerable<DataRepository> allObservedData);
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -199,6 +200,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly IChartSettingsPresenter _chartSettingsPresenter;
       private readonly IChartExportSettingsPresenter _chartExportSettingsPresenter;
       private readonly ICurveSettingsPresenter _curveSettingsPresenter;
+      private readonly ICurveColorGroupingPresenter _curveColorGroupingPresenter;
       private readonly IDataBrowserPresenter _dataBrowserPresenter;
       private readonly IChartTemplateMenuPresenter _chartTemplateMenuPresenter;
       private readonly IChartUpdater _chartUpdater;
@@ -206,7 +208,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly IDimensionFactory _dimensionFactory;
       private Func<DataColumn, string> _curveNameDefinition;
       private readonly List<IPresenterWithColumnSettings> _presentersWithColumnSettings;
-      private readonly IApplicationController _applicationController;
       public CurveChart Chart { get; private set; }
       public event Action ChartChanged = delegate { };
       public event Action<IReadOnlyCollection<GridColumnSettings>> ColumnSettingsChanged = delegate { };
@@ -219,7 +220,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          IChartSettingsPresenter chartSettingsPresenter, IChartExportSettingsPresenter chartExportSettingsPresenter,
          ICurveSettingsPresenter curveSettingsPresenter, IDataBrowserPresenter dataBrowserPresenter,
          IChartTemplateMenuPresenter chartTemplateMenuPresenter, IChartUpdater chartUpdater, IEventPublisher eventPublisher,
-         IDimensionFactory dimensionFactory, IApplicationController applicationController)
+         IDimensionFactory dimensionFactory, ICurveColorGroupingPresenter curveColorGroupingPresenter)
          : base(view)
       {
          _showDataColumnInDataBrowserDefinition = col => col.DataInfo.Origin != ColumnOrigins.BaseGrid;
@@ -228,12 +229,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _chartSettingsPresenter = chartSettingsPresenter;
          _chartExportSettingsPresenter = chartExportSettingsPresenter;
          _curveSettingsPresenter = curveSettingsPresenter;
+         _curveColorGroupingPresenter = curveColorGroupingPresenter;
          _dataBrowserPresenter = dataBrowserPresenter;
          _chartTemplateMenuPresenter = chartTemplateMenuPresenter;
          _chartUpdater = chartUpdater;
          _eventPublisher = eventPublisher;
          _dimensionFactory = dimensionFactory;
-         _applicationController = applicationController;
          _presentersWithColumnSettings = new List<IPresenterWithColumnSettings> {_dataBrowserPresenter, _curveSettingsPresenter, _axisSettingsPresenter};
          initPresentersWithColumnSettings();
 
@@ -251,13 +252,37 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _axisSettingsPresenter.AxisAdded += (o, e) => onAxisAdded();
          _axisSettingsPresenter.AxisPropertyChanged += (o, e) => updateChart();
 
-         AddSubPresenters(axisSettingsPresenter, chartSettingsPresenter, chartExportSettingsPresenter, curveSettingsPresenter, dataBrowserPresenter);
+         curveColorGroupingPresenter.ApplySelectedColorGrouping += (o, e) => onApplyColorGrouping(e.SelectedMetaData);
+
+
+         AddSubPresenters(axisSettingsPresenter, chartSettingsPresenter, chartExportSettingsPresenter, curveSettingsPresenter, dataBrowserPresenter, curveColorGroupingPresenter);
 
          _view.SetAxisSettingsView(axisSettingsPresenter.View);
          _view.SetChartSettingsView(chartSettingsPresenter.View);
          _view.SetChartExportSettingsView(chartExportSettingsPresenter.View);
          _view.SetCurveSettingsView(curveSettingsPresenter.View);
+         _view.SetCurveColorGroupingView(curveColorGroupingPresenter.View);
          _view.SetDataBrowserView(dataBrowserPresenter.View);
+      }
+
+      //gets all the common metaData of the observed data that correspond to active curves 
+      private IEnumerable<string> getCommonMetaDataOfCurves(IEnumerable<DataRepository> allObservedData)
+      {
+         var activeDataColumns = _dataBrowserPresenter.GetAllUsedDataColumns();
+         var activeObservedData = allObservedData.Where(x => activeDataColumns.Any(column => column.Repository.Name == x.Name));
+
+         if (!activeObservedData.Any())
+            return new List<string>();
+
+         var firstCurveMetaData = activeObservedData.First().ExtendedProperties.Keys.ToList();
+         var commonMetaData = firstCurveMetaData.Where(x => activeObservedData.All(observedData => observedData.ExtendedProperties.Keys.Contains(x)));
+
+         return commonMetaData;
+      }
+
+      private void onApplyColorGrouping(IEnumerable<string> eSelectedMetaData)
+      {
+         throw new NotImplementedException();
       }
 
       private void initPresentersWithColumnSettings()
@@ -604,6 +629,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
          var commonMetaDataTest = firstMetaData.Where(x => activeObservedData.All(observedData => observedData.ExtendedProperties.Keys.Contains(x)));
 
 
+         //the part that is actually working
+         /*
          using (var curveColorGroupingPresenter = _applicationController.Start<ICurveColorGroupingPresenter>())
          {
             curveColorGroupingPresenter.SetMetadata(commonMetaDataTest.ToList());
@@ -625,18 +652,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
             }
 
 
-            /*
-            var test = activeObservedData.GroupBy(x => x.ExtendedProperties[selected.First()].ValueAsObject);
-
-            var flatList = test.Select(group => group.ToList()).ToList();
-
-            //var test_2 = test.GroupBy(x => ) .GroupBy(x => x.ExtendedProperties[selected.First()].ValueAsObject);
-
-            foreach (var groupingMetaData in selected)
-            {
-               activeObservedData.GroupBy(x => x.ExtendedProperties[groupingMetaData].ValueAsObject);
-            }
-*/
             foreach (var group in groupedDataRepositories)
             {
                var groupColor = Chart.SelectNewColor();
@@ -647,64 +662,19 @@ namespace OSPSuite.Presentation.Presenters.Charts
                      //curve.Color = groupColor;
                      _curveSettingsPresenter.UpdateColorForCurve(curve, groupColor); //not sure I actually like teh naming
                   //since we also have the other color updating function
-
-                  //if we end up doing it like this we have to write a function to get the curve and
-                  //pass the DTO as argument
-                  //_curveSettingsPresenter.UpdateCurveColor(curve, groupColor);
                }
             }
 
-            //this refresh does not work, it actually just rebinds, without notifying change
-            //_curveSettingsPresenter.Refresh();
-
-            /*
-            var testColor = Chart.SelectNewColor();
-
-            //then we work through them and assign colors. The thing is it would be a bit more effective if we do not go through everything too many times. 
-            foreach (var curve in Chart.Curves)
-            {
-               if (curve.Name.StartsWith(activeObservedData.First().Name))
-                  curve.Color = testColor;   
-            }
-*/
-            /*
-            Chart.Curves.Find().
-            foreach (var dataColumn in dataColumnList)
-            {
-               var (exists, curve) = createAndConfigureCurve(dataColumn, defaultCurveOptions);
-
-               if (exists) continue;
-
-               if (defaultCurveOptions != null)
-                  curve.CurveOptions.UpdateFrom(defaultCurveOptions);
-
-               curve.Color = groupColor;
-               curve.UpdateStyleForObservedData();
-
-               Chart.AddCurve(curve);
-            }
-*/
          }
 
-         /*
-         foreach (var curve in Chart.Curves)
-         {
-            var namesOfMetaData = curve.xData.Repository.ExtendedProperties.Keys.ToList();
-         }
-
-         using (var curveColorGroupingPresenter = _applicationController.Start<ICurveColorGroupingPresenter>())
-         {
-            List<string> temp = _dataBrowserPresenter.GetAllUsedDataColumns();
-            curveColorGroupingPresenter.SetMetadata(new List<string> { "Species", "Organ", "Compartment", "ID", "Patient ID" });
-            curveColorGroupingPresenter.Show();
-
-            if (curveColorGroupingPresenter.Canceled())
-               return;
-
-            var selected = curveColorGroupingPresenter.GetSelectedItems();
-         }
-*/
+         */
       }
+
+      public void SetAvailableColorGroupingMetaData(IEnumerable<DataRepository> allObservedData)
+      {
+         _curveColorGroupingPresenter.SetMetadata(getCommonMetaDataOfCurves(allObservedData));
+      }
+
       private bool canHandle(ChartEvent chartEvent)
       {
          return Equals(chartEvent.Chart, Chart);

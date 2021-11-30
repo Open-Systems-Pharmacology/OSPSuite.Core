@@ -37,6 +37,10 @@
          this.barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
          this.barDockControlRight = new DevExpress.XtraBars.BarDockControl();
          this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+         this.panelCurveColorGrouping = new DevExpress.XtraEditors.PanelControl();
+         this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
+         this.layoutControlItem8 = new DevExpress.XtraLayout.LayoutControlItem();
          this.colorGroupingButton = new DevExpress.XtraEditors.SimpleButton();
          this.panelChartSettings = new DevExpress.XtraEditors.PanelControl();
          this.panelChartExportSettings = new DevExpress.XtraEditors.PanelControl();
@@ -45,6 +49,8 @@
          this.panelCurveOptions = new DevExpress.XtraEditors.PanelControl();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.tabbedControlGroup1 = new DevExpress.XtraLayout.TabbedControlGroup();
+         this.colorGroupingLayoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
+         this.layoutControlItem7 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControlGroup3 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.splitterItem2 = new DevExpress.XtraLayout.SplitterItem();
          this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
@@ -61,6 +67,11 @@
          ((System.ComponentModel.ISupportInitialize)(this._barManager)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
+         this.layoutControl1.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.panelCurveColorGrouping)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem8)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.panelChartSettings)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.panelChartExportSettings)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.panelDataBrowser)).BeginInit();
@@ -68,6 +79,8 @@
          ((System.ComponentModel.ISupportInitialize)(this.panelCurveOptions)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.tabbedControlGroup1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.colorGroupingLayoutControlGroup)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem7)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup3)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.splitterItem2)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
@@ -155,6 +168,7 @@
          // layoutControl
          // 
          this.layoutControl.AllowCustomization = false;
+         this.layoutControl.Controls.Add(this.layoutControl1);
          this.layoutControl.Controls.Add(this.colorGroupingButton);
          this.layoutControl.Controls.Add(this.panelChartSettings);
          this.layoutControl.Controls.Add(this.panelChartExportSettings);
@@ -170,6 +184,42 @@
          this.layoutControl.Size = new System.Drawing.Size(1395, 1546);
          this.layoutControl.TabIndex = 19;
          this.layoutControl.Text = "layoutControl1";
+         // 
+         // layoutControl1
+         // 
+         this.layoutControl1.Controls.Add(this.panelCurveColorGrouping);
+         this.layoutControl1.Location = new System.Drawing.Point(15, 814);
+         this.layoutControl1.Name = "layoutControl1";
+         this.layoutControl1.Root = this.Root;
+         this.layoutControl1.Size = new System.Drawing.Size(1365, 717);
+         this.layoutControl1.TabIndex = 25;
+         this.layoutControl1.Text = "layoutControl1";
+         // 
+         // panelCurveColorGrouping
+         // 
+         this.panelCurveColorGrouping.Location = new System.Drawing.Point(12, 12);
+         this.panelCurveColorGrouping.Name = "panelCurveColorGrouping";
+         this.panelCurveColorGrouping.Size = new System.Drawing.Size(1341, 693);
+         this.panelCurveColorGrouping.TabIndex = 4;
+         // 
+         // Root
+         // 
+         this.Root.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
+         this.Root.GroupBordersVisible = false;
+         this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.layoutControlItem8});
+         this.Root.Name = "Root";
+         this.Root.Size = new System.Drawing.Size(1365, 717);
+         this.Root.TextVisible = false;
+         // 
+         // layoutControlItem8
+         // 
+         this.layoutControlItem8.Control = this.panelCurveColorGrouping;
+         this.layoutControlItem8.Location = new System.Drawing.Point(0, 0);
+         this.layoutControlItem8.Name = "layoutControlItem8";
+         this.layoutControlItem8.Size = new System.Drawing.Size(1345, 697);
+         this.layoutControlItem8.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem8.TextVisible = false;
          // 
          // colorGroupingButton
          // 
@@ -191,10 +241,10 @@
          // 
          // panelChartExportSettings
          // 
-         this.panelChartExportSettings.Location = new System.Drawing.Point(15, 814);
+         this.panelChartExportSettings.Location = new System.Drawing.Point(273, 814);
          this.panelChartExportSettings.Margin = new System.Windows.Forms.Padding(8);
          this.panelChartExportSettings.Name = "panelChartExportSettings";
-         this.panelChartExportSettings.Size = new System.Drawing.Size(1365, 717);
+         this.panelChartExportSettings.Size = new System.Drawing.Size(1107, 717);
          this.panelChartExportSettings.TabIndex = 23;
          // 
          // panelDataBrowser
@@ -241,13 +291,32 @@
          this.tabbedControlGroup1.CustomizationFormText = "Options";
          this.tabbedControlGroup1.Location = new System.Drawing.Point(0, 742);
          this.tabbedControlGroup1.Name = "tabbedControlGroup1";
-         this.tabbedControlGroup1.SelectedTabPage = this.layoutControlGroup3;
+         this.tabbedControlGroup1.SelectedTabPage = this.colorGroupingLayoutControlGroup;
          this.tabbedControlGroup1.Size = new System.Drawing.Size(1395, 804);
          this.tabbedControlGroup1.TabPages.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutControlGroup3,
             this.layoutControlGroup2,
-            this.layoutControlGroup4});
+            this.layoutControlGroup4,
+            this.colorGroupingLayoutControlGroup});
          this.tabbedControlGroup1.Text = "Options";
+         // 
+         // colorGroupingLayoutControlGroup
+         // 
+         this.colorGroupingLayoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.layoutControlItem7});
+         this.colorGroupingLayoutControlGroup.Location = new System.Drawing.Point(0, 0);
+         this.colorGroupingLayoutControlGroup.Name = "colorGroupingLayoutControlGroup";
+         this.colorGroupingLayoutControlGroup.Size = new System.Drawing.Size(1369, 721);
+         this.colorGroupingLayoutControlGroup.Text = "Curves Color Grouping";
+         // 
+         // layoutControlItem7
+         // 
+         this.layoutControlItem7.Control = this.layoutControl1;
+         this.layoutControlItem7.Location = new System.Drawing.Point(0, 0);
+         this.layoutControlItem7.Name = "layoutControlItem7";
+         this.layoutControlItem7.Size = new System.Drawing.Size(1369, 721);
+         this.layoutControlItem7.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem7.TextVisible = false;
          // 
          // layoutControlGroup3
          // 
@@ -328,14 +397,14 @@
          // layoutControlItem5
          // 
          this.layoutControlItem5.Control = this.panelChartExportSettings;
-         this.layoutControlItem5.CustomizationFormText = "layoutControlItem5";
+         this.layoutControlItem5.CustomizationFormText = "Curve Color Grouping";
          this.layoutControlItem5.Location = new System.Drawing.Point(0, 0);
          this.layoutControlItem5.MinSize = new System.Drawing.Size(12, 13);
          this.layoutControlItem5.Name = "layoutControlItem5";
          this.layoutControlItem5.Size = new System.Drawing.Size(1369, 721);
          this.layoutControlItem5.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom;
-         this.layoutControlItem5.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem5.TextVisible = false;
+         this.layoutControlItem5.Text = "Curve Color Grouping";
+         this.layoutControlItem5.TextSize = new System.Drawing.Size(255, 33);
          // 
          // splitterItem1
          // 
@@ -383,6 +452,11 @@
          ((System.ComponentModel.ISupportInitialize)(this._barManager)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
          this.layoutControl.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
+         this.layoutControl1.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.panelCurveColorGrouping)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem8)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.panelChartSettings)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.panelChartExportSettings)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.panelDataBrowser)).EndInit();
@@ -390,6 +464,8 @@
          ((System.ComponentModel.ISupportInitialize)(this.panelCurveOptions)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.tabbedControlGroup1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.colorGroupingLayoutControlGroup)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem7)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup3)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.splitterItem2)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
@@ -435,5 +511,11 @@
       private DevExpress.XtraEditors.SimpleButton colorGroupingButton;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem6;
       private Controls.UxLayoutControl layoutControl;
+      private DevExpress.XtraLayout.LayoutControl layoutControl1;
+      private DevExpress.XtraEditors.PanelControl panelCurveColorGrouping;
+      private DevExpress.XtraLayout.LayoutControlGroup Root;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem8;
+      private DevExpress.XtraLayout.LayoutControlGroup colorGroupingLayoutControlGroup;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem7;
    }
 }
