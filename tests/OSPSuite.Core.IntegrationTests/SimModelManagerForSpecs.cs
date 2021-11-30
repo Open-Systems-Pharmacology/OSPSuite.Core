@@ -14,17 +14,17 @@ namespace OSPSuite.Core
 
       public Simulation CreateSimulation(IModelCoreSimulation modelCoreSimulation)
       {
-         return base.CreateSimulation(_simModelExporter.ExportSimModelXml(modelCoreSimulation, SimModelExportMode.Optimized));
+         return CreateSimulation(_simModelExporter.ExportSimModelXml(modelCoreSimulation, SimModelExportMode.Optimized));
       }
 
       public IReadOnlyList<ParameterProperties> SetVariableParameters(Simulation simulation, IReadOnlyList<string> variablePaths)
       {
-         return base.SetVariableParameters(simulation, variablePaths, calculateSensitivities: false);
+         return SetVariableParameters(simulation, variablePaths, calculateSensitivities: false);
       }
 
-      public new IReadOnlyList<SpeciesProperties> SetVariableSpecies(Simulation simulation, IReadOnlyList<string> variablePaths)
+      public IReadOnlyList<SpeciesProperties> SetVariableSpecies(Simulation simulation, IReadOnlyList<string> variablePaths)
       {
-         return base.SetVariableMolecules(simulation, variablePaths);
+         return SetVariableMolecules(simulation, variablePaths);
       }
    }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Autofac;
 using OSPSuite.Core;
@@ -126,6 +127,9 @@ namespace OSPSuite.Infrastructure.Container.Autofac
 
       private void register(IReadOnlyCollection<Type> serviceTypes, Type concreteType, LifeStyle lifeStyle, string key = null)
       {
+         if (concreteType.IsGenericTypeDefinition)
+            return;
+
          var builder = AutofacBuilder
             .RegisterType(concreteType)
             .As(serviceTypes.ToArray())
