@@ -5,6 +5,7 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
@@ -692,6 +693,68 @@ namespace OSPSuite.Presentation.Presentation
       public void should_update_the_chart()
       {
          A.CallTo(() => _chartUpdater.Update(_chart)).MustHaveHappened();
+      }
+   }
+
+   public class When_setting_metadata_for_color_grouping : concern_for_ChartEditorPresenter
+   {
+      private DataRepository _dataRepository_1;
+      private DataRepository _dataRepository_2;
+      private List<DataRepository> _dataRepositoryList;
+      private DataColumn _column1;
+      private DataColumn _column2;
+      private List<DataColumn> _usedDataColumns;
+      private IEnumerable<string> _commonMetaData;
+      protected override void Context()
+      {
+         base.Context();
+         var baseGrid_1 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
+         var baseGrid_2 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
+
+         _column1 = new DataColumn("Column 1", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid_1)
+         {
+            DataInfo = new DataInfo(ColumnOrigins.Calculation),
+            IsInternal = false
+         };
+
+         _column2 = new DataColumn("Column 2", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid_2)
+         {
+            DataInfo = new DataInfo(ColumnOrigins.Calculation),
+         };
+
+         _dataRepository_1 = new DataRepository { _column1 };
+         _dataRepository_2 = new DataRepository { _column2 };
+
+         _dataRepository_1.ExtendedProperties.Add(new ExtendedProperty<int>() { Name = "ID", Value = 1 });
+         _dataRepository_2.ExtendedProperties.Add(new ExtendedProperty<int>() { Name = "ID", Value = 2 });
+
+         _dataRepository_1.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Human" });
+         _dataRepository_2.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Human" });
+
+         sut.SetShowDataColumnInDataBrowserDefinition(x => true);
+         sut.AddDataRepositories(new[] { _dataRepository_1, _dataRepository_2 });
+         _dataRepositoryList = new List<DataRepository>(){_dataRepository_1, _dataRepository_2};
+
+         var metaData_List = new List<string> {"ID", "Species"};
+         _commonMetaData = metaData_List;
+
+         A.CallTo(() => _dataBrowserPresenter.GetAllUsedDataColumns()).Returns(new[] { _column1, _column2, _standardColumn });
+      }
+      protected override void Because()
+      {
+         sut.SetAvailableColorGroupingMetaData(_dataRepositoryList);
+      }
+
+      private IEnumerable<string> getMetaDataEnumerableHelper()
+      {
+         return _commonMetaData.Select(x => x);
+      }
+
+      [Observation]
+      public void should_set_common_meta_data_correctly()
+      {
+         var tet = getMetaDataEnumerableHelper();
+         A.CallTo(() => _curveColorGroupingPresenter.SetMetadata(tet)).MustHaveHappened();
       }
    }
 }
