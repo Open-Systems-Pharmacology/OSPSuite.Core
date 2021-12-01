@@ -698,63 +698,63 @@ namespace OSPSuite.Presentation.Presentation
 
    public class When_setting_metadata_for_color_grouping : concern_for_ChartEditorPresenter
    {
-      private DataRepository _dataRepository_1;
-      private DataRepository _dataRepository_2;
+      private DataRepository _dataRepository1;
+      private DataRepository _dataRepository2;
       private List<DataRepository> _dataRepositoryList;
       private DataColumn _column1;
       private DataColumn _column2;
       private List<DataColumn> _usedDataColumns;
       private IEnumerable<string> _commonMetaData;
+      private IEnumerable<string> _calculatedCommonMetaData;
       protected override void Context()
       {
          base.Context();
-         var baseGrid_1 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
-         var baseGrid_2 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
+         var baseGrid1 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
+         var baseGrid2 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
 
-         _column1 = new DataColumn("Column 1", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid_1)
+         _column1 = new DataColumn("Column 1", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid1)
          {
             DataInfo = new DataInfo(ColumnOrigins.Calculation),
             IsInternal = false
          };
 
-         _column2 = new DataColumn("Column 2", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid_2)
+         _column2 = new DataColumn("Column 2", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid2)
          {
             DataInfo = new DataInfo(ColumnOrigins.Calculation),
          };
 
-         _dataRepository_1 = new DataRepository { _column1 };
-         _dataRepository_2 = new DataRepository { _column2 };
+         _dataRepository1 = new DataRepository { _column1 };
+         _dataRepository2 = new DataRepository { _column2 };
 
-         _dataRepository_1.ExtendedProperties.Add(new ExtendedProperty<int>() { Name = "ID", Value = 1 });
-         _dataRepository_2.ExtendedProperties.Add(new ExtendedProperty<int>() { Name = "ID", Value = 2 });
+         _dataRepository1.ExtendedProperties.Add(new ExtendedProperty<int>() { Name = "ID", Value = 1 });
+         _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<int>() { Name = "ID", Value = 2 });
 
-         _dataRepository_1.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Human" });
-         _dataRepository_2.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Human" });
+         _dataRepository1.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Human" });
+         _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Human" });
+         _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "NotCommonMetaData", Value = "test" });
 
          sut.SetShowDataColumnInDataBrowserDefinition(x => true);
-         sut.AddDataRepositories(new[] { _dataRepository_1, _dataRepository_2 });
-         _dataRepositoryList = new List<DataRepository>(){_dataRepository_1, _dataRepository_2};
+         sut.AddDataRepositories(new[] { _dataRepository1, _dataRepository2 });
+         _dataRepositoryList = new List<DataRepository>(){_dataRepository1, _dataRepository2};
 
-         var metaData_List = new List<string> {"ID", "Species"};
-         _commonMetaData = metaData_List;
+          
+         _commonMetaData = new List<string> { "ID", "Species" }; ;
 
          A.CallTo(() => _dataBrowserPresenter.GetAllUsedDataColumns()).Returns(new[] { _column1, _column2, _standardColumn });
+
+
+         A.CallTo(() => _curveColorGroupingPresenter.SetMetadata(A<IEnumerable<string>>._))
+            .Invokes(x => { _calculatedCommonMetaData = x.GetArgument<IEnumerable<string>>(0); });
       }
       protected override void Because()
       {
          sut.SetAvailableColorGroupingMetaData(_dataRepositoryList);
       }
 
-      private IEnumerable<string> getMetaDataEnumerableHelper()
-      {
-         return _commonMetaData.Select(x => x);
-      }
-
       [Observation]
       public void should_set_common_meta_data_correctly()
       {
-         var tet = getMetaDataEnumerableHelper();
-         A.CallTo(() => _curveColorGroupingPresenter.SetMetadata(tet)).MustHaveHappened();
+         _calculatedCommonMetaData.ShouldBeEqualTo(_commonMetaData);
       }
    }
 }
