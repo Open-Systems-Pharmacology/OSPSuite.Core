@@ -37,11 +37,6 @@ namespace OSPSuite.UI.Views.Charts
          }
       }
 
-      public IEnumerable<string> GetSelectedItems()
-      {
-         throw new NotImplementedException();
-      }
-
       private IEnumerable<string> getSelectedItems()
       {
          return metaDataCheckedListBoxControl.CheckedIndices.Select(index => metaDataCheckedListBoxControl.GetItemText(index)).ToList();

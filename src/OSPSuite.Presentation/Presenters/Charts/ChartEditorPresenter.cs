@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Org.BouncyCastle.Math.EC.Rfc7748;
 using OSPSuite.Assets;
@@ -9,11 +8,9 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
-using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.MenuAndBars;
-using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Events;
@@ -185,10 +182,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       void Refresh();
 
-      void OnColorGroupButtonClicked();
-
-      event EventHandler<EventArgs> ColorGroupButtonClicked;
-      void ColorGroupByMetaData(IEnumerable<DataRepository> allObservedData);
       void SetAvailableColorGroupingMetaData(IEnumerable<DataRepository> allObservedData);
    }
 
@@ -206,6 +199,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly IChartUpdater _chartUpdater;
       private readonly IEventPublisher _eventPublisher;
       private readonly IDimensionFactory _dimensionFactory;
+      private IEnumerable<DataRepository> _activeObservedData;
       private Func<DataColumn, string> _curveNameDefinition;
       private readonly List<IPresenterWithColumnSettings> _presentersWithColumnSettings;
       public CurveChart Chart { get; private set; }
@@ -213,8 +207,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public event Action<IReadOnlyCollection<GridColumnSettings>> ColumnSettingsChanged = delegate { };
       public event EventHandler<IDragEvent> DragOver = delegate { };
       public event EventHandler<IDragEvent> DragDrop = delegate { };
-      public event EventHandler<EventArgs> ColorGroupButtonClicked = delegate { };
-
 
       public ChartEditorPresenter(IChartEditorView view, IAxisSettingsPresenter axisSettingsPresenter,
          IChartSettingsPresenter chartSettingsPresenter, IChartExportSettingsPresenter chartExportSettingsPresenter,
@@ -269,20 +261,37 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private IEnumerable<string> getCommonMetaDataOfCurves(IEnumerable<DataRepository> allObservedData)
       {
          var activeDataColumns = _dataBrowserPresenter.GetAllUsedDataColumns();
-         var activeObservedData = allObservedData.Where(x => activeDataColumns.Any(column => column.Repository.Name == x.Name));
+         _activeObservedData = allObservedData.Where(x => activeDataColumns.Any(column => column.Repository.Name == x.Name));
 
-         if (!activeObservedData.Any())
+         if (_activeObservedData == null || !_activeObservedData.Any())
             return new List<string>();
 
-         var firstCurveMetaData = activeObservedData.First().ExtendedProperties.Keys.ToList();
-         var commonMetaData = firstCurveMetaData.Where(x => activeObservedData.All(observedData => observedData.ExtendedProperties.Keys.Contains(x)));
+         var firstCurveMetaData = _activeObservedData.First().ExtendedProperties.Keys.ToList();
+         var commonMetaData = firstCurveMetaData.Where(x => _activeObservedData.All(observedData => observedData.ExtendedProperties.Keys.Contains(x)));
 
          return commonMetaData;
       }
 
       private void onApplyColorGrouping(IEnumerable<string> eSelectedMetaData)
       {
-         throw new NotImplementedException();
+         //like this we can get the repositories grouped according to the selected MetaData
+         var groupedDataRepositories = new List<List<DataRepository>>();
+         foreach (var groupingMetaData in eSelectedMetaData)
+         {
+            var dataReposGroupedBySingleMetaData = _activeObservedData.GroupBy(x => x.ExtendedProperties[groupingMetaData].ValueAsObject).Select(group => group.ToList()).ToList();
+            groupedDataRepositories.AddRange(dataReposGroupedBySingleMetaData);
+         }
+
+         foreach (var group in groupedDataRepositories)
+         {
+            var groupColor = Chart.SelectNewColor();
+
+            foreach (var curve in Chart.Curves)
+            {
+               if (group.Any(x => curve.Name.StartsWith(x.Name)))
+                  _curveSettingsPresenter.UpdateColorForCurve(curve, groupColor);
+            }
+         }
       }
 
       private void initPresentersWithColumnSettings()
@@ -597,79 +606,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _axisSettingsPresenter.Refresh();
          updateUsedColumns();
       }
-
-      public void OnColorGroupButtonClicked()
-      {
-         ColorGroupButtonClicked.Invoke(this, new EventArgs());
-      }
-
-      public void ColorGroupByMetaData(IEnumerable<DataRepository> allObservedData)
-      {
-         var activeDataColumns = _dataBrowserPresenter.GetAllUsedDataColumns();
-
-         //var activeObservedData = allObservedData.Where(x => activeDataColumns.Any(column => column.Id == x.Id));
-         var activeObservedData = allObservedData.Where(x => activeDataColumns.Any(column => column.Repository.Name == x.Name));
-
-         if (activeObservedData == null || !activeObservedData.Any())
-            return;
-
-         /*
-         var commonMetaData = activeObservedData.First().ExtendedProperties.Keys.ToList();
-
-         foreach (var column in activeObservedData) //we are checking the first one twice
-         {
-            foreach (var extendedPropertyName in commonMetaData.Where(extendedPropertyName => !column.ExtendedProperties.Keys.Contains(extendedPropertyName)))
-            {
-               commonMetaData.Remove(extendedPropertyName);
-            }
-         }
-*/
-         var firstMetaData = activeObservedData.First().ExtendedProperties.Keys.ToList();
-
-         var commonMetaDataTest = firstMetaData.Where(x => activeObservedData.All(observedData => observedData.ExtendedProperties.Keys.Contains(x)));
-
-
-         //the part that is actually working
-         /*
-         using (var curveColorGroupingPresenter = _applicationController.Start<ICurveColorGroupingPresenter>())
-         {
-            curveColorGroupingPresenter.SetMetadata(commonMetaDataTest.ToList());
-            curveColorGroupingPresenter.Show();
-
-            if (curveColorGroupingPresenter.Canceled())
-               return;
-
-            var selected = curveColorGroupingPresenter.GetSelectedItems();
-
-            //=========
-
-            //like this we can get the repositories grouped according to the selected MetaData
-            var groupedDataRepositories = new List<List<DataRepository>>();
-            foreach (var groupingMetaData in selected)
-            {
-               var dataReposGroupedBySingleMetaData = activeObservedData.GroupBy(x => x.ExtendedProperties[groupingMetaData].ValueAsObject).Select(group => group.ToList()).ToList();
-               groupedDataRepositories.AddRange(dataReposGroupedBySingleMetaData);
-            }
-
-
-            foreach (var group in groupedDataRepositories)
-            {
-               var groupColor = Chart.SelectNewColor();
-
-               foreach (var curve in Chart.Curves)
-               {
-                  if (group.Any(x => curve.Name.StartsWith(x.Name)))
-                     //curve.Color = groupColor;
-                     _curveSettingsPresenter.UpdateColorForCurve(curve, groupColor); //not sure I actually like teh naming
-                  //since we also have the other color updating function
-               }
-            }
-
-         }
-
-         */
-      }
-
       public void SetAvailableColorGroupingMetaData(IEnumerable<DataRepository> allObservedData)
       {
          _curveColorGroupingPresenter.SetMetadata(getCommonMetaDataOfCurves(allObservedData));

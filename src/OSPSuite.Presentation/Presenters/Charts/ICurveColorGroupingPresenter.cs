@@ -21,8 +21,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
    {
       void SetMetadata(IEnumerable<string> metaDataCategories);
 
-      IEnumerable<string> GetSelectedItems();
-
       event EventHandler<CurveColorGroupingEventArgs> ApplySelectedColorGrouping;
 
       void ApplyColorGroupingClicked(IEnumerable<string> selectedMetaData);
@@ -38,11 +36,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public CurveColorGroupingPresenter(ICurveColorGroupingView view) : base(view)
       {
-      }
-
-      public IEnumerable<string> GetSelectedItems()
-      {
-         return _view.GetSelectedItems();
       }
 
       public void SetMetadata(IEnumerable<string> metaDataCategories)

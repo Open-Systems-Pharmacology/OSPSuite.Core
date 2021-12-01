@@ -60,7 +60,6 @@ namespace OSPSuite.UI.Views.Charts
          repositoryItemCheckEditForUsedIn.EditValueChanged += (o, e) => OnEvent(() => changeUsed(o));
 
          repositoryItemCheckEditForUsedIn.ValueGrayed = null;
-         colorGroupingButton.Text = Captions.Chart.ColorGrouping.ColorGroupingButton;
       }
 
       private void changeUsed(object sender)
@@ -180,11 +179,6 @@ namespace OSPSuite.UI.Views.Charts
       public void SetChartExportSettingsView(IView view)
       {
          panelChartExportSettings.FillWith(view);
-      }
-
-      private void ColorGroupByMetaData(object sender, EventArgs e)
-      {
-         _presenter.OnColorGroupButtonClicked();
       }
    }
 }
