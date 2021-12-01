@@ -81,7 +81,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void SelectedDataColumnsChanged();
 
       /// <summary>
-      ///    Returns all the metaData names that are common for all the curves visible in the chart
+      ///    Returns all the DataColumns for the curves that are visible in the chart
       /// </summary>
       IEnumerable<DataColumn> GetAllUsedDataColumns();
    }
@@ -165,17 +165,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public IEnumerable<DataColumn> GetAllUsedDataColumns()
       {
          return _dataColumnDTOCache.KeyValues.Where(x => x.Value.Used).Select(x => x.Key);
-
-         /*
-         var hash = new HashSet<string>();
-
-         foreach (var dataColumn in usedDataColumns)
-         {
-            dataColumn.Repository.ExtendedProperties.Keys.Each(x => hash.Add(x));
-         }
-
-         return hash.ToList();
-*/
       }
 
       public void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used)

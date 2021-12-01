@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Org.BouncyCastle.Math.EC.Rfc7748;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
@@ -182,6 +181,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       void Refresh();
 
+      /// <summary>
+      ///    Sets the metaData available as color grouping criteria in the color grouping tab.
+      /// <param name="allObservedData"> is all the observed data on the chart</param>
+      /// </summary>
       void SetAvailableColorGroupingMetaData(IEnumerable<DataRepository> allObservedData);
    }
 

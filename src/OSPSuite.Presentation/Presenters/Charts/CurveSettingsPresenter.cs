@@ -201,8 +201,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void UpdateColorForCurve(Curve curve, Color color)
       {
          var curveDTO = findCurveDTOFor(curve);
-         curveDTO.Color = color;
-         NotifyCurvePropertyChange(curveDTO);
+         UpdateCurveColor(curveDTO, color);
       }
    }
 }

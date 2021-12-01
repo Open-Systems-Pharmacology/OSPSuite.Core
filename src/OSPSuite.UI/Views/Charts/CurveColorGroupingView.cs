@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DevExpress.Utils.Extensions;
-using DevExpress.XtraEditors;
-using DevExpress.XtraEditors.Controls;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Charts;
@@ -44,7 +41,7 @@ namespace OSPSuite.UI.Views.Charts
 
       private void onApplyColorGroupingButtonClicked(object sender, EventArgs eventArgs)
       {
-         _presenter.ApplyColorGroupingClicked(getSelectedItems());
+         _presenter.ApplyColorGroupingButtonClicked(getSelectedItems());
       }
    }
 }
