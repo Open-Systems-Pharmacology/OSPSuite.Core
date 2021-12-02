@@ -247,8 +247,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _axisSettingsPresenter.AxisAdded += (o, e) => onAxisAdded();
          _axisSettingsPresenter.AxisPropertyChanged += (o, e) => updateChart();
 
-         curveColorGroupingPresenter.ApplySelectedColorGrouping += (o, e) => onApplyColorGrouping(e.SelectedMetaData);
-
+         _curveColorGroupingPresenter.ApplySelectedColorGrouping += (o, e) => onApplyColorGrouping(e.SelectedMetaData);
 
          AddSubPresenters(axisSettingsPresenter, chartSettingsPresenter, chartExportSettingsPresenter, curveSettingsPresenter, dataBrowserPresenter, curveColorGroupingPresenter);
 
@@ -277,6 +276,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void onApplyColorGrouping(IReadOnlyList<string> eSelectedMetaData)
       {
+         if (_activeObservedData == null)
+            return;
+
          //like this we can get the repositories grouped according to the selected MetaData
          var groupedDataRepositories = new List<List<DataRepository>>();
          foreach (var groupingMetaData in eSelectedMetaData)
