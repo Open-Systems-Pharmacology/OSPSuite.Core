@@ -103,8 +103,8 @@ namespace OSPSuite.Presentation.Presentation
 
          sut.SetShowDataColumnInDataBrowserDefinition(x => x.Name != _hiddenColumn.Name);
 
-         A.CallTo(() => _dataBrowserPresenter.AddDataColumns(A<IEnumerable<DataColumn>>._))
-            .Invokes(x => _dataColumnsAdded = x.GetArgument<IEnumerable<DataColumn>>(0).ToList());
+         A.CallTo(() => _dataBrowserPresenter.AddDataColumns(A<IReadOnlyList<DataColumn>>._))
+            .Invokes(x => _dataColumnsAdded = x.GetArgument<IReadOnlyList<DataColumn>>(0).ToList());
       }
 
       protected override void Because()
@@ -266,8 +266,8 @@ namespace OSPSuite.Presentation.Presentation
 
          A.CallTo(() => _dataBrowserPresenter.AllDataColumns).Returns(new[] {_columnThatWillBeInternal, _columnThatWillBeRemoved, _standardColumn});
 
-         A.CallTo(() => _dataBrowserPresenter.RemoveDataColumns(A<IEnumerable<DataColumn>>._))
-            .Invokes(x => _dataColumnsRemoved = x.GetArgument<IEnumerable<DataColumn>>(0).ToList());
+         A.CallTo(() => _dataBrowserPresenter.RemoveDataColumns(A<IReadOnlyList<DataColumn>>._))
+            .Invokes(x => _dataColumnsRemoved = x.GetArgument<IReadOnlyList<DataColumn>>(0).ToList());
       }
 
       protected override void Because()
@@ -703,8 +703,8 @@ namespace OSPSuite.Presentation.Presentation
       private List<DataRepository> _dataRepositoryList;
       private DataColumn _column1;
       private DataColumn _column2;
-      private IEnumerable<string> _commonMetaData;
-      private IEnumerable<string> _calculatedCommonMetaData;
+      private IReadOnlyList<string> _commonMetaData;
+      private IReadOnlyList<string> _calculatedCommonMetaData;
       protected override void Context()
       {
          base.Context();

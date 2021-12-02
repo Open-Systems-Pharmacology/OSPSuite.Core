@@ -26,7 +26,7 @@ namespace OSPSuite.UI.Views.Charts
          _presenter = presenter;
       }
 
-      public void SetMetadata(IEnumerable<string> metaDataCategories)
+      public void SetMetadata(IReadOnlyList<string> metaDataCategories)
       {
          foreach (var metaDataCategory in metaDataCategories)
          {

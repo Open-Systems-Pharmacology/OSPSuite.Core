@@ -5,6 +5,6 @@ namespace OSPSuite.Presentation.Views.Charts
 {
    public interface ICurveColorGroupingView : IView<ICurveColorGroupingPresenter>
    {
-      void SetMetadata(IEnumerable<string> metaDataCategories);
+      void SetMetadata(IReadOnlyList<string> metaDataCategories);
    }
 }

@@ -202,7 +202,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly IChartUpdater _chartUpdater;
       private readonly IEventPublisher _eventPublisher;
       private readonly IDimensionFactory _dimensionFactory;
-      private IEnumerable<DataRepository> _activeObservedData;
+      private List<DataRepository> _activeObservedData;
       private Func<DataColumn, string> _curveNameDefinition;
       private readonly List<IPresenterWithColumnSettings> _presentersWithColumnSettings;
       public CurveChart Chart { get; private set; }
@@ -261,10 +261,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
       }
 
       //gets all the common metaData of the observed data that correspond to active curves 
-      private IReadOnlyList<string> getCommonMetaDataOfCurves(IEnumerable<DataRepository> allObservedData)
+      private IReadOnlyList<string> getCommonMetaDataOfCurves(IReadOnlyList<DataRepository> allObservedData)
       {
          var activeDataColumns = _dataBrowserPresenter.GetAllUsedDataColumns();
-         _activeObservedData = allObservedData.Where(x => activeDataColumns.Any(column => column.Repository.Name == x.Name));
+         _activeObservedData = allObservedData.Where(x => activeDataColumns.Any(column => column.Repository.Name == x.Name)).ToList();
 
          if (_activeObservedData == null || !_activeObservedData.Any())
             return new List<string>();

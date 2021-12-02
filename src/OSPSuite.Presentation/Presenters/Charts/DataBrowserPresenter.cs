@@ -83,7 +83,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    Returns all the DataColumns for the curves that are visible in the chart
       /// </summary>
-      IEnumerable<DataColumn> GetAllUsedDataColumns();
+      IReadOnlyList<DataColumn> GetAllUsedDataColumns();
    }
 
    public class DataBrowserPresenter : PresenterWithColumnSettings<IDataBrowserView, IDataBrowserPresenter>, IDataBrowserPresenter
@@ -162,9 +162,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
          updateDataSelection(_view.SelectedDescendantColumns);
       }
 
-      public IEnumerable<DataColumn> GetAllUsedDataColumns()
+      public IReadOnlyList<DataColumn> GetAllUsedDataColumns()
       {
-         return _dataColumnDTOCache.KeyValues.Where(x => x.Value.Used).Select(x => x.Key);
+         return _dataColumnDTOCache.KeyValues.Where(x => x.Value.Used).Select(x => x.Key).ToList();
       }
 
       public void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used)
