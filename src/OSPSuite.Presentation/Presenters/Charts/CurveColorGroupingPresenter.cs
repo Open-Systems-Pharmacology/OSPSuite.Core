@@ -9,9 +9,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    Selected observed data metaData according to which curves should be assigned the same color
       /// </summary>
-      public IEnumerable<string> SelectedMetaData { get; }
+      public IReadOnlyList<string> SelectedMetaData { get; }
 
-      public CurveColorGroupingEventArgs(IEnumerable<string> selectedMetaData)
+      public CurveColorGroupingEventArgs(IReadOnlyList<string> selectedMetaData)
       {
          SelectedMetaData = selectedMetaData;
       }
@@ -19,17 +19,17 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
    public interface ICurveColorGroupingPresenter : IPresenter<ICurveColorGroupingView>, IDisposablePresenter
    {
-      void SetMetadata(IEnumerable<string> metaDataCategories);
+      void SetMetadata(IReadOnlyList<string> metaDataCategories);
 
       event EventHandler<CurveColorGroupingEventArgs> ApplySelectedColorGrouping;
 
-      void ApplyColorGroupingButtonClicked(IEnumerable<string> selectedMetaData);
+      void ApplyColorGroupingButtonClicked(IReadOnlyList<string> selectedMetaData);
    }
 
    public class CurveColorGroupingPresenter : AbstractDisposablePresenter<ICurveColorGroupingView, ICurveColorGroupingPresenter>, ICurveColorGroupingPresenter
    {
       public event EventHandler<CurveColorGroupingEventArgs> ApplySelectedColorGrouping = delegate { };
-      void ICurveColorGroupingPresenter.ApplyColorGroupingButtonClicked(IEnumerable<string> selectedMetaData)
+      void ICurveColorGroupingPresenter.ApplyColorGroupingButtonClicked(IReadOnlyList<string> selectedMetaData)
       {
          ApplySelectedColorGrouping.Invoke(this, new CurveColorGroupingEventArgs(selectedMetaData));
       }
@@ -38,7 +38,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
       }
 
-      public void SetMetadata(IEnumerable<string> metaDataCategories)
+      public void SetMetadata(IReadOnlyList<string> metaDataCategories)
       {
          _view.SetMetadata(metaDataCategories);
       }

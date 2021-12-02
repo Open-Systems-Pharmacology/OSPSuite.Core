@@ -34,7 +34,7 @@ namespace OSPSuite.UI.Views.Charts
          }
       }
 
-      private IEnumerable<string> getSelectedItems()
+      private IReadOnlyList<string> getSelectedItems()
       {
          return metaDataCheckedListBoxControl.CheckedIndices.Select(index => metaDataCheckedListBoxControl.GetItemText(index)).ToList();
       }

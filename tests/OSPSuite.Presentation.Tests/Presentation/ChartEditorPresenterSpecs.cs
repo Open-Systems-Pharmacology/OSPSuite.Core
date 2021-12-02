@@ -703,7 +703,6 @@ namespace OSPSuite.Presentation.Presentation
       private List<DataRepository> _dataRepositoryList;
       private DataColumn _column1;
       private DataColumn _column2;
-      private List<DataColumn> _usedDataColumns;
       private IEnumerable<string> _commonMetaData;
       private IEnumerable<string> _calculatedCommonMetaData;
       protected override void Context()
@@ -733,19 +732,17 @@ namespace OSPSuite.Presentation.Presentation
          _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Human" });
          _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "NotCommonMetaData", Value = "test" });
 
-         sut.SetShowDataColumnInDataBrowserDefinition(x => true);
          sut.AddDataRepositories(new[] { _dataRepository1, _dataRepository2 });
          _dataRepositoryList = new List<DataRepository>(){_dataRepository1, _dataRepository2};
-
-          
          _commonMetaData = new List<string> { "ID", "Species" }; ;
 
          A.CallTo(() => _dataBrowserPresenter.GetAllUsedDataColumns()).Returns(new[] { _column1, _column2, _standardColumn });
 
 
-         A.CallTo(() => _curveColorGroupingPresenter.SetMetadata(A<IEnumerable<string>>._))
-            .Invokes(x => { _calculatedCommonMetaData = x.GetArgument<IEnumerable<string>>(0); });
+         A.CallTo(() => _curveColorGroupingPresenter.SetMetadata(A<IReadOnlyList<string>>._))
+            .Invokes(x => { _calculatedCommonMetaData = x.GetArgument<IReadOnlyList<string>>(0); });
       }
+
       protected override void Because()
       {
          sut.SetAvailableColorGroupingMetaData(_dataRepositoryList);

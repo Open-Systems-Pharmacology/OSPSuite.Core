@@ -185,7 +185,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Sets the metaData available as color grouping criteria in the color grouping tab.
       /// <param name="allObservedData"> is all the observed data on the chart</param>
       /// </summary>
-      void SetAvailableColorGroupingMetaData(IEnumerable<DataRepository> allObservedData);
+      void SetAvailableColorGroupingMetaData(IReadOnlyList<DataRepository> allObservedData);
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -261,7 +261,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       }
 
       //gets all the common metaData of the observed data that correspond to active curves 
-      private IEnumerable<string> getCommonMetaDataOfCurves(IEnumerable<DataRepository> allObservedData)
+      private IReadOnlyList<string> getCommonMetaDataOfCurves(IEnumerable<DataRepository> allObservedData)
       {
          var activeDataColumns = _dataBrowserPresenter.GetAllUsedDataColumns();
          _activeObservedData = allObservedData.Where(x => activeDataColumns.Any(column => column.Repository.Name == x.Name));
@@ -270,18 +270,18 @@ namespace OSPSuite.Presentation.Presenters.Charts
             return new List<string>();
 
          var firstCurveMetaData = _activeObservedData.First().ExtendedProperties.Keys.ToList();
-         var commonMetaData = firstCurveMetaData.Where(x => _activeObservedData.All(observedData => observedData.ExtendedProperties.Keys.Contains(x)));
+         var commonMetaData = firstCurveMetaData.Where(x => _activeObservedData.All(observedData => observedData.ExtendedProperties.Keys.Contains(x))).ToList();
 
          return commonMetaData;
       }
 
-      private void onApplyColorGrouping(IEnumerable<string> eSelectedMetaData)
+      private void onApplyColorGrouping(IReadOnlyList<string> eSelectedMetaData)
       {
          //like this we can get the repositories grouped according to the selected MetaData
          var groupedDataRepositories = new List<List<DataRepository>>();
          foreach (var groupingMetaData in eSelectedMetaData)
          {
-            var dataReposGroupedBySingleMetaData = _activeObservedData.GroupBy(x => x.ExtendedProperties[groupingMetaData].ValueAsObject).Select(group => group.ToList()).ToList();
+            var dataReposGroupedBySingleMetaData = _activeObservedData.GroupBy(x => x.ExtendedProperties[groupingMetaData].ValueAsObject).Select(group => group.ToList());
             groupedDataRepositories.AddRange(dataReposGroupedBySingleMetaData);
          }
 
@@ -609,7 +609,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _axisSettingsPresenter.Refresh();
          updateUsedColumns();
       }
-      public void SetAvailableColorGroupingMetaData(IEnumerable<DataRepository> allObservedData)
+      public void SetAvailableColorGroupingMetaData(IReadOnlyList<DataRepository> allObservedData)
       {
          _curveColorGroupingPresenter.SetMetadata(getCommonMetaDataOfCurves(allObservedData));
       }
