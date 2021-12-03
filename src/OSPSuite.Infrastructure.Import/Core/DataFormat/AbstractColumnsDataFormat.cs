@@ -175,11 +175,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       {
          var groupingCriteria =
             Parameters
-               //the last check makes sure that a MetaDataFormatParameter with manual input (eg molecule) does not get added to the groupByParams if it is not set
-               .Where(p => p is GroupByDataFormatParameter || p is MetaDataFormatParameter && p.ColumnName != null)
+               .Where(p => p.IsGroupingCriterion())
                .Select(p =>
                   (p.ColumnName,
-                     p is GroupByDataFormatParameter || ((MetaDataFormatParameter)p).IsColumn
+                     p.ComesFromColumn() 
                         ? (data.GetColumnDescription(p.ColumnName).ExistingValues)
                         : new List<string>() { p.ColumnName }));
          
