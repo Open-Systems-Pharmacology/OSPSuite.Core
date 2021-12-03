@@ -47,7 +47,43 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          ExtractGeneralParameters(keys, data, metaDataCategories, ref totalRank);
          ExtractNonQualifiedHeadings(keys, missingKeys, columnInfos, data, ref totalRank);
          setSecondaryColumnUnit(columnInfos);
+         setDimensionsForMappings(columnInfos);
          return totalRank;
+      }
+
+      private void setDimensionsForMappings(IReadOnlyList<ColumnInfo> columnInfos)
+      {
+         foreach (var parameter in _parameters.OfType<MappingDataFormatParameter>())
+         {
+            var mappedColumn = parameter.MappedColumn;
+
+            if (mappedColumn?.Unit == null || mappedColumn?.Dimension != null)
+               continue;
+
+            var concreteColumnInfo = columnInfos.First(x => x.DisplayName == mappedColumn.Name);
+            //initial settings for fraction dimension
+            if (concreteColumnInfo.DefaultDimension?.Name == Constants.Dimension.FRACTION &&
+                mappedColumn.Unit.ColumnName.IsNullOrEmpty() &&
+                mappedColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit)
+            {
+               mappedColumn.Dimension = concreteColumnInfo.DefaultDimension;
+               mappedColumn.Unit = new UnitDescription(mappedColumn.Dimension.DefaultUnitName);
+               continue;
+            }
+
+            if (!mappedColumn.Unit.ColumnName.IsNullOrEmpty())
+               mappedColumn.Dimension = null;
+            else
+            {
+               var supportedDimensions = concreteColumnInfo.SupportedDimensions;
+               var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.HasUnit(mappedColumn.Unit.SelectedUnit));
+
+               if (dimensionForUnit == null)
+                  mappedColumn.Unit = new UnitDescription(UnitDescription.InvalidUnit);
+               else
+                  mappedColumn.Dimension = dimensionForUnit;
+            }
+         }
       }
 
       private void setSecondaryColumnUnit(IReadOnlyList<ColumnInfo> columnInfos)
@@ -202,6 +238,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       /// the second parameter is constraint to have its value equal to its ExistingValue on index 2, and
       /// the third parameter is constraint to have its value equal to its ExistingValue on index 1</param>
       /// <param name="dataSets">List to store the dataSets</param>
+      /// <param name="columnInfos">List of column infos</param>
       private void buildDataSetsRecursively(IUnformattedData data, IEnumerable<(string ColumnName, IReadOnlyList<string> ExistingValues)> parameters, Stack<int> indexes, List<ParsedDataSet> dataSets, IReadOnlyList<ColumnInfo> columnInfos)
       {
          var valueTuples = parameters.ToList();
