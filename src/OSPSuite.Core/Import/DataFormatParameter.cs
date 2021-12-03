@@ -131,7 +131,7 @@ namespace OSPSuite.Core.Import
 
       public override bool ComesFromColumn()
       {
-         throw new System.NotImplementedException();
+         return true;
       }
 
       public override string TooltipDescription()
