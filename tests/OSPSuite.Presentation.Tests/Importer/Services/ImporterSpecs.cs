@@ -20,7 +20,7 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       public ParsedDataSetTest() : base
          (
-            new List<(string ColumnName, IList<string> ExistingValues)>(), 
+            new List<(string ColumnName, IReadOnlyList<string> ExistingValues)>(), 
             A.Fake<IUnformattedData>(), 
             new List<UnformattedRow>(), 
             new Dictionary<ExtendedColumn, IList<SimulationPoint>>())

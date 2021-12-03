@@ -209,14 +209,19 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       public IEnumerable<ParsedDataSet> Parse(IUnformattedData data,
          IReadOnlyList<ColumnInfo> columnInfos)
       {
-         var groupByParams =
+         var groupingCriteria =
             Parameters
-               .Where(p => p is GroupByDataFormatParameter || p is MetaDataFormatParameter)
-               .Select(p => (p.ColumnName, p is GroupByDataFormatParameter || (p as MetaDataFormatParameter).IsColumn ? (data.GetColumnDescription(p.ColumnName).ExistingValues) as IList<string> : new List<string>() { p.ColumnName }));
-         return buildDataSets(data, groupByParams, columnInfos);
+               .Where(p => p.IsGroupingCriterion())
+               .Select(p =>
+                  (p.ColumnName,
+                     p.ComesFromColumn() 
+                        ? (data.GetColumnDescription(p.ColumnName).ExistingValues)
+                        : new List<string>() { p.ColumnName }));
+         
+         return buildDataSets(data, groupingCriteria, columnInfos);
       }
 
-      private IEnumerable<ParsedDataSet> buildDataSets(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters, IReadOnlyList<ColumnInfo> columnInfos)
+      private IEnumerable<ParsedDataSet> buildDataSets(IUnformattedData data, IEnumerable<(string ColumnName, IReadOnlyList<string> ExistingValues)> parameters, IReadOnlyList<ColumnInfo> columnInfos)
       {
          var dataSets = new List<ParsedDataSet>();
          buildDataSetsRecursively(data, parameters, new Stack<int>(), dataSets, columnInfos);
@@ -234,7 +239,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       /// the third parameter is constraint to have its value equal to its ExistingValue on index 1</param>
       /// <param name="dataSets">List to store the dataSets</param>
       /// <param name="columnInfos">List of column infos</param>
-      private void buildDataSetsRecursively(IUnformattedData data, IEnumerable<(string ColumnName, IList<string> ExistingValues)> parameters, Stack<int> indexes, List<ParsedDataSet> dataSets, IReadOnlyList<ColumnInfo> columnInfos)
+      private void buildDataSetsRecursively(IUnformattedData data, IEnumerable<(string ColumnName, IReadOnlyList<string> ExistingValues)> parameters, Stack<int> indexes, List<ParsedDataSet> dataSets, IReadOnlyList<ColumnInfo> columnInfos)
       {
          var valueTuples = parameters.ToList();
          if (indexes.Count() < valueTuples.Count()) //Still traversing the parameters
