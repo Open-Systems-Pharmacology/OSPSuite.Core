@@ -279,26 +279,48 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (_activeObservedData == null)
             return;
 
-         //like this we can get the repositories grouped according to the selected MetaData
-         var groupedDataRepositories = new List<List<DataRepository>>();
-         foreach (var groupingMetaData in eSelectedMetaData)
-         {
-            var dataReposGroupedBySingleMetaData = _activeObservedData.GroupBy(x => x.ExtendedProperties[groupingMetaData].ValueAsObject).Select(group => group.ToList());
-            groupedDataRepositories.AddRange(dataReposGroupedBySingleMetaData);
-         }
+         var groupedDataRepositories = GroupDataRepositories(eSelectedMetaData);
+         assignSameColorToGroupedCurves(groupedDataRepositories);
+      }
 
+      private void assignSameColorToGroupedCurves(List<List<DataRepository>> groupedDataRepositories)
+      {
          foreach (var group in groupedDataRepositories)
          {
             var groupColor = Chart.SelectNewColor();
+            var curvesInGroup = findCurvesCorrespondingToRepositoryList(group);
 
-            foreach (var curve in Chart.Curves)
-            {
-               if (group.Any(x => curve.Name.StartsWith(x.Name)))
-                  _curveSettingsPresenter.UpdateColorForCurve(curve, groupColor);
-            }
+            if (!curvesInGroup.Any())
+               continue;
+            
+            curvesInGroup.Each(x => _curveSettingsPresenter.UpdateColorForCurve(x, groupColor));
          }
       }
 
+      private List<List<DataRepository>> GroupDataRepositories(IReadOnlyList<string> groupingCriteria)
+      {
+         var groupedDataRepositories = new List<List<DataRepository>> { _activeObservedData };
+         foreach (var groupingMetaData in groupingCriteria)
+         {
+            var tempGroupedList = new List<List<DataRepository>>();
+            foreach (var existingGroup in groupedDataRepositories)
+            {
+               var dataReposGroupedBySingleMetaData =
+                  existingGroup.GroupBy(x => x.ExtendedProperties[groupingMetaData].ValueAsObject).Select(group => @group.ToList());
+               tempGroupedList.AddRange(dataReposGroupedBySingleMetaData);
+            }
+
+            groupedDataRepositories = tempGroupedList;
+         }
+
+         return groupedDataRepositories;
+      }
+
+      private IReadOnlyList<Curve> findCurvesCorrespondingToRepositoryList (IReadOnlyList<DataRepository> listOfDataRepositories)
+      {
+         var allColumnsInGroup = listOfDataRepositories.SelectMany(x => x.Columns).ToList();
+         return allColumnsInGroup.Select(column => Chart.FindCurveWithSameData(column.BaseGrid, column)).Where(existingCurve => existingCurve != null).ToList();
+      }
       private void initPresentersWithColumnSettings()
       {
          _presentersWithColumnSettings.Each(x => x.ColumnSettingsChanged += ColumnSettingsChanged);

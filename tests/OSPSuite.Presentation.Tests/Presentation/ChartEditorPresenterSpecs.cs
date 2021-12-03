@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using FakeItEasy;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
@@ -80,26 +81,6 @@ namespace OSPSuite.Presentation.Presentation
 
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(_baseGrid)).Returns(_baseGrid.Dimension);
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(_standardColumn)).Returns(_standardColumn.Dimension);
-
-         /*
-         var baseGrid1 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
-         var baseGrid2 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
-         var baseGrid3 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
-
-         _column1 = new DataColumn("Column 1", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid1)
-         {
-            DataInfo = new DataInfo(ColumnOrigins.Calculation),
-            IsInternal = false
-         };
-
-         _column2 = new DataColumn("Column 2", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid2)
-         {
-            DataInfo = new DataInfo(ColumnOrigins.Calculation),
-         };
-
-
-*/
-
       }
    }
 
@@ -801,7 +782,7 @@ namespace OSPSuite.Presentation.Presentation
          _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Human" });
          _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "NotCommonMetaData", Value = "test" });
          _dataRepository3.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Dog" });
-         _dataRepositoryList = new List<DataRepository>() { _dataRepository1, _dataRepository2 };
+         _dataRepositoryList = new List<DataRepository>() { _dataRepository1, _dataRepository2, _dataRepository3 };
 
          _curve = sut.AddCurveForColumn(_standardColumn);
          _curve2 = sut.AddCurveForColumn(_standardColumn2);
@@ -809,11 +790,14 @@ namespace OSPSuite.Presentation.Presentation
 
          A.CallTo(() => _dataBrowserPresenter.GetAllUsedDataColumns()).Returns(new[] { _standardColumn, _standardColumn2, _standardColumn3 });
          sut.AddDataRepositories(new[] { _dataRepository1, _dataRepository2, _dataRepository3 });
-         sut.SetAvailableColorGroupingMetaData(_dataRepositoryList);
+         
 
          A.CallTo(() => _curveSettingsPresenter.UpdateColorForCurve(A<Curve>._, A<Color>._))
             .Invokes(x =>
             {
+               //since curveSettingsPresenter is a Fake, we need to do this to get the list of usedColors updated.
+               //otherwise we get the same color assigned all the time
+               x.GetArgument<Curve>(0).Color = x.GetArgument<Color>(1);
                _colorsForCurveName.Add(x.GetArgument<Curve>(0).Id, x.GetArgument<Color>(1));
             });
 
@@ -821,16 +805,29 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         _groupingCriteria = new List<string> { "Species" };
-         _curveColorGroupingPresenter.ApplySelectedColorGrouping += Raise.With(new CurveColorGroupingEventArgs(_groupingCriteria));
+         sut.SetAvailableColorGroupingMetaData(_dataRepositoryList);
       }
 
       [Observation]
-      public void should_calculate_the_groups_correctly()
+      public void should_group_on_single_criterion()
       {
+         _groupingCriteria = new List<string> { "Species" };
+         _curveColorGroupingPresenter.ApplySelectedColorGrouping += Raise.With(new CurveColorGroupingEventArgs(_groupingCriteria));
+
          _colorsForCurveName[_curve.Id].Equals(_colorsForCurveName[_curve2.Id]).ShouldBeTrue();
-         _colorsForCurveName[_curve3.Id].Equals(_colorsForCurveName[_curve.Id]).ShouldBeTrue();
-         _colorsForCurveName[_curve3.Id].Equals(_colorsForCurveName[_curve2.Id]).ShouldBeTrue();
+         _colorsForCurveName[_curve3.Id].Equals(_colorsForCurveName[_curve.Id]).ShouldBeFalse();
+         _colorsForCurveName[_curve3.Id].Equals(_colorsForCurveName[_curve2.Id]).ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_group_on_multiple_criteria()
+      {
+         _groupingCriteria = new List<string> { "Species", "ID" };
+         _curveColorGroupingPresenter.ApplySelectedColorGrouping += Raise.With(new CurveColorGroupingEventArgs(_groupingCriteria));
+
+         _colorsForCurveName[_curve.Id].Equals(_colorsForCurveName[_curve2.Id]).ShouldBeFalse();
+         _colorsForCurveName[_curve3.Id].Equals(_colorsForCurveName[_curve.Id]).ShouldBeFalse();
+         _colorsForCurveName[_curve3.Id].Equals(_colorsForCurveName[_curve2.Id]).ShouldBeFalse();
       }
    }
 }
