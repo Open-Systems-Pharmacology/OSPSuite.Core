@@ -194,6 +194,8 @@ namespace OSPSuite.Assets
       public static readonly string EditManually = "Edit manually";
       public static readonly string ShouldColorGroupObservedData = "Color group observed data from same folder when dropping to chart";
       public static readonly string ColorGroupObservedDataContextMenu = "Color group when adding to chart";
+      public static readonly string EditAllCurvesProperties = "Edit options for selected";
+
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {

@@ -5,11 +5,14 @@ using System.Linq.Expressions;
 using System.Windows.Forms;
 using DevExpress.Data;
 using DevExpress.Utils;
+using DevExpress.Utils.Menu;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
+using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
+using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.DataBinding;
@@ -70,6 +73,7 @@ namespace OSPSuite.UI.Views.Charts
          gridView.ShowColumnChooser = true;
          gridView.ShouldUseColorForDisabledCell = false;
          gridView.OptionsView.ShowGroupPanel = false;
+         gridView.PopupMenuShowing += onPopupMenuShowing;
 
          var toolTipController = new ToolTipController();
          toolTipController.GetActiveObjectInfo += onToolTipControllerGetActiveObjectInfo;
@@ -377,6 +381,44 @@ namespace OSPSuite.UI.Views.Charts
             return;
 
          _presenter.Remove(curve);
+      }
+
+      private void onPopupMenuShowing(object sender, PopupMenuShowingEventArgs e)
+      {
+         var gridViewMenu = e.Menu;
+         if (gridViewMenu == null)
+            return;
+
+         //if (e.HitInfo.HitTest != GridHitTest.RowIndicator)
+           // return;
+
+         if (gridView.GetSelectedRows().Length == 0)
+            return;
+
+         var copyAllMenu = new DXMenuItem(Captions.EditAllCurvesProperties, (o, args) => onEditProperties());
+         gridViewMenu.Items.Insert(0, copyAllMenu);
+      }
+
+      private void onEditProperties()
+      {
+         var selectedCurveList = getSelectedCurveDTOs();
+
+         if (selectedCurveList.Count > 1)
+            _presenter.EditProperties(selectedCurveList);
+      }
+
+      private List<CurveDTO> getSelectedCurveDTOs()
+      {
+         var selectedCurveList = new List<CurveDTO>();
+         for (var i = 0; i < gridView.SelectedRowsCount; i++)
+         {
+            var row = (gridView.GetSelectedRows()[i]);
+            var selectedCurveDTO = gridView.GetRow(row) as CurveDTO;
+            if (selectedCurveDTO == null) continue;
+            selectedCurveList.Add(selectedCurveDTO);
+         }
+
+         return selectedCurveList;
       }
    }
 }
