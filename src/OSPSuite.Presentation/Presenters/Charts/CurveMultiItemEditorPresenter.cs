@@ -10,8 +10,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       Yes,
       No
    }
-/*
-   public enum LineStyles
+
+   public enum MultiEditLineStyles
    {
       None,
       Solid,
@@ -20,7 +20,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       DashDot
    }
 
-   public enum Symbols
+   public enum MultiEditSymbols
    {
       None,
       Circle,
@@ -28,7 +28,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       Triangle,
       Square
    }
-*/
+
    public interface ICurveMultiItemEditorPresenter : IDisposablePresenter, IPresenter<ICurveMultiItemEditorView>
    {
       void Show();

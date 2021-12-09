@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using OSPSuite.Core.Chart;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
@@ -15,7 +16,16 @@ namespace OSPSuite.UI.Views.Charts
       {
          InitializeComponent();
 
-         styleComboBoxEdit.FillComboBoxEditorWith(EnumHelper.AllValuesFor<LineStyles>());
+         var booleanComboBoxValues = new List<string>()
+         {
+            "<Current value>",
+            "Yes",
+            "No"
+         };
+
+         //ok so, get the enum values, ToString() fore Each one. then add to that list the default
+         //when reading, if default => null, else parse to the enum (we could even parse directly if it is not exception prone) 
+      styleComboBoxEdit.FillComboBoxEditorWith(EnumHelper.AllValuesFor<LineStyles>());
          styleComboBoxEdit.Properties.Items.Add("<Current value>");
          styleComboBoxEdit.SelectedItem = "<Current value>";
          symbolComboBoxEdit.FillComboBoxEditorWith(EnumHelper.AllValuesFor<Symbols>());
