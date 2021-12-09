@@ -202,7 +202,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly IChartUpdater _chartUpdater;
       private readonly IEventPublisher _eventPublisher;
       private readonly IDimensionFactory _dimensionFactory;
-      private List<DataRepository> _activeObservedData;
+      private IReadOnlyList<DataRepository> _activeObservedDataList;
       private Func<DataColumn, string> _curveNameDefinition;
       private readonly List<IPresenterWithColumnSettings> _presentersWithColumnSettings;
       public CurveChart Chart { get; private set; }
@@ -263,27 +263,27 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private IReadOnlyList<string> getCommonMetaDataOfCurves(IReadOnlyList<DataRepository> allObservedData)
       {
          var activeDataColumns = _dataBrowserPresenter.GetAllUsedDataColumns();
-         _activeObservedData = allObservedData.Where(x => activeDataColumns.Any(column => column.Repository.Name == x.Name)).ToList();
+         _activeObservedDataList = allObservedData.Where(x => activeDataColumns.Any(column => column.Repository.Name == x.Name)).ToList();
 
-         if (_activeObservedData == null || !_activeObservedData.Any())
+         if (!_activeObservedDataList.Any())
             return new List<string>();
 
-         var firstCurveMetaData = _activeObservedData.First().ExtendedProperties.Keys.ToList();
-         var commonMetaData = firstCurveMetaData.Where(x => _activeObservedData.All(observedData => observedData.ExtendedProperties.Keys.Contains(x))).ToList();
+         var firstCurveMetaData = _activeObservedDataList.First().ExtendedProperties.Keys.ToList();
+         var commonMetaData = firstCurveMetaData.Where(x => _activeObservedDataList.All(observedData => observedData.ExtendedProperties.Keys.Contains(x))).ToList();
 
          return commonMetaData;
       }
 
       private void onApplyColorGrouping(IReadOnlyList<string> eSelectedMetaData)
       {
-         if (_activeObservedData == null)
+         if (_activeObservedDataList == null)
             return;
 
-         var groupedDataRepositories = GroupDataRepositories(eSelectedMetaData);
+         var groupedDataRepositories = groupDataRepositories(eSelectedMetaData);
          assignSameColorToGroupedCurves(groupedDataRepositories);
       }
 
-      private void assignSameColorToGroupedCurves(List<List<DataRepository>> groupedDataRepositories)
+      private void assignSameColorToGroupedCurves(List<IReadOnlyList<DataRepository>> groupedDataRepositories)
       {
          foreach (var group in groupedDataRepositories)
          {
@@ -297,12 +297,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
          }
       }
 
-      private List<List<DataRepository>> GroupDataRepositories(IReadOnlyList<string> groupingCriteria)
+      private List<IReadOnlyList<DataRepository>> groupDataRepositories(IReadOnlyList<string> groupingCriteria)
       {
-         var groupedDataRepositories = new List<List<DataRepository>> { _activeObservedData };
+         var groupedDataRepositories = new List<IReadOnlyList<DataRepository>> { _activeObservedDataList };
          foreach (var groupingMetaData in groupingCriteria)
          {
-            var tempGroupedList = new List<List<DataRepository>>();
+            var tempGroupedList = new List<IReadOnlyList<DataRepository>>();
             foreach (var existingGroup in groupedDataRepositories)
             {
                var dataReposGroupedBySingleMetaData =

@@ -1247,7 +1247,7 @@ namespace OSPSuite.Assets
 
          public static class ColorGrouping
          {
-            public static string ColorGroupingDialogDescription = "Choose the metadata according to which the data will be grouped to the same color";
+            public static string ColorGroupingDialogDescription = "Select metadata as criteria for color grouping";
             public static string ApplyColorGroupingButton = "Apply Color Grouping";
          }
       }
