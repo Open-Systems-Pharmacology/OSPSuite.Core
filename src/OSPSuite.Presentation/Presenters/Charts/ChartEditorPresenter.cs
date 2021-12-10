@@ -180,12 +180,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Refresh the presenter with all values and settings from the underlying <see cref="CurveChart" />
       /// </summary>
       void Refresh();
-
-      /// <summary>
-      ///    Sets the metaData available as color grouping criteria in the color grouping tab.
-      /// <param name="allObservedData"> is all the observed data on the chart</param>
-      /// </summary>
-      void SetAvailableColorGroupingMetaData(IReadOnlyList<DataRepository> allObservedData);
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -202,7 +196,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly IChartUpdater _chartUpdater;
       private readonly IEventPublisher _eventPublisher;
       private readonly IDimensionFactory _dimensionFactory;
-      private IReadOnlyList<DataRepository> _activeObservedDataList;
       private Func<DataColumn, string> _curveNameDefinition;
       private readonly List<IPresenterWithColumnSettings> _presentersWithColumnSettings;
       public CurveChart Chart { get; private set; }
@@ -257,28 +250,26 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _view.SetCurveSettingsView(curveSettingsPresenter.View);
          _view.SetCurveColorGroupingView(curveColorGroupingPresenter.View);
          _view.SetDataBrowserView(dataBrowserPresenter.View);
+
+         _curveColorGroupingPresenter.SetMetadata(getCommonMetaDataOfCurves());
       }
 
       //gets all the common metaData of the observed data that correspond to active curves 
-      private IReadOnlyList<string> getCommonMetaDataOfCurves(IReadOnlyList<DataRepository> allObservedData)
+      private IReadOnlyList<string> getCommonMetaDataOfCurves()
       {
-         var activeDataColumns = _dataBrowserPresenter.GetAllUsedDataColumns();
-         _activeObservedDataList = allObservedData.Where(x => activeDataColumns.Any(column => column.Repository.Name == x.Name)).ToList();
+         var activeObservedDataList = _dataBrowserPresenter.GetAllUsedDataColumns().Where(x => x.IsObservation()).Select(x => x.Repository).ToList();
 
-         if (!_activeObservedDataList.Any())
+         if (!activeObservedDataList.Any())
             return new List<string>();
 
-         var firstCurveMetaData = _activeObservedDataList.First().ExtendedProperties.Keys.ToList();
-         var commonMetaData = firstCurveMetaData.Where(x => _activeObservedDataList.All(observedData => observedData.ExtendedProperties.Keys.Contains(x))).ToList();
+         var firstCurveMetaData = activeObservedDataList.First().ExtendedProperties.Keys.ToList();
+         var commonMetaData = firstCurveMetaData.Where(x => activeObservedDataList.All(observedData => observedData.ExtendedProperties.Keys.Contains(x))).ToList();
 
          return commonMetaData;
       }
 
       private void onApplyColorGrouping(IReadOnlyList<string> eSelectedMetaData)
       {
-         if (_activeObservedDataList == null)
-            return;
-
          var groupedDataRepositories = groupDataRepositories(eSelectedMetaData);
          assignSameColorToGroupedCurves(groupedDataRepositories);
       }
@@ -299,7 +290,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private List<IReadOnlyList<DataRepository>> groupDataRepositories(IReadOnlyList<string> groupingCriteria)
       {
-         var groupedDataRepositories = new List<IReadOnlyList<DataRepository>> { _activeObservedDataList };
+         var activeObservedDataList = _dataBrowserPresenter.GetAllUsedDataColumns().Where(x => x.IsObservation()).Select(x => x.Repository);
+         var groupedDataRepositories = new List<IReadOnlyList<DataRepository>> { activeObservedDataList.ToList() };
          foreach (var groupingMetaData in groupingCriteria)
          {
             var tempGroupedList = new List<IReadOnlyList<DataRepository>>();
@@ -633,10 +625,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _axisSettingsPresenter.Refresh();
          updateUsedColumns();
       }
-      public void SetAvailableColorGroupingMetaData(IReadOnlyList<DataRepository> allObservedData)
-      {
-         _curveColorGroupingPresenter.SetMetadata(getCommonMetaDataOfCurves(allObservedData));
-      }
 
       private bool canHandle(ChartEvent chartEvent)
       {
@@ -648,6 +636,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (!canHandle(chartUpdatedEvent))
             return;
 
+         _curveColorGroupingPresenter.SetMetadata(getCommonMetaDataOfCurves());
          Refresh();
 
          if (chartUpdatedEvent.PropagateChartChangeEvent)
