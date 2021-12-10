@@ -30,12 +30,12 @@ namespace OSPSuite.Core.Domain
 
       public ParameterInfo Info { get; set; }
       public PKSimBuildingBlockType BuildingBlockType { get; set; }
-      public ParameterOrigin Origin { get; private set; }
-      public ValueOrigin ValueOrigin { get; private set; }
+      public ParameterOrigin Origin { get; }
+      public ValueOrigin ValueOrigin { get; }
      
 
       public double? DefaultValue { get; set; }
-      public bool IsChangedByCreateIndividual { get; private set; }
+      public bool IsChangedByCreateIndividual { get; set; }
 
       public void ResetToDefault()
       {
