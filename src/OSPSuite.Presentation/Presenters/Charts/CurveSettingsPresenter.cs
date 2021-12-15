@@ -222,10 +222,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
             foreach (var curveDTO in selectedCurveDTOs)
             {
                if (selectedValues.Color != null) curveDTO.Color = (Color)selectedValues.Color;
-               if (selectedValues.Style != null) curveDTO.LineStyle = (LineStyles)selectedValues.Style;
-               if (selectedValues.Symbol != null) curveDTO.Symbol = (Symbols)selectedValues.Symbol;
-               if (selectedValues.Visible != null) curveDTO.Visible = (bool)selectedValues.Visible;
-               if (selectedValues.VisibleInLegend != null) curveDTO.VisibleInLegend = (bool)selectedValues.VisibleInLegend;
+               if (Enum.TryParse(selectedValues.Style, out LineStyles selectedStyle)) 
+                  curveDTO.LineStyle = selectedStyle;
+               if (Enum.TryParse(selectedValues.Symbol, out Symbols selectedSymbol))
+                  curveDTO.Symbol = selectedSymbol;
+               if (Enum.TryParse(selectedValues.Visible, out YesNoValues selectedVisible))
+                  curveDTO.Visible = selectedVisible == YesNoValues.Yes;
+               if (Enum.TryParse(selectedValues.VisibleInLegend, out YesNoValues selectedLegendVisible))
+                  curveDTO.VisibleInLegend = selectedLegendVisible == YesNoValues.Yes;
 
                NotifyCurvePropertyChange(curveDTO);
             }

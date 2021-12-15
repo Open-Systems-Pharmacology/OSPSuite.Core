@@ -4,29 +4,10 @@ using OSPSuite.Presentation.Views.Charts;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
-   public enum BooleanComboBox
+   public enum YesNoValues
    {
-      Default,
       Yes,
       No
-   }
-
-   public enum MultiEditLineStyles
-   {
-      None,
-      Solid,
-      Dash,
-      Dot,
-      DashDot
-   }
-
-   public enum MultiEditSymbols
-   {
-      None,
-      Circle,
-      Diamond,
-      Triangle,
-      Square
    }
 
    public interface ICurveMultiItemEditorPresenter : IDisposablePresenter, IPresenter<ICurveMultiItemEditorView>
@@ -39,10 +20,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
    public class SelectedCurveValues
    {
       public Color? Color { get; set; }
-      public LineStyles? Style { get; set; }
-      public Symbols? Symbol { get; set; }
-      public bool? Visible { get; set; }
-      public bool? VisibleInLegend { get; set; }
+      public string Style { get; set; }
+      public string Symbol { get; set; }
+      public string Visible { get; set; }
+      public string VisibleInLegend { get; set; }
    }
 
    public class CurveMultiItemEditorPresenter : AbstractDisposablePresenter<ICurveMultiItemEditorView, ICurveMultiItemEditorPresenter>,

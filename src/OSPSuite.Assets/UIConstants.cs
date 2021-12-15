@@ -1252,6 +1252,11 @@ namespace OSPSuite.Assets
             public static string ColorGroupingDialogDescription = "Choose the metadata according to which the data will be grouped to the same color";
             public static string ApplyColorGroupingButton = "Apply Color Grouping";
          }
+
+         public static class MultiCurveOptions
+         {
+            public static string CurrentValue = "< Current value>";
+         }
       }
    }
 
