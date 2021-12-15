@@ -19,7 +19,7 @@ namespace OSPSuite.Core.Domain
 
       public PathCache<TEntity> For(IEnumerable<TEntity> entities)
       {
-         entities.Each(Add);
+         entities?.Each(Add);
          return this;
       }
    }

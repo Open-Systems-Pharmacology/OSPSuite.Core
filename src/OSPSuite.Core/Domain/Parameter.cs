@@ -75,7 +75,7 @@ namespace OSPSuite.Core.Domain
       ///    Can this parameter be changed by the create individual algorithm?
       ///    Default false
       /// </summary>
-      bool IsChangedByCreateIndividual { get; }
+      bool IsChangedByCreateIndividual { get; set; }
 
       /// <summary>
       ///    Reset the parameter values to its default as defined when created
@@ -89,7 +89,7 @@ namespace OSPSuite.Core.Domain
       double RandomDeviateIn(RandomGenerator randomGenerator, double? min = null, double? max = null);
 
       /// <summary>
-      /// Sets the RHS Formula to NULL. This is required for R-Only in order to be able to set the RHS formula to NULL
+      ///    Sets the RHS Formula to NULL. This is required for R-Only in order to be able to set the RHS formula to NULL
       /// </summary>
       void ClearRHSFormula();
    }
@@ -151,9 +151,13 @@ namespace OSPSuite.Core.Domain
 
       public void ClearRHSFormula() => RHSFormula = null;
 
-      public virtual bool IsChangedByCreateIndividual => false;
-
       #region Parameter Info
+
+      public bool IsChangedByCreateIndividual
+      {
+         get => Info.IsChangedByCreateIndividual;
+         set => Info.IsChangedByCreateIndividual = value;
+      }
 
       public bool CanBeVaried
       {

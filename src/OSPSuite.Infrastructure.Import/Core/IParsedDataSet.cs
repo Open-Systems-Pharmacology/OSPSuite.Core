@@ -12,7 +12,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       public IReadOnlyDictionary<ExtendedColumn, IList<SimulationPoint>> Data { get; protected set; }
 
       public ParsedDataSet(
-         IEnumerable<(string ColumnName, IList<string> ExistingValues)> mappings,
+         IEnumerable<(string ColumnName, IReadOnlyList<string> ExistingValues)> mappings,
          IUnformattedData columnHandler,
          IEnumerable<UnformattedRow> rawData,
          Dictionary<ExtendedColumn, IList<SimulationPoint>> parsedData
@@ -23,7 +23,7 @@ namespace OSPSuite.Infrastructure.Import.Core
             var columnDescription = columnHandler.GetColumnDescription(p.ColumnName);
             return new InstantiatedMetaData()
             {
-               Id = columnDescription != null ? columnDescription.Index : -1,
+               Id = columnDescription?.Index ?? -1,
                Value = columnDescription != null ? rawData.First().Data.ElementAt(columnHandler.GetColumnDescription(p.ColumnName).Index) : p.ColumnName
             };
          }

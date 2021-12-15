@@ -9,6 +9,7 @@ namespace OSPSuite.Infrastructure.Import.Extensions
       /// Adds a list of values as a row to a DataTable
       /// </summary>
       /// <param name="rowValues">The values to be added to the DataTable</param>
+      /// <param name="dataTable">DataTable to add values to</param>
       public static void AddRowToDataTable(this DataTable dataTable, IReadOnlyList<string> rowValues)
       {
          var dataRow = dataTable.NewRow();

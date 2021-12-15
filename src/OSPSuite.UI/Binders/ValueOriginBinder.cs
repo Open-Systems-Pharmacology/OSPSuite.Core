@@ -240,6 +240,8 @@ namespace OSPSuite.UI.Binders
 
       public bool ColumnIsValueOrigin(GridColumn column) => Equals(column, _valueOriginColumn.XtraColumn);
 
+      public IGridViewColumn ValueOriginColumn => _valueOriginColumn;
+
       #region Disposable properties
 
       private bool _disposed;

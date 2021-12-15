@@ -30,31 +30,6 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_the_parameter_identificaiton_runner_is_asked_to_run_a_parameter_identificaiton_when_another_one_is_already_running : concern_for_ParameterIdentificationRunner
-   {
-
-      protected override void Context()
-      {
-         base.Context();
-        var  identificationEngine = A.Fake<IParameterIdentificationEngine>();
-         A.CallTo(() => _engineFactory.Create()).Returns(identificationEngine);
-         A.CallTo(() => _entityValidationTask.Validate(_parameterIdentification)).Returns(true);
-         A.CallTo(() => identificationEngine.StartAsync(_parameterIdentification)).Returns(Task.Delay(1000));
-      }
-
-      protected override void Because()
-      {
-         sut.Run(_parameterIdentification);
-      }
-
-      [Observation]
-      public void should_throw_an_exception()
-      {
-         var task = sut.Run(_parameterIdentification);
-         task.IsFaulted.ShouldBeTrue();
-      }
-   }
-
    public class When_a_parameter_identification_is_finished_running   : concern_for_ParameterIdentificationRunner
    {
       protected override void Context()

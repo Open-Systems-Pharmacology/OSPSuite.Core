@@ -9,6 +9,7 @@ using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Core.Services;
 using OSPSuite.R.Domain;
 using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Exceptions;
 using SimulationRunOptions = OSPSuite.R.Domain.SimulationRunOptions;
 
 namespace OSPSuite.R.Services
@@ -114,12 +115,14 @@ namespace OSPSuite.R.Services
 
       private Task<SimulationResults> runAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions)
       {
-         return Task.Run(() =>
-         {
-            _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
-            var simulationResults = _simModelManager.RunSimulation(simulation, coreSimulationRunOptionsFrom(simulationRunOptions));
-            return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
-         });
+         return Task.Run(() => run(simulation, simulationRunOptions));
+      }
+
+      private SimulationResults run(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions)
+      {
+         _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
+         var simulationResults = _simModelManager.RunSimulation(simulation, coreSimulationRunOptionsFrom(simulationRunOptions));
+         return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
       }
 
       private Core.Domain.SimulationRunOptions coreSimulationRunOptionsFrom(SimulationRunOptions simulationRunOptions)
@@ -142,7 +145,10 @@ namespace OSPSuite.R.Services
 
       public SimulationResults Run(SimulationRunArgs simulationRunArgs)
       {
-         return RunAsync(simulationRunArgs).Result;
+         var (simulation, population, agingData, simulationRunOptions) = simulationRunArgs;
+         if (population != null)
+            return runAsync(simulation, population, agingData, simulationRunOptions).Result; //Not really without a task
+         return run(simulation, simulationRunOptions);
       }
    }
 }

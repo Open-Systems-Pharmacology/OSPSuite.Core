@@ -7,9 +7,9 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.R.Domain
 {
-   public class ConcurrentRunSimulationBatch : IDisposable
+   public class ConcurrentRunSimulationBatch : IDisposable, IWithId
    {
-      public string Id { get; }
+      public string Id { get; set; }
       public IModelCoreSimulation Simulation { get; }
       private readonly List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
 
