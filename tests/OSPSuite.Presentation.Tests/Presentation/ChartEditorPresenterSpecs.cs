@@ -2,14 +2,18 @@
 using System.Drawing;
 using System.Linq;
 using FakeItEasy;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
+using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
@@ -23,6 +27,7 @@ namespace OSPSuite.Presentation.Presentation
       protected IChartSettingsPresenter _chartSettingsPresenter;
       protected IChartExportSettingsPresenter _chartExportSettingsPresenter;
       protected ICurveSettingsPresenter _curveSettingsPresenter;
+      protected ICurveColorGroupingPresenter _curveColorGroupingPresenter;
       protected IDataBrowserPresenter _dataBrowserPresenter;
       protected IChartTemplateMenuPresenter _chartTemplateMenuPresenter;
       protected IChartUpdater _chartUpdater;
@@ -32,6 +37,10 @@ namespace OSPSuite.Presentation.Presentation
       protected BaseGrid _baseGrid;
       protected DataColumn _standardColumn;
       protected DataColumn _standardColumn2;
+      protected DataColumn _standardColumn3;
+      protected List<DataRepository> _dataRepositoryList;
+      protected BaseGrid _baseGrid2;
+      protected BaseGrid _baseGrid3;
 
       protected override void Context()
       {
@@ -45,7 +54,8 @@ namespace OSPSuite.Presentation.Presentation
          _chartUpdater = A.Fake<IChartUpdater>();
          _eventPublisher = A.Fake<IEventPublisher>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
-         sut = new ChartEditorPresenter(_view, _axisSettingsPresenter, _chartSettingsPresenter, _chartExportSettingsPresenter, _curveSettingsPresenter, _dataBrowserPresenter, _chartTemplateMenuPresenter, _chartUpdater, _eventPublisher, _dimensionFactory);
+         _curveColorGroupingPresenter = A.Fake<ICurveColorGroupingPresenter>();
+         sut = new ChartEditorPresenter(_view, _axisSettingsPresenter, _chartSettingsPresenter, _chartExportSettingsPresenter, _curveSettingsPresenter, _dataBrowserPresenter, _chartTemplateMenuPresenter, _chartUpdater, _eventPublisher, _dimensionFactory, _curveColorGroupingPresenter);
 
          sut.SetCurveNameDefinition(x => x.QuantityInfo.PathAsString);
 
@@ -53,13 +63,20 @@ namespace OSPSuite.Presentation.Presentation
          sut.Edit(_chart);
 
          _baseGrid = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
+         _baseGrid2 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
+         _baseGrid3 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
          _standardColumn = new DataColumn("Standard", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
          {
-            DataInfo = new DataInfo(ColumnOrigins.Calculation),
+            DataInfo = new DataInfo(ColumnOrigins.Observation),
          };
-         _standardColumn2 = new DataColumn("Standard_2", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
+         _standardColumn2 = new DataColumn("Standard_2", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid2)
          {
-            DataInfo = new DataInfo(ColumnOrigins.Calculation),
+            DataInfo = new DataInfo(ColumnOrigins.Observation),
+         };
+
+         _standardColumn3 = new DataColumn("Standard_3", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid3)
+         {
+            DataInfo = new DataInfo(ColumnOrigins.Observation),
          };
 
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(_baseGrid)).Returns(_baseGrid.Dimension);
@@ -99,8 +116,8 @@ namespace OSPSuite.Presentation.Presentation
 
          sut.SetShowDataColumnInDataBrowserDefinition(x => x.Name != _hiddenColumn.Name);
 
-         A.CallTo(() => _dataBrowserPresenter.AddDataColumns(A<IEnumerable<DataColumn>>._))
-            .Invokes(x => _dataColumnsAdded = x.GetArgument<IEnumerable<DataColumn>>(0).ToList());
+         A.CallTo(() => _dataBrowserPresenter.AddDataColumns(A<IReadOnlyList<DataColumn>>._))
+            .Invokes(x => _dataColumnsAdded = x.GetArgument<IReadOnlyList<DataColumn>>(0).ToList());
       }
 
       protected override void Because()
@@ -262,8 +279,8 @@ namespace OSPSuite.Presentation.Presentation
 
          A.CallTo(() => _dataBrowserPresenter.AllDataColumns).Returns(new[] {_columnThatWillBeInternal, _columnThatWillBeRemoved, _standardColumn});
 
-         A.CallTo(() => _dataBrowserPresenter.RemoveDataColumns(A<IEnumerable<DataColumn>>._))
-            .Invokes(x => _dataColumnsRemoved = x.GetArgument<IEnumerable<DataColumn>>(0).ToList());
+         A.CallTo(() => _dataBrowserPresenter.RemoveDataColumns(A<IReadOnlyList<DataColumn>>._))
+            .Invokes(x => _dataColumnsRemoved = x.GetArgument<IReadOnlyList<DataColumn>>(0).ToList());
       }
 
       protected override void Because()
@@ -689,6 +706,128 @@ namespace OSPSuite.Presentation.Presentation
       public void should_update_the_chart()
       {
          A.CallTo(() => _chartUpdater.Update(_chart)).MustHaveHappened();
+      }
+   }
+
+   public class When_setting_metadata_for_color_grouping : concern_for_ChartEditorPresenter
+   {
+
+      private IReadOnlyList<string> _commonMetaData;
+      private IReadOnlyList<string> _calculatedCommonMetaData;
+      private DataRepository _dataRepository1;
+      private DataRepository _dataRepository2;
+      private DataRepository _dataRepository3;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dataRepository1 = new DataRepository { _standardColumn };
+         _dataRepository2 = new DataRepository { _standardColumn2 };
+         _dataRepository3 = new DataRepository { _standardColumn3 };
+         _dataRepository1.ExtendedProperties.Add(new ExtendedProperty<int>() { Name = "ID", Value = 1 });
+         _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<int>() { Name = "ID", Value = 2 });
+         _dataRepository3.ExtendedProperties.Add(new ExtendedProperty<int>() { Name = "ID", Value = 3 });
+
+         _dataRepository1.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Human" });
+         _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Human" });
+         _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "NotCommonMetaData", Value = "test" });
+         _dataRepository3.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Dog" });
+         _dataRepositoryList = new List<DataRepository>(){_dataRepository1, _dataRepository2, _dataRepository3 };
+
+         sut.AddDataRepositories(_dataRepositoryList);
+
+         _commonMetaData = new List<string> { "ID", "Species" }; ;
+
+         A.CallTo(() => _dataBrowserPresenter.GetAllUsedDataColumns()).Returns(new[] { _standardColumn, _standardColumn2, _standardColumn3 });
+
+
+         A.CallTo(() => _curveColorGroupingPresenter.SetMetadata(A<IReadOnlyList<string>>._))
+            .Invokes(x => { _calculatedCommonMetaData = x.GetArgument<IReadOnlyList<string>>(0); });
+      }
+
+      protected override void Because()
+      {
+         sut.Handle(new ChartUpdatedEvent(_chart, true));
+      }
+      [Observation]
+      public void should_set_common_meta_data_correctly()
+      {
+         _calculatedCommonMetaData.ShouldBeEqualTo(_commonMetaData);
+      }
+   }
+
+
+   public class When_the_chart_editor_presenter_is_notified_that_color_grouping_should_be_applied : concern_for_ChartEditorPresenter
+   {
+      private readonly Cache<string, Color> _colorsForCurveName = new Cache<string, Color>();
+      private List<string> _groupingCriteria;
+      private DataRepository _dataRepository1;
+      private DataRepository _dataRepository2;
+      private DataRepository _dataRepository3;
+      private Curve _curve;
+      private Curve _curve2;
+      private Curve _curve3;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dataRepository1 = new DataRepository { _standardColumn };
+         _dataRepository2 = new DataRepository { _standardColumn2 };
+         _dataRepository3 = new DataRepository { _standardColumn3 };
+         _dataRepository1.ExtendedProperties.Add(new ExtendedProperty<int>() { Name = "ID", Value = 1 });
+         _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<int>() { Name = "ID", Value = 2 });
+         _dataRepository3.ExtendedProperties.Add(new ExtendedProperty<int>() { Name = "ID", Value = 3 });
+
+         _dataRepository1.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Human" });
+         _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Human" });
+         _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "NotCommonMetaData", Value = "test" });
+         _dataRepository3.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Dog" });
+         _dataRepositoryList = new List<DataRepository>() { _dataRepository1, _dataRepository2, _dataRepository3 };
+
+         _curve = sut.AddCurveForColumn(_standardColumn);
+         _curve2 = sut.AddCurveForColumn(_standardColumn2);
+         _curve3 = sut.AddCurveForColumn(_standardColumn3);
+
+         A.CallTo(() => _dataBrowserPresenter.GetAllUsedDataColumns()).Returns(new[] { _standardColumn, _standardColumn2, _standardColumn3 });
+         sut.AddDataRepositories(_dataRepositoryList);
+         
+
+         A.CallTo(() => _curveSettingsPresenter.UpdateColorForCurve(A<Curve>._, A<Color>._))
+            .Invokes(x =>
+            {
+               //since curveSettingsPresenter is a Fake, we need to do this to get the list of usedColors updated.
+               //otherwise we get the same color assigned all the time
+               x.GetArgument<Curve>(0).Color = x.GetArgument<Color>(1);
+               _colorsForCurveName.Add(x.GetArgument<Curve>(0).Id, x.GetArgument<Color>(1));
+            });
+         
+      }
+
+      protected override void Because()
+      {
+         sut.Handle(new ChartUpdatedEvent(_chart, true));
+      }
+
+      [Observation]
+      public void should_group_on_single_criterion()
+      {
+         _groupingCriteria = new List<string> { "Species" };
+         _curveColorGroupingPresenter.ApplySelectedColorGrouping += Raise.With(new CurveColorGroupingEventArgs(_groupingCriteria));
+
+         _colorsForCurveName[_curve.Id].Equals(_colorsForCurveName[_curve2.Id]).ShouldBeTrue();
+         _colorsForCurveName[_curve3.Id].Equals(_colorsForCurveName[_curve.Id]).ShouldBeFalse();
+         _colorsForCurveName[_curve3.Id].Equals(_colorsForCurveName[_curve2.Id]).ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_group_on_multiple_criteria()
+      {
+         _groupingCriteria = new List<string> { "Species", "ID" };
+         _curveColorGroupingPresenter.ApplySelectedColorGrouping += Raise.With(new CurveColorGroupingEventArgs(_groupingCriteria));
+
+         _colorsForCurveName[_curve.Id].Equals(_colorsForCurveName[_curve2.Id]).ShouldBeFalse();
+         _colorsForCurveName[_curve3.Id].Equals(_colorsForCurveName[_curve.Id]).ShouldBeFalse();
+         _colorsForCurveName[_curve3.Id].Equals(_colorsForCurveName[_curve2.Id]).ShouldBeFalse();
       }
    }
 }

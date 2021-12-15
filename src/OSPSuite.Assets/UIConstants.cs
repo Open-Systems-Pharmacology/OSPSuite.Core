@@ -1244,6 +1244,12 @@ namespace OSPSuite.Assets
             public static readonly string FontSizeWatermark = "Font Size Watermark";
             public static readonly string IncludeOriginData = "Include Origin Data";
          }
+
+         public static class ColorGrouping
+         {
+            public static string ColorGroupingDialogDescription = "Select metadata as criteria for color grouping";
+            public static string ApplyColorGroupingButton = "Apply Color Grouping";
+         }
       }
    }
 

@@ -8,7 +8,6 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Core;
-using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Settings;
@@ -121,7 +120,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    Adds a curves to the chart for all dataColumns in <paramref name="dataColumnList" /> if they do not already exist.
       ///    Curve options will be applied if they are specified and a new curve is created.All the created curves will have
-      ///    the same color. 
+      ///    the same color.
       /// </summary>
       void AddCurvesWithSameColorForColumn(IReadOnlyList<DataColumn> dataColumnList, CurveOptions defaultCurveOptions = null);
 
@@ -181,7 +180,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Refresh the presenter with all values and settings from the underlying <see cref="CurveChart" />
       /// </summary>
       void Refresh();
-
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -192,6 +190,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly IChartSettingsPresenter _chartSettingsPresenter;
       private readonly IChartExportSettingsPresenter _chartExportSettingsPresenter;
       private readonly ICurveSettingsPresenter _curveSettingsPresenter;
+      private readonly ICurveColorGroupingPresenter _curveColorGroupingPresenter;
       private readonly IDataBrowserPresenter _dataBrowserPresenter;
       private readonly IChartTemplateMenuPresenter _chartTemplateMenuPresenter;
       private readonly IChartUpdater _chartUpdater;
@@ -205,11 +204,18 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public event EventHandler<IDragEvent> DragOver = delegate { };
       public event EventHandler<IDragEvent> DragDrop = delegate { };
 
-      public ChartEditorPresenter(IChartEditorView view, IAxisSettingsPresenter axisSettingsPresenter,
-         IChartSettingsPresenter chartSettingsPresenter, IChartExportSettingsPresenter chartExportSettingsPresenter,
-         ICurveSettingsPresenter curveSettingsPresenter, IDataBrowserPresenter dataBrowserPresenter,
-         IChartTemplateMenuPresenter chartTemplateMenuPresenter, IChartUpdater chartUpdater, IEventPublisher eventPublisher,
-         IDimensionFactory dimensionFactory)
+      public ChartEditorPresenter(
+         IChartEditorView view,
+         IAxisSettingsPresenter axisSettingsPresenter,
+         IChartSettingsPresenter chartSettingsPresenter,
+         IChartExportSettingsPresenter chartExportSettingsPresenter,
+         ICurveSettingsPresenter curveSettingsPresenter,
+         IDataBrowserPresenter dataBrowserPresenter,
+         IChartTemplateMenuPresenter chartTemplateMenuPresenter,
+         IChartUpdater chartUpdater,
+         IEventPublisher eventPublisher,
+         IDimensionFactory dimensionFactory,
+         ICurveColorGroupingPresenter curveColorGroupingPresenter)
          : base(view)
       {
          _showDataColumnInDataBrowserDefinition = col => col.DataInfo.Origin != ColumnOrigins.BaseGrid;
@@ -218,6 +224,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _chartSettingsPresenter = chartSettingsPresenter;
          _chartExportSettingsPresenter = chartExportSettingsPresenter;
          _curveSettingsPresenter = curveSettingsPresenter;
+         _curveColorGroupingPresenter = curveColorGroupingPresenter;
          _dataBrowserPresenter = dataBrowserPresenter;
          _chartTemplateMenuPresenter = chartTemplateMenuPresenter;
          _chartUpdater = chartUpdater;
@@ -240,13 +247,83 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _axisSettingsPresenter.AxisAdded += (o, e) => onAxisAdded();
          _axisSettingsPresenter.AxisPropertyChanged += (o, e) => updateChart();
 
-         AddSubPresenters(axisSettingsPresenter, chartSettingsPresenter, chartExportSettingsPresenter, curveSettingsPresenter, dataBrowserPresenter);
+         _curveColorGroupingPresenter.ApplySelectedColorGrouping += (o, e) => onApplyColorGrouping(e.SelectedMetaData);
+
+         AddSubPresenters(axisSettingsPresenter, chartSettingsPresenter, chartExportSettingsPresenter, curveSettingsPresenter, dataBrowserPresenter, curveColorGroupingPresenter);
 
          _view.SetAxisSettingsView(axisSettingsPresenter.View);
          _view.SetChartSettingsView(chartSettingsPresenter.View);
          _view.SetChartExportSettingsView(chartExportSettingsPresenter.View);
          _view.SetCurveSettingsView(curveSettingsPresenter.View);
+         _view.SetCurveColorGroupingView(curveColorGroupingPresenter.View);
          _view.SetDataBrowserView(dataBrowserPresenter.View);
+      }
+
+      //gets all the common metaData of the observed data that correspond to active curves 
+      private IReadOnlyList<string> getCommonMetaDataOfCurves()
+      {
+         var activeObservedDataList = _dataBrowserPresenter.GetAllUsedDataColumns().Where(x => x.IsObservation()).Select(x => x.Repository).ToList();
+
+         if (!activeObservedDataList.Any())
+            return new List<string>();
+
+         var firstCurveMetaData = activeObservedDataList.First().ExtendedProperties.Keys.ToList();
+         var commonMetaData = firstCurveMetaData.Where(x => activeObservedDataList.All(observedData => observedData.ExtendedProperties.Keys.Contains(x))).ToList();
+
+         return commonMetaData;
+      }
+
+      private void onApplyColorGrouping(IReadOnlyList<string> eSelectedMetaData)
+      {
+         var groupedDataRepositories = groupDataRepositories(eSelectedMetaData);
+         assignSameColorToGroupedCurves(groupedDataRepositories);
+      }
+
+      private void assignSameColorToGroupedCurves(List<IReadOnlyList<DataRepository>> groupedDataRepositories)
+      {
+         foreach (var group in groupedDataRepositories)
+         {
+            var curvesInGroup = findCurvesCorrespondingToRepositoryList(group);
+
+            if (!curvesInGroup.Any())
+               continue;
+
+            var groupColor = Chart.SelectNewColor();
+            curvesInGroup.Each(x => _curveSettingsPresenter.UpdateColorForCurve(x, groupColor));
+         }
+      }
+
+      private List<IReadOnlyList<DataRepository>> groupDataRepositories(IReadOnlyList<string> groupingCriteria)
+      {
+         var activeObservedDataList = _dataBrowserPresenter.GetAllUsedDataColumns().Where(x => x.IsObservation()).Select(x => x.Repository);
+
+         // we will group according to each criterion sequentially. the actual order of the criteria will not make a difference in the result.
+         // we start with all the initial data repositories in one group. We will group them according to the first criterion resulting in x groups
+         // then we will group each of the newly created groups with the next criterion and so on. 
+         var groupedDataRepositories = new List<IReadOnlyList<DataRepository>> {activeObservedDataList.ToList()};
+         foreach (var groupingMetaData in groupingCriteria)
+         {
+            var tempGroupedList = new List<IReadOnlyList<DataRepository>>();
+            foreach (var existingGroup in groupedDataRepositories)
+            {
+               var dataReposGroupedBySingleMetaData =
+                  existingGroup.GroupBy(x => x.ExtendedProperties[groupingMetaData].ValueAsObject).Select(group => @group.ToList());
+               // we are using tempGroupedList to "flatten" the structure of the groups. Every time we apply .GroupBy() we will get a new layer of groups
+               // but since we do not care about what the parent node criteria are, but only for the resulting groups and their contained elements we can 
+               // avoid the extra complexity
+               tempGroupedList.AddRange(dataReposGroupedBySingleMetaData);
+            }
+
+            groupedDataRepositories = tempGroupedList;
+         }
+
+         return groupedDataRepositories;
+      }
+
+      private IReadOnlyList<Curve> findCurvesCorrespondingToRepositoryList(IReadOnlyList<DataRepository> listOfDataRepositories)
+      {
+         var allColumnsInGroup = listOfDataRepositories.SelectMany(x => x.Columns).ToList();
+         return allColumnsInGroup.Select(column => Chart.FindCurveWithSameData(column.BaseGrid, column)).Where(existingCurve => existingCurve != null).ToList();
       }
 
       private void initPresentersWithColumnSettings()
@@ -370,6 +447,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          if (Chart == null) return;
          _dataBrowserPresenter.InitializeIsUsedForDataColumns(Chart.UsedColumns);
+
+         //Once used columns are updated, we need to make sure we update the meta data related to used column as well
+         refreshColorGroupingPresenter();
       }
 
       public void AddDataRepositories(IEnumerable<DataRepository> dataRepositories)
@@ -501,7 +581,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          }
       }
 
-
       public Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null)
       {
          var (exists, curve) = createAndConfigureCurve(dataColumn, defaultCurveOptions);
@@ -512,18 +591,18 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          if (defaultCurveOptions != null)
             curve.CurveOptions.UpdateFrom(defaultCurveOptions);
-         
+
          Chart.AddCurve(curve);
 
          return curve;
       }
 
-      private (bool exists, Curve curve) createAndConfigureCurve (DataColumn dataColumn, CurveOptions defaultCurveOptions)
+      private (bool exists, Curve curve) createAndConfigureCurve(DataColumn dataColumn, CurveOptions defaultCurveOptions)
       {
          var curve = Chart.CreateCurve(dataColumn.BaseGrid, dataColumn, _curveNameDefinition(dataColumn), _dimensionFactory);
 
          if (Chart.HasCurve(curve.Id))
-            return ( true, Chart.CurveBy(curve.Id));
+            return (true, Chart.CurveBy(curve.Id));
 
          return (false, curve);
       }
@@ -576,6 +655,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          if (chartUpdatedEvent.PropagateChartChangeEvent)
             ChartChanged();
+      }
+
+      private void refreshColorGroupingPresenter()
+      {
+         _curveColorGroupingPresenter.SetMetadata(getCommonMetaDataOfCurves());
       }
    }
 }
