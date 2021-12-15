@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          _dimensionRepository = A.Fake<IDimensionFactory>();
-         A.CallTo(() => _dimensionRepository.NoDimension).Returns(new Dimension());
+         A.CallTo(() => _dimensionRepository.NoDimension).Returns(Constants.Dimension.NO_DIMENSION);
          _objectBaseFactory = new ObjectBaseFactoryForSpecs(_dimensionRepository);
          _objectToClone = createEntityToClone();
          _dataRepositoryTask = A.Fake<IDataRepositoryTask>();

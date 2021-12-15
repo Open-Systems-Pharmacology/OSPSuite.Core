@@ -943,14 +943,17 @@ namespace OSPSuite.Assets
          public static readonly string NoResultsAvailable = "No result available. Please start parameter identification";
          public static readonly string NoParameterIdentificationRunning = "No visual feedback available. Please start parameter identification.";
 
-         public static readonly string ParameterIdentificationCanceled = "Parameter identification canceled";
+         public static string ParameterIdentificationCanceled(string parameterIdentificationName)
+         {
+            return $"Parameter identification '{parameterIdentificationName}' canceled";
+         }
          public static readonly string Best = "Best";
          public static readonly string Current = "Current";
          public static readonly string Clone = "Clone";
 
-         public static string ParameterIdentificationFinished(string duration)
+         public static string ParameterIdentificationFinished(string parameterIdentificationName, string duration)
          {
-            return $"Parameter identification finished in {duration}";
+            return $"Parameter identification '{parameterIdentificationName}' finished in {duration}";
          }
 
          public static string LinkedParametersIn(string name)

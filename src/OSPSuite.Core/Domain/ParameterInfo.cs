@@ -12,6 +12,7 @@ namespace OSPSuite.Core.Domain
       MinIsAllowed = 2 << 3,
       MaxIsAllowed = 2 << 4,
       CanBeVariedInPopulation = 2 << 5,
+      IsChangedByCreateIndividual = 2 << 6,
    }
 
    public class ParameterInfo
@@ -39,7 +40,7 @@ namespace OSPSuite.Core.Domain
          GroupName = Constants.Groups.UNDEFINED;
          Sequence = 1;
          ReferenceId = 0;
-         BuildingBlockType=PKSimBuildingBlockType.Simulation;
+         BuildingBlockType = PKSimBuildingBlockType.Simulation;
       }
 
       public bool ReadOnly
@@ -110,6 +111,18 @@ namespace OSPSuite.Core.Domain
             if (CanBeVariedInPopulation != value)
             {
                ParameterFlag ^= ParameterFlag.CanBeVariedInPopulation;
+            }
+         }
+      }
+
+      public bool IsChangedByCreateIndividual
+      {
+         get => (ParameterFlag & ParameterFlag.IsChangedByCreateIndividual) == ParameterFlag.IsChangedByCreateIndividual;
+         set
+         {
+            if (IsChangedByCreateIndividual != value)
+            {
+               ParameterFlag ^= ParameterFlag.IsChangedByCreateIndividual;
             }
          }
       }

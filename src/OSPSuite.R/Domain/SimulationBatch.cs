@@ -128,17 +128,7 @@ namespace OSPSuite.R.Domain
 
       public Task<SimulationResults> RunAsync(SimulationBatchRunValues simulationBatchRunValues)
       {
-         return Task.Run(() =>
-         {
-            _simModelBatch.UpdateParameterValues(simulationBatchRunValues.Values);
-            _simModelBatch.UpdateInitialValues(simulationBatchRunValues.MoleculeValues);
-            var simulationResults = _simModelBatch.RunSimulation();
-
-            if (!_simulationBatchOptions.CalculateSensitivity)
-               return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
-
-            return _simulationResultsCreator.CreateResultsWithSensitivitiesFrom(simulationResults.Results, _simModelBatch, _simulationBatchOptions.Parameters);
-         });
+         return Task.Run(() => Run(simulationBatchRunValues));
       }
 
       /// <summary>
@@ -146,8 +136,17 @@ namespace OSPSuite.R.Domain
       ///    This is really the only method that will be called from R
       /// </summary>
       /// <returns>Results of the simulation run</returns>
-      public SimulationResults Run(SimulationBatchRunValues simulationBatchRunValues) =>
-         RunAsync(simulationBatchRunValues).Result;
+      public SimulationResults Run(SimulationBatchRunValues simulationBatchRunValues)
+      {
+         _simModelBatch.UpdateParameterValues(simulationBatchRunValues.Values);
+         _simModelBatch.UpdateInitialValues(simulationBatchRunValues.MoleculeValues);
+         var simulationResults = _simModelBatch.RunSimulation();
+
+         if (!_simulationBatchOptions.CalculateSensitivity)
+            return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
+
+         return _simulationResultsCreator.CreateResultsWithSensitivitiesFrom(simulationResults.Results, _simModelBatch, _simulationBatchOptions.Parameters);
+      }
 
       protected virtual void Cleanup()
       {

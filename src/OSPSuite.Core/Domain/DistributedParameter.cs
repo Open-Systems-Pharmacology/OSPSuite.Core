@@ -58,6 +58,7 @@ namespace OSPSuite.Core.Domain
             {
                percentile = Formula.DowncastTo<IDistributionFormula>().CalculatePercentileForValue(value, this);
             }
+
             _cachedValueValid = true;
             IsFixedValue = true;
          }
@@ -155,9 +156,13 @@ namespace OSPSuite.Core.Domain
          IsDefault = sourceDistributedParameter.IsDefault;
       }
 
-      public virtual bool IsChangedByCreateIndividual => this.IsOfType(PKSimBuildingBlockType.Individual);
-
       #region Parameter Info
+
+      public bool IsChangedByCreateIndividual
+      {
+         get => Info.IsChangedByCreateIndividual;
+         set => Info.IsChangedByCreateIndividual = value;
+      }
 
       public bool CanBeVaried
       {

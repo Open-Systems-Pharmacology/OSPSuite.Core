@@ -5,6 +5,7 @@ using OSPSuite.BDDHelper.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
@@ -40,12 +41,12 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          _columnInfos.First(x => x.Name == "Error").SupportedDimensions.Add(_fakedErrorDimension);
          _metaDataCategories = new List<MetaDataCategory>()
          {
-            new MetaDataCategory() {Name = "Organ"},
-            new MetaDataCategory() {Name = "Compartment"},
-            new MetaDataCategory() {Name = "Species"},
-            new MetaDataCategory() {Name = "Dose"},
-            new MetaDataCategory() {Name = "Molecule"},
-            new MetaDataCategory() {Name = "Route"}
+            new MetaDataCategory() { Name = "Organ" },
+            new MetaDataCategory() { Name = "Compartment" },
+            new MetaDataCategory() { Name = "Species" },
+            new MetaDataCategory() { Name = "Dose" },
+            new MetaDataCategory() { Name = "Molecule" },
+            new MetaDataCategory() { Name = "Route" }
          };
 
          A.CallTo(() => _fakedTimeDimension.HasUnit("min")).Returns(true);
@@ -288,6 +289,56 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             dataset.Data.ElementAt(1).Value.ElementAt(2).Lloq.ShouldBeEqualTo(double.NaN);
             dataset.Data.ElementAt(1).Value.ElementAt(2).Measurement.ShouldBeEqualTo(10);
          }
+      }
+   }
+
+   public class When_parsing_format_with_missing_molecule_mapping : ConcernforDataFormat_DataFormatHeadersWithUnits
+   {
+      private IUnformattedData _mockedData;
+      private string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
+      private string[] _groupIds = new string[] { "H", "T2DM" };
+      protected override void Context()
+      {
+         base.Context();
+         _mockedData = A.Fake<IUnformattedData>();
+         A.CallTo(() => _mockedData.GetHeaders()).Returns(_basicFormat.GetHeaders());
+         A.CallTo(() => _mockedData.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
+         foreach (var molecule in _molecules)
+            foreach (var groupId in _groupIds)
+               for (var time = 0; time < 10; time++)
+               {
+                  _basicFormat.AddRow(new List<string>()
+                  {
+                     "PeripheralVenousBlood",
+                     "Arterialized",
+                     "Human",
+                     "75 [g] glucose",
+                     molecule,
+                     $"time",
+                     "0",
+                     "0",
+                     "po",
+                     groupId
+                  });
+               }
+      }
+
+      protected override void Because()
+      {
+         sut.SetParameters(_mockedData, _columnInfos, _metaDataCategories);
+         //emulate the behaviour of deleting the mapping from the column mapping gridView
+         sut.Parameters.Find(x => x.ColumnName == "Molecule").ColumnName = null;
+      }
+
+      [TestCase]
+      public void parsing_should_work()
+      {
+         var data = sut.Parse
+         (
+            _basicFormat,
+            _columnInfos
+         ).ToList();
+         data.Count.ShouldBeEqualTo(1);
       }
    }
 
