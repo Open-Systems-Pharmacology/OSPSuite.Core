@@ -67,16 +67,16 @@ namespace OSPSuite.Presentation.Presentation
          _baseGrid3 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
          _standardColumn = new DataColumn("Standard", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
          {
-            DataInfo = new DataInfo(ColumnOrigins.Calculation),
+            DataInfo = new DataInfo(ColumnOrigins.Observation),
          };
          _standardColumn2 = new DataColumn("Standard_2", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid2)
          {
-            DataInfo = new DataInfo(ColumnOrigins.Calculation),
+            DataInfo = new DataInfo(ColumnOrigins.Observation),
          };
 
          _standardColumn3 = new DataColumn("Standard_3", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid3)
          {
-            DataInfo = new DataInfo(ColumnOrigins.Calculation),
+            DataInfo = new DataInfo(ColumnOrigins.Observation),
          };
 
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(_baseGrid)).Returns(_baseGrid.Dimension);
@@ -732,9 +732,9 @@ namespace OSPSuite.Presentation.Presentation
          _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Human" });
          _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "NotCommonMetaData", Value = "test" });
          _dataRepository3.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Dog" });
-         _dataRepositoryList = new List<DataRepository>(){_dataRepository1, _dataRepository2};
+         _dataRepositoryList = new List<DataRepository>(){_dataRepository1, _dataRepository2, _dataRepository3 };
 
-         sut.AddDataRepositories(new[] { _dataRepository1, _dataRepository2, _dataRepository3 });
+         sut.AddDataRepositories(_dataRepositoryList);
 
          _commonMetaData = new List<string> { "ID", "Species" }; ;
 
@@ -747,7 +747,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         sut.SetAvailableColorGroupingMetaData(_dataRepositoryList);
+         sut.Handle(new ChartUpdatedEvent(_chart, true));
       }
       [Observation]
       public void should_set_common_meta_data_correctly()
@@ -789,7 +789,7 @@ namespace OSPSuite.Presentation.Presentation
          _curve3 = sut.AddCurveForColumn(_standardColumn3);
 
          A.CallTo(() => _dataBrowserPresenter.GetAllUsedDataColumns()).Returns(new[] { _standardColumn, _standardColumn2, _standardColumn3 });
-         sut.AddDataRepositories(new[] { _dataRepository1, _dataRepository2, _dataRepository3 });
+         sut.AddDataRepositories(_dataRepositoryList);
          
 
          A.CallTo(() => _curveSettingsPresenter.UpdateColorForCurve(A<Curve>._, A<Color>._))
@@ -800,12 +800,12 @@ namespace OSPSuite.Presentation.Presentation
                x.GetArgument<Curve>(0).Color = x.GetArgument<Color>(1);
                _colorsForCurveName.Add(x.GetArgument<Curve>(0).Id, x.GetArgument<Color>(1));
             });
-
+         
       }
 
       protected override void Because()
       {
-         sut.SetAvailableColorGroupingMetaData(_dataRepositoryList);
+         sut.Handle(new ChartUpdatedEvent(_chart, true));
       }
 
       [Observation]
