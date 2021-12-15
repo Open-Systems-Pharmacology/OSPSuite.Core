@@ -296,6 +296,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private List<IReadOnlyList<DataRepository>> groupDataRepositories(IReadOnlyList<string> groupingCriteria)
       {
          var activeObservedDataList = _dataBrowserPresenter.GetAllUsedDataColumns().Where(x => x.IsObservation()).Select(x => x.Repository);
+
+         // we will group according to each criterion sequentially. the actual order of the criteria will not make a difference in the result.
+         // we start with all the initial data repositories in one group. We will group them according to the first criterion resulting in x groups
+         // then we will group each of the newly created groups with the next criterion and so on. 
          var groupedDataRepositories = new List<IReadOnlyList<DataRepository>> {activeObservedDataList.ToList()};
          foreach (var groupingMetaData in groupingCriteria)
          {
@@ -304,6 +308,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
             {
                var dataReposGroupedBySingleMetaData =
                   existingGroup.GroupBy(x => x.ExtendedProperties[groupingMetaData].ValueAsObject).Select(group => @group.ToList());
+               // we are using tempGroupedList to "flatten" the structure of the groups. Every time we apply .GroupBy() we will get a new layer of groups
+               // but since we do not care about what the parent node criteria are, but only for the resulting groups and their contained elements we can 
+               // avoid the extra complexity
                tempGroupedList.AddRange(dataReposGroupedBySingleMetaData);
             }
 
