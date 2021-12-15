@@ -15,6 +15,17 @@ namespace OSPSuite.UI.Views.Charts
       public CurveMultiItemEditorView()
       {
          InitializeComponent();
+      }
+
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+
+         colorLayoutControlItem.Text = Captions.Chart.MultiCurveOptions.Color;
+         styleLayoutControlItem.Text = Captions.Chart.MultiCurveOptions.Style;
+         symbolLayoutControlItem.Text = Captions.Chart.MultiCurveOptions.Symbol;
+         visibleLayoutControlItem.Text = Captions.Chart.MultiCurveOptions.Visible;
+         inLegendLayoutControlItem.Text = Captions.Chart.MultiCurveOptions.InLegend;
 
          styleComboBoxEdit.FillComboBoxEditorWith(EnumHelper.AllValuesFor<LineStyles>());
          styleComboBoxEdit.Properties.Items.Insert(0, Captions.Chart.MultiCurveOptions.CurrentValue);
@@ -50,7 +61,7 @@ namespace OSPSuite.UI.Views.Charts
             Symbol = symbolComboBoxEdit.SelectedItem.ToString(),
             Visible = visibleComboBoxEdit.SelectedItem.ToString(),
             VisibleInLegend = inLegendComboBoxEdit.SelectedItem.ToString()
-      };
+         };
       }
    }
 }

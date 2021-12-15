@@ -1258,7 +1258,12 @@ namespace OSPSuite.Assets
 
          public static class MultiCurveOptions
          {
-            public static string CurrentValue = "< Current value>";
+            public static string CurrentValue = "<Current value>";
+            public static string Color = "Color";
+            public static string Style = "Style";
+            public static string Symbol = "Symbol";
+            public static string Visible = "Visible";
+            public static string InLegend = "In Legend";
          }
       }
    }
