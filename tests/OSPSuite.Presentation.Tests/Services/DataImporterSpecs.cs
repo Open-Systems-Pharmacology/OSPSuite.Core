@@ -267,6 +267,14 @@ namespace OSPSuite.Presentation.Services
             getFileFullName("IntegrationSampleMissingMapping.xlsx"));
          A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column 'SD [mg/l]' is missing from at least one of the sheets being loaded.")).MustHaveHappened();
       }
+
+      [Observation]
+      public void should_not_notify_on_preset_mapping()
+      {
+         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName("IntegrationSampleMissingMapping.xlsx"));
+         A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column 'VenousBlood' is missing from at least one of the sheets being loaded.")).MustNotHaveHappened();
+      }
    }
 
    public class When_importing_data_with_missing_unit_columns : concern_for_DataImporter

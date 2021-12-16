@@ -148,7 +148,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetDescriptionForRow(ColumnMappingDTO model)
       {
          var values = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName)?.ListOfValues.Keys;
-         _setDescriptionForRow(model, values != null && values.All(v => v != model.ExcelColumn));
+         setDescriptionForRow(model, values != null && values.All(v => v != model.ExcelColumn));
       }
 
       public void UpdateMetaDataForModel(MetaDataFormatParameter mappingSource)
@@ -468,7 +468,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          return options;
       }
 
-      private IEnumerable<string> availableColumns()
+      private IEnumerable<string> 
+         availableColumns()
       {
          return _format.ExcelColumnNames
             .Where
@@ -510,7 +511,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          };
       }
 
-      private void _setDescriptionForRow(ColumnMappingDTO model, bool isColumn)
+      private void setDescriptionForRow(ColumnMappingDTO model, bool isColumn)
       {
          if (model.Source == null)
          {
