@@ -12,7 +12,7 @@ namespace OSPSuite.Presentation.Presentation
    {
       protected IContainer _container;
       protected ParameterIdentification _parameterIdentification;
-      //protected FeedbackPresenter
+
       protected override void Context()
       {
          _container = A.Fake<IContainer>();
