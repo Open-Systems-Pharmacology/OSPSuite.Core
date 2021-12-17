@@ -17,7 +17,7 @@ namespace OSPSuite.Presentation.Presentation
       {
          _container = A.Fake<IContainer>();
          _parameterIdentification = new ParameterIdentification();
-         A.CallTo(() => _container.Resolve<IParameterIdentificationFeedbackPresenter>()).Returns(A.Fake<IParameterIdentificationFeedbackPresenter>());
+         A.CallTo(() => _container.Resolve<IParameterIdentificationFeedbackPresenter>()).ReturnsLazily(() => A.Fake<IParameterIdentificationFeedbackPresenter>());
          sut = new MultipleParameterIdentificationFeedbackPresentersManager(_container);
       }
    }
