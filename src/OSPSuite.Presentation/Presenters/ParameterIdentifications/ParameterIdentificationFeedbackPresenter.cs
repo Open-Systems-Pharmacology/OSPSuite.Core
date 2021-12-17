@@ -25,13 +25,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
    public interface IParameterIdentificationFeedbackPresenter : IPresenter<IParameterIdentificationFeedbackView>,
       IToogleablePresenter,
-      IListener<ParameterIdentificationStartedEvent>,
-      IListener<ParameterIdentificationSelectedEvent>,
-      IListener<ParameterIdentificationTerminatedEvent>,
       IListener<ParameterIdentificationIntermediateResultsUpdatedEvent>,
       IListener<ProjectClosedEvent>
    {
       bool ShouldRefreshFeedback { get; set; }
+      void OnParameterIdentificationStarted(ParameterIdentification parameterIdentification);
+      void OnParameterIdentificationTerminated(ParameterIdentification parameterIdentification);
    }
 
    public class ParameterIdentificationFeedbackPresenter : AbstractToggleablePresenter<IParameterIdentificationFeedbackView, IParameterIdentificationFeedbackPresenter>, IParameterIdentificationFeedbackPresenter
@@ -71,23 +70,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          feedbackEditorSettings.Size = size;
       }
 
-      public void Handle(ParameterIdentificationStartedEvent eventToHandle)
+      public void OnParameterIdentificationStarted(ParameterIdentification parameterIdentification)
       {
-         _currentParameterIdentifications.Add(eventToHandle.ParameterIdentification);
-         _parameterIdentification = eventToHandle.ParameterIdentification;
+         _parameterIdentification = parameterIdentification;
          _view.Caption = Captions.ParameterIdentification.FeedbackViewFor(_parameterIdentification.Name);
          showParameterIdentificationFeedback();
       }
-
-      public void Handle(ParameterIdentificationSelectedEvent eventToHandle)
-      {
-         if (!_currentParameterIdentifications.Contains(eventToHandle.ParameterIdentification))
-            return;
-
-         _parameterIdentification = eventToHandle.ParameterIdentification;
-         _view.Caption = Captions.ParameterIdentification.FeedbackViewFor(_parameterIdentification.Name);
-         showParameterIdentificationFeedback();
-     }
 
       private void showParameterIdentificationFeedback()
       {
@@ -118,7 +106,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.ShowFeedbackView(feedbackPresenterToShow.BaseView);
       }
 
-      public void Handle(ParameterIdentificationTerminatedEvent eventToHandle)
+      public void OnParameterIdentificationTerminated(ParameterIdentification parameterIdentification)
       {
          _parameterIdentification = null;
          clearFeedbackReferences();
@@ -142,6 +130,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          clearFeedbackReferences();
          resetFeedback();
          _view.NoFeedbackAvailable();
+         _view.Hide();
       }
 
       public void Handle(ParameterIdentificationIntermediateResultsUpdatedEvent eventToHandle)

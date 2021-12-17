@@ -1,19 +1,28 @@
-﻿using OSPSuite.Presentation.Presenters.ParameterIdentifications;
+﻿using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Core.Events;
+using OSPSuite.Presentation.Presenters.ParameterIdentifications;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.UICommands
 {
-   public class ParameterIdentificationFeedbackViewVisibilityUICommand : ObjectUICommand<IParameterIdentificationFeedbackPresenter>
+   public class ParameterIdentificationFeedbackViewVisibilityUICommand : ObjectUICommand<IParameterIdentificationFeedbackPresenter>, IListener<ParameterIdentificationSelectedEvent>
    {
-      private readonly IParameterIdentificationFeedbackPresenter _feedbackPresenter;
+      private readonly IMultipleParameterIdentificationFeedbackPresentersManager _multipleParameterIdentificationFeedbackPresentersManager;
+      private ParameterIdentification _parameterIdentification;
 
-      public ParameterIdentificationFeedbackViewVisibilityUICommand(IParameterIdentificationFeedbackPresenter feedbackPresenter)
+      public ParameterIdentificationFeedbackViewVisibilityUICommand(IMultipleParameterIdentificationFeedbackPresentersManager multipleParameterIdentificationFeedbackPresentersManager)
       {
-         _feedbackPresenter = feedbackPresenter;
+         _multipleParameterIdentificationFeedbackPresentersManager = multipleParameterIdentificationFeedbackPresentersManager;
+      }
+
+      public void Handle(ParameterIdentificationSelectedEvent eventToHandle)
+      {
+         _parameterIdentification = eventToHandle.ParameterIdentification;
       }
 
       protected override void PerformExecute()
       {
-         _feedbackPresenter.Display();
+         _multipleParameterIdentificationFeedbackPresentersManager.FeedbackPresenterFor(_parameterIdentification).Display();
       }
    }
 }
