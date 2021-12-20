@@ -21,11 +21,11 @@ namespace OSPSuite.UI.Views.Charts
       {
          base.InitializeResources();
 
-         colorLayoutControlItem.Text = Captions.Chart.MultiCurveOptions.Color;
-         styleLayoutControlItem.Text = Captions.Chart.MultiCurveOptions.Style;
-         symbolLayoutControlItem.Text = Captions.Chart.MultiCurveOptions.Symbol;
-         visibleLayoutControlItem.Text = Captions.Chart.MultiCurveOptions.Visible;
-         inLegendLayoutControlItem.Text = Captions.Chart.MultiCurveOptions.InLegend;
+         colorLayoutControlItem.Text = Captions.Chart.CurveOptions.Color;
+         styleLayoutControlItem.Text = Captions.Chart.CurveOptions.LineStyle;
+         symbolLayoutControlItem.Text = Captions.Chart.CurveOptions.Symbol;
+         visibleLayoutControlItem.Text = Captions.Chart.CurveOptions.Visible;
+         inLegendLayoutControlItem.Text = Captions.Chart.CurveOptions.VisibleInLegend;
 
          styleComboBoxEdit.FillComboBoxEditorWith(EnumHelper.AllValuesFor<LineStyles>());
          styleComboBoxEdit.Properties.Items.Insert(0, Captions.Chart.MultiCurveOptions.CurrentValue);
