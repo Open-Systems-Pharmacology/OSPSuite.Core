@@ -1,44 +1,80 @@
-﻿using System.Drawing;
-using OSPSuite.Assets;
+﻿using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
+using OSPSuite.DataBinding;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.Presentation.Extensions;
+using OSPSuite.Presentation.Formatters;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
-using OSPSuite.UI.Extensions;
-using OSPSuite.Utility;
+using OSPSuite.Utility.Format;
+using System;
+using System.Drawing;
 
 namespace OSPSuite.UI.Views.Charts
 {
    public partial class CurveMultiItemEditorView : BaseModalView, ICurveMultiItemEditorView
    {
       private ICurveMultiItemEditorPresenter _presenter;
+      private ScreenBinder<SelectedCurveValues> _screenBinder;
+      private readonly IFormatter<bool?> _boolFormatter;
+      private readonly IFormatter<LineStyles?> _lineStylesFormatter;
+      private readonly IFormatter<Symbols?> _symbolsFormatter;
 
       public CurveMultiItemEditorView()
       {
          InitializeComponent();
+         _boolFormatter = new BooleanYesNoFormatter();
+         _symbolsFormatter = new SymbolsFormatter();
+         _lineStylesFormatter = new LineStylesFormatter();
       }
 
       public override void InitializeResources()
       {
          base.InitializeResources();
 
-         colorLayoutControlItem.Text = Captions.Chart.CurveOptions.Color;
-         styleLayoutControlItem.Text = Captions.Chart.CurveOptions.LineStyle;
-         symbolLayoutControlItem.Text = Captions.Chart.CurveOptions.Symbol;
-         visibleLayoutControlItem.Text = Captions.Chart.CurveOptions.Visible;
-         inLegendLayoutControlItem.Text = Captions.Chart.CurveOptions.VisibleInLegend;
+         colorLayoutControlItem.Text = Captions.Chart.CurveOptions.Color.FormatForLabel();
+         styleLayoutControlItem.Text = Captions.Chart.CurveOptions.LineStyle.FormatForLabel();
+         symbolLayoutControlItem.Text = Captions.Chart.CurveOptions.Symbol.FormatForLabel();
+         visibleLayoutControlItem.Text = Captions.Chart.CurveOptions.Visible.FormatForLabel();
+         inLegendLayoutControlItem.Text = Captions.Chart.CurveOptions.VisibleInLegend.FormatForLabel();
 
-         styleComboBoxEdit.FillComboBoxEditorWith(EnumHelper.AllValuesFor<LineStyles>());
-         styleComboBoxEdit.Properties.Items.Insert(0, Captions.Chart.MultiCurveOptions.CurrentValue);
-         styleComboBoxEdit.SelectedIndex = 0;
-         symbolComboBoxEdit.FillComboBoxEditorWith(EnumHelper.AllValuesFor<Symbols>());
-         symbolComboBoxEdit.Properties.Items.Insert(0, Captions.Chart.MultiCurveOptions.CurrentValue);
-         symbolComboBoxEdit.SelectedIndex = 0;
-         visibleComboBoxEdit.FillComboBoxEditorWith(EnumHelper.AllValuesFor<YesNoValues>());
-         visibleComboBoxEdit.Properties.Items.Insert(0, Captions.Chart.MultiCurveOptions.CurrentValue);
-         visibleComboBoxEdit.SelectedIndex = 0;
-         inLegendComboBoxEdit.FillComboBoxEditorWith(EnumHelper.AllValuesFor<YesNoValues>());
-         inLegendComboBoxEdit.Properties.Items.Insert(0, Captions.Chart.MultiCurveOptions.CurrentValue);
-         inLegendComboBoxEdit.SelectedIndex = 0;
+         _screenBinder = new ScreenBinder<SelectedCurveValues> { BindingMode = BindingMode.TwoWay };
+      }
+
+      public override void InitializeBinding()
+      {
+         base.InitializeBinding();
+
+         _screenBinder.Bind(x => x.Color)
+            .To(colorPickEdit1)
+            .OnValueUpdated += colorChanged;
+
+         _screenBinder.Bind(x => x.Style)
+            .To(styleComboBoxEdit)
+            .WithValues(_presenter.AllLineStyles)
+            .WithFormat(_lineStylesFormatter); 
+         
+
+         _screenBinder.Bind(x => x.Symbol)
+            .To(symbolComboBoxEdit)
+            .WithValues(_presenter.AllSymbols)
+            .WithFormat(_symbolsFormatter); ;
+
+         _screenBinder.Bind(x => x.Visible)
+            .To(visibleComboBoxEdit)
+            .WithValues(_presenter.AllBooleanOptions)
+            .WithFormat(_boolFormatter);
+
+         _screenBinder.Bind(x => x.VisibleInLegend)
+            .To(inLegendComboBoxEdit)
+            .WithValues(_presenter.AllBooleanOptions)
+            .WithFormat(_boolFormatter);
+
+      }
+
+      private void colorChanged(SelectedCurveValues o, Color color)
+      {
+         _presenter.SetColorChangedFlag();
       }
 
       public void AttachPresenter(ICurveMultiItemEditorPresenter presenter)
@@ -46,22 +82,11 @@ namespace OSPSuite.UI.Views.Charts
          _presenter = presenter;
       }
 
-      public SelectedCurveValues GetSelectedValues()
+      public void BindTo(SelectedCurveValues selectedCurveValues)
       {
-         Color? selectedColor;
-         if (colorPickEdit1.Color.IsEmpty)
-            selectedColor = null;
-         else
-            selectedColor = colorPickEdit1.Color;
-
-         return new SelectedCurveValues()
-         {
-            Color = selectedColor,
-            Style = styleComboBoxEdit.SelectedItem.ToString(),
-            Symbol = symbolComboBoxEdit.SelectedItem.ToString(),
-            Visible = visibleComboBoxEdit.SelectedItem.ToString(),
-            VisibleInLegend = inLegendComboBoxEdit.SelectedItem.ToString()
-         };
+         _screenBinder.BindToSource(selectedCurveValues);
       }
+
+
    }
 }

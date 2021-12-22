@@ -1,4 +1,5 @@
-﻿
+﻿using OSPSuite.UI.Controls;
+
 namespace OSPSuite.UI.Views.Charts
 {
    partial class CurveMultiItemEditorView
@@ -30,11 +31,11 @@ namespace OSPSuite.UI.Views.Charts
       private void InitializeComponent()
       {
          this.colorEditLayoutControl = new DevExpress.XtraLayout.LayoutControl();
-         this.inLegendComboBoxEdit = new DevExpress.XtraEditors.ComboBoxEdit();
-         this.visibleComboBoxEdit = new DevExpress.XtraEditors.ComboBoxEdit();
-         this.symbolComboBoxEdit = new DevExpress.XtraEditors.ComboBoxEdit();
-         this.styleComboBoxEdit = new DevExpress.XtraEditors.ComboBoxEdit();
-         this.colorPickEdit1 = new DevExpress.XtraEditors.ColorPickEdit();
+         this.inLegendComboBoxEdit = new UxComboBoxEdit();
+         this.visibleComboBoxEdit = new UxComboBoxEdit();
+         this.symbolComboBoxEdit = new UxComboBoxEdit();
+         this.styleComboBoxEdit = new UxComboBoxEdit();
+         this.colorPickEdit1 = new UxColorPickEditWithHistory();
          this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.colorLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
@@ -250,14 +251,14 @@ namespace OSPSuite.UI.Views.Charts
       private DevExpress.XtraLayout.LayoutControl colorEditLayoutControl;
       private DevExpress.XtraLayout.LayoutControlGroup Root;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
-      private DevExpress.XtraEditors.ColorPickEdit colorPickEdit1;
+      private OSPSuite.UI.Controls.UxColorPickEditWithHistory colorPickEdit1;
       private DevExpress.XtraLayout.LayoutControlItem colorLayoutControlItem;
-      private DevExpress.XtraEditors.ComboBoxEdit symbolComboBoxEdit;
-      private DevExpress.XtraEditors.ComboBoxEdit styleComboBoxEdit;
+      private OSPSuite.UI.Controls.UxComboBoxEdit symbolComboBoxEdit;
+      private OSPSuite.UI.Controls.UxComboBoxEdit styleComboBoxEdit;
       private DevExpress.XtraLayout.LayoutControlItem styleLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem symbolLayoutControlItem;
-      private DevExpress.XtraEditors.ComboBoxEdit inLegendComboBoxEdit;
-      private DevExpress.XtraEditors.ComboBoxEdit visibleComboBoxEdit;
+      private OSPSuite.UI.Controls.UxComboBoxEdit inLegendComboBoxEdit;
+      private OSPSuite.UI.Controls.UxComboBoxEdit visibleComboBoxEdit;
       private DevExpress.XtraLayout.LayoutControlItem visibleLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem inLegendLayoutControlItem;
    }

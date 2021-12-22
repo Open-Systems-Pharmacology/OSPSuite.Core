@@ -4,6 +4,6 @@ namespace OSPSuite.Presentation.Views.Charts
 {
    public interface ICurveMultiItemEditorView : IModalView<ICurveMultiItemEditorPresenter>
    {
-      SelectedCurveValues GetSelectedValues();
+      void BindTo(SelectedCurveValues selectedCurveValues);
    }
 }
