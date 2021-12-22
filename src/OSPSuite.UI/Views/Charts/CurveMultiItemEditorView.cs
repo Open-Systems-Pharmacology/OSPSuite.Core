@@ -69,7 +69,6 @@ namespace OSPSuite.UI.Views.Charts
             .To(inLegendComboBoxEdit)
             .WithValues(_presenter.AllBooleanOptions)
             .WithFormat(_boolFormatter);
-
       }
 
       private void colorChanged(SelectedCurveValues o, Color color)
@@ -86,7 +85,5 @@ namespace OSPSuite.UI.Views.Charts
       {
          _screenBinder.BindToSource(selectedCurveValues);
       }
-
-
    }
 }

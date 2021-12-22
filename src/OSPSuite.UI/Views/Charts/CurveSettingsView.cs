@@ -389,9 +389,6 @@ namespace OSPSuite.UI.Views.Charts
          if (gridViewMenu == null)
             return;
 
-         //if (e.HitInfo.HitTest != GridHitTest.RowIndicator)
-           // return;
-
          if (gridView.GetSelectedRows().Length == 0)
             return;
 
