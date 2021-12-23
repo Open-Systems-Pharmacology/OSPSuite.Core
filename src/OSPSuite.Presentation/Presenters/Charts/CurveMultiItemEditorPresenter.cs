@@ -30,7 +30,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
    public class CurveMultiItemEditorPresenter : AbstractDisposablePresenter<ICurveMultiItemEditorView, ICurveMultiItemEditorPresenter>,
       ICurveMultiItemEditorPresenter
    {
-      private SelectedCurveValues _selectedCurveValues;
+      private readonly SelectedCurveValues _selectedCurveValues;
+
       public CurveMultiItemEditorPresenter(ICurveMultiItemEditorView view) : base(view)
       {
          _selectedCurveValues = new SelectedCurveValues();
@@ -38,9 +39,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public IEnumerable<bool?> AllBooleanOptions => Constants.MultiCurveOptions.AllBooleanOptions;
 
-      public IEnumerable<LineStyles?> AllLineStyles => new List<LineStyles?>() { null }.Union(EnumHelper.AllValuesFor<LineStyles>().Cast<LineStyles?>());
+      public IEnumerable<LineStyles?> AllLineStyles => new List<LineStyles?>() {null}.Union(EnumHelper.AllValuesFor<LineStyles>().Cast<LineStyles?>());
 
-      public IEnumerable<Symbols?> AllSymbols => new List<Symbols?>() { null }.Union(EnumHelper.AllValuesFor<Symbols>().Cast<Symbols?>());
+      public IEnumerable<Symbols?> AllSymbols => new List<Symbols?>() {null}.Union(EnumHelper.AllValuesFor<Symbols>().Cast<Symbols?>());
+
       public void SetColorChangedFlag()
       {
          _selectedCurveValues.IsColorSet = true;

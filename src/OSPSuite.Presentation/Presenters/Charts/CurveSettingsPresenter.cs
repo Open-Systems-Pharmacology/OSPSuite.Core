@@ -80,7 +80,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public IEnumerable<AxisTypes> AllYAxisTypes => _chart.AllUsedYAxisTypes;
 
-      public CurveSettingsPresenter(ICurveSettingsView view, IDimensionFactory dimensionFactory, 
+      public CurveSettingsPresenter(ICurveSettingsView view, IDimensionFactory dimensionFactory,
          IApplicationController applicationController) : base(view)
       {
          _dimensionFactory = dimensionFactory;
@@ -141,7 +141,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void Refresh()
       {
          //Refresh initiated from UI action
-         if(IsLatched)
+         if (IsLatched)
             return;
 
          foreach (var curve in _chart.Curves)
@@ -217,11 +217,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
             foreach (var curveDTO in selectedCurveDTOs)
             {
-               if (selectedValues.IsColorSet) curveDTO.Color = selectedValues.Color;
-               if (selectedValues.Style != null) curveDTO.LineStyle = (LineStyles)selectedValues.Style;
-               if (selectedValues.Symbol != null) curveDTO.Symbol = (Symbols)selectedValues.Symbol;
-               if (selectedValues.Visible != null) curveDTO.Visible = (bool)selectedValues.Visible;
-               if (selectedValues.VisibleInLegend != null) curveDTO.VisibleInLegend = (bool)selectedValues.VisibleInLegend;
+               if (selectedValues.IsColorSet)
+                  curveDTO.Color = selectedValues.Color;
+
+               curveDTO.LineStyle = selectedValues.Style.GetValueOrDefault(curveDTO.LineStyle);
+               curveDTO.Symbol = selectedValues.Symbol.GetValueOrDefault(curveDTO.Symbol);
+               curveDTO.Visible = selectedValues.Visible.GetValueOrDefault(curveDTO.Visible);
+               curveDTO.VisibleInLegend = selectedValues.VisibleInLegend.GetValueOrDefault(curveDTO.VisibleInLegend);
 
                NotifyCurvePropertyChange(curveDTO);
             }

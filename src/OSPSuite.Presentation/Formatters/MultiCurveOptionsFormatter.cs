@@ -1,8 +1,5 @@
-﻿using System.Drawing;
-using NPOI.OpenXmlFormats.Dml;
-using OSPSuite.Assets;
+﻿using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
-using OSPSuite.Core.Domain;
 using OSPSuite.Utility.Format;
 
 namespace OSPSuite.Presentation.Formatters
@@ -14,7 +11,7 @@ namespace OSPSuite.Presentation.Formatters
          if (valueToFormat == null)
             return Captions.Chart.MultiCurveOptions.CurrentValue;
 
-         return (bool)valueToFormat ? "Yes" : "No";
+         return  valueToFormat.Value ? "Yes" : "No";
       }
    }
 
@@ -25,9 +22,10 @@ namespace OSPSuite.Presentation.Formatters
          if (valueToFormat == null)
             return Captions.Chart.MultiCurveOptions.CurrentValue;
 
-         return ((LineStyles)valueToFormat).ToString();
+         return  valueToFormat.Value.ToString();
       }
    }
+
    public class SymbolsFormatter : IFormatter<Symbols?>
    {
       public string Format(Symbols? valueToFormat)
@@ -35,7 +33,7 @@ namespace OSPSuite.Presentation.Formatters
          if (valueToFormat == null)
             return Captions.Chart.MultiCurveOptions.CurrentValue;
 
-         return ((Symbols)valueToFormat).ToString();
+         return valueToFormat.Value.ToString();
       }
    }
 }

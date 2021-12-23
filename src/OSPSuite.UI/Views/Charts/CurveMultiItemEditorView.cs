@@ -1,4 +1,5 @@
-﻿using OSPSuite.Assets;
+﻿using System.Drawing;
+using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
@@ -7,25 +8,20 @@ using OSPSuite.Presentation.Formatters;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Format;
-using System;
-using System.Drawing;
 
 namespace OSPSuite.UI.Views.Charts
 {
    public partial class CurveMultiItemEditorView : BaseModalView, ICurveMultiItemEditorView
    {
       private ICurveMultiItemEditorPresenter _presenter;
-      private ScreenBinder<SelectedCurveValues> _screenBinder;
-      private readonly IFormatter<bool?> _boolFormatter;
-      private readonly IFormatter<LineStyles?> _lineStylesFormatter;
-      private readonly IFormatter<Symbols?> _symbolsFormatter;
+      private readonly IFormatter<bool?> _boolFormatter = new BooleanYesNoFormatter();
+      private readonly IFormatter<LineStyles?> _lineStylesFormatter = new LineStylesFormatter();
+      private readonly IFormatter<Symbols?> _symbolsFormatter = new SymbolsFormatter();
+      private readonly ScreenBinder<SelectedCurveValues> _screenBinder = new ScreenBinder<SelectedCurveValues> {BindingMode = BindingMode.TwoWay};
 
       public CurveMultiItemEditorView()
       {
          InitializeComponent();
-         _boolFormatter = new BooleanYesNoFormatter();
-         _symbolsFormatter = new SymbolsFormatter();
-         _lineStylesFormatter = new LineStylesFormatter();
       }
 
       public override void InitializeResources()
@@ -37,8 +33,6 @@ namespace OSPSuite.UI.Views.Charts
          symbolLayoutControlItem.Text = Captions.Chart.CurveOptions.Symbol.FormatForLabel();
          visibleLayoutControlItem.Text = Captions.Chart.CurveOptions.Visible.FormatForLabel();
          inLegendLayoutControlItem.Text = Captions.Chart.CurveOptions.VisibleInLegend.FormatForLabel();
-
-         _screenBinder = new ScreenBinder<SelectedCurveValues> { BindingMode = BindingMode.TwoWay };
       }
 
       public override void InitializeBinding()
@@ -52,13 +46,14 @@ namespace OSPSuite.UI.Views.Charts
          _screenBinder.Bind(x => x.Style)
             .To(styleComboBoxEdit)
             .WithValues(_presenter.AllLineStyles)
-            .WithFormat(_lineStylesFormatter); 
-         
+            .WithFormat(_lineStylesFormatter);
+
 
          _screenBinder.Bind(x => x.Symbol)
             .To(symbolComboBoxEdit)
             .WithValues(_presenter.AllSymbols)
-            .WithFormat(_symbolsFormatter); ;
+            .WithFormat(_symbolsFormatter);
+         ;
 
          _screenBinder.Bind(x => x.Visible)
             .To(visibleComboBoxEdit)
