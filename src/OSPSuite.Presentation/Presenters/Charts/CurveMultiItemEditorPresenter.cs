@@ -37,11 +37,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _selectedCurveValues = new SelectedCurveValues();
       }
 
-      public IEnumerable<bool?> AllBooleanOptions => Constants.MultiCurveOptions.AllBooleanOptions;
+      public IEnumerable<bool?> AllBooleanOptions { get; } = Constants.MultiCurveOptions.AllBooleanOptions;
 
-      public IEnumerable<LineStyles?> AllLineStyles => new List<LineStyles?>() {null}.Union(EnumHelper.AllValuesFor<LineStyles>().Cast<LineStyles?>());
+      public IEnumerable<LineStyles?> AllLineStyles { get; } = new List<LineStyles?>() {null}.Union(EnumHelper.AllValuesFor<LineStyles>().Cast<LineStyles?>());
 
-      public IEnumerable<Symbols?> AllSymbols => new List<Symbols?>() {null}.Union(EnumHelper.AllValuesFor<Symbols>().Cast<Symbols?>());
+      public IEnumerable<Symbols?> AllSymbols { get; } = new List<Symbols?>() {null}.Union(EnumHelper.AllValuesFor<Symbols>().Cast<Symbols?>());
 
       public void SetColorChangedFlag()
       {
