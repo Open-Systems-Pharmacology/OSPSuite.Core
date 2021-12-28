@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -618,6 +621,11 @@ namespace OSPSuite.Core.Domain
 
 
          public static readonly Color DEFAULT_FONT_COLOR_WATERMARK = Color.Black;
+      }
+
+      public static class MultiCurveOptions
+      {
+         public static readonly IReadOnlyList<bool?> AllBooleanOptions= new bool?[] { null, false, true };
       }
 
       public static class ImporterConstants

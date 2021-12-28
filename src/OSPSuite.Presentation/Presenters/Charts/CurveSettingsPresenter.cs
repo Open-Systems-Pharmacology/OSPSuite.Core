@@ -6,6 +6,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.DTO.Charts;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility;
@@ -60,6 +61,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       event EventHandler<CurveEventArgs> CurvePropertyChanged;
       void UpdateCurveColor(CurveDTO curveDTO, Color color);
       void UpdateColorForCurve(Curve curve, Color color);
+      void EditProperties(List<CurveDTO> selectedCurveDTOs);
    }
 
    public class CurveSettingsPresenter : PresenterWithColumnSettings<ICurveSettingsView, ICurveSettingsPresenter>, ICurveSettingsPresenter, ILatchable
@@ -69,6 +71,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public event EventHandler<CurveEventArgs> CurvePropertyChanged = delegate { };
 
       private readonly IDimensionFactory _dimensionFactory;
+      private readonly IApplicationController _applicationController;
 
       public Func<DataColumn, string> CurveNameDefinition { get; set; }
       private CurveChart _chart;
@@ -77,9 +80,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public IEnumerable<AxisTypes> AllYAxisTypes => _chart.AllUsedYAxisTypes;
 
-      public CurveSettingsPresenter(ICurveSettingsView view, IDimensionFactory dimensionFactory) : base(view)
+      public CurveSettingsPresenter(ICurveSettingsView view, IDimensionFactory dimensionFactory,
+         IApplicationController applicationController) : base(view)
       {
          _dimensionFactory = dimensionFactory;
+         _applicationController = applicationController;
          CurveNameDefinition = column => column.Name;
       }
 
@@ -136,7 +141,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void Refresh()
       {
          //Refresh initiated from UI action
-         if(IsLatched)
+         if (IsLatched)
             return;
 
          foreach (var curve in _chart.Curves)
@@ -202,6 +207,27 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          var curveDTO = findCurveDTOFor(curve);
          UpdateCurveColor(curveDTO, color);
+      }
+
+      public void EditProperties(List<CurveDTO> selectedCurveDTOs)
+      {
+         using (var multiEditorPresenter = _applicationController.Start<ICurveMultiItemEditorPresenter>())
+         {
+            var selectedValues = multiEditorPresenter.GetSelectedValues();
+
+            foreach (var curveDTO in selectedCurveDTOs)
+            {
+               if (selectedValues.IsColorSet)
+                  curveDTO.Color = selectedValues.Color;
+
+               curveDTO.LineStyle = selectedValues.Style.GetValueOrDefault(curveDTO.LineStyle);
+               curveDTO.Symbol = selectedValues.Symbol.GetValueOrDefault(curveDTO.Symbol);
+               curveDTO.Visible = selectedValues.Visible.GetValueOrDefault(curveDTO.Visible);
+               curveDTO.VisibleInLegend = selectedValues.VisibleInLegend.GetValueOrDefault(curveDTO.VisibleInLegend);
+
+               NotifyCurvePropertyChange(curveDTO);
+            }
+         }
       }
    }
 }
