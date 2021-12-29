@@ -36,7 +36,7 @@ namespace OSPSuite.UI.Views.Charts
          this.visibleComboBoxEdit = new UxComboBoxEdit();
          this.symbolComboBoxEdit = new UxComboBoxEdit();
          this.styleComboBoxEdit = new UxComboBoxEdit();
-         this.colorPickEdit1 = new UxColorPickEditWithHistory();
+         this.colorPickEdit = new UxColorPickEditWithHistory();
          this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.colorLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
@@ -58,7 +58,7 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.visibleComboBoxEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.symbolComboBoxEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.styleComboBoxEdit.Properties)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.colorPickEdit1.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.colorPickEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.colorLayoutControlItem)).BeginInit();
@@ -77,7 +77,7 @@ namespace OSPSuite.UI.Views.Charts
          this.colorEditLayoutControl.Controls.Add(this.visibleComboBoxEdit);
          this.colorEditLayoutControl.Controls.Add(this.symbolComboBoxEdit);
          this.colorEditLayoutControl.Controls.Add(this.styleComboBoxEdit);
-         this.colorEditLayoutControl.Controls.Add(this.colorPickEdit1);
+         this.colorEditLayoutControl.Controls.Add(this.colorPickEdit);
          this.colorEditLayoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.colorEditLayoutControl.Location = new System.Drawing.Point(0, 0);
          this.colorEditLayoutControl.Name = "colorEditLayoutControl";
@@ -131,15 +131,15 @@ namespace OSPSuite.UI.Views.Charts
          // 
          // colorPickEdit1
          // 
-         this.colorPickEdit1.EditValue = System.Drawing.Color.Empty;
-         this.colorPickEdit1.Location = new System.Drawing.Point(134, 12);
-         this.colorPickEdit1.Name = "colorPickEdit1";
-         this.colorPickEdit1.Properties.AutomaticColor = System.Drawing.Color.Black;
-         this.colorPickEdit1.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+         this.colorPickEdit.EditValue = System.Drawing.Color.Empty;
+         this.colorPickEdit.Location = new System.Drawing.Point(134, 12);
+         this.colorPickEdit.Name = "colorPickEdit";
+         this.colorPickEdit.Properties.AutomaticColor = System.Drawing.Color.Black;
+         this.colorPickEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.colorPickEdit1.Size = new System.Drawing.Size(889, 48);
-         this.colorPickEdit1.StyleController = this.colorEditLayoutControl;
-         this.colorPickEdit1.TabIndex = 5;
+         this.colorPickEdit.Size = new System.Drawing.Size(889, 48);
+         this.colorPickEdit.StyleController = this.colorEditLayoutControl;
+         this.colorPickEdit.TabIndex = 5;
          // 
          // Root
          // 
@@ -166,7 +166,7 @@ namespace OSPSuite.UI.Views.Charts
          // 
          // colorLayoutControlItem
          // 
-         this.colorLayoutControlItem.Control = this.colorPickEdit1;
+         this.colorLayoutControlItem.Control = this.colorPickEdit;
          this.colorLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.colorLayoutControlItem.Name = "colorLayoutControlItem";
          this.colorLayoutControlItem.Size = new System.Drawing.Size(1015, 52);
@@ -234,7 +234,7 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.visibleComboBoxEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.symbolComboBoxEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.styleComboBoxEdit.Properties)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.colorPickEdit1.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.colorPickEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.colorLayoutControlItem)).EndInit();
@@ -252,7 +252,7 @@ namespace OSPSuite.UI.Views.Charts
       private DevExpress.XtraLayout.LayoutControl colorEditLayoutControl;
       private DevExpress.XtraLayout.LayoutControlGroup Root;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
-      private OSPSuite.UI.Controls.UxColorPickEditWithHistory colorPickEdit1;
+      private OSPSuite.UI.Controls.UxColorPickEditWithHistory colorPickEdit;
       private DevExpress.XtraLayout.LayoutControlItem colorLayoutControlItem;
       private OSPSuite.UI.Controls.UxComboBoxEdit symbolComboBoxEdit;
       private OSPSuite.UI.Controls.UxComboBoxEdit styleComboBoxEdit;

@@ -40,8 +40,7 @@ namespace OSPSuite.UI.Views.Charts
          base.InitializeBinding();
 
          _screenBinder.Bind(x => x.Color)
-            .To(colorPickEdit1)
-            .OnValueUpdated += colorChanged;
+            .To(colorPickEdit);
 
          _screenBinder.Bind(x => x.Style)
             .To(styleComboBoxEdit)
@@ -66,10 +65,6 @@ namespace OSPSuite.UI.Views.Charts
             .WithFormat(_boolFormatter);
       }
 
-      private void colorChanged(SelectedCurveValues o, Color color)
-      {
-         _presenter.SetColorChangedFlag();
-      }
 
       public void AttachPresenter(ICurveMultiItemEditorPresenter presenter)
       {

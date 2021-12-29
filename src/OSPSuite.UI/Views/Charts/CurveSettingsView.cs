@@ -389,10 +389,11 @@ namespace OSPSuite.UI.Views.Charts
          if (gridViewMenu == null)
             return;
 
-         if (gridView.GetSelectedRows().Length == 0)
+         //only one or no curve selected. We do not show the option
+         if (gridView.GetSelectedRows().Length <= 1)
             return;
 
-         var copyAllMenu = new DXMenuItem(Captions.EditAllCurvesProperties, (o, args) => onEditProperties());
+         var copyAllMenu = new DXMenuItem(Captions.EditAllCurvesProperties, (o, args) => onEditProperties(), ApplicationIcons.Edit);
          gridViewMenu.Items.Insert(0, copyAllMenu);
       }
 
