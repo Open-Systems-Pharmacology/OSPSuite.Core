@@ -23,7 +23,7 @@ namespace OSPSuite.Core.Domain.Formulas
       {
       }
 
-      protected override double CalculateFor(IEnumerable<IObjectReference> usedObjects, IUsingFormula dependentObject)
+      protected override double CalculateFor(IReadOnlyList<IObjectReference> usedObjects, IUsingFormula dependentObject)
       {
          return Value;
       }
@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Domain.Formulas
 
       public double Value
       {
-         get { return _value; }
+         get => _value;
          set
          {
             _value = value;

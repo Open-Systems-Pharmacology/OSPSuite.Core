@@ -43,7 +43,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    The value in the displayed unit
       /// </summary>
-      bool TryGetValueInDisplayUnit(out double result);
+      (double value, bool success) TryGetValueInDisplayUnit();
 
       
       /// <summary>
@@ -147,19 +147,29 @@ namespace OSPSuite.Core.Domain
          set => Value = this.ConvertToBaseUnit(value);
       }
 
-      public virtual bool TryGetValueInDisplayUnit(out double result)
+      private (double value, bool success) tryGetValue()
       {
-         try
+         if (IsFixedValue || _cachedValueValid)
+            return (_cachedValue, success: true);
+
+         if (Formula == null)
+            return (double.NaN, success: false);
+
+         var (value, success) = Formula.TryCalculate(this);
+         if (success)
          {
-            result = ValueInDisplayUnit;
-            return true;
+            _cachedValue = value;
+            //Cached value is only valid if the Formula has updated it's references
+            _cachedValueValid = Formula.AreReferencesResolved;
          }
-         catch (OSPSuiteException)
-         {
-           //Formula could not be parsed. In that case, we save the value as double.NaN so that next time, the value will be NaN
-           result = double.NaN;
-           return false;
-         }
+
+         return (value, success);
+
+      }
+      public virtual (double value, bool success) TryGetValueInDisplayUnit()
+      {
+         var (value, success) = tryGetValue();
+         return (this.ConvertToDisplayUnit(value), success);
       }
 
       /// <inheritdoc />

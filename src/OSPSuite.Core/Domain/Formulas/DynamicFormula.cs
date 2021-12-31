@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Domain.Formulas
          FormulaString = VariablePattern;
       }
 
-      protected override double CalculateFor(IEnumerable<IObjectReference> usedObjects, IUsingFormula dependentObject)
+      protected override double CalculateFor(IReadOnlyList<IObjectReference> usedObjects, IUsingFormula dependentObject)
       {
          //this formula cannot be evaluated 
          return double.NaN;
