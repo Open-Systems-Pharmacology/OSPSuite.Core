@@ -8,7 +8,7 @@ using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Presentation.Presentation
 {
-   public abstract class concern_for_MultipleParameterIdentificationFeedbackPresentersManager : ContextSpecification<MultipleParameterIdentificationFeedbackPresentersManager>
+   public abstract class concern_for_MultipleParameterIdentificationFeedbackPresentersManager : ContextSpecification<ParameterIdentificationFeedbackPresentersManager>
    {
       protected IContainer _container;
       protected ParameterIdentification _parameterIdentification;
@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.Presentation
          _container = A.Fake<IContainer>();
          _parameterIdentification = new ParameterIdentification();
          A.CallTo(() => _container.Resolve<IParameterIdentificationFeedbackPresenter>()).ReturnsLazily(() => A.Fake<IParameterIdentificationFeedbackPresenter>());
-         sut = new MultipleParameterIdentificationFeedbackPresentersManager(_container);
+         sut = new ParameterIdentificationFeedbackPresentersManager(_container);
       }
    }
 
@@ -32,7 +32,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_send_started_event_to_proper_presenter()
       {
-         A.CallTo(() => sut.FeedbackPresenterFor(_parameterIdentification).OnParameterIdentificationStarted(_parameterIdentification)).MustHaveHappened();
+         A.CallTo(() => sut.FeedbackPresenterFor(_parameterIdentification).ParameterIdentificationStarted(_parameterIdentification)).MustHaveHappened();
       }
    }
 
@@ -46,7 +46,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_send_terminated_event_to_proper_presenter()
       {
-         A.CallTo(() => sut.FeedbackPresenterFor(_parameterIdentification).OnParameterIdentificationTerminated(_parameterIdentification)).MustHaveHappened();
+         A.CallTo(() => sut.FeedbackPresenterFor(_parameterIdentification).ParameterIdentificationTerminated(_parameterIdentification)).MustHaveHappened();
       }
    }
 
