@@ -8,7 +8,7 @@ using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Presentation.Presentation
 {
-   public abstract class concern_for_MultipleParameterIdentificationFeedbackPresentersManager : ContextSpecification<ParameterIdentificationFeedbackPresentersManager>
+   public abstract class concern_for_ParameterIdentificationFeedbackPresentersManager : ContextSpecification<ParameterIdentificationFeedbackPresentersManager>
    {
       protected IContainer _container;
       protected ParameterIdentification _parameterIdentification;
@@ -22,7 +22,7 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_starting_a_new_parameter_identification : concern_for_MultipleParameterIdentificationFeedbackPresentersManager
+   public class When_starting_a_new_parameter_identification : concern_for_ParameterIdentificationFeedbackPresentersManager
    {
       protected override void Because()
       {
@@ -36,7 +36,7 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_terminating_a_new_parameter_identification : concern_for_MultipleParameterIdentificationFeedbackPresentersManager
+   public class When_terminating_a_new_parameter_identification : concern_for_ParameterIdentificationFeedbackPresentersManager
    {
       protected override void Because()
       {
@@ -50,7 +50,7 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_accessing_a_presenter_through_parameter_identification : concern_for_MultipleParameterIdentificationFeedbackPresentersManager
+   public class When_accessing_a_presenter_through_parameter_identification : concern_for_ParameterIdentificationFeedbackPresentersManager
    {
       [Observation]
       public void should_return_the_same_for_a_single_parameter_identification()
