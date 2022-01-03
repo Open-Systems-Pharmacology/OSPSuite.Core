@@ -14,17 +14,15 @@ namespace OSPSuite.Presentation.Presenters.Charts
       IEnumerable<bool?> AllBooleanOptions { get; }
       IEnumerable<LineStyles?> AllLineStyles { get; }
       IEnumerable<Symbols?> AllSymbols { get; }
-      void SetColorChangedFlag();
    }
 
    public class SelectedCurveValues
    {
-      public Color Color { get; set; }
+      public Color? Color { get; set; }
       public LineStyles? Style { get; set; }
       public Symbols? Symbol { get; set; }
       public bool? Visible { get; set; }
       public bool? VisibleInLegend { get; set; }
-      public bool IsColorSet { get; set; } = false;
    }
 
    public class CurveMultiItemEditorPresenter : AbstractDisposablePresenter<ICurveMultiItemEditorView, ICurveMultiItemEditorPresenter>,
@@ -42,11 +40,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public IEnumerable<LineStyles?> AllLineStyles { get; } = new List<LineStyles?>() {null}.Union(EnumHelper.AllValuesFor<LineStyles>().Cast<LineStyles?>());
 
       public IEnumerable<Symbols?> AllSymbols { get; } = new List<Symbols?>() {null}.Union(EnumHelper.AllValuesFor<Symbols>().Cast<Symbols?>());
-
-      public void SetColorChangedFlag()
-      {
-         _selectedCurveValues.IsColorSet = true;
-      }
 
       public SelectedCurveValues GetSelectedValues()
       {

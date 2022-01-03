@@ -217,10 +217,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
             foreach (var curveDTO in selectedCurveDTOs)
             {
-               if (selectedValues.IsColorSet)
-                  curveDTO.Color = selectedValues.Color;
-
                curveDTO.LineStyle = selectedValues.Style.GetValueOrDefault(curveDTO.LineStyle);
+               curveDTO.Color = selectedValues.Color.GetValueOrDefault(curveDTO.Color);
                curveDTO.Symbol = selectedValues.Symbol.GetValueOrDefault(curveDTO.Symbol);
                curveDTO.Visible = selectedValues.Visible.GetValueOrDefault(curveDTO.Visible);
                curveDTO.VisibleInLegend = selectedValues.VisibleInLegend.GetValueOrDefault(curveDTO.VisibleInLegend);
