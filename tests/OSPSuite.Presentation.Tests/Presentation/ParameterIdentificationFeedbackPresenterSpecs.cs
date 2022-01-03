@@ -41,7 +41,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         sut.OnParameterIdentificationStarted(_paramterIdentification);
+         sut.ParameterIdentificationStarted(_paramterIdentification);
       }
 
       [Observation]
@@ -69,7 +69,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         sut.OnParameterIdentificationStarted(_paramterIdentification);
+         sut.ParameterIdentificationStarted(_paramterIdentification);
       }
 
       [Observation]
@@ -91,7 +91,7 @@ namespace OSPSuite.Presentation.Presentation
    {
       protected override void Because()
       {
-         sut.OnParameterIdentificationTerminated(_paramterIdentification);
+         sut.ParameterIdentificationTerminated(_paramterIdentification);
       }
 
       [Observation]
@@ -123,7 +123,7 @@ namespace OSPSuite.Presentation.Presentation
          _runState = A.Fake<ParameterIdentificationRunState>();
          sut.ShouldRefreshFeedback = false;
          A.CallTo(() => _paramterIdentification.IsSingleRun).Returns(true);
-         sut.OnParameterIdentificationStarted(_paramterIdentification);
+         sut.ParameterIdentificationStarted(_paramterIdentification);
       }
 
       protected override void Because()
@@ -150,7 +150,7 @@ namespace OSPSuite.Presentation.Presentation
          sut.ShouldRefreshFeedback = true;
          A.CallTo(() => _view.Visible).Returns(false);
          A.CallTo(() => _paramterIdentification.IsSingleRun).Returns(true);
-         sut.OnParameterIdentificationStarted(_paramterIdentification);
+         sut.ParameterIdentificationStarted(_paramterIdentification);
       }
 
       protected override void Because()
@@ -176,7 +176,7 @@ namespace OSPSuite.Presentation.Presentation
          sut.ShouldRefreshFeedback = true;
          A.CallTo(() => _view.Visible).Returns(true);
          A.CallTo(() => _paramterIdentification.IsSingleRun).Returns(true);
-         sut.OnParameterIdentificationStarted(_paramterIdentification);
+         sut.ParameterIdentificationStarted(_paramterIdentification);
       }
 
       protected override void Because()
