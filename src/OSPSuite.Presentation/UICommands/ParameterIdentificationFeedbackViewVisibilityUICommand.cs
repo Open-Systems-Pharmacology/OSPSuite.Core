@@ -7,12 +7,12 @@ namespace OSPSuite.Presentation.UICommands
 {
    public class ParameterIdentificationFeedbackViewVisibilityUICommand : ObjectUICommand<IParameterIdentificationFeedbackPresenter>, IListener<ParameterIdentificationSelectedEvent>
    {
-      private readonly IParameterIdentificationFeedbackPresentersManager _multipleParameterIdentificationFeedbackPresentersManager;
+      private readonly IParameterIdentificationFeedbackPresentersManager _parameterIdentificationFeedbackPresentersManager;
       private ParameterIdentification _parameterIdentification;
 
       public ParameterIdentificationFeedbackViewVisibilityUICommand(IParameterIdentificationFeedbackPresentersManager multipleParameterIdentificationFeedbackPresentersManager)
       {
-         _multipleParameterIdentificationFeedbackPresentersManager = multipleParameterIdentificationFeedbackPresentersManager;
+         _parameterIdentificationFeedbackPresentersManager = multipleParameterIdentificationFeedbackPresentersManager;
       }
 
       public void Handle(ParameterIdentificationSelectedEvent eventToHandle)
@@ -22,7 +22,7 @@ namespace OSPSuite.Presentation.UICommands
 
       protected override void PerformExecute()
       {
-         _multipleParameterIdentificationFeedbackPresentersManager.FeedbackPresenterFor(_parameterIdentification).Display();
+         _parameterIdentificationFeedbackPresentersManager.FeedbackPresenterFor(_parameterIdentification).Display();
       }
    }
 }
