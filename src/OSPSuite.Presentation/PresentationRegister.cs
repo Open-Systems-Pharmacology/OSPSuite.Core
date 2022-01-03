@@ -52,7 +52,7 @@ namespace OSPSuite.Presentation
             scan.ExcludeType<JournalPageEditorFormPresenter>();
             scan.ExcludeType<ChartLayoutTemplateRepository>();
             scan.ExcludeType<HistoryBrowserConfiguration>();
-            scan.ExcludeType<MultipleParameterIdentificationFeedbackPresentersManager>();
+            scan.ExcludeType<ParameterIdentificationFeedbackPresentersManager>();
 
             //Registered as open generic
             scan.ExcludeType(typeof(CloneObjectBasePresenter<>));
@@ -78,7 +78,7 @@ namespace OSPSuite.Presentation
          container.Register<IChartLayoutTemplateRepository, IStartable, ChartLayoutTemplateRepository>(LifeStyle.Singleton);
          container.Register<IHistoryBrowserConfiguration, HistoryBrowserConfiguration>(LifeStyle.Singleton);
          container.Register<DirectoryMapSettings, DirectoryMapSettings>(LifeStyle.Singleton);
-         container.Register<IMultipleParameterIdentificationFeedbackPresentersManager, MultipleParameterIdentificationFeedbackPresentersManager>(LifeStyle.Singleton);
+         container.Register<IParameterIdentificationFeedbackPresentersManager, ParameterIdentificationFeedbackPresentersManager>(LifeStyle.Singleton);
 
          //Special registration
          container.Register<ChartEditorAndDisplaySettings, ChartEditorAndDisplaySettings>();

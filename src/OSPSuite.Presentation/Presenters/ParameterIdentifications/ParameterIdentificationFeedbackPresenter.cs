@@ -29,8 +29,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       IListener<ProjectClosedEvent>
    {
       bool ShouldRefreshFeedback { get; set; }
-      void OnParameterIdentificationStarted(ParameterIdentification parameterIdentification);
-      void OnParameterIdentificationTerminated(ParameterIdentification parameterIdentification);
+      void ParameterIdentificationStarted(ParameterIdentification parameterIdentification);
+      void ParameterIdentificationTerminated(ParameterIdentification parameterIdentification);
    }
 
    public class ParameterIdentificationFeedbackPresenter : AbstractToggleablePresenter<IParameterIdentificationFeedbackView, IParameterIdentificationFeedbackPresenter>, IParameterIdentificationFeedbackPresenter
@@ -70,7 +70,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          feedbackEditorSettings.Size = size;
       }
 
-      public void OnParameterIdentificationStarted(ParameterIdentification parameterIdentification)
+      public void ParameterIdentificationStarted(ParameterIdentification parameterIdentification)
       {
          _parameterIdentification = parameterIdentification;
          _view.Caption = Captions.ParameterIdentification.FeedbackViewFor(_parameterIdentification.Name);
@@ -106,7 +106,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.ShowFeedbackView(feedbackPresenterToShow.BaseView);
       }
 
-      public void OnParameterIdentificationTerminated(ParameterIdentification parameterIdentification)
+      public void ParameterIdentificationTerminated(ParameterIdentification parameterIdentification)
       {
          _parameterIdentification = null;
          clearFeedbackReferences();

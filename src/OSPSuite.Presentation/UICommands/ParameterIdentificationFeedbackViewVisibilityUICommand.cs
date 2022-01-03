@@ -7,10 +7,10 @@ namespace OSPSuite.Presentation.UICommands
 {
    public class ParameterIdentificationFeedbackViewVisibilityUICommand : ObjectUICommand<IParameterIdentificationFeedbackPresenter>, IListener<ParameterIdentificationSelectedEvent>
    {
-      private readonly IMultipleParameterIdentificationFeedbackPresentersManager _multipleParameterIdentificationFeedbackPresentersManager;
+      private readonly IParameterIdentificationFeedbackPresentersManager _multipleParameterIdentificationFeedbackPresentersManager;
       private ParameterIdentification _parameterIdentification;
 
-      public ParameterIdentificationFeedbackViewVisibilityUICommand(IMultipleParameterIdentificationFeedbackPresentersManager multipleParameterIdentificationFeedbackPresentersManager)
+      public ParameterIdentificationFeedbackViewVisibilityUICommand(IParameterIdentificationFeedbackPresentersManager multipleParameterIdentificationFeedbackPresentersManager)
       {
          _multipleParameterIdentificationFeedbackPresentersManager = multipleParameterIdentificationFeedbackPresentersManager;
       }
