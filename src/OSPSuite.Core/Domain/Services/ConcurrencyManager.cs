@@ -49,30 +49,23 @@ namespace OSPSuite.Core.Domain.Services
          IReadOnlyList<TData> data,
          Func<TData, CancellationToken, TResult> action,
          CancellationToken cancellationToken,
-         uint? numberOfCoresToUse = null
+         int numberOfCoresToUse
       ) where TData : IWithId;
    }
 
    public class ConcurrencyManager : IConcurrencyManager
    {
-      private readonly int _maximumNumberOfCoresToUse;
-
-      public ConcurrencyManager(ICoreUserSettings coreUserSettings)
-      {
-         _maximumNumberOfCoresToUse = Math.Max(1, coreUserSettings.MaximumNumberOfCoresToUse);
-      }
-
       public async Task<IDictionary<TData, ConcurrencyManagerResult<TResult>>> RunAsync<TData, TResult>
       (
          IReadOnlyList<TData> data,
          Func<TData, CancellationToken, TResult> action,
          CancellationToken cancellationToken,
-         uint? numberOfCoresToUse = null
+         int numberOfCoresToUse
       ) where TData : IWithId
       {
          var results = new ConcurrentDictionary<TData, ConcurrencyManagerResult<TResult>>();
 
-         await Task.Run(() => Parallel.ForEach(data, createParallelOptions(cancellationToken, numberOfCoresToUse == null ? _maximumNumberOfCoresToUse : Convert.ToInt32(numberOfCoresToUse)),
+         await Task.Run(() => Parallel.ForEach(data, createParallelOptions(cancellationToken, numberOfCoresToUse),
                datum =>
                {
                   cancellationToken.ThrowIfCancellationRequested();
