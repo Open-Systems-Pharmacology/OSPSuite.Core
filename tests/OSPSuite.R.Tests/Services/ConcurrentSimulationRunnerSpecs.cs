@@ -11,13 +11,6 @@ using OSPSuite.R.Domain;
 
 namespace OSPSuite.R.Services
 {
-   class CoreUserSettings : ICoreUserSettings
-   {
-      public int MaximumNumberOfCoresToUse { get; set; } = 4;
-      public int NumberOfBins { get; set; }
-      public int NumberOfIndividualsPerBin { get; set; }
-   }
-
    public abstract class concern_for_ConcurrentSimulationRunner : ContextForIntegration<IConcurrentSimulationRunner>
    {
       protected ISimulationPersister _simulationPersister;
@@ -28,8 +21,7 @@ namespace OSPSuite.R.Services
       {
          base.GlobalContext();
          _simulationPersister = Api.GetSimulationPersister();
-         _coreUserSettings = new CoreUserSettings();
-         _concurrencyManager = new ConcurrencyManager(_coreUserSettings);
+         _concurrencyManager = new ConcurrencyManager();
          sut = new ConcurrentSimulationRunner(_concurrencyManager);
       }
    }
