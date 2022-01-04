@@ -27,10 +27,10 @@ namespace OSPSuite.Presentation.Presentation
          _multipleFeedbackPresenter = A.Fake<IMultipleParameterIdentificationFeedbackPresenter>();
          _parameterIdentificationFeedbackManager = new ParameterIdentificationFeedbackManager();
 
-         sut = new ParameterIdentificationFeedbackPresenter(_view, _presenterUserSettings, _singleFeedbackPresenter, _multipleFeedbackPresenter, _parameterIdentificationFeedbackManager);
+         sut = new ParameterIdentificationFeedbackPresenter(_view, _presenterUserSettings, _singleFeedbackPresenter, _multipleFeedbackPresenter);
 
          _paramterIdentification = A.Fake<ParameterIdentification>();
-         sut.Edit(_parameterIdentificationFeedbackManager.GetFeedbackFor(_paramterIdentification));
+         sut.Edit(new ParameterIdentificationFeedback(_paramterIdentification));
       }
    }
 
