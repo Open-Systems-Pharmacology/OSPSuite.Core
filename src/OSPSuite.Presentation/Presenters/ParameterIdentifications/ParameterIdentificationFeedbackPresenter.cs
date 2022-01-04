@@ -41,7 +41,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private readonly ISingleParameterIdentificationFeedbackPresenter _singleFeedbackPresenter;
       private readonly IMultipleParameterIdentificationFeedbackPresenter _multipleFeedbackPresenter;
       private ParameterIdentification _parameterIdentification;
-      private ParameterIdentificationFeedback _key;
+      private ParameterIdentificationFeedback _parameterIdentificationFeedback;
       private IParameterIdentificationRunFeedbackPresenter _activeFeedbackPresenter;
       private readonly IParameterIdentificationFeedbackManager _parameterIdentificationFeedbackManager;
 
@@ -79,10 +79,15 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(ParameterIdentificationStartedEvent eventToHandle)
       {
-         if (_parameterIdentificationFeedbackManager.GetFeedbackFor(eventToHandle.ParameterIdentification) != _key)
+         setParameterIdentificationToStarted(eventToHandle.ParameterIdentification);
+      }
+
+      private void setParameterIdentificationToStarted(ParameterIdentification parameterIdentification)
+      {
+         if (_parameterIdentificationFeedbackManager.GetFeedbackFor(parameterIdentification) != _parameterIdentificationFeedback)
             return;
 
-         _parameterIdentification = eventToHandle.ParameterIdentification;
+         _parameterIdentification = parameterIdentification;
          _view.Caption = Captions.ParameterIdentification.FeedbackViewFor(_parameterIdentification.Name);
          showParameterIdentificationFeedback();
       }
@@ -118,7 +123,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(ParameterIdentificationTerminatedEvent eventToHandle)
       {
-         if (_parameterIdentificationFeedbackManager.GetFeedbackFor(eventToHandle.ParameterIdentification) != _key)
+         if (_parameterIdentificationFeedbackManager.GetFeedbackFor(eventToHandle.ParameterIdentification) != _parameterIdentificationFeedback)
             return;
 
          _parameterIdentification = null;
@@ -139,6 +144,11 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       }
 
       public void Handle(ProjectClosedEvent eventToHandle)
+      {
+         closeAndClearReferences();
+      }
+
+      private void closeAndClearReferences()
       {
          clearFeedbackReferences();
          resetFeedback();
@@ -174,7 +184,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Close()
       {
-         Handle(new ProjectClosedEvent());
+         closeAndClearReferences();
       }
 
       public IPresentationSettings GetSettings()
@@ -205,9 +215,9 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Edit(ParameterIdentificationFeedback objectToEdit)
       {
-         _key = objectToEdit;
+         _parameterIdentificationFeedback = objectToEdit;
          if (objectToEdit.Running)
-            Handle(new ParameterIdentificationStartedEvent(objectToEdit.ParameterIdentification));
+            setParameterIdentificationToStarted(objectToEdit.ParameterIdentification);
          _view.Display();
       }
 
@@ -218,6 +228,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private bool canRefresh => ShouldRefreshFeedback && _view.Visible;
 
-      public object Subject => _key;
+      //Used as an id to check if the subject already has a presenter associated
+      public object Subject => _parameterIdentificationFeedback;
    }
 }

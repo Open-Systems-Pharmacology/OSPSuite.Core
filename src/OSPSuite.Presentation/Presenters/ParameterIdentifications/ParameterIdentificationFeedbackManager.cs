@@ -51,17 +51,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(ParameterIdentificationStartedEvent eventToHandle)
       {
-         var parameterIdentification = eventToHandle.ParameterIdentification;
-         lock (_locker)
-         {
-            var feedback = _cache[parameterIdentification];
-            if (feedback == null)
-            {
-               feedback = new ParameterIdentificationFeedback(parameterIdentification);
-               _cache.Add(parameterIdentification, feedback);
-            }
-            feedback.Running = true;
-         }
+         GetFeedbackFor(eventToHandle.ParameterIdentification).Running = true;
       }
    }
 }
