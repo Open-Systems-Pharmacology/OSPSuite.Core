@@ -30,6 +30,7 @@ namespace OSPSuite.Presentation.Presentation
          sut = new ParameterIdentificationFeedbackPresenter(_view, _presenterUserSettings, _singleFeedbackPresenter, _multipleFeedbackPresenter, _parameterIdentificationFeedbackManager);
 
          _paramterIdentification = A.Fake<ParameterIdentification>();
+         sut.Edit(_parameterIdentificationFeedbackManager.GetFeedbackFor(_paramterIdentification));
       }
    }
 
