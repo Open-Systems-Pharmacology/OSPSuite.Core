@@ -206,6 +206,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public void Edit(ParameterIdentificationFeedback objectToEdit)
       {
          _key = objectToEdit;
+         if (objectToEdit.Running)
+            Handle(new ParameterIdentificationStartedEvent(objectToEdit.ParameterIdentification));
          _view.Display();
       }
 
