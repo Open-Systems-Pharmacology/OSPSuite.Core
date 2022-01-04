@@ -14,6 +14,7 @@ namespace OSPSuite.Presentation.Presentation
       protected IPresentationUserSettings _presenterUserSettings;
       protected ISingleParameterIdentificationFeedbackPresenter _singleFeedbackPresenter;
       protected IMultipleParameterIdentificationFeedbackPresenter _multipleFeedbackPresenter;
+      protected IParameterIdentificationFeedbackManager _parameterIdentificationFeedbackManager;
       protected IContainer _container;
 
       protected ParameterIdentification _paramterIdentification;
@@ -24,8 +25,9 @@ namespace OSPSuite.Presentation.Presentation
          _presenterUserSettings = A.Fake<IPresentationUserSettings>();
          _singleFeedbackPresenter = A.Fake<ISingleParameterIdentificationFeedbackPresenter>();
          _multipleFeedbackPresenter = A.Fake<IMultipleParameterIdentificationFeedbackPresenter>();
+         _parameterIdentificationFeedbackManager = new ParameterIdentificationFeedbackManager();
 
-         sut = new ParameterIdentificationFeedbackPresenter(_view, _presenterUserSettings, _singleFeedbackPresenter, _multipleFeedbackPresenter);
+         sut = new ParameterIdentificationFeedbackPresenter(_view, _presenterUserSettings, _singleFeedbackPresenter, _multipleFeedbackPresenter, _parameterIdentificationFeedbackManager);
 
          _paramterIdentification = A.Fake<ParameterIdentification>();
       }
@@ -41,7 +43,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         sut.ParameterIdentificationStarted(_paramterIdentification);
+         sut.Handle(new ParameterIdentificationStartedEvent(_paramterIdentification));
       }
 
       [Observation]
@@ -69,7 +71,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         sut.ParameterIdentificationStarted(_paramterIdentification);
+         sut.Handle(new ParameterIdentificationStartedEvent(_paramterIdentification));
       }
 
       [Observation]
@@ -91,7 +93,7 @@ namespace OSPSuite.Presentation.Presentation
    {
       protected override void Because()
       {
-         sut.ParameterIdentificationTerminated(_paramterIdentification);
+         sut.Handle(new ParameterIdentificationTerminatedEvent(_paramterIdentification));
       }
 
       [Observation]
@@ -123,7 +125,7 @@ namespace OSPSuite.Presentation.Presentation
          _runState = A.Fake<ParameterIdentificationRunState>();
          sut.ShouldRefreshFeedback = false;
          A.CallTo(() => _paramterIdentification.IsSingleRun).Returns(true);
-         sut.ParameterIdentificationStarted(_paramterIdentification);
+         sut.Handle(new ParameterIdentificationStartedEvent(_paramterIdentification));
       }
 
       protected override void Because()
@@ -150,7 +152,7 @@ namespace OSPSuite.Presentation.Presentation
          sut.ShouldRefreshFeedback = true;
          A.CallTo(() => _view.Visible).Returns(false);
          A.CallTo(() => _paramterIdentification.IsSingleRun).Returns(true);
-         sut.ParameterIdentificationStarted(_paramterIdentification);
+         sut.Handle(new ParameterIdentificationStartedEvent(_paramterIdentification));
       }
 
       protected override void Because()
@@ -176,7 +178,7 @@ namespace OSPSuite.Presentation.Presentation
          sut.ShouldRefreshFeedback = true;
          A.CallTo(() => _view.Visible).Returns(true);
          A.CallTo(() => _paramterIdentification.IsSingleRun).Returns(true);
-         sut.ParameterIdentificationStarted(_paramterIdentification);
+         sut.Handle(new ParameterIdentificationStartedEvent(_paramterIdentification));
       }
 
       protected override void Because()

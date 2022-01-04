@@ -1,18 +1,21 @@
 ﻿using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
+using OSPSuite.Presentation.Services;
 using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.UICommands
 {
    public class ParameterIdentificationFeedbackViewVisibilityUICommand : ObjectUICommand<IParameterIdentificationFeedbackPresenter>, IListener<ParameterIdentificationSelectedEvent>
    {
-      private readonly IParameterIdentificationFeedbackPresentersManager _parameterIdentificationFeedbackPresentersManager;
+      private readonly ISingleStartPresenterTask _singleStartPresenterTask;
       private ParameterIdentification _parameterIdentification;
+      private readonly IParameterIdentificationFeedbackManager _parameterIdentificationFeedbackManager;
 
-      public ParameterIdentificationFeedbackViewVisibilityUICommand(IParameterIdentificationFeedbackPresentersManager multipleParameterIdentificationFeedbackPresentersManager)
+      public ParameterIdentificationFeedbackViewVisibilityUICommand(ISingleStartPresenterTask singleStartPresenterTask, IParameterIdentificationFeedbackManager parameterIdentificationFeedbackManager)
       {
-         _parameterIdentificationFeedbackPresentersManager = multipleParameterIdentificationFeedbackPresentersManager;
+         _singleStartPresenterTask = singleStartPresenterTask;
+         _parameterIdentificationFeedbackManager = parameterIdentificationFeedbackManager;
       }
 
       public void Handle(ParameterIdentificationSelectedEvent eventToHandle)
@@ -22,7 +25,7 @@ namespace OSPSuite.Presentation.UICommands
 
       protected override void PerformExecute()
       {
-         _parameterIdentificationFeedbackPresentersManager.FeedbackPresenterFor(_parameterIdentification).Display();
+         _singleStartPresenterTask.StartForSubject(_parameterIdentificationFeedbackManager.GetFeedbackFor(_parameterIdentification));
       }
    }
 }

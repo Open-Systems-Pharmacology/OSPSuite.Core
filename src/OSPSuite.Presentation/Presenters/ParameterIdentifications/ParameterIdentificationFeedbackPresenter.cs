@@ -5,6 +5,9 @@ using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 using System.Collections.Generic;
+using System;
+using OSPSuite.Presentation.Core;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
@@ -26,11 +29,45 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
    public interface IParameterIdentificationFeedbackPresenter : IPresenter<IParameterIdentificationFeedbackView>,
       IToogleablePresenter,
       IListener<ParameterIdentificationIntermediateResultsUpdatedEvent>,
-      IListener<ProjectClosedEvent>
+      IListener<ProjectClosedEvent>,
+      IListener<ParameterIdentificationStartedEvent>,
+      IListener<ParameterIdentificationTerminatedEvent>,
+      ISingleStartPresenter<ParameterIdentificationFeedback>
    {
       bool ShouldRefreshFeedback { get; set; }
-      void ParameterIdentificationStarted(ParameterIdentification parameterIdentification);
-      void ParameterIdentificationTerminated(ParameterIdentification parameterIdentification);
+   }
+
+   public class ParameterIdentificationFeedback
+   {
+      public ParameterIdentificationFeedback(ParameterIdentification parameterIdentification)
+      {
+         ParameterIdentification = parameterIdentification;
+      }
+      public ParameterIdentification ParameterIdentification { get; private set; }
+   }
+
+   public interface IParameterIdentificationFeedbackManager
+   {
+      ParameterIdentificationFeedback GetFeedbackFor(ParameterIdentification parameterIdentification);
+   }
+
+   public class ParameterIdentificationFeedbackManager : IParameterIdentificationFeedbackManager
+   {
+      protected readonly Cache<ParameterIdentification, ParameterIdentificationFeedback> _cache = new Cache<ParameterIdentification, ParameterIdentificationFeedback>();
+      protected readonly object _locker = new object();
+
+      public ParameterIdentificationFeedback GetFeedbackFor(ParameterIdentification parameterIdentification)
+      {
+         lock (_locker)
+         {
+            if (_cache.Contains(parameterIdentification))
+               return _cache[parameterIdentification];
+
+            var feedback = new ParameterIdentificationFeedback(parameterIdentification);
+            _cache.Add(parameterIdentification, feedback);
+            return feedback;
+         }
+      }
    }
 
    public class ParameterIdentificationFeedbackPresenter : AbstractToggleablePresenter<IParameterIdentificationFeedbackView, IParameterIdentificationFeedbackPresenter>, IParameterIdentificationFeedbackPresenter
@@ -39,13 +76,18 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private readonly ISingleParameterIdentificationFeedbackPresenter _singleFeedbackPresenter;
       private readonly IMultipleParameterIdentificationFeedbackPresenter _multipleFeedbackPresenter;
       private ParameterIdentification _parameterIdentification;
+      private ParameterIdentificationFeedback _key;
       private IParameterIdentificationRunFeedbackPresenter _activeFeedbackPresenter;
-      private List<ParameterIdentification> _currentParameterIdentifications;
+      private readonly IParameterIdentificationFeedbackManager _parameterIdentificationFeedbackManager;
+
+      public event EventHandler Closing;
+
       public bool ShouldRefreshFeedback { get; set; }
       private ParameterIdentificationFeedbackEditorSettings feedbackEditorSettings => _presenterUserSettings.ParameterIdentificationFeedbackEditorSettings;
 
       public ParameterIdentificationFeedbackPresenter(IParameterIdentificationFeedbackView view, IPresentationUserSettings presenterUserSettings,
-         ISingleParameterIdentificationFeedbackPresenter singleFeedbackPresenter, IMultipleParameterIdentificationFeedbackPresenter multipleFeedbackPresenter) : base(view)
+         ISingleParameterIdentificationFeedbackPresenter singleFeedbackPresenter, IMultipleParameterIdentificationFeedbackPresenter multipleFeedbackPresenter,
+         IParameterIdentificationFeedbackManager parameterIdentificationFeedbackManager) : base(view)
       {
          _presenterUserSettings = presenterUserSettings;
          _singleFeedbackPresenter = singleFeedbackPresenter;
@@ -56,7 +98,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.BindToProperties();
          _view.NoFeedbackAvailable();
          _activeFeedbackPresenter = null;
-         _currentParameterIdentifications = new List<ParameterIdentification>();
+         _parameterIdentificationFeedbackManager = parameterIdentificationFeedbackManager;
       }
 
       public override void Display()
@@ -70,9 +112,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          feedbackEditorSettings.Size = size;
       }
 
-      public void ParameterIdentificationStarted(ParameterIdentification parameterIdentification)
+      public void Handle(ParameterIdentificationStartedEvent eventToHandle)
       {
-         _parameterIdentification = parameterIdentification;
+         if (_parameterIdentificationFeedbackManager.GetFeedbackFor(eventToHandle.ParameterIdentification) != _key)
+            return;
+
+         _parameterIdentification = eventToHandle.ParameterIdentification;
          _view.Caption = Captions.ParameterIdentification.FeedbackViewFor(_parameterIdentification.Name);
          showParameterIdentificationFeedback();
       }
@@ -106,8 +151,11 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.ShowFeedbackView(feedbackPresenterToShow.BaseView);
       }
 
-      public void ParameterIdentificationTerminated(ParameterIdentification parameterIdentification)
+      public void Handle(ParameterIdentificationTerminatedEvent eventToHandle)
       {
+         if (_parameterIdentificationFeedbackManager.GetFeedbackFor(eventToHandle.ParameterIdentification) != _key)
+            return;
+
          _parameterIdentification = null;
          clearFeedbackReferences();
       }
@@ -154,6 +202,54 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _activeFeedbackPresenter?.UpdateFeedback(state);
       }
 
+      public void OnFormClosed()
+      {
+         throw new NotImplementedException();
+      }
+
+      public void Close()
+      {
+         throw new NotImplementedException();
+      }
+
+      public IPresentationSettings GetSettings()
+      {
+         throw new NotImplementedException();
+      }
+
+      public void RestoreSettings(IPresentationSettings settings)
+      {
+         throw new NotImplementedException();
+      }
+
+      public void SaveChanges()
+      {
+         throw new NotImplementedException();
+      }
+
+      public void Activated()
+      {
+         throw new NotImplementedException();
+      }
+
+      public void Handle(RenamedEvent eventToHandle)
+      {
+         throw new NotImplementedException();
+      }
+
+      public void Edit(ParameterIdentificationFeedback objectToEdit)
+      {
+         _key = objectToEdit;
+         _view.Display();
+      }
+
+      public void Edit(object objectToEdit)
+      {
+         Edit(objectToEdit as ParameterIdentification);
+      }
+
       private bool canRefresh => ShouldRefreshFeedback && _view.Visible;
+
+      public object Subject => throw new NotImplementedException();
    }
 }
