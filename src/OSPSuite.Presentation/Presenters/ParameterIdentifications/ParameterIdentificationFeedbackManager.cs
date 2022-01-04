@@ -14,10 +14,13 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public ParameterIdentification ParameterIdentification { get; private set; }
 
-      public bool Running { get; set; }
+      public RunStatusId RunStatus { get; set; }
    }
 
-   public interface IParameterIdentificationFeedbackManager : IListener<ProjectClosedEvent>, IListener<ParameterIdentificationStartedEvent>
+   public interface IParameterIdentificationFeedbackManager : 
+      IListener<ProjectClosedEvent>, 
+      IListener<ParameterIdentificationStartedEvent>,
+      IListener<ParameterIdentificationTerminatedEvent>
    {
       ParameterIdentificationFeedback GetFeedbackFor(ParameterIdentification parameterIdentification);
    }
@@ -51,7 +54,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(ParameterIdentificationStartedEvent eventToHandle)
       {
-         GetFeedbackFor(eventToHandle.ParameterIdentification).Running = true;
+         GetFeedbackFor(eventToHandle.ParameterIdentification).RunStatus = RunStatusId.Running;
+      }
+
+      public void Handle(ParameterIdentificationTerminatedEvent eventToHandle)
+      {
+         GetFeedbackFor(eventToHandle.ParameterIdentification).RunStatus = RunStatusId.Canceled;
       }
    }
 }

@@ -43,7 +43,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private ParameterIdentification _parameterIdentification;
       private ParameterIdentificationFeedback _parameterIdentificationFeedback;
       private IParameterIdentificationRunFeedbackPresenter _activeFeedbackPresenter;
-      private readonly IParameterIdentificationFeedbackManager _parameterIdentificationFeedbackManager;
 
       public event EventHandler Closing;
 
@@ -51,8 +50,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private ParameterIdentificationFeedbackEditorSettings feedbackEditorSettings => _presenterUserSettings.ParameterIdentificationFeedbackEditorSettings;
 
       public ParameterIdentificationFeedbackPresenter(IParameterIdentificationFeedbackView view, IPresentationUserSettings presenterUserSettings,
-         ISingleParameterIdentificationFeedbackPresenter singleFeedbackPresenter, IMultipleParameterIdentificationFeedbackPresenter multipleFeedbackPresenter,
-         IParameterIdentificationFeedbackManager parameterIdentificationFeedbackManager) : base(view)
+         ISingleParameterIdentificationFeedbackPresenter singleFeedbackPresenter, IMultipleParameterIdentificationFeedbackPresenter multipleFeedbackPresenter) : base(view)
       {
          _presenterUserSettings = presenterUserSettings;
          _singleFeedbackPresenter = singleFeedbackPresenter;
@@ -63,7 +61,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.BindToProperties();
          _view.NoFeedbackAvailable();
          _activeFeedbackPresenter = null;
-         _parameterIdentificationFeedbackManager = parameterIdentificationFeedbackManager;
       }
 
       public override void Display()
@@ -79,14 +76,14 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(ParameterIdentificationStartedEvent eventToHandle)
       {
+         if (eventToHandle.ParameterIdentification != _parameterIdentificationFeedback.ParameterIdentification)
+            return;
+
          setParameterIdentificationToStarted(eventToHandle.ParameterIdentification);
       }
 
       private void setParameterIdentificationToStarted(ParameterIdentification parameterIdentification)
       {
-         if (_parameterIdentificationFeedbackManager.GetFeedbackFor(parameterIdentification) != _parameterIdentificationFeedback)
-            return;
-
          _parameterIdentification = parameterIdentification;
          _view.Caption = Captions.ParameterIdentification.FeedbackViewFor(_parameterIdentification.Name);
          showParameterIdentificationFeedback();
@@ -123,9 +120,13 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(ParameterIdentificationTerminatedEvent eventToHandle)
       {
-         if (_parameterIdentificationFeedbackManager.GetFeedbackFor(eventToHandle.ParameterIdentification) != _parameterIdentificationFeedback)
+         if (eventToHandle.ParameterIdentification != _parameterIdentificationFeedback.ParameterIdentification)
             return;
+         setParameterIdentificationToTerminated();
+      }
 
+      public void setParameterIdentificationToTerminated()
+      {
          _parameterIdentification = null;
          clearFeedbackReferences();
       }
@@ -216,8 +217,17 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public void Edit(ParameterIdentificationFeedback objectToEdit)
       {
          _parameterIdentificationFeedback = objectToEdit;
-         if (objectToEdit.Running)
-            setParameterIdentificationToStarted(objectToEdit.ParameterIdentification);
+
+         switch (objectToEdit.RunStatus)
+         {
+            case RunStatusId.Running:
+               setParameterIdentificationToStarted(objectToEdit.ParameterIdentification);
+               break;
+            case RunStatusId.Canceled:
+               setParameterIdentificationToStarted(objectToEdit.ParameterIdentification);
+               setParameterIdentificationToTerminated();
+               break;
+         }
          _view.Display();
       }
 
