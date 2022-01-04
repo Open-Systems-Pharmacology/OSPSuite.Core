@@ -4,10 +4,8 @@ using OSPSuite.Utility.Events;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
-using System.Collections.Generic;
 using System;
 using OSPSuite.Presentation.Core;
-using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
@@ -35,39 +33,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       ISingleStartPresenter<ParameterIdentificationFeedback>
    {
       bool ShouldRefreshFeedback { get; set; }
-   }
-
-   public class ParameterIdentificationFeedback
-   {
-      public ParameterIdentificationFeedback(ParameterIdentification parameterIdentification)
-      {
-         ParameterIdentification = parameterIdentification;
-      }
-      public ParameterIdentification ParameterIdentification { get; private set; }
-   }
-
-   public interface IParameterIdentificationFeedbackManager
-   {
-      ParameterIdentificationFeedback GetFeedbackFor(ParameterIdentification parameterIdentification);
-   }
-
-   public class ParameterIdentificationFeedbackManager : IParameterIdentificationFeedbackManager
-   {
-      protected readonly Cache<ParameterIdentification, ParameterIdentificationFeedback> _cache = new Cache<ParameterIdentification, ParameterIdentificationFeedback>();
-      protected readonly object _locker = new object();
-
-      public ParameterIdentificationFeedback GetFeedbackFor(ParameterIdentification parameterIdentification)
-      {
-         lock (_locker)
-         {
-            if (_cache.Contains(parameterIdentification))
-               return _cache[parameterIdentification];
-
-            var feedback = new ParameterIdentificationFeedback(parameterIdentification);
-            _cache.Add(parameterIdentification, feedback);
-            return feedback;
-         }
-      }
    }
 
    public class ParameterIdentificationFeedbackPresenter : AbstractToggleablePresenter<IParameterIdentificationFeedbackView, IParameterIdentificationFeedbackPresenter>, IParameterIdentificationFeedbackPresenter
