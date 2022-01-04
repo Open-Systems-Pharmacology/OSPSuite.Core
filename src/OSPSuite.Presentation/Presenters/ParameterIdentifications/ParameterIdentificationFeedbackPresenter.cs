@@ -204,37 +204,38 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void OnFormClosed()
       {
-         throw new NotImplementedException();
+         //Nothing to do here
       }
 
       public void Close()
       {
-         throw new NotImplementedException();
+         Handle(new ProjectClosedEvent());
       }
 
       public IPresentationSettings GetSettings()
       {
-         throw new NotImplementedException();
+         //Nothing to do here
+         return null;
       }
 
       public void RestoreSettings(IPresentationSettings settings)
       {
-         throw new NotImplementedException();
+         //Nothing to do here
       }
 
       public void SaveChanges()
       {
-         throw new NotImplementedException();
+         //Nothing to do here
       }
 
       public void Activated()
       {
-         throw new NotImplementedException();
+         //Nothing to do here
       }
 
       public void Handle(RenamedEvent eventToHandle)
       {
-         throw new NotImplementedException();
+         //Nothing to do here
       }
 
       public void Edit(ParameterIdentificationFeedback objectToEdit)
@@ -245,11 +246,11 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Edit(object objectToEdit)
       {
-         Edit(objectToEdit as ParameterIdentification);
+         Edit(objectToEdit as ParameterIdentificationFeedback);
       }
 
       private bool canRefresh => ShouldRefreshFeedback && _view.Visible;
 
-      public object Subject => throw new NotImplementedException();
+      public object Subject => _key;
    }
 }
