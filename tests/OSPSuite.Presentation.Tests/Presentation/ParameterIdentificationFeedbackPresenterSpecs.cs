@@ -94,6 +94,7 @@ namespace OSPSuite.Presentation.Presentation
    {
       protected override void Because()
       {
+         sut.Handle(new ParameterIdentificationStartedEvent(_paramterIdentification));
          sut.Handle(new ParameterIdentificationTerminatedEvent(_paramterIdentification));
       }
 

@@ -76,7 +76,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(ParameterIdentificationStartedEvent eventToHandle)
       {
-         if (!Equals(_parameterIdentification, eventToHandle.ParameterIdentification))
+         if (!Equals(_parameterIdentificationFeedback.ParameterIdentification, eventToHandle.ParameterIdentification))
             return;
 
          setParameterIdentificationToStarted(eventToHandle.ParameterIdentification);
