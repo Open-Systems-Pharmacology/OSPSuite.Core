@@ -76,7 +76,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(ParameterIdentificationStartedEvent eventToHandle)
       {
-         if (eventToHandle.ParameterIdentification != _parameterIdentificationFeedback.ParameterIdentification)
+         if (!Equals(_parameterIdentification, eventToHandle.ParameterIdentification))
             return;
 
          setParameterIdentificationToStarted(eventToHandle.ParameterIdentification);
@@ -120,7 +120,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(ParameterIdentificationTerminatedEvent eventToHandle)
       {
-         if (eventToHandle.ParameterIdentification != _parameterIdentificationFeedback.ParameterIdentification)
+         if (!Equals(_parameterIdentification, eventToHandle.ParameterIdentification))
             return;
          setParameterIdentificationToTerminated();
       }
@@ -214,17 +214,22 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          //Nothing to do here
       }
 
-      public void Edit(ParameterIdentificationFeedback objectToEdit)
+      public void Edit(ParameterIdentificationFeedback parameterIdentificationFeedback)
       {
-         _parameterIdentificationFeedback = objectToEdit;
+         _parameterIdentificationFeedback = parameterIdentificationFeedback;
 
-         switch (objectToEdit.RunStatus)
+         switch (parameterIdentificationFeedback.RunStatus)
          {
             case RunStatusId.Running:
-               setParameterIdentificationToStarted(objectToEdit.ParameterIdentification);
+               setParameterIdentificationToStarted(parameterIdentificationFeedback.ParameterIdentification);
                break;
             case RunStatusId.Canceled:
-               setParameterIdentificationToStarted(objectToEdit.ParameterIdentification);
+               // Presenter was opened after the events were triggered but actually a terminated
+               // event is triggered after a started event was triggered and the feedback view
+               // should evolve through both of them. If terminated is invoked directly, then the
+               // view would should its initial state asking the user to start the parameter identification
+               // instead of showing the terminated parameter identification and its last state.
+               setParameterIdentificationToStarted(parameterIdentificationFeedback.ParameterIdentification);
                setParameterIdentificationToTerminated();
                break;
          }
