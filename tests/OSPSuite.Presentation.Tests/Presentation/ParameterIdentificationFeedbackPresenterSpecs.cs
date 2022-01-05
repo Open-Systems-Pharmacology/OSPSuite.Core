@@ -4,6 +4,7 @@ using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Presentation.Presentation
 {
@@ -13,6 +14,8 @@ namespace OSPSuite.Presentation.Presentation
       protected IPresentationUserSettings _presenterUserSettings;
       protected ISingleParameterIdentificationFeedbackPresenter _singleFeedbackPresenter;
       protected IMultipleParameterIdentificationFeedbackPresenter _multipleFeedbackPresenter;
+      protected IParameterIdentificationFeedbackManager _parameterIdentificationFeedbackManager;
+      protected IContainer _container;
 
       protected ParameterIdentification _paramterIdentification;
 
@@ -22,10 +25,12 @@ namespace OSPSuite.Presentation.Presentation
          _presenterUserSettings = A.Fake<IPresentationUserSettings>();
          _singleFeedbackPresenter = A.Fake<ISingleParameterIdentificationFeedbackPresenter>();
          _multipleFeedbackPresenter = A.Fake<IMultipleParameterIdentificationFeedbackPresenter>();
+         _parameterIdentificationFeedbackManager = new ParameterIdentificationFeedbackManager();
 
          sut = new ParameterIdentificationFeedbackPresenter(_view, _presenterUserSettings, _singleFeedbackPresenter, _multipleFeedbackPresenter);
 
          _paramterIdentification = A.Fake<ParameterIdentification>();
+         sut.Edit(new ParameterIdentificationFeedback(_paramterIdentification));
       }
    }
 
@@ -89,6 +94,7 @@ namespace OSPSuite.Presentation.Presentation
    {
       protected override void Because()
       {
+         sut.Handle(new ParameterIdentificationStartedEvent(_paramterIdentification));
          sut.Handle(new ParameterIdentificationTerminatedEvent(_paramterIdentification));
       }
 

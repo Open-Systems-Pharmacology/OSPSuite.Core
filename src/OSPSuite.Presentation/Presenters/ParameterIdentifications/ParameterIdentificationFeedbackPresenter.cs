@@ -4,7 +4,8 @@ using OSPSuite.Utility.Events;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
-using System.Collections.Generic;
+using System;
+using OSPSuite.Presentation.Core;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
@@ -25,11 +26,11 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
    public interface IParameterIdentificationFeedbackPresenter : IPresenter<IParameterIdentificationFeedbackView>,
       IToogleablePresenter,
-      IListener<ParameterIdentificationStartedEvent>,
-      IListener<ParameterIdentificationSelectedEvent>,
-      IListener<ParameterIdentificationTerminatedEvent>,
       IListener<ParameterIdentificationIntermediateResultsUpdatedEvent>,
-      IListener<ProjectClosedEvent>
+      IListener<ProjectClosedEvent>,
+      IListener<ParameterIdentificationStartedEvent>,
+      IListener<ParameterIdentificationTerminatedEvent>,
+      ISingleStartPresenter<ParameterIdentificationFeedback>
    {
       bool ShouldRefreshFeedback { get; set; }
    }
@@ -40,8 +41,11 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private readonly ISingleParameterIdentificationFeedbackPresenter _singleFeedbackPresenter;
       private readonly IMultipleParameterIdentificationFeedbackPresenter _multipleFeedbackPresenter;
       private ParameterIdentification _parameterIdentification;
+      private ParameterIdentificationFeedback _parameterIdentificationFeedback;
       private IParameterIdentificationRunFeedbackPresenter _activeFeedbackPresenter;
-      private List<ParameterIdentification> _currentParameterIdentifications;
+
+      public event EventHandler Closing;
+
       public bool ShouldRefreshFeedback { get; set; }
       private ParameterIdentificationFeedbackEditorSettings feedbackEditorSettings => _presenterUserSettings.ParameterIdentificationFeedbackEditorSettings;
 
@@ -57,7 +61,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.BindToProperties();
          _view.NoFeedbackAvailable();
          _activeFeedbackPresenter = null;
-         _currentParameterIdentifications = new List<ParameterIdentification>();
       }
 
       public override void Display()
@@ -73,21 +76,18 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(ParameterIdentificationStartedEvent eventToHandle)
       {
-         _currentParameterIdentifications.Add(eventToHandle.ParameterIdentification);
-         _parameterIdentification = eventToHandle.ParameterIdentification;
+         if (!Equals(_parameterIdentificationFeedback.ParameterIdentification, eventToHandle.ParameterIdentification))
+            return;
+
+         setParameterIdentificationToStarted(eventToHandle.ParameterIdentification);
+      }
+
+      private void setParameterIdentificationToStarted(ParameterIdentification parameterIdentification)
+      {
+         _parameterIdentification = parameterIdentification;
          _view.Caption = Captions.ParameterIdentification.FeedbackViewFor(_parameterIdentification.Name);
          showParameterIdentificationFeedback();
       }
-
-      public void Handle(ParameterIdentificationSelectedEvent eventToHandle)
-      {
-         if (!_currentParameterIdentifications.Contains(eventToHandle.ParameterIdentification))
-            return;
-
-         _parameterIdentification = eventToHandle.ParameterIdentification;
-         _view.Caption = Captions.ParameterIdentification.FeedbackViewFor(_parameterIdentification.Name);
-         showParameterIdentificationFeedback();
-     }
 
       private void showParameterIdentificationFeedback()
       {
@@ -120,6 +120,13 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(ParameterIdentificationTerminatedEvent eventToHandle)
       {
+         if (!Equals(_parameterIdentification, eventToHandle.ParameterIdentification))
+            return;
+         setParameterIdentificationToTerminated();
+      }
+
+      public void setParameterIdentificationToTerminated()
+      {
          _parameterIdentification = null;
          clearFeedbackReferences();
       }
@@ -139,9 +146,15 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(ProjectClosedEvent eventToHandle)
       {
+         closeAndClearReferences();
+      }
+
+      private void closeAndClearReferences()
+      {
          clearFeedbackReferences();
          resetFeedback();
          _view.NoFeedbackAvailable();
+         _view.Hide();
       }
 
       public void Handle(ParameterIdentificationIntermediateResultsUpdatedEvent eventToHandle)
@@ -165,6 +178,72 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _activeFeedbackPresenter?.UpdateFeedback(state);
       }
 
+      public void OnFormClosed()
+      {
+         //Nothing to do here
+      }
+
+      public void Close()
+      {
+         closeAndClearReferences();
+      }
+
+      public IPresentationSettings GetSettings()
+      {
+         //Nothing to do here
+         return null;
+      }
+
+      public void RestoreSettings(IPresentationSettings settings)
+      {
+         //Nothing to do here
+      }
+
+      public void SaveChanges()
+      {
+         //Nothing to do here
+      }
+
+      public void Activated()
+      {
+         //Nothing to do here
+      }
+
+      public void Handle(RenamedEvent eventToHandle)
+      {
+         //Nothing to do here
+      }
+
+      public void Edit(ParameterIdentificationFeedback parameterIdentificationFeedback)
+      {
+         _parameterIdentificationFeedback = parameterIdentificationFeedback;
+
+         switch (parameterIdentificationFeedback.RunStatus)
+         {
+            case RunStatusId.Running:
+               setParameterIdentificationToStarted(parameterIdentificationFeedback.ParameterIdentification);
+               break;
+            case RunStatusId.Canceled:
+               // Presenter was opened after the events were triggered but actually a terminated
+               // event is triggered after a started event was triggered and the feedback view
+               // should evolve through both of them. If terminated is invoked directly, then the
+               // view would should its initial state asking the user to start the parameter identification
+               // instead of showing the terminated parameter identification and its last state.
+               setParameterIdentificationToStarted(parameterIdentificationFeedback.ParameterIdentification);
+               setParameterIdentificationToTerminated();
+               break;
+         }
+         _view.Display();
+      }
+
+      public void Edit(object objectToEdit)
+      {
+         Edit(objectToEdit as ParameterIdentificationFeedback);
+      }
+
       private bool canRefresh => ShouldRefreshFeedback && _view.Visible;
+
+      //Used as an id to check if the subject already has a presenter associated
+      public object Subject => _parameterIdentificationFeedback;
    }
 }
