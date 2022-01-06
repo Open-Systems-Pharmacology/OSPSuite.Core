@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
@@ -38,6 +39,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dialogCreator = dialogCreator;
          _importerPresenter = importerPresenter;
          AddSubPresenters(importerPresenter);
+      }
+
+      public override bool ShouldClose
+      {
+         get
+         {
+            var shouldCancel = _dialogCreator.MessageBoxYesNo(Captions.ReallyCancel);
+            return shouldCancel == ViewResult.Yes;
+         }
       }
 
       public IReadOnlyList<DataRepository> ImportDataSets(
