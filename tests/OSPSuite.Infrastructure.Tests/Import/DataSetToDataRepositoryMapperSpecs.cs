@@ -24,12 +24,14 @@ namespace OSPSuite.Infrastructure.Import
       protected Dictionary<ExtendedColumn, IList<SimulationPoint>> _parsedDataSetInconsistentLLOQ;
       protected Dictionary<ExtendedColumn, IList<SimulationPoint>> _parsedDataSetUnitFromColumn;
       protected DataSetToDataRepositoryMappingResult _result;
+      protected IDimensionFactory _dimensionFactory;
 
       protected override void Context()
       {
          _dataSourceLLOQ = A.Fake<IDataSource>();
          _dataSourceInconsistentLLOQ = A.Fake<IDataSource>();
          _dataSourceUnitFromColumn = A.Fake<IDataSource>();
+         _dimensionFactory = A.Fake<IDimensionFactory>();
          var timeDimension = DomainHelperForSpecs.TimeDimensionForSpecs();
          _concentrationDimensionLLOQ = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
          _concentrationDimensionUnitFromColumn = new Dimension(new BaseDimensionRepresentation {AmountExponent = 3, LengthExponent = -1}, Constants.Dimension.AMOUNT_PER_TIME, "µmol/min");
@@ -230,7 +232,7 @@ namespace OSPSuite.Infrastructure.Import
             )
          );
 
-         sut = new DataSetToDataRepositoryMapper();
+         sut = new DataSetToDataRepositoryMapper(_dimensionFactory);
       }
    }
 
