@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Presentation.Importer.Presenters 
 {
@@ -58,8 +59,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
          {
             new ColumnInfo() { Name = "Time", IsMandatory = true, BaseGridName = "Time" },
             new ColumnInfo() { Name = "Concentration", IsMandatory = true, BaseGridName = "Time" },
-            new ColumnInfo() { Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration", BaseGridName = "Time" }
+            new ColumnInfo() { Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration", BaseGridName = "Time"}
          };
+         _columnInfos[2].SupportedDimensions.Add(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
          _metaDataCategories = new List<MetaDataCategory>()
          {
             new MetaDataCategory()
@@ -319,6 +321,31 @@ namespace OSPSuite.Presentation.Importer.Presenters
             A<string>.Ignored,
             false
          )).MustHaveHappened();
+      }
+   }
+
+   public class When_unit_is_manually_set :concern_for_ColumnMappingPresenter
+   {
+      protected MappingDataFormatParameter _mappingSource;
+
+      protected override void Context()
+      {
+         base.Context();
+         _mappingSource = _parameters[2] as MappingDataFormatParameter;
+         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription("µmol/l"));
+         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(1);
+         UpdateSettings();
+      }
+
+      protected override void Because()
+      {
+         sut.UpdateDescriptionForModel(_mappingSource);
+      }
+
+      [Observation]
+      public void the_dimension_is_set()
+      {
+         _mappingSource.MappedColumn.Dimension.ShouldNotBeNull();
       }
    }
 

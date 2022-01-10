@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private bool _columnMapping;
 
-      public UnitDescription Unit => new UnitDescription(_selectedUnit, _selectedColumn);
+      public UnitDescription Unit => new UnitDescription(_view.SelectedUnit, _selectedColumn);
 
       public UnitsEditorPresenter(IUnitsEditorView view) : base(view)
       {

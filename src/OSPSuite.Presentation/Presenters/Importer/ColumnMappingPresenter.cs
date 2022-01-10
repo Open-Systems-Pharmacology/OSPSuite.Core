@@ -181,8 +181,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          else
          {
-            column.Unit = _mappingParameterEditorPresenter.Unit;  
-            column.Dimension = _mappingParameterEditorPresenter.Dimension;
+            column.Unit = _mappingParameterEditorPresenter.Unit;
+            column.Dimension = _columnInfos
+               .First(x => x.DisplayName == model.MappingName)
+               .SupportedDimensions
+               .FirstOrDefault(x => dimensionContainsUnit(x, column.Unit));
          }
 
          if (model.ColumnInfo.IsBase())
@@ -210,6 +213,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          ValidateMapping();
          _view.CloseEditor();
+      }
+
+      private bool dimensionContainsUnit(IDimension dimension, UnitDescription unit)
+      {
+         return dimension.Units.Select(x => x.Name).Contains(unit.SelectedUnit);
       }
 
       public bool ShouldManualInputOnMetaDataBeEnabled(ColumnMappingDTO model)

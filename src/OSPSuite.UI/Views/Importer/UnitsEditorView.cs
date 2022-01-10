@@ -36,6 +36,11 @@ namespace OSPSuite.UI.Views.Importer
          _columnComboBox.EditValueChanged += (s, a) => OnEvent(onColumnComboBoxTextChanged);
       }
 
+      public string SelectedUnit 
+      { 
+         get => _unitComboBox.EditValue as string; 
+      }
+
       public sealed override string Text
       {
          get => base.Text;
