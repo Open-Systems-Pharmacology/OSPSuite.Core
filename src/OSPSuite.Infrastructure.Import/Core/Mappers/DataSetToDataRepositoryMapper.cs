@@ -5,6 +5,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core.Mappers
@@ -29,6 +30,13 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
    public class DataSetToDataRepositoryMapper : IDataSetToDataRepositoryMapper
    {
+      private IDimensionFactory _dimensionFactory;
+
+      public DataSetToDataRepositoryMapper(IDimensionFactory dimensionFactory)
+      {
+         _dimensionFactory = dimensionFactory;
+      }
+
       public DataSetToDataRepositoryMappingResult ConvertImportDataSet(ImportedDataSet dataSet)
       {
          var sheetName = dataSet.SheetName; 
@@ -68,7 +76,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       private bool convertParsedDataColumnAndReturnWarningFlag(DataRepository dataRepository, KeyValuePair<ExtendedColumn, IList<SimulationPoint>> columnAndData, string fileName)
       {
          DataColumn dataColumn;
-         var unit = columnAndData.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit)).Unit;
+         var unit = columnAndData.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit))?.Unit ?? _dimensionFactory.NoDimension.DefaultUnit.Name;
          var warningFlag = false;
          var dimension = columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.SupportedDimensions.FirstOrDefault(x => x.FindUnit(unit, ignoreCase: true) != null);
 
