@@ -208,10 +208,9 @@ namespace OSPSuite.Presentation.Services
       [Observation]
       public void should_correctly_notify_and_return_empty_on_invalid_file_format()
       {
-         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
-            getFileFullName(
-               "sample1.xlsx")).Count.ShouldBeEqualTo(0);
-          A.CallTo(() => _dialogCreator.MessageBoxError(Error.UnsupportedFileFormat(getFileFullName("sample1.xlsx")))).MustHaveHappened();
+         var invalidFileName = getFileFullName("invalid.xlsx");
+         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings, invalidFileName).Count.ShouldBeEqualTo(0);
+          A.CallTo(() => _dialogCreator.MessageBoxError(Error.UnsupportedFileFormat(invalidFileName))).MustHaveHappened();
       }
 
       [Observation]

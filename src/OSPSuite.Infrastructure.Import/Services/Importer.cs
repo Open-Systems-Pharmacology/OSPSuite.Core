@@ -107,14 +107,10 @@ namespace OSPSuite.Infrastructure.Import.Services
          {
             CalculateFormat(dataSource, columnInfos, metaDataCategories, x);
             if (dataSource.AvailableFormats?.Count > 0)
-               break;
+               return dataSource;
          };
 
-         if (dataSource.AvailableFormats.Count == 0)
-            throw new UnsupportedFormatException(dataSource.Path);
-
-         dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();
-         return dataSource;
+         throw new UnsupportedFormatException(dataSource.Path);
       }
 
       public void CalculateFormat(IDataSourceFile dataSource, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName)
@@ -123,6 +119,7 @@ namespace OSPSuite.Infrastructure.Import.Services
             throw new UnsupportedFormatException(dataSource.Path);
 
          dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets[sheetName].RawData, columnInfos, metaDataCategories).ToList();
+         dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();
       }
 
       public IEnumerable<string> NamesFromConvention
