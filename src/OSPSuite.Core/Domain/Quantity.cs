@@ -123,7 +123,7 @@ namespace OSPSuite.Core.Domain
             else
             {
                _cachedValue = Formula.Calculate(this);
-               //Cached value is only valid if the Formula has updated it's references
+               //Cached value is only valid if the Formula has updated its references
                _cachedValueValid = Formula.AreReferencesResolved;
             }
 
@@ -159,7 +159,7 @@ namespace OSPSuite.Core.Domain
          if (success)
          {
             _cachedValue = value;
-            //Cached value is only valid if the Formula has updated it's references
+            //Cached value is only valid if the Formula has updated its references
             _cachedValueValid = Formula.AreReferencesResolved;
          }
 
