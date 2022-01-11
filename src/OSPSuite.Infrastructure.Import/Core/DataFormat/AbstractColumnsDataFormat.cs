@@ -209,6 +209,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       public IEnumerable<ParsedDataSet> Parse(IUnformattedData data,
          IReadOnlyList<ColumnInfo> columnInfos)
       {
+         var missingColumns = Parameters.Where(p => p.ComesFromColumn() && data.GetColumnDescription(p.ColumnName) == null).Select(p => p.ColumnName);
+         if (missingColumns.Any())
+            throw new MissingColumnException(missingColumns.ToList());
+
          var groupingCriteria =
             Parameters
                .Where(p => p.IsGroupingCriterion())
@@ -217,7 +221,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                      p.ComesFromColumn() 
                         ? (data.GetColumnDescription(p.ColumnName).ExistingValues)
                         : new List<string>() { p.ColumnName }));
-         
+
          return buildDataSets(data, groupingCriteria, columnInfos);
       }
 
@@ -315,7 +319,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       {
          var columnDescription = data.GetColumnDescription(currentParameter.ColumnName);
          if (columnDescription == null)
-            throw new MissingColumnException(currentParameter.ColumnName);
+            throw new MissingColumnException(new List<string>() { currentParameter.ColumnName });
 
          var element = row.Data.ElementAt(columnDescription.Index).Trim();
 
@@ -325,7 +329,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             if (!string.IsNullOrEmpty(currentParameter.MappedColumn.Unit.ColumnName))
                unitColumnDescription = data.GetColumnDescription(currentParameter.MappedColumn.Unit.ColumnName);
             if (unitColumnDescription == null)
-               throw new MissingColumnException(currentParameter.MappedColumn.Unit.ColumnName);
+               throw new MissingColumnException(new List<string>() { currentParameter.MappedColumn.Unit.ColumnName });
          }
 
          var unit = currentParameter.MappedColumn.Unit.ExtractUnit(columnName => data.GetColumnDescription(columnName).Index, row.Data);
@@ -367,7 +371,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var columnDescription = data.GetColumnDescription(currentParameter.ColumnName);
          
          if (columnDescription == null)
-            throw new MissingColumnException(currentParameter.ColumnName);
+            throw new MissingColumnException(new List<string>() { currentParameter.ColumnName});
          
          var element = row.Data.ElementAt(columnDescription.Index).Trim();
          if (double.TryParse(element, out var result))

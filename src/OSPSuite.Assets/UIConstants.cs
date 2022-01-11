@@ -1307,7 +1307,7 @@ namespace OSPSuite.Assets
       public static string BaseGridColumnNotFoundException(string columnName) => $"BaseGrid Column {columnName} unexpectedly not found.";
       public static string EmptyDataSet(string dataSetName) => $"Your settings ended up with following empty datasets: '{dataSetName}'. Please remove the data set from your data, filter it out or add at least one observation for it.";
 
-      public static string MissingColumnException(string missingColumn) => $"The mapped column '{missingColumn}' is missing from at least one of the sheets being loaded.";
+      public static string MissingColumnException(IReadOnlyList<string> missingColumns) => $"The mapped column(s) \n \n '{missingColumns.ToString("\n")}' \n \n is missing from at least one of the sheets being loaded.";
 
       public static string InvalidDimensionException(string invalidUnit, string mappingName) => $"The unit '{invalidUnit}' you are trying to assign to the mapping '{mappingName}' does not belong to a supported dimension of this mapping.";
       public static string InconsistentDimensionBetweenUnitsException(string mappingName) => $"For the mapping '{mappingName}' not all units in the mapped column belong to the same dimension.";
