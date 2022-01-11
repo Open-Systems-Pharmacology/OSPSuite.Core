@@ -11,7 +11,6 @@ namespace OSPSuite.Core.Domain
       public const int PKML_VERSION = PKMLVersion.CURRENT;
       public const string CVODES = "CVODES";
       public const int SIM_MODEL_XML_VERSION = 4;
-      public const int MAX_NUMBER_OF_POINTS_PER_INTERVAL = 5000;
       public const int MIN_NUMBER_OF_POINTS_PER_INTERVAL = 2;
       public const int MAX_NUMBER_OF_CHAR_IN_TABLE_NAME = 29;
       public const string WILD_CARD = "*";
