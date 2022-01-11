@@ -215,8 +215,10 @@ namespace OSPSuite.UI.Views.Importer
          _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() =>
          {
             _presenter.ClearRow(_gridViewBinder.FocusedElement);
-            columnMappingGridView.ActiveEditor.EditValue = Captions.Importer.NoneEditorNullText;
             columnMappingGridView.CloseEditor();
+            if (columnMappingGridView.ActiveEditor == null)
+               return;
+            columnMappingGridView.ActiveEditor.EditValue = Captions.Importer.NoneEditorNullText;
          });
 
          _disabledRemoveButtonRepository.Buttons[0].Enabled = false;
