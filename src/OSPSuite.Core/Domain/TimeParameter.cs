@@ -54,10 +54,10 @@ namespace OSPSuite.Core.Domain
 
       public string ValueDescription { get; set; }
 
-      public bool TryGetValueInDisplayUnit(out double result)
+
+      public (double value, bool success) TryGetValueInDisplayUnit()
       {
-         result = ValueInDisplayUnit;
-         return true;
+         return (ValueInDisplayUnit, true);
       }
 
       public bool NegativeValuesAllowed { get; set; }
