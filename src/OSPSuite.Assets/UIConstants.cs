@@ -377,7 +377,7 @@ namespace OSPSuite.Assets
          public static readonly string NanActionIgnoreRow = "Ignore the row";
          public static readonly string NanActionHint = "Defines what to do when an invalid measurement is found (invalid measurements are NaN or the number indicated in the NaN indicator). \"Ignore the row\" will import the data ignoring the currently invalid row. \"Prevent the import\" will throw an error and halt the import process";
          public static readonly string NanIndicator = "NaN indicator";
-         public static readonly string NanIndicatorHint = "Set a string to indicate how NaN should be detected";
+         public static readonly string NanIndicatorHint = "Type a number that will be interpreted as NaN(Not a Number). Text in numerical columns is interpreted as NaN anyway.";
          public static readonly string OpenFileConfirmation = "Opening a new file will drop your currently imported data. Are you sure you want to open a new file?";
          public static readonly string ExcelColumn = "Data Column/Value";
          public static readonly string MappingName = "Mapping Name";
