@@ -19,6 +19,7 @@ namespace OSPSuite.UI.Views.Importer
          base.InitializeResources();
          CancelVisible = false;
          layoutControlBase.Visible = false;
+         MaximizeBox = true;
       }
 
       public void AttachPresenter(IModalImporterPresenter presenter)
