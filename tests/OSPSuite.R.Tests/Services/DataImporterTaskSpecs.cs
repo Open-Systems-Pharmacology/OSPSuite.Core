@@ -298,7 +298,7 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
-      public void should_consider_columns_with_string_values()
+      public void should_consider_columns_with_string_values_and_skip_invalid_sheets()
       {
          var configuration = sut.CreateConfigurationFor(getFileFullName("BookStrings.xlsx"));
          configuration.Parameters.Exists(x => (x as MappingDataFormatParameter).ColumnName == "Time [h]").ShouldBeTrue();

@@ -102,8 +102,18 @@ namespace OSPSuite.Infrastructure.Import.Services
 
          if (dataSource.DataSheets == null) return null;
 
-         CalculateFormat(dataSource, columnInfos, metaDataCategories, dataSource.DataSheets.Keys.FirstOrDefault());
 
+         foreach(var x in dataSource.DataSheets.Keys)
+         {
+            CalculateFormat(dataSource, columnInfos, metaDataCategories, x);
+            if (dataSource.AvailableFormats?.Count > 0)
+               break;
+         };
+
+         if (dataSource.AvailableFormats.Count == 0)
+            throw new UnsupportedFormatException(dataSource.Path);
+
+         dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();
          return dataSource;
       }
 
@@ -113,11 +123,6 @@ namespace OSPSuite.Infrastructure.Import.Services
             throw new UnsupportedFormatException(dataSource.Path);
 
          dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets[sheetName].RawData, columnInfos, metaDataCategories).ToList();
-
-         if (dataSource.AvailableFormats.Count == 0)
-            throw new UnsupportedFormatException(dataSource.Path);
-
-         dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();
       }
 
       public IEnumerable<string> NamesFromConvention
