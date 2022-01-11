@@ -296,5 +296,14 @@ namespace OSPSuite.R.Services
          _configuration.ClearLoadedSheets();
          sut.GetAllLoadedSheets(_configuration).ShouldBeEmpty();
       }
+
+      [Observation]
+      public void should_consider_columns_with_string_values()
+      {
+         var configuration = sut.CreateConfigurationFor(getFileFullName("BookStrings.xlsx"));
+         configuration.Parameters.Exists(x => (x as MappingDataFormatParameter).ColumnName == "Time [h]").ShouldBeTrue();
+         configuration.Parameters.Exists(x => (x as MappingDataFormatParameter).ColumnName == "Measurement [mg/l]").ShouldBeTrue();
+         configuration.Parameters.Exists(x => (x as MappingDataFormatParameter).ColumnName == "Error [mg/l]").ShouldBeTrue();
+      }
    }
 }
