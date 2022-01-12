@@ -35,6 +35,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          View.FillColumnComboBox(availableColumns);
          View.SetParams(_columnMapping, useDimensionSelector);
+         if (!_columnMapping)
+            View.SelectedUnit = importDataColumn.Unit.SelectedUnit;
       }
 
       public void SelectDimension(string dimensionName)

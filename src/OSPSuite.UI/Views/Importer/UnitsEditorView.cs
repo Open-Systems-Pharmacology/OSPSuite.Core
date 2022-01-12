@@ -38,7 +38,8 @@ namespace OSPSuite.UI.Views.Importer
 
       public string SelectedUnit 
       { 
-         get => _unitComboBox.EditValue as string; 
+         get => _unitComboBox.EditValue as string;
+         set => _unitComboBox.EditValue = value;
       }
 
       public sealed override string Text

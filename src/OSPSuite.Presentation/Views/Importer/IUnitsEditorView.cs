@@ -13,6 +13,6 @@ namespace OSPSuite.Presentation.Views.Importer
       void SetUnitColumnSelection();
       void ShowToggle();
       void SetUnitsManualSelection();
-      string SelectedUnit { get; }
+      string SelectedUnit { get; set; }
    }
 }
