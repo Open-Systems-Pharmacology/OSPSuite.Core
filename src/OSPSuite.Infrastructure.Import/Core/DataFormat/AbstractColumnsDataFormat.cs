@@ -209,9 +209,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       public IEnumerable<ParsedDataSet> Parse(IUnformattedData data,
          IReadOnlyList<ColumnInfo> columnInfos)
       {
-         var missingColumns = Parameters.Where(p => p.ComesFromColumn() && data.GetColumnDescription(p.ColumnName) == null).Select(p => p.ColumnName);
+         var missingColumns = Parameters.Where(p => p.ComesFromColumn() && data.GetColumnDescription(p.ColumnName) == null).Select(p => p.ColumnName).ToList();
          if (missingColumns.Any())
-            throw new MissingColumnException(missingColumns.ToList());
+            throw new MissingColumnException(missingColumns);
 
          var groupingCriteria =
             Parameters
@@ -326,7 +326,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             if (!string.IsNullOrEmpty(currentParameter.MappedColumn.Unit.ColumnName))
                unitColumnDescription = data.GetColumnDescription(currentParameter.MappedColumn.Unit.ColumnName);
             if (unitColumnDescription == null)
-               throw new MissingColumnException(new List<string>() { currentParameter.MappedColumn.Unit.ColumnName });
+               throw new MissingColumnException(currentParameter.MappedColumn.Unit.ColumnName);
          }
 
          var unit = currentParameter.MappedColumn.Unit.ExtractUnit(columnName => data.GetColumnDescription(columnName).Index, row.Data);

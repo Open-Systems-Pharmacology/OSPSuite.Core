@@ -8,5 +8,9 @@ namespace OSPSuite.Infrastructure.Import.Core
       public MissingColumnException(IReadOnlyList<string> missingColumns) : base(Error.MissingColumnException(missingColumns))
       {
       }
+
+      public MissingColumnException(string missingColumn) : base(Error.MissingColumnException(new List<string>() { missingColumn}))
+      {
+      }
    }
 }
