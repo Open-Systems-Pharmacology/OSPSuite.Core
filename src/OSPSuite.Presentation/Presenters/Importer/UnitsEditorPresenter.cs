@@ -11,7 +11,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
    public class UnitsEditorPresenter : AbstractDisposablePresenter<IUnitsEditorView, IUnitsEditorPresenter>, IUnitsEditorPresenter
    {
       private IReadOnlyList<IDimension> _dimensions;
-      private string _selectedUnit;
       private string _selectedColumn;
       public IDimension Dimension { get; private set; }
 
@@ -32,7 +31,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (Dimension != null && !_dimensions.Contains(Dimension))
             Dimension = _dimensions.FirstOrDefault();
 
-         _selectedUnit = importDataColumn.Unit.SelectedUnit;
          FillDimensions(importDataColumn.Unit.SelectedUnit);
 
          View.FillColumnComboBox(availableColumns);
@@ -48,10 +46,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
                         Constants.Dimension.NO_DIMENSION;
             //checking whether _selectedUnit is not supported by the current dimension, meaning that the user 
             //has selected a new dimension and the unit must be reset to the default unit of this dimension
-            if (_selectedUnit == null || !Dimension.HasUnit(_selectedUnit))
-               _selectedUnit = Dimension.DefaultUnitName;
-            
-            fillUnits(_selectedUnit);
+            if (_view.SelectedUnit == null || !Dimension.HasUnit(_view.SelectedUnit))
+               fillUnits(Dimension.DefaultUnitName);
          });
       }
 
@@ -85,7 +81,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             _columnMapping = false;
             _selectedColumn = null;
-            _selectedUnit = unit;
          });
       }
 

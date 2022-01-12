@@ -25,7 +25,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private MappingProblem _mappingProblem = new MappingProblem() {MissingMapping = new List<string>(), MissingUnit = new List<string>()};
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       private readonly IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
-      private readonly IDimensionFactory _dimensionFactory;
 
       public ColumnMappingPresenter
       (
@@ -37,7 +36,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       ) : base(view)
       {
          _importer = importer; 
-         _dimensionFactory = dimensionFactory;
          _mappingParameterEditorPresenter = mappingParameterEditorPresenter;
          _metaDataParameterEditorPresenter = metaDataParameterEditorPresenter;
          View.FillMappingView(_mappingParameterEditorPresenter.BaseView);
