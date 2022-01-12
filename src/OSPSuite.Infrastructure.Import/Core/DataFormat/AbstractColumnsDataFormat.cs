@@ -209,6 +209,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       public IEnumerable<ParsedDataSet> Parse(IUnformattedData data,
          IReadOnlyList<ColumnInfo> columnInfos)
       {
+         var missingColumns = Parameters.Where(p => p.ComesFromColumn() && data.GetColumnDescription(p.ColumnName) == null).Select(p => p.ColumnName).ToList();
+         if (missingColumns.Any())
+            throw new MissingColumnException(missingColumns);
+
          var groupingCriteria =
             Parameters
                .Where(p => p.IsGroupingCriterion())
@@ -217,7 +221,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                      p.ComesFromColumn() 
                         ? (data.GetColumnDescription(p.ColumnName).ExistingValues)
                         : new List<string>() { p.ColumnName }));
-         
+
          return buildDataSets(data, groupingCriteria, columnInfos);
       }
 
@@ -314,9 +318,6 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       private SimulationPoint parseMappingOnSameColumn(MappingDataFormatParameter currentParameter, IUnformattedData data, UnformattedRow row)
       {
          var columnDescription = data.GetColumnDescription(currentParameter.ColumnName);
-         if (columnDescription == null)
-            throw new MissingColumnException(currentParameter.ColumnName);
-
          var element = row.Data.ElementAt(columnDescription.Index).Trim();
 
          if (!currentParameter.MappedColumn.Unit.ColumnName.IsNullOrEmpty())
@@ -365,9 +366,6 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             lloq = double.NaN;
 
          var columnDescription = data.GetColumnDescription(currentParameter.ColumnName);
-         
-         if (columnDescription == null)
-            throw new MissingColumnException(currentParameter.ColumnName);
          
          var element = row.Data.ElementAt(columnDescription.Index).Trim();
          if (double.TryParse(element, out var result))

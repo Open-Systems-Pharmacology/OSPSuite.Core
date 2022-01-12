@@ -171,7 +171,7 @@ namespace OSPSuite.Core.Import
 
       public override bool ComesFromColumn()
       {
-         return false;
+         return true;
       }
 
       public override string TooltipDescription()
