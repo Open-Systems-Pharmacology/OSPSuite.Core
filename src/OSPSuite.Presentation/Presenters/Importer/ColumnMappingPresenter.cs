@@ -179,6 +179,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          else
          {
+            //When unit is set, the dimension has to be inferred from it.
+            //The dimension is the first from the supported dimension which
+            //has the selected unit.
             column.Unit = _mappingParameterEditorPresenter.Unit;
             column.Dimension = _columnInfos
                .First(x => x.DisplayName == model.MappingName)
