@@ -5,6 +5,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core.Mappers
@@ -68,7 +69,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       private bool convertParsedDataColumnAndReturnWarningFlag(DataRepository dataRepository, KeyValuePair<ExtendedColumn, IList<SimulationPoint>> columnAndData, string fileName)
       {
          DataColumn dataColumn;
-         var unit = columnAndData.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit)).Unit;
+         var unit = columnAndData.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit))?.Unit ?? Constants.Dimension.NO_DIMENSION.DefaultUnitName;
          var warningFlag = false;
          var dimension = columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.SupportedDimensions.FirstOrDefault(x => x.FindUnit(unit, ignoreCase: true) != null);
 
