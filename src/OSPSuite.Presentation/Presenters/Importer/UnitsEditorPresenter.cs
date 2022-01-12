@@ -10,7 +10,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
 {
    public class UnitsEditorPresenter : AbstractDisposablePresenter<IUnitsEditorView, IUnitsEditorPresenter>, IUnitsEditorPresenter
    {
-      private Column _importDataColumn;
       private IReadOnlyList<IDimension> _dimensions;
       private string _selectedUnit;
       private string _selectedColumn;
@@ -26,7 +25,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetOptions(Column importDataColumn, IReadOnlyList<IDimension> dimensions, IEnumerable<string> availableColumns)
       {
-         _importDataColumn = importDataColumn;
          _dimensions = dimensions;
 
          _columnMapping = !importDataColumn.Unit.ColumnName.IsNullOrEmpty();
@@ -53,7 +51,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
             if (_selectedUnit == null || !Dimension.HasUnit(_selectedUnit))
                _selectedUnit = Dimension.DefaultUnitName;
             
-            SetUnit();
             fillUnits(_selectedUnit);
          });
       }
@@ -108,15 +105,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          if (Dimension != null)
             View.FillUnitComboBox(Dimension.Units, selectedUnit);
-      }
-
-      public void SetUnit()
-      {
-         this.DoWithinExceptionHandler(() =>
-         {
-            _importDataColumn.Unit = new UnitDescription(_selectedUnit);
-            _importDataColumn.Dimension = Dimension;
-         });
       }
    }
 }
