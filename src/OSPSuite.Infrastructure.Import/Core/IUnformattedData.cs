@@ -173,8 +173,11 @@ namespace OSPSuite.Infrastructure.Import.Core
          {
             var index = _headers[headerName].Index;
             foreach (var header in _headers.Where(h => h.Index > index))
+            {
                header.DecrementIndex();
+            }
             _headers.Remove(headerName);
+            _rawDataTable.ForEach(row => row.RemoveAt(index));
          }
       }
 
