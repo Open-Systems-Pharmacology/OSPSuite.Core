@@ -243,9 +243,7 @@ namespace OSPSuite.Presentation.Services
             sut.ImportFromConfiguration(_importerConfigurationMW, _metaDataCategories, _columnInfos, _dataImporterSettings,
                getFileFullName(
                   "IntegrationSampleMissingColumn.xlsx"));
-         result.Count.ShouldBeEqualTo(1);
-         result[0].AllButBaseGridAsArray[0].InternalValues[3].ToDouble().ShouldBeEqualTo(5582554);
-
+         result[0].AllButBaseGridAsArray[0].InternalValues[3].ToDouble().ShouldBeEqualTo(0);
       }
    }
 
