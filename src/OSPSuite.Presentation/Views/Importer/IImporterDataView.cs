@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Presentation.Presenters.Importer;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Views.Importer
 {
@@ -18,5 +21,6 @@ namespace OSPSuite.Presentation.Views.Importer
       void SetFilter(string filter);
       string SelectedTab { get; set; }
       string GetFilter();
+      void SetTabMarks(Cache<IDataSet, List<ParseErrorDescription>> errors, IEnumerable<string> loadedSheets);
    }
 }

@@ -299,7 +299,9 @@ namespace OSPSuite.Infrastructure.Import.Services
             sheets.Add(key, dataSourceFile.DataSheets[key]);
          }
 
-         dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
+         var errors = dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
+         if (errors.Any())
+            throw new ImporterParsingException(errors);
          return (DataSourceToDataSets(dataSource, metaDataCategories, dataImporterSettings, configuration.Id), missingSheets);
       }
    }

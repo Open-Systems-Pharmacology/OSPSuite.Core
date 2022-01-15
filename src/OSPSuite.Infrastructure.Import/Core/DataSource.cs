@@ -3,9 +3,12 @@ using System.Data;
 using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Import;
+using OSPSuite.Infrastructure.Import.Core.Exceptions;
+using OSPSuite.Infrastructure.Import.Core.Helpers;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
@@ -16,7 +19,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       void SetDataFormat(IDataFormat dataFormat);
       void SetNamingConvention(string namingConvention);
-      void AddSheets(Cache<string, DataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter);
+      Cache<IDataSet, List<ParseErrorDescription>> AddSheets(Cache<string, DataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter);
       void SetMappings(string fileName, IEnumerable<MetaDataMappingConverter> mappings);
       ImporterConfiguration GetImporterConfiguration();
       IEnumerable<MetaDataMappingConverter> GetMappings();
@@ -24,7 +27,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       IEnumerable<string> NamesFromConvention();
       NanSettings NanSettings { get; set; }
       ImportedDataSet DataSetAt(int index);
-      void ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos);
+      Cache<IDataSet, List<ParseErrorDescription>> ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos);
    }
 
    public class DataSource : IDataSource
@@ -72,16 +75,18 @@ namespace OSPSuite.Infrastructure.Import.Core
          return filteredDataSheets;
       }
 
-      public void AddSheets(Cache<string, DataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter)
-      {         
+      public Cache<IDataSet, List<ParseErrorDescription>> AddSheets(Cache<string, DataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter)
+      {
          _importer.AddFromFile(_configuration.Format, filterSheets(dataSheets, filter), columnInfos, this);
          if (NanSettings == null || !double.TryParse(NanSettings.Indicator, out var indicator))
             indicator = double.NaN;
+         var errors = new Cache<IDataSet, List<ParseErrorDescription>>();
          foreach (var dataSet in DataSets.KeyValues)
          {
             if (NanSettings != null && NanSettings.Action == NanSettings.ActionType.Throw)
             {
-               dataSet.Value.ThrowsOnNan(indicator);
+               if (dataSet.Value.NanValuesExist(indicator))
+                  CachedListHelpers.Add(errors, dataSet.Value, new NaNParseErrorDescription());
             }
             else
             {
@@ -91,9 +96,10 @@ namespace OSPSuite.Infrastructure.Import.Core
                   continue;
 
                var emptyDataSetsNames = emptyDataSets.Select(d => string.Join(".", d.Description.Where(metaData => metaData.Value != null).Select(metaData => metaData.Value)));
-               throw new EmptyDataSetsException(emptyDataSetsNames);
+               CachedListHelpers.Add(errors, dataSet.Value, new EmptyDataSetsParseErrorDescription(emptyDataSetsNames));
             }
          }
+         return errors;
       }
 
       public void SetMappings(string fileName, IEnumerable<MetaDataMappingConverter> mappings)
@@ -145,8 +151,9 @@ namespace OSPSuite.Infrastructure.Import.Core
       }
 
       //checks that the dimension of all the units coming from columns for error have the same dimension to the corresponding measurement
-      private void validateErrorAgainstMeasurement(IReadOnlyList<ColumnInfo> columnInfos)
+      private Cache<IDataSet, List<ParseErrorDescription>> validateErrorAgainstMeasurement(IReadOnlyList<ColumnInfo> columnInfos)
       {
+         var errors = new Cache<IDataSet, List<ParseErrorDescription>>();
          foreach (var column in columnInfos.Where(c => !c.IsAuxiliary()))
          {
             foreach (var relatedColumn in columnInfos.Where(c => c.IsAuxiliary() && c.RelatedColumnOf == column.Name))
@@ -162,7 +169,10 @@ namespace OSPSuite.Infrastructure.Import.Core
                         continue;
 
                      if (errorColumn.Value != null && measurementColumn.Value.Count != errorColumn.Value.Count)
-                        throw new MismatchingArrayLengthsException();
+                     {
+                        CachedListHelpers.Add(errors, dataSet, new MismatchingArrayLengthsParseErrorDescription());
+                        continue;
+                     }
 
                      var errorDimension = errorColumn.Key.Column.Dimension;
                      var measurementDimension = measurementColumn.Key.Column.Dimension;
@@ -177,7 +187,10 @@ namespace OSPSuite.Infrastructure.Import.Core
                            var measurementSupportedDimension = column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(measurementColumn.Value.ElementAt(i).Unit));
                            var errorSupportedDimension = column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(errorColumn.Value.ElementAt(i).Unit));
                            if (measurementSupportedDimension != errorSupportedDimension)
-                              throw new ErrorUnitException();
+                           {
+                              CachedListHelpers.Add(errors, dataSet, new ErrorUnitParseErrorDescription());
+                              continue;
+                           }
                         }
                      }
                      else
@@ -189,17 +202,22 @@ namespace OSPSuite.Infrastructure.Import.Core
                            continue;
 
                         if (measurementDimension != errorDimension)
-                           throw new ErrorUnitException();
+                        {
+                           CachedListHelpers.Add(errors, dataSet, new ErrorUnitParseErrorDescription());
+                           continue;
+                        }
                      }
                   }
                }
             }
          }
+         return errors;
       }
       //checks that all units coming from a mapped column unit belong to a valid dimension for this mapping
       //and also that they are all of the same dimension within every data set. 
-      private void validateUnitsSupportedAndSameDimension(IReadOnlyList<ColumnInfo> columnInfos)
+      private Cache<IDataSet, List<ParseErrorDescription>> validateUnitsSupportedAndSameDimension(IReadOnlyList<ColumnInfo> columnInfos)
       {
+         var errors = new Cache<IDataSet, List<ParseErrorDescription>>();
          foreach (var columnInfo in columnInfos)
          {
             foreach (var dataSet in DataSets)
@@ -227,22 +245,30 @@ namespace OSPSuite.Infrastructure.Import.Core
 
                         //if the unit specified does not belong to one of the supported dimensions of the mapping
                         if (dimension == null)
-                           throw new InvalidDimensionException(currentValue.Unit, columnInfo.DisplayName);
+                        {
+                           CachedListHelpers.Add(errors, dataSet, new InvalidDimensionParseErrorDescription(currentValue.Unit, columnInfo.DisplayName));
+                           continue;
+                        }
 
                         //if the unit specified is not of the same dimension as the other units of the same data set
                         if (dimension != dimensionOfFirstUnit)
-                           throw new InconsistentDimensionBetweenUnitsException(columnInfo.DisplayName);
+                        {
+                           CachedListHelpers.Add(errors, dataSet, new InconsistentDimensionBetweenUnitsParseErrorDescription(columnInfo.DisplayName));
+                           continue;
+                        }
                      }
                   }
                }
             }
          }
+         return errors;
       }
 
-      void IDataSource.ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos)
+      Cache<IDataSet, List<ParseErrorDescription>> IDataSource.ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos)
       {
-         validateUnitsSupportedAndSameDimension(columnInfos);
-         validateErrorAgainstMeasurement(columnInfos);
+         var errors = validateUnitsSupportedAndSameDimension(columnInfos);
+         validateErrorAgainstMeasurement(columnInfos).KeyValues.Each(x => CachedListHelpers.Add(errors, x.Key, x.Value));
+         return errors;
       }
    }
 

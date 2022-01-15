@@ -8,12 +8,14 @@ using OSPSuite.Core.Import;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
+using OSPSuite.Infrastructure.Import.Core.Helpers;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -176,9 +178,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
-      private void validateDataSource(IDataSource dataSource)
+      private Cache<IDataSet, List<ParseErrorDescription>> validateDataSource(IDataSource dataSource)
       {
-         dataSource.ValidateDataSourceUnits(_columnInfos);
+         return dataSource.ValidateDataSourceUnits(_columnInfos);
       }
 
       private void loadSheets(IDataSourceFile dataSourceFile, Cache<string, DataSheet> sheets, string filter, string selectedNamingConvention = null)
@@ -205,9 +207,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSource.SetMappings(dataSourceFile.Path, mappings);
          _dataSource.NanSettings = _nanPresenter.Settings;
          _dataSource.SetDataFormat(_columnMappingPresenter.GetDataFormat());
-         _dataSource.AddSheets(sheets, _columnInfos, filter);
+         var errors = _dataSource.AddSheets(sheets, _columnInfos, filter);
 
-         validateDataSource(_dataSource);
+         validateDataSource(_dataSource).KeyValues.Each(x => CachedListHelpers.Add(errors, x.Key, x.Value));
+         if (errors.Any())
+         {
+            //ToDo: mark tabs
+            _dataSource.DataSets.Keys
+            throw new ImporterParsingException(errors);
+         }
 
          var keys = new List<string>()
          {
@@ -264,7 +272,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          catch (AbstractImporterException e)
          {
             _dialogCreator.MessageBoxError(e.Message);
-            if (e is NanException || e is ErrorUnitException)
+            if (e is ImporterParsingException)
                _view.DisableConfirmationView();
          }
       }

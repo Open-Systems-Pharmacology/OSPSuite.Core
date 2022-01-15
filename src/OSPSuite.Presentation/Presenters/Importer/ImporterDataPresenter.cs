@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
@@ -265,6 +266,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          Sheets.Clear();
          View.ResetImportButtons();
+      }
+
+      public void SetTabMarks(Cache<IDataSet, List<ParseErrorDescription>> errors, IEnumerable<string> loadedSheets)
+      {
+
       }
    }
 }

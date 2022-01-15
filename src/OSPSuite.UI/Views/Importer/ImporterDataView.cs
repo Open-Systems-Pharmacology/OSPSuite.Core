@@ -9,10 +9,14 @@ using DevExpress.XtraTab;
 using DevExpress.XtraTab.Buttons;
 using DevExpress.XtraTab.ViewInfo;
 using OSPSuite.Assets;
+using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {
@@ -222,11 +226,10 @@ namespace OSPSuite.UI.Views.Importer
 
       public void AddTabs(List<string> sheetNames)
       {
+         importerTabControl.Images = imageCollection1;
          //we should seek an alternative
          foreach (var sheetName in sheetNames)
-         {
             importerTabControl.TabPages.Add(sheetName);
-         }
 
          hideCloseButtonForSingleTab();
       }
@@ -290,6 +293,15 @@ namespace OSPSuite.UI.Views.Importer
       public string GetFilter()
       {
          return DevExpress.Data.Filtering.CriteriaToWhereClauseHelper.GetDataSetWhere(dataViewingGridView.ActiveFilterCriteria);
+      }
+
+      public void SetTabMarks(Cache<IDataSet, List<ParseErrorDescription>> errors, Cache<string, IDataSet> loadedSheets)
+      {
+         importerTabControl.TabPages.Each((x, i) =>
+         {
+            if (errors.Contains(x))
+            x.ImageIndex = 0
+         });
       }
    }
 }

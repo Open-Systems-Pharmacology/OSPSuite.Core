@@ -31,6 +31,7 @@ namespace OSPSuite.UI.Views.Importer
       /// </summary>
       private void InitializeComponent()
       {
+         this.components = new System.ComponentModel.Container();
          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImporterDataView));
          this.rootLayoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.useForImportCheckEdit = new DevExpress.XtraEditors.CheckEdit();
@@ -45,6 +46,8 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
          this.dataViewingGridControl = new DevExpress.XtraGrid.GridControl();
          this.dataViewingGridView = new DevExpress.XtraGrid.Views.Grid.GridView();
+         this.imageCollection1 = new DevExpress.Utils.ImageCollection(this.components);
+         this.dpiAwareImageCollection1 = new DevExpress.Utils.DPIAwareImageCollection(this.components);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).BeginInit();
          this.rootLayoutControl.SuspendLayout();
@@ -58,6 +61,8 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridView)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.imageCollection1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.dpiAwareImageCollection1)).BeginInit();
          this.SuspendLayout();
          // 
          // rootLayoutControl
@@ -81,11 +86,11 @@ namespace OSPSuite.UI.Views.Importer
          this.useForImportCheckEdit.AllowHtmlTextInToolTip = DevExpress.Utils.DefaultBoolean.True;
          this.useForImportCheckEdit.Location = new System.Drawing.Point(2, 1022);
          this.useForImportCheckEdit.Name = "useForImportCheckEdit";
-         this.useForImportCheckEdit.Properties.Caption = Captions.Importer.UseFiltersForImport;
+         this.useForImportCheckEdit.Properties.Caption = "Use filters for importing data";
          this.useForImportCheckEdit.Size = new System.Drawing.Size(478, 24);
          this.useForImportCheckEdit.StyleController = this.rootLayoutControl;
          this.useForImportCheckEdit.TabIndex = 11;
-         this.useForImportCheckEdit.ToolTip = Captions.Importer.UseFiltersForImportTooltip;
+         this.useForImportCheckEdit.ToolTip = resources.GetString("useForImportCheckEdit.ToolTip");
          this.useForImportCheckEdit.ToolTipAnchor = DevExpress.Utils.ToolTipAnchor.Cursor;
          // 
          // btnImport
@@ -193,6 +198,17 @@ namespace OSPSuite.UI.Views.Importer
          this.dataViewingGridView.Name = "dataViewingGridView";
          this.dataViewingGridView.OptionsView.ColumnAutoWidth = false;
          // 
+         // imageCollection1
+         // 
+         this.imageCollection1.ImageStream = ((DevExpress.Utils.ImageCollectionStreamer)(resources.GetObject("imageCollection1.ImageStream")));
+         this.imageCollection1.Images.SetKeyName(0, "OK.ico");
+         this.imageCollection1.Images.SetKeyName(1, "Cancel.ico");
+         // 
+         // dpiAwareImageCollection1
+         // 
+         this.dpiAwareImageCollection1.Owner = this;
+         this.dpiAwareImageCollection1.Stream = ((DevExpress.Utils.DPIAwareImageCollectionStreamer)(resources.GetObject("dpiAwareImageCollection1.Stream")));
+         // 
          // ImporterDataView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -214,6 +230,8 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridView)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.imageCollection1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.dpiAwareImageCollection1)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -233,5 +251,7 @@ namespace OSPSuite.UI.Views.Importer
       private DevExpress.XtraEditors.CheckEdit useForImportCheckEdit;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
+      private ImageCollection imageCollection1;
+      private DPIAwareImageCollection dpiAwareImageCollection1;
    }
 }

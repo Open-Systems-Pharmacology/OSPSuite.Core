@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace OSPSuite.Infrastructure.Import.Core
@@ -19,7 +20,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       IReadOnlyList<ParsedDataSet> Data { get; }
       void ClearNan(double indicator);
-      void ThrowsOnNan(double indicator);
+      bool NanValuesExist(double indicator);
       void AddData(IEnumerable<ParsedDataSet> range);
    }
 
@@ -34,10 +35,9 @@ namespace OSPSuite.Infrastructure.Import.Core
          _data.AddRange(range);
       }
 
-      public void ThrowsOnNan(double indicator)
+      public bool NanValuesExist(double indicator)
       {
-         if (_data.Any(dataSet => dataSet.Data.Any(pair => pair.Key.ColumnInfo.IsMandatory && pair.Value.Any(point => point.Measurement == indicator || double.IsNaN(point.Measurement)))))
-            throw new NanException();
+         return _data.Any(dataSet => dataSet.Data.Any(pair => pair.Key.ColumnInfo.IsMandatory && pair.Value.Any(point => point.Measurement == indicator || double.IsNaN(point.Measurement))));
       }
 
       public void ClearNan(double indicator)
