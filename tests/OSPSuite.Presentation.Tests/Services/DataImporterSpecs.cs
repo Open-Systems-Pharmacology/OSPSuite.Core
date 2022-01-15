@@ -2,12 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using OSPSuite.Assets;
 using FakeItEasy;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Import;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
@@ -232,6 +234,16 @@ namespace OSPSuite.Presentation.Services
             getFileFullName(
                "IntegrationSample1.csv"));
          result[0].AllButBaseGridAsArray[0].DataInfo.MolWeight.ShouldBeEqualTo(2.08E-07);
+      }
+
+      [Observation]
+      public void should_filter_out_empty_column()
+      {
+         var result =
+            sut.ImportFromConfiguration(_importerConfigurationMW, _metaDataCategories, _columnInfos, _dataImporterSettings,
+               getFileFullName(
+                  "IntegrationSampleMissingColumn.xlsx"));
+         result[0].AllButBaseGridAsArray[0].InternalValues[3].ToDouble().ShouldBeEqualTo(0);
       }
    }
 
