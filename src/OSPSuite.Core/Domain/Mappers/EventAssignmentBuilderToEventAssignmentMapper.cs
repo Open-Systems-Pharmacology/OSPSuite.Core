@@ -38,7 +38,7 @@ namespace OSPSuite.Core.Domain.Mappers
          //Assignment are named programatically and not by the user so there should not be any conflict.
          var name = $"{assignmentBuilder.Name}_{moleculeBuilder.Name}";
          var assignment = createAssignment(assignmentBuilder, buildConfiguration, name);
-         assignment.ObjectPath.Replace(ObjectPathKeywords.ALL_FLOATING, moleculeBuilder.Name);
+         assignment.ObjectPath.Replace(ObjectPathKeywords.ALL_FLOATING_MOLECULES, moleculeBuilder.Name);
          return assignment;
       }
 
@@ -58,6 +58,6 @@ namespace OSPSuite.Core.Domain.Mappers
       }
 
       private bool isForAllFloating(IEventAssignmentBuilder assignmentBuilder) =>
-         assignmentBuilder.ObjectPath.Contains(ObjectPathKeywords.ALL_FLOATING);
+         assignmentBuilder.ObjectPath.Contains(ObjectPathKeywords.ALL_FLOATING_MOLECULES);
    }
 }

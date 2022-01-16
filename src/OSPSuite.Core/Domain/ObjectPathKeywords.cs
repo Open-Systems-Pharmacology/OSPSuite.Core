@@ -59,7 +59,7 @@ namespace OSPSuite.Core.Domain
       ///    String representing a reference to all floating molecules. The entry will be duplicated.
       ///    This is typically used in event assignment to change all floating molecules at once
       /// </summary>
-      public static readonly string ALL_FLOATING = addKeyword("ALL_FLOATING");
+      public static readonly string ALL_FLOATING_MOLECULES = addKeyword("ALL_FLOATING_MOLECULES");
 
       private static string addKeyword(string keyword)
       {
