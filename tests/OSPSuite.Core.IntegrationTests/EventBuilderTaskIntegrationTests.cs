@@ -49,12 +49,6 @@ namespace OSPSuite.Core
             {
                lastPathEntry.ShouldBeEqualTo(C3);
             }
-            else
-            {
-               //eventgroup builders which are not application will be replaced with the 1st floating 
-               //molecule which is C1
-               lastPathEntry.ShouldBeEqualTo(C1);
-            }
          }
       }
    }
