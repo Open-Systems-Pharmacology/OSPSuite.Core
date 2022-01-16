@@ -34,6 +34,8 @@ namespace OSPSuite.Core.Domain.Mappers
 
       private IEventAssignment createMoleculeAssignment(IMoleculeBuilder moleculeBuilder, IEventAssignmentBuilder assignmentBuilder, IBuildConfiguration buildConfiguration)
       {
+         //We change the original name to ensure unicity in the container.
+         //Assignment are named programatically and not by the user so there should not be any conflict.
          var name = $"{assignmentBuilder.Name}_{moleculeBuilder.Name}";
          var assignment = createAssignment(assignmentBuilder, buildConfiguration, name);
          assignment.ObjectPath.Replace(ObjectPathKeywords.ALL_FLOATING, moleculeBuilder.Name);
