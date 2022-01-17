@@ -155,6 +155,7 @@ namespace OSPSuite.Core.Domain
          public const string IS_LIVER_ZONATED = "Is liver zonated";
          public const string USE_AS_SUSPENSION = "Use as suspension";
          public const string ENABLE_SUPERSATURATION = "Enable supersaturation";
+         public const string URINE_EMPTYING_ENABLE = "Urine emptying enabled";
          public const string PARTICLE_SIZE_DISTRIBUTION = "Particle size distribution";
          public const string NUMBER_OF_BINS = "Number of bins";
          public const string TOTAL_DRUG_MASS = "Total drug mass";
@@ -186,7 +187,8 @@ namespace OSPSuite.Core.Domain
             IS_SMALL_MOLECULE,
             IS_LIVER_ZONATED,
             USE_AS_SUSPENSION,
-            ENABLE_SUPERSATURATION
+            ENABLE_SUPERSATURATION,
+            URINE_EMPTYING_ENABLE
          };
 
          public static readonly IReadOnlyCollection<string> AllCategorialParameters = new List<string>(AllBooleanParameters)
