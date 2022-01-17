@@ -211,6 +211,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          validateDataSource(_dataSource).KeyValues.Each(x => CachedListHelpers.Add(errors, x.Key, x.Value));
          _importerDataPresenter.SetTabMarks(errors, _dataSource.DataSets);
+         if (errors.Any())
+         {
+            throw new ImporterParsingException(errors);
+         }
+
 
          var keys = new List<string>()
          {

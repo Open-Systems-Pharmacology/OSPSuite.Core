@@ -1277,6 +1277,8 @@ namespace OSPSuite.Assets
       public static readonly string NaNOnData = "Data contains NaN values at imported columns. Select a different action for NaN values or clean your data.";
       public static readonly string UnsupportedFileType = "The type of file that you are trying to open is not currently supported";
       public static readonly string CannotRemoveBaseGridColumnStillInUse = "Cannot remove base grid column still used by other columns";
+      public static readonly string SimpleParseErrorMessage = "There were errors while parsing your data. Navigate to the sheets to read the concrete error.";
+
       public static string ParseErrorMessage(IEnumerable<string> errors) => "There were errors while parsing your data: " + string.Join(". ", errors);
 
       public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) => $"Plotting data set number:{sheetName} produced the following error: {exceptionMessage}";

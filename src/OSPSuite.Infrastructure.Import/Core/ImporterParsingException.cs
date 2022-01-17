@@ -11,7 +11,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       public Cache<IDataSet, List<ParseErrorDescription>>FaultyDataSet { get; private set; }
 
       public ImporterParsingException(Cache<IDataSet, List<ParseErrorDescription>> faultyDataSets)
-         : base(Error.ParseErrorMessage(faultyDataSets.KeyValues.SelectMany(x => x.Value.Select(y => $"{x.Key} => {y.Message}"))))
+         : base(Error.SimpleParseErrorMessage)
       {
          FaultyDataSet = faultyDataSets;
       }

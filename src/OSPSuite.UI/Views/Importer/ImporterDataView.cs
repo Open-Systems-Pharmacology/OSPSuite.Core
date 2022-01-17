@@ -233,6 +233,7 @@ namespace OSPSuite.UI.Views.Importer
             importerTabControl.TabPages.Add(sheetName);
 
          hideCloseButtonForSingleTab();
+         refreshErrorMarks();
       }
 
       private void hideCloseButtonForSingleTab()
@@ -319,22 +320,26 @@ namespace OSPSuite.UI.Views.Importer
          }
       }
 
-      public void SetTabMarks(Cache<IDataSet, List<ParseErrorDescription>> errors, Cache<string, IDataSet> loadedDataSets)
+      private void refreshErrorMarks()
       {
-         _lastErrors = errors;
-         _lastLoadedDataSets = loadedDataSets;
-         refreshErrorMessage();
-
          importerTabControl.TabPages.Each(x =>
          {
-            if (loadedDataSets.Contains(x.Text))
+            if (_lastLoadedDataSets.Contains(x.Text))
             {
-               x.ImageIndex = errors.Contains(loadedDataSets[x.Text]) ? 1 : 0;
+               x.ImageIndex = _lastErrors.Contains(_lastLoadedDataSets[x.Text]) ? 1 : 0;
                return;
             }
 
             x.ImageIndex = -1;
          });
+      }
+
+      public void SetTabMarks(Cache<IDataSet, List<ParseErrorDescription>> errors, Cache<string, IDataSet> loadedDataSets)
+      {
+         _lastErrors = errors;
+         _lastLoadedDataSets = loadedDataSets;
+         refreshErrorMessage();
+         refreshErrorMarks();
       }
    }
 }
