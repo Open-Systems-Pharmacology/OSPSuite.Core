@@ -21,6 +21,6 @@ namespace OSPSuite.Presentation.Views.Importer
       void SetFilter(string filter);
       string SelectedTab { get; set; }
       string GetFilter();
-      void SetTabMarks(Cache<IDataSet, List<ParseErrorDescription>> errors, IEnumerable<string> loadedSheets);
+      void SetTabMarks(Cache<IDataSet, List<ParseErrorDescription>> errors, Cache<string, IDataSet> loadedDataSets);
    }
 }

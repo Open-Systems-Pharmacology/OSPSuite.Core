@@ -34,6 +34,7 @@ namespace OSPSuite.UI.Views.Importer
          this.components = new System.ComponentModel.Container();
          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImporterDataView));
          this.rootLayoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.labelControlError = new DevExpress.XtraEditors.LabelControl();
          this.useForImportCheckEdit = new DevExpress.XtraEditors.CheckEdit();
          this.btnImport = new DevExpress.XtraEditors.SimpleButton();
          this.btnImportAll = new DevExpress.XtraEditors.SimpleButton();
@@ -44,10 +45,12 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutItemImportCurrent = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
          this.dataViewingGridControl = new DevExpress.XtraGrid.GridControl();
          this.dataViewingGridView = new DevExpress.XtraGrid.Views.Grid.GridView();
          this.imageCollection1 = new DevExpress.Utils.ImageCollection(this.components);
          this.dpiAwareImageCollection1 = new DevExpress.Utils.DPIAwareImageCollection(this.components);
+         this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).BeginInit();
          this.rootLayoutControl.SuspendLayout();
@@ -59,14 +62,17 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemImportCurrent)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridView)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.imageCollection1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.dpiAwareImageCollection1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).BeginInit();
          this.SuspendLayout();
          // 
          // rootLayoutControl
          // 
+         this.rootLayoutControl.Controls.Add(this.labelControlError);
          this.rootLayoutControl.Controls.Add(this.useForImportCheckEdit);
          this.rootLayoutControl.Controls.Add(this.btnImport);
          this.rootLayoutControl.Controls.Add(this.btnImportAll);
@@ -80,6 +86,17 @@ namespace OSPSuite.UI.Views.Importer
          this.rootLayoutControl.Size = new System.Drawing.Size(1457, 1050);
          this.rootLayoutControl.TabIndex = 0;
          this.rootLayoutControl.Text = "rootLayoutControl";
+         // 
+         // labelControlError
+         // 
+         this.labelControlError.Appearance.ForeColor = System.Drawing.Color.Red;
+         this.labelControlError.Appearance.Options.UseForeColor = true;
+         this.labelControlError.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
+         this.labelControlError.Location = new System.Drawing.Point(2, 951);
+         this.labelControlError.Name = "labelControlError";
+         this.labelControlError.Size = new System.Drawing.Size(1453, 16);
+         this.labelControlError.StyleController = this.rootLayoutControl;
+         this.labelControlError.TabIndex = 12;
          // 
          // useForImportCheckEdit
          // 
@@ -118,7 +135,7 @@ namespace OSPSuite.UI.Views.Importer
          this.importerTabControl.Location = new System.Drawing.Point(2, 2);
          this.importerTabControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.importerTabControl.Name = "importerTabControl";
-         this.importerTabControl.Size = new System.Drawing.Size(1453, 1015);
+         this.importerTabControl.Size = new System.Drawing.Size(1453, 945);
          this.importerTabControl.TabIndex = 5;
          // 
          // Root
@@ -130,7 +147,9 @@ namespace OSPSuite.UI.Views.Importer
             this.layoutItemImportAll,
             this.layoutItemImportCurrent,
             this.emptySpaceItem1,
-            this.layoutControlItem1});
+            this.layoutControlItem1,
+            this.layoutControlItem2,
+            this.emptySpaceItem2});
          this.Root.Name = "Root";
          this.Root.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
          this.Root.Size = new System.Drawing.Size(1457, 1050);
@@ -141,7 +160,7 @@ namespace OSPSuite.UI.Views.Importer
          this.importerLayoutControlItem.Control = this.importerTabControl;
          this.importerLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.importerLayoutControlItem.Name = "importerLayoutControlItem";
-         this.importerLayoutControlItem.Size = new System.Drawing.Size(1457, 1019);
+         this.importerLayoutControlItem.Size = new System.Drawing.Size(1457, 949);
          this.importerLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.importerLayoutControlItem.TextVisible = false;
          // 
@@ -181,6 +200,16 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem1.TextVisible = false;
          // 
+         // layoutControlItem2
+         // 
+         this.layoutControlItem2.Control = this.labelControlError;
+         this.layoutControlItem2.Location = new System.Drawing.Point(0, 949);
+         this.layoutControlItem2.Name = "layoutControlItem2";
+         this.layoutControlItem2.Size = new System.Drawing.Size(1457, 20);
+         this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem2.TextVisible = false;
+         this.layoutControlItem2.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+         // 
          // dataViewingGridControl
          // 
          this.dataViewingGridControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -209,6 +238,14 @@ namespace OSPSuite.UI.Views.Importer
          this.dpiAwareImageCollection1.Owner = this;
          this.dpiAwareImageCollection1.Stream = ((DevExpress.Utils.DPIAwareImageCollectionStreamer)(resources.GetObject("dpiAwareImageCollection1.Stream")));
          // 
+         // emptySpaceItem2
+         // 
+         this.emptySpaceItem2.AllowHotTrack = false;
+         this.emptySpaceItem2.Location = new System.Drawing.Point(0, 969);
+         this.emptySpaceItem2.Name = "emptySpaceItem2";
+         this.emptySpaceItem2.Size = new System.Drawing.Size(1457, 50);
+         this.emptySpaceItem2.TextSize = new System.Drawing.Size(0, 0);
+         // 
          // ImporterDataView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -228,10 +265,12 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemImportCurrent)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridView)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.imageCollection1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dpiAwareImageCollection1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -253,5 +292,8 @@ namespace OSPSuite.UI.Views.Importer
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
       private ImageCollection imageCollection1;
       private DPIAwareImageCollection dpiAwareImageCollection1;
+      private DevExpress.XtraEditors.LabelControl labelControlError;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
+      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem2;
    }
 }

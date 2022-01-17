@@ -210,12 +210,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var errors = _dataSource.AddSheets(sheets, _columnInfos, filter);
 
          validateDataSource(_dataSource).KeyValues.Each(x => CachedListHelpers.Add(errors, x.Key, x.Value));
-         if (errors.Any())
-         {
-            //ToDo: mark tabs
-            _dataSource.DataSets.Keys
-            throw new ImporterParsingException(errors);
-         }
+         _importerDataPresenter.SetTabMarks(errors, _dataSource.DataSets);
 
          var keys = new List<string>()
          {

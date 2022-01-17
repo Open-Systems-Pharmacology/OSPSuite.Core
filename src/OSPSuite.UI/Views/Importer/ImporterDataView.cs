@@ -28,6 +28,8 @@ namespace OSPSuite.UI.Views.Importer
       private bool sheetImportedFlag;
       private bool allSheetsImportedFlag;
       private bool allImportButtonsDisabledFlag;
+      private Cache<IDataSet, List<ParseErrorDescription>> _lastErrors = new Cache<IDataSet, List<ParseErrorDescription>>();
+      private Cache<string, IDataSet> _lastLoadedDataSets = new Cache<string, IDataSet>();
 
       public ImporterDataView()
       {
@@ -227,7 +229,6 @@ namespace OSPSuite.UI.Views.Importer
       public void AddTabs(List<string> sheetNames)
       {
          importerTabControl.Images = imageCollection1;
-         //we should seek an alternative
          foreach (var sheetName in sheetNames)
             importerTabControl.TabPages.Add(sheetName);
 
@@ -289,18 +290,50 @@ namespace OSPSuite.UI.Views.Importer
          useForImportCheckEdit.Checked = true;
       }
 
-      public string SelectedTab { get; set; }
+      private string _selectedTab;
+      public string SelectedTab {
+         get => _selectedTab;
+         set
+         {
+            _selectedTab = value;
+            refreshErrorMessage();
+         }
+      }
       public string GetFilter()
       {
          return DevExpress.Data.Filtering.CriteriaToWhereClauseHelper.GetDataSetWhere(dataViewingGridView.ActiveFilterCriteria);
       }
 
-      public void SetTabMarks(Cache<IDataSet, List<ParseErrorDescription>> errors, Cache<string, IDataSet> loadedSheets)
+      private void refreshErrorMessage()
       {
-         importerTabControl.TabPages.Each((x, i) =>
+
+         if (_lastLoadedDataSets.Contains(SelectedTab) && _lastErrors.Contains(_lastLoadedDataSets[SelectedTab]))
          {
-            if (errors.Contains(x))
-            x.ImageIndex = 0
+            labelControlError.Text = Error.ParseErrorMessage(_lastErrors[_lastLoadedDataSets[SelectedTab]].Select(x => x.Message));
+            layoutControlItem2.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
+         }
+         else
+         {
+            labelControlError.Text = "";
+            layoutControlItem2.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+         }
+      }
+
+      public void SetTabMarks(Cache<IDataSet, List<ParseErrorDescription>> errors, Cache<string, IDataSet> loadedDataSets)
+      {
+         _lastErrors = errors;
+         _lastLoadedDataSets = loadedDataSets;
+         refreshErrorMessage();
+
+         importerTabControl.TabPages.Each(x =>
+         {
+            if (loadedDataSets.Contains(x.Text))
+            {
+               x.ImageIndex = errors.Contains(loadedDataSets[x.Text]) ? 1 : 0;
+               return;
+            }
+
+            x.ImageIndex = -1;
          });
       }
    }
