@@ -319,7 +319,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          var errors = new Cache<IDataSet, List<ParseErrorDescription>>();
          errors.Add(new DataSet(), new List<ParseErrorDescription>() { new MismatchingArrayLengthsParseErrorDescription() });
-         A.CallTo(() => _dataSource.ValidateDataSourceUnits(A<IReadOnlyList<ColumnInfo>>.Ignored)).Returns(errors);
+         A.CallTo(() => _dataSource.AddSheets(A<Cache<string, DataSheet>>.Ignored, A<IReadOnlyList<ColumnInfo>>.Ignored, A<string>.Ignored)).Returns(errors);
          _sheets = new Cache<string, DataSheet>();
          _sheets.Add("sheet1", A.Fake<DataSheet>());
          _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() {Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets});
