@@ -190,13 +190,13 @@ namespace OSPSuite.Infrastructure.Import.Services
          {
             var dataRepoMapping = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i));
             var dataRepo = dataRepoMapping.DataRepository;
-            dataRepo.ConfigurationId = id; 
-            
+            dataRepo.ConfigurationId = id;
+
             //when the MW does not come from the column but from a the value of of the MW of a specific molecule
             var molecularWeightFromMoleculeAsString = extractMoleculeDescription(metaDataCategories, dataImporterSettings, dataRepo);
             var molecularWeightValueAsString = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
 
-            if (!molecularWeightFromMoleculeAsString.IsNullOrEmpty())
+            if (dataImporterSettings.CheckMolWeightAgainstMolecule && !molecularWeightFromMoleculeAsString.IsNullOrEmpty())
             {
                if (molecularWeightValueAsString.IsNullOrEmpty())
                {

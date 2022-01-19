@@ -236,7 +236,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
          _view.MolWeightEditable = _observedDataConfiguration.MolWeightEditable;
          var molWeightParameter = retrieveUniqueMolWeightParameter();
-         var shouldBindToMolWeight = molWeightParameter != null && _observedDataConfiguration.MolWeightVisible;
+         var shouldBindToMolWeight = _observedDataConfiguration.MolWeightVisible;
          _view.MolWeightVisible = shouldBindToMolWeight;
 
          if (shouldBindToMolWeight)
