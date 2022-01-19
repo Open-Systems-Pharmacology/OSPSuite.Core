@@ -86,7 +86,7 @@ namespace OSPSuite.Starter.Presenters
 
          StartImporterExcelView(
             _dataGenerator.DefaultMoBiMetaDataCategories(),
-            _dataGenerator.DefaultMoBiConcentrationImportConfiguration(),
+            _dataImporter.ColumnInfosForObservedData(),
             dataImporterSettings
          );
 
@@ -117,7 +117,7 @@ namespace OSPSuite.Starter.Presenters
             (
                configuration,
                (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories(),
-               _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+               _dataImporter.ColumnInfosForObservedData(),
                dataImporterSettings,
                _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
             )?.Count() + " data sets successfully imported");
@@ -150,7 +150,7 @@ namespace OSPSuite.Starter.Presenters
             (
                configuration,
                (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories(),
-               _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+               _dataImporter.ColumnInfosForObservedData(),
                dataImporterSettings,
                _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
             )?.Count() + " data sets successfully imported");
@@ -168,7 +168,7 @@ namespace OSPSuite.Starter.Presenters
          StartImporterExcelView
          (
             metaDataCategories,
-            _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+            _dataImporter.ColumnInfosForObservedData(),
             dataImporterSettings
          );
       }
@@ -182,7 +182,7 @@ namespace OSPSuite.Starter.Presenters
          _dataGenerator.AddMoleculeValuesToMetaDataList(metaDataCategories);
          StartImporterExcelView(
             metaDataCategories,
-            _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+            _dataImporter.ColumnInfosForObservedData(),
             dataImporterSettings
          );
       }

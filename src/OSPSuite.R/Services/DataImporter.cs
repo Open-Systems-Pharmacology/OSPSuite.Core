@@ -21,7 +21,7 @@ namespace OSPSuite.R.Services
       private readonly IDimension _massConcentrationDimension;
       private readonly IOSPSuiteLogger _logger;
 
-      public DataImporter(IImporter importer, IOSPSuiteLogger logger, IDimensionFactory dimensionFactory) : base(importer)
+      public DataImporter(IImporter importer, IOSPSuiteLogger logger, IDimensionFactory dimensionFactory) : base(importer, dimensionFactory)
       {
          _logger = logger;
          _dimensionFactory = dimensionFactory;
