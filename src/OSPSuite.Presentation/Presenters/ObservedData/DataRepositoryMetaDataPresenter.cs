@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NPOI.HSSF.Record.Chart;
 using OSPSuite.Assets;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
@@ -56,7 +57,15 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       /// <param name="dataRepositories">The repositories to edit</param>
       void EditObservedData(IEnumerable<DataRepository> dataRepositories);
 
+      /// <summary>
+      ///    Updates the molecular weight
+      /// </summary>
       void SetMolWeight(double oldMolWeightValueInDisplayUnit, double molWeightValueInDisplayUnit);
+
+      /// <summary>
+      ///    Returns the default molecular weight unit
+      /// </summary>
+      Unit GetDefaultMolWeightUnit();
    }
 
    public class DataRepositoryMetaDataPresenter : AbstractSubPresenter<IDataRepositoryMetaDataView, IDataRepositoryMetaDataPresenter>,
@@ -69,6 +78,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       private readonly IParameterFactory _parameterFactory;
       private IEnumerable<IBusinessRule> _defaultRules;
       private readonly IDimension _molWeightDimension;
+      private readonly IDimensionFactory _dimensionFactory;
       public bool IsLatched { get; set; }
 
       public DataRepositoryMetaDataPresenter(IDataRepositoryMetaDataView view, IEditObservedDataTask editObservedDataTask,
@@ -79,6 +89,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          _observedDataConfiguration = observedDataConfiguration;
          _parameterFactory = parameterFactory;
          _molWeightDimension = dimensionFactory.Dimension(Constants.Dimension.MOLECULAR_WEIGHT);
+         _dimensionFactory = dimensionFactory;
       }
 
       /// <summary>
@@ -188,6 +199,11 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       public void SetMolWeight(double oldMolWeightValueInDisplayUnit, double molWeightValueInDisplayUnit)
       {
          this.DoWithinLatch(() => { AddCommand(_editObservedDataTask.UpdateMolWeight(_allDataRepositories, molWeightValueInCoreUnit(oldMolWeightValueInDisplayUnit), molWeightValueInCoreUnit(molWeightValueInDisplayUnit))); });
+      }
+
+      public Unit GetDefaultMolWeightUnit()
+      {
+         return _dimensionFactory.Dimensions.First(x => x.Name == Constants.Dimension.MOLECULAR_WEIGHT).DefaultUnit;
       }
 
       private double molWeightValueInCoreUnit(double valueInDisplayUnit)
