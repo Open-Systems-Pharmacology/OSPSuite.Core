@@ -16,14 +16,12 @@ namespace OSPSuite.Starter.Tasks
    {
       void AddMoleculeValuesToMetaDataList(IList<MetaDataCategory> metaDataCategories);
       void AddOrganValuesToMetaDataList(IList<MetaDataCategory> metaDataCategories);
-      IReadOnlyList<ColumnInfo> DefaultPKSimConcentrationImportConfiguration();
       IReadOnlyList<ColumnInfo> DefaultTestConcentrationImportConfiguration();
       IReadOnlyList<MetaDataCategory> DefaultTestMetaDataCategories();
       IReadOnlyList<ColumnInfo> DefaultGroupByConcentrationImportConfiguration();
       IReadOnlyList<MetaDataCategory> DefaultGroupByTestMetaDataCategories();
       IReadOnlyList<ColumnInfo> GetOntogenyColumnInfo();
       IReadOnlyList<MetaDataCategory> DefaultMoBiMetaDataCategories();
-      IReadOnlyList<ColumnInfo> DefaultMoBiConcentrationImportConfiguration();
    }
 
    public class ImporterConfigurationDataGenerator : IImporterConfigurationDataGenerator
@@ -38,77 +36,6 @@ namespace OSPSuite.Starter.Tasks
          _molarConcentrationDimension = _dimensionFactory.Dimension("Concentration (molar)");
          _massConcentrationDimension = _dimensionFactory.Dimension("Concentration (mass)");
          _ageInYearsDimension = _dimensionFactory.Dimension("Age in years");
-      }
-
-      public IReadOnlyList<ColumnInfo> DefaultMoBiConcentrationImportConfiguration()
-      {
-         var columns = new List<ColumnInfo>();
-
-         var timeDimension = _dimensionFactory.Dimension("Time");
-         var timeColumn = new ColumnInfo
-         {
-            DefaultDimension = timeDimension,
-            Name = "Time",
-            DisplayName = "Time",
-            IsMandatory = true,
-         };
-
-         timeColumn.SupportedDimensions.Add(timeDimension);
-         columns.Add(timeColumn);
-
-         var mainDimension = _dimensionFactory.Dimension("Concentration (molar)");
-         var noDimension = _dimensionFactory.Dimension("Dimensionless");
-         var measurementInfo = new ColumnInfo
-         {
-            DefaultDimension = mainDimension,
-            Name = "Measurement",
-            DisplayName = "Measurement",
-            IsMandatory = true,
-            BaseGridName = timeColumn.Name
-         };
-         foreach (var dimension in _dimensionFactory.Dimensions)
-         {
-            if (dimension.Equals(timeDimension)) continue;
-            if (dimension.Equals(noDimension)) continue;
-            measurementInfo.SupportedDimensions.Add(dimension);
-         }
-         columns.Add(measurementInfo);
-
-         var errorInfo = new ColumnInfo
-         {
-            DefaultDimension = mainDimension,
-            Name = "Error",
-            DisplayName = "Error",
-            IsMandatory = false,
-            BaseGridName = timeColumn.Name,
-            RelatedColumnOf = measurementInfo.Name
-         };
-         foreach (var dimension in _dimensionFactory.Dimensions)
-         {
-            if (dimension.Equals(timeDimension)) continue;
-            errorInfo.SupportedDimensions.Add(dimension);
-         }
-         columns.Add(errorInfo);
-
-         return columns;
-      }
-
-      public IReadOnlyList<ColumnInfo> DefaultPKSimConcentrationImportConfiguration()
-      {
-         var columns = new List<ColumnInfo>();
-         var timeColumn = createTimeColumn();
-
-         columns.Add(timeColumn);
-
-         var concentrationInfo = createConcentrationColumn(timeColumn);
-
-         columns.Add(concentrationInfo);
-
-         var errorInfo = createErrorColumn(timeColumn, concentrationInfo);
-
-         columns.Add(errorInfo);
-
-         return columns;
       }
 
       public IReadOnlyList<MetaDataCategory> DefaultMoBiMetaDataCategories()
