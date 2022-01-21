@@ -193,11 +193,11 @@ namespace OSPSuite.Core.Domain.Formulas
       /// </summary>
       public virtual (double value, bool success) TryCalculate(IUsingFormula refObject)
       {
-         var usedObjects = GetUsedObjectsFrom(refObject);
+         var usedObjects = GetUsedObjectsFrom(refObject, throwOnMissingRef:false);
          return TryCalculateFor(usedObjects, refObject);
       }
 
-      protected IReadOnlyList<IObjectReference> GetUsedObjectsFrom(IUsingFormula refObject)
+      protected IReadOnlyList<IObjectReference> GetUsedObjectsFrom(IUsingFormula refObject, bool throwOnMissingRef = true)
       {
          if (AreReferencesResolved)
             return ObjectReferences;
@@ -208,10 +208,14 @@ namespace OSPSuite.Core.Domain.Formulas
          foreach (var path in ObjectPaths)
          {
             var usingObject = path.Resolve<IFormulaUsable>(refObject);
-            if (usingObject == null)
-               throw new OSPSuiteException($"Cannot evaluate formula for '{refObject.Name}' with path '{path}'");
+            if (usingObject != null)
+            {
+               usedObjects.Add(new ObjectReference(usingObject, path.Alias));
+               continue;
+            }
 
-            usedObjects.Add(new ObjectReference(usingObject, path.Alias));
+            if (throwOnMissingRef)
+               throw new OSPSuiteException($"Cannot evaluate formula for '{refObject.Name}' with path '{path}'");
          }
 
          return usedObjects;
