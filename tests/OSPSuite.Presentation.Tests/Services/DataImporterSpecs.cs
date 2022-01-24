@@ -2,12 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using OSPSuite.Assets;
 using FakeItEasy;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Import;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
@@ -52,7 +54,7 @@ namespace OSPSuite.Presentation.Services
          _importer = IoC.Container.Resolve<IImporter>();
          _applicationController = A.Fake<ApplicationController>();
 
-         sut = new DataImporter(_dialogCreator, _importer, _applicationController);
+         sut = new DataImporter(_dialogCreator, _importer, _applicationController, _dimensionFactory);
 
          _importerConfiguration = new ImporterConfiguration {FileName = "IntegrationSample1.xlsx", NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}"};
          _importerConfiguration.AddToLoadedSheets("Sheet1");
@@ -233,6 +235,16 @@ namespace OSPSuite.Presentation.Services
                "IntegrationSample1.csv"));
          result[0].AllButBaseGridAsArray[0].DataInfo.MolWeight.ShouldBeEqualTo(2.08E-07);
       }
+
+      [Observation]
+      public void should_filter_out_empty_column()
+      {
+         var result =
+            sut.ImportFromConfiguration(_importerConfigurationMW, _metaDataCategories, _columnInfos, _dataImporterSettings,
+               getFileFullName(
+                  "IntegrationSampleMissingColumn.xlsx"));
+         result[0].AllButBaseGridAsArray[0].InternalValues[3].ToDouble().ShouldBeEqualTo(0);
+      }
    }
 
    public class When_importing_data_with_missing_columns : concern_for_DataImporter
@@ -265,7 +277,7 @@ namespace OSPSuite.Presentation.Services
       {
          sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName("IntegrationSampleMissingMapping.xlsx"));
-         A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column 'SD [mg/l]' is missing from at least one of the sheets being loaded.")).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column(s) \n \n 'SD [mg/l]' \n \n is missing from at least one of the sheets being loaded.")).MustHaveHappened();
       }
 
       [Observation]
@@ -306,8 +318,8 @@ namespace OSPSuite.Presentation.Services
       public void should_set_unit_of_missing_column_to_undefined()
       {
          sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
-            getFileFullName("IntegrationSampleMissingMapping.xlsx"));
-         A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column 'timeUnitColumn' is missing from at least one of the sheets being loaded.")).MustHaveHappened();
+            getFileFullName("IntegrationSampleMissingMappingUnit.xlsx"));
+         A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column(s) \n \n 'timeUnitColumn' \n \n is missing from at least one of the sheets being loaded.")).MustHaveHappened();
       }
    }
 

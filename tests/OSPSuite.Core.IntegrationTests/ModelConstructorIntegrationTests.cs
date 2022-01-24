@@ -341,7 +341,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_have_created_two_eplicit_formula_for_the_parameter_referencing_a_dynamic_formula()
+      public void should_have_created_two_explicit_formula_for_the_parameter_referencing_a_dynamic_formula()
       {
          _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "A").GetSingleChildByName<IParameter>(ConstantsForSpecs.SumProcessRate)
             .Formula.ShouldBeAnInstanceOf<ExplicitFormula>();

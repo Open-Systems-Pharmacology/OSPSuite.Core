@@ -4,6 +4,7 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
@@ -72,6 +73,12 @@ namespace OSPSuite.Infrastructure.Import.Services
       IReadOnlyList<MetaDataCategory> DefaultMetaDataCategories();
 
       /// <summary>
+      ///    Creates a default list of ColumnInfos that could still be modified by the caller
+      /// </summary>
+      /// <returns>a list of meta data categories</returns>
+      IReadOnlyList<ColumnInfo> ColumnInfosForObservedData();
+
+      /// <summary>
       ///    Compares if two data repositories come from the same data
       /// </summary>
       /// <param name="sourceDataRepository">source DataRepository to compare with</param>
@@ -93,10 +100,57 @@ namespace OSPSuite.Infrastructure.Import.Services
    public abstract class AbstractDataImporter : IDataImporter
    {
       protected readonly IImporter _importer;
+      private readonly IDimensionFactory _dimensionFactory;
 
-      protected AbstractDataImporter(IImporter importer)
+      protected AbstractDataImporter(IImporter importer, IDimensionFactory dimensionFactory)
       {
          _importer = importer;
+         _dimensionFactory = dimensionFactory;
+      }
+
+      public virtual IReadOnlyList<ColumnInfo> ColumnInfosForObservedData()
+      {
+         var columns = new List<ColumnInfo>();
+
+         var timeDimension = _dimensionFactory.Dimension(Constants.Dimension.TIME);
+         var timeColumn = new ColumnInfo
+         {
+            DefaultDimension = timeDimension,
+            Name = Constants.Dimension.TIME,
+            DisplayName = Constants.Dimension.TIME,
+            IsMandatory = true,
+         };
+
+         timeColumn.SupportedDimensions.Add(timeDimension);
+         columns.Add(timeColumn);
+
+         var mainDimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
+         var measurementInfo = new ColumnInfo
+         {
+            DefaultDimension = mainDimension,
+            Name = Constants.MEASUREMENT,
+            DisplayName = Constants.MEASUREMENT,
+            IsMandatory = true,
+            BaseGridName = timeColumn.Name
+         };
+
+         addDimensionsTo(measurementInfo);
+         columns.Add(measurementInfo);
+
+         var errorInfo = new ColumnInfo
+         {
+            DefaultDimension = mainDimension,
+            Name = Constants.ERROR,
+            DisplayName = Constants.ERROR,
+            IsMandatory = false,
+            BaseGridName = timeColumn.Name,
+            RelatedColumnOf = measurementInfo.Name
+         };
+
+         addDimensionsTo(errorInfo);
+         columns.Add(errorInfo);
+
+         return columns;
       }
 
       public abstract bool AreFromSameMetaDataCombination(DataRepository sourceDataRepository, DataRepository targetDataRepository);
@@ -119,6 +173,15 @@ namespace OSPSuite.Infrastructure.Import.Services
          return configuration;
       }
 
+      private void addDimensionsTo(ColumnInfo columnInfo)
+      {
+         var timeDimension = _dimensionFactory.Dimension(Constants.Dimension.TIME);
+
+         foreach (var dimension in _dimensionFactory.DimensionsSortedByName.Where(x => x != timeDimension))
+         {
+            columnInfo.SupportedDimensions.Add(dimension);
+         }
+      }
 
       public virtual IReadOnlyList<MetaDataCategory> DefaultMetaDataCategories()
       {

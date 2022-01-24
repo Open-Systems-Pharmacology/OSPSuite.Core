@@ -1,4 +1,5 @@
-﻿using OSPSuite.Utility.Extensions;
+﻿using System.Collections.Generic;
+using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Maths.Random;
 
 namespace OSPSuite.Core.Domain.Formulas
@@ -37,8 +38,8 @@ namespace OSPSuite.Core.Domain.Formulas
       /// </summary>
       /// <param name = "randomGenerator">Used to generate uniform or gaussian deviates</param>
       /// <param name = "refObject">reference object used to retrieve distribution parameters</param>
-      /// <param name = "min">The generatd value should be bigger than min</param>
-      /// <param name = "max">The generatd value should be smaller than max</param>
+      /// <param name = "min">The generated value should be bigger than min</param>
+      /// <param name = "max">The generated value should be smaller than max</param>
       double RandomDeviate(RandomGenerator randomGenerator, IUsingFormula refObject, double min, double max);
 
       /// <summary>
@@ -58,11 +59,14 @@ namespace OSPSuite.Core.Domain.Formulas
          return CalculatePercentileForValue(quantity.Value, refObject);
       }
 
+   
+
       public abstract double CalculatePercentileForValue(double value, IUsingFormula refObject);
       public abstract double CalculateValueFromPercentile(double percentile, IUsingFormula refObject);
       public abstract double ProbabilityDensityFor(double value, IUsingFormula refObject);
       public abstract double RandomDeviate(RandomGenerator randomGenerator, IUsingFormula refObject, double min, double max);
       public abstract double RandomDeviate(RandomGenerator randomGenerator, IUsingFormula refObject);
+
 
       protected virtual double Deviation(IUsingFormula refObject)
       {

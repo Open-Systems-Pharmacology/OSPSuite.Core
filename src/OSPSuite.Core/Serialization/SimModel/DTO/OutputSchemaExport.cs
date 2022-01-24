@@ -29,9 +29,7 @@ namespace OSPSuite.Core.Serialization.SimModel.DTO
             if (StartTime == EndTime)
                return Constants.MIN_NUMBER_OF_POINTS_PER_INTERVAL; //just a single point
 
-            return Math.Min(
-               Math.Max(Constants.MIN_NUMBER_OF_POINTS_PER_INTERVAL, (int) Math.Round(Resolution * (EndTime - StartTime)) + 1),
-               Constants.MAX_NUMBER_OF_POINTS_PER_INTERVAL);
+            return Math.Max(Constants.MIN_NUMBER_OF_POINTS_PER_INTERVAL, (int) Math.Round(Resolution * (EndTime - StartTime)) + 1);
          }
       }
    }

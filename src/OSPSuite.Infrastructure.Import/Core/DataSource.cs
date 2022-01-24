@@ -157,8 +157,7 @@ namespace OSPSuite.Infrastructure.Import.Core
                   {
                      var measurementColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == column.Name);
                      var errorColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == relatedColumn.Name);
-
-                     if (errorColumn.Key == null)
+                     if (errorColumn.Key == null || errorColumn.Key.ErrorDeviation == Constants.STD_DEV_GEOMETRIC)
                         continue;
 
                      if (errorColumn.Value != null && measurementColumn.Value.Count != errorColumn.Value.Count)
@@ -208,13 +207,14 @@ namespace OSPSuite.Infrastructure.Import.Core
                {
                   var column = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == columnInfo.Name);
 
-                  if (column.Key == null)
+                  if (column.Key == null || column.Key.ErrorDeviation == Constants.STD_DEV_GEOMETRIC)
                         continue;
 
                   //if unit comes from a column
                   if (column.Key.Column.Dimension == null)
                   {
                      var firstNonEmptyUnit = column.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit));
+                     
                      var dimensionOfFirstUnit = columnInfo.SupportedDimensions.FirstOrDefault(x => x.FindUnit(firstNonEmptyUnit.Unit, ignoreCase: true) != null);
 
                      for (var i = 0; i < column.Value.Count(); i++)

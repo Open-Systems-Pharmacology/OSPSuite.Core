@@ -6,6 +6,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Core;
@@ -19,6 +20,7 @@ namespace OSPSuite.UI.Services
       protected IDialogCreator _dialogCreator;
       protected IImporter _importer;
       protected IApplicationController _applicationController;
+      protected IDimensionFactory _dimensionFactory;
       protected IImporterReloadPresenter _reloadPresenter;
       protected IReadOnlyList<DataRepository> _existingDataSets;
       protected IReadOnlyList<DataRepository> _dataSetsToImport;
@@ -32,6 +34,7 @@ namespace OSPSuite.UI.Services
          _importer = A.Fake<IImporter>();
          _applicationController = A.Fake<IApplicationController>();
          _reloadPresenter = A.Fake<IImporterReloadPresenter>();
+         _dimensionFactory = A.Fake<IDimensionFactory>();
 
          A.CallTo(() => _applicationController.Start<IImporterReloadPresenter>()).Returns(_reloadPresenter);
          A.CallTo(() => _reloadPresenter.Canceled()).Returns(false);
@@ -86,7 +89,7 @@ namespace OSPSuite.UI.Services
                }
             }
          };
-         sut = new DataImporter(_dialogCreator, _importer , _applicationController);
+         sut = new DataImporter(_dialogCreator, _importer , _applicationController, _dimensionFactory);
       }
    }
 

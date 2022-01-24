@@ -24,7 +24,7 @@ namespace OSPSuite.Infrastructure.Import
       protected Dictionary<ExtendedColumn, IList<SimulationPoint>> _parsedDataSetInconsistentLLOQ;
       protected Dictionary<ExtendedColumn, IList<SimulationPoint>> _parsedDataSetUnitFromColumn;
       protected DataSetToDataRepositoryMappingResult _result;
-
+      
       protected override void Context()
       {
          _dataSourceLLOQ = A.Fake<IDataSource>();

@@ -248,9 +248,46 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_return_nan_and_ensures_that_calls_is_not_successful()
       {
-         var res = sut.TryGetValueInDisplayUnit(out var result);
+         var (value, res) = sut.TryGetValueInDisplayUnit();
          res.ShouldBeFalse();
-         result.ShouldBeEqualTo(double.NaN);
+         value.ShouldBeEqualTo(double.NaN);
+      }
+   }
+
+   public class When_retrieving_the_value_of_a_parameter_for_which_the_formula_uses_object_not_available : concern_for_Parameter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Formula = new ExplicitFormula("1/P");
+         sut.Formula.AddObjectPath(new FormulaUsablePath("Organism", "Not_there"){Alias = "P"});
+      }
+
+      [Observation]
+      public void should_return_nan_and_ensures_that_calls_is_not_successful()
+      {
+         var (value, res) = sut.TryGetValueInDisplayUnit();
+         res.ShouldBeFalse();
+         value.ShouldBeEqualTo(double.NaN);
+      }
+   }
+
+
+   public class When_retrieving_the_value_of_a_parameter_for_which_the_formula_can_be_retrieved : concern_for_Parameter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Formula = new ExplicitFormula("2 + 6");
+      }
+
+      [Observation]
+      public void should_return_nan_and_ensures_that_calls_is_not_successful()
+      {
+         var (value, res) = sut.TryGetValueInDisplayUnit();
+         res.ShouldBeTrue();
+         value.ShouldBeEqualTo(8);
+         sut.Value.ShouldBeEqualTo(8);
       }
    }
 }

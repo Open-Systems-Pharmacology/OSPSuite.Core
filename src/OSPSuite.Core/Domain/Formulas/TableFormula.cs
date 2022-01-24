@@ -193,7 +193,7 @@ namespace OSPSuite.Core.Domain.Formulas
          OnChanged();
       }
 
-      protected override double CalculateFor(IEnumerable<IObjectReference> usedObjects, IUsingFormula dependentObject)
+      protected override double CalculateFor(IReadOnlyList<IObjectReference> usedObjects, IUsingFormula dependentObject)
       {
          return ValueAt(0);
       }

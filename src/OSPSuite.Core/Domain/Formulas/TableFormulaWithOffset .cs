@@ -60,7 +60,7 @@ namespace OSPSuite.Core.Domain.Formulas
       /// <summary>
       ///    Return the value of the table object for 0-offset value
       /// </summary>
-      protected override double CalculateFor(IEnumerable<IObjectReference> usedObjects, IUsingFormula dependentObject)
+      protected override double CalculateFor(IReadOnlyList<IObjectReference> usedObjects, IUsingFormula dependentObject)
       {
          var tableObject = GetTableObject(dependentObject);
 

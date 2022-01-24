@@ -381,7 +381,7 @@ namespace OSPSuite.Assets
          public static readonly string NanActionIgnoreRow = "Ignore the row";
          public static readonly string NanActionHint = "Defines what to do when an invalid measurement is found (invalid measurements are NaN or the number indicated in the NaN indicator). \"Ignore the row\" will import the data ignoring the currently invalid row. \"Prevent the import\" will throw an error and halt the import process";
          public static readonly string NanIndicator = "NaN indicator";
-         public static readonly string NanIndicatorHint = "Set a string to indicate how NaN should be detected";
+         public static readonly string NanIndicatorHint = "Type a number that will be interpreted as NaN(Not a Number). Text in numerical columns is interpreted as NaN anyway.";
          public static readonly string OpenFileConfirmation = "Opening a new file will drop your currently imported data. Are you sure you want to open a new file?";
          public static readonly string ExcelColumn = "Data Column/Value";
          public static readonly string MappingName = "Mapping Name";
@@ -1291,7 +1291,7 @@ namespace OSPSuite.Assets
       public static readonly string UnsupportedFileType = "The type of file that you are trying to open is not currently supported";
       public static readonly string CannotRemoveBaseGridColumnStillInUse = "Cannot remove base grid column still used by other columns";
 
-      public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) => $"Plotting data set number:{sheetName} produced the following error: {exceptionMessage}";
+      public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) => $"It was not possible to plot the data sets. Please, check your configuration for any missing grouping or meta data parameter. An error occur while plotting data set number:{sheetName + 1} produced the following error: {exceptionMessage}";
 
       public static string InvalidObservedDataFile(string exceptionMessage)
       {
@@ -1322,7 +1322,7 @@ namespace OSPSuite.Assets
       public static string BaseGridColumnNotFoundException(string columnName) => $"BaseGrid Column {columnName} unexpectedly not found.";
       public static string EmptyDataSet(string dataSetName) => $"Your settings ended up with following empty datasets: '{dataSetName}'. Please remove the data set from your data, filter it out or add at least one observation for it.";
 
-      public static string MissingColumnException(string missingColumn) => $"The mapped column '{missingColumn}' is missing from at least one of the sheets being loaded.";
+      public static string MissingColumnException(IReadOnlyList<string> missingColumns) => $"The mapped column(s) \n \n '{missingColumns.ToString("\n")}' \n \n is missing from at least one of the sheets being loaded.";
 
       public static string InvalidDimensionException(string invalidUnit, string mappingName) => $"The unit '{invalidUnit}' you are trying to assign to the mapping '{mappingName}' does not belong to a supported dimension of this mapping.";
       public static string InconsistentDimensionBetweenUnitsException(string mappingName) => $"For the mapping '{mappingName}' not all units in the mapped column belong to the same dimension.";
