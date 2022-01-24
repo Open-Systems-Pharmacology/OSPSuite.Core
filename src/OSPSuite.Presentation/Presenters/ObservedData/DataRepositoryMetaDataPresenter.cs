@@ -251,7 +251,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          _view.BindToMetaData(_metaDataDTOList);
 
          _view.MolWeightEditable = _observedDataConfiguration.MolWeightEditable;
-         var molWeightParameter = retrieveUniqueMolWeightParameter();
+         var molWeightParameter = retrieveUniqueMolWeightParameter(); //check what happens when editing multiple metaData
          var shouldBindToMolWeight = _observedDataConfiguration.MolWeightVisible;
          _view.MolWeightVisible = shouldBindToMolWeight;
 
@@ -263,7 +263,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
             _view.BindToLLOQ(lowerLimitsOfQuantification.First());
       }
 
-      private IEnumerable<IParameter> retrieveLLOQs()
+      private IEnumerable<IParameter> retrieveLLOQs()//check that this gets updated
       {
          return _allDataRepositories.SelectMany(x => x.AllButBaseGrid())
             .Where(x => x.DataInfo.LLOQ.HasValue)
@@ -283,10 +283,9 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
             .Where(x => x.HasValue)
             .Distinct().ToList();
 
-         if (molWeights.Count != 1)
-            return null;
+         var molWeightValue = molWeights.Count != 1 ? double.NaN : molWeights[0];
 
-         return _parameterFactory.CreateParameter(Constants.Parameters.MOL_WEIGHT, molWeights[0], _molWeightDimension);
+         return _parameterFactory.CreateParameter(Constants.Parameters.MOL_WEIGHT, molWeightValue, _molWeightDimension);
       }
 
       private bool isReadOnly(IExtendedProperty extendedProperty)

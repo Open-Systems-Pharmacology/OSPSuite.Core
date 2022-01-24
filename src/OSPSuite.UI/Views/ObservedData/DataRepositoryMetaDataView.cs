@@ -88,9 +88,9 @@ namespace OSPSuite.UI.Views.ObservedData
             .WithRepository(removeRepository)
             .WithFixedWidth(UIConstants.Size.EMBEDDED_BUTTON_WIDTH);
 
-         _molWeightBinder.Bind(x => x == null ? double.NaN : x.ValueInDisplayUnit)
+         _molWeightBinder.Bind(x => x.ValueInDisplayUnit)
             .To(tbMolWeight)
-            .WithFormat(dto => new UnitFormatter(dto == null ? _presenter.GetDefaultMolWeightUnit() : dto.DisplayUnit))
+            .WithFormat(dto => new UnitFormatter(dto.DisplayUnit))
             .OnValueUpdating += (o, e) => OnEvent(() => _presenter.SetMolWeight(e.OldValue, e.NewValue));
 
          _lowerLimitOfQuantificationBinder.Bind(x => x.ValueInDisplayUnit)
