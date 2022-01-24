@@ -70,6 +70,7 @@ namespace OSPSuite.R.Performance
 
       private static void doGC(IConcurrentSimulationRunner concurrentSimulationRunner)
       {
+         concurrentSimulationRunner.Dispose();
          concurrentSimulationRunner.GCCollectAndCompact();
          for (int i = 0; i < 4; i++)
          {
