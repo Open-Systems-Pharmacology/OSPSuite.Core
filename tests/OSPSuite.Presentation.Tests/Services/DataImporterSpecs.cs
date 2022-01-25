@@ -54,7 +54,7 @@ namespace OSPSuite.Presentation.Services
          _importer = IoC.Container.Resolve<IImporter>();
          _applicationController = A.Fake<ApplicationController>();
 
-         sut = new DataImporter(_dialogCreator, _importer, _applicationController);
+         sut = new DataImporter(_dialogCreator, _importer, _applicationController, _dimensionFactory);
 
          _importerConfiguration = new ImporterConfiguration {FileName = "IntegrationSample1.xlsx", NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}"};
          _importerConfiguration.AddToLoadedSheets("Sheet1");

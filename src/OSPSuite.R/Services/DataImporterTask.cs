@@ -65,7 +65,7 @@ namespace OSPSuite.R.Services
             NameOfMetaDataHoldingMolecularWeightInformation = Constants.ObservedData.MOLECULAR_WEIGHT,
             IgnoreSheetNamesAtImport = true
          };
-         _columnInfos = ((DataImporter)_dataImporter).DefaultPKSimImportConfiguration();
+         _columnInfos = _dataImporter.ColumnInfosForObservedData();
          _csvSeparatorSelector = csvSeparatorSelector;
       }
 
