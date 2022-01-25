@@ -251,7 +251,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          _view.BindToMetaData(_metaDataDTOList);
 
          _view.MolWeightEditable = _observedDataConfiguration.MolWeightEditable;
-         var molWeightParameter = retrieveUniqueMolWeightParameter(); //check what happens when editing multiple metaData
+         var molWeightParameter = retrieveUniqueMolWeightParameter();
          var shouldBindToMolWeight = _observedDataConfiguration.MolWeightVisible;
          _view.MolWeightVisible = shouldBindToMolWeight;
 
