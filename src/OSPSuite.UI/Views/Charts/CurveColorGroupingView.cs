@@ -28,6 +28,7 @@ namespace OSPSuite.UI.Views.Charts
 
       public void SetMetadata(IReadOnlyList<string> metaDataCategories)
       {
+         metaDataCheckedListBoxControl.Items.Clear();
          foreach (var metaDataCategory in metaDataCategories)
          {
             metaDataCheckedListBoxControl.Items.Add(metaDataCategory);
