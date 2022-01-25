@@ -22,7 +22,7 @@ namespace OSPSuite.R.Performance
          // var numberOfSimulationToRun = int.Parse(args[1]);
 
          var pkmlPath = @"C:\tests\v11\1455\testRunSimulations\BigSim2.pkml";
-         var numberOfSimulationToRun = 8;
+         var numberOfSimulationToRun = 12;
 
          for (int i = 0; i < 1; i++)
          {
