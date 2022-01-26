@@ -50,7 +50,7 @@ skip_commits:
 branches:
   only:
     - develop
-    - color-grouping-od-feature-branch
+    - color-grouping-od-feature-branch 
 
 test:
   assemblies:
