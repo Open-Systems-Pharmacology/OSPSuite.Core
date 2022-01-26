@@ -263,7 +263,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
             _view.BindToLLOQ(lowerLimitsOfQuantification.First());
       }
 
-      private IEnumerable<IParameter> retrieveLLOQs()//check that this gets updated
+      private IEnumerable<IParameter> retrieveLLOQs()
       {
          return _allDataRepositories.SelectMany(x => x.AllButBaseGrid())
             .Where(x => x.DataInfo.LLOQ.HasValue)

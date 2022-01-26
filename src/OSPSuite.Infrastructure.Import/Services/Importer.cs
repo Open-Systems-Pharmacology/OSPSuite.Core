@@ -193,7 +193,7 @@ namespace OSPSuite.Infrastructure.Import.Services
             dataRepo.ConfigurationId = id;
 
             //when the MW does not come from the column but from a the value of of the MW of a specific molecule
-            var molecularWeightFromMoleculeAsString = extractMoleculeDescription(metaDataCategories, dataImporterSettings, dataRepo);
+            var molecularWeightFromMoleculeAsString = extractMolecularWeight(metaDataCategories, dataImporterSettings, dataRepo);
             var molecularWeightValueAsString = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
 
             if (dataImporterSettings.CheckMolWeightAgainstMolecule && !molecularWeightFromMoleculeAsString.IsNullOrEmpty())
@@ -236,14 +236,19 @@ namespace OSPSuite.Infrastructure.Import.Services
          return _molWeightDimension.UnitValueToBaseUnitValue(_molWeightDimension.DefaultUnit, valueInDisplayUnit);
       }
 
-      private static string extractMoleculeDescription(IReadOnlyList<MetaDataCategory> metaDataCategories, DataImporterSettings dataImporterSettings, DataRepository dataRepo)
+      private static string extractMolecularWeight(IReadOnlyList<MetaDataCategory> metaDataCategories, DataImporterSettings dataImporterSettings, DataRepository dataRepo)
       {
-         var metaDataCategoryForMoleculeDescription =
-            (metaDataCategories?.FirstOrDefault(md => md.Name == dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation));
-         var moleculeDescription = metaDataCategoryForMoleculeDescription?.ListOfValues.FirstOrDefault(v =>
+         var metaDataCategoryForMoleculeDescriptions =
+            metaDataCategories?.Where(md => md.Name == dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation);
+
+         //if we find no molecules, or more than one molecules, we do not need to check
+         if (metaDataCategoryForMoleculeDescriptions == null || metaDataCategoryForMoleculeDescriptions.Count() != 1)
+            return null;
+
+         var molecularWeight = metaDataCategoryForMoleculeDescriptions.FirstOrDefault().ListOfValues.FirstOrDefault(v =>
             v.Key == dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)).Value;
          
-         return moleculeDescription;
+         return molecularWeight;
       }
 
       public (IReadOnlyList<DataSetToDataRepositoryMappingResult> DataRepositories, List<string> MissingSheets) ImportFromConfiguration
