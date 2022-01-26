@@ -189,60 +189,83 @@ namespace OSPSuite.Infrastructure.Import.Services
          for (var i = 0; i < dataSource.DataSets.SelectMany(ds => ds.Data).Count(); i++)
          {
             var dataRepoMapping = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i));
-            var dataRepo = dataRepoMapping.DataRepository;
-            dataRepo.ConfigurationId = id;
-
-            //when the MW does not come from the column but from a the value of of the MW of a specific molecule
-            var molecularWeightFromMoleculeAsString = extractMolecularWeight(metaDataCategories, dataImporterSettings, dataRepo);
-            var molecularWeightValueAsString = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
-
-            if (dataImporterSettings.CheckMolWeightAgainstMolecule && !molecularWeightFromMoleculeAsString.IsNullOrEmpty())
-            {
-               if (molecularWeightValueAsString.IsNullOrEmpty())
-               {
-                  molecularWeightValueAsString = molecularWeightFromMoleculeAsString;
-               }
-               else
-               {
-                  double.TryParse(molecularWeightFromMoleculeAsString, out var moleculeMolWeight);
-                  double.TryParse(molecularWeightValueAsString, out var molWeight);
-
-                  if (!ValueComparer.AreValuesEqual(moleculeMolWeight, molWeight))
-                  {
-                     throw new InconsistentMoleculeAndMolWeightException();
-                  }
-               }
-            }
-
-            if (!molecularWeightValueAsString.IsNullOrEmpty())
-            {
-               if (double.TryParse(molecularWeightValueAsString, out var molWeight))
-               {
-                  //we are assuming that the MW coming from the column in excel is always in g/mol, that's why we need this conversion here
-                  dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeightValueInCoreUnit(molWeight));
-               }
-            }
-
-            //We remove the extended property of MolWeight to avoid the duplication, since the MolWeight exists also in the DataRepository properties
-            dataRepo.ExtendedProperties.Remove(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
+            determineMolecularWeight(metaDataCategories, dataImporterSettings, id, dataRepoMapping);
             dataRepositories.Add(dataRepoMapping);
          }
 
          return dataRepositories;
       }
 
+      private void determineMolecularWeight(IReadOnlyList<MetaDataCategory> metaDataCategories, DataImporterSettings dataImporterSettings, string id,
+         DataSetToDataRepositoryMappingResult dataRepoMapping)
+      {
+         var dataRepo = dataRepoMapping.DataRepository;
+         dataRepo.ConfigurationId = id;
+
+         var molecularWeightFromMoleculeAsString = extractMolecularWeight(metaDataCategories, dataImporterSettings, dataRepo);
+         var molecularWeightValueAsString = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
+
+         //when the MW does not come from the column but from a the value of of the MW of a specific molecule
+         if (dataImporterSettings.CheckMolWeightAgainstMolecule && !molecularWeightFromMoleculeAsString.IsNullOrEmpty())
+         {
+            {
+               double.TryParse(molecularWeightFromMoleculeAsString, out var moleculeMolWeight);
+               double.TryParse(molecularWeightValueAsString, out var molWeight);
+
+               if (!ValueComparer.AreValuesEqual(moleculeMolWeight, molWeight))
+               {
+                  throw new InconsistentMoleculeAndMolWeightException();
+               }
+            }
+         }
+
+         //assign the MolWeight coming from the excel column or the assigned Molecule
+         if (!molecularWeightValueAsString.IsNullOrEmpty())
+         {
+            assignMolWeightToDataRepo(molecularWeightValueAsString, dataRepo);
+         }
+         else if (!molecularWeightFromMoleculeAsString.IsNullOrEmpty())
+         {
+            assignMolWeightToDataRepo(molecularWeightFromMoleculeAsString, dataRepo);
+         }
+
+         //We remove the extended property of MolWeight to avoid the duplication, since the MolWeight exists also in the DataRepository properties
+         dataRepo.ExtendedProperties.Remove(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
+      }
+
+      private void assignMolWeightToDataRepo(string molecularWeightValueAsString, DataRepository dataRepo)
+      {
+         if (double.TryParse(molecularWeightValueAsString, out var molWeight))
+         {
+            //we are assuming that the MW coming from the column in excel is always in g/mol, that's why we need this conversion here
+            dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeightValueInCoreUnit(molWeight));
+         }
+      }
+
       private double molWeightValueInCoreUnit(double valueInDisplayUnit)
       {
          return _molWeightDimension.UnitValueToBaseUnitValue(_molWeightDimension.DefaultUnit, valueInDisplayUnit);
+      }
+      private static bool isMolWeightUnique(IReadOnlyList<MetaDataCategory> moleculeDescriptions, string moleculeName)
+      {
+         if (!moleculeDescriptions.Any()) return false;
+
+         var moleculeWeightOfFirstMolecule = moleculeDescriptions.FirstOrDefault().ListOfValues.FirstOrDefault(v =>
+            v.Key == moleculeName).Value;
+
+         return moleculeDescriptions.All(x =>
+            x.ListOfValues.FirstOrDefault(v => v.Key == moleculeName).Value == moleculeWeightOfFirstMolecule);
       }
 
       private static string extractMolecularWeight(IReadOnlyList<MetaDataCategory> metaDataCategories, DataImporterSettings dataImporterSettings, DataRepository dataRepo)
       {
          var metaDataCategoryForMoleculeDescriptions =
-            metaDataCategories?.Where(md => md.Name == dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation);
+            metaDataCategories?.Where(md => md.Name == dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation).ToList();
 
-         //if we find no molecules, or more than one molecules, we do not need to check
-         if (metaDataCategoryForMoleculeDescriptions == null || metaDataCategoryForMoleculeDescriptions.Count() != 1)
+         var moleculeName = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation);
+         //if we find no molecules, or more than one molecules with different molWeights, we do not need to check
+         if (metaDataCategoryForMoleculeDescriptions == null ||
+             isMolWeightUnique(metaDataCategoryForMoleculeDescriptions, moleculeName))
             return null;
 
          var molecularWeight = metaDataCategoryForMoleculeDescriptions.FirstOrDefault().ListOfValues.FirstOrDefault(v =>
