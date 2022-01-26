@@ -248,13 +248,15 @@ namespace OSPSuite.Infrastructure.Import.Services
       }
       private static bool isMolWeightUnique(IReadOnlyList<MetaDataCategory> moleculeDescriptions, string moleculeName)
       {
-         if (!moleculeDescriptions.Any()) return false;
+         //if there is no moleculeCategory, or no specified molecules
+         if (!moleculeDescriptions.Any() || !moleculeDescriptions.FirstOrDefault().ListOfValues.Any()) return false;
 
          var moleculeWeightOfFirstMolecule = moleculeDescriptions.FirstOrDefault().ListOfValues.FirstOrDefault(v =>
             v.Key == moleculeName).Value;
 
-         return moleculeDescriptions.All(x =>
-            x.ListOfValues.FirstOrDefault(v => v.Key == moleculeName).Value == moleculeWeightOfFirstMolecule);
+         return moleculeDescriptions.FirstOrDefault().ListOfValues
+            .Where(x => x.Key == moleculeName)
+            .All(v => v.Value == moleculeWeightOfFirstMolecule);
       }
 
       private static string extractMolecularWeight(IReadOnlyList<MetaDataCategory> metaDataCategories, DataImporterSettings dataImporterSettings, DataRepository dataRepo)
@@ -265,11 +267,11 @@ namespace OSPSuite.Infrastructure.Import.Services
          var moleculeName = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation);
          //if we find no molecules, or more than one molecules with different molWeights, we do not need to check
          if (metaDataCategoryForMoleculeDescriptions == null ||
-             isMolWeightUnique(metaDataCategoryForMoleculeDescriptions, moleculeName))
+             !isMolWeightUnique(metaDataCategoryForMoleculeDescriptions, moleculeName))
             return null;
 
-         var molecularWeight = metaDataCategoryForMoleculeDescriptions.FirstOrDefault().ListOfValues.FirstOrDefault(v =>
-            v.Key == dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)).Value;
+         var molecularWeight = metaDataCategoryForMoleculeDescriptions.FirstOrDefault().ListOfValues.FirstOrDefault(x =>
+            x.Key == moleculeName).Value;
          
          return molecularWeight;
       }
