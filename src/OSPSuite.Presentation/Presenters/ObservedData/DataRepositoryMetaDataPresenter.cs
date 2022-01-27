@@ -252,7 +252,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
          _view.MolWeightEditable = _observedDataConfiguration.MolWeightEditable;
          var molWeightParameter = retrieveUniqueMolWeightParameter();
-         var shouldBindToMolWeight = _observedDataConfiguration.MolWeightVisible;
+         var shouldBindToMolWeight = molWeightParameter != null && _observedDataConfiguration.MolWeightVisible;
          _view.MolWeightVisible = shouldBindToMolWeight;
 
          if (shouldBindToMolWeight)
@@ -283,7 +283,10 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
             .Where(x => x.HasValue)
             .Distinct().ToList();
 
-         var molWeightValue = molWeights.Count != 1 ? double.NaN : molWeights[0];
+         if (molWeights.Count > 1)
+            return null;
+
+         var molWeightValue = molWeights.Count == 0 ? double.NaN : molWeights[0];
 
          return _parameterFactory.CreateParameter(Constants.Parameters.MOL_WEIGHT, molWeightValue, _molWeightDimension);
       }
