@@ -259,6 +259,23 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
+   public class When_binding_to_single_observed_data_with_no_molweight_set : concern_for_DataRepositoryMetaDataPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _observedDataConfiguration.MolWeightEditable).Returns(true);
+         A.CallTo(() => _observedDataConfiguration.MolWeightVisible).Returns(true);
+         sut.EditObservedData(_dataRepository);
+      }
+
+      [Observation]
+      public void should_show_the_molweight()
+      {
+         _view.MolWeightVisible.ShouldBeTrue();
+      }
+   }
+
    public class When_binding_to_a_set_of_observed_data_containing_same_molweight_and_molweight_can_be_edited : concern_for_DataRepositoryMetaDataPresenter
    {
       private IParameter _molWeightParameter;
