@@ -206,7 +206,9 @@ namespace OSPSuite.Infrastructure.Import.Services
          var molecularWeightValueAsString = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
 
          //when the MW does not come from the column but from a the value of of the MW of a specific molecule
-         if (dataImporterSettings.CheckMolWeightAgainstMolecule && !molecularWeightFromMoleculeAsString.IsNullOrEmpty())
+         if (dataImporterSettings.CheckMolWeightAgainstMolecule && 
+             !molecularWeightFromMoleculeAsString.IsNullOrEmpty() &&
+             !molecularWeightValueAsString.IsNullOrEmpty())
          {
             {
                double.TryParse(molecularWeightFromMoleculeAsString, out var moleculeMolWeight);
