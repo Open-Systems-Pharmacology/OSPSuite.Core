@@ -202,7 +202,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       public Unit GetDefaultMolWeightUnit()
       {
-         return _dimensionFactory.Dimensions.First(x => x.Name == Constants.Dimension.MOLECULAR_WEIGHT).DefaultUnit;
+         return _dimensionFactory.TryGetDimension(Constants.Dimension.MOLECULAR_WEIGHT, out var dimension) ? dimension.DefaultUnit : null;
       }
 
       private double molWeightValueInCoreUnit(double valueInDisplayUnit)

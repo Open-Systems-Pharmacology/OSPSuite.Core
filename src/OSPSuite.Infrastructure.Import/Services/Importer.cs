@@ -189,19 +189,18 @@ namespace OSPSuite.Infrastructure.Import.Services
          for (var i = 0; i < dataSource.DataSets.SelectMany(ds => ds.Data).Count(); i++)
          {
             var dataRepoMapping = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i));
-            determineMolecularWeight(metaDataCategories, dataImporterSettings, id, dataRepoMapping);
+            var dataRepo = dataRepoMapping.DataRepository;
+            dataRepo.ConfigurationId = id;
+            determineMolecularWeight(metaDataCategories, dataImporterSettings, dataRepo);
             dataRepositories.Add(dataRepoMapping);
          }
 
          return dataRepositories;
       }
 
-      private void determineMolecularWeight(IReadOnlyList<MetaDataCategory> metaDataCategories, DataImporterSettings dataImporterSettings, string id,
-         DataSetToDataRepositoryMappingResult dataRepoMapping)
+      private void determineMolecularWeight(IReadOnlyList<MetaDataCategory> metaDataCategories, DataImporterSettings dataImporterSettings,
+         DataRepository dataRepo)
       {
-         var dataRepo = dataRepoMapping.DataRepository;
-         dataRepo.ConfigurationId = id;
-
          var molecularWeightFromMoleculeAsString = extractMolecularWeight(metaDataCategories, dataImporterSettings, dataRepo);
          var molecularWeightValueAsString = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
 

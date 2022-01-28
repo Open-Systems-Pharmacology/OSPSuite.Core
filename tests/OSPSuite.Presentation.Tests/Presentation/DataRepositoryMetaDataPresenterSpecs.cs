@@ -286,7 +286,7 @@ namespace OSPSuite.Presentation.Presentation
          _molWeightParameter = A.Fake<IParameter>();
          _dataColumn1.DataInfo.MolWeight = 50;
          _dataColumn2.DataInfo.MolWeight = 50;
-         A.CallTo(() => _observedDataConfiguration.MolWeightAlwaysEditable).Returns(true);
+         A.CallTo(() => _observedDataConfiguration.MolWeightAlwaysEditable).Returns(false);
          A.CallTo(() => _observedDataConfiguration.MolWeightVisible).Returns(true);
          A.CallTo(_parameterFactory).WithReturnType<IParameter>().Returns(_molWeightParameter);
          sut.EditObservedData(_dataRepository);
@@ -315,6 +315,7 @@ namespace OSPSuite.Presentation.Presentation
          _molWeightParameter = A.Fake<IParameter>();
          _dataColumn1.DataInfo.MolWeight = 50;
          _dataColumn2.DataInfo.MolWeight = 50;
+         _dataRepository.ExtendedProperties.Add(new ExtendedProperty<string> { Name = "Molecule", Value = "DummyMolecule" });
          A.CallTo(() => _observedDataConfiguration.MolWeightAlwaysEditable).Returns(false);
          A.CallTo(() => _observedDataConfiguration.MolWeightVisible).Returns(true);
          A.CallTo(_parameterFactory).WithReturnType<IParameter>().Returns(_molWeightParameter);
