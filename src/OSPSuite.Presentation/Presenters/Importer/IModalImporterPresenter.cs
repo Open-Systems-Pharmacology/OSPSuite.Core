@@ -33,6 +33,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       private readonly IImporterPresenter _importerPresenter;
       private readonly IDialogCreator _dialogCreator;
+      private bool _shouldPromptBeforeClose = false;
 
       public ModalImporterPresenter(IModalImporterView view, IImporterPresenter importerPresenter, IDialogCreator dialogCreator) : base(view)
       {
@@ -41,12 +42,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          AddSubPresenters(importerPresenter);
       }
 
-      private bool _shouldPromtBeforeClose = false;
       public override bool ShouldClose
       {
          get
          {
-            if (!_shouldPromtBeforeClose)
+            if (!_shouldPromptBeforeClose)
                return true;
             var shouldCancel = _dialogCreator.MessageBoxYesNo(Captions.ReallyCancel);
             return shouldCancel == ViewResult.Yes;
@@ -111,10 +111,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          _importerPresenter.OnTriggerImport += (s, d) => 
          {
-            _shouldPromtBeforeClose = false;
-            _view.CloseOnImport(); 
+            _shouldPromptBeforeClose = false;
+            _view.CloseView(); 
          };
-         _shouldPromtBeforeClose = true;
+         _shouldPromptBeforeClose = true;
          _view.Display();
          return (results, configuration);
       }

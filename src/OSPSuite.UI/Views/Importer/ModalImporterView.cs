@@ -37,11 +37,6 @@ namespace OSPSuite.UI.Views.Importer
          importerPanelControl.FillWith(view);
       }
 
-      public void CloseOnImport()
-      {
-         DialogResult = DialogResult.OK;
-      }
-
       public void SetBaseView(IView baseView)
       {
          importerPanelControl.FillWith(baseView);
