@@ -44,7 +44,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          DataImporterSettings dataImporterSettings
       );
 
-      void CalculateFormat(IDataSourceFile dataSource, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName);
+      IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName);
    }
 
    public class Importer : IImporter
@@ -113,13 +113,12 @@ namespace OSPSuite.Infrastructure.Import.Services
          throw new UnsupportedFormatException(dataSource.Path);
       }
 
-      public void CalculateFormat(IDataSourceFile dataSource, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName)
+      public IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName)
       {
          if (sheetName == null)
             throw new UnsupportedFormatException(dataSource.Path);
 
-         dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets[sheetName].RawData, columnInfos, metaDataCategories).ToList();
-         dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();
+         return AvailableFormats(dataSource.DataSheets[sheetName].RawData, columnInfos, metaDataCategories);
       }
 
       public IEnumerable<string> NamesFromConvention

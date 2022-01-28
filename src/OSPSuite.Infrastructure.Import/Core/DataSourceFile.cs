@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
 
@@ -23,7 +24,16 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public IDataFormat Format { get; set; }
 
-      public IList<IDataFormat> AvailableFormats { get; set; }
+      private IList<IDataFormat> _availableFormats;
+      public IList<IDataFormat> AvailableFormats 
+      {
+         get => _availableFormats; 
+         set
+         {
+            _availableFormats = value;
+            Format = value.FirstOrDefault();
+         }
+      }
 
       protected DataSourceFile(IImportLogger logger)
       {
