@@ -249,7 +249,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          _allDataRepositories.ToList().IntersectingMetaData().Each(x => _metaDataDTOList.Add(createDTO(x)));
          _view.BindToMetaData(_metaDataDTOList);
 
-         _view.MolWeightEditable = _observedDataConfiguration.MolWeightEditable;
+         _view.MolWeightEditable = _observedDataConfiguration.MolWeightAlwaysEditable || _allDataRepositories.Any(x => x.ExtendedProperties.Contains(Captions.Molecule));
+
          var molWeightParameter = retrieveUniqueMolWeightParameter();
          var shouldBindToMolWeight = molWeightParameter != null && _observedDataConfiguration.MolWeightVisible;
          _view.MolWeightVisible = shouldBindToMolWeight;
