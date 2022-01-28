@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NPOI.HSSF.Record.Chart;
 using OSPSuite.Assets;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
