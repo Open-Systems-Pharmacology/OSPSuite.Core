@@ -65,7 +65,10 @@ namespace OSPSuite.Presentation.Services
          _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
          _dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
          _dataImporterSettings.IgnoreSheetNamesAtImport = true;
+         _dataImporterSettings.CheckMolWeightAgainstMolecule = false;
          _columnInfos = getDefaultColumnInfos();
+
+         _metaDataCategories.First(md => md.Name == _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation).ListOfValues.Add("TestInputMolecule", "233");
       }
 
       protected string getFileFullName(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", fileName);
@@ -160,7 +163,7 @@ namespace OSPSuite.Presentation.Services
             new MetaDataFormatParameter("VenousBlood", "Organ", false),
             new MetaDataFormatParameter("TestInputMolecule", "Molecule", false)
          };
-         var parameterListMolecularWeight = parameterList;
+         var parameterListMolecularWeight = new List<DataFormatParameter> (parameterList);
          parameterListMolecularWeight.Add(new MetaDataFormatParameter("Molecular Weight", "Molecular Weight", true));
          _importerConfiguration.CloneParametersFrom(parameterList);
          _importerConfigurationMW.CloneParametersFrom(parameterListMolecularWeight);
@@ -216,14 +219,42 @@ namespace OSPSuite.Presentation.Services
           A.CallTo(() => _dialogCreator.MessageBoxError(Error.UnsupportedFileFormat(getFileFullName("sample1.xlsx")))).MustHaveHappened();
       }
 
+
+      //so we should simply pass to the metadataCategories the value of the MW and check against it.
+      //then check that the exception gets thrown when we have set teh dataImporterSettings (let's make this default)
+      //and it does not get thrown when we are doing for MoBi. For MoBi also check that we get the correct MW (the one coming from the
+      //excel, not the Molecule)
       [Observation]
-      public void should_convert_MW_correctly_excel()
+      public void should_convert_MW_correctly_excel_not_checking()
       {
          var result = 
          sut.ImportFromConfiguration(_importerConfigurationMW, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(
                "IntegrationSample1.xlsx"));
          result[0].AllButBaseGridAsArray[0].DataInfo.MolWeight.ShouldBeEqualTo(2.08E-07);
+      }
+
+      [Observation]
+      public void should_not_allow_import_when_checking_MW_against_molecule()
+      {
+         _dataImporterSettings.CheckMolWeightAgainstMolecule = true;
+
+            sut.ImportFromConfiguration(_importerConfigurationMW, _metaDataCategories, _columnInfos, _dataImporterSettings,
+               getFileFullName(
+                  "IntegrationSample1.xlsx"));
+         A.CallTo(() => _dialogCreator.MessageBoxError(Error.InconsistentMoleculeAndMolWeightException)).MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_correctly_get_MW_from_molecule()
+      {
+         _dataImporterSettings.CheckMolWeightAgainstMolecule = true;
+
+         var result =
+         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName(
+               "IntegrationSample1.xlsx"));
+         result[0].AllButBaseGridAsArray[0].DataInfo.MolWeight.ShouldBeEqualTo(2.3300000000000001E-07d);
       }
 
       [Observation]

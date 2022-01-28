@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Domain.Services
       IEnumerable<string> PredefinedValuesFor(string metaData);
       IReadOnlyList<string> DefaultMetaDataCategories { get; }
       IReadOnlyList<string> ReadOnlyMetaDataCategories { get; }
-      bool MolWeightEditable { get; }
+      bool MolWeightAlwaysEditable { get; }
       bool MolWeightVisible { get; }
    }
 }

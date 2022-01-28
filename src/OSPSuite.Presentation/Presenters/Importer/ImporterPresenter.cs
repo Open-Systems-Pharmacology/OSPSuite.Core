@@ -327,7 +327,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
             foreach (var element in listOfNonExistingColumns)
             {
-               configuration.Parameters.Remove(element);
+               configuration.RemoveParameter(element);
             }
          }
 
