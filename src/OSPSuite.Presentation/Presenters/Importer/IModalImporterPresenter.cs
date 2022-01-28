@@ -41,10 +41,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
          AddSubPresenters(importerPresenter);
       }
 
+      private bool _shouldPromtBeforeClose = false;
       public override bool ShouldClose
       {
          get
          {
+            if (!_shouldPromtBeforeClose)
+               return true;
             var shouldCancel = _dialogCreator.MessageBoxYesNo(Captions.ReallyCancel);
             return shouldCancel == ViewResult.Yes;
          }
@@ -106,7 +109,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
             results.Each(r => r.ConfigurationId = configurationId);
          }
 
-         _importerPresenter.OnTriggerImport += (s, d) => { _view.CloseOnImport(); };
+         _importerPresenter.OnTriggerImport += (s, d) => 
+         {
+            _shouldPromtBeforeClose = false;
+            _view.CloseOnImport(); 
+         };
+         _shouldPromtBeforeClose = true;
          _view.Display();
          return (results, configuration);
       }
