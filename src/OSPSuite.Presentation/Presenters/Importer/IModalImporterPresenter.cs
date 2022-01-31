@@ -34,12 +34,22 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IImporterPresenter _importerPresenter;
       private readonly IDialogCreator _dialogCreator;
       private bool _shouldPromptBeforeClose = false;
+      private IReadOnlyList<DataRepository> _results;
+      private ImporterConfiguration _configuration;
 
       public ModalImporterPresenter(IModalImporterView view, IImporterPresenter importerPresenter, IDialogCreator dialogCreator) : base(view)
       {
          _dialogCreator = dialogCreator;
          _importerPresenter = importerPresenter;
          AddSubPresenters(importerPresenter);
+
+         _importerPresenter.OnTriggerImport += (s, d) =>
+         {
+            _results = d.DataRepositories;
+            _configuration = _importerPresenter.UpdateAndGetConfiguration();
+            _shouldPromptBeforeClose = false;
+            _view.CloseView();
+         };
       }
 
       public override bool ShouldClose
@@ -93,30 +103,21 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) importDataSets(string configurationId)
       {
-         IReadOnlyList<DataRepository> results = Array.Empty<DataRepository>();
-         ImporterConfiguration configuration = null;
+         
          _view.FillImporterPanel(_importerPresenter.BaseView);
 
-         _importerPresenter.OnTriggerImport += (s, d) =>
-         {
-            results = d.DataRepositories;
-            configuration = _importerPresenter.UpdateAndGetConfiguration();
-         };
+         _results = Array.Empty<DataRepository>();
+         _configuration = null;
 
          if (!string.IsNullOrEmpty(configurationId))
          {
-            configuration.Id = configurationId;
-            results.Each(r => r.ConfigurationId = configurationId);
+            _configuration.Id = configurationId;
+            _results.Each(r => r.ConfigurationId = configurationId);
          }
 
-         _importerPresenter.OnTriggerImport += (s, d) => 
-         {
-            _shouldPromptBeforeClose = false;
-            _view.CloseView(); 
-         };
          _shouldPromptBeforeClose = true;
          _view.Display();
-         return (results, configuration);
+         return (_results, _configuration);
       }
    }
 }
