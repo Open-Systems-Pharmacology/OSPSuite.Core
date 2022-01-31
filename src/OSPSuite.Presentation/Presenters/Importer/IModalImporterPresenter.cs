@@ -33,7 +33,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       private readonly IImporterPresenter _importerPresenter;
       private readonly IDialogCreator _dialogCreator;
-      private bool _shouldPromptBeforeClose = false;
       private IReadOnlyList<DataRepository> _results;
       private ImporterConfiguration _configuration;
 
@@ -47,20 +46,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             _results = d.DataRepositories;
             _configuration = _importerPresenter.UpdateAndGetConfiguration();
-            _shouldPromptBeforeClose = false;
             _view.CloseView();
          };
       }
 
       public override bool ShouldClose
       {
-         get
-         {
-            if (!_shouldPromptBeforeClose)
-               return true;
-            var shouldCancel = _dialogCreator.MessageBoxYesNo(Captions.ReallyCancel);
-            return shouldCancel == ViewResult.Yes;
-         }
+         get => _dialogCreator.MessageBoxYesNo(Captions.ReallyCancel) == ViewResult.Yes;
       }
 
       public IReadOnlyList<DataRepository> ImportDataSets(
@@ -115,7 +107,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
             _results.Each(r => r.ConfigurationId = configurationId);
          }
 
-         _shouldPromptBeforeClose = true;
          _view.Display();
          return (_results, _configuration);
       }

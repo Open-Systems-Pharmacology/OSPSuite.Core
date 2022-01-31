@@ -27,10 +27,7 @@ namespace OSPSuite.UI.Views.Importer
          _modalImporterPresenter = presenter;
       }
 
-      protected override void OnFormClosing(FormClosingEventArgs e)
-      {
-         e.Cancel = !_modalImporterPresenter.ShouldClose;
-      }
+      protected override bool ShouldClose => _modalImporterPresenter.ShouldClose;
 
       public void FillImporterPanel(IView view)
       {
