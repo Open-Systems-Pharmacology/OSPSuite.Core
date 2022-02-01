@@ -5,6 +5,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
+using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
@@ -25,6 +26,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private MappingProblem _mappingProblem = new MappingProblem() {MissingMapping = new List<string>(), MissingUnit = new List<string>()};
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       private readonly IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
+      protected readonly IDialogCreator _dialogCreator;
 
       public ColumnMappingPresenter
       (
@@ -32,9 +34,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IImporter importer,
          IMappingParameterEditorPresenter mappingParameterEditorPresenter,
          IMetaDataParameterEditorPresenter metaDataParameterEditorPresenter,
-         IDimensionFactory dimensionFactory
+         IDimensionFactory dimensionFactory,
+         IDialogCreator dialogCreator
       ) : base(view)
       {
+         _dialogCreator = dialogCreator;
          _importer = importer; 
          _mappingParameterEditorPresenter = mappingParameterEditorPresenter;
          _metaDataParameterEditorPresenter = metaDataParameterEditorPresenter;
@@ -605,6 +609,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void ResetMappingBasedOnCurrentSheet()
       {
+         if (_dialogCreator.MessageBoxYesNo(Captions.Importer.ActionWillEraseLoadedData) == ViewResult.No)
+            return;
+            
          OnResetMappingBasedOnCurrentSheet(this, new EventArgs());
       }
 

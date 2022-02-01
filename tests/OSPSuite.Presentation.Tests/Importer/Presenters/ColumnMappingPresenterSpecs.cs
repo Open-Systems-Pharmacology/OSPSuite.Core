@@ -12,6 +12,8 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Helpers;
+using OSPSuite.Core.Services;
+using OSPSuite.Assets;
 
 namespace OSPSuite.Presentation.Importer.Presenters 
 {
@@ -32,6 +34,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("?", "") }),
          new GroupByDataFormatParameter("Study id")
       };
+      protected IDialogCreator _dialogCreator;
 
       public override void GlobalContext()
       {
@@ -44,6 +47,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _importer.CheckWhetherAllDataColumnsAreMapped(A<IReadOnlyList<ColumnInfo>>.Ignored,
             A<IEnumerable<DataFormatParameter>>.Ignored)).Returns(new MappingProblem()
             {MissingMapping = new List<string>(), MissingUnit = new List<string>()});
+         _dialogCreator = A.Fake<IDialogCreator>();
       }
 
       protected void UpdateSettings()
@@ -88,7 +92,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          };
          _mappingParameterEditorPresenter = A.Fake<IMappingParameterEditorPresenter>();
          _metaDataParameterEditorPresenter = A.Fake<IMetaDataParameterEditorPresenter>();
-         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter, _dimensionFactory);
+         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter, _dimensionFactory, _dialogCreator);
       }
    }
 
@@ -416,6 +420,20 @@ namespace OSPSuite.Presentation.Importer.Presenters
             _columnInfos[2]
          ));
          (res.Any(r => r.Label.StartsWith("Col1")) && res.Any( c => c.Label.StartsWith("Col2")) && res.Any(r => r.Label.StartsWith("Error")) && res.Any(r => r.Label.StartsWith("Concentration"))).ShouldBeTrue();
+      }
+   }
+
+   public class When_reseting_mappings_based_on_sheet : concern_for_ColumnMappingPresenter
+   {
+      protected override void Because()
+      {
+         sut.ResetMappingBasedOnCurrentSheet();
+      }
+
+      [Observation]
+      public void should_prompt_user()
+      {
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.Importer.ActionWillEraseLoadedData, ViewResult.Yes)).MustHaveHappened();
       }
    }
 }
