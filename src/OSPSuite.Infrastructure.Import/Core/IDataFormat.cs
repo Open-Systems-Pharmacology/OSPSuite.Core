@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 
 namespace OSPSuite.Infrastructure.Import.Core
@@ -18,5 +19,6 @@ namespace OSPSuite.Infrastructure.Import.Core
       void CopyParametersFromConfiguration(OSPSuite.Core.Import.ImporterConfiguration configuration);
       IList<string> ExcelColumnNames { get; }
       IEnumerable<ParsedDataSet> Parse(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
+      UnitDescription ExtractUnits(string description, IReadOnlyList<IDimension> supportedDimensions);
    }
 }

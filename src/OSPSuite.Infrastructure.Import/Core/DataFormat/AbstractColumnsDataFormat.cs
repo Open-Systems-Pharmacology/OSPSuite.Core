@@ -110,6 +110,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       protected abstract UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions,  ref double rank);
 
+      public UnitDescription ExtractUnits(string description, IReadOnlyList<IDimension> supportedDimensions)
+      {
+         var rank = 0.0;
+         return ExtractUnits(description, null, null, supportedDimensions, ref rank);
+      }
+
       protected virtual void ExtractQualifiedHeadings(List<string> keys, List<string> missingKeys, IReadOnlyList<ColumnInfo> columnInfos, IUnformattedData data, ref double rank)
       {
          foreach (var header in columnInfos)

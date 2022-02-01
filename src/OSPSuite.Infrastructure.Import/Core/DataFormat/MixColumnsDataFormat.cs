@@ -31,6 +31,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          rank++;
          return lloqKey;
       }
+
       protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
       {
          var units = GetLastBracketsOfString(description);
@@ -41,6 +42,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             rank++;
             return new UnitDescription(unit);
          }
+
+         if (data == null)
+            return new UnitDescription();
 
          var unitKey = data.GetHeaders().FindHeader(description + "_UNIT");
          if (unitKey == null)
