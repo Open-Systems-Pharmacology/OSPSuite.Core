@@ -5,9 +5,11 @@ using System.IO;
 using System.Linq;
 using OSPSuite.Assets;
 using FakeItEasy;
+using NUnit.Framework;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Import;
@@ -143,8 +145,9 @@ namespace OSPSuite.Presentation.Services
 
    public class When_importing_data_from_correct_configuration : concern_for_DataImporter
    {
-      protected override void Because()
+      protected override void Context()
       {
+         base.Context();
          var parameterList = new List<DataFormatParameter>
          {
             new MappingDataFormatParameter("time  [h]",
@@ -186,19 +189,30 @@ namespace OSPSuite.Presentation.Services
       }
 
       [Observation]
-      public void should_return_empty_on_invalid_file_name()
+      [TestCase("IntegrationSample1.csv", 2)]
+      [TestCase("sample_non_existent.csv", 2)]
+      [TestCase("IntegrationSample1.csv", 2)]
+      [TestCase("IntegrationSample1.csv", 2)]
+      [TestCase("IntegrationSample1.csv", 2)]
+      [TestCase("IntegrationSample1.csv", 2)]
+      public void should_return_empty_on_invalid_file_name(string fileName, int count)
       {
          sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(
-               "")).Count.ShouldBeEqualTo(0);
+               fileName)).Count.ShouldBeEqualTo(count);
       }
 
       [Observation]
       public void should_return_empty_on_non_existent_file_name()
       {
-         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+         import("sample_non_existent.xlsx").Count.ShouldBeEqualTo(0);
+      }
+
+      private IReadOnlyList<DataRepository> import(string fileName)
+      {
+         return sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(
-               "sample_non_existent.xlsx")).Count.ShouldBeEqualTo(0);
+               fileName));
       }
 
       [Observation]
@@ -391,9 +405,12 @@ namespace OSPSuite.Presentation.Services
 
    public class When_importing_with_inconsistent_units_in_column : concern_for_DataImporter
    {
-      protected override void Because()
+      private List<DataFormatParameter> _parameterList;
+
+      protected override void Context()
       {
-         var parameterList = new List<DataFormatParameter>
+         base.Context();
+          _parameterList = new List<DataFormatParameter>
          {
             new MappingDataFormatParameter("time  [h]",
                new Column() {Name = "Time", Dimension = _dimensionFactory.Dimension("Time"), Unit = new UnitDescription("h")}),
@@ -411,7 +428,11 @@ namespace OSPSuite.Presentation.Services
             new MetaDataFormatParameter("VenousBlood", "Organ", false),
             new MetaDataFormatParameter("TestInputMolecule", "Molecule", false)
          };
-         _importerConfiguration.CloneParametersFrom(parameterList);
+
+      }
+      protected override void Because()
+      {
+         _importerConfiguration.CloneParametersFrom(_parameterList);
       }
 
       [Observation]

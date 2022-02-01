@@ -33,10 +33,10 @@ namespace OSPSuite.R.Domain
       public bool CalculateSensitivity { get; set; } = false;
    }
 
-   public class SimulationBatchRunValues
+   public class SimulationBatchRunValues 
    {
       //Id to recognize it when running concurrently
-      public string Id { get; set; }
+      public string Id { get;  }
 
       //Potentially null
       public double[] ParameterValues { get; set; }
@@ -53,6 +53,14 @@ namespace OSPSuite.R.Domain
       public double[] Values => ParameterValues.ToNetArray(ParameterValue);
 
       public double[] MoleculeValues => InitialValues.ToNetArray(InitialValue);
+
+      public SimulationBatchRunValues()
+      {
+         Id = generateId();
+      }
+
+      private string generateId() => Guid.NewGuid().ToString();
+
    }
 
    public class SimulationBatch : IDisposable
