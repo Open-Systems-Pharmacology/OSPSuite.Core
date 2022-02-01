@@ -5,11 +5,9 @@ using System.IO;
 using System.Linq;
 using OSPSuite.Assets;
 using FakeItEasy;
-using NUnit.Framework;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Import;
@@ -58,11 +56,11 @@ namespace OSPSuite.Presentation.Services
 
          sut = new DataImporter(_dialogCreator, _importer, _applicationController, _dimensionFactory);
 
-         _importerConfiguration = new ImporterConfiguration {FileName = "IntegrationSample1.xlsx", NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}"};
+         _importerConfiguration = new ImporterConfiguration { FileName = "IntegrationSample1.xlsx", NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}" };
          _importerConfiguration.AddToLoadedSheets("Sheet1");
          _importerConfigurationMW = new ImporterConfiguration { FileName = "IntegrationSample1.xlsx", NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}" };
          _importerConfigurationMW.AddToLoadedSheets("Sheet1");
-         _metaDataCategories = (IReadOnlyList<MetaDataCategory>) sut.DefaultMetaDataCategories();
+         _metaDataCategories = (IReadOnlyList<MetaDataCategory>)sut.DefaultMetaDataCategories();
          _dataImporterSettings = new DataImporterSettings();
          _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
          _dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
@@ -145,9 +143,8 @@ namespace OSPSuite.Presentation.Services
 
    public class When_importing_data_from_correct_configuration : concern_for_DataImporter
    {
-      protected override void Context()
+      protected override void Because()
       {
-         base.Context();
          var parameterList = new List<DataFormatParameter>
          {
             new MappingDataFormatParameter("time  [h]",
@@ -166,7 +163,7 @@ namespace OSPSuite.Presentation.Services
             new MetaDataFormatParameter("VenousBlood", "Organ", false),
             new MetaDataFormatParameter("TestInputMolecule", "Molecule", false)
          };
-         var parameterListMolecularWeight = new List<DataFormatParameter> (parameterList);
+         var parameterListMolecularWeight = new List<DataFormatParameter>(parameterList);
          parameterListMolecularWeight.Add(new MetaDataFormatParameter("Molecular Weight", "Molecular Weight", true));
          _importerConfiguration.CloneParametersFrom(parameterList);
          _importerConfigurationMW.CloneParametersFrom(parameterListMolecularWeight);
@@ -189,30 +186,19 @@ namespace OSPSuite.Presentation.Services
       }
 
       [Observation]
-      [TestCase("IntegrationSample1.csv", 2)]
-      [TestCase("sample_non_existent.csv", 2)]
-      [TestCase("IntegrationSample1.csv", 2)]
-      [TestCase("IntegrationSample1.csv", 2)]
-      [TestCase("IntegrationSample1.csv", 2)]
-      [TestCase("IntegrationSample1.csv", 2)]
-      public void should_return_empty_on_invalid_file_name(string fileName, int count)
+      public void should_return_empty_on_invalid_file_name()
       {
          sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(
-               fileName)).Count.ShouldBeEqualTo(count);
+               "")).Count.ShouldBeEqualTo(0);
       }
 
       [Observation]
       public void should_return_empty_on_non_existent_file_name()
       {
-         import("sample_non_existent.xlsx").Count.ShouldBeEqualTo(0);
-      }
-
-      private IReadOnlyList<DataRepository> import(string fileName)
-      {
-         return sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(
-               fileName));
+               "sample_non_existent.xlsx")).Count.ShouldBeEqualTo(0);
       }
 
       [Observation]
@@ -230,7 +216,7 @@ namespace OSPSuite.Presentation.Services
          sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(
                "sample1.xlsx")).Count.ShouldBeEqualTo(0);
-          A.CallTo(() => _dialogCreator.MessageBoxError(Error.UnsupportedFileFormat(getFileFullName("sample1.xlsx")))).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxError(Error.UnsupportedFileFormat(getFileFullName("sample1.xlsx")))).MustHaveHappened();
       }
 
 
@@ -241,7 +227,7 @@ namespace OSPSuite.Presentation.Services
       [Observation]
       public void should_convert_MW_correctly_excel_not_checking()
       {
-         var result = 
+         var result =
          sut.ImportFromConfiguration(_importerConfigurationMW, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(
                "IntegrationSample1.xlsx"));
@@ -253,9 +239,9 @@ namespace OSPSuite.Presentation.Services
       {
          _dataImporterSettings.CheckMolWeightAgainstMolecule = true;
 
-            sut.ImportFromConfiguration(_importerConfigurationMW, _metaDataCategories, _columnInfos, _dataImporterSettings,
-               getFileFullName(
-                  "IntegrationSample1.xlsx"));
+         sut.ImportFromConfiguration(_importerConfigurationMW, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName(
+               "IntegrationSample1.xlsx"));
          A.CallTo(() => _dialogCreator.MessageBoxError(Error.InconsistentMoleculeAndMolWeightException)).MustHaveHappened();
       }
 
@@ -405,12 +391,9 @@ namespace OSPSuite.Presentation.Services
 
    public class When_importing_with_inconsistent_units_in_column : concern_for_DataImporter
    {
-      private List<DataFormatParameter> _parameterList;
-
-      protected override void Context()
+      protected override void Because()
       {
-         base.Context();
-          _parameterList = new List<DataFormatParameter>
+         var parameterList = new List<DataFormatParameter>
          {
             new MappingDataFormatParameter("time  [h]",
                new Column() {Name = "Time", Dimension = _dimensionFactory.Dimension("Time"), Unit = new UnitDescription("h")}),
@@ -428,11 +411,7 @@ namespace OSPSuite.Presentation.Services
             new MetaDataFormatParameter("VenousBlood", "Organ", false),
             new MetaDataFormatParameter("TestInputMolecule", "Molecule", false)
          };
-
-      }
-      protected override void Because()
-      {
-         _importerConfiguration.CloneParametersFrom(_parameterList);
+         _importerConfiguration.CloneParametersFrom(parameterList);
       }
 
       [Observation]
@@ -445,4 +424,3 @@ namespace OSPSuite.Presentation.Services
       }
    }
 }
-
