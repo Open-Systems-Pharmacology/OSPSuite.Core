@@ -99,6 +99,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
       private string getCellStringValue(ICell cell)
       {
+         correctExcel2007CompatibilityFormula(cell);
+
          var cellValue = _formulaEvaluator.Evaluate(cell);
 
          if (cellValue == null) return "";
@@ -114,6 +116,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          }
 
          return "";
+      }
+
+      private static void correctExcel2007CompatibilityFormula(ICell cell)
+      {
+         if (cell.CellType == CellType.Formula && cell.CellFormula.Contains("_xlfn.CONCAT"))
+            cell.CellFormula = cell.CellFormula.Replace("_xlfn.CONCAT", "CONCATENATE");
       }
 
       private bool isNumeric(ICell cell)
