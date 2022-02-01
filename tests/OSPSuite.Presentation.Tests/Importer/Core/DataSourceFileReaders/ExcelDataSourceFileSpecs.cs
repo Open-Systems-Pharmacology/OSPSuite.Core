@@ -118,10 +118,10 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void sheet_names_read_correctly()
       {
-         sut.DataSheets.Count.ShouldBeEqualTo(3);
+         sut.DataSheets.Count.ShouldBeEqualTo(4);
          var keys = sut.DataSheets.Keys;
 
-         for (var i = 0; i < 2; i++)
+         for (var i = 0; i < 4; i++)
          {
             keys.ElementAt(i).ShouldBeEqualTo("Sheet" + (i + 1));
          }
