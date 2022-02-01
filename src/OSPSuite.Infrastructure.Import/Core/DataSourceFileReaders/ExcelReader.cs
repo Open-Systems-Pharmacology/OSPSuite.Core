@@ -121,7 +121,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
       private static void correctExcel2007CompatibilityFormula(ICell cell)
       {
          if (cell.CellType == CellType.Formula && cell.CellFormula.Contains("_xlfn.CONCAT"))
-            cell.CellFormula.Replace("_xlfn.CONCAT", "CONCATENATE");
+            cell.CellFormula = cell.CellFormula.Replace("_xlfn.CONCAT", "CONCATENATE");
       }
 
       private bool isNumeric(ICell cell)
