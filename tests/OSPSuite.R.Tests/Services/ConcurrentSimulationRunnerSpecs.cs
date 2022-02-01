@@ -240,10 +240,11 @@ namespace OSPSuite.R.Services
          };
          _parValues2 = new SimulationBatchRunValues
          {
-            ParameterValues = new[] { 3.5, 0.53 }
-         }; _parValues3 = new SimulationBatchRunValues
+            ParameterValues = new[] {3.5, 0.53}
+         };
+         _parValues3 = new SimulationBatchRunValues
          {
-            ParameterValues = new[] { 3.5, 0.53 }
+            ParameterValues = new[] {3.5, 0.53}
          };
 
          _simulationBatch1.AddSimulationBatchRunValues(_parValues1);
