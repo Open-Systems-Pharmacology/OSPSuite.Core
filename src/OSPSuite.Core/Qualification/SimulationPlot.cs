@@ -1,6 +1,6 @@
 ﻿namespace OSPSuite.Core.Qualification
 {
-   public class SimulationPlot : IReferencingProject
+   public class SimulationPlot : IReferencingSimulation
    {
       public string Simulation { get; set; }
       public string Project { get; set; }
