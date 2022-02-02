@@ -100,10 +100,10 @@ namespace OSPSuite.Infrastructure.Import.Services
 
             while (reader.MoveToNextRow())
             {
-               var rowList = reader.CurrentRow;
-               rowList = removeColumnsWithoutHeader(rowList, dataTable.Columns.Count);
+               var rowValues = reader.CurrentRow;
+               rowValues = removeColumnsWithoutHeader(rowValues, dataTable.Columns.Count);
 
-               dataTable.AddRowToDataTable(rowList);
+               dataTable.AddRowToDataTable(rowValues);
             }
 
             dataTablesList.Add(dataTable);
