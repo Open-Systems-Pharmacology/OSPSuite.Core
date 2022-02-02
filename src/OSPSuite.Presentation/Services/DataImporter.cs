@@ -44,6 +44,7 @@ namespace OSPSuite.Presentation.Services
 
          using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
          {
+            importerModalPresenter.SetCaption(dataImporterSettings.Caption);
             return importerModalPresenter.ImportDataSets(metaDataCategories, columnInfos, dataImporterSettings, dataFileName);
          }
       }
