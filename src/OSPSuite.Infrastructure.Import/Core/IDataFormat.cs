@@ -19,6 +19,6 @@ namespace OSPSuite.Infrastructure.Import.Core
       void CopyParametersFromConfiguration(OSPSuite.Core.Import.ImporterConfiguration configuration);
       IList<string> ExcelColumnNames { get; }
       IEnumerable<ParsedDataSet> Parse(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos);
-      UnitDescription ExtractUnits(string description, IReadOnlyList<IDimension> supportedDimensions);
+      UnitDescription ExtractUnitDescriptions(string description, IReadOnlyList<IDimension> supportedDimensions);
    }
 }

@@ -438,7 +438,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             mappingSource.MappedColumn.Unit = new UnitDescription(oldUnitDescription);
          }
          _model = new ColumnMappingDTO(ColumnMappingDTO.ColumnType.Mapping, "Concentration", mappingSource, 0);
-         A.CallTo(() => _basicFormat.ExtractUnits(A<string>.Ignored, A<IReadOnlyList<IDimension>>.Ignored)).Returns(new UnitDescription(newUnitDescription));
+         A.CallTo(() => _basicFormat.ExtractUnitDescriptions(A<string>.Ignored, A<IReadOnlyList<IDimension>>.Ignored)).Returns(new UnitDescription(newUnitDescription));
 
          //Act
          _model.ExcelColumn = "Measurement";
