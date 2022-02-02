@@ -56,11 +56,11 @@ namespace OSPSuite.Presentation.Services
 
          sut = new DataImporter(_dialogCreator, _importer, _applicationController, _dimensionFactory);
 
-         _importerConfiguration = new ImporterConfiguration {FileName = "IntegrationSample1.xlsx", NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}"};
+         _importerConfiguration = new ImporterConfiguration { FileName = "IntegrationSample1.xlsx", NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}" };
          _importerConfiguration.AddToLoadedSheets("Sheet1");
          _importerConfigurationMW = new ImporterConfiguration { FileName = "IntegrationSample1.xlsx", NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}" };
          _importerConfigurationMW.AddToLoadedSheets("Sheet1");
-         _metaDataCategories = (IReadOnlyList<MetaDataCategory>) sut.DefaultMetaDataCategories();
+         _metaDataCategories = (IReadOnlyList<MetaDataCategory>)sut.DefaultMetaDataCategories();
          _dataImporterSettings = new DataImporterSettings();
          _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
          _dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
@@ -163,7 +163,7 @@ namespace OSPSuite.Presentation.Services
             new MetaDataFormatParameter("VenousBlood", "Organ", false),
             new MetaDataFormatParameter("TestInputMolecule", "Molecule", false)
          };
-         var parameterListMolecularWeight = new List<DataFormatParameter> (parameterList);
+         var parameterListMolecularWeight = new List<DataFormatParameter>(parameterList);
          parameterListMolecularWeight.Add(new MetaDataFormatParameter("Molecular Weight", "Molecular Weight", true));
          _importerConfiguration.CloneParametersFrom(parameterList);
          _importerConfigurationMW.CloneParametersFrom(parameterListMolecularWeight);
@@ -216,7 +216,7 @@ namespace OSPSuite.Presentation.Services
          sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(
                "sample1.xlsx")).Count.ShouldBeEqualTo(0);
-          A.CallTo(() => _dialogCreator.MessageBoxError(Error.UnsupportedFileFormat(getFileFullName("sample1.xlsx")))).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxError(Error.UnsupportedFileFormat(getFileFullName("sample1.xlsx")))).MustHaveHappened();
       }
 
 
@@ -227,7 +227,7 @@ namespace OSPSuite.Presentation.Services
       [Observation]
       public void should_convert_MW_correctly_excel_not_checking()
       {
-         var result = 
+         var result =
          sut.ImportFromConfiguration(_importerConfigurationMW, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(
                "IntegrationSample1.xlsx"));
@@ -239,9 +239,9 @@ namespace OSPSuite.Presentation.Services
       {
          _dataImporterSettings.CheckMolWeightAgainstMolecule = true;
 
-            sut.ImportFromConfiguration(_importerConfigurationMW, _metaDataCategories, _columnInfos, _dataImporterSettings,
-               getFileFullName(
-                  "IntegrationSample1.xlsx"));
+         sut.ImportFromConfiguration(_importerConfigurationMW, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName(
+               "IntegrationSample1.xlsx"));
          A.CallTo(() => _dialogCreator.MessageBoxError(Error.InconsistentMoleculeAndMolWeightException)).MustHaveHappened();
       }
 
@@ -424,4 +424,3 @@ namespace OSPSuite.Presentation.Services
       }
    }
 }
-
