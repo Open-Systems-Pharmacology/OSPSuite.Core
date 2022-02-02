@@ -418,4 +418,34 @@ namespace OSPSuite.Presentation.Importer.Presenters
          (res.Any(r => r.Label.StartsWith("Col1")) && res.Any( c => c.Label.StartsWith("Col2")) && res.Any(r => r.Label.StartsWith("Error")) && res.Any(r => r.Label.StartsWith("Concentration"))).ShouldBeTrue();
       }
    }
+
+   public class When_setting_mapping_column : concern_for_ColumnMappingPresenter
+   {
+      protected ColumnMappingDTO _model;
+
+      [TestCase("mmol/l", "?", true, false)]
+      [TestCase("mmol/l", "mol/l", true, true)]
+      [TestCase("mmol/l", "?", false, true)]
+      [TestCase("mmol/l", "mol/l", false, true)]
+      public void the_unit_is_set_properly(string oldUnitDescription, string newUnitDescription, bool haveOldSource, bool shouldUpdate)
+      {
+         //Set up
+         UpdateSettings();
+         MappingDataFormatParameter mappingSource = null;
+         if (haveOldSource)
+         {
+            mappingSource = _parameters[2] as MappingDataFormatParameter;
+            mappingSource.MappedColumn.Unit = new UnitDescription(oldUnitDescription);
+         }
+         _model = new ColumnMappingDTO(ColumnMappingDTO.ColumnType.Mapping, "Concentration", mappingSource, 0);
+         A.CallTo(() => _basicFormat.ExtractUnitDescriptions(A<string>.Ignored, A<IReadOnlyList<IDimension>>.Ignored)).Returns(new UnitDescription(newUnitDescription));
+
+         //Act
+         _model.ExcelColumn = "Measurement";
+         sut.SetDescriptionForRow(_model);
+
+         //Assert
+         (_model.Source as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo(shouldUpdate ? newUnitDescription : oldUnitDescription);
+      }
+   }
 }
