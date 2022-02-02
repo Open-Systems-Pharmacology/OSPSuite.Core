@@ -27,6 +27,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          string path,
          ImporterConfiguration configuration
       );
+
+      void SetCaption(string caption);
    }
 
    public class ModalImporterPresenter : AbstractDisposablePresenter<IModalImporterView, IModalImporterPresenter>, IModalImporterPresenter
@@ -66,6 +68,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
          _importerPresenter.LoadConfiguration(configuration, path);
          return importDataSets(configuration.Id).DataRepositories;
+      }
+
+      public void SetCaption(string caption)
+      {
+         _view.Caption = caption;
       }
 
       public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
