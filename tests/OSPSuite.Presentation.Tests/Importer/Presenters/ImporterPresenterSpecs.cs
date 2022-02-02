@@ -43,10 +43,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataSource = dataSource;
       }
 
-      protected override void onResetMappingBasedOnCurrentSheet(object sender, EventArgs args)
+      protected override void onResetMappingBasedOnCurrentSheet()
       {
          OnResetMappingBasedOnCurrentSheetInvoked = true;
-         base.onResetMappingBasedOnCurrentSheet(sender, args);
+         base.onResetMappingBasedOnCurrentSheet();
       }
 
       protected override bool confirmDroppingOfLoadedSheets()
