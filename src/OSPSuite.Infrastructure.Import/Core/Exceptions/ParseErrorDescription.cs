@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Assets;
+using OSPSuite.Utility.Extensions;
 using System.Collections.Generic;
 
 namespace OSPSuite.Infrastructure.Import.Core.Exceptions
@@ -60,7 +61,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Exceptions
    {
       public EmptyDataSetsParseErrorDescription(IEnumerable<string> dataSetNames)
       {
-         Message = Error.EmptyDataSet($"{string.Join(", ", dataSetNames)}");
+         Message = Error.EmptyDataSet($"{dataSetNames.ToString(", ")}");
       }
    }
 }

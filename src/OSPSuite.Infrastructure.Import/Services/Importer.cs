@@ -106,7 +106,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          foreach(var x in dataSource.DataSheets.Keys)
          {
             dataSource.AvailableFormats = CalculateFormat(dataSource, columnInfos, metaDataCategories, x).ToList();
-            if (dataSource.AvailableFormats?.Count > 0)
+            if (dataSource.AvailableFormats.Any())
                return dataSource;
          };
 

@@ -37,7 +37,19 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public bool NanValuesExist(double indicator)
       {
-         return _data.Any(dataSet => dataSet.Data.Any(pair => pair.Key.ColumnInfo.IsMandatory && pair.Value.Any(point => point.Measurement == indicator || double.IsNaN(point.Measurement))));
+         //returns true if for any ParsedDataSet 
+         return _data.Any(
+            //any SimulationPoint
+            dataSet => dataSet.Data.Any(
+               //belonging to a mandatory column
+               pair => pair.Key.ColumnInfo.IsMandatory && 
+               //is NaN or marked as NaN
+               pair.Value.Any(
+                  point => point.Measurement == indicator || 
+                  double.IsNaN(point.Measurement)
+               )
+            )
+         );
       }
 
       public void ClearNan(double indicator)
