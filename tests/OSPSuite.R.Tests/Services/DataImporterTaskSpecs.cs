@@ -301,9 +301,9 @@ namespace OSPSuite.R.Services
       public void should_consider_columns_with_string_values_and_skip_invalid_sheets()
       {
          var configuration = sut.CreateConfigurationFor(getFileFullName("BookStrings.xlsx"));
-         configuration.Parameters.Exists(x => (x as MappingDataFormatParameter).ColumnName == "Time [h]").ShouldBeTrue();
-         configuration.Parameters.Exists(x => (x as MappingDataFormatParameter).ColumnName == "Measurement [mg/l]").ShouldBeTrue();
-         configuration.Parameters.Exists(x => (x as MappingDataFormatParameter).ColumnName == "Error [mg/l]").ShouldBeTrue();
+         configuration.Parameters.Any(x => (x as MappingDataFormatParameter).ColumnName == "Time [h]").ShouldBeTrue();
+         configuration.Parameters.Any(x => (x as MappingDataFormatParameter).ColumnName == "Measurement [mg/l]").ShouldBeTrue();
+         configuration.Parameters.Any(x => (x as MappingDataFormatParameter).ColumnName == "Error [mg/l]").ShouldBeTrue();
       }
    }
 }
