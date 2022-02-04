@@ -317,7 +317,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       protected override void Because()
       {
-         var errors = new Cache<IDataSet, List<ParseErrorDescription>>();
+         var errors = new ParseErrors();
          errors.Add(new DataSet(), new List<ParseErrorDescription>() { new MismatchingArrayLengthsParseErrorDescription() });
          A.CallTo(() => _dataSource.AddSheets(A<Cache<string, DataSheet>>.Ignored, A<IReadOnlyList<ColumnInfo>>.Ignored, A<string>.Ignored)).Returns(errors);
          _sheets = new Cache<string, DataSheet>();

@@ -268,7 +268,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.ResetImportButtons();
       }
 
-      public void SetTabMarks(Cache<IDataSet, List<ParseErrorDescription>> errors, Cache<string, IDataSet> loadedDataSets)
+      public void SetTabMarks(ParseErrors errors, Cache<string, IDataSet> loadedDataSets)
       {
          View.SetTabMarks(errors, loadedDataSets);
       }

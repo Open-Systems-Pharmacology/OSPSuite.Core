@@ -64,6 +64,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SetFilter(string FilterString);
       void GetFormatBasedOnCurrentSheet();
       void ResetLoadedSheets();
-      void SetTabMarks(Cache<IDataSet, List<ParseErrorDescription>> errors, Cache<string, IDataSet> loadedDataSets);
+      void SetTabMarks(ParseErrors errors, Cache<string, IDataSet> loadedDataSets);
    }
 }

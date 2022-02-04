@@ -8,9 +8,9 @@ namespace OSPSuite.Infrastructure.Import.Core
 {
    public class ImporterParsingException : AbstractImporterException
    {
-      public Cache<IDataSet, List<ParseErrorDescription>>FaultyDataSet { get; private set; }
+      public ParseErrors FaultyDataSet { get; private set; }
 
-      public ImporterParsingException(Cache<IDataSet, List<ParseErrorDescription>> faultyDataSets)
+      public ImporterParsingException(ParseErrors faultyDataSets)
          : base(Error.SimpleParseErrorMessage)
       {
          FaultyDataSet = faultyDataSets;

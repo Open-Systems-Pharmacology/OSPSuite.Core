@@ -178,7 +178,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
-      private Cache<IDataSet, List<ParseErrorDescription>> validateDataSource(IDataSource dataSource)
+      private ParseErrors validateDataSource(IDataSource dataSource)
       {
          return dataSource.ValidateDataSourceUnits(_columnInfos);
       }
@@ -209,7 +209,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSource.SetDataFormat(_columnMappingPresenter.GetDataFormat());
          var errors = _dataSource.AddSheets(sheets, _columnInfos, filter);
 
-         validateDataSource(_dataSource).KeyValues.Each(x => CachedListHelpers.Add(errors, x.Key, x.Value));
+         errors.Add(validateDataSource(_dataSource));
          _importerDataPresenter.SetTabMarks(errors, _dataSource.DataSets);
          if (errors.Any())
          {

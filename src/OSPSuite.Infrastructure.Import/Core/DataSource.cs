@@ -12,6 +12,38 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
+   public class ParseErrors
+   {
+      private Cache<IDataSet, List<ParseErrorDescription>> _errors = new Cache<IDataSet, List<ParseErrorDescription>>(onMissingKey: _ => new List<ParseErrorDescription>());
+
+      public bool Any() => _errors.Any();
+
+      public bool Contains(IDataSet key) => _errors.Contains(key);
+
+      public IEnumerable<ParseErrorDescription> ErrorsFor(IDataSet key) => _errors[key];
+
+      public void Add(IDataSet key, ParseErrorDescription x)
+      {
+         Add(key, new List<ParseErrorDescription>() { x });
+      }
+
+      public void Add(ParseErrors other)
+      {
+         foreach (var x in other._errors.KeyValues)
+         {
+            Add(x.Key, x.Value);
+         }
+      }
+
+      public void Add(IDataSet key, IEnumerable<ParseErrorDescription> list)
+      {
+         if (_errors.Contains(key))
+            _errors[key].AddRange(list);
+         else
+            _errors.Add(key, new List<ParseErrorDescription>(list));
+      }
+   }
+
    /// <summary>
    /// Collection of DataSets
    /// </summary>
@@ -19,7 +51,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       void SetDataFormat(IDataFormat dataFormat);
       void SetNamingConvention(string namingConvention);
-      Cache<IDataSet, List<ParseErrorDescription>> AddSheets(Cache<string, DataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter);
+      ParseErrors AddSheets(Cache<string, DataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter);
       void SetMappings(string fileName, IEnumerable<MetaDataMappingConverter> mappings);
       ImporterConfiguration GetImporterConfiguration();
       IEnumerable<MetaDataMappingConverter> GetMappings();
@@ -27,7 +59,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       IEnumerable<string> NamesFromConvention();
       NanSettings NanSettings { get; set; }
       ImportedDataSet DataSetAt(int index);
-      Cache<IDataSet, List<ParseErrorDescription>> ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos);
+      ParseErrors ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos);
    }
 
    public class DataSource : IDataSource
@@ -75,18 +107,18 @@ namespace OSPSuite.Infrastructure.Import.Core
          return filteredDataSheets;
       }
 
-      public Cache<IDataSet, List<ParseErrorDescription>> AddSheets(Cache<string, DataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter)
+      public ParseErrors AddSheets(Cache<string, DataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter)
       {
          _importer.AddFromFile(_configuration.Format, filterSheets(dataSheets, filter), columnInfos, this);
          if (NanSettings == null || !double.TryParse(NanSettings.Indicator, out var indicator))
             indicator = double.NaN;
-         var errors = new Cache<IDataSet, List<ParseErrorDescription>>();
+         var errors = new ParseErrors();
          foreach (var dataSet in DataSets.KeyValues)
          {
             if (NanSettings != null && NanSettings.Action == NanSettings.ActionType.Throw)
             {
                if (dataSet.Value.NanValuesExist(indicator))
-                  CachedListHelpers.Add(errors, dataSet.Value, new NaNParseErrorDescription());
+                  errors.Add(dataSet.Value, new NaNParseErrorDescription());
             }
             else
             {
@@ -96,7 +128,7 @@ namespace OSPSuite.Infrastructure.Import.Core
                   continue;
 
                var emptyDataSetsNames = emptyDataSets.Select(d => string.Join(".", d.Description.Where(metaData => metaData.Value != null).Select(metaData => metaData.Value)));
-               CachedListHelpers.Add(errors, dataSet.Value, new EmptyDataSetsParseErrorDescription(emptyDataSetsNames));
+               errors.Add(dataSet.Value, new EmptyDataSetsParseErrorDescription(emptyDataSetsNames));
             }
          }
          return errors;
@@ -151,9 +183,9 @@ namespace OSPSuite.Infrastructure.Import.Core
       }
 
       //checks that the dimension of all the units coming from columns for error have the same dimension to the corresponding measurement
-      private Cache<IDataSet, List<ParseErrorDescription>> validateErrorAgainstMeasurement(IReadOnlyList<ColumnInfo> columnInfos)
+      private ParseErrors validateErrorAgainstMeasurement(IReadOnlyList<ColumnInfo> columnInfos)
       {
-         var errors = new Cache<IDataSet, List<ParseErrorDescription>>();
+         var errors = new ParseErrors();
          foreach (var column in columnInfos.Where(c => !c.IsAuxiliary()))
          {
             foreach (var relatedColumn in columnInfos.Where(c => c.IsAuxiliary() && c.RelatedColumnOf == column.Name))
@@ -170,7 +202,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
                      if (errorColumn.Value != null && measurementColumn.Value.Count != errorColumn.Value.Count)
                      {
-                        CachedListHelpers.Add(errors, dataSet, new MismatchingArrayLengthsParseErrorDescription());
+                        errors.Add(dataSet, new MismatchingArrayLengthsParseErrorDescription());
                         continue;
                      }
 
@@ -188,7 +220,7 @@ namespace OSPSuite.Infrastructure.Import.Core
                            var errorSupportedDimension = column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(errorColumn.Value.ElementAt(i).Unit));
                            if (measurementSupportedDimension != errorSupportedDimension)
                            {
-                              CachedListHelpers.Add(errors, dataSet, new ErrorUnitParseErrorDescription());
+                              errors.Add(dataSet, new ErrorUnitParseErrorDescription());
                               continue;
                            }
                         }
@@ -203,7 +235,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
                         if (measurementDimension != errorDimension)
                         {
-                           CachedListHelpers.Add(errors, dataSet, new ErrorUnitParseErrorDescription());
+                           errors.Add(dataSet, new ErrorUnitParseErrorDescription());
                            continue;
                         }
                      }
@@ -215,9 +247,9 @@ namespace OSPSuite.Infrastructure.Import.Core
       }
       //checks that all units coming from a mapped column unit belong to a valid dimension for this mapping
       //and also that they are all of the same dimension within every data set. 
-      private Cache<IDataSet, List<ParseErrorDescription>> validateUnitsSupportedAndSameDimension(IReadOnlyList<ColumnInfo> columnInfos)
+      private ParseErrors validateUnitsSupportedAndSameDimension(IReadOnlyList<ColumnInfo> columnInfos)
       {
-         var errors = new Cache<IDataSet, List<ParseErrorDescription>>();
+         var errors = new ParseErrors();
          foreach (var columnInfo in columnInfos)
          {
             foreach (var dataSet in DataSets)
@@ -246,14 +278,14 @@ namespace OSPSuite.Infrastructure.Import.Core
                         //if the unit specified does not belong to one of the supported dimensions of the mapping
                         if (dimension == null)
                         {
-                           CachedListHelpers.Add(errors, dataSet, new InvalidDimensionParseErrorDescription(currentValue.Unit, columnInfo.DisplayName));
+                           errors.Add(dataSet, new InvalidDimensionParseErrorDescription(currentValue.Unit, columnInfo.DisplayName));
                            continue;
                         }
 
                         //if the unit specified is not of the same dimension as the other units of the same data set
                         if (dimension != dimensionOfFirstUnit)
                         {
-                           CachedListHelpers.Add(errors, dataSet, new InconsistentDimensionBetweenUnitsParseErrorDescription(columnInfo.DisplayName));
+                           errors.Add(dataSet, new InconsistentDimensionBetweenUnitsParseErrorDescription(columnInfo.DisplayName));
                            continue;
                         }
                      }
@@ -264,10 +296,10 @@ namespace OSPSuite.Infrastructure.Import.Core
          return errors;
       }
 
-      Cache<IDataSet, List<ParseErrorDescription>> IDataSource.ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos)
+      ParseErrors IDataSource.ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos)
       {
          var errors = validateUnitsSupportedAndSameDimension(columnInfos);
-         validateErrorAgainstMeasurement(columnInfos).KeyValues.Each(x => CachedListHelpers.Add(errors, x.Key, x.Value));
+         errors.Add(validateErrorAgainstMeasurement(columnInfos));
          return errors;
       }
    }

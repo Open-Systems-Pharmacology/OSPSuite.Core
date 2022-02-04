@@ -28,7 +28,7 @@ namespace OSPSuite.UI.Views.Importer
       private bool sheetImportedFlag;
       private bool allSheetsImportedFlag;
       private bool allImportButtonsDisabledFlag;
-      private Cache<IDataSet, List<ParseErrorDescription>> _lastErrors = new Cache<IDataSet, List<ParseErrorDescription>>();
+      private ParseErrors _lastErrors = new ParseErrors();
       private Cache<string, IDataSet> _lastLoadedDataSets = new Cache<string, IDataSet>();
 
       public ImporterDataView()
@@ -310,7 +310,7 @@ namespace OSPSuite.UI.Views.Importer
 
          if (_lastLoadedDataSets.Contains(SelectedTab) && _lastErrors.Contains(_lastLoadedDataSets[SelectedTab]))
          {
-            labelControlError.Text = Error.ParseErrorMessage(_lastErrors[_lastLoadedDataSets[SelectedTab]].Select(x => x.Message));
+            labelControlError.Text = Error.ParseErrorMessage(_lastErrors.ErrorsFor(_lastLoadedDataSets[SelectedTab]).Select(x => x.Message));
             layoutControlItem2.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
          }
          else
@@ -334,7 +334,7 @@ namespace OSPSuite.UI.Views.Importer
          });
       }
 
-      public void SetTabMarks(Cache<IDataSet, List<ParseErrorDescription>> errors, Cache<string, IDataSet> loadedDataSets)
+      public void SetTabMarks(ParseErrors errors, Cache<string, IDataSet> loadedDataSets)
       {
          _lastErrors = errors;
          _lastLoadedDataSets = loadedDataSets;
