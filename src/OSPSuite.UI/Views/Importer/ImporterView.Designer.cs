@@ -3,7 +3,7 @@ using OSPSuite.UI.Controls;
 
 namespace OSPSuite.UI.Views.Importer
 {
-   partial class ImporterView : BaseUserControl, IImporterView
+   partial class ImporterView 
    {
       /// <summary>
       /// Required designer variable.
@@ -121,7 +121,7 @@ namespace OSPSuite.UI.Views.Importer
          this.saveMappingBtn.Size = new System.Drawing.Size(156, 27);
          this.saveMappingBtn.StyleController = this.rootLayoutControl;
          this.saveMappingBtn.TabIndex = 9;
-         this.saveMappingBtn.Text = "uxSimpleButton1";
+         this.saveMappingBtn.Text = "saveMappingBtn";
          // 
          // sourceFilePanelControl
          // 
