@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Domain.Formulas
 {
    public class LogNormalDistributionFormula : DistributionFormula
    {
-      protected override double CalculateFor(IEnumerable<IObjectReference> usedObjects, IUsingFormula refObject)
+      protected override double CalculateFor(IReadOnlyList<IObjectReference> usedObjects, IUsingFormula refObject)
       {
          var distributedParameter = refObject.ConvertedTo<IDistributedParameter>();
          var percentile = distributedParameter.Percentile;

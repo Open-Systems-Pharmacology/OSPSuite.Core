@@ -24,15 +24,24 @@ namespace OSPSuite.Core.Domain.Formulas
          OriginId = string.Empty;
       }
 
-      protected override double CalculateFor(IEnumerable<IObjectReference> usedObjects, IUsingFormula dependentObject)
+      protected override double CalculateFor(IReadOnlyList<IObjectReference> usedObjects, IUsingFormula dependentObject)
       {
-         var allUsedObjects = usedObjects.ToList();
-         var formulaParser = createFormulaParser(allUsedObjects);
+         var formulaParser = createFormulaParser(usedObjects);
 
          var parameterValues = new double[] {};
-         var variableValues = allUsedObjects.Select(x => x.Object.Value).ToArray();
+         var variableValues = usedObjects.Select(x => x.Object.Value).ToArray();
 
          return formulaParser.Compute(variableValues, parameterValues);
+      }
+
+      protected override (double value, bool success) TryCalculateFor(IReadOnlyList<IObjectReference> usedObjects, IUsingFormula dependentObject)
+      {
+         var formulaParser = createFormulaParser(usedObjects);
+
+         var parameterValues = new double[] { };
+         var variableValues = usedObjects.Select(x => x.Object.Value).ToArray();
+
+         return formulaParser.TryCompute(variableValues, parameterValues);
       }
 
       private IExplicitFormulaParser createFormulaParser(IEnumerable<IObjectReference> references)

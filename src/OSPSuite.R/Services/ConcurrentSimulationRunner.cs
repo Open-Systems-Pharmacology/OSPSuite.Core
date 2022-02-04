@@ -24,7 +24,7 @@ namespace OSPSuite.R.Services
       public string Id
       {
          get => SimulationBatchRunValues.Id;
-         set => SimulationBatchRunValues.Id = value;
+         set => throw new InvalidArgumentException("Setting Id in SimulationBatchRunOptions should never be called");
       }
    }
 
@@ -98,22 +98,23 @@ namespace OSPSuite.R.Services
 
       private Task initializeBatches()
       {
-         return _concurrencyManager.RunAsync
+         //The batch creation is expensive so we store the created batches from one RunConcurrently call
+         //to the next one. It might happen though that the later call needs more batches than the former
+         //so for each needed batch, we create a new one.
+         //The iteration occurs on the list of _listOfSettingsForConcurrentRunSimulationBatch (over different
+         //simulation objects), taking for each settings (or simulation) a list with the missing batches 
+         //(one for each MissingBatchesCount) to add a new batch on such a settings object
+         var batches = _listOfConcurrentRunSimulationBatch.SelectMany
          (
-            //The batch creation is expensive so we store the created batches from one RunConcurrently call
-            //to the next one. It might happen though that the later call needs more batches than the former
-            //so for each needed batch, we create a new one.
-            //The iteration occurs on the list of _listOfSettingsForConcurrentRunSimulationBatch (over different
-            //simulation objects), taking for each settings (or simulation) a list with the missing batches 
-            //(one for each MissingBatchesCount) to add a new batch on such a settings object
-            _listOfConcurrentRunSimulationBatch.SelectMany
-            (
-               settings => Enumerable.Range(0, settings.MissingBatchesCount).Select(_ => settings)
-            ).ToList(),
-            (settings, ct) => settings.AddNewBatch(),
+            batch => Enumerable.Range(0, batch.MissingBatchesCount).Select(_ => batch)
+         ).ToList();
+
+         return _concurrencyManager.RunAsync(
+            batches,
+            //Use {} to specify using the overload without return value
+            (batch, ct) => { batch.AddNewBatch(); },
             _cancellationTokenSource.Token,
             numberOfCoresToUse());
-
       }
 
       public async Task<IEnumerable<ConcurrencyManagerResult<SimulationResults>>> RunConcurrentlyAsync()
@@ -137,14 +138,16 @@ namespace OSPSuite.R.Services
          {
             await initializeBatches();
 
+            var simulationBatchRunOptionsList = _listOfConcurrentRunSimulationBatch.SelectMany(sb => sb.SimulationBatchRunValues.Select((rv, i) => new SimulationBatchRunOptions
+            {
+               Simulation = sb.Simulation,
+               SimulationBatch = sb.SimulationBatches.ElementAt(i),
+               SimulationBatchOptions = sb.SimulationBatchOptions,
+               SimulationBatchRunValues = rv
+            })).ToList();
+
             var results = await _concurrencyManager.RunAsync(
-               _listOfConcurrentRunSimulationBatch.SelectMany(sb => sb.SimulationBatchRunValues.Select((rv, i) => new SimulationBatchRunOptions()
-               {
-                  Simulation = sb.Simulation,
-                  SimulationBatch = sb.SimulationBatches.ElementAt(i),
-                  SimulationBatchOptions = sb.SimulationBatchOptions,
-                  SimulationBatchRunValues = rv
-               })).ToList(),
+               simulationBatchRunOptionsList,
                runSimulationBatch,
                _cancellationTokenSource.Token,
                numberOfCoresToUse());

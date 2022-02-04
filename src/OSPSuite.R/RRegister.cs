@@ -1,6 +1,7 @@
 ﻿using OSPSuite.Core;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.R.Domain;
@@ -39,6 +40,7 @@ namespace OSPSuite.R
          //Add specific implementations that are not registered automatically
          container.Register<SimulationBatch, SimulationBatch>();
          container.Register<ISimulationBatchFactory, SimulationBatchFactory>();
+         container.Register<IObjectTypeResolver, RObjectTypeResolver>();
 
          //Singletons
          container.Register<IGroupRepository, RGroupRepository>(LifeStyle.Singleton);

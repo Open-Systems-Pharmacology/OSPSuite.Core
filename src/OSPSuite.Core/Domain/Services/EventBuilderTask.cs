@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    Adds events defined by build configuration to the given model
       /// </summary>
       /// <param name="buildConfiguration">the build configuration</param>
-      /// <param name="model">the model where the obervers should be defined</param>
+      /// <param name="model">the model where the observers should be defined</param>
       void CreateEvents(IBuildConfiguration buildConfiguration, IModel model);
    }
 
@@ -29,24 +29,21 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly ITransportBuilderToTransportMapper _transportMapper;
       private readonly IEventGroupBuilderToEventGroupMapper _eventGroupMapper;
-      private readonly IContainerTask _containerTask;
       private IModel _model;
       private EntityDescriptorMapList<IContainer> _allModelContainerDescriptors;
       private ICache<DescriptorCriteria, IEnumerable<IContainer>> _sourceCriteriaTargetContainerCache;
       private ICache<DescriptorCriteria, IEnumerable<IContainer>> _applicationTransportTargetContainerCache;
       private IBuildConfiguration _buildConfiguration;
-      private IList<IEventGroup> _eventGroupsWhichAreNotApplications;
 
       public EventBuilderTask(
-         IKeywordReplacerTask keywordReplacerTask, 
-         ITransportBuilderToTransportMapper transportMapper, 
+         IKeywordReplacerTask keywordReplacerTask,
+         ITransportBuilderToTransportMapper transportMapper,
          IEventGroupBuilderToEventGroupMapper eventGroupMapper,
          IContainerTask containerTask)
       {
          _keywordReplacerTask = keywordReplacerTask;
          _transportMapper = transportMapper;
          _eventGroupMapper = eventGroupMapper;
-         _containerTask = containerTask;
       }
 
       public void CreateEvents(IBuildConfiguration buildConfiguration, IModel model)
@@ -60,8 +57,6 @@ namespace OSPSuite.Core.Domain.Services
             _sourceCriteriaTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
             _applicationTransportTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
 
-            _eventGroupsWhichAreNotApplications=new List<IEventGroup>();
-
             //Cache all containers where the event group builder will be created using the source criteria
             foreach (var eventGroupBuilder in _buildConfiguration.EventGroups)
             {
@@ -74,20 +69,6 @@ namespace OSPSuite.Core.Domain.Services
             foreach (var eventGroupBuilder in _buildConfiguration.EventGroups)
             {
                createEventGroupFrom(eventGroupBuilder, buildConfiguration.Molecules);
-            }
-
-            //---- Replace the keyword MOLECULE in the event groups which are not applications with
-            //     the name of the first floating molecule. This is done only for backward compatibility:
-            //
-            //     - continuous EHC defined in old PK-Sim 5.x projects.
-            //       (the new implementation of EHC does not require this kind of replacement)
-            //
-            //     - immediate EHC created during project conversion from old PK-Sim 4.2 project
-            //
-            //     This step must be done after ALL other keyword replacements
-            foreach (var nonAppEventGroup in _eventGroupsWhichAreNotApplications )
-            {
-               _keywordReplacerTask.ReplaceMoleculeKeywordInNonApplicationEventGroup(nonAppEventGroup,buildConfiguration.Molecules);
             }
          }
          finally
@@ -126,14 +107,8 @@ namespace OSPSuite.Core.Domain.Services
          foreach (var childEventGroup in eventGroup.GetAllContainersAndSelf<IEventGroup>())
          {
             var childEventGroupBuilder = _buildConfiguration.BuilderFor(childEventGroup).DowncastTo<IEventGroupBuilder>();
-            if (childEventGroupBuilder.IsAnImplementationOf<IApplicationBuilder>())
-            {
-               addApplicationTransports(childEventGroupBuilder.DowncastTo<IApplicationBuilder>(), childEventGroup);
-            }
-            else
-            {
-               _eventGroupsWhichAreNotApplications.Add(childEventGroup);
-            }
+            if (childEventGroupBuilder is IApplicationBuilder applicationBuilder) 
+               addApplicationTransports(applicationBuilder, childEventGroup);
 
             _keywordReplacerTask.ReplaceIn(childEventGroup, _model.Root, childEventGroupBuilder, _buildConfiguration.Molecules);
          }

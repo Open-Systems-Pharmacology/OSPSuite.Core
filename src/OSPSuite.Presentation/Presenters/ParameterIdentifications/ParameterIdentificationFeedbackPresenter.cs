@@ -1,11 +1,11 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Events;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Events;
-using OSPSuite.Presentation.Views.ParameterIdentifications;
-using System;
 using OSPSuite.Presentation.Core;
+using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
@@ -44,9 +44,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private ParameterIdentificationFeedback _parameterIdentificationFeedback;
       private IParameterIdentificationRunFeedbackPresenter _activeFeedbackPresenter;
 
-      public event EventHandler Closing;
+      public event EventHandler Closing = delegate { };
 
       public bool ShouldRefreshFeedback { get; set; }
+
       private ParameterIdentificationFeedbackEditorSettings feedbackEditorSettings => _presenterUserSettings.ParameterIdentificationFeedbackEditorSettings;
 
       public ParameterIdentificationFeedbackPresenter(IParameterIdentificationFeedbackView view, IPresentationUserSettings presenterUserSettings,
@@ -125,7 +126,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          setParameterIdentificationToTerminated();
       }
 
-      public void setParameterIdentificationToTerminated()
+      private void setParameterIdentificationToTerminated()
       {
          _parameterIdentification = null;
          clearFeedbackReferences();
@@ -233,6 +234,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
                setParameterIdentificationToTerminated();
                break;
          }
+
          _view.Display();
       }
 

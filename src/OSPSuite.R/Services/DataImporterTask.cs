@@ -65,7 +65,7 @@ namespace OSPSuite.R.Services
             NameOfMetaDataHoldingMolecularWeightInformation = Constants.ObservedData.MOLECULAR_WEIGHT,
             IgnoreSheetNamesAtImport = true
          };
-         _columnInfos = ((DataImporter)_dataImporter).DefaultPKSimImportConfiguration();
+         _columnInfos = _dataImporter.ColumnInfosForObservedData();
          _csvSeparatorSelector = csvSeparatorSelector;
       }
 
@@ -268,7 +268,7 @@ namespace OSPSuite.R.Services
       {
          var errorParameter = GetError(configuration);
          if (errorParameter != null)
-            configuration.Parameters.Remove(errorParameter);
+            configuration.RemoveParameter(errorParameter);
       }
 
       public void RemoveGroupingColumn(ImporterConfiguration configuration, string columnName)
@@ -276,7 +276,7 @@ namespace OSPSuite.R.Services
          var column = configuration.Parameters.FirstOrDefault(p => p.ColumnName == columnName);
          if (column == null)
             return;
-         configuration.Parameters.Remove(column);
+         configuration.RemoveParameter(column);
       }
 
       public void SetIsUnitFromColumn(MappingDataFormatParameter parameter, bool isUnitFromColumn)

@@ -25,6 +25,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
 {
    internal class ImporterPresenterForTest : ImporterPresenter
    {
+      public bool OnResetMappingBasedOnCurrentSheetInvoked { get; set; }
+
       public ImporterPresenterForTest(
          IImporterView view,
          IDataSetToDataRepositoryMapper dataRepositoryMapper,
@@ -40,6 +42,17 @@ namespace OSPSuite.Presentation.Importer.Presenters
       ) : base(view, dataRepositoryMapper, importer, nanPresenter, importerDataPresenter, confirmationPresenter, columnMappingPresenter, sourceFilePresenter, dialogCreator, pkmlPersistor)
       {
          _dataSource = dataSource;
+      }
+
+      protected override void onResetMappingBasedOnCurrentSheet()
+      {
+         OnResetMappingBasedOnCurrentSheetInvoked = true;
+         base.onResetMappingBasedOnCurrentSheet();
+      }
+
+      protected override bool confirmDroppingOfLoadedSheets()
+      {
+         return false;
       }
    }
 
@@ -430,6 +443,21 @@ namespace OSPSuite.Presentation.Importer.Presenters
                A<string>.Ignored,
                A<IEnumerable<MetaDataMappingConverter>>.That.Matches(c => c.All(m => m.Id != "id1")))
          ).MustHaveHappened();
+      }
+   }
+
+   public class When_loading_configuration_from_button : concern_for_ImporterPresenter
+   {
+      protected override void Because()
+      {
+         (sut as ImporterPresenterForTest).OnResetMappingBasedOnCurrentSheetInvoked = false;
+         sut.LoadConfigurationWithoutImporting();
+      }
+
+      [Observation]
+      public void must_reset_format_based_on_current_sheet()
+      {
+         (sut as ImporterPresenterForTest).OnResetMappingBasedOnCurrentSheetInvoked.ShouldBeTrue();
       }
    }
 }

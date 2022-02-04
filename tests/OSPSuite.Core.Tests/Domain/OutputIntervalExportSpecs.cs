@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   internal class When_have_to_low_resolution : concern_for_OutputIntervalExport
+   internal class When_we_have_a_too_low_resolution : concern_for_OutputIntervalExport
    {
       protected override void Because()
       {
@@ -52,7 +52,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_return_max_number_of_time_points()
       {
-         sut.NumberOfTimePoints.ShouldBeEqualTo(Constants.MAX_NUMBER_OF_POINTS_PER_INTERVAL);
+         sut.NumberOfTimePoints.ShouldBeEqualTo(100000 * 60 + 1);
       }
    }
 

@@ -27,27 +27,34 @@ namespace OSPSuite.Presentation.Presenters.Importer
          string path,
          ImporterConfiguration configuration
       );
+
+      void SetCaption(string caption);
    }
 
    public class ModalImporterPresenter : AbstractDisposablePresenter<IModalImporterView, IModalImporterPresenter>, IModalImporterPresenter
    {
       private readonly IImporterPresenter _importerPresenter;
       private readonly IDialogCreator _dialogCreator;
+      private IReadOnlyList<DataRepository> _results;
+      private ImporterConfiguration _configuration;
 
       public ModalImporterPresenter(IModalImporterView view, IImporterPresenter importerPresenter, IDialogCreator dialogCreator) : base(view)
       {
          _dialogCreator = dialogCreator;
          _importerPresenter = importerPresenter;
          AddSubPresenters(importerPresenter);
+
+         _importerPresenter.OnTriggerImport += (s, d) =>
+         {
+            _results = d.DataRepositories;
+            _configuration = _importerPresenter.UpdateAndGetConfiguration();
+            _view.CloseView();
+         };
       }
 
       public override bool ShouldClose
       {
-         get
-         {
-            var shouldCancel = _dialogCreator.MessageBoxYesNo(Captions.ReallyCancel);
-            return shouldCancel == ViewResult.Yes;
-         }
+         get => _dialogCreator.MessageBoxYesNo(Captions.ReallyCancel) == ViewResult.Yes;
       }
 
       public IReadOnlyList<DataRepository> ImportDataSets(
@@ -61,6 +68,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
          _importerPresenter.LoadConfiguration(configuration, path);
          return importDataSets(configuration.Id).DataRepositories;
+      }
+
+      public void SetCaption(string caption)
+      {
+         _view.Caption = caption;
       }
 
       public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
@@ -90,25 +102,20 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) importDataSets(string configurationId)
       {
-         IReadOnlyList<DataRepository> results = Array.Empty<DataRepository>();
-         ImporterConfiguration configuration = null;
+         
          _view.FillImporterPanel(_importerPresenter.BaseView);
 
-         _importerPresenter.OnTriggerImport += (s, d) =>
-         {
-            results = d.DataRepositories;
-            configuration = _importerPresenter.UpdateAndGetConfiguration();
-         };
+         _results = Array.Empty<DataRepository>();
+         _configuration = null;
 
          if (!string.IsNullOrEmpty(configurationId))
          {
-            configuration.Id = configurationId;
-            results.Each(r => r.ConfigurationId = configurationId);
+            _configuration.Id = configurationId;
+            _results.Each(r => r.ConfigurationId = configurationId);
          }
 
-         _importerPresenter.OnTriggerImport += (s, d) => { _view.CloseOnImport(); };
          _view.Display();
-         return (results, configuration);
+         return (_results, _configuration);
       }
    }
 }

@@ -1,6 +1,6 @@
 ﻿namespace OSPSuite.Core.Qualification
 {
-   public interface IReferencingSimulation
+   public interface IReferencingSimulation : IReferencingProject
    {
       string Simulation { get; set; }
    }

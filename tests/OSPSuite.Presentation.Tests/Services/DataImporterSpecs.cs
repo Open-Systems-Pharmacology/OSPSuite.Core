@@ -2,12 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using OSPSuite.Assets;
 using FakeItEasy;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Import;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
@@ -52,18 +54,21 @@ namespace OSPSuite.Presentation.Services
          _importer = IoC.Container.Resolve<IImporter>();
          _applicationController = A.Fake<ApplicationController>();
 
-         sut = new DataImporter(_dialogCreator, _importer, _applicationController);
+         sut = new DataImporter(_dialogCreator, _importer, _applicationController, _dimensionFactory);
 
-         _importerConfiguration = new ImporterConfiguration {FileName = "IntegrationSample1.xlsx", NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}"};
+         _importerConfiguration = new ImporterConfiguration { FileName = "IntegrationSample1.xlsx", NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}" };
          _importerConfiguration.AddToLoadedSheets("Sheet1");
          _importerConfigurationMW = new ImporterConfiguration { FileName = "IntegrationSample1.xlsx", NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}" };
          _importerConfigurationMW.AddToLoadedSheets("Sheet1");
-         _metaDataCategories = (IReadOnlyList<MetaDataCategory>) sut.DefaultMetaDataCategories();
+         _metaDataCategories = (IReadOnlyList<MetaDataCategory>)sut.DefaultMetaDataCategories();
          _dataImporterSettings = new DataImporterSettings();
          _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
          _dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
          _dataImporterSettings.IgnoreSheetNamesAtImport = true;
+         _dataImporterSettings.CheckMolWeightAgainstMolecule = false;
          _columnInfos = getDefaultColumnInfos();
+
+         _metaDataCategories.First(md => md.Name == _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation).ListOfValues.Add("TestInputMolecule", "233");
       }
 
       protected string getFileFullName(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", fileName);
@@ -158,7 +163,7 @@ namespace OSPSuite.Presentation.Services
             new MetaDataFormatParameter("VenousBlood", "Organ", false),
             new MetaDataFormatParameter("TestInputMolecule", "Molecule", false)
          };
-         var parameterListMolecularWeight = parameterList;
+         var parameterListMolecularWeight = new List<DataFormatParameter>(parameterList);
          parameterListMolecularWeight.Add(new MetaDataFormatParameter("Molecular Weight", "Molecular Weight", true));
          _importerConfiguration.CloneParametersFrom(parameterList);
          _importerConfigurationMW.CloneParametersFrom(parameterListMolecularWeight);
@@ -208,19 +213,48 @@ namespace OSPSuite.Presentation.Services
       [Observation]
       public void should_correctly_notify_and_return_empty_on_invalid_file_format()
       {
-         var invalidFileName = getFileFullName("invalid.xlsx");
-         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings, invalidFileName).Count.ShouldBeEqualTo(0);
-          A.CallTo(() => _dialogCreator.MessageBoxError(Error.UnsupportedFileFormat(invalidFileName))).MustHaveHappened();
+         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName(
+               "sample1.xlsx")).Count.ShouldBeEqualTo(0);
+         A.CallTo(() => _dialogCreator.MessageBoxError(Error.UnsupportedFileFormat(getFileFullName("sample1.xlsx")))).MustHaveHappened();
       }
 
+
+      //so we should simply pass to the metadataCategories the value of the MW and check against it.
+      //then check that the exception gets thrown when we have set teh dataImporterSettings (let's make this default)
+      //and it does not get thrown when we are doing for MoBi. For MoBi also check that we get the correct MW (the one coming from the
+      //excel, not the Molecule)
       [Observation]
-      public void should_convert_MW_correctly_excel()
+      public void should_convert_MW_correctly_excel_not_checking()
       {
-         var result = 
+         var result =
          sut.ImportFromConfiguration(_importerConfigurationMW, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(
                "IntegrationSample1.xlsx"));
          result[0].AllButBaseGridAsArray[0].DataInfo.MolWeight.ShouldBeEqualTo(2.08E-07);
+      }
+
+      [Observation]
+      public void should_not_allow_import_when_checking_MW_against_molecule()
+      {
+         _dataImporterSettings.CheckMolWeightAgainstMolecule = true;
+
+         sut.ImportFromConfiguration(_importerConfigurationMW, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName(
+               "IntegrationSample1.xlsx"));
+         A.CallTo(() => _dialogCreator.MessageBoxError(Error.InconsistentMoleculeAndMolWeightException)).MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_correctly_get_MW_from_molecule()
+      {
+         _dataImporterSettings.CheckMolWeightAgainstMolecule = true;
+
+         var result =
+         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName(
+               "IntegrationSample1.xlsx"));
+         result[0].AllButBaseGridAsArray[0].DataInfo.MolWeight.ShouldBeEqualTo(2.3300000000000001E-07d);
       }
 
       [Observation]
@@ -231,6 +265,16 @@ namespace OSPSuite.Presentation.Services
             getFileFullName(
                "IntegrationSample1.csv"));
          result[0].AllButBaseGridAsArray[0].DataInfo.MolWeight.ShouldBeEqualTo(2.08E-07);
+      }
+
+      [Observation]
+      public void should_filter_out_empty_column()
+      {
+         var result =
+            sut.ImportFromConfiguration(_importerConfigurationMW, _metaDataCategories, _columnInfos, _dataImporterSettings,
+               getFileFullName(
+                  "IntegrationSampleMissingColumn.xlsx"));
+         result[0].AllButBaseGridAsArray[0].InternalValues[3].ToDouble().ShouldBeEqualTo(0);
       }
    }
 
@@ -264,7 +308,7 @@ namespace OSPSuite.Presentation.Services
       {
          sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName("IntegrationSampleMissingMapping.xlsx"));
-         A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column 'SD [mg/l]' is missing from at least one of the sheets being loaded.")).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column(s) \n \n 'SD [mg/l]' \n \n is missing from at least one of the sheets being loaded.")).MustHaveHappened();
       }
 
       [Observation]
@@ -305,8 +349,8 @@ namespace OSPSuite.Presentation.Services
       public void should_set_unit_of_missing_column_to_undefined()
       {
          sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
-            getFileFullName("IntegrationSampleMissingMapping.xlsx"));
-         A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column 'timeUnitColumn' is missing from at least one of the sheets being loaded.")).MustHaveHappened();
+            getFileFullName("IntegrationSampleMissingMappingUnit.xlsx"));
+         A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column(s) \n \n 'timeUnitColumn' \n \n is missing from at least one of the sheets being loaded.")).MustHaveHappened();
       }
    }
 
@@ -380,4 +424,3 @@ namespace OSPSuite.Presentation.Services
       }
    }
 }
-

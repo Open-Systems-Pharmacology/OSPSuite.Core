@@ -91,7 +91,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.OnTabChanged += onTabChanged;
          _importerDataPresenter.OnDataChanged += onImporterDataChanged;
          _columnMappingPresenter.OnMissingMapping += onMissingMapping;
-         _columnMappingPresenter.OnResetMappingBasedOnCurrentSheet += onResetMappingBasedOnCurrentSheet;
+         _columnMappingPresenter.OnResetMappingBasedOnCurrentSheet += (o, e) => onResetMappingBasedOnCurrentSheet();
          _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
          View.DisableConfirmationView();
       }
@@ -240,7 +240,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _columnMappingPresenter.SetRawData(e.TabData);
       }
 
-      private void onResetMappingBasedOnCurrentSheet(object sender, EventArgs e)
+      protected virtual void onResetMappingBasedOnCurrentSheet()
       {
          if (confirmDroppingOfLoadedSheets())
             return;
@@ -335,7 +335,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
             foreach (var element in listOfNonExistingColumns)
             {
-               configuration.Parameters.Remove(element);
+               configuration.RemoveParameter(element);
             }
          }
 
@@ -395,7 +395,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.DisableImportedSheets();
       }
 
-      private bool confirmDroppingOfLoadedSheets()
+      protected virtual bool confirmDroppingOfLoadedSheets()
       {
          return _dataSource.DataSets.Count != 0 && _dialogCreator.MessageBoxYesNo(Captions.Importer.ActionWillEraseLoadedData) != ViewResult.Yes;
       }
@@ -411,6 +411,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          if (confirmDroppingOfLoadedSheets())
                return;
+
+         onResetMappingBasedOnCurrentSheet();
 
          var fileName = _dialogCreator.AskForFileToOpen(Captions.Importer.ApplyConfiguration, Constants.Filter.XML_FILE_FILTER,
             Constants.DirectoryKey.OBSERVED_DATA);

@@ -4,6 +4,7 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
@@ -22,8 +23,9 @@ namespace OSPSuite.Presentation.Services
       public DataImporter(
          IDialogCreator dialogCreator,
          IImporter importer,
-         IApplicationController applicationController
-      ) : base(importer)
+         IApplicationController applicationController,
+         IDimensionFactory dimensionFactory
+      ) : base(importer, dimensionFactory)
       {
          _dialogCreator = dialogCreator;
          _applicationController = applicationController;
@@ -42,6 +44,7 @@ namespace OSPSuite.Presentation.Services
 
          using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
          {
+            importerModalPresenter.SetCaption(dataImporterSettings.Caption);
             return importerModalPresenter.ImportDataSets(metaDataCategories, columnInfos, dataImporterSettings, dataFileName);
          }
       }

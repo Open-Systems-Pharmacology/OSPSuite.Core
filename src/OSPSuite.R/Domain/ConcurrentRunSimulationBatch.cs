@@ -41,12 +41,9 @@ namespace OSPSuite.R.Domain
 
       public IReadOnlyCollection<SimulationBatch> SimulationBatches => _simulationBatches;
 
-      public string AddSimulationBatchRunValues(SimulationBatchRunValues simulationBatchRunValues)
+      public void AddSimulationBatchRunValues(SimulationBatchRunValues simulationBatchRunValues)
       {
-         var id = generateId();
-         simulationBatchRunValues.Id = id;
          _simulationBatchRunValues.Add(simulationBatchRunValues);
-         return id;
       }
 
       private string generateId() => Guid.NewGuid().ToString();

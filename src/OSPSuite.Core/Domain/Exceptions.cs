@@ -1,5 +1,6 @@
 using System;
 using OSPSuite.Assets;
+using OSPSuite.Assets.Extensions;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Utility.Exceptions;
 
@@ -15,6 +16,10 @@ namespace OSPSuite.Core.Domain
    public class NotUniqueIdException : ArgumentException
    {
       public NotUniqueIdException(string id) : base($"Id {id} not unique")
+      {
+      }
+
+      public NotUniqueIdException(string id, string type) : base($"Id {id} is used multiple times in {type.Pluralize()}")
       {
       }
    }

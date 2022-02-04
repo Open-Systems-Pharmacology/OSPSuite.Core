@@ -11,7 +11,6 @@ namespace OSPSuite.Core.Domain
       public const int PKML_VERSION = PKMLVersion.CURRENT;
       public const string CVODES = "CVODES";
       public const int SIM_MODEL_XML_VERSION = 4;
-      public const int MAX_NUMBER_OF_POINTS_PER_INTERVAL = 5000;
       public const int MIN_NUMBER_OF_POINTS_PER_INTERVAL = 2;
       public const int MAX_NUMBER_OF_CHAR_IN_TABLE_NAME = 29;
       public const string WILD_CARD = "*";
@@ -156,6 +155,7 @@ namespace OSPSuite.Core.Domain
          public const string IS_LIVER_ZONATED = "Is liver zonated";
          public const string USE_AS_SUSPENSION = "Use as suspension";
          public const string ENABLE_SUPERSATURATION = "Enable supersaturation";
+         public const string URINE_EMPTYING_ENABLE = "Urine emptying enabled";
          public const string PARTICLE_SIZE_DISTRIBUTION = "Particle size distribution";
          public const string NUMBER_OF_BINS = "Number of bins";
          public const string TOTAL_DRUG_MASS = "Total drug mass";
@@ -187,7 +187,8 @@ namespace OSPSuite.Core.Domain
             IS_SMALL_MOLECULE,
             IS_LIVER_ZONATED,
             USE_AS_SUSPENSION,
-            ENABLE_SUPERSATURATION
+            ENABLE_SUPERSATURATION,
+            URINE_EMPTYING_ENABLE
          };
 
          public static readonly IReadOnlyCollection<string> AllCategorialParameters = new List<string>(AllBooleanParameters)

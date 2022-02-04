@@ -28,25 +28,19 @@ namespace OSPSuite.Core.Domain
       public IFormula Formula { get; set; }
       public bool OneTime { get; set; }
 
-      public IEnumerable<IEventAssignment> Assignments
-      {
-         get { return GetChildren<IEventAssignment>(); }
-      }
+      public IEnumerable<IEventAssignment> Assignments => GetChildren<IEventAssignment>();
 
-      public void AddAssignment(IEventAssignment assignment)
-      {
-         Add(assignment);
-      }
+      public void AddAssignment(IEventAssignment assignment) => Add(assignment);
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
 
-         var srcEvent = source as IEvent;
-         if (srcEvent == null) return;
+         var sourceEvent = source as IEvent;
+         if (sourceEvent == null) return;
 
-         Dimension = srcEvent.Dimension;
-         OneTime = srcEvent.OneTime;
+         Dimension = sourceEvent.Dimension;
+         OneTime = sourceEvent.OneTime;
       }
    }
 }
