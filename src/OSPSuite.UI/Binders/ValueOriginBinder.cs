@@ -21,6 +21,7 @@ using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;
+using static OSPSuite.UI.UIConstants.Size;
 
 namespace OSPSuite.UI.Binders
 {
@@ -100,14 +101,14 @@ namespace OSPSuite.UI.Binders
       ///    object can be edited or not.
       /// </param>
       /// <param name="defaultColumnWidth">
-      ///    Default column width for the value origin column. If null, no default witdh will be
+      ///    Default column width for the value origin column. If null, no default width will be
       ///    set
       /// </param>
       public void InitializeBinding(
          GridViewBinder<T> gridViewBinder,
          Action<T, ValueOrigin> onValueOriginUpdated,
          Func<T, bool> valueOriginEditableFunc = null,
-         int? defaultColumnWidth = UIConstants.Size.EMBEDDED_DESCRIPTION_WIDTH)
+         int? defaultColumnWidth = null)
       {
          _gridViewBinder = gridViewBinder;
          _gridView = _gridViewBinder.GridView.DowncastTo<UxGridView>();
@@ -125,8 +126,7 @@ namespace OSPSuite.UI.Binders
             .WithEditRepository(editRepositoryFor)
             .WithEditorConfiguration((editor, withValueOrigin) => { _valueOriginPresenter.Edit(withValueOrigin.ValueOrigin); });
 
-         if (defaultColumnWidth.HasValue)
-            _valueOriginColumn.WithWidth(defaultColumnWidth.Value);
+         _valueOriginColumn.WithWidth(defaultColumnWidth.GetValueOrDefault(EMBEDDED_DESCRIPTION_WIDTH));
 
          initializeToolTip(_gridView.GridControl);
       }
