@@ -11,7 +11,8 @@ namespace OSPSuite.Core.Services
       /// </summary>
       public static void ForceGC()
       {
-         GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+//see reference here
+//https://dotnettools-support.jetbrains.com/hc/en-us/community/posts/360000088690-How-reproduce-DotMemory-s-Force-GC-button-s-behaviour-on-code-with-c-
          for (int i = 0; i < 4; i++)
          {
             GC.Collect(2, GCCollectionMode.Forced, blocking: true);
