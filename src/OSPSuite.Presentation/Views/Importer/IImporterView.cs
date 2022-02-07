@@ -11,7 +11,5 @@ namespace OSPSuite.Presentation.Views.Importer
       void EnableConfirmationView();
       void DisableConfirmationView();
       void AddNanView(INanView nanView);
-      void ShowExtraErrors(string errorMessage);
-      void HideExtraErrors();
    }
 }

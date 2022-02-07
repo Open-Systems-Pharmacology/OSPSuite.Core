@@ -4,7 +4,6 @@ using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Exceptions;
-using OSPSuite.Infrastructure.Import.Core.Helpers;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
@@ -58,7 +57,8 @@ namespace OSPSuite.Infrastructure.Import.Core
       Cache<string, IDataSet> DataSets { get; }
       IEnumerable<string> NamesFromConvention();
       NanSettings NanSettings { get; set; }
-      ImportedDataSet DataSetAt(int index);
+      ImportedDataSet ImportedDataSetAt(int index);
+      IDataSet DataSetAt(int index);
       ParseErrors ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos);
    }
 
@@ -155,7 +155,26 @@ namespace OSPSuite.Infrastructure.Import.Core
          return _importer.NamesFromConvention(_configuration.NamingConventions, _configuration.FileName, DataSets, _mappings);
       }
 
-      public ImportedDataSet DataSetAt(int index)
+      public IDataSet DataSetAt(int index)
+      {
+         var sheetIndex = 0;
+         var sheet = DataSets.GetEnumerator();
+         var accumulatedIndexes = 0;
+         while (sheet.MoveNext() && index >= 0)
+         {
+            if (sheet.Current.Data.Count() > index)
+            {
+               return sheet.Current;
+            }
+
+            index -= sheet.Current.Data.Count();
+            sheetIndex++;
+            accumulatedIndexes += sheet.Current.Data.Count();
+         }
+         return null;
+      }
+
+      public ImportedDataSet ImportedDataSetAt(int index)
       {
          var sheetIndex = 0;
          var sheet = DataSets.GetEnumerator();
@@ -296,7 +315,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          return errors;
       }
 
-      ParseErrors IDataSource.ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos)
+      public ParseErrors ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos)
       {
          var errors = validateUnitsSupportedAndSameDimension(columnInfos);
          errors.Add(validateErrorAgainstMeasurement(columnInfos));

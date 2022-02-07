@@ -64,4 +64,12 @@ namespace OSPSuite.Infrastructure.Import.Core.Exceptions
          Message = Error.EmptyDataSet($"{dataSetNames.ToString(", ")}");
       }
    }
+
+   public class NonMonotonicalTimeParseErrorDescription : ParseErrorDescription
+   {
+      public NonMonotonicalTimeParseErrorDescription(string message)
+      {
+         Message = message;
+      }
+   }
 }

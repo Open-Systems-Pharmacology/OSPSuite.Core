@@ -189,7 +189,7 @@ namespace OSPSuite.Infrastructure.Import.Services
 
          for (var i = 0; i < dataSource.DataSets.SelectMany(ds => ds.Data).Count(); i++)
          {
-            var dataRepoMapping = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i));
+            var dataRepoMapping = _dataRepositoryMapper.ConvertImportDataSet(dataSource.ImportedDataSetAt(i));
             var dataRepo = dataRepoMapping.DataRepository;
             dataRepo.ConfigurationId = id;
             determineMolecularWeight(metaDataCategories, dataImporterSettings, dataRepo);

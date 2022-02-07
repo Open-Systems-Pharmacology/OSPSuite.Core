@@ -272,5 +272,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          View.SetTabMarks(errors, loadedDataSets);
       }
+
+      public void SetTabMarks(ParseErrors errors)
+      {
+         View.SetTabMarks(errors);
+      }
    }
 }

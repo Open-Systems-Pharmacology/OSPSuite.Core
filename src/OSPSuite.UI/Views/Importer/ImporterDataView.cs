@@ -10,11 +10,11 @@ using DevExpress.XtraTab.Buttons;
 using DevExpress.XtraTab.ViewInfo;
 using OSPSuite.Assets;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
+using OSPSuite.UI.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
@@ -23,6 +23,7 @@ namespace OSPSuite.UI.Views.Importer
    public partial class ImporterDataView : BaseUserControl, IImporterDataView
    {
       private IImporterDataPresenter _dataPresenter;
+      private readonly IImageListRetriever _imageListRetriever;
 
       private string _contextMenuSelectedTab;
       private bool sheetImportedFlag;
@@ -31,7 +32,7 @@ namespace OSPSuite.UI.Views.Importer
       private ParseErrors _lastErrors = new ParseErrors();
       private Cache<string, IDataSet> _lastLoadedDataSets = new Cache<string, IDataSet>();
 
-      public ImporterDataView()
+      public ImporterDataView(IImageListRetriever imageListRetriever)
       {
          InitializeComponent();
          btnImport.Click += (s, a) => OnEvent(onButtonImportClicked, s, a);
@@ -50,6 +51,7 @@ namespace OSPSuite.UI.Views.Importer
          btnImport.Text = Captions.Importer.LoadCurrentSheet;
          allImportButtonsDisabledFlag = false;
          dataViewingGridView.OptionsBehavior.Editable = false;
+         _imageListRetriever = imageListRetriever;
       }
       
       public override void InitializeResources()
@@ -228,7 +230,7 @@ namespace OSPSuite.UI.Views.Importer
 
       public void AddTabs(List<string> sheetNames)
       {
-         importerTabControl.Images = imageCollection1;
+         importerTabControl.Images = _imageListRetriever.AllImages16x16;
          foreach (var sheetName in sheetNames)
             importerTabControl.TabPages.Add(sheetName);
 
@@ -311,12 +313,12 @@ namespace OSPSuite.UI.Views.Importer
          if (_lastLoadedDataSets.Contains(SelectedTab) && _lastErrors.Contains(_lastLoadedDataSets[SelectedTab]))
          {
             labelControlError.Text = Error.ParseErrorMessage(_lastErrors.ErrorsFor(_lastLoadedDataSets[SelectedTab]).Select(x => x.Message));
-            layoutControlItem2.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
+            layoutControlItemError.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
          }
          else
          {
             labelControlError.Text = "";
-            layoutControlItem2.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+            layoutControlItemError.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
          }
       }
 
@@ -326,12 +328,17 @@ namespace OSPSuite.UI.Views.Importer
          {
             if (_lastLoadedDataSets.Contains(x.Text))
             {
-               x.ImageIndex = _lastErrors.Contains(_lastLoadedDataSets[x.Text]) ? 1 : 0;
+               x.ImageIndex = _lastErrors.Contains(_lastLoadedDataSets[x.Text]) ? _imageListRetriever.ImageIndex(ApplicationIcons.Cancel) : _imageListRetriever.ImageIndex(ApplicationIcons.OK);
                return;
             }
 
             x.ImageIndex = -1;
          });
+      }
+
+      public void SetTabMarks(ParseErrors errors)
+      {
+         SetTabMarks(errors, _lastLoadedDataSets);
       }
 
       public void SetTabMarks(ParseErrors errors, Cache<string, IDataSet> loadedDataSets)

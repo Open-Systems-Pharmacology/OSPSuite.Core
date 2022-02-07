@@ -15,7 +15,6 @@ using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
-using OSPSuite.Infrastructure.Import.Core.Helpers;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -100,14 +99,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          try
          {
-            _view.HideExtraErrors();
-            var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.DataSetAt(e.Index));
+            var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.ImportedDataSetAt(e.Index));
             _confirmationPresenter.PlotDataRepository(dataRepository.DataRepository);
          }
          catch (InvalidArgumentException invalidException)
          {
-            _view.ShowExtraErrors(Error.ErrorWhenPlottingDataRepository(e.Index, invalidException.Message));
             _view.DisableConfirmationView();
+            var errors = new ParseErrors();
+            errors.Add(_dataSource.DataSetAt(e.Index), new NonMonotonicalTimeParseErrorDescription(Error.ErrorWhenPlottingDataRepository(e.Index, invalidException.Message)));
+            _importerDataPresenter.SetTabMarks(errors);
          }
       }
 

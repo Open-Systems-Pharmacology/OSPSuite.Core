@@ -200,7 +200,7 @@ namespace OSPSuite.Infrastructure.Import
          _parsedDataSetInconsistentLLOQ = _parsedDataSetLLOQ;
          _parsedDataSetInconsistentLLOQ.First(x => x.Key.ColumnInfo.Name == "Concentration").Value.ElementAt(0).Lloq = 2;
 
-         A.CallTo(() => _dataSourceLLOQ.DataSetAt(A<int>.Ignored)).Returns(new ImportedDataSet
+         A.CallTo(() => _dataSourceLLOQ.ImportedDataSetAt(A<int>.Ignored)).Returns(new ImportedDataSet
             (
                "file",
                "sheet1",
@@ -210,7 +210,7 @@ namespace OSPSuite.Infrastructure.Import
             )
          );
 
-         A.CallTo(() => _dataSourceInconsistentLLOQ.DataSetAt(A<int>.Ignored)).Returns(new ImportedDataSet
+         A.CallTo(() => _dataSourceInconsistentLLOQ.ImportedDataSetAt(A<int>.Ignored)).Returns(new ImportedDataSet
             (
                "file",
                "sheet1",
@@ -220,7 +220,7 @@ namespace OSPSuite.Infrastructure.Import
             )
          );
 
-         A.CallTo(() => _dataSourceUnitFromColumn.DataSetAt(A<int>.Ignored)).Returns(new ImportedDataSet
+         A.CallTo(() => _dataSourceUnitFromColumn.ImportedDataSetAt(A<int>.Ignored)).Returns(new ImportedDataSet
             (
                "file",
                "sheet1",
@@ -238,7 +238,7 @@ namespace OSPSuite.Infrastructure.Import
    {
       protected override void Because()
       {
-         _result = sut.ConvertImportDataSet(_dataSourceInconsistentLLOQ.DataSetAt(0));
+         _result = sut.ConvertImportDataSet(_dataSourceInconsistentLLOQ.ImportedDataSetAt(0));
       }
 
       [Observation]
@@ -253,7 +253,7 @@ namespace OSPSuite.Infrastructure.Import
    {
       protected override void Because()
       {
-         _result = sut.ConvertImportDataSet(_dataSourceLLOQ.DataSetAt(0));
+         _result = sut.ConvertImportDataSet(_dataSourceLLOQ.ImportedDataSetAt(0));
       }
 
       [Observation]
@@ -279,7 +279,7 @@ namespace OSPSuite.Infrastructure.Import
    {
       protected override void Because()
       {
-         _result = sut.ConvertImportDataSet(_dataSourceUnitFromColumn.DataSetAt(0));
+         _result = sut.ConvertImportDataSet(_dataSourceUnitFromColumn.ImportedDataSetAt(0));
       }
 
       [Observation]

@@ -45,10 +45,9 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutItemImportCurrent = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.layoutControlItemError = new DevExpress.XtraLayout.LayoutControlItem();
          this.dataViewingGridControl = new DevExpress.XtraGrid.GridControl();
          this.dataViewingGridView = new DevExpress.XtraGrid.Views.Grid.GridView();
-         this.imageCollection1 = new DevExpress.Utils.ImageCollection(this.components);
          this.dpiAwareImageCollection1 = new DevExpress.Utils.DPIAwareImageCollection(this.components);
          this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
@@ -62,10 +61,9 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemImportCurrent)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItemError)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridView)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.imageCollection1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.dpiAwareImageCollection1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).BeginInit();
          this.SuspendLayout();
@@ -148,7 +146,7 @@ namespace OSPSuite.UI.Views.Importer
             this.layoutItemImportCurrent,
             this.emptySpaceItem1,
             this.layoutControlItem1,
-            this.layoutControlItem2,
+            this.layoutControlItemError,
             this.emptySpaceItem2});
          this.Root.Name = "Root";
          this.Root.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
@@ -202,13 +200,13 @@ namespace OSPSuite.UI.Views.Importer
          // 
          // layoutControlItem2
          // 
-         this.layoutControlItem2.Control = this.labelControlError;
-         this.layoutControlItem2.Location = new System.Drawing.Point(0, 949);
-         this.layoutControlItem2.Name = "layoutControlItem2";
-         this.layoutControlItem2.Size = new System.Drawing.Size(1457, 20);
-         this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem2.TextVisible = false;
-         this.layoutControlItem2.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+         this.layoutControlItemError.Control = this.labelControlError;
+         this.layoutControlItemError.Location = new System.Drawing.Point(0, 949);
+         this.layoutControlItemError.Name = "layoutControlItem2";
+         this.layoutControlItemError.Size = new System.Drawing.Size(1457, 20);
+         this.layoutControlItemError.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItemError.TextVisible = false;
+         this.layoutControlItemError.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
          // 
          // dataViewingGridControl
          // 
@@ -226,12 +224,6 @@ namespace OSPSuite.UI.Views.Importer
          this.dataViewingGridView.GridControl = this.dataViewingGridControl;
          this.dataViewingGridView.Name = "dataViewingGridView";
          this.dataViewingGridView.OptionsView.ColumnAutoWidth = false;
-         // 
-         // imageCollection1
-         // 
-         this.imageCollection1.ImageStream = ((DevExpress.Utils.ImageCollectionStreamer)(resources.GetObject("imageCollection1.ImageStream")));
-         this.imageCollection1.Images.SetKeyName(0, "OK.ico");
-         this.imageCollection1.Images.SetKeyName(1, "Cancel.ico");
          // 
          // dpiAwareImageCollection1
          // 
@@ -265,10 +257,9 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemImportCurrent)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItemError)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridView)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.imageCollection1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dpiAwareImageCollection1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).EndInit();
          this.ResumeLayout(false);
@@ -290,10 +281,9 @@ namespace OSPSuite.UI.Views.Importer
       private DevExpress.XtraEditors.CheckEdit useForImportCheckEdit;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
-      private ImageCollection imageCollection1;
       private DPIAwareImageCollection dpiAwareImageCollection1;
       private DevExpress.XtraEditors.LabelControl labelControlError;
-      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItemError;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem2;
    }
 }
