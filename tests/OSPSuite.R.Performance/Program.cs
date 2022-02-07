@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Core.Services;
 using OSPSuite.R.Domain;
 using OSPSuite.R.Services;
 
@@ -71,12 +72,7 @@ namespace OSPSuite.R.Performance
       private static void doGC(IConcurrentSimulationRunner concurrentSimulationRunner)
       {
          concurrentSimulationRunner.Dispose();
-         concurrentSimulationRunner.GCCollectAndCompact();
-         for (int i = 0; i < 4; i++)
-         {
-            GC.Collect(2, GCCollectionMode.Forced, true);
-            GC.WaitForPendingFinalizers();
-         }
+         GarbageCollectionTask.ForceGC();
       }
    }
 }
