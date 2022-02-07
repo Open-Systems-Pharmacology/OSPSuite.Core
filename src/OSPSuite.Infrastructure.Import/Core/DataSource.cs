@@ -162,14 +162,15 @@ namespace OSPSuite.Infrastructure.Import.Core
          var accumulatedIndexes = 0;
          while (sheet.MoveNext() && index >= 0)
          {
-            if (sheet.Current.Data.Count() > index)
+            var countOnSheet = sheet.Current.Data.Count();
+            if (countOnSheet > index)
             {
                return sheet.Current;
             }
 
-            index -= sheet.Current.Data.Count();
+            index -= countOnSheet;
             sheetIndex++;
-            accumulatedIndexes += sheet.Current.Data.Count();
+            accumulatedIndexes += countOnSheet;
          }
          return null;
       }

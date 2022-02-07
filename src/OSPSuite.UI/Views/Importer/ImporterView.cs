@@ -91,10 +91,5 @@ namespace OSPSuite.UI.Views.Importer
       {
          nanPanelControl.FillWith(nanView);
       }
-      public void HideExtraErrors()
-      {
-         _labelExtraErrors.Text = "";
-         layoutControlItemExtraError.ContentVisible = false;
-      }
    }
 }
