@@ -74,6 +74,7 @@ namespace OSPSuite.UI.Binders
 
       private void closeUp(CloseUpEventArgs e)
       {
+         //Normal means OK was clicked. Any other value is interpreted as cancel
          var cancel = e.CloseMode != PopupCloseMode.Normal;
          updateValueOrigin(cancel);
       }
