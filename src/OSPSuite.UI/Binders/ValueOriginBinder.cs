@@ -31,7 +31,7 @@ namespace OSPSuite.UI.Binders
       private readonly IImageListRetriever _imageListRetriever;
       private readonly IToolTipCreator _toolTipCreator;
       private GridViewBinder<T> _gridViewBinder;
-      private readonly RepositoryItemPopupContainerEdit _repositoryItemPopupContainerEdit = new RepositoryItemPopupContainerEdit();
+      private readonly UxRepositoryItemPopupContainerEditOKButton _repositoryItemPopupContainerEdit = new UxRepositoryItemPopupContainerEditOKButton();
       private readonly PopupContainerControl _popupControl = new PopupContainerControl();
       private UxGridView _gridView;
       private Action<T, ValueOrigin> _onValueOriginUpdated;
@@ -47,11 +47,12 @@ namespace OSPSuite.UI.Binders
          _popupControl.FillWith(_valueOriginPresenter.BaseView);
          _repositoryItemPopupContainerEdit.Buttons[0].Kind = ButtonPredefines.Combo;
          _repositoryItemPopupContainerEdit.PopupControl = _popupControl;
-         _repositoryItemPopupContainerEdit.CloseOnOuterMouseClick = false;
+         _repositoryItemPopupContainerEdit.CloseOnOuterMouseClick = true;
          _repositoryItemPopupContainerEdit.QueryDisplayText += (o, e) => queryDisplayText(e);
          _repositoryItemPopupContainerEdit.CloseUp += (o, e) => closeUp(e);
          _repositoryItemPopupContainerEdit.CloseUpKey = new KeyShortcut(Keys.Enter);
          _repositoryItemPopupContainerEdit.AllowDropDownWhenReadOnly = DefaultBoolean.True;
+         _repositoryItemPopupContainerEdit.ShowPopupCloseButton = true;
       }
 
       private void onToolTipControllerGetActiveObjectInfo(object sender, ToolTipControllerGetActiveObjectInfoEventArgs e)
@@ -73,7 +74,7 @@ namespace OSPSuite.UI.Binders
 
       private void closeUp(CloseUpEventArgs e)
       {
-         var cancel = e.CloseMode == PopupCloseMode.Cancel;
+         var cancel = e.CloseMode != PopupCloseMode.Normal;
          updateValueOrigin(cancel);
       }
 
