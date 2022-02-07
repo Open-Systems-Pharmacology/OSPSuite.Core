@@ -24,13 +24,11 @@ namespace OSPSuite.UI.Views.Importer
    {
       private IImporterDataPresenter _dataPresenter;
       private readonly IImageListRetriever _imageListRetriever;
-
+      private Cache<string, TabMarkInfo> _tabMarks;
       private string _contextMenuSelectedTab;
       private bool sheetImportedFlag;
       private bool allSheetsImportedFlag;
       private bool allImportButtonsDisabledFlag;
-      private ParseErrors _lastErrors = new ParseErrors();
-      private Cache<string, IDataSet> _lastLoadedDataSets = new Cache<string, IDataSet>();
 
       public ImporterDataView(IImageListRetriever imageListRetriever)
       {
@@ -309,42 +307,35 @@ namespace OSPSuite.UI.Views.Importer
 
       private void refreshErrorMessage()
       {
-
-         if (_lastLoadedDataSets.Contains(SelectedTab) && _lastErrors.Contains(_lastLoadedDataSets[SelectedTab]))
+         var tabMark = _tabMarks[SelectedTab];
+         if (tabMark.ContainsError)
          {
-            labelControlError.Text = Error.ParseErrorMessage(_lastErrors.ErrorsFor(_lastLoadedDataSets[SelectedTab]).Select(x => x.Message));
+            labelControlError.Text = tabMark.ErrorMessage;
             layoutControlItemError.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
+            return;
          }
-         else
-         {
-            labelControlError.Text = "";
-            layoutControlItemError.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
-         }
+
+         layoutControlItemError.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
       }
 
       private void refreshErrorMarks()
       {
          importerTabControl.TabPages.Each(x =>
          {
-            if (_lastLoadedDataSets.Contains(x.Text))
+            var tabMark = _tabMarks[x.Text];
+            if (!tabMark.IsLoaded)
             {
-               x.ImageIndex = _lastErrors.Contains(_lastLoadedDataSets[x.Text]) ? _imageListRetriever.ImageIndex(ApplicationIcons.Cancel) : _imageListRetriever.ImageIndex(ApplicationIcons.OK);
+               x.ImageIndex = -1;
                return;
             }
 
-            x.ImageIndex = -1;
+            x.ImageIndex = tabMark.ContainsError ? _imageListRetriever.ImageIndex(ApplicationIcons.Cancel) : _imageListRetriever.ImageIndex(ApplicationIcons.OK);         
          });
       }
 
-      public void SetTabMarks(ParseErrors errors)
+      public void SetTabMarks(Cache<string, TabMarkInfo> tabMarks)
       {
-         SetTabMarks(errors, _lastLoadedDataSets);
-      }
-
-      public void SetTabMarks(ParseErrors errors, Cache<string, IDataSet> loadedDataSets)
-      {
-         _lastErrors = errors;
-         _lastLoadedDataSets = loadedDataSets;
+         _tabMarks = tabMarks;
          refreshErrorMessage();
          refreshErrorMarks();
       }

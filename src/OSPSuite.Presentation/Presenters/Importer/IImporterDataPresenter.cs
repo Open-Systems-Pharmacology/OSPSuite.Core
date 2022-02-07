@@ -66,5 +66,18 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void ResetLoadedSheets();
       void SetTabMarks(ParseErrors errors, Cache<string, IDataSet> loadedDataSets);
       void SetTabMarks(ParseErrors errors);
+
+   }
+
+   public class TabMarkInfo
+   {
+      public string ErrorMessage { get; private set; }
+      public bool IsLoaded { get; private set; }
+      public bool ContainsError { get => ErrorMessage != null; }
+      public TabMarkInfo(string errorMessage, bool isLoaded)
+      {
+         ErrorMessage = errorMessage;
+         IsLoaded = isLoaded;
+      }
    }
 }
