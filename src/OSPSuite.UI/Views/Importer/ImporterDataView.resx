@@ -120,47 +120,4 @@
   <metadata name="errorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="useForImportCheckEdit.ToolTip" xml:space="preserve">
-    <value>When selected, the filter will apply to the data during the import process. When deselected, the filter only affects this view. Check documentation for more information on defining filters: &lt;href=https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering&gt;https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering&lt;/href&gt;</value>
-  </data>
-  <metadata name="imageCollection1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>163, 17</value>
-  </metadata>
-  <assembly alias="DevExpress.Utils.v21.2" name="DevExpress.Utils.v21.2, Version=21.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
-  <data name="imageCollection1.ImageStream" type="DevExpress.Utils.ImageCollectionStreamer, DevExpress.Utils.v21.2" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        AAEAAAD/////AQAAAAAAAAAMAgAAAFpEZXZFeHByZXNzLlV0aWxzLnYyMS4yLCBWZXJzaW9uPTIxLjIu
-        My4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI4OGQxNzU0ZDcwMGU0OWEMAwAAAFFT
-        eXN0ZW0uRHJhd2luZywgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRv
-        a2VuPWIwM2Y1ZjdmMTFkNTBhM2EFAQAAAChEZXZFeHByZXNzLlV0aWxzLkltYWdlQ29sbGVjdGlvblN0
-        cmVhbWVyAgAAAAlJbWFnZVNpemUERGF0YQQHE1N5c3RlbS5EcmF3aW5nLlNpemUDAAAAAgIAAAAF/P//
-        /xNTeXN0ZW0uRHJhd2luZy5TaXplAgAAAAV3aWR0aAZoZWlnaHQAAAgIAwAAABAAAAAQAAAACQUAAAAP
-        BQAAAJgDAAAC1AEAAIlQTkcNChoKAAAADUlIRFIAAAAQAAAAEAgGAAAAH/P/YQAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAF2SURBVDhPY8AF0s4Ys8bvcrFI3OPqmbjHQwsoxAiRIQBS
-        T3l6Jux0+5ew2+0/Bt7p9i1xm4coVCkmiN3l+girRjQcv8N5AlQLAiTscHmCTTE6Dt1mBcSW/2N3u9dC
-        tTIwhG/xDcKmGB3Pvtr1HwZABnls82AHG5CwC4efkTCyZhCI2m73P3GH202GkN4QTmwakDG65tV35sDl
-        GOJ2urqBGDE7nf4vvjHlf8Y+P7yatz9cDRR3hcszxOxyywQxNtxdBFXy/3/t8TSsmnc8XPM/Hkkz2IDE
-        3R42IEbHmVKoMghYd3cBlAUBR57txtAMNqB+vz0LiAGSPPR0B1Q5Kjj36jhWzSAMiYXdzn9AHGyGnH8N
-        1LwLu+bYPY57wAbE73DTgAmCDDn8dCdY8633l4GaXTA0wjDDf6T8kXrMcwuyZMQOW5zOBuGM7d62UK0I
-        AHTJYmyK0XHwZm8HqBZMEL/fXiB2l/MrbBpjtzser69nYIIqBQIGBgDCdSCqO2LSiQAAAABJRU5ErkJg
-        grwBAACJUE5HDQoaCgAAAA1JSERSAAAAEAAAABAIBgAAAB/z/2EAAAAEZ0FNQQAAsY8L/GEFAAAACXBI
-        WXMAABJ0AAASdAHeZh94AAABXklEQVQ4T4WSPUvDQBzG//UNJ21FQWku11gxyaWhg7i4OPsB3MUvorsf
-        wMEPIHRy9u2aXFpBEFxcBRE7OYiTKFJ7b0lzifqDB47nnucf7i7wG51dmGSevcF8vMOCRvsAYEJt/U0v
-        WN6MCP5mBA9NRR76vFpDTRUt0ms5d2VFU/ct50xVMm5I41YEfHsYe6i0mPN9+1RVAfqhE+oNDUULWVgI
-        Cf9jMEi9l/WVRTGAeehLmKOvj0MtPUSWNXpA7FtvMASoaIOL1udVTNJdXVIrCbWqaZYLkgA1xw0uc4jG
-        LHNB5NpbpsnVRTVVk1xWpwsZLui3rXpxI39mTXYnmeQl5sx8+XyuolYS83XEgNGf9y6MwivIM5t3ossJ
-        wY9iAAvtmjZfry9EyLwwPeT55Dj1OoTMiAGcmDhH44V/5eN9Vc3oueiwNGwoIWhPVYpQjGcjFz2VFZmL
-        Hug2TKnoCIAfQmzsw53qs4QAAAAASUVORK5CYIIL
-</value>
-  </data>
-  <metadata name="dpiAwareImageCollection1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>338, 17</value>
-  </metadata>
-  <data name="dpiAwareImageCollection1.Stream" type="DevExpress.Utils.DPIAwareImageCollectionStreamer, DevExpress.Utils.v21.2" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        AAEAAAD/////AQAAAAAAAAAMAgAAAFpEZXZFeHByZXNzLlV0aWxzLnYyMS4yLCBWZXJzaW9uPTIxLjIu
-        My4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI4OGQxNzU0ZDcwMGU0OWEFAQAAADBE
-        ZXZFeHByZXNzLlV0aWxzLkRQSUF3YXJlSW1hZ2VDb2xsZWN0aW9uU3RyZWFtZXIAAAAAAgAAAAs=
-</value>
-  </data>
 </root>
