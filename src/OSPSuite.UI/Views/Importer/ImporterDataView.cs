@@ -9,7 +9,6 @@ using DevExpress.XtraTab;
 using DevExpress.XtraTab.Buttons;
 using DevExpress.XtraTab.ViewInfo;
 using OSPSuite.Assets;
-using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
@@ -24,7 +23,7 @@ namespace OSPSuite.UI.Views.Importer
    {
       private IImporterDataPresenter _dataPresenter;
       private readonly IImageListRetriever _imageListRetriever;
-      private Cache<string, TabMarkInfo> _tabMarks;
+      private Cache<string, TabMarkInfo> _tabMarks = new Cache<string, TabMarkInfo>(onMissingKey: _ => new TabMarkInfo(null, false));
       private string _contextMenuSelectedTab;
       private bool sheetImportedFlag;
       private bool allSheetsImportedFlag;
@@ -61,6 +60,7 @@ namespace OSPSuite.UI.Views.Importer
          layoutItemImportAll.AdjustLargeButtonSize();
          layoutItemImportCurrent.AdjustLargeButtonSize();
          ApplicationIcon = ApplicationIcons.Excel;
+         useForImportCheckEdit.ToolTip = Captions.Importer.UseFiltersForImportTooltip;
          useForImportCheckEdit.CheckedChanged += (s, a) => OnEvent(() => _dataPresenter.TriggerOnDataChanged());
          dataViewingGridView.ColumnFilterChanged += (s, a) => OnEvent(() => _dataPresenter.TriggerOnDataChanged());
 

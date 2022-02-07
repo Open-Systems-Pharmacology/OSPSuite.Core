@@ -20,7 +20,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly Cache<string, DataTable> _sheetsForViewing;
       private string _currentSheetName;
-      private ParseErrors _lastErrors = new ParseErrors();
       private Cache<string, IDataSet> _lastLoadedDataSets = new Cache<string, IDataSet>();
       public Cache<string, DataSheet> Sheets { get; set; }
 
@@ -273,14 +272,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetTabMarks(ParseErrors errors, Cache<string, IDataSet> loadedDataSets)
       {
-         _lastErrors = errors;
          _lastLoadedDataSets = loadedDataSets;
          var tabMarkInfos = new Cache<string, TabMarkInfo>(onMissingKey: _ => new TabMarkInfo(errorMessage : null, isLoaded : false));
-         foreach (var loadedDataSet in loadedDataSets)
+         foreach (var loadedDataSet in loadedDataSets.KeyValues)
          {
-            var errorsForDataSet = _lastErrors.ErrorsFor(loadedDataSet);
+            var errorsForDataSet = errors.ErrorsFor(loadedDataSet.Value);
             var errorMessage = errorsForDataSet.Any() ? Error.ParseErrorMessage(errorsForDataSet.Select(x => x.Message)) : null;
             var info = new TabMarkInfo(errorMessage: errorMessage, isLoaded: true);
+            tabMarkInfos.Add(loadedDataSet.Key, info);
          }
          View.SetTabMarks(tabMarkInfos);
       }

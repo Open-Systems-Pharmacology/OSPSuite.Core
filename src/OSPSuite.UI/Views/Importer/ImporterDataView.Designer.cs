@@ -105,7 +105,6 @@ namespace OSPSuite.UI.Views.Importer
          this.useForImportCheckEdit.Size = new System.Drawing.Size(478, 24);
          this.useForImportCheckEdit.StyleController = this.rootLayoutControl;
          this.useForImportCheckEdit.TabIndex = 11;
-         this.useForImportCheckEdit.ToolTip = resources.GetString("useForImportCheckEdit.ToolTip");
          this.useForImportCheckEdit.ToolTipAnchor = DevExpress.Utils.ToolTipAnchor.Cursor;
          // 
          // btnImport
