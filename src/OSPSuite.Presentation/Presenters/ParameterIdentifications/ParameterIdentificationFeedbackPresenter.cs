@@ -33,6 +33,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       ISingleStartPresenter<ParameterIdentificationFeedback>
    {
       bool ShouldRefreshFeedback { get; set; }
+
+      ParameterIdentification ParameterIdentification { get; }
    }
 
    public class ParameterIdentificationFeedbackPresenter : AbstractToggleablePresenter<IParameterIdentificationFeedbackView, IParameterIdentificationFeedbackPresenter>, IParameterIdentificationFeedbackPresenter

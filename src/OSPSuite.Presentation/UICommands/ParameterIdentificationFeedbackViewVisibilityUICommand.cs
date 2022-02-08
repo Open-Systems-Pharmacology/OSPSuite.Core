@@ -5,22 +5,20 @@ using OSPSuite.Presentation.Services;
 
 namespace OSPSuite.Presentation.UICommands
 {
-   public class ParameterIdentificationFeedbackViewVisibilityUICommand : ObjectUICommand<IParameterIdentificationFeedbackPresenter>
+   public class ParameterIdentificationFeedbackViewVisibilityUICommand : ActiveObjectUICommand<IParameterIdentificationFeedbackPresenter>
    {
       private readonly ISingleStartPresenterTask _singleStartPresenterTask;
       private readonly IParameterIdentificationFeedbackManager _parameterIdentificationFeedbackManager;
-      private readonly IActiveSubjectRetriever _activeSubjectRetriever;
 
-      public ParameterIdentificationFeedbackViewVisibilityUICommand(ISingleStartPresenterTask singleStartPresenterTask, IParameterIdentificationFeedbackManager parameterIdentificationFeedbackManager, IActiveSubjectRetriever activeSubjectRetriever)
+      public ParameterIdentificationFeedbackViewVisibilityUICommand(ISingleStartPresenterTask singleStartPresenterTask, IParameterIdentificationFeedbackManager parameterIdentificationFeedbackManager, IActiveSubjectRetriever activeSubjectRetriever) : base(activeSubjectRetriever)
       {
          _singleStartPresenterTask = singleStartPresenterTask;
          _parameterIdentificationFeedbackManager = parameterIdentificationFeedbackManager;
-         _activeSubjectRetriever = activeSubjectRetriever;
       }
 
       protected override void PerformExecute()
       {
-         _singleStartPresenterTask.StartForSubject(_parameterIdentificationFeedbackManager.GetFeedbackFor(_activeSubjectRetriever.Active<ParameterIdentification>()));
+         _singleStartPresenterTask.StartForSubject(_parameterIdentificationFeedbackManager.GetFeedbackFor(Subject.ParameterIdentification));
       }
    }
 }
