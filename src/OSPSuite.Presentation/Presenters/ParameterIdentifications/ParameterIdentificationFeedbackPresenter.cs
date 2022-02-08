@@ -249,5 +249,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       //Used as an id to check if the subject already has a presenter associated
       public object Subject => _parameterIdentificationFeedback;
+
+      public ParameterIdentification ParameterIdentification => _parameterIdentificationFeedback.ParameterIdentification;
    }
 }
