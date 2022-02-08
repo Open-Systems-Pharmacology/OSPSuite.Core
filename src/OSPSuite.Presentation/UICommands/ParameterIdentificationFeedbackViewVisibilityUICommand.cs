@@ -5,7 +5,7 @@ using OSPSuite.Presentation.Services;
 
 namespace OSPSuite.Presentation.UICommands
 {
-   public class ParameterIdentificationFeedbackViewVisibilityUICommand : ActiveObjectUICommand<IParameterIdentificationFeedbackPresenter>
+   public class ParameterIdentificationFeedbackViewVisibilityUICommand : ActiveObjectUICommand<ParameterIdentification>
    {
       private readonly ISingleStartPresenterTask _singleStartPresenterTask;
       private readonly IParameterIdentificationFeedbackManager _parameterIdentificationFeedbackManager;
@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.UICommands
 
       protected override void PerformExecute()
       {
-         _singleStartPresenterTask.StartForSubject(_parameterIdentificationFeedbackManager.GetFeedbackFor(Subject.ParameterIdentification));
+         _singleStartPresenterTask.StartForSubject(_parameterIdentificationFeedbackManager.GetFeedbackFor(Subject));
       }
    }
 }

@@ -33,8 +33,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       ISingleStartPresenter<ParameterIdentificationFeedback>
    {
       bool ShouldRefreshFeedback { get; set; }
-
-      ParameterIdentification ParameterIdentification { get; }
    }
 
    public class ParameterIdentificationFeedbackPresenter : AbstractToggleablePresenter<IParameterIdentificationFeedbackView, IParameterIdentificationFeedbackPresenter>, IParameterIdentificationFeedbackPresenter
@@ -249,7 +247,5 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       //Used as an id to check if the subject already has a presenter associated
       public object Subject => _parameterIdentificationFeedback;
-
-      public ParameterIdentification ParameterIdentification => _parameterIdentificationFeedback.ParameterIdentification;
    }
 }
