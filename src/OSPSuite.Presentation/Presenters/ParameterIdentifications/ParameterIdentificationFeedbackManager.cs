@@ -1,15 +1,20 @@
-﻿using OSPSuite.Core.Domain.ParameterIdentifications;
+﻿using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Events;
+using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
-   public class ParameterIdentificationFeedback
+   public class ParameterIdentificationFeedback : IWithId
    {
+      public string Id { get; set; }
+
       public ParameterIdentificationFeedback(ParameterIdentification parameterIdentification)
       {
          ParameterIdentification = parameterIdentification;
+         Id = ShortGuid.NewGuid();
       }
 
       public ParameterIdentification ParameterIdentification { get; private set; }
