@@ -163,7 +163,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          var dataSourceFile = _importer.LoadFile(columnInfos, dataPath, metaDataCategories);
          if (!string.IsNullOrEmpty(sheetName))
          {
-            _importer.CalculateFormat(dataSourceFile, columnInfos, metaDataCategories, sheetName);
+            dataSourceFile.AvailableFormats = _importer.CalculateFormat(dataSourceFile, columnInfos, metaDataCategories, sheetName).ToList();
          }
 
          configuration.CloneParametersFrom(dataSourceFile.Format.Parameters.ToList());

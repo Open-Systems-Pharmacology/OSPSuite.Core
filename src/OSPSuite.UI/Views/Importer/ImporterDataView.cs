@@ -13,19 +13,23 @@ using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
+using OSPSuite.UI.Services;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {
    public partial class ImporterDataView : BaseUserControl, IImporterDataView
    {
       private IImporterDataPresenter _dataPresenter;
-
+      private readonly IImageListRetriever _imageListRetriever;
+      private Cache<string, TabMarkInfo> _tabMarks = new Cache<string, TabMarkInfo>(onMissingKey: _ => new TabMarkInfo(null, false));
       private string _contextMenuSelectedTab;
       private bool sheetImportedFlag;
       private bool allSheetsImportedFlag;
       private bool allImportButtonsDisabledFlag;
 
-      public ImporterDataView()
+      public ImporterDataView(IImageListRetriever imageListRetriever)
       {
          InitializeComponent();
          btnImport.Click += (s, a) => OnEvent(onButtonImportClicked, s, a);
@@ -44,6 +48,7 @@ namespace OSPSuite.UI.Views.Importer
          btnImport.Text = Captions.Importer.LoadCurrentSheet;
          allImportButtonsDisabledFlag = false;
          dataViewingGridView.OptionsBehavior.Editable = false;
+         _imageListRetriever = imageListRetriever;
       }
       
       public override void InitializeResources()
@@ -55,6 +60,7 @@ namespace OSPSuite.UI.Views.Importer
          layoutItemImportAll.AdjustLargeButtonSize();
          layoutItemImportCurrent.AdjustLargeButtonSize();
          ApplicationIcon = ApplicationIcons.Excel;
+         useForImportCheckEdit.ToolTip = Captions.Importer.UseFiltersForImportTooltip;
          useForImportCheckEdit.CheckedChanged += (s, a) => OnEvent(() => _dataPresenter.TriggerOnDataChanged());
          dataViewingGridView.ColumnFilterChanged += (s, a) => OnEvent(() => _dataPresenter.TriggerOnDataChanged());
 
@@ -222,13 +228,12 @@ namespace OSPSuite.UI.Views.Importer
 
       public void AddTabs(List<string> sheetNames)
       {
-         //we should seek an alternative
+         importerTabControl.Images = _imageListRetriever.AllImages16x16;
          foreach (var sheetName in sheetNames)
-         {
             importerTabControl.TabPages.Add(sheetName);
-         }
 
          hideCloseButtonForSingleTab();
+         refreshErrorMarks();
       }
 
       private void hideCloseButtonForSingleTab()
@@ -286,10 +291,53 @@ namespace OSPSuite.UI.Views.Importer
          useForImportCheckEdit.Checked = true;
       }
 
-      public string SelectedTab { get; set; }
+      private string _selectedTab;
+      public string SelectedTab {
+         get => _selectedTab;
+         set
+         {
+            _selectedTab = value;
+            refreshErrorMessage();
+         }
+      }
       public string GetFilter()
       {
          return DevExpress.Data.Filtering.CriteriaToWhereClauseHelper.GetDataSetWhere(dataViewingGridView.ActiveFilterCriteria);
+      }
+
+      private void refreshErrorMessage()
+      {
+         var tabMark = _tabMarks[SelectedTab];
+         if (tabMark.ContainsError)
+         {
+            labelControlError.Text = tabMark.ErrorMessage;
+            layoutControlItemError.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
+            return;
+         }
+
+         layoutControlItemError.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+      }
+
+      private void refreshErrorMarks()
+      {
+         importerTabControl.TabPages.Each(x =>
+         {
+            var tabMark = _tabMarks[x.Text];
+            if (!tabMark.IsLoaded)
+            {
+               x.ImageIndex = -1;
+               return;
+            }
+
+            x.ImageIndex = tabMark.ContainsError ? _imageListRetriever.ImageIndex(ApplicationIcons.Cancel) : _imageListRetriever.ImageIndex(ApplicationIcons.OK);         
+         });
+      }
+
+      public void SetTabMarks(Cache<string, TabMarkInfo> tabMarks)
+      {
+         _tabMarks = tabMarks;
+         refreshErrorMessage();
+         refreshErrorMarks();
       }
    }
 }

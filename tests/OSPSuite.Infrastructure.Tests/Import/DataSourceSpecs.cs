@@ -233,7 +233,7 @@ namespace OSPSuite.Infrastructure.Import
       {
          var sheets = new Cache<string, DataSheet>();
          sheets.Add("sheet1", new DataSheet() { RawData = new UnformattedData() });
-         The.Action(() => sut.AddSheets(sheets, _columnInfos, "")).ShouldThrowAn<EmptyDataSetsException>();
+         sut.AddSheets(sheets, _columnInfos, "").Any().ShouldBeTrue();
       }
    }
    public class When_validating_geometric_error : concern_for_DataSource
@@ -729,7 +729,7 @@ namespace OSPSuite.Infrastructure.Import
       [Observation]
       public void should_not_be_valid()
       {
-         The.Action(() => sut.ValidateDataSourceUnits(_columnInfos)).ShouldThrowAn<InvalidDimensionException>();
+         sut.ValidateDataSourceUnits(_columnInfos).Any().ShouldBeTrue();
       }
    }
 
@@ -819,7 +819,7 @@ namespace OSPSuite.Infrastructure.Import
       [Observation]
       public void should_be_valid()
       {
-         The.Action(() => sut.ValidateDataSourceUnits(_columnInfos)).ShouldThrowAn<ErrorUnitException>();
+         sut.ValidateDataSourceUnits(_columnInfos).Any().ShouldBeTrue();
       }
    }
 
@@ -892,7 +892,7 @@ namespace OSPSuite.Infrastructure.Import
       [Observation]
       public void should_be_valid()
       {
-         The.Action(() => sut.ValidateDataSourceUnits(_columnInfos)).ShouldThrowAn<InconsistentDimensionBetweenUnitsException>();
+         sut.ValidateDataSourceUnits(_columnInfos).Any().ShouldBeTrue();
       }
    }
 
@@ -965,7 +965,7 @@ namespace OSPSuite.Infrastructure.Import
       [Observation]
       public void should_be_valid()
       {
-         The.Action(() => sut.ValidateDataSourceUnits(_columnInfos)).ShouldThrowAn<InvalidDimensionException>();
+         sut.ValidateDataSourceUnits(_columnInfos).Any().ShouldBeTrue();
       }
    }
 }

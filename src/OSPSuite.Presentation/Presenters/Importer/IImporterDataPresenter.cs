@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
 
@@ -63,5 +64,20 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SetFilter(string FilterString);
       void GetFormatBasedOnCurrentSheet();
       void ResetLoadedSheets();
+      void SetTabMarks(ParseErrors errors, Cache<string, IDataSet> loadedDataSets);
+      void SetTabMarks(ParseErrors errors);
+
+   }
+
+   public class TabMarkInfo
+   {
+      public string ErrorMessage { get; private set; }
+      public bool IsLoaded { get; private set; }
+      public bool ContainsError { get => ErrorMessage != null; }
+      public TabMarkInfo(string errorMessage, bool isLoaded)
+      {
+         ErrorMessage = errorMessage;
+         IsLoaded = isLoaded;
+      }
    }
 }

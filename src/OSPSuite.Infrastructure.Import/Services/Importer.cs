@@ -44,7 +44,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          DataImporterSettings dataImporterSettings
       );
 
-      void CalculateFormat(IDataSourceFile dataSource, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName);
+      IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName);
    }
 
    public class Importer : IImporter
@@ -102,22 +102,23 @@ namespace OSPSuite.Infrastructure.Import.Services
 
          if (dataSource.DataSheets == null) return null;
 
-         CalculateFormat(dataSource, columnInfos, metaDataCategories, dataSource.DataSheets.Keys.FirstOrDefault());
 
-         return dataSource;
+         foreach(var x in dataSource.DataSheets.Keys)
+         {
+            dataSource.AvailableFormats = CalculateFormat(dataSource, columnInfos, metaDataCategories, x).ToList();
+            if (dataSource.AvailableFormats.Any())
+               return dataSource;
+         };
+
+         throw new UnsupportedFormatException(dataSource.Path);
       }
 
-      public void CalculateFormat(IDataSourceFile dataSource, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName)
+      public IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName)
       {
          if (sheetName == null)
             throw new UnsupportedFormatException(dataSource.Path);
 
-         dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets[sheetName].RawData, columnInfos, metaDataCategories).ToList();
-
-         if (dataSource.AvailableFormats.Count == 0)
-            throw new UnsupportedFormatException(dataSource.Path);
-
-         dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();
+         return AvailableFormats(dataSource.DataSheets[sheetName].RawData, columnInfos, metaDataCategories);
       }
 
       public IEnumerable<string> NamesFromConvention
@@ -188,7 +189,7 @@ namespace OSPSuite.Infrastructure.Import.Services
 
          for (var i = 0; i < dataSource.DataSets.SelectMany(ds => ds.Data).Count(); i++)
          {
-            var dataRepoMapping = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i));
+            var dataRepoMapping = _dataRepositoryMapper.ConvertImportDataSet(dataSource.ImportedDataSetAt(i));
             var dataRepo = dataRepoMapping.DataRepository;
             dataRepo.ConfigurationId = id;
             determineMolecularWeight(metaDataCategories, dataImporterSettings, dataRepo);
@@ -328,7 +329,9 @@ namespace OSPSuite.Infrastructure.Import.Services
             sheets.Add(key, dataSourceFile.DataSheets[key]);
          }
 
-         dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
+         var errors = dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
+         if (errors.Any())
+            throw new ImporterParsingException(errors);
          return (DataSourceToDataSets(dataSource, metaDataCategories, dataImporterSettings, configuration.Id), missingSheets);
       }
    }

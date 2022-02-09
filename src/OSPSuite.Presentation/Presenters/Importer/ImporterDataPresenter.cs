@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
@@ -18,6 +20,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly Cache<string, DataTable> _sheetsForViewing;
       private string _currentSheetName;
+      private Cache<string, IDataSet> _lastLoadedDataSets = new Cache<string, IDataSet>();
       public Cache<string, DataSheet> Sheets { get; set; }
 
       public event EventHandler<FormatChangedEventArgs> OnFormatChanged = delegate { };
@@ -256,7 +259,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void GetFormatBasedOnCurrentSheet()
       {
-         _importer.CalculateFormat(_dataSourceFile, _columnInfos, _metaDataCategories, _currentSheetName);
+         _dataSourceFile.AvailableFormats = _importer.CalculateFormat(_dataSourceFile, _columnInfos, _metaDataCategories, _currentSheetName).ToList();
          ResetLoadedSheets();
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
       }
@@ -265,6 +268,25 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          Sheets.Clear();
          View.ResetImportButtons();
+      }
+
+      public void SetTabMarks(ParseErrors errors, Cache<string, IDataSet> loadedDataSets)
+      {
+         _lastLoadedDataSets = loadedDataSets;
+         var tabMarkInfos = new Cache<string, TabMarkInfo>(onMissingKey: _ => new TabMarkInfo(errorMessage : null, isLoaded : false));
+         foreach (var loadedDataSet in loadedDataSets.KeyValues)
+         {
+            var errorsForDataSet = errors.ErrorsFor(loadedDataSet.Value);
+            var errorMessage = errorsForDataSet.Any() ? Error.ParseErrorMessage(errorsForDataSet.Select(x => x.Message)) : null;
+            var info = new TabMarkInfo(errorMessage: errorMessage, isLoaded: true);
+            tabMarkInfos.Add(loadedDataSet.Key, info);
+         }
+         View.SetTabMarks(tabMarkInfos);
+      }
+
+      public void SetTabMarks(ParseErrors errors)
+      {
+         SetTabMarks(errors, _lastLoadedDataSets);
       }
    }
 }
