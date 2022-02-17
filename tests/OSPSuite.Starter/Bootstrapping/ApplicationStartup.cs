@@ -22,6 +22,7 @@ using OSPSuite.Infrastructure.Services;
 using OSPSuite.Presentation;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Starter.Presenters;
+using OSPSuite.Starter.Views;
 using OSPSuite.UI;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Events;
@@ -110,6 +111,7 @@ namespace OSPSuite.Starter.Bootstrapping
             container.Register<IHistoryManager, HistoryManager<MyContext>>();
             container.Register<IFullPathDisplayResolver, FullPathDisplayResolver>();
             container.Register<MyContext, MyContext>();
+            container.Register<IConfigurableContainerLayoutView, AccordionLayoutView>();
 
 
             container.Register<DxContainer, DxContainer>(LifeStyle.Singleton);
