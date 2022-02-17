@@ -35,6 +35,7 @@ namespace OSPSuite.Starter.Views
          startEmptyFormButton.Click += (sender, args) => OnEvent(_presenter.StartEmptyFormTest);
          startLoggerButton.Click += (sender, args) => OnEvent(_presenter.StartLoggerTest);
          startDialogCreatorButton.Click += (sender, args) => OnEvent(_presenter.StartDialogCreatorTest);
+         startDynamicTestButton.Click += (sender, args) => OnEvent(_presenter.StartDynamicTest);
       }
 
       public override void InitializeResources()
@@ -61,6 +62,7 @@ namespace OSPSuite.Starter.Views
          startEmptyFormButton.Text = "Start Empty Form";
          startLoggerButton.Text = "Start Logger Test";
          startDialogCreatorButton.Text = "Start Dialog Creator Test";
+         startDynamicTestButton.Text = "Start Dynamic Test";
       }
 
       public void AttachPresenter(ITestPresenter presenter)

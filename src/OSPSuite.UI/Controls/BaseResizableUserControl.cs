@@ -7,6 +7,7 @@ namespace OSPSuite.UI.Controls
    {
       public event EventHandler<ViewResizedEventArgs> HeightChanged = delegate { };
 
+      private bool _resizedPerformed = false;
       public BaseResizableUserControl()
       {
          InitializeComponent();
@@ -30,8 +31,14 @@ namespace OSPSuite.UI.Controls
       protected override void OnVisibleChanged(EventArgs e)
       {
          base.OnVisibleChanged(e);
+         if (_resizedPerformed) 
+            return;
+
          if (Visible)
+         {
+            _resizedPerformed = true;
             AdjustHeight();
+         }
       }
    }
 }

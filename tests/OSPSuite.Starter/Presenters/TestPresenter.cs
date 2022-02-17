@@ -33,6 +33,7 @@ namespace OSPSuite.Starter.Presenters
       void StartEmptyFormTest();
       void StartLoggerTest();
       void StartDialogCreatorTest();
+      void StartDynamicTest();
    }
 
    public class TestPresenter : AbstractPresenter<ITestView, ITestPresenter>, ITestPresenter
@@ -45,11 +46,12 @@ namespace OSPSuite.Starter.Presenters
       private readonly ISimpleUIStarter _simpleUIStarter;
       private readonly IOSPSuiteLogger _logger;
       private readonly IDialogCreator _dialogCreator;
+      private readonly IDynamicTestPresenter _dynamicTestPresenter;
 
       public TestPresenter(ITestView view, IGridTestStarter girdTestStarter,
          IShellPresenter shellPresenter, IOptimizationStarter optimizationStarter, ISensitivityAnalysisStarter sensitivityAnalysisStarter,
          ICommandBrowserStarter commandBrowserStarter, ISimpleUIStarter simpleUIStarter, IImporterConfigurationDataGenerator dataGenerator,
-         IOSPSuiteLogger logger, IDialogCreator dialogCreator) : base(view)
+         IOSPSuiteLogger logger, IDialogCreator dialogCreator, IDynamicTestPresenter dynamicTestPresenter) : base(view)
       {
          _girdTestStarter = girdTestStarter;
          _shellPresenter = shellPresenter;
@@ -59,6 +61,7 @@ namespace OSPSuite.Starter.Presenters
          _simpleUIStarter = simpleUIStarter;
          _logger = logger;
          _dialogCreator = dialogCreator;
+         _dynamicTestPresenter = dynamicTestPresenter;
       }
 
       public void StartLoggerTest()
@@ -102,7 +105,8 @@ namespace OSPSuite.Starter.Presenters
 
       public void StartImporterTest() => start<IImporterTestPresenter>();
 
-      public void StartImporterReloadTest() {
+      public void StartImporterReloadTest()
+      {
          var presenter = IoC.Resolve<IImporterTestPresenter>();
          presenter.ReloadWithPKSimSettings();
       }
@@ -111,6 +115,11 @@ namespace OSPSuite.Starter.Presenters
       {
          var presenter = IoC.Resolve<IImporterTestPresenter>();
          presenter.LoadWithPKSimSettings();
+      }
+
+      public void StartDynamicTest()
+      {
+         _dynamicTestPresenter.Start();
       }
 
       public void StartShellTest() => _shellPresenter.Start();
