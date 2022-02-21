@@ -175,9 +175,7 @@ namespace OSPSuite.Infrastructure.Import.Services
 
       private void addDimensionsTo(ColumnInfo columnInfo)
       {
-         var timeDimension = _dimensionFactory.Dimension(Constants.Dimension.TIME);
-
-         foreach (var dimension in _dimensionFactory.DimensionsSortedByName.Where(x => x != timeDimension))
+         foreach (var dimension in _dimensionFactory.DimensionsSortedByName)
          {
             columnInfo.SupportedDimensions.Add(dimension);
          }
