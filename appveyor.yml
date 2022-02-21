@@ -50,7 +50,7 @@ skip_commits:
 branches:
   only:
     - develop
-    -1505-time-dimension-missing
+    - 1505-time-dimension-missing
 
 test:
   assemblies:
