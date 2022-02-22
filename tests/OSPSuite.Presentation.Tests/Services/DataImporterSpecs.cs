@@ -71,6 +71,28 @@ namespace OSPSuite.Presentation.Services
          _metaDataCategories.First(md => md.Name == _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation).ListOfValues.Add("TestInputMolecule", "233");
       }
 
+      protected List<DataFormatParameter> createTestParameters(string moleculeColumnName, UnitDescription timeUnitDescription, UnitDescription concentrationUnitDescription, IDimension _timeConcentrationDimension)
+      {
+         var parameterList = new List<DataFormatParameter>
+         {
+            new MappingDataFormatParameter("time  [h]",
+               new Column() { Name = "Time", Dimension = _dimensionFactory.Dimension("Time"), Unit = timeUnitDescription }),
+            new MappingDataFormatParameter("conc  [mg/l]",
+               new Column()
+               {
+                  Name = "Concentration", Dimension = _timeConcentrationDimension, Unit = concentrationUnitDescription
+               }),
+            new MappingDataFormatParameter("SD [mg/l]",
+               new Column()
+               {
+                  Name = "Error", ErrorStdDev = "Arithmetic Standard Deviation", Dimension = _massConcentrationDimension,
+                  Unit = new UnitDescription("mg/l")
+               }),
+            new MetaDataFormatParameter("VenousBlood", "Organ", false),
+            new MetaDataFormatParameter(moleculeColumnName, "Molecule", false)
+         };
+         return parameterList;
+      }
       protected string getFileFullName(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", fileName);
 
       private IReadOnlyList<ColumnInfo> getDefaultColumnInfos()
@@ -145,24 +167,7 @@ namespace OSPSuite.Presentation.Services
    {
       protected override void Because()
       {
-         var parameterList = new List<DataFormatParameter>
-         {
-            new MappingDataFormatParameter("time  [h]",
-               new Column() {Name = "Time", Dimension = _dimensionFactory.Dimension("Time"), Unit = new UnitDescription("h")}),
-            new MappingDataFormatParameter("conc  [mg/l]",
-               new Column()
-               {
-                  Name = "Concentration", Dimension = _massConcentrationDimension, Unit = new UnitDescription("mg/l")
-               }),
-            new MappingDataFormatParameter("SD [mg/l]",
-               new Column()
-               {
-                  Name = "Error", ErrorStdDev = "Arithmetic Standard Deviation", Dimension = _massConcentrationDimension,
-                  Unit = new UnitDescription("mg/l")
-               }),
-            new MetaDataFormatParameter("VenousBlood", "Organ", false),
-            new MetaDataFormatParameter("TestInputMolecule", "Molecule", false)
-         };
+         var parameterList = createTestParameters("TestInputMolecule", new UnitDescription("h"), new UnitDescription("mg/l"), _massConcentrationDimension);
          var parameterListMolecularWeight = new List<DataFormatParameter>(parameterList);
          parameterListMolecularWeight.Add(new MetaDataFormatParameter("Molecular Weight", "Molecular Weight", true));
          _importerConfiguration.CloneParametersFrom(parameterList);
@@ -281,24 +286,7 @@ namespace OSPSuite.Presentation.Services
    {
       protected override void Because()
       {
-         var parameterList = new List<DataFormatParameter>
-         {
-            new MappingDataFormatParameter("time  [h]",
-               new Column() {Name = "Time", Dimension = _dimensionFactory.Dimension("Time"), Unit = new UnitDescription("h")}),
-            new MappingDataFormatParameter("conc  [mg/l]",
-               new Column()
-               {
-                  Name = "Concentration", Dimension = _massConcentrationDimension, Unit = new UnitDescription("mg/l")
-               }),
-            new MappingDataFormatParameter("SD [mg/l]",
-               new Column()
-               {
-                  Name = "Error", ErrorStdDev = "Arithmetic Standard Deviation", Dimension = _massConcentrationDimension,
-                  Unit = new UnitDescription("mg/l")
-               }),
-            new MetaDataFormatParameter("VenousBlood", "Organ", false),
-            new MetaDataFormatParameter(null, "Molecule", false)
-         };
+         var parameterList = createTestParameters(null, new UnitDescription("h"), new UnitDescription("mg/l"), _massConcentrationDimension);
          _importerConfiguration.CloneParametersFrom(parameterList);
       }
 
@@ -323,24 +311,7 @@ namespace OSPSuite.Presentation.Services
    {
       protected override void Because()
       {
-         var parameterList = new List<DataFormatParameter>
-         {
-            new MappingDataFormatParameter("time  [h]",
-               new Column() {Name = "Time", Dimension = _dimensionFactory.Dimension("Time"), Unit = new UnitDescription("h", "timeUnitColumn")}),
-            new MappingDataFormatParameter("conc  [mg/l]",
-               new Column()
-               {
-                  Name = "Concentration", Dimension = _massConcentrationDimension, Unit = new UnitDescription("mg/l")
-               }),
-            new MappingDataFormatParameter("SD [mg/l]",
-               new Column()
-               {
-                  Name = "Error", ErrorStdDev = "Arithmetic Standard Deviation", Dimension = _massConcentrationDimension,
-                  Unit = new UnitDescription("mg/l")
-               }),
-            new MetaDataFormatParameter("VenousBlood", "Organ", false),
-            new MetaDataFormatParameter(null, "Molecule", false)
-         };
+         var parameterList = createTestParameters(null, new UnitDescription("h", "timeUnitColumn"), new UnitDescription("mg/l"), _massConcentrationDimension);
          _importerConfiguration.CloneParametersFrom(parameterList);
       }
 
@@ -353,63 +324,12 @@ namespace OSPSuite.Presentation.Services
       }
    }
 
-   public class When_importing_data_from_incorrect_configuration : concern_for_DataImporter
-   {
-      protected override void Because()
-      {
-         var parameterList = new List<DataFormatParameter>
-         {
-            new MappingDataFormatParameter("time  [h]",
-               new Column() {Name = "Time", Dimension = _dimensionFactory.Dimension("Time"), Unit = new UnitDescription("h")}),
-            new MappingDataFormatParameter("conc  [mg/l]",
-               new Column()
-               {
-                  Name = "Concentration", Dimension = _timeConcentrationDimension, Unit = new UnitDescription("s")
-               }),
-            new MappingDataFormatParameter("SD [mg/l]",
-               new Column()
-               {
-                  Name = "Error", ErrorStdDev = "Arithmetic Standard Deviation", Dimension = _massConcentrationDimension,
-                  Unit = new UnitDescription("mg/l")
-               }),
-            new MetaDataFormatParameter("VenousBlood", "Organ", false),
-            new MetaDataFormatParameter("TestInputMolecule", "Molecule", false)
-         };
-         _importerConfiguration.CloneParametersFrom(parameterList);
-      }
-
-      [Observation]
-      public void should_throw_exception_when_trying_to_import()
-      {
-         The.Action(() =>
-            sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
-               getFileFullName(
-                  "IntegrationSample1.xlsx"))).ShouldThrowAn<OSPSuiteException>();
-      }
-   }
-
    public class When_importing_with_inconsistent_units_in_column : concern_for_DataImporter
    {
       protected override void Because()
       {
-         var parameterList = new List<DataFormatParameter>
-         {
-            new MappingDataFormatParameter("time  [h]",
-               new Column() {Name = "Time", Dimension = _dimensionFactory.Dimension("Time"), Unit = new UnitDescription("h")}),
-            new MappingDataFormatParameter("conc  [mg/l]",
-               new Column()
-               {
-                  Name = "Concentration", Dimension = _timeConcentrationDimension, Unit = new UnitDescription("s")
-               }),
-            new MappingDataFormatParameter("SD [mg/l]",
-               new Column()
-               {
-                  Name = "Error", ErrorStdDev = "Arithmetic Standard Deviation", Dimension = _massConcentrationDimension,
-                  Unit = new UnitDescription("mg/l")
-               }),
-            new MetaDataFormatParameter("VenousBlood", "Organ", false),
-            new MetaDataFormatParameter("TestInputMolecule", "Molecule", false)
-         };
+         var parameterList =
+            createTestParameters("TestInputMolecule", new UnitDescription("h"), new UnitDescription("s"), _timeConcentrationDimension);
          _importerConfiguration.CloneParametersFrom(parameterList);
       }
 
@@ -420,6 +340,28 @@ namespace OSPSuite.Presentation.Services
             sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
                getFileFullName(
                   "IntegrationSample1.xlsx"))).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
+   public class When_importing_empty_metadata_columns : concern_for_DataImporter
+   {
+      protected override void Because()
+      {
+         var parameterList = createTestParameters("TestInputMolecule", new UnitDescription("h"), new UnitDescription("mg/l"),
+            _massConcentrationDimension);
+         parameterList.Add(new MetaDataFormatParameter("Dose", "Dose", true));
+         _importerConfiguration.CloneParametersFrom(parameterList);
+      }
+
+      [Observation]
+      public void should_not_import_empty_metadata()
+      {
+         var result = sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName(
+               "IntegrationSample1.xlsx"));
+         result.First().ExtendedProperties.Contains("Dose").ShouldBeFalse();
+            
+         
       }
    }
 }
