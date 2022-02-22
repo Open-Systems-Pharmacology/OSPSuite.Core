@@ -519,12 +519,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          var supportedDimensions = _columnInfos.First(x => x.DisplayName == model.MappingName).SupportedDimensions;
          var unit = _format.ExtractUnitDescriptions(model.ExcelColumn, supportedDimensions);
-         if (unit.SelectedUnit != UnitDescription.InvalidUnit)
-         {
-            var mappingDataFormatParameter = (model.Source as MappingDataFormatParameter);
-            mappingDataFormatParameter.MappedColumn.Unit = unit;
-            mappingDataFormatParameter.MappedColumn.Dimension = supportedDimensions.FirstOrDefault(x => x.HasUnit(unit.SelectedUnit)); ;
-         }
+         if (unit.SelectedUnit == UnitDescription.InvalidUnit)
+            return;
+         
+         var mappingDataFormatParameter = (model.Source as MappingDataFormatParameter);
+         mappingDataFormatParameter.MappedColumn.Unit = unit;
+         mappingDataFormatParameter.MappedColumn.Dimension = supportedDimensions.FirstOrDefault(x => x.HasUnit(unit.SelectedUnit)); ;
       }
 
       private void setDescriptionForRow(ColumnMappingDTO model, bool isColumn)
