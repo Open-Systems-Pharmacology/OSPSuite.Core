@@ -342,4 +342,26 @@ namespace OSPSuite.Presentation.Services
                   "IntegrationSample1.xlsx"))).ShouldThrowAn<OSPSuiteException>();
       }
    }
+
+   public class When_importing_empty_metadata_columns : concern_for_DataImporter
+   {
+      protected override void Because()
+      {
+         var parameterList = createTestParameters("TestInputMolecule", new UnitDescription("h"), new UnitDescription("mg/l"),
+            _massConcentrationDimension);
+         parameterList.Add(new MetaDataFormatParameter("Dose", "Dose", true));
+         _importerConfiguration.CloneParametersFrom(parameterList);
+      }
+
+      [Observation]
+      public void should_not_import_empty_metadata()
+      {
+         var result = sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName(
+               "IntegrationSample1.xlsx"));
+         result.First().ExtendedProperties.Contains("Dose").ShouldBeFalse();
+            
+         
+      }
+   }
 }
