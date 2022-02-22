@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core.Mappers
 {
@@ -39,7 +40,8 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
          foreach (var metaDataDescription in dataSet.MetaDataDescription)
          {
-            dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = metaDataDescription.Name, Value = metaDataDescription.Value });
+            if (!metaDataDescription.Value.IsNullOrEmpty())
+               dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = metaDataDescription.Name, Value = metaDataDescription.Value });
          }
 
          var warningFlag = false;
