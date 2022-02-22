@@ -107,7 +107,10 @@ namespace OSPSuite.Infrastructure.Import.Services
          {
             dataSource.AvailableFormats = CalculateFormat(dataSource, columnInfos, metaDataCategories, x).ToList();
             if (dataSource.AvailableFormats.Any())
+            {
+               dataSource.FormatCalculatedFrom = x;
                return dataSource;
+            }
          };
 
          throw new UnsupportedFormatException(dataSource.Path);

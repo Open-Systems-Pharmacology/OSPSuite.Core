@@ -196,6 +196,17 @@ namespace OSPSuite.UI.Views.Importer
          _dataPresenter.ImportDataForConfirmation(importerTabControl.SelectedTabPage.Text);
       }
 
+      public void SelectTab(string tabName)
+      {
+         var tab = importerTabControl.TabPages.FirstOrDefault(x => x.Text == tabName);
+         if (tab == null)
+            return;
+
+         var oldTab = importerTabControl.SelectedTabPage;
+         importerTabControl.SelectedTabPage = tab;
+         onSelectedPageChanged(this, new TabPageChangedEventArgs(oldTab, tab));
+      }
+
       private void onSelectedPageChanged(object sender, TabPageChangedEventArgs e)
       {
          if (importerTabControl.SelectedTabPage == null) return;

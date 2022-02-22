@@ -22,5 +22,6 @@ namespace OSPSuite.Presentation.Views.Importer
       string SelectedTab { get; set; }
       string GetFilter();
       void SetTabMarks(Cache<string, TabMarkInfo> tabMarks);
+      void SelectTab(string tabName);
    }
 }

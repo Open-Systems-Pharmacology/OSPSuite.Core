@@ -139,6 +139,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.AddTabs(GetSheetNames());
          View.ResetImportButtons();
 
+         View.SelectTab(_dataSourceFile.FormatCalculatedFrom);
          return _dataSourceFile;
       }
 
