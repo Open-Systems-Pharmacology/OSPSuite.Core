@@ -61,6 +61,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             new ColumnInfo() { Name = "Concentration", IsMandatory = true, BaseGridName = "Time" },
             new ColumnInfo() { Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration", BaseGridName = "Time"}
          };
+         _columnInfos[1].SupportedDimensions.Add(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
          _columnInfos[2].SupportedDimensions.Add(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
          _metaDataCategories = new List<MetaDataCategory>()
          {
@@ -427,7 +428,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [TestCase("mmol/l", "mol/l", true, true)]
       [TestCase("mmol/l", "?", false, true)]
       [TestCase("mmol/l", "mol/l", false, true)]
-      public void the_unit_is_set_properly(string oldUnitDescription, string newUnitDescription, bool haveOldSource, bool shouldUpdate)
+      public void the_unit_and_dimension_are_set_properly(string oldUnitDescription, string newUnitDescription, bool haveOldSource, bool shouldUpdate)
       {
          //Set up
          UpdateSettings();
@@ -445,7 +446,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          sut.SetDescriptionForRow(_model);
 
          //Assert
-         (_model.Source as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo(shouldUpdate ? newUnitDescription : oldUnitDescription);
+         var mappingDataFormat = (_model.Source as MappingDataFormatParameter);
+         mappingDataFormat.MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo(shouldUpdate ? newUnitDescription : oldUnitDescription);
+         if (shouldUpdate && newUnitDescription != "?")
+            mappingDataFormat.MappedColumn.Dimension.HasUnit(mappingDataFormat.MappedColumn.Unit.SelectedUnit).ShouldBeTrue();
       }
    }
 }

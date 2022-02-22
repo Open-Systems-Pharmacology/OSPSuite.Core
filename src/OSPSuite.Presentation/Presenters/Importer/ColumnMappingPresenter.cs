@@ -515,6 +515,18 @@ namespace OSPSuite.Presentation.Presenters.Importer
          };
       }
 
+      private void setUnitAndDimension(ColumnMappingDTO model)
+      {
+         var supportedDimensions = _columnInfos.First(x => x.DisplayName == model.MappingName).SupportedDimensions;
+         var unit = _format.ExtractUnitDescriptions(model.ExcelColumn, supportedDimensions);
+         if (unit.SelectedUnit != UnitDescription.InvalidUnit)
+         {
+            var mappingDataFormatParameter = (model.Source as MappingDataFormatParameter);
+            mappingDataFormatParameter.MappedColumn.Unit = unit;
+            mappingDataFormatParameter.MappedColumn.Dimension = supportedDimensions.FirstOrDefault(x => x.HasUnit(unit.SelectedUnit)); ;
+         }
+      }
+
       private void setDescriptionForRow(ColumnMappingDTO model, bool isColumn)
       {
          if (model.Source == null)
@@ -526,10 +538,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                   break;
                case ColumnMappingDTO.ColumnType.Mapping:
                   model.Source = new MappingDataFormatParameter(model.ExcelColumn, new Column() {Name = model.MappingName, Unit = new UnitDescription(UnitDescription.InvalidUnit)});
-                  var supportedDimensions = _columnInfos.First(x => x.DisplayName == model.MappingName).SupportedDimensions;
-                  var unit = _format.ExtractUnitDescriptions(model.ExcelColumn, supportedDimensions);
-                  if (unit.SelectedUnit != UnitDescription.InvalidUnit)
-                     (model.Source as MappingDataFormatParameter).MappedColumn.Unit = unit;
+                  setUnitAndDimension(model);
                   break;
                default:
                   throw new NotImplementedException($"Setting description for unhandled column type: {model.CurrentColumnType}");
@@ -550,10 +559,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             {
                (model.Source as MetaDataFormatParameter).IsColumn = isColumn;
             }
-            var supportedDimensions = _columnInfos.First(x => x.DisplayName == model.MappingName).SupportedDimensions;
-            var unit = _format.ExtractUnitDescriptions(model.ExcelColumn, supportedDimensions);
-            if (unit.SelectedUnit != UnitDescription.InvalidUnit)
-               (model.Source as MappingDataFormatParameter).MappedColumn.Unit = unit;
+            setUnitAndDimension(model);
          }
       }
 
