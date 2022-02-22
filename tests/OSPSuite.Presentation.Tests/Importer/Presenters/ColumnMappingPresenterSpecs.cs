@@ -448,7 +448,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          //Assert
          var mappingDataFormat = (_model.Source as MappingDataFormatParameter);
          mappingDataFormat.MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo(shouldUpdate ? newUnitDescription : oldUnitDescription);
-         if (shouldUpdate && newUnitDescription != "?")
+         if (shouldUpdate && newUnitDescription != UnitDescription.InvalidUnit)
             mappingDataFormat.MappedColumn.Dimension.HasUnit(mappingDataFormat.MappedColumn.Unit.SelectedUnit).ShouldBeTrue();
       }
    }
