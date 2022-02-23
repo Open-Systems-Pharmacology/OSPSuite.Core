@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using DevExpress.XtraEditors;
+using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Presenters.Importer;
@@ -24,6 +26,21 @@ namespace OSPSuite.UI.Views.Importer
       public string SelectedSeparator
       {
          get => separatorComboBoxEdit.SelectedText;
+      }
+
+      public void DisableSelectingDataSets(string errorMessage)
+      {
+         importButton.Enabled = false;
+         namesListBox.SelectionMode = SelectionMode.None;
+         layoutControlItemError.Visibility = LayoutVisibility.Always;
+         labelControlError.Text = errorMessage;
+      }
+
+      public void EnableSelectingDataSets()
+      {
+         namesListBox.SelectionMode = SelectionMode.One;
+         layoutControlItemError.Visibility = LayoutVisibility.Never;
+         importButton.Enabled = true;
       }
 
       public ImportConfirmationView()

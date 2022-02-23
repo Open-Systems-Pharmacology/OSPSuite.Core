@@ -104,10 +104,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          catch (InvalidArgumentException invalidException)
          {
-            _view.DisableConfirmationView();
             var errors = new ParseErrors();
             errors.Add(_dataSource.DataSetAt(e.Index), new NonMonotonicalTimeParseErrorDescription(Error.ErrorWhenPlottingDataRepository(e.Index, invalidException.Message)));
             _importerDataPresenter.SetTabMarks(errors);
+            _confirmationPresenter.DisableSelectingDataSets(invalidException.Message);
          }
       }
 
@@ -226,6 +226,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          keys.AddRange(_dataSource.GetMappings().Select(m => m.Id));
          _confirmationPresenter.SetKeys(keys);
          View.EnableConfirmationView();
+         _confirmationPresenter.EnableSelectingDataSets();
          _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions.ToList(), selectedNamingConvention);
       }
 

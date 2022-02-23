@@ -95,5 +95,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public event EventHandler<DataSetSelectedEventArgs> OnDataSetSelected = delegate { };
 
       public event EventHandler<NamingConventionChangedEventArgs> OnNamingConventionChanged = delegate { };
+      public void DisableSelectingDataSets(string errorMessage)
+      {
+         _view.DisableSelectingDataSets(errorMessage);
+      }
+
+      public void EnableSelectingDataSets()
+      {
+         _view.EnableSelectingDataSets();
+      }
    }
 }
