@@ -103,12 +103,12 @@ namespace OSPSuite.Infrastructure.Import.Services
          if (dataSource.DataSheets == null) return null;
 
 
-         foreach(var x in dataSource.DataSheets.Keys)
+         foreach(var sheetName in dataSource.DataSheets.Keys)
          {
-            dataSource.AvailableFormats = CalculateFormat(dataSource, columnInfos, metaDataCategories, x).ToList();
+            dataSource.AvailableFormats = CalculateFormat(dataSource, columnInfos, metaDataCategories, sheetName).ToList();
             if (dataSource.AvailableFormats.Any())
             {
-               dataSource.FormatCalculatedFrom = x;
+               dataSource.FormatCalculatedFrom = sheetName;
                return dataSource;
             }
          };
