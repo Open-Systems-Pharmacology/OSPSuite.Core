@@ -6,6 +6,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 
@@ -16,11 +17,11 @@ namespace OSPSuite.Starter.Tasks
    {
       void AddMoleculeValuesToMetaDataList(IList<MetaDataCategory> metaDataCategories);
       void AddOrganValuesToMetaDataList(IList<MetaDataCategory> metaDataCategories);
-      IReadOnlyList<ColumnInfo> DefaultTestConcentrationImportConfiguration();
+      Cache<string, ColumnInfo> DefaultTestConcentrationImportConfiguration();
       IReadOnlyList<MetaDataCategory> DefaultTestMetaDataCategories();
-      IReadOnlyList<ColumnInfo> DefaultGroupByConcentrationImportConfiguration();
+      Cache<string, ColumnInfo> DefaultGroupByConcentrationImportConfiguration();
       IReadOnlyList<MetaDataCategory> DefaultGroupByTestMetaDataCategories();
-      IReadOnlyList<ColumnInfo> GetOntogenyColumnInfo();
+      Cache<string, ColumnInfo> GetOntogenyColumnInfo();
       IReadOnlyList<MetaDataCategory> DefaultMoBiMetaDataCategories();
    }
 
@@ -130,9 +131,9 @@ namespace OSPSuite.Starter.Tasks
          return categories;
       }
 
-      public IReadOnlyList<ColumnInfo> DefaultGroupByConcentrationImportConfiguration()
+      public Cache<string, ColumnInfo> DefaultGroupByConcentrationImportConfiguration()
       {
-         var columns = new List<ColumnInfo>();
+         var columns = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName);
          var timeColumn = createTimeColumn();
 
          createMetaData().Each(category => timeColumn.MetaDataCategories.Add(category));
@@ -299,9 +300,9 @@ namespace OSPSuite.Starter.Tasks
          return concentrationInfo;
       }
 
-      public IReadOnlyList<ColumnInfo> DefaultTestConcentrationImportConfiguration()
+      public Cache<string, ColumnInfo> DefaultTestConcentrationImportConfiguration()
       {
-         var columnInfos = new List<ColumnInfo>();
+         var columnInfos = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName);
          var timeColumn = createTimeColumn();
          createMetaData().Each(category => timeColumn.MetaDataCategories.Add(category));
          columnInfos.Add(timeColumn);
@@ -344,9 +345,9 @@ namespace OSPSuite.Starter.Tasks
          return columnInfos;
       }
 
-      public IReadOnlyList<ColumnInfo> GetOntogenyColumnInfo()
+      public Cache<string, ColumnInfo> GetOntogenyColumnInfo()
       {
-         var columns = new List<ColumnInfo>();
+         var columns = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName);
 
          var ageColumn = new ColumnInfo
          {

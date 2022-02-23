@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Utility.Collections;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Presentation.Presenters.Importer
@@ -15,7 +16,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos,
+         Cache<string, ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings
       );
 

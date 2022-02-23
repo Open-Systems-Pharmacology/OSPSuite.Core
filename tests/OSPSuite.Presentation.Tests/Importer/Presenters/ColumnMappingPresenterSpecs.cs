@@ -12,6 +12,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Presenters 
 {
@@ -23,7 +24,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IDimensionFactory _dimensionFactory;
       protected IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       protected IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
-      protected IReadOnlyList<ColumnInfo> _columnInfos;
+      protected Cache<string, ColumnInfo> _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected List<DataFormatParameter> _parameters = new List<DataFormatParameter>() 
       {
@@ -41,7 +42,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _view = A.Fake<IColumnMappingView>();
          _importer = A.Fake<IImporter>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
-         A.CallTo(() => _importer.CheckWhetherAllDataColumnsAreMapped(A<IReadOnlyList<ColumnInfo>>.Ignored,
+         A.CallTo(() => _importer.CheckWhetherAllDataColumnsAreMapped(A<Cache<string, ColumnInfo>>.Ignored,
             A<IEnumerable<DataFormatParameter>>.Ignored)).Returns(new MappingProblem()
             {MissingMapping = new List<string>(), MissingUnit = new List<string>()});
       }
@@ -55,14 +56,14 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Context()
       {
          base.Context();
-         _columnInfos = new List<ColumnInfo>()
+         _columnInfos = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName)
          {
             new ColumnInfo() { Name = "Time", IsMandatory = true, BaseGridName = "Time" },
             new ColumnInfo() { Name = "Concentration", IsMandatory = true, BaseGridName = "Time" },
             new ColumnInfo() { Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration", BaseGridName = "Time"}
          };
-         _columnInfos[1].SupportedDimensions.Add(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
-         _columnInfos[2].SupportedDimensions.Add(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
+         _columnInfos.ElementAt(1).SupportedDimensions.Add(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
+         _columnInfos.ElementAt(2).SupportedDimensions.Add(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
          _metaDataCategories = new List<MetaDataCategory>()
          {
             new MetaDataCategory()
@@ -179,7 +180,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             "Error", 
             _parameters[2],
             0,
-            _columnInfos[2]
+            _columnInfos.ElementAt(2)
          ));
          sut.UpdateDescriptionForModel(_parameters[2] as MappingDataFormatParameter);
       }
@@ -209,7 +210,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             "Error",
             _parameters[2],
             0,
-            _columnInfos[2]
+            _columnInfos.ElementAt(2)
          ));
          sut.UpdateDescriptionForModel(_parameters[2] as MappingDataFormatParameter);
       }
@@ -241,7 +242,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             "Error",
             _parameters[1],
             0,
-            _columnInfos[1]
+            _columnInfos.ElementAt(1)
          ));
          sut.UpdateDescriptionForModel(_parameters[1] as MappingDataFormatParameter);
       }
@@ -298,7 +299,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             "Concentration",
             _parameters[1],
             0,
-            _columnInfos[1]
+            _columnInfos.ElementAt(1)
          ));
       }
 
@@ -367,7 +368,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             "Error",
             _parameters[2],
             0,
-            _columnInfos[2]
+            _columnInfos.ElementAt(2)
          ));
       }
 
@@ -400,7 +401,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             "Error",
             _parameters[2],
             0,
-            _columnInfos[2]
+            _columnInfos.ElementAt(2)
          ));
          (res.Any(r => r.Description == "Col1") && res.Any(r => r.Description == "Col2") && res.Any(r => r.Description == "Error") && res.Any(r => r.Description == "Concentration")).ShouldBeTrue();
       }
@@ -414,7 +415,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             "Error",
             _parameters[2],
             0,
-            _columnInfos[2]
+            _columnInfos.ElementAt(2)
          ));
          (res.Any(r => r.Label.StartsWith("Col1")) && res.Any( c => c.Label.StartsWith("Col2")) && res.Any(r => r.Label.StartsWith("Error")) && res.Any(r => r.Label.StartsWith("Concentration"))).ShouldBeTrue();
       }

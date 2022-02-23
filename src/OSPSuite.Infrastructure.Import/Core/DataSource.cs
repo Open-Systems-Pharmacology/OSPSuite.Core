@@ -50,7 +50,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       void SetDataFormat(IDataFormat dataFormat);
       void SetNamingConvention(string namingConvention);
-      ParseErrors AddSheets(Cache<string, DataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter);
+      ParseErrors AddSheets(Cache<string, DataSheet> dataSheets, Cache<string, ColumnInfo> columnInfos, string filter);
       void SetMappings(string fileName, IEnumerable<MetaDataMappingConverter> mappings);
       ImporterConfiguration GetImporterConfiguration();
       IEnumerable<MetaDataMappingConverter> GetMappings();
@@ -59,7 +59,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       NanSettings NanSettings { get; set; }
       ImportedDataSet ImportedDataSetAt(int index);
       IDataSet DataSetAt(int index);
-      ParseErrors ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos);
+      ParseErrors ValidateDataSourceUnits(Cache<string, ColumnInfo> columnInfos);
    }
 
    public class DataSource : IDataSource
@@ -107,7 +107,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          return filteredDataSheets;
       }
 
-      public ParseErrors AddSheets(Cache<string, DataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, string filter)
+      public ParseErrors AddSheets(Cache<string, DataSheet> dataSheets, Cache<string, ColumnInfo> columnInfos, string filter)
       {
          _importer.AddFromFile(_configuration.Format, filterSheets(dataSheets, filter), columnInfos, this);
          if (NanSettings == null || !double.TryParse(NanSettings.Indicator, out var indicator))
@@ -203,7 +203,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       }
 
       //checks that the dimension of all the units coming from columns for error have the same dimension to the corresponding measurement
-      private ParseErrors validateErrorAgainstMeasurement(IReadOnlyList<ColumnInfo> columnInfos)
+      private ParseErrors validateErrorAgainstMeasurement(Cache<string, ColumnInfo> columnInfos)
       {
          var errors = new ParseErrors();
          foreach (var column in columnInfos.Where(c => !c.IsAuxiliary()))
@@ -266,7 +266,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       }
       //checks that all units coming from a mapped column unit belong to a valid dimension for this mapping
       //and also that they are all of the same dimension within every data set. 
-      private ParseErrors validateUnitsSupportedAndSameDimension(IReadOnlyList<ColumnInfo> columnInfos)
+      private ParseErrors validateUnitsSupportedAndSameDimension(Cache<string, ColumnInfo> columnInfos)
       {
          var errors = new ParseErrors();
          foreach (var columnInfo in columnInfos)
@@ -316,7 +316,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          return errors;
       }
 
-      public ParseErrors ValidateDataSourceUnits(IReadOnlyList<ColumnInfo> columnInfos)
+      public ParseErrors ValidateDataSourceUnits(Cache<string, ColumnInfo> columnInfos)
       {
          var errors = validateUnitsSupportedAndSameDimension(columnInfos);
          errors.Add(validateErrorAgainstMeasurement(columnInfos));

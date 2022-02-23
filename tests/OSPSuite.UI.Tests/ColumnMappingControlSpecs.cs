@@ -709,7 +709,7 @@
 //             base.GlobalContext();
 //
 //             var dataRepositoryMapper = A.Fake<IImportDataTableToDataRepositoryMapper>();
-//             var columnInfos = A.Fake<IReadOnlyList<ColumnInfo>>();
+//             var columnInfos = A.Fake<Cache<string, ColumnInfo>>();
 //             _importer = new Presentation.Importer.Services.Importer(dataRepositoryMapper, columnInfos, _importerTask, _dialogCreator);
 //             _excelFile = Path.Combine(_excelFilePath, "Test2.xls");
 //             _data = _importer.GetPreview(_excelFile, 10, new Cache<string, Rectangle>());
@@ -1103,7 +1103,7 @@
 //          public override void GlobalContext()
 //          {
 //             base.GlobalContext();
-//             var columnInfos = A.Fake<IReadOnlyList<ColumnInfo>>();
+//             var columnInfos = A.Fake<Cache<string, ColumnInfo>>();
 //             var dataRepositoryMapper = A.Fake<IImportDataTableToDataRepositoryMapper>();
 //             _importer = new Presentation.Importer.Services.Importer(dataRepositoryMapper, columnInfos, _importerTask, _dialogCreator);
 //             _excelFile = Path.Combine(_excelFilePath, "Test4.xls");

@@ -16,7 +16,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       private readonly IImporter _importer;
       private IDataSourceFile _dataSourceFile;
-      private IReadOnlyList<ColumnInfo> _columnInfos;
+      private Cache<string, ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly Cache<string, DataTable> _sheetsForViewing;
       private string _currentSheetName;
@@ -115,7 +115,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          OnFormatChanged.Invoke(this, new FormatChangedEventArgs() {Format = format});
       }
 
-      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos)
+      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, Cache<string, ColumnInfo> columnInfos)
       {
          _columnInfos = columnInfos;
          _metaDataCategories = metaDataCategories;

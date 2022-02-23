@@ -9,6 +9,7 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Importer
@@ -17,7 +18,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       private IDataFormat _format;
       private List<ColumnMappingDTO> _mappings;
-      private IReadOnlyList<ColumnInfo> _columnInfos;
+      private Cache<string, ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IImporter _importer;
       private IList<DataFormatParameter> _originalFormat;
@@ -44,7 +45,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos
+         Cache<string, ColumnInfo> columnInfos
       )
       {
          _columnInfos = columnInfos;
@@ -517,7 +518,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void setUnitAndDimension(ColumnMappingDTO model)
       {
-         var supportedDimensions = _columnInfos.First(x => x.DisplayName == model.MappingName).SupportedDimensions;
+         var supportedDimensions = _columnInfos[model.MappingName].SupportedDimensions;
          var unit = _format.ExtractUnitDescriptions(model.ExcelColumn, supportedDimensions);
          if (unit.SelectedUnit == UnitDescription.InvalidUnit)
             return;

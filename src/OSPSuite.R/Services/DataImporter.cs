@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -41,7 +42,7 @@ namespace OSPSuite.R.Services
 
       public override (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories, 
-         IReadOnlyList<ColumnInfo> columnInfos, 
+         Cache<string, ColumnInfo> columnInfos, 
          DataImporterSettings dataImporterSettings,
          string dataFileName)
       {
@@ -51,7 +52,7 @@ namespace OSPSuite.R.Services
       public override IReadOnlyList<DataRepository> ImportFromConfiguration(
          ImporterConfiguration configuration,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos,
+         Cache<string, ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings,
          string dataFileName)
       {

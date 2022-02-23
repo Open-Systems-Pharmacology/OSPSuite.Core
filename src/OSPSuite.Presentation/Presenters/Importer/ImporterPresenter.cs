@@ -27,7 +27,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       private readonly IImporter _importer;
       private DataImporterSettings _dataImporterSettings;
-      private IReadOnlyList<ColumnInfo> _columnInfos;
+      private Cache<string, ColumnInfo> _columnInfos;
       private readonly INanPresenter _nanPresenter;
       protected IDataSource _dataSource;
       private IDataSourceFile _dataSourceFile;
@@ -111,7 +111,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
-      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos,
+      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, Cache<string, ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings)
       {
          _columnInfos = columnInfos;

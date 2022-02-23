@@ -8,6 +8,7 @@ using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
@@ -43,7 +44,7 @@ namespace OSPSuite.R.Services
       private readonly IDataImporter _dataImporter;
       private readonly IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly DataImporterSettings _dataImporterSettings;
-      private readonly IReadOnlyList<ColumnInfo> _columnInfos;
+      private readonly Cache<string, ColumnInfo> _columnInfos;
       private readonly IDimensionFactory _dimensionFactory;
       private readonly IPKMLPersistor _pkmlPersistor;
       private readonly ICsvDynamicSeparatorSelector _csvSeparatorSelector;
@@ -247,21 +248,21 @@ namespace OSPSuite.R.Services
       {
          return configuration.Parameters
             .OfType<MappingDataFormatParameter>()
-            .FirstOrDefault(p => _columnInfos.First(ci => ci.DisplayName == p.MappedColumn.Name).IsAuxiliary());
+            .FirstOrDefault(p => _columnInfos[p.MappedColumn.Name].IsAuxiliary());
       }
 
       public MappingDataFormatParameter GetMeasurement(ImporterConfiguration configuration)
       {
          return configuration.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p =>
          {
-            var columnInfo = _columnInfos.First(ci => ci.DisplayName == p.MappedColumn.Name);
+            var columnInfo = _columnInfos[p.MappedColumn.Name];
             return !(columnInfo.IsAuxiliary() || columnInfo.IsBase());
          });
       }
 
       public MappingDataFormatParameter GetTime(ImporterConfiguration configuration)
       {
-         return configuration.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => _columnInfos.First(ci => ci.DisplayName == p.MappedColumn.Name).IsBase());
+         return configuration.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => _columnInfos[p.MappedColumn.Name].IsBase());
       }
 
       public void RemoveError(ImporterConfiguration configuration)

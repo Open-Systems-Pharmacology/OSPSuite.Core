@@ -11,6 +11,7 @@ using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Starter.Tasks;
 using OSPSuite.Starter.Views;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
@@ -47,7 +48,7 @@ namespace OSPSuite.Starter.Presenters
          _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
       }
 
-      private void StartImporterExcelView(IReadOnlyList<MetaDataCategory> categories, IReadOnlyList<ColumnInfo> columns, DataImporterSettings settings)
+      private void StartImporterExcelView(IReadOnlyList<MetaDataCategory> categories, Cache<string, ColumnInfo> columns, DataImporterSettings settings)
       {
          settings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
          settings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
