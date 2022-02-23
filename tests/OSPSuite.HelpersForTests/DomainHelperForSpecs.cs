@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OSPSuite.Core.Domain;
@@ -39,6 +40,22 @@ namespace OSPSuite.Helpers
          }
 
          return _concentrationDimension;
+      }
+
+      public static IEnumerable<IDimension> ExtendedDimensionsForSpecs()
+      {
+         var dimensions = new List<IDimension>();
+         var dimension = new Dimension(new BaseDimensionRepresentation { AmountExponent = 3, LengthExponent = -1 }, Constants.Dimension.MOLAR_CONCENTRATION, "µmol/l");
+         dimension.AddUnit(new Unit("mol/l", 1E6, 0));
+         dimensions.Add(dimension);
+
+         dimension = new Dimension(new BaseDimensionRepresentation { AmountExponent = 3, LengthExponent = -1 }, Constants.Dimension.DIMENSIONLESS, "");
+         dimensions.Add(dimension);
+
+         dimension = new Dimension(new BaseDimensionRepresentation { AmountExponent = 3, LengthExponent = -1 }, Constants.Dimension.FRACTION, "");
+         dimension.AddUnit(new Unit("%", 1E6, 0));
+         dimensions.Add(dimension);
+         return dimensions;
       }
 
       public static IDimension LengthDimensionForSpecs()

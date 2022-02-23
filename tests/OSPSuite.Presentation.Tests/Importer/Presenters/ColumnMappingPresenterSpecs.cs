@@ -454,4 +454,32 @@ namespace OSPSuite.Presentation.Importer.Presenters
             mappedColumn.Dimension.HasUnit(mappedColumn.Unit.SelectedUnit).ShouldBeTrue();
       }
    }
+
+   public class When_unit_is_manually_set_to_fraction_empty : concern_for_ColumnMappingPresenter
+   {
+      protected MappingDataFormatParameter _mappingSource;
+
+      protected override void Context()
+      {
+         base.Context();
+         _columnInfos[2].SupportedDimensions.Clear();
+         _columnInfos[2].SupportedDimensions.AddRange(DomainHelperForSpecs.ExtendedDimensionsForSpecs());
+         _mappingSource = _parameters[2] as MappingDataFormatParameter;
+         _mappingSource.MappedColumn.Dimension = _columnInfos[2].SupportedDimensions.First(x => x.Name == Constants.Dimension.FRACTION);
+         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
+         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(1);
+         UpdateSettings();
+      }
+
+      protected override void Because()
+      {
+         sut.UpdateDescriptionForModel(_mappingSource);
+      }
+
+      [Observation]
+      public void the_dimension_is_not_changed()
+      {
+         _mappingSource.MappedColumn.Dimension.ShouldNotBeNull();
+      }
+   }
 }
