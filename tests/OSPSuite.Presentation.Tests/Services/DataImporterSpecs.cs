@@ -18,6 +18,7 @@ using OSPSuite.Presentation.Core;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Exceptions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Services
 {
@@ -31,7 +32,7 @@ namespace OSPSuite.Presentation.Services
       protected ImporterConfiguration _importerConfigurationMW;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected DataImporterSettings _dataImporterSettings;
-      protected IReadOnlyList<ColumnInfo> _columnInfos;
+      protected Cache<string, ColumnInfo> _columnInfos;
       protected IDimension _molarConcentrationDimension;
       protected IDimension _massConcentrationDimension;
       protected IDimension _timeConcentrationDimension;
@@ -95,9 +96,9 @@ namespace OSPSuite.Presentation.Services
       }
       protected string getFileFullName(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", fileName);
 
-      private IReadOnlyList<ColumnInfo> getDefaultColumnInfos()
+      private Cache<string, ColumnInfo> getDefaultColumnInfos()
       {
-         var columns = new List<ColumnInfo>();
+         var columns = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName);
          var timeColumn = createTimeColumn();
 
          columns.Add(timeColumn);

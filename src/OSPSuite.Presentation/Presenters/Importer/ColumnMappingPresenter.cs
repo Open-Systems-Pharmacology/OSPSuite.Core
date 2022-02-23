@@ -9,6 +9,7 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Importer
@@ -17,7 +18,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       private IDataFormat _format;
       private List<ColumnMappingDTO> _mappings;
-      private IReadOnlyList<ColumnInfo> _columnInfos;
+      private Cache<string, ColumnInfo> _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IImporter _importer;
       private IList<DataFormatParameter> _originalFormat;
@@ -44,7 +45,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos
+         Cache<string, ColumnInfo> columnInfos
       )
       {
          _columnInfos = columnInfos;
@@ -515,6 +516,18 @@ namespace OSPSuite.Presentation.Presenters.Importer
          };
       }
 
+      private void setUnitAndDimension(ColumnMappingDTO model)
+      {
+         var supportedDimensions = _columnInfos[model.MappingName].SupportedDimensions;
+         var unit = _format.ExtractUnitDescriptions(model.ExcelColumn, supportedDimensions);
+         if (unit.SelectedUnit == UnitDescription.InvalidUnit)
+            return;
+         
+         var mappingDataFormatParameter = (model.Source as MappingDataFormatParameter);
+         mappingDataFormatParameter.MappedColumn.Unit = unit;
+         mappingDataFormatParameter.MappedColumn.Dimension = supportedDimensions.FirstOrDefault(x => x.HasUnit(unit.SelectedUnit)); ;
+      }
+
       private void setDescriptionForRow(ColumnMappingDTO model, bool isColumn)
       {
          if (model.Source == null)
@@ -526,10 +539,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                   break;
                case ColumnMappingDTO.ColumnType.Mapping:
                   model.Source = new MappingDataFormatParameter(model.ExcelColumn, new Column() {Name = model.MappingName, Unit = new UnitDescription(UnitDescription.InvalidUnit)});
-                  var supportedDimensions = _columnInfos.First(x => x.DisplayName == model.MappingName).SupportedDimensions;
-                  var unit = _format.ExtractUnitDescriptions(model.ExcelColumn, supportedDimensions);
-                  if (unit.SelectedUnit != UnitDescription.InvalidUnit)
-                     (model.Source as MappingDataFormatParameter).MappedColumn.Unit = unit;
+                  setUnitAndDimension(model);
                   break;
                default:
                   throw new NotImplementedException($"Setting description for unhandled column type: {model.CurrentColumnType}");
@@ -550,10 +560,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             {
                (model.Source as MetaDataFormatParameter).IsColumn = isColumn;
             }
-            var supportedDimensions = _columnInfos.First(x => x.DisplayName == model.MappingName).SupportedDimensions;
-            var unit = _format.ExtractUnitDescriptions(model.ExcelColumn, supportedDimensions);
-            if (unit.SelectedUnit != UnitDescription.InvalidUnit)
-               (model.Source as MappingDataFormatParameter).MappedColumn.Unit = unit;
+            setUnitAndDimension(model);
          }
       }
 

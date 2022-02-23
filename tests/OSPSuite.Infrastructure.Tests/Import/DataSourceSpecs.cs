@@ -14,7 +14,7 @@ namespace OSPSuite.Infrastructure.Import
 {
    public abstract class concern_for_DataSource : ContextSpecification<IDataSource>
    {
-      protected IReadOnlyList<ColumnInfo> _columnInfos;
+      protected Cache<string, ColumnInfo> _columnInfos;
       protected IDimension _fakedTimeDimension;
       protected IDimension _fakedConcentrationDimensionMolar;
       protected IDimension _fakedConcentrationDimensionMass;
@@ -32,18 +32,18 @@ namespace OSPSuite.Infrastructure.Import
          _fakedImporter = A.Fake<IImporter>();
          _fakeDataSet = new DataSet();
 
-         _columnInfos = new List<ColumnInfo>()
+         _columnInfos = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName)
          {
             new ColumnInfo() { DisplayName = "Time", Name ="Time" },
             new ColumnInfo() { DisplayName = "Concentration", Name = "Concentration"},
             new ColumnInfo() { DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration"}
          };
 
-         _columnInfos.First(x => x.DisplayName == "Time").SupportedDimensions.Add(_fakedTimeDimension);
-         _columnInfos.First(x => x.DisplayName == "Concentration").SupportedDimensions.Add(_fakedConcentrationDimensionMolar);
-         _columnInfos.First(x => x.DisplayName == "Concentration").SupportedDimensions.Add(_fakedConcentrationDimensionMass);
-         _columnInfos.First(x => x.DisplayName == "Error").SupportedDimensions.Add(_fakedErrorDimension);
-         _columnInfos.First(x => x.DisplayName == "Error").SupportedDimensions.Add(_fakedConcentrationDimensionMass);
+         _columnInfos["Time"].SupportedDimensions.Add(_fakedTimeDimension);
+         _columnInfos["Concentration"].SupportedDimensions.Add(_fakedConcentrationDimensionMolar);
+         _columnInfos["Concentration"].SupportedDimensions.Add(_fakedConcentrationDimensionMass);
+         _columnInfos["Error"].SupportedDimensions.Add(_fakedErrorDimension);
+         _columnInfos["Error"].SupportedDimensions.Add(_fakedConcentrationDimensionMass);
          var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
          {
             {
@@ -54,7 +54,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Time",
                      Unit = new UnitDescription("s")
                   },
-                  ColumnInfo = _columnInfos[0]
+                  ColumnInfo = _columnInfos["Time"]
                },
                new List<SimulationPoint>()
                {
@@ -86,7 +86,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Concentration",
                      Unit = new UnitDescription("pmol/l")
                   },
-                  ColumnInfo = _columnInfos[1]
+                  ColumnInfo = _columnInfos["Concentration"]
                },
                new List<SimulationPoint>()
                {
@@ -118,7 +118,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Error",
                      Unit = new UnitDescription("")
                   },
-                  ColumnInfo = _columnInfos[2]
+                  ColumnInfo = _columnInfos["Error"]
                },
                new List<SimulationPoint>()
                {
@@ -171,10 +171,10 @@ namespace OSPSuite.Infrastructure.Import
       protected override void Context()
       {
          base.Context();
-         _columnInfos = new List<ColumnInfo>()  {
-            new ColumnInfo() { Name = "Time", IsMandatory = true, BaseGridName = "Time" },
-            new ColumnInfo() { Name = "Concentration", IsMandatory = true, BaseGridName = "Time" },
-            new ColumnInfo() { Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration", BaseGridName = "Time" }
+         _columnInfos = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName)  {
+            new ColumnInfo() { DisplayName = "Time", Name = "Time", IsMandatory = true, BaseGridName = "Time" },
+            new ColumnInfo() { DisplayName = "Concentration", Name = "Concentration", IsMandatory = true, BaseGridName = "Time" },
+            new ColumnInfo() { DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration", BaseGridName = "Time" }
          };
          var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
          {
@@ -186,7 +186,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Time",
                      Unit = new UnitDescription("s")
                   },
-                  ColumnInfo = _columnInfos[0]
+                  ColumnInfo = _columnInfos["Time"]
                },
                new List<SimulationPoint>() { }
             },
@@ -198,7 +198,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Concentration",
                      Unit = new UnitDescription("mol")
                   },
-                  ColumnInfo = _columnInfos[1]
+                  ColumnInfo = _columnInfos["Concentration"]
                },
                new List<SimulationPoint>() { }
             },
@@ -210,7 +210,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Error",
                      Unit = new UnitDescription("")
                   },
-                  ColumnInfo = _columnInfos[2]
+                  ColumnInfo = _columnInfos["Error"]
                },
                new List<SimulationPoint>() { }
             }
@@ -254,7 +254,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Time",
                      Unit = new UnitDescription("s")
                   },
-                  ColumnInfo = _columnInfos[0]
+                  ColumnInfo = _columnInfos["Time"]
                },
                new List<SimulationPoint>()
                {
@@ -286,7 +286,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Concentration",
                      Unit = new UnitDescription("pmol/l")
                   },
-                  ColumnInfo = _columnInfos[1]
+                  ColumnInfo = _columnInfos["Concentration"]
                },
                new List<SimulationPoint>()
                {
@@ -319,7 +319,7 @@ namespace OSPSuite.Infrastructure.Import
                      Unit = new UnitDescription("pmol/l"),
                      Dimension = Constants.Dimension.NO_DIMENSION
                   },
-                  ColumnInfo = _columnInfos[2]
+                  ColumnInfo = _columnInfos["Error"]
                },
                new List<SimulationPoint>()
                {
@@ -380,7 +380,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Time",
                      Unit = new UnitDescription("s")
                   },
-                  ColumnInfo = _columnInfos[0]
+                  ColumnInfo = _columnInfos["Time"]
                },
                new List<SimulationPoint>()
                {
@@ -412,7 +412,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Concentration",
                      Unit = new UnitDescription("pmol/l")
                   },
-                  ColumnInfo = _columnInfos[1]
+                  ColumnInfo = _columnInfos["Concentration"]
                },
                new List<SimulationPoint>()
                {
@@ -445,7 +445,7 @@ namespace OSPSuite.Infrastructure.Import
                      Unit = new UnitDescription("pmol/l"),
                      Dimension = Constants.Dimension.NO_DIMENSION
                   },
-                  ColumnInfo = _columnInfos[2]
+                  ColumnInfo = _columnInfos["Error"]
                },
                new List<SimulationPoint>()
                {
@@ -505,7 +505,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Time",
                      Unit = new UnitDescription("s")
                   },
-                  ColumnInfo = _columnInfos[0]
+                  ColumnInfo = _columnInfos["Time"]
                },
                new List<SimulationPoint>()
                {
@@ -537,7 +537,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Concentration",
                      Unit = new UnitDescription("pmol/l")
                   },
-                  ColumnInfo = _columnInfos[1]
+                  ColumnInfo = _columnInfos["Concentration"]
                },
                new List<SimulationPoint>()
                {
@@ -569,7 +569,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Error",
                      Unit = new UnitDescription("")
                   },
-                  ColumnInfo = _columnInfos[2]
+                  ColumnInfo = _columnInfos["Error"]
                },
                new List<SimulationPoint>()
                {
@@ -628,7 +628,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Time",
                      Unit = new UnitDescription("s")
                   },
-                  ColumnInfo = _columnInfos[0]
+                  ColumnInfo = _columnInfos["Time"]
                },
                new List<SimulationPoint>()
                {
@@ -660,7 +660,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Concentration",
                      Unit = new UnitDescription("pmol/l")
                   },
-                  ColumnInfo = _columnInfos[1]
+                  ColumnInfo = _columnInfos["Concentration"]
                },
                new List<SimulationPoint>()
                {
@@ -692,7 +692,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Error",
                      Unit = new UnitDescription("ng/ml")
                   },
-                  ColumnInfo = _columnInfos[2]
+                  ColumnInfo = _columnInfos["Error"]
                },
                new List<SimulationPoint>()
                {
@@ -752,7 +752,7 @@ namespace OSPSuite.Infrastructure.Import
                      Unit = new UnitDescription("s"),
                      Dimension = _fakedTimeDimension
                   },
-                  ColumnInfo = _columnInfos[0]
+                  ColumnInfo = _columnInfos["Time"]
                },
                new List<SimulationPoint>()
                {
@@ -773,7 +773,7 @@ namespace OSPSuite.Infrastructure.Import
                      Unit = new UnitDescription("pmol/l"),
                      Dimension =  _fakedConcentrationDimensionMass
                   },
-                  ColumnInfo = _columnInfos[1]
+                  ColumnInfo = _columnInfos["Concentration"]
                },
                new List<SimulationPoint>()
                {
@@ -794,7 +794,7 @@ namespace OSPSuite.Infrastructure.Import
                      Unit = new UnitDescription(""),
                      Dimension = _fakedConcentrationDimensionMolar
                   },
-                  ColumnInfo = _columnInfos[2]
+                  ColumnInfo = _columnInfos["Error"]
                },
                new List<SimulationPoint>()
                {
@@ -840,7 +840,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Time",
                      Unit = new UnitDescription("s")
                   },
-                  ColumnInfo = _columnInfos[0]
+                  ColumnInfo = _columnInfos["Time"]
                },
                new List<SimulationPoint>()
                {
@@ -861,7 +861,7 @@ namespace OSPSuite.Infrastructure.Import
                      Unit = new UnitDescription("pmol/l"),
                      Dimension =  null
                   },
-                  ColumnInfo = _columnInfos[1]
+                  ColumnInfo = _columnInfos["Concentration"]
                },
                new List<SimulationPoint>()
                {
@@ -913,7 +913,7 @@ namespace OSPSuite.Infrastructure.Import
                      Name = "Time",
                      Unit = new UnitDescription("s")
                   },
-                  ColumnInfo = _columnInfos[0]
+                  ColumnInfo = _columnInfos["Time"]
                },
                new List<SimulationPoint>()
                {
@@ -934,7 +934,7 @@ namespace OSPSuite.Infrastructure.Import
                      Unit = new UnitDescription("pmol/l"),
                      Dimension =  null
                   },
-                  ColumnInfo = _columnInfos[1]
+                  ColumnInfo = _columnInfos["Concentration"]
                },
                new List<SimulationPoint>()
                {

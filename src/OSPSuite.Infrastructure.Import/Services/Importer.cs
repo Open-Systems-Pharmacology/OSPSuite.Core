@@ -19,9 +19,9 @@ namespace OSPSuite.Infrastructure.Import.Services
 {
    public interface IImporter
    {
-      IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories);
-      void AddFromFile(IDataFormat format, Cache<string, DataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IDataSource alreadyExisting);
-      IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
+      IDataSourceFile LoadFile(Cache<string, ColumnInfo> columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories);
+      void AddFromFile(IDataFormat format, Cache<string, DataSheet> dataSheets, Cache<string, ColumnInfo> columnInfos, IDataSource alreadyExisting);
+      IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, Cache<string, ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
       IEnumerable<string> NamesFromConvention
       (
          string namingConvention,
@@ -30,7 +30,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          IEnumerable<MetaDataMappingConverter> mappings
       );
       int GetImageIndex(DataFormatParameter parameter);
-      MappingProblem CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings);
+      MappingProblem CheckWhetherAllDataColumnsAreMapped(Cache<string, ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings);
 
       IReadOnlyList<DataSetToDataRepositoryMappingResult> DataSourceToDataSets(IDataSource dataSource, IReadOnlyList<MetaDataCategory> metaDataCategories,
          DataImporterSettings dataImporterSettings, string id);
@@ -38,13 +38,13 @@ namespace OSPSuite.Infrastructure.Import.Services
       (IReadOnlyList<DataSetToDataRepositoryMappingResult> DataRepositories, List<string> MissingSheets) ImportFromConfiguration
       (
          ImporterConfiguration configuration,
-         IReadOnlyList<ColumnInfo> columnInfos,
+         Cache<string, ColumnInfo> columnInfos,
          string fileName,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          DataImporterSettings dataImporterSettings
       );
 
-      IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName);
+      IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, Cache<string, ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName);
    }
 
    public class Importer : IImporter
@@ -62,7 +62,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          _molWeightDimension = dimensionFactory.Dimension(Constants.Dimension.MOLECULAR_WEIGHT);
       }
 
-      public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, Cache<string, ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          return _container.ResolveAll<IDataFormat>()
             .Select(x => (x, x.SetParameters(data, columnInfos, metaDataCategories)))
@@ -71,7 +71,7 @@ namespace OSPSuite.Infrastructure.Import.Services
             .Select(p => p.x);
       }
 
-      public void AddFromFile(IDataFormat format, Cache<string, DataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IDataSource alreadyExisting)
+      public void AddFromFile(IDataFormat format, Cache<string, DataSheet> dataSheets, Cache<string, ColumnInfo> columnInfos, IDataSource alreadyExisting)
       {
          var dataSets = new Cache<string, IDataSet>();
 
@@ -96,7 +96,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          }
       }
 
-      public IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      public IDataSourceFile LoadFile(Cache<string, ColumnInfo> columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          var dataSource = _parser.For(fileName);
 
@@ -113,7 +113,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          throw new UnsupportedFormatException(dataSource.Path);
       }
 
-      public IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName)
+      public IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, Cache<string, ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName)
       {
          if (sheetName == null)
             throw new UnsupportedFormatException(dataSource.Path);
@@ -167,7 +167,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          }
       }
 
-      public MappingProblem CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings)
+      public MappingProblem CheckWhetherAllDataColumnsAreMapped(Cache<string, ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings)
       {
          var subset = mappings.OfType<MappingDataFormatParameter>().ToList();
 
@@ -281,7 +281,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       public (IReadOnlyList<DataSetToDataRepositoryMappingResult> DataRepositories, List<string> MissingSheets) ImportFromConfiguration
       (
          ImporterConfiguration configuration,
-         IReadOnlyList<ColumnInfo> columnInfos,
+         Cache<string, ColumnInfo> columnInfos,
          string fileName,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          DataImporterSettings dataImporterSettings

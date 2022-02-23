@@ -31,7 +31,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos
+         Cache<string, ColumnInfo> columnInfos
       );
 
       event EventHandler<FormatChangedEventArgs> OnFormatChanged;

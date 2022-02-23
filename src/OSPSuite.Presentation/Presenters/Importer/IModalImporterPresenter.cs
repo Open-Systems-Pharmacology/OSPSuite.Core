@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
@@ -14,7 +15,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos,
+         Cache<string, ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings,
          string path,
          string configurationId = null
@@ -22,7 +23,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       IReadOnlyList<DataRepository> ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos,
+         Cache<string, ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings,
          string path,
          ImporterConfiguration configuration
@@ -59,7 +60,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public IReadOnlyList<DataRepository> ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos,
+         Cache<string, ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings,
          string path,
          ImporterConfiguration configuration
@@ -77,7 +78,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos,
+         Cache<string, ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings,
          string path,
          string configurationId = null

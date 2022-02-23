@@ -17,7 +17,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    public abstract class ConcernforDataFormat_DataFormatHeadersWithUnits : ContextSpecification<DataFormatHeadersWithUnits>
    {
       protected IUnformattedData _basicFormat;
-      protected IReadOnlyList<ColumnInfo> _columnInfos;
+      protected Cache<string, ColumnInfo> _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected IDimension _fakedTimeDimension;
       protected IDimension _fakedConcentrationDimension;
@@ -29,16 +29,16 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          _fakedConcentrationDimension = A.Fake<IDimension>();
          _fakedErrorDimension = A.Fake<IDimension>();
 
-         _columnInfos = new List<ColumnInfo>()
+         _columnInfos = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName)
          {
             new ColumnInfo() { DisplayName = "Time", Name = "Time", IsMandatory = true },
             new ColumnInfo() { DisplayName = "Concentration", Name = "Concentration", IsMandatory = true },
             new ColumnInfo() { DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration" }
          };
 
-         _columnInfos.First(x => x.Name == "Time").SupportedDimensions.Add(_fakedTimeDimension);
-         _columnInfos.First(x => x.Name == "Concentration").SupportedDimensions.Add(_fakedConcentrationDimension);
-         _columnInfos.First(x => x.Name == "Error").SupportedDimensions.Add(_fakedErrorDimension);
+         _columnInfos["Time"].SupportedDimensions.Add(_fakedTimeDimension);
+         _columnInfos["Concentration"].SupportedDimensions.Add(_fakedConcentrationDimension);
+         _columnInfos["Error"].SupportedDimensions.Add(_fakedErrorDimension);
          _metaDataCategories = new List<MetaDataCategory>()
          {
             new MetaDataCategory() { Name = "Organ" },

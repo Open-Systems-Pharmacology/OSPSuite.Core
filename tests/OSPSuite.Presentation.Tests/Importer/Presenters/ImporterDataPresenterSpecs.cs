@@ -16,7 +16,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IImporterDataView _view;
       protected IImporter _importer;
       protected IDataSourceFile _dataSourceFile;
-      protected IReadOnlyList<ColumnInfo> _columnInfos;
+      protected Cache<string, ColumnInfo> _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected Cache<string, DataSheet> _sheetCache;
       protected DataSheet _dataSheet;
@@ -32,7 +32,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataSheet.RawData.AddColumn("test_column", 0);
          _dataSheet.RawData.AddRow(new List<string>(){ "1"});
          _sheetCache = new Cache<string, DataSheet> {{"sheet1", _dataSheet}, {"sheet2", _dataSheet}, {"sheet3", _dataSheet}};
-         A.CallTo(() => _importer.LoadFile(A<IReadOnlyList<ColumnInfo>>._, A<string>._, A<IReadOnlyList<MetaDataCategory>>._))
+         A.CallTo(() => _importer.LoadFile(A<Cache<string, ColumnInfo>>._, A<string>._, A<IReadOnlyList<MetaDataCategory>>._))
             .Returns(_dataSourceFile);
          A.CallTo(() => _view.GetActiveFilterCriteria()).Returns("active_filter_criteria");
          A.CallTo(() => _dataSourceFile.DataSheets).Returns(_sheetCache);
@@ -44,7 +44,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
          sut = new ImporterDataPresenter(_view, _importer);
 
-         _columnInfos = new List<ColumnInfo>()
+         _columnInfos = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName)
          {
             new ColumnInfo() { Name = "Time", IsMandatory = true, BaseGridName = "Time" },
             new ColumnInfo() { Name = "Concentration", IsMandatory = true, BaseGridName = "Time" },
