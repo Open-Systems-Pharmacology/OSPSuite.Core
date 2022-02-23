@@ -169,7 +169,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class When_setting_settings : concern_for_ImporterPresenter
    {
-      protected Cache<string, ColumnInfo> _columnInfos = A.Fake<Cache<string, ColumnInfo>>();
+      protected Cache<string, ColumnInfo> _columnInfos = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName);
 
       protected override void Because()
       {
