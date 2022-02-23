@@ -12,10 +12,12 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       Cache<string, DataSheet> DataSheets { get; }
 	   string Path { get; set; }
-
       IDataFormat Format { get; set; }
-
       IList<IDataFormat> AvailableFormats { get; set; }
+      //Stores what sheet was used to calculate the format
+      //so the presenter can actually select such a sheet
+      //as active when initialized
+      string FormatCalculatedFrom { get; set; }
    }
 
    public abstract class DataSourceFile : IDataSourceFile
@@ -34,6 +36,8 @@ namespace OSPSuite.Infrastructure.Import.Core
             Format = value.FirstOrDefault();
          }
       }
+
+      public string FormatCalculatedFrom { get; set; }
 
       protected DataSourceFile(IImportLogger logger)
       {

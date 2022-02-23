@@ -250,4 +250,26 @@ namespace OSPSuite.Presentation.Importer.Presenters
          sheets.ShouldBeEqualTo(new List<string> { "sheet1", "sheet2", "sheet3" });
       }
    }
+
+   public class When_loading_file_with_invalid_sheets : concern_for_ImporterDataPresenter
+   {
+      protected string _baseSheet = "baseSheet";
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _dataSourceFile.FormatCalculatedFrom).Returns(_baseSheet);
+      }
+
+      protected override void Because()
+      {
+         sut.SetDataSource("test_file");
+      }
+
+      [Observation]
+      public void first_valid_sheet_is_selected()
+      {
+         A.CallTo(() => _view.SelectTab(_baseSheet)).MustHaveHappened();
+      }
+   }
 }
