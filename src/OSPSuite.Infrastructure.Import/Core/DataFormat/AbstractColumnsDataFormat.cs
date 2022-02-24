@@ -1,14 +1,14 @@
-﻿using OSPSuite.Infrastructure.Import.Core.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Core.Import;
+using OSPSuite.Infrastructure.Import.Core.Extensions;
+using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 {
@@ -16,11 +16,11 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
    {
       public abstract string Name { get; }
       public abstract string Description { get; }
-      private IList<DataFormatParameter> _parameters;
-      public IList<DataFormatParameter> Parameters { get => _parameters; } //ToDo: Move entities to core and avoid copying this list
+      public IList<DataFormatParameter> Parameters { get; private set; }
+
       public IList<string> ExcelColumnNames { get; protected set; } = new List<string>();
 
-      public double SetParameters(IUnformattedData rawData, Cache<string, ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      public double SetParameters(IUnformattedData rawData, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          if (NotCompatible(rawData, columnInfos))
             return 0;
@@ -28,18 +28,18 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          return 1 + setParameters(rawData, columnInfos, metaDataCategories);
       }
 
-      protected bool NotCompatible(IUnformattedData data, Cache<string, ColumnInfo> columnInfos)
+      protected bool NotCompatible(IUnformattedData data, ColumnInfoCache columnInfos)
       {
          return (data.GetHeaders()
             .Select(data.GetColumnDescription)
             .Count(header => header.Level == ColumnDescription.MeasurementLevel.Numeric)) < columnInfos.Count(ci => ci.IsMandatory);
       }
 
-      private double setParameters(IUnformattedData data, Cache<string, ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      private double setParameters(IUnformattedData data, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          var keys = data.GetHeaders().ToList();
          ExcelColumnNames = keys.ToList();
-         _parameters = new List<DataFormatParameter>();
+         Parameters = new List<DataFormatParameter>();
 
          var missingKeys = new List<string>();
 
@@ -52,9 +52,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          return totalRank;
       }
 
-      private void setDimensionsForMappings(Cache<string, ColumnInfo> columnInfos)
+      private void setDimensionsForMappings(ColumnInfoCache columnInfos)
       {
-         foreach (var parameter in _parameters.OfType<MappingDataFormatParameter>())
+         foreach (var parameter in Parameters.OfType<MappingDataFormatParameter>())
          {
             var mappedColumn = parameter.MappedColumn;
 
@@ -87,7 +87,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          }
       }
 
-      private void setSecondaryColumnUnit(Cache<string, ColumnInfo> columnInfos)
+      private void setSecondaryColumnUnit(ColumnInfoCache columnInfos)
       {
          var mappings = Parameters.OfType<MappingDataFormatParameter>();
          foreach (var column in columnInfos.Where(c => !c.IsAuxiliary()))
@@ -109,7 +109,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       protected abstract string ExtractLloq(string description, IUnformattedData data, List<string> keys, ref double rank);
 
-      protected abstract UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions,  ref double rank);
+      protected abstract UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank);
 
       public UnitDescription ExtractUnitDescriptions(string description, IReadOnlyList<IDimension> supportedDimensions)
       {
@@ -136,12 +136,13 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                };
                if (columnInfos[headerName].IsAuxiliary())
                {
-                  if(units.ColumnName.IsNullOrEmpty() && units.SelectedUnit == UnitDescription.InvalidUnit)
+                  if (units.ColumnName.IsNullOrEmpty() && units.SelectedUnit == UnitDescription.InvalidUnit)
                      col.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
                   else
                      col.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
                }
-               _parameters.Add(new MappingDataFormatParameter
+
+               Parameters.Add(new MappingDataFormatParameter
                (
                   headerKey,
                   col
@@ -158,13 +159,14 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       {
          return Regex.Match(header, @"\[([^\]\[]*)\]$").Value;
       }
+
       protected string GetAndValidateUnitFromBrackets(string units, IReadOnlyList<IDimension> supportedDimensions)
       {
          return units
             .Trim().Substring(1, units.Length - 2).Trim() //remove the brackets and whitespaces from end and beginning
-            .Split(',') //we split in case there are more than one units separated with ,
+            .Split(',')                                   //we split in case there are more than one units separated with ,
             //only accepts valid and supported units
-            .FirstOrDefault(unitName => supportedDimensions.Any(x => x.HasUnit((string)unitName))) ?? UnitDescription.InvalidUnit;     //default = ?
+            .FirstOrDefault(unitName => supportedDimensions.Any(x => x.HasUnit((string) unitName))) ?? UnitDescription.InvalidUnit; //default = ?
       }
 
       protected virtual void ExtractNonQualifiedHeadings(List<string> keys, List<string> missingKeys, Cache<string, ColumnInfo> columnInfos, IUnformattedData data, ref double rank)
@@ -172,15 +174,15 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          foreach (var header in missingKeys)
          {
             var headerKey = keys.FirstOrDefault
-               (h =>
-                  data.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Numeric &&
-                  Parameters
-                     .OfType<MappingDataFormatParameter>()
-                     .All(m => m.ColumnName != h)
-               );
+            (h =>
+               data.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Numeric &&
+               Parameters
+                  .OfType<MappingDataFormatParameter>()
+                  .All(m => m.ColumnName != h)
+            );
             if (headerKey == null) continue;
             keys.Remove(headerKey);
-            var units = ExtractUnits(headerKey, data, keys, columnInfos[header].SupportedDimensions,  ref rank);
+            var units = ExtractUnits(headerKey, data, keys, columnInfos[header].SupportedDimensions, ref rank);
 
             var col = new Column()
             {
@@ -192,7 +194,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             {
                col.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
             }
-            _parameters.Add
+
+            Parameters.Add
             (
                new MappingDataFormatParameter
                (
@@ -209,12 +212,11 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          foreach (var header in columnsCopy.Where(h => metaDataCategories.Select(c => c.Name).FindHeader(h) != null))
          {
             keys.Remove(header);
-            _parameters.Add(new MetaDataFormatParameter(header, metaDataCategories.Select(c => c.Name).FindHeader(header)));
+            Parameters.Add(new MetaDataFormatParameter(header, metaDataCategories.Select(c => c.Name).FindHeader(header)));
          }
       }
 
-      public IEnumerable<ParsedDataSet> Parse(IUnformattedData data,
-         Cache<string, ColumnInfo> columnInfos)
+      public IEnumerable<ParsedDataSet> Parse(IUnformattedData data, ColumnInfoCache columnInfos)
       {
          var missingColumns = Parameters.Where(p => p.ComesFromColumn() && data.GetColumnDescription(p.ColumnName) == null).Select(p => p.ColumnName).ToList();
          if (missingColumns.Any())
@@ -225,9 +227,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                .Where(p => p.IsGroupingCriterion())
                .Select(p =>
                   (p.ColumnName,
-                     p.ComesFromColumn() 
+                     p.ComesFromColumn()
                         ? (data.GetColumnDescription(p.ColumnName).ExistingValues)
-                        : new List<string>() { p.ColumnName }));
+                        : new List<string>() {p.ColumnName}));
 
          return buildDataSets(data, groupingCriteria, columnInfos);
       }
@@ -240,14 +242,17 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       }
 
       /// <summary>
-      /// Populates the dataSets from the data recursively.
+      ///    Populates the dataSets from the data recursively.
       /// </summary>
       /// <param name="data">The unformatted source data</param>
       /// <param name="parameters">Parameters of the format for grouping by</param>
-      /// <param name="indexes">List of indexes for the recursion, each index encodes an existingValue, 
-      /// e.g. [1,2,1] would mean that the first parameter is constraint to have its value equal to its ExistingValue on index 1,
-      /// the second parameter is constraint to have its value equal to its ExistingValue on index 2, and
-      /// the third parameter is constraint to have its value equal to its ExistingValue on index 1</param>
+      /// <param name="indexes">
+      ///    List of indexes for the recursion, each index encodes an existingValue,
+      ///    e.g. [1,2,1] would mean that the first parameter is constraint to have its value equal to its ExistingValue on index
+      ///    1,
+      ///    the second parameter is constraint to have its value equal to its ExistingValue on index 2, and
+      ///    the third parameter is constraint to have its value equal to its ExistingValue on index 1
+      /// </param>
       /// <param name="dataSets">List to store the dataSets</param>
       /// <param name="columnInfos">List of column infos</param>
       private void buildDataSetsRecursively(IUnformattedData data, IEnumerable<(string ColumnName, IReadOnlyList<string> ExistingValues)> parameters, Stack<int> indexes, List<ParsedDataSet> dataSets, Cache<string, ColumnInfo> columnInfos)
@@ -299,11 +304,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          {
             var currentParameter = mappingParameters.FirstOrDefault(p => p.MappedColumn.Name == columnInfo.DisplayName);
             if (currentParameter == null) continue;
-            Func<MappingDataFormatParameter, IUnformattedData, UnformattedRow, SimulationPoint> mappingsParser = 
-               currentParameter.MappedColumn.LloqColumn == null ? 
-                  (Func<MappingDataFormatParameter, IUnformattedData, UnformattedRow, SimulationPoint>)parseMappingOnSameColumn : 
-                  parseMappingOnSameGivenColumn;
-            
+            Func<MappingDataFormatParameter, IUnformattedData, UnformattedRow, SimulationPoint> mappingsParser =
+               currentParameter.MappedColumn.LloqColumn == null ? (Func<MappingDataFormatParameter, IUnformattedData, UnformattedRow, SimulationPoint>) parseMappingOnSameColumn : parseMappingOnSameGivenColumn;
+
             dictionary.Add
             (
                new ExtendedColumn
@@ -337,7 +340,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          }
 
          var unit = currentParameter.MappedColumn.Unit.ExtractUnit(columnName => data.GetColumnDescription(columnName).Index, row.Data);
-         
+
          if (double.TryParse(element, out var result))
             return new SimulationPoint()
             {
@@ -373,7 +376,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             lloq = double.NaN;
 
          var columnDescription = data.GetColumnDescription(currentParameter.ColumnName);
-         
+
          var element = row.Data.ElementAt(columnDescription.Index).Trim();
          if (double.TryParse(element, out var result))
             return new SimulationPoint()
@@ -392,7 +395,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       public void CopyParametersFromConfiguration(OSPSuite.Core.Import.ImporterConfiguration configuration)
       {
-         _parameters = new List<DataFormatParameter>(configuration.Parameters);
+         Parameters = new List<DataFormatParameter>(configuration.Parameters);
       }
    }
 }

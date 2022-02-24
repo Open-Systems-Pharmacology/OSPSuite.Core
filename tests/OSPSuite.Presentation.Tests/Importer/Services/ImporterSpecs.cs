@@ -40,7 +40,7 @@ namespace OSPSuite.Presentation.Importer.Services
       protected IDataSourceFileParser _parser;
       protected IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       protected IDialogCreator _dialogCreator;
-      protected Cache<string, ColumnInfo> _columnInfos;
+      protected ColumnInfoCache _columnInfos;
       protected IDimension _fakedTimeDimension;
       protected IDimension _fakedConcentrationDimension;
       protected IDimension _fakedErrorDimension;
@@ -57,7 +57,7 @@ namespace OSPSuite.Presentation.Importer.Services
          _container = A.Fake<IContainer>();
          _dialogCreator = A.Fake<IDialogCreator>();
          var dataFormat = A.Fake<IDataFormat>();
-         _columnInfos = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName)
+         _columnInfos = new ColumnInfoCache
          {
             new ColumnInfo() { DisplayName = "Time" },
             new ColumnInfo() { DisplayName = "Concentration" },
@@ -221,7 +221,7 @@ namespace OSPSuite.Presentation.Importer.Services
       protected IDataSourceFileParser _parser;
       protected IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       protected IDialogCreator _dialogCreator;
-      protected Cache<string, ColumnInfo> _columnInfos;
+      protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected IDimension _fakedTimeDimension;
       protected IDimension _fakedConcentrationDimension;
@@ -238,7 +238,7 @@ namespace OSPSuite.Presentation.Importer.Services
          _dialogCreator = A.Fake<IDialogCreator>();
          _fakedDimensionFactory = A.Fake<IDimensionFactory>();
          var dataFormat = A.Fake<IDataFormat>();
-         _columnInfos = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName)
+         _columnInfos = new ColumnInfoCache()
          {
             new ColumnInfo() { DisplayName = "Time" },
             new ColumnInfo() { DisplayName = "Concentration" },

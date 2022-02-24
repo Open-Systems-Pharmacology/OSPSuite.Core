@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
@@ -30,7 +31,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       /// <summary>
       ///    List of possible supported dimensions.This List may be empty if all dimensions are supported
       /// </summary>
-      public List<IDimension> SupportedDimensions { get;}
+      public List<IDimension> SupportedDimensions { get; }
 
       public IDimension DefaultDimension { get; set; }
       public IList<MetaDataCategory> MetaDataCategories { get; }
@@ -43,6 +44,18 @@ namespace OSPSuite.Infrastructure.Import.Core
          SupportedDimensions = new List<IDimension>();
          DefaultDimension = null;
          MetaDataCategories = new List<MetaDataCategory>();
+      }
+   }
+
+   public class ColumnInfoCache : Cache<string, ColumnInfo>
+   {
+      public ColumnInfoCache() : base(x => x.DisplayName)
+      {
+      }
+
+      public ColumnInfoCache(IReadOnlyList<ColumnInfo> columnInfos) : this()
+      {
+         AddRange(columnInfos);
       }
    }
 }

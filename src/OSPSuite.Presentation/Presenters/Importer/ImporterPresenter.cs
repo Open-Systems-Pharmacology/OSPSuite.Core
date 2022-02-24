@@ -18,6 +18,31 @@ using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
+   public class ImportTriggeredEventArgs : EventArgs
+   {
+      public IReadOnlyList<DataRepository> DataRepositories { get; set; }
+   }
+
+   public interface IImporterPresenter : IDisposablePresenter
+   {
+      void SetSettings(
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
+         ColumnInfoCache columnInfos,
+         DataImporterSettings dataImporterSettings
+      );
+
+      bool SetSourceFile(string path);
+
+      event EventHandler<ImportTriggeredEventArgs> OnTriggerImport;
+
+      void SaveConfiguration();
+
+      void LoadConfiguration(ImporterConfiguration configuration, string fileName);
+
+      ImporterConfiguration UpdateAndGetConfiguration();
+      void LoadConfigurationWithoutImporting();
+   }
+
    public class ImporterPresenter : AbstractDisposablePresenter<IImporterView, IImporterPresenter>, IImporterPresenter
    {
       private readonly IImporterDataPresenter _importerDataPresenter;
@@ -27,7 +52,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       private readonly IImporter _importer;
       private DataImporterSettings _dataImporterSettings;
-      private Cache<string, ColumnInfo> _columnInfos;
+      private ColumnInfoCache _columnInfos;
       private readonly INanPresenter _nanPresenter;
       protected IDataSource _dataSource;
       private IDataSourceFile _dataSourceFile;
@@ -111,7 +136,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
-      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, Cache<string, ColumnInfo> columnInfos,
+      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, ColumnInfoCache columnInfos,
          DataImporterSettings dataImporterSettings)
       {
          _columnInfos = columnInfos;
@@ -253,12 +278,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             _dialogCreator.MessageBoxError(Captions.Importer.SheetFormatNotSupported);
          }
+
          _view.DisableConfirmationView();
       }
 
       private void onMissingMapping(object sender, MissingMappingEventArgs missingMappingEventArgs)
       {
-         _importerDataPresenter.onMissingMapping();
+         _importerDataPresenter.OnMissingMapping();
          View.DisableConfirmationView();
       }
 
@@ -279,7 +305,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void onCompletedMapping(object sender, EventArgs args)
       {
-         _importerDataPresenter.onCompletedMapping();
+         _importerDataPresenter.OnCompletedMapping();
          onImporterDataChanged(this, args);
       }
 
@@ -410,7 +436,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void LoadConfigurationWithoutImporting()
       {
          if (confirmDroppingOfLoadedSheets())
-               return;
+            return;
 
          onResetMappingBasedOnCurrentSheet();
 
@@ -419,7 +445,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (fileName.IsNullOrEmpty())
             return;
-         
+
          var configuration = _pkmlPersistor.Load<ImporterConfiguration>(fileName);
          applyConfiguration(configuration);
       }

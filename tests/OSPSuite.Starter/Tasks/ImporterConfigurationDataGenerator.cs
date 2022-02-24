@@ -17,11 +17,11 @@ namespace OSPSuite.Starter.Tasks
    {
       void AddMoleculeValuesToMetaDataList(IList<MetaDataCategory> metaDataCategories);
       void AddOrganValuesToMetaDataList(IList<MetaDataCategory> metaDataCategories);
-      Cache<string, ColumnInfo> DefaultTestConcentrationImportConfiguration();
+      IReadOnlyList<ColumnInfo> DefaultTestConcentrationImportConfiguration();
       IReadOnlyList<MetaDataCategory> DefaultTestMetaDataCategories();
-      Cache<string, ColumnInfo> DefaultGroupByConcentrationImportConfiguration();
+      IReadOnlyList<ColumnInfo> DefaultGroupByConcentrationImportConfiguration();
       IReadOnlyList<MetaDataCategory> DefaultGroupByTestMetaDataCategories();
-      Cache<string, ColumnInfo> GetOntogenyColumnInfo();
+      IReadOnlyList<ColumnInfo> GetOntogenyColumnInfo();
       IReadOnlyList<MetaDataCategory> DefaultMoBiMetaDataCategories();
    }
 
@@ -131,9 +131,9 @@ namespace OSPSuite.Starter.Tasks
          return categories;
       }
 
-      public Cache<string, ColumnInfo> DefaultGroupByConcentrationImportConfiguration()
+      public IReadOnlyList<ColumnInfo> DefaultGroupByConcentrationImportConfiguration()
       {
-         var columns = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName);
+         var columns = new List<ColumnInfo>();
          var timeColumn = createTimeColumn();
 
          createMetaData().Each(category => timeColumn.MetaDataCategories.Add(category));
@@ -300,16 +300,16 @@ namespace OSPSuite.Starter.Tasks
          return concentrationInfo;
       }
 
-      public Cache<string, ColumnInfo> DefaultTestConcentrationImportConfiguration()
+      public IReadOnlyList<ColumnInfo> DefaultTestConcentrationImportConfiguration()
       {
-         var columnInfos = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName);
+         var columnInfos = new List<ColumnInfo>();
          var timeColumn = createTimeColumn();
          createMetaData().Each(category => timeColumn.MetaDataCategories.Add(category));
          columnInfos.Add(timeColumn);
 
          columnInfos.Add(createConcentrationColumn(timeColumn));
 
-         var categoryColum = new ColumnInfo
+         var categoryColumn = new ColumnInfo
          {
             IsMandatory = false,
             BaseGridName = timeColumn.Name,
@@ -317,8 +317,8 @@ namespace OSPSuite.Starter.Tasks
             Name = "Category",
             DisplayName = "Categorie of Experiment",
          };
-         categoryColum.SupportedDimensions.Add(_dimensionFactory.Dimension("Dimensionless"));
-         columnInfos.Add(categoryColum);
+         categoryColumn.SupportedDimensions.Add(_dimensionFactory.Dimension("Dimensionless"));
+         columnInfos.Add(categoryColumn);
 
          var dateCategory = new ColumnInfo
          {
@@ -345,9 +345,9 @@ namespace OSPSuite.Starter.Tasks
          return columnInfos;
       }
 
-      public Cache<string, ColumnInfo> GetOntogenyColumnInfo()
+      public IReadOnlyList<ColumnInfo> GetOntogenyColumnInfo()
       {
-         var columns = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName);
+         var columns = new List<ColumnInfo>();
 
          var ageColumn = new ColumnInfo
          {
