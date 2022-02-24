@@ -59,7 +59,7 @@ namespace OSPSuite.R.Services
          _dataImporter = dataImporter;
          _dimensionFactory = dimensionFactory;
          _pkmlPersistor = pkmlPersistor;
-         _metaDataCategories = (IReadOnlyList<MetaDataCategory>)_dataImporter.DefaultMetaDataCategories();
+         _metaDataCategories = _dataImporter.DefaultMetaDataCategories();
          _dataImporterSettings = new DataImporterSettings
          {
             NameOfMetaDataHoldingMoleculeInformation = Constants.ObservedData.MOLECULE,
@@ -78,16 +78,8 @@ namespace OSPSuite.R.Services
 
       public IReadOnlyList<DataRepository> ImportExcelFromConfiguration(
          string configurationPath,
-         string dataPath)
-      {
-         return _dataImporter.ImportFromConfiguration(
-            GetConfiguration(configurationPath),
-            _metaDataCategories,
-            _columnInfos,
-            _dataImporterSettings,
-            dataPath
-         ).ToArray();
-      }
+         string dataPath) =>
+         ImportExcelFromConfiguration(GetConfiguration(configurationPath), dataPath);
 
       public IReadOnlyList<DataRepository> ImportExcelFromConfiguration(
          ImporterConfiguration configuration,
@@ -105,17 +97,8 @@ namespace OSPSuite.R.Services
       public IReadOnlyList<DataRepository> ImportCsvFromConfiguration(
          string configurationPath,
          string dataPath,
-         char columnSeparator)
-      {
-         _csvSeparatorSelector.CsvSeparator = columnSeparator;
-         return _dataImporter.ImportFromConfiguration(
-            GetConfiguration(configurationPath),
-            _metaDataCategories,
-            _columnInfos,
-            _dataImporterSettings,
-            dataPath
-         ).ToArray();
-      }
+         char columnSeparator) =>
+         ImportCsvFromConfiguration(GetConfiguration(configurationPath), dataPath, columnSeparator);
 
       public IReadOnlyList<DataRepository> ImportCsvFromConfiguration(
          ImporterConfiguration configuration,
@@ -135,18 +118,19 @@ namespace OSPSuite.R.Services
       public ImporterConfiguration GetConfiguration(string filePath)
       {
          var configuration = _pkmlPersistor.Load<ImporterConfiguration>(filePath);
-         if (string.IsNullOrEmpty(configuration.NamingConventions))
+         if (!string.IsNullOrEmpty(configuration.NamingConventions)) 
+            return configuration;
+         
+         var separator = Constants.ImporterConstants.NAMING_PATTERN_SEPARATORS.First();
+         var keys = new List<string>
          {
-            var separator = Constants.ImporterConstants.NAMING_PATTERN_SEPARATORS.First();
-            var keys = new List<string>()
-            {
-               Constants.FILE,
-               Constants.SHEET
-            };
-            keys.AddRange(configuration.Parameters.OfType<MetaDataFormatParameter>().Select(p => p.MetaDataId));
-            keys.AddRange(configuration.Parameters.OfType<GroupByDataFormatParameter>().Select(p => p.ColumnName));
-            configuration.NamingConventions = string.Join(separator, keys.Select(k => $"{{{k}}}"));
-         }
+            Constants.FILE,
+            Constants.SHEET
+         };
+         keys.AddRange(configuration.Parameters.OfType<MetaDataFormatParameter>().Select(p => p.MetaDataId));
+         keys.AddRange(configuration.Parameters.OfType<GroupByDataFormatParameter>().Select(p => p.ColumnName));
+         configuration.NamingConventions = string.Join(separator, keys.Select(k => $"{{{k}}}"));
+
          return configuration;
       }
 
@@ -229,7 +213,7 @@ namespace OSPSuite.R.Services
 
       public void SetAllLoadedSheet(ImporterConfiguration configuration, string sheet)
       {
-         SetAllLoadedSheet(configuration, new[] { sheet });
+         SetAllLoadedSheet(configuration, new[] {sheet});
       }
 
       public string[] GetAllGroupingColumns(ImporterConfiguration configuration)
@@ -277,6 +261,7 @@ namespace OSPSuite.R.Services
          var column = configuration.Parameters.FirstOrDefault(p => p.ColumnName == columnName);
          if (column == null)
             return;
+
          configuration.RemoveParameter(column);
       }
 
