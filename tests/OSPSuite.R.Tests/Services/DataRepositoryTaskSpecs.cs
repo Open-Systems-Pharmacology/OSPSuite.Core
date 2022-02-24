@@ -286,4 +286,35 @@ namespace OSPSuite.R.Services
          The.Action(()=>sut.SetColumnOrigin(_column, "TOTO")).ShouldThrowAn<Exception>();
       }
    }
+
+   public class When_creating_a_default_observation_repository : concern_for_DataRepositoryTask
+   {
+      private DataRepository _dataRepository;
+      private DataColumn _column;
+
+      protected override void Because()
+      {
+         _dataRepository = sut.CreateEmptyObservationRepository("xValue", "yValue");
+         _column = _dataRepository.FindByName("yValue");
+      }
+
+      [Observation]
+      public void should_return_a_repository_with_two_columns_having_the_expected_names()
+      {
+         _dataRepository.FindByName("xValue").ShouldNotBeNull();
+         _column.ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void the_type_of_the_column_should_be_observation()
+      {
+         _column.DataInfo.Origin.ShouldBeEqualTo(ColumnOrigins.Observation);
+      }
+
+      [Observation]
+      public void the_dimension_of_the_column_should_be_concentration_mass()
+      {
+         _column.DimensionName().ShouldBeEqualTo(Constants.Dimension.MASS_CONCENTRATION);
+      }
+   }
 }
