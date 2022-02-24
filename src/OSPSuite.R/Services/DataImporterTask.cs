@@ -44,10 +44,11 @@ namespace OSPSuite.R.Services
       private readonly IDataImporter _dataImporter;
       private readonly IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly DataImporterSettings _dataImporterSettings;
-      private readonly Cache<string, ColumnInfo> _columnInfos;
+      private readonly ColumnInfoCache _columnInfoCache;
       private readonly IDimensionFactory _dimensionFactory;
       private readonly IPKMLPersistor _pkmlPersistor;
       private readonly ICsvDynamicSeparatorSelector _csvSeparatorSelector;
+      private readonly IReadOnlyList<ColumnInfo> _columnInfos;
 
       public DataImporterTask(
          IDataImporter dataImporter,
@@ -59,7 +60,7 @@ namespace OSPSuite.R.Services
          _dataImporter = dataImporter;
          _dimensionFactory = dimensionFactory;
          _pkmlPersistor = pkmlPersistor;
-         _metaDataCategories = _dataImporter.DefaultMetaDataCategories();
+         _metaDataCategories = _dataImporter.DefaultMetaDataCategoriesForObservedData();
          _dataImporterSettings = new DataImporterSettings
          {
             NameOfMetaDataHoldingMoleculeInformation = Constants.ObservedData.MOLECULE,
@@ -67,6 +68,7 @@ namespace OSPSuite.R.Services
             IgnoreSheetNamesAtImport = true
          };
          _columnInfos = _dataImporter.ColumnInfosForObservedData();
+         _columnInfoCache = new ColumnInfoCache(_columnInfos);
          _csvSeparatorSelector = csvSeparatorSelector;
       }
 
@@ -145,7 +147,7 @@ namespace OSPSuite.R.Services
          var dimension = _dimensionFactory.Dimension(Constants.Dimension.TIME);
          var timeColumn = new Column
          {
-            Name = _columnInfos.First(ci => ci.IsBase()).DisplayName,
+            Name = _columnInfoCache.First(ci => ci.IsBase()).DisplayName,
             Dimension = dimension,
             Unit = new UnitDescription(dimension.DefaultUnitName)
          };
@@ -154,7 +156,7 @@ namespace OSPSuite.R.Services
          dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
          var measurementColumn = new Column
          {
-            Name = _columnInfos.First(ci => !(ci.IsAuxiliary() || ci.IsBase())).DisplayName,
+            Name = _columnInfoCache.First(ci => !(ci.IsAuxiliary() || ci.IsBase())).DisplayName,
             Dimension = dimension,
             Unit = new UnitDescription(dimension.DefaultUnitName)
          };
@@ -188,7 +190,7 @@ namespace OSPSuite.R.Services
          var measurementUnitDescription = GetMeasurement(configuration).MappedColumn.Unit;
          var errorColumn = new Column
          {
-            Name = _columnInfos.First(ci => ci.IsAuxiliary()).DisplayName,
+            Name = _columnInfoCache.First(ci => ci.IsAuxiliary()).DisplayName,
             Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION),
             Unit = new UnitDescription(measurementUnitDescription.SelectedUnit, measurementUnitDescription.ColumnName),
             ErrorStdDev = Constants.STD_DEV_ARITHMETIC
@@ -232,21 +234,21 @@ namespace OSPSuite.R.Services
       {
          return configuration.Parameters
             .OfType<MappingDataFormatParameter>()
-            .FirstOrDefault(p => _columnInfos[p.MappedColumn.Name].IsAuxiliary());
+            .FirstOrDefault(p => _columnInfoCache[p.MappedColumn.Name].IsAuxiliary());
       }
 
       public MappingDataFormatParameter GetMeasurement(ImporterConfiguration configuration)
       {
          return configuration.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p =>
          {
-            var columnInfo = _columnInfos[p.MappedColumn.Name];
+            var columnInfo = _columnInfoCache[p.MappedColumn.Name];
             return !(columnInfo.IsAuxiliary() || columnInfo.IsBase());
          });
       }
 
       public MappingDataFormatParameter GetTime(ImporterConfiguration configuration)
       {
-         return configuration.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => _columnInfos[p.MappedColumn.Name].IsBase());
+         return configuration.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => _columnInfoCache[p.MappedColumn.Name].IsBase());
       }
 
       public void RemoveError(ImporterConfiguration configuration)

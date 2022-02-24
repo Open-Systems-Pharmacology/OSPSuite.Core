@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Views.Importer;
-using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -52,7 +51,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
    public interface IColumnMappingPresenter : IPresenter<IColumnMappingView>
    {
-      void SetSettings( IReadOnlyList<MetaDataCategory> metaDataCategories, Cache<string, ColumnInfo> columnInfos);
+      void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, ColumnInfoCache columnInfos);
       IDataFormat GetDataFormat();
       void SetDataFormat(IDataFormat format);
       void SetRawData(UnformattedData rawData);

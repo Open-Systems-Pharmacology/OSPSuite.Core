@@ -32,7 +32,7 @@ namespace OSPSuite.Presentation.Services
       protected ImporterConfiguration _importerConfigurationMW;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected DataImporterSettings _dataImporterSettings;
-      protected Cache<string, ColumnInfo> _columnInfos;
+      protected IReadOnlyList<ColumnInfo> _columnInfos;
       protected IDimension _molarConcentrationDimension;
       protected IDimension _massConcentrationDimension;
       protected IDimension _timeConcentrationDimension;
@@ -61,7 +61,7 @@ namespace OSPSuite.Presentation.Services
          _importerConfiguration.AddToLoadedSheets("Sheet1");
          _importerConfigurationMW = new ImporterConfiguration { FileName = "IntegrationSample1.xlsx", NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}" };
          _importerConfigurationMW.AddToLoadedSheets("Sheet1");
-         _metaDataCategories = (IReadOnlyList<MetaDataCategory>)sut.DefaultMetaDataCategories();
+         _metaDataCategories = (IReadOnlyList<MetaDataCategory>)sut.DefaultMetaDataCategoriesForObservedData();
          _dataImporterSettings = new DataImporterSettings();
          _dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
          _dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
@@ -96,9 +96,9 @@ namespace OSPSuite.Presentation.Services
       }
       protected string getFileFullName(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", fileName);
 
-      private Cache<string, ColumnInfo> getDefaultColumnInfos()
+      private IReadOnlyList<ColumnInfo> getDefaultColumnInfos()
       {
-         var columns = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName);
+         var columns = new List<ColumnInfo>();
          var timeColumn = createTimeColumn();
 
          columns.Add(timeColumn);

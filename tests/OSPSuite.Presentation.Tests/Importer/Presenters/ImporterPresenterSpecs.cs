@@ -146,7 +146,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             _dataSource);
          _importerConfiguration = A.Fake<ImporterConfiguration>();
          sut.LoadConfiguration(_importerConfiguration, "");
-         sut.SetSettings(_metaDataCategories, new Cache<string, ColumnInfo>(getKey: x => x.DisplayName), _dataImporterSettings);
+         sut.SetSettings(_metaDataCategories, new ColumnInfoCache(), _dataImporterSettings);
       }
 
       protected static MetaDataCategory createMetaDataCategory<T>(string descriptiveName, bool isMandatory = false, bool isListOfValuesFixed = false, Action<MetaDataCategory> fixedValuesRetriever = null)
@@ -169,7 +169,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
    public class When_setting_settings : concern_for_ImporterPresenter
    {
-      protected Cache<string, ColumnInfo> _columnInfos = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName);
+      protected ColumnInfoCache _columnInfos = new ColumnInfoCache();
 
       protected override void Because()
       {
@@ -300,7 +300,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void invokes_column_mapping_presenter()
       {
-         A.CallTo(() => _importerDataPresenter.onCompletedMapping()).MustHaveHappened();
+         A.CallTo(() => _importerDataPresenter.OnCompletedMapping()).MustHaveHappened();
       }
 
       [Observation]
@@ -332,7 +332,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          var errors = new ParseErrors();
          errors.Add(new DataSet(), new List<ParseErrorDescription>() { new MismatchingArrayLengthsParseErrorDescription() });
-         A.CallTo(() => _dataSource.AddSheets(A<Cache<string, DataSheet>>.Ignored, A<Cache<string, ColumnInfo>>.Ignored, A<string>.Ignored)).Returns(errors);
+         A.CallTo(() => _dataSource.AddSheets(A<Cache<string, DataSheet>>.Ignored, A<ColumnInfoCache>.Ignored, A<string>.Ignored)).Returns(errors);
          _sheets = new Cache<string, DataSheet>();
          _sheets.Add("sheet1", A.Fake<DataSheet>());
          _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() {Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets});
@@ -356,7 +356,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void invokes_importer_data_presenter()
       {
-         A.CallTo(() => _importerDataPresenter.onMissingMapping()).MustHaveHappened();
+         A.CallTo(() => _importerDataPresenter.OnMissingMapping()).MustHaveHappened();
       }
 
       [Observation]

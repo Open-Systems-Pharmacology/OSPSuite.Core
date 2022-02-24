@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       private IDataFormat _format;
       private List<ColumnMappingDTO> _mappings;
-      private Cache<string, ColumnInfo> _columnInfos;
+      private ColumnInfoCache _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IImporter _importer;
       private IList<DataFormatParameter> _originalFormat;
@@ -45,7 +45,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         Cache<string, ColumnInfo> columnInfos
+         ColumnInfoCache columnInfos
       )
       {
          _columnInfos = columnInfos;

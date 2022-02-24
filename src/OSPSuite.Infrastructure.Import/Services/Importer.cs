@@ -19,9 +19,10 @@ namespace OSPSuite.Infrastructure.Import.Services
 {
    public interface IImporter
    {
-      IDataSourceFile LoadFile(Cache<string, ColumnInfo> columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories);
-      void AddFromFile(IDataFormat format, Cache<string, DataSheet> dataSheets, Cache<string, ColumnInfo> columnInfos, IDataSource alreadyExisting);
-      IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, Cache<string, ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
+      IDataSourceFile LoadFile(ColumnInfoCache columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories);
+      void AddFromFile(IDataFormat format, Cache<string, DataSheet> dataSheets, ColumnInfoCache columnInfos, IDataSource alreadyExisting);
+      IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
+
       IEnumerable<string> NamesFromConvention
       (
          string namingConvention,
@@ -29,8 +30,9 @@ namespace OSPSuite.Infrastructure.Import.Services
          Cache<string, IDataSet> dataSets,
          IEnumerable<MetaDataMappingConverter> mappings
       );
+
       int GetImageIndex(DataFormatParameter parameter);
-      MappingProblem CheckWhetherAllDataColumnsAreMapped(Cache<string, ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings);
+      MappingProblem CheckWhetherAllDataColumnsAreMapped(ColumnInfoCache dataColumns, IEnumerable<DataFormatParameter> mappings);
 
       IReadOnlyList<DataSetToDataRepositoryMappingResult> DataSourceToDataSets(IDataSource dataSource, IReadOnlyList<MetaDataCategory> metaDataCategories,
          DataImporterSettings dataImporterSettings, string id);
@@ -38,13 +40,13 @@ namespace OSPSuite.Infrastructure.Import.Services
       (IReadOnlyList<DataSetToDataRepositoryMappingResult> DataRepositories, List<string> MissingSheets) ImportFromConfiguration
       (
          ImporterConfiguration configuration,
-         Cache<string, ColumnInfo> columnInfos,
+         ColumnInfoCache columnInfos,
          string fileName,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          DataImporterSettings dataImporterSettings
       );
 
-      IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, Cache<string, ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName);
+      IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName);
    }
 
    public class Importer : IImporter
@@ -54,7 +56,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       private readonly IDimension _molWeightDimension;
 
-      public Importer( IoC container, IDataSourceFileParser parser, IDataSetToDataRepositoryMapper dataRepositoryMapper, IDimensionFactory dimensionFactory)
+      public Importer(IoC container, IDataSourceFileParser parser, IDataSetToDataRepositoryMapper dataRepositoryMapper, IDimensionFactory dimensionFactory)
       {
          _container = container;
          _parser = parser;
@@ -62,7 +64,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          _molWeightDimension = dimensionFactory.Dimension(Constants.Dimension.MOLECULAR_WEIGHT);
       }
 
-      public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, Cache<string, ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          return _container.ResolveAll<IDataFormat>()
             .Select(x => (x, x.SetParameters(data, columnInfos, metaDataCategories)))
@@ -71,7 +73,7 @@ namespace OSPSuite.Infrastructure.Import.Services
             .Select(p => p.x);
       }
 
-      public void AddFromFile(IDataFormat format, Cache<string, DataSheet> dataSheets, Cache<string, ColumnInfo> columnInfos, IDataSource alreadyExisting)
+      public void AddFromFile(IDataFormat format, Cache<string, DataSheet> dataSheets, ColumnInfoCache columnInfos, IDataSource alreadyExisting)
       {
          var dataSets = new Cache<string, IDataSet>();
 
@@ -92,18 +94,19 @@ namespace OSPSuite.Infrastructure.Import.Services
                current = new DataSet();
                alreadyExisting.DataSets.Add(key, current);
             }
+
             current.AddData(dataSets[key].Data);
          }
       }
 
-      public IDataSourceFile LoadFile(Cache<string, ColumnInfo> columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      public IDataSourceFile LoadFile(ColumnInfoCache columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          var dataSource = _parser.For(fileName);
 
          if (dataSource.DataSheets == null) return null;
 
 
-         foreach(var sheetName in dataSource.DataSheets.Keys)
+         foreach (var sheetName in dataSource.DataSheets.Keys)
          {
             dataSource.AvailableFormats = CalculateFormat(dataSource, columnInfos, metaDataCategories, sheetName).ToList();
             if (dataSource.AvailableFormats.Any())
@@ -111,12 +114,14 @@ namespace OSPSuite.Infrastructure.Import.Services
                dataSource.FormatCalculatedFrom = sheetName;
                return dataSource;
             }
-         };
+         }
+
+         ;
 
          throw new UnsupportedFormatException(dataSource.Path);
       }
 
-      public IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, Cache<string, ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName)
+      public IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName)
       {
          if (sheetName == null)
             throw new UnsupportedFormatException(dataSource.Path);
@@ -149,6 +154,7 @@ namespace OSPSuite.Infrastructure.Import.Services
                counters.Add(key, 0);
                counter = 0;
             }
+
             counters[key]++;
             // Only add a number (for making it unique) to the name if the key already existed in the counters
             return key + (counter > 0 ? $"_{counter}" : "");
@@ -170,7 +176,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          }
       }
 
-      public MappingProblem CheckWhetherAllDataColumnsAreMapped(Cache<string, ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings)
+      public MappingProblem CheckWhetherAllDataColumnsAreMapped(ColumnInfoCache dataColumns, IEnumerable<DataFormatParameter> mappings)
       {
          var subset = mappings.OfType<MappingDataFormatParameter>().ToList();
 
@@ -209,7 +215,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          var molecularWeightValueAsString = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
 
          //when the MW does not come from the column but from a the value of of the MW of a specific molecule
-         if (dataImporterSettings.CheckMolWeightAgainstMolecule && 
+         if (dataImporterSettings.CheckMolWeightAgainstMolecule &&
              !molecularWeightFromMoleculeAsString.IsNullOrEmpty() &&
              !molecularWeightValueAsString.IsNullOrEmpty())
          {
@@ -251,6 +257,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       {
          return _molWeightDimension.UnitValueToBaseUnitValue(_molWeightDimension.DefaultUnit, valueInDisplayUnit);
       }
+
       private static bool isMolWeightUnique(IReadOnlyList<MetaDataCategory> moleculeDescriptions, string moleculeName)
       {
          //if there is no moleculeCategory, or no specified molecules
@@ -277,14 +284,14 @@ namespace OSPSuite.Infrastructure.Import.Services
 
          var molecularWeight = metaDataCategoryForMoleculeDescriptions.FirstOrDefault().ListOfValues.FirstOrDefault(x =>
             x.Key == moleculeName).Value;
-         
+
          return molecularWeight;
       }
 
       public (IReadOnlyList<DataSetToDataRepositoryMappingResult> DataRepositories, List<string> MissingSheets) ImportFromConfiguration
       (
          ImporterConfiguration configuration,
-         Cache<string, ColumnInfo> columnInfos,
+         ColumnInfoCache columnInfos,
          string fileName,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          DataImporterSettings dataImporterSettings

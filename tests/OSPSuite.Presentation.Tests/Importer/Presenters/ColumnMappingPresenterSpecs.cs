@@ -26,7 +26,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IDimensionFactory _dimensionFactory;
       protected IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       protected IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
-      protected Cache<string, ColumnInfo> _columnInfos;
+      protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected List<DataFormatParameter> _parameters = new List<DataFormatParameter>() 
       {
@@ -44,7 +44,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _view = A.Fake<IColumnMappingView>();
          _importer = A.Fake<IImporter>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
-         A.CallTo(() => _importer.CheckWhetherAllDataColumnsAreMapped(A<Cache<string, ColumnInfo>>.Ignored,
+         A.CallTo(() => _importer.CheckWhetherAllDataColumnsAreMapped(A<ColumnInfoCache>.Ignored,
             A<IEnumerable<DataFormatParameter>>.Ignored)).Returns(new MappingProblem()
             {MissingMapping = new List<string>(), MissingUnit = new List<string>()});
       }
@@ -58,7 +58,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Context()
       {
          base.Context();
-         _columnInfos = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName)
+         _columnInfos = new ColumnInfoCache
          {
             new ColumnInfo() { Name = "Time", IsMandatory = true, BaseGridName = "Time" },
             new ColumnInfo() { Name = "Concentration", IsMandatory = true, BaseGridName = "Time" },
