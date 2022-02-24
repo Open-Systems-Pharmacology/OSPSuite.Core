@@ -4,6 +4,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Serialization.Xml;
+using OSPSuite.Utility;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
@@ -64,6 +65,14 @@ namespace OSPSuite.R.Services
       /// <param name="dataRepository">DataRepository for which the meta data should be removed</param>
       /// <param name="key">Key of the meta data to remove</param>
       void RemoveMetaData(DataRepository dataRepository, string key);
+
+
+      /// <summary>
+      /// Set the <see cref="ColumnOrigins"/> for the column given as parameter
+      /// </summary>
+      /// <param name="column">Data column to set</param>
+      /// <param name="columnOrigin">String representation of the column origin (<see cref="ColumnOrigins"/></param>
+      void SetColumnOrigin(DataColumn column, string columnOrigin);
    }
 
    public class DataRepositoryTask : IDataRepositoryTask
@@ -146,6 +155,12 @@ namespace OSPSuite.R.Services
       public void RemoveMetaData(DataRepository dataRepository, string key)
       {
          dataRepository.ExtendedProperties.Remove(key);
+      }
+
+      public void SetColumnOrigin(DataColumn column, string columnOrigin)
+      {
+         var origin = EnumHelper.ParseValue<ColumnOrigins>(columnOrigin);
+         column.DataInfo.Origin = origin;
       }
    }
 }
