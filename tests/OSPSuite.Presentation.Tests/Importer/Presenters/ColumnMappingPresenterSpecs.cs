@@ -18,6 +18,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
 {
    public abstract class concern_for_ColumnMappingPresenter : ContextSpecification<ColumnMappingPresenter>
    {
+      protected const int GEOMETRIC_ERROR = 0;
+      protected const int ARITMETIC_ERROR = 1;
       protected IDataFormat _basicFormat;
       protected IColumnMappingView _view;
       protected IImporter _importer;
@@ -168,7 +170,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          base.Context();
          A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
-         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(0);
+         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(GEOMETRIC_ERROR);
          UpdateSettings();
       }
 
@@ -198,7 +200,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          base.Context();
          A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
-         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(1);
+         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(ARITMETIC_ERROR);
          UpdateSettings();
       }
 
@@ -335,7 +337,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          base.Context();
          _mappingSource = _parameters[2] as MappingDataFormatParameter;
          A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription("µmol/l"));
-         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(1);
+         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(ARITMETIC_ERROR);
          UpdateSettings();
       }
 
@@ -468,7 +470,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _mappingSource = _parameters[2] as MappingDataFormatParameter;
          _mappingSource.MappedColumn.Dimension = supportedDimensions.First(x => x.Name == Constants.Dimension.FRACTION);
          A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
-         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(1);
+         A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(ARITMETIC_ERROR);
          UpdateSettings();
       }
 
