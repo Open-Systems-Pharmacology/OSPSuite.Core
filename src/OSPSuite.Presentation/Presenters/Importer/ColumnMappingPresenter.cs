@@ -184,10 +184,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
             //The dimension is the first from the supported dimension which
             //has the selected unit.
             column.Unit = _mappingParameterEditorPresenter.Unit;
-            column.Dimension = _columnInfos
-               .First(x => x.DisplayName == model.MappingName)
-               .SupportedDimensions
-               .FirstOrDefault(x => x.HasUnit(column.Unit.SelectedUnit));
+            if (column.Dimension != null && !column.Dimension.HasUnit(column.Unit.SelectedUnit))
+            {
+               column.Dimension = _columnInfos[model.MappingName]
+                  .SupportedDimensions
+                  .FirstOrDefault(x => x.HasUnit(column.Unit.SelectedUnit));
+            }
          }
 
          if (model.ColumnInfo.IsBase())
