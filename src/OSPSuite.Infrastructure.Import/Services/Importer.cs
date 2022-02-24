@@ -116,8 +116,6 @@ namespace OSPSuite.Infrastructure.Import.Services
             }
          }
 
-         ;
-
          throw new UnsupportedFormatException(dataSource.Path);
       }
 
