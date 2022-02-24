@@ -44,18 +44,7 @@ namespace OSPSuite.Helpers
 
       public static IEnumerable<IDimension> ExtendedDimensionsForSpecs()
       {
-         var dimensions = new List<IDimension>();
-         var dimension = new Dimension(new BaseDimensionRepresentation { AmountExponent = 3, LengthExponent = -1 }, Constants.Dimension.MOLAR_CONCENTRATION, "µmol/l");
-         dimension.AddUnit(new Unit("mol/l", 1E6, 0));
-         dimensions.Add(dimension);
-
-         dimension = new Dimension(new BaseDimensionRepresentation { AmountExponent = 3, LengthExponent = -1 }, Constants.Dimension.DIMENSIONLESS, "");
-         dimensions.Add(dimension);
-
-         dimension = new Dimension(new BaseDimensionRepresentation { AmountExponent = 3, LengthExponent = -1 }, Constants.Dimension.FRACTION, "");
-         dimension.AddUnit(new Unit("%", 1E6, 0));
-         dimensions.Add(dimension);
-         return dimensions;
+         return new [] { ConcentrationDimensionForSpecs(), Constants.Dimension.NO_DIMENSION, FractionDimensionForSpecs() };
       }
 
       public static IDimension LengthDimensionForSpecs()
