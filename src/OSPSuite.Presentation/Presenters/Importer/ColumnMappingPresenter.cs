@@ -185,9 +185,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
             //has the selected unit.
             column.Unit = _mappingParameterEditorPresenter.Unit;
             if (column.Dimension != null && !column.Dimension.HasUnit(column.Unit.SelectedUnit))
+            {
                column.Dimension = _columnInfos[model.MappingName]
                   .SupportedDimensions
                   .FirstOrDefault(x => x.HasUnit(column.Unit.SelectedUnit));
+            }
          }
 
          if (model.ColumnInfo.IsBase())
