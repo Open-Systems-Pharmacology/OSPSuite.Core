@@ -462,10 +462,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Context()
       {
          base.Context();
-         _columnInfos[2].SupportedDimensions.Clear();
-         _columnInfos[2].SupportedDimensions.AddRange(DomainHelperForSpecs.ExtendedDimensionsForSpecs());
+         var supportedDimensions = _columnInfos["Error"].SupportedDimensions;
+         supportedDimensions.Clear();
+         supportedDimensions.AddRange(DomainHelperForSpecs.ExtendedDimensionsForSpecs());
          _mappingSource = _parameters[2] as MappingDataFormatParameter;
-         _mappingSource.MappedColumn.Dimension = _columnInfos[2].SupportedDimensions.First(x => x.Name == Constants.Dimension.FRACTION);
+         _mappingSource.MappedColumn.Dimension = supportedDimensions.First(x => x.Name == Constants.Dimension.FRACTION);
          A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
          A.CallTo(() => _mappingParameterEditorPresenter.SelectedErrorType).Returns(1);
          UpdateSettings();
