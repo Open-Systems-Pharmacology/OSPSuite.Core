@@ -5,6 +5,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
+using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
@@ -26,6 +27,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private MappingProblem _mappingProblem = new MappingProblem() {MissingMapping = new List<string>(), MissingUnit = new List<string>()};
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       private readonly IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
+      private readonly IDialogCreator _dialogCreator;
 
       public ColumnMappingPresenter
       (
@@ -33,12 +35,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IImporter importer,
          IMappingParameterEditorPresenter mappingParameterEditorPresenter,
          IMetaDataParameterEditorPresenter metaDataParameterEditorPresenter,
-         IDimensionFactory dimensionFactory
+         IDimensionFactory dimensionFactory,
+         IDialogCreator dialogCreator
       ) : base(view)
       {
          _importer = importer; 
          _mappingParameterEditorPresenter = mappingParameterEditorPresenter;
          _metaDataParameterEditorPresenter = metaDataParameterEditorPresenter;
+         _dialogCreator = dialogCreator;
          View.FillMappingView(_mappingParameterEditorPresenter.BaseView);
          View.FillMetaDataView(_metaDataParameterEditorPresenter.BaseView);
       }
@@ -134,9 +138,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetDataFormat(IDataFormat format)
       {
-         _format = format;
-         _originalFormat = _format.Parameters.ToList();
-         setDataFormat(format.Parameters);
+         try
+         {
+            _format = format;
+            _originalFormat = _format.Parameters.ToList();
+            setDataFormat(format.Parameters);
+         }
+         catch
+         {
+            _dialogCreator.MessageBoxError(Error.ErrorSettingImportFormat);
+         }
       }
 
       public void SetRawData(UnformattedData rawData)

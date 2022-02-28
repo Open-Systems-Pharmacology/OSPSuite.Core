@@ -13,6 +13,8 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Core.Services;
+using OSPSuite.Assets;
 
 namespace OSPSuite.Presentation.Importer.Presenters 
 {
@@ -35,10 +37,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
          new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("?", "") }),
          new GroupByDataFormatParameter("Study id")
       };
+      protected IDialogCreator _dialogCreator;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
+         _dialogCreator = A.Fake<IDialogCreator>();
          _basicFormat = A.Fake<IDataFormat>();
          A.CallTo(() => _basicFormat.Parameters).Returns(_parameters);
          _view = A.Fake<IColumnMappingView>();
@@ -92,7 +96,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          };
          _mappingParameterEditorPresenter = A.Fake<IMappingParameterEditorPresenter>();
          _metaDataParameterEditorPresenter = A.Fake<IMetaDataParameterEditorPresenter>();
-         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter, _dimensionFactory);
+         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter, _dimensionFactory, _dialogCreator);
       }
    }
 
@@ -114,6 +118,23 @@ namespace OSPSuite.Presentation.Importer.Presenters
                   l.Count(m => m.CurrentColumnType == ColumnMappingDTO.ColumnType.Mapping && m.Source is MappingDataFormatParameter && (m.Source as MappingDataFormatParameter).MappedColumn.Name == "Concentration") == 1 &&
                   l.Count(m => m.CurrentColumnType == ColumnMappingDTO.ColumnType.GroupBy && m.Source is GroupByDataFormatParameter && (m.Source as GroupByDataFormatParameter).ColumnName == "Study id") == 1
             ))).MustHaveHappened();
+      }
+   }
+
+   public class When_setting_wrong_data_format : concern_for_ColumnMappingPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _basicFormat.Parameters).Returns(null);
+         UpdateSettings();
+      }
+
+      [Observation]
+      public void shows_error_message()
+      {
+         A.CallTo(
+            () => _dialogCreator.MessageBoxError(Error.ErrorSettingImportFormat)).MustHaveHappened();
       }
    }
 
