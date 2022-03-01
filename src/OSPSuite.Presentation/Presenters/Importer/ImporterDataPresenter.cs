@@ -16,7 +16,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       private readonly IImporter _importer;
       private IDataSourceFile _dataSourceFile;
-      private Cache<string, ColumnInfo> _columnInfos;
+      private ColumnInfoCache _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly Cache<string, DataTable> _sheetsForViewing;
       private string _currentSheetName;
@@ -66,12 +66,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets, Filter = GetActiveFilterCriteria() });
       }
 
-      public void onMissingMapping()
+      public void OnMissingMapping()
       {
          View.DisableImportButtons();
       }
 
-      public void onCompletedMapping()
+      public void OnCompletedMapping()
       {
          View.EnableImportButtons();
       }
@@ -100,9 +100,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          OnDataChanged.Invoke(this, null);
       }
 
-      public void SetFilter(string FilterString)
+      public void SetFilter(string filterString)
       {
-         _view.SetFilter(FilterString);
+         _view.SetFilter(filterString);
       }
 
       private DataSheet getSingleSheet(string sheetName)
@@ -115,7 +115,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          OnFormatChanged.Invoke(this, new FormatChangedEventArgs() {Format = format});
       }
 
-      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, Cache<string, ColumnInfo> columnInfos)
+      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, ColumnInfoCache columnInfos)
       {
          _columnInfos = columnInfos;
          _metaDataCategories = metaDataCategories;
@@ -139,6 +139,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.AddTabs(GetSheetNames());
          View.ResetImportButtons();
 
+         View.SelectTab(_dataSourceFile.FormatCalculatedFrom);
          return _dataSourceFile;
       }
 

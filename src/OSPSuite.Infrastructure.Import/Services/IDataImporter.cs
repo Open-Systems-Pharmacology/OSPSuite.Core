@@ -11,27 +11,6 @@ using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Infrastructure.Import.Services
 {
-   public class ReloadDataSets
-   {
-      public IEnumerable<DataRepository> NewDataSets { get; }
-      public IEnumerable<DataRepository> OverwrittenDataSets { get; }
-      public IEnumerable<DataRepository> DataSetsToBeDeleted { get; }
-
-      public ReloadDataSets()
-      {
-         NewDataSets = Enumerable.Empty<DataRepository>();
-         OverwrittenDataSets = Enumerable.Empty<DataRepository>();
-         DataSetsToBeDeleted = Enumerable.Empty<DataRepository>();
-      }
-
-      public ReloadDataSets(IEnumerable<DataRepository> newDataSets, IEnumerable<DataRepository> overwrittenDataSets, IEnumerable<DataRepository> dataSetsToBeDeleted)
-      {
-         NewDataSets = newDataSets;
-         OverwrittenDataSets = overwrittenDataSets;
-         DataSetsToBeDeleted = dataSetsToBeDeleted;
-      }
-   }
-
    public interface IDataImporter
    {
       /// <summary>
@@ -43,7 +22,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       /// <param name="dataFileName">Path to the file containing the data</param>
       (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         Cache<string, ColumnInfo> columnInfos,
+         IReadOnlyList<ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings,
          string dataFileName
       );
@@ -59,7 +38,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       IReadOnlyList<DataRepository> ImportFromConfiguration(
          ImporterConfiguration configuration,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         Cache<string, ColumnInfo> columnInfos,
+         IReadOnlyList<ColumnInfo> columnInfos,
          DataImporterSettings dataImporterSettings,
          string dataFileName
       );
@@ -71,13 +50,13 @@ namespace OSPSuite.Infrastructure.Import.Services
       ///    Creates a default list of meta data categories that could still be modified by the caller
       /// </summary>
       /// <returns>a list of meta data categories</returns>
-      IReadOnlyList<MetaDataCategory> DefaultMetaDataCategories();
+      IReadOnlyList<MetaDataCategory> DefaultMetaDataCategoriesForObservedData();
 
       /// <summary>
       ///    Creates a default list of ColumnInfos that could still be modified by the caller
       /// </summary>
       /// <returns>a list of meta data categories</returns>
-      Cache<string, ColumnInfo> ColumnInfosForObservedData();
+      IReadOnlyList<ColumnInfo> ColumnInfosForObservedData();
 
       /// <summary>
       ///    Compares if two data repositories come from the same data
@@ -95,7 +74,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       /// <param name="metaDataCategories">meta data description</param>
       /// <param name="sheetName">name of the sheet to base the configuration on</param>
       /// <returns></returns>
-      ImporterConfiguration ConfigurationFromData(string dataPath, Cache<string, ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName = null);
+      ImporterConfiguration ConfigurationFromData(string dataPath, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName = null);
    }
 
    public abstract class AbstractDataImporter : IDataImporter
@@ -109,9 +88,9 @@ namespace OSPSuite.Infrastructure.Import.Services
          _dimensionFactory = dimensionFactory;
       }
 
-      public virtual Cache<string, ColumnInfo> ColumnInfosForObservedData()
+      public virtual IReadOnlyList<ColumnInfo> ColumnInfosForObservedData()
       {
-         var columns = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName);
+         var columns = new List<ColumnInfo>();
 
          var timeDimension = _dimensionFactory.Dimension(Constants.Dimension.TIME);
          var timeColumn = new ColumnInfo
@@ -155,16 +134,17 @@ namespace OSPSuite.Infrastructure.Import.Services
       }
 
       public abstract bool AreFromSameMetaDataCombination(DataRepository sourceDataRepository, DataRepository targetDataRepository);
+
       public abstract ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport, IReadOnlyList<DataRepository> existingDataSets);
 
-      public ImporterConfiguration ConfigurationFromData(string dataPath, Cache<string, ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName = null)
+      public ImporterConfiguration ConfigurationFromData(string dataPath, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName = null)
       {
          var configuration = new ImporterConfiguration();
-
-         var dataSourceFile = _importer.LoadFile(columnInfos, dataPath, metaDataCategories);
+         var columnInfoCache = new ColumnInfoCache(columnInfos);
+         var dataSourceFile = _importer.LoadFile(columnInfoCache, dataPath, metaDataCategories);
          if (!string.IsNullOrEmpty(sheetName))
          {
-            dataSourceFile.AvailableFormats = _importer.CalculateFormat(dataSourceFile, columnInfos, metaDataCategories, sheetName).ToList();
+            dataSourceFile.AvailableFormats = _importer.CalculateFormat(dataSourceFile, columnInfoCache, metaDataCategories, sheetName).ToList();
          }
 
          configuration.CloneParametersFrom(dataSourceFile.Format.Parameters.ToList());
@@ -182,7 +162,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          }
       }
 
-      public virtual IReadOnlyList<MetaDataCategory> DefaultMetaDataCategories()
+      public virtual IReadOnlyList<MetaDataCategory> DefaultMetaDataCategoriesForObservedData()
       {
          var categories = new List<MetaDataCategory>();
 
@@ -234,8 +214,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          return category;
       }
 
-
-      public abstract (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IReadOnlyList<MetaDataCategory> metaDataCategories, Cache<string, ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings, string dataFileName);
-      public abstract IReadOnlyList<DataRepository> ImportFromConfiguration(ImporterConfiguration configuration, IReadOnlyList<MetaDataCategory> metaDataCategories, Cache<string, ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings, string dataFileName);
+      public abstract (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings, string dataFileName);
+      public abstract IReadOnlyList<DataRepository> ImportFromConfiguration(ImporterConfiguration configuration, IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings, string dataFileName);
    }
 }

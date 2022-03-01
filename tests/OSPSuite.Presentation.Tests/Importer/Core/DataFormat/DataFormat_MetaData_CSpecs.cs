@@ -17,7 +17,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    public abstract class ConcernforDataFormat_DataFormatHeadersWithUnits : ContextSpecification<DataFormatHeadersWithUnits>
    {
       protected IUnformattedData _basicFormat;
-      protected Cache<string, ColumnInfo> _columnInfos;
+      protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected IDimension _fakedTimeDimension;
       protected IDimension _fakedConcentrationDimension;
@@ -29,7 +29,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          _fakedConcentrationDimension = A.Fake<IDimension>();
          _fakedErrorDimension = A.Fake<IDimension>();
 
-         _columnInfos = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName)
+         _columnInfos = new ColumnInfoCache
          {
             new ColumnInfo() { DisplayName = "Time", Name = "Time", IsMandatory = true },
             new ColumnInfo() { DisplayName = "Concentration", Name = "Concentration", IsMandatory = true },

@@ -1,4 +1,7 @@
-﻿using OSPSuite.BDDHelper;
+﻿using System;
+using System.Linq;
+using NUnit.Framework;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -7,8 +10,6 @@ using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Helpers;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Exceptions;
-using System;
-using System.Linq;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.R.Services
@@ -151,14 +152,14 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
-      public void should_update_the_meta_data_if_it_already_exists ()
+      public void should_update_the_meta_data_if_it_already_exists()
       {
          sut.AddMetaData(_dataRepository, "meta_data", "value");
          sut.AddMetaData(_dataRepository, "meta_data", "updated_value");
          _dataRepository.ExtendedPropertyValueFor("meta_data").ShouldBeEqualTo("updated_value");
       }
    }
-   
+
    public class When_removing_metadata : concern_for_DataRepositoryTask
    {
       private DataRepository _dataRepository;
@@ -198,18 +199,17 @@ namespace OSPSuite.R.Services
       public void should_throw_an_exception_if_removing_a_base_grid_and_the_data_repository_has_other_column()
       {
          var baseGrid = _dataRepository.BaseGrid;
-         The.Action(()=>sut.RemoveColumn(_dataRepository, baseGrid)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.RemoveColumn(_dataRepository, baseGrid)).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
       public void should_remove_the_base_grid_if_it_is_not_used_anywhere()
       {
          var baseGrid = _dataRepository.BaseGrid;
-         _dataRepository.AllButBaseGridAsArray.Each(x=>sut.RemoveColumn(_dataRepository, x));
+         _dataRepository.AllButBaseGridAsArray.Each(x => sut.RemoveColumn(_dataRepository, x));
          sut.RemoveColumn(_dataRepository, baseGrid);
          _dataRepository.Columns.ShouldBeEmpty();
       }
-
 
       [Observation]
       public void should_remove_the_column_and_related_column_associated_with_the_column()
@@ -241,6 +241,80 @@ namespace OSPSuite.R.Services
          sut.RemoveColumn(_dataRepository, errorColumn);
          _dataRepository.Columns.Contains(errorColumn).ShouldBeFalse();
          column.RelatedColumns.ShouldBeEmpty();
+      }
+   }
+
+   public class When_setting_the_value_origin_of_a_predefined_column_to_a_valid_value : concern_for_DataRepositoryTask
+   {
+      private DataRepository _dataRepository;
+      private DataColumn _column;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dataRepository = DomainHelperForSpecs.ObservedData();
+         var baseGrid = _dataRepository.BaseGrid;
+         _column = DomainHelperForSpecs.ConcentrationColumnForObservedData(baseGrid);
+      }
+
+      [TestCase("Calculation", ColumnOrigins.Calculation)]
+      [TestCase("CalculationAuxiliary", ColumnOrigins.CalculationAuxiliary)]
+      [TestCase("Observation", ColumnOrigins.Observation)]
+      public void should_set_the_value_as_expected(string value, ColumnOrigins origin)
+      {
+         sut.SetColumnOrigin(_column, value);
+         _column.DataInfo.Origin.ShouldBeEqualTo(origin);
+      }
+   }
+
+   public class When_setting_the_value_origin_of_a_predefined_column_to_an_invalid_value : concern_for_DataRepositoryTask
+   {
+      private DataRepository _dataRepository;
+      private DataColumn _column;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dataRepository = DomainHelperForSpecs.ObservedData();
+         var baseGrid = _dataRepository.BaseGrid;
+         _column = DomainHelperForSpecs.ConcentrationColumnForObservedData(baseGrid);
+      }
+
+      [Observation]
+      public void should_throw_an_error()
+      {
+         The.Action(()=>sut.SetColumnOrigin(_column, "TOTO")).ShouldThrowAn<Exception>();
+      }
+   }
+
+   public class When_creating_a_default_observation_repository : concern_for_DataRepositoryTask
+   {
+      private DataRepository _dataRepository;
+      private DataColumn _column;
+
+      protected override void Because()
+      {
+         _dataRepository = sut.CreateEmptyObservationRepository("xValue", "yValue");
+         _column = _dataRepository.FindByName("yValue");
+      }
+
+      [Observation]
+      public void should_return_a_repository_with_two_columns_having_the_expected_names()
+      {
+         _dataRepository.FindByName("xValue").ShouldNotBeNull();
+         _column.ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void the_type_of_the_column_should_be_observation()
+      {
+         _column.DataInfo.Origin.ShouldBeEqualTo(ColumnOrigins.Observation);
+      }
+
+      [Observation]
+      public void the_dimension_of_the_column_should_be_concentration_mass()
+      {
+         _column.DimensionName().ShouldBeEqualTo(Constants.Dimension.MASS_CONCENTRATION);
       }
    }
 }

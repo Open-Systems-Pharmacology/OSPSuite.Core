@@ -48,7 +48,7 @@ namespace OSPSuite.Starter.Presenters
          _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
       }
 
-      private void StartImporterExcelView(IReadOnlyList<MetaDataCategory> categories, Cache<string, ColumnInfo> columns, DataImporterSettings settings)
+      private void StartImporterExcelView(IReadOnlyList<MetaDataCategory> categories, IReadOnlyList<ColumnInfo> columns, DataImporterSettings settings)
       {
          settings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
          settings.NameOfMetaDataHoldingMolecularWeightInformation = "Molecular Weight";
@@ -117,7 +117,7 @@ namespace OSPSuite.Starter.Presenters
             _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
             (
                configuration,
-               (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories(),
+               _dataImporter.DefaultMetaDataCategoriesForObservedData(),
                _dataImporter.ColumnInfosForObservedData(),
                dataImporterSettings,
                _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
@@ -150,7 +150,7 @@ namespace OSPSuite.Starter.Presenters
             _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
             (
                configuration,
-               (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories(),
+               (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategoriesForObservedData(),
                _dataImporter.ColumnInfosForObservedData(),
                dataImporterSettings,
                _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
@@ -163,7 +163,7 @@ namespace OSPSuite.Starter.Presenters
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         var metaDataCategories = _dataImporter.DefaultMetaDataCategories().ToList();
+         var metaDataCategories = _dataImporter.DefaultMetaDataCategoriesForObservedData().ToList();
          _dataGenerator.AddMoleculeValuesToMetaDataList(metaDataCategories);
          _dataGenerator.AddOrganValuesToMetaDataList(metaDataCategories);
          StartImporterExcelView
@@ -179,7 +179,7 @@ namespace OSPSuite.Starter.Presenters
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         var metaDataCategories = _dataImporter.DefaultMetaDataCategories().ToList();
+         var metaDataCategories = _dataImporter.DefaultMetaDataCategoriesForObservedData().ToList();
          _dataGenerator.AddMoleculeValuesToMetaDataList(metaDataCategories);
          StartImporterExcelView(
             metaDataCategories,

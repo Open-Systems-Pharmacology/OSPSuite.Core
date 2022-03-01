@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OSPSuite.Core.Domain;
@@ -39,6 +40,11 @@ namespace OSPSuite.Helpers
          }
 
          return _concentrationDimension;
+      }
+
+      public static IEnumerable<IDimension> ExtendedDimensionsForSpecs()
+      {
+         return new [] { ConcentrationDimensionForSpecs(), Constants.Dimension.NO_DIMENSION, FractionDimensionForSpecs() };
       }
 
       public static IDimension LengthDimensionForSpecs()

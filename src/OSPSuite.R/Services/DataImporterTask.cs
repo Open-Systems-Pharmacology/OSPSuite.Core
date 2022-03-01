@@ -44,10 +44,11 @@ namespace OSPSuite.R.Services
       private readonly IDataImporter _dataImporter;
       private readonly IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly DataImporterSettings _dataImporterSettings;
-      private readonly Cache<string, ColumnInfo> _columnInfos;
+      private readonly ColumnInfoCache _columnInfoCache;
       private readonly IDimensionFactory _dimensionFactory;
       private readonly IPKMLPersistor _pkmlPersistor;
       private readonly ICsvDynamicSeparatorSelector _csvSeparatorSelector;
+      private readonly IReadOnlyList<ColumnInfo> _columnInfos;
 
       public DataImporterTask(
          IDataImporter dataImporter,
@@ -59,7 +60,7 @@ namespace OSPSuite.R.Services
          _dataImporter = dataImporter;
          _dimensionFactory = dimensionFactory;
          _pkmlPersistor = pkmlPersistor;
-         _metaDataCategories = (IReadOnlyList<MetaDataCategory>)_dataImporter.DefaultMetaDataCategories();
+         _metaDataCategories = _dataImporter.DefaultMetaDataCategoriesForObservedData();
          _dataImporterSettings = new DataImporterSettings
          {
             NameOfMetaDataHoldingMoleculeInformation = Constants.ObservedData.MOLECULE,
@@ -67,6 +68,7 @@ namespace OSPSuite.R.Services
             IgnoreSheetNamesAtImport = true
          };
          _columnInfos = _dataImporter.ColumnInfosForObservedData();
+         _columnInfoCache = new ColumnInfoCache(_columnInfos);
          _csvSeparatorSelector = csvSeparatorSelector;
       }
 
@@ -78,16 +80,8 @@ namespace OSPSuite.R.Services
 
       public IReadOnlyList<DataRepository> ImportExcelFromConfiguration(
          string configurationPath,
-         string dataPath)
-      {
-         return _dataImporter.ImportFromConfiguration(
-            GetConfiguration(configurationPath),
-            _metaDataCategories,
-            _columnInfos,
-            _dataImporterSettings,
-            dataPath
-         ).ToArray();
-      }
+         string dataPath) =>
+         ImportExcelFromConfiguration(GetConfiguration(configurationPath), dataPath);
 
       public IReadOnlyList<DataRepository> ImportExcelFromConfiguration(
          ImporterConfiguration configuration,
@@ -105,17 +99,8 @@ namespace OSPSuite.R.Services
       public IReadOnlyList<DataRepository> ImportCsvFromConfiguration(
          string configurationPath,
          string dataPath,
-         char columnSeparator)
-      {
-         _csvSeparatorSelector.CsvSeparator = columnSeparator;
-         return _dataImporter.ImportFromConfiguration(
-            GetConfiguration(configurationPath),
-            _metaDataCategories,
-            _columnInfos,
-            _dataImporterSettings,
-            dataPath
-         ).ToArray();
-      }
+         char columnSeparator) =>
+         ImportCsvFromConfiguration(GetConfiguration(configurationPath), dataPath, columnSeparator);
 
       public IReadOnlyList<DataRepository> ImportCsvFromConfiguration(
          ImporterConfiguration configuration,
@@ -135,18 +120,19 @@ namespace OSPSuite.R.Services
       public ImporterConfiguration GetConfiguration(string filePath)
       {
          var configuration = _pkmlPersistor.Load<ImporterConfiguration>(filePath);
-         if (string.IsNullOrEmpty(configuration.NamingConventions))
+         if (!string.IsNullOrEmpty(configuration.NamingConventions)) 
+            return configuration;
+         
+         var separator = Constants.ImporterConstants.NAMING_PATTERN_SEPARATORS.First();
+         var keys = new List<string>
          {
-            var separator = Constants.ImporterConstants.NAMING_PATTERN_SEPARATORS.First();
-            var keys = new List<string>()
-            {
-               Constants.FILE,
-               Constants.SHEET
-            };
-            keys.AddRange(configuration.Parameters.OfType<MetaDataFormatParameter>().Select(p => p.MetaDataId));
-            keys.AddRange(configuration.Parameters.OfType<GroupByDataFormatParameter>().Select(p => p.ColumnName));
-            configuration.NamingConventions = string.Join(separator, keys.Select(k => $"{{{k}}}"));
-         }
+            Constants.FILE,
+            Constants.SHEET
+         };
+         keys.AddRange(configuration.Parameters.OfType<MetaDataFormatParameter>().Select(p => p.MetaDataId));
+         keys.AddRange(configuration.Parameters.OfType<GroupByDataFormatParameter>().Select(p => p.ColumnName));
+         configuration.NamingConventions = string.Join(separator, keys.Select(k => $"{{{k}}}"));
+
          return configuration;
       }
 
@@ -161,7 +147,7 @@ namespace OSPSuite.R.Services
          var dimension = _dimensionFactory.Dimension(Constants.Dimension.TIME);
          var timeColumn = new Column
          {
-            Name = _columnInfos.First(ci => ci.IsBase()).DisplayName,
+            Name = _columnInfoCache.First(ci => ci.IsBase()).DisplayName,
             Dimension = dimension,
             Unit = new UnitDescription(dimension.DefaultUnitName)
          };
@@ -170,7 +156,7 @@ namespace OSPSuite.R.Services
          dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
          var measurementColumn = new Column
          {
-            Name = _columnInfos.First(ci => !(ci.IsAuxiliary() || ci.IsBase())).DisplayName,
+            Name = _columnInfoCache.First(ci => !(ci.IsAuxiliary() || ci.IsBase())).DisplayName,
             Dimension = dimension,
             Unit = new UnitDescription(dimension.DefaultUnitName)
          };
@@ -204,7 +190,7 @@ namespace OSPSuite.R.Services
          var measurementUnitDescription = GetMeasurement(configuration).MappedColumn.Unit;
          var errorColumn = new Column
          {
-            Name = _columnInfos.First(ci => ci.IsAuxiliary()).DisplayName,
+            Name = _columnInfoCache.First(ci => ci.IsAuxiliary()).DisplayName,
             Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION),
             Unit = new UnitDescription(measurementUnitDescription.SelectedUnit, measurementUnitDescription.ColumnName),
             ErrorStdDev = Constants.STD_DEV_ARITHMETIC
@@ -229,7 +215,7 @@ namespace OSPSuite.R.Services
 
       public void SetAllLoadedSheet(ImporterConfiguration configuration, string sheet)
       {
-         SetAllLoadedSheet(configuration, new[] { sheet });
+         SetAllLoadedSheet(configuration, new[] {sheet});
       }
 
       public string[] GetAllGroupingColumns(ImporterConfiguration configuration)
@@ -248,21 +234,21 @@ namespace OSPSuite.R.Services
       {
          return configuration.Parameters
             .OfType<MappingDataFormatParameter>()
-            .FirstOrDefault(p => _columnInfos[p.MappedColumn.Name].IsAuxiliary());
+            .FirstOrDefault(p => _columnInfoCache[p.MappedColumn.Name].IsAuxiliary());
       }
 
       public MappingDataFormatParameter GetMeasurement(ImporterConfiguration configuration)
       {
          return configuration.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p =>
          {
-            var columnInfo = _columnInfos[p.MappedColumn.Name];
+            var columnInfo = _columnInfoCache[p.MappedColumn.Name];
             return !(columnInfo.IsAuxiliary() || columnInfo.IsBase());
          });
       }
 
       public MappingDataFormatParameter GetTime(ImporterConfiguration configuration)
       {
-         return configuration.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => _columnInfos[p.MappedColumn.Name].IsBase());
+         return configuration.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => _columnInfoCache[p.MappedColumn.Name].IsBase());
       }
 
       public void RemoveError(ImporterConfiguration configuration)
@@ -277,6 +263,7 @@ namespace OSPSuite.R.Services
          var column = configuration.Parameters.FirstOrDefault(p => p.ColumnName == columnName);
          if (column == null)
             return;
+
          configuration.RemoveParameter(column);
       }
 

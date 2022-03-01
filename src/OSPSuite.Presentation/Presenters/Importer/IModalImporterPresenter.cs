@@ -15,7 +15,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         Cache<string, ColumnInfo> columnInfos,
+         ColumnInfoCache columnInfos,
          DataImporterSettings dataImporterSettings,
          string path,
          string configurationId = null
@@ -23,7 +23,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       IReadOnlyList<DataRepository> ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         Cache<string, ColumnInfo> columnInfos,
+         ColumnInfoCache columnInfos,
          DataImporterSettings dataImporterSettings,
          string path,
          ImporterConfiguration configuration
@@ -53,14 +53,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          };
       }
 
-      public override bool ShouldClose
-      {
-         get => _dialogCreator.MessageBoxYesNo(Captions.ReallyCancel) == ViewResult.Yes;
-      }
+      public override bool ShouldClose => _dialogCreator.MessageBoxYesNo(Captions.ReallyCancel) == ViewResult.Yes;
 
       public IReadOnlyList<DataRepository> ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         Cache<string, ColumnInfo> columnInfos,
+         ColumnInfoCache columnInfos,
          DataImporterSettings dataImporterSettings,
          string path,
          ImporterConfiguration configuration
@@ -78,7 +75,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         Cache<string, ColumnInfo> columnInfos,
+         ColumnInfoCache columnInfos,
          DataImporterSettings dataImporterSettings,
          string path,
          string configurationId = null

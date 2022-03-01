@@ -14,7 +14,7 @@ namespace OSPSuite.Infrastructure.Import
 {
    public abstract class concern_for_DataSource : ContextSpecification<IDataSource>
    {
-      protected Cache<string, ColumnInfo> _columnInfos;
+      protected ColumnInfoCache _columnInfos;
       protected IDimension _fakedTimeDimension;
       protected IDimension _fakedConcentrationDimensionMolar;
       protected IDimension _fakedConcentrationDimensionMass;
@@ -32,7 +32,7 @@ namespace OSPSuite.Infrastructure.Import
          _fakedImporter = A.Fake<IImporter>();
          _fakeDataSet = new DataSet();
 
-         _columnInfos = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName)
+         _columnInfos = new ColumnInfoCache
          {
             new ColumnInfo() { DisplayName = "Time", Name ="Time" },
             new ColumnInfo() { DisplayName = "Concentration", Name = "Concentration"},
@@ -171,7 +171,8 @@ namespace OSPSuite.Infrastructure.Import
       protected override void Context()
       {
          base.Context();
-         _columnInfos = new Cache<string, ColumnInfo>(getKey: x => x.DisplayName)  {
+         _columnInfos = new ColumnInfoCache
+         {
             new ColumnInfo() { DisplayName = "Time", Name = "Time", IsMandatory = true, BaseGridName = "Time" },
             new ColumnInfo() { DisplayName = "Concentration", Name = "Concentration", IsMandatory = true, BaseGridName = "Time" },
             new ColumnInfo() { DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration", BaseGridName = "Time" }
