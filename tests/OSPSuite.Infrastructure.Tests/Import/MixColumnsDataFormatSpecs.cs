@@ -113,6 +113,7 @@ namespace OSPSuite.Infrastructure.Import
 
          var errorMappingColumn = sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Error [lol]").MappedColumn;
          errorMappingColumn.Unit.SelectedUnit.ShouldBeEqualTo(UnitDescription.InvalidUnit);
+         errorMappingColumn.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_ARITHMETIC);
       }
    }
 }

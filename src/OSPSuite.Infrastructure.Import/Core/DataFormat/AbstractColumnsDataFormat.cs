@@ -136,7 +136,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                };
                if (columnInfos[headerName].IsAuxiliary())
                {
-                  if (units.ColumnName.IsNullOrEmpty() && units.SelectedUnit == UnitDescription.InvalidUnit)
+                  if (units.SelectedUnit.IsNullOrEmpty())
                      col.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
                   else
                      col.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
