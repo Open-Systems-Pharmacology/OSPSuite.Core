@@ -167,7 +167,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             return;
          foreach (var relatedColumn in _columnInfos.RelatedColumnsFrom(column.Name))
          {
-            var relatedParameter = _mappings.Select(x => x.Source).OfType<MappingDataFormatParameter>().FirstOrDefault(x => x.ColumnName == relatedColumn.Name);
+            var relatedParameter = _mappings.Select(x => x.Source).OfType<MappingDataFormatParameter>().FirstOrDefault(x => x.MappedColumn.Name == relatedColumn.Name);
             if (relatedParameter == null)
                continue;
 
@@ -219,7 +219,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             //The dimension is the first from the supported dimension which
             //has the selected unit.
             column.Unit = _mappingParameterEditorPresenter.Unit;
-            if (column.Dimension != null && !column.Dimension.HasUnit(column.Unit.SelectedUnit))
+            if (column.Dimension == null || !column.Dimension.HasUnit(column.Unit.SelectedUnit))
             {
                column.Dimension = _columnInfos[model.MappingName]
                   .SupportedDimensions
