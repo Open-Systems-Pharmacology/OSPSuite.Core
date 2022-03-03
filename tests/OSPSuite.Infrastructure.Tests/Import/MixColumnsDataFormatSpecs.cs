@@ -26,21 +26,21 @@ namespace OSPSuite.Infrastructure.Import
          A.CallTo(() => _rawData.GetColumnDescription(A<string>.Ignored)).Returns(new ColumnDescription(0) { Level = ColumnDescription.MeasurementLevel.Numeric });
          _columnInfos = new ColumnInfoCache
          {
-            new ColumnInfo() { DisplayName = "Time", Name ="Time" },
-            new ColumnInfo() { DisplayName = "Concentration", Name = "Concentration"},
-            new ColumnInfo() { DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration"}
+            new ColumnInfo { DisplayName = "Time", Name ="Time" },
+            new ColumnInfo { DisplayName = "Concentration", Name = "Concentration"},
+            new ColumnInfo { DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration"}
          };
          _columnInfos["Time"].SupportedDimensions.Add(DimensionFactoryForSpecs.TimeDimension);
          _columnInfos["Concentration"].SupportedDimensions.Add(DimensionFactoryForSpecs.ConcentrationDimension);
          _columnInfos["Error"].SupportedDimensions.Add(DimensionFactoryForSpecs.ConcentrationDimension);
          _metaDataCategories = new List<MetaDataCategory>()
          {
-            new MetaDataCategory() { Name = "Organ" },
-            new MetaDataCategory() { Name = "Compartment" },
-            new MetaDataCategory() { Name = "Species" },
-            new MetaDataCategory() { Name = "Dose" },
-            new MetaDataCategory() { Name = "Molecule" },
-            new MetaDataCategory() { Name = "Route" }
+            new MetaDataCategory { Name = "Organ" },
+            new MetaDataCategory { Name = "Compartment" },
+            new MetaDataCategory { Name = "Species" },
+            new MetaDataCategory { Name = "Dose" },
+            new MetaDataCategory { Name = "Molecule" },
+            new MetaDataCategory { Name = "Route" }
          };
       }
    }
