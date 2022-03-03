@@ -172,6 +172,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (model == null)
             return;
 
+         var dimensionChanged = false;
+
          var column = ((MappingDataFormatParameter) model.Source).MappedColumn;
          if (!string.IsNullOrEmpty(_mappingParameterEditorPresenter.Unit.ColumnName))
          {
@@ -189,6 +191,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                column.Dimension = _columnInfos[model.MappingName]
                   .SupportedDimensions
                   .FirstOrDefault(x => x.HasUnit(column.Unit.SelectedUnit));
+               dimensionChanged = true;
             }
          }
 
@@ -213,6 +216,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
          else //in this case the column is a measurement column
          {
             column.LloqColumn = _mappingParameterEditorPresenter.LloqFromColumn() ? _mappingParameterEditorPresenter.LloqColumn : null;
+            if (dimensionChanged)
+               foreach (var relatedColumn in _columnInfos.Where(c => c.IsAuxiliary() && c.RelatedColumnOf == column.Name))
+               {
+                  var relatedParameter = _mappings.Select(x => x.Source).OfType<MappingDataFormatParameter>().FirstOrDefault(x => x.ColumnName == relatedColumn.Name);
+                  if (relatedParameter == null)
+                     return;
+                  relatedParameter.MappedColumn.Dimension = column.Dimension;
+                  relatedParameter.MappedColumn.Unit = new UnitDescription(column.Unit.SelectedUnit);
+               }
          }
 
          ValidateMapping();

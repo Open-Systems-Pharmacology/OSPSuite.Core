@@ -12,7 +12,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Helpers;
-using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Importer.Presenters 
 {
@@ -31,7 +30,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected List<DataFormatParameter> _parameters = new List<DataFormatParameter>() 
       {
          new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = new UnitDescription("min") }),
-         new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") }),
+         new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l"), Dimension = DimensionFactoryForSpecs.ConcentrationDimension }),
          new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("?", "") }),
          new GroupByDataFormatParameter("Study id")
       };
@@ -328,7 +327,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_unit_is_manually_set :concern_for_ColumnMappingPresenter
+   public class When_error_unit_is_manually_set :concern_for_ColumnMappingPresenter
    {
       protected MappingDataFormatParameter _mappingSource;
 
@@ -350,6 +349,57 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void the_dimension_is_set()
       {
          _mappingSource.MappedColumn.Dimension.ShouldNotBeNull();
+      }
+   }
+
+   public class When_measurement_unit_is_manually_set_on_the_same_dimension : concern_for_ColumnMappingPresenter
+   {
+      protected MappingDataFormatParameter _mappingSource;
+
+      protected override void Context()
+      {
+         base.Context();
+         _mappingSource = _parameters[1] as MappingDataFormatParameter;
+         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription("µmol/l"));
+         UpdateSettings();
+      }
+
+      protected override void Because()
+      {
+         sut.UpdateDescriptionForModel(_mappingSource);
+      }
+
+      [Observation]
+      public void the_error_is_preserved()
+      {
+         var originalErrorMapping = _parameters[2] as MappingDataFormatParameter;
+         var currentErrorMapping = sut.GetDataFormat().Parameters[2] as MappingDataFormatParameter;
+         originalErrorMapping.MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo(currentErrorMapping.MappedColumn.Unit.SelectedUnit);
+      }
+   }
+
+   public class When_measurement_unit_is_manually_set_to_a_diferent_dimension : concern_for_ColumnMappingPresenter
+   {
+      protected MappingDataFormatParameter _mappingSource;
+
+      protected override void Context()
+      {
+         base.Context();
+         _mappingSource = _parameters[1] as MappingDataFormatParameter;
+         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription("µmol"));
+         UpdateSettings();
+      }
+
+      protected override void Because()
+      {
+         sut.UpdateDescriptionForModel(_mappingSource);
+      }
+
+      [Observation]
+      public void the_error_is_updated()
+      {
+         var currentErrorMapping = sut.GetDataFormat().Parameters[2] as MappingDataFormatParameter;
+         currentErrorMapping.MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("µmol");
       }
    }
 
@@ -457,7 +507,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_unit_is_manually_set_to_fraction_empty : concern_for_ColumnMappingPresenter
+   public class When_error_unit_is_manually_set_to_fraction_empty : concern_for_ColumnMappingPresenter
    {
       protected MappingDataFormatParameter _mappingSource;
 
