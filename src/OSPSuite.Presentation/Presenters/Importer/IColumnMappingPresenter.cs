@@ -54,7 +54,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, ColumnInfoCache columnInfos);
       IDataFormat GetDataFormat();
       void SetDataFormat(IDataFormat format);
-      void SetRawData(UnformattedData rawData);
+      void SetRawData(IUnformattedData rawData);
       IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingDTO model);
       IEnumerable<RowOptionDTO> GetAvailableRowsFor(ColumnMappingDTO model);
       ToolTipDescription ToolTipDescriptionFor(int index);

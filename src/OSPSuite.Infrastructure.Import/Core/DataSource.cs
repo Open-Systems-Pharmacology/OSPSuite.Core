@@ -59,7 +59,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       NanSettings NanSettings { get; set; }
       ImportedDataSet ImportedDataSetAt(int index);
       IDataSet DataSetAt(int index);
-      ParseErrors ValidateDataSourceUnits(Cache<string, ColumnInfo> columnInfos);
+      ParseErrors ValidateDataSourceUnits(ColumnInfoCache columnInfos);
    }
 
    public class DataSource : IDataSource
@@ -203,12 +203,12 @@ namespace OSPSuite.Infrastructure.Import.Core
       }
 
       //checks that the dimension of all the units coming from columns for error have the same dimension to the corresponding measurement
-      private ParseErrors validateErrorAgainstMeasurement(Cache<string, ColumnInfo> columnInfos)
+      private ParseErrors validateErrorAgainstMeasurement(ColumnInfoCache columnInfos)
       {
          var errors = new ParseErrors();
          foreach (var column in columnInfos.Where(c => !c.IsAuxiliary()))
          {
-            foreach (var relatedColumn in columnInfos.Where(c => c.IsAuxiliary() && c.RelatedColumnOf == column.Name))
+            foreach (var relatedColumn in columnInfos.RelatedColumnsFrom(column.Name))
             {
                foreach (var dataSet in DataSets)
                {
@@ -316,7 +316,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          return errors;
       }
 
-      public ParseErrors ValidateDataSourceUnits(Cache<string, ColumnInfo> columnInfos)
+      public ParseErrors ValidateDataSourceUnits(ColumnInfoCache columnInfos)
       {
          var errors = validateUnitsSupportedAndSameDimension(columnInfos);
          errors.Add(validateErrorAgainstMeasurement(columnInfos));

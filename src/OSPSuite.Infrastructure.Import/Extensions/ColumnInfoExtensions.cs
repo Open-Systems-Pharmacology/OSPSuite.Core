@@ -13,5 +13,10 @@ namespace OSPSuite.Infrastructure.Import.Extensions
       {
          return !info.IsMandatory;
       }
+
+      public static bool IsMeasurement(this ColumnInfo info)
+      {
+         return !info.IsBase() && !info.IsAuxiliary();
+      }
    }
 }

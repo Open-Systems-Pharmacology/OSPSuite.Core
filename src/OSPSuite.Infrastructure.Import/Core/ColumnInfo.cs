@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Infrastructure.Import.Core
@@ -56,6 +58,11 @@ namespace OSPSuite.Infrastructure.Import.Core
       public ColumnInfoCache(IReadOnlyList<ColumnInfo> columnInfos) : this()
       {
          AddRange(columnInfos);
+      }
+
+      public IEnumerable<ColumnInfo> RelatedColumnsFrom(string measurement)
+      {
+         return this.Where(c => c.IsAuxiliary() && c.RelatedColumnOf == measurement);
       }
    }
 }

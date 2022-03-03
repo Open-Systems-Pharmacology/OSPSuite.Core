@@ -403,6 +403,37 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
+   public class When_measurement_unit_is_manually_set_to_a_column : concern_for_ColumnMappingPresenter
+   {
+      protected MappingDataFormatParameter _mappingSource;
+      protected IUnformattedData _rawData;
+
+      protected override void Context()
+      {
+         base.Context();
+         _mappingSource = _parameters[1] as MappingDataFormatParameter;
+         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription("µmol", "Some Column"));
+         _rawData = A.Fake<IUnformattedData>();
+         A.CallTo(() => _rawData.GetColumn(A<string>.Ignored)).Returns(new[] { "µmol" });
+         sut.SetRawData(_rawData);
+         UpdateSettings();
+      }
+
+      protected override void Because()
+      {
+         sut.UpdateDescriptionForModel(_mappingSource);
+      }
+
+      [Observation]
+      public void the_error_unit_is_updated_to_the_same_column()
+      {
+         var currentErrorUnit = (sut.GetDataFormat().Parameters[2] as MappingDataFormatParameter).MappedColumn.Unit;
+
+         currentErrorUnit.SelectedUnit.ShouldBeEqualTo("µmol");
+         currentErrorUnit.ColumnName.ShouldBeEqualTo("Some Column");
+      }
+   }
+
    public class When_setting_editor_settings_for_error : concern_for_ColumnMappingPresenter
    {
       protected override void Context()

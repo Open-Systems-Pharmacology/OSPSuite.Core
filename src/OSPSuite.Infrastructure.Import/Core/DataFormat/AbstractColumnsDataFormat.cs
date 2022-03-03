@@ -92,7 +92,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var mappings = Parameters.OfType<MappingDataFormatParameter>();
          foreach (var column in columnInfos.Where(c => !c.IsAuxiliary()))
          {
-            foreach (var relatedColumn in columnInfos.Where(c => c.IsAuxiliary() && c.RelatedColumnOf == column.Name))
+            foreach (var relatedColumn in columnInfos.RelatedColumnsFrom(column.Name))
             {
                var relatedParameter = mappings.FirstOrDefault(p => p.ColumnName == relatedColumn.Name);
                if (relatedParameter != null && (relatedParameter.MappedColumn.Unit == null || relatedParameter.MappedColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit))
