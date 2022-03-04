@@ -4,6 +4,7 @@ using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
@@ -272,4 +273,26 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _view.SelectTab(_baseSheet)).MustHaveHappened();
       }
    }
+
+   public class When_calculating_format_based_on_invalid_sheet : concern_for_ImporterDataPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.SetDataSource("test_file");
+      }
+
+      protected override void Because()
+      {
+
+         A.CallTo(() => _importer.CalculateFormat(A<IDataSourceFile>._ ,A<ColumnInfoCache>._, A<IReadOnlyList<MetaDataCategory>>._, A<string>._ )).Returns(new List<IDataFormat>());
+      }
+
+      [Observation]
+      public void action_should_not_proceed()
+      {
+         Assert.Throws<UnsupportedFormatException>(() => sut.GetFormatBasedOnCurrentSheet());
+      }
+   }
+
 }

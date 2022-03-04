@@ -260,7 +260,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void GetFormatBasedOnCurrentSheet()
       {
-         _dataSourceFile.AvailableFormats = _importer.CalculateFormat(_dataSourceFile, _columnInfos, _metaDataCategories, _currentSheetName).ToList();
+         var availableFormats  = _importer.CalculateFormat(_dataSourceFile, _columnInfos, _metaDataCategories, _currentSheetName).ToList();
+         
+         if(availableFormats.Count <1 )
+            throw new UnsupportedFormatException(_dataSourceFile.Path);
+
+         _dataSourceFile.AvailableFormats = availableFormats;
          ResetLoadedSheets();
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
       }
