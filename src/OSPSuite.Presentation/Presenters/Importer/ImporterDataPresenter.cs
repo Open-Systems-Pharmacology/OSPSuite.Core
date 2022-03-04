@@ -263,6 +263,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSourceFile.AvailableFormats = _importer.CalculateFormat(_dataSourceFile, _columnInfos, _metaDataCategories, _currentSheetName).ToList();
          ResetLoadedSheets();
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
+         View.ClearTabMarks();
       }
 
       public void ResetLoadedSheets()
