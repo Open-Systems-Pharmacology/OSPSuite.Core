@@ -350,10 +350,5 @@ namespace OSPSuite.UI.Views.Importer
          refreshErrorMessage();
          refreshErrorMarks();
       }
-
-      public void ClearTabMarks()
-      {
-         SetTabMarks(new Cache<string, TabMarkInfo>(onMissingKey: _ => new TabMarkInfo(errorMessage: null, isLoaded: false)));
-      }
    }
 }

@@ -290,7 +290,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void tab_marks_are_cleared()
       {
-         A.CallTo(() => _view.ClearTabMarks()).MustHaveHappened();
+         A.CallTo(() => _view.SetTabMarks(A<Cache<string, TabMarkInfo>>.Ignored)).MustHaveHappened();
       }
    }
 }
