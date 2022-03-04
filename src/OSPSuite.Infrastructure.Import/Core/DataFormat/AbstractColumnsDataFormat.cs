@@ -225,11 +225,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var groupingCriteria =
             Parameters
                .Where(p => p.IsGroupingCriterion())
-               .Select(p =>
-                  (p.ColumnName,
-                     p.ComesFromColumn()
-                        ? (data.GetColumnDescription(p.ColumnName).ExistingValues)
-                        : new List<string>() {p.ColumnName}));
+               .Select(p => p.ColumnName);
 
          return buildDataSets(data, groupingCriteria, columnInfos);
       }
