@@ -234,61 +234,31 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          return buildDataSets(data, groupingCriteria, columnInfos);
       }
 
+      private string rowId(IEnumerable<(string ColumnName, IReadOnlyList<string> ExistingValues)> parameters, IUnformattedData data, UnformattedRow row)
+      {
+         return string
+            .Join(
+               ",", 
+               parameters.Select(parameter =>
+               {
+                  var elementColumn = data.GetColumnDescription(parameter.ColumnName);
+                  return elementColumn != null ? row.Data.ElementAt(elementColumn.Index) : parameter.ColumnName;
+               })
+            );
+      }
+
       private IEnumerable<ParsedDataSet> buildDataSets(IUnformattedData data, IEnumerable<(string ColumnName, IReadOnlyList<string> ExistingValues)> parameters, Cache<string, ColumnInfo> columnInfos)
       {
          var dataSets = new List<ParsedDataSet>();
-         buildDataSetsRecursively(data, parameters, new Stack<int>(), dataSets, columnInfos);
-         return dataSets;
-      }
-
-      /// <summary>
-      ///    Populates the dataSets from the data recursively.
-      /// </summary>
-      /// <param name="data">The unformatted source data</param>
-      /// <param name="parameters">Parameters of the format for grouping by</param>
-      /// <param name="indexes">
-      ///    List of indexes for the recursion, each index encodes an existingValue,
-      ///    e.g. [1,2,1] would mean that the first parameter is constraint to have its value equal to its ExistingValue on index
-      ///    1,
-      ///    the second parameter is constraint to have its value equal to its ExistingValue on index 2, and
-      ///    the third parameter is constraint to have its value equal to its ExistingValue on index 1
-      /// </param>
-      /// <param name="dataSets">List to store the dataSets</param>
-      /// <param name="columnInfos">List of column infos</param>
-      private void buildDataSetsRecursively(IUnformattedData data, IEnumerable<(string ColumnName, IReadOnlyList<string> ExistingValues)> parameters, Stack<int> indexes, List<ParsedDataSet> dataSets, Cache<string, ColumnInfo> columnInfos)
-      {
-         var valueTuples = parameters.ToList();
-         if (indexes.Count() < valueTuples.Count()) //Still traversing the parameters
+         var cachedUnformattedRows = new Cache<string, List<UnformattedRow>>();
+         foreach(var row in data.GetRows(_ => true))
          {
-            for (var i = 0; i < valueTuples.ElementAt(indexes.Count()).ExistingValues.Count(); i++) //For every existing value on the current parameter
-            {
-               indexes.Push(i);
-               buildDataSetsRecursively(data, valueTuples, indexes, dataSets, columnInfos);
-               indexes.Pop();
-            }
-
-            return;
+            var id = rowId(parameters, data, row);
+            if (!cachedUnformattedRows.Contains(id))
+               cachedUnformattedRows.Add(id, new List<UnformattedRow>());
+            cachedUnformattedRows[id].Add(row);
          }
-
-         //Filter based on the parameters
-         var indexesCopy = indexes.ToList();
-         indexesCopy.Reverse();
-         var rawDataSet = data.GetRows(
-            row =>
-            {
-               var index = 0;
-               return valueTuples.All(p =>
-               {
-                  var elementColumn = data.GetColumnDescription(p.ColumnName);
-                  var element = elementColumn != null ? row.ElementAt(elementColumn.Index) : p.ColumnName;
-                  return element == p.ExistingValues[indexesCopy.ElementAt(index++)];
-               });
-            }
-         ).ToList();
-         if (!rawDataSet.Any())
-            return;
-
-         dataSets.Add(new ParsedDataSet(valueTuples, data, rawDataSet, parseMappings(rawDataSet, data, columnInfos)));
+         return cachedUnformattedRows.Select(rows => new ParsedDataSet(parameters, data, rows, parseMappings(rows, data, columnInfos)));
       }
 
       private Dictionary<ExtendedColumn, IList<SimulationPoint>> parseMappings(IEnumerable<UnformattedRow> rawDataSet, IUnformattedData data,
