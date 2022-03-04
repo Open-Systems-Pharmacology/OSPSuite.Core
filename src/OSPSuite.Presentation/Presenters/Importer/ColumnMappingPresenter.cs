@@ -284,10 +284,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var columns = new List<string>() {column.Unit.ColumnName};
          var dimensions = new List<IDimension>();
 
+         string measurementUnit = null;
          if (model.ColumnInfo.RelatedColumnOf != null) //if there is a measurement column
          {
             var relatedColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == model.ColumnInfo.RelatedColumnOf);
             var relatedColumn = ((MappingDataFormatParameter) relatedColumnDTO?.Source)?.MappedColumn;
+            measurementUnit = relatedColumn?.Unit?.SelectedUnit;
 
             if (relatedColumn != null && !relatedColumn.Unit.ColumnName.IsNullOrEmpty())
             {
@@ -320,7 +322,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (model.ColumnInfo.IsAuxiliary())
          {
-            _mappingParameterEditorPresenter.SetErrorTypeOptions(new List<string>() {Constants.STD_DEV_ARITHMETIC, Constants.STD_DEV_GEOMETRIC}, source.MappedColumn.ErrorStdDev);
+            _mappingParameterEditorPresenter.SetErrorTypeOptions
+            (
+               new List<string>() {Constants.STD_DEV_ARITHMETIC, Constants.STD_DEV_GEOMETRIC}, 
+               source.MappedColumn.ErrorStdDev, 
+               type => type == Constants.STD_DEV_ARITHMETIC ? measurementUnit : null
+            );
          }
          else
          {

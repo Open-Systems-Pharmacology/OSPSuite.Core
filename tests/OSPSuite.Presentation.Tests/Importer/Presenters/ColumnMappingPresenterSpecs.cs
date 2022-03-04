@@ -12,6 +12,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Helpers;
+using System;
 
 namespace OSPSuite.Presentation.Importer.Presenters 
 {
@@ -461,7 +462,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _mappingParameterEditorPresenter.SetErrorTypeOptions
          (
             A<IEnumerable<string>>.That.Matches(l => l.Contains(Constants.STD_DEV_ARITHMETIC) && l.Contains(Constants.STD_DEV_GEOMETRIC)),
-            A<string>.Ignored
+            A<string>.Ignored,
+            A<Func<string, string>>.Ignored
          )).MustHaveHappened();
       }
    }
