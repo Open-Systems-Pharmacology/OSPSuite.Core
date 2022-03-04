@@ -234,31 +234,31 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          return buildDataSets(data, groupingCriteria, columnInfos);
       }
 
-      private string rowId(IEnumerable<(string ColumnName, IReadOnlyList<string> ExistingValues)> parameters, IUnformattedData data, UnformattedRow row)
+      private string rowId(IEnumerable<string> parameters, IUnformattedData data, UnformattedRow row)
       {
          return string
             .Join(
                ",", 
                parameters.Select(parameter =>
                {
-                  var elementColumn = data.GetColumnDescription(parameter.ColumnName);
-                  return elementColumn != null ? row.Data.ElementAt(elementColumn.Index) : parameter.ColumnName;
+                  var elementColumn = data.GetColumnDescription(parameter);
+                  return elementColumn != null ? row.Data.ElementAt(elementColumn.Index) : parameter;
                })
             );
       }
 
-      private IEnumerable<ParsedDataSet> buildDataSets(IUnformattedData data, IEnumerable<(string ColumnName, IReadOnlyList<string> ExistingValues)> parameters, Cache<string, ColumnInfo> columnInfos)
+      private IEnumerable<ParsedDataSet> buildDataSets(IUnformattedData data, IEnumerable<string> groupingParameters, Cache<string, ColumnInfo> columnInfos)
       {
          var dataSets = new List<ParsedDataSet>();
          var cachedUnformattedRows = new Cache<string, List<UnformattedRow>>();
          foreach(var row in data.GetRows(_ => true))
          {
-            var id = rowId(parameters, data, row);
+            var id = rowId(groupingParameters, data, row);
             if (!cachedUnformattedRows.Contains(id))
                cachedUnformattedRows.Add(id, new List<UnformattedRow>());
             cachedUnformattedRows[id].Add(row);
          }
-         return cachedUnformattedRows.Select(rows => new ParsedDataSet(parameters, data, rows, parseMappings(rows, data, columnInfos)));
+         return cachedUnformattedRows.Select(rows => new ParsedDataSet(groupingParameters, data, rows, parseMappings(rows, data, columnInfos)));
       }
 
       private Dictionary<ExtendedColumn, IList<SimulationPoint>> parseMappings(IEnumerable<UnformattedRow> rawDataSet, IUnformattedData data,
