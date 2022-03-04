@@ -317,7 +317,7 @@ namespace OSPSuite.Infrastructure.Import.Services
                Id = md.ColumnName,
                Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
             })
-         );
+         ).ToList();
          dataSource.SetMappings(dataSourceFile.Path, mappings);
          dataSource.NanSettings = configuration.NanSettings;
          dataSource.SetDataFormat(dataSourceFile.Format);

@@ -441,7 +441,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _dataSource.SetMappings
             (
                A<string>.Ignored,
-               A<IEnumerable<MetaDataMappingConverter>>.That.Matches(c => c.All(m => m.Id != "id1")))
+               A<IList<MetaDataMappingConverter>>.That.Matches(c => c.All(m => m.Id != "id1")))
          ).MustHaveHappened();
       }
    }
