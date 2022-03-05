@@ -272,4 +272,25 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _view.SelectTab(_baseSheet)).MustHaveHappened();
       }
    }
+
+   public class When_resetting_format_based_on_curremt_sheet : concern_for_ImporterDataPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _dataSourceFile.FormatCalculatedFrom).Returns("baseSheet");
+         sut.SetDataSource("test_file");
+      }
+
+      protected override void Because()
+      {
+         sut.GetFormatBasedOnCurrentSheet();
+      }
+
+      [Observation]
+      public void tab_marks_are_cleared()
+      {
+         A.CallTo(() => _view.SetTabMarks(A<Cache<string, TabMarkInfo>>.Ignored)).MustHaveHappened();
+      }
+   }
 }

@@ -4,7 +4,6 @@ using System.Data;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
-using DataSet = OSPSuite.Infrastructure.Import.Core.DataSet;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
