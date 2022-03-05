@@ -30,8 +30,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       event EventHandler<DataSetSelectedEventArgs> OnDataSetSelected;
 
       event EventHandler<NamingConventionChangedEventArgs> OnNamingConventionChanged;
-
-      void DisableSelectingDataSets(string errorMessage);
-      void EnableSelectingDataSets();
+      void SetErrorState(string invalidExceptionMessage);
+      void SetErrorFreeState();
    }
 }

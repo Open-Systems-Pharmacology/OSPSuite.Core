@@ -28,19 +28,19 @@ namespace OSPSuite.UI.Views.Importer
          get => separatorComboBoxEdit.SelectedText;
       }
 
-      public void DisableSelectingDataSets(string errorMessage)
+      public bool SelectingDataSetsEnabled
       {
-         importButton.Enabled = false;
-         namesListBox.SelectionMode = SelectionMode.None;
-         layoutControlItemError.Visibility = LayoutVisibility.Always;
-         labelControlError.Text = errorMessage;
+         set
+         {
+            importButton.Enabled = value;
+            namesListBox.SelectionMode = value? SelectionMode.One : SelectionMode.None;
+            layoutControlItemError.Visibility = value? LayoutVisibility.Never : LayoutVisibility.Always;
+         }
       }
 
-      public void EnableSelectingDataSets()
+      public void SetErrorMessage(string errorMessage)
       {
-         namesListBox.SelectionMode = SelectionMode.One;
-         layoutControlItemError.Visibility = LayoutVisibility.Never;
-         importButton.Enabled = true;
+         labelControlError.Text = errorMessage;
       }
 
       public ImportConfirmationView()
