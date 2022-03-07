@@ -273,6 +273,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
+
    public class When_calculating_format_based_on_invalid_sheet : concern_for_ImporterDataPresenter
    {
       protected override void Context()
@@ -286,6 +287,28 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void throws_exception()
       {
          The.Action(() => sut.GetFormatBasedOnCurrentSheet()).ShouldThrowAn<UnsupportedFormatException>();
+      }
+   }
+
+   public class When_resetting_format_based_on_curremt_sheet : concern_for_ImporterDataPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _dataSourceFile.FormatCalculatedFrom).Returns("baseSheet");
+         sut.SetDataSource("test_file");
+         A.CallTo(() => _importer.CalculateFormat(A<IDataSourceFile>.Ignored, A<ColumnInfoCache>.Ignored, A<IReadOnlyList<MetaDataCategory>>.Ignored, A<string>.Ignored)).Returns(new List<IDataFormat>());
+      }
+
+      protected override void Because()
+      {
+         sut.GetFormatBasedOnCurrentSheet();
+      }
+
+      [Observation]
+      public void tab_marks_are_cleared()
+      {
+         A.CallTo(() => _view.SetTabMarks(A<Cache<string, TabMarkInfo>>.Ignored)).MustHaveHappened();
       }
    }
 }

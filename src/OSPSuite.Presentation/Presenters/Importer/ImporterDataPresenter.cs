@@ -5,7 +5,6 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
@@ -265,6 +264,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             throw new UnsupportedFormatException(_dataSourceFile.Path);
          ResetLoadedSheets();
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
+         View.SetTabMarks(new Cache<string, TabMarkInfo>(onMissingKey: _ => new TabMarkInfo(errorMessage: null, isLoaded: false)));
       }
 
       public void ResetLoadedSheets()
