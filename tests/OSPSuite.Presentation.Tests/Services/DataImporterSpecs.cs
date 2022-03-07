@@ -361,8 +361,6 @@ namespace OSPSuite.Presentation.Services
             getFileFullName(
                "IntegrationSample1.xlsx"));
          result.First().ExtendedProperties.Contains("Dose").ShouldBeFalse();
-            
-         
       }
    }
 }
