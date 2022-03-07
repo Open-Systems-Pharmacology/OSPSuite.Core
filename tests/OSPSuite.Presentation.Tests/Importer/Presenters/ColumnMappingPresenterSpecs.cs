@@ -121,23 +121,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_setting_wrong_data_format : concern_for_ColumnMappingPresenter
-   {
-      protected override void Context()
-      {
-         base.Context();
-         A.CallTo(() => _basicFormat.Parameters).Returns(null);
-         UpdateSettings();
-      }
-
-      [Observation]
-      public void shows_error_message()
-      {
-         A.CallTo(
-            () => _dialogCreator.MessageBoxError(Error.ErrorSettingImportFormat)).MustHaveHappened();
-      }
-   }
-
    public class When_initializing_error_unit : concern_for_ColumnMappingPresenter
    {
       protected override void Context()

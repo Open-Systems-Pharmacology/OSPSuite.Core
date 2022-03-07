@@ -10,7 +10,6 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Importer
@@ -138,16 +137,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetDataFormat(IDataFormat format)
       {
-         try
-         {
-            _format = format;
-            _originalFormat = _format.Parameters.ToList();
-            setDataFormat(format.Parameters);
-         }
-         catch
-         {
-            _dialogCreator.MessageBoxError(Error.ErrorSettingImportFormat);
-         }
+         if (format == null)
+            return;
+         _format = format;
+         _originalFormat = _format.Parameters.ToList();
+         setDataFormat(format.Parameters);
       }
 
       public void SetRawData(UnformattedData rawData)
