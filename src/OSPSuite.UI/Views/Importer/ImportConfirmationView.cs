@@ -22,6 +22,7 @@ namespace OSPSuite.UI.Views.Importer
    public partial class ImportConfirmationView : BaseUserControl, IImportConfirmationView
    {
       private IImportConfirmationPresenter _presenter;
+      private bool _selectingDataSetsEnabled = true;
       private List<string> _namingConventionOptions = new List<string>();
       public string SelectedSeparator
       {
@@ -32,10 +33,12 @@ namespace OSPSuite.UI.Views.Importer
       {
          set
          {
-            importButton.Enabled = value;
-            namesListBox.SelectionMode = value? SelectionMode.One : SelectionMode.None;
-            layoutControlItemError.Visibility = value? LayoutVisibility.Never : LayoutVisibility.Always;
+            _selectingDataSetsEnabled = value;
+            importButton.Enabled = _selectingDataSetsEnabled;
+            namesListBox.SelectionMode = _selectingDataSetsEnabled ? SelectionMode.One : SelectionMode.None;
+            layoutControlItemError.Visibility = _selectingDataSetsEnabled ? LayoutVisibility.Never : LayoutVisibility.Always;
          }
+         get => _selectingDataSetsEnabled;
       }
 
       public void SetErrorMessage(string errorMessage)

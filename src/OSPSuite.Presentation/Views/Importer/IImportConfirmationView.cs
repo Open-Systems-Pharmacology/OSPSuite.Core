@@ -14,7 +14,7 @@ namespace OSPSuite.Presentation.Views.Importer
       void AddChartView(IView chartView);
       void AddDataView(IDataRepositoryDataView dataView);
       string SelectedSeparator { get; }
-      bool SelectingDataSetsEnabled { set; }
+      bool SelectingDataSetsEnabled { get; set; }
       void SetErrorMessage(string errorMessage);
    }
 }
