@@ -227,7 +227,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          (
             dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
-               Id = dataMappings.Any(x=> x.Id == md.ColumnName) ? md.ColumnName + Constants.ImporterConstants.GroupingBySuffix : md.ColumnName,
+               //in case of a duplicate name coming from an excel column used as a grouping by with the same name as a metaData, we add a suffix 
+               Id = dataMappings.ExistsById(md.ColumnName) ? md.ColumnName + Constants.ImporterConstants.GroupingBySuffix : md.ColumnName,
                Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
             })
          ).ToList();

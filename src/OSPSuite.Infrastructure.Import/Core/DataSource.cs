@@ -51,7 +51,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       void SetDataFormat(IDataFormat dataFormat);
       void SetNamingConvention(string namingConvention);
       ParseErrors AddSheets(Cache<string, DataSheet> dataSheets, ColumnInfoCache columnInfos, string filter);
-      void SetMappings(string fileName, IList<MetaDataMappingConverter> mappings);
+      void SetMappings(string fileName, IReadOnlyList<MetaDataMappingConverter> mappings);
       ImporterConfiguration GetImporterConfiguration();
       IEnumerable<MetaDataMappingConverter> GetMappings();
       Cache<string, IDataSet> DataSets { get; }
@@ -134,10 +134,10 @@ namespace OSPSuite.Infrastructure.Import.Core
          return errors;
       }
 
-      public void SetMappings(string fileName, IList<MetaDataMappingConverter> mappings)
+      public void SetMappings(string fileName, IReadOnlyList<MetaDataMappingConverter> mappings)
       {
          _configuration.FileName = fileName;
-         _mappings = (IReadOnlyList<MetaDataMappingConverter>)mappings;
+         _mappings = mappings;
       }
 
       public ImporterConfiguration GetImporterConfiguration()
