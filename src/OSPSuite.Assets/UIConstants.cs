@@ -1278,7 +1278,7 @@ namespace OSPSuite.Assets
       public static readonly string UnsupportedFileType = "The type of file that you are trying to open is not currently supported";
       public static readonly string CannotRemoveBaseGridColumnStillInUse = "Cannot remove base grid column still used by other columns";
       public static readonly string SimpleParseErrorMessage = "There were errors while parsing your data. Navigate to the sheets to read the concrete error.";
-
+      
       public static string ParseErrorMessage(IEnumerable<string> errors) => $"There were errors while parsing your data: {string.Join(". ", errors)}";
 
       public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) => $"It was not possible to plot the data sets. Please, check your configuration for any missing grouping or meta data parameter. An error occur while plotting data set number:{sheetName + 1} produced the following error: {exceptionMessage}";

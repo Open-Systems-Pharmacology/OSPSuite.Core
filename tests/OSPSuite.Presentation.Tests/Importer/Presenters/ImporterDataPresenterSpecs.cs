@@ -273,6 +273,23 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
+
+   public class When_calculating_format_based_on_invalid_sheet : concern_for_ImporterDataPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.SetDataSource("test_file");
+         A.CallTo(() => _importer.CalculateFormat(A<IDataSourceFile>.Ignored, A<ColumnInfoCache>.Ignored, A<IReadOnlyList<MetaDataCategory>>.Ignored, A<string>.Ignored)).Returns(new List<IDataFormat>());
+      }
+
+      [Observation]
+      public void throws_exception()
+      {
+         The.Action(() => sut.GetFormatBasedOnCurrentSheet()).ShouldThrowAn<UnsupportedFormatException>();
+      }
+   }
+
    public class When_resetting_format_based_on_curremt_sheet : concern_for_ImporterDataPresenter
    {
       protected override void Context()
@@ -280,6 +297,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          base.Context();
          A.CallTo(() => _dataSourceFile.FormatCalculatedFrom).Returns("baseSheet");
          sut.SetDataSource("test_file");
+         A.CallTo(() => _importer.CalculateFormat(A<IDataSourceFile>.Ignored, A<ColumnInfoCache>.Ignored, A<IReadOnlyList<MetaDataCategory>>.Ignored, A<string>.Ignored)).Returns(new List<IDataFormat> { A.Fake<IDataFormat>() });
       }
 
       protected override void Because()

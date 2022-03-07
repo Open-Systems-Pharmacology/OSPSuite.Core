@@ -115,7 +115,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.OnTabChanged += onTabChanged;
          _importerDataPresenter.OnDataChanged += onImporterDataChanged;
          _columnMappingPresenter.OnMissingMapping += onMissingMapping;
-         _columnMappingPresenter.OnResetMappingBasedOnCurrentSheet += (o, e) => onResetMappingBasedOnCurrentSheet();
+         _columnMappingPresenter.OnResetMappingBasedOnCurrentSheet += ((o, e) => this.DoWithinExceptionHandler(onResetMappingBasedOnCurrentSheet));
          _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
          View.DisableConfirmationView();
       }

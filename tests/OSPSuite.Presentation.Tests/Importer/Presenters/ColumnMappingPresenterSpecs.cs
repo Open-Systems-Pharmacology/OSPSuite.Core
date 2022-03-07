@@ -12,6 +12,9 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Core.Services;
+using OSPSuite.Assets;
 using System;
 
 namespace OSPSuite.Presentation.Importer.Presenters 
@@ -35,10 +38,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
          new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("?", "") }),
          new GroupByDataFormatParameter("Study id")
       };
+      protected IDialogCreator _dialogCreator;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
+         _dialogCreator = A.Fake<IDialogCreator>();
          _basicFormat = A.Fake<IDataFormat>();
          A.CallTo(() => _basicFormat.Parameters).Returns(_parameters);
          _view = A.Fake<IColumnMappingView>();
@@ -92,7 +97,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          };
          _mappingParameterEditorPresenter = A.Fake<IMappingParameterEditorPresenter>();
          _metaDataParameterEditorPresenter = A.Fake<IMetaDataParameterEditorPresenter>();
-         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter, _dimensionFactory);
+         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter, _dimensionFactory, _dialogCreator);
       }
    }
 
