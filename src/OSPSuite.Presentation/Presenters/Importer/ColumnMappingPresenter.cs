@@ -7,7 +7,6 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Extensions;
@@ -22,7 +21,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IImporter _importer;
       private IList<DataFormatParameter> _originalFormat;
-      private UnformattedData _rawData;
+      private IUnformattedData _rawData;
       private MappingProblem _mappingProblem = new MappingProblem() {MissingMapping = new List<string>(), MissingUnit = new List<string>()};
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       private readonly IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
@@ -144,7 +143,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          setDataFormat(format.Parameters);
       }
 
-      public void SetRawData(UnformattedData rawData)
+      public void SetRawData(IUnformattedData rawData)
       {
          _rawData = rawData;
       }
@@ -167,6 +166,41 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _view.CloseEditor();
       }
 
+      private void updateErrorAfterMeasurementChanges(ColumnMappingDTO model, Column column, Action<MappingDataFormatParameter> updateAction)
+      {
+         if (!model.ColumnInfo.IsMeasurement)
+            return;
+         foreach (var relatedColumn in _columnInfos.RelatedColumnsFrom(column.Name))
+         {
+            var relatedParameter = _mappings.Select(x => x.Source).OfType<MappingDataFormatParameter>().FirstOrDefault(x => x.MappedColumn.Name == relatedColumn.Name);
+            if (relatedParameter == null)
+               continue;
+
+            updateAction(relatedParameter);
+         }
+      }
+
+      private void updateErrorDescriptionAfterMeasurementDimensionChanged(ColumnMappingDTO model, Column column)
+      {
+         updateErrorAfterMeasurementChanges(model, column, relatedParameter => {
+            relatedParameter.MappedColumn.Dimension = column.Dimension;
+            relatedParameter.MappedColumn.Unit = new UnitDescription(column.Unit.SelectedUnit);
+         });
+      }
+
+      private void updateErrorDescriptionAfterMeasurementUnitIsSetFromColumn(ColumnMappingDTO model, Column column)
+      {
+
+         updateErrorAfterMeasurementChanges(model, column, relatedParameter =>
+         {
+            if (!relatedParameter.MappedColumn.Unit.ColumnName.IsNullOrEmpty())
+               //already a column, nothing to do here
+               return;
+            relatedParameter.MappedColumn.Dimension = null;
+            relatedParameter.MappedColumn.Unit = new UnitDescription(column.Unit.SelectedUnit, column.Unit.ColumnName);
+         });
+      }
+
       public void UpdateDescriptionForModel(MappingDataFormatParameter mappingSource)
       {
          if (mappingSource == null)
@@ -182,6 +216,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             column.Unit = new UnitDescription(_rawData.GetColumn(_mappingParameterEditorPresenter.Unit.ColumnName).FirstOrDefault(), _mappingParameterEditorPresenter.Unit.ColumnName);
             column.Dimension = null;
+            updateErrorDescriptionAfterMeasurementUnitIsSetFromColumn(model, column);
          }
          else
          {
@@ -189,22 +224,23 @@ namespace OSPSuite.Presentation.Presenters.Importer
             //The dimension is the first from the supported dimension which
             //has the selected unit.
             column.Unit = _mappingParameterEditorPresenter.Unit;
-            if (column.Dimension != null && !column.Dimension.HasUnit(column.Unit.SelectedUnit))
+            if (column.Dimension == null || !column.Dimension.HasUnit(column.Unit.SelectedUnit))
             {
                column.Dimension = _columnInfos[model.MappingName]
                   .SupportedDimensions
                   .FirstOrDefault(x => x.HasUnit(column.Unit.SelectedUnit));
+               updateErrorDescriptionAfterMeasurementDimensionChanged(model, column);
             }
          }
 
-         if (model.ColumnInfo.IsBase())
+         if (model.ColumnInfo.IsBase)
          {
             ValidateMapping();
             _view.CloseEditor();
             return;
          }
 
-         if (model.ColumnInfo.IsAuxiliary())
+         if (model.ColumnInfo.IsAuxiliary)
          {
             if (_mappingParameterEditorPresenter.SelectedErrorType == 0)
                column.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
@@ -217,7 +253,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
          else //in this case the column is a measurement column
          {
-            column.LloqColumn = _mappingParameterEditorPresenter.LloqFromColumn() ? _mappingParameterEditorPresenter.LloqColumn : null;
+            column.LloqColumn = _mappingParameterEditorPresenter.LloqFromColumn() ? _mappingParameterEditorPresenter.LloqColumn : null;               
          }
 
          ValidateMapping();
@@ -253,10 +289,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var columns = new List<string>() {column.Unit.ColumnName};
          var dimensions = new List<IDimension>();
 
+         string measurementUnit = null;
          if (model.ColumnInfo.RelatedColumnOf != null) //if there is a measurement column
          {
             var relatedColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == model.ColumnInfo.RelatedColumnOf);
             var relatedColumn = ((MappingDataFormatParameter) relatedColumnDTO?.Source)?.MappedColumn;
+            measurementUnit = relatedColumn?.Unit?.SelectedUnit;
 
             if (relatedColumn != null && !relatedColumn.Unit.ColumnName.IsNullOrEmpty())
             {
@@ -284,12 +322,17 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          _mappingParameterEditorPresenter.SetUnitOptions(column, dimensions, columns.Union(availableColumns()));
 
-         if (model.ColumnInfo.IsBase())
+         if (model.ColumnInfo.IsBase)
             return;
 
-         if (model.ColumnInfo.IsAuxiliary())
+         if (model.ColumnInfo.IsAuxiliary)
          {
-            _mappingParameterEditorPresenter.SetErrorTypeOptions(new List<string>() {Constants.STD_DEV_ARITHMETIC, Constants.STD_DEV_GEOMETRIC}, source.MappedColumn.ErrorStdDev);
+            _mappingParameterEditorPresenter.SetErrorTypeOptions
+            (
+               new List<string>() {Constants.STD_DEV_ARITHMETIC, Constants.STD_DEV_GEOMETRIC}, 
+               source.MappedColumn.ErrorStdDev, 
+               type => type == Constants.STD_DEV_ARITHMETIC ? measurementUnit : null
+            );
          }
          else
          {

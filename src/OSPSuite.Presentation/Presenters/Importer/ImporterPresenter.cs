@@ -216,18 +216,23 @@ namespace OSPSuite.Presentation.Presenters.Importer
             return;
          }
 
-         var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Where(p => p.ColumnName != null).Select(md => new MetaDataMappingConverter()
-         {
-            Id = md.MetaDataId,
-            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
-         }).Union
+         var dataMappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Where(p => p.ColumnName != null).Select(md =>
+            new MetaDataMappingConverter()
+            {
+               Id = md.MetaDataId,
+               Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
+            }).ToList();
+            
+         var mappings   = dataMappings.Union
          (
             dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
-               Id = md.ColumnName,
+               //in case of a duplicate name coming from an excel column used as a grouping by with the same name as a metaData, we add a suffix 
+               Id = dataMappings.ExistsById(md.ColumnName) ? md.ColumnName + Constants.ImporterConstants.GroupingBySuffix : md.ColumnName,
                Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
             })
-         );
+         ).ToList();
+
 
          _dataSource.SetMappings(dataSourceFile.Path, mappings);
          _dataSource.NanSettings = _nanPresenter.Settings;

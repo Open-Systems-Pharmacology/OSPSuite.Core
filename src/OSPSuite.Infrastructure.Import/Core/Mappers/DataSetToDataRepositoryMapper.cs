@@ -5,8 +5,6 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core.Mappers
@@ -75,7 +73,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          var warningFlag = false;
          var dimension = columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.SupportedDimensions.FirstOrDefault(x => x.FindUnit(unit, ignoreCase: true) != null);
 
-         if (columnAndData.Key.ColumnInfo.IsBase())
+         if (columnAndData.Key.ColumnInfo.IsBase)
             dataColumn = new BaseGrid(columnAndData.Key.ColumnInfo.Name, dimension);
          else
          {
@@ -131,7 +129,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
          if (propInfo != null)
          {
-            if (columnAndData.Key.ColumnInfo.IsAuxiliary())
+            if (columnAndData.Key.ColumnInfo.IsAuxiliary)
             {
                switch (columnAndData.Key.ErrorDeviation)
                {

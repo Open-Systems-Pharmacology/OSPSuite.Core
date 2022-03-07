@@ -6,7 +6,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Extensions;
-using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
@@ -90,9 +89,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       private void setSecondaryColumnUnit(ColumnInfoCache columnInfos)
       {
          var mappings = Parameters.OfType<MappingDataFormatParameter>();
-         foreach (var column in columnInfos.Where(c => !c.IsAuxiliary()))
+         foreach (var column in columnInfos.Where(c => !c.IsAuxiliary))
          {
-            foreach (var relatedColumn in columnInfos.Where(c => c.IsAuxiliary() && c.RelatedColumnOf == column.Name))
+            foreach (var relatedColumn in columnInfos.RelatedColumnsFrom(column.Name))
             {
                var relatedParameter = mappings.FirstOrDefault(p => p.ColumnName == relatedColumn.Name);
                if (relatedParameter != null && (relatedParameter.MappedColumn.Unit == null || relatedParameter.MappedColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit))
@@ -134,9 +133,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                   Unit = units,
                   LloqColumn = ExtractLloq(headerKey, data, keys, ref rank)
                };
-               if (columnInfos[headerName].IsAuxiliary())
+               if (columnInfos[headerName].IsAuxiliary)
                {
-                  if (units.ColumnName.IsNullOrEmpty() && units.SelectedUnit == UnitDescription.InvalidUnit)
+                  if (units.SelectedUnit.IsNullOrEmpty())
                      col.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
                   else
                      col.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
@@ -190,7 +189,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                Unit = units,
                LloqColumn = ExtractLloq(headerKey, data, keys, ref rank)
             };
-            if (columnInfos[header].IsAuxiliary())
+            if (columnInfos[header].IsAuxiliary)
             {
                col.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
             }

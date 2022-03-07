@@ -625,6 +625,7 @@ namespace OSPSuite.Core.Domain
       {
          public static readonly string[] NAMING_PATTERN_SEPARATORS = { ".", ",", "-", "_" };
          public static readonly string Undefined = "Undefined";
+         public static readonly string GroupingBySuffix = "_GroupBy";
       }
 
       public static class LoggerConstants

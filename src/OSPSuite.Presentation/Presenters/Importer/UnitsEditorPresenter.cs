@@ -83,6 +83,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             _columnMapping = false;
             _selectedColumn = null;
+            _view.SelectedUnit = unit;
          });
       }
 
