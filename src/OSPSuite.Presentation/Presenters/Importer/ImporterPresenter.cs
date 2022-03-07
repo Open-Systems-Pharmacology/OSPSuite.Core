@@ -127,12 +127,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
             var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.ImportedDataSetAt(e.Index));
             _confirmationPresenter.PlotDataRepository(dataRepository.DataRepository);
          }
-         catch (InvalidArgumentException invalidException)
+         catch (TimeNotStrictlyMonotoneException timeNonMonotoneException)
          {
             var errors = new ParseErrors();
-            errors.Add(_dataSource.DataSetAt(e.Index), new NonMonotonicalTimeParseErrorDescription(Error.ErrorWhenPlottingDataRepository(e.Index, invalidException.Message)));
+            errors.Add(_dataSource.DataSetAt(e.Index), new NonMonotonicalTimeParseErrorDescription(Error.ErrorWhenPlottingDataRepository(e.Index, timeNonMonotoneException.Message)));
             _importerDataPresenter.SetTabMarks(errors);
-            _confirmationPresenter.SetErrorState(invalidException.Message);
+            _confirmationPresenter.SetViewingStateToError(timeNonMonotoneException.Message);
          }
       }
 
@@ -251,7 +251,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          keys.AddRange(_dataSource.GetMappings().Select(m => m.Id));
          _confirmationPresenter.SetKeys(keys);
          View.EnableConfirmationView();
-         _confirmationPresenter.SetErrorFreeState();
+         _confirmationPresenter.SetViewingStateToNormal();
          _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions.ToList(), selectedNamingConvention);
       }
 

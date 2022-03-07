@@ -43,7 +43,7 @@ namespace OSPSuite.Core.Domain.Data
 
                   var beforeValue =this.ConvertToDisplayUnit(value[i - 1]);
                   var afterValue = this.ConvertToDisplayUnit(value[i]);
-                  throw new InvalidArgumentException(Error.TimeNotStrictlyMonotone(beforeValue, afterValue, DisplayUnit.Name));
+                  throw new TimeNotStrictlyMonotoneException(Error.TimeNotStrictlyMonotone(beforeValue, afterValue, DisplayUnit.Name));
                }
             }
 
