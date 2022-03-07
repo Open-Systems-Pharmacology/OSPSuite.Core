@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility.Collections;
 
@@ -45,6 +46,21 @@ namespace OSPSuite.Infrastructure.Import.Core
          DefaultDimension = null;
          MetaDataCategories = new List<MetaDataCategory>();
       }
+
+      public bool IsBase
+      {
+         get => string.IsNullOrEmpty(BaseGridName) || BaseGridName == Name;
+      }
+
+      public bool IsAuxiliary
+      {
+         get => !IsMandatory;
+      }
+
+      public bool IsMeasurement
+      {
+         get => !IsBase && !IsAuxiliary;
+      }
    }
 
    public class ColumnInfoCache : Cache<string, ColumnInfo>
@@ -56,6 +72,11 @@ namespace OSPSuite.Infrastructure.Import.Core
       public ColumnInfoCache(IReadOnlyList<ColumnInfo> columnInfos) : this()
       {
          AddRange(columnInfos);
+      }
+
+      public IEnumerable<ColumnInfo> RelatedColumnsFrom(string anotherColumn)
+      {
+         return this.Where(c => c.IsAuxiliary && c.RelatedColumnOf == anotherColumn);
       }
    }
 }

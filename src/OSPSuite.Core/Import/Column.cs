@@ -16,7 +16,6 @@ namespace OSPSuite.Core.Import
       public UnitDescription()
       {
          ColumnName = "";
-         SelectedUnit = InvalidUnit;
       }
       public UnitDescription(string defUnit, string columnName = "")
       {
