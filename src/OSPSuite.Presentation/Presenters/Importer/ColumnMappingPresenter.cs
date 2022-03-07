@@ -6,7 +6,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Extensions;
@@ -163,7 +162,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void updateErrorAfterMeasurementChanges(ColumnMappingDTO model, Column column, Action<MappingDataFormatParameter> updateAction)
       {
-         if (!model.ColumnInfo.IsMeasurement())
+         if (!model.ColumnInfo.IsMeasurement)
             return;
          foreach (var relatedColumn in _columnInfos.RelatedColumnsFrom(column.Name))
          {
@@ -228,14 +227,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
             }
          }
 
-         if (model.ColumnInfo.IsBase())
+         if (model.ColumnInfo.IsBase)
          {
             ValidateMapping();
             _view.CloseEditor();
             return;
          }
 
-         if (model.ColumnInfo.IsAuxiliary())
+         if (model.ColumnInfo.IsAuxiliary)
          {
             if (_mappingParameterEditorPresenter.SelectedErrorType == 0)
                column.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
@@ -317,10 +316,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          _mappingParameterEditorPresenter.SetUnitOptions(column, dimensions, columns.Union(availableColumns()));
 
-         if (model.ColumnInfo.IsBase())
+         if (model.ColumnInfo.IsBase)
             return;
 
-         if (model.ColumnInfo.IsAuxiliary())
+         if (model.ColumnInfo.IsAuxiliary)
          {
             _mappingParameterEditorPresenter.SetErrorTypeOptions
             (

@@ -4,7 +4,6 @@ using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Exceptions;
-using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
@@ -206,7 +205,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       private ParseErrors validateErrorAgainstMeasurement(ColumnInfoCache columnInfos)
       {
          var errors = new ParseErrors();
-         foreach (var column in columnInfos.Where(c => !c.IsAuxiliary()))
+         foreach (var column in columnInfos.Where(c => !c.IsAuxiliary))
          {
             foreach (var relatedColumn in columnInfos.RelatedColumnsFrom(column.Name))
             {
