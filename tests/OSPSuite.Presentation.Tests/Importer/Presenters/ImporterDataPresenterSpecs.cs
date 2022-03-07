@@ -272,4 +272,20 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _view.SelectTab(_baseSheet)).MustHaveHappened();
       }
    }
+
+   public class When_calculating_format_based_on_invalid_sheet : concern_for_ImporterDataPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.SetDataSource("test_file");
+         A.CallTo(() => _importer.CalculateFormat(A<IDataSourceFile>.Ignored, A<ColumnInfoCache>.Ignored, A<IReadOnlyList<MetaDataCategory>>.Ignored, A<string>.Ignored)).Returns(new List<IDataFormat>());
+      }
+
+      [Observation]
+      public void throws_exception()
+      {
+         The.Action(() => sut.GetFormatBasedOnCurrentSheet()).ShouldThrowAn<UnsupportedFormatException>();
+      }
+   }
 }
