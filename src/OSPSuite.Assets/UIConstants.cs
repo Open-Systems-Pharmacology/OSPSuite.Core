@@ -1905,7 +1905,6 @@ namespace OSPSuite.Assets
    {
       public static string AsDeveloperOnly(string menuName) => $"{menuName} (Developer only)...";
 
-      public static readonly string ExportToPDF = "Export to PDF...";
       public static readonly string ExportToExcel = "Export to Excel...";
       public static readonly string CopyToClipboard = "Copy to Clipboard";
       public static readonly string ResetZoom = "Reset Zoom";
