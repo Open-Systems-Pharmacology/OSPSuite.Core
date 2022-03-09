@@ -193,10 +193,15 @@ namespace OSPSuite.R.Services
 
          var pathArray = path.ToPathArray();
          var quantity = simulation.Model.Root.EntityAt<IQuantity>(pathArray);
-         if (quantity == null && throwIfNotFound)
+
+         if (quantity != null)
+            return quantity;
+
+         if (throwIfNotFound)
             throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path));
 
-         return quantity;
+         _logger.AddWarning(Error.CouldNotFindQuantityWithPath(path));
+         return null;
       }
 
       private string[] allEntityPathIn<T>(IContainer container, Func<T, bool> filterFunc = null) where T : class, IEntity
