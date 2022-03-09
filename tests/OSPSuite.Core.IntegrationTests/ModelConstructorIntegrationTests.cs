@@ -295,11 +295,11 @@ namespace OSPSuite.Core
       [Observation]
       public void should_have_created_a_parameter_with_criteria_in_plasma_but_not_in_cells()
       {
-         var bone_plasma_D = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Bone, ConstantsForSpecs.Plasma, "A");
-         var localWithCriteria = bone_plasma_D.Parameter("LocalWithCriteria");
+         var bone_plasma_A = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Bone, ConstantsForSpecs.Plasma, "A");
+         var localWithCriteria = bone_plasma_A.Parameter("LocalWithCriteria");
          localWithCriteria.ShouldNotBeNull();
-         var bone_cells_D = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "A");
-         localWithCriteria = bone_cells_D.Parameter("LocalWithCriteria");
+         var bone_cells_A = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "A");
+         localWithCriteria = bone_cells_A.Parameter("LocalWithCriteria");
          localWithCriteria.ShouldBeNull();
       }
 
