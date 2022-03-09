@@ -43,9 +43,9 @@ namespace OSPSuite.Core.Domain.Builder
    /// </summary>
    public class ReactionBuilder : ProcessBuilder, IReactionBuilder
    {
-      private readonly IList<IReactionPartnerBuilder> _educts;
-      private readonly IList<IReactionPartnerBuilder> _products;
-      private readonly IList<string> _modifier;
+      private readonly List<IReactionPartnerBuilder> _educts;
+      private readonly List<IReactionPartnerBuilder> _products;
+      private readonly List<string> _modifier;
       public DescriptorCriteria ContainerCriteria { get; set; }
 
       public ReactionBuilder()
@@ -83,15 +83,9 @@ namespace OSPSuite.Core.Domain.Builder
          OnChanged();
       }
 
-      public void RemoveEduct(IReactionPartnerBuilder educt)
-      {
-         _educts.Remove(educt);
-      }
+      public void RemoveEduct(IReactionPartnerBuilder educt) => _educts.Remove(educt);
 
-      public void RemoveProduct(IReactionPartnerBuilder product)
-      {
-         _products.Remove(product);
-      }
+      public void RemoveProduct(IReactionPartnerBuilder product) => _products.Remove(product);
 
       public IEnumerable<string> ModifierNames => _modifier;
 
@@ -110,10 +104,7 @@ namespace OSPSuite.Core.Domain.Builder
          _modifier.Remove(modifierToRemove);
       }
 
-      public void ClearModifiers()
-      {
-         _modifier.Clear();
-      }
+      public void ClearModifiers() => _modifier.Clear();
 
       public IReactionPartnerBuilder EductBy(string moleculeName)
       {

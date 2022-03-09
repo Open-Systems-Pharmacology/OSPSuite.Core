@@ -319,6 +319,13 @@ namespace OSPSuite.Helpers
          var oneGlobalParameter = newConstantParameter("oneGlobalParameter", 33).WithMode(ParameterBuildMode.Global);
          moleculeA.AddParameter(oneGlobalParameter);
          moleculeA.AddParameter(newConstantParameter(Constants.Parameters.MOL_WEIGHT, 250).WithMode(ParameterBuildMode.Global));
+
+         var localParameterWithCriteria = newConstantParameter("LocalWithCriteria", 0).WithMode(ParameterBuildMode.Local);
+         //Create a local parameter that should only be defined in Plasma
+         localParameterWithCriteria.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma));
+         moleculeA.AddParameter(localParameterWithCriteria);
+
+
          moleculeA.AddUsedCalculationMethod(new UsedCalculationMethod("PartitionCoeff", "CM1"));
          var transporter1 = _objectBaseFactory.Create<TransporterMoleculeContainer>().WithName("D");
          transporter1.TransportName = "My Transport1";
@@ -438,6 +445,7 @@ namespace OSPSuite.Helpers
          moleculeD.AddParameter(relExpNorm);
          moleculeD.AddParameter(relExpGlobal);
          moleculeD.AddParameter(relExpLocalFromGlobal);
+
          return moleculeD;
       }
 
