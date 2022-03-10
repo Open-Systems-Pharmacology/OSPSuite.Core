@@ -4,7 +4,6 @@ using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
@@ -268,7 +267,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          base.Context();
          sut.SetDataSource("test_file");
-         A.CallTo(() => _importer.CalculateFormat(A<IDataSourceFile>.Ignored, A<ColumnInfoCache>.Ignored, A<IReadOnlyList<MetaDataCategory>>.Ignored, A<string>.Ignored)).Returns(new List<IDataFormat>());
+         A.CallTo(() => _importer.CalculateFormat(A<IDataSourceFile>.Ignored, A<ColumnInfoCache>.Ignored, A<IReadOnlyList<MetaDataCategory>>.Ignored,
+               A<string>.Ignored))
+            .Returns(new List<IDataFormat>());
       }
 
       [Observation]
@@ -285,7 +286,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
          base.Context();
          A.CallTo(() => _dataSourceFile.FormatCalculatedFrom).Returns("baseSheet");
          sut.SetDataSource("test_file");
-         A.CallTo(() => _importer.CalculateFormat(A<IDataSourceFile>.Ignored, A<ColumnInfoCache>.Ignored, A<IReadOnlyList<MetaDataCategory>>.Ignored, A<string>.Ignored)).Returns(new List<IDataFormat> { A.Fake<IDataFormat>() });
+         A.CallTo(() => _importer.CalculateFormat(A<IDataSourceFile>.Ignored, A<ColumnInfoCache>.Ignored, A<IReadOnlyList<MetaDataCategory>>.Ignored,
+               A<string>.Ignored))
+            .Returns(new List<IDataFormat> { A.Fake<IDataFormat>() });
       }
 
       protected override void Because()
