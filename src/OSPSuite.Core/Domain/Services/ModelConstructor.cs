@@ -113,7 +113,7 @@ namespace OSPSuite.Core.Domain.Services
 
          //now we should be able to resolve all references
          _referencesResolver.ResolveReferencesIn(model);
-         
+
          //This should be done after reference were resolved to ensure that we do not remove formula parameter that could not be evaluated
          removeUndefinedLocalMoleculeParametersIn(model);
 
@@ -359,7 +359,7 @@ namespace OSPSuite.Core.Domain.Services
          var presentMolecules = allPresentMoleculesInContainers(root, buildConfiguration).ToList();
 
          var moleculesWithPhysicalContainers = presentMolecules.Where(containerIsPhysical);
-         moleculesWithPhysicalContainers.Each(pm => addMoleculeToContainer(buildConfiguration, pm, molecules[pm.MoleculeStartValue.MoleculeName]));
+         moleculesWithPhysicalContainers.Each(x => addMoleculeToContainer(buildConfiguration, x.Container, molecules[x.MoleculeStartValue.MoleculeName]));
 
          return new MoleculeBuildingBlockValidator().Validate(molecules).Messages
             .Concat(createValidationMessagesForPresentMolecules(presentMolecules, buildConfiguration.MoleculeStartValues));
@@ -370,10 +370,9 @@ namespace OSPSuite.Core.Domain.Services
          return startValueAndContainer.Container != null && startValueAndContainer.Container.Mode == ContainerMode.Physical;
       }
 
-      private void addMoleculeToContainer(IBuildConfiguration buildConfiguration, StartValueAndContainer startValueAndContainer,
-         IMoleculeBuilder moleculeBuilder)
+      private void addMoleculeToContainer(IBuildConfiguration buildConfiguration, IContainer container, IMoleculeBuilder moleculeBuilder)
       {
-         startValueAndContainer.Container.Add(_moleculeMapper.MapFrom(moleculeBuilder, buildConfiguration));
+         container.Add(_moleculeMapper.MapFrom(moleculeBuilder, container, buildConfiguration));
       }
 
       private IEnumerable<ValidationMessage> createValidationMessagesForPresentMolecules(List<StartValueAndContainer> presentMolecules,

@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Assets;
+using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Maths.Random;
@@ -92,6 +93,11 @@ namespace OSPSuite.Core.Domain
       ///    Sets the RHS Formula to NULL. This is required for R-Only in order to be able to set the RHS formula to NULL
       /// </summary>
       void ClearRHSFormula();
+
+      /// <summary>
+      ///    Criteria for containers where parameter should be created. This is only useful in builder and is not used in parameter instances
+      /// </summary>
+      DescriptorCriteria ContainerCriteria { set; get; }
    }
 
    public class Parameter : Quantity, IParameter
@@ -101,6 +107,8 @@ namespace OSPSuite.Core.Domain
       public virtual ParameterInfo Info { get; set; }
       public virtual ParameterOrigin Origin { get; private set; }
       public virtual double? DefaultValue { get; set; }
+
+      public DescriptorCriteria ContainerCriteria { set; get; }
 
       /// <inheritdoc />
       public bool IsDefault { get; set; }
@@ -136,6 +144,7 @@ namespace OSPSuite.Core.Domain
          Origin = sourceParameter.Origin.Clone();
          DefaultValue = sourceParameter.DefaultValue;
          IsDefault = sourceParameter.IsDefault;
+         ContainerCriteria = sourceParameter.ContainerCriteria?.Clone();
       }
 
       public double RandomDeviateIn(RandomGenerator randomGenerator, double? min = null, double? max = null)

@@ -1,5 +1,4 @@
 using OSPSuite.Core.Domain;
-using OSPSuite.Serializer;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -8,7 +7,7 @@ namespace OSPSuite.Core.Serialization.Xml
       public override void PerformMapping()
       {
          //it is necessary to load children first before processing to further deserialization 
-         //for instance, percentile parameter is a child of the distributedParmaeter which needs to be available before setting the isfixedvalue
+         //for instance, percentile parameter is a child of the distributedParameter which needs to be available before setting the isfixedvalue
          MapEnumerable(x => x.Children, x => x.Add);
          base.PerformMapping();
          Map(x => x.Mode);
@@ -24,7 +23,7 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public abstract class DistributedParameterXmlSerializerBase<TDistributedParamter> : QuantityAndContainerXmlSerializer<TDistributedParamter> where TDistributedParamter : IDistributedParameter
+   public abstract class DistributedParameterXmlSerializerBase<TDistributedParameter> : QuantityAndContainerXmlSerializer<TDistributedParameter> where TDistributedParameter : IDistributedParameter
    {
       public override void PerformMapping()
       {
@@ -32,6 +31,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.BuildMode);
          Map(x => x.Info);
          Map(x => x.IsDefault);
+         Map(x => x.ContainerCriteria);
          MapReference(x => x.RHSFormula);
 
          //no need to save origin, or default value for core parameter are those values are only used in PK-Sim
