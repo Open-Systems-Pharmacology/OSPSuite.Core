@@ -341,38 +341,4 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          data.Count.ShouldBeEqualTo(1);
       }
    }
-
-   public class When_parsing_format_with_measurement_units_but_without_error_units : ConcernforDataFormat_DataFormatHeadersWithUnits
-   {
-      private IUnformattedData _mockedData;
-
-      protected override void Context()
-      {
-         base.Context();
-         _mockedData = A.Fake<IUnformattedData>();
-         var headers = _basicFormat.GetHeaders().ToList();
-         headers.Remove("Error [pmol/l]");
-         headers.Add("Error");
-         A.CallTo(() => _mockedData.GetHeaders()).Returns(headers);
-         A.CallTo(() => _mockedData.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => {
-            var param = columnName.Arguments[0].ToString();
-            if (param == "Error")
-               return _basicFormat.GetColumnDescription("Error [pmol/l]");
-            return _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString());
-         });
-      }
-
-      protected override void Because()
-      {
-         sut.SetParameters(_mockedData, _columnInfos, _metaDataCategories);
-      }
-
-      [TestCase]
-      public void initialize_error_unit_from_measurement_unit()
-      {
-         sut.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => p.MappedColumn.Name == "Error").MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo(
-            sut.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => p.MappedColumn.Name == "Concentration").MappedColumn.Unit.SelectedUnit
-         );
-      }
-   }
 }

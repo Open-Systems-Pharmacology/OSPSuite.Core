@@ -257,6 +257,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSourceFile.AvailableFormats = availableFormats;
          ResetLoadedSheets();
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
+         View.SetTabMarks(new Cache<string, TabMarkInfo>(onMissingKey: _ => new TabMarkInfo(errorMessage: null, isLoaded: false)));
       }
 
       public void ResetLoadedSheets()

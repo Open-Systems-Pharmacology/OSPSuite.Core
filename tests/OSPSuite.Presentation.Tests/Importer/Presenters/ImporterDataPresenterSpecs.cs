@@ -268,18 +268,35 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          base.Context();
          sut.SetDataSource("test_file");
+         A.CallTo(() => _importer.CalculateFormat(A<IDataSourceFile>.Ignored, A<ColumnInfoCache>.Ignored, A<IReadOnlyList<MetaDataCategory>>.Ignored, A<string>.Ignored)).Returns(new List<IDataFormat>());
+      }
+
+      [Observation]
+      public void throws_exception()
+      {
+         The.Action(() => sut.GetFormatBasedOnCurrentSheet()).ShouldThrowAn<UnsupportedFormatException>();
+      }
+   }
+
+   public class When_resetting_format_based_on_current_sheet : concern_for_ImporterDataPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _dataSourceFile.FormatCalculatedFrom).Returns("baseSheet");
+         sut.SetDataSource("test_file");
+         A.CallTo(() => _importer.CalculateFormat(A<IDataSourceFile>.Ignored, A<ColumnInfoCache>.Ignored, A<IReadOnlyList<MetaDataCategory>>.Ignored, A<string>.Ignored)).Returns(new List<IDataFormat> { A.Fake<IDataFormat>() });
       }
 
       protected override void Because()
       {
-         A.CallTo(() => _importer.CalculateFormat(A<IDataSourceFile>._, A<ColumnInfoCache>._, A<IReadOnlyList<MetaDataCategory>>._, A<string>._))
-            .Returns(new List<IDataFormat>());
+         sut.GetFormatBasedOnCurrentSheet();
       }
 
       [Observation]
-      public void action_should_not_proceed()
+      public void tab_marks_are_cleared()
       {
-         The.Action(() => sut.GetFormatBasedOnCurrentSheet()).ShouldThrowAn<UnsupportedFormatException>();
+         A.CallTo(() => _view.SetTabMarks(A<Cache<string, TabMarkInfo>>.Ignored)).MustHaveHappened();
       }
    }
 }

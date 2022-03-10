@@ -115,7 +115,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.OnTabChanged += onTabChanged;
          _importerDataPresenter.OnDataChanged += onImporterDataChanged;
          _columnMappingPresenter.OnMissingMapping += onMissingMapping;
-         _columnMappingPresenter.OnResetMappingBasedOnCurrentSheet += (o, e) => onResetMappingBasedOnCurrentSheet();
+         _columnMappingPresenter.OnResetMappingBasedOnCurrentSheet += ((o, e) => this.DoWithinExceptionHandler(onResetMappingBasedOnCurrentSheet));
          _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
          View.DisableConfirmationView();
       }
@@ -127,12 +127,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
             var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.ImportedDataSetAt(e.Index));
             _confirmationPresenter.PlotDataRepository(dataRepository.DataRepository);
          }
-         catch (InvalidArgumentException invalidException)
+         catch (TimeNotStrictlyMonotoneException timeNonMonotoneException)
          {
-            _view.DisableConfirmationView();
             var errors = new ParseErrors();
-            errors.Add(_dataSource.DataSetAt(e.Index), new NonMonotonicalTimeParseErrorDescription(Error.ErrorWhenPlottingDataRepository(e.Index, invalidException.Message)));
+            errors.Add(_dataSource.DataSetAt(e.Index), new NonMonotonicalTimeParseErrorDescription(Error.ErrorWhenPlottingDataRepository(e.Index, timeNonMonotoneException.Message)));
             _importerDataPresenter.SetTabMarks(errors);
+            _confirmationPresenter.SetViewingStateToError(timeNonMonotoneException.Message);
          }
       }
 
@@ -216,18 +216,23 @@ namespace OSPSuite.Presentation.Presenters.Importer
             return;
          }
 
-         var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Where(p => p.ColumnName != null).Select(md => new MetaDataMappingConverter()
-         {
-            Id = md.MetaDataId,
-            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
-         }).Union
+         var dataMappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Where(p => p.ColumnName != null).Select(md =>
+            new MetaDataMappingConverter()
+            {
+               Id = md.MetaDataId,
+               Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
+            }).ToList();
+            
+         var mappings   = dataMappings.Union
          (
             dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
-               Id = md.ColumnName,
+               //in case of a duplicate name coming from an excel column used as a grouping by with the same name as a metaData, we add a suffix 
+               Id = dataMappings.ExistsById(md.ColumnName) ? md.ColumnName + Constants.ImporterConstants.GroupingBySuffix : md.ColumnName,
                Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
             })
-         );
+         ).ToList();
+
 
          _dataSource.SetMappings(dataSourceFile.Path, mappings);
          _dataSource.NanSettings = _nanPresenter.Settings;
@@ -251,6 +256,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          keys.AddRange(_dataSource.GetMappings().Select(m => m.Id));
          _confirmationPresenter.SetKeys(keys);
          View.EnableConfirmationView();
+         _confirmationPresenter.SetViewingStateToNormal();
          _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions.ToList(), selectedNamingConvention);
       }
 

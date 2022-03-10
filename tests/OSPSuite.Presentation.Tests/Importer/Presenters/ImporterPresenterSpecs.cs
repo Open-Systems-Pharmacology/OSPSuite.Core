@@ -86,7 +86,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          var dataSet = new DataSet();
          dataSet.AddData(new List<ParsedDataSet>()
          {
-            new ParsedDataSet(new List<(string ColumnName, IReadOnlyList<string> ExistingValues)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), new Dictionary<ExtendedColumn, IList<SimulationPoint>>())
+            new ParsedDataSet(new List<string>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), new Dictionary<ExtendedColumn, IList<SimulationPoint>>())
          });
          _dataSource = A.Fake<IDataSource>();
          A.CallTo(() => _dataSource.DataSets).Returns(cache);
@@ -441,7 +441,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          A.CallTo(() => _dataSource.SetMappings
             (
                A<string>.Ignored,
-               A<IEnumerable<MetaDataMappingConverter>>.That.Matches(c => c.All(m => m.Id != "id1")))
+               A<IReadOnlyList<MetaDataMappingConverter>>.That.Matches(c => c.All(m => m.Id != "id1")))
          ).MustHaveHappened();
       }
    }

@@ -325,12 +325,15 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_expected_entries()
       {
-         The.Action(() => sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}"))).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}"), throwIfNotFound: true)).ShouldThrowAn<OSPSuiteException>();
 
-         The.Action(() => sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "NOPE"))).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "NOPE"), throwIfNotFound: true)).ShouldThrowAn<OSPSuiteException>();
 
-         sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, Constants.Parameters.VOLUME)).ShouldBeFalse();
-         sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, Constants.Parameters.VOLUME)).ShouldBeTrue();
+         sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, Constants.Parameters.VOLUME), throwIfNotFound: true).ShouldBeFalse();
+         sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, Constants.Parameters.VOLUME), throwIfNotFound: true).ShouldBeTrue();
+
+         //do not exist
+         sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "NOPE"), throwIfNotFound:false).ShouldBeFalse();
       }
    }
 
@@ -339,7 +342,9 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_expected_entries()
       {
-         sut.BaseUnitNameByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, Constants.Parameters.VOLUME)).ShouldBeEqualTo(_volumeLiverCell.Dimension.BaseUnit.Name);
+         sut.BaseUnitNameByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, Constants.Parameters.VOLUME), throwIfNotFound: true).ShouldBeEqualTo(_volumeLiverCell.Dimension.BaseUnit.Name);
+         sut.BaseUnitNameByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "NOPE"), throwIfNotFound: false).ShouldBeNullOrEmpty();
+         The.Action(() => sut.BaseUnitNameByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "NOPE"), throwIfNotFound: true)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -348,7 +353,9 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_expected_entries()
       {
-         sut.DimensionNameByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, Constants.Parameters.VOLUME)).ShouldBeEqualTo(_volumeLiverCell.Dimension.Name);
+         sut.DimensionNameByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, Constants.Parameters.VOLUME), throwIfNotFound: true).ShouldBeEqualTo(_volumeLiverCell.Dimension.Name);
+         sut.DimensionNameByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "NOPE"), throwIfNotFound: false).ShouldBeNullOrEmpty();
+         The.Action(() => sut.DimensionNameByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "NOPE"), throwIfNotFound: true)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -357,25 +364,25 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_throw_an_exception_if_the_path_contains_wild_cards()
       {
-         The.Action(() => sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}"), 5, true)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}"), 5, throwIfNotFound: true)).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
       public void should_throw_an_exception_if_the_path_does_not_exist_in_the_simulation()
       {
-         The.Action(() => sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "TOTO"), 5, true)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "TOTO"), 5, throwIfNotFound: true)).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
       public void should_not_throw_an_exception_if_the_path_does_not_exist_in_the_simulation_and_the_throw_flag_is_set_to_false()
       {
-         sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "TOTO"), 5, false);
+         sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "TOTO"), 5, throwIfNotFound: false);
       }
 
       [Observation]
       public void should_set_the_value_of_the_parameter_as_expected_otherwise()
       {
-         sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, _volumeLiverCell.Name), 666, true);
+         sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, _volumeLiverCell.Name), 666, throwIfNotFound: true);
          _volumeLiverCell.Value.ShouldBeEqualTo(666);
       }
    }

@@ -6,7 +6,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Extensions;
-using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
@@ -90,9 +89,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       private void setSecondaryColumnUnit(ColumnInfoCache columnInfos)
       {
          var mappings = Parameters.OfType<MappingDataFormatParameter>();
-         foreach (var column in columnInfos.Where(c => !c.IsAuxiliary()))
+         foreach (var column in columnInfos.Where(c => !c.IsAuxiliary))
          {
-            foreach (var relatedColumn in columnInfos.Where(c => c.IsAuxiliary() && c.RelatedColumnOf == column.Name))
+            foreach (var relatedColumn in columnInfos.RelatedColumnsFrom(column.Name))
             {
                var relatedParameter = mappings.FirstOrDefault(p => p.ColumnName == relatedColumn.Name);
                if (relatedParameter != null && (relatedParameter.MappedColumn.Unit == null || relatedParameter.MappedColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit))
@@ -134,9 +133,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                   Unit = units,
                   LloqColumn = ExtractLloq(headerKey, data, keys, ref rank)
                };
-               if (columnInfos[headerName].IsAuxiliary())
+               if (columnInfos[headerName].IsAuxiliary)
                {
-                  if (units.ColumnName.IsNullOrEmpty() && units.SelectedUnit == UnitDescription.InvalidUnit)
+                  if (units.SelectedUnit.IsNullOrEmpty())
                      col.ErrorStdDev = Constants.STD_DEV_GEOMETRIC;
                   else
                      col.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
@@ -190,7 +189,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                Unit = units,
                LloqColumn = ExtractLloq(headerKey, data, keys, ref rank)
             };
-            if (columnInfos[header].IsAuxiliary())
+            if (columnInfos[header].IsAuxiliary)
             {
                col.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
             }
@@ -225,70 +224,36 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var groupingCriteria =
             Parameters
                .Where(p => p.IsGroupingCriterion())
-               .Select(p =>
-                  (p.ColumnName,
-                     p.ComesFromColumn()
-                        ? (data.GetColumnDescription(p.ColumnName).ExistingValues)
-                        : new List<string>() {p.ColumnName}));
+               .Select(p => p.ColumnName);
 
          return buildDataSets(data, groupingCriteria, columnInfos);
       }
 
-      private IEnumerable<ParsedDataSet> buildDataSets(IUnformattedData data, IEnumerable<(string ColumnName, IReadOnlyList<string> ExistingValues)> parameters, Cache<string, ColumnInfo> columnInfos)
+      private string rowId(IEnumerable<string> parameters, IUnformattedData data, UnformattedRow row)
       {
-         var dataSets = new List<ParsedDataSet>();
-         buildDataSetsRecursively(data, parameters, new Stack<int>(), dataSets, columnInfos);
-         return dataSets;
+         return string
+            .Join(
+               ",", 
+               parameters.Select(parameter =>
+               {
+                  var elementColumn = data.GetColumnDescription(parameter);
+                  return elementColumn != null ? row.Data.ElementAt(elementColumn.Index) : parameter;
+               })
+            );
       }
 
-      /// <summary>
-      ///    Populates the dataSets from the data recursively.
-      /// </summary>
-      /// <param name="data">The unformatted source data</param>
-      /// <param name="parameters">Parameters of the format for grouping by</param>
-      /// <param name="indexes">
-      ///    List of indexes for the recursion, each index encodes an existingValue,
-      ///    e.g. [1,2,1] would mean that the first parameter is constraint to have its value equal to its ExistingValue on index
-      ///    1,
-      ///    the second parameter is constraint to have its value equal to its ExistingValue on index 2, and
-      ///    the third parameter is constraint to have its value equal to its ExistingValue on index 1
-      /// </param>
-      /// <param name="dataSets">List to store the dataSets</param>
-      /// <param name="columnInfos">List of column infos</param>
-      private void buildDataSetsRecursively(IUnformattedData data, IEnumerable<(string ColumnName, IReadOnlyList<string> ExistingValues)> parameters, Stack<int> indexes, List<ParsedDataSet> dataSets, Cache<string, ColumnInfo> columnInfos)
+      private IEnumerable<ParsedDataSet> buildDataSets(IUnformattedData data, IEnumerable<string> groupingParameters, Cache<string, ColumnInfo> columnInfos)
       {
-         var valueTuples = parameters.ToList();
-         if (indexes.Count() < valueTuples.Count()) //Still traversing the parameters
+         var dataSets = new List<ParsedDataSet>();
+         var cachedUnformattedRows = new Cache<string, List<UnformattedRow>>();
+         foreach(var row in data.GetRows(_ => true))
          {
-            for (var i = 0; i < valueTuples.ElementAt(indexes.Count()).ExistingValues.Count(); i++) //For every existing value on the current parameter
-            {
-               indexes.Push(i);
-               buildDataSetsRecursively(data, valueTuples, indexes, dataSets, columnInfos);
-               indexes.Pop();
-            }
-
-            return;
+            var id = rowId(groupingParameters, data, row);
+            if (!cachedUnformattedRows.Contains(id))
+               cachedUnformattedRows.Add(id, new List<UnformattedRow>());
+            cachedUnformattedRows[id].Add(row);
          }
-
-         //Filter based on the parameters
-         var indexesCopy = indexes.ToList();
-         indexesCopy.Reverse();
-         var rawDataSet = data.GetRows(
-            row =>
-            {
-               var index = 0;
-               return valueTuples.All(p =>
-               {
-                  var elementColumn = data.GetColumnDescription(p.ColumnName);
-                  var element = elementColumn != null ? row.ElementAt(elementColumn.Index) : p.ColumnName;
-                  return element == p.ExistingValues[indexesCopy.ElementAt(index++)];
-               });
-            }
-         ).ToList();
-         if (!rawDataSet.Any())
-            return;
-
-         dataSets.Add(new ParsedDataSet(valueTuples, data, rawDataSet, parseMappings(rawDataSet, data, columnInfos)));
+         return cachedUnformattedRows.Select(rows => new ParsedDataSet(groupingParameters, data, rows, parseMappings(rows, data, columnInfos)));
       }
 
       private Dictionary<ExtendedColumn, IList<SimulationPoint>> parseMappings(IEnumerable<UnformattedRow> rawDataSet, IUnformattedData data,

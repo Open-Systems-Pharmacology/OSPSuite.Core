@@ -174,28 +174,6 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_exporting_a_chart_to_pdf : concern_for_SimpleChartPresenter
-   {
-      private DataRepository _dataRepository;
-
-      protected override void Context()
-      {
-         base.Context();
-         _dataRepository= A.Fake<DataRepository>();
-         sut.Plot(_dataRepository);
-      }
-
-      protected override void Because()
-      {
-         _chartDisplayPresenter.ExportToPDF();
-      }
-
-      [Observation]
-      public void should_raise_the_export_to_pdf_event_with_the_chart()
-      {
-         A.CallTo(() => _eventPublisher.PublishEvent(A<ExportToPDFEvent>._)).MustHaveHappened();
-      }
-   }
    public class When_the_simple_chart_presenter_is_told_to_plot_the_chart_for_a_table_formula : concern_for_SimpleChartPresenter
    {
       private TableFormula _tableFormula;

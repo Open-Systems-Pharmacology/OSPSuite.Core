@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
@@ -11,7 +12,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void HideAll();
       void SetUnitOptions(Column importDataColumn, IReadOnlyList<IDimension> dimensions, IEnumerable<string> availableColumns);
       void SetLloqOptions(IEnumerable<string> columns, string selected, bool lloqColumnsSelection);
-      void SetErrorTypeOptions(IEnumerable<string> types, string selected);
+      void SetErrorTypeOptions(IEnumerable<string> types, string selected, Func<string, string> onTypeChanged);
       int SelectedErrorType { get; }
       bool LloqFromColumn();
       UnitDescription Unit { get; }
@@ -27,6 +28,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IUnitsEditorPresenter _unitsEditorPresenter;
       private readonly ILloqEditorPresenter _lloqEditorPresenter;
       private readonly IOptionsEditorPresenter _errorEditorPresenter;
+      private Func<string, string> _unitValueOnTypeChanged;
 
 
       public MappingParameterEditorPresenter(
@@ -93,8 +95,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.ShowLloq();
       }
 
-      public void SetErrorTypeOptions(IEnumerable<string> types, string selected)
+      public void SetErrorTypeOptions(IEnumerable<string> types, string selected, Func<string, string> unitValueOnTypeChanged)
       {
+         _unitValueOnTypeChanged = unitValueOnTypeChanged;
          _errorEditorPresenter.SetOptions(new Dictionary<string, IEnumerable<string>>() {{"", types}}, selected);
          View.ShowErrorTypes();
 
@@ -108,6 +111,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
             View.ShowUnits();
          else if (e.Text.Equals(Constants.STD_DEV_GEOMETRIC))
             View.HideUnits();
+         var unit = _unitValueOnTypeChanged(e.Text);
+         if (unit == null)
+            return;
+         
+         _unitsEditorPresenter.SelectUnit(unit);
       }
    }
 }

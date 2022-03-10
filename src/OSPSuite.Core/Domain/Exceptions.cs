@@ -59,6 +59,13 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class TimeNotStrictlyMonotoneException : InvalidArgumentException
+   {
+      public TimeNotStrictlyMonotoneException(string message) : base(message)
+      {
+      }
+   }
+
    public class InvalidTypeException : OSPSuiteException
    {
       public InvalidTypeException(Type givenType, Type expectedType)

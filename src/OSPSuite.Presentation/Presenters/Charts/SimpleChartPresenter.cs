@@ -89,7 +89,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _dimensionFactory = dimensionFactory;
          _view.AddView(_chartDisplayPresenter.View);
          _chartDisplayPresenter.DisableCurveAndAxisEdits();
-         _chartDisplayPresenter.ExportToPDF = exportToPDF;
          LogLinSelectionEnabled = false;
          AddSubPresenters(_chartDisplayPresenter);
       }
@@ -112,12 +111,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          get => _view.LogLinSelectionEnabled;
          set => _view.LogLinSelectionEnabled = value;
-      }
-
-      private void exportToPDF()
-      {
-         if (Chart == null) return;
-         _eventPublisher.PublishEvent(new ExportToPDFEvent(Chart));
       }
 
       public CurveChart Plot(TableFormula tableFormula)

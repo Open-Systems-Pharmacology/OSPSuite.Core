@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
 using System.Collections.Generic;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Presenters.ObservedData;
 
@@ -43,6 +44,39 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void empty_naming_conventions_throws_exception()
       {
          Assert.Throws<EmptyNamingConventionsException>(() => sut.SetNamingConventions(new List<string>(), null));
+      }
+   }
+
+   public class When_setting_error_state : concern_for_ImportConfirmationPresenter
+   {
+      protected override void Because()
+      {
+         sut.SetViewingStateToError("test error");
+      }
+      [Observation]
+      public void error_should_be_correctly_set()
+      {
+         A.CallTo(() => _view.SetErrorMessage("test error")).MustHaveHappened();
+      }
+
+      [Observation]
+      public void selecting_datasets_should_be_disabled()
+      {
+         _view.SelectingDataSetsEnabled.ShouldBeFalse();
+      }
+   }
+
+   public class When_setting_error_free_state : concern_for_ImportConfirmationPresenter
+   {
+      protected override void Because()
+      {
+         sut.SetViewingStateToNormal();
+      }
+
+      [Observation]
+      public void selecting_datasets_should_be_enabled()
+      {
+         _view.SelectingDataSetsEnabled.ShouldBeTrue();
       }
    }
 }
