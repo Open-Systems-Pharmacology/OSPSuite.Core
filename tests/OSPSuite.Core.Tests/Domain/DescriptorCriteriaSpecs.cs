@@ -51,7 +51,7 @@ namespace OSPSuite.Core.Domain
          A.CallTo(() => cond2.IsSatisfiedBy(_entityCriteria)).Returns(false);
          sut.Add(cond1);
          sut.Add(cond2);
-         sut.Operator = DescriptorCriteriaOperator.Or;
+         sut.Operator = CriteriaOperator.Or;
       }
 
       [Observation]
@@ -189,7 +189,6 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-
    public class When_comparing_two_descriptor_criteria_containing_the_same_descriptors_but_different_operators : concern_for_DescriptorCriteria
    {
       private DescriptorCriteria _anotherDescriptor;
@@ -203,13 +202,12 @@ namespace OSPSuite.Core.Domain
          sut.Add(new InContainerCondition("Liver"));
          sut.Add(new MatchAllCondition());
 
-         _anotherDescriptor = new DescriptorCriteria {Operator = DescriptorCriteriaOperator.Or};
+         _anotherDescriptor = new DescriptorCriteria {Operator = CriteriaOperator.Or};
          _anotherDescriptor.Add(new MatchTagCondition("toto"));
          _anotherDescriptor.Add(new NotMatchTagCondition("toto"));
          _anotherDescriptor.Add(new MatchTagCondition("titi"));
          _anotherDescriptor.Add(new InContainerCondition("Liver"));
          _anotherDescriptor.Add(new MatchAllCondition());
-
       }
 
       [Observation]

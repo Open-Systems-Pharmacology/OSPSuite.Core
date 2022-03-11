@@ -5,7 +5,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Descriptors
 {
-   public enum DescriptorCriteriaOperator
+   public enum CriteriaOperator
    {
       And,
       Or
@@ -14,11 +14,11 @@ namespace OSPSuite.Core.Domain.Descriptors
    public class DescriptorCriteria : List<IDescriptorCondition>, ISpecification<IEntity>, ISpecification<EntityDescriptor>
    {
       //Default behavior
-      public DescriptorCriteriaOperator Operator { get; set; } = DescriptorCriteriaOperator.And;
+      public CriteriaOperator Operator { get; set; } = CriteriaOperator.And;
 
       public override string ToString()
       {
-         var operation = Operator == DescriptorCriteriaOperator.And ? Constants.AND : Constants.OR;
+         var operation = Operator == CriteriaOperator.And ? Constants.AND : Constants.OR;
          return this.ToString(operation.ToUpper(), " ").Trim(' ');
       }
 
@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Domain.Descriptors
          if (!this.Any())
             return false;
 
-         if (Operator == DescriptorCriteriaOperator.And)
+         if (Operator == CriteriaOperator.And)
             return this.All(x => x.IsSatisfiedBy(entityDescriptor));
 
          return this.Any(x => x.IsSatisfiedBy(entityDescriptor));
