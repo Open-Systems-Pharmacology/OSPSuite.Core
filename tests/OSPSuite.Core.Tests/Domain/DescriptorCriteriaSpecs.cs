@@ -40,6 +40,38 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_cloning_a_descriptor_criteria : concern_for_DescriptorCriteria
+   {
+      private DescriptorCriteria _clone;
+
+      protected override void Context()
+      {
+         base.Context();
+         var cond1 = new InContainerCondition("TOTO");
+         sut.Add(cond1);
+         sut.Operator = CriteriaOperator.Or;
+      }
+
+      protected override void Because()
+      {
+         _clone = sut.Clone();
+      }
+
+      [Observation]
+      public void should_clone_the_operator()
+      {
+         _clone.Operator.ShouldBeEqualTo(CriteriaOperator.Or);
+      }
+
+      [Observation]
+      public void should_clone_the_conditions()
+      {
+         _clone.Count.ShouldBeEqualTo(1);
+         _clone[0].ShouldBeAnInstanceOf<InContainerCondition>();
+         _clone[0].DowncastTo<InContainerCondition>().Tag.ShouldBeEqualTo("TOTO");
+      }
+   }
+
    public class When_checking_if_a_criteria_satisfies_some_tags_that_are_not_satisfied_by_at_least_one_condition_and_the_operator_is_OR : concern_for_DescriptorCriteria
    {
       protected override void Context()

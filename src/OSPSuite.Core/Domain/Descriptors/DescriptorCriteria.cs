@@ -86,6 +86,7 @@ namespace OSPSuite.Core.Domain.Descriptors
       {
          var clone = new DescriptorCriteria();
          this.Each(x => clone.Add(x.CloneCondition()));
+         clone.Operator = Operator;
          return clone;
       }
 
