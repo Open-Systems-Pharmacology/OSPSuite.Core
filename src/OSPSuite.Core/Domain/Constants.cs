@@ -568,6 +568,7 @@ namespace OSPSuite.Core.Domain
 
       public const string NOT = "Not";
       public const string AND = "and";
+      public const string OR = "or";
       public const string IN_CONTAINER = "In container";
       public const string NOT_IN_CONTAINER = "Not in container";
       public const string LLOQ = "LLOQ";

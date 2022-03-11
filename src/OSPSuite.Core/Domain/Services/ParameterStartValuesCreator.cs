@@ -160,7 +160,7 @@ namespace OSPSuite.Core.Domain.Services
          if (parameter.BuildMode != ParameterBuildMode.Local)
             //unknown build mode - should never happen
             throw new ArgumentException(Error.UnknownParameterBuildMode);
-         
+
          //"Local"-Parameter are defined per physical container and
          // per molecule
          return spatialStructure.PhysicalContainers
