@@ -243,7 +243,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    public class When_Nonmem_is_parsing_format : ConcernforDataFormat_Nonmem
    {
       private IUnformattedData _mockedData;
-      
+      private string _testSheetName = "Sheet1";
+
       protected override void Context()
       {
          base.Context();
@@ -263,6 +264,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          var data = sut.Parse
          (
+            _testSheetName,
             _basicFormat,
             _columnInfos
          ).ToList();
@@ -284,6 +286,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
          var data = sut.Parse
          (
+            _testSheetName,
             _mockedData,
             _columnInfos
          );

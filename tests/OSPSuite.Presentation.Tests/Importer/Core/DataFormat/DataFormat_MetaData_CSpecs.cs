@@ -218,6 +218,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    public class When_parsing_format : ConcernforDataFormat_DataFormatHeadersWithUnits
    {
       private IUnformattedData _mockedData;
+      private string _testSheetName = "Sheet1";
       private string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
       private string[] _groupIds = new string[] { "H", "T2DM" };
       protected override void Context()
@@ -256,6 +257,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          var data = sut.Parse
          (
+            _testSheetName,
             _basicFormat,
             _columnInfos
          ).ToList();
@@ -277,6 +279,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
          var data = sut.Parse
          (
+            _testSheetName,
             _mockedData,
             _columnInfos
          );
@@ -297,6 +300,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       private IUnformattedData _mockedData;
       private string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
       private string[] _groupIds = new string[] { "H", "T2DM" };
+      private string _testSheetName = "Sheet1";
+
       protected override void Context()
       {
          base.Context();
@@ -335,6 +340,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          var data = sut.Parse
          (
+            _testSheetName,
             _basicFormat,
             _columnInfos
          ).ToList();

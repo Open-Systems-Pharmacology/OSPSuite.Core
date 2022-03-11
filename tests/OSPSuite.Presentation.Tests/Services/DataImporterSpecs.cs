@@ -296,7 +296,7 @@ namespace OSPSuite.Presentation.Services
       {
          sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName("IntegrationSampleMissingMapping.xlsx"));
-         A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column(s) \n \n 'SD [mg/l]' \n \n is missing from at least one of the sheets being loaded.")).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column(s) \n \n 'SD [mg/l]' \n \n is missing at least from the sheet \n \n 'Sheet1' \n \n that you are trying to load.")).MustHaveHappened();
       }
 
       [Observation]
@@ -321,7 +321,7 @@ namespace OSPSuite.Presentation.Services
       {
          sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName("IntegrationSampleMissingMappingUnit.xlsx"));
-         A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column(s) \n \n 'timeUnitColumn' \n \n is missing from at least one of the sheets being loaded.")).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column(s) \n \n 'timeUnitColumn' \n \n is missing at least from the sheet \n \n 'Sheet1' \n \n that you are trying to load.")).MustHaveHappened();
       }
    }
 

@@ -19,7 +19,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       IList<DataFormatParameter> Parameters { get; }
       void CopyParametersFromConfiguration(OSPSuite.Core.Import.ImporterConfiguration configuration);
       IList<string> ExcelColumnNames { get; }
-      IEnumerable<ParsedDataSet> Parse(IUnformattedData data, ColumnInfoCache columnInfos);
+      IEnumerable<ParsedDataSet> Parse(string sheetName, IUnformattedData data, ColumnInfoCache columnInfos);
       UnitDescription ExtractUnitDescriptions(string description, IReadOnlyList<IDimension> supportedDimensions);
    }
 }

@@ -80,7 +80,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          foreach (var sheetKeyValue in dataSheets.KeyValues)
          {
             var data = new DataSet();
-            data.AddData(format.Parse(sheetKeyValue.Value.RawData, columnInfos));
+            data.AddData(format.Parse(sheetKeyValue.Key, sheetKeyValue.Value.RawData, columnInfos));
             dataSets.Add(sheetKeyValue.Key, data);
          }
 

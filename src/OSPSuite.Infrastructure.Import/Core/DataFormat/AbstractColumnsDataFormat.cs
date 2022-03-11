@@ -215,18 +215,18 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          }
       }
 
-      public IEnumerable<ParsedDataSet> Parse(IUnformattedData data, ColumnInfoCache columnInfos)
+      public IEnumerable<ParsedDataSet> Parse(string sheetName, IUnformattedData data, ColumnInfoCache columnInfos)
       {
          var missingColumns = Parameters.Where(p => p.ComesFromColumn() && data.GetColumnDescription(p.ColumnName) == null).Select(p => p.ColumnName).ToList();
          if (missingColumns.Any())
-            throw new MissingColumnException(missingColumns);
+            throw new MissingColumnException(sheetName, missingColumns);
 
          var groupingCriteria =
             Parameters
                .Where(p => p.IsGroupingCriterion())
                .Select(p => p.ColumnName);
 
-         return buildDataSets(data, groupingCriteria, columnInfos);
+         return buildDataSets(sheetName, data, groupingCriteria, columnInfos);
       }
 
       private string rowId(IEnumerable<string> parameters, IUnformattedData data, UnformattedRow row)
@@ -242,9 +242,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             );
       }
 
-      private IEnumerable<ParsedDataSet> buildDataSets(IUnformattedData data, IEnumerable<string> groupingParameters, Cache<string, ColumnInfo> columnInfos)
+      private IEnumerable<ParsedDataSet> buildDataSets(string currentSheetName, IUnformattedData data, IEnumerable<string> groupingParameters, Cache<string, ColumnInfo> columnInfos)
       {
-         var dataSets = new List<ParsedDataSet>();
          var cachedUnformattedRows = new Cache<string, List<UnformattedRow>>();
          foreach(var row in data.GetRows(_ => true))
          {
@@ -253,10 +252,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                cachedUnformattedRows.Add(id, new List<UnformattedRow>());
             cachedUnformattedRows[id].Add(row);
          }
-         return cachedUnformattedRows.Select(rows => new ParsedDataSet(groupingParameters, data, rows, parseMappings(rows, data, columnInfos)));
+         return cachedUnformattedRows.Select(rows => new ParsedDataSet(groupingParameters, data, rows, parseMappings(currentSheetName, rows, data, columnInfos)));
       }
 
-      private Dictionary<ExtendedColumn, IList<SimulationPoint>> parseMappings(IEnumerable<UnformattedRow> rawDataSet, IUnformattedData data,
+      private Dictionary<ExtendedColumn, IList<SimulationPoint>> parseMappings(string currentSheetName, IEnumerable<UnformattedRow> rawDataSet, IUnformattedData data,
          Cache<string, ColumnInfo> columnInfos)
       {
          var dictionary = new Dictionary<ExtendedColumn, IList<SimulationPoint>>();
@@ -269,8 +268,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          {
             var currentParameter = mappingParameters.FirstOrDefault(p => p.MappedColumn.Name == columnInfo.DisplayName);
             if (currentParameter == null) continue;
-            Func<MappingDataFormatParameter, IUnformattedData, UnformattedRow, SimulationPoint> mappingsParser =
-               currentParameter.MappedColumn.LloqColumn == null ? (Func<MappingDataFormatParameter, IUnformattedData, UnformattedRow, SimulationPoint>) parseMappingOnSameColumn : parseMappingOnSameGivenColumn;
+            Func<string, MappingDataFormatParameter, IUnformattedData, UnformattedRow, SimulationPoint> mappingsParser =
+               currentParameter.MappedColumn.LloqColumn == null ? ( Func<string, MappingDataFormatParameter, IUnformattedData, UnformattedRow, SimulationPoint>) parseMappingOnSameColumn : parseMappingOnSameGivenColumn;
 
             dictionary.Add
             (
@@ -282,7 +281,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                },
                dataSet.Select
                (
-                  row => mappingsParser(currentParameter, data, row)
+                  row => mappingsParser(currentSheetName, currentParameter, data, row)
                ).ToList()
             );
          }
@@ -290,7 +289,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          return dictionary;
       }
 
-      private SimulationPoint parseMappingOnSameColumn(MappingDataFormatParameter currentParameter, IUnformattedData data, UnformattedRow row)
+      private SimulationPoint parseMappingOnSameColumn(string currentSheetName, MappingDataFormatParameter currentParameter, IUnformattedData data, UnformattedRow row)
       {
          var columnDescription = data.GetColumnDescription(currentParameter.ColumnName);
          var element = row.Data.ElementAt(columnDescription.Index).Trim();
@@ -301,7 +300,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             if (!string.IsNullOrEmpty(currentParameter.MappedColumn.Unit.ColumnName))
                unitColumnDescription = data.GetColumnDescription(currentParameter.MappedColumn.Unit.ColumnName);
             if (unitColumnDescription == null)
-               throw new MissingColumnException(currentParameter.MappedColumn.Unit.ColumnName);
+               throw new MissingColumnException(currentSheetName, currentParameter.MappedColumn.Unit.ColumnName);
          }
 
          var unit = currentParameter.MappedColumn.Unit.ExtractUnit(columnName => data.GetColumnDescription(columnName).Index, row.Data);
@@ -330,7 +329,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          };
       }
 
-      private SimulationPoint parseMappingOnSameGivenColumn(MappingDataFormatParameter currentParameter, IUnformattedData data, UnformattedRow row)
+      private SimulationPoint parseMappingOnSameGivenColumn(string currentSheetName, MappingDataFormatParameter currentParameter, IUnformattedData data, UnformattedRow row)
       {
          var lloqIndex = string.IsNullOrWhiteSpace(currentParameter.MappedColumn.LloqColumn)
             ? -1
