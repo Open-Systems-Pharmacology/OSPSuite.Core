@@ -127,7 +127,7 @@ namespace OSPSuite.Core.Domain.Services
          ISpatialStructure spatialStructure, IEnumerable<IMoleculeBuilder> moleculeBuilderCollection)
       {
          foreach (var paramValue in moleculeBuilderCollection.SelectMany(moleculeBuilder =>
-            getMoleculeParameterValues(spatialStructure, moleculeBuilder)))
+                     getMoleculeParameterValues(spatialStructure, moleculeBuilder)))
          {
             parameterStartValuesBuildingBlock.Add(paramValue);
          }
@@ -145,36 +145,27 @@ namespace OSPSuite.Core.Domain.Services
 
       private IEnumerable<IParameterStartValue> getMoleculeParameterValues(ISpatialStructure spatialStructure, IMoleculeBuilder moleculeBuilder)
       {
-         foreach (var parameter in moleculeBuilder.Parameters)
-         {
-            //check if parameter value should be set
-            if (!parameterValueShouldBeSet(parameter))
-               continue;
-
+         return moleculeBuilder.Parameters.Where(parameterValueShouldBeSet)
             //"Property"-Parameter are defined in the molecule itself
-            if (parameter.BuildMode == ParameterBuildMode.Property)
-               continue;
+            .Where(x => x.BuildMode != ParameterBuildMode.Property)
+            .SelectMany(x => getMoleculeParameterValue(spatialStructure, moleculeBuilder, x));
+      }
 
-            //"Global"-Parameter are defined once per molecule
-            if (parameter.BuildMode == ParameterBuildMode.Global)
-            {
-               yield return globalMoleculeParameterValueFor(moleculeBuilder, parameter);
-               continue;
-            }
+      private IEnumerable<IParameterStartValue> getMoleculeParameterValue(ISpatialStructure spatialStructure, IMoleculeBuilder moleculeBuilder, IParameter parameter)
+      {
+         //"Global"-Parameter are defined once per molecule
+         if (parameter.BuildMode == ParameterBuildMode.Global)
+            return new[] {globalMoleculeParameterValueFor(moleculeBuilder, parameter)};
 
-            //"Local"-Parameter are defined per physical container and
-            // per molecule
-            if (parameter.BuildMode == ParameterBuildMode.Local)
-            {
-               foreach (var container in spatialStructure.PhysicalContainers)
-                  yield return localMoleculeParameterValueFor(moleculeBuilder, parameter, container);
-
-               continue;
-            }
-
+         if (parameter.BuildMode != ParameterBuildMode.Local)
             //unknown build mode - should never happen
             throw new ArgumentException(Error.UnknownParameterBuildMode);
-         }
+         
+         //"Local"-Parameter are defined per physical container and
+         // per molecule
+         return spatialStructure.PhysicalContainers
+            .Select(x => localMoleculeParameterValueFor(moleculeBuilder, parameter, x))
+            .Where(psv => psv != null);
       }
 
       private IParameterStartValue containerParameterValueFor(IParameter parameter)
@@ -208,6 +199,11 @@ namespace OSPSuite.Core.Domain.Services
 
       private IParameterStartValue localMoleculeParameterValueFor(IMoleculeBuilder moleculeBuilder, IParameter parameter, IContainer container)
       {
+         var containerSatisfiesCriteria = parameter.ContainerCriteria?.IsSatisfiedBy(container) ?? true;
+
+         if (!containerSatisfiesCriteria)
+            return null;
+
          var parameterPath = _objectPathFactory.CreateAbsoluteObjectPath(container)
             .AndAdd(moleculeBuilder.Name)
             .AndAdd(parameter.Name);
