@@ -47,6 +47,12 @@ namespace OSPSuite.Core.Domain.Descriptors
          return this;
       }
 
+      public DescriptorCriteriaBuilder With(DescriptorCriteriaOperator criteriaOperator)
+      {
+         _criteria.Operator = criteriaOperator;
+         return this;
+      }
+
       public DescriptorCriteria Build()
       {
          return _criteria;

@@ -8,6 +8,7 @@ namespace OSPSuite.Core.Serialization.Xml
    {
       public override void PerformMapping()
       {
+         Map(x => x.Operator);
          MapEnumerable(x => x, x => x.Add).WithMappingName(Constants.Serialization.DESCRIPTOR_CONDITIONS);
       }
    }
