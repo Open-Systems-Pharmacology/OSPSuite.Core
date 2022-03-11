@@ -3,9 +3,11 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
@@ -31,9 +33,17 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
+         var drugMoleculeBuilder = createMoleculeBuilder("Drug");
+         var localParameterWithCondition = DomainHelperForSpecs.ConstantParameterWithValue(3)
+            .WithName("LocalParameterWithCondition")
+            .WithMode(ParameterBuildMode.Local)
+            .WithParentContainer(drugMoleculeBuilder);
+
+         localParameterWithCondition.ContainerCriteria = Create.Criteria(x => x.With("Cell"));
+
          _molecules = new MoleculeBuildingBlock
          {
-            createMoleculeBuilder("Drug"), 
+            drugMoleculeBuilder, 
             createMoleculeBuilder("Other")
          };
          _spatialStructure = new SpatialStructure
@@ -45,8 +55,12 @@ namespace OSPSuite.Core.Domain
          _spatialStructure.GlobalMoleculeDependentProperties.Add(_globalParameter);
          var topContainer = new Container().WithName("Organism");
          var organ =new Container().WithName("Organ").WithParentContainer(topContainer);
+         var cell = new Container().WithName("Cell").WithParentContainer(organ).WithMode(ContainerMode.Physical);
+         var interstitial = new Container().WithName("Interstitial").WithParentContainer(organ).WithMode(ContainerMode.Physical);
+
          var mp = new Container().WithName(Constants.MOLECULE_PROPERTIES).WithParentContainer(organ);
          new Parameter().WithName("Local").WithFormula(new ConstantFormula(3)).WithParentContainer(mp);
+
          _spatialStructure.AddTopContainer(topContainer);
          var neighborhood = new NeighborhoodBuilder().WithName("A2B");
          var nmp = new Container().WithName(Constants.MOLECULE_PROPERTIES).WithParentContainer(neighborhood);
@@ -81,6 +95,13 @@ namespace OSPSuite.Core.Domain
       {
          parameterStartValueForPathShouldExists(_parameterStartValues, "Drug|GlobalMoleculeParameter");
          parameterStartValueForPathShouldExists(_parameterStartValues, "Other|GlobalMoleculeParameter");
+      }
+
+      [Observation]
+      public void should_create_start_values_for_local_molecule_parameters_with_conditions()
+      {
+         parameterStartValueForPathShouldExists(_parameterStartValues, "Organism|Organ|Cell|Drug|LocalParameterWithCondition");
+         parameterStartValueForPathShouldNotExist(_parameterStartValues, "Organism|Organ|Interstitial|Drug|LocalParameterWithCondition");
       }
 
       [Observation]
