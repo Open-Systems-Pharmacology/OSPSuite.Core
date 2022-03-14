@@ -7,6 +7,7 @@ using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Services;
 using System.Linq;
+using OSPSuite.UI.Views;
 
 namespace OSPSuite.Starter.Presenters
 {
@@ -34,6 +35,8 @@ namespace OSPSuite.Starter.Presenters
       void StartLoggerTest();
       void StartDialogCreatorTest();
       void StartDynamicTest();
+      void ShowModalTest();
+      void ShowWizardTest();
    }
 
    public class TestPresenter : AbstractPresenter<ITestView, ITestPresenter>, ITestPresenter
@@ -120,6 +123,20 @@ namespace OSPSuite.Starter.Presenters
       public void StartDynamicTest()
       {
          _dynamicTestPresenter.Start();
+      }
+
+      public void ShowModalTest()
+      {
+         var view = new BaseModalView();
+         view.InitializeResources();
+         view.Display();
+      }
+
+      public void ShowWizardTest()
+      {
+         var view = new WizardView();
+         view.InitializeResources();
+         view.Display();
       }
 
       public void StartShellTest() => _shellPresenter.Start();
