@@ -62,6 +62,11 @@ namespace OSPSuite.Core.Domain
          return (ValueInDisplayUnit, true);
       }
 
+      public (double value, bool success) TryGetValue()
+      {
+         return (Value, true);
+      }
+
       public bool NegativeValuesAllowed { get; set; }
 
       public TimeParameter()

@@ -45,7 +45,10 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       (double value, bool success) TryGetValueInDisplayUnit();
 
-      
+      /// <summary>
+      ///    The value in the displayed unit
+      /// </summary>
+      (double value, bool success) TryGetValue();
       /// <summary>
       ///    Specifies whether negative values are allowed or not for this quantity
       /// </summary>
@@ -147,7 +150,7 @@ namespace OSPSuite.Core.Domain
          set => Value = this.ConvertToBaseUnit(value);
       }
 
-      private (double value, bool success) tryGetValue()
+      public (double value, bool success) TryGetValue()
       {
          if (IsFixedValue || _cachedValueValid)
             return (_cachedValue, success: true);
@@ -168,7 +171,7 @@ namespace OSPSuite.Core.Domain
       }
       public virtual (double value, bool success) TryGetValueInDisplayUnit()
       {
-         var (value, success) = tryGetValue();
+         var (value, success) = TryGetValue();
          return (this.ConvertToDisplayUnit(value), success);
       }
 
