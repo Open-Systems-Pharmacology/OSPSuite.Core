@@ -5,9 +5,9 @@ namespace OSPSuite.Presentation.DTO
 {
    public static class ParameterDTOExtensions
    {
-      public static IFormatter<double> ParameterFormatter(this IParameterDTO parameterDTO)
+      public static IFormatter<double> ParameterFormatter(this IParameterDTO parameterDTO, bool checkForEditable = true)
       {
-         return new ParameterFormatter(parameterDTO);
+         return new ParameterFormatter(parameterDTO, checkForEditable);
       }
 
       public static IFormatter<uint> IntParameterFormatter(this IParameterDTO parameterDTO)
