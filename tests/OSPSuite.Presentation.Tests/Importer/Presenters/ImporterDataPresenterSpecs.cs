@@ -1,15 +1,15 @@
-﻿using FakeItEasy;
-using OSPSuite.BDDHelper;
-using OSPSuite.Presentation.Presenters.Importer;
-using OSPSuite.Presentation.Views.Importer;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using FakeItEasy;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Presentation.Presenters.Importer;
+using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
 
-namespace OSPSuite.Presentation.Importer.Presenters 
+namespace OSPSuite.Presentation.Importer.Presenters
 {
    public abstract class concern_for_ImporterDataPresenter : ContextSpecification<ImporterDataPresenter>
    {
@@ -30,10 +30,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataSheet = new DataSheet();
          _dataSheet.RawData = new UnformattedData();
          _dataSheet.RawData.AddColumn("test_column", 0);
-         _dataSheet.RawData.AddRow(new List<string>(){ "1"});
-         _sheetCache = new Cache<string, DataSheet> {{"sheet1", _dataSheet}, {"sheet2", _dataSheet}, {"sheet3", _dataSheet}};
-         A.CallTo(() => _importer.LoadFile(A<ColumnInfoCache>._, A<string>._, A<IReadOnlyList<MetaDataCategory>>._))
-            .Returns(_dataSourceFile);
+         _dataSheet.RawData.AddRow(new List<string>() { "1" });
+         _sheetCache = new Cache<string, DataSheet> { { "sheet1", _dataSheet }, { "sheet2", _dataSheet }, { "sheet3", _dataSheet } };
+         A.CallTo(() => _importer.LoadFile(A<ColumnInfoCache>._, A<string>._, A<IReadOnlyList<MetaDataCategory>>._)).Returns(_dataSourceFile);
          A.CallTo(() => _view.GetActiveFilterCriteria()).Returns("active_filter_criteria");
          A.CallTo(() => _dataSourceFile.DataSheets).Returns(_sheetCache);
       }
@@ -52,26 +51,14 @@ namespace OSPSuite.Presentation.Importer.Presenters
          };
          _metaDataCategories = new List<MetaDataCategory>()
          {
-            new MetaDataCategory()
-            {
-               Name = "Time",
-               IsMandatory = true,
-            },
-            new MetaDataCategory()
-            {
-               Name = "Concentration",
-               IsMandatory = true
-            },
-            new MetaDataCategory()
-            {
-               DisplayName = "Error",
-               IsMandatory = false
-            }
+            new MetaDataCategory() { Name = "Time", IsMandatory = true, },
+            new MetaDataCategory() { Name = "Concentration", IsMandatory = true },
+            new MetaDataCategory() { DisplayName = "Error", IsMandatory = false }
          };
 
          sut.SetSettings(_metaDataCategories, _columnInfos);
       }
-}
+   }
 
    public class When_loading_new_file : concern_for_ImporterDataPresenter
    {
@@ -99,7 +86,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void result_should_be_null()
       {
-         sut.SetDataSource(null).ShouldBeEqualTo(null);         
+         sut.SetDataSource(null).ShouldBeEqualTo(null);
          A.CallTo(() => _view.AddTabs(A<List<string>>._)).MustNotHaveHappened();
       }
    }
@@ -133,6 +120,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    public class When_selecting_an_already_deleted_tab : concern_for_ImporterDataPresenter
    {
       private bool _selectTabResult;
+
       protected override void Context()
       {
          base.Context();
@@ -174,7 +162,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
          sut.Sheets.Keys.ShouldContain("sheet2");
       }
    }
-
 
    public class When_dropping_loaded_sheets : concern_for_ImporterDataPresenter
    {
@@ -232,6 +219,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    public class When_loading_for_confirmation : concern_for_ImporterDataPresenter
    {
       protected List<string> sheets;
+
       protected override void Context()
       {
          base.Context();
@@ -273,14 +261,15 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-
    public class When_calculating_format_based_on_invalid_sheet : concern_for_ImporterDataPresenter
    {
       protected override void Context()
       {
          base.Context();
          sut.SetDataSource("test_file");
-         A.CallTo(() => _importer.CalculateFormat(A<IDataSourceFile>.Ignored, A<ColumnInfoCache>.Ignored, A<IReadOnlyList<MetaDataCategory>>.Ignored, A<string>.Ignored)).Returns(new List<IDataFormat>());
+         A.CallTo(() => _importer.CalculateFormat(A<IDataSourceFile>.Ignored, A<ColumnInfoCache>.Ignored, A<IReadOnlyList<MetaDataCategory>>.Ignored,
+               A<string>.Ignored))
+            .Returns(new List<IDataFormat>());
       }
 
       [Observation]
@@ -290,14 +279,16 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_resetting_format_based_on_curremt_sheet : concern_for_ImporterDataPresenter
+   public class When_resetting_format_based_on_current_sheet : concern_for_ImporterDataPresenter
    {
       protected override void Context()
       {
          base.Context();
          A.CallTo(() => _dataSourceFile.FormatCalculatedFrom).Returns("baseSheet");
          sut.SetDataSource("test_file");
-         A.CallTo(() => _importer.CalculateFormat(A<IDataSourceFile>.Ignored, A<ColumnInfoCache>.Ignored, A<IReadOnlyList<MetaDataCategory>>.Ignored, A<string>.Ignored)).Returns(new List<IDataFormat> { A.Fake<IDataFormat>() });
+         A.CallTo(() => _importer.CalculateFormat(A<IDataSourceFile>.Ignored, A<ColumnInfoCache>.Ignored, A<IReadOnlyList<MetaDataCategory>>.Ignored,
+               A<string>.Ignored))
+            .Returns(new List<IDataFormat> { A.Fake<IDataFormat>() });
       }
 
       protected override void Because()
