@@ -51,13 +51,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var sheets = new Cache<string, DataSheet>();
          foreach (var element in _dataSourceFile.DataSheets.KeyValues)
          {
-            if (Sheets.Keys.Contains(element.Key)) continue;
+            if (Sheets.Keys.Contains(element.Key)) 
+               continue;
 
             Sheets.Add(element.Key, element.Value);
             sheets.Add(element.Key, element.Value);
          }
 
-         if (sheets.Count == 0) return;
+         if (sheets.Count == 0) 
+            return;
 
          OnImportSheets.Invoke(this,
             new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets, Filter = GetActiveFilterCriteria() });
@@ -82,7 +84,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
             sheets.Add(sheetName, getSingleSheet(sheetName));
          }
 
-         if (sheets.Count == 0) return;
+         if (sheets.Count == 0) 
+            return;
 
          OnImportSheets.Invoke(this,
             new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets, Filter = GetActiveFilterCriteria() });
@@ -121,11 +124,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public IDataSourceFile SetDataSource(string dataSourceFileName)
       {
-         if (string.IsNullOrEmpty(dataSourceFileName)) return null;
+         if (string.IsNullOrEmpty(dataSourceFileName)) 
+            return null;
+
          Sheets = new Cache<string, DataSheet>();
          _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
 
-         if (_dataSourceFile == null) return null;
+         if (_dataSourceFile == null) 
+            return null;
 
          setDefaultMetaData();
          setMetaDataWithManualInput();
@@ -144,13 +150,19 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          foreach (var metaData in _metaDataCategories)
          {
-            if (!metaData.AllowsManualInput) continue;
+            if (!metaData.AllowsManualInput) 
+               continue;
 
             var parameter = _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().FirstOrDefault(p => p.ColumnName == metaData.Name);
-            if (parameter != null) continue;
+            
+            if (parameter != null) 
+               continue;
 
             parameter = new MetaDataFormatParameter(null, metaData.Name, false);
-            if (_dataSourceFile.Format.Parameters.Any(p => (p as MetaDataFormatParameter)?.MetaDataId == parameter.MetaDataId)) continue;
+            
+            if (_dataSourceFile.Format.Parameters.Any(p => (p as MetaDataFormatParameter)?.MetaDataId == parameter.MetaDataId)) 
+            if (_dataSourceFile.Format.Parameters.Any(p => (p as MetaDataFormatParameter)?.MetaDataId == parameter.MetaDataId)) 
+               continue;
 
             _dataSourceFile.Format.Parameters.Add(parameter);
             return;
@@ -185,7 +197,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public bool SelectTab(string tabName)
       {
-         if (!_dataSourceFile.DataSheets.Contains(tabName)) return false;
+         if (!_dataSourceFile.DataSheets.Contains(tabName)) 
+            return false;
 
          var activeFilter = GetActiveFilterCriteria();
          OnTabChanged.Invoke(this, new TabChangedEventArgs() { TabData = _dataSourceFile.DataSheets[tabName].RawData });
@@ -198,11 +211,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void RemoveTab(string tabName)
       {
          _dataSourceFile.DataSheets.Remove(tabName);
-         if (Sheets.Keys.Contains(tabName))
-         {
-            Sheets.Remove(tabName);
-            TriggerOnDataChanged();
-         }
+
+         if (!Sheets.Keys.Contains(tabName)) 
+            return;
+
+         Sheets.Remove(tabName);
+         TriggerOnDataChanged();
       }
 
       public void ReopenAllSheets()
@@ -218,16 +232,21 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSourceFile.DataSheets.Clear();
          _dataSourceFile.DataSheets.Add(tabName, remainingSheet);
          View.AddTabs(GetSheetNames());
-         if (Sheets.Keys.Any(k => k != tabName))
-         {
-            DataSheet currentAlreadyLoaded = null;
-            if (Sheets.Keys.Contains(tabName)) currentAlreadyLoaded = Sheets[tabName];
 
-            Sheets.Clear();
-            if (currentAlreadyLoaded != null) Sheets.Add(tabName, currentAlreadyLoaded);
+         if (Sheets.Keys.All(k => k == tabName)) 
+            return;
 
-            TriggerOnDataChanged();
-         }
+         DataSheet currentAlreadyLoaded = null;
+
+         if (Sheets.Keys.Contains(tabName)) 
+            currentAlreadyLoaded = Sheets[tabName];
+
+         Sheets.Clear();
+
+         if (currentAlreadyLoaded != null) 
+            Sheets.Add(tabName, currentAlreadyLoaded);
+
+         TriggerOnDataChanged();
       }
 
       public void RefreshTabs()
@@ -238,9 +257,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void DisableImportedSheets()
       {
-         if (Sheets.Keys.Any(x => x == View.SelectedTab)) View.DisableImportCurrentSheet();
+         if (Sheets.Keys.Any(x => x == View.SelectedTab)) 
+            View.DisableImportCurrentSheet();
 
-         if (Sheets.Keys.All(GetSheetNames().Contains) && GetSheetNames().Count == Sheets.Keys.Count()) View.DisableImportAllSheets();
+         if (Sheets.Keys.All(GetSheetNames().Contains) && GetSheetNames().Count == Sheets.Keys.Count()) 
+            View.DisableImportAllSheets();
       }
 
       public string GetActiveFilterCriteria()
@@ -252,7 +273,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          var availableFormats = _importer.CalculateFormat(_dataSourceFile, _columnInfos, _metaDataCategories, _currentSheetName).ToList();
 
-         if (!availableFormats.Any()) throw new UnsupportedFormatException(_dataSourceFile.Path);
+         if (!availableFormats.Any()) 
+            throw new UnsupportedFormatException(_dataSourceFile.Path);
 
          _dataSourceFile.AvailableFormats = availableFormats;
          ResetLoadedSheets();
