@@ -7,17 +7,19 @@ namespace OSPSuite.Presentation.Formatters
    public class ParameterFormatter : NumericFormatter<double>
    {
       private readonly IParameterDTO _parameterDTO;
+      private readonly bool _checkForEditable;
 
-      public ParameterFormatter(IParameterDTO parameterDTO) : base(NumericFormatterOptions.Instance)
+      public ParameterFormatter(IParameterDTO parameterDTO, bool checkForEditable) : base(NumericFormatterOptions.Instance)
       {
          _parameterDTO = parameterDTO;
+         _checkForEditable = checkForEditable;
       }
 
       public override string Format(double valueToFormat)
       {
          if (double.IsNaN(valueToFormat))
          {
-            if (_parameterDTO.Parameter.Editable)
+            if (_parameterDTO.Parameter.Editable && _checkForEditable)
                return Captions.EnterAValue;
 
             return Captions.NaN;

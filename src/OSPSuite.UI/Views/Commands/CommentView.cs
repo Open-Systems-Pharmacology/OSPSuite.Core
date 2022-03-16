@@ -41,7 +41,7 @@ namespace OSPSuite.UI.Views.Commands
 
       public string CommandDescription
       {
-         set { lblCommandDescription.Text = value; }
+         set => lblCommandDescription.Text = value;
       }
 
       public void AttachPresenter(ICommentPresenter presenter)

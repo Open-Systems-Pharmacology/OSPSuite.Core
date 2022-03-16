@@ -27,6 +27,7 @@ namespace OSPSuite.Core.Domain
       public bool MaxIsAllowed { get; set; }
       public bool CanBeVariedInPopulation { get; set; }
       public bool IsDefault { get; set; }
+      public DescriptorCriteria ContainerCriteria { get; set; }
 
       public ParameterInfo Info { get; set; }
       public PKSimBuildingBlockType BuildingBlockType { get; set; }
@@ -52,12 +53,18 @@ namespace OSPSuite.Core.Domain
          //nothing to do
       }
 
+
       public string ValueDescription { get; set; }
 
 
       public (double value, bool success) TryGetValueInDisplayUnit()
       {
          return (ValueInDisplayUnit, true);
+      }
+
+      public (double value, bool success) TryGetValue()
+      {
+         return (Value, true);
       }
 
       public bool NegativeValuesAllowed { get; set; }

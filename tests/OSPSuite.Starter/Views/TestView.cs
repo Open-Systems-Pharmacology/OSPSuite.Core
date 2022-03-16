@@ -36,6 +36,8 @@ namespace OSPSuite.Starter.Views
          startLoggerButton.Click += (sender, args) => OnEvent(_presenter.StartLoggerTest);
          startDialogCreatorButton.Click += (sender, args) => OnEvent(_presenter.StartDialogCreatorTest);
          startDynamicTestButton.Click += (sender, args) => OnEvent(_presenter.StartDynamicTest);
+         showModalButton.Click += (sender, args) => OnEvent(_presenter.ShowModalTest);
+         showWizardButton.Click += (sender, args) => OnEvent(_presenter.ShowWizardTest);
       }
 
       public override void InitializeResources()
@@ -63,6 +65,8 @@ namespace OSPSuite.Starter.Views
          startLoggerButton.Text = "Start Logger Test";
          startDialogCreatorButton.Text = "Start Dialog Creator Test";
          startDynamicTestButton.Text = "Start Dynamic Test";
+         showWizardButton.Text = "Start Wizard Test";
+         showModalButton.Text = "Start Modal Test";
       }
 
       public void AttachPresenter(ITestPresenter presenter)

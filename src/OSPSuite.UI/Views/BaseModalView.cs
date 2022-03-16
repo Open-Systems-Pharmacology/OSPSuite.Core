@@ -97,16 +97,13 @@ namespace OSPSuite.UI.Views
       public override void InitializeResources()
       {
          base.InitializeResources();
-         btnOk.Text = Captions.OKButton;
+         btnOk.InitWithImage(ApplicationIcons.OK, Captions.OKButton, ImageLocation.MiddleRight);
+         btnCancel.InitWithImage(ApplicationIcons.Cancel, Captions.CancelButton, ImageLocation.MiddleRight);
          btnCancel.Text = Captions.CancelButton;
          layoutItemOK.AdjustButtonSize();
          layoutItemCancel.AdjustButtonSize();
          layoutItemExtra.AdjustButtonSize();
          layoutControlBase.AutoScroll = false;
-         btnOk.Image = ApplicationIcons.OK.ToImage(IconSizes.Size16x16);
-         btnCancel.Image = ApplicationIcons.Cancel.ToImage(IconSizes.Size16x16);
-         btnOk.ImageLocation = ImageLocation.MiddleRight;
-         btnCancel.ImageLocation = ImageLocation.MiddleRight;
          MaximizeBox = false; 
          MinimizeBox = false;
          btnOk.Shortcut = Keys.Control | Keys.Enter;
