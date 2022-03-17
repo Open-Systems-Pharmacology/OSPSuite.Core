@@ -109,11 +109,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          ).ToList();
          View.SetMappingSource(_mappings);
          ValidateMapping();
-         InitializeErrorUnit(); //should not be public
+         InitializeErrorUnit();
       }
-
-      //so this has good chaces actually of fucking up the reading of the error unit from the column in the first place....
-      //we have to seeif and when we need this
+      
       public void InitializeErrorUnit()
       {
          var errorColumnDTO = _mappings.FirstOrDefault(c => (c.ColumnInfo != null) && !c.ColumnInfo.RelatedColumnOf.IsNullOrEmpty());
@@ -124,7 +122,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if ((errorColumn.Unit.SelectedUnit != "?") && (!string.IsNullOrEmpty(errorColumn.Unit.ColumnName))) return;
          if (errorColumn.ErrorStdDev ==
-             Constants.STD_DEV_GEOMETRIC) //this should probably be done somewhere else...if not here it is probably being done nowhere
+             Constants.STD_DEV_GEOMETRIC)
          {
             errorColumn.Unit = new UnitDescription("");
             return;
