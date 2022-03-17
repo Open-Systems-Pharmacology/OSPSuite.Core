@@ -590,45 +590,53 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var mappingDataFormatParameter = (model.Source as MappingDataFormatParameter);
          mappingDataFormatParameter.MappedColumn.Unit = unit;
          mappingDataFormatParameter.MappedColumn.Dimension = supportedDimensions.FirstOrDefault(x => x.HasUnit(unit.SelectedUnit));
-         ;
       }
 
       private void setDescriptionForRow(ColumnMappingDTO model, bool isColumn)
       {
-         if (model.Source == null)
+         switch (model.Source)
          {
-            switch (model.CurrentColumnType)
-            {
-               case ColumnMappingDTO.ColumnType.MetaData:
-                  model.Source = new MetaDataFormatParameter(model.ExcelColumn, model.MappingName, isColumn);
-                  break;
-               case ColumnMappingDTO.ColumnType.Mapping:
-                  model.Source = new MappingDataFormatParameter(model.ExcelColumn,
-                     new Column() { Name = model.MappingName, Unit = new UnitDescription(UnitDescription.InvalidUnit) });
-                  setUnitAndDimension(model);
-                  break;
-               default:
-                  throw new NotImplementedException($"Setting description for unhandled column type: {model.CurrentColumnType}");
-            }
+            case null:
+               switch (model.CurrentColumnType)
+               {
+                  case ColumnMappingDTO.ColumnType.MetaData:
+                     model.Source = new MetaDataFormatParameter(model.ExcelColumn, model.MappingName, isColumn);
+                     break;
+                  case ColumnMappingDTO.ColumnType.Mapping:
+                     model.Source = new MappingDataFormatParameter(model.ExcelColumn,
+                        new Column() { Name = model.MappingName, Unit = new UnitDescription(UnitDescription.InvalidUnit) });
+                     setUnitAndDimension(model);
+                     break;
+                  default:
+                     throw new NotImplementedException($"Setting description for unhandled column type: {model.CurrentColumnType}");
+               }
 
-            _format.Parameters.Add(model.Source);
-         }
-         else if (model.Source is AddGroupByFormatParameter /*|| model.Source is GroupByDataFormatParameter*/
-         ) //here comes the second error. if the model.Source == null, then it works. otherwise we do not have enough cases (we never find the correct one) 
-         {
-            model.Source = new GroupByDataFormatParameter(model.ExcelColumn);
-            _format.Parameters.Add(model.Source);
-            setDataFormat(_format.Parameters);
-         }
-         else
-         {
-            model.Source.ColumnName = model.ExcelColumn;
-            if (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData)
+               _format.Parameters.Add(model.Source);
+               break;
+            case AddGroupByFormatParameter _:
+               model.Source = new GroupByDataFormatParameter(model.ExcelColumn);
+               _format.Parameters.Add(model.Source);
+               setDataFormat(_format.Parameters);
+               break;
+            default:
             {
-               (model.Source as MetaDataFormatParameter).IsColumn = isColumn;
-            }
+               model.Source.ColumnName = model.ExcelColumn;
+               switch (model.CurrentColumnType)
+               {
+                  case ColumnMappingDTO.ColumnType.MetaData:
+                     (model.Source as MetaDataFormatParameter).IsColumn = isColumn;
+                     break;
+                  case ColumnMappingDTO.ColumnType.Mapping:
+                     setUnitAndDimension(model);
+                     break;
+                  case ColumnMappingDTO.ColumnType.GroupBy:
+                     break;
+                  default:
+                     throw new NotImplementedException($"Setting description for unhandled column type: {model.CurrentColumnType}");
+               }
 
-            setUnitAndDimension(model);
+               break;
+            }
          }
       }
 

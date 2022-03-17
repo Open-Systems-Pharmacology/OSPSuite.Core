@@ -1,23 +1,21 @@
-﻿using FakeItEasy;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FakeItEasy;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
-using System.Linq;
+using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Import;
+using OSPSuite.Core.Services;
+using OSPSuite.Helpers;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
-using OSPSuite.Core.Import;
-using System.Collections.Generic;
-using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Helpers;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Core.Services;
-using OSPSuite.Assets;
-using System;
 
-namespace OSPSuite.Presentation.Importer.Presenters 
+namespace OSPSuite.Presentation.Importer.Presenters
 {
    public abstract class concern_for_ColumnMappingPresenter : ContextSpecification<ColumnMappingPresenter>
    {
@@ -31,13 +29,20 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
       protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
-      protected List<DataFormatParameter> _parameters = new List<DataFormatParameter>() 
+
+      protected List<DataFormatParameter> _parameters = new List<DataFormatParameter>()
       {
          new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = new UnitDescription("min") }),
-         new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l"), Dimension = DimensionFactoryForSpecs.ConcentrationDimension }),
+         new MappingDataFormatParameter("Observation",
+            new Column()
+            {
+               Name = "Concentration", Unit = new UnitDescription("mol/l"), Dimension = DimensionFactoryForSpecs.ConcentrationDimension
+            }),
          new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("?", "") }),
-         new GroupByDataFormatParameter("Study id")
+         new GroupByDataFormatParameter("Study id"),
+         new GroupByDataFormatParameter("Patient id")
       };
+
       protected IDialogCreator _dialogCreator;
 
       public override void GlobalContext()
@@ -51,7 +56,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dimensionFactory = A.Fake<IDimensionFactory>();
          A.CallTo(() => _importer.CheckWhetherAllDataColumnsAreMapped(A<ColumnInfoCache>.Ignored,
             A<IEnumerable<DataFormatParameter>>.Ignored)).Returns(new MappingProblem()
-            {MissingMapping = new List<string>(), MissingUnit = new List<string>()});
+            { MissingMapping = new List<string>(), MissingUnit = new List<string>() });
       }
 
       protected void UpdateSettings()
@@ -67,7 +72,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          {
             new ColumnInfo() { Name = "Time", IsMandatory = true, BaseGridName = "Time" },
             new ColumnInfo() { Name = "Concentration", IsMandatory = true, BaseGridName = "Time" },
-            new ColumnInfo() { Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration", BaseGridName = "Time"}
+            new ColumnInfo() { Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration", BaseGridName = "Time" }
          };
          _columnInfos.ElementAt(1).SupportedDimensions.Add(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
          _columnInfos.ElementAt(2).SupportedDimensions.Add(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
@@ -97,7 +102,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          };
          _mappingParameterEditorPresenter = A.Fake<IMappingParameterEditorPresenter>();
          _metaDataParameterEditorPresenter = A.Fake<IMetaDataParameterEditorPresenter>();
-         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter, _dimensionFactory, _dialogCreator);
+         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter, _dimensionFactory,
+            _dialogCreator);
       }
    }
 
@@ -114,11 +120,14 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          A.CallTo(
             () => _view.SetMappingSource(
-               A<IList<ColumnMappingDTO>>.That.Matches(l => 
-                  l.Count(m => m.CurrentColumnType == ColumnMappingDTO.ColumnType.Mapping && m.Source is MappingDataFormatParameter && (m.Source as MappingDataFormatParameter).MappedColumn.Name == "Time") == 1 &&
-                  l.Count(m => m.CurrentColumnType == ColumnMappingDTO.ColumnType.Mapping && m.Source is MappingDataFormatParameter && (m.Source as MappingDataFormatParameter).MappedColumn.Name == "Concentration") == 1 &&
-                  l.Count(m => m.CurrentColumnType == ColumnMappingDTO.ColumnType.GroupBy && m.Source is GroupByDataFormatParameter && (m.Source as GroupByDataFormatParameter).ColumnName == "Study id") == 1
-            ))).MustHaveHappened();
+               A<IList<ColumnMappingDTO>>.That.Matches(l =>
+                  l.Count(m => m.CurrentColumnType == ColumnMappingDTO.ColumnType.Mapping && m.Source is MappingDataFormatParameter &&
+                               (m.Source as MappingDataFormatParameter).MappedColumn.Name == "Time") == 1 &&
+                  l.Count(m => m.CurrentColumnType == ColumnMappingDTO.ColumnType.Mapping && m.Source is MappingDataFormatParameter &&
+                               (m.Source as MappingDataFormatParameter).MappedColumn.Name == "Concentration") == 1 &&
+                  l.Count(m => m.CurrentColumnType == ColumnMappingDTO.ColumnType.GroupBy && m.Source is GroupByDataFormatParameter &&
+                               (m.Source as GroupByDataFormatParameter).ColumnName == "Study id") == 1
+               ))).MustHaveHappened();
       }
    }
 
@@ -138,7 +147,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_unit_is_properly_set()
       {
-         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Observation").MappedColumn.Unit.ShouldBeEqualTo(_basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit);
+         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Observation").MappedColumn.Unit
+            .ShouldBeEqualTo(_basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit);
       }
    }
 
@@ -147,11 +157,12 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _basicFormat.Parameters).Returns(new List<DataFormatParameter>() 
+         A.CallTo(() => _basicFormat.Parameters).Returns(new List<DataFormatParameter>()
          {
             new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = new UnitDescription("min") }),
             new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") }),
-            new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("g/l"), ErrorStdDev = Constants.STD_DEV_GEOMETRIC }),
+            new MappingDataFormatParameter("Error",
+               new Column() { Name = "Error", Unit = new UnitDescription("g/l"), ErrorStdDev = Constants.STD_DEV_GEOMETRIC }),
             new GroupByDataFormatParameter("Study id")
          });
          UpdateSettings();
@@ -165,7 +176,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_unit_is_properly_set()
       {
-         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit.SelectedUnit.ShouldBeEmpty();
+         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit.SelectedUnit
+            .ShouldBeEmpty();
       }
    }
 
@@ -183,8 +195,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          sut.SetSubEditorSettingsForMapping(new ColumnMappingDTO
          (
-            ColumnMappingDTO.ColumnType.Mapping, 
-            "Error", 
+            ColumnMappingDTO.ColumnType.Mapping,
+            "Error",
             _parameters[2],
             0,
             _columnInfos.ElementAt(2)
@@ -264,6 +276,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    public class When_clearing_description_for_meta_data_model : concern_for_ColumnMappingPresenter
    {
       protected ColumnMappingDTO _model;
+
       protected override void Context()
       {
          base.Context();
@@ -315,8 +328,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          A.CallTo(() => _mappingParameterEditorPresenter.SetUnitOptions
          (
-            A<Column>.That.Matches(c => c.Name == "Concentration"), 
-            A<IReadOnlyList<IDimension>>.Ignored, 
+            A<Column>.That.Matches(c => c.Name == "Concentration"),
+            A<IReadOnlyList<IDimension>>.Ignored,
             A<IEnumerable<string>>.That.Matches(l => l.Contains("Col1") && l.Contains("Col2"))
          )).MustHaveHappened();
       }
@@ -333,7 +346,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_error_unit_is_manually_set :concern_for_ColumnMappingPresenter
+   public class When_error_unit_is_manually_set : concern_for_ColumnMappingPresenter
    {
       protected MappingDataFormatParameter _mappingSource;
 
@@ -493,7 +506,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
             0,
             _columnInfos.ElementAt(2)
          ));
-         (res.Any(r => r.Description == "Col1") && res.Any(r => r.Description == "Col2") && res.Any(r => r.Description == "Error") && res.Any(r => r.Description == "Concentration")).ShouldBeTrue();
+         (res.Any(r => r.Description == "Col1") && res.Any(r => r.Description == "Col2") && res.Any(r => r.Description == "Error") &&
+          res.Any(r => r.Description == "Concentration")).ShouldBeTrue();
       }
 
       [Observation]
@@ -507,7 +521,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
             0,
             _columnInfos.ElementAt(2)
          ));
-         (res.Any(r => r.Label.StartsWith("Col1")) && res.Any( c => c.Label.StartsWith("Col2")) && res.Any(r => r.Label.StartsWith("Error")) && res.Any(r => r.Label.StartsWith("Concentration"))).ShouldBeTrue();
+         (res.Any(r => r.Label.StartsWith("Col1")) && res.Any(c => c.Label.StartsWith("Col2")) && res.Any(r => r.Label.StartsWith("Error")) &&
+          res.Any(r => r.Label.StartsWith("Concentration"))).ShouldBeTrue();
       }
    }
 
@@ -529,8 +544,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
             mappingSource = _parameters[2] as MappingDataFormatParameter;
             mappingSource.MappedColumn.Unit = new UnitDescription(oldUnitDescription);
          }
+
          _model = new ColumnMappingDTO(ColumnMappingDTO.ColumnType.Mapping, "Concentration", mappingSource, 0);
-         A.CallTo(() => _basicFormat.ExtractUnitDescriptions(A<string>.Ignored, A<IReadOnlyList<IDimension>>.Ignored)).Returns(new UnitDescription(newUnitDescription));
+         A.CallTo(() => _basicFormat.ExtractUnitDescriptions(A<string>.Ignored, A<IReadOnlyList<IDimension>>.Ignored))
+            .Returns(new UnitDescription(newUnitDescription));
 
          //Act
          _model.ExcelColumn = "Measurement";
@@ -542,6 +559,108 @@ namespace OSPSuite.Presentation.Importer.Presenters
          mappedColumn.Unit.SelectedUnit.ShouldBeEqualTo(shouldUpdate ? newUnitDescription : oldUnitDescription);
          if (shouldUpdate && newUnitDescription != UnitDescription.InvalidUnit)
             mappedColumn.Dimension.HasUnit(mappedColumn.Unit.SelectedUnit).ShouldBeTrue();
+      }
+   }
+
+   public class When_setting_group_by_column : concern_for_ColumnMappingPresenter
+   {
+      protected ColumnMappingDTO _model;
+
+      protected override void Context()
+      {
+         base.Context();
+         UpdateSettings();
+         GroupByDataFormatParameter groupBySource = null;
+         groupBySource = _parameters[3] as GroupByDataFormatParameter;
+
+         _model = new ColumnMappingDTO(ColumnMappingDTO.ColumnType.GroupBy, "Study id", groupBySource, 0)
+         {
+            ExcelColumn = "Study id"
+         };
+      }
+
+      protected override void Because()
+      {
+         sut.SetDescriptionForRow(_model);
+      }
+
+      [Observation]
+      public void the_meta_data_row_should_be_correctly_added()
+      {
+         var groupByDataFormat = (_model.Source as GroupByDataFormatParameter);
+         groupByDataFormat.ColumnName.ShouldBeEqualTo("Study id");
+      }
+   }
+
+   public class When_setting_meta_data_column : concern_for_ColumnMappingPresenter
+   {
+      protected ColumnMappingDTO _model;
+
+      protected override void Context()
+      {
+         base.Context();
+         UpdateSettings();
+         MetaDataFormatParameter metaDataSource = null;
+         metaDataSource = _parameters[3] as MetaDataFormatParameter;
+
+         _model = new ColumnMappingDTO(ColumnMappingDTO.ColumnType.MetaData, "Study id", metaDataSource, 0)
+         {
+            ExcelColumn = "Study id"
+         };
+      }
+
+      protected override void Because()
+      {
+         sut.SetDescriptionForRow(_model);
+      }
+
+      [Observation]
+      public void the_meta_data_row_should_be_correctly_added()
+      {
+         var metaDataFormat = (_model.Source as MetaDataFormatParameter);
+         metaDataFormat.ColumnName.ShouldBeEqualTo("Study id");
+      }
+   }
+
+   public class When_resetting_meta_data_column : concern_for_ColumnMappingPresenter
+   {
+      protected ColumnMappingDTO _firstModel;
+      protected ColumnMappingDTO _secondModel;
+
+      protected override void Context()
+      {
+         base.Context();
+         UpdateSettings();
+
+         MetaDataFormatParameter metaDataSource = null;
+         metaDataSource = _parameters[3] as MetaDataFormatParameter;
+
+         _firstModel = new ColumnMappingDTO(ColumnMappingDTO.ColumnType.MetaData, "Study id", metaDataSource, 0)
+         {
+            ExcelColumn = "Study id"
+         };
+
+         MetaDataFormatParameter secondMetaDataSource = null;
+         secondMetaDataSource = _parameters[4] as MetaDataFormatParameter;
+
+         _secondModel = new ColumnMappingDTO(ColumnMappingDTO.ColumnType.MetaData, "Patient id", secondMetaDataSource, 0)
+         {
+            ExcelColumn = "Patient id"
+         };
+         sut.SetDescriptionForRow(_firstModel);
+
+      }
+
+      protected override void Because()
+      {
+         sut.SetDescriptionForRow(_secondModel);
+      }
+
+      [Observation]
+      public void the_meta_data_row_should_be_correctly_added()
+      {
+         var metaDataFormat = (_secondModel.Source as MetaDataFormatParameter);
+         metaDataFormat.ColumnName.ShouldBeEqualTo("Patient id");
       }
    }
 
