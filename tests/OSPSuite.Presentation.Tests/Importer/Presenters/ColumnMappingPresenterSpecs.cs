@@ -26,7 +26,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IDataFormat _basicFormat;
       protected IColumnMappingView _view;
       protected IImporter _importer;
-      protected IDimensionFactory _dimensionFactory;
       protected IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       protected IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
       protected ColumnInfoCache _columnInfos;
@@ -38,17 +37,14 @@ namespace OSPSuite.Presentation.Importer.Presenters
          new MappingDataFormatParameter("Error", new Column() { Name = "Error", Unit = new UnitDescription("?", "") }),
          new GroupByDataFormatParameter("Study id")
       };
-      protected IDialogCreator _dialogCreator;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
-         _dialogCreator = A.Fake<IDialogCreator>();
          _basicFormat = A.Fake<IDataFormat>();
          A.CallTo(() => _basicFormat.Parameters).Returns(_parameters);
          _view = A.Fake<IColumnMappingView>();
          _importer = A.Fake<IImporter>();
-         _dimensionFactory = A.Fake<IDimensionFactory>();
          A.CallTo(() => _importer.CheckWhetherAllDataColumnsAreMapped(A<ColumnInfoCache>.Ignored,
             A<IEnumerable<DataFormatParameter>>.Ignored)).Returns(new MappingProblem()
             {MissingMapping = new List<string>(), MissingUnit = new List<string>()});
@@ -97,7 +93,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          };
          _mappingParameterEditorPresenter = A.Fake<IMappingParameterEditorPresenter>();
          _metaDataParameterEditorPresenter = A.Fake<IMetaDataParameterEditorPresenter>();
-         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter, _dimensionFactory, _dialogCreator);
+         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter);
       }
    }
 

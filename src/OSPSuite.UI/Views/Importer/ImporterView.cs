@@ -1,9 +1,4 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
-using DevExpress.Utils;
-using DevExpress.XtraEditors;
-using DevExpress.XtraLayout.Utils;
-using DevExpress.XtraTab;
+﻿using DevExpress.XtraTab;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
@@ -22,7 +17,7 @@ namespace OSPSuite.UI.Views.Importer
       public ImporterView()
       {
          InitializeComponent();
-         nanLayoutControlItem.AdjustControlHeight(80);
+        //nanLayoutControlItem.AdjustControlHeight(160);
       }
 
       public override void InitializeResources()
@@ -40,10 +35,15 @@ namespace OSPSuite.UI.Views.Importer
          {
             _presenter.LoadConfigurationWithoutImporting();
          });
+         resetMappingBasedOnCurrentSheetBtn.Click += (s, a) => OnEvent(() =>
+         {
+            _presenter.ResetMappingBasedOnCurrentSheet();
+         });
          saveMappingBtn.InitWithImage(ApplicationIcons.Save, Captions.Importer.SaveConfiguration);
          applyMappingBtn.InitWithImage(ApplicationIcons.Load, Captions.Importer.ApplyConfiguration);
          saveMappingBtnLayoutControlItem.AdjustLargeButtonSize();
          applyMappingLayoutControlItem.AdjustLargeButtonSize();
+         resetMappingBasedOnCurrentSheetBtn.ToolTip = Captions.Importer.ResetMappingBasedOnCurrentSheetToolTip;
       }
 
       public void AttachPresenter(IImporterPresenter presenter)

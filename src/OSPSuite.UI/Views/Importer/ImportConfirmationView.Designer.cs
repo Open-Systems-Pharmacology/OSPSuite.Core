@@ -1,4 +1,6 @@
 ﻿
+using OSPSuite.Assets;
+
 namespace OSPSuite.UI.Views.Importer
 {
    partial class ImportConfirmationView
@@ -301,7 +303,7 @@ namespace OSPSuite.UI.Views.Importer
          this.importButton.Size = new System.Drawing.Size(803, 54);
          this.importButton.StyleController = this.layoutControl;
          this.importButton.TabIndex = 40;
-         this.importButton.Text = "Import";
+         this.importButton.Text = Captions.Importer.Import;
          // 
          // layoutControl
          // 

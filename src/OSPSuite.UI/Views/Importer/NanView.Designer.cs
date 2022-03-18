@@ -30,6 +30,7 @@ namespace OSPSuite.UI.Views.Importer
       /// </summary>
       private void InitializeComponent()
       {
+         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NanView));
          this.rootLayoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.actionImageComboBoxEdit = new DevExpress.XtraEditors.ImageComboBoxEdit();
          this.indicatorTextEdit = new DevExpress.XtraEditors.TextEdit();
@@ -54,34 +55,35 @@ namespace OSPSuite.UI.Views.Importer
          this.rootLayoutControl.Controls.Add(this.indicatorTextEdit);
          this.rootLayoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.rootLayoutControl.Location = new System.Drawing.Point(0, 0);
-         this.rootLayoutControl.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+         this.rootLayoutControl.Margin = new System.Windows.Forms.Padding(8, 5, 8, 5);
          this.rootLayoutControl.Name = "rootLayoutControl";
          this.rootLayoutControl.Root = this.Root;
-         this.rootLayoutControl.Size = new System.Drawing.Size(556, 79);
+         this.rootLayoutControl.Size = new System.Drawing.Size(1390, 201);
          this.rootLayoutControl.TabIndex = 0;
          this.rootLayoutControl.Text = "rootLayoutControl";
          // 
          // actionImageComboBoxEdit
          // 
-         this.actionImageComboBoxEdit.Location = new System.Drawing.Point(136, 26);
-         this.actionImageComboBoxEdit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+         this.actionImageComboBoxEdit.Location = new System.Drawing.Point(337, 54);
+         this.actionImageComboBoxEdit.Margin = new System.Windows.Forms.Padding(8, 5, 8, 5);
          this.actionImageComboBoxEdit.Name = "actionImageComboBoxEdit";
          this.actionImageComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.actionImageComboBoxEdit.Size = new System.Drawing.Size(418, 20);
+         this.actionImageComboBoxEdit.Size = new System.Drawing.Size(1051, 48);
          this.actionImageComboBoxEdit.StyleController = this.rootLayoutControl;
          this.actionImageComboBoxEdit.TabIndex = 5;
-         this.actionImageComboBoxEdit.ToolTip = Captions.Importer.NanActionHint;
+         this.actionImageComboBoxEdit.ToolTip = resources.GetString("actionImageComboBoxEdit.ToolTip");
          // 
          // indicatorTextEdit
          // 
-         this.indicatorTextEdit.Location = new System.Drawing.Point(136, 2);
-         this.indicatorTextEdit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+         this.indicatorTextEdit.Location = new System.Drawing.Point(337, 2);
+         this.indicatorTextEdit.Margin = new System.Windows.Forms.Padding(8, 5, 8, 5);
          this.indicatorTextEdit.Name = "indicatorTextEdit";
-         this.indicatorTextEdit.Size = new System.Drawing.Size(418, 20);
+         this.indicatorTextEdit.Size = new System.Drawing.Size(1051, 48);
          this.indicatorTextEdit.StyleController = this.rootLayoutControl;
          this.indicatorTextEdit.TabIndex = 4;
-         this.indicatorTextEdit.ToolTip = Captions.Importer.NanIndicatorHint;
+         this.indicatorTextEdit.ToolTip = "Type a number that will be interpreted as NaN(Not a Number). Text in numerical co" +
+    "lumns is interpreted as NaN anyway.";
          // 
          // Root
          // 
@@ -93,7 +95,7 @@ namespace OSPSuite.UI.Views.Importer
             this.emptySpaceItem1});
          this.Root.Name = "Root";
          this.Root.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
-         this.Root.Size = new System.Drawing.Size(556, 79);
+         this.Root.Size = new System.Drawing.Size(1390, 201);
          this.Root.TextVisible = false;
          // 
          // indicatorLayoutControlItem
@@ -101,33 +103,33 @@ namespace OSPSuite.UI.Views.Importer
          this.indicatorLayoutControlItem.Control = this.indicatorTextEdit;
          this.indicatorLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.indicatorLayoutControlItem.Name = "indicatorLayoutControlItem";
-         this.indicatorLayoutControlItem.Size = new System.Drawing.Size(556, 24);
-         this.indicatorLayoutControlItem.TextSize = new System.Drawing.Size(131, 13);
+         this.indicatorLayoutControlItem.Size = new System.Drawing.Size(1390, 52);
+         this.indicatorLayoutControlItem.TextSize = new System.Drawing.Size(323, 33);
          // 
          // actionLayoutControlItem
          // 
          this.actionLayoutControlItem.Control = this.actionImageComboBoxEdit;
-         this.actionLayoutControlItem.Location = new System.Drawing.Point(0, 24);
+         this.actionLayoutControlItem.Location = new System.Drawing.Point(0, 52);
          this.actionLayoutControlItem.Name = "actionLayoutControlItem";
-         this.actionLayoutControlItem.Size = new System.Drawing.Size(556, 24);
-         this.actionLayoutControlItem.TextSize = new System.Drawing.Size(131, 13);
+         this.actionLayoutControlItem.Size = new System.Drawing.Size(1390, 52);
+         this.actionLayoutControlItem.TextSize = new System.Drawing.Size(323, 33);
          // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 48);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 104);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(556, 31);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(1390, 97);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // NanView
          // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+         this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.rootLayoutControl);
-         this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+         this.Margin = new System.Windows.Forms.Padding(8, 5, 8, 5);
          this.Name = "NanView";
-         this.Size = new System.Drawing.Size(556, 79);
+         this.Size = new System.Drawing.Size(1390, 201);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).EndInit();
          this.rootLayoutControl.ResumeLayout(false);
