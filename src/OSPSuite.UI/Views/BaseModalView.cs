@@ -175,10 +175,10 @@ namespace OSPSuite.UI.Views
          set => AcceptButton = value ? btnOk : null;
       }
 
-      protected SimpleButton ExtraButton => btnExtra;
+      protected SimpleButton ButtonExtra => btnExtra;
 
-      protected SimpleButton OkButton => btnOk;
+      protected SimpleButton ButtonOk => btnOk;
 
-      protected SimpleButton CancelButton => btnCancel;
+      protected SimpleButton ButtonCancel => btnCancel;
    }
 };
