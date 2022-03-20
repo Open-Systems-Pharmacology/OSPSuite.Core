@@ -180,5 +180,18 @@ namespace OSPSuite.UI.Views
       protected SimpleButton ButtonOk => btnOk;
 
       protected SimpleButton ButtonCancel => btnCancel;
+
+      /// <summary>
+      ///    Makes the extra section visible and replace the extra button with the control given as parameter
+      /// </summary>
+      protected void ReplaceExtraButtonWith(Control control)
+      {
+         //Make the extra section visible and replace the extra button with the control given as parameter
+         ExtraVisible = true;
+         ButtonExtra.Visible = false;
+         control.Margin = ButtonExtra.Margin;
+         tablePanel.Controls.Add(control);
+         tablePanel.SetCell(control, tablePanel.GetRow(ButtonExtra), tablePanel.GetColumn(ButtonExtra));
+      }
    }
 };
