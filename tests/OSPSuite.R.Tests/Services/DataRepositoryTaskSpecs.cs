@@ -89,16 +89,7 @@ namespace OSPSuite.R.Services
       public void should_throw_an_exception_if_multiple_columns_are_found()
       {
          _dataRepository.Add(DomainHelperForSpecs.ConcentrationColumnForObservedData(_dataRepository.BaseGrid));
-         try
-         {
-            sut.GetMeasurementColumn(_dataRepository);
-            true.ShouldBeFalse("Exception should have been raised");
-         }
-         catch (Exception e)
-         {
-            e.ShouldBeAnInstanceOf<OSPSuiteException>();
-            e.Message.ShouldBeEqualTo(Error.MoreThanOneMeasurementColumnFound);
-         }
+         Assert.Catch<OSPSuiteException>(() => sut.GetMeasurementColumn(_dataRepository), Error.MoreThanOneMeasurementColumnFound);
       }
 
       [Observation]
