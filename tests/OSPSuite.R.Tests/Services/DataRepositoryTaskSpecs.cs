@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using NUnit.Framework;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -57,6 +58,54 @@ namespace OSPSuite.R.Services
       {
          base.Cleanup();
          FileHelper.DeleteFile(_dataRepositoryFile);
+      }
+   }
+
+   public class When_retrieving_the_measurement_column_in_a_data_repository : concern_for_DataRepositoryTask
+   {
+      private DataRepository _dataRepository;
+      private DataColumn _obsColumn;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dataRepository = DomainHelperForSpecs.ObservedData(
+            "TOTO",
+            _dimensionTask.DimensionByName(Constants.Dimension.TIME),
+            _dimensionTask.DimensionByName(Constants.Dimension.MOLAR_CONCENTRATION),
+            "OBS_COL"
+         );
+
+         _obsColumn = _dataRepository.Columns.FindByName("OBS_COL");
+      }
+
+      [Observation]
+      public void should_return_the_expected_column_if_one_is_defined()
+      {
+         sut.GetMeasurementColumn(_dataRepository).ShouldBeEqualTo(_obsColumn);
+      }
+
+      [Observation]
+      public void should_throw_an_exception_if_multiple_columns_are_found()
+      {
+         _dataRepository.Add(DomainHelperForSpecs.ConcentrationColumnForObservedData(_dataRepository.BaseGrid));
+         try
+         {
+            sut.GetMeasurementColumn(_dataRepository);
+            true.ShouldBeFalse("Exception should have been raised");
+         }
+         catch (Exception e)
+         {
+            e.ShouldBeAnInstanceOf<OSPSuiteException>();
+            e.Message.ShouldBeEqualTo(Error.MoreThanOneMeasurementColumnFound);
+         }
+      }
+
+      [Observation]
+      public void should_return_null_if_none_is_defined()
+      {
+         var dataRepository = new DataRepository();
+         sut.GetMeasurementColumn(dataRepository).ShouldBeNull();
       }
    }
 
@@ -283,7 +332,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_throw_an_error()
       {
-         The.Action(()=>sut.SetColumnOrigin(_column, "TOTO")).ShouldThrowAn<Exception>();
+         The.Action(() => sut.SetColumnOrigin(_column, "TOTO")).ShouldThrowAn<Exception>();
       }
    }
 
