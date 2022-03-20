@@ -44,7 +44,7 @@ namespace OSPSuite.Helpers
 
       public static IEnumerable<IDimension> ExtendedDimensionsForSpecs()
       {
-         return new [] { ConcentrationDimensionForSpecs(), Constants.Dimension.NO_DIMENSION, FractionDimensionForSpecs() };
+         return new[] {ConcentrationDimensionForSpecs(), Constants.Dimension.NO_DIMENSION, FractionDimensionForSpecs()};
       }
 
       public static IDimension LengthDimensionForSpecs()
@@ -111,7 +111,7 @@ namespace OSPSuite.Helpers
          return identificationParameter;
       }
 
-      public static DataRepository ObservedData(string id = "TestData", IDimension timeDimension = null, IDimension concentrationDimension = null)
+      public static DataRepository ObservedData(string id = "TestData", IDimension timeDimension = null, IDimension concentrationDimension = null, string obsDataColumnName = null)
       {
          var observedData = new DataRepository(id).WithName(id);
          var baseGrid = new BaseGrid("Time", timeDimension ?? TimeDimensionForSpecs())
@@ -120,15 +120,15 @@ namespace OSPSuite.Helpers
          };
          observedData.Add(baseGrid);
 
-         var data = ConcentrationColumnForObservedData(baseGrid, concentrationDimension);
+         var data = ConcentrationColumnForObservedData(baseGrid, concentrationDimension, obsDataColumnName);
          observedData.Add(data);
 
          return observedData;
       }
 
-      public static DataColumn ConcentrationColumnForObservedData(BaseGrid baseGrid, IDimension concentrationDimension = null)
+      public static DataColumn ConcentrationColumnForObservedData(BaseGrid baseGrid, IDimension concentrationDimension = null, string obsDataColumnName = null)
       {
-         var data = new DataColumn("Col", concentrationDimension ?? ConcentrationDimensionForSpecs(), baseGrid)
+         var data = new DataColumn(obsDataColumnName ?? "Col", concentrationDimension ?? ConcentrationDimensionForSpecs(), baseGrid)
          {
             Values = new[] {10f, 20f, 30f},
             DataInfo = {Origin = ColumnOrigins.Observation}
