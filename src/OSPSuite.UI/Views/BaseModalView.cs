@@ -26,6 +26,7 @@ namespace OSPSuite.UI.Views
          InitializeComponent();
          _shortcutsManager = new BarManager {Form = this};
          ShowInTaskbar = false;
+         btnOk.Click += (o, e) => OnEvent(OkClicked);
          btnExtra.Click += (o, e) => OnEvent(ExtraClicked);
          btnCancel.Click += (o, e) => OnEvent(CancelClicked);
          btnOk.Manager = _shortcutsManager;
@@ -33,11 +34,15 @@ namespace OSPSuite.UI.Views
          btnExtra.Manager = _shortcutsManager;
       }
 
-      protected virtual void CancelClicked()
+      protected virtual void OkClicked()
       {
          /*nothing to do here*/
       }
 
+      protected virtual void CancelClicked()
+      {
+         /*nothing to do here*/
+      }
 
       protected virtual void ExtraClicked()
       {
@@ -75,6 +80,12 @@ namespace OSPSuite.UI.Views
       {
          set => btnOk.Enabled = value;
          get => btnOk.Enabled;
+      }
+
+      public bool CancelEnabled
+      {
+         set => btnCancel.Enabled = value;
+         get => btnCancel.Enabled;
       }
 
       public bool ExtraEnabled
@@ -124,7 +135,7 @@ namespace OSPSuite.UI.Views
          tablePanel.AdjustButton(btnCancel);
          tablePanel.AdjustButton(btnExtra);
          tablePanel.AutoScroll = false;
-         MaximizeBox = false; 
+         MaximizeBox = false;
          MinimizeBox = false;
          btnOk.Shortcut = Keys.Control | Keys.Enter;
          tablePanel.ColumnFor(btnExtra).Visible = false;
@@ -153,7 +164,7 @@ namespace OSPSuite.UI.Views
 
       protected void SetItemVisibility(SimpleButton button, bool visible)
       {
-         tablePanel.ColumnFor(button).Visible  =visible;
+         tablePanel.ColumnFor(button).Visible = visible;
       }
 
       /// <summary>
@@ -163,5 +174,11 @@ namespace OSPSuite.UI.Views
       {
          set => AcceptButton = value ? btnOk : null;
       }
+
+      protected SimpleButton ExtraButton => btnExtra;
+
+      protected SimpleButton OkButton => btnOk;
+
+      protected SimpleButton CancelButton => btnCancel;
    }
 };
