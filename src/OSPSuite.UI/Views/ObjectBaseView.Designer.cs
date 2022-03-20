@@ -37,8 +37,6 @@ namespace OSPSuite.UI.Views
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemName = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemDescription = new DevExpress.XtraLayout.LayoutControlItem();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).BeginInit();
-         this.layoutControlBase.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
@@ -123,10 +121,7 @@ namespace OSPSuite.UI.Views
          this.Controls.Add(this.layoutControl);
          this.Name = "ObjectBaseView";
          this.Text = "ObjectBaseView";
-         this.Controls.SetChildIndex(this.layoutControlBase, 0);
          this.Controls.SetChildIndex(this.layoutControl, 0);
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).EndInit();
-         this.layoutControlBase.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
          this.layoutControl.ResumeLayout(false);

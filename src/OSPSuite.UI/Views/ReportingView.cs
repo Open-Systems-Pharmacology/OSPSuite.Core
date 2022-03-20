@@ -113,7 +113,7 @@ namespace OSPSuite.UI.Views
          layoutItemSubtitle.Text = Captions.Reporting.Subtitle.FormatForLabel();
          layoutItemFont.Text = Captions.Reporting.Font.FormatForLabel();
          layoutItemColor.TextVisible = false;
-         btnOk.Text = Captions.Reporting.CreateReport;
+         OkCaption = Captions.Reporting.CreateReport;
          Caption = Captions.Reporting.ReportToPDFTitle;
          Icon = ApplicationIcons.PDF.WithSize(IconSizes.Size16x16);
          layoutGroupTemplate.Text = Captions.Reporting.TemplateSelection;
