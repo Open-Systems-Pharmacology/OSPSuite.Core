@@ -18,7 +18,7 @@ namespace OSPSuite.UI.Views.Importer
       {
          base.InitializeResources();
          CancelVisible = false;
-         layoutControlBase.Visible = false;
+         tablePanel.Visible = false;
          MaximizeBox = true;
       }
 
