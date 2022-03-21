@@ -536,6 +536,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IEnumerable<string>
          availableColumns()
       {
+         //ToDo: this should be refactor to be more readable
          return _format.ExcelColumnNames
             .Where
             (
