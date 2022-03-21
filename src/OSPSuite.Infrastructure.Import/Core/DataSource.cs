@@ -48,7 +48,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       void SetDataFormat(IDataFormat dataFormat);
       void SetNamingConvention(string namingConvention);
-      ParseErrors AddSheets(Cache<string, DataSheet> dataSheets, ColumnInfoCache columnInfos, string filter);
+      ParseErrors AddSheets(DataSheetCollection dataSheets, ColumnInfoCache columnInfos, string filter);
       void SetMappings(string fileName, IReadOnlyList<MetaDataMappingConverter> mappings);
       ImporterConfiguration GetImporterConfiguration();
       IEnumerable<MetaDataMappingConverter> GetMappings();

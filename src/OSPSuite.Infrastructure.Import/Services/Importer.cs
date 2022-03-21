@@ -75,14 +75,7 @@ namespace OSPSuite.Infrastructure.Import.Services
 
       public void AddFromFile(IDataFormat format, DataSheetCollection dataSheets, ColumnInfoCache columnInfos, IDataSource alreadyExisting)
       {
-         var dataSets = new Cache<string, IDataSet>();
-
-         foreach (var sheetKeyValue in dataSheets.KeyValues)
-         {
-            var data = new DataSet();
-            data.AddData(format.Parse(sheetKeyValue.Value.RawSheetData, columnInfos));
-            dataSets.Add(sheetKeyValue.Key, data);
-         }
+         var dataSets = dataSheets.GetDataSets(format, columnInfos); //ToDo: to be made into a new class DataSetCollection instead of a Cache
 
          foreach (var key in dataSets.Keys)
          {

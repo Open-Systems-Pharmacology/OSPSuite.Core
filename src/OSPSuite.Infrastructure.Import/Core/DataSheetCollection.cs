@@ -21,7 +21,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       }
       public void Initialize()
       {
-         _previouslyLoadedDataSheets = _dataSheets;
+         _previouslyLoadedDataSheets = _dataSheets; //ToDo: make a safe copy of the Cache, so that we do not keep a reference and changing the original
          _dataSheets = new Cache<string, UnformattedSheetData>();
       }
 
@@ -70,6 +70,20 @@ namespace OSPSuite.Infrastructure.Import.Core
          }
 
          return filteredDataSheets;
+      }
+
+      public Cache<string, IDataSet> GetDataSets(IDataFormat format, ColumnInfoCache columnInfos)
+      {
+         var dataSets = new Cache<string, IDataSet>();
+
+         foreach (var sheetKeyValue in _dataSheets.KeyValues)
+         {
+            var data = new DataSet();
+            data.AddData(format.Parse(sheetKeyValue.Value, columnInfos));
+            dataSets.Add(sheetKeyValue.Key, data);
+         }
+
+         return dataSets;
       }
    }
 }
