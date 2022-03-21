@@ -18,12 +18,12 @@ namespace OSPSuite.Infrastructure.Import.Core
       //so the presenter can actually select such a sheet
       //as active when initialized
       string FormatCalculatedFrom { get; set; }
-
+      DataSheetCollection DataSheets { get; }
    }
 
    public abstract class DataSourceFile : IDataSourceFile
    {
-      protected readonly IImportLogger _logger; //not sure this is the correct logger implementetion - could be we need to write our own
+      protected readonly IImportLogger _logger; //ToDo: not sure this is the correct logger implementation - could be we need to write our own
 
       public IDataFormat Format { get; set; }
 
@@ -39,7 +39,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       }
 
       public string FormatCalculatedFrom { get; set; }
-
+      public DataSheetCollection DataSheets { get; } = new DataSheetCollection();
       protected DataSourceFile(IImportLogger logger)
       {
          _logger = logger;
@@ -55,9 +55,9 @@ namespace OSPSuite.Infrastructure.Import.Core
       public string Path 
       {
          get  => _path; 
-         set { _path = value; DataSheetsDeprecated = LoadFromFile(value); }
+         set { _path = value; LoadFromFile(value); }
       }
 
-      protected abstract Cache<string, DataSheet> LoadFromFile(string path);
+      protected abstract void LoadFromFile(string path);
    }
 }

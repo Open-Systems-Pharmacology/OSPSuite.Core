@@ -1,7 +1,6 @@
 ﻿using System;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 {
@@ -15,12 +14,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
       {
       }
 
-      protected override Cache<string, DataSheet> LoadFromFile(string path)
+      protected override void LoadFromFile(string path)
       {
+         DataSheets.Initialize(); //first we clear the sheet collection, in case there were some sheets left from previously loading
+
          try
          {
-            var loadedData = new Cache<string, DataSheet>();
-
             var reader = new ExcelReader(path);
 
             while (reader.MoveToNextSheet())
@@ -46,10 +45,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                dataSheet.RawSheetData.RemoveEmptyColumns();
                dataSheet.RawSheetData.RemoveEmptyRows();
 
-               loadedData.Add(sheetName, dataSheet);
+               DataSheets.AddSheet(sheetName, dataSheet);
             }
-
-            return loadedData;
          }
          catch (Exception ex)
          {

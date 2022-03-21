@@ -5,6 +5,7 @@
    /// </summary>
    public class DataSheet
    {
+      public string SheetName { get; set; }
       public UnformattedSheetData RawSheetData { get; set; }
    }
 }

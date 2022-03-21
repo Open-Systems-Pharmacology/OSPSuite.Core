@@ -17,15 +17,17 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
       {
          _csvSeparatorSelector = csvSeparatorSelector;
       }
-      protected override Cache<string, DataSheet> LoadFromFile(string path)
+      protected override void LoadFromFile(string path)
       {
+         var separator = _csvSeparatorSelector.GetCsvSeparator(path);
+
+         //if separator selection dialog was cancelled, abort
+         if (!(separator is char separatorCharacter)) return;
+
+         DataSheets.Initialize(); //first we clear the sheet collection, in case there were some sheets left from previously loading
+
          try
          {
-            var separator = _csvSeparatorSelector.GetCsvSeparator(path);
-
-            //if separator selection dialog was cancelled, abort
-            if (!(separator is char separatorCharacter)) return null;
- 
             using (var reader = new CsvReaderDisposer(path, separatorCharacter))
             {
                var csv = reader.Csv;
@@ -50,15 +52,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                dataSheet.RawSheetData.RemoveEmptyColumns();
                dataSheet.RawSheetData.RemoveEmptyRows();
 
-               var loadedData = new Cache<string, DataSheet>()
-               {
-                  { "", dataSheet }
-               };
-               return loadedData;
+               DataSheets.AddSheet("", dataSheet);
             }
          }
          catch (Exception e)
          {
+            DataSheets.ResetPreviousDataSheets();
             _logger.AddError(e.Message);
             throw new InvalidObservedDataFileException(e.Message);
          }
