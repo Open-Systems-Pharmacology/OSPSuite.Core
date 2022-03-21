@@ -32,10 +32,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                var headers = csv.GetFieldHeaders();
                var rows = new List<List<string>>(headers.Length);
 
-               var dataSheet = new DataSheet {RawData = new UnformattedData()};
+               var dataSheet = new DataSheet {RawSheetData = new UnformattedSheetData()};
 
                for (var i = 0; i < headers.Length; i++)
-                  dataSheet.RawData.AddColumn(headers[i], i);
+                  dataSheet.RawSheetData.AddColumn(headers[i], i);
                var currentRow = new string[csv.FieldCount];
 
                while (csv.ReadNextRecord())
@@ -43,12 +43,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                   csv.CopyCurrentRecordTo(currentRow);
                   var rowList = currentRow.ToList();
                   var levels = getMeasurementLevels(rowList);
-                  dataSheet.RawData.CalculateColumnDescription(levels);
-                  dataSheet.RawData.AddRow(rowList);
+                  dataSheet.RawSheetData.CalculateColumnDescription(levels);
+                  dataSheet.RawSheetData.AddRow(rowList);
                }
 
-               dataSheet.RawData.RemoveEmptyColumns();
-               dataSheet.RawData.RemoveEmptyRows();
+               dataSheet.RawSheetData.RemoveEmptyColumns();
+               dataSheet.RawSheetData.RemoveEmptyRows();
 
                var loadedData = new Cache<string, DataSheet>()
                {

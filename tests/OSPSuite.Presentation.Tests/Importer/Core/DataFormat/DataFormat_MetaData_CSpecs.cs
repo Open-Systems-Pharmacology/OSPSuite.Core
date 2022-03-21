@@ -53,7 +53,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          A.CallTo(() => _fakedConcentrationDimension.HasUnit("pmol/l")).Returns(true);
          A.CallTo(() => _fakedErrorDimension.HasUnit("pmol/l")).Returns(true);
          sut = new DataFormatHeadersWithUnits();
-         _basicFormat = new TestUnformattedData
+         _basicFormat = new TestUnformattedSheetData
          (
             new Cache<string, ColumnDescription>()
             {
@@ -113,7 +113,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void reject_single_column_data()
       {
-         var singleColumn = new TestUnformattedData
+         var singleColumn = new TestUnformattedSheetData
          (
             new Cache<string, ColumnDescription>()
             {
@@ -134,7 +134,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void reject_multicolumn_with_less_than_two_numeric_columns()
       {
-         var singleColumn = new TestUnformattedData
+         var singleColumn = new TestUnformattedSheetData
          (
             new Cache<string, ColumnDescription>()
             {

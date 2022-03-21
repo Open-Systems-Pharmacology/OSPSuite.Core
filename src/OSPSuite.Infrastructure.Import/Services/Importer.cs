@@ -80,7 +80,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          foreach (var sheetKeyValue in dataSheets.KeyValues)
          {
             var data = new DataSet();
-            data.AddData(format.Parse(sheetKeyValue.Value.RawData, columnInfos));
+            data.AddData(format.Parse(sheetKeyValue.Value.RawSheetData, columnInfos));
             dataSets.Add(sheetKeyValue.Key, data);
          }
 
@@ -124,7 +124,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          if (sheetName == null)
             throw new UnsupportedFormatException(dataSource.Path);
 
-         return AvailableFormats(dataSource.DataSheets[sheetName].RawData, columnInfos, metaDataCategories);
+         return AvailableFormats(dataSource.DataSheets[sheetName].RawSheetData, columnInfos, metaDataCategories);
       }
 
       public IEnumerable<string> NamesFromConvention
@@ -309,13 +309,13 @@ namespace OSPSuite.Infrastructure.Import.Services
          var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
             Id = md.MetaDataId,
-            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
+            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawSheetData.GetColumnDescription(md.ColumnName).Index : -1
          }).Union
          (
             dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
                Id = md.ColumnName,
-               Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+               Index = sheetName => dataSourceFile.DataSheets[sheetName].RawSheetData.GetColumnDescription(md.ColumnName).Index
             })
          ).ToList();
          dataSource.SetMappings(dataSourceFile.Path, mappings);

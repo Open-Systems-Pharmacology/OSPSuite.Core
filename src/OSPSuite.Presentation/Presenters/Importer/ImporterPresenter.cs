@@ -220,7 +220,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             new MetaDataMappingConverter()
             {
                Id = md.MetaDataId,
-               Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
+               Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawSheetData.GetColumnDescription(md.ColumnName).Index : -1
             }).ToList();
             
          var mappings   = dataMappings.Union
@@ -229,7 +229,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             {
                //in case of a duplicate name coming from an excel column used as a grouping by with the same name as a metaData, we add a suffix 
                Id = dataMappings.ExistsById(md.ColumnName) ? md.ColumnName + Constants.ImporterConstants.GroupingBySuffix : md.ColumnName,
-               Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+               Index = sheetName => dataSourceFile.DataSheets[sheetName].RawSheetData.GetColumnDescription(md.ColumnName).Index
             })
          ).ToList();
 
@@ -268,7 +268,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void onTabChanged(object sender, TabChangedEventArgs e)
       {
-         _columnMappingPresenter.SetRawData(e.TabData);
+         _columnMappingPresenter.SetRawData(e.TabSheetData);
       }
 
       protected virtual void onResetMappingBasedOnCurrentSheet()

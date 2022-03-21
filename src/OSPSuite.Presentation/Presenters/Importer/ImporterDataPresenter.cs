@@ -191,7 +191,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          foreach (var sheet in _dataSourceFile.DataSheets.KeyValues)
          {
-            _sheetsForViewing[sheet.Key] = sheet.Value.RawData.AsDataTable();
+            _sheetsForViewing[sheet.Key] = sheet.Value.RawSheetData.AsDataTable();
          }
       }
 
@@ -201,7 +201,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             return false;
 
          var activeFilter = GetActiveFilterCriteria();
-         OnTabChanged.Invoke(this, new TabChangedEventArgs() { TabData = _dataSourceFile.DataSheets[tabName].RawData });
+         OnTabChanged.Invoke(this, new TabChangedEventArgs() { TabSheetData = _dataSourceFile.DataSheets[tabName].RawSheetData });
          View.SetGridSource(tabName);
          View.SetFilter(activeFilter);
          _currentSheetName = tabName;

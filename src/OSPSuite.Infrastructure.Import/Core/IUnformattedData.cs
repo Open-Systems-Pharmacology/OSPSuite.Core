@@ -33,15 +33,15 @@ namespace OSPSuite.Infrastructure.Import.Core
       void RemoveEmptyRows();
    }
 
-   public class UnformattedData : IUnformattedData
+   public class UnformattedSheetData : IUnformattedData
    {
       private readonly List<List<string>> _rawDataTable = new List<List<string>>();
       private List<string> _emptyColumns = new List<string>();
 
       protected Cache<string, ColumnDescription> _headers =
-         new Cache<string, ColumnDescription>(); //we have to ensure headers and RawData sizes match
+         new Cache<string, ColumnDescription>(); //we have to ensure headers and RawSheetData sizes match
 
-      public UnformattedData(UnformattedData reference)
+      public UnformattedSheetData(UnformattedSheetData reference)
       {
          _headers = new Cache<string, ColumnDescription>();
          foreach (var header in reference.GetHeaders())
@@ -51,7 +51,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          _rawDataTable = new List<List<string>>();
       }
 
-      public UnformattedData()
+      public UnformattedSheetData()
       {
          _emptyColumns = new List<string>();
          _headers = new Cache<string, ColumnDescription>();

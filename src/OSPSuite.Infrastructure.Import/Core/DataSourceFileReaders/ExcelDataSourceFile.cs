@@ -29,22 +29,22 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
                var sheetName = reader.CurrentSheet.SheetName;
                DataSheet dataSheet = new DataSheet();
-               dataSheet.RawData = new UnformattedData();
+               dataSheet.RawSheetData = new UnformattedSheetData();
                var headers = reader.CurrentRow;
      
                for (var j = 0; j < headers.Count; j++)
-                  dataSheet.RawData.AddColumn(headers[j], j);
+                  dataSheet.RawSheetData.AddColumn(headers[j], j);
 
                while (reader.MoveToNextRow())
                {
                   //the first two could even be done only once
                   var levels = reader.GetMeasurementLevels(headers.Count);
-                  dataSheet.RawData.CalculateColumnDescription(levels);
-                  dataSheet.RawData.AddRow(reader.CurrentRow);
+                  dataSheet.RawSheetData.CalculateColumnDescription(levels);
+                  dataSheet.RawSheetData.AddRow(reader.CurrentRow);
                }
 
-               dataSheet.RawData.RemoveEmptyColumns();
-               dataSheet.RawData.RemoveEmptyRows();
+               dataSheet.RawSheetData.RemoveEmptyColumns();
+               dataSheet.RawSheetData.RemoveEmptyRows();
 
                loadedData.Add(sheetName, dataSheet);
             }

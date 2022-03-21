@@ -269,7 +269,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Context()
       {
          base.Context();
-         _args = new TabChangedEventArgs() {TabData = new UnformattedData()};
+         _args = new TabChangedEventArgs() {TabSheetData = new UnformattedSheetData()};
       }
 
       protected override void Because()
@@ -280,7 +280,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void invokes_column_mapping_presenter()
       {
-         A.CallTo(() => _columnMappingPresenter.SetRawData(_args.TabData)).MustHaveHappened();
+         A.CallTo(() => _columnMappingPresenter.SetRawData(_args.TabSheetData)).MustHaveHappened();
       }
    }
 

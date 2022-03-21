@@ -28,9 +28,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _importer = A.Fake<IImporter>();
          _view = A.Fake<IImporterDataView>();
          _dataSheet = new DataSheet();
-         _dataSheet.RawData = new UnformattedData();
-         _dataSheet.RawData.AddColumn("test_column", 0);
-         _dataSheet.RawData.AddRow(new List<string>() { "1" });
+         _dataSheet.RawSheetData = new UnformattedSheetData();
+         _dataSheet.RawSheetData.AddColumn("test_column", 0);
+         _dataSheet.RawSheetData.AddRow(new List<string>() { "1" });
          _sheetCache = new Cache<string, DataSheet> { { "sheet1", _dataSheet }, { "sheet2", _dataSheet }, { "sheet3", _dataSheet } };
          A.CallTo(() => _importer.LoadFile(A<ColumnInfoCache>._, A<string>._, A<IReadOnlyList<MetaDataCategory>>._)).Returns(_dataSourceFile);
          A.CallTo(() => _view.GetActiveFilterCriteria()).Returns("active_filter_criteria");

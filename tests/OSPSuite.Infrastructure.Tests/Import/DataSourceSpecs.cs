@@ -233,7 +233,7 @@ namespace OSPSuite.Infrastructure.Import
       public void throw_on_empty_dataset()
       {
          var sheets = new Cache<string, DataSheet>();
-         sheets.Add("sheet1", new DataSheet() { RawData = new UnformattedData() });
+         sheets.Add("sheet1", new DataSheet() { RawSheetData = new UnformattedSheetData() });
          sut.AddSheets(sheets, _columnInfos, "").Any().ShouldBeTrue();
       }
    }

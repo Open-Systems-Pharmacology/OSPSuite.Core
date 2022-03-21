@@ -9,7 +9,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 {
    public class TabChangedEventArgs : EventArgs
    {
-      public UnformattedData TabData { get; set; }
+      public UnformattedSheetData TabSheetData { get; set; }
    }
 
    public class ImportSheetsEventArgs : EventArgs

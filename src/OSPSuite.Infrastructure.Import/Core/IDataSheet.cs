@@ -9,6 +9,6 @@ namespace OSPSuite.Infrastructure.Import.Core
    /// </summary>
    public class DataSheet
    {
-      public UnformattedData RawData { get; set; }
+      public UnformattedSheetData RawSheetData { get; set; }
    }
 }

@@ -91,14 +91,14 @@ namespace OSPSuite.Infrastructure.Import.Core
          var filteredDataSheets = new Cache<string, DataSheet>();
          foreach (var key in dataSheets.Keys)
          {
-            var dt = dataSheets[key].RawData.AsDataTable();
+            var dt = dataSheets[key].RawSheetData.AsDataTable();
             var dv = new DataView(dt);
             dv.RowFilter = filter;
             var list = new List<DataRow>();
-            var ds = new DataSheet() { RawData = new UnformattedData(dataSheets[key].RawData) };
+            var ds = new DataSheet() { RawSheetData = new UnformattedSheetData(dataSheets[key].RawSheetData) };
             foreach (DataRowView drv in dv)
             {
-               ds.RawData.AddRow(drv.Row.ItemArray.Select(c => c.ToString()));
+               ds.RawSheetData.AddRow(drv.Row.ItemArray.Select(c => c.ToString()));
             }
             filteredDataSheets.Add(key, ds);
          }

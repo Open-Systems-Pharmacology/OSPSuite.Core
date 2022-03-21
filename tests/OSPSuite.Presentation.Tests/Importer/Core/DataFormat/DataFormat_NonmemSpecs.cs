@@ -12,9 +12,9 @@ using OSPSuite.Core.Import;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
-   internal class TestUnformattedData : UnformattedData
+   internal class TestUnformattedSheetData : UnformattedSheetData
    {
-      public TestUnformattedData(Cache<string, ColumnDescription> headers)
+      public TestUnformattedSheetData(Cache<string, ColumnDescription> headers)
       {
          _headers = headers;
       }
@@ -108,7 +108,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   }
                }
             };
-         _basicFormat = new TestUnformattedData(_headersCache);
+         _basicFormat = new TestUnformattedSheetData(_headersCache);
          foreach (var molecule in _molecules)
             foreach (var groupId in _groupIds)
                for (var time = 0; time < 10; time++)
@@ -145,7 +145,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void reject_single_column_data()
       {
-         var singleColumn = new TestUnformattedData
+         var singleColumn = new TestUnformattedSheetData
          (
             new Cache<string, ColumnDescription>()
             {
@@ -166,7 +166,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void reject_multicolumn_with_less_than_two_numeric_columns()
       {
-         var singleColumn = new TestUnformattedData
+         var singleColumn = new TestUnformattedSheetData
          (
             new Cache<string, ColumnDescription>()
             {
@@ -307,7 +307,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             _headersCache.Add("DOSE",
                               new ColumnDescription(3, new List<string>() { "75 [g] glucose" }, ColumnDescription.MeasurementLevel.Discrete)
                            );
-            _mockedDataCapital = new TestUnformattedData(_headersCache);
+            _mockedDataCapital = new TestUnformattedSheetData(_headersCache);
             sut.SetParameters(_mockedDataCapital, _columnInfos, _metaDataCategories);
          }
 

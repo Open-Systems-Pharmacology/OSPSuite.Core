@@ -53,7 +53,7 @@ namespace OSPSuite.Presentation.Importer.Services
          _fakedConcentrationDimension = A.Fake<IDimension>();
          _fakedErrorDimension = A.Fake<IDimension>();
          _fakedDimensionFactory = A.Fake<IDimensionFactory>();
-         _basicFormat = A.Fake<UnformattedData>();
+         _basicFormat = A.Fake<UnformattedSheetData>();
          _container = A.Fake<IContainer>();
          _dialogCreator = A.Fake<IDialogCreator>();
          var dataFormat = A.Fake<IDataFormat>();
@@ -274,7 +274,7 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       protected override void Because()
       {
-         _basicFormat = new TestUnformattedData
+         _basicFormat = new TestUnformattedSheetData
          (
             new Cache<string, ColumnDescription>()
             {
@@ -310,7 +310,7 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       protected override void Because()
       {
-         _basicFormat = new TestUnformattedData
+         _basicFormat = new TestUnformattedSheetData
          (
             new Cache<string, ColumnDescription>()
             {
@@ -363,7 +363,7 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       protected override void Because()
       {
-         _basicFormat = new TestUnformattedData
+         _basicFormat = new TestUnformattedSheetData
          (
             new Cache<string, ColumnDescription>()
             {
@@ -412,7 +412,7 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       protected override void Because()
       {
-         _basicFormat = new TestUnformattedData
+         _basicFormat = new TestUnformattedSheetData
          (
             new Cache<string, ColumnDescription>()
             {
