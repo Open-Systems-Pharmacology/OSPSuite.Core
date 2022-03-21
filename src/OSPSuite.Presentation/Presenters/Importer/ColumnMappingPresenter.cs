@@ -121,8 +121,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var errorColumn = ((MappingDataFormatParameter)errorColumnDTO.Source).MappedColumn;
 
          if ((errorColumn.Unit.SelectedUnit != "?") && (!string.IsNullOrEmpty(errorColumn.Unit.ColumnName))) return;
-         if (errorColumn.ErrorStdDev ==
-             Constants.STD_DEV_GEOMETRIC)
+         if (errorColumn.ErrorStdDev == Constants.STD_DEV_GEOMETRIC)
          {
             errorColumn.Unit = new UnitDescription("");
             return;
