@@ -103,10 +103,10 @@ namespace OSPSuite.Infrastructure.Import.Services
       {
          var dataSource = _parser.For(fileName);
 
-         if (dataSource.DataSheets == null) return null;
+         if (dataSource.DataSheetsDeprecated == null) return null;
 
 
-         foreach (var sheetName in dataSource.DataSheets.Keys)
+         foreach (var sheetName in dataSource.DataSheetsDeprecated.Keys)
          {
             dataSource.AvailableFormats = CalculateFormat(dataSource, columnInfos, metaDataCategories, sheetName).ToList();
             if (dataSource.AvailableFormats.Any())
@@ -124,7 +124,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          if (sheetName == null)
             throw new UnsupportedFormatException(dataSource.Path);
 
-         return AvailableFormats(dataSource.DataSheets[sheetName].RawSheetData, columnInfos, metaDataCategories);
+         return AvailableFormats(dataSource.DataSheetsDeprecated[sheetName].RawSheetData, columnInfos, metaDataCategories);
       }
 
       public IEnumerable<string> NamesFromConvention
@@ -309,13 +309,13 @@ namespace OSPSuite.Infrastructure.Import.Services
          var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
             Id = md.MetaDataId,
-            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawSheetData.GetColumnDescription(md.ColumnName).Index : -1
+            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheetsDeprecated[sheetName].RawSheetData.GetColumnDescription(md.ColumnName).Index : -1
          }).Union
          (
             dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
                Id = md.ColumnName,
-               Index = sheetName => dataSourceFile.DataSheets[sheetName].RawSheetData.GetColumnDescription(md.ColumnName).Index
+               Index = sheetName => dataSourceFile.DataSheetsDeprecated[sheetName].RawSheetData.GetColumnDescription(md.ColumnName).Index
             })
          ).ToList();
          dataSource.SetMappings(dataSourceFile.Path, mappings);
@@ -324,17 +324,17 @@ namespace OSPSuite.Infrastructure.Import.Services
          dataSource.SetNamingConvention(configuration.NamingConventions);
          var sheets = new Cache<string, DataSheet>();
          var missingSheets = new List<string>();
-         var sheetList = dataImporterSettings.IgnoreSheetNamesAtImport ? dataSourceFile.DataSheets.Keys : configuration.LoadedSheets;
+         var sheetList = dataImporterSettings.IgnoreSheetNamesAtImport ? dataSourceFile.DataSheetsDeprecated.Keys : configuration.LoadedSheets;
 
          foreach (var key in sheetList)
          {
-            if (!dataSourceFile.DataSheets.Contains(key))
+            if (!dataSourceFile.DataSheetsDeprecated.Contains(key))
             {
                missingSheets.Add(key);
                continue;
             }
 
-            sheets.Add(key, dataSourceFile.DataSheets[key]);
+            sheets.Add(key, dataSourceFile.DataSheetsDeprecated[key]);
          }
 
          var errors = dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);

@@ -38,7 +38,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public List<string> GetSheetNames()
       {
-         return _dataSourceFile.DataSheets.Keys.ToList();
+         return _dataSourceFile.DataSheetsDeprecated.Keys.ToList();
       }
 
       public DataTable GetSheet(string tabName)
@@ -49,7 +49,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void ImportDataForConfirmation()
       {
          var sheets = new Cache<string, DataSheet>();
-         foreach (var element in _dataSourceFile.DataSheets.KeyValues)
+         foreach (var element in _dataSourceFile.DataSheetsDeprecated.KeyValues)
          {
             if (Sheets.Keys.Contains(element.Key))
                continue;
@@ -108,7 +108,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private DataSheet getSingleSheet(string sheetName)
       {
-         return _dataSourceFile.DataSheets[sheetName];
+         return _dataSourceFile.DataSheetsDeprecated[sheetName];
       }
 
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
@@ -189,7 +189,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void createSheetsForViewing()
       {
-         foreach (var sheet in _dataSourceFile.DataSheets.KeyValues)
+         foreach (var sheet in _dataSourceFile.DataSheetsDeprecated.KeyValues)
          {
             _sheetsForViewing[sheet.Key] = sheet.Value.RawSheetData.AsDataTable();
          }
@@ -197,11 +197,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public bool SelectTab(string tabName)
       {
-         if (!_dataSourceFile.DataSheets.Contains(tabName))
+         if (!_dataSourceFile.DataSheetsDeprecated.Contains(tabName))
             return false;
 
          var activeFilter = GetActiveFilterCriteria();
-         OnTabChanged.Invoke(this, new TabChangedEventArgs() { TabSheetData = _dataSourceFile.DataSheets[tabName].RawSheetData });
+         OnTabChanged.Invoke(this, new TabChangedEventArgs() { TabSheetData = _dataSourceFile.DataSheetsDeprecated[tabName].RawSheetData });
          View.SetGridSource(tabName);
          View.SetFilter(activeFilter);
          _currentSheetName = tabName;
@@ -210,7 +210,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void RemoveTab(string tabName)
       {
-         _dataSourceFile.DataSheets.Remove(tabName);
+         _dataSourceFile.DataSheetsDeprecated.Remove(tabName);
 
          if (!Sheets.Keys.Contains(tabName))
             return;
@@ -228,9 +228,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void RemoveAllButThisTab(string tabName)
       {
          View.ClearTabs();
-         var remainingSheet = _dataSourceFile.DataSheets[tabName];
-         _dataSourceFile.DataSheets.Clear();
-         _dataSourceFile.DataSheets.Add(tabName, remainingSheet);
+         var remainingSheet = _dataSourceFile.DataSheetsDeprecated[tabName];
+         _dataSourceFile.DataSheetsDeprecated.Clear();
+         _dataSourceFile.DataSheetsDeprecated.Add(tabName, remainingSheet);
          View.AddTabs(GetSheetNames());
 
          if (Sheets.Keys.All(k => k == tabName))

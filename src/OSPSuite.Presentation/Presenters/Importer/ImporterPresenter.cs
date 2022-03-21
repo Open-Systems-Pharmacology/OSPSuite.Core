@@ -220,7 +220,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             new MetaDataMappingConverter()
             {
                Id = md.MetaDataId,
-               Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawSheetData.GetColumnDescription(md.ColumnName).Index : -1
+               Index = sheetName => md.IsColumn ? dataSourceFile.DataSheetsDeprecated[sheetName].RawSheetData.GetColumnDescription(md.ColumnName).Index : -1
             }).ToList();
             
          var mappings   = dataMappings.Union
@@ -229,7 +229,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             {
                //in case of a duplicate name coming from an excel column used as a grouping by with the same name as a metaData, we add a suffix 
                Id = dataMappings.ExistsById(md.ColumnName) ? md.ColumnName + Constants.ImporterConstants.GroupingBySuffix : md.ColumnName,
-               Index = sheetName => dataSourceFile.DataSheets[sheetName].RawSheetData.GetColumnDescription(md.ColumnName).Index
+               Index = sheetName => dataSourceFile.DataSheetsDeprecated[sheetName].RawSheetData.GetColumnDescription(md.ColumnName).Index
             })
          ).ToList();
 
@@ -405,7 +405,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var sheets = new Cache<string, DataSheet>();
          foreach (var element in _configuration.LoadedSheets)
          {
-            sheets.Add(element, _dataSourceFile.DataSheets[element]);
+            sheets.Add(element, _dataSourceFile.DataSheetsDeprecated[element]);
          }
 
          foreach (var sheet in sheets.KeyValues)

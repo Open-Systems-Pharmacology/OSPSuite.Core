@@ -10,7 +10,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    /// </summary>
    public interface IDataSourceFile
    {
-      Cache<string, DataSheet> DataSheets { get; }
+      Cache<string, DataSheet> DataSheetsDeprecated { get; }
 	   string Path { get; set; }
       IDataFormat Format { get; set; }
       IList<IDataFormat> AvailableFormats { get; set; }
@@ -18,6 +18,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       //so the presenter can actually select such a sheet
       //as active when initialized
       string FormatCalculatedFrom { get; set; }
+
    }
 
    public abstract class DataSourceFile : IDataSourceFile
@@ -44,7 +45,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          _logger = logger;
       }
       
-      public Cache<string, DataSheet> DataSheets 
+      public Cache<string, DataSheet> DataSheetsDeprecated 
       { 
          get;
          protected set; 
@@ -54,7 +55,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       public string Path 
       {
          get  => _path; 
-         set { _path = value; DataSheets = LoadFromFile(value); }
+         set { _path = value; DataSheetsDeprecated = LoadFromFile(value); }
       }
 
       protected abstract Cache<string, DataSheet> LoadFromFile(string path);

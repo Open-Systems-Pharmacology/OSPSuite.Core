@@ -34,7 +34,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _sheetCache = new Cache<string, DataSheet> { { "sheet1", _dataSheet }, { "sheet2", _dataSheet }, { "sheet3", _dataSheet } };
          A.CallTo(() => _importer.LoadFile(A<ColumnInfoCache>._, A<string>._, A<IReadOnlyList<MetaDataCategory>>._)).Returns(_dataSourceFile);
          A.CallTo(() => _view.GetActiveFilterCriteria()).Returns("active_filter_criteria");
-         A.CallTo(() => _dataSourceFile.DataSheets).Returns(_sheetCache);
+         A.CallTo(() => _dataSourceFile.DataSheetsDeprecated).Returns(_sheetCache);
       }
 
       protected override void Context()
