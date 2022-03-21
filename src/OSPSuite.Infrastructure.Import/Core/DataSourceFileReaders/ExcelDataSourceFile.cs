@@ -26,30 +26,30 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
             {
                if (!reader.MoveToNextRow()) continue;
 
-               var sheetName = reader.CurrentSheet.SheetName;
-               DataSheet dataSheet = new DataSheet();
-               dataSheet.RawSheetData = new UnformattedSheetData();
+               var sheetName = reader.CurrentSheet.SheetName; 
+               var rawSheetData = new UnformattedSheetData();
                var headers = reader.CurrentRow;
      
                for (var j = 0; j < headers.Count; j++)
-                  dataSheet.RawSheetData.AddColumn(headers[j], j);
+                  rawSheetData.AddColumn(headers[j], j);
 
                while (reader.MoveToNextRow())
                {
                   //the first two could even be done only once
                   var levels = reader.GetMeasurementLevels(headers.Count);
-                  dataSheet.RawSheetData.CalculateColumnDescription(levels);
-                  dataSheet.RawSheetData.AddRow(reader.CurrentRow);
+                  rawSheetData.CalculateColumnDescription(levels);
+                  rawSheetData.AddRow(reader.CurrentRow);
                }
 
-               dataSheet.RawSheetData.RemoveEmptyColumns();
-               dataSheet.RawSheetData.RemoveEmptyRows();
+               rawSheetData.RemoveEmptyColumns();
+               rawSheetData.RemoveEmptyRows();
 
-               DataSheets.AddSheet(sheetName, dataSheet);
+               DataSheets.AddSheet(sheetName, rawSheetData);
             }
          }
          catch (Exception ex)
          {
+            DataSheets.ResetPreviousDataSheets();
             _logger.AddError(ex.Message);
             throw new InvalidObservedDataFileException(ex.Message);
          }

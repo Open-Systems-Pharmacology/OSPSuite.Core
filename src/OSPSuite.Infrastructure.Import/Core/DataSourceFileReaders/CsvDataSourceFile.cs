@@ -34,10 +34,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                var headers = csv.GetFieldHeaders();
                var rows = new List<List<string>>(headers.Length);
 
-               var dataSheet = new DataSheet {RawSheetData = new UnformattedSheetData()};
+               var dataSheet = new UnformattedSheetData();
 
                for (var i = 0; i < headers.Length; i++)
-                  dataSheet.RawSheetData.AddColumn(headers[i], i);
+                  dataSheet.AddColumn(headers[i], i);
                var currentRow = new string[csv.FieldCount];
 
                while (csv.ReadNextRecord())
@@ -45,12 +45,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                   csv.CopyCurrentRecordTo(currentRow);
                   var rowList = currentRow.ToList();
                   var levels = getMeasurementLevels(rowList);
-                  dataSheet.RawSheetData.CalculateColumnDescription(levels);
-                  dataSheet.RawSheetData.AddRow(rowList);
+                  dataSheet.CalculateColumnDescription(levels);
+                  dataSheet.AddRow(rowList);
                }
 
-               dataSheet.RawSheetData.RemoveEmptyColumns();
-               dataSheet.RawSheetData.RemoveEmptyRows();
+               dataSheet.RemoveEmptyColumns();
+               dataSheet.RemoveEmptyRows();
 
                DataSheets.AddSheet("", dataSheet);
             }

@@ -6,7 +6,6 @@ using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
@@ -86,29 +85,9 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public NanSettings NanSettings { get; set; }
 
-      private Cache<string, DataSheet> filterSheets(Cache<string, DataSheet> dataSheets, string filter)
+      public ParseErrors AddSheets(DataSheetCollection dataSheets, ColumnInfoCache columnInfos, string filter)
       {
-         var filteredDataSheets = new Cache<string, DataSheet>();
-         foreach (var key in dataSheets.Keys)
-         {
-            var dt = dataSheets[key].RawSheetData.AsDataTable();
-            var dv = new DataView(dt);
-            dv.RowFilter = filter;
-            var list = new List<DataRow>();
-            var ds = new DataSheet() { RawSheetData = new UnformattedSheetData(dataSheets[key].RawSheetData) };
-            foreach (DataRowView drv in dv)
-            {
-               ds.RawSheetData.AddRow(drv.Row.ItemArray.Select(c => c.ToString()));
-            }
-            filteredDataSheets.Add(key, ds);
-         }
-
-         return filteredDataSheets;
-      }
-
-      public ParseErrors AddSheets(Cache<string, DataSheet> dataSheets, ColumnInfoCache columnInfos, string filter)
-      {
-         _importer.AddFromFile(_configuration.Format, filterSheets(dataSheets, filter), columnInfos, this);
+         _importer.AddFromFile(_configuration.Format, dataSheets.Filter(filter), columnInfos, this);
          if (NanSettings == null || !double.TryParse(NanSettings.Indicator, out var indicator))
             indicator = double.NaN;
          var errors = new ParseErrors();

@@ -20,7 +20,7 @@ namespace OSPSuite.Infrastructure.Import.Services
    public interface IImporter
    {
       IDataSourceFile LoadFile(ColumnInfoCache columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories);
-      void AddFromFile(IDataFormat format, Cache<string, DataSheet> dataSheets, ColumnInfoCache columnInfos, IDataSource alreadyExisting);
+      void AddFromFile(IDataFormat format, DataSheetCollection dataSheets, ColumnInfoCache columnInfos, IDataSource alreadyExisting);
       IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
 
       IEnumerable<string> NamesFromConvention
@@ -73,7 +73,7 @@ namespace OSPSuite.Infrastructure.Import.Services
             .Select(p => p.x);
       }
 
-      public void AddFromFile(IDataFormat format, Cache<string, DataSheet> dataSheets, ColumnInfoCache columnInfos, IDataSource alreadyExisting)
+      public void AddFromFile(IDataFormat format, DataSheetCollection dataSheets, ColumnInfoCache columnInfos, IDataSource alreadyExisting)
       {
          var dataSets = new Cache<string, IDataSet>();
 
@@ -322,7 +322,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          dataSource.NanSettings = configuration.NanSettings;
          dataSource.SetDataFormat(dataSourceFile.Format);
          dataSource.SetNamingConvention(configuration.NamingConventions);
-         var sheets = new Cache<string, DataSheet>();
+         var sheets = new DataSheetCollection();
          var missingSheets = new List<string>();
          var sheetList = dataImporterSettings.IgnoreSheetNamesAtImport ? dataSourceFile.DataSheetsDeprecated.Keys : configuration.LoadedSheets;
 
@@ -334,7 +334,7 @@ namespace OSPSuite.Infrastructure.Import.Services
                continue;
             }
 
-            sheets.Add(key, dataSourceFile.DataSheetsDeprecated[key]);
+            sheets.AddSheet(key, dataSourceFile.DataSheets.GetDataSheet(key).RawSheetData);
          }
 
          var errors = dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
