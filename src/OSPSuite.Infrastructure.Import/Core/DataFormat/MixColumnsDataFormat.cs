@@ -4,6 +4,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core.Extensions;
 using System.Text.RegularExpressions;
 using OSPSuite.Core.Import;
+using OSPSuite.Infrastructure.Import.Services;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 {
@@ -34,11 +35,11 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
       {
-         var units = GetLastBracketsOfString(description);
+         var (_, unit) = UnitExtractor.ExtractLabelAndUnit(description);
 
-         if (!string.IsNullOrEmpty(units))
+         if (!string.IsNullOrEmpty(unit))
          {
-            var unit = GetAndValidateUnitFromBrackets(units, supportedDimensions);
+            unit = GetAndValidateUnitFromBrackets(unit, supportedDimensions);
             rank++;
             return new UnitDescription(unit);
          }
@@ -48,9 +49,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
          var unitKey = data.GetHeaders().FindHeader(description + "_UNIT");
          if (unitKey == null)
-         {
             return new UnitDescription();
-         }
+
          keys.Remove(unitKey);
          rank++;
          return new UnitDescription(data.GetColumn(unitKey).FirstOrDefault(u => !string.IsNullOrEmpty(u)), unitKey);
