@@ -7,22 +7,22 @@ namespace OSPSuite.Infrastructure.Import.Services
    public static class UnitExtractor
    {
       /// <summary>
-      ///    Extracts the label and  units from the given <paramref name="text" /> by matching unit has being the last entry in
+      ///    Extracts the name and  unit from the given <paramref name="text" /> by matching unit has being the last entry in
       ///    [].
       ///    If not unit is found, return an empty string for the unit
       /// </summary>
       /// <example>
-      ///    ExtractLabelAndUnit("Concentration [mg/l]") => "Concentration" and "mg/l"
+      ///    ExtractNameAndUnit("Concentration [mg/l]") => "Concentration" and "mg/l"
       /// </example>
-      public static (string label, string unit) ExtractLabelAndUnit(string text)
+      public static (string name, string unit) ExtractNameAndUnit(string text)
       {
          var (unitWithBrackets, unit) = extractUnit(text);
          if (string.IsNullOrEmpty(unit))
             return (text, unit);
 
          var bracketIndex = text.LastIndexOf(unitWithBrackets, StringComparison.Ordinal);
-         var label = text.Remove(bracketIndex, unitWithBrackets.Length).TrimmedValue();
-         return (label, unit);
+         var name = text.Remove(bracketIndex, unitWithBrackets.Length).TrimmedValue();
+         return (name, unit);
       }
 
       private static (string unitWithBrackets, string unit) extractUnit(string text)
