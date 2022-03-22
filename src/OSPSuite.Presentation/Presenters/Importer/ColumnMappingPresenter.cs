@@ -590,11 +590,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
          mappingDataFormatParameter.MappedColumn.Dimension = supportedDimensions.FirstOrDefault(x => x.HasUnit(unit.SelectedUnit));
       }
 
+      //ToDo: this big switch statement here underneath should be refactored, probably broken to more than one functions.
+      //ToDo: also the part of the switch(model.Source) that also then in the cases changes the model.Source is kind of murky. 
       private void setDescriptionForRow(ColumnMappingDTO model, bool isColumn)
       {
          switch (model.Source)
          {
-            case null:
+            //this is the case for the first setting of Mapping or MetaData. GroupBy and AddGroupBy are never null.
+            case null: 
                switch (model.CurrentColumnType)
                {
                   case ColumnMappingDTO.ColumnType.MetaData:
@@ -611,12 +614,17 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
                _format.Parameters.Add(model.Source);
                break;
-            case AddGroupByFormatParameter _:
+            //this is the case for setting a new GroupBy parameter. The AddGroupByFormatParameter corresponds to the line in the ColumnMapping Grid
+            //that has the "+" button for adding the GroupBy, that's why in this case we are introducing a new Parameter, instead of changing the existing.
+            //The AddGroupByFormatParameter, should never be changed, as the "+" button line should always present in the Grid
+            case AddGroupByFormatParameter _: 
                model.Source = new GroupByDataFormatParameter(model.ExcelColumn);
                _format.Parameters.Add(model.Source);
                setDataFormat(_format.Parameters);
                break;
-            default:
+            //this is the case that corresponds to the changing of the mapping for a Parameter.
+            //The Parameter in this case can be Mapping, MetaData or GroupBy
+            default: 
             {
                model.Source.ColumnName = model.ExcelColumn;
                switch (model.CurrentColumnType)
