@@ -27,13 +27,17 @@ namespace OSPSuite.Infrastructure.Import.Services
 
       private static (string unitWithBrackets, string unit) extractUnit(string text)
       {
-         var unitWithBrackets = Regex.Match(text, @"\[([^\]\[]*)\]\s*$").Value.TrimmedValue();
+         var trimmedText = text.TrimmedValue();
+         var openBracketIndex = trimmedText.LastIndexOf("[", StringComparison.Ordinal);
+         var closeBracketIndex = trimmedText.LastIndexOf("]", StringComparison.Ordinal);
+         
+         //No open bracket or close bracket is not the last element => invalid unit
+         if (openBracketIndex < 0 || closeBracketIndex != trimmedText.Length - 1)
+            return (string.Empty, string.Empty);
 
-         if (string.IsNullOrEmpty(unitWithBrackets))
-            return (unitWithBrackets, string.Empty);
-
-
+         var unitWithBrackets = trimmedText.Substring(openBracketIndex);
          var unit = unitWithBrackets.Substring(1, unitWithBrackets.Length - 2).TrimmedValue();
+
          return (unitWithBrackets, unit);
       }
    }
