@@ -154,7 +154,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          }
       }
 
-     protected string GetAndValidateUnitFromBrackets(string unit, IReadOnlyList<IDimension> supportedDimensions)
+     protected string ValidateUnit(string unit, IReadOnlyList<IDimension> supportedDimensions)
       {
          return supportedDimensions.Any(x => x.HasUnit(unit)) ? unit : UnitDescription.InvalidUnit;
       }

@@ -39,7 +39,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
          if (!string.IsNullOrEmpty(unit))
          {
-            unit = GetAndValidateUnitFromBrackets(unit, supportedDimensions);
+            unit = ValidateUnit(unit, supportedDimensions);
             rank++;
             return new UnitDescription(unit);
          }

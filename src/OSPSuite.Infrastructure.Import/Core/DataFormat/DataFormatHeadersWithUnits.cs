@@ -33,7 +33,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          if (string.IsNullOrEmpty(unit))
             return new UnitDescription();
 
-         unit = GetAndValidateUnitFromBrackets(unit, supportedDimensions);
+         unit = ValidateUnit(unit, supportedDimensions);
          if (unit != UnitDescription.InvalidUnit) 
             rank++;
 
