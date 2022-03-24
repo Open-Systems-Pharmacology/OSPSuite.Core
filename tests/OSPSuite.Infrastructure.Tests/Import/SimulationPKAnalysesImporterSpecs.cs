@@ -69,11 +69,11 @@ namespace OSPSuite.Infrastructure.Import
       {
          //in base unit already
          var output1Para1 = ParameterFor("Output1", "Para1");
-         output1Para1.Values.ShouldContain(10, 11);
+         output1Para1.ValueCache.ShouldContain(10, 11);
 
          //in h need to be converted to min
          var outputPara2 = ParameterFor("Output1", "Para2");
-         outputPara2.Values.ShouldContain(12 * 60, 13 * 60);
+         outputPara2.ValueCache.ShouldContain(12 * 60, 13 * 60);
       }
    }
 
@@ -122,11 +122,11 @@ namespace OSPSuite.Infrastructure.Import
       }
 
       [Observation]
-      public void should_have_replaced_the_missing_values_with_nan()
+      public void should_have_imported_the_expected_number_of_values()
       {
          var parameter = ParameterFor("Output1", "Para1");
-         parameter.Count.ShouldBeEqualTo(5);
-         parameter.Values.ShouldOnlyContainInOrder(10, float.NaN, 11, float.NaN, 12);
+         parameter.Count.ShouldBeEqualTo(3);
+         parameter.ValueCache.ShouldOnlyContainInOrder(10, 11, 12);
       }
    }
 }
