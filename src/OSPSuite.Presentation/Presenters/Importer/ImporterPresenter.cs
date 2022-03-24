@@ -42,6 +42,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       ImporterConfiguration UpdateAndGetConfiguration();
       void LoadConfigurationWithoutImporting();
       void ResetMappingBasedOnCurrentSheet();
+      void ClearMapping();
    }
 
    public class ImporterPresenter : AbstractDisposablePresenter<IImporterView, IImporterPresenter>, IImporterPresenter
@@ -286,6 +287,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
 
          _view.DisableConfirmationView();
+      }
+
+      public void ClearMapping()
+      {
+         _columnMappingPresenter.ClearMapping();
       }
 
       private void onMissingMapping(object sender, MissingMappingEventArgs missingMappingEventArgs)

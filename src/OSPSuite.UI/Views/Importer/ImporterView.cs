@@ -27,25 +27,32 @@ namespace OSPSuite.UI.Views.Importer
          previewLayoutControlItem.Name = Captions.Importer.PreviewLayout;
          columnMappingLayoutControlItem.Name = Captions.Importer.MappingSettings;
 
-         saveMappingBtn.Click += (s, a) => OnEvent(() =>
+         saveMappingBtn.Click += (o, e) => OnEvent(() =>
          {
             _presenter.SaveConfiguration();
          });
-         applyMappingBtn.Click += (s, a) => OnEvent(() =>
+         applyMappingBtn.Click += (o, e) => OnEvent(() =>
          {
             _presenter.LoadConfigurationWithoutImporting();
          });
-         resetMappingBasedOnCurrentSheetBtn.Click += (s, a) => OnEvent(() =>
+         resetMappingBasedOnCurrentSheetBtn.Click += (o, e) => OnEvent(() =>
          {
             _presenter.ResetMappingBasedOnCurrentSheet();
          });
+         clearMappingBtn.Click += (o, e) => OnEvent(() =>
+         {
+            _presenter.ClearMapping();
+         });
          saveMappingBtn.InitWithImage(ApplicationIcons.Save, Captions.Importer.SaveConfiguration);
          applyMappingBtn.InitWithImage(ApplicationIcons.Load, Captions.Importer.ApplyConfiguration);
-         resetMappingBasedOnCurrentSheetBtn.InitWithImage(ApplicationIcons.Update, Captions.Importer.ResetMappingBasedOnCurrentSheet);
+         resetMappingBasedOnCurrentSheetBtn.InitWithImage(ApplicationIcons.Refresh, Captions.Importer.ResetMapping);
+         clearMappingBtn.InitWithImage(ApplicationIcons.Delete, Captions.Importer.ClearMapping); //ToDo: WRONG ICON
          saveMappingBtnLayoutControlItem.AdjustLargeButtonSize();
          applyMappingLayoutControlItem.AdjustLargeButtonSize();
          resetMappingBasedOnCurrentSheetLayoutControlItem.AdjustLargeButtonSize();
-         resetMappingBasedOnCurrentSheetBtn.ToolTip = Captions.Importer.ResetMappingBasedOnCurrentSheetToolTip;
+         clearMappingLayoutControlItem.AdjustLargeButtonSize();
+         resetMappingBasedOnCurrentSheetBtn.ToolTip = Captions.Importer.ResetMappingToolTip;
+         clearMappingBtn.ToolTip = Captions.Importer.ClearMappingToolTip;
       }
 
       public void AttachPresenter(IImporterPresenter presenter)

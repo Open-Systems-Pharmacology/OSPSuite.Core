@@ -56,7 +56,6 @@ namespace OSPSuite.UI.Views.Importer
          columnMappingGridView.OptionsBehavior.EditorShowMode = EditorShowMode.MouseDown;
          columnMappingGridView.OptionsCustomization.AllowSort = false;
          columnMappingGridView.OptionsCustomization.AllowFilter = false;
-         columnMappingGridView.MouseDown += (o, e) => OnEvent(onMouseDown, o, e);
          columnMappingGrid.ToolTipController = new ToolTipController().Initialize(imageListRetriever);
          columnMappingGrid.ToolTipController.GetActiveObjectInfo += (o, e) => OnEvent(onGetActiveObjectInfo, o, e);
          var unitInformationTip = new SuperToolTip();
@@ -300,20 +299,6 @@ namespace OSPSuite.UI.Views.Importer
          editor.Enabled = false;
       }
 
-      private void onMouseDown(object sender, MouseEventArgs mouseEventArgs)
-      {
-         if (mouseEventArgs.Button != MouseButtons.Right)
-            return;
-
-         if (!(sender is GridView mv))
-            return;
-
-         var menu = new GridViewColumnMenu(mv);
-         menu.Items.Clear();
-         menu.Items.Add(new DXMenuItem(Captions.Importer.ClearMapping, onClearMappingClick));
-         menu.Show(mouseEventArgs.Location);
-      }
-
       private static void clearSelectionOnDeleteForComboBoxEdit(object sender, KeyEventArgs e)
       {
          var comboBoxEdit = sender as ImageComboBoxEdit; //this actually comes from the column with the xes, so all good
@@ -323,11 +308,6 @@ namespace OSPSuite.UI.Views.Importer
 
          if (e.KeyCode == Keys.Delete)
             view.ActiveEditor.EditValue = Captions.Importer.NoneEditorNullText;
-      }
-
-      private void onClearMappingClick(object sender, EventArgs eventArgs)
-      {
-         _presenter.ClearMapping();
       }
    }
 
