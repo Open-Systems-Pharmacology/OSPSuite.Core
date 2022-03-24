@@ -230,7 +230,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _chartUpdater = chartUpdater;
          _eventPublisher = eventPublisher;
          _dimensionFactory = dimensionFactory;
-         _presentersWithColumnSettings = new List<IPresenterWithColumnSettings> {_dataBrowserPresenter, _curveSettingsPresenter, _axisSettingsPresenter};
+         _presentersWithColumnSettings = new List<IPresenterWithColumnSettings>
+            { _dataBrowserPresenter, _curveSettingsPresenter, _axisSettingsPresenter };
          initPresentersWithColumnSettings();
 
          _dataBrowserPresenter.UsedChanged += (o, e) => onDataBrowserUsedChanged(e);
@@ -249,7 +250,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          _curveColorGroupingPresenter.ApplySelectedColorGrouping += (o, e) => onApplyColorGrouping(e.SelectedMetaData);
 
-         AddSubPresenters(axisSettingsPresenter, chartSettingsPresenter, chartExportSettingsPresenter, curveSettingsPresenter, dataBrowserPresenter, curveColorGroupingPresenter);
+         AddSubPresenters(axisSettingsPresenter, chartSettingsPresenter, chartExportSettingsPresenter, curveSettingsPresenter, dataBrowserPresenter,
+            curveColorGroupingPresenter);
 
          _view.SetAxisSettingsView(axisSettingsPresenter.View);
          _view.SetChartSettingsView(chartSettingsPresenter.View);
@@ -268,7 +270,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
             return new List<string>();
 
          var firstCurveMetaData = activeObservedDataList.First().ExtendedProperties.Keys.ToList();
-         var commonMetaData = firstCurveMetaData.Where(x => activeObservedDataList.All(observedData => observedData.ExtendedProperties.Keys.Contains(x))).ToList();
+         var commonMetaData = firstCurveMetaData
+            .Where(x => activeObservedDataList.All(observedData => observedData.ExtendedProperties.Keys.Contains(x))).ToList();
 
          return commonMetaData;
       }
@@ -300,7 +303,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          // we will group according to each criterion sequentially. the actual order of the criteria will not make a difference in the result.
          // we start with all the initial data repositories in one group. We will group them according to the first criterion resulting in x groups
          // then we will group each of the newly created groups with the next criterion and so on. 
-         var groupedDataRepositories = new List<IReadOnlyList<DataRepository>> {activeObservedDataList.ToList()};
+         var groupedDataRepositories = new List<IReadOnlyList<DataRepository>> { activeObservedDataList.ToList() };
          foreach (var groupingMetaData in groupingCriteria)
          {
             var tempGroupedList = new List<IReadOnlyList<DataRepository>>();
@@ -323,7 +326,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private IReadOnlyList<Curve> findCurvesCorrespondingToRepositoryList(IReadOnlyList<DataRepository> listOfDataRepositories)
       {
          var allColumnsInGroup = listOfDataRepositories.SelectMany(x => x.Columns).ToList();
-         return allColumnsInGroup.Select(column => Chart.FindCurveWithSameData(column.BaseGrid, column)).Where(existingCurve => existingCurve != null).ToList();
+         return allColumnsInGroup.Select(column => Chart.FindCurveWithSameData(column.BaseGrid, column)).Where(existingCurve => existingCurve != null)
+            .ToList();
       }
 
       private void initPresentersWithColumnSettings()
@@ -377,7 +381,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void ApplyAllColumnSettings() => _presentersWithColumnSettings.Each(x => x.ApplyAllColumnSettings());
 
-      public void ApplyColumnSettings(GridColumnSettings columnSettings) => _presentersWithColumnSettings.Each(x => x.ApplyColumnSettings(columnSettings));
+      public void ApplyColumnSettings(GridColumnSettings columnSettings) =>
+         _presentersWithColumnSettings.Each(x => x.ApplyColumnSettings(columnSettings));
 
       public void ShowCustomizationForm() => _view.ShowCustomizationForm();
 
@@ -535,16 +540,19 @@ namespace OSPSuite.Presentation.Presenters.Charts
          return settings;
       }
 
-      private void addSettingsFrom(IPresenterWithColumnSettings presenterWithColumnSettings, ChartEditorSettings settings, Func<ChartEditorSettings, Action<GridColumnSettings>> addAction)
+      private void addSettingsFrom(IPresenterWithColumnSettings presenterWithColumnSettings, ChartEditorSettings settings,
+         Func<ChartEditorSettings, Action<GridColumnSettings>> addAction)
       {
          presenterWithColumnSettings.AllColumnSettings.Each(x => addAction(settings)(new GridColumnSettings(x)));
       }
 
       public GridColumnSettings ColumnSettingsFor(BrowserColumns browserColumn) => _dataBrowserPresenter.ColumnSettings(browserColumn.ToString());
 
-      public GridColumnSettings ColumnSettingsFor(CurveOptionsColumns curveOptionsColumn) => _curveSettingsPresenter.ColumnSettings(curveOptionsColumn.ToString());
+      public GridColumnSettings ColumnSettingsFor(CurveOptionsColumns curveOptionsColumn) =>
+         _curveSettingsPresenter.ColumnSettings(curveOptionsColumn.ToString());
 
-      public GridColumnSettings ColumnSettingsFor(AxisOptionsColumns axisOptionsColumn) => _axisSettingsPresenter.ColumnSettings(axisOptionsColumn.ToString());
+      public GridColumnSettings ColumnSettingsFor(AxisOptionsColumns axisOptionsColumn) =>
+         _axisSettingsPresenter.ColumnSettings(axisOptionsColumn.ToString());
 
       public void SetDisplayQuantityPathDefinition(Func<DataColumn, PathElements> displayQuantityPathDefinition)
       {
@@ -599,12 +607,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private (bool exists, Curve curve) createAndConfigureCurve(DataColumn dataColumn, CurveOptions defaultCurveOptions)
       {
-         var curve = Chart.CreateCurve(dataColumn.BaseGrid, dataColumn, _curveNameDefinition(dataColumn), _dimensionFactory);
+         var curve = Chart.FindCurveWithSameData(dataColumn.BaseGrid, dataColumn);
+         if (curve != null)
+            return (exists:true, Chart.CurveBy(curve.Id));
 
-         if (Chart.HasCurve(curve.Id))
-            return (true, Chart.CurveBy(curve.Id));
-
-         return (false, curve);
+         curve = Chart.CreateCurve(dataColumn.BaseGrid, dataColumn, _curveNameDefinition(dataColumn), _dimensionFactory);
+         return (exists:false, curve);
       }
 
       private void addCurvesForColumns(IEnumerable<DataColumn> columns, CurveOptions defaultCurveOptions = null)

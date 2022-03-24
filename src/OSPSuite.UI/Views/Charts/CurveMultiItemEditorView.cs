@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using OSPSuite.Assets;
+﻿using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
@@ -17,7 +16,7 @@ namespace OSPSuite.UI.Views.Charts
       private readonly IFormatter<bool?> _boolFormatter = new BooleanYesNoFormatter();
       private readonly IFormatter<LineStyles?> _lineStylesFormatter = new LineStylesFormatter();
       private readonly IFormatter<Symbols?> _symbolsFormatter = new SymbolsFormatter();
-      private readonly ScreenBinder<SelectedCurveValues> _screenBinder = new ScreenBinder<SelectedCurveValues> {BindingMode = BindingMode.TwoWay};
+      private readonly ScreenBinder<SelectedCurveValues> _screenBinder = new ScreenBinder<SelectedCurveValues> { BindingMode = BindingMode.TwoWay };
 
       public CurveMultiItemEditorView()
       {
@@ -52,7 +51,6 @@ namespace OSPSuite.UI.Views.Charts
             .To(symbolComboBoxEdit)
             .WithValues(_presenter.AllSymbols)
             .WithFormat(_symbolsFormatter);
-         ;
 
          _screenBinder.Bind(x => x.Visible)
             .To(visibleComboBoxEdit)
@@ -64,7 +62,6 @@ namespace OSPSuite.UI.Views.Charts
             .WithValues(_presenter.AllBooleanOptions)
             .WithFormat(_boolFormatter);
       }
-
 
       public void AttachPresenter(ICurveMultiItemEditorPresenter presenter)
       {

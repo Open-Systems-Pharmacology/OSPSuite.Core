@@ -56,7 +56,7 @@ namespace OSPSuite.UI.Views.Charts
          _toolTipCreator = toolTipCreator;
          InitializeComponent();
 
-         _gridBinderCurves = new GridViewBinder<CurveDTO>(gridView) {BindingMode = BindingMode.TwoWay};
+         _gridBinderCurves = new GridViewBinder<CurveDTO>(gridView) { BindingMode = BindingMode.TwoWay };
 
          _interpolationModeRepository = new UxRepositoryItemComboBox(gridView);
          _lineStyleRepository = new UxRepositoryItemLineStyles(gridView);
@@ -87,7 +87,7 @@ namespace OSPSuite.UI.Views.Charts
       {
          _interpolationModeRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<InterpolationModes>());
          _interpolationModeRepository.TextEditStyle = TextEditStyles.DisableTextEditor;
-         _lineThicknessRepository.FillComboBoxRepositoryWith(new[] {1, 2, 3});
+         _lineThicknessRepository.FillComboBoxRepositoryWith(new[] { 1, 2, 3 });
          _axisTypeRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<AxisTypes>());
          _axisTypeRepository.Items.Remove(AxisTypes.X);
 
@@ -131,7 +131,8 @@ namespace OSPSuite.UI.Views.Charts
             .WithFixedWidth(UIConstants.Size.EMBEDDED_BUTTON_WIDTH);
       }
 
-      private IGridViewAutoBindColumn<CurveDTO, T> createFor<T>(Expression<Func<CurveDTO, T>> propertyToBindTo, CurveOptionsColumns curveOptionsColumn, RepositoryItem repositoryItem = null, bool showInColumnChooser = true)
+      private IGridViewAutoBindColumn<CurveDTO, T> createFor<T>(Expression<Func<CurveDTO, T>> propertyToBindTo,
+         CurveOptionsColumns curveOptionsColumn, RepositoryItem repositoryItem = null, bool showInColumnChooser = true)
       {
          var column = _gridBinderCurves.AutoBind(propertyToBindTo)
             .WithShowInColumnChooser(showInColumnChooser)
@@ -278,7 +279,7 @@ namespace OSPSuite.UI.Views.Charts
       {
          var dragSize = SystemInformation.DragSize;
          return new Rectangle(new Point(_downHitInfo.HitPoint.X - dragSize.Width / 2,
-                                        _downHitInfo.HitPoint.Y - dragSize.Height / 2), dragSize);
+            _downHitInfo.HitPoint.Y - dragSize.Height / 2), dragSize);
       }
 
       private bool hitInColorCell(GridHitInfo hitInfo)
@@ -342,7 +343,6 @@ namespace OSPSuite.UI.Views.Charts
 
             else if (hitInYColumn(hitInfo))
                _presenter.SetCurveYData(curve, column);
-
          }
          else if (hitInfo.HitTest == GridHitTest.EmptyRow)
          {
@@ -407,10 +407,11 @@ namespace OSPSuite.UI.Views.Charts
 
       private List<CurveDTO> getSelectedCurveDTOs()
       {
+         var selectedRows = gridView.GetSelectedRows();
          var selectedCurveList = new List<CurveDTO>();
          for (var i = 0; i < gridView.SelectedRowsCount; i++)
          {
-            var row = (gridView.GetSelectedRows()[i]);
+            var row = (selectedRows[i]);
             var selectedCurveDTO = gridView.GetRow(row) as CurveDTO;
             if (selectedCurveDTO == null) continue;
             selectedCurveList.Add(selectedCurveDTO);

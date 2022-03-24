@@ -1,5 +1,6 @@
 ﻿using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Services;
 using OSPSuite.Utility.Format;
 
 namespace OSPSuite.Presentation.Formatters
@@ -11,7 +12,7 @@ namespace OSPSuite.Presentation.Formatters
          if (valueToFormat == null)
             return Captions.Chart.MultiCurveOptions.CurrentValue;
 
-         return  valueToFormat.Value ? "Yes" : "No";
+         return valueToFormat.Value ? Captions.Yes : Captions.No;
       }
    }
 
@@ -22,7 +23,7 @@ namespace OSPSuite.Presentation.Formatters
          if (valueToFormat == null)
             return Captions.Chart.MultiCurveOptions.CurrentValue;
 
-         return  valueToFormat.Value.ToString();
+         return valueToFormat.Value.ToString();
       }
    }
 

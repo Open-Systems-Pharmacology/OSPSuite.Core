@@ -26,12 +26,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void ApplyColorGroupingButtonClicked(IReadOnlyList<string> selectedMetaData);
    }
 
-   public class CurveColorGroupingPresenter : AbstractDisposablePresenter<ICurveColorGroupingView, ICurveColorGroupingPresenter>, ICurveColorGroupingPresenter
+   public class CurveColorGroupingPresenter : AbstractDisposablePresenter<ICurveColorGroupingView, ICurveColorGroupingPresenter>,
+      ICurveColorGroupingPresenter
    {
       public event EventHandler<CurveColorGroupingEventArgs> ApplySelectedColorGrouping = delegate { };
+
       void ICurveColorGroupingPresenter.ApplyColorGroupingButtonClicked(IReadOnlyList<string> selectedMetaData)
       {
-         ApplySelectedColorGrouping.Invoke(this, new CurveColorGroupingEventArgs(selectedMetaData));
+         ApplySelectedColorGrouping(this, new CurveColorGroupingEventArgs(selectedMetaData));
       }
 
       public CurveColorGroupingPresenter(ICurveColorGroupingView view) : base(view)

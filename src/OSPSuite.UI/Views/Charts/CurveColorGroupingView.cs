@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Extensions;
@@ -18,7 +17,7 @@ namespace OSPSuite.UI.Views.Charts
          InitializeComponent();
          colorGroupingDescriptionLabelControl.Text = Captions.Chart.ColorGrouping.ColorGroupingDialogDescription.FormatForLabel();
          applyColorGroupingButton.Text = Captions.Chart.ColorGrouping.ApplyColorGroupingButton;
-         applyColorGroupingButton.Click += (s, a) => OnEvent(onApplyColorGroupingButtonClicked, s, a);
+         applyColorGroupingButton.Click += (o, e) => OnEvent(onApplyColorGroupingButtonClicked);
       }
 
       public void AttachPresenter(ICurveColorGroupingPresenter presenter)
@@ -40,7 +39,7 @@ namespace OSPSuite.UI.Views.Charts
          return metaDataCheckedListBoxControl.CheckedIndices.Select(index => metaDataCheckedListBoxControl.GetItemText(index)).ToList();
       }
 
-      private void onApplyColorGroupingButtonClicked(object sender, EventArgs eventArgs)
+      private void onApplyColorGroupingButtonClicked()
       {
          _presenter.ApplyColorGroupingButtonClicked(getSelectedItems());
       }
