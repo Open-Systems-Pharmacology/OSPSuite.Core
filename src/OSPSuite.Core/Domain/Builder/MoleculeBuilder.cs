@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Builder
 {
@@ -84,70 +84,34 @@ namespace OSPSuite.Core.Domain.Builder
          QuantityType = QuantityType.Undefined;
       }
 
-      public void AddParameter(IParameter parameter)
-      {
-         Add(parameter);
-      }
+      public void AddParameter(IParameter parameter) => Add(parameter);
 
-      public void RemoveParameter(IParameter parameterToRemove)
-      {
-         RemoveChild(parameterToRemove);
-      }
+      public void RemoveParameter(IParameter parameterToRemove) => RemoveChild(parameterToRemove);
 
-      public IEnumerable<IParameter> Parameters
-      {
-         get { return GetChildren<IParameter>(); }
-      }
+      public IEnumerable<IParameter> Parameters => GetChildren<IParameter>();
 
-      public IEnumerable<TransporterMoleculeContainer> TransporterMoleculeContainerCollection
-      {
-         get { return GetChildren<TransporterMoleculeContainer>(); }
-      }
+      public IEnumerable<TransporterMoleculeContainer> TransporterMoleculeContainerCollection => GetChildren<TransporterMoleculeContainer>();
 
-      public void AddTransporterMoleculeContainer(TransporterMoleculeContainer transporterMolecule)
-      {
-         Add(transporterMolecule);
-      }
+      public void AddTransporterMoleculeContainer(TransporterMoleculeContainer transporterMolecule) => Add(transporterMolecule);
 
-      public void RemoveTransporterMoleculeContainer(TransporterMoleculeContainer transporterMoleculeToRemove)
-      {
-         RemoveChild(transporterMoleculeToRemove);
-      }
+      public void RemoveTransporterMoleculeContainer(TransporterMoleculeContainer transporterMoleculeToRemove) => RemoveChild(transporterMoleculeToRemove);
 
-      public IEnumerable<InteractionContainer> InteractionContainerCollection
-      {
-         get { return GetChildren<InteractionContainer>(); }
-      }
+      public IEnumerable<InteractionContainer> InteractionContainerCollection => GetChildren<InteractionContainer>();
 
-      public void AddInteractionContainer(InteractionContainer interactionContainer)
-      {
-         Add(interactionContainer);
-      }
+      public void AddInteractionContainer(InteractionContainer interactionContainer) => Add(interactionContainer);
 
-      public void RemoveInteractionContainer(InteractionContainer interactionContainer)
-      {
-         RemoveChild(interactionContainer);
-      }
+      public void RemoveInteractionContainer(InteractionContainer interactionContainer) => RemoveChild(interactionContainer);
 
-      public void AddUsedCalculationMethod(UsedCalculationMethod calculationMethod)
-      {
-         _usedCalculationMethods.Add(calculationMethod);
-      }
+      public void AddUsedCalculationMethod(UsedCalculationMethod calculationMethod) => _usedCalculationMethods.Add(calculationMethod);
 
       public void AddUsedCalculationMethod(ICoreCalculationMethod calculationMethod)
       {
          AddUsedCalculationMethod(new UsedCalculationMethod(calculationMethod.Category, calculationMethod.Name));
       }
 
-      public IEnumerable<UsedCalculationMethod> UsedCalculationMethods
-      {
-         get { return _usedCalculationMethods; }
-      }
+      public IEnumerable<UsedCalculationMethod> UsedCalculationMethods => _usedCalculationMethods;
 
-      public bool IsFloatingXenobiotic
-      {
-         get { return IsFloating && IsXenobiotic; }
-      }
+      public bool IsFloatingXenobiotic => IsFloating && IsXenobiotic;
 
       public double? GetDefaultMoleculeStartValue()
       {
@@ -177,18 +141,8 @@ namespace OSPSuite.Core.Domain.Builder
 
       public virtual Unit DisplayUnit
       {
-         get
-         {
-            if (_displayUnit != null)
-               return _displayUnit;
-
-            return Dimension != null ? Dimension.DefaultUnit : null;
-         }
-         set
-         {
-            _displayUnit = value;
-            OnPropertyChanged(() => DisplayUnit);
-         }
+         get => _displayUnit ?? Dimension?.DefaultUnit;
+         set => SetProperty(ref _displayUnit, value);
       }
    }
 }

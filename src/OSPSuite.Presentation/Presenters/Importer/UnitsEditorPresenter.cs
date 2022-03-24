@@ -10,15 +10,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
 {
    public class UnitsEditorPresenter : AbstractDisposablePresenter<IUnitsEditorView, IUnitsEditorPresenter>, IUnitsEditorPresenter
    {
-      private Column _importDataColumn;
       private IReadOnlyList<IDimension> _dimensions;
-      private string _selectedUnit;
       private string _selectedColumn;
       public IDimension Dimension { get; private set; }
 
       private bool _columnMapping;
 
-      public UnitDescription Unit => new UnitDescription(_selectedUnit, _selectedColumn);
+      public UnitDescription Unit => new UnitDescription(_view.SelectedUnit, _selectedColumn);
 
       public UnitsEditorPresenter(IUnitsEditorView view) : base(view)
       {
@@ -26,7 +24,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetOptions(Column importDataColumn, IReadOnlyList<IDimension> dimensions, IEnumerable<string> availableColumns)
       {
-         _importDataColumn = importDataColumn;
          _dimensions = dimensions;
 
          _columnMapping = !importDataColumn.Unit.ColumnName.IsNullOrEmpty();
@@ -34,11 +31,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (Dimension != null && !_dimensions.Contains(Dimension))
             Dimension = _dimensions.FirstOrDefault();
 
-         _selectedUnit = importDataColumn.Unit.SelectedUnit;
          FillDimensions(importDataColumn.Unit.SelectedUnit);
 
          View.FillColumnComboBox(availableColumns);
          View.SetParams(_columnMapping, useDimensionSelector);
+         if (!_columnMapping)
+            View.SelectedUnit = importDataColumn.Unit.SelectedUnit;
       }
 
       public void SelectDimension(string dimensionName)
@@ -50,11 +48,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
                         Constants.Dimension.NO_DIMENSION;
             //checking whether _selectedUnit is not supported by the current dimension, meaning that the user 
             //has selected a new dimension and the unit must be reset to the default unit of this dimension
-            if (_selectedUnit == null || !Dimension.HasUnit(_selectedUnit))
-               _selectedUnit = Dimension.DefaultUnitName;
-            
-            SetUnit();
-            fillUnits(_selectedUnit);
+            if (_view.SelectedUnit == null || !Dimension.HasUnit(_view.SelectedUnit))
+               fillUnits(Dimension.DefaultUnitName);
          });
       }
 
@@ -88,7 +83,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             _columnMapping = false;
             _selectedColumn = null;
-            _selectedUnit = unit;
+            _view.SelectedUnit = unit;
          });
       }
 
@@ -108,15 +103,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          if (Dimension != null)
             View.FillUnitComboBox(Dimension.Units, selectedUnit);
-      }
-
-      public void SetUnit()
-      {
-         this.DoWithinExceptionHandler(() =>
-         {
-            _importDataColumn.Unit = new UnitDescription(_selectedUnit);
-            _importDataColumn.Dimension = Dimension;
-         });
       }
    }
 }

@@ -22,7 +22,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    public abstract class ConcernforDataFormat_Nonmem : ContextSpecification<DataFormatNonmem>
    {
       protected IUnformattedData _basicFormat;
-      protected IReadOnlyList<ColumnInfo> _columnInfos;
+      protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected Cache<string, ColumnDescription> _headersCache;
       protected string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
@@ -30,7 +30,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       protected override void Context()
       {
-         _columnInfos = new List<ColumnInfo>()
+         _columnInfos = new ColumnInfoCache
          {
             new ColumnInfo() { DisplayName = "Time", IsMandatory = true },
             new ColumnInfo() { DisplayName = "Concentration", IsMandatory = true },

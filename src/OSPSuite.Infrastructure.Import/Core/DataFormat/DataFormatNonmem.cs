@@ -28,6 +28,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
       {
+         if (data == null)
+            return new UnitDescription();
+
          var unitKey = data.GetHeaders().FindHeader(description + "_UNIT");
          if (unitKey == null)
          {

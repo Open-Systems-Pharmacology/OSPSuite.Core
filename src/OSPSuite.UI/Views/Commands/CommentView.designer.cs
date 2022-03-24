@@ -34,13 +34,6 @@
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
          this.tbComments = new DevExpress.XtraEditors.MemoEdit();
          this.layoutItemComments = new DevExpress.XtraLayout.LayoutControlItem();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).BeginInit();
-         this.layoutControlBase.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroupBase)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemOK)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemCancel)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItemBase)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemExtra)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
@@ -49,9 +42,6 @@
          ((System.ComponentModel.ISupportInitialize)(this.tbComments.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemComments)).BeginInit();
          this.SuspendLayout();
-         this.layoutControlBase.Controls.SetChildIndex(this.btnCancel, 0);
-         this.layoutControlBase.Controls.SetChildIndex(this.btnOk, 0);
-         this.layoutControlBase.Controls.SetChildIndex(this.btnExtra, 0);
          // 
          // layoutControl
          // 
@@ -122,15 +112,7 @@
          this.Controls.Add(this.layoutControl);
          this.Name = "CommentView";
          this.Text = "CommentView";
-         this.Controls.SetChildIndex(this.layoutControlBase, 0);
          this.Controls.SetChildIndex(this.layoutControl, 0);
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).EndInit();
-         this.layoutControlBase.ResumeLayout(false);
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroupBase)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemOK)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemCancel)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItemBase)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemExtra)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
          this.layoutControl.ResumeLayout(false);

@@ -11,6 +11,7 @@ using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Starter.Tasks;
 using OSPSuite.Starter.Views;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
@@ -116,7 +117,7 @@ namespace OSPSuite.Starter.Presenters
             _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
             (
                configuration,
-               (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories(),
+               _dataImporter.DefaultMetaDataCategoriesForObservedData(),
                _dataImporter.ColumnInfosForObservedData(),
                dataImporterSettings,
                _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
@@ -149,7 +150,7 @@ namespace OSPSuite.Starter.Presenters
             _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
             (
                configuration,
-               (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories(),
+               (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategoriesForObservedData(),
                _dataImporter.ColumnInfosForObservedData(),
                dataImporterSettings,
                _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
@@ -162,7 +163,7 @@ namespace OSPSuite.Starter.Presenters
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         var metaDataCategories = _dataImporter.DefaultMetaDataCategories().ToList();
+         var metaDataCategories = _dataImporter.DefaultMetaDataCategoriesForObservedData().ToList();
          _dataGenerator.AddMoleculeValuesToMetaDataList(metaDataCategories);
          _dataGenerator.AddOrganValuesToMetaDataList(metaDataCategories);
          StartImporterExcelView
@@ -178,7 +179,7 @@ namespace OSPSuite.Starter.Presenters
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         var metaDataCategories = _dataImporter.DefaultMetaDataCategories().ToList();
+         var metaDataCategories = _dataImporter.DefaultMetaDataCategoriesForObservedData().ToList();
          _dataGenerator.AddMoleculeValuesToMetaDataList(metaDataCategories);
          StartImporterExcelView(
             metaDataCategories,

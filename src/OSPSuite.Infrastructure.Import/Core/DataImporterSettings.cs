@@ -16,6 +16,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       private string _token;
       private string _delimiter;
 
+      public bool CheckMolWeightAgainstMolecule { get; set; }
       public string NameOfMetaDataHoldingMoleculeInformation { get; set; }
 
       public string NameOfMetaDataHoldingMolecularWeightInformation { get; set; }

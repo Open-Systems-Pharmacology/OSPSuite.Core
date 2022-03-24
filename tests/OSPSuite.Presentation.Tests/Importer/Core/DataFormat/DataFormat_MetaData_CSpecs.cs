@@ -17,7 +17,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    public abstract class ConcernforDataFormat_DataFormatHeadersWithUnits : ContextSpecification<DataFormatHeadersWithUnits>
    {
       protected IUnformattedData _basicFormat;
-      protected IReadOnlyList<ColumnInfo> _columnInfos;
+      protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected IDimension _fakedTimeDimension;
       protected IDimension _fakedConcentrationDimension;
@@ -29,16 +29,16 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          _fakedConcentrationDimension = A.Fake<IDimension>();
          _fakedErrorDimension = A.Fake<IDimension>();
 
-         _columnInfos = new List<ColumnInfo>()
+         _columnInfos = new ColumnInfoCache
          {
             new ColumnInfo() { DisplayName = "Time", Name = "Time", IsMandatory = true },
             new ColumnInfo() { DisplayName = "Concentration", Name = "Concentration", IsMandatory = true },
             new ColumnInfo() { DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration" }
          };
 
-         _columnInfos.First(x => x.Name == "Time").SupportedDimensions.Add(_fakedTimeDimension);
-         _columnInfos.First(x => x.Name == "Concentration").SupportedDimensions.Add(_fakedConcentrationDimension);
-         _columnInfos.First(x => x.Name == "Error").SupportedDimensions.Add(_fakedErrorDimension);
+         _columnInfos["Time"].SupportedDimensions.Add(_fakedTimeDimension);
+         _columnInfos["Concentration"].SupportedDimensions.Add(_fakedConcentrationDimension);
+         _columnInfos["Error"].SupportedDimensions.Add(_fakedErrorDimension);
          _metaDataCategories = new List<MetaDataCategory>()
          {
             new MetaDataCategory() { Name = "Organ" },
@@ -339,40 +339,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             _columnInfos
          ).ToList();
          data.Count.ShouldBeEqualTo(1);
-      }
-   }
-
-   public class When_parsing_format_with_measurement_units_but_without_error_units : ConcernforDataFormat_DataFormatHeadersWithUnits
-   {
-      private IUnformattedData _mockedData;
-
-      protected override void Context()
-      {
-         base.Context();
-         _mockedData = A.Fake<IUnformattedData>();
-         var headers = _basicFormat.GetHeaders().ToList();
-         headers.Remove("Error [pmol/l]");
-         headers.Add("Error");
-         A.CallTo(() => _mockedData.GetHeaders()).Returns(headers);
-         A.CallTo(() => _mockedData.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => {
-            var param = columnName.Arguments[0].ToString();
-            if (param == "Error")
-               return _basicFormat.GetColumnDescription("Error [pmol/l]");
-            return _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString());
-         });
-      }
-
-      protected override void Because()
-      {
-         sut.SetParameters(_mockedData, _columnInfos, _metaDataCategories);
-      }
-
-      [TestCase]
-      public void initialize_error_unit_from_measurement_unit()
-      {
-         sut.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => p.MappedColumn.Name == "Error").MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo(
-            sut.Parameters.OfType<MappingDataFormatParameter>().FirstOrDefault(p => p.MappedColumn.Name == "Concentration").MappedColumn.Unit.SelectedUnit
-         );
       }
    }
 }

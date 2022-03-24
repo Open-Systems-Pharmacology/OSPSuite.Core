@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using DevExpress.XtraEditors;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Starter.Bootstrapping;
@@ -21,7 +22,7 @@ namespace OSPSuite.Starter
          Application.EnableVisualStyles();
          Application.SetCompatibleTextRenderingDefault(false);
          ApplicationStartup.Initialize();
-
+         WindowsFormsSettings.SetDPIAware();
          Application.Run(IoC.Resolve<ITestPresenter>().View as Form);
       }
    }

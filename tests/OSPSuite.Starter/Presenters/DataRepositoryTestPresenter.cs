@@ -87,7 +87,7 @@ namespace OSPSuite.Starter.Presenters
       }
 
       public IReadOnlyList<string> ReadOnlyMetaDataCategories => emptyList();
-      public bool MolWeightEditable => true;
+      public bool MolWeightAlwaysEditable => true;
       public bool MolWeightVisible => true;
    }
 }

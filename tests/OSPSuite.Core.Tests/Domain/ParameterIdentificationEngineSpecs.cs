@@ -19,14 +19,12 @@ namespace OSPSuite.Core.Domain
       protected ParameterIdentification _parameterIdentification;
       protected IParameterIdentificationRunFactory _parameterIdentificationRunFactory;
       protected ICoreUserSettings _coreUserSettings;
-      protected IConcurrencyManager _concurrencyManager;
 
       protected override void Context()
       {
          _eventPublisher = A.Fake<IEventPublisher>();
          _parameterIdentificationRunFactory = A.Fake<IParameterIdentificationRunFactory>();
          _parameterIdentification = new ParameterIdentification().WithId("PI");
-         _concurrencyManager = new ConcurrencyManager();
          _coreUserSettings= A.Fake<ICoreUserSettings>();
          A.CallTo(() => _coreUserSettings.MaximumNumberOfCoresToUse).Returns(2);
          sut = new ParameterIdentificationEngine(_eventPublisher, _parameterIdentificationRunFactory, _coreUserSettings);

@@ -6,6 +6,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 
@@ -308,7 +309,7 @@ namespace OSPSuite.Starter.Tasks
 
          columnInfos.Add(createConcentrationColumn(timeColumn));
 
-         var categoryColum = new ColumnInfo
+         var categoryColumn = new ColumnInfo
          {
             IsMandatory = false,
             BaseGridName = timeColumn.Name,
@@ -316,8 +317,8 @@ namespace OSPSuite.Starter.Tasks
             Name = "Category",
             DisplayName = "Categorie of Experiment",
          };
-         categoryColum.SupportedDimensions.Add(_dimensionFactory.Dimension("Dimensionless"));
-         columnInfos.Add(categoryColum);
+         categoryColumn.SupportedDimensions.Add(_dimensionFactory.Dimension("Dimensionless"));
+         columnInfos.Add(categoryColumn);
 
          var dateCategory = new ColumnInfo
          {

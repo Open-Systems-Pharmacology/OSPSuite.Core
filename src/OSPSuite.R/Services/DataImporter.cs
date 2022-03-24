@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -40,7 +41,7 @@ namespace OSPSuite.R.Services
  
 
       public override (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
-         IReadOnlyList<MetaDataCategory> metaDataCategories, 
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
          IReadOnlyList<ColumnInfo> columnInfos, 
          DataImporterSettings dataImporterSettings,
          string dataFileName)
@@ -58,8 +59,8 @@ namespace OSPSuite.R.Services
          if (string.IsNullOrEmpty(dataFileName) || !File.Exists(dataFileName))
             throw new OSPSuiteException(Error.InvalidFile);
 
-
-         var importedData = _importer.ImportFromConfiguration(configuration, columnInfos, dataFileName, metaDataCategories, dataImporterSettings);
+         var columnInfoCache = new ColumnInfoCache(columnInfos);
+         var importedData = _importer.ImportFromConfiguration(configuration, columnInfoCache, dataFileName, metaDataCategories, dataImporterSettings);
          if (importedData.MissingSheets.Count != 0)
             _logger.AddWarning(Captions.Importer.SheetsNotFound(importedData.MissingSheets));
          return importedData.DataRepositories.Select(drm => drm.DataRepository).ToList();

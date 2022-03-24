@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using FakeItEasy;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Data;
@@ -38,6 +39,29 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          _result.ShouldNotBeNull();
          _result.Count.ShouldBeEqualTo(0);
+      }
+   }
+
+   public class When_starting_the_modal_presenter_and_the_user_imports : concern_for_ModalImporterPresenter
+   {
+      private IReadOnlyList<DataRepository> _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _presenter.SetSourceFile(A<string>.Ignored)).Returns(true);
+      }
+
+      protected override void Because()
+      {
+         (_result, _) = sut.ImportDataSets(null, null, null, "some file");
+         _presenter.OnTriggerImport += Raise.With(null, new ImportTriggeredEventArgs());
+      }
+
+      [Observation]
+      public void should_not_prompt_user_for_close()
+      {
+         A.CallTo(() => _dialogCreator.MessageBoxYesNo(Captions.ReallyCancel, ViewResult.Yes)).MustNotHaveHappened();
       }
    }
 }

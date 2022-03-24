@@ -680,6 +680,7 @@ namespace OSPSuite.Core.Helpers
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualQuantity(x1, x2);
          AreEqualFormula(x1.RHSFormula, x2.RHSFormula);
+         AreEqualDescriptorCriteria(x1.ContainerCriteria, x2.ContainerCriteria);
          Assert.AreEqual(x1.CanBeVaried, x2.CanBeVaried);
          Assert.AreEqual(x1.BuildingBlockType, x2.BuildingBlockType);
          Assert.AreEqual(x1.GroupName, x2.GroupName);
@@ -740,6 +741,7 @@ namespace OSPSuite.Core.Helpers
       {
          if (!AssertBothNotNull(x1, x2)) return;
          Assert.AreEqual(x1.Count, x2.Count);
+         Assert.AreEqual(x1.Operator, x2.Operator);
          foreach (var dc1 in x2)
          {
             Assert.IsTrue(x1.Contains(dc1));

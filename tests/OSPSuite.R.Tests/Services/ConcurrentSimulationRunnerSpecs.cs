@@ -21,7 +21,7 @@ namespace OSPSuite.R.Services
       {
          base.GlobalContext();
          _simulationPersister = Api.GetSimulationPersister();
-         _concurrencyManager = new ConcurrencyManager();
+         _concurrencyManager = Api.Container.Resolve<IConcurrencyManager>();
          sut = new ConcurrentSimulationRunner(_concurrencyManager);
       }
    }
@@ -104,10 +104,11 @@ namespace OSPSuite.R.Services
             InitialValues = new[] {10.5},
             ParameterValues = new[] {3.6, 0.55}
          });
-         _ids.Add(_concurrentRunSimulationBatch.AddSimulationBatchRunValues(_simulationBatchRunValues[0]));
-         _ids.Add(_concurrentRunSimulationBatch.AddSimulationBatchRunValues(_simulationBatchRunValues[1]));
-         _ids.Add(_concurrentRunSimulationBatch.AddSimulationBatchRunValues(_simulationBatchRunValues[2]));
+         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(_simulationBatchRunValues[0]);
+         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(_simulationBatchRunValues[1]);
+         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(_simulationBatchRunValues[2]);
 
+         _ids.AddRange(_concurrentRunSimulationBatch.SimulationBatchRunValues.Select(x => x.Id));
          _results = sut.RunConcurrently();
       }
 
@@ -183,6 +184,8 @@ namespace OSPSuite.R.Services
       private Simulation _simulation;
       private ConcurrentRunSimulationBatch _simulationBatch1;
       private SimulationBatchRunValues _parValues1;
+      private SimulationBatchRunValues _parValues2;
+      private SimulationBatchRunValues _parValues3;
       private ConcurrentRunSimulationBatch _simulationBatch2;
       private ConcurrentRunSimulationBatch _simulationBatch3;
 
@@ -235,11 +238,18 @@ namespace OSPSuite.R.Services
          {
             ParameterValues = new[] {3.5, 0.53}
          };
-
+         _parValues2 = new SimulationBatchRunValues
+         {
+            ParameterValues = new[] {3.5, 0.53}
+         };
+         _parValues3 = new SimulationBatchRunValues
+         {
+            ParameterValues = new[] {3.5, 0.53}
+         };
 
          _simulationBatch1.AddSimulationBatchRunValues(_parValues1);
-         _simulationBatch2.AddSimulationBatchRunValues(_parValues1);
-         _simulationBatch3.AddSimulationBatchRunValues(_parValues1);
+         _simulationBatch2.AddSimulationBatchRunValues(_parValues2);
+         _simulationBatch3.AddSimulationBatchRunValues(_parValues3);
          sut.AddSimulationBatch(_simulationBatch1);
          sut.AddSimulationBatch(_simulationBatch2);
          sut.AddSimulationBatch(_simulationBatch3);
@@ -312,7 +322,7 @@ namespace OSPSuite.R.Services
          base.GlobalContext();
          _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("sc_model_2c.pkml"));
          _simulationRunner = Api.GetSimulationRunner();
-        
+
          _containerTask = Api.GetContainerTask();
          _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Mass_balance_observer");
          _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Stratum_corneum_observer");
@@ -352,7 +362,7 @@ namespace OSPSuite.R.Services
          var asyncRes = res[0].Result;
          _containerTask.SetValueByPath(_simulation, "DERMAL_APPLICATION_AREA|skin_compartment|SC_skin_sublayer|SC_total_thickness", 0.0002, throwIfNotFound: true);
          _containerTask.SetValueByPath(_simulation, "DERMAL_APPLICATION_AREA|skin_compartment|Hydrated SC", 1, throwIfNotFound: true);
-         var expectedResults = _simulationRunner.Run(new SimulationRunArgs { Simulation = _simulation });
+         var expectedResults = _simulationRunner.Run(new SimulationRunArgs {Simulation = _simulation});
          res[0].Succeeded.ShouldBeTrue();
          asyncRes.Count.ShouldBeEqualTo(1);
          asyncRes.AllValuesFor("DERMAL_APPLICATION_AREA|permeant|Vehicle_observer").Last().ShouldBeEqualTo(
@@ -397,7 +407,7 @@ namespace OSPSuite.R.Services
          {
             ParameterValues = new[]
             {
-               0.0002,1
+               0.0002, 1
             }
          };
 
@@ -413,7 +423,7 @@ namespace OSPSuite.R.Services
          var asyncRes = res[0].Result;
          _containerTask.SetValueByPath(_simulation, "DERMAL_APPLICATION_AREA|skin_compartment|SC_skin_sublayer|SC_total_thickness", 0.0002, throwIfNotFound: true);
          _containerTask.SetValueByPath(_simulation, "DERMAL_APPLICATION_AREA|skin_compartment|Hydrated SC", 1, throwIfNotFound: true);
-         var expectedResults = _simulationRunner.Run(new SimulationRunArgs { Simulation = _simulation });
+         var expectedResults = _simulationRunner.Run(new SimulationRunArgs {Simulation = _simulation});
          res[0].Succeeded.ShouldBeTrue();
          asyncRes.Count.ShouldBeEqualTo(1);
          asyncRes.AllValuesFor("DERMAL_APPLICATION_AREA|permeant|Vehicle_observer").Last().ShouldBeEqualTo(

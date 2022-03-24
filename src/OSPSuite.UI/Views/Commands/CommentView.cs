@@ -23,7 +23,12 @@ namespace OSPSuite.UI.Views.Commands
       {
          base.InitializeBinding();
          _screenBinder.Bind(historyItem => historyItem.Comment).To(tbComments);
-         btnCancel.Click += (o, e) => _screenBinder.Reset();
+      }
+
+      protected override void CancelClicked()
+      {
+         base.CancelClicked();
+         _screenBinder.Reset();
       }
 
       public void BindTo(IHistoryItemDTO historyItemDTO)
@@ -41,7 +46,7 @@ namespace OSPSuite.UI.Views.Commands
 
       public string CommandDescription
       {
-         set { lblCommandDescription.Text = value; }
+         set => lblCommandDescription.Text = value;
       }
 
       public void AttachPresenter(ICommentPresenter presenter)

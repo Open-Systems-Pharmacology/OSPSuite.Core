@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
@@ -9,15 +10,16 @@ using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Presenters.Importer
-{ 
+{
    public class ImporterDataPresenter : AbstractPresenter<IImporterDataView, IImporterDataPresenter>, IImporterDataPresenter
    {
       private readonly IImporter _importer;
       private IDataSourceFile _dataSourceFile;
-      private IReadOnlyList<ColumnInfo> _columnInfos;
+      private ColumnInfoCache _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly Cache<string, DataTable> _sheetsForViewing;
       private string _currentSheetName;
+      private Cache<string, IDataSet> _lastLoadedDataSets = new Cache<string, IDataSet>();
       public Cache<string, DataSheet> Sheets { get; set; }
 
       public event EventHandler<FormatChangedEventArgs> OnFormatChanged = delegate { };
@@ -26,10 +28,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public event EventHandler<ImportSheetsEventArgs> OnImportSheets = delegate { };
       public event EventHandler<EventArgs> OnDataChanged = delegate { };
 
-      public ImporterDataPresenter
-      (
-         IImporterDataView dataView,
-         IImporter importer) : base(dataView)
+      public ImporterDataPresenter(IImporterDataView dataView, IImporter importer) : base(dataView)
       {
          _importer = importer;
          _sheetsForViewing = new Cache<string, DataTable>();
@@ -41,34 +40,37 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          return _dataSourceFile.DataSheets.Keys.ToList();
       }
+
       public DataTable GetSheet(string tabName)
       {
          return _sheetsForViewing.Contains(tabName) ? _sheetsForViewing[tabName] : new DataTable();
       }
+
       public void ImportDataForConfirmation()
       {
          var sheets = new Cache<string, DataSheet>();
          foreach (var element in _dataSourceFile.DataSheets.KeyValues)
          {
-            if (Sheets.Keys.Contains(element.Key)) 
+            if (Sheets.Keys.Contains(element.Key))
                continue;
 
             Sheets.Add(element.Key, element.Value);
             sheets.Add(element.Key, element.Value);
          }
 
-         if (sheets.Count == 0) 
+         if (sheets.Count == 0)
             return;
 
-         OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets, Filter = GetActiveFilterCriteria() });
+         OnImportSheets.Invoke(this,
+            new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets, Filter = GetActiveFilterCriteria() });
       }
 
-      public void onMissingMapping()
+      public void OnMissingMapping()
       {
          View.DisableImportButtons();
       }
 
-      public void onCompletedMapping()
+      public void OnCompletedMapping()
       {
          View.EnableImportButtons();
       }
@@ -81,15 +83,17 @@ namespace OSPSuite.Presentation.Presenters.Importer
             Sheets.Add(sheetName, getSingleSheet(sheetName));
             sheets.Add(sheetName, getSingleSheet(sheetName));
          }
-         if (sheets.Count == 0) 
+
+         if (sheets.Count == 0)
             return;
 
-         OnImportSheets.Invoke(this, new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets, Filter = GetActiveFilterCriteria()});
+         OnImportSheets.Invoke(this,
+            new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, Sheets = sheets, Filter = GetActiveFilterCriteria() });
       }
 
       public string GetFilter()
       {
-         return  _view.GetFilter();
+         return _view.GetFilter();
       }
 
       public void TriggerOnDataChanged()
@@ -97,9 +101,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          OnDataChanged.Invoke(this, null);
       }
 
-      public void SetFilter(string FilterString)
+      public void SetFilter(string filterString)
       {
-         _view.SetFilter(FilterString);
+         _view.SetFilter(filterString);
       }
 
       private DataSheet getSingleSheet(string sheetName)
@@ -109,10 +113,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
       {
-         OnFormatChanged.Invoke(this, new FormatChangedEventArgs() {Format = format});
+         OnFormatChanged.Invoke(this, new FormatChangedEventArgs() { Format = format });
       }
 
-      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos)
+      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, ColumnInfoCache columnInfos)
       {
          _columnInfos = columnInfos;
          _metaDataCategories = metaDataCategories;
@@ -120,13 +124,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public IDataSourceFile SetDataSource(string dataSourceFileName)
       {
-         if (string.IsNullOrEmpty(dataSourceFileName)) return null;
+         if (string.IsNullOrEmpty(dataSourceFileName))
+            return null;
+
          Sheets = new Cache<string, DataSheet>();
          _dataSourceFile = _importer.LoadFile(_columnInfos, dataSourceFileName, _metaDataCategories);
 
          if (_dataSourceFile == null)
             return null;
-         
+
          setDefaultMetaData();
          setMetaDataWithManualInput();
          createSheetsForViewing();
@@ -136,6 +142,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.AddTabs(GetSheetNames());
          View.ResetImportButtons();
 
+         View.SelectTab(_dataSourceFile.FormatCalculatedFrom);
          return _dataSourceFile;
       }
 
@@ -143,16 +150,19 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          foreach (var metaData in _metaDataCategories)
          {
-            if (!metaData.AllowsManualInput) 
+            if (!metaData.AllowsManualInput)
                continue;
-            
+
             var parameter = _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().FirstOrDefault(p => p.ColumnName == metaData.Name);
-            if (parameter != null) 
+
+            if (parameter != null)
                continue;
 
             parameter = new MetaDataFormatParameter(null, metaData.Name, false);
+
             if (_dataSourceFile.Format.Parameters.Any(p => (p as MetaDataFormatParameter)?.MetaDataId == parameter.MetaDataId))
-               continue;
+               if (_dataSourceFile.Format.Parameters.Any(p => (p as MetaDataFormatParameter)?.MetaDataId == parameter.MetaDataId))
+                  continue;
 
             _dataSourceFile.Format.Parameters.Add(parameter);
             return;
@@ -171,6 +181,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
                _dataSourceFile.Format.Parameters.Add(parameter);
                return;
             }
+
             parameter.ColumnName = metaData.DefaultValue.ToString();
             parameter.IsColumn = false;
          }
@@ -200,11 +211,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void RemoveTab(string tabName)
       {
          _dataSourceFile.DataSheets.Remove(tabName);
-         if (Sheets.Keys.Contains(tabName))
-         {
-            Sheets.Remove(tabName);
-            TriggerOnDataChanged();
-         }
+
+         if (!Sheets.Keys.Contains(tabName))
+            return;
+
+         Sheets.Remove(tabName);
+         TriggerOnDataChanged();
       }
 
       public void ReopenAllSheets()
@@ -220,18 +232,21 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSourceFile.DataSheets.Clear();
          _dataSourceFile.DataSheets.Add(tabName, remainingSheet);
          View.AddTabs(GetSheetNames());
-         if (Sheets.Keys.Any(k => k != tabName))
-         {
-            DataSheet currentAlreadyLoaded = null;
-            if (Sheets.Keys.Contains(tabName))
-               currentAlreadyLoaded = Sheets[tabName];
 
-            Sheets.Clear();
-            if (currentAlreadyLoaded != null)
-               Sheets.Add(tabName, currentAlreadyLoaded);
-            
-            TriggerOnDataChanged();
-         }
+         if (Sheets.Keys.All(k => k == tabName))
+            return;
+
+         DataSheet currentAlreadyLoaded = null;
+
+         if (Sheets.Keys.Contains(tabName))
+            currentAlreadyLoaded = Sheets[tabName];
+
+         Sheets.Clear();
+
+         if (currentAlreadyLoaded != null)
+            Sheets.Add(tabName, currentAlreadyLoaded);
+
+         TriggerOnDataChanged();
       }
 
       public void RefreshTabs()
@@ -242,7 +257,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void DisableImportedSheets()
       {
-         if (Sheets.Keys.Any(x => x ==View.SelectedTab))
+         if (Sheets.Keys.Any(x => x == View.SelectedTab))
             View.DisableImportCurrentSheet();
 
          if (Sheets.Keys.All(GetSheetNames().Contains) && GetSheetNames().Count == Sheets.Keys.Count())
@@ -256,15 +271,41 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void GetFormatBasedOnCurrentSheet()
       {
-         _importer.CalculateFormat(_dataSourceFile, _columnInfos, _metaDataCategories, _currentSheetName);
+         var availableFormats = _importer.CalculateFormat(_dataSourceFile, _columnInfos, _metaDataCategories, _currentSheetName).ToList();
+
+         if (!availableFormats.Any())
+            throw new UnsupportedFormatException(_dataSourceFile.Path);
+
+         _dataSourceFile.AvailableFormats = availableFormats;
          ResetLoadedSheets();
          SetDataFormat(_dataSourceFile.Format, _dataSourceFile.AvailableFormats);
+         View.SetTabMarks(new Cache<string, TabMarkInfo>(onMissingKey: _ => new TabMarkInfo(errorMessage: null, isLoaded: false)));
       }
 
       public void ResetLoadedSheets()
       {
          Sheets.Clear();
          View.ResetImportButtons();
+      }
+
+      public void SetTabMarks(ParseErrors errors, Cache<string, IDataSet> loadedDataSets)
+      {
+         _lastLoadedDataSets = loadedDataSets;
+         var tabMarkInfos = new Cache<string, TabMarkInfo>(onMissingKey: _ => new TabMarkInfo(errorMessage: null, isLoaded: false));
+         foreach (var loadedDataSet in loadedDataSets.KeyValues)
+         {
+            var errorsForDataSet = errors.ErrorsFor(loadedDataSet.Value);
+            var errorMessage = errorsForDataSet.Any() ? Error.ParseErrorMessage(errorsForDataSet.Select(x => x.Message)) : null;
+            var info = new TabMarkInfo(errorMessage: errorMessage, isLoaded: true);
+            tabMarkInfos.Add(loadedDataSet.Key, info);
+         }
+
+         View.SetTabMarks(tabMarkInfos);
+      }
+
+      public void SetTabMarks(ParseErrors errors)
+      {
+         SetTabMarks(errors, _lastLoadedDataSets);
       }
    }
 }

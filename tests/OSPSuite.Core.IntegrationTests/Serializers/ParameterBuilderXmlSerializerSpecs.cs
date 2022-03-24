@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Helpers;
 using OSPSuite.Helpers;
@@ -18,6 +19,20 @@ namespace OSPSuite.Core.Serializers
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualParameterBuilder(x2, x1);
       }
+
+      [Test]
+      public void TestSerializationParameterBuilderWithCriteria()
+      {
+         var x1 = CreateObject<Parameter>().WithName("Pascal.Builder").WithMode(ParameterBuildMode.Local);
+         x1.ContainerCriteria = Create.Criteria(x => x.With("toto").With(CriteriaOperator.Or));
+         var x2 = SerializeAndDeserialize(x1);
+         AssertForSpecs.AreEqualParameterBuilder(x2, x1);
+
+         x1.ContainerCriteria = Create.Criteria(x => x.With("toto").With(CriteriaOperator.And));
+         x2 = SerializeAndDeserialize(x1);
+         AssertForSpecs.AreEqualParameterBuilder(x2, x1);
+      }
+
 
       [Test]
       public void TestSerializationParameterBuilderWithParameterWithConstantFormula()

@@ -10,6 +10,7 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.Importer;
+using OSPSuite.Utility.Collections;
 using static OSPSuite.Assets.Captions.Importer;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
@@ -42,9 +43,11 @@ namespace OSPSuite.Presentation.Services
          if (string.IsNullOrEmpty(dataFileName) || !System.IO.File.Exists(dataFileName))
             return (Array.Empty<DataRepository>(), null);
 
+         var columnInfoCache = new ColumnInfoCache(columnInfos);
          using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
          {
-            return importerModalPresenter.ImportDataSets(metaDataCategories, columnInfos, dataImporterSettings, dataFileName);
+            importerModalPresenter.SetCaption(dataImporterSettings.Caption);
+            return importerModalPresenter.ImportDataSets(metaDataCategories, columnInfoCache, dataImporterSettings, dataFileName);
          }
       }
 
@@ -56,6 +59,7 @@ namespace OSPSuite.Presentation.Services
          string dataFileName
       )
       {
+         var columnInfoCache = new ColumnInfoCache(columnInfos);
          if (string.IsNullOrEmpty(dataFileName) || !System.IO.File.Exists(dataFileName))
             return Enumerable.Empty<DataRepository>().ToList();
          
@@ -63,13 +67,13 @@ namespace OSPSuite.Presentation.Services
          {
             using (var importerModalPresenter = _applicationController.Start<IModalImporterPresenter>())
             {
-               return importerModalPresenter.ImportDataSets(metaDataCategories, columnInfos, dataImporterSettings, dataFileName, configuration);
+               return importerModalPresenter.ImportDataSets(metaDataCategories, columnInfoCache, dataImporterSettings, dataFileName, configuration);
             }
          }
 
          try
          {
-            var importedData = _importer.ImportFromConfiguration(configuration, columnInfos, dataFileName, metaDataCategories, dataImporterSettings);
+            var importedData = _importer.ImportFromConfiguration(configuration, columnInfoCache, dataFileName, metaDataCategories, dataImporterSettings);
             if (importedData.MissingSheets.Count != 0)
                _dialogCreator.MessageBoxError(SheetsNotFound(importedData.MissingSheets));
             return importedData.DataRepositories.Select(drm => drm.DataRepository).ToList();

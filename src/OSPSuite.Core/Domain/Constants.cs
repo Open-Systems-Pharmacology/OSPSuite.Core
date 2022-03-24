@@ -570,7 +570,8 @@ namespace OSPSuite.Core.Domain
       }
 
       public const string NOT = "Not";
-      public const string AND = "and";
+      public const string AND = "And";
+      public const string OR = "Or";
       public const string IN_CONTAINER = "In container";
       public const string NOT_IN_CONTAINER = "Not in container";
       public const string LLOQ = "LLOQ";
@@ -633,6 +634,7 @@ namespace OSPSuite.Core.Domain
       {
          public static readonly string[] NAMING_PATTERN_SEPARATORS = { ".", ",", "-", "_" };
          public static readonly string Undefined = "Undefined";
+         public static readonly string GroupingBySuffix = "_GroupBy";
       }
 
       public static class LoggerConstants
