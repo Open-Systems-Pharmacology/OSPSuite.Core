@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain
@@ -11,7 +13,12 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    The values. One item for each individual
       /// </summary>
-      public virtual float[] Values { get; private set; }
+      public virtual float[] ValuesAsArray => ValueCache.ToArray();
+
+      /// <summary>
+      ///    The values cache. The key will be the ind of the individual
+      /// </summary>
+      public virtual Cache<int, float> ValueCache { get; } = new Cache<int, float>(onMissingKey: x => float.NaN);
 
       /// <summary>
       ///    Path of underlying quantity for which pk-analyses were performed
@@ -30,7 +37,6 @@ namespace OSPSuite.Core.Domain
 
       public QuantityPKParameter()
       {
-         Values = Array.Empty<float>();
       }
 
       public override string ToString()
@@ -43,15 +49,7 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public virtual void SetValue(int individualId, float pkValue)
       {
-         if (Count <= individualId)
-            throw new OSPSuiteException(Error.IndividualIdDoesNotMatchTheValueLength(individualId, Count));
-
-         Values[individualId] = pkValue;
-      }
-
-      public virtual void SetNumberOfIndividuals(int numberOfIndividual)
-      {
-         Values = new float[numberOfIndividual].InitializeWith(float.NaN);
+         ValueCache[individualId] = pkValue;
       }
 
       /// <summary>
@@ -59,7 +57,12 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public virtual string Id => CreateId(QuantityPath, Name);
 
-      public virtual int Count => Values.Length;
+      public virtual int Count => ValueCache.Count;
+
+      /// <summary>
+      /// Returns the PK-Parameter value defined for individual with id <paramref name="individualId"/> or NaN otherwise
+      /// </summary>
+      public virtual float ValueFor(int individualId) => ValueCache[individualId];
 
       public static string CreateId(string quantityPath, string pkParameterName)
       {

@@ -13,8 +13,7 @@ namespace OSPSuite.Core.Serialization.Xml
       {
       }
 
-      protected CacheXmlSerializer()
-         : this(string.Format("{0}{1}Cache", typeof(TKey).Name, typeof(TValue).Name))
+      protected CacheXmlSerializer() : this($"{typeof(TKey).Name}{typeof(TValue).Name}Cache")
       {
       }
 
@@ -54,6 +53,10 @@ namespace OSPSuite.Core.Serialization.Xml
    }
 
    public class StringStringCacheXmlSerializer : CacheXmlSerializer<string, string>
+   {
+   }
+
+   public class IntFloatCacheXmlSerializer : CacheXmlSerializer<int, float>
    {
    }
 

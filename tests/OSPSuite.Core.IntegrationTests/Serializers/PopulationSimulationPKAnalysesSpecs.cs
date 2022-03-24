@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Serializers
 
          x2.ShouldNotBeNull();
          x2.All().Count().ShouldBeEqualTo(5);
-         x2.PKParameterFor("Path1", "AUC").Values.Length.ShouldBeEqualTo(_numberOfIndividuals);
+         x2.PKParameterFor("Path1", "AUC").Count.ShouldBeEqualTo(_numberOfIndividuals);
       }
 
       [Observation]
@@ -44,7 +44,6 @@ namespace OSPSuite.Core.Serializers
          var pk = new QuantityPKParameter {QuantityPath = path};
          pk.Name = "AUC";
 
-         pk.SetNumberOfIndividuals(_numberOfIndividuals);
          for (int i = 0; i < _numberOfIndividuals; i++)
          {
             pk.SetValue(i, (float) _random.NextDouble() * 100);

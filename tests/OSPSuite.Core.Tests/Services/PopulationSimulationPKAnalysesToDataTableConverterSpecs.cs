@@ -38,7 +38,6 @@ namespace OSPSuite.Core.Services
          var pkParameter = new PKParameter {DisplayUnit = "UNIT", Name = "P" };
          A.CallTo(() => _pkParameterRepository.FindByName(quantityPKParameter.Name)).Returns(pkParameter);
          var mergedDimension = A.Fake<IDimension>();
-         quantityPKParameter.SetNumberOfIndividuals(2);
          quantityPKParameter.SetValue(0, 10);
          quantityPKParameter.SetValue(1, 11);
 
