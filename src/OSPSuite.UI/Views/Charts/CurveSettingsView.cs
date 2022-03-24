@@ -5,11 +5,14 @@ using System.Linq.Expressions;
 using System.Windows.Forms;
 using DevExpress.Data;
 using DevExpress.Utils;
+using DevExpress.Utils.Menu;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
+using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
+using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.DataBinding;
@@ -53,7 +56,7 @@ namespace OSPSuite.UI.Views.Charts
          _toolTipCreator = toolTipCreator;
          InitializeComponent();
 
-         _gridBinderCurves = new GridViewBinder<CurveDTO>(gridView) {BindingMode = BindingMode.TwoWay};
+         _gridBinderCurves = new GridViewBinder<CurveDTO>(gridView) { BindingMode = BindingMode.TwoWay };
 
          _interpolationModeRepository = new UxRepositoryItemComboBox(gridView);
          _lineStyleRepository = new UxRepositoryItemLineStyles(gridView);
@@ -70,6 +73,7 @@ namespace OSPSuite.UI.Views.Charts
          gridView.ShowColumnChooser = true;
          gridView.ShouldUseColorForDisabledCell = false;
          gridView.OptionsView.ShowGroupPanel = false;
+         gridView.PopupMenuShowing += onPopupMenuShowing;
 
          var toolTipController = new ToolTipController();
          toolTipController.GetActiveObjectInfo += onToolTipControllerGetActiveObjectInfo;
@@ -83,7 +87,7 @@ namespace OSPSuite.UI.Views.Charts
       {
          _interpolationModeRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<InterpolationModes>());
          _interpolationModeRepository.TextEditStyle = TextEditStyles.DisableTextEditor;
-         _lineThicknessRepository.FillComboBoxRepositoryWith(new[] {1, 2, 3});
+         _lineThicknessRepository.FillComboBoxRepositoryWith(new[] { 1, 2, 3 });
          _axisTypeRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<AxisTypes>());
          _axisTypeRepository.Items.Remove(AxisTypes.X);
 
@@ -127,7 +131,8 @@ namespace OSPSuite.UI.Views.Charts
             .WithFixedWidth(UIConstants.Size.EMBEDDED_BUTTON_WIDTH);
       }
 
-      private IGridViewAutoBindColumn<CurveDTO, T> createFor<T>(Expression<Func<CurveDTO, T>> propertyToBindTo, CurveOptionsColumns curveOptionsColumn, RepositoryItem repositoryItem = null, bool showInColumnChooser = true)
+      private IGridViewAutoBindColumn<CurveDTO, T> createFor<T>(Expression<Func<CurveDTO, T>> propertyToBindTo,
+         CurveOptionsColumns curveOptionsColumn, RepositoryItem repositoryItem = null, bool showInColumnChooser = true)
       {
          var column = _gridBinderCurves.AutoBind(propertyToBindTo)
             .WithShowInColumnChooser(showInColumnChooser)
@@ -274,7 +279,7 @@ namespace OSPSuite.UI.Views.Charts
       {
          var dragSize = SystemInformation.DragSize;
          return new Rectangle(new Point(_downHitInfo.HitPoint.X - dragSize.Width / 2,
-                                        _downHitInfo.HitPoint.Y - dragSize.Height / 2), dragSize);
+            _downHitInfo.HitPoint.Y - dragSize.Height / 2), dragSize);
       }
 
       private bool hitInColorCell(GridHitInfo hitInfo)
@@ -338,7 +343,6 @@ namespace OSPSuite.UI.Views.Charts
 
             else if (hitInYColumn(hitInfo))
                _presenter.SetCurveYData(curve, column);
-
          }
          else if (hitInfo.HitTest == GridHitTest.EmptyRow)
          {
@@ -377,6 +381,42 @@ namespace OSPSuite.UI.Views.Charts
             return;
 
          _presenter.Remove(curve);
+      }
+
+      private void onPopupMenuShowing(object sender, PopupMenuShowingEventArgs e)
+      {
+         var gridViewMenu = e.Menu;
+         if (gridViewMenu == null)
+            return;
+
+         //only one or no curve selected. We do not show the option
+         if (gridView.GetSelectedRows().Length <= 1)
+            return;
+
+         var copyAllMenu = new DXMenuItem(Captions.EditAllCurvesProperties, (o, args) => onEditProperties(), ApplicationIcons.Edit);
+         gridViewMenu.Items.Insert(0, copyAllMenu);
+      }
+
+      private void onEditProperties()
+      {
+         var selectedCurveList = getSelectedCurveDTOs();
+
+         if (selectedCurveList.Count > 1)
+            _presenter.EditProperties(selectedCurveList);
+      }
+
+      private List<CurveDTO> getSelectedCurveDTOs()
+      {
+         var selectedRows = gridView.GetSelectedRows();
+         var selectedCurveList = new List<CurveDTO>();
+         foreach (var row in selectedRows)
+         {
+            var selectedCurveDTO = gridView.GetRow(row) as CurveDTO;
+            if (selectedCurveDTO == null) continue;
+            selectedCurveList.Add(selectedCurveDTO);
+         }
+
+         return selectedCurveList;
       }
    }
 }

@@ -10,6 +10,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
+using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.DTO.Charts;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
@@ -25,6 +26,7 @@ namespace OSPSuite.Presentation.Presentation
       protected Curve _curve2;
       private DataColumn _datColumn1;
       private DataColumn _datColumn2;
+      private IApplicationController _applicationController;
       protected List<CurveDTO> _allCurveDTOs;
       protected CurveDTO _curveDTO1;
 
@@ -32,6 +34,7 @@ namespace OSPSuite.Presentation.Presentation
       {
          _view = A.Fake<ICurveSettingsView>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
+         _applicationController = A.Fake<IApplicationController>(); 
          _chart = new CurveChart();
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(A<IWithDimension>._)).ReturnsLazily(x => x.GetArgument<IWithDimension>(0).Dimension);
 
@@ -52,7 +55,7 @@ namespace OSPSuite.Presentation.Presentation
          _chart.AddCurve(_curve1);
          _chart.AddCurve(_curve2);
 
-         sut = new CurveSettingsPresenter(_view, _dimensionFactory);
+         sut = new CurveSettingsPresenter(_view, _dimensionFactory, _applicationController);
 
          A.CallTo(() => _view.BindTo(A<IEnumerable<CurveDTO>>._))
             .Invokes(x =>

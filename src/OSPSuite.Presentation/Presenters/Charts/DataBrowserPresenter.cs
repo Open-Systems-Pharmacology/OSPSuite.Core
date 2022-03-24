@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NPOI.XSSF.UserModel;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -78,6 +79,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Is called from the view when the column selection is changed by the user
       /// </summary>
       void SelectedDataColumnsChanged();
+
+      /// <summary>
+      ///    Returns all the DataColumns for the curves that are visible in the chart
+      /// </summary>
+      IReadOnlyList<DataColumn> GetAllUsedDataColumns();
    }
 
    public class DataBrowserPresenter : PresenterWithColumnSettings<IDataBrowserView, IDataBrowserPresenter>, IDataBrowserPresenter
@@ -154,6 +160,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void SelectedDataColumnsChanged()
       {
          updateDataSelection(_view.SelectedDescendantColumns);
+      }
+
+      public IReadOnlyList<DataColumn> GetAllUsedDataColumns()
+      {
+         return _dataColumnDTOCache.KeyValues.Where(x => x.Value.Used).Select(x => x.Key).ToList();
       }
 
       public void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used)
