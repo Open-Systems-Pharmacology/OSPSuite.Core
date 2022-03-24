@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
-using OSPSuite.Assets;
+﻿using System.Linq;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -35,14 +32,7 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public virtual string Name { get; set; }
 
-      public QuantityPKParameter()
-      {
-      }
-
-      public override string ToString()
-      {
-         return Id;
-      }
+      public override string ToString() => Id;
 
       /// <summary>
       ///    Set the pkValue for the individual with id <paramref name="individualId" />
@@ -60,7 +50,7 @@ namespace OSPSuite.Core.Domain
       public virtual int Count => ValueCache.Count;
 
       /// <summary>
-      /// Returns the PK-Parameter value defined for individual with id <paramref name="individualId"/> or NaN otherwise
+      ///    Returns the PK-Parameter value defined for individual with id <paramref name="individualId" /> or NaN otherwise
       /// </summary>
       public virtual float ValueFor(int individualId) => ValueCache[individualId];
 

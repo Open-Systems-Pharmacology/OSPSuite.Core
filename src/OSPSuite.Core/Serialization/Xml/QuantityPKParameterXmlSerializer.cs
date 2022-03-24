@@ -9,7 +9,6 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.Dimension);
          Map(x => x.Name);
          Map(x => x.QuantityPath);
-         //TODO Serialization
          Map(x => x.ValueCache);
       }
    }
