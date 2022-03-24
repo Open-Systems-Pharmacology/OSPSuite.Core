@@ -44,13 +44,6 @@ namespace OSPSuite.UI.Views.Charts
          this.symbolLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.visibleLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.inLegendLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).BeginInit();
-         this.layoutControlBase.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroupBase)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemOK)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemCancel)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItemBase)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemExtra)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.colorEditLayoutControl)).BeginInit();
          this.colorEditLayoutControl.SuspendLayout();
@@ -67,9 +60,6 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.visibleLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.inLegendLayoutControlItem)).BeginInit();
          this.SuspendLayout();
-         this.layoutControlBase.Controls.SetChildIndex(this.btnCancel, 0);
-         this.layoutControlBase.Controls.SetChildIndex(this.btnOk, 0);
-         this.layoutControlBase.Controls.SetChildIndex(this.btnExtra, 0);
          // 
          // colorEditLayoutControl
          // 
@@ -218,15 +208,6 @@ namespace OSPSuite.UI.Views.Charts
          this.Controls.Add(this.colorEditLayoutControl);
          this.Name = "CurveMultiItemEditorView";
          this.Text = "Edit Options";
-         this.Controls.SetChildIndex(this.layoutControlBase, 0);
-         this.Controls.SetChildIndex(this.colorEditLayoutControl, 0);
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).EndInit();
-         this.layoutControlBase.ResumeLayout(false);
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroupBase)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemOK)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemCancel)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItemBase)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemExtra)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.colorEditLayoutControl)).EndInit();
          this.colorEditLayoutControl.ResumeLayout(false);
