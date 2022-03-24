@@ -409,9 +409,8 @@ namespace OSPSuite.UI.Views.Charts
       {
          var selectedRows = gridView.GetSelectedRows();
          var selectedCurveList = new List<CurveDTO>();
-         for (var i = 0; i < gridView.SelectedRowsCount; i++)
+         foreach (var row in selectedRows)
          {
-            var row = (selectedRows[i]);
             var selectedCurveDTO = gridView.GetRow(row) as CurveDTO;
             if (selectedCurveDTO == null) continue;
             selectedCurveList.Add(selectedCurveDTO);
