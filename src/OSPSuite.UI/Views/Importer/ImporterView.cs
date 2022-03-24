@@ -41,8 +41,10 @@ namespace OSPSuite.UI.Views.Importer
          });
          saveMappingBtn.InitWithImage(ApplicationIcons.Save, Captions.Importer.SaveConfiguration);
          applyMappingBtn.InitWithImage(ApplicationIcons.Load, Captions.Importer.ApplyConfiguration);
+         resetMappingBasedOnCurrentSheetBtn.InitWithImage(ApplicationIcons.Update, Captions.Importer.ResetMappingBasedOnCurrentSheet);
          saveMappingBtnLayoutControlItem.AdjustLargeButtonSize();
          applyMappingLayoutControlItem.AdjustLargeButtonSize();
+         resetMappingBasedOnCurrentSheetLayoutControlItem.AdjustLargeButtonSize();
          resetMappingBasedOnCurrentSheetBtn.ToolTip = Captions.Importer.ResetMappingBasedOnCurrentSheetToolTip;
       }
 

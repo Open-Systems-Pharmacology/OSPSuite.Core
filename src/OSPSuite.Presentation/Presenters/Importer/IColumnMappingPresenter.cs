@@ -60,7 +60,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       ToolTipDescription ToolTipDescriptionFor(int index);
       void ClearRow(ColumnMappingDTO model);
       void AddGroupBy(AddGroupByFormatParameter source);
-      void ResetMapping();
       void ClearMapping();
       void ValidateMapping();
       void SetSubEditorSettingsForMapping(ColumnMappingDTO model);

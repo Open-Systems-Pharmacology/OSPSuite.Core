@@ -310,7 +310,6 @@ namespace OSPSuite.UI.Views.Importer
 
          var menu = new GridViewColumnMenu(mv);
          menu.Items.Clear();
-         menu.Items.Add(new DXMenuItem(Captions.Importer.ResetMapping, onCreateAutoMappingClick));
          menu.Items.Add(new DXMenuItem(Captions.Importer.ClearMapping, onClearMappingClick));
          menu.Show(mouseEventArgs.Location);
       }
@@ -324,11 +323,6 @@ namespace OSPSuite.UI.Views.Importer
 
          if (e.KeyCode == Keys.Delete)
             view.ActiveEditor.EditValue = Captions.Importer.NoneEditorNullText;
-      }
-
-      private void onCreateAutoMappingClick(object sender, EventArgs eventArgs)
-      {
-         _presenter.ResetMapping();
       }
 
       private void onClearMappingClick(object sender, EventArgs eventArgs)

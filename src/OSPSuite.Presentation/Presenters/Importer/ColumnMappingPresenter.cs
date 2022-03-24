@@ -20,7 +20,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private ColumnInfoCache _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IImporter _importer;
-      private IList<DataFormatParameter> _originalFormat;
       private IUnformattedData _rawData;
       private MappingProblem _mappingProblem = new MappingProblem() {MissingMapping = new List<string>(), MissingUnit = new List<string>()};
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
@@ -135,7 +134,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (format == null)
             return;
          _format = format;
-         _originalFormat = _format.Parameters.ToList();
          setDataFormat(format.Parameters);
       }
 
@@ -651,17 +649,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
             .Select(f => f.Source)
             .Append(parameter)
             .ToList());
-      }
-
-      public void ResetMapping()
-      {
-         if (_format != null)
-         {
-            _format.Parameters.Clear();
-            foreach (var p in _originalFormat)
-               _format.Parameters.Add(p);
-         }
-         setDataFormat(_originalFormat);
       }
 
       public void ClearMapping()
