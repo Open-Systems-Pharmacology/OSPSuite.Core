@@ -22,6 +22,8 @@ namespace OSPSuite.UI.Views
       {
          InitializeComponent();
          initializeHelp();
+         //Set default icons for all views. Specific icons should be overwritten
+         ApplicationIcon = ApplicationIcons.DefaultIcon;
       }
 
       private void initializeHelp()
@@ -31,11 +33,9 @@ namespace OSPSuite.UI.Views
 
       public virtual void InitializeResources()
       {
-         //Set default icons for all views. Specific icons should be overwritten
-         ApplicationIcon = ApplicationIcons.DefaultIcon;
       }
 
-      public virtual ApplicationIcon ApplicationIcon
+      public ApplicationIcon ApplicationIcon
       {
          get => _applicationIcon;
          set

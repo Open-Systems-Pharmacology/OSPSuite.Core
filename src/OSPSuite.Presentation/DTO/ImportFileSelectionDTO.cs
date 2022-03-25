@@ -62,9 +62,9 @@ namespace OSPSuite.Presentation.DTO
 
       public string Message => Messages.ToString("\n");
 
-      public SvgImage Image => imageFrom(Status);
+      public ApplicationIcon Image => imageFrom(Status);
 
-      private SvgImage imageFrom(NotificationType status)
+      private ApplicationIcon imageFrom(NotificationType status)
       {
          switch (status)
          {

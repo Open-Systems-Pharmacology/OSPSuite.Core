@@ -20,7 +20,8 @@ namespace OSPSuite.UI.Extensions
 
       public static void SetImage(this ImageCollectionImageOptions imageOptions, ApplicationIcon icon, IconSize iconSize = null)
       {
-         imageOptions.SvgImage = icon;
+         var image = icon ?? ApplicationIcons.DefaultIcon;
+         imageOptions.SvgImage = image;
          imageOptions.SvgImageSize = iconSize ?? IconSizes.Size16x16;
       }
    }
