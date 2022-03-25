@@ -27,7 +27,7 @@ namespace OSPSuite.Presentation.DTO
       /// </summary>
       public virtual string FilePath
       {
-         get { return _filePath; }
+         get => _filePath;
          set
          {
             _filePath = value;
@@ -38,14 +38,11 @@ namespace OSPSuite.Presentation.DTO
          }
       }
 
-      public bool FileDefined
-      {
-         get { return !string.IsNullOrEmpty(FilePath); }
-      }
+      public bool FileDefined => !string.IsNullOrEmpty(FilePath);
 
       public IEnumerable<string> Messages
       {
-         get { return _messages; }
+         get => _messages;
          set
          {
             _messages = value;
@@ -55,7 +52,7 @@ namespace OSPSuite.Presentation.DTO
 
       public NotificationType Status
       {
-         get { return _status; }
+         get => _status;
          set
          {
             _status = value;
@@ -63,22 +60,16 @@ namespace OSPSuite.Presentation.DTO
          }
       }
 
-      public string Message
-      {
-         get { return Messages.ToString("\n"); }
-      }
+      public string Message => Messages.ToString("\n");
 
-      public SvgImage Image
-      {
-         get { return imageFrom(Status); }
-      }
+      public SvgImage Image => imageFrom(Status);
 
       private SvgImage imageFrom(NotificationType status)
       {
          switch (status)
          {
             case NotificationType.Info:
-               return ApplicationIcons.OK;
+               return ApplicationIcons.OK.ToSvgImage();
             case NotificationType.Warning:
                return ApplicationIcons.Warning;
             case NotificationType.Error:

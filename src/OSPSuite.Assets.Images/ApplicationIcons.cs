@@ -14,10 +14,7 @@ namespace OSPSuite.Assets
       private static readonly ICache<string, ApplicationIcon> _allIcons = new Cache<string, ApplicationIcon>(icon => icon.IconName);
       private static IList<ApplicationIcon> _allIconsList;
 
-      //TODO DELETE
-      public static readonly ApplicationIcon Placenta = AddNamedIcon("Placenta");
-
-
+   
       public static readonly ApplicationIcon Absorption = AddNamedIcon("Absorption");
       public static readonly ApplicationIcon ActiveEfflux = AddNamedIcon("Efflux", "ActiveEfflux");
       public static readonly ApplicationIcon ActiveInflux = AddNamedIcon("Influx", "ActiveInflux");
@@ -493,7 +490,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon Endometrium = AddNamedIcon("Endometrium");
       public static readonly ApplicationIcon Endosome = AddNamedIcon("Endosome");
       public static readonly ApplicationIcon Fetus = AddNamedIcon("Fetus");
-      // public static readonly ApplicationIcon Placenta = AddNamedIcon("Placenta");
+      public static readonly ApplicationIcon Placenta = AddNamedIcon("Placenta");
       public static readonly ApplicationIcon Myometrium = AddNamedIcon("Endometrium", "Myometrium");
       public static readonly ApplicationIcon ExpressionProfile = AddNamedIcon("ProteinExpression", "ExpressionProfile");
       public static readonly ApplicationIcon ExpressionProfileFolder = AddNamedIcon("ExpressionProfileFolder");
@@ -541,7 +538,7 @@ namespace OSPSuite.Assets
          {
             //TODO remote debug
             System.Diagnostics.Debug.WriteLine($"{resName} svg icon not found");
-            var icon = _allIcons["PLACENTA"];
+            var icon = _allIcons["ABSORPTION"];
             _allIcons.Add(name, icon);
             return icon;
          }
