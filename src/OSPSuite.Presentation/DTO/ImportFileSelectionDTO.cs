@@ -69,7 +69,7 @@ namespace OSPSuite.Presentation.DTO
          switch (status)
          {
             case NotificationType.Info:
-               return ApplicationIcons.OK.ToSvgImage();
+               return ApplicationIcons.OK;
             case NotificationType.Warning:
                return ApplicationIcons.Warning;
             case NotificationType.Error:
@@ -77,32 +77,20 @@ namespace OSPSuite.Presentation.DTO
             case NotificationType.None:
                return ApplicationIcons.Help;
             default:
-               throw new ArgumentOutOfRangeException("status");
+               throw new ArgumentOutOfRangeException(nameof(status));
          }
       }
 
       private static class AllRules
       {
-         private static IBusinessRule fileExists
-         {
-            get { return GenericRules.FileExists<ImportFileSelectionDTO>(x => x.FilePath); }
-         }
+         private static IBusinessRule fileExists { get; } = GenericRules.FileExists<ImportFileSelectionDTO>(x => x.FilePath);
 
-         private static IBusinessRule fileNotEmpty
-         {
-            get { return GenericRules.NonEmptyRule<ImportFileSelectionDTO>(x => x.FilePath); }
-         }
+         private static IBusinessRule fileNotEmpty { get; } = GenericRules.NonEmptyRule<ImportFileSelectionDTO>(x => x.FilePath);
 
-         private static IBusinessRule statusIsNotError
-         {
-            get
-            {
-               return CreateRule.For<ImportFileSelectionDTO>()
-                  .Property(item => item.Status)
-                  .WithRule((item, status) => status != NotificationType.Error)
-                  .WithError((item, status) => item.Message);
-            }
-         }
+         private static IBusinessRule statusIsNotError { get; } = CreateRule.For<ImportFileSelectionDTO>()
+            .Property(item => item.Status)
+            .WithRule((item, status) => status != NotificationType.Error)
+            .WithError((item, status) => item.Message);
 
          internal static IEnumerable<IBusinessRule> All()
          {

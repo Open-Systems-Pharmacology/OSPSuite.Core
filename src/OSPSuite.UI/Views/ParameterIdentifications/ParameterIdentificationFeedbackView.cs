@@ -69,7 +69,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       {
          base.InitializeResources();
          Caption = Captions.ParameterIdentification.FeedbackView;
-         // Icon = ApplicationIcons.ParameterIdentificationVisualFeedback;
+         ApplicationIcon = ApplicationIcons.ParameterIdentificationVisualFeedback;
 
          _lblInfo.Font = new Font(_lblInfo.Font.Name, 15.0f);
          _lblInfo.Text = Captions.ParameterIdentification.NoParameterIdentificationRunning;

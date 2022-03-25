@@ -22,36 +22,17 @@ namespace OSPSuite.UI.Services
          _userSettings = userSettings;
       }
 
-      public SvgImageCollection AllImages16x16
-      {
-         get
-         {
-            Start();
-            return _allImages16x16;
-         }
-      }
+      public SvgImageCollection AllImages16x16 => allImageForSize(IconSizes.Size16x16);
 
-      public SvgImageCollection AllImages24x24
-      {
-         get
-         {
-            Start();
-            return _allImages24x24;
-         }
-      }
+      public SvgImageCollection AllImages24x24 => allImageForSize(IconSizes.Size24x24);
 
-      public SvgImageCollection AllImages32x32
-      {
-         get
-         {
-            Start();
-            return _allImages32x32;
-         }
-      }
+      public SvgImageCollection AllImages32x32 => allImageForSize(IconSizes.Size32x32);
 
+      public SvgImageCollection AllImages48x48 => allImageForSize(IconSizes.Size48x48);
 
       private SvgImageCollection allImageForSize(IconSize iconSize)
       {
+         Start();
          if (iconSize == IconSizes.Size16x16)
             return _allImages16x16;
 
@@ -88,19 +69,10 @@ namespace OSPSuite.UI.Services
          _initialized = true;
       }
 
-      public SvgImageCollection AllImagesForTreeView
-      {
-         get { return allImageForSize(_userSettings.IconSizeTreeView); }
-      }
+      public SvgImageCollection AllImagesForTreeView => allImageForSize(_userSettings.IconSizeTreeView);
 
-      public SvgImageCollection AllImagesForContextMenu
-      {
-         get { return allImageForSize(_userSettings.IconSizeContextMenu); }
-      }
+      public SvgImageCollection AllImagesForContextMenu => allImageForSize(_userSettings.IconSizeContextMenu);
 
-      public SvgImageCollection AllImagesForTabs
-      {
-         get { return allImageForSize(_userSettings.IconSizeTab); }
-      }
+      public SvgImageCollection AllImagesForTabs => allImageForSize(_userSettings.IconSizeTab);
    }
 }

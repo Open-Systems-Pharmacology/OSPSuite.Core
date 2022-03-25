@@ -9,6 +9,7 @@ namespace OSPSuite.UI.Services
       SvgImageCollection AllImages16x16 { get; }
       SvgImageCollection AllImages24x24 { get; }
       SvgImageCollection AllImages32x32 { get; }
+      SvgImageCollection AllImages48x48 { get; }
       SvgImageCollection AllImagesForContextMenu { get; }
       SvgImageCollection AllImagesForTreeView { get; }
       SvgImageCollection AllImagesForTabs { get; }
