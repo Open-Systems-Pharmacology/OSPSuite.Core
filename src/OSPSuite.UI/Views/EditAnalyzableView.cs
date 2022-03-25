@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Windows.Forms;
-using OSPSuite.Utility.Extensions;
 using DevExpress.Utils;
 using DevExpress.XtraBars;
 using DevExpress.XtraTab;
@@ -10,13 +9,15 @@ using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
+using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views
 {
    public partial class EditAnalyzableView : BaseMdiChildTabbedView, IEditAnalyzableView, IViewWithPopup
    {
-      public BarManager PopupBarManager { get; private set; }
+      public BarManager PopupBarManager { get; }
 
       public EditAnalyzableView(IShell shell, IImageListRetriever imageListRetriever)
          : base(shell)
@@ -89,12 +90,12 @@ namespace OSPSuite.UI.Views
 
       public void UpdateTrafficLightFor(ISimulationAnalysisPresenter simulationAnalysisPresenter, ApplicationIcon icon)
       {
-         foreach (XtraTabPage page in  tabAnalyzable.TabPages)
+         foreach (XtraTabPage page in tabAnalyzable.TabPages)
          {
             if (page.Tag != simulationAnalysisPresenter)
                continue;
 
-            page.Image = icon.ToImage(UIConstants.ICON_SIZE_TAB);
+            page.SetImage(icon, UIConstants.ICON_SIZE_TAB);
          }
       }
 
@@ -109,6 +110,5 @@ namespace OSPSuite.UI.Views
       public override XtraTabControl TabControl => tabAnalyzable;
 
       private IEditAnalyzablePresenter editAnalyzablePresenter => _presenter.DowncastTo<IEditAnalyzablePresenter>();
-
    }
 }

@@ -152,8 +152,7 @@ namespace OSPSuite.UI.Views
          btnNext.InitWithImage(ApplicationIcons.Next, Captions.NextButton, ImageLocation.MiddleRight);
          btnPrevious.InitWithImage(ApplicationIcons.Previous, Captions.PreviousButton, ImageLocation.MiddleLeft);
          btnOk.InitWithImage(ApplicationIcons.OK, Captions.OKButton, ImageLocation.MiddleRight);
-         btnCancel.InitWithImage(ApplicationIcons.Cancel, Captions.Cancel, ImageLocation.MiddleRight);
-         btnCancel.Text = Captions.CancelButton;
+         btnCancel.InitWithImage(ApplicationIcons.Cancel, Captions.CancelButton, ImageLocation.MiddleRight);
          layoutItemNext.AdjustButtonSize();
          layoutItemPrevious.AdjustButtonSize();
          layoutItemOK.AdjustButtonSize();

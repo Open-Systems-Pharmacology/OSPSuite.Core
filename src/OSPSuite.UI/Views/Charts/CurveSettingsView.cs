@@ -56,7 +56,7 @@ namespace OSPSuite.UI.Views.Charts
          _toolTipCreator = toolTipCreator;
          InitializeComponent();
 
-         _gridBinderCurves = new GridViewBinder<CurveDTO>(gridView) { BindingMode = BindingMode.TwoWay };
+         _gridBinderCurves = new GridViewBinder<CurveDTO>(gridView) {BindingMode = BindingMode.TwoWay};
 
          _interpolationModeRepository = new UxRepositoryItemComboBox(gridView);
          _lineStyleRepository = new UxRepositoryItemLineStyles(gridView);
@@ -87,7 +87,7 @@ namespace OSPSuite.UI.Views.Charts
       {
          _interpolationModeRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<InterpolationModes>());
          _interpolationModeRepository.TextEditStyle = TextEditStyles.DisableTextEditor;
-         _lineThicknessRepository.FillComboBoxRepositoryWith(new[] { 1, 2, 3 });
+         _lineThicknessRepository.FillComboBoxRepositoryWith(new[] {1, 2, 3});
          _axisTypeRepository.FillComboBoxRepositoryWith(EnumHelper.AllValuesFor<AxisTypes>());
          _axisTypeRepository.Items.Remove(AxisTypes.X);
 
@@ -393,7 +393,7 @@ namespace OSPSuite.UI.Views.Charts
          if (gridView.GetSelectedRows().Length <= 1)
             return;
 
-         var copyAllMenu = new DXMenuItem(Captions.EditAllCurvesProperties, (o, args) => onEditProperties(), ApplicationIcons.Edit);
+         var copyAllMenu = new DXMenuItem(Captions.EditAllCurvesProperties, (o, args) => onEditProperties()) {SvgImage = ApplicationIcons.Edit};
          gridViewMenu.Items.Insert(0, copyAllMenu);
       }
 

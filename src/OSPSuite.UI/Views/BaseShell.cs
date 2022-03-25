@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Container;
-using OSPSuite.Utility.Extensions;
 using DevExpress.Utils;
 using DevExpress.XtraBars;
 using DevExpress.XtraBars.Alerter;
@@ -24,6 +20,9 @@ using OSPSuite.Presentation.Regions;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views
 {
@@ -51,7 +50,12 @@ namespace OSPSuite.UI.Views
          UpdateStyles();
 
          PopupBarManager = new BarManager {Form = this};
-         _removeAlertButton = new AlertButton(ApplicationIcons.Cancel, AlertButtonStyle.Button) {Hint = ToolTips.DoNotShowVersionUpdate};
+         _removeAlertButton = new AlertButton
+         {
+            Hint = ToolTips.DoNotShowVersionUpdate,
+            Style = AlertButtonStyle.Button,
+         };
+         _removeAlertButton.ImageOptions.SetImage(ApplicationIcons.Cancel);
       }
 
       public virtual void Initialize()
@@ -120,8 +124,7 @@ namespace OSPSuite.UI.Views
          _presenter.Activate(ActiveView);
          if (ActiveView == null) return;
          var page = xtraTabbedMdiManager.Pages[ActiveMdiChild];
-         if (page == null) return;
-         page.Image = ActiveView.ApplicationIcon.ToImage(IconSizes.Size16x16);
+         page?.SetImage(ActiveView.ApplicationIcon);
       }
 
       private void pageRemoved(object sender, MdiTabPageEventArgs e)
@@ -134,7 +137,7 @@ namespace OSPSuite.UI.Views
       {
          var activeView = viewFromPage(e);
          if (activeView == null) return;
-         e.Page.Image = activeView.ApplicationIcon.ToImage(IconSizes.Size16x16);
+         e.Page.SetImage(activeView.ApplicationIcon);
       }
 
       public void ShowHelp()
@@ -144,7 +147,8 @@ namespace OSPSuite.UI.Views
 
       public void DisplayNotification(string caption, string notification, string url)
       {
-         var info = new AlertInfo(caption, notification, ApplicationIcon.ToImage(IconSizes.Size32x32)) {Tag = url};
+         var info = new AlertInfo(caption, notification) {Tag = url};
+         info.ImageOptions.SetImage(ApplicationIcon, IconSizes.Size32x32);
          alertControl.FormMaxCount = 1;
          alertControl.Show(this, info);
       }
@@ -219,7 +223,7 @@ namespace OSPSuite.UI.Views
          try
          {
             //Memory leak in .NET Framework. FormerlyActiveMdiChild is not set to null
-            typeof (Form).InvokeMember("FormerlyActiveMdiChild",
+            typeof(Form).InvokeMember("FormerlyActiveMdiChild",
                BindingFlags.Instance | BindingFlags.SetProperty |
                BindingFlags.NonPublic, null,
                this, new object[] {null});

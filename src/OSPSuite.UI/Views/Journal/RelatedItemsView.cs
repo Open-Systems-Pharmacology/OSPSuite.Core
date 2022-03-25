@@ -101,7 +101,7 @@ namespace OSPSuite.UI.Views.Journal
       {
          var repositoryCompareRelatedItem = new RepositoryItemPopupContainerEdit {PopupControl = _popupControl};
          repositoryCompareRelatedItem.Buttons[0].Kind = ButtonPredefines.Glyph;
-         repositoryCompareRelatedItem.Buttons[0].Image = ApplicationIcons.Comparison.ToImage(IconSizes.Size16x16);
+         repositoryCompareRelatedItem.Buttons[0].SetImage(ApplicationIcons.Comparison);
          repositoryCompareRelatedItem.CloseOnOuterMouseClick = false;
          repositoryCompareRelatedItem.TextEditStyle = TextEditStyles.HideTextEditor;
 
@@ -158,10 +158,10 @@ namespace OSPSuite.UI.Views.Journal
          base.InitializeResources();
 
          _reloadRelatedItemRepository.Buttons[0].Kind = ButtonPredefines.Glyph;
-         _reloadRelatedItemRepository.Buttons[0].Image = ApplicationIcons.Load.ToImage(IconSizes.Size16x16);
+         _reloadRelatedItemRepository.Buttons[0].SetImage(ApplicationIcons.Load);
 
          _removeRelatedItemRepository.Buttons[0].Kind = ButtonPredefines.Glyph;
-         _removeRelatedItemRepository.Buttons[0].Image = ApplicationIcons.Delete.ToImage(IconSizes.Size16x16);
+         _removeRelatedItemRepository.Buttons[0].SetImage(ApplicationIcons.Delete);
          _removeRelatedItemRepository.Buttons[0].ToolTip = Captions.Journal.ToolTip.DeleteRelatedItem;
 
          layoutItemAddRelatedItem.AdjustButtonSize();
