@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
@@ -37,9 +39,12 @@ namespace OSPSuite.Core.Chart
          RemoveCurvesForDataRepository(dataRepository);
       }
 
-      public virtual void UpdateFrom(ChartWithObservedData originalChart)
+      public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
-         originalChart.AllObservedData().Each(AddObservedData);
+         base.UpdatePropertiesFrom(source, cloneManager);
+         var sourceChartWithObservedData = source as ChartWithObservedData;
+         if (sourceChartWithObservedData == null) return;
+         sourceChartWithObservedData.AllObservedData().Each(AddObservedData);
       }
    }
 }
