@@ -495,6 +495,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ExpressionProfile = AddNamedIcon("ProteinExpression", "ExpressionProfile");
       public static readonly ApplicationIcon ExpressionProfileFolder = AddNamedIcon("ExpressionProfileFolder");
       public static readonly ApplicationIcon OSPSuite = AddNamedIcon("OSPSuite");
+      public static readonly ApplicationIcon RedCross = AddNamedIcon("Delete", "RedCross");
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
       private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((SvgImage) null);
