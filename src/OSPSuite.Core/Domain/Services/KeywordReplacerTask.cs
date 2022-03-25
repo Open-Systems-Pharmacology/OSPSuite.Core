@@ -80,13 +80,6 @@ namespace OSPSuite.Core.Domain.Services
       void ReplaceIn(IParameter parameter, IContainer rootContainer, string moleculeName);
       void ReplaceIn(IMoleculeAmount moleculeAmount, IContainer rootContainer);
 
-      /// <summary>
-      ///    Replaces keyword MOLECULE with the name of first floating molecule. Is used only for backwards
-      ///    compatibility (EHC events in old projects) and for ImmediateEHC-Event (which comes only from
-      ///    converted PKSim 4.2 projects)
-      /// </summary>
-      void ReplaceMoleculeKeywordInNonApplicationEventGroup(IEventGroup eventGroup, IMoleculeBuildingBlock molecules);
-
       void ReplaceIn(IMoleculeAmount moleculeAmount);
    }
 
@@ -179,17 +172,6 @@ namespace OSPSuite.Core.Domain.Services
       {
          eventGroup.GetAllChildren<IUsingFormula>().Each(keywordReplacer.ReplaceIn);
          eventGroup.GetAllChildren<IEventAssignment>().Select(x => x.ObjectPath).Each(keywordReplacer.ReplaceIn);
-      }
-
-      public void ReplaceMoleculeKeywordInNonApplicationEventGroup(IEventGroup eventGroup, IMoleculeBuildingBlock molecules)
-      {
-         if (!molecules.AllFloating().Any())
-            return;
-
-         var keywordReplacer = new KeywordReplacerCollection();
-         addMoleculeReplacersTo(keywordReplacer, molecules.AllFloating().First().Name);
-
-         replaceInEventGroup(eventGroup, keywordReplacer);
       }
 
       public IObjectPath CreateModelPathFor(IObjectPath objectPath, IContainer rootContainer)

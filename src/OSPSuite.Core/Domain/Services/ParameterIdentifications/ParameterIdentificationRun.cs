@@ -100,7 +100,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
             parallelOptions.CancellationToken.ThrowIfCancellationRequested();
             _allSimModelBatches.TryAdd(simulation, createSimModelBatch(simulation));
          });
-         
+
          initializeParameterHistoryCache();
          _variableParameters = _parameterIdentification.AllVariableIdentificationParameters.ToList();
          _fixedParameters = _parameterIdentification.AllFixedIdentificationParameters.ToList();
@@ -147,7 +147,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          catch (Exception e)
          {
             RunResult.Status = RunStatus.Faulted;
-            RunResult.Message = e.FullMessage();
+            RunResult.Message = $"{e.FullMessage()}\n\nStack trace:\n\n{e.FullStackTrace()}";
             return RunResult;
          }
          finally
@@ -228,7 +228,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       {
          var simulationResults = new ConcurrentBag<SimulationRunResults>();
          var parallelOptions = createParallelOptions(_cancellationToken);
-            
+
          try
          {
             Parallel.ForEach(_allSimModelBatches.Values, parallelOptions, simulationBatch =>

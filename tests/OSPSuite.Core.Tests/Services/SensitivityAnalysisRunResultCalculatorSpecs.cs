@@ -48,14 +48,12 @@ namespace OSPSuite.Core.Services
          base.Context();
          _numberOfVariations = 5;
          _pkParameter1 = new QuantityPKParameter {QuantityPath = "Output1", Name = "AUC"};
-         _pkParameter1.SetNumberOfIndividuals(_numberOfVariations);
          _pkParameter1.SetValue(0, 10);
          _pkParameter1.SetValue(1, 11);
          _pkParameter1.SetValue(2, 12);
          _pkParameter1.SetValue(4, _defaultPK1Value);
 
          _pkParameter2 = new QuantityPKParameter { QuantityPath = "Output2", Name = "Cmax" };
-         _pkParameter2.SetNumberOfIndividuals(_numberOfVariations);
          _pkParameter2.SetValue(0, 20);
          _pkParameter2.SetValue(1, 21);
          _pkParameter2.SetValue(2, 22);

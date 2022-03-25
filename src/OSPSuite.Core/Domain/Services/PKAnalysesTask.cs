@@ -16,9 +16,8 @@ namespace OSPSuite.Core.Domain.Services
       ///    than the number of overall individuals.
       /// </summary>
       /// <param name="simulation">Simulation used to perform the population run</param>
-      /// <param name="numberOfIndividuals">Number of individuals in the population run</param>
       /// <param name="runResults">Results for the simulation run</param>
-      PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults);
+      PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, SimulationResults runResults);
    }
 
    public class PKAnalysesTask : IPKAnalysesTask
@@ -36,12 +35,12 @@ namespace OSPSuite.Core.Domain.Services
          _pkValuesCalculator = pkValuesCalculator;
       }
 
-      public virtual PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults)
+      public virtual PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation,  SimulationResults runResults)
       {
-         return CalculateFor(simulation, numberOfIndividuals, runResults, id => { });
+         return CalculateFor(simulation,  runResults, id => { });
       }
 
-      protected virtual PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, int numberOfIndividuals, SimulationResults runResults,  Action<int> performIndividualScalingAction)
+      protected virtual PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, SimulationResults runResults,  Action<int> performIndividualScalingAction)
       {
          _lazyLoadTask.Load(simulation as ILazyLoadable);
 
@@ -55,7 +54,7 @@ namespace OSPSuite.Core.Domain.Services
 
             foreach (var selectedQuantity in selectedQuantityForMolecule)
             {
-               addPKParametersForOutput(simulation, numberOfIndividuals, runResults, performIndividualScalingAction, selectedQuantity, popAnalyses, moleculeName, pkCalculationOptions, allApplicationParameters);
+               addPKParametersForOutput(simulation,  runResults, performIndividualScalingAction, selectedQuantity, popAnalyses, moleculeName, pkCalculationOptions, allApplicationParameters);
             }
          }
 
@@ -64,7 +63,6 @@ namespace OSPSuite.Core.Domain.Services
 
       private void addPKParametersForOutput(
          IModelCoreSimulation simulation,
-         int numberOfIndividuals,
          SimulationResults simulationResults,
          Action<int> performIndividualScalingAction,
          QuantitySelection selectedQuantity,
@@ -80,7 +78,6 @@ namespace OSPSuite.Core.Domain.Services
          foreach (var pkParameter in allPKParameters)
          {
             var quantityPKParameter = new QuantityPKParameter { Name = pkParameter.Name, QuantityPath = selectedQuantity.Path, Dimension = pkParameter.Dimension };
-            quantityPKParameter.SetNumberOfIndividuals(numberOfIndividuals);
             popAnalyses.AddPKAnalysis(quantityPKParameter);
          }
 

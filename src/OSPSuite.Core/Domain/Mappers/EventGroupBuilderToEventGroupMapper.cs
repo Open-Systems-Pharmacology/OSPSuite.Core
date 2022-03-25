@@ -92,11 +92,12 @@ namespace OSPSuite.Core.Domain.Mappers
          //---- add molecule amounts
          foreach (var appMolecule in applicationBuilder.Molecules)
          {
-            var molecule = _moleculeMapper.MapFrom(molecules[applicationBuilder.MoleculeName], buildConfiguration);
-            molecule.Formula = _formulaMapper.MapFrom(appMolecule.Formula, buildConfiguration);
-
             //get container for the molecule
             var moleculeContainer = appMolecule.RelativeContainerPath.Resolve<IContainer>(eventGroup);
+
+            var molecule = _moleculeMapper.MapFrom(molecules[applicationBuilder.MoleculeName], moleculeContainer, buildConfiguration);
+            molecule.Formula = _formulaMapper.MapFrom(appMolecule.Formula, buildConfiguration);
+
             moleculeContainer.Add(molecule);
 
             addVolumeParameterTo(moleculeContainer);

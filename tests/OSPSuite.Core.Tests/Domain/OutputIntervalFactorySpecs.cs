@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
@@ -18,7 +19,7 @@ namespace OSPSuite.Core.Domain
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
          A.CallTo(() => _objectBaseFactory.Create<IParameter>()).ReturnsLazily(x=>new Parameter());
-         A.CallTo(() => _dimensionFactory.Dimension(A<string>._)).Returns(Constants.Dimension.NO_DIMENSION);
+         A.CallTo(() => _dimensionFactory.Dimension(A<string>._)).Returns(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
          _containerTask = A.Fake<IContainerTask>();
          sut = new OutputIntervalFactory(_objectBaseFactory, _dimensionFactory, _containerTask);
       }

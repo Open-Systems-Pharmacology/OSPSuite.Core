@@ -5,16 +5,33 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Descriptors
 {
+   public enum CriteriaOperator
+   {
+      And,
+      Or
+   }
+
    public class DescriptorCriteria : List<IDescriptorCondition>, ISpecification<IEntity>, ISpecification<EntityDescriptor>
    {
+      //Default behavior
+      public CriteriaOperator Operator { get; set; } = CriteriaOperator.And;
+
       public override string ToString()
       {
-         return this.ToString(Constants.AND.ToUpper(), " ").Trim(' ');
+         var operation = Operator == CriteriaOperator.And ? Constants.AND : Constants.OR;
+         return this.ToString(operation.ToUpper(), " ").Trim(' ');
       }
 
       public bool IsSatisfiedBy(EntityDescriptor entityDescriptor)
       {
-         return this.Any() && this.All(condition => condition.IsSatisfiedBy(entityDescriptor));
+         //Empty criteria does not fulfill 
+         if (!this.Any())
+            return false;
+
+         if (Operator == CriteriaOperator.And)
+            return this.All(x => x.IsSatisfiedBy(entityDescriptor));
+
+         return this.Any(x => x.IsSatisfiedBy(entityDescriptor));
       }
 
       public virtual bool IsSatisfiedBy(IEntity entity)
@@ -26,6 +43,9 @@ namespace OSPSuite.Core.Domain.Descriptors
       {
          if (other == null) return false;
          if (Count != other.Count())
+            return false;
+
+         if (Operator != other.Operator)
             return false;
 
          for (int i = 0; i < Count; i++)
@@ -43,17 +63,20 @@ namespace OSPSuite.Core.Domain.Descriptors
       }
 
       /// <summary>
-      /// Removes all tag conditions for the given <paramref name="tag"/>
+      ///    Removes all tag conditions for the given <paramref name="tag" />
       /// </summary>
-      /// <typeparam name="T">This allows to filter the type being removed. To remove all conditions for the given type, use T = ITagCondition</typeparam>
+      /// <typeparam name="T">
+      ///    This allows to filter the type being removed. To remove all conditions for the given type, use T =
+      ///    ITagCondition
+      /// </typeparam>
       /// <param name="tag">Tag to remove</param>
       public void RemoveByTag<T>(string tag) where T : class, ITagCondition
       {
          var conditionsToRemove = (from conditions in this
-                                   let tagConditions = conditions as T
-                                   where tagConditions != null
-                                   where tagConditions.Tag.Equals(tag)
-                                   select conditions)
+               let tagConditions = conditions as T
+               where tagConditions != null
+               where tagConditions.Tag.Equals(tag)
+               select conditions)
             .ToList();
 
          conditionsToRemove.Each(condition => Remove(condition));
@@ -63,6 +86,7 @@ namespace OSPSuite.Core.Domain.Descriptors
       {
          var clone = new DescriptorCriteria();
          this.Each(x => clone.Add(x.CloneCondition()));
+         clone.Operator = Operator;
          return clone;
       }
 
@@ -72,10 +96,13 @@ namespace OSPSuite.Core.Domain.Descriptors
          unchecked // Overflow is fine, just wrap
          {
             int hash = 17;
+            //ok to use operator here
+            hash = (hash * 23) + Operator.GetHashCode();
             foreach (var descriptor in this)
             {
-               hash = (hash*23) + descriptor.GetHashCode();
+               hash = (hash * 23) + descriptor.GetHashCode();
             }
+
             return hash;
          }
       }

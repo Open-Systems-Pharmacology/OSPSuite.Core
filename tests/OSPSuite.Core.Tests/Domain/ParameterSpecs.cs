@@ -193,7 +193,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_be_able_to_retrieve_the_dislay_unit()
+      public void should_be_able_to_retrieve_the_display_unit()
       {
          sut.DisplayUnit.ShouldBeEqualTo(_displayUnit);
       }
@@ -233,7 +233,61 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_have_set_the_rhs_formula_to_null()
       {
-         sut.RHSFormula.ShouldBeNull();   
+         sut.RHSFormula.ShouldBeNull();
+      }
+   }
+
+   public class When_retrieving_the_value_of_a_parameter_for_which_the_formula_throws_an_exception : concern_for_Parameter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Formula = new ExplicitFormula("1/P");
+      }
+
+      [Observation]
+      public void should_return_nan_and_ensures_that_calls_is_not_successful()
+      {
+         var (value, res) = sut.TryGetValueInDisplayUnit();
+         res.ShouldBeFalse();
+         value.ShouldBeEqualTo(double.NaN);
+      }
+   }
+
+   public class When_retrieving_the_value_of_a_parameter_for_which_the_formula_uses_object_not_available : concern_for_Parameter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Formula = new ExplicitFormula("1/P");
+         sut.Formula.AddObjectPath(new FormulaUsablePath("Organism", "Not_there"){Alias = "P"});
+      }
+
+      [Observation]
+      public void should_return_nan_and_ensures_that_calls_is_not_successful()
+      {
+         var (value, res) = sut.TryGetValueInDisplayUnit();
+         res.ShouldBeFalse();
+         value.ShouldBeEqualTo(double.NaN);
+      }
+   }
+
+
+   public class When_retrieving_the_value_of_a_parameter_for_which_the_formula_can_be_retrieved : concern_for_Parameter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Formula = new ExplicitFormula("2 + 6");
+      }
+
+      [Observation]
+      public void should_return_nan_and_ensures_that_calls_is_not_successful()
+      {
+         var (value, res) = sut.TryGetValueInDisplayUnit();
+         res.ShouldBeTrue();
+         value.ShouldBeEqualTo(8);
+         sut.Value.ShouldBeEqualTo(8);
       }
    }
 }

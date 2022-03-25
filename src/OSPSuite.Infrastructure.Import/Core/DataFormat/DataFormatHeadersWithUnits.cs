@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Infrastructure.Import.Services;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 {
@@ -27,16 +28,15 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
       {
-         var units = GetLastBracketsOfString(description);
+         var (_, unit) = UnitExtractor.ExtractNameAndUnit(description);
          
-         if (string.IsNullOrEmpty(units))
+         if (string.IsNullOrEmpty(unit))
             return new UnitDescription();
 
-         var unit = GetAndValidateUnitFromBrackets(units, supportedDimensions);
-         if (unit != UnitDescription.InvalidUnit)
-         {
+         unit = ValidateUnit(unit, supportedDimensions);
+         if (unit != UnitDescription.InvalidUnit) 
             rank++;
-         }
+
          return new UnitDescription(unit);
       }
    }

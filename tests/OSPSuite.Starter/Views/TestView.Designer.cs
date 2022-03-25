@@ -29,6 +29,7 @@
       private void InitializeComponent()
       {
          this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.startDynamicTestButton = new DevExpress.XtraEditors.SimpleButton();
          this.startDialogCreatorButton = new DevExpress.XtraEditors.SimpleButton();
          this.startLoggerButton = new DevExpress.XtraEditors.SimpleButton();
          this.startImporterLoadTestButton = new DevExpress.XtraEditors.SimpleButton();
@@ -72,6 +73,11 @@
          this.layoutControlItem19 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControlItem20 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControlItem21 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.layoutControlItem22 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.showModalButton = new DevExpress.XtraEditors.SimpleButton();
+         this.layoutControlItem23 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.showWizardButton = new DevExpress.XtraEditors.SimpleButton();
+         this.layoutControlItem24 = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
@@ -97,11 +103,17 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem19)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem20)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem21)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem22)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem23)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem24)).BeginInit();
          this.SuspendLayout();
          // 
          // layoutControl
          // 
          this.layoutControl.AllowCustomization = false;
+         this.layoutControl.Controls.Add(this.showWizardButton);
+         this.layoutControl.Controls.Add(this.showModalButton);
+         this.layoutControl.Controls.Add(this.startDynamicTestButton);
          this.layoutControl.Controls.Add(this.startDialogCreatorButton);
          this.layoutControl.Controls.Add(this.startLoggerButton);
          this.layoutControl.Controls.Add(this.startImporterLoadTestButton);
@@ -125,199 +137,205 @@
          this.layoutControl.Controls.Add(this.startChartTestButton);
          this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.layoutControl.Location = new System.Drawing.Point(0, 0);
-         this.layoutControl.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.layoutControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.layoutControl.Name = "layoutControl";
          this.layoutControl.Root = this.layoutControlGroup1;
-         this.layoutControl.Size = new System.Drawing.Size(940, 1757);
+         this.layoutControl.Size = new System.Drawing.Size(439, 773);
          this.layoutControl.TabIndex = 0;
          this.layoutControl.Text = "layoutControl1";
          // 
+         // startDynamicTestButton
+         // 
+         this.startDynamicTestButton.Location = new System.Drawing.Point(12, 663);
+         this.startDynamicTestButton.Name = "startDynamicTestButton";
+         this.startDynamicTestButton.Size = new System.Drawing.Size(415, 27);
+         this.startDynamicTestButton.StyleController = this.layoutControl;
+         this.startDynamicTestButton.TabIndex = 25;
+         this.startDynamicTestButton.Text = "startDynamicTestButton";
+         // 
          // startDialogCreatorButton
          // 
-         this.startDialogCreatorButton.Location = new System.Drawing.Point(12, 1172);
-         this.startDialogCreatorButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startDialogCreatorButton.Location = new System.Drawing.Point(12, 632);
+         this.startDialogCreatorButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startDialogCreatorButton.Name = "startDialogCreatorButton";
-         this.startDialogCreatorButton.Size = new System.Drawing.Size(916, 54);
+         this.startDialogCreatorButton.Size = new System.Drawing.Size(415, 27);
          this.startDialogCreatorButton.StyleController = this.layoutControl;
          this.startDialogCreatorButton.TabIndex = 24;
          this.startDialogCreatorButton.Text = "startDialogCreatorTetsButton";
          // 
          // startLoggerButton
          // 
-         this.startLoggerButton.Location = new System.Drawing.Point(12, 1056);
-         this.startLoggerButton.Margin = new System.Windows.Forms.Padding(6);
+         this.startLoggerButton.Location = new System.Drawing.Point(12, 570);
          this.startLoggerButton.Name = "startLoggerButton";
-         this.startLoggerButton.Size = new System.Drawing.Size(916, 54);
+         this.startLoggerButton.Size = new System.Drawing.Size(415, 27);
          this.startLoggerButton.StyleController = this.layoutControl;
          this.startLoggerButton.TabIndex = 23;
          this.startLoggerButton.Text = "startLoggerButton";
          // 
          // startImporterLoadTestButton
          // 
-         this.startImporterLoadTestButton.Location = new System.Drawing.Point(12, 418);
-         this.startImporterLoadTestButton.Margin = new System.Windows.Forms.Padding(6);
+         this.startImporterLoadTestButton.Location = new System.Drawing.Point(12, 229);
          this.startImporterLoadTestButton.Name = "startImporterLoadTestButton";
-         this.startImporterLoadTestButton.Size = new System.Drawing.Size(916, 54);
+         this.startImporterLoadTestButton.Size = new System.Drawing.Size(415, 27);
          this.startImporterLoadTestButton.StyleController = this.layoutControl;
          this.startImporterLoadTestButton.TabIndex = 22;
          this.startImporterLoadTestButton.Text = "startImporterLoadTestButton";
          // 
          // startImporterReloadTestButton
          // 
-         this.startImporterReloadTestButton.Location = new System.Drawing.Point(12, 360);
-         this.startImporterReloadTestButton.Margin = new System.Windows.Forms.Padding(6);
+         this.startImporterReloadTestButton.Location = new System.Drawing.Point(12, 198);
          this.startImporterReloadTestButton.Name = "startImporterReloadTestButton";
-         this.startImporterReloadTestButton.Size = new System.Drawing.Size(916, 54);
+         this.startImporterReloadTestButton.Size = new System.Drawing.Size(415, 27);
          this.startImporterReloadTestButton.StyleController = this.layoutControl;
          this.startImporterReloadTestButton.TabIndex = 21;
          this.startImporterReloadTestButton.Text = "startImporterReloadTestButton";
          // 
          // startEmptyFormButton
          // 
-         this.startEmptyFormButton.Location = new System.Drawing.Point(12, 1114);
-         this.startEmptyFormButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startEmptyFormButton.Location = new System.Drawing.Point(12, 601);
+         this.startEmptyFormButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startEmptyFormButton.Name = "startEmptyFormButton";
-         this.startEmptyFormButton.Size = new System.Drawing.Size(916, 54);
+         this.startEmptyFormButton.Size = new System.Drawing.Size(415, 27);
          this.startEmptyFormButton.StyleController = this.layoutControl;
          this.startEmptyFormButton.TabIndex = 20;
          this.startEmptyFormButton.Text = "startEmptyFormButton";
          // 
          // startMatrixTestButton
          // 
-         this.startMatrixTestButton.Location = new System.Drawing.Point(12, 998);
-         this.startMatrixTestButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startMatrixTestButton.Location = new System.Drawing.Point(12, 539);
+         this.startMatrixTestButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startMatrixTestButton.Name = "startMatrixTestButton";
-         this.startMatrixTestButton.Size = new System.Drawing.Size(916, 54);
+         this.startMatrixTestButton.Size = new System.Drawing.Size(415, 27);
          this.startMatrixTestButton.StyleController = this.layoutControl;
          this.startMatrixTestButton.TabIndex = 19;
          this.startMatrixTestButton.Text = "startMatrixTestButton";
          // 
          // startHistogramTestButton
          // 
-         this.startHistogramTestButton.Location = new System.Drawing.Point(12, 940);
-         this.startHistogramTestButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startHistogramTestButton.Location = new System.Drawing.Point(12, 508);
+         this.startHistogramTestButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startHistogramTestButton.Name = "startHistogramTestButton";
-         this.startHistogramTestButton.Size = new System.Drawing.Size(916, 54);
+         this.startHistogramTestButton.Size = new System.Drawing.Size(415, 27);
          this.startHistogramTestButton.StyleController = this.layoutControl;
          this.startHistogramTestButton.TabIndex = 18;
          this.startHistogramTestButton.Text = "startHistogramTestButton";
          // 
          // startSensitivityAnalysisTestButton
          // 
-         this.startSensitivityAnalysisTestButton.Location = new System.Drawing.Point(12, 708);
-         this.startSensitivityAnalysisTestButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startSensitivityAnalysisTestButton.Location = new System.Drawing.Point(12, 384);
+         this.startSensitivityAnalysisTestButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startSensitivityAnalysisTestButton.Name = "startSensitivityAnalysisTestButton";
-         this.startSensitivityAnalysisTestButton.Size = new System.Drawing.Size(916, 54);
+         this.startSensitivityAnalysisTestButton.Size = new System.Drawing.Size(415, 27);
          this.startSensitivityAnalysisTestButton.StyleController = this.layoutControl;
          this.startSensitivityAnalysisTestButton.TabIndex = 17;
          this.startSensitivityAnalysisTestButton.Text = "startSensitivityAnalysisTestButton";
          // 
          // startExceptionViewButton
          // 
-         this.startExceptionViewButton.Location = new System.Drawing.Point(12, 882);
-         this.startExceptionViewButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startExceptionViewButton.Location = new System.Drawing.Point(12, 477);
+         this.startExceptionViewButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startExceptionViewButton.Name = "startExceptionViewButton";
-         this.startExceptionViewButton.Size = new System.Drawing.Size(916, 54);
+         this.startExceptionViewButton.Size = new System.Drawing.Size(415, 27);
          this.startExceptionViewButton.StyleController = this.layoutControl;
          this.startExceptionViewButton.TabIndex = 16;
          this.startExceptionViewButton.Text = "startExceptionViewButton";
          // 
          // startSimpleUITestButton
          // 
-         this.startSimpleUITestButton.Location = new System.Drawing.Point(12, 824);
-         this.startSimpleUITestButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startSimpleUITestButton.Location = new System.Drawing.Point(12, 446);
+         this.startSimpleUITestButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startSimpleUITestButton.Name = "startSimpleUITestButton";
-         this.startSimpleUITestButton.Size = new System.Drawing.Size(916, 54);
+         this.startSimpleUITestButton.Size = new System.Drawing.Size(415, 27);
          this.startSimpleUITestButton.StyleController = this.layoutControl;
          this.startSimpleUITestButton.TabIndex = 15;
          this.startSimpleUITestButton.Text = "startSimpleUITestButton";
          // 
          // startCommandBrowserTestButton
          // 
-         this.startCommandBrowserTestButton.Location = new System.Drawing.Point(12, 766);
-         this.startCommandBrowserTestButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startCommandBrowserTestButton.Location = new System.Drawing.Point(12, 415);
+         this.startCommandBrowserTestButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startCommandBrowserTestButton.Name = "startCommandBrowserTestButton";
-         this.startCommandBrowserTestButton.Size = new System.Drawing.Size(916, 54);
+         this.startCommandBrowserTestButton.Size = new System.Drawing.Size(415, 27);
          this.startCommandBrowserTestButton.StyleController = this.layoutControl;
          this.startCommandBrowserTestButton.TabIndex = 14;
          this.startCommandBrowserTestButton.Text = "startCommandBrowserTestButton";
          // 
          // startParameterIdentificationTestButton
          // 
-         this.startParameterIdentificationTestButton.Location = new System.Drawing.Point(12, 650);
-         this.startParameterIdentificationTestButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startParameterIdentificationTestButton.Location = new System.Drawing.Point(12, 353);
+         this.startParameterIdentificationTestButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startParameterIdentificationTestButton.Name = "startParameterIdentificationTestButton";
-         this.startParameterIdentificationTestButton.Size = new System.Drawing.Size(916, 54);
+         this.startParameterIdentificationTestButton.Size = new System.Drawing.Size(415, 27);
          this.startParameterIdentificationTestButton.StyleController = this.layoutControl;
          this.startParameterIdentificationTestButton.TabIndex = 13;
          this.startParameterIdentificationTestButton.Text = "startParameterIdentificationTestButton";
          // 
          // startPivotGridTestButton
          // 
-         this.startPivotGridTestButton.Location = new System.Drawing.Point(12, 592);
-         this.startPivotGridTestButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startPivotGridTestButton.Location = new System.Drawing.Point(12, 322);
+         this.startPivotGridTestButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startPivotGridTestButton.Name = "startPivotGridTestButton";
-         this.startPivotGridTestButton.Size = new System.Drawing.Size(916, 54);
+         this.startPivotGridTestButton.Size = new System.Drawing.Size(415, 27);
          this.startPivotGridTestButton.StyleController = this.layoutControl;
          this.startPivotGridTestButton.TabIndex = 12;
          this.startPivotGridTestButton.Text = "startPivotGridTestButton";
          // 
          // startDataRepositoryTestButton
          // 
-         this.startDataRepositoryTestButton.Location = new System.Drawing.Point(12, 476);
-         this.startDataRepositoryTestButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startDataRepositoryTestButton.Location = new System.Drawing.Point(12, 260);
+         this.startDataRepositoryTestButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startDataRepositoryTestButton.Name = "startDataRepositoryTestButton";
-         this.startDataRepositoryTestButton.Size = new System.Drawing.Size(916, 54);
+         this.startDataRepositoryTestButton.Size = new System.Drawing.Size(415, 27);
          this.startDataRepositoryTestButton.StyleController = this.layoutControl;
          this.startDataRepositoryTestButton.TabIndex = 11;
          this.startDataRepositoryTestButton.Text = "startDataRepositoryTestButton";
          // 
          // startShellTestButton
          // 
-         this.startShellTestButton.Location = new System.Drawing.Point(12, 534);
-         this.startShellTestButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startShellTestButton.Location = new System.Drawing.Point(12, 291);
+         this.startShellTestButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startShellTestButton.Name = "startShellTestButton";
-         this.startShellTestButton.Size = new System.Drawing.Size(916, 54);
+         this.startShellTestButton.Size = new System.Drawing.Size(415, 27);
          this.startShellTestButton.StyleController = this.layoutControl;
          this.startShellTestButton.TabIndex = 10;
          this.startShellTestButton.Text = "startShellTestButton";
          // 
          // startImporterTestButton
          // 
-         this.startImporterTestButton.Location = new System.Drawing.Point(12, 302);
-         this.startImporterTestButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startImporterTestButton.Location = new System.Drawing.Point(12, 167);
+         this.startImporterTestButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startImporterTestButton.Name = "startImporterTestButton";
-         this.startImporterTestButton.Size = new System.Drawing.Size(916, 54);
+         this.startImporterTestButton.Size = new System.Drawing.Size(415, 27);
          this.startImporterTestButton.StyleController = this.layoutControl;
          this.startImporterTestButton.TabIndex = 9;
          this.startImporterTestButton.Text = "startImporterTestButton";
          // 
          // startExplorerTestButton
          // 
-         this.startExplorerTestButton.Location = new System.Drawing.Point(12, 244);
-         this.startExplorerTestButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startExplorerTestButton.Location = new System.Drawing.Point(12, 136);
+         this.startExplorerTestButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startExplorerTestButton.Name = "startExplorerTestButton";
-         this.startExplorerTestButton.Size = new System.Drawing.Size(916, 54);
+         this.startExplorerTestButton.Size = new System.Drawing.Size(415, 27);
          this.startExplorerTestButton.StyleController = this.layoutControl;
          this.startExplorerTestButton.TabIndex = 8;
          this.startExplorerTestButton.Text = "startExplorerTestButton";
          // 
          // startComparisonTestButton
          // 
-         this.startComparisonTestButton.Location = new System.Drawing.Point(12, 186);
-         this.startComparisonTestButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startComparisonTestButton.Location = new System.Drawing.Point(12, 105);
+         this.startComparisonTestButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startComparisonTestButton.Name = "startComparisonTestButton";
-         this.startComparisonTestButton.Size = new System.Drawing.Size(916, 54);
+         this.startComparisonTestButton.Size = new System.Drawing.Size(415, 27);
          this.startComparisonTestButton.StyleController = this.layoutControl;
          this.startComparisonTestButton.TabIndex = 7;
          this.startComparisonTestButton.Text = "startComparisonTestButton";
          // 
          // startGridTestButton
          // 
-         this.startGridTestButton.Location = new System.Drawing.Point(12, 128);
-         this.startGridTestButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startGridTestButton.Location = new System.Drawing.Point(12, 74);
+         this.startGridTestButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startGridTestButton.Name = "startGridTestButton";
-         this.startGridTestButton.Size = new System.Drawing.Size(916, 54);
+         this.startGridTestButton.Size = new System.Drawing.Size(415, 27);
          this.startGridTestButton.StyleController = this.layoutControl;
          this.startGridTestButton.TabIndex = 6;
          this.startGridTestButton.Text = "startGridTestButton";
@@ -325,19 +343,19 @@
          // startJournalTestButton
          // 
          this.startJournalTestButton.Location = new System.Drawing.Point(12, 12);
-         this.startJournalTestButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startJournalTestButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startJournalTestButton.Name = "startJournalTestButton";
-         this.startJournalTestButton.Size = new System.Drawing.Size(916, 54);
+         this.startJournalTestButton.Size = new System.Drawing.Size(415, 27);
          this.startJournalTestButton.StyleController = this.layoutControl;
          this.startJournalTestButton.TabIndex = 5;
          this.startJournalTestButton.Text = "startJournalTestButton";
          // 
          // startChartTestButton
          // 
-         this.startChartTestButton.Location = new System.Drawing.Point(12, 70);
-         this.startChartTestButton.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.startChartTestButton.Location = new System.Drawing.Point(12, 43);
+         this.startChartTestButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
          this.startChartTestButton.Name = "startChartTestButton";
-         this.startChartTestButton.Size = new System.Drawing.Size(916, 54);
+         this.startChartTestButton.Size = new System.Drawing.Size(415, 27);
          this.startChartTestButton.StyleController = this.layoutControl;
          this.startChartTestButton.TabIndex = 4;
          this.startChartTestButton.Text = "startChartTestButton";
@@ -367,17 +385,20 @@
             this.layoutControlItem18,
             this.layoutControlItem19,
             this.layoutControlItem20,
-            this.layoutControlItem21});
+            this.layoutControlItem21,
+            this.layoutControlItem22,
+            this.layoutControlItem23,
+            this.layoutControlItem24});
          this.layoutControlGroup1.Name = "layoutControlGroup1";
-         this.layoutControlGroup1.Size = new System.Drawing.Size(940, 1757);
+         this.layoutControlGroup1.Size = new System.Drawing.Size(439, 773);
          this.layoutControlGroup1.TextVisible = false;
          // 
          // layoutControlItem1
          // 
          this.layoutControlItem1.Control = this.startChartTestButton;
-         this.layoutControlItem1.Location = new System.Drawing.Point(0, 58);
+         this.layoutControlItem1.Location = new System.Drawing.Point(0, 31);
          this.layoutControlItem1.Name = "layoutControlItem1";
-         this.layoutControlItem1.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem1.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem1.TextVisible = false;
          // 
@@ -386,188 +407,233 @@
          this.layoutControlItem2.Control = this.startJournalTestButton;
          this.layoutControlItem2.Location = new System.Drawing.Point(0, 0);
          this.layoutControlItem2.Name = "layoutControlItem2";
-         this.layoutControlItem2.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem2.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem2.TextVisible = false;
          // 
          // layoutControlItem3
          // 
          this.layoutControlItem3.Control = this.startGridTestButton;
-         this.layoutControlItem3.Location = new System.Drawing.Point(0, 116);
+         this.layoutControlItem3.Location = new System.Drawing.Point(0, 62);
          this.layoutControlItem3.Name = "layoutControlItem3";
-         this.layoutControlItem3.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem3.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem3.TextVisible = false;
          // 
          // layoutControlItem4
          // 
          this.layoutControlItem4.Control = this.startComparisonTestButton;
-         this.layoutControlItem4.Location = new System.Drawing.Point(0, 174);
+         this.layoutControlItem4.Location = new System.Drawing.Point(0, 93);
          this.layoutControlItem4.Name = "layoutControlItem4";
-         this.layoutControlItem4.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem4.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem4.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem4.TextVisible = false;
          // 
          // layoutControlItem5
          // 
          this.layoutControlItem5.Control = this.startExplorerTestButton;
-         this.layoutControlItem5.Location = new System.Drawing.Point(0, 232);
+         this.layoutControlItem5.Location = new System.Drawing.Point(0, 124);
          this.layoutControlItem5.Name = "layoutControlItem5";
-         this.layoutControlItem5.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem5.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem5.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem5.TextVisible = false;
          // 
          // layoutControlItem6
          // 
          this.layoutControlItem6.Control = this.startImporterTestButton;
-         this.layoutControlItem6.Location = new System.Drawing.Point(0, 290);
+         this.layoutControlItem6.Location = new System.Drawing.Point(0, 155);
          this.layoutControlItem6.Name = "layoutControlItem6";
-         this.layoutControlItem6.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem6.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem6.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem6.TextVisible = false;
          // 
          // layoutControlItem7
          // 
          this.layoutControlItem7.Control = this.startShellTestButton;
-         this.layoutControlItem7.Location = new System.Drawing.Point(0, 522);
+         this.layoutControlItem7.Location = new System.Drawing.Point(0, 279);
          this.layoutControlItem7.Name = "layoutControlItem7";
-         this.layoutControlItem7.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem7.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem7.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem7.TextVisible = false;
          // 
          // layoutControlItem8
          // 
          this.layoutControlItem8.Control = this.startDataRepositoryTestButton;
-         this.layoutControlItem8.Location = new System.Drawing.Point(0, 464);
+         this.layoutControlItem8.Location = new System.Drawing.Point(0, 248);
          this.layoutControlItem8.Name = "layoutControlItem8";
-         this.layoutControlItem8.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem8.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem8.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem8.TextVisible = false;
          // 
          // layoutControlItem9
          // 
          this.layoutControlItem9.Control = this.startPivotGridTestButton;
-         this.layoutControlItem9.Location = new System.Drawing.Point(0, 580);
+         this.layoutControlItem9.Location = new System.Drawing.Point(0, 310);
          this.layoutControlItem9.Name = "layoutControlItem9";
-         this.layoutControlItem9.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem9.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem9.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem9.TextVisible = false;
          // 
          // layoutControlItem10
          // 
          this.layoutControlItem10.Control = this.startParameterIdentificationTestButton;
-         this.layoutControlItem10.Location = new System.Drawing.Point(0, 638);
+         this.layoutControlItem10.Location = new System.Drawing.Point(0, 341);
          this.layoutControlItem10.Name = "layoutControlItem10";
-         this.layoutControlItem10.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem10.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem10.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem10.TextVisible = false;
          // 
          // layoutControlItem11
          // 
          this.layoutControlItem11.Control = this.startCommandBrowserTestButton;
-         this.layoutControlItem11.Location = new System.Drawing.Point(0, 754);
+         this.layoutControlItem11.Location = new System.Drawing.Point(0, 403);
          this.layoutControlItem11.Name = "layoutControlItem11";
-         this.layoutControlItem11.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem11.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem11.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem11.TextVisible = false;
          // 
          // layoutControlItem12
          // 
          this.layoutControlItem12.Control = this.startSimpleUITestButton;
-         this.layoutControlItem12.Location = new System.Drawing.Point(0, 812);
+         this.layoutControlItem12.Location = new System.Drawing.Point(0, 434);
          this.layoutControlItem12.Name = "layoutControlItem12";
-         this.layoutControlItem12.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem12.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem12.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem12.TextVisible = false;
          // 
          // layoutControlItem13
          // 
          this.layoutControlItem13.Control = this.startExceptionViewButton;
-         this.layoutControlItem13.Location = new System.Drawing.Point(0, 870);
+         this.layoutControlItem13.Location = new System.Drawing.Point(0, 465);
          this.layoutControlItem13.Name = "layoutControlItem13";
-         this.layoutControlItem13.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem13.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem13.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem13.TextVisible = false;
          // 
          // layoutControlItem14
          // 
          this.layoutControlItem14.Control = this.startSensitivityAnalysisTestButton;
-         this.layoutControlItem14.Location = new System.Drawing.Point(0, 696);
+         this.layoutControlItem14.Location = new System.Drawing.Point(0, 372);
          this.layoutControlItem14.Name = "layoutControlItem14";
-         this.layoutControlItem14.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem14.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem14.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem14.TextVisible = false;
          // 
          // layoutControlItem15
          // 
          this.layoutControlItem15.Control = this.startHistogramTestButton;
-         this.layoutControlItem15.Location = new System.Drawing.Point(0, 928);
+         this.layoutControlItem15.Location = new System.Drawing.Point(0, 496);
          this.layoutControlItem15.Name = "layoutControlItem15";
-         this.layoutControlItem15.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem15.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem15.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem15.TextVisible = false;
          // 
          // layoutControlItem16
          // 
          this.layoutControlItem16.Control = this.startMatrixTestButton;
-         this.layoutControlItem16.Location = new System.Drawing.Point(0, 986);
+         this.layoutControlItem16.Location = new System.Drawing.Point(0, 527);
          this.layoutControlItem16.Name = "layoutControlItem16";
-         this.layoutControlItem16.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem16.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem16.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem16.TextVisible = false;
          // 
          // layoutControlItem17
          // 
          this.layoutControlItem17.Control = this.startEmptyFormButton;
-         this.layoutControlItem17.Location = new System.Drawing.Point(0, 1102);
+         this.layoutControlItem17.Location = new System.Drawing.Point(0, 589);
          this.layoutControlItem17.Name = "layoutControlItem17";
-         this.layoutControlItem17.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem17.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem17.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem17.TextVisible = false;
          // 
          // layoutControlItem18
          // 
          this.layoutControlItem18.Control = this.startImporterReloadTestButton;
-         this.layoutControlItem18.Location = new System.Drawing.Point(0, 348);
+         this.layoutControlItem18.Location = new System.Drawing.Point(0, 186);
          this.layoutControlItem18.Name = "layoutControlItem18";
-         this.layoutControlItem18.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem18.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem18.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem18.TextVisible = false;
          // 
          // layoutControlItem19
          // 
          this.layoutControlItem19.Control = this.startImporterLoadTestButton;
-         this.layoutControlItem19.Location = new System.Drawing.Point(0, 406);
+         this.layoutControlItem19.Location = new System.Drawing.Point(0, 217);
          this.layoutControlItem19.Name = "layoutControlItem19";
-         this.layoutControlItem19.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem19.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem19.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem19.TextVisible = false;
          // 
          // layoutControlItem20
          // 
          this.layoutControlItem20.Control = this.startLoggerButton;
-         this.layoutControlItem20.Location = new System.Drawing.Point(0, 1044);
+         this.layoutControlItem20.Location = new System.Drawing.Point(0, 558);
          this.layoutControlItem20.Name = "layoutControlItem20";
-         this.layoutControlItem20.Size = new System.Drawing.Size(920, 58);
+         this.layoutControlItem20.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem20.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem20.TextVisible = false;
          // 
          // layoutControlItem21
          // 
          this.layoutControlItem21.Control = this.startDialogCreatorButton;
-         this.layoutControlItem21.Location = new System.Drawing.Point(0, 1160);
+         this.layoutControlItem21.Location = new System.Drawing.Point(0, 620);
          this.layoutControlItem21.Name = "layoutControlItem21";
-         this.layoutControlItem21.Size = new System.Drawing.Size(920, 577);
+         this.layoutControlItem21.Size = new System.Drawing.Size(419, 31);
          this.layoutControlItem21.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem21.TextVisible = false;
          // 
+         // layoutControlItem22
+         // 
+         this.layoutControlItem22.Control = this.startDynamicTestButton;
+         this.layoutControlItem22.Location = new System.Drawing.Point(0, 651);
+         this.layoutControlItem22.Name = "layoutControlItem22";
+         this.layoutControlItem22.Size = new System.Drawing.Size(419, 31);
+         this.layoutControlItem22.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem22.TextVisible = false;
+         // 
+         // showModalButton
+         // 
+         this.showModalButton.Location = new System.Drawing.Point(12, 694);
+         this.showModalButton.Name = "showModalButton";
+         this.showModalButton.Size = new System.Drawing.Size(415, 27);
+         this.showModalButton.StyleController = this.layoutControl;
+         this.showModalButton.TabIndex = 26;
+         this.showModalButton.Text = "showModalButton";
+         // 
+         // layoutControlItem23
+         // 
+         this.layoutControlItem23.Control = this.showModalButton;
+         this.layoutControlItem23.Location = new System.Drawing.Point(0, 682);
+         this.layoutControlItem23.Name = "layoutControlItem23";
+         this.layoutControlItem23.Size = new System.Drawing.Size(419, 31);
+         this.layoutControlItem23.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem23.TextVisible = false;
+         // 
+         // showWizardButton
+         // 
+         this.showWizardButton.Location = new System.Drawing.Point(12, 725);
+         this.showWizardButton.Name = "showWizardButton";
+         this.showWizardButton.Size = new System.Drawing.Size(415, 27);
+         this.showWizardButton.StyleController = this.layoutControl;
+         this.showWizardButton.TabIndex = 27;
+         this.showWizardButton.Text = "showWizardButton";
+         // 
+         // layoutControlItem24
+         // 
+         this.layoutControlItem24.Control = this.showWizardButton;
+         this.layoutControlItem24.Location = new System.Drawing.Point(0, 713);
+         this.layoutControlItem24.Name = "layoutControlItem24";
+         this.layoutControlItem24.Size = new System.Drawing.Size(419, 40);
+         this.layoutControlItem24.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem24.TextVisible = false;
+         // 
          // TestView
          // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
+         this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.ClientSize = new System.Drawing.Size(940, 1757);
+         this.ClientSize = new System.Drawing.Size(439, 773);
          this.Controls.Add(this.layoutControl);
-         this.Margin = new System.Windows.Forms.Padding(6, 10, 6, 10);
+         this.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
          this.Name = "TestView";
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
@@ -594,6 +660,9 @@
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem19)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem20)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem21)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem22)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem23)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem24)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -643,5 +712,11 @@
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem20;
       private DevExpress.XtraEditors.SimpleButton startDialogCreatorButton;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem21;
+      private DevExpress.XtraEditors.SimpleButton startDynamicTestButton;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem22;
+      private DevExpress.XtraEditors.SimpleButton showWizardButton;
+      private DevExpress.XtraEditors.SimpleButton showModalButton;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem23;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem24;
    }
 }

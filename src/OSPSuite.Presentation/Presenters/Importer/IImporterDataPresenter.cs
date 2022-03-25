@@ -30,7 +30,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos
+         ColumnInfoCache columnInfos
       );
 
       event EventHandler<FormatChangedEventArgs> OnFormatChanged;
@@ -47,8 +47,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void ReopenAllSheets();
       void RemoveAllButThisTab(string tabName);
       void ImportDataForConfirmation();
-      void onMissingMapping();
-      void onCompletedMapping();
+      void OnMissingMapping();
+      void OnCompletedMapping();
       void DisableImportedSheets();
       List<string> GetSheetNames();
       DataTable GetSheet(string tabName);
@@ -60,8 +60,24 @@ namespace OSPSuite.Presentation.Presenters.Importer
       string GetActiveFilterCriteria();
       string GetFilter();
       void TriggerOnDataChanged();
-      void SetFilter(string FilterString);
+      void SetFilter(string filterString);
       void GetFormatBasedOnCurrentSheet();
       void ResetLoadedSheets();
+      void SetTabMarks(ParseErrors errors, Cache<string, IDataSet> loadedDataSets);
+      void SetTabMarks(ParseErrors errors);
+   }
+
+   public class TabMarkInfo
+   {
+      public string ErrorMessage { get; }
+      public bool IsLoaded { get; }
+
+      public bool ContainsError => ErrorMessage != null;
+
+      public TabMarkInfo(string errorMessage, bool isLoaded)
+      {
+         ErrorMessage = errorMessage;
+         IsLoaded = isLoaded;
+      }
    }
 }

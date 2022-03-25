@@ -26,7 +26,10 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private ParameterIdentification _parameterIdentification;
       private readonly CancellationTokenSource _cancellationTokenSource;
 
-      public ParameterIdentificationEngine(IEventPublisher eventPublisher, IParameterIdentificationRunFactory parameterIdentificationRunFactory, ICoreUserSettings coreUserSettings)
+      public ParameterIdentificationEngine(
+         IEventPublisher eventPublisher, 
+         IParameterIdentificationRunFactory parameterIdentificationRunFactory, 
+         ICoreUserSettings coreUserSettings)
       {
          _eventPublisher = eventPublisher;
          _parameterIdentificationRunFactory = parameterIdentificationRunFactory;

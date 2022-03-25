@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Helpers
       {
          Assert.AreEqual(x1.GetType(), x2.GetType());
 
-         if (typeof (T) == typeof (String))
+         if (typeof(T) == typeof(String))
          {
             AreEqualStrings(x1 as string, x2 as string);
             return;
@@ -35,78 +35,93 @@ namespace OSPSuite.Core.Helpers
             AreEqualOutputInterval(x1 as OutputInterval, x2 as OutputInterval);
             return;
          }
+
          if (x1.IsAnImplementationOf<DataColumn>())
          {
             AreEqualMcDataColumn(x1 as DataColumn, x2 as DataColumn);
             return;
          }
+
          // Types related to EventBuilder
          if (x1.IsAnImplementationOf<IApplicationBuilder>())
          {
             AreEqualApplicationBuilder((IApplicationBuilder) x1, (IApplicationBuilder) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IEventGroupBuilder>())
          {
             AreEqualEventGroupBuilder((IEventGroupBuilder) x1, (IEventGroupBuilder) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IEventBuilder>())
          {
             AreEqualEventBuilder((IEventBuilder) x1, (IEventBuilder) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IEventAssignmentBuilder>())
          {
             AreEqualEventAssignmentBuilder((IEventAssignmentBuilder) x1, (IEventAssignmentBuilder) x2);
             return;
          }
+
          // Types derived from other Builder
          if (x1.IsAnImplementationOf<INeighborhoodBuilder>())
          {
             AreEqualNeighborhoodBuilder((INeighborhoodBuilder) x1, (INeighborhoodBuilder) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<TransporterMoleculeContainer>())
          {
             AreEqualTransporterMoleculeContainer(x1 as TransporterMoleculeContainer, x2 as TransporterMoleculeContainer);
          }
+
          if (x1.IsAnImplementationOf<InteractionContainer>())
          {
             AreEqualInteractionContainer(x1 as InteractionContainer, x2 as InteractionContainer);
          }
+
          if (x1.IsAnImplementationOf<IMoleculeBuilder>())
          {
             AreEqualMoleculeBuilder((IMoleculeBuilder) x1, (IMoleculeBuilder) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IParameter>())
          {
             AreEqualParameterBuilder((IParameter) x1, (IParameter) x2);
             return;
          }
+
          // Types derived from ObserverBuilder
          if (x1.IsAnImplementationOf<IContainerObserverBuilder>())
          {
             AreEqualObserverBuilder((IContainerObserverBuilder) x1, (IContainerObserverBuilder) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IAmountObserverBuilder>())
          {
             AreEqualAmountObserverBuilder((IAmountObserverBuilder) x1, (IAmountObserverBuilder) x2);
             return;
          }
+
          // Types derived from ProcessBuilder
          if (x1.IsAnImplementationOf<IReactionPartnerBuilder>())
          {
             AreEqualReactionPartnerBuilder((IReactionPartnerBuilder) x1, (IReactionPartnerBuilder) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IReactionBuilder>())
          {
             AreEqualReactionBuilder((IReactionBuilder) x1, (IReactionBuilder) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<ITransportBuilder>())
          {
             AreEqualTransportBuilder((ITransportBuilder) x1, (ITransportBuilder) x2);
@@ -119,38 +134,45 @@ namespace OSPSuite.Core.Helpers
             AreEqualMoleculeStartValue((IMoleculeStartValue) x1, (IMoleculeStartValue) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IParameterStartValue>())
          {
             AreEqualParameterStartValue((IParameterStartValue) x1, (IParameterStartValue) x2);
             return;
          }
+
          // Types derived from Event
          if (x1.IsAnImplementationOf<IEventGroup>())
          {
             AreEqualEventGroup((IEventGroup) x1, (IEventGroup) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IEvent>())
          {
             AreEqualEvent((IEvent) x1, (IEvent) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IEventAssignment>())
          {
             AreEqualEventAssignment((IEventAssignment) x1, (IEventAssignment) x2);
             return;
          }
+
          // Types derived from Process
          if (x1.IsAnImplementationOf<IReaction>())
          {
             AreEqualReaction((IReaction) x1, (IReaction) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<ITransport>())
          {
             AreEqualTransport((ITransport) x1, (ITransport) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IProcess>())
          {
             AreEqualProcess((IProcess) x1, (IProcess) x2);
@@ -163,11 +185,13 @@ namespace OSPSuite.Core.Helpers
             AreEqualDistributedParameter((IDistributedParameter) x1, (IDistributedParameter) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IMoleculeAmount>())
          {
             AreEqualMoleculeAmount((IMoleculeAmount) x1, (IMoleculeAmount) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IQuantityAndContainer>())
          {
             AreEqualQuantityAndContainer((IQuantityAndContainer) x1, (IQuantityAndContainer) x2);
@@ -180,21 +204,25 @@ namespace OSPSuite.Core.Helpers
             AreEqualParameter((IParameter) x1, (IParameter) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IObserver>())
          {
             AreEqualObserver((IObserver) x1, (IObserver) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IQuantity>())
          {
             AreEqualQuantity((IQuantity) x1, (IQuantity) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IFormulaUsable>())
          {
             AreEqualFormulaUsable((IFormulaUsable) x1, (IFormulaUsable) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<DataRepository>())
          {
             AreEqualMcDataRepository(x1 as DataRepository, x2 as DataRepository);
@@ -207,21 +235,25 @@ namespace OSPSuite.Core.Helpers
             AreEqualExplicitFormula(x1.DowncastTo<ExplicitFormula>(), x2.DowncastTo<ExplicitFormula>());
             return;
          }
+
          if (x1.IsAnImplementationOf<ConstantFormula>())
          {
             AreEqualConstantFormula(x1.DowncastTo<ConstantFormula>(), x2.DowncastTo<ConstantFormula>());
             return;
          }
+
          if (x1.IsAnImplementationOf<TableFormula>())
          {
             AreEqualTableFormula(x1.DowncastTo<TableFormula>(), x2.DowncastTo<TableFormula>());
             return;
          }
+
          if (x1.IsAnImplementationOf<ValuePoint>())
          {
             AreEqualValuePoint(x1.DowncastTo<ValuePoint>(), x2.DowncastTo<ValuePoint>());
             return;
          }
+
          if (x1.IsAnImplementationOf<IFormula>())
          {
             AreEqualFormula((IFormula) x1, (IFormula) x2);
@@ -234,16 +266,19 @@ namespace OSPSuite.Core.Helpers
             AreEqualNeighborhood((INeighborhood) x1, (INeighborhood) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IContainer>())
          {
             AreEqualContainer((IContainer) x1, (IContainer) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IEntity>())
          {
             AreEqualEntity((IEntity) x1, (IEntity) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IObjectBase>())
          {
             AreEqualObjectBase((IObjectBase) x1, (IObjectBase) x2);
@@ -256,16 +291,19 @@ namespace OSPSuite.Core.Helpers
             AreEqualReactionPartner((IReactionPartner) x1, (IReactionPartner) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IObjectReference>())
          {
             AreEqualObjectReference((IObjectReference) x1, (IObjectReference) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IFormulaUsablePath>())
          {
             AreEqualFormulaUsablePath((IFormulaUsablePath) x1, (IFormulaUsablePath) x2);
             return;
          }
+
          if (x1.IsAnImplementationOf<IObjectPath>())
          {
             AreEqualObjectPath((IObjectPath) x1, (IObjectPath) x2);
@@ -280,7 +318,6 @@ namespace OSPSuite.Core.Helpers
 
          Assert.Fail("No McAssert.Equal available for Type " + x1.GetType().Name);
       }
-
 
       public static bool AreEqualIndividualValueCache(IndividualValuesCache x1, IndividualValuesCache x2)
       {
@@ -312,11 +349,12 @@ namespace OSPSuite.Core.Helpers
             Assert.IsNull(x1);
             return false;
          }
-         
+
          if (x1 == null)
          {
             Assert.IsNull(x2);
          }
+
          return true;
       }
 
@@ -340,6 +378,7 @@ namespace OSPSuite.Core.Helpers
          x1.Values.ShouldBeEqualTo(x2.Values);
          x1.Percentiles.ShouldBeEqualTo(x2.Percentiles);
       }
+
       // checks whether both are null or else both are equal
       public static void AssertAreEqualDouble(double x1, double x2)
       {
@@ -389,6 +428,7 @@ namespace OSPSuite.Core.Helpers
             AreEqual(l1[i], l2[i]);
          }
       }
+
       public static void AreEqualObjectPath(IObjectPath x1, IObjectPath x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
@@ -519,13 +559,12 @@ namespace OSPSuite.Core.Helpers
          }
       }
 
-
       public static void AreEqualPartialDerivatives(PartialDerivatives x1, PartialDerivatives x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualStrings(x1.FullOutputPath, x2.FullOutputPath);
          AreEqualEnumerableWithSameOrder(x1.ParameterNames, x2.ParameterNames);
-           Assert.AreEqual(x1.AllPartialDerivatives.Count, x2.AllPartialDerivatives.Count);
+         Assert.AreEqual(x1.AllPartialDerivatives.Count, x2.AllPartialDerivatives.Count);
 
          for (int i = 0; i < x1.AllPartialDerivatives.Count; i++)
          {
@@ -592,6 +631,7 @@ namespace OSPSuite.Core.Helpers
             Assert.AreEqual(x2.Name, Constants.Dimension.DIMENSIONLESS);
             return;
          }
+
          if (x2 == null)
          {
             Assert.AreEqual(x1.Name, Constants.Dimension.DIMENSIONLESS);
@@ -643,6 +683,21 @@ namespace OSPSuite.Core.Helpers
          AreEqualUnit(x1.DisplayUnit, x1.DisplayUnit);
       }
 
+      public static void AreEqualQuantity(QuantityPKParameter x1, QuantityPKParameter x2)
+      {
+         if (!AssertBothNotNull(x1, x2)) return;
+         AssertAreEqual(x2.Name, x1.Name);
+         AssertAreEqual(x2.QuantityPath, x1.QuantityPath);
+         AssertAreEqual(x2.Count, x1.Count);
+         AreEqualDimension(x1.Dimension, x2.Dimension);
+
+         foreach (var kv in x1.ValueCache.KeyValues)
+         {
+            x2.ValueCache.Contains(kv.Key).ShouldBeTrue();
+            x2.ValueCache[kv.Key].ShouldBeEqualTo(kv.Value);
+         }
+      }
+
       public static void AreEqualQuantity(IQuantity x1, IQuantity x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
@@ -650,7 +705,7 @@ namespace OSPSuite.Core.Helpers
          AreEqualEntity(x1, x2);
          AreEqualDimension(x1.Dimension, x2.Dimension);
          Assert.AreEqual(x1.IsFixedValue, x2.IsFixedValue);
-         if (x1.IsFixedValue) 
+         if (x1.IsFixedValue)
             AssertAreEqualDouble(x1.Value, x2.Value);
 
          Assert.AreEqual(x1.Persistable, x2.Persistable);
@@ -680,6 +735,7 @@ namespace OSPSuite.Core.Helpers
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualQuantity(x1, x2);
          AreEqualFormula(x1.RHSFormula, x2.RHSFormula);
+         AreEqualDescriptorCriteria(x1.ContainerCriteria, x2.ContainerCriteria);
          Assert.AreEqual(x1.CanBeVaried, x2.CanBeVaried);
          Assert.AreEqual(x1.BuildingBlockType, x2.BuildingBlockType);
          Assert.AreEqual(x1.GroupName, x2.GroupName);
@@ -717,7 +773,7 @@ namespace OSPSuite.Core.Helpers
          AreEqualDimension(x1.Dimension, x2.Dimension);
          AreEqualFormula(x1.Formula, x2.Formula);
          Assert.AreEqual(x1.UseAsValue, x2.UseAsValue);
-         
+
          AssertAreEqualId(x1.ChangedEntity, x2.ChangedEntity);
       }
 
@@ -740,10 +796,12 @@ namespace OSPSuite.Core.Helpers
       {
          if (!AssertBothNotNull(x1, x2)) return;
          Assert.AreEqual(x1.Count, x2.Count);
+         Assert.AreEqual(x1.Operator, x2.Operator);
          foreach (var dc1 in x2)
          {
             Assert.IsTrue(x1.Contains(dc1));
          }
+
          foreach (var dc2 in x1)
          {
             Assert.IsTrue(x2.Contains(dc2));
@@ -809,11 +867,13 @@ namespace OSPSuite.Core.Helpers
          {
             Assert.IsTrue(x1.MoleculeNames.Contains(name));
          }
+
          Assert.AreEqual(x1.MoleculeNamesToExclude.Count(), x2.MoleculeNamesToExclude.Count());
          foreach (var name in x2.MoleculeNamesToExclude)
          {
             Assert.IsTrue(x1.MoleculeNamesToExclude.Contains(name));
          }
+
          Assert.AreEqual(x1.ForAll, x2.ForAll);
       }
 
@@ -1028,7 +1088,6 @@ namespace OSPSuite.Core.Helpers
          Assert.AreEqual(x1.CreatedBy, x2.CreatedBy);
          Assert.AreEqual(x1.Origin, x2.Origin);
          Assert.AreEqual(x1.CreationMode, x2.CreationMode);
-
       }
 
       public static void AreEqualBuildingBlock<TBuilder>(IBuildingBlock<TBuilder> x1, IBuildingBlock<TBuilder> x2) where TBuilder : class, IObjectBase
@@ -1093,8 +1152,6 @@ namespace OSPSuite.Core.Helpers
          AreEqualOutputSchema(x1.OutputSchema, x2.OutputSchema);
          AreEqualQuantitySelections(x1.OutputSelections, x2.OutputSelections);
       }
-
-  
 
       private static void AreEqualSolverSettings(SolverSettings x1, SolverSettings x2)
       {
@@ -1206,7 +1263,7 @@ namespace OSPSuite.Core.Helpers
          if (!AssertBothNotNull(x1, x2)) return;
          AssertAreEqualId(x1, x2);
          AreEqualStrings(x1.Name, x2.Name);
-         Assert.AreEqual(x2.IsInternal, x1.IsInternal); 
+         Assert.AreEqual(x2.IsInternal, x1.IsInternal);
          AreEqualDimension(x1.Dimension, x2.Dimension);
          AssertAreEqualId(x1.Repository, x2.Repository);
          AssertAreEqualId(x1.BaseGrid, x2.BaseGrid);
@@ -1222,7 +1279,6 @@ namespace OSPSuite.Core.Helpers
             Assert.IsTrue(x2.ContainsRelatedColumn(relCol1.DataInfo.AuxiliaryType));
             AreEqual(relCol1, x2.GetRelatedColumn(relCol1.DataInfo.AuxiliaryType));
          }
-       
       }
 
       public static void AreEqualMcDataRepository(DataRepository x1, DataRepository x2)

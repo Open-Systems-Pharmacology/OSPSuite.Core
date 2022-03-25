@@ -9,7 +9,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void SetOptions(Column importDataColumn, IReadOnlyList<IDimension> dimensions, IEnumerable<string> availableColumns);
       UnitDescription Unit { get; }
       IDimension Dimension { get; }
-      void SetUnit();
       void SelectDimension(string dimensionName);
       void SelectUnit(string unit);
       void SelectColumn(string column);

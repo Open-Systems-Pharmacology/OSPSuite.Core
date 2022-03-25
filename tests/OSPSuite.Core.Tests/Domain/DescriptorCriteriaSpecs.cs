@@ -40,6 +40,59 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_cloning_a_descriptor_criteria : concern_for_DescriptorCriteria
+   {
+      private DescriptorCriteria _clone;
+
+      protected override void Context()
+      {
+         base.Context();
+         var cond1 = new InContainerCondition("TOTO");
+         sut.Add(cond1);
+         sut.Operator = CriteriaOperator.Or;
+      }
+
+      protected override void Because()
+      {
+         _clone = sut.Clone();
+      }
+
+      [Observation]
+      public void should_clone_the_operator()
+      {
+         _clone.Operator.ShouldBeEqualTo(CriteriaOperator.Or);
+      }
+
+      [Observation]
+      public void should_clone_the_conditions()
+      {
+         _clone.Count.ShouldBeEqualTo(1);
+         _clone[0].ShouldBeAnInstanceOf<InContainerCondition>();
+         _clone[0].DowncastTo<InContainerCondition>().Tag.ShouldBeEqualTo("TOTO");
+      }
+   }
+
+   public class When_checking_if_a_criteria_satisfies_some_tags_that_are_not_satisfied_by_at_least_one_condition_and_the_operator_is_OR : concern_for_DescriptorCriteria
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var cond1 = A.Fake<IDescriptorCondition>();
+         A.CallTo(() => cond1.IsSatisfiedBy(_entityCriteria)).Returns(true);
+         var cond2 = A.Fake<IDescriptorCondition>();
+         A.CallTo(() => cond2.IsSatisfiedBy(_entityCriteria)).Returns(false);
+         sut.Add(cond1);
+         sut.Add(cond2);
+         sut.Operator = CriteriaOperator.Or;
+      }
+
+      [Observation]
+      public void should_return_that_the_criteria_does_satisfy_the_tags()
+      {
+         sut.IsSatisfiedBy(_entityCriteria).ShouldBeTrue();
+      }
+   }
+
    public class When_checking_if_a_criteria_satisfies_some_tags_that_are_satisfied_by_all_its_conditions : concern_for_DescriptorCriteria
    {
       protected override void Context()
@@ -165,6 +218,34 @@ namespace OSPSuite.Core.Domain
          //We want to check equality not reference. Use Nunit support directly
          Assert.AreEqual(sut, _anotherDescriptor);
          Assert.AreEqual(sut, _yetAnotherWithSameConditions);
+      }
+   }
+
+   public class When_comparing_two_descriptor_criteria_containing_the_same_descriptors_but_different_operators : concern_for_DescriptorCriteria
+   {
+      private DescriptorCriteria _anotherDescriptor;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut.Add(new MatchTagCondition("toto"));
+         sut.Add(new NotMatchTagCondition("toto"));
+         sut.Add(new MatchTagCondition("titi"));
+         sut.Add(new InContainerCondition("Liver"));
+         sut.Add(new MatchAllCondition());
+
+         _anotherDescriptor = new DescriptorCriteria {Operator = CriteriaOperator.Or};
+         _anotherDescriptor.Add(new MatchTagCondition("toto"));
+         _anotherDescriptor.Add(new NotMatchTagCondition("toto"));
+         _anotherDescriptor.Add(new MatchTagCondition("titi"));
+         _anotherDescriptor.Add(new InContainerCondition("Liver"));
+         _anotherDescriptor.Add(new MatchAllCondition());
+      }
+
+      [Observation]
+      public void should_return_that_the_descriptor_criteria_are_not_equals()
+      {
+         sut.Equals(_anotherDescriptor).ShouldBeFalse();
       }
    }
 

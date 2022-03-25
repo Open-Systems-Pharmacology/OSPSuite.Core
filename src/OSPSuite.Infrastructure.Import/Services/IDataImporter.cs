@@ -1,33 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Utility.Collections;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Infrastructure.Import.Services
 {
-   public class ReloadDataSets
-   {
-      public IEnumerable<DataRepository> NewDataSets { get; }
-      public IEnumerable<DataRepository> OverwrittenDataSets { get; }
-      public IEnumerable<DataRepository> DataSetsToBeDeleted { get; }
-
-      public ReloadDataSets()
-      {
-         NewDataSets = Enumerable.Empty<DataRepository>();
-         OverwrittenDataSets = Enumerable.Empty<DataRepository>();
-         DataSetsToBeDeleted = Enumerable.Empty<DataRepository>();
-      }
-
-      public ReloadDataSets(IEnumerable<DataRepository> newDataSets, IEnumerable<DataRepository> overwrittenDataSets, IEnumerable<DataRepository> dataSetsToBeDeleted)
-      {
-         NewDataSets = newDataSets;
-         OverwrittenDataSets = overwrittenDataSets;
-         DataSetsToBeDeleted = dataSetsToBeDeleted;
-      }
-   }
-
    public interface IDataImporter
    {
       /// <summary>
@@ -67,7 +50,13 @@ namespace OSPSuite.Infrastructure.Import.Services
       ///    Creates a default list of meta data categories that could still be modified by the caller
       /// </summary>
       /// <returns>a list of meta data categories</returns>
-      IList<MetaDataCategory> DefaultMetaDataCategories();
+      IReadOnlyList<MetaDataCategory> DefaultMetaDataCategoriesForObservedData();
+
+      /// <summary>
+      ///    Creates a default list of ColumnInfos that could still be modified by the caller
+      /// </summary>
+      /// <returns>a list of meta data categories</returns>
+      IReadOnlyList<ColumnInfo> ColumnInfosForObservedData();
 
       /// <summary>
       ///    Compares if two data repositories come from the same data
@@ -78,7 +67,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       bool AreFromSameMetaDataCombination(DataRepository sourceDataRepository, DataRepository targetDataRepository);
 
       /// <summary>
-      ///    Returns a new Configuration autodiscovered from the data contained in dataPath
+      ///    Returns a new Configuration auto discovered from the data contained in dataPath
       /// </summary>
       /// <param name="dataPath">File containing data</param>
       /// <param name="columnInfos">Column infos description</param>
@@ -91,24 +80,71 @@ namespace OSPSuite.Infrastructure.Import.Services
    public abstract class AbstractDataImporter : IDataImporter
    {
       protected readonly IImporter _importer;
+      private readonly IDimensionFactory _dimensionFactory;
 
-      public AbstractDataImporter(
-         IImporter importer
-      )
+      protected AbstractDataImporter(IImporter importer, IDimensionFactory dimensionFactory)
       {
          _importer = importer;
+         _dimensionFactory = dimensionFactory;
+      }
+
+      public virtual IReadOnlyList<ColumnInfo> ColumnInfosForObservedData()
+      {
+         var columns = new List<ColumnInfo>();
+
+         var timeDimension = _dimensionFactory.Dimension(Constants.Dimension.TIME);
+         var timeColumn = new ColumnInfo
+         {
+            DefaultDimension = timeDimension,
+            Name = Constants.Dimension.TIME,
+            DisplayName = Constants.Dimension.TIME,
+            IsMandatory = true,
+         };
+
+         timeColumn.SupportedDimensions.Add(timeDimension);
+         columns.Add(timeColumn);
+
+         var mainDimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
+         var measurementInfo = new ColumnInfo
+         {
+            DefaultDimension = mainDimension,
+            Name = Constants.MEASUREMENT,
+            DisplayName = Constants.MEASUREMENT,
+            IsMandatory = true,
+            BaseGridName = timeColumn.Name
+         };
+
+         addDimensionsTo(measurementInfo);
+         columns.Add(measurementInfo);
+
+         var errorInfo = new ColumnInfo
+         {
+            DefaultDimension = mainDimension,
+            Name = Constants.ERROR,
+            DisplayName = Constants.ERROR,
+            IsMandatory = false,
+            BaseGridName = timeColumn.Name,
+            RelatedColumnOf = measurementInfo.Name
+         };
+
+         addDimensionsTo(errorInfo);
+         columns.Add(errorInfo);
+
+         return columns;
       }
 
       public abstract bool AreFromSameMetaDataCombination(DataRepository sourceDataRepository, DataRepository targetDataRepository);
+
       public abstract ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport, IReadOnlyList<DataRepository> existingDataSets);
+
       public ImporterConfiguration ConfigurationFromData(string dataPath, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName = null)
       {
          var configuration = new ImporterConfiguration();
-
-         var dataSourceFile = _importer.LoadFile(columnInfos, dataPath, metaDataCategories);
+         var columnInfoCache = new ColumnInfoCache(columnInfos);
+         var dataSourceFile = _importer.LoadFile(columnInfoCache, dataPath, metaDataCategories);
          if (!string.IsNullOrEmpty(sheetName))
          {
-            _importer.CalculateFormat(dataSourceFile, columnInfos, metaDataCategories, sheetName);
+            dataSourceFile.AvailableFormats = _importer.CalculateFormat(dataSourceFile, columnInfoCache, metaDataCategories, sheetName).ToList();
          }
 
          configuration.CloneParametersFrom(dataSourceFile.Format.Parameters.ToList());
@@ -117,7 +153,67 @@ namespace OSPSuite.Infrastructure.Import.Services
          configuration.NamingConventions = "";
          return configuration;
       }
-      public abstract IList<MetaDataCategory> DefaultMetaDataCategories();
+
+      private void addDimensionsTo(ColumnInfo columnInfo)
+      {
+         foreach (var dimension in _dimensionFactory.DimensionsSortedByName)
+         {
+            columnInfo.SupportedDimensions.Add(dimension);
+         }
+      }
+
+      public virtual IReadOnlyList<MetaDataCategory> DefaultMetaDataCategoriesForObservedData()
+      {
+         var categories = new List<MetaDataCategory>();
+
+         var speciesCategory = CreateMetaDataCategory<string>(Constants.ObservedData.SPECIES, isMandatory: true, isListOfValuesFixed: true);
+         categories.Add(speciesCategory);
+
+         var organCategory = CreateMetaDataCategory<string>(Constants.ObservedData.ORGAN, isMandatory: true, isListOfValuesFixed: true);
+         organCategory.Description = ObservedData.ObservedDataOrganDescription;
+         organCategory.TopNames.Add(Constants.ObservedData.PERIPHERAL_VENOUS_BLOOD_ORGAN);
+         organCategory.TopNames.Add(Constants.ObservedData.VENOUS_BLOOD_ORGAN);
+         categories.Add(organCategory);
+
+         var compCategory = CreateMetaDataCategory<string>(Constants.ObservedData.COMPARTMENT, isMandatory: true, isListOfValuesFixed: true);
+         compCategory.Description = ObservedData.ObservedDataCompartmentDescription;
+         compCategory.TopNames.Add(Constants.ObservedData.PLASMA_COMPARTMENT);
+         categories.Add(compCategory);
+
+         var moleculeCategory = CreateMetaDataCategory<string>(Constants.ObservedData.MOLECULE);
+         moleculeCategory.Description = ObservedData.MoleculeNameDescription;
+         moleculeCategory.AllowsManualInput = true;
+         categories.Add(moleculeCategory);
+
+         // Add non-mandatory metadata categories
+         var molecularWeightCategory = CreateMetaDataCategory<double>(Constants.ObservedData.MOLECULAR_WEIGHT);
+         molecularWeightCategory.MinValue = 0;
+         molecularWeightCategory.MinValueAllowed = false;
+         categories.Add(molecularWeightCategory);
+         categories.Add(CreateMetaDataCategory<string>(Constants.ObservedData.STUDY_ID));
+         categories.Add(CreateMetaDataCategory<string>(Constants.ObservedData.SUBJECT_ID));
+         categories.Add(CreateMetaDataCategory<string>(Constants.ObservedData.GENDER, isListOfValuesFixed: true));
+         categories.Add(CreateMetaDataCategory<string>(Constants.ObservedData.DOSE));
+         categories.Add(CreateMetaDataCategory<string>(Constants.ObservedData.ROUTE));
+
+         return categories;
+      }
+
+      protected static MetaDataCategory CreateMetaDataCategory<T>(string descriptiveName, bool isMandatory = false, bool isListOfValuesFixed = false)
+      {
+         var category = new MetaDataCategory
+         {
+            Name = descriptiveName,
+            DisplayName = descriptiveName,
+            Description = descriptiveName,
+            MetaDataType = typeof(T),
+            IsMandatory = isMandatory,
+            IsListOfValuesFixed = isListOfValuesFixed
+         };
+
+         return category;
+      }
+
       public abstract (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings, string dataFileName);
       public abstract IReadOnlyList<DataRepository> ImportFromConfiguration(ImporterConfiguration configuration, IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings, string dataFileName);
    }

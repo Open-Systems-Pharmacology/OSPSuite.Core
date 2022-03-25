@@ -40,15 +40,10 @@ namespace OSPSuite.UI.Views.Commands
       public void BindTo(LabelDTO labelDTO)
       {
          _screenBinder.BindToSource(labelDTO);
-         SetButtonOKEnable();
+         SetOkButtonEnable();
       }
 
       public override bool HasError => _screenBinder.HasError;
-
-      protected virtual void SetButtonOKEnable()
-      {
-         btnOk.Enabled = !_screenBinder.HasError;
-      }
 
       public void AttachPresenter(ILabelPresenter presenter)
       {

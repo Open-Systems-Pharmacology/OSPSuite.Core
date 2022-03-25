@@ -171,10 +171,14 @@ namespace OSPSuite.UI.Views.Charts
          panelChartSettings.FillWith(view);
       }
 
+      public void SetCurveColorGroupingView(IView view)
+      {
+         panelCurveColorGrouping.FillWith(view);
+      }
+
       public void SetChartExportSettingsView(IView view)
       {
          panelChartExportSettings.FillWith(view);
       }
-
    }
 }

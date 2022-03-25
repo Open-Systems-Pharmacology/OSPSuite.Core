@@ -2,6 +2,7 @@
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Journal;
+using OSPSuite.Core.Services;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.FileLocker;
@@ -48,7 +49,7 @@ namespace OSPSuite.Core
       protected void ReleaseMemory()
       {
          //This might free some C++ objects still  being held into memory
-         this.GCCollectAndCompact();
+         GarbageCollectionTask.ForceGC();
       }
 
       protected void ReleaseLock()

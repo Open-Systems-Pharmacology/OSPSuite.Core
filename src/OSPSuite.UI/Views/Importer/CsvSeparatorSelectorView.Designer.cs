@@ -42,13 +42,6 @@ namespace OSPSuite.UI.Views.Importer
          this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.emptySpaceItem3 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.emptySpaceItem4 = new DevExpress.XtraLayout.EmptySpaceItem();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).BeginInit();
-         this.layoutControlBase.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroupBase)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemOK)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemCancel)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItemBase)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemExtra)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.mainLayoutControl)).BeginInit();
          this.mainLayoutControl.SuspendLayout();
@@ -61,56 +54,6 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem3)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem4)).BeginInit();
          this.SuspendLayout();
-         // 
-         // btnCancel
-         // 
-         this.btnCancel.Location = new System.Drawing.Point(491, 7);
-         this.btnCancel.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
-         this.btnCancel.Size = new System.Drawing.Size(158, 27);
-         // 
-         // btnOk
-         // 
-         this.btnOk.Location = new System.Drawing.Point(381, 7);
-         this.btnOk.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
-         this.btnOk.Size = new System.Drawing.Size(108, 27);
-         // 
-         // layoutControlBase
-         // 
-         this.layoutControlBase.Location = new System.Drawing.Point(0, 192);
-         this.layoutControlBase.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
-         this.layoutControlBase.Size = new System.Drawing.Size(656, 57);
-         this.layoutControlBase.Controls.SetChildIndex(this.btnCancel, 0);
-         this.layoutControlBase.Controls.SetChildIndex(this.btnOk, 0);
-         this.layoutControlBase.Controls.SetChildIndex(this.btnExtra, 0);
-         // 
-         // btnExtra
-         // 
-         this.btnExtra.Location = new System.Drawing.Point(7, 7);
-         this.btnExtra.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
-         this.btnExtra.Size = new System.Drawing.Size(194, 27);
-         // 
-         // layoutControlGroupBase
-         // 
-         this.layoutControlGroupBase.Size = new System.Drawing.Size(656, 57);
-         // 
-         // layoutItemOK
-         // 
-         this.layoutItemOK.Location = new System.Drawing.Point(374, 0);
-         this.layoutItemOK.Size = new System.Drawing.Size(110, 45);
-         // 
-         // layoutItemCancel
-         // 
-         this.layoutItemCancel.Location = new System.Drawing.Point(484, 0);
-         this.layoutItemCancel.Size = new System.Drawing.Size(160, 45);
-         // 
-         // emptySpaceItemBase
-         // 
-         this.emptySpaceItemBase.Location = new System.Drawing.Point(196, 0);
-         this.emptySpaceItemBase.Size = new System.Drawing.Size(178, 45);
-         // 
-         // layoutItemExtra
-         // 
-         this.layoutItemExtra.Size = new System.Drawing.Size(196, 45);
          // 
          // mainLayoutControl
          // 
@@ -221,15 +164,7 @@ namespace OSPSuite.UI.Views.Importer
          this.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
          this.Name = "CsvSeparatorSelectorView";
          this.Text = "Separator Selection";
-         this.Controls.SetChildIndex(this.layoutControlBase, 0);
          this.Controls.SetChildIndex(this.mainLayoutControl, 0);
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).EndInit();
-         this.layoutControlBase.ResumeLayout(false);
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroupBase)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemOK)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemCancel)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItemBase)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemExtra)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.mainLayoutControl)).EndInit();
          this.mainLayoutControl.ResumeLayout(false);

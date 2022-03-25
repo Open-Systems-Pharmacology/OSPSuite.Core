@@ -64,13 +64,13 @@ namespace OSPSuite.Core.Domain.Services
             var quantityPKParameterContext = new QuantityPKParameterContext(quantityPKParameter, molWeight);
             var mergedDimension = _dimensionFactory.MergedDimensionFor(quantityPKParameterContext);
             var unit = mergedDimension.UnitOrDefault(pkParameter.DisplayUnit);
-            quantityPKParameter.Values.Each((value, index) =>
+            quantityPKParameter.ValueCache.KeyValues.Each(kv =>
             {
                var row = dataTable.NewRow();
-               row[INDIVIDUAL_ID] = index;
+               row[INDIVIDUAL_ID] = kv.Key;
                row[QUANTITY_PATH] = inQuote(quantityPath);
                row[PARAMETER] = inQuote(pkParameter.Name);
-               row[VALUE] = mergedDimension.BaseUnitValueToUnitValue(unit, value).ConvertedTo<string>();
+               row[VALUE] = mergedDimension.BaseUnitValueToUnitValue(unit, kv.Value).ConvertedTo<string>();
                row[UNIT] = unit.Name;
                dataTable.Rows.Add(row);
             });

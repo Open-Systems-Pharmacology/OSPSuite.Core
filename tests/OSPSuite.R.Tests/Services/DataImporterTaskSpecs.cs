@@ -172,6 +172,18 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
+      public void should_create_configuration_with_correct_dimension_from_data()
+      {
+         var configuration = sut.CreateConfigurationFor(getFileFullName("sample_header_dimensions_test.xlsx"));
+         var dimension = (configuration.Parameters[1] as MappingDataFormatParameter).MappedColumn.Dimension;
+         dimension.DisplayName.ShouldBeEqualTo("Time");
+         dimension = (configuration.Parameters[2] as MappingDataFormatParameter).MappedColumn.Dimension;
+         dimension.DisplayName.ShouldBeEqualTo("Concentration (mass)");
+         dimension = (configuration.Parameters[0] as MappingDataFormatParameter).MappedColumn.Dimension;
+         dimension.DisplayName.ShouldBeEqualTo("Concentration (mass)");
+      }
+
+      [Observation]
       public void should_save_configuration()
       {
          var tempFileName = FileHelper.GenerateTemporaryFileName();
@@ -283,6 +295,15 @@ namespace OSPSuite.R.Services
          sut.GetAllLoadedSheets(_configuration).ShouldContain(sheet);
          _configuration.ClearLoadedSheets();
          sut.GetAllLoadedSheets(_configuration).ShouldBeEmpty();
+      }
+
+      [Observation]
+      public void should_consider_columns_with_string_values_and_skip_invalid_sheets()
+      {
+         var configuration = sut.CreateConfigurationFor(getFileFullName("BookStrings.xlsx"));
+         configuration.Parameters.Any(x => (x as MappingDataFormatParameter).ColumnName == "Time [h]").ShouldBeTrue();
+         configuration.Parameters.Any(x => (x as MappingDataFormatParameter).ColumnName == "Measurement [mg/l]").ShouldBeTrue();
+         configuration.Parameters.Any(x => (x as MappingDataFormatParameter).ColumnName == "Error [mg/l]").ShouldBeTrue();
       }
    }
 }

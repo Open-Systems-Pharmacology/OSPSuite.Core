@@ -65,6 +65,14 @@ namespace OSPSuite.R
 
       public static IDataImporterTask GetDataImporterTask() => resolveTask<IDataImporterTask>();
 
+      /// <summary>
+      /// Forces the Garbage collection 
+      /// </summary>
+      public static void ForceGC()
+      {
+         GarbageCollectionTask.ForceGC();
+      }
+
       private static T resolveTask<T>()
       {
          try

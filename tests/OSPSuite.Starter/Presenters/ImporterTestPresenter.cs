@@ -11,6 +11,7 @@ using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Starter.Tasks;
 using OSPSuite.Starter.Views;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
@@ -86,7 +87,7 @@ namespace OSPSuite.Starter.Presenters
 
          StartImporterExcelView(
             _dataGenerator.DefaultMoBiMetaDataCategories(),
-            _dataGenerator.DefaultMoBiConcentrationImportConfiguration(),
+            _dataImporter.ColumnInfosForObservedData(),
             dataImporterSettings
          );
 
@@ -116,8 +117,8 @@ namespace OSPSuite.Starter.Presenters
             _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
             (
                configuration,
-               (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories(),
-               _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+               _dataImporter.DefaultMetaDataCategoriesForObservedData(),
+               _dataImporter.ColumnInfosForObservedData(),
                dataImporterSettings,
                _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
             )?.Count() + " data sets successfully imported");
@@ -149,8 +150,8 @@ namespace OSPSuite.Starter.Presenters
             _dialogCreator.MessageBoxInfo(_dataImporter.ImportFromConfiguration
             (
                configuration,
-               (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategories(),
-               _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+               (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategoriesForObservedData(),
+               _dataImporter.ColumnInfosForObservedData(),
                dataImporterSettings,
                _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
             )?.Count() + " data sets successfully imported");
@@ -162,13 +163,13 @@ namespace OSPSuite.Starter.Presenters
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         var metaDataCategories = _dataImporter.DefaultMetaDataCategories();
+         var metaDataCategories = _dataImporter.DefaultMetaDataCategoriesForObservedData().ToList();
          _dataGenerator.AddMoleculeValuesToMetaDataList(metaDataCategories);
          _dataGenerator.AddOrganValuesToMetaDataList(metaDataCategories);
          StartImporterExcelView
          (
-            (IReadOnlyList<MetaDataCategory>)metaDataCategories,
-            _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+            metaDataCategories,
+            _dataImporter.ColumnInfosForObservedData(),
             dataImporterSettings
          );
       }
@@ -178,11 +179,11 @@ namespace OSPSuite.Starter.Presenters
          var dataImporterSettings = new DataImporterSettings();
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET);
          dataImporterSettings.AddNamingPatternMetaData(Constants.FILE, Constants.SHEET, "Species");
-         var metaDataCategories = _dataImporter.DefaultMetaDataCategories();
+         var metaDataCategories = _dataImporter.DefaultMetaDataCategoriesForObservedData().ToList();
          _dataGenerator.AddMoleculeValuesToMetaDataList(metaDataCategories);
          StartImporterExcelView(
-            (IReadOnlyList<MetaDataCategory>)metaDataCategories,
-            _dataGenerator.DefaultPKSimConcentrationImportConfiguration(),
+            metaDataCategories,
+            _dataImporter.ColumnInfosForObservedData(),
             dataImporterSettings
          );
       }

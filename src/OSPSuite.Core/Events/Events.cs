@@ -12,16 +12,6 @@ namespace OSPSuite.Core.Events
       }
    }
 
-   public class ExportToPDFEvent
-   {
-      public object ObjectToExport { get; private set; }
-
-      public ExportToPDFEvent(object objectToExport)
-      {
-         ObjectToExport = objectToExport;
-      }
-   }
-
    public class ChartTemplatesChangedEvent
    {
       public IWithChartTemplates WithChartTemplates { get; private set; }

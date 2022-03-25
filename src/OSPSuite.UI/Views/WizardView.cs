@@ -74,7 +74,7 @@ namespace OSPSuite.UI.Views
             if (e.CloseReason == CloseReason.UserClosing && btnCancel.Enabled == false)
                e.Cancel = true;
             else
-               e.Cancel = !WizardPresenter.ShouldClose;
+               e.Cancel = !(WizardPresenter?.ShouldClose ?? true);
          }
 
          base.OnFormClosing(e);

@@ -51,10 +51,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
    public interface IColumnMappingPresenter : IPresenter<IColumnMappingView>
    {
-      void SetSettings( IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos);
+      void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, ColumnInfoCache columnInfos);
       IDataFormat GetDataFormat();
       void SetDataFormat(IDataFormat format);
-      void SetRawData(UnformattedData rawData);
+      void SetRawData(IUnformattedData rawData);
       IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingDTO model);
       IEnumerable<RowOptionDTO> GetAvailableRowsFor(ColumnMappingDTO model);
       ToolTipDescription ToolTipDescriptionFor(int index);

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
 
@@ -11,10 +12,12 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       Cache<string, DataSheet> DataSheets { get; }
 	   string Path { get; set; }
-
       IDataFormat Format { get; set; }
-
       IList<IDataFormat> AvailableFormats { get; set; }
+      //Stores what sheet was used to calculate the format
+      //so the presenter can actually select such a sheet
+      //as active when initialized
+      string FormatCalculatedFrom { get; set; }
    }
 
    public abstract class DataSourceFile : IDataSourceFile
@@ -23,7 +26,18 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public IDataFormat Format { get; set; }
 
-      public IList<IDataFormat> AvailableFormats { get; set; }
+      private IList<IDataFormat> _availableFormats;
+      public IList<IDataFormat> AvailableFormats 
+      {
+         get => _availableFormats; 
+         set
+         {
+            _availableFormats = value;
+            Format = value.FirstOrDefault();
+         }
+      }
+
+      public string FormatCalculatedFrom { get; set; }
 
       protected DataSourceFile(IImportLogger logger)
       {

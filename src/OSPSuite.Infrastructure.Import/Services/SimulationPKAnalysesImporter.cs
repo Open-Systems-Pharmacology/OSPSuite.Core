@@ -70,9 +70,6 @@ namespace OSPSuite.Infrastructure.Import.Services
             {
                var pkParameter = keyValue.Key;
                var values = keyValue.Value;
-               //0-based id
-               var maxIndividualId = values.Select(x => x.individualId).Max();
-               pkParameter.SetNumberOfIndividuals(maxIndividualId + 1);
 
                foreach (var (individualId, value) in values)
                {

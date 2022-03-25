@@ -4,6 +4,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.R.Domain.UnitSystem;
 using OSPSuite.Utility.Exceptions;
 
@@ -83,6 +84,23 @@ namespace OSPSuite.R.Services
       ///    Throws an exception if a dimension named <paramref name="dimensionName" /> does not exist
       /// </summary>
       string BaseUnitFor(string dimensionName);
+
+
+      /// <summary>
+      /// Returns an array containing name and unit defined in the given text (typically header of csv or excel file)
+      /// The name will be defined in the first element and the unit in the second element of the returned array.
+      /// If not unit could be extracted, the text is return as is and the unit is empty
+      /// </summary>
+      /// <example>
+      /// extractUnit("Value") => ["Value", ""]
+      /// extractUnit("Value [unit]") => ["Value", "unit"]
+      /// extractUnit("Value [unit] ") => ["Value", "unit"]
+      /// extractUnit("Value [raw] 1 [unit]") => ["Value [raw] 1", "unit"]
+      /// extractUnit("Value [raw] [unit]") => ["Value [raw]", "unit"]
+      /// extractUnit("Value [raw] 1") => ["Value [raw] 1", ""]
+      /// extractUnit("[Value] [unit]") => ["[Value]", "unit"]
+      /// </example>
+      string[] ExtractNameAndUnit(string text);
    }
 
    public class DimensionTask : IDimensionTask
@@ -97,6 +115,12 @@ namespace OSPSuite.R.Services
       public bool HasUnit(string dimensionName, string unit) => DimensionByName(dimensionName).SupportsUnit(unit, ignoreCase: true);
 
       public string BaseUnitFor(string dimensionName) => DimensionByName(dimensionName).BaseUnit.Name;
+
+      public string[] ExtractNameAndUnit(string text)
+      {
+         var res = UnitExtractor.ExtractNameAndUnit(text);
+         return new[] {res.name, res.unit};
+      }
 
       public IDimension DimensionByName(string dimensionName) => _dimensionFactory.Dimension(dimensionName);
 

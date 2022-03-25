@@ -1,19 +1,24 @@
-﻿using OSPSuite.Presentation.Presenters.ParameterIdentifications;
+﻿using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Core.Services;
+using OSPSuite.Presentation.Presenters.ParameterIdentifications;
+using OSPSuite.Presentation.Services;
 
 namespace OSPSuite.Presentation.UICommands
 {
-   public class ParameterIdentificationFeedbackViewVisibilityUICommand : ObjectUICommand<IParameterIdentificationFeedbackPresenter>
+   public class ParameterIdentificationFeedbackViewVisibilityUICommand : ActiveObjectUICommand<ParameterIdentification>
    {
-      private readonly IParameterIdentificationFeedbackPresenter _feedbackPresenter;
+      private readonly ISingleStartPresenterTask _singleStartPresenterTask;
+      private readonly IParameterIdentificationFeedbackManager _parameterIdentificationFeedbackManager;
 
-      public ParameterIdentificationFeedbackViewVisibilityUICommand(IParameterIdentificationFeedbackPresenter feedbackPresenter)
+      public ParameterIdentificationFeedbackViewVisibilityUICommand(ISingleStartPresenterTask singleStartPresenterTask, IParameterIdentificationFeedbackManager parameterIdentificationFeedbackManager, IActiveSubjectRetriever activeSubjectRetriever) : base(activeSubjectRetriever)
       {
-         _feedbackPresenter = feedbackPresenter;
+         _singleStartPresenterTask = singleStartPresenterTask;
+         _parameterIdentificationFeedbackManager = parameterIdentificationFeedbackManager;
       }
 
       protected override void PerformExecute()
       {
-         _feedbackPresenter.Display();
+         _singleStartPresenterTask.StartForSubject(_parameterIdentificationFeedbackManager.GetFeedbackFor(Subject));
       }
    }
 }

@@ -192,6 +192,12 @@ namespace OSPSuite.Assets
       public static readonly string ContainerObserver = "Container Observer";
       public static readonly string UnitsEditorCaption = "Unit Settings";
       public static readonly string EditManually = "Edit manually";
+      public static readonly string ShouldColorGroupObservedData = "Color group observed data from same folder when dropping to chart";
+      public static readonly string ColorGroupObservedDataContextMenu = "Color group when adding to chart";
+      public static readonly string EditAllCurvesProperties = "Edit Options for Selected";
+      public static readonly string No = "No";
+      public static readonly string Yes = "Yes";
+
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
@@ -377,7 +383,7 @@ namespace OSPSuite.Assets
          public static readonly string NanActionIgnoreRow = "Ignore the row";
          public static readonly string NanActionHint = "Defines what to do when an invalid measurement is found (invalid measurements are NaN or the number indicated in the NaN indicator). \"Ignore the row\" will import the data ignoring the currently invalid row. \"Prevent the import\" will throw an error and halt the import process";
          public static readonly string NanIndicator = "NaN indicator";
-         public static readonly string NanIndicatorHint = "Set a string to indicate how NaN should be detected";
+         public static readonly string NanIndicatorHint = "Type a number that will be interpreted as NaN(Not a Number). Text in numerical columns is interpreted as NaN anyway.";
          public static readonly string OpenFileConfirmation = "Opening a new file will drop your currently imported data. Are you sure you want to open a new file?";
          public static readonly string ExcelColumn = "Data Column/Value";
          public static readonly string MappingName = "Mapping Name";
@@ -457,7 +463,7 @@ namespace OSPSuite.Assets
          public static readonly string NotConfiguredField = "Field not configured yet";
          public static readonly string AddGroupBy = "Add a new grouping by";
          public static readonly string MissingMandatoryMapping = "Field is mandatory and has not configured yet";
-         public static readonly string MissingUnit = "Field most contain a valid unit description";
+         public static readonly string MissingUnit = "Field must contain a valid unit description";
          public static string MappingHint(string parameter, string target, string unit)
          {
             return $"The column {parameter} will be mapped into {target} with units as {unit}";
@@ -939,14 +945,17 @@ namespace OSPSuite.Assets
          public static readonly string NoResultsAvailable = "No result available. Please start parameter identification";
          public static readonly string NoParameterIdentificationRunning = "No visual feedback available. Please start parameter identification.";
 
-         public static readonly string ParameterIdentificationCanceled = "Parameter identification canceled";
+         public static string ParameterIdentificationCanceled(string parameterIdentificationName)
+         {
+            return $"Parameter identification '{parameterIdentificationName}' canceled";
+         }
          public static readonly string Best = "Best";
          public static readonly string Current = "Current";
          public static readonly string Clone = "Clone";
 
-         public static string ParameterIdentificationFinished(string duration)
+         public static string ParameterIdentificationFinished(string parameterIdentificationName, string duration)
          {
-            return $"Parameter identification finished in {duration}";
+            return $"Parameter identification '{parameterIdentificationName}' finished in {duration}";
          }
 
          public static string LinkedParametersIn(string name)
@@ -1242,6 +1251,17 @@ namespace OSPSuite.Assets
             public static readonly string FontSizeWatermark = "Font Size Watermark";
             public static readonly string IncludeOriginData = "Include Origin Data";
          }
+
+         public static class ColorGrouping
+         {
+            public static string ColorGroupingDialogDescription = "Select metadata as criteria for color grouping";
+            public static string ApplyColorGroupingButton = "Apply Color Grouping";
+         }
+
+         public static class MultiCurveOptions
+         {
+            public static string CurrentValue = "<Current value>";
+         }
       }
    }
 
@@ -1272,8 +1292,11 @@ namespace OSPSuite.Assets
       public static readonly string NaNOnData = "Data contains NaN values at imported columns. Select a different action for NaN values or clean your data.";
       public static readonly string UnsupportedFileType = "The type of file that you are trying to open is not currently supported";
       public static readonly string CannotRemoveBaseGridColumnStillInUse = "Cannot remove base grid column still used by other columns";
+      public static readonly string SimpleParseErrorMessage = "There were errors while parsing your data. Navigate to the sheets to read the concrete error.";
+      
+      public static string ParseErrorMessage(IEnumerable<string> errors) => $"There were errors while parsing your data: {string.Join(". ", errors)}";
 
-      public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) => $"Plotting data set number:{sheetName} produced the following error: {exceptionMessage}";
+      public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) => $"It was not possible to plot the data sets. Please, check your configuration for any missing grouping or meta data parameter. An error occur while plotting data set number:{sheetName + 1} produced the following error: {exceptionMessage}";
 
       public static string InvalidObservedDataFile(string exceptionMessage)
       {
@@ -1304,7 +1327,7 @@ namespace OSPSuite.Assets
       public static string BaseGridColumnNotFoundException(string columnName) => $"BaseGrid Column {columnName} unexpectedly not found.";
       public static string EmptyDataSet(string dataSetName) => $"Your settings ended up with following empty datasets: '{dataSetName}'. Please remove the data set from your data, filter it out or add at least one observation for it.";
 
-      public static string MissingColumnException(string missingColumn) => $"The mapped column '{missingColumn}' is missing from at least one of the sheets being loaded.";
+      public static string MissingColumnException(IReadOnlyList<string> missingColumns) => $"The mapped column(s) \n \n '{missingColumns.ToString("\n")}' \n \n is missing from at least one of the sheets being loaded.";
 
       public static string InvalidDimensionException(string invalidUnit, string mappingName) => $"The unit '{invalidUnit}' you are trying to assign to the mapping '{mappingName}' does not belong to a supported dimension of this mapping.";
       public static string InconsistentDimensionBetweenUnitsException(string mappingName) => $"For the mapping '{mappingName}' not all units in the mapped column belong to the same dimension.";
@@ -1441,6 +1464,7 @@ namespace OSPSuite.Assets
       public static readonly string TransportMoleculeNamesBothListsNonEmpty = "Molecule names to transport and molecule names not to transport are both nonempty";
       public static readonly string InvalidFile = "Invalid File";
       public static readonly string InvalidAuxiliaryType = "The error type is invalid. Valid types are 'ArithmeticStdDev' and 'GeometricStdDev'";
+      public static readonly string MoreThanOneMeasurementColumnFound = "More than one measurement column was found in the data repository.";
 
       public static string UserDefinedPKParameterNotFound(string pkParameterName) => $"PK-Parameter '{pkParameterName}' not found";
 
@@ -1897,7 +1921,6 @@ namespace OSPSuite.Assets
    {
       public static string AsDeveloperOnly(string menuName) => $"{menuName} (Developer only)...";
 
-      public static readonly string ExportToPDF = "Export to PDF...";
       public static readonly string ExportToExcel = "Export to Excel...";
       public static readonly string CopyToClipboard = "Copy to Clipboard";
       public static readonly string ResetZoom = "Reset Zoom";

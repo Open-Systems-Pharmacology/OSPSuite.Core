@@ -33,10 +33,10 @@ namespace OSPSuite.R.Domain
       public bool CalculateSensitivity { get; set; } = false;
    }
 
-   public class SimulationBatchRunValues
+   public class SimulationBatchRunValues 
    {
       //Id to recognize it when running concurrently
-      public string Id { get; set; }
+      public string Id { get;  }
 
       //Potentially null
       public double[] ParameterValues { get; set; }
@@ -53,6 +53,14 @@ namespace OSPSuite.R.Domain
       public double[] Values => ParameterValues.ToNetArray(ParameterValue);
 
       public double[] MoleculeValues => InitialValues.ToNetArray(InitialValue);
+
+      public SimulationBatchRunValues()
+      {
+         Id = generateId();
+      }
+
+      private string generateId() => Guid.NewGuid().ToString();
+
    }
 
    public class SimulationBatch : IDisposable
@@ -74,6 +82,7 @@ namespace OSPSuite.R.Domain
 
       public void Initialize(IModelCoreSimulation simulation, SimulationBatchOptions simulationBatchOptions)
       {
+         _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
          //SimModel optionally caches XML used for loading a simulation as string.
          //This XML string was used e.g. by the old Matlab-/R-Toolbox when saving a simulation to XML.
          //C++ export also depends on the original XML string at the moment (not quite clear why).
@@ -82,24 +91,24 @@ namespace OSPSuite.R.Domain
          _simModelBatch.InitializeWith(simulation, simulationBatchOptions.Parameters, simulationBatchOptions.Molecules, simulationBatchOptions.CalculateSensitivity);
          //This needs to be done after initialization of the SimModelBatch so that we can check parameters
          validate(simulationBatchOptions);
-         _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
          _simulationBatchOptions = simulationBatchOptions;
       }
 
       /// <summary>
-      /// Export model as C++ code; keep parameters and initial values set in InitializeWith as variable
+      ///    Export model as C++ code; keep parameters and initial values set in InitializeWith as variable
       /// </summary>
       /// <param name="outputFolder">Model .cpp file will be created here</param>
       /// <param name="fullMode">
-      ///   If true: all parameters will be set as to be varied before export (will only have effect if SimModel simulation was not finalized yet
-      ///   If false: parameters will be simplified (where possible)
+      ///    If true: all parameters will be set as to be varied before export (will only have effect if SimModel simulation was
+      ///    not finalized yet
+      ///    If false: parameters will be simplified (where possible)
       /// </param>
       /// <param name="modelName">
-      ///   If empty (default): model will be named Standard and exported to Standard.cpp
-      ///   Otherwise: model will be named to "modelName" in the C++ code and exported to modelName.cpp.
-      ///              modelName must be both valid file name AND valid C++ identifier in such a case
+      ///    If empty (default): model will be named Standard and exported to Standard.cpp
+      ///    Otherwise: model will be named to "modelName" in the C++ code and exported to modelName.cpp.
+      ///    modelName must be both valid file name AND valid C++ identifier in such a case
       /// </param>
-      public void ExportToCPPCode(string outputFolder, bool fullMode, string modelName="")
+      public void ExportToCPPCode(string outputFolder, bool fullMode, string modelName = "")
       {
          var exportMode = fullMode ? CodeExportMode.Formula : CodeExportMode.Values;
          _simModelBatch.ExportToCPPCode(outputFolder, exportMode, modelName);
@@ -127,17 +136,7 @@ namespace OSPSuite.R.Domain
 
       public Task<SimulationResults> RunAsync(SimulationBatchRunValues simulationBatchRunValues)
       {
-         return Task.Run(() =>
-         {
-            _simModelBatch.UpdateParameterValues(simulationBatchRunValues.Values);
-            _simModelBatch.UpdateInitialValues(simulationBatchRunValues.MoleculeValues);
-            var simulationResults = _simModelBatch.RunSimulation();
-
-            if (!_simulationBatchOptions.CalculateSensitivity)
-               return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
-
-            return _simulationResultsCreator.CreateResultsWithSensitivitiesFrom(simulationResults.Results, _simModelBatch, _simulationBatchOptions.Parameters);
-         });
+         return Task.Run(() => Run(simulationBatchRunValues));
       }
 
       /// <summary>
@@ -145,8 +144,17 @@ namespace OSPSuite.R.Domain
       ///    This is really the only method that will be called from R
       /// </summary>
       /// <returns>Results of the simulation run</returns>
-      public SimulationResults Run(SimulationBatchRunValues simulationBatchRunValues) =>
-         RunAsync(simulationBatchRunValues).Result;
+      public SimulationResults Run(SimulationBatchRunValues simulationBatchRunValues)
+      {
+         _simModelBatch.UpdateParameterValues(simulationBatchRunValues.Values);
+         _simModelBatch.UpdateInitialValues(simulationBatchRunValues.MoleculeValues);
+         var simulationResults = _simModelBatch.RunSimulation();
+
+         if (!_simulationBatchOptions.CalculateSensitivity)
+            return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
+
+         return _simulationResultsCreator.CreateResultsWithSensitivitiesFrom(simulationResults.Results, _simModelBatch, _simulationBatchOptions.Parameters);
+      }
 
       protected virtual void Cleanup()
       {

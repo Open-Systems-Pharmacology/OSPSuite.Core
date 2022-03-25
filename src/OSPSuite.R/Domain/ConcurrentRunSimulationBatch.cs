@@ -7,9 +7,9 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.R.Domain
 {
-   public class ConcurrentRunSimulationBatch : IDisposable
+   public class ConcurrentRunSimulationBatch : IDisposable, IWithId
    {
-      public string Id { get; }
+      public string Id { get; set; }
       public IModelCoreSimulation Simulation { get; }
       private readonly List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
 
@@ -41,12 +41,9 @@ namespace OSPSuite.R.Domain
 
       public IReadOnlyCollection<SimulationBatch> SimulationBatches => _simulationBatches;
 
-      public string AddSimulationBatchRunValues(SimulationBatchRunValues simulationBatchRunValues)
+      public void AddSimulationBatchRunValues(SimulationBatchRunValues simulationBatchRunValues)
       {
-         var id = generateId();
-         simulationBatchRunValues.Id = id;
          _simulationBatchRunValues.Add(simulationBatchRunValues);
-         return id;
       }
 
       private string generateId() => Guid.NewGuid().ToString();

@@ -42,7 +42,7 @@
     <PackageReference Include="MathNet.Numerics" Version="4.15.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
     <PackageReference Include="OSPSuite.Serializer" Version="3.0.0.1" />
-    <PackageReference Include="OSPSuite.FuncParser" Version="4.0.0.50" GeneratePathProperty="true" />
+    <PackageReference Include="OSPSuite.FuncParser" Version="4.0.0.51" GeneratePathProperty="true" />
     <PackageReference Include="OSPSuite.SimModel" Version="4.0.0.45" GeneratePathProperty="true" />
     <PackageReference Include="OSPSuite.Utility" Version="4.0.0.4" />
   </ItemGroup>
@@ -56,6 +56,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Converters\v11\" />
   </ItemGroup>
 
 </Project>

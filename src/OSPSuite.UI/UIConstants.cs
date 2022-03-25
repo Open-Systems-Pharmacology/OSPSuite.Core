@@ -34,29 +34,28 @@ namespace OSPSuite.UI
       {
          private static readonly double _scaleFactor = createScaleFactor();
          public static readonly int EMBEDDED_BUTTON_WIDTH = ScaleForScreenDPI(25);
-         public const int EMBEDDED_CHECK_BOX_WIDTH = 60;
-         public const int EMBEDDED_DESCRIPTION_WIDTH = 80;
-         public const int EMPTY_SPACE_HEIGHT = 20;
-         public const int RADIO_GROUP_HEIGHT = 24;
-         public const int LARGE_BUTTON_WIDTH = 150;
-         public const int LARGE_BUTTON_HEIGHT = 29;
-         public const int ADD_REMOVE_BUTTON_WIDTH = 100;
-         public const int ADD_REMOVE_BUTTON_HEIGHT = 60;
+         public static readonly int EMBEDDED_CHECK_BOX_WIDTH = ScaleForScreenDPI(60);
+         public static readonly int EMBEDDED_DESCRIPTION_WIDTH = ScaleForScreenDPI(80);
+         public static readonly int EMPTY_SPACE_HEIGHT = ScaleForScreenDPI(20);
+         public static readonly int RADIO_GROUP_HEIGHT = ScaleForScreenDPI(24);
+         public static readonly int LARGE_BUTTON_WIDTH = ScaleForScreenDPI(150);
+         public static readonly int LARGE_BUTTON_HEIGHT = ScaleForScreenDPI(29);
+         public static readonly int ADD_REMOVE_BUTTON_WIDTH = ScaleForScreenDPI(100);
+         public static readonly int ADD_REMOVE_BUTTON_HEIGHT = ScaleForScreenDPI(60);
          public const double SCREEN_RESIZE_FRACTION = 0.9;
          public static readonly int BUTTON_WIDTH = ScaleForScreenDPI(105);
          public static readonly int BUTTON_HEIGHT = ScaleForScreenDPI(24);
-         public const int OPTIMIZED_RANGE_WIDTH = 300;
+         public static readonly int OPTIMIZED_RANGE_WIDTH = ScaleForScreenDPI(300);
 
-         public static int ScaleForScreenDPI(int size)
-         {
-            return (int) (_scaleFactor * size);
-         }
+         public static int ScaleForScreenDPI(int size) => (int) (_scaleFactor * size);
 
          private static double createScaleFactor()
          {
             using (var graphics = Graphics.FromHwnd(IntPtr.Zero))
             {
-
+               if (graphics.DpiX >= 200)
+                  return 2;
+               
                if (graphics.DpiX > 120)
                   return 1.5;
 
