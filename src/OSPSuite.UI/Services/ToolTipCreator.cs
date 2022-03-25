@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using System.Linq;
 using DevExpress.Utils;
-using DevExpress.Utils.Svg;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Journal;
@@ -15,7 +14,7 @@ namespace OSPSuite.UI.Services
 {
    public interface IToolTipCreator
    {
-      SuperToolTip CreateToolTip(string content, string title = null, SvgImage image = null, IWithIcon withIcon = null);
+      SuperToolTip CreateToolTip(string content, string title = null, ApplicationIcon image = null, IWithIcon withIcon = null);
       SuperToolTip ToolTipFor(JournalPageDTO journalPageDTO);
       SuperToolTip ToolTipFor(ValueOrigin valueOrigin);
       SuperToolTip ToolTipFor(RelatedItem relatedItem);
@@ -28,9 +27,9 @@ namespace OSPSuite.UI.Services
 
    public class ToolTipCreator : IToolTipCreator
    {
-      public SuperToolTip CreateToolTip(string content, string title = null, SvgImage image = null, IWithIcon withIcon = null)
+      public SuperToolTip CreateToolTip(string content, string title = null, ApplicationIcon image = null, IWithIcon withIcon = null)
       {
-         var imageToUse = image ?? (withIcon == null ? null : ApplicationIcons.IconFor(withIcon));
+         var imageToUse = image ?? ApplicationIcons.IconFor(withIcon);
          // Create an object to initialize the SuperToolTip.
          var superToolTip = CreateToolTip();
          var setupArgs = new SuperToolTipSetupArgs();
