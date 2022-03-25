@@ -4,8 +4,8 @@ namespace OSPSuite.Assets
 {
     public class IconSize
     {
-        public int Width { get; private set; }
-        public int Height { get; private set; }
+        public int Width { get; }
+        public int Height { get; }
 
         internal IconSize(int width, int height)
         {
@@ -13,10 +13,7 @@ namespace OSPSuite.Assets
             Height = height;
         }
 
-        public string Id
-        {
-            get { return string.Format("{0}x{1}", Width, Height); }
-        }
+        public string Id => $"{Width}x{Height}";
 
         public static implicit operator Size(IconSize icon)
         {

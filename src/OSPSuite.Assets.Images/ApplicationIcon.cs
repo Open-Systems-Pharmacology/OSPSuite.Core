@@ -10,7 +10,6 @@ namespace OSPSuite.Assets
       private readonly SvgBitmap _bitmap;
 
       public string IconName { get; set; }
-      public IconSize IconSize { get; set; }
       public int Index { get; set; }
 
       public ApplicationIcon(byte[] bytes) : this(bytesToImage(bytes))
@@ -22,7 +21,6 @@ namespace OSPSuite.Assets
          _image = image;
          _bitmap = image == null ? null : new SvgBitmap(image);
          Index = -1;
-         IconSize = IconSizes.Size16x16;
       }
 
       private static SvgImage bytesToImage(byte[] bytes)
@@ -33,7 +31,7 @@ namespace OSPSuite.Assets
 
       public static implicit operator SvgImage(ApplicationIcon icon) => icon.ToSvgImage();
 
-      public virtual Image ToImage() => ToImage(IconSize);
+      public virtual Image ToImage() => ToImage(IconSizes.Size16x16);
 
       public virtual Image ToImage(IconSize imageSize)
       {
@@ -49,14 +47,6 @@ namespace OSPSuite.Assets
          }*/
       }
 
-      public virtual SvgImage ToSvgImage()
-      {
-         return WithSize(IconSize);
-      }
-
-      public virtual SvgImage WithSize(IconSize iconSize)
-      {
-         return _image;
-      }
+      public virtual SvgImage ToSvgImage() => _image;
    }
 }
