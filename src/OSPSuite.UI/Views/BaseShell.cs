@@ -29,12 +29,12 @@ namespace OSPSuite.UI.Views
    public partial class BaseShell : RibbonForm, IMainView, IViewWithPopup
    {
       public event EventHandler CaptionChanged = delegate { };
-      public ApplicationIcon ApplicationIcon { get; set; }
       public event Action Loading = delegate { };
       private IMainViewPresenter _presenter;
       private readonly AlertButton _removeAlertButton;
       private RibbonControl _ribbon;
       private DockManager _dockManager;
+      private ApplicationIcon _applicationIcon;
 
       public BaseShell()
       {
@@ -56,6 +56,17 @@ namespace OSPSuite.UI.Views
             Style = AlertButtonStyle.Button,
          };
          _removeAlertButton.ImageOptions.SetImage(ApplicationIcons.Cancel);
+      }
+
+      public ApplicationIcon ApplicationIcon
+      {
+         get => _applicationIcon;
+         set
+         {
+            _applicationIcon = value;
+            IconOptions.SvgImage = value;
+            IconOptions.SvgImageSize = IconSizes.Size16x16;
+         }
       }
 
       public virtual void Initialize()
