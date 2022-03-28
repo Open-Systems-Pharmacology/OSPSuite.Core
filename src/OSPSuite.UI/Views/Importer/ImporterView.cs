@@ -46,7 +46,7 @@ namespace OSPSuite.UI.Views.Importer
          saveMappingBtn.InitWithImage(ApplicationIcons.Save, Captions.Importer.SaveConfiguration);
          applyMappingBtn.InitWithImage(ApplicationIcons.Load, Captions.Importer.ApplyConfiguration);
          resetMappingBasedOnCurrentSheetBtn.InitWithImage(ApplicationIcons.Refresh, Captions.Importer.ResetMapping);
-         clearMappingBtn.InitWithImage(ApplicationIcons.Delete, Captions.Importer.ClearMapping); //ToDo: WRONG ICON
+         clearMappingBtn.InitWithImage(ApplicationIcons.RedCross, Captions.Importer.ClearMapping); //ToDo: WRONG ICON
          saveMappingBtnLayoutControlItem.AdjustLargeButtonSize();
          applyMappingLayoutControlItem.AdjustLargeButtonSize();
          resetMappingBasedOnCurrentSheetLayoutControlItem.AdjustLargeButtonSize();

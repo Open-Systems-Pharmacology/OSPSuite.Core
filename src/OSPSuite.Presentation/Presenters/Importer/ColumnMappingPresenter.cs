@@ -683,23 +683,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
             .ToList());
       }
 
-      public void ResetMapping()
-      {
-         if (_format != null)
-         {
-            _format.Parameters.Clear();
-            foreach (var p in _originalFormat)
-               _format.Parameters.Add(p);
-         }
-
-         setDataFormat(_originalFormat);
-      }
-
-      public void ResetMappingBasedOnCurrentSheet()
-      {
-         OnResetMappingBasedOnCurrentSheet(this, new EventArgs());
-      }
-
       public void ClearMapping()
       {
          var format = new List<DataFormatParameter>();

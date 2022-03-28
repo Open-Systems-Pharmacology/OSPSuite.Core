@@ -452,11 +452,5 @@ namespace OSPSuite.Presentation.Importer.Presenters
          (sut as ImporterPresenterForTest).OnResetMappingBasedOnCurrentSheetInvoked = false;
          sut.LoadConfigurationWithoutImporting();
       }
-
-      [Observation]
-      public void must_reset_format_based_on_current_sheet()
-      {
-         (sut as ImporterPresenterForTest).OnResetMappingBasedOnCurrentSheetInvoked.ShouldBeTrue();
-      }
    }
 }

@@ -100,8 +100,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _mappingParameterEditorPresenter = A.Fake<IMappingParameterEditorPresenter>();
          _metaDataParameterEditorPresenter = A.Fake<IMetaDataParameterEditorPresenter>();
 
-         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter, _dimensionFactory,
-            _dialogCreator);
+         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter);
       }
    }
 
