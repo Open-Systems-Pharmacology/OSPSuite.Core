@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using DevExpress.Utils.Svg;
@@ -14,7 +12,6 @@ namespace OSPSuite.Assets
       private static readonly ICache<string, ApplicationIcon> _allIcons = new Cache<string, ApplicationIcon>(icon => icon.IconName);
       private static IList<ApplicationIcon> _allIconsList;
 
-   
       public static readonly ApplicationIcon Absorption = AddNamedIcon("Absorption");
       public static readonly ApplicationIcon ActiveEfflux = AddNamedIcon("Efflux", "ActiveEfflux");
       public static readonly ApplicationIcon ActiveInflux = AddNamedIcon("Influx", "ActiveInflux");
@@ -534,16 +531,6 @@ namespace OSPSuite.Assets
          var name = (iconName ?? resName).ToUpperInvariant();
          var iconAsBytes = getIcon(resName);
 
-         //TODO remove when all icons are available as SVG
-         if (iconAsBytes == null)
-         {
-            //TODO remote debug
-            System.Diagnostics.Debug.WriteLine($"{resName} svg icon not found");
-            var icon = _allIcons["ABSORPTION"];
-            _allIcons.Add(name, icon);
-            return icon;
-         }
-
          var appIcon = new ApplicationIcon(iconAsBytes)
          {
             IconName = name,
@@ -558,6 +545,7 @@ namespace OSPSuite.Assets
       {
          var assembly = Assembly.GetExecutingAssembly();
          var resourceName = typeof(ApplicationIcon).Namespace + ".Icons." + iconName + ".svg";
+         
          using (var stream = assembly.GetManifestResourceStream(resourceName))
          {
             if (stream == null)
@@ -596,7 +584,7 @@ namespace OSPSuite.Assets
       {
          return IconByNameOrDefault(withIcon?.IconName, EmptyIcon);
       }
-      
+
       private static ApplicationIcon dynamicIconFor(string template, string entity, ApplicationIcon defaultIcon)
       {
          var iconName = string.Format(template, entity);
