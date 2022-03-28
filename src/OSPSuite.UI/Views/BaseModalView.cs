@@ -6,6 +6,7 @@ using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
+using Padding = System.Windows.Forms.Padding;
 
 namespace OSPSuite.UI.Views
 {
@@ -25,10 +26,22 @@ namespace OSPSuite.UI.Views
          InitializeComponent();
          _shortcutsManager = new BarManager {Form = this};
          ShowInTaskbar = false;
+         btnOk.Click += (o, e) => OnEvent(OkClicked);
          btnExtra.Click += (o, e) => OnEvent(ExtraClicked);
+         btnCancel.Click += (o, e) => OnEvent(CancelClicked);
          btnOk.Manager = _shortcutsManager;
          btnCancel.Manager = _shortcutsManager;
          btnExtra.Manager = _shortcutsManager;
+      }
+
+      protected virtual void OkClicked()
+      {
+         /*nothing to do here*/
+      }
+
+      protected virtual void CancelClicked()
+      {
+         /*nothing to do here*/
       }
 
       protected virtual void ExtraClicked()
@@ -50,7 +63,13 @@ namespace OSPSuite.UI.Views
       protected override void OnFormClosing(FormClosingEventArgs e)
       {
          if (Canceled)
-            e.Cancel = !ShouldClose;
+         {
+            //if cancel button is deactivated, and the user triggered cancel should not close the form
+            if (e.CloseReason == CloseReason.UserClosing && btnCancel.Enabled == false)
+               e.Cancel = true;
+            else
+               e.Cancel = !ShouldClose;
+         }
 
          base.OnFormClosing(e);
       }
@@ -69,10 +88,28 @@ namespace OSPSuite.UI.Views
          get => btnOk.Enabled;
       }
 
+      public bool CancelEnabled
+      {
+         set => btnCancel.Enabled = value;
+         get => btnCancel.Enabled;
+      }
+
       public bool ExtraEnabled
       {
          set => btnExtra.Enabled = value;
          get => btnExtra.Enabled;
+      }
+
+      public string OkCaption
+      {
+         get => btnOk.Text;
+         set => btnOk.Text = value;
+      }
+
+      public string ExtraCaption
+      {
+         get => btnExtra.Text;
+         set => btnExtra.Text = value;
       }
 
       protected virtual void SetOkButtonEnable()
@@ -100,34 +137,40 @@ namespace OSPSuite.UI.Views
          btnOk.InitWithImage(ApplicationIcons.OK, Captions.OKButton, ImageLocation.MiddleRight);
          btnCancel.InitWithImage(ApplicationIcons.Cancel, Captions.CancelButton, ImageLocation.MiddleRight);
          btnCancel.Text = Captions.CancelButton;
-         layoutItemOK.AdjustButtonSize();
-         layoutItemCancel.AdjustButtonSize();
-         layoutItemExtra.AdjustButtonSize();
-         layoutControlBase.AutoScroll = false;
-         MaximizeBox = false; 
+         tablePanel.AdjustButton(btnOk);
+         tablePanel.AdjustButton(btnCancel);
+         tablePanel.AdjustButton(btnExtra);
+         tablePanel.AutoScroll = false;
+         MaximizeBox = false;
          MinimizeBox = false;
          btnOk.Shortcut = Keys.Control | Keys.Enter;
-         //hide the extra button per default
-         layoutItemExtra.Visibility = LayoutVisibilityConvertor.FromBoolean(false);
-
-         layoutControlGroupBase.HideBorderIfRequired();
+         tablePanel.ColumnFor(btnExtra).Visible = false;
+         //Double margin right for cancel 
+         btnCancel.Margin = new Padding(btnCancel.Margin.Left, btnCancel.Margin.Top, btnCancel.Margin.Right * 2, btnCancel.Margin.Bottom);
+         //Double margin right for extra 
+         btnExtra.Margin = new Padding(btnExtra.Margin.Left * 2, btnExtra.Margin.Top, btnExtra.Margin.Right, btnExtra.Margin.Bottom);
       }
 
       public bool CancelVisible
       {
-         set => SetItemVisibility(layoutItemCancel, value);
-         get => LayoutVisibilityConvertor.ToBoolean(layoutItemCancel.Visibility);
+         set => SetItemVisibility(btnCancel, value);
+         get => tablePanel.ColumnFor(btnCancel).Visible;
       }
 
       public bool ExtraVisible
       {
-         get => LayoutVisibilityConvertor.ToBoolean(layoutItemExtra.Visibility);
-         set => SetItemVisibility(layoutItemExtra, value);
+         set => SetItemVisibility(btnExtra, value);
+         get => tablePanel.ColumnFor(btnExtra).Visible;
       }
 
       protected void SetItemVisibility(LayoutControlItem itemForButton, bool visible)
       {
          itemForButton.Visibility = LayoutVisibilityConvertor.FromBoolean(visible);
+      }
+
+      protected void SetItemVisibility(SimpleButton button, bool visible)
+      {
+         tablePanel.ColumnFor(button).Visible = visible;
       }
 
       /// <summary>
@@ -137,5 +180,24 @@ namespace OSPSuite.UI.Views
       {
          set => AcceptButton = value ? btnOk : null;
       }
+
+      protected SimpleButton ButtonExtra => btnExtra;
+
+      protected SimpleButton ButtonOk => btnOk;
+
+      protected SimpleButton ButtonCancel => btnCancel;
+
+      /// <summary>
+      ///    Makes the extra section visible and replace the extra button with the control given as parameter
+      /// </summary>
+      protected void ReplaceExtraButtonWith(Control control)
+      {
+         //Make the extra section visible and replace the extra button with the control given as parameter
+         ExtraVisible = true;
+         ButtonExtra.Visible = false;
+         control.Margin = ButtonExtra.Margin;
+         tablePanel.Controls.Add(control);
+         tablePanel.SetCell(control, tablePanel.GetRow(ButtonExtra), tablePanel.GetColumn(ButtonExtra));
+      }
    }
-}
+};

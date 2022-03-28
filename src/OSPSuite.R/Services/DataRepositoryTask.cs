@@ -28,6 +28,13 @@ namespace OSPSuite.R.Services
       void SaveDataRepository(DataRepository dataRepository, string fileName);
 
       /// <summary>
+      ///    Returns the first instance of a measurement column (e.g. ColumnOrigin is Observation) defined in the repository of
+      ///    null if not found.
+      ///    <exception cref="OSPSuiteException">is thrown if there are more than one measurement column in the data repository</exception>
+      /// </summary>
+      DataColumn GetMeasurementColumn(DataRepository dataRepository);
+
+      /// <summary>
       ///    Returns the Error column associated with the <paramref name="column" /> or <c>null</c> if none is defined
       /// </summary>
       DataColumn GetErrorColumn(DataColumn column);
@@ -40,7 +47,6 @@ namespace OSPSuite.R.Services
       /// <param name="column">Column for which an error column should be created</param>
       /// <param name="name">Name of the error column</param>
       /// <param name="errorType">Error type for error column</param>
-      /// <returns></returns>
       DataColumn AddErrorColumn(DataColumn column, string name, string errorType);
 
       /// <summary>
@@ -102,6 +108,18 @@ namespace OSPSuite.R.Services
       public void SaveDataRepository(DataRepository dataRepository, string fileName)
       {
          _pkmlPersistor.SaveToPKML(dataRepository, fileName);
+      }
+
+      public DataColumn GetMeasurementColumn(DataRepository dataRepository)
+      {
+         var observationColumns = dataRepository.ObservationColumns().ToList();
+         if (!observationColumns.Any())
+            return null;
+
+         if (observationColumns.Count == 1)
+            return observationColumns[0];
+
+         throw new OSPSuiteException(Error.MoreThanOneMeasurementColumnFound);
       }
 
       public DataColumn GetErrorColumn(DataColumn column)

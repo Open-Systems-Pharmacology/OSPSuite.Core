@@ -31,15 +31,6 @@
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
          this.SuspendLayout();
          // 
-         // btnCancel
-         // 
-         this.btnCancel.Location = new System.Drawing.Point(347, 12);
-         // 
-         // btnOk
-         // 
-         this.btnOk.Location = new System.Drawing.Point(260, 12);
-         this.btnOk.Size = new System.Drawing.Size(83, 22);
-         // 
          // BaseModalTabbedContainerView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);

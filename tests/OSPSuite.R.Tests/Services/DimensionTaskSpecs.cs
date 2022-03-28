@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using NUnit.Framework;
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.R.Services
 {
@@ -141,7 +141,7 @@ namespace OSPSuite.R.Services
          catch (Exception e)
          {
             e.Message.ShouldBeEqualTo(Error.UnitIsNotDefinedInDimension("TOTO", Constants.Dimension.MOLAR_AMOUNT));
-         } 
+         }
       }
    }
 
@@ -311,6 +311,24 @@ namespace OSPSuite.R.Services
          sut.DimensionForStandardPKParameter(StandardPKParameter.Vss).Name.ShouldBeEqualTo(Constants.Dimension.VOLUME_PER_BODY_WEIGHT);
          sut.DimensionForStandardPKParameter(StandardPKParameter.Vd).Name.ShouldBeEqualTo(Constants.Dimension.VOLUME_PER_BODY_WEIGHT);
          sut.DimensionForStandardPKParameter(StandardPKParameter.Tthreshold).Name.ShouldBeEqualTo(Constants.Dimension.TIME);
+      }
+   }
+
+   public class When_extracting_the_unit_defined_in_a_text : concern_for_DimensionTask
+   {
+      [TestCase("Value", "Value", "")]
+      [TestCase("Value [unit]", "Value", "unit")]
+      [TestCase("Value [unit] ", "Value", "unit")]
+      [TestCase("Value [raw] 1 [unit]", "Value [raw] 1", "unit")]
+      [TestCase("Value [raw] [unit] ", "Value [raw]", "unit")]
+      [TestCase("Value [raw] 1", "Value [raw] 1", "")]
+      [TestCase("[Value] [unit]", "[Value]", "unit")]
+      public void should_return_the_expected_value(string text, string name, string unit)
+      {
+         var res = sut.ExtractNameAndUnit(text);
+         res.Length.ShouldBeEqualTo(2);
+         res[0].ShouldBeEqualTo(name);
+         res[1].ShouldBeEqualTo(unit);
       }
    }
 }
