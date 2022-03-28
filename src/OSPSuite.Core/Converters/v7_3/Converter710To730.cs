@@ -51,10 +51,10 @@ namespace OSPSuite.Core.Converters.v7_3
          return (PKMLVersion.V7_3_0, converted);
       }
 
-      private XElement valueOriginFor(string valueDescriptioon)
+      private XElement valueOriginFor(string valueDescription)
       {
          var element = new XElement(Constants.Serialization.VALUE_ORIGIN);
-         element.SetAttributeValue(Constants.Serialization.Attribute.DESCRIPTION, valueDescriptioon);
+         element.SetAttributeValue(Constants.Serialization.Attribute.DESCRIPTION, valueDescription);
          return element;
       }
 

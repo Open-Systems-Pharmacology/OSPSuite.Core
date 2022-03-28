@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
       {
          var sensitivityRunResult = new SensitivityAnalysisRunResult();
 
-         var pkAnalyses = _pkAnalysesTask.CalculateFor(sensitivityAnalysis.Simulation, variationData.NumberOfVariations, simulationResults);
+         var pkAnalyses = _pkAnalysesTask.CalculateFor(sensitivityAnalysis.Simulation, simulationResults);
          foreach (var pkParameter in pkAnalyses.All())
          {
             sensitivityAnalysis.AllSensitivityParameters.Each((sensitivityParameter, index) =>
@@ -49,7 +49,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
       private PKParameterSensitivity calculateParameterSensitivity(SensitivityParameter sensitivityParameter, int sensitivityParameterIndex, VariationData variationData, QuantityPKParameter pkParameter)
       {
          var defaultParameterValue = sensitivityParameter.DefaultValue;
-         var defaultPKValue = pkParameter.Values[variationData.DefaultVariationId];
+         var defaultPKValue = pkParameter.ValueFor(variationData.DefaultVariationId);
          var allVariations = variationData.VariationsFor(sensitivityParameter.Name);
 
          if (float.IsNaN(defaultPKValue) || defaultPKValue == 0 || defaultParameterValue == 0 || !allVariations.Any())
@@ -65,7 +65,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 
          var delta = (from variation in allVariations
             let deltaP = difference(variation.Variation[sensitivityParameterIndex], defaultParameterValue)
-            let deltaPK = difference(pkParameter.Values[variation.VariationId], defaultPKValue)
+            let deltaPK = difference(pkParameter.ValueFor(variation.VariationId), defaultPKValue)
             select deltaPK / deltaP).Sum();
 
          sensitivity.Value = delta * defaultParameterValue / defaultPKValue / allVariations.Count;

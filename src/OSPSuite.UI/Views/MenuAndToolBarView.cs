@@ -25,9 +25,15 @@ namespace OSPSuite.UI.Views
       private readonly MRUArrayList _mruArrayList;
       private readonly ICache<string, IList<IButtonGroup>> _buttonGroupCache;
 
-      public MenuAndToolBarView(RibbonBarManager barManager, IButtonGroupToRibbonPageGroupMapper ribbonPageGroupMapper, IMenuBarItemToBarItemMapper barItemMapper,
-         IRibbonBarItemToBarItemMapper ribbonItemMapper, ISkinManagerToSkinGalleryMapper skinGalleryMapper,
-         ApplicationMenu applicationMenu, PanelControl panelRecentItems, IToolTipCreator toolTipCreator)
+      public MenuAndToolBarView(
+         RibbonBarManager barManager, 
+         IButtonGroupToRibbonPageGroupMapper ribbonPageGroupMapper, 
+         IMenuBarItemToBarItemMapper barItemMapper,
+         IRibbonBarItemToBarItemMapper ribbonItemMapper, 
+         ISkinManagerToSkinGalleryMapper skinGalleryMapper,
+         ApplicationMenu applicationMenu, 
+         PanelControl panelRecentItems, 
+         IToolTipCreator toolTipCreator)
       {
          _barManager = barManager;
          _ribbonPageGroupMapper = ribbonPageGroupMapper;

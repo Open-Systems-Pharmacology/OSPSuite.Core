@@ -12,7 +12,7 @@ namespace OSPSuite.UI.Extensions
          if (control == null) return;
          page.FillWith(viewToAdd);
          page.Text = viewToAdd.Caption;
-         page.Image = viewToAdd.ApplicationIcon.ToImage(UIConstants.ICON_SIZE_TAB);
+         page.SetImage(viewToAdd.ApplicationIcon, UIConstants.ICON_SIZE_TAB);
       }
    }
 }

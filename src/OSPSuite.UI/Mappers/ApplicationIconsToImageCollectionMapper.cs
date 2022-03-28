@@ -6,17 +6,17 @@ namespace OSPSuite.UI.Mappers
 {
    public interface IApplicationIconsToImageCollectionMapper
    {
-      ImageCollection MapFrom(IEnumerable<ApplicationIcon> listOfIcons, IconSize iconSize);
+      SvgImageCollection MapFrom(IEnumerable<ApplicationIcon> listOfIcons, IconSize iconSize);
    }
 
    public class ApplicationIconsToImageCollectionMapper : IApplicationIconsToImageCollectionMapper
    {
-      public ImageCollection MapFrom(IEnumerable<ApplicationIcon> listOfIcons, IconSize iconSize)
+      public SvgImageCollection MapFrom(IEnumerable<ApplicationIcon> listOfIcons, IconSize iconSize)
       {
-         var imageList = new ImageCollection {ImageSize = iconSize};
+         var imageList = new SvgImageCollection { ImageSize = iconSize};
          foreach (var icon in listOfIcons)
          {
-            imageList.AddImage(icon.ToImage(iconSize), icon.IconName);
+            imageList.Add(icon.IconName,  icon);
          }
          return imageList;
       }

@@ -9,6 +9,7 @@ namespace OSPSuite.Presentation.Views.Charts
       void SetCurveSettingsView(IView view);
       void SetAxisSettingsView(IView view);
       void SetChartSettingsView(IView view);
+      void SetCurveColorGroupingView(IView view);
       void SetChartExportSettingsView(IView view);
       void ShowCustomizationForm();
       void LoadLayoutFromString(string dockingLayout);

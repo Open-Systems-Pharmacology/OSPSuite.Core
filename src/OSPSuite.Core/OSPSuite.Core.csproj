@@ -58,4 +58,8 @@
     <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Converters\v11\" />
+  </ItemGroup>
+
 </Project>

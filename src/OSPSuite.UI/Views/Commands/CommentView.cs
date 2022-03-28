@@ -41,7 +41,7 @@ namespace OSPSuite.UI.Views.Commands
          base.InitializeResources();
          lblCommandDescription.AutoSizeMode = LabelAutoSizeMode.Vertical;
          layoutItemComments.Text = Captions.Comments;
-         Icon = ApplicationIcons.Edit;
+         ApplicationIcon = ApplicationIcons.Edit;
       }
 
       public string CommandDescription

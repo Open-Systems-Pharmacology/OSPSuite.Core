@@ -233,6 +233,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             );
       }
 
+
       private IEnumerable<ParsedDataSet> buildDataSets(IUnformattedData data, IEnumerable<string> groupingParameters, Cache<string, ColumnInfo> columnInfos)
       {
          var dataSets = new List<ParsedDataSet>();

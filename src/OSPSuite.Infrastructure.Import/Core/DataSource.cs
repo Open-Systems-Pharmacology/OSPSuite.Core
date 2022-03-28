@@ -43,7 +43,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    }
 
    /// <summary>
-   /// Collection of DataSets
+   ///    Collection of DataSets
    /// </summary>
    public interface IDataSource
    {
@@ -92,14 +92,13 @@ namespace OSPSuite.Infrastructure.Import.Core
          foreach (var key in dataSheets.Keys)
          {
             var dt = dataSheets[key].RawData.AsDataTable();
-            var dv = new DataView(dt);
-            dv.RowFilter = filter;
-            var list = new List<DataRow>();
-            var ds = new DataSheet() { RawData = new UnformattedData(dataSheets[key].RawData) };
+            var dv = new DataView(dt) {RowFilter = filter};
+            var ds = new DataSheet() {RawData = new UnformattedData(dataSheets[key].RawData)};
             foreach (DataRowView drv in dv)
             {
                ds.RawData.AddRow(drv.Row.ItemArray.Select(c => c.ToString()));
             }
+
             filteredDataSheets.Add(key, ds);
          }
 
@@ -263,6 +262,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          }
          return errors;
       }
+
       //checks that all units coming from a mapped column unit belong to a valid dimension for this mapping
       //and also that they are all of the same dimension within every data set. 
       private ParseErrors validateUnitsSupportedAndSameDimension(Cache<string, ColumnInfo> columnInfos)
@@ -325,8 +325,8 @@ namespace OSPSuite.Infrastructure.Import.Core
 
    public class MetaDataInstance
    {
-      public string Name { get; private set; }
-      public string Value { get; private set; }
+      public string Name { get; }
+      public string Value { get; }
 
       public MetaDataInstance(string name, string value)
       {
@@ -337,11 +337,11 @@ namespace OSPSuite.Infrastructure.Import.Core
 
    public class ImportedDataSet
    {
-      public string FileName { get; private set; }
-      public string SheetName { get; private set; }
-      public ParsedDataSet ParsedDataSet { get; private set; }
-      public string Name { get; private set; }
-      public IReadOnlyList<MetaDataInstance> MetaDataDescription { get; private set; }
+      public string FileName { get; }
+      public string SheetName { get; }
+      public ParsedDataSet ParsedDataSet { get; }
+      public string Name { get; }
+      public IReadOnlyList<MetaDataInstance> MetaDataDescription { get; }
 
       public ImportedDataSet(string fileName, string sheetName, ParsedDataSet parsedDataSet, string name, IReadOnlyList<MetaDataInstance> metaDataDescription)
       {

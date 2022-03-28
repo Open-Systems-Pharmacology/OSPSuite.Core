@@ -20,7 +20,7 @@ namespace OSPSuite.Starter.Presenters
       {
       }
 
-      protected override void DisableMenuBarItemsForPogramStart()
+      protected override void DisableMenuBarItemsForProgramStart()
       {
       }
 
