@@ -62,6 +62,8 @@ namespace OSPSuite.UI.Views.Importer
          base.InitializeResources();
          indicatorLayoutControlItem.Text = Captions.Importer.NanIndicator.FormatForLabel(false);
          actionLayoutControlItem.Text = Captions.Importer.NanAction.FormatForLabel(false);
+         actionImageComboBoxEdit.ToolTip = Captions.Importer.NanActionHint;
+         indicatorTextEdit.ToolTip = Captions.Importer.NanIndicatorHint;
       }
    }
 }

@@ -17,7 +17,6 @@ namespace OSPSuite.UI.Views.Importer
       public ImporterView()
       {
          InitializeComponent();
-        //nanLayoutControlItem.AdjustControlHeight(160);
       }
 
       public override void InitializeResources()
@@ -27,22 +26,12 @@ namespace OSPSuite.UI.Views.Importer
          previewLayoutControlItem.Name = Captions.Importer.PreviewLayout;
          columnMappingLayoutControlItem.Name = Captions.Importer.MappingSettings;
 
-         saveMappingBtn.Click += (o, e) => OnEvent(() =>
-         {
-            _presenter.SaveConfiguration();
-         });
-         applyMappingBtn.Click += (o, e) => OnEvent(() =>
-         {
-            _presenter.LoadConfigurationWithoutImporting();
-         });
-         resetMappingBasedOnCurrentSheetBtn.Click += (o, e) => OnEvent(() =>
-         {
-            _presenter.ResetMappingBasedOnCurrentSheet();
-         });
-         clearMappingBtn.Click += (o, e) => OnEvent(() =>
-         {
-            _presenter.ClearMapping();
-         });
+
+         saveMappingBtn.Click += (o, e) => OnEvent(_presenter.SaveConfiguration);
+         applyMappingBtn.Click += (o, e) => OnEvent(_presenter.LoadConfigurationWithoutImporting);
+         resetMappingBasedOnCurrentSheetBtn.Click += (o, e) => OnEvent(_presenter.ResetMappingBasedOnCurrentSheet);
+         clearMappingBtn.Click += (o, e) => OnEvent(_presenter.ClearMapping);
+
          saveMappingBtn.InitWithImage(ApplicationIcons.Save, Captions.Importer.SaveConfiguration);
          applyMappingBtn.InitWithImage(ApplicationIcons.Load, Captions.Importer.ApplyConfiguration);
          resetMappingBasedOnCurrentSheetBtn.InitWithImage(ApplicationIcons.Refresh, Captions.Importer.ResetMapping);

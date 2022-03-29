@@ -120,7 +120,4 @@
   <metadata name="errorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="actionImageComboBoxEdit.ToolTip" xml:space="preserve">
-    <value>Defines what to do when an invalid measurement is found (invalid measurements are NaN or the number indicated in the NaN indicator). "Ignore the row" will import the data ignoring the currently invalid row. "Prevent the import" will throw an error and halt the import process</value>
-  </data>
 </root>

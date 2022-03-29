@@ -82,8 +82,6 @@ namespace OSPSuite.UI.Views.Importer
          this.indicatorTextEdit.Size = new System.Drawing.Size(1051, 48);
          this.indicatorTextEdit.StyleController = this.rootLayoutControl;
          this.indicatorTextEdit.TabIndex = 4;
-         this.indicatorTextEdit.ToolTip = "Type a number that will be interpreted as NaN(Not a Number). Text in numerical co" +
-    "lumns is interpreted as NaN anyway.";
          // 
          // Root
          // 
