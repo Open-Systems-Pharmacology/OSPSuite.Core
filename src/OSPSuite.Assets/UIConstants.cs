@@ -364,8 +364,9 @@ namespace OSPSuite.Assets
          public static readonly string TheUnitInformationMustBeEnteredOrConfirmed = "The unit information must be entered or confirmed.";
          public static readonly string TheMetaDataInformationMustBeEnteredOrConfirmed = "The meta data must be entered or confirmed.";
          public static readonly string ResetMapping = "Reset Mapping";
-         public static readonly string ResetMappingBasedOnCurrentSheet = "Reset Mapping based on current sheet";
-         public static readonly string ClearMapping = "Clear Mapping";
+         public static readonly string ResetMappingToolTip = "Automatically recalculates the format based on the sheet currently selected and sets the mapping settings accordingly.";
+         public static readonly string ClearMappingToolTip = "Clears all the mappings. Same as clicking all the X buttons to the right of the grid.";
+         public static readonly string ClearMapping = "Clear All";
          public static readonly string Format = "Format: ";
          public static readonly string AddKeys = "Add Keys";
          public static readonly string Columns = "Columns";

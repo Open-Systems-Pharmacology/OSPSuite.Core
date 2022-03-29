@@ -20,27 +20,22 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private ColumnInfoCache _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IImporter _importer;
-      private IList<DataFormatParameter> _originalFormat;
       private IUnformattedData _rawData;
       private MappingProblem _mappingProblem = new MappingProblem() { MissingMapping = new List<string>(), MissingUnit = new List<string>() };
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       private readonly IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
-      private readonly IDialogCreator _dialogCreator;
 
       public ColumnMappingPresenter
       (
          IColumnMappingView view,
          IImporter importer,
          IMappingParameterEditorPresenter mappingParameterEditorPresenter,
-         IMetaDataParameterEditorPresenter metaDataParameterEditorPresenter,
-         IDimensionFactory dimensionFactory,
-         IDialogCreator dialogCreator
+         IMetaDataParameterEditorPresenter metaDataParameterEditorPresenter
       ) : base(view)
       {
          _importer = importer;
          _mappingParameterEditorPresenter = mappingParameterEditorPresenter;
          _metaDataParameterEditorPresenter = metaDataParameterEditorPresenter;
-         _dialogCreator = dialogCreator;
          View.FillMappingView(_mappingParameterEditorPresenter.BaseView);
          View.FillMetaDataView(_metaDataParameterEditorPresenter.BaseView);
       }
@@ -139,7 +134,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (format == null)
             return;
          _format = format;
-         _originalFormat = _format.Parameters.ToList();
          setDataFormat(format.Parameters);
       }
 
@@ -687,23 +681,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
             .Select(f => f.Source)
             .Append(parameter)
             .ToList());
-      }
-
-      public void ResetMapping()
-      {
-         if (_format != null)
-         {
-            _format.Parameters.Clear();
-            foreach (var p in _originalFormat)
-               _format.Parameters.Add(p);
-         }
-
-         setDataFormat(_originalFormat);
-      }
-
-      public void ResetMappingBasedOnCurrentSheet()
-      {
-         OnResetMappingBasedOnCurrentSheet(this, new EventArgs());
       }
 
       public void ClearMapping()

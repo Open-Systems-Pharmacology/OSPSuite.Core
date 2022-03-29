@@ -41,6 +41,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       ImporterConfiguration UpdateAndGetConfiguration();
       void LoadConfigurationWithoutImporting();
+      void ResetMappingBasedOnCurrentSheet();
+      void ClearMapping();
    }
 
    public class ImporterPresenter : AbstractDisposablePresenter<IImporterView, IImporterPresenter>, IImporterPresenter
@@ -115,7 +117,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.OnTabChanged += onTabChanged;
          _importerDataPresenter.OnDataChanged += onImporterDataChanged;
          _columnMappingPresenter.OnMissingMapping += onMissingMapping;
-         _columnMappingPresenter.OnResetMappingBasedOnCurrentSheet += ((o, e) => this.DoWithinExceptionHandler(onResetMappingBasedOnCurrentSheet));
          _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
          View.DisableConfirmationView();
       }
@@ -271,7 +272,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _columnMappingPresenter.SetRawData(e.TabData);
       }
 
-      protected virtual void onResetMappingBasedOnCurrentSheet()
+      public void ResetMappingBasedOnCurrentSheet()
       {
          if (confirmDroppingOfLoadedSheets())
             return;
@@ -286,6 +287,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
 
          _view.DisableConfirmationView();
+      }
+
+      public void ClearMapping()
+      {
+         _columnMappingPresenter.ClearMapping();
       }
 
       private void onMissingMapping(object sender, MissingMappingEventArgs missingMappingEventArgs)
@@ -444,7 +450,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (confirmDroppingOfLoadedSheets())
             return;
 
-         onResetMappingBasedOnCurrentSheet();
+         ResetMappingBasedOnCurrentSheet();
 
          var fileName = _dialogCreator.AskForFileToOpen(Captions.Importer.ApplyConfiguration, Constants.Filter.XML_FILE_FILTER,
             Constants.DirectoryKey.OBSERVED_DATA);
