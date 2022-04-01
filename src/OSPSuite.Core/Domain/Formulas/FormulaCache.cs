@@ -19,7 +19,6 @@ namespace OSPSuite.Core.Domain.Formulas
       void Refresh();
    }
 
-   //good example of Cache with key 
    public class FormulaCache : Cache<string, IFormula>, IFormulaCache
    {
       public FormulaCache() : base(formula => formula.Id)

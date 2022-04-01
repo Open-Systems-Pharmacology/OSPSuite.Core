@@ -53,7 +53,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          }
          catch (Exception ex)
          {
-            DataSheets = alreadyLoadedDataSheets; //do we actually need a dataSheet.Clone or something for this?
+            DataSheets = alreadyLoadedDataSheets; 
             _logger.AddError(ex.Message);
             throw new InvalidObservedDataFileException(ex.Message);
          }

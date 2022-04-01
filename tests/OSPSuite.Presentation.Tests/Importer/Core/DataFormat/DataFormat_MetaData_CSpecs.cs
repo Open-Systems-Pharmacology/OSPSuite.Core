@@ -217,15 +217,15 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
    public class When_parsing_format : ConcernforDataFormat_DataFormatHeadersWithUnits
    {
-      private IDataSheet _mockedDataSheet;
+      private IDataSheet _mockedData;
       private string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
       private string[] _groupIds = new string[] { "H", "T2DM" };
       protected override void Context()
       {
          base.Context();
-         _mockedDataSheet = A.Fake<IDataSheet>();
-         A.CallTo(() => _mockedDataSheet.GetHeaders()).Returns(_basicFormat.GetHeaders());
-         A.CallTo(() => _mockedDataSheet.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
+         _mockedData = A.Fake<IDataSheet>();
+         A.CallTo(() => _mockedData.GetHeaders()).Returns(_basicFormat.GetHeaders());
+         A.CallTo(() => _mockedData.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
          foreach (var molecule in _molecules)
             foreach (var groupId in _groupIds)
                for (var time = 0; time < 10; time++)
@@ -248,7 +248,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       protected override void Because()
       {
-         sut.SetParameters(_mockedDataSheet, _columnInfos, _metaDataCategories);
+         sut.SetParameters(_mockedData, _columnInfos, _metaDataCategories);
       }
 
       [TestCase]
@@ -267,7 +267,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void parse_lloq()
       {
-         A.CallTo(() => _mockedDataSheet.GetRows(A<Func<IEnumerable<string>, bool>>.Ignored)).ReturnsLazily(
+         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.Ignored)).ReturnsLazily(
             param => new List<UnformattedRow>()
             {
                new UnformattedRow(0, new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", $"<{0.01}", "0", "po", "<GroupId>" }),
@@ -277,7 +277,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
          var data = sut.Parse
          (
-            _mockedDataSheet,
+            _mockedData,
             _columnInfos
          );
          foreach (var dataset in data)

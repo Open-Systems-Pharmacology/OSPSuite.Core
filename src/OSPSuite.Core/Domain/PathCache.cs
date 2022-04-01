@@ -10,7 +10,6 @@ namespace OSPSuite.Core.Domain
    ///    The cache also returns null if a value is not found with a given path
    /// </summary>
    /// <typeparam name="TEntity"></typeparam>
-   //good example of Cache with key 
    public class PathCache<TEntity> : Cache<string, TEntity> where TEntity : class, IEntity
    {
       public PathCache(IEntityPathResolver entityPathResolver)
