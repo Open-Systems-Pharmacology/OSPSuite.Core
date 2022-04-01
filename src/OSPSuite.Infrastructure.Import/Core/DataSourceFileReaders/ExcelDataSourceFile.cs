@@ -16,7 +16,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
       protected override void LoadFromFile(string path)
       {
-         DataSheets.Initialize(); //first we clear the sheet collection, in case there were some sheets left from previously loading
+         //local DataSheets, so that the member gets assigned only if the functions terminates correctly
+         var alreadyLoadedDataSheets = DataSheets; //first we clear the sheet collection, in case there were some sheets left from previously loading
 
          try
          {
@@ -27,7 +28,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                if (!reader.MoveToNextRow()) continue;
 
                var sheetName = reader.CurrentSheet.SheetName; 
-               var rawSheetData = new UnformattedSheetData();
+               var rawSheetData = new DataSheet();
                var headers = reader.CurrentRow;
      
                for (var j = 0; j < headers.Count; j++)
@@ -49,7 +50,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          }
          catch (Exception ex)
          {
-            DataSheets.ResetPreviousDataSheets();
+            DataSheets = alreadyLoadedDataSheets; //do we actually need a dataSheet.Clone or something for this?
             _logger.AddError(ex.Message);
             throw new InvalidObservedDataFileException(ex.Message);
          }

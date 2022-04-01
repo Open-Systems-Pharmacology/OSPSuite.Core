@@ -204,7 +204,7 @@ namespace OSPSuite.Infrastructure.Import
             (
                "file",
                "sheet1",
-               new ParsedDataSet(new List<string>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), _parsedDataSetLLOQ),
+               new ParsedDataSet(new List<string>(), A.Fake<IDataSheet>(), new List<UnformattedRow>(), _parsedDataSetLLOQ),
                "name",
                new List<MetaDataInstance>()
             )
@@ -214,7 +214,7 @@ namespace OSPSuite.Infrastructure.Import
             (
                "file",
                "sheet1",
-               new ParsedDataSet(new List<string>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), _parsedDataSetInconsistentLLOQ),
+               new ParsedDataSet(new List<string>(), A.Fake<IDataSheet>(), new List<UnformattedRow>(), _parsedDataSetInconsistentLLOQ),
                "name",
                new List<MetaDataInstance>()
             )
@@ -224,7 +224,7 @@ namespace OSPSuite.Infrastructure.Import
             (
                "file",
                "sheet1",
-               new ParsedDataSet(new List<string>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), _parsedDataSetUnitFromColumn),
+               new ParsedDataSet(new List<string>(), A.Fake<IDataSheet>(), new List<UnformattedRow>(), _parsedDataSetUnitFromColumn),
                "name",
                new List<MetaDataInstance>()
             )

@@ -21,7 +21,7 @@ namespace OSPSuite.Infrastructure.Import.Services
    {
       IDataSourceFile LoadFile(ColumnInfoCache columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories);
       void AddFromFile(IDataFormat format, DataSheetCollection dataSheets, ColumnInfoCache columnInfos, IDataSource alreadyExisting);
-      IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
+      IEnumerable<IDataFormat> AvailableFormats(IDataSheet dataSheet, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
 
       IEnumerable<string> NamesFromConvention
       (
@@ -64,10 +64,10 @@ namespace OSPSuite.Infrastructure.Import.Services
          _molWeightDimension = dimensionFactory.Dimension(Constants.Dimension.MOLECULAR_WEIGHT);
       }
 
-      public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      public IEnumerable<IDataFormat> AvailableFormats(IDataSheet dataSheet, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          return _container.ResolveAll<IDataFormat>()
-            .Select(x => (x, x.SetParameters(data, columnInfos, metaDataCategories)))
+            .Select(x => (x, x.SetParameters(dataSheet, columnInfos, metaDataCategories)))
             .Where(p => p.Item2 > 0)
             .OrderByDescending(p => p.Item2)
             .Select(p => p.x);
@@ -96,10 +96,10 @@ namespace OSPSuite.Infrastructure.Import.Services
       {
          var dataSource = _parser.For(fileName);
 
-         if (dataSource.DataSheetsDeprecated == null) return null;
+         if (dataSource.DataSheets == null) return null;
 
 
-         foreach (var sheetName in dataSource.DataSheetsDeprecated.Keys)
+         foreach (var sheetName in dataSource.DataSheets.GetDataSheetNames())
          {
             dataSource.AvailableFormats = CalculateFormat(dataSource, columnInfos, metaDataCategories, sheetName).ToList();
             if (dataSource.AvailableFormats.Any())
@@ -117,7 +117,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          if (sheetName == null)
             throw new UnsupportedFormatException(dataSource.Path);
 
-         return AvailableFormats(dataSource.DataSheetsDeprecated[sheetName].RawSheetData, columnInfos, metaDataCategories);
+         return AvailableFormats(dataSource.DataSheets.GetDataSheet(sheetName), columnInfos, metaDataCategories);
       }
 
       public IEnumerable<string> NamesFromConvention
@@ -302,13 +302,13 @@ namespace OSPSuite.Infrastructure.Import.Services
          var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
             Id = md.MetaDataId,
-            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheetsDeprecated[sheetName].RawSheetData.GetColumnDescription(md.ColumnName).Index : -1
+            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets.GetDataSheet(sheetName).GetColumnDescription(md.ColumnName).Index : -1
          }).Union
          (
             dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
                Id = md.ColumnName,
-               Index = sheetName => dataSourceFile.DataSheetsDeprecated[sheetName].RawSheetData.GetColumnDescription(md.ColumnName).Index
+               Index = sheetName => dataSourceFile.DataSheets.GetDataSheet(sheetName).GetColumnDescription(md.ColumnName).Index
             })
          ).ToList();
          dataSource.SetMappings(dataSourceFile.Path, mappings);
@@ -317,17 +317,17 @@ namespace OSPSuite.Infrastructure.Import.Services
          dataSource.SetNamingConvention(configuration.NamingConventions);
          var sheets = new DataSheetCollection();
          var missingSheets = new List<string>();
-         var sheetList = dataImporterSettings.IgnoreSheetNamesAtImport ? dataSourceFile.DataSheetsDeprecated.Keys : configuration.LoadedSheets;
+         var sheetList = dataImporterSettings.IgnoreSheetNamesAtImport ? dataSourceFile.DataSheets.GetDataSheetNames() : configuration.LoadedSheets;
 
          foreach (var key in sheetList)
          {
-            if (!dataSourceFile.DataSheetsDeprecated.Contains(key))
+            if (!dataSourceFile.DataSheets.Contains(key))
             {
                missingSheets.Add(key);
                continue;
             }
 
-            sheets.AddSheet(key, dataSourceFile.DataSheets.GetDataSheet(key).RawSheetData);
+            sheets.AddSheet(key, dataSourceFile.DataSheets.GetDataSheet(key));
          }
 
          var errors = dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);

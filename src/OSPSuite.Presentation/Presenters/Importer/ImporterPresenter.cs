@@ -191,15 +191,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          try
          {
-            loadSheets(args.DataSourceFile, args.Sheets, args.Filter);
+            loadSheets(args.DataSourceFile, args.SheetNames, args.Filter);
             _importerDataPresenter.DisableImportedSheets();
-            args.Sheets.Keys.Each(_configuration.AddToLoadedSheets);
+            args.SheetNames.Each(_configuration.AddToLoadedSheets);
             _configuration.FilterString = args.Filter;
          }
          catch (AbstractImporterException e)
          {
             _dialogCreator.MessageBoxError(e.Message);
-            args.Sheets.Keys.Each(_importerDataPresenter.Sheets.Remove);
+            args.SheetNames.Each(_importerDataPresenter.ImportedSheets.Remove);
          }
       }
 
@@ -208,19 +208,20 @@ namespace OSPSuite.Presentation.Presenters.Importer
          return dataSource.ValidateDataSourceUnits(_columnInfos);
       }
 
-      private void loadSheets(IDataSourceFile dataSourceFile, Cache<string, DataSheet> sheets, string filter, string selectedNamingConvention = null)
+      private void loadSheets(IDataSourceFile dataSourceFile, IReadOnlyList<string> sheetNames, string filter, string selectedNamingConvention = null)
       {
-         if (!sheets.Any())
+         if (!sheetNames.Any())
          {
             View.DisableConfirmationView();
             return;
          }
 
+         var sheets = dataSourceFile.DataSheets.GetDataSheets(sheetNames);
          var dataMappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Where(p => p.ColumnName != null).Select(md =>
             new MetaDataMappingConverter()
             {
                Id = md.MetaDataId,
-               Index = sheetName => md.IsColumn ? dataSourceFile.DataSheetsDeprecated[sheetName].RawSheetData.GetColumnDescription(md.ColumnName).Index : -1
+               Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets.GetDataSheet(sheetName).GetColumnDescription(md.ColumnName).Index : -1
             }).ToList();
             
          var mappings   = dataMappings.Union
@@ -229,7 +230,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             {
                //in case of a duplicate name coming from an excel column used as a grouping by with the same name as a metaData, we add a suffix 
                Id = dataMappings.ExistsById(md.ColumnName) ? md.ColumnName + Constants.ImporterConstants.GroupingBySuffix : md.ColumnName,
-               Index = sheetName => dataSourceFile.DataSheetsDeprecated[sheetName].RawSheetData.GetColumnDescription(md.ColumnName).Index
+               Index = sheetName => dataSourceFile.DataSheets.GetDataSheet(sheetName).GetColumnDescription(md.ColumnName).Index
             })
          ).ToList();
 
@@ -268,7 +269,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void onTabChanged(object sender, TabChangedEventArgs e)
       {
-         _columnMappingPresenter.SetRawData(e.TabSheetData);
+         _columnMappingPresenter.SetRawData(e.TabSheet);
       }
 
       protected virtual void onResetMappingBasedOnCurrentSheet()
@@ -299,7 +300,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSource.DataSets.Clear();
          try
          {
-            loadSheets(_dataSourceFile, _importerDataPresenter.Sheets, _importerDataPresenter.GetActiveFilterCriteria());
+            loadSheets(_dataSourceFile, _importerDataPresenter.ImportedSheets.GetDataSheetNames(), _importerDataPresenter.GetActiveFilterCriteria());
          }
          catch (AbstractImporterException e)
          {
@@ -405,18 +406,18 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var sheets = new Cache<string, DataSheet>();
          foreach (var element in _configuration.LoadedSheets)
          {
-            sheets.Add(element, _dataSourceFile.DataSheetsDeprecated[element]);
+            sheets.Add(element, _dataSourceFile.DataSheets.GetDataSheet(element));
          }
 
          foreach (var sheet in sheets.KeyValues)
          {
-            _importerDataPresenter.Sheets.Add(sheet.Key, sheet.Value);
+            _importerDataPresenter.ImportedSheets.AddSheet(sheet.Key, sheet.Value);
          }
 
          try
          {
             var namingConvention = configuration.NamingConventions;
-            loadSheets(_dataSourceFile, _importerDataPresenter.Sheets, configuration.FilterString, namingConvention);
+            loadSheets(_dataSourceFile, _importerDataPresenter.ImportedSheets.GetDataSheetNames(), configuration.FilterString, namingConvention);
             _confirmationPresenter.TriggerNamingConventionChanged(namingConvention);
          }
          catch (AbstractImporterException e)

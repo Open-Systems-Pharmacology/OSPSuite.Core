@@ -9,13 +9,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
 {
    public class TabChangedEventArgs : EventArgs
    {
-      public UnformattedSheetData TabSheetData { get; set; }
+      public DataSheet TabSheet { get; set; }
    }
 
    public class ImportSheetsEventArgs : EventArgs
    {
       public IDataSourceFile DataSourceFile { get; set; }
-      public Cache<string, DataSheet> Sheets { get; set; }
+      public IReadOnlyList<string> SheetNames { get; set; }
       public string Filter { get; set; }
    }
 
@@ -56,7 +56,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       //should this be here actually, or in the view? - then the view should only get the list of the sheet names from the _dataviewingpresenter
       void RefreshTabs();
-      Cache<string, DataSheet> Sheets { get; set; }
       string GetActiveFilterCriteria();
       string GetFilter();
       void TriggerOnDataChanged();
@@ -65,6 +64,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void ResetLoadedSheets();
       void SetTabMarks(ParseErrors errors, Cache<string, IDataSet> loadedDataSets);
       void SetTabMarks(ParseErrors errors);
+      DataSheetCollection ImportedSheets { get; set; }
    }
 
    public class TabMarkInfo

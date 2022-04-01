@@ -16,7 +16,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
    public abstract class ConcernforDataFormat_DataFormatHeadersWithUnits : ContextSpecification<DataFormatHeadersWithUnits>
    {
-      protected IUnformattedData _basicFormat;
+      protected IDataSheet _basicFormat;
       protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected IDimension _fakedTimeDimension;
@@ -53,7 +53,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          A.CallTo(() => _fakedConcentrationDimension.HasUnit("pmol/l")).Returns(true);
          A.CallTo(() => _fakedErrorDimension.HasUnit("pmol/l")).Returns(true);
          sut = new DataFormatHeadersWithUnits();
-         _basicFormat = new TestUnformattedSheetData
+         _basicFormat = new TestDataSheet
          (
             new Cache<string, ColumnDescription>()
             {
@@ -113,7 +113,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void reject_single_column_data()
       {
-         var singleColumn = new TestUnformattedSheetData
+         var singleColumn = new TestDataSheet
          (
             new Cache<string, ColumnDescription>()
             {
@@ -134,7 +134,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void reject_multicolumn_with_less_than_two_numeric_columns()
       {
-         var singleColumn = new TestUnformattedSheetData
+         var singleColumn = new TestDataSheet
          (
             new Cache<string, ColumnDescription>()
             {
@@ -217,15 +217,15 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
    public class When_parsing_format : ConcernforDataFormat_DataFormatHeadersWithUnits
    {
-      private IUnformattedData _mockedData;
+      private IDataSheet _mockedDataSheet;
       private string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
       private string[] _groupIds = new string[] { "H", "T2DM" };
       protected override void Context()
       {
          base.Context();
-         _mockedData = A.Fake<IUnformattedData>();
-         A.CallTo(() => _mockedData.GetHeaders()).Returns(_basicFormat.GetHeaders());
-         A.CallTo(() => _mockedData.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
+         _mockedDataSheet = A.Fake<IDataSheet>();
+         A.CallTo(() => _mockedDataSheet.GetHeaders()).Returns(_basicFormat.GetHeaders());
+         A.CallTo(() => _mockedDataSheet.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
          foreach (var molecule in _molecules)
             foreach (var groupId in _groupIds)
                for (var time = 0; time < 10; time++)
@@ -248,7 +248,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       protected override void Because()
       {
-         sut.SetParameters(_mockedData, _columnInfos, _metaDataCategories);
+         sut.SetParameters(_mockedDataSheet, _columnInfos, _metaDataCategories);
       }
 
       [TestCase]
@@ -267,7 +267,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void parse_lloq()
       {
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.Ignored)).ReturnsLazily(
+         A.CallTo(() => _mockedDataSheet.GetRows(A<Func<IEnumerable<string>, bool>>.Ignored)).ReturnsLazily(
             param => new List<UnformattedRow>()
             {
                new UnformattedRow(0, new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", $"<{0.01}", "0", "po", "<GroupId>" }),
@@ -277,7 +277,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
          var data = sut.Parse
          (
-            _mockedData,
+            _mockedDataSheet,
             _columnInfos
          );
          foreach (var dataset in data)
@@ -294,15 +294,15 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
    public class When_parsing_format_with_missing_molecule_mapping : ConcernforDataFormat_DataFormatHeadersWithUnits
    {
-      private IUnformattedData _mockedData;
+      private IDataSheet _mockedDataSheet;
       private string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
       private string[] _groupIds = new string[] { "H", "T2DM" };
       protected override void Context()
       {
          base.Context();
-         _mockedData = A.Fake<IUnformattedData>();
-         A.CallTo(() => _mockedData.GetHeaders()).Returns(_basicFormat.GetHeaders());
-         A.CallTo(() => _mockedData.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
+         _mockedDataSheet = A.Fake<IDataSheet>();
+         A.CallTo(() => _mockedDataSheet.GetHeaders()).Returns(_basicFormat.GetHeaders());
+         A.CallTo(() => _mockedDataSheet.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
          foreach (var molecule in _molecules)
             foreach (var groupId in _groupIds)
                for (var time = 0; time < 10; time++)
@@ -325,7 +325,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       protected override void Because()
       {
-         sut.SetParameters(_mockedData, _columnInfos, _metaDataCategories);
+         sut.SetParameters(_mockedDataSheet, _columnInfos, _metaDataCategories);
          //emulate the behaviour of deleting the mapping from the column mapping gridView
          sut.Parameters.Find(x => x.ColumnName == "Molecule").ColumnName = null;
       }

@@ -45,7 +45,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       void UpdateCache();
 
       /// <summary>
-      ///    Completely rebinds the view to the content of the data sourcee
+      ///    Completely rebinds the view to the content of the dataSheet sourcee
       /// </summary>
       void Refresh();
 

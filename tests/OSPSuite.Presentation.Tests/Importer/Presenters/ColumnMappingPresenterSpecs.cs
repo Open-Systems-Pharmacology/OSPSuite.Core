@@ -412,16 +412,16 @@ namespace OSPSuite.Presentation.Importer.Presenters
    public class When_measurement_unit_is_manually_set_to_a_column : concern_for_ColumnMappingPresenter
    {
       protected MappingDataFormatParameter _mappingSource;
-      protected IUnformattedData _rawData;
+      protected IDataSheet _rawDataSheet;
 
       protected override void Context()
       {
          base.Context();
          _mappingSource = _parameters[1] as MappingDataFormatParameter;
          A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription("µmol", "Some Column"));
-         _rawData = A.Fake<IUnformattedData>();
-         A.CallTo(() => _rawData.GetColumn(A<string>.Ignored)).Returns(new[] { "µmol" });
-         sut.SetRawData(_rawData);
+         _rawDataSheet = A.Fake<IDataSheet>();
+         A.CallTo(() => _rawDataSheet.GetColumn(A<string>.Ignored)).Returns(new[] { "µmol" });
+         sut.SetRawData(_rawDataSheet);
          UpdateSettings();
       }
 

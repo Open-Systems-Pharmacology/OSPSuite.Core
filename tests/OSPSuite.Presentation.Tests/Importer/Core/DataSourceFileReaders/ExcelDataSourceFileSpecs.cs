@@ -39,11 +39,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       public void headers_are_ajusted_on_empty_columns()
       {
          sut.Path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "sample2.xlsx");
-         var columns = sut.DataSheetsDeprecated.ElementAt(0).RawSheetData.GetHeaders();
+         var columns = sut.DataSheets.ElementAt(0).GetHeaders();
          columns.Count().ShouldBeEqualTo(4);
          for (var i = 0; i < 4; i++)
          {
-            sut.DataSheetsDeprecated.ElementAt(0).RawSheetData.GetColumnDescription(columns.ElementAt(i)).Index.ShouldBeEqualTo(i);
+            sut.DataSheets.ElementAt(0).GetColumnDescription(columns.ElementAt(i)).Index.ShouldBeEqualTo(i);
          }
       }
 
@@ -56,70 +56,70 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void headers_are_read_first_sheet()
       {
-         sut.DataSheetsDeprecated.ElementAt(0).RawSheetData.GetHeaders().Count().ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(0).GetHeaders().Count().ShouldBeEqualTo(3);
          for (var i = 1; i <= 3; i++)
          {
-            sut.DataSheetsDeprecated.ElementAt(0).RawSheetData.GetHeaders().ElementAt(i - 1).ShouldBeEqualTo("header" + i);
+            sut.DataSheets.ElementAt(0).GetHeaders().ElementAt(i - 1).ShouldBeEqualTo("header" + i);
          }
       }
 
       [TestCase]
       public void headers_are_read_second_sheet()
       {
-         sut.DataSheetsDeprecated.ElementAt(1).RawSheetData.GetHeaders().Count().ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(1).GetHeaders().Count().ShouldBeEqualTo(3);
          for (var i = 1; i <= 3; i++)
          {
-            sut.DataSheetsDeprecated["Sheet2"].RawSheetData.GetHeaders().ElementAt(i - 1).ShouldBeEqualTo("sheet2_header" + i);
+            sut.DataSheets.GetDataSheet("Sheet2").GetHeaders().ElementAt(i - 1).ShouldBeEqualTo("sheet2_header" + i);
          }
       }
       [TestCase]
       public void body_is_read_first_sheet()
       {
-         sut.DataSheetsDeprecated.ElementAt(0).RawSheetData.GetDataRow(0).Count().ShouldBeEqualTo(3);
-         sut.DataSheetsDeprecated.ElementAt(0).RawSheetData.GetColumn("header1").Count().ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(0).GetDataRow(0).Count().ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(0).GetColumn("header1").Count().ShouldBeEqualTo(3);
 
-         var headers = sut.DataSheetsDeprecated.ElementAt(0).RawSheetData.GetHeaders();
+         var headers = sut.DataSheets.ElementAt(0).GetHeaders();
 
          for (var i = 0; i < 3; i++)
          {
-            sut.DataSheetsDeprecated.ElementAt(0).RawSheetData.GetColumn(headers.ElementAt(i)).ShouldBeEqualTo(new[] { "str" + (i + 1), "str" + (i + 4), "str" + (i + 7) });
+            sut.DataSheets.ElementAt(0).GetColumn(headers.ElementAt(i)).ShouldBeEqualTo(new[] { "str" + (i + 1), "str" + (i + 4), "str" + (i + 7) });
          }
       }
 
       [TestCase]
       public void body_is_read_second_sheet()
       {
-         sut.DataSheetsDeprecated.ElementAt(1).RawSheetData.GetDataRow(0).Count().ShouldBeEqualTo(3);
-         sut.DataSheetsDeprecated.ElementAt(1).RawSheetData.GetColumn("sheet2_header2").Count().ShouldBeEqualTo(2);
+         sut.DataSheets.ElementAt(1).GetDataRow(0).Count().ShouldBeEqualTo(3);
+         sut.DataSheets.ElementAt(1).GetColumn("sheet2_header2").Count().ShouldBeEqualTo(2);
 
-         var headers = sut.DataSheetsDeprecated.ElementAt(1).RawSheetData.GetHeaders();
+         var headers = sut.DataSheets.ElementAt(1).GetHeaders();
          for (var i = 0; i < 3; i++)
          {
-            sut.DataSheetsDeprecated.ElementAt(1).RawSheetData.GetColumn(headers.ElementAt(i)).ShouldBeEqualTo(new[] { "str" + (i + 7), "str" + (i + 10) });
+            sut.DataSheets.ElementAt(1).GetColumn(headers.ElementAt(i)).ShouldBeEqualTo(new[] { "str" + (i + 7), "str" + (i + 10) });
          }
       }
 
       [TestCase]
       public void measurement_levels_are_read_third_sheet()
       {
-         sut.DataSheetsDeprecated.ElementAt(2).RawSheetData.GetColumnDescription("Double").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
-         sut.DataSheetsDeprecated.ElementAt(2).RawSheetData.GetColumnDescription("integer").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
-         sut.DataSheetsDeprecated.ElementAt(2).RawSheetData.GetColumnDescription("string").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Discrete);
-         sut.DataSheetsDeprecated.ElementAt(2).RawSheetData.GetColumnDescription("not available").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
-         sut.DataSheetsDeprecated.ElementAt(2).RawSheetData.GetColumnDescription("empty row").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
+         sut.DataSheets.ElementAt(2).GetColumnDescription("Double").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
+         sut.DataSheets.ElementAt(2).GetColumnDescription("integer").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
+         sut.DataSheets.ElementAt(2).GetColumnDescription("string").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Discrete);
+         sut.DataSheets.ElementAt(2).GetColumnDescription("not available").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
+         sut.DataSheets.ElementAt(2).GetColumnDescription("empty row").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
       }
 
       [TestCase]
       public void existing_values_are_read_third_sheet()
       {
-         sut.DataSheetsDeprecated.ElementAt(2).RawSheetData.GetColumnDescription("string").ExistingValues.ShouldBeEqualTo(new List<string>(){ "str8", "str11" });
+         sut.DataSheets.ElementAt(2).GetColumnDescription("string").ExistingValues.ShouldBeEqualTo(new List<string>(){ "str8", "str11" });
       }
 
       [TestCase]
       public void sheet_names_read_correctly()
       {
-         sut.DataSheetsDeprecated.Count.ShouldBeEqualTo(4);
-         var keys = sut.DataSheetsDeprecated.Keys;
+         sut.DataSheets.Count().ShouldBeEqualTo(4);
+         var keys = sut.DataSheets.GetDataSheetNames();
 
          for (var i = 0; i < 4; i++)
          {
@@ -130,21 +130,21 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void double_read_with_correct_precision()
       {
-         sut.DataSheetsDeprecated.ElementAt(2).RawSheetData.GetColumn("Double").ShouldBeEqualTo(new List<string>(){ "0.000341012439638598" , 34.4399986267089.ToString(CultureInfo.CurrentCulture) });
+         sut.DataSheets.ElementAt(2).GetColumn("Double").ShouldBeEqualTo(new List<string>(){ "0.000341012439638598" , 34.4399986267089.ToString(CultureInfo.CurrentCulture) });
       }
 
 
       [TestCase]
       public void rightmost_column_with_empty_rows_read_correctly()
       {
-         sut.DataSheetsDeprecated.ElementAt(2).RawSheetData.GetColumn("empty row").ShouldBeEqualTo(new List<string>() { "", "21"});
+         sut.DataSheets.ElementAt(2).GetColumn("empty row").ShouldBeEqualTo(new List<string>() { "", "21"});
       }
 
 
       [TestCase]
       public void excel_cell_read_correctly()
       {
-         sut.DataSheetsDeprecated.ElementAt(2).RawSheetData.GetCell("Double",0).ShouldBeEqualTo("0.000341012439638598");
+         sut.DataSheets.ElementAt(2).GetCell("Double",0).ShouldBeEqualTo("0.000341012439638598");
       }
    }
 }

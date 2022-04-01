@@ -12,16 +12,16 @@ using OSPSuite.Core.Import;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
-   internal class TestUnformattedSheetData : UnformattedSheetData
+   internal class TestDataSheet : DataSheet
    {
-      public TestUnformattedSheetData(Cache<string, ColumnDescription> headers)
+      public TestDataSheet(Cache<string, ColumnDescription> headers)
       {
          _headers = headers;
       }
    }
    public abstract class ConcernforDataFormat_Nonmem : ContextSpecification<DataFormatNonmem>
    {
-      protected IUnformattedData _basicFormat;
+      protected IDataSheet _basicFormat;
       protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected Cache<string, ColumnDescription> _headersCache;
@@ -108,7 +108,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
                   }
                }
             };
-         _basicFormat = new TestUnformattedSheetData(_headersCache);
+         _basicFormat = new TestDataSheet(_headersCache);
          foreach (var molecule in _molecules)
             foreach (var groupId in _groupIds)
                for (var time = 0; time < 10; time++)
@@ -145,7 +145,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void reject_single_column_data()
       {
-         var singleColumn = new TestUnformattedSheetData
+         var singleColumn = new TestDataSheet
          (
             new Cache<string, ColumnDescription>()
             {
@@ -166,7 +166,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void reject_multicolumn_with_less_than_two_numeric_columns()
       {
-         var singleColumn = new TestUnformattedSheetData
+         var singleColumn = new TestDataSheet
          (
             new Cache<string, ColumnDescription>()
             {
@@ -242,20 +242,20 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
    public class When_Nonmem_is_parsing_format : ConcernforDataFormat_Nonmem
    {
-      private IUnformattedData _mockedData;
+      private IDataSheet _mockedDataSheet;
       
       protected override void Context()
       {
          base.Context();
-         _mockedData = A.Fake<IUnformattedData>();
-         A.CallTo(() => _mockedData.GetHeaders()).Returns(_basicFormat.GetHeaders());
-         A.CallTo(() => _mockedData.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
-         A.CallTo(() => _mockedData.GetColumn(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumn(columnName.Arguments[0].ToString()));
+         _mockedDataSheet = A.Fake<IDataSheet>();
+         A.CallTo(() => _mockedDataSheet.GetHeaders()).Returns(_basicFormat.GetHeaders());
+         A.CallTo(() => _mockedDataSheet.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
+         A.CallTo(() => _mockedDataSheet.GetColumn(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumn(columnName.Arguments[0].ToString()));
       }
 
       protected override void Because()
       {
-         sut.SetParameters(_mockedData, _columnInfos, _metaDataCategories);
+         sut.SetParameters(_mockedDataSheet, _columnInfos, _metaDataCategories);
       }
 
       [TestCase]
@@ -274,7 +274,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void parse_lloq()
       {
-         A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.Ignored)).ReturnsLazily(
+         A.CallTo(() => _mockedDataSheet.GetRows(A<Func<IEnumerable<string>, bool>>.Ignored)).ReturnsLazily(
             param => new List<UnformattedRow>()
             {
                new UnformattedRow(0, new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "0", "0", "po", "<GroupId>", "min", "pmol/l", "pmol/l", $"{0.01}" }),
@@ -284,7 +284,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
          var data = sut.Parse
          (
-            _mockedData,
+            _mockedDataSheet,
             _columnInfos
          );
          foreach (var dataset in data)
@@ -300,15 +300,15 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public class When_parsing_headers_with_capital : ConcernforDataFormat_Nonmem
       {
-         private IUnformattedData _mockedDataCapital;
+         private IDataSheet _mockedDataSheetCapital;
          protected override void Because()
          {
             _headersCache.Remove("Dose");
             _headersCache.Add("DOSE",
                               new ColumnDescription(3, new List<string>() { "75 [g] glucose" }, ColumnDescription.MeasurementLevel.Discrete)
                            );
-            _mockedDataCapital = new TestUnformattedSheetData(_headersCache);
-            sut.SetParameters(_mockedDataCapital, _columnInfos, _metaDataCategories);
+            _mockedDataSheetCapital = new TestDataSheet(_headersCache);
+            sut.SetParameters(_mockedDataSheetCapital, _columnInfos, _metaDataCategories);
          }
 
          [TestCase]

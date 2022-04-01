@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 {
@@ -24,7 +23,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          //if separator selection dialog was cancelled, abort
          if (!(separator is char separatorCharacter)) return;
 
-         DataSheets.Initialize(); //first we clear the sheet collection, in case there were some sheets left from previously loading
+         //we keep a copy of the already loaded sheets, in case the reading fails
+         var alreadyLoadedDataSheets = DataSheets;
 
          try
          {
@@ -34,7 +34,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                var headers = csv.GetFieldHeaders();
                var rows = new List<List<string>>(headers.Length);
 
-               var dataSheet = new UnformattedSheetData();
+               var dataSheet = new DataSheet();
 
                for (var i = 0; i < headers.Length; i++)
                   dataSheet.AddColumn(headers[i], i);
@@ -57,7 +57,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          }
          catch (Exception e)
          {
-            DataSheets.ResetPreviousDataSheets();
+            DataSheets = alreadyLoadedDataSheets; //do we actually need a dataSheet.Clone or something for this?
             _logger.AddError(e.Message);
             throw new InvalidObservedDataFileException(e.Message);
          }

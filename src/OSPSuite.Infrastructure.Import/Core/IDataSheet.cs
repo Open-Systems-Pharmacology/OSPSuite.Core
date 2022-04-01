@@ -17,7 +17,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          Data = data;
       }
    }
-   public interface IUnformattedData
+   public interface IDataSheet
    {
       IEnumerable<string> GetColumn(string columnName);
       ColumnDescription GetColumnDescription(string columnName);
@@ -31,9 +31,11 @@ namespace OSPSuite.Infrastructure.Import.Core
       UnformattedDataRow GetDataRow(int index);
       void RemoveEmptyColumns();
       void RemoveEmptyRows();
+      string SheetName { get; set; }
+
    }
 
-   public class UnformattedSheetData : IUnformattedData
+   public class DataSheet : IDataSheet
    {
       private readonly List<List<string>> _rawDataTable = new List<List<string>>();
       private List<string> _emptyColumns = new List<string>();
@@ -41,7 +43,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       protected Cache<string, ColumnDescription> _headers =
          new Cache<string, ColumnDescription>(); //we have to ensure headers and RawSheetData sizes match
 
-      public UnformattedSheetData(UnformattedSheetData reference)
+      public DataSheet(DataSheet reference)
       {
          _headers = new Cache<string, ColumnDescription>();
          foreach (var header in reference.GetHeaders())
@@ -51,7 +53,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          _rawDataTable = new List<List<string>>();
       }
 
-      public UnformattedSheetData()
+      public DataSheet()
       {
          _emptyColumns = new List<string>();
          _headers = new Cache<string, ColumnDescription>();
@@ -191,6 +193,8 @@ namespace OSPSuite.Infrastructure.Import.Core
                break;
          }
       }
+
+      public string SheetName { get; set; }
 
       private static bool IsEmpty(string s)
       {

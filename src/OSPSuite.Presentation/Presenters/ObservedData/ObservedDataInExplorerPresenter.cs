@@ -21,7 +21,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       IListener<ObservedDataRemovedEvent>
    {
       /// <summary>
-      ///    Returns all possible <see cref="ClassificationTemplate" /> defined for observed data under the given
+      ///    Returns all possible <see cref="ClassificationTemplate" /> defined for observed dataSheet under the given
       ///    <paramref name="parentClassificationNode" />
       /// </summary>
       IEnumerable<ClassificationTemplate> AvailableObservedDataCategoriesIn(ITreeNode<IClassification> parentClassificationNode);
@@ -29,35 +29,35 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       /// <summary>
       ///    Intializes the current object with the required references to perform its tasks. This should be done only once
       /// </summary>
-      /// <param name="explorerPresenter">Explorer Presenter for which observed data should be managed</param>
+      /// <param name="explorerPresenter">Explorer Presenter for which observed dataSheet should be managed</param>
       /// <param name="classificationPresenter">
       ///    The Classification Presenter defined in the <paramref name="explorerPresenter" />
       ///    .
       /// </param>
       /// <param name="observedDataFolder">
-      ///    The application specific <see cref="RootNodeType" /> representing the observed data
+      ///    The application specific <see cref="RootNodeType" /> representing the observed dataSheet
       ///    folder
       /// </param>
       void InitializeWith(IExplorerPresenter explorerPresenter, IClassificationPresenter classificationPresenter, RootNodeType observedDataFolder);
 
       /// <summary>
-      ///    Add all observed data defined in <paramref name="project" /> to the explorer
+      ///    Add all observed dataSheet defined in <paramref name="project" /> to the explorer
       /// </summary>
       void AddObservedDataToTree(IProject project);
 
       /// <summary>
-      ///    Groups all observed data classified under <paramref name="parentNode" /> having the given
+      ///    Groups all observed dataSheet classified under <paramref name="parentNode" /> having the given
       ///    <paramref name="category" /> as extended properties
       /// </summary>
       void GroupObservedDataByCategory(ITreeNode<IClassification> parentNode, string category);
 
       /// <summary>
-      ///    Returns true if the <paramref name="node" /> represents an observed data node that can be dragged otherwise false
+      ///    Returns true if the <paramref name="node" /> represents an observed dataSheet node that can be dragged otherwise false
       /// </summary>
       bool CanDrag(ITreeNode node);
 
       /// <summary>
-      ///    Returns <c>true</c> if the observed data defined unter the <paramref name="classificationNode" /> where removed
+      ///    Returns <c>true</c> if the observed dataSheet defined unter the <paramref name="classificationNode" /> where removed
       ///    otherwise <c>false</c>
       /// </summary>
       bool RemoveObservedDataUnder(ITreeNode<IClassification> classificationNode);

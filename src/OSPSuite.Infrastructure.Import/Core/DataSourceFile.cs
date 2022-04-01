@@ -10,7 +10,6 @@ namespace OSPSuite.Infrastructure.Import.Core
    /// </summary>
    public interface IDataSourceFile
    {
-      Cache<string, DataSheet> DataSheetsDeprecated { get; }
 	   string Path { get; set; }
       IDataFormat Format { get; set; }
       IList<IDataFormat> AvailableFormats { get; set; }
@@ -39,18 +38,12 @@ namespace OSPSuite.Infrastructure.Import.Core
       }
 
       public string FormatCalculatedFrom { get; set; }
-      public DataSheetCollection DataSheets { get; } = new DataSheetCollection();
+      public DataSheetCollection DataSheets { get; set; } = new DataSheetCollection();
       protected DataSourceFile(IImportLogger logger)
       {
          _logger = logger;
       }
       
-      public Cache<string, DataSheet> DataSheetsDeprecated 
-      { 
-         get;
-         protected set; 
-      }
-
       private string _path;
       public string Path 
       {

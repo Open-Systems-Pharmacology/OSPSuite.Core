@@ -15,9 +15,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       public override string Description { get; } = _description;
 
-      protected override string ExtractLloq(string description, IUnformattedData data, List<string> keys, ref double rank)
+      protected override string ExtractLloq(string description, IDataSheet dataSheet, List<string> keys, ref double rank)
       {
-         if (data.GetColumn(description).Any(element => element.Trim().StartsWith("<")))
+         if (dataSheet.GetColumn(description).Any(element => element.Trim().StartsWith("<")))
          {
             rank++;
          }
@@ -25,7 +25,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          return null;
       }
 
-      protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
+      protected override UnitDescription ExtractUnits(string description, IDataSheet dataSheet, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
       {
          var units = GetLastBracketsOfString(description);
          

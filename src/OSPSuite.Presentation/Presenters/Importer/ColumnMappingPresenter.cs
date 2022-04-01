@@ -21,7 +21,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IImporter _importer;
       private IList<DataFormatParameter> _originalFormat;
-      private IUnformattedData _rawData;
+      private IDataSheet _rawDataSheet;
       private MappingProblem _mappingProblem = new MappingProblem() {MissingMapping = new List<string>(), MissingUnit = new List<string>()};
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       private readonly IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
@@ -143,9 +143,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          setDataFormat(format.Parameters);
       }
 
-      public void SetRawData(IUnformattedData rawData)
+      public void SetRawData(IDataSheet rawDataSheet)
       {
-         _rawData = rawData;
+         _rawDataSheet = rawDataSheet;
       }
 
       public void SetDescriptionForRow(ColumnMappingDTO model)
@@ -214,7 +214,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var column = ((MappingDataFormatParameter) model.Source).MappedColumn;
          if (!string.IsNullOrEmpty(_mappingParameterEditorPresenter.Unit.ColumnName))
          {
-            column.Unit = new UnitDescription(_rawData.GetColumn(_mappingParameterEditorPresenter.Unit.ColumnName).FirstOrDefault(), _mappingParameterEditorPresenter.Unit.ColumnName);
+            column.Unit = new UnitDescription(_rawDataSheet.GetColumn(_mappingParameterEditorPresenter.Unit.ColumnName).FirstOrDefault(), _mappingParameterEditorPresenter.Unit.ColumnName);
             column.Dimension = null;
             updateErrorDescriptionAfterMeasurementUnitIsSetFromColumn(model, column);
          }
@@ -741,7 +741,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             OnMappingCompleted(this, new EventArgs());
          }
 
-         //at the end refresh the data in the columnMappingView grid, to ensure consistency 
+         //at the end refresh the dataSheet in the columnMappingView grid, to ensure consistency 
          View.RefreshData();
       }
 

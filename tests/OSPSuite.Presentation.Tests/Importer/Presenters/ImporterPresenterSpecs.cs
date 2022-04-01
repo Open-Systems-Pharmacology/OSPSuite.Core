@@ -86,7 +86,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          var dataSet = new DataSet();
          dataSet.AddData(new List<ParsedDataSet>()
          {
-            new ParsedDataSet(new List<string>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), new Dictionary<ExtendedColumn, IList<SimulationPoint>>())
+            new ParsedDataSet(new List<string>(), A.Fake<IDataSheet>(), new List<UnformattedRow>(), new Dictionary<ExtendedColumn, IList<SimulationPoint>>())
          });
          _dataSource = A.Fake<IDataSource>();
          A.CallTo(() => _dataSource.DataSets).Returns(cache);
@@ -269,7 +269,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected override void Context()
       {
          base.Context();
-         _args = new TabChangedEventArgs() {TabSheetData = new UnformattedSheetData()};
+         _args = new TabChangedEventArgs() { TabSheet = new DataSheet()};
       }
 
       protected override void Because()
@@ -280,7 +280,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void invokes_column_mapping_presenter()
       {
-         A.CallTo(() => _columnMappingPresenter.SetRawData(_args.TabSheetData)).MustHaveHappened();
+         A.CallTo(() => _columnMappingPresenter.SetRawData(_args.TabSheet)).MustHaveHappened();
       }
    }
 
@@ -293,7 +293,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          base.Context();
          _sheets = new Cache<string, DataSheet>();
          _sheets.Add("sheet1", A.Fake<DataSheet>());
-         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() {Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets});
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() {Filter = "", DataSourceFile = _dataSourceFile, SheetNames = _sheets.Keys.ToList()});
          _columnMappingPresenter.OnMappingCompleted += Raise.With(new EventArgs());
       }
 
@@ -332,10 +332,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          var errors = new ParseErrors();
          errors.Add(new DataSet(), new List<ParseErrorDescription>() { new MismatchingArrayLengthsParseErrorDescription() });
-         A.CallTo(() => _dataSource.AddSheets(A<Cache<string, DataSheet>>.Ignored, A<ColumnInfoCache>.Ignored, A<string>.Ignored)).Returns(errors);
+         A.CallTo(() => _dataSource.AddSheets(A<DataSheetCollection>._, A<ColumnInfoCache>.Ignored, A<string>.Ignored)).Returns(errors);
          _sheets = new Cache<string, DataSheet>();
          _sheets.Add("sheet1", A.Fake<DataSheet>());
-         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() {Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets});
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() {Filter = "", DataSourceFile = _dataSourceFile, SheetNames = _sheets.Keys.ToList()});
          _columnMappingPresenter.OnMappingCompleted += Raise.With(new EventArgs());
       }
 
@@ -431,7 +431,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
       protected override void Because()
       {
-         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() {Filter = "", DataSourceFile = _dataSourceFile, Sheets = _sheets});
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs() {Filter = "", DataSourceFile = _dataSourceFile, SheetNames = _sheets.Keys.ToList()});
       }
 
       [Observation]

@@ -28,6 +28,7 @@ namespace OSPSuite.Core.Domain.Data
       protected List<float> _values;
       public IDimension Dimension { get; set; }
 
+      //also an example
       internal Cache<AuxiliaryType, DataColumn> RelatedColumnsCache { get; } = new Cache<AuxiliaryType, DataColumn>(x => x.DataInfo.AuxiliaryType);
 
       /// <summary>

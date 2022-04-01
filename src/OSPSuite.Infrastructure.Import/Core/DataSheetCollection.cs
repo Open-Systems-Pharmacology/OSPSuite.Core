@@ -7,42 +7,49 @@ using OSPSuite.Utility.Collections;
 namespace OSPSuite.Infrastructure.Import.Core
 {
    /// <summary>
-   ///    e.g. a sheet in an excel file
+   ///    a collection of excel dataSheet sheets
    /// </summary>
-   public class DataSheetCollection //: IEnumerable<UnformattedSheetData>
+   public class DataSheetCollection : IEnumerable<DataSheet>
    {
-      private Cache<string, UnformattedSheetData> _dataSheets;
-      private Cache<string, UnformattedSheetData> _previouslyLoadedDataSheets;
+      private readonly Cache<string, DataSheet> _dataSheets; //get? ACTUALLY MAKE THIS PUBLIC PROPERTY; WITH PRIVTE SETTER PERHAPS
 
       public DataSheetCollection()
       {
-         _dataSheets = new Cache<string, UnformattedSheetData>();
-         _previouslyLoadedDataSheets = new Cache<string, UnformattedSheetData>();
-      }
-      public void Initialize()
-      {
-         _previouslyLoadedDataSheets = _dataSheets; //ToDo: make a safe copy of the Cache, so that we do not keep a reference and changing the original
-         _dataSheets = new Cache<string, UnformattedSheetData>();
+         _dataSheets = new Cache<string, DataSheet>(x => x.SheetName);
       }
 
-      public void AddSheet(string sheetName, UnformattedSheetData dataSheet)
+      //Todo: this is used in one very specific place and should probably be refactored out
+      public DataSheetCollection(Cache<string, DataSheet> sheets) 
       {
-         _dataSheets.Add(sheetName, dataSheet);
+         _dataSheets = sheets;
       }
 
-      public void ResetPreviousDataSheets()
+      public void AddSheet(string sheetName, DataSheet sheet)
       {
-         _dataSheets = _previouslyLoadedDataSheets;
+         _dataSheets.Add(sheetName, sheet);
       }
 
       public DataSheet GetDataSheet(string sheetName)
       {
-         var rawData = _dataSheets[sheetName]; //OK, what if we do not find this?
-         return new DataSheet(sheetName, rawData);
+         var rawData = _dataSheets[sheetName]; //Todo: OK, what if we do not find this?  --- throw exception
+         return rawData;
       }
 
-      /*
-      public IEnumerator<UnformattedSheetData> GetEnumerator()
+      public DataSheetCollection GetDataSheets(IReadOnlyList<string> sheetNames)
+      {
+         var sheets = new DataSheetCollection();
+
+         foreach (var sheetName in sheetNames)
+         {
+            if (_dataSheets.Contains(sheetName))
+               sheets.AddSheet(sheetName, _dataSheets[sheetName]);
+         }
+
+         return sheets;
+      }
+
+      
+      public IEnumerator<DataSheet> GetEnumerator()
       {
          return _dataSheets.GetEnumerator();
       }
@@ -51,7 +58,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       {
          return _dataSheets.GetEnumerator();
       }
-*/
+
       public DataSheetCollection Filter(string filter)
       {
          var filteredDataSheets = new DataSheetCollection();
@@ -61,7 +68,7 @@ namespace OSPSuite.Infrastructure.Import.Core
             var dv = new DataView(dt);
             dv.RowFilter = filter;
             var list = new List<DataRow>();
-            var ds = new UnformattedSheetData(_dataSheets[key]);
+            var ds = new DataSheet(_dataSheets[key]);
             foreach (DataRowView drv in dv)
             {
                ds.AddRow(drv.Row.ItemArray.Select(c => c.ToString()));
@@ -84,6 +91,41 @@ namespace OSPSuite.Infrastructure.Import.Core
          }
 
          return dataSets;
+      }
+
+      public IReadOnlyList<string> AddNotExistingSheets(DataSheetCollection existingDataSheets)
+      {
+         var sheetNames = new List<string>();
+         foreach (var sheet in _dataSheets)
+         {
+            if (existingDataSheets.Contains(sheet.SheetName))
+               continue;
+
+            _dataSheets.Add(sheet);
+            sheetNames.Add(sheet.SheetName);
+         }
+
+         return sheetNames;
+      }
+
+      public bool Contains(string sheetName)
+      {
+         return _dataSheets.Contains(sheetName);
+      }
+
+      public void Remove(string sheetName)
+      {
+         _dataSheets.Remove(sheetName);
+      }
+
+      public void Clear()
+      {
+         _dataSheets.Clear();
+      }
+
+      public IReadOnlyList<string> GetDataSheetNames()
+      {
+         return _dataSheets.Keys.ToList();
       }
    }
 }
