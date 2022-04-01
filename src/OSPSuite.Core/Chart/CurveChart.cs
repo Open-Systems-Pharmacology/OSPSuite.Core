@@ -4,26 +4,22 @@ using System.Drawing;
 using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Reflection;
-using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Chart
 {
-   public class CurveChart : Notifier, IWithId, IChart, IVisitable<IVisitor>, IWithAxes
+   public class CurveChart : ObjectBase, IChart, IWithAxes
    {
       public ChartFontAndSizeSettings FontAndSize { get; } = new ChartFontAndSizeSettings();
       public ChartSettings ChartSettings { get; } = new ChartSettings();
       private readonly Cache<string, Curve> _curves;
       private readonly Cache<AxisTypes, Axis> _axes;
-      public string Id { get; set; }
       private bool _previewSettings;
       private bool _includeOriginData;
-      private string _description;
-      private string _name;
       private string _title;
       private string _originText;
       public Scalings DefaultYAxisScaling { get; set; }
@@ -31,8 +27,6 @@ namespace OSPSuite.Core.Chart
       public CurveChart()
       {
          Id = string.Empty;
-         _name = string.Empty;
-         _description = string.Empty;
          _title = string.Empty;
          _axes = new Cache<AxisTypes, Axis>(axis => axis.AxisType, x => null);
          _curves = new Cache<string, Curve>(curve => curve.Id, x => null);
@@ -91,11 +85,11 @@ namespace OSPSuite.Core.Chart
 
       public IEnumerable<AxisTypes> AllUsedAxisTypes => _axes.Select(x => x.AxisType);
 
-      public IEnumerable<AxisTypes> AllUsedYAxisTypes => AllUsedAxisTypes.Except(new[] { AxisTypes.X });
+      public IEnumerable<AxisTypes> AllUsedYAxisTypes => AllUsedAxisTypes.Except(new[] {AxisTypes.X});
 
       public IEnumerable<Axis> AllUsedYAxis => _axes.Where(x => x.AxisType != AxisTypes.X);
 
-      public IEnumerable<AxisTypes> AllUsedSecondaryAxisTypes => AllUsedYAxisTypes.Except(new[] { AxisTypes.Y });
+      public IEnumerable<AxisTypes> AllUsedSecondaryAxisTypes => AllUsedYAxisTypes.Except(new[] {AxisTypes.Y});
 
       public bool HasCurve(string curveId) => _curves.Contains(curveId);
 
@@ -303,25 +297,9 @@ namespace OSPSuite.Core.Chart
                if (curve.yData != null)
                   userColumns.Add(curve.yData);
             }
+
             return userColumns.ToList();
          }
-      }
-
-       public virtual void AcceptVisitor(IVisitor visitor)
-      {
-         visitor.Visit(this);
-      }
-
-      public virtual string Name
-      {
-         get => _name;
-         set => SetProperty(ref _name, value);
-      }
-
-      public virtual string Description
-      {
-         get => _description;
-         set => SetProperty(ref _description, value);
       }
 
       public string Title
@@ -346,6 +324,18 @@ namespace OSPSuite.Core.Chart
       {
          get => _previewSettings;
          set => SetProperty(ref _previewSettings, value);
+      }
+
+      public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
+      {
+         base.UpdatePropertiesFrom(source, cloneManager);
+         var sourceCurveChart = source as CurveChart;
+         if (sourceCurveChart == null) return;
+
+         Title = sourceCurveChart.Title;
+         OriginText = sourceCurveChart.OriginText;
+         IncludeOriginData = sourceCurveChart.IncludeOriginData;
+         PreviewSettings = sourceCurveChart.PreviewSettings;
       }
    }
 }

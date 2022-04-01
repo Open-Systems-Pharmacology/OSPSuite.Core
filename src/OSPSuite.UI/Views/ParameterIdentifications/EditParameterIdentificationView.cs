@@ -18,6 +18,10 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          _presenter = presenter;
       }
 
-      public override ApplicationIcon ApplicationIcon => ApplicationIcons.ParameterIdentification;
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         ApplicationIcon = ApplicationIcons.ParameterIdentification;
+      }
    }
 }

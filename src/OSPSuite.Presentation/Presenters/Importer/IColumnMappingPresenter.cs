@@ -60,8 +60,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       ToolTipDescription ToolTipDescriptionFor(int index);
       void ClearRow(ColumnMappingDTO model);
       void AddGroupBy(AddGroupByFormatParameter source);
-      void ResetMapping();
-      void ResetMappingBasedOnCurrentSheet();
       void ClearMapping();
       void ValidateMapping();
       void SetSubEditorSettingsForMapping(ColumnMappingDTO model);
@@ -74,8 +72,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       event EventHandler OnMappingCompleted; //status: you can import
 
       event EventHandler<MissingMappingEventArgs> OnMissingMapping;
-
-      event EventHandler OnResetMappingBasedOnCurrentSheet;
       IEnumerable<string> GetAllAvailableExcelColumns();
    }
 }

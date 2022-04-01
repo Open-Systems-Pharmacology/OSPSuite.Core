@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
-using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -39,15 +38,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          IDialogCreator dialogCreator,
          IPKMLPersistor pkmlPersistor,
          IDataSource dataSource
-      ) : base(view, dataRepositoryMapper, importer, nanPresenter, importerDataPresenter, confirmationPresenter, columnMappingPresenter, sourceFilePresenter, dialogCreator, pkmlPersistor)
+      ) : base(view, dataRepositoryMapper, importer, nanPresenter, importerDataPresenter, confirmationPresenter, columnMappingPresenter,
+         sourceFilePresenter, dialogCreator, pkmlPersistor)
       {
          _dataSource = dataSource;
-      }
-
-      protected override void onResetMappingBasedOnCurrentSheet()
-      {
-         OnResetMappingBasedOnCurrentSheetInvoked = true;
-         base.onResetMappingBasedOnCurrentSheet();
       }
 
       protected override bool confirmDroppingOfLoadedSheets()
@@ -91,9 +85,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataSource = A.Fake<IDataSource>();
          A.CallTo(() => _dataSource.DataSets).Returns(cache);
          cache.Add("sheet1", dataSet);
-         var dataRepository = new DataRepository {Name = "name"};
-         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() {Name = "Molecule", Value = "Molecule1"});
-         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() {Name = "Mol weight", Value = 22.0.ToString()});
+         var dataRepository = new DataRepository { Name = "name" };
+         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Molecule", Value = "Molecule1" });
+         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Mol weight", Value = 22.0.ToString() });
 
          var dataColumn = new BaseGrid("Time", A.Fake<IDimension>());
          var dataInfo = new DataInfo(ColumnOrigins.Undefined);
@@ -149,7 +143,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
          sut.SetSettings(_metaDataCategories, new ColumnInfoCache(), _dataImporterSettings);
       }
 
-      protected static MetaDataCategory createMetaDataCategory<T>(string descriptiveName, bool isMandatory = false, bool isListOfValuesFixed = false, Action<MetaDataCategory> fixedValuesRetriever = null)
+      protected static MetaDataCategory createMetaDataCategory<T>(string descriptiveName, bool isMandatory = false, bool isListOfValuesFixed = false,
+         Action<MetaDataCategory> fixedValuesRetriever = null)
       {
          var category = new MetaDataCategory
          {
@@ -247,7 +242,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          base.Context();
          var dataFormat = A.Fake<IDataFormat>();
          A.CallTo(() => dataFormat.Parameters).Returns(Enumerable.Empty<DataFormatParameter>().ToList());
-         _args = new FormatChangedEventArgs() {Format = dataFormat};
+         _args = new FormatChangedEventArgs() { Format = dataFormat };
       }
 
       protected override void Because()
@@ -452,12 +447,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          (sut as ImporterPresenterForTest).OnResetMappingBasedOnCurrentSheetInvoked = false;
          sut.LoadConfigurationWithoutImporting();
-      }
-
-      [Observation]
-      public void must_reset_format_based_on_current_sheet()
-      {
-         (sut as ImporterPresenterForTest).OnResetMappingBasedOnCurrentSheetInvoked.ShouldBeTrue();
       }
    }
 }

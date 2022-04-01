@@ -17,12 +17,9 @@ namespace OSPSuite.Core
          return CreateSimulation(_simModelExporter.ExportSimModelXml(modelCoreSimulation, SimModelExportMode.Optimized));
       }
 
-      public IReadOnlyList<ParameterProperties> SetVariableParameters(Simulation simulation, IReadOnlyList<string> variablePaths)
-      {
-         return SetVariableParameters(simulation, variablePaths, calculateSensitivities: false);
-      }
+      public IReadOnlyList<ParameterProperties> SetVariableParameters(Simulation simulation, IReadOnlyList<string> variablePaths) => base.SetVariableParameters(simulation, variablePaths, calculateSensitivities: false);
 
-      public IReadOnlyList<SpeciesProperties> SetVariableSpecies(Simulation simulation, IReadOnlyList<string> variablePaths)
+      public  IReadOnlyList<SpeciesProperties> SetVariableSpecies(Simulation simulation, IReadOnlyList<string> variablePaths)
       {
          return SetVariableMolecules(simulation, variablePaths);
       }

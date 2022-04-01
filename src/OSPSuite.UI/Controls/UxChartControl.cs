@@ -48,7 +48,7 @@ namespace OSPSuite.UI.Controls
          return new ChartTitle {Text = string.Empty, Font = new Font("Arial", fontSize), Alignment = alignment, Dock = dockStyle, WordWrap = true};
       }
 
-      public ImageCollection Images
+      public SvgImageCollection Images
       {
          set => _barManager.Images = value;
       }

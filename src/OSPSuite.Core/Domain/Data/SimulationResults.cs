@@ -132,17 +132,6 @@ namespace OSPSuite.Core.Domain.Data
          }
       }
 
-      public virtual int NumberOfIndividuals
-      {
-         get
-         {
-            var allIndividualsIds = AllIndividualIds();
-            //+1 because individual ids are typically 0 based
-            var maxNumberOfIndividuals = allIndividualsIds.Any() ? allIndividualsIds.Max() + 1 : 0;
-            return Math.Max(Count, maxNumberOfIndividuals);
-         }
-      }
-
       protected internal virtual void ReorderByIndividualId()
       {
          lock (_locker)

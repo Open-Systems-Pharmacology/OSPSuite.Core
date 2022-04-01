@@ -154,18 +154,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          }
       }
 
-      protected string GetLastBracketsOfString(string header)
+     protected string ValidateUnit(string unit, IReadOnlyList<IDimension> supportedDimensions)
       {
-         return Regex.Match(header, @"\[([^\]\[]*)\]$").Value;
-      }
-
-      protected string GetAndValidateUnitFromBrackets(string units, IReadOnlyList<IDimension> supportedDimensions)
-      {
-         return units
-            .Trim().Substring(1, units.Length - 2).Trim() //remove the brackets and whitespaces from end and beginning
-            .Split(',')                                   //we split in case there are more than one units separated with ,
-            //only accepts valid and supported units
-            .FirstOrDefault(unitName => supportedDimensions.Any(x => x.HasUnit((string) unitName))) ?? UnitDescription.InvalidUnit; //default = ?
+         return supportedDimensions.Any(x => x.HasUnit(unit)) ? unit : UnitDescription.InvalidUnit;
       }
 
       protected virtual void ExtractNonQualifiedHeadings(List<string> keys, List<string> missingKeys, Cache<string, ColumnInfo> columnInfos, IDataSheet dataSheet, ref double rank)
@@ -242,7 +233,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             );
       }
 
-      private IEnumerable<ParsedDataSet> buildDataSets(IDataSheet dataSheet, IEnumerable<string> groupingParameters, Cache<string, ColumnInfo> columnInfos)
+      private IEnumerable<ParsedDataSet> buildDataSets(IDataSheet data, IEnumerable<string> groupingParameters, Cache<string, ColumnInfo> columnInfos)
       {
          var dataSets = new List<ParsedDataSet>();
          var cachedUnformattedRows = new Cache<string, List<UnformattedRow>>();

@@ -55,7 +55,7 @@ namespace OSPSuite.Core.Services
 
          A.CallTo(() => _pkParameterRepository.All()).Returns(new[] {_p1, _p2});
          var individualResults = A.Fake<IndividualResults>();
-         A.CallTo(() => _runResults.AllIndividualResults).Returns(new HashSet<IndividualResults>(new [] {individualResults}));
+         A.CallTo(() => _runResults.AllIndividualResults).Returns(new HashSet<IndividualResults>(new[] {individualResults}));
          var pKValues = new PKValues();
          pKValues.AddValue(_p1.Name, 10f);
          pKValues.AddValue(_p2.Name, 20f);
@@ -64,14 +64,14 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         _popAnalysis = sut.CalculateFor(_simulation, 1, _runResults);
+         _popAnalysis = sut.CalculateFor(_simulation, _runResults);
       }
 
       [Observation]
       public void should_exclude_the_norm_parameters()
       {
          _popAnalysis.All().Count().ShouldBeEqualTo(1);
-         _popAnalysis.PKParameterFor("Liver|Cell|Drug|Concentration", _p1.Name).Values[0].ShouldBeEqualTo(10f);
+         _popAnalysis.PKParameterFor("Liver|Cell|Drug|Concentration", _p1.Name).ValueFor(0).ShouldBeEqualTo(10f);
          _popAnalysis.HasPKParameterFor("Liver|Cell|Drug|Concentration", _p2.Name).ShouldBeFalse();
       }
    }
@@ -97,11 +97,11 @@ namespace OSPSuite.Core.Services
          A.CallTo(_pkCalculationOptionsFactory).WithReturnType<PKCalculationOptions>().Returns(pKCalculationOptions);
 
          _p1 = new PKParameter {Name = "AUC", Mode = PKParameterMode.Single};
-         _userDefinedParameter1 = new UserDefinedPKParameter { Name = "Dynamic1", Mode = PKParameterMode.Single};
+         _userDefinedParameter1 = new UserDefinedPKParameter {Name = "Dynamic1", Mode = PKParameterMode.Single};
 
-         A.CallTo(() => _pkParameterRepository.All()).Returns(new[] { _p1, _userDefinedParameter1 });
+         A.CallTo(() => _pkParameterRepository.All()).Returns(new[] {_p1, _userDefinedParameter1});
          var individualResults = A.Fake<IndividualResults>();
-         A.CallTo(() => _runResults.AllIndividualResults).Returns(new HashSet<IndividualResults>(new[] { individualResults }));
+         A.CallTo(() => _runResults.AllIndividualResults).Returns(new HashSet<IndividualResults>(new[] {individualResults}));
 
          var pKValues = new PKValues();
          pKValues.AddValue(_p1.Name, 10f);
@@ -111,15 +111,15 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         _popAnalysis = sut.CalculateFor(_simulation, 1, _runResults);
+         _popAnalysis = sut.CalculateFor(_simulation, _runResults);
       }
 
       [Observation]
       public void should_also_return_value_for_the_dynamic_parameters()
       {
          _popAnalysis.All().Count().ShouldBeEqualTo(2);
-         _popAnalysis.PKParameterFor("Liver|Cell|Drug|Concentration", _p1.Name).Values[0].ShouldBeEqualTo(10f);
-         _popAnalysis.PKParameterFor("Liver|Cell|Drug|Concentration", _userDefinedParameter1.Name).Values[0].ShouldBeEqualTo(30f);
+         _popAnalysis.PKParameterFor("Liver|Cell|Drug|Concentration", _p1.Name).ValueFor(0).ShouldBeEqualTo(10f);
+         _popAnalysis.PKParameterFor("Liver|Cell|Drug|Concentration", _userDefinedParameter1.Name).ValueFor(0).ShouldBeEqualTo(30f);
       }
    }
 }

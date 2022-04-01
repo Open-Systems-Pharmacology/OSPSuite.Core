@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using DevExpress.Utils;
+using DevExpress.Utils.Svg;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
@@ -150,22 +151,22 @@ namespace OSPSuite.UI.Binders
 
       private Image imageFor(ValueOrigin valueOrigin)
       {
-         var sourceImage = ApplicationIcons.IconFor(valueOrigin.Source).ToImage(IconSizes.Size16x16);
+         var sourceImage = ApplicationIcons.IconFor(valueOrigin.Source).ToImage();
          if (valueOrigin.Method == ValueOriginDeterminationMethods.Undefined)
             return sourceImage;
 
-         var methodImage = ApplicationIcons.IconFor(valueOrigin.Method).ToImage(IconSizes.Size16x16);
+         var methodImage = ApplicationIcons.IconFor(valueOrigin.Method).ToImage();
          if (valueOrigin.Source == ValueOriginSources.Undefined)
             return methodImage;
 
          var resultImage = new Bitmap(sourceImage.Width + methodImage.Width + IMAGE_OFFSET, sourceImage.Height);
-
+         
          using (var g = Graphics.FromImage(resultImage))
          {
             g.DrawImage(sourceImage, new PointF(0, 0));
             g.DrawImage(methodImage, new PointF(sourceImage.Width + IMAGE_OFFSET, 0));
          }
-
+         
          return resultImage;
       }
 

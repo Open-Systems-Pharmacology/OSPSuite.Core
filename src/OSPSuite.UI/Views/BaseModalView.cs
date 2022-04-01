@@ -63,7 +63,13 @@ namespace OSPSuite.UI.Views
       protected override void OnFormClosing(FormClosingEventArgs e)
       {
          if (Canceled)
-            e.Cancel = !ShouldClose;
+         {
+            //if cancel button is deactivated, and the user triggered cancel should not close the form
+            if (e.CloseReason == CloseReason.UserClosing && btnCancel.Enabled == false)
+               e.Cancel = true;
+            else
+               e.Cancel = !ShouldClose;
+         }
 
          base.OnFormClosing(e);
       }

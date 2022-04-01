@@ -18,6 +18,10 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          _presenter = presenter;
       }
 
-      public override ApplicationIcon ApplicationIcon => ApplicationIcons.SensitivityAnalysis;
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         ApplicationIcon = ApplicationIcons.SensitivityAnalysis;
+      }
    }
 }

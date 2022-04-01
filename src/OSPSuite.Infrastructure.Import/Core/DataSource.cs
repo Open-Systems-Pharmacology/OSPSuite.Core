@@ -42,7 +42,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    }
 
    /// <summary>
-   /// Collection of DataSets
+   ///    Collection of DataSets
    /// </summary>
    public interface IDataSource
    {
@@ -242,6 +242,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          }
          return errors;
       }
+
       //checks that all units coming from a mapped column unit belong to a valid dimension for this mapping
       //and also that they are all of the same dimension within every data set. 
       private ParseErrors validateUnitsSupportedAndSameDimension(Cache<string, ColumnInfo> columnInfos)
@@ -304,8 +305,8 @@ namespace OSPSuite.Infrastructure.Import.Core
 
    public class MetaDataInstance
    {
-      public string Name { get; private set; }
-      public string Value { get; private set; }
+      public string Name { get; }
+      public string Value { get; }
 
       public MetaDataInstance(string name, string value)
       {
@@ -316,11 +317,11 @@ namespace OSPSuite.Infrastructure.Import.Core
 
    public class ImportedDataSet
    {
-      public string FileName { get; private set; }
-      public string SheetName { get; private set; }
-      public ParsedDataSet ParsedDataSet { get; private set; }
-      public string Name { get; private set; }
-      public IReadOnlyList<MetaDataInstance> MetaDataDescription { get; private set; }
+      public string FileName { get; }
+      public string SheetName { get; }
+      public ParsedDataSet ParsedDataSet { get; }
+      public string Name { get; }
+      public IReadOnlyList<MetaDataInstance> MetaDataDescription { get; }
 
       public ImportedDataSet(string fileName, string sheetName, ParsedDataSet parsedDataSet, string name, IReadOnlyList<MetaDataInstance> metaDataDescription)
       {

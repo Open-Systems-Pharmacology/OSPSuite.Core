@@ -1,6 +1,5 @@
 ﻿using System.Xml.Linq;
 using OSPSuite.Core.Domain.ParameterIdentifications;
-using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
@@ -27,10 +26,7 @@ namespace OSPSuite.Core.Converters.v10
 
       public void Visit(ParameterIdentification parameterIdentification)
       {
-         parameterIdentification.Results.Each(x =>
-         {
-            convert(x.BestResult, parameterIdentification);
-         });
+         parameterIdentification.Results.Each(x => { convert(x.BestResult, parameterIdentification); });
          _converted = true;
       }
 
@@ -47,8 +43,6 @@ namespace OSPSuite.Core.Converters.v10
             x.Max = identificationParameter.MaxValue;
             x.Scaling = identificationParameter.Scaling;
          });
-
       }
-
    }
 }

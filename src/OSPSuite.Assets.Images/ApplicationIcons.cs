@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using DevExpress.Utils.Svg;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
@@ -492,9 +492,10 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ExpressionProfile = AddNamedIcon("ProteinExpression", "ExpressionProfile");
       public static readonly ApplicationIcon ExpressionProfileFolder = AddNamedIcon("ExpressionProfileFolder");
       public static readonly ApplicationIcon OSPSuite = AddNamedIcon("OSPSuite");
+      public static readonly ApplicationIcon RedCross = AddNamedIcon("RedCross");
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
-      private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((Icon) null);
+      private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((SvgImage) null);
 
       public static readonly ApplicationIcon EmptyIcon = createEmptyIcon();
 
@@ -529,8 +530,6 @@ namespace OSPSuite.Assets
       {
          var name = (iconName ?? resName).ToUpperInvariant();
          var iconAsBytes = getIcon(resName);
-         if (iconAsBytes == null)
-            return createEmptyIcon();
 
          var appIcon = new ApplicationIcon(iconAsBytes)
          {
@@ -542,24 +541,11 @@ namespace OSPSuite.Assets
          return appIcon;
       }
 
-//
-//      public static ApplicationIcon AddNamedIcon(byte[] icon, string iconName)
-//      {
-//         var name = iconName.ToUpperInvariant();
-//         var appIcon = new ApplicationIcon(icon)
-//         {
-//            IconName = name,
-//            Index = _allIcons.Count
-//         };
-//
-//         _allIcons.Add(appIcon);
-//         return appIcon;
-//      }
-
-      public static byte[] getIcon(string iconName)
+      private static byte[] getIcon(string iconName)
       {
          var assembly = Assembly.GetExecutingAssembly();
-         var resourceName = typeof(ApplicationIcon).Namespace + ".Icons." + iconName + ".ico";
+         var resourceName = typeof(ApplicationIcon).Namespace + ".Icons." + iconName + ".svg";
+         
          using (var stream = assembly.GetManifestResourceStream(resourceName))
          {
             if (stream == null)
@@ -598,7 +584,6 @@ namespace OSPSuite.Assets
       {
          return IconByNameOrDefault(withIcon?.IconName, EmptyIcon);
       }
-
 
       private static ApplicationIcon dynamicIconFor(string template, string entity, ApplicationIcon defaultIcon)
       {

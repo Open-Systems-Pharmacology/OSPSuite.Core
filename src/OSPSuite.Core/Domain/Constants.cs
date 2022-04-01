@@ -622,6 +622,11 @@ namespace OSPSuite.Core.Domain
          public static readonly Color DEFAULT_FONT_COLOR_WATERMARK = Color.Black;
       }
 
+      public static class MultiCurveOptions
+      {
+         public static readonly IReadOnlyList<bool?> AllBooleanOptions= new bool?[] { null, false, true };
+      }
+
       public static class ImporterConstants
       {
          public static readonly string[] NAMING_PATTERN_SEPARATORS = { ".", ",", "-", "_" };
