@@ -233,9 +233,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             );
       }
 
-      private IEnumerable<ParsedDataSet> buildDataSets(IDataSheet data, IEnumerable<string> groupingParameters, Cache<string, ColumnInfo> columnInfos)
+      private IEnumerable<ParsedDataSet> buildDataSets(IDataSheet dataSheet, IEnumerable<string> groupingParameters, Cache<string, ColumnInfo> columnInfos)
       {
-         var dataSets = new List<ParsedDataSet>();
          var cachedUnformattedRows = new Cache<string, List<UnformattedRow>>();
          foreach(var row in dataSheet.GetRows(_ => true))
          {
