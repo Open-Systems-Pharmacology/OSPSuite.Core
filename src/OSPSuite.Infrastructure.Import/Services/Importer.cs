@@ -327,7 +327,7 @@ namespace OSPSuite.Infrastructure.Import.Services
                continue;
             }
 
-            sheets.AddSheet(key, dataSourceFile.DataSheets.GetDataSheet(key));
+            sheets.AddSheet(dataSourceFile.DataSheets.GetDataSheet(key));
          }
 
          var errors = dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);

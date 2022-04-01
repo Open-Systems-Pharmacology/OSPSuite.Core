@@ -232,7 +232,8 @@ namespace OSPSuite.Infrastructure.Import
       public void throw_on_empty_dataset()
       {
          var sheets = new DataSheetCollection();
-         sheets.AddSheet("sheet1", new DataSheet());
+         var sheet = new DataSheet() { SheetName = "sheet1" };
+         sheets.AddSheet(sheet);
          sut.AddSheets(sheets, _columnInfos, "").Any().ShouldBeTrue();
       }
    }

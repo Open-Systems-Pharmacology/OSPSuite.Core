@@ -410,14 +410,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          //About NanSettings: we do actually read the nanSettings in import dataSheets
          //we just never update the editor on the view, which actually is a problem
          var sheets = new Cache<string, DataSheet>();
-         foreach (var element in _configuration.LoadedSheets)
+         foreach (var sheetName in _configuration.LoadedSheets)
          {
-            sheets.Add(element, _dataSourceFile.DataSheets.GetDataSheet(element));
-         }
-
-         foreach (var sheet in sheets.KeyValues)
-         {
-            _importerDataPresenter.ImportedSheets.AddSheet(sheet.Key, sheet.Value);
+            _importerDataPresenter.ImportedSheets.AddSheet(_dataSourceFile.DataSheets.GetDataSheet(sheetName));
          }
 
          try

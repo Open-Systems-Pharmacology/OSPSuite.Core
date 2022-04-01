@@ -73,7 +73,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var sheets = new Cache<string, DataSheet>();
          if (!ImportedSheets.Contains(sheetName))
          {
-            ImportedSheets.AddSheet(sheetName, getSingleSheet(sheetName));
+            ImportedSheets.AddSheet(getSingleSheet(sheetName));
             sheets.Add(sheetName, getSingleSheet(sheetName));
          }
 
@@ -223,7 +223,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.ClearTabs();
          var remainingSheet = _dataSourceFile.DataSheets.GetDataSheet(tabName);
          _dataSourceFile.DataSheets.Clear();
-         _dataSourceFile.DataSheets.AddSheet(tabName, remainingSheet);
+         _dataSourceFile.DataSheets.AddSheet(remainingSheet);
          View.AddTabs(GetSheetNames());
 
          if (ImportedSheets.All(k => k.SheetName == tabName))
@@ -237,7 +237,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          ImportedSheets.Clear();
 
          if (currentAlreadyLoaded != null)
-            ImportedSheets.AddSheet(tabName, currentAlreadyLoaded);
+            ImportedSheets.AddSheet(currentAlreadyLoaded);
 
          TriggerOnDataChanged();
       }

@@ -28,8 +28,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
             {
                if (!reader.MoveToNextRow()) continue;
 
-               var sheetName = reader.CurrentSheet.SheetName; 
-               var rawSheetData = new DataSheet();
+               var rawSheetData = new DataSheet
+               {
+                  SheetName = reader.CurrentSheet.SheetName
+               };
                var headers = reader.CurrentRow;
      
                for (var j = 0; j < headers.Count; j++)
@@ -46,7 +48,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                rawSheetData.RemoveEmptyColumns();
                rawSheetData.RemoveEmptyRows();
 
-               DataSheets.AddSheet(sheetName, rawSheetData);
+               DataSheets.AddSheet(rawSheetData);
             }
          }
          catch (Exception ex)

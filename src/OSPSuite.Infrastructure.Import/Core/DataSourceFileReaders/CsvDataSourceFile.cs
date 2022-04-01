@@ -35,7 +35,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                var headers = csv.GetFieldHeaders();
                var rows = new List<List<string>>(headers.Length);
 
-               var dataSheet = new DataSheet();
+               var dataSheet = new DataSheet
+               {
+                  SheetName = ""
+               };
 
                for (var i = 0; i < headers.Length; i++)
                   dataSheet.AddColumn(headers[i], i);
@@ -53,7 +56,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                dataSheet.RemoveEmptyColumns();
                dataSheet.RemoveEmptyRows();
 
-               DataSheets.AddSheet("", dataSheet);
+               DataSheets.AddSheet(dataSheet);
             }
          }
          catch (Exception e)

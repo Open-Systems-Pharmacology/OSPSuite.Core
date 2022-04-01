@@ -11,28 +11,21 @@ namespace OSPSuite.Infrastructure.Import.Core
    /// </summary>
    public class DataSheetCollection : IEnumerable<DataSheet>
    {
-      private readonly Cache<string, DataSheet> _dataSheets; //get? ACTUALLY MAKE THIS PUBLIC PROPERTY; WITH PRIVTE SETTER PERHAPS
+      private readonly Cache<string, DataSheet> _dataSheets;
 
       public DataSheetCollection()
       {
          _dataSheets = new Cache<string, DataSheet>(x => x.SheetName);
       }
 
-      //Todo: this is used in one very specific place and should probably be refactored out
-      public DataSheetCollection(Cache<string, DataSheet> sheets) 
+      public void AddSheet(DataSheet sheet)
       {
-         _dataSheets = sheets;
-      }
-
-      public void AddSheet(string sheetName, DataSheet sheet)
-      {
-         _dataSheets.Add(sheetName, sheet);
+         _dataSheets.Add(sheet);
       }
 
       public DataSheet GetDataSheet(string sheetName)
       {
-         var rawData = _dataSheets[sheetName]; //Todo: OK, what if we do not find this?  --- throw exception
-         return rawData;
+         return _dataSheets[sheetName];
       }
 
       public DataSheetCollection GetDataSheets(IReadOnlyList<string> sheetNames)
@@ -42,7 +35,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          foreach (var sheetName in sheetNames)
          {
             if (_dataSheets.Contains(sheetName))
-               sheets.AddSheet(sheetName, _dataSheets[sheetName]);
+               sheets.AddSheet(_dataSheets[sheetName]);
          }
 
          return sheets;
@@ -73,7 +66,7 @@ namespace OSPSuite.Infrastructure.Import.Core
             {
                ds.AddRow(drv.Row.ItemArray.Select(c => c.ToString()));
             }
-            filteredDataSheets.AddSheet(key, ds);
+            filteredDataSheets.AddSheet(ds);
          }
 
          return filteredDataSheets;

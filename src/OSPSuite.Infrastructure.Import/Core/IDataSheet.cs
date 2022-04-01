@@ -51,6 +51,7 @@ namespace OSPSuite.Infrastructure.Import.Core
             _headers.Add(header, reference.GetColumnDescription(header));
          }
          _rawDataTable = new List<List<string>>();
+         SheetName = reference.SheetName;
       }
 
       public DataSheet()
