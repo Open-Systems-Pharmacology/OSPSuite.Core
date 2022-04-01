@@ -25,6 +25,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
          //we keep a copy of the already loaded sheets, in case the reading fails
          var alreadyLoadedDataSheets = DataSheets;
+         DataSheets.Clear();
 
          try
          {

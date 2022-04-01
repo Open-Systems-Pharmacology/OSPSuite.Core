@@ -18,8 +18,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IDataSourceFile _dataSourceFile;
       protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
-      protected Cache<string, DataSheet> _sheetCache;
       protected DataSheet _dataSheet;
+      protected DataSheet _dataSheet2;
+      protected DataSheet _dataSheet3;
       protected DataSheetCollection _sheetsCollection;
 
       public override void GlobalContext()
@@ -29,10 +30,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _importer = A.Fake<IImporter>();
          _view = A.Fake<IImporterDataView>();
          _dataSheet = new DataSheet();
-         _dataSheet = new DataSheet();
+         _dataSheet.SheetName = "sheet1";
          _dataSheet.AddColumn("test_column", 0);
          _dataSheet.AddRow(new List<string>() { "1" });
-         _sheetCache = new Cache<string, DataSheet> { { "sheet1", _dataSheet }, { "sheet2", _dataSheet }, { "sheet3", _dataSheet } };
+         _dataSheet2 = _dataSheet;
+         _dataSheet2.SheetName = "sheet2";
+         _dataSheet3 = _dataSheet;
+         _dataSheet3.SheetName = "sheet3";
          _sheetsCollection = new DataSheetCollection();
          _sheetsCollection.AddSheet("sheet1", _dataSheet);
          _sheetsCollection.AddSheet("sheet2", _dataSheet);
@@ -240,7 +244,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void result_should_be_null()
       {
-         sheets.ShouldBeEqualTo(new List<string> { "sheet1", "sheet2", "sheet3" });
+         sheets.ShouldBeNull();
       }
    }
 

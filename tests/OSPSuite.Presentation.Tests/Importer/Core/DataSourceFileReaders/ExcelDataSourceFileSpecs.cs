@@ -36,7 +36,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
    public class When_reading_excel : ConcernForExcelDataSourceFile
    {
       [TestCase]
-      public void headers_are_ajusted_on_empty_columns()
+      public void headers_are_adjusted_on_empty_columns()
       {
          sut.Path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "sample2.xlsx");
          var columns = sut.DataSheets.ElementAt(0).GetHeaders();

@@ -16,8 +16,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
       protected override void LoadFromFile(string path)
       {
-         //local DataSheets, so that the member gets assigned only if the functions terminates correctly
-         var alreadyLoadedDataSheets = DataSheets; //first we clear the sheet collection, in case there were some sheets left from previously loading
+         //we keep a copy of the already loaded sheets, in case the reading fails
+         var alreadyLoadedDataSheets = DataSheets;
+         DataSheets.Clear();
 
          try
          {
