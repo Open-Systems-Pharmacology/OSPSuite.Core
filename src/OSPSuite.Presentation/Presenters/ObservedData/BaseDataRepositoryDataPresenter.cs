@@ -105,6 +105,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       protected string GetColumnIdFromColumnIndex(int columnIndex)
       {
+         if (columnIndex >= _datatable.Columns.Count) return null;
          var column = _datatable.Columns[columnIndex];
          return ColumnIdFromColumn(column);
       }
