@@ -243,9 +243,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
 
       [Observation]
-      public void result_should_be_null()
+      public void result_should_be_sheet_names()
       {
-         sheets.ShouldBeNull();
+         sheets.ShouldBeEqualTo(new List<string> { "sheet1", "sheet2", "sheet3" });
       }
    }
 
