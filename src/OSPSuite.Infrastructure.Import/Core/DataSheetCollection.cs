@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    /// <summary>
    ///    a collection of excel dataSheet sheets
    /// </summary>
-   public class DataSheetCollection : IEnumerable<DataSheet>
+   public class DataSheetCollection : IEnumerable<DataSheet>, ICloneable
    {
       private readonly Cache<string, DataSheet> _dataSheets = new Cache<string, DataSheet>(x => x.SheetName);
 
@@ -109,6 +110,11 @@ namespace OSPSuite.Infrastructure.Import.Core
       public IReadOnlyList<string> GetDataSheetNames()
       {
          return _dataSheets.Keys.ToList();
+      }
+
+      public object Clone()
+      {
+         return this.MemberwiseClone();
       }
    }
 }
