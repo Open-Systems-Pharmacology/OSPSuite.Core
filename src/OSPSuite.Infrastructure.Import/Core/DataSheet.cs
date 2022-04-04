@@ -92,12 +92,12 @@ namespace OSPSuite.Infrastructure.Import.Core
          }
       }
 
-      public IEnumerable<string> GetColumn(string columnName)
+      public virtual IEnumerable<string> GetColumn(string columnName)
       {
          return getColumn(_headers[columnName].Index);
       }
 
-      public IEnumerable<UnformattedRow> GetRows(Func<IEnumerable<string>, bool> filter)
+      public virtual IEnumerable<UnformattedRow> GetRows(Func<IEnumerable<string>, bool> filter)
       {
          return _rawDataTable.Select((data, index) => new UnformattedRow(index, data)).Where(row => filter(row.Data));
       }
@@ -137,12 +137,12 @@ namespace OSPSuite.Infrastructure.Import.Core
          return new UnformattedDataRow(_rawDataTable[rowIndex], _headers).GetCellValue(columnName);
       }
 
-      public IEnumerable<string> GetHeaders()
+      public virtual IEnumerable<string> GetHeaders()
       {
          return _headers.Keys;
       }
 
-      public ColumnDescription GetColumnDescription(string columnName)
+      public virtual ColumnDescription GetColumnDescription(string columnName)
       {
          return _headers.Contains(columnName) ? _headers[columnName] : null;
       }
