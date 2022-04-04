@@ -102,7 +102,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          return _rawDataTable.Select((data, index) => new UnformattedRow(index, data)).Where(row => filter(row.Data));
       }
 
-      public DataTable AsDataTable()
+      public DataTable ToDataTable()
       {
          var resultTable = new DataTable();
          var indexList = _headers.Select( h => h.Index);
@@ -110,7 +110,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          // Add columns.
          foreach (var header in _headers.Keys)
          {
-            resultTable.AddColumn(header, typeof(string));
+            resultTable.AddColumn(header);
          }
 
          Func<IEnumerable<string>, IEnumerable<string>> maskFunction;
@@ -126,7 +126,6 @@ namespace OSPSuite.Infrastructure.Import.Core
 
          foreach (var itemList in _rawDataTable)
          {
-            // ReSharper disable once CoVariantArrayConversion
             resultTable.Rows.Add(maskFunction(itemList).ToArray());
          }
 

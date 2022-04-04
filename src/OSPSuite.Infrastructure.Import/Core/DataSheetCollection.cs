@@ -53,7 +53,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          var filteredDataSheets = new DataSheetCollection();
          foreach (var key in _dataSheets.Keys)
          {
-            var dt = _dataSheets[key].AsDataTable();
+            var dt = _dataSheets[key].ToDataTable();
             var dv = new DataView(dt);
             dv.RowFilter = filter;
             var ds = new DataSheet(_dataSheets[key]);

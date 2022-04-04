@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using MathNet.Numerics;
 using OSPSuite.Assets;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
@@ -70,18 +71,18 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void ImportDataForConfirmation(string sheetName)
       {
-         var sheets = new Cache<string, DataSheet>();
+         var sheets = new DataSheetCollection();
          if (!ImportedSheets.Contains(sheetName))
          {
             ImportedSheets.AddSheet(getSingleSheet(sheetName));
-            sheets.Add(sheetName, getSingleSheet(sheetName));
+            sheets.AddSheet(getSingleSheet(sheetName));
          }
 
-         if (sheets.Count == 0)
+         if (!sheets.Any())
             return;
 
          OnImportSheets.Invoke(this,
-            new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, SheetNames = sheets.Keys.ToList(), Filter = GetActiveFilterCriteria() });
+            new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, SheetNames = sheets.GetDataSheetNames(), Filter = GetActiveFilterCriteria() });
       }
 
       public string GetFilter()
@@ -184,7 +185,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          foreach (var sheet in _dataSourceFile.DataSheets)
          {
-            _sheetsForViewing[sheet.SheetName] = sheet.AsDataTable();
+            _sheetsForViewing[sheet.SheetName] = sheet.ToDataTable();
          }
       }
 
@@ -253,7 +254,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (ImportedSheets.Any(x => x.SheetName == View.SelectedTab))
             View.DisableImportCurrentSheet();
 
-         if (ImportedSheets.All(sheet => GetSheetNames().Contains(sheet.SheetName)) && GetSheetNames().Count == ImportedSheets.Count())
+         var sheetNames = GetSheetNames();
+         var importedSheetsNames = ImportedSheets.GetDataSheetNames();
+         if (importedSheetsNames.ContainsAll(sheetNames) && sheetNames.Count == importedSheetsNames.Count())
             View.DisableImportAllSheets();
       }
 
