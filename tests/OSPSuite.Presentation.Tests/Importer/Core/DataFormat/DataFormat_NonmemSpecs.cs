@@ -243,7 +243,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    public class When_Nonmem_is_parsing_format : ConcernforDataFormat_Nonmem
    {
       private DataSheet _mockedDataSheet;
-      
+
+
       protected override void Context()
       {
          base.Context();
