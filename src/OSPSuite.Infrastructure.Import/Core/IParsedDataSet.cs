@@ -13,7 +13,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public ParsedDataSet(
          IEnumerable<string> groupingParameters,
-         IDataSheet columnHandler,
+         DataSheet columnHandler,
          IEnumerable<UnformattedRow> rawData,
          Dictionary<ExtendedColumn, IList<SimulationPoint>> parsedData
       )

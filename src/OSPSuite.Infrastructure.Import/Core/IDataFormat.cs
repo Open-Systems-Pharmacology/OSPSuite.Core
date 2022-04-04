@@ -15,11 +15,11 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       string Name { get; }
       string Description { get; }
-      double SetParameters(IDataSheet rawDataSheet, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
+      double SetParameters(DataSheet rawDataSheet, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
       IList<DataFormatParameter> Parameters { get; }
       void CopyParametersFromConfiguration(OSPSuite.Core.Import.ImporterConfiguration configuration);
       IList<string> ExcelColumnNames { get; }
-      IEnumerable<ParsedDataSet> Parse(IDataSheet dataSheet, ColumnInfoCache columnInfos);
+      IEnumerable<ParsedDataSet> Parse(DataSheet dataSheet, ColumnInfoCache columnInfos);
       UnitDescription ExtractUnitDescriptions(string description, IReadOnlyList<IDimension> supportedDimensions);
    }
 }

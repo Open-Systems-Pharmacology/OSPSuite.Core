@@ -80,7 +80,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          var dataSet = new DataSet();
          dataSet.AddData(new List<ParsedDataSet>()
          {
-            new ParsedDataSet(new List<string>(), A.Fake<IDataSheet>(), new List<UnformattedRow>(), new Dictionary<ExtendedColumn, IList<SimulationPoint>>())
+            new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), new Dictionary<ExtendedColumn, IList<SimulationPoint>>())
          });
          _dataSource = A.Fake<IDataSource>();
          A.CallTo(() => _dataSource.DataSets).Returns(cache);

@@ -21,7 +21,7 @@ namespace OSPSuite.Infrastructure.Import.Services
    {
       IDataSourceFile LoadFile(ColumnInfoCache columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories);
       void AddFromFile(IDataFormat format, DataSheetCollection dataSheets, ColumnInfoCache columnInfos, IDataSource alreadyExisting);
-      IEnumerable<IDataFormat> AvailableFormats(IDataSheet dataSheet, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
+      IEnumerable<IDataFormat> AvailableFormats(DataSheet dataSheet, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
 
       IEnumerable<string> NamesFromConvention
       (
@@ -64,7 +64,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          _molWeightDimension = dimensionFactory.Dimension(Constants.Dimension.MOLECULAR_WEIGHT);
       }
 
-      public IEnumerable<IDataFormat> AvailableFormats(IDataSheet dataSheet, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      public IEnumerable<IDataFormat> AvailableFormats(DataSheet dataSheet, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          return _container.ResolveAll<IDataFormat>()
             .Select(x => (x, x.SetParameters(dataSheet, columnInfos, metaDataCategories)))

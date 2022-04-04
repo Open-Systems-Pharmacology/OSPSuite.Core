@@ -21,7 +21,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
    }
    public abstract class ConcernforDataFormat_Nonmem : ContextSpecification<DataFormatNonmem>
    {
-      protected IDataSheet _basicFormat;
+      protected DataSheet _basicFormat;
       protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected Cache<string, ColumnDescription> _headersCache;
@@ -242,12 +242,12 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
    public class When_Nonmem_is_parsing_format : ConcernforDataFormat_Nonmem
    {
-      private IDataSheet _mockedDataSheet;
+      private DataSheet _mockedDataSheet;
       
       protected override void Context()
       {
          base.Context();
-         _mockedDataSheet = A.Fake<IDataSheet>();
+         _mockedDataSheet = A.Fake<DataSheet>();
          A.CallTo(() => _mockedDataSheet.GetHeaders()).Returns(_basicFormat.GetHeaders());
          A.CallTo(() => _mockedDataSheet.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
          A.CallTo(() => _mockedDataSheet.GetColumn(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumn(columnName.Arguments[0].ToString()));
@@ -300,7 +300,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
       public class When_parsing_headers_with_capital : ConcernforDataFormat_Nonmem
       {
-         private IDataSheet _mockedDataSheetCapital;
+         private DataSheet _mockedDataSheetCapital;
          protected override void Because()
          {
             _headersCache.Remove("Dose");

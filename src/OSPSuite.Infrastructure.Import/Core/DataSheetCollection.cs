@@ -23,7 +23,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          return _dataSheets[sheetName];
       }
 
-      public DataSheetCollection GetDataSheetByName(IReadOnlyList<string> sheetNames)
+      public DataSheetCollection GetDataSheetsByName(IReadOnlyList<string> sheetNames)
       {
          var sheets = new DataSheetCollection();
 

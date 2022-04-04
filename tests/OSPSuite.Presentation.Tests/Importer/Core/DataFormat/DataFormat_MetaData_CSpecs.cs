@@ -16,7 +16,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
    public abstract class ConcernforDataFormat_DataFormatHeadersWithUnits : ContextSpecification<DataFormatHeadersWithUnits>
    {
-      protected IDataSheet _basicFormat;
+      protected DataSheet _basicFormat;
       protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected IDimension _fakedTimeDimension;
@@ -217,13 +217,13 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
    public class When_parsing_format : ConcernforDataFormat_DataFormatHeadersWithUnits
    {
-      private IDataSheet _mockedData;
+      private DataSheet _mockedData;
       private string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
       private string[] _groupIds = new string[] { "H", "T2DM" };
       protected override void Context()
       {
          base.Context();
-         _mockedData = A.Fake<IDataSheet>();
+         _mockedData = A.Fake<DataSheet>();
          A.CallTo(() => _mockedData.GetHeaders()).Returns(_basicFormat.GetHeaders());
          A.CallTo(() => _mockedData.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
          foreach (var molecule in _molecules)
@@ -294,13 +294,13 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
 
    public class When_parsing_format_with_missing_molecule_mapping : ConcernforDataFormat_DataFormatHeadersWithUnits
    {
-      private IDataSheet _mockedDataSheet;
+      private DataSheet _mockedDataSheet;
       private string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
       private string[] _groupIds = new string[] { "H", "T2DM" };
       protected override void Context()
       {
          base.Context();
-         _mockedDataSheet = A.Fake<IDataSheet>();
+         _mockedDataSheet = A.Fake<DataSheet>();
          A.CallTo(() => _mockedDataSheet.GetHeaders()).Returns(_basicFormat.GetHeaders());
          A.CallTo(() => _mockedDataSheet.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
          foreach (var molecule in _molecules)

@@ -217,7 +217,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             return;
          }
 
-         var sheets = dataSourceFile.DataSheets.GetDataSheetByName(sheetNames);
+         var sheets = dataSourceFile.DataSheets.GetDataSheetsByName(sheetNames);
          var dataMappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Where(p => p.ColumnName != null).Select(md =>
             new MetaDataMappingConverter()
             {

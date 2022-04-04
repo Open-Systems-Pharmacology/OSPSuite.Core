@@ -20,7 +20,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private ColumnInfoCache _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IImporter _importer;
-      private IDataSheet _rawData;
+      private DataSheet _rawData;
       private MappingProblem _mappingProblem = new MappingProblem() { MissingMapping = new List<string>(), MissingUnit = new List<string>() };
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       private readonly IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
@@ -137,7 +137,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          setDataFormat(format.Parameters);
       }
 
-      public void SetRawData(IDataSheet rawData)
+      public void SetRawData(DataSheet rawData)
       {
          _rawData = rawData;
       }

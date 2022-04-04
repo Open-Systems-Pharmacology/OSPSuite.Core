@@ -17,25 +17,8 @@ namespace OSPSuite.Infrastructure.Import.Core
          Data = data;
       }
    }
-   public interface IDataSheet
-   {
-      IEnumerable<string> GetColumn(string columnName);
-      ColumnDescription GetColumnDescription(string columnName);
-      IEnumerable<string> GetHeaders();
-      string GetCell(string columnName, int rowIndex);
-      IEnumerable<UnformattedRow> GetRows(Func<IEnumerable<string>, bool> filter);
 
-      void AddRow(IEnumerable<string> row);
-      void AddColumn(string columnName, int columnIndex);
-      DataTable AsDataTable();
-      UnformattedDataRow GetDataRow(int index);
-      void RemoveEmptyColumns();
-      void RemoveEmptyRows();
-      string SheetName { get; set; }
-
-   }
-
-   public class DataSheet : IDataSheet
+   public class DataSheet
    {
       private readonly List<List<string>> _rawDataTable = new List<List<string>>();
       private List<string> _emptyColumns = new List<string>();

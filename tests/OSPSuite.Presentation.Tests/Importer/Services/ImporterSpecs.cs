@@ -21,7 +21,7 @@ namespace OSPSuite.Presentation.Importer.Services
       public ParsedDataSetTest() : base
          (
             new List<string>(), 
-            A.Fake<IDataSheet>(), 
+            A.Fake<DataSheet>(), 
             new List<UnformattedRow>(), 
             new Dictionary<ExtendedColumn, IList<SimulationPoint>>())
       {
@@ -35,7 +35,7 @@ namespace OSPSuite.Presentation.Importer.Services
    }
    public abstract class ConcernForImporter : ContextSpecification<OSPSuite.Infrastructure.Import.Services.Importer>
    {
-      protected IDataSheet _basicFormat;
+      protected DataSheet _basicFormat;
       protected IContainer _container;
       protected IDataSourceFileParser _parser;
       protected IDataSetToDataRepositoryMapper _dataRepositoryMapper;
@@ -216,7 +216,7 @@ namespace OSPSuite.Presentation.Importer.Services
 
    public abstract class ConcernForImporter2 : ContextSpecification<OSPSuite.Infrastructure.Import.Services.Importer>
    {
-      protected IDataSheet _basicFormat;
+      protected DataSheet _basicFormat;
       protected IContainer _container;
       protected IDataSourceFileParser _parser;
       protected IDataSetToDataRepositoryMapper _dataRepositoryMapper;
