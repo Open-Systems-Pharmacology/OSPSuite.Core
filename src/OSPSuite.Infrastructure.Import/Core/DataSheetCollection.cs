@@ -11,24 +11,19 @@ namespace OSPSuite.Infrastructure.Import.Core
    /// </summary>
    public class DataSheetCollection : IEnumerable<DataSheet>
    {
-      private readonly Cache<string, DataSheet> _dataSheets;
-
-      public DataSheetCollection()
-      {
-         _dataSheets = new Cache<string, DataSheet>(x => x.SheetName);
-      }
+      private readonly Cache<string, DataSheet> _dataSheets = new Cache<string, DataSheet>(x => x.SheetName);
 
       public void AddSheet(DataSheet sheet)
       {
          _dataSheets.Add(sheet);
       }
 
-      public DataSheet GetDataSheet(string sheetName)
+      public DataSheet GetDataSheetByName(string sheetName)
       {
          return _dataSheets[sheetName];
       }
 
-      public DataSheetCollection GetDataSheets(IReadOnlyList<string> sheetNames)
+      public DataSheetCollection GetDataSheetByName(IReadOnlyList<string> sheetNames)
       {
          var sheets = new DataSheetCollection();
 
@@ -60,7 +55,6 @@ namespace OSPSuite.Infrastructure.Import.Core
             var dt = _dataSheets[key].AsDataTable();
             var dv = new DataView(dt);
             dv.RowFilter = filter;
-            var list = new List<DataRow>();
             var ds = new DataSheet(_dataSheets[key]);
             foreach (DataRowView drv in dv)
             {
@@ -86,19 +80,15 @@ namespace OSPSuite.Infrastructure.Import.Core
          return dataSets;
       }
 
-      public IReadOnlyList<string> AddNotExistingSheets(DataSheetCollection existingDataSheets)
+      /// <summary>
+      ///    Adds the sheets of collection <paramref name="sheetsToBeAdded" /> to the current collection
+      ///    Returns the names of the sheets added.
+      /// </summary>
+      public IReadOnlyList<string> AddNotExistingSheets(DataSheetCollection sheetsToBeAdded)
       {
-         var sheetNames = new List<string>();
-         foreach (var sheet in _dataSheets)
-         {
-            if (existingDataSheets.Contains(sheet.SheetName))
-               continue;
-
-            _dataSheets.Add(sheet);
-            sheetNames.Add(sheet.SheetName);
-         }
-
-         return sheetNames;
+         var notExistingSheets = sheetsToBeAdded.Where(x => !_dataSheets.Contains(x)).ToList();
+         _dataSheets.AddRange(notExistingSheets);
+         return notExistingSheets.Select(x => x.SheetName).ToList();
       }
 
       public bool Contains(string sheetName)

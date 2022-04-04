@@ -69,7 +69,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          sut.DataSheets.ElementAt(1).GetHeaders().Count().ShouldBeEqualTo(3);
          for (var i = 1; i <= 3; i++)
          {
-            sut.DataSheets.GetDataSheet("Sheet2").GetHeaders().ElementAt(i - 1).ShouldBeEqualTo("sheet2_header" + i);
+            sut.DataSheets.GetDataSheetByName("Sheet2").GetHeaders().ElementAt(i - 1).ShouldBeEqualTo("sheet2_header" + i);
          }
       }
       [TestCase]

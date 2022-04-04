@@ -117,7 +117,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          if (sheetName == null)
             throw new UnsupportedFormatException(dataSource.Path);
 
-         return AvailableFormats(dataSource.DataSheets.GetDataSheet(sheetName), columnInfos, metaDataCategories);
+         return AvailableFormats(dataSource.DataSheets.GetDataSheetByName(sheetName), columnInfos, metaDataCategories);
       }
 
       public IEnumerable<string> NamesFromConvention
@@ -302,13 +302,13 @@ namespace OSPSuite.Infrastructure.Import.Services
          var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
             Id = md.MetaDataId,
-            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets.GetDataSheet(sheetName).GetColumnDescription(md.ColumnName).Index : -1
+            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets.GetDataSheetByName(sheetName).GetColumnDescription(md.ColumnName).Index : -1
          }).Union
          (
             dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
                Id = md.ColumnName,
-               Index = sheetName => dataSourceFile.DataSheets.GetDataSheet(sheetName).GetColumnDescription(md.ColumnName).Index
+               Index = sheetName => dataSourceFile.DataSheets.GetDataSheetByName(sheetName).GetColumnDescription(md.ColumnName).Index
             })
          ).ToList();
          dataSource.SetMappings(dataSourceFile.Path, mappings);
@@ -327,7 +327,7 @@ namespace OSPSuite.Infrastructure.Import.Services
                continue;
             }
 
-            sheets.AddSheet(dataSourceFile.DataSheets.GetDataSheet(key));
+            sheets.AddSheet(dataSourceFile.DataSheets.GetDataSheetByName(key));
          }
 
          var errors = dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);

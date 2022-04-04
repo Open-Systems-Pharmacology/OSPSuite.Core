@@ -101,7 +101,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private DataSheet getSingleSheet(string sheetName)
       {
-         return _dataSourceFile.DataSheets.GetDataSheet(sheetName);
+         return _dataSourceFile.DataSheets.GetDataSheetByName(sheetName);
       }
 
       public void SetDataFormat(IDataFormat format, IEnumerable<IDataFormat> availableFormats)
@@ -194,7 +194,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             return false;
 
          var activeFilter = GetActiveFilterCriteria();
-         OnTabChanged.Invoke(this, new TabChangedEventArgs() { TabSheet = _dataSourceFile.DataSheets.GetDataSheet(tabName) });
+         OnTabChanged.Invoke(this, new TabChangedEventArgs() { TabSheet = _dataSourceFile.DataSheets.GetDataSheetByName(tabName) });
          View.SetGridSource(tabName);
          View.SetFilter(activeFilter);
          _currentSheetName = tabName;
@@ -221,7 +221,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void RemoveAllButThisTab(string tabName)
       {
          View.ClearTabs();
-         var remainingSheet = _dataSourceFile.DataSheets.GetDataSheet(tabName);
+         var remainingSheet = _dataSourceFile.DataSheets.GetDataSheetByName(tabName);
          _dataSourceFile.DataSheets.Clear();
          _dataSourceFile.DataSheets.AddSheet(remainingSheet);
          View.AddTabs(GetSheetNames());
@@ -232,7 +232,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          DataSheet currentAlreadyLoaded = null;
 
          if (ImportedSheets.Contains(tabName))
-            currentAlreadyLoaded = ImportedSheets.GetDataSheet(tabName);
+            currentAlreadyLoaded = ImportedSheets.GetDataSheetByName(tabName);
 
          ImportedSheets.Clear();
 
