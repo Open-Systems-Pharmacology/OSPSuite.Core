@@ -115,6 +115,8 @@ namespace OSPSuite.Infrastructure.Import.Core
 
          Func<IEnumerable<string>, IEnumerable<string>> maskFunction;
 
+         //we filter columns that don't have a header, using the index in the cases
+         //where the length of the row is longer than the headers
          if (_rawDataTable.Count > 0 && (_headers.Count != _rawDataTable.First().Count))
          {
             maskFunction = (inputList) => inputList.Where((v, i) => indexList.Contains(i));
@@ -126,7 +128,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
          foreach (var itemList in _rawDataTable)
          {
-            resultTable.Rows.Add(maskFunction(itemList).ToArray());
+            resultTable.Rows.Add(maskFunction(itemList).ToArray<object>());
          }
 
          return resultTable;
