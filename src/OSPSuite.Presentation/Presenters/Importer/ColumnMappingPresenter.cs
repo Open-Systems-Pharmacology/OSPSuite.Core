@@ -5,7 +5,6 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
-using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
@@ -106,7 +105,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          ValidateMapping();
          InitializeErrorUnit();
       }
-      
+
       public void InitializeErrorUnit()
       {
          var errorColumnDTO = _mappings.FirstOrDefault(c => (c.ColumnInfo != null) && !c.ColumnInfo.RelatedColumnOf.IsNullOrEmpty());
@@ -125,8 +124,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var measurementColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == errorColumnDTO.ColumnInfo.RelatedColumnOf);
          var measurementColumn = ((MappingDataFormatParameter)measurementColumnDTO?.Source)?.MappedColumn;
 
-         if (measurementColumn != null)
+         if (measurementColumn != null && unitNotSet(errorColumn))
             errorColumn.Unit = measurementColumn.Unit;
+      }
+
+      private bool unitNotSet(Column column)
+      {
+         //when unit is not set and also columnName is not set
+         return (column.Unit.SelectedUnit == null || column.Unit.SelectedUnit == "?" ) 
+                && string.IsNullOrEmpty(column.Unit.ColumnName);
       }
 
       public void SetDataFormat(IDataFormat format)
@@ -591,7 +597,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          switch (model.Source)
          {
             //this is the case for the first setting of Mapping or MetaData. GroupBy and AddGroupBy are never null.
-            case null: 
+            case null:
                switch (model.CurrentColumnType)
                {
                   case ColumnMappingDTO.ColumnType.MetaData:
@@ -611,14 +617,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
             //this is the case for setting a new GroupBy parameter. The AddGroupByFormatParameter corresponds to the line in the ColumnMapping Grid
             //that has the "+" button for adding the GroupBy, that's why in this case we are introducing a new Parameter, instead of changing the existing.
             //The AddGroupByFormatParameter, should never be changed, as the "+" button line should always present in the Grid
-            case AddGroupByFormatParameter _: 
+            case AddGroupByFormatParameter _:
                model.Source = new GroupByDataFormatParameter(model.ExcelColumn);
                _format.Parameters.Add(model.Source);
                setDataFormat(_format.Parameters);
                break;
             //this is the case that corresponds to the changing of the mapping for a Parameter.
             //The Parameter in this case can be Mapping, MetaData or GroupBy
-            default: 
+            default:
             {
                model.Source.ColumnName = model.ExcelColumn;
                switch (model.CurrentColumnType)

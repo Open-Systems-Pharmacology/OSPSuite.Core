@@ -48,12 +48,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          base.GlobalContext();
          _basicFormat = A.Fake<IDataFormat>();
-         A.CallTo(() => _basicFormat.Parameters).Returns(_parameters);
          _view = A.Fake<IColumnMappingView>();
          _importer = A.Fake<IImporter>();
-         A.CallTo(() => _importer.CheckWhetherAllDataColumnsAreMapped(A<ColumnInfoCache>.Ignored,
-            A<IEnumerable<DataFormatParameter>>.Ignored)).Returns(new MappingProblem()
-            { MissingMapping = new List<string>(), MissingUnit = new List<string>() });
       }
 
       protected void UpdateSettings()
@@ -99,8 +95,24 @@ namespace OSPSuite.Presentation.Importer.Presenters
          };
          _mappingParameterEditorPresenter = A.Fake<IMappingParameterEditorPresenter>();
          _metaDataParameterEditorPresenter = A.Fake<IMetaDataParameterEditorPresenter>();
+         A.CallTo(() => _basicFormat.Parameters).Returns(_parameters);
+         A.CallTo(() => _importer.CheckWhetherAllDataColumnsAreMapped(A<ColumnInfoCache>.Ignored,
+            A<IEnumerable<DataFormatParameter>>.Ignored)).Returns(new MappingProblem()
+            { MissingMapping = new List<string>(), MissingUnit = new List<string>() });
 
          sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter);
+      }
+
+      protected List<DataFormatParameter> CreateParameters(MappingDataFormatParameter concentration, MappingDataFormatParameter error)
+      {
+         return new List<DataFormatParameter>()
+         {
+            new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = new UnitDescription("min") }),
+            concentration,
+            error,
+            new GroupByDataFormatParameter("Study id"),
+            new GroupByDataFormatParameter("Patient id")
+         };
       }
    }
 
@@ -149,19 +161,18 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_initializing_error_unit_on_initialized_error : concern_for_ColumnMappingPresenter
+   public class When_initializing_geometric_error_unit : concern_for_ColumnMappingPresenter
    {
+      private List<DataFormatParameter> _errorUnitParameters;
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _basicFormat.Parameters).Returns(new List<DataFormatParameter>()
-         {
-            new MappingDataFormatParameter("Time", new Column() { Name = "Time", Unit = new UnitDescription("min") }),
-            new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") }),
-            new MappingDataFormatParameter("Error",
-               new Column() { Name = "Error", Unit = new UnitDescription("g/l"), ErrorStdDev = Constants.STD_DEV_GEOMETRIC }),
-            new GroupByDataFormatParameter("Study id")
-         });
+         var concentration =
+            new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") });
+         var error = new MappingDataFormatParameter("Error",
+            new Column() { Name = "Error", Unit = new UnitDescription("g/l"), ErrorStdDev = Constants.STD_DEV_GEOMETRIC });
+         _errorUnitParameters = CreateParameters(concentration, error);
+         A.CallTo(() => _basicFormat.Parameters).Returns(_errorUnitParameters);
          UpdateSettings();
       }
 
@@ -175,6 +186,35 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit.SelectedUnit
             .ShouldBeEmpty();
+      }
+   }
+
+   public class When_initializing_already_initialized_error_unit : concern_for_ColumnMappingPresenter
+   {
+      private List<DataFormatParameter> _errorUnitParameters;
+
+      protected override void Context()
+      {
+         base.Context();
+         var concentration =
+            new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") });
+         var error = new MappingDataFormatParameter("Error",
+            new Column() { Name = "Error", Unit = new UnitDescription("g/l"), ErrorStdDev = Constants.STD_DEV_ARITHMETIC });
+         _errorUnitParameters = CreateParameters(concentration, error);
+         A.CallTo(() => _basicFormat.Parameters).Returns(_errorUnitParameters);
+         UpdateSettings();
+      }
+
+      protected override void Because()
+      {
+         sut.InitializeErrorUnit();
+      }
+
+      [Observation]
+      public void the_unit_is_not_changed()
+      {
+         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit.SelectedUnit
+            .ShouldBeEqualTo("g/l");
       }
    }
 
@@ -645,7 +685,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
             ExcelColumn = "Patient id"
          };
          sut.SetDescriptionForRow(_firstModel);
-
       }
 
       protected override void Because()
