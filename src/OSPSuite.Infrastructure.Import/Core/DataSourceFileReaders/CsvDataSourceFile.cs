@@ -24,7 +24,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          if (!(separator is char separatorCharacter)) return;
 
          //we keep a copy of the already loaded sheets, in case the reading fails
-         var alreadyLoadedDataSheets = new DataSheetCollection(DataSheets);
+         var alreadyLoadedDataSheets = new DataSheetCollection();
+         alreadyLoadedDataSheets.CopySheetsFrom(DataSheets);
          DataSheets.Clear();
 
          try
@@ -61,7 +62,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          }
          catch (Exception e)
          {
-            DataSheets = alreadyLoadedDataSheets;
+            DataSheets.CopySheetsFrom(alreadyLoadedDataSheets);
             _logger.AddError(e.Message);
             throw new InvalidObservedDataFileException(e.Message);
          }

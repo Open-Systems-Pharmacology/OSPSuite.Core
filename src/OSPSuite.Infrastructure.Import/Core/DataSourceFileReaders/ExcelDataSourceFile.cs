@@ -17,7 +17,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
       protected override void LoadFromFile(string path)
       {
          //we keep a copy of the already loaded sheets, in case the reading fails
-         var alreadyLoadedDataSheets = new DataSheetCollection(DataSheets);
+         var alreadyLoadedDataSheets = new DataSheetCollection();
+         alreadyLoadedDataSheets.CopySheetsFrom(DataSheets);
          DataSheets.Clear();
 
          try
@@ -53,7 +54,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          }
          catch (Exception ex)
          {
-            DataSheets = alreadyLoadedDataSheets; 
+            DataSheets.CopySheetsFrom(alreadyLoadedDataSheets);
             _logger.AddError(ex.Message);
             throw new InvalidObservedDataFileException(ex.Message);
          }

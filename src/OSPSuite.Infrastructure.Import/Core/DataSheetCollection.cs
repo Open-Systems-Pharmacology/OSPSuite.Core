@@ -14,13 +14,6 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       private readonly Cache<string, DataSheet> _dataSheets = new Cache<string, DataSheet>(x => x.SheetName);
 
-      public DataSheetCollection (DataSheetCollection dataSheetCollection)
-      {
-         _dataSheets = dataSheetCollection._dataSheets.Copy();
-      }
-
-      public DataSheetCollection() { }
-
       public void AddSheet(DataSheet sheet)
       {
          _dataSheets.Add(sheet);
@@ -44,7 +37,6 @@ namespace OSPSuite.Infrastructure.Import.Core
          return sheets;
       }
 
-      
       public IEnumerator<DataSheet> GetEnumerator()
       {
          return _dataSheets.GetEnumerator();
@@ -74,6 +66,11 @@ namespace OSPSuite.Infrastructure.Import.Core
          return filteredDataSheets;
       }
 
+      public void CopySheetsFrom (DataSheetCollection dataSheetsToCopy)
+      {
+         Clear();
+         _dataSheets.AddRange(dataSheetsToCopy._dataSheets);
+      }
       public Cache<string, IDataSet> GetDataSets(IDataFormat format, ColumnInfoCache columnInfos)
       {
          var dataSets = new Cache<string, IDataSet>();

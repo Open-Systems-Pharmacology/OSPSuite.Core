@@ -38,7 +38,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       }
 
       public string FormatCalculatedFrom { get; set; }
-      public DataSheetCollection DataSheets { get; set; } = new DataSheetCollection();
+      public DataSheetCollection DataSheets { get; } = new DataSheetCollection();
       protected DataSourceFile(IImportLogger logger)
       {
          _logger = logger;
