@@ -131,7 +131,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private bool unitNotSet(Column column)
       {
          //when unit is not set and also columnName is not set
-         return (column.Unit.SelectedUnit == "?" || column.Unit.SelectedUnit == null) 
+         return (column.Unit.SelectedUnit == null || column.Unit.SelectedUnit == "?" ) 
                 && string.IsNullOrEmpty(column.Unit.ColumnName);
       }
 
