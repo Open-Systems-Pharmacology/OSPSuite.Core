@@ -459,6 +459,12 @@ namespace OSPSuite.Presentation.Presentation
       {
          sut.AvailableUnitsFor(0).ShouldOnlyContain(_unit1, _unit2);
       }
+
+      [Observation]
+      public void should_return_no_units_for_column_outside_grid()
+      {
+         sut.AvailableUnitsFor(2).ShouldBeEmpty();
+      }
    }
 
    public class When_retrieving_all_the_units_available_for_an_unbound_column_ : concern_for_DataRepositoryDataPresenter
