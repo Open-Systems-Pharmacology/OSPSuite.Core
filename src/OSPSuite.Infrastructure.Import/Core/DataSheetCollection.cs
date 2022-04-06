@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
@@ -13,6 +14,13 @@ namespace OSPSuite.Infrastructure.Import.Core
    public class DataSheetCollection : IEnumerable<DataSheet>
    {
       private readonly Cache<string, DataSheet> _dataSheets = new Cache<string, DataSheet>(x => x.SheetName);
+
+      public DataSheetCollection Clone()
+      {
+         var clone = new DataSheetCollection();
+         _dataSheets.Each(sheet => clone.AddSheet(sheet));
+         return clone;
+      }
 
       public void AddSheet(DataSheet sheet)
       {

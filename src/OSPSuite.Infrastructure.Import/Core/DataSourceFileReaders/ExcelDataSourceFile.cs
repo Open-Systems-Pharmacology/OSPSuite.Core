@@ -17,8 +17,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
       protected override void LoadFromFile(string path)
       {
          //we keep a copy of the already loaded sheets, in case the reading fails
-         var alreadyLoadedDataSheets = new DataSheetCollection();
-         alreadyLoadedDataSheets.CopySheetsFrom(DataSheets);
+         var alreadyLoadedDataSheets = DataSheets.Clone();
          DataSheets.Clear();
 
          try
