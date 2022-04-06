@@ -18,8 +18,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IDataSourceFile _dataSourceFile;
       protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
-      protected Cache<string, DataSheet> _sheetCache;
       protected DataSheet _dataSheet;
+      protected DataSheet _dataSheet2;
+      protected DataSheet _dataSheet3;
+      protected DataSheetCollection _sheetsCollection;
 
       public override void GlobalContext()
       {
@@ -27,14 +29,22 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataSourceFile = A.Fake<IDataSourceFile>();
          _importer = A.Fake<IImporter>();
          _view = A.Fake<IImporterDataView>();
-         _dataSheet = new DataSheet();
-         _dataSheet.RawData = new UnformattedData();
-         _dataSheet.RawData.AddColumn("test_column", 0);
-         _dataSheet.RawData.AddRow(new List<string>() { "1" });
-         _sheetCache = new Cache<string, DataSheet> { { "sheet1", _dataSheet }, { "sheet2", _dataSheet }, { "sheet3", _dataSheet } };
+         _dataSheet = new DataSheet { SheetName = "sheet1" };
+         _dataSheet.AddColumn("test_column", 0);
+         _dataSheet.AddRow(new List<string>() { "1" });
+         _dataSheet2 = new DataSheet { SheetName = "sheet2" };
+         _dataSheet2.AddColumn("test_column", 0);
+         _dataSheet2.AddRow(new List<string>() { "1" });
+         _dataSheet3 = new DataSheet { SheetName = "sheet3" };
+         _dataSheet3.AddColumn("test_column", 0);
+         _dataSheet3.AddRow(new List<string>() { "1" });
+         _sheetsCollection = new DataSheetCollection();
+         _sheetsCollection.AddSheet(_dataSheet);
+         _sheetsCollection.AddSheet(_dataSheet2);
+         _sheetsCollection.AddSheet(_dataSheet3);
          A.CallTo(() => _importer.LoadFile(A<ColumnInfoCache>._, A<string>._, A<IReadOnlyList<MetaDataCategory>>._)).Returns(_dataSourceFile);
          A.CallTo(() => _view.GetActiveFilterCriteria()).Returns("active_filter_criteria");
-         A.CallTo(() => _dataSourceFile.DataSheets).Returns(_sheetCache);
+         A.CallTo(() => _dataSourceFile.DataSheets).Returns(_sheetsCollection);
       }
 
       protected override void Context()
@@ -158,8 +168,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void no_further_action_should_be_taken()
       {
-         sut.Sheets.Keys.ShouldNotContain("sheet1");
-         sut.Sheets.Keys.ShouldContain("sheet2");
+         sut.ImportedSheets.GetDataSheetNames().ShouldNotContain("sheet1");
+         sut.ImportedSheets.GetDataSheetNames().ShouldContain("sheet2");
       }
    }
 
@@ -181,7 +191,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void sheets_should_have_been_cleared()
       {
-         sut.Sheets.Keys.Count().ShouldBeEqualTo(0);
+         sut.ImportedSheets.Count().ShouldBeEqualTo(0);
       }
 
       [Observation]
@@ -210,9 +220,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void no_further_action_should_be_taken()
       {
-         sut.Sheets.Keys.ShouldContain("sheet1");
-         sut.Sheets.Keys.ShouldNotContain("sheet2");
-         sut.Sheets.Keys.ShouldNotContain("sheet3");
+         sut.ImportedSheets.GetDataSheetNames().ShouldContain("sheet1");
+         sut.ImportedSheets.GetDataSheetNames().ShouldNotContain("sheet2");
+         sut.ImportedSheets.GetDataSheetNames().ShouldNotContain("sheet3");
       }
    }
 
@@ -224,7 +234,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          base.Context();
          sut.SetDataSource("test_file");
-         sut.OnImportSheets += (o, a) => sheets = a.Sheets.Keys.ToList();
+         sut.OnImportSheets += (o, a) => sheets = (List<string>)a.SheetNames;
       }
 
       protected override void Because()
@@ -233,7 +243,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
 
       [Observation]
-      public void result_should_be_null()
+      public void result_should_be_sheet_names()
       {
          sheets.ShouldBeEqualTo(new List<string> { "sheet1", "sheet2", "sheet3" });
       }

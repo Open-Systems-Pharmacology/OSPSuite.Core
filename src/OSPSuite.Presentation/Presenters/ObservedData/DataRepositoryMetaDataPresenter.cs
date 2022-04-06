@@ -25,33 +25,33 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       IListener<ObservedDataMetaDataRemovedEvent>
    {
       /// <summary>
-      ///    Adds a new row to the view, but does not affect the repository meta data
+      ///    Adds a new row to the view, but does not affect the repository meta dataSheet
       /// </summary>
       void NewMetaDataAdded();
 
       /// <summary>
-      ///    Changes a value of a meta data name/value pair in the data repository
-      ///    If the data does not exist in the repository it is added
+      ///    Changes a value of a meta dataSheet name/value pair in the dataSheet repository
+      ///    If the dataSheet does not exist in the repository it is added
       /// </summary>
-      /// <param name="metaDataDTO">The new meta data name/value pair</param>
-      /// <param name="oldValue">The old value of the meta data</param>
+      /// <param name="metaDataDTO">The new meta dataSheet name/value pair</param>
+      /// <param name="oldValue">The old value of the meta dataSheet</param>
       void MetaDataValueChanged(MetaDataDTO metaDataDTO, string oldValue);
 
       /// <summary>
-      ///    Changes the name (or key) of a meta data name/value pair in the data repository
-      ///    It will not add data to the repository if the key is not found
+      ///    Changes the name (or key) of a meta dataSheet name/value pair in the dataSheet repository
+      ///    It will not add dataSheet to the repository if the key is not found
       /// </summary>
-      /// <param name="metaDataDTO">The new meta data name/value pair</param>
-      /// <param name="oldName">The old name of the meta data</param>
+      /// <param name="metaDataDTO">The new meta dataSheet name/value pair</param>
+      /// <param name="oldName">The old name of the meta dataSheet</param>
       void MetaDataNameChanged(MetaDataDTO metaDataDTO, string oldName);
 
       /// <summary>
-      ///    Removes the meta data from the observed data repository being edited
+      ///    Removes the meta dataSheet from the observed dataSheet repository being edited
       /// </summary>
       void RemoveMetaData(MetaDataDTO metaDataDTO);
 
       /// <summary>
-      ///    Edits the metadata on multiple data repositories at once
+      ///    Edits the metadata on multiple dataSheet repositories at once
       /// </summary>
       /// <param name="dataRepositories">The repositories to edit</param>
       void EditObservedData(IEnumerable<DataRepository> dataRepositories);
@@ -94,7 +94,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       /// <summary>
       ///    Binds the <paramref name="observedData" /> with the view
       /// </summary>
-      /// <param name="observedData">The data repository that will be edited</param>
+      /// <param name="observedData">The dataSheet repository that will be edited</param>
       public void EditObservedData(DataRepository observedData)
       {
          editObservedData(new List<DataRepository> {observedData}, MetaDataDTO.MetaDataDTORules.All());
@@ -211,7 +211,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       }
 
       /// <summary>
-      ///    Rebinds the repository to the view when meta data changes on a repository
+      ///    Rebinds the repository to the view when meta dataSheet changes on a repository
       /// </summary>
       public void Handle(ObservedDataMetaDataChangedEvent eventToHandle)
       {
@@ -219,7 +219,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       }
 
       /// <summary>
-      ///    Rebinds the repository to the view when meta data is added to the repository
+      ///    Rebinds the repository to the view when meta dataSheet is added to the repository
       /// </summary>
       public void Handle(ObservedDataMetaDataAddedEvent eventToHandle)
       {
@@ -227,7 +227,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       }
 
       /// <summary>
-      ///    Rebinds the repository to the view when meta data is removed from the repository
+      ///    Rebinds the repository to the view when meta dataSheet is removed from the repository
       /// </summary>
       public void Handle(ObservedDataMetaDataRemovedEvent eventToHandle)
       {

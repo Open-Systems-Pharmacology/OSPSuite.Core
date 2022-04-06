@@ -20,8 +20,8 @@ namespace OSPSuite.Infrastructure.Import.Services
    public interface IImporter
    {
       IDataSourceFile LoadFile(ColumnInfoCache columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories);
-      void AddFromFile(IDataFormat format, Cache<string, DataSheet> dataSheets, ColumnInfoCache columnInfos, IDataSource alreadyExisting);
-      IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
+      void AddFromFile(IDataFormat format, DataSheetCollection dataSheets, ColumnInfoCache columnInfos, IDataSource alreadyExisting);
+      IEnumerable<IDataFormat> AvailableFormats(DataSheet dataSheet, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
 
       IEnumerable<string> NamesFromConvention
       (
@@ -64,25 +64,18 @@ namespace OSPSuite.Infrastructure.Import.Services
          _molWeightDimension = dimensionFactory.Dimension(Constants.Dimension.MOLECULAR_WEIGHT);
       }
 
-      public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      public IEnumerable<IDataFormat> AvailableFormats(DataSheet dataSheet, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          return _container.ResolveAll<IDataFormat>()
-            .Select(x => (x, x.SetParameters(data, columnInfos, metaDataCategories)))
+            .Select(x => (x, x.SetParameters(dataSheet, columnInfos, metaDataCategories)))
             .Where(p => p.Item2 > 0)
             .OrderByDescending(p => p.Item2)
             .Select(p => p.x);
       }
 
-      public void AddFromFile(IDataFormat format, Cache<string, DataSheet> dataSheets, ColumnInfoCache columnInfos, IDataSource alreadyExisting)
+      public void AddFromFile(IDataFormat format, DataSheetCollection dataSheets, ColumnInfoCache columnInfos, IDataSource alreadyExisting)
       {
-         var dataSets = new Cache<string, IDataSet>();
-
-         foreach (var sheetKeyValue in dataSheets.KeyValues)
-         {
-            var data = new DataSet();
-            data.AddData(format.Parse(sheetKeyValue.Value.RawData, columnInfos));
-            dataSets.Add(sheetKeyValue.Key, data);
-         }
+         var dataSets = dataSheets.GetDataSets(format, columnInfos); //ToDo: to be made into a new class DataSetCollection instead of a Cache
 
          foreach (var key in dataSets.Keys)
          {
@@ -106,7 +99,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          if (dataSource.DataSheets == null) return null;
 
 
-         foreach (var sheetName in dataSource.DataSheets.Keys)
+         foreach (var sheetName in dataSource.DataSheets.GetDataSheetNames())
          {
             dataSource.AvailableFormats = CalculateFormat(dataSource, columnInfos, metaDataCategories, sheetName).ToList();
             if (dataSource.AvailableFormats.Any())
@@ -124,7 +117,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          if (sheetName == null)
             throw new UnsupportedFormatException(dataSource.Path);
 
-         return AvailableFormats(dataSource.DataSheets[sheetName].RawData, columnInfos, metaDataCategories);
+         return AvailableFormats(dataSource.DataSheets.GetDataSheetByName(sheetName), columnInfos, metaDataCategories);
       }
 
       public IEnumerable<string> NamesFromConvention
@@ -309,22 +302,22 @@ namespace OSPSuite.Infrastructure.Import.Services
          var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
             Id = md.MetaDataId,
-            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
+            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets.GetDataSheetByName(sheetName).GetColumnDescription(md.ColumnName).Index : -1
          }).Union
          (
             dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
                Id = md.ColumnName,
-               Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+               Index = sheetName => dataSourceFile.DataSheets.GetDataSheetByName(sheetName).GetColumnDescription(md.ColumnName).Index
             })
          ).ToList();
          dataSource.SetMappings(dataSourceFile.Path, mappings);
          dataSource.NanSettings = configuration.NanSettings;
          dataSource.SetDataFormat(dataSourceFile.Format);
          dataSource.SetNamingConvention(configuration.NamingConventions);
-         var sheets = new Cache<string, DataSheet>();
+         var sheets = new DataSheetCollection();
          var missingSheets = new List<string>();
-         var sheetList = dataImporterSettings.IgnoreSheetNamesAtImport ? dataSourceFile.DataSheets.Keys : configuration.LoadedSheets;
+         var sheetList = dataImporterSettings.IgnoreSheetNamesAtImport ? dataSourceFile.DataSheets.GetDataSheetNames() : configuration.LoadedSheets;
 
          foreach (var key in sheetList)
          {
@@ -334,7 +327,7 @@ namespace OSPSuite.Infrastructure.Import.Services
                continue;
             }
 
-            sheets.Add(key, dataSourceFile.DataSheets[key]);
+            sheets.AddSheet(dataSourceFile.DataSheets.GetDataSheetByName(key));
          }
 
          var errors = dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);

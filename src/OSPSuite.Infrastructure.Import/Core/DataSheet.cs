@@ -17,31 +17,16 @@ namespace OSPSuite.Infrastructure.Import.Core
          Data = data;
       }
    }
-   public interface IUnformattedData
-   {
-      IEnumerable<string> GetColumn(string columnName);
-      ColumnDescription GetColumnDescription(string columnName);
-      IEnumerable<string> GetHeaders();
-      string GetCell(string columnName, int rowIndex);
-      IEnumerable<UnformattedRow> GetRows(Func<IEnumerable<string>, bool> filter);
 
-      void AddRow(IEnumerable<string> row);
-      void AddColumn(string columnName, int columnIndex);
-      DataTable AsDataTable();
-      UnformattedDataRow GetDataRow(int index);
-      void RemoveEmptyColumns();
-      void RemoveEmptyRows();
-   }
-
-   public class UnformattedData : IUnformattedData
+   public class DataSheet
    {
       private readonly List<List<string>> _rawDataTable = new List<List<string>>();
       private List<string> _emptyColumns = new List<string>();
 
       protected Cache<string, ColumnDescription> _headers =
-         new Cache<string, ColumnDescription>(); //we have to ensure headers and RawData sizes match
+         new Cache<string, ColumnDescription>(); //we have to ensure headers and RawSheetData sizes match
 
-      public UnformattedData(UnformattedData reference)
+      public DataSheet(DataSheet reference)
       {
          _headers = new Cache<string, ColumnDescription>();
          foreach (var header in reference.GetHeaders())
@@ -49,9 +34,10 @@ namespace OSPSuite.Infrastructure.Import.Core
             _headers.Add(header, reference.GetColumnDescription(header));
          }
          _rawDataTable = new List<List<string>>();
+         SheetName = reference.SheetName;
       }
 
-      public UnformattedData()
+      public DataSheet()
       {
          _emptyColumns = new List<string>();
          _headers = new Cache<string, ColumnDescription>();
@@ -106,17 +92,17 @@ namespace OSPSuite.Infrastructure.Import.Core
          }
       }
 
-      public IEnumerable<string> GetColumn(string columnName)
+      public virtual IEnumerable<string> GetColumn(string columnName)
       {
          return getColumn(_headers[columnName].Index);
       }
 
-      public IEnumerable<UnformattedRow> GetRows(Func<IEnumerable<string>, bool> filter)
+      public virtual IEnumerable<UnformattedRow> GetRows(Func<IEnumerable<string>, bool> filter)
       {
          return _rawDataTable.Select((data, index) => new UnformattedRow(index, data)).Where(row => filter(row.Data));
       }
 
-      public DataTable AsDataTable()
+      public DataTable ToDataTable()
       {
          var resultTable = new DataTable();
          var indexList = _headers.Select( h => h.Index);
@@ -124,11 +110,13 @@ namespace OSPSuite.Infrastructure.Import.Core
          // Add columns.
          foreach (var header in _headers.Keys)
          {
-            resultTable.AddColumn(header, typeof(string));
+            resultTable.AddColumn(header);
          }
 
          Func<IEnumerable<string>, IEnumerable<string>> maskFunction;
 
+         //we filter columns that don't have a header, using the index in the cases
+         //where the length of the row is longer than the headers
          if (_rawDataTable.Count > 0 && (_headers.Count != _rawDataTable.First().Count))
          {
             maskFunction = (inputList) => inputList.Where((v, i) => indexList.Contains(i));
@@ -140,8 +128,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
          foreach (var itemList in _rawDataTable)
          {
-            // ReSharper disable once CoVariantArrayConversion
-            resultTable.Rows.Add(maskFunction(itemList).ToArray());
+            resultTable.Rows.Add(maskFunction(itemList).ToArray<object>());
          }
 
          return resultTable;
@@ -152,12 +139,12 @@ namespace OSPSuite.Infrastructure.Import.Core
          return new UnformattedDataRow(_rawDataTable[rowIndex], _headers).GetCellValue(columnName);
       }
 
-      public IEnumerable<string> GetHeaders()
+      public virtual IEnumerable<string> GetHeaders()
       {
          return _headers.Keys;
       }
 
-      public ColumnDescription GetColumnDescription(string columnName)
+      public virtual ColumnDescription GetColumnDescription(string columnName)
       {
          return _headers.Contains(columnName) ? _headers[columnName] : null;
       }
@@ -185,17 +172,13 @@ namespace OSPSuite.Infrastructure.Import.Core
       {
          for (var i = _rawDataTable.Count -1; i >= 0; i--)
          {
-            if (_rawDataTable[i].TrueForAll(IsEmpty))
+            if (_rawDataTable[i].All(x => x.IsNullOrEmpty()))
                _rawDataTable.RemoveAt(i);
             else
                break;
          }
       }
 
-      private static bool IsEmpty(string s)
-      {
-         return s.IsNullOrEmpty();
-      }
-
+      public string SheetName { get; set; }
    }
 }

@@ -11,7 +11,7 @@ namespace OSPSuite.Presentation.Presenters
       void InitializeAnalysis(ISimulationAnalysis simulationAnalysis, IAnalysable analysable);
 
       /// <summary>
-      /// Updates the underlying <see cref="ISimulationAnalysis"/> with the data from <paramref name="analysable"/> (e.g in case of simulation chart, the simulaton results)
+      /// Updates the underlying <see cref="ISimulationAnalysis"/> with the dataSheet from <paramref name="analysable"/> (e.g in case of simulation chart, the simulaton results)
       /// </summary>
       void UpdateAnalysisBasedOn(IAnalysable analysable);
 

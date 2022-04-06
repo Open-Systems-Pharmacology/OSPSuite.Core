@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -155,7 +154,7 @@ namespace OSPSuite.Infrastructure.Import
          A.CallTo(() => _fakedConcentrationDimensionMolar.FindUnit("ng/ml", true)).Returns(null);
          A.CallTo(() => _fakedConcentrationDimensionMass.FindUnit("pmol/l", true)).Returns(null);
 
-         _fakeDataSet.AddData(new List<ParsedDataSet>() {new ParsedDataSet(new List<string>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(),
+         _fakeDataSet.AddData(new List<ParsedDataSet>() {new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(),
             parsedData)});
                
 
@@ -217,7 +216,7 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          var dataSet = new DataSet();
-         dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), parsedData) } });
+         dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          _dimensionFactory = A.Fake<IDimensionFactory>();
          var fractionDimension = A.Fake<IDimension>();
          A.CallTo(() => fractionDimension.Name).Returns(Constants.Dimension.FRACTION);
@@ -232,8 +231,9 @@ namespace OSPSuite.Infrastructure.Import
       [Observation]
       public void throw_on_empty_dataset()
       {
-         var sheets = new Cache<string, DataSheet>();
-         sheets.Add("sheet1", new DataSheet() { RawData = new UnformattedData() });
+         var sheets = new DataSheetCollection();
+         var sheet = new DataSheet() { SheetName = "sheet1" };
+         sheets.AddSheet(sheet);
          sut.AddSheets(sheets, _columnInfos, "").Any().ShouldBeTrue();
       }
    }
@@ -346,7 +346,7 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), parsedData) } });
+         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          sut.DataSets.Clear();
          
       }
@@ -472,7 +472,7 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), parsedData) } });
+         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          sut.DataSets.Clear();
 
       }
@@ -596,7 +596,7 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), parsedData) } });
+         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          sut.DataSets.Clear();
       }
       protected override void Because()
@@ -719,7 +719,7 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), parsedData) } });
+         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          sut.DataSets.Clear();
       }
       protected override void Because()
@@ -809,7 +809,7 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), parsedData) } });
+         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          sut.DataSets.Clear();
       }
       protected override void Because()
@@ -882,7 +882,7 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), parsedData) } });
+         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          sut.DataSets.Clear();
       }
       protected override void Because()
@@ -955,7 +955,7 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), parsedData) } });
+         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          sut.DataSets.Clear();
       }
       protected override void Because()

@@ -21,7 +21,7 @@ namespace OSPSuite.Presentation.Importer.Services
       public ParsedDataSetTest() : base
          (
             new List<string>(), 
-            A.Fake<IUnformattedData>(), 
+            A.Fake<DataSheet>(), 
             new List<UnformattedRow>(), 
             new Dictionary<ExtendedColumn, IList<SimulationPoint>>())
       {
@@ -35,7 +35,7 @@ namespace OSPSuite.Presentation.Importer.Services
    }
    public abstract class ConcernForImporter : ContextSpecification<OSPSuite.Infrastructure.Import.Services.Importer>
    {
-      protected IUnformattedData _basicFormat;
+      protected DataSheet _basicFormat;
       protected IContainer _container;
       protected IDataSourceFileParser _parser;
       protected IDataSetToDataRepositoryMapper _dataRepositoryMapper;
@@ -53,7 +53,7 @@ namespace OSPSuite.Presentation.Importer.Services
          _fakedConcentrationDimension = A.Fake<IDimension>();
          _fakedErrorDimension = A.Fake<IDimension>();
          _fakedDimensionFactory = A.Fake<IDimensionFactory>();
-         _basicFormat = A.Fake<UnformattedData>();
+         _basicFormat = A.Fake<DataSheet>();
          _container = A.Fake<IContainer>();
          _dialogCreator = A.Fake<IDialogCreator>();
          var dataFormat = A.Fake<IDataFormat>();
@@ -216,7 +216,7 @@ namespace OSPSuite.Presentation.Importer.Services
 
    public abstract class ConcernForImporter2 : ContextSpecification<OSPSuite.Infrastructure.Import.Services.Importer>
    {
-      protected IUnformattedData _basicFormat;
+      protected DataSheet _basicFormat;
       protected IContainer _container;
       protected IDataSourceFileParser _parser;
       protected IDataSetToDataRepositoryMapper _dataRepositoryMapper;
@@ -274,7 +274,7 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       protected override void Because()
       {
-         _basicFormat = new TestUnformattedData
+         _basicFormat = new TestDataSheet
          (
             new Cache<string, ColumnDescription>()
             {
@@ -310,7 +310,7 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       protected override void Because()
       {
-         _basicFormat = new TestUnformattedData
+         _basicFormat = new TestDataSheet
          (
             new Cache<string, ColumnDescription>()
             {
@@ -363,7 +363,7 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       protected override void Because()
       {
-         _basicFormat = new TestUnformattedData
+         _basicFormat = new TestDataSheet
          (
             new Cache<string, ColumnDescription>()
             {
@@ -412,7 +412,7 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       protected override void Because()
       {
-         _basicFormat = new TestUnformattedData
+         _basicFormat = new TestDataSheet
          (
             new Cache<string, ColumnDescription>()
             {

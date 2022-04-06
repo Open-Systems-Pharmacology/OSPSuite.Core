@@ -213,7 +213,7 @@ namespace OSPSuite.UI.Views.Importer
 
          if (!_dataPresenter.SelectTab(e.Page.Text)) return;
 
-         if (_dataPresenter.Sheets.Keys.Contains(e.Page.Text))
+         if (_dataPresenter.ImportedSheets.GetDataSheetNames().Contains(e.Page.Text))
             DisableImportCurrentSheet();
          else
             enableImportCurrentSheet();

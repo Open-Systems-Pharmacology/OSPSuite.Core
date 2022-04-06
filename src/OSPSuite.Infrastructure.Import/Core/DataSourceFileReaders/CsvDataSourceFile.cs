@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 {
@@ -17,25 +16,32 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
       {
          _csvSeparatorSelector = csvSeparatorSelector;
       }
-      protected override Cache<string, DataSheet> LoadFromFile(string path)
+      protected override void LoadFromFile(string path)
       {
+         var separator = _csvSeparatorSelector.GetCsvSeparator(path);
+
+         //if separator selection dialog was cancelled, abort
+         if (!(separator is char separatorCharacter)) return;
+
+         //we keep a copy of the already loaded sheets, in case the reading fails
+         var alreadyLoadedDataSheets = DataSheets.Clone();
+         DataSheets.Clear();
+
          try
          {
-            var separator = _csvSeparatorSelector.GetCsvSeparator(path);
-
-            //if separator selection dialog was cancelled, abort
-            if (!(separator is char separatorCharacter)) return null;
- 
             using (var reader = new CsvReaderDisposer(path, separatorCharacter))
             {
                var csv = reader.Csv;
                var headers = csv.GetFieldHeaders();
                var rows = new List<List<string>>(headers.Length);
 
-               var dataSheet = new DataSheet {RawData = new UnformattedData()};
+               var dataSheet = new DataSheet
+               {
+                  SheetName = ""
+               };
 
                for (var i = 0; i < headers.Length; i++)
-                  dataSheet.RawData.AddColumn(headers[i], i);
+                  dataSheet.AddColumn(headers[i], i);
                var currentRow = new string[csv.FieldCount];
 
                while (csv.ReadNextRecord())
@@ -43,22 +49,19 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                   csv.CopyCurrentRecordTo(currentRow);
                   var rowList = currentRow.ToList();
                   var levels = getMeasurementLevels(rowList);
-                  dataSheet.RawData.CalculateColumnDescription(levels);
-                  dataSheet.RawData.AddRow(rowList);
+                  dataSheet.CalculateColumnDescription(levels);
+                  dataSheet.AddRow(rowList);
                }
 
-               dataSheet.RawData.RemoveEmptyColumns();
-               dataSheet.RawData.RemoveEmptyRows();
+               dataSheet.RemoveEmptyColumns();
+               dataSheet.RemoveEmptyRows();
 
-               var loadedData = new Cache<string, DataSheet>()
-               {
-                  { "", dataSheet }
-               };
-               return loadedData;
+               DataSheets.AddSheet(dataSheet);
             }
          }
          catch (Exception e)
          {
+            DataSheets.CopySheetsFrom(alreadyLoadedDataSheets);
             _logger.AddError(e.Message);
             throw new InvalidObservedDataFileException(e.Message);
          }

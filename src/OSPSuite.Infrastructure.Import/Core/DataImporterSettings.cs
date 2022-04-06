@@ -26,7 +26,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       public bool IgnoreSheetNamesAtImport { get; set; } = false;
 
       /// <summary>
-      ///    Gets the default naming convention for the imported observed data
+      ///    Gets the default naming convention for the imported observed dataSheet
       /// </summary>
       public IEnumerable<string> NamingConventions
       {

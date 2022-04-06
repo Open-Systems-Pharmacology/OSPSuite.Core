@@ -13,7 +13,7 @@ namespace OSPSuite.Infrastructure.Import
 {
    public abstract class concern_for_MixColumnsDataFormat : ContextSpecification<MixColumnsDataFormat>
    {
-      protected IUnformattedData _rawData;
+      protected DataSheet _rawDataSheet;
       protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected IEnumerable<string> _headers { get; set; } = new[] { "Time [h]", "Concentration [mol]", "Error [mol]" };
@@ -21,9 +21,9 @@ namespace OSPSuite.Infrastructure.Import
       protected override void Context()
       {
          sut = new MixColumnsDataFormat();
-         _rawData = A.Fake<IUnformattedData>();
-         A.CallTo(() => _rawData.GetHeaders()).ReturnsLazily(() => _headers);
-         A.CallTo(() => _rawData.GetColumnDescription(A<string>.Ignored)).Returns(new ColumnDescription(0) { Level = ColumnDescription.MeasurementLevel.Numeric });
+         _rawDataSheet = A.Fake<DataSheet>();
+         A.CallTo(() => _rawDataSheet.GetHeaders()).ReturnsLazily(() => _headers);
+         A.CallTo(() => _rawDataSheet.GetColumnDescription(A<string>.Ignored)).Returns(new ColumnDescription(0) { Level = ColumnDescription.MeasurementLevel.Numeric });
          _columnInfos = new ColumnInfoCache
          {
             new ColumnInfo { DisplayName = "Time", Name ="Time" },
@@ -49,7 +49,7 @@ namespace OSPSuite.Infrastructure.Import
    {
       protected override void Because()
       {
-         sut.SetParameters(_rawData, _columnInfos, _metaDataCategories);
+         sut.SetParameters(_rawDataSheet, _columnInfos, _metaDataCategories);
       }
 
       [Observation]
@@ -76,7 +76,7 @@ namespace OSPSuite.Infrastructure.Import
 
       protected override void Because()
       {
-         sut.SetParameters(_rawData, _columnInfos, _metaDataCategories);
+         sut.SetParameters(_rawDataSheet, _columnInfos, _metaDataCategories);
       }
 
       [Observation]
@@ -101,7 +101,7 @@ namespace OSPSuite.Infrastructure.Import
 
       protected override void Because()
       {
-         sut.SetParameters(_rawData, _columnInfos, _metaDataCategories);
+         sut.SetParameters(_rawDataSheet, _columnInfos, _metaDataCategories);
       }
 
       [Observation]

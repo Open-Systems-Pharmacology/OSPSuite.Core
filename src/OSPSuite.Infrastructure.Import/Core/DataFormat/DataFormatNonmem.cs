@@ -13,9 +13,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       public override string Name => _name;
       public override string Description => _description;
 
-      protected override string ExtractLloq(string description, IUnformattedData data, List<string> keys, ref double rank)
+      protected override string ExtractLloq(string description, DataSheet dataSheet, List<string> keys, ref double rank)
       {
-         var lloqKey = data.GetHeaders().FindHeader(description + "_LLOQ");
+         var lloqKey = dataSheet.GetHeaders().FindHeader(description + "_LLOQ");
          if (lloqKey == null)
          {
             return "";
@@ -26,12 +26,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          return lloqKey;
       }
 
-      protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
+      protected override UnitDescription ExtractUnits(string description, DataSheet dataSheet, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
       {
-         if (data == null)
+         if (dataSheet == null)
             return new UnitDescription();
 
-         var unitKey = data.GetHeaders().FindHeader(description + "_UNIT");
+         var unitKey = dataSheet.GetHeaders().FindHeader(description + "_UNIT");
          if (unitKey == null)
          {
             return new UnitDescription();
@@ -39,7 +39,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
          keys.Remove(unitKey);
          rank++;
-         return new UnitDescription(data.GetColumn(unitKey).FirstOrDefault(u => !string.IsNullOrEmpty(u)), unitKey);
+         return new UnitDescription(dataSheet.GetColumn(unitKey).FirstOrDefault(u => !string.IsNullOrEmpty(u)), unitKey);
       }
    }
 }
