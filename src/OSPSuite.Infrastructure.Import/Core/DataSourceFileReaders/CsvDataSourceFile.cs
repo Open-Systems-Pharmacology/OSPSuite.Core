@@ -24,7 +24,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          if (!(separator is char separatorCharacter)) return;
 
          //we keep a copy of the already loaded sheets, in case the reading fails
-         var alreadyLoadedDataSheets = (DataSheetCollection)DataSheets.Clone();
+         var alreadyLoadedDataSheets = new DataSheetCollection(DataSheets);
          DataSheets.Clear();
 
          try

@@ -10,9 +10,16 @@ namespace OSPSuite.Infrastructure.Import.Core
    /// <summary>
    ///    a collection of excel dataSheet sheets
    /// </summary>
-   public class DataSheetCollection : IEnumerable<DataSheet>, ICloneable
+   public class DataSheetCollection : IEnumerable<DataSheet>
    {
       private readonly Cache<string, DataSheet> _dataSheets = new Cache<string, DataSheet>(x => x.SheetName);
+
+      public DataSheetCollection (DataSheetCollection dataSheetCollection)
+      {
+         _dataSheets = dataSheetCollection._dataSheets.Copy();
+      }
+
+      public DataSheetCollection() { }
 
       public void AddSheet(DataSheet sheet)
       {
@@ -110,11 +117,6 @@ namespace OSPSuite.Infrastructure.Import.Core
       public IReadOnlyList<string> GetDataSheetNames()
       {
          return _dataSheets.Keys.ToList();
-      }
-
-      public object Clone()
-      {
-         return this.MemberwiseClone();
       }
    }
 }
