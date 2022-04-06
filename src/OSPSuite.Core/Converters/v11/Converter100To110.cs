@@ -38,7 +38,7 @@ namespace OSPSuite.Core.Converters.v11
          var valueCache = new XElement("ValueCache");
 
          valueCache.Add(valuesElement);
-         valueCache.Add(new XElement(Constants.Serialization.KEYS, individualIds.ToByteArray()));
+         valueCache.Add(new XElement(Constants.Serialization.KEYS, individualIds.ToByteString()));
          element.Add(valueCache);
          _converted = true;
       }

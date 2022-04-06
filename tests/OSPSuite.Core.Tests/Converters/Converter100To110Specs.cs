@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Converters.v11;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Serialization;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Converters
 {
@@ -35,6 +36,8 @@ namespace OSPSuite.Core.Converters
       protected override void Because()
       {
          (_version, _converted) = sut.ConvertXml(_element);
+
+
       }
 
       [Observation]
@@ -44,8 +47,21 @@ namespace OSPSuite.Core.Converters
          _converted.ShouldBeTrue();
          var valueCache = _element.Element("ValueCache");
          valueCache.ShouldNotBeNull();
-         var valueElement = valueCache.Elements(Constants.Serialization.VALUES);
+         var valueElement = valueCache.Element(Constants.Serialization.VALUES);
          valueElement.ShouldNotBeNull();
       }
+
+
+      [Observation]
+      public void should_be_able_to_deserialize_the_produce_xml()
+      {
+         var valueCache = _element.Element("ValueCache");
+         var valueElement = valueCache.Element(Constants.Serialization.VALUES);
+         var valueKeys = valueCache.Element(Constants.Serialization.KEYS);
+
+         var keys = valueKeys.Value.ToIntegerArray();
+
+      }
+
    }
 }

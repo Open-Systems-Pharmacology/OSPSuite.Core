@@ -63,7 +63,7 @@ namespace OSPSuite.Core.Serialization.Xml
    public class StringNullableDoubleCacheXmlSerializer : CacheXmlSerializer<string, double?>
    {
       public StringNullableDoubleCacheXmlSerializer()
-         : base(string.Format("StringNullableDoubleCache"))
+         : base("StringNullableDoubleCache")
       {
       }
    }
