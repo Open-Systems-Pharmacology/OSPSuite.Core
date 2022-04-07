@@ -31,7 +31,7 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
       public IEnumerable<OutputParameterSensitivity> AllOutputParameterSensitivitiesFor(string outputPath, string parameterPath)
       {
          return _allOutputParameterSensitivities.Where(
-            x => string.Equals(x.QuantityPath, outputPath) && string.Equals(x.ParameterPath, parameterPath));
+            x => string.Equals(x.OutputPath, outputPath) && string.Equals(x.ParameterPath, parameterPath));
       }
 
       public PKParameterSensitivity PKParameterSensitivityFor(string pkParameterName, string outputPath, string parameterName)

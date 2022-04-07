@@ -3,36 +3,36 @@
    public class OutputParameterSensitivity
    {
       /// <summary>
-      /// Path of varied parameter
+      ///    Path of varied parameter
       /// </summary>
       public string ParameterPath { get; }
 
       /// <summary>
-      ///    Path of the quantity for which values are stored
+      ///    Path of the output for which values are stored
       /// </summary>
-      public string QuantityPath { get; set; }
+      public string OutputPath { get; set; }
 
       /// <summary>
-      /// Value of actual parameter for this variation
+      ///    Values for the given <see cref="OutputPath" />
+      /// </summary>
+      public float[] OutputValues { get; }
+
+      /// <summary>
+      ///    Value of actual parameter for this variation
       /// </summary>
       public double ParameterValue { get; }
 
       /// <summary>
-      /// Values for the given <see cref="QuantityPath"/>
+      ///    Name of the parameter in the sensitivity
       /// </summary>
-      public float[] QuantityValues { get; }
+      public string SensitivityParameterName { get; }
 
-      /// <summary>
-      /// NAme of the parameter in the sensitivity
-      /// </summary>
-      public  string SensitivityParameterName { get; }
-
-      public OutputParameterSensitivity(string sensitivityParameterName, string parameterPath, double parameterValue, string quantityPath, float[] quantityValues)
+      public OutputParameterSensitivity(string sensitivityParameterName, string parameterPath, double parameterValue, string outputPath, float[] outputValues)
       {
          ParameterPath = parameterPath;
-         QuantityPath = quantityPath;
+         OutputPath = outputPath;
          ParameterValue = parameterValue;
-         QuantityValues = quantityValues;
+         OutputValues = outputValues;
          SensitivityParameterName = sensitivityParameterName;
       }
    }

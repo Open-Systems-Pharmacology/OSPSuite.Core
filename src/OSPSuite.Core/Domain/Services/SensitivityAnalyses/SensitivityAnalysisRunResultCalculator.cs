@@ -36,9 +36,15 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
       {
          variationData.AllVariations.Each(variation =>
          {
+            //one variation corresponds to one row in the simulation table (e.g. one IndividualId)
+            //this is the variation of one parameter compared to the base simulation
             var resultsForVariation = simulationResults.ResultsFor(variation.VariationId);
+
+            //Retrieve this parameter
             var sensitivityParameter = sensitivityAnalysis.SensitivityParameterByName(variation.ParameterName);
             var parameterPath = sensitivityParameter.ParameterSelection.Path;
+
+            //For all output, we add the sensitivity
             resultsForVariation.AllValues.Each(outputValue =>
             {
                var outputParameterSensitivity = calculateOutputParameterSensitivity(outputValue, variation, parameterPath);
