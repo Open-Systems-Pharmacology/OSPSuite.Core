@@ -49,12 +49,12 @@ namespace OSPSuite.Core.Domain
       private VariationData _variationData;
       private SensitivityAnalysisRunResult _sensitivityAnalysisResults;
       private DataTable _dataTable;
-      private RunOptions _runOptions;
+      private SensitivityAnalysisRunOptions _runOptions;
 
       protected override void Context()
       {
          base.Context();
-         _runOptions = new RunOptions();
+         _runOptions = new SensitivityAnalysisRunOptions();
          _allEvents = new List<SensitivityAnalysisEvent>();
          A.CallTo(() => _eventPublisher.PublishEvent(A<SensitivityAnalysisStartedEvent>._))
             .Invokes(x => _allEvents.Add(x.GetArgument<SensitivityAnalysisStartedEvent>(0)));
@@ -73,7 +73,7 @@ namespace OSPSuite.Core.Domain
          A.CallTo(() => _populationRunner.RunPopulationAsync(_modelCoreSimulation, _runOptions,  _dataTable, null, null)).ReturnsAsync(_populationRunResult);
 
          _sensitivityAnalysisResults=new SensitivityAnalysisRunResult();
-         A.CallTo(() => _runResultCalculator.CreateFor(_sensitivityAnalysis, _variationData, _populationRunResult.Results)).Returns(_sensitivityAnalysisResults);
+         A.CallTo(() => _runResultCalculator.CreateFor(_sensitivityAnalysis, _variationData, _populationRunResult.Results, false)).Returns(_sensitivityAnalysisResults);
 
       }
 

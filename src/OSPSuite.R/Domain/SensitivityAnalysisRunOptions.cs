@@ -1,8 +1,6 @@
-﻿using OSPSuite.Core.Domain;
-
-namespace OSPSuite.R.Domain
+﻿namespace OSPSuite.R.Domain
 {
-   public class SensitivityAnalysisRunOptions : RunOptions
+   public class SensitivityAnalysisRunOptions : Core.Domain.SensitivityAnalyses.SensitivityAnalysisRunOptions
    {
       /// <summary>
       ///    Specifies whether progress bar should be shown during simulation run. Default is <c>true</c>

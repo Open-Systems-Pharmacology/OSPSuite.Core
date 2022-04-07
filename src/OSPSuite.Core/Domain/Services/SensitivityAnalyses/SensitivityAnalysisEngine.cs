@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using OSPSuite.Utility.Events;
 using OSPSuite.Core.Domain.Mappers;
-using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Events;
 
@@ -11,7 +9,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 {
    public interface ISensitivityAnalysisEngine : IDisposable
    {
-      Task StartAsync(SensitivityAnalysis sensitivityAnalysis, RunOptions runOptions);
+      Task StartAsync(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions);
 
       void Stop();
 
@@ -56,7 +54,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
          _populationRunner.SimulationProgress += simulationProgress;
       }
 
-      public async Task StartAsync(SensitivityAnalysis sensitivityAnalysis, RunOptions runOptions)
+      public async Task StartAsync(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions)
       {
          _sensitivityAnalysis = sensitivityAnalysis;
          _eventPublisher.PublishEvent(new SensitivityAnalysisStartedEvent(sensitivityAnalysis));
@@ -67,7 +65,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
             _simulationPersistableUpdater.UpdateSimulationPersistable(modelCoreSimulation);
             var variationData = _sensitivityAnalysisVariationDataCreator.CreateForRun(sensitivityAnalysis);
             var runResults = await _populationRunner.RunPopulationAsync(modelCoreSimulation, runOptions,  variationData.ToDataTable());
-            sensitivityAnalysis.Results = await calculateSensitivityBasedOn(sensitivityAnalysis, variationData, runResults);
+            sensitivityAnalysis.Results = await calculateSensitivityBasedOn(sensitivityAnalysis, variationData, runResults, runOptions);
             _eventPublisher.PublishEvent(new SensitivityAnalysisResultsUpdatedEvent(sensitivityAnalysis));
          }
          finally
@@ -77,9 +75,9 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
          }
       }
 
-      private Task<SensitivityAnalysisRunResult> calculateSensitivityBasedOn(SensitivityAnalysis sensitivityAnalysis, VariationData variationData, PopulationRunResults runResults)
+      private Task<SensitivityAnalysisRunResult> calculateSensitivityBasedOn(SensitivityAnalysis sensitivityAnalysis, VariationData variationData, PopulationRunResults runResults, SensitivityAnalysisRunOptions sensitivityAnalysisRunOptions)
       {
-         return Task.Run(() => _runResultCalculator.CreateFor(sensitivityAnalysis, variationData, runResults.Results));
+         return Task.Run(() => _runResultCalculator.CreateFor(sensitivityAnalysis, variationData, runResults.Results, sensitivityAnalysisRunOptions.SaveOutputParameterSensitivities));
       }
 
       private void simulationProgress(object sender, MultipleSimulationsProgressEventArgs eventArgs)

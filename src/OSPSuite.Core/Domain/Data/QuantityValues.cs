@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Domain.Data
 
       /// <summary>
       ///    Only required because charts requires ColumnId to defined curves
-      /// </summary>
+      /// </summary> 
       public virtual string ColumnId { get; set; }
 
       /// <summary>

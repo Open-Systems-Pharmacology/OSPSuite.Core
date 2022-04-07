@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -6,12 +7,14 @@ using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.R.Domain;
 using SensitivityAnalysis = OSPSuite.R.Domain.SensitivityAnalysis;
+using SensitivityAnalysisRunOptions = OSPSuite.R.Domain.SensitivityAnalysisRunOptions;
 
 namespace OSPSuite.R.Services
 {
    public abstract class concern_for_SensitivityAnalysisRunner : ContextForIntegration<ISensitivityAnalysisRunner>
    {
       protected SensitivityAnalysisRunResult _result;
+
       protected override void Context()
       {
          sut = Api.GetSensitivityAnalysisRunner();
@@ -43,7 +46,60 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_run_the_simulation_as_expected()
       {
-         _result.AllPKParameterSensitivities.Select(x=>x.ParameterName).Distinct().ShouldOnlyContain("Liver-Volume");
+         _result.AllPKParameterSensitivities.Select(x => x.ParameterName).Distinct().ShouldOnlyContain("Liver-Volume");
+      }
+
+      [Observation]
+      public void should_not_calculate_output_sensitivities()
+      {
+         _result.AllOutputParameterSensitivities.ShouldBeEmpty();
+      }
+   }
+
+   public class When_running_a_sensitivity_analysis_for_a_simulation_with_predefined_parameters_and_the_simulation_results_should_also_be_exported : concern_for_SensitivityAnalysisRunner
+   {
+      private SensitivityAnalysis _sensitivityAnalysis;
+      private Simulation _simulation;
+      private SensitivityAnalysisRunOptions _runOptions;
+      private IReadOnlyList<string> parameterPaths;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         var simulationFile = HelperForSpecs.DataFile("S1.pkml");
+         var simulationPersister = Api.GetSimulationPersister();
+         _simulation = simulationPersister.LoadSimulation(simulationFile);
+         _sensitivityAnalysis = new SensitivityAnalysis(_simulation) {NumberOfSteps = 2, VariationRange = 0.2};
+         var containerTask = Api.GetContainerTask();
+         var liverVolumes = containerTask.AllParametersMatching(_simulation, "Organism|Liver|Volume");
+         parameterPaths = liverVolumes.Select(x => x.ConsolidatedPath()).ToArray();
+         _sensitivityAnalysis.AddParameterPaths(parameterPaths);
+         _runOptions = new SensitivityAnalysisRunOptions {SaveOutputParameterSensitivities = true};
+      }
+
+      protected override void Because()
+      {
+         _result = sut.Run(_sensitivityAnalysis, _runOptions);
+      }
+
+      [Observation]
+      public void should_run_the_simulation_as_expected()
+      {
+         _result.AllPKParameterSensitivities.Select(x => x.ParameterName).Distinct().ShouldOnlyContain("Liver-Volume");
+      }
+
+      [Observation]
+      public void should_have_calculated_output_sensitivities()
+      {
+         _result.AllOutputParameterSensitivities.ShouldNotBeEmpty();
+         foreach (var outputPath in _result.AllQuantityPaths)
+         {
+            foreach (var parameterPath in parameterPaths)
+            {
+               var outputParameterSensitivity = _result.AllOutputParameterSensitivitiesFor(outputPath, parameterPath);
+               outputParameterSensitivity.Count().ShouldBeEqualTo(4);
+            }
+         }
       }
    }
 
@@ -61,13 +117,13 @@ namespace OSPSuite.R.Services
          var simulationPersister = Api.GetSimulationPersister();
          var pkParametersTask = Api.GetPKParameterTask();
          _simulation = simulationPersister.LoadSimulation(simulationFile);
-         _sensitivityAnalysis = new SensitivityAnalysis(_simulation) { NumberOfSteps = 2, VariationRange = 0.2 };
+         _sensitivityAnalysis = new SensitivityAnalysis(_simulation) {NumberOfSteps = 2, VariationRange = 0.2};
 
          //Should calculate CMax/100
          _userDefinedPKParameter = new UserDefinedPKParameter {Name = "Toto", NormalizationFactor = 100, StandardPKParameter = StandardPKParameter.C_max};
          pkParametersTask.AddUserDefinedPKParameter(_userDefinedPKParameter);
 
-         _userDefinedCLParameter = new UserDefinedPKParameter { Name = "MyCL",  StandardPKParameter = StandardPKParameter.CL };
+         _userDefinedCLParameter = new UserDefinedPKParameter {Name = "MyCL", StandardPKParameter = StandardPKParameter.CL};
          pkParametersTask.AddUserDefinedPKParameter(_userDefinedCLParameter);
 
          var containerTask = Api.GetContainerTask();

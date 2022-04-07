@@ -88,7 +88,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_return_the_expected_pk_parameter_sensitivity()
       {
-         sut.AllFor(_pkParameterSensitivity1.PKParameterName, _pkParameterSensitivity1.QuantityPath).ShouldOnlyContain(_pkParameterSensitivity1);
+         sut.AllPKParameterSensitivitiesFor(_pkParameterSensitivity1.PKParameterName, _pkParameterSensitivity1.QuantityPath).ShouldOnlyContain(_pkParameterSensitivity1);
       }
    }
 
