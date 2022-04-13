@@ -1,18 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Validation;
-using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.SensitivityAnalyses
 {
    public class SensitivityParameter : Container
    {
       public virtual ParameterSelection ParameterSelection { get; set; }
-      public virtual IParameter Parameter => ParameterSelection.Parameter;
-      public virtual double DefaultValue => Parameter.Value;
+
       public virtual SensitivityAnalysis SensitivityAnalysis { get; set; }
+
+      public virtual IParameter Parameter => ParameterSelection.Parameter;
+
+      public virtual double DefaultValue => Parameter.Value;
 
       public SensitivityParameter()
       {
@@ -20,9 +23,11 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
       }
 
       public virtual IParameter VariationRangeParameter => this.Parameter(Constants.Parameters.VARIATION_RANGE);
+
       public virtual double VariationRangeValue => VariationRangeParameter.Value;
 
       public virtual IParameter NumberOfStepsParameter => this.Parameter(Constants.Parameters.NUMBER_OF_STEPS);
+
       public virtual int NumberOfStepsValue => NumberOfStepsParameter.Value.ConvertedTo<int>();
 
       public virtual bool Analyzes(ParameterSelection parameterSelection)
@@ -49,15 +54,9 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
          }
       }
 
-      private IEnumerable<double> purify(IEnumerable<double> values)
-      {
-         return values.Where(valueIsValid);
-      }
+      private IEnumerable<double> purify(IEnumerable<double> values) => values.Where(valueIsValid);
 
-      private bool valueIsValid(double value)
-      {
-         return Parameter.Validate(x => x.Value, value).IsEmpty;
-      }
+      private bool valueIsValid(double value) => Parameter.Validate(x => x.Value, value).IsEmpty;
 
       public virtual void UpdateSimulation(ISimulation newSimulation)
       {
@@ -101,7 +100,7 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
                if (otherSensitivityParameter == null)
                   return true;
 
-               return Equals(otherSensitivityParameter,sensitivityParameter);
+               return Equals(otherSensitivityParameter, sensitivityParameter);
             })
             .WithError((field, name) => Error.NameAlreadyExistsInContainerType(name, ObjectTypes.SensitivityParameter));
       }

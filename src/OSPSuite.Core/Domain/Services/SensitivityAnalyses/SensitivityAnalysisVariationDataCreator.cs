@@ -20,9 +20,9 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
             DefaultValues = sensitivityAnalysis.AllSensitivityParameters.Select(x => x.Parameter.Value).ToList(),
          };
 
-         sensitivityAnalysis.AllSensitivityParameters.Each(parameter =>
+         sensitivityAnalysis.AllSensitivityParameters.Each((parameter,index) =>
          {
-            variationData.AddVariationValues(parameter.Name, sensitivityAnalysis.AllParameterVariationsFor(parameter).ToList());
+            variationData.AddVariationValues(parameter.Name, index, sensitivityAnalysis.AllParameterVariationsFor(parameter).ToList());
          });
 
          return variationData;
