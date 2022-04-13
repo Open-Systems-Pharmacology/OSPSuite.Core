@@ -74,7 +74,7 @@ namespace OSPSuite.R.Services
          var liverVolumes = containerTask.AllParametersMatching(_simulation, "Organism|Liver|Volume");
          parameterPaths = liverVolumes.Select(x => x.ConsolidatedPath()).ToArray();
          _sensitivityAnalysis.AddParameterPaths(parameterPaths);
-         _runOptions = new SensitivityAnalysisRunOptions {SaveOutputParameterSensitivities = true};
+         _runOptions = new SensitivityAnalysisRunOptions {ReturnOutputValues = true};
       }
 
       protected override void Because()

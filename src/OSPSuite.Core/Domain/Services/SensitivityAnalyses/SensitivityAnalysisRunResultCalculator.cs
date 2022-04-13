@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 {
    public interface ISensitivityAnalysisRunResultCalculator
    {
-      SensitivityAnalysisRunResult CreateFor(SensitivityAnalysis sensitivityAnalysis, VariationData variationData, SimulationResults simulationResults, bool saveOutputParameterSensitivities);
+      SensitivityAnalysisRunResult CreateFor(SensitivityAnalysis sensitivityAnalysis, VariationData variationData, SimulationResults simulationResults, bool addOutputParameterSensitivitiesToResult);
    }
 
    public class SensitivityAnalysisRunResultCalculator : ISensitivityAnalysisRunResultCalculator
@@ -20,13 +20,13 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
          _pkAnalysesTask = pkAnalysesTask;
       }
 
-      public SensitivityAnalysisRunResult CreateFor(SensitivityAnalysis sensitivityAnalysis, VariationData variationData, SimulationResults simulationResults, bool saveOutputParameterSensitivities)
+      public SensitivityAnalysisRunResult CreateFor(SensitivityAnalysis sensitivityAnalysis, VariationData variationData, SimulationResults simulationResults, bool addOutputParameterSensitivitiesToResult)
       {
          var sensitivityRunResult = new SensitivityAnalysisRunResult();
 
          addPKAnalysisSensitivities(variationData, simulationResults, sensitivityRunResult, sensitivityAnalysis);
 
-         if (saveOutputParameterSensitivities)
+         if (addOutputParameterSensitivitiesToResult)
             addOutputSensitivities(variationData, simulationResults, sensitivityRunResult, sensitivityAnalysis);
 
          return sensitivityRunResult;

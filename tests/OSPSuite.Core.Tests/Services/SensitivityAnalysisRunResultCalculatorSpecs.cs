@@ -89,7 +89,7 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         _result = sut.CreateFor(_sensitivityAnalysis, _variationData, _simulationResults, saveOutputParameterSensitivities: false);
+         _result = sut.CreateFor(_sensitivityAnalysis, _variationData, _simulationResults, addOutputParameterSensitivitiesToResult: false);
       }
 
       [Observation]
@@ -198,7 +198,7 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         _result = sut.CreateFor(_sensitivityAnalysis, _variationData, _simulationResults, saveOutputParameterSensitivities: true);
+         _result = sut.CreateFor(_sensitivityAnalysis, _variationData, _simulationResults, addOutputParameterSensitivitiesToResult: true);
       }
 
       [Observation]
