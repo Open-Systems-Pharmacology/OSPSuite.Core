@@ -10,7 +10,7 @@
       /// <summary>
       ///    Path of the output for which values are stored
       /// </summary>
-      public string OutputPath { get; set; }
+      public string OutputPath { get; }
 
       /// <summary>
       ///    Values for the given <see cref="OutputPath" />
