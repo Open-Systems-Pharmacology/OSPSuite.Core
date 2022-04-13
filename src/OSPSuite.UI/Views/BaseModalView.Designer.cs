@@ -36,7 +36,7 @@ namespace OSPSuite.UI.Views
          this.btnExtra = new OSPSuite.UI.Controls.UxSimpleButton();
          this.btnCancel = new OSPSuite.UI.Controls.UxSimpleButton();
          this.tablePanel = new DevExpress.Utils.Layout.TablePanel();
-         ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();   
          ((System.ComponentModel.ISupportInitialize)(this.tablePanel)).BeginInit();
          this.tablePanel.SuspendLayout();
          this.SuspendLayout();
