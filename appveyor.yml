@@ -50,7 +50,6 @@ skip_commits:
 branches:
   only:
     - develop
-    - 1591-color-grouping-contextMenu-refactoring
 
 test:
   assemblies:
