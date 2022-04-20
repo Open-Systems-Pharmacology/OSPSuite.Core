@@ -73,8 +73,8 @@ namespace OSPSuite.Core.Domain.Services
 
       public bool Delete(IEnumerable<DataRepository> observedDataToBeRemoved, bool silent = false)
       {
-         var observedDataToRemoveList = observedDataToBeRemoved?.ToList();
-         if (observedDataToRemoveList == null || !observedDataToRemoveList.Any())
+         var observedDataToRemoveList = observedDataToBeRemoved.ToList();
+         if (!observedDataToRemoveList.Any())
             return true;
 
          var usedInAnalyzablesCache = new Cache<DataRepository, IEnumerable<IUsesObservedData>>();
