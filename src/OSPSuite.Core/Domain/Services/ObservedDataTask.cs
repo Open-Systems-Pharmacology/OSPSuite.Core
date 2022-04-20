@@ -73,6 +73,9 @@ namespace OSPSuite.Core.Domain.Services
       {
          var observedDataToRemoveList = observedDataToBeRemoved.ToList();
 
+         if (observedDataToRemoveList.Count < 1) 
+            return true;
+
          var usedInAnalyzablesCache = new Cache<DataRepository, IEnumerable<IUsesObservedData>>();
 
          observedDataToRemoveList.Each(x => { usedInAnalyzablesCache[x] = allUsersOfObservedData(x); });
