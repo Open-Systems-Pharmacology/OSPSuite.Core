@@ -12,6 +12,7 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <PackageProjectUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</PackageProjectUrl>
     <PackageIcon>logo.png</PackageIcon>
+    <PackageIconUrl>https://raw.githubusercontent.com/Open-Systems-Pharmacology/Suite/master/logo.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</RepositoryUrl>
     <PackageTags>open-systems-pharmacology, ospsuite-components</PackageTags>
     <Description>Presentation Serialization functionalities for the Open Systems Pharmacology Suite</Description>
