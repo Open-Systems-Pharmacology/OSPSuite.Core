@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
       /// </summary>
       /// <param name="classificationNode">The node whose leaf nodes contain the observed data to be edited</param>
       /// <returns>The MenuBarButton</returns>
-      public static IMenuBarButton CreateEditMultipleMetaDataMenuButton(ITreeNode classificationNode)
+      public static IMenuBarButton EditMultipleMetaData(ITreeNode classificationNode)
       {
          var repositories = classificationNode.AllNodes<ObservedDataNode>().Select(x => x.Tag.Repository);
 
@@ -32,7 +32,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
       /// </summary>
       /// <param name="userSettings">The user settings that contain Color Grouping option</param>
       /// <returns>The MenuBarButton</returns>
-      public static IMenuBarButton CreateEditMultipleMetaDataMenuButton(IPresentationUserSettings userSettings)
+      public static IMenuBarButton ColorGroupObservedData(IPresentationUserSettings userSettings)
       {
          return CreateMenuCheckButton.WithCaption(MenuNames.ColorGroupObservedData)
             .WithChecked(userSettings.ColorGroupObservedDataFromSameFolder)

@@ -14,7 +14,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
       protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(ClassificationNode classificationNode, IExplorerPresenter presenter)
       {
-         yield return ObservedDataClassificationCommonContextMenuItems.CreateEditMultipleMetaDataMenuButton(classificationNode);
+         yield return ObservedDataClassificationCommonContextMenuItems.EditMultipleMetaData(classificationNode);
 
          foreach (var item in base.AllMenuItemsFor(classificationNode, presenter))
          {
