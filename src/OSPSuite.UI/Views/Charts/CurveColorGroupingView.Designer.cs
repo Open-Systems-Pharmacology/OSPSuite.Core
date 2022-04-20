@@ -37,7 +37,7 @@ namespace OSPSuite.UI.Views.Charts
          this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.applyColorGroupingButton = new DevExpress.XtraEditors.SimpleButton();
-         this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.layoutApplyColorGroupButton = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
@@ -47,7 +47,7 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutApplyColorGroupButton)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).BeginInit();
          this.SuspendLayout();
          // 
@@ -89,7 +89,7 @@ namespace OSPSuite.UI.Views.Charts
             this.layoutControlItem1,
             this.layoutControlItem2,
             this.emptySpaceItem1,
-            this.layoutControlItem3,
+            this.layoutApplyColorGroupButton,
             this.emptySpaceItem2});
          this.Root.Name = "Root";
          this.Root.Size = new System.Drawing.Size(1035, 548);
@@ -132,12 +132,12 @@ namespace OSPSuite.UI.Views.Charts
          // 
          // layoutControlItem3
          // 
-         this.layoutControlItem3.Control = this.applyColorGroupingButton;
-         this.layoutControlItem3.Location = new System.Drawing.Point(507, 450);
-         this.layoutControlItem3.Name = "layoutControlItem3";
-         this.layoutControlItem3.Size = new System.Drawing.Size(508, 58);
-         this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem3.TextVisible = false;
+         this.layoutApplyColorGroupButton.Control = this.applyColorGroupingButton;
+         this.layoutApplyColorGroupButton.Location = new System.Drawing.Point(507, 450);
+         this.layoutApplyColorGroupButton.Name = "layoutApplyColorGroupButton";
+         this.layoutApplyColorGroupButton.Size = new System.Drawing.Size(508, 58);
+         this.layoutApplyColorGroupButton.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutApplyColorGroupButton.TextVisible = false;
          // 
          // emptySpaceItem2
          // 
@@ -163,7 +163,7 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutApplyColorGroupButton)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).EndInit();
          this.ResumeLayout(false);
 
@@ -179,7 +179,7 @@ namespace OSPSuite.UI.Views.Charts
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
       private DevExpress.XtraEditors.SimpleButton applyColorGroupingButton;
-      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem3;
+      private DevExpress.XtraLayout.LayoutControlItem layoutApplyColorGroupButton;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem2;
    }
 }

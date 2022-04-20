@@ -103,16 +103,10 @@ namespace OSPSuite.Core.Services
 
    public class When_the_observed_data_task_is_deleting_empty_observed_data : concern_for_ObservedDataTask
    {
-      private bool _result;
-      protected override void Because()
-      {
-         _result = sut.Delete(new List<DataRepository>());
-      }
-
       [Observation]
       public void should_return_true()
       {
-         _result.ShouldBeTrue();
+         sut.Delete(new List<DataRepository>()).ShouldBeTrue();
       }
    }
 

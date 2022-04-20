@@ -77,6 +77,7 @@ namespace OSPSuite.UI.Views.Charts
          panelChartSettings.Refresh();
          panelCurveOptions.Refresh();
          panelDataBrowser.Refresh();
+         panelCurveColorGrouping.Refresh();
       }
 
       protected override void OnVisibleChanged(EventArgs e)
@@ -179,6 +180,15 @@ namespace OSPSuite.UI.Views.Charts
       public void SetChartExportSettingsView(IView view)
       {
          panelChartExportSettings.FillWith(view);
+      }
+
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         layoutColorGrouping.Text = Captions.CurvesColorGrouping;
+         layoutChartExportOptions.Text = Captions.ChartExportOptions;
+         layoutChartOptions.Text = Captions.ChartOptions;
+         layoutCurveAndChartSettings.Text = Captions.CurveAndAxisSettings;
       }
    }
 }

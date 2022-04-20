@@ -258,3 +258,5 @@ paket-files/
 /tests/OSPSuite.Core.Tests/OSPSuite.SimModelSolver_CVODES282.dll
 /src/OSPSuite.Core/include
 /tests/OSPSuite.Core.Tests/include
+
+licenses.licx

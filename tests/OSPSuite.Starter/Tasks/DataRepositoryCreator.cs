@@ -130,6 +130,9 @@ namespace OSPSuite.Starter.Tasks
          if (lloq.HasValue)
             addLLOQToDataColumns(dataRepository.AllButBaseGrid(), lloq.Value);
 
+         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>{Name = "Meta1", Value = "Value1"});
+         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>{Name = "Meta2", Value = "Value2"});
+         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>{Name = "Meta3", Value = "Value3"});
          return dataRepository;
       }
 
