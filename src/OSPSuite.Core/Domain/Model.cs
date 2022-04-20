@@ -1,6 +1,5 @@
 ﻿using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain
@@ -27,9 +26,13 @@ namespace OSPSuite.Core.Domain
       string MoleculeNameFor(string quantityPath);
 
       /// <summary>
-      ///    Returns the molecule name associated with the <paramref name="quantity" />
+      ///    Returns the molecule name associated with the <paramref name="entity" />:
+      ///    1-If the <paramref name="entity" /> is a molecule or a molecule container return its name
+      ///    2-If the entity is in a container (direct or indirect) that is a molecule or a molecule container, return the name
+      ///    of the ancestor
+      ///    3-Otherwise, returns an empty string
       /// </summary>
-      string MoleculeNameFor(IQuantity quantity);
+      string MoleculeNameFor(IEntity entity);
    }
 
    public class Model : ObjectBase, IModel
@@ -60,16 +63,23 @@ namespace OSPSuite.Core.Domain
 
       public string MoleculeNameFor(string quantityPath)
       {
-         var quantity = Root?.EntityAt<IQuantity>(quantityPath.ToPathArray());
-         return MoleculeNameFor(quantity);
+         var entity = Root?.EntityAt<IEntity>(quantityPath.ToPathArray());
+         return MoleculeNameFor(entity);
       }
 
-      public string MoleculeNameFor(IQuantity quantity)
+      public string MoleculeNameFor(IEntity entity)
       {
-         if (quantity == null)
+         if (entity == null)
             return string.Empty;
 
-         return quantity.IsAnImplementationOf<IMoleculeAmount>() ? quantity.Name : quantity.ParentContainer?.Name;
+         switch (entity)
+         {
+            case IMoleculeAmount _:
+            case IContainer container when container.ContainerType == ContainerType.Molecule:
+               return entity.Name;
+         }
+
+         return MoleculeNameFor(entity.ParentContainer);
       }
 
       public double? MolWeightFor(string quantityPath)
