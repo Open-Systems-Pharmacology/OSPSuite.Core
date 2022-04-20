@@ -34,7 +34,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
       /// <returns>The MenuBarButton</returns>
       public static IMenuBarButton CreateEditMultipleMetaDataMenuButton(IPresentationUserSettings userSettings)
       {
-         return CreateMenuCheckButton.WithCaption(Captions.ColorGroupObservedDataContextMenu)
+         return CreateMenuCheckButton.WithCaption(MenuNames.ColorGroupObservedData)
             .WithChecked(userSettings.ColorGroupObservedDataFromSameFolder)
             .WithCheckedAction(colorGroup => userSettings.ColorGroupObservedDataFromSameFolder = colorGroup);
       }
