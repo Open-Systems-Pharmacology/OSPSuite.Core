@@ -43,7 +43,6 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       {
          _dataRepositoryTask = dataRepositoryTask;
          _editObservedDataTask = editObservedDataTask;
-         DisableEdition();
       }
 
       public void DisableEdition()
