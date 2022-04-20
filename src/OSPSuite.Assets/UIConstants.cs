@@ -194,6 +194,10 @@ namespace OSPSuite.Assets
       public static readonly string EditManually = "Edit manually";
       public static readonly string ShouldColorGroupObservedData = "Color group observed data from same folder when dropping to chart";
       public static readonly string EditAllCurvesProperties = "Edit Options for Selected";
+      public static readonly string CurvesAndAxisOptions = "Curves and Axis Options";
+      public static readonly string CurvesColorGrouping = "Curves Color Grouping";
+      public static readonly string ChartOptions = "Chart Options";
+      public static readonly string ChartExportOptions = "Chart Export Options";
       public static readonly string No = "No";
       public static readonly string Yes = "Yes";
 
