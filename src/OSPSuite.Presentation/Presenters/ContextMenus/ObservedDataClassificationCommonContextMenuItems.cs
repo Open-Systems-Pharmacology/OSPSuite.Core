@@ -26,5 +26,17 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithCommandFor<EditMultipleMetaDataUICommand, IEnumerable<DataRepository>>(repositories)
             .WithIcon(ApplicationIcons.Edit);
       }
+
+      /// <summary>
+      ///    Creates an IMenuBarButton that sets the Color Grouping option for charts
+      /// </summary>
+      /// <param name="userSettings">The user settings that contain Color Grouping option</param>
+      /// <returns>The MenuBarButton</returns>
+      public static IMenuBarButton CreateEditMultipleMetaDataMenuButton(IPresentationUserSettings userSettings)
+      {
+         return CreateMenuCheckButton.WithCaption(Captions.ColorGroupObservedDataContextMenu)
+            .WithChecked(userSettings.ColorGroupObservedDataFromSameFolder)
+            .WithCheckedAction(colorGroup => userSettings.ColorGroupObservedDataFromSameFolder = colorGroup);
+      }
    }
 }
