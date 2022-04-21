@@ -50,7 +50,6 @@ skip_commits:
 branches:
   only:
     - develop
-    - 1145-observed-data-read-only
 
 test:
   assemblies:
