@@ -55,7 +55,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public string Origin => DataColumn.DataInfo.Origin.ToString();
       public string Date => DataColumn.DataInfo.Date.ToIsoFormat();
       public string Category => DataColumn.DataInfo.Category;
-      public string Source => DataColumn.DataInfo.Source;
 
       public bool Used
       {

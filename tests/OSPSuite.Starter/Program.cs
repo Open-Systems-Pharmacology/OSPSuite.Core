@@ -56,7 +56,7 @@ namespace OSPSuite.Starter
          return path;
       }
 
-      public static string IdentificationKeyDefintion(DataColumn col)
+      public static string IdentificationKeyDefinition(DataColumn col)
       {
          const int quantityPathLevelForIdentification = 1;
 
@@ -78,7 +78,6 @@ namespace OSPSuite.Starter
          {
             // use (category, source, date, name) as key 
             key += ObjectPath.PATH_DELIMITER + col.DataInfo.Category
-                                             + ObjectPath.PATH_DELIMITER + col.DataInfo.Source
                                              + ObjectPath.PATH_DELIMITER + col.DataInfo.Date.ToShortDateString()
                                              + ObjectPath.PATH_DELIMITER + col.DataInfo.Date.ToShortTimeString()
                                              + ObjectPath.PATH_DELIMITER + col.Name;

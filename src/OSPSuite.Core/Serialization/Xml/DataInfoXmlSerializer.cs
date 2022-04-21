@@ -17,7 +17,6 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.AuxiliaryType);
          Map(x => x.DisplayUnitName);
          Map(x => x.Date);
-         Map(x => x.Source);
          Map(x => x.Category);
          Map(x => x.MolWeight);
          Map(x => x.LLOQ).WithMappingName(Constants.Serialization.Attribute.LLOQ);

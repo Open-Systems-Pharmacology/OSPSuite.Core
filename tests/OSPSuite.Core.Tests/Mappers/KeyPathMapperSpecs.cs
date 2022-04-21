@@ -53,21 +53,19 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
-   public class When_mapping_a_data_column_representing_an_unknow_time : concern_for_KeyPathMapper
+   public class When_mapping_a_data_column_representing_an_unknown_time : concern_for_KeyPathMapper
    {
       protected override void Context()
       {
          base.Context();
          _dataInfo.Origin = ColumnOrigins.Undefined;
          _column.Name = "AA";
-         _column.DataInfo.Source = "BB";
       }
 
       [Observation]
-      public void should_return_a_path_containg_the_column_name_and_source()
+      public void should_return_a_path_containing_the_column_name_and_source()
       {
          _key.Contains("AA").ShouldBeTrue();
-         _key.Contains("BB").ShouldBeTrue();
       }
    }
 
@@ -77,14 +75,12 @@ namespace OSPSuite.Core.Mappers
       {
          base.Context();
          _dataInfo.Origin = ColumnOrigins.Observation;
-         _dataInfo.Source = "toto";
          _column.Name = "col";
       }
 
       [Observation]
       public void should_return_a_key_made_from_the_source_category_and_column_name()
       {
-         _key.Contains(_dataInfo.Source).ShouldBeTrue();
          _key.Contains(_column.Name).ShouldBeTrue();
       }
    }
@@ -95,14 +91,12 @@ namespace OSPSuite.Core.Mappers
       {
          base.Context();
          _dataInfo.Origin = ColumnOrigins.ObservationAuxiliary;
-         _dataInfo.Source = "toto";
          _column.Name = "col";
       }
 
       [Observation]
       public void should_return_a_key_made_from_the_source_category_and_column_name()
       {
-         _key.Contains(_dataInfo.Source).ShouldBeTrue();
          _key.Contains(_column.Name).ShouldBeTrue();
       }
    }

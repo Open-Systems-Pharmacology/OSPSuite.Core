@@ -25,12 +25,12 @@ namespace OSPSuite.Core.Serializers
          _col1 = new DataColumn("Columbus", DimensionLength, _baseGrid)
          {
             QuantityInfo = new QuantityInfo(path, QuantityType.Parameter),
-            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, "cm", new DateTime(2010, 10, 22), "Study1", "Dog", 2.4),
+            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, "cm", new DateTime(2010, 10, 22),  "Dog", 2.4),
             Values = new[] {1.0F, 2.1F, -3.4F}
          };
 
          _relCol = new DataColumn("Renate", DimensionLength, _baseGrid);
-         _relCol.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.ArithmeticStdDev, "cm", new DateTime(2010, 10, 22), "Study1", "Dog", 2.4);
+         _relCol.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.ArithmeticStdDev, "cm", new DateTime(2010, 10, 22),  "Dog", 2.4);
 
          _col2 = new DataColumn("Columbine", DimensionLength, _baseGrid);
          _col2.AddRelatedColumn(_relCol);

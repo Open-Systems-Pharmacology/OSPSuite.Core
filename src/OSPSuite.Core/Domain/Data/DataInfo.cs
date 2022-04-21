@@ -46,7 +46,7 @@ namespace OSPSuite.Core.Domain.Data
       public ColumnOrigins Origin { get; set; }
 
       /// <summary>
-      ///    AuxiliaryType only relevant if origin is ObservationAuxiliary. Is set to undefined otherwse
+      ///    AuxiliaryType only relevant if origin is ObservationAuxiliary. Is set to undefined otherwise
       /// </summary>
       public AuxiliaryType AuxiliaryType { get; set; }
 
@@ -60,12 +60,6 @@ namespace OSPSuite.Core.Domain.Data
       ///    Full Date corresponding to the time when the column was created. Only useful for simulated data
       /// </summary>
       public DateTime Date { get; set; }
-
-      /// <summary>
-      ///    For observed data it is normally the name of the excel sheet or csv file. For simulated data,
-      ///    it could be the name of the simulation
-      /// </summary>
-      public string Source { get; set; }
 
       /// <summary>
       ///    Extra information that can be used to group the data in a project specific fashion. (only displayed in
@@ -88,12 +82,12 @@ namespace OSPSuite.Core.Domain.Data
       public float? LLOQ { get; set; }
 
       /// <summary>
-      /// Wrapper around the LLOQ Value defined as float so that it can be set via R (float not available in rClr)
+      ///    Wrapper around the LLOQ Value defined as float so that it can be set via R (float not available in rClr)
       /// </summary>
       public double? LLOQAsDouble
       {
          get => LLOQ;
-         set => LLOQ = (float)value;
+         set => LLOQ = (float) value;
       }
 
       /// <summary>
@@ -108,17 +102,16 @@ namespace OSPSuite.Core.Domain.Data
       }
 
       public DataInfo(ColumnOrigins columnOrigins)
-         : this(columnOrigins, AuxiliaryType.Undefined, string.Empty, DateTime.Now, string.Empty, string.Empty, null)
+         : this(columnOrigins, AuxiliaryType.Undefined, string.Empty, DateTime.Now, string.Empty, null)
       {
       }
 
-      public DataInfo(ColumnOrigins origin, AuxiliaryType auxiliaryType, string displayUnitName, DateTime date, string source, string category, double? molWeight)
+      public DataInfo(ColumnOrigins origin, AuxiliaryType auxiliaryType, string displayUnitName, DateTime date, string category, double? molWeight)
       {
          Origin = origin;
          AuxiliaryType = auxiliaryType;
          DisplayUnitName = displayUnitName;
          Date = date;
-         Source = source;
          Category = category;
          MolWeight = molWeight;
          ExtendedProperties = new ExtendedProperties();
@@ -126,7 +119,7 @@ namespace OSPSuite.Core.Domain.Data
 
       public DataInfo Clone()
       {
-         var dataInfo = new DataInfo(Origin, AuxiliaryType, DisplayUnitName, Date, Source, Category, MolWeight);
+         var dataInfo = new DataInfo(Origin, AuxiliaryType, DisplayUnitName, Date, Category, MolWeight);
          dataInfo.ExtendedProperties.UpdateFrom(ExtendedProperties);
          dataInfo.LLOQ = LLOQ;
          dataInfo.ComparisonThreshold = ComparisonThreshold;
