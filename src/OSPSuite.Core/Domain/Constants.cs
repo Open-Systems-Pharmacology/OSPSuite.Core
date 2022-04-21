@@ -346,6 +346,7 @@ namespace OSPSuite.Core.Domain
          public const string PARAMETER = "Parameter";
          public const string VALUE = "Value";
          public const string PK_PARAMETER = "PKParameter";
+         public const string PARAMETER_PATH = "ParameterPath";
       }
 
       public static class Distribution

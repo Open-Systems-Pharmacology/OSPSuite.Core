@@ -93,7 +93,7 @@ namespace OSPSuite.R.Services
          _result.AllOutputParameterSensitivities.ShouldNotBeEmpty();
          foreach (var outputPath in _result.AllQuantityPaths)
          {
-            var outputParameterSensitivity = _result.AllOutputParameterSensitivitiesFor(outputPath, "Liver-Volume");
+            var outputParameterSensitivity = _result.AllOutputParameterSensitivitiesBySensitivityParameterName(outputPath, "Liver-Volume");
             outputParameterSensitivity.Count().ShouldBeEqualTo(4);
          }
       }

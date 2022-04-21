@@ -19,7 +19,8 @@ namespace OSPSuite.Core.Domain
             ParameterName = "P1",
             PKParameterName = "AUC",
             QuantityPath = "Organism|Liver|Drug|Concentration",
-            Value = 0.8
+            Value = 0.8,
+            ParameterPath = "P1-Path"
          };
 
          _pkParameterSensitivity2 = new PKParameterSensitivity
@@ -27,7 +28,8 @@ namespace OSPSuite.Core.Domain
             ParameterName = "P2",
             PKParameterName = "AUC2",
             QuantityPath = "Organism|Liver|Drug|Concentration",
-            Value = 0.8
+            Value = 0.8,
+            ParameterPath = "P2-Path"
          };
 
          _pkParameterSensitivity3 = new PKParameterSensitivity
@@ -35,7 +37,9 @@ namespace OSPSuite.Core.Domain
             ParameterName = "P2",
             PKParameterName = "AUC",
             QuantityPath = "Organism|Kidney|Drug|Concentration",
-            Value = 0.8
+            Value = 0.8,
+            ParameterPath = "P3-Path"
+
          };
 
          sut.AddPKParameterSensitivity(_pkParameterSensitivity1);
@@ -49,13 +53,13 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_return_the_expected_object_if_found()
       {
-         sut.PKParameterSensitivityFor(_pkParameterSensitivity1.PKParameterName, _pkParameterSensitivity1.QuantityPath, _pkParameterSensitivity1.ParameterName).ShouldBeEqualTo(_pkParameterSensitivity1);
+         sut.PKParameterSensitivityBySensitivityParameterName(_pkParameterSensitivity1.PKParameterName, _pkParameterSensitivity1.QuantityPath, _pkParameterSensitivity1.ParameterName).ShouldBeEqualTo(_pkParameterSensitivity1);
       }
 
       [Observation]
       public void should_return_null_if_the_parameter_is_not_found()
       {
-         sut.PKParameterSensitivityFor(_pkParameterSensitivity1.PKParameterName, _pkParameterSensitivity1.QuantityPath, "Unknown").ShouldBeNull();
+         sut.PKParameterSensitivityBySensitivityParameterName(_pkParameterSensitivity1.PKParameterName, _pkParameterSensitivity1.QuantityPath, "Unknown").ShouldBeNull();
       }
    }
 

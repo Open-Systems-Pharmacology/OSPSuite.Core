@@ -86,6 +86,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
             ParameterName = sensitivityParameter.Name,
             PKParameterName = pkParameter.Name,
             QuantityPath = pkParameter.QuantityPath,
+            ParameterPath = sensitivityParameter.ParameterSelection.Path,
             Value = double.NaN
          };
 

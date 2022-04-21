@@ -9,6 +9,7 @@ namespace OSPSuite.Core.Serialization.Xml
          //No need to serialize the Id as it is a readonly field based on all other properties
          Map(x => x.QuantityPath);
          Map(x => x.ParameterName);
+         Map(x => x.ParameterPath);
          Map(x => x.PKParameterName);
          Map(x => x.Value);
       }

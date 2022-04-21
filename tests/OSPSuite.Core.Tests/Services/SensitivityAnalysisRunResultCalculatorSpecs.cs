@@ -215,19 +215,19 @@ namespace OSPSuite.Core.Services
          //8 = number of output * number of variations = 2*4
          _result.AllOutputParameterSensitivities.Count.ShouldBeEqualTo(8);
 
-         _result.OutputParameterSensitivitiesFor("Output1", _sensitivityParameter1.Name).Length.ShouldBeEqualTo(2);
-         _result.OutputParameterSensitivitiesFor("Output2", _sensitivityParameter1.Name).Length.ShouldBeEqualTo(2);
-         _result.OutputParameterSensitivitiesFor("Output1", _sensitivityParameter2.Name).Length.ShouldBeEqualTo(2);
-         _result.OutputParameterSensitivitiesFor("Output2", _sensitivityParameter2.Name).Length.ShouldBeEqualTo(2);
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output1", _sensitivityParameter1.Name).Length.ShouldBeEqualTo(2);
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output2", _sensitivityParameter1.Name).Length.ShouldBeEqualTo(2);
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output1", _sensitivityParameter2.Name).Length.ShouldBeEqualTo(2);
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output2", _sensitivityParameter2.Name).Length.ShouldBeEqualTo(2);
 
          //test some of the values
-         _result.OutputParameterSensitivitiesFor("Output1", _sensitivityParameter1.Name)[0].OutputValues.ShouldBeEqualTo(new[] {111.1f, 211.1f, 311.1f, 411.1f, 511.1f});
-         _result.OutputParameterSensitivitiesFor("Output1", _sensitivityParameter1.Name)[0].TimeValues.ShouldBeEqualTo(new[] { 1, 2, 3, 4, 5f });
-         _result.OutputParameterSensitivitiesFor("Output1", _sensitivityParameter1.Name)[1].OutputValues.ShouldBeEqualTo(new[] {112.1f, 212.1f, 312.1f, 412.1f, 512.1f});
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output1", _sensitivityParameter1.Name)[0].OutputValues.ShouldBeEqualTo(new[] {111.1f, 211.1f, 311.1f, 411.1f, 511.1f});
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output1", _sensitivityParameter1.Name)[0].TimeValues.ShouldBeEqualTo(new[] { 1, 2, 3, 4, 5f });
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output1", _sensitivityParameter1.Name)[1].OutputValues.ShouldBeEqualTo(new[] {112.1f, 212.1f, 312.1f, 412.1f, 512.1f});
 
          //test some of the values
-         _result.OutputParameterSensitivitiesFor("Output2", _sensitivityParameter2.Name)[0].OutputValues.ShouldBeEqualTo(new[] {121.2f, 221.2f, 321.2f, 421.2f, 521.2f});
-         _result.OutputParameterSensitivitiesFor("Output2", _sensitivityParameter2.Name)[1].OutputValues.ShouldBeEqualTo(new[] {122.2f, 222.2f, 322.2f, 422.2f, 522.2f});
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output2", _sensitivityParameter2.Name)[0].OutputValues.ShouldBeEqualTo(new[] {121.2f, 221.2f, 321.2f, 421.2f, 521.2f});
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output2", _sensitivityParameter2.Name)[1].OutputValues.ShouldBeEqualTo(new[] {122.2f, 222.2f, 322.2f, 422.2f, 522.2f});
       }
    }
 }
