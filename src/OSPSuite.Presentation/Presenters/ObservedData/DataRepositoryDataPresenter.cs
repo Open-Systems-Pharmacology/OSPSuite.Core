@@ -5,17 +5,14 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Events;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Views.ObservedData;
 using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
-using DataColumn = System.Data.DataColumn;
+using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
 namespace OSPSuite.Presentation.Presenters.ObservedData
 {
@@ -29,12 +26,14 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       int NumberOfObservations { get; }
    }
 
-   public class DataRepositoryDataPresenter : BaseDataRepositoryDataPresenter<IDataRepositoryDataView, IDataRepositoryDataPresenter>, IDataRepositoryDataPresenter
+   public class DataRepositoryDataPresenter : BaseDataRepositoryDataPresenter<IDataRepositoryDataView, IDataRepositoryDataPresenter>,
+      IDataRepositoryDataPresenter
    {
       private readonly IDataRepositoryExportTask _dataRepositoryTask;
       private readonly IEditObservedDataTask _editObservedDataTask;
 
-      public DataRepositoryDataPresenter(IDataRepositoryDataView view, IDataRepositoryExportTask dataRepositoryTask, IEditObservedDataTask editObservedDataTask)
+      public DataRepositoryDataPresenter(IDataRepositoryDataView view, IDataRepositoryExportTask dataRepositoryTask,
+         IEditObservedDataTask editObservedDataTask)
          : base(view)
       {
          _dataRepositoryTask = dataRepositoryTask;
@@ -61,7 +60,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       public IEnumerable<string> GetCellValidationErrorMessages(int rowIndex, int columnIndex, string newValue)
       {
          if (string.IsNullOrWhiteSpace(newValue))
-            return new[] {Error.ValueIsRequired};
+            return new[] { Error.ValueIsRequired };
 
          var proposedValue = newValue.ConvertedTo<float>();
          var editedColumnId = GetColumnIdFromColumnIndex(columnIndex);
@@ -85,7 +84,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
          // The proposed value is already in the basegrid somewhere else
          if (_observedData.BaseGrid.Values.Contains(proposedBaseValue))
-            result.Add(Error.ExistingValueInDataRepository(_observedData.BaseGrid.Name, proposedValue, _observedData.BaseGrid.DisplayUnit.ToString()));
+            result.Add(Error.ExistingValueInDataRepository(_observedData.BaseGrid.Name, proposedValue,
+               _observedData.BaseGrid.DisplayUnit.ToString()));
 
 
          return result;
@@ -104,7 +104,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          };
       }
 
-      private static float valueInBaseUnit(float valueInDisplayUnit, OSPSuite.Core.Domain.Data.DataColumn column)
+      private static float valueInBaseUnit(float valueInDisplayUnit, DataColumn column)
       {
          return Convert.ToSingle(column.ConvertToBaseUnit(valueInDisplayUnit));
       }
@@ -127,7 +127,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          return col?.DisplayUnit;
       }
 
-      private OSPSuite.Core.Domain.Data.DataColumn columnFromColumnIndex(int columnIndex)
+      private DataColumn columnFromColumnIndex(int columnIndex)
       {
          var id = GetColumnIdFromColumnIndex(columnIndex);
          return _observedData.Contains(id) ? _observedData[id] : null;

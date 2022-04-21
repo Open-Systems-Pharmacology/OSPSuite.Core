@@ -1,32 +1,24 @@
 ﻿using System.Data;
 using System.Linq;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.Utility.Extensions;
 using DevExpress.XtraEditors.Controls;
-using DevExpress.XtraEditors.Repository;
-using DevExpress.XtraGrid.Columns;
-using DevExpress.XtraGrid.Views.Base;
-using DevExpress.XtraLayout.Utils;
-using OSPSuite.Core.Commands;
-using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters.ObservedData;
 using OSPSuite.Presentation.Views.ObservedData;
 using OSPSuite.UI.Binders;
-using OSPSuite.UI.Controls;
 using OSPSuite.UI.Services;
 
 namespace OSPSuite.UI.Views.ObservedData
 {
-   public partial class DataRepositoryDataView : BaseDataRepositoryDataView<IDataRepositoryDataView, IDataRepositoryDataPresenter>, IDataRepositoryDataView
+   public partial class DataRepositoryDataView : BaseDataRepositoryDataView<IDataRepositoryDataView, IDataRepositoryDataPresenter>,
+      IDataRepositoryDataView
    {
       protected readonly GridViewColumnUnitsMenuBinder<int> _columnUnitsMenuBinder;
-      private readonly GridColumnCreator _creator = new GridColumnCreator();
       private DataTable _dataTable;
 
       public DataRepositoryDataView(IToolTipCreator tooltipCreator) : base(tooltipCreator)
       {
          InitializeComponent();
          _columnUnitsMenuBinder = new GridViewColumnUnitsMenuBinder<int>(gridView, col => col.AbsoluteIndex);
+         gridView.OptionsBehavior.Editable = false;
       }
 
       public override void InitializeBinding()
