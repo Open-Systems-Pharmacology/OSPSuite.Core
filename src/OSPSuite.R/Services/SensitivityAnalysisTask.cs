@@ -33,7 +33,6 @@ namespace OSPSuite.R.Services
       /// </summary>
       SensitivityAnalysisRunResult ImportResultsFromCSV(IModelCoreSimulation simulation, params string[] csvFiles);
 
-
       string SensitivityParameterNameForParameter(IParameter parameter);
    }
 
