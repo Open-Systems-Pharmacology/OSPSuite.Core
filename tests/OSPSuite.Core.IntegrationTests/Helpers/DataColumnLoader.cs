@@ -2,6 +2,7 @@
 using OSPSuite.Core.Domain.Data;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace OSPSuite.Core.Helpers
@@ -16,8 +17,8 @@ namespace OSPSuite.Core.Helpers
          foreach (string line in File.ReadLines(fileName))
          {
             var cells = line.Split(';');
-            timeValues.Add(float.Parse(cells[0]));
-            concValues.Add(float.Parse(cells[1]));
+            timeValues.Add(float.Parse(cells[0], CultureInfo.InvariantCulture));
+            concValues.Add(float.Parse(cells[1], CultureInfo.InvariantCulture));
          }
 
          var baseGrid = new BaseGrid(
