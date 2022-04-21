@@ -43,10 +43,21 @@ namespace OSPSuite.UI.Extensions
             if (chart.IncludeOriginData)
                AddOriginData(cloneOfChartControl, chart);
 
+            prepareChartForCopying(cloneOfChartControl);
             AddWatermark(cloneOfChartControl, watermark, chart);
 
             chartControl.CopyChartToClipboard(cloneOfChartControl);
          }
+      }
+
+      private static void prepareChartForCopying(ChartControl cloneOfChartControl)
+      {
+         //remove the outer border from the copy
+         cloneOfChartControl.BorderOptions.Visibility = DefaultBoolean.False;
+
+         //if the color is not set (transparent), assign white for the copy
+         if (cloneOfChartControl.BackColor == Color.Transparent)
+            cloneOfChartControl.BackColor = Color.White;
       }
 
       private static void copyFontAndSizeSettings(ChartControl sourceChartControl, ChartControl targetChartControl)
@@ -99,6 +110,8 @@ namespace OSPSuite.UI.Extensions
          {
             copyFontAndSizeSettings(chartControl, cloneOfChartControl);
             AddWatermark(cloneOfChartControl, watermark);
+            prepareChartForCopying(cloneOfChartControl);
+
             chartControl.CopyChartToClipboard(cloneOfChartControl);
          }
       }
