@@ -114,6 +114,11 @@ namespace OSPSuite.Core.Domain.UnitSystem
          throw new UnableToResolveParametersException(unit, usedConverter.UnableToResolveParametersMessage);
       }
 
+      public float BaseUnitValueToUnitValue(Unit unit, float valueInBaseUnit)
+      {
+         return Convert.ToSingle(BaseUnitValueToUnitValue(unit, Convert.ToDouble(valueInBaseUnit)));
+      }
+
       private IDimensionConverter converterFor(IDimension usedDimension)
       {
          return _converters.First(converter => converter.CanConvertTo(usedDimension));
@@ -131,6 +136,12 @@ namespace OSPSuite.Core.Domain.UnitSystem
             return usedConverter.ConvertToSourceBaseUnit(usedDimension.UnitValueToBaseUnitValue(unit, valueInUnit));
 
          throw new UnableToResolveParametersException(unit, usedConverter.UnableToResolveParametersMessage);
+      }
+
+      public float UnitValueToBaseUnitValue(Unit unit, float valueInUnit)
+      {
+         return Convert.ToSingle(UnitValueToBaseUnitValue(unit, Convert.ToDouble(valueInUnit)));
+
       }
 
       private IDimension targetDimensionWith(Unit unit)

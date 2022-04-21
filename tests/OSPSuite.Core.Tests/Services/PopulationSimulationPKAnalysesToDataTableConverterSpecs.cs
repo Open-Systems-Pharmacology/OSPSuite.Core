@@ -48,8 +48,8 @@ namespace OSPSuite.Core.Services
          var unit = A.Fake<Unit>();
          A.CallTo(() => unit.Name).Returns(pkParameter.DisplayUnit);
          A.CallTo(() => mergedDimension.UnitOrDefault(pkParameter.DisplayUnit)).Returns(unit);
-         A.CallTo(() => mergedDimension.BaseUnitValueToUnitValue(unit, 10)).Returns(100.10);
-         A.CallTo(() => mergedDimension.BaseUnitValueToUnitValue(unit, 11)).Returns(110.20);
+         A.CallTo(() => mergedDimension.BaseUnitValueToUnitValue(unit, 10)).Returns(100.10f);
+         A.CallTo(() => mergedDimension.BaseUnitValueToUnitValue(unit, 11)).Returns(110.20f);
 
          _pkAnalysis.AddPKAnalysis(quantityPKParameter);
       }

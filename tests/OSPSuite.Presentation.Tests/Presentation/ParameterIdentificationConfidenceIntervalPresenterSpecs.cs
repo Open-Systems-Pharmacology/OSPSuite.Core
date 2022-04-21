@@ -92,7 +92,7 @@ namespace OSPSuite.Presentation.Presentation
 
          _identificationParameter = DomainHelperForSpecs.IdentificationParameter("IP1");
          _confidenceIntervals = new Cache<string, double>();
-         _confidenceIntervals.Add(_identificationParameter.Name, 5);
+         _confidenceIntervals.Add(_identificationParameter.Name, 5d);
 
          A.CallTo(_confidenceIntervalCalculator).WithReturnType<ICache<string, double>>().Returns(_confidenceIntervals);
          A.CallTo(() => _runResult.BestResult.Values).Returns(new []{new OptimizedParameterValue(_identificationParameter.Name, 10, 20, 0, 100, Scalings.Linear) });
@@ -100,8 +100,8 @@ namespace OSPSuite.Presentation.Presentation
 
          _identificationParameter.AddLinkedParameter(_parameterSelection);
 
-         A.CallTo(() => _dimension.BaseUnitValueToUnitValue(_identificationParameter.StartValueParameter.DisplayUnit,5)).Returns(50);
-         A.CallTo(() => _dimension.BaseUnitValueToUnitValue(_identificationParameter.StartValueParameter.DisplayUnit, 10)).Returns(100);
+         A.CallTo(() => _dimension.BaseUnitValueToUnitValue(_identificationParameter.StartValueParameter.DisplayUnit,5d)).Returns(50);
+         A.CallTo(() => _dimension.BaseUnitValueToUnitValue(_identificationParameter.StartValueParameter.DisplayUnit, 10d)).Returns(100);
       }
 
       protected override void Because()
