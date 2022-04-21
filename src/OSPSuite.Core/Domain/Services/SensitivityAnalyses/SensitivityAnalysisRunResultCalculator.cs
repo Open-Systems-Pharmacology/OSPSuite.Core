@@ -55,7 +55,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 
       private OutputParameterSensitivity calculateOutputParameterSensitivity(QuantityValues outputValue, ParameterVariation variationData, string parameterPath)
       {
-         return new OutputParameterSensitivity(variationData.ParameterName, parameterPath, variationData.ParameterValue, outputValue.QuantityPath, outputValue.Values);
+         return new OutputParameterSensitivity(variationData.ParameterName, parameterPath, variationData.ParameterValue, outputValue.QuantityPath, outputValue.Values, outputValue.Time.Values);
       }
 
       private void addPKAnalysisSensitivities(VariationData variationData, SimulationResults simulationResults, SensitivityAnalysisRunResult sensitivityRunResult, SensitivityAnalysis sensitivityAnalysis)

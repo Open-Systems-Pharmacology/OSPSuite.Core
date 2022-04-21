@@ -28,10 +28,10 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
             x => string.Equals(x.QuantityPath, outputPath) && string.Equals(x.PKParameterName, pkParameterName));
       }
 
-      public IEnumerable<OutputParameterSensitivity> AllOutputParameterSensitivitiesFor(string outputPath, string parameterPath)
+      public IEnumerable<OutputParameterSensitivity> AllOutputParameterSensitivitiesFor(string outputPath, string parameterName)
       {
          return _allOutputParameterSensitivities.Where(
-            x => string.Equals(x.OutputPath, outputPath) && string.Equals(x.ParameterPath, parameterPath));
+            x => string.Equals(x.OutputPath, outputPath) && string.Equals(x.SensitivityParameterName, parameterName));
       }
 
       public PKParameterSensitivity PKParameterSensitivityFor(string pkParameterName, string outputPath, string parameterName)
@@ -39,9 +39,9 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
          return AllPKParameterSensitivitiesFor(pkParameterName, outputPath).Find(x => string.Equals(parameterName, x.ParameterName));
       }
 
-      public OutputParameterSensitivity[] OutputParameterSensitivitiesFor(string outputPath, string parameterPath)
+      public OutputParameterSensitivity[] OutputParameterSensitivitiesFor(string outputPath, string parameterName)
       {
-         return AllOutputParameterSensitivitiesFor(outputPath, parameterPath).ToArray();
+         return AllOutputParameterSensitivitiesFor(outputPath, parameterName).ToArray();
       }
 
       public double PKParameterSensitivityValueFor(string pkParameterName, string outputPath, string parameterName)
