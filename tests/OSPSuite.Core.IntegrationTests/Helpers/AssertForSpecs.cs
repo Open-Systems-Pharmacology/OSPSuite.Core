@@ -1249,7 +1249,6 @@ namespace OSPSuite.Core.Helpers
       public static void AreEqualMcQuantityInfo(QuantityInfo x1, QuantityInfo x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
-         AreEqualStrings(x1.Name, x2.Name);
          Assert.AreEqual(x1.Type, x2.Type);
          Assert.AreEqual(x1.Path.Count(), x2.Path.Count());
          for (int i = 0; i < x1.Path.Count(); i++)

@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Mappers
          sut = new KeyPathMapper(_entityPathResolver, _objectPathFactory);
          _column = new DataColumn();
          _dataInfo = new DataInfo(ColumnOrigins.Calculation);
-         _quantityInfo = new QuantityInfo("Name", new List<string>(), QuantityType.Undefined);
+         _quantityInfo = new QuantityInfo(new List<string>(), QuantityType.Undefined);
          _column.DataInfo = _dataInfo;
          _column.QuantityInfo = _quantityInfo;
       }

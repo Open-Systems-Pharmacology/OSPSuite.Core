@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Serializers
          var x1 = new DataColumn("Columbus", DimensionLength, baseGrid)
          {
             IsInternal = true,
-            QuantityInfo = new QuantityInfo("Quain", path, QuantityType.Parameter),
+            QuantityInfo = new QuantityInfo(path, QuantityType.Parameter),
             DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, "cm", new DateTime(2010, 10, 22), "Study1", "Dog", 2.4),
             Values = new[] {1.0F, 2.1F, -3.4F}
          };

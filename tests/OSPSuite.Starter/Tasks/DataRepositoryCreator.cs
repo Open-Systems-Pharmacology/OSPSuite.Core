@@ -366,7 +366,7 @@ namespace OSPSuite.Starter.Tasks
          var baseGrid4 = new BaseGrid("LogGrid", _dimensionFactory.Dimension("Time"));
 
          var baseGridPath = new List<string> {rep4Name, baseGrid4.Name};
-         baseGrid4.QuantityInfo = new QuantityInfo(baseGrid3.Name, baseGridPath, QuantityType.Time);
+         baseGrid4.QuantityInfo = new QuantityInfo(baseGridPath, QuantityType.Time);
          baseGrid4.Values = new[] {0.0F, 0.00001F, 0.00002F, 2.0F, 4.0F};
          return baseGrid4;
       }
@@ -376,7 +376,7 @@ namespace OSPSuite.Starter.Tasks
          var baseGrid3 = new BaseGrid("FewPoints", _dimensionFactory.Dimension("Time"));
 
          var baseGridPath = new List<string> {rep3Name, baseGrid3.Name};
-         baseGrid3.QuantityInfo = new QuantityInfo(baseGrid3.Name, baseGridPath, QuantityType.Time);
+         baseGrid3.QuantityInfo = new QuantityInfo(baseGridPath, QuantityType.Time);
          baseGrid3.Values = new[] {0.0F, 2.0F, 4.0F};
          return baseGrid3;
       }
@@ -389,7 +389,7 @@ namespace OSPSuite.Starter.Tasks
          };
 
          var baseGridPath = new List<string> {rep2Name, baseGrid2.Name};
-         baseGrid2.QuantityInfo = new QuantityInfo(baseGrid2.Name, baseGridPath, QuantityType.Time);
+         baseGrid2.QuantityInfo = new QuantityInfo(baseGridPath, QuantityType.Time);
          baseGrid2.Values = new[] {0.0F * 24 * 3600, 1.0F * 24 * 3600, 2.0F * 24 * 3600, 3.0F * 24 * 3600, 4.0F * 24 * 3600};
          return baseGrid2;
       }
@@ -402,15 +402,15 @@ namespace OSPSuite.Starter.Tasks
          if (baseGridValueGenerator == null)
             baseGridValueGenerator = (x,total) => x / (total / 10F);
 
-         var basegrid1Values = new float[numberOfPointsPerCalculation];
+         var baseGrid1Values = new float[numberOfPointsPerCalculation];
          for (var i = 0; i < numberOfPointsPerCalculation; i++)
          {
-            basegrid1Values[i] = baseGridValueGenerator(i, numberOfPointsPerCalculation);
+            baseGrid1Values[i] = baseGridValueGenerator(i, numberOfPointsPerCalculation);
          }
 
-         baseGridWithManyPoints.Values = basegrid1Values;
+         baseGridWithManyPoints.Values = baseGrid1Values;
          var baseGridPath = new List<string> {repositoryName, baseGridWithManyPoints.Name};
-         baseGridWithManyPoints.QuantityInfo = new QuantityInfo(baseGridWithManyPoints.Name, baseGridPath, QuantityType.Time);
+         baseGridWithManyPoints.QuantityInfo = new QuantityInfo(baseGridPath, QuantityType.Time);
          return baseGridWithManyPoints;
       }
    }

@@ -276,7 +276,7 @@ namespace OSPSuite.Core.Domain
          base.Context();
 
          
-         _simulationColumn = new DataColumn { QuantityInfo = new QuantityInfo("name", new[] { "Sim", "FullPath" }, QuantityType.Undefined) };
+         _simulationColumn = new DataColumn { QuantityInfo = new QuantityInfo(new[] { "Sim", "FullPath" }, QuantityType.Undefined) };
 
          _observationColumn1 = A.Fake<DataColumn>();
          _observationColumn1.DataInfo.Origin = ColumnOrigins.Observation;

@@ -32,11 +32,11 @@ namespace OSPSuite.Starter
       internal static QuantityInfo CreateQuantityInfo(IQuantity quantity)
       {
          var opf = IoC.Resolve<IObjectPathFactory>();
-         var qi = new QuantityInfo(quantity.Name, opf.CreateAbsoluteObjectPath(quantity).ToList(), quantity.QuantityType) {OrderIndex = quantity.Name.Length};
+         var qi = new QuantityInfo(opf.CreateAbsoluteObjectPath(quantity).ToList(), quantity.QuantityType) {OrderIndex = quantity.Name.Length};
          return qi;
       }
 
-      internal static TestEnvironment TestEnvironment { get; private set; }
+      internal static TestEnvironment TestEnvironment => null;
 
       public static string NameDefinition(DataColumn column)
       {
