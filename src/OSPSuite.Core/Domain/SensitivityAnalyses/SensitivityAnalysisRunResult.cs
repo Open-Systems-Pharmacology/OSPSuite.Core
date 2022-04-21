@@ -28,25 +28,25 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
             x => string.Equals(x.QuantityPath, outputPath) && string.Equals(x.PKParameterName, pkParameterName));
       }
 
-      public IEnumerable<OutputParameterSensitivity> AllOutputParameterSensitivitiesFor(string outputPath, string parameterName)
+      public IEnumerable<OutputParameterSensitivity> AllOutputParameterSensitivitiesFor(string outputPath, string sensitivityParameterName)
       {
          return _allOutputParameterSensitivities.Where(
-            x => string.Equals(x.OutputPath, outputPath) && string.Equals(x.SensitivityParameterName, parameterName));
+            x => string.Equals(x.OutputPath, outputPath) && string.Equals(x.SensitivityParameterName, sensitivityParameterName));
       }
 
-      public PKParameterSensitivity PKParameterSensitivityFor(string pkParameterName, string outputPath, string parameterName)
+      public PKParameterSensitivity PKParameterSensitivityFor(string pkParameterName, string outputPath, string sensitivityParameterName)
       {
-         return AllPKParameterSensitivitiesFor(pkParameterName, outputPath).Find(x => string.Equals(parameterName, x.ParameterName));
+         return AllPKParameterSensitivitiesFor(pkParameterName, outputPath).Find(x => string.Equals(sensitivityParameterName, x.ParameterName));
       }
 
-      public OutputParameterSensitivity[] OutputParameterSensitivitiesFor(string outputPath, string parameterName)
+      public OutputParameterSensitivity[] OutputParameterSensitivitiesFor(string outputPath, string sensitivityParameterName)
       {
-         return AllOutputParameterSensitivitiesFor(outputPath, parameterName).ToArray();
+         return AllOutputParameterSensitivitiesFor(outputPath, sensitivityParameterName).ToArray();
       }
 
-      public double PKParameterSensitivityValueFor(string pkParameterName, string outputPath, string parameterName)
+      public double PKParameterSensitivityValueFor(string pkParameterName, string outputPath, string sensitivityParameterName)
       {
-         return PKParameterSensitivityFor(pkParameterName, outputPath, parameterName)?.Value ?? double.NaN;
+         return PKParameterSensitivityFor(pkParameterName, outputPath, sensitivityParameterName)?.Value ?? double.NaN;
       }
 
       public void UpdateSensitivityParameterName(string oldParameterName, string newParameterName)
