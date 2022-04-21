@@ -46,9 +46,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       public override void InitializeResources()
       {
          base.InitializeResources();
-         layoutItemAddData.Visibility = LayoutVisibility.Never;
-         emptySpaceItem.Visibility = LayoutVisibility.Never;
-
          gridView.OptionsSelection.EnableAppearanceFocusedCell = false;
          gridView.FocusRectStyle = DrawFocusRectStyle.RowFocus;
       }

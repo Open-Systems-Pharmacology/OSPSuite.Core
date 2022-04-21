@@ -25,12 +25,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       IListener<ObservedDataTableChangedEvent>
    {
       void ValueIsSet(CellValueChangedDTO cellValueChangedDTO);
-      void RemoveData(int rowIndex);
-      void AddRow();
-      void AddData(int rowIndex);
       IEnumerable<string> GetCellValidationErrorMessages(int rowIndex, int columnIndex, string newValue);
       int NumberOfObservations { get; }
-      void DisableEdition();
    }
 
    public class DataRepositoryDataPresenter : BaseDataRepositoryDataPresenter<IDataRepositoryDataView, IDataRepositoryDataPresenter>, IDataRepositoryDataPresenter
@@ -45,11 +41,6 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          _editObservedDataTask = editObservedDataTask;
       }
 
-      public void DisableEdition()
-      {
-         View.DisableEdition();
-      }
-
       protected override DataTable MapDataTableFromColumns()
       {
          return _dataRepositoryTask.ToDataTable(_observedData, new DataColumnExportOptions { ForceColumnTypeAsObject = true }).First();
@@ -58,33 +49,6 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       public void ValueIsSet(CellValueChangedDTO cellValueChangedDTO)
       {
          this.DoWithinLatch(() => AddCommand(_editObservedDataTask.SetValue(_observedData, mapFrom(cellValueChangedDTO))));
-      }
-
-      public void RemoveData(int rowIndex)
-      {
-         if (_observedData.BaseGrid.Count > rowIndex)
-            AddCommand(_editObservedDataTask.RemoveValue(_observedData, rowIndex));
-
-         else if (_datatable.Rows.Count > rowIndex)
-            _datatable.Rows.RemoveAt(rowIndex);
-      }
-
-      public void AddRow()
-      {
-         var identificationsUsingObservedData = _editObservedDataTask.ParameterIdentificationsUsingDataRepository(_observedData);
-         if (identificationsUsingObservedData.Any())
-            throw new OSPSuiteException(Captions.ParameterIdentification.CannotAddObservedDataPointBeingUsedByParameterIdentification(_observedData.Name, identificationsUsingObservedData));
-
-         _datatable.Rows.Add(_datatable.NewRow());
-      }
-
-      public void AddData(int rowIndex)
-      {
-         var dataRowData = getDataForRow(rowIndex);
-
-         if (isNotSuitableForAddRemoveOperation(dataRowData)) return;
-
-         AddCommand(_editObservedDataTask.AddValue(_observedData, dataRowData));
       }
 
       /// <summary>
@@ -125,59 +89,6 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
 
          return result;
-      }
-
-      private bool isNotSuitableForAddRemoveOperation(DataRowData dataRowData)
-      {
-         // Must not have empty cells
-         if (dataRowData.Data.Any(x => !x.IsValid()))
-            return true;
-
-         // Must have values for all columns
-         if (!dataRowData.Data.Keys.ContainsAll(_observedData.Columns.Where(x => !x.IsBaseGrid()).Select(x => x.Id)))
-            return true;
-
-         if (dataRowData.BaseGridValue < 0)
-            return true;
-
-         return false;
-      }
-
-      private DataRowData getDataForRow(int rowIndex)
-      {
-         var rowData = new DataRowData();
-
-         allButBaseGrid().Each(column =>
-            rowData.Data.Add(getRepositoryColumnIdFromDataColumn(column), _observedData.ConvertBaseValueForColumn(ColumnIdFromColumn(column), convertCellToFloat(rowIndex, column))));
-
-         var baseGrid = baseGridColumn();
-         rowData.BaseGridValue = _observedData.ConvertBaseValueForColumn(ColumnIdFromColumn(baseGrid), convertCellToFloat(rowIndex, baseGrid));
-         return rowData;
-      }
-
-      private DataColumn baseGridColumn()
-      {
-         var baseGridId = _observedData.BaseGrid.Id;
-         return _datatable.Columns.Cast<DataColumn>().First(x => getRepositoryColumnIdFromDataColumn(x).Equals(baseGridId));
-      }
-
-      private IEnumerable<DataColumn> allButBaseGrid()
-      {
-         var baseGridId = _observedData.BaseGrid.Id;
-         return _datatable.Columns.Cast<DataColumn>().Where(x => !getRepositoryColumnIdFromDataColumn(x).Equals(baseGridId));
-      }
-
-      private string getRepositoryColumnIdFromDataColumn(DataColumn column)
-      {
-         return GetColumnIdFromColumnIndex(_datatable.Columns.IndexOf(column));
-      }
-
-      private float convertCellToFloat(int rowIndex, DataColumn column)
-      {
-         if (_datatable.Rows[rowIndex][column] is DBNull)
-            return float.NaN;
-
-         return _datatable.Rows[rowIndex][column].ConvertedTo<float>();
       }
 
       private CellValueChanged mapFrom(CellValueChangedDTO dto)

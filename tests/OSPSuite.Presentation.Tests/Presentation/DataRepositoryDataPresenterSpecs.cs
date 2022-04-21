@@ -194,29 +194,6 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_adding_row_to_data_repository : concern_for_DataRepositoryDataPresenter
-   {
-      protected override void Context()
-      {
-         base.Context();
-         _dataTable.AddColumn<float>("base");
-         _dataTable.Columns[1].ExtendedProperties.Add(Constants.DATA_REPOSITORY_COLUMN_ID, _baseGrid.Id);
-         sut.EditObservedData(_dataRepository);
-         sut.AddRow();
-      }
-
-      protected override void Because()
-      {
-         sut.AddData(0);
-      }
-
-      [Observation]
-      public void a_call_to_add_data_task_must_occur()
-      {
-         A.CallTo(() => _editObservedDataTask.AddValue(_dataRepository, A<DataRowData>.Ignored)).MustHaveHappened();
-      }
-   }
-
    public class When_editing_a_data_repository : concern_for_DataRepositoryDataPresenter
    {
       protected override void Because()
@@ -289,56 +266,6 @@ namespace OSPSuite.Presentation.Presentation
       public void view_must_have_been_bound_to_table()
       {
          A.CallTo(() => _view.BindTo(A<DataTable>.Ignored)).MustHaveHappenedTwiceExactly();
-      }
-   }
-
-   public class When_removing_value_not_in_repository : concern_for_DataRepositoryDataPresenter
-   {
-      protected override void Context()
-      {
-         base.Context();
-         _dataRepository.Columns.Each(column => column.InsertValueAt(0, 0.1f));
-         _dataRepository.Columns.Each(column => column.InsertValueAt(1, 0.2f));
-         _dataTable.Rows.Add(_dataTable.NewRow());
-         _dataTable.Rows.Add(_dataTable.NewRow());
-         _dataTable.Rows.Add(_dataTable.NewRow());
-         sut.EditObservedData(_dataRepository);
-      }
-
-      protected override void Because()
-      {
-         sut.RemoveData(2);
-      }
-
-      [Observation]
-      public void must_remove_row_from_table_instead()
-      {
-         _dataTable.Rows.Count.ShouldBeEqualTo(2);
-      }
-   }
-
-   public class When_removing_value_from_repository : concern_for_DataRepositoryDataPresenter
-   {
-      protected override void Context()
-      {
-         base.Context();
-         _dataRepository.Columns.Each(column => column.InsertValueAt(0, 0.1f));
-         _dataRepository.Columns.Each(column => column.InsertValueAt(1, 0.2f));
-         _dataTable.Rows.Add(_dataTable.NewRow());
-         _dataTable.Rows.Add(_dataTable.NewRow());
-
-         sut.EditObservedData(_dataRepository);
-      }
-
-      protected override void Because()
-      {
-         sut.RemoveData(1);
-      }
-
-      [Observation]
-      public void command_must_have_been_called_to_remove_data()
-      {
-         A.CallTo(() => _editObservedDataTask.RemoveValue(A<DataRepository>._, 1)).MustHaveHappened();
       }
    }
 
