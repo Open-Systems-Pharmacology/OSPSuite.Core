@@ -79,11 +79,11 @@ namespace OSPSuite.UI.Controls
          set => _description.Text = value;
       }
 
-      public virtual void CopyChartToClipboard(ChartControl chartControl)
+      public virtual void CopyChartToClipboard()
       {
          using (var ms = new MemoryStream())
          {
-            chartControl.ExportToImage(ms, ImageFormat.Png);
+            ExportToImage(ms, ImageFormat.Png);
             ms.Seek(0, SeekOrigin.Begin);
 
             using (var mf = new Bitmap(ms))
