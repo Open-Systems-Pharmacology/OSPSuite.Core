@@ -31,15 +31,15 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
    {
       public DataSetToDataRepositoryMappingResult ConvertImportDataSet(ImportedDataSet dataSet)
       {
-         var sheetName = dataSet.SheetName; 
-         var dataRepository = new DataRepository { Name = dataSet.Name };
+         var sheetName = dataSet.SheetName;
+         var dataRepository = new DataRepository {Name = dataSet.Name};
 
          addExtendedPropertyForSource(dataSet.FileName, sheetName, dataRepository);
 
          foreach (var metaDataDescription in dataSet.MetaDataDescription)
          {
             if (!metaDataDescription.Value.IsNullOrEmpty())
-               dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = metaDataDescription.Name, Value = metaDataDescription.Value });
+               dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() {Name = metaDataDescription.Name, Value = metaDataDescription.Value});
          }
 
          var warningFlag = false;
@@ -81,16 +81,13 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             {
                throw new BaseGridColumnNotFoundException(columnAndData.Key.ColumnInfo.BaseGridName);
             }
+
             var baseGrid = findColumnByName(dataRepository.Columns, columnAndData.Key.ColumnInfo.BaseGridName) as BaseGrid;
             dataColumn = new DataColumn(columnAndData.Key.ColumnInfo.Name, dimension, baseGrid);
          }
 
          var dataInfo = new DataInfo(ColumnOrigins.Undefined);
          dataColumn.DataInfo = dataInfo;
-
-         if (!string.IsNullOrEmpty(fileName))
-            dataInfo.Source = fileName;
-
          dataInfo.DisplayUnitName = unit;
 
          var values = new float[columnAndData.Value.Count];
@@ -108,17 +105,20 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
                   if (lloqValue.Lloq > value.Lloq)
                      value.Lloq = lloqValue.Lloq;
                }
+
                if (lloqValue == null || lloqValue.Lloq < value.Lloq)
                   lloqValue = value;
             }
+
             var adjustedValue = truncateUsingLLOQ(value);
             if (double.IsNaN(adjustedValue))
                values[i++] = float.NaN;
             else if (unit != null && !string.IsNullOrEmpty(value.Unit))
-               values[i++] = (float)dataColumn.Dimension.UnitValueToBaseUnitValue(dimension?.FindUnit(value.Unit, true), adjustedValue);
+               values[i++] = (float) dataColumn.Dimension.UnitValueToBaseUnitValue(dimension?.FindUnit(value.Unit, true), adjustedValue);
             else
                values[i++] = (float) adjustedValue;
          }
+
          if (lloqValue != null)
             dataInfo.LLOQ = Convert.ToSingle(dimension?.UnitValueToBaseUnitValue(dimension.FindUnit(lloqValue.Unit), lloqValue.Lloq));
 
@@ -140,6 +140,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
                         {
                            dataColumn[i] = float.NaN;
                         }
+
                      break;
                   case Constants.STD_DEV_GEOMETRIC:
                      errorType = AuxiliaryType.GeometricStdDev;
@@ -148,9 +149,11 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
                         {
                            dataColumn[i] = float.NaN;
                         }
+
                      break;
                }
             }
+
             propInfo.SetValue(dataColumn.DataInfo, errorType, null);
          }
 
@@ -171,13 +174,13 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
       private double truncateUsingLLOQ(SimulationPoint value)
       {
-         if (value == null) 
+         if (value == null)
             return double.NaN;
-         
-         if (double.IsNaN(value.Lloq)) 
+
+         if (double.IsNaN(value.Lloq))
             return value.Measurement;
-         
-         if (double.IsNaN(value.Measurement) || value.Measurement < value.Lloq) 
+
+         if (double.IsNaN(value.Measurement) || value.Measurement < value.Lloq)
             return value.Lloq / 2;
 
          return value.Measurement;
@@ -190,22 +193,11 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             throw new ColumnNotFoundException(name);
          return column;
       }
-      private static void addExtendedPropertyForSource(string fileName, string sheetName,  DataRepository dataRepository)
+
+      private static void addExtendedPropertyForSource(string fileName, string sheetName, DataRepository dataRepository)
       {
-         if (!string.IsNullOrEmpty(fileName))
-         {
-            var sourceProperty =
-               Activator.CreateInstance(typeof(ExtendedProperty<>).MakeGenericType(fileName.GetType()))
-                  as IExtendedProperty;
-            if (sourceProperty != null)
-            {
-               sourceProperty.Name = Constants.FILE;
-               sourceProperty.ValueAsObject = fileName;
-               dataRepository.ExtendedProperties.Add(sourceProperty);
-            }
-            
-            dataRepository.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.SHEET, Value = sheetName });
-         }
+         // dataRepository.ExtendedProperties.Add(new ExtendedProperty<string> {Name = Constants.FILE, Value = fileName});
+         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string> {Name = Constants.SHEET, Value = sheetName});
       }
 
       private static bool containsColumnByName(IEnumerable<DataColumn> columns, string name)

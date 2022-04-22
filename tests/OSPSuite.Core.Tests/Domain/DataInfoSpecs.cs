@@ -1,5 +1,4 @@
-﻿using System;
-using OSPSuite.BDDHelper;
+﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Data;
 
@@ -9,7 +8,7 @@ namespace OSPSuite.Core.Domain
    {
       protected override void Context()
       {
-         sut = new DataInfo(ColumnOrigins.Calculation, AuxiliaryType.ArithmeticStdDev, "ml", DateTime.Today, "Journal", "cat", 155d)
+         sut = new DataInfo(ColumnOrigins.Calculation, AuxiliaryType.ArithmeticStdDev, "ml", "cat", 155d)
          {
             LLOQ = 25,
             ComparisonThreshold = 1e-3f
@@ -36,8 +35,6 @@ namespace OSPSuite.Core.Domain
          _clone.AuxiliaryType.ShouldBeEqualTo(sut.AuxiliaryType);
          _clone.Origin.ShouldBeEqualTo(sut.Origin);
          _clone.DisplayUnitName.ShouldBeEqualTo(sut.DisplayUnitName);
-         _clone.Date.ShouldBeEqualTo(sut.Date);
-         _clone.Source.ShouldBeEqualTo(sut.Source);
          _clone.Category.ShouldBeEqualTo(sut.Category);
          _clone.MolWeight.ShouldBeEqualTo(sut.MolWeight);
 

@@ -100,7 +100,7 @@ namespace OSPSuite.Core.Services
          {
             Values = new[] {0f, 2.5f, 0.9f, 0.9f, 0.5f},
             DataInfo = {Origin = ColumnOrigins.Calculation},
-            QuantityInfo = new QuantityInfo("Concentration", new[] {"Sim", "Organism", "Liver", "Plasma", "Concentration"}, QuantityType.Drug)
+            QuantityInfo = new QuantityInfo(new[] {"Sim", "Organism", "Liver", "Plasma", "Concentration"}, QuantityType.Drug)
          };
 
          _simulationResults.Add(otherSimulationDataColumn);
