@@ -108,9 +108,9 @@ namespace OSPSuite.Core.Domain.UnitSystem
          _unitSynonyms.Add(unitSynonym);
       }
 
-      public virtual double BaseUnitValueToUnitValue(double baseUnitValue) => baseUnitValue / Factor - Offset;
+      public virtual double BaseUnitValueToUnitValue(double valueInBaseUnit) => valueInBaseUnit / Factor - Offset;
 
-      public virtual double UnitValueToBaseUnitValue(double unitValue) => (unitValue + Offset) * Factor;
+      public virtual double UnitValueToBaseUnitValue(double valueInUnit) => (valueInUnit + Offset) * Factor;
 
       public override string ToString() => Name;
 

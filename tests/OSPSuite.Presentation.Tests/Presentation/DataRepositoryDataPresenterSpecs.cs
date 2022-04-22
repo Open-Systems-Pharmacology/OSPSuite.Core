@@ -244,8 +244,8 @@ namespace OSPSuite.Presentation.Presentation
          _dto = new CellValueChangedDTO {ColumnIndex = 0, OldDisplayValue = 1, NewDisplayValue = 2, RowIndex = 3};
          _command = A.Fake<ICommand>();
 
-         A.CallTo(() => _dim.UnitValueToBaseUnitValue(A<Unit>._, 1)).Returns(10);
-         A.CallTo(() => _dim.UnitValueToBaseUnitValue(A<Unit>._, 2)).Returns(20);
+         A.CallTo(() => _dim.UnitValueToBaseUnitValue(A<Unit>._, 1.0)).Returns(10);
+         A.CallTo(() => _dim.UnitValueToBaseUnitValue(A<Unit>._, 2.0)).Returns(20);
          A.CallTo(() => _editObservedDataTask.SetValue(A<DataRepository>._, A<CellValueChanged>._))
             .Invokes(x => _cellValueChanged = x.GetArgument<CellValueChanged>(1)).Returns(_command);
       }

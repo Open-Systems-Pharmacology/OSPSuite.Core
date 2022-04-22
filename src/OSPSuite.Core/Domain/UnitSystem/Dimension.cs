@@ -88,11 +88,25 @@ namespace OSPSuite.Core.Domain.UnitSystem
       double BaseUnitValueToUnitValue(Unit unit, double valueInBaseUnit);
 
       /// <summary>
+      ///    Converts the given value (in base unit) to a representation of the value in the <paramref name="unit" />
+      /// </summary>
+      /// <param name="unit">Unit into which the value should be converted</param>
+      /// <param name="valueInBaseUnit">Value in base unit to convert</param>
+      float BaseUnitValueToUnitValue(Unit unit, float valueInBaseUnit);
+
+      /// <summary>
       ///    Converts the given value in <paramref name="unit" /> to values in the base unit
       /// </summary>
       /// <param name="unit">Unit of the value given as parameter</param>
       /// <param name="valueInUnit">Value to be converted in base unit </param>
       double UnitValueToBaseUnitValue(Unit unit, double valueInUnit);
+
+      /// <summary>
+      ///    Converts the given value in <paramref name="unit" /> to values in the base unit
+      /// </summary>
+      /// <param name="unit">Unit of the value given as parameter</param>
+      /// <param name="valueInUnit">Value to be converted in base unit </param>
+      float UnitValueToBaseUnitValue(Unit unit, float valueInUnit);
 
       /// <summary>
       ///    Adds a unit to the dimension and set the unit as default unit if the flag is set to true
@@ -143,7 +157,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
       {
          BaseRepresentation = baseRepresentation;
          Name = dimensionName;
-         BaseUnit = new Unit(baseUnitName, 1.0, 0.0);
+         BaseUnit = new Unit(baseUnitName, 1f, 0f);
          _units.Add(BaseUnit);
       }
 
@@ -214,12 +228,22 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public double BaseUnitValueToUnitValue(Unit unit, double valueInBaseUnit)
       {
-         return valueInBaseUnit / unit.Factor - unit.Offset;
+         return unit.BaseUnitValueToUnitValue(valueInBaseUnit);
+      }
+
+      public float BaseUnitValueToUnitValue(Unit unit, float valueInBaseUnit)
+      {
+         return Convert.ToSingle(unit.BaseUnitValueToUnitValue(valueInBaseUnit));
       }
 
       public double UnitValueToBaseUnitValue(Unit unit, double valueInUnit)
       {
-         return (valueInUnit + unit.Offset) * unit.Factor;
+         return unit.UnitValueToBaseUnitValue(valueInUnit);
+      }
+
+      public float UnitValueToBaseUnitValue(Unit unit, float valueInUnit)
+      {
+         return Convert.ToSingle(unit.UnitValueToBaseUnitValue(valueInUnit));
       }
 
       public Unit AddUnit(string unitName, double factor, double offset) => AddUnit(unitName, factor, offset, false);

@@ -280,12 +280,12 @@ namespace OSPSuite.Core.Domain
          sut.XDisplayUnit = A.Fake<Unit>();
          sut.XDimension = A.Fake<IDimension>();
          sut.YDisplayUnit = A.Fake<Unit>();
-         A.CallTo(() => sut.XDimension.BaseUnitValueToUnitValue(sut.XDisplayUnit, 1)).Returns(10);
-         A.CallTo(() => sut.Dimension.BaseUnitValueToUnitValue(sut.YDisplayUnit, 1)).Returns(100);
+         A.CallTo(() => sut.XDimension.BaseUnitValueToUnitValue(sut.XDisplayUnit, 1.0)).Returns(10);
+         A.CallTo(() => sut.Dimension.BaseUnitValueToUnitValue(sut.YDisplayUnit, 1.0)).Returns(100);
       }
 
       [Observation]
-      public void should_use_the_expcted_conversion_method_to_convert_the_values_from_base_to_display_unit()
+      public void should_use_the_expected_conversion_method_to_convert_the_values_from_base_to_display_unit()
       {
          sut.XDisplayValueFor(1).ShouldBeEqualTo(10);
          sut.YDisplayValueFor(1).ShouldBeEqualTo(100);
@@ -301,12 +301,12 @@ namespace OSPSuite.Core.Domain
          sut.XDisplayUnit = A.Fake<Unit>();
          sut.XDimension = A.Fake<IDimension>();
          sut.YDisplayUnit = A.Fake<Unit>();
-         A.CallTo(() => sut.XDimension.UnitValueToBaseUnitValue(sut.XDisplayUnit, 1)).Returns(10);
-         A.CallTo(() => sut.Dimension.UnitValueToBaseUnitValue(sut.YDisplayUnit, 1)).Returns(100);
+         A.CallTo(() => sut.XDimension.UnitValueToBaseUnitValue(sut.XDisplayUnit, 1.0)).Returns(10);
+         A.CallTo(() => sut.Dimension.UnitValueToBaseUnitValue(sut.YDisplayUnit, 1.0)).Returns(100);
       }
 
       [Observation]
-      public void should_use_the_expcted_conversion_method_to_convert_the_values_from_display_to_base_unit()
+      public void should_use_the_expected_conversion_method_to_convert_the_values_from_display_to_base_unit()
       {
          sut.XBaseValueFor(1).ShouldBeEqualTo(10);
          sut.YBaseValueFor(1).ShouldBeEqualTo(100);

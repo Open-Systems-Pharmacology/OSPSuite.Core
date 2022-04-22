@@ -8,6 +8,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Helpers;
 using OSPSuite.Utility.Format;
 using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
@@ -15,14 +16,14 @@ namespace OSPSuite.Infrastructure.Export
 {
    public abstract class concern_for_DataRepositoryExportTask : ContextSpecification<IDataRepositoryExportTask>
    {
-      private IDimension _time;
+      protected IDimension _time;
       protected IDimension _mass;
       protected BaseGrid _baseGrid1;
       protected DataRepository _dataRepository;
 
       protected override void Context()
       {
-         _time = new Dimension(new BaseDimensionRepresentation {TimeExponent = 1}, "Time", "s");
+         _time = DomainHelperForSpecs.TimeDimensionForSpecs();
          _mass = new Dimension(new BaseDimensionRepresentation {MassExponent = 1}, "Mass", "kg");
          _mass.AddUnit("mg", 0.1, 0.0);
          _mass.DefaultUnit = _mass.Unit("mg");
@@ -33,7 +34,7 @@ namespace OSPSuite.Infrastructure.Export
       }
    }
 
-   public class When_converting_a_data_repository_with_only_one_base_grid_to_a_datatable : concern_for_DataRepositoryExportTask
+   public class When_converting_a_data_repository_with_only_one_base_grid_to_a_data_table : concern_for_DataRepositoryExportTask
    {
       private DataColumn _col1;
       private DataColumn _col2;
@@ -55,19 +56,19 @@ namespace OSPSuite.Infrastructure.Export
          _results = sut.ToDataTable(_dataRepository);
       }
 
-      [Test]
+      [Observation]
       public void should_return_a_data_table_containing_one_column_for_each_available_column_in_the_repository()
       {
          _results.Count().ShouldBeEqualTo(1);
          _dataTable = _results.ElementAt(0);
          _dataTable.Columns.Count.ShouldBeEqualTo(3);
-         _dataTable.Columns[0].ColumnName.ShouldBeEqualTo(_baseGrid1.Name + " [s]");
+         _dataTable.Columns[0].ColumnName.ShouldBeEqualTo(_baseGrid1.Name + " [min]");
          _dataTable.Columns[1].ColumnName.ShouldBeEqualTo(_col1.Name + " [mg]");
          _dataTable.Columns[2].ColumnName.ShouldBeEqualTo(_col2.Name + " [mg]");
       }
 
       [Observation]
-      public void should_have_set_the_value_from_the_columns_into_the_datatable()
+      public void should_have_set_the_value_from_the_columns_into_the_data_table()
       {
          _dataTable = _results.ElementAt(0);
          _dataTable.Columns.Count.ShouldBeEqualTo(3);
@@ -86,7 +87,54 @@ namespace OSPSuite.Infrastructure.Export
       }
    }
 
-   public class When_converting_a_data_repository_with_auxiliary_columns_to_datatable : concern_for_DataRepositoryExportTask
+   public class When_converting_a_data_repository_with_only_one_base_grid_to_a_data_table_with_value_in_hour : concern_for_DataRepositoryExportTask
+   {
+      private DataColumn _col1;
+      private DataTable _dataTable;
+      private IEnumerable<DataTable> _results;
+
+      protected override void Context()
+      {
+         base.Context();
+         _baseGrid1.DisplayUnit = _time.Unit("h");
+         _baseGrid1.Values = new List<float> {4.98f}; //0.083 h
+         _col1 = new DataColumn("col1", _mass, _baseGrid1) { Values = new[] { 12.487f } };
+
+         _dataRepository.Add(_col1);
+      }
+
+      protected override void Because()
+      {
+         _results = sut.ToDataTable(_dataRepository, new DataColumnExportOptions{UseDisplayUnit = true, FormatOutput = false});
+      }
+
+      [Observation]
+      public void should_not_round_the_values_and_add_conversion_digit_at_the_end()
+      {
+         _results.Count().ShouldBeEqualTo(1); 
+         _dataTable = _results.ElementAt(0);
+         _dataTable.Columns.Count.ShouldBeEqualTo(2);
+         _dataTable.Columns[0].ColumnName.ShouldBeEqualTo(_baseGrid1.Name + " [h]");
+         _dataTable.Columns[1].ColumnName.ShouldBeEqualTo(_col1.Name + " [mg]");
+      }
+
+      [Observation]
+      public void should_have_set_the_value_from_the_columns_into_the_data_table()
+      {
+         _dataTable = _results.ElementAt(0);
+         _dataTable.Rows[0].ItemArray.ShouldOnlyContainInOrder(0.083f, 124.87f);
+      }
+
+      [Observation]
+      public void should_have_set_the_name_of_the_data_repository_in_the_table()
+      {
+         _dataTable = _results.ElementAt(0);
+         _dataTable.TableName.ShouldBeEqualTo(_dataRepository.Name);
+      }
+   }
+
+
+   public class When_converting_a_data_repository_with_auxiliary_columns_to_data_table : concern_for_DataRepositoryExportTask
    {
       private DataColumn _col1;
       private DataColumn _col2;
@@ -123,13 +171,13 @@ namespace OSPSuite.Infrastructure.Export
          _results.Count().ShouldBeEqualTo(1);
          _dataTable = _results.ElementAt(0);
          _dataTable.Columns.Count.ShouldBeEqualTo(3);
-         _dataTable.Columns[0].ColumnName.ShouldBeEqualTo(_baseGrid1.Name + " [s]");
+         _dataTable.Columns[0].ColumnName.ShouldBeEqualTo(_baseGrid1.Name + " [min]");
          _dataTable.Columns[1].ColumnName.ShouldBeEqualTo(_col1.Name + " [mg]");
          _dataTable.Columns[2].ColumnName.ShouldBeEqualTo(_col2.Name + " [mg]");
       }
    }
 
-   public class When_converting_a_data_repository_with_only_one_base_grid_to_a_datatable_and_the_value_should_be_exported_in_base_unit : concern_for_DataRepositoryExportTask
+   public class When_converting_a_data_repository_with_only_one_base_grid_to_a_data_table_and_the_value_should_be_exported_in_base_unit : concern_for_DataRepositoryExportTask
    {
       private DataColumn _col1;
       private DataColumn _col2;
@@ -157,13 +205,13 @@ namespace OSPSuite.Infrastructure.Export
          _results.Count().ShouldBeEqualTo(1);
          _dataTable = _results.ElementAt(0);
          _dataTable.Columns.Count.ShouldBeEqualTo(3);
-         _dataTable.Columns[0].ColumnName.ShouldBeEqualTo(_baseGrid1.Name + " [s]");
+         _dataTable.Columns[0].ColumnName.ShouldBeEqualTo(_baseGrid1.Name + " [min]");
          _dataTable.Columns[1].ColumnName.ShouldBeEqualTo(_col1.Name + " [kg]");
          _dataTable.Columns[2].ColumnName.ShouldBeEqualTo(_col2.Name + " [kg]");
       }
 
       [Observation]
-      public void should_have_set_the_value_from_the_columns_into_the_datatable_using_values_in_base_unit()
+      public void should_have_set_the_value_from_the_columns_into_the_data_table_using_values_in_base_unit()
       {
          _dataTable = _results.ElementAt(0);
          _dataTable.Columns.Count.ShouldBeEqualTo(3);
@@ -182,7 +230,7 @@ namespace OSPSuite.Infrastructure.Export
       }
    }
 
-   public class When_converting_a_data_repository_and_output_should_be_formated : concern_for_DataRepositoryExportTask
+   public class When_converting_a_data_repository_and_output_should_be_formatted : concern_for_DataRepositoryExportTask
    {
       private DataColumn _col1;
       private DataTable _dataTable;
@@ -202,7 +250,7 @@ namespace OSPSuite.Infrastructure.Export
       }
 
       [Observation]
-      public void should_have_set_the_value_from_the_columns_into_the_datatable()
+      public void should_have_set_the_value_from_the_columns_into_the_data_table()
       {
          _dataTable = _results.ElementAt(0);
          _dataTable.Columns.Count.ShouldBeEqualTo(2);
@@ -264,7 +312,7 @@ namespace OSPSuite.Infrastructure.Export
       }
 
       [Observation]
-      public void should_have_created_a_defautl_name_of_table()
+      public void should_have_created_a_default_name_of_table()
       {
          _dataTable = _results.ElementAt(0);
          _dataTable.TableName.ShouldBeEqualTo("Table");
@@ -353,7 +401,7 @@ namespace OSPSuite.Infrastructure.Export
       }
    }
 
-   public class When_converting_a_data_repository_with_brackets_inthe_name : concern_for_DataRepositoryExportTask
+   public class When_converting_a_data_repository_with_brackets_in_the_name : concern_for_DataRepositoryExportTask
    {
       private DataColumn _col1;
       private DataTable _dataTable;
