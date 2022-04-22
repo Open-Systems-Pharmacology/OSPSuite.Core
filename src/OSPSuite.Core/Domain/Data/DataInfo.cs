@@ -57,11 +57,6 @@ namespace OSPSuite.Core.Domain.Data
       public string DisplayUnitName { get; set; }
 
       /// <summary>
-      ///    Full Date corresponding to the time when the column was created. Only useful for simulated data
-      /// </summary>
-      public DateTime Date { get; set; }
-
-      /// <summary>
       ///    Extra information that can be used to group the data in a project specific fashion. (only displayed in
       ///    DataColumn.Category)
       /// </summary>
@@ -87,7 +82,7 @@ namespace OSPSuite.Core.Domain.Data
       public double? LLOQAsDouble
       {
          get => LLOQ;
-         set => LLOQ = (float) value;
+         set => LLOQ = value.HasValue ? Convert.ToSingle(value.Value) : (float?) null;
       }
 
       /// <summary>
@@ -102,16 +97,15 @@ namespace OSPSuite.Core.Domain.Data
       }
 
       public DataInfo(ColumnOrigins columnOrigins)
-         : this(columnOrigins, AuxiliaryType.Undefined, string.Empty, DateTime.Now, string.Empty, null)
+         : this(columnOrigins, AuxiliaryType.Undefined, string.Empty, string.Empty, null)
       {
       }
 
-      public DataInfo(ColumnOrigins origin, AuxiliaryType auxiliaryType, string displayUnitName, DateTime date, string category, double? molWeight)
+      public DataInfo(ColumnOrigins origin, AuxiliaryType auxiliaryType, string displayUnitName, string category, double? molWeight)
       {
          Origin = origin;
          AuxiliaryType = auxiliaryType;
          DisplayUnitName = displayUnitName;
-         Date = date;
          Category = category;
          MolWeight = molWeight;
          ExtendedProperties = new ExtendedProperties();
@@ -119,7 +113,7 @@ namespace OSPSuite.Core.Domain.Data
 
       public DataInfo Clone()
       {
-         var dataInfo = new DataInfo(Origin, AuxiliaryType, DisplayUnitName, Date, Category, MolWeight);
+         var dataInfo = new DataInfo(Origin, AuxiliaryType, DisplayUnitName, Category, MolWeight);
          dataInfo.ExtendedProperties.UpdateFrom(ExtendedProperties);
          dataInfo.LLOQ = LLOQ;
          dataInfo.ComparisonThreshold = ComparisonThreshold;

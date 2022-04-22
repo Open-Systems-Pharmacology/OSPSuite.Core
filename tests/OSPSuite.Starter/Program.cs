@@ -76,11 +76,8 @@ namespace OSPSuite.Starter
          }
          else if (col.DataInfo.Origin == ColumnOrigins.Observation)
          {
-            // use (category, source, date, name) as key 
-            key += ObjectPath.PATH_DELIMITER + col.DataInfo.Category
-                                             + ObjectPath.PATH_DELIMITER + col.DataInfo.Date.ToShortDateString()
-                                             + ObjectPath.PATH_DELIMITER + col.DataInfo.Date.ToShortTimeString()
-                                             + ObjectPath.PATH_DELIMITER + col.Name;
+            // use (category, name) as key 
+            key += ObjectPath.PATH_DELIMITER + col.DataInfo.Category + ObjectPath.PATH_DELIMITER + col.Name;
          }
 
          return key;

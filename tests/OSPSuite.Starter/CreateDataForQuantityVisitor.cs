@@ -13,14 +13,12 @@ namespace OSPSuite.Starter
    {
       private readonly BaseGrid _baseGrid;
       private readonly DataRepository _dataRepository;
-      private readonly DateTime _date;
       private int _n;
 
       public CreateDataForQuantityVisitor(DataRepository dataRepository, BaseGrid baseGrid, DateTime date)
       {
          _dataRepository = dataRepository;
          _baseGrid = baseGrid;
-         _date = date;
          _n = 0;
       }
 
@@ -34,7 +32,7 @@ namespace OSPSuite.Starter
             if (quantity.Dimension == null) quantity.Dimension = dimensionFactory.Dimension("Mass");
 
             DataColumn dc = new DataColumn(quantity.Name, quantity.Dimension, _baseGrid);
-            dc.DataInfo = new DataInfo(ColumnOrigins.Calculation, AuxiliaryType.Undefined, quantity.Dimension.DefaultUnitName, _date, "", 320);
+            dc.DataInfo = new DataInfo(ColumnOrigins.Calculation, AuxiliaryType.Undefined, quantity.Dimension.DefaultUnitName, "", 320);
 
             dc.QuantityInfo = Helper.CreateQuantityInfo(quantity);
 

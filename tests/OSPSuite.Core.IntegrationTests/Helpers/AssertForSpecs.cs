@@ -1233,7 +1233,6 @@ namespace OSPSuite.Core.Helpers
          Assert.AreEqual(x1.Origin, x2.Origin);
          Assert.AreEqual(x1.AuxiliaryType, x2.AuxiliaryType);
          AreEqualStrings(x1.DisplayUnitName, x2.DisplayUnitName);
-         Assert.AreEqual(x1.Date, x2.Date);
          AreEqualStrings(x1.Category, x2.Category);
 
          if (x1.MolWeight.HasValue && x2.MolWeight.HasValue)

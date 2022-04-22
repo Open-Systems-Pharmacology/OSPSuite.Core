@@ -53,7 +53,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public string QuantityType => DataColumn.QuantityInfo.Type.ToString();
       public bool HasRelatedColumns => DataColumn.RelatedColumns.Any();
       public string Origin => DataColumn.DataInfo.Origin.ToString();
-      public string Date => DataColumn.DataInfo.Date.ToIsoFormat();
       public string Category => DataColumn.DataInfo.Category;
 
       public bool Used
