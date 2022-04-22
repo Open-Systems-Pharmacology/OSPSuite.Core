@@ -32,7 +32,11 @@ namespace OSPSuite.R.Services
       ///    Imports  sensitivity analysis run results from one or more csv files defined in <paramref name="csvFiles" />
       /// </summary>
       SensitivityAnalysisRunResult ImportResultsFromCSV(IModelCoreSimulation simulation, params string[] csvFiles);
-
+      
+      /// <summary>
+      /// Returns the sensitivity parameter name for the <paramref name="parameter"/>
+      /// For instance parameter Volume in Liver would return Liver-Volume
+      /// </summary>
       string SensitivityParameterNameForParameter(IParameter parameter);
    }
 

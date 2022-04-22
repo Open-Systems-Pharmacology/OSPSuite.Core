@@ -68,13 +68,26 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_return_the_expected_value_if_the_result_exist_for_the_given_parameter_combination()
       {
-         sut.PKParameterSensitivityValueFor(_pkParameterSensitivity1.PKParameterName, _pkParameterSensitivity1.QuantityPath, _pkParameterSensitivity1.ParameterName).ShouldBeEqualTo(_pkParameterSensitivity1.Value);
+         sut.PKParameterSensitivityValueBySensitivityParameterName(_pkParameterSensitivity1.PKParameterName, _pkParameterSensitivity1.QuantityPath, _pkParameterSensitivity1.ParameterName).ShouldBeEqualTo(_pkParameterSensitivity1.Value);
+      }
+      
+      [Observation]
+      public void should_return_the_expected_value_if_the_result_exist_for_the_given_parameter_combination_by_path()
+      {
+         sut.PKParameterSensitivityValueByParameterPath(_pkParameterSensitivity1.PKParameterName, _pkParameterSensitivity1.QuantityPath, _pkParameterSensitivity1.ParameterPath).ShouldBeEqualTo(_pkParameterSensitivity1.Value);
       }
 
       [Observation]
       public void should_return_NaN_if_the_parameter_is_not_found()
       {
-         sut.PKParameterSensitivityValueFor(_pkParameterSensitivity1.PKParameterName, _pkParameterSensitivity1.QuantityPath, "Unknown").ShouldBeEqualTo(double.NaN);
+         sut.PKParameterSensitivityValueBySensitivityParameterName(_pkParameterSensitivity1.PKParameterName, _pkParameterSensitivity1.QuantityPath, "Unknown").ShouldBeEqualTo(double.NaN);
+      }
+
+
+      [Observation]
+      public void should_return_NaN_if_the_parameter_by_path_is_not_found()
+      {
+         sut.PKParameterSensitivityValueByParameterPath(_pkParameterSensitivity1.PKParameterName, _pkParameterSensitivity1.QuantityPath, "Unknown").ShouldBeEqualTo(double.NaN);
       }
    }
 
