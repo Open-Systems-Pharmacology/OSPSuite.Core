@@ -21,30 +21,11 @@ namespace OSPSuite.UI.Views.ObservedData
          gridView.OptionsBehavior.Editable = false;
       }
 
-      public override void InitializeBinding()
-      {
-         base.InitializeBinding();
-         gridView.ValidatingEditor += (o, e) => OnEvent(gridEditorValidating, e);
-      }
-
       public override void BindTo(DataTable dataTable)
       {
          _dataTable = dataTable;
          base.BindTo(dataTable);
          _columnUnitsMenuBinder.BindTo(_presenter);
-      }
-
-      private void gridEditorValidating(BaseContainerValidateEditorEventArgs e)
-      {
-         var rowIndex = gridView.GetFocusedDataSourceRowIndex();
-         var columnIndex = gridView.FocusedColumn.AbsoluteIndex;
-
-         var validationFailureMessages = _presenter.GetCellValidationErrorMessages(rowIndex, columnIndex, e.Value.ToString()).ToList();
-
-         if (!validationFailureMessages.Any()) return;
-
-         e.Valid = false;
-         e.ErrorText = validationFailureMessages.First();
       }
    }
 }
