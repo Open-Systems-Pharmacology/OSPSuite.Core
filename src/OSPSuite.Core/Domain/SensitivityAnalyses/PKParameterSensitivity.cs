@@ -50,6 +50,11 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
       }
 
       /// <summary>
+      ///    Path of underlying parameter. Useful for scripting
+      /// </summary>
+      public virtual string ParameterPath { get; set; }
+
+      /// <summary>
       ///    Value of sensitivity
       /// </summary>
       public virtual double Value { get; set; }

@@ -28,25 +28,46 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
             x => string.Equals(x.QuantityPath, outputPath) && string.Equals(x.PKParameterName, pkParameterName));
       }
 
-      public IEnumerable<OutputParameterSensitivity> AllOutputParameterSensitivitiesFor(string outputPath, string parameterPath)
+      public IEnumerable<OutputParameterSensitivity> AllOutputParameterSensitivitiesBySensitivityParameterName(string outputPath, string sensitivityParameterName)
+      {
+         return _allOutputParameterSensitivities.Where(
+            x => string.Equals(x.OutputPath, outputPath) && string.Equals(x.SensitivityParameterName, sensitivityParameterName));
+      }
+
+      public IEnumerable<OutputParameterSensitivity> AllOutputParameterSensitivitiesByParameterPath(string outputPath, string parameterPath)
       {
          return _allOutputParameterSensitivities.Where(
             x => string.Equals(x.OutputPath, outputPath) && string.Equals(x.ParameterPath, parameterPath));
       }
 
-      public PKParameterSensitivity PKParameterSensitivityFor(string pkParameterName, string outputPath, string parameterName)
+      public PKParameterSensitivity PKParameterSensitivityBySensitivityParameterName(string pkParameterName, string outputPath, string sensitivityParameterName)
       {
-         return AllPKParameterSensitivitiesFor(pkParameterName, outputPath).Find(x => string.Equals(parameterName, x.ParameterName));
+         return AllPKParameterSensitivitiesFor(pkParameterName, outputPath).Find(x => string.Equals(sensitivityParameterName, x.ParameterName));
       }
 
-      public OutputParameterSensitivity[] OutputParameterSensitivitiesFor(string outputPath, string parameterPath)
+      public PKParameterSensitivity PKParameterSensitivityByParameterPath(string pkParameterName, string outputPath, string parameterPath)
       {
-         return AllOutputParameterSensitivitiesFor(outputPath, parameterPath).ToArray();
+         return AllPKParameterSensitivitiesFor(pkParameterName, outputPath).Find(x => string.Equals(parameterPath, x.ParameterPath));
       }
 
-      public double PKParameterSensitivityValueFor(string pkParameterName, string outputPath, string parameterName)
+      public OutputParameterSensitivity[] OutputParameterSensitivitiesBySensitivityParameterName(string outputPath, string sensitivityParameterName)
       {
-         return PKParameterSensitivityFor(pkParameterName, outputPath, parameterName)?.Value ?? double.NaN;
+         return AllOutputParameterSensitivitiesBySensitivityParameterName(outputPath, sensitivityParameterName).ToArray();
+      }
+
+      public OutputParameterSensitivity[] OutputParameterSensitivitiesByParameterPath(string outputPath, string quantityPath)
+      {
+         return AllOutputParameterSensitivitiesByParameterPath(outputPath, quantityPath).ToArray();
+      }
+
+      public double PKParameterSensitivityValueBySensitivityParameterName(string pkParameterName, string outputPath, string sensitivityParameterName)
+      {
+         return PKParameterSensitivityBySensitivityParameterName(pkParameterName, outputPath, sensitivityParameterName)?.Value ?? double.NaN;
+      }
+
+      public double PKParameterSensitivityValueByParameterPath(string pkParameterName, string outputPath, string parameterPath)
+      {
+         return PKParameterSensitivityByParameterPath(pkParameterName, outputPath, parameterPath)?.Value ?? double.NaN;
       }
 
       public void UpdateSensitivityParameterName(string oldParameterName, string newParameterName)
@@ -93,6 +114,8 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
       public string[] AllPKParameterNames => _allPKParameterSensitivities.Select(x => x.PKParameterName).Distinct().ToArray();
 
       public string[] AllQuantityPaths => _allPKParameterSensitivities.Select(x => x.QuantityPath).Distinct().ToArray();
+
+      public string[] AllParameterPaths => _allPKParameterSensitivities.Select(x => x.ParameterPath).Distinct().ToArray();
 
       public virtual int Count => _allPKParameterSensitivities.Count;
    }

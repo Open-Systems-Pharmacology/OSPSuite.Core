@@ -61,7 +61,6 @@ namespace OSPSuite.R.Services
       private SensitivityAnalysis _sensitivityAnalysis;
       private Simulation _simulation;
       private SensitivityAnalysisRunOptions _runOptions;
-      private IReadOnlyList<string> parameterPaths;
 
       public override void GlobalContext()
       {
@@ -72,7 +71,7 @@ namespace OSPSuite.R.Services
          _sensitivityAnalysis = new SensitivityAnalysis(_simulation) {NumberOfSteps = 2, VariationRange = 0.2};
          var containerTask = Api.GetContainerTask();
          var liverVolumes = containerTask.AllParametersMatching(_simulation, "Organism|Liver|Volume");
-         parameterPaths = liverVolumes.Select(x => x.ConsolidatedPath()).ToArray();
+         var parameterPaths = liverVolumes.Select(x => x.ConsolidatedPath()).ToArray();
          _sensitivityAnalysis.AddParameterPaths(parameterPaths);
          _runOptions = new SensitivityAnalysisRunOptions {ReturnOutputValues = true};
       }
@@ -94,11 +93,8 @@ namespace OSPSuite.R.Services
          _result.AllOutputParameterSensitivities.ShouldNotBeEmpty();
          foreach (var outputPath in _result.AllQuantityPaths)
          {
-            foreach (var parameterPath in parameterPaths)
-            {
-               var outputParameterSensitivity = _result.AllOutputParameterSensitivitiesFor(outputPath, parameterPath);
-               outputParameterSensitivity.Count().ShouldBeEqualTo(4);
-            }
+            var outputParameterSensitivity = _result.AllOutputParameterSensitivitiesBySensitivityParameterName(outputPath, "Liver-Volume");
+            outputParameterSensitivity.Count().ShouldBeEqualTo(4);
          }
       }
    }
