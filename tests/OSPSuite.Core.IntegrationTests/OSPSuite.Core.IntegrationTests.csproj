@@ -63,7 +63,7 @@
     <None Update="Data\EventsAppKeywordReplacement.pkml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Data\MultipleDosing_0_8_16.xls">
+    <None Update="Data\MultipleDosing_0_8_16.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Data\simple.pkml">
@@ -75,7 +75,7 @@
     <None Update="Data\SingleDosing.xls">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Data\SingleDosing_CL.xls">
+    <None Update="Data\SingleDosing_CL.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Data\SingleDosing_IV_30.xls">
