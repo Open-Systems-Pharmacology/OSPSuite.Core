@@ -32,11 +32,11 @@ namespace OSPSuite.Starter
       internal static QuantityInfo CreateQuantityInfo(IQuantity quantity)
       {
          var opf = IoC.Resolve<IObjectPathFactory>();
-         var qi = new QuantityInfo(quantity.Name, opf.CreateAbsoluteObjectPath(quantity).ToList(), quantity.QuantityType) {OrderIndex = quantity.Name.Length};
+         var qi = new QuantityInfo(opf.CreateAbsoluteObjectPath(quantity).ToList(), quantity.QuantityType) {OrderIndex = quantity.Name.Length};
          return qi;
       }
 
-      internal static TestEnvironment TestEnvironment { get; private set; }
+      internal static TestEnvironment TestEnvironment => null;
 
       public static string NameDefinition(DataColumn column)
       {
@@ -56,7 +56,7 @@ namespace OSPSuite.Starter
          return path;
       }
 
-      public static string IdentificationKeyDefintion(DataColumn col)
+      public static string IdentificationKeyDefinition(DataColumn col)
       {
          const int quantityPathLevelForIdentification = 1;
 
@@ -76,12 +76,8 @@ namespace OSPSuite.Starter
          }
          else if (col.DataInfo.Origin == ColumnOrigins.Observation)
          {
-            // use (category, source, date, name) as key 
-            key += ObjectPath.PATH_DELIMITER + col.DataInfo.Category
-                                             + ObjectPath.PATH_DELIMITER + col.DataInfo.Source
-                                             + ObjectPath.PATH_DELIMITER + col.DataInfo.Date.ToShortDateString()
-                                             + ObjectPath.PATH_DELIMITER + col.DataInfo.Date.ToShortTimeString()
-                                             + ObjectPath.PATH_DELIMITER + col.Name;
+            // use (category, name) as key 
+            key += ObjectPath.PATH_DELIMITER + col.DataInfo.Category + ObjectPath.PATH_DELIMITER + col.Name;
          }
 
          return key;

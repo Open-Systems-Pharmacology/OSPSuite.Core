@@ -1233,8 +1233,6 @@ namespace OSPSuite.Core.Helpers
          Assert.AreEqual(x1.Origin, x2.Origin);
          Assert.AreEqual(x1.AuxiliaryType, x2.AuxiliaryType);
          AreEqualStrings(x1.DisplayUnitName, x2.DisplayUnitName);
-         Assert.AreEqual(x1.Date, x2.Date);
-         AreEqualStrings(x1.Source, x2.Source);
          AreEqualStrings(x1.Category, x2.Category);
 
          if (x1.MolWeight.HasValue && x2.MolWeight.HasValue)
@@ -1249,7 +1247,6 @@ namespace OSPSuite.Core.Helpers
       public static void AreEqualMcQuantityInfo(QuantityInfo x1, QuantityInfo x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
-         AreEqualStrings(x1.Name, x2.Name);
          Assert.AreEqual(x1.Type, x2.Type);
          Assert.AreEqual(x1.Path.Count(), x2.Path.Count());
          for (int i = 0; i < x1.Path.Count(); i++)

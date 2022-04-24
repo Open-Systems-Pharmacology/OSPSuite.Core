@@ -32,6 +32,12 @@ namespace OSPSuite.R.Services
       ///    Imports  sensitivity analysis run results from one or more csv files defined in <paramref name="csvFiles" />
       /// </summary>
       SensitivityAnalysisRunResult ImportResultsFromCSV(IModelCoreSimulation simulation, params string[] csvFiles);
+      
+      /// <summary>
+      /// Returns the sensitivity parameter name for the <paramref name="parameter"/>
+      /// For instance parameter Volume in Liver would return Liver-Volume
+      /// </summary>
+      string SensitivityParameterNameForParameter(IParameter parameter);
    }
 
    public class SensitivityAnalysisTask : ISensitivityAnalysisTask
@@ -39,17 +45,20 @@ namespace OSPSuite.R.Services
       private readonly ISensitivityAnalysisToCoreSensitivityAnalysisMapper _sensitivityAnalysisMapper;
       private readonly ISimulationResultsToDataTableConverter _simulationResultsToDataTableConverter;
       private readonly ISensitivityAnalysisRunResultsImportTask _sensitivityAnalysisRunResultsImportTask;
+      private readonly IFullPathDisplayResolver _fullPathDisplayResolver;
       private readonly RLogger _logger;
 
       public SensitivityAnalysisTask(
          ISensitivityAnalysisToCoreSensitivityAnalysisMapper sensitivityAnalysisMapper,
          ISimulationResultsToDataTableConverter simulationResultsToDataTableConverter,
          ISensitivityAnalysisRunResultsImportTask sensitivityAnalysisRunResultsImportTask,
+         IFullPathDisplayResolver fullPathDisplayResolver,
          RLogger logger)
       {
          _sensitivityAnalysisMapper = sensitivityAnalysisMapper;
          _simulationResultsToDataTableConverter = simulationResultsToDataTableConverter;
          _sensitivityAnalysisRunResultsImportTask = sensitivityAnalysisRunResultsImportTask;
+         _fullPathDisplayResolver = fullPathDisplayResolver;
          _logger = logger;
       }
 
@@ -73,5 +82,7 @@ namespace OSPSuite.R.Services
          _logger.Log(sensitivityAnalysisImportResult);
          return sensitivityAnalysisImportResult.SensitivityAnalysisRunResult;
       }
+
+      public string SensitivityParameterNameForParameter(IParameter parameter) => _fullPathDisplayResolver.FullPathFor(parameter);
    }
 }

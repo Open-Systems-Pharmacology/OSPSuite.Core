@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Serializers
       public void TestSerialization()
       {
          var path = new List<string>(new string[] {"aa", "bb"});
-         QuantityInfo x1 = new QuantityInfo("Quain", path, QuantityType.Parameter);
+         QuantityInfo x1 = new QuantityInfo(path, QuantityType.Parameter);
 
          var mapper = new StringEnumerableAttributeMapper();
          bool ismatch = mapper.IsMatch(typeof (List<string>));
@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Serializers
       public void TestSerializationWithEmptyPath()
       {
          var path = new List<string>();
-         QuantityInfo x1 = new QuantityInfo("Quain", path, QuantityType.Parameter);
+         QuantityInfo x1 = new QuantityInfo(path, QuantityType.Parameter);
          QuantityInfo x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualMcQuantityInfo(x1, x2);
       }
