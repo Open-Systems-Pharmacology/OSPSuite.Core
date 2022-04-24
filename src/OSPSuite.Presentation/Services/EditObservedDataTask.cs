@@ -31,11 +31,6 @@ namespace OSPSuite.Presentation.Services
          _molWeightDimension = dimensionFactory.Dimension(Constants.Dimension.MOLECULAR_WEIGHT);
       }
 
-      public ICommand SetValue(DataRepository observedData, CellValueChanged cellValueChanged)
-      {
-         return new SetObservedDataValueCommand(observedData, cellValueChanged).Run(_executionContext);
-      }
-
       public ICommand AddMetaData(IEnumerable<DataRepository> observedData, MetaDataKeyValue metaDataKeyValue)
       {
          var macroCommand = new OSPSuiteMacroCommand<IOSPSuiteExecutionContext>
@@ -75,34 +70,9 @@ namespace OSPSuite.Presentation.Services
          return macroCommand;
       }
 
-      public ICommand SetUnit(DataRepository dataRepository, string columnId, Unit newUnit)
-      {
-         return new SetObservedDataColumnUnitCommand(dataRepository, columnId, newUnit).Run(_executionContext);
-      }
-
-      public ICommand RemoveValue(DataRepository observedData, int dataRowIndex)
-      {
-         var identificationsUsingDataRepository = ParameterIdentificationsUsingDataRepository(observedData);
-
-         if (!identificationsUsingDataRepository.Any())
-            return new RemoveObservedDataRowCommand(observedData, dataRowIndex).Run(_executionContext);
-
-         throw new OSPSuiteException(Captions.ParameterIdentification.CannotDeleteObservedDataPointBeingUsedByParameterIdentification(observedData.Name, identificationsUsingDataRepository));
-      }
-
       public IReadOnlyList<string> ParameterIdentificationsUsingDataRepository(DataRepository observedData)
       {
          return _parameterIdentificationTask.ParameterIdentificationsUsingObservedData(observedData).Select(x => x.Name).ToList();
-      }
-
-      public ICommand AddValue(DataRepository observedData, DataRowData dataRowAdded)
-      {
-         var identificationsUsingDataRepository = ParameterIdentificationsUsingDataRepository(observedData);
-
-         if (!identificationsUsingDataRepository.Any())
-            return new AddObservedDataRowCommand(observedData, dataRowAdded).Run(_executionContext);
-
-         throw new OSPSuiteException(Captions.ParameterIdentification.CannotAddObservedDataPointBeingUsedByParameterIdentification(observedData.Name, identificationsUsingDataRepository));
       }
 
       public void EditMultipleMetaDataFor(IEnumerable<DataRepository> dataRepositories)
