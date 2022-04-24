@@ -2105,16 +2105,6 @@ namespace OSPSuite.Assets
          return $"{parameterName} set from {oldValue} to {newValue} in {observedDataName}";
       }
 
-      public static string SetObservedDataColumnUnitCommandDescription(string columnName, string oldUnit, string newUnit)
-      {
-         return $"Unit in column '{columnName}' changed from '{oldUnit}' to {newUnit}";
-      }
-
-      public static string SetObservedDataValueDescription(string baseGridNameValueUnit, string oldNameValueUnits, string newNameValueUnits)
-      {
-         return $"Value of an Observed Data point changed from '{oldNameValueUnits}' to '{newNameValueUnits}' at '{baseGridNameValueUnit}.";
-      }
-
       public static string AddObservedDataValueDescription(string baseGridNameValueUnit, IEnumerable<string> columnNameValueUnits)
       {
          var sb = nameValueUnitListFormatter(baseGridNameValueUnit, columnNameValueUnits);

@@ -54,7 +54,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       ///    Edits the metadata on multiple dataSheet repositories at once
       /// </summary>
       /// <param name="dataRepositories">The repositories to edit</param>
-      void EditObservedData(IEnumerable<DataRepository> dataRepositories);
+      void EditObservedDataMetaData(IEnumerable<DataRepository> dataRepositories);
 
       /// <summary>
       ///    Updates the molecular weight
@@ -100,7 +100,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          editObservedData(new List<DataRepository> {observedData}, MetaDataDTO.MetaDataDTORules.All());
       }
 
-      public void EditObservedData(IEnumerable<DataRepository> observedData)
+      public void EditObservedDataMetaData(IEnumerable<DataRepository> observedData)
       {
          editObservedData(observedData, MetaDataDTO.MetaDataDTORules.AllForMultipleEdits());
       }
