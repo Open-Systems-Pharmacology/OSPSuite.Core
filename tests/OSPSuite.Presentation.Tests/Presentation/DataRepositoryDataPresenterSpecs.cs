@@ -23,7 +23,6 @@ namespace OSPSuite.Presentation.Presentation
 {
    public abstract class concern_for_DataRepositoryDataPresenter : ContextSpecification<DataRepositoryDataPresenter>
    {
-      protected IEditObservedDataTask _editObservedDataTask;
       protected IDataRepositoryDataView _view;
       private IDataRepositoryExportTask _dataRepositoryTask;
       protected DataRepository _dataRepository;
@@ -35,11 +34,10 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Context()
       {
-         _editObservedDataTask = A.Fake<IEditObservedDataTask>();
          _view = A.Fake<IDataRepositoryDataView>();
          _dataRepositoryTask = A.Fake<IDataRepositoryExportTask>();
          _commandCollector = A.Fake<ICommandCollector>();
-         sut = new DataRepositoryDataPresenter(_view, _dataRepositoryTask, _editObservedDataTask);
+         sut = new DataRepositoryDataPresenter(_view, _dataRepositoryTask);
          sut.InitializeWith(_commandCollector);
 
          //common setup
