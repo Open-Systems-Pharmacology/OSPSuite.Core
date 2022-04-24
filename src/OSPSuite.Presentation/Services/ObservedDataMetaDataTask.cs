@@ -16,14 +16,14 @@ using Command = OSPSuite.Assets.Command;
 
 namespace OSPSuite.Presentation.Services
 {
-   public class EditObservedDataTask : IEditObservedDataTask
+   public class ObservedDataMetaDataTask : IObservedDataMetaDataTask
    {
       private readonly IOSPSuiteExecutionContext _executionContext;
       private readonly IApplicationController _applicationController;
       private readonly IParameterIdentificationTask _parameterIdentificationTask;
       private readonly IDimension _molWeightDimension;
 
-      public EditObservedDataTask(IOSPSuiteExecutionContext executionContext, IApplicationController applicationController, IDimensionFactory dimensionFactory, IParameterIdentificationTask parameterIdentificationTask)
+      public ObservedDataMetaDataTask(IOSPSuiteExecutionContext executionContext, IApplicationController applicationController, IDimensionFactory dimensionFactory, IParameterIdentificationTask parameterIdentificationTask)
       {
          _executionContext = executionContext;
          _applicationController = applicationController;

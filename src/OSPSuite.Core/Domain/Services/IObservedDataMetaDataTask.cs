@@ -5,7 +5,7 @@ using OSPSuite.Core.Domain.Data;
 
 namespace OSPSuite.Core.Domain.Services
 {
-   public interface IEditObservedDataTask
+   public interface IObservedDataMetaDataTask
    {
       /// <summary>
       /// Command that adds new metadata to an enumeration of data repositories

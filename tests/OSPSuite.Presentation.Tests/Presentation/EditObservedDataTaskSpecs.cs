@@ -18,7 +18,7 @@ using Command = OSPSuite.Assets.Command;
 
 namespace OSPSuite.Presentation.Presentation
 {
-   public abstract class concern_for_EditObservedDataTask : ContextSpecification<IEditObservedDataTask>
+   public abstract class concern_for_EditObservedDataTask : ContextSpecification<IObservedDataMetaDataTask>
    {
       private IApplicationController _applicationController;
       private IOSPSuiteExecutionContext _context;
@@ -32,7 +32,7 @@ namespace OSPSuite.Presentation.Presentation
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _parameterIdentificationTask = A.Fake<IParameterIdentificationTask>();
 
-         sut = new EditObservedDataTask(_context, _applicationController, _dimensionFactory, _parameterIdentificationTask);
+         sut = new ObservedDataMetaDataTask(_context, _applicationController, _dimensionFactory, _parameterIdentificationTask);
       }
    }
 
