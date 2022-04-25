@@ -48,15 +48,15 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public bool ColumnIsInDataRepository(DataColumn column)
       {
-         var columnId = GetColumnIdFromColumnIndex(_datatable.Columns.IndexOf(column));
+         var columnId = GetColumnIdFromColumnIndex(_dataTable.Columns.IndexOf(column));
 
          return _weightedObservedData.ObservedData.Columns.ExistsById(columnId);
       }
 
       public void DisableRepositoryColumns()
       {
-         if (_datatable == null) return;
-         foreach (DataColumn column in _datatable.Columns)
+         if (_dataTable == null) return;
+         foreach (DataColumn column in _dataTable.Columns)
          {
             if (ColumnIsInDataRepository(column))
                _view.DisplayColumnReadOnly(column);

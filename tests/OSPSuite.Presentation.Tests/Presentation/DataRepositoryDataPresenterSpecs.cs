@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using FakeItEasy;
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core.Commands;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Events;
-using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters.ObservedData;
 using OSPSuite.Presentation.Views.ObservedData;
 using OSPSuite.Utility.Extensions;
@@ -150,49 +146,6 @@ namespace OSPSuite.Presentation.Presentation
       {
          //once for the edit and one for the value changed
          A.CallTo(() => _view.BindTo(A<DataTable>._)).MustHaveHappenedTwiceExactly();
-      }
-   }
-
-   public class When_retrieving_all_the_units_available_for_a_predefined_column : concern_for_DataRepositoryDataPresenter
-   {
-      private Unit _unit1;
-      private Unit _unit2;
-
-      protected override void Context()
-      {
-         base.Context();
-         _unit1 = A.Fake<Unit>();
-         _unit2 = A.Fake<Unit>();
-         A.CallTo(() => _dim.Units).Returns(new[] {_unit1, _unit2});
-         sut.EditObservedData(_dataRepository);
-      }
-
-      [Observation]
-      public void should_return_the_list_of_all_available_units_for_the_underlying_column()
-      {
-         sut.AvailableUnitsFor(0).ShouldOnlyContain(_unit1, _unit2);
-      }
-
-      [Observation]
-      public void should_return_no_units_for_column_outside_grid()
-      {
-         sut.AvailableUnitsFor(2).ShouldBeEmpty();
-      }
-   }
-
-   public class When_retrieving_all_the_units_available_for_an_unbound_column_ : concern_for_DataRepositoryDataPresenter
-   {
-      protected override void Context()
-      {
-         base.Context();
-         _dataTable.AddColumn<float>("unbound");
-         sut.EditObservedData(_dataRepository);
-      }
-
-      [Observation]
-      public void should_return_an_empty_list()
-      {
-         sut.AvailableUnitsFor(1).ShouldBeEmpty();
       }
    }
 }
