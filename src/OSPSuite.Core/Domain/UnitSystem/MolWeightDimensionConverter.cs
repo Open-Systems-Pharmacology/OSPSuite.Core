@@ -27,8 +27,12 @@ namespace OSPSuite.Core.Domain.UnitSystem
       public virtual string UnableToResolveParametersMessage => Error.MolWeightNotAvailable;
 
       protected double ConvertToMass(double molar) => molar * MolWeight;
+      
+      protected float ConvertToMass(float molar) => Convert.ToSingle(molar * MolWeight);
 
       public double ConvertToMolar(double mass) => mass / MolWeight;
+      
+      public float ConvertToMolar(float mass) => Convert.ToSingle(mass / MolWeight);
 
       protected abstract double MolWeight { get; }
    }

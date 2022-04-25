@@ -8,11 +8,6 @@ namespace OSPSuite.Core.Domain.Data
    {
       private IList<string> _path;
 
-      /// <summary>
-      ///   Typically name of the underlying quantity. This will only be used and displayed in the 
-      ///   DataColumn QuantityName from the DataBrowser
-      /// </summary>
-      public string Name { get; set; }
 
       /// <summary>
       ///   Typically the quantity type such as species, observer etc..This will only be used and displayed in the 
@@ -26,19 +21,17 @@ namespace OSPSuite.Core.Domain.Data
       public int OrderIndex { get; set; }
 
       [Obsolete("For serialization")]
-      public QuantityInfo() : this(string.Empty, new List<string>(), QuantityType.Undefined)
+      public QuantityInfo() : this(new List<string>(), QuantityType.Undefined)
       {
       }
 
       /// <summary>
       ///   Create a new quantity info
       /// </summary>
-      /// <param name = "name">Name of quantity but could be set to sthg else. Only used in DataColumn.QuantityName</param>
       /// <param name = "quantityPath">Full path of quantity</param>
       /// <param name = "quantityType">Type of quantity (such as species, observer, parameter). </param>
-      public QuantityInfo(string name, IEnumerable<string> quantityPath, QuantityType quantityType)
+      public QuantityInfo(IEnumerable<string> quantityPath, QuantityType quantityType)
       {
-         Name = name;
          Type = quantityType;
          _path = new List<string>(quantityPath);
       }
@@ -53,17 +46,14 @@ namespace OSPSuite.Core.Domain.Data
       /// </summary>
       public IEnumerable<string> Path
       {
-         get { return _path; }
-         set { _path = new List<string>(value); }
+         get => _path;
+         set => _path = new List<string>(value);
       }
 
       /// <summary>
       ///   Returns a clone of the quantity info
       /// </summary>
-      public QuantityInfo Clone()
-      {
-         return new QuantityInfo(Name, _path, Type);
-      }
+      public QuantityInfo Clone() => new QuantityInfo( _path, Type);
 
       public override bool Equals(object obj)
       {

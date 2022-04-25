@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -6,7 +5,6 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Helpers;
-using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
@@ -15,13 +13,13 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestSerializationWithoutRelatedColumn()
       {
-         var path = new List<string>(new string[] {"aa", "bb"});
-         var baseGrid = new BaseGrid("Bastian", DimensionTime) {Values = new float[] {0F, 3600F, 7200F}};
+         var path = new List<string>(new[] {"aa", "bb"});
+         var baseGrid = new BaseGrid("Bastian", DimensionTime) {Values = new[] {0F, 3600F, 7200F}};
          var x1 = new DataColumn("Columbus", DimensionLength, baseGrid)
          {
             IsInternal = true,
-            QuantityInfo = new QuantityInfo("Quain", path, QuantityType.Parameter),
-            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, "cm", new DateTime(2010, 10, 22), "Study1", "Dog", 2.4),
+            QuantityInfo = new QuantityInfo(path, QuantityType.Parameter),
+            DataInfo = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.Undefined, "cm", "Dog", 2.4),
             Values = new[] {1.0F, 2.1F, -3.4F}
          };
          x1.DataInfo.LLOQ = 1.0F;
@@ -36,11 +34,11 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestSerializationWithRelatedColumnExplicitelyBefore()
       {
-         var baseGrid = new BaseGrid("Bastian", DimensionTime) {Values = new float[] {0F, 3600F, 7200F}};
+         var baseGrid = new BaseGrid("Bastian", DimensionTime) {Values = new[] {0F, 3600F, 7200F}};
          var x1 = new DataColumn("Columbus", DimensionLength, baseGrid) {IsInternal = false};
          var relCol = new DataColumn("Renate", DimensionLess, baseGrid)
          {
-            DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.GeometricStdDev, " ", new DateTime(2010, 10, 22), "Study1", "Dog", 2.4)
+            DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.GeometricStdDev, " ", "Dog", 2.4)
          };
          x1.AddRelatedColumn(relCol);
 
@@ -55,13 +53,13 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestSerializationWithRelatedColumnExplicitelyAfter()
       {
-         var baseGrid = new BaseGrid("Bastian", DimensionTime) {Values = new float[] {0F, 3600F, 7200F}};
+         var baseGrid = new BaseGrid("Bastian", DimensionTime) {Values = new[] {0F, 3600F, 7200F}};
          var x1 = new DataColumn("Columbus", DimensionLength, baseGrid);
          var relColG = new DataColumn("RenateG", DimensionLess, baseGrid);
-         relColG.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.GeometricStdDev, " ", new DateTime(2010, 10, 22), "Study1", "Dog", 2.4);
+         relColG.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.GeometricStdDev, " ", "Dog", 2.4);
          x1.AddRelatedColumn(relColG);
          var relColA = new DataColumn("RenateA", DimensionLength, baseGrid);
-         relColA.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.ArithmeticStdDev, "cm", new DateTime(2010, 10, 22), "Study1", "Dog", 2.4);
+         relColA.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.ArithmeticStdDev, "cm", "Dog", 2.4);
          x1.AddRelatedColumn(relColA);
 
          var dr1 = new DataRepository("id") {x1, relColG, relColA};

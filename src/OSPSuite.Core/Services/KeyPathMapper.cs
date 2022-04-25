@@ -79,7 +79,7 @@ namespace OSPSuite.Core.Services
             case ColumnOrigins.Undefined:
             case ColumnOrigins.Observation:
             case ColumnOrigins.ObservationAuxiliary:
-               return new KeyPathMap(path: _objectPathFactory.CreateFormulaUsablePathFrom(dataInfo.Source, dataColumn.Name).ToString());
+               return new KeyPathMap(path: _objectPathFactory.CreateFormulaUsablePathFrom(dataColumn.Repository?.Name, dataColumn.Name).ToString());
             case ColumnOrigins.BaseGrid:
                return new KeyPathMap(path: quantityInfo.PathAsString);
             case ColumnOrigins.Calculation:

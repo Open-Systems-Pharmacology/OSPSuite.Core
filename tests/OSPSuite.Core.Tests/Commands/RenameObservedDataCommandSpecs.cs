@@ -31,8 +31,8 @@ namespace OSPSuite.Core.Commands
          _baseGrid = new BaseGrid("Time", _timeDimension);
          _column = new DataColumn("Col", _concDimension, _baseGrid);
 
-         var quantityInfo = new QuantityInfo(_column.Name, new[] {_oldName, ObjectTypes.ObservedData, "Organ", "Compartment", "Drug", _column.Name}, QuantityType.Undefined);
-         _baseGrid.QuantityInfo = new QuantityInfo("time", new[] {_oldName, ObjectTypes.ObservedData}, QuantityType.BaseGrid);
+         var quantityInfo = new QuantityInfo(new[] {_oldName, ObjectTypes.ObservedData, "Organ", "Compartment", "Drug", _column.Name}, QuantityType.Undefined);
+         _baseGrid.QuantityInfo = new QuantityInfo(new[] {_oldName, ObjectTypes.ObservedData}, QuantityType.BaseGrid);
          _column.QuantityInfo = quantityInfo;
          _dataRepository.Add(_baseGrid);
          _dataRepository.Add(_column);

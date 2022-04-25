@@ -48,14 +48,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public string Name => displayNameFor(PathElementId.Name);
       public string BaseGridName => DataColumn.BaseGrid.Name;
       public int OrderIndex => DataColumn.QuantityInfo.OrderIndex;
-      public string QuantityName => DataColumn.QuantityInfo.Name;
+      public string QuantityName => DataColumn.Name;
       public string DimensionName => DataColumn.Dimension.Name;
       public string QuantityType => DataColumn.QuantityInfo.Type.ToString();
       public bool HasRelatedColumns => DataColumn.RelatedColumns.Any();
       public string Origin => DataColumn.DataInfo.Origin.ToString();
-      public string Date => DataColumn.DataInfo.Date.ToIsoFormat();
       public string Category => DataColumn.DataInfo.Category;
-      public string Source => DataColumn.DataInfo.Source;
 
       public bool Used
       {

@@ -169,7 +169,7 @@ namespace OSPSuite.Helpers
          {
             Values = new[] {0f, 2.5f, 0.9f, 0.9f, 0.5f},
             DataInfo = {Origin = ColumnOrigins.Calculation},
-            QuantityInfo = new QuantityInfo("Concentration", new[] {simulationName, "Organism", "Blood", "Plasma", "Concentration"}, QuantityType.Drug)
+            QuantityInfo = new QuantityInfo(new[] {simulationName, "Organism", "Blood", "Plasma", "Concentration"}, QuantityType.Drug)
          };
 
          simulationResults.Add(data);
@@ -210,7 +210,7 @@ namespace OSPSuite.Helpers
          {
             Values = new[] {10f, 20f, 30f},
             DataInfo = {Origin = ColumnOrigins.Calculation},
-            QuantityInfo = new QuantityInfo("Concentration", new[] {simulationName, "Comp", "Liver", "Cell", "Concentration"}, QuantityType.Drug)
+            QuantityInfo = new QuantityInfo(new[] {simulationName, "Comp", "Liver", "Cell", "Concentration"}, QuantityType.Drug)
          };
          return data;
       }

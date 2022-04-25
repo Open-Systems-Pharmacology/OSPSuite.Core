@@ -116,6 +116,7 @@ namespace OSPSuite.Core.Domain.Services
          dataTable.AddColumn<string>(Constants.SensitivityAnalysisResults.PARAMETER);
          dataTable.AddColumn<string>(Constants.SensitivityAnalysisResults.PK_PARAMETER);
          dataTable.AddColumn<string>(Constants.SensitivityAnalysisResults.VALUE);
+         dataTable.AddColumn<string>(Constants.SensitivityAnalysisResults.PARAMETER_PATH);
 
          dataTable.BeginLoadData();
          foreach (var pkParameterSensitivity in sensitivityAnalysisRunResult.AllPKParameterSensitivities)
@@ -125,6 +126,7 @@ namespace OSPSuite.Core.Domain.Services
             row[Constants.SensitivityAnalysisResults.PARAMETER] = pkParameterSensitivity.ParameterName.InQuotes();
             row[Constants.SensitivityAnalysisResults.PK_PARAMETER] = pkParameterSensitivity.PKParameterName.InQuotes();
             row[Constants.SensitivityAnalysisResults.VALUE] = pkParameterSensitivity.Value.ConvertedTo<string>();
+            row[Constants.SensitivityAnalysisResults.PARAMETER_PATH] = pkParameterSensitivity.ParameterPath.InQuotes();
             dataTable.Rows.Add(row);
          }
 

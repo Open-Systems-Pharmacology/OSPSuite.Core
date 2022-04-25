@@ -76,9 +76,7 @@ namespace OSPSuite.UI.Views.Charts
          bind(x => x.QuantityType, BrowserColumns.QuantityType);
          bind(x => x.QuantityName, BrowserColumns.QuantityName);
          bind(x => x.Origin, BrowserColumns.Origin);
-         bind(x => x.Date, BrowserColumns.Date);
          bind(x => x.Category, BrowserColumns.Category);
-         bind(x => x.Source, BrowserColumns.Source);
 
          var usedColumn = _gridViewBinder.Bind(x => x.Used)
             .WithRepository(dto => _usedRepository)

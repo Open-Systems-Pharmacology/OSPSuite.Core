@@ -132,6 +132,7 @@ namespace OSPSuite.Core.Services
       private IndividualResults _resV12;
       private IndividualResults _resV21;
       private IndividualResults _resV22;
+      private QuantityValues _timeValues;
 
       protected override void Context()
       {
@@ -174,21 +175,28 @@ namespace OSPSuite.Core.Services
          _variationData.AddVariation(pv21);
          _variationData.AddVariation(pv22);
 
-         _resV11 = new IndividualResults {IndividualId = 0};
+         _timeValues = new QuantityValues {QuantityPath = "Time", Values = new[] {1, 2, 3, 4, 5f}};
+
+         _resV11 = new IndividualResults {IndividualId = 0, Time = _timeValues };
          _resV11.Add(new QuantityValues {QuantityPath = "Output1", Values = new[] {111.1f, 211.1f, 311.1f, 411.1f, 511.1f}});
          _resV11.Add(new QuantityValues {QuantityPath = "Output2", Values = new[] {111.2f, 211.2f, 311.2f, 411.2f, 511.2f}});
+         _resV11.UpdateQuantityTimeReference();
 
-         _resV12 = new IndividualResults {IndividualId = 1};
+         _resV12 = new IndividualResults {IndividualId = 1, Time = _timeValues };
          _resV12.Add(new QuantityValues {QuantityPath = "Output1", Values = new[] {112.1f, 212.1f, 312.1f, 412.1f, 512.1f}});
          _resV12.Add(new QuantityValues {QuantityPath = "Output2", Values = new[] {112.2f, 212.2f, 312.2f, 412.2f, 512.2f}});
+         _resV12.UpdateQuantityTimeReference();
 
-         _resV21 = new IndividualResults {IndividualId = 2};
+         _resV21 = new IndividualResults {IndividualId = 2, Time = _timeValues };
          _resV21.Add(new QuantityValues {QuantityPath = "Output1", Values = new[] {121.1f, 221.1f, 321.1f, 421.1f, 521.1f}});
          _resV21.Add(new QuantityValues {QuantityPath = "Output2", Values = new[] {121.2f, 221.2f, 321.2f, 421.2f, 521.2f}});
+         _resV21.UpdateQuantityTimeReference();
 
-         _resV22 = new IndividualResults {IndividualId = 3};
+         _resV22 = new IndividualResults {IndividualId = 3, Time = _timeValues };
          _resV22.Add(new QuantityValues {QuantityPath = "Output1", Values = new[] {122.1f, 222.1f, 322.1f, 422.1f, 522.1f}});
          _resV22.Add(new QuantityValues {QuantityPath = "Output2", Values = new[] {122.2f, 222.2f, 322.2f, 422.2f, 522.2f}});
+         _resV22.UpdateQuantityTimeReference();
+
 
          _simulationResults.Add(_resV11);
          _simulationResults.Add(_resV12);
@@ -207,18 +215,19 @@ namespace OSPSuite.Core.Services
          //8 = number of output * number of variations = 2*4
          _result.AllOutputParameterSensitivities.Count.ShouldBeEqualTo(8);
 
-         _result.OutputParameterSensitivitiesFor("Output1", "SP1-PATH").Length.ShouldBeEqualTo(2);
-         _result.OutputParameterSensitivitiesFor("Output2", "SP1-PATH").Length.ShouldBeEqualTo(2);
-         _result.OutputParameterSensitivitiesFor("Output1", "SP2-PATH").Length.ShouldBeEqualTo(2);
-         _result.OutputParameterSensitivitiesFor("Output2", "SP2-PATH").Length.ShouldBeEqualTo(2);
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output1", _sensitivityParameter1.Name).Length.ShouldBeEqualTo(2);
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output2", _sensitivityParameter1.Name).Length.ShouldBeEqualTo(2);
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output1", _sensitivityParameter2.Name).Length.ShouldBeEqualTo(2);
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output2", _sensitivityParameter2.Name).Length.ShouldBeEqualTo(2);
 
          //test some of the values
-         _result.OutputParameterSensitivitiesFor("Output1", "SP1-PATH")[0].OutputValues.ShouldBeEqualTo(new[] {111.1f, 211.1f, 311.1f, 411.1f, 511.1f});
-         _result.OutputParameterSensitivitiesFor("Output1", "SP1-PATH")[1].OutputValues.ShouldBeEqualTo(new[] {112.1f, 212.1f, 312.1f, 412.1f, 512.1f});
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output1", _sensitivityParameter1.Name)[0].OutputValues.ShouldBeEqualTo(new[] {111.1f, 211.1f, 311.1f, 411.1f, 511.1f});
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output1", _sensitivityParameter1.Name)[0].TimeValues.ShouldBeEqualTo(new[] { 1, 2, 3, 4, 5f });
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output1", _sensitivityParameter1.Name)[1].OutputValues.ShouldBeEqualTo(new[] {112.1f, 212.1f, 312.1f, 412.1f, 512.1f});
 
          //test some of the values
-         _result.OutputParameterSensitivitiesFor("Output2", "SP2-PATH")[0].OutputValues.ShouldBeEqualTo(new[] {121.2f, 221.2f, 321.2f, 421.2f, 521.2f});
-         _result.OutputParameterSensitivitiesFor("Output2", "SP2-PATH")[1].OutputValues.ShouldBeEqualTo(new[] {122.2f, 222.2f, 322.2f, 422.2f, 522.2f});
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output2", _sensitivityParameter2.Name)[0].OutputValues.ShouldBeEqualTo(new[] {121.2f, 221.2f, 321.2f, 421.2f, 521.2f});
+         _result.OutputParameterSensitivitiesBySensitivityParameterName("Output2", _sensitivityParameter2.Name)[1].OutputValues.ShouldBeEqualTo(new[] {122.2f, 222.2f, 322.2f, 422.2f, 522.2f});
       }
    }
 }
