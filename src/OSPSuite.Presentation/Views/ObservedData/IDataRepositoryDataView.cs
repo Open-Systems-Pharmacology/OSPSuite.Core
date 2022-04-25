@@ -4,6 +4,5 @@ namespace OSPSuite.Presentation.Views.ObservedData
 {
    public interface IDataRepositoryDataView : IBaseDataRepositoryDataView<IDataRepositoryDataPresenter>
    {
-      void DisableEdition();
    }
 }

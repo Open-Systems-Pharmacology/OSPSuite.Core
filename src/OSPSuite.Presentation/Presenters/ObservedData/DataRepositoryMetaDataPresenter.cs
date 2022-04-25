@@ -54,7 +54,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       ///    Edits the metadata on multiple dataSheet repositories at once
       /// </summary>
       /// <param name="dataRepositories">The repositories to edit</param>
-      void EditObservedData(IEnumerable<DataRepository> dataRepositories);
+      void EditObservedDataMetaData(IEnumerable<DataRepository> dataRepositories);
 
       /// <summary>
       ///    Updates the molecular weight
@@ -72,7 +72,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
    {
       protected IEnumerable<DataRepository> _allDataRepositories;
       private NotifyList<MetaDataDTO> _metaDataDTOList;
-      private readonly IEditObservedDataTask _editObservedDataTask;
+      private readonly IObservedDataMetaDataTask _observedDataMetaDataTask;
       private readonly IObservedDataConfiguration _observedDataConfiguration;
       private readonly IParameterFactory _parameterFactory;
       private IEnumerable<IBusinessRule> _defaultRules;
@@ -80,11 +80,11 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       private readonly IDimensionFactory _dimensionFactory;
       public bool IsLatched { get; set; }
 
-      public DataRepositoryMetaDataPresenter(IDataRepositoryMetaDataView view, IEditObservedDataTask editObservedDataTask,
+      public DataRepositoryMetaDataPresenter(IDataRepositoryMetaDataView view, IObservedDataMetaDataTask observedDataMetaDataTask,
          IObservedDataConfiguration observedDataConfiguration, IParameterFactory parameterFactory, IDimensionFactory dimensionFactory)
          : base(view)
       {
-         _editObservedDataTask = editObservedDataTask;
+         _observedDataMetaDataTask = observedDataMetaDataTask;
          _observedDataConfiguration = observedDataConfiguration;
          _parameterFactory = parameterFactory;
          _molWeightDimension = dimensionFactory.Dimension(Constants.Dimension.MOLECULAR_WEIGHT);
@@ -100,7 +100,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          editObservedData(new List<DataRepository> {observedData}, MetaDataDTO.MetaDataDTORules.All());
       }
 
-      public void EditObservedData(IEnumerable<DataRepository> observedData)
+      public void EditObservedDataMetaData(IEnumerable<DataRepository> observedData)
       {
          editObservedData(observedData, MetaDataDTO.MetaDataDTORules.AllForMultipleEdits());
       }
@@ -144,7 +144,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       public void RemoveMetaData(MetaDataDTO metaDataDTO)
       {
-         AddCommand(_editObservedDataTask.RemoveMetaData(_allDataRepositories, mapFrom(metaDataDTO)));
+         AddCommand(_observedDataMetaDataTask.RemoveMetaData(_allDataRepositories, mapFrom(metaDataDTO)));
       }
 
       public IEnumerable<string> PredefinedValuesFor(MetaDataDTO metaDataDTO)
@@ -180,24 +180,24 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       private void metaDataAdded(MetaDataDTO metaDataDTO)
       {
-         AddCommand(_editObservedDataTask.AddMetaData(_allDataRepositories, mapFrom(metaDataDTO)));
+         AddCommand(_observedDataMetaDataTask.AddMetaData(_allDataRepositories, mapFrom(metaDataDTO)));
       }
 
       private void metaDataValueChanged(MetaDataDTO metaDataDTO, string oldValue)
       {
-         AddCommand(_editObservedDataTask.ChangeMetaData(_allDataRepositories,
+         AddCommand(_observedDataMetaDataTask.ChangeMetaData(_allDataRepositories,
             new MetaDataChanged {NewName = metaDataDTO.Name, OldName = metaDataDTO.Name, OldValue = oldValue, NewValue = metaDataDTO.Value}));
       }
 
       private void metaDataNameChanged(MetaDataDTO metaDataDTO, string oldName)
       {
-         AddCommand(_editObservedDataTask.ChangeMetaData(_allDataRepositories,
+         AddCommand(_observedDataMetaDataTask.ChangeMetaData(_allDataRepositories,
             new MetaDataChanged {NewName = metaDataDTO.Name, OldName = oldName, OldValue = metaDataDTO.Value, NewValue = metaDataDTO.Value}));
       }
 
       public void SetMolWeight(double oldMolWeightValueInDisplayUnit, double molWeightValueInDisplayUnit)
       {
-         this.DoWithinLatch(() => { AddCommand(_editObservedDataTask.UpdateMolWeight(_allDataRepositories, molWeightValueInCoreUnit(oldMolWeightValueInDisplayUnit), molWeightValueInCoreUnit(molWeightValueInDisplayUnit))); });
+         this.DoWithinLatch(() => { AddCommand(_observedDataMetaDataTask.UpdateMolWeight(_allDataRepositories, molWeightValueInCoreUnit(oldMolWeightValueInDisplayUnit), molWeightValueInCoreUnit(molWeightValueInDisplayUnit))); });
       }
 
       public Unit GetDefaultMolWeightUnit()

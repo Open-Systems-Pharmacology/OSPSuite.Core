@@ -19,7 +19,7 @@ namespace OSPSuite.Presentation.Presentation
 {
    public abstract class concern_for_DataRepositoryMetaDataPresenter : ContextSpecification<DataRepositoryMetaDataPresenter>
    {
-      protected IEditObservedDataTask _editObservedDataTask;
+      protected IObservedDataMetaDataTask _observedDataMetaDataTask;
       protected IDataRepositoryMetaDataView _view;
       protected DataRepository _dataRepository;
       private ICommandCollector _commandCollector;
@@ -32,13 +32,13 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          _commandCollector = A.Fake<ICommandCollector>();
-         _editObservedDataTask = A.Fake<IEditObservedDataTask>();
+         _observedDataMetaDataTask = A.Fake<IObservedDataMetaDataTask>();
          _view = A.Fake<IDataRepositoryMetaDataView>();
          _observedDataConfiguration = A.Fake<IObservedDataConfiguration>();
          _dataRepository = new DataRepository();
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _parameterFactory = A.Fake<IParameterFactory>();
-         sut = new DataRepositoryMetaDataPresenter(_view, _editObservedDataTask, _observedDataConfiguration, _parameterFactory, _dimensionFactory);
+         sut = new DataRepositoryMetaDataPresenter(_view, _observedDataMetaDataTask, _observedDataConfiguration, _parameterFactory, _dimensionFactory);
          sut.InitializeWith(_commandCollector);
          sut.EditObservedData(_dataRepository);
 
@@ -126,7 +126,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void command_to_add_is_not_issued()
       {
-         A.CallTo(() => _editObservedDataTask.AddMetaData(A<IEnumerable<DataRepository>>.Ignored, A<MetaDataKeyValue>.Ignored)).MustNotHaveHappened();
+         A.CallTo(() => _observedDataMetaDataTask.AddMetaData(A<IEnumerable<DataRepository>>.Ignored, A<MetaDataKeyValue>.Ignored)).MustNotHaveHappened();
       }
    }
 
@@ -165,7 +165,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void command_for_add_is_issued()
       {
-         A.CallTo(() => _editObservedDataTask.AddMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataKeyValue>.That.Matches(x => x.Value.Equals("onlyValue") && x.Key.Equals("onlyName")))).MustHaveHappened();
+         A.CallTo(() => _observedDataMetaDataTask.AddMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataKeyValue>.That.Matches(x => x.Value.Equals("onlyValue") && x.Key.Equals("onlyName")))).MustHaveHappened();
       }
 
       protected override void Context()
@@ -185,7 +185,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void command_for_change_is_issued()
       {
-         A.CallTo(() => _editObservedDataTask.ChangeMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataChanged>.Ignored)).MustHaveHappened();
+         A.CallTo(() => _observedDataMetaDataTask.ChangeMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataChanged>.Ignored)).MustHaveHappened();
       }
 
       protected override void Context()
@@ -205,7 +205,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void command_for_add_is_issued()
       {
-         A.CallTo(() => _editObservedDataTask.AddMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataKeyValue>.Ignored)).MustHaveHappened();
+         A.CallTo(() => _observedDataMetaDataTask.AddMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataKeyValue>.Ignored)).MustHaveHappened();
       }
 
       protected override void Context()
@@ -236,7 +236,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void command_for_change_is_issued()
       {
-         A.CallTo(() => _editObservedDataTask.ChangeMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataChanged>.Ignored)).MustHaveHappened();
+         A.CallTo(() => _observedDataMetaDataTask.ChangeMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataChanged>.Ignored)).MustHaveHappened();
       }
    }
 

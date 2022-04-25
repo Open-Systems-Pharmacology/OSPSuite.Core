@@ -6,16 +6,16 @@ namespace OSPSuite.Presentation.UICommands
 {
    public class EditMultipleMetaDataUICommand : ObjectUICommand<IEnumerable<DataRepository>>
    {
-      private readonly IEditObservedDataTask _observedDataTask;
+      private readonly IObservedDataMetaDataTask _observedDataMetaDataTask;
 
-      public EditMultipleMetaDataUICommand(IEditObservedDataTask observedDataTask)
+      public EditMultipleMetaDataUICommand(IObservedDataMetaDataTask observedDataMetaDataTask)
       {
-         _observedDataTask = observedDataTask;
+         _observedDataMetaDataTask = observedDataMetaDataTask;
       }
 
       protected override void PerformExecute()
       {
-         _observedDataTask.EditMultipleMetaDataFor(Subject);
+         _observedDataMetaDataTask.EditMultipleMetaDataFor(Subject);
       }
    }
 }

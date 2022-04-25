@@ -26,7 +26,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataPresenter = dataPresenter;
          View.AddChartView(_chartPresenter.BaseView);
          View.AddDataView(_dataPresenter.View);
-         _dataPresenter.DisableEdition();
       }
       public void DataSetSelected(int index)
       {

@@ -2105,22 +2105,6 @@ namespace OSPSuite.Assets
          return $"{parameterName} set from {oldValue} to {newValue} in {observedDataName}";
       }
 
-      public static string SetObservedDataColumnUnitCommandDescription(string columnName, string oldUnit, string newUnit)
-      {
-         return $"Unit in column '{columnName}' changed from '{oldUnit}' to {newUnit}";
-      }
-
-      public static string SetObservedDataValueDescription(string baseGridNameValueUnit, string oldNameValueUnits, string newNameValueUnits)
-      {
-         return $"Value of an Observed Data point changed from '{oldNameValueUnits}' to '{newNameValueUnits}' at '{baseGridNameValueUnit}.";
-      }
-
-      public static string AddObservedDataValueDescription(string baseGridNameValueUnit, IEnumerable<string> columnNameValueUnits)
-      {
-         var sb = nameValueUnitListFormatter(baseGridNameValueUnit, columnNameValueUnits);
-         return $"Added an Observed Data point with Values: {sb}";
-      }
-
       public static string AddObservedDataToProjectDescription(string observedDataName, string projectName)
       {
          return AddEntityToContainer(ObjectTypes.ObservedData, observedDataName, ObjectTypes.Project, projectName);
@@ -2152,12 +2136,6 @@ namespace OSPSuite.Assets
          columnNameValueUnits.Each(x => sb.Append(x));
          sb.Append($" at {baseGridNameValueUnit}");
          return sb;
-      }
-
-      public static string RemoveObservedDataValueDescription(string baseGridNameValueUnit, IEnumerable<string> removedNameValueUnits)
-      {
-         var sb = nameValueUnitListFormatter(baseGridNameValueUnit, removedNameValueUnits);
-         return $"Removed an Observed Data point with Values: {sb}";
       }
 
       public static string ChangeColorOfCurveTemplate(string curveTemplateName, string newName, string oldName)

@@ -8,7 +8,7 @@ namespace OSPSuite.Presentation.UICommands
 {
    public abstract class concern_for_EditMultipleMetaDataUICommand : ContextSpecification<EditMultipleMetaDataUICommand>
    {
-      protected IEditObservedDataTask _task = A.Fake<IEditObservedDataTask>();
+      protected IObservedDataMetaDataTask _task = A.Fake<IObservedDataMetaDataTask>();
       protected IEnumerable<DataRepository> _repositories;
 
       protected override void Context()

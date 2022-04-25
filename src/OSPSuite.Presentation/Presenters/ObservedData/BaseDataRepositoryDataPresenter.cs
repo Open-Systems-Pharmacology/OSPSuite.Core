@@ -24,7 +24,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       where TPresenter : IBaseDataRepositoryDataPresenter<TView>
    {
       protected DataRepository _observedData;
-      protected DataTable _datatable;
+      protected DataTable _dataTable;
       private readonly NumericFormatter<double> _numericFormatter = new NumericFormatter<double>(NumericFormatterOptions.Instance);
 
       protected BaseDataRepositoryDataPresenter(TView view) : base(view)
@@ -56,8 +56,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       protected void Rebind()
       {
-         _datatable = MapDataTableFromColumns();
-         _view.BindTo(_datatable);
+         _dataTable = MapDataTableFromColumns();
+         _view.BindTo(_dataTable);
       }
 
       public string ToolTipTextForRow(int observedDataRowIndex)
@@ -105,10 +105,10 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       protected string GetColumnIdFromColumnIndex(int columnIndex)
       {
-         if (columnIndex >= _datatable.Columns.Count) 
+         if (columnIndex >= _dataTable.Columns.Count)
             return null;
 
-         var column = _datatable.Columns[columnIndex];
+         var column = _dataTable.Columns[columnIndex];
          return ColumnIdFromColumn(column);
       }
 

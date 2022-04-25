@@ -37,7 +37,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       public ICommand Edit(IEnumerable<DataRepository> dataRepositories)
       {
-         _metaDataPresenter.EditObservedData(dataRepositories);
+         _metaDataPresenter.EditObservedDataMetaData(dataRepositories);
          _view.Display();
 
          if (!_view.Canceled)
