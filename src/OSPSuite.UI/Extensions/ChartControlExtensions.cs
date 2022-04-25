@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Media;
 using DevExpress.Utils;
 using DevExpress.XtraCharts;
 using OSPSuite.Core.Chart;
@@ -10,7 +9,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.UI.Controls;
 using OSPSuite.Utility.Extensions;
-using Color = System.Drawing.Color;
 
 namespace OSPSuite.UI.Extensions
 {
@@ -36,7 +34,7 @@ namespace OSPSuite.UI.Extensions
       /// </summary>
       public static void CopyToClipboard(this UxChartControl chartControl, IChart chart, string watermark)
       {
-         using (var cloneOfChartControl = (ChartControl) chartControl.Clone())
+         using (var cloneOfChartControl = (ChartControl)chartControl.Clone())
          {
             cloneOfChartControl.SetFontAndSizeSettings(chart.FontAndSize, chartControl.Size);
 
@@ -44,7 +42,12 @@ namespace OSPSuite.UI.Extensions
                AddOriginData(cloneOfChartControl, chart);
 
             prepareChartForCopying(cloneOfChartControl);
-            AddWatermark(cloneOfChartControl, watermark, chart);
+
+            if (!string.IsNullOrEmpty(watermark))
+            {
+               //Bug in devexpress that does not keep the color in bar charts
+               AddWatermark(cloneOfChartControl, watermark);
+            }
 
             chartControl.CopyChartToClipboard();
          }
@@ -73,7 +76,8 @@ namespace OSPSuite.UI.Extensions
          setFontAndSizeSettings(targetChartControl, width, height, fontTitle, fontDescription, fontAxis, fontLegend);
       }
 
-      private static void setFontAndSizeSettings(ChartControl chartControl, int width, int height, Font fontTitle, Font fontDescription, Font fontAxis, Font fontLegend)
+      private static void setFontAndSizeSettings(ChartControl chartControl, int width, int height, Font fontTitle, Font fontDescription,
+         Font fontAxis, Font fontLegend)
       {
          chartControl.Width = width;
          chartControl.Height = height;
@@ -98,8 +102,8 @@ namespace OSPSuite.UI.Extensions
 
       public static void CopyToClipboard(this UxChartControl chartControl, string watermark)
       {
-         //We need to use watermak in the chart. Create a clone
-         using (var cloneOfChartControl = (ChartControl) chartControl.Clone())
+         //We need to use watermark in the chart. Create a clone
+         using (var cloneOfChartControl = (ChartControl)chartControl.Clone())
          {
             copyFontAndSizeSettings(chartControl, cloneOfChartControl);
             prepareChartForCopying(cloneOfChartControl);
@@ -109,7 +113,6 @@ namespace OSPSuite.UI.Extensions
                //Bug in devexpress that does not keep the color in bar charts
                AddWatermark(cloneOfChartControl, watermark);
             }
-
             chartControl.CopyChartToClipboard();
          }
       }
@@ -133,7 +136,8 @@ namespace OSPSuite.UI.Extensions
          if (watermarkAnnotation == null)
             watermarkAnnotation = createWatermarkAnnotation(chartControl);
 
-         watermarkAnnotation.Font = watermarkFont ?? new Font(watermarkAnnotation.Font.FontFamily, Constants.ChartFontOptions.DEFAULT_FONT_SIZE_WATERMARK);
+         watermarkAnnotation.Font =
+            watermarkFont ?? new Font(watermarkAnnotation.Font.FontFamily, Constants.ChartFontOptions.DEFAULT_FONT_SIZE_WATERMARK);
          watermarkAnnotation.Text = watermark.InBold();
          updateAnnotationPosition(watermarkAnnotation, chartControl);
       }
@@ -190,9 +194,10 @@ namespace OSPSuite.UI.Extensions
          return chartControl.Titles.OfType<ChartTitle>().ToArray();
       }
 
-      public static Font FontFor(this ChartFontAndSizeSettings chartFontAndSizeSettings, Func<ChartFonts, int> fontSizeFunc) => FontFor( chartFontAndSizeSettings, fontSizeFunc(chartFontAndSizeSettings.Fonts));
+      public static Font FontFor(this ChartFontAndSizeSettings chartFontAndSizeSettings, Func<ChartFonts, int> fontSizeFunc) =>
+         FontFor(chartFontAndSizeSettings, fontSizeFunc(chartFontAndSizeSettings.Fonts));
 
-      public static Font FontFor(this ChartFontAndSizeSettings chartFontAndSizeSettings, int fontSize) => new Font(chartFontAndSizeSettings.Fonts.FontFamilyName, fontSize);
-
+      public static Font FontFor(this ChartFontAndSizeSettings chartFontAndSizeSettings, int fontSize) =>
+         new Font(chartFontAndSizeSettings.Fonts.FontFamilyName, fontSize);
    }
 }
