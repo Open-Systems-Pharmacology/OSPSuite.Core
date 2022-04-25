@@ -200,6 +200,15 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
+      public void Retrieving_and_settings_single_value()
+      {
+         //set one value for the base grid so that setting a single value won't expend the array
+         _baseGrid.Values = new[] {2F};
+         sut.Value = 2.5;
+         sut.ValuesAsArray.ShouldBeEqualTo(new[] {2.5});
+      }
+
+      [Observation]
       public void retrieving_value_as_array_for_a_column_not_initialized()
       {
          sut.ValuesAsArray.ShouldBeEqualTo(Array.Empty<double>());

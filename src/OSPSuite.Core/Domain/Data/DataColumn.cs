@@ -138,6 +138,14 @@ namespace OSPSuite.Core.Domain.Data
       }
 
       /// <summary>
+      ///    Required for R (one value being set is not found properly by rCLR)
+      /// </summary>
+      public virtual double Value
+      {
+         set => ValuesAsArray = new[] {value};
+      }
+
+      /// <summary>
       ///    Returns the internal array of values. Its size is in either 1 (constant array) or equal to baseGrid dimension
       /// </summary>
       public virtual List<float> InternalValues
