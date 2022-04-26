@@ -18,7 +18,6 @@ namespace OSPSuite.Core.Domain
          return withDimension.Dimension?.BaseUnitValueToUnitValue(unit, valueInBaseUnit) ?? valueInBaseUnit;
       }
 
-
       public static double ConvertToUnit(this IWithDimension withDimension, double valueInBaseUnit, string unit)
       {
          return HasUnit(withDimension, unit) ? ConvertToUnit(withDimension, valueInBaseUnit, withDimension.Dimension.Unit(unit)) : valueInBaseUnit;
@@ -32,6 +31,11 @@ namespace OSPSuite.Core.Domain
       public static double ConvertToBaseUnit(this IWithDimension withDimension, double value, Unit unit)
       {
          return withDimension.Dimension?.UnitValueToBaseUnitValue(unit, value) ?? value;
+      }
+
+      public static double ConvertToBaseUnit(this IWithDimension withDimension, double value, string unit)
+      {
+         return HasUnit(withDimension, unit) ? ConvertToBaseUnit(withDimension, value, withDimension.Dimension.Unit(unit)) : value;
       }
 
       public static float ConvertToBaseUnit(this IWithDimension withDimension, float value, Unit unit)
