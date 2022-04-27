@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Windows.Forms;
+using System.Windows.Forms.Design;
 using DevExpress.Utils;
 using DevExpress.XtraCharts;
 using OSPSuite.Core.Chart;
@@ -49,31 +53,36 @@ namespace OSPSuite.UI.Extensions
                AddWatermark(cloneOfChartControl, watermark);
             }
 
-            chartControl.CopyChartToClipboard();
+            cloneOfChartControl.CopyChartToClipboard();
          }
       }
 
-      private static void prepareChartForCopying(ChartControl cloneOfChartControl)
+      public static void CopyChartToClipboard(this ChartControl chartControl)
+      {
+         using (var ms = new MemoryStream())
+         {
+            chartControl.ExportToImage(ms, ImageFormat.Png);
+            ms.Seek(0, SeekOrigin.Begin);
+
+            using (var mf = new Bitmap(ms))
+               Clipboard.SetImage(mf);
+         }
+      }
+
+      //returns whether the color was changed or not
+      private static bool prepareChartForCopying(ChartControl cloneOfChartControl)
       {
          //remove the outer border from the copy
          cloneOfChartControl.BorderOptions.Visibility = DefaultBoolean.False;
 
          //if the color is not set (transparent), assign white for the copy
          if (cloneOfChartControl.BackColor == Color.Transparent)
+         {
             cloneOfChartControl.BackColor = Color.White;
-      }
+            return true;
+         }
 
-      private static void copyFontAndSizeSettings(ChartControl sourceChartControl, ChartControl targetChartControl)
-      {
-         var width = sourceChartControl.Width;
-         var height = sourceChartControl.Height;
-         var fontTitle = sourceChartControl.Titles.Count > 0 ? sourceChartControl.Titles[0].Font : null;
-         var fontDescription = sourceChartControl.Titles.Count > 1 ? sourceChartControl.Titles[1].Font : null;
-         var fontLegend = sourceChartControl.Legend?.Font;
-         var xyDiagram = sourceChartControl.Diagram as XYDiagram;
-         var fontAxis = xyDiagram?.AxisX.Label.Font;
-
-         setFontAndSizeSettings(targetChartControl, width, height, fontTitle, fontDescription, fontAxis, fontLegend);
+         return false;
       }
 
       private static void setFontAndSizeSettings(ChartControl chartControl, int width, int height, Font fontTitle, Font fontDescription,
@@ -102,24 +111,44 @@ namespace OSPSuite.UI.Extensions
 
       public static void CopyToClipboard(this UxChartControl chartControl, string watermark)
       {
-         //We need to use watermark in the chart. Create a clone
-         using (var cloneOfChartControl = (ChartControl)chartControl.Clone())
-         {
-            copyFontAndSizeSettings(chartControl, cloneOfChartControl);
-            prepareChartForCopying(cloneOfChartControl);
+         var watermarkAdded = false;
+            var backColorChanged = prepareChartForCopying(chartControl);
 
             if (!string.IsNullOrEmpty(watermark))
             {
                //Bug in devexpress that does not keep the color in bar charts
-               AddWatermark(cloneOfChartControl, watermark);
+               AddWatermark(chartControl, watermark);
+               watermarkAdded = true;
             }
+
+            chartControl.Annotations.AddTextAnnotation("GAMW");
             chartControl.CopyChartToClipboard();
-         }
+
+            resetChartAfterCopying(chartControl, backColorChanged, watermarkAdded);
+      }
+
+      private static void resetChartAfterCopying(UxChartControl chartControl, bool backColorChanged, bool watermarkAdded)
+      {
+         chartControl.BorderOptions.Visibility = DefaultBoolean.False;
+
+         if (backColorChanged)
+            chartControl.BackColor = Color.Transparent;
+
+         if (watermarkAdded)
+            chartControl.RemoveWatermark();
       }
 
       public static void AddWatermark(this ChartControl chartControl, string watermark, IChart chart)
       {
          AddWatermark(chartControl, watermark, chart.FontAndSize.FontFor(x => x.WatermarkSize));
+      }
+
+      public static void RemoveWatermark(this ChartControl chartControl)
+      {
+         var watermarkAnnotation = chartControl.Annotations.OfType<TextAnnotation>().FirstOrDefault(x => Equals(x.Name, WATERMARK_ANNOTATION));
+
+         if (watermarkAnnotation != null)
+            chartControl.Annotations.Remove(watermarkAnnotation);
       }
 
       public static void AddWatermark(this ChartControl chartControl, string watermark, Font watermarkFont = null)

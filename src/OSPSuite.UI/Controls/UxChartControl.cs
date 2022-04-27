@@ -79,18 +79,6 @@ namespace OSPSuite.UI.Controls
          set => _description.Text = value;
       }
 
-      public virtual void CopyChartToClipboard()
-      {
-         using (var ms = new MemoryStream())
-         {
-            ExportToImage(ms, ImageFormat.Png);
-            ms.Seek(0, SeekOrigin.Begin);
-
-            using (var mf = new Bitmap(ms))
-               Clipboard.SetImage(mf);
-         }
-      }
-
       private void initializePopup()
       {
          _barManager.SetPopupContextMenu(this, PopupMenu);
