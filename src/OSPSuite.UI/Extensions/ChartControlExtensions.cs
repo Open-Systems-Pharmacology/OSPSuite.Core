@@ -68,8 +68,7 @@ namespace OSPSuite.UI.Extensions
          }
       }
 
-      //returns whether the color was changed or not
-      private static bool prepareChartForCopying(ChartControl cloneOfChartControl)
+      private static void prepareChartForCopying(ChartControl cloneOfChartControl)
       {
          //remove the outer border from the copy
          cloneOfChartControl.BorderOptions.Visibility = DefaultBoolean.False;
@@ -142,14 +141,6 @@ namespace OSPSuite.UI.Extensions
       public static void AddWatermark(this ChartControl chartControl, string watermark, IChart chart)
       {
          AddWatermark(chartControl, watermark, chart.FontAndSize.FontFor(x => x.WatermarkSize));
-      }
-
-      public static void RemoveWatermark(this ChartControl chartControl)
-      {
-         var watermarkAnnotation = chartControl.Annotations.OfType<TextAnnotation>().FirstOrDefault(x => Equals(x.Name, WATERMARK_ANNOTATION));
-
-         if (watermarkAnnotation != null)
-            chartControl.Annotations.Remove(watermarkAnnotation);
       }
 
       public static void AddWatermark(this ChartControl chartControl, string watermark, Font watermarkFont = null)
