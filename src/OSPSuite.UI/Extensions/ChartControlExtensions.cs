@@ -75,12 +75,7 @@ namespace OSPSuite.UI.Extensions
 
          //if the color is not set (transparent), assign white for the copy
          if (cloneOfChartControl.BackColor == Color.Transparent)
-         {
             cloneOfChartControl.BackColor = Color.White;
-            return true;
-         }
-
-         return false;
       }
 
       private static void setFontAndSizeSettings(ChartControl chartControl, int width, int height, Font fontTitle, Font fontDescription,
