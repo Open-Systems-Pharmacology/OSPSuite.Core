@@ -47,10 +47,7 @@ namespace OSPSuite.UI.Extensions
             prepareChartForCopying(cloneOfChartControl);
 
             if (!string.IsNullOrEmpty(watermark))
-            {
-               //Bug in devexpress that does not keep the color in bar charts
                AddWatermark(cloneOfChartControl, watermark);
-            }
 
             cloneOfChartControl.CopyChartToClipboard();
          }
