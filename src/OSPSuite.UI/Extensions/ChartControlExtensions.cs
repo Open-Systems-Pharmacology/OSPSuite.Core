@@ -47,7 +47,7 @@ namespace OSPSuite.UI.Extensions
             prepareChartForCopying(cloneOfChartControl);
 
             if (!string.IsNullOrEmpty(watermark))
-               AddWatermark(cloneOfChartControl, watermark);
+               AddWatermark(cloneOfChartControl, watermark, chart); 
 
             cloneOfChartControl.CopyChartToClipboard();
          }
