@@ -38,8 +38,8 @@ namespace OSPSuite.UI.Views.Importer
          clearMappingBtn.InitWithImage(ApplicationIcons.RedCross, Captions.Importer.ClearMapping);
          saveMappingBtnLayoutControlItem.AdjustLargeButtonSize();
          applyMappingLayoutControlItem.AdjustLargeButtonSize();
-         resetMappingBasedOnCurrentSheetLayoutControlItem.AdjustLargeButtonSize();
-         clearMappingLayoutControlItem.AdjustLargeButtonSize();
+         resetMappingBasedOnCurrentSheetLayoutControlItem.AdjustLongButtonSize();
+         clearMappingLayoutControlItem.AdjustLongButtonSize();
          resetMappingBasedOnCurrentSheetBtn.ToolTip = Captions.Importer.ResetMappingToolTip;
          clearMappingBtn.ToolTip = Captions.Importer.ClearMappingToolTip;
       }
