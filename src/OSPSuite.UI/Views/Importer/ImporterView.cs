@@ -22,9 +22,9 @@ namespace OSPSuite.UI.Views.Importer
       public override void InitializeResources()
       {
          base.InitializeResources();
-         sourceFileLayoutControlItem.Name = Captions.Importer.SourceLayout;
+         sourceFileLayoutControlGroup.Text = Captions.Importer.SourceLayout;
          previewLayoutControlItem.Name = Captions.Importer.PreviewLayout;
-         columnMappingLayoutControlItem.Name = Captions.Importer.MappingSettings;
+         mappingLayoutControlGroup.Text = Captions.Importer.MappingSettings;
 
 
          saveMappingBtn.Click += (o, e) => OnEvent(_presenter.SaveConfiguration);
@@ -38,10 +38,11 @@ namespace OSPSuite.UI.Views.Importer
          clearMappingBtn.InitWithImage(ApplicationIcons.RedCross, Captions.Importer.ClearMapping);
          saveMappingBtnLayoutControlItem.AdjustLargeButtonSize();
          applyMappingLayoutControlItem.AdjustLargeButtonSize();
-         resetMappingBasedOnCurrentSheetLayoutControlItem.AdjustLargeButtonSize();
-         clearMappingLayoutControlItem.AdjustLargeButtonSize();
+         resetMappingBasedOnCurrentSheetLayoutControlItem.AdjustLongButtonSize();
+         clearMappingLayoutControlItem.AdjustLongButtonSize();
          resetMappingBasedOnCurrentSheetBtn.ToolTip = Captions.Importer.ResetMappingToolTip;
          clearMappingBtn.ToolTip = Captions.Importer.ClearMappingToolTip;
+         sourceFileLayoutControlItem.AdjustControlHeight(70);
       }
 
       public void AttachPresenter(IImporterPresenter presenter)
