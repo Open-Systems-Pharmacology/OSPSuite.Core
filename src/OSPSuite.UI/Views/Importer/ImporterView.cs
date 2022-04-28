@@ -22,7 +22,7 @@ namespace OSPSuite.UI.Views.Importer
       public override void InitializeResources()
       {
          base.InitializeResources();
-         sourceFileLayoutControlItem.Name = Captions.Importer.SourceLayout;
+         sourceFileLayoutControlGroup.Text = Captions.Importer.SourceLayout;
          previewLayoutControlItem.Name = Captions.Importer.PreviewLayout;
          mappingLayoutControlGroup.Text = Captions.Importer.MappingSettings;
 

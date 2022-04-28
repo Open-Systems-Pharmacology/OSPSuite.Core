@@ -55,6 +55,7 @@ namespace OSPSuite.UI.Views.Importer
          this.emptySpaceItem3 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.previewLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.sourceFileLayoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.sourceFileLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).BeginInit();
@@ -78,6 +79,7 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem3)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.previewLayoutControlItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.sourceFileLayoutControlGroup)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.sourceFileLayoutControlItem)).BeginInit();
          this.SuspendLayout();
          // 
@@ -149,11 +151,11 @@ namespace OSPSuite.UI.Views.Importer
          // sourceFilePanelControl
          // 
          this.sourceFilePanelControl.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
-         this.sourceFilePanelControl.Location = new System.Drawing.Point(1133, 49);
+         this.sourceFilePanelControl.Location = new System.Drawing.Point(2910, 243);
          this.sourceFilePanelControl.Margin = new System.Windows.Forms.Padding(2);
          this.sourceFilePanelControl.Name = "sourceFilePanelControl";
          this.sourceFilePanelControl.Padding = new System.Windows.Forms.Padding(9, 0, 0, 3);
-         this.sourceFilePanelControl.Size = new System.Drawing.Size(1659, 89);
+         this.sourceFilePanelControl.Size = new System.Drawing.Size(3993, 25);
          this.sourceFilePanelControl.TabIndex = 8;
          // 
          // nanPanelControl
@@ -197,7 +199,7 @@ namespace OSPSuite.UI.Views.Importer
             this.mappingLayoutControlGroup,
             this.emptySpaceItem1,
             this.previewLayoutControlItem,
-            this.sourceFileLayoutControlItem});
+            this.sourceFileLayoutControlGroup});
          this.Root.Name = "Root";
          this.Root.Size = new System.Drawing.Size(2805, 1609);
          this.Root.TextVisible = false;
@@ -326,16 +328,26 @@ namespace OSPSuite.UI.Views.Importer
          this.previewLayoutControlItem.Size = new System.Drawing.Size(1663, 1448);
          this.previewLayoutControlItem.Spacing = new DevExpress.XtraLayout.Utils.Padding(20, 20, 20, 20);
          this.previewLayoutControlItem.TextLocation = DevExpress.Utils.Locations.Top;
-         this.previewLayoutControlItem.TextSize = new System.Drawing.Size(339, 33);
+         this.previewLayoutControlItem.TextSize = new System.Drawing.Size(313, 33);
+         // 
+         // sourceFileLayoutControlGroup
+         // 
+         this.sourceFileLayoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.sourceFileLayoutControlItem});
+         this.sourceFileLayoutControlGroup.Location = new System.Drawing.Point(1120, 0);
+         this.sourceFileLayoutControlGroup.Name = "sourceFileLayoutControlGroup";
+         this.sourceFileLayoutControlGroup.Size = new System.Drawing.Size(1663, 129);
+         this.sourceFileLayoutControlGroup.Spacing = new DevExpress.XtraLayout.Utils.Padding(20, 20, 20, 20);
          // 
          // sourceFileLayoutControlItem
          // 
          this.sourceFileLayoutControlItem.Control = this.sourceFilePanelControl;
-         this.sourceFileLayoutControlItem.Location = new System.Drawing.Point(1120, 0);
+         this.sourceFileLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.sourceFileLayoutControlItem.Name = "sourceFileLayoutControlItem";
-         this.sourceFileLayoutControlItem.Size = new System.Drawing.Size(1663, 129);
+         this.sourceFileLayoutControlItem.Size = new System.Drawing.Size(1601, 14);
          this.sourceFileLayoutControlItem.TextLocation = DevExpress.Utils.Locations.Top;
-         this.sourceFileLayoutControlItem.TextSize = new System.Drawing.Size(339, 33);
+         this.sourceFileLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
+         this.sourceFileLayoutControlItem.TextVisible = false;
          // 
          // ImporterView
          // 
@@ -367,6 +379,7 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem3)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.previewLayoutControlItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.sourceFileLayoutControlGroup)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.sourceFileLayoutControlItem)).EndInit();
          this.ResumeLayout(false);
 
@@ -399,5 +412,6 @@ namespace OSPSuite.UI.Views.Importer
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
       private DevExpress.XtraLayout.LayoutControlItem previewLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem sourceFileLayoutControlItem;
+      private DevExpress.XtraLayout.LayoutControlGroup sourceFileLayoutControlGroup;
    }
 }
