@@ -24,7 +24,7 @@ namespace OSPSuite.UI.Views.Importer
          base.InitializeResources();
          sourceFileLayoutControlItem.Name = Captions.Importer.SourceLayout;
          previewLayoutControlItem.Name = Captions.Importer.PreviewLayout;
-         columnMappingLayoutControlItem.Name = Captions.Importer.MappingSettings;
+         mappingLayoutControlGroup.Text = Captions.Importer.MappingSettings;
 
 
          saveMappingBtn.Click += (o, e) => OnEvent(_presenter.SaveConfiguration);
