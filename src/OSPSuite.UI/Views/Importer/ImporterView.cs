@@ -42,6 +42,7 @@ namespace OSPSuite.UI.Views.Importer
          clearMappingLayoutControlItem.AdjustLongButtonSize();
          resetMappingBasedOnCurrentSheetBtn.ToolTip = Captions.Importer.ResetMappingToolTip;
          clearMappingBtn.ToolTip = Captions.Importer.ClearMappingToolTip;
+         sourceFileLayoutControlItem.AdjustControlHeight(70);
       }
 
       public void AttachPresenter(IImporterPresenter presenter)

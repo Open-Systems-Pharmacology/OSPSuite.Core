@@ -46,10 +46,10 @@ namespace OSPSuite.UI.Views.Importer
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControlItemError = new DevExpress.XtraLayout.LayoutControlItem();
+         this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.dataViewingGridControl = new DevExpress.XtraGrid.GridControl();
          this.dataViewingGridView = new DevExpress.XtraGrid.Views.Grid.GridView();
          this.dpiAwareImageCollection1 = new DevExpress.Utils.DPIAwareImageCollection(this.components);
-         this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.rootLayoutControl)).BeginInit();
          this.rootLayoutControl.SuspendLayout();
@@ -62,10 +62,10 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItemError)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridView)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.dpiAwareImageCollection1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).BeginInit();
          this.SuspendLayout();
          // 
          // rootLayoutControl
@@ -90,51 +90,51 @@ namespace OSPSuite.UI.Views.Importer
          this.labelControlError.Appearance.ForeColor = System.Drawing.Color.Red;
          this.labelControlError.Appearance.Options.UseForeColor = true;
          this.labelControlError.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
-         this.labelControlError.Location = new System.Drawing.Point(2, 2105);
+         this.labelControlError.Location = new System.Drawing.Point(30, 5238);
          this.labelControlError.Margin = new System.Windows.Forms.Padding(6);
          this.labelControlError.Name = "labelControlError";
-         this.labelControlError.Size = new System.Drawing.Size(3118, 1);
+         this.labelControlError.Size = new System.Drawing.Size(7745, 3);
          this.labelControlError.StyleController = this.rootLayoutControl;
          this.labelControlError.TabIndex = 12;
          // 
          // useForImportCheckEdit
          // 
          this.useForImportCheckEdit.AllowHtmlTextInToolTip = DevExpress.Utils.DefaultBoolean.True;
-         this.useForImportCheckEdit.Location = new System.Drawing.Point(2, 2113);
+         this.useForImportCheckEdit.Location = new System.Drawing.Point(30, 5258);
          this.useForImportCheckEdit.Margin = new System.Windows.Forms.Padding(6);
          this.useForImportCheckEdit.Name = "useForImportCheckEdit";
          this.useForImportCheckEdit.Properties.Caption = "Use filters for importing data";
-         this.useForImportCheckEdit.Size = new System.Drawing.Size(1029, 47);
+         this.useForImportCheckEdit.Size = new System.Drawing.Size(2555, 118);
          this.useForImportCheckEdit.StyleController = this.rootLayoutControl;
          this.useForImportCheckEdit.TabIndex = 11;
          this.useForImportCheckEdit.ToolTipAnchor = DevExpress.Utils.ToolTipAnchor.Cursor;
          // 
          // btnImport
          // 
-         this.btnImport.Location = new System.Drawing.Point(2721, 2110);
+         this.btnImport.Location = new System.Drawing.Point(6783, 5250);
          this.btnImport.Margin = new System.Windows.Forms.Padding(2);
          this.btnImport.Name = "btnImport";
-         this.btnImport.Size = new System.Drawing.Size(225, 54);
+         this.btnImport.Size = new System.Drawing.Size(560, 135);
          this.btnImport.StyleController = this.rootLayoutControl;
          this.btnImport.TabIndex = 10;
          this.btnImport.Text = "btnImport";
          // 
          // btnImportAll
          // 
-         this.btnImportAll.Location = new System.Drawing.Point(2950, 2110);
+         this.btnImportAll.Location = new System.Drawing.Point(7353, 5250);
          this.btnImportAll.Margin = new System.Windows.Forms.Padding(2);
          this.btnImportAll.Name = "btnImportAll";
-         this.btnImportAll.Size = new System.Drawing.Size(170, 54);
+         this.btnImportAll.Size = new System.Drawing.Size(423, 135);
          this.btnImportAll.StyleController = this.rootLayoutControl;
          this.btnImportAll.TabIndex = 9;
          this.btnImportAll.Text = "btnImportAll";
          // 
          // importerTabControl
          // 
-         this.importerTabControl.Location = new System.Drawing.Point(2, 2);
+         this.importerTabControl.Location = new System.Drawing.Point(30, 30);
          this.importerTabControl.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
          this.importerTabControl.Name = "importerTabControl";
-         this.importerTabControl.Size = new System.Drawing.Size(3118, 2075);
+         this.importerTabControl.Size = new System.Drawing.Size(7745, 5140);
          this.importerTabControl.TabIndex = 5;
          // 
          // Root
@@ -150,7 +150,6 @@ namespace OSPSuite.UI.Views.Importer
             this.layoutControlItemError,
             this.emptySpaceItem2});
          this.Root.Name = "Root";
-         this.Root.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
          this.Root.Size = new System.Drawing.Size(3122, 2166);
          this.Root.TextVisible = false;
          // 
@@ -159,55 +158,63 @@ namespace OSPSuite.UI.Views.Importer
          this.importerLayoutControlItem.Control = this.importerTabControl;
          this.importerLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.importerLayoutControlItem.Name = "importerLayoutControlItem";
-         this.importerLayoutControlItem.Size = new System.Drawing.Size(3122, 2079);
+         this.importerLayoutControlItem.Size = new System.Drawing.Size(3102, 2060);
          this.importerLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.importerLayoutControlItem.TextVisible = false;
          // 
          // layoutItemImportAll
          // 
          this.layoutItemImportAll.Control = this.btnImportAll;
-         this.layoutItemImportAll.Location = new System.Drawing.Point(2948, 2108);
+         this.layoutItemImportAll.Location = new System.Drawing.Point(2929, 2088);
          this.layoutItemImportAll.Name = "layoutItemImportAll";
-         this.layoutItemImportAll.Size = new System.Drawing.Size(174, 58);
+         this.layoutItemImportAll.Size = new System.Drawing.Size(173, 58);
          this.layoutItemImportAll.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemImportAll.TextVisible = false;
          // 
          // layoutItemImportCurrent
          // 
          this.layoutItemImportCurrent.Control = this.btnImport;
-         this.layoutItemImportCurrent.Location = new System.Drawing.Point(2719, 2108);
+         this.layoutItemImportCurrent.Location = new System.Drawing.Point(2701, 2088);
          this.layoutItemImportCurrent.Name = "layoutItemImportCurrent";
-         this.layoutItemImportCurrent.Size = new System.Drawing.Size(229, 58);
+         this.layoutItemImportCurrent.Size = new System.Drawing.Size(228, 58);
          this.layoutItemImportCurrent.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemImportCurrent.TextVisible = false;
          // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(1033, 2108);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(1026, 2088);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(1686, 58);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(1675, 58);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // layoutControlItem1
          // 
          this.layoutControlItem1.ContentVertAlignment = DevExpress.Utils.VertAlignment.Center;
          this.layoutControlItem1.Control = this.useForImportCheckEdit;
-         this.layoutControlItem1.Location = new System.Drawing.Point(0, 2108);
+         this.layoutControlItem1.Location = new System.Drawing.Point(0, 2088);
          this.layoutControlItem1.Name = "layoutControlItem1";
-         this.layoutControlItem1.Size = new System.Drawing.Size(1033, 58);
+         this.layoutControlItem1.Size = new System.Drawing.Size(1026, 58);
          this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem1.TextVisible = false;
          // 
          // layoutControlItemError
          // 
          this.layoutControlItemError.Control = this.labelControlError;
-         this.layoutControlItemError.Location = new System.Drawing.Point(0, 2103);
+         this.layoutControlItemError.Location = new System.Drawing.Point(0, 2083);
          this.layoutControlItemError.Name = "layoutControlItem2";
-         this.layoutControlItemError.Size = new System.Drawing.Size(3122, 5);
+         this.layoutControlItemError.Size = new System.Drawing.Size(3102, 5);
          this.layoutControlItemError.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItemError.TextVisible = false;
          this.layoutControlItemError.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+         // 
+         // emptySpaceItem2
+         // 
+         this.emptySpaceItem2.AllowHotTrack = false;
+         this.emptySpaceItem2.Location = new System.Drawing.Point(0, 2060);
+         this.emptySpaceItem2.Name = "emptySpaceItem2";
+         this.emptySpaceItem2.Size = new System.Drawing.Size(3102, 23);
+         this.emptySpaceItem2.TextSize = new System.Drawing.Size(0, 0);
          // 
          // dataViewingGridControl
          // 
@@ -231,14 +238,6 @@ namespace OSPSuite.UI.Views.Importer
          this.dpiAwareImageCollection1.Owner = this;
          this.dpiAwareImageCollection1.Stream = ((DevExpress.Utils.DPIAwareImageCollectionStreamer)(resources.GetObject("dpiAwareImageCollection1.Stream")));
          // 
-         // emptySpaceItem2
-         // 
-         this.emptySpaceItem2.AllowHotTrack = false;
-         this.emptySpaceItem2.Location = new System.Drawing.Point(0, 2079);
-         this.emptySpaceItem2.Name = "emptySpaceItem2";
-         this.emptySpaceItem2.Size = new System.Drawing.Size(3122, 24);
-         this.emptySpaceItem2.TextSize = new System.Drawing.Size(0, 0);
-         // 
          // ImporterDataView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
@@ -259,10 +258,10 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItemError)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dataViewingGridView)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dpiAwareImageCollection1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).EndInit();
          this.ResumeLayout(false);
 
       }
