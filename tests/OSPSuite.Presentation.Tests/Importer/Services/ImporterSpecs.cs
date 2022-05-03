@@ -448,4 +448,30 @@ namespace OSPSuite.Presentation.Importer.Services
          (formats.First().Parameters.First(parameter => parameter.ColumnName == "Time [invalidUnit]") as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo(UnitDescription.InvalidUnit);
       }
    }
+
+
+   public class When_checking_missing_mapping_for_empty_column : ConcernForImporter2
+   {
+      private IEnumerable<DataFormatParameter> _parameterList;
+      protected override void Because()
+      {
+         _parameterList = new List<DataFormatParameter>
+            {
+               new MappingDataFormatParameter("time  [h]",
+                  new Column() { Name = "Time", Dimension = _fakedTimeDimension, Unit = new UnitDescription() }),
+               new MappingDataFormatParameter("conc  [mg/l]",
+                  new Column()
+                  {
+                     Name = "Concentration", Dimension = _fakedConcentrationDimension, Unit = new UnitDescription("mg/l")
+                  })
+            };
+      }
+
+      [TestCase]
+      public void the_invalid_unit_is_detected()
+      {
+         sut.CheckWhetherAllDataColumnsAreMapped(_columnInfos, _parameterList).MissingUnit.First().ShouldBeEqualTo("Time");
+      }
+   }
+
 }
