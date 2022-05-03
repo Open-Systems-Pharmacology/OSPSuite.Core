@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Import
@@ -59,6 +60,16 @@ namespace OSPSuite.Core.Import
       public override string ToString()
       {
          return $"{Name} [{Unit}]";
+      }
+
+      //unit is missing if the SelectedUnit is undefined and 1. the error is not geometric or 2. the mapped column is empty
+      public bool MissingUnitMapping()
+      {
+         return (Unit.SelectedUnit == UnitDescription.InvalidUnit &&
+                  (ErrorStdDev == null || ErrorStdDev.Equals(Constants.STD_DEV_ARITHMETIC)))
+                  ||
+                  ((Unit.SelectedUnit == null || Unit.SelectedUnit == UnitDescription.InvalidUnit) &&
+                  Unit.ColumnName == string.Empty);
       }
    }
 }

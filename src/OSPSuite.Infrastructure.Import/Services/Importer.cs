@@ -58,7 +58,10 @@ namespace OSPSuite.Infrastructure.Import.Services
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       private readonly IDimension _molWeightDimension;
 
-      public Importer(IoC container, IDataSourceFileParser parser, IDataSetToDataRepositoryMapper dataRepositoryMapper,
+      public Importer(
+         IoC container, 
+         IDataSourceFileParser parser, 
+         IDataSetToDataRepositoryMapper dataRepositoryMapper,
          IDimensionFactory dimensionFactory)
       {
          _container = container;
@@ -183,13 +186,10 @@ namespace OSPSuite.Infrastructure.Import.Services
                .Where(col => col.IsMandatory && subset.All(cm =>
                   cm.MappedColumn.Name != col.Name)).Select(col => col.Name)
                .ToList(),
-            //all the mappings where the unit is undefined and 1. the error is not geometric or 2. the mapped column is empty
+            //all the mappings where the unit is missing
             MissingUnit = subset
                .Where(
-                  cm => cm.MappedColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit && 
-                        ((cm.MappedColumn.ErrorStdDev == null || cm.MappedColumn.ErrorStdDev.Equals(Constants.STD_DEV_ARITHMETIC)))
-                        ||
-                        cm.MappedColumn.Unit.ColumnName == string.Empty)
+                  cm => cm.MappedColumn.MissingUnitMapping())
                .Select(cm => cm.MappedColumn.Name)
                .ToList()
          };
