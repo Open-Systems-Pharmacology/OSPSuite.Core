@@ -62,13 +62,15 @@ namespace OSPSuite.Core.Import
          return $"{Name} [{Unit}]";
       }
 
-      //unit is missing if the SelectedUnit is undefined and 1. the error is not geometric or 2. the mapped column is empty
       public bool MissingUnitMapping()
       {
-         return (Unit.SelectedUnit == UnitDescription.InvalidUnit &&
+         return 
+            //manual selection: selected unit not set and the column is not a Geometric Standard Deviation
+            (Unit.SelectedUnit == UnitDescription.InvalidUnit &&
                   (ErrorStdDev == null || ErrorStdDev.Equals(Constants.STD_DEV_ARITHMETIC)))
-                  ||
-                  ((Unit.SelectedUnit == null || Unit.SelectedUnit == UnitDescription.InvalidUnit) &&
+            ||
+            //select from a column: selected unit is null (not set) and no column has been selected
+            (Unit.SelectedUnit == null  &&
                   Unit.ColumnName == string.Empty);
       }
    }
