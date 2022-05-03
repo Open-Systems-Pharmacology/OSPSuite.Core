@@ -34,7 +34,8 @@ namespace OSPSuite.Infrastructure.Import.Services
       int GetImageIndex(DataFormatParameter parameter);
       MappingProblem CheckWhetherAllDataColumnsAreMapped(ColumnInfoCache dataColumns, IEnumerable<DataFormatParameter> mappings);
 
-      IReadOnlyList<DataSetToDataRepositoryMappingResult> DataSourceToDataSets(IDataSource dataSource, IReadOnlyList<MetaDataCategory> metaDataCategories,
+      IReadOnlyList<DataSetToDataRepositoryMappingResult> DataSourceToDataSets(IDataSource dataSource,
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
          DataImporterSettings dataImporterSettings, string id);
 
       (IReadOnlyList<DataSetToDataRepositoryMappingResult> DataRepositories, List<string> MissingSheets) ImportFromConfiguration
@@ -46,7 +47,8 @@ namespace OSPSuite.Infrastructure.Import.Services
          DataImporterSettings dataImporterSettings
       );
 
-      IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName);
+      IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, ColumnInfoCache columnInfos,
+         IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName);
    }
 
    public class Importer : IImporter
@@ -56,7 +58,11 @@ namespace OSPSuite.Infrastructure.Import.Services
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       private readonly IDimension _molWeightDimension;
 
-      public Importer(IoC container, IDataSourceFileParser parser, IDataSetToDataRepositoryMapper dataRepositoryMapper, IDimensionFactory dimensionFactory)
+      public Importer(
+         IoC container, 
+         IDataSourceFileParser parser, 
+         IDataSetToDataRepositoryMapper dataRepositoryMapper,
+         IDimensionFactory dimensionFactory)
       {
          _container = container;
          _parser = parser;
@@ -64,7 +70,8 @@ namespace OSPSuite.Infrastructure.Import.Services
          _molWeightDimension = dimensionFactory.Dimension(Constants.Dimension.MOLECULAR_WEIGHT);
       }
 
-      public IEnumerable<IDataFormat> AvailableFormats(DataSheet dataSheet, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      public IEnumerable<IDataFormat> AvailableFormats(DataSheet dataSheet, ColumnInfoCache columnInfos,
+         IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          return _container.ResolveAll<IDataFormat>()
             .Select(x => (x, x.SetParameters(dataSheet, columnInfos, metaDataCategories)))
@@ -112,7 +119,8 @@ namespace OSPSuite.Infrastructure.Import.Services
          throw new UnsupportedFormatException(dataSource.Path);
       }
 
-      public IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName)
+      public IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, ColumnInfoCache columnInfos,
+         IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName)
       {
          if (sheetName == null)
             throw new UnsupportedFormatException(dataSource.Path);
@@ -173,16 +181,22 @@ namespace OSPSuite.Infrastructure.Import.Services
 
          return new MappingProblem()
          {
+            //all the mandatory mappings that have not been mapped to a column
             MissingMapping = dataColumns
                .Where(col => col.IsMandatory && subset.All(cm =>
                   cm.MappedColumn.Name != col.Name)).Select(col => col.Name)
                .ToList(),
-            MissingUnit = subset.Where(cm => cm.MappedColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit && (cm.MappedColumn.ErrorStdDev == null || cm.MappedColumn.ErrorStdDev.Equals(Constants.STD_DEV_ARITHMETIC))).Select(cm => cm.MappedColumn.Name)
+            //all the mappings where the unit is missing
+            MissingUnit = subset
+               .Where(
+                  cm => cm.MappedColumn.MissingUnitMapping())
+               .Select(cm => cm.MappedColumn.Name)
                .ToList()
          };
       }
 
-      public IReadOnlyList<DataSetToDataRepositoryMappingResult> DataSourceToDataSets(IDataSource dataSource, IReadOnlyList<MetaDataCategory> metaDataCategories,
+      public IReadOnlyList<DataSetToDataRepositoryMappingResult> DataSourceToDataSets(IDataSource dataSource,
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
          DataImporterSettings dataImporterSettings, string id)
       {
          var dataRepositories = new List<DataSetToDataRepositoryMappingResult>();
@@ -262,7 +276,8 @@ namespace OSPSuite.Infrastructure.Import.Services
             .All(v => v.Value == moleculeWeightOfFirstMolecule);
       }
 
-      private static string extractMolecularWeight(IReadOnlyList<MetaDataCategory> metaDataCategories, DataImporterSettings dataImporterSettings, DataRepository dataRepo)
+      private static string extractMolecularWeight(IReadOnlyList<MetaDataCategory> metaDataCategories, DataImporterSettings dataImporterSettings,
+         DataRepository dataRepo)
       {
          var metaDataCategoryForMoleculeDescriptions =
             metaDataCategories?.Where(md => md.Name == dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation).ToList();

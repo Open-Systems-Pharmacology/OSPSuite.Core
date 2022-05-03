@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Import
@@ -59,6 +60,18 @@ namespace OSPSuite.Core.Import
       public override string ToString()
       {
          return $"{Name} [{Unit}]";
+      }
+
+      public bool MissingUnitMapping()
+      {
+         return 
+            //manual selection: selected unit not set and the column is not a Geometric Standard Deviation
+            (Unit.SelectedUnit == UnitDescription.InvalidUnit &&
+                  (ErrorStdDev == null || ErrorStdDev.Equals(Constants.STD_DEV_ARITHMETIC)))
+            ||
+            //select from a column: selected unit is null (not set) and no column has been selected
+            (Unit.SelectedUnit == null  &&
+                  Unit.ColumnName == string.Empty);
       }
    }
 }
