@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters.Nodes;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Binders
@@ -22,6 +23,26 @@ namespace OSPSuite.Presentation.Binders
       public IReadOnlyList<DataRepository> DroppedObservedDataFrom(IDragEvent e)
       {
          return getObservedDataNodesFrom(e).Select(observedDataNode => observedDataNode.Tag.Subject).ToList();
+      }
+
+      public List<List<DataRepository>> DroppedObservedDataWithFolderPathFrom(IDragEvent e)
+      {
+         var dataNodes = e.Data<IEnumerable<ITreeNode>>();
+
+         if (dataNodes == null)
+            return new List<List<DataRepository>>();
+
+         var treeNodes = dataNodes.ToList();
+
+         //if we are dropping a selection of observed data sets, we should not get them grouped together
+         if (areAllObservedDataNodes(treeNodes))
+            return observedDataNodesFromNodes(treeNodes);
+         //if we are dropping a selection of folders, data sets should be grouped according to their parent folder
+         if (areAllObservedDataClassificationNodes(treeNodes) || areAllRootNodes(treeNodes))
+               return observedDataNodesGroupedByFolder(treeNodes).ToList();
+
+
+         return new List<List<DataRepository>>();
       }
 
       private DragEffect dragEffectForConditionalType(IDragEvent e)
@@ -58,7 +79,7 @@ namespace OSPSuite.Presentation.Binders
          if (dataNodes == null)
             return new List<ObservedDataNode>();
 
-         var treeNodes = dataNodes as IList<ITreeNode> ?? dataNodes.ToList();
+         var treeNodes = dataNodes.ToList();
          if (areAllObservedDataNodes(treeNodes))
             return observedDataNodesFromObservedDataNodes(treeNodes);
 
@@ -80,15 +101,37 @@ namespace OSPSuite.Presentation.Binders
          return observedDataList;
       }
 
+      private Cache<string, List<DataRepository>> observedDataNodesGroupedByFolder(IEnumerable<ITreeNode> treeNodes)
+      {
+         var observedDataWithFolderAddressCache = new Cache<string, List<DataRepository>>();
+         treeNodes.Each(treeNode =>
+         {
+            var classificationNode = getClassificationNodeFrom(treeNode);
+            classificationNode.AllLeafNodes.OfType<ObservedDataNode>().Each(observedDataNode =>
+            {
+               if (observedDataWithFolderAddressCache.Contains(observedDataNode.ParentNode.Id))
+                  observedDataWithFolderAddressCache[observedDataNode.ParentNode.Id].Add(observedDataNode.Tag.Subject);
+               else
+                  observedDataWithFolderAddressCache.Add(observedDataNode.ParentNode.Id, new List<DataRepository> { observedDataNode.Tag.Subject });
+            });
+         });
+         return observedDataWithFolderAddressCache;
+      }
+
+      //when dragging and dropping just a selection of observed data and not folders, each one should get a different color
+      private static List<List<DataRepository>> observedDataNodesFromNodes(IEnumerable<ITreeNode> treeNodes)
+      {
+         var observedDataWithFolderAddressCache = new List<List<DataRepository>>();
+         treeNodes.OfType<ObservedDataNode>().Each(node =>
+            observedDataWithFolderAddressCache.Add(new List<DataRepository> {node.Tag.Subject})
+         );
+         return observedDataWithFolderAddressCache;
+      }
+
       private static IReadOnlyList<ObservedDataNode> observedDataNodesFromObservedDataNodes(IEnumerable<ITreeNode> treeNodes)
       {
          var observedDataList = new List<ObservedDataNode>();
-         treeNodes.Each(node =>
-         {
-            var observedDataNode = node as ObservedDataNode;
-            if (observedDataNode != null)
-               observedDataList.Add(observedDataNode);
-         });
+         treeNodes.OfType<ObservedDataNode>().Each(node => observedDataList.Add(node));
          return observedDataList;
       }
 

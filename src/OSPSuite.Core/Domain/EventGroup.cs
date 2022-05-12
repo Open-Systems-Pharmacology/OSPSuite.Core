@@ -24,10 +24,7 @@ namespace OSPSuite.Core.Domain
    {
       public string EventGroupType { get; set; }
 
-      public IEnumerable<IEvent> Events
-      {
-         get { return GetChildren<IEvent>(); }
-      }
+      public IEnumerable<IEvent> Events => GetChildren<IEvent>();
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {

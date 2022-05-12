@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using DevExpress.Utils;
+using DevExpress.Utils.Svg;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
@@ -21,6 +22,7 @@ using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;
+using static OSPSuite.UI.UIConstants.Size;
 
 namespace OSPSuite.UI.Binders
 {
@@ -30,7 +32,7 @@ namespace OSPSuite.UI.Binders
       private readonly IImageListRetriever _imageListRetriever;
       private readonly IToolTipCreator _toolTipCreator;
       private GridViewBinder<T> _gridViewBinder;
-      private readonly RepositoryItemPopupContainerEdit _repositoryItemPopupContainerEdit = new RepositoryItemPopupContainerEdit();
+      private readonly UxRepositoryItemPopupContainerEditOKButton _repositoryItemPopupContainerEdit = new UxRepositoryItemPopupContainerEditOKButton();
       private readonly PopupContainerControl _popupControl = new PopupContainerControl();
       private UxGridView _gridView;
       private Action<T, ValueOrigin> _onValueOriginUpdated;
@@ -46,11 +48,12 @@ namespace OSPSuite.UI.Binders
          _popupControl.FillWith(_valueOriginPresenter.BaseView);
          _repositoryItemPopupContainerEdit.Buttons[0].Kind = ButtonPredefines.Combo;
          _repositoryItemPopupContainerEdit.PopupControl = _popupControl;
-         _repositoryItemPopupContainerEdit.CloseOnOuterMouseClick = false;
+         _repositoryItemPopupContainerEdit.CloseOnOuterMouseClick = true;
          _repositoryItemPopupContainerEdit.QueryDisplayText += (o, e) => queryDisplayText(e);
          _repositoryItemPopupContainerEdit.CloseUp += (o, e) => closeUp(e);
          _repositoryItemPopupContainerEdit.CloseUpKey = new KeyShortcut(Keys.Enter);
          _repositoryItemPopupContainerEdit.AllowDropDownWhenReadOnly = DefaultBoolean.True;
+         _repositoryItemPopupContainerEdit.ShowPopupCloseButton = true;
       }
 
       private void onToolTipControllerGetActiveObjectInfo(object sender, ToolTipControllerGetActiveObjectInfoEventArgs e)
@@ -72,7 +75,8 @@ namespace OSPSuite.UI.Binders
 
       private void closeUp(CloseUpEventArgs e)
       {
-         var cancel = e.CloseMode == PopupCloseMode.Cancel;
+         //Normal means OK was clicked. Any other value is interpreted as cancel
+         var cancel = e.CloseMode != PopupCloseMode.Normal;
          updateValueOrigin(cancel);
       }
 
@@ -100,14 +104,14 @@ namespace OSPSuite.UI.Binders
       ///    object can be edited or not.
       /// </param>
       /// <param name="defaultColumnWidth">
-      ///    Default column width for the value origin column. If null, no default witdh will be
+      ///    Default column width for the value origin column. If null, no default width will be
       ///    set
       /// </param>
       public void InitializeBinding(
          GridViewBinder<T> gridViewBinder,
          Action<T, ValueOrigin> onValueOriginUpdated,
          Func<T, bool> valueOriginEditableFunc = null,
-         int? defaultColumnWidth = UIConstants.Size.EMBEDDED_DESCRIPTION_WIDTH)
+         int? defaultColumnWidth = null)
       {
          _gridViewBinder = gridViewBinder;
          _gridView = _gridViewBinder.GridView.DowncastTo<UxGridView>();
@@ -125,8 +129,7 @@ namespace OSPSuite.UI.Binders
             .WithEditRepository(editRepositoryFor)
             .WithEditorConfiguration((editor, withValueOrigin) => { _valueOriginPresenter.Edit(withValueOrigin.ValueOrigin); });
 
-         if (defaultColumnWidth.HasValue)
-            _valueOriginColumn.WithWidth(defaultColumnWidth.Value);
+         _valueOriginColumn.WithWidth(defaultColumnWidth.GetValueOrDefault(EMBEDDED_DESCRIPTION_WIDTH));
 
          initializeToolTip(_gridView.GridControl);
       }
@@ -148,22 +151,22 @@ namespace OSPSuite.UI.Binders
 
       private Image imageFor(ValueOrigin valueOrigin)
       {
-         var sourceImage = ApplicationIcons.IconFor(valueOrigin.Source).ToImage(IconSizes.Size16x16);
+         var sourceImage = ApplicationIcons.IconFor(valueOrigin.Source).ToImage();
          if (valueOrigin.Method == ValueOriginDeterminationMethods.Undefined)
             return sourceImage;
 
-         var methodImage = ApplicationIcons.IconFor(valueOrigin.Method).ToImage(IconSizes.Size16x16);
+         var methodImage = ApplicationIcons.IconFor(valueOrigin.Method).ToImage();
          if (valueOrigin.Source == ValueOriginSources.Undefined)
             return methodImage;
 
          var resultImage = new Bitmap(sourceImage.Width + methodImage.Width + IMAGE_OFFSET, sourceImage.Height);
-
+         
          using (var g = Graphics.FromImage(resultImage))
          {
             g.DrawImage(sourceImage, new PointF(0, 0));
             g.DrawImage(methodImage, new PointF(sourceImage.Width + IMAGE_OFFSET, 0));
          }
-
+         
          return resultImage;
       }
 
@@ -239,6 +242,8 @@ namespace OSPSuite.UI.Binders
       }
 
       public bool ColumnIsValueOrigin(GridColumn column) => Equals(column, _valueOriginColumn.XtraColumn);
+
+      public IGridViewColumn ValueOriginColumn => _valueOriginColumn;
 
       #region Disposable properties
 

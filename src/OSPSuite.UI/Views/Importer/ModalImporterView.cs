@@ -8,6 +8,7 @@ namespace OSPSuite.UI.Views.Importer
 {
    public partial class ModalImporterView : BaseModalView, IModalImporterView
    {
+      private IModalImporterPresenter _modalImporterPresenter;
       public ModalImporterView()
       {
          InitializeComponent();
@@ -17,21 +18,20 @@ namespace OSPSuite.UI.Views.Importer
       {
          base.InitializeResources();
          CancelVisible = false;
-         layoutControlBase.Visible = false;
+         tablePanel.Visible = false;
+         MaximizeBox = true;
       }
 
       public void AttachPresenter(IModalImporterPresenter presenter)
       {
+         _modalImporterPresenter = presenter;
       }
+
+      protected override bool ShouldClose => _modalImporterPresenter.ShouldClose;
 
       public void FillImporterPanel(IView view)
       {
          importerPanelControl.FillWith(view);
-      }
-
-      public void CloseOnImport()
-      {
-         DialogResult = DialogResult.OK;
       }
 
       public void SetBaseView(IView baseView)

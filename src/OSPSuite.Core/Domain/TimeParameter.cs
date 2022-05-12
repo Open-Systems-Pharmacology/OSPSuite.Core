@@ -27,15 +27,16 @@ namespace OSPSuite.Core.Domain
       public bool MaxIsAllowed { get; set; }
       public bool CanBeVariedInPopulation { get; set; }
       public bool IsDefault { get; set; }
+      public DescriptorCriteria ContainerCriteria { get; set; }
 
       public ParameterInfo Info { get; set; }
       public PKSimBuildingBlockType BuildingBlockType { get; set; }
-      public ParameterOrigin Origin { get; private set; }
-      public ValueOrigin ValueOrigin { get; private set; }
+      public ParameterOrigin Origin { get; }
+      public ValueOrigin ValueOrigin { get; }
      
 
       public double? DefaultValue { get; set; }
-      public bool IsChangedByCreateIndividual { get; private set; }
+      public bool IsChangedByCreateIndividual { get; set; }
 
       public void ResetToDefault()
       {
@@ -52,7 +53,20 @@ namespace OSPSuite.Core.Domain
          //nothing to do
       }
 
+
       public string ValueDescription { get; set; }
+
+
+      public (double value, bool success) TryGetValueInDisplayUnit()
+      {
+         return (ValueInDisplayUnit, true);
+      }
+
+      public (double value, bool success) TryGetValue()
+      {
+         return (Value, true);
+      }
+
       public bool NegativeValuesAllowed { get; set; }
 
       public TimeParameter()

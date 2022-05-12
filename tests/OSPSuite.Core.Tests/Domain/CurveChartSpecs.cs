@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
@@ -260,6 +261,30 @@ namespace OSPSuite.Core.Domain
       public void should_reset_the_y_axis_type_of_all_curves_using_this_axis_to_Y()
       {
          _curveOnY2Axis.yAxisType.ShouldBeEqualTo(AxisTypes.Y);
+      }
+   }
+
+   public class When_updating_a_chart_from_another_chart : concern_for_CurveChart
+   {
+      private CurveChart _other;
+
+      protected override void Context()
+      {
+         base.Context();
+         _other = new CurveChart {Name = "A", Title = "B", Description = "C"};
+      }
+
+      protected override void Because()
+      {
+         sut.UpdatePropertiesFrom(_other, A.Fake<ICloneManager>());
+      }
+
+      [Observation]
+      public void should_also_update_title_and_description()
+      {
+         sut.Name.ShouldBeEqualTo(_other.Name);
+         sut.Title.ShouldBeEqualTo(_other.Title);
+         sut.Description.ShouldBeEqualTo(_other.Description);
       }
    }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 {
@@ -15,44 +14,46 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
       {
       }
 
-      protected override Cache<string, DataSheet> LoadFromFile(string path)
+      protected override void LoadFromFile(string path)
       {
+         //we keep a copy of the already loaded sheets, in case the reading fails
+         var alreadyLoadedDataSheets = DataSheets.Clone();
+         DataSheets.Clear();
+
          try
          {
-            var loadedData = new Cache<string, DataSheet>();
-
             var reader = new ExcelReader(path);
 
             while (reader.MoveToNextSheet())
             {
                if (!reader.MoveToNextRow()) continue;
 
-               var sheetName = reader.CurrentSheet.SheetName;
-               DataSheet dataSheet = new DataSheet();
-               dataSheet.RawData = new UnformattedData();
+               var rawSheetData = new DataSheet
+               {
+                  SheetName = reader.CurrentSheet.SheetName
+               };
                var headers = reader.CurrentRow;
      
                for (var j = 0; j < headers.Count; j++)
-                  dataSheet.RawData.AddColumn(headers[j], j);
+                  rawSheetData.AddColumn(headers[j], j);
 
                while (reader.MoveToNextRow())
                {
                   //the first two could even be done only once
                   var levels = reader.GetMeasurementLevels(headers.Count);
-                  dataSheet.RawData.CalculateColumnDescription(levels);
-                  dataSheet.RawData.AddRow(reader.CurrentRow);
+                  rawSheetData.CalculateColumnDescription(levels);
+                  rawSheetData.AddRow(reader.CurrentRow);
                }
 
-               dataSheet.RawData.RemoveEmptyColumns();
-               dataSheet.RawData.RemoveEmptyRows();
+               rawSheetData.RemoveEmptyColumns();
+               rawSheetData.RemoveEmptyRows();
 
-               loadedData.Add(sheetName, dataSheet);
+               DataSheets.AddSheet(rawSheetData);
             }
-
-            return loadedData;
          }
          catch (Exception ex)
          {
+            DataSheets.CopySheetsFrom(alreadyLoadedDataSheets);
             _logger.AddError(ex.Message);
             throw new InvalidObservedDataFileException(ex.Message);
          }

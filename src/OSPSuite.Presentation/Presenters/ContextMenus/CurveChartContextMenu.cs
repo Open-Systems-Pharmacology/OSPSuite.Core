@@ -36,10 +36,6 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithIcon(ApplicationIcons.Copy)
             .AsGroupStarter();
 
-         yield return CreateMenuButton.WithCaption(MenuNames.ExportToPDF)
-            .WithActionCommand(chartDisplayPresenter.ExportToPDF)
-            .WithIcon(ApplicationIcons.PDF);
-
          yield return CreateMenuButton.WithCaption(MenuNames.ExportToExcel)
             .WithActionCommand(chartDisplayPresenter.ExportToExcel)
             .WithIcon(ApplicationIcons.Excel);

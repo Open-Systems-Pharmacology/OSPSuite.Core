@@ -52,7 +52,7 @@ namespace OSPSuite.Core.Domain.Data
          Name = name;
          Dimension = dimension;
          BaseGrid = baseGrid;
-         QuantityInfo = new QuantityInfo(string.Empty, new List<string>(), QuantityType.Undefined);
+         QuantityInfo = new QuantityInfo(new List<string>(), QuantityType.Undefined);
          var defaultUnitName = dimension != null ? dimension.DefaultUnitName : string.Empty;
          DataInfo = new DataInfo(ColumnOrigins.Undefined) {DisplayUnitName = defaultUnitName};
          IsInternal = false;
@@ -135,6 +135,14 @@ namespace OSPSuite.Core.Domain.Data
       {
          get => Values?.ToDoubleArray() ?? Array.Empty<double>();
          set => Values = value?.ToFloatArray();
+      }
+
+      /// <summary>
+      ///    Required for R (one value being set is not found properly by rCLR)
+      /// </summary>
+      public virtual double Value
+      {
+         set => ValuesAsArray = new[] {value};
       }
 
       /// <summary>

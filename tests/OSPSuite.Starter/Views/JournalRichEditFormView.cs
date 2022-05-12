@@ -17,8 +17,13 @@ namespace OSPSuite.Starter.Views
          base.InitializeResources();
          ExtraEnabled = true;
          ExtraVisible = true;
-         btnExtra.Text = "Export";
-         btnExtra.Click += (o,e) => OnEvent(() => exportToWord(uxRichEditControl.Document.OpenXmlBytes));
+         ExtraCaption = "Export";
+      }
+
+      protected override void ExtraClicked()
+      {
+         base.ExtraClicked();
+         exportToWord(uxRichEditControl.Document.OpenXmlBytes);
       }
 
       private void exportToWord(byte[] openXmlBytes)

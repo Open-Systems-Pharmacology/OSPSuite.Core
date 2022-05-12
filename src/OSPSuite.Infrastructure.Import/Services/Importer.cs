@@ -19,9 +19,10 @@ namespace OSPSuite.Infrastructure.Import.Services
 {
    public interface IImporter
    {
-      IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories);
-      void AddFromFile(IDataFormat format, Cache<string, DataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IDataSource alreadyExisting);
-      IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
+      IDataSourceFile LoadFile(ColumnInfoCache columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories);
+      void AddFromFile(IDataFormat format, DataSheetCollection dataSheets, ColumnInfoCache columnInfos, IDataSource alreadyExisting);
+      IEnumerable<IDataFormat> AvailableFormats(DataSheet dataSheet, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
+
       IEnumerable<string> NamesFromConvention
       (
          string namingConvention,
@@ -29,22 +30,25 @@ namespace OSPSuite.Infrastructure.Import.Services
          Cache<string, IDataSet> dataSets,
          IEnumerable<MetaDataMappingConverter> mappings
       );
-      int GetImageIndex(DataFormatParameter parameter);
-      MappingProblem CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings);
 
-      IReadOnlyList<DataSetToDataRepositoryMappingResult> DataSourceToDataSets(IDataSource dataSource, IReadOnlyList<MetaDataCategory> metaDataCategories,
+      int GetImageIndex(DataFormatParameter parameter);
+      MappingProblem CheckWhetherAllDataColumnsAreMapped(ColumnInfoCache dataColumns, IEnumerable<DataFormatParameter> mappings);
+
+      IReadOnlyList<DataSetToDataRepositoryMappingResult> DataSourceToDataSets(IDataSource dataSource,
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
          DataImporterSettings dataImporterSettings, string id);
 
       (IReadOnlyList<DataSetToDataRepositoryMappingResult> DataRepositories, List<string> MissingSheets) ImportFromConfiguration
       (
          ImporterConfiguration configuration,
-         IReadOnlyList<ColumnInfo> columnInfos,
+         ColumnInfoCache columnInfos,
          string fileName,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          DataImporterSettings dataImporterSettings
       );
 
-      void CalculateFormat(IDataSourceFile dataSource, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName);
+      IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, ColumnInfoCache columnInfos,
+         IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName);
    }
 
    public class Importer : IImporter
@@ -54,7 +58,11 @@ namespace OSPSuite.Infrastructure.Import.Services
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       private readonly IDimension _molWeightDimension;
 
-      public Importer( IoC container, IDataSourceFileParser parser, IDataSetToDataRepositoryMapper dataRepositoryMapper, IDimensionFactory dimensionFactory)
+      public Importer(
+         IoC container, 
+         IDataSourceFileParser parser, 
+         IDataSetToDataRepositoryMapper dataRepositoryMapper,
+         IDimensionFactory dimensionFactory)
       {
          _container = container;
          _parser = parser;
@@ -62,25 +70,19 @@ namespace OSPSuite.Infrastructure.Import.Services
          _molWeightDimension = dimensionFactory.Dimension(Constants.Dimension.MOLECULAR_WEIGHT);
       }
 
-      public IEnumerable<IDataFormat> AvailableFormats(IUnformattedData data, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      public IEnumerable<IDataFormat> AvailableFormats(DataSheet dataSheet, ColumnInfoCache columnInfos,
+         IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          return _container.ResolveAll<IDataFormat>()
-            .Select(x => (x, x.SetParameters(data, columnInfos, metaDataCategories)))
+            .Select(x => (x, x.SetParameters(dataSheet, columnInfos, metaDataCategories)))
             .Where(p => p.Item2 > 0)
             .OrderByDescending(p => p.Item2)
             .Select(p => p.x);
       }
 
-      public void AddFromFile(IDataFormat format, Cache<string, DataSheet> dataSheets, IReadOnlyList<ColumnInfo> columnInfos, IDataSource alreadyExisting)
+      public void AddFromFile(IDataFormat format, DataSheetCollection dataSheets, ColumnInfoCache columnInfos, IDataSource alreadyExisting)
       {
-         var dataSets = new Cache<string, IDataSet>();
-
-         foreach (var sheetKeyValue in dataSheets.KeyValues)
-         {
-            var data = new DataSet();
-            data.AddData(format.Parse(sheetKeyValue.Value.RawData, columnInfos));
-            dataSets.Add(sheetKeyValue.Key, data);
-         }
+         var dataSets = dataSheets.GetDataSets(format, columnInfos); //ToDo: to be made into a new class DataSetCollection instead of a Cache
 
          foreach (var key in dataSets.Keys)
          {
@@ -92,32 +94,38 @@ namespace OSPSuite.Infrastructure.Import.Services
                current = new DataSet();
                alreadyExisting.DataSets.Add(key, current);
             }
+
             current.AddData(dataSets[key].Data);
          }
       }
 
-      public IDataSourceFile LoadFile(IReadOnlyList<ColumnInfo> columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      public IDataSourceFile LoadFile(ColumnInfoCache columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          var dataSource = _parser.For(fileName);
 
          if (dataSource.DataSheets == null) return null;
 
-         CalculateFormat(dataSource, columnInfos, metaDataCategories, dataSource.DataSheets.Keys.FirstOrDefault());
 
-         return dataSource;
+         foreach (var sheetName in dataSource.DataSheets.GetDataSheetNames())
+         {
+            dataSource.AvailableFormats = CalculateFormat(dataSource, columnInfos, metaDataCategories, sheetName).ToList();
+            if (dataSource.AvailableFormats.Any())
+            {
+               dataSource.FormatCalculatedFrom = sheetName;
+               return dataSource;
+            }
+         }
+
+         throw new UnsupportedFormatException(dataSource.Path);
       }
 
-      public void CalculateFormat(IDataSourceFile dataSource, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName)
+      public IEnumerable<IDataFormat> CalculateFormat(IDataSourceFile dataSource, ColumnInfoCache columnInfos,
+         IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName)
       {
          if (sheetName == null)
             throw new UnsupportedFormatException(dataSource.Path);
 
-         dataSource.AvailableFormats = AvailableFormats(dataSource.DataSheets[sheetName].RawData, columnInfos, metaDataCategories).ToList();
-
-         if (dataSource.AvailableFormats.Count == 0)
-            throw new UnsupportedFormatException(dataSource.Path);
-
-         dataSource.Format = dataSource.AvailableFormats.FirstOrDefault();
+         return AvailableFormats(dataSource.DataSheets.GetDataSheetByName(sheetName), columnInfos, metaDataCategories);
       }
 
       public IEnumerable<string> NamesFromConvention
@@ -145,6 +153,7 @@ namespace OSPSuite.Infrastructure.Import.Services
                counters.Add(key, 0);
                counter = 0;
             }
+
             counters[key]++;
             // Only add a number (for making it unique) to the name if the key already existed in the counters
             return key + (counter > 0 ? $"_{counter}" : "");
@@ -166,69 +175,87 @@ namespace OSPSuite.Infrastructure.Import.Services
          }
       }
 
-      public MappingProblem CheckWhetherAllDataColumnsAreMapped(IReadOnlyList<ColumnInfo> dataColumns, IEnumerable<DataFormatParameter> mappings)
+      public MappingProblem CheckWhetherAllDataColumnsAreMapped(ColumnInfoCache dataColumns, IEnumerable<DataFormatParameter> mappings)
       {
          var subset = mappings.OfType<MappingDataFormatParameter>().ToList();
 
          return new MappingProblem()
          {
+            //all the mandatory mappings that have not been mapped to a column
             MissingMapping = dataColumns
                .Where(col => col.IsMandatory && subset.All(cm =>
                   cm.MappedColumn.Name != col.Name)).Select(col => col.Name)
                .ToList(),
-            MissingUnit = subset.Where(cm => cm.MappedColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit && (cm.MappedColumn.ErrorStdDev == null || cm.MappedColumn.ErrorStdDev.Equals(Constants.STD_DEV_ARITHMETIC))).Select(cm => cm.MappedColumn.Name)
+            //all the mappings where the unit is missing
+            MissingUnit = subset
+               .Where(
+                  cm => cm.MappedColumn.MissingUnitMapping())
+               .Select(cm => cm.MappedColumn.Name)
                .ToList()
          };
       }
 
-      public IReadOnlyList<DataSetToDataRepositoryMappingResult> DataSourceToDataSets(IDataSource dataSource, IReadOnlyList<MetaDataCategory> metaDataCategories,
+      public IReadOnlyList<DataSetToDataRepositoryMappingResult> DataSourceToDataSets(IDataSource dataSource,
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
          DataImporterSettings dataImporterSettings, string id)
       {
          var dataRepositories = new List<DataSetToDataRepositoryMappingResult>();
 
          for (var i = 0; i < dataSource.DataSets.SelectMany(ds => ds.Data).Count(); i++)
          {
-            var dataRepoMapping = _dataRepositoryMapper.ConvertImportDataSet(dataSource.DataSetAt(i));
+            var dataRepoMapping = _dataRepositoryMapper.ConvertImportDataSet(dataSource.ImportedDataSetAt(i));
             var dataRepo = dataRepoMapping.DataRepository;
-            dataRepo.ConfigurationId = id; 
-            
-            //when the MW does not come from the column but from a the value of of the MW of a specific molecule
-            var molecularWeightFromMoleculeAsString = extractMoleculeDescription(metaDataCategories, dataImporterSettings, dataRepo);
-            var molecularWeightValueAsString = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
-
-            if (!molecularWeightFromMoleculeAsString.IsNullOrEmpty())
-            {
-               if (molecularWeightValueAsString.IsNullOrEmpty())
-               {
-                  molecularWeightValueAsString = molecularWeightFromMoleculeAsString;
-               }
-               else
-               {
-                  double.TryParse(molecularWeightFromMoleculeAsString, out var moleculeMolWeight);
-                  double.TryParse(molecularWeightValueAsString, out var molWeight);
-
-                  if (!ValueComparer.AreValuesEqual(moleculeMolWeight, molWeight))
-                  {
-                     throw new InconsistentMoleculeAndMolWeightException();
-                  }
-               }
-            }
-
-            if (!molecularWeightValueAsString.IsNullOrEmpty())
-            {
-               if (double.TryParse(molecularWeightValueAsString, out var molWeight))
-               {
-                  //we are assuming that the MW coming from the column in excel is always in g/mol, that's why we need this conversion here
-                  dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeightValueInCoreUnit(molWeight));
-               }
-            }
-
-            //We remove the extended property of MolWeight to avoid the duplication, since the MolWeight exists also in the DataRepository properties
-            dataRepo.ExtendedProperties.Remove(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
+            dataRepo.ConfigurationId = id;
+            determineMolecularWeight(metaDataCategories, dataImporterSettings, dataRepo);
             dataRepositories.Add(dataRepoMapping);
          }
 
          return dataRepositories;
+      }
+
+      private void determineMolecularWeight(IReadOnlyList<MetaDataCategory> metaDataCategories, DataImporterSettings dataImporterSettings,
+         DataRepository dataRepo)
+      {
+         var molecularWeightFromMoleculeAsString = extractMolecularWeight(metaDataCategories, dataImporterSettings, dataRepo);
+         var molecularWeightValueAsString = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
+
+         //when the MW does not come from the column but from a the value of of the MW of a specific molecule
+         if (dataImporterSettings.CheckMolWeightAgainstMolecule &&
+             !molecularWeightFromMoleculeAsString.IsNullOrEmpty() &&
+             !molecularWeightValueAsString.IsNullOrEmpty())
+         {
+            {
+               double.TryParse(molecularWeightFromMoleculeAsString, out var moleculeMolWeight);
+               double.TryParse(molecularWeightValueAsString, out var molWeight);
+
+               if (!ValueComparer.AreValuesEqual(moleculeMolWeight, molWeight))
+               {
+                  throw new InconsistentMoleculeAndMolWeightException();
+               }
+            }
+         }
+
+         //assign the MolWeight coming from the excel column or the assigned Molecule
+         if (!molecularWeightValueAsString.IsNullOrEmpty())
+         {
+            assignMolWeightToDataRepo(molecularWeightValueAsString, dataRepo);
+         }
+         else if (!molecularWeightFromMoleculeAsString.IsNullOrEmpty())
+         {
+            assignMolWeightToDataRepo(molecularWeightFromMoleculeAsString, dataRepo);
+         }
+
+         //We remove the extended property of MolWeight to avoid the duplication, since the MolWeight exists also in the DataRepository properties
+         dataRepo.ExtendedProperties.Remove(dataImporterSettings.NameOfMetaDataHoldingMolecularWeightInformation);
+      }
+
+      private void assignMolWeightToDataRepo(string molecularWeightValueAsString, DataRepository dataRepo)
+      {
+         if (double.TryParse(molecularWeightValueAsString, out var molWeight))
+         {
+            //we are assuming that the MW coming from the column in excel is always in g/mol, that's why we need this conversion here
+            dataRepo.AllButBaseGrid().Each(x => x.DataInfo.MolWeight = molWeightValueInCoreUnit(molWeight));
+         }
       }
 
       private double molWeightValueInCoreUnit(double valueInDisplayUnit)
@@ -236,20 +263,41 @@ namespace OSPSuite.Infrastructure.Import.Services
          return _molWeightDimension.UnitValueToBaseUnitValue(_molWeightDimension.DefaultUnit, valueInDisplayUnit);
       }
 
-      private static string extractMoleculeDescription(IReadOnlyList<MetaDataCategory> metaDataCategories, DataImporterSettings dataImporterSettings, DataRepository dataRepo)
+      private static bool isMolWeightUnique(IReadOnlyList<MetaDataCategory> moleculeDescriptions, string moleculeName)
       {
-         var metaDataCategoryForMoleculeDescription =
-            (metaDataCategories?.FirstOrDefault(md => md.Name == dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation));
-         var moleculeDescription = metaDataCategoryForMoleculeDescription?.ListOfValues.FirstOrDefault(v =>
-            v.Key == dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation)).Value;
-         
-         return moleculeDescription;
+         //if there is no moleculeCategory, or no specified molecules
+         if (!moleculeDescriptions.Any() || !moleculeDescriptions.FirstOrDefault().ListOfValues.Any()) return false;
+
+         var moleculeWeightOfFirstMolecule = moleculeDescriptions.FirstOrDefault().ListOfValues.FirstOrDefault(v =>
+            v.Key == moleculeName).Value;
+
+         return moleculeDescriptions.FirstOrDefault().ListOfValues
+            .Where(x => x.Key == moleculeName)
+            .All(v => v.Value == moleculeWeightOfFirstMolecule);
+      }
+
+      private static string extractMolecularWeight(IReadOnlyList<MetaDataCategory> metaDataCategories, DataImporterSettings dataImporterSettings,
+         DataRepository dataRepo)
+      {
+         var metaDataCategoryForMoleculeDescriptions =
+            metaDataCategories?.Where(md => md.Name == dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation).ToList();
+
+         var moleculeName = dataRepo.ExtendedPropertyValueFor(dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation);
+         //if we find no molecules, or more than one molecules with different molWeights, we do not need to check
+         if (metaDataCategoryForMoleculeDescriptions == null ||
+             !isMolWeightUnique(metaDataCategoryForMoleculeDescriptions, moleculeName))
+            return null;
+
+         var molecularWeight = metaDataCategoryForMoleculeDescriptions.FirstOrDefault().ListOfValues.FirstOrDefault(x =>
+            x.Key == moleculeName).Value;
+
+         return molecularWeight;
       }
 
       public (IReadOnlyList<DataSetToDataRepositoryMappingResult> DataRepositories, List<string> MissingSheets) ImportFromConfiguration
       (
          ImporterConfiguration configuration,
-         IReadOnlyList<ColumnInfo> columnInfos,
+         ColumnInfoCache columnInfos,
          string fileName,
          IReadOnlyList<MetaDataCategory> metaDataCategories,
          DataImporterSettings dataImporterSettings
@@ -269,22 +317,22 @@ namespace OSPSuite.Infrastructure.Import.Services
          var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
             Id = md.MetaDataId,
-            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
+            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets.GetDataSheetByName(sheetName).GetColumnDescription(md.ColumnName).Index : -1
          }).Union
          (
             dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
                Id = md.ColumnName,
-               Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+               Index = sheetName => dataSourceFile.DataSheets.GetDataSheetByName(sheetName).GetColumnDescription(md.ColumnName).Index
             })
-         );
+         ).ToList();
          dataSource.SetMappings(dataSourceFile.Path, mappings);
          dataSource.NanSettings = configuration.NanSettings;
          dataSource.SetDataFormat(dataSourceFile.Format);
          dataSource.SetNamingConvention(configuration.NamingConventions);
-         var sheets = new Cache<string, DataSheet>();
+         var sheets = new DataSheetCollection();
          var missingSheets = new List<string>();
-         var sheetList = dataImporterSettings.IgnoreSheetNamesAtImport ? dataSourceFile.DataSheets.Keys : configuration.LoadedSheets;
+         var sheetList = dataImporterSettings.IgnoreSheetNamesAtImport ? dataSourceFile.DataSheets.GetDataSheetNames() : configuration.LoadedSheets;
 
          foreach (var key in sheetList)
          {
@@ -294,10 +342,12 @@ namespace OSPSuite.Infrastructure.Import.Services
                continue;
             }
 
-            sheets.Add(key, dataSourceFile.DataSheets[key]);
+            sheets.AddSheet(dataSourceFile.DataSheets.GetDataSheetByName(key));
          }
 
-         dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
+         var errors = dataSource.AddSheets(sheets, columnInfos, configuration.FilterString);
+         if (errors.Any())
+            throw new ImporterParsingException(errors);
          return (DataSourceToDataSets(dataSource, metaDataCategories, dataImporterSettings, configuration.Id), missingSheets);
       }
    }

@@ -16,6 +16,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       private string _token;
       private string _delimiter;
 
+      public bool CheckMolWeightAgainstMolecule { get; set; }
       public string NameOfMetaDataHoldingMoleculeInformation { get; set; }
 
       public string NameOfMetaDataHoldingMolecularWeightInformation { get; set; }
@@ -25,7 +26,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       public bool IgnoreSheetNamesAtImport { get; set; } = false;
 
       /// <summary>
-      ///    Gets the default naming convention for the imported observed data
+      ///    Gets the default naming convention for the imported observed dataSheet
       /// </summary>
       public IEnumerable<string> NamingConventions
       {

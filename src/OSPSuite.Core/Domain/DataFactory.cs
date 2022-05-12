@@ -76,7 +76,7 @@ namespace OSPSuite.Core.Domain
                ComparisonThreshold = (float) quantityValues.ComparisonThreshold
             },
             Values = new List<float>(quantityValues.Values.ToFloatArray()),
-            QuantityInfo = new QuantityInfo(quantityValues.Name, quantityPath, quantity.QuantityType),
+            QuantityInfo = new QuantityInfo(quantityPath, quantity.QuantityType),
             DisplayUnit = _displayUnitRetriever.PreferredUnitFor(quantity)
          };
 
@@ -99,7 +99,7 @@ namespace OSPSuite.Core.Domain
       {
          return new BaseGrid(Constants.TIME, _dimensionFactory.Dimension(Constants.Dimension.TIME))
          {
-            QuantityInfo = new QuantityInfo(Constants.TIME, new List<string> {Constants.TIME}, QuantityType.BaseGrid),
+            QuantityInfo = new QuantityInfo(new List<string> {Constants.TIME}, QuantityType.BaseGrid),
             Values = new List<float>(values.ToFloatArray())
          };
       }

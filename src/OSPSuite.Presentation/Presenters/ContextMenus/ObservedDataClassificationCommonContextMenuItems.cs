@@ -18,13 +18,25 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
       /// </summary>
       /// <param name="classificationNode">The node whose leaf nodes contain the observed data to be edited</param>
       /// <returns>The MenuBarButton</returns>
-      public static IMenuBarButton CreateEditMultipleMetaDataMenuButton(ITreeNode classificationNode)
+      public static IMenuBarButton EditMultipleMetaData(ITreeNode classificationNode)
       {
          var repositories = classificationNode.AllNodes<ObservedDataNode>().Select(x => x.Tag.Repository);
 
          return CreateMenuButton.WithCaption(MenuNames.EditAllMetaData)
             .WithCommandFor<EditMultipleMetaDataUICommand, IEnumerable<DataRepository>>(repositories)
             .WithIcon(ApplicationIcons.Edit);
+      }
+
+      /// <summary>
+      ///    Creates an IMenuBarButton that sets the Color Grouping option for charts
+      /// </summary>
+      /// <param name="userSettings">The user settings that contain Color Grouping option</param>
+      /// <returns>The MenuBarButton</returns>
+      public static IMenuBarButton ColorGroupObservedData(IPresentationUserSettings userSettings)
+      {
+         return CreateMenuCheckButton.WithCaption(MenuNames.ColorGroupObservedData)
+            .WithChecked(userSettings.ColorGroupObservedDataFromSameFolder)
+            .WithCheckedAction(colorGroup => userSettings.ColorGroupObservedDataFromSameFolder = colorGroup);
       }
    }
 }

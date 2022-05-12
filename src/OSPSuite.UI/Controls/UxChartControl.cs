@@ -48,7 +48,7 @@ namespace OSPSuite.UI.Controls
          return new ChartTitle {Text = string.Empty, Font = new Font("Arial", fontSize), Alignment = alignment, Dock = dockStyle, WordWrap = true};
       }
 
-      public ImageCollection Images
+      public SvgImageCollection Images
       {
          set => _barManager.Images = value;
       }
@@ -77,18 +77,6 @@ namespace OSPSuite.UI.Controls
       {
          get => _description.Text;
          set => _description.Text = value;
-      }
-
-      public virtual void CopyChartToClipboard(ChartControl chartControl)
-      {
-         using (var ms = new MemoryStream())
-         {
-            chartControl.ExportToImage(ms, ImageFormat.Png);
-            ms.Seek(0, SeekOrigin.Begin);
-
-            using (var mf = new Bitmap(ms))
-               Clipboard.SetImage(mf);
-         }
       }
 
       private void initializePopup()

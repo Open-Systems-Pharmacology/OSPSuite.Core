@@ -7,9 +7,13 @@ using OSPSuite.Presentation.Views;
 
 namespace OSPSuite.Presentation.Presenters
 {
-   public interface IRenameObjectPresenter : IObjectBasePresenter<IWithName>
+   public interface IRenamePresenter : IDisposablePresenter
    {
       string NewNameFrom(IWithName namedObject, IEnumerable<string> forbiddenNames, string entityType = null);
+   }
+
+   public interface IRenameObjectPresenter : IObjectBasePresenter<IWithName>, IRenamePresenter
+   {
    }
 
    public class RenameObjectPresenter : ObjectBasePresenter<IWithName>, IRenameObjectPresenter

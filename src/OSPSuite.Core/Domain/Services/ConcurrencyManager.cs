@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -38,96 +37,107 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       /// <typeparam name="TData">Data type to consume by the worker function</typeparam>
       /// <typeparam name="TResult">Data produced by the worker function</typeparam>
-      /// <param name="numberOfCoresToUse">Number of cores to use. Use 0 or negative to take all cores</param>
       /// <param name="data">List of data to consume by the workers</param>
-      /// <param name="idFunc"></param>
-      /// <param name="action">
-      ///    A function running on each worker on each piece of data. It is assume that the action runs on its
-      ///    own thread
+      /// <param name="func">
+      ///    A function running on each worker on each piece of data.
       /// </param>
       /// <param name="cancellationToken">Cancellation token to cancel the threads</param>
+      /// <param name="numberOfCoresToUse">Number of cores to use. Use null to take all cores</param>
       /// <returns>Dictionary binding a result for each input data after running the action on it</returns>
-      Task<IReadOnlyDictionary<TData, ConcurrencyManagerResult<TResult>>> RunAsync<TData, TResult>(
-         int numberOfCoresToUse,
+      Task<IDictionary<TData, ConcurrencyManagerResult<TResult>>> RunAsync<TData, TResult>(
          IReadOnlyList<TData> data,
-         Func<TData, string> idFunc,
-         Func<int, TData, CancellationToken, Task<TResult>> action,
-         CancellationToken cancellationToken
+         Func<TData, CancellationToken, TResult> func,
+         CancellationToken cancellationToken,
+         int numberOfCoresToUse
+      ) where TData : IWithId;
+
+      /// <summary>
+      /// </summary>
+      /// <typeparam name="TData">Data type to consume by the worker function</typeparam>
+      /// <param name="data">List of data to consume by the workers</param>
+      /// <param name="action">
+      ///    An action running on each worker on each piece of data.
+      /// </param>
+      /// <param name="cancellationToken">Cancellation token to cancel the threads</param>
+      /// <param name="numberOfCoresToUse">Number of cores to use. Use null to take all cores</param>
+      /// <returns>Dictionary binding a result for each input data after running the action on it</returns>
+      Task RunAsync<TData>(
+         IReadOnlyList<TData> data,
+         Action<TData, CancellationToken> action,
+         CancellationToken cancellationToken,
+         int numberOfCoresToUse
       );
    }
 
    public class ConcurrencyManager : IConcurrencyManager
    {
-      private readonly int _maximumNumberOfCoresToUse = Math.Max(1, Environment.ProcessorCount - 1);
+      private readonly IObjectTypeResolver _objectTypeResolver;
 
-      public async Task<IReadOnlyDictionary<TData, ConcurrencyManagerResult<TResult>>> RunAsync<TData, TResult>
-      (int numberOfCoresToUse,
-         IReadOnlyList<TData> data,
-         Func<TData, string> idFunc,
-         Func<int, TData, CancellationToken, Task<TResult>> action,
-         CancellationToken cancellationToken)
+      public ConcurrencyManager(IObjectTypeResolver objectTypeResolver)
       {
-         if (numberOfCoresToUse <= 0)
-            numberOfCoresToUse = _maximumNumberOfCoresToUse;
+         _objectTypeResolver = objectTypeResolver;
+      }
 
-         var concurrentData = new ConcurrentQueue<TData>(data);
-         numberOfCoresToUse = Math.Min(numberOfCoresToUse, concurrentData.Count);
-
+      public async Task<IDictionary<TData, ConcurrencyManagerResult<TResult>>> RunAsync<TData, TResult>
+      (
+         IReadOnlyList<TData> data,
+         Func<TData, CancellationToken, TResult> func,
+         CancellationToken cancellationToken,
+         int numberOfCoresToUse
+      ) where TData : IWithId
+      {
          var results = new ConcurrentDictionary<TData, ConcurrencyManagerResult<TResult>>();
 
-         //Splits the action based in the number of cores available. 
-         //No thread will be created here. If the actions are all running on the same thread, the effect of the concurrency execution will be inexistent
+         verifyUniqueIdsAreUsed(data);
 
-         var tasks = Enumerable.Range(0, numberOfCoresToUse).Select(async coreId =>
-         {
-            //While there is data left
-            while (concurrentData.TryDequeue(out var datum))
+         await Task.Run(() => Parallel.ForEach(data, createParallelOptions(cancellationToken, numberOfCoresToUse),
+            datum =>
             {
                cancellationToken.ThrowIfCancellationRequested();
-
-               //Invoke the action on it and store the result. We assume here that each action runs on its own thread.
-               var result = await returnWithExceptionHandling(
-                  coreId,
-                  action,
-                  datum,
-                  idFunc,
-                  cancellationToken
-               );
-               results.TryAdd(datum, result);
-            }
-         });
-
-         await Task.WhenAll(tasks);
-
-         //all tasks are completed. Can return results
+               try
+               {
+                  results.TryAdd(
+                     datum,
+                     new ConcurrencyManagerResult<TResult>(datum.Id, func(datum, cancellationToken))
+                  );
+               }
+               catch (Exception e)
+               {
+                  results.TryAdd(
+                     datum,
+                     new ConcurrencyManagerResult<TResult>(datum.Id, e.Message)
+                  );
+               }
+            }), cancellationToken);
          return results;
       }
 
-      private async Task<ConcurrencyManagerResult<TResult>> returnWithExceptionHandling<TData, TResult>
-      (
-         int coreId,
-         Func<int, TData, CancellationToken, Task<TResult>> task,
-         TData data,
-         Func<TData, string> idFunc,
-         CancellationToken cancellationToken
-      )
+      public Task RunAsync<TData>(IReadOnlyList<TData> data, Action<TData, CancellationToken> action, CancellationToken cancellationToken, int numberOfCoresToUse)
       {
-         try
+         return Task.Run(() => Parallel.ForEach(data, createParallelOptions(cancellationToken, numberOfCoresToUse),
+            datum =>
+            {
+               cancellationToken.ThrowIfCancellationRequested();
+               action(datum, cancellationToken);
+            }), cancellationToken);
+      }
+
+      private void verifyUniqueIdsAreUsed<TData>(IReadOnlyList<TData> data) where TData : IWithId
+      {
+         var duplicates = data.GroupBy(x => x.Id).Where(g => g.Count() > 1).Select(x => x.Key).ToList();
+         if (!duplicates.Any())
+            return;
+
+         throw new NotUniqueIdException(duplicates[0], _objectTypeResolver.TypeFor<TData>());
+      }
+
+      private ParallelOptions createParallelOptions(CancellationToken token, int maximumNumberOfCoresToUse)
+      {
+         return new ParallelOptions()
          {
-            return new ConcurrencyManagerResult<TResult>
-            (
-               id: idFunc(data),
-               result: await task(coreId, data, cancellationToken)
-            );
-         }
-         catch (Exception e)
-         {
-            return new ConcurrencyManagerResult<TResult>
-            (
-               id: idFunc(data),
-               errorMessage: e.ExceptionMessage(addContactSupportInfo: false)
-            );
-         }
+            CancellationToken = token,
+            MaxDegreeOfParallelism = maximumNumberOfCoresToUse
+         };
       }
    }
 }

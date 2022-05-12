@@ -12,19 +12,21 @@ namespace OSPSuite.Infrastructure.Import.Core
       public IReadOnlyDictionary<ExtendedColumn, IList<SimulationPoint>> Data { get; protected set; }
 
       public ParsedDataSet(
-         IEnumerable<(string ColumnName, IList<string> ExistingValues)> mappings,
-         IUnformattedData columnHandler,
+         IEnumerable<string> groupingParameters,
+         DataSheet columnHandler,
          IEnumerable<UnformattedRow> rawData,
          Dictionary<ExtendedColumn, IList<SimulationPoint>> parsedData
       )
       {
-         Description = mappings.Select(p =>
+         Description = groupingParameters.Select(x =>
          {
-            var columnDescription = columnHandler.GetColumnDescription(p.ColumnName);
+            //All rows should share the same value for the groupingParameters
+            var columnDescription = columnHandler.GetColumnDescription(x);
+            var columnValue = columnDescription != null ? rawData.First().Data.ElementAt(columnDescription.Index) : x;
             return new InstantiatedMetaData()
             {
-               Id = columnDescription != null ? columnDescription.Index : -1,
-               Value = columnDescription != null ? rawData.First().Data.ElementAt(columnHandler.GetColumnDescription(p.ColumnName).Index) : p.ColumnName
+               Id = columnDescription?.Index ?? -1,//-1 stands for no real position
+               Value = columnValue
             };
          }
          );

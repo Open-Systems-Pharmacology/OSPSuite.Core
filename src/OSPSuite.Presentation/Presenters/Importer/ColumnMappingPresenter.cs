@@ -6,7 +6,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Extensions;
@@ -17,27 +16,23 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       private IDataFormat _format;
       private List<ColumnMappingDTO> _mappings;
-      private IReadOnlyList<ColumnInfo> _columnInfos;
+      private ColumnInfoCache _columnInfos;
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IImporter _importer;
-      private IList<DataFormatParameter> _originalFormat;
-      private UnformattedData _rawData;
-      private MappingProblem _mappingProblem = new MappingProblem() {MissingMapping = new List<string>(), MissingUnit = new List<string>()};
+      private DataSheet _rawData;
+      private MappingProblem _mappingProblem = new MappingProblem() { MissingMapping = new List<string>(), MissingUnit = new List<string>() };
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       private readonly IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
-      private readonly IDimensionFactory _dimensionFactory;
 
       public ColumnMappingPresenter
       (
          IColumnMappingView view,
          IImporter importer,
          IMappingParameterEditorPresenter mappingParameterEditorPresenter,
-         IMetaDataParameterEditorPresenter metaDataParameterEditorPresenter,
-         IDimensionFactory dimensionFactory
+         IMetaDataParameterEditorPresenter metaDataParameterEditorPresenter
       ) : base(view)
       {
-         _importer = importer; 
-         _dimensionFactory = dimensionFactory;
+         _importer = importer;
          _mappingParameterEditorPresenter = mappingParameterEditorPresenter;
          _metaDataParameterEditorPresenter = metaDataParameterEditorPresenter;
          View.FillMappingView(_mappingParameterEditorPresenter.BaseView);
@@ -46,7 +41,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos
+         ColumnInfoCache columnInfos
       )
       {
          _columnInfos = columnInfos;
@@ -109,52 +104,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          View.SetMappingSource(_mappings);
          ValidateMapping();
          InitializeErrorUnit();
-         setDimensionsForMappings();
       }
-
-      private void setDimensionsForMappings()
-      {
-         foreach (var mapping in _mappings)
-         {
-            var mappingColumn = (mapping.Source as MappingDataFormatParameter)?.MappedColumn;
-
-            //we also check whether dimension is already set, since this function is used also when a 
-            //groupBy parameter is being set, and in that case we do not want to reset the dimension
-            //based on the selected unit
-            if (mappingColumn?.Unit == null || mappingColumn.Dimension != null)
-               continue;
-
-            //initial settings for fraction dimension
-            if (mapping.ColumnInfo.DefaultDimension?.Name == Constants.Dimension.FRACTION &&
-                mappingColumn.Unit.ColumnName.IsNullOrEmpty() &&
-                mappingColumn.Unit.SelectedUnit == UnitDescription.InvalidUnit)
-            {
-               mappingColumn.Dimension = mapping.ColumnInfo.DefaultDimension;
-               mappingColumn.Unit = new UnitDescription(mappingColumn.Dimension.BaseUnit.Name);
-               continue;
-            }
-
-            if (!mappingColumn.Unit.ColumnName.IsNullOrEmpty())
-               mappingColumn.Dimension = null;
-            else
-            {
-               var supportedDimensions = _columnInfos.First(i => i.DisplayName == mapping.MappingName).SupportedDimensions;
-               var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.HasUnit(mappingColumn.Unit.SelectedUnit));
-
-               if (dimensionForUnit ==  null)
-                  mappingColumn.Unit = new UnitDescription(UnitDescription.InvalidUnit);
-               else
-                  mappingColumn.Dimension = dimensionForUnit;
-            }
-         }
-      }
-
-      private IDimension selectDimensionThatHasUnit(IList<IDimension> dimensions, string unit)
-      {
-         return dimensions.FirstOrDefault(x => x.HasUnit(unit));
-      }
-
-
 
       public void InitializeErrorUnit()
       {
@@ -162,7 +112,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          if (errorColumnDTO?.Source == null) return;
 
-         var errorColumn = ((MappingDataFormatParameter) errorColumnDTO.Source).MappedColumn;
+         var errorColumn = ((MappingDataFormatParameter)errorColumnDTO.Source).MappedColumn;
 
          if ((errorColumn.Unit.SelectedUnit != "?") && (!string.IsNullOrEmpty(errorColumn.Unit.ColumnName))) return;
          if (errorColumn.ErrorStdDev == Constants.STD_DEV_GEOMETRIC)
@@ -172,20 +122,28 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
 
          var measurementColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == errorColumnDTO.ColumnInfo.RelatedColumnOf);
-         var measurementColumn = ((MappingDataFormatParameter) measurementColumnDTO?.Source)?.MappedColumn;
-         
-         if (measurementColumn != null)
+         var measurementColumn = ((MappingDataFormatParameter)measurementColumnDTO?.Source)?.MappedColumn;
+
+         if (measurementColumn != null && unitNotSet(errorColumn))
             errorColumn.Unit = measurementColumn.Unit;
+      }
+
+      private bool unitNotSet(Column column)
+      {
+         //when unit is not set and also columnName is not set
+         return (column.Unit.SelectedUnit == null || column.Unit.SelectedUnit == "?" ) 
+                && string.IsNullOrEmpty(column.Unit.ColumnName);
       }
 
       public void SetDataFormat(IDataFormat format)
       {
+         if (format == null)
+            return;
          _format = format;
-         _originalFormat = _format.Parameters.ToList();
          setDataFormat(format.Parameters);
       }
 
-      public void SetRawData(UnformattedData rawData)
+      public void SetRawData(DataSheet rawData)
       {
          _rawData = rawData;
       }
@@ -193,7 +151,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void SetDescriptionForRow(ColumnMappingDTO model)
       {
          var values = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName)?.ListOfValues.Keys;
-         _setDescriptionForRow(model, values != null && values.All(v => v != model.ExcelColumn));
+         setDescriptionForRow(model, values != null && values.All(v => v != model.ExcelColumn));
       }
 
       public void UpdateMetaDataForModel(MetaDataFormatParameter mappingSource)
@@ -208,6 +166,42 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _view.CloseEditor();
       }
 
+      private void updateErrorAfterMeasurementChanges(ColumnMappingDTO model, Column column, Action<MappingDataFormatParameter> updateAction)
+      {
+         if (!model.ColumnInfo.IsMeasurement)
+            return;
+         foreach (var relatedColumn in _columnInfos.RelatedColumnsFrom(column.Name))
+         {
+            var relatedParameter = _mappings.Select(x => x.Source).OfType<MappingDataFormatParameter>()
+               .FirstOrDefault(x => x.MappedColumn.Name == relatedColumn.Name);
+            if (relatedParameter == null)
+               continue;
+
+            updateAction(relatedParameter);
+         }
+      }
+
+      private void updateErrorDescriptionAfterMeasurementDimensionChanged(ColumnMappingDTO model, Column column)
+      {
+         updateErrorAfterMeasurementChanges(model, column, relatedParameter =>
+         {
+            relatedParameter.MappedColumn.Dimension = column.Dimension;
+            relatedParameter.MappedColumn.Unit = new UnitDescription(column.Unit.SelectedUnit);
+         });
+      }
+
+      private void updateErrorDescriptionAfterMeasurementUnitIsSetFromColumn(ColumnMappingDTO model, Column column)
+      {
+         updateErrorAfterMeasurementChanges(model, column, relatedParameter =>
+         {
+            if (!relatedParameter.MappedColumn.Unit.ColumnName.IsNullOrEmpty())
+               //already a column, nothing to do here
+               return;
+            relatedParameter.MappedColumn.Dimension = null;
+            relatedParameter.MappedColumn.Unit = new UnitDescription(column.Unit.SelectedUnit, column.Unit.ColumnName);
+         });
+      }
+
       public void UpdateDescriptionForModel(MappingDataFormatParameter mappingSource)
       {
          if (mappingSource == null)
@@ -218,26 +212,36 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (model == null)
             return;
 
-         var column = ((MappingDataFormatParameter) model.Source).MappedColumn;
+         var column = ((MappingDataFormatParameter)model.Source).MappedColumn;
          if (!string.IsNullOrEmpty(_mappingParameterEditorPresenter.Unit.ColumnName))
          {
             column.Unit = new UnitDescription(_rawData.GetColumn(_mappingParameterEditorPresenter.Unit.ColumnName).FirstOrDefault(), _mappingParameterEditorPresenter.Unit.ColumnName);
             column.Dimension = null;
+            updateErrorDescriptionAfterMeasurementUnitIsSetFromColumn(model, column);
          }
          else
          {
-            column.Unit = _mappingParameterEditorPresenter.Unit;  
-            column.Dimension = _mappingParameterEditorPresenter.Dimension;
+            //When unit is set, the dimension has to be inferred from it.
+            //The dimension is the first from the supported dimension which
+            //has the selected unit.
+            column.Unit = _mappingParameterEditorPresenter.Unit;
+            if (column.Dimension == null || !column.Dimension.HasUnit(column.Unit.SelectedUnit))
+            {
+               column.Dimension = _columnInfos[model.MappingName]
+                  .SupportedDimensions
+                  .FirstOrDefault(x => x.HasUnit(column.Unit.SelectedUnit));
+               updateErrorDescriptionAfterMeasurementDimensionChanged(model, column);
+            }
          }
 
-         if (model.ColumnInfo.IsBase())
+         if (model.ColumnInfo.IsBase)
          {
             ValidateMapping();
             _view.CloseEditor();
             return;
          }
 
-         if (model.ColumnInfo.IsAuxiliary())
+         if (model.ColumnInfo.IsAuxiliary)
          {
             if (_mappingParameterEditorPresenter.SelectedErrorType == 0)
                column.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
@@ -278,18 +282,20 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (!(model.Source is MappingDataFormatParameter))
             return;
 
-         var source = (MappingDataFormatParameter) model.Source;
+         var source = (MappingDataFormatParameter)model.Source;
          var column = source.MappedColumn;
 
          _mappingParameterEditorPresenter.InitView();
 
-         var columns = new List<string>() {column.Unit.ColumnName};
+         var columns = new List<string>() { column.Unit.ColumnName };
          var dimensions = new List<IDimension>();
 
+         string measurementUnit = null;
          if (model.ColumnInfo.RelatedColumnOf != null) //if there is a measurement column
          {
             var relatedColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == model.ColumnInfo.RelatedColumnOf);
-            var relatedColumn = ((MappingDataFormatParameter) relatedColumnDTO?.Source)?.MappedColumn;
+            var relatedColumn = ((MappingDataFormatParameter)relatedColumnDTO?.Source)?.MappedColumn;
+            measurementUnit = relatedColumn?.Unit?.SelectedUnit;
 
             if (relatedColumn != null && !relatedColumn.Unit.ColumnName.IsNullOrEmpty())
             {
@@ -305,9 +311,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          else
          {
             var errorColumnDTO = _mappings.FirstOrDefault(c => c.ColumnInfo?.RelatedColumnOf == model.MappingName);
-            var errorColumn = ((MappingDataFormatParameter) errorColumnDTO?.Source)?.MappedColumn;
+            var errorColumn = ((MappingDataFormatParameter)errorColumnDTO?.Source)?.MappedColumn;
 
-            if (errorColumn?.Unit != null && !errorColumn.Unit.ColumnName.IsNullOrEmpty()) 
+            if (errorColumn?.Unit != null && !errorColumn.Unit.ColumnName.IsNullOrEmpty())
                columns.Add(errorColumn.Unit.ColumnName);
 
             dimensions.AddRange(_columnInfos
@@ -317,12 +323,17 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          _mappingParameterEditorPresenter.SetUnitOptions(column, dimensions, columns.Union(availableColumns()));
 
-         if (model.ColumnInfo.IsBase())
+         if (model.ColumnInfo.IsBase)
             return;
 
-         if (model.ColumnInfo.IsAuxiliary())
+         if (model.ColumnInfo.IsAuxiliary)
          {
-            _mappingParameterEditorPresenter.SetErrorTypeOptions(new List<string>() {Constants.STD_DEV_ARITHMETIC, Constants.STD_DEV_GEOMETRIC}, source.MappedColumn.ErrorStdDev);
+            _mappingParameterEditorPresenter.SetErrorTypeOptions
+            (
+               new List<string>() { Constants.STD_DEV_ARITHMETIC, Constants.STD_DEV_GEOMETRIC },
+               source.MappedColumn.ErrorStdDev,
+               type => type == Constants.STD_DEV_ARITHMETIC ? measurementUnit : null
+            );
          }
          else
          {
@@ -380,7 +391,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (model.Source == null)
             return false;
 
-         var source =model.Source as MetaDataFormatParameter;
+         var source = model.Source as MetaDataFormatParameter;
 
          if (source.ColumnName == null)
             return false;
@@ -402,7 +413,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             var metaDataCategory = _metaDataCategories.FirstOrDefault(md => md.Name == model.MappingName);
             if (columnNameHasManualInput(model, metaDataCategory))
-               options.Add(new RowOptionDTO() {Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData)});
+               options.Add(new RowOptionDTO()
+                  { Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData) });
             if (metaDataCategory != null && metaDataCategory.ShouldListOfValuesBeIncluded)
             {
                options.AddRange(metaDataCategory.ListOfValues.Keys.Select(v =>
@@ -414,27 +426,33 @@ namespace OSPSuite.Presentation.Presenters.Importer
                   var iconIndex = ApplicationIcons.IconIndex(v);
                   if (iconIndex == -1)
                      iconIndex = ApplicationIcons.IconIndex(ApplicationIcons.MetaData);
-                  return new RowOptionDTO() {Description = v, ImageIndex = iconIndex};
+                  return new RowOptionDTO() { Description = v, ImageIndex = iconIndex };
                }));
             }
+
             topNames = metaDataCategory.TopNames;
          }
 
-         if (model.Source != null && (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData && (model.Source as MetaDataFormatParameter).IsColumn))
+         if (model.Source != null && (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData &&
+                                      (model.Source as MetaDataFormatParameter).IsColumn))
          {
-            options.Add(new RowOptionDTO() {Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule)});
+            options.Add(new RowOptionDTO()
+               { Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) });
          }
          else if (model.Source != null && !(model.Source is AddGroupByFormatParameter) && !(model.Source is MetaDataFormatParameter))
          {
-            options.Add(new RowOptionDTO() {Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule)});
+            options.Add(new RowOptionDTO()
+               { Description = model.Source.ColumnName, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) });
          }
 
          if (model.CurrentColumnType == ColumnMappingDTO.ColumnType.AddGroupBy)
             options.Add(new RowOptionDTO() { Description = model.ExcelColumn, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.Add) });
 
-         options.AddRange(excelColumns.Select(c => new RowOptionDTO() {Description = c, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule)}));
+         options.AddRange(excelColumns.Select(c => new RowOptionDTO()
+            { Description = c, ImageIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule) }));
          var metaDataIconIndex = ApplicationIcons.IconIndex(ApplicationIcons.ObservedDataForMolecule);
-         return options.OrderByDescending(o => topNames.Contains(o.Description)).ThenBy(o => o.ImageIndex == metaDataIconIndex).ThenBy(o => o.Description);
+         return options.OrderByDescending(o => topNames.Contains(o.Description)).ThenBy(o => o.ImageIndex == metaDataIconIndex)
+            .ThenBy(o => o.Description);
       }
 
       public IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingDTO model)
@@ -513,13 +531,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
          return options;
       }
 
-      private IEnumerable<string> availableColumns()
+      private IEnumerable<string>
+         availableColumns()
       {
+         //ToDo: this should be refactor to be more readable
          return _format.ExcelColumnNames
             .Where
             (
                cn =>
-                  _format.Parameters.OfType<MappingDataFormatParameter>().All(p => p.ColumnName != cn && p.MappedColumn?.Unit?.ColumnName != cn && p.MappedColumn?.LloqColumn != cn) &&
+                  _format.Parameters.OfType<MappingDataFormatParameter>().All(p =>
+                     p.ColumnName != cn && p.MappedColumn?.Unit?.ColumnName != cn && p.MappedColumn?.LloqColumn != cn) &&
                   _format.Parameters.OfType<MetaDataFormatParameter>().All(p => p.ColumnName != cn) &&
                   _format.Parameters.OfType<GroupByDataFormatParameter>().All(p => p.ColumnName != cn)
             );
@@ -543,7 +564,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
             {
                Title = Captions.Importer.NotConfiguredField
             };
-         if ((element is MappingDataFormatParameter) && _mappingProblem.MissingUnit.Contains((element as MappingDataFormatParameter).MappedColumn.Name))
+         if ((element is MappingDataFormatParameter) &&
+             _mappingProblem.MissingUnit.Contains((element as MappingDataFormatParameter).MappedColumn.Name))
             return new ToolTipDescription()
             {
                Title = Captions.Importer.MissingUnit
@@ -555,36 +577,70 @@ namespace OSPSuite.Presentation.Presenters.Importer
          };
       }
 
-      private void _setDescriptionForRow(ColumnMappingDTO model, bool isColumn)
+      private void setUnitAndDimension(ColumnMappingDTO model)
       {
-         if (model.Source == null)
-         {
-            switch (model.CurrentColumnType)
-            {
-               case ColumnMappingDTO.ColumnType.MetaData:
-                  model.Source = new MetaDataFormatParameter(model.ExcelColumn, model.MappingName, isColumn);
-                  break;
-               case ColumnMappingDTO.ColumnType.Mapping:
-                  model.Source = new MappingDataFormatParameter(model.ExcelColumn, new Column() {Name = model.MappingName, Unit = new UnitDescription(UnitDescription.InvalidUnit)});
-                  break;
-               default:
-                  throw new NotImplementedException($"Setting description for unhandled column type: {model.CurrentColumnType}");
-            }
+         var supportedDimensions = _columnInfos[model.MappingName].SupportedDimensions;
+         var unit = _format.ExtractUnitDescriptions(model.ExcelColumn, supportedDimensions);
+         if (unit.SelectedUnit == UnitDescription.InvalidUnit)
+            return;
 
-            _format.Parameters.Add(model.Source);
-         }
-         else if (model.Source is AddGroupByFormatParameter)
+         var mappingDataFormatParameter = (model.Source as MappingDataFormatParameter);
+         mappingDataFormatParameter.MappedColumn.Unit = unit;
+         mappingDataFormatParameter.MappedColumn.Dimension = supportedDimensions.FirstOrDefault(x => x.HasUnit(unit.SelectedUnit));
+      }
+
+      //ToDo: this big switch statement here underneath should be refactored, probably broken to more than one functions.
+      //ToDo: also the part of the switch(model.Source) that also then in the cases changes the model.Source is kind of murky. 
+      private void setDescriptionForRow(ColumnMappingDTO model, bool isColumn)
+      {
+         switch (model.Source)
          {
-            model.Source = new GroupByDataFormatParameter(model.ExcelColumn);
-            _format.Parameters.Add(model.Source);
-            setDataFormat(_format.Parameters);
-         }
-         else
-         {
-            model.Source.ColumnName = model.ExcelColumn;
-            if (model.CurrentColumnType == ColumnMappingDTO.ColumnType.MetaData)
+            //this is the case for the first setting of Mapping or MetaData. GroupBy and AddGroupBy are never null.
+            case null:
+               switch (model.CurrentColumnType)
+               {
+                  case ColumnMappingDTO.ColumnType.MetaData:
+                     model.Source = new MetaDataFormatParameter(model.ExcelColumn, model.MappingName, isColumn);
+                     break;
+                  case ColumnMappingDTO.ColumnType.Mapping:
+                     model.Source = new MappingDataFormatParameter(model.ExcelColumn,
+                        new Column() { Name = model.MappingName, Unit = new UnitDescription(UnitDescription.InvalidUnit) });
+                     setUnitAndDimension(model);
+                     break;
+                  default:
+                     throw new NotImplementedException($"Setting description for unhandled column type: {model.CurrentColumnType}");
+               }
+
+               _format.Parameters.Add(model.Source);
+               break;
+            //this is the case for setting a new GroupBy parameter. The AddGroupByFormatParameter corresponds to the line in the ColumnMapping Grid
+            //that has the "+" button for adding the GroupBy, that's why in this case we are introducing a new Parameter, instead of changing the existing.
+            //The AddGroupByFormatParameter, should never be changed, as the "+" button line should always present in the Grid
+            case AddGroupByFormatParameter _:
+               model.Source = new GroupByDataFormatParameter(model.ExcelColumn);
+               _format.Parameters.Add(model.Source);
+               setDataFormat(_format.Parameters);
+               break;
+            //this is the case that corresponds to the changing of the mapping for a Parameter.
+            //The Parameter in this case can be Mapping, MetaData or GroupBy
+            default:
             {
-               (model.Source as MetaDataFormatParameter).IsColumn = isColumn;
+               model.Source.ColumnName = model.ExcelColumn;
+               switch (model.CurrentColumnType)
+               {
+                  case ColumnMappingDTO.ColumnType.MetaData:
+                     (model.Source as MetaDataFormatParameter).IsColumn = isColumn;
+                     break;
+                  case ColumnMappingDTO.ColumnType.Mapping:
+                     setUnitAndDimension(model);
+                     break;
+                  case ColumnMappingDTO.ColumnType.GroupBy:
+                     break;
+                  default:
+                     throw new NotImplementedException($"Setting description for unhandled column type: {model.CurrentColumnType}");
+               }
+
+               break;
             }
          }
       }
@@ -632,22 +688,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
             .ToList());
       }
 
-      public void ResetMapping()
-      {
-         if (_format != null)
-         {
-            _format.Parameters.Clear();
-            foreach (var p in _originalFormat)
-               _format.Parameters.Add(p);
-         }
-         setDataFormat(_originalFormat);
-      }
-
-      public void ResetMappingBasedOnCurrentSheet()
-      {
-         OnResetMappingBasedOnCurrentSheet(this, new EventArgs());
-      }
-
       public void ClearMapping()
       {
          var format = new List<DataFormatParameter>();
@@ -685,10 +725,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          var errorColumnDTO = _mappings?.FirstOrDefault(c => (c?.ColumnInfo != null) && !c.ColumnInfo.RelatedColumnOf.IsNullOrEmpty());
 
-         var errorColumn = ((MappingDataFormatParameter) errorColumnDTO?.Source)?.MappedColumn;
+         var errorColumn = ((MappingDataFormatParameter)errorColumnDTO?.Source)?.MappedColumn;
          if (errorColumn == null) return;
          var measurementColumnDTO = _mappings.FirstOrDefault(c => c.MappingName == errorColumnDTO.ColumnInfo.RelatedColumnOf);
-         var measurementColumn = ((MappingDataFormatParameter) measurementColumnDTO?.Source)?.MappedColumn;
+         var measurementColumn = ((MappingDataFormatParameter)measurementColumnDTO?.Source)?.MappedColumn;
          if (measurementColumn == null) return;
 
          //either both measurement and error units should be coming from excel columns, or they should have the same dimension
@@ -709,7 +749,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          setStatuses();
          if (_mappingProblem.MissingMapping.Count != 0 || _mappingProblem.MissingUnit.Count != 0)
          {
-            OnMissingMapping(this, new MissingMappingEventArgs {Message = _mappingProblem.MissingMapping.FirstOrDefault() ?? _mappingProblem.MissingUnit.FirstOrDefault()});
+            OnMissingMapping(this,
+               new MissingMappingEventArgs
+                  { Message = _mappingProblem.MissingMapping.FirstOrDefault() ?? _mappingProblem.MissingUnit.FirstOrDefault() });
          }
          else
          {
@@ -724,7 +766,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public event EventHandler<MissingMappingEventArgs> OnMissingMapping = delegate { };
 
-      public event EventHandler OnResetMappingBasedOnCurrentSheet = delegate { }; 
+      public event EventHandler OnResetMappingBasedOnCurrentSheet = delegate { };
 
       public IEnumerable<string> GetAllAvailableExcelColumns()
       {

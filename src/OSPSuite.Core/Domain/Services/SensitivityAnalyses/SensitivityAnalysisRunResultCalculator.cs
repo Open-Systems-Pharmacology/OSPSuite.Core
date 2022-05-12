@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Utility.Extensions;
 
@@ -10,10 +8,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 {
    public interface ISensitivityAnalysisRunResultCalculator
    {
-      SensitivityAnalysisRunResult CreateFor(
-         SensitivityAnalysis sensitivityAnalysis,
-         VariationData variationData,
-         SimulationResults simulationResults);
+      SensitivityAnalysisRunResult CreateFor(SensitivityAnalysis sensitivityAnalysis, VariationData variationData, SimulationResults simulationResults, bool addOutputParameterSensitivitiesToResult);
    }
 
    public class SensitivityAnalysisRunResultCalculator : ISensitivityAnalysisRunResultCalculator
@@ -25,31 +20,62 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
          _pkAnalysesTask = pkAnalysesTask;
       }
 
-      public SensitivityAnalysisRunResult CreateFor(
-         SensitivityAnalysis sensitivityAnalysis, 
-         VariationData variationData, 
-         SimulationResults simulationResults)
+      public SensitivityAnalysisRunResult CreateFor(SensitivityAnalysis sensitivityAnalysis, VariationData variationData, SimulationResults simulationResults, bool addOutputParameterSensitivitiesToResult)
       {
          var sensitivityRunResult = new SensitivityAnalysisRunResult();
 
-         var pkAnalyses = _pkAnalysesTask.CalculateFor(sensitivityAnalysis.Simulation, variationData.NumberOfVariations, simulationResults);
-         foreach (var pkParameter in pkAnalyses.All())
-         {
-            sensitivityAnalysis.AllSensitivityParameters.Each((sensitivityParameter, index) =>
-            {
-               var pkSensitivity = calculateParameterSensitivity(sensitivityParameter, index, variationData, pkParameter);
-               if (pkSensitivity != null)
-                  sensitivityRunResult.AddPKParameterSensitivity(pkSensitivity);
-            });
-         }
+         addPKAnalysisSensitivities(variationData, simulationResults, sensitivityRunResult, sensitivityAnalysis);
+
+         if (addOutputParameterSensitivitiesToResult)
+            addOutputSensitivities(variationData, simulationResults, sensitivityRunResult, sensitivityAnalysis);
 
          return sensitivityRunResult;
       }
 
-      private PKParameterSensitivity calculateParameterSensitivity(SensitivityParameter sensitivityParameter, int sensitivityParameterIndex, VariationData variationData, QuantityPKParameter pkParameter)
+      private void addOutputSensitivities(VariationData variationData, SimulationResults simulationResults, SensitivityAnalysisRunResult sensitivityRunResult, SensitivityAnalysis sensitivityAnalysis)
+      {
+         variationData.AllVariations.Each(variation =>
+         {
+            //one variation corresponds to one row in the simulation table (e.g. one IndividualId)
+            //this is the variation of one parameter compared to the base simulation
+            var resultsForVariation = simulationResults.ResultsFor(variation.VariationId);
+
+            //Retrieve this parameter
+            var sensitivityParameter = sensitivityAnalysis.SensitivityParameterByName(variation.ParameterName);
+            var parameterPath = sensitivityParameter.ParameterSelection.Path;
+
+            //For all output, we add the sensitivity
+            resultsForVariation.AllValues.Each(outputValue =>
+            {
+               var outputParameterSensitivity = calculateOutputParameterSensitivity(outputValue, variation, parameterPath);
+               sensitivityRunResult.AddOutputParameterSensitivity(outputParameterSensitivity);
+            });
+         });
+      }
+
+      private OutputParameterSensitivity calculateOutputParameterSensitivity(QuantityValues outputValue, ParameterVariation variationData, string parameterPath)
+      {
+         return new OutputParameterSensitivity(variationData.ParameterName, parameterPath, variationData.ParameterValue, outputValue.QuantityPath, outputValue.Values, outputValue.Time.Values);
+      }
+
+      private void addPKAnalysisSensitivities(VariationData variationData, SimulationResults simulationResults, SensitivityAnalysisRunResult sensitivityRunResult, SensitivityAnalysis sensitivityAnalysis)
+      {
+         var pkAnalyses = _pkAnalysesTask.CalculateFor(sensitivityAnalysis.Simulation, simulationResults);
+         foreach (var pkParameter in pkAnalyses.All())
+         {
+            sensitivityAnalysis.AllSensitivityParameters.Each(sensitivityParameter =>
+            {
+               var pkSensitivity = calculatePKParameterSensitivity(sensitivityParameter, variationData, pkParameter);
+               if (pkSensitivity != null)
+                  sensitivityRunResult.AddPKParameterSensitivity(pkSensitivity);
+            });
+         }
+      }
+
+      private PKParameterSensitivity calculatePKParameterSensitivity(SensitivityParameter sensitivityParameter, VariationData variationData, QuantityPKParameter pkParameter)
       {
          var defaultParameterValue = sensitivityParameter.DefaultValue;
-         var defaultPKValue = pkParameter.Values[variationData.DefaultVariationId];
+         var defaultPKValue = pkParameter.ValueFor(variationData.DefaultVariationId);
          var allVariations = variationData.VariationsFor(sensitivityParameter.Name);
 
          if (float.IsNaN(defaultPKValue) || defaultPKValue == 0 || defaultParameterValue == 0 || !allVariations.Any())
@@ -60,12 +86,13 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
             ParameterName = sensitivityParameter.Name,
             PKParameterName = pkParameter.Name,
             QuantityPath = pkParameter.QuantityPath,
+            ParameterPath = sensitivityParameter.ParameterSelection.Path,
             Value = double.NaN
          };
 
          var delta = (from variation in allVariations
-            let deltaP = difference(variation.Variation[sensitivityParameterIndex], defaultParameterValue)
-            let deltaPK = difference(pkParameter.Values[variation.VariationId], defaultPKValue)
+            let deltaP = difference(variation.ParameterValue, defaultParameterValue)
+            let deltaPK = difference(pkParameter.ValueFor(variation.VariationId), defaultPKValue)
             select deltaPK / deltaP).Sum();
 
          sensitivity.Value = delta * defaultParameterValue / defaultPKValue / allVariations.Count;

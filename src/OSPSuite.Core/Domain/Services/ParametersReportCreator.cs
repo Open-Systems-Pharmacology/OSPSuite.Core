@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
@@ -89,7 +90,7 @@ namespace OSPSuite.Core.Domain.Services
          foreach (var parameter in parametersToExport)
          {
             var row = dataTable.NewRow();
-            row[colPath] = _objectPathFactory.CreateAbsoluteObjectPath(parameter);
+            row[colPath] = _objectPathFactory.CreateAbsoluteObjectPath(parameter).PathAsString.InQuotes();
 
             try
             {

@@ -9,6 +9,7 @@ using OSPSuite.R.Domain;
 using OSPSuite.R.Mapper;
 using OSPSuite.Utility.Events;
 using SensitivityAnalysis = OSPSuite.R.Domain.SensitivityAnalysis;
+using SensitivityAnalysisRunOptions = OSPSuite.R.Domain.SensitivityAnalysisRunOptions;
 
 namespace OSPSuite.R.Services
 {
@@ -85,7 +86,7 @@ namespace OSPSuite.R.Services
 
       private void simulationTerminated(ISensitivityAnalysisEngine sensitivityAnalysisEngine)
       {
-         terminated(sensitivityAnalysisEngine, new EventArgs());
+         terminated(sensitivityAnalysisEngine, EventArgs.Empty);
       }
 
       private void terminated(object sender, EventArgs e)

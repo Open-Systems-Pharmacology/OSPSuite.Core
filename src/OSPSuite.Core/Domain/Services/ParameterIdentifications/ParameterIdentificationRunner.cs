@@ -2,18 +2,19 @@
 using System.Threading.Tasks;
 using OSPSuite.Assets;
 using OSPSuite.Utility;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Collections;
+using System.Linq;
 
 namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 {
    public interface IParameterIdentificationRunner
    {
       Task Run(ParameterIdentification parameterIdentification);
-      void Stop();
+      void Stop(ParameterIdentification parameterIdentification);
       bool IsRunning { get; }
    }
 
@@ -23,9 +24,9 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private readonly IDialogCreator _dialogCreator;
       private readonly IEntityValidationTask _entityValidationTask;
       private readonly IOSPSuiteExecutionContext _executionContext;
-      private IParameterIdentificationEngine _parameterIdentificationEngine;
+      private readonly Cache<ParameterIdentification, IParameterIdentificationEngine> _parameterIdentificationEngines = new Cache<ParameterIdentification, IParameterIdentificationEngine>(onMissingKey: x => null);
 
-      public bool IsRunning => _parameterIdentificationEngine != null;
+      public bool IsRunning => _parameterIdentificationEngines.Any();
 
       public ParameterIdentificationRunner(IParameterIdentificationEngineFactory parameterIdentificationEngineFactory,  IDialogCreator dialogCreator, 
          IEntityValidationTask entityValidationTask, IOSPSuiteExecutionContext executionContext)
@@ -43,32 +44,30 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
          try
          {
-            if (IsRunning)
-               throw new OSPSuiteException(Error.CannotStartTwoConcurrentParameterIdentifications);
-
-            using (_parameterIdentificationEngine = _parameterIdentificationEngineFactory.Create())
+            using (var parameterIdentificationEngine = _parameterIdentificationEngineFactory.Create())
             {
+               _parameterIdentificationEngines.Add(parameterIdentification, parameterIdentificationEngine);
                var begin = SystemTime.UtcNow();
-               await _parameterIdentificationEngine.StartAsync(parameterIdentification);
+               await parameterIdentificationEngine.StartAsync(parameterIdentification);
                var end = SystemTime.UtcNow();
                var timeSpent = end - begin;
-               _dialogCreator.MessageBoxInfo(Captions.ParameterIdentification.ParameterIdentificationFinished(timeSpent.ToDisplay()));
+               _dialogCreator.MessageBoxInfo(Captions.ParameterIdentification.ParameterIdentificationFinished(parameterIdentification.Name, timeSpent.ToDisplay()));
             }
          }
          catch (OperationCanceledException)
          {
-            _dialogCreator.MessageBoxInfo(Captions.ParameterIdentification.ParameterIdentificationCanceled);
+            _dialogCreator.MessageBoxInfo(Captions.ParameterIdentification.ParameterIdentificationCanceled(parameterIdentification.Name));
          }
          finally
          {
             _executionContext.ProjectChanged();
-            _parameterIdentificationEngine = null;
+            _parameterIdentificationEngines.Remove(parameterIdentification);
          }
       }
 
-      public void Stop()
+      public void Stop(ParameterIdentification parameterIdentification)
       {
-         _parameterIdentificationEngine?.Stop();
+         _parameterIdentificationEngines[parameterIdentification]?.Stop();
       }
    }
 }

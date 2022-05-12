@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility;
 
 namespace OSPSuite.Core.Domain
@@ -49,7 +50,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_exporting_some_parameters_to_a_datatable_using_the_paramteres_report : concern_for_ParametersReportCreator
+   public class When_exporting_some_parameters_to_a_datatable_using_the_parameter_report : concern_for_ParametersReportCreator
    {
       private DataTable _table;
 
@@ -75,9 +76,9 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_have_written_the_path_of_the_parameters()
       {
-         _table.Rows[0][Constants.ParameterExport.PARAMETER_PATH].ShouldBeEqualTo("P1");
-         _table.Rows[1][Constants.ParameterExport.PARAMETER_PATH].ShouldBeEqualTo("P2");
-         _table.Rows[2][Constants.ParameterExport.PARAMETER_PATH].ShouldBeEqualTo("P3");
+         _table.Rows[0][Constants.ParameterExport.PARAMETER_PATH].ShouldBeEqualTo("P1".InQuotes());
+         _table.Rows[1][Constants.ParameterExport.PARAMETER_PATH].ShouldBeEqualTo("P2".InQuotes());
+         _table.Rows[2][Constants.ParameterExport.PARAMETER_PATH].ShouldBeEqualTo("P3".InQuotes());
       }
 
       [Observation]

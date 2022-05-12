@@ -95,7 +95,7 @@ namespace OSPSuite.UI.Binders
          var p = _treeView.PointToClient(Control.MousePosition);
          var targetNode = _treeView.CalcHitInfo(p).Node;
 
-         var treeNodes = dragNodes as IList<ITreeNode> ?? dragNodes.ToList();
+         var treeNodes =  dragNodes.ToList();
 
          if (!treeNodes.All(_presenter.CanDrag))
             return DragDropEffects.None;

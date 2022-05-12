@@ -94,7 +94,7 @@ namespace OSPSuite.Core
 
       private bool molWeightShouldBeSetFor(DataColumn dataColumn)
       {
-         if (dataColumn.QuantityInfo.Name == "A")
+         if (dataColumn.Name == "A")
             return true;
 
          if (!dataColumn.QuantityInfo.Type.Is(QuantityType.Observer))

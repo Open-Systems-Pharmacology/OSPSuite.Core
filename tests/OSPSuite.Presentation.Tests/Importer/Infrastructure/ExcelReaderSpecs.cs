@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
-using OSPSuite.Presentation.Importer.Core;
 
 namespace OSPSuite.Presentation.Importer.Infrastructure
 {
@@ -73,5 +72,20 @@ namespace OSPSuite.Presentation.Importer.Infrastructure
          }
       }
 
+      [TestCase]
+      public void new_excel_formula_read()
+      {
+         foreach (var path in _excelFilePath)
+         {
+            sut.LoadNewWorkbook(_excelFilePath[0]);
+            for (var i = 0; i < 4; i++)
+               sut.MoveToNextSheet();
+            for (var i = 0; i < 2; i++)
+               sut.MoveToNextRow();
+            sut.CurrentRow[0].ShouldBeEqualTo("Concat_test1");
+            sut.MoveToNextRow();
+            sut.CurrentRow[0].ShouldBeEqualTo("Concat_test2");
+         }
+      }
    }
 }

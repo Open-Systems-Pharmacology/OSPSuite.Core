@@ -37,8 +37,6 @@ namespace OSPSuite.UI.Views
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemName = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemDescription = new DevExpress.XtraLayout.LayoutControlItem();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).BeginInit();
-         this.layoutControlBase.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
@@ -48,29 +46,7 @@ namespace OSPSuite.UI.Views
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemName)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemDescription)).BeginInit();
          this.SuspendLayout();
-         // 
-         // btnCancel
-         // 
-         this.btnCancel.Location = new System.Drawing.Point(341, 12);
-         this.btnCancel.Size = new System.Drawing.Size(68, 22);
-         // 
-         // btnOk
-         // 
-         this.btnOk.Location = new System.Drawing.Point(257, 12);
-         this.btnOk.Size = new System.Drawing.Size(80, 22);
-         // 
-         // layoutControlBase
-         // 
-         this.layoutControlBase.Location = new System.Drawing.Point(0, 217);
-         this.layoutControlBase.Size = new System.Drawing.Size(421, 46);
-         this.layoutControlBase.Controls.SetChildIndex(this.btnCancel, 0);
-         this.layoutControlBase.Controls.SetChildIndex(this.btnOk, 0);
-         this.layoutControlBase.Controls.SetChildIndex(this.btnExtra, 0);
-         // 
-         // btnExtra
-         // 
-         this.btnExtra.Size = new System.Drawing.Size(118, 22);
-         // 
+       // 
          // layoutControl1
          // 
          this.layoutControl.AllowCustomization = false;
@@ -145,10 +121,7 @@ namespace OSPSuite.UI.Views
          this.Controls.Add(this.layoutControl);
          this.Name = "ObjectBaseView";
          this.Text = "ObjectBaseView";
-         this.Controls.SetChildIndex(this.layoutControlBase, 0);
          this.Controls.SetChildIndex(this.layoutControl, 0);
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlBase)).EndInit();
-         this.layoutControlBase.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
          this.layoutControl.ResumeLayout(false);

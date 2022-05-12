@@ -22,6 +22,7 @@ namespace OSPSuite.Starter.Tasks
       public IconSize IconSizeContextMenu { get; set; }
       public Color ChartBackColor { get; set; }
       public Color ChartDiagramBackColor { get; set; }
+      public bool ColorGroupObservedDataFromSameFolder { get; set; }
       public DisplayUnitsManager DisplayUnits { get; set; }
       public IList<string> ProjectFiles { get; set; }
       public uint MRUListItemCount { get; set; }

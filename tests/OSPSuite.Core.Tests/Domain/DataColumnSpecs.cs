@@ -107,7 +107,7 @@ namespace OSPSuite.Core.Domain
       {
          sut.Values = new[] {8.0F, 0.0F, -5.0F};
          var relatedColumn = new DataColumn("Regina", _dimensionless, _baseGrid);
-         relatedColumn.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.GeometricStdDev, " ", DateTime.MinValue, "", "", 0);
+         relatedColumn.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.GeometricStdDev, " ", "", 0);
          relatedColumn.Values = new[] {0.1F, 0.2F, 0.1F};
 
          sut.AddRelatedColumn(relatedColumn);
@@ -122,7 +122,7 @@ namespace OSPSuite.Core.Domain
 
          sut.Values = new[] {8.0F, 0.0F, -5.0F};
          var relatedColumn = new DataColumn("Regina", _dimensionless, baseGrid2);
-         relatedColumn.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.GeometricStdDev, " ", DateTime.MinValue, "", "", 0);
+         relatedColumn.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.GeometricStdDev, " ", "", 0);
          relatedColumn.Values = new[] {0.1F, 0.2F, 0.1F};
 
          The.Action(() => sut.AddRelatedColumn(relatedColumn)).ShouldThrowAn<InvalidArgumentException>();
@@ -133,7 +133,7 @@ namespace OSPSuite.Core.Domain
       {
          sut.Values = new[] {8.0F, 0.0F, -5.0F};
          var relatedColumn = new DataColumn("Regina", _dimensionless, _baseGrid);
-         relatedColumn.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.ArithmeticStdDev, " ", DateTime.MinValue, "", "", 0);
+         relatedColumn.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.ArithmeticStdDev, " ", "", 0);
          relatedColumn.Values = new[] {0.1F, 0.2F, 0.1F};
 
          The.Action(() => sut.AddRelatedColumn(relatedColumn)).ShouldThrowAn<InvalidArgumentException>();
@@ -144,7 +144,7 @@ namespace OSPSuite.Core.Domain
       {
          sut.Values = new[] {8.0F, 0.0F, -5.0F};
          var relatedColumn = new DataColumn("Regina", _length, _baseGrid);
-         relatedColumn.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.GeometricStdDev, " ", DateTime.MinValue, "", "", 0);
+         relatedColumn.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.GeometricStdDev, " ", "", 0);
          relatedColumn.Values = new[] {0.1F, 0.2F, 0.1F};
 
          The.Action(() => sut.AddRelatedColumn(relatedColumn)).ShouldThrowAn<InvalidArgumentException>();
@@ -200,6 +200,15 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
+      public void Retrieving_and_settings_single_value()
+      {
+         //set one value for the base grid so that setting a single value won't expend the array
+         _baseGrid.Values = new[] {2F};
+         sut.Value = 2.5;
+         sut.ValuesAsArray.ShouldBeEqualTo(new[] {2.5});
+      }
+
+      [Observation]
       public void retrieving_value_as_array_for_a_column_not_initialized()
       {
          sut.ValuesAsArray.ShouldBeEqualTo(Array.Empty<double>());
@@ -218,6 +227,5 @@ namespace OSPSuite.Core.Domain
          sut.DataInfo.LLOQAsDouble = 5d;
          sut.DataInfo.LLOQ.ShouldBeEqualTo(5f);
       }
-
    }
 }

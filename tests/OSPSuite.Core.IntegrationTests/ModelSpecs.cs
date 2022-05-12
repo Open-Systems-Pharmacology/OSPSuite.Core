@@ -1,11 +1,9 @@
-﻿using FakeItEasy;
-using OSPSuite.BDDHelper;
+﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility.Container;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Helpers;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core
 {
@@ -64,7 +62,7 @@ namespace OSPSuite.Core
          var root = new Container().WithName("Root").WithId("Root");
          sut.Root = root;
          _quantityWithMolWeight = new MoleculeAmount().WithName("Molecule");
-         var quantityWithMolWeightContainer = new Container().WithName(_quantityWithMolWeight.Name);
+         var quantityWithMolWeightContainer = new Container().WithName(_quantityWithMolWeight.Name).WithContainerType(ContainerType.Molecule);
          quantityWithMolWeightContainer.Add(new Parameter().WithName(Constants.Parameters.MOL_WEIGHT).WithFormula(new ConstantFormula(400)));
          _parameterUnderMoleculeWithMolWeight = new Parameter().WithName("Concentration");
          quantityWithMolWeightContainer.Add(_parameterUnderMoleculeWithMolWeight);
@@ -88,7 +86,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_null_if_the_quantity_is_null()
       {
-         sut.MolWeightFor((IQuantity)null).ShouldBeNull();
+         sut.MolWeightFor((IQuantity) null).ShouldBeNull();
       }
 
       [Observation]
@@ -109,12 +107,20 @@ namespace OSPSuite.Core
       {
          sut.MolWeightFor(_quantityWithMolWeight).ShouldBeEqualTo(400);
       }
+
+      [Observation]
+      public void should_return_the_molweight_parameter_value_when_passing_the_molecule_name()
+      {
+         sut.MolWeightFor(_quantityWithMolWeight.Name).ShouldBeEqualTo(400);
+      }
    }
 
    public class When_retrieving_the_molecule_name_for_a_given_quantity : concern_for_Model
    {
       private MoleculeAmount _molecule;
       private Parameter _parameterUnderMolecule;
+      private Parameter _parameterUnderAnotherContainer;
+      private Parameter _aParameterWithoutParent;
 
       protected override void Context()
       {
@@ -122,20 +128,25 @@ namespace OSPSuite.Core
          var root = new Container().WithName("Root").WithId("Root");
          sut.Root = root;
          _molecule = new MoleculeAmount().WithName("Molecule");
-         var containerUnderMoleculeContainer = new Container().WithName("toto");
-         _parameterUnderMolecule = new Parameter().WithName("Param").WithFormula(new ConstantFormula(400));   
-         containerUnderMoleculeContainer.Add(_parameterUnderMolecule);
+         var globalMoleculeContainer = new Container().WithName("toto").WithContainerType(ContainerType.Molecule);
+         _parameterUnderMolecule = new Parameter().WithName("Param").WithFormula(new ConstantFormula(400));
+         _parameterUnderAnotherContainer = new Parameter().WithName("Param").WithFormula(new ConstantFormula(400));
+         globalMoleculeContainer.Add(_parameterUnderMolecule);
 
          sut.Root.Add(_molecule);
-         sut.Root.Add(containerUnderMoleculeContainer);
-      }
+         sut.Root.Add(globalMoleculeContainer);
+         var anotherContainer = new Container().WithName("anotherContainer");
+         sut.Root.Add(anotherContainer);
+         anotherContainer.Add(_parameterUnderAnotherContainer);
 
+         _aParameterWithoutParent = new Parameter().WithName("_aParameterWithoutParent").WithFormula(new ConstantFormula(400));
+      }
 
       [Observation]
       public void should_return_empty_string_if_the_quantity_is_null()
       {
-         string.IsNullOrEmpty(sut.MoleculeNameFor((string)null)).ShouldBeTrue();
-         string.IsNullOrEmpty(sut.MoleculeNameFor((IQuantity)null)).ShouldBeTrue();
+         sut.MoleculeNameFor((string) null).ShouldBeNullOrEmpty();
+         sut.MoleculeNameFor((IQuantity) null).ShouldBeNullOrEmpty();
       }
 
       [Observation]
@@ -150,5 +161,16 @@ namespace OSPSuite.Core
          sut.MoleculeNameFor(_parameterUnderMolecule).ShouldBeEqualTo("toto");
       }
 
+      [Observation]
+      public void should_return_empty_string_if_the_quantity_is_in_a_container_that_is_not_a_molecule()
+      {
+         sut.MoleculeNameFor(_parameterUnderAnotherContainer).ShouldBeNullOrEmpty();
+      }
+
+      [Observation]
+      public void should_return_empty_string_if_the_quantity_is_not_a_molecule_and_not_in_a_container()
+      {
+         sut.MoleculeNameFor(_aParameterWithoutParent).ShouldBeNullOrEmpty();
+      }
    }
 }

@@ -101,6 +101,15 @@ namespace OSPSuite.Core.Services
       }
    }
 
+   public class When_the_observed_data_task_is_deleting_empty_observed_data : concern_for_ObservedDataTask
+   {
+      [Observation]
+      public void should_return_true()
+      {
+         sut.Delete(new List<DataRepository>()).ShouldBeTrue();
+      }
+   }
+
    public class When_the_observed_data_task_is_deleting_some_observed_data_and_the_silent_mode_is_activated : concern_for_ObservedDataTask
    {
       private IUsesObservedData _userOfObservedData1;

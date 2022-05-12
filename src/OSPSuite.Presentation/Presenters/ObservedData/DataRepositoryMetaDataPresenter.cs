@@ -25,38 +25,46 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       IListener<ObservedDataMetaDataRemovedEvent>
    {
       /// <summary>
-      ///    Adds a new row to the view, but does not affect the repository meta data
+      ///    Adds a new row to the view, but does not affect the repository meta dataSheet
       /// </summary>
       void NewMetaDataAdded();
 
       /// <summary>
-      ///    Changes a value of a meta data name/value pair in the data repository
-      ///    If the data does not exist in the repository it is added
+      ///    Changes a value of a meta dataSheet name/value pair in the dataSheet repository
+      ///    If the dataSheet does not exist in the repository it is added
       /// </summary>
-      /// <param name="metaDataDTO">The new meta data name/value pair</param>
-      /// <param name="oldValue">The old value of the meta data</param>
+      /// <param name="metaDataDTO">The new meta dataSheet name/value pair</param>
+      /// <param name="oldValue">The old value of the meta dataSheet</param>
       void MetaDataValueChanged(MetaDataDTO metaDataDTO, string oldValue);
 
       /// <summary>
-      ///    Changes the name (or key) of a meta data name/value pair in the data repository
-      ///    It will not add data to the repository if the key is not found
+      ///    Changes the name (or key) of a meta dataSheet name/value pair in the dataSheet repository
+      ///    It will not add dataSheet to the repository if the key is not found
       /// </summary>
-      /// <param name="metaDataDTO">The new meta data name/value pair</param>
-      /// <param name="oldName">The old name of the meta data</param>
+      /// <param name="metaDataDTO">The new meta dataSheet name/value pair</param>
+      /// <param name="oldName">The old name of the meta dataSheet</param>
       void MetaDataNameChanged(MetaDataDTO metaDataDTO, string oldName);
 
       /// <summary>
-      ///    Removes the meta data from the observed data repository being edited
+      ///    Removes the meta dataSheet from the observed dataSheet repository being edited
       /// </summary>
       void RemoveMetaData(MetaDataDTO metaDataDTO);
 
       /// <summary>
-      ///    Edits the metadata on multiple data repositories at once
+      ///    Edits the metadata on multiple dataSheet repositories at once
       /// </summary>
       /// <param name="dataRepositories">The repositories to edit</param>
-      void EditObservedData(IEnumerable<DataRepository> dataRepositories);
+      void EditObservedDataMetaData(IEnumerable<DataRepository> dataRepositories);
 
+      /// <summary>
+      ///    Updates the molecular weight
+      /// </summary>
       void SetMolWeight(double oldMolWeightValueInDisplayUnit, double molWeightValueInDisplayUnit);
+
+      /// <summary>
+      ///    Returns the default molecular weight unit
+      /// </summary>
+      Unit GetDefaultMolWeightUnit();
    }
 
    public class DataRepositoryMetaDataPresenter : AbstractSubPresenter<IDataRepositoryMetaDataView, IDataRepositoryMetaDataPresenter>,
@@ -64,33 +72,35 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
    {
       protected IEnumerable<DataRepository> _allDataRepositories;
       private NotifyList<MetaDataDTO> _metaDataDTOList;
-      private readonly IEditObservedDataTask _editObservedDataTask;
+      private readonly IObservedDataMetaDataTask _observedDataMetaDataTask;
       private readonly IObservedDataConfiguration _observedDataConfiguration;
       private readonly IParameterFactory _parameterFactory;
       private IEnumerable<IBusinessRule> _defaultRules;
       private readonly IDimension _molWeightDimension;
+      private readonly IDimensionFactory _dimensionFactory;
       public bool IsLatched { get; set; }
 
-      public DataRepositoryMetaDataPresenter(IDataRepositoryMetaDataView view, IEditObservedDataTask editObservedDataTask,
+      public DataRepositoryMetaDataPresenter(IDataRepositoryMetaDataView view, IObservedDataMetaDataTask observedDataMetaDataTask,
          IObservedDataConfiguration observedDataConfiguration, IParameterFactory parameterFactory, IDimensionFactory dimensionFactory)
          : base(view)
       {
-         _editObservedDataTask = editObservedDataTask;
+         _observedDataMetaDataTask = observedDataMetaDataTask;
          _observedDataConfiguration = observedDataConfiguration;
          _parameterFactory = parameterFactory;
          _molWeightDimension = dimensionFactory.Dimension(Constants.Dimension.MOLECULAR_WEIGHT);
+         _dimensionFactory = dimensionFactory;
       }
 
       /// <summary>
       ///    Binds the <paramref name="observedData" /> with the view
       /// </summary>
-      /// <param name="observedData">The data repository that will be edited</param>
+      /// <param name="observedData">The dataSheet repository that will be edited</param>
       public void EditObservedData(DataRepository observedData)
       {
          editObservedData(new List<DataRepository> {observedData}, MetaDataDTO.MetaDataDTORules.All());
       }
 
-      public void EditObservedData(IEnumerable<DataRepository> observedData)
+      public void EditObservedDataMetaData(IEnumerable<DataRepository> observedData)
       {
          editObservedData(observedData, MetaDataDTO.MetaDataDTORules.AllForMultipleEdits());
       }
@@ -134,7 +144,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       public void RemoveMetaData(MetaDataDTO metaDataDTO)
       {
-         AddCommand(_editObservedDataTask.RemoveMetaData(_allDataRepositories, mapFrom(metaDataDTO)));
+         AddCommand(_observedDataMetaDataTask.RemoveMetaData(_allDataRepositories, mapFrom(metaDataDTO)));
       }
 
       public IEnumerable<string> PredefinedValuesFor(MetaDataDTO metaDataDTO)
@@ -170,24 +180,29 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       private void metaDataAdded(MetaDataDTO metaDataDTO)
       {
-         AddCommand(_editObservedDataTask.AddMetaData(_allDataRepositories, mapFrom(metaDataDTO)));
+         AddCommand(_observedDataMetaDataTask.AddMetaData(_allDataRepositories, mapFrom(metaDataDTO)));
       }
 
       private void metaDataValueChanged(MetaDataDTO metaDataDTO, string oldValue)
       {
-         AddCommand(_editObservedDataTask.ChangeMetaData(_allDataRepositories,
+         AddCommand(_observedDataMetaDataTask.ChangeMetaData(_allDataRepositories,
             new MetaDataChanged {NewName = metaDataDTO.Name, OldName = metaDataDTO.Name, OldValue = oldValue, NewValue = metaDataDTO.Value}));
       }
 
       private void metaDataNameChanged(MetaDataDTO metaDataDTO, string oldName)
       {
-         AddCommand(_editObservedDataTask.ChangeMetaData(_allDataRepositories,
+         AddCommand(_observedDataMetaDataTask.ChangeMetaData(_allDataRepositories,
             new MetaDataChanged {NewName = metaDataDTO.Name, OldName = oldName, OldValue = metaDataDTO.Value, NewValue = metaDataDTO.Value}));
       }
 
       public void SetMolWeight(double oldMolWeightValueInDisplayUnit, double molWeightValueInDisplayUnit)
       {
-         this.DoWithinLatch(() => { AddCommand(_editObservedDataTask.UpdateMolWeight(_allDataRepositories, molWeightValueInCoreUnit(oldMolWeightValueInDisplayUnit), molWeightValueInCoreUnit(molWeightValueInDisplayUnit))); });
+         this.DoWithinLatch(() => { AddCommand(_observedDataMetaDataTask.UpdateMolWeight(_allDataRepositories, molWeightValueInCoreUnit(oldMolWeightValueInDisplayUnit), molWeightValueInCoreUnit(molWeightValueInDisplayUnit))); });
+      }
+
+      public Unit GetDefaultMolWeightUnit()
+      {
+         return _dimensionFactory.TryGetDimension(Constants.Dimension.MOLECULAR_WEIGHT, out var dimension) ? dimension.DefaultUnit : null;
       }
 
       private double molWeightValueInCoreUnit(double valueInDisplayUnit)
@@ -196,7 +211,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       }
 
       /// <summary>
-      ///    Rebinds the repository to the view when meta data changes on a repository
+      ///    Rebinds the repository to the view when meta dataSheet changes on a repository
       /// </summary>
       public void Handle(ObservedDataMetaDataChangedEvent eventToHandle)
       {
@@ -204,7 +219,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       }
 
       /// <summary>
-      ///    Rebinds the repository to the view when meta data is added to the repository
+      ///    Rebinds the repository to the view when meta dataSheet is added to the repository
       /// </summary>
       public void Handle(ObservedDataMetaDataAddedEvent eventToHandle)
       {
@@ -212,7 +227,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       }
 
       /// <summary>
-      ///    Rebinds the repository to the view when meta data is removed from the repository
+      ///    Rebinds the repository to the view when meta dataSheet is removed from the repository
       /// </summary>
       public void Handle(ObservedDataMetaDataRemovedEvent eventToHandle)
       {
@@ -234,7 +249,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          _allDataRepositories.ToList().IntersectingMetaData().Each(x => _metaDataDTOList.Add(createDTO(x)));
          _view.BindToMetaData(_metaDataDTOList);
 
-         _view.MolWeightEditable = _observedDataConfiguration.MolWeightEditable;
+         _view.MolWeightEditable = _observedDataConfiguration.MolWeightAlwaysEditable || !_allDataRepositories.Any(x => x.ExtendedProperties.Contains(Captions.Molecule));
+
          var molWeightParameter = retrieveUniqueMolWeightParameter();
          var shouldBindToMolWeight = molWeightParameter != null && _observedDataConfiguration.MolWeightVisible;
          _view.MolWeightVisible = shouldBindToMolWeight;
@@ -267,10 +283,12 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
             .Where(x => x.HasValue)
             .Distinct().ToList();
 
-         if (molWeights.Count != 1)
+         if (molWeights.Count > 1)
             return null;
 
-         return _parameterFactory.CreateParameter(Constants.Parameters.MOL_WEIGHT, molWeights[0], _molWeightDimension);
+         var molWeightValue = molWeights.Count == 0 ? double.NaN : molWeights[0];
+
+         return _parameterFactory.CreateParameter(Constants.Parameters.MOL_WEIGHT, molWeightValue, _molWeightDimension);
       }
 
       private bool isReadOnly(IExtendedProperty extendedProperty)

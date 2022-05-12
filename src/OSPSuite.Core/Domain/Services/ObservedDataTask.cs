@@ -22,8 +22,10 @@ namespace OSPSuite.Core.Domain.Services
       bool Delete(DataRepository observedData);
 
       /// <summary>
-      ///    Deletes the <paramref name="observedDataEnumerable" /> from the project. User prompt can be turned off (<paramref name="silent"/> set to <c>true</c>).
-      ///    Returns <c>true</c> if the deletion was confirm by the user otherwise <c>false</c> (only if the <paramref name="silent"/> flag is set to <c>false</c> which is the default)
+      ///    Deletes the <paramref name="observedDataEnumerable" /> from the project. User prompt can be turned off (
+      ///    <paramref name="silent" /> set to <c>true</c>).
+      ///    Returns <c>true</c> if the deletion was confirm by the user otherwise <c>false</c> (only if the
+      ///    <paramref name="silent" /> flag is set to <c>false</c> which is the default)
       /// </summary>
       bool Delete(IEnumerable<DataRepository> observedDataEnumerable, bool silent = false);
 
@@ -66,12 +68,14 @@ namespace OSPSuite.Core.Domain.Services
 
       public bool Delete(DataRepository observedData)
       {
-         return Delete(new [] { observedData });
+         return Delete(new[] {observedData});
       }
 
       public bool Delete(IEnumerable<DataRepository> observedDataToBeRemoved, bool silent = false)
       {
          var observedDataToRemoveList = observedDataToBeRemoved.ToList();
+         if (!observedDataToRemoveList.Any())
+            return true;
 
          var usedInAnalyzablesCache = new Cache<DataRepository, IEnumerable<IUsesObservedData>>();
 

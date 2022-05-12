@@ -3,13 +3,13 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility.Container;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Extensions;
 using IContainer = OSPSuite.Core.Domain.IContainer;
 
 namespace OSPSuite.Core
@@ -21,6 +21,7 @@ namespace OSPSuite.Core
       protected IModel _model;
 
       protected string _modelName = "MyModel";
+
       public override void GlobalContext()
       {
          base.GlobalContext();
@@ -218,7 +219,6 @@ namespace OSPSuite.Core
          moleculeContainer.ContainsName(observerName).ShouldBeTrue();
       }
 
-
       [Observation]
       public void Observer_InContainerObserver_should_have_been_created_under_the_molecule_properties_container_for_C_under_lung_plasma()
       {
@@ -242,9 +242,7 @@ namespace OSPSuite.Core
          var bone_plasma = _model.ModelOrganCompartment(ConstantsForSpecs.Bone, ConstantsForSpecs.Plasma);
          moleculeContainer = bone_plasma.GetSingleChildByName<IContainer>("C");
          moleculeContainer.ContainsName(observerName).ShouldBeTrue();
-
       }
-
 
       [Observation]
       public void bolus_application_should_only_take_place_in_arterial_blood_plasma()
@@ -286,12 +284,23 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_have_created_a_help_parameter_for_the_molecule_A_under_boneg_plasma_with_the_value_20()
+      public void should_have_created_a_help_parameter_for_the_molecule_A_under_bone_plasma_with_the_value_20()
       {
          var lungPlasmaA = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Bone, ConstantsForSpecs.Plasma, "A");
          var parameterHelp = lungPlasmaA.GetSingleChildByName<IParameter>("HelpMe");
          parameterHelp.ShouldNotBeNull();
          parameterHelp.Value.ShouldBeEqualTo(20);
+      }
+
+      [Observation]
+      public void should_have_created_a_parameter_with_criteria_in_plasma_but_not_in_cells()
+      {
+         var bone_plasma_A = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Bone, ConstantsForSpecs.Plasma, "A");
+         var localWithCriteria = bone_plasma_A.Parameter("LocalWithCriteria");
+         localWithCriteria.ShouldNotBeNull();
+         var bone_cells_A = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "A");
+         localWithCriteria = bone_cells_A.Parameter("LocalWithCriteria");
+         localWithCriteria.ShouldBeNull();
       }
 
       [Observation]
@@ -341,7 +350,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_have_created_two_eplicit_formula_for_the_parameter_referencing_a_dynamic_formula()
+      public void should_have_created_two_explicit_formula_for_the_parameter_referencing_a_dynamic_formula()
       {
          _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "A").GetSingleChildByName<IParameter>(ConstantsForSpecs.SumProcessRate)
             .Formula.ShouldBeAnInstanceOf<ExplicitFormula>();
@@ -406,8 +415,7 @@ namespace OSPSuite.Core
          bone_cell_E.ScaleDivisor.ShouldBeEqualTo(2.5);
       }
 
-
-      [Observation] 
+      [Observation]
       public void should_have_removed_local_molecule_parameters_with_a_NAN_value()
       {
          var bone_cell_E = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "E");
@@ -421,7 +429,6 @@ namespace OSPSuite.Core
          var global_container = _model.Root.EntityAt<IContainer>("E");
          global_container.Parameter("GlobalNaNParam").ShouldNotBeNull();
       }
-
 
       [Observation]
       public void should_have_added_the_local_transporter_process_parameters_in_the_local_transporter_process_container()
@@ -550,5 +557,4 @@ namespace OSPSuite.Core
          _result.ValidationResult.Messages.ElementAt(0).Text.ShouldBeEqualTo(Validation.ModelNameCannotBeNamedLikeATopContainer(_model.Root.GetChildren<IContainer>().AllNames()));
       }
    }
-
 }

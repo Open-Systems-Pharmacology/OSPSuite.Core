@@ -1,5 +1,4 @@
 using System.Drawing;
-using OSPSuite.Utility;
 using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Core.Chart

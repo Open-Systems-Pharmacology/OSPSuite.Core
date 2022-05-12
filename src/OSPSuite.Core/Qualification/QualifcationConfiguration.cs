@@ -1,4 +1,5 @@
-﻿using OSPSuite.Assets;
+﻿using System.Collections.Generic;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Utility.Validation;
 
@@ -46,6 +47,9 @@ namespace OSPSuite.Core.Qualification
       /// </summary>
       public string ReportConfigurationFile { get; set; }
 
+      /// <summary>
+      /// List of simulation plots (in PK-Sim typically) to export automatically
+      /// </summary>
       public SimulationPlot[] SimulationPlots { get; set; }
 
       public Input[] Inputs { get; set; }
@@ -53,6 +57,13 @@ namespace OSPSuite.Core.Qualification
       public BuildingBlockSwap[] BuildingBlocks { get; set; }
 
       public SimulationParameterSwap[] SimulationParameters { get; set; }
+
+      /// <summary>
+      /// List of simulation names to export. Of this array is empty or null, no simulation will be exported.
+      /// It is an error to have a SimulationPlots defined for a simulation not listed in this array.
+      /// The simulations must be defined in the project or will be ignored
+      /// </summary>
+      public string[] Simulations { get; set; }
 
       public IBusinessRuleSet Rules { get; } = new BusinessRuleSet();
 

@@ -1,6 +1,5 @@
 ﻿using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain
@@ -16,20 +15,24 @@ namespace OSPSuite.Core.Domain
       IParameter BodyWeight { get; }
 
       /// <summary>
-      ///    Returns the total drug mass parameter defined in the model for the <paramref name="moleculeName"/> if available or null otherwise
+      ///    Returns the total drug mass parameter defined in the model for the <paramref name="moleculeName" /> if available or
+      ///    null otherwise
       /// </summary>
       IParameter TotalDrugMassFor(string moleculeName);
 
       /// <summary>
-      /// Returns the molecule name associated with a quantity with path <paramref name="quantityPath"/>
+      ///    Returns the molecule name associated with a quantity with path <paramref name="quantityPath" />
       /// </summary>
       string MoleculeNameFor(string quantityPath);
 
       /// <summary>
-      /// Returns the molecule name associated with the <paramref name="quantity"/>
+      ///    Returns the molecule name associated with the <paramref name="entity" />:
+      ///    1-If the <paramref name="entity" /> is a molecule or a molecule container return its name
+      ///    2-If the entity is in a container (direct or indirect) that is a molecule or a molecule container, return the name
+      ///    of the ancestor
+      ///    3-Otherwise, returns an empty string
       /// </summary>
-      string MoleculeNameFor(IQuantity quantity);
-
+      string MoleculeNameFor(IEntity entity);
    }
 
    public class Model : ObjectBase, IModel
@@ -46,22 +49,11 @@ namespace OSPSuite.Core.Domain
             {
                Root.RemoveChild(_neighborhoods);
             }
+
             _neighborhoods = value;
             Root?.Add(_neighborhoods);
          }
          get => _neighborhoods;
-      }
-
-      public double? MolWeightFor(IQuantity quantity)
-      {
-         var moleculeName = MoleculeNameFor(quantity);
-
-         if (string.IsNullOrEmpty(moleculeName))
-            return null;
-
-         //try to find the molweight parameter in the global molecule container
-         var molWeightParameter = Root?.EntityAt<IParameter>(moleculeName, Constants.Parameters.MOL_WEIGHT);
-         return molWeightParameter?.Value;
       }
 
       public virtual IParameter BodyWeight => Root?.EntityAt<IParameter>(Constants.ORGANISM, Constants.Parameters.WEIGHT);
@@ -71,24 +63,47 @@ namespace OSPSuite.Core.Domain
 
       public string MoleculeNameFor(string quantityPath)
       {
-         var quantity = Root?.EntityAt<IQuantity>(quantityPath.ToPathArray());
-         return MoleculeNameFor(quantity);
+         var entity = Root?.EntityAt<IEntity>(quantityPath.ToPathArray());
+         return MoleculeNameFor(entity);
       }
 
-      public string MoleculeNameFor(IQuantity quantity)
+      public string MoleculeNameFor(IEntity entity)
       {
-         if (quantity == null)
+         if (entity == null)
             return string.Empty;
 
-         return quantity.IsAnImplementationOf<IMoleculeAmount>() ?
-            quantity.Name :
-            quantity.ParentContainer?.Name;
+         switch (entity)
+         {
+            case IMoleculeAmount _:
+            case IContainer container when container.ContainerType == ContainerType.Molecule:
+               return entity.Name;
+         }
+
+         return MoleculeNameFor(entity.ParentContainer);
       }
 
       public double? MolWeightFor(string quantityPath)
       {
-         var quantity = Root?.EntityAt<IQuantity>(quantityPath.ToPathArray());
-         return MolWeightFor(quantity);
+         var pathArray = quantityPath.ToPathArray();
+
+         //we have a real quantity path
+         if (pathArray.Length > 1)
+            return MolWeightFor(Root?.EntityAt<IQuantity>(pathArray));
+
+         //this is potentially just the molecule name
+         return molWeightFor(quantityPath);
+      }
+
+      public double? MolWeightFor(IQuantity quantity) => molWeightFor(MoleculeNameFor(quantity));
+
+      private double? molWeightFor(string moleculeName)
+      {
+         if (string.IsNullOrEmpty(moleculeName))
+            return null;
+
+         //try to find the molweight parameter in the global molecule container
+         var molWeightParameter = Root?.EntityAt<IParameter>(moleculeName, Constants.Parameters.MOL_WEIGHT);
+         return molWeightParameter?.Value;
       }
 
       public IContainer Root
@@ -124,7 +139,5 @@ namespace OSPSuite.Core.Domain
          // so only internal property must be set
          _neighborhoods = Root.Container(sourceModel.Neighborhoods.Name);
       }
-     
-
    }
 }

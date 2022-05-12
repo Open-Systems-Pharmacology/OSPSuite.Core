@@ -1,5 +1,4 @@
-﻿using System;
-using OSPSuite.BDDHelper;
+﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -14,7 +13,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          _timeDimension = new Dimension(new BaseDimensionRepresentation {TimeExponent = 1}, "Time", "min");
-         _timeDimension.AddUnit("s", 1.0/60, 0);
+         _timeDimension.AddUnit("s", 1.0 / 60, 0);
          _timeDimension.AddUnit("h", 60, 0);
 
          _parameter = new Parameter().WithDimension(_timeDimension);
@@ -30,6 +29,14 @@ namespace OSPSuite.Core.Domain
          _parameter.ConvertToUnit(60, "s").ShouldBeEqualTo(3600);
          _parameter.ConvertToUnit(60, "h").ShouldBeEqualTo(1);
       }
+
+      [Observation]
+      public void should_return_the_given_value_in_base_unit_converted_to_the_unit_using_double()
+      {
+         _parameter.ConvertToUnit(60.0, "min").ShouldBeEqualTo(60.0);
+         _parameter.ConvertToUnit(60.0, "s").ShouldBeEqualTo(3600.0);
+         _parameter.ConvertToUnit(60.0, "h").ShouldBeEqualTo(1.0);
+      }
    }
 
    public class When_converting_values_for_a_with_dimension_object_to_a_given_unit : concern_for_WithDimensionExtensions
@@ -41,8 +48,15 @@ namespace OSPSuite.Core.Domain
          _parameter.ConvertToBaseUnit(60, "s").ShouldBeEqualTo(1);
          _parameter.ConvertToBaseUnit(1, "h").ShouldBeEqualTo(60);
       }
-   }
 
+      [Observation]
+      public void should_return_the_given_value_in_float_converted_in_the_unit()
+      {
+         _parameter.ConvertToBaseUnit(60.0, "min").ShouldBeEqualTo(60.0);
+         _parameter.ConvertToBaseUnit(60.0, "s").ShouldBeEqualTo(1.0);
+         _parameter.ConvertToBaseUnit(1.0, "h").ShouldBeEqualTo(60.0);
+      }
+   }
 
    public class When_converting_values_for_a_with_dimension_object_to_a_given_unit_that_is_not_defined_in_the_dimension : concern_for_WithDimensionExtensions
    {

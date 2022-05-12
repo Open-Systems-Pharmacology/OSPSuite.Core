@@ -30,12 +30,16 @@ namespace OSPSuite.UI.Extensions
 
       public static void SetTabVisibility(this ITabbedView view, ISubPresenterItem subPresenterItem, bool visible)
       {
-         view.PageFrom(subPresenterItem).PageVisible = visible;
+         var tab = view.PageFrom(subPresenterItem);
+         tab.SuspendLayout();
+         tab.PageVisible = visible;
+         tab.ResumeLayout(true);
       }
 
       public static void SetTabIcon(this ITabbedView view, ISubPresenterItem subPresenterItem, ApplicationIcon icon)
       {
-         view.PageFrom(subPresenterItem).Image = icon.ToImage(UIConstants.ICON_SIZE_TAB);
+         view.PageFrom(subPresenterItem).ImageOptions.SvgImage = icon;
+         view.PageFrom(subPresenterItem).ImageOptions.SvgImageSize = UIConstants.ICON_SIZE_TAB;
       }
 
       public static void ActivateTab(this ITabbedView view, ISubPresenterItem subPresenterItem)

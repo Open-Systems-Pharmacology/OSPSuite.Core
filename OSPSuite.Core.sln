@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.202
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Core", "src\OSPSuite.Core\OSPSuite.Core.csproj", "{BBEFC737-8370-44A0-B3B4-60A6C405569C}"
 EndProject
@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		appveyor-coverage.yml = appveyor-coverage.yml
 		appveyor.yml = appveyor.yml
+		logo.png = logo.png
 		rakefile.rb = rakefile.rb
 		SolutionInfo.cs = SolutionInfo.cs
 	EndProjectSection
@@ -54,6 +55,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Infrastructure.Castle", "src\OSPSuite.Infrastructure.Castle\OSPSuite.Infrastructure.Castle.csproj", "{F428C61C-1B1A-42E2-8362-E416260E7B07}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Infrastructure.Autofac", "src\OSPSuite.Infrastructure.Autofac\OSPSuite.Infrastructure.Autofac.csproj", "{E29CA1A8-7589-41DD-8280-4D0D9289DDB8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.R.Performance", "tests\OSPSuite.R.Performance\OSPSuite.R.Performance.csproj", "{806D7CE1-C84C-4731-AE66-498B4950A52F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -149,6 +152,10 @@ Global
 		{E29CA1A8-7589-41DD-8280-4D0D9289DDB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E29CA1A8-7589-41DD-8280-4D0D9289DDB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E29CA1A8-7589-41DD-8280-4D0D9289DDB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{806D7CE1-C84C-4731-AE66-498B4950A52F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{806D7CE1-C84C-4731-AE66-498B4950A52F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{806D7CE1-C84C-4731-AE66-498B4950A52F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{806D7CE1-C84C-4731-AE66-498B4950A52F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

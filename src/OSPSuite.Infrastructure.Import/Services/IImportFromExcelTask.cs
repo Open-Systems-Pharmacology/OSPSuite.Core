@@ -100,13 +100,23 @@ namespace OSPSuite.Infrastructure.Import.Services
 
             while (reader.MoveToNextRow())
             {
-               dataTable.AddRowToDataTable(reader.CurrentRow);
+               var rowValues = reader.CurrentRow;
+               rowValues = removeColumnsWithoutHeader(rowValues, dataTable.Columns.Count);
+
+               dataTable.AddRowToDataTable(rowValues);
             }
 
             dataTablesList.Add(dataTable);
          }
 
          return dataTablesList;
+      }
+
+      private static List<string> removeColumnsWithoutHeader(List<string> rowList, int headerCount)
+      {
+         if (rowList.Count > headerCount)
+            rowList = rowList.GetRange(0, headerCount);
+         return rowList;
       }
    }
 }

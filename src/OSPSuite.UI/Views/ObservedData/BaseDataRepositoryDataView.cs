@@ -96,12 +96,5 @@ namespace OSPSuite.UI.Views.ObservedData
       }
 
       public override ApplicationIcon ApplicationIcon => ApplicationIcons.Parameters;
-
-      public override void InitializeResources()
-      {
-         base.InitializeResources();
-         btnAddData.InitWithImage(ApplicationIcons.Create, text: Captions.AddDataPoint);
-         layoutItemAddData.AdjustLargeButtonSize();
-      }
    }
 }

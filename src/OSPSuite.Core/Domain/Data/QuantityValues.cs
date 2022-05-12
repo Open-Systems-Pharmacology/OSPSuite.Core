@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Data
 {
@@ -40,13 +40,13 @@ namespace OSPSuite.Core.Domain.Data
       public QuantityValues()
       {
          QuantityPath = string.Empty;
-         Values = new float[] {};
+         Values = new float[] { };
       }
 
       public virtual float[] Values
       {
          get => _values;
-         set => _values = value ?? new float[] {};
+         set => _values = value ?? new float[] { };
       }
 
       public virtual IReadOnlyDictionary<string, double[]> Sensitivities
@@ -97,7 +97,7 @@ namespace OSPSuite.Core.Domain.Data
    {
       public NullQuantityValues()
       {
-         Time=new QuantityValues();
+         Time = new QuantityValues();
       }
    }
 }

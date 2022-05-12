@@ -7,12 +7,12 @@ namespace OSPSuite.Core.Domain
    public static class ObjectBaseExtensions
    {
       /// <summary>
-      ///    Finds the first item that fulfils the predicate.
+      ///    Finds the first item that fulfills the predicate.
       /// </summary>
       /// <typeparam name="T"></typeparam>
       /// <param name="enumerable">The enumerable to search in.</param>
-      /// <param name="predicate">The predicate the item should fulfil.</param>
-      /// <returns> The First item that fulfils the predicate</returns>
+      /// <param name="predicate">The predicate the item should fulfill.</param>
+      /// <returns> The First item that fulfills the predicate</returns>
       public static T Find<T>(this IEnumerable<T> enumerable, Func<T, bool> predicate)
       {
          return enumerable.FirstOrDefault(predicate);

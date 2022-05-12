@@ -96,7 +96,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_result_in_call_to_set_repository_in_subpresenter()
       {
-         A.CallTo(() => _subPresenter.EditObservedData(A<IEnumerable<DataRepository>>.Ignored)).MustHaveHappened();
+         A.CallTo(() => _subPresenter.EditObservedDataMetaData(A<IEnumerable<DataRepository>>.Ignored)).MustHaveHappened();
       }
    }
 }

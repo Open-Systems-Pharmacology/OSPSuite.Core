@@ -1,6 +1,8 @@
-﻿using OSPSuite.Core.Domain.Formulas;
+﻿using System;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -39,6 +41,15 @@ namespace OSPSuite.Core.Domain
       double ValueInDisplayUnit { get; set; }
 
       /// <summary>
+      ///    The value in the displayed unit
+      /// </summary>
+      (double value, bool success) TryGetValueInDisplayUnit();
+
+      /// <summary>
+      ///    The value in the displayed unit
+      /// </summary>
+      (double value, bool success) TryGetValue();
+      /// <summary>
       ///    Specifies whether negative values are allowed or not for this quantity
       /// </summary>
       bool NegativeValuesAllowed { get; set; }
@@ -61,6 +72,8 @@ namespace OSPSuite.Core.Domain
 
       /// <inheritdoc />
       public QuantityType QuantityType { get; set; }
+
+    
 
       /// <inheritdoc />
       public bool NegativeValuesAllowed { get; set; }
@@ -113,7 +126,7 @@ namespace OSPSuite.Core.Domain
             else
             {
                _cachedValue = Formula.Calculate(this);
-               //Cached value is only valid if the Formula has updated it's references
+               //Cached value is only valid if the Formula has updated its references
                _cachedValueValid = Formula.AreReferencesResolved;
             }
 
@@ -135,6 +148,31 @@ namespace OSPSuite.Core.Domain
       {
          get => this.ConvertToDisplayUnit(Value);
          set => Value = this.ConvertToBaseUnit(value);
+      }
+
+      public (double value, bool success) TryGetValue()
+      {
+         if (IsFixedValue || _cachedValueValid)
+            return (_cachedValue, success: true);
+
+         if (Formula == null)
+            return (double.NaN, success: false);
+
+         var (value, success) = Formula.TryCalculate(this);
+         if (success)
+         {
+            _cachedValue = value;
+            //Cached value is only valid if the Formula has updated its references
+            _cachedValueValid = Formula.AreReferencesResolved;
+         }
+
+         return (value, success);
+
+      }
+      public virtual (double value, bool success) TryGetValueInDisplayUnit()
+      {
+         var (value, success) = TryGetValue();
+         return (this.ConvertToDisplayUnit(value), success);
       }
 
       /// <inheritdoc />

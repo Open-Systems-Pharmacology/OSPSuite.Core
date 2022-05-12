@@ -8,6 +8,7 @@ using OSPSuite.Core.Import;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
@@ -17,6 +18,33 @@ using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
+   public class ImportTriggeredEventArgs : EventArgs
+   {
+      public IReadOnlyList<DataRepository> DataRepositories { get; set; }
+   }
+
+   public interface IImporterPresenter : IDisposablePresenter
+   {
+      void SetSettings(
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
+         ColumnInfoCache columnInfos,
+         DataImporterSettings dataImporterSettings
+      );
+
+      bool SetSourceFile(string path);
+
+      event EventHandler<ImportTriggeredEventArgs> OnTriggerImport;
+
+      void SaveConfiguration();
+
+      void LoadConfiguration(ImporterConfiguration configuration, string fileName);
+
+      ImporterConfiguration UpdateAndGetConfiguration();
+      void LoadConfigurationWithoutImporting();
+      void ResetMappingBasedOnCurrentSheet();
+      void ClearMapping();
+   }
+
    public class ImporterPresenter : AbstractDisposablePresenter<IImporterView, IImporterPresenter>, IImporterPresenter
    {
       private readonly IImporterDataPresenter _importerDataPresenter;
@@ -26,7 +54,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       private readonly IImporter _importer;
       private DataImporterSettings _dataImporterSettings;
-      private IReadOnlyList<ColumnInfo> _columnInfos;
+      private ColumnInfoCache _columnInfos;
       private readonly INanPresenter _nanPresenter;
       protected IDataSource _dataSource;
       private IDataSourceFile _dataSourceFile;
@@ -89,7 +117,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.OnTabChanged += onTabChanged;
          _importerDataPresenter.OnDataChanged += onImporterDataChanged;
          _columnMappingPresenter.OnMissingMapping += onMissingMapping;
-         _columnMappingPresenter.OnResetMappingBasedOnCurrentSheet += onResetMappingBasedOnCurrentSheet;
          _columnMappingPresenter.OnMappingCompleted += onCompletedMapping;
          View.DisableConfirmationView();
       }
@@ -98,18 +125,19 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          try
          {
-            _view.HideExtraErrors();
-            var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.DataSetAt(e.Index));
+            var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.ImportedDataSetAt(e.Index));
             _confirmationPresenter.PlotDataRepository(dataRepository.DataRepository);
          }
-         catch (InvalidArgumentException invalidException)
+         catch (TimeNotStrictlyMonotoneException timeNonMonotoneException)
          {
-            _view.ShowExtraErrors(Error.ErrorWhenPlottingDataRepository(e.Index, invalidException.Message));
-            _view.DisableConfirmationView();
+            var errors = new ParseErrors();
+            errors.Add(_dataSource.DataSetAt(e.Index), new NonMonotonicalTimeParseErrorDescription(Error.ErrorWhenPlottingDataRepository(e.Index, timeNonMonotoneException.Message)));
+            _importerDataPresenter.SetTabMarks(errors);
+            _confirmationPresenter.SetViewingStateToError(timeNonMonotoneException.Message);
          }
       }
 
-      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos,
+      public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, ColumnInfoCache columnInfos,
          DataImporterSettings dataImporterSettings)
       {
          _columnInfos = columnInfos;
@@ -164,50 +192,62 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          try
          {
-            loadSheets(args.DataSourceFile, args.Sheets, args.Filter);
+            loadSheets(args.DataSourceFile, args.SheetNames, args.Filter);
             _importerDataPresenter.DisableImportedSheets();
-            args.Sheets.Keys.Each(_configuration.AddToLoadedSheets);
+            args.SheetNames.Each(_configuration.AddToLoadedSheets);
             _configuration.FilterString = args.Filter;
          }
          catch (AbstractImporterException e)
          {
             _dialogCreator.MessageBoxError(e.Message);
-            args.Sheets.Keys.Each(_importerDataPresenter.Sheets.Remove);
+            args.SheetNames.Each(_importerDataPresenter.ImportedSheets.Remove);
          }
       }
 
-      private void validateDataSource(IDataSource dataSource)
+      private ParseErrors validateDataSource(IDataSource dataSource)
       {
-         dataSource.ValidateDataSourceUnits(_columnInfos);
+         return dataSource.ValidateDataSourceUnits(_columnInfos);
       }
 
-      private void loadSheets(IDataSourceFile dataSourceFile, Cache<string, DataSheet> sheets, string filter, string selectedNamingConvention = null)
+      private void loadSheets(IDataSourceFile dataSourceFile, IReadOnlyList<string> sheetNames, string filter, string selectedNamingConvention = null)
       {
-         if (!sheets.Any())
+         if (!sheetNames.Any())
          {
             View.DisableConfirmationView();
             return;
          }
 
-         var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Where(p => p.ColumnName != null).Select(md => new MetaDataMappingConverter()
-         {
-            Id = md.MetaDataId,
-            Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index : -1
-         }).Union
+         var sheets = dataSourceFile.DataSheets.GetDataSheetsByName(sheetNames);
+         var dataMappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Where(p => p.ColumnName != null).Select(md =>
+            new MetaDataMappingConverter()
+            {
+               Id = md.MetaDataId,
+               Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets.GetDataSheetByName(sheetName).GetColumnDescription(md.ColumnName).Index : -1
+            }).ToList();
+            
+         var mappings   = dataMappings.Union
          (
             dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
-               Id = md.ColumnName,
-               Index = sheetName => dataSourceFile.DataSheets[sheetName].RawData.GetColumnDescription(md.ColumnName).Index
+               //in case of a duplicate name coming from an excel column used as a grouping by with the same name as a metaData, we add a suffix 
+               Id = dataMappings.ExistsById(md.ColumnName) ? md.ColumnName + Constants.ImporterConstants.GroupingBySuffix : md.ColumnName,
+               Index = sheetName => dataSourceFile.DataSheets.GetDataSheetByName(sheetName).GetColumnDescription(md.ColumnName).Index
             })
-         );
+         ).ToList();
+
 
          _dataSource.SetMappings(dataSourceFile.Path, mappings);
          _dataSource.NanSettings = _nanPresenter.Settings;
          _dataSource.SetDataFormat(_columnMappingPresenter.GetDataFormat());
-         _dataSource.AddSheets(sheets, _columnInfos, filter);
+         var errors = _dataSource.AddSheets(sheets, _columnInfos, filter);
 
-         validateDataSource(_dataSource);
+         errors.Add(validateDataSource(_dataSource));
+         _importerDataPresenter.SetTabMarks(errors, _dataSource.DataSets);
+         if (errors.Any())
+         {
+            throw new ImporterParsingException(errors);
+         }
+
 
          var keys = new List<string>()
          {
@@ -218,6 +258,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          keys.AddRange(_dataSource.GetMappings().Select(m => m.Id));
          _confirmationPresenter.SetKeys(keys);
          View.EnableConfirmationView();
+         _confirmationPresenter.SetViewingStateToNormal();
          _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions.ToList(), selectedNamingConvention);
       }
 
@@ -229,10 +270,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void onTabChanged(object sender, TabChangedEventArgs e)
       {
-         _columnMappingPresenter.SetRawData(e.TabData);
+         _columnMappingPresenter.SetRawData(e.TabSheet);
       }
 
-      private void onResetMappingBasedOnCurrentSheet(object sender, EventArgs e)
+      public void ResetMappingBasedOnCurrentSheet()
       {
          if (confirmDroppingOfLoadedSheets())
             return;
@@ -245,12 +286,18 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             _dialogCreator.MessageBoxError(Captions.Importer.SheetFormatNotSupported);
          }
+
          _view.DisableConfirmationView();
+      }
+
+      public void ClearMapping()
+      {
+         _columnMappingPresenter.ClearMapping();
       }
 
       private void onMissingMapping(object sender, MissingMappingEventArgs missingMappingEventArgs)
       {
-         _importerDataPresenter.onMissingMapping();
+         _importerDataPresenter.OnMissingMapping();
          View.DisableConfirmationView();
       }
 
@@ -259,19 +306,19 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSource.DataSets.Clear();
          try
          {
-            loadSheets(_dataSourceFile, _importerDataPresenter.Sheets, _importerDataPresenter.GetActiveFilterCriteria());
+            loadSheets(_dataSourceFile, _importerDataPresenter.ImportedSheets.GetDataSheetNames(), _importerDataPresenter.GetActiveFilterCriteria());
          }
          catch (AbstractImporterException e)
          {
             _dialogCreator.MessageBoxError(e.Message);
-            if (e is NanException || e is ErrorUnitException)
+            if (e is ImporterParsingException)
                _view.DisableConfirmationView();
          }
       }
 
       private void onCompletedMapping(object sender, EventArgs args)
       {
-         _importerDataPresenter.onCompletedMapping();
+         _importerDataPresenter.OnCompletedMapping();
          onImporterDataChanged(this, args);
       }
 
@@ -316,7 +363,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void applyConfiguration(ImporterConfiguration configuration)
       {
          var excelColumnNames = _columnMappingPresenter.GetAllAvailableExcelColumns();
-         var listOfNonExistingColumns = configuration.Parameters.Where(parameter => !excelColumnNames.Contains(parameter.ColumnName)).ToList();
+         var listOfNonExistingColumns = configuration.Parameters.Where(parameter => !excelColumnNames.Contains(parameter.ColumnName) && parameter.ComesFromColumn()).ToList();
 
          if (listOfNonExistingColumns.Any())
          {
@@ -327,7 +374,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
             foreach (var element in listOfNonExistingColumns)
             {
-               configuration.Parameters.Remove(element);
+               configuration.RemoveParameter(element);
             }
          }
 
@@ -363,20 +410,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
          //About NanSettings: we do actually read the nanSettings in import dataSheets
          //we just never update the editor on the view, which actually is a problem
          var sheets = new Cache<string, DataSheet>();
-         foreach (var element in _configuration.LoadedSheets)
+         foreach (var sheetName in _configuration.LoadedSheets)
          {
-            sheets.Add(element, _dataSourceFile.DataSheets[element]);
-         }
-
-         foreach (var sheet in sheets.KeyValues)
-         {
-            _importerDataPresenter.Sheets.Add(sheet.Key, sheet.Value);
+            _importerDataPresenter.ImportedSheets.AddSheet(_dataSourceFile.DataSheets.GetDataSheetByName(sheetName));
          }
 
          try
          {
             var namingConvention = configuration.NamingConventions;
-            loadSheets(_dataSourceFile, _importerDataPresenter.Sheets, configuration.FilterString, namingConvention);
+            loadSheets(_dataSourceFile, _importerDataPresenter.ImportedSheets.GetDataSheetNames(), configuration.FilterString, namingConvention);
             _confirmationPresenter.TriggerNamingConventionChanged(namingConvention);
          }
          catch (AbstractImporterException e)
@@ -387,7 +429,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.DisableImportedSheets();
       }
 
-      private bool confirmDroppingOfLoadedSheets()
+      protected virtual bool confirmDroppingOfLoadedSheets()
       {
          return _dataSource.DataSets.Count != 0 && _dialogCreator.MessageBoxYesNo(Captions.Importer.ActionWillEraseLoadedData) != ViewResult.Yes;
       }
@@ -402,14 +444,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void LoadConfigurationWithoutImporting()
       {
          if (confirmDroppingOfLoadedSheets())
-               return;
+            return;
+
+         ResetMappingBasedOnCurrentSheet();
 
          var fileName = _dialogCreator.AskForFileToOpen(Captions.Importer.ApplyConfiguration, Constants.Filter.XML_FILE_FILTER,
             Constants.DirectoryKey.OBSERVED_DATA);
 
          if (fileName.IsNullOrEmpty())
             return;
-         
+
          var configuration = _pkmlPersistor.Load<ImporterConfiguration>(fileName);
          applyConfiguration(configuration);
       }

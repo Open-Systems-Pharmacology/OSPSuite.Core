@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Core.Extensions;
+using OSPSuite.Core.Services;
 using OSPSuite.Presentation.MenuAndBars;
 
 namespace OSPSuite.Presentation.UICommands
@@ -7,7 +8,7 @@ namespace OSPSuite.Presentation.UICommands
    {
       public void Execute()
       {
-         this.GCCollectAndCompact();
+         GarbageCollectionTask.ForceGC();
       }
    }
 }

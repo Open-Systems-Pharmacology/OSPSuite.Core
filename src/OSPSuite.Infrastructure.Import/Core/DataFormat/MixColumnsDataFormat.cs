@@ -4,6 +4,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core.Extensions;
 using System.Text.RegularExpressions;
 using OSPSuite.Core.Import;
+using OSPSuite.Infrastructure.Import.Services;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 {
@@ -14,15 +15,15 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       public override string Name => _name;
       public override string Description => _description;
       
-      protected override string ExtractLloq(string description, IUnformattedData data, List<string> keys, ref double rank)
+      protected override string ExtractLloq(string description, DataSheet dataSheet, List<string> keys, ref double rank)
       {
-         if (data.GetColumn(description).Any(element => element.Trim().StartsWith("<")))
+         if (dataSheet.GetColumn(description).Any(element => element.Trim().StartsWith("<")))
          {
             rank++;
             return null;
          }
 
-         var lloqKey = data.GetHeaders().FindHeader(description + "_LLOQ");
+         var lloqKey = dataSheet.GetHeaders().FindHeader(description + "_LLOQ");
          if (lloqKey == null)
          {
             return "";
@@ -31,25 +32,28 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          rank++;
          return lloqKey;
       }
-      protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
-      {
-         var units = GetLastBracketsOfString(description);
 
-         if (!string.IsNullOrEmpty(units))
+      protected override UnitDescription ExtractUnits(string description, DataSheet dataSheet, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
+      {
+         var (_, unit) = UnitExtractor.ExtractNameAndUnit(description);
+
+         if (!string.IsNullOrEmpty(unit))
          {
-            var unit = GetAndValidateUnitFromBrackets(units, supportedDimensions);
+            unit = ValidateUnit(unit, supportedDimensions);
             rank++;
             return new UnitDescription(unit);
          }
 
-         var unitKey = data.GetHeaders().FindHeader(description + "_UNIT");
-         if (unitKey == null)
-         {
+         if (dataSheet == null)
             return new UnitDescription();
-         }
+
+         var unitKey = dataSheet.GetHeaders().FindHeader(description + "_UNIT");
+         if (unitKey == null)
+            return new UnitDescription();
+
          keys.Remove(unitKey);
          rank++;
-         return new UnitDescription(data.GetColumn(unitKey).FirstOrDefault(u => !string.IsNullOrEmpty(u)), unitKey);
+         return new UnitDescription(dataSheet.GetColumn(unitKey).FirstOrDefault(u => !string.IsNullOrEmpty(u)), unitKey);
       }
    }
 }

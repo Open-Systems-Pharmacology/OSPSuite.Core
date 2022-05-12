@@ -48,7 +48,7 @@ namespace OSPSuite.Core.Services
          }
          catch (OSPSuiteException ex)
          {
-            throw new FuncParserException(ex.Message,ex);
+            throw new FuncParserException(ex.Message, ex);
          }
          catch (Exception ex)
          {
@@ -69,6 +69,23 @@ namespace OSPSuite.Core.Services
          catch (Exception ex)
          {
             throw new FuncParserException($"Unable to parse expression: {ex.Message}", ex);
+         }
+      }
+
+      public (double value, bool success) TryCompute(double[] variableValues, double[] parameterValues)
+      {
+         var success = _parserFunc.TryParse();
+         if (!success)
+            return (double.NaN, success: false);
+
+         try
+         {
+            _parserFunc.SetParameterValues(parameterValues);
+            return (_parserFunc.CalcExpression(variableValues), success);
+         }
+         catch (OSPSuiteException)
+         {
+            return (double.NaN, success: false);
          }
       }
    }

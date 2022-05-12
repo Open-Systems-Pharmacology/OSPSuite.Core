@@ -1,4 +1,5 @@
-﻿using OSPSuite.Core.Domain.Formulas;
+﻿using OSPSuite.Core.Domain.Descriptors;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Maths.Random;
 using OSPSuite.Utility.Extensions;
@@ -24,6 +25,7 @@ namespace OSPSuite.Core.Domain
       public ParameterInfo Info { get; set; }
       public ParameterOrigin Origin { get; private set; }
       public double? DefaultValue { get; set; }
+      public DescriptorCriteria ContainerCriteria { get; set; }
 
       /// <inheritdoc />
       public bool IsDefault { get; set; }
@@ -58,6 +60,7 @@ namespace OSPSuite.Core.Domain
             {
                percentile = Formula.DowncastTo<IDistributionFormula>().CalculatePercentileForValue(value, this);
             }
+
             _cachedValueValid = true;
             IsFixedValue = true;
          }
@@ -153,11 +156,16 @@ namespace OSPSuite.Core.Domain
          DefaultValue = sourceDistributedParameter.DefaultValue;
          Origin = sourceDistributedParameter.Origin.Clone();
          IsDefault = sourceDistributedParameter.IsDefault;
+         ContainerCriteria = sourceDistributedParameter.ContainerCriteria?.Clone();
       }
 
-      public virtual bool IsChangedByCreateIndividual => this.IsOfType(PKSimBuildingBlockType.Individual);
-
       #region Parameter Info
+
+      public bool IsChangedByCreateIndividual
+      {
+         get => Info.IsChangedByCreateIndividual;
+         set => Info.IsChangedByCreateIndividual = value;
+      }
 
       public bool CanBeVaried
       {

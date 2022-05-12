@@ -19,9 +19,10 @@ namespace OSPSuite.UI.Views.ObservedData
          _presenter = presenter;
       }
 
-      public override ApplicationIcon ApplicationIcon
+      public override void InitializeResources()
       {
-         get { return ApplicationIcons.ObservedData; }
+         base.InitializeResources();
+         ApplicationIcon = ApplicationIcons.ObservedData;
       }
 
       public override void AddSubItemView(ISubPresenterItem subPresenterItem, IView viewToAdd)

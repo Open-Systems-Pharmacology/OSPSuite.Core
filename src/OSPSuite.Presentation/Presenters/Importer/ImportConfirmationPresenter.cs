@@ -26,7 +26,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataPresenter = dataPresenter;
          View.AddChartView(_chartPresenter.BaseView);
          View.AddDataView(_dataPresenter.View);
-         _dataPresenter.DisableEdition();
       }
       public void DataSetSelected(int index)
       {
@@ -95,5 +94,16 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public event EventHandler<DataSetSelectedEventArgs> OnDataSetSelected = delegate { };
 
       public event EventHandler<NamingConventionChangedEventArgs> OnNamingConventionChanged = delegate { };
+      
+      public void SetViewingStateToError(string invalidExceptionMessage)
+      {
+         _view.SetErrorMessage(invalidExceptionMessage);
+         _view.SelectingDataSetsEnabled = false;
+      }
+
+      public void SetViewingStateToNormal()
+      {
+         _view.SelectingDataSetsEnabled = true;
+      }
    }
 }

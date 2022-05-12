@@ -14,11 +14,12 @@ namespace OSPSuite.Core.Domain
       Population = 2 << 5,
       Event = 2 << 6,
       ObserverSet = 2 << 7,
+      ExpressionProfile = 2 << 8,
 
       /// <summary>
       ///    All but simulation
       /// </summary>
-      Template = Compound | Formulation | Protocol | Individual | Population | Event | ObserverSet,
+      Template = Compound | Formulation | Protocol | Individual | Population | Event | ObserverSet | ExpressionProfile,
       SimulationSubject = Individual | Population
    }
 

@@ -4,7 +4,6 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.R.Domain;
 using OSPSuite.Utility;
-using OSPSuite.Utility.Container;
 using SensitivityAnalysis = OSPSuite.R.Domain.SensitivityAnalysis;
 
 namespace OSPSuite.R.Services

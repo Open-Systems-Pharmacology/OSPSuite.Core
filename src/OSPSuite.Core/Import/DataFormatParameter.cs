@@ -35,6 +35,9 @@ namespace OSPSuite.Core.Import
          return other.GetType() == GetType();
       }
 
+      public abstract bool IsGroupingCriterion();
+      public abstract bool ComesFromColumn();
+
       public abstract string TooltipTitle();
 
       public abstract string TooltipDescription();
@@ -51,6 +54,16 @@ namespace OSPSuite.Core.Import
       public override string TooltipDescription()
       {
          return Captions.Importer.AddGroupByHint;
+      }
+
+      public override bool IsGroupingCriterion()
+      {
+         return false;
+      }
+
+      public override bool ComesFromColumn()
+      {
+         return false;
       }
 
       public override string TooltipTitle()
@@ -78,6 +91,16 @@ namespace OSPSuite.Core.Import
          return base.EquivalentTo(other) && MetaDataId == (other as MetaDataFormatParameter).MetaDataId;
       }
 
+      public override bool IsGroupingCriterion()
+      {
+         return ColumnName != null;
+      }
+
+      public override bool ComesFromColumn()
+      {
+         return IsColumn && IsGroupingCriterion();
+      }
+
       public override string TooltipDescription()
       {
          return Captions.Importer.MetaDataHint(ColumnName, MetaDataId);
@@ -99,6 +122,16 @@ namespace OSPSuite.Core.Import
       public override bool EquivalentTo(DataFormatParameter other)
       {
          return base.EquivalentTo(other) && ColumnName == (other as GroupByDataFormatParameter).ColumnName;
+      }
+
+      public override bool IsGroupingCriterion()
+      {
+         return true;
+      }
+
+      public override bool ComesFromColumn()
+      {
+         return true;
       }
 
       public override string TooltipDescription()
@@ -129,6 +162,16 @@ namespace OSPSuite.Core.Import
       public override bool EquivalentTo(DataFormatParameter other)
       {
          return base.EquivalentTo(other) && MappedColumn.Name == (other as MappingDataFormatParameter).MappedColumn.Name;
+      }
+
+      public override bool IsGroupingCriterion()
+      {
+         return false;
+      }
+
+      public override bool ComesFromColumn()
+      {
+         return true;
       }
 
       public override string TooltipDescription()

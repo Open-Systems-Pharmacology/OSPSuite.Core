@@ -123,7 +123,7 @@ namespace OSPSuite.R.Services
       public void should_be_able_to_calculate_the_normalized_values()
       {
          var pkParameter = _pkAnalysis.PKParameterFor("Organism|PeripheralVenousBlood|C1|Plasma (Peripheral Venous Blood)", "C_max_tD1_tD2_norm");
-         pkParameter.Values[0].ShouldBeGreaterThan(0);
+         pkParameter.ValueFor(0).ShouldBeGreaterThan(0);
       }
    }
 
@@ -154,10 +154,40 @@ namespace OSPSuite.R.Services
       {
          _pkAnalysis.ShouldNotBeNull();
          var values = _pkAnalysis.PKParameterFor(_outputPath, "C_max");
-         values.Count.ShouldBeEqualTo(5);
-         float.IsNaN(values.Values[3]).ShouldBeTrue();
+         values.Count.ShouldBeEqualTo(4);
       }
    }
+
+   public class When_calculating_the_pk_analysis_for_a_population_with_sparse_ids : concern_for_PKAnalysisTask
+   {
+      private PopulationSimulationPKAnalyses _pkAnalysis;
+      private IndividualValuesCache _population;
+      private SimulationResults _result;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         var populationFile = HelperForSpecs.DataFile("pop_5_sparse_id.csv");
+         var populationTask = Api.GetPopulationTask();
+         _population = populationTask.ImportPopulation(populationFile);
+         _result = _simulationRunner.Run(new SimulationRunArgs { Simulation = _simulation, Population = _population });
+      }
+
+      protected override void Because()
+      {
+         _pkAnalysis = sut.CalculateFor(new CalculatePKAnalysisArgs { Simulation = _simulation, SimulationResults = _result });
+      }
+
+      [Observation]
+      public void should_not_create_more_entries_in_the_returns_value_that_expected()
+      {
+         _pkAnalysis.ShouldNotBeNull();
+         var values = _pkAnalysis.PKParameterFor(_outputPath, "C_max");
+         values.Count.ShouldBeEqualTo(5);
+         float.IsNaN(values.ValueFor(3)).ShouldBeTrue();
+      }
+   }
+
 
    public class When_calculating_the_pk_analysis_for_a_population_with_inconsistent_id : concern_for_PKAnalysisTask
    {
@@ -188,8 +218,7 @@ namespace OSPSuite.R.Services
       {
          _pkAnalysis.ShouldNotBeNull();
          var values = _pkAnalysis.PKParameterFor(_outputPath, "C_max");
-         values.Count.ShouldBeEqualTo(11);
-         float.IsNaN(values.Values[8]).ShouldBeTrue();
+         values.Count.ShouldBeEqualTo(4);
       }
    }
 

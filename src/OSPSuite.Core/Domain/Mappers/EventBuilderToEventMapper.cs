@@ -1,9 +1,11 @@
+using System.Linq;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Mappers
 {
    /// <summary>
-   /// Maps event builder object to an model event
+   ///    Maps event builder object to an model event
    /// </summary>
    public interface IEventBuilderToEventMapper : IBuilderMapper<IEventBuilder, IEvent>
    {
@@ -17,9 +19,9 @@ namespace OSPSuite.Core.Domain.Mappers
       private readonly IEventAssignmentBuilderToEventAssignmentMapper _assignmentMapper;
 
       public EventBuilderToEventMapper(IObjectBaseFactory objectBaseFactory,
-                                       IParameterBuilderToParameterMapper parameterMapper,
-                                       IFormulaBuilderToFormulaMapper formulaMapper,
-                                       IEventAssignmentBuilderToEventAssignmentMapper assignmentMapper)
+         IParameterBuilderToParameterMapper parameterMapper,
+         IFormulaBuilderToFormulaMapper formulaMapper,
+         IEventAssignmentBuilderToEventAssignmentMapper assignmentMapper)
       {
          _objectBaseFactory = objectBaseFactory;
          _parameterMapper = parameterMapper;
@@ -27,24 +29,23 @@ namespace OSPSuite.Core.Domain.Mappers
          _assignmentMapper = assignmentMapper;
       }
 
-      public IEvent MapFrom(IEventBuilder eventBuilder,IBuildConfiguration buildConfiguration)
+      public IEvent MapFrom(IEventBuilder eventBuilder, IBuildConfiguration buildConfiguration)
       {
          var modelEvent = _objectBaseFactory.Create<IEvent>()
             .WithName(eventBuilder.Name)
             .WithDimension(eventBuilder.Dimension)
             .WithDescription(eventBuilder.Description)
-            .WithFormula(_formulaMapper.MapFrom(eventBuilder.Formula,buildConfiguration));
+            .WithFormula(_formulaMapper.MapFrom(eventBuilder.Formula, buildConfiguration));
 
          buildConfiguration.AddBuilderReference(modelEvent, eventBuilder);
 
-         foreach(var assignment in eventBuilder.Assignments)
-         {
-            modelEvent.AddAssignment(_assignmentMapper.MapFrom(assignment,buildConfiguration));
-         }
+         eventBuilder.Assignments
+            .SelectMany(x => _assignmentMapper.MapFrom(x, buildConfiguration))
+            .Each(modelEvent.AddAssignment);
 
          foreach (var param in eventBuilder.Parameters)
          {
-            modelEvent.Add(_parameterMapper.MapFrom(param,buildConfiguration));
+            modelEvent.Add(_parameterMapper.MapFrom(param, buildConfiguration));
          }
 
          modelEvent.OneTime = eventBuilder.OneTime;

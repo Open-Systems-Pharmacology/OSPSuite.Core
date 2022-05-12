@@ -29,10 +29,10 @@ namespace OSPSuite.Presentation.Presenters.Main
       {
          AddRibbonPages();
          updateMruMenuList();
-         DisableMenuBarItemsForPogramStart();
+         DisableMenuBarItemsForProgramStart();
       }
 
-      protected abstract void DisableMenuBarItemsForPogramStart();
+      protected abstract void DisableMenuBarItemsForProgramStart();
 
       protected abstract void AddRibbonPages();
 
@@ -72,19 +72,10 @@ namespace OSPSuite.Presentation.Presenters.Main
          //nothing to do here
       }
 
-      public IView BaseView
-      {
-         get { return null; }
-      }
+      public IView BaseView => null;
 
-      public bool CanClose
-      {
-         get { return true; }
-      }
+      public bool CanClose => true;
 
-      public string ErrorMessage
-      {
-         get { return string.Empty; }
-      }
+      public string ErrorMessage => string.Empty;
    }
 }

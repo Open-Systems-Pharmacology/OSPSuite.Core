@@ -1,9 +1,4 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
-using DevExpress.Utils;
-using DevExpress.XtraEditors;
-using DevExpress.XtraLayout.Utils;
-using DevExpress.XtraTab;
+﻿using DevExpress.XtraTab;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
@@ -22,28 +17,32 @@ namespace OSPSuite.UI.Views.Importer
       public ImporterView()
       {
          InitializeComponent();
-         nanLayoutControlItem.AdjustControlHeight(80);
       }
 
       public override void InitializeResources()
       {
          base.InitializeResources();
-         sourceFileLayoutControlItem.Name = Captions.Importer.SourceLayout;
+         sourceFileLayoutControlGroup.Text = Captions.Importer.SourceLayout;
          previewLayoutControlItem.Name = Captions.Importer.PreviewLayout;
-         columnMappingLayoutControlItem.Name = Captions.Importer.MappingSettings;
+         mappingLayoutControlGroup.Text = Captions.Importer.MappingSettings;
 
-         saveMappingBtn.Click += (s, a) => OnEvent(() =>
-         {
-            _presenter.SaveConfiguration();
-         });
-         applyMappingBtn.Click += (s, a) => OnEvent(() =>
-         {
-            _presenter.LoadConfigurationWithoutImporting();
-         });
+
+         saveMappingBtn.Click += (o, e) => OnEvent(_presenter.SaveConfiguration);
+         applyMappingBtn.Click += (o, e) => OnEvent(_presenter.LoadConfigurationWithoutImporting);
+         resetMappingBasedOnCurrentSheetBtn.Click += (o, e) => OnEvent(_presenter.ResetMappingBasedOnCurrentSheet);
+         clearMappingBtn.Click += (o, e) => OnEvent(_presenter.ClearMapping);
+
          saveMappingBtn.InitWithImage(ApplicationIcons.Save, Captions.Importer.SaveConfiguration);
          applyMappingBtn.InitWithImage(ApplicationIcons.Load, Captions.Importer.ApplyConfiguration);
+         resetMappingBasedOnCurrentSheetBtn.InitWithImage(ApplicationIcons.Refresh, Captions.Importer.ResetMapping);
+         clearMappingBtn.InitWithImage(ApplicationIcons.RedCross, Captions.Importer.ClearMapping);
          saveMappingBtnLayoutControlItem.AdjustLargeButtonSize();
          applyMappingLayoutControlItem.AdjustLargeButtonSize();
+         resetMappingBasedOnCurrentSheetLayoutControlItem.AdjustLongButtonSize();
+         clearMappingLayoutControlItem.AdjustLongButtonSize();
+         resetMappingBasedOnCurrentSheetBtn.ToolTip = Captions.Importer.ResetMappingToolTip;
+         clearMappingBtn.ToolTip = Captions.Importer.ClearMappingToolTip;
+         sourceFileLayoutControlItem.AdjustControlHeight(70);
       }
 
       public void AttachPresenter(IImporterPresenter presenter)
@@ -90,17 +89,6 @@ namespace OSPSuite.UI.Views.Importer
       public void AddNanView(INanView nanView)
       {
          nanPanelControl.FillWith(nanView);
-      }
-
-      public void ShowExtraErrors(string errorMessage)
-      {
-         _labelExtraErrors.Text = errorMessage;
-         layoutControlItemExtraError.ContentVisible = true;
-      }
-      public void HideExtraErrors()
-      {
-         _labelExtraErrors.Text = "";
-         layoutControlItemExtraError.ContentVisible = false;
       }
    }
 }

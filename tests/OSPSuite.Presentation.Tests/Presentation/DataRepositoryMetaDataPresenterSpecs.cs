@@ -19,7 +19,7 @@ namespace OSPSuite.Presentation.Presentation
 {
    public abstract class concern_for_DataRepositoryMetaDataPresenter : ContextSpecification<DataRepositoryMetaDataPresenter>
    {
-      protected IEditObservedDataTask _editObservedDataTask;
+      protected IObservedDataMetaDataTask _observedDataMetaDataTask;
       protected IDataRepositoryMetaDataView _view;
       protected DataRepository _dataRepository;
       private ICommandCollector _commandCollector;
@@ -32,13 +32,13 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          _commandCollector = A.Fake<ICommandCollector>();
-         _editObservedDataTask = A.Fake<IEditObservedDataTask>();
+         _observedDataMetaDataTask = A.Fake<IObservedDataMetaDataTask>();
          _view = A.Fake<IDataRepositoryMetaDataView>();
          _observedDataConfiguration = A.Fake<IObservedDataConfiguration>();
          _dataRepository = new DataRepository();
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _parameterFactory = A.Fake<IParameterFactory>();
-         sut = new DataRepositoryMetaDataPresenter(_view, _editObservedDataTask, _observedDataConfiguration, _parameterFactory, _dimensionFactory);
+         sut = new DataRepositoryMetaDataPresenter(_view, _observedDataMetaDataTask, _observedDataConfiguration, _parameterFactory, _dimensionFactory);
          sut.InitializeWith(_commandCollector);
          sut.EditObservedData(_dataRepository);
 
@@ -126,7 +126,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void command_to_add_is_not_issued()
       {
-         A.CallTo(() => _editObservedDataTask.AddMetaData(A<IEnumerable<DataRepository>>.Ignored, A<MetaDataKeyValue>.Ignored)).MustNotHaveHappened();
+         A.CallTo(() => _observedDataMetaDataTask.AddMetaData(A<IEnumerable<DataRepository>>.Ignored, A<MetaDataKeyValue>.Ignored)).MustNotHaveHappened();
       }
    }
 
@@ -165,7 +165,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void command_for_add_is_issued()
       {
-         A.CallTo(() => _editObservedDataTask.AddMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataKeyValue>.That.Matches(x => x.Value.Equals("onlyValue") && x.Key.Equals("onlyName")))).MustHaveHappened();
+         A.CallTo(() => _observedDataMetaDataTask.AddMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataKeyValue>.That.Matches(x => x.Value.Equals("onlyValue") && x.Key.Equals("onlyName")))).MustHaveHappened();
       }
 
       protected override void Context()
@@ -185,7 +185,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void command_for_change_is_issued()
       {
-         A.CallTo(() => _editObservedDataTask.ChangeMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataChanged>.Ignored)).MustHaveHappened();
+         A.CallTo(() => _observedDataMetaDataTask.ChangeMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataChanged>.Ignored)).MustHaveHappened();
       }
 
       protected override void Context()
@@ -205,7 +205,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void command_for_add_is_issued()
       {
-         A.CallTo(() => _editObservedDataTask.AddMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataKeyValue>.Ignored)).MustHaveHappened();
+         A.CallTo(() => _observedDataMetaDataTask.AddMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataKeyValue>.Ignored)).MustHaveHappened();
       }
 
       protected override void Context()
@@ -236,7 +236,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void command_for_change_is_issued()
       {
-         A.CallTo(() => _editObservedDataTask.ChangeMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataChanged>.Ignored)).MustHaveHappened();
+         A.CallTo(() => _observedDataMetaDataTask.ChangeMetaData(A<IEnumerable<DataRepository>>.That.Contains(_dataRepository), A<MetaDataChanged>.Ignored)).MustHaveHappened();
       }
    }
 
@@ -247,7 +247,7 @@ namespace OSPSuite.Presentation.Presentation
          base.Context();
          _dataColumn1.DataInfo.MolWeight = 50;
          _dataColumn2.DataInfo.MolWeight = 60;
-         A.CallTo(() => _observedDataConfiguration.MolWeightEditable).Returns(true);
+         A.CallTo(() => _observedDataConfiguration.MolWeightAlwaysEditable).Returns(true);
          A.CallTo(() => _observedDataConfiguration.MolWeightVisible).Returns(true);
          sut.EditObservedData(_dataRepository);
       }
@@ -256,6 +256,23 @@ namespace OSPSuite.Presentation.Presentation
       public void should_hide_the_molweight()
       {
          _view.MolWeightVisible.ShouldBeFalse();
+      }
+   }
+
+   public class When_binding_to_single_observed_data_with_no_molweight_set : concern_for_DataRepositoryMetaDataPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _observedDataConfiguration.MolWeightAlwaysEditable).Returns(true);
+         A.CallTo(() => _observedDataConfiguration.MolWeightVisible).Returns(true);
+         sut.EditObservedData(_dataRepository);
+      }
+
+      [Observation]
+      public void should_show_the_molweight()
+      {
+         _view.MolWeightVisible.ShouldBeTrue();
       }
    }
 
@@ -269,7 +286,7 @@ namespace OSPSuite.Presentation.Presentation
          _molWeightParameter = A.Fake<IParameter>();
          _dataColumn1.DataInfo.MolWeight = 50;
          _dataColumn2.DataInfo.MolWeight = 50;
-         A.CallTo(() => _observedDataConfiguration.MolWeightEditable).Returns(true);
+         A.CallTo(() => _observedDataConfiguration.MolWeightAlwaysEditable).Returns(false);
          A.CallTo(() => _observedDataConfiguration.MolWeightVisible).Returns(true);
          A.CallTo(_parameterFactory).WithReturnType<IParameter>().Returns(_molWeightParameter);
          sut.EditObservedData(_dataRepository);
@@ -298,7 +315,8 @@ namespace OSPSuite.Presentation.Presentation
          _molWeightParameter = A.Fake<IParameter>();
          _dataColumn1.DataInfo.MolWeight = 50;
          _dataColumn2.DataInfo.MolWeight = 50;
-         A.CallTo(() => _observedDataConfiguration.MolWeightEditable).Returns(false);
+         _dataRepository.ExtendedProperties.Add(new ExtendedProperty<string> { Name = "Molecule", Value = "DummyMolecule" });
+         A.CallTo(() => _observedDataConfiguration.MolWeightAlwaysEditable).Returns(false);
          A.CallTo(() => _observedDataConfiguration.MolWeightVisible).Returns(true);
          A.CallTo(_parameterFactory).WithReturnType<IParameter>().Returns(_molWeightParameter);
          sut.EditObservedData(_dataRepository);
@@ -333,7 +351,7 @@ namespace OSPSuite.Presentation.Presentation
          _molWeightParameter = A.Fake<IParameter>();
          _dataColumn1.DataInfo.MolWeight = 50;
          _dataColumn2.DataInfo.MolWeight = 50;
-         A.CallTo(() => _observedDataConfiguration.MolWeightEditable).Returns(true);
+         A.CallTo(() => _observedDataConfiguration.MolWeightAlwaysEditable).Returns(true);
          A.CallTo(() => _observedDataConfiguration.MolWeightVisible).Returns(false);
          A.CallTo(_parameterFactory).WithReturnType<IParameter>().Returns(_molWeightParameter);
          sut.EditObservedData(_dataRepository);

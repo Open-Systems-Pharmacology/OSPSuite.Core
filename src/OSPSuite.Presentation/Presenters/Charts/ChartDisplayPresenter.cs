@@ -63,12 +63,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       void RefreshAxisBinders();
 
-      /// <summary>
-      ///    Action to call when exporting to PDF
-      /// </summary>
-      Action ExportToPDF { get; set; }
-
-      /// <summary>
+    /// <summary>
       ///    Action to call when a point is hot tracked in the chart view
       /// </summary>
       Action<int> HotTracked { set; }
@@ -189,7 +184,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly Cache<string, ICurveBinder> _quickCurveBinderCache;
       private bool _isLLOQVisible;
       private ChartFontAndSizeSettings _displayChartFontAndSizeSettings;
-      public Action ExportToPDF { get; set; }
+
       public event EventHandler<IDragEvent> DragOver = delegate { };
       public event EventHandler<IDragEvent> DragDrop = delegate { };
 
@@ -217,7 +212,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _curveBinders = new Cache<string, ICurveBinder>(c => c.Id, onMissingKey: key => null);
          _quickCurveBinderCache = new Cache<string, ICurveBinder>(onMissingKey: key => null);
          _displayChartFontAndSizeSettings = new ChartFontAndSizeSettings();
-         ExportToPDF = () => throw new OSPSuiteException(Error.NotImplemented);
       }
 
       public CurveChart Chart { get; private set; }

@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 {
    public interface ISensitivityAnalysisRunner
    {
-      Task Run(SensitivityAnalysis sensitivityAnalysis, RunOptions runOptions = null);
+      Task Run(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions = null);
       void Stop();
       bool IsRunning { get; }
    }
@@ -43,7 +43,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
          _coreUserSettings = coreUserSettings;
       }
 
-      public async Task Run(SensitivityAnalysis sensitivityAnalysis, RunOptions runOptions = null)
+      public async Task Run(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions = null)
       {
          if (!_entityValidationTask.Validate(sensitivityAnalysis))
             return;
@@ -53,7 +53,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
             if (IsRunning)
                throw new OSPSuiteException(Error.CannotStartTwoConcurrentSensitivityAnalyses);
 
-            var options = runOptions ?? new RunOptions {NumberOfCoresToUse = _coreUserSettings.MaximumNumberOfCoresToUse};
+            var options = runOptions ?? new SensitivityAnalysisRunOptions { NumberOfCoresToUse = _coreUserSettings.MaximumNumberOfCoresToUse};
             using (_sensitivityAnalysisEngine = _sensitivityAnalysisEngineFactory.Create())
             {
                var begin = SystemTime.UtcNow();

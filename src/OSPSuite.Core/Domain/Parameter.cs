@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Assets;
+using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Maths.Random;
@@ -75,7 +76,7 @@ namespace OSPSuite.Core.Domain
       ///    Can this parameter be changed by the create individual algorithm?
       ///    Default false
       /// </summary>
-      bool IsChangedByCreateIndividual { get; }
+      bool IsChangedByCreateIndividual { get; set; }
 
       /// <summary>
       ///    Reset the parameter values to its default as defined when created
@@ -89,9 +90,14 @@ namespace OSPSuite.Core.Domain
       double RandomDeviateIn(RandomGenerator randomGenerator, double? min = null, double? max = null);
 
       /// <summary>
-      /// Sets the RHS Formula to NULL. This is required for R-Only in order to be able to set the RHS formula to NULL
+      ///    Sets the RHS Formula to NULL. This is required for R-Only in order to be able to set the RHS formula to NULL
       /// </summary>
       void ClearRHSFormula();
+
+      /// <summary>
+      ///    Criteria for containers where parameter should be created. This is only useful in builder and is not used in parameter instances
+      /// </summary>
+      DescriptorCriteria ContainerCriteria { set; get; }
    }
 
    public class Parameter : Quantity, IParameter
@@ -101,6 +107,8 @@ namespace OSPSuite.Core.Domain
       public virtual ParameterInfo Info { get; set; }
       public virtual ParameterOrigin Origin { get; private set; }
       public virtual double? DefaultValue { get; set; }
+
+      public DescriptorCriteria ContainerCriteria { set; get; }
 
       /// <inheritdoc />
       public bool IsDefault { get; set; }
@@ -136,6 +144,7 @@ namespace OSPSuite.Core.Domain
          Origin = sourceParameter.Origin.Clone();
          DefaultValue = sourceParameter.DefaultValue;
          IsDefault = sourceParameter.IsDefault;
+         ContainerCriteria = sourceParameter.ContainerCriteria?.Clone();
       }
 
       public double RandomDeviateIn(RandomGenerator randomGenerator, double? min = null, double? max = null)
@@ -151,9 +160,13 @@ namespace OSPSuite.Core.Domain
 
       public void ClearRHSFormula() => RHSFormula = null;
 
-      public virtual bool IsChangedByCreateIndividual => false;
-
       #region Parameter Info
+
+      public bool IsChangedByCreateIndividual
+      {
+         get => Info.IsChangedByCreateIndividual;
+         set => Info.IsChangedByCreateIndividual = value;
+      }
 
       public bool CanBeVaried
       {

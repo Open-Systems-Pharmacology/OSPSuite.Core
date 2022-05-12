@@ -51,17 +51,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
    public interface IColumnMappingPresenter : IPresenter<IColumnMappingView>
    {
-      void SetSettings( IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos);
+      void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, ColumnInfoCache columnInfos);
       IDataFormat GetDataFormat();
       void SetDataFormat(IDataFormat format);
-      void SetRawData(UnformattedData rawData);
+      void SetRawData(DataSheet rawDataSheet);
       IEnumerable<ColumnMappingOption> GetAvailableOptionsFor(ColumnMappingDTO model);
       IEnumerable<RowOptionDTO> GetAvailableRowsFor(ColumnMappingDTO model);
       ToolTipDescription ToolTipDescriptionFor(int index);
       void ClearRow(ColumnMappingDTO model);
       void AddGroupBy(AddGroupByFormatParameter source);
-      void ResetMapping();
-      void ResetMappingBasedOnCurrentSheet();
       void ClearMapping();
       void ValidateMapping();
       void SetSubEditorSettingsForMapping(ColumnMappingDTO model);
@@ -74,8 +72,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       event EventHandler OnMappingCompleted; //status: you can import
 
       event EventHandler<MissingMappingEventArgs> OnMissingMapping;
-
-      event EventHandler OnResetMappingBasedOnCurrentSheet;
       IEnumerable<string> GetAllAvailableExcelColumns();
    }
 }

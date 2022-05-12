@@ -1,9 +1,10 @@
-﻿using OSPSuite.Utility.Container;
-using DevExpress.XtraBars;
+﻿using DevExpress.XtraBars;
 using DevExpress.XtraBars.Ribbon;
 using DevExpress.XtraEditors;
+using OSPSuite.Assets;
 using OSPSuite.Starter.Presenters;
 using OSPSuite.UI.Views;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Starter.Views
 {
@@ -18,7 +19,7 @@ namespace OSPSuite.Starter.Views
          // WITH AUTOFAC
          var dxContainer = container.Resolve<DxContainer>();
          dxContainer.RibbonBarManager = ribbon.Manager;
-         dxContainer.BarManager = ribbon.Manager ;
+         dxContainer.BarManager = ribbon.Manager;
          dxContainer.UserLookAndFeel = defaultLookAndFeel.LookAndFeel;
          dxContainer.XtraTabbedMdiManager = xtraTabbedMdiManager;
          dxContainer.ApplicationMenu = new ApplicationMenu();
@@ -33,7 +34,12 @@ namespace OSPSuite.Starter.Views
          container.RegisterImplementationOf(new ApplicationMenu());
          container.RegisterImplementationOf(new PanelControl());
          container.RegisterImplementationOf(ribbon);
+      }
 
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         ApplicationIcon = ApplicationIcons.PKSim;
       }
 
       public void AttachPresenter(IShellPresenter presenter)
@@ -41,6 +47,5 @@ namespace OSPSuite.Starter.Views
          _presenter = presenter;
          base.AttachPresenter(presenter);
       }
-
    }
 }

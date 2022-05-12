@@ -192,6 +192,14 @@ namespace OSPSuite.Assets
       public static readonly string ContainerObserver = "Container Observer";
       public static readonly string UnitsEditorCaption = "Unit Settings";
       public static readonly string EditManually = "Edit manually";
+      public static readonly string ShouldColorGroupObservedData = "Color group observed data from same folder when dropping to chart";
+      public static readonly string EditAllCurvesProperties = "Edit Options for Selected";
+      public static readonly string CurvesAndAxisOptions = "Curves and Axis Options";
+      public static readonly string CurvesColorGrouping = "Curves Color Grouping";
+      public static readonly string ChartOptions = "Chart Options";
+      public static readonly string ChartExportOptions = "Chart Export Options";
+      public static readonly string No = "No";
+      public static readonly string Yes = "Yes";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
@@ -358,8 +366,9 @@ namespace OSPSuite.Assets
          public static readonly string TheUnitInformationMustBeEnteredOrConfirmed = "The unit information must be entered or confirmed.";
          public static readonly string TheMetaDataInformationMustBeEnteredOrConfirmed = "The meta data must be entered or confirmed.";
          public static readonly string ResetMapping = "Reset Mapping";
-         public static readonly string ResetMappingBasedOnCurrentSheet = "Reset Mapping based on current sheet";
-         public static readonly string ClearMapping = "Clear Mapping";
+         public static readonly string ResetMappingToolTip = "Automatically recalculates the format based on the sheet currently selected and sets the mapping settings accordingly.";
+         public static readonly string ClearMappingToolTip = "Clears all the mappings. Same as clicking all the X buttons to the right of the grid.";
+         public static readonly string ClearMapping = "Clear All";
          public static readonly string Format = "Format: ";
          public static readonly string AddKeys = "Add Keys";
          public static readonly string Columns = "Columns";
@@ -375,9 +384,12 @@ namespace OSPSuite.Assets
          public static readonly string NanAction = "Action";
          public static readonly string NanActionThrowsError = "Prevent the import";
          public static readonly string NanActionIgnoreRow = "Ignore the row";
-         public static readonly string NanActionHint = "Defines what to do when an invalid measurement is found (invalid measurements are NaN or the number indicated in the NaN indicator). \"Ignore the row\" will import the data ignoring the currently invalid row. \"Prevent the import\" will throw an error and halt the import process";
+
+         public static readonly string NanActionHint =
+            "Defines what to do when an invalid measurement is found (invalid measurements are NaN or the number indicated in the NaN indicator). \"Ignore the row\" will import the data ignoring the currently invalid row. \"Prevent the import\" will throw an error and halt the import process";
+
          public static readonly string NanIndicator = "NaN indicator";
-         public static readonly string NanIndicatorHint = "Set a string to indicate how NaN should be detected";
+         public static readonly string NanIndicatorHint = "Type a number that will be interpreted as NaN(Not a Number). Text in numerical columns is interpreted as NaN anyway.";
          public static readonly string OpenFileConfirmation = "Opening a new file will drop your currently imported data. Are you sure you want to open a new file?";
          public static readonly string ExcelColumn = "Data Column/Value";
          public static readonly string MappingName = "Mapping Name";
@@ -417,8 +429,10 @@ namespace OSPSuite.Assets
          public static readonly string GroupByTitle = "Group By";
          public static readonly string SelectToAdd = "Select to add";
          public static readonly string MappingTitle = "Mapping";
+
          public static readonly string ReloadWillCauseChangeOfDataSets =
             "Reloading will cause the following changes in observed data. Do you really want to reload?";
+
          public static readonly string UnexpectedExceptionWhenLoading =
             "An unexpected error occurred while loading the file. The file format is probably not supported. Please check the <href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats >documentation</href> for more details";
 
@@ -429,7 +443,9 @@ namespace OSPSuite.Assets
          public static string LLOQInconsistentValuesAt(string dataRepositoryName) => $"There were different LLOQ values detected for the data from a single source. Please check data under name {dataRepositoryName}. Are you sure you want to continue with import?";
          public static string CsvSeparatorDescription(string fileName) => $"Please select the separator for the file \r\n'{fileName}':";
 
-         public static readonly string SheetFormatNotSupported = "The format of the sheet you are trying to use is not supported.You can find a documentation of the supported formats<href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats > here </href>";
+         public static readonly string SheetFormatNotSupported =
+            "The format of the sheet you are trying to use is not supported.You can find a documentation of the supported formats<href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats > here </href>";
+
          public static string ConfirmDroppingExcelColumns(string listOfExcelColumns)
          {
             var sb = new StringBuilder();
@@ -449,7 +465,9 @@ namespace OSPSuite.Assets
          }
 
          public static readonly string UseFiltersForImport = "Use filters for importing data";
-         public static readonly string UseFiltersForImportTooltip = "When selected, the filter will apply to the data during the import process. When deselected, the filter only affects this view. Check documentation for more information on defining filters: <href=https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering>https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering</href>";
+
+         public static readonly string UseFiltersForImportTooltip =
+            "When selected, the filter will apply to the data during the import process. When deselected, the filter only affects this view. Check documentation for more information on defining filters: <href=https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering>https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/features-of-tables#filtering</href>";
 
          public static readonly string AddGroupByTitle = "Add Group By";
          public static readonly string MetaDataTitle = "Meta data";
@@ -458,18 +476,22 @@ namespace OSPSuite.Assets
          public static readonly string AddGroupBy = "Add a new grouping by";
          public static readonly string MissingMandatoryMapping = "Field is mandatory and has not configured yet";
          public static readonly string MissingUnit = "Field must contain a valid unit description";
+
          public static string MappingHint(string parameter, string target, string unit)
          {
             return $"The column {parameter} will be mapped into {target} with units as {unit}";
          }
+
          public static string MappingHintUnitColumn(string parameter, string target, string unitColumn)
          {
             return $"The column {parameter} will be mapped into {target} and column {unitColumn} will be mapped into unit";
          }
+
          public static string MappingHintNoUnit(string parameter, string target)
          {
             return $"The column {parameter} will be mapped into {target}";
          }
+
          public static string GroupByHint(string parameter)
          {
             return $"The column {parameter} will be used for grouping by";
@@ -489,6 +511,7 @@ namespace OSPSuite.Assets
          {
             return $"The column {parameter} will be used as meta data to extract the following data: {target}";
          }
+
          public static readonly string IgnoredParameterHint = "This parameter will be ignored";
 
          public static readonly string GroupByDescription = "Group by";
@@ -939,14 +962,18 @@ namespace OSPSuite.Assets
          public static readonly string NoResultsAvailable = "No result available. Please start parameter identification";
          public static readonly string NoParameterIdentificationRunning = "No visual feedback available. Please start parameter identification.";
 
-         public static readonly string ParameterIdentificationCanceled = "Parameter identification canceled";
+         public static string ParameterIdentificationCanceled(string parameterIdentificationName)
+         {
+            return $"Parameter identification '{parameterIdentificationName}' canceled";
+         }
+
          public static readonly string Best = "Best";
          public static readonly string Current = "Current";
          public static readonly string Clone = "Clone";
 
-         public static string ParameterIdentificationFinished(string duration)
+         public static string ParameterIdentificationFinished(string parameterIdentificationName, string duration)
          {
-            return $"Parameter identification finished in {duration}";
+            return $"Parameter identification '{parameterIdentificationName}' finished in {duration}";
          }
 
          public static string LinkedParametersIn(string name)
@@ -1061,12 +1088,21 @@ namespace OSPSuite.Assets
 
             public static class Descriptions
             {
-               public static readonly string Epsfcn = "Used in determining a suitable step length for the forward-difference approximation.\nThis approximation assumes that the relative errors in the functions are of the order of epsfcn.\nIf epsfcn is less than the machine precision, it is assumed that the relative errors in the functions are of the order of the machine precision.";
-               public static readonly string MaximumNumberOfIterations = "The maximum number of iterations to perform. If the number of calculation iterations exceeds MAXITER, then the algorithm returns.\nIf MAXITER = 0, then the algorithm does not iterate to adjust parameter values;\nhowever, the user function is evaluated and parameter errors/covariance/Jacobian are estimated before returning.";
+               public static readonly string Epsfcn =
+                  "Used in determining a suitable step length for the forward-difference approximation.\nThis approximation assumes that the relative errors in the functions are of the order of epsfcn.\nIf epsfcn is less than the machine precision, it is assumed that the relative errors in the functions are of the order of the machine precision.";
+
+               public static readonly string MaximumNumberOfIterations =
+                  "The maximum number of iterations to perform. If the number of calculation iterations exceeds MAXITER, then the algorithm returns.\nIf MAXITER = 0, then the algorithm does not iterate to adjust parameter values;\nhowever, the user function is evaluated and parameter errors/covariance/Jacobian are estimated before returning.";
+
                public static readonly string RelativeChiSquareConvergenceCriteriumFtol = "Termination occurs when both the actual and predicted relative reductions in the sum of squares are at most ftol. Therefore, ftol measures the relative error desired in the sum of squares.";
                public static readonly string RelativeParameterConvergenceCriteriumXtol = "Termination occurs when the relative error between two consecutive iterates is at most xtol. Therefore, xtol measures the relative error desired in the approximate solution.";
-               public static readonly string OrthoganalityConvergenceCriteriumGtol = "Termination occurs when the cosine of the angle between fvec and any column of the jacobian is at most gtol in absolute value.\nTherefore, gtol measures the orthogonality desired between the function vector and the columns of the jacobian.";
-               public static readonly string InitialStepBoundFactor = "Used in determining the initial step bound. This bound is set to the product of factor and the euclidean norm of diag*x if nonzero, or else to factor itself.\nIn most cases factor should lie in the interval [0.1, 100]. 100 is a generally recommended value.";
+
+               public static readonly string OrthoganalityConvergenceCriteriumGtol =
+                  "Termination occurs when the cosine of the angle between fvec and any column of the jacobian is at most gtol in absolute value.\nTherefore, gtol measures the orthogonality desired between the function vector and the columns of the jacobian.";
+
+               public static readonly string InitialStepBoundFactor =
+                  "Used in determining the initial step bound. This bound is set to the product of factor and the euclidean norm of diag*x if nonzero, or else to factor itself.\nIn most cases factor should lie in the interval [0.1, 100]. 100 is a generally recommended value.";
+
                public static readonly string MaximumNumberOfFunctionEvaluations = "Termination occurs when the number of calls to objective function is greater or equal this value by the end of an iteration.\nIf the value is set to 0, then the number of evaluations is unlimited.";
                public static readonly string MaximumNumberOfIterationsMonteCarlo = "The maximum number of iterations to perform. If the number of calculation iterations exceeds this number, then the algorithm returns.";
 
@@ -1242,6 +1278,17 @@ namespace OSPSuite.Assets
             public static readonly string FontSizeWatermark = "Font Size Watermark";
             public static readonly string IncludeOriginData = "Include Origin Data";
          }
+
+         public static class ColorGrouping
+         {
+            public static string ColorGroupingDialogDescription = "Select metadata as criteria for color grouping";
+            public static string ApplyColorGroupingButton = "Apply Color Grouping";
+         }
+
+         public static class MultiCurveOptions
+         {
+            public static string CurrentValue = "<Current value>";
+         }
       }
    }
 
@@ -1272,8 +1319,12 @@ namespace OSPSuite.Assets
       public static readonly string NaNOnData = "Data contains NaN values at imported columns. Select a different action for NaN values or clean your data.";
       public static readonly string UnsupportedFileType = "The type of file that you are trying to open is not currently supported";
       public static readonly string CannotRemoveBaseGridColumnStillInUse = "Cannot remove base grid column still used by other columns";
+      public static readonly string SimpleParseErrorMessage = "There were errors while parsing your data. Navigate to the sheets to read the concrete error.";
 
-      public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) => $"Plotting data set number:{sheetName} produced the following error: {exceptionMessage}";
+      public static string ParseErrorMessage(IEnumerable<string> errors) => $"There were errors while parsing your data: {string.Join(". ", errors)}";
+
+      public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) =>
+         $"It was not possible to plot the data sets. Please, check your configuration for any missing grouping or meta data parameter. An error occur while plotting data set number:{sheetName + 1} produced the following error: {exceptionMessage}";
 
       public static string InvalidObservedDataFile(string exceptionMessage)
       {
@@ -1304,7 +1355,7 @@ namespace OSPSuite.Assets
       public static string BaseGridColumnNotFoundException(string columnName) => $"BaseGrid Column {columnName} unexpectedly not found.";
       public static string EmptyDataSet(string dataSetName) => $"Your settings ended up with following empty datasets: '{dataSetName}'. Please remove the data set from your data, filter it out or add at least one observation for it.";
 
-      public static string MissingColumnException(string missingColumn) => $"The mapped column '{missingColumn}' is missing from at least one of the sheets being loaded.";
+      public static string MissingColumnException(string sheetName, IReadOnlyList<string> missingColumns) => $"The mapped column(s) \n \n '{missingColumns.ToString("\n")}' \n \n is missing at least from the sheet \n \n '{sheetName}' \n \n that you are trying to load.";
 
       public static string InvalidDimensionException(string invalidUnit, string mappingName) => $"The unit '{invalidUnit}' you are trying to assign to the mapping '{mappingName}' does not belong to a supported dimension of this mapping.";
       public static string InconsistentDimensionBetweenUnitsException(string mappingName) => $"For the mapping '{mappingName}' not all units in the mapped column belong to the same dimension.";
@@ -1441,6 +1492,7 @@ namespace OSPSuite.Assets
       public static readonly string TransportMoleculeNamesBothListsNonEmpty = "Molecule names to transport and molecule names not to transport are both nonempty";
       public static readonly string InvalidFile = "Invalid File";
       public static readonly string InvalidAuxiliaryType = "The error type is invalid. Valid types are 'ArithmeticStdDev' and 'GeometricStdDev'";
+      public static readonly string MoreThanOneMeasurementColumnFound = "More than one measurement column was found in the data repository.";
 
       public static string UserDefinedPKParameterNotFound(string pkParameterName) => $"PK-Parameter '{pkParameterName}' not found";
 
@@ -1592,7 +1644,6 @@ namespace OSPSuite.Assets
          }
       }
 
-     
       public static string DuplicatedIndividualResultsForId(int individualId) => $"Individual results for individual with id '{individualId}' were defined more than once!";
 
       public static string DuplicatedPKParameterSensitivityFor(string id) => $"PKParameter sensitivity results for '{id}' were defined more than once!";
@@ -1626,7 +1677,10 @@ namespace OSPSuite.Assets
       {
          public static readonly string NoSimulationDefined = "No simulation defined";
          public static readonly string NoSensitivityParameterDefined = "No sensitivity parameter defined";
-         public static readonly string OnlyInactiveSensitivityParameterDefined = "Only parameters equal to zero selected. To prevent accidental structural model changes, the requested sensitivity calculation is not available for those parameters.\nTo override this behavior, please disturb the corresponding parameters in used simulation by a tiny amount.";
+
+         public static readonly string OnlyInactiveSensitivityParameterDefined =
+            "Only parameters equal to zero selected. To prevent accidental structural model changes, the requested sensitivity calculation is not available for those parameters.\nTo override this behavior, please disturb the corresponding parameters in used simulation by a tiny amount.";
+
          public static string NoOutputAvailableInSelectedSimulation(string simulationName) => $"No output available in simulation '{simulationName}'";
          public static string SimulationDoesNotHaveParameterPath(string simulationName, string path) => $"The simulation '{simulationName}' does not contain a parameter with path '{path}'";
 
@@ -1846,7 +1900,7 @@ namespace OSPSuite.Assets
       public static readonly string CreatingModel = "Creating Model...";
       public static readonly string ImportingResults = "Importing results...";
 
-      public static string FollowingOutputsWereSuccessfullyImported(int numberOfIndividuals) => 
+      public static string FollowingOutputsWereSuccessfullyImported(int numberOfIndividuals) =>
          $"Simulation results for {numberOfIndividuals} individuals were successfully imported for the following quantities:";
 
       public static readonly string FollowingPKParameterSensitivityWereSuccessfullyImported = "PKParameter sensitivities were successfully imported for the following quantities:";
@@ -1854,7 +1908,6 @@ namespace OSPSuite.Assets
       public static string CalculationPopulationSimulation(int number, int total) => $"Simulation {number}/{total}...";
 
       public static readonly string FollowingPKParametersWereSuccessfullyImported = "Following PK-Parameters were successfully imported:";
-
    }
 
    public static class Warning
@@ -1897,7 +1950,6 @@ namespace OSPSuite.Assets
    {
       public static string AsDeveloperOnly(string menuName) => $"{menuName} (Developer only)...";
 
-      public static readonly string ExportToPDF = "Export to PDF...";
       public static readonly string ExportToExcel = "Export to Excel...";
       public static readonly string CopyToClipboard = "Copy to Clipboard";
       public static readonly string ResetZoom = "Reset Zoom";
@@ -1957,6 +2009,8 @@ namespace OSPSuite.Assets
       public static readonly string StopSensitivityAnalysis = "Stop";
       public static readonly string StartSensitivityAnalysis = "Start Sensitivity Analysis...";
       public static readonly string ClearHistory = "Clear History";
+      public static readonly string ColorGroupObservedData = "Color by folder when adding to chart";
+
       public static readonly string Help = "Help";
 
       public static string CompareObjects(string objectType)
@@ -2051,22 +2105,6 @@ namespace OSPSuite.Assets
          return $"{parameterName} set from {oldValue} to {newValue} in {observedDataName}";
       }
 
-      public static string SetObservedDataColumnUnitCommandDescription(string columnName, string oldUnit, string newUnit)
-      {
-         return $"Unit in column '{columnName}' changed from '{oldUnit}' to {newUnit}";
-      }
-
-      public static string SetObservedDataValueDescription(string baseGridNameValueUnit, string oldNameValueUnits, string newNameValueUnits)
-      {
-         return $"Value of an Observed Data point changed from '{oldNameValueUnits}' to '{newNameValueUnits}' at '{baseGridNameValueUnit}.";
-      }
-
-      public static string AddObservedDataValueDescription(string baseGridNameValueUnit, IEnumerable<string> columnNameValueUnits)
-      {
-         var sb = nameValueUnitListFormatter(baseGridNameValueUnit, columnNameValueUnits);
-         return $"Added an Observed Data point with Values: {sb}";
-      }
-
       public static string AddObservedDataToProjectDescription(string observedDataName, string projectName)
       {
          return AddEntityToContainer(ObjectTypes.ObservedData, observedDataName, ObjectTypes.Project, projectName);
@@ -2098,12 +2136,6 @@ namespace OSPSuite.Assets
          columnNameValueUnits.Each(x => sb.Append(x));
          sb.Append($" at {baseGridNameValueUnit}");
          return sb;
-      }
-
-      public static string RemoveObservedDataValueDescription(string baseGridNameValueUnit, IEnumerable<string> removedNameValueUnits)
-      {
-         var sb = nameValueUnitListFormatter(baseGridNameValueUnit, removedNameValueUnits);
-         return $"Removed an Observed Data point with Values: {sb}";
       }
 
       public static string ChangeColorOfCurveTemplate(string curveTemplateName, string newName, string oldName)

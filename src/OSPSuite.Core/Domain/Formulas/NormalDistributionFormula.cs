@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Domain.Formulas
 {
    public class NormalDistributionFormula : DistributionFormula
    {
-      protected override double CalculateFor(IEnumerable<IObjectReference> usedObjects, IUsingFormula dependentObject)
+      protected override double CalculateFor(IReadOnlyList<IObjectReference> usedObjects, IUsingFormula dependentObject)
       {
          var locDependentObject = dependentObject.ConvertedTo<IDistributedParameter>();
          var percentile = locDependentObject.Percentile;

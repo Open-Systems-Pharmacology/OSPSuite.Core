@@ -9,13 +9,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
 {
    public class TabChangedEventArgs : EventArgs
    {
-      public UnformattedData TabData { get; set; }
+      public DataSheet TabSheet { get; set; }
    }
 
    public class ImportSheetsEventArgs : EventArgs
    {
       public IDataSourceFile DataSourceFile { get; set; }
-      public Cache<string, DataSheet> Sheets { get; set; }
+      public IReadOnlyList<string> SheetNames { get; set; }
       public string Filter { get; set; }
    }
 
@@ -30,7 +30,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       void SetSettings(
          IReadOnlyList<MetaDataCategory> metaDataCategories,
-         IReadOnlyList<ColumnInfo> columnInfos
+         ColumnInfoCache columnInfos
       );
 
       event EventHandler<FormatChangedEventArgs> OnFormatChanged;
@@ -47,8 +47,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void ReopenAllSheets();
       void RemoveAllButThisTab(string tabName);
       void ImportDataForConfirmation();
-      void onMissingMapping();
-      void onCompletedMapping();
+      void OnMissingMapping();
+      void OnCompletedMapping();
       void DisableImportedSheets();
       List<string> GetSheetNames();
       DataTable GetSheet(string tabName);
@@ -56,12 +56,28 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       //should this be here actually, or in the view? - then the view should only get the list of the sheet names from the _dataviewingpresenter
       void RefreshTabs();
-      Cache<string, DataSheet> Sheets { get; set; }
       string GetActiveFilterCriteria();
       string GetFilter();
       void TriggerOnDataChanged();
-      void SetFilter(string FilterString);
+      void SetFilter(string filterString);
       void GetFormatBasedOnCurrentSheet();
       void ResetLoadedSheets();
+      void SetTabMarks(ParseErrors errors, Cache<string, IDataSet> loadedDataSets);
+      void SetTabMarks(ParseErrors errors);
+      DataSheetCollection ImportedSheets { get; set; }
+   }
+
+   public class TabMarkInfo
+   {
+      public string ErrorMessage { get; }
+      public bool IsLoaded { get; }
+
+      public bool ContainsError => ErrorMessage != null;
+
+      public TabMarkInfo(string errorMessage, bool isLoaded)
+      {
+         ErrorMessage = errorMessage;
+         IsLoaded = isLoaded;
+      }
    }
 }

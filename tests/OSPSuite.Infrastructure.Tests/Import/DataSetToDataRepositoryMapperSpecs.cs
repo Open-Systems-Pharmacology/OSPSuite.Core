@@ -24,7 +24,7 @@ namespace OSPSuite.Infrastructure.Import
       protected Dictionary<ExtendedColumn, IList<SimulationPoint>> _parsedDataSetInconsistentLLOQ;
       protected Dictionary<ExtendedColumn, IList<SimulationPoint>> _parsedDataSetUnitFromColumn;
       protected DataSetToDataRepositoryMappingResult _result;
-
+      
       protected override void Context()
       {
          _dataSourceLLOQ = A.Fake<IDataSource>();
@@ -200,31 +200,31 @@ namespace OSPSuite.Infrastructure.Import
          _parsedDataSetInconsistentLLOQ = _parsedDataSetLLOQ;
          _parsedDataSetInconsistentLLOQ.First(x => x.Key.ColumnInfo.Name == "Concentration").Value.ElementAt(0).Lloq = 2;
 
-         A.CallTo(() => _dataSourceLLOQ.DataSetAt(A<int>.Ignored)).Returns(new ImportedDataSet
+         A.CallTo(() => _dataSourceLLOQ.ImportedDataSetAt(A<int>.Ignored)).Returns(new ImportedDataSet
             (
                "file",
                "sheet1",
-               new ParsedDataSet(new List<(string, IList<string>)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), _parsedDataSetLLOQ),
+               new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), _parsedDataSetLLOQ),
                "name",
                new List<MetaDataInstance>()
             )
          );
 
-         A.CallTo(() => _dataSourceInconsistentLLOQ.DataSetAt(A<int>.Ignored)).Returns(new ImportedDataSet
+         A.CallTo(() => _dataSourceInconsistentLLOQ.ImportedDataSetAt(A<int>.Ignored)).Returns(new ImportedDataSet
             (
                "file",
                "sheet1",
-               new ParsedDataSet(new List<(string, IList<string>)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), _parsedDataSetInconsistentLLOQ),
+               new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), _parsedDataSetInconsistentLLOQ),
                "name",
                new List<MetaDataInstance>()
             )
          );
 
-         A.CallTo(() => _dataSourceUnitFromColumn.DataSetAt(A<int>.Ignored)).Returns(new ImportedDataSet
+         A.CallTo(() => _dataSourceUnitFromColumn.ImportedDataSetAt(A<int>.Ignored)).Returns(new ImportedDataSet
             (
                "file",
                "sheet1",
-               new ParsedDataSet(new List<(string, IList<string>)>(), A.Fake<IUnformattedData>(), new List<UnformattedRow>(), _parsedDataSetUnitFromColumn),
+               new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), _parsedDataSetUnitFromColumn),
                "name",
                new List<MetaDataInstance>()
             )
@@ -238,7 +238,7 @@ namespace OSPSuite.Infrastructure.Import
    {
       protected override void Because()
       {
-         _result = sut.ConvertImportDataSet(_dataSourceInconsistentLLOQ.DataSetAt(0));
+         _result = sut.ConvertImportDataSet(_dataSourceInconsistentLLOQ.ImportedDataSetAt(0));
       }
 
       [Observation]
@@ -253,7 +253,7 @@ namespace OSPSuite.Infrastructure.Import
    {
       protected override void Because()
       {
-         _result = sut.ConvertImportDataSet(_dataSourceLLOQ.DataSetAt(0));
+         _result = sut.ConvertImportDataSet(_dataSourceLLOQ.ImportedDataSetAt(0));
       }
 
       [Observation]
@@ -279,7 +279,7 @@ namespace OSPSuite.Infrastructure.Import
    {
       protected override void Because()
       {
-         _result = sut.ConvertImportDataSet(_dataSourceUnitFromColumn.DataSetAt(0));
+         _result = sut.ConvertImportDataSet(_dataSourceUnitFromColumn.ImportedDataSetAt(0));
       }
 
       [Observation]

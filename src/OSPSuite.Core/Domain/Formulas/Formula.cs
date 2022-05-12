@@ -44,11 +44,18 @@ namespace OSPSuite.Core.Domain.Formulas
       void ResolveObjectPathsFor(IEntity dependentEntity);
 
       /// <summary>
-      ///    Tries to calculate the formula value for a formula used within any building block
+      ///    Calculates the formula value for a formula used within any building block
       ///    <para></para>
       /// </summary>
       /// <param name="refObject"> Object for which the formula should be calculated </param>
       double Calculate(IUsingFormula refObject);
+
+      /// <summary>
+      ///    Tries to calculate the formula value for a formula used within any building block
+      ///    <para></para>
+      /// </summary>
+      /// <param name="refObject"> Object for which the formula should be calculated </param>
+      (double value, bool success) TryCalculate(IUsingFormula refObject);
 
       /// <summary>
       ///    Adds a new path reference to the Formulas.
@@ -181,7 +188,16 @@ namespace OSPSuite.Core.Domain.Formulas
          }
       }
 
-      protected IEnumerable<IObjectReference> GetUsedObjectsFrom(IUsingFormula refObject)
+      /// <summary>
+      ///    Can be used for all formulas both in model and in building blocks
+      /// </summary>
+      public virtual (double value, bool success) TryCalculate(IUsingFormula refObject)
+      {
+         var usedObjects = GetUsedObjectsFrom(refObject, throwOnMissingRef:false);
+         return TryCalculateFor(usedObjects, refObject);
+      }
+
+      protected IReadOnlyList<IObjectReference> GetUsedObjectsFrom(IUsingFormula refObject, bool throwOnMissingRef = true)
       {
          if (AreReferencesResolved)
             return ObjectReferences;
@@ -192,16 +208,33 @@ namespace OSPSuite.Core.Domain.Formulas
          foreach (var path in ObjectPaths)
          {
             var usingObject = path.Resolve<IFormulaUsable>(refObject);
-            if (usingObject == null)
-               throw new OSPSuiteException($"Cannot evaluate formula for '{refObject.Name}' with path '{path}'");
+            if (usingObject != null)
+            {
+               usedObjects.Add(new ObjectReference(usingObject, path.Alias));
+               continue;
+            }
 
-            usedObjects.Add(new ObjectReference(usingObject, path.Alias));
+            if (throwOnMissingRef)
+               throw new OSPSuiteException($"Cannot evaluate formula for '{refObject.Name}' with path '{path}'");
          }
 
          return usedObjects;
       }
 
-      protected abstract double CalculateFor(IEnumerable<IObjectReference> usedObjects, IUsingFormula dependentObject);
+      protected abstract double CalculateFor(IReadOnlyList<IObjectReference> usedObjects, IUsingFormula dependentObject);
+
+      protected virtual (double value, bool success) TryCalculateFor(IReadOnlyList<IObjectReference> usedObjects, IUsingFormula dependentObject)
+      {
+         //default implementation common for all formula except some specific implementation
+         try
+         {
+            return (CalculateFor(usedObjects, dependentObject), true);
+         }
+         catch (OSPSuiteException)
+         {
+            return (double.NaN, false);
+         }
+      }
 
       protected IFormulaUsable GetReferencedEntityByAlias(string alias, IUsingFormula refObject)
       {
@@ -268,5 +301,6 @@ namespace OSPSuite.Core.Domain.Formulas
 
       protected virtual IEnumerable<string> UsedVariableNames => ObjectPaths.Select(path => path.Alias);
 
-      public static Func<IEnumerable<string>, IEnumerable<string>, IExplicitFormulaParser> ExplicitFormulaParserCreator { get; set; } = (v, p) => new ExplicitFormulaParser(v, p); }
+      public static Func<IEnumerable<string>, IEnumerable<string>, IExplicitFormulaParser> ExplicitFormulaParserCreator { get; set; } = (v, p) => new ExplicitFormulaParser(v, p);
+   }
 }

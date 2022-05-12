@@ -20,8 +20,8 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       public ParsedDataSetTest() : base
          (
-            new List<(string ColumnName, IList<string> ExistingValues)>(), 
-            A.Fake<IUnformattedData>(), 
+            new List<string>(), 
+            A.Fake<DataSheet>(), 
             new List<UnformattedRow>(), 
             new Dictionary<ExtendedColumn, IList<SimulationPoint>>())
       {
@@ -35,12 +35,12 @@ namespace OSPSuite.Presentation.Importer.Services
    }
    public abstract class ConcernForImporter : ContextSpecification<OSPSuite.Infrastructure.Import.Services.Importer>
    {
-      protected IUnformattedData _basicFormat;
+      protected DataSheet _basicFormat;
       protected IContainer _container;
       protected IDataSourceFileParser _parser;
       protected IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       protected IDialogCreator _dialogCreator;
-      protected IReadOnlyList<ColumnInfo> _columnInfos;
+      protected ColumnInfoCache _columnInfos;
       protected IDimension _fakedTimeDimension;
       protected IDimension _fakedConcentrationDimension;
       protected IDimension _fakedErrorDimension;
@@ -53,20 +53,20 @@ namespace OSPSuite.Presentation.Importer.Services
          _fakedConcentrationDimension = A.Fake<IDimension>();
          _fakedErrorDimension = A.Fake<IDimension>();
          _fakedDimensionFactory = A.Fake<IDimensionFactory>();
-         _basicFormat = A.Fake<UnformattedData>();
+         _basicFormat = A.Fake<DataSheet>();
          _container = A.Fake<IContainer>();
          _dialogCreator = A.Fake<IDialogCreator>();
          var dataFormat = A.Fake<IDataFormat>();
-         _columnInfos = new List<ColumnInfo>()
+         _columnInfos = new ColumnInfoCache
          {
             new ColumnInfo() { DisplayName = "Time" },
             new ColumnInfo() { DisplayName = "Concentration" },
             new ColumnInfo() { DisplayName = "Error" }
          };
 
-         _columnInfos.First(x => x.DisplayName == "Time").SupportedDimensions.Add(_fakedTimeDimension);
-         _columnInfos.First(x => x.DisplayName == "Concentration").SupportedDimensions.Add(_fakedConcentrationDimension);
-         _columnInfos.First(x => x.DisplayName == "Error").SupportedDimensions.Add(_fakedErrorDimension);
+         _columnInfos["Time"].SupportedDimensions.Add(_fakedTimeDimension);
+         _columnInfos["Concentration"].SupportedDimensions.Add(_fakedConcentrationDimension);
+         _columnInfos["Error"].SupportedDimensions.Add(_fakedErrorDimension);
 
          A.CallTo(() => dataFormat.SetParameters(_basicFormat, _columnInfos, null)).Returns(1);
          A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() {dataFormat});
@@ -216,12 +216,12 @@ namespace OSPSuite.Presentation.Importer.Services
 
    public abstract class ConcernForImporter2 : ContextSpecification<OSPSuite.Infrastructure.Import.Services.Importer>
    {
-      protected IUnformattedData _basicFormat;
+      protected DataSheet _basicFormat;
       protected IContainer _container;
       protected IDataSourceFileParser _parser;
       protected IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       protected IDialogCreator _dialogCreator;
-      protected IReadOnlyList<ColumnInfo> _columnInfos;
+      protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected IDimension _fakedTimeDimension;
       protected IDimension _fakedConcentrationDimension;
@@ -238,7 +238,7 @@ namespace OSPSuite.Presentation.Importer.Services
          _dialogCreator = A.Fake<IDialogCreator>();
          _fakedDimensionFactory = A.Fake<IDimensionFactory>();
          var dataFormat = A.Fake<IDataFormat>();
-         _columnInfos = new List<ColumnInfo>()
+         _columnInfos = new ColumnInfoCache()
          {
             new ColumnInfo() { DisplayName = "Time" },
             new ColumnInfo() { DisplayName = "Concentration" },
@@ -254,9 +254,9 @@ namespace OSPSuite.Presentation.Importer.Services
             new MetaDataCategory() {Name = "Route"}
          };
 
-         _columnInfos.First(x => x.DisplayName == "Time").SupportedDimensions.Add(_fakedTimeDimension);
-         _columnInfos.First(x => x.DisplayName == "Concentration").SupportedDimensions.Add(_fakedConcentrationDimension);
-         _columnInfos.First(x => x.DisplayName == "Error").SupportedDimensions.Add(_fakedErrorDimension);
+         _columnInfos["Time"].SupportedDimensions.Add(_fakedTimeDimension);
+         _columnInfos["Concentration"].SupportedDimensions.Add(_fakedConcentrationDimension);
+         _columnInfos["Error"].SupportedDimensions.Add(_fakedErrorDimension);
 
          A.CallTo(() => _fakedTimeDimension.HasUnit("min")).Returns(true);
          A.CallTo(() => _fakedConcentrationDimension.HasUnit("pmol/l")).Returns(true);
@@ -274,7 +274,7 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       protected override void Because()
       {
-         _basicFormat = new TestUnformattedData
+         _basicFormat = new TestDataSheet
          (
             new Cache<string, ColumnDescription>()
             {
@@ -310,7 +310,7 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       protected override void Because()
       {
-         _basicFormat = new TestUnformattedData
+         _basicFormat = new TestDataSheet
          (
             new Cache<string, ColumnDescription>()
             {
@@ -363,7 +363,7 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       protected override void Because()
       {
-         _basicFormat = new TestUnformattedData
+         _basicFormat = new TestDataSheet
          (
             new Cache<string, ColumnDescription>()
             {
@@ -412,7 +412,7 @@ namespace OSPSuite.Presentation.Importer.Services
    {
       protected override void Because()
       {
-         _basicFormat = new TestUnformattedData
+         _basicFormat = new TestDataSheet
          (
             new Cache<string, ColumnDescription>()
             {
@@ -448,4 +448,30 @@ namespace OSPSuite.Presentation.Importer.Services
          (formats.First().Parameters.First(parameter => parameter.ColumnName == "Time [invalidUnit]") as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo(UnitDescription.InvalidUnit);
       }
    }
+
+
+   public class When_checking_missing_mapping_for_empty_column : ConcernForImporter2
+   {
+      private IEnumerable<DataFormatParameter> _parameterList;
+      protected override void Because()
+      {
+         _parameterList = new List<DataFormatParameter>
+            {
+               new MappingDataFormatParameter("time  [h]",
+                  new Column() { Name = "Time", Dimension = _fakedTimeDimension, Unit = new UnitDescription() }),
+               new MappingDataFormatParameter("conc  [mg/l]",
+                  new Column()
+                  {
+                     Name = "Concentration", Dimension = _fakedConcentrationDimension, Unit = new UnitDescription("mg/l")
+                  })
+            };
+      }
+
+      [TestCase]
+      public void the_invalid_unit_is_detected()
+      {
+         sut.CheckWhetherAllDataColumnsAreMapped(_columnInfos, _parameterList).MissingUnit.First().ShouldBeEqualTo("Time");
+      }
+   }
+
 }

@@ -8,6 +8,7 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
    public class VariationData : IWithName
    {
       public string Name { get; set; }
+
       public IReadOnlyList<double> DefaultValues { get; set; }
 
       public int DefaultVariationId => _variationValues.Count;
@@ -60,16 +61,17 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
          dataTable.Rows.Add(row);
       }
 
-      public void AddVariationValues(string parameterName, IReadOnlyList<IReadOnlyList<double>> variations)
+      public void AddVariationValues(string parameterName, int parameterIndex,  IReadOnlyList<IReadOnlyList<double>> variations)
       {
-         variations.Each(v =>
+         variations.Each(variation =>
          {
-            var parameterVariation = new ParameterVariation
-            {
-               ParameterName = parameterName,
-               Variation = v,
-               VariationId = _variationValues.Count
-            };
+            //The id is the current index in the variation array
+            var variationId = _variationValues.Count;
+            var parameterVariation = new ParameterVariation(
+               parameterName,
+               parameterIndex,
+               variationId,
+               variation);
 
             AddVariation(parameterVariation);
          });
@@ -81,5 +83,9 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
       }
 
       public virtual IReadOnlyList<ParameterVariation> VariationsFor(string parameterName) => _variationValues.Where(x => string.Equals(x.ParameterName, parameterName)).ToList();
+
+      public virtual IReadOnlyList<ParameterVariation> AllVariations => _variationValues;
+
+
    }
 }

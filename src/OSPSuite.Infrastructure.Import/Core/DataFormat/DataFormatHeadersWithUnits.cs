@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Infrastructure.Import.Services;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 {
@@ -15,9 +16,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       public override string Description { get; } = _description;
 
-      protected override string ExtractLloq(string description, IUnformattedData data, List<string> keys, ref double rank)
+      protected override string ExtractLloq(string description, DataSheet dataSheet, List<string> keys, ref double rank)
       {
-         if (data.GetColumn(description).Any(element => element.Trim().StartsWith("<")))
+         if (dataSheet.GetColumn(description).Any(element => element.Trim().StartsWith("<")))
          {
             rank++;
          }
@@ -25,18 +26,17 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          return null;
       }
 
-      protected override UnitDescription ExtractUnits(string description, IUnformattedData data, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
+      protected override UnitDescription ExtractUnits(string description, DataSheet dataSheet, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
       {
-         var units = GetLastBracketsOfString(description);
+         var (_, unit) = UnitExtractor.ExtractNameAndUnit(description);
          
-         if (string.IsNullOrEmpty(units))
+         if (string.IsNullOrEmpty(unit))
             return new UnitDescription();
 
-         var unit = GetAndValidateUnitFromBrackets(units, supportedDimensions);
-         if (unit != UnitDescription.InvalidUnit)
-         {
+         unit = ValidateUnit(unit, supportedDimensions);
+         if (unit != UnitDescription.InvalidUnit) 
             rank++;
-         }
+
          return new UnitDescription(unit);
       }
    }

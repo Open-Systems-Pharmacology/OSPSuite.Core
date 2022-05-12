@@ -20,8 +20,8 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         sut.AddVariationValues("P0", new List<IReadOnlyList<double>> {new List<double> {10d, 20d}});
-         sut.AddVariationValues("P1", new List<IReadOnlyList<double>> {new List<double> {1d, 2d}, new List<double> {3d, 4}});
+         sut.AddVariationValues("P0", 0,  new List<IReadOnlyList<double>> {new List<double> {10d, 20d}});
+         sut.AddVariationValues("P1", 1, new List<IReadOnlyList<double>> {new List<double> {1d, 2d}, new List<double> {3d, 4}});
       }
 
       protected override void Because()
@@ -34,10 +34,12 @@ namespace OSPSuite.Core.Domain
       {
          _result.Count.ShouldBeEqualTo(2);
          _result[0].ParameterName.ShouldBeEqualTo("P1");
+         _result[0].ParameterIndex.ShouldBeEqualTo(1);
          _result[0].VariationId.ShouldBeEqualTo(1);
          _result[0].Variation.ShouldOnlyContainInOrder(1d, 2d);
 
          _result[1].ParameterName.ShouldBeEqualTo("P1");
+         _result[1].ParameterIndex.ShouldBeEqualTo(1);
          _result[1].VariationId.ShouldBeEqualTo(2);
          _result[1].Variation.ShouldOnlyContainInOrder(3d, 4d);
       }

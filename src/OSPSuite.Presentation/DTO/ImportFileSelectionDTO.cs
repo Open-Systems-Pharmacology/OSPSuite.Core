@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
+using DevExpress.Utils.Svg;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Validation;
-using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Presentation.DTO
 {
@@ -27,7 +27,7 @@ namespace OSPSuite.Presentation.DTO
       /// </summary>
       public virtual string FilePath
       {
-         get { return _filePath; }
+         get => _filePath;
          set
          {
             _filePath = value;
@@ -38,14 +38,11 @@ namespace OSPSuite.Presentation.DTO
          }
       }
 
-      public bool FileDefined
-      {
-         get { return !string.IsNullOrEmpty(FilePath); }
-      }
+      public bool FileDefined => !string.IsNullOrEmpty(FilePath);
 
       public IEnumerable<string> Messages
       {
-         get { return _messages; }
+         get => _messages;
          set
          {
             _messages = value;
@@ -55,7 +52,7 @@ namespace OSPSuite.Presentation.DTO
 
       public NotificationType Status
       {
-         get { return _status; }
+         get => _status;
          set
          {
             _status = value;
@@ -63,17 +60,11 @@ namespace OSPSuite.Presentation.DTO
          }
       }
 
-      public string Message
-      {
-         get { return Messages.ToString("\n"); }
-      }
+      public string Message => Messages.ToString("\n");
 
-      public Image Image
-      {
-         get { return imageFrom(Status); }
-      }
+      public ApplicationIcon Image => imageFrom(Status);
 
-      private Image imageFrom(NotificationType status)
+      private ApplicationIcon imageFrom(NotificationType status)
       {
          switch (status)
          {
@@ -86,32 +77,20 @@ namespace OSPSuite.Presentation.DTO
             case NotificationType.None:
                return ApplicationIcons.Help;
             default:
-               throw new ArgumentOutOfRangeException("status");
+               throw new ArgumentOutOfRangeException(nameof(status));
          }
       }
 
       private static class AllRules
       {
-         private static IBusinessRule fileExists
-         {
-            get { return GenericRules.FileExists<ImportFileSelectionDTO>(x => x.FilePath); }
-         }
+         private static IBusinessRule fileExists { get; } = GenericRules.FileExists<ImportFileSelectionDTO>(x => x.FilePath);
 
-         private static IBusinessRule fileNotEmpty
-         {
-            get { return GenericRules.NonEmptyRule<ImportFileSelectionDTO>(x => x.FilePath); }
-         }
+         private static IBusinessRule fileNotEmpty { get; } = GenericRules.NonEmptyRule<ImportFileSelectionDTO>(x => x.FilePath);
 
-         private static IBusinessRule statusIsNotError
-         {
-            get
-            {
-               return CreateRule.For<ImportFileSelectionDTO>()
-                  .Property(item => item.Status)
-                  .WithRule((item, status) => status != NotificationType.Error)
-                  .WithError((item, status) => item.Message);
-            }
-         }
+         private static IBusinessRule statusIsNotError { get; } = CreateRule.For<ImportFileSelectionDTO>()
+            .Property(item => item.Status)
+            .WithRule((item, status) => status != NotificationType.Error)
+            .WithError((item, status) => item.Message);
 
          internal static IEnumerable<IBusinessRule> All()
          {

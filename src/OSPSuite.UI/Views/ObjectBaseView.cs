@@ -32,7 +32,7 @@ namespace OSPSuite.UI.Views
          set => layoutItemName.Text = value.FormatForLabel(checkCase: false);
          get => layoutItemName.Text;
       }
-
+      
       public void AttachPresenter(IObjectBasePresenter presenter)
       {
          //nothing to do here
@@ -94,7 +94,7 @@ namespace OSPSuite.UI.Views
       public override void InitializeResources()
       {
          base.InitializeResources();
-         Icon = ApplicationIcons.Rename;
+         ApplicationIcon = ApplicationIcons.Rename;
          layoutItemName.Text = Captions.Rename.FormatForLabel();
          layoutItemDescription.Text = Captions.Description.FormatForLabel();
       }

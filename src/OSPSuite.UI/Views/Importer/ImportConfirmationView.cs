@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using DevExpress.XtraEditors;
+using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Presenters.Importer;
@@ -20,10 +22,28 @@ namespace OSPSuite.UI.Views.Importer
    public partial class ImportConfirmationView : BaseUserControl, IImportConfirmationView
    {
       private IImportConfirmationPresenter _presenter;
+      private bool _selectingDataSetsEnabled = true;
       private List<string> _namingConventionOptions = new List<string>();
       public string SelectedSeparator
       {
          get => separatorComboBoxEdit.SelectedText;
+      }
+
+      public bool SelectingDataSetsEnabled
+      {
+         set
+         {
+            _selectingDataSetsEnabled = value;
+            importButton.Enabled = _selectingDataSetsEnabled;
+            namesListBox.SelectionMode = _selectingDataSetsEnabled ? SelectionMode.One : SelectionMode.None;
+            layoutControlItemError.Visibility = _selectingDataSetsEnabled ? LayoutVisibility.Never : LayoutVisibility.Always;
+         }
+         get => _selectingDataSetsEnabled;
+      }
+
+      public void SetErrorMessage(string errorMessage)
+      {
+         labelControlError.Text = errorMessage;
       }
 
       public ImportConfirmationView()

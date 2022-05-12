@@ -9,27 +9,65 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
    {
       private readonly List<PKParameterSensitivity> _allPKParameterSensitivities = new List<PKParameterSensitivity>();
 
+      /// <summary>
+      ///    This property won't be serialized
+      /// </summary>
+      private readonly List<OutputParameterSensitivity> _allOutputParameterSensitivities = new List<OutputParameterSensitivity>();
+
       public virtual IReadOnlyList<PKParameterSensitivity> AllPKParameterSensitivities => _allPKParameterSensitivities;
 
-      public virtual void AddPKParameterSensitivity(PKParameterSensitivity parameterSensitivity)
-      {
-         _allPKParameterSensitivities.Add(parameterSensitivity);
-      }
+      public virtual IReadOnlyList<OutputParameterSensitivity> AllOutputParameterSensitivities => _allOutputParameterSensitivities;
 
-      public IEnumerable<PKParameterSensitivity> AllFor(string pkParameterName, string outputPath)
+      public virtual void AddPKParameterSensitivity(PKParameterSensitivity pkParameterSensitivity) => _allPKParameterSensitivities.Add(pkParameterSensitivity);
+
+      public virtual void AddOutputParameterSensitivity(OutputParameterSensitivity outputParameterSensitivity) => _allOutputParameterSensitivities.Add(outputParameterSensitivity);
+
+      public IEnumerable<PKParameterSensitivity> AllPKParameterSensitivitiesFor(string pkParameterName, string outputPath)
       {
          return _allPKParameterSensitivities.Where(
             x => string.Equals(x.QuantityPath, outputPath) && string.Equals(x.PKParameterName, pkParameterName));
       }
 
-      public PKParameterSensitivity PKParameterSensitivityFor(string pkParameterName, string outputPath, string parameterName)
+      public IEnumerable<OutputParameterSensitivity> AllOutputParameterSensitivitiesBySensitivityParameterName(string outputPath, string sensitivityParameterName)
       {
-         return AllFor(pkParameterName, outputPath).Find(x => string.Equals(parameterName, x.ParameterName));
+         return _allOutputParameterSensitivities.Where(
+            x => string.Equals(x.OutputPath, outputPath) && string.Equals(x.SensitivityParameterName, sensitivityParameterName));
       }
 
-      public double PKParameterSensitivityValueFor(string pkParameterName, string outputPath, string parameterName)
+      public IEnumerable<OutputParameterSensitivity> AllOutputParameterSensitivitiesByParameterPath(string outputPath, string parameterPath)
       {
-         return PKParameterSensitivityFor(pkParameterName, outputPath, parameterName)?.Value ?? double.NaN;
+         return _allOutputParameterSensitivities.Where(
+            x => string.Equals(x.OutputPath, outputPath) && string.Equals(x.ParameterPath, parameterPath));
+      }
+
+      public PKParameterSensitivity PKParameterSensitivityBySensitivityParameterName(string pkParameterName, string outputPath, string sensitivityParameterName)
+      {
+         return AllPKParameterSensitivitiesFor(pkParameterName, outputPath).Find(x => string.Equals(sensitivityParameterName, x.ParameterName));
+      }
+
+      public PKParameterSensitivity PKParameterSensitivityByParameterPath(string pkParameterName, string outputPath, string parameterPath)
+      {
+         return AllPKParameterSensitivitiesFor(pkParameterName, outputPath).Find(x => string.Equals(parameterPath, x.ParameterPath));
+      }
+
+      public OutputParameterSensitivity[] OutputParameterSensitivitiesBySensitivityParameterName(string outputPath, string sensitivityParameterName)
+      {
+         return AllOutputParameterSensitivitiesBySensitivityParameterName(outputPath, sensitivityParameterName).ToArray();
+      }
+
+      public OutputParameterSensitivity[] OutputParameterSensitivitiesByParameterPath(string outputPath, string quantityPath)
+      {
+         return AllOutputParameterSensitivitiesByParameterPath(outputPath, quantityPath).ToArray();
+      }
+
+      public double PKParameterSensitivityValueBySensitivityParameterName(string pkParameterName, string outputPath, string sensitivityParameterName)
+      {
+         return PKParameterSensitivityBySensitivityParameterName(pkParameterName, outputPath, sensitivityParameterName)?.Value ?? double.NaN;
+      }
+
+      public double PKParameterSensitivityValueByParameterPath(string pkParameterName, string outputPath, string parameterPath)
+      {
+         return PKParameterSensitivityByParameterPath(pkParameterName, outputPath, parameterPath)?.Value ?? double.NaN;
       }
 
       public void UpdateSensitivityParameterName(string oldParameterName, string newParameterName)
@@ -50,7 +88,7 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
 
       private IEnumerable<PKParameterSensitivity> allPKParametersForSelectionWithDefinedSensitivity(string pkParameterName, string outputPath)
       {
-         return AllFor(pkParameterName, outputPath).Where(x => !double.IsNaN(x.Value));
+         return AllPKParameterSensitivitiesFor(pkParameterName, outputPath).Where(x => !double.IsNaN(x.Value));
       }
 
       private static IEnumerable<PKParameterSensitivity> sensitivitiesUpToTotalSensitivity(IReadOnlyList<PKParameterSensitivity> orderedSensitivities,
@@ -76,6 +114,8 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
       public string[] AllPKParameterNames => _allPKParameterSensitivities.Select(x => x.PKParameterName).Distinct().ToArray();
 
       public string[] AllQuantityPaths => _allPKParameterSensitivities.Select(x => x.QuantityPath).Distinct().ToArray();
+
+      public string[] AllParameterPaths => _allPKParameterSensitivities.Select(x => x.ParameterPath).Distinct().ToArray();
 
       public virtual int Count => _allPKParameterSensitivities.Count;
    }

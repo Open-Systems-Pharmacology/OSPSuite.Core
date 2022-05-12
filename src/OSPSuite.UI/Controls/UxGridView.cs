@@ -441,21 +441,21 @@ namespace OSPSuite.UI.Controls
 
       private void addCopyMenuItemsForRowSelect(GridViewMenu gridViewMenu)
       {
-         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard(), ApplicationIcons.CopySelection) {Shortcut = Shortcut.CtrlC};
+         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) {Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection};
          gridViewMenu.Items.Insert(0, copyRowMenu);
       }
 
       private void addCopyMenuItemsForCellSelect(GridViewMenu gridViewMenu)
       {
-         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard(), ApplicationIcons.CopySelection);
-         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, (o, args) => processSelectiveCopyToClipboard(), ApplicationIcons.CopySelection) {Shortcut = Shortcut.CtrlC};
+         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) {SvgImage = ApplicationIcons.CopySelection};
+         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, (o, args) => processSelectiveCopyToClipboard()) {Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection};
          gridViewMenu.Items.Insert(0, copyRowMenu);
          gridViewMenu.Items.Insert(0, copySelectionMenu);
       }
 
       private void addCommonCopyMenuItems(GridViewMenu gridViewMenu)
       {
-         var copyAllMenu = new DXMenuItem(Captions.CopyTable, (o, args) => copyEntireGridToClipboard(), ApplicationIcons.Copy) {Shortcut = Shortcut.CtrlShiftC};
+         var copyAllMenu = new DXMenuItem(Captions.CopyTable, (o, args) => copyEntireGridToClipboard()) {Shortcut = Shortcut.CtrlShiftC, SvgImage = ApplicationIcons.Copy};
          gridViewMenu.Items.Insert(0, copyAllMenu);
       }
 

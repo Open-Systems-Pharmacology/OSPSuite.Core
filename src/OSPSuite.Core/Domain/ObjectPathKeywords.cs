@@ -36,7 +36,7 @@ namespace OSPSuite.Core.Domain
       public static readonly string REALIZATION = addKeyword("REALIZATION");
 
       /// <summary>
-      ///    String representing a reference to  the transporter molecule in a transpot process
+      ///    String representing a reference to  the transporter molecule in a transport process
       /// </summary>
       public static readonly string TRANSPORTER = addKeyword("TRANSPORTER");
 
@@ -54,6 +54,12 @@ namespace OSPSuite.Core.Domain
       ///    String representing a reference to the global transport process
       /// </summary>
       public static readonly string TRANSPORT = addKeyword("TRANSPORT");
+
+      /// <summary>
+      ///    String representing a reference to all floating molecules. The entry will be duplicated.
+      ///    This is typically used in event assignment to change all floating molecules at once
+      /// </summary>
+      public static readonly string ALL_FLOATING_MOLECULES = addKeyword("ALL_FLOATING_MOLECULES");
 
       private static string addKeyword(string keyword)
       {

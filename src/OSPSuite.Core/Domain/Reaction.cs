@@ -50,9 +50,9 @@ namespace OSPSuite.Core.Domain
 
    public class Reaction : Process, IReaction
    {
-      private readonly IList<IReactionPartner> _educts;
-      private readonly IList<IReactionPartner> _products;
-      private readonly IList<string> _modifier;
+      private readonly List<IReactionPartner> _educts;
+      private readonly List<IReactionPartner> _products;
+      private readonly List<string> _modifier;
 
       public Reaction()
       {
@@ -63,10 +63,7 @@ namespace OSPSuite.Core.Domain
          Icon = IconNames.REACTION;
       }
 
-      public IEnumerable<IReactionPartner> Educts
-      {
-         get { return _educts; }
-      }
+      public IEnumerable<IReactionPartner> Educts => _educts;
 
       public void AddModifier(string modifierName)
       {
@@ -77,29 +74,17 @@ namespace OSPSuite.Core.Domain
       ///    Adds the educt to the reactions educt list.
       /// </summary>
       /// <param name="newEduct">The new educt.</param>
-      public void AddEduct(IReactionPartner newEduct)
-      {
-         _educts.Add(newEduct);
-      }
+      public void AddEduct(IReactionPartner newEduct) => _educts.Add(newEduct);
 
-      public IEnumerable<IReactionPartner> Products
-      {
-         get { return _products; }
-      }
+      public IEnumerable<IReactionPartner> Products => _products;
 
-      public IEnumerable<string> ModifierNames
-      {
-         get { return _modifier; }
-      }
+      public IEnumerable<string> ModifierNames => _modifier;
 
       /// <summary>
       ///    Adds the product to the reactions product list.
       /// </summary>
       /// <param name="newProduct">The new product.</param>
-      public void AddProduct(IReactionPartner newProduct)
-      {
-         _products.Add(newProduct);
-      }
+      public void AddProduct(IReactionPartner newProduct) => _products.Add(newProduct);
 
       public override bool Uses(IMoleculeAmount amount)
       {
