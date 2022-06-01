@@ -47,7 +47,7 @@ namespace OSPSuite.UI.Controls
 
       private void onFieldValueDisplayText(PivotFieldDisplayTextEventArgs e)
       {
-         if (e.Field != ParameterField) return;
+         if (e == null || e.Value  == null || e.Field != ParameterField) return;
          e.DisplayText = _parameterDisplayFunc(e.Value.ToString());
       }
 
