@@ -47,6 +47,8 @@ namespace OSPSuite.UI.Controls
 
       private void onFieldValueDisplayText(PivotFieldDisplayTextEventArgs e)
       {
+         //added null checks to prevent the editor to crash when editting the view
+         //e.g. GlobalPKAnalysisView@PKSim
          if (e == null || e.Value  == null || e.Field != ParameterField) return;
          e.DisplayText = _parameterDisplayFunc(e.Value.ToString());
       }
