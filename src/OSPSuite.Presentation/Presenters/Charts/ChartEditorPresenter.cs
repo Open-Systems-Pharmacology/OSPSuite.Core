@@ -186,6 +186,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       void Refresh();
 
+      /// <summary>
+      ///    sets the Group Values (Dictionary Key) in the DataBrowser Grid for which the group title should be
+      ///    replaced by the given Dictionary Value. 
+      /// </summary>
       void SetGroupRowNamingReplacements(Dictionary<string, string> groupingNamesReplacementDictionary);
    }
 
