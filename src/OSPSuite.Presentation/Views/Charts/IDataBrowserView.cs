@@ -16,5 +16,10 @@ namespace OSPSuite.Presentation.Views.Charts
       /// Returns all selected <see cref="DataColumnDTO"/> and their descendants.
       /// </summary>
       IReadOnlyList<DataColumnDTO> SelectedDescendantColumns { get; }
+
+      /// <summary>
+      /// sets the group row format of the gridView to the specified string.
+      /// </summary>
+      void SetGroupRowFormat(string format);
    }
 }

@@ -97,6 +97,10 @@ namespace OSPSuite.UI.Views.Charts
       public IReadOnlyList<DataColumnDTO> SelectedColumns => dtoListFrom(gridView.GetSelectedRows());
 
       public IReadOnlyList<DataColumnDTO> SelectedDescendantColumns => selectDescendentDataRows(gridView.GetSelectedRows());
+      public void SetGroupRowFormat(string format)
+      {
+         gridView.GroupFormat = format;
+      }
 
       private IReadOnlyList<DataColumnDTO> dtoListFrom(IEnumerable<int> rowHandles) => rowHandles.Select(_gridViewBinder.ElementAt).ToList();
 

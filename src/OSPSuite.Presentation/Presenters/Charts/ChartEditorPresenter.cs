@@ -57,6 +57,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void AddDataRepositories(IEnumerable<DataRepository> dataRepositories);
 
       /// <summary>
+      /// sets the group row format in the gridView of the DataBrowserView to the specified string.
+      /// </summary>
+      void SetGroupRowFormat(string format);
+
+      /// <summary>
       ///    Returns all DataColumns used in the DataBrowser
       /// </summary>
       IReadOnlyList<DataColumn> AllDataColumns { get; }
@@ -467,6 +472,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _dataBrowserPresenter.AddDataColumns(allColumnsToAdd);
 
          updateUsedColumns();
+      }
+
+      public void SetGroupRowFormat(string format)
+      {
+         _dataBrowserPresenter.SetGroupRowFormat(format);
       }
 
       private bool hasColumn(DataColumn dataColumn) => _dataBrowserPresenter.ContainsDataColumn(dataColumn);

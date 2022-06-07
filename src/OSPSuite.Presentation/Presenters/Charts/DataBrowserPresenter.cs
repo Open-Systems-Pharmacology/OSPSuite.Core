@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NPOI.XSSF.UserModel;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -84,6 +83,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Returns all the DataColumns for the curves that are visible in the chart
       /// </summary>
       IReadOnlyList<DataColumn> GetAllUsedDataColumns();
+
+      /// <summary>
+      /// sets the group row format of the gridView to the specified string.
+      /// </summary>
+      void SetGroupRowFormat(string format);
    }
 
    public class DataBrowserPresenter : PresenterWithColumnSettings<IDataBrowserView, IDataBrowserPresenter>, IDataBrowserPresenter
@@ -165,6 +169,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public IReadOnlyList<DataColumn> GetAllUsedDataColumns()
       {
          return _dataColumnDTOCache.KeyValues.Where(x => x.Value.Used).Select(x => x.Key).ToList();
+      }
+
+      public void SetGroupRowFormat(string format)
+      {
+         _view.SetGroupRowFormat(format);
       }
 
       public void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used)

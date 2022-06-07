@@ -1289,6 +1289,11 @@ namespace OSPSuite.Assets
          {
             public static string CurrentValue = "<Current value>";
          }
+
+         public static class GroupRowFormat
+         {
+            public static string HideColumnName = "[#image]{1} {2}";
+         }
       }
    }
 

@@ -33,7 +33,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.SetAnalysisView(chartPresenterContext.EditorAndDisplayPresenter.BaseView);
          _view.ApplicationIcon = icon;
          PresentationKey = presentationKey;
-         PostEditorLayout = showSimulationColumn;
+         PostEditorLayout = showSimulationAndOriginColumns;
          AddAllButtons();
       }
 
@@ -74,15 +74,23 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       protected override void ConfigureColumns()
       {
          base.ConfigureColumns();
-         showSimulationColumn();
+         showSimulationAndOriginColumns();
       }
 
-      private void showSimulationColumn()
+      private void showSimulationAndOriginColumns()
       {
+         ChartEditorPresenter.SetGroupRowFormat(Captions.Chart.GroupRowFormat.HideColumnName);
+         
          var simulationColumnSettings = Column(BrowserColumns.Simulation);
          simulationColumnSettings.Visible = true;
          simulationColumnSettings.VisibleIndex = 0;
          ChartEditorPresenter.ApplyColumnSettings(simulationColumnSettings);
+
+         var originColumnSettings = Column(BrowserColumns.Origin);
+         originColumnSettings.Visible = false;
+         originColumnSettings.GroupIndex = 1;
+         originColumnSettings.Caption = "Data Origin";
+         ChartEditorPresenter.ApplyColumnSettings(originColumnSettings);
       }
 
       private void updateCacheColor()
