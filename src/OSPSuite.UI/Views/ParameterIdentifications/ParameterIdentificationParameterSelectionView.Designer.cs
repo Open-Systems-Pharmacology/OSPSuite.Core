@@ -68,7 +68,6 @@
          // 
          // layoutControl
          // 
-         this.layoutControl.AllowCustomization = false;
          this.layoutControl.Controls.Add(this.btnAddIdentificationParameter);
          this.layoutControl.Controls.Add(this.btnAddLinkedParameter);
          this.layoutControl.Controls.Add(this.panelLinkedParameters);
@@ -76,56 +75,50 @@
          this.layoutControl.Controls.Add(this.panelSimulationParameters);
          this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.layoutControl.Location = new System.Drawing.Point(0, 0);
-         this.layoutControl.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
          this.layoutControl.Name = "layoutControl";
          this.layoutControl.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(1226, 472, 250, 350);
          this.layoutControl.Root = this.layoutControlGroup;
-         this.layoutControl.Size = new System.Drawing.Size(2932, 1779);
+         this.layoutControl.Size = new System.Drawing.Size(1173, 701);
          this.layoutControl.TabIndex = 0;
          this.layoutControl.Text = "layoutControl1";
          // 
          // btnAddIdentificationParameter
          // 
-         this.btnAddIdentificationParameter.Location = new System.Drawing.Point(932, 162);
-         this.btnAddIdentificationParameter.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+         this.btnAddIdentificationParameter.Location = new System.Drawing.Point(368, 64);
          this.btnAddIdentificationParameter.Name = "btnAddIdentificationParameter";
-         this.btnAddIdentificationParameter.Size = new System.Drawing.Size(397, 54);
+         this.btnAddIdentificationParameter.Size = new System.Drawing.Size(160, 22);
          this.btnAddIdentificationParameter.StyleController = this.layoutControl;
          this.btnAddIdentificationParameter.TabIndex = 10;
          this.btnAddIdentificationParameter.Text = "btnAddIdentificationParameter";
          // 
          // btnAddLinkedParameter
          // 
-         this.btnAddLinkedParameter.Location = new System.Drawing.Point(932, 1034);
-         this.btnAddLinkedParameter.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+         this.btnAddLinkedParameter.Location = new System.Drawing.Point(368, 403);
          this.btnAddLinkedParameter.Name = "btnAddLinkedParameter";
-         this.btnAddLinkedParameter.Size = new System.Drawing.Size(395, 54);
+         this.btnAddLinkedParameter.Size = new System.Drawing.Size(159, 22);
          this.btnAddLinkedParameter.StyleController = this.layoutControl;
          this.btnAddLinkedParameter.TabIndex = 9;
          this.btnAddLinkedParameter.Text = "btnAddLinkedParameter";
          // 
          // panelLinkedParameters
          // 
-         this.panelLinkedParameters.Location = new System.Drawing.Point(1337, 957);
-         this.panelLinkedParameters.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+         this.panelLinkedParameters.Location = new System.Drawing.Point(531, 372);
          this.panelLinkedParameters.Name = "panelLinkedParameters";
-         this.panelLinkedParameters.Size = new System.Drawing.Size(1565, 792);
+         this.panelLinkedParameters.Size = new System.Drawing.Size(630, 317);
          this.panelLinkedParameters.TabIndex = 7;
          // 
          // panelIdentificationParameters
          // 
-         this.panelIdentificationParameters.Location = new System.Drawing.Point(1339, 71);
-         this.panelIdentificationParameters.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+         this.panelIdentificationParameters.Location = new System.Drawing.Point(532, 28);
          this.panelIdentificationParameters.Name = "panelIdentificationParameters";
-         this.panelIdentificationParameters.Size = new System.Drawing.Size(1563, 810);
+         this.panelIdentificationParameters.Size = new System.Drawing.Size(629, 319);
          this.panelIdentificationParameters.TabIndex = 6;
          // 
          // panelSimulationParameters
          // 
-         this.panelSimulationParameters.Location = new System.Drawing.Point(30, 30);
-         this.panelSimulationParameters.Margin = new System.Windows.Forms.Padding(8, 8, 8, 8);
+         this.panelSimulationParameters.Location = new System.Drawing.Point(12, 12);
          this.panelSimulationParameters.Name = "panelSimulationParameters";
-         this.panelSimulationParameters.Size = new System.Drawing.Size(867, 1719);
+         this.panelSimulationParameters.Size = new System.Drawing.Size(347, 677);
          this.panelSimulationParameters.TabIndex = 4;
          // 
          // layoutControlGroup
@@ -144,109 +137,109 @@
             this.emptySpaceItem4,
             this.splitterItem1,
             this.splitterItem2});
+         this.layoutControlGroup.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup.Name = "Root";
-         this.layoutControlGroup.Size = new System.Drawing.Size(2932, 1779);
+         this.layoutControlGroup.Size = new System.Drawing.Size(1173, 701);
          this.layoutControlGroup.TextVisible = false;
          // 
          // layoutItemIdentificationParameters
          // 
          this.layoutItemIdentificationParameters.Control = this.panelIdentificationParameters;
-         this.layoutItemIdentificationParameters.Location = new System.Drawing.Point(1309, 0);
+         this.layoutItemIdentificationParameters.Location = new System.Drawing.Point(520, 0);
          this.layoutItemIdentificationParameters.Name = "layoutItemIdentificationParameters";
-         this.layoutItemIdentificationParameters.Size = new System.Drawing.Size(1573, 861);
+         this.layoutItemIdentificationParameters.Size = new System.Drawing.Size(633, 339);
          this.layoutItemIdentificationParameters.TextLocation = DevExpress.Utils.Locations.Top;
-         this.layoutItemIdentificationParameters.TextSize = new System.Drawing.Size(418, 33);
+         this.layoutItemIdentificationParameters.TextSize = new System.Drawing.Size(170, 13);
          // 
          // layoutItemLinkedParameters
          // 
          this.layoutItemLinkedParameters.Control = this.panelLinkedParameters;
-         this.layoutItemLinkedParameters.Location = new System.Drawing.Point(1307, 886);
+         this.layoutItemLinkedParameters.Location = new System.Drawing.Point(519, 344);
          this.layoutItemLinkedParameters.Name = "layoutItemLinkedParameters";
-         this.layoutItemLinkedParameters.Size = new System.Drawing.Size(1575, 843);
+         this.layoutItemLinkedParameters.Size = new System.Drawing.Size(634, 337);
          this.layoutItemLinkedParameters.TextLocation = DevExpress.Utils.Locations.Top;
-         this.layoutItemLinkedParameters.TextSize = new System.Drawing.Size(418, 33);
+         this.layoutItemLinkedParameters.TextSize = new System.Drawing.Size(170, 13);
          // 
          // layoutItemAllParameters
          // 
          this.layoutItemAllParameters.Control = this.panelSimulationParameters;
          this.layoutItemAllParameters.Location = new System.Drawing.Point(0, 0);
          this.layoutItemAllParameters.Name = "layoutItemAllParameters";
-         this.layoutItemAllParameters.Size = new System.Drawing.Size(877, 1729);
+         this.layoutItemAllParameters.Size = new System.Drawing.Size(351, 681);
          this.layoutItemAllParameters.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemAllParameters.TextVisible = false;
          // 
          // layoutItemAddIdentificationParameter
          // 
          this.layoutItemAddIdentificationParameter.Control = this.btnAddIdentificationParameter;
-         this.layoutItemAddIdentificationParameter.Location = new System.Drawing.Point(902, 132);
+         this.layoutItemAddIdentificationParameter.Location = new System.Drawing.Point(356, 52);
          this.layoutItemAddIdentificationParameter.Name = "layoutItemAddIdentificationParameter";
-         this.layoutItemAddIdentificationParameter.Size = new System.Drawing.Size(407, 64);
+         this.layoutItemAddIdentificationParameter.Size = new System.Drawing.Size(164, 26);
          this.layoutItemAddIdentificationParameter.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemAddIdentificationParameter.TextVisible = false;
          // 
          // layoutItemAddLinkedParameter
          // 
          this.layoutItemAddLinkedParameter.Control = this.btnAddLinkedParameter;
-         this.layoutItemAddLinkedParameter.Location = new System.Drawing.Point(902, 1004);
+         this.layoutItemAddLinkedParameter.Location = new System.Drawing.Point(356, 391);
          this.layoutItemAddLinkedParameter.Name = "layoutItemAddLinkedParameter";
-         this.layoutItemAddLinkedParameter.Size = new System.Drawing.Size(405, 64);
+         this.layoutItemAddLinkedParameter.Size = new System.Drawing.Size(163, 26);
          this.layoutItemAddLinkedParameter.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemAddLinkedParameter.TextVisible = false;
          // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(902, 1068);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(356, 417);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(405, 661);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(163, 264);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // emptySpaceItem2
          // 
          this.emptySpaceItem2.AllowHotTrack = false;
-         this.emptySpaceItem2.Location = new System.Drawing.Point(902, 0);
+         this.emptySpaceItem2.Location = new System.Drawing.Point(356, 0);
          this.emptySpaceItem2.Name = "emptySpaceItem2";
-         this.emptySpaceItem2.Size = new System.Drawing.Size(407, 132);
+         this.emptySpaceItem2.Size = new System.Drawing.Size(164, 52);
          this.emptySpaceItem2.TextSize = new System.Drawing.Size(0, 0);
          // 
          // emptySpaceItem3
          // 
          this.emptySpaceItem3.AllowHotTrack = false;
-         this.emptySpaceItem3.Location = new System.Drawing.Point(902, 196);
+         this.emptySpaceItem3.Location = new System.Drawing.Point(356, 78);
          this.emptySpaceItem3.Name = "emptySpaceItem3";
-         this.emptySpaceItem3.Size = new System.Drawing.Size(407, 665);
+         this.emptySpaceItem3.Size = new System.Drawing.Size(164, 261);
          this.emptySpaceItem3.TextSize = new System.Drawing.Size(0, 0);
          // 
          // emptySpaceItem4
          // 
          this.emptySpaceItem4.AllowHotTrack = false;
-         this.emptySpaceItem4.Location = new System.Drawing.Point(902, 886);
+         this.emptySpaceItem4.Location = new System.Drawing.Point(356, 344);
          this.emptySpaceItem4.Name = "emptySpaceItem4";
-         this.emptySpaceItem4.Size = new System.Drawing.Size(405, 118);
+         this.emptySpaceItem4.Size = new System.Drawing.Size(163, 47);
          this.emptySpaceItem4.TextSize = new System.Drawing.Size(0, 0);
          // 
          // splitterItem1
          // 
          this.splitterItem1.AllowHotTrack = true;
-         this.splitterItem1.Location = new System.Drawing.Point(902, 861);
+         this.splitterItem1.Location = new System.Drawing.Point(356, 339);
          this.splitterItem1.Name = "splitterItem1";
-         this.splitterItem1.Size = new System.Drawing.Size(1980, 25);
+         this.splitterItem1.Size = new System.Drawing.Size(797, 5);
          // 
          // splitterItem2
          // 
          this.splitterItem2.AllowHotTrack = true;
-         this.splitterItem2.Location = new System.Drawing.Point(877, 0);
+         this.splitterItem2.Location = new System.Drawing.Point(351, 0);
          this.splitterItem2.Name = "splitterItem2";
-         this.splitterItem2.Size = new System.Drawing.Size(25, 1729);
+         this.splitterItem2.Size = new System.Drawing.Size(5, 681);
          // 
          // ParameterIdentificationParameterSelectionView
          // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
+         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.layoutControl);
-         this.Margin = new System.Windows.Forms.Padding(20, 20, 20, 20);
          this.Name = "ParameterIdentificationParameterSelectionView";
-         this.Size = new System.Drawing.Size(2932, 1779);
+         this.Size = new System.Drawing.Size(1173, 701);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
          this.layoutControl.ResumeLayout(false);
@@ -270,6 +263,8 @@
       }
 
       #endregion
+
+      private DevExpress.XtraLayout.LayoutControl layoutControl;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
       private DevExpress.XtraEditors.PanelControl panelSimulationParameters;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemAllParameters;
@@ -287,6 +282,5 @@
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem4;
       private DevExpress.XtraLayout.SplitterItem splitterItem1;
       private DevExpress.XtraLayout.SplitterItem splitterItem2;
-      private Controls.UxLayoutControl layoutControl;
    }
 }

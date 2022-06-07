@@ -33,12 +33,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.SetAnalysisView(chartPresenterContext.EditorAndDisplayPresenter.BaseView);
          _view.ApplicationIcon = icon;
          PresentationKey = presentationKey;
-         setReplacementGroupingStrings();
+         setReplacementGroupingStringsForParameterIdentification();
          PostEditorLayout = setColumnGroupingsAndVisibility;
          AddAllButtons();
       }
 
-      private void setReplacementGroupingStrings()
+      private void setReplacementGroupingStringsForParameterIdentification()
       {
          _chartPresenterContext.EditorPresenter.SetGroupRowNamingReplacements(new Dictionary<string, string>() { {"CalculationAuxiliary", "Simulation" }});
       }
