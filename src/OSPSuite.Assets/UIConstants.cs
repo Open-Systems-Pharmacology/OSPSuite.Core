@@ -1293,6 +1293,8 @@ namespace OSPSuite.Assets
          public static class GroupRowFormat
          {
             public static string HideColumnName = "[#image]{1} {2}";
+            public static string DataOrigin = "Data Origin";
+            public static string Simulation = "Simulation";
          }
       }
    }

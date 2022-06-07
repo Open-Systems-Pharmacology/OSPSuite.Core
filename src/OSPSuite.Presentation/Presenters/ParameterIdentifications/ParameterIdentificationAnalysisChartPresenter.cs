@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -15,20 +13,25 @@ using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
-   public abstract class ParameterIdentificationAnalysisChartPresenter<TChart, TView, TPresenter> : SimulationAnalysisChartPresenter<TChart, TView, TPresenter>, IParameterIdentificationAnalysisPresenter
+   public abstract class
+      ParameterIdentificationAnalysisChartPresenter<TChart, TView, TPresenter> : SimulationAnalysisChartPresenter<TChart, TView, TPresenter>,
+         IParameterIdentificationAnalysisPresenter
       where TChart : ChartWithObservedData, ISimulationAnalysis where
-         TView : class, IParameterIdentificationAnalysisView, IView<TPresenter> where TPresenter : ISimulationAnalysisPresenter
+      TView : class, IParameterIdentificationAnalysisView, IView<TPresenter> where TPresenter : ISimulationAnalysisPresenter
    {
       protected ParameterIdentification _parameterIdentification;
       private readonly Cache<string, Color> _colorCache = new Cache<string, Color>(onMissingKey: x => Color.Black);
       protected bool _isMultipleRun;
       protected CurveChartTemplate _chartTemplate;
 
-      protected ParameterIdentificationAnalysisChartPresenter(TView view, ChartPresenterContext chartPresenterContext,  ApplicationIcon icon, string presentationKey) :
-            base(view, chartPresenterContext)
+      protected ParameterIdentificationAnalysisChartPresenter(TView view, ChartPresenterContext chartPresenterContext, ApplicationIcon icon,
+         string presentationKey) :
+         base(view, chartPresenterContext)
       {
          _view.SetAnalysisView(chartPresenterContext.EditorAndDisplayPresenter.BaseView);
          _view.ApplicationIcon = icon;
@@ -40,7 +43,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private void setReplacementGroupingStringsForParameterIdentification()
       {
-         _chartPresenterContext.EditorPresenter.SetGroupRowNamingReplacements(new Dictionary<string, string>() { {"CalculationAuxiliary", "Simulation" }});
+         _chartPresenterContext.EditorPresenter.SetGroupRowNamingReplacements(new Dictionary<string, string>()
+            { { ColumnOrigins.CalculationAuxiliary.ToString(), Captions.Chart.GroupRowFormat.Simulation} });
       }
 
       public override void UpdateAnalysisBasedOn(IAnalysable analysable)
@@ -96,7 +100,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          var originColumnSettings = Column(BrowserColumns.Origin);
          originColumnSettings.Visible = false;
          originColumnSettings.GroupIndex = 1;
-         originColumnSettings.Caption = "Data Origin";
+         originColumnSettings.Caption = Captions.Chart.GroupRowFormat.DataOrigin;
          ChartEditorPresenter.ApplyColumnSettings(originColumnSettings);
       }
 
@@ -149,7 +153,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          Chart.AddCurvesFor(columns, NameForColumn, _chartPresenterContext.DimensionFactory, action);
       }
 
-      protected ParameterIdentificationRunResult RunResultWithBestError(IReadOnlyList<ParameterIdentificationRunResult> parameterIdentificationResults)
+      protected ParameterIdentificationRunResult RunResultWithBestError(
+         IReadOnlyList<ParameterIdentificationRunResult> parameterIdentificationResults)
       {
          return parameterIdentificationResults.MinimumBy(x => x.TotalError);
       }
@@ -180,7 +185,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          var outputPath = outputMappingsByOutput.Key;
          SelectColorForPath(outputPath);
 
-         AddDataRepositoriesToEditor(outputMappingsByOutput.Select(x=>x.WeightedObservedData.ObservedData));
+         AddDataRepositoriesToEditor(outputMappingsByOutput.Select(x => x.WeightedObservedData.ObservedData));
 
          AddCurvesFor(outputMappingsByOutput.SelectMany(x => x.WeightedObservedData.ObservedData.ObservationColumns()),
             (column, curve) =>
