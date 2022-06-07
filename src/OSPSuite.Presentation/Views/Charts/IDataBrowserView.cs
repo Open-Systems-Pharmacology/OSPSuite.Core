@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Presentation.Presenters.Charts;
 
 namespace OSPSuite.Presentation.Views.Charts
@@ -21,5 +22,7 @@ namespace OSPSuite.Presentation.Views.Charts
       /// sets the group row format of the gridView to the specified string.
       /// </summary>
       void SetGroupRowFormat(string format);
+
+      Dictionary<string, string> GroupingNamesReplacementDictionary { set; }
    }
 }

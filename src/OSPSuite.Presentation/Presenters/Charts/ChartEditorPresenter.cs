@@ -185,6 +185,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Refresh the presenter with all values and settings from the underlying <see cref="CurveChart" />
       /// </summary>
       void Refresh();
+
+      void SetGroupRowNamingReplacements(Dictionary<string, string> groupingNamesReplacementDictionary);
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -657,6 +659,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _curveSettingsPresenter.Refresh();
          _axisSettingsPresenter.Refresh();
          updateUsedColumns();
+      }
+
+      public void SetGroupRowNamingReplacements(Dictionary<string, string> groupingNamesReplacementDictionary)
+      {
+         _dataBrowserPresenter.GroupingNamesReplacementDictionary(groupingNamesReplacementDictionary);
       }
 
       private bool canHandle(ChartEvent chartEvent)

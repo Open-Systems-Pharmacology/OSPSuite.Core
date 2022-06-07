@@ -88,6 +88,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// sets the group row format of the gridView to the specified string.
       /// </summary>
       void SetGroupRowFormat(string format);
+
+      void GroupingNamesReplacementDictionary(Dictionary<string, string> groupingNamesReplacementDictionary);
    }
 
    public class DataBrowserPresenter : PresenterWithColumnSettings<IDataBrowserView, IDataBrowserPresenter>, IDataBrowserPresenter
@@ -174,6 +176,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void SetGroupRowFormat(string format)
       {
          _view.SetGroupRowFormat(format);
+      }
+
+    public void GroupingNamesReplacementDictionary(Dictionary<string, string> groupingNamesReplacementDictionary)
+      {
+         _view.GroupingNamesReplacementDictionary = groupingNamesReplacementDictionary;
       }
 
       public void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used)

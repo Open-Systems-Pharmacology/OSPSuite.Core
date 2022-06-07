@@ -33,8 +33,14 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.SetAnalysisView(chartPresenterContext.EditorAndDisplayPresenter.BaseView);
          _view.ApplicationIcon = icon;
          PresentationKey = presentationKey;
-         PostEditorLayout = showSimulationAndOriginColumns;
+         setReplacementGroupingStrings();
+         PostEditorLayout = setColumnGroupingsAndVisibility;
          AddAllButtons();
+      }
+
+      private void setReplacementGroupingStrings()
+      {
+         _chartPresenterContext.EditorPresenter.SetGroupRowNamingReplacements(new Dictionary<string, string>() { {"CalculationAuxiliary", "Simulation" }});
       }
 
       public override void UpdateAnalysisBasedOn(IAnalysable analysable)
@@ -74,23 +80,31 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       protected override void ConfigureColumns()
       {
          base.ConfigureColumns();
-         showSimulationAndOriginColumns();
+         setColumnGroupingsAndVisibility();
       }
 
-      private void showSimulationAndOriginColumns()
+      private void showSimulationColumn()
       {
-         ChartEditorPresenter.SetGroupRowFormat(Captions.Chart.GroupRowFormat.HideColumnName);
-         
          var simulationColumnSettings = Column(BrowserColumns.Simulation);
          simulationColumnSettings.Visible = true;
          simulationColumnSettings.VisibleIndex = 0;
          ChartEditorPresenter.ApplyColumnSettings(simulationColumnSettings);
+      }
 
+      private void groupByOriginColumn()
+      {
          var originColumnSettings = Column(BrowserColumns.Origin);
          originColumnSettings.Visible = false;
          originColumnSettings.GroupIndex = 1;
          originColumnSettings.Caption = "Data Origin";
          ChartEditorPresenter.ApplyColumnSettings(originColumnSettings);
+      }
+
+      private void setColumnGroupingsAndVisibility()
+      {
+         ChartEditorPresenter.SetGroupRowFormat(Captions.Chart.GroupRowFormat.HideColumnName);
+         showSimulationColumn();
+         groupByOriginColumn();
       }
 
       private void updateCacheColor()
