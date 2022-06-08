@@ -50,6 +50,7 @@ skip_commits:
 branches:
   only:
     - develop
+    - 1637-grouping-of-simulated-results
 
 test:
   assemblies:
