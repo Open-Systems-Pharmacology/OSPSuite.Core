@@ -88,12 +88,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// sets the group row format of the gridView to the specified string.
       /// </summary>
       void SetGroupRowFormat(string format);
-
-      /// <summary>
-      ///    sets the Group Values (Dictionary Key) in the DataBrowser Grid for which the group title should be
-      ///    replaced by the given Dictionary Value. 
-      /// </summary>
-      void GroupingNamesReplacementDictionary(Dictionary<string, string> groupingNamesReplacementDictionary);
    }
 
    public class DataBrowserPresenter : PresenterWithColumnSettings<IDataBrowserView, IDataBrowserPresenter>, IDataBrowserPresenter
@@ -180,11 +174,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void SetGroupRowFormat(string format)
       {
          _view.SetGroupRowFormat(format);
-      }
-
-    public void GroupingNamesReplacementDictionary(Dictionary<string, string> groupingNamesReplacementDictionary)
-      {
-         _view.GroupingNamesReplacementDictionary = groupingNamesReplacementDictionary;
       }
 
       public void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used)

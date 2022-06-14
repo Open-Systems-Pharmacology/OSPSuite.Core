@@ -40,20 +40,6 @@ namespace OSPSuite.UI.Views.Charts
          InitializeWith(gridView);
          _gridViewBinder = new GridViewBinder<DataColumnDTO>(gridView);
          _usedRepository = new UxRepositoryItemCheckEdit(gridView);
-
-         
-         gridView.CustomDrawGroupRow += (s, e) =>
-         {
-            var info = e.Info as GridGroupRowInfo;
-
-            foreach (var replacementPair in GroupingNamesReplacementDictionary)
-            {
-               if (info.GroupValueText == replacementPair.Key)
-                  info.GroupText = replacementPair.Value;
-            }
-         };
-
-
       }
 
       private void onGridViewSelectionChanged()
@@ -115,8 +101,6 @@ namespace OSPSuite.UI.Views.Charts
       {
          gridView.GroupFormat = format;
       }
-
-      public Dictionary<string, string> GroupingNamesReplacementDictionary { get; set; } = new Dictionary<string, string>();
 
       private IReadOnlyList<DataColumnDTO> dtoListFrom(IEnumerable<int> rowHandles) => rowHandles.Select(_gridViewBinder.ElementAt).ToList();
 

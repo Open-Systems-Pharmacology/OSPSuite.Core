@@ -22,11 +22,5 @@ namespace OSPSuite.Presentation.Views.Charts
       /// sets the group row format of the gridView to the specified string.
       /// </summary>
       void SetGroupRowFormat(string format);
-
-      /// <summary>
-      ///    Dictionary that specifies the Group Values (Dictionary Key) in the DataBrowser Grid for which the group title should be
-      ///    replaced by the given Dictionary Value. 
-      /// </summary>
-      Dictionary<string, string> GroupingNamesReplacementDictionary { set; }
    }
 }

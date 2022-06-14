@@ -185,12 +185,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Refresh the presenter with all values and settings from the underlying <see cref="CurveChart" />
       /// </summary>
       void Refresh();
-
-      /// <summary>
-      ///    sets the Group Values (Dictionary Key) in the DataBrowser Grid for which the group title should be
-      ///    replaced by the given Dictionary Value. 
-      /// </summary>
-      void SetGroupRowNamingReplacements(Dictionary<string, string> groupingNamesReplacementDictionary);
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -663,11 +657,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _curveSettingsPresenter.Refresh();
          _axisSettingsPresenter.Refresh();
          updateUsedColumns();
-      }
-
-      public void SetGroupRowNamingReplacements(Dictionary<string, string> groupingNamesReplacementDictionary)
-      {
-         _dataBrowserPresenter.GroupingNamesReplacementDictionary(groupingNamesReplacementDictionary);
       }
 
       private bool canHandle(ChartEvent chartEvent)

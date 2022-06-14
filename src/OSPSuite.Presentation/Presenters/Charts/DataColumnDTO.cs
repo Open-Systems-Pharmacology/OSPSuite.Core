@@ -53,7 +53,24 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public string QuantityType => DataColumn.QuantityInfo.Type.ToString();
       public bool HasRelatedColumns => DataColumn.RelatedColumns.Any();
       public string Origin => DataColumn.DataInfo.Origin.ToString();
-      public string Category => DataColumn.DataInfo.Category;
+      public string Category => categoryFromOrigin(DataColumn.DataInfo.Origin);
+
+      private string categoryFromOrigin(ColumnOrigins dataInfoOrigin)
+      {
+         switch (dataInfoOrigin)
+         {
+            case ColumnOrigins.BaseGrid:
+               return "Time";
+            case ColumnOrigins.Calculation:
+            case ColumnOrigins.CalculationAuxiliary:
+               return "Simulation";
+            case ColumnOrigins.Observation:
+            case ColumnOrigins.ObservationAuxiliary:
+               return "Observation";
+            default:
+               throw new ArgumentOutOfRangeException(nameof(dataInfoOrigin), dataInfoOrigin, null);
+         }
+      }
 
       public bool Used
       {

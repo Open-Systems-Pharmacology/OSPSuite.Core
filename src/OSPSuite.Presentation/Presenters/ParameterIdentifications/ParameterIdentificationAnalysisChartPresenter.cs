@@ -43,7 +43,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private void setReplacementGroupingStringsForParameterIdentification()
       {
-         _chartPresenterContext.EditorPresenter.SetGroupRowNamingReplacements(new Dictionary<string, string>()
+         _chartPresenterContext.EditorPresenter.
+            SetGroupRowNamingReplacements(new Dictionary<string, string>()
             { { ColumnOrigins.CalculationAuxiliary.ToString(), Captions.Chart.GroupRowFormat.Simulation} });
       }
 
@@ -95,20 +96,20 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          ChartEditorPresenter.ApplyColumnSettings(simulationColumnSettings);
       }
 
-      private void groupByOriginColumn()
+      private void groupByCategoryColumn()
       {
-         var originColumnSettings = Column(BrowserColumns.Origin);
-         originColumnSettings.Visible = false;
-         originColumnSettings.GroupIndex = 1;
-         originColumnSettings.Caption = Captions.Chart.GroupRowFormat.DataOrigin;
-         ChartEditorPresenter.ApplyColumnSettings(originColumnSettings);
+         var categoryColumnSettings = Column(BrowserColumns.Category);
+         categoryColumnSettings.Visible = false;
+         categoryColumnSettings.GroupIndex = 1;
+         //categoryColumnSettings.Caption = Captions.Chart.GroupRowFormat.DataOrigin;
+         ChartEditorPresenter.ApplyColumnSettings(categoryColumnSettings);
       }
 
       private void setColumnGroupingsAndVisibility()
       {
          ChartEditorPresenter.SetGroupRowFormat(Captions.Chart.GroupRowFormat.HideColumnName);
          showSimulationColumn();
-         groupByOriginColumn();
+         groupByCategoryColumn();
       }
 
       private void updateCacheColor()
