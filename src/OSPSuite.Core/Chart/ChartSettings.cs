@@ -14,6 +14,11 @@ namespace OSPSuite.Core.Chart
       BottomInside
    }
 
+   public static class GridGroupRowFormats
+   {
+      public const string HideColumnName = "[#image]{1} {2}";
+   }
+
    public class ChartSettings : Notifier, IUpdatable
    {
       private bool _sideMarginsEnabled;

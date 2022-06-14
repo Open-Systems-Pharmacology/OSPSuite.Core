@@ -99,7 +99,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private void setColumnGroupingsAndVisibility()
       {
-         ChartEditorPresenter.SetGroupRowFormat(Captions.Chart.GroupRowFormat.HideColumnName);
+         ChartEditorPresenter.SetGroupRowFormat(GridGroupRowFormats.HideColumnName);
          showSimulationColumn();
          groupByCategoryColumn();
       }
