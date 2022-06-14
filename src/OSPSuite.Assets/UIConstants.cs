@@ -1295,6 +1295,9 @@ namespace OSPSuite.Assets
             public static string Simulation = "Simulation";
             public static string Time = "Time";
             public static string Observation = "Observation";
+
+            ///return the default format of the grid grouping row 
+            public static string GridGroupingRowDefaultFormat = "{0}: [#image]{1} {2}";
          }
       }
    }

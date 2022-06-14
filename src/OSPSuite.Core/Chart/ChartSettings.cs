@@ -19,20 +19,6 @@ namespace OSPSuite.Core.Chart
       HideColumnName
    }
 
-   public static class GridGroupRowFormatsExtensions
-   {
-      public static string GetFormatString(this GridGroupRowFormats formatName)
-      {
-         switch (formatName)
-         {
-            case GridGroupRowFormats.HideColumnName:
-               return "[#image]{1} {2}";
-            default:
-               return "{0}: [#image]{1} {2}"; //return the default format of the grid grouping row 
-         }
-      }
-   }
-
    public class ChartSettings : Notifier, IUpdatable
    {
       private bool _sideMarginsEnabled;
