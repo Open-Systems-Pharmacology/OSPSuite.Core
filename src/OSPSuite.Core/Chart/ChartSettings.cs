@@ -16,7 +16,10 @@ namespace OSPSuite.Core.Chart
 
    public enum GridGroupRowFormats
    {
-      HideColumnName
+      HideColumnName,
+
+      ///return the default format of the grid grouping row 
+      Default
    }
 
    public class ChartSettings : Notifier, IUpdatable

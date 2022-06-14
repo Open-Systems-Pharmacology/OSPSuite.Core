@@ -1,4 +1,4 @@
-﻿using OSPSuite.Assets;
+﻿using System;
 using OSPSuite.Core.Chart;
 
 namespace OSPSuite.UI.Extensions
@@ -11,8 +11,10 @@ namespace OSPSuite.UI.Extensions
          {
             case GridGroupRowFormats.HideColumnName:
                return "[#image]{1} {2}";
+            case GridGroupRowFormats.Default:
+               return "{0}: [#image]{1} {2}";
             default:
-               return Captions.Chart.GroupRowFormat.GridGroupingRowDefaultFormat; 
+               throw new ArgumentOutOfRangeException(nameof(formatName), formatName, null);
          }
       }
    }
