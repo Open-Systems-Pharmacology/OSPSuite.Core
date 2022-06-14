@@ -1290,6 +1290,13 @@ namespace OSPSuite.Assets
          {
             public static string CurrentValue = "<Current value>";
          }
+
+         public static class GroupRowFormat
+         {
+            public static string Simulation = "Simulation";
+            public static string Time = "Time";
+            public static string Observation = "Observation";
+         }
       }
    }
 
