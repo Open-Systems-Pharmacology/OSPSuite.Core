@@ -36,16 +36,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.SetAnalysisView(chartPresenterContext.EditorAndDisplayPresenter.BaseView);
          _view.ApplicationIcon = icon;
          PresentationKey = presentationKey;
-         setReplacementGroupingStringsForParameterIdentification();
          PostEditorLayout = setColumnGroupingsAndVisibility;
          AddAllButtons();
-      }
-
-      private void setReplacementGroupingStringsForParameterIdentification()
-      {
-         _chartPresenterContext.EditorPresenter.
-            SetGroupRowNamingReplacements(new Dictionary<string, string>()
-            { { ColumnOrigins.CalculationAuxiliary.ToString(), Captions.Chart.GroupRowFormat.Simulation} });
       }
 
       public override void UpdateAnalysisBasedOn(IAnalysable analysable)
