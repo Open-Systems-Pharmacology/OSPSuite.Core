@@ -1,5 +1,4 @@
-﻿using DevExpress.XtraEditors;
-using OSPSuite.Assets;
+﻿using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 
 namespace OSPSuite.UI.Extensions
