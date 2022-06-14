@@ -59,7 +59,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       /// sets the group row format in the gridView of the DataBrowserView to the specified string.
       /// </summary>
-      void SetGroupRowFormat(string format);
+      void SetGroupRowFormat(GridGroupRowFormats format);
 
       /// <summary>
       ///    Returns all DataColumns used in the DataBrowser
@@ -474,7 +474,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          updateUsedColumns();
       }
 
-      public void SetGroupRowFormat(string format)
+      public void SetGroupRowFormat(GridGroupRowFormats format)
       {
          _dataBrowserPresenter.SetGroupRowFormat(format);
       }

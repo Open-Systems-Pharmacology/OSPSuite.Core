@@ -8,6 +8,7 @@ using DevExpress.Utils;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
+using OSPSuite.Core.Chart;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.Presenters.Charts;
@@ -97,9 +98,9 @@ namespace OSPSuite.UI.Views.Charts
       public IReadOnlyList<DataColumnDTO> SelectedColumns => dtoListFrom(gridView.GetSelectedRows());
 
       public IReadOnlyList<DataColumnDTO> SelectedDescendantColumns => selectDescendentDataRows(gridView.GetSelectedRows());
-      public void SetGroupRowFormat(string format)
+      public void SetGroupRowFormat(GridGroupRowFormats format)
       {
-         gridView.GroupFormat = format;
+         gridView.GroupFormat = format.GetFormatString();
       }
 
       private IReadOnlyList<DataColumnDTO> dtoListFrom(IEnumerable<int> rowHandles) => rowHandles.Select(_gridViewBinder.ElementAt).ToList();

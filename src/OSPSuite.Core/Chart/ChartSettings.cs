@@ -14,12 +14,26 @@ namespace OSPSuite.Core.Chart
       BottomInside
    }
 
-   public static class GridGroupRowFormats
+   public enum GridGroupRowFormats
    {
-      public const string HideColumnName = "[#image]{1} {2}";
+      HideColumnName
    }
 
-   public class ChartSettings : Notifier, IUpdatable
+   public static class GridGroupRowFormatsExtensions
+   {
+      public static string GetFormatString(this GridGroupRowFormats formatName)
+      {
+         switch (formatName)
+         {
+            case GridGroupRowFormats.HideColumnName:
+               return "[#image]{1} {2}";
+            default:
+               return "{0}: [#image]{1} {2}"; //return the default format of the grid grouping row 
+         }
+      }
+   }
+
+      public class ChartSettings : Notifier, IUpdatable
    {
       private bool _sideMarginsEnabled;
       private LegendPositions _legendPosition;

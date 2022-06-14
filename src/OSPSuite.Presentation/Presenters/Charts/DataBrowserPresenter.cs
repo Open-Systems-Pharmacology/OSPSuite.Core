@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Views.Charts;
@@ -87,7 +88,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       /// sets the group row format of the gridView to the specified string.
       /// </summary>
-      void SetGroupRowFormat(string format);
+      void SetGroupRowFormat(GridGroupRowFormats format);
    }
 
    public class DataBrowserPresenter : PresenterWithColumnSettings<IDataBrowserView, IDataBrowserPresenter>, IDataBrowserPresenter
@@ -171,7 +172,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          return _dataColumnDTOCache.KeyValues.Where(x => x.Value.Used).Select(x => x.Key).ToList();
       }
 
-      public void SetGroupRowFormat(string format)
+      public void SetGroupRowFormat(GridGroupRowFormats format)
       {
          _view.SetGroupRowFormat(format);
       }
