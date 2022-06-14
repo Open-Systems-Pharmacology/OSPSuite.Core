@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Chart
       }
    }
 
-      public class ChartSettings : Notifier, IUpdatable
+   public class ChartSettings : Notifier, IUpdatable
    {
       private bool _sideMarginsEnabled;
       private LegendPositions _legendPosition;
