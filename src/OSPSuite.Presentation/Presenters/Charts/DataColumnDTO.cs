@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -60,13 +61,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
          switch (dataInfoOrigin)
          {
             case ColumnOrigins.BaseGrid:
-               return "Time";
+               return Captions.Chart.GroupRowFormat.Time;
             case ColumnOrigins.Calculation:
             case ColumnOrigins.CalculationAuxiliary:
-               return "Simulation";
+               return Captions.Chart.GroupRowFormat.Simulation;
             case ColumnOrigins.Observation:
             case ColumnOrigins.ObservationAuxiliary:
-               return "Observation";
+               return Captions.Chart.GroupRowFormat.Observation;
             default:
                throw new ArgumentOutOfRangeException(nameof(dataInfoOrigin), dataInfoOrigin, null);
          }

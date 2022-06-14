@@ -93,7 +93,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          var categoryColumnSettings = Column(BrowserColumns.Category);
          categoryColumnSettings.Visible = false;
          categoryColumnSettings.GroupIndex = 1;
-         //categoryColumnSettings.Caption = Captions.Chart.GroupRowFormat.DataOrigin;
          ChartEditorPresenter.ApplyColumnSettings(categoryColumnSettings);
       }
 

@@ -1292,8 +1292,9 @@ namespace OSPSuite.Assets
 
          public static class GroupRowFormat
          {
-            public static string DataOrigin = "Data Origin";
             public static string Simulation = "Simulation";
+            public static string Time = "Time";
+            public static string Observation = "Observation";
          }
       }
    }
