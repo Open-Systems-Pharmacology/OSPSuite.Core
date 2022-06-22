@@ -33,7 +33,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _view.SetAnalysisView(chartPresenterContext.EditorAndDisplayPresenter.BaseView);
          _view.ApplicationIcon = icon;
          PresentationKey = presentationKey;
-         PostEditorLayout = showSimulationColumn;
+         PostEditorLayout = setColumnGroupingsAndVisibility;
          AddAllButtons();
       }
 
@@ -90,7 +90,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       protected override void ConfigureColumns()
       {
          base.ConfigureColumns();
-         showSimulationColumn();
+         setColumnGroupingsAndVisibility();
       }
 
       private void showSimulationColumn()
@@ -99,6 +99,21 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          simulationColumnSettings.Visible = true;
          simulationColumnSettings.VisibleIndex = 0;
          ChartEditorPresenter.ApplyColumnSettings(simulationColumnSettings);
+      }
+
+      private void groupByCategoryColumn()
+      {
+         var categoryColumnSettings = Column(BrowserColumns.Category);
+         categoryColumnSettings.Visible = false;
+         categoryColumnSettings.GroupIndex = 1;
+         ChartEditorPresenter.ApplyColumnSettings(categoryColumnSettings);
+      }
+
+      private void setColumnGroupingsAndVisibility()
+      {
+         ChartEditorPresenter.SetGroupRowFormat(GridGroupRowFormats.HideColumnName);
+         showSimulationColumn();
+         groupByCategoryColumn();
       }
 
       private void updateCacheColor()

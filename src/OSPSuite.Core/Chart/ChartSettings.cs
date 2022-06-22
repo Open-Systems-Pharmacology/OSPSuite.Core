@@ -14,6 +14,14 @@ namespace OSPSuite.Core.Chart
       BottomInside
    }
 
+   public enum GridGroupRowFormats
+   {
+      HideColumnName,
+
+      ///return the default format of the grid grouping row 
+      Default
+   }
+
    public class ChartSettings : Notifier, IUpdatable
    {
       private bool _sideMarginsEnabled;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Views.Charts;
@@ -94,6 +95,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// should be updated when their linked output used state is updated
       /// </summary>
       void OutputObservedDataLinkingChanged(bool linkSimToData);
+
+      /// <summary>
+      /// sets the group row format of the gridView to the specified string.
+      /// </summary>
+      void SetGroupRowFormat(GridGroupRowFormats format);
    }
 
    public class DataBrowserPresenter : PresenterWithColumnSettings<IDataBrowserView, IDataBrowserPresenter>, IDataBrowserPresenter
@@ -205,6 +211,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
             var linkedObservedData = _dataColumnDTOCache.KeyValues.Where(x => pair.Value.Contains(x.Key.Repository.Name)).Select(x => x.Value);
             SetUsedState(linkedObservedData.ToList(), outputColumnUsed);
          }
+      }
+
+      public void SetGroupRowFormat(GridGroupRowFormats format)
+      {
+         _view.SetGroupRowFormat(format);
       }
 
       public void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used)
