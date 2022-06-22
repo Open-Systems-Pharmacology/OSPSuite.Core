@@ -87,7 +87,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       /// Cache of all the mappings of Simulation Outputs and their mapped Observed Data
       /// </summary>
-      Cache<string, List<string>> OutputMappingNames { get; set; } 
+      Cache<string, List<string>> OutputMappingNames { get; set; }
+
+      /// <summary>
+      /// Changes the bool that defines whether the corresponding observed data used state
+      /// should be updated when their linked output used state is updated
+      /// </summary>
       void OutputObservedDataLinkingChanged(bool linkSimToData);
    }
 
@@ -97,7 +102,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly Cache<DataColumn, DataColumnDTO> _dataColumnDTOCache = new Cache<DataColumn, DataColumnDTO>(x => x.DataColumn, x => null);
       private readonly List<DataColumn> _allDataColumns = new List<DataColumn>();
       private Func<DataColumn, PathElements> _displayQuantityPathDefinition;
-      private bool _linkMappedOutputs; //should we somehow initialize this?
+      private bool _linkMappedOutputs;
       public event EventHandler<ColumnsEventArgs> SelectionChanged = delegate { };
       public event EventHandler<UsedColumnsEventArgs> UsedChanged = delegate { };
       
