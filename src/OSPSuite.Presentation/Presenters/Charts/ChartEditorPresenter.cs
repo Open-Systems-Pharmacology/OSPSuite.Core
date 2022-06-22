@@ -12,6 +12,7 @@ using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
@@ -99,6 +100,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void SetDisplayQuantityPathDefinition(Func<DataColumn, PathElements> displayQuantityPathDefinition);
 
       /// <summary>
+      /// Sets the output mappings of Simulation Outputs and their mapped Observed Data
+      /// </summary>
+      void SetOutputMappingNames(Cache<string, List<string>> outputObservedDataPairs);
+
+      /// <summary>
       ///    Sets Definition, whether DataColumn is shown in DataBrowser.
       /// </summary>
       void SetShowDataColumnInDataBrowserDefinition(Func<DataColumn, bool> showDataColumnInDataBrowserDefinition);
@@ -164,6 +170,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       /// <param name="isUsed">true for checked, false for unchecked and null for indeterminate</param>
       void UpdateUsedForSelection(bool? isUsed);
+
+      /// <summary>
+      ///    Updates the LinkedOutputData menu item checkbox check state.
+      /// </summary>
+      /// <param name="linkSimToData">true for checked, false for unchecked</param>
+      void UpdateLinkSimulationToDataSelection(bool linkSimToData);
 
       /// <summary>
       ///    Adds chart template menu
@@ -399,6 +411,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _dataBrowserPresenter.UpdateUsedStateForSelection(used: isUsed.Value);
       }
 
+      public void UpdateLinkSimulationToDataSelection(bool linkSimToData)
+      {
+         _dataBrowserPresenter.OutputObservedDataLinkingChanged(linkSimToData);
+      }
+
       public void AddChartTemplateMenu(IWithChartTemplates withChartTemplates, Action<CurveChartTemplate> loadMenuFor)
       {
          AddButton(_chartTemplateMenuPresenter.CreateChartTemplateButton(withChartTemplates, () => Chart, loadMenuFor));
@@ -557,6 +574,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void SetDisplayQuantityPathDefinition(Func<DataColumn, PathElements> displayQuantityPathDefinition)
       {
          _dataBrowserPresenter.SetDisplayQuantityPathDefinition(displayQuantityPathDefinition);
+      }
+
+      public void SetOutputMappingNames(Cache<string, List<string>> outputObservedDataPairs)
+      {
+         _dataBrowserPresenter.OutputMappingNames = outputObservedDataPairs;
       }
 
       public void SetShowDataColumnInDataBrowserDefinition(Func<DataColumn, bool> showDataColumnInDataBrowserDefinition)

@@ -23,6 +23,7 @@ namespace OSPSuite.UI.Views.Charts
       private IChartEditorPresenter _presenter;
       private readonly SvgImageCollection _allImages;
       private readonly BarEditItem _barEditItemForUsedIn;
+      private readonly BarEditItem _barEditItemLinkSimulationObserved;
 
       public ChartEditorView(IMenuBarItemToBarItemMapper barItemMapper, IImageListRetriever imageListRetriever)
       {
@@ -44,6 +45,8 @@ namespace OSPSuite.UI.Views.Charts
             AutoWidth = false
          };
 
+         var repositoryItemCheckEditLinkSimulationAndObserved = CreateLinkSimulationAndObservedRepositoryItem();
+
          _barEditItemForUsedIn = new BarEditItem(_barManager)
          {
             Edit = repositoryItemCheckEditForUsedIn,
@@ -57,9 +60,35 @@ namespace OSPSuite.UI.Views.Charts
 
          _barEditItemForUsedIn.SuperTip = new SuperToolTip().WithText(ToolTips.UseSelectedCurvesToolTip);
 
+         _barEditItemLinkSimulationObserved = new BarEditItem(_barManager)
+         {
+            Edit = repositoryItemCheckEditLinkSimulationAndObserved,
+            Alignment = BarItemLinkAlignment.Right,
+            AutoFillWidth = false,
+            Width = 20,
+            Caption = Captions.LinkDataToSimulations,
+            CaptionAlignment = HorzAlignment.Near,
+            PaintStyle = BarItemPaintStyle.Caption,
+            Hint = "test hint"
+         };
+
          repositoryItemCheckEditForUsedIn.EditValueChanged += (o, e) => OnEvent(() => changeUsed(o));
 
+         repositoryItemCheckEditLinkSimulationAndObserved.EditValueChanged += (o, e) => OnEvent(() => changeLinkSimulationToData(o));
+
          repositoryItemCheckEditForUsedIn.ValueGrayed = null;
+      }
+
+      private static RepositoryItemCheckEdit CreateLinkSimulationAndObservedRepositoryItem()
+      {
+         var repositoryItemCheckEditLinkSimulationAndObserved = new RepositoryItemCheckEdit
+         {
+            UseParentBackground = true,
+            Caption = string.Empty,
+            GlyphAlignment = HorzAlignment.Near,
+            AutoWidth = false
+         };
+         return repositoryItemCheckEditLinkSimulationAndObserved;
       }
 
       private void changeUsed(object sender)
@@ -68,6 +97,13 @@ namespace OSPSuite.UI.Views.Charts
          if (checkEdit == null) return;
 
          _presenter.UpdateUsedForSelection(checkEdit.Checked);
+      }
+      private void changeLinkSimulationToData(object sender)
+      {
+         var checkEdit = sender as CheckEdit;
+         if (checkEdit == null) return;
+
+         _presenter.UpdateLinkSimulationToDataSelection(checkEdit.Checked);
       }
 
       protected override void SetVisibleCore(bool value)

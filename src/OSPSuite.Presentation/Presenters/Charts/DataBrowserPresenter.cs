@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NPOI.XSSF.UserModel;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -84,16 +83,24 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Returns all the DataColumns for the curves that are visible in the chart
       /// </summary>
       IReadOnlyList<DataColumn> GetAllUsedDataColumns();
+
+      /// <summary>
+      /// Cache of all the mappings of Simulation Outputs and their mapped Observed Data
+      /// </summary>
+      Cache<string, List<string>> OutputMappingNames { get; set; } 
+      void OutputObservedDataLinkingChanged(bool linkSimToData);
    }
 
    public class DataBrowserPresenter : PresenterWithColumnSettings<IDataBrowserView, IDataBrowserPresenter>, IDataBrowserPresenter
    {
+      public Cache<string, List<string>> OutputMappingNames { get; set; } = new Cache<string, List<string>>();
       private readonly Cache<DataColumn, DataColumnDTO> _dataColumnDTOCache = new Cache<DataColumn, DataColumnDTO>(x => x.DataColumn, x => null);
       private readonly List<DataColumn> _allDataColumns = new List<DataColumn>();
       private Func<DataColumn, PathElements> _displayQuantityPathDefinition;
+      private bool _linkMappedOutputs; //should we somehow initialize this?
       public event EventHandler<ColumnsEventArgs> SelectionChanged = delegate { };
       public event EventHandler<UsedColumnsEventArgs> UsedChanged = delegate { };
-
+      
       public DataBrowserPresenter(IDataBrowserView view) : base(view)
       {
       }
@@ -150,6 +157,20 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          raiseUsedChanged(dataColumnDTO.DataColumn, used);
          updateDataSelection(_view.SelectedColumns);
+         updateLinkedObservedData(dataColumnDTO.DataColumn, used);
+      }
+
+      private void updateLinkedObservedData(DataColumn dataColumn, bool used)
+      {
+         if (!_linkMappedOutputs) return;
+
+         var updatedDataColumnName = dataColumn.PathAsString;
+         if (!OutputMappingNames.Contains(updatedDataColumnName)) return;
+
+         var linkedObservedDataNames = OutputMappingNames[updatedDataColumnName];
+         var linkedObservedData = _dataColumnDTOCache.KeyValues.Where(x => linkedObservedDataNames.Contains(x.Key.Repository.Name)).Select(x => x.Value).ToList();
+         
+         SetUsedState(linkedObservedData, used);
       }
 
       public void UpdateUsedStateForSelection(bool used)
@@ -165,6 +186,20 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public IReadOnlyList<DataColumn> GetAllUsedDataColumns()
       {
          return _dataColumnDTOCache.KeyValues.Where(x => x.Value.Used).Select(x => x.Key).ToList();
+      }
+
+      public void OutputObservedDataLinkingChanged(bool linkSimToData)
+      {
+         _linkMappedOutputs = linkSimToData;
+
+         if (!_linkMappedOutputs) return;
+
+         foreach (var pair in OutputMappingNames.KeyValues)
+         {
+            var outputColumnUsed = _dataColumnDTOCache.KeyValues.FirstOrDefault(x => x.Key.PathAsString == pair.Key).Value.Used;
+            var linkedObservedData = _dataColumnDTOCache.KeyValues.Where(x => pair.Value.Contains(x.Key.Repository.Name)).Select(x => x.Value);
+            SetUsedState(linkedObservedData.ToList(), outputColumnUsed);
+         }
       }
 
       public void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used)

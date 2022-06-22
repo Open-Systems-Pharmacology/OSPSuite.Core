@@ -80,6 +80,7 @@ namespace OSPSuite.Assets
       public static readonly string DiagramBackground = "Diagram Background";
       public static readonly string ChartColor = "Chart Color";
       public static readonly string UseSelected = "Use selected";
+      public static readonly string LinkDataToSimulations = "Link Data to Simulations";
       public static readonly string MetaData = "Meta Data";
       public static readonly string AddDataPoint = "Add Data Point";
       public static readonly string AddMetaData = "Add Meta Data";

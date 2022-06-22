@@ -17,6 +17,7 @@ using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Presentation
 {
@@ -100,10 +101,12 @@ namespace OSPSuite.Presentation.Presentation
    {
       private DataRepository _simulationResult1;
       private DataColumn _outputColumn1;
+      private DataColumn _outputColumn2;
       private DataColumn _firstObservedData1;
       private DataRepository _simulationResult2;
       private DataColumn _firstObservedData2;
       private List<DataRepository> _allAddedDataRepositories;
+      private Cache<string, List<string>> _allAddedOutputMappingNames;
 
       protected override void Context()
       {
@@ -114,9 +117,10 @@ namespace OSPSuite.Presentation.Presentation
          _simulationResult1 = DomainHelperForSpecs.IndividualSimulationDataRepositoryFor("SimulationResult1");
          _simulationResult2 = DomainHelperForSpecs.IndividualSimulationDataRepositoryFor("SimulationResult2");
          _outputColumn1 = _simulationResult1.AllButBaseGrid().First();
+         _outputColumn2 = _simulationResult2.AllButBaseGrid().First();
 
          A.CallTo(() => _outputMapping1.FullOutputPath).Returns(_outputColumn1.QuantityInfo.PathAsString);
-         A.CallTo(() => _outputMapping2.FullOutputPath).Returns(_outputColumn1.QuantityInfo.PathAsString);
+         A.CallTo(() => _outputMapping2.FullOutputPath).Returns(_outputColumn2.QuantityInfo.PathAsString);
          _optimizationRunResult.AddResult(_simulationResult1);
          _optimizationRunResult.AddResult(_simulationResult2);
          _optimizationRunResult2.AddResult(DomainHelperForSpecs.IndividualSimulationDataRepositoryFor("SimulationResult3"));
@@ -127,6 +131,10 @@ namespace OSPSuite.Presentation.Presentation
          _allAddedDataRepositories = new List<DataRepository>();;
          A.CallTo(() => ChartEditorPresenter.AddDataRepositories(A<IEnumerable<DataRepository>>._))
             .Invokes(x => _allAddedDataRepositories.AddRange(x.GetArgument<IEnumerable<DataRepository>>(0)));
+
+         _allAddedOutputMappingNames = new Cache<string, List<string>>();
+         A.CallTo(() => ChartEditorPresenter.SetOutputMappingNames(A<Cache<string, List<string>>>._))
+            .Invokes(x => _allAddedOutputMappingNames = x.GetArgument<Cache<string, List<string>>>(0) );
 
       }
 
@@ -179,6 +187,14 @@ namespace OSPSuite.Presentation.Presentation
       {
          var observedDataCurve = _timeProfileAnalysis.FindCurveWithSameData(_firstObservedData1.BaseGrid, _firstObservedData1);
          observedDataCurve.VisibleInLegend.ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_add_the_correct_output_to_observed_data_mapping_names()
+      {
+         _allAddedOutputMappingNames[_outputMapping1.FullOutputPath].SequenceEqual(new List<string>() { _firstObservedData1.Name });
+         _allAddedOutputMappingNames[_outputMapping2.FullOutputPath].SequenceEqual(new List<string>() { _firstObservedData2.Name });
+
       }
    }
 }
