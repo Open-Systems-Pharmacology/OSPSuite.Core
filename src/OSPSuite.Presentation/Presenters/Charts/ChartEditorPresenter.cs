@@ -179,8 +179,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    Updates the LinkedOutputData menu item checkbox check state.
       /// </summary>
-      /// <param name="linkSimToData">true for checked, false for unchecked</param>
-      void UpdateLinkSimulationToDataSelection(bool linkSimToData);
+      /// <param name="isLinkedSimToData">true for checked, false for unchecked</param>
+      void UpdateLinkSimulationToDataSelection(bool isLinkedSimToData);
 
       /// <summary>
       ///    Adds chart template menu
@@ -416,9 +416,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _dataBrowserPresenter.UpdateUsedStateForSelection(used: isUsed.Value);
       }
 
-      public void UpdateLinkSimulationToDataSelection(bool linkSimToData)
+      public void UpdateLinkSimulationToDataSelection(bool isLinkedSimToData)
       {
-         _dataBrowserPresenter.OutputObservedDataLinkingChanged(linkSimToData);
+         _dataBrowserPresenter.OutputObservedDataLinkingChanged(isLinkedSimToData);
       }
 
       public void AddChartTemplateMenu(IWithChartTemplates withChartTemplates, Action<CurveChartTemplate> loadMenuFor)

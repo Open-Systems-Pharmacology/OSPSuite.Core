@@ -2266,6 +2266,7 @@ namespace OSPSuite.Assets
    {
       public static readonly string ToolTipForAxis = "Double click to edit axis";
       public static readonly string UseSelectedCurvesToolTip = "Adds or removes all the selected curves at once.";
+      public static readonly string LinkSimulationObservedToolTip = "Links the simulation outputs to their mapped observed data, so that when a simulation output is (de)selected the corresponding observed data gets (de)selected as well.";
       public static readonly string AddUnitMap = "Add new default unit for a specific dimension";
       public static readonly string LoadUnits = "Load default units from file";
       public static readonly string SaveUnits = "Save default units to file";

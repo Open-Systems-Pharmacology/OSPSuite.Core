@@ -94,7 +94,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// Changes the bool that defines whether the corresponding observed data used state
       /// should be updated when their linked output used state is updated
       /// </summary>
-      void OutputObservedDataLinkingChanged(bool linkSimToData);
+      void OutputObservedDataLinkingChanged(bool isLinkedSimToData);
 
       /// <summary>
       /// sets the group row format of the gridView to the specified string.
@@ -108,7 +108,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly Cache<DataColumn, DataColumnDTO> _dataColumnDTOCache = new Cache<DataColumn, DataColumnDTO>(x => x.DataColumn, x => null);
       private readonly List<DataColumn> _allDataColumns = new List<DataColumn>();
       private Func<DataColumn, PathElements> _displayQuantityPathDefinition;
-      private bool _linkMappedOutputs;
+      private bool _isLinkedMappedOutputs;
       public event EventHandler<ColumnsEventArgs> SelectionChanged = delegate { };
       public event EventHandler<UsedColumnsEventArgs> UsedChanged = delegate { };
       
@@ -173,7 +173,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void updateLinkedObservedData(DataColumn dataColumn, bool used)
       {
-         if (!_linkMappedOutputs) return;
+         if (!_isLinkedMappedOutputs) return;
 
          var updatedDataColumnName = dataColumn.PathAsString;
          if (!OutputMappingNames.Contains(updatedDataColumnName)) return;
@@ -199,11 +199,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          return _dataColumnDTOCache.KeyValues.Where(x => x.Value.Used).Select(x => x.Key).ToList();
       }
 
-      public void OutputObservedDataLinkingChanged(bool linkSimToData)
+      public void OutputObservedDataLinkingChanged(bool isLinkedSimToData)
       {
-         _linkMappedOutputs = linkSimToData;
+         _isLinkedMappedOutputs = isLinkedSimToData;
 
-         if (!_linkMappedOutputs) return;
+         if (!_isLinkedMappedOutputs) return;
 
          foreach (var pair in OutputMappingNames.KeyValues)
          {

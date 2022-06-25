@@ -68,9 +68,10 @@ namespace OSPSuite.UI.Views.Charts
             Width = 20,
             Caption = Captions.LinkDataToSimulations,
             CaptionAlignment = HorzAlignment.Near,
-            PaintStyle = BarItemPaintStyle.Caption,
-            Hint = "test hint"
+            PaintStyle = BarItemPaintStyle.Caption
          };
+
+         _barEditItemLinkSimulationObserved.SuperTip = new SuperToolTip().WithText(ToolTips.LinkSimulationObservedToolTip);
 
          repositoryItemCheckEditForUsedIn.EditValueChanged += (o, e) => OnEvent(() => changeUsed(o));
 
