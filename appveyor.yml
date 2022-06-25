@@ -36,7 +36,7 @@ build:
 skip_branch_with_pr: true
 
 pull_requests: 
-  do_not_increment_build_number: true
+  do_not_increment_build_number: false
 
 nuget: 
   disable_publish_on_pr: false 
@@ -50,6 +50,7 @@ skip_commits:
 branches:
   only:
     - develop
+    - 1635-color-grouping-button-layout
 
 test:
   assemblies:
