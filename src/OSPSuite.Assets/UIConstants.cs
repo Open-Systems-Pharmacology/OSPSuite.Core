@@ -339,7 +339,7 @@ namespace OSPSuite.Assets
 
       public static string ReallyClearHistory = "Really clear command history? This action is irreversible even if the project is not saved afterwards.";
 
-      public static class Importer
+      public static class Importer 
       {
          public static readonly string ImportAll = "Import All";
          public static readonly string Import = "Import";
