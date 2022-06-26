@@ -339,6 +339,14 @@ namespace OSPSuite.Assets
 
       public static string ReallyClearHistory = "Really clear command history? This action is irreversible even if the project is not saved afterwards.";
 
+      public static class SimulationUI
+      {
+         public static readonly string DataSelection = "Data";
+         public static readonly string Outputs = "Simulation Outputs";
+         public static readonly string ObservedData = "Observed Data";
+         public static readonly string NoneEditorNullText = "<None>";
+      }
+
       public static class Importer
       {
          public static readonly string ImportAll = "Import All";
