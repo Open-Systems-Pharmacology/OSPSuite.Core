@@ -88,7 +88,7 @@ namespace OSPSuite.Presentation.Presenters
       public void AddOutputMapping()
       {
          var newOutputMapping = new OutputMapping();
-         //_allOutputMappingDTOs.Add(mapFrom(newOutputMapping));
+         //_allOutputMappingDTOs.Add(mapFrom(newOutputMapping));  
          OnStatusChanged();
       }
 
