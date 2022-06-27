@@ -23,8 +23,6 @@ namespace OSPSuite.Presentation.DTO
             .WithRule((x, y) => x.Mapping.SimulationDimensionsAreConsistent(y))
             .WithError(Error.OutputMappingHasInconsistentDimension);
 
-         private static readonly IBusinessRule _outputDefined = GenericRules.NotNull<SimulationOutputMappingDTO, SimulationQuantitySelectionDTO>(x => x.Output);
-
          private static readonly IBusinessRule _observedDataDefined = GenericRules.NotNull<SimulationOutputMappingDTO, DataRepository>(x => x.ObservedData);
 
          private static readonly IBusinessRule _outputWeightGreaterThanZero = CreateRule.For<SimulationOutputMappingDTO>()
@@ -34,7 +32,6 @@ namespace OSPSuite.Presentation.DTO
 
          internal static IEnumerable<IBusinessRule> All()
          {
-            yield return _outputDefined;
             yield return _observedDataDefined;
             yield return _outputMatchesObservationDimension;
             yield return _outputWeightGreaterThanZero;

@@ -96,6 +96,9 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
          if (observedData == null )
             return false;
 
+         if (Output == null)
+            return true;
+
          var observationColumn = observedData.FirstDataColumn();
 
          if (Output.Dimension == null || observationColumn.Dimension == null)
