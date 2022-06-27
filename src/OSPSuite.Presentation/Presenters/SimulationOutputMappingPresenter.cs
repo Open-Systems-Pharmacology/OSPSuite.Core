@@ -111,15 +111,15 @@ namespace OSPSuite.Presentation.Presenters
          //get all available observed data, and create non-mapped DTOs for each one
          foreach (var observedData in getAllAvailableObservedData())
          {
-            var newOutputMapping = new OutputMapping();
-            var newOutputMappingDTO = mapFrom(newOutputMapping);
-            newOutputMappingDTO.ObservedData = observedData;
-            
-
             if (!_listOfOutputMappingDTOs.Any(x =>
                x.ObservedData.Id.Equals(observedData.Id))) //possibly a better way (or already existing way) to write this exists. 
             {
+               var newOutputMapping = new OutputMapping();
+               var newOutputMappingDTO = mapFrom(newOutputMapping);
+               _simulation.OutputMappings.Add(newOutputMapping);
+
                _listOfOutputMappingDTOs.Add(newOutputMappingDTO);
+               newOutputMappingDTO.ObservedData = observedData;
             }
          }
 
