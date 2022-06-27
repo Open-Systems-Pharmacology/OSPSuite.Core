@@ -27,8 +27,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       protected bool _isMultipleRun;
       protected CurveChartTemplate _chartTemplate;
 
-      protected ParameterIdentificationAnalysisChartPresenter(TView view, ChartPresenterContext chartPresenterContext, ApplicationIcon icon,
-         string presentationKey) :
+      protected ParameterIdentificationAnalysisChartPresenter(TView view, ChartPresenterContext chartPresenterContext, ApplicationIcon icon, string presentationKey) :
          base(view, chartPresenterContext)
       {
          _view.SetAnalysisView(chartPresenterContext.EditorAndDisplayPresenter.BaseView);
@@ -54,9 +53,25 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          {
             _isMultipleRun = _parameterIdentification.Results.Count > 1;
             UpdateAnalysisBasedOn(_parameterIdentification.Results);
+            setOutputMappingNames();
          }
 
          Refresh();
+      }
+
+      private void setOutputMappingNames()
+      {
+         var outputMappingNames = new Cache<string, List<string>>();
+         foreach (var outputMapping in _parameterIdentification.OutputMappings.All)
+         {
+            var outputName = outputMapping.FullOutputPath;
+            if (outputMappingNames.Contains(outputName))
+               outputMappingNames[outputName].Add(outputMapping.WeightedObservedData.ObservedData.Name);
+            else
+               outputMappingNames.Add(outputName, new List<string>() { outputMapping.WeightedObservedData.ObservedData.Name });
+         }
+
+         ChartEditorPresenter.SetOutputMappingNames(outputMappingNames);
       }
 
       protected virtual void UpdateTemplateFromChart()

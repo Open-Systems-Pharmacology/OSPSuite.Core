@@ -86,6 +86,17 @@ namespace OSPSuite.Presentation.Presenters.Charts
       IReadOnlyList<DataColumn> GetAllUsedDataColumns();
 
       /// <summary>
+      /// Cache of all the mappings of Simulation Outputs and their mapped Observed Data
+      /// </summary>
+      Cache<string, List<string>> OutputMappingNames { get; set; }
+
+      /// <summary>
+      /// Changes the bool that defines whether the corresponding observed data used state
+      /// should be updated when their linked output used state is updated
+      /// </summary>
+      void OutputObservedDataLinkingChanged(bool isLinkedSimToData);
+
+      /// <summary>
       /// sets the group row format of the gridView to the specified string.
       /// </summary>
       void SetGroupRowFormat(GridGroupRowFormats format);
@@ -93,12 +104,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
    public class DataBrowserPresenter : PresenterWithColumnSettings<IDataBrowserView, IDataBrowserPresenter>, IDataBrowserPresenter
    {
+      public Cache<string, List<string>> OutputMappingNames { get; set; } = new Cache<string, List<string>>();
       private readonly Cache<DataColumn, DataColumnDTO> _dataColumnDTOCache = new Cache<DataColumn, DataColumnDTO>(x => x.DataColumn, x => null);
       private readonly List<DataColumn> _allDataColumns = new List<DataColumn>();
       private Func<DataColumn, PathElements> _displayQuantityPathDefinition;
+      private bool _isLinkedMappedOutputs;
       public event EventHandler<ColumnsEventArgs> SelectionChanged = delegate { };
       public event EventHandler<UsedColumnsEventArgs> UsedChanged = delegate { };
-
+      
       public DataBrowserPresenter(IDataBrowserView view) : base(view)
       {
       }
@@ -155,6 +168,20 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          raiseUsedChanged(dataColumnDTO.DataColumn, used);
          updateDataSelection(_view.SelectedColumns);
+         updateLinkedObservedData(dataColumnDTO.DataColumn, used);
+      }
+
+      private void updateLinkedObservedData(DataColumn dataColumn, bool used)
+      {
+         if (!_isLinkedMappedOutputs) return;
+
+         var updatedDataColumnName = dataColumn.PathAsString;
+         if (!OutputMappingNames.Contains(updatedDataColumnName)) return;
+
+         var linkedObservedDataNames = OutputMappingNames[updatedDataColumnName];
+         var linkedObservedData = _dataColumnDTOCache.KeyValues.Where(x => linkedObservedDataNames.Contains(x.Key.Repository.Name)).Select(x => x.Value).ToList();
+         
+         SetUsedState(linkedObservedData, used);
       }
 
       public void UpdateUsedStateForSelection(bool used)
@@ -170,6 +197,20 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public IReadOnlyList<DataColumn> GetAllUsedDataColumns()
       {
          return _dataColumnDTOCache.KeyValues.Where(x => x.Value.Used).Select(x => x.Key).ToList();
+      }
+
+      public void OutputObservedDataLinkingChanged(bool isLinkedSimToData)
+      {
+         _isLinkedMappedOutputs = isLinkedSimToData;
+
+         if (!_isLinkedMappedOutputs) return;
+
+         foreach (var pair in OutputMappingNames.KeyValues)
+         {
+            var outputColumnUsed = _dataColumnDTOCache.KeyValues.FirstOrDefault(x => x.Key.PathAsString == pair.Key).Value.Used;
+            var linkedObservedData = _dataColumnDTOCache.KeyValues.Where(x => pair.Value.Contains(x.Key.Repository.Name)).Select(x => x.Value);
+            SetUsedState(linkedObservedData.ToList(), outputColumnUsed);
+         }
       }
 
       public void SetGroupRowFormat(GridGroupRowFormats format)

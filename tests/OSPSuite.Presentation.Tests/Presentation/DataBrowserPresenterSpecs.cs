@@ -5,11 +5,10 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
-using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Presentation
 {
@@ -315,4 +314,30 @@ namespace OSPSuite.Presentation.Presentation
          _allDataColumnDTOs[1].Used.ShouldBeTrue();
       }
    }
+
+
+   public class When_the_linking_of_outpu_mappings_is_changed : concern_for_DataBrowserPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.AddDataColumns(new[] { _column1, _column2 });
+         sut.OutputMappingNames.Add(_column1.PathAsString, new List<string> { _column2.Repository.Name });
+         _allDataColumnDTOs[0].Used = true;
+         _allDataColumnDTOs[1].Used = false;
+      }
+
+      protected override void Because()
+      {
+         sut.OutputObservedDataLinkingChanged(true);
+      }
+
+      [Observation]
+      public void used_state_should_have_been_updated_for_linked_data()
+      {
+         _allDataColumnDTOs[0].Used.ShouldBeTrue();
+         _allDataColumnDTOs[1].Used.ShouldBeTrue();
+      }
+   }
+
 }
