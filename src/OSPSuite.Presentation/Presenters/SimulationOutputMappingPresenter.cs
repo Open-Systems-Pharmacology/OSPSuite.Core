@@ -105,7 +105,7 @@ namespace OSPSuite.Presentation.Presenters
 //and for the observed data, if you do not find it, just add it. - then we simply have to handle this latter on when using those
 
          //first map all the existing OutputMappings in the Simulation
-         _simulation.AllOutputMappings.All.Each(x => _listOfOutputMappingDTOs.Add(mapFrom(x)));
+         _simulation.OutputMappings.All.Each(x => _listOfOutputMappingDTOs.Add(mapFrom(x)));
 
          //get all available observed data, and create non-mapped DTOs for each one
          foreach (var observedData in getAllAvailableObservedData())

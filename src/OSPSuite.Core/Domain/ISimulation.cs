@@ -8,6 +8,6 @@ namespace OSPSuite.Core.Domain
    {
       IEnumerable<CurveChart> Charts { get; }
 
-      OutputMappings AllOutputMappings { get; set; }
+      OutputMappings OutputMappings { get; set; }
    }
 }
