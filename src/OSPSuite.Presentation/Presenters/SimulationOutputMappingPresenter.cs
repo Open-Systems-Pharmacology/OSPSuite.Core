@@ -115,13 +115,15 @@ namespace OSPSuite.Presentation.Presenters
                x.ObservedData.Id.Equals(observedData.Id))) //possibly a better way (or already existing way) to write this exists. 
             {
                var newOutputMapping = new OutputMapping();
-               
+               var newOutputMappingDTO = mapFrom(newOutputMapping);
+               newOutputMappingDTO.ObservedData = observedData;
+               newOutputMapping.WeightedObservedData = newOutputMappingDTO.WeightedObservedData;
+               newOutputMappingDTO.ObservedData = observedData;
                //var newOutputMappingDTO = mapFrom(newOutputMapping);
                _simulation.OutputMappings.Add(newOutputMapping);
+               _listOfOutputMappingDTOs.Add(newOutputMappingDTO);
 
-               _listOfOutputMappingDTOs.Add(mapFrom(newOutputMapping));
-               var test = _listOfOutputMappingDTOs.First(x => x.ObservedData == null);
-               test.ObservedData = observedData;
+
             }
          }
 
