@@ -88,6 +88,7 @@ namespace OSPSuite.Presentation.Presenters
       public void SetSimulation(ISimulation simulation)
       {
          _simulation = simulation;
+         Refresh();
       }
 
       public void AddOutputMapping()
