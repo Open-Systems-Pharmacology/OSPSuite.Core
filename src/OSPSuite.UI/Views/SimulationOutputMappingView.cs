@@ -6,6 +6,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
+using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.Importer;
@@ -21,7 +22,7 @@ namespace OSPSuite.UI.Views
    public partial class SimulationOutputMappingView : BaseUserControl, ISimulationOutputMappingView
    {
       private ISimulationOutputMappingPresenter _presenter;
-      private readonly GridViewBinder<OutputMappingDTO> _gridViewBinder;
+      private readonly GridViewBinder<SimulationOutputMappingDTO> _gridViewBinder;
       private readonly RepositoryItemButtonEdit _removeButtonRepository = new UxRemoveButtonRepository();
       private readonly UxRepositoryItemComboBox _outputRepository;
       private readonly UxRepositoryItemComboBox _singleObservedDataRepository;
@@ -31,7 +32,7 @@ namespace OSPSuite.UI.Views
       {
          InitializeComponent();
          gridView.AllowsFiltering = false;
-         _gridViewBinder = new GridViewBinder<OutputMappingDTO>(gridView);
+         _gridViewBinder = new GridViewBinder<SimulationOutputMappingDTO>(gridView);
          _outputRepository = new UxRepositoryItemComboBox(gridView)
          {
             AllowNullInput = DefaultBoolean.True,
@@ -46,9 +47,14 @@ namespace OSPSuite.UI.Views
          _presenter = presenter;
       }
 
-      public void BindTo(IEnumerable<OutputMappingDTO> outputMappingList) //THIS IS NOT EXACTLY CORRECT, WE ARE NOT BINDING TO THIS 
+      public void BindTo(IEnumerable<SimulationOutputMappingDTO> outputMappingList) //THIS IS NOT EXACTLY CORRECT, WE ARE NOT BINDING TO THIS 
       {
          _gridViewBinder.BindToSource(outputMappingList);
+      }
+
+      public void RefreshGrid()
+      {
+         gridView.RefreshData();
       }
 
       public override void InitializeBinding()
@@ -85,15 +91,15 @@ namespace OSPSuite.UI.Views
       }
 
       
-      private RepositoryItemComboBox singleObservedDataRepository(OutputMappingDTO outputMappingDTO)
+      private RepositoryItemComboBox singleObservedDataRepository(SimulationOutputMappingDTO outputMappingDTO)
       {
          _singleObservedDataRepository.FillComboBoxRepositoryWith(outputMappingDTO.ObservedData);
          return _singleObservedDataRepository;
       }
 
-      private IFormatter<DataRepository> observedDataDisplay(OutputMappingDTO outputMappingDTO) => new WeightedObservedDataFormatter(outputMappingDTO);
+      private IFormatter<DataRepository> observedDataDisplay(SimulationOutputMappingDTO outputMappingDTO) => new WeightedObservedDataFormatter(outputMappingDTO);
 
-      private RepositoryItem allOutputsRepository(OutputMappingDTO dto)
+      private RepositoryItem allOutputsRepository(SimulationOutputMappingDTO dto)
       {
          return RepositoryItemFor(_presenter.AllAvailableOutputs, _outputRepository);
       }

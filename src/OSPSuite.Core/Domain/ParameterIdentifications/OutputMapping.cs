@@ -91,6 +91,32 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
          return false;
       }
 
+      public bool SimulationDimensionsAreConsistent(DataRepository observedData)
+      {
+         if (observedData == null )
+            return false;
+
+         var observationColumn = observedData.FirstDataColumn();
+
+         if (Output.Dimension == null || observationColumn.Dimension == null)
+            return false;
+
+         if (Output.Dimension == observationColumn.Dimension)
+            return true;
+
+         if (Output.IsConcentration() && observationColumn.IsConcentration())
+            return true;
+
+         if (Output.IsAmount() && observationColumn.IsAmount())
+            return true;
+
+         //not the same dimension but sharing the same base unit (for example for fraction and dimensionsless)
+         if (Output.Dimension.BaseUnit.Name == observationColumn.Dimension.BaseUnit.Name)
+            return true;
+
+         return false;
+      }
+
       public bool DimensionsAreConsistent()
       {
          return DimensionsAreConsistent(WeightedObservedData?.ObservedData);

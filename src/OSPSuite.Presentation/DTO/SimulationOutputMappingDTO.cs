@@ -3,70 +3,24 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Presentation.DTO
 {
-   public class SimulationOutputMappingDTO : DxValidatableDTO
+   public class SimulationOutputMappingDTO : OutputMappingDTO
    {
-      public OutputMapping Mapping { get; }
-      private SimulationQuantitySelectionDTO _output;
-      private DataRepository _observedData;
-
-      public SimulationOutputMappingDTO(OutputMapping outputMapping)
+      public SimulationOutputMappingDTO(OutputMapping outputMapping) : base(outputMapping)
       {
-         Mapping = outputMapping;
-         _observedData = outputMapping.WeightedObservedData;
-         Rules.AddRange(OutputMappingRules.All());
+         Rules.Clear();
+         Rules.AddRange(SimulationOutputMappingRules.All());
       }
 
-      public WeightedObservedData WeightedObservedData => Mapping.WeightedObservedData;
-
-      public SimulationQuantitySelectionDTO Output
-      {
-         get => _output;
-         set
-         {
-            _output = value;
-            Mapping.OutputSelection = new SimulationQuantitySelection(_output?.Simulation, _output?.QuantitySelectionDTO?.ToQuantitySelection());
-            OnPropertyChanged(() => Output);
-         }
-      }
-
-      public DataRepository ObservedData
-      {
-         get => _observedData;
-         set => SetProperty(ref _observedData, value);
-      }
-
-      public float Weight
-      {
-         get => Mapping.Weight;
-         set
-         {
-            Mapping.Weight = value;
-            OnPropertyChanged(() => Weight);
-         }
-      }
-
-      public Scalings Scaling
-      {
-         get => Mapping.Scaling;
-         set
-         {
-            if (Mapping.Scaling == value)
-               return;
-
-            Mapping.Scaling = value;
-            OnPropertyChanged(() => Scaling);
-         }
-      }
-
-      private static class OutputMappingRules
+      private static class SimulationOutputMappingRules
       {
          private static readonly IBusinessRule _outputMatchesObservationDimension = CreateRule.For<SimulationOutputMappingDTO>()
             .Property(x => x.ObservedData)
-            .WithRule((x, y) => x.Mapping.DimensionsAreConsistent(y))
+            .WithRule((x, y) => x.Mapping.SimulationDimensionsAreConsistent(y))
             .WithError(Error.OutputMappingHasInconsistentDimension);
 
          private static readonly IBusinessRule _outputDefined = GenericRules.NotNull<SimulationOutputMappingDTO, SimulationQuantitySelectionDTO>(x => x.Output);

@@ -24,8 +24,8 @@ namespace OSPSuite.Presentation.Presenters
       void SetSimulation(ISimulation simulation);
       void AddOutputMapping();
       IEnumerable<SimulationQuantitySelectionDTO> AllAvailableOutputs { get; }
-      IEnumerable<DataRepository> AllObservedDataFor(OutputMappingDTO dto);
-      void RemoveOutputMapping(OutputMappingDTO outputMappingDTO);
+      IEnumerable<DataRepository> AllObservedDataFor(SimulationOutputMappingDTO dto);
+      void RemoveOutputMapping(SimulationOutputMappingDTO outputMappingDTO);
 
       /// <summary>
       ///    Ensures that the cached list are updated 
@@ -46,11 +46,11 @@ namespace OSPSuite.Presentation.Presenters
    {
       private readonly IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
       private readonly IObservedDataRepository _observedDataRepository;
-      private readonly IOutputMappingToOutputMappingDTOMapper _outputMappingDTOMapper;
+      private readonly ISimulationOutputMappingToOutputMappingDTOMapper _outputMappingDTOMapper;
       private readonly IQuantityToSimulationQuantitySelectionDTOMapper _simulationQuantitySelectionDTOMapper;
       private readonly List<SimulationQuantitySelectionDTO> _allAvailableOutputs = new List<SimulationQuantitySelectionDTO>();
 
-      private readonly NotifyList<OutputMappingDTO> _listOfOutputMappingDTOs;
+      private readonly NotifyList<SimulationOutputMappingDTO> _listOfOutputMappingDTOs;
 
       private ISimulation _simulation;
       public bool IsLatched { get; set; }
@@ -59,7 +59,7 @@ namespace OSPSuite.Presentation.Presenters
          ISimulationOutputMappingView view,
          IEntitiesInSimulationRetriever entitiesInSimulationRetriever,
          IObservedDataRepository observedDataRepository,
-         IOutputMappingToOutputMappingDTOMapper outputMappingDTOMapper,
+         ISimulationOutputMappingToOutputMappingDTOMapper outputMappingDTOMapper,
          IQuantityToSimulationQuantitySelectionDTOMapper simulationQuantitySelectionDTOMapper,
          IParameterIdentificationTask parameterIdentificationTask) : base(view)
       {
@@ -67,7 +67,7 @@ namespace OSPSuite.Presentation.Presenters
          _observedDataRepository = observedDataRepository;
          _outputMappingDTOMapper = outputMappingDTOMapper;
          _simulationQuantitySelectionDTOMapper = simulationQuantitySelectionDTOMapper;
-         _listOfOutputMappingDTOs = new NotifyList<OutputMappingDTO>();
+         _listOfOutputMappingDTOs = new NotifyList<SimulationOutputMappingDTO>();
       }
 
       public void Refresh()
@@ -117,7 +117,9 @@ namespace OSPSuite.Presentation.Presenters
                var newOutputMapping = new OutputMapping();
                var newOutputMappingDTO = mapFrom(newOutputMapping);
                newOutputMappingDTO.ObservedData = observedData;
-               newOutputMapping.WeightedObservedData = newOutputMappingDTO.WeightedObservedData;
+
+               var weightedObservedData = new WeightedObservedData(observedData);
+               newOutputMapping.WeightedObservedData = weightedObservedData;
                newOutputMappingDTO.ObservedData = observedData;
                //var newOutputMappingDTO = mapFrom(newOutputMapping);
                _simulation.OutputMappings.Add(newOutputMapping);
@@ -146,14 +148,14 @@ namespace OSPSuite.Presentation.Presenters
          return _simulationQuantitySelectionDTOMapper.MapFrom(simulation, quantity);
       }
 
-      private OutputMappingDTO mapFrom(OutputMapping outputMapping)
+      private SimulationOutputMappingDTO mapFrom(OutputMapping outputMapping)
       {
          return _outputMappingDTOMapper.MapFrom(outputMapping, AllAvailableOutputs);
       }
 
 
       //probably will have to delete
-      public virtual IEnumerable<DataRepository> AllObservedDataFor(OutputMappingDTO outputMappingDTO)
+      public virtual IEnumerable<DataRepository> AllObservedDataFor(SimulationOutputMappingDTO outputMappingDTO)
       {
          return _observedDataRepository.AllObservedDataUsedBy(_simulation)
             .Distinct()
@@ -173,10 +175,10 @@ namespace OSPSuite.Presentation.Presenters
          _simulation = simulation;
       }
 
-      public void RemoveOutputMapping(OutputMappingDTO outputMappingDTO) //this is th "x", so should probably be set to <None>
+      public void RemoveOutputMapping(SimulationOutputMappingDTO outputMappingDTO) //this is th "x", so should probably be set to <None>
       {
-         outputMappingDTO.ObservedData = null;
-         OnStatusChanged();
+         outputMappingDTO.Output = null;
+         _view.RefreshGrid();
       }
 
       public void Handle(ObservedDataAddedToAnalysableEvent eventToHandle)
