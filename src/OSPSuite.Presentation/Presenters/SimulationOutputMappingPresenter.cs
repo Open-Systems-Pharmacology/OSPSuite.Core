@@ -11,7 +11,6 @@ using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Mappers.ParameterIdentifications;
-using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
@@ -22,6 +21,7 @@ namespace OSPSuite.Presentation.Presenters
 {
    public interface ISimulationOutputMappingPresenter : IPresenter<ISimulationOutputMappingView>, ILatchable
    {
+      void SetSimulation(ISimulation simulation);
       void AddOutputMapping();
       IEnumerable<SimulationQuantitySelectionDTO> AllAvailableOutputs { get; }
       IEnumerable<DataRepository> AllObservedDataFor(OutputMappingDTO dto);
@@ -85,6 +85,11 @@ namespace OSPSuite.Presentation.Presenters
          _allAvailableOutputs.Clear();
       }
 
+      public void SetSimulation(ISimulation simulation)
+      {
+         _simulation = simulation;
+      }
+
       public void AddOutputMapping()
       {
          var newOutputMapping = new OutputMapping();
@@ -100,7 +105,7 @@ namespace OSPSuite.Presentation.Presenters
 //and for the observed data, if you do not find it, just add it. - then we simply have to handle this latter on when using those
 
          //first map all the existing OutputMappings in the Simulation
-         _simulation.AllOutputMappings.Each(x => _listOfOutputMappingDTOs.Add(mapFrom(x)));
+         _simulation.AllOutputMappings.All.Each(x => _listOfOutputMappingDTOs.Add(mapFrom(x)));
 
          //get all available observed data, and create non-mapped DTOs for each one
          foreach (var observedData in getAllAvailableObservedData())

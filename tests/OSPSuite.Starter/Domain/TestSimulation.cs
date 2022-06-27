@@ -20,7 +20,7 @@ namespace OSPSuite.Starter.Domain
          get { yield break; }
       }
 
-      public IReadOnlyList<OutputMapping> AllOutputMappings { get; }
+      public OutputMappings AllOutputMappings { get; set; }
 
       public OutputSchema OutputSchema => Settings.OutputSchema;
       public ISimulationSettings Settings => BuildConfiguration.SimulationSettings;
