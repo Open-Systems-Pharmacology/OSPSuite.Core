@@ -82,6 +82,16 @@ namespace OSPSuite.R.Services
       /// <param name="value">Value to set in base unit</param>
       /// <param name="throwIfNotFound">Should an error be thrown if the quantity by path is not found?</param>
       void SetValueByPath(IModelCoreSimulation simulation, string path, double value, bool throwIfNotFound);
+
+
+      /// <summary>
+      ///    Gets the value of the quantity by path
+      /// </summary>
+      /// <param name="simulation">Simulation containing the value to set</param>
+      /// <param name="path">Full path. Wild card not allowed</param>
+      /// <param name="throwIfNotFound">Should an error be thrown if the quantity by path is not found?</param>
+      /// <returns>Value in base unit</returns>
+      double GetValueByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound);
    }
 
    public class ContainerTask : IContainerTask
@@ -184,6 +194,25 @@ namespace OSPSuite.R.Services
             throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path));
 
          _logger.AddWarning(Error.CouldNotFindQuantityWithPath(path));
+      }
+
+      public double GetValueByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound)
+      {
+         if (path.Contains(WILD_CARD))
+            throw new OSPSuiteException(Error.CannotGetValueByPathUsingWildCard(path));
+
+         var pathArray = path.ToPathArray();
+         var quantity = simulation.Model.Root.EntityAt<IQuantity>(pathArray);
+         if (quantity != null)
+         {
+            return quantity.Value;
+         }
+
+         if (throwIfNotFound)
+            throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path));
+
+         _logger.AddWarning(Error.CouldNotFindQuantityWithPath(path));
+         return double.NaN;
       }
 
       private IQuantity singleQuantityByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound)
