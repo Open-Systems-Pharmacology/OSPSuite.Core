@@ -5,6 +5,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Core;
@@ -105,11 +106,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void SetDisplayQuantityPathDefinition(Func<DataColumn, PathElements> displayQuantityPathDefinition);
 
       /// <summary>
-      /// Sets the output mappings of Simulation Outputs and their mapped Observed Data
-      /// </summary>
-      void SetOutputMappingNames(Cache<string, List<string>> outputObservedDataPairs);
-
-      /// <summary>
       ///    Sets Definition, whether DataColumn is shown in DataBrowser.
       /// </summary>
       void SetShowDataColumnInDataBrowserDefinition(Func<DataColumn, bool> showDataColumnInDataBrowserDefinition);
@@ -197,6 +193,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Refresh the presenter with all values and settings from the underlying <see cref="CurveChart" />
       /// </summary>
       void Refresh();
+
+      /// <summary>
+      /// Sets the output mappings of Simulation Outputs and their mapped Observed Data
+      /// </summary>
+      void SetOutputMappings(OutputMappings outputMappings);
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -586,11 +587,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _dataBrowserPresenter.SetDisplayQuantityPathDefinition(displayQuantityPathDefinition);
       }
 
-      public void SetOutputMappingNames(Cache<string, List<string>> outputObservedDataPairs)
-      {
-         _dataBrowserPresenter.OutputMappingNames = outputObservedDataPairs;
-      }
-
       public void SetShowDataColumnInDataBrowserDefinition(Func<DataColumn, bool> showDataColumnInDataBrowserDefinition)
       {
          _showDataColumnInDataBrowserDefinition = showDataColumnInDataBrowserDefinition;
@@ -679,6 +675,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _curveSettingsPresenter.Refresh();
          _axisSettingsPresenter.Refresh();
          updateUsedColumns();
+      }
+
+      public void SetOutputMappings(OutputMappings outputMappings)
+      {
+         _dataBrowserPresenter.AllOutputMappings = outputMappings;
       }
 
       private bool canHandle(ChartEvent chartEvent)

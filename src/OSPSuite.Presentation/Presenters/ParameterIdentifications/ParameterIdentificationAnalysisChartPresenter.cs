@@ -61,17 +61,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private void setOutputMappingNames()
       {
-         var outputMappingNames = new Cache<string, List<string>>();
-         foreach (var outputMapping in _parameterIdentification.OutputMappings.All)
-         {
-            var outputName = outputMapping.FullOutputPath;
-            if (outputMappingNames.Contains(outputName))
-               outputMappingNames[outputName].Add(outputMapping.WeightedObservedData.ObservedData.Name);
-            else
-               outputMappingNames.Add(outputName, new List<string>() { outputMapping.WeightedObservedData.ObservedData.Name });
-         }
-
-         ChartEditorPresenter.SetOutputMappingNames(outputMappingNames);
+         ChartEditorPresenter.SetOutputMappings(_parameterIdentification.OutputMappings);
       }
 
       protected virtual void UpdateTemplateFromChart()

@@ -322,7 +322,7 @@ namespace OSPSuite.Presentation.Presentation
       {
          base.Context();
          sut.AddDataColumns(new[] { _column1, _column2 });
-         sut.OutputMappingNames.Add(_column1.PathAsString, new List<string> { _column2.Repository.Name });
+         //sut.AllOutputMappings.Add(_column1.PathAsString, new List<string> { _column2.Repository.Name });
          _allDataColumnDTOs[0].Used = true;
          _allDataColumnDTOs[1].Used = false;
       }

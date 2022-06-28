@@ -131,8 +131,8 @@ namespace OSPSuite.Presentation.Presentation
             .Invokes(x => _allAddedDataRepositories.AddRange(x.GetArgument<IEnumerable<DataRepository>>(0)));
 
          _allAddedOutputMappingNames = new Cache<string, List<string>>();
-         A.CallTo(() => ChartEditorPresenter.SetOutputMappingNames(A<Cache<string, List<string>>>._))
-            .Invokes(x => _allAddedOutputMappingNames = x.GetArgument<Cache<string, List<string>>>(0) );
+         //A.CallTo(() => ChartEditorPresenter.SetOutputMappingNames(A<Cache<string, List<string>>>._))
+           // .Invokes(x => _allAddedOutputMappingNames = x.GetArgument<Cache<string, List<string>>>(0) );
 
       }
 

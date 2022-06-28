@@ -46,6 +46,11 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
          return All.Where(x => x.UsesObservedData(dataRepository));
       }
 
+      public virtual IEnumerable<DataRepository> AllDataRepositoryMappedTo(string outputFullPath)
+      {
+         return All.Where(x => x.FullOutputPath == outputFullPath).Select(x => x.WeightedObservedData.ObservedData);
+      }
+
       public virtual IEnumerable<DataRepository> AllDataRepositoryMappedFor(ISimulation simulation)
       {
          return AllOutputMappingsFor(simulation).Select(x => x.WeightedObservedData.ObservedData);
