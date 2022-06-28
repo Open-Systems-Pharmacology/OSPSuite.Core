@@ -50,7 +50,6 @@ skip_commits:
 branches:
   only:
     - develop
-    - 1641-linking-MappedOUtputs-in-Charts
 
 test:
   assemblies:

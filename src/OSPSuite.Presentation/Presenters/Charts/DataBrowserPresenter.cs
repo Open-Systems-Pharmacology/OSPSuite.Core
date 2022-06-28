@@ -5,6 +5,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
@@ -86,9 +87,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
       IReadOnlyList<DataColumn> GetAllUsedDataColumns();
 
       /// <summary>
-      /// Cache of all the mappings of Simulation Outputs and their mapped Observed Data
+      /// List of all the mappings of Simulation Outputs and their corresponding Observed Data
       /// </summary>
-      Cache<string, List<string>> OutputMappingNames { get; set; }
+      OutputMappings AllOutputMappings { get; set; }
 
       /// <summary>
       /// Changes the bool that defines whether the corresponding observed data used state
@@ -104,7 +105,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
    public class DataBrowserPresenter : PresenterWithColumnSettings<IDataBrowserView, IDataBrowserPresenter>, IDataBrowserPresenter
    {
-      public Cache<string, List<string>> OutputMappingNames { get; set; } = new Cache<string, List<string>>();
       private readonly Cache<DataColumn, DataColumnDTO> _dataColumnDTOCache = new Cache<DataColumn, DataColumnDTO>(x => x.DataColumn, x => null);
       private readonly List<DataColumn> _allDataColumns = new List<DataColumn>();
       private Func<DataColumn, PathElements> _displayQuantityPathDefinition;
@@ -174,14 +174,23 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private void updateLinkedObservedData(DataColumn dataColumn, bool used)
       {
          if (!_isLinkedMappedOutputs) return;
-
-         var updatedDataColumnName = dataColumn.PathAsString;
-         if (!OutputMappingNames.Contains(updatedDataColumnName)) return;
-
-         var linkedObservedDataNames = OutputMappingNames[updatedDataColumnName];
-         var linkedObservedData = _dataColumnDTOCache.KeyValues.Where(x => linkedObservedDataNames.Contains(x.Key.Repository.Name)).Select(x => x.Value).ToList();
          
+         var linkedObservedData = getLinkedObservedDataFromOutputPath(dataColumn.PathAsString);
          SetUsedState(linkedObservedData, used);
+      }
+
+      private List<DataColumnDTO> getLinkedObservedDataFromOutputPath(string updatedDataColumnName)
+      {
+         var linkedObservedDataRepositories = AllOutputMappings.AllDataRepositoryMappedTo(updatedDataColumnName);
+         var linkedObservedData = getDataColumnDTOsFromDatarepositories(linkedObservedDataRepositories);
+         return linkedObservedData;
+      }
+
+      private List<DataColumnDTO> getDataColumnDTOsFromDatarepositories(IEnumerable<DataRepository> linkedObservedDataRepositories)
+      {
+         var linkedObservedData = _dataColumnDTOCache.KeyValues.Where(x => linkedObservedDataRepositories.Any(y => y.Id == x.Key.Repository.Id))
+            .Select(c => c.Value).ToList();
+         return linkedObservedData;
       }
 
       public void UpdateUsedStateForSelection(bool used)
@@ -199,16 +208,23 @@ namespace OSPSuite.Presentation.Presenters.Charts
          return _dataColumnDTOCache.KeyValues.Where(x => x.Value.Used).Select(x => x.Key).ToList();
       }
 
+      public OutputMappings AllOutputMappings { get; set; }
+
       public void OutputObservedDataLinkingChanged(bool isLinkedSimToData)
       {
          _isLinkedMappedOutputs = isLinkedSimToData;
 
          if (!_isLinkedMappedOutputs) return;
 
-         foreach (var pair in OutputMappingNames.KeyValues)
+         var test = new OutputMappings();
+
+         foreach (var dataColumnPair in _dataColumnDTOCache.KeyValues)
          {
-            var outputColumnUsed = _dataColumnDTOCache.KeyValues.FirstOrDefault(x => x.Key.PathAsString == pair.Key).Value.Used;
-            var linkedObservedData = _dataColumnDTOCache.KeyValues.Where(x => pair.Value.Contains(x.Key.Repository.Name)).Select(x => x.Value);
+            var outputColumnUsed = dataColumnPair.Value.Used;
+
+            var linkedObservedData = getLinkedObservedDataFromOutputPath(dataColumnPair.Key.PathAsString);
+            //var linkedObservedDataRepositories = AllOutputMappings.AllDataRepositoryMappedTo(outputDataColumnName);
+            //var linkedObservedData = getDataColumnDTOsFromDatarepositories(linkedObservedDataRepositories);
             SetUsedState(linkedObservedData.ToList(), outputColumnUsed);
          }
       }

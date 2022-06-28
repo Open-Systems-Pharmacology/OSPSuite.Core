@@ -65,7 +65,6 @@ namespace OSPSuite.UI.Views.Charts
             Edit = repositoryItemCheckEditLinkSimulationAndObserved,
             Alignment = BarItemLinkAlignment.Right,
             AutoFillWidth = false,
-            Width = 20,
             Caption = Captions.LinkDataToSimulations,
             CaptionAlignment = HorzAlignment.Near,
             PaintStyle = BarItemPaintStyle.Caption
