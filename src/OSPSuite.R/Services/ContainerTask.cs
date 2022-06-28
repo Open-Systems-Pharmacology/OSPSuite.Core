@@ -200,8 +200,7 @@ namespace OSPSuite.R.Services
          if (path.Contains(WILD_CARD))
             throw new OSPSuiteException(Error.CannotSetValueByPathUsingWildCard(path));
 
-         var pathArray = path.ToPathArray();
-         var quantity = simulation.Model.Root.EntityAt<IQuantity>(pathArray);
+         var quantity = simulation.Model.Root.EntityAt<IQuantity>(path);
 
          if (quantity != null)
             return quantity;
