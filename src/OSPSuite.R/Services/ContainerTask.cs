@@ -179,40 +179,20 @@ namespace OSPSuite.R.Services
 
       public void SetValueByPath(IModelCoreSimulation simulation, string path, double value, bool throwIfNotFound)
       {
-         if (path.Contains(WILD_CARD))
-            throw new OSPSuiteException(Error.CannotSetValueByPathUsingWildCard(path));
-
-         var pathArray = path.ToPathArray();
-         var quantity = simulation.Model.Root.EntityAt<IQuantity>(pathArray);
-         if (quantity != null)
-         {
-            quantity.Value = value;
+         var quantity = singleQuantityByPath(simulation, path, throwIfNotFound);
+         if (quantity == null)
             return;
-         }
 
-         if (throwIfNotFound)
-            throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path));
-
-         _logger.AddWarning(Error.CouldNotFindQuantityWithPath(path));
+         quantity.Value = value;
       }
 
       public double GetValueByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound)
       {
-         if (path.Contains(WILD_CARD))
-            throw new OSPSuiteException(Error.CannotGetValueByPathUsingWildCard(path));
+         var quantity = singleQuantityByPath(simulation, path, throwIfNotFound);
+         if (quantity == null)
+            return double.NaN;
 
-         var pathArray = path.ToPathArray();
-         var quantity = simulation.Model.Root.EntityAt<IQuantity>(pathArray);
-         if (quantity != null)
-         {
-            return quantity.Value;
-         }
-
-         if (throwIfNotFound)
-            throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path));
-
-         _logger.AddWarning(Error.CouldNotFindQuantityWithPath(path));
-         return double.NaN;
+         return quantity.Value;
       }
 
       private IQuantity singleQuantityByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound)
