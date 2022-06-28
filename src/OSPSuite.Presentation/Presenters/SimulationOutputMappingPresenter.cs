@@ -105,6 +105,7 @@ namespace OSPSuite.Presentation.Presenters
          //KEEP SHIT SIMPLE: just add the observed data as mappings to the DTO list (hence also the simulation.OutputMappings)
 //and for the observed data, if you do not find it, just add it. - then we simply have to handle this latter on when using those
 
+         addOutputMappingsFor(_simulation);
          //first map all the existing OutputMappings in the Simulation
          _simulation.OutputMappings.All.Each(x => _listOfOutputMappingDTOs.Add(mapFrom(x)));
 
@@ -184,6 +185,47 @@ namespace OSPSuite.Presentation.Presenters
       public void Handle(ObservedDataAddedToAnalysableEvent eventToHandle)
       {
          Refresh();
+      }
+
+      private void addOutputMappingsFor(ISimulation simulation)
+      {
+         foreach (var keyValue in _entitiesInSimulationRetriever.OutputsFrom(simulation).KeyValues)
+         {
+            var output = keyValue.Value;
+            var outputPath = keyValue.Key;
+            observedDataInSimulationMatchingOutputs(outputPath, simulation).Each(obs => addOutputMapping(output, outputPath, obs, simulation));
+         }
+      }
+
+      private void addOutputMapping(IQuantity output, string outputPath, DataRepository observedData, ISimulation simulation)
+      {
+         _simulation.OutputMappings.Add(new OutputMapping
+         {
+            OutputSelection = new SimulationQuantitySelection(simulation, new QuantitySelection(outputPath, output.QuantityType)),
+            WeightedObservedData = new WeightedObservedData(observedData),
+            Scaling = DefaultScalingFor(output)
+         });
+      }
+      public Scalings DefaultScalingFor(IQuantity output)
+      {
+         return output.IsFraction() ? Scalings.Linear : Scalings.Log;
+      }
+      private IEnumerable<DataRepository> observedDataInSimulationMatchingOutputs(string outputPath, ISimulation simulation)
+      {
+         var allObservedDataUsedByTheSimulation = _observedDataRepository.AllObservedDataUsedBy(simulation);
+         return allObservedDataUsedByTheSimulation.Where(obs => observedDataMatchesOutput(obs, outputPath));
+      }
+
+      private bool observedDataMatchesOutput(DataRepository observedData, string outputPath)
+      {
+         var organ = observedData.ExtendedPropertyValueFor(Constants.ObservedData.ORGAN);
+         var compartment = observedData.ExtendedPropertyValueFor(Constants.ObservedData.COMPARTMENT);
+         var molecule = observedData.ExtendedPropertyValueFor(Constants.ObservedData.MOLECULE);
+
+         if (organ == null || compartment == null || molecule == null)
+            return false;
+
+         return outputPath.Contains(organ) && outputPath.Contains(compartment) && outputPath.Contains(molecule);
       }
 
       //So this is a better question let's say. What happens actually when observed data has been removed?
