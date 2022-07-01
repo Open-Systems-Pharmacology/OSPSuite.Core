@@ -168,18 +168,18 @@ namespace OSPSuite.R.Services
 
       public string[] AllStateVariableParameterPathsIn(IModelCoreSimulation simulation) => AllStateVariableParameterPathsIn(simulation?.Model?.Root);
 
-      public string BaseUnitNameByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound) => singleQuantityByPath(simulation, path, throwIfNotFound, Error.CannotGetValueByPathUsingWildCard(path)).BaseUnitName();
+      public string BaseUnitNameByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound) => singleQuantityByPath(simulation, path, throwIfNotFound).BaseUnitName();
 
-      public string DimensionNameByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound) => singleQuantityByPath(simulation, path, throwIfNotFound, Error.CannotGetValueByPathUsingWildCard(path)).DimensionName();
+      public string DimensionNameByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound) => singleQuantityByPath(simulation, path, throwIfNotFound).DimensionName();
 
-      public bool IsExplicitFormulaByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound) => singleQuantityByPath(simulation, path, throwIfNotFound, Error.CannotGetValueByPathUsingWildCard(path))?.Formula.IsExplicit() ?? false;
+      public bool IsExplicitFormulaByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound) => singleQuantityByPath(simulation, path, throwIfNotFound)?.Formula.IsExplicit() ?? false;
 
       public void AddQuantitiesToSimulationOutputByPath(IModelCoreSimulation simulation, string path) =>
          AllQuantitiesMatching(simulation, path).Each(simulation.OutputSelections.AddQuantity);
 
       public void SetValueByPath(IModelCoreSimulation simulation, string path, double value, bool throwIfNotFound)
       {
-         var quantity = singleQuantityByPath(simulation, path, throwIfNotFound, Error.CannotSetValueByPathUsingWildCard(path));
+         var quantity = singleQuantityByPath(simulation, path, throwIfNotFound);
          if (quantity == null)
             return;
 
@@ -188,14 +188,14 @@ namespace OSPSuite.R.Services
 
       public double GetValueByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound)
       {
-         var quantity = singleQuantityByPath(simulation, path, throwIfNotFound, Error.CannotGetValueByPathUsingWildCard(path));
+         var quantity = singleQuantityByPath(simulation, path, throwIfNotFound);
          return quantity?.Value ?? double.NaN;
       }
 
-      private IQuantity singleQuantityByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound, string messageToRiseOnWilCard)
+      private IQuantity singleQuantityByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound)
       {
          if (path.Contains(WILD_CARD))
-            throw new OSPSuiteException(messageToRiseOnWilCard);
+            throw new OSPSuiteException(Error.CannotAccessValueByPathUsingWildCard(path));
 
          var quantity = simulation.Model.Root.EntityAt<IQuantity>(path);
 
