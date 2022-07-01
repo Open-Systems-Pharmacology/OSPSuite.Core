@@ -1725,7 +1725,7 @@ namespace OSPSuite.Assets
 
       public static string TypeNotSupported(string typeName) => $"{typeName} is not currently been handled";
 
-      public static string CannotSetValueByPathUsingWildCard(string path) => $"Setting value by path is not supported for path containing wildcard ({path})";
+      public static string CannotAccessValueByPathUsingWildCard(string path) => $"Accessing value by path is not supported for path containing wildcard ({path})";
    }
 
    public static class Validation
