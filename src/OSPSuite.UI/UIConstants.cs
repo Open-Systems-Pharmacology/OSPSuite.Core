@@ -46,6 +46,7 @@ namespace OSPSuite.UI
          public static readonly int BUTTON_WIDTH = ScaleForScreenDPI(105);
          public static readonly int BUTTON_HEIGHT = ScaleForScreenDPI(24);
          public static readonly int OPTIMIZED_RANGE_WIDTH = ScaleForScreenDPI(300);
+         public static readonly int APPLICATION_MENU_RIGHT_PANE_WIDTH = ScaleForScreenDPI(300);
 
          public static int ScaleForScreenDPI(int size) => (int) (_scaleFactor * size);
 

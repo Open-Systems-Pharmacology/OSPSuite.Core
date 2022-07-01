@@ -185,8 +185,6 @@ namespace OSPSuite.Presentation.Presentation
    }
    public class When_adding_a_curve_for_a_columns_grouped_for_the_same_color : concern_for_ChartEditorPresenter
    {
-      private Curve _curve;
-
       protected override void Context()
       {
          base.Context();
