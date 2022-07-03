@@ -203,6 +203,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Adds the control for linking the (de)selection of outputs and observed data
       /// </summary>
       void AddLinkSimDataMenuItem();
+
+      void SetLinkSimDataMenuItemVisibility(bool isVisible);
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -412,6 +414,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void AddUsedInMenuItem() => _view.AddUsedInMenuItemCheckBox();
 
       public void AddLinkSimDataMenuItem() => _view.AddLinkSimulationObservedMenuItemCheckBox();
+      public void SetLinkSimDataMenuItemVisibility(bool isVisible) => _view.SetlinkSimDataMenuItemVisisbility(isVisible);
 
       public void OnDragDrop(IDragEvent dropEvent) => DragDrop(this, dropEvent);
 

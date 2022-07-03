@@ -32,5 +32,7 @@ namespace OSPSuite.Presentation.Views.Charts
       /// Adds the link simulation to data checkbox to the menubar
       /// </summary>
       void AddLinkSimulationObservedMenuItemCheckBox();
+
+      void SetlinkSimDataMenuItemVisisbility(bool isVisible);
    }
 }
