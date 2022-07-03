@@ -1304,6 +1304,7 @@ namespace OSPSuite.Assets
             public static string Simulation = "Simulation";
             public static string Time = "Time";
             public static string Observation = "Observation";
+            public static string Undefined = "Undefined";
          }
       }
    }
