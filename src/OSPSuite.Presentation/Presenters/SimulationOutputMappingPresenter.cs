@@ -8,7 +8,6 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.DTO;
-using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Mappers.ParameterIdentifications;
 using OSPSuite.Presentation.Views;
@@ -105,9 +104,10 @@ namespace OSPSuite.Presentation.Presenters
          //KEEP SHIT SIMPLE: just add the observed data as mappings to the DTO list (hence also the simulation.OutputMappings)
 //and for the observed data, if you do not find it, just add it. - then we simply have to handle this latter on when using those
 
-         addOutputMappingsFor(_simulation);
+         //addOutputMappingsFor(_simulation);
          //first map all the existing OutputMappings in the Simulation
          _simulation.OutputMappings.All.Each(x => _listOfOutputMappingDTOs.Add(mapFrom(x)));
+         var newOutputMapping = new OutputMapping();
 
          //get all available observed data, and create non-mapped DTOs for each one
          foreach (var observedData in getAllAvailableObservedData())
@@ -115,7 +115,25 @@ namespace OSPSuite.Presentation.Presenters
             if (!_listOfOutputMappingDTOs.Any(x =>
                x.ObservedData.Id.Equals(observedData.Id))) //possibly a better way (or already existing way) to write this exists. 
             {
-               var newOutputMapping = new OutputMapping();
+
+               //`==========================================
+
+               var outputPaths = _entitiesInSimulationRetriever.OutputsFrom(_simulation).Keys;
+               var matchingOutputPath = outputPaths.FirstOrDefault(x => observedDataMatchesOutput(observedData, x));
+
+               if (matchingOutputPath != null)
+               {
+                  var matchingOutput = _entitiesInSimulationRetriever.OutputsFrom(_simulation)[matchingOutputPath];
+                  newOutputMapping = new OutputMapping //  probably not this way, just initialize if we need
+                  {
+                     OutputSelection = new SimulationQuantitySelection(_simulation, new QuantitySelection(matchingOutputPath, matchingOutput.QuantityType)),
+                     WeightedObservedData = new WeightedObservedData(observedData),
+                     Scaling = DefaultScalingFor(matchingOutput)
+                  };
+               }
+
+               //`==========================================
+               
                var newOutputMappingDTO = mapFrom(newOutputMapping);
                newOutputMappingDTO.ObservedData = observedData;
 
@@ -176,7 +194,7 @@ namespace OSPSuite.Presentation.Presenters
          _simulation = simulation;
       }
 
-      public void RemoveOutputMapping(SimulationOutputMappingDTO outputMappingDTO) //this is th "x", so should probably be set to <None>
+      public void RemoveOutputMapping(SimulationOutputMappingDTO outputMappingDTO)
       {
          outputMappingDTO.Output = null;
          _view.RefreshGrid();
