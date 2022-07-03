@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
-using DevExpress.XtraBars;
-using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using OSPSuite.Assets;
 using OSPSuite.UI.Extensions;
+using OSPSuite.UI.Views;
 
 namespace OSPSuite.UI.Controls
 {
-   public partial class InputBoxDialog : XtraForm
+   public partial class InputBoxDialog : BaseModalView
    {
       internal IEnumerable<string> NotAllowedValues { get; set; }
       internal string FormPrompt { get; set; }
@@ -21,30 +19,25 @@ namespace OSPSuite.UI.Controls
       public InputBoxDialog()
       {
          InitializeComponent();
-         initializeResources();
+         InitializeResources();
          Load += onLoad;
-         btnOk.Manager = new BarManager {Form = this};
       }
 
-      private void initializeResources()
+      public override void InitializeResources()
       {
+         base.InitializeResources();
          lblPrompt.AsDescription();
-
-         btnOk.Shortcut = Keys.Control | Keys.Enter;
-         btnCancel.Text = Captions.CancelButton;
-
-         btnOk.InitWithImage(ApplicationIcons.OK, Captions.OKButton, ImageLocation.MiddleRight);
-         btnCancel.InitWithImage(ApplicationIcons.Cancel, Captions.CancelButton, ImageLocation.MiddleRight);
-
-         MaximizeBox = false;
-         MinimizeBox = false;
-         layoutItemOk.AdjustButtonSize();
-         layoutItemCancel.AdjustButtonSize();
       }
 
       internal string InputResponse => cbInput.Text;
 
-      public static string Show(string prompt, string title, string defaultValue = null, IEnumerable<string> forbiddenValues = null, IEnumerable<string> predefinedValues = null)
+      public static string Show(
+         string prompt,
+         string title,
+         string defaultValue = null,
+         IEnumerable<string> forbiddenValues = null,
+         IEnumerable<string> predefinedValues = null,
+         string iconName = null)
       {
          var inputBoxDialog = new InputBoxDialog
          {
@@ -55,7 +48,10 @@ namespace OSPSuite.UI.Controls
             NotAllowedValues = forbiddenValues ?? Enumerable.Empty<string>()
          };
 
-         if (inputBoxDialog.ShowDialog() == DialogResult.Cancel)
+         inputBoxDialog.ApplicationIcon = ApplicationIcons.IconByNameOrDefault(iconName, ApplicationIcons.DefaultIcon);
+         inputBoxDialog.Display();
+
+         if (inputBoxDialog.Canceled)
             return string.Empty;
 
          return inputBoxDialog.InputResponse;
@@ -80,13 +76,11 @@ namespace OSPSuite.UI.Controls
       {
          var value = e.NewValue.ToString().Trim();
          if (string.IsNullOrEmpty(value))
-            errorProvider.SetError(cbInput, "Please enter a value");
+            OnValidationError(cbInput, "Please enter a value");
          else if (NotAllowedValues.Contains(value))
-            errorProvider.SetError(cbInput, $"{e.NewValue} is not allowed");
+            OnValidationError(cbInput, $"{e.NewValue} is not allowed");
          else
-            errorProvider.SetError(cbInput, string.Empty);
-
-         btnOk.Enabled = !errorProvider.HasErrors;
+            OnClearError(cbInput);
       }
    }
 }

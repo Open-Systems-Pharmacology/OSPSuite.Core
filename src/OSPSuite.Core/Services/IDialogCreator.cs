@@ -24,7 +24,6 @@ namespace OSPSuite.Core.Services
       /// </remarks>
       ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel, ViewResult defaultButton = ViewResult.Yes);
 
-
       ViewResult MessageBoxYesNo(string message, ViewResult defaultButton = ViewResult.Yes);
 
       /// <summary>
@@ -63,7 +62,6 @@ namespace OSPSuite.Core.Services
       /// <param name="defaultDirectory">Optional: default directory, This will override the directory key value</param>
       string AskForFileToSave(string title, string filter, string directoryKey, string defaultFileName = null, string defaultDirectory = null);
 
-
       /// <summary>
       ///    Prompt a dialog asking the user to select a folder. The title is used in the description field.
       ///    The default starting folder will be mapped using the directory key
@@ -71,6 +69,6 @@ namespace OSPSuite.Core.Services
       /// <returns>the selected folder if the user confirmed the action or string.empty on cancel</returns>
       string AskForFolder(string title, string directoryKey, string defaultDirectory = null);
 
-      string AskForInput(string caption, string text, string defaultValue = null, IEnumerable<string> forbiddenValues=null, IEnumerable<string> predefinedValues=null);
+      string AskForInput(string caption, string text, string defaultValue = null, IEnumerable<string> forbiddenValues = null, IEnumerable<string> predefinedValues = null, string iconName = null);
    }
 }

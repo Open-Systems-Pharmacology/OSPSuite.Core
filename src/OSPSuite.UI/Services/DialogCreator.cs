@@ -177,9 +177,9 @@ namespace OSPSuite.UI.Services
          }
       }
 
-      public string AskForInput(string caption, string text, string defaultValue = null, IEnumerable<string> forbiddenValues = null, IEnumerable<string> predefinedValues = null)
+      public string AskForInput(string caption, string text, string defaultValue = null, IEnumerable<string> forbiddenValues = null, IEnumerable<string> predefinedValues = null, string iconName = null)
       {
-         return InputBoxDialog.Show(caption, text, defaultValue, forbiddenValues, predefinedValues);
+         return InputBoxDialog.Show(caption, text, defaultValue, forbiddenValues, predefinedValues, iconName);
       }
 
       private class XtraMessageBoxLocalizer : Localizer

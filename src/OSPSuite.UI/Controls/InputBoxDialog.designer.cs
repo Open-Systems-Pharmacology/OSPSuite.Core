@@ -28,71 +28,51 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.components = new System.ComponentModel.Container();
-         this.errorProvider = new DevExpress.XtraEditors.DXErrorProvider.DXErrorProvider(this.components);
-         this.btnOk = new UxSimpleButton();
-         this.layoutControl1 = new UxLayoutControl();
-         this.lblPrompt = new DevExpress.XtraEditors.LabelControl();
+         this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
          this.cbInput = new DevExpress.XtraEditors.MRUEdit();
-         this.btnCancel = new DevExpress.XtraEditors.SimpleButton();
-         this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
-         this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.layoutItemInput = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
-         this.layoutItemOk = new DevExpress.XtraLayout.LayoutControlItem();
-         this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
-         this.layoutItemCancel = new DevExpress.XtraLayout.LayoutControlItem();
-         ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
-         this.layoutControl1.SuspendLayout();
+         this.lblPrompt = new DevExpress.XtraEditors.LabelControl();
+         this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
+         ((System.ComponentModel.ISupportInitialize)(this.tablePanel)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
+         this.layoutControl.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.cbInput.Properties)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemInput)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemOk)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemCancel)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
          this.SuspendLayout();
          // 
-         // errorProvider
+         // tablePanel
          // 
-         this.errorProvider.ContainerControl = this;
+         this.tablePanel.Location = new System.Drawing.Point(0, 89);
          // 
-         // btnOk
+         // layoutControl
          // 
-         this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-         this.btnOk.Location = new System.Drawing.Point(232, 87);
-         this.btnOk.Name = "btnOk";
-         this.btnOk.Size = new System.Drawing.Size(149, 22);
-         this.btnOk.StyleController = this.layoutControl1;
-         this.btnOk.TabIndex = 5;
-         this.btnOk.Text = "btnOK";
+         this.layoutControl.Controls.Add(this.lblPrompt);
+         this.layoutControl.Controls.Add(this.cbInput);
+         this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.layoutControl.Location = new System.Drawing.Point(0, 0);
+         this.layoutControl.Name = "layoutControl";
+         this.layoutControl.Root = this.Root;
+         this.layoutControl.Size = new System.Drawing.Size(580, 89);
+         this.layoutControl.TabIndex = 39;
+         this.layoutControl.Text = "layoutControl1";
          // 
-         // layoutControl1
+         // Root
          // 
-         this.layoutControl1.AllowCustomization = false;
-         this.layoutControl1.Controls.Add(this.lblPrompt);
-         this.layoutControl1.Controls.Add(this.cbInput);
-         this.layoutControl1.Controls.Add(this.btnCancel);
-         this.layoutControl1.Controls.Add(this.btnOk);
-         this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.layoutControl1.Location = new System.Drawing.Point(0, 0);
-         this.layoutControl1.Name = "layoutControl1";
-         this.layoutControl1.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(705, 325, 250, 350);
-         this.layoutControl1.Root = this.layoutControlGroup1;
-         this.layoutControl1.Size = new System.Drawing.Size(461, 121);
-         this.layoutControl1.TabIndex = 0;
-         this.layoutControl1.Text = "layoutControl1";
-         // 
-         // lblPrompt
-         // 
-         this.lblPrompt.Location = new System.Drawing.Point(12, 12);
-         this.lblPrompt.Name = "lblPrompt";
-         this.lblPrompt.Size = new System.Drawing.Size(44, 13);
-         this.lblPrompt.StyleController = this.layoutControl1;
-         this.lblPrompt.TabIndex = 7;
-         this.lblPrompt.Text = "lblPrompt";
+         this.Root.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
+         this.Root.GroupBordersVisible = false;
+         this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.layoutItemInput,
+            this.emptySpaceItem1,
+            this.layoutControlItem2});
+         this.Root.Name = "Root";
+         this.Root.Size = new System.Drawing.Size(580, 89);
+         this.Root.TextVisible = false;
          // 
          // cbInput
          // 
@@ -100,149 +80,78 @@
          this.cbInput.Name = "cbInput";
          this.cbInput.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.cbInput.Size = new System.Drawing.Size(437, 20);
-         this.cbInput.StyleController = this.layoutControl1;
+         this.cbInput.Size = new System.Drawing.Size(556, 20);
+         this.cbInput.StyleController = this.layoutControl;
          this.cbInput.TabIndex = 6;
          // 
-         // btnCancel
+         // layoutItemInput
          // 
-         this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-         this.btnCancel.Location = new System.Drawing.Point(385, 87);
-         this.btnCancel.Name = "btnCancel";
-         this.btnCancel.Size = new System.Drawing.Size(64, 22);
-         this.btnCancel.StyleController = this.layoutControl1;
-         this.btnCancel.TabIndex = 4;
-         this.btnCancel.Text = "btnCancel";
-         // 
-         // layoutControlGroup1
-         // 
-         this.layoutControlGroup1.CustomizationFormText = "layoutControlGroup1";
-         this.layoutControlGroup1.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
-         this.layoutControlGroup1.GroupBordersVisible = false;
-         this.layoutControlGroup1.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
-            this.layoutControlItem1,
-            this.layoutControlItem2,
-            this.emptySpaceItem1,
-            this.layoutItemOk,
-            this.emptySpaceItem2,
-            this.layoutItemCancel});
-         this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
-         this.layoutControlGroup1.Name = "layoutControlGroup1";
-         this.layoutControlGroup1.Size = new System.Drawing.Size(461, 121);
-         this.layoutControlGroup1.Text = "layoutControlGroup1";
-         this.layoutControlGroup1.TextVisible = false;
-         // 
-         // layoutControlItem1
-         // 
-         this.layoutControlItem1.Control = this.cbInput;
-         this.layoutControlItem1.CustomizationFormText = "layoutControlItem1";
-         this.layoutControlItem1.Location = new System.Drawing.Point(0, 17);
-         this.layoutControlItem1.Name = "layoutControlItem1";
-         this.layoutControlItem1.Size = new System.Drawing.Size(441, 24);
-         this.layoutControlItem1.Text = "layoutControlItem1";
-         this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem1.TextToControlDistance = 0;
-         this.layoutControlItem1.TextVisible = false;
-         // 
-         // layoutControlItem2
-         // 
-         this.layoutControlItem2.Control = this.lblPrompt;
-         this.layoutControlItem2.CustomizationFormText = "layoutControlItem2";
-         this.layoutControlItem2.Location = new System.Drawing.Point(0, 0);
-         this.layoutControlItem2.Name = "layoutControlItem2";
-         this.layoutControlItem2.Size = new System.Drawing.Size(441, 17);
-         this.layoutControlItem2.Text = "layoutControlItem2";
-         this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem2.TextToControlDistance = 0;
-         this.layoutControlItem2.TextVisible = false;
+         this.layoutItemInput.Control = this.cbInput;
+         this.layoutItemInput.Location = new System.Drawing.Point(0, 17);
+         this.layoutItemInput.Name = "layoutItemInput";
+         this.layoutItemInput.Size = new System.Drawing.Size(560, 24);
+         this.layoutItemInput.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutItemInput.TextVisible = false;
          // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.CustomizationFormText = "emptySpaceItem1";
          this.emptySpaceItem1.Location = new System.Drawing.Point(0, 41);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(441, 34);
-         this.emptySpaceItem1.Text = "emptySpaceItem1";
+         this.emptySpaceItem1.Size = new System.Drawing.Size(560, 28);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
-         // layoutItemOk
+         // lblPrompt
          // 
-         this.layoutItemOk.Control = this.btnOk;
-         this.layoutItemOk.CustomizationFormText = "layoutControlItem2";
-         this.layoutItemOk.Location = new System.Drawing.Point(220, 75);
-         this.layoutItemOk.Name = "layoutItemOk";
-         this.layoutItemOk.Size = new System.Drawing.Size(153, 26);
-         this.layoutItemOk.Text = "layoutItemOk";
-         this.layoutItemOk.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutItemOk.TextToControlDistance = 0;
-         this.layoutItemOk.TextVisible = false;
+         this.lblPrompt.Location = new System.Drawing.Point(12, 12);
+         this.lblPrompt.Name = "lblPrompt";
+         this.lblPrompt.Size = new System.Drawing.Size(44, 13);
+         this.lblPrompt.StyleController = this.layoutControl;
+         this.lblPrompt.TabIndex = 8;
+         this.lblPrompt.Text = "lblPrompt";
          // 
-         // emptySpaceItem2
+         // layoutControlItem2
          // 
-         this.emptySpaceItem2.AllowHotTrack = false;
-         this.emptySpaceItem2.CustomizationFormText = "emptySpaceItem2";
-         this.emptySpaceItem2.Location = new System.Drawing.Point(0, 75);
-         this.emptySpaceItem2.Name = "emptySpaceItem2";
-         this.emptySpaceItem2.Size = new System.Drawing.Size(220, 26);
-         this.emptySpaceItem2.Text = "emptySpaceItem2";
-         this.emptySpaceItem2.TextSize = new System.Drawing.Size(0, 0);
-         // 
-         // layoutItemCancel
-         // 
-         this.layoutItemCancel.Control = this.btnCancel;
-         this.layoutItemCancel.CustomizationFormText = "layoutItemCancel";
-         this.layoutItemCancel.Location = new System.Drawing.Point(373, 75);
-         this.layoutItemCancel.Name = "layoutItemCancel";
-         this.layoutItemCancel.Size = new System.Drawing.Size(68, 26);
-         this.layoutItemCancel.Text = "layoutItemCancel";
-         this.layoutItemCancel.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutItemCancel.TextToControlDistance = 0;
-         this.layoutItemCancel.TextVisible = false;
+         this.layoutControlItem2.Control = this.lblPrompt;
+         this.layoutControlItem2.Location = new System.Drawing.Point(0, 0);
+         this.layoutControlItem2.Name = "layoutControlItem2";
+         this.layoutControlItem2.Size = new System.Drawing.Size(560, 17);
+         this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem2.TextVisible = false;
          // 
          // InputBoxDialog
          // 
-         this.AcceptButton = this.btnOk;
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.AutoSize = true;
-         this.CancelButton = this.btnCancel;
-         this.ClientSize = new System.Drawing.Size(461, 121);
-         this.Controls.Add(this.layoutControl1);
+         this.Caption = "InputBoxDialog";
+         this.ClientSize = new System.Drawing.Size(580, 132);
+         this.Controls.Add(this.layoutControl);
          this.Name = "InputBoxDialog";
-         this.ShowIcon = false;
-         this.ShowInTaskbar = false;
-         this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
          this.Text = "InputBoxDialog";
-         ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
-         this.layoutControl1.ResumeLayout(false);
+         this.Controls.SetChildIndex(this.tablePanel, 0);
+         this.Controls.SetChildIndex(this.layoutControl, 0);
+         ((System.ComponentModel.ISupportInitialize)(this.tablePanel)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
+         this.layoutControl.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.cbInput.Properties)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemInput)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemOk)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemCancel)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
          this.ResumeLayout(false);
+         this.PerformLayout();
 
       }
 
       #endregion
 
-      private UxLayoutControl layoutControl1;
-      private UxSimpleButton btnOk;
-      private DevExpress.XtraEditors.SimpleButton btnCancel;
-      private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
-      private DevExpress.XtraLayout.LayoutControlItem layoutItemCancel;
-      private DevExpress.XtraLayout.LayoutControlItem layoutItemOk;
-      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
+      private DevExpress.XtraLayout.LayoutControl layoutControl;
+      private DevExpress.XtraLayout.LayoutControlGroup Root;
       private DevExpress.XtraEditors.MRUEdit cbInput;
-      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
+      private DevExpress.XtraLayout.LayoutControlItem layoutItemInput;
+      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
       private DevExpress.XtraEditors.LabelControl lblPrompt;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
-      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem2;
-      private DevExpress.XtraEditors.DXErrorProvider.DXErrorProvider errorProvider;
    }
 }
