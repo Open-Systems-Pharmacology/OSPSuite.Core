@@ -187,10 +187,12 @@ namespace OSPSuite.Presentation.Presentation
          observedDataCurve.VisibleInLegend.ShouldBeFalse();
       }
 
+/*
       [Observation]
       public void should_add_the_correct_output_to_observed_data_mapping_names()
       {
          _allAddedOutputMappingNames[_outputMapping1.FullOutputPath].ShouldContain( _firstObservedData1.Repository.Name, _firstObservedData2.Repository.Name );
       }
+*/
    }
 }

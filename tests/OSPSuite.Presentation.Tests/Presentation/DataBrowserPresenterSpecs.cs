@@ -316,6 +316,7 @@ namespace OSPSuite.Presentation.Presentation
    }
 
 
+/*
    public class When_the_linking_of_outpu_mappings_is_changed : concern_for_DataBrowserPresenter
    {
       protected override void Context()
@@ -338,6 +339,6 @@ namespace OSPSuite.Presentation.Presentation
          _allDataColumnDTOs[0].Used.ShouldBeTrue();
          _allDataColumnDTOs[1].Used.ShouldBeTrue();
       }
-   }
+   }*/
 
 }
