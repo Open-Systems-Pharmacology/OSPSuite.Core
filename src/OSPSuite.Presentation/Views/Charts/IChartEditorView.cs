@@ -27,5 +27,10 @@ namespace OSPSuite.Presentation.Views.Charts
       /// </summary>
       /// <param name="checkedState">true if the checkbox should be checked, false if unchecked, null for indeterminate</param>
       void SetSelectAllCheckBox(bool? checkedState);
+
+      /// <summary>
+      /// Adds the link simulation to data checkbox to the menubar
+      /// </summary>
+      void AddLinkSimulationObservedMenuItemCheckBox();
    }
 }

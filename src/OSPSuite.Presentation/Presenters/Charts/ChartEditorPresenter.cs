@@ -198,6 +198,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// Sets the output mappings of Simulation Outputs and their mapped Observed Data
       /// </summary>
       void SetOutputMappings(OutputMappings outputMappings);
+
+      /// <summary>
+      ///    Adds the control for linking the (de)selection of outputs and observed data
+      /// </summary>
+      void AddLinkSimDataMenuItem();
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -405,6 +410,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void ShowCustomizationForm() => _view.ShowCustomizationForm();
 
       public void AddUsedInMenuItem() => _view.AddUsedInMenuItemCheckBox();
+
+      public void AddLinkSimDataMenuItem() => _view.AddLinkSimulationObservedMenuItemCheckBox();
 
       public void OnDragDrop(IDragEvent dropEvent) => DragDrop(this, dropEvent);
 

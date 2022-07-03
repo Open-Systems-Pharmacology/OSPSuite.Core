@@ -77,6 +77,8 @@ namespace OSPSuite.UI.Views.Charts
          repositoryItemCheckEditLinkSimulationAndObserved.EditValueChanged += (o, e) => OnEvent(() => changeLinkSimulationToData(o));
 
          repositoryItemCheckEditForUsedIn.ValueGrayed = null;
+
+         _barEditItemLinkSimulationObserved.EditValue = false;
       }
 
       private static RepositoryItemCheckEdit CreateLinkSimulationAndObservedRepositoryItem()
@@ -176,6 +178,11 @@ namespace OSPSuite.UI.Views.Charts
       public void AddUsedInMenuItemCheckBox()
       {
          _barMenu.AddItem(_barEditItemForUsedIn);
+      }
+
+      public void AddLinkSimulationObservedMenuItemCheckBox()
+      {
+         _barMenu.AddItem(_barEditItemLinkSimulationObserved);
       }
 
       public void SetSelectAllCheckBox(bool? checkedState)
