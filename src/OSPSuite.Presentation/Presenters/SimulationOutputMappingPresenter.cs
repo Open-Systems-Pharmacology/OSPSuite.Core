@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Org.BouncyCastle.Math.EC.Rfc7748;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
@@ -157,6 +156,7 @@ namespace OSPSuite.Presentation.Presenters
       {
          get
          { 
+            //OK, so we probably have to clear here, then refresh
             var outputs = _entitiesInSimulationRetriever.OutputsFrom(_simulation);
             _allAvailableOutputs.AddRange(outputs.Select(x => mapFrom(_simulation, x)).OrderBy(x => x.DisplayString));
             return _allAvailableOutputs;
