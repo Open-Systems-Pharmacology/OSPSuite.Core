@@ -33,6 +33,9 @@ namespace OSPSuite.Presentation.Views.Charts
       /// </summary>
       void AddLinkSimulationObservedMenuItemCheckBox();
 
+      /// <summary>
+      ///    Sets the visibility of the control for linking the (de)selection of outputs and observed data 
+      /// </summary>
       void SetlinkSimDataMenuItemVisisbility(bool isVisible);
    }
 }
