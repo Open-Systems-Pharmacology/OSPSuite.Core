@@ -95,7 +95,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// Changes the bool that defines whether the corresponding observed data used state
       /// should be updated when their linked output used state is updated
       /// </summary>
-      void OutputObservedDataLinkingChanged(bool isLinkedSimToData);
+      void OutputObservedDataLinkingChanged(bool isLinkedMappedOutputs);
 
       /// <summary>
       /// sets the group row format of the gridView to the specified string.
@@ -210,9 +210,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public OutputMappings AllOutputMappings { get; set; }
 
-      public void OutputObservedDataLinkingChanged(bool isLinkedSimToData)
+      public void OutputObservedDataLinkingChanged(bool isLinkedMappedOutputs)
       {
-         _isLinkedMappedOutputs = isLinkedSimToData;
+         _isLinkedMappedOutputs = isLinkedMappedOutputs;
 
          if (!_isLinkedMappedOutputs) return;
 
