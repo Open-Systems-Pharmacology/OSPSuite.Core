@@ -65,6 +65,7 @@ namespace OSPSuite.UI.Views.Charts
             Edit = repositoryItemCheckEditLinkSimulationAndObserved,
             Alignment = BarItemLinkAlignment.Right,
             AutoFillWidth = false,
+            Width = 20,
             Caption = Captions.LinkDataToSimulations,
             CaptionAlignment = HorzAlignment.Near,
             PaintStyle = BarItemPaintStyle.Caption
@@ -79,7 +80,7 @@ namespace OSPSuite.UI.Views.Charts
          repositoryItemCheckEditForUsedIn.ValueGrayed = null;
 
          _barEditItemLinkSimulationObserved.EditValue = false;
-         _barEditItemLinkSimulationObserved.Visibility = BarItemVisibility.Never;
+         //_barEditItemLinkSimulationObserved.Visibility = BarItemVisibility.Never;
       }
 
       private static RepositoryItemCheckEdit CreateLinkSimulationAndObservedRepositoryItem()
@@ -188,10 +189,7 @@ namespace OSPSuite.UI.Views.Charts
 
       public void SetlinkSimDataMenuItemVisisbility(bool isVisible)
       {
-         if ( isVisible )
-            _barEditItemLinkSimulationObserved.Visibility = BarItemVisibility.Always;
-         else
-            _barEditItemLinkSimulationObserved.Visibility = BarItemVisibility.Never;
+         _barEditItemLinkSimulationObserved.Visibility = isVisible ? BarItemVisibility.Always : BarItemVisibility.Never;
       }
 
       public void SetSelectAllCheckBox(bool? checkedState)

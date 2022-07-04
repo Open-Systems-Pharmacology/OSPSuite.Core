@@ -35,7 +35,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          PresentationKey = presentationKey;
          PostEditorLayout = setColumnGroupingsAndVisibility;
          AddAllButtons();
-         ChartEditorPresenter.SetLinkSimDataMenuItemVisibility(true);
+         ChartEditorPresenter.AddLinkSimDataMenuItem();
       }
 
       public override void UpdateAnalysisBasedOn(IAnalysable analysable)
