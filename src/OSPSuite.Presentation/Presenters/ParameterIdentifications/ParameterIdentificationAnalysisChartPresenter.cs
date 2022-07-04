@@ -35,7 +35,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          PresentationKey = presentationKey;
          PostEditorLayout = setColumnGroupingsAndVisibility;
          AddAllButtons();
-         ChartEditorPresenter.AddLinkSimDataMenuItem();
+         ChartEditorPresenter.SetLinkSimDataMenuItemVisibility(true);
       }
 
       public override void UpdateAnalysisBasedOn(IAnalysable analysable)
@@ -54,15 +54,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          {
             _isMultipleRun = _parameterIdentification.Results.Count > 1;
             UpdateAnalysisBasedOn(_parameterIdentification.Results);
-            setOutputMappingNames();
+            ChartEditorPresenter.SetOutputMappings(_parameterIdentification.OutputMappings);
          }
 
          Refresh();
-      }
-
-      private void setOutputMappingNames()
-      {
-         ChartEditorPresenter.SetOutputMappings(_parameterIdentification.OutputMappings);
       }
 
       protected virtual void UpdateTemplateFromChart()

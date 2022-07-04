@@ -216,15 +216,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          if (!_isLinkedMappedOutputs) return;
 
-         var test = new OutputMappings();
-
          foreach (var dataColumnPair in _dataColumnDTOCache.KeyValues)
          {
             var outputColumnUsed = dataColumnPair.Value.Used;
-
             var linkedObservedData = getLinkedObservedDataFromOutputPath(dataColumnPair.Key.PathAsString);
-            //var linkedObservedDataRepositories = AllOutputMappings.AllDataRepositoryMappedTo(outputDataColumnName);
-            //var linkedObservedData = getDataColumnDTOsFromDatarepositories(linkedObservedDataRepositories);
             SetUsedState(linkedObservedData.ToList(), outputColumnUsed);
          }
       }
