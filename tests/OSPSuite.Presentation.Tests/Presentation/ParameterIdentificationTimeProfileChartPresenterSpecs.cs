@@ -11,7 +11,6 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
-using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Services;
@@ -105,7 +104,6 @@ namespace OSPSuite.Presentation.Presentation
       private DataRepository _simulationResult2;
       private DataColumn _firstObservedData2;
       private List<DataRepository> _allAddedDataRepositories;
-      private Cache<string, List<string>> _allAddedOutputMappingNames;
 
       protected override void Context()
       {
@@ -129,11 +127,6 @@ namespace OSPSuite.Presentation.Presentation
          _allAddedDataRepositories = new List<DataRepository>();;
          A.CallTo(() => ChartEditorPresenter.AddDataRepositories(A<IEnumerable<DataRepository>>._))
             .Invokes(x => _allAddedDataRepositories.AddRange(x.GetArgument<IEnumerable<DataRepository>>(0)));
-
-         _allAddedOutputMappingNames = new Cache<string, List<string>>();
-         //A.CallTo(() => ChartEditorPresenter.SetOutputMappingNames(A<Cache<string, List<string>>>._))
-           // .Invokes(x => _allAddedOutputMappingNames = x.GetArgument<Cache<string, List<string>>>(0) );
-
       }
 
       protected override void Because()
@@ -186,13 +179,5 @@ namespace OSPSuite.Presentation.Presentation
          var observedDataCurve = _timeProfileAnalysis.FindCurveWithSameData(_firstObservedData1.BaseGrid, _firstObservedData1);
          observedDataCurve.VisibleInLegend.ShouldBeFalse();
       }
-
-/*
-      [Observation]
-      public void should_add_the_correct_output_to_observed_data_mapping_names()
-      {
-         _allAddedOutputMappingNames[_outputMapping1.FullOutputPath].ShouldContain( _firstObservedData1.Repository.Name, _firstObservedData2.Repository.Name );
-      }
-*/
    }
 }

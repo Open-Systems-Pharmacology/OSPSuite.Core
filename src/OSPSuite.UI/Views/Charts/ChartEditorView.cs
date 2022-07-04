@@ -80,7 +80,7 @@ namespace OSPSuite.UI.Views.Charts
          repositoryItemCheckEditForUsedIn.ValueGrayed = null;
 
          _barEditItemLinkSimulationObserved.EditValue = false;
-         //_barEditItemLinkSimulationObserved.Visibility = BarItemVisibility.Never;
+         _barEditItemLinkSimulationObserved.Visibility = BarItemVisibility.Never;
       }
 
       private static RepositoryItemCheckEdit CreateLinkSimulationAndObservedRepositoryItem()
