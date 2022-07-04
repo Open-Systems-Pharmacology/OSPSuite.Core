@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Org.BouncyCastle.Math.EC.Rfc7748;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
@@ -102,7 +103,7 @@ namespace OSPSuite.Presentation.Presenters
          _listOfOutputMappingDTOs.Clear();
 
          //KEEP SHIT SIMPLE: just add the observed data as mappings to the DTO list (hence also the simulation.OutputMappings)
-//and for the observed data, if you do not find it, just add it. - then we simply have to handle this latter on when using those
+         //and for the observed data, if you do not find it, just add it. - then we simply have to handle this latter on when using those
 
          //addOutputMappingsFor(_simulation);
          //first map all the existing OutputMappings in the Simulation
@@ -205,33 +206,9 @@ namespace OSPSuite.Presentation.Presenters
          Refresh();
       }
 
-      private void addOutputMappingsFor(ISimulation simulation)
-      {
-         foreach (var keyValue in _entitiesInSimulationRetriever.OutputsFrom(simulation).KeyValues)
-         {
-            var output = keyValue.Value;
-            var outputPath = keyValue.Key;
-            observedDataInSimulationMatchingOutputs(outputPath, simulation).Each(obs => addOutputMapping(output, outputPath, obs, simulation));
-         }
-      }
-
-      private void addOutputMapping(IQuantity output, string outputPath, DataRepository observedData, ISimulation simulation)
-      {
-         _simulation.OutputMappings.Add(new OutputMapping
-         {
-            OutputSelection = new SimulationQuantitySelection(simulation, new QuantitySelection(outputPath, output.QuantityType)),
-            WeightedObservedData = new WeightedObservedData(observedData),
-            Scaling = DefaultScalingFor(output)
-         });
-      }
       public Scalings DefaultScalingFor(IQuantity output)
       {
          return output.IsFraction() ? Scalings.Linear : Scalings.Log;
-      }
-      private IEnumerable<DataRepository> observedDataInSimulationMatchingOutputs(string outputPath, ISimulation simulation)
-      {
-         var allObservedDataUsedByTheSimulation = _observedDataRepository.AllObservedDataUsedBy(simulation);
-         return allObservedDataUsedByTheSimulation.Where(obs => observedDataMatchesOutput(obs, outputPath));
       }
 
       private bool observedDataMatchesOutput(DataRepository observedData, string outputPath)
@@ -246,13 +223,17 @@ namespace OSPSuite.Presentation.Presenters
          return outputPath.Contains(organ) && outputPath.Contains(compartment) && outputPath.Contains(molecule);
       }
 
-      //So this is a better question let's say. What happens actually when observed data has been removed?
-      //I dont think this is specified. Even I do not think this was thought of: probably we will have to remove
-      //the corresponding mapping I would say. This is also an extra reason why we would need to keep the tree nodes
-      //under the Simulation (at least in PK-sIM): Is this even doable in MoBi? 
       public void Handle(ObservedDataRemovedFromAnalysableEvent eventToHandle) 
       {
-         throw new System.NotImplementedException();
+         //remove deleted observed data
+         var outputsMatchingDeletedObservedData = _simulation.OutputMappings.All.Where(x => !getAllAvailableObservedData().Contains(x.WeightedObservedData.ObservedData)).ToList();
+
+         foreach (var outputMapping in outputsMatchingDeletedObservedData)
+         {
+            _simulation.OutputMappings.Remove(outputMapping);
+         }
+
+         updateOutputMappingList();
       }
    }
 }
