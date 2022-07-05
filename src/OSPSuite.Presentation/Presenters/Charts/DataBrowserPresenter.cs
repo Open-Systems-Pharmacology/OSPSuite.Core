@@ -179,17 +179,16 @@ namespace OSPSuite.Presentation.Presenters.Charts
          SetUsedState(linkedObservedData, used);
       }
 
-      private List<DataColumnDTO> getLinkedObservedDataFromOutputPath(string outputPath)
+      private IReadOnlyList<DataColumnDTO> getLinkedObservedDataFromOutputPath(string outputPath)
       {
          var linkedObservedDataRepositories = AllOutputMappings.AllDataRepositoryMappedTo(outputPath);
          return getDataColumnDTOsFromDataRepositories(linkedObservedDataRepositories);
       }
 
-      private List<DataColumnDTO> getDataColumnDTOsFromDataRepositories(IEnumerable<DataRepository> linkedObservedDataRepositories)
+      private IReadOnlyList<DataColumnDTO> getDataColumnDTOsFromDataRepositories(IEnumerable<DataRepository> linkedObservedDataRepositories)
       {
-         var linkedObservedData = _dataColumnDTOCache.KeyValues.Where(x => linkedObservedDataRepositories.Any(y => y.Id == x.Key.Repository.Id))
-            .Select(c => c.Value).ToList();
-         return linkedObservedData;
+         return _dataColumnDTOCache.Where(x => linkedObservedDataRepositories.Contains(x.DataColumn.Repository)).ToList();
+
       }
 
       public void UpdateUsedStateForSelection(bool used)
