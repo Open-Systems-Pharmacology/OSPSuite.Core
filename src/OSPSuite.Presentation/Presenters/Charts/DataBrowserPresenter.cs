@@ -203,7 +203,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public IReadOnlyList<DataColumn> GetAllUsedDataColumns()
       {
-         return _dataColumnDTOCache.KeyValues.Where(x => x.Value.Used).Select(x => x.Key).ToList();
+         return _dataColumnDTOCache.Where(x => x.Used).Select(x => x.DataColumn).ToList();
       }
 
       public OutputMappings AllOutputMappings { get; set; }
@@ -214,10 +214,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          if (!_isLinkedMappedOutputs) return;
 
-         foreach (var dataColumnPair in _dataColumnDTOCache.KeyValues)
+         //loop only through the simulation outputs data columns
+         foreach (var dataColumnDTO in _dataColumnDTOCache.Where(x => x.Category == Captions.Chart.GroupRowFormat.Simulation))
          {
-            var outputColumnUsed = dataColumnPair.Value.Used;
-            var linkedObservedData = getLinkedObservedDataFromOutputPath(dataColumnPair.Key.PathAsString);
+            var outputColumnUsed = dataColumnDTO.Used;
+            var linkedObservedData = getLinkedObservedDataFromOutputPath(dataColumnDTO.DataColumn.PathAsString);
             SetUsedState(linkedObservedData, outputColumnUsed);
          }
       }
