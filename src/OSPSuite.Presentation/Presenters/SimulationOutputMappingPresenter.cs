@@ -155,9 +155,11 @@ namespace OSPSuite.Presentation.Presenters
       public IEnumerable<SimulationQuantitySelectionDTO> AllAvailableOutputs
       {
          get
-         { 
+         {
+            //THIS DOES NOT SEEM IDEAL... we actually do not need _allAvailableOutputs to be stored, and it is too complicated, actually it is simple what need to be done
             //OK, so we probably have to clear here, then refresh
             var outputs = _entitiesInSimulationRetriever.OutputsFrom(_simulation);
+            _allAvailableOutputs.Clear();
             _allAvailableOutputs.AddRange(outputs.Select(x => mapFrom(_simulation, x)).OrderBy(x => x.DisplayString));
             return _allAvailableOutputs;
          }
