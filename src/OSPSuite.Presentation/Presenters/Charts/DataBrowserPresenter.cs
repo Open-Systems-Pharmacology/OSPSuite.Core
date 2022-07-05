@@ -5,6 +5,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
@@ -86,6 +87,17 @@ namespace OSPSuite.Presentation.Presenters.Charts
       IReadOnlyList<DataColumn> GetAllUsedDataColumns();
 
       /// <summary>
+      /// List of all the mappings of Simulation Outputs and their corresponding Observed Data
+      /// </summary>
+      OutputMappings AllOutputMappings { get; set; }
+
+      /// <summary>
+      /// Changes the bool that defines whether the corresponding observed data used state
+      /// should be updated when their linked output used state is updated
+      /// </summary>
+      void OutputObservedDataLinkingChanged(bool isLinkedMappedOutputs);
+
+      /// <summary>
       /// sets the group row format of the gridView to the specified string.
       /// </summary>
       void SetGroupRowFormat(GridGroupRowFormats format);
@@ -96,9 +108,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly Cache<DataColumn, DataColumnDTO> _dataColumnDTOCache = new Cache<DataColumn, DataColumnDTO>(x => x.DataColumn, x => null);
       private readonly List<DataColumn> _allDataColumns = new List<DataColumn>();
       private Func<DataColumn, PathElements> _displayQuantityPathDefinition;
+      private bool _isLinkedMappedOutputs;
       public event EventHandler<ColumnsEventArgs> SelectionChanged = delegate { };
       public event EventHandler<UsedColumnsEventArgs> UsedChanged = delegate { };
-
+      
       public DataBrowserPresenter(IDataBrowserView view) : base(view)
       {
       }
@@ -155,6 +168,27 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          raiseUsedChanged(dataColumnDTO.DataColumn, used);
          updateDataSelection(_view.SelectedColumns);
+         updateLinkedObservedData(dataColumnDTO.DataColumn, used);
+      }
+
+      private void updateLinkedObservedData(DataColumn dataColumn, bool used)
+      {
+         if (!_isLinkedMappedOutputs) return;
+         
+         var linkedObservedData = getLinkedObservedDataFromOutputPath(dataColumn.PathAsString);
+         SetUsedState(linkedObservedData, used);
+      }
+
+      private IReadOnlyList<DataColumnDTO> getLinkedObservedDataFromOutputPath(string outputPath)
+      {
+         var linkedObservedDataRepositories = AllOutputMappings.AllDataRepositoryMappedTo(outputPath);
+         return getDataColumnDTOsFromDataRepositories(linkedObservedDataRepositories);
+      }
+
+      private IReadOnlyList<DataColumnDTO> getDataColumnDTOsFromDataRepositories(IEnumerable<DataRepository> linkedObservedDataRepositories)
+      {
+         return _dataColumnDTOCache.Where(x => linkedObservedDataRepositories.Contains(x.DataColumn.Repository)).ToList();
+
       }
 
       public void UpdateUsedStateForSelection(bool used)
@@ -169,7 +203,24 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public IReadOnlyList<DataColumn> GetAllUsedDataColumns()
       {
-         return _dataColumnDTOCache.KeyValues.Where(x => x.Value.Used).Select(x => x.Key).ToList();
+         return _dataColumnDTOCache.Where(x => x.Used).Select(x => x.DataColumn).ToList();
+      }
+
+      public OutputMappings AllOutputMappings { get; set; }
+
+      public void OutputObservedDataLinkingChanged(bool isLinkedMappedOutputs)
+      {
+         _isLinkedMappedOutputs = isLinkedMappedOutputs;
+
+         if (!_isLinkedMappedOutputs) return;
+
+         //loop only through the simulation outputs data columns
+         foreach (var dataColumnDTO in _dataColumnDTOCache.Where(x => x.Category == Captions.Chart.GroupRowFormat.Simulation))
+         {
+            var outputColumnUsed = dataColumnDTO.Used;
+            var linkedObservedData = getLinkedObservedDataFromOutputPath(dataColumnDTO.DataColumn.PathAsString);
+            SetUsedState(linkedObservedData, outputColumnUsed);
+         }
       }
 
       public void SetGroupRowFormat(GridGroupRowFormats format)
