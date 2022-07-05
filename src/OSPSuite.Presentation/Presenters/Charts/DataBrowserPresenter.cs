@@ -95,7 +95,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// Changes the bool that defines whether the corresponding observed data used state
       /// should be updated when their linked output used state is updated
       /// </summary>
-      void OutputObservedDataLinkingChanged(bool isLinkedSimToData);
+      void OutputObservedDataLinkingChanged(bool isLinkedMappedOutputs);
 
       /// <summary>
       /// sets the group row format of the gridView to the specified string.
@@ -179,14 +179,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
          SetUsedState(linkedObservedData, used);
       }
 
-      private List<DataColumnDTO> getLinkedObservedDataFromOutputPath(string updatedDataColumnName)
+      private List<DataColumnDTO> getLinkedObservedDataFromOutputPath(string outputPath)
       {
-         var linkedObservedDataRepositories = AllOutputMappings.AllDataRepositoryMappedTo(updatedDataColumnName);
-         var linkedObservedData = getDataColumnDTOsFromDatarepositories(linkedObservedDataRepositories);
-         return linkedObservedData;
+         var linkedObservedDataRepositories = AllOutputMappings.AllDataRepositoryMappedTo(outputPath);
+         return getDataColumnDTOsFromDataRepositories(linkedObservedDataRepositories);
       }
 
-      private List<DataColumnDTO> getDataColumnDTOsFromDatarepositories(IEnumerable<DataRepository> linkedObservedDataRepositories)
+      private List<DataColumnDTO> getDataColumnDTOsFromDataRepositories(IEnumerable<DataRepository> linkedObservedDataRepositories)
       {
          var linkedObservedData = _dataColumnDTOCache.KeyValues.Where(x => linkedObservedDataRepositories.Any(y => y.Id == x.Key.Repository.Id))
             .Select(c => c.Value).ToList();
@@ -210,9 +209,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public OutputMappings AllOutputMappings { get; set; }
 
-      public void OutputObservedDataLinkingChanged(bool isLinkedSimToData)
+      public void OutputObservedDataLinkingChanged(bool isLinkedMappedOutputs)
       {
-         _isLinkedMappedOutputs = isLinkedSimToData;
+         _isLinkedMappedOutputs = isLinkedMappedOutputs;
 
          if (!_isLinkedMappedOutputs) return;
 
@@ -220,7 +219,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          {
             var outputColumnUsed = dataColumnPair.Value.Used;
             var linkedObservedData = getLinkedObservedDataFromOutputPath(dataColumnPair.Key.PathAsString);
-            SetUsedState(linkedObservedData.ToList(), outputColumnUsed);
+            SetUsedState(linkedObservedData, outputColumnUsed);
          }
       }
 
