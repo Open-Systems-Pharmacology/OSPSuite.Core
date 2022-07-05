@@ -179,14 +179,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
          SetUsedState(linkedObservedData, used);
       }
 
-      private List<DataColumnDTO> getLinkedObservedDataFromOutputPath(string updatedDataColumnName)
+      private List<DataColumnDTO> getLinkedObservedDataFromOutputPath(string outputPath)
       {
-         var linkedObservedDataRepositories = AllOutputMappings.AllDataRepositoryMappedTo(updatedDataColumnName);
-         var linkedObservedData = getDataColumnDTOsFromDatarepositories(linkedObservedDataRepositories);
-         return linkedObservedData;
+         var linkedObservedDataRepositories = AllOutputMappings.AllDataRepositoryMappedTo(outputPath);
+         return getDataColumnDTOsFromDataRepositories(linkedObservedDataRepositories);
       }
 
-      private List<DataColumnDTO> getDataColumnDTOsFromDatarepositories(IEnumerable<DataRepository> linkedObservedDataRepositories)
+      private List<DataColumnDTO> getDataColumnDTOsFromDataRepositories(IEnumerable<DataRepository> linkedObservedDataRepositories)
       {
          var linkedObservedData = _dataColumnDTOCache.KeyValues.Where(x => linkedObservedDataRepositories.Any(y => y.Id == x.Key.Repository.Id))
             .Select(c => c.Value).ToList();
@@ -220,7 +219,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          {
             var outputColumnUsed = dataColumnPair.Value.Used;
             var linkedObservedData = getLinkedObservedDataFromOutputPath(dataColumnPair.Key.PathAsString);
-            SetUsedState(linkedObservedData.ToList(), outputColumnUsed);
+            SetUsedState(linkedObservedData, outputColumnUsed);
          }
       }
 
