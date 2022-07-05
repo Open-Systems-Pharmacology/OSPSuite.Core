@@ -5,9 +5,8 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Extensions;
+using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Helpers;
-using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
 
@@ -312,6 +311,36 @@ namespace OSPSuite.Presentation.Presentation
       public void should_only_select_the_used_columns_that_exist()
       {
          _allDataColumnDTOs[0].Used.ShouldBeFalse();
+         _allDataColumnDTOs[1].Used.ShouldBeTrue();
+      }
+   }
+
+   public class When_the_linking_of_output_mappings_is_changed : concern_for_DataBrowserPresenter
+   {
+      private OutputMappings _fakeOutputMappings;
+      private readonly List<DataRepository> _linkedDataRepositories = new List<DataRepository>();
+
+      protected override void Context()
+      {
+         base.Context();
+         sut.AddDataColumns(new[] { _column1, _column2 });
+         _linkedDataRepositories.Add(_column2.Repository);
+         _fakeOutputMappings = A.Fake<OutputMappings>();
+         A.CallTo(() => _fakeOutputMappings.AllDataRepositoryMappedTo(_column1.PathAsString)).Returns(_linkedDataRepositories);
+         _allDataColumnDTOs[0].Used = true;
+         _allDataColumnDTOs[1].Used = false;
+         sut.AllOutputMappings = _fakeOutputMappings;
+      }
+
+      protected override void Because()
+      {
+         sut.OutputObservedDataLinkingChanged(true);
+      }
+
+      [Observation]
+      public void used_state_should_have_been_updated_for_linked_data()
+      {
+         _allDataColumnDTOs[0].Used.ShouldBeTrue();
          _allDataColumnDTOs[1].Used.ShouldBeTrue();
       }
    }
