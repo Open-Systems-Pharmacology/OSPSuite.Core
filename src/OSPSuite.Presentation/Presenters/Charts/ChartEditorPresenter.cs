@@ -13,6 +13,7 @@ using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
