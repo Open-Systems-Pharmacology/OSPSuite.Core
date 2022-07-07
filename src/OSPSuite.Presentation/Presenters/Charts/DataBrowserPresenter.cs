@@ -223,22 +223,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          }
       }
 
-      public OutputMappings AllOutputMappings { get; set; }
-
-      public void OutputObservedDataLinkingChanged(bool isLinkedMappedOutputs)
-      {
-         _isLinkedMappedOutputs = isLinkedMappedOutputs;
-
-         if (!_isLinkedMappedOutputs) return;
-
-         foreach (var dataColumnPair in _dataColumnDTOCache.KeyValues)
-         {
-            var outputColumnUsed = dataColumnPair.Value.Used;
-            var linkedObservedData = getLinkedObservedDataFromOutputPath(dataColumnPair.Key.PathAsString);
-            SetUsedState(linkedObservedData, outputColumnUsed);
-         }
-      }
-
       public void SetGroupRowFormat(GridGroupRowFormats format)
       {
          _view.SetGroupRowFormat(format);
