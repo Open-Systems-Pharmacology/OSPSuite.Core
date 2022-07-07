@@ -33,7 +33,7 @@ namespace OSPSuite.R.MinimalImplementations
          return string.Empty;
       }
 
-      public string AskForInput(string caption, string text, string defaultValue = null, IEnumerable<string> forbiddenValues = null, IEnumerable<string> predefinedValues = null)
+      public string AskForInput(string caption, string text, string defaultValue = null, IEnumerable<string> forbiddenValues = null, IEnumerable<string> predefinedValues = null, string iconName = null)
       {
          return string.Empty;
       }

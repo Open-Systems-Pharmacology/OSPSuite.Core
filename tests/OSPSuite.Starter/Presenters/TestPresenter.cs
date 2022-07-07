@@ -7,6 +7,7 @@ using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Services;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.UI.Views;
 
 namespace OSPSuite.Starter.Presenters
@@ -75,11 +76,13 @@ namespace OSPSuite.Starter.Presenters
 
       public void StartDialogCreatorTest()
       {
-         _dialogCreator.MessageBoxError("This is an error message");
-         _dialogCreator.MessageBoxInfo("this is an info message");
-         _dialogCreator.MessageBoxYesNoCancel("This is a YesNoCancelMessage");
-         _dialogCreator.MessageBoxYesNoCancel(
-            "And this is a message with a <href =https://docs.open-systems-pharmacology.org> hyperlink </href>");
+         // _dialogCreator.MessageBoxError("This is an error message");
+         // _dialogCreator.MessageBoxInfo("this is an info message");
+         // _dialogCreator.MessageBoxYesNoCancel("This is a YesNoCancelMessage");
+         // _dialogCreator.MessageBoxYesNoCancel(
+         //    "And this is a message with a <href =https://docs.open-systems-pharmacology.org> hyperlink </href>");
+
+         _dialogCreator.AskForInput("This is the caption", "Hello","toto", new[] {"titi", "tutu"}, iconName:ApplicationIcons.Rename.IconName);
       }
 
       private void start<T>(int width = 0, int height = 0) where T : IPresenter

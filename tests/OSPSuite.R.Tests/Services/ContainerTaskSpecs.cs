@@ -386,4 +386,31 @@ namespace OSPSuite.R.Services
          _volumeLiverCell.Value.ShouldBeEqualTo(666);
       }
    }
+   public class When_getting_a_value_by_path : concern_for_ContainerTask
+   {
+      [Observation]
+      public void should_throw_an_exception_if_the_path_contains_wild_cards()
+      {
+         The.Action(() => sut.GetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, $"Vol{Constants.WILD_CARD}"), throwIfNotFound: true)).ShouldThrowAn<OSPSuiteException>();
+      }
+
+      [Observation]
+      public void should_throw_an_exception_if_the_path_does_not_exist_in_the_simulation()
+      {
+         The.Action(() => sut.GetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "TOTO"), throwIfNotFound: true)).ShouldThrowAn<OSPSuiteException>();
+      }
+
+      [Observation]
+      public void should_not_throw_an_exception_if_the_path_does_not_exist_in_the_simulation_and_the_throw_flag_is_set_to_false()
+      {
+         sut.GetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "TOTO"), throwIfNotFound: false);
+      }
+
+      [Observation]
+      public void should_get_the_value_of_the_parameter_as_expected_otherwise()
+      {
+         sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, _volumeLiverCell.Name), 666, throwIfNotFound: true);
+         sut.GetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, _volumeLiverCell.Name), throwIfNotFound: true).ShouldBeEqualTo(666);
+      }
+   }
 }

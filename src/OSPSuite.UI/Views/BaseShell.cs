@@ -23,6 +23,7 @@ using OSPSuite.UI.Services;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
+using static OSPSuite.UI.UIConstants.Size;
 
 namespace OSPSuite.UI.Views
 {
@@ -266,6 +267,10 @@ namespace OSPSuite.UI.Views
          applicationMenu.MenuDrawMode = MenuDrawMode.LargeImagesTextDescription;
          applicationMenu.Ribbon = ribbon;
          popupControlContainer.Ribbon = ribbon;
+         applicationMenu.RightPaneWidth = APPLICATION_MENU_RIGHT_PANE_WIDTH;
+         applicationMenu.AutoFillEditorWidth = true;
+         //This seems to be a good min width: Twice the size of the right pane
+         applicationMenu.MinWidth = applicationMenu.RightPaneWidth * 2;
       }
 
       public virtual void InitializeBinding()
