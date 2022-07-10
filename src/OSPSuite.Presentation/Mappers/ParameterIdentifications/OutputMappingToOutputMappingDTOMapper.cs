@@ -27,4 +27,26 @@ namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
             Equals(simulationQuantitySelectionDTO.QuantityPath, outputMapping.OutputPath);
       }
    }
+
+   public interface ISimulationOutputMappingToOutputMappingDTOMapper
+   {
+      SimulationOutputMappingDTO MapFrom(OutputMapping outputMapping, IEnumerable<SimulationQuantitySelectionDTO> allOutputs);
+   }
+
+   public class SimulationOutputMappingToOutputMappingDTOMapper : ISimulationOutputMappingToOutputMappingDTOMapper
+   {
+      public SimulationOutputMappingDTO MapFrom(OutputMapping outputMapping, IEnumerable<SimulationQuantitySelectionDTO> allOutputs)
+      {
+         return new SimulationOutputMappingDTO(outputMapping)
+         {
+            Output = allOutputs.FirstOrDefault(x => matches(outputMapping, x))
+         };
+      }
+
+      private static bool matches(OutputMapping outputMapping, SimulationQuantitySelectionDTO simulationQuantitySelectionDTO)
+      {
+         return Equals(simulationQuantitySelectionDTO.Simulation, outputMapping.Simulation) &&
+                Equals(simulationQuantitySelectionDTO.QuantityPath, outputMapping.OutputPath);
+      }
+   }
 }

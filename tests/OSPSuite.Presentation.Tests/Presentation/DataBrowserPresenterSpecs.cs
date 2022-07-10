@@ -323,6 +323,7 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          base.Context();
+         _column1.DataInfo.Origin = ColumnOrigins.CalculationAuxiliary;
          sut.AddDataColumns(new[] { _column1, _column2 });
          _linkedDataRepositories.Add(_column2.Repository);
          _fakeOutputMappings = A.Fake<OutputMappings>();
