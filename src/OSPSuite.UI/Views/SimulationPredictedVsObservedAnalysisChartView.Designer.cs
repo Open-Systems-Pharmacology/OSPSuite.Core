@@ -1,6 +1,6 @@
 ﻿namespace OSPSuite.UI.Views
 {
-   partial class SimulationRunAnalysisView
+   partial class SimulationPredictedVsObservedAnalysisChartView
    {
       /// <summary> 
       /// Required designer variable.
@@ -76,12 +76,12 @@
          this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem1.TextVisible = false;
          // 
-         // SimulationRunAnalysisView
+         // SimulationPredictedVsObservedAnalysisChartView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.layoutControl1);
-         this.Name = "SimulationRunAnalysisView";
+         this.Name = "SimulationPredictedVsObservedAnalysisChartView";
          this.Size = new System.Drawing.Size(2259, 1781);
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
          this.layoutControl1.ResumeLayout(false);

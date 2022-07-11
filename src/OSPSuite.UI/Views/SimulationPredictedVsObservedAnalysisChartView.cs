@@ -5,10 +5,10 @@ using OSPSuite.UI.Extensions;
 
 namespace OSPSuite.UI.Views
 {
-   public partial class SimulationRunAnalysisView : BaseUserControl, ISimulationRunAnalysisView
+   public partial class SimulationPredictedVsObservedAnalysisChartView : BaseUserControl, ISimulationPredictedVsObservedAnalysisChartView
    {
-      private ISimulationRunAnalysisPresenter _presenter;
-      public SimulationRunAnalysisView()
+      private ISimulationPredictedVsObservedChartPresenter _presenter;
+      public SimulationPredictedVsObservedAnalysisChartView()
       {
          InitializeComponent();
       }
@@ -18,7 +18,7 @@ namespace OSPSuite.UI.Views
          panelChart.FillWith(view);
       }
 
-      public void AttachPresenter(ISimulationRunAnalysisPresenter presenter)
+      public void AttachPresenter(ISimulationPredictedVsObservedChartPresenter presenter)
       {
          _presenter = presenter;
       }
