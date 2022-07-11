@@ -1,4 +1,5 @@
-﻿using OSPSuite.Presentation.Presenters.ParameterIdentifications;
+﻿using OSPSuite.Presentation.Presenters;
+using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 
 namespace OSPSuite.Presentation.Views.ParameterIdentifications
 {

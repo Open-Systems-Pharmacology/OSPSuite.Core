@@ -6,6 +6,7 @@ using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
+using OSPSuite.Presentation.Presenters;
 
 namespace OSPSuite.UI.Views.ParameterIdentifications
 {
