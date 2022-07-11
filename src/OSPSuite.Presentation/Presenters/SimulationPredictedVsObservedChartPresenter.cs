@@ -19,10 +19,10 @@ namespace OSPSuite.Presentation.Presenters
    {
    }
 
-   public class SimulationPredictedVsObservedChartPresenter : ChartPresenter<SimulationPredictedVsObservedChart, ISimulationAnalysisChartView, ISimulationPredictedVsObservedChartPresenter>,
+   public class SimulationPredictedVsObservedChartPresenter : ChartPresenter<SimulationPredictedVsObservedChart, ISimulationPredictedVsObservedAnalysisChartView, ISimulationPredictedVsObservedChartPresenter>,
       ISimulationPredictedVsObservedChartPresenter
    {
-      public SimulationPredictedVsObservedChartPresenter(ISimulationAnalysisChartView view, ChartPresenterContext chartPresenterContext) : base(view, chartPresenterContext)
+      public SimulationPredictedVsObservedChartPresenter(ISimulationPredictedVsObservedAnalysisChartView view, ChartPresenterContext chartPresenterContext) : base(view, chartPresenterContext)
       {
       }
 
