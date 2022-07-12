@@ -21,6 +21,7 @@ namespace OSPSuite.R.Domain
       public bool UsesObservedData(DataRepository observedData) => false;
       public IEnumerable<CurveChart> Charts { get; } = new List<CurveChart>();
       public OutputMappings OutputMappings { get; set; }
+      public SimulationResults Results { get; set; }
 
       public void RemoveAnalysis(ISimulationAnalysis simulationAnalysis)
       {

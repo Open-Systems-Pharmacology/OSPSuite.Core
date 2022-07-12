@@ -13,6 +13,7 @@ namespace OSPSuite.Presentation.Presenters
          public static readonly string ParameterIdentificationResidualVsTimeChartPresenter = createConstant("ParameterIdentificationResidualVsTimeChartPresenter");
          public static readonly string ParameterIdentificationResidualHistogramPresenter = createConstant("ParameterIdentificationResidualHistogramPresenter");
          public static readonly string ParameterIdentificationPredictedVsActualChartPresenter = createConstant("ParameterIdentificationPredictedVsActualChartPresenter");
+         public static readonly string SimulationPredictedVsActualChartPresenter = createConstant("SimulationPredictedVsActualChartPresenter");
          public static readonly string ParameterIdentificationCorrelationCovarianceMatrixPresenter = createConstant("ParameterIdentificationCorrelationCovarianceMatrixPresenter");
          public static readonly string ParameterIdentificationTimeProfileConfidenceIntervalChartPresenter = createConstant("ParameterIdentificationTimeProfileConfidenceIntervalChartPresenter");
          public static readonly string ParameterIdentificationTimeProfilePredictionIntervalChartPresenter = createConstant("ParameterIdentificationTimeProfilePredictionIntervalChartPresenter");
