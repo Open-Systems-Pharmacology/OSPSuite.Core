@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility.Extensions;
@@ -6,7 +7,7 @@ using OSPSuite.Utility.Extensions;
 namespace OSPSuite.Core.Chart
 {
    public class SimulationPredictedVsObservedChart : ChartWithObservedData, ISimulationAnalysis
-   {
+   { 
       public IAnalysable Analysable { get; set; }
 
       public void UpdateAxesVisibility()

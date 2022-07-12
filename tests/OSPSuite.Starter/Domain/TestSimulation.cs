@@ -22,6 +22,7 @@ namespace OSPSuite.Starter.Domain
 
       public OutputMappings OutputMappings { get; set; }
       public SimulationResults Results { get; set; }
+      public DataRepository ResultRepository { get; }
 
       public OutputSchema OutputSchema => Settings.OutputSchema;
       public ISimulationSettings Settings => BuildConfiguration.SimulationSettings;

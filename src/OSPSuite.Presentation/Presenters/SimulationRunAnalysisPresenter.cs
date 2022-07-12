@@ -27,6 +27,7 @@ namespace OSPSuite.Presentation.Presenters
       private readonly Cache<string, Color> _colorCache = new Cache<string, Color>(onMissingKey: x => Color.Black);
       protected CurveChartTemplate _chartTemplate;
       public IReadOnlyList<IndividualResults> AllRunResults { get; private set; }
+      protected List<DataRepository> _resultsRepositories = new List<DataRepository>();
 
       protected SimulationRunAnalysisPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, ApplicationIcon icon, string presentationKey) : base(view, chartPresenterContext)
       {
@@ -124,6 +125,12 @@ namespace OSPSuite.Presentation.Presenters
          //_view.BindToSelectedRunResult();
       }
 
+      protected void AddResultRepositoriesToEditor(IReadOnlyList<DataRepository> dataRepositories)
+      {
+         _resultsRepositories.AddRange(dataRepositories);
+         AddDataRepositoriesToEditor(dataRepositories);
+      }
+
       protected override ISimulation SimulationFor(DataColumn dataColumn)
       {
          if (string.IsNullOrEmpty(dataColumn.PathAsString))
@@ -183,5 +190,7 @@ namespace OSPSuite.Presentation.Presenters
       {
          _simulation.OutputMappings.All.GroupBy(x => x.FullOutputPath).Each(addObservedDataForOutput);
       }
+
+      protected abstract void AddRunResultToChart();
    }
 }

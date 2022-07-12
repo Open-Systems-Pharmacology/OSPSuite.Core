@@ -12,5 +12,7 @@ namespace OSPSuite.Core.Domain
       OutputMappings OutputMappings { get; set; }
 
       SimulationResults Results { get; set; }
+
+      DataRepository ResultRepository { get; }
    }
 }

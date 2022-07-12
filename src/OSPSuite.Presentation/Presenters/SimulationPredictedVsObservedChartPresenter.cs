@@ -82,10 +82,19 @@ namespace OSPSuite.Presentation.Presenters
          _identityRepositories.Clear();
       }
 
+      protected override void AddRunResultToChart()
+      {
+         addPredictedVsObservedToChart(new List<DataRepository>() {_simulation.ResultRepository}, (column, curve) =>
+         {
+            curve.Description = curve.Name;
+            curve.Name = column.PathAsString;
+         });
+      }
+
       //OK, so let's forget for now, but we definately need to adjust this one
       private void addPredictedVsObservedToChart(IReadOnlyList<DataRepository> simulationResults, Action<DataColumn, Curve> action)
       {
-         //AddResultRepositoriesToEditor(simulationResults);
+         AddResultRepositoriesToEditor(simulationResults);
          simulationResults.Each(x => plotAllCalculations(x, action));
       }
 
