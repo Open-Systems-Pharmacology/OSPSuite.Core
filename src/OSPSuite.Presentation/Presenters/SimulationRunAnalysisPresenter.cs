@@ -57,6 +57,7 @@ namespace OSPSuite.Presentation.Presenters
             ChartEditorPresenter.SetOutputMappings(_simulation.OutputMappings);
          }
 
+         updateAnalysis();
          Refresh();
       }
 
@@ -189,6 +190,17 @@ namespace OSPSuite.Presentation.Presenters
       protected void AddUsedObservedDataToChart()
       {
          _simulation.OutputMappings.All.GroupBy(x => x.FullOutputPath).Each(addObservedDataForOutput);
+      }
+      private void clearRunResults()
+      {
+         RemoveDataRepositoriesFromEditor(_resultsRepositories);
+         _resultsRepositories.Clear();
+      }
+
+      private void updateAnalysis()
+      {
+         clearRunResults();
+         AddRunResultToChart();
       }
 
       protected abstract void AddRunResultToChart();

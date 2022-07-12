@@ -91,7 +91,7 @@ namespace OSPSuite.Presentation.Presenters
          });
       }
 
-      //OK, so let's forget for now, but we definately need to adjust this one
+      //OK, so let's forget for now, but we definitely need to adjust this one
       private void addPredictedVsObservedToChart(IReadOnlyList<DataRepository> simulationResults, Action<DataColumn, Curve> action)
       {
          AddResultRepositoriesToEditor(simulationResults);
