@@ -2,20 +2,19 @@
 using System.Linq;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Presentation.DTO;
-using OSPSuite.Presentation.DTO.ParameterIdentifications;
 
-namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
+namespace OSPSuite.Presentation.Mappers
 {
-   public interface IOutputMappingToOutputMappingDTOMapper
+   public interface ISimulationOutputMappingToOutputMappingDTOMapper
    {
-      OutputMappingDTO MapFrom(OutputMapping outputMapping, IEnumerable<SimulationQuantitySelectionDTO> allOutputs);
+      SimulationOutputMappingDTO MapFrom(OutputMapping outputMapping, IEnumerable<SimulationQuantitySelectionDTO> allOutputs);
    }
 
-   public class OutputMappingToOutputMappingDTOMapper : IOutputMappingToOutputMappingDTOMapper
+   public class SimulationOutputMappingToOutputMappingDTOMapper : ISimulationOutputMappingToOutputMappingDTOMapper
    {
-      public OutputMappingDTO MapFrom(OutputMapping outputMapping, IEnumerable<SimulationQuantitySelectionDTO> allOutputs)
+      public SimulationOutputMappingDTO MapFrom(OutputMapping outputMapping, IEnumerable<SimulationQuantitySelectionDTO> allOutputs)
       {
-         return new OutputMappingDTO(outputMapping)
+         return new SimulationOutputMappingDTO(outputMapping)
          {
             Output = allOutputs.FirstOrDefault(x => matches(outputMapping, x))
          };

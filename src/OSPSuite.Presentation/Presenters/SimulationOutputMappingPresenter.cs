@@ -9,7 +9,6 @@ using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Mappers;
-using OSPSuite.Presentation.Mappers.ParameterIdentifications;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
@@ -90,7 +89,7 @@ namespace OSPSuite.Presentation.Presenters
          Refresh();
       }
 
-      public void AddOutputMapping()
+      public void AddOutputMapping() //DO WE NEED THIS EVEN???? we should check again in PK-Sim also
       {
          var newOutputMapping = new OutputMapping();
          //_allOutputMappingDTOs.Add(mapFrom(newOutputMapping));  
@@ -101,11 +100,7 @@ namespace OSPSuite.Presentation.Presenters
       {
          _listOfOutputMappingDTOs.Clear();
 
-         //KEEP SHIT SIMPLE: just add the observed data as mappings to the DTO list (hence also the simulation.OutputMappings)
-         //and for the observed data, if you do not find it, just add it. - then we simply have to handle this latter on when using those
-
-         //addOutputMappingsFor(_simulation);
-         //first map all the existing OutputMappings in the Simulation
+         //first add all the existing OutputMappings in the Simulation
          _simulation.OutputMappings.All.Each(x => _listOfOutputMappingDTOs.Add(mapFrom(x)));
          var newOutputMapping = new OutputMapping();
 
@@ -124,12 +119,11 @@ namespace OSPSuite.Presentation.Presenters
                if (matchingOutputPath != null)
                {
                   var matchingOutput = _entitiesInSimulationRetriever.OutputsFrom(_simulation)[matchingOutputPath];
-                  newOutputMapping = new OutputMapping //  probably not this way, just initialize if we need
-                  {
-                     OutputSelection = new SimulationQuantitySelection(_simulation, new QuantitySelection(matchingOutputPath, matchingOutput.QuantityType)),
-                     WeightedObservedData = new WeightedObservedData(observedData),
-                     Scaling = DefaultScalingFor(matchingOutput)
-                  };
+
+                  newOutputMapping.OutputSelection =
+                     new SimulationQuantitySelection(_simulation, new QuantitySelection(matchingOutputPath, matchingOutput.QuantityType));
+                  newOutputMapping.WeightedObservedData = new WeightedObservedData(observedData);
+                  newOutputMapping.Scaling = DefaultScalingFor(matchingOutput);
                }
 
                //`==========================================
@@ -137,19 +131,10 @@ namespace OSPSuite.Presentation.Presenters
                var newOutputMappingDTO = mapFrom(newOutputMapping);
                newOutputMappingDTO.ObservedData = observedData;
 
-               var weightedObservedData = new WeightedObservedData(observedData);
-               newOutputMapping.WeightedObservedData = weightedObservedData;
-               newOutputMappingDTO.ObservedData = observedData;
-               //var newOutputMappingDTO = mapFrom(newOutputMapping);
                _simulation.OutputMappings.Add(newOutputMapping);
                _listOfOutputMappingDTOs.Add(newOutputMappingDTO);
-
-
             }
          }
-
-         //IMPORTANT: WHAT IF THIS HERE IS CALLED WHEN OBSERVED DATA GETS UPDATED??? WE ARE SUPPOSED TO TRY TO MAP IT AUTOMATICALLY
-         //SHOULD WE KEEP A LIST OF WHAT GOT ADDED? LETS HANDLE THIS SEPARATELY, ITS OK FOR NOW
       }
 
       public IEnumerable<SimulationQuantitySelectionDTO> AllAvailableOutputs
