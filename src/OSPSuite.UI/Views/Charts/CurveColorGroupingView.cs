@@ -55,6 +55,7 @@ namespace OSPSuite.UI.Views.Charts
          base.InitializeResources();
          colorGroupingDescriptionLabelControl.Text = Captions.Chart.ColorGrouping.ColorGroupingDialogDescription.FormatForLabel();
          applyColorGroupingButton.Text = Captions.Chart.ColorGrouping.ApplyColorGroupingButton;
+         applyColorGroupingButton.AutoWidthInLayoutControl = true;
          layoutApplyColorGroupButton.AdjustLongButtonSize();
          applyColorGroupingButton.InitWithImage(ApplicationIcons.OK, Captions.Chart.ColorGrouping.ApplyColorGroupingButton, ImageLocation.MiddleRight);
       }

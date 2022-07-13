@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 using DevExpress.Utils.Layout;
 using DevExpress.XtraEditors;
 
@@ -34,15 +35,17 @@ namespace OSPSuite.UI.Extensions
          var col = tablePanel.ColumnFor(control);
          if (width.HasValue)
          {
-            col.Style = TablePanelEntityStyle.Absolute;
+            col.Style = TablePanelEntityStyle.AutoSize;
             col.Width = width.Value + control.Margin.Horizontal;
+            // control.MaximumSize = new Size(width.Value, control.Height);
             control.Width = width.Value;
          }
 
          if (height.HasValue)
          {
-            row.Style = TablePanelEntityStyle.Absolute;
+            row.Style = TablePanelEntityStyle.AutoSize;
             row.Height = height.Value + control.Margin.Vertical;
+            // control.MaximumSize = new Size(control.Width, height.Value);
             control.Height = height.Value;
          }
       }

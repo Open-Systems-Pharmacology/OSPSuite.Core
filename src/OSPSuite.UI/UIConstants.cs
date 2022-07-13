@@ -38,16 +38,24 @@ namespace OSPSuite.UI
          public static readonly int EMBEDDED_DESCRIPTION_WIDTH = ScaleForScreenDPI(80);
          public static readonly int EMPTY_SPACE_HEIGHT = ScaleForScreenDPI(20);
          public static readonly int RADIO_GROUP_HEIGHT = ScaleForScreenDPI(24);
-         public static readonly int LARGE_BUTTON_WIDTH = ScaleForScreenDPI(150);
-         public static readonly int LARGE_BUTTON_HEIGHT = ScaleForScreenDPI(29);
          public static readonly int ADD_REMOVE_BUTTON_WIDTH = ScaleForScreenDPI(100);
          public static readonly int ADD_REMOVE_BUTTON_HEIGHT = ScaleForScreenDPI(60);
          public const double SCREEN_RESIZE_FRACTION = 0.9;
+         //Buttons tends to grow to wide on bigger screen. We set a max
          public static readonly int BUTTON_WIDTH = ScaleForScreenDPI(105);
-         public static readonly int BUTTON_HEIGHT = ScaleForScreenDPI(24);
-         public static readonly int OPTIMIZED_RANGE_WIDTH = ScaleForScreenDPI(300);
+         public static readonly int LARGE_BUTTON_WIDTH = ScaleForScreenDPI(150);
+         //Buttons tends to grow to tall on bigger screen. We set a max
+         public static readonly int BUTTON_HEIGHT = ScaleForScreenDPI(24, 48);
+         public static readonly int LARGE_BUTTON_HEIGHT = ScaleForScreenDPI(29, 48);
 
-         public static int ScaleForScreenDPI(int size) => (int) (_scaleFactor * size);
+         public static readonly int OPTIMIZED_RANGE_WIDTH = ScaleForScreenDPI(300);
+         public static readonly int APPLICATION_MENU_RIGHT_PANE_WIDTH = ScaleForScreenDPI(300);
+
+         public static int ScaleForScreenDPI(int size, int? maxSize = null)
+         {
+            var proposedSize = (int)(_scaleFactor * size);
+            return Math.Min(proposedSize, maxSize.GetValueOrDefault(proposedSize));
+         }
 
          private static double createScaleFactor()
          {
