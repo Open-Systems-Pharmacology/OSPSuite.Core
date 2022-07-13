@@ -45,7 +45,7 @@ namespace OSPSuite.UI.Views
          _presenter = presenter;
       }
 
-      public void BindTo(IEnumerable<SimulationOutputMappingDTO> outputMappingList) //THIS IS NOT EXACTLY CORRECT, WE ARE NOT BINDING TO THIS 
+      public void BindTo(IEnumerable<SimulationOutputMappingDTO> outputMappingList)
       {
          _gridViewBinder.BindToSource(outputMappingList);
       }
@@ -102,7 +102,6 @@ namespace OSPSuite.UI.Views
          return RepositoryItemFor(_presenter.AllAvailableOutputs, _outputRepository);
       }
 
-      //this is only called once, not sure we really need it...we could also pass the single value of the observed data here, but seems an overkill
       protected RepositoryItem RepositoryItemFor<T>(IEnumerable<T> allItems, UxRepositoryItemComboBox listRepositoryItems)
       {
          listRepositoryItems.FillComboBoxRepositoryWith(allItems);

@@ -20,9 +20,7 @@ namespace OSPSuite.Presentation.Presenters
    public interface ISimulationOutputMappingPresenter : IPresenter<ISimulationOutputMappingView>, ILatchable
    {
       void SetSimulation(ISimulation simulation);
-      void AddOutputMapping();
       IEnumerable<SimulationQuantitySelectionDTO> AllAvailableOutputs { get; }
-      IEnumerable<DataRepository> AllObservedDataFor(SimulationOutputMappingDTO dto);
       void RemoveOutputMapping(SimulationOutputMappingDTO outputMappingDTO);
 
       /// <summary>
@@ -89,13 +87,6 @@ namespace OSPSuite.Presentation.Presenters
          Refresh();
       }
 
-      public void AddOutputMapping() //DO WE NEED THIS EVEN???? we should check again in PK-Sim also
-      {
-         var newOutputMapping = new OutputMapping();
-         //_allOutputMappingDTOs.Add(mapFrom(newOutputMapping));  
-         OnStatusChanged();
-      }
-
       private void updateOutputMappingList()
       {
          _listOfOutputMappingDTOs.Clear();
@@ -141,8 +132,6 @@ namespace OSPSuite.Presentation.Presenters
       {
          get
          {
-            //THIS DOES NOT SEEM IDEAL... we actually do not need _allAvailableOutputs to be stored, and it is too complicated, actually it is simple what need to be done
-            //OK, so we probably have to clear here, then refresh
             var outputs = _entitiesInSimulationRetriever.OutputsFrom(_simulation);
             _allAvailableOutputs.Clear();
             _allAvailableOutputs.AddRange(outputs.Select(x => mapFrom(_simulation, x)).OrderBy(x => x.DisplayString));
@@ -160,16 +149,6 @@ namespace OSPSuite.Presentation.Presenters
          return _outputMappingDTOMapper.MapFrom(outputMapping, AllAvailableOutputs);
       }
 
-
-      //probably will have to delete
-      public virtual IEnumerable<DataRepository> AllObservedDataFor(SimulationOutputMappingDTO outputMappingDTO)
-      {
-         return _observedDataRepository.AllObservedDataUsedBy(_simulation)
-            .Distinct()
-            .OrderBy(x => x.Name);
-
-         //return new List<DataRepository>(); //we are returning an empty list here, the implementations in PK-Sim and MoBi will provide the actual data
-      }
       private IEnumerable<DataRepository> getAllAvailableObservedData()
       {
          return _observedDataRepository.AllObservedDataUsedBy(_simulation)
