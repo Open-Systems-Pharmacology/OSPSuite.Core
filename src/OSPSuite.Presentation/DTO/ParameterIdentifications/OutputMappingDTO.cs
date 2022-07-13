@@ -66,7 +66,7 @@ namespace OSPSuite.Presentation.DTO.ParameterIdentifications
       {
          private static readonly IBusinessRule _outputMatchesObservationDimension = CreateRule.For<OutputMappingDTO>()
             .Property(x => x.ObservedData)
-            .WithRule((x, y) => x.Mapping.DimensionsAreConsistent(y))
+            .WithRule((x, y) => x.Mapping.DimensionsAreConsistentForParameterIdentification(y))
             .WithError(Error.OutputMappingHasInconsistentDimension);
 
          private static readonly IBusinessRule _outputDefined = GenericRules.NotNull<OutputMappingDTO, SimulationQuantitySelectionDTO>(x => x.Output);
