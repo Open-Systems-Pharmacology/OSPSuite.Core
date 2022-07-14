@@ -7,9 +7,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO;
-using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters;
-using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Controls;
@@ -47,7 +45,7 @@ namespace OSPSuite.UI.Views
          _presenter = presenter;
       }
 
-      public void BindTo(IEnumerable<SimulationOutputMappingDTO> outputMappingList) //THIS IS NOT EXACTLY CORRECT, WE ARE NOT BINDING TO THIS 
+      public void BindTo(IEnumerable<SimulationOutputMappingDTO> outputMappingList)
       {
          _gridViewBinder.BindToSource(outputMappingList);
       }
@@ -104,7 +102,6 @@ namespace OSPSuite.UI.Views
          return RepositoryItemFor(_presenter.AllAvailableOutputs, _outputRepository);
       }
 
-      //this is only called once, not sure we really need it...we could also pass the single value of the observed data here, but seems an overkill
       protected RepositoryItem RepositoryItemFor<T>(IEnumerable<T> allItems, UxRepositoryItemComboBox listRepositoryItems)
       {
          listRepositoryItems.FillComboBoxRepositoryWith(allItems);

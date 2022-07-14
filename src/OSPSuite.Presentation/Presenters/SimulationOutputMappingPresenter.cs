@@ -9,7 +9,6 @@ using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Mappers;
-using OSPSuite.Presentation.Mappers.ParameterIdentifications;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
@@ -21,9 +20,7 @@ namespace OSPSuite.Presentation.Presenters
    public interface ISimulationOutputMappingPresenter : IPresenter<ISimulationOutputMappingView>, ILatchable
    {
       void SetSimulation(ISimulation simulation);
-      void AddOutputMapping();
       IEnumerable<SimulationQuantitySelectionDTO> AllAvailableOutputs { get; }
-      IEnumerable<DataRepository> AllObservedDataFor(SimulationOutputMappingDTO dto);
       void RemoveOutputMapping(SimulationOutputMappingDTO outputMappingDTO);
 
       /// <summary>
@@ -39,7 +36,7 @@ namespace OSPSuite.Presentation.Presenters
       void InitializeSimulation(ISimulation simulation);
    }
 
-   public class SimulationOutputMappingPresenter : AbstractPresenter<ISimulationOutputMappingView, ISimulationOutputMappingPresenter>, ISimulationOutputMappingPresenter, IListener<ObservedDataAddedToAnalysableEvent>,
+   public class SimulationOutputMappingPresenter : AbstractSubPresenter<ISimulationOutputMappingView, ISimulationOutputMappingPresenter>, ISimulationOutputMappingPresenter, IListener<ObservedDataAddedToAnalysableEvent>,
       IListener<ObservedDataRemovedFromAnalysableEvent>
 
    {
@@ -90,22 +87,11 @@ namespace OSPSuite.Presentation.Presenters
          Refresh();
       }
 
-      public void AddOutputMapping()
-      {
-         var newOutputMapping = new OutputMapping();
-         //_allOutputMappingDTOs.Add(mapFrom(newOutputMapping));  
-         OnStatusChanged();
-      }
-
       private void updateOutputMappingList()
       {
          _listOfOutputMappingDTOs.Clear();
 
-         //KEEP SHIT SIMPLE: just add the observed data as mappings to the DTO list (hence also the simulation.OutputMappings)
-         //and for the observed data, if you do not find it, just add it. - then we simply have to handle this latter on when using those
-
-         //addOutputMappingsFor(_simulation);
-         //first map all the existing OutputMappings in the Simulation
+         //first add all the existing OutputMappings in the Simulation
          _simulation.OutputMappings.All.Each(x => _listOfOutputMappingDTOs.Add(mapFrom(x)));
          var newOutputMapping = new OutputMapping();
 
@@ -124,12 +110,11 @@ namespace OSPSuite.Presentation.Presenters
                if (matchingOutputPath != null)
                {
                   var matchingOutput = _entitiesInSimulationRetriever.OutputsFrom(_simulation)[matchingOutputPath];
-                  newOutputMapping = new OutputMapping //  probably not this way, just initialize if we need
-                  {
-                     OutputSelection = new SimulationQuantitySelection(_simulation, new QuantitySelection(matchingOutputPath, matchingOutput.QuantityType)),
-                     WeightedObservedData = new WeightedObservedData(observedData),
-                     Scaling = DefaultScalingFor(matchingOutput)
-                  };
+
+                  newOutputMapping.OutputSelection =
+                     new SimulationQuantitySelection(_simulation, new QuantitySelection(matchingOutputPath, matchingOutput.QuantityType));
+                  newOutputMapping.WeightedObservedData = new WeightedObservedData(observedData);
+                  newOutputMapping.Scaling = DefaultScalingFor(matchingOutput);
                }
 
                //`==========================================
@@ -137,27 +122,16 @@ namespace OSPSuite.Presentation.Presenters
                var newOutputMappingDTO = mapFrom(newOutputMapping);
                newOutputMappingDTO.ObservedData = observedData;
 
-               var weightedObservedData = new WeightedObservedData(observedData);
-               newOutputMapping.WeightedObservedData = weightedObservedData;
-               newOutputMappingDTO.ObservedData = observedData;
-               //var newOutputMappingDTO = mapFrom(newOutputMapping);
                _simulation.OutputMappings.Add(newOutputMapping);
                _listOfOutputMappingDTOs.Add(newOutputMappingDTO);
-
-
             }
          }
-
-         //IMPORTANT: WHAT IF THIS HERE IS CALLED WHEN OBSERVED DATA GETS UPDATED??? WE ARE SUPPOSED TO TRY TO MAP IT AUTOMATICALLY
-         //SHOULD WE KEEP A LIST OF WHAT GOT ADDED? LETS HANDLE THIS SEPARATELY, ITS OK FOR NOW
       }
 
       public IEnumerable<SimulationQuantitySelectionDTO> AllAvailableOutputs
       {
          get
          {
-            //THIS DOES NOT SEEM IDEAL... we actually do not need _allAvailableOutputs to be stored, and it is too complicated, actually it is simple what need to be done
-            //OK, so we probably have to clear here, then refresh
             var outputs = _entitiesInSimulationRetriever.OutputsFrom(_simulation);
             _allAvailableOutputs.Clear();
             _allAvailableOutputs.AddRange(outputs.Select(x => mapFrom(_simulation, x)).OrderBy(x => x.DisplayString));
@@ -175,16 +149,6 @@ namespace OSPSuite.Presentation.Presenters
          return _outputMappingDTOMapper.MapFrom(outputMapping, AllAvailableOutputs);
       }
 
-
-      //probably will have to delete
-      public virtual IEnumerable<DataRepository> AllObservedDataFor(SimulationOutputMappingDTO outputMappingDTO)
-      {
-         return _observedDataRepository.AllObservedDataUsedBy(_simulation)
-            .Distinct()
-            .OrderBy(x => x.Name);
-
-         //return new List<DataRepository>(); //we are returning an empty list here, the implementations in PK-Sim and MoBi will provide the actual data
-      }
       private IEnumerable<DataRepository> getAllAvailableObservedData()
       {
          return _observedDataRepository.AllObservedDataUsedBy(_simulation)

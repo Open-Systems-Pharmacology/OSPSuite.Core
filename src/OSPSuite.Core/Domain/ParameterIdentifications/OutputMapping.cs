@@ -65,39 +65,25 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
          OutputSelection.UpdateSimulation(newSimulation);
       }
 
-      public bool DimensionsAreConsistent(DataRepository observedData)
+      public bool DimensionsAreConsistentForParameterIdentification(DataRepository observedData)
       {
-         if (observedData == null || Output == null)
-            return false;
-
-         var observationColumn = observedData.FirstDataColumn();
-
-         if (Output.Dimension == null || observationColumn.Dimension == null)
-            return false;
-
-         if (Output.Dimension == observationColumn.Dimension)
-            return true;
-
-         if (Output.IsConcentration() && observationColumn.IsConcentration())
-            return true;
-
-         if (Output.IsAmount() && observationColumn.IsAmount())
-            return true;
-
-         //not the same dimension but sharing the same base unit (for example for fraction and dimensionsless)
-         if(Output.Dimension.BaseUnit.Name == observationColumn.Dimension.BaseUnit.Name)
-            return true;
-
-         return false;
+         return Output != null && dimensionsAreConsistent(observedData);
       }
 
       public bool SimulationDimensionsAreConsistent(DataRepository observedData)
       {
-         if (observedData == null )
-            return false;
+         return Output == null || dimensionsAreConsistent(observedData);
+      }
 
-         if (Output == null)
-            return true;
+      public bool DimensionsAreConsistentForParameterIdentification()
+      {
+         return DimensionsAreConsistentForParameterIdentification(WeightedObservedData?.ObservedData);
+      }
+
+      private bool dimensionsAreConsistent(DataRepository observedData)
+      {
+         if (observedData == null)
+            return false;
 
          var observationColumn = observedData.FirstDataColumn();
 
@@ -118,11 +104,6 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
             return true;
 
          return false;
-      }
-
-      public bool DimensionsAreConsistent()
-      {
-         return DimensionsAreConsistent(WeightedObservedData?.ObservedData);
       }
    }
 }
