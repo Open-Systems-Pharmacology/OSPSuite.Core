@@ -150,7 +150,7 @@ namespace OSPSuite.Presentation.Presenters
 
       private DataRepository getOrCreateScatterDataRepositoryFor( OutputResiduals outputResidual)
       {
-         var repositoryName = "test";//(Captions.ParameterIdentification.SimulationResultsForRun(runIndex);
+         var repositoryName = "Simulation Results";
          var id = $"{Chart.Id}-{outputResidual.FullOutputPath}-{outputResidual.ObservedData.Id}";
 
          var timeValues = outputResidual.Residuals.Select(x => x.Time).ToList();
