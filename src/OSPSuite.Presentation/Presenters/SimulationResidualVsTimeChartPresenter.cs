@@ -38,27 +38,30 @@ namespace OSPSuite.Presentation.Presenters
       private readonly ISimulationPredictedVsObservedChartService _predictedVsObservedChartService;
       private readonly List<DataRepository> _identityRepositories;
       private readonly IObservedDataRepository _observedDataRepository;
-      private readonly ResidualCalculator _residualCalculator;
+      private readonly IResidualCalculatorFactory _residualCalculatorFactory;
+      private readonly IResidualCalculator _residualCalculator;
       private IReadOnlyCollection<OutputResiduals> AllOutputResiduals;
       private string _markerCurveId = string.Empty;
       private const string ZERO = "Zero";
 
-      public SimulationResidualVsTimeChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, ISimulationPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository) 
+      public SimulationResidualVsTimeChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, 
+         ISimulationPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository, IResidualCalculatorFactory residualCalculatorFactory) 
          : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis, PresenterConstants.PresenterKeys.SimulationPredictedVsActualChartPresenter)
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
          _identityRepositories = new List<DataRepository>();
          _observedDataRepository = observedDataRepository;
-         //OK this is not working, but we still have the:_
-         //_simulation.ResultRepository;
-         //we could use this for the calculation, but again this is something we have actually added
-         var simulationResidual = _residualCalculator.CalculateForSimulation(_simulation.ResultRepository, _simulation.OutputMappings.All);
-         AllOutputResiduals = simulationResidual.AllOutputResiduals;
+         _residualCalculatorFactory = residualCalculatorFactory;
+
+         //probably have to somehow set the correct configuration here
+         _residualCalculator = _residualCalculatorFactory.CreateFor(new ParameterIdentificationConfiguration());
       }
 
       protected override void UpdateAnalysisBasedOn(IReadOnlyList<IndividualResults> simulationResults)
       {
          base.UpdateAnalysisBasedOn(simulationResults);
+         var simulationResidual = _residualCalculator.CalculateForSimulation(_simulation.ResultRepository, _simulation.OutputMappings.All);
+         AllOutputResiduals = simulationResidual.AllOutputResiduals;
          if (!getAllAvailableObservedData().Any())
             return;
 
@@ -200,7 +203,5 @@ namespace OSPSuite.Presentation.Presenters
          base.Clear();
          Chart.RemoveCurve(_markerCurveId);
       }
-
-      public SimulationResidualVsTimeChart Chart { get; }
    }
 }
