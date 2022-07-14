@@ -30,7 +30,7 @@ namespace OSPSuite.Core.Domain.Services
          if (parameterIdentification.AllOutputMappings.Any(x => !x.IsValid))
             validationResult.AddMessage(NotificationType.Error, parameterIdentification, Error.OutputMappingIsInvalid);
 
-         if (parameterIdentification.AllOutputMappings.Any(x => !x.DimensionsAreConsistent()))
+         if (parameterIdentification.AllOutputMappings.Any(x => !x.DimensionsAreConsistentForParameterIdentification()))
             validationResult.AddMessage(NotificationType.Error, parameterIdentification, Error.OutputMappingHasInconsistentDimension);
 
          if (!parameterIdentification.AllIdentificationParameters.Any())

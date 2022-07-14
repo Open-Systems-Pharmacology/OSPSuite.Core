@@ -80,6 +80,7 @@ namespace OSPSuite.Assets
       public static readonly string DiagramBackground = "Diagram Background";
       public static readonly string ChartColor = "Chart Color";
       public static readonly string UseSelected = "Use selected";
+      public static readonly string LinkDataToSimulations = "Link Data to Simulations";
       public static readonly string MetaData = "Meta Data";
       public static readonly string AddDataPoint = "Add Data Point";
       public static readonly string AddMetaData = "Add Meta Data";
@@ -338,6 +339,14 @@ namespace OSPSuite.Assets
       }
 
       public static string ReallyClearHistory = "Really clear command history? This action is irreversible even if the project is not saved afterwards.";
+
+      public static class SimulationUI
+      {
+         public static readonly string DataSelection = "Data";
+         public static readonly string Outputs = "Simulation Outputs";
+         public static readonly string ObservedData = "Observed Data";
+         public static readonly string NoneEditorNullText = "<None>";
+      }
 
       public static class Importer
       {
@@ -1288,6 +1297,14 @@ namespace OSPSuite.Assets
          public static class MultiCurveOptions
          {
             public static string CurrentValue = "<Current value>";
+         }
+
+         public static class GroupRowFormat
+         {
+            public static string Simulation = "Simulation";
+            public static string Time = "Time";
+            public static string Observation = "Observation";
+            public static string Undefined = "Undefined";
          }
       }
    }
@@ -2259,6 +2276,7 @@ namespace OSPSuite.Assets
    {
       public static readonly string ToolTipForAxis = "Double click to edit axis";
       public static readonly string UseSelectedCurvesToolTip = "Adds or removes all the selected curves at once.";
+      public static readonly string LinkSimulationObservedToolTip = "Links the simulation outputs to their mapped observed data, so that when a simulation output is (de)selected the corresponding observed data gets (de)selected as well.";
       public static readonly string AddUnitMap = "Add new default unit for a specific dimension";
       public static readonly string LoadUnits = "Load default units from file";
       public static readonly string SaveUnits = "Save default units to file";

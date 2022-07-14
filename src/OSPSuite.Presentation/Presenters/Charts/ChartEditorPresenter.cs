@@ -5,6 +5,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Core;
@@ -12,6 +13,7 @@ using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
@@ -55,6 +57,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Adds <paramref name="dataRepositories" /> to DataBrowser. This does not trigger a redraw of the chart
       /// </summary>
       void AddDataRepositories(IEnumerable<DataRepository> dataRepositories);
+
+      /// <summary>
+      /// sets the group row format in the gridView of the DataBrowserView to the specified string.
+      /// </summary>
+      void SetGroupRowFormat(GridGroupRowFormats format);
 
       /// <summary>
       ///    Returns all DataColumns used in the DataBrowser
@@ -166,6 +173,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void UpdateUsedForSelection(bool? isUsed);
 
       /// <summary>
+      ///    Updates the LinkedOutputData menu item checkbox check state.
+      /// </summary>
+      /// <param name="isLinkedMappedOutputs">true for checked, false for unchecked</param>
+      void UpdateLinkSimulationToDataSelection(bool isLinkedMappedOutputs);
+
+      /// <summary>
       ///    Adds chart template menu
       /// </summary>
       void AddChartTemplateMenu(IWithChartTemplates withChartTemplates, Action<CurveChartTemplate> loadMenuFor);
@@ -180,6 +193,21 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Refresh the presenter with all values and settings from the underlying <see cref="CurveChart" />
       /// </summary>
       void Refresh();
+
+      /// <summary>
+      /// Sets the output mappings of Simulation Outputs and their mapped Observed Data
+      /// </summary>
+      void SetOutputMappings(OutputMappings outputMappings);
+
+      /// <summary>
+      ///    Adds the control for linking the (de)selection of outputs and observed data
+      /// </summary>
+      void AddLinkSimDataMenuItem();
+
+      /// <summary>
+      ///    Sets the visibility of the control for linking the (de)selection of outputs and observed data 
+      /// </summary>
+      void SetLinkSimDataMenuItemVisibility(bool isVisible);
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -388,6 +416,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void AddUsedInMenuItem() => _view.AddUsedInMenuItemCheckBox();
 
+      public void AddLinkSimDataMenuItem() => _view.AddLinkSimulationObservedMenuItemCheckBox();
+
+      public void SetLinkSimDataMenuItemVisibility(bool isVisible) => _view.SetlinkSimDataMenuItemVisisbility(isVisible);
+
       public void OnDragDrop(IDragEvent dropEvent) => DragDrop(this, dropEvent);
 
       public void OnDragOver(IDragEvent dragEvent) => DragOver(this, dragEvent);
@@ -397,6 +429,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (!isUsed.HasValue) return;
 
          _dataBrowserPresenter.UpdateUsedStateForSelection(used: isUsed.Value);
+      }
+
+      public void UpdateLinkSimulationToDataSelection(bool isLinkedMappedOutputs)
+      {
+         _dataBrowserPresenter.OutputObservedDataLinkingChanged(isLinkedMappedOutputs);
       }
 
       public void AddChartTemplateMenu(IWithChartTemplates withChartTemplates, Action<CurveChartTemplate> loadMenuFor)
@@ -467,6 +504,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _dataBrowserPresenter.AddDataColumns(allColumnsToAdd);
 
          updateUsedColumns();
+      }
+
+      public void SetGroupRowFormat(GridGroupRowFormats format)
+      {
+         _dataBrowserPresenter.SetGroupRowFormat(format);
       }
 
       private bool hasColumn(DataColumn dataColumn) => _dataBrowserPresenter.ContainsDataColumn(dataColumn);
@@ -647,6 +689,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _curveSettingsPresenter.Refresh();
          _axisSettingsPresenter.Refresh();
          updateUsedColumns();
+      }
+
+      public void SetOutputMappings(OutputMappings outputMappings)
+      {
+         _dataBrowserPresenter.AllOutputMappings = outputMappings;
       }
 
       private bool canHandle(ChartEvent chartEvent)
