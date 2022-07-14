@@ -2010,6 +2010,7 @@ namespace OSPSuite.Assets
       public static readonly string StartSensitivityAnalysis = "Start Sensitivity Analysis...";
       public static readonly string ClearHistory = "Clear History";
       public static readonly string ColorGroupObservedData = "Color by folder when adding to chart";
+      public static readonly string AddDeviationLines = "Add deviation lines...";
 
       public static readonly string Help = "Help";
 

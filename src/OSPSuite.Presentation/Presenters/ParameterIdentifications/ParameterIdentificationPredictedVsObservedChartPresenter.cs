@@ -28,6 +28,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
          _identityRepositories = new List<DataRepository>();
+         //ChartDisplayPresenter.AddDeviationLinesEvent += addDeviationLines(); //yeah probably we need some arguments...which means we creat the dialog on the level of the Display presenter....
+         //actually not even sure we are going to need to handle anything here...
       }
 
       protected override void UpdateAnalysisBasedOn(IReadOnlyList<ParameterIdentificationRunResult> parameterIdentificationResults)

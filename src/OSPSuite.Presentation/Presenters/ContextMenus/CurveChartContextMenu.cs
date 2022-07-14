@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Presenters.Charts;
+using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
@@ -39,6 +41,14 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
          yield return CreateMenuButton.WithCaption(MenuNames.ExportToExcel)
             .WithActionCommand(chartDisplayPresenter.ExportToExcel)
             .WithIcon(ApplicationIcons.Excel);
+
+         if (curveChart.IsAnImplementationOf<ParameterIdentificationPredictedVsObservedChart>() ||
+             curveChart.IsAnImplementationOf<SimulationPredictedVsObservedChart>())
+         {
+            yield return CreateMenuButton.WithCaption(MenuNames.AddDeviationLines)
+               .WithActionCommand(chartDisplayPresenter.AddDeviationLines); //and an action I guess....but then we have to publish???
+            //.WithIcon(ApplicationIcons.PKSim); //we probably need a new icon here
+         }
       }
    }
 

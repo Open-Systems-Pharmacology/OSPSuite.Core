@@ -7,6 +7,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Mappers;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.ContextMenus;
@@ -68,7 +69,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       Action<int> HotTracked { set; }
 
-      /// <summary>
+      event EventHandler<IEvent> AddDeviationLinesEvent;
+
+    /// <summary>
       ///    Exports the selected curves to excel
       /// </summary>
       void ExportToExcel();
@@ -169,6 +172,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void OnDragDrop(IDragEvent dropEvent);
 
       void OnDragOver(IDragEvent dragEvent);
+      void AddDeviationLines();
    }
 
    public class ChartDisplayPresenter : AbstractPresenter<IChartDisplayView, IChartDisplayPresenter>, IChartDisplayPresenter
@@ -179,6 +183,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly ICurveToDataModeMapper _dataModeMapper;
       private readonly ICurveChartExportTask _chartExportTask;
       private readonly IApplicationSettings _applicationSettings;
+      private readonly IApplicationController _applicationController;
       private readonly Cache<AxisTypes, IAxisBinder> _axisBinders;
       private readonly Cache<string, ICurveBinder> _curveBinders;
       private readonly Cache<string, ICurveBinder> _quickCurveBinderCache;
@@ -193,13 +198,16 @@ namespace OSPSuite.Presentation.Presenters.Charts
          set => View.HotTracked = value;
       }
 
+      public event EventHandler<IEvent> AddDeviationLinesEvent = delegate { };
+
       public ChartDisplayPresenter(IChartDisplayView chartDisplayView,
          ICurveBinderFactory curveBinderFactory,
          IViewItemContextMenuFactory contextMenuFactory,
          IAxisBinderFactory axisBinderFactory,
          ICurveToDataModeMapper dataModeMapper,
          ICurveChartExportTask chartExportTask,
-         IApplicationSettings applicationSettings)
+         IApplicationSettings applicationSettings,
+         IApplicationController applicationController)
          : base(chartDisplayView)
       {
          _curveBinderFactory = curveBinderFactory;
@@ -212,6 +220,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _curveBinders = new Cache<string, ICurveBinder>(c => c.Id, onMissingKey: key => null);
          _quickCurveBinderCache = new Cache<string, ICurveBinder>(onMissingKey: key => null);
          _displayChartFontAndSizeSettings = new ChartFontAndSizeSettings();
+         _applicationController = applicationController;
       }
 
       public CurveChart Chart { get; private set; }
@@ -239,6 +248,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void OnDragDrop(IDragEvent dropEvent) => DragDrop(this, dropEvent);
 
       public void OnDragOver(IDragEvent dragEvent) => DragOver(this, dragEvent);
+
+      public void AddDeviationLines()
+      {
+         using (var deviationLinesPresenter = _applicationController.Start<IDeviationLinesPresenter>())
+         {
+         }
+         //AddDeviationLinesEvent(this, null);
+      }
 
       public void Refresh()
       {
