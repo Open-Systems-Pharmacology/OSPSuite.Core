@@ -10,7 +10,7 @@ using OSPSuite.Presentation.Presenters;
 using OSPSuite.Utility.Events;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
-namespace OSPSuite.Presentation.Presentation
+namespace OSPSuite.Presentation.Presentation 
 {
    public abstract class concern_for_ApplicationController : ContextSpecification<IApplicationController>
    {
