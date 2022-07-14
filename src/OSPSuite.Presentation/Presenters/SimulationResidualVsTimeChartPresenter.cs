@@ -87,12 +87,6 @@ namespace OSPSuite.Presentation.Presenters
          AddResultRepositoriesToEditor(new[] { dataRepository });
       }
 
-      protected void AddResultRepositoriesToEditor(IReadOnlyList<DataRepository> dataRepositories)
-      {
-         _resultsRepositories.AddRange(dataRepositories);
-         AddDataRepositoriesToEditor(dataRepositories);
-      }
-
       private void addOutputToScatter(IGrouping<string, OutputResiduals> outputMappingsByOutput)
       {
          var fullOutputPath = outputMappingsByOutput.Key;
