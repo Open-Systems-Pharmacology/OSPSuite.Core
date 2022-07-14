@@ -108,10 +108,8 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _outputMappingDTOMapper.MapFrom(_outputMapping2, A<IEnumerable<SimulationQuantitySelectionDTO>>._)).Returns(_outputMappingDTO2);
       }
    }
-
    
-
-      public class When_retrieving_the_list_of_all_available_outputs_from_a_simulation : concern_for_SimulationOutputMappingPresenter
+   public class When_retrieving_the_list_of_all_available_outputs_from_a_simulation : concern_for_SimulationOutputMappingPresenter
       {
          [Observation]
          public void should_return_the_distinct_list_of_all_outputs_accross_all_simulations_used_in_the_PI()
