@@ -36,7 +36,7 @@ namespace OSPSuite.Presentation.Presenters
       void InitializeSimulation(ISimulation simulation);
    }
 
-   public class SimulationOutputMappingPresenter : AbstractPresenter<ISimulationOutputMappingView, ISimulationOutputMappingPresenter>, ISimulationOutputMappingPresenter, IListener<ObservedDataAddedToAnalysableEvent>,
+   public class SimulationOutputMappingPresenter : AbstractSubPresenter<ISimulationOutputMappingView, ISimulationOutputMappingPresenter>, ISimulationOutputMappingPresenter, IListener<ObservedDataAddedToAnalysableEvent>,
       IListener<ObservedDataRemovedFromAnalysableEvent>
 
    {
