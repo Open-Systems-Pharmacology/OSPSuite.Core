@@ -8,7 +8,6 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Events;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.DTO;
@@ -24,7 +23,6 @@ namespace OSPSuite.Presentation.Presentation
       private IObservedDataRepository _observedDataRepository;
       private IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
       private ISimulationOutputMappingToOutputMappingDTOMapper _outputMappingDTOMapper;
-      protected ParameterIdentification _parameterIdentification;
       protected ISimulation _simulation1;
       protected DataRepository _observedData1;
       protected WeightedObservedData _weightedObservedData1;
@@ -41,7 +39,6 @@ namespace OSPSuite.Presentation.Presentation
       protected SimulationOutputMappingDTO _outputMappingDTO2;
       protected SimulationOutputMappingDTO _newOutputMappingDTO;
       private IQuantityToSimulationQuantitySelectionDTOMapper _simulationQuantitySelectionDTOMapper;
-      protected IParameterIdentificationTask _parameterIdentificationTask;
 
       protected override void Context()
       {
