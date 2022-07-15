@@ -16,7 +16,8 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters
 {
-   public interface ISimulationOutputMappingPresenter : IPresenter<ISimulationOutputMappingView>, ILatchable
+   public interface ISimulationOutputMappingPresenter : IPresenter<ISimulationOutputMappingView>, ILatchable, IListener<ObservedDataAddedToAnalysableEvent>,
+      IListener<ObservedDataRemovedFromAnalysableEvent>
    {
       void SetSimulation(ISimulation simulation);
       IEnumerable<SimulationQuantitySelectionDTO> AllAvailableOutputs { get; }
@@ -36,9 +37,7 @@ namespace OSPSuite.Presentation.Presenters
    }
 
    public class SimulationOutputMappingPresenter : AbstractSubPresenter<ISimulationOutputMappingView, ISimulationOutputMappingPresenter>,
-      ISimulationOutputMappingPresenter, IListener<ObservedDataAddedToAnalysableEvent>,
-      IListener<ObservedDataRemovedFromAnalysableEvent>
-
+      ISimulationOutputMappingPresenter
    {
       private readonly IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
       private readonly IObservedDataRepository _observedDataRepository;
@@ -92,13 +91,13 @@ namespace OSPSuite.Presentation.Presenters
 
          //first add all the existing OutputMappings in the Simulation
          _simulation.OutputMappings.All.Each(x => _listOfOutputMappingDTOs.Add(mapFrom(x)));
-         var newOutputMapping = new OutputMapping();
-
+         
          //get all available observed data, and create new mappings for the unmapped
          foreach (var observedData in getAllAvailableObservedData())
          {
             if (_listOfOutputMappingDTOs.Any(x => x.ObservedData.Equals(observedData))) continue;
 
+            var newOutputMapping = new OutputMapping();
             mapMatchingOutput(observedData, newOutputMapping);
 
             var newOutputMappingDTO = mapFrom(newOutputMapping);
@@ -187,13 +186,13 @@ namespace OSPSuite.Presentation.Presenters
 
       public void Handle(ObservedDataRemovedFromAnalysableEvent eventToHandle)
       {
-         //remove deleted observed data
-         var outputsMatchingDeletedObservedData = _simulation.OutputMappings.All
-            .Where(x => !getAllAvailableObservedData().Contains(x.WeightedObservedData.ObservedData)).ToList();
-
-         foreach (var outputMapping in outputsMatchingDeletedObservedData)
+         foreach (var removedObservedData in eventToHandle.ObservedData)
          {
-            _simulation.OutputMappings.Remove(outputMapping);
+            var outputsMatchingDeletedObservedData = _simulation.OutputMappings.OutputMappingsUsingDataRepository(removedObservedData);
+            foreach (var outputMapping in outputsMatchingDeletedObservedData)
+            {
+               _simulation.OutputMappings.Remove(outputMapping);
+            }
          }
 
          updateOutputMappingList();
