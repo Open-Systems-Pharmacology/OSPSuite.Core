@@ -84,8 +84,6 @@ namespace OSPSuite.Presentation.Presentation
 
          A.CallTo(() => _simulation1.OutputMappings.OutputMappingsUsingDataRepository(_observedData1)).Returns(new List<OutputMapping>(){ _outputMapping1});
          A.CallTo(() => _simulation1.OutputMappings.OutputMappingsUsingDataRepository(_observedData2)).Returns(new List<OutputMapping>() { _outputMapping2 });
-
-
          A.CallTo(() => _outputMappingDTOMapper.MapFrom(_outputMapping1, A<IEnumerable<SimulationQuantitySelectionDTO>>._))
             .Returns(_outputMappingDTO1);
          A.CallTo(() => _outputMappingDTOMapper.MapFrom(_outputMapping2, A<IEnumerable<SimulationQuantitySelectionDTO>>._))
