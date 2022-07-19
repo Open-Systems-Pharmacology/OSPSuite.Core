@@ -101,7 +101,6 @@ namespace OSPSuite.Presentation.Presenters
             mapMatchingOutput(observedData, newOutputMapping);
 
             var newOutputMappingDTO = mapFrom(newOutputMapping);
-            newOutputMappingDTO.ObservedData = observedData;
 
             _simulation.OutputMappings.Add(newOutputMapping);
             _listOfOutputMappingDTOs.Add(newOutputMappingDTO);
@@ -113,7 +112,11 @@ namespace OSPSuite.Presentation.Presenters
          var pathCache = _entitiesInSimulationRetriever.OutputsFrom(_simulation);
          var matchingOutputPath = pathCache.Keys.FirstOrDefault(x => observedDataMatchesOutput(observedData, x));
 
-         if (matchingOutputPath == null) return;
+         if (matchingOutputPath == null)
+         {
+            newOutputMapping.WeightedObservedData = new WeightedObservedData(observedData);
+            return;
+         }
 
          var matchingOutput = pathCache[matchingOutputPath];
 
@@ -188,7 +191,7 @@ namespace OSPSuite.Presentation.Presenters
       {
          foreach (var removedObservedData in eventToHandle.ObservedData)
          {
-            var outputsMatchingDeletedObservedData = _simulation.OutputMappings.OutputMappingsUsingDataRepository(removedObservedData);
+            var outputsMatchingDeletedObservedData = _simulation.OutputMappings.OutputMappingsUsingDataRepository(removedObservedData).ToList();
             foreach (var outputMapping in outputsMatchingDeletedObservedData)
             {
                _simulation.OutputMappings.Remove(outputMapping);
