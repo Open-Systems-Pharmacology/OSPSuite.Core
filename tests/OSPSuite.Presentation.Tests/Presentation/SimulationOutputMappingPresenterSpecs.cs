@@ -139,8 +139,9 @@ namespace OSPSuite.Presentation.Presentation
       {
          _allOutputMappingDTOs.Count().ShouldBeEqualTo(2);
          _allOutputMappingDTOs.ElementAt(0).ShouldBeEqualTo(_outputMappingDTO1);
-         _allOutputMappingDTOs.ElementAt(1).ObservedData.ShouldBeEqualTo(_observedData2);
-         _allOutputMappingDTOs.ElementAt(1).Output.ShouldBeEqualTo(null);
+         _simulation1.OutputMappings.All.Count().ShouldBeEqualTo(2);
+         _simulation1.OutputMappings.All.ElementAt(1).WeightedObservedData.ObservedData.ShouldBeEqualTo(_observedData2);
+         _simulation1.OutputMappings.All.ElementAt(1).Output.ShouldBeEqualTo(null);
       }
    }
 
