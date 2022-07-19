@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 
 namespace OSPSuite.Core.Domain
@@ -9,5 +10,9 @@ namespace OSPSuite.Core.Domain
       IEnumerable<CurveChart> Charts { get; }
 
       OutputMappings OutputMappings { get; set; }
+
+      SimulationResults Results { get; set; }
+
+      DataRepository ResultRepository { get; }
    }
 }

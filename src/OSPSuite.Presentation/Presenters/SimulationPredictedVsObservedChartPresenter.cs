@@ -3,53 +3,72 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
-using OSPSuite.Core.Chart.ParameterIdentifications;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
-using OSPSuite.Core.Extensions;
+using OSPSuite.Core.Domain.Repositories;
+using OSPSuite.Core.Events;
 using OSPSuite.Core.Services;
 using OSPSuite.Core.Services.ParameterIdentifications;
+using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Services.Charts;
-using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
+namespace OSPSuite.Presentation.Presenters
 {
-   public interface IParameterIdentificationPredictedVsObservedChartPresenter : IParameterIdentificationSingleRunAnalysisPresenter
+   public interface ISimulationPredictedVsObservedChartPresenter : IChartPresenter<SimulationPredictedVsObservedChart>,
+      ISimulationAnalysisPresenter
+      /*,
+      IListener<RenamedEvent>,
+      IListener<ObservedDataAddedToAnalysableEvent>,
+      IListener<ObservedDataRemovedFromAnalysableEvent>,
+      IListener<SimulationResultsUpdatedEvent>*/
    {
    }
 
-   public class ParameterIdentificationPredictedVsObservedChartPresenter : ParameterIdentificationSingleRunAnalysisPresenter<ParameterIdentificationPredictedVsObservedChart>, IParameterIdentificationPredictedVsObservedChartPresenter
+   //: SimulationAnalysisChartPresenter<SimulationPredictedVsObservedChart, ISimulationPredictedVsObservedAnalysisChartView, ISimulationPredictedVsObservedChartPresenter>,
+   //this should actually implement SimulationRunAnalysisPresenter<SimulationPredictedVsObservedChart>
+   //and the view and presenter interfaces should actually be part of SimulationRunAnalysisPresenter
+   //ISimulationRunAnalysisView should actually get an implementation instead of  ISimulationPredictedVsObservedAnalysisChartView
+   public class SimulationPredictedVsObservedChartPresenter : SimulationRunAnalysisPresenter<SimulationPredictedVsObservedChart>, 
+      ISimulationPredictedVsObservedChartPresenter
    {
-      private readonly IPredictedVsObservedChartService _predictedVsObservedChartService;
+      private readonly ISimulationPredictedVsObservedChartService _predictedVsObservedChartService;
       private readonly List<DataRepository> _identityRepositories;
+      private readonly IObservedDataRepository _observedDataRepository;
 
-      public ParameterIdentificationPredictedVsObservedChartPresenter(IParameterIdentificationSingleRunAnalysisView view, ChartPresenterContext chartPresenterContext, IPredictedVsObservedChartService predictedVsObservedChartService) :
-         base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis, PresenterConstants.PresenterKeys.ParameterIdentificationPredictedVsActualChartPresenter)
+      public SimulationPredictedVsObservedChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, ISimulationPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository) 
+         : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis, PresenterConstants.PresenterKeys.SimulationPredictedVsActualChartPresenter)
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
          _identityRepositories = new List<DataRepository>();
-         //ChartDisplayPresenter.AddDeviationLinesEvent += addDeviationLines(); //yeah probably we need some arguments...which means we creat the dialog on the level of the Display presenter....
-         //actually not even sure we are going to need to handle anything here...
+         _observedDataRepository = observedDataRepository;
       }
 
-      protected override void UpdateAnalysisBasedOn(IReadOnlyList<ParameterIdentificationRunResult> parameterIdentificationResults)
+      protected override void UpdateAnalysisBasedOn(IReadOnlyList<IndividualResults> simulationResults)
       {
-         base.UpdateAnalysisBasedOn(parameterIdentificationResults);
-         if (!_parameterIdentification.AllObservedData.Any())
+         base.UpdateAnalysisBasedOn(simulationResults);
+         if (!getAllAvailableObservedData().Any())
             return;
 
-         var observationColumns = _parameterIdentification.AllObservedData.Select(x => x.FirstDataColumn()).ToList();
+         var observationColumns = getAllAvailableObservedData().Select(x => x.FirstDataColumn()).ToList();
 
          _identityRepositories.AddRange(_predictedVsObservedChartService.AddIdentityCurves(observationColumns, Chart));
 
          if (ChartIsBeingCreated)
             _predictedVsObservedChartService.SetXAxisDimension(observationColumns, Chart);
 
-         AddDataRepositoriesToEditor(_identityRepositories.Union(_parameterIdentification.AllObservedData));
+         AddDataRepositoriesToEditor(_identityRepositories.Union(getAllAvailableObservedData()));
          UpdateChartFromTemplate();
       }
 
+      private IEnumerable<DataRepository> getAllAvailableObservedData()
+      {
+         return _observedDataRepository.AllObservedDataUsedBy(_simulation)
+            .Distinct()
+            .OrderBy(x => x.Name);
+      }
       protected override void ChartChanged()
       {
          base.ChartChanged();
@@ -63,15 +82,16 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _identityRepositories.Clear();
       }
 
-      protected override void AddRunResultToChart(ParameterIdentificationRunResult runResult)
+      protected override void AddRunResultToChart()
       {
-         addPredictedVsObservedToChart(runResult.BestResult.SimulationResults, (column, curve) =>
+         addPredictedVsObservedToChart(new List<DataRepository>() {_simulation.ResultRepository}, (column, curve) =>
          {
-            curve.Description = CurveDescription(curve.Name, runResult);
+            curve.Description = curve.Name;
             curve.Name = column.PathAsString;
          });
       }
 
+      //OK, so let's forget for now, but we definitely need to adjust this one
       private void addPredictedVsObservedToChart(IReadOnlyList<DataRepository> simulationResults, Action<DataColumn, Curve> action)
       {
          AddResultRepositoriesToEditor(simulationResults);
@@ -86,11 +106,13 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private void plotCalculationColumn(DataColumn calculationColumn, Action<DataColumn, Curve> action)
       {
-         var allObservationsForOutput = _parameterIdentification.AllObservationColumnsFor(calculationColumn.PathAsString).ToList();
+         //THIS NEEDS TO BE PACKED IN A FUNCTION SOMEWHERE
+         var allObservationsForOutput = _simulation.OutputMappings.All.Where(x => string.Equals(x.FullOutputPath, calculationColumn.PathAsString))
+            .SelectMany(x => x.WeightedObservedData.ObservedData.ObservationColumns());
 
          if (!allObservationsForOutput.Any())
             Chart.RemoveCurvesForColumn(calculationColumn);
-
+               
          SelectColorForCalculationColumn(calculationColumn);
 
          _predictedVsObservedChartService.AddCurvesFor(allObservationsForOutput, calculationColumn, Chart, (column, curve) =>

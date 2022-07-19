@@ -122,5 +122,31 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
          return Math.Log10(x);
       }
+
+      public ResidualsResult CalculateForSimulation(DataRepository simulationResultRepository, IReadOnlyList<OutputMapping> allOutputMappings)
+      {
+ 
+
+         var simulationColumnsCache = new Cache<string, DataColumn>(x => x.PathAsString, x => null);
+         simulationColumnsCache.AddRange(simulationResultRepository.AllButBaseGrid());
+
+         var residualResult = new ResidualsResult();
+
+         foreach (var outputMapping in allOutputMappings)
+         {
+            var simulationColumn = simulationColumnsCache[outputMapping.FullOutputPath];
+            if (simulationColumn == null)
+            {
+               residualResult.ExceptionOccured = true;
+               residualResult.ExceptionMessage = Error.CannotFindSimulationResultsForOutput(outputMapping.FullOutputPath);
+               return residualResult;
+            }
+
+            var outputResiduals = calculateOutputResiduals(simulationColumn, outputMapping);
+            residualResult.AddOutputResiduals(outputMapping.FullOutputPath, outputMapping.WeightedObservedData, outputResiduals);
+         }
+
+         return residualResult;
+      }
    }
 }
