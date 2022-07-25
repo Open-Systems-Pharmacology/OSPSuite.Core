@@ -253,8 +253,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          using (var deviationLinesPresenter = _applicationController.Start<IDeviationLinesPresenter>())
          {
+            var foldValue = deviationLinesPresenter.GetFoldValue();
          }
-         //AddDeviationLinesEvent(this, null);
       }
 
       public void Refresh()

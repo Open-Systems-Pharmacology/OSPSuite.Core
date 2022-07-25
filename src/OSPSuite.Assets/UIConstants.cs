@@ -1306,6 +1306,11 @@ namespace OSPSuite.Assets
             public static string Observation = "Observation";
             public static string Undefined = "Undefined";
          }
+
+         public static class DeviationLines
+         {
+            public static string SpecifyFoldValue = "Specify deviation fold value";
+         }
       }
    }
 

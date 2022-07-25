@@ -8,8 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using OSPSuite.Assets;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Charts
 {
@@ -19,11 +22,17 @@ namespace OSPSuite.UI.Views.Charts
       public DeviationLinesView()
       {
          InitializeComponent();
+         this.layoutControlItem1.Text = Captions.Chart.DeviationLines.SpecifyFoldValue.FormatForLabel();
       }
 
       public void AttachPresenter(IDeviationLinesPresenter presenter)
       {
          _presenter = presenter;
+      }
+
+      public float GetFoldValue()
+      {
+         return foldValueTextEdit.EditValue.ConvertedTo<float>();
       }
    }
 }

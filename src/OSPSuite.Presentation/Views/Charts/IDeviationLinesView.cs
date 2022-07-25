@@ -4,5 +4,6 @@ namespace OSPSuite.Presentation.Views.Charts
 {
    public interface IDeviationLinesView : IModalView<IDeviationLinesPresenter>
    {
+      float GetFoldValue();
    }
 }
