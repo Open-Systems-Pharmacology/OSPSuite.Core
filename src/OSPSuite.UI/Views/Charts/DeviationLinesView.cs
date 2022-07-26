@@ -22,7 +22,8 @@ namespace OSPSuite.UI.Views.Charts
       public DeviationLinesView()
       {
          InitializeComponent();
-         this.layoutControlItem1.Text = Captions.Chart.DeviationLines.SpecifyFoldValue.FormatForLabel();
+         layoutControlItem1.TextVisible = false;
+         labelControl1.Text = Captions.Chart.DeviationLines.SpecifyFoldValue.FormatForLabel();
       }
 
       public void AttachPresenter(IDeviationLinesPresenter presenter)

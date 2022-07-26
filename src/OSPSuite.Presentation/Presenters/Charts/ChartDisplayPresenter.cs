@@ -21,6 +21,16 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
+   public class AddDeviationLinesEventArgs : EventArgs
+   {
+      public float FoldValue { get; }
+
+      public AddDeviationLinesEventArgs(float foldValue)
+      {
+         FoldValue = foldValue;
+      }
+   }
+
    /// <summary>
    ///    Presenter of ChartDisplay component, which displays a IChart.
    /// </summary>
@@ -69,7 +79,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       Action<int> HotTracked { set; }
 
-      event EventHandler<IEvent> AddDeviationLinesEvent;
+      event EventHandler<AddDeviationLinesEventArgs> AddDeviationLinesEvent;
 
     /// <summary>
       ///    Exports the selected curves to excel
@@ -198,7 +208,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          set => View.HotTracked = value;
       }
 
-      public event EventHandler<IEvent> AddDeviationLinesEvent = delegate { };
+      public event EventHandler<AddDeviationLinesEventArgs> AddDeviationLinesEvent = delegate { };
 
       public ChartDisplayPresenter(IChartDisplayView chartDisplayView,
          ICurveBinderFactory curveBinderFactory,
@@ -254,6 +264,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          using (var deviationLinesPresenter = _applicationController.Start<IDeviationLinesPresenter>())
          {
             var foldValue = deviationLinesPresenter.GetFoldValue();
+            
+            if (foldValue == 0)
+               return;
+
+            AddDeviationLinesEvent(this, new AddDeviationLinesEventArgs(foldValue));
          }
       }
 
