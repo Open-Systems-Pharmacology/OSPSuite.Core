@@ -6,8 +6,6 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
-using OSPSuite.Core.Extensions;
-using OSPSuite.Core.Services;
 using OSPSuite.Core.Services.ParameterIdentifications;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -90,7 +88,9 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          var observationColumns = _parameterIdentification.AllObservedData.Select(x => x.FirstDataColumn()).ToList();
          _deviationLineRepositories.AddRange(_predictedVsObservedChartService.AddDeviationLine(foldValue, observationColumns, Chart));
          AddDataRepositoriesToEditor(_deviationLineRepositories);
-         UpdateChartFromTemplate();
+         ChartChanged();
+         ChartDisplayPresenter.Refresh();
+         ChartEditorPresenter.Refresh();
       }
 
       private void plotCalculationColumn(DataColumn calculationColumn, Action<DataColumn, Curve> action)
@@ -129,7 +129,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       {
          base.Clear();
          _identityRepositories.Each(x => Chart.RemoveCurvesForDataRepository(x));
-         _deviationLineRepositories.Each(x => Chart.RemoveCurvesForDataRepository(x));
+         //_deviationLineRepositories.Each(x => Chart.RemoveCurvesForDataRepository(x));
       }
 
       private static bool isCalculationOrCalculationAuxiliaryColumn(DataColumn column)

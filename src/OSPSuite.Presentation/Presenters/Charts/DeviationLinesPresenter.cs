@@ -1,10 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using OSPSuite.Core.Chart;
-using OSPSuite.Core.Domain;
-using OSPSuite.Presentation.Views.Charts;
-using OSPSuite.Utility;
+﻿using OSPSuite.Presentation.Views.Charts;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
