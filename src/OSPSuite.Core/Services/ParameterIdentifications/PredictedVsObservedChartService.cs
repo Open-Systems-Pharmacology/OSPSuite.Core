@@ -119,7 +119,6 @@ namespace OSPSuite.Core.Services.ParameterIdentifications
          var deviationCurves = addDeviationLines(foldValue, observationColumns, chart).ToList();
          chart.UpdateAxesVisibility();
          return deviationCurves;
-
       }
 
       private IEnumerable<DataRepository> addDeviationLines(float foldValue, List<DataColumn> observationColumns, ParameterIdentificationPredictedVsObservedChart chart)

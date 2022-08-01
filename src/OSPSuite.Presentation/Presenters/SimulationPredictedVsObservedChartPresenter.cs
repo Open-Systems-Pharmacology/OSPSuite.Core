@@ -37,6 +37,7 @@ namespace OSPSuite.Presentation.Presenters
       private readonly ISimulationPredictedVsObservedChartService _predictedVsObservedChartService;
       private readonly List<DataRepository> _identityRepositories;
       private readonly IObservedDataRepository _observedDataRepository;
+      private readonly List<DataRepository> _deviationLineRepositories;
 
       public SimulationPredictedVsObservedChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, ISimulationPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository) 
          : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis, PresenterConstants.PresenterKeys.SimulationPredictedVsActualChartPresenter)
@@ -44,6 +45,8 @@ namespace OSPSuite.Presentation.Presenters
          _predictedVsObservedChartService = predictedVsObservedChartService;
          _identityRepositories = new List<DataRepository>();
          _observedDataRepository = observedDataRepository;
+         _deviationLineRepositories = new List<DataRepository>();
+         ChartDisplayPresenter.AddDeviationLinesEvent += (o, e) => addDeviationLines(e.FoldValue);
       }
 
       protected override void UpdateAnalysisBasedOn(IReadOnlyList<IndividualResults> simulationResults)
@@ -59,7 +62,7 @@ namespace OSPSuite.Presentation.Presenters
          if (ChartIsBeingCreated)
             _predictedVsObservedChartService.SetXAxisDimension(observationColumns, Chart);
 
-         AddDataRepositoriesToEditor(_identityRepositories.Union(getAllAvailableObservedData()));
+         AddDataRepositoriesToEditor(_identityRepositories.Union(getAllAvailableObservedData().Union(_deviationLineRepositories)));
          UpdateChartFromTemplate();
       }
 
@@ -80,6 +83,7 @@ namespace OSPSuite.Presentation.Presenters
       {
          base.ClearChartAndDataRepositories();
          _identityRepositories.Clear();
+         _deviationLineRepositories.Clear();
       }
 
       protected override void AddRunResultToChart()
@@ -121,6 +125,16 @@ namespace OSPSuite.Presentation.Presenters
             curve.VisibleInLegend = !chartAlreadyContainsCurveFor(calculationColumn);
             action(calculationColumn, curve);
          });
+      }
+
+      private void addDeviationLines(float foldValue)
+      {
+         var observationColumns = getAllAvailableObservedData().Select(x => x.FirstDataColumn()).ToList();
+         _deviationLineRepositories.AddRange(_predictedVsObservedChartService.AddDeviationLine(foldValue, observationColumns, Chart));
+         AddDataRepositoriesToEditor(_deviationLineRepositories);
+         ChartChanged();
+         ChartDisplayPresenter.Refresh();
+         ChartEditorPresenter.Refresh();
       }
 
       private IEnumerable<DataColumn> calculationColumnsToPlot(DataRepository dataRepository)
