@@ -86,7 +86,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private void addDeviationLines(float foldValue)
       {
          var observationColumns = _parameterIdentification.AllObservedData.Select(x => x.FirstDataColumn()).ToList();
-         _deviationLineRepositories.AddRange(_predictedVsObservedChartService.AddDeviationLine(foldValue, observationColumns, Chart));
+         _deviationLineRepositories.AddRange(_predictedVsObservedChartService.AddDeviationLine(foldValue, observationColumns, Chart, _deviationLineRepositories.Count/2));
          AddDataRepositoriesToEditor(_deviationLineRepositories);
          ChartChanged();
          ChartDisplayPresenter.Refresh();

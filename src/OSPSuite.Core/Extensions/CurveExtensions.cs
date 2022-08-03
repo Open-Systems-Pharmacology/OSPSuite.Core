@@ -37,5 +37,36 @@ namespace OSPSuite.Core.Extensions
          curve.LineThickness = 2;
          curve.Name = curveName;
       }
+
+      public static void UpdateIdentityCurve(this Curve curve, string curveName)
+      {
+         curve.VisibleInLegend = false;
+         curve.LineStyle = LineStyles.Solid;
+         curve.Color = Color.Black;
+         curve.Name = curveName;
+         curve.LineThickness = 2;
+         curve.Name = curveName;
+      }
+
+      public static void UpdateDeviationCurve(this Curve curve, string curveName, int curveNumber)
+      {
+         curve.VisibleInLegend = false;
+         switch (curveNumber % 3)
+         {
+            case 0:
+               curve.LineStyle = LineStyles.Dash;
+               break;
+            case 1:
+               curve.LineStyle = LineStyles.Dot;
+               break;
+            default:
+               curve.LineStyle = LineStyles.DashDot;
+               break;
+         }
+         curve.Color = Color.Black;
+         curve.Name = curveName;
+         curve.LineThickness = 2;
+         curve.Name = curveName;
+      }
    }
 }

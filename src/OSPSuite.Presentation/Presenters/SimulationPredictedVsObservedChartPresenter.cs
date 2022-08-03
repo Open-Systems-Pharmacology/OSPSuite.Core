@@ -64,6 +64,10 @@ namespace OSPSuite.Presentation.Presenters
 
          AddDataRepositoriesToEditor(_identityRepositories.Union(getAllAvailableObservedData().Union(_deviationLineRepositories)));
          UpdateChartFromTemplate();
+         var xAxis = Chart.AxisBy(AxisTypes.X);
+         var yAxis = Chart.AxisBy(AxisTypes.Y);
+         yAxis.Dimension = xAxis.Dimension;
+         yAxis.UnitName = xAxis.UnitName;
       }
 
       private IEnumerable<DataRepository> getAllAvailableObservedData()
@@ -130,7 +134,7 @@ namespace OSPSuite.Presentation.Presenters
       private void addDeviationLines(float foldValue)
       {
          var observationColumns = getAllAvailableObservedData().Select(x => x.FirstDataColumn()).ToList();
-         _deviationLineRepositories.AddRange(_predictedVsObservedChartService.AddDeviationLine(foldValue, observationColumns, Chart));
+         _deviationLineRepositories.AddRange(_predictedVsObservedChartService.AddDeviationLine(foldValue, observationColumns, Chart, _deviationLineRepositories.Count / 2));
          AddDataRepositoriesToEditor(_deviationLineRepositories);
          ChartChanged();
          ChartDisplayPresenter.Refresh();

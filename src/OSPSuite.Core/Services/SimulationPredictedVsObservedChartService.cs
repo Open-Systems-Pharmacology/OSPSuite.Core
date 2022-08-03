@@ -40,7 +40,7 @@ namespace OSPSuite.Core.Services
       /// </summary>
       void SetXAxisDimension(IEnumerable<DataColumn> observationColumns, SimulationPredictedVsObservedChart chart);
 
-      IEnumerable<DataRepository> AddDeviationLine(float foldValue, List<DataColumn> observationColumns, SimulationPredictedVsObservedChart chart);
+      IEnumerable<DataRepository> AddDeviationLine(float foldValue, List<DataColumn> observationColumns, SimulationPredictedVsObservedChart chart, int numberOfDeviationLines);
    }
 
    public class SimulationPredictedVsObservedChartService : ISimulationPredictedVsObservedChartService
@@ -108,17 +108,22 @@ namespace OSPSuite.Core.Services
 
          xAxis.Scaling = chart.AxisBy(AxisTypes.Y).Scaling;
          xAxis.UnitName = chart.AxisBy(AxisTypes.Y).UnitName;
+         var yAxis = chart.AxisBy(AxisTypes.Y);
+
+         if (defaultDimension != null)
+            yAxis.Dimension = defaultDimension;
 
          chart.UpdateAxesVisibility();
       }
 
-      public IEnumerable<DataRepository> AddDeviationLine(float foldValue, List<DataColumn> observationColumns, SimulationPredictedVsObservedChart chart)
+      public IEnumerable<DataRepository> AddDeviationLine(float foldValue, List<DataColumn> observationColumns, SimulationPredictedVsObservedChart chart,  int numberOfDeviationLines)
       {
-         var deviationCurves = addDeviationLines(foldValue, observationColumns, chart).ToList();
+         var deviationCurves = addDeviationLines(foldValue, observationColumns, chart, numberOfDeviationLines).ToList();
          chart.UpdateAxesVisibility();
          return deviationCurves;
       }
-      private IEnumerable<DataRepository> addDeviationLines(float foldValue, List<DataColumn> observationColumns, SimulationPredictedVsObservedChart chart)
+      private IEnumerable<DataRepository> addDeviationLines(float foldValue, List<DataColumn> observationColumns,
+         SimulationPredictedVsObservedChart chart, int numberOfDeviationLines)
       {
          var dataColumns = observationColumns.ToList();
          //We are using display name here as it is the only way to identify unique merge dimensions
@@ -127,27 +132,28 @@ namespace OSPSuite.Core.Services
 
          foreach (var mergedDimension in uniqueDimensions)
          {
-            foreach (var p in createFoldDeviationRepository(foldValue, chart, dataColumns, mergedDimension)) yield return p;
+            foreach (var p in createFoldDeviationRepository(foldValue, chart, dataColumns, mergedDimension, numberOfDeviationLines)) yield return p;
          }
       }
 
-      private IEnumerable<DataRepository> createFoldDeviationRepository(float foldValue, SimulationPredictedVsObservedChart chart, List<DataColumn> dataColumns,
-         IDimension mergedDimension)
+      private IEnumerable<DataRepository> createFoldDeviationRepository(float foldValue, SimulationPredictedVsObservedChart chart,
+         List<DataColumn> dataColumns,
+         IDimension mergedDimension, int numberOfDeviationLines)
       {
          var deviationLineRepository = new List<DataRepository>();
          var deviationLineUpper = createDeviationRepository(foldValue, dataColumns, mergedDimension);
          deviationLineRepository.Add(deviationLineUpper);
          var deviationLineLower = createLowerDeviationRepository(foldValue, dataColumns, mergedDimension);
          deviationLineRepository.Add(deviationLineLower);
-         chart.AddCurvesFor(deviationLineUpper, x => x.Name, _dimensionFactory, (column, curve) => curve.UpdateMarkerCurve(foldValue + "fold upper deviation line"));
-         chart.AddCurvesFor(deviationLineLower, x => x.Name, _dimensionFactory, (column, curve) => curve.UpdateMarkerCurve(foldValue + "fold upper deviation line"));
+         chart.AddCurvesFor(deviationLineUpper, x => x.Name, _dimensionFactory, (column, curve) => curve.UpdateDeviationCurve(foldValue + "fold deviation line", numberOfDeviationLines));
+         chart.AddCurvesFor(deviationLineLower, x => x.Name, _dimensionFactory, (column, curve) => curve.UpdateDeviationCurve(foldValue + "fold deviation line", numberOfDeviationLines));
 
          return deviationLineRepository;
       }
 
       private DataRepository createDeviationRepository(float foldValue, List<DataColumn> dataColumns, IDimension mergedDimension)
       {
-         var dataRepository = new DataRepository { Name = "Deviation_Upper" };
+         var dataRepository = new DataRepository { Name = "Deviation" };
 
          var columnsWithMatchingDimension = dataColumns.Where(x => x.Dimension.IsEquivalentTo(mergedDimension)).ToList();
 
@@ -164,7 +170,7 @@ namespace OSPSuite.Core.Services
             Values = new List<float>() { identityMinimum, identityMaximum }
          };
 
-         var values = new DataColumn("Marker_Deviation_Upper", mergedDimension, baseGrid)
+         var values = new DataColumn("Marker_Deviation", mergedDimension, baseGrid)
          {
             Values = new List<float>() { (identityMinimum + (identityMinimum * foldValue)), (identityMaximum + (identityMaximum * foldValue)) },
             Name = "Deviation"
@@ -176,7 +182,7 @@ namespace OSPSuite.Core.Services
 
       private DataRepository createLowerDeviationRepository(float foldValue, List<DataColumn> dataColumns, IDimension mergedDimension)
       {
-         var dataRepository = new DataRepository { Name = "DeviationLower" };
+         var dataRepository = new DataRepository { Name = "Deviation" };
 
          var columnsWithMatchingDimension = dataColumns.Where(x => x.Dimension.IsEquivalentTo(mergedDimension)).ToList();
 
@@ -188,15 +194,14 @@ namespace OSPSuite.Core.Services
          var identityMaximum = getIdentityMaximum(columnsForIdentityRepository, mergedDimension);
 
          //======================
-         var testValue = 0.0001.ToFloat();
          var baseGrid = new BaseGrid(mergedDimension.Name, mergedDimension)
          {
-            Values = new List<float>() { (testValue + (testValue * foldValue)), (identityMinimum + (identityMinimum * foldValue)), (identityMaximum + (identityMaximum * foldValue)) }
+            Values = new List<float>() { identityMinimum, identityMaximum }
          };
 
-         var values = new DataColumn("Marker_Deviation_Upper", mergedDimension, baseGrid)
+         var values = new DataColumn("Marker_Deviation", mergedDimension, baseGrid)
          {
-            Values = new List<float>() { testValue, identityMinimum, identityMaximum },
+            Values = new List<float>() { identityMinimum / (1 + foldValue), identityMaximum / (1 + foldValue) },
             Name = "Deviation"
          };
 
@@ -223,7 +228,7 @@ namespace OSPSuite.Core.Services
             var identityRepository = createIdentityRepository(dataColumns, mergedDimension);
             if (identityRepository == null) continue;
 
-            chart.AddCurvesFor(identityRepository, x => x.Name, _dimensionFactory, (column, curve) => curve.UpdateMarkerCurve(Identity));
+            chart.AddCurvesFor(identityRepository, x => x.Name, _dimensionFactory, (column, curve) => curve.UpdateIdentityCurve(Identity));
             yield return identityRepository;
          }
       }
