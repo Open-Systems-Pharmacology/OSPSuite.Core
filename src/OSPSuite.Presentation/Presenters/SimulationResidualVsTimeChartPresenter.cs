@@ -74,7 +74,7 @@ namespace OSPSuite.Presentation.Presenters
          }
 
          UpdateChartFromTemplate();
-
+         View.SetTotalError(simulationResidual.TotalError);
       }
 
       protected override void AddRunResultToChart()
