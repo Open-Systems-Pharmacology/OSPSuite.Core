@@ -64,7 +64,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          base.InitializeResources();
          layoutItemTreeView.TextVisible = false;
          btnAddSimulation.InitWithImage(ApplicationIcons.Add, Captions.ParameterIdentification.AddSimulation);
-         layoutItemAddSimulation.AdjustLargeButtonSize();
+         layoutItemAddSimulation.AdjustLargeButtonSize(layoutControl);
       }
 
       public ITreeNode AddNode(ITreeNode nodeToAdd)

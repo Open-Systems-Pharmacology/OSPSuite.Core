@@ -29,9 +29,9 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
       public override void InitializeResources()
       {
          base.InitializeResources();
-         layoutItemAddParameters.AsAddButton();
-         layoutItemRemoveParameters.AsRemoveButton();
-         layoutItemAddAllConstantParameters.AsAddButton(Captions.SensitivityAnalysis.AddAllConstants);
+         layoutItemAddParameters.AsAddButton(layoutControl);
+         layoutItemRemoveParameters.AsRemoveButton(layoutControl);
+         layoutItemAddAllConstantParameters.AsAddButton(layoutControl, Captions.SensitivityAnalysis.AddAllConstants);
          layoutItemSelectSimulation.TextVisible = false;
          cbSimulationSelector.Properties.TextEditStyle = TextEditStyles.DisableTextEditor;
          btnAddAllConstantParameters.ToolTip = Captions.SensitivityAnalysis.AddAllConstantsDescription;

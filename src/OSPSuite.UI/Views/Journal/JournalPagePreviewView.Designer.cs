@@ -29,7 +29,7 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.panelRelatedItems = new DevExpress.XtraEditors.PanelControl();
          this.lblUpdatedAt = new DevExpress.XtraEditors.LabelControl();
          this.tokenTags = new DevExpress.XtraEditors.TokenEdit();
@@ -40,8 +40,8 @@
          this.layoutGroupRelatedItems = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutGroupItemTags = new DevExpress.XtraLayout.LayoutControlGroup();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
-         this.layoutControl1.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
+         this.layoutControl.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.panelRelatedItems)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.tokenTags.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).BeginInit();
@@ -54,17 +54,17 @@
          // 
          // layoutControl1
          // 
-         this.layoutControl1.AllowCustomization = false;
-         this.layoutControl1.Controls.Add(this.panelRelatedItems);
-         this.layoutControl1.Controls.Add(this.lblUpdatedAt);
-         this.layoutControl1.Controls.Add(this.tokenTags);
-         this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.layoutControl1.Location = new System.Drawing.Point(0, 0);
-         this.layoutControl1.Name = "layoutControl1";
-         this.layoutControl1.Root = this.layoutControlGroup1;
-         this.layoutControl1.Size = new System.Drawing.Size(330, 389);
-         this.layoutControl1.TabIndex = 0;
-         this.layoutControl1.Text = "layoutControl1";
+         this.layoutControl.AllowCustomization = false;
+         this.layoutControl.Controls.Add(this.panelRelatedItems);
+         this.layoutControl.Controls.Add(this.lblUpdatedAt);
+         this.layoutControl.Controls.Add(this.tokenTags);
+         this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.layoutControl.Location = new System.Drawing.Point(0, 0);
+         this.layoutControl.Name = "layoutControl";
+         this.layoutControl.Root = this.layoutControlGroup1;
+         this.layoutControl.Size = new System.Drawing.Size(330, 389);
+         this.layoutControl.TabIndex = 0;
+         this.layoutControl.Text = "layoutControl1";
          // 
          // panelRelatedItems
          // 
@@ -78,7 +78,7 @@
          this.lblUpdatedAt.Location = new System.Drawing.Point(2, 2);
          this.lblUpdatedAt.Name = "lblUpdatedAt";
          this.lblUpdatedAt.Size = new System.Drawing.Size(62, 13);
-         this.lblUpdatedAt.StyleController = this.layoutControl1;
+         this.lblUpdatedAt.StyleController = this.layoutControl;
          this.lblUpdatedAt.TabIndex = 9;
          this.lblUpdatedAt.Text = "lblUpdatedAt";
          // 
@@ -89,7 +89,7 @@
          this.tokenTags.Properties.Separators.AddRange(new string[] {
             ","});
          this.tokenTags.Size = new System.Drawing.Size(183, 20);
-         this.tokenTags.StyleController = this.layoutControl1;
+         this.tokenTags.StyleController = this.layoutControl;
          this.tokenTags.TabIndex = 7;
          // 
          // layoutControlGroup1
@@ -155,12 +155,12 @@
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.Controls.Add(this.layoutControl1);
+         this.Controls.Add(this.layoutControl);
          this.Name = "JournalPagePreviewView";
          this.Size = new System.Drawing.Size(330, 389);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
-         this.layoutControl1.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
+         this.layoutControl.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.panelRelatedItems)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.tokenTags.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).EndInit();
@@ -181,7 +181,7 @@
       private DevExpress.XtraLayout.LayoutControlItem layoutItemUpdatedAt;
       private DevExpress.XtraEditors.PanelControl panelRelatedItems;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemRelatedItems;
-      private Controls.UxLayoutControl layoutControl1;
+      private Controls.UxLayoutControl layoutControl;
       private DevExpress.XtraLayout.LayoutControlGroup layoutGroupRelatedItems;
       private DevExpress.XtraLayout.LayoutControlGroup layoutGroupItemTags;
    }

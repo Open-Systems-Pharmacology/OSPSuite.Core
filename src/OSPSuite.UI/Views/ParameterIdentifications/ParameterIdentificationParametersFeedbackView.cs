@@ -120,7 +120,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          base.InitializeResources();
          layoutItemParameters.TextVisible = false;
          layoutItemRunProperties.TextVisible = false;
-         layoutItemExportParametersHistory.AdjustLargeButtonSize();
+         layoutItemExportParametersHistory.AdjustLargeButtonSize(layoutControl);
          btnExportParametersHistory.InitWithImage(ApplicationIcons.Excel, Captions.ParameterIdentification.ExportParametersHistory);
       }
    }
