@@ -24,19 +24,19 @@ namespace OSPSuite.UI.Extensions
          return button;
       }
 
-      public static void AsAddButton(this LayoutControlItem buttonControlItem, string caption = Captions.AddButtonText)
+      public static void AsAddButton(this LayoutControlItem buttonControlItem, LayoutControl layoutControl, string caption = Captions.AddButtonText)
       {
-         buttonControlItem.AsLargeButtonWithImage(ApplicationIcons.Forward, caption);
+         buttonControlItem.AsLargeButtonWithImage(layoutControl, ApplicationIcons.Forward, caption);
       }
 
-      public static void AsRemoveButton(this LayoutControlItem buttonControlItem, string caption = Captions.RemoveButtonText)
+      public static void AsRemoveButton(this LayoutControlItem buttonControlItem, LayoutControl layoutControl, string caption = Captions.RemoveButtonText)
       {
-         buttonControlItem.AsLargeButtonWithImage(ApplicationIcons.Back, caption);
+         buttonControlItem.AsLargeButtonWithImage(layoutControl, ApplicationIcons.Back, caption);
       }
 
-      public static void AsLargeButtonWithImage(this LayoutControlItem buttonControlItem, ApplicationIcon applicationIcon, string text)
+      public static void AsLargeButtonWithImage(this LayoutControlItem buttonControlItem, LayoutControl layoutControl,  ApplicationIcon applicationIcon, string text)
       {
-         buttonControlItem.AdjustControlSize(UIConstants.Size.ADD_REMOVE_BUTTON_WIDTH, UIConstants.Size.ADD_REMOVE_BUTTON_HEIGHT);
+         buttonControlItem.AdjustControlSize(layoutControl, UIConstants.Size.ADD_REMOVE_BUTTON_WIDTH, UIConstants.Size.ADD_REMOVE_BUTTON_HEIGHT);
          var button = buttonControlItem.Control as SimpleButton;
          button?.InitWithImage(applicationIcon, IconSizes.Size24x24, text: text, imageLocation: ImageLocation.TopCenter);
       }

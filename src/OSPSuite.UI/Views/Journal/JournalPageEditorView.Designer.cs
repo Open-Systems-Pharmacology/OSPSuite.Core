@@ -39,7 +39,7 @@ namespace OSPSuite.UI.Views.Journal
          DevExpress.XtraBars.Ribbon.ReduceOperation reduceOperation1 = new DevExpress.XtraBars.Ribbon.ReduceOperation();
          this.stylesRibbonPageGroup1 = new DevExpress.XtraRichEdit.UI.StylesRibbonPageGroup();
          this.galleryChangeStyleItem1 = new DevExpress.XtraRichEdit.UI.GalleryChangeStyleItem();
-         this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.tbTitle = new DevExpress.XtraEditors.TextEdit();
          this.ribbonControl = new DevExpress.XtraBars.Ribbon.RibbonControl();
          this.uxRichEditControl = new OSPSuite.UI.Controls.UxRichEditControl();
@@ -215,8 +215,8 @@ namespace OSPSuite.UI.Views.Journal
          this.buttonPreviousPage = new DevExpress.XtraEditors.SimpleButton();
          this.layoutItemButtonPreviousPage = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
-         this.layoutControl1.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
+         this.layoutControl.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.tbTitle.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.ribbonControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.repositoryItemBorderLineStyle1)).BeginInit();
@@ -255,21 +255,21 @@ namespace OSPSuite.UI.Views.Journal
          // 
          // layoutControl1
          // 
-         this.layoutControl1.AllowCustomization = false;
-         this.layoutControl1.Controls.Add(this.tbTitle);
-         this.layoutControl1.Controls.Add(this.cbOrigin);
-         this.layoutControl1.Controls.Add(this.tagEdit);
-         this.layoutControl1.Controls.Add(this.uxRichEditControl);
-         this.layoutControl1.Controls.Add(this.buttonNextPage);
-         this.layoutControl1.Controls.Add(this.buttonPreviousPage);
-         this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.layoutControl1.Location = new System.Drawing.Point(0, 141);
-         this.layoutControl1.Name = "layoutControl1";
-         this.layoutControl1.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(1167, 385, 450, 400);
-         this.layoutControl1.Root = this.layoutControlGroup1;
-         this.layoutControl1.Size = new System.Drawing.Size(940, 403);
-         this.layoutControl1.TabIndex = 0;
-         this.layoutControl1.Text = "layoutControl1";
+         this.layoutControl.AllowCustomization = false;
+         this.layoutControl.Controls.Add(this.tbTitle);
+         this.layoutControl.Controls.Add(this.cbOrigin);
+         this.layoutControl.Controls.Add(this.tagEdit);
+         this.layoutControl.Controls.Add(this.uxRichEditControl);
+         this.layoutControl.Controls.Add(this.buttonNextPage);
+         this.layoutControl.Controls.Add(this.buttonPreviousPage);
+         this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.layoutControl.Location = new System.Drawing.Point(0, 141);
+         this.layoutControl.Name = "layoutControl";
+         this.layoutControl.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(1167, 385, 450, 400);
+         this.layoutControl.Root = this.layoutControlGroup1;
+         this.layoutControl.Size = new System.Drawing.Size(940, 403);
+         this.layoutControl.TabIndex = 0;
+         this.layoutControl.Text = "layoutControl1";
          // 
          // tbTitle
          // 
@@ -277,7 +277,7 @@ namespace OSPSuite.UI.Views.Journal
          this.tbTitle.MenuManager = this.ribbonControl;
          this.tbTitle.Name = "tbTitle";
          this.tbTitle.Size = new System.Drawing.Size(664, 20);
-         this.tbTitle.StyleController = this.layoutControl1;
+         this.tbTitle.StyleController = this.layoutControl;
          this.tbTitle.TabIndex = 8;
          // 
          // ribbonControl
@@ -1440,7 +1440,7 @@ namespace OSPSuite.UI.Views.Journal
          this.cbOrigin.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
          this.cbOrigin.Size = new System.Drawing.Size(101, 20);
-         this.cbOrigin.StyleController = this.layoutControl1;
+         this.cbOrigin.StyleController = this.layoutControl;
          this.cbOrigin.TabIndex = 7;
          // 
          // tagEdit
@@ -1452,7 +1452,7 @@ namespace OSPSuite.UI.Views.Journal
          this.tagEdit.Properties.Separators.AddRange(new string[] {
             ","});
          this.tagEdit.Size = new System.Drawing.Size(362, 20);
-         this.tagEdit.StyleController = this.layoutControl1;
+         this.tagEdit.StyleController = this.layoutControl;
          this.tagEdit.TabIndex = 5;
          // 
          // layoutControlGroup1
@@ -1649,7 +1649,7 @@ namespace OSPSuite.UI.Views.Journal
          this.buttonNextPage.Location = new System.Drawing.Point(707, 379);
          this.buttonNextPage.Name = "buttonNextPage";
          this.buttonNextPage.Size = new System.Drawing.Size(231, 22);
-         this.buttonNextPage.StyleController = this.layoutControl1;
+         this.buttonNextPage.StyleController = this.layoutControl;
          this.buttonNextPage.TabIndex = 9;
          this.buttonNextPage.Text = "buttonNextPage";
          // 
@@ -1667,7 +1667,7 @@ namespace OSPSuite.UI.Views.Journal
          this.buttonPreviousPage.Location = new System.Drawing.Point(472, 379);
          this.buttonPreviousPage.Name = "buttonPreviousPage";
          this.buttonPreviousPage.Size = new System.Drawing.Size(231, 22);
-         this.buttonPreviousPage.StyleController = this.layoutControl1;
+         this.buttonPreviousPage.StyleController = this.layoutControl;
          this.buttonPreviousPage.TabIndex = 10;
          this.buttonPreviousPage.Text = "buttonPreviousPage";
          // 
@@ -1684,13 +1684,13 @@ namespace OSPSuite.UI.Views.Journal
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.Controls.Add(this.layoutControl1);
+         this.Controls.Add(this.layoutControl);
          this.Controls.Add(this.ribbonControl);
          this.Name = "JournalPageEditorView";
          this.Size = new System.Drawing.Size(940, 544);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
-         this.layoutControl1.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
+         this.layoutControl.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.tbTitle.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.ribbonControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.repositoryItemBorderLineStyle1)).EndInit();
@@ -1885,7 +1885,7 @@ namespace OSPSuite.UI.Views.Journal
       private DevExpress.XtraLayout.LayoutControlItem layoutItemSource;
       private TextEdit tbTitle;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemTitle;
-      private UxLayoutControl layoutControl1;
+      private UxLayoutControl layoutControl;
       private SimpleButton buttonNextPage;
       private SimpleButton buttonPreviousPage;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemButtonPreviousPage;

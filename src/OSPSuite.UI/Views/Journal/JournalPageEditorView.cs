@@ -234,8 +234,8 @@ namespace OSPSuite.UI.Views.Journal
 
          buttonPreviousPage.InitWithImage(ApplicationIcons.Previous, imageLocation: ImageLocation.MiddleCenter, toolTip: ToolTips.Journal.NavigateToPreviousPage);
          buttonNextPage.InitWithImage(ApplicationIcons.Next, imageLocation: ImageLocation.MiddleCenter, toolTip: ToolTips.Journal.NavigateToNextPage);
-         layoutItemButtonNextPage.AdjustButtonSizeWithImageOnly();
-         layoutItemButtonPreviousPage.AdjustButtonSizeWithImageOnly();
+         layoutItemButtonNextPage.AdjustButtonSizeWithImageOnly(layoutControl);
+         layoutItemButtonPreviousPage.AdjustButtonSizeWithImageOnly(layoutControl);
       }
 
       private void addParagraphStyle(string name, string fontName, int fontSize, bool isBold, Color color, int spacingBefore)

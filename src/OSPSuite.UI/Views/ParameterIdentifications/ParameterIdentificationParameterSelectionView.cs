@@ -49,8 +49,8 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       public override void InitializeResources()
       {
          base.InitializeResources();
-         layoutItemAddIdentificationParameter.AsAddButton();
-         layoutItemAddLinkedParameter.AsAddButton();
+         layoutItemAddIdentificationParameter.AsAddButton(layoutControl);
+         layoutItemAddLinkedParameter.AsAddButton(layoutControl);
          layoutItemIdentificationParameters.Text = Captions.ParameterIdentification.IdentificationParameters;
          layoutItemLinkedParameters.Text = Captions.ParameterIdentification.LinkedParameters;
       }

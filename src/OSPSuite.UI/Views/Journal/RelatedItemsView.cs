@@ -164,10 +164,10 @@ namespace OSPSuite.UI.Views.Journal
          _removeRelatedItemRepository.Buttons[0].SetImage(ApplicationIcons.Delete);
          _removeRelatedItemRepository.Buttons[0].ToolTip = Captions.Journal.ToolTip.DeleteRelatedItem;
 
-         layoutItemAddRelatedItem.AdjustButtonSize();
+         layoutItemAddRelatedItem.AdjustButtonSize(layoutControl);
          buttonAddRelatedItemFromFile.InitWithImage(ApplicationIcons.Add, text: Captions.Journal.AddRelatedItem, toolTip: ToolTips.Journal.AddRelatedItemFromFile);
 
-         layoutItemReloadAllRelatedItems.AdjustButtonSize();
+         layoutItemReloadAllRelatedItems.AdjustButtonSize(layoutControl);
          buttonReloadAllRelatedItems.InitWithImage(ApplicationIcons.ImportAll, text: Captions.Journal.ImportAllRelatedItem, toolTip: ToolTips.Journal.ImportAllRelatedItem);
       }
 

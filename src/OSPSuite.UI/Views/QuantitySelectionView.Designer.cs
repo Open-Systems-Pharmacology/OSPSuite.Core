@@ -28,11 +28,11 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.btnDeselectAll = new DevExpress.XtraEditors.SimpleButton();
          this.txtInfo = new DevExpress.XtraEditors.TextEdit();
          this.lblDescription = new DevExpress.XtraEditors.LabelControl();
-         this.layoutControl = new DevExpress.XtraLayout.LayoutControlGroup();
+         this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemDeselectAll = new DevExpress.XtraLayout.LayoutControlItem();
@@ -42,10 +42,10 @@
          this.panelSelectedQuantities = new DevExpress.XtraEditors.PanelControl();
          this.layoutControlItem6 = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
-         this.layoutControl1.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.txtInfo.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
+         this.layoutControl.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)(this.txtInfo.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemDeselectAll)).BeginInit();
@@ -58,26 +58,26 @@
          // 
          // layoutControl1
          // 
-         this.layoutControl1.Controls.Add(this.panelSelectedQuantities);
-         this.layoutControl1.Controls.Add(this.panelQuantities);
-         this.layoutControl1.Controls.Add(this.btnDeselectAll);
-         this.layoutControl1.Controls.Add(this.txtInfo);
-         this.layoutControl1.Controls.Add(this.lblDescription);
-         this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.layoutControl1.Location = new System.Drawing.Point(0, 0);
-         this.layoutControl1.Name = "layoutControl1";
-         this.layoutControl1.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(855, 250, 250, 350);
-         this.layoutControl1.Root = this.layoutControl;
-         this.layoutControl1.Size = new System.Drawing.Size(513, 512);
-         this.layoutControl1.TabIndex = 0;
-         this.layoutControl1.Text = "layoutControl1";
+         this.layoutControl.Controls.Add(this.panelSelectedQuantities);
+         this.layoutControl.Controls.Add(this.panelQuantities);
+         this.layoutControl.Controls.Add(this.btnDeselectAll);
+         this.layoutControl.Controls.Add(this.txtInfo);
+         this.layoutControl.Controls.Add(this.lblDescription);
+         this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.layoutControl.Location = new System.Drawing.Point(0, 0);
+         this.layoutControl.Name = "layoutControl";
+         this.layoutControl.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(855, 250, 250, 350);
+         this.layoutControl.Root = this.layoutControlGroup;
+         this.layoutControl.Size = new System.Drawing.Size(513, 512);
+         this.layoutControl.TabIndex = 0;
+         this.layoutControl.Text = "layoutControl1";
          // 
          // btnDeselectAll
          // 
          this.btnDeselectAll.Location = new System.Drawing.Point(258, 19);
          this.btnDeselectAll.Name = "btnDeselectAll";
          this.btnDeselectAll.Size = new System.Drawing.Size(253, 22);
-         this.btnDeselectAll.StyleController = this.layoutControl1;
+         this.btnDeselectAll.StyleController = this.layoutControl;
          this.btnDeselectAll.TabIndex = 6;
          this.btnDeselectAll.Text = "btnDeselectAll";
          // 
@@ -86,7 +86,7 @@
          this.txtInfo.Location = new System.Drawing.Point(2, 19);
          this.txtInfo.Name = "txtInfo";
          this.txtInfo.Size = new System.Drawing.Size(252, 20);
-         this.txtInfo.StyleController = this.layoutControl1;
+         this.txtInfo.StyleController = this.layoutControl;
          this.txtInfo.TabIndex = 5;
          // 
          // lblDescription
@@ -94,28 +94,28 @@
          this.lblDescription.Location = new System.Drawing.Point(2, 2);
          this.lblDescription.Name = "lblDescription";
          this.lblDescription.Size = new System.Drawing.Size(63, 13);
-         this.lblDescription.StyleController = this.layoutControl1;
+         this.lblDescription.StyleController = this.layoutControl;
          this.lblDescription.TabIndex = 4;
          this.lblDescription.Text = "lblDescription";
          // 
          // layoutControl
          // 
-         this.layoutControl.CustomizationFormText = "layoutControl";
-         this.layoutControl.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
-         this.layoutControl.GroupBordersVisible = false;
-         this.layoutControl.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+         this.layoutControlGroup.CustomizationFormText = "layoutControl";
+         this.layoutControlGroup.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
+         this.layoutControlGroup.GroupBordersVisible = false;
+         this.layoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutControlItem1,
             this.layoutControlItem2,
             this.layoutItemDeselectAll,
             this.splitterItem1,
             this.layoutControlItem3,
             this.layoutControlItem6});
-         this.layoutControl.Location = new System.Drawing.Point(0, 0);
-         this.layoutControl.Name = "Root";
-         this.layoutControl.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
-         this.layoutControl.Size = new System.Drawing.Size(513, 512);
-         this.layoutControl.Text = "Root";
-         this.layoutControl.TextVisible = false;
+         this.layoutControlGroup.Location = new System.Drawing.Point(0, 0);
+         this.layoutControlGroup.Name = "Root";
+         this.layoutControlGroup.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
+         this.layoutControlGroup.Size = new System.Drawing.Size(513, 512);
+         this.layoutControlGroup.Text = "Root";
+         this.layoutControlGroup.TextVisible = false;
          // 
          // layoutControlItem1
          // 
@@ -203,14 +203,14 @@
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.Controls.Add(this.layoutControl1);
+         this.Controls.Add(this.layoutControl);
          this.Name = "QuantitySelectionView";
          this.Size = new System.Drawing.Size(513, 512);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
-         this.layoutControl1.ResumeLayout(false);
-         ((System.ComponentModel.ISupportInitialize)(this.txtInfo.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
+         this.layoutControl.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)(this.txtInfo.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemDeselectAll)).EndInit();
@@ -225,8 +225,8 @@
 
       #endregion
 
-      private DevExpress.XtraLayout.LayoutControl layoutControl1;
-      private DevExpress.XtraLayout.LayoutControlGroup layoutControl;
+      private DevExpress.XtraLayout.LayoutControl layoutControl;
+      private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
       private DevExpress.XtraEditors.LabelControl lblDescription;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
       private DevExpress.XtraEditors.TextEdit txtInfo;
