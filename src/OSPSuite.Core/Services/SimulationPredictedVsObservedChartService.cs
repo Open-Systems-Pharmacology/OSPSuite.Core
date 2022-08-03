@@ -165,7 +165,7 @@ namespace OSPSuite.Core.Services
          {
             addResultCurves(observationColumn, calculationColumn, chart, action);
          }
-         adjustAxes(calculationColumn, chart);
+         //adjustAxes(calculationColumn, chart);
       }
 
       private void addResultCurves(DataColumn observationColumn, DataColumn simulationResultColumn, SimulationPredictedVsObservedChart chart, Action<DataColumn, Curve> action)
