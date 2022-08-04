@@ -8,7 +8,7 @@ namespace OSPSuite.UI.Extensions
    {
       public static SimpleButton InitWithImage(this SimpleButton button, ApplicationIcon applicationIcon, string text = null, ImageLocation imageLocation = ImageLocation.MiddleLeft, string toolTip = null)
       {
-         return button.InitWithImage(applicationIcon, IconSizes.Size16x16, text: text, imageLocation: imageLocation, toolTip: toolTip);
+         return button.InitWithImage(applicationIcon, IconSizes.Size16x16, text, imageLocation, toolTip);
       }
 
       public static SimpleButton InitWithImage(this SimpleButton button, ApplicationIcon applicationIcon, IconSize iconSize, string text = null, ImageLocation imageLocation = ImageLocation.MiddleLeft, string toolTip = null)
@@ -24,21 +24,28 @@ namespace OSPSuite.UI.Extensions
          return button;
       }
 
-      public static void AsAddButton(this LayoutControlItem buttonControlItem, LayoutControl layoutControl, string caption = Captions.AddButtonText)
+      public static void AsAddButton(this LayoutControlItem buttonControlItem, string caption = Captions.AddButtonText, LayoutControl layoutControl = null)
       {
-         buttonControlItem.AsLargeButtonWithImage(layoutControl, ApplicationIcons.Forward, caption);
+         buttonControlItem.AsLargeButtonWithImage(ApplicationIcons.Forward, caption, layoutControl);
       }
 
-      public static void AsRemoveButton(this LayoutControlItem buttonControlItem, LayoutControl layoutControl, string caption = Captions.RemoveButtonText)
+      public static void AsRemoveButton(this LayoutControlItem buttonControlItem, string caption = Captions.RemoveButtonText, LayoutControl layoutControl = null)
       {
-         buttonControlItem.AsLargeButtonWithImage(layoutControl, ApplicationIcons.Back, caption);
+         buttonControlItem.AsLargeButtonWithImage(ApplicationIcons.Back, caption, layoutControl);
       }
 
-      public static void AsLargeButtonWithImage(this LayoutControlItem buttonControlItem, LayoutControl layoutControl,  ApplicationIcon applicationIcon, string text)
+      public static void AsLargeButtonWithImage(this LayoutControlItem buttonControlItem, ApplicationIcon applicationIcon, string text, LayoutControl layoutControl = null)
       {
-         buttonControlItem.AdjustControlSize(layoutControl, UIConstants.Size.ADD_REMOVE_BUTTON_WIDTH, UIConstants.Size.ADD_REMOVE_BUTTON_HEIGHT);
+         buttonControlItem.AdjustControlSize(UIConstants.Size.ADD_REMOVE_BUTTON_WIDTH, UIConstants.Size.ADD_REMOVE_BUTTON_HEIGHT, layoutControl);
          var button = buttonControlItem.Control as SimpleButton;
          button?.InitWithImage(applicationIcon, IconSizes.Size24x24, text: text, imageLocation: ImageLocation.TopCenter);
+      }
+
+      public static void AsButtonWithImage(this LayoutControlItem buttonControlItem, ApplicationIcon applicationIcon, string text, ImageLocation imageLocation = ImageLocation.MiddleLeft, string toolTip = null, LayoutControl layoutControl = null)
+      {
+         buttonControlItem.AdjustButtonSize(layoutControl);
+         var button = buttonControlItem.Control as SimpleButton;
+         button?.InitWithImage(applicationIcon, IconSizes.Size16x16, text, imageLocation, toolTip);
       }
    }
 }
