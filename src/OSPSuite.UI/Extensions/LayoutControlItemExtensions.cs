@@ -52,7 +52,7 @@ namespace OSPSuite.UI.Extensions
       /// <summary>
       ///    Only sets the control item height. Width will be calculated dynamically
       /// </summary>
-      public static void AdjustControlHeight(this LayoutControlItem layoutControlItem, LayoutControl layoutControl, int height)
+      public static void AdjustControlHeight(this LayoutControlItem layoutControlItem, int height, LayoutControl layoutControl = null)
       {
          //using 0 allows the control width to be calculated dynamically
          layoutControlItem.AdjustControlSize(0, height, layoutControl);
@@ -61,7 +61,7 @@ namespace OSPSuite.UI.Extensions
       /// <summary>
       ///    Only sets the control item width. Height will be calculated dynamically
       /// </summary>
-      public static void AdjustControlWidth(this LayoutControlItem layoutControlItem, LayoutControl layoutControl, int width)
+      public static void AdjustControlWidth(this LayoutControlItem layoutControlItem, int width, LayoutControl layoutControl = null)
       {
          //using 0 allows the control width to be calculated dynamically
          layoutControlItem.AdjustControlSize(width, 0, layoutControl);
@@ -82,12 +82,12 @@ namespace OSPSuite.UI.Extensions
          layoutControl?.EndUpdate();
       }
 
-      public static void AdjustButtonSize(this LayoutControlItem layoutControlItem, LayoutControl layoutControl)
+      public static void AdjustButtonSize(this LayoutControlItem layoutControlItem, LayoutControl layoutControl = null)
       {
          layoutControlItem.AdjustControlSize(BUTTON_WIDTH, BUTTON_HEIGHT, layoutControl);
       }
 
-      public static void AdjustButtonSizeWithImageOnly(this LayoutControlItem layoutControlItem, LayoutControl layoutControl)
+      public static void AdjustButtonSizeWithImageOnly(this LayoutControlItem layoutControlItem, LayoutControl layoutControl = null)
       {
          layoutControlItem.AdjustControlSize(BUTTON_HEIGHT, BUTTON_HEIGHT, layoutControl);
       }
