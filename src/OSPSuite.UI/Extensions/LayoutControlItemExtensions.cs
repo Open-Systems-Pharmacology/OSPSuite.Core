@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using DevExpress.LookAndFeel;
 using DevExpress.Skins;
 using DevExpress.XtraLayout;
@@ -90,6 +91,19 @@ namespace OSPSuite.UI.Extensions
       public static void AdjustButtonSizeWithImageOnly(this LayoutControlItem layoutControlItem, LayoutControl layoutControl = null)
       {
          layoutControlItem.AdjustControlSize(BUTTON_HEIGHT, BUTTON_HEIGHT, layoutControl);
+      }
+
+      public static void DoInBatch(this LayoutControl layoutControl, Action action)
+      {
+         try
+         {
+            layoutControl.BeginUpdate();
+            action();
+         }
+         finally
+         {
+            layoutControl.EndUpdate();
+         }
       }
    }
 }
