@@ -137,8 +137,10 @@ namespace OSPSuite.UI.Views.Journal
          layoutControl.AutoScroll = false;
          btnFind.InitWithImage(ApplicationIcons.Search, Captions.Journal.Find);
          btnClear.Text = Captions.Journal.Clear;
-         layoutItemButtonClear.AdjustControlWidth(layoutControl, UIConstants.Size.EMBEDDED_CHECK_BOX_WIDTH);
-         layoutItemButtonSearch.AdjustControlWidth(layoutControl, UIConstants.Size.EMBEDDED_CHECK_BOX_WIDTH);
+         layoutControl.BeginUpdate();
+         layoutItemButtonClear.AdjustControlWidth(UIConstants.Size.EMBEDDED_CHECK_BOX_WIDTH);
+         layoutItemButtonSearch.AdjustControlWidth(UIConstants.Size.EMBEDDED_CHECK_BOX_WIDTH);
+         layoutControl.EndUpdate();
       }
 
       public void AdjustHeight()

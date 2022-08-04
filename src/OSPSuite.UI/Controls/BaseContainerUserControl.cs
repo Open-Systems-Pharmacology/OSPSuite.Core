@@ -60,7 +60,7 @@ namespace OSPSuite.UI.Controls
          try
          {
             layoutControlItem.Owner.BeginUpdate();
-            layoutControlItem.AdjustControlHeight(layoutControl, height);
+            layoutControlItem.AdjustControlHeight(height, layoutControl);
             var group = layoutControlItem.Parent;
             //only one item in the group and the view should be hidden
             group.Visibility = LayoutVisibilityConvertor.FromBoolean(height > 0 || group.Items.Count > 1);

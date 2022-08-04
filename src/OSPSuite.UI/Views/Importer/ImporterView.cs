@@ -36,13 +36,17 @@ namespace OSPSuite.UI.Views.Importer
          applyMappingBtn.InitWithImage(ApplicationIcons.Load, Captions.Importer.ApplyConfiguration);
          resetMappingBasedOnCurrentSheetBtn.InitWithImage(ApplicationIcons.Refresh, Captions.Importer.ResetMapping);
          clearMappingBtn.InitWithImage(ApplicationIcons.RedCross, Captions.Importer.ClearMapping);
-         saveMappingBtnLayoutControlItem.AdjustLargeButtonSize(rootLayoutControl);
-         applyMappingLayoutControlItem.AdjustLargeButtonSize(rootLayoutControl);
-         resetMappingBasedOnCurrentSheetLayoutControlItem.AdjustLongButtonSize(rootLayoutControl);
-         clearMappingLayoutControlItem.AdjustLongButtonSize(rootLayoutControl);
+         
+         rootLayoutControl.BeginUpdate();
+         saveMappingBtnLayoutControlItem.AdjustLargeButtonSize();
+         applyMappingLayoutControlItem.AdjustLargeButtonSize();
+         resetMappingBasedOnCurrentSheetLayoutControlItem.AdjustLongButtonSize();
+         clearMappingLayoutControlItem.AdjustLongButtonSize();
+         sourceFileLayoutControlItem.AdjustControlHeight(70);
+         rootLayoutControl.EndUpdate();
+
          resetMappingBasedOnCurrentSheetBtn.ToolTip = Captions.Importer.ResetMappingToolTip;
          clearMappingBtn.ToolTip = Captions.Importer.ClearMappingToolTip;
-         sourceFileLayoutControlItem.AdjustControlHeight(rootLayoutControl, 70);
       }
 
       public void AttachPresenter(IImporterPresenter presenter)

@@ -47,7 +47,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
       private void adjustHeight(IResizableView view, int height)
       {
-         layoutItemProperties.AdjustControlHeight(layoutControl, height);
+         layoutItemProperties.AdjustControlHeight(height, layoutControl);
          view.Repaint();
       }
 
