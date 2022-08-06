@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using DevExpress.LookAndFeel;
 using DevExpress.Skins;
+using DevExpress.Utils.Layout;
 using DevExpress.XtraLayout;
 using OSPSuite.Presentation.Extensions;
+using OSPSuite.UI.Controls;
 using static OSPSuite.UI.UIConstants.Size;
 
 namespace OSPSuite.UI.Extensions
@@ -93,17 +96,16 @@ namespace OSPSuite.UI.Extensions
          layoutControlItem.AdjustControlSize(BUTTON_HEIGHT, BUTTON_HEIGHT, layoutControl);
       }
 
-      public static void DoInBatch(this LayoutControl layoutControl, Action action)
+      public static void AdjustGridViewHeight(this LayoutControlItem layoutControlItem, UxGridView gridView, LayoutControl layoutControl)
       {
-         try
-         {
-            layoutControl.BeginUpdate();
-            action();
-         }
-         finally
-         {
-            layoutControl.EndUpdate();
-         }
+         layoutControlItem.AdjustControlHeight(gridView.OptimalHeight, layoutControl);
+      }
+
+      public static void AdjustTablePanelHeight(this LayoutControlItem layoutControlItem, TablePanel tablePanel, LayoutControl layoutControl)
+      {
+         var visibleRows = tablePanel.Rows.Where(x => x.Visible).ToList();
+         var visibleRowHeight = visibleRows.Sum(x => ScaleForScreenDPI(Convert.ToInt16(x.Height)) + COMPUTED_EXTRA_HEIGHT);
+         layoutControlItem.AdjustControlHeight(visibleRowHeight, layoutControl);
       }
    }
 }

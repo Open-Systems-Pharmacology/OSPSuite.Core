@@ -40,10 +40,14 @@ namespace OSPSuite.UI
          public static readonly int RADIO_GROUP_HEIGHT = ScaleForScreenDPI(24);
          public static readonly int ADD_REMOVE_BUTTON_WIDTH = ScaleForScreenDPI(100);
          public static readonly int ADD_REMOVE_BUTTON_HEIGHT = ScaleForScreenDPI(60);
+
          public const double SCREEN_RESIZE_FRACTION = 0.9;
+
          //Buttons tends to grow to wide on bigger screen. We set a max
          public static readonly int BUTTON_WIDTH = ScaleForScreenDPI(105);
+
          public static readonly int LARGE_BUTTON_WIDTH = ScaleForScreenDPI(150);
+
          //Buttons tends to grow to tall on bigger screen. We set a max
          public static readonly int BUTTON_HEIGHT = ScaleForScreenDPI(24, 48);
          public static readonly int LARGE_BUTTON_HEIGHT = ScaleForScreenDPI(29, 48);
@@ -51,9 +55,21 @@ namespace OSPSuite.UI
          public static readonly int OPTIMIZED_RANGE_WIDTH = ScaleForScreenDPI(300);
          public static readonly int APPLICATION_MENU_RIGHT_PANE_WIDTH = ScaleForScreenDPI(300);
 
+         public static readonly int COMPUTED_EXTRA_HEIGHT = computedExtraRowHeight();
+
+         private static int computedExtraRowHeight()
+         {
+            //This extra constant seems to be what we need to have perfect height on 200% scaling.
+            const int extraHeight = 3;
+            var scaledExtraHeight = ScaleForScreenDPI(extraHeight);
+            var needExtraHeight = scaledExtraHeight != extraHeight;
+            //We return the extra row height (not scaled)
+            return needExtraHeight ? extraHeight : 0;
+         }
+
          public static int ScaleForScreenDPI(int size, int? maxSize = null)
          {
-            var proposedSize = (int)(_scaleFactor * size);
+            var proposedSize = (int) (_scaleFactor * size);
             return Math.Min(proposedSize, maxSize.GetValueOrDefault(proposedSize));
          }
 
@@ -63,7 +79,7 @@ namespace OSPSuite.UI
             {
                if (graphics.DpiX >= 200)
                   return 2;
-               
+
                if (graphics.DpiX > 120)
                   return 1.5;
 
@@ -75,7 +91,7 @@ namespace OSPSuite.UI
       public static class Chart
       {
          public const int SERIES_MARKER_SIZE = 5;
-         public static  readonly System.Drawing.Size LEGEND_MARKER_SIZE = new System.Drawing.Size(9, 9);
+         public static readonly System.Drawing.Size LEGEND_MARKER_SIZE = new System.Drawing.Size(9, 9);
       }
 
       internal static class Skins

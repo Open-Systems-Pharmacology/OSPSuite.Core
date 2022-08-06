@@ -37,7 +37,7 @@ namespace OSPSuite.UI.Controls
 
       public override void AdjustHeight()
       {
-         layoutItemGrid.AdjustControlHeight(gridView.OptimalHeight, layoutControl);
+         layoutItemGrid.AdjustGridViewHeight(gridView, layoutControl);
          base.AdjustHeight();
       }
 
