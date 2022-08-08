@@ -84,9 +84,9 @@ namespace OSPSuite.UI.Views
       public override void InitializeResources()
       {
          base.InitializeResources();
-         layoutItemAddUnitMap.AdjustTallButtonSize();
-         layoutItemLoadUnits.AdjustTallButtonSize();
-         layoutItemSaveUnits.AdjustTallButtonSize();
+         layoutItemAddUnitMap.AdjustTallButtonSize(layoutControl);
+         layoutItemLoadUnits.AdjustTallButtonSize(layoutControl);
+         layoutItemSaveUnits.AdjustTallButtonSize(layoutControl);
          btnAddUnitMap.InitWithImage(ApplicationIcons.Add, Captions.AddUnitMap, toolTip: ToolTips.AddUnitMap);
          btnLoadUnits.InitWithImage(ApplicationIcons.Load, Captions.LoadUnits, toolTip: ToolTips.LoadUnits);
          btnSaveUnits.InitWithImage(ApplicationIcons.Save, Captions.SaveUnits, toolTip: ToolTips.SaveUnits);

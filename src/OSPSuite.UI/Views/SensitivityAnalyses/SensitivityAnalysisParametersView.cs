@@ -151,7 +151,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
       {
          base.InitializeResources();
          layoutItemParameters.TextVisible = false;
-         layoutItemRemoveAll.AdjustLargeButtonSize();
+         layoutItemRemoveAll.AdjustLargeButtonSize(layoutControl);
          btnRemoveAll.InitWithImage(ApplicationIcons.Remove, Captions.SensitivityAnalysis.RemoveAll);
 
          updatePanelSize(panelSetNMax);

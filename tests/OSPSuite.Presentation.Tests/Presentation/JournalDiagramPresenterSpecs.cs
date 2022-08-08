@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using FakeItEasy;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.Core.Diagram;
 using OSPSuite.Core.Domain;
@@ -28,9 +29,9 @@ namespace OSPSuite.Presentation.Presentation
       protected IReloadRelatedItemTask _reloadRelatedItemTask;
       protected JournalDiagram _journalDiagram;
       protected Journal _journal;
-      private IDiagramModelFactory _diagramModelFactory;
+      protected IDiagramModelFactory _diagramModelFactory;
 
-      protected override void Context()
+      protected void InitSut()
       {
          _journalTask = A.Fake<IJournalTask>();
          _view = A.Fake<IJournalDiagramView>();
@@ -41,17 +42,36 @@ namespace OSPSuite.Presentation.Presentation
          _userSettings = A.Fake<IPresentationUserSettings>();
          _dialogCreator = A.Fake<IDialogCreator>();
          _containerBaseLayouter = A.Fake<IContainerBaseLayouter>();
-         _viewItemContextMenuFactory= A.Fake<IViewItemContextMenuFactory>();
-         _diagramModelFactory= A.Fake<IDiagramModelFactory>();
+         _viewItemContextMenuFactory = A.Fake<IViewItemContextMenuFactory>();
+         _diagramModelFactory = A.Fake<IDiagramModelFactory>();
          sut = new JournalDiagramPresenter(_view, _containerBaseLayouter, _dialogCreator, _diagramModelFactory, _userSettings, _journalTask,
             _journalPageTask, _reloadRelatedItemTask, journalComparisonTask, _multipleBaseNodeContextMenuFactory, _viewItemContextMenuFactory);
+      }
 
+      protected override void Context()
+      {
+         InitSut();
          _journal = new Journal();
-         _journalDiagram = new JournalDiagram().WithName(global::OSPSuite.Assets.Captions.Journal.DefaultDiagramName);
+         _journalDiagram = new JournalDiagram().WithName(Captions.Journal.DefaultDiagramName);
          _journal.AddDiagram(_journalDiagram);
          _journalDiagram.DiagramManager = A.Fake<IDiagramManager<JournalDiagram>>();
          _journalDiagram.DiagramModel = A.Fake<IDiagramModel>();
          sut.Handle(new JournalLoadedEvent(_journal));
+      }
+   }
+
+   public class When_notify_that_the_diagram_should_be_updated_via_global_events_but_the_diagram_was_not_initialized_yet : concern_for_JournalDiagramPresenter
+   {
+      //do not use base context to avoid initialization of journal
+      protected override void Context()
+      {
+         InitSut();
+      }
+
+      [Observation]
+      public void should_not_crash()
+      {
+         sut.Handle(new JournalPageUpdatedEvent(new JournalPage()));
       }
    }
 
@@ -99,7 +119,7 @@ namespace OSPSuite.Presentation.Presentation
 
          _journal.AddJournalPage(_journalPage);
 
-         A.CallTo(() => _view.GetSelection()).Returns(new List<IBaseObject> { _relatedItemNode, _journalPageNode });
+         A.CallTo(() => _view.GetSelection()).Returns(new List<IBaseObject> {_relatedItemNode, _journalPageNode});
       }
 
       protected override void Because()
@@ -216,7 +236,7 @@ namespace OSPSuite.Presentation.Presentation
    {
       protected override void Because()
       {
-         sut.ShowContextMenu(A.Fake<IBaseNode>() , new Point(), new PointF());
+         sut.ShowContextMenu(A.Fake<IBaseNode>(), new Point(), new PointF());
       }
 
       [Observation]
@@ -279,7 +299,7 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _viewItemContextMenuFactory.CreateFor(A<IViewItem>._, sut)).MustNotHaveHappened();
       }
    }
-   
+
    public class When_handling_a_journal_closed_event : concern_for_JournalDiagramPresenter
    {
       protected override void Because()

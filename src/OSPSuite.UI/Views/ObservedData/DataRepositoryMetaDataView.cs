@@ -159,13 +159,13 @@ namespace OSPSuite.UI.Views.ObservedData
             if (layoutItemMolWeight.Visible != value)
                layoutItemMolWeight.Visibility = LayoutVisibilityConvertor.FromBoolean(value);
          }
-         get { return layoutItemMolWeight.Visible; }
+         get => layoutItemMolWeight.Visible;
       }
 
       public bool MolWeightEditable
       {
-         get { return tbMolWeight.Properties.Enabled; }
-         set { tbMolWeight.Properties.Enabled = value; }
+         get => tbMolWeight.Properties.Enabled;
+         set => tbMolWeight.Properties.Enabled = value;
       }
 
       public override void InitializeResources()
@@ -173,7 +173,7 @@ namespace OSPSuite.UI.Views.ObservedData
          base.InitializeResources();
          Caption = Captions.MetaData;
          btnAddRow.InitWithImage(ApplicationIcons.Create, text: Captions.AddMetaData);
-         layoutItemAddRow.AdjustLargeButtonSize();
+         layoutItemAddRow.AdjustLargeButtonSize(layoutControl1);
          layoutItemMolWeight.Text = Constants.Parameters.MOL_WEIGHT.FormatForLabel();
          layoutItemLowerLimitOfQuantification.Text = Captions.LLOQ.FormatForLabel(checkCase:false);
       }
@@ -190,14 +190,8 @@ namespace OSPSuite.UI.Views.ObservedData
             gridView.AdjustAppearance(e, isEnabled: !dto.ValueReadOnly);
       }
 
-      public override ApplicationIcon ApplicationIcon
-      {
-         get { return ApplicationIcons.Parameters; }
-      }
+      public override ApplicationIcon ApplicationIcon => ApplicationIcons.Parameters;
 
-      public override bool HasError
-      {
-         get { return _gridViewBinder.HasError; }
-      }
+      public override bool HasError => _gridViewBinder.HasError;
    }
 }

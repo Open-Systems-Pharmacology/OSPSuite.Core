@@ -110,12 +110,16 @@ namespace OSPSuite.Presentation.Presenters.Diagram
 
       public bool GridVisible
       {
-         set { _view.GridVisible = value; }
-         get { return _view.GridVisible; }
+         set => _view.GridVisible = value;
+         get => _view.GridVisible;
       }
 
       public virtual void Refresh()
       {
+         //DiagramManager may be null if an event is triggered before the view is initialized (for instance using event publisher)
+         if (DiagramManager == null)
+            return;
+
          DiagramManager.RefreshDiagramFromModel();
          DiagramManager.RefreshFromDiagramOptions();
          refreshGrid();

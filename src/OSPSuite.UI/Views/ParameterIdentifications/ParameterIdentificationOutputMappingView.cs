@@ -112,7 +112,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       {
          base.InitializeResources();
          layoutItemGridOutputs.TextVisible = false;
-         layoutItemAddOutput.AdjustLargeButtonSize();
+         layoutItemAddOutput.AdjustLargeButtonSize(layoutControl);
          btnAddOutput.InitWithImage(ApplicationIcons.Add, Captions.ParameterIdentification.AddOutput);
       }
 

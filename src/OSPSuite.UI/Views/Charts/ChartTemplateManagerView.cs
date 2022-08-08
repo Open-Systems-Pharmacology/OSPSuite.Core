@@ -117,7 +117,7 @@ namespace OSPSuite.UI.Views.Charts
          gridViewTemplates.OptionsSelection.EnableAppearanceFocusedRow = true;
 
          loadTemplateButton.InitWithImage(ApplicationIcons.Load, Captions.LoadTemplate);
-         loadTemplateControlItem.AdjustLongButtonSize();
+         loadTemplateControlItem.AdjustLongButtonSize(layoutControl);
 
          Caption = Captions.ManageChartTemplates;
       }

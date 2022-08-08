@@ -1,10 +1,10 @@
 ﻿using System.Windows.Forms;
-using OSPSuite.Utility.Extensions;
 using DevExpress.XtraLayout;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Controls
 {
@@ -18,27 +18,27 @@ namespace OSPSuite.UI.Controls
          InitializeComponent();
       }
 
-      protected LayoutControlItem AddViewTo(LayoutControlGroup layoutControlGroup, IView view)
+      protected LayoutControlItem AddViewTo(LayoutControlGroup layoutControlGroup, LayoutControl layoutControl, IView view)
       {
          var group = layoutControlGroup.AddGroup();
-         return AddViewToGroup(group, view);
+         return AddViewToGroup(group, layoutControl, view);
       }
 
-      protected LayoutControlItem AddViewToGroup(LayoutControlGroup group, IView view)
+      protected LayoutControlItem AddViewToGroup(LayoutControlGroup group, LayoutControl layoutControl, IView view)
       {
          var layoutControlItem = group.AddItem();
          group.Text = view.Caption;
          if (view.ApplicationIcon != null)
             group.CaptionImageIndex = ApplicationIcons.IconIndex(view.ApplicationIcon);
 
-         AddViewTo(layoutControlItem, view);
+         AddViewTo(layoutControlItem, layoutControl, view);
 
          layoutControlItem.TextVisible = false;
 
          return layoutControlItem;
       }
 
-      protected void AddViewTo(LayoutControlItem layoutControlItem, IView view)
+      protected void AddViewTo(LayoutControlItem layoutControlItem, LayoutControl layoutControl, IView view)
       {
          if (layoutControlItem.Control != null)
             layoutControlItem.Control.FillWith(view);
@@ -49,10 +49,10 @@ namespace OSPSuite.UI.Controls
          if (resizableView == null) return;
 
          layoutControlItem.SizeConstraintsType = SizeConstraintsType.Custom;
-         resizableView.HeightChanged += (o, e) => AdjustLayoutItemSize(layoutControlItem, resizableView, e.Height);
+         resizableView.HeightChanged += (o, e) => AdjustLayoutItemSize(layoutControlItem, layoutControl, resizableView, e.Height);
       }
 
-      protected virtual void AdjustLayoutItemSize(LayoutControlItem layoutControlItem, IResizableView view, int height)
+      protected virtual void AdjustLayoutItemSize(LayoutControlItem layoutControlItem, LayoutControl layoutControl, IResizableView view, int height)
       {
          if (layoutControlItem == null || layoutControlItem.Parent == null)
             return;
@@ -60,7 +60,7 @@ namespace OSPSuite.UI.Controls
          try
          {
             layoutControlItem.Owner.BeginUpdate();
-            layoutControlItem.AdjustControlHeight(height);
+            layoutControlItem.AdjustControlHeight(height, layoutControl);
             var group = layoutControlItem.Parent;
             //only one item in the group and the view should be hidden
             group.Visibility = LayoutVisibilityConvertor.FromBoolean(height > 0 || group.Items.Count > 1);
@@ -91,5 +91,4 @@ namespace OSPSuite.UI.Controls
          dummyGroup.GroupBordersVisible = false;
       }
    }
-
 }
