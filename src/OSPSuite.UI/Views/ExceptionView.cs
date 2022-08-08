@@ -35,8 +35,8 @@ namespace OSPSuite.UI.Views
          MaximizeBox = false;
          btnCopyToClipboard.Text = Captions.CopyToClipboard;
          btnClose.Text = Captions.CloseButton;
-         layoutItemOk.AdjustButtonSize();
-         layoutItemCopyToClipbord.AdjustButtonSize();
+         layoutItemOk.AdjustButtonSize(layoutControl);
+         layoutItemCopyToClipbord.AdjustButtonSize(layoutControl);
          layoutGroupException.Text = Captions.Exception;
          layoutGroupStackTraceException.Text = Captions.StackTrace;
          issueTrackerLink.OpenLink += (o, e) => goToIssueTracker(e);

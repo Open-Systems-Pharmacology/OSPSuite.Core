@@ -149,14 +149,12 @@ namespace OSPSuite.UI.Views
       public override void InitializeResources()
       {
          base.InitializeResources();
-         btnNext.InitWithImage(ApplicationIcons.Next, Captions.NextButton, ImageLocation.MiddleRight);
-         btnPrevious.InitWithImage(ApplicationIcons.Previous, Captions.PreviousButton, ImageLocation.MiddleLeft);
-         btnOk.InitWithImage(ApplicationIcons.OK, Captions.OKButton, ImageLocation.MiddleRight);
-         btnCancel.InitWithImage(ApplicationIcons.Cancel, Captions.CancelButton, ImageLocation.MiddleRight);
-         layoutItemNext.AdjustButtonSize();
-         layoutItemPrevious.AdjustButtonSize();
-         layoutItemOK.AdjustButtonSize();
-         layoutItemCancel.AdjustButtonSize();
+         layoutControlBase.BeginUpdate();
+         layoutItemNext.AsButtonWithImage(ApplicationIcons.Next, Captions.NextButton, ImageLocation.MiddleRight);
+         layoutItemPrevious.AsButtonWithImage(ApplicationIcons.Previous, Captions.PreviousButton, ImageLocation.MiddleLeft);
+         layoutItemOK.AsButtonWithImage(ApplicationIcons.OK, Captions.OKButton, ImageLocation.MiddleRight);
+         layoutItemCancel.AsButtonWithImage(ApplicationIcons.Cancel, Captions.CancelButton, ImageLocation.MiddleRight);
+         layoutControlBase.EndUpdate();
          MinimizeBox = false;
          MaximizeBox = false;
          layoutControlGroup.HideBorderIfRequired();

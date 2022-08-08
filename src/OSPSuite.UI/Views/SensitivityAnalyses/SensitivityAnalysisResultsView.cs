@@ -125,7 +125,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          _lblInfo.AsFullViewText(Captions.SensitivityAnalysis.NoResultsAvailable);
          layoutItemParameters.TextVisible = false;
          btnExportToExcel.InitWithImage(ApplicationIcons.Excel, text: Captions.SensitivityAnalysis.ExportPKAnalysesSensitivityToExcel);
-         layoutItemExportToExcel.AdjustLargeButtonSize();
+         layoutItemExportToExcel.AdjustLargeButtonSize(layoutControl);
       }
 
       public override void InitializeBinding()

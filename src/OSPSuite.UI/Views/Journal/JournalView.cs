@@ -4,12 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Windows.Forms;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using DevExpress.Data;
 using DevExpress.Utils;
 using DevExpress.XtraBars;
-using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Base;
@@ -19,6 +16,8 @@ using DevExpress.XtraRichEdit;
 using OSPSuite.Assets;
 using OSPSuite.Core.Journal;
 using OSPSuite.Core.Services;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO.Journal;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Journal;
@@ -53,7 +52,7 @@ namespace OSPSuite.UI.Views.Journal
          gridView.ShouldUseColorForDisabledCell = false;
          gridView.ShowColumnChooser = true;
          _rowFontSize = AppearanceObject.DefaultFont.Size;
-         PopupBarManager = new BarManager { Form = this, Images = imageListRetriever.AllImagesForContextMenu };
+         PopupBarManager = new BarManager {Form = this, Images = imageListRetriever.AllImagesForContextMenu};
          _toolTipCreator = toolTipCreator;
          var toolTipController = new ToolTipController();
          toolTipController.GetActiveObjectInfo += onToolTipControllerGetActiveObjectInfo;
@@ -70,7 +69,7 @@ namespace OSPSuite.UI.Views.Journal
          _titleRepository = new RepositoryItemTextEdit();
 
          _dateTimeFormatter = new DateTimeFormatter();
-         _descriptionRepository = new RepositoryItemRichTextEdit { DocumentFormat = DocumentFormat.Html };
+         _descriptionRepository = new RepositoryItemRichTextEdit {DocumentFormat = DocumentFormat.Html};
       }
 
       private void onMeasurePreviewHeight(RowHeightEventArgs e)
@@ -241,12 +240,12 @@ namespace OSPSuite.UI.Views.Journal
 
       public void AddPreviewView(IView view)
       {
-         AddViewTo(layoutItemPreview, view);
+         AddViewTo(layoutItemPreview, layoutControl, view);
       }
 
       public void AddSearchView(IView view)
       {
-         AddViewTo(layoutitemSearch, view);
+         AddViewTo(layoutitemSearch, layoutControl, view);
       }
 
       public JournalPageDTO SelectedJournalPage
