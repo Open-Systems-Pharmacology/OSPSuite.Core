@@ -4,6 +4,7 @@ using System.Linq;
 using MathNet.Numerics;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Chart.Simulations;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
@@ -35,8 +36,6 @@ namespace OSPSuite.Presentation.Presenters
    public class SimulationResidualVsTimeChartPresenter : SimulationRunAnalysisPresenter<SimulationResidualVsTimeChart>,
       ISimulationResidualVsTimeChartPresenter
    {
-      private readonly ISimulationPredictedVsObservedChartService _predictedVsObservedChartService;
-      private readonly List<DataRepository> _identityRepositories;
       private readonly IObservedDataRepository _observedDataRepository;
       private readonly IResidualCalculatorFactory _residualCalculatorFactory;
       private readonly IResidualCalculator _residualCalculator;
@@ -45,11 +44,9 @@ namespace OSPSuite.Presentation.Presenters
       private const string ZERO = "Zero";
 
       public SimulationResidualVsTimeChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, 
-         ISimulationPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository, IResidualCalculatorFactory residualCalculatorFactory) 
+          IObservedDataRepository observedDataRepository, IResidualCalculatorFactory residualCalculatorFactory) 
          : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis, PresenterConstants.PresenterKeys.SimulationPredictedVsActualChartPresenter)
       {
-         _predictedVsObservedChartService = predictedVsObservedChartService;
-         _identityRepositories = new List<DataRepository>();
          _observedDataRepository = observedDataRepository;
          _residualCalculatorFactory = residualCalculatorFactory;
 

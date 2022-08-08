@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
-using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Core.Services.ParameterIdentifications
+namespace OSPSuite.Core.Services
 {
    public interface IPredictedVsObservedChartService
    {
@@ -24,20 +23,20 @@ namespace OSPSuite.Core.Services.ParameterIdentifications
       ///    Adds the identity curve to the <paramref name="chart" /> where the values predicted equals the values observed
       ///    <returns>Any identity repositories created</returns>
       /// </summary>
-      IReadOnlyList<DataRepository> AddIdentityCurves(IEnumerable<DataColumn> observationColumns, ParameterIdentificationPredictedVsObservedChart chart);
+      IReadOnlyList<DataRepository> AddIdentityCurves(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart);
 
       /// <summary>
       ///    Adds curves to the <paramref name="chart" /> for each combination of <paramref name="observationColumns" /> and
       ///    <paramref name="calculationColumn" />
       ///    <paramref name="action" /> will be run when the curve is created for the <paramref name="calculationColumn" />
       /// </summary>
-      void AddCurvesFor(IEnumerable<DataColumn> observationColumns, DataColumn calculationColumn, ParameterIdentificationPredictedVsObservedChart chart, Action<DataColumn, Curve> action = null);
+      void AddCurvesFor(IEnumerable<DataColumn> observationColumns, DataColumn calculationColumn, PredictedVsObservedChart chart, Action<DataColumn, Curve> action = null);
 
       /// <summary>
       ///    Sets the <paramref name="chart" /> x axis dimension to the most occurring dimension from
       ///    <paramref name="observationColumns" />
       /// </summary>
-      void SetXAxisDimension(IEnumerable<DataColumn> observationColumns, ParameterIdentificationPredictedVsObservedChart chart);
+      void SetXAxisDimension(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart);
    }
 
    public class PredictedVsObservedChartService : IPredictedVsObservedChartService
@@ -56,7 +55,7 @@ namespace OSPSuite.Core.Services.ParameterIdentifications
 
       private DataRepository createIdentityRepository(IReadOnlyList<DataColumn> allObservationColumns, IDimension mergedDimension)
       {
-         var dataRepository = new DataRepository {Name = IDENTITY};
+         var dataRepository = new DataRepository { Name = IDENTITY };
 
          var columnsWithMatchingDimension = allObservationColumns.Where(x => x.Dimension.IsEquivalentTo(mergedDimension)).ToList();
 
@@ -88,12 +87,12 @@ namespace OSPSuite.Core.Services.ParameterIdentifications
          return values;
       }
 
-      public void AddCurvesFor(IEnumerable<DataColumn> observationColumns, DataColumn calculationColumn, ParameterIdentificationPredictedVsObservedChart chart, Action<DataColumn, Curve> action = null)
+      public void AddCurvesFor(IEnumerable<DataColumn> observationColumns, DataColumn calculationColumn, PredictedVsObservedChart chart, Action<DataColumn, Curve> action = null)
       {
          observationColumns.Each(observationColumn => plotPredictedVsObserved(observationColumn, calculationColumn, chart, action));
       }
 
-      public void SetXAxisDimension(IEnumerable<DataColumn> observationColumns, ParameterIdentificationPredictedVsObservedChart chart)
+      public void SetXAxisDimension(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart)
       {
          var dataColumns = observationColumns.ToList();
 
@@ -109,14 +108,14 @@ namespace OSPSuite.Core.Services.ParameterIdentifications
          chart.UpdateAxesVisibility();
       }
 
-      public IReadOnlyList<DataRepository> AddIdentityCurves(IEnumerable<DataColumn> observationColumns, ParameterIdentificationPredictedVsObservedChart chart)
+      public IReadOnlyList<DataRepository> AddIdentityCurves(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart)
       {
          var identityCurves = addIdentityCurves(observationColumns, chart).ToList();
          chart.UpdateAxesVisibility();
          return identityCurves;
       }
 
-      private IEnumerable<DataRepository> addIdentityCurves(IEnumerable<DataColumn> observationColumns, ParameterIdentificationPredictedVsObservedChart chart)
+      private IEnumerable<DataRepository> addIdentityCurves(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart)
       {
          var dataColumns = observationColumns.ToList();
          //We are using display name here as it is the only way to identify unique merge dimensions
@@ -159,7 +158,7 @@ namespace OSPSuite.Core.Services.ParameterIdentifications
          return _dimensionFactory.MergedDimensionFor(dataColumn);
       }
 
-      private void plotPredictedVsObserved(DataColumn observationColumn, DataColumn calculationColumn, ParameterIdentificationPredictedVsObservedChart chart, Action<DataColumn, Curve> action)
+      private void plotPredictedVsObserved(DataColumn observationColumn, DataColumn calculationColumn, PredictedVsObservedChart chart, Action<DataColumn, Curve> action)
       {
          if (chart.FindCurveWithSameData(observationColumn, calculationColumn) == null)
          {
@@ -168,9 +167,9 @@ namespace OSPSuite.Core.Services.ParameterIdentifications
          adjustAxes(calculationColumn, chart);
       }
 
-      private void addResultCurves(DataColumn observationColumn, DataColumn simulationResultColumn, ParameterIdentificationPredictedVsObservedChart chart, Action<DataColumn, Curve> action)
+      private void addResultCurves(DataColumn observationColumn, DataColumn simulationResultColumn, PredictedVsObservedChart chart, Action<DataColumn, Curve> action)
       {
-         var curve = new Curve {Name = Captions.ParameterIdentification.CreateCurveNameForPredictedVsObserved(observationColumn.Repository.Name, simulationResultColumn.Repository.Name)};
+         var curve = new Curve { Name = Captions.ParameterIdentification.CreateCurveNameForPredictedVsObserved(observationColumn.Repository.Name, simulationResultColumn.Repository.Name) };
          curve.SetxData(observationColumn, _dimensionFactory);
          curve.SetyData(simulationResultColumn, _dimensionFactory);
          adjustResultCurveDisplay(curve);
@@ -184,7 +183,7 @@ namespace OSPSuite.Core.Services.ParameterIdentifications
          curve.Symbol = Symbols.Diamond;
       }
 
-      private void adjustAxes(DataColumn calculationColumn, ParameterIdentificationPredictedVsObservedChart chart)
+      private void adjustAxes(DataColumn calculationColumn, PredictedVsObservedChart chart)
       {
          chart.AxisBy(AxisTypes.Y).UnitName = _displayUnitRetriever.PreferredUnitFor(calculationColumn).Name;
       }
@@ -192,7 +191,7 @@ namespace OSPSuite.Core.Services.ParameterIdentifications
       private static float getIdentityMinimum(IEnumerable<DataColumn> allObservationColumns, IDimension mergedDimension)
       {
          // Avoid selection of '0' values because they cannot be plotted in log scales
-         return (float) allObservationColumns.Min(column => mergedDimension.UnitValueToBaseUnitValue(column.Dimension.BaseUnit, columnNonZeroValues(column).Min()));
+         return (float)allObservationColumns.Min(column => mergedDimension.UnitValueToBaseUnitValue(column.Dimension.BaseUnit, columnNonZeroValues(column).Min()));
       }
 
       private static IEnumerable<float> columnNonZeroValues(DataColumn column)
@@ -202,7 +201,7 @@ namespace OSPSuite.Core.Services.ParameterIdentifications
 
       private static float getIdentityMaximum(IEnumerable<DataColumn> allObservationColumns, IDimension mergedDimension)
       {
-         return (float) allObservationColumns.Max(column => mergedDimension.UnitValueToBaseUnitValue(column.Dimension.BaseUnit, column.Values.Max()));
+         return (float)allObservationColumns.Max(column => mergedDimension.UnitValueToBaseUnitValue(column.Dimension.BaseUnit, column.Values.Max()));
       }
    }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Serialization.Chart;
@@ -37,7 +38,7 @@ namespace OSPSuite.Core.Serialization.Xml
    {
    }
 
-   public abstract class ParameterIdentificationAnalysisChartWithLocalRepositoriesXmlSerializer<T> : CurveChartXmlSerializer<T> where T : ParameterIdentificationAnalysisChartWithLocalRepositories
+   public abstract class ParameterIdentificationAnalysisChartWithLocalRepositoriesXmlSerializer<T> : CurveChartXmlSerializer<T> where T : AnalysisChartWithLocalRepositories
    {
       public override void PerformMapping()
       {

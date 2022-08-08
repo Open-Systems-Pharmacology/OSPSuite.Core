@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
-using OSPSuite.Core.Domain;
+using OSPSuite.Core.Chart.Simulations;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Repositories;
-using OSPSuite.Core.Events;
 using OSPSuite.Core.Services;
-using OSPSuite.Core.Services.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views;
-using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters
@@ -34,11 +31,11 @@ namespace OSPSuite.Presentation.Presenters
    public class SimulationPredictedVsObservedChartPresenter : SimulationRunAnalysisPresenter<SimulationPredictedVsObservedChart>, 
       ISimulationPredictedVsObservedChartPresenter
    {
-      private readonly ISimulationPredictedVsObservedChartService _predictedVsObservedChartService;
+      private readonly IPredictedVsObservedChartService _predictedVsObservedChartService;
       private readonly List<DataRepository> _identityRepositories;
       private readonly IObservedDataRepository _observedDataRepository;
 
-      public SimulationPredictedVsObservedChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, ISimulationPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository) 
+      public SimulationPredictedVsObservedChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, IPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository) 
          : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis, PresenterConstants.PresenterKeys.SimulationPredictedVsActualChartPresenter)
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;

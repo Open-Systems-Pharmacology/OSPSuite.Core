@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -8,17 +7,17 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Chart
 {
-   public abstract class SimulationAnalysisChart : ChartWithObservedData, ISimulationAnalysis
+   public abstract class AnalysisChart : ChartWithObservedData, ISimulationAnalysis
    {
       public IAnalysable Analysable { get; set; }
    }
 
-   public abstract class SimulationAnalysisChartWithLocalRepositories : SimulationAnalysisChart
+   public abstract class AnalysisChartWithLocalRepositories : AnalysisChart
    {
       private readonly List<DataRepository> _dataRepositories;
       public virtual IReadOnlyList<DataRepository> DataRepositories => _dataRepositories;
 
-      protected SimulationAnalysisChartWithLocalRepositories()
+      protected AnalysisChartWithLocalRepositories()
       {
          _dataRepositories = new List<DataRepository>();
       }
@@ -38,8 +37,12 @@ namespace OSPSuite.Core.Chart
          dataRepositories.Each(AddRepository);
       }
    }
-   public class SimulationPredictedVsObservedChart : SimulationAnalysisChart
+
+   public abstract class PredictedVsObservedChart : AnalysisChart
    {
+      /// <summary>
+      ///    Modifies the Y axes visibility based on X axis dimension. Y axes which do not share a unit with X axis are not shown
+      /// </summary>
       public void UpdateAxesVisibility()
       {
          var visibleAxes = Axes.Where(x => x.Dimension != null && x.Dimension.HasSharedUnitNamesWith(XAxis.Dimension)).ToList();
@@ -47,10 +50,4 @@ namespace OSPSuite.Core.Chart
          Axes.Except(visibleAxes).Each(axis => axis.Visible = false);
       }
    }
-
-   public class SimulationResidualVsTimeChart : SimulationAnalysisChartWithLocalRepositories
-   {
-   }
-
-
 }
