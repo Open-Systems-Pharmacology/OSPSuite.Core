@@ -79,7 +79,6 @@ namespace OSPSuite.Presentation.Presenters
          });
       }
 
-      //OK, so let's forget for now, but we definitely need to adjust this one
       private void addPredictedVsObservedToChart(IReadOnlyList<DataRepository> simulationResults, Action<DataColumn, Curve> action)
       {
          AddResultRepositoriesToEditor(simulationResults);
@@ -94,9 +93,8 @@ namespace OSPSuite.Presentation.Presenters
 
       private void plotCalculationColumn(DataColumn calculationColumn, Action<DataColumn, Curve> action)
       {
-         //THIS NEEDS TO BE PACKED IN A FUNCTION SOMEWHERE
          var allObservationsForOutput = _simulation.OutputMappings.All.Where(x => string.Equals(x.FullOutputPath, calculationColumn.PathAsString))
-            .SelectMany(x => x.WeightedObservedData.ObservedData.ObservationColumns());
+            .SelectMany(x => x.WeightedObservedData.ObservedData.ObservationColumns()).ToList();
 
          if (!allObservationsForOutput.Any())
             Chart.RemoveCurvesForColumn(calculationColumn);
