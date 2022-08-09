@@ -16,18 +16,9 @@ namespace OSPSuite.Presentation.Presenters
 {
    public interface ISimulationPredictedVsObservedChartPresenter : IChartPresenter<SimulationPredictedVsObservedChart>,
       ISimulationAnalysisPresenter
-      /*,
-      IListener<RenamedEvent>,
-      IListener<ObservedDataAddedToAnalysableEvent>,
-      IListener<ObservedDataRemovedFromAnalysableEvent>,
-      IListener<SimulationResultsUpdatedEvent>*/
    {
    }
-
-   //: SimulationAnalysisChartPresenter<SimulationPredictedVsObservedChart, ISimulationPredictedVsObservedAnalysisChartView, ISimulationPredictedVsObservedChartPresenter>,
-   //this should actually implement SimulationRunAnalysisPresenter<SimulationPredictedVsObservedChart>
-   //and the view and presenter interfaces should actually be part of SimulationRunAnalysisPresenter
-   //ISimulationRunAnalysisView should actually get an implementation instead of  ISimulationPredictedVsObservedAnalysisChartView
+   
    public class SimulationPredictedVsObservedChartPresenter : SimulationRunAnalysisPresenter<SimulationPredictedVsObservedChart>, 
       ISimulationPredictedVsObservedChartPresenter
    {
