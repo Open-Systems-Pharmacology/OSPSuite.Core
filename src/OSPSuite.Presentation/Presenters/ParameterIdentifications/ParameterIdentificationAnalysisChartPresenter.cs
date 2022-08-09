@@ -55,7 +55,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
             UpdateAnalysisBasedOn(_parameterIdentification.Results);
          }
 
-         Refresh();
+         Refresh(); 
       }
 
       protected virtual void UpdateTemplateFromChart()
