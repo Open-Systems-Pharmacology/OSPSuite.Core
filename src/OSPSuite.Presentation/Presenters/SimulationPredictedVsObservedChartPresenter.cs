@@ -17,6 +17,7 @@ namespace OSPSuite.Presentation.Presenters
    public interface ISimulationPredictedVsObservedChartPresenter : IChartPresenter<SimulationPredictedVsObservedChart>,
       ISimulationAnalysisPresenter
    {
+      ISimulationRunAnalysisView View { get; }
    }
    
    public class SimulationPredictedVsObservedChartPresenter : SimulationRunAnalysisPresenter<SimulationPredictedVsObservedChart>, 
