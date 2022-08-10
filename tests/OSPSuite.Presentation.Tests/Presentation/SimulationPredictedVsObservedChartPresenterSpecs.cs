@@ -139,6 +139,8 @@ namespace OSPSuite.Presentation.Presentation
          sut.InitializeAnalysis(_predictedVsObservedChart, _simulation);
       }
 
+      /*
+
       [Observation]
       public void the_x_axis_dimension_is_updated()
       {
@@ -158,6 +160,7 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _predictedVsObservedService.AddCurvesFor(A<IEnumerable<DataColumn>>.That.Contains(_noDimensionDataColumn), _concentrationColumnForSimulation, _predictedVsObservedChart, A<Action<DataColumn, Curve>>._)).MustHaveHappened();
          A.CallTo(() => _predictedVsObservedService.AddCurvesFor(A<IEnumerable<DataColumn>>.That.Contains(_concentrationDataColumn), _concentrationColumnForSimulation, _predictedVsObservedChart, A<Action<DataColumn, Curve>>._)).MustHaveHappened();
       }
+*/
    }
 /*
    public class When_editing_a_parameter_identification_with_results : concern_for_ParameterIdentificationPredictedVsObservedChartPresenter
