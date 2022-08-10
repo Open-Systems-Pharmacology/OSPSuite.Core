@@ -73,7 +73,7 @@ namespace OSPSuite.UI.Views
          txtInfo.Properties.Appearance.Options.UseForeColor = true;
          txtInfo.Properties.BorderStyle = BorderStyles.NoBorder;
          lblDescription.AsDescription();
-         layoutItemDeselectAll.AdjustButtonSize();
+         layoutItemDeselectAll.AdjustButtonSize(layoutControl);
          btnDeselectAll.Text = Captions.DeselectAll;
       }
    }

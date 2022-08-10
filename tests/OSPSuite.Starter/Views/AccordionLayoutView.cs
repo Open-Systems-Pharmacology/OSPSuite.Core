@@ -18,7 +18,7 @@ namespace OSPSuite.Starter.Views
       public void AddView(IView view)
       {
          var group = layoutControl.Root.AddGroup();
-         AddViewToGroup(group, view);
+         AddViewToGroup(group, layoutControl, view);
 
          group.ExpandButtonVisible = true;
       }

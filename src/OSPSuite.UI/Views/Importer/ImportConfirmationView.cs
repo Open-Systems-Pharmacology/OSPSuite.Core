@@ -77,8 +77,9 @@ namespace OSPSuite.UI.Views.Importer
          namingElementLayoutControlItem.Text = Captions.Importer.NamingElement.FormatForLabel();
          namingPatternLayoutControlGroup.Text = Captions.Importer.CreateNamingPattern;
          dataSetsLayoutControlItem.Text =Captions.Importer.DataSets;
-         buttonAddLayoutControlItem.AdjustButtonSize();
-         importButtonLayoutControlItem.AdjustButtonSize();
+         //TODO WHY DO WE HAVE TWO LAYOUT CONTROLS IN ONE VIEW?
+         buttonAddLayoutControlItem.AdjustButtonSize(layoutControl1);
+         importButtonLayoutControlItem.AdjustButtonSize(layoutControl);
          namingPatternDropDownLabelControl.AsDescription();
          namingPatternDropDownLabelControl.Text = Captions.Importer.NamingPatternDescription.FormatForDescription();
          namingPatternDropDownLabelControl.AutoSizeMode = LabelAutoSizeMode.Vertical;

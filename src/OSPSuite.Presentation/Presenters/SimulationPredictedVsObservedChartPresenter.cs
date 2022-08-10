@@ -3,43 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
-using OSPSuite.Core.Domain;
+using OSPSuite.Core.Chart.Simulations;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Repositories;
-using OSPSuite.Core.Events;
 using OSPSuite.Core.Services;
-using OSPSuite.Core.Services.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views;
-using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters
 {
    public interface ISimulationPredictedVsObservedChartPresenter : IChartPresenter<SimulationPredictedVsObservedChart>,
       ISimulationAnalysisPresenter
-      /*,
-      IListener<RenamedEvent>,
-      IListener<ObservedDataAddedToAnalysableEvent>,
-      IListener<ObservedDataRemovedFromAnalysableEvent>,
-      IListener<SimulationResultsUpdatedEvent>*/
    {
    }
-
-   //: SimulationAnalysisChartPresenter<SimulationPredictedVsObservedChart, ISimulationPredictedVsObservedAnalysisChartView, ISimulationPredictedVsObservedChartPresenter>,
-   //this should actually implement SimulationRunAnalysisPresenter<SimulationPredictedVsObservedChart>
-   //and the view and presenter interfaces should actually be part of SimulationRunAnalysisPresenter
-   //ISimulationRunAnalysisView should actually get an implementation instead of  ISimulationPredictedVsObservedAnalysisChartView
+   
    public class SimulationPredictedVsObservedChartPresenter : SimulationRunAnalysisPresenter<SimulationPredictedVsObservedChart>, 
       ISimulationPredictedVsObservedChartPresenter
    {
-      private readonly ISimulationPredictedVsObservedChartService _predictedVsObservedChartService;
+      private readonly IPredictedVsObservedChartService _predictedVsObservedChartService;
       private readonly List<DataRepository> _identityRepositories;
       private readonly IObservedDataRepository _observedDataRepository;
       private readonly List<DataRepository> _deviationLineRepositories;
 
-      public SimulationPredictedVsObservedChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, ISimulationPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository) 
+      public SimulationPredictedVsObservedChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, IPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository) 
          : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis, PresenterConstants.PresenterKeys.SimulationPredictedVsActualChartPresenter)
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
@@ -99,7 +87,6 @@ namespace OSPSuite.Presentation.Presenters
          });
       }
 
-      //OK, so let's forget for now, but we definitely need to adjust this one
       private void addPredictedVsObservedToChart(IReadOnlyList<DataRepository> simulationResults, Action<DataColumn, Curve> action)
       {
          AddResultRepositoriesToEditor(simulationResults);
@@ -114,9 +101,8 @@ namespace OSPSuite.Presentation.Presenters
 
       private void plotCalculationColumn(DataColumn calculationColumn, Action<DataColumn, Curve> action)
       {
-         //THIS NEEDS TO BE PACKED IN A FUNCTION SOMEWHERE
          var allObservationsForOutput = _simulation.OutputMappings.All.Where(x => string.Equals(x.FullOutputPath, calculationColumn.PathAsString))
-            .SelectMany(x => x.WeightedObservedData.ObservedData.ObservationColumns());
+            .SelectMany(x => x.WeightedObservedData.ObservedData.ObservationColumns()).ToList();
 
          if (!allObservationsForOutput.Any())
             Chart.RemoveCurvesForColumn(calculationColumn);

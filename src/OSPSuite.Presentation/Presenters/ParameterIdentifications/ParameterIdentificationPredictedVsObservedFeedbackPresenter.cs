@@ -7,7 +7,6 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
-using OSPSuite.Core.Services.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.Utility.Extensions;

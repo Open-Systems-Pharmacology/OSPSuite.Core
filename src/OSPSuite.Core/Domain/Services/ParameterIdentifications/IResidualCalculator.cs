@@ -8,6 +8,6 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
    {
       void Initialize(RemoveLLOQMode removeLLOQMode);
       ResidualsResult Calculate(IReadOnlyList<SimulationRunResults> simulationsResults, IReadOnlyList<OutputMapping> allOutputMappings);
-      ResidualsResult CalculateForSimulation(DataRepository simulationResultRepository, IReadOnlyList<OutputMapping> outputMappingsAll);
+      ResidualsResult CalculateForSimulation(DataRepository simulationResultRepository, IReadOnlyList<OutputMapping> allOutputMappings);
    }
 }

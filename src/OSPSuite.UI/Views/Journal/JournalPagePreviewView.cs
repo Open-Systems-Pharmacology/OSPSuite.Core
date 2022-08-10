@@ -70,7 +70,7 @@ namespace OSPSuite.UI.Views.Journal
 
       public void AddRelatedItemsView(IView view)
       {
-         AddViewTo(layoutItemRelatedItems, view);
+         AddViewTo(layoutItemRelatedItems, layoutControl, view);
       }
 
       private void updateControlVisibility(bool relatedItemVisible, bool tagVisible)

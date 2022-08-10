@@ -31,11 +31,11 @@ namespace OSPSuite.UI.Views
       /// </summary>
       private void InitializeComponent()
       {
-         this.btnOk = new UxSimpleButton();
-         this.layoutControlBase = new UxLayoutControl();
-         this.btnCancel = new UxSimpleButton();
-         this.btnNext = new UxSimpleButton();
-         this.btnPrevious = new UxSimpleButton();
+         this.btnOk = new OSPSuite.UI.Controls.UxSimpleButton();
+         this.layoutControlBase = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.btnCancel = new OSPSuite.UI.Controls.UxSimpleButton();
+         this.btnNext = new OSPSuite.UI.Controls.UxSimpleButton();
+         this.btnPrevious = new OSPSuite.UI.Controls.UxSimpleButton();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemCancel = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemOK = new DevExpress.XtraLayout.LayoutControlItem();
@@ -68,6 +68,7 @@ namespace OSPSuite.UI.Views
          // layoutControlBase
          // 
          this.layoutControlBase.AllowCustomization = false;
+         this.layoutControlBase.AutoScroll = false;
          this.layoutControlBase.Controls.Add(this.btnCancel);
          this.layoutControlBase.Controls.Add(this.btnOk);
          this.layoutControlBase.Controls.Add(this.btnNext);
@@ -75,6 +76,7 @@ namespace OSPSuite.UI.Views
          this.layoutControlBase.Dock = System.Windows.Forms.DockStyle.Bottom;
          this.layoutControlBase.Location = new System.Drawing.Point(0, 451);
          this.layoutControlBase.Name = "layoutControlBase";
+         this.layoutControlBase.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(574, 236, 650, 400);
          this.layoutControlBase.Root = this.layoutControlGroup;
          this.layoutControlBase.Size = new System.Drawing.Size(526, 46);
          this.layoutControlBase.TabIndex = 36;
@@ -124,10 +126,8 @@ namespace OSPSuite.UI.Views
             this.layoutItemNext,
             this.layoutItemPrevious,
             this.emptySpaceItemBase});
-         this.layoutControlGroup.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup.Name = "Root";
          this.layoutControlGroup.Size = new System.Drawing.Size(526, 46);
-         this.layoutControlGroup.Text = "Root";
          this.layoutControlGroup.TextVisible = false;
          // 
          // layoutItemCancel
@@ -137,9 +137,7 @@ namespace OSPSuite.UI.Views
          this.layoutItemCancel.Location = new System.Drawing.Point(408, 0);
          this.layoutItemCancel.Name = "layoutItemCancel";
          this.layoutItemCancel.Size = new System.Drawing.Size(98, 26);
-         this.layoutItemCancel.Text = "layoutItemCancel";
          this.layoutItemCancel.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutItemCancel.TextToControlDistance = 0;
          this.layoutItemCancel.TextVisible = false;
          // 
          // layoutItemOK
@@ -149,9 +147,7 @@ namespace OSPSuite.UI.Views
          this.layoutItemOK.Location = new System.Drawing.Point(364, 0);
          this.layoutItemOK.Name = "layoutItemOK";
          this.layoutItemOK.Size = new System.Drawing.Size(44, 26);
-         this.layoutItemOK.Text = "layoutItemOK";
          this.layoutItemOK.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutItemOK.TextToControlDistance = 0;
          this.layoutItemOK.TextVisible = false;
          // 
          // layoutItemNext
@@ -161,9 +157,7 @@ namespace OSPSuite.UI.Views
          this.layoutItemNext.Location = new System.Drawing.Point(310, 0);
          this.layoutItemNext.Name = "layoutItemNext";
          this.layoutItemNext.Size = new System.Drawing.Size(54, 26);
-         this.layoutItemNext.Text = "layoutItemNext";
          this.layoutItemNext.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutItemNext.TextToControlDistance = 0;
          this.layoutItemNext.TextVisible = false;
          // 
          // layoutItemPrevious
@@ -173,9 +167,7 @@ namespace OSPSuite.UI.Views
          this.layoutItemPrevious.Location = new System.Drawing.Point(238, 0);
          this.layoutItemPrevious.Name = "layoutItemPrevious";
          this.layoutItemPrevious.Size = new System.Drawing.Size(72, 26);
-         this.layoutItemPrevious.Text = "layoutItemPrevious";
          this.layoutItemPrevious.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutItemPrevious.TextToControlDistance = 0;
          this.layoutItemPrevious.TextVisible = false;
          // 
          // emptySpaceItemBase
@@ -185,7 +177,6 @@ namespace OSPSuite.UI.Views
          this.emptySpaceItemBase.Location = new System.Drawing.Point(0, 0);
          this.emptySpaceItemBase.Name = "emptySpaceItemBase";
          this.emptySpaceItemBase.Size = new System.Drawing.Size(238, 26);
-         this.emptySpaceItemBase.Text = "emptySpaceItemBase";
          this.emptySpaceItemBase.TextSize = new System.Drawing.Size(0, 0);
          // 
          // WizardView

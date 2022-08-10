@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using MathNet.Numerics;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Chart.Simulations;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
-using OSPSuite.Core.Events;
 using OSPSuite.Core.Extensions;
-using OSPSuite.Core.Services;
-using OSPSuite.Core.Services.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views;
-using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Extensions;
 using Constants = OSPSuite.Core.Domain.Constants;
 
@@ -24,48 +19,35 @@ namespace OSPSuite.Presentation.Presenters
 {
    public interface ISimulationResidualVsTimeChartPresenter : IChartPresenter<SimulationResidualVsTimeChart>,
       ISimulationAnalysisPresenter
-      /*,
-      IListener<RenamedEvent>,
-      IListener<ObservedDataAddedToAnalysableEvent>,
-      IListener<ObservedDataRemovedFromAnalysableEvent>,
-      IListener<SimulationResultsUpdatedEvent>*/
    {
    }
 
    public class SimulationResidualVsTimeChartPresenter : SimulationRunAnalysisPresenter<SimulationResidualVsTimeChart>,
       ISimulationResidualVsTimeChartPresenter
    {
-      private readonly ISimulationPredictedVsObservedChartService _predictedVsObservedChartService;
-      private readonly List<DataRepository> _identityRepositories;
       private readonly IObservedDataRepository _observedDataRepository;
-      private readonly IResidualCalculatorFactory _residualCalculatorFactory;
       private readonly IResidualCalculator _residualCalculator;
-      private IReadOnlyCollection<OutputResiduals> AllOutputResiduals;
+      private IReadOnlyCollection<OutputResiduals> _allOutputResiduals;
       private string _markerCurveId = string.Empty;
       private const string ZERO = "Zero";
 
       public SimulationResidualVsTimeChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, 
-         ISimulationPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository, IResidualCalculatorFactory residualCalculatorFactory) 
+          IObservedDataRepository observedDataRepository, IResidualCalculatorFactory residualCalculatorFactory) 
          : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis, PresenterConstants.PresenterKeys.SimulationPredictedVsActualChartPresenter)
       {
-         _predictedVsObservedChartService = predictedVsObservedChartService;
-         _identityRepositories = new List<DataRepository>();
          _observedDataRepository = observedDataRepository;
-         _residualCalculatorFactory = residualCalculatorFactory;
-
-         //probably have to somehow set the correct configuration here
-         _residualCalculator = _residualCalculatorFactory.CreateFor(new ParameterIdentificationConfiguration());
+         _residualCalculator = residualCalculatorFactory.CreateFor(new ParameterIdentificationConfiguration());
       }
 
       protected override void UpdateAnalysisBasedOn(IReadOnlyList<IndividualResults> simulationResults)
       {
          base.UpdateAnalysisBasedOn(simulationResults);
          var simulationResidual = _residualCalculator.CalculateForSimulation(_simulation.ResultRepository, _simulation.OutputMappings.All);
-         AllOutputResiduals = simulationResidual.AllOutputResiduals;
+         _allOutputResiduals = simulationResidual.AllOutputResiduals;
          if (!getAllAvailableObservedData().Any())
             return;
 
-         addZeroMarkerCurveToChart();
+         addZeroMarkerCurveToChart();//create a service for this
 
          if (ChartIsBeingCreated)
          {
@@ -79,7 +61,7 @@ namespace OSPSuite.Presentation.Presenters
 
       protected override void AddRunResultToChart()
       {
-         AllOutputResiduals.GroupBy(x => x.FullOutputPath).Each(addOutputToScatter);
+         _allOutputResiduals.GroupBy(x => x.FullOutputPath).Each(addOutputToScatter);
       }
 
       protected void AddResultRepositoryToEditor(DataRepository dataRepository)

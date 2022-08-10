@@ -57,8 +57,8 @@ namespace OSPSuite.UI.Views.Importer
          Caption = Captions.Importer.SourceTab;
          btnImport.InitWithImage(ApplicationIcons.Import, Captions.Importer.LoadCurrentSheet);
          btnImportAll.InitWithImage(ApplicationIcons.Import, Captions.Importer.LoadAllSheets);
-         layoutItemImportAll.AdjustLargeButtonSize();
-         layoutItemImportCurrent.AdjustLargeButtonSize();
+         layoutItemImportAll.AdjustLargeButtonSize(rootLayoutControl);
+         layoutItemImportCurrent.AdjustLargeButtonSize(rootLayoutControl);
          ApplicationIcon = ApplicationIcons.Excel;
          useForImportCheckEdit.ToolTip = Captions.Importer.UseFiltersForImportTooltip;
          useForImportCheckEdit.CheckedChanged += (s, a) => OnEvent(() => _dataPresenter.TriggerOnDataChanged());
