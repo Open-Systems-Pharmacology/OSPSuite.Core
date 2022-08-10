@@ -42,8 +42,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithActionCommand(chartDisplayPresenter.ExportToExcel)
             .WithIcon(ApplicationIcons.Excel);
 
-         if (curveChart.IsAnImplementationOf<ParameterIdentificationPredictedVsObservedChart>() ||
-             curveChart.IsAnImplementationOf<SimulationPredictedVsObservedChart>())
+         if (curveChart.IsAnImplementationOf<PredictedVsObservedChart>())
          {
             yield return CreateMenuButton.WithCaption(MenuNames.AddDeviationLines)
                .WithActionCommand(chartDisplayPresenter.AddDeviationLines); //and an action I guess....but then we have to publish???

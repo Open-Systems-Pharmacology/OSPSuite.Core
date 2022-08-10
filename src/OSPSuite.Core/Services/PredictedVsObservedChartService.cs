@@ -121,7 +121,7 @@ namespace OSPSuite.Core.Services
       }
 
       private IEnumerable<DataRepository> addDeviationLines(float foldValue, List<DataColumn> observationColumns,
-         ParameterIdentificationPredictedVsObservedChart chart, int numberOfDeviationLines)
+         PredictedVsObservedChart chart, int numberOfDeviationLines)
       {
          var dataColumns = observationColumns.ToList();
          //We are using display name here as it is the only way to identify unique merge dimensions
@@ -208,7 +208,7 @@ namespace OSPSuite.Core.Services
          return dataRepository;
       }
 
-      public IReadOnlyList<DataRepository> AddIdentityCurves(IEnumerable<DataColumn> observationColumns, ParameterIdentificationPredictedVsObservedChart chart)
+      public IReadOnlyList<DataRepository> AddIdentityCurves(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart)
       {
          var identityCurves = addIdentityCurves(observationColumns, chart).ToList();
          chart.UpdateAxesVisibility();
