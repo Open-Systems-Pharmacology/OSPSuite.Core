@@ -20,6 +20,7 @@ namespace OSPSuite.Presentation.Presenters
    public interface ISimulationResidualVsTimeChartPresenter : IChartPresenter<SimulationResidualVsTimeChart>,
       ISimulationAnalysisPresenter
    {
+      ISimulationRunAnalysisView View { get; }
    }
 
    public class SimulationResidualVsTimeChartPresenter : SimulationRunAnalysisPresenter<SimulationResidualVsTimeChart>,
