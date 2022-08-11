@@ -38,9 +38,9 @@ namespace OSPSuite.Presentation.Presenters
          ChartDisplayPresenter.AddDeviationLinesEvent += (o, e) => addDeviationLines(e.FoldValue);
       }
 
-      protected override void UpdateAnalysisBasedOn(IReadOnlyList<IndividualResults> simulationResults)
+      protected override void UpdateAnalysisBasedOn(DataRepository simulationResultsRepository) //hmmm... even this repository for this presenter at least is never being used....
+                                                                                                //we should delete it as an argument
       {
-         base.UpdateAnalysisBasedOn(simulationResults);
          if (!getAllAvailableObservedData().Any())
             return;
 

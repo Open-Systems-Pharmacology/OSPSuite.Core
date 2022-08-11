@@ -40,9 +40,8 @@ namespace OSPSuite.Presentation.Presenters
          _residualCalculator = residualCalculatorFactory.CreateFor(new ParameterIdentificationConfiguration());
       }
 
-      protected override void UpdateAnalysisBasedOn(IReadOnlyList<IndividualResults> simulationResults)
+      protected override void UpdateAnalysisBasedOn(DataRepository simulationResultsRepository)
       {
-         base.UpdateAnalysisBasedOn(simulationResults);
          var simulationResidual = _residualCalculator.CalculateForSimulation(_simulation.ResultsDataRepository, _simulation.OutputMappings.All);
          _allOutputResiduals = simulationResidual.AllOutputResiduals;
          if (!getAllAvailableObservedData().Any())

@@ -48,7 +48,7 @@ namespace OSPSuite.Presentation.Presenters
 
          if (!_simulation.ResultsDataRepository.IsNull())
          {
-            //UpdateAnalysisBasedOn(_simulation.Results.IndividualResultsAsArray());
+            UpdateAnalysisBasedOn(_simulation.ResultsDataRepository);
             ChartEditorPresenter.SetOutputMappings(_simulation.OutputMappings);
          }
 
@@ -56,16 +56,7 @@ namespace OSPSuite.Presentation.Presenters
          Refresh();
       }
 
-      protected virtual void UpdateAnalysisBasedOn(IReadOnlyList<IndividualResults> simulationResults)
-      {
-         //AllRunResults = _simulation.Results.AllIndividualResults.ToList();//.OrderBy(x => x.TotalError).ToList();
-
-         //if (!AllRunResults.Any()) return;
-
-         //updateSelectedRunResults(AllRunResults.First());
-
-         //_view.BindToSelectedRunResult();
-      }
+      protected abstract void UpdateAnalysisBasedOn(DataRepository simulationResultsRepository);
 
       protected void AddResultRepositoriesToEditor(IReadOnlyList<DataRepository> dataRepositories)
       {
