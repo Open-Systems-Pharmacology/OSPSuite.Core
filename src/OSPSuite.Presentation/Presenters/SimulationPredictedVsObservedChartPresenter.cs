@@ -73,7 +73,7 @@ namespace OSPSuite.Presentation.Presenters
 
       protected override void AddRunResultToChart()
       {
-         addPredictedVsObservedToChart(new List<DataRepository>() {_simulation.ResultRepository}, (column, curve) =>
+         addPredictedVsObservedToChart(new List<DataRepository>() {_simulation.ResultsDataRepository}, (column, curve) =>
          {
             curve.Description = curve.Name;
             curve.Name = column.PathAsString;

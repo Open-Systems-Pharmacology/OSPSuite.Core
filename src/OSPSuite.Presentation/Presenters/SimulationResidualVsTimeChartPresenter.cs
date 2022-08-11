@@ -43,7 +43,7 @@ namespace OSPSuite.Presentation.Presenters
       protected override void UpdateAnalysisBasedOn(IReadOnlyList<IndividualResults> simulationResults)
       {
          base.UpdateAnalysisBasedOn(simulationResults);
-         var simulationResidual = _residualCalculator.CalculateForSimulation(_simulation.ResultRepository, _simulation.OutputMappings.All);
+         var simulationResidual = _residualCalculator.CalculateForSimulation(_simulation.ResultsDataRepository, _simulation.OutputMappings.All);
          _allOutputResiduals = simulationResidual.AllOutputResiduals;
          if (!getAllAvailableObservedData().Any())
             return;
