@@ -21,7 +21,7 @@ namespace OSPSuite.Presentation.Presenters
       where TChart : ChartWithObservedData, ISimulationAnalysis
    {
       protected ISimulation _simulation;
-      public IReadOnlyList<IndividualResults> AllRunResults { get; private set; }
+      //public IReadOnlyList<IndividualResults> AllRunResults { get; private set; }
       protected List<DataRepository> _resultsRepositories = new List<DataRepository>();
 
       protected SimulationRunAnalysisPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, ApplicationIcon icon, string presentationKey) : base(view, chartPresenterContext)
@@ -46,9 +46,9 @@ namespace OSPSuite.Presentation.Presenters
          else
             UpdateCacheColor();
 
-         if (_simulation.Results.Any())
+         if (!_simulation.ResultsDataRepository.IsNull())
          {
-            UpdateAnalysisBasedOn(_simulation.Results.IndividualResultsAsArray());
+            //UpdateAnalysisBasedOn(_simulation.Results.IndividualResultsAsArray());
             ChartEditorPresenter.SetOutputMappings(_simulation.OutputMappings);
          }
 
@@ -58,9 +58,9 @@ namespace OSPSuite.Presentation.Presenters
 
       protected virtual void UpdateAnalysisBasedOn(IReadOnlyList<IndividualResults> simulationResults)
       {
-         AllRunResults = _simulation.Results.AllIndividualResults.ToList();//.OrderBy(x => x.TotalError).ToList();
+         //AllRunResults = _simulation.Results.AllIndividualResults.ToList();//.OrderBy(x => x.TotalError).ToList();
 
-         if (!AllRunResults.Any()) return;
+         //if (!AllRunResults.Any()) return;
 
          //updateSelectedRunResults(AllRunResults.First());
 

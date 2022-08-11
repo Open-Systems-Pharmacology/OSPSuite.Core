@@ -22,7 +22,7 @@ namespace OSPSuite.R.Domain
       public IEnumerable<CurveChart> Charts { get; } = new List<CurveChart>();
       public OutputMappings OutputMappings { get; set; }
       public SimulationResults Results { get; set; }
-      public DataRepository ResultRepository { get; }
+      public DataRepository ResultsDataRepository { get; }
 
       public DataRepository GetResultRepository()
       {
