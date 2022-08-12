@@ -48,11 +48,15 @@ namespace OSPSuite.Presentation.Presenters
 
          if (!_simulation.ResultsDataRepository.IsNull())
          {
+            //
+            UpdateTemplateFromChart();
+            ClearChartAndDataRepositories();
+            //
             UpdateAnalysisBasedOn(_simulation.ResultsDataRepository);
             ChartEditorPresenter.SetOutputMappings(_simulation.OutputMappings);
+            updateAnalysis();
          }
 
-         updateAnalysis();
          Refresh();
       }
 

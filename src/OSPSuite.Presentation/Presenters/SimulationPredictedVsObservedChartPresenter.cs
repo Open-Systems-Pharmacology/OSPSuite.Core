@@ -48,15 +48,16 @@ namespace OSPSuite.Presentation.Presenters
 
          _identityRepositories.AddRange(_predictedVsObservedChartService.AddIdentityCurves(observationColumns, Chart));
 
-         if (ChartIsBeingCreated)
+         //if (ChartIsBeingCreated)
             _predictedVsObservedChartService.SetXAxisDimension(observationColumns, Chart);
 
          AddDataRepositoriesToEditor(_identityRepositories.Union(getAllAvailableObservedData().Union(_deviationLineRepositories)));
-         UpdateChartFromTemplate();
+         //UpdateChartFromTemplate();
          var xAxis = Chart.AxisBy(AxisTypes.X);
          var yAxis = Chart.AxisBy(AxisTypes.Y);
          yAxis.Dimension = xAxis.Dimension;
          yAxis.UnitName = xAxis.UnitName;
+         ChartDisplayPresenter.Refresh();
       }
 
       private IEnumerable<DataRepository> getAllAvailableObservedData()
