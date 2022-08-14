@@ -35,8 +35,7 @@ namespace OSPSuite.Presentation.Presenters
          _observedDataRepository = observedDataRepository;
       }
 
-      protected override void UpdateAnalysisBasedOn(DataRepository simulationResultsRepository) //hmmm... even this repository for this presenter at least is never being used....
-                                                                                                //we should delete it as an argument
+      protected override void UpdateAnalysisBasedOn()
       {
          if (!getAllAvailableObservedData().Any())
             return;
