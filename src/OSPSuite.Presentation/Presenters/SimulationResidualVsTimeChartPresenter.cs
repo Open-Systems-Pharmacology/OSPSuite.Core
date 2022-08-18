@@ -13,7 +13,6 @@ using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Utility.Extensions;
-using Constants = OSPSuite.Core.Domain.Constants;
 
 namespace OSPSuite.Presentation.Presenters
 {
@@ -32,9 +31,10 @@ namespace OSPSuite.Presentation.Presenters
       private string _markerCurveId = string.Empty;
       private const string ZERO = "Zero";
 
-      public SimulationResidualVsTimeChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, 
-          IObservedDataRepository observedDataRepository, IResidualCalculatorFactory residualCalculatorFactory) 
-         : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis, PresenterConstants.PresenterKeys.SimulationPredictedVsActualChartPresenter)
+      public SimulationResidualVsTimeChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext,
+         IObservedDataRepository observedDataRepository, IResidualCalculatorFactory residualCalculatorFactory)
+         : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis,
+            PresenterConstants.PresenterKeys.SimulationPredictedVsActualChartPresenter)
       {
          _observedDataRepository = observedDataRepository;
          _residualCalculator = residualCalculatorFactory.CreateFor(new ParameterIdentificationConfiguration());
@@ -47,7 +47,7 @@ namespace OSPSuite.Presentation.Presenters
          if (!getAllAvailableObservedData().Any())
             return;
 
-         addZeroMarkerCurveToChart();//create a service for this
+         addZeroMarkerCurveToChart();
 
          if (ChartIsBeingCreated)
          {
@@ -115,7 +115,7 @@ namespace OSPSuite.Presentation.Presenters
       }
 
       private float minObservedDataTime()
-      { 
+      {
          return getAllAvailableObservedData().Select(x => x.BaseGrid.Values.First()).Min();
       }
 
@@ -124,7 +124,7 @@ namespace OSPSuite.Presentation.Presenters
          return getAllAvailableObservedData().Select(x => x.BaseGrid.Values.Last()).Max();
       }
 
-      private DataRepository getOrCreateScatterDataRepositoryFor( OutputResiduals outputResidual)
+      private DataRepository getOrCreateScatterDataRepositoryFor(OutputResiduals outputResidual)
       {
          var repositoryName = "Simulation Results";
          var id = $"{Chart.Id}-{outputResidual.FullOutputPath}-{outputResidual.ObservedData.Id}";
@@ -169,7 +169,8 @@ namespace OSPSuite.Presentation.Presenters
       {
          var dataRepository = new DataRepository(id) { Name = name };
          var baseGrid = new BaseGrid($"{id}-Time", "Time", _chartPresenterContext.DimensionFactory.Dimension(Constants.Dimension.TIME));
-         var values = new DataColumn($"{id}-{valueName}", valueName, _chartPresenterContext.DimensionFactory.NoDimension, baseGrid) { DataInfo = { Origin = ColumnOrigins.CalculationAuxiliary } };
+         var values = new DataColumn($"{id}-{valueName}", valueName, _chartPresenterContext.DimensionFactory.NoDimension, baseGrid)
+            { DataInfo = { Origin = ColumnOrigins.CalculationAuxiliary } };
          dataRepository.Add(values);
          return dataRepository;
       }

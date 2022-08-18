@@ -9,6 +9,7 @@ namespace OSPSuite.UI.Views
    public partial class SimulationRunAnalysisView : BaseUserControl, ISimulationRunAnalysisView
    {
       private ISimulationRunAnalysisPresenter _presenter;
+
       public SimulationRunAnalysisView()
       {
          InitializeComponent();

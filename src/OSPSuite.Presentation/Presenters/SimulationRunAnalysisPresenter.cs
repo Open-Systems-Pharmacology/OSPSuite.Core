@@ -21,7 +21,6 @@ namespace OSPSuite.Presentation.Presenters
       where TChart : ChartWithObservedData, ISimulationAnalysis
    {
       protected ISimulation _simulation;
-      //public IReadOnlyList<IndividualResults> AllRunResults { get; private set; }
       protected List<DataRepository> _resultsRepositories = new List<DataRepository>();
 
       protected SimulationRunAnalysisPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, ApplicationIcon icon, string presentationKey) : base(view, chartPresenterContext)
@@ -66,10 +65,7 @@ namespace OSPSuite.Presentation.Presenters
 
       protected override ISimulation SimulationFor(DataColumn dataColumn)
       {
-         if (string.IsNullOrEmpty(dataColumn.PathAsString))
-            return null;
-
-         return _simulation; //here we only have one simulation - so nothing more to search for.
+         return string.IsNullOrEmpty(dataColumn.PathAsString) ? null : _simulation;
       }
 
       protected void AddCurvesFor(DataRepository dataRepository, Action<DataColumn, Curve> action)

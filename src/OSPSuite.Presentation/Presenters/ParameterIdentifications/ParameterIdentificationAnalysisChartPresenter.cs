@@ -15,14 +15,17 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
-   public abstract class ParameterIdentificationAnalysisChartPresenter<TChart, TView, TPresenter> : CommonAnalysisChartPresenter<TChart, TView, TPresenter>, IParameterIdentificationAnalysisPresenter
+   public abstract class
+      ParameterIdentificationAnalysisChartPresenter<TChart, TView, TPresenter> : CommonAnalysisChartPresenter<TChart, TView, TPresenter>,
+         IParameterIdentificationAnalysisPresenter
       where TChart : ChartWithObservedData, ISimulationAnalysis where
       TView : class, IParameterIdentificationAnalysisView, IView<TPresenter> where TPresenter : ISimulationAnalysisPresenter
    {
       protected ParameterIdentification _parameterIdentification;
       protected bool _isMultipleRun;
 
-      protected ParameterIdentificationAnalysisChartPresenter(TView view, ChartPresenterContext chartPresenterContext, ApplicationIcon icon, string presentationKey) :
+      protected ParameterIdentificationAnalysisChartPresenter(TView view, ChartPresenterContext chartPresenterContext, ApplicationIcon icon,
+         string presentationKey) :
          base(view, chartPresenterContext)
       {
          _view.SetAnalysisView(chartPresenterContext.EditorAndDisplayPresenter.BaseView);

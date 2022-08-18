@@ -19,16 +19,18 @@ namespace OSPSuite.Presentation.Presenters
    {
       ISimulationRunAnalysisView View { get; }
    }
-   
-   public class SimulationPredictedVsObservedChartPresenter : SimulationRunAnalysisPresenter<SimulationPredictedVsObservedChart>, 
+
+   public class SimulationPredictedVsObservedChartPresenter : SimulationRunAnalysisPresenter<SimulationPredictedVsObservedChart>,
       ISimulationPredictedVsObservedChartPresenter
    {
       private readonly IPredictedVsObservedChartService _predictedVsObservedChartService;
       private readonly List<DataRepository> _identityRepositories;
       private readonly IObservedDataRepository _observedDataRepository;
 
-      public SimulationPredictedVsObservedChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, IPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository) 
-         : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis, PresenterConstants.PresenterKeys.SimulationPredictedVsActualChartPresenter)
+      public SimulationPredictedVsObservedChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext,
+         IPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository)
+         : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis,
+            PresenterConstants.PresenterKeys.SimulationPredictedVsActualChartPresenter)
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
          _identityRepositories = new List<DataRepository>();
@@ -57,6 +59,7 @@ namespace OSPSuite.Presentation.Presenters
             .Distinct()
             .OrderBy(x => x.Name);
       }
+
       protected override void ChartChanged()
       {
          base.ChartChanged();
@@ -72,7 +75,7 @@ namespace OSPSuite.Presentation.Presenters
 
       protected override void AddRunResultToChart()
       {
-         addPredictedVsObservedToChart(new List<DataRepository>() {_simulation.ResultsDataRepository}, (column, curve) =>
+         addPredictedVsObservedToChart(new List<DataRepository>() { _simulation.ResultsDataRepository }, (column, curve) =>
          {
             curve.Description = curve.Name;
             curve.Name = column.PathAsString;
@@ -98,7 +101,7 @@ namespace OSPSuite.Presentation.Presenters
 
          if (!allObservationsForOutput.Any())
             Chart.RemoveCurvesForColumn(calculationColumn);
-               
+
          SelectColorForCalculationColumn(calculationColumn);
 
          _predictedVsObservedChartService.AddCurvesFor(allObservationsForOutput, calculationColumn, Chart, (column, curve) =>

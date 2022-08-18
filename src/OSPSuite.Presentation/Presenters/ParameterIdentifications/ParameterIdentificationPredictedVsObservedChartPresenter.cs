@@ -17,13 +17,17 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
    {
    }
 
-   public class ParameterIdentificationPredictedVsObservedChartPresenter : ParameterIdentificationSingleRunAnalysisPresenter<ParameterIdentificationPredictedVsObservedChart>, IParameterIdentificationPredictedVsObservedChartPresenter
+   public class ParameterIdentificationPredictedVsObservedChartPresenter :
+      ParameterIdentificationSingleRunAnalysisPresenter<ParameterIdentificationPredictedVsObservedChart>,
+      IParameterIdentificationPredictedVsObservedChartPresenter
    {
       private readonly IPredictedVsObservedChartService _predictedVsObservedChartService;
       private readonly List<DataRepository> _identityRepositories;
 
-      public ParameterIdentificationPredictedVsObservedChartPresenter(IParameterIdentificationSingleRunAnalysisView view, ChartPresenterContext chartPresenterContext, IPredictedVsObservedChartService predictedVsObservedChartService) :
-         base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis, PresenterConstants.PresenterKeys.ParameterIdentificationPredictedVsActualChartPresenter)
+      public ParameterIdentificationPredictedVsObservedChartPresenter(IParameterIdentificationSingleRunAnalysisView view,
+         ChartPresenterContext chartPresenterContext, IPredictedVsObservedChartService predictedVsObservedChartService) :
+         base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis,
+            PresenterConstants.PresenterKeys.ParameterIdentificationPredictedVsActualChartPresenter)
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
          _identityRepositories = new List<DataRepository>();
