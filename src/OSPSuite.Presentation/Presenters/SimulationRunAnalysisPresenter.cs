@@ -47,7 +47,7 @@ namespace OSPSuite.Presentation.Presenters
 
          if (!_simulation.ResultsDataRepository.IsNull())
          {
-            UpdateAnalysisBasedOn();
+            UpdateAnalysis();
             ChartEditorPresenter.SetOutputMappings(_simulation.OutputMappings);
          }
 
@@ -55,7 +55,7 @@ namespace OSPSuite.Presentation.Presenters
          Refresh();
       }
 
-      protected abstract void UpdateAnalysisBasedOn();
+      protected abstract void UpdateAnalysis();
 
       protected void AddResultRepositoriesToEditor(IReadOnlyList<DataRepository> dataRepositories)
       {

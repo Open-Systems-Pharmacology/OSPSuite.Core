@@ -37,7 +37,7 @@ namespace OSPSuite.Presentation.Presenters
          _observedDataRepository = observedDataRepository;
       }
 
-      protected override void UpdateAnalysisBasedOn()
+      protected override void UpdateAnalysis()
       {
          if (!getAllAvailableObservedData().Any())
             return;

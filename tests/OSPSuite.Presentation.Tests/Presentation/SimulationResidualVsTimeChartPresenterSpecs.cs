@@ -30,6 +30,7 @@ namespace OSPSuite.Presentation.Presentation
       protected IChartTemplatingTask _chartTemplatingTask;
       protected IObservedDataRepository _observedDataRepository;
       protected IResidualCalculatorFactory _residualCalculatorFactory;
+      protected IResidualCalculator _residualCalculator;
       protected SimulationResidualVsTimeChart _residualVsTimeChart;
       protected ISimulation _simulation;
       protected IDimensionFactory _dimensionFactory;
@@ -51,6 +52,7 @@ namespace OSPSuite.Presentation.Presentation
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _chartEditorLayoutTask = A.Fake<IChartEditorLayoutTask>();
          _projectRetriever = A.Fake<IProjectRetriever>();
+         _residualCalculator = A.Fake<IResidualCalculator>();
 
          _chartPresenterContext = A.Fake<ChartPresenterContext>();
          A.CallTo(() => _chartPresenterContext.EditorAndDisplayPresenter).Returns(_chartEditorAndDisplayPresenter);
@@ -61,16 +63,20 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _chartPresenterContext.ProjectRetriever).Returns(_projectRetriever);
 
 
-         sut = new SimulationResidualVsTimeChartPresenter(_view, _chartPresenterContext, _observedDataRepository, _residualCalculatorFactory); //do we need the factory to be a real instead of a fake???
+         sut = new SimulationResidualVsTimeChartPresenter(_view, _chartPresenterContext, _observedDataRepository, _residualCalculatorFactory);
 
          _residualVsTimeChart = new SimulationResidualVsTimeChart().WithAxes();
          _simulation = A.Fake<ISimulation>();
+         _residualResults = new ResidualsResult();
+
+         A.CallTo(() => _residualCalculatorFactory.CreateFor(A<ParameterIdentificationConfiguration>._)).Returns(_residualCalculator);
+
 
          /*
          _parameterIdentificationRunResult = A.Fake<ParameterIdentificationRunResult>();
          A.CallTo(() => _parameterIdentification.Results).Returns(new[] { _parameterIdentificationRunResult });
 
-         _residualResults = new ResidualsResult();
+        
          _optimizationRunResult = new OptimizationRunResult { ResidualsResult = _residualResults };
          _parameterIdentificationRunResult.BestResult = _optimizationRunResult;
 
@@ -89,6 +95,7 @@ namespace OSPSuite.Presentation.Presentation
       private OutputMapping _outputMapping1;
       private OutputMapping _outputMapping2;
       private OutputMapping _outputMapping3;
+      private OutputMappings _outputMappings;
 
       protected override void Context()
       {
@@ -114,13 +121,20 @@ namespace OSPSuite.Presentation.Presentation
          _residualResults.AddOutputResiduals(_outputResiduals3);
 
 
+         _outputMappings = new OutputMappings();
+         _outputMappings.Add(_outputMapping1);
+         _outputMappings.Add(_outputMapping2);
+         _outputMappings.Add(_outputMapping3);
+
          A.CallTo(() => _outputMapping1.FullOutputPath).Returns("OutputPath1");
          A.CallTo(() => _outputMapping2.FullOutputPath).Returns("OutputPath2");
          A.CallTo(() => _outputMapping3.FullOutputPath).Returns("OutputPath1");
 
 
-         //A.CallTo(() => _parameterIdentification.AllOutputMappings).Returns(new[] { _outputMapping1, _outputMapping2, _outputMapping3 });
-         //A.CallTo(() => _parameterIdentification.AllObservedData).Returns(new[] { observation3, observation1, observation2 });
+         A.CallTo(() => _simulation.OutputMappings).Returns(_outputMappings);
+         A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(A<ISimulation>._)).Returns(new List<DataRepository>() { observation3, observation1, observation2 });
+         A.CallTo(() => _residualCalculator.CalculateForSimulation(A<DataRepository>._, A<List<OutputMapping>>._)).Returns(_residualResults);
+
       }
 
       protected override void Because()
@@ -168,7 +182,7 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _parameterIdentification.AllObservedData).Returns(new[] { DomainHelperForSpecs.ObservedData() });
+         //A.CallTo(() => _parameterIdentification.AllObservedData).Returns(new[] { DomainHelperForSpecs.ObservedData() });
          sut.InitializeAnalysis(_residualVsTimeChart, _simulation);
 
          //only zero marker
