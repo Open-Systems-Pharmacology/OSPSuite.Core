@@ -47,6 +47,9 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
          foreach (var outputMapping in allOutputMappings)
          {
+            if (outputMapping.Output == null)
+               continue;
+
             var simulationColumn = simulationColumnsCache[outputMapping.FullOutputPath];
             if (simulationColumn == null)
             {
