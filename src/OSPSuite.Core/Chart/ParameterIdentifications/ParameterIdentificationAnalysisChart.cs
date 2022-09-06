@@ -22,9 +22,5 @@
 
    public class ParameterIdentificationPredictedVsObservedChart : PredictedVsObservedChart
    {
-      public ParameterIdentificationPredictedVsObservedChart()
-      {
-         ChartSettings.LegendPosition = LegendPositions.BottomInside;
-      }
    }
 }
