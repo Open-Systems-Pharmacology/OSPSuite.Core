@@ -51,7 +51,7 @@ namespace OSPSuite.Presentation.Presenters
             ChartEditorPresenter.SetOutputMappings(_simulation.OutputMappings);
          }
 
-         updateAnalysis();
+         updateRunResults();
          Refresh();
       }
 
@@ -83,7 +83,7 @@ namespace OSPSuite.Presentation.Presenters
          _resultsRepositories.Clear();
       }
 
-      private void updateAnalysis()
+      private void updateRunResults()
       {
          clearRunResults();
          AddRunResultToChart();

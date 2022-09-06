@@ -15,12 +15,8 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
-   public interface ICommonAnalysisChartPresenter : ISimulationAnalysisPresenter
-   {
-   }
-
    public abstract class CommonAnalysisChartPresenter<TChart, TView, TPresenter> : SimulationAnalysisChartPresenter<TChart, TView, TPresenter>,
-      ICommonAnalysisChartPresenter
+      ISimulationAnalysisPresenter
       where TChart : ChartWithObservedData, ISimulationAnalysis
       where TView : class, IView<TPresenter>
       where TPresenter : ISimulationAnalysisPresenter

@@ -109,7 +109,7 @@ namespace OSPSuite.Presentation.Presenters
       {
          var id = $"{Chart.Id}-{ZERO}";
          var dataRepository = createEmptyRepository(id, ZERO, ZERO);
-         dataRepository.BaseGrid.Values = new[] { minObservedDataTime(), MaxObservedDataTime() };
+         dataRepository.BaseGrid.Values = new[] { minObservedDataTime(), maxObservedDataTime() };
          dataRepository.FirstDataColumn().Values = new[] { 0f, 0f };
          return dataRepository;
       }
@@ -119,7 +119,7 @@ namespace OSPSuite.Presentation.Presenters
          return getAllAvailableObservedData().Select(x => x.BaseGrid.Values.First()).Min();
       }
 
-      private float MaxObservedDataTime()
+      private float maxObservedDataTime()
       {
          return getAllAvailableObservedData().Select(x => x.BaseGrid.Values.Last()).Max();
       }
