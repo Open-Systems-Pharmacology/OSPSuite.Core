@@ -7,7 +7,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Repositories;
-using OSPSuite.Core.Domain.Services.ParameterIdentifications;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Services.Charts;
@@ -42,7 +42,7 @@ namespace OSPSuite.Presentation.Presenters
 
       protected override void UpdateAnalysis()
       {
-         var simulationResidual = _residualCalculator.CalculateForSimulation(_simulation.ResultsDataRepository, _simulation.OutputMappings.All);
+         var simulationResidual = _residualCalculator.Calculate(_simulation.ResultsDataRepository, _simulation.OutputMappings.All);
          _allOutputResiduals = simulationResidual.AllOutputResiduals;
          if (!getAllAvailableObservedData().Any())
             return;

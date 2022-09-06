@@ -4,12 +4,13 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
+namespace OSPSuite.Core.Domain.Services
 {
    public abstract class ResidualCalculator : IResidualCalculator
    {
@@ -131,7 +132,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          return Math.Log10(x);
       }
 
-      public ResidualsResult CalculateForSimulation(DataRepository simulationResultRepository, IReadOnlyList<OutputMapping> allOutputMappings)
+      public ResidualsResult Calculate(DataRepository simulationResultRepository, IReadOnlyList<OutputMapping> allOutputMappings)
       {
          var simulationColumnsCache = new Cache<string, DataColumn>(x => x.PathAsString, x => null);
          simulationColumnsCache.AddRange(simulationResultRepository.AllButBaseGrid());

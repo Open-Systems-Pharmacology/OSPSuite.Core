@@ -11,7 +11,6 @@ using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Presenters;
@@ -133,7 +132,7 @@ namespace OSPSuite.Presentation.Presentation
 
          A.CallTo(() => _simulation.OutputMappings).Returns(_outputMappings);
          A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(A<ISimulation>._)).Returns(new List<DataRepository>() { observation3, observation1, observation2 });
-         A.CallTo(() => _residualCalculator.CalculateForSimulation(A<DataRepository>._, A<List<OutputMapping>>._)).Returns(_residualResults);
+         A.CallTo(() => _residualCalculator.Calculate(A<DataRepository>._, A<List<OutputMapping>>._)).Returns(_residualResults);
 
       }
 
