@@ -145,8 +145,8 @@ namespace OSPSuite.Core.Services
          deviationLineRepository.Add(deviationLineUpper);
          var deviationLineLower = createLowerDeviationRepository(foldValue, dataColumns, mergedDimension);
          deviationLineRepository.Add(deviationLineLower);
-         chart.AddCurvesFor(deviationLineUpper, x => x.Name, _dimensionFactory, (column, curve) => curve.UpdateDeviationCurve(foldValue + "fold deviation line", numberOfDeviationLines));
-         chart.AddCurvesFor(deviationLineLower, x => x.Name, _dimensionFactory, (column, curve) => curve.UpdateDeviationCurve(foldValue + "fold deviation line", numberOfDeviationLines));
+         chart.AddCurvesFor(deviationLineUpper, x => x.Name, _dimensionFactory, (column, curve) => curve.UpdateDeviationCurve(foldValue + "-fold deviation", numberOfDeviationLines));
+         chart.AddCurvesFor(deviationLineLower, x => x.Name, _dimensionFactory, (column, curve) => curve.UpdateDeviationCurve(foldValue + "-fold deviation", numberOfDeviationLines));
          
          return deviationLineRepository;
       }
