@@ -23,11 +23,6 @@ namespace OSPSuite.R.Domain
       public OutputMappings OutputMappings { get; set; }
       public DataRepository ResultsDataRepository { get; set; }
 
-      public DataRepository GetResultRepository()
-      {
-         throw new NotImplementedException();
-      }
-
       public void RemoveAnalysis(ISimulationAnalysis simulationAnalysis)
       {
          // nothing to do in R

@@ -34,7 +34,7 @@ namespace OSPSuite.Presentation.Presenters
       public SimulationResidualVsTimeChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext,
          IObservedDataRepository observedDataRepository, IResidualCalculatorFactory residualCalculatorFactory)
          : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis,
-            PresenterConstants.PresenterKeys.SimulationPredictedVsActualChartPresenter)
+            PresenterConstants.PresenterKeys.SimulationPredictedVsObservedChartPresenter)
       {
          _observedDataRepository = observedDataRepository;
          _residualCalculator = residualCalculatorFactory.CreateFor(new ParameterIdentificationConfiguration());

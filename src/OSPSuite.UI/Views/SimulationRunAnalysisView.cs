@@ -1,22 +1,27 @@
 ﻿using DevExpress.XtraLayout.Utils;
+using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
+using OSPSuite.Utility.Format;
 
 namespace OSPSuite.UI.Views
 {
    public partial class SimulationRunAnalysisView : BaseUserControl, ISimulationRunAnalysisView
    {
       private ISimulationRunAnalysisPresenter _presenter;
+      private readonly IFormatter<double> _doubleFormatter;
 
       public SimulationRunAnalysisView()
       {
          InitializeComponent();
-         layoutControlItem2.TextVisible = true;
-         layoutControlItem2.Visibility = LayoutVisibility.Never;
-         layoutControlItem2.Text = "Total error";
+         totalErrorLayoutControlItem.TextVisible = true;
+         totalErrorLayoutControlItem.Visibility = LayoutVisibility.Never;
+         totalErrorLayoutControlItem.Text = Captions.ParameterIdentification.TotalError; ;
          totalErrorTextEdit.ReadOnly = true;
+         _doubleFormatter = new DoubleFormatter();
       }
 
       public void SetAnalysisView(IView view)
@@ -26,8 +31,8 @@ namespace OSPSuite.UI.Views
 
       public void SetTotalError(double totalError)
       {
-         layoutControlItem2.Visibility = LayoutVisibility.Always;
-         totalErrorTextEdit.Text = totalError.ToString();
+         totalErrorLayoutControlItem.Visibility = LayoutVisibility.Always;
+         totalErrorTextEdit.Text = _doubleFormatter.Format(totalError);
       }
 
       public void AttachPresenter(ISimulationRunAnalysisPresenter presenter)

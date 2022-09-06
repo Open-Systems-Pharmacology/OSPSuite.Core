@@ -30,7 +30,7 @@ namespace OSPSuite.Presentation.Presenters
       public SimulationPredictedVsObservedChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext,
          IPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository)
          : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis,
-            PresenterConstants.PresenterKeys.SimulationPredictedVsActualChartPresenter)
+            PresenterConstants.PresenterKeys.SimulationPredictedVsObservedChartPresenter)
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
          _identityRepositories = new List<DataRepository>();
