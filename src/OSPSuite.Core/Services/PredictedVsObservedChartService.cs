@@ -30,7 +30,8 @@ namespace OSPSuite.Core.Services
       ///    <paramref name="calculationColumn" />
       ///    <paramref name="action" /> will be run when the curve is created for the <paramref name="calculationColumn" />
       /// </summary>
-      void AddCurvesFor(IEnumerable<DataColumn> observationColumns, DataColumn calculationColumn, PredictedVsObservedChart chart, Action<DataColumn, Curve> action = null);
+      void AddCurvesFor(IEnumerable<DataColumn> observationColumns, DataColumn calculationColumn, PredictedVsObservedChart chart,
+         Action<DataColumn, Curve> action = null);
 
       /// <summary>
       ///    Sets the <paramref name="chart" /> x axis dimension to the most occurring dimension from
@@ -92,7 +93,8 @@ namespace OSPSuite.Core.Services
          return values;
       }
 
-      public void AddCurvesFor(IEnumerable<DataColumn> observationColumns, DataColumn calculationColumn, PredictedVsObservedChart chart, Action<DataColumn, Curve> action = null)
+      public void AddCurvesFor(IEnumerable<DataColumn> observationColumns, DataColumn calculationColumn, PredictedVsObservedChart chart,
+         Action<DataColumn, Curve> action = null)
       {
          observationColumns.Each(observationColumn => plotPredictedVsObserved(observationColumn, calculationColumn, chart, action));
       }
@@ -219,7 +221,8 @@ namespace OSPSuite.Core.Services
       {
          var dataColumns = observationColumns.ToList();
          //We are using display name here as it is the only way to identify unique merge dimensions
-         var uniqueDimensions = dataColumns.Select(dataColumn => _dimensionFactory.MergedDimensionFor(dataColumn)).DistinctBy(dimension => dimension.DisplayName);
+         var uniqueDimensions = dataColumns.Select(dataColumn => _dimensionFactory.MergedDimensionFor(dataColumn))
+            .DistinctBy(dimension => dimension.DisplayName);
 
          foreach (var mergedDimension in uniqueDimensions)
          {
@@ -258,7 +261,8 @@ namespace OSPSuite.Core.Services
          return _dimensionFactory.MergedDimensionFor(dataColumn);
       }
 
-      private void plotPredictedVsObserved(DataColumn observationColumn, DataColumn calculationColumn, PredictedVsObservedChart chart, Action<DataColumn, Curve> action)
+      private void plotPredictedVsObserved(DataColumn observationColumn, DataColumn calculationColumn, PredictedVsObservedChart chart,
+         Action<DataColumn, Curve> action)
       {
          if (chart.FindCurveWithSameData(observationColumn, calculationColumn) == null)
          {
@@ -267,9 +271,14 @@ namespace OSPSuite.Core.Services
          //adjustAxes(calculationColumn, chart);
       }
 
-      private void addResultCurves(DataColumn observationColumn, DataColumn simulationResultColumn, PredictedVsObservedChart chart, Action<DataColumn, Curve> action)
+      private void addResultCurves(DataColumn observationColumn, DataColumn simulationResultColumn, PredictedVsObservedChart chart,
+         Action<DataColumn, Curve> action)
       {
-         var curve = new Curve { Name = Captions.ParameterIdentification.CreateCurveNameForPredictedVsObserved(observationColumn.Repository.Name, simulationResultColumn.Repository.Name) };
+         var curve = new Curve
+         {
+            Name = Captions.ParameterIdentification.CreateCurveNameForPredictedVsObserved(observationColumn.Repository.Name,
+               simulationResultColumn.Repository.Name)
+         };
          curve.SetxData(observationColumn, _dimensionFactory);
          curve.SetyData(simulationResultColumn, _dimensionFactory);
          adjustResultCurveDisplay(curve);
@@ -291,7 +300,8 @@ namespace OSPSuite.Core.Services
       private static float getIdentityMinimum(IEnumerable<DataColumn> allObservationColumns, IDimension mergedDimension)
       {
          // Avoid selection of '0' values because they cannot be plotted in log scales
-         return (float)allObservationColumns.Min(column => mergedDimension.UnitValueToBaseUnitValue(column.Dimension.BaseUnit, columnNonZeroValues(column).Min()));
+         return (float)allObservationColumns.Min(column =>
+            mergedDimension.UnitValueToBaseUnitValue(column.Dimension.BaseUnit, columnNonZeroValues(column).Min()));
       }
 
       private static IEnumerable<float> columnNonZeroValues(DataColumn column)

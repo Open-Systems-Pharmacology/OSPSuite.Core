@@ -19,10 +19,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
    {
    }
 
-   public abstract class CommonAnalysisChartPresenter<TChart, TView, TPresenter> : SimulationAnalysisChartPresenter<TChart, TView, TPresenter>, ICommonAnalysisChartPresenter
-   where TChart : ChartWithObservedData, ISimulationAnalysis
-   where TView : class, IView<TPresenter>
-   where TPresenter : ISimulationAnalysisPresenter
+   public abstract class CommonAnalysisChartPresenter<TChart, TView, TPresenter> : SimulationAnalysisChartPresenter<TChart, TView, TPresenter>,
+      ICommonAnalysisChartPresenter
+      where TChart : ChartWithObservedData, ISimulationAnalysis
+      where TView : class, IView<TPresenter>
+      where TPresenter : ISimulationAnalysisPresenter
    {
       protected readonly Cache<string, Color> _colorCache = new Cache<string, Color>(onMissingKey: x => Color.Black);
       protected CurveChartTemplate _chartTemplate;
@@ -125,6 +126,5 @@ namespace OSPSuite.Presentation.Presenters.Charts
                curve.VisibleInLegend = false;
             });
       }
-
    }
 }

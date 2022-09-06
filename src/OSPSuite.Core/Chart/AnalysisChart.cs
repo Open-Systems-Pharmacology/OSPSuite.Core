@@ -40,6 +40,11 @@ namespace OSPSuite.Core.Chart
 
    public abstract class PredictedVsObservedChart : AnalysisChart
    {
+      protected PredictedVsObservedChart()
+      {
+         ChartSettings.LegendPosition = LegendPositions.BottomInside;
+      }
+
       /// <summary>
       ///    Modifies the Y axes visibility based on X axis dimension. Y axes which do not share a unit with X axis are not shown
       /// </summary>

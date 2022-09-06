@@ -17,13 +17,17 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
    {
    }
 
-   public class ParameterIdentificationPredictedVsObservedFeedbackPresenter : ParameterIdentificationChartFeedbackPresenter<ParameterIdentificationPredictedVsObservedChart>, IParameterIdentificationPredictedVsObservedFeedbackPresenter
+   public class ParameterIdentificationPredictedVsObservedFeedbackPresenter :
+      ParameterIdentificationChartFeedbackPresenter<ParameterIdentificationPredictedVsObservedChart>,
+      IParameterIdentificationPredictedVsObservedFeedbackPresenter
    {
       private readonly IPredictedVsObservedChartService _predictedVsObservedChartService;
 
-      public ParameterIdentificationPredictedVsObservedFeedbackPresenter(IParameterIdentificationChartFeedbackView view, IChartDisplayPresenter chartDisplayPresenter, IDimensionFactory dimensionFactory,
+      public ParameterIdentificationPredictedVsObservedFeedbackPresenter(IParameterIdentificationChartFeedbackView view,
+         IChartDisplayPresenter chartDisplayPresenter, IDimensionFactory dimensionFactory,
          IDisplayUnitRetriever displayUnitRetriever, IPredictedVsObservedChartService predictedVsObservedChartService) :
-         base(view, chartDisplayPresenter, dimensionFactory, displayUnitRetriever, new ParameterIdentificationPredictedVsObservedChart {Title = Captions.ParameterIdentification.PredictedVsObservedAnalysis})
+         base(view, chartDisplayPresenter, dimensionFactory, displayUnitRetriever,
+            new ParameterIdentificationPredictedVsObservedChart { Title = Captions.ParameterIdentification.PredictedVsObservedAnalysis })
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
       }

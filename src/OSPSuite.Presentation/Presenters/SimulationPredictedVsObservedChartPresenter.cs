@@ -19,8 +19,8 @@ namespace OSPSuite.Presentation.Presenters
    {
       ISimulationRunAnalysisView View { get; }
    }
-   
-   public class SimulationPredictedVsObservedChartPresenter : SimulationRunAnalysisPresenter<SimulationPredictedVsObservedChart>, 
+
+   public class SimulationPredictedVsObservedChartPresenter : SimulationRunAnalysisPresenter<SimulationPredictedVsObservedChart>,
       ISimulationPredictedVsObservedChartPresenter
    {
       private readonly IPredictedVsObservedChartService _predictedVsObservedChartService;
@@ -28,8 +28,10 @@ namespace OSPSuite.Presentation.Presenters
       private readonly IObservedDataRepository _observedDataRepository;
       private readonly List<DataRepository> _deviationLineRepositories;
 
-      public SimulationPredictedVsObservedChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, IPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository) 
-         : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis, PresenterConstants.PresenterKeys.SimulationPredictedVsActualChartPresenter)
+      public SimulationPredictedVsObservedChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext,
+         IPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository)
+         : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis,
+            PresenterConstants.PresenterKeys.SimulationPredictedVsActualChartPresenter)
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
          _identityRepositories = new List<DataRepository>();
@@ -38,8 +40,7 @@ namespace OSPSuite.Presentation.Presenters
          ChartDisplayPresenter.AddDeviationLinesEvent += (o, e) => addDeviationLines(e.FoldValue);
       }
 
-      protected override void UpdateAnalysisBasedOn(DataRepository simulationResultsRepository) //hmmm... even this repository for this presenter at least is never being used....
-                                                                                                //we should delete it as an argument
+      protected override void UpdateAnalysis()
       {
          if (!getAllAvailableObservedData().Any())
             return;
@@ -66,6 +67,7 @@ namespace OSPSuite.Presentation.Presenters
             .Distinct()
             .OrderBy(x => x.Name);
       }
+
       protected override void ChartChanged()
       {
          base.ChartChanged();
@@ -82,7 +84,7 @@ namespace OSPSuite.Presentation.Presenters
 
       protected override void AddRunResultToChart()
       {
-         addPredictedVsObservedToChart(new List<DataRepository>() {_simulation.ResultsDataRepository}, (column, curve) =>
+         addPredictedVsObservedToChart(new List<DataRepository>() { _simulation.ResultsDataRepository }, (column, curve) =>
          {
             curve.Description = curve.Name;
             curve.Name = column.PathAsString;
@@ -108,7 +110,7 @@ namespace OSPSuite.Presentation.Presenters
 
          if (!allObservationsForOutput.Any())
             Chart.RemoveCurvesForColumn(calculationColumn);
-               
+
          SelectColorForCalculationColumn(calculationColumn);
 
          _predictedVsObservedChartService.AddCurvesFor(allObservationsForOutput, calculationColumn, Chart, (column, curve) =>
