@@ -53,6 +53,8 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       {
          gridParameters.RefreshDataSource();
          gridProperties.RefreshDataSource();
+         //We are doing it here as for some reasons, the row count is not calculated properly in the BindTo
+         layoutItemRunProperties.AdjustGridViewHeight(gridViewProperties, layoutControl);
       }
 
       public void BindTo(IEnumerable<ParameterFeedbackDTO> parametersDTO, IEnumerable<IRunPropertyDTO> propertiesDTO)
@@ -118,6 +120,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       public override void InitializeResources()
       {
          base.InitializeResources();
+         //Enable for this gris as it will only have one entry and the first row when focuses should not have the selection background
          layoutItemParameters.TextVisible = false;
          layoutItemRunProperties.TextVisible = false;
          layoutItemExportParametersHistory.AdjustLargeButtonSize(layoutControl);
