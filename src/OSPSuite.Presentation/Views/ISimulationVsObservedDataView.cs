@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Presentation.Views
 { 
-   public interface ISimulationVsObservedDataView : IView<ISimulationRunAnalysisPresenter>, ISimulationAnalysisView
+   public interface ISimulationVsObservedDataView : IView<ISimulationVsObservedDataPresenter>, ISimulationAnalysisView
    {
       void SetTotalError(double totalError);
    }

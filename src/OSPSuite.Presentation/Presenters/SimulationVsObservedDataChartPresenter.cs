@@ -13,11 +13,11 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters
 {
-   public interface ISimulationRunAnalysisPresenter : ISimulationAnalysisPresenter
+   public interface ISimulationVsObservedDataPresenter : ISimulationAnalysisPresenter
    {
    }
 
-   public abstract class SimulationVsObservedDataChartPresenter<TChart> : CommonAnalysisChartPresenter<TChart, ISimulationVsObservedDataView, ISimulationRunAnalysisPresenter>, ISimulationRunAnalysisPresenter 
+   public abstract class SimulationVsObservedDataChartPresenter<TChart> : SimulationAnalysisChartPresenter<TChart, ISimulationVsObservedDataView, ISimulationVsObservedDataPresenter>, ISimulationVsObservedDataPresenter 
       where TChart : ChartWithObservedData, ISimulationAnalysis
    {
       protected ISimulation _simulation;
