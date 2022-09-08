@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.Services.SensitivityAnalyses;
@@ -47,12 +48,11 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
          _sensitivityAnalysisTask = sensitivityAnalysisTask;
          _sensitivityAnalysisSetNMaxPresenter = sensitivityAnalysisSetNMaxPresenter;
 
-         _subPresenterManager.Add(sensitivityAnalysisSetNMaxPresenter);
-         _subPresenterManager.Add(sensitivityAnalysisSetRangePresenter);
-
+         AddSubPresenters(sensitivityAnalysisSetNMaxPresenter, sensitivityAnalysisSetRangePresenter);
          _view.SetNMaxView(sensitivityAnalysisSetNMaxPresenter.BaseView);
          _view.SetRangeView(sensitivityAnalysisSetRangePresenter.BaseView);
 
+         _view.RefreshParameterHeight();
          configureSetValuePresenters(sensitivityAnalysisSetNMaxPresenter, sensitivityAnalysisSetRangePresenter);
       }
 
