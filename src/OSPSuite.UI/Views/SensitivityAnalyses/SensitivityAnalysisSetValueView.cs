@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Drawing;
+using OSPSuite.Assets;
 using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
-using DevExpress.XtraLayout;
-using OSPSuite.Assets;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters.SensitivityAnalyses;
 using OSPSuite.Presentation.Views.SensitivityAnalyses;
@@ -29,31 +27,9 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          base.InitializeResources();
          btnApplyAll.InitWithImage(ApplicationIcons.RefreshAll, Captions.SensitivityAnalysis.All);
          btnApplySelection.InitWithImage(ApplicationIcons.RefreshSelected, Captions.SensitivityAnalysis.Selection);
-
-         alignButtons();
-         textEdit.Properties.Mask.UseMaskAsDisplayFormat = true;
-
-         layoutControlItemValueText.TextVisible = false;
-         verticalAlignTextEdit();
-         uxLayoutControl.BestFit();
-      }
-
-      private void alignButtons()
-      {
-         btnApplyAll.AutoWidthInLayoutControl = true;
-         btnApplySelection.AutoWidthInLayoutControl = true;
-         layoutControlItemAllButton.SizeConstraintsType = SizeConstraintsType.Custom;
-         layoutControlItemAllButton.ControlAlignment = ContentAlignment.MiddleLeft;
-         layoutControlItemSelectionButton.SizeConstraintsType = SizeConstraintsType.Custom;
-         layoutControlItemSelectionButton.ControlAlignment = ContentAlignment.MiddleLeft;
-      }
-
-      private void verticalAlignTextEdit()
-      {
-         layoutControlItemValueText.SizeConstraintsType = SizeConstraintsType.Custom;
-         layoutControlItemValueText.FillControlToClientArea = false;
-         layoutControlItemValueText.Size = new Size(100, 0);
-         layoutControlItemValueText.ControlAlignment = ContentAlignment.MiddleLeft;
+         tablePanel.AdjustControlSize(btnApplyAll, height: tbValue.Height);
+         tablePanel.AdjustControlSize(btnApplySelection, height: tbValue.Height);
+         tbValue.Properties.Mask.UseMaskAsDisplayFormat = true;
       }
 
       public override void InitializeBinding()
@@ -64,7 +40,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          btnApplyAll.ToolTip = Captions.SensitivityAnalysis.ApplyValueToAllSensitivityParameters;
          btnApplySelection.ToolTip = Captions.SensitivityAnalysis.ApplyValueToSelectedSensitivityParameters;
 
-         _textEditElementBinder = _screenBinder.Bind(x => x.Value).To(textEdit);
+         _textEditElementBinder = _screenBinder.Bind(x => x.Value).To(tbValue);
          _textEditElementBinder.OnValueUpdating += (parameterDTO, value) => OnEvent(() => setParameterValue(parameterDTO, value));
 
          RegisterValidationFor(_screenBinder, NotifyViewChanged);
@@ -87,7 +63,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
 
       public void ConfigureForUInt()
       {
-         textEdit.Properties.ConfigureWith(typeof(uint));
+         tbValue.Properties.ConfigureWith(typeof(uint));
          _textEditElementBinder.WithFormat(value => Convert.ToUInt32(value).ToString());
       }
    }

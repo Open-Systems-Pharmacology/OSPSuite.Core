@@ -31,7 +31,7 @@ namespace OSPSuite.UI.Controls
       public event Action<ITreeNode> SelectedNodeChanged = delegate { };
       public event Action<NodeChangingEventArgs> SelectedNodeChanging = delegate { };
       private readonly ICache<string, TreeListNode> _allNodes;
-      private readonly Func<string, TreeListNode> _onMisingKey = s => null;
+      private readonly Func<string, TreeListNode> _onMissingKey = s => null;
       private bool _shouldExpandAddedNode;
       private bool _useLazyLoading;
       private readonly ToolTipPartsToSuperToolTipMapper _toolTipMapper;
@@ -46,7 +46,7 @@ namespace OSPSuite.UI.Controls
          DataColumn.FieldName = _infoColumn;
          DataColumn.Visible = true;
          DataColumn.VisibleIndex = 0;
-         _allNodes = new Cache<string, TreeListNode>(_onMisingKey);
+         _allNodes = new Cache<string, TreeListNode>(_onMissingKey);
          FocusedNodeChanged += (o, e) => this.DoWithinLatch(() => onFocusedNodeChanged(o, e));
          MouseClick += mouseClickEvent;
          MouseDoubleClick += mouseDoubleClickEvent;
@@ -254,7 +254,7 @@ namespace OSPSuite.UI.Controls
       /// </remarks>
       public bool UseLazyLoading
       {
-         get { return _useLazyLoading; }
+         get => _useLazyLoading;
          set
          {
             _useLazyLoading = value;
