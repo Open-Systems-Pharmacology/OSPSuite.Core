@@ -21,7 +21,7 @@ namespace OSPSuite.Presentation.Presenters
       where TChart : ChartWithObservedData, ISimulationAnalysis
    {
       protected ISimulation _simulation;
-      protected List<DataRepository> _resultsRepositories = new List<DataRepository>(); //THIS SHOULD BE ONLY ONE RESULT REPOSITORY (AND DO WE HAVE THE RESULTS SOMEWHERE ELSE?)
+      protected DataRepository _resultsRepository = new DataRepository();
 
       protected SimulationVsObservedDataChartPresenter(ISimulationVsObservedDataView view, ChartPresenterContext chartPresenterContext, ApplicationIcon icon, string presentationKey) : base(view, chartPresenterContext)
       {
@@ -57,10 +57,10 @@ namespace OSPSuite.Presentation.Presenters
 
       protected abstract void UpdateAnalysis();
 
-      protected void AddResultRepositoriesToEditor(IReadOnlyList<DataRepository> dataRepositories)
+      protected void AddResultRepositoryToEditor(DataRepository dataRepository)
       {
-         _resultsRepositories.AddRange(dataRepositories);
-         AddDataRepositoriesToEditor(dataRepositories);
+         _resultsRepository = dataRepository;
+         AddDataRepositoriesToEditor(new List<DataRepository>() { dataRepository });
       }
 
       protected override ISimulation SimulationFor(DataColumn dataColumn)
@@ -79,8 +79,8 @@ namespace OSPSuite.Presentation.Presenters
       }
       private void clearRunResults()
       {
-         RemoveDataRepositoriesFromEditor(_resultsRepositories);
-         _resultsRepositories.Clear();
+         RemoveDataRepositoriesFromEditor(new List<DataRepository>() { _resultsRepository });
+         _resultsRepository.Clear();
       }
 
       private void updateRunResults()

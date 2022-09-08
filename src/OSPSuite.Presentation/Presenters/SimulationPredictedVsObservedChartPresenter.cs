@@ -75,17 +75,17 @@ namespace OSPSuite.Presentation.Presenters
 
       protected override void AddRunResultToChart()
       {
-         addPredictedVsObservedToChart(new List<DataRepository>() { _simulation.ResultsDataRepository }, (column, curve) =>
+         addPredictedVsObservedToChart( _simulation.ResultsDataRepository, (column, curve) =>
          {
             curve.Description = curve.Name;
             curve.Name = column.PathAsString;
          });
       }
 
-      private void addPredictedVsObservedToChart(IReadOnlyList<DataRepository> simulationResults, Action<DataColumn, Curve> action)
+      private void addPredictedVsObservedToChart(DataRepository simulationResult, Action<DataColumn, Curve> action)
       {
-         AddResultRepositoriesToEditor(simulationResults);
-         simulationResults.Each(x => plotAllCalculations(x, action));
+         AddResultRepositoryToEditor(simulationResult);
+         plotAllCalculations(simulationResult, action);
       }
 
       private void plotAllCalculations(DataRepository simulationResult, Action<DataColumn, Curve> action)

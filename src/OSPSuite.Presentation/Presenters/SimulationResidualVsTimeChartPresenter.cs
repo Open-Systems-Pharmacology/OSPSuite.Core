@@ -64,15 +64,10 @@ namespace OSPSuite.Presentation.Presenters
          _allOutputResiduals.GroupBy(x => x.FullOutputPath).Each(addOutputToScatter);
       }
 
-      protected void AddResultRepositoryToEditor(DataRepository dataRepository)
-      {
-         AddResultRepositoriesToEditor(new[] { dataRepository });
-      }
-
       private void addOutputToScatter(IGrouping<string, OutputResiduals> outputMappingsByOutput)
       {
          var fullOutputPath = outputMappingsByOutput.Key;
-         bool shouldShowInLegend = true;
+         var shouldShowInLegend = true;
          foreach (var outputMapping in outputMappingsByOutput)
          {
             var dataRepository = getOrCreateScatterDataRepositoryFor(outputMapping);
