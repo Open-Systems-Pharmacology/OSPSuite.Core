@@ -48,11 +48,12 @@ namespace OSPSuite.Core.Domain.Services
 
          return calculateResidualsResult(allOutputMappings, simulationColumnsCache);
       }
+
       private ResidualsResult calculateResidualsResult(IReadOnlyList<OutputMapping> allOutputMappings,
          Cache<string, DataColumn> simulationColumnsCache)
       {
          var residualResult = new ResidualsResult();
-         
+
          //Simulation can have null Outputs, meaning that the corresponding Observed Data is not mapped to an Output
          //This is not a valid OutputMapping and should not be taken into account for the calculation
          foreach (var outputMapping in allOutputMappings.Where(x => x.Output != null))

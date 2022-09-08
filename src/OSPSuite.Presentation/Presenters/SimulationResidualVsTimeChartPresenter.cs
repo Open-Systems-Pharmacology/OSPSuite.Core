@@ -19,10 +19,10 @@ namespace OSPSuite.Presentation.Presenters
    public interface ISimulationResidualVsTimeChartPresenter : IChartPresenter<SimulationResidualVsTimeChart>,
       ISimulationAnalysisPresenter
    {
-      ISimulationRunAnalysisView View { get; }
+      ISimulationVsObservedDataView View { get; }
    }
 
-   public class SimulationResidualVsTimeChartPresenter : SimulationRunAnalysisPresenter<SimulationResidualVsTimeChart>,
+   public class SimulationResidualVsTimeChartPresenter : SimulationVsObservedDataChartPresenter<SimulationResidualVsTimeChart>,
       ISimulationResidualVsTimeChartPresenter
    {
       private readonly IObservedDataRepository _observedDataRepository;
@@ -31,7 +31,7 @@ namespace OSPSuite.Presentation.Presenters
       private string _markerCurveId = string.Empty;
       private const string ZERO = "Zero";
 
-      public SimulationResidualVsTimeChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext,
+      public SimulationResidualVsTimeChartPresenter(ISimulationVsObservedDataView view, ChartPresenterContext chartPresenterContext,
          IObservedDataRepository observedDataRepository, IResidualCalculatorFactory residualCalculatorFactory)
          : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis,
             PresenterConstants.PresenterKeys.SimulationPredictedVsObservedChartPresenter)

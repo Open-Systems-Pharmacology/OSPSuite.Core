@@ -9,12 +9,12 @@ using OSPSuite.Utility.Format;
 
 namespace OSPSuite.UI.Views
 {
-   public partial class SimulationRunAnalysisView : BaseUserControl, ISimulationRunAnalysisView
+   public partial class SimulationVsObservedDataView : BaseUserControl, ISimulationVsObservedDataView
    {
-      private ISimulationRunAnalysisPresenter _presenter;
+      private ISimulationVsObservedDataPresenter _presenter;
       private readonly IFormatter<double> _doubleFormatter;
 
-      public SimulationRunAnalysisView()
+      public SimulationVsObservedDataView()
       {
          InitializeComponent();
          totalErrorLayoutControlItem.TextVisible = true;
@@ -35,7 +35,7 @@ namespace OSPSuite.UI.Views
          totalErrorTextEdit.Text = _doubleFormatter.Format(totalError);
       }
 
-      public void AttachPresenter(ISimulationRunAnalysisPresenter presenter)
+      public void AttachPresenter(ISimulationVsObservedDataPresenter presenter)
       {
          _presenter = presenter;
       }

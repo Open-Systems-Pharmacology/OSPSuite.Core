@@ -23,7 +23,7 @@ namespace OSPSuite.Presentation.Presentation
 {
    public abstract class concern_for_SimulationResidualVsTimeChartPresenter : ContextSpecification<ISimulationResidualVsTimeChartPresenter>
    {
-      protected ISimulationRunAnalysisView _view;
+      protected ISimulationVsObservedDataView _view;
       protected IChartEditorAndDisplayPresenter _chartEditorAndDisplayPresenter;
       protected IDataColumnToPathElementsMapper _pathElementsMapper;
       protected IChartTemplatingTask _chartTemplatingTask;
@@ -42,7 +42,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Context()
       {
-         _view = A.Fake<ISimulationRunAnalysisView>();
+         _view = A.Fake<ISimulationVsObservedDataView>();
          _chartEditorAndDisplayPresenter = A.Fake<IChartEditorAndDisplayPresenter>();
          _observedDataRepository = A.Fake<IObservedDataRepository>();
          _residualCalculatorFactory = A.Fake<IResidualCalculatorFactory>();

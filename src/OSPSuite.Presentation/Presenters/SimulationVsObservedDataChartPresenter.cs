@@ -17,13 +17,13 @@ namespace OSPSuite.Presentation.Presenters
    {
    }
 
-   public abstract class SimulationRunAnalysisPresenter<TChart> : CommonAnalysisChartPresenter<TChart, ISimulationRunAnalysisView, ISimulationRunAnalysisPresenter>, ISimulationRunAnalysisPresenter 
+   public abstract class SimulationVsObservedDataChartPresenter<TChart> : CommonAnalysisChartPresenter<TChart, ISimulationVsObservedDataView, ISimulationRunAnalysisPresenter>, ISimulationRunAnalysisPresenter 
       where TChart : ChartWithObservedData, ISimulationAnalysis
    {
       protected ISimulation _simulation;
-      protected List<DataRepository> _resultsRepositories = new List<DataRepository>();
+      protected List<DataRepository> _resultsRepositories = new List<DataRepository>(); //THIS SHOULD BE ONLY ONE RESULT REPOSITORY (AND DO WE HAVE THE RESULTS SOMEWHERE ELSE?)
 
-      protected SimulationRunAnalysisPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext, ApplicationIcon icon, string presentationKey) : base(view, chartPresenterContext)
+      protected SimulationVsObservedDataChartPresenter(ISimulationVsObservedDataView view, ChartPresenterContext chartPresenterContext, ApplicationIcon icon, string presentationKey) : base(view, chartPresenterContext)
       {
          _view.SetAnalysisView(chartPresenterContext.EditorAndDisplayPresenter.BaseView);
          _view.ApplicationIcon = icon;

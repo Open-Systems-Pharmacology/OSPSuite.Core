@@ -24,7 +24,7 @@ namespace OSPSuite.Presentation.Presentation
 {
    public abstract class concern_for_SimulationPredictedVsObservedChartPresenter : ContextSpecification<SimulationPredictedVsObservedChartPresenter>
    {
-      private ISimulationRunAnalysisView _view;
+      private ISimulationVsObservedDataView _view;
       private IChartEditorAndDisplayPresenter _chartEditorAndDisplayPresenter;
       private ICurveNamer _curveNamer;
       protected ISimulation _simulation;
@@ -48,7 +48,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Context()
       {
-         _view = A.Fake<ISimulationRunAnalysisView>();
+         _view = A.Fake<ISimulationVsObservedDataView>();
          _observedDataRepository = A.Fake<IObservedDataRepository>();
          _chartEditorAndDisplayPresenter = A.Fake<IChartEditorAndDisplayPresenter>();
          _curveNamer = A.Fake<ICurveNamer>();

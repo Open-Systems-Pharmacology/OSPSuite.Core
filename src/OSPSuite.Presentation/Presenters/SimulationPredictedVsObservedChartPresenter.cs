@@ -17,17 +17,17 @@ namespace OSPSuite.Presentation.Presenters
    public interface ISimulationPredictedVsObservedChartPresenter : IChartPresenter<SimulationPredictedVsObservedChart>,
       ISimulationAnalysisPresenter
    {
-      ISimulationRunAnalysisView View { get; }
+      ISimulationVsObservedDataView View { get; }
    }
 
-   public class SimulationPredictedVsObservedChartPresenter : SimulationRunAnalysisPresenter<SimulationPredictedVsObservedChart>,
+   public class SimulationPredictedVsObservedChartPresenter : SimulationVsObservedDataChartPresenter<SimulationPredictedVsObservedChart>,
       ISimulationPredictedVsObservedChartPresenter
    {
       private readonly IPredictedVsObservedChartService _predictedVsObservedChartService;
       private readonly List<DataRepository> _identityRepositories;
       private readonly IObservedDataRepository _observedDataRepository;
 
-      public SimulationPredictedVsObservedChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext,
+      public SimulationPredictedVsObservedChartPresenter(ISimulationVsObservedDataView view, ChartPresenterContext chartPresenterContext,
          IPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository)
          : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis,
             PresenterConstants.PresenterKeys.SimulationPredictedVsObservedChartPresenter)

@@ -1,6 +1,6 @@
 ﻿namespace OSPSuite.UI.Views
 {
-   partial class SimulationRunAnalysisView
+   partial class SimulationVsObservedDataView
    {
       /// <summary> 
       /// Required designer variable.
@@ -135,12 +135,12 @@
          this.layoutControl1.TabIndex = 0;
          this.layoutControl1.Text = "layoutControl1";
          // 
-         // SimulationRunAnalysisView
+         // SimulationVsObservedDataView
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.layoutControl1);
-         this.Name = "SimulationRunAnalysisView";
+         this.Name = "SimulationVsObservedDataView";
          this.Size = new System.Drawing.Size(2259, 1781);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl2)).EndInit();
