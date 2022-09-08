@@ -120,7 +120,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       public override void InitializeResources()
       {
          base.InitializeResources();
-         //Enable for this gris as it will only have one entry and the first row when focuses should not have the selection background
          layoutItemParameters.TextVisible = false;
          layoutItemRunProperties.TextVisible = false;
          layoutItemExportParametersHistory.AdjustLargeButtonSize(layoutControl);
