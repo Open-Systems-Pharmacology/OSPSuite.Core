@@ -34,6 +34,7 @@ namespace OSPSuite.Presentation.Presenters
       void Refresh();
 
       void InitializeSimulation(ISimulation simulation);
+      void UpdateSimulationOutputMappings(SimulationOutputMappingDTO simulationOutputMappingDTO);
    }
 
    public class SimulationOutputMappingPresenter : AbstractSubPresenter<ISimulationOutputMappingView, ISimulationOutputMappingPresenter>,
@@ -102,7 +103,9 @@ namespace OSPSuite.Presentation.Presenters
 
             var newOutputMappingDTO = mapFrom(newOutputMapping);
 
-            _simulation.OutputMappings.Add(newOutputMapping);
+            if (newOutputMapping.Output != null) 
+               _simulation.OutputMappings.Add(newOutputMapping);
+
             _listOfOutputMappingDTOs.Add(newOutputMappingDTO);
          }
       }
@@ -159,9 +162,16 @@ namespace OSPSuite.Presentation.Presenters
          _simulation = simulation;
       }
 
+      public void UpdateSimulationOutputMappings(SimulationOutputMappingDTO simulationOutputMappingDTO)
+      {
+         if(!_simulation.OutputMappings.OutputMappingsUsingDataRepository(simulationOutputMappingDTO.ObservedData).Any())
+            _simulation.OutputMappings.Add(simulationOutputMappingDTO.Mapping);
+      }
+
       public void RemoveOutputMapping(SimulationOutputMappingDTO outputMappingDTO)
       {
          outputMappingDTO.Output = null;
+         _simulation.OutputMappings.Remove(outputMappingDTO.Mapping);
          _view.RefreshGrid();
       }
 

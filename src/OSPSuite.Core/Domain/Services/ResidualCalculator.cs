@@ -54,9 +54,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          var residualResult = new ResidualsResult();
 
-         //Simulation can have null Outputs, meaning that the corresponding Observed Data is not mapped to an Output
-         //This is not a valid OutputMapping and should not be taken into account for the calculation
-         foreach (var outputMapping in allOutputMappings.Where(x => x.Output != null))
+         foreach (var outputMapping in allOutputMappings)
          {
             var simulationColumn = simulationColumnsCache[outputMapping.FullOutputPath];
             if (simulationColumn == null)
