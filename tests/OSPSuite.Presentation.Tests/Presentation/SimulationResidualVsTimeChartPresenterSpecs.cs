@@ -12,6 +12,7 @@ using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.Charts;
@@ -34,6 +35,7 @@ namespace OSPSuite.Presentation.Presentation
       protected ISimulation _simulation;
       protected IDimensionFactory _dimensionFactory;
       protected ResidualsResult _residualResults;
+      protected ResidualsVsTimeChartService _residualsVsTimeChartService;
       private IChartEditorLayoutTask _chartEditorLayoutTask;
       private IProjectRetriever _projectRetriever;
       private ChartPresenterContext _chartPresenterContext;
@@ -52,6 +54,7 @@ namespace OSPSuite.Presentation.Presentation
          _chartEditorLayoutTask = A.Fake<IChartEditorLayoutTask>();
          _projectRetriever = A.Fake<IProjectRetriever>();
          _residualCalculator = A.Fake<IResidualCalculator>();
+         _residualsVsTimeChartService = A.Fake<ResidualsVsTimeChartService>();
 
          _chartPresenterContext = A.Fake<ChartPresenterContext>();
          A.CallTo(() => _chartPresenterContext.EditorAndDisplayPresenter).Returns(_chartEditorAndDisplayPresenter);
@@ -62,7 +65,7 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _chartPresenterContext.ProjectRetriever).Returns(_projectRetriever);
 
 
-         sut = new SimulationResidualVsTimeChartPresenter(_view, _chartPresenterContext, _observedDataRepository, _residualCalculatorFactory);
+         sut = new SimulationResidualVsTimeChartPresenter(_view, _chartPresenterContext, _observedDataRepository, _residualCalculatorFactory, _residualsVsTimeChartService);
 
          _residualVsTimeChart = new SimulationResidualVsTimeChart().WithAxes();
          _simulation = A.Fake<ISimulation>();
