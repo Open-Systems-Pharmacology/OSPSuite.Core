@@ -100,13 +100,16 @@ namespace OSPSuite.Core.Services
 
          var defaultDimension = mostFrequentDimension(dataColumns);
          var xAxis = chart.AxisBy(AxisTypes.X);
+         var yAxis = chart.AxisBy(AxisTypes.Y);
+
 
          if (defaultDimension != null)
             xAxis.Dimension = defaultDimension;
 
          xAxis.Scaling = chart.AxisBy(AxisTypes.Y).Scaling;
          xAxis.UnitName = chart.AxisBy(AxisTypes.Y).UnitName;
-
+         xAxis.Caption += "Observed " + defaultDimension;
+         yAxis.Caption += "Simulated " + defaultDimension; //hey no though, the dimension should come from the yAxis. but yeah...still should be the same, so would work
          chart.UpdateAxesVisibility();
       }
 

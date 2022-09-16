@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.DTO;
+using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Utility;
@@ -98,13 +99,12 @@ namespace OSPSuite.Presentation.Presenters
          {
             if (_listOfOutputMappingDTOs.Any(x => x.ObservedData.Equals(observedData))) continue;
 
-            var newOutputMapping = new OutputMapping();
-            mapMatchingOutput(observedData, newOutputMapping);
-
+            //add only a DTO with the observed data with Output == null
+            var newOutputMapping = new OutputMapping
+            {
+               WeightedObservedData = new WeightedObservedData(observedData)
+            };
             var newOutputMappingDTO = mapFrom(newOutputMapping);
-
-            if (newOutputMapping.Output != null) 
-               _simulation.OutputMappings.Add(newOutputMapping);
 
             _listOfOutputMappingDTOs.Add(newOutputMappingDTO);
          }
@@ -199,15 +199,6 @@ namespace OSPSuite.Presentation.Presenters
 
       public void Handle(ObservedDataRemovedFromAnalysableEvent eventToHandle)
       {
-         foreach (var removedObservedData in eventToHandle.ObservedData)
-         {
-            var outputsMatchingDeletedObservedData = _simulation.OutputMappings.OutputMappingsUsingDataRepository(removedObservedData).ToList();
-            foreach (var outputMapping in outputsMatchingDeletedObservedData)
-            {
-               _simulation.OutputMappings.Remove(outputMapping);
-            }
-         }
-
          updateOutputMappingList();
       }
    }
