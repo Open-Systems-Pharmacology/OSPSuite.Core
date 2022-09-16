@@ -7,7 +7,6 @@ using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.DTO;
-using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Utility;
@@ -17,7 +16,8 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters
 {
-   public interface ISimulationOutputMappingPresenter : IPresenter<ISimulationOutputMappingView>, ILatchable, IListener<ObservedDataAddedToAnalysableEvent>,
+   public interface ISimulationOutputMappingPresenter : IPresenter<ISimulationOutputMappingView>, ILatchable,
+      IListener<ObservedDataAddedToAnalysableEvent>,
       IListener<ObservedDataRemovedFromAnalysableEvent>
    {
       void SetSimulation(ISimulation simulation);
@@ -93,7 +93,7 @@ namespace OSPSuite.Presentation.Presenters
 
          //first add all the existing OutputMappings in the Simulation
          _simulation.OutputMappings.All.Each(x => _listOfOutputMappingDTOs.Add(mapFrom(x)));
-         
+
          //get all available observed data, and create new mappings for the unmapped
          foreach (var observedData in getAllAvailableObservedData())
          {
@@ -108,25 +108,6 @@ namespace OSPSuite.Presentation.Presenters
 
             _listOfOutputMappingDTOs.Add(newOutputMappingDTO);
          }
-      }
-
-      private void mapMatchingOutput(DataRepository observedData, OutputMapping newOutputMapping)
-      {
-         var pathCache = _entitiesInSimulationRetriever.OutputsFrom(_simulation);
-         var matchingOutputPath = pathCache.Keys.FirstOrDefault(x => observedDataMatchesOutput(observedData, x));
-
-         if (matchingOutputPath == null)
-         {
-            newOutputMapping.WeightedObservedData = new WeightedObservedData(observedData);
-            return;
-         }
-
-         var matchingOutput = pathCache[matchingOutputPath];
-
-         newOutputMapping.OutputSelection =
-            new SimulationQuantitySelection(_simulation, new QuantitySelection(matchingOutputPath, matchingOutput.QuantityType));
-         newOutputMapping.WeightedObservedData = new WeightedObservedData(observedData);
-         newOutputMapping.Scaling = DefaultScalingFor(matchingOutput);
       }
 
       public IEnumerable<SimulationQuantitySelectionDTO> AllAvailableOutputs
@@ -164,7 +145,7 @@ namespace OSPSuite.Presentation.Presenters
 
       public void UpdateSimulationOutputMappings(SimulationOutputMappingDTO simulationOutputMappingDTO)
       {
-         if(!_simulation.OutputMappings.OutputMappingsUsingDataRepository(simulationOutputMappingDTO.ObservedData).Any())
+         if (!_simulation.OutputMappings.OutputMappingsUsingDataRepository(simulationOutputMappingDTO.ObservedData).Any())
             _simulation.OutputMappings.Add(simulationOutputMappingDTO.Mapping);
       }
 
