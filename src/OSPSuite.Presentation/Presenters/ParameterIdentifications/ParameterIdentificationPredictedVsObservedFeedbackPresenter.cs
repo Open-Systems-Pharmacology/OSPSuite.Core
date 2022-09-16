@@ -79,7 +79,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       {
          var allObservationColumnsFor = _parameterIdentification.AllObservationColumnsFor(SelectedOutput.FullOutputPath).ToList();
          _predictedVsObservedChartService.AddIdentityCurves(allObservationColumnsFor, _chart);
-         _predictedVsObservedChartService.SetXAxisDimension(allObservationColumnsFor, _chart);
+         _predictedVsObservedChartService.ConfigureAxesDimensionAndTitle(allObservationColumnsFor, _chart);
       }
    }
 }

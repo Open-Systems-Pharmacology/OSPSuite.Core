@@ -47,7 +47,7 @@ namespace OSPSuite.Presentation.Presenters
          _identityRepositories.AddRange(_predictedVsObservedChartService.AddIdentityCurves(observationColumns, Chart));
 
          if (ChartIsBeingCreated)
-            _predictedVsObservedChartService.SetXAxisDimension(observationColumns, Chart);
+            _predictedVsObservedChartService.ConfigureAxesDimensionAndTitle(observationColumns, Chart);
 
          AddDataRepositoriesToEditor(_identityRepositories.Union(getAllAvailableObservedData()));
          UpdateChartFromTemplate();

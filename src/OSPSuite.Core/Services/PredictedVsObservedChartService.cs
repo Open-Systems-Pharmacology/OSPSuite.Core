@@ -35,9 +35,9 @@ namespace OSPSuite.Core.Services
 
       /// <summary>
       ///    Sets the <paramref name="chart" /> x axis dimension to the most occurring dimension from
-      ///    <paramref name="observationColumns" />
+      ///    <paramref name="observationColumns" /> and adjusts the axes names
       /// </summary>
-      void SetXAxisDimension(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart);
+      void ConfigureAxesDimensionAndTitle(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart);
    }
 
    public class PredictedVsObservedChartService : IPredictedVsObservedChartService
@@ -94,23 +94,26 @@ namespace OSPSuite.Core.Services
          observationColumns.Each(observationColumn => plotPredictedVsObserved(observationColumn, calculationColumn, chart, action));
       }
 
-      public void SetXAxisDimension(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart)
+      public void ConfigureAxesDimensionAndTitle(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart)
       {
-         var dataColumns = observationColumns.ToList();
-
-         var defaultDimension = mostFrequentDimension(dataColumns);
          var xAxis = chart.AxisBy(AxisTypes.X);
          var yAxis = chart.AxisBy(AxisTypes.Y);
 
+         var defaultDimension = mostFrequentDimension(observationColumns.ToList());
 
-         if (defaultDimension != null)
-            xAxis.Dimension = defaultDimension;
-
-         xAxis.Scaling = chart.AxisBy(AxisTypes.Y).Scaling;
-         xAxis.UnitName = chart.AxisBy(AxisTypes.Y).UnitName;
-         xAxis.Caption += "Observed " + defaultDimension;
-         yAxis.Caption += "Simulated " + defaultDimension; //hey no though, the dimension should come from the yAxis. but yeah...still should be the same, so would work
+         setAxisDimension(defaultDimension, chart, xAxis);
+         xAxis.Caption += Captions.ParameterIdentification.ObservedChartAxis + defaultDimension;
+         yAxis.Caption += Captions.ParameterIdentification.SimulatedChartAxis + defaultDimension;
          chart.UpdateAxesVisibility();
+      }
+
+      private void setAxisDimension(IDimension dimension, PredictedVsObservedChart chart, Axis axis)
+      {
+         if (dimension != null)
+            axis.Dimension = dimension;
+
+         axis.Scaling = chart.AxisBy(AxisTypes.Y).Scaling;
+         axis.UnitName = chart.AxisBy(AxisTypes.Y).UnitName;
       }
 
       public IReadOnlyList<DataRepository> AddIdentityCurves(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart)

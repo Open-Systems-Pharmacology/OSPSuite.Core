@@ -155,7 +155,7 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Because()
       {
          sut.AddIdentityCurves(_allObservations, _predictedVsObservedChart);
-         sut.SetXAxisDimension(_allObservations, _predictedVsObservedChart);
+         sut.ConfigureAxesDimensionAndTitle(_allObservations, _predictedVsObservedChart);
       }
 
       [Observation]
@@ -196,7 +196,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         sut.SetXAxisDimension(new[] {_concentrationObservationColumn, _secondColumnForObservations}, _predictedVsObservedChart);
+         sut.ConfigureAxesDimensionAndTitle(new[] {_concentrationObservationColumn, _secondColumnForObservations}, _predictedVsObservedChart);
       }
    }
 
