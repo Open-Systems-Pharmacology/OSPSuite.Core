@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.Utility.Extensions;
@@ -19,12 +20,13 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
    public class ParameterIdentificationResidualVsTimeChartPresenter : ParameterIdentificationSingleRunAnalysisPresenter<ParameterIdentificationResidualVsTimeChart>, IParameterIdentificationResidualVsTimeChartPresenter
    {
-      private string _markerCurveId = string.Empty;
-      private const string ZERO = "Zero";
+      private readonly IResidualsVsTimeChartService _residualsVsTimeChartService;
+      private DataRepository _zeroRepository;
 
-      public ParameterIdentificationResidualVsTimeChartPresenter(IParameterIdentificationSingleRunAnalysisView view, ChartPresenterContext chartPresenterContext) :
+      public ParameterIdentificationResidualVsTimeChartPresenter(IParameterIdentificationSingleRunAnalysisView view, ChartPresenterContext chartPresenterContext, IResidualsVsTimeChartService residualsVsTimeChartService) :
          base(view, chartPresenterContext, ApplicationIcons.ResidualVsTimeAnalysis, PresenterConstants.PresenterKeys.ParameterIdentificationResidualVsTimeChartPresenter)
       {
+         _residualsVsTimeChartService = residualsVsTimeChartService;
       }
 
       protected override void UpdateAnalysisBasedOn(IReadOnlyList<ParameterIdentificationRunResult> parameterIdentificationResults)
@@ -33,7 +35,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          if (!_parameterIdentification.AllObservedData.Any())
             return;
 
-         addZeroMarkerCurveToChart();
+         _zeroRepository = _residualsVsTimeChartService.AddZeroMarkerCurveToChart(Chart, _parameterIdentification.MinObservedDataTime, _parameterIdentification.MaxObservedDataTime);
+         AddDataRepositoriesToEditor(new[] { _zeroRepository });
 
          if (ChartIsBeingCreated)
          {
@@ -74,25 +77,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          }
       }
 
-      private void addZeroMarkerCurveToChart()
-      {
-         var markerRepository = createMarkerRepository();
-         AddDataRepositoriesToEditor(new[] {markerRepository});
-         AddCurvesFor(markerRepository, (column, curve) =>
-         {
-            curve.UpdateMarkerCurve(ZERO);
-            _markerCurveId = curve.Id;
-         });
-      }
-
-      private DataRepository createMarkerRepository()
-      {
-         var id = $"{Chart.Id}-{ZERO}";
-         var dataRepository = createEmptyRepository(id, ZERO, ZERO);
-         dataRepository.BaseGrid.Values = new[] {_parameterIdentification.MinObservedDataTime, _parameterIdentification.MaxObservedDataTime};
-         dataRepository.FirstDataColumn().Values = new[] {0f, 0f};
-         return dataRepository;
-      }
 
       private DataRepository getOrCreateScatterDataRepositoryFor(int runIndex, OutputResiduals outputResidual)
       {
@@ -105,7 +89,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          var dataRepository = Chart.DataRepositories.FindById(id);
          if (dataRepository == null)
          {
-            dataRepository = createScatterDataRepository(id, repositoryName, outputResidual);
+            dataRepository = _residualsVsTimeChartService.CreateScatterDataRepository(id, repositoryName, outputResidual);
             Chart.AddRepository(dataRepository);
          }
 
@@ -115,32 +99,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          return dataRepository;
       }
 
-      private DataRepository createScatterDataRepository(string id, string repositoryName, OutputResiduals outputResidual)
-      {
-         var dataRepository = createEmptyRepository(id, repositoryName, "Values");
-         var scatterColumn = dataRepository.FirstDataColumn();
-         var outputPath = new List<string>(outputResidual.FullOutputPath.ToPathArray());
-         //need to create a unique path containing the observed data name. Since we want to keep the entity name and simulation name, we have to insert before the name
-         if (outputPath.Count > 0)
-            outputPath.Insert(outputPath.Count - 1, outputResidual.ObservedDataName);
-
-         scatterColumn.QuantityInfo.Path = outputPath;
-         return dataRepository;
-      }
-
-      private DataRepository createEmptyRepository(string id, string name, string valueName)
-      {
-         var dataRepository = new DataRepository(id) {Name = name};
-         var baseGrid = new BaseGrid($"{id}-Time", "Time", _chartPresenterContext.DimensionFactory.Dimension(Constants.Dimension.TIME));
-         var values = new DataColumn($"{id}-{valueName}", valueName, _chartPresenterContext.DimensionFactory.NoDimension, baseGrid) {DataInfo = {Origin = ColumnOrigins.CalculationAuxiliary}};
-         dataRepository.Add(values);
-         return dataRepository;
-      }
-
       public override void Clear()
       {
          base.Clear();
-         Chart.RemoveCurve(_markerCurveId);
+         Chart.RemoveCurvesForDataRepository(_zeroRepository);
       }
    }
 }

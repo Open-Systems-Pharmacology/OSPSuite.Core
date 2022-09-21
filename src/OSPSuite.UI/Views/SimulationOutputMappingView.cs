@@ -59,7 +59,7 @@ namespace OSPSuite.UI.Views
       {
          base.InitializeBinding();
 
-         _gridViewBinder.AutoBind(x => x.ObservedData) 
+         _gridViewBinder.AutoBind(x => x.ObservedData)
             .WithRepository(singleObservedDataRepository)
             .WithFormat(observedDataDisplay)
             .WithCaption(Captions.SimulationUI.ObservedData)
@@ -68,6 +68,7 @@ namespace OSPSuite.UI.Views
          _gridViewBinder.AutoBind(x => x.Output)
             .WithRepository(allOutputsRepository)
             .WithShowButton(ShowButtonModeEnum.ShowAlways)
+            .WithOnValueUpdated((o, e) => onOutputValueChanged(o))
             .WithCaption(Captions.SimulationUI.Outputs);
 
          _gridViewBinder.Bind(x => x.Scaling)
@@ -88,14 +89,19 @@ namespace OSPSuite.UI.Views
          _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.RemoveOutputMapping(_gridViewBinder.FocusedElement));
       }
 
-      
+      private void onOutputValueChanged(SimulationOutputMappingDTO simulationOutputMappingDTO)
+      {
+         _presenter.UpdateSimulationOutputMappings(simulationOutputMappingDTO);
+      }
+
       private RepositoryItemComboBox singleObservedDataRepository(SimulationOutputMappingDTO outputMappingDTO)
       {
          _singleObservedDataRepository.FillComboBoxRepositoryWith(outputMappingDTO.ObservedData);
          return _singleObservedDataRepository;
       }
 
-      private IFormatter<DataRepository> observedDataDisplay(SimulationOutputMappingDTO outputMappingDTO) => new WeightedObservedDataFormatter(outputMappingDTO);
+      private IFormatter<DataRepository> observedDataDisplay(SimulationOutputMappingDTO outputMappingDTO) =>
+         new WeightedObservedDataFormatter(outputMappingDTO);
 
       private RepositoryItem allOutputsRepository(SimulationOutputMappingDTO dto)
       {

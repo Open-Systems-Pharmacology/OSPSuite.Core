@@ -1,7 +1,7 @@
 ﻿using System;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 
-namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
+namespace OSPSuite.Core.Domain.Services
 {
    public interface IResidualCalculatorFactory
    {
@@ -10,9 +10,9 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
    public class ResidualCalculatorFactory : IResidualCalculatorFactory
    {
-      private readonly OSPSuite.Utility.Container.IContainer _container;
+      private readonly Utility.Container.IContainer _container;
 
-      public ResidualCalculatorFactory(OSPSuite.Utility.Container.IContainer container)
+      public ResidualCalculatorFactory(Utility.Container.IContainer container)
       {
          _container = container;
       }

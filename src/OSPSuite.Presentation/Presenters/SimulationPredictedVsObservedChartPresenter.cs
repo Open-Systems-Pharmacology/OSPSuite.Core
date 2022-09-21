@@ -3,51 +3,61 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
-using OSPSuite.Core.Chart.ParameterIdentifications;
+using OSPSuite.Core.Chart.Simulations;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Services;
+using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Services.Charts;
-using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Presentation.Views;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
+namespace OSPSuite.Presentation.Presenters
 {
-   public interface IParameterIdentificationPredictedVsObservedChartPresenter : IParameterIdentificationSingleRunAnalysisPresenter
+   public interface ISimulationPredictedVsObservedChartPresenter : IChartPresenter<SimulationPredictedVsObservedChart>,
+      ISimulationAnalysisPresenter
    {
+      ISimulationVsObservedDataView View { get; }
    }
 
-   public class ParameterIdentificationPredictedVsObservedChartPresenter :
-      ParameterIdentificationSingleRunAnalysisPresenter<ParameterIdentificationPredictedVsObservedChart>,
-      IParameterIdentificationPredictedVsObservedChartPresenter
+   public class SimulationPredictedVsObservedChartPresenter : SimulationVsObservedDataChartPresenter<SimulationPredictedVsObservedChart>,
+      ISimulationPredictedVsObservedChartPresenter
    {
       private readonly IPredictedVsObservedChartService _predictedVsObservedChartService;
       private readonly List<DataRepository> _identityRepositories;
+      private readonly IObservedDataRepository _observedDataRepository;
 
-      public ParameterIdentificationPredictedVsObservedChartPresenter(IParameterIdentificationSingleRunAnalysisView view,
-         ChartPresenterContext chartPresenterContext, IPredictedVsObservedChartService predictedVsObservedChartService) :
-         base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis,
-            PresenterConstants.PresenterKeys.ParameterIdentificationPredictedVsObservedChartPresenter)
+      public SimulationPredictedVsObservedChartPresenter(ISimulationVsObservedDataView view, ChartPresenterContext chartPresenterContext,
+         IPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository)
+         : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis,
+            PresenterConstants.PresenterKeys.SimulationPredictedVsObservedChartPresenter)
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
          _identityRepositories = new List<DataRepository>();
+         _observedDataRepository = observedDataRepository;
       }
 
-      protected override void UpdateAnalysisBasedOn(IReadOnlyList<ParameterIdentificationRunResult> parameterIdentificationResults)
+      protected override void UpdateAnalysis()
       {
-         base.UpdateAnalysisBasedOn(parameterIdentificationResults);
-         if (!_parameterIdentification.AllObservedData.Any())
+         if (!getAllAvailableObservedData().Any())
             return;
 
-         var observationColumns = _parameterIdentification.AllObservedData.Select(x => x.FirstDataColumn()).ToList();
+         var observationColumns = getAllAvailableObservedData().Select(x => x.FirstDataColumn()).ToList();
 
          _identityRepositories.AddRange(_predictedVsObservedChartService.AddIdentityCurves(observationColumns, Chart));
 
          if (ChartIsBeingCreated)
             _predictedVsObservedChartService.ConfigureAxesDimensionAndTitle(observationColumns, Chart);
 
-         AddDataRepositoriesToEditor(_identityRepositories.Union(_parameterIdentification.AllObservedData));
+         AddDataRepositoriesToEditor(_identityRepositories.Union(getAllAvailableObservedData()));
          UpdateChartFromTemplate();
+      }
+
+      private IEnumerable<DataRepository> getAllAvailableObservedData()
+      {
+         return _observedDataRepository.AllObservedDataUsedBy(_simulation)
+            .Distinct()
+            .OrderBy(x => x.Name);
       }
 
       protected override void ChartChanged()
@@ -63,19 +73,19 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _identityRepositories.Clear();
       }
 
-      protected override void AddRunResultToChart(ParameterIdentificationRunResult runResult)
+      protected override void AddRunResultToChart()
       {
-         addPredictedVsObservedToChart(runResult.BestResult.SimulationResults, (column, curve) =>
+         addPredictedVsObservedToChart( _simulation.ResultsDataRepository, (column, curve) =>
          {
-            curve.Description = CurveDescription(curve.Name, runResult);
+            curve.Description = curve.Name;
             curve.Name = column.PathAsString;
          });
       }
 
-      private void addPredictedVsObservedToChart(IReadOnlyList<DataRepository> simulationResults, Action<DataColumn, Curve> action)
+      private void addPredictedVsObservedToChart(DataRepository simulationResult, Action<DataColumn, Curve> action)
       {
-         AddResultRepositoriesToEditor(simulationResults);
-         simulationResults.Each(x => plotAllCalculations(x, action));
+         AddResultRepositoryToEditor(simulationResult);
+         plotAllCalculations(simulationResult, action);
       }
 
       private void plotAllCalculations(DataRepository simulationResult, Action<DataColumn, Curve> action)
@@ -86,7 +96,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private void plotCalculationColumn(DataColumn calculationColumn, Action<DataColumn, Curve> action)
       {
-         var allObservationsForOutput = _parameterIdentification.AllObservationColumnsFor(calculationColumn.PathAsString).ToList();
+         var allObservationsForOutput = _simulation.OutputMappings.All.Where(x => string.Equals(x.FullOutputPath, calculationColumn.PathAsString))
+            .SelectMany(x => x.WeightedObservedData.ObservedData.ObservationColumns()).ToList();
 
          if (!allObservationsForOutput.Any())
             Chart.RemoveCurvesForColumn(calculationColumn);

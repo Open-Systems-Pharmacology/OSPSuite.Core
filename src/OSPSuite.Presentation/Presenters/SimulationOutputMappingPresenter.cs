@@ -16,7 +16,8 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters
 {
-   public interface ISimulationOutputMappingPresenter : IPresenter<ISimulationOutputMappingView>, ILatchable, IListener<ObservedDataAddedToAnalysableEvent>,
+   public interface ISimulationOutputMappingPresenter : IPresenter<ISimulationOutputMappingView>, ILatchable,
+      IListener<ObservedDataAddedToAnalysableEvent>,
       IListener<ObservedDataRemovedFromAnalysableEvent>
    {
       void SetSimulation(ISimulation simulation);
@@ -34,6 +35,7 @@ namespace OSPSuite.Presentation.Presenters
       void Refresh();
 
       void InitializeSimulation(ISimulation simulation);
+      void UpdateSimulationOutputMappings(SimulationOutputMappingDTO simulationOutputMappingDTO);
    }
 
    public class SimulationOutputMappingPresenter : AbstractSubPresenter<ISimulationOutputMappingView, ISimulationOutputMappingPresenter>,
@@ -91,39 +93,21 @@ namespace OSPSuite.Presentation.Presenters
 
          //first add all the existing OutputMappings in the Simulation
          _simulation.OutputMappings.All.Each(x => _listOfOutputMappingDTOs.Add(mapFrom(x)));
-         
+
          //get all available observed data, and create new mappings for the unmapped
          foreach (var observedData in getAllAvailableObservedData())
          {
             if (_listOfOutputMappingDTOs.Any(x => x.ObservedData.Equals(observedData))) continue;
 
-            var newOutputMapping = new OutputMapping();
-            mapMatchingOutput(observedData, newOutputMapping);
-
+            //add only a DTO with the observed data with Output == null
+            var newOutputMapping = new OutputMapping
+            {
+               WeightedObservedData = new WeightedObservedData(observedData)
+            };
             var newOutputMappingDTO = mapFrom(newOutputMapping);
 
-            _simulation.OutputMappings.Add(newOutputMapping);
             _listOfOutputMappingDTOs.Add(newOutputMappingDTO);
          }
-      }
-
-      private void mapMatchingOutput(DataRepository observedData, OutputMapping newOutputMapping)
-      {
-         var pathCache = _entitiesInSimulationRetriever.OutputsFrom(_simulation);
-         var matchingOutputPath = pathCache.Keys.FirstOrDefault(x => observedDataMatchesOutput(observedData, x));
-
-         if (matchingOutputPath == null)
-         {
-            newOutputMapping.WeightedObservedData = new WeightedObservedData(observedData);
-            return;
-         }
-
-         var matchingOutput = pathCache[matchingOutputPath];
-
-         newOutputMapping.OutputSelection =
-            new SimulationQuantitySelection(_simulation, new QuantitySelection(matchingOutputPath, matchingOutput.QuantityType));
-         newOutputMapping.WeightedObservedData = new WeightedObservedData(observedData);
-         newOutputMapping.Scaling = DefaultScalingFor(matchingOutput);
       }
 
       public IEnumerable<SimulationQuantitySelectionDTO> AllAvailableOutputs
@@ -159,9 +143,16 @@ namespace OSPSuite.Presentation.Presenters
          _simulation = simulation;
       }
 
+      public void UpdateSimulationOutputMappings(SimulationOutputMappingDTO simulationOutputMappingDTO)
+      {
+         if (!_simulation.OutputMappings.OutputMappingsUsingDataRepository(simulationOutputMappingDTO.ObservedData).Any())
+            _simulation.OutputMappings.Add(simulationOutputMappingDTO.Mapping);
+      }
+
       public void RemoveOutputMapping(SimulationOutputMappingDTO outputMappingDTO)
       {
          outputMappingDTO.Output = null;
+         _simulation.OutputMappings.Remove(outputMappingDTO.Mapping);
          _view.RefreshGrid();
       }
 
@@ -189,15 +180,6 @@ namespace OSPSuite.Presentation.Presenters
 
       public void Handle(ObservedDataRemovedFromAnalysableEvent eventToHandle)
       {
-         foreach (var removedObservedData in eventToHandle.ObservedData)
-         {
-            var outputsMatchingDeletedObservedData = _simulation.OutputMappings.OutputMappingsUsingDataRepository(removedObservedData).ToList();
-            foreach (var outputMapping in outputsMatchingDeletedObservedData)
-            {
-               _simulation.OutputMappings.Remove(outputMapping);
-            }
-         }
-
          updateOutputMappingList();
       }
    }

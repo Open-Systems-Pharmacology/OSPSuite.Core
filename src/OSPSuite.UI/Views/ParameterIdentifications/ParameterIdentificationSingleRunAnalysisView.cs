@@ -1,6 +1,6 @@
-﻿using OSPSuite.DataBinding;
+﻿using DevExpress.XtraLayout.Utils;
+using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
-using DevExpress.XtraLayout.Utils;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -55,6 +55,5 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          layoutItemChartControl.TextVisible = false;
          layoutItemRunSelection.TextVisible = false;
       }
-
    }
 }
