@@ -1,6 +1,7 @@
 ﻿using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.R.Domain;
 
 namespace OSPSuite.R.Services
 {
@@ -18,9 +19,10 @@ namespace OSPSuite.R.Services
       }
       public IModelCoreSimulation Clone(IModelCoreSimulation simulationToClone)
       {
-         var model = _cloneManagerForModel.CloneModel(simulationToClone.Model);
-         var simulation = _cloneManagerForModel.Clone(simulationToClone);
-         simulation.Model = model;
+         var simulation = new ModelCoreSimulation
+         {
+            Model = _cloneManagerForModel.CloneModel(simulationToClone.Model)
+         };
 
          // Initialize a BuildConfiguration with only SimulationSettings because some of the properties to complete the initialization are required
          // None of the other properties are required to complete the simulation
