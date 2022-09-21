@@ -32,6 +32,11 @@ namespace OSPSuite.R.Domain
          // nothing to do in R
       }
 
+      public Simulation()
+      {
+         CoreSimulation = new ModelCoreSimulation();
+      }
+
       public Simulation(IModelCoreSimulation modelCoreSimulation)
       {
          CoreSimulation = modelCoreSimulation;

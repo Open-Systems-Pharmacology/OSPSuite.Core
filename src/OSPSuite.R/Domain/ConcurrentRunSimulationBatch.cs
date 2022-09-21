@@ -23,9 +23,9 @@ namespace OSPSuite.R.Domain
 
       internal int MissingBatchesCount => Math.Max(0, SimulationBatchRunValues.Count - _simulationBatches.Count);
 
-      public ConcurrentRunSimulationBatch(Simulation simulation, SimulationBatchOptions simulationBatchOptions)
+      public ConcurrentRunSimulationBatch(IModelCoreSimulation simulation, SimulationBatchOptions simulationBatchOptions)
       {
-         Simulation = Api.GetSimulationTask().Clone(simulation.CoreSimulation);
+         Simulation = Api.GetSimulationTask().Clone(simulation);
          SimulationBatchOptions = simulationBatchOptions;
          Id = generateId();
       }

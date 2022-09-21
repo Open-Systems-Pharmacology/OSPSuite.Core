@@ -57,7 +57,7 @@ namespace OSPSuite.R.Services
    {
       private ConcurrentRunSimulationBatch _concurrentRunSimulationBatch;
       private ConcurrencyManagerResult<SimulationResults>[] _results;
-      private Simulation _simulation;
+      private IModelCoreSimulation _simulation;
       private readonly List<string> _ids = new List<string>();
       private readonly List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
 
