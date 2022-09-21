@@ -25,7 +25,7 @@ namespace OSPSuite.R.Domain
 
       public ConcurrentRunSimulationBatch(IModelCoreSimulation simulation, SimulationBatchOptions simulationBatchOptions)
       {
-         Simulation = simulation;
+         Simulation = Api.GetSimulationTask().Clone(simulation);
          SimulationBatchOptions = simulationBatchOptions;
          Id = generateId();
       }
