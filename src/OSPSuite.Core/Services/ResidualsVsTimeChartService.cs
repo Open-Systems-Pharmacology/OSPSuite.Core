@@ -1,7 +1,7 @@
 using System;
-using OSPSuite.Core.Domain;
 using System.Collections.Generic;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -18,13 +18,13 @@ namespace OSPSuite.Core.Services
 
       /// <summary>
       ///    Adds the zero marker curve to the <paramref name="chart" /> where the residuals equal zero. The zero line
-      /// will begin at <paramref name="minObservedDataTime" /> and end at <paramref name="maxObservedDataTime" />
+      ///    will begin at <paramref name="minObservedDataTime" /> and end at <paramref name="maxObservedDataTime" />
       /// </summary>
       DataRepository AddZeroMarkerCurveToChart(AnalysisChartWithLocalRepositories chart, float minObservedDataTime, float maxObservedDataTime);
 
       /// <summary>
       ///    Creates the DataRepository for the given residuals <paramref name="outputResidual" /> with given
-      /// <paramref name="id" /> and <paramref name="repositoryName" /> 
+      ///    <paramref name="id" /> and <paramref name="repositoryName" />
       /// </summary>
       DataRepository CreateScatterDataRepository(string id, string repositoryName, OutputResiduals outputResidual);
    }
@@ -40,12 +40,12 @@ namespace OSPSuite.Core.Services
          _dimensionFactory = dimensionFactory;
       }
 
-
       public string Zero => ZERO;
+
       public DataRepository AddZeroMarkerCurveToChart(AnalysisChartWithLocalRepositories chart, float minObservedDataTime, float maxObservedDataTime)
       {
          var markerRepository = createMarkerRepository(minObservedDataTime, maxObservedDataTime, chart);
-         AddCurvesFor(markerRepository,(column, curve) =>
+         AddCurvesFor(markerRepository, (column, curve) =>
          {
             curve.UpdateMarkerCurve(ZERO);
             _markerCurveId = curve.Id;
@@ -53,11 +53,12 @@ namespace OSPSuite.Core.Services
 
          return markerRepository;
       }
+
       private DataRepository createMarkerRepository(float minObservedDataTime, float maxObservedDataTime, AnalysisChartWithLocalRepositories chart)
       {
          var id = $"{chart.Id}-{ZERO}";
          var dataRepository = createEmptyRepository(id, ZERO, ZERO);
-         dataRepository.BaseGrid.Values = new[] { minObservedDataTime, maxObservedDataTime};
+         dataRepository.BaseGrid.Values = new[] { minObservedDataTime, maxObservedDataTime };
          dataRepository.FirstDataColumn().Values = new[] { 0f, 0f };
          return dataRepository;
       }

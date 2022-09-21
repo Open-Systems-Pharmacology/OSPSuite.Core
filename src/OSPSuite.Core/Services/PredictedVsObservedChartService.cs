@@ -37,7 +37,7 @@ namespace OSPSuite.Core.Services
       ///    Sets the <paramref name="chart" /> x axis dimension to the most occurring dimension from
       ///    <paramref name="observationColumns" /> and adjusts the axes names
       /// </summary>
-      void ConfigureAxesDimensionAndTitle(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart);
+      void ConfigureAxesDimensionAndTitle(IReadOnlyList<DataColumn> observationColumns, PredictedVsObservedChart chart);
    }
 
    public class PredictedVsObservedChartService : IPredictedVsObservedChartService
@@ -94,16 +94,16 @@ namespace OSPSuite.Core.Services
          observationColumns.Each(observationColumn => plotPredictedVsObserved(observationColumn, calculationColumn, chart, action));
       }
 
-      public void ConfigureAxesDimensionAndTitle(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart)
+      public void ConfigureAxesDimensionAndTitle(IReadOnlyList<DataColumn> observationColumns, PredictedVsObservedChart chart)
       {
          var xAxis = chart.AxisBy(AxisTypes.X);
          var yAxis = chart.AxisBy(AxisTypes.Y);
 
-         var defaultDimension = mostFrequentDimension(observationColumns.ToList());
+         var defaultDimension = mostFrequentDimension(observationColumns);
 
          setAxisDimension(defaultDimension, chart, xAxis);
-         xAxis.Caption += Captions.ParameterIdentification.ObservedChartAxis + defaultDimension;
-         yAxis.Caption += Captions.ParameterIdentification.SimulatedChartAxis + defaultDimension;
+         xAxis.Caption = Captions.ParameterIdentification.ObservedChartAxis + defaultDimension;
+         yAxis.Caption = Captions.ParameterIdentification.SimulatedChartAxis + defaultDimension;
          chart.UpdateAxesVisibility();
       }
 

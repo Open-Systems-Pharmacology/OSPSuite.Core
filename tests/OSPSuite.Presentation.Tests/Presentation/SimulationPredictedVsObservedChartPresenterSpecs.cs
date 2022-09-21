@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.Core.Chart;
-using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Chart.Simulations;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -45,6 +44,12 @@ namespace OSPSuite.Presentation.Presentation
       private IProjectRetriever _projectRetriever;
       protected ChartPresenterContext _chartPresenterContext;
       protected DataRepository _simulationData;
+      protected OutputMappings _outputMappings;
+      protected IQuantity _quantityWithNoDimension;
+      protected IQuantity _quantityWithConcentration;
+      protected DataColumn _noDimensionDataColumn;
+      protected DataColumn _concentrationDataColumn;
+      protected DataColumn _concentrationColumnForSimulation;
 
       protected override void Context()
       {
@@ -89,23 +94,6 @@ namespace OSPSuite.Presentation.Presentation
          _optimizationRunResult = new OptimizationRunResult
             { ResidualsResult = _residualResults, SimulationResults = new List<DataRepository> { _simulationData } };
          _parameterIdentificationRunResult.BestResult = _optimizationRunResult;
-
-         sut.InitializeAnalysis(_predictedVsObservedChart);
-      }
-   }
-
-   public class When_the_results_have_preferred_and_non_preferred_dimensions : concern_for_SimulationPredictedVsObservedChartPresenter
-   {
-      private OutputMappings _outputMappings;
-      private IQuantity _quantityWithNoDimension;
-      private IQuantity _quantityWithConcentration;
-      private DataColumn _noDimensionDataColumn;
-      private DataColumn _concentrationDataColumn;
-      private DataColumn _concentrationColumnForSimulation;
-
-      protected override void Context()
-      {
-         base.Context();
          _noDimensionColumnForSimulation.Dimension = DomainHelperForSpecs.NoDimension();
          _concentrationColumnForSimulation = DomainHelperForSpecs.ConcentrationColumnForSimulation("Simulation", _simulationData.BaseGrid);
          _simulationData.Add(_concentrationColumnForSimulation);
@@ -149,10 +137,12 @@ namespace OSPSuite.Presentation.Presentation
          _calculationData.Add(_concentrationDataColumn);
          A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(A<ISimulation>._)).Returns(new List<DataRepository>() { _calculationData });
 
-         //A.CallTo(() => _parameterIdentification.AllObservationColumnsFor(_noDimensionColumnForSimulation.QuantityInfo.PathAsString)).Returns(new List<DataColumn> { _noDimensionDataColumn, _concentrationDataColumn });
-         //A.CallTo(() => _parameterIdentification.AllObservedData).Returns(new[] { _calculationData });
+         sut.InitializeAnalysis(_predictedVsObservedChart);
       }
+   }
 
+   public class When_the_results_have_preferred_and_non_preferred_dimensions : concern_for_SimulationPredictedVsObservedChartPresenter
+   {
       protected override void Because()
       {
          sut.InitializeAnalysis(_predictedVsObservedChart, _simulation);
@@ -161,41 +151,16 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_x_axis_dimension_is_updated()
       {
-         A.CallTo(() => _predictedVsObservedService.ConfigureAxesDimensionAndTitle(A<IEnumerable<DataColumn>>.That.Contains(_calculationData.FirstDataColumn()),
+         A.CallTo(() => _predictedVsObservedService.ConfigureAxesDimensionAndTitle(
+            A<IReadOnlyList<DataColumn>>.That.Contains(_calculationData.FirstDataColumn()),
             _predictedVsObservedChart)).MustHaveHappened();
-      }
-
-      [Observation]
-      public void adds_curve_for_no_dimension_column()
-      {
-        // A.CallTo(() => _predictedVsObservedService.AddCurvesFor(A<IEnumerable<DataColumn>>.That.Contains(_noDimensionDataColumn),
-          //  _noDimensionColumnForSimulation, _predictedVsObservedChart, A<Action<DataColumn, Curve>>._)).MustHaveHappened();
-         A.CallTo(() => _predictedVsObservedService.AddCurvesFor(A<IEnumerable<DataColumn>>._,
-            A<DataColumn>._, _predictedVsObservedChart, A<Action<DataColumn, Curve>>._)).MustHaveHappened();
       }
 
       [Observation]
       public void adds_curve_for_concentration_column()
       {
-         A.CallTo(() => _predictedVsObservedService.AddCurvesFor(A<IEnumerable<DataColumn>>.That.Contains(_noDimensionDataColumn),
-            _concentrationColumnForSimulation, _predictedVsObservedChart, A<Action<DataColumn, Curve>>._)).MustHaveHappened();
-         A.CallTo(() => _predictedVsObservedService.AddCurvesFor(A<IEnumerable<DataColumn>>.That.Contains(_concentrationDataColumn),
-            _concentrationColumnForSimulation, _predictedVsObservedChart, A<Action<DataColumn, Curve>>._)).MustHaveHappened();
-      }
-   }
-
-   public class When_editing_a_simulation_with_results : concern_for_SimulationPredictedVsObservedChartPresenter
-   {
-      protected override void Because()
-      {
-         sut.InitializeAnalysis(_predictedVsObservedChart, _simulation);
-      }
-
-      [Observation]
-      public void should_call_the_chart_service_to_create_a_curve_for_each_simulation_output()
-      {
-         A.CallTo(() => _predictedVsObservedService.AddCurvesFor(A<IEnumerable<DataColumn>>._, _noDimensionColumnForSimulation,
-            A<ParameterIdentificationPredictedVsObservedChart>._, A<Action<DataColumn, Curve>>._)).MustHaveHappened();
+         A.CallTo(() => _predictedVsObservedService.AddCurvesFor(A<IEnumerable<DataColumn>>._,
+            _concentrationDataColumn, A<PredictedVsObservedChart>._, A<Action<DataColumn, Curve>>._)).MustHaveHappened();
       }
    }
 }

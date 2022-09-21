@@ -137,7 +137,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_x_axis_dimension_is_updated()
       {
-         A.CallTo(() => _predictedVsObservedService.ConfigureAxesDimensionAndTitle(A<IEnumerable<DataColumn>>.That.Contains(_observationData.FirstDataColumn()), _predictedVsObservedChart)).MustHaveHappened();
+         A.CallTo(() => _predictedVsObservedService.ConfigureAxesDimensionAndTitle(A<IReadOnlyList<DataColumn>>.That.Contains(_observationData.FirstDataColumn()), _predictedVsObservedChart)).MustHaveHappened();
       }
 
       [Observation]

@@ -36,9 +36,16 @@ namespace OSPSuite.Presentation.Presentation
       protected IDimensionFactory _dimensionFactory;
       protected ResidualsResult _residualResults;
       protected ResidualsVsTimeChartService _residualsVsTimeChartService;
-      private IChartEditorLayoutTask _chartEditorLayoutTask;
-      private IProjectRetriever _projectRetriever;
-      private ChartPresenterContext _chartPresenterContext;
+      protected IChartEditorLayoutTask _chartEditorLayoutTask;
+      protected IProjectRetriever _projectRetriever;
+      protected ChartPresenterContext _chartPresenterContext;
+      protected OutputResiduals _outputResiduals1;
+      protected OutputResiduals _outputResiduals3;
+      protected OutputResiduals _outputResiduals2;
+      protected OutputMapping _outputMapping1;
+      protected OutputMapping _outputMapping2;
+      protected OutputMapping _outputMapping3;
+      protected OutputMappings _outputMappings;
 
       protected IChartEditorPresenter ChartEditorPresenter => _chartEditorAndDisplayPresenter.EditorPresenter;
 
@@ -63,45 +70,15 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _chartPresenterContext.DimensionFactory).Returns(_dimensionFactory);
          A.CallTo(() => _chartPresenterContext.EditorLayoutTask).Returns(_chartEditorLayoutTask);
          A.CallTo(() => _chartPresenterContext.ProjectRetriever).Returns(_projectRetriever);
+         A.CallTo(() => _residualCalculatorFactory.CreateFor(A<ParameterIdentificationConfiguration>._)).Returns(_residualCalculator);
 
 
-         sut = new SimulationResidualVsTimeChartPresenter(_view, _chartPresenterContext, _observedDataRepository, _residualCalculatorFactory, _residualsVsTimeChartService);
+
 
          _residualVsTimeChart = new SimulationResidualVsTimeChart().WithAxes();
          _simulation = A.Fake<ISimulation>();
          _residualResults = new ResidualsResult();
 
-         A.CallTo(() => _residualCalculatorFactory.CreateFor(A<ParameterIdentificationConfiguration>._)).Returns(_residualCalculator);
-
-
-         /*
-         _parameterIdentificationRunResult = A.Fake<ParameterIdentificationRunResult>();
-         A.CallTo(() => _parameterIdentification.Results).Returns(new[] { _parameterIdentificationRunResult });
-
-        
-         _optimizationRunResult = new OptimizationRunResult { ResidualsResult = _residualResults };
-         _parameterIdentificationRunResult.BestResult = _optimizationRunResult;
-
-
-         A.CallTo(() => _parameterIdentification.MinObservedDataTime).Returns(10);
-         A.CallTo(() => _parameterIdentification.MaxObservedDataTime).Returns(50);
-*/
-      }
-   }
-
-   public class When_displaying_the_results_of_a_given_simulation_as_residual_vs_time : concern_for_SimulationResidualVsTimeChartPresenter
-   {
-      private OutputResiduals _outputResiduals1;
-      private OutputResiduals _outputResiduals3;
-      private OutputResiduals _outputResiduals2;
-      private OutputMapping _outputMapping1;
-      private OutputMapping _outputMapping2;
-      private OutputMapping _outputMapping3;
-      private OutputMappings _outputMappings;
-
-      protected override void Context()
-      {
-         base.Context();
          _outputMapping1 = A.Fake<OutputMapping>();
          _outputMapping2 = A.Fake<OutputMapping>();
          _outputMapping3 = A.Fake<OutputMapping>();
@@ -136,9 +113,12 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _simulation.OutputMappings).Returns(_outputMappings);
          A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(A<ISimulation>._)).Returns(new List<DataRepository>() { observation3, observation1, observation2 });
          A.CallTo(() => _residualCalculator.Calculate(A<DataRepository>._, A<List<OutputMapping>>._)).Returns(_residualResults);
-
+         sut = new SimulationResidualVsTimeChartPresenter(_view, _chartPresenterContext, _observedDataRepository, _residualCalculatorFactory, _residualsVsTimeChartService);
       }
+   }
 
+   public class When_displaying_the_results_of_a_given_simulation_as_residual_vs_time : concern_for_SimulationResidualVsTimeChartPresenter
+   {
       protected override void Because()
       {
          sut.InitializeAnalysis(_residualVsTimeChart, _simulation);
@@ -156,27 +136,6 @@ namespace OSPSuite.Presentation.Presentation
          _residualVsTimeChart.Curves.Count.ShouldBeEqualTo(_residualResults.AllOutputResiduals.Count + 1);
       }
 
-      [Observation]
-      public void all_observed_data_mapped_to_the_same_output_should_have_the_same_color()
-      {
-         _residualVsTimeChart.Curves.ElementAt(0).Color.ShouldBeEqualTo(_residualVsTimeChart.Curves.ElementAt(1).Color);
-      }
-
-      [Observation]
-      public void only_one_residual_scatter_curve_should_be_visible_in_legend_per_observed_data()
-      {
-         _residualVsTimeChart.Curves.ElementAt(0).VisibleInLegend.ShouldBeTrue();
-         _residualVsTimeChart.Curves.ElementAt(1).VisibleInLegend.ShouldBeFalse();
-      }
-
-      [Observation]
-      public void should_have_added_the_name_of_the_observed_data_to_the_output_path_as_one_before_last_item()
-      {
-         var firstCurve = _residualVsTimeChart.Curves.ElementAt(0);
-         var yData = firstCurve.yData;
-         var pathArray = yData.QuantityInfo.Path.ToArray();
-         pathArray[pathArray.Length - 2].ShouldBeEqualTo(_outputResiduals1.ObservedDataName);
-      }
    }
 
    public class When_clearing_the_simulation_residual_vs_time_chart_presenter : concern_for_SimulationResidualVsTimeChartPresenter
@@ -184,11 +143,10 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          base.Context();
-         //A.CallTo(() => _parameterIdentification.AllObservedData).Returns(new[] { DomainHelperForSpecs.ObservedData() });
          sut.InitializeAnalysis(_residualVsTimeChart, _simulation);
 
-         //only zero marker
-         _residualVsTimeChart.Curves.Count.ShouldBeEqualTo(1);
+         //residual results plus zero marker
+         _residualVsTimeChart.Curves.Count.ShouldBeEqualTo(_residualResults.AllOutputResiduals.Count + 1);
       }
 
       protected override void Because()
@@ -200,7 +158,7 @@ namespace OSPSuite.Presentation.Presentation
       public void should_remove_the_zero_maker_curve_that_was_added_to_the_chart()
       {
          //zero marker removed
-         _residualVsTimeChart.Curves.Count.ShouldBeEqualTo(0);
+         _residualVsTimeChart.Curves.Count.ShouldBeEqualTo(_residualResults.AllOutputResiduals.Count);
       }
    }
 }
