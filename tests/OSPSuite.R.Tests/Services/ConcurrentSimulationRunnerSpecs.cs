@@ -26,47 +26,6 @@ namespace OSPSuite.R.Services
       }
    }
 
-   public class When_adding_simulations_to_the_batch : concern_for_ConcurrentSimulationRunner
-   {
-      private ConcurrencyManagerResult<SimulationResults>[] _results;
-      private Simulation _simulation;
-      private ConcurrentRunSimulationBatch _concurrentRunSimulationBatch;
-
-      protected override void Context()
-      {
-         base.Context();
-         _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("Vehicle.pkml"));
-
-          
-         _concurrentRunSimulationBatch = new ConcurrentRunSimulationBatch
-         (
-            _simulation,
-            new SimulationBatchOptions
-            {
-               VariableParameters = new[]
-               {
-                  "Organism|Tumor|Intracellular|k1",
-                  "Organism|Tumor|Intracellular|k2"
-               }
-            }
-         );
-         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues {ParameterValues = new[] {1e-4, 1e-4}});
-         sut.AddSimulationBatch(_concurrentRunSimulationBatch);
-         _simulation.SimulationSettings.OutputSchema.Clear();
-      }
-
-      protected override void Because()
-      {
-         _results = sut.RunConcurrently();
-      }
-
-      [Observation]
-      public void should_run_the_simulations()
-      {
-         _results.First().Result.AllIndividualResults.Count.ShouldBeEqualTo(1);
-      }
-   }
-
    public class When_running_simulations_concurrently : concern_for_ConcurrentSimulationRunner
    {
       private ConcurrencyManagerResult<SimulationResults>[] _results;
@@ -98,7 +57,7 @@ namespace OSPSuite.R.Services
    {
       private ConcurrentRunSimulationBatch _concurrentRunSimulationBatch;
       private ConcurrencyManagerResult<SimulationResults>[] _results;
-      private IModelCoreSimulation _simulation;
+      private Simulation _simulation;
       private readonly List<string> _ids = new List<string>();
       private readonly List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
 
