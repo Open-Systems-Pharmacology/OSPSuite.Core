@@ -21,10 +21,10 @@ namespace OSPSuite.Core.Domain.Services
       public void UpdateSimulationPersistable(IModelCoreSimulation simulation)
       {
          var allQuantities = _entitiesInSimulationRetriever.QuantitiesFrom(simulation);
-         updatePersitable(allQuantities, simulation.OutputSelections);
+         updatePersistable(allQuantities, simulation.OutputSelections);
       }
 
-      private void updatePersitable(PathCache<IQuantity> allQuantities, OutputSelections outputSelections)
+      private void updatePersistable(PathCache<IQuantity> allQuantities, OutputSelections outputSelections)
       {
          SetPersistable(allQuantities, false);
 

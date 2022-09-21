@@ -16,7 +16,7 @@ namespace OSPSuite.R.Services
 {
    internal class SimulationBatchRunOptions : IWithId
    {
-      public IModelCoreSimulation Simulation { get; set; }
+      // public IModelCoreSimulation Simulation { get; set; }
       public SimulationBatch SimulationBatch { get; set; }
       public SimulationBatchRunValues SimulationBatchRunValues { get; set; }
       public SimulationBatchOptions SimulationBatchOptions { get; set; }
@@ -140,7 +140,7 @@ namespace OSPSuite.R.Services
 
             var simulationBatchRunOptionsList = _listOfConcurrentRunSimulationBatch.SelectMany(sb => sb.SimulationBatchRunValues.Select((rv, i) => new SimulationBatchRunOptions
             {
-               Simulation = sb.Simulation,
+               // Simulation = sb.Simulation,
                SimulationBatch = sb.SimulationBatches.ElementAt(i),
                SimulationBatchOptions = sb.SimulationBatchOptions,
                SimulationBatchRunValues = rv
