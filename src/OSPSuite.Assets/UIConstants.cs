@@ -904,6 +904,8 @@ namespace OSPSuite.Assets
          public static readonly string RemoveLLOQMode = "Remove data below LLOQ";
          public static readonly string TimeProfileAnalysis = "Time Profile";
          public static readonly string PredictedVsObservedAnalysis = "Predicted vs. Observed";
+         public static readonly string SimulatedChartAxis = "Simulated ";
+         public static readonly string ObservedChartAxis = "Observed ";
          public static readonly string ResidualsVsTimeAnalysis = "Residuals vs. Time";
          public static readonly string ResidualHistogramAnalysis = "Histogram of Residuals";
          public static readonly string RunResultsProperties = "Parameter Identification Run Properties";

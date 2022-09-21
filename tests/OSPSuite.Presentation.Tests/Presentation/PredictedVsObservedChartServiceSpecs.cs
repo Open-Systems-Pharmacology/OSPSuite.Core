@@ -9,9 +9,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
-using OSPSuite.Core.Services.ParameterIdentifications;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Extensions;
 
@@ -77,13 +75,15 @@ namespace OSPSuite.Presentation.Presentation
       {
          base.Context();
          _simulationColumn.Dimension = _fractionObservationColumn.Dimension;
-         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString)).Returns(new List<DataColumn> {_fractionObservationColumn});
-         sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn, _predictedVsObservedChart);
+         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString))
+            .Returns(new List<DataColumn> { _fractionObservationColumn });
+         sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn,
+            _predictedVsObservedChart);
       }
 
       protected override void Because()
       {
-         sut.AddIdentityCurves(new[] {_concentrationObservationColumn, _fractionObservationColumn}, _predictedVsObservedChart);
+         sut.AddIdentityCurves(new[] { _concentrationObservationColumn, _fractionObservationColumn }, _predictedVsObservedChart);
       }
 
       [Observation]
@@ -101,11 +101,13 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString)).Returns(new List<DataColumn> {_concentrationObservationColumn});
-         _baseGrid = new BaseGrid("basegrid", DomainHelperForSpecs.TimeDimensionForSpecs()) {Values = new[] {0f}};
-         _allObservations = new List<DataColumn> {new DataColumn("name", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)};
-         _allObservations.First().Values = new[] {1f};
-         sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn, _predictedVsObservedChart);
+         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString))
+            .Returns(new List<DataColumn> { _concentrationObservationColumn });
+         _baseGrid = new BaseGrid("basegrid", DomainHelperForSpecs.TimeDimensionForSpecs()) { Values = new[] { 0f } };
+         _allObservations = new List<DataColumn> { new DataColumn("name", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid) };
+         _allObservations.First().Values = new[] { 1f };
+         sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn,
+            _predictedVsObservedChart);
       }
 
       protected override void Because()
@@ -135,20 +137,20 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          base.Context();
-         _concentrationBaseGrid = new BaseGrid("basegrid", DomainHelperForSpecs.TimeDimensionForSpecs()) {Values = new[] {0f}};
-         _fractionBaseGrid = new BaseGrid("basegrid", DomainHelperForSpecs.TimeDimensionForSpecs()) {Values = new[] {0f}};
-         _secondFractionBaseGrid = new BaseGrid("basegrid", DomainHelperForSpecs.TimeDimensionForSpecs()) {Values = new[] {0f}};
+         _concentrationBaseGrid = new BaseGrid("basegrid", DomainHelperForSpecs.TimeDimensionForSpecs()) { Values = new[] { 0f } };
+         _fractionBaseGrid = new BaseGrid("basegrid", DomainHelperForSpecs.TimeDimensionForSpecs()) { Values = new[] { 0f } };
+         _secondFractionBaseGrid = new BaseGrid("basegrid", DomainHelperForSpecs.TimeDimensionForSpecs()) { Values = new[] { 0f } };
 
-         var concentrationColumn = new DataColumn("name", _concentrationDimensionForSpecs, _concentrationBaseGrid) {Values = new[] {1f}};
-         _concentrationRepository = new DataRepository {concentrationColumn};
+         var concentrationColumn = new DataColumn("name", _concentrationDimensionForSpecs, _concentrationBaseGrid) { Values = new[] { 1f } };
+         _concentrationRepository = new DataRepository { concentrationColumn };
 
-         var fractionColumn = new DataColumn("name", _fractionDimensionForSpecs, _fractionBaseGrid) {Values = new[] {1f}};
-         _fractionRepository = new DataRepository {fractionColumn};
+         var fractionColumn = new DataColumn("name", _fractionDimensionForSpecs, _fractionBaseGrid) { Values = new[] { 1f } };
+         _fractionRepository = new DataRepository { fractionColumn };
 
-         var secondFractionColumn = new DataColumn("name", _fractionDimensionForSpecs, _secondFractionBaseGrid) {Values = new[] {1f}};
-         _secondFractionRepository = new DataRepository {secondFractionColumn};
+         var secondFractionColumn = new DataColumn("name", _fractionDimensionForSpecs, _secondFractionBaseGrid) { Values = new[] { 1f } };
+         _secondFractionRepository = new DataRepository { secondFractionColumn };
 
-         _allObservations = new List<DataColumn> {concentrationColumn, fractionColumn, secondFractionColumn};
+         _allObservations = new List<DataColumn> { concentrationColumn, fractionColumn, secondFractionColumn };
 
          sut.AddCurvesFor(_allObservations, concentrationColumn, _predictedVsObservedChart);
       }
@@ -156,7 +158,7 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Because()
       {
          sut.AddIdentityCurves(_allObservations, _predictedVsObservedChart);
-         sut.SetXAxisDimension(_allObservations, _predictedVsObservedChart);
+         sut.ConfigureAxesDimensionAndTitle(_allObservations, _predictedVsObservedChart);
       }
 
       [Observation]
@@ -168,8 +170,11 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_chart_should_contain_identity_lines_for_each_dimension()
       {
-         _predictedVsObservedChart.Curves.Count(curve => Equals(curve.Name, "Identity") && Equals(curve.xDimension.DisplayName, _fractionDimensionForSpecs.DisplayName)).ShouldBeEqualTo(1);
-         _predictedVsObservedChart.Curves.Count(curve => Equals(curve.Name, "Identity") && Equals(curve.xDimension.DisplayName, _concentrationDimensionForSpecs.DisplayName)).ShouldBeEqualTo(1);
+         _predictedVsObservedChart.Curves
+            .Count(curve => Equals(curve.Name, "Identity") && Equals(curve.xDimension.DisplayName, _fractionDimensionForSpecs.DisplayName))
+            .ShouldBeEqualTo(1);
+         _predictedVsObservedChart.Curves.Count(curve =>
+            Equals(curve.Name, "Identity") && Equals(curve.xDimension.DisplayName, _concentrationDimensionForSpecs.DisplayName)).ShouldBeEqualTo(1);
       }
    }
 
@@ -188,16 +193,18 @@ namespace OSPSuite.Presentation.Presentation
          _secondColumnForSimulation.Dimension = SecondColumnDimension();
          _simulationData.Add(_secondColumnForSimulation);
 
-         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString)).Returns(new List<DataColumn> {_concentrationObservationColumn});
-         sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn, _predictedVsObservedChart);
-         sut.AddIdentityCurves(new[] {_concentrationObservationColumn, _secondColumnForObservations}, _predictedVsObservedChart);
+         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString))
+            .Returns(new List<DataColumn> { _concentrationObservationColumn });
+         sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn,
+            _predictedVsObservedChart);
+         sut.AddIdentityCurves(new[] { _concentrationObservationColumn, _secondColumnForObservations }, _predictedVsObservedChart);
       }
 
       protected abstract IDimension SecondColumnDimension();
 
       protected override void Because()
       {
-         sut.SetXAxisDimension(new[] {_concentrationObservationColumn, _secondColumnForObservations}, _predictedVsObservedChart);
+         sut.ConfigureAxesDimensionAndTitle(new[] { _concentrationObservationColumn, _secondColumnForObservations }, _predictedVsObservedChart);
       }
    }
 
@@ -212,8 +219,10 @@ namespace OSPSuite.Presentation.Presentation
       public void only_preferred_axes_are_visible()
       {
          _predictedVsObservedChart.Axes.Count.ShouldBeEqualTo(3);
-         _predictedVsObservedChart.Axes.Count(axis => axis.Visible && axis.Dimension == DomainHelperForSpecs.ConcentrationDimensionForSpecs()).ShouldBeEqualTo(2);
-         _predictedVsObservedChart.Axes.Count(axis => !axis.Visible && axis.Dimension != DomainHelperForSpecs.ConcentrationDimensionForSpecs()).ShouldBeEqualTo(1);
+         _predictedVsObservedChart.Axes.Count(axis => axis.Visible && axis.Dimension == DomainHelperForSpecs.ConcentrationDimensionForSpecs())
+            .ShouldBeEqualTo(2);
+         _predictedVsObservedChart.Axes.Count(axis => !axis.Visible && axis.Dimension != DomainHelperForSpecs.ConcentrationDimensionForSpecs())
+            .ShouldBeEqualTo(1);
       }
    }
 
@@ -234,8 +243,10 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void only_non_preferred_are_visible()
       {
-         _predictedVsObservedChart.Axes.Count(axis => axis.Visible && axis.Dimension == DomainHelperForSpecs.LengthDimensionForSpecs()).ShouldBeEqualTo(2);
-         _predictedVsObservedChart.Axes.Count(axis => !axis.Visible && axis.Dimension != DomainHelperForSpecs.LengthDimensionForSpecs()).ShouldBeEqualTo(1);
+         _predictedVsObservedChart.Axes.Count(axis => axis.Visible && axis.Dimension == DomainHelperForSpecs.LengthDimensionForSpecs())
+            .ShouldBeEqualTo(2);
+         _predictedVsObservedChart.Axes.Count(axis => !axis.Visible && axis.Dimension != DomainHelperForSpecs.LengthDimensionForSpecs())
+            .ShouldBeEqualTo(1);
       }
 
       [Observation]
@@ -275,13 +286,15 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          base.Context();
-         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString)).Returns(new List<DataColumn> {_concentrationObservationColumn});
+         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString))
+            .Returns(new List<DataColumn> { _concentrationObservationColumn });
       }
 
       protected override void Because()
       {
-         sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn, _predictedVsObservedChart);
-         sut.AddIdentityCurves(new[] {_concentrationObservationColumn}, _predictedVsObservedChart);
+         sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn,
+            _predictedVsObservedChart);
+         sut.AddIdentityCurves(new[] { _concentrationObservationColumn }, _predictedVsObservedChart);
       }
 
       [Observation]

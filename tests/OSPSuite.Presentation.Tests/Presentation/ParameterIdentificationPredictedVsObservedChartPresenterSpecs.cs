@@ -13,7 +13,6 @@ using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
-using OSPSuite.Core.Services.ParameterIdentifications;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
@@ -138,7 +137,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_x_axis_dimension_is_updated()
       {
-         A.CallTo(() => _predictedVsObservedService.SetXAxisDimension(A<IEnumerable<DataColumn>>.That.Contains(_observationData.FirstDataColumn()), _predictedVsObservedChart)).MustHaveHappened();
+         A.CallTo(() => _predictedVsObservedService.ConfigureAxesDimensionAndTitle(A<IReadOnlyList<DataColumn>>.That.Contains(_observationData.FirstDataColumn()), _predictedVsObservedChart)).MustHaveHappened();
       }
 
       [Observation]
