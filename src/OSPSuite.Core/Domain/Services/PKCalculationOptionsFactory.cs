@@ -27,13 +27,18 @@ namespace OSPSuite.Core.Domain.Services
          var applicationEndTimes = new List<float>(applicationStartTimes.Skip(1)) {endTime};
 
 
-         for (int i = 0; i < applicationStartTimes.Length; i++)
+         for (var i = 0; i < applicationStartTimes.Length; i++)
          {
             var dosingInterval = new DosingInterval
             {
                StartValue = applicationStartTimes[i],
                EndValue = applicationEndTimes[i]
             };
+
+            //as soon as one dosing interval is not valid, it means that the end time might be on exactly the start time of an application.
+            //Everything after this is by construction invalid so we do not consider further interval for the calculations
+            if (!dosingInterval.IsValid)
+               break;
 
             options.AddInterval(dosingInterval);
          }
@@ -58,10 +63,7 @@ namespace OSPSuite.Core.Domain.Services
 
          options.TotalDrugMassPerBodyWeight = drugMassPerBodyWeightFor(totalDrugMass, bodyWeight);
 
-         options.DosingIntervals.Each((x, i) =>
-         {
-            x.DrugMassPerBodyWeight = drugMassPerBodyWeightFor(allApplicationParametersOrderedByStartTime[i].DrugMass, bodyWeight);
-         });
+         options.DosingIntervals.Each((x, i) => { x.DrugMassPerBodyWeight = drugMassPerBodyWeightFor(allApplicationParametersOrderedByStartTime[i].DrugMass, bodyWeight); });
       }
 
       private double? drugMassPerBodyWeightFor(IParameter drugMass, double? bodyWeight)
