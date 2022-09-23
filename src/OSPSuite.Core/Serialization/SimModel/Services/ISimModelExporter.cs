@@ -27,13 +27,13 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
       ///    Returns a SimModel representation of the given <paramref name="modelCoreSimulation" /> using the
       ///    <paramref name="simModelExportMode" />
       /// </summary>
-      string ExportSimModelXml(IModelCoreSimulation modelCoreSimulation, SimModelExportMode simModelExportMode);
+      string ExportSimModelXml(IModelCoreSimulation modelCoreSimulation, SimModelExportMode simModelExportMode, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.Default);
 
       /// <summary>
       ///    Creates a SimModel representation of the given <paramref name="modelCoreSimulation" /> and save it to the file
       ///    given as parameter using the full export
       /// </summary>
-      void ExportSimModelXml(IModelCoreSimulation modelCoreSimulation, string fileName);
+      void ExportSimModelXml(IModelCoreSimulation modelCoreSimulation, string fileName, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.Default);
 
       /// <summary>
       ///    Export ODE system of the current simulation as pure matlab code

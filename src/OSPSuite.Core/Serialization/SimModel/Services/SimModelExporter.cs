@@ -18,14 +18,14 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          _exportSerializer = exportSerializer;
       }
 
-      public string ExportSimModelXml(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode)
+      public string ExportSimModelXml(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.Default)
       {
-         return _exportSerializer.Serialize(createSimulationExport(simulation, simModelExportMode));
+         return _exportSerializer.Serialize(createSimulationExport(simulation, simModelExportMode, simulationExportCreatorMode));
       }
 
-      public void ExportSimModelXml(IModelCoreSimulation simulation, string fileName)
+      public void ExportSimModelXml(IModelCoreSimulation simulation, string fileName, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.Default)
       {
-         var element = _exportSerializer.SerializeElement(createSimulationExport(simulation, SimModelExportMode.Full));
+         var element = _exportSerializer.SerializeElement(createSimulationExport(simulation, SimModelExportMode.Full, simulationExportCreatorMode));
          XmlHelper.SaveXmlElementToFile(element, fileName);
       }
 
@@ -49,7 +49,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          if (!Directory.Exists(outputFolder))
             Directory.CreateDirectory(outputFolder);
 
-         var simModelXml = ExportSimModelXml(modelCoreSimulation, SimModelExportMode.Full);
+         var simModelXml = ExportSimModelXml(modelCoreSimulation, SimModelExportMode.Full, SimulationExportCreatorMode.Default);
          var simModelSimulation = new Simulation();
 
          //SimModel optionally caches XML used for loading a simulation as string.
@@ -68,10 +68,10 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          return EnumHelper.ParseValue<CodeExportMode>(formulaExportMode.ToString());
       }
 
-      private SimulationExport createSimulationExport(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode)
+      private SimulationExport createSimulationExport(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode, SimulationExportCreatorMode simulationExportCreatorMode)
       {
          var simulationExportCreator = _simulationExportCreatorFactory.Create();
-         var simulationExport = simulationExportCreator.CreateExportFor(simulation.Model, simModelExportMode);
+         var simulationExport = simulationExportCreator.CreateExportFor(simulation.Model, simModelExportMode, simulationExportCreatorMode);
          simulationExport.AddSimulationConfiguration(simulation.SimulationSettings);
          return simulationExport;
       }

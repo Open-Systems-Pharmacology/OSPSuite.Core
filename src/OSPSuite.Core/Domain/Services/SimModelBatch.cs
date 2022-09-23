@@ -47,10 +47,10 @@ namespace OSPSuite.Core.Domain.Services
             simulationResultsName: _simulationResultsName);
       }
 
-      private Simulation createAndFinalizeSimulation(IReadOnlyList<string> variableParameterPaths,
-         IReadOnlyList<string> variableMoleculePaths)
+      private Simulation createAndFinalizeSimulation(IReadOnlyList<string> variableParameterPaths, IReadOnlyList<string> variableMoleculePaths)
       {
-         var simulationExport = CreateSimulationExport(_modelCoreSimulation, SimModelExportMode.Optimized);
+         var simulationExport = CreateSimulationExport(_modelCoreSimulation, SimModelExportMode.Optimized, 
+            TreatConstantMoleculesAsParameters ? SimulationExportCreatorMode.Default : SimulationExportCreatorMode.KeepConstantMolecules);
          var simulation = CreateSimulation(simulationExport, x =>
          {
             x.CheckForNegativeValues = false;
@@ -165,6 +165,8 @@ namespace OSPSuite.Core.Domain.Services
       /// the SimModel simulation is loaded from XML.
       /// </summary>
       public bool KeepXMLNodeInSimModelSimulation { get; set; }
+
+      public bool TreatConstantMoleculesAsParameters { get; set; } = true;
 
       #region Disposable properties
 

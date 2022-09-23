@@ -134,7 +134,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_model_core_exporter_is_used_to_export_the_simulation()
       {
-         A.CallTo(() => _simModelExporter.ExportSimModelXml(_modelCoreSimulation, A<string>._)).MustHaveHappened();
+         A.CallTo(() => _simModelExporter.ExportSimModelXml(_modelCoreSimulation, A<string>._, SimulationExportCreatorMode.Default)).MustHaveHappened();
       }
 
       [Observation]

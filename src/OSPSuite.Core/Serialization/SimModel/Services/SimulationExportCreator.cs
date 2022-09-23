@@ -14,17 +14,23 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Serialization.SimModel.Services
 {
+   public enum SimulationExportCreatorMode
+   {
+      Default,
+      KeepConstantMolecules
+   }
+
    public interface ISimulationExportCreator
    {
       /// <summary>
       ///    Create the sim model export model using the Full mode
       /// </summary>
-      SimulationExport CreateExportFor(IModel model);
+      SimulationExport CreateExportFor(IModel model, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.Default);
 
       /// <summary>
       ///    Create the sim model export model using the export mode given as parameter
       /// </summary>
-      SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode);
+      SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.Default);
    }
 
    public class SimulationExportCreator :
@@ -43,6 +49,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
       private readonly ITableFormulaToTableFormulaExportMapper _tableFormulaExportMapper;
       private readonly IConcentrationBasedFormulaUpdater _concentrationBasedFormulaUpdater;
       private IReadOnlyList<IProcess> _allProcesses;
+      private SimulationExportCreatorMode _simulationExportCreatorMode = SimulationExportCreatorMode.Default;
 
       public SimulationExportCreator(
          IObjectPathFactory objectPathFactory, 
@@ -54,15 +61,16 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          _concentrationBasedFormulaUpdater = concentrationBasedFormulaUpdater;
       }
 
-      public SimulationExport CreateExportFor(IModel model)
+      public SimulationExport CreateExportFor(IModel model, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.Default)
       {
-         return CreateExportFor(model, SimModelExportMode.Full);
+         return CreateExportFor(model, SimModelExportMode.Full, simulationExportCreatorMode);
       }
 
-      public SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode)
+      public SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.Default)
       {
          try
          {
+            _simulationExportCreatorMode = simulationExportCreatorMode;
             _modelExport = new SimulationExport();
             _idMap = new Cache<string, int> {{Constants.TIME, 0}};
             _exportMode = exportMode;
@@ -157,7 +165,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
 
       private bool canBeExportedAsParameter(IMoleculeAmount moleculeAmount)
       {
-         if (isSystemVariable(moleculeAmount))
+         if (_simulationExportCreatorMode == SimulationExportCreatorMode.KeepConstantMolecules || isSystemVariable(moleculeAmount))
             return false;
 
          return !_allProcesses.Any(x => x.Uses(moleculeAmount));
