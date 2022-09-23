@@ -6,7 +6,7 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core
 {
-   public abstract class concern_for_PKAnalysesTaskIntegration : ContextWithLoadedSimulation<PKCalculationOptionsFactory>
+   public abstract class concern_for_PKCalculationOptionsFactory : ContextWithLoadedSimulation<PKCalculationOptionsFactory>
    {
       protected IModelCoreSimulation _simulation;
 
@@ -17,10 +17,10 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_calculating_the_PK_analyses_for_a_multiple_simulation_with_three_application_but_setting_the_end_time_to_the_start_time_of_third_application : concern_for_PKAnalysesTaskIntegration
+   public class When_creating_the_PK_calculation_options_for_a_multiple_simulation_with_three_applications : concern_for_PKCalculationOptionsFactory
    {
       [Observation]
-      public void should_treat_the_application_has_multiple_application()
+      public void should_treat_the_application_has_multiple_application_when_setting_the_end_time_to_start_time_of_last_application()
       {
          _simulation.SimulationSettings.OutputSchema.Intervals.Last().EndTime.Value = 48 * 60; //48 hours
          var pkOptions = new PKCalculationOptionsFactory().CreateFor(_simulation, "drug");
@@ -28,7 +28,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_treat_the_application_has_multiple_application_if_the_time_of_application_is_not_exactly_time_of_last_application()
+      public void should_treat_the_application_has_multiple_application_when_setting_the_end_time_before_the_start_time_of_last_application()
       {
          _simulation.SimulationSettings.OutputSchema.Intervals.Last().EndTime.Value = 47 * 60; //47 hours
          var pkOptions = new PKCalculationOptionsFactory().CreateFor(_simulation, "drug");
