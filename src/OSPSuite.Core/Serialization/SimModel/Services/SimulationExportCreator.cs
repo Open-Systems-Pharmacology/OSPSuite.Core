@@ -16,8 +16,15 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
 {
    public enum SimulationExportCreatorMode
    {
-      Default,
-      KeepConstantMolecules
+      /// <summary>
+      /// This option allows optimization of constant molecules to parameters
+      /// </summary>
+      TreatConstantMoleculeAsParameter,
+
+      /// <summary>
+      /// This option prevents the optimization of constant molecules to parameters
+      /// </summary>
+      ConstantMoleculeStaysMolecule
    }
 
    public interface ISimulationExportCreator
@@ -25,12 +32,12 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
       /// <summary>
       ///    Create the sim model export model using the Full mode
       /// </summary>
-      SimulationExport CreateExportFor(IModel model, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.Default);
+      SimulationExport CreateExportFor(IModel model, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter);
 
       /// <summary>
       ///    Create the sim model export model using the export mode given as parameter
       /// </summary>
-      SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.Default);
+      SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter);
    }
 
    public class SimulationExportCreator :
@@ -49,7 +56,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
       private readonly ITableFormulaToTableFormulaExportMapper _tableFormulaExportMapper;
       private readonly IConcentrationBasedFormulaUpdater _concentrationBasedFormulaUpdater;
       private IReadOnlyList<IProcess> _allProcesses;
-      private SimulationExportCreatorMode _simulationExportCreatorMode = SimulationExportCreatorMode.Default;
+      private SimulationExportCreatorMode _simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter;
 
       public SimulationExportCreator(
          IObjectPathFactory objectPathFactory, 
@@ -61,12 +68,12 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          _concentrationBasedFormulaUpdater = concentrationBasedFormulaUpdater;
       }
 
-      public SimulationExport CreateExportFor(IModel model, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.Default)
+      public SimulationExport CreateExportFor(IModel model, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter)
       {
          return CreateExportFor(model, SimModelExportMode.Full, simulationExportCreatorMode);
       }
 
-      public SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.Default)
+      public SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter)
       {
          try
          {
@@ -165,7 +172,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
 
       private bool canBeExportedAsParameter(IMoleculeAmount moleculeAmount)
       {
-         if (_simulationExportCreatorMode == SimulationExportCreatorMode.KeepConstantMolecules || isSystemVariable(moleculeAmount))
+         if (_simulationExportCreatorMode == SimulationExportCreatorMode.ConstantMoleculeStaysMolecule || isSystemVariable(moleculeAmount))
             return false;
 
          return !_allProcesses.Any(x => x.Uses(moleculeAmount));
