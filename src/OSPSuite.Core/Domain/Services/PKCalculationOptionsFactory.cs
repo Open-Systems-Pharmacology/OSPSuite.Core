@@ -63,7 +63,7 @@ namespace OSPSuite.Core.Domain.Services
 
          options.TotalDrugMassPerBodyWeight = drugMassPerBodyWeightFor(totalDrugMass, bodyWeight);
 
-         options.DosingIntervals.Each((x, i) => { x.DrugMassPerBodyWeight = drugMassPerBodyWeightFor(allApplicationParametersOrderedByStartTime[i].DrugMass, bodyWeight); });
+         options.DosingIntervals.Each((x, i) => x.DrugMassPerBodyWeight = drugMassPerBodyWeightFor(allApplicationParametersOrderedByStartTime[i].DrugMass, bodyWeight));
       }
 
       private double? drugMassPerBodyWeightFor(IParameter drugMass, double? bodyWeight)
