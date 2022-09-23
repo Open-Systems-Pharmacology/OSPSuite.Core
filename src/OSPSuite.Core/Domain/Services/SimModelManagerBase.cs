@@ -23,7 +23,8 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Create the xml for simmodel based on the <paramref name="simulation" />
       /// </summary>
-      protected string CreateSimulationExport(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.Default)
+      protected string CreateSimulationExport(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode, 
+         SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter)
       {
          return _simModelExporter.ExportSimModelXml(simulation, simModelExportMode, simulationExportCreatorMode);
       }
@@ -31,7 +32,8 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Create the xml for simmodel based on the <paramref name="simulation" />
       /// </summary>
-      protected Task<string> CreateSimulationExportAsync(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.Default)
+      protected Task<string> CreateSimulationExportAsync(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode, 
+         SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter)
       {
          return Task.Run(() => _simModelExporter.ExportSimModelXml(simulation, simModelExportMode, simulationExportCreatorMode));
       }

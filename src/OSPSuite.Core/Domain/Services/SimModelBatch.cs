@@ -50,7 +50,7 @@ namespace OSPSuite.Core.Domain.Services
       private Simulation createAndFinalizeSimulation(IReadOnlyList<string> variableParameterPaths, IReadOnlyList<string> variableMoleculePaths)
       {
          var simulationExport = CreateSimulationExport(_modelCoreSimulation, SimModelExportMode.Optimized, 
-            TreatConstantMoleculesAsParameters ? SimulationExportCreatorMode.TreatConstantSpeciesAsParameter : SimulationExportCreatorMode.ConstantSpeciesStaysSpecies);
+            TreatConstantMoleculesAsParameters ? SimulationExportCreatorMode.TreatConstantMoleculeAsParameter : SimulationExportCreatorMode.ConstantMoleculeStaysMolecule);
          var simulation = CreateSimulation(simulationExport, x =>
          {
             x.CheckForNegativeValues = false;

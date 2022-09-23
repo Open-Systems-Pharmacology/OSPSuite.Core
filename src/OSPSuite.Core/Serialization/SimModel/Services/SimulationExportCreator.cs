@@ -37,7 +37,8 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
       /// <summary>
       ///    Create the sim model export model using the export mode given as parameter
       /// </summary>
-      SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter);
+      SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode, 
+         SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter);
    }
 
    public class SimulationExportCreator :
@@ -73,7 +74,8 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          return CreateExportFor(model, SimModelExportMode.Full, simulationExportCreatorMode);
       }
 
-      public SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter)
+      public SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode, 
+         SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter)
       {
          try
          {

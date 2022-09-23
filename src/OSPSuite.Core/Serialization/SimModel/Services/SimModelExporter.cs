@@ -18,12 +18,14 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          _exportSerializer = exportSerializer;
       }
 
-      public string ExportSimModelXml(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.Default)
+      public string ExportSimModelXml(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode, 
+         SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter)
       {
          return _exportSerializer.Serialize(createSimulationExport(simulation, simModelExportMode, simulationExportCreatorMode));
       }
 
-      public void ExportSimModelXml(IModelCoreSimulation simulation, string fileName, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.Default)
+      public void ExportSimModelXml(IModelCoreSimulation simulation, string fileName, 
+         SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter)
       {
          var element = _exportSerializer.SerializeElement(createSimulationExport(simulation, SimModelExportMode.Full, simulationExportCreatorMode));
          XmlHelper.SaveXmlElementToFile(element, fileName);
@@ -49,7 +51,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          if (!Directory.Exists(outputFolder))
             Directory.CreateDirectory(outputFolder);
 
-         var simModelXml = ExportSimModelXml(modelCoreSimulation, SimModelExportMode.Full, SimulationExportCreatorMode.Default);
+         var simModelXml = ExportSimModelXml(modelCoreSimulation, SimModelExportMode.Full, SimulationExportCreatorMode.TreatConstantMoleculeAsParameter);
          var simModelSimulation = new Simulation();
 
          //SimModel optionally caches XML used for loading a simulation as string.
