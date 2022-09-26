@@ -6,13 +6,13 @@ namespace OSPSuite.Core.Serialization.SimModel.DTO
    {
       public EventExport()
       {
-         AssignmentList = new List<AssigmentExport>();
+         AssignmentList = new List<AssignmentExport>();
       }
 
       public bool OneTime { get; set; }
       public int Id { set; get; }
       public string EntityId { set; get; }
       public int ConditionFormulaId { get; set; }
-      public IList<AssigmentExport> AssignmentList { get; set; }
+      public IList<AssignmentExport> AssignmentList { get; set; }
    }
 }

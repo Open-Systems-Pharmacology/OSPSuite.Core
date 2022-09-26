@@ -53,6 +53,40 @@ namespace OSPSuite.R.Services
       }
    }
 
+   public class When_applying_start_values_for_all_molecule_paths : concern_for_ConcurrentSimulationRunner
+   {
+      private Simulation _simulation;
+      private IContainerTask _containerTask;
+      private string[] _allMoleculePaths;
+      private IEnumerable<double> _moleculesStartValues;
+      private ConcurrentRunSimulationBatch _concurrentRunSimulationBatch;
+      private ConcurrencyManagerResult<SimulationResults>[] _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml"));
+         _containerTask = Api.GetContainerTask();
+         _allMoleculePaths = _containerTask.AllMoleculesPathsIn(_simulation);
+         _moleculesStartValues = _allMoleculePaths.Select(x => _containerTask.GetValueByPath(_simulation, x, true));
+
+         _concurrentRunSimulationBatch = new ConcurrentRunSimulationBatch(_simulation, new SimulationBatchOptions { VariableMolecules = _allMoleculePaths });
+         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { InitialValues = _moleculesStartValues.ToArray() });
+         sut.AddSimulationBatch(_concurrentRunSimulationBatch);
+      }
+
+      protected override void Because()
+      {
+         _result = sut.RunConcurrently();
+      }
+
+      [Observation]
+      public void should_complete_without_error()
+      {
+         _result.Length.ShouldBeEqualTo(1);
+      }
+   }
+
    public class When_running_a_batch_simulation_run_concurrently : concern_for_ConcurrentSimulationRunner
    {
       private ConcurrentRunSimulationBatch _concurrentRunSimulationBatch;
@@ -91,18 +125,18 @@ namespace OSPSuite.R.Services
       {
          _simulationBatchRunValues.Add(new SimulationBatchRunValues
          {
-            InitialValues = new[] {10.0},
-            ParameterValues = new[] {3.5, 0.53}
+            InitialValues = new[] { 10.0 },
+            ParameterValues = new[] { 3.5, 0.53 }
          });
          _simulationBatchRunValues.Add(new SimulationBatchRunValues
          {
-            InitialValues = new[] {9.0},
-            ParameterValues = new[] {3.4, 0.50}
+            InitialValues = new[] { 9.0 },
+            ParameterValues = new[] { 3.4, 0.50 }
          });
          _simulationBatchRunValues.Add(new SimulationBatchRunValues
          {
-            InitialValues = new[] {10.5},
-            ParameterValues = new[] {3.6, 0.55}
+            InitialValues = new[] { 10.5 },
+            ParameterValues = new[] { 3.6, 0.55 }
          });
          _concurrentRunSimulationBatch.AddSimulationBatchRunValues(_simulationBatchRunValues[0]);
          _concurrentRunSimulationBatch.AddSimulationBatchRunValues(_simulationBatchRunValues[1]);
@@ -152,11 +186,11 @@ namespace OSPSuite.R.Services
 
          _parValues1 = new SimulationBatchRunValues
          {
-            ParameterValues = new[] {3.5, 0.53}
+            ParameterValues = new[] { 3.5, 0.53 }
          };
          _parValues2 = new SimulationBatchRunValues
          {
-            ParameterValues = new[] {3.4, 0.50}
+            ParameterValues = new[] { 3.4, 0.50 }
          };
 
          _simulationBatch.AddSimulationBatchRunValues(_parValues1);
@@ -236,15 +270,15 @@ namespace OSPSuite.R.Services
 
          _parValues1 = new SimulationBatchRunValues
          {
-            ParameterValues = new[] {3.5, 0.53}
+            ParameterValues = new[] { 3.5, 0.53 }
          };
          _parValues2 = new SimulationBatchRunValues
          {
-            ParameterValues = new[] {3.5, 0.53}
+            ParameterValues = new[] { 3.5, 0.53 }
          };
          _parValues3 = new SimulationBatchRunValues
          {
-            ParameterValues = new[] {3.5, 0.53}
+            ParameterValues = new[] { 3.5, 0.53 }
          };
 
          _simulationBatch1.AddSimulationBatchRunValues(_parValues1);
@@ -292,7 +326,7 @@ namespace OSPSuite.R.Services
 
          _parValues = new SimulationBatchRunValues
          {
-            ParameterValues = new[] {0.0002}
+            ParameterValues = new[] { 0.0002 }
          };
 
 
@@ -362,7 +396,7 @@ namespace OSPSuite.R.Services
          var asyncRes = res[0].Result;
          _containerTask.SetValueByPath(_simulation, "DERMAL_APPLICATION_AREA|skin_compartment|SC_skin_sublayer|SC_total_thickness", 0.0002, throwIfNotFound: true);
          _containerTask.SetValueByPath(_simulation, "DERMAL_APPLICATION_AREA|skin_compartment|Hydrated SC", 1, throwIfNotFound: true);
-         var expectedResults = _simulationRunner.Run(new SimulationRunArgs {Simulation = _simulation});
+         var expectedResults = _simulationRunner.Run(new SimulationRunArgs { Simulation = _simulation });
          res[0].Succeeded.ShouldBeTrue();
          asyncRes.Count.ShouldBeEqualTo(1);
          asyncRes.AllValuesFor("DERMAL_APPLICATION_AREA|permeant|Vehicle_observer").Last().ShouldBeEqualTo(
@@ -423,7 +457,7 @@ namespace OSPSuite.R.Services
          var asyncRes = res[0].Result;
          _containerTask.SetValueByPath(_simulation, "DERMAL_APPLICATION_AREA|skin_compartment|SC_skin_sublayer|SC_total_thickness", 0.0002, throwIfNotFound: true);
          _containerTask.SetValueByPath(_simulation, "DERMAL_APPLICATION_AREA|skin_compartment|Hydrated SC", 1, throwIfNotFound: true);
-         var expectedResults = _simulationRunner.Run(new SimulationRunArgs {Simulation = _simulation});
+         var expectedResults = _simulationRunner.Run(new SimulationRunArgs { Simulation = _simulation });
          res[0].Succeeded.ShouldBeTrue();
          asyncRes.Count.ShouldBeEqualTo(1);
          asyncRes.AllValuesFor("DERMAL_APPLICATION_AREA|permeant|Vehicle_observer").Last().ShouldBeEqualTo(
