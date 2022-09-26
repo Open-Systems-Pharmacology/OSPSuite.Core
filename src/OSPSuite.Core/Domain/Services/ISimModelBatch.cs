@@ -49,10 +49,5 @@ namespace OSPSuite.Core.Domain.Services
       //C++ export also depends on the original XML string at the moment (not quite clear why).
       //Because per default XML is NOT cached, we need to set the KeepXML-option to true BEFORE loading a simulation.
       bool KeepXMLNodeInSimModelSimulation { get; set; }
-
-      /// <summary>
-      /// If true (the default) then molecules that do not vary are optimized to parameters
-      /// </summary>
-      bool TreatConstantMoleculesAsParameters { get; set; }
    }
 }

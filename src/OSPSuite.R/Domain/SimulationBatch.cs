@@ -88,7 +88,6 @@ namespace OSPSuite.R.Domain
          //C++ export also depends on the original XML string at the moment (not quite clear why).
          //Because per default XML is NOT cached, we need to set the KeepXML-option to true BEFORE loading a simulation.
          _simModelBatch.KeepXMLNodeInSimModelSimulation = true;
-         _simModelBatch.TreatConstantMoleculesAsParameters = false;
          _simModelBatch.InitializeWith(simulation, simulationBatchOptions.Parameters, simulationBatchOptions.Molecules, simulationBatchOptions.CalculateSensitivity);
          //This needs to be done after initialization of the SimModelBatch so that we can check parameters
          validate(simulationBatchOptions);

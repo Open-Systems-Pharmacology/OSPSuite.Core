@@ -14,31 +14,12 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Serialization.SimModel.Services
 {
-   public enum SimulationExportCreatorMode
-   {
-      /// <summary>
-      /// This option allows optimization of constant molecules to parameters
-      /// </summary>
-      TreatConstantMoleculeAsParameter,
-
-      /// <summary>
-      /// This option prevents the optimization of constant molecules to parameters
-      /// </summary>
-      ConstantMoleculeStaysMolecule
-   }
-
    public interface ISimulationExportCreator
    {
       /// <summary>
-      ///    Create the sim model export model using the Full mode
-      /// </summary>
-      SimulationExport CreateExportFor(IModel model, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter);
-
-      /// <summary>
       ///    Create the sim model export model using the export mode given as parameter
       /// </summary>
-      SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode, 
-         SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter);
+      SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode = SimModelExportMode.Full, IReadOnlyList<string> variableMoleculePaths = null);
    }
 
    public class SimulationExportCreator :
@@ -57,29 +38,26 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
       private readonly ITableFormulaToTableFormulaExportMapper _tableFormulaExportMapper;
       private readonly IConcentrationBasedFormulaUpdater _concentrationBasedFormulaUpdater;
       private IReadOnlyList<IProcess> _allProcesses;
-      private SimulationExportCreatorMode _simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter;
+      private IReadOnlyList<string> _variableMoleculePaths;
+      private readonly IEntityPathResolver _entityPathResolver;
 
       public SimulationExportCreator(
          IObjectPathFactory objectPathFactory, 
          ITableFormulaToTableFormulaExportMapper tableFormulaExportMapper,
-         IConcentrationBasedFormulaUpdater concentrationBasedFormulaUpdater)
+         IConcentrationBasedFormulaUpdater concentrationBasedFormulaUpdater,
+         IEntityPathResolver entityPathResolver)
       {
          _objectPathFactory = objectPathFactory;
          _tableFormulaExportMapper = tableFormulaExportMapper;
          _concentrationBasedFormulaUpdater = concentrationBasedFormulaUpdater;
+         _entityPathResolver = entityPathResolver;
       }
 
-      public SimulationExport CreateExportFor(IModel model, SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter)
-      {
-         return CreateExportFor(model, SimModelExportMode.Full, simulationExportCreatorMode);
-      }
-
-      public SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode, 
-         SimulationExportCreatorMode simulationExportCreatorMode = SimulationExportCreatorMode.TreatConstantMoleculeAsParameter)
+      public SimulationExport CreateExportFor(IModel model, SimModelExportMode exportMode = SimModelExportMode.Full, IReadOnlyList<string> variableMoleculePaths = null)
       {
          try
          {
-            _simulationExportCreatorMode = simulationExportCreatorMode;
+            _variableMoleculePaths = variableMoleculePaths ?? new List<string>() ;
             _modelExport = new SimulationExport();
             _idMap = new Cache<string, int> {{Constants.TIME, 0}};
             _exportMode = exportMode;
@@ -174,10 +152,15 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
 
       private bool canBeExportedAsParameter(IMoleculeAmount moleculeAmount)
       {
-         if (_simulationExportCreatorMode == SimulationExportCreatorMode.ConstantMoleculeStaysMolecule || isSystemVariable(moleculeAmount))
+         if (isMoleculeInVariableMoleculePathsList(moleculeAmount) || isSystemVariable(moleculeAmount))
             return false;
 
          return !_allProcesses.Any(x => x.Uses(moleculeAmount));
+      }
+
+      private bool isMoleculeInVariableMoleculePathsList(IMoleculeAmount moleculeAmount)
+      {
+         return _variableMoleculePaths.Contains(_entityPathResolver.PathFor(moleculeAmount));
       }
 
       private void createVariableExport(IMoleculeAmount moleculeAmount)
@@ -245,7 +228,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          foreach (var assignment in eventToVisit.Assignments)
          {
             var alternateFormula = assignment.Formula;
-            var assigmentExport = new AssigmentExport
+            var assigmentExport = new AssignmentExport
             {
                ObjectId = idFor(assignment.ChangedEntity),
                NewFormulaId = mapFormula(assignment, alternateFormula).Id,
