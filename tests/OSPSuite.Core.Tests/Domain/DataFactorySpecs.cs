@@ -11,7 +11,6 @@ namespace OSPSuite.Core.Domain
    public abstract class concern_for_DataFactory : ContextSpecification<DataFactory>
    {
       private IDimensionFactory _dimensionFactory;
-      private IObjectPathFactory _objectPathFactory;
       private IDisplayUnitRetriever _displayUnitRetriever;
       private IDataRepositoryTask _dataRepositoryTask;
 
@@ -19,11 +18,10 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _dimensionFactory = A.Fake<IDimensionFactory>();
-         _objectPathFactory = A.Fake<IObjectPathFactory>();
          _displayUnitRetriever = A.Fake<IDisplayUnitRetriever>();
          _dataRepositoryTask = A.Fake<IDataRepositoryTask>();
 
-         sut = new DataFactory(_dimensionFactory, _objectPathFactory, _displayUnitRetriever, _dataRepositoryTask);
+         sut = new DataFactory(_dimensionFactory, _displayUnitRetriever, _dataRepositoryTask);
       }
    }
 
