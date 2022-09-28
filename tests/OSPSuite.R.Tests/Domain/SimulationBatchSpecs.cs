@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Extensions;
 using OSPSuite.R.Services;
 using OSPSuite.SimModel;
+using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.R.Domain
@@ -26,6 +27,50 @@ namespace OSPSuite.R.Domain
          _simulationBatchFactory = Api.GetSimulationBatchFactory();
 
          _simulation = _simulationPersister.LoadSimulation(_simulationFile);
+      }
+   }
+
+   public class When_running_a_batch_simulation_with_an_error : concern_for_SimulationBatch
+   {
+      private SimulationBatchOptions _simulationBatchOptions;
+      private SimulationResults _results;
+      private SimulationBatchRunValues _simulationBatchRunValues;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+
+         // Force an error during simulation run
+         _simulation.SimulationSettings.Solver.MxStep = 3;
+         _simulationBatchOptions = new SimulationBatchOptions
+         {
+            VariableMolecules = new[]
+            {
+               new[] {"Organism", "Kidney", "Intracellular", "Caffeine"}.ToPathString()
+            },
+
+            VariableParameters = new[]
+            {
+               new[] {"Organism", "Liver", "Volume"}.ToPathString(),
+               new[] {"Organism", "Hematocrit"}.ToPathString(),
+            }
+         };
+         sut = _simulationBatchFactory.Create(_simulation, _simulationBatchOptions);
+      }
+
+      protected override void Because()
+      {
+         _simulationBatchRunValues = new SimulationBatchRunValues
+         {
+            InitialValues = new[] { 10.0 },
+            ParameterValues = new[] { 3.0, 0.53 }
+         };
+      }
+
+      [Observation]
+      public void should_throw_an_exception_during_run()
+      {
+         The.Action(() => sut.Run(_simulationBatchRunValues)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 

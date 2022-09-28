@@ -101,6 +101,8 @@ namespace OSPSuite.R.Services
          base.GlobalContext();
          _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml"));
 
+         // Force an error during simulation run
+         _simulation.SimulationSettings.Solver.MxStep = 3;
          _concurrentRunSimulationBatch = new ConcurrentRunSimulationBatch
          (
             _simulation,
@@ -124,7 +126,7 @@ namespace OSPSuite.R.Services
 
       protected override void Because()
       {
-         _simulation.SimulationSettings.Solver.MxStep = 3;
+         
          _simulationBatchRunValues.Add(new SimulationBatchRunValues
          {
             InitialValues = new[] { 10.0 },
@@ -138,13 +140,9 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
-      public void should_throw_exception_when_the_simulation_run_fails()
+      public void should_return_a_result_with_success_set_to_false()
       {
-         var id = _ids.First();
-         var simulationBatch = Api.GetSimulationBatchFactory().Create(_simulation, _concurrentRunSimulationBatch.SimulationBatchOptions);
-            
-         The.Action(() => simulationBatch.Run(_simulationBatchRunValues.FirstOrDefault(v => v.Id == id)))
-            .ShouldThrowAn<OSPSuiteException>();
+         _results.All(x => x.Succeeded).ShouldBeFalse();
       }
    }
 

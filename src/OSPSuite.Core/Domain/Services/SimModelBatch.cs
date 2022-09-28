@@ -82,19 +82,31 @@ namespace OSPSuite.Core.Domain.Services
             _simModelSimulation.RunSimulation();
             var hasResults = simulationHasResults(_simModelSimulation);
 
-            return new SimulationRunResults(success: hasResults, warnings: WarningsFrom(_simModelSimulation), results: getResults(),
-               error: hasResults ? null : Error.SimulationDidNotProduceResults);
+            return createSimulationResults();
          }
          catch (Exception e)
          {
-            return new SimulationRunResults(success: false, warnings: WarningsFrom(_simModelSimulation), results: new DataRepository(),
-               error: e.FullMessage());
+            return createSimulationResults(e.FullMessage());
          }
          finally
          {
             _parameterValueCache.Clear();
             _initialValueCache.Clear();
          }
+      }
+
+      SimulationRunResults createSimulationResults(string errorFromException = null)
+      {
+         var hasResults = simulationHasResults(_simModelSimulation);
+         var warnings = WarningsFrom(_simModelSimulation);
+         var error = errorFromException ?? (hasResults ? null : Error.SimulationDidNotProduceResults);
+         if (error == null)
+         {
+            return new SimulationRunResults(success: true, warnings, results: getResults());
+         }
+
+         //error
+         return new SimulationRunResults(false, warnings, new DataRepository(), error);
       }
 
       private bool simulationHasResults(Simulation simModelSimulation)
