@@ -8,6 +8,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.R.Domain;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.R.Services
 {
@@ -84,6 +85,66 @@ namespace OSPSuite.R.Services
       public void should_complete_without_error()
       {
          _result.Length.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_running_a_batch_simulation_with_exception : concern_for_ConcurrentSimulationRunner
+   {
+      private ConcurrentRunSimulationBatch _concurrentRunSimulationBatch;
+      private ConcurrencyManagerResult<SimulationResults>[] _results;
+      private IModelCoreSimulation _simulation;
+      private readonly List<string> _ids = new List<string>();
+      private readonly List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml"));
+
+         _concurrentRunSimulationBatch = new ConcurrentRunSimulationBatch
+         (
+            _simulation,
+            new SimulationBatchOptions
+            {
+               VariableMolecules = new[]
+               {
+                  new[] { "Organism", "Kidney", "Intracellular", "Caffeine" }.ToPathString()
+               },
+
+               VariableParameters = new[]
+               {
+                  new[] { "Organism", "Liver", "Volume" }.ToPathString(),
+                  new[] { "Organism", "Hematocrit" }.ToPathString(),
+               }
+            }
+         );
+
+         sut.AddSimulationBatch(_concurrentRunSimulationBatch);
+      }
+
+      protected override void Because()
+      {
+         _simulation.SimulationSettings.Solver.MxStep = 3;
+         _simulationBatchRunValues.Add(new SimulationBatchRunValues
+         {
+            InitialValues = new[] { 10.0 },
+            ParameterValues = new[] { 3.5, 0.53 }
+         });
+
+         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(_simulationBatchRunValues[0]);
+
+         _ids.AddRange(_concurrentRunSimulationBatch.SimulationBatchRunValues.Select(x => x.Id));
+         _results = sut.RunConcurrently();
+      }
+
+      [Observation]
+      public void should_throw_exception_when_the_simulation_run_fails()
+      {
+         var id = _ids.First();
+         var simulationBatch = Api.GetSimulationBatchFactory().Create(_simulation, _concurrentRunSimulationBatch.SimulationBatchOptions);
+            
+         The.Action(() => simulationBatch.Run(_simulationBatchRunValues.FirstOrDefault(v => v.Id == id)))
+            .ShouldThrowAn<OSPSuiteException>();
       }
    }
 

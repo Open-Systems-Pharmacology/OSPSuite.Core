@@ -1644,6 +1644,8 @@ namespace OSPSuite.Assets
          }
       }
 
+      public static string SimulationDidNotProduceResults = "Simulation did not produce results";
+
       public static string DuplicatedIndividualResultsForId(int individualId) => $"Individual results for individual with id '{individualId}' were defined more than once!";
 
       public static string DuplicatedPKParameterSensitivityFor(string id) => $"PKParameter sensitivity results for '{id}' were defined more than once!";

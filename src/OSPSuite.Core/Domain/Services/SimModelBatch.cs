@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.SimModel;
@@ -79,7 +80,10 @@ namespace OSPSuite.Core.Domain.Services
          {
             updateSimulationValues();
             _simModelSimulation.RunSimulation();
-            return new SimulationRunResults(success: true, warnings: WarningsFrom(_simModelSimulation), results: getResults());
+            var hasResults = simulationHasResults(_simModelSimulation);
+
+            return new SimulationRunResults(success: hasResults, warnings: WarningsFrom(_simModelSimulation), results: getResults(),
+               error: hasResults ? null : Error.SimulationDidNotProduceResults);
          }
          catch (Exception e)
          {
@@ -91,6 +95,11 @@ namespace OSPSuite.Core.Domain.Services
             _parameterValueCache.Clear();
             _initialValueCache.Clear();
          }
+      }
+
+      private bool simulationHasResults(Simulation simModelSimulation)
+      {
+         return simModelSimulation.AllValues.Any();
       }
 
       public void UpdateParameterValue(string parameterPath, double value) => _parameterValueCache[parameterPath] = value;
