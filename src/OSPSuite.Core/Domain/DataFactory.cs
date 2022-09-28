@@ -30,19 +30,16 @@ namespace OSPSuite.Core.Domain
 
    public class DataFactory : IDataFactory
    {
-      private readonly IObjectPathFactory _objectPathFactory;
       private readonly IDisplayUnitRetriever _displayUnitRetriever;
       private readonly IDataRepositoryTask _dataRepositoryTask;
       private readonly IDimensionFactory _dimensionFactory;
 
       public DataFactory(
          IDimensionFactory dimensionFactory,
-         IObjectPathFactory objectPathFactory,
          IDisplayUnitRetriever displayUnitRetriever,
          IDataRepositoryTask dataRepositoryTask)
       {
          _dimensionFactory = dimensionFactory;
-         _objectPathFactory = objectPathFactory;
          _displayUnitRetriever = displayUnitRetriever;
          _dataRepositoryTask = dataRepositoryTask;
       }
@@ -50,13 +47,13 @@ namespace OSPSuite.Core.Domain
       public DataRepository CreateRepository(IModelCoreSimulation simulation, Simulation simModelSimulation, string repositoryName = DEFAULT_SIMULATION_RESULTS_NAME)
       {
          var repository = new DataRepository().WithName(repositoryName);
-         var allPersitableQuantities = new Cache<string, IQuantity>(q => _objectPathFactory.CreateAbsoluteObjectPath(q).ToString(), x => null);
+         var allPersitableQuantities = new Cache<string, IQuantity>(q => q.Id, x => null);
          allPersitableQuantities.AddRange(simulation.Model.Root.GetAllChildren<IQuantity>(x => x.Persistable));
 
          var time = createTimeGrid(simModelSimulation.SimulationTimes);
          foreach (var quantityValue in simModelSimulation.AllValues)
          {
-            var quantity = allPersitableQuantities[quantityValue.Path];
+            var quantity = allPersitableQuantities[quantityValue.EntityId];
 
             if (quantity == null)
                continue;
