@@ -323,4 +323,34 @@ namespace OSPSuite.Presentation.Presentation
          _predictedVsObservedChart.Curves.Count.ShouldBeEqualTo(2);
       }
    }
+
+   public class When_adding_deviation_lines_to_a_chart : concern_for_PredictedVsObservedChartService
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString))
+            .Returns(new List<DataColumn> { _concentrationObservationColumn });
+      }
+
+      protected override void Because()
+      {
+         sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn,
+            _predictedVsObservedChart);
+         sut.AddDeviationLine(1, _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(),  _predictedVsObservedChart, 0);
+      }
+
+      [Observation]
+      public void two_deviation_lines_should_have_been_added()
+      {
+         _predictedVsObservedChart.Curves.Count.ShouldBeEqualTo(3);
+      }
+
+      [Observation]
+      public void deviation_lines_should_be_named_correctly()
+      {
+         _predictedVsObservedChart.Curves.Count(curve => curve.Name.Equals("1-fold deviation")).ShouldBeEqualTo(2);
+      }
+
+   }
 }

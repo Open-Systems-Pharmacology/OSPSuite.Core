@@ -133,7 +133,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       {
          base.Clear();
          _identityRepositories.Each(x => Chart.RemoveCurvesForDataRepository(x));
-         //_deviationLineRepositories.Each(x => Chart.RemoveCurvesForDataRepository(x));
+         _deviationLineRepositories.Each(x => Chart.RemoveCurvesForDataRepository(x));
       }
 
       private static bool isCalculationOrCalculationAuxiliaryColumn(DataColumn column)
