@@ -100,19 +100,11 @@ namespace OSPSuite.Core.Domain.Services
          var hasResults = simulationHasResults(_simModelSimulation);
          var warnings = WarningsFrom(_simModelSimulation);
          var error = errorFromException ?? (hasResults ? null : Error.SimulationDidNotProduceResults);
-         if (error == null)
-         {
-            return new SimulationRunResults(success: true, warnings, results: getResults());
-         }
 
-         //error
-         return new SimulationRunResults(false, warnings, new DataRepository(), error);
+         return new SimulationRunResults(success: error == null, warnings, getResults(), error);
       }
 
-      private bool simulationHasResults(Simulation simModelSimulation)
-      {
-         return simModelSimulation.AllValues.Any();
-      }
+      private bool simulationHasResults(Simulation simModelSimulation) => simModelSimulation.AllValues.Any();
 
       public void UpdateParameterValue(string parameterPath, double value) => _parameterValueCache[parameterPath] = value;
 

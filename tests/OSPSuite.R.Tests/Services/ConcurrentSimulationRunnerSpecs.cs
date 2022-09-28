@@ -101,8 +101,6 @@ namespace OSPSuite.R.Services
          base.GlobalContext();
          _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml"));
 
-         // Force an error during simulation run
-         _simulation.SimulationSettings.Solver.MxStep = 3;
          _concurrentRunSimulationBatch = new ConcurrentRunSimulationBatch
          (
             _simulation,
@@ -133,7 +131,15 @@ namespace OSPSuite.R.Services
             ParameterValues = new[] { 3.5, 0.53 }
          });
 
+         // Force an error during simulation run because ParameterValues vector does not have enough values
+         _simulationBatchRunValues.Add(new SimulationBatchRunValues
+         {
+            InitialValues = new[] { 10.0 },
+            ParameterValues = new[] { 3.5 }
+         });
+
          _concurrentRunSimulationBatch.AddSimulationBatchRunValues(_simulationBatchRunValues[0]);
+         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(_simulationBatchRunValues[1]);
 
          _ids.AddRange(_concurrentRunSimulationBatch.SimulationBatchRunValues.Select(x => x.Id));
          _results = sut.RunConcurrently();
@@ -142,7 +148,8 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_a_result_with_success_set_to_false()
       {
-         _results.All(x => x.Succeeded).ShouldBeFalse();
+         _results.Count(x => x.Succeeded).ShouldBeEqualTo(1);
+         _results.Count(x => !x.Succeeded).ShouldBeEqualTo(1);
       }
    }
 
