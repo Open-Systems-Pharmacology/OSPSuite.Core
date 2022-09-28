@@ -56,9 +56,6 @@ namespace OSPSuite.Core.Domain.Services
 
          foreach (var outputMapping in allOutputMappings)
          {
-            if (outputMapping.Output == null)
-               continue;
-
             var simulationColumn = simulationColumnsCache[outputMapping.FullOutputPath];
             if (simulationColumn == null)
             {
@@ -138,14 +135,6 @@ namespace OSPSuite.Core.Domain.Services
             x = Constants.LOG_SAFE_EPSILON;
 
          return Math.Log10(x);
-      }
-
-      public ResidualsResult Calculate(DataRepository simulationResultRepository, IReadOnlyList<OutputMapping> allOutputMappings)
-      {
-         var simulationColumnsCache = new Cache<string, DataColumn>(x => x.PathAsString, x => null);
-         simulationColumnsCache.AddRange(simulationResultRepository.AllButBaseGrid());
-
-         return calculateResidualsResult(allOutputMappings, simulationColumnsCache);
       }
    }
 }

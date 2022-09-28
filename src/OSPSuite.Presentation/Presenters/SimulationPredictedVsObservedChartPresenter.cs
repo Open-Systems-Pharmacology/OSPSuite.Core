@@ -26,6 +26,7 @@ namespace OSPSuite.Presentation.Presenters
       private readonly IPredictedVsObservedChartService _predictedVsObservedChartService;
       private readonly List<DataRepository> _identityRepositories;
       private readonly IObservedDataRepository _observedDataRepository;
+      private readonly List<DataRepository> _deviationLineRepositories;
 
       public SimulationPredictedVsObservedChartPresenter(ISimulationVsObservedDataView view, ChartPresenterContext chartPresenterContext,
          IPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository)
