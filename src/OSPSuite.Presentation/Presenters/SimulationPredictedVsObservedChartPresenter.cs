@@ -49,22 +49,10 @@ namespace OSPSuite.Presentation.Presenters
 
          _identityRepositories.AddRange(_predictedVsObservedChartService.AddIdentityCurves(observationColumns, Chart));
 
-//from merge
-/*         //if (ChartIsBeingCreated)
-            _predictedVsObservedChartService.SetXAxisDimension(observationColumns, Chart);
-
-         AddDataRepositoriesToEditor(_identityRepositories.Union(getAllAvailableObservedData().Union(_deviationLineRepositories)));
-         //UpdateChartFromTemplate();
-         var xAxis = Chart.AxisBy(AxisTypes.X);
-         var yAxis = Chart.AxisBy(AxisTypes.Y);
-         yAxis.Dimension = xAxis.Dimension;
-         yAxis.UnitName = xAxis.UnitName;
-         ChartDisplayPresenter.Refresh();
-*/
          if (ChartIsBeingCreated)
             _predictedVsObservedChartService.ConfigureAxesDimensionAndTitle(observationColumns, Chart);
 
-         AddDataRepositoriesToEditor(_identityRepositories.Union(getAllAvailableObservedData()));
+         AddDataRepositoriesToEditor(_identityRepositories.Union(getAllAvailableObservedData().Union(_deviationLineRepositories)));
          UpdateChartFromTemplate();
       }
 
