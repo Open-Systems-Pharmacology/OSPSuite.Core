@@ -82,11 +82,11 @@ namespace OSPSuite.Core.Domain.Services
             _simModelSimulation.RunSimulation();
             var hasResults = simulationHasResults(_simModelSimulation);
 
-            return createSimulationResults();
+            return createSimulationRunResults();
          }
          catch (Exception e)
          {
-            return createSimulationResults(e.FullMessage());
+            return createSimulationRunResults(e.FullMessage());
          }
          finally
          {
@@ -95,7 +95,7 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      SimulationRunResults createSimulationResults(string errorFromException = null)
+      SimulationRunResults createSimulationRunResults(string errorFromException = null)
       {
          var hasResults = simulationHasResults(_simModelSimulation);
          var warnings = WarningsFrom(_simModelSimulation);
