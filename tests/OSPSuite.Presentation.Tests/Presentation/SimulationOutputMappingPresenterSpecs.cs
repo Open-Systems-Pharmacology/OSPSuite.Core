@@ -31,7 +31,6 @@ namespace OSPSuite.Presentation.Presentation
       protected SimulationQuantitySelectionDTO _output1;
       protected SimulationQuantitySelectionDTO _output2;
       protected IQuantity _quantity1;
-      private IQuantity _quantity2;
       protected IEnumerable<SimulationOutputMappingDTO> _allOutputMappingDTOs;
       protected OutputMapping _outputMapping1;
       protected OutputMapping _outputMapping2;
@@ -61,7 +60,6 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(_simulation1)).Returns(new[] { _observedData2 });
 
          _quantity1 = A.Fake<IQuantity>();
-         _quantity2 = A.Fake<IQuantity>();
          _output1 = A.Fake<SimulationQuantitySelectionDTO>();
          A.CallTo(() => _output1.Simulation).Returns(_simulation1);
          _output2 = A.Fake<SimulationQuantitySelectionDTO>();
@@ -135,13 +133,11 @@ namespace OSPSuite.Presentation.Presentation
       }
 
       [Observation]
-      public void should_show_the_existing_mapping_and_also_add_a_new_one()
+      public void should_show_the_existing_mapping_and_also_add_a_new_OutputMappingDTO()
       {
          _allOutputMappingDTOs.Count().ShouldBeEqualTo(2);
          _allOutputMappingDTOs.ElementAt(0).ShouldBeEqualTo(_outputMappingDTO1);
-         _simulation1.OutputMappings.All.Count().ShouldBeEqualTo(2);
-         _simulation1.OutputMappings.All.ElementAt(1).WeightedObservedData.ObservedData.ShouldBeEqualTo(_observedData2);
-         _simulation1.OutputMappings.All.ElementAt(1).Output.ShouldBeEqualTo(null);
+         _simulation1.OutputMappings.All.Count().ShouldBeEqualTo(1);
       }
    }
 
@@ -153,6 +149,7 @@ namespace OSPSuite.Presentation.Presentation
          _simulation1.OutputMappings.Add(_outputMapping1);
          _simulation1.OutputMappings.Add(_outputMapping2);
          sut.SetSimulation(_simulation1);
+         _simulation1.OutputMappings.Remove(_outputMapping1);
          sut.Handle(new ObservedDataRemovedFromAnalysableEvent(_simulation1, _observedData1));
       }
 

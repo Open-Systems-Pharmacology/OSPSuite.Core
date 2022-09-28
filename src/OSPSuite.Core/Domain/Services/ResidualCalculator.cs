@@ -41,6 +41,14 @@ namespace OSPSuite.Core.Domain.Services
          return calculateResidualsResult(allOutputMappings, simulationColumnsCache);
       }
 
+      public ResidualsResult Calculate(DataRepository simulationResultRepository, IReadOnlyList<OutputMapping> allOutputMappings)
+      {
+         var simulationColumnsCache = new Cache<string, DataColumn>(x => x.PathAsString, x => null);
+         simulationColumnsCache.AddRange(simulationResultRepository.AllButBaseGrid());
+
+         return calculateResidualsResult(allOutputMappings, simulationColumnsCache);
+      }
+
       private ResidualsResult calculateResidualsResult(IReadOnlyList<OutputMapping> allOutputMappings,
          Cache<string, DataColumn> simulationColumnsCache)
       {

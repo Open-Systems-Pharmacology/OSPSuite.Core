@@ -6,12 +6,12 @@ namespace OSPSuite.Presentation.Presenters
    public interface ISimulationAnalysisPresenter : IPresenter, IListener, IPresenterWithSettings
    {
       /// <summary>
-      ///    Intitialize the presenter for the <paramref name="simulationAnalysis" />.
+      ///    Initialize the presenter for the <paramref name="simulationAnalysis" />.
       /// </summary>
       void InitializeAnalysis(ISimulationAnalysis simulationAnalysis, IAnalysable analysable);
 
       /// <summary>
-      /// Updates the underlying <see cref="ISimulationAnalysis"/> with the dataSheet from <paramref name="analysable"/> (e.g in case of simulation chart, the simulaton results)
+      /// Updates the underlying <see cref="ISimulationAnalysis"/> with the dataSheet from <paramref name="analysable"/> (e.g in case of simulation chart, the simulation results)
       /// </summary>
       void UpdateAnalysisBasedOn(IAnalysable analysable);
 

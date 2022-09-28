@@ -28,7 +28,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public ParameterIdentificationPredictedVsObservedChartPresenter(IParameterIdentificationSingleRunAnalysisView view,
          ChartPresenterContext chartPresenterContext, IPredictedVsObservedChartService predictedVsObservedChartService) :
          base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis,
-            PresenterConstants.PresenterKeys.ParameterIdentificationPredictedVsActualChartPresenter)
+            PresenterConstants.PresenterKeys.ParameterIdentificationPredictedVsObservedChartPresenter)
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
          _identityRepositories = new List<DataRepository>();
@@ -47,7 +47,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _identityRepositories.AddRange(_predictedVsObservedChartService.AddIdentityCurves(observationColumns, Chart));
 
          if (ChartIsBeingCreated)
-            _predictedVsObservedChartService.SetXAxisDimension(observationColumns, Chart);
+            _predictedVsObservedChartService.ConfigureAxesDimensionAndTitle(observationColumns, Chart);
 
          AddDataRepositoriesToEditor(_identityRepositories.Union(_parameterIdentification.AllObservedData).Union(_deviationLineRepositories));
          UpdateChartFromTemplate();

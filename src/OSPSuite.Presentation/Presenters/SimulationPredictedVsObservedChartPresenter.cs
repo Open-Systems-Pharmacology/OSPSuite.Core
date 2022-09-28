@@ -17,21 +17,20 @@ namespace OSPSuite.Presentation.Presenters
    public interface ISimulationPredictedVsObservedChartPresenter : IChartPresenter<SimulationPredictedVsObservedChart>,
       ISimulationAnalysisPresenter
    {
-      ISimulationRunAnalysisView View { get; }
+      ISimulationVsObservedDataView View { get; }
    }
 
-   public class SimulationPredictedVsObservedChartPresenter : SimulationRunAnalysisPresenter<SimulationPredictedVsObservedChart>,
+   public class SimulationPredictedVsObservedChartPresenter : SimulationVsObservedDataChartPresenter<SimulationPredictedVsObservedChart>,
       ISimulationPredictedVsObservedChartPresenter
    {
       private readonly IPredictedVsObservedChartService _predictedVsObservedChartService;
       private readonly List<DataRepository> _identityRepositories;
       private readonly IObservedDataRepository _observedDataRepository;
-      private readonly List<DataRepository> _deviationLineRepositories;
 
-      public SimulationPredictedVsObservedChartPresenter(ISimulationRunAnalysisView view, ChartPresenterContext chartPresenterContext,
+      public SimulationPredictedVsObservedChartPresenter(ISimulationVsObservedDataView view, ChartPresenterContext chartPresenterContext,
          IPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository)
          : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis,
-            PresenterConstants.PresenterKeys.SimulationPredictedVsActualChartPresenter)
+            PresenterConstants.PresenterKeys.SimulationPredictedVsObservedChartPresenter)
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
          _identityRepositories = new List<DataRepository>();
@@ -49,7 +48,8 @@ namespace OSPSuite.Presentation.Presenters
 
          _identityRepositories.AddRange(_predictedVsObservedChartService.AddIdentityCurves(observationColumns, Chart));
 
-         //if (ChartIsBeingCreated)
+//from merge
+/*         //if (ChartIsBeingCreated)
             _predictedVsObservedChartService.SetXAxisDimension(observationColumns, Chart);
 
          AddDataRepositoriesToEditor(_identityRepositories.Union(getAllAvailableObservedData().Union(_deviationLineRepositories)));
@@ -59,6 +59,12 @@ namespace OSPSuite.Presentation.Presenters
          yAxis.Dimension = xAxis.Dimension;
          yAxis.UnitName = xAxis.UnitName;
          ChartDisplayPresenter.Refresh();
+*/
+         if (ChartIsBeingCreated)
+            _predictedVsObservedChartService.ConfigureAxesDimensionAndTitle(observationColumns, Chart);
+
+         AddDataRepositoriesToEditor(_identityRepositories.Union(getAllAvailableObservedData()));
+         UpdateChartFromTemplate();
       }
 
       private IEnumerable<DataRepository> getAllAvailableObservedData()
@@ -84,17 +90,17 @@ namespace OSPSuite.Presentation.Presenters
 
       protected override void AddRunResultToChart()
       {
-         addPredictedVsObservedToChart(new List<DataRepository>() { _simulation.ResultsDataRepository }, (column, curve) =>
+         addPredictedVsObservedToChart( _simulation.ResultsDataRepository, (column, curve) =>
          {
             curve.Description = curve.Name;
             curve.Name = column.PathAsString;
          });
       }
 
-      private void addPredictedVsObservedToChart(IReadOnlyList<DataRepository> simulationResults, Action<DataColumn, Curve> action)
+      private void addPredictedVsObservedToChart(DataRepository simulationResult, Action<DataColumn, Curve> action)
       {
-         AddResultRepositoriesToEditor(simulationResults);
-         simulationResults.Each(x => plotAllCalculations(x, action));
+         AddResultRepositoryToEditor(simulationResult);
+         plotAllCalculations(simulationResult, action);
       }
 
       private void plotAllCalculations(DataRepository simulationResult, Action<DataColumn, Curve> action)

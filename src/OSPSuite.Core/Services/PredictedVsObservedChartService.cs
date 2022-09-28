@@ -35,9 +35,9 @@ namespace OSPSuite.Core.Services
 
       /// <summary>
       ///    Sets the <paramref name="chart" /> x axis dimension to the most occurring dimension from
-      ///    <paramref name="observationColumns" />
+      ///    <paramref name="observationColumns" /> and adjusts the axes names
       /// </summary>
-      void SetXAxisDimension(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart);
+      void ConfigureAxesDimensionAndTitle(IReadOnlyList<DataColumn> observationColumns, PredictedVsObservedChart chart);
 
       /// <summary>
       ///    Creates new deviation line with fold value <paramref name="foldValue" /> 
@@ -99,19 +99,16 @@ namespace OSPSuite.Core.Services
          observationColumns.Each(observationColumn => plotPredictedVsObserved(observationColumn, calculationColumn, chart, action));
       }
 
-      public void SetXAxisDimension(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart)
+      public void ConfigureAxesDimensionAndTitle(IReadOnlyList<DataColumn> observationColumns, PredictedVsObservedChart chart)
       {
-         var dataColumns = observationColumns.ToList();
-
-         var defaultDimension = mostFrequentDimension(dataColumns);
          var xAxis = chart.AxisBy(AxisTypes.X);
+         var yAxis = chart.AxisBy(AxisTypes.Y);
 
-         if (defaultDimension != null)
-            xAxis.Dimension = defaultDimension;
+         var defaultDimension = mostFrequentDimension(observationColumns);
 
-         xAxis.Scaling = chart.AxisBy(AxisTypes.Y).Scaling;
-         xAxis.UnitName = chart.AxisBy(AxisTypes.Y).UnitName;
-
+         setAxisDimension(defaultDimension, chart, xAxis);
+         xAxis.Caption = Captions.ParameterIdentification.ObservedChartAxis + defaultDimension;
+         yAxis.Caption = Captions.ParameterIdentification.SimulatedChartAxis + defaultDimension;
          chart.UpdateAxesVisibility();
       }
 
@@ -209,6 +206,15 @@ namespace OSPSuite.Core.Services
          dataRepository.Add(values);
          return dataRepository;
       }
+      
+      private void setAxisDimension(IDimension dimension, PredictedVsObservedChart chart, Axis axis)
+      {
+         if (dimension != null)
+            axis.Dimension = dimension;
+
+         axis.Scaling = chart.AxisBy(AxisTypes.Y).Scaling;
+         axis.UnitName = chart.AxisBy(AxisTypes.Y).UnitName;
+      }
 
       public IReadOnlyList<DataRepository> AddIdentityCurves(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart)
       {
@@ -268,7 +274,7 @@ namespace OSPSuite.Core.Services
          {
             addResultCurves(observationColumn, calculationColumn, chart, action);
          }
-         //adjustAxes(calculationColumn, chart);
+         adjustAxes(calculationColumn, chart);
       }
 
       private void addResultCurves(DataColumn observationColumn, DataColumn simulationResultColumn, PredictedVsObservedChart chart,
