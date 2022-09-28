@@ -39,7 +39,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <typeparam name="TResult">Data produced by the worker function</typeparam>
       /// <param name="data">List of data to consume by the workers</param>
       /// <param name="func">
-      ///    A function running on each worker on each piece of data.
+      ///    A function running on each worker on each piece of data. Needs to throw exceptions if the <paramref name="func"/> is not successful
       /// </param>
       /// <param name="cancellationToken">Cancellation token to cancel the threads</param>
       /// <param name="numberOfCoresToUse">Number of cores to use. Use null to take all cores</param>
@@ -56,7 +56,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <typeparam name="TData">Data type to consume by the worker function</typeparam>
       /// <param name="data">List of data to consume by the workers</param>
       /// <param name="action">
-      ///    An action running on each worker on each piece of data.
+      ///    An action running on each worker on each piece of data. Needs to throw exceptions if the <paramref name="action"/>is not successful
       /// </param>
       /// <param name="cancellationToken">Cancellation token to cancel the threads</param>
       /// <param name="numberOfCoresToUse">Number of cores to use. Use null to take all cores</param>

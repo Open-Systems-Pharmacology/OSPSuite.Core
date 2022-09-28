@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.R.Extensions;
 using OSPSuite.SimModel;
+using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.R.Domain
@@ -148,12 +149,15 @@ namespace OSPSuite.R.Domain
       {
          _simModelBatch.UpdateParameterValues(simulationBatchRunValues.Values);
          _simModelBatch.UpdateInitialValues(simulationBatchRunValues.MoleculeValues);
-         var simulationResults = _simModelBatch.RunSimulation();
+         var simulationRunResults = _simModelBatch.RunSimulation();
+
+         if (!simulationRunResults.Success)
+            throw new OSPSuiteException(simulationRunResults.Error);
 
          if (!_simulationBatchOptions.CalculateSensitivity)
-            return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
+            return _simulationResultsCreator.CreateResultsFrom(simulationRunResults.Results);
 
-         return _simulationResultsCreator.CreateResultsWithSensitivitiesFrom(simulationResults.Results, _simModelBatch, _simulationBatchOptions.Parameters);
+         return _simulationResultsCreator.CreateResultsWithSensitivitiesFrom(simulationRunResults.Results, _simModelBatch, _simulationBatchOptions.Parameters);
       }
 
       protected virtual void Cleanup()
