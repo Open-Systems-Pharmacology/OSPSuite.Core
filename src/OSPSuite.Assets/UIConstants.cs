@@ -934,9 +934,14 @@ namespace OSPSuite.Assets
          public static readonly string TimeProfileConfidenceIntervalAnalysis = "Confidence Interval";
          public static readonly string TimeProfileVPCIntervalAnalysis = "Visual Predictive Check Interval";
 
-         public static string DeviationLineName(float foldValue)
+         public static string DeviationLineNameUpper(float foldValue)
          {
-            return foldValue + "-fold deviation";
+            return foldValue + "-fold deviation Upper";
+         }
+
+         public static string DeviationLineNameLower(float foldValue)
+         {
+            return foldValue + "-fold deviation Lower";
          }
 
          public static string FeedbackViewFor(string parameterIdentificationName)
@@ -1313,12 +1318,16 @@ namespace OSPSuite.Assets
             public static string Simulation = "Simulation";
             public static string Time = "Time";
             public static string Observation = "Observation";
-            public static string Undefined = "Undefined";
+            public static string IdentityCurve = "Identity";
+            public static string Undefined = "Undefined"; 
          }
 
          public static class DeviationLines
          {
             public static string SpecifyFoldValue = "Specify deviation fold value";
+            public static string DeviationLineDescription = "Will create two deviation lines according to the given fold value which has to be >= 1.\n" +
+                                                            "For a fold value equal to 1, the created lines would be equal to the identity line.\n" +
+                                                            "An x-fold deviation range includes simulated values within x-fold and 1/x-fold of observed values.";
          }
       }
    }

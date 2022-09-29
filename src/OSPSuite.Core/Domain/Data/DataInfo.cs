@@ -29,7 +29,12 @@ namespace OSPSuite.Core.Domain.Data
       /// <summary>
       ///    Column is based on calculation values but is used in a different context (for example ParameterIdentification plots)
       /// </summary>
-      CalculationAuxiliary
+      CalculationAuxiliary,
+
+      /// <summary>
+      ///    Column is an identity curve or deviation line to facilitate the viewing of a plot 
+      /// </summary>
+      IdentityCurve
    }
 
    public enum AuxiliaryType

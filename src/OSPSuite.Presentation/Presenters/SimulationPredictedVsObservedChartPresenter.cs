@@ -119,7 +119,7 @@ namespace OSPSuite.Presentation.Presenters
       private void addDeviationLines(float foldValue)
       {
          var observationColumns = getAllAvailableObservedData().Select(x => x.FirstDataColumn()).ToList();
-         _deviationLineRepositories.AddRange(_predictedVsObservedChartService.AddDeviationLine(foldValue, observationColumns, Chart, _deviationLineRepositories.Count / 2));
+         _deviationLineRepositories.AddRange(_predictedVsObservedChartService.AddDeviationLine(foldValue, observationColumns, Chart, _deviationLineRepositories.Count));
          AddDataRepositoriesToEditor(_deviationLineRepositories);
          ChartChanged();
          ChartDisplayPresenter.Refresh();
