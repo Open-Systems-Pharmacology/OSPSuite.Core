@@ -20,7 +20,7 @@ namespace OSPSuite.UI.Views.Charts
          //Regex: only numbers, with 2 points of decimal precision, and greater than 1
          foldValueTextEdit.Properties.Mask.EditMask = "[1-9](\\d+)?(\\R.\\d{0,2})?";
          foldValueTextEdit.Properties.Mask.MaskType = DevExpress.XtraEditors.Mask.MaskType.RegEx;
-
+         foldValueTextEdit.Select();
       }
 
       public void AttachPresenter(IDeviationLinesPresenter presenter)
