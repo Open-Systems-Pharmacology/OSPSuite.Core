@@ -337,7 +337,7 @@ namespace OSPSuite.Presentation.Presentation
       {
          sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn,
             _predictedVsObservedChart);
-         sut.AddDeviationLine(1, _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(),  _predictedVsObservedChart, 0);
+         sut.AddDeviationLine(2, _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(),  _predictedVsObservedChart, 0);
       }
 
       [Observation]
@@ -349,8 +349,8 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void deviation_lines_should_be_named_correctly()
       {
-         _predictedVsObservedChart.Curves.Count(curve => curve.Name.Equals("1-fold deviation")).ShouldBeEqualTo(2);
+         _predictedVsObservedChart.Curves.Count(curve => curve.Name.Equals("2-fold deviation Upper")).ShouldBeEqualTo(1);
+         _predictedVsObservedChart.Curves.Count(curve => curve.Name.Equals("2-fold deviation Lower")).ShouldBeEqualTo(1);
       }
-
    }
 }
