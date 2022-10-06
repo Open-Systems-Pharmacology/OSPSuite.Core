@@ -569,14 +569,15 @@ namespace OSPSuite.Assets
             return $"{missingObjectType} '{missingObjectName}' is missing from {containerType} '{containerName}'";
          }
 
-         public static string ConnectionBetween(string firstNeigborPath, string secondNeigborPath)
+         public static string ConnectionBetween(string firstNeighborPath, string secondNeighborPath)
          {
-            return $"Between '{firstNeigborPath}' and '{secondNeigborPath}'";
+            return $"Between '{firstNeighborPath}' and '{secondNeighborPath}'";
          }
 
          public static readonly string NoDifferenceFound = "No difference found.";
          public static readonly string Stationary = "Stationary";
          public static readonly string IsStateVariable = "Is state variable";
+         public static readonly string Criteria = "Criteria";
       }
 
       public static class Commands
