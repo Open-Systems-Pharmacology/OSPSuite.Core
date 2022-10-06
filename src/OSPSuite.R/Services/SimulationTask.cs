@@ -7,10 +7,10 @@ namespace OSPSuite.R.Services
    public interface ISimulationTask
    {
       /// <summary>
-      /// Return a clone of the simulation that can be used during batch run.
-      /// This simulation will contain the minimal information required to run. Configuration settings such as some building blocks will not be copied over
+      /// Returns a clone of the simulation that can be used during batch run.
+      /// This simulation will contain the minimal information required to run. Configuration settings (e.g. some building blocks) will not be copied over
       /// </summary>
-      /// <param name="simulation"></param>
+      /// <param name="simulation">Simulation to clone</param>
       IModelCoreSimulation CloneForBatchRun(IModelCoreSimulation simulation);
    }
 
