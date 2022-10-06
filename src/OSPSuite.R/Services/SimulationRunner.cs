@@ -71,7 +71,7 @@ namespace OSPSuite.R.Services
 
       private void simulationTerminated()
       {
-         terminated(this, new EventArgs());
+         terminated(this, EventArgs.Empty);
       }
 
       private void terminated(object sender, EventArgs e)

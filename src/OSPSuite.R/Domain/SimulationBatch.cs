@@ -34,10 +34,10 @@ namespace OSPSuite.R.Domain
       public bool CalculateSensitivity { get; set; } = false;
    }
 
-   public class SimulationBatchRunValues 
+   public class SimulationBatchRunValues
    {
       //Id to recognize it when running concurrently
-      public string Id { get;  }
+      public string Id { get; }
 
       //Potentially null
       public double[] ParameterValues { get; set; }
@@ -61,29 +61,24 @@ namespace OSPSuite.R.Domain
       }
 
       private string generateId() => Guid.NewGuid().ToString();
-
    }
 
    public class SimulationBatch : IDisposable
    {
       private readonly ISimModelBatch _simModelBatch;
       private readonly ISimulationResultsCreator _simulationResultsCreator;
-      private readonly ISimulationPersistableUpdater _simulationPersistableUpdater;
       private SimulationBatchOptions _simulationBatchOptions;
 
       public SimulationBatch(ISimModelBatch simModelBatch,
-         ISimulationResultsCreator simulationResultsCreator,
-         ISimulationPersistableUpdater simulationPersistableUpdater
+         ISimulationResultsCreator simulationResultsCreator
       )
       {
          _simModelBatch = simModelBatch;
          _simulationResultsCreator = simulationResultsCreator;
-         _simulationPersistableUpdater = simulationPersistableUpdater;
       }
 
       public void Initialize(IModelCoreSimulation simulation, SimulationBatchOptions simulationBatchOptions)
       {
-         _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
          //SimModel optionally caches XML used for loading a simulation as string.
          //This XML string was used e.g. by the old Matlab-/R-Toolbox when saving a simulation to XML.
          //C++ export also depends on the original XML string at the moment (not quite clear why).
