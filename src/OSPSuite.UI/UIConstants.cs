@@ -77,6 +77,9 @@ namespace OSPSuite.UI
          {
             using (var graphics = Graphics.FromHwnd(IntPtr.Zero))
             {
+               if (graphics.DpiX >= 250)
+                  return 2.5;
+
                if (graphics.DpiX >= 200)
                   return 2;
 
