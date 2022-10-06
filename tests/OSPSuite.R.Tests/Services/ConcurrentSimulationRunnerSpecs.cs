@@ -8,7 +8,6 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.R.Domain;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.R.Services
 {
@@ -17,12 +16,14 @@ namespace OSPSuite.R.Services
       protected ISimulationPersister _simulationPersister;
       protected IConcurrencyManager _concurrencyManager;
       protected ICoreUserSettings _coreUserSettings;
+      protected ISimulationPersistableUpdater _simulationPersistableUpdater;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
          _simulationPersister = Api.GetSimulationPersister();
          _concurrencyManager = Api.Container.Resolve<IConcurrencyManager>();
+         _simulationPersistableUpdater = Api.Container.Resolve<ISimulationPersistableUpdater>();
          sut = new ConcurrentSimulationRunner(_concurrencyManager);
       }
    }
@@ -227,6 +228,7 @@ namespace OSPSuite.R.Services
       {
          base.GlobalContext();
          _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("S1.pkml"));
+         _simulationPersistableUpdater.UpdateSimulationPersistable(_simulation);
 
          _concurrentRunSimulationBatch = new ConcurrentRunSimulationBatch
          (
@@ -277,6 +279,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_be_able_to_simulate_the_simulation_for_multiple_runs()
       {
+
          foreach (var id in _ids)
          {
             var result = Api.GetSimulationBatchFactory().Create(_simulation, _concurrentRunSimulationBatch.SimulationBatchOptions).Run(_simulationBatchRunValues.FirstOrDefault(v => v.Id == id));
