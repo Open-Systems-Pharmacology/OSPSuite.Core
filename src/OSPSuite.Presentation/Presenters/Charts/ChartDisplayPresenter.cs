@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using OSPSuite.Assets;
 using OSPSuite.Core;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Mappers;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.ContextMenus;
@@ -16,7 +14,6 @@ using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Charts
@@ -34,7 +31,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
    /// <summary>
    ///    Presenter of ChartDisplay component, which displays a IChart.
    /// </summary>
-   public interface IChartDisplayPresenter : 
+   public interface IChartDisplayPresenter :
       IPresenter<IChartDisplayView>,
       ICanCopyToClipboard,
       IPresenterWithContextMenu<IViewItem>,
@@ -74,14 +71,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       void RefreshAxisBinders();
 
-    /// <summary>
+      /// <summary>
       ///    Action to call when a point is hot tracked in the chart view
       /// </summary>
       Action<int> HotTracked { set; }
 
       event EventHandler<AddDeviationLinesEventArgs> AddDeviationLinesEvent;
 
-    /// <summary>
+      /// <summary>
       ///    Exports the selected curves to excel
       /// </summary>
       void ExportToExcel();
@@ -171,10 +168,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void Edit(CurveChart chart);
 
       /// <summary>
-      /// Edit the <paramref name="chart"/>using the <paramref name="displayChartFontAndSizeSettings"/>to display the chart in the view
+      ///    Edit the <paramref name="chart" />using the <paramref name="displayChartFontAndSizeSettings" />to display the chart
+      ///    in the view
       /// </summary>
       /// <param name="chart">Chart to edit</param>
-      /// <param name="displayChartFontAndSizeSettings">Default font and size use to display the chart. This is not what will be used to export the chart</param>
+      /// <param name="displayChartFontAndSizeSettings">
+      ///    Default font and size use to display the chart. This is not what will be
+      ///    used to export the chart
+      /// </param>
       void Edit(CurveChart chart, ChartFontAndSizeSettings displayChartFontAndSizeSettings);
 
       void Clear();
@@ -264,7 +265,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          using (var deviationLinesPresenter = _applicationController.Start<IDeviationLinesPresenter>())
          {
             var foldValue = deviationLinesPresenter.GetFoldValue();
-            
+
             if (foldValue == 0)
                return;
 
@@ -282,7 +283,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _quickCurveBinderCache.Clear();
          _curveBinders.Each(addCurvesToQuickCacheAdapter);
       }
-     
+
       public void ResetVisibleRange()
       {
          Chart.Axes.Each(axis => axis.ResetRange());
@@ -409,6 +410,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
             //maybe can be done better
             View.ReOrderLegend();
          }
+
          updateViewLayout();
 
          RefreshAxisBinders();
@@ -452,7 +454,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void pruneCurves() => pruneBinders(_curveBinders, Chart.Curves, x => x.Curve, removeCurveBinder);
 
-      private void pruneBinders<TBinder, TBoundObject>(IEnumerable<TBinder> binders, IReadOnlyCollection<TBoundObject> boundObjects, Func<TBinder, TBoundObject> retrieveBoundObjectFunc, Action<TBinder> removeBinderAction)
+      private void pruneBinders<TBinder, TBoundObject>(IEnumerable<TBinder> binders, IReadOnlyCollection<TBoundObject> boundObjects,
+         Func<TBinder, TBoundObject> retrieveBoundObjectFunc, Action<TBinder> removeBinderAction)
       {
          //Remove using reference to ensure that the bound object in the binder is the same as the one in the chart
          binders.Where(x => !boundObjects.Contains(retrieveBoundObjectFunc(x))).ToList().Each(removeBinderAction);
@@ -484,6 +487,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
             removeCurveBinder(curveBinder);
          }
+
          curveBinder = _curveBinderFactory.CreateFor(curve, View.ChartControl, Chart, yAxisBinder);
          _curveBinders.Add(curveBinder);
 
@@ -572,7 +576,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          View.UpdateSettings(Chart);
 
          var areChartWidthAndHeightDefined = Chart.FontAndSize.SizeIsDefined;
-     
+
          if (Chart.PreviewSettings)
             setDisplay(areChartWidthAndHeightDefined ? Dock.None : Dock.Fill, Chart.FontAndSize, showingPreview: true);
          else

@@ -934,15 +934,9 @@ namespace OSPSuite.Assets
          public static readonly string TimeProfileConfidenceIntervalAnalysis = "Confidence Interval";
          public static readonly string TimeProfileVPCIntervalAnalysis = "Visual Predictive Check Interval";
 
-         public static string DeviationLineNameUpper(float foldValue)
-         {
-            return foldValue + "-fold deviation Upper";
-         }
+         public static string DeviationLineNameUpper(float foldValue) => $"{foldValue}-fold deviation Upper";
 
-         public static string DeviationLineNameLower(float foldValue)
-         {
-            return foldValue + "-fold deviation Lower";
-         }
+         public static string DeviationLineNameLower(float foldValue) => $"{foldValue}-fold deviation Lower";
 
          public static string FeedbackViewFor(string parameterIdentificationName)
          {

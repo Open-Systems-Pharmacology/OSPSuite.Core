@@ -160,21 +160,21 @@ namespace OSPSuite.Core.Services
          var identityMinimum = getIdentityMinimum(columnsForIdentityRepository, mergedDimension);
          var identityMaximum = getIdentityMaximum(columnsForIdentityRepository, mergedDimension);
 
-         var baseGridUpper = new BaseGrid(Captions.ParameterIdentification.Deviation, mergedDimension)
+         var baseGridDeviation = new BaseGrid(Captions.ParameterIdentification.Deviation, mergedDimension)
          {
             Values = new List<float>() { identityMinimum, identityMaximum }
          };
 
          var deviationDataRepository = new DataRepository { Name = Captions.ParameterIdentification.Deviation };
          var changePercentageForUpperCurve = foldValue - 1;
-         var valuesUpper = new DataColumn(Captions.ParameterIdentification.DeviationLineNameUpper(foldValue), mergedDimension, baseGridUpper)
+         var valuesUpper = new DataColumn(Captions.ParameterIdentification.DeviationLineNameUpper(foldValue), mergedDimension, baseGridDeviation)
          {
             Values = new List<float>() { (identityMinimum + (identityMinimum * changePercentageForUpperCurve)), (identityMaximum + (identityMaximum * changePercentageForUpperCurve)) },
             DataInfo = new DataInfo(ColumnOrigins.IdentityCurve, AuxiliaryType.Undefined, string.Empty, string.Empty, null)
          };
          deviationDataRepository.Add(valuesUpper);
 
-         var valuesLower = new DataColumn(Captions.ParameterIdentification.DeviationLineNameLower(foldValue), mergedDimension, baseGridUpper)
+         var valuesLower = new DataColumn(Captions.ParameterIdentification.DeviationLineNameLower(foldValue), mergedDimension, baseGridDeviation)
          {
             Values = new List<float>() { identityMinimum / foldValue, identityMaximum / foldValue },
             DataInfo = new DataInfo(ColumnOrigins.IdentityCurve, AuxiliaryType.Undefined, string.Empty, string.Empty, null)

@@ -32,10 +32,5 @@ namespace OSPSuite.UI.Views.Charts
       {
          return foldValueTextEdit.EditValue.ConvertedTo<float>();
       }
-
-      private void tablePanel_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
-      {
-
-      }
    }
 }
