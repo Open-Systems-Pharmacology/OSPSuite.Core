@@ -55,7 +55,6 @@ namespace OSPSuite.UI.Views.Charts
          // 
          this.tablePanel.Location = new System.Drawing.Point(0, 286);
          this.tablePanel.Size = new System.Drawing.Size(1260, 110);
-         this.tablePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.tablePanel_Paint);
          // 
          // layoutControl1
          // 

@@ -1319,9 +1319,7 @@ namespace OSPSuite.Assets
          public static class DeviationLines
          {
             public static string SpecifyFoldValue = "Specify deviation fold value";
-            public static string DeviationLineDescription = "Will create two deviation lines according to the given fold value which has to be >= 1.\n" +
-                                                            "For a fold value equal to 1, the created lines would be equal to the identity line.\n" +
-                                                            "An x-fold deviation range includes simulated values within x-fold and 1/x-fold of observed values.";
+            public static string DeviationLineDescription = "Will create two deviation lines according to the given fold value which has to be >= 1. For a fold value equal to 1, the created lines would be equal to the identity line. An x-fold deviation range includes simulated values within x-fold and 1/x-fold of observed values.";
          }
       }
    }
