@@ -51,10 +51,10 @@ namespace OSPSuite.Core.Extensions
          curve.Name = curveName;
       }
 
-      public static void UpdateDeviationCurve(this Curve curve, string curveName, int curveNumber)
+      public static void UpdateDeviationCurve(this Curve curve, string curveName, int deviationLinesCount)
       {
          curve.VisibleInLegend = false;
-         switch (curveNumber % 3)
+         switch (deviationLinesCount % 3)
          {
             case 0:
                curve.LineStyle = LineStyles.Dash;

@@ -43,7 +43,7 @@ namespace OSPSuite.Core.Services
       ///    Creates new deviation line with fold value <paramref name="foldValue" />
       /// </summary>
       IEnumerable<DataRepository> AddDeviationLine(float foldValue, List<DataColumn> observationColumns, PredictedVsObservedChart chart,
-         int numberOfDeviationLines);
+         int deviationLinesCount);
    }
 
    public class PredictedVsObservedChartService : IPredictedVsObservedChartService
@@ -115,15 +115,15 @@ namespace OSPSuite.Core.Services
       }
 
       public IEnumerable<DataRepository> AddDeviationLine(float foldValue, List<DataColumn> observationColumns, PredictedVsObservedChart chart,
-         int numberOfDeviationLines)
+         int deviationLinesCount)
       {
-         var deviationCurves = addDeviationLines(foldValue, observationColumns, chart, numberOfDeviationLines).ToList();
+         var deviationCurves = addDeviationLines(foldValue, observationColumns, chart, deviationLinesCount).ToList();
          chart.UpdateAxesVisibility();
          return deviationCurves;
       }
 
       private IEnumerable<DataRepository> addDeviationLines(float foldValue, IReadOnlyList<DataColumn> observationColumns,
-         PredictedVsObservedChart chart, int numberOfDeviationLines)
+         PredictedVsObservedChart chart, int deviationLinesCount)
       {
          var dataColumns = observationColumns;
 
@@ -133,17 +133,17 @@ namespace OSPSuite.Core.Services
 
          foreach (var mergedDimension in uniqueDimensions)
          {
-            yield return createFoldDeviationRepositories(foldValue, chart, dataColumns, mergedDimension, numberOfDeviationLines);
+            yield return createFoldDeviationRepositories(foldValue, chart, dataColumns, mergedDimension, deviationLinesCount);
          }
       }
 
       private DataRepository createFoldDeviationRepositories(float foldValue, PredictedVsObservedChart chart,
          IReadOnlyList<DataColumn> dataColumns,
-         IDimension mergedDimension, int numberOfDeviationLines)
+         IDimension mergedDimension, int deviationLinesCount)
       {
          var deviationLineRepository= createDeviationRepository(foldValue, dataColumns, mergedDimension);
          chart.AddCurvesFor(deviationLineRepository, x => x.Name, _dimensionFactory,
-            (column, curve) => curve.UpdateDeviationCurve(column.Name, numberOfDeviationLines));
+            (column, curve) => curve.UpdateDeviationCurve(column.Name, deviationLinesCount));
 
          return deviationLineRepository;
       }

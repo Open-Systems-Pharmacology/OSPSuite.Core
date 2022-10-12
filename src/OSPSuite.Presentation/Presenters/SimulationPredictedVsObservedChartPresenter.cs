@@ -37,6 +37,7 @@ namespace OSPSuite.Presentation.Presenters
          _identityRepositories = new List<DataRepository>();
          _observedDataRepository = observedDataRepository;
          _deviationLineRepositories = new List<DataRepository>();
+
          ChartDisplayPresenter.AddDeviationLinesEvent += (o, e) => addDeviationLines(e.FoldValue);
       }
 
@@ -51,6 +52,12 @@ namespace OSPSuite.Presentation.Presenters
 
          if (ChartIsBeingCreated)
             _predictedVsObservedChartService.ConfigureAxesDimensionAndTitle(observationColumns, Chart);
+
+         //plot the already added and saved deviation lines
+         if (Chart.DeviationFoldValues != null)
+            Chart.DeviationFoldValues.Each(addDeviationLines);
+         else
+            Chart.DeviationFoldValues = new List<float>();
 
          AddDataRepositoriesToEditor(_identityRepositories.Union(getAllAvailableObservedData().Union(_deviationLineRepositories)));
          UpdateChartFromTemplate();
@@ -79,7 +86,7 @@ namespace OSPSuite.Presentation.Presenters
 
       protected override void AddRunResultToChart()
       {
-         addPredictedVsObservedToChart( _simulation.ResultsDataRepository, (column, curve) =>
+         addPredictedVsObservedToChart(_simulation.ResultsDataRepository, (column, curve) =>
          {
             curve.Description = curve.Name;
             curve.Name = column.PathAsString;
@@ -119,11 +126,19 @@ namespace OSPSuite.Presentation.Presenters
       private void addDeviationLines(float foldValue)
       {
          var observationColumns = getAllAvailableObservedData().Select(x => x.FirstDataColumn()).ToList();
-         _deviationLineRepositories.AddRange(_predictedVsObservedChartService.AddDeviationLine(foldValue, observationColumns, Chart, _deviationLineRepositories.Count));
+         _deviationLineRepositories.AddRange(
+            _predictedVsObservedChartService.AddDeviationLine(foldValue, observationColumns, Chart, _deviationLineRepositories.Count));
+         addToDeviationFoldValueList(foldValue);
          AddDataRepositoriesToEditor(_deviationLineRepositories);
          ChartChanged();
          ChartDisplayPresenter.Refresh();
          ChartEditorPresenter.Refresh();
+      }
+
+      private void addToDeviationFoldValueList(float foldValue)
+      {
+         if (!Chart.DeviationFoldValues.Contains(foldValue))
+            Chart.DeviationFoldValues.Add(foldValue);
       }
 
       private IEnumerable<DataColumn> calculationColumnsToPlot(DataRepository dataRepository)
