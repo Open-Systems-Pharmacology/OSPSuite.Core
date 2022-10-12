@@ -37,10 +37,11 @@ namespace OSPSuite.Core.Domain.Services
 
       public virtual PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation,  SimulationResults runResults)
       {
-         return CalculateFor(simulation,  runResults, id => { });
+         return CalculateFor(simulation,  runResults, id => { }, (results, options, moleculeName) => { });
       }
 
-      protected virtual PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, SimulationResults runResults,  Action<int> performIndividualScalingAction)
+      protected virtual PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, SimulationResults runResults, Action<int> performIndividualScalingAction,
+         Action<IndividualResults, PKCalculationOptions, string> calculateAppSpecificPKAnalysis)
       {
          _lazyLoadTask.Load(simulation as ILazyLoadable);
 
@@ -54,7 +55,7 @@ namespace OSPSuite.Core.Domain.Services
 
             foreach (var selectedQuantity in selectedQuantityForMolecule)
             {
-               addPKParametersForOutput(simulation,  runResults, performIndividualScalingAction, selectedQuantity, popAnalyses, moleculeName, pkCalculationOptions, allApplicationParameters);
+               addPKParametersForOutput(simulation,  runResults, performIndividualScalingAction, selectedQuantity, popAnalyses, moleculeName, pkCalculationOptions, allApplicationParameters, calculateAppSpecificPKAnalysis);
             }
          }
 
@@ -69,7 +70,8 @@ namespace OSPSuite.Core.Domain.Services
          PopulationSimulationPKAnalyses popAnalyses,
          string moleculeName,
          PKCalculationOptions pkCalculationOptions,
-         IReadOnlyList<ApplicationParameters> allApplicationParameters)
+         IReadOnlyList<ApplicationParameters> allApplicationParameters,
+         Action<IndividualResults, PKCalculationOptions, string> appSpecificPKAnalysis)
       {
          var allPKParameters = _pkParameterRepository.All().Where(p => PKParameterCanBeUsed(p, pkCalculationOptions)).ToList();
          var allUserDefinedPKParameters = allPKParameters.OfType<UserDefinedPKParameter>().ToList();
@@ -98,6 +100,7 @@ namespace OSPSuite.Core.Domain.Services
             {
                quantityPKParameter.SetValue(individualResult.IndividualId, pkValues.ValueOrDefaultFor(quantityPKParameter.Name));
             }
+            appSpecificPKAnalysis(individualResult, pkCalculationOptions, moleculeName);
          }
       }
 
