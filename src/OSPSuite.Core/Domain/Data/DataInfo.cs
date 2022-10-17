@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Domain.Data
       /// <summary>
       ///    Column is an identity curve or deviation line to facilitate the viewing of a plot 
       /// </summary>
-      IdentityCurve
+      DeviationLine
    }
 
    public enum AuxiliaryType

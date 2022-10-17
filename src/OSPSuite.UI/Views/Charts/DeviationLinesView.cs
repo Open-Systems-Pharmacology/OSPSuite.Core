@@ -1,25 +1,26 @@
 ﻿using OSPSuite.Assets;
+using OSPSuite.DataBinding;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.Presentation.DTO.Charts;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.UI.Extensions;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Charts
 {
    public partial class DeviationLinesView : BaseModalView, IDeviationLinesView
    {
+      private readonly ScreenBinder<FoldValueDTO> _screenBinder;
       private IDeviationLinesPresenter _presenter;
       public DeviationLinesView()
       {
          InitializeComponent();
+         _screenBinder = new ScreenBinder<FoldValueDTO>();
          foldValueInputControlItem.TextVisible = false;
          foldValueTextLabelControl.Text = Captions.Chart.DeviationLines.SpecifyFoldValue.FormatForLabel();
          deviationLineDescriptionLabelControl.AsDescription();
          deviationLineDescriptionLabelControl.Text = Captions.Chart.DeviationLines.DeviationLineDescription.FormatForDescription();
-         //Regex: only numbers, with 2 points of decimal precision, and greater than 1
-         foldValueTextEdit.Properties.Mask.EditMask = "[1-9](\\d+)?(\\R.\\d{0,2})?";
-         foldValueTextEdit.Properties.Mask.MaskType = DevExpress.XtraEditors.Mask.MaskType.RegEx;
          foldValueTextEdit.Select();
       }
 
@@ -28,9 +29,19 @@ namespace OSPSuite.UI.Views.Charts
          _presenter = presenter;
       }
 
-      public float GetFoldValue()
+      
+      public override void InitializeBinding()
       {
-         return foldValueTextEdit.EditValue.ConvertedTo<float>();
+         base.InitializeBinding();
+         _screenBinder.Bind(x => x.FoldValue).To(foldValueTextEdit); 
+         RegisterValidationFor(_screenBinder, NotifyViewChanged);
       }
+
+      public void BindTo(FoldValueDTO foldValueDTO)
+      {
+         _screenBinder.BindToSource(foldValueDTO);
+      }
+
+      public override bool HasError => _screenBinder.HasError;
    }
 }
