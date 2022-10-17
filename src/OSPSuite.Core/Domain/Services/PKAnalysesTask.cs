@@ -40,8 +40,9 @@ namespace OSPSuite.Core.Domain.Services
          return CalculateFor(simulation,  runResults, id => { }, (results, options, moleculeName) => { });
       }
 
+      
       protected virtual PopulationSimulationPKAnalyses CalculateFor(IModelCoreSimulation simulation, SimulationResults runResults, Action<int> performIndividualScalingAction,
-         Action<IndividualResults, PKCalculationOptions, string> calculateAppSpecificPKAnalysis)
+         Action<int, PKCalculationOptions, string> calculateAppSpecificPKAnalysis)
       {
          _lazyLoadTask.Load(simulation as ILazyLoadable);
 
@@ -53,13 +54,38 @@ namespace OSPSuite.Core.Domain.Services
             var pkCalculationOptions = _pkCalculationOptionsFactory.CreateFor(simulation, moleculeName);
             var allApplicationParameters = simulation.AllApplicationParametersOrderedByStartTimeFor(moleculeName);
 
+            // calculate application specific PK Analysis
+            scaledIndividualIteration(simulation, runResults, performIndividualScalingAction, moleculeName, pkCalculationOptions, allApplicationParameters, results =>
+            {
+               // To prevent re-writing of the individual body weight scaling logic, we are using this application specific action that is called for each individual
+               // after scaling has been done
+               calculateAppSpecificPKAnalysis(results.IndividualId, pkCalculationOptions, moleculeName);
+            });
+
+            // add the values for each output
             foreach (var selectedQuantity in selectedQuantityForMolecule)
             {
-               addPKParametersForOutput(simulation,  runResults, performIndividualScalingAction, selectedQuantity, popAnalyses, moleculeName, pkCalculationOptions, allApplicationParameters, calculateAppSpecificPKAnalysis);
+               addPKParametersForOutput(simulation,  runResults, performIndividualScalingAction, selectedQuantity, popAnalyses, moleculeName, pkCalculationOptions, allApplicationParameters);
             }
          }
 
          return popAnalyses;
+      }
+
+      private void scaledIndividualIteration(IModelCoreSimulation simulation, SimulationResults simulationResults,
+         Action<int> performIndividualScalingAction,
+         string moleculeName,
+         PKCalculationOptions pkCalculationOptions,
+         IReadOnlyList<ApplicationParameters> allApplicationParameters, Action<IndividualResults> actionToPerform)
+      {
+         foreach (var individualResult in simulationResults.AllIndividualResults)
+         {
+            performIndividualScalingAction(individualResult.IndividualId);
+            _pkCalculationOptionsFactory.UpdateTotalDrugMassPerBodyWeight(simulation, moleculeName, pkCalculationOptions, allApplicationParameters);
+
+            actionToPerform(individualResult);
+
+         }
       }
 
       private void addPKParametersForOutput(
@@ -70,8 +96,7 @@ namespace OSPSuite.Core.Domain.Services
          PopulationSimulationPKAnalyses popAnalyses,
          string moleculeName,
          PKCalculationOptions pkCalculationOptions,
-         IReadOnlyList<ApplicationParameters> allApplicationParameters,
-         Action<IndividualResults, PKCalculationOptions, string> appSpecificPKAnalysis)
+         IReadOnlyList<ApplicationParameters> allApplicationParameters)
       {
          var allPKParameters = _pkParameterRepository.All().Where(p => PKParameterCanBeUsed(p, pkCalculationOptions)).ToList();
          var allUserDefinedPKParameters = allPKParameters.OfType<UserDefinedPKParameter>().ToList();
@@ -83,16 +108,12 @@ namespace OSPSuite.Core.Domain.Services
             popAnalyses.AddPKAnalysis(quantityPKParameter);
          }
 
-         //add the values for each individual
-         foreach (var individualResult in simulationResults.AllIndividualResults)
+         scaledIndividualIteration(simulation, simulationResults, performIndividualScalingAction, moleculeName, pkCalculationOptions, allApplicationParameters, individualResult =>
          {
-            performIndividualScalingAction(individualResult.IndividualId);
-            _pkCalculationOptionsFactory.UpdateTotalDrugMassPerBodyWeight(simulation, moleculeName, pkCalculationOptions, allApplicationParameters);
-
             var values = individualResult.QuantityValuesFor(selectedQuantity.Path);
             //This can happen is the results do not match the simulation
             if (values == null)
-               continue;
+               return;
 
             var pkValues = _pkValuesCalculator.CalculatePK(individualResult.Time.Values, values.Values, pkCalculationOptions, allUserDefinedPKParameters);
 
@@ -100,8 +121,8 @@ namespace OSPSuite.Core.Domain.Services
             {
                quantityPKParameter.SetValue(individualResult.IndividualId, pkValues.ValueOrDefaultFor(quantityPKParameter.Name));
             }
-            appSpecificPKAnalysis(individualResult, pkCalculationOptions, moleculeName);
-         }
+         });
+
       }
 
       private static string moleculeNameFrom(QuantitySelection selectedQuantity) => selectedQuantity.Path.ToPathArray().MoleculeName();
