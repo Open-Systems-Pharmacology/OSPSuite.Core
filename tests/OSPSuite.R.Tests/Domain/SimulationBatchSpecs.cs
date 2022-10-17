@@ -33,7 +33,6 @@ namespace OSPSuite.R.Domain
    public class When_running_a_batch_simulation_with_an_error : concern_for_SimulationBatch
    {
       private SimulationBatchOptions _simulationBatchOptions;
-      private SimulationResults _results;
       private SimulationBatchRunValues _simulationBatchRunValues;
 
       public override void GlobalContext()

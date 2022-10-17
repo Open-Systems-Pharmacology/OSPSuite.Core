@@ -90,7 +90,7 @@ namespace OSPSuite.Core.Domain.Services
       public void Visit(OutputSchema outputSchema)
       {
          //For output schema, we calculate the number of overall generated points and if it's bigger than the max suggested, warning
-         var numberOfGeneratedPoints = Convert.ToInt32(outputSchema.Intervals.Sum(x => x.Resolution.Value * x.EndTime.Value));
+         var numberOfGeneratedPoints = Convert.ToInt32(outputSchema.Intervals.Sum(x => x.Resolution.Value * (x.EndTime.Value - x.StartTime.Value)));
          if (numberOfGeneratedPoints > Constants.MAX_NUMBER_OF_SUGGESTED_OUTPUT_POINTS)
             addValidationMessage(NotificationType.Warning, outputSchema, Warning.LargeNumberOfOutputPoints(numberOfGeneratedPoints));
       }

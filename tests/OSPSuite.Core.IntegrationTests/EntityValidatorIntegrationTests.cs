@@ -73,4 +73,33 @@ namespace OSPSuite.Core
          _result.ValidationState.ShouldBeEqualTo(ValidationState.Valid);
       }
    }
+
+   public class When_validating_a_simulation_with_a_resolution_resulting_in_a_realistic_number_of_points_based_on_start_time_and_end_time_of_interval : concern_for_EntityValidator
+   {
+      private ValidationResult _result;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         var interval = _simulation.SimulationSettings.OutputSchema.Intervals.First();
+         //10 pts per hour
+         interval.Resolution.ValueInDisplayUnit = 10;
+
+         //9_months_start
+         interval.StartTime.Value = 60 * 24 * 30 * 9;
+         //10_months_end
+         interval.EndTime.Value = 60 * 24 * 30 * 10;
+      }
+
+      protected override void Because()
+      {
+         _result = _entityValidator.Validate(_simulation);
+      }
+
+      [Observation]
+      public void should_not_return_warnings()
+      {
+         _result.ValidationState.ShouldBeEqualTo(ValidationState.Valid);
+      }
+   }
 }
