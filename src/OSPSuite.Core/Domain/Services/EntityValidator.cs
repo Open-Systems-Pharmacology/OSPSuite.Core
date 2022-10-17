@@ -24,6 +24,7 @@ namespace OSPSuite.Core.Domain.Services
 
    public class EntityValidator : IEntityValidator,
       IVisitor<IEntity>,
+      IVisitor<IParameter>,
       IVisitor<OutputSchema>,
       IVisitor<ParameterIdentification>,
       IVisitor<SensitivityAnalysis>
