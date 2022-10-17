@@ -93,7 +93,6 @@ namespace OSPSuite.Core.Domain.Services
          var numberOfGeneratedPoints = Convert.ToInt32(outputSchema.Intervals.Sum(x => x.Resolution.Value * x.EndTime.Value));
          if (numberOfGeneratedPoints > Constants.MAX_NUMBER_OF_SUGGESTED_OUTPUT_POINTS)
             addValidationMessage(NotificationType.Warning, outputSchema, Warning.LargeNumberOfOutputPoints(numberOfGeneratedPoints));
-
       }
 
       private void addRuleToValidation(IBusinessRule rule, IObjectBase objectBase)
@@ -115,7 +114,5 @@ namespace OSPSuite.Core.Domain.Services
       {
          _validationResult.AddMessagesFrom(_sensitivityAnalysisValidator.Validate(sensitivityAnalysis));
       }
-
-    
    }
 }
