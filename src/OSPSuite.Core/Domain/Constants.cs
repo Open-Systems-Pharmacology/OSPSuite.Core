@@ -68,7 +68,7 @@ namespace OSPSuite.Core.Domain
       public const float MIN_FRACTION_RELATIVE_COMPARISON_THRESHOLD = 1e-4F;
 
       //Max suggested output points. User can decide to still go ahead with the simulation
-      public const float MAX_NUMBER_OF_SUGGESTED_OUTPUT_POINTS = 100000;
+      public const float MAX_NUMBER_OF_SUGGESTED_OUTPUT_POINTS = 50000;
       
       public const float FLOAT_RELATIVE_EPSILON = 0.00001f;
       public const double CONFIDENCE_INTERVAL_ALPHA = 0.05;
