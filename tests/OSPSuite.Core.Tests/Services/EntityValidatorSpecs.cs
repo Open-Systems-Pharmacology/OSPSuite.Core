@@ -16,8 +16,8 @@ namespace OSPSuite.Core.Services
       protected override void Context()
       {
          var parameterIdentificationValidator = A.Fake<IParameterIdentificationValidator>();
-         _sensitivityAnalysisValidator= A.Fake<ISensitivityAnalysisValidator>();
-         sut = new EntityValidator(parameterIdentificationValidator,_sensitivityAnalysisValidator);
+         _sensitivityAnalysisValidator = A.Fake<ISensitivityAnalysisValidator>();
+         sut = new EntityValidator(parameterIdentificationValidator, _sensitivityAnalysisValidator);
       }
    }
 
@@ -47,7 +47,6 @@ namespace OSPSuite.Core.Services
          _result.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
       }
    }
-
 
    public class When_validating_a_container_container_two_parameters_with_one_invalid : concern_for_EntityValidator
    {
@@ -84,4 +83,5 @@ namespace OSPSuite.Core.Services
          _result.Messages.ElementAt(0).Object.ShouldBeEqualTo(_invalidParameter);
       }
    }
+
 }
