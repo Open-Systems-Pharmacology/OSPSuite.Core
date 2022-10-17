@@ -84,7 +84,6 @@ namespace OSPSuite.Core.Domain.Services
             _pkCalculationOptionsFactory.UpdateTotalDrugMassPerBodyWeight(simulation, moleculeName, pkCalculationOptions, allApplicationParameters);
 
             actionToPerform(individualResult);
-
          }
       }
 
