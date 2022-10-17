@@ -42,7 +42,7 @@ namespace OSPSuite.Presentation.Presenters
 
       public string Caption
       {
-         set { _view.Caption = value; }
+         set => _view.Caption = value;
       }
    }
 }

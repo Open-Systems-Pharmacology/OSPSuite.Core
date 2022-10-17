@@ -70,6 +70,7 @@ namespace OSPSuite.Core
          container.RegisterImplementationOf(A.Fake<IJournalDiagramManagerFactory>());
          container.RegisterImplementationOf(A.Fake<ICoreUserSettings>());
          container.RegisterImplementationOf(A.Fake<ICoreSimulationFactory>());
+         container.RegisterImplementationOf(A.Fake<IFullPathDisplayResolver>());
 
          var applicationConfiguration = A.Fake<IApplicationConfiguration>();
          A.CallTo(() => applicationConfiguration.Product).Returns(Origins.Other);

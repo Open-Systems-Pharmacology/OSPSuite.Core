@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Utility.Extensions;
@@ -21,7 +24,7 @@ namespace OSPSuite.Core.Domain.Services
 
    public class EntityValidator : IEntityValidator,
       IVisitor<IEntity>,
-      IVisitor<IParameter>,
+      IVisitor<OutputSchema>,
       IVisitor<ParameterIdentification>,
       IVisitor<SensitivityAnalysis>
    {
@@ -29,7 +32,8 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IParameterIdentificationValidator _parameterIdentificationValidator;
       private readonly ISensitivityAnalysisValidator _sensitivityAnalysisValidator;
 
-      public EntityValidator(IParameterIdentificationValidator parameterIdentificationValidator,
+      public EntityValidator(
+         IParameterIdentificationValidator parameterIdentificationValidator,
          ISensitivityAnalysisValidator sensitivityAnalysisValidator)
       {
          _parameterIdentificationValidator = parameterIdentificationValidator;
@@ -39,8 +43,7 @@ namespace OSPSuite.Core.Domain.Services
       public ValidationResult Validate(IObjectBase objectBase)
       {
          var objectsToValidate = new List<IObjectBase>();
-         IReadOnlyList<string> compoundNames = new List<string>();
-         var simulation = objectBase as ISimulation;
+         var simulation = objectBase as IModelCoreSimulation;
          if (simulation != null)
          {
             objectsToValidate.Add(simulation.Model.Root);
@@ -83,6 +86,15 @@ namespace OSPSuite.Core.Domain.Services
          Visit((IEntity) parameter);
       }
 
+      public void Visit(OutputSchema outputSchema)
+      {
+         //For output schema, we calculate the number of overall generated points and if it's bigger than the max suggested, warning
+         var numberOfGeneratedPoints = Convert.ToInt32(outputSchema.Intervals.Sum(x => x.Resolution.Value * x.EndTime.Value));
+         if (numberOfGeneratedPoints > Constants.MAX_NUMBER_OF_SUGGESTED_OUTPUT_POINTS)
+            addValidationMessage(NotificationType.Warning, outputSchema, Warning.LargeNumberOfOutputPoints(numberOfGeneratedPoints));
+
+      }
+
       private void addRuleToValidation(IBusinessRule rule, IObjectBase objectBase)
       {
          addValidationMessage(NotificationType.Error, objectBase, rule.Description);
@@ -102,5 +114,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          _validationResult.AddMessagesFrom(_sensitivityAnalysisValidator.Validate(sensitivityAnalysis));
       }
+
+    
    }
 }
