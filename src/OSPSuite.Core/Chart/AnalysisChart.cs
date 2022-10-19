@@ -54,5 +54,15 @@ namespace OSPSuite.Core.Chart
          visibleAxes.Each(axis => axis.Visible = true);
          Axes.Except(visibleAxes).Each(axis => axis.Visible = false);
       }
+
+      public List<float> DeviationFoldValues { get; } = new List<float>();
+
+      public void AddToDeviationFoldValue(float foldValue)
+      {
+         if (DeviationFoldValues.Contains(foldValue))
+            return;
+
+         DeviationFoldValues.Add(foldValue);
+      }
    }
 }

@@ -68,6 +68,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
             case ColumnOrigins.Observation:
             case ColumnOrigins.ObservationAuxiliary:
                return Captions.Chart.GroupRowFormat.Observation;
+            case ColumnOrigins.DeviationLine:
+               return Captions.Chart.GroupRowFormat.DeviationLine;
             case ColumnOrigins.Undefined:
                return Captions.Chart.GroupRowFormat.Undefined;
             default:
