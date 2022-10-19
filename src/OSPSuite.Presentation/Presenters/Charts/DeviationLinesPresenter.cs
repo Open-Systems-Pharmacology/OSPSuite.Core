@@ -5,6 +5,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
 {
    public interface IDeviationLinesPresenter : IDisposablePresenter, IPresenter<IDeviationLinesView>
    {
+      /// <summary>
+      ///    A returned value of 0 means that the action was cancelled by the user
+      /// </summary>
       float GetFoldValue();
    }
 

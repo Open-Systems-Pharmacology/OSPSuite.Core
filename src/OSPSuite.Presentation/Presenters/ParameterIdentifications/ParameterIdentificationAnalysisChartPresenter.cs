@@ -15,9 +15,8 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
-   public abstract class
-      ParameterIdentificationAnalysisChartPresenter<TChart, TView, TPresenter> : SimulationAnalysisChartPresenter<TChart, TView, TPresenter>,
-         IParameterIdentificationAnalysisPresenter
+   public abstract class ParameterIdentificationAnalysisChartPresenter<TChart, TView, TPresenter> : SimulationAnalysisChartPresenter<TChart, TView, TPresenter>,
+      IParameterIdentificationAnalysisPresenter
       where TChart : ChartWithObservedData, ISimulationAnalysis where
       TView : class, IParameterIdentificationAnalysisView, IView<TPresenter> where TPresenter : ISimulationAnalysisPresenter
    {

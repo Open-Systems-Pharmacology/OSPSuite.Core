@@ -1,4 +1,5 @@
-﻿using OSPSuite.Utility.Validation;
+﻿using OSPSuite.Assets;
+using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Presentation.DTO.Charts
 {
@@ -6,28 +7,22 @@ namespace OSPSuite.Presentation.DTO.Charts
    {
       public float FoldValue { get; set; }
 
-      public IBusinessRuleSet Rules
-      {
-         get { return AllRules.Default; }
-      }
+      public IBusinessRuleSet Rules => AllRules.Default;
 
       private static class AllRules
       {
-         public static IBusinessRule FoldValueGreaterThanOne
+         private static IBusinessRule foldValueGreaterThanOne
          {
             get
             {
                return CreateRule.For<FoldValueDTO>()
                   .Property(item => item.FoldValue)
                   .WithRule((x, value) => value > 1.0)
-                  .WithError("Fold value must be a number greater than one.");
+                  .WithError(Error.FoldValueMustBeGreaterThanOne);
             }
          }
 
-         public static IBusinessRuleSet Default
-         {
-            get { return new BusinessRuleSet(FoldValueGreaterThanOne); }
-         }
+         public static IBusinessRuleSet Default => new BusinessRuleSet(foldValueGreaterThanOne);
       }
    }
 }
