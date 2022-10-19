@@ -5,7 +5,7 @@ namespace OSPSuite.Presentation.DTO.Charts
 {
    public class FoldValueDTO : IValidatable
    {
-      public float FoldValue { get; set; };
+      public float FoldValue { get; set; }
 
       public IBusinessRuleSet Rules => AllRules.Default;
 
