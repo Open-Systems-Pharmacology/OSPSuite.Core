@@ -6,9 +6,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
    public interface IDeviationLinesPresenter : IDisposablePresenter, IPresenter<IDeviationLinesView>
    {
       /// <summary>
-      ///    A returned value of 0 means that the action was cancelled by the user
+      ///    A returned value of null means that the action was cancelled by the user
       /// </summary>
-      float GetFoldValue();
+      float? GetFoldValue();
    }
 
    public class DeviationLinesPresenter : AbstractDisposablePresenter<IDeviationLinesView, IDeviationLinesPresenter>,
@@ -20,12 +20,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
       }
 
-      public float GetFoldValue()
+      public float? GetFoldValue()
       {
          _view.BindTo(FoldValueDTO);
          _view.Display();
 
-         return FoldValueDTO.FoldValue;
+         return _view.Canceled ? null : FoldValueDTO.FoldValue;
       }
    }
 }

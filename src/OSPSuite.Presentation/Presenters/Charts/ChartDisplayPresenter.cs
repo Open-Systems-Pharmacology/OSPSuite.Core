@@ -266,10 +266,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
          {
             var foldValue = deviationLinesPresenter.GetFoldValue();
 
-            if (foldValue == 0)
+            if (!foldValue.HasValue)
                return;
 
-            AddDeviationLinesEvent(this, new AddDeviationLinesEventArgs(foldValue));
+            AddDeviationLinesEvent(this, new AddDeviationLinesEventArgs(foldValue.GetValueOrDefault()));
          }
       }
 

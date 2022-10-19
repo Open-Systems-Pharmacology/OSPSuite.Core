@@ -20,7 +20,8 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       [TestCase(0.2f, false)]
       [TestCase(1.2f, true)]
-      public void should_return_the_expected_validation_rule(float value, bool isValid)
+      [TestCase(null, false)]
+      public void should_return_the_expected_validation_rule(float? value, bool isValid)
       {
          sut.FoldValue = value;
          sut.IsValid().ShouldBeEqualTo(isValid);
