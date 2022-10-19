@@ -62,6 +62,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          base.ChartChanged();
          Chart.UpdateAxesVisibility();
          _chartPresenterContext.DisplayPresenter.Refresh();
+         _chartPresenterContext.EditorPresenter.Refresh();
       }
 
       protected override void ClearChartAndDataRepositories()
@@ -97,16 +98,9 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          var observationColumns = _parameterIdentification.AllObservedData.Select(x => x.FirstDataColumn()).ToList();
          _deviationLineRepositories.AddRange(
             _predictedVsObservedChartService.AddDeviationLine(foldValue, observationColumns, Chart, _deviationLineRepositories.Count));
-         addToDeviationFoldValueList(foldValue);
+         Chart.AddToDeviationFoldValue(foldValue);
          AddDataRepositoriesToEditor(_deviationLineRepositories);
          ChartChanged();
-         ChartDisplayPresenter.Refresh();
-         ChartEditorPresenter.Refresh();
-      }
-
-      private void addToDeviationFoldValueList(float foldValue)
-      {
-         Chart.AddToDeviationFoldValue(foldValue);
       }
 
       private void plotCalculationColumn(DataColumn calculationColumn, Action<DataColumn, Curve> action)
