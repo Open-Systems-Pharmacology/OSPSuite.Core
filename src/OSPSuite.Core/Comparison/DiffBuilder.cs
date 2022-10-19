@@ -46,12 +46,12 @@ namespace OSPSuite.Core.Comparison
 
       public abstract void Compare(IComparison<TObject> comparison);
 
-      internal void CompareValues<TInput, TOuput>(Func<TInput, TOuput> funcEvaluation, Expression<Func<TInput, TOuput>> propertyNameExpression, IComparison<TInput> comparison) where TInput : class
+      internal void CompareValues<TInput, TOutput>(Func<TInput, TOutput> funcEvaluation, Expression<Func<TInput, TOutput>> propertyNameExpression, IComparison<TInput> comparison) where TInput : class
       {
          CompareValues(funcEvaluation, nameFrom(propertyNameExpression), comparison);
       }
 
-      protected void CompareValues<TInput, TOuput>(Func<TInput, TOuput> funcEvaluation, Expression<Func<TInput, TOuput>> propertyNameExpression, IComparison<TInput> comparison, Func<TOuput, TOuput, bool> areEquals) where TInput : class
+      protected void CompareValues<TInput, TOutput>(Func<TInput, TOutput> funcEvaluation, Expression<Func<TInput, TOutput>> propertyNameExpression, IComparison<TInput> comparison, Func<TOutput, TOutput, bool> areEquals) where TInput : class
       {
          CompareValues(funcEvaluation, nameFrom(propertyNameExpression), comparison, areEquals);
       }
@@ -71,23 +71,23 @@ namespace OSPSuite.Core.Comparison
          CompareDoubleValues(funcEvaluation, nameFrom(propertyNameExpression), comparison, displayUnitFunc);
       }
 
-      protected void CompareValues<TInput, TOuput>(Func<TInput, TOuput> funcEvaluation, Expression<Func<TInput, TOuput>> propertyNameExpression, IComparison<TInput> comparison,
-         Func<TOuput, TOuput, bool> areEquals, Func<TInput, TOuput, string> formatter) where TInput : class
+      protected void CompareValues<TInput, TOutput>(Func<TInput, TOutput> funcEvaluation, Expression<Func<TInput, TOutput>> propertyNameExpression, IComparison<TInput> comparison,
+         Func<TOutput, TOutput, bool> areEquals, Func<TInput, TOutput, string> formatter) where TInput : class
       {
          CompareValues(funcEvaluation, nameFrom(propertyNameExpression), comparison, areEquals, formatter);
       }
 
-      private string nameFrom<TInput, TOuput>(Expression<Func<TInput, TOuput>> propertyNameExpression)
+      private string nameFrom<TInput, TOutput>(Expression<Func<TInput, TOutput>> propertyNameExpression)
       {
          return propertyNameExpression.Name().SplitToUpperCase();
       }
 
-      protected void CompareValues<TInput, TOuput>(Func<TInput, TOuput> funcEvaluation, string propertyName, IComparison<TInput> comparison) where TInput : class
+      protected void CompareValues<TInput, TOutput>(Func<TInput, TOutput> funcEvaluation, string propertyName, IComparison<TInput> comparison) where TInput : class
       {
          CompareValues(funcEvaluation, propertyName, comparison, (x1, x2) => Equals(x1, x2), (input, output) => defaultFormatter(input, output));
       }
 
-      protected void CompareValues<TInput, TOuput>(Func<TInput, TOuput> funcEvaluation, string propertyName, IComparison<TInput> comparison, Func<TOuput, TOuput, bool> areEquals) where TInput : class
+      protected void CompareValues<TInput, TOutput>(Func<TInput, TOutput> funcEvaluation, string propertyName, IComparison<TInput> comparison, Func<TOutput, TOutput, bool> areEquals) where TInput : class
       {
          CompareValues(funcEvaluation, propertyName, comparison, areEquals, (input, output) => defaultFormatter(input, output));
       }
@@ -121,7 +121,7 @@ namespace OSPSuite.Core.Comparison
       ///    comparison
       /// </summary>
       /// <typeparam name="TInput">Input type</typeparam>
-      /// <typeparam name="TOuput">Output type</typeparam>
+      /// <typeparam name="TOutput">Output type</typeparam>
       /// <param name="funcEvaluation">
       ///    The actual function being evaluated. We could compile the property name expression but
       ///    this would have an impact on performance
@@ -130,7 +130,7 @@ namespace OSPSuite.Core.Comparison
       /// <param name="comparison">Comparison</param>
       /// <param name="areEquals">Method used to compare the two values of type TOutput</param>
       /// <param name="formatter">Formatter used to format the output value</param>
-      protected void CompareValues<TInput, TOuput>(Func<TInput, TOuput> funcEvaluation, string propertyName, IComparison<TInput> comparison, Func<TOuput, TOuput, bool> areEquals, Func<TInput, TOuput, string> formatter) where TInput : class
+      protected void CompareValues<TInput, TOutput>(Func<TInput, TOutput> funcEvaluation, string propertyName, IComparison<TInput> comparison, Func<TOutput, TOutput, bool> areEquals, Func<TInput, TOutput, string> formatter) where TInput : class
       {
          var object1 = comparison.Object1;
          var object2 = comparison.Object2;

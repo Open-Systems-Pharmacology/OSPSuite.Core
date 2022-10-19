@@ -28,6 +28,8 @@ namespace OSPSuite.Core.Comparison
          else
             CompareValues(x => x.RHSFormula != null, Captions.Diff.IsStateVariable, comparison);
 
+         CompareValues(x => x.ContainerCriteria, x => x.ContainerCriteria, comparison);
+
          if (comparison.Settings.OnlyComputingRelevant)
             return;
 
