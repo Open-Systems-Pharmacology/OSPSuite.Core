@@ -161,23 +161,6 @@ namespace OSPSuite.Presentation.Presenters
          Refresh();
       }
 
-      public Scalings DefaultScalingFor(IQuantity output)
-      {
-         return output.IsFraction() ? Scalings.Linear : Scalings.Log;
-      }
-
-      private bool observedDataMatchesOutput(DataRepository observedData, string outputPath)
-      {
-         var organ = observedData.ExtendedPropertyValueFor(Constants.ObservedData.ORGAN);
-         var compartment = observedData.ExtendedPropertyValueFor(Constants.ObservedData.COMPARTMENT);
-         var molecule = observedData.ExtendedPropertyValueFor(Constants.ObservedData.MOLECULE);
-
-         if (organ == null || compartment == null || molecule == null)
-            return false;
-
-         return outputPath.Contains(organ) && outputPath.Contains(compartment) && outputPath.Contains(molecule);
-      }
-
       public void Handle(ObservedDataRemovedFromAnalysableEvent eventToHandle)
       {
          updateOutputMappingList();

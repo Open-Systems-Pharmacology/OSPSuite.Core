@@ -1,4 +1,6 @@
-﻿namespace OSPSuite.Core.Chart.ParameterIdentifications
+﻿using System.Collections.Generic;
+
+namespace OSPSuite.Core.Chart.ParameterIdentifications
 {
    public class ParameterIdentificationTimeProfileChart : AnalysisChart
    {
