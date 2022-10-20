@@ -323,4 +323,92 @@ namespace OSPSuite.Presentation.Presentation
          _predictedVsObservedChart.Curves.Count.ShouldBeEqualTo(2);
       }
    }
+
+   public class When_adding_deviation_lines_to_a_chart_with_fold_value_2 : concern_for_PredictedVsObservedChartService
+   {
+      private DataRepository _deviationLineRepository;
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString))
+            .Returns(new List<DataColumn> { _concentrationObservationColumn });
+      }
+
+      protected override void Because()
+      {
+         sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn,
+            _predictedVsObservedChart);
+         _deviationLineRepository = sut.AddDeviationLine(2, _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(),  _predictedVsObservedChart, 0).First();
+      }
+
+      [Observation]
+      public void two_deviation_lines_should_have_been_added()
+      {
+         _predictedVsObservedChart.Curves.Count.ShouldBeEqualTo(3);
+      }
+
+      [Observation]
+      public void deviation_lines_should_be_named_correctly()
+      {
+         _predictedVsObservedChart.Curves.Count(curve => curve.Name.Equals("2-fold deviation Upper")).ShouldBeEqualTo(1);
+         _predictedVsObservedChart.Curves.Count(curve => curve.Name.Equals("2-fold deviation Lower")).ShouldBeEqualTo(1);
+      }
+
+      [Observation]
+      public void upper_deviation_line_value_should_be_twice_the_observation()
+      {
+         var firstObservationValue = _concentrationObservationColumn.Values[0]; 
+         var lastObservationValue = _concentrationObservationColumn.Values.Last();
+         _deviationLineRepository.AllButBaseGrid().First().Values[0].ShouldBeEqualTo(firstObservationValue*2);
+         _deviationLineRepository.AllButBaseGrid().First().Values.Last().ShouldBeEqualTo(lastObservationValue * 2);
+      }
+
+      [Observation]
+      public void lower_deviation_line_value_should_be_half_the_observation()
+      {
+         var firstObservationValue = _concentrationObservationColumn.Values[0];
+         var lastObservationValue = _concentrationObservationColumn.Values.Last();
+         _deviationLineRepository.AllButBaseGridAsArray[1].Values[0].ShouldBeEqualTo(firstObservationValue / 2);
+         _deviationLineRepository.AllButBaseGridAsArray[1].Values.Last().ShouldBeEqualTo(lastObservationValue / 2);
+      }
+   }
+
+   public class When_adding_deviation_lines_to_a_chart_with_fold_value_10 : concern_for_PredictedVsObservedChartService
+   {
+      private DataRepository _deviationLineRepository;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString))
+            .Returns(new List<DataColumn> { _concentrationObservationColumn });
+      }
+
+      protected override void Because()
+      {
+         sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn,
+            _predictedVsObservedChart);
+         _deviationLineRepository = sut.AddDeviationLine(10,
+            _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(), _predictedVsObservedChart, 0).First();
+      }
+
+      [Observation]
+      public void upper_deviation_line_value_should_be_ten_times_the_observation()
+      {
+         var firstObservationValue = _concentrationObservationColumn.Values[0];
+         var lastObservationValue = _concentrationObservationColumn.Values.Last();
+         _deviationLineRepository.AllButBaseGrid().First().Values[0].ShouldBeEqualTo(firstObservationValue * 10);
+         _deviationLineRepository.AllButBaseGrid().First().Values.Last().ShouldBeEqualTo(lastObservationValue * 10);
+      }
+
+      [Observation]
+      public void lower_deviation_line_value_should_be_one_tenth_of_the_observation()
+      {
+         var firstObservationValue = _concentrationObservationColumn.Values[0];
+         var lastObservationValue = _concentrationObservationColumn.Values.Last();
+         _deviationLineRepository.AllButBaseGridAsArray[1].Values[0].ShouldBeEqualTo(firstObservationValue / 10);
+         _deviationLineRepository.AllButBaseGridAsArray[1].Values.Last().ShouldBeEqualTo(lastObservationValue / 10);
+      }
+   }
+
 }

@@ -906,6 +906,8 @@ namespace OSPSuite.Assets
          public static readonly string PredictedVsObservedAnalysis = "Predicted vs. Observed";
          public static readonly string SimulatedChartAxis = "Simulated ";
          public static readonly string ObservedChartAxis = "Observed ";
+         public static readonly string MarkerDeviation = "Marker_Deviation";
+         public static readonly string Deviation = "Deviation";
          public static readonly string ResidualsVsTimeAnalysis = "Residuals vs. Time";
          public static readonly string ResidualHistogramAnalysis = "Histogram of Residuals";
          public static readonly string RunResultsProperties = "Parameter Identification Run Properties";
@@ -932,6 +934,10 @@ namespace OSPSuite.Assets
          public static readonly string TimeProfilePredictionIntervalAnalysis = "Prediction Interval";
          public static readonly string TimeProfileConfidenceIntervalAnalysis = "Confidence Interval";
          public static readonly string TimeProfileVPCIntervalAnalysis = "Visual Predictive Check Interval";
+
+         public static string DeviationLineNameUpper(float foldValue) => $"{foldValue}-fold deviation Upper";
+
+         public static string DeviationLineNameLower(float foldValue) => $"{foldValue}-fold deviation Lower";
 
          public static string FeedbackViewFor(string parameterIdentificationName)
          {
@@ -1307,7 +1313,14 @@ namespace OSPSuite.Assets
             public static string Simulation = "Simulation";
             public static string Time = "Time";
             public static string Observation = "Observation";
-            public static string Undefined = "Undefined";
+            public static string DeviationLine = "Deviation Lines";
+            public static string Undefined = "Undefined"; 
+         }
+
+         public static class DeviationLines
+         {
+            public static string SpecifyFoldValue = "Specify deviation fold value";
+            public static string DeviationLineDescription = "Will create two deviation lines according to the given fold value which has to be >= 1. For a fold value equal to 1, the created lines would be equal to the identity line. An x-fold deviation range includes simulated values within x-fold and 1/x-fold of observed values.";
          }
       }
    }
@@ -1340,6 +1353,7 @@ namespace OSPSuite.Assets
       public static readonly string UnsupportedFileType = "The type of file that you are trying to open is not currently supported";
       public static readonly string CannotRemoveBaseGridColumnStillInUse = "Cannot remove base grid column still used by other columns";
       public static readonly string SimpleParseErrorMessage = "There were errors while parsing your data. Navigate to the sheets to read the concrete error.";
+      public static readonly string FoldValueMustBeGreaterThanOne = "Fold value must be a number greater than one.";
 
       public static string ParseErrorMessage(IEnumerable<string> errors) => $"There were errors while parsing your data: {string.Join(". ", errors)}";
 
@@ -2035,6 +2049,7 @@ namespace OSPSuite.Assets
       public static readonly string StartSensitivityAnalysis = "Start Sensitivity Analysis...";
       public static readonly string ClearHistory = "Clear History";
       public static readonly string ColorGroupObservedData = "Color by folder when adding to chart";
+      public static readonly string AddDeviationLines = "Add deviation lines...";
 
       public static readonly string Help = "Help";
 
