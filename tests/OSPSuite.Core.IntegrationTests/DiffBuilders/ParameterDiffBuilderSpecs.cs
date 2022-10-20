@@ -3,6 +3,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Container;
@@ -76,6 +77,32 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
+   public class When_comparing_parameters_having_everything_similar_excepts_container_criteria : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var c1 = new Container {Name = "O"};
+         var p11 = new Parameter {Name = "P1"}.WithParentContainer(c1);
+         p11.ContainerCriteria = Create.Criteria(x => x.InContainer("CONT1"));
+
+         var c2 = new Container {Name = "O"};
+         var p21 = new Parameter {Name = "P1"}.WithParentContainer(c2);
+         p21.ContainerCriteria = Create.Criteria(x => x.InContainer("CONT2"));
+
+         _object1 = c1;
+         _object2 = c2;
+
+         _comparerSettings = new ComparerSettings {FormulaComparison = FormulaComparison.Value, OnlyComputingRelevant = true};
+      }
+
+      [Observation]
+      public void should_show_a_difference()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
    public class When_comparing_parameters_having_the_same_value_but_using_different_display_units_and_the_comparison_compares_everything : concern_for_ObjectComparer
    {
       protected override void Context()
@@ -111,21 +138,21 @@ namespace OSPSuite.Core.DiffBuilders
       protected override void Context()
       {
          base.Context();
-         var c1 = new Container { Name = "O" };
-         var p11 = new Parameter { Name = "P1" }.WithParentContainer(c1);
+         var c1 = new Container {Name = "O"};
+         var p11 = new Parameter {Name = "P1"}.WithParentContainer(c1);
          p11.Formula = new ConstantFormula(5);
          p11.ValueOrigin.Description = "HELLO";
 
 
-         var c2 = new Container { Name = "O" };
-         var p21 = new Parameter { Name = "P1" }.WithParentContainer(c2);
+         var c2 = new Container {Name = "O"};
+         var p21 = new Parameter {Name = "P1"}.WithParentContainer(c2);
          p21.Formula = new ConstantFormula(5);
          p21.ValueOrigin.Description = "HELLO-2";
 
          _object1 = c1;
          _object2 = c2;
 
-         _comparerSettings = new ComparerSettings { FormulaComparison = FormulaComparison.Value, OnlyComputingRelevant = false };
+         _comparerSettings = new ComparerSettings {FormulaComparison = FormulaComparison.Value, OnlyComputingRelevant = false};
       }
 
       [Observation]
@@ -134,7 +161,6 @@ namespace OSPSuite.Core.DiffBuilders
          _report.Count.ShouldBeEqualTo(1);
       }
    }
-
 
    public class When_comparing_parameters_having_the_different_base_values_but_the_same_display_value : concern_for_ObjectComparer
    {
@@ -240,15 +266,15 @@ namespace OSPSuite.Core.DiffBuilders
       {
          base.Context();
          var distributedFormulaFactory = IoC.Resolve<IDistributionFormulaFactory>();
-         var c1 = new Container { Name = "O" };
-         var p11 = new DistributedParameter() { Name = "P1" }.WithParentContainer(c1);
+         var c1 = new Container {Name = "O"};
+         var p11 = new DistributedParameter() {Name = "P1"}.WithParentContainer(c1);
          var meanP11 = new Parameter().WithFormula(new ConstantFormula(1)).WithName(Constants.Distribution.MEAN).WithParentContainer(p11);
          var devP11 = new Parameter().WithFormula(new ConstantFormula(2)).WithName(Constants.Distribution.DEVIATION).WithParentContainer(p11);
          var percentile11 = new Parameter().WithFormula(new ConstantFormula(0.5)).WithName(Constants.Distribution.PERCENTILE).WithParentContainer(p11);
          p11.Formula = distributedFormulaFactory.CreateNormalDistributionFormulaFor(p11, meanP11, devP11);
 
-         var c2 = new Container { Name = "O" };
-         var p21 = new DistributedParameter() { Name = "P1" }.WithParentContainer(c2);
+         var c2 = new Container {Name = "O"};
+         var p21 = new DistributedParameter() {Name = "P1"}.WithParentContainer(c2);
          var meanP21 = new Parameter().WithFormula(new ConstantFormula(1)).WithName(Constants.Distribution.MEAN).WithParentContainer(p21);
          var devP21 = new Parameter().WithFormula(new ConstantFormula(2)).WithName(Constants.Distribution.GEOMETRIC_DEVIATION).WithParentContainer(p21);
          var percentile21 = new Parameter().WithFormula(new ConstantFormula(0.5)).WithName(Constants.Distribution.PERCENTILE).WithParentContainer(p21);
@@ -273,19 +299,17 @@ namespace OSPSuite.Core.DiffBuilders
       protected override void Context()
       {
          base.Context();
-         var c1 = new Container { Name = "O" };
-         var p11 = new Parameter { Name = "P1" }.WithParentContainer(c1);
+         var c1 = new Container {Name = "O"};
+         var p11 = new Parameter {Name = "P1"}.WithParentContainer(c1);
          p11.Formula = new ConstantFormula(5);
          p11.RHSFormula = new ConstantFormula(-1);
 
-         
 
-
-         var c2 = new Container { Name = "O" };
-         var p21 = new Parameter { Name = "P1" }.WithParentContainer(c2);
+         var c2 = new Container {Name = "O"};
+         var p21 = new Parameter {Name = "P1"}.WithParentContainer(c2);
          p21.Formula = new ConstantFormula(5);
          p21.RHSFormula = new ConstantFormula(1);
-         
+
          _object1 = c1;
          _object2 = c2;
 
@@ -298,5 +322,4 @@ namespace OSPSuite.Core.DiffBuilders
          _report.Count.ShouldBeEqualTo(1);
       }
    }
-
 }

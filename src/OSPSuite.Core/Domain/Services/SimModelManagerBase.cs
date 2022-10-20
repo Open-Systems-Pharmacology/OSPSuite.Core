@@ -23,17 +23,17 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Create the xml for simmodel based on the <paramref name="simulation" />
       /// </summary>
-      protected string CreateSimulationExport(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode)
+      protected string CreateSimulationExport(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode, IReadOnlyList<string> variableMoleculePaths = null)
       {
-         return _simModelExporter.ExportSimModelXml(simulation, simModelExportMode);
+         return _simModelExporter.ExportSimModelXml(simulation, simModelExportMode, variableMoleculePaths);
       }
 
       /// <summary>
       ///    Create the xml for simmodel based on the <paramref name="simulation" />
       /// </summary>
-      protected Task<string> CreateSimulationExportAsync(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode)
+      protected Task<string> CreateSimulationExportAsync(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode, IReadOnlyList<string> variableMoleculePaths = null)
       {
-         return Task.Run(() => _simModelExporter.ExportSimModelXml(simulation, simModelExportMode));
+         return Task.Run(() => _simModelExporter.ExportSimModelXml(simulation, simModelExportMode, variableMoleculePaths));
       }
 
       /// <summary>

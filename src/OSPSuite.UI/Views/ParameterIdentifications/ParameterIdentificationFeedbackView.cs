@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Drawing;
-using OSPSuite.DataBinding;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.Utility.Extensions;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
+using OSPSuite.DataBinding;
+using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.UI.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.ParameterIdentifications
 {

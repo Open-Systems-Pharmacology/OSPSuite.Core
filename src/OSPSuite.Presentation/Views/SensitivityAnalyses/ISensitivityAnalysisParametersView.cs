@@ -10,5 +10,6 @@ namespace OSPSuite.Presentation.Views.SensitivityAnalyses
       IEnumerable<SensitivityParameterDTO> SelectedParameters();
       void SetNMaxView(IView view);
       void SetRangeView(IView view);
+      void RefreshParameterHeight();
    }
 }

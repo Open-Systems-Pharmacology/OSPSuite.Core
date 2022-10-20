@@ -578,14 +578,15 @@ namespace OSPSuite.Assets
             return $"{missingObjectType} '{missingObjectName}' is missing from {containerType} '{containerName}'";
          }
 
-         public static string ConnectionBetween(string firstNeigborPath, string secondNeigborPath)
+         public static string ConnectionBetween(string firstNeighborPath, string secondNeighborPath)
          {
-            return $"Between '{firstNeigborPath}' and '{secondNeigborPath}'";
+            return $"Between '{firstNeighborPath}' and '{secondNeighborPath}'";
          }
 
          public static readonly string NoDifferenceFound = "No difference found.";
          public static readonly string Stationary = "Stationary";
          public static readonly string IsStateVariable = "Is state variable";
+         public static readonly string Criteria = "Criteria";
       }
 
       public static class Commands
@@ -1663,6 +1664,8 @@ namespace OSPSuite.Assets
          }
       }
 
+      public static string SimulationDidNotProduceResults = "Simulation did not produce results";
+
       public static string DuplicatedIndividualResultsForId(int individualId) => $"Individual results for individual with id '{individualId}' were defined more than once!";
 
       public static string DuplicatedPKParameterSensitivityFor(string id) => $"PKParameter sensitivity results for '{id}' were defined more than once!";
@@ -1941,6 +1944,9 @@ namespace OSPSuite.Assets
       public static string ParameterWithPathNotFoundInBaseIndividual(string parameterPath) => $"Parameter '{parameterPath}' was not found in individual and will be ignored.";
 
       public static string UserDefinedPKParameterAlreadyExistsAndWillBeReplaced(string pkParameterName) => $"User Defined PK-Parameter '{pkParameterName}' already exists and will be replaced.";
+
+      public static string LargeNumberOfOutputPoints(int numberOfPoints) =>
+         $"The selected output resolution will generate {numberOfPoints} points and may severely impact the software performance.\nAre you sure you want to run with these setting? If not, consider changing output resolution in simulations settings";
    }
 
    public static class RibbonCategories

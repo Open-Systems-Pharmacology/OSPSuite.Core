@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Serialization.SimModel.DTO;
@@ -18,14 +19,14 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          _exportSerializer = exportSerializer;
       }
 
-      public string ExportSimModelXml(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode)
+      public string ExportSimModelXml(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode, IReadOnlyList<string> variableMoleculePaths = null)
       {
-         return _exportSerializer.Serialize(createSimulationExport(simulation, simModelExportMode));
+         return _exportSerializer.Serialize(createSimulationExport(simulation, simModelExportMode, variableMoleculePaths));
       }
 
-      public void ExportSimModelXml(IModelCoreSimulation simulation, string fileName)
+      public void ExportSimModelXml(IModelCoreSimulation simulation, string fileName, IReadOnlyList<string> variableMoleculePaths = null)
       {
-         var element = _exportSerializer.SerializeElement(createSimulationExport(simulation, SimModelExportMode.Full));
+         var element = _exportSerializer.SerializeElement(createSimulationExport(simulation, SimModelExportMode.Full, variableMoleculePaths));
          XmlHelper.SaveXmlElementToFile(element, fileName);
       }
 
@@ -68,10 +69,10 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          return EnumHelper.ParseValue<CodeExportMode>(formulaExportMode.ToString());
       }
 
-      private SimulationExport createSimulationExport(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode)
+      private SimulationExport createSimulationExport(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode, IReadOnlyList<string> variableMoleculePaths)
       {
          var simulationExportCreator = _simulationExportCreatorFactory.Create();
-         var simulationExport = simulationExportCreator.CreateExportFor(simulation.Model, simModelExportMode);
+         var simulationExport = simulationExportCreator.CreateExportFor(simulation.Model, simModelExportMode, variableMoleculePaths);
          simulationExport.AddSimulationConfiguration(simulation.SimulationSettings);
          return simulationExport;
       }
