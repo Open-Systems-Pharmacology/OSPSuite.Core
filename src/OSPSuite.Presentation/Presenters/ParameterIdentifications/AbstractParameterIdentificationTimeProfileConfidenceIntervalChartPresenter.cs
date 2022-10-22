@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core.Chart;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
@@ -13,7 +13,7 @@ using OSPSuite.Presentation.Views.ParameterIdentifications;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
-   public class AbstractParameterIdentificationTimeProfileConfidenceIntervalChartPresenter<TChart> : ParameterIdentificationSingleRunAnalysisPresenter<TChart> where TChart : ParameterIdentificationAnalysisChartWithLocalRepositories, ISimulationAnalysis
+   public class AbstractParameterIdentificationTimeProfileConfidenceIntervalChartPresenter<TChart> : ParameterIdentificationSingleRunAnalysisPresenter<TChart> where TChart : AnalysisChartWithLocalRepositories, ISimulationAnalysis
    {
       private readonly ITimeProfileConfidenceIntervalCalculator _timeProfileConfidenceIntervalCalculator;
       private readonly Func<ITimeProfileConfidenceIntervalCalculator, Func<ParameterIdentification, ParameterIdentificationRunResult, IReadOnlyList<DataRepository>>> _confidenceIntervalFunc;

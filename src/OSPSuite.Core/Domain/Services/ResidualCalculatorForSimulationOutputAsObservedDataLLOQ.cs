@@ -1,11 +1,12 @@
 using System;
+using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
 
-namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
+namespace OSPSuite.Core.Domain.Services
 {
    public class ResidualCalculatorForSimulationOutputAsObservedDataLLOQ : ResidualCalculator
    {
-      public ResidualCalculatorForSimulationOutputAsObservedDataLLOQ(ITimeGridRestrictor timeGridRestrictor, IDimensionFactory dimensionFactory) : base(timeGridRestrictor,dimensionFactory)
+      public ResidualCalculatorForSimulationOutputAsObservedDataLLOQ(ITimeGridRestrictor timeGridRestrictor, IDimensionFactory dimensionFactory) : base(timeGridRestrictor, dimensionFactory)
       {
       }
 

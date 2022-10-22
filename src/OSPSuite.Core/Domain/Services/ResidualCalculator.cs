@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
-using RemoveLLOQMode = OSPSuite.Core.Domain.ParameterIdentifications.RemoveLLOQMode;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
+namespace OSPSuite.Core.Domain.Services
 {
    public abstract class ResidualCalculator : IResidualCalculator
    {
@@ -34,10 +34,24 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       {
          if (simulationsResults.Any(x => !x.Success))
             return residualResultWithErrorFrom(simulationsResults);
-        
+
          var simulationColumnsCache = new Cache<string, DataColumn>(x => x.PathAsString, x => null);
          simulationsResults.Select(x => x.Results).Each(repo => simulationColumnsCache.AddRange(repo.AllButBaseGrid()));
 
+         return calculateResidualsResult(allOutputMappings, simulationColumnsCache);
+      }
+
+      public ResidualsResult Calculate(DataRepository simulationResultRepository, IReadOnlyList<OutputMapping> allOutputMappings)
+      {
+         var simulationColumnsCache = new Cache<string, DataColumn>(x => x.PathAsString, x => null);
+         simulationColumnsCache.AddRange(simulationResultRepository.AllButBaseGrid());
+
+         return calculateResidualsResult(allOutputMappings, simulationColumnsCache);
+      }
+
+      private ResidualsResult calculateResidualsResult(IReadOnlyList<OutputMapping> allOutputMappings,
+         Cache<string, DataColumn> simulationColumnsCache)
+      {
          var residualResult = new ResidualsResult();
 
          foreach (var outputMapping in allOutputMappings)
@@ -60,7 +74,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private ResidualsResult residualResultWithErrorFrom(IReadOnlyList<SimulationRunResults> simulationsResults)
       {
          var exceptionMessage = simulationsResults.Select(x => x.Error).Where(x => x != null).ToString("\n");
-         return  new ResidualsResult
+         return new ResidualsResult
          {
             ExceptionOccured = true,
             ExceptionMessage = exceptionMessage
@@ -85,12 +99,12 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          {
             var weight = outputMapping.Weight * outputMapping.WeightedObservedData.Weights[index];
             var observedValue = convertToBaseUnit(mergedDimension, currentObservedDataUnit, observedValueColumn[index]);
-            if(!observedValue.IsValid())
+            if (!observedValue.IsValid())
                continue;
 
             var observedTime = observedTimeColumn[index];
             var simulatedValue = simulationColumn.GetValue(observedTime);
-            if(!simulatedValue.IsValid())
+            if (!simulatedValue.IsValid())
                continue;
 
             outputResiduals.Add(new Residual(observedTime, weight * residualCalculatorFunc(simulatedValue, observedValue, lloq), weight));

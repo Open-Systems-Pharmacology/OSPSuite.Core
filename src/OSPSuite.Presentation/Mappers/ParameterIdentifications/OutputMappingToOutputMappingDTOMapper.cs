@@ -23,8 +23,8 @@ namespace OSPSuite.Presentation.Mappers.ParameterIdentifications
 
       private static bool matches(OutputMapping outputMapping, SimulationQuantitySelectionDTO simulationQuantitySelectionDTO)
       {
-         return Equals(simulationQuantitySelectionDTO.Simulation, outputMapping.Simulation) && 
-            Equals(simulationQuantitySelectionDTO.QuantityPath, outputMapping.OutputPath);
+         return Equals(simulationQuantitySelectionDTO.Simulation, outputMapping.Simulation) &&
+                Equals(simulationQuantitySelectionDTO.QuantityPath, outputMapping.OutputPath);
       }
    }
 }

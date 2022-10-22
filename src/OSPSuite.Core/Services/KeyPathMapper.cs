@@ -84,6 +84,7 @@ namespace OSPSuite.Core.Services
                return new KeyPathMap(path: quantityInfo.PathAsString);
             case ColumnOrigins.Calculation:
             case ColumnOrigins.CalculationAuxiliary:
+            case ColumnOrigins.DeviationLine:
                return calculationKeyFor(quantityInfo);
             default:
                throw new ArgumentOutOfRangeException();

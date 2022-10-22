@@ -9,6 +9,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
+using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Presenters.ContextMenus;
 using OSPSuite.Presentation.Services.Charts;
@@ -33,6 +34,7 @@ namespace OSPSuite.Presentation.Presentation
       private IViewItemContextMenuFactory _contextMenuFactory;
       protected ICurveChartExportTask _chartExportTask;
       protected IApplicationSettings _applicationSettings;
+      protected IApplicationController _applicationController;
 
       protected override void Context()
       {
@@ -45,8 +47,9 @@ namespace OSPSuite.Presentation.Presentation
          _contextMenuFactory = A.Fake<IViewItemContextMenuFactory>();
          _chartExportTask = A.Fake<ICurveChartExportTask>();
          _applicationSettings = A.Fake<IApplicationSettings>();
+         _applicationController = A.Fake<IApplicationController>();
 
-         sut = new ChartDisplayPresenter(_chartDisplayView, _curveBinderFactory, _contextMenuFactory, _axisBinderFactory, _dataModeMapper, _chartExportTask, _applicationSettings);
+         sut = new ChartDisplayPresenter(_chartDisplayView, _curveBinderFactory, _contextMenuFactory, _axisBinderFactory, _dataModeMapper, _chartExportTask, _applicationSettings, _applicationController);
          var dataRepository = DomainHelperForSpecs.SimulationDataRepositoryFor("Sim");
 
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(A<DataColumn>._)).ReturnsLazily(x => x.GetArgument<DataColumn>(0).Dimension);

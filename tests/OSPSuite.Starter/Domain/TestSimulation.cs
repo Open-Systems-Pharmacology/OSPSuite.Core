@@ -4,6 +4,7 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.ParameterIdentifications;
 
 namespace OSPSuite.Starter.Domain
 {
@@ -18,6 +19,9 @@ namespace OSPSuite.Starter.Domain
       {
          get { yield break; }
       }
+
+      public OutputMappings OutputMappings { get; set; }
+      public DataRepository ResultsDataRepository { get; set; }
 
       public OutputSchema OutputSchema => Settings.OutputSchema;
       public ISimulationSettings Settings => BuildConfiguration.SimulationSettings;
