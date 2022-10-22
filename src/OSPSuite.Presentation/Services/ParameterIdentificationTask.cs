@@ -34,6 +34,7 @@ namespace OSPSuite.Presentation.Services
       private readonly ISimulationSelector _simulationSelector;
       private readonly IHeavyWorkManager _heavyWorkManager;
       private readonly IParameterAnalysableParameterSelector _parameterSelector;
+      private readonly IOutputMappingMatchingService _outputMappingMatchingService;
 
       public ParameterIdentificationTask(
          IParameterIdentificationFactory parameterIdentificationFactory,
@@ -50,7 +51,8 @@ namespace OSPSuite.Presentation.Services
          IDialogCreator dialogCreator,
          ISimulationSelector simulationSelector,
          IHeavyWorkManager heavyWorkManager,
-         IParameterAnalysableParameterSelector parameterSelector)
+         IParameterAnalysableParameterSelector parameterSelector,
+         IOutputMappingMatchingService outputMappingMatchingService)
       {
          _parameterIdentificationFactory = parameterIdentificationFactory;
          _withIdRepository = withIdRepository;
@@ -67,6 +69,7 @@ namespace OSPSuite.Presentation.Services
          _simulationSelector = simulationSelector;
          _heavyWorkManager = heavyWorkManager;
          _parameterSelector = parameterSelector;
+         _outputMappingMatchingService = outputMappingMatchingService;
       }
 
       public void AddToProject(ParameterIdentification parameterIdentification)
@@ -217,24 +220,12 @@ namespace OSPSuite.Presentation.Services
 
       public Scalings DefaultScalingFor(IQuantity output)
       {
-         return output.IsFraction() ? Scalings.Linear : Scalings.Log;
+         return _outputMappingMatchingService.DefaultScalingFor(output);
       }
 
       private IEnumerable<DataRepository> observedDataInSimulationMatchingOutputs(string outputPath, ISimulation simulation)
       {
-         return AllObservedDataUsedBy(simulation).Where(obs => observedDataMatchesOutput(obs, outputPath));
-      }
-
-      private bool observedDataMatchesOutput(DataRepository observedData, string outputPath)
-      {
-         var organ = observedData.ExtendedPropertyValueFor(Constants.ObservedData.ORGAN);
-         var compartment = observedData.ExtendedPropertyValueFor(Constants.ObservedData.COMPARTMENT);
-         var molecule = observedData.ExtendedPropertyValueFor(Constants.ObservedData.MOLECULE);
-
-         if (organ == null || compartment == null || molecule == null)
-            return false;
-
-         return outputPath.Contains(organ) && outputPath.Contains(compartment) && outputPath.Contains(molecule);
+         return AllObservedDataUsedBy(simulation).Where(obs => _outputMappingMatchingService.ObservedDataMatchesOutput(obs, outputPath));
       }
 
       private ISimulation simulationContaining(IParameter parameter)
