@@ -9,7 +9,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Services
 {
-   public abstract class concern_for_OutputMappingMatchingService : ContextSpecification<OutputMappingMatchingService>
+   public abstract class concern_for_OutputMappingMatchingTask : ContextSpecification<OutputMappingMatchingTask>
    {
       protected IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
       protected IEntityPathResolver _entityPathResolver;
@@ -43,11 +43,11 @@ namespace OSPSuite.Core.Services
          _entitiesInSimulationRetriever = A.Fake<IEntitiesInSimulationRetriever>();
          A.CallTo(() => _entitiesInSimulationRetriever.OutputsFrom(A<ISimulation>._)).Returns(_pathCache);
 
-         sut = new OutputMappingMatchingService(_entitiesInSimulationRetriever);
+         sut = new OutputMappingMatchingTask(_entitiesInSimulationRetriever);
       }
    }
 
-   public class When_mapping_data_that_has_no_matching_output : concern_for_OutputMappingMatchingService
+   public class When_mapping_data_that_has_no_matching_output : concern_for_OutputMappingMatchingTask
    {
       [Observation]
       [TestCase("test1|test2|test3", false)]
@@ -60,7 +60,7 @@ namespace OSPSuite.Core.Services
    }
 
    /*
-   public class When_adding_observed_data_to_a_simulation : concern_for_OutputMappingMatchingService
+   public class When_adding_observed_data_to_a_simulation : concern_for_OutputMappingMatchingTask
    {
       protected override void Context()
       {

@@ -6,7 +6,7 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Services
 {
-   public interface IOutputMappingMatchingService
+   public interface IOutputMappingMatchingTask
    {
       /// <summary>
       ///    Adds an output mapping to the <paramref name="simulation"/> for the <paramref name="observedData"/> in the case
@@ -26,11 +26,11 @@ namespace OSPSuite.Core.Services
       Scalings DefaultScalingFor(IQuantity output);
    }
 
-   public class OutputMappingMatchingService : IOutputMappingMatchingService
+   public class OutputMappingMatchingTask : IOutputMappingMatchingTask
    {
       private readonly IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
 
-      public OutputMappingMatchingService (IEntitiesInSimulationRetriever entitiesInSimulationRetriever)
+      public OutputMappingMatchingTask (IEntitiesInSimulationRetriever entitiesInSimulationRetriever)
       {
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
       }
