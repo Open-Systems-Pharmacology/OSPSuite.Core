@@ -34,6 +34,7 @@ namespace OSPSuite.Presentation.Services
       private ISimulationSelector _simulationSelector;
       private IHeavyWorkManager _heavyWorkManager;
       protected IParameterAnalysableParameterSelector _parameterAnalysableParameterSelector;
+      protected IOutputMappingMatchingTask _outputMappingMatchingTask;
 
       protected override void Context()
       {
@@ -51,11 +52,12 @@ namespace OSPSuite.Presentation.Services
          _dialogCreator = A.Fake<IDialogCreator>();
          _simulationSelector = A.Fake<ISimulationSelector>();
          _parameterAnalysableParameterSelector = A.Fake<IParameterAnalysableParameterSelector>();
+         _outputMappingMatchingTask = new OutputMappingMatchingTask(_entitiesInSimulationRetriever);
 
          _heavyWorkManager = new HeavyWorkManagerForSpecs();
          sut = new ParameterIdentificationTask(_parameterIdentificationFactory, _withIdRepository, _entitiesInSimulationRetriever, _observedDataRepository,
             _entityPathResolver, _identificationParameterFactory, _executionContext, _favoriteRepository, _simulationSwapValidator, _applicationController,
-            _simulationSwapCorrector, _dialogCreator, _simulationSelector, _heavyWorkManager, _parameterAnalysableParameterSelector);
+            _simulationSwapCorrector, _dialogCreator, _simulationSelector, _heavyWorkManager, _parameterAnalysableParameterSelector, _outputMappingMatchingTask);
       }
    }
 
