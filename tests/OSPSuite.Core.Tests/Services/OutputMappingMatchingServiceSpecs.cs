@@ -71,7 +71,7 @@ namespace OSPSuite.Core.Services
       [Observation]
       public void matching_simulation_output_mapping_should_have_been_added()
       {
-         sut.ObservedDataMatchesOutput(_observedData, "").ShouldBeEqualTo(false);
+         _simulation.OutputMappings.All.Count.ShouldBeEqualTo(1);
       }
    }
 */
