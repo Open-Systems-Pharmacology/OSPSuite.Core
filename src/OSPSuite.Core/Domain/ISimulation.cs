@@ -5,7 +5,7 @@ using OSPSuite.Core.Domain.ParameterIdentifications;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface ISimulation : ILazyLoadable, IAnalysable, IUsesObservedData, IModelCoreSimulation
+   public interface ISimulation : ILazyLoadable, IAnalysable, IUsesObservedData, IModelCoreSimulation, IWithHasChanged
    {
       IEnumerable<CurveChart> Charts { get; }
 

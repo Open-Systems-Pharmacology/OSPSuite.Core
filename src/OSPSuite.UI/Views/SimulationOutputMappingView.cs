@@ -73,10 +73,12 @@ namespace OSPSuite.UI.Views
 
          _gridViewBinder.Bind(x => x.Scaling)
             .WithCaption(Captions.Scaling)
+            .WithOnValueUpdated((o, e) => onOutputMappingEdited())
             .WithRepository(x => _scalingRepository)
             .WithShowButton(ShowButtonModeEnum.ShowAlways);
 
-         _gridViewBinder.Bind(x => x.Weight);
+         _gridViewBinder.Bind(x => x.Weight)
+            .WithOnValueUpdated((o, e) => onOutputMappingEdited());
 
          _gridViewBinder.AddUnboundColumn()
             .WithCaption(UIConstants.EMPTY_COLUMN)
@@ -89,6 +91,10 @@ namespace OSPSuite.UI.Views
          _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.RemoveOutputMapping(_gridViewBinder.FocusedElement));
       }
 
+      private void onOutputMappingEdited()
+      {
+         _presenter.MarkSimulationAsChanged();
+      }
       private void onOutputValueChanged(SimulationOutputMappingDTO simulationOutputMappingDTO)
       {
          _presenter.UpdateSimulationOutputMappings(simulationOutputMappingDTO);
