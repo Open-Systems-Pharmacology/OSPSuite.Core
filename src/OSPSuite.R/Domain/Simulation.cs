@@ -120,5 +120,6 @@ namespace OSPSuite.R.Domain
       public double? MolWeightFor(IQuantity quantity) => CoreSimulation.MolWeightFor(quantity);
 
       public double? MolWeightFor(string quantityPath) => CoreSimulation.MolWeightFor(quantityPath);
+      public bool HasChanged { get; set; }
    }
 }

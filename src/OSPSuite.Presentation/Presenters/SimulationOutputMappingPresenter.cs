@@ -36,6 +36,7 @@ namespace OSPSuite.Presentation.Presenters
 
       void InitializeSimulation(ISimulation simulation);
       void UpdateSimulationOutputMappings(SimulationOutputMappingDTO simulationOutputMappingDTO);
+      void MarkSimulationAsChanged();
    }
 
    public class SimulationOutputMappingPresenter : AbstractSubPresenter<ISimulationOutputMappingView, ISimulationOutputMappingPresenter>,
@@ -145,8 +146,14 @@ namespace OSPSuite.Presentation.Presenters
 
       public void UpdateSimulationOutputMappings(SimulationOutputMappingDTO simulationOutputMappingDTO)
       {
+         MarkSimulationAsChanged();
          if (!_simulation.OutputMappings.OutputMappingsUsingDataRepository(simulationOutputMappingDTO.ObservedData).Any())
             _simulation.OutputMappings.Add(simulationOutputMappingDTO.Mapping);
+      }
+
+      public void MarkSimulationAsChanged()
+      {
+         _simulation.HasChanged = true;
       }
 
       public void RemoveOutputMapping(SimulationOutputMappingDTO outputMappingDTO)

@@ -29,6 +29,11 @@ namespace OSPSuite.Core.Domain
       string Name { get; set; }
    }
 
+   public interface IWithHasChanged
+   {
+      bool HasChanged { get; set; }
+   }
+
    public interface IWithDescription
    {
       string Description { get; set; }
