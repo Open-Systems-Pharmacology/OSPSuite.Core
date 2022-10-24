@@ -60,5 +60,7 @@ namespace OSPSuite.Starter.Domain
       {
          return true;
       }
+
+      public bool HasChanged { get; set; }
    }
 }
