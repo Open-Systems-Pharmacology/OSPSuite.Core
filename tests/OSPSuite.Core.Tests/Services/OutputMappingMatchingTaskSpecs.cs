@@ -1,4 +1,5 @@
-﻿using FakeItEasy;
+﻿using System.Linq;
+using FakeItEasy;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -16,9 +17,11 @@ namespace OSPSuite.Core.Services
       protected PathCache<IQuantity> _pathCache;
       protected IQuantity _quantity1;
       protected IQuantity _quantity2;
+      protected IQuantity _compartment;
       protected DataRepository _observedData;
       protected ISimulation _simulation;
       protected IContainer _container;
+      protected IContainer _organContainer;
 
       protected override void Context()
       {
@@ -29,17 +32,26 @@ namespace OSPSuite.Core.Services
          _observedData.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.ObservedData.COMPARTMENT, Value = "TestCompartment" });
          _observedData.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.ObservedData.MOLECULE, Value = "TestMolecule" });
          _simulation = A.Fake<ISimulation>();
-         _container = A.Fake<IContainer>();
-         _quantity1 = A.Fake<IQuantity>();
+
+         _organContainer = new Container().WithName("Brain");
+         _organContainer.Add(new MoleculeAmount() { Name = "TestMolecule" });
+
+         _container = new Container().WithName("TestCompartment");
+         _container.Add(_organContainer);
+
+         _quantity1 = new MoleculeAmount();
          _quantity1.QuantityType = QuantityType.Drug;
-         _quantity2 = A.Fake<IQuantity>();
+
+         _quantity2 = new MoleculeAmount();
          _quantity2.QuantityType = QuantityType.Drug;
-         _container.Add(_quantity2);
+         
          _simulation.Model.Root = _container;
 
-         _pathCache = new PathCache<IQuantity>(_entityPathResolver);
-         _pathCache.Add("TestCompartment|Brain|TestMolecule", _quantity1);
-         _pathCache.Add("test1|Brain|TestMolecule", _quantity2);
+         _pathCache = new PathCache<IQuantity>(_entityPathResolver)
+         {
+            { "TestCompartment|Brain|TestMolecule", _quantity1 },
+            { "test1|Brain|TestMolecule", _quantity2 }
+         };
          _entitiesInSimulationRetriever = A.Fake<IEntitiesInSimulationRetriever>();
          A.CallTo(() => _entitiesInSimulationRetriever.OutputsFrom(A<ISimulation>._)).Returns(_pathCache);
 
@@ -59,8 +71,8 @@ namespace OSPSuite.Core.Services
       }
    }
 
-   /*
-   public class When_adding_observed_data_to_a_simulation : concern_for_OutputMappingMatchingTask
+   
+   public class When_adding_matching_observed_data_to_a_simulation : concern_for_OutputMappingMatchingTask
    {
       protected override void Context()
       {
@@ -72,7 +84,26 @@ namespace OSPSuite.Core.Services
       public void matching_simulation_output_mapping_should_have_been_added()
       {
          _simulation.OutputMappings.All.Count.ShouldBeEqualTo(1);
+         _simulation.OutputMappings.All.First().Output.Name.ShouldBeEqualTo("TestMolecule");
+         _simulation.OutputMappings.All.First().WeightedObservedData.Name.ShouldBeEqualTo("TestData");
       }
    }
-*/
+
+   public class When_adding_non_matching_observed_data_to_a_simulation : concern_for_OutputMappingMatchingTask
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _observedData.ExtendedProperties.Remove(Constants.ObservedData.MOLECULE);
+         _observedData.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.ObservedData.MOLECULE, Value = "TestMolecule_2" });
+         sut.AddMatchingOutputMapping(_observedData, _simulation);
+      }
+
+      [Observation]
+      public void no_simulation_output_mapping_should_have_been_added()
+      {
+         _simulation.OutputMappings.All.ShouldBeEmpty();
+      }
+   }
+
 }
