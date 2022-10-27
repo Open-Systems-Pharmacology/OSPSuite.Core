@@ -28,6 +28,36 @@ namespace OSPSuite.R.Services
       }
    }
 
+   public class When_using_time_points_instead_of_intervals : concern_for_ConcurrentSimulationRunner
+   {
+      private Simulation _sim;
+      private ConcurrentRunSimulationBatch _concurrentRunSimulationBatch;
+      private ConcurrencyManagerResult<SimulationResults>[] _results;
+
+      protected override void Context()
+      {
+         base.Context();
+         _sim = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("Aciclovir.pkml"));
+         _sim.SimulationSettings.OutputSchema.Clear();
+         _sim.SimulationSettings.OutputSchema.AddTimePoints(new[] { 1d, 2d, 3d });
+
+         _concurrentRunSimulationBatch = new ConcurrentRunSimulationBatch(_sim, new SimulationBatchOptions { VariableParameters = new[] { "Aciclovir|Lipophilicity" } });
+         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new[] { -0.097 } });
+         sut.AddSimulationBatch(_concurrentRunSimulationBatch);
+      }
+
+      protected override void Because()
+      {
+         _results = sut.RunConcurrently();
+      }
+
+      [Observation]
+      public void the_results_should_contain_run_results()
+      {
+         _results.First().ErrorMessage.ShouldBeEmpty();
+      }
+   }
+
    public class When_running_simulations_that_fail_sometimes : concern_for_ConcurrentSimulationRunner
    {
       private ConcurrencyManagerResult<SimulationResults>[] _results;
@@ -38,15 +68,7 @@ namespace OSPSuite.R.Services
          sut.SimulationRunOptions = new Domain.SimulationRunOptions { NumberOfCoresToUse = 19 };
          var modelCoreSimulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("Aciclovir.pkml"));
 
-         _concurrentRunSimulationBatch = new ConcurrentRunSimulationBatch(modelCoreSimulation, new SimulationBatchOptions { VariableParameters = new []{ "Aciclovir|Lipophilicity" } });
-         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
-         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
-         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
-         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });         
-         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
-         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
-         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
-         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });         
+         _concurrentRunSimulationBatch = new ConcurrentRunSimulationBatch(modelCoreSimulation, new SimulationBatchOptions { VariableParameters = new[] { "Aciclovir|Lipophilicity" } });
          _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
          _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
          _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
@@ -68,7 +90,15 @@ namespace OSPSuite.R.Services
          _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
          _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
          _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
-         
+         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
+         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
+         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
+         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
+         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
+         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
+         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
+         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { ParameterValues = new double[] { 0.1 } });
+
 
          sut.AddSimulationBatch(_concurrentRunSimulationBatch);
       }
