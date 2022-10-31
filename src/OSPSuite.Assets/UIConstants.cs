@@ -342,7 +342,7 @@ namespace OSPSuite.Assets
 
       public static class SimulationUI
       {
-         public static readonly string DataSelection = "Data";
+         public static readonly string ObservedDataSelection = "Observed Data";
          public static readonly string PredictedVsObservedSimulation = "Predicted vs Observed";
          public static readonly string ResidualsVsTimeSimulation = "Residuals vs Time";
          public static readonly string Outputs = "Simulation Outputs";
