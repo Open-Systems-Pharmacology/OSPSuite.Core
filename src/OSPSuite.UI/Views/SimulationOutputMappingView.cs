@@ -120,6 +120,8 @@ namespace OSPSuite.UI.Views
          return listRepositoryItems;
       }
 
-      public override string Caption => Captions.SimulationUI.DataSelection;
+      public override string Caption => Captions.SimulationUI.ObservedDataSelection;
+
+      public override ApplicationIcon ApplicationIcon => ApplicationIcons.ObservedData;
    }
 }
