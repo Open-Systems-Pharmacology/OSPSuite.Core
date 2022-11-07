@@ -92,36 +92,5 @@ namespace OSPSuite.Core.Extensions
 
          return Convert.ToSingle(Math.Pow(sum, 0.5));
       }
-
-      public static float Percentile(this IReadOnlyList<float> sortedArray, double percentile)
-      {
-         return sortedArray.Quantile(percentile / 100);
-      }
-
-      public static float Median(this IReadOnlyList<float> sortedArray)
-      {
-         return sortedArray.Percentile(50);
-      }
-
-      public static float Quantile(this IReadOnlyList<float> sortedArray, double quantile)
-      {
-         int N = sortedArray.Count;
-
-         if (N == 0)
-            return float.NaN;
-
-         double n = (N - 1) * quantile + 1;
-
-         if (n == 1d)
-            return sortedArray[0];
-
-         if (n == N)
-            return sortedArray[N - 1];
-
-         int k = (int) n;
-         var d = n - k;
-         double value = sortedArray[k - 1] + d * (sortedArray[k] - sortedArray[k - 1]);
-         return (float) value;
-      }
    }
 }
