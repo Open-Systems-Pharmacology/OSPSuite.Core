@@ -6,7 +6,6 @@ using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
-using OSPSuite.Core.Services;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Views;
@@ -48,7 +47,6 @@ namespace OSPSuite.Presentation.Presenters
       private readonly ISimulationOutputMappingToOutputMappingDTOMapper _outputMappingDTOMapper;
       private readonly IQuantityToSimulationQuantitySelectionDTOMapper _simulationQuantitySelectionDTOMapper;
       private readonly List<SimulationQuantitySelectionDTO> _allAvailableOutputs = new List<SimulationQuantitySelectionDTO>();
-      private readonly IOutputMappingMatchingTask _outputMappingMatchingTask;
 
       private readonly NotifyList<SimulationOutputMappingDTO> _listOfOutputMappingDTOs;
 
@@ -66,7 +64,6 @@ namespace OSPSuite.Presentation.Presenters
          _observedDataRepository = observedDataRepository;
          _outputMappingDTOMapper = outputMappingDTOMapper;
          _simulationQuantitySelectionDTOMapper = simulationQuantitySelectionDTOMapper;
-         _outputMappingMatchingTask = new OutputMappingMatchingTask(_entitiesInSimulationRetriever);
          _listOfOutputMappingDTOs = new NotifyList<SimulationOutputMappingDTO>();
       }
 
@@ -152,7 +149,6 @@ namespace OSPSuite.Presentation.Presenters
          MarkSimulationAsChanged();
          if (!_simulation.OutputMappings.OutputMappingsUsingDataRepository(simulationOutputMappingDTO.ObservedData).Any())
             _simulation.OutputMappings.Add(simulationOutputMappingDTO.Mapping);
-         simulationOutputMappingDTO.Scaling = _outputMappingMatchingTask.DefaultScalingFor(simulationOutputMappingDTO.Output.Quantity);
       }
 
       public void MarkSimulationAsChanged()

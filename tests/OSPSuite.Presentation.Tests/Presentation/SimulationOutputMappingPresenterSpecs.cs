@@ -161,21 +161,4 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_new_output_gets_mapped : concern_for_SimulationOutputMappingPresenter
-   {
-      protected override void Context()
-      {
-         base.Context();
-         _simulation1.OutputMappings.Add(_outputMapping1);
-         _simulation1.OutputMappings.All[0].Scaling = Scalings.Linear;
-         sut.SetSimulation(_simulation1);
-         sut.UpdateSimulationOutputMappings(_outputMappingDTO1);
-      }
-
-      [Observation]
-      public void should_have_removed_the_corresponding_output_mapping()
-      {
-         _simulation1.OutputMappings.All[0].Scaling.ShouldBeEqualTo(Scalings.Log);
-      }
-   }
 }
