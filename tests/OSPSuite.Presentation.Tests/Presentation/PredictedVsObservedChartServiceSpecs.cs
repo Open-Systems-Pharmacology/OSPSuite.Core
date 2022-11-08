@@ -350,7 +350,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void deviation_lines_should_be_named_correctly()
       {
-         _predictedVsObservedChart.Curves.Count(curve => curve.Name.Equals("2-fold deviation Upper")).ShouldBeEqualTo(1);
+         _predictedVsObservedChart.Curves.Count(curve => curve.Name.Equals("2-fold deviation")).ShouldBeEqualTo(1);
          _predictedVsObservedChart.Curves.Count(curve => curve.Name.Equals("2-fold deviation Lower")).ShouldBeEqualTo(1);
       }
 
