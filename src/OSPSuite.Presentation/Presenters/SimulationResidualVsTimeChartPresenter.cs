@@ -52,11 +52,8 @@ namespace OSPSuite.Presentation.Presenters
          _zeroRepository = _residualsVsTimeChartService.AddZeroMarkerCurveToChart(Chart, minObservedDataTime(), maxObservedDataTime());
          AddDataRepositoriesToEditor(new[] { _zeroRepository });
 
-         if (ChartIsBeingCreated)
-         {
-            Chart.AxisBy(AxisTypes.Y).Caption = Captions.ParameterIdentification.Residuals;
-            Chart.AxisBy(AxisTypes.Y).Scaling = Scalings.Linear;
-         }
+         if (ChartIsBeingCreated) 
+            _residualsVsTimeChartService.ConfigureChartAxis(Chart);
 
          UpdateChartFromTemplate();
          View.SetTotalError(simulationResidual.TotalError);
@@ -102,26 +99,8 @@ namespace OSPSuite.Presentation.Presenters
          return getAllAvailableObservedData().Select(x => x.BaseGrid.Values.Last()).Max();
       }
 
-      private DataRepository getOrCreateScatterDataRepositoryFor(OutputResiduals outputResidual)
-      {
-         var repositoryName = "Simulation Results";
-         var id = $"{Chart.Id}-{outputResidual.FullOutputPath}-{outputResidual.ObservedData.Id}";
-
-         var timeValues = outputResidual.Residuals.Select(x => x.Time).ToList();
-         var outputValues = outputResidual.Residuals.Select(x => x.Value).ToList();
-
-         var dataRepository = Chart.DataRepositories.FindById(id);
-         if (dataRepository == null)
-         {
-            dataRepository = _residualsVsTimeChartService.CreateScatterDataRepository(id, repositoryName, outputResidual);
-            Chart.AddRepository(dataRepository);
-         }
-
-         dataRepository.BaseGrid.Values = timeValues.ToFloatArray();
-         dataRepository.FirstDataColumn().Values = outputValues.ToFloatArray();
-
-         return dataRepository;
-      }
+      private DataRepository getOrCreateScatterDataRepositoryFor(OutputResiduals outputResidual) =>
+         _residualsVsTimeChartService.GetOrCreateScatterDataRepositoryInChart(Chart, outputResidual);
 
       private IEnumerable<DataRepository> getAllAvailableObservedData()
       {

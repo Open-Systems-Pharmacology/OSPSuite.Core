@@ -1,15 +1,18 @@
 ﻿using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Extensions;
 
-namespace OSPSuite.Core.Domain.ParameterIdentifications
+namespace OSPSuite.Core.Domain
 {
    public class OutputMapping
    {
       public virtual WeightedObservedData WeightedObservedData { get; set; }
+    
       public virtual SimulationQuantitySelection OutputSelection { get; set; }
+      
       public virtual Scalings Scaling { get; set; }
-      public float Weight { get; set; }
+      
+      public float Weight { get; set; } = Constants.DEFAULT_WEIGHT;
 
       /// <summary>
       ///    Returns the consolidated path of the mapped output (e.g without the name of the simulation)
@@ -21,33 +24,20 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
       /// </summary>
       public virtual string FullOutputPath => OutputSelection?.FullQuantityPath ?? string.Empty;
 
-
       /// <summary>
       ///    Returns the underlying mapped output (Molecule Amount or Observer)
       /// </summary>
       public virtual IQuantity Output => OutputSelection?.Quantity;
 
-      public OutputMapping()
-      {
-         Weight = Constants.DEFAULT_WEIGHT;
-      }
-
       public virtual ISimulation Simulation => OutputSelection?.Simulation;
+
       public IDimension Dimension => OutputSelection?.Quantity?.Dimension;
 
-      public virtual bool UsesObservedData(DataRepository observerData)
-      {
-         return Equals(WeightedObservedData.ObservedData, observerData);
-      }
+      public virtual bool UsesObservedData(DataRepository observerData) => Equals(WeightedObservedData.ObservedData, observerData);
 
-      public virtual bool UsesSimulation(ISimulation simulation)
-      {
-         return Equals(OutputSelection.Simulation, simulation);
-      }
+      public virtual bool UsesSimulation(ISimulation simulation) => Equals(OutputSelection.Simulation, simulation);
 
       public virtual bool IsValid => Output != null && WeightedObservedData != null;
-
-
 
       public virtual OutputMapping Clone()
       {
