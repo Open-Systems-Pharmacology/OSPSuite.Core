@@ -197,35 +197,12 @@ namespace OSPSuite.Presentation.Services
 
       private void addOutputMappingsFor(ISimulation simulation, ParameterIdentification parameterIdentification)
       {
-         foreach (var keyValue in _entitiesInSimulationRetriever.OutputsFrom(simulation).KeyValues)
-         {
-            var output = keyValue.Value;
-            var outputPath = keyValue.Key;
-            observedDataInSimulationMatchingOutputs(outputPath, simulation).Each(obs => addOutputMapping(output, outputPath, obs, simulation, parameterIdentification));
-         }
-      }
-
-      private void addOutputMapping(IQuantity output, string outputPath, DataRepository observedData, ISimulation simulation, ParameterIdentification parameterIdentification)
-      {
-         if (parameterIdentification.UsesObservedData(observedData))
-            return;
-
-         parameterIdentification.AddOutputMapping(new OutputMapping
-         {
-            OutputSelection = new SimulationQuantitySelection(simulation, new QuantitySelection(outputPath, output.QuantityType)),
-            WeightedObservedData = new WeightedObservedData(observedData),
-            Scaling = DefaultScalingFor(output)
-         });
+         simulation.OutputMappings.All.Each(parameterIdentification.AddOutputMapping);
       }
 
       public Scalings DefaultScalingFor(IQuantity output)
       {
          return _outputMappingMatchingTask.DefaultScalingFor(output);
-      }
-
-      private IEnumerable<DataRepository> observedDataInSimulationMatchingOutputs(string outputPath, ISimulation simulation)
-      {
-         return AllObservedDataUsedBy(simulation).Where(obs => _outputMappingMatchingTask.ObservedDataMatchesOutput(obs, outputPath));
       }
 
       private ISimulation simulationContaining(IParameter parameter)

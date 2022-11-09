@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -275,6 +276,7 @@ namespace OSPSuite.Presentation.Services
       private DataRepository _observedData2;
       private string _outputPath;
       private DataRepository _observedData3;
+      private OutputMapping _outputMapping;
 
       protected override void Context()
       {
@@ -292,7 +294,7 @@ namespace OSPSuite.Presentation.Services
          _observedData2 = DomainHelperForSpecs.ObservedData("OBS2");
          _observedData3 = DomainHelperForSpecs.ObservedData("OBS3");
 
-         A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(_simulation)).Returns(new[] {_observedData1, _observedData2});
+         A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(_simulation)).Returns(new[] { _observedData2, _observedData3});
 
          var simulationQuantitySelection = A.Fake<SimulationQuantitySelection>();
          A.CallTo(() => simulationQuantitySelection.Path).Returns(_outputPath);
@@ -303,6 +305,14 @@ namespace OSPSuite.Presentation.Services
          _observedData1.ExtendedProperties.Add(new ExtendedProperty<string> {Name = Constants.ObservedData.COMPARTMENT, Value = "Cell"});
 
          _observedData3.ExtendedProperties.Add(new ExtendedProperty<string> {Name = Constants.ObservedData.ORGAN, Value = "Kidney"});
+
+         _outputMapping = new OutputMapping
+         {
+            OutputSelection = new SimulationQuantitySelection(_simulation, new QuantitySelection("PATH", QuantityType.Parameter)),
+            WeightedObservedData = new WeightedObservedData(_observedData3)
+         };
+         _simulation.OutputMappings.Add(_outputMapping);
+
       }
 
       protected override void Because()
@@ -317,10 +327,11 @@ namespace OSPSuite.Presentation.Services
       }
 
       [Observation]
-      public void should_automatically_mapped_observed_data_not_already_in_use_and_that_matches_simulation_output()
+      public void should_be_assigned_the_output_mappings_from_the_added_simulation()
       {
-         _parameterIdentification.UsesObservedData(_observedData1).ShouldBeTrue();
-         _parameterIdentification.UsesObservedData(_observedData3).ShouldBeFalse();
+         _parameterIdentification.UsesObservedData(_observedData1).ShouldBeFalse();
+         _parameterIdentification.UsesObservedData(_observedData3).ShouldBeTrue();
+         _parameterIdentification.OutputMappings.All.Count(mapping => mapping.WeightedObservedData.ObservedData.Id == "OBS3").ShouldBeEqualTo(1);
       }
    }
 
