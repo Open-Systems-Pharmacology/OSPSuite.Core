@@ -87,7 +87,8 @@ namespace OSPSuite.Presentation.Presenters
          addPredictedVsObservedToChart(_simulation.ResultsDataRepository, (column, curve) =>
          {
             curve.Description = curve.Name;
-            curve.Name = column.PathAsString;
+            SelectColorForPath(curve.Name);
+            UpdateColorForPath(curve, curve.Name);
          });
       }
 
@@ -116,7 +117,7 @@ namespace OSPSuite.Presentation.Presenters
          _predictedVsObservedChartService.AddCurvesFor(allObservationsForOutput, calculationColumn, Chart, (column, curve) =>
          {
             UpdateColorForCalculationColumn(curve, calculationColumn);
-            curve.VisibleInLegend = !chartAlreadyContainsCurveFor(calculationColumn);
+            curve.VisibleInLegend = true;
             action(calculationColumn, curve);
          });
       }
@@ -134,11 +135,6 @@ namespace OSPSuite.Presentation.Presenters
       private IEnumerable<DataColumn> calculationColumnsToPlot(DataRepository dataRepository)
       {
          return dataRepository.Where(isPlottableCalculation).ToList();
-      }
-
-      private bool chartAlreadyContainsCurveFor(DataColumn calculationColumn)
-      {
-         return Chart.Curves.Any(x => Equals(x.yData, calculationColumn));
       }
 
       private static bool isPlottableCalculation(DataColumn column)

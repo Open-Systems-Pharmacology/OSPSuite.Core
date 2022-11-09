@@ -115,7 +115,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          AddColumnSettings(CurveOptionsColumns.Symbol).WithCaption(Captions.Chart.CurveOptions.Symbol);
          AddColumnSettings(CurveOptionsColumns.LineThickness).WithCaption(Captions.Chart.CurveOptions.LineThickness).WithVisible(false);
          AddColumnSettings(CurveOptionsColumns.Visible).WithCaption(Captions.Chart.CurveOptions.Visible);
-         AddColumnSettings(CurveOptionsColumns.VisibleInLegend).WithCaption(Captions.Chart.CurveOptions.VisibleInLegend);
+         AddColumnSettings(CurveOptionsColumns.VisibleInLegend).WithCaption(Captions.Chart.CurveOptions.InLegend);
          AddColumnSettings(CurveOptionsColumns.ShowLowerLimitOfQuantification).WithCaption(Captions.LLOQ).WithVisible(false);
       }
 

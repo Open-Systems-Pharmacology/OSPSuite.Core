@@ -1259,7 +1259,7 @@ namespace OSPSuite.Assets
             public static string InterpolationMode = "Interpolation";
             public static string yAxisType = "y-Axis";
             public static string Visible = "Visible";
-            public static string VisibleInLegend = "In Legend";
+            public static string InLegend = "In Legend";
             public static string Color = "Color";
             public static string LineStyle = "Style";
             public static string Symbol = "Symbol";

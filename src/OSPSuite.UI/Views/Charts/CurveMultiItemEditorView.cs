@@ -31,7 +31,7 @@ namespace OSPSuite.UI.Views.Charts
          styleLayoutControlItem.Text = Captions.Chart.CurveOptions.LineStyle.FormatForLabel();
          symbolLayoutControlItem.Text = Captions.Chart.CurveOptions.Symbol.FormatForLabel();
          visibleLayoutControlItem.Text = Captions.Chart.CurveOptions.Visible.FormatForLabel();
-         inLegendLayoutControlItem.Text = Captions.Chart.CurveOptions.VisibleInLegend.FormatForLabel();
+         inLegendLayoutControlItem.Text = Captions.Chart.CurveOptions.InLegend.FormatForLabel();
       }
 
       public override void InitializeBinding()
