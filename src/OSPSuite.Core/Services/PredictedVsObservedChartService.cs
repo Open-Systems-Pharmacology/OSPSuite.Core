@@ -121,7 +121,7 @@ namespace OSPSuite.Core.Services
             chart.AddCurvesFor(repository, x => x.Name, _dimensionFactory, (column, curve) => curve.UpdateDeviationCurve(column.Name, deviationLinesCount)));
 
          //adding one of the deviation lines to the legend. Workaround for now until the presenter is adjusted for Predicted vs. Observed Chart.
-         var upperDeviationLine = chart.Curves.FirstOrDefault(curve => curve.Name.Equals(Captions.ParameterIdentification.DeviationLineNameUpper(foldValue)));
+         var upperDeviationLine = chart.Curves.FindByName(Captions.PredictedVsObserved.DeviationLineNameUpper(foldValue));
          if (upperDeviationLine != null)
             upperDeviationLine.VisibleInLegend = true;
 
