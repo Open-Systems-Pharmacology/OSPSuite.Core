@@ -3,10 +3,8 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -23,7 +21,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private readonly IResidualsVsTimeChartService _residualsVsTimeChartService;
       private DataRepository _zeroRepository;
 
-      public ParameterIdentificationResidualVsTimeChartPresenter(IParameterIdentificationSingleRunAnalysisView view, ChartPresenterContext chartPresenterContext, IResidualsVsTimeChartService residualsVsTimeChartService) :
+      public ParameterIdentificationResidualVsTimeChartPresenter(
+         IParameterIdentificationSingleRunAnalysisView view,
+         ChartPresenterContext chartPresenterContext,
+         IResidualsVsTimeChartService residualsVsTimeChartService) :
          base(view, chartPresenterContext, ApplicationIcons.ResidualVsTimeAnalysis, PresenterConstants.PresenterKeys.ParameterIdentificationResidualVsTimeChartPresenter)
       {
          _residualsVsTimeChartService = residualsVsTimeChartService;
@@ -36,13 +37,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
             return;
 
          _zeroRepository = _residualsVsTimeChartService.AddZeroMarkerCurveToChart(Chart, _parameterIdentification.MinObservedDataTime, _parameterIdentification.MaxObservedDataTime);
-         AddDataRepositoriesToEditor(new[] { _zeroRepository });
+         AddDataRepositoriesToEditor(new[] {_zeroRepository});
 
          if (ChartIsBeingCreated)
-         {
-            Chart.AxisBy(AxisTypes.Y).Caption = Captions.ParameterIdentification.Residuals;
-            Chart.AxisBy(AxisTypes.Y).Scaling = Scalings.Linear;
-         }
+            _residualsVsTimeChartService.ConfigureChartAxis(Chart);
 
          UpdateChartFromTemplate();
       }
@@ -55,7 +53,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private void addOutputToScatter(IGrouping<string, OutputResiduals> outputMappingsByOutput, ParameterIdentificationRunResult runResult)
       {
          var fullOutputPath = outputMappingsByOutput.Key;
-         bool shouldShowInLegend = true;
+         var shouldShowInLegend = true;
          foreach (var outputMapping in outputMappingsByOutput)
          {
             var dataRepository = getOrCreateScatterDataRepositoryFor(runResult.Index, outputMapping);
@@ -77,27 +75,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          }
       }
 
-
-      private DataRepository getOrCreateScatterDataRepositoryFor(int runIndex, OutputResiduals outputResidual)
-      {
-         var repositoryName = Captions.ParameterIdentification.SimulationResultsForRun(runIndex);
-         var id = $"{Chart.Id}-{outputResidual.FullOutputPath}-{outputResidual.ObservedData.Id}-{runIndex}";
-
-         var timeValues = outputResidual.Residuals.Select(x => x.Time).ToList();
-         var outputValues = outputResidual.Residuals.Select(x => x.Value).ToList();
-
-         var dataRepository = Chart.DataRepositories.FindById(id);
-         if (dataRepository == null)
-         {
-            dataRepository = _residualsVsTimeChartService.CreateScatterDataRepository(id, repositoryName, outputResidual);
-            Chart.AddRepository(dataRepository);
-         }
-
-         dataRepository.BaseGrid.Values = timeValues.ToFloatArray();
-         dataRepository.FirstDataColumn().Values = outputValues.ToFloatArray();
-
-         return dataRepository;
-      }
+      private DataRepository getOrCreateScatterDataRepositoryFor(int runIndex, OutputResiduals outputResidual) =>
+         _residualsVsTimeChartService.GetOrCreateScatterDataRepositoryInChart(Chart, outputResidual, runIndex);
 
       public override void Clear()
       {
