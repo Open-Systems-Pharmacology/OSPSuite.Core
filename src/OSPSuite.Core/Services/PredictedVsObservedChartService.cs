@@ -191,7 +191,7 @@ namespace OSPSuite.Core.Services
                   Values = new List<float>() {identityMinimum, identityMaximum}
                };
 
-               var valuesUpper = new DataColumn(Captions.ParameterIdentification.DeviationLineNameUpper(foldValue), mergedDimension,
+               var valuesUpper = new DataColumn(Captions.PredictedVsObserved.DeviationLineNameUpper(foldValue), mergedDimension,
                   baseGridDeviation)
                {
                   Values = new List<float>()
@@ -203,7 +203,7 @@ namespace OSPSuite.Core.Services
                };
                deviationDataRepository.Add(valuesUpper);
 
-               var valuesLower = new DataColumn(Captions.ParameterIdentification.DeviationLineNameLower(foldValue), mergedDimension,
+               var valuesLower = new DataColumn(Captions.PredictedVsObserved.DeviationLineNameLower(foldValue), mergedDimension,
                   baseGridDeviation)
                {
                   Values = new List<float>() {identityMinimum / foldValue, identityMaximum / foldValue},
