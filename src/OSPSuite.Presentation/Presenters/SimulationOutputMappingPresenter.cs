@@ -19,7 +19,8 @@ namespace OSPSuite.Presentation.Presenters
 {
    public interface ISimulationOutputMappingPresenter : IPresenter<ISimulationOutputMappingView>, ILatchable,
       IListener<ObservedDataAddedToAnalysableEvent>,
-      IListener<ObservedDataRemovedFromAnalysableEvent>
+      IListener<ObservedDataRemovedFromAnalysableEvent>,
+      IListener<SimulationOutputSelectionsChangedEvent>
    {
       void SetSimulation(ISimulation simulation);
       IEnumerable<SimulationQuantitySelectionDTO> AllAvailableOutputs { get; }
@@ -176,6 +177,12 @@ namespace OSPSuite.Presentation.Presenters
       public void Handle(ObservedDataRemovedFromAnalysableEvent eventToHandle)
       {
          updateOutputMappingList();
+      }
+
+      public void Handle(SimulationOutputSelectionsChangedEvent eventToHandle)
+      {
+         if(Equals(eventToHandle.Simulation ,_simulation))
+            Refresh();
       }
    }
 }
