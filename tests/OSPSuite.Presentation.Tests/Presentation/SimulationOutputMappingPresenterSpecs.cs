@@ -19,7 +19,7 @@ namespace OSPSuite.Presentation.Presentation
 {
    public abstract class concern_for_SimulationOutputMappingPresenter : ContextSpecification<ISimulationOutputMappingPresenter>
    {
-      private ISimulationOutputMappingView _view;
+      protected ISimulationOutputMappingView _view;
       private IObservedDataRepository _observedDataRepository;
       private IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
       private ISimulationOutputMappingToOutputMappingDTOMapper _outputMappingDTOMapper;
@@ -138,6 +138,22 @@ namespace OSPSuite.Presentation.Presentation
          _allOutputMappingDTOs.Count().ShouldBeEqualTo(2);
          _allOutputMappingDTOs.ElementAt(0).ShouldBeEqualTo(_outputMappingDTO1);
          _simulation1.OutputMappings.All.Count().ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_simulation_output_selections_have_changed : concern_for_SimulationOutputMappingPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.SetSimulation(_simulation1);
+         sut.Handle(new SimulationOutputSelectionsChangedEvent(_simulation1));
+      }
+
+      [Observation]
+      public void should_have_removed_the_corresponding_output_mapping()
+      {
+         A.CallTo(() => _view.BindTo(A<IEnumerable<SimulationOutputMappingDTO>>._)).MustHaveHappened(2, Times.Exactly);
       }
    }
 
