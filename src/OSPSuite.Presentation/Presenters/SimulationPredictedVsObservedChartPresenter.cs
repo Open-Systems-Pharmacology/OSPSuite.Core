@@ -87,6 +87,8 @@ namespace OSPSuite.Presentation.Presenters
          addPredictedVsObservedToChart(_simulation.ResultsDataRepository, (column, curve) =>
          {
             curve.Description = curve.Name;
+            SelectColorForPath(column.PathAsString);
+            UpdateColorForPath(curve, column.PathAsString);
          });
       }
 
