@@ -121,7 +121,7 @@ namespace OSPSuite.Core.Services
             chart.AddCurvesFor(repository, x => x.Name, _dimensionFactory, (column, curve) => curve.UpdateDeviationCurve(column.Name, deviationLinesCount)));
 
          //adding one of the deviation lines to the legend. Workaround for now until the presenter is adjusted for Predicted vs. Observed Chart.
-         var upperDeviationLine = chart.Curves.FindByName(Captions.PredictedVsObserved.DeviationLineNameUpper(foldValue));
+         var upperDeviationLine = chart.Curves.FindByName(Captions.Chart.DeviationLines.DeviationLineNameUpper(foldValue));
          if (upperDeviationLine != null)
             upperDeviationLine.VisibleInLegend = true;
 
@@ -191,7 +191,7 @@ namespace OSPSuite.Core.Services
                   Values = new List<float>() {identityMinimum, identityMaximum}
                };
 
-               var valuesUpper = new DataColumn(Captions.ParameterIdentification.DeviationLineNameUpper(foldValue), mergedDimension,
+               var valuesUpper = new DataColumn(Captions.Chart.DeviationLines.DeviationLineNameUpper(foldValue), mergedDimension,
                   baseGridDeviation)
                {
                   Values = new List<float>()
@@ -203,7 +203,7 @@ namespace OSPSuite.Core.Services
                };
                deviationDataRepository.Add(valuesUpper);
 
-               var valuesLower = new DataColumn(Captions.ParameterIdentification.DeviationLineNameLower(foldValue), mergedDimension,
+               var valuesLower = new DataColumn(Captions.Chart.DeviationLines.DeviationLineNameLower(foldValue), mergedDimension,
                   baseGridDeviation)
                {
                   Values = new List<float>() {identityMinimum / foldValue, identityMaximum / foldValue},
