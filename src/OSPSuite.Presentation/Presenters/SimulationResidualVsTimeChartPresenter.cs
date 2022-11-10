@@ -3,12 +3,10 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Simulations;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Services.Charts;
@@ -29,11 +27,12 @@ namespace OSPSuite.Presentation.Presenters
       private readonly IObservedDataRepository _observedDataRepository;
       private readonly IResidualsVsTimeChartService _residualsVsTimeChartService;
       private readonly IResidualCalculator _residualCalculator;
-      private DataRepository _zeroRepository;
+      private DataRepository _zeroRepository = new DataRepository();
       private IReadOnlyCollection<OutputResiduals> _allOutputResiduals;
 
       public SimulationResidualVsTimeChartPresenter(ISimulationVsObservedDataView view, ChartPresenterContext chartPresenterContext,
-         IObservedDataRepository observedDataRepository, IResidualCalculatorFactory residualCalculatorFactory, IResidualsVsTimeChartService residualsVsTimeChartService)
+         IObservedDataRepository observedDataRepository, IResidualCalculatorFactory residualCalculatorFactory,
+         IResidualsVsTimeChartService residualsVsTimeChartService)
          : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis,
             PresenterConstants.PresenterKeys.SimulationPredictedVsObservedChartPresenter)
       {
@@ -52,7 +51,7 @@ namespace OSPSuite.Presentation.Presenters
          _zeroRepository = _residualsVsTimeChartService.AddZeroMarkerCurveToChart(Chart, minObservedDataTime(), maxObservedDataTime());
          AddDataRepositoriesToEditor(new[] { _zeroRepository });
 
-         if (ChartIsBeingCreated) 
+         if (ChartIsBeingCreated)
             _residualsVsTimeChartService.ConfigureChartAxis(Chart);
 
          UpdateChartFromTemplate();
