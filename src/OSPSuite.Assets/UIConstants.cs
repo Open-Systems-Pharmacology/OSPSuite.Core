@@ -1,10 +1,10 @@
-﻿using System;
+﻿using OSPSuite.Assets.Extensions;
+using OSPSuite.Utility.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using OSPSuite.Assets.Extensions;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Assets
 {
@@ -937,10 +937,6 @@ namespace OSPSuite.Assets
          public static readonly string TimeProfileConfidenceIntervalAnalysis = "Confidence Interval";
          public static readonly string TimeProfileVPCIntervalAnalysis = "Visual Predictive Check Interval";
 
-         public static string DeviationLineNameUpper(float foldValue) => $"{foldValue}-fold deviation";
-
-         public static string DeviationLineNameLower(float foldValue) => $"{foldValue}-fold deviation Lower";
-
          public static string FeedbackViewFor(string parameterIdentificationName)
          {
             return $"{FeedbackView} for {parameterIdentificationName}";
@@ -1323,6 +1319,9 @@ namespace OSPSuite.Assets
          {
             public static string SpecifyFoldValue = "Specify deviation fold value";
             public static string DeviationLineDescription = "Will create two deviation lines according to the given fold value which has to be greater than 1 (foldValue >1). An x-fold deviation range includes simulated values within x-fold and 1/x-fold of observed values.";
+            public static string DeviationLineNameUpper(float foldValue) => $"{foldValue}-fold deviation";
+            public static string DeviationLineNameLower(float foldValue) => $"{foldValue}-fold deviation Lower";
+
          }
       }
    }
