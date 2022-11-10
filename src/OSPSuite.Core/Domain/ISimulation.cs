@@ -13,5 +13,6 @@ namespace OSPSuite.Core.Domain
 
       //ResultsDataRepository will be null for Population Simulations and should never be called for them
       DataRepository ResultsDataRepository { get; set; }
+      void RemoveUsedObservedData(DataRepository dataRepository);
    }
 }
