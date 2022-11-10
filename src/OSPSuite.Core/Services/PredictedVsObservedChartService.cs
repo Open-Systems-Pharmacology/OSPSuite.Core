@@ -121,7 +121,7 @@ namespace OSPSuite.Core.Services
             chart.AddCurvesFor(repository, x => x.Name, _dimensionFactory, (column, curve) => curve.UpdateDeviationCurve(column.Name, deviationLinesCount)));
 
          //adding one of the deviation lines to the legend. Workaround for now until the presenter is adjusted for Predicted vs. Observed Chart.
-         var upperDeviationLine = chart.Curves.FindByName(Captions.PredictedVsObserved.DeviationLineNameUpper(foldValue));
+         var upperDeviationLine = chart.Curves.FindByName(Captions.Chart.DeviationLines.DeviationLineNameUpper(foldValue));
          if (upperDeviationLine != null)
             upperDeviationLine.VisibleInLegend = true;
 
@@ -180,7 +180,7 @@ namespace OSPSuite.Core.Services
       private DataRepository createRepositoryBasedOnSettings(float foldValue, IDimension mergedDimension, DeviationLineSettings settings,
          float identityMinimum, float identityMaximum)
       {
-         var deviationDataRepository = new DataRepository {Name = settings.RepositoryName};
+         var deviationDataRepository = new DataRepository { Name = settings.RepositoryName };
          var changePercentageForUpperCurve = foldValue - 1;
 
          switch (settings.LineType)
@@ -188,10 +188,10 @@ namespace OSPSuite.Core.Services
             case DeviationLineType.Deviation:
                var baseGridDeviation = new BaseGrid(settings.RepositoryName, mergedDimension)
                {
-                  Values = new List<float>() {identityMinimum, identityMaximum}
+                  Values = new List<float>() { identityMinimum, identityMaximum }
                };
 
-               var valuesUpper = new DataColumn(Captions.PredictedVsObserved.DeviationLineNameUpper(foldValue), mergedDimension,
+               var valuesUpper = new DataColumn(Captions.Chart.DeviationLines.DeviationLineNameUpper(foldValue), mergedDimension,
                   baseGridDeviation)
                {
                   Values = new List<float>()
@@ -203,10 +203,10 @@ namespace OSPSuite.Core.Services
                };
                deviationDataRepository.Add(valuesUpper);
 
-               var valuesLower = new DataColumn(Captions.PredictedVsObserved.DeviationLineNameLower(foldValue), mergedDimension,
+               var valuesLower = new DataColumn(Captions.Chart.DeviationLines.DeviationLineNameLower(foldValue), mergedDimension,
                   baseGridDeviation)
                {
-                  Values = new List<float>() {identityMinimum / foldValue, identityMaximum / foldValue},
+                  Values = new List<float>() { identityMinimum / foldValue, identityMaximum / foldValue },
                   DataInfo = new DataInfo(ColumnOrigins.DeviationLine, AuxiliaryType.Undefined, string.Empty, string.Empty, null)
                };
                deviationDataRepository.Add(valuesLower);
@@ -300,7 +300,7 @@ namespace OSPSuite.Core.Services
       private static float getIdentityMinimum(IEnumerable<DataColumn> allObservationColumns, IDimension mergedDimension)
       {
          // Avoid selection of '0' values because they cannot be plotted in log scales
-         return (float) allObservationColumns.Min(column =>
+         return allObservationColumns.Min(column =>
             mergedDimension.UnitValueToBaseUnitValue(column.Dimension.BaseUnit, columnNonZeroValues(column).Min()));
       }
 
@@ -311,7 +311,7 @@ namespace OSPSuite.Core.Services
 
       private static float getIdentityMaximum(IEnumerable<DataColumn> allObservationColumns, IDimension mergedDimension)
       {
-         return (float) allObservationColumns.Max(column => mergedDimension.UnitValueToBaseUnitValue(column.Dimension.BaseUnit, column.Values.Max()));
+         return allObservationColumns.Max(column => mergedDimension.UnitValueToBaseUnitValue(column.Dimension.BaseUnit, column.Values.Max()));
       }
    }
 }
