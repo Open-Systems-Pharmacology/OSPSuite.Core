@@ -184,16 +184,5 @@ namespace OSPSuite.Presentation.Presenters
       {
          updateOutputMappingList();
       }
-
-      /*
-      private void removeUsedObservedDataFromSimulation(SimulationOutputMappingDTO outputMappingDTO)
-      {
-         _simulation.RemoveUsedObservedData(outputMappingDTO.ObservedData);
-         _simulation.OutputMappings.Remove(outputMappingDTO.Mapping);
-
-         _eventPublisher.PublishEvent(new ObservedDataRemovedFromAnalysableEvent(_simulation, outputMappingDTO.ObservedData));
-         _eventPublisher.PublishEvent(new SimulationStatusChangedEvent(_simulation));
-      }
-*/
    }
 }
