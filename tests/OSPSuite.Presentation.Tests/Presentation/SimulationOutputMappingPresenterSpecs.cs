@@ -14,6 +14,7 @@ using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Presentation
 {
@@ -23,6 +24,7 @@ namespace OSPSuite.Presentation.Presentation
       private IObservedDataRepository _observedDataRepository;
       private IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
       private ISimulationOutputMappingToOutputMappingDTOMapper _outputMappingDTOMapper;
+      private IEventPublisher _eventPublisher;
       protected ISimulation _simulation1;
       protected DataRepository _observedData1;
       protected WeightedObservedData _weightedObservedData1;
@@ -46,9 +48,10 @@ namespace OSPSuite.Presentation.Presentation
          _entitiesInSimulationRetriever = A.Fake<IEntitiesInSimulationRetriever>();
          _outputMappingDTOMapper = A.Fake<ISimulationOutputMappingToOutputMappingDTOMapper>();
          _simulationQuantitySelectionDTOMapper = A.Fake<IQuantityToSimulationQuantitySelectionDTOMapper>();
+         _eventPublisher = A.Fake<IEventPublisher>();
 
          sut = new SimulationOutputMappingPresenter(_view, _entitiesInSimulationRetriever, _observedDataRepository, _outputMappingDTOMapper,
-            _simulationQuantitySelectionDTOMapper);
+            _simulationQuantitySelectionDTOMapper, _eventPublisher);
 
 
          _observedData1 = DomainHelperForSpecs.ObservedData("Obs1").WithName("Obs1");

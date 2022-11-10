@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using DevExpress.Utils;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
@@ -111,13 +112,9 @@ namespace OSPSuite.UI.Views
 
       private RepositoryItem allOutputsRepository(SimulationOutputMappingDTO dto)
       {
-         return RepositoryItemFor(_presenter.AllAvailableOutputs, _outputRepository);
-      }
-
-      protected RepositoryItem RepositoryItemFor<T>(IEnumerable<T> allItems, UxRepositoryItemComboBox listRepositoryItems)
-      {
-         listRepositoryItems.FillComboBoxRepositoryWith(allItems);
-         return listRepositoryItems;
+         var outputsList = _presenter.AllAvailableOutputs.Concat(null); 
+         _outputRepository.FillComboBoxRepositoryWith(_presenter.AllAvailableOutputs);
+         return _outputRepository;
       }
 
       public override string Caption => Captions.SimulationUI.ObservedDataSelection;
