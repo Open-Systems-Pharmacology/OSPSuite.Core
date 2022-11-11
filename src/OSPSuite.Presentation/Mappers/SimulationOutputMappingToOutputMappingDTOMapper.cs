@@ -1,19 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Presentation.DTO;
 
 namespace OSPSuite.Presentation.Mappers
 {
    public interface ISimulationOutputMappingToOutputMappingDTOMapper
    {
-      SimulationOutputMappingDTO MapFrom(OutputMapping outputMapping, IEnumerable<SimulationQuantitySelectionDTO> allOutputs);
+      SimulationOutputMappingDTO MapFrom(OutputMapping outputMapping, IReadOnlyList<SimulationQuantitySelectionDTO> allOutputs);
    }
 
    public class SimulationOutputMappingToOutputMappingDTOMapper : ISimulationOutputMappingToOutputMappingDTOMapper
    {
-      public SimulationOutputMappingDTO MapFrom(OutputMapping outputMapping, IEnumerable<SimulationQuantitySelectionDTO> allOutputs)
+      public SimulationOutputMappingDTO MapFrom(OutputMapping outputMapping, IReadOnlyList<SimulationQuantitySelectionDTO> allOutputs)
       {
          return new SimulationOutputMappingDTO(outputMapping)
          {
