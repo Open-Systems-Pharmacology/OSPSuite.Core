@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Core.Domain.ParameterIdentifications
+namespace OSPSuite.Core.Domain
 {
    public class OutputMappings : IUpdatable
    {

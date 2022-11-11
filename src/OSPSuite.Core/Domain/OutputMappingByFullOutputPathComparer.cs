@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace OSPSuite.Core.Domain.ParameterIdentifications
+namespace OSPSuite.Core.Domain
 {
    public class OutputMappingByFullOutputPathComparer : IEqualityComparer<OutputMapping>
    {
