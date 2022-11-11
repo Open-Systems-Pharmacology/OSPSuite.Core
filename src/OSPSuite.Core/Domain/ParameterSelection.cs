@@ -9,11 +9,11 @@ namespace OSPSuite.Core.Domain
       {
       }
 
-      public ParameterSelection(ISimulation simulation, QuantitySelection quantitySelection) : base(simulation, quantitySelection)
+      public ParameterSelection(IModelCoreSimulation simulation, QuantitySelection quantitySelection) : base(simulation, quantitySelection)
       {
       }
 
-      public ParameterSelection(ISimulation simulation, string parameterPath) : this(simulation, new QuantitySelection(parameterPath, QuantityType.Parameter))
+      public ParameterSelection(IModelCoreSimulation simulation, string parameterPath) : this(simulation, new QuantitySelection(parameterPath, QuantityType.Parameter))
       {
       }
 

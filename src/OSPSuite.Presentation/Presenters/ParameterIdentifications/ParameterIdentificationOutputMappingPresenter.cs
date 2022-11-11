@@ -157,7 +157,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          if (outputSelectionDTO == null)
             return Enumerable.Empty<DataRepository>();
 
-         return _observedDataRepository.AllObservedDataUsedBy(outputSelectionDTO.Simulation)
+         var usesObservedData = outputSelectionDTO.Simulation as IUsesObservedData;
+         return _observedDataRepository.AllObservedDataUsedBy(usesObservedData)
             .Distinct()
             .OrderBy(x => x.Name);
       }
@@ -184,7 +185,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          raiseObservedDataMappedFor(dto.WeightedObservedData);
       }
 
-      public int? nextUniqueIdFor(List<OutputMappingDTO> outputMappings)
+      private int? nextUniqueIdFor(List<OutputMappingDTO> outputMappings)
       {
          if (!outputMappings.Any())
             return null;

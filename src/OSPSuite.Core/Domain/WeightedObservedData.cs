@@ -2,7 +2,7 @@
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Extensions;
 
-namespace OSPSuite.Core.Domain.ParameterIdentifications
+namespace OSPSuite.Core.Domain
 {
    public class WeightedObservedData
    {
