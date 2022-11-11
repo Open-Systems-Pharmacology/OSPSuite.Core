@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Xml.Linq;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Serializer.Xml.Extensions;
 using OSPSuite.Core.Domain.ParameterIdentifications;
