@@ -110,7 +110,7 @@ namespace OSPSuite.Core.Services
          int deviationLinesCount)
       {
          if (chart.DeviationFoldValues.Contains(foldValue))
-            return new List<DataRepository>();
+            return Enumerable.Empty<DataRepository>();
 
          var settings = new DeviationLineSettings
          {
