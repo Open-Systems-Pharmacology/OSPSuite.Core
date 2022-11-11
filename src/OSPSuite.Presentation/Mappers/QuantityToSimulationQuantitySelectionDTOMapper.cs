@@ -6,7 +6,7 @@ namespace OSPSuite.Presentation.Mappers
 {
    public interface IQuantityToSimulationQuantitySelectionDTOMapper
    {
-      SimulationQuantitySelectionDTO MapFrom(ISimulation simulation, IQuantity quantity);
+      SimulationQuantitySelectionDTO MapFrom(IModelCoreSimulation simulation, IQuantity quantity);
    }
 
    public class QuantityToSimulationQuantitySelectionDTOMapper : AbstractQuantityToSimulationQuantitySelectionDTOMapper, IQuantityToSimulationQuantitySelectionDTOMapper
@@ -21,7 +21,7 @@ namespace OSPSuite.Presentation.Mappers
          _quantityDisplayPathMapper = quantityDisplayPathMapper;
       }
 
-      public SimulationQuantitySelectionDTO MapFrom(ISimulation simulation, IQuantity quantity)
+      public SimulationQuantitySelectionDTO MapFrom(IModelCoreSimulation simulation, IQuantity quantity)
       {
          var quantitySelectionDTO = _quantitySelectionDTOMapper.MapFrom(quantity);
          if (quantitySelectionDTO == null)

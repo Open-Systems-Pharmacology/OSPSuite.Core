@@ -7,20 +7,15 @@ namespace OSPSuite.Core.Serialization.Exchange
 {
    public class SimulationTransfer : IWithId
    {
-      public IModelCoreSimulation Simulation { get; set; }
-      public IList<DataRepository> AllObservedData { get; set; }
-      public int PkmlVersion { get; set; }
-      public string Id { get; set; }
-      public Favorites Favorites { get; set; }
-      public string JournalPath { get; set; }
+      public string Id { get; set; } = ShortGuid.NewGuid();
 
-      public SimulationTransfer()
-      {
-         AllObservedData = new List<DataRepository>();
-         PkmlVersion = Constants.PKML_VERSION;
-         Id = ShortGuid.NewGuid();
-         Favorites = new Favorites();
-         JournalPath = string.Empty;
-      }
+      public IModelCoreSimulation Simulation { get; set; }
+      public OutputMappings OutputMappings { get; set; } = new OutputMappings();
+      public IList<DataRepository> AllObservedData { get; set; } = new List<DataRepository>();
+
+      //MetaData about the export
+      public int PkmlVersion { get; set; } = Constants.PKML_VERSION;
+      public Favorites Favorites { get; set; } = new Favorites();
+      public string JournalPath { get; set; } = string.Empty;
    }
 }
