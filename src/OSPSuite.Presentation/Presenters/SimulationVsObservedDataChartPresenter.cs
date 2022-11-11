@@ -49,9 +49,9 @@ namespace OSPSuite.Presentation.Presenters
          {
             UpdateAnalysis();
             ChartEditorPresenter.SetOutputMappings(_simulation.OutputMappings);
+            AddRunResultToChart();
          }
 
-         AddRunResultToChart();
          Refresh();
       }
 
