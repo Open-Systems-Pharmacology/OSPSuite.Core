@@ -327,6 +327,7 @@ namespace OSPSuite.Presentation.Presentation
    public class When_adding_deviation_lines_to_a_chart_with_fold_value_2 : concern_for_PredictedVsObservedChartService
    {
       private DataRepository _deviationLineRepository;
+
       protected override void Context()
       {
          base.Context();
@@ -338,7 +339,8 @@ namespace OSPSuite.Presentation.Presentation
       {
          sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn,
             _predictedVsObservedChart);
-         _deviationLineRepository = sut.AddDeviationLine(2, _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(),  _predictedVsObservedChart, 0).First();
+         _deviationLineRepository = sut.AddDeviationLine(2,
+            _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(), _predictedVsObservedChart, 0).First();
       }
 
       [Observation]
@@ -357,9 +359,9 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void upper_deviation_line_value_should_be_twice_the_observation()
       {
-         var firstObservationValue = _concentrationObservationColumn.Values[0]; 
+         var firstObservationValue = _concentrationObservationColumn.Values[0];
          var lastObservationValue = _concentrationObservationColumn.Values.Last();
-         _deviationLineRepository.AllButBaseGrid().First().Values[0].ShouldBeEqualTo(firstObservationValue*2);
+         _deviationLineRepository.AllButBaseGrid().First().Values[0].ShouldBeEqualTo(firstObservationValue * 2);
          _deviationLineRepository.AllButBaseGrid().First().Values.Last().ShouldBeEqualTo(lastObservationValue * 2);
       }
 
@@ -376,21 +378,29 @@ namespace OSPSuite.Presentation.Presentation
    public class When_adding_deviation_lines_with_the_same_fold_value_again : concern_for_PredictedVsObservedChartService
    {
       private DataRepository _deviationLineRepository;
+
       protected override void Context()
       {
          base.Context();
          A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString))
             .Returns(new List<DataColumn> { _concentrationObservationColumn });
+         sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn,
+            _predictedVsObservedChart);
+         _deviationLineRepository = sut.AddDeviationLine(2, _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(), _predictedVsObservedChart, 0).First();
+         _predictedVsObservedChart.DeviationFoldValues.Add(2);
       }
 
       protected override void Because()
       {
-         sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn,
-            _predictedVsObservedChart);
-         _deviationLineRepository = sut.AddDeviationLine(2, _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(), _predictedVsObservedChart, 0).First();
-         _deviationLineRepository = sut.AddDeviationLine(2, _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(), _predictedVsObservedChart, 0).First();
+         _deviationLineRepository = sut.AddDeviationLine(2, _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(), _predictedVsObservedChart, 0).FirstOrDefault();
       }
 
+      [Observation]
+      public void deviation_line_repository_should_be_empty()
+      {
+         _deviationLineRepository.ShouldBeNull();
+      }
+      
       [Observation]
       public void only_two_deviation_lines_should_have_been_added()
       {
@@ -398,7 +408,7 @@ namespace OSPSuite.Presentation.Presentation
       }
 
       [Observation]
-      public void the_aded_deviation_lines_should_be_named_correctly()
+      public void the_added_deviation_lines_should_be_named_correctly()
       {
          _predictedVsObservedChart.Curves.Count(curve => curve.Name.Equals("2-fold deviation")).ShouldBeEqualTo(1);
          _predictedVsObservedChart.Curves.Count(curve => curve.Name.Equals("2-fold deviation Lower")).ShouldBeEqualTo(1);
@@ -442,5 +452,4 @@ namespace OSPSuite.Presentation.Presentation
          _deviationLineRepository.AllButBaseGridAsArray[1].Values.Last().ShouldBeEqualTo(lastObservationValue / 10);
       }
    }
-
 }
