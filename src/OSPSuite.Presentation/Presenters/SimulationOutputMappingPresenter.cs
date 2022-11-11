@@ -122,7 +122,10 @@ namespace OSPSuite.Presentation.Presenters
          get
          {
             var outputs = _entitiesInSimulationRetriever.OutputsFrom(_simulation);
+            var emptyMapping = new SimulationOutputMappingDTO(new OutputMapping());
+            
             _allAvailableOutputs.Clear();
+            _allAvailableOutputs.Add(emptyMapping.Output);
             _allAvailableOutputs.AddRange(outputs.Select(x => mapFrom(_simulation, x)).OrderBy(x => x.DisplayString));
             return _allAvailableOutputs;
          }

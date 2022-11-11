@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using DevExpress.Printing.Core.PdfExport.Metafile;
 using DevExpress.Utils;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
@@ -8,6 +9,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO;
+using OSPSuite.Presentation.Formatters;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views;
@@ -26,6 +28,7 @@ namespace OSPSuite.UI.Views
       private readonly UxRepositoryItemComboBox _outputRepository;
       private readonly UxRepositoryItemComboBox _singleObservedDataRepository;
       private readonly UxRepositoryItemScalings _scalingRepository;
+      private readonly IFormatter<SimulationQuantitySelectionDTO> _outputFormatter = new SimulationOutputFormatter();
 
       public SimulationOutputMappingView()
       {
@@ -70,7 +73,8 @@ namespace OSPSuite.UI.Views
             .WithRepository(allOutputsRepository)
             .WithShowButton(ShowButtonModeEnum.ShowAlways)
             .WithOnValueUpdated((o, e) => onOutputValueChanged(o))
-            .WithCaption(Captions.SimulationUI.Outputs);
+            .WithCaption(Captions.SimulationUI.Outputs)
+            .WithFormat(_outputFormatter);
 
          _gridViewBinder.Bind(x => x.Scaling)
             .WithCaption(Captions.Scaling)
@@ -112,8 +116,8 @@ namespace OSPSuite.UI.Views
 
       private RepositoryItem allOutputsRepository(SimulationOutputMappingDTO dto)
       {
-         var outputsList = _presenter.AllAvailableOutputs.Concat(null); 
          _outputRepository.FillComboBoxRepositoryWith(_presenter.AllAvailableOutputs);
+         //_outputRepository.Items.Add(Captions.SimulationUI.NoneEditorNullText);
          return _outputRepository;
       }
 
