@@ -1,4 +1,4 @@
-﻿using OSPSuite.Core.Domain.ParameterIdentifications;
+﻿using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Core.Serialization.Xml
 {

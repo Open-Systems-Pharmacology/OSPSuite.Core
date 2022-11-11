@@ -75,7 +75,7 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_the_parameter_identification_data_presenter_is_notififed_that_a_weighted_observed_data_was_selected : concern_for_ParameterIdentificationDataSelectionPresenter
+   public class When_the_parameter_identification_data_presenter_is_notified_that_a_weighted_observed_data_was_selected : concern_for_ParameterIdentificationDataSelectionPresenter
    {
       private WeightedObservedData _weightedObservedData;
 

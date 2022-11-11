@@ -38,7 +38,7 @@ namespace OSPSuite.Core.Helpers
 
          if (x1.IsAnImplementationOf<DataColumn>())
          {
-            AreEqualMcDataColumn(x1 as DataColumn, x2 as DataColumn);
+            AreEqualDataColumn(x1 as DataColumn, x2 as DataColumn);
             return;
          }
 
@@ -225,7 +225,7 @@ namespace OSPSuite.Core.Helpers
 
          if (x1.IsAnImplementationOf<DataRepository>())
          {
-            AreEqualMcDataRepository(x1 as DataRepository, x2 as DataRepository);
+            AreEqualDataRepository(x1 as DataRepository, x2 as DataRepository);
             return;
          }
 
@@ -1227,7 +1227,7 @@ namespace OSPSuite.Core.Helpers
          }
       }
 
-      public static void AreEqualMcDataInfo(DataInfo x1, DataInfo x2)
+      public static void AreEqualDataInfo(DataInfo x1, DataInfo x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          Assert.AreEqual(x1.Origin, x2.Origin);
@@ -1244,7 +1244,7 @@ namespace OSPSuite.Core.Helpers
          }
       }
 
-      public static void AreEqualMcQuantityInfo(QuantityInfo x1, QuantityInfo x2)
+      public static void AreEqualQuantityInfo(QuantityInfo x1, QuantityInfo x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          Assert.AreEqual(x1.Type, x2.Type);
@@ -1255,7 +1255,7 @@ namespace OSPSuite.Core.Helpers
          }
       }
 
-      public static void AreEqualMcDataColumn(DataColumn x1, DataColumn x2)
+      public static void AreEqualDataColumn(DataColumn x1, DataColumn x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AssertAreEqualId(x1, x2);
@@ -1265,8 +1265,8 @@ namespace OSPSuite.Core.Helpers
          AssertAreEqualId(x1.Repository, x2.Repository);
          AssertAreEqualId(x1.BaseGrid, x2.BaseGrid);
          AreEqualFloatArray(x1.Values, x2.Values);
-         AreEqualMcQuantityInfo(x1.QuantityInfo, x2.QuantityInfo);
-         AreEqualMcDataInfo(x1.DataInfo, x2.DataInfo);
+         AreEqualQuantityInfo(x1.QuantityInfo, x2.QuantityInfo);
+         AreEqualDataInfo(x1.DataInfo, x2.DataInfo);
          x1.DataInfo.LLOQ.ShouldBeEqualTo(x2.DataInfo.LLOQ);
          x1.DataInfo.ComparisonThreshold.ShouldBeEqualTo(x2.DataInfo.ComparisonThreshold);
 
@@ -1278,7 +1278,7 @@ namespace OSPSuite.Core.Helpers
          }
       }
 
-      public static void AreEqualMcDataRepository(DataRepository x1, DataRepository x2)
+      public static void AreEqualDataRepository(DataRepository x1, DataRepository x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AssertAreEqualId(x1, x2);

@@ -5,10 +5,10 @@ namespace OSPSuite.Presentation.DTO
    public class SimulationQuantitySelectionDTO : ValidatableDTO, IPathRepresentableDTO
    {
       public virtual QuantitySelectionDTO QuantitySelectionDTO { get; }
-      public virtual ISimulation Simulation { get; }
+      public virtual IModelCoreSimulation Simulation { get; }
       public virtual string DisplayString { get; }
 
-      public SimulationQuantitySelectionDTO(ISimulation simulation, QuantitySelectionDTO quantitySelectionDTO, string displayString)
+      public SimulationQuantitySelectionDTO(IModelCoreSimulation simulation, QuantitySelectionDTO quantitySelectionDTO, string displayString)
       {
          DisplayString = displayString;
          QuantitySelectionDTO = quantitySelectionDTO;
@@ -25,7 +25,7 @@ namespace OSPSuite.Presentation.DTO
 
       public PathElements PathElements
       {
-         get { return QuantitySelectionDTO?.PathElements; }
+         get => QuantitySelectionDTO?.PathElements;
          set
          {
             if (QuantitySelectionDTO != null)

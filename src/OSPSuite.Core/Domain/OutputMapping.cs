@@ -1,5 +1,4 @@
 ﻿using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain
@@ -7,11 +6,11 @@ namespace OSPSuite.Core.Domain
    public class OutputMapping
    {
       public virtual WeightedObservedData WeightedObservedData { get; set; }
-    
+
       public virtual SimulationQuantitySelection OutputSelection { get; set; }
-      
+
       public virtual Scalings Scaling { get; set; }
-      
+
       public float Weight { get; set; } = Constants.DEFAULT_WEIGHT;
 
       /// <summary>
@@ -29,7 +28,7 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public virtual IQuantity Output => OutputSelection?.Quantity;
 
-      public virtual ISimulation Simulation => OutputSelection?.Simulation;
+      public virtual IModelCoreSimulation Simulation => OutputSelection?.Simulation;
 
       public IDimension Dimension => OutputSelection?.Quantity?.Dimension;
 
