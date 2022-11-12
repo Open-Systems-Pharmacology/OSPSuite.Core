@@ -49,10 +49,7 @@ namespace OSPSuite.Core.Domain
          };
       }
 
-      public void UpdateSimulation(ISimulation newSimulation)
-      {
-         OutputSelection.UpdateSimulation(newSimulation);
-      }
+      public void UpdateSimulation(ISimulation newSimulation) => OutputSelection.UpdateSimulation(newSimulation);
 
       public bool DimensionsAreConsistentForParameterIdentification(DataRepository observedData)
       {

@@ -37,6 +37,12 @@ namespace OSPSuite.Core.Domain
             .ToList().Each(x => _allOutputMappings.Remove(x));
       }
 
+      public virtual void SwapSimulation(ISimulation oldSimulation, ISimulation newSimulation)
+      {
+         //Use ToList() here as the collection might be modified as we iterate
+         _allOutputMappings.Where(x => x.UsesSimulation(oldSimulation)).ToList().Each(x => x.UpdateSimulation(newSimulation));
+      }
+
       private bool outputBelongsToSimulation(ISimulation simulation, OutputMapping outputMapping)
       {
          return Equals(outputMapping.Simulation, simulation);
