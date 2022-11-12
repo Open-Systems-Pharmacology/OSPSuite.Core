@@ -3,12 +3,14 @@ using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
+using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Mappers;
@@ -40,6 +42,8 @@ namespace OSPSuite.Presentation.Presentation
       protected SimulationOutputMappingDTO _outputMappingDTO2;
       protected SimulationOutputMappingDTO _newOutputMappingDTO;
       private IQuantityToSimulationQuantitySelectionDTOMapper _simulationQuantitySelectionDTOMapper;
+      protected IDialogCreator _dialogCreator;
+      protected IOSPSuiteExecutionContext _executionContext;
 
       protected override void Context()
       {
@@ -49,9 +53,12 @@ namespace OSPSuite.Presentation.Presentation
          _outputMappingDTOMapper = A.Fake<ISimulationOutputMappingToOutputMappingDTOMapper>();
          _simulationQuantitySelectionDTOMapper = A.Fake<IQuantityToSimulationQuantitySelectionDTOMapper>();
          _eventPublisher = A.Fake<IEventPublisher>();
+         _dialogCreator = A.Fake<IDialogCreator>();
+         _executionContext = A.Fake<IOSPSuiteExecutionContext>();
+
 
          sut = new SimulationOutputMappingPresenter(_view, _entitiesInSimulationRetriever, _observedDataRepository, _outputMappingDTOMapper,
-            _simulationQuantitySelectionDTOMapper, _eventPublisher);
+            _simulationQuantitySelectionDTOMapper, _eventPublisher, _dialogCreator, _executionContext);
 
 
          _observedData1 = DomainHelperForSpecs.ObservedData("Obs1").WithName("Obs1");
@@ -79,12 +86,14 @@ namespace OSPSuite.Presentation.Presentation
          _outputMapping2 = A.Fake<OutputMapping>();
 
 
-         _outputMappingDTO1 = new SimulationOutputMappingDTO(_outputMapping1) { Output = _output1, ObservedData = _observedData1};
-         _outputMappingDTO2 = new SimulationOutputMappingDTO(_outputMapping2) { Output = _output2, ObservedData = _observedData2};
+         _outputMappingDTO1 = new SimulationOutputMappingDTO(_outputMapping1) { Output = _output1, ObservedData = _observedData1 };
+         _outputMappingDTO2 = new SimulationOutputMappingDTO(_outputMapping2) { Output = _output2, ObservedData = _observedData2 };
          _newOutputMappingDTO = new SimulationOutputMappingDTO(new OutputMapping());
 
-         A.CallTo(() => _simulation1.OutputMappings.OutputMappingsUsingDataRepository(_observedData1)).Returns(new List<OutputMapping>(){ _outputMapping1});
-         A.CallTo(() => _simulation1.OutputMappings.OutputMappingsUsingDataRepository(_observedData2)).Returns(new List<OutputMapping>() { _outputMapping2 });
+         A.CallTo(() => _simulation1.OutputMappings.OutputMappingsUsingDataRepository(_observedData1))
+            .Returns(new List<OutputMapping>() { _outputMapping1 });
+         A.CallTo(() => _simulation1.OutputMappings.OutputMappingsUsingDataRepository(_observedData2))
+            .Returns(new List<OutputMapping>() { _outputMapping2 });
          A.CallTo(() => _outputMappingDTOMapper.MapFrom(_outputMapping1, A<IEnumerable<SimulationQuantitySelectionDTO>>._))
             .Returns(_outputMappingDTO1);
          A.CallTo(() => _outputMappingDTOMapper.MapFrom(_outputMapping2, A<IEnumerable<SimulationQuantitySelectionDTO>>._))
@@ -126,7 +135,9 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_loading_a_simulation_with_existing_output_mapping_and_unmapped_observed_data_without_matching_output : concern_for_SimulationOutputMappingPresenter
+   public class
+      When_loading_a_simulation_with_existing_output_mapping_and_unmapped_observed_data_without_matching_output :
+         concern_for_SimulationOutputMappingPresenter
    {
       protected override void Context()
       {
