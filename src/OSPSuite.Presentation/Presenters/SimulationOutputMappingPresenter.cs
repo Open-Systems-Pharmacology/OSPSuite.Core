@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
+using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
@@ -50,6 +52,9 @@ namespace OSPSuite.Presentation.Presenters
       private readonly List<SimulationQuantitySelectionDTO> _allAvailableOutputs = new List<SimulationQuantitySelectionDTO>();
       private readonly IOutputMappingMatchingTask _outputMappingMatchingTask;
       private readonly IEventPublisher _eventPublisher;
+      protected readonly IDialogCreator _dialogCreator;
+      private readonly IOSPSuiteExecutionContext _executionContext;
+
 
       private readonly NotifyList<SimulationOutputMappingDTO> _listOfOutputMappingDTOs;
 
@@ -62,7 +67,9 @@ namespace OSPSuite.Presentation.Presenters
          IObservedDataRepository observedDataRepository,
          ISimulationOutputMappingToOutputMappingDTOMapper outputMappingDTOMapper,
          IQuantityToSimulationQuantitySelectionDTOMapper simulationQuantitySelectionDTOMapper,
-         IEventPublisher eventPublisher) : base(view)
+         IEventPublisher eventPublisher,
+         IDialogCreator dialogCreator,
+         IOSPSuiteExecutionContext executionContext) : base(view)
       {
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
          _observedDataRepository = observedDataRepository;
@@ -71,6 +78,8 @@ namespace OSPSuite.Presentation.Presenters
          _eventPublisher = eventPublisher;
          _outputMappingMatchingTask = new OutputMappingMatchingTask(_entitiesInSimulationRetriever);
          _listOfOutputMappingDTOs = new NotifyList<SimulationOutputMappingDTO>();
+         _dialogCreator = dialogCreator;
+         _executionContext = executionContext;
       }
 
       public void Refresh()
@@ -122,10 +131,7 @@ namespace OSPSuite.Presentation.Presenters
          get
          {
             var outputs = _entitiesInSimulationRetriever.OutputsFrom(_simulation);
-            var emptyMapping = new SimulationOutputMappingDTO(new OutputMapping());
-            
             _allAvailableOutputs.Clear();
-            _allAvailableOutputs.Add(emptyMapping.Output);
             _allAvailableOutputs.AddRange(outputs.Select(x => mapFrom(_simulation, x)).OrderBy(x => x.DisplayString));
             return _allAvailableOutputs;
          }
@@ -158,7 +164,7 @@ namespace OSPSuite.Presentation.Presenters
          MarkSimulationAsChanged();
          if (!_simulation.OutputMappings.OutputMappingsUsingDataRepository(simulationOutputMappingDTO.ObservedData).Any())
             _simulation.OutputMappings.Add(simulationOutputMappingDTO.Mapping);
-            
+
          simulationOutputMappingDTO.Scaling = _outputMappingMatchingTask.DefaultScalingFor(simulationOutputMappingDTO.Output.Quantity);
       }
 
@@ -169,6 +175,20 @@ namespace OSPSuite.Presentation.Presenters
 
       public void RemoveOutputMapping(SimulationOutputMappingDTO outputMappingDTO)
       {
+         var parameterIdentifications = findParameterIdentificationsUsing(outputMappingDTO.ObservedData).ToList();
+         if (parameterIdentifications.Any())
+         {
+            _dialogCreator.MessageBoxInfo(
+               Captions.ParameterIdentification.CannotRemoveObservedDataBeingUsedByParameterIdentification(outputMappingDTO.ObservedData.Name,
+                  parameterIdentifications.AllNames().ToList()));
+
+
+            var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyRemoveObservedDataFromSimulation);
+            if (viewResult == ViewResult.No)
+               return;
+         }
+
+
          _simulation.RemoveUsedObservedData(outputMappingDTO.ObservedData);
          _simulation.OutputMappings.Remove(outputMappingDTO.Mapping);
 
@@ -176,6 +196,14 @@ namespace OSPSuite.Presentation.Presenters
          _eventPublisher.PublishEvent(new SimulationStatusChangedEvent(_simulation));
 
          _view.RefreshGrid();
+      }
+
+      private IEnumerable<ParameterIdentification> findParameterIdentificationsUsing(DataRepository dataRepository)
+      {
+         return from parameterIdentification in _executionContext.Project.AllParameterIdentifications
+            let outputMappings = parameterIdentification.AllOutputMappingsFor(_simulation)
+            where outputMappings.Any(x => x.UsesObservedData(dataRepository))
+            select parameterIdentification;
       }
 
       public void Handle(ObservedDataAddedToAnalysableEvent eventToHandle)
