@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.Core.Domain.ParameterIdentifications
+namespace OSPSuite.Core.Domain
 {
-   public class OutputMappings : IUpdatable
+   public class OutputMappings : IUpdatable, IEnumerable<OutputMapping>
    {
       private readonly List<OutputMapping> _allOutputMappings = new List<OutputMapping>();
 
@@ -34,6 +35,12 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
       {
          _allOutputMappings.Where(x => outputBelongsToSimulation(simulation, x))
             .ToList().Each(x => _allOutputMappings.Remove(x));
+      }
+
+      public virtual void SwapSimulation(ISimulation oldSimulation, ISimulation newSimulation)
+      {
+         //Use ToList() here as the collection might be modified as we iterate
+         _allOutputMappings.Where(x => x.UsesSimulation(oldSimulation)).ToList().Each(x => x.UpdateSimulation(newSimulation));
       }
 
       private bool outputBelongsToSimulation(ISimulation simulation, OutputMapping outputMapping)
@@ -75,6 +82,13 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
       public bool Contains(OutputMapping outputMapping)
       {
          return _allOutputMappings.Contains(outputMapping);
+      }
+
+      public IEnumerator<OutputMapping> GetEnumerator() => _allOutputMappings.GetEnumerator();
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+         return GetEnumerator();
       }
    }
 }

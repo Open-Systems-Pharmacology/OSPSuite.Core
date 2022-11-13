@@ -1,4 +1,5 @@
-﻿using OSPSuite.Core.Domain.Data;
+﻿using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.Presenters.Charts;

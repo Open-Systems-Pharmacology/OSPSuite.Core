@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 
 namespace OSPSuite.Starter.Domain
 {

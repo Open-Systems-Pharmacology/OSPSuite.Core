@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 
@@ -24,6 +25,12 @@ namespace OSPSuite.Core.Serialization.Xml
       private Action<IExtendedProperty> addFunction(DataRepository dataRepository)
       {
          return dataRepository.ExtendedProperties.Add;
+      }
+
+      protected override void TypedDeserialize(DataRepository dataRepository, XElement outputToDeserialize, SerializationContext serializationContext)
+      {
+         base.TypedDeserialize(dataRepository, outputToDeserialize, serializationContext);
+         serializationContext.Register(dataRepository);
       }
    }
 }

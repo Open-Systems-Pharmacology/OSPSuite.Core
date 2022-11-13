@@ -63,6 +63,7 @@ namespace OSPSuite.Core.Serializers
          _model = _result.Model;
          _simulation = new ModelCoreSimulation
          {
+            Id = "SimulationId",
             BuildConfiguration = _buildConfiguration,
             Model = _model
          };

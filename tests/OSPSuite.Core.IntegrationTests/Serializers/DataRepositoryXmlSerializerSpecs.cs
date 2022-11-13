@@ -68,7 +68,7 @@ namespace OSPSuite.Core.Serializers
       [Observation]
       public void deserialized_repository_should_be_equal_to_original()
       {
-         AssertForSpecs.AreEqualMcDataRepository(_originalRepository, _deserializedRepository);
+         AssertForSpecs.AreEqualDataRepository(_originalRepository, _deserializedRepository);
       }
    }
 
@@ -100,7 +100,7 @@ namespace OSPSuite.Core.Serializers
       [Observation]
       public void deserialized_repository_should_be_equal_to_the_original()
       {
-         AssertForSpecs.AreEqualMcDataRepository(_originalDataRepository, _deserializedDataRepository);
+         AssertForSpecs.AreEqualDataRepository(_originalDataRepository, _deserializedDataRepository);
       }
    }
 }

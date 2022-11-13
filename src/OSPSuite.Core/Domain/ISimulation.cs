@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 
 namespace OSPSuite.Core.Domain
 {

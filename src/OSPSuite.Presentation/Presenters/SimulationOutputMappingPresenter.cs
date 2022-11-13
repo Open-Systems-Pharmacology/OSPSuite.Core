@@ -4,7 +4,6 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
@@ -21,23 +20,18 @@ namespace OSPSuite.Presentation.Presenters
 {
    public interface ISimulationOutputMappingPresenter : IPresenter<ISimulationOutputMappingView>, ILatchable,
       IListener<ObservedDataAddedToAnalysableEvent>,
-      IListener<ObservedDataRemovedFromAnalysableEvent>
+      IListener<ObservedDataRemovedFromAnalysableEvent>,
+      IListener<SimulationOutputSelectionsChangedEvent>
    {
-      void SetSimulation(ISimulation simulation);
-      IEnumerable<SimulationQuantitySelectionDTO> AllAvailableOutputs { get; }
+      void EditSimulation(ISimulation simulation);
+      IReadOnlyList<SimulationQuantitySelectionDTO> AllAvailableOutputs { get; }
       void RemoveOutputMapping(SimulationOutputMappingDTO outputMappingDTO);
-
-      /// <summary>
-      ///    Ensures that the cached list are updated
-      /// </summary>
-      void UpdateCache();
 
       /// <summary>
       ///    Completely rebinds the view to the content of the data source
       /// </summary>
       void Refresh();
 
-      void InitializeSimulation(ISimulation simulation);
       void UpdateSimulationOutputMappings(SimulationOutputMappingDTO simulationOutputMappingDTO);
       void MarkSimulationAsChanged();
    }
@@ -86,18 +80,20 @@ namespace OSPSuite.Presentation.Presenters
       {
          this.DoWithinLatch(() =>
          {
-            UpdateCache();
+            updateOutputLists();
             updateOutputMappingList();
             _view.BindTo(_listOfOutputMappingDTOs);
          });
       }
 
-      public void UpdateCache()
+      private void updateOutputLists()
       {
          _allAvailableOutputs.Clear();
+         var outputs = _entitiesInSimulationRetriever.OutputsFrom(_simulation);
+         _allAvailableOutputs.AddRange(outputs.Select(x => mapFrom(_simulation, x)).OrderBy(x => x.DisplayString));
       }
 
-      public void SetSimulation(ISimulation simulation)
+      public void EditSimulation(ISimulation simulation)
       {
          _simulation = simulation;
          Refresh();
@@ -111,9 +107,10 @@ namespace OSPSuite.Presentation.Presenters
          _simulation.OutputMappings.All.Each(x => _listOfOutputMappingDTOs.Add(mapFrom(x)));
 
          //get all available observed data, and create new mappings for the unmapped
-         foreach (var observedData in getAllAvailableObservedData())
+         foreach (var observedData in allAvailableObservedDataUsedBySimulation())
          {
-            if (_listOfOutputMappingDTOs.Any(x => x.ObservedData.Equals(observedData))) continue;
+            if (_listOfOutputMappingDTOs.Any(x => x.ObservedData.Equals(observedData)))
+               continue;
 
             //add only a DTO with the observed data with Output == null
             var newOutputMapping = new OutputMapping
@@ -126,37 +123,17 @@ namespace OSPSuite.Presentation.Presenters
          }
       }
 
-      public IEnumerable<SimulationQuantitySelectionDTO> AllAvailableOutputs
-      {
-         get
-         {
-            var outputs = _entitiesInSimulationRetriever.OutputsFrom(_simulation);
-            _allAvailableOutputs.Clear();
-            _allAvailableOutputs.AddRange(outputs.Select(x => mapFrom(_simulation, x)).OrderBy(x => x.DisplayString));
-            return _allAvailableOutputs;
-         }
-      }
+      public IReadOnlyList<SimulationQuantitySelectionDTO> AllAvailableOutputs => _allAvailableOutputs;
 
-      private SimulationQuantitySelectionDTO mapFrom(ISimulation simulation, IQuantity quantity)
-      {
-         return _simulationQuantitySelectionDTOMapper.MapFrom(simulation, quantity);
-      }
+      private SimulationQuantitySelectionDTO mapFrom(ISimulation simulation, IQuantity quantity) => _simulationQuantitySelectionDTOMapper.MapFrom(simulation, quantity);
 
-      private SimulationOutputMappingDTO mapFrom(OutputMapping outputMapping)
-      {
-         return _outputMappingDTOMapper.MapFrom(outputMapping, AllAvailableOutputs);
-      }
+      private SimulationOutputMappingDTO mapFrom(OutputMapping outputMapping) => _outputMappingDTOMapper.MapFrom(outputMapping, AllAvailableOutputs);
 
-      private IEnumerable<DataRepository> getAllAvailableObservedData()
+      private IEnumerable<DataRepository> allAvailableObservedDataUsedBySimulation()
       {
          return _observedDataRepository.AllObservedDataUsedBy(_simulation)
             .Distinct()
             .OrderBy(x => x.Name);
-      }
-
-      public void InitializeSimulation(ISimulation simulation)
-      {
-         _simulation = simulation;
       }
 
       public void UpdateSimulationOutputMappings(SimulationOutputMappingDTO simulationOutputMappingDTO)
@@ -214,6 +191,12 @@ namespace OSPSuite.Presentation.Presenters
       public void Handle(ObservedDataRemovedFromAnalysableEvent eventToHandle)
       {
          updateOutputMappingList();
+      }
+
+      public void Handle(SimulationOutputSelectionsChangedEvent eventToHandle)
+      {
+         if (Equals(eventToHandle.Simulation, _simulation))
+            Refresh();
       }
    }
 }

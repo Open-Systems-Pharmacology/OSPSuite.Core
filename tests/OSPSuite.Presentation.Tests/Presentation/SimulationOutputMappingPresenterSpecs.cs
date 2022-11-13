@@ -22,7 +22,7 @@ namespace OSPSuite.Presentation.Presentation
 {
    public abstract class concern_for_SimulationOutputMappingPresenter : ContextSpecification<ISimulationOutputMappingPresenter>
    {
-      private ISimulationOutputMappingView _view;
+      protected ISimulationOutputMappingView _view;
       private IObservedDataRepository _observedDataRepository;
       private IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
       private ISimulationOutputMappingToOutputMappingDTOMapper _outputMappingDTOMapper;
@@ -91,14 +91,14 @@ namespace OSPSuite.Presentation.Presentation
          _newOutputMappingDTO = new SimulationOutputMappingDTO(new OutputMapping());
 
          A.CallTo(() => _simulation1.OutputMappings.OutputMappingsUsingDataRepository(_observedData1))
-            .Returns(new List<OutputMapping>() { _outputMapping1 });
+            .Returns(new List<OutputMapping>(){ _outputMapping1});
          A.CallTo(() => _simulation1.OutputMappings.OutputMappingsUsingDataRepository(_observedData2))
             .Returns(new List<OutputMapping>() { _outputMapping2 });
-         A.CallTo(() => _outputMappingDTOMapper.MapFrom(_outputMapping1, A<IEnumerable<SimulationQuantitySelectionDTO>>._))
+         A.CallTo(() => _outputMappingDTOMapper.MapFrom(_outputMapping1, A<IReadOnlyList<SimulationQuantitySelectionDTO>>._))
             .Returns(_outputMappingDTO1);
-         A.CallTo(() => _outputMappingDTOMapper.MapFrom(_outputMapping2, A<IEnumerable<SimulationQuantitySelectionDTO>>._))
+         A.CallTo(() => _outputMappingDTOMapper.MapFrom(_outputMapping2, A<IReadOnlyList<SimulationQuantitySelectionDTO>>._))
             .Returns(_outputMappingDTO2);
-         A.CallTo(() => _outputMappingDTOMapper.MapFrom(new OutputMapping(), A<IEnumerable<SimulationQuantitySelectionDTO>>._))
+         A.CallTo(() => _outputMappingDTOMapper.MapFrom(new OutputMapping(), A<IReadOnlyList<SimulationQuantitySelectionDTO>>._))
             .Returns(_newOutputMappingDTO);
       }
    }
@@ -108,7 +108,7 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          base.Context();
-         sut.SetSimulation(_simulation1);
+         sut.EditSimulation(_simulation1);
       }
 
       [Observation]
@@ -124,7 +124,7 @@ namespace OSPSuite.Presentation.Presentation
       {
          base.Context();
          _simulation1.OutputMappings.Add(_outputMapping2);
-         sut.SetSimulation(_simulation1);
+         sut.EditSimulation(_simulation1);
       }
 
       [Observation]
@@ -143,7 +143,7 @@ namespace OSPSuite.Presentation.Presentation
       {
          base.Context();
          _simulation1.OutputMappings.Add(_outputMapping1);
-         sut.SetSimulation(_simulation1);
+         sut.EditSimulation(_simulation1);
       }
 
       [Observation]
@@ -155,6 +155,22 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
+   public class When_simulation_output_selections_have_changed : concern_for_SimulationOutputMappingPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.EditSimulation(_simulation1);
+         sut.Handle(new SimulationOutputSelectionsChangedEvent(_simulation1));
+      }
+
+      [Observation]
+      public void should_have_removed_the_corresponding_output_mapping()
+      {
+         A.CallTo(() => _view.BindTo(A<IEnumerable<SimulationOutputMappingDTO>>._)).MustHaveHappened(2, Times.Exactly);
+      }
+   }
+
    public class When_simulation_observed_data_gets_deleted : concern_for_SimulationOutputMappingPresenter
    {
       protected override void Context()
@@ -162,7 +178,7 @@ namespace OSPSuite.Presentation.Presentation
          base.Context();
          _simulation1.OutputMappings.Add(_outputMapping1);
          _simulation1.OutputMappings.Add(_outputMapping2);
-         sut.SetSimulation(_simulation1);
+         sut.EditSimulation(_simulation1);
          _simulation1.OutputMappings.Remove(_outputMapping1);
          sut.Handle(new ObservedDataRemovedFromAnalysableEvent(_simulation1, _observedData1));
       }
@@ -182,7 +198,7 @@ namespace OSPSuite.Presentation.Presentation
          base.Context();
          _simulation1.OutputMappings.Add(_outputMapping1);
          _simulation1.OutputMappings.All[0].Scaling = Scalings.Linear;
-         sut.SetSimulation(_simulation1);
+         sut.EditSimulation(_simulation1);
          sut.UpdateSimulationOutputMappings(_outputMappingDTO1);
       }
 

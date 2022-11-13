@@ -9,10 +9,11 @@ namespace OSPSuite.Core.Domain
    {
       private IQuantity _quantity;
       private string _fullQuantityPath;
-      public virtual ISimulation Simulation { get; private set; }
-      
-      public virtual string SimulationId { get; set; }
+
+      public virtual IModelCoreSimulation Simulation { get; private set; }
+
       public virtual QuantitySelection QuantitySelection { get; }
+
       public virtual IDimension Dimension => Quantity?.Dimension;
 
       [Obsolete("For serialization")]
@@ -20,7 +21,7 @@ namespace OSPSuite.Core.Domain
       {
       }
 
-      public SimulationQuantitySelection(ISimulation simulation, QuantitySelection quantitySelection)
+      public SimulationQuantitySelection(IModelCoreSimulation simulation, QuantitySelection quantitySelection)
       {
          Simulation = simulation;
          QuantitySelection = quantitySelection;
