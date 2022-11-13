@@ -15,6 +15,7 @@ using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Extensions;
+using OSPSuite.Core.Domain.ParameterIdentifications;
 
 namespace OSPSuite.Presentation.Presenters
 {
