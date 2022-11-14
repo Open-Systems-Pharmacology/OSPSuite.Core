@@ -46,9 +46,8 @@ namespace OSPSuite.Presentation.Presenters
       private readonly IQuantityToSimulationQuantitySelectionDTOMapper _simulationQuantitySelectionDTOMapper;
       private readonly List<SimulationQuantitySelectionDTO> _allAvailableOutputs = new List<SimulationQuantitySelectionDTO>();
       private readonly IOutputMappingMatchingTask _outputMappingMatchingTask;
-      private readonly IEventPublisher _eventPublisher;
       protected readonly IDialogCreator _dialogCreator;
-      private readonly IOSPSuiteExecutionContext _executionContext;
+      private readonly IOSPSuiteExecutionContext _context;
 
 
       private readonly NotifyList<SimulationOutputMappingDTO> _listOfOutputMappingDTOs;
@@ -62,19 +61,17 @@ namespace OSPSuite.Presentation.Presenters
          IObservedDataRepository observedDataRepository,
          ISimulationOutputMappingToOutputMappingDTOMapper outputMappingDTOMapper,
          IQuantityToSimulationQuantitySelectionDTOMapper simulationQuantitySelectionDTOMapper,
-         IEventPublisher eventPublisher,
          IDialogCreator dialogCreator,
-         IOSPSuiteExecutionContext executionContext) : base(view)
+         IOSPSuiteExecutionContext context) : base(view)
       {
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
          _observedDataRepository = observedDataRepository;
          _outputMappingDTOMapper = outputMappingDTOMapper;
          _simulationQuantitySelectionDTOMapper = simulationQuantitySelectionDTOMapper;
-         _eventPublisher = eventPublisher;
          _outputMappingMatchingTask = new OutputMappingMatchingTask(_entitiesInSimulationRetriever);
          _listOfOutputMappingDTOs = new NotifyList<SimulationOutputMappingDTO>();
          _dialogCreator = dialogCreator;
-         _executionContext = executionContext;
+         _context = context;
       }
 
       public void Refresh()
@@ -170,15 +167,15 @@ namespace OSPSuite.Presentation.Presenters
          _simulation.RemoveUsedObservedData(outputMappingDTO.ObservedData);
          _simulation.OutputMappings.Remove(outputMappingDTO.Mapping);
 
-         _eventPublisher.PublishEvent(new ObservedDataRemovedFromAnalysableEvent(_simulation, outputMappingDTO.ObservedData));
-         _eventPublisher.PublishEvent(new SimulationStatusChangedEvent(_simulation));
+         _context.PublishEvent(new ObservedDataRemovedFromAnalysableEvent(_simulation, outputMappingDTO.ObservedData));
+         _context.PublishEvent(new SimulationStatusChangedEvent(_simulation));
 
          _view.RefreshGrid();
       }
 
       private IEnumerable<ParameterIdentification> findParameterIdentificationsUsing(DataRepository dataRepository)
       {
-         return from parameterIdentification in _executionContext.Project.AllParameterIdentifications
+         return from parameterIdentification in _context.Project.AllParameterIdentifications
             let outputMappings = parameterIdentification.AllOutputMappingsFor(_simulation)
             where outputMappings.Any(x => x.UsesObservedData(dataRepository))
             select parameterIdentification;
