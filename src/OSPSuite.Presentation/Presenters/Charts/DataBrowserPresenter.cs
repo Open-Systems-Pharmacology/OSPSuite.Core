@@ -271,6 +271,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       protected override void SetDefaultColumnSettings()
       {
+         //-1 actively removes the grouping for this column if there was one till now - specifying none leaves everything as is.
          AddColumnSettings(BrowserColumns.RepositoryName).WithCaption(Captions.Chart.DataBrowser.RepositoryName).GroupIndex = -1;
          AddColumnSettings(BrowserColumns.Simulation).WithCaption(Captions.SimulationPath);
          AddColumnSettings(BrowserColumns.TopContainer).WithCaption(Captions.TopContainerPath);
