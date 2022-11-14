@@ -7,7 +7,6 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO;
-using OSPSuite.Presentation.Formatters;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views;
@@ -26,7 +25,6 @@ namespace OSPSuite.UI.Views
       private readonly UxRepositoryItemComboBox _outputRepository;
       private readonly UxRepositoryItemComboBox _singleObservedDataRepository;
       private readonly UxRepositoryItemScalings _scalingRepository;
-      private readonly IFormatter<SimulationQuantitySelectionDTO> _outputFormatter = new SimulationOutputFormatter();
 
       public SimulationOutputMappingView()
       {
@@ -71,8 +69,7 @@ namespace OSPSuite.UI.Views
             .WithRepository(allOutputsRepository)
             .WithShowButton(ShowButtonModeEnum.ShowAlways)
             .WithOnValueUpdated((o, e) => onOutputValueChanged(o))
-            .WithCaption(Captions.SimulationUI.Outputs)
-            .WithFormat(_outputFormatter);
+            .WithCaption(Captions.SimulationUI.Outputs);
 
          _gridViewBinder.Bind(x => x.Scaling)
             .WithCaption(Captions.Scaling)

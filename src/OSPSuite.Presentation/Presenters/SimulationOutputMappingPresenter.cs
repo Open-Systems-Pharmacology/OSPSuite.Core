@@ -89,9 +89,10 @@ namespace OSPSuite.Presentation.Presenters
          _allAvailableOutputs.Clear();
          var outputs = _entitiesInSimulationRetriever.OutputsFrom(_simulation);
          _allAvailableOutputs.AddRange(outputs.Select(x => mapFrom(_simulation, x)).OrderBy(x => x.DisplayString));
-         var test = new SimulationQuantitySelectionDTO(_simulation, null, Captions.SimulationUI.NoneEditorNullText);
-         _allAvailableOutputs.Add(test);
 
+         //adding a none DTO output, in order to be able to select it and delete the outputMapping
+         var noneEntry = new SimulationQuantitySelectionDTO(_simulation, null, Captions.SimulationUI.NoneEditorNullText);
+         _allAvailableOutputs.Add(noneEntry);
       }
 
       public void EditSimulation(ISimulation simulation)
