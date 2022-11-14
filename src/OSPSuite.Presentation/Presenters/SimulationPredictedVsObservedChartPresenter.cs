@@ -50,6 +50,11 @@ namespace OSPSuite.Presentation.Presenters
 
          _identityRepositories.AddRange(_predictedVsObservedChartService.AddIdentityCurves(observationColumns, Chart));
 
+         //if no identity repository has been added, resulting in the chart not having been initialized, just return an empty plot
+         //this has been the case for having only one plot with exclusively 0 values
+         if (!_identityRepositories.Any())
+            return;
+
          if (ChartIsBeingCreated)
             _predictedVsObservedChartService.ConfigureAxesDimensionAndTitle(observationColumns, Chart);
 
