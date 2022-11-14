@@ -16,8 +16,8 @@ namespace OSPSuite.Core.Services
 
       protected override void Context()
       {
-         _dimensionFactory= A.Fake<IDimensionFactory>(); 
-         _pkParameterRepository= A.Fake<IPKParameterRepository>();   
+         _dimensionFactory= new DimensionFactory();
+         _pkParameterRepository = new PKParameterRepository();
          sut = new PopulationSimulationPKAnalysesToDataTableConverter(_dimensionFactory,_pkParameterRepository);
       }
    }
@@ -33,25 +33,39 @@ namespace OSPSuite.Core.Services
       {
          base.Context();
          _pkAnalysis = new PopulationSimulationPKAnalyses();
-         _populationSimulation = A.Fake<IModelCoreSimulation>();
+         _populationSimulation = new ModelCoreSimulation().WithName("simulation");
          var quantityPKParameter = new QuantityPKParameter { QuantityPath = "Liver", Name = "P" };
+         var anotherQuantityPKParameter = new QuantityPKParameter { QuantityPath = "Plasma", Name = "Vss (Plasma)" };
          var pkParameter = new PKParameter {DisplayUnit = "UNIT", Name = "P" };
-         A.CallTo(() => _pkParameterRepository.FindByName(quantityPKParameter.Name)).Returns(pkParameter);
-         var mergedDimension = A.Fake<IDimension>();
+
+         _pkParameterRepository.Add(pkParameter);
+
+         var mergedDimension = new Dimension(new BaseDimensionRepresentation(), "mergedDimension", pkParameter.DisplayUnit)
+         {
+            DefaultUnit =
+            {
+               Factor = 0.1
+            }
+         };
+
+         var anotherMergedDimension = new Dimension(new BaseDimensionRepresentation(), "overF", "baseUnit");
          quantityPKParameter.SetValue(0, 10);
          quantityPKParameter.SetValue(1, 11);
+         anotherQuantityPKParameter.SetValue(0, 12);
+         anotherQuantityPKParameter.SetValue(1, 13);
 
-         A.CallTo(() => _dimensionFactory.MergedDimensionFor(A<QuantityPKParameterContext>._))
-            .WhenArgumentsMatch(x=>x.Get<QuantityPKParameterContext>(0).QuantityPKParameter==quantityPKParameter)
-            .Returns(mergedDimension);
+         quantityPKParameter.Dimension = mergedDimension;
+         anotherQuantityPKParameter.Dimension = anotherMergedDimension;
 
-         var unit = A.Fake<Unit>();
-         A.CallTo(() => unit.Name).Returns(pkParameter.DisplayUnit);
-         A.CallTo(() => mergedDimension.UnitOrDefault(pkParameter.DisplayUnit)).Returns(unit);
-         A.CallTo(() => mergedDimension.BaseUnitValueToUnitValue(unit, 10)).Returns(100.10f);
-         A.CallTo(() => mergedDimension.BaseUnitValueToUnitValue(unit, 11)).Returns(110.20f);
+         _dimensionFactory.AddDimension(mergedDimension);
+         _dimensionFactory.AddDimension(anotherMergedDimension);
+
+         var anotherUnit = new Unit("RealUnit", 10, 0);
+         anotherMergedDimension.AddUnit(anotherUnit);
+         anotherMergedDimension.DefaultUnit = anotherUnit;
 
          _pkAnalysis.AddPKAnalysis(quantityPKParameter);
+         _pkAnalysis.AddPKAnalysis(anotherQuantityPKParameter);
       }
 
       protected override void Because()
@@ -73,9 +87,11 @@ namespace OSPSuite.Core.Services
       [Observation]
       public void should_have_exported_the_value_in_the_default_unit()
       {
-         _dataTable.Rows.Count.ShouldBeEqualTo(2);
-         _dataTable.Rows[0][Constants.SimulationResults.VALUE].ShouldBeEqualTo("100.1");
-         _dataTable.Rows[1][Constants.SimulationResults.VALUE].ShouldBeEqualTo("110.2");
+         _dataTable.Rows.Count.ShouldBeEqualTo(4);
+         _dataTable.Rows[0][Constants.SimulationResults.VALUE].ShouldBeEqualTo("100");
+         _dataTable.Rows[1][Constants.SimulationResults.VALUE].ShouldBeEqualTo("110");
+         _dataTable.Rows[2][Constants.SimulationResults.VALUE].ShouldBeEqualTo("1.2");
+         _dataTable.Rows[3][Constants.SimulationResults.VALUE].ShouldBeEqualTo("1.3");
       }
 
       [Observation]
