@@ -75,6 +75,7 @@ namespace OSPSuite.Presentation.Presenters
 
       protected override string NameForColumn(DataColumn dataColumn)
       {
+         // In the case of these charts that are for a single simulation, we just need to override the default implementation to not include the simulation name
          return _chartPresenterContext.CurveNamer.CurveNameForColumn(SimulationFor(dataColumn), dataColumn, addSimulationName: false);
       }
 
