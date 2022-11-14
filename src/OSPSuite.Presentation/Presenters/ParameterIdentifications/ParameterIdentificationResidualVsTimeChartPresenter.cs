@@ -64,7 +64,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
             {
                SelectColorForPath(fullOutputPath);
                UpdateColorForPath(curve, fullOutputPath);
-               curve.Name = fullOutputPath;
+               curve.Name = NameForColumn(column);
                curve.Description = CurveDescription(outputMapping.ObservedDataName, runResult);
                curve.Symbol = Symbols.Circle;
                curve.LineStyle = LineStyles.None;

@@ -77,7 +77,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          addPredictedVsObservedToChart(runResult.BestResult.SimulationResults, (column, curve) =>
          {
             curve.Description = CurveDescription(curve.Name, runResult);
-            curve.Name = column.PathAsString;
+            curve.Name = NameForColumn(column);
          });
       }
 
