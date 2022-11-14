@@ -52,7 +52,7 @@ namespace OSPSuite.Presentation.Presenters
 
          //if no identity repository has been added, resulting in the chart not having been initialized, just return an empty plot
          //this has been the case for having only one plot with exclusively 0 values
-         if (!Chart.Axes.Any())
+         if (!_identityRepositories.Any())
             return;
 
          if (ChartIsBeingCreated)
