@@ -117,6 +117,7 @@ namespace OSPSuite.UI.Views
       private RepositoryItem allOutputsRepository(SimulationOutputMappingDTO dto)
       {
          _outputRepository.FillComboBoxRepositoryWith(_presenter.AllAvailableOutputs);
+         //_outputRepository.Items.Add(null);
          _outputRepository.Items.Add(Captions.SimulationUI.NoneEditorNullText);
          return _outputRepository;
       }
