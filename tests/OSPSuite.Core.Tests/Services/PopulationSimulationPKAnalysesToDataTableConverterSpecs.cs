@@ -51,8 +51,6 @@ namespace OSPSuite.Core.Services
          var anotherMergedDimension = new Dimension(new BaseDimensionRepresentation(), "overF", "baseUnit");
          quantityPKParameter.SetValue(0, 10);
          quantityPKParameter.SetValue(1, 11);
-         anotherQuantityPKParameter.SetValue(0, 10);
-         anotherQuantityPKParameter.SetValue(1, 11);
          anotherQuantityPKParameter.SetValue(0, 12);
          anotherQuantityPKParameter.SetValue(1, 13);
 
