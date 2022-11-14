@@ -76,9 +76,9 @@ namespace OSPSuite.Core.Domain
 
          _allValueOriginCommands = new List<ICommand>();
 
-         A.CallTo(() => _parameterTask.SetParameterValue(A<IParameter>._, A<double>._, A<ISimulation>._)).ReturnsLazily(x => A.Fake<IOSPSuiteCommmand<IOSPSuiteExecutionContext>>());
+         A.CallTo(() => _parameterTask.SetParameterValue(A<IParameter>._, A<double>._, A<IModelCoreSimulation>._)).ReturnsLazily(x => A.Fake<IOSPSuiteCommmand<IOSPSuiteExecutionContext>>());
 
-         A.CallTo(() => _parameterTask.UpdateParameterValueOrigin(A<IParameter>._, A<ValueOrigin>._, A<ISimulation>._)).ReturnsLazily(x =>
+         A.CallTo(() => _parameterTask.UpdateParameterValueOrigin(A<IParameter>._, A<ValueOrigin>._, A<IModelCoreSimulation>._)).ReturnsLazily(x =>
          {
             var command = A.Fake<IOSPSuiteCommmand<IOSPSuiteExecutionContext>>();
             _allValueOriginCommands.Add(command);

@@ -77,7 +77,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          return new[] {setValueCommand, updateValueOriginCommand(identificationParameter, parameter, linkedParameter.Simulation).AsHidden()};
       }
 
-      private ICommand updateValueOriginCommand(IdentificationParameter identificationParameter, IParameter parameter, ISimulation simulation)
+      private ICommand updateValueOriginCommand(IdentificationParameter identificationParameter, IParameter parameter, IModelCoreSimulation simulation)
       {
          var isoDate = SystemTime.Now().ToIsoFormat();
          var valueOrigin = new ValueOrigin

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Core.Domain.Repositories
 {
@@ -37,7 +37,7 @@ namespace OSPSuite.Core.Domain.Repositories
 
       public IEnumerable<DataRepository> AllObservedDataUsedBy(IUsesObservedData observedDataUser)
       {
-         return All().Where(observedDataUser.UsesObservedData);
+         return observedDataUser == null ? Enumerable.Empty<DataRepository>() : All().Where(observedDataUser.UsesObservedData);
       }
 
       public IEnumerable<DataRepository> AllObservedDataUsedBy(IEnumerable<IUsesObservedData> observedDataUsers)

@@ -45,7 +45,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private readonly IOutputSelectionUpdater _outputSelectionUpdater;
       private readonly ICoreUserSettings _coreUserSettings;
       private readonly IJacobianMatrixCalculator _jacobianMatrixCalculator;
-      private readonly ConcurrentDictionary<ISimulation, ISimModelBatch> _allSimModelBatches = new ConcurrentDictionary<ISimulation, ISimModelBatch>();
+      private readonly ConcurrentDictionary<IModelCoreSimulation, ISimModelBatch> _allSimModelBatches = new ConcurrentDictionary<IModelCoreSimulation, ISimModelBatch>();
       private readonly List<float> _totalErrorHistory = new List<float>();
 
       private readonly Cache<string, IdentificationParameterHistory> _parametersHistory =

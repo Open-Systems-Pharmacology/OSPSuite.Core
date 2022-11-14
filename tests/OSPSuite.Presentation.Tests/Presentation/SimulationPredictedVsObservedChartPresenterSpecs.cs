@@ -50,6 +50,7 @@ namespace OSPSuite.Presentation.Presentation
       protected DataColumn _noDimensionDataColumn;
       protected DataColumn _concentrationDataColumn;
       protected DataColumn _concentrationColumnForSimulation;
+      protected IChartEditorPresenter _chartEditorPresenter;
 
       protected override void Context()
       {
@@ -64,6 +65,7 @@ namespace OSPSuite.Presentation.Presentation
          _predictedVsObservedService = A.Fake<IPredictedVsObservedChartService>();
          _chartEditorLayoutTask = A.Fake<IChartEditorLayoutTask>();
          _projectRetriever = A.Fake<IProjectRetriever>();
+         _chartEditorPresenter = A.Fake<IChartEditorPresenter>();
 
          _chartPresenterContext = A.Fake<ChartPresenterContext>();
          A.CallTo(() => _chartPresenterContext.EditorAndDisplayPresenter).Returns(_chartEditorAndDisplayPresenter);
@@ -74,6 +76,8 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _chartPresenterContext.DimensionFactory).Returns(_dimensionFactory);
          A.CallTo(() => _chartPresenterContext.EditorLayoutTask).Returns(_chartEditorLayoutTask);
          A.CallTo(() => _chartPresenterContext.ProjectRetriever).Returns(_projectRetriever);
+         A.CallTo(() => _chartPresenterContext.EditorPresenter).Returns(_chartEditorPresenter);
+         A.CallTo(() => _chartEditorAndDisplayPresenter.EditorPresenter).Returns(_chartEditorPresenter);
 
          _calculationData = DomainHelperForSpecs.ObservedData();
          _calculationData.Name = "calculation observed data";
@@ -141,6 +145,27 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
+   public class When_the_simulation_does_not_have_results : concern_for_SimulationPredictedVsObservedChartPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _simulation.ResultsDataRepository).Returns(null);
+      }
+
+      protected override void Because()
+      {
+         sut.InitializeAnalysis(_predictedVsObservedChart, _simulation);
+      }
+
+      [Observation]
+      public void the_chart_editor_must_not_be_initialized_with_null()
+      {
+         A.CallTo(() => _chartEditorPresenter.AddDataRepositories(A<IEnumerable<DataRepository>>._)).MustNotHaveHappened();
+      }
+
+   }
+
    public class When_the_results_have_preferred_and_non_preferred_dimensions : concern_for_SimulationPredictedVsObservedChartPresenter
    {
       protected override void Because()
@@ -161,6 +186,12 @@ namespace OSPSuite.Presentation.Presentation
       {
          A.CallTo(() => _predictedVsObservedService.AddCurvesFor(A<IEnumerable<DataColumn>>._,
             _concentrationDataColumn, A<PredictedVsObservedChart>._, A<Action<DataColumn, Curve>>._)).MustHaveHappened();
+      }
+
+      [Observation]
+      public void the_chart_editor_must_be_initialized_with_data_repository()
+      {
+         A.CallTo(() => _chartEditorPresenter.AddDataRepositories(A<IEnumerable<DataRepository>>.That.Contains(_calculationData))).MustHaveHappened();
       }
    }
 }

@@ -181,11 +181,10 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_all_predefined_pk_and_all_user_defined_pk_parameters()
       {
-         sut.AllPKParameterNames().Length.ShouldBeEqualTo(31);
-
+         var predefinedPKParameters = sut.AllPKParameterNames().Length;
          sut.AddUserDefinedPKParameter(_userDefinedPKParameter);
 
-         sut.AllPKParameterNames().Length.ShouldBeEqualTo(32);
+         sut.AllPKParameterNames().Length.ShouldBeEqualTo(predefinedPKParameters + 1);
       }
 
       public override void GlobalCleanup()

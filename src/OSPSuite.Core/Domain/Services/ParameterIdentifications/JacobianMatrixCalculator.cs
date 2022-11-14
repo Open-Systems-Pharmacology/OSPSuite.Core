@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 {
    public interface IJacobianMatrixCalculator
    {
-      JacobianMatrix CalculateFor(ParameterIdentification parameterIdentification, OptimizationRunResult runResult, IDictionary<ISimulation, ISimModelBatch> simModelBatches);
+      JacobianMatrix CalculateFor(ParameterIdentification parameterIdentification, OptimizationRunResult runResult, IDictionary<IModelCoreSimulation, ISimModelBatch> simModelBatches);
    }
 
    public class JacobianMatrixCalculator : IJacobianMatrixCalculator
    {
-      public JacobianMatrix CalculateFor(ParameterIdentification parameterIdentification, OptimizationRunResult runResult, IDictionary<ISimulation, ISimModelBatch> simModelBatches)
+      public JacobianMatrix CalculateFor(ParameterIdentification parameterIdentification, OptimizationRunResult runResult, IDictionary<IModelCoreSimulation, ISimModelBatch> simModelBatches)
       {
          var allVariableIdentificationParameters = parameterIdentification.AllVariableIdentificationParameters.ToList();
          var matrix = new JacobianMatrix(allVariableIdentificationParameters.AllNames());
@@ -76,6 +75,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
             sensitivityValue += sensitivityForParameter;
          }
+
          return sensitivityValue;
       }
 
