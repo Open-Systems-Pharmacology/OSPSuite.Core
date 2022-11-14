@@ -49,7 +49,6 @@ namespace OSPSuite.Presentation.Presenters
       protected readonly IDialogCreator _dialogCreator;
       private readonly IOSPSuiteExecutionContext _context;
 
-
       private readonly NotifyList<SimulationOutputMappingDTO> _listOfOutputMappingDTOs;
 
       private ISimulation _simulation;

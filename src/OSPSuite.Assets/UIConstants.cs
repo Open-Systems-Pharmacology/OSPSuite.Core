@@ -203,7 +203,6 @@ namespace OSPSuite.Assets
       public static readonly string Yes = "Yes";
       public static readonly string ReallyRemoveObservedDataFromSimulation = $"Really remove {ObjectTypes.ObservedData} from simulation?\nHint: {ObjectTypes.ObservedData} will not be deleted from project";
 
-
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
          var sb = new StringBuilder();
