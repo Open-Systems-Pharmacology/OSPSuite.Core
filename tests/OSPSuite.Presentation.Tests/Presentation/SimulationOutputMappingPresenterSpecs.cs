@@ -70,7 +70,7 @@ namespace OSPSuite.Presentation.Presentation
 
          _quantity1 = A.Fake<IQuantity>();
          _output1 = A.Fake<SimulationQuantitySelectionDTO>();
-         _emptyOutput = new SimulationQuantitySelectionDTO(_simulation1, null, Captions.SimulationUI.NoneEditorNullText);
+         _emptyOutput = new SimulationQuantitySelectionDTO(null, null, Captions.SimulationUI.NoneEditorNullText);
          A.CallTo(() => _output1.Simulation).Returns(_simulation1);
          _output2 = A.Fake<SimulationQuantitySelectionDTO>();
          A.CallTo(() => _entitiesInSimulationRetriever.OutputsFrom(_simulation1)).Returns(new PathCache<IQuantity>(new EntityPathResolverForSpecs())

@@ -48,6 +48,7 @@ namespace OSPSuite.Presentation.Presenters
       private readonly IOutputMappingMatchingTask _outputMappingMatchingTask;
       protected readonly IDialogCreator _dialogCreator;
       private readonly IOSPSuiteExecutionContext _context;
+      private readonly SimulationQuantitySelectionDTO _noneEntry;
 
       private readonly NotifyList<SimulationOutputMappingDTO> _listOfOutputMappingDTOs;
 
@@ -67,6 +68,7 @@ namespace OSPSuite.Presentation.Presenters
          _observedDataRepository = observedDataRepository;
          _outputMappingDTOMapper = outputMappingDTOMapper;
          _simulationQuantitySelectionDTOMapper = simulationQuantitySelectionDTOMapper;
+         _noneEntry = new SimulationQuantitySelectionDTO(null, null, Captions.SimulationUI.NoneEditorNullText);
          _outputMappingMatchingTask = new OutputMappingMatchingTask(_entitiesInSimulationRetriever);
          _listOfOutputMappingDTOs = new NotifyList<SimulationOutputMappingDTO>();
          _dialogCreator = dialogCreator;
@@ -90,8 +92,7 @@ namespace OSPSuite.Presentation.Presenters
          _allAvailableOutputs.AddRange(outputs.Select(x => mapFrom(_simulation, x)).OrderBy(x => x.DisplayString));
 
          //adding a none DTO output, in order to be able to select it and delete the outputMapping
-         var noneEntry = new SimulationQuantitySelectionDTO(_simulation, null, Captions.SimulationUI.NoneEditorNullText);
-         _allAvailableOutputs.Add(noneEntry);
+         _allAvailableOutputs.Add(_noneEntry);
       }
 
       public void EditSimulation(ISimulation simulation)

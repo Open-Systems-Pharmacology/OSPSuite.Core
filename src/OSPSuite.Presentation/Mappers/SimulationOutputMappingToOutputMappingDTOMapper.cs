@@ -22,9 +22,6 @@ namespace OSPSuite.Presentation.Mappers
 
       private static bool matches(OutputMapping outputMapping, SimulationQuantitySelectionDTO simulationQuantitySelectionDTO)
       {
-         if (simulationQuantitySelectionDTO == null) 
-            return false;
-
          return Equals(simulationQuantitySelectionDTO.Simulation, outputMapping.Simulation) &&
                 Equals(simulationQuantitySelectionDTO.QuantityPath, outputMapping.OutputPath);
       }
