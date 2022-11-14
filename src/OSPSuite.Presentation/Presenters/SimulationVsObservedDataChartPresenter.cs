@@ -73,6 +73,11 @@ namespace OSPSuite.Presentation.Presenters
          Chart.AddCurvesFor(dataRepository.AllButBaseGrid(), NameForColumn, _chartPresenterContext.DimensionFactory, action);
       }
 
+      protected override string NameForColumn(DataColumn dataColumn)
+      {
+         return _chartPresenterContext.CurveNamer.CurveNameForColumn(SimulationFor(dataColumn), dataColumn, addSimulationName: false);
+      }
+
       protected void AddUsedObservedDataToChart()
       {
          _simulation.OutputMappings.All.GroupBy(x => x.FullOutputPath).Each(AddObservedDataForOutput);

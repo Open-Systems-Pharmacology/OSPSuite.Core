@@ -92,7 +92,7 @@ namespace OSPSuite.Presentation.Presenters
          addPredictedVsObservedToChart(_simulation.ResultsDataRepository, (column, curve) =>
          {
             curve.Description = curve.Name;
-            curve.Name = column.PathAsString;
+            curve.Name = NameForColumn(column);
          });
       }
 
