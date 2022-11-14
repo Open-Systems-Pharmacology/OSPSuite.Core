@@ -63,13 +63,18 @@ namespace OSPSuite.Core.Domain.Services
             var pkParameter = _pkParameterRepository.FindByName(quantityPKParameter.Name);
             var quantityPKParameterContext = new QuantityPKParameterContext(quantityPKParameter, molWeight);
             var mergedDimension = _dimensionFactory.MergedDimensionFor(quantityPKParameterContext);
-            var unit = mergedDimension.UnitOrDefault(pkParameter.DisplayUnit);
+
+            // In case the pkParameter is not found in the PkParameterRepository, use the mergedDimension default
+            // This happens when the pkParameter is created from something other than the default set of PK Parameters
+            // For example VSS (plasma) for a population which is not calculated from a single curve
+            var unit = mergedDimension.UnitOrDefault(pkParameter?.DisplayUnit);
+
             quantityPKParameter.ValueCache.KeyValues.Each(kv =>
             {
                var row = dataTable.NewRow();
                row[INDIVIDUAL_ID] = kv.Key;
                row[QUANTITY_PATH] = inQuote(quantityPath);
-               row[PARAMETER] = inQuote(pkParameter.Name);
+               row[PARAMETER] = inQuote(quantityPKParameter.Name);
                row[VALUE] = mergedDimension.BaseUnitValueToUnitValue(unit, kv.Value).ConvertedTo<string>();
                row[UNIT] = unit.Name;
                dataTable.Rows.Add(row);
