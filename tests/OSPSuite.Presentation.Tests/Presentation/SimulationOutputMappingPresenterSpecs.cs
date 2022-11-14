@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
@@ -16,7 +16,6 @@ using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
-using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Presentation
 {
@@ -33,12 +32,14 @@ namespace OSPSuite.Presentation.Presentation
       protected WeightedObservedData _weightedObservedData2;
       protected SimulationQuantitySelectionDTO _output1;
       protected SimulationQuantitySelectionDTO _output2;
+      protected SimulationQuantitySelectionDTO _emptyOutput;
       protected IQuantity _quantity1;
       protected IEnumerable<SimulationOutputMappingDTO> _allOutputMappingDTOs;
       protected OutputMapping _outputMapping1;
       protected OutputMapping _outputMapping2;
       protected SimulationOutputMappingDTO _outputMappingDTO1;
       protected SimulationOutputMappingDTO _outputMappingDTO2;
+      protected SimulationOutputMappingDTO _noOutputOutputMappingDTO;
       protected SimulationOutputMappingDTO _newOutputMappingDTO;
       private IQuantityToSimulationQuantitySelectionDTOMapper _simulationQuantitySelectionDTOMapper;
       protected IDialogCreator _dialogCreator;
@@ -69,6 +70,7 @@ namespace OSPSuite.Presentation.Presentation
 
          _quantity1 = A.Fake<IQuantity>();
          _output1 = A.Fake<SimulationQuantitySelectionDTO>();
+         _emptyOutput = new SimulationQuantitySelectionDTO(_simulation1, null, Captions.SimulationUI.NoneEditorNullText);
          A.CallTo(() => _output1.Simulation).Returns(_simulation1);
          _output2 = A.Fake<SimulationQuantitySelectionDTO>();
          A.CallTo(() => _entitiesInSimulationRetriever.OutputsFrom(_simulation1)).Returns(new PathCache<IQuantity>(new EntityPathResolverForSpecs())
@@ -86,6 +88,7 @@ namespace OSPSuite.Presentation.Presentation
 
          _outputMappingDTO1 = new SimulationOutputMappingDTO(_outputMapping1) { Output = _output1, ObservedData = _observedData1 };
          _outputMappingDTO2 = new SimulationOutputMappingDTO(_outputMapping2) { Output = _output2, ObservedData = _observedData2 };
+         _noOutputOutputMappingDTO = new SimulationOutputMappingDTO(_outputMapping2) { Output = _emptyOutput, ObservedData = _observedData1 };
          _newOutputMappingDTO = new SimulationOutputMappingDTO(new OutputMapping());
 
          A.CallTo(() => _simulation1.OutputMappings.OutputMappingsUsingDataRepository(_observedData1))
@@ -112,7 +115,13 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_return_the_distinct_list_of_all_outputs_in_the_simulation()
       {
-         sut.AllAvailableOutputs.ShouldOnlyContain(_output1);
+         sut.AllAvailableOutputs.ShouldContain(_output1);
+      }
+
+      [Observation]
+      public void should_contain_an_empty_output_for_none_()
+      {
+         sut.AllAvailableOutputs.Count(output => output.DisplayString.Equals(Captions.SimulationUI.NoneEditorNullText)).ShouldBeEqualTo(1);
       }
    }
 
@@ -133,8 +142,7 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class
-      When_loading_a_simulation_with_existing_output_mapping_and_unmapped_observed_data_without_matching_output :
+   public class When_loading_a_simulation_with_existing_output_mapping_and_unmapped_observed_data_without_matching_output :
          concern_for_SimulationOutputMappingPresenter
    {
       protected override void Context()
@@ -204,6 +212,42 @@ namespace OSPSuite.Presentation.Presentation
       public void should_have_removed_the_corresponding_output_mapping()
       {
          _simulation1.OutputMappings.All[0].Scaling.ShouldBeEqualTo(Scalings.Log);
+      }
+   }
+
+   public class When_removing_observed_data : concern_for_SimulationOutputMappingPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _simulation1.OutputMappings.Add(_outputMapping1);
+         _simulation1.OutputMappings.All[0].Scaling = Scalings.Linear;
+         sut.EditSimulation(_simulation1);
+         sut.RemoveObservedData(_outputMappingDTO1);
+      }
+
+      [Observation]
+      public void should_have_removed_the_corresponding_output_mapping()
+      {
+         A.CallTo(() => _simulation1.RemoveUsedObservedData(_outputMappingDTO1.ObservedData)).MustHaveHappened();
+      }
+   }
+   public class When_output_gets_removed : concern_for_SimulationOutputMappingPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _simulation1.OutputMappings.Add(_outputMapping1);
+         _simulation1.OutputMappings.All[0].Scaling = Scalings.Linear;
+         sut.EditSimulation(_simulation1);
+         _outputMappingDTO1.Output = _emptyOutput;
+         sut.UpdateSimulationOutputMappings(_outputMappingDTO1);
+      }
+
+      [Observation]
+      public void should_have_removed_the_corresponding_output_mapping()
+      {
+         _simulation1.OutputMappings.All.ShouldBeEmpty();
       }
    }
 }

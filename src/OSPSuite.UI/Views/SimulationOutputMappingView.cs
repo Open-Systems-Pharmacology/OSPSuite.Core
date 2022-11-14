@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using DevExpress.Printing.Core.PdfExport.Metafile;
 using DevExpress.Utils;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
@@ -100,6 +98,7 @@ namespace OSPSuite.UI.Views
       {
          _presenter.MarkSimulationAsChanged();
       }
+
       private void onOutputValueChanged(SimulationOutputMappingDTO simulationOutputMappingDTO)
       {
          _presenter.UpdateSimulationOutputMappings(simulationOutputMappingDTO);
