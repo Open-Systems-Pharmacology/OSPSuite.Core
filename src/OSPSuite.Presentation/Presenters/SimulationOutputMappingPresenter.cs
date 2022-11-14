@@ -26,7 +26,7 @@ namespace OSPSuite.Presentation.Presenters
    {
       void EditSimulation(ISimulation simulation);
       IReadOnlyList<SimulationQuantitySelectionDTO> AllAvailableOutputs { get; }
-      void RemoveOutputMapping(SimulationOutputMappingDTO outputMappingDTO);
+      void RemoveObservedData(SimulationOutputMappingDTO outputMappingDTO);
 
       /// <summary>
       ///    Completely rebinds the view to the content of the data source
@@ -89,6 +89,9 @@ namespace OSPSuite.Presentation.Presenters
          _allAvailableOutputs.Clear();
          var outputs = _entitiesInSimulationRetriever.OutputsFrom(_simulation);
          _allAvailableOutputs.AddRange(outputs.Select(x => mapFrom(_simulation, x)).OrderBy(x => x.DisplayString));
+         var test = new SimulationQuantitySelectionDTO(_simulation, null, Captions.SimulationUI.NoneEditorNullText);
+         _allAvailableOutputs.Add(test);
+
       }
 
       public void EditSimulation(ISimulation simulation)
@@ -137,10 +140,24 @@ namespace OSPSuite.Presentation.Presenters
       public void UpdateSimulationOutputMappings(SimulationOutputMappingDTO simulationOutputMappingDTO)
       {
          MarkSimulationAsChanged();
+
+         if (simulationOutputMappingDTO.Output.DisplayString.Equals(Captions.SimulationUI.NoneEditorNullText))
+         {
+            removeOutputMapping(simulationOutputMappingDTO);
+            return;
+         }
+
          if (!_simulation.OutputMappings.OutputMappingsUsingDataRepository(simulationOutputMappingDTO.ObservedData).Any())
             _simulation.OutputMappings.Add(simulationOutputMappingDTO.Mapping);
 
          simulationOutputMappingDTO.Scaling = _outputMappingMatchingTask.DefaultScalingFor(simulationOutputMappingDTO.Output.Quantity);
+      }
+
+      private void removeOutputMapping(SimulationOutputMappingDTO simulationOutputMappingDTO)
+      {
+         simulationOutputMappingDTO.Output = null;
+         _simulation.OutputMappings.Remove(simulationOutputMappingDTO.Mapping);
+         _view.RefreshGrid();
       }
 
       public void MarkSimulationAsChanged()
@@ -148,7 +165,7 @@ namespace OSPSuite.Presentation.Presenters
          _simulation.HasChanged = true;
       }
 
-      public void RemoveOutputMapping(SimulationOutputMappingDTO outputMappingDTO)
+      public void RemoveObservedData(SimulationOutputMappingDTO outputMappingDTO)
       {
          var parameterIdentifications = findParameterIdentificationsUsing(outputMappingDTO.ObservedData).ToList();
          if (parameterIdentifications.Any())
@@ -157,12 +174,12 @@ namespace OSPSuite.Presentation.Presenters
                Captions.ParameterIdentification.CannotRemoveObservedDataBeingUsedByParameterIdentification(outputMappingDTO.ObservedData.Name,
                   parameterIdentifications.AllNames().ToList()));
 
-
-            var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyRemoveObservedDataFromSimulation);
-            if (viewResult == ViewResult.No)
-               return;
+            return;
          }
 
+         var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyRemoveObservedDataFromSimulation);
+         if (viewResult == ViewResult.No)
+            return;
 
          _simulation.RemoveUsedObservedData(outputMappingDTO.ObservedData);
          _simulation.OutputMappings.Remove(outputMappingDTO.Mapping);

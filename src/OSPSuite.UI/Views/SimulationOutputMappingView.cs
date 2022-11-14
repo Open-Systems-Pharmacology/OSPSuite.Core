@@ -93,7 +93,7 @@ namespace OSPSuite.UI.Views
 
          _gridViewBinder.Changed += NotifyViewChanged;
 
-         _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.RemoveOutputMapping(_gridViewBinder.FocusedElement));
+         _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.RemoveObservedData(_gridViewBinder.FocusedElement));
       }
 
       private void onOutputMappingEdited()
@@ -117,8 +117,6 @@ namespace OSPSuite.UI.Views
       private RepositoryItem allOutputsRepository(SimulationOutputMappingDTO dto)
       {
          _outputRepository.FillComboBoxRepositoryWith(_presenter.AllAvailableOutputs);
-         //_outputRepository.Items.Add(null);
-         _outputRepository.Items.Add(Captions.SimulationUI.NoneEditorNullText);
          return _outputRepository;
       }
 
