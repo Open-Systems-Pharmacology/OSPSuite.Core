@@ -141,6 +141,8 @@ namespace OSPSuite.Presentation.Presentation
          _calculationData.Add(_concentrationDataColumn);
          A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(A<ISimulation>._)).Returns(new List<DataRepository>() { _calculationData });
 
+         A.CallTo(() => _predictedVsObservedService.AddIdentityCurves(A<List<DataColumn>>._, _predictedVsObservedChart)).Returns(new List<DataRepository>() { DomainHelperForSpecs.ObservedData() });
+
          sut.InitializeAnalysis(_predictedVsObservedChart);
       }
    }
