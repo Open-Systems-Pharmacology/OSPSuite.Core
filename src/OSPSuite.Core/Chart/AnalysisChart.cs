@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Chart
@@ -35,34 +33,6 @@ namespace OSPSuite.Core.Chart
       public virtual void AddRepositories(IEnumerable<DataRepository> dataRepositories)
       {
          dataRepositories.Each(AddRepository);
-      }
-   }
-
-   public abstract class PredictedVsObservedChart : AnalysisChart
-   {
-      protected PredictedVsObservedChart()
-      {
-         ChartSettings.LegendPosition = LegendPositions.BottomInside;
-      }
-
-      /// <summary>
-      ///    Modifies the Y axes visibility based on X axis dimension. Y axes which do not share a unit with X axis are not shown
-      /// </summary>
-      public void UpdateAxesVisibility()
-      {
-         var visibleAxes = Axes.Where(x => x.Dimension != null && x.Dimension.HasSharedUnitNamesWith(XAxis.Dimension)).ToList();
-         visibleAxes.Each(axis => axis.Visible = true);
-         Axes.Except(visibleAxes).Each(axis => axis.Visible = false);
-      }
-
-      public List<float> DeviationFoldValues { get; } = new List<float>();
-
-      public void AddToDeviationFoldValue(float foldValue)
-      {
-         if (DeviationFoldValues.Contains(foldValue))
-            return;
-
-         DeviationFoldValues.Add(foldValue);
       }
    }
 }

@@ -35,7 +35,7 @@ namespace OSPSuite.Core.Services
       ///    Adds the identity curve to the <paramref name="chart" /> where the values predicted equals the values observed
       ///    <returns>Any identity repositories created</returns>
       /// </summary>
-      IReadOnlyList<DataRepository> AddIdentityCurves(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart);
+      IReadOnlyList<DataRepository> AddIdentityCurves(IReadOnlyList<DataColumn> observationColumns, PredictedVsObservedChart chart);
 
       /// <summary>
       ///    Adds curves to the <paramref name="chart" /> for each combination of <paramref name="observationColumns" /> and
@@ -54,8 +54,7 @@ namespace OSPSuite.Core.Services
       /// <summary>
       ///    Creates new deviation line with fold value <paramref name="foldValue" />
       /// </summary>
-      IEnumerable<DataRepository> AddDeviationLine(float foldValue, List<DataColumn> observationColumns, PredictedVsObservedChart chart,
-         int deviationLinesCount);
+      IEnumerable<DataRepository> AddDeviationLine(float foldValue, List<DataColumn> observationColumns, PredictedVsObservedChart chart);
    }
 
    public class PredictedVsObservedChartService : IPredictedVsObservedChartService
@@ -106,10 +105,9 @@ namespace OSPSuite.Core.Services
          chart.UpdateAxesVisibility();
       }
 
-      public IEnumerable<DataRepository> AddDeviationLine(float foldValue, List<DataColumn> observationColumns, PredictedVsObservedChart chart,
-         int deviationLinesCount)
+      public IEnumerable<DataRepository> AddDeviationLine(float foldValue, List<DataColumn> observationColumns, PredictedVsObservedChart chart)
       {
-         if (chart.DeviationFoldValues.Contains(foldValue))
+         if (chart.HasDeviationCurveFor(foldValue))
             return Enumerable.Empty<DataRepository>();
 
          var settings = new DeviationLineSettings
@@ -118,10 +116,10 @@ namespace OSPSuite.Core.Services
             RepositoryName = Captions.ParameterIdentification.Deviation
          };
 
-         var deviationCurves = addDeviationLines(foldValue, observationColumns, settings).ToList();
+         var deviationCurves = createDeviationRepositories(foldValue, observationColumns, settings).ToList();
+         chart.AddDeviationCurvesForFoldValue(foldValue, _dimensionFactory, deviationCurves, 
+            (column, curve) => curve.UpdateDeviationCurve(column.Name, chart.PlottedFolds().Except(new[] { foldValue, 1.0f }).Count()));
 
-         deviationCurves.Where(repository => repository != null).Each(repository =>
-            chart.AddCurvesFor(repository, x => x.Name, _dimensionFactory, (column, curve) => curve.UpdateDeviationCurve(column.Name, deviationLinesCount)));
 
          //adding one of the deviation lines to the legend. Workaround for now until the presenter is adjusted for Predicted vs. Observed Chart.
          var upperDeviationLine = chart.Curves.FindByName(Captions.Chart.DeviationLines.DeviationLineNameUpper(foldValue));
@@ -132,7 +130,7 @@ namespace OSPSuite.Core.Services
          return deviationCurves;
       }
 
-      public IReadOnlyList<DataRepository> AddIdentityCurves(IEnumerable<DataColumn> observationColumns, PredictedVsObservedChart chart)
+      public IReadOnlyList<DataRepository> AddIdentityCurves(IReadOnlyList<DataColumn> observationColumns, PredictedVsObservedChart chart)
       {
          var settings = new DeviationLineSettings
          {
@@ -140,16 +138,14 @@ namespace OSPSuite.Core.Services
             RepositoryName = Identity
          };
 
-         var identityCurves = addDeviationLines(1, observationColumns.ToList(), settings).ToList();
-
-         identityCurves.Where(repository => repository != null).Each(repository =>
-            chart.AddCurvesFor(repository, x => x.Name, _dimensionFactory, (column, curve) => curve.UpdateIdentityCurve(Identity)));
+         var deviationCurves = createDeviationRepositories(foldValue:1, observationColumns, settings).ToList();
+         chart.AddDeviationCurvesForFoldValue(foldValue: 1, _dimensionFactory, deviationCurves, (column, curve) => curve.UpdateIdentityCurve(Identity));
 
          chart.UpdateAxesVisibility();
-         return identityCurves;
+         return deviationCurves;
       }
 
-      private IEnumerable<DataRepository> addDeviationLines(float foldValue, IReadOnlyList<DataColumn> observationColumns,
+      private IEnumerable<DataRepository> createDeviationRepositories(float foldValue, IReadOnlyList<DataColumn> observationColumns,
          DeviationLineSettings settings)
       {
          var uniqueDimensions = observationColumns.Select(dataColumn => _dimensionFactory.MergedDimensionFor(dataColumn))
