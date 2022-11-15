@@ -36,16 +36,18 @@ namespace OSPSuite.Core.Domain.Mappers
          if (dataColumn.IsObservation())
             return ObservedDataPathElementsFor(dataColumn, quantityPath);
 
-         if (dataColumn.IsBaseGrid())
-            return pathElementsForBaseGrid(dataColumn);
+         if (dataColumn.IsBaseGrid() || dataColumn.IsDeviation())
+            return pathElementsForNameOnlyColumn(dataColumn);
 
          return pathElementsForUnknownColumns(dataColumn, quantityPath);
       }
 
-      private static PathElements pathElementsForBaseGrid(DataColumn dataColumn)
+      private static PathElements pathElementsForNameOnlyColumn(DataColumn dataColumn)
       {
-         var pathColumnValues = new PathElements();
-         pathColumnValues[PathElementId.Name] = new PathElement {DisplayName = dataColumn.Name};
+         var pathColumnValues = new PathElements
+         {
+            [PathElementId.Name] = new PathElement {DisplayName = dataColumn.Name}
+         };
          return pathColumnValues;
       }
 
