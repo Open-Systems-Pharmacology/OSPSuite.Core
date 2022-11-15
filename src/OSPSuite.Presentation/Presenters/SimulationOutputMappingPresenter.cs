@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Repositories;
@@ -15,7 +14,6 @@ using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 
 namespace OSPSuite.Presentation.Presenters
 {
@@ -124,7 +122,8 @@ namespace OSPSuite.Presentation.Presenters
 
       public IReadOnlyList<SimulationQuantitySelectionDTO> AllAvailableOutputs => _allAvailableOutputs;
 
-      private SimulationQuantitySelectionDTO mapFrom(ISimulation simulation, IQuantity quantity) => _simulationQuantitySelectionDTOMapper.MapFrom(simulation, quantity);
+      private SimulationQuantitySelectionDTO mapFrom(ISimulation simulation, IQuantity quantity) =>
+         _simulationQuantitySelectionDTOMapper.MapFrom(simulation, quantity);
 
       private SimulationOutputMappingDTO mapFrom(OutputMapping outputMapping) => _outputMappingDTOMapper.MapFrom(outputMapping, AllAvailableOutputs);
 
@@ -142,7 +141,6 @@ namespace OSPSuite.Presentation.Presenters
          if (simulationOutputMappingDTO.Output.DisplayString.Equals(Captions.SimulationUI.NoneEditorNullText))
          {
             _simulation.RemoveOutputMappings(simulationOutputMappingDTO.ObservedData);
-            //removeOutputMapping(simulationOutputMappingDTO);
             return;
          }
 
@@ -150,13 +148,6 @@ namespace OSPSuite.Presentation.Presenters
             _simulation.OutputMappings.Add(simulationOutputMappingDTO.Mapping);
 
          simulationOutputMappingDTO.Scaling = _outputMappingMatchingTask.DefaultScalingFor(simulationOutputMappingDTO.Output.Quantity);
-      }
-
-      //HAVE TO TEST THIS CHANGE OF HANDLING THE DELETION OF OutputMapping
-      private void removeOutputMapping(SimulationOutputMappingDTO simulationOutputMappingDTO)
-      {
-         _simulation.OutputMappings.Remove(simulationOutputMappingDTO.Mapping);
-         _view.RefreshGrid();
       }
 
       public void MarkSimulationAsChanged()
@@ -172,12 +163,8 @@ namespace OSPSuite.Presentation.Presenters
             Simulation = _simulation
          };
 
-         _observedDataTask.RemoveUsedObservedDataFromSimulation(new List<UsedObservedData>() {usedObservedData});
-
-         //TEST IF WE NEED THIS
-         _view.RefreshGrid();
+         _observedDataTask.RemoveUsedObservedDataFromSimulation(new List<UsedObservedData>() { usedObservedData });
       }
-
 
       public void Handle(ObservedDataAddedToAnalysableEvent eventToHandle)
       {
