@@ -24,6 +24,10 @@ namespace OSPSuite.Starter.Domain
       {
       }
 
+      public void RemoveOutputMappings(DataRepository dataRepository)
+      {
+      }
+
       public OutputSchema OutputSchema => Settings.OutputSchema;
       public ISimulationSettings Settings => BuildConfiguration.SimulationSettings;
 

@@ -42,12 +42,11 @@ namespace OSPSuite.Presentation.Presenters
    {
       private readonly IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
       private readonly IObservedDataRepository _observedDataRepository;
+      private readonly IObservedDataTask _observedDataTask;
       private readonly ISimulationOutputMappingToOutputMappingDTOMapper _outputMappingDTOMapper;
       private readonly IQuantityToSimulationQuantitySelectionDTOMapper _simulationQuantitySelectionDTOMapper;
       private readonly List<SimulationQuantitySelectionDTO> _allAvailableOutputs = new List<SimulationQuantitySelectionDTO>();
       private readonly IOutputMappingMatchingTask _outputMappingMatchingTask;
-      protected readonly IDialogCreator _dialogCreator;
-      private readonly IOSPSuiteExecutionContext _context;
       private readonly SimulationQuantitySelectionDTO _noneEntry;
 
       private readonly NotifyList<SimulationOutputMappingDTO> _listOfOutputMappingDTOs;
@@ -61,8 +60,7 @@ namespace OSPSuite.Presentation.Presenters
          IObservedDataRepository observedDataRepository,
          ISimulationOutputMappingToOutputMappingDTOMapper outputMappingDTOMapper,
          IQuantityToSimulationQuantitySelectionDTOMapper simulationQuantitySelectionDTOMapper,
-         IDialogCreator dialogCreator,
-         IOSPSuiteExecutionContext context) : base(view)
+         IObservedDataTask observedDataTask) : base(view)
       {
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
          _observedDataRepository = observedDataRepository;
@@ -71,8 +69,7 @@ namespace OSPSuite.Presentation.Presenters
          _noneEntry = new SimulationQuantitySelectionDTO(null, null, Captions.SimulationUI.NoneEditorNullText);
          _outputMappingMatchingTask = new OutputMappingMatchingTask(_entitiesInSimulationRetriever);
          _listOfOutputMappingDTOs = new NotifyList<SimulationOutputMappingDTO>();
-         _dialogCreator = dialogCreator;
-         _context = context;
+         _observedDataTask = observedDataTask;
       }
 
       public void Refresh()
@@ -144,7 +141,8 @@ namespace OSPSuite.Presentation.Presenters
 
          if (simulationOutputMappingDTO.Output.DisplayString.Equals(Captions.SimulationUI.NoneEditorNullText))
          {
-            removeOutputMapping(simulationOutputMappingDTO);
+            _simulation.RemoveOutputMappings(simulationOutputMappingDTO.ObservedData);
+            //removeOutputMapping(simulationOutputMappingDTO);
             return;
          }
 
@@ -154,9 +152,9 @@ namespace OSPSuite.Presentation.Presenters
          simulationOutputMappingDTO.Scaling = _outputMappingMatchingTask.DefaultScalingFor(simulationOutputMappingDTO.Output.Quantity);
       }
 
+      //HAVE TO TEST THIS CHANGE OF HANDLING THE DELETION OF OutputMapping
       private void removeOutputMapping(SimulationOutputMappingDTO simulationOutputMappingDTO)
       {
-         simulationOutputMappingDTO.Output = null;
          _simulation.OutputMappings.Remove(simulationOutputMappingDTO.Mapping);
          _view.RefreshGrid();
       }
@@ -168,36 +166,18 @@ namespace OSPSuite.Presentation.Presenters
 
       public void RemoveObservedData(SimulationOutputMappingDTO outputMappingDTO)
       {
-         var parameterIdentifications = findParameterIdentificationsUsing(outputMappingDTO.ObservedData).ToList();
-         if (parameterIdentifications.Any())
+         var usedObservedData = new UsedObservedData
          {
-            _dialogCreator.MessageBoxInfo(
-               Captions.ParameterIdentification.CannotRemoveObservedDataBeingUsedByParameterIdentification(outputMappingDTO.ObservedData.Name,
-                  parameterIdentifications.AllNames().ToList()));
+            Id = outputMappingDTO.ObservedData.Id,
+            Simulation = _simulation
+         };
 
-            return;
-         }
+         _observedDataTask.RemoveUsedObservedDataFromSimulation(new List<UsedObservedData>() {usedObservedData});
 
-         var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyRemoveObservedDataFromSimulation);
-         if (viewResult == ViewResult.No)
-            return;
-
-         _simulation.RemoveUsedObservedData(outputMappingDTO.ObservedData);
-         _simulation.OutputMappings.Remove(outputMappingDTO.Mapping);
-
-         _context.PublishEvent(new ObservedDataRemovedFromAnalysableEvent(_simulation, outputMappingDTO.ObservedData));
-         _context.PublishEvent(new SimulationStatusChangedEvent(_simulation));
-
+         //TEST IF WE NEED THIS
          _view.RefreshGrid();
       }
 
-      private IEnumerable<ParameterIdentification> findParameterIdentificationsUsing(DataRepository dataRepository)
-      {
-         return from parameterIdentification in _context.Project.AllParameterIdentifications
-            let outputMappings = parameterIdentification.AllOutputMappingsFor(_simulation)
-            where outputMappings.Any(x => x.UsesObservedData(dataRepository))
-            select parameterIdentification;
-      }
 
       public void Handle(ObservedDataAddedToAnalysableEvent eventToHandle)
       {

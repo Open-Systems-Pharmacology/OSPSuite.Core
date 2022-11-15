@@ -27,6 +27,11 @@ namespace OSPSuite.R.Domain
          // nothing to do in R
       }
 
+      public void RemoveOutputMappings(DataRepository dataRepository)
+      {
+         // nothing to do in R
+      }
+
       public void RemoveAnalysis(ISimulationAnalysis simulationAnalysis)
       {
          // nothing to do in R
