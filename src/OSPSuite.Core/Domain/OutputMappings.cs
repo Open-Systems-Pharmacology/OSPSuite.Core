@@ -31,6 +31,11 @@ namespace OSPSuite.Core.Domain
          _allOutputMappings.Remove(outputMapping);
       }
 
+      public void Clear()
+      {
+         _allOutputMappings.Clear();
+      }
+
       public void RemoveOutputsReferencing(ISimulation simulation)
       {
          _allOutputMappings.Where(x => outputBelongsToSimulation(simulation, x))

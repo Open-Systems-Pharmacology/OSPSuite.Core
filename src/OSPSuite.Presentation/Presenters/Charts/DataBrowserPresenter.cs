@@ -5,7 +5,6 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
@@ -114,6 +113,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       
       public DataBrowserPresenter(IDataBrowserView view) : base(view)
       {
+         AllOutputMappings = new OutputMappings();
       }
 
       public void SetDisplayQuantityPathDefinition(Func<DataColumn, PathElements> displayQuantityPathDefinition)
