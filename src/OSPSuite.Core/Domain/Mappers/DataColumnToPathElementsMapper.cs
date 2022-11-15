@@ -44,11 +44,10 @@ namespace OSPSuite.Core.Domain.Mappers
 
       private static PathElements pathElementsForNameOnlyColumn(DataColumn dataColumn)
       {
-         var pathColumnValues = new PathElements
+         return new PathElements
          {
             [PathElementId.Name] = new PathElement {DisplayName = dataColumn.Name}
          };
-         return pathColumnValues;
       }
 
       protected virtual PathElements ObservedDataPathElementsFor(DataColumn dataColumn, List<string> quantityPath)
