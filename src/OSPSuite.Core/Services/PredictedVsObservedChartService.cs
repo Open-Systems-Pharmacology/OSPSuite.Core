@@ -117,6 +117,9 @@ namespace OSPSuite.Core.Services
          };
 
          var deviationCurves = createDeviationRepositories(foldValue, observationColumns, settings).ToList();
+
+         // only count the plotted folds that are needed to select the next line type. For that reason, we don't want to count the unity fold, nor the fold just plotted
+         // That's foldValue and 1.0f are not counted
          chart.AddDeviationCurvesForFoldValue(foldValue, _dimensionFactory, deviationCurves, 
             (column, curve) => curve.UpdateDeviationCurve(column.Name, chart.PlottedFolds().Except(new[] { foldValue, 1.0f }).Count()));
 
