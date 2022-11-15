@@ -200,6 +200,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void SetOutputMappings(OutputMappings outputMappings);
 
       /// <summary>
+      /// Adds the output mappings to the existing ones 
+      /// </summary>
+      void AddOutputMappings(OutputMappings outputMappings);
+
+      /// <summary>
       ///    Adds the control for linking the (de)selection of outputs and observed data
       /// </summary>
       void AddLinkSimDataMenuItem();
@@ -415,6 +420,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void ShowCustomizationForm() => _view.ShowCustomizationForm();
 
       public void AddUsedInMenuItem() => _view.AddUsedInMenuItemCheckBox();
+
+      public void AddOutputMappings(OutputMappings outputMappings)
+      {
+         foreach (var outputMapping in outputMappings) 
+         {
+            _dataBrowserPresenter.AllOutputMappings.Add(outputMapping);
+         }
+      }
 
       public void AddLinkSimDataMenuItem() => _view.AddLinkSimulationObservedMenuItemCheckBox();
 
