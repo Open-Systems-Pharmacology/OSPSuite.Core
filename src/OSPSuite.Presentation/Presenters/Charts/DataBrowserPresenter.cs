@@ -113,6 +113,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       
       public DataBrowserPresenter(IDataBrowserView view) : base(view)
       {
+         AllOutputMappings = new OutputMappings();
       }
 
       public void SetDisplayQuantityPathDefinition(Func<DataColumn, PathElements> displayQuantityPathDefinition)
