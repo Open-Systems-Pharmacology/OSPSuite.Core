@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.SimModel;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Events
@@ -61,6 +62,14 @@ namespace OSPSuite.Core.Events
 
       protected SimulationEvent(ISimulation simulation) : base(simulation)
       {
+      }
+   }
+
+   public class SimulationOutputMappingsChangedEvent : SimulationEvent
+   {
+      public SimulationOutputMappingsChangedEvent(ISimulation simulation) : base(simulation)
+      {
+         
       }
    }
 

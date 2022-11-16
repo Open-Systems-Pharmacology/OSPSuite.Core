@@ -41,6 +41,7 @@ namespace OSPSuite.Presentation.Presenters
       private readonly IObservedDataRepository _observedDataRepository;
       private readonly ISimulationOutputMappingToOutputMappingDTOMapper _outputMappingDTOMapper;
       private readonly IQuantityToSimulationQuantitySelectionDTOMapper _simulationQuantitySelectionDTOMapper;
+      private readonly IEventPublisher _eventPublisher;
       private readonly List<SimulationQuantitySelectionDTO> _allAvailableOutputs = new List<SimulationQuantitySelectionDTO>();
       private readonly IOutputMappingMatchingTask _outputMappingMatchingTask;
 
@@ -54,12 +55,14 @@ namespace OSPSuite.Presentation.Presenters
          IEntitiesInSimulationRetriever entitiesInSimulationRetriever,
          IObservedDataRepository observedDataRepository,
          ISimulationOutputMappingToOutputMappingDTOMapper outputMappingDTOMapper,
-         IQuantityToSimulationQuantitySelectionDTOMapper simulationQuantitySelectionDTOMapper) : base(view)
+         IQuantityToSimulationQuantitySelectionDTOMapper simulationQuantitySelectionDTOMapper,
+         IEventPublisher eventPublisher) : base(view)
       {
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
          _observedDataRepository = observedDataRepository;
          _outputMappingDTOMapper = outputMappingDTOMapper;
          _simulationQuantitySelectionDTOMapper = simulationQuantitySelectionDTOMapper;
+         _eventPublisher = eventPublisher;
          _outputMappingMatchingTask = new OutputMappingMatchingTask(_entitiesInSimulationRetriever);
          _listOfOutputMappingDTOs = new NotifyList<SimulationOutputMappingDTO>();
       }
@@ -126,16 +129,18 @@ namespace OSPSuite.Presentation.Presenters
 
       public void UpdateSimulationOutputMappings(SimulationOutputMappingDTO simulationOutputMappingDTO)
       {
-         MarkSimulationAsChanged();
+         
          if (!_simulation.OutputMappings.OutputMappingsUsingDataRepository(simulationOutputMappingDTO.ObservedData).Any())
             _simulation.OutputMappings.Add(simulationOutputMappingDTO.Mapping);
 
          simulationOutputMappingDTO.Scaling = _outputMappingMatchingTask.DefaultScalingFor(simulationOutputMappingDTO.Output.Quantity);
+         MarkSimulationAsChanged();
       }
 
       public void MarkSimulationAsChanged()
       {
          _simulation.HasChanged = true;
+         this.DoWithinLatch(() => _eventPublisher.PublishEvent(new SimulationOutputMappingsChangedEvent(_simulation)));
       }
 
       public void RemoveOutputMapping(SimulationOutputMappingDTO outputMappingDTO)
@@ -143,6 +148,7 @@ namespace OSPSuite.Presentation.Presenters
          outputMappingDTO.Output = null;
          _simulation.OutputMappings.Remove(outputMappingDTO.Mapping);
          _view.RefreshGrid();
+         MarkSimulationAsChanged();
       }
 
       public void Handle(ObservedDataAddedToAnalysableEvent eventToHandle)
