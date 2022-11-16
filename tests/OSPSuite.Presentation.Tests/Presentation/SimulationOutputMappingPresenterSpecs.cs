@@ -221,7 +221,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_have_called_the_service_to_remove_the_corresponding_observed_data()
       {
-         A.CallTo(() => _observedDataTask.RemoveUsedObservedDataFromSimulation(A<List<UsedObservedData>>.That.Matches(args => args.Any(x => x.Id.Equals(_outputMappingDTO1.ObservedData.Id))))).MustHaveHappened();
+         A.CallTo(() => _observedDataTask.RemoveUsedObservedDataFromSimulation(A<IReadOnlyList<UsedObservedData>>.That.Matches(args => args.Any(x => x.Id.Equals(_outputMappingDTO1.ObservedData.Id))))).MustHaveHappened();
       }
    }
 
