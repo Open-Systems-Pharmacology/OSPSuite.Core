@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.SimModel;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Events

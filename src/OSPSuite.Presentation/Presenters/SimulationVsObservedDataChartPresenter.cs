@@ -90,7 +90,7 @@ namespace OSPSuite.Presentation.Presenters
       
       public void Handle(SimulationOutputMappingsChangedEvent eventToHandle)
       {
-         if (eventToHandle.Simulation == _simulation)
+         if (Equals(eventToHandle.Simulation, _simulation))
             UpdateAnalysisBasedOn(_simulation);
       }
    }

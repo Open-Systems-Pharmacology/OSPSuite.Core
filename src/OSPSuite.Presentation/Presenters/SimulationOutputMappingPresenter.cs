@@ -157,7 +157,7 @@ namespace OSPSuite.Presentation.Presenters
       public void MarkSimulationAsChanged()
       {
          _simulation.HasChanged = true;
-         this.DoWithinLatch(() => _eventPublisher.PublishEvent(new SimulationOutputMappingsChangedEvent(_simulation)));
+         _eventPublisher.PublishEvent(new SimulationOutputMappingsChangedEvent(_simulation));
       }
 
       public void RemoveObservedData(SimulationOutputMappingDTO outputMappingDTO)
