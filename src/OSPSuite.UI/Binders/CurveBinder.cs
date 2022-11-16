@@ -497,6 +497,21 @@ namespace OSPSuite.UI.Binders
                return MarkerKind.Triangle;
             case Symbols.Square:
                return MarkerKind.Square;
+            case Symbols.InvertedTriangle:
+               return MarkerKind.InvertedTriangle;
+            case Symbols.Plus:
+               return MarkerKind.Plus;
+            case Symbols.Cross:
+               return MarkerKind.Cross;
+            case Symbols.Star:
+               return MarkerKind.Star;
+            case Symbols.Pentagon:
+               return MarkerKind.Pentagon;
+            case Symbols.Hexagon:
+               return MarkerKind.Hexagon;
+            case Symbols.ThinCross:
+               return MarkerKind.ThinCross;
+
             default:
                throw new ArgumentOutOfRangeException(nameof(symbol));
          }

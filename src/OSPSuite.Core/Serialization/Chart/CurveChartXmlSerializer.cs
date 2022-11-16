@@ -1,10 +1,11 @@
 ﻿using System.Xml.Linq;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Chart.Simulations;
 using OSPSuite.Core.Serialization.Xml;
 
 namespace OSPSuite.Core.Serialization.Chart
 {
-   public abstract class CurveChartXmlSerializer<TCurveChart> : OSPSuiteXmlSerializer<TCurveChart> where TCurveChart: CurveChart
+   public abstract class CurveChartXmlSerializer<TCurveChart> : OSPSuiteXmlSerializer<TCurveChart> where TCurveChart : CurveChart
    {
       public override void PerformMapping()
       {
@@ -31,6 +32,18 @@ namespace OSPSuite.Core.Serialization.Chart
 
    public class CurveChartXmlSerializer : CurveChartXmlSerializer<CurveChart>
    {
-      
+   }
+
+   public class SimulationPredictedVsObservedChartXmlSerializer : CurveChartXmlSerializer<SimulationPredictedVsObservedChart>
+   {
+      public override void PerformMapping()
+      {
+         base.PerformMapping();
+         Map(x => x.DeviationFoldValues);
+      }
+   }
+
+   public class SimulationResidualVsTimeChartSerializer : CurveChartXmlSerializer<SimulationResidualVsTimeChart>
+   {
    }
 }
