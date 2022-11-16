@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
@@ -37,7 +37,8 @@ namespace OSPSuite.Presentation.Presentation
       protected SimulationOutputMappingDTO _outputMappingDTO1;
       protected SimulationOutputMappingDTO _outputMappingDTO2;
       protected SimulationOutputMappingDTO _newOutputMappingDTO;
-      private IQuantityToSimulationQuantitySelectionDTOMapper _simulationQuantitySelectionDTOMapper;
+      protected IQuantityToSimulationQuantitySelectionDTOMapper _simulationQuantitySelectionDTOMapper;
+      protected IObservedDataTask _observedDataTask;
 
       protected override void Context()
       {
@@ -46,9 +47,11 @@ namespace OSPSuite.Presentation.Presentation
          _entitiesInSimulationRetriever = A.Fake<IEntitiesInSimulationRetriever>();
          _outputMappingDTOMapper = A.Fake<ISimulationOutputMappingToOutputMappingDTOMapper>();
          _simulationQuantitySelectionDTOMapper = A.Fake<IQuantityToSimulationQuantitySelectionDTOMapper>();
+         _observedDataTask = A.Fake<IObservedDataTask>();
+
 
          sut = new SimulationOutputMappingPresenter(_view, _entitiesInSimulationRetriever, _observedDataRepository, _outputMappingDTOMapper,
-            _simulationQuantitySelectionDTOMapper);
+            _simulationQuantitySelectionDTOMapper, _observedDataTask);
 
 
          _observedData1 = DomainHelperForSpecs.ObservedData("Obs1").WithName("Obs1");
@@ -76,12 +79,14 @@ namespace OSPSuite.Presentation.Presentation
          _outputMapping2 = A.Fake<OutputMapping>();
 
 
-         _outputMappingDTO1 = new SimulationOutputMappingDTO(_outputMapping1) { Output = _output1, ObservedData = _observedData1};
-         _outputMappingDTO2 = new SimulationOutputMappingDTO(_outputMapping2) { Output = _output2, ObservedData = _observedData2};
+         _outputMappingDTO1 = new SimulationOutputMappingDTO(_outputMapping1) { Output = _output1, ObservedData = _observedData1 };
+         _outputMappingDTO2 = new SimulationOutputMappingDTO(_outputMapping2) { Output = _output2, ObservedData = _observedData2 };
          _newOutputMappingDTO = new SimulationOutputMappingDTO(new OutputMapping());
 
-         A.CallTo(() => _simulation1.OutputMappings.OutputMappingsUsingDataRepository(_observedData1)).Returns(new List<OutputMapping>(){ _outputMapping1});
-         A.CallTo(() => _simulation1.OutputMappings.OutputMappingsUsingDataRepository(_observedData2)).Returns(new List<OutputMapping>() { _outputMapping2 });
+         A.CallTo(() => _simulation1.OutputMappings.OutputMappingsUsingDataRepository(_observedData1))
+            .Returns(new List<OutputMapping>() { _outputMapping1 });
+         A.CallTo(() => _simulation1.OutputMappings.OutputMappingsUsingDataRepository(_observedData2))
+            .Returns(new List<OutputMapping>() { _outputMapping2 });
          A.CallTo(() => _outputMappingDTOMapper.MapFrom(_outputMapping1, A<IReadOnlyList<SimulationQuantitySelectionDTO>>._))
             .Returns(_outputMappingDTO1);
          A.CallTo(() => _outputMappingDTOMapper.MapFrom(_outputMapping2, A<IReadOnlyList<SimulationQuantitySelectionDTO>>._))
@@ -102,7 +107,13 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_return_the_distinct_list_of_all_outputs_in_the_simulation()
       {
-         sut.AllAvailableOutputs.ShouldOnlyContain(_output1);
+         sut.AllAvailableOutputs.ShouldContain(_output1);
+      }
+
+      [Observation]
+      public void should_contain_an_empty_output_for_none_()
+      {
+         sut.AllAvailableOutputs.Count(output => output.DisplayString.Equals(Captions.SimulationUI.NoneEditorNullText)).ShouldBeEqualTo(1);
       }
    }
 
@@ -123,7 +134,8 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_loading_a_simulation_with_existing_output_mapping_and_unmapped_observed_data_without_matching_output : concern_for_SimulationOutputMappingPresenter
+   public class When_loading_a_simulation_with_existing_output_mapping_and_unmapped_observed_data_without_matching_output :
+      concern_for_SimulationOutputMappingPresenter
    {
       protected override void Context()
       {
@@ -192,6 +204,49 @@ namespace OSPSuite.Presentation.Presentation
       public void should_have_removed_the_corresponding_output_mapping()
       {
          _simulation1.OutputMappings.All[0].Scaling.ShouldBeEqualTo(Scalings.Log);
+      }
+   }
+
+   public class When_removing_observed_data : concern_for_SimulationOutputMappingPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _simulation1.OutputMappings.Add(_outputMapping1);
+         _simulation1.OutputMappings.All[0].Scaling = Scalings.Linear;
+         sut.EditSimulation(_simulation1);
+         sut.RemoveObservedData(_outputMappingDTO1);
+      }
+
+      [Observation]
+      public void should_have_called_the_service_to_remove_the_corresponding_observed_data()
+      {
+         A.CallTo(() => _observedDataTask.RemoveUsedObservedDataFromSimulation(A<IReadOnlyList<UsedObservedData>>.That.Matches(args => args.Any(x => x.Id.Equals(_outputMappingDTO1.ObservedData.Id))))).MustHaveHappened();
+      }
+   }
+
+   public class When_output_gets_removed : concern_for_SimulationOutputMappingPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _simulation1.OutputMappings.Add(_outputMapping1);
+         _simulation1.OutputMappings.All[0].Scaling = Scalings.Linear;
+         sut.EditSimulation(_simulation1);
+         //we know we add the none entry at the end of the list by construction
+         //Setting the no output selection
+         _outputMappingDTO1.Output = sut.AllAvailableOutputs.Last();
+      }
+
+      protected override void Because()
+      {
+         sut.UpdateSimulationOutputMappings(_outputMappingDTO1);
+      }
+
+      [Observation]
+      public void should_have_removed_the_corresponding_output_mapping()
+      {
+         A.CallTo(() => _simulation1.RemoveOutputMappings(_outputMappingDTO1.ObservedData)).MustHaveHappened();
       }
    }
 }

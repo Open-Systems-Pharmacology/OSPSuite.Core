@@ -22,6 +22,15 @@ namespace OSPSuite.R.Domain
       public IEnumerable<CurveChart> Charts { get; } = new List<CurveChart>();
       public OutputMappings OutputMappings { get; set; }
       public DataRepository ResultsDataRepository { get; set; }
+      public void RemoveUsedObservedData(DataRepository dataRepository)
+      {
+         // nothing to do in R
+      }
+
+      public void RemoveOutputMappings(DataRepository dataRepository)
+      {
+         // nothing to do in R
+      }
 
       public void RemoveAnalysis(ISimulationAnalysis simulationAnalysis)
       {

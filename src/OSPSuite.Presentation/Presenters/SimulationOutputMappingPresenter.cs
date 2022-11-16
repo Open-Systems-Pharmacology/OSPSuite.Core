@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Repositories;
@@ -23,7 +24,7 @@ namespace OSPSuite.Presentation.Presenters
    {
       void EditSimulation(ISimulation simulation);
       IReadOnlyList<SimulationQuantitySelectionDTO> AllAvailableOutputs { get; }
-      void RemoveOutputMapping(SimulationOutputMappingDTO outputMappingDTO);
+      void RemoveObservedData(SimulationOutputMappingDTO outputMappingDTO);
 
       /// <summary>
       ///    Completely rebinds the view to the content of the data source
@@ -39,10 +40,12 @@ namespace OSPSuite.Presentation.Presenters
    {
       private readonly IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
       private readonly IObservedDataRepository _observedDataRepository;
+      private readonly IObservedDataTask _observedDataTask;
       private readonly ISimulationOutputMappingToOutputMappingDTOMapper _outputMappingDTOMapper;
       private readonly IQuantityToSimulationQuantitySelectionDTOMapper _simulationQuantitySelectionDTOMapper;
       private readonly List<SimulationQuantitySelectionDTO> _allAvailableOutputs = new List<SimulationQuantitySelectionDTO>();
       private readonly IOutputMappingMatchingTask _outputMappingMatchingTask;
+      private readonly SimulationQuantitySelectionDTO _noneEntry;
 
       private readonly NotifyList<SimulationOutputMappingDTO> _listOfOutputMappingDTOs;
 
@@ -54,14 +57,17 @@ namespace OSPSuite.Presentation.Presenters
          IEntitiesInSimulationRetriever entitiesInSimulationRetriever,
          IObservedDataRepository observedDataRepository,
          ISimulationOutputMappingToOutputMappingDTOMapper outputMappingDTOMapper,
-         IQuantityToSimulationQuantitySelectionDTOMapper simulationQuantitySelectionDTOMapper) : base(view)
+         IQuantityToSimulationQuantitySelectionDTOMapper simulationQuantitySelectionDTOMapper,
+         IObservedDataTask observedDataTask) : base(view)
       {
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
          _observedDataRepository = observedDataRepository;
          _outputMappingDTOMapper = outputMappingDTOMapper;
          _simulationQuantitySelectionDTOMapper = simulationQuantitySelectionDTOMapper;
+         _noneEntry = new SimulationQuantitySelectionDTO(null, null, Captions.SimulationUI.NoneEditorNullText);
          _outputMappingMatchingTask = new OutputMappingMatchingTask(_entitiesInSimulationRetriever);
          _listOfOutputMappingDTOs = new NotifyList<SimulationOutputMappingDTO>();
+         _observedDataTask = observedDataTask;
       }
 
       public void Refresh()
@@ -79,6 +85,9 @@ namespace OSPSuite.Presentation.Presenters
          _allAvailableOutputs.Clear();
          var outputs = _entitiesInSimulationRetriever.OutputsFrom(_simulation);
          _allAvailableOutputs.AddRange(outputs.Select(x => mapFrom(_simulation, x)).OrderBy(x => x.DisplayString));
+
+         //adding a none DTO output, in order to be able to select it and delete the outputMapping
+         _allAvailableOutputs.Add(_noneEntry);
       }
 
       public void EditSimulation(ISimulation simulation)
@@ -113,7 +122,8 @@ namespace OSPSuite.Presentation.Presenters
 
       public IReadOnlyList<SimulationQuantitySelectionDTO> AllAvailableOutputs => _allAvailableOutputs;
 
-      private SimulationQuantitySelectionDTO mapFrom(ISimulation simulation, IQuantity quantity) => _simulationQuantitySelectionDTOMapper.MapFrom(simulation, quantity);
+      private SimulationQuantitySelectionDTO mapFrom(ISimulation simulation, IQuantity quantity) =>
+         _simulationQuantitySelectionDTOMapper.MapFrom(simulation, quantity);
 
       private SimulationOutputMappingDTO mapFrom(OutputMapping outputMapping) => _outputMappingDTOMapper.MapFrom(outputMapping, AllAvailableOutputs);
 
@@ -127,6 +137,13 @@ namespace OSPSuite.Presentation.Presenters
       public void UpdateSimulationOutputMappings(SimulationOutputMappingDTO simulationOutputMappingDTO)
       {
          MarkSimulationAsChanged();
+
+         if (Equals(simulationOutputMappingDTO.Output, _noneEntry))
+         {
+            _simulation.RemoveOutputMappings(simulationOutputMappingDTO.ObservedData);
+            return;
+         }
+
          if (!_simulation.OutputMappings.OutputMappingsUsingDataRepository(simulationOutputMappingDTO.ObservedData).Any())
             _simulation.OutputMappings.Add(simulationOutputMappingDTO.Mapping);
 
@@ -138,11 +155,15 @@ namespace OSPSuite.Presentation.Presenters
          _simulation.HasChanged = true;
       }
 
-      public void RemoveOutputMapping(SimulationOutputMappingDTO outputMappingDTO)
+      public void RemoveObservedData(SimulationOutputMappingDTO outputMappingDTO)
       {
-         outputMappingDTO.Output = null;
-         _simulation.OutputMappings.Remove(outputMappingDTO.Mapping);
-         _view.RefreshGrid();
+         var usedObservedData = new UsedObservedData
+         {
+            Id = outputMappingDTO.ObservedData.Id,
+            Simulation = _simulation
+         };
+
+         _observedDataTask.RemoveUsedObservedDataFromSimulation(new List<UsedObservedData>() {usedObservedData});
       }
 
       public void Handle(ObservedDataAddedToAnalysableEvent eventToHandle)
