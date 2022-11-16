@@ -488,6 +488,7 @@ namespace OSPSuite.UI.Binders
          switch (symbol)
          {
             case Symbols.None:
+               //We return an arbitrary symbol for none as it does not exist in DevExpress
                return MarkerKind.Square;
             case Symbols.Circle:
                return MarkerKind.Circle;
