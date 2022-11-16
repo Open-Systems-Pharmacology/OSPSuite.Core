@@ -199,7 +199,7 @@ namespace OSPSuite.Core.Domain.Services
          if (viewResult == ViewResult.No)
             return;
 
-         usedObservedDataList.GroupBy(x => x.Simulation).Each(x => removeUsedObservedDataFromSimulation(x, x.Key.DowncastTo<ISimulation>()));
+         usedObservedDataList.GroupBy(x => x.Simulation).Each(x => removeUsedObservedDataFromSimulation(x, x.Key));
       }
 
       private IEnumerable<ParameterIdentification> findParameterIdentificationsUsing(UsedObservedData usedObservedData)
