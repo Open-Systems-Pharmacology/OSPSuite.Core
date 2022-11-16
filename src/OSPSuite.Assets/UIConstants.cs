@@ -201,6 +201,7 @@ namespace OSPSuite.Assets
       public static readonly string ChartExportOptions = "Chart Export Options";
       public static readonly string No = "No";
       public static readonly string Yes = "Yes";
+      public static readonly string ReallyRemoveObservedDataFromSimulation = $"Really remove {ObjectTypes.ObservedData} from the simulation?\nHint: {ObjectTypes.ObservedData} will not be deleted from the project";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
