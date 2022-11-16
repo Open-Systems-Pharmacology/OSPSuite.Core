@@ -488,6 +488,7 @@ namespace OSPSuite.UI.Binders
          switch (symbol)
          {
             case Symbols.None:
+               //We return an arbitrary symbol for none as it does not exist in DevExpress
                return MarkerKind.Square;
             case Symbols.Circle:
                return MarkerKind.Circle;
@@ -497,6 +498,21 @@ namespace OSPSuite.UI.Binders
                return MarkerKind.Triangle;
             case Symbols.Square:
                return MarkerKind.Square;
+            case Symbols.InvertedTriangle:
+               return MarkerKind.InvertedTriangle;
+            case Symbols.Plus:
+               return MarkerKind.Plus;
+            case Symbols.Cross:
+               return MarkerKind.Cross;
+            case Symbols.Star:
+               return MarkerKind.Star;
+            case Symbols.Pentagon:
+               return MarkerKind.Pentagon;
+            case Symbols.Hexagon:
+               return MarkerKind.Hexagon;
+            case Symbols.ThinCross:
+               return MarkerKind.ThinCross;
+
             default:
                throw new ArgumentOutOfRangeException(nameof(symbol));
          }

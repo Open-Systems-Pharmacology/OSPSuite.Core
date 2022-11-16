@@ -18,7 +18,14 @@ namespace OSPSuite.Core.Chart
       Circle,
       Diamond,
       Triangle,
-      Square
+      Square,
+      InvertedTriangle,
+      Plus,
+      Cross,
+      Star,
+      Pentagon,
+      Hexagon,
+      ThinCross,
    }
 
    public enum InterpolationModes
