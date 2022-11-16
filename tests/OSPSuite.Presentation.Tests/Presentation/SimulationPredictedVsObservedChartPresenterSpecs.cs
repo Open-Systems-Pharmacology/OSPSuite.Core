@@ -11,6 +11,7 @@ using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Events;
 using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Presenters;
@@ -194,6 +195,26 @@ namespace OSPSuite.Presentation.Presentation
       public void the_chart_editor_must_be_initialized_with_data_repository()
       {
          A.CallTo(() => _chartEditorPresenter.AddDataRepositories(A<IEnumerable<DataRepository>>.That.Contains(_calculationData))).MustHaveHappened();
+      }
+   }
+
+   public class When_handling_the_output_mapping_changed_event : concern_for_SimulationPredictedVsObservedChartPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.UpdateAnalysisBasedOn(_simulation);
+      }
+
+      protected override void Because()
+      {
+         sut.Handle(new SimulationOutputMappingsChangedEvent(_simulation));
+      }
+
+      [Observation]
+      public void the_chart_editor_presenter_should_be_updated()
+      {
+         A.CallTo(() => _chartEditorPresenter.SetOutputMappings(A<OutputMappings>._)).MustHaveHappened(2, Times.Exactly);
       }
    }
 }

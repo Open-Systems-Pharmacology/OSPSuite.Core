@@ -64,6 +64,14 @@ namespace OSPSuite.Core.Events
       }
    }
 
+   public class SimulationOutputMappingsChangedEvent : SimulationEvent
+   {
+      public SimulationOutputMappingsChangedEvent(ISimulation simulation) : base(simulation)
+      {
+         
+      }
+   }
+
    public class SimulationOutputSelectionsChangedEvent : SimulationEvent
    {
       public SimulationOutputSelectionsChangedEvent(ISimulation simulation) : base(simulation)

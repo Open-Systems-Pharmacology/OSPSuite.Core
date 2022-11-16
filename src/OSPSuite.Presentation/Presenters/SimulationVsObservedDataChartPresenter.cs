@@ -5,15 +5,17 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Events;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters
 {
-   public interface ISimulationVsObservedDataPresenter : ISimulationAnalysisPresenter
+   public interface ISimulationVsObservedDataPresenter : ISimulationAnalysisPresenter, IListener<SimulationOutputMappingsChangedEvent>
    {
    }
 
@@ -85,5 +87,11 @@ namespace OSPSuite.Presentation.Presenters
       }
 
       protected abstract void AddRunResultToChart();
+      
+      public void Handle(SimulationOutputMappingsChangedEvent eventToHandle)
+      {
+         if (Equals(eventToHandle.Simulation, _simulation))
+            UpdateAnalysisBasedOn(_simulation);
+      }
    }
 }
