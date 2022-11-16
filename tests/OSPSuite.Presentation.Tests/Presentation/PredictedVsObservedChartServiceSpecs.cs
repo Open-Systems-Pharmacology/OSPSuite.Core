@@ -65,7 +65,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_identity_repository_should_be_null()
       {
-         sut.AddIdentityCurves(_observedConcentrationData.ObservationColumns(), _predictedVsObservedChart).ShouldBeEmpty();
+         sut.AddIdentityCurves(_observedConcentrationData.ObservationColumns().ToList(), _predictedVsObservedChart).ShouldBeEmpty();
       }
    }
 
@@ -112,7 +112,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         sut.AddIdentityCurves(_allObservations, _predictedVsObservedChart);
+         sut.AddIdentityCurves(_allObservations.ToList(), _predictedVsObservedChart);
       }
 
       [Observation]
@@ -340,7 +340,7 @@ namespace OSPSuite.Presentation.Presentation
          sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn,
             _predictedVsObservedChart);
          _deviationLineRepository = sut.AddDeviationLine(2,
-            _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(), _predictedVsObservedChart, 0).First();
+            _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(), _predictedVsObservedChart).First();
       }
 
       [Observation]
@@ -375,9 +375,9 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_adding_deviation_lines_with_the_same_fold_value_again : concern_for_PredictedVsObservedChartService
+   public class When_plotting_deviation_lines_that_have_not_been_plotted : concern_for_PredictedVsObservedChartService
    {
-      private DataRepository _deviationLineRepository;
+      private readonly List<DataRepository> _deviationLineRepositories = new List<DataRepository>();
 
       protected override void Context()
       {
@@ -386,19 +386,48 @@ namespace OSPSuite.Presentation.Presentation
             .Returns(new List<DataColumn> { _concentrationObservationColumn });
          sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn,
             _predictedVsObservedChart);
-         _deviationLineRepository = sut.AddDeviationLine(2, _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(), _predictedVsObservedChart, 0).First();
-         _predictedVsObservedChart.DeviationFoldValues.Add(2);
+         _predictedVsObservedChart.AddToDeviationFoldValue(2);
       }
 
       protected override void Because()
       {
-         _deviationLineRepository = sut.AddDeviationLine(2, _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(), _predictedVsObservedChart, 0).FirstOrDefault();
+         _predictedVsObservedChart.DeviationFoldValues.Each(foldValue =>
+         {
+            _deviationLineRepositories.AddRange(sut.AddDeviationLine(2, _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(), _predictedVsObservedChart));
+         });
+      }
+
+      [Observation]
+      public void deviation_line_repository_should_not_be_empty()
+      {
+         _deviationLineRepositories.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_adding_deviation_lines_with_the_same_fold_value_again : concern_for_PredictedVsObservedChartService
+   {
+      private IEnumerable<DataRepository> _deviationLineRepositories;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString))
+            .Returns(new List<DataColumn> { _concentrationObservationColumn });
+         sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn,
+            _predictedVsObservedChart);
+         sut.AddDeviationLine(2, _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(), _predictedVsObservedChart);
+         _predictedVsObservedChart.AddToDeviationFoldValue(2);
+      }
+
+      protected override void Because()
+      {
+         _deviationLineRepositories = sut.AddDeviationLine(2, _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(), _predictedVsObservedChart);
       }
 
       [Observation]
       public void deviation_line_repository_should_be_empty()
       {
-         _deviationLineRepository.ShouldBeNull();
+         _deviationLineRepositories.ShouldBeEmpty();
       }
       
       [Observation]
@@ -431,7 +460,7 @@ namespace OSPSuite.Presentation.Presentation
          sut.AddCurvesFor(_identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString), _simulationColumn,
             _predictedVsObservedChart);
          _deviationLineRepository = sut.AddDeviationLine(10,
-            _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(), _predictedVsObservedChart, 0).First();
+            _identification.AllObservationColumnsFor(_simulationColumn.QuantityInfo.PathAsString).ToList(), _predictedVsObservedChart).First();
       }
 
       [Observation]
