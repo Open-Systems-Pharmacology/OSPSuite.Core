@@ -30,7 +30,6 @@ namespace OSPSuite.Presentation.Presentation
       protected WeightedObservedData _weightedObservedData2;
       protected SimulationQuantitySelectionDTO _output1;
       protected SimulationQuantitySelectionDTO _output2;
-      protected SimulationQuantitySelectionDTO _noneEntry;
       protected IQuantity _quantity1;
       protected IEnumerable<SimulationOutputMappingDTO> _allOutputMappingDTOs;
       protected OutputMapping _outputMapping1;
@@ -65,7 +64,6 @@ namespace OSPSuite.Presentation.Presentation
 
          _quantity1 = A.Fake<IQuantity>();
          _output1 = A.Fake<SimulationQuantitySelectionDTO>();
-         _noneEntry = new SimulationQuantitySelectionDTO(null, null, Captions.SimulationUI.NoneEditorNullText);
          A.CallTo(() => _output1.Simulation).Returns(_simulation1);
          _output2 = A.Fake<SimulationQuantitySelectionDTO>();
          A.CallTo(() => _entitiesInSimulationRetriever.OutputsFrom(_simulation1)).Returns(new PathCache<IQuantity>(new EntityPathResolverForSpecs())
@@ -235,7 +233,13 @@ namespace OSPSuite.Presentation.Presentation
          _simulation1.OutputMappings.Add(_outputMapping1);
          _simulation1.OutputMappings.All[0].Scaling = Scalings.Linear;
          sut.EditSimulation(_simulation1);
-         _outputMappingDTO1.Output = _noneEntry;
+         //we know we add the none entry at the end of the list by construction
+         //Setting the no output selection
+         _outputMappingDTO1.Output = sut.AllAvailableOutputs.Last();
+      }
+
+      protected override void Because()
+      {
          sut.UpdateSimulationOutputMappings(_outputMappingDTO1);
       }
 

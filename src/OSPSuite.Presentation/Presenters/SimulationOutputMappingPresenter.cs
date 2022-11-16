@@ -138,7 +138,7 @@ namespace OSPSuite.Presentation.Presenters
       {
          MarkSimulationAsChanged();
 
-         if (simulationOutputMappingDTO.Output.DisplayString.Equals(Captions.SimulationUI.NoneEditorNullText))
+         if (Equals(simulationOutputMappingDTO.Output, _noneEntry))
          {
             _simulation.RemoveOutputMappings(simulationOutputMappingDTO.ObservedData);
             return;
@@ -163,7 +163,7 @@ namespace OSPSuite.Presentation.Presenters
             Simulation = _simulation
          };
 
-         _observedDataTask.RemoveUsedObservedDataFromSimulation(new List<UsedObservedData>() { usedObservedData });
+         _observedDataTask.RemoveUsedObservedDataFromSimulation(new List<UsedObservedData>() {usedObservedData});
       }
 
       public void Handle(ObservedDataAddedToAnalysableEvent eventToHandle)
