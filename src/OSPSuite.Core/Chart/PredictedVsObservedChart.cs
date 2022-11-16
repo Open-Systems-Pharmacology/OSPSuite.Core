@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Chart
 {
    public abstract class PredictedVsObservedChart : AnalysisChart
    {
-      private readonly Cache<float, IEnumerable<DataRepository>> _deviationRepositoryCache = new Cache<float, IEnumerable<DataRepository>>(onMissingKey: x => null);
+      private readonly Cache<float, IReadOnlyList<DataRepository>> _deviationRepositoryCache = new Cache<float, IReadOnlyList<DataRepository>>(onMissingKey: x => null);
       public List<float> DeviationFoldValues { get; } = new List<float>();
 
       protected PredictedVsObservedChart()
@@ -43,8 +43,10 @@ namespace OSPSuite.Core.Chart
       {
          base.UpdatePropertiesFrom(source, cloneManager);
          var sourceChart = source as PredictedVsObservedChart;
+         if (sourceChart == null)
+            return;
 
-         sourceChart?.DeviationFoldValues.Each(AddToDeviationFoldValue);
+         sourceChart.DeviationFoldValues.Each(AddToDeviationFoldValue);
       }
 
       public bool HasDeviationCurveFor(float foldValue)
