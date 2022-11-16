@@ -4,6 +4,8 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Core.Events;
 using OSPSuite.Core.Import;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Collections;
@@ -47,6 +49,13 @@ namespace OSPSuite.Core.Domain.Services
 
       void AddObservedDataToProject(DataRepository observedData);
       void AddImporterConfigurationToProject(ImporterConfiguration configuration);
+
+      /// <summary>
+      ///    Removes from the simulations all the observed data as defined in the pairs of the
+      ///    <paramref name="usedObservedDataList" />, while first checking that they are not used
+      ///    in Parameter Identifications and also requiring confirmation by the user.
+      /// </summary>
+      void RemoveUsedObservedDataFromSimulation(IReadOnlyList<UsedObservedData> usedObservedDataList);
    }
 
    public abstract class ObservedDataTask : IObservedDataTask
@@ -57,7 +66,8 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IContainerTask _containerTask;
       private readonly IObjectTypeResolver _objectTypeResolver;
 
-      protected ObservedDataTask(IDialogCreator dialogCreator, IOSPSuiteExecutionContext executionContext, IDataRepositoryExportTask dataRepositoryExportTask, IContainerTask containerTask, IObjectTypeResolver objectTypeResolver)
+      protected ObservedDataTask(IDialogCreator dialogCreator, IOSPSuiteExecutionContext executionContext,
+         IDataRepositoryExportTask dataRepositoryExportTask, IContainerTask containerTask, IObjectTypeResolver objectTypeResolver)
       {
          _dialogCreator = dialogCreator;
          _executionContext = executionContext;
@@ -68,7 +78,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public bool Delete(DataRepository observedData)
       {
-         return Delete(new[] {observedData});
+         return Delete(new[] { observedData });
       }
 
       public bool Delete(IEnumerable<DataRepository> observedDataToBeRemoved, bool silent = false)
@@ -99,7 +109,8 @@ namespace OSPSuite.Core.Domain.Services
          return deleteAll(observedDataThatCanBeRemoved);
       }
 
-      private string messageForObservedDataUsedByAnalysable(DataRepository observedData, Cache<DataRepository, IEnumerable<IUsesObservedData>> usersOfObservedDataCache)
+      private string messageForObservedDataUsedByAnalysable(DataRepository observedData,
+         Cache<DataRepository, IEnumerable<IUsesObservedData>> usersOfObservedDataCache)
       {
          var typeNamesUsingObservedData = usersOfObservedDataCache[observedData].Select(typeNamed).ToList();
          return Error.CannotDeleteObservedData(observedData.Name, typeNamesUsingObservedData);
@@ -133,7 +144,8 @@ namespace OSPSuite.Core.Domain.Services
 
       public void Export(DataRepository observedData)
       {
-         var file = _dialogCreator.AskForFileToSave(Captions.ExportObservedDataToExcel, Constants.Filter.EXCEL_SAVE_FILE_FILTER, Constants.DirectoryKey.OBSERVED_DATA, observedData.Name);
+         var file = _dialogCreator.AskForFileToSave(Captions.ExportObservedDataToExcel, Constants.Filter.EXCEL_SAVE_FILE_FILTER,
+            Constants.DirectoryKey.OBSERVED_DATA, observedData.Name);
          if (string.IsNullOrEmpty(file)) return;
 
          _dataRepositoryExportTask.ExportToExcel(observedData, file, launchExcel: true);
@@ -166,9 +178,71 @@ namespace OSPSuite.Core.Domain.Services
          _executionContext.AddToHistory(new AddImporterConfigurationToProjectCommand(configuration).Run(_executionContext));
       }
 
+      public void RemoveUsedObservedDataFromSimulation(IReadOnlyList<UsedObservedData> usedObservedDataList)
+      {
+         if (!usedObservedDataList.Any())
+            return;
+
+         foreach (var usedObservedData in usedObservedDataList)
+         {
+            var parameterIdentifications = findParameterIdentificationsUsing(usedObservedData).ToList();
+            if (!parameterIdentifications.Any())
+               continue;
+
+            _dialogCreator.MessageBoxInfo(
+               Captions.ParameterIdentification.CannotRemoveObservedDataBeingUsedByParameterIdentification(observedDataFrom(usedObservedData).Name,
+                  parameterIdentifications.AllNames().ToList()));
+            return;
+         }
+
+         var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyRemoveObservedDataFromSimulation);
+         if (viewResult == ViewResult.No)
+            return;
+
+         usedObservedDataList.GroupBy(x => x.Simulation).Each(x => removeUsedObservedDataFromSimulation(x, x.Key));
+      }
+
+      private IEnumerable<ParameterIdentification> findParameterIdentificationsUsing(UsedObservedData usedObservedData)
+      {
+         var observedData = observedDataFrom(usedObservedData);
+         var simulation = usedObservedData.Simulation;
+
+         return from parameterIdentification in allParameterIdentifications()
+            let outputMappings = parameterIdentification.AllOutputMappingsFor(simulation)
+            where outputMappings.Any(x => x.UsesObservedData(observedData))
+            select parameterIdentification;
+      }
+
+      private void removeUsedObservedDataFromSimulation(IEnumerable<UsedObservedData> usedObservedData, ISimulation simulation)
+      {
+         _executionContext.Load(simulation);
+
+         var observedDataList = observedDataListFrom(usedObservedData);
+         observedDataList.Each(simulation.RemoveUsedObservedData);
+         observedDataList.Each(simulation.RemoveOutputMappings);
+
+         _executionContext.PublishEvent(new ObservedDataRemovedFromAnalysableEvent(simulation, observedDataList));
+         _executionContext.PublishEvent(new SimulationStatusChangedEvent(simulation));
+      }
+
+      private DataRepository observedDataFrom(UsedObservedData usedObservedData)
+      {
+         return _executionContext.Project.ObservedDataBy(usedObservedData.Id);
+      }
+
+      private IReadOnlyCollection<ParameterIdentification> allParameterIdentifications()
+      {
+         return _executionContext.Project.AllParameterIdentifications;
+      }
+
       private IEnumerable<IUsesObservedData> allUsersOfObservedData(DataRepository observedData)
       {
          return _executionContext.Project.AllUsersOfObservedData.Where(x => x.UsesObservedData(observedData));
+      }
+
+      private IReadOnlyList<DataRepository> observedDataListFrom(IEnumerable<UsedObservedData> usedObservedData)
+      {
+         return usedObservedData.Select(observedDataFrom).ToList();
       }
 
       //TODO See if code can be merged between APPS

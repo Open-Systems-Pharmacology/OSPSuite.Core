@@ -88,13 +88,14 @@ namespace OSPSuite.UI.Views
 
          _gridViewBinder.Changed += NotifyViewChanged;
 
-         _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.RemoveOutputMapping(_gridViewBinder.FocusedElement));
+         _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.RemoveObservedData(_gridViewBinder.FocusedElement));
       }
 
       private void onOutputMappingEdited()
       {
          _presenter.MarkSimulationAsChanged();
       }
+
       private void onOutputValueChanged(SimulationOutputMappingDTO simulationOutputMappingDTO)
       {
          _presenter.UpdateSimulationOutputMappings(simulationOutputMappingDTO);
@@ -111,13 +112,8 @@ namespace OSPSuite.UI.Views
 
       private RepositoryItem allOutputsRepository(SimulationOutputMappingDTO dto)
       {
-         return RepositoryItemFor(_presenter.AllAvailableOutputs, _outputRepository);
-      }
-
-      protected RepositoryItem RepositoryItemFor<T>(IEnumerable<T> allItems, UxRepositoryItemComboBox listRepositoryItems)
-      {
-         listRepositoryItems.FillComboBoxRepositoryWith(allItems);
-         return listRepositoryItems;
+         _outputRepository.FillComboBoxRepositoryWith(_presenter.AllAvailableOutputs);
+         return _outputRepository;
       }
 
       public override string Caption => Captions.SimulationUI.ObservedDataSelection;
