@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain.Data;
@@ -10,6 +9,7 @@ using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.Utility.Extensions;
+using static OSPSuite.Assets.Captions.ParameterIdentification;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
@@ -27,7 +27,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          IChartDisplayPresenter chartDisplayPresenter, IDimensionFactory dimensionFactory,
          IDisplayUnitRetriever displayUnitRetriever, IPredictedVsObservedChartService predictedVsObservedChartService) :
          base(view, chartDisplayPresenter, dimensionFactory, displayUnitRetriever,
-            new ParameterIdentificationPredictedVsObservedChart { Title = Captions.ParameterIdentification.PredictedVsObservedAnalysis })
+            new ParameterIdentificationPredictedVsObservedChart {Title = PredictedVsObservedAnalysis})
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
       }
@@ -54,10 +54,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       {
          var calculationColumns = dataRepository.AllButBaseGrid();
          var allObservationsForOutput = _parameterIdentification.AllObservationColumnsFor(SelectedOutput.FullOutputPath);
-         calculationColumns.Each(calculationColumn =>
-         {
-            _predictedVsObservedChartService.AddCurvesFor(allObservationsForOutput, calculationColumn, _chart, action);
-         });
+         calculationColumns.Each(calculationColumn => { _predictedVsObservedChartService.AddCurvesFor(allObservationsForOutput, calculationColumn, _chart, action); });
       }
 
       protected override void UpdateChartForSelectedOutput()

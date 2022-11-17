@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Chart
          return _deviationRepositoryCache[foldValue] != null;
       }
 
-      public void AddDeviationCurvesForFoldValue(float foldValue, IDimensionFactory dimensionFactory, List<DataRepository> deviationCurves, Action<DataColumn, Curve> action)
+      public void AddDeviationCurvesForFoldValue(float foldValue, IDimensionFactory dimensionFactory, IReadOnlyList<DataRepository> deviationCurves, Action<DataColumn, Curve> action)
       {
          deviationCurves.Where(repository => repository != null).Each(repository => { this.AddCurvesFor(repository, x => x.Name, dimensionFactory, action); });
          _deviationRepositoryCache[foldValue] = deviationCurves;

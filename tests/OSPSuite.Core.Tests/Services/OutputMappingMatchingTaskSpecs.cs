@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Core.Services
 {
@@ -22,11 +23,12 @@ namespace OSPSuite.Core.Services
       protected ISimulation _simulation;
       protected IContainer _container;
       protected IContainer _organContainer;
+      private IEventPublisher _eventPublisher;
 
       protected override void Context()
       {
          _entityPathResolver = A.Fake<IEntityPathResolver>();
-
+         _eventPublisher = A.Fake<IEventPublisher>();
          _observedData = DomainHelperForSpecs.ObservedData();
          _observedData.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.ObservedData.ORGAN, Value = "Brain" });
          _observedData.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.ObservedData.COMPARTMENT, Value = "TestCompartment" });
@@ -55,7 +57,7 @@ namespace OSPSuite.Core.Services
          _entitiesInSimulationRetriever = A.Fake<IEntitiesInSimulationRetriever>();
          A.CallTo(() => _entitiesInSimulationRetriever.OutputsFrom(A<ISimulation>._)).Returns(_pathCache);
 
-         sut = new OutputMappingMatchingTask(_entitiesInSimulationRetriever);
+         sut = new OutputMappingMatchingTask(_entitiesInSimulationRetriever, _eventPublisher);
       }
    }
 

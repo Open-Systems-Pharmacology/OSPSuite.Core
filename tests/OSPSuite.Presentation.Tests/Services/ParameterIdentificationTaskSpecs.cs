@@ -15,6 +15,7 @@ using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Services
 {
@@ -36,9 +37,11 @@ namespace OSPSuite.Presentation.Services
       private IHeavyWorkManager _heavyWorkManager;
       protected IParameterAnalysableParameterSelector _parameterAnalysableParameterSelector;
       protected IOutputMappingMatchingTask _outputMappingMatchingTask;
+      private IEventPublisher _eventPublisher;
 
       protected override void Context()
       {
+         _eventPublisher = A.Fake<IEventPublisher>();
          _parameterIdentificationFactory = A.Fake<IParameterIdentificationFactory>();
          _withIdRepository = A.Fake<IWithIdRepository>();
          _entitiesInSimulationRetriever = A.Fake<IEntitiesInSimulationRetriever>();
@@ -53,7 +56,7 @@ namespace OSPSuite.Presentation.Services
          _dialogCreator = A.Fake<IDialogCreator>();
          _simulationSelector = A.Fake<ISimulationSelector>();
          _parameterAnalysableParameterSelector = A.Fake<IParameterAnalysableParameterSelector>();
-         _outputMappingMatchingTask = new OutputMappingMatchingTask(_entitiesInSimulationRetriever);
+         _outputMappingMatchingTask = new OutputMappingMatchingTask(_entitiesInSimulationRetriever, _eventPublisher);
 
          _heavyWorkManager = new HeavyWorkManagerForSpecs();
          sut = new ParameterIdentificationTask(_parameterIdentificationFactory, _withIdRepository, _entitiesInSimulationRetriever, _observedDataRepository,
