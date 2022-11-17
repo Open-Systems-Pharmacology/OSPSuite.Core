@@ -29,6 +29,7 @@ namespace OSPSuite.Presentation.Presenters
       private readonly IResidualCalculator _residualCalculator;
       private DataRepository _zeroRepository = new DataRepository();
       private IReadOnlyCollection<OutputResiduals> _allOutputResiduals;
+      private bool _axesInitialized;
 
       public SimulationResidualVsTimeChartPresenter(ISimulationVsObservedDataView view, ChartPresenterContext chartPresenterContext,
          IObservedDataRepository observedDataRepository, IResidualCalculatorFactory residualCalculatorFactory,
@@ -45,14 +46,19 @@ namespace OSPSuite.Presentation.Presenters
       {
          var simulationResidual = _residualCalculator.Calculate(_simulation.ResultsDataRepository, _simulation.OutputMappings.All);
          _allOutputResiduals = simulationResidual.AllOutputResiduals;
-         if (!getAllAvailableObservedData().Any())
+         var availableObservedData = getAllAvailableObservedData();
+         if (!availableObservedData.Any())
             return;
 
-         _zeroRepository = _residualsVsTimeChartService.AddZeroMarkerCurveToChart(Chart, minObservedDataTime(), maxObservedDataTime());
-         AddDataRepositoriesToEditor(new[] { _zeroRepository });
+         _zeroRepository = _residualsVsTimeChartService.AddZeroMarkerCurveToChart(Chart, minObservedDataTime(availableObservedData), maxObservedDataTime(availableObservedData));
+         AddDataRepositoriesToEditor(new[] {_zeroRepository});
 
-         if (ChartIsBeingCreated)
+         //The chart will not come into initialization if no observed data was available
+         if (ChartIsBeingCreated || !_axesInitialized)
+         {
             _residualsVsTimeChartService.ConfigureChartAxis(Chart);
+            _axesInitialized = true;
+         }
 
          UpdateChartFromTemplate();
          View.SetTotalError(simulationResidual.TotalError);
@@ -88,24 +94,20 @@ namespace OSPSuite.Presentation.Presenters
          }
       }
 
-      private float minObservedDataTime()
-      {
-         return getAllAvailableObservedData().Select(x => x.BaseGrid.Values.First()).Min();
-      }
+      private float minObservedDataTime(IReadOnlyList<DataRepository> availableObservedData) =>
+         availableObservedData.Select(x => x.BaseGrid.Values.First()).Min();
 
-      private float maxObservedDataTime()
-      {
-         return getAllAvailableObservedData().Select(x => x.BaseGrid.Values.Last()).Max();
-      }
+      private float maxObservedDataTime(IReadOnlyList<DataRepository> availableObservedData) =>
+         availableObservedData.Select(x => x.BaseGrid.Values.Last()).Max();
 
       private DataRepository getOrCreateScatterDataRepositoryFor(OutputResiduals outputResidual) =>
          _residualsVsTimeChartService.GetOrCreateScatterDataRepositoryInChart(Chart, outputResidual);
 
-      private IEnumerable<DataRepository> getAllAvailableObservedData()
+      private IReadOnlyList<DataRepository> getAllAvailableObservedData()
       {
          return _observedDataRepository.AllObservedDataUsedBy(_simulation)
             .Distinct()
-            .OrderBy(x => x.Name);
+            .OrderBy(x => x.Name).ToList();
       }
 
       public override void Clear()

@@ -4,6 +4,7 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Simulations;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Services;
@@ -27,6 +28,7 @@ namespace OSPSuite.Presentation.Presenters
       private readonly List<DataRepository> _identityRepositories;
       private readonly IObservedDataRepository _observedDataRepository;
       private readonly List<DataRepository> _deviationLineRepositories;
+      private bool _axesInitialized;
 
       public SimulationPredictedVsObservedChartPresenter(ISimulationVsObservedDataView view, ChartPresenterContext chartPresenterContext,
          IPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository)
@@ -39,14 +41,16 @@ namespace OSPSuite.Presentation.Presenters
          _deviationLineRepositories = new List<DataRepository>();
 
          ChartDisplayPresenter.AddDeviationLinesEvent += (o, e) => addDeviationLines(e.FoldValue);
+         
       }
 
       protected override void UpdateAnalysis()
       {
-         if (!getAllAvailableObservedData().Any())
+         var allAvailableObservedData = getAllAvailableObservedData();
+         if (!allAvailableObservedData.Any())
             return;
 
-         var observationColumns = getAllAvailableObservedData().Select(x => x.FirstDataColumn()).ToList();
+         var observationColumns = allAvailableObservedData.Select(x => x.FirstDataColumn()).ToList();
 
          _identityRepositories.AddRange(_predictedVsObservedChartService.AddIdentityCurves(observationColumns, Chart));
 
@@ -55,22 +59,25 @@ namespace OSPSuite.Presentation.Presenters
          if (!_identityRepositories.Any())
             return;
 
-         if (ChartIsBeingCreated)
+         //The chart will not come into initialization if no observed data was available
+         if (ChartIsBeingCreated || !_axesInitialized)
+         {
             _predictedVsObservedChartService.ConfigureAxesDimensionAndTitle(observationColumns, Chart);
+            _axesInitialized = true;
+         }
 
          //plot the already added and saved deviation lines
          Chart.DeviationFoldValues.Each(addDeviationLines);
 
-         AddDataRepositoriesToEditor(_identityRepositories.Union(getAllAvailableObservedData().Union(_deviationLineRepositories)));
+         AddDataRepositoriesToEditor(_identityRepositories.Union(allAvailableObservedData.Union(_deviationLineRepositories)));
          UpdateChartFromTemplate();
       }
 
-      private IEnumerable<DataRepository> getAllAvailableObservedData()
-      {
-         return _observedDataRepository.AllObservedDataUsedBy(_simulation)
+      private IReadOnlyList<DataRepository> getAllAvailableObservedData() =>
+         _observedDataRepository.AllObservedDataUsedBy(_simulation)
             .Distinct()
-            .OrderBy(x => x.Name);
-      }
+            .OrderBy(x => x.Name)
+            .ToList();
 
       protected override void ChartChanged()
       {
