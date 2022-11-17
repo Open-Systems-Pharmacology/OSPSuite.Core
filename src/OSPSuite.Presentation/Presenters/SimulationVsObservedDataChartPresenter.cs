@@ -39,13 +39,8 @@ namespace OSPSuite.Presentation.Presenters
       {
          _simulation = analysable.DowncastTo<ISimulation>();
 
-         if (ChartIsBeingUpdated)
-         {
-            UpdateTemplateFromChart();
-            ClearChartAndDataRepositories();
-         }
-         else
-            UpdateCacheColor();
+         ClearChartAndDataRepositories();
+         UpdateCacheColor();
 
          if (!_simulation.ResultsDataRepository.IsNull())
          {
@@ -90,7 +85,12 @@ namespace OSPSuite.Presentation.Presenters
       
       public void Handle(SimulationOutputMappingsChangedEvent eventToHandle)
       {
-         if (Equals(eventToHandle.Simulation, _simulation))
+         updateForAnalysableEvents(eventToHandle);
+      }
+
+      private void updateForAnalysableEvents(AnalysableEvent eventToHandle)
+      {
+         if (Equals(eventToHandle.Analysable, _simulation))
             UpdateAnalysisBasedOn(_simulation);
       }
    }

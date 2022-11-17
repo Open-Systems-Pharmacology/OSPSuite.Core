@@ -9,6 +9,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
+using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Mappers;
@@ -41,9 +42,11 @@ namespace OSPSuite.Presentation.Presentation
       protected IQuantityToSimulationQuantitySelectionDTOMapper _simulationQuantitySelectionDTOMapper;
       protected IObservedDataTask _observedDataTask;
       protected IEventPublisher _eventPublisher;
+      private IOutputMappingMatchingTask _outputMappingMatchingTask;
 
       protected override void Context()
       {
+         _outputMappingMatchingTask = new OutputMappingMatchingTask(_entitiesInSimulationRetriever, _eventPublisher);
          _view = A.Fake<ISimulationOutputMappingView>();
          _observedDataRepository = A.Fake<IObservedDataRepository>();
          _entitiesInSimulationRetriever = A.Fake<IEntitiesInSimulationRetriever>();
@@ -54,7 +57,7 @@ namespace OSPSuite.Presentation.Presentation
 
 
          sut = new SimulationOutputMappingPresenter(_view, _entitiesInSimulationRetriever, _observedDataRepository, _outputMappingDTOMapper,
-            _simulationQuantitySelectionDTOMapper, _observedDataTask, _eventPublisher);
+            _simulationQuantitySelectionDTOMapper, _observedDataTask, _eventPublisher, _outputMappingMatchingTask);
 
 
          _observedData1 = DomainHelperForSpecs.ObservedData("Obs1").WithName("Obs1");

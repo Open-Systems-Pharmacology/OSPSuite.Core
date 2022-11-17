@@ -4,6 +4,7 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Simulations;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Services;
@@ -43,10 +44,11 @@ namespace OSPSuite.Presentation.Presenters
 
       protected override void UpdateAnalysis()
       {
-         if (!getAllAvailableObservedData().Any())
+         var allAvailableObservedData = getAllAvailableObservedData();
+         if (!allAvailableObservedData.Any())
             return;
 
-         var observationColumns = getAllAvailableObservedData().Select(x => x.FirstDataColumn()).ToList();
+         var observationColumns = allAvailableObservedData.Select(x => x.FirstDataColumn()).ToList();
 
          _identityRepositories.AddRange(_predictedVsObservedChartService.AddIdentityCurves(observationColumns, Chart));
 
@@ -54,23 +56,21 @@ namespace OSPSuite.Presentation.Presenters
          //this has been the case for having only one plot with exclusively 0 values
          if (!_identityRepositories.Any())
             return;
-
-         if (ChartIsBeingCreated)
-            _predictedVsObservedChartService.ConfigureAxesDimensionAndTitle(observationColumns, Chart);
+         
+         _predictedVsObservedChartService.ConfigureAxesDimensionAndTitle(observationColumns, Chart);
 
          //plot the already added and saved deviation lines
          Chart.DeviationFoldValues.Each(addDeviationLines);
 
-         AddDataRepositoriesToEditor(_identityRepositories.Union(getAllAvailableObservedData().Union(_deviationLineRepositories)));
+         AddDataRepositoriesToEditor(_identityRepositories.Union(allAvailableObservedData.Union(_deviationLineRepositories)));
          UpdateChartFromTemplate();
       }
 
-      private IEnumerable<DataRepository> getAllAvailableObservedData()
-      {
-         return _observedDataRepository.AllObservedDataUsedBy(_simulation)
+      private IReadOnlyList<DataRepository> getAllAvailableObservedData() =>
+         _observedDataRepository.AllObservedDataUsedBy(_simulation)
             .Distinct()
-            .OrderBy(x => x.Name);
-      }
+            .OrderBy(x => x.Name)
+            .ToList();
 
       protected override void ChartChanged()
       {

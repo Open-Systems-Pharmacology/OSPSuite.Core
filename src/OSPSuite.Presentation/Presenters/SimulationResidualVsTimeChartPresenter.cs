@@ -45,14 +45,14 @@ namespace OSPSuite.Presentation.Presenters
       {
          var simulationResidual = _residualCalculator.Calculate(_simulation.ResultsDataRepository, _simulation.OutputMappings.All);
          _allOutputResiduals = simulationResidual.AllOutputResiduals;
-         if (!getAllAvailableObservedData().Any())
+         var availableObservedData = getAllAvailableObservedData();
+         if (!availableObservedData.Any())
             return;
 
-         _zeroRepository = _residualsVsTimeChartService.AddZeroMarkerCurveToChart(Chart, minObservedDataTime(), maxObservedDataTime());
+         _zeroRepository = _residualsVsTimeChartService.AddZeroMarkerCurveToChart(Chart, minObservedDataTime(availableObservedData), maxObservedDataTime(availableObservedData));
          AddDataRepositoriesToEditor(new[] { _zeroRepository });
 
-         if (ChartIsBeingCreated)
-            _residualsVsTimeChartService.ConfigureChartAxis(Chart);
+         _residualsVsTimeChartService.ConfigureChartAxis(Chart);
 
          UpdateChartFromTemplate();
          View.SetTotalError(simulationResidual.TotalError);
@@ -88,24 +88,20 @@ namespace OSPSuite.Presentation.Presenters
          }
       }
 
-      private float minObservedDataTime()
-      {
-         return getAllAvailableObservedData().Select(x => x.BaseGrid.Values.First()).Min();
-      }
+      private float minObservedDataTime(IReadOnlyList<DataRepository> availableObservedData) =>
+         availableObservedData.Select(x => x.BaseGrid.Values.First()).Min();
 
-      private float maxObservedDataTime()
-      {
-         return getAllAvailableObservedData().Select(x => x.BaseGrid.Values.Last()).Max();
-      }
+      private float maxObservedDataTime(IReadOnlyList<DataRepository> availableObservedData) =>
+         availableObservedData.Select(x => x.BaseGrid.Values.Last()).Max();
 
       private DataRepository getOrCreateScatterDataRepositoryFor(OutputResiduals outputResidual) =>
          _residualsVsTimeChartService.GetOrCreateScatterDataRepositoryInChart(Chart, outputResidual);
 
-      private IEnumerable<DataRepository> getAllAvailableObservedData()
+      private IReadOnlyList<DataRepository> getAllAvailableObservedData()
       {
          return _observedDataRepository.AllObservedDataUsedBy(_simulation)
             .Distinct()
-            .OrderBy(x => x.Name);
+            .OrderBy(x => x.Name).ToList();
       }
 
       public override void Clear()

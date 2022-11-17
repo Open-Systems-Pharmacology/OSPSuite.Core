@@ -8,6 +8,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
+using static OSPSuite.Assets.Captions.ParameterIdentification;
 
 namespace OSPSuite.Core.Services
 {
@@ -100,8 +101,8 @@ namespace OSPSuite.Core.Services
          var defaultDimension = mostFrequentDimension(observationColumns);
 
          setAxisDimension(defaultDimension, chart, xAxis);
-         xAxis.Caption = Captions.ParameterIdentification.ObservedChartAxis + defaultDimension;
-         yAxis.Caption = Captions.ParameterIdentification.SimulatedChartAxis + defaultDimension;
+         xAxis.Caption = $"{ObservedChartAxis} {defaultDimension}";
+         yAxis.Caption = $"{SimulatedChartAxis}  {defaultDimension}";
          chart.UpdateAxesVisibility();
       }
 
@@ -113,15 +114,15 @@ namespace OSPSuite.Core.Services
          var settings = new DeviationLineSettings
          {
             LineType = DeviationLineType.Deviation,
-            RepositoryName = Captions.ParameterIdentification.Deviation
+            RepositoryName = Deviation
          };
 
-         var deviationCurves = createDeviationRepositories(foldValue, observationColumns, settings).ToList();
+         var deviationCurves = createDeviationRepositories(foldValue, observationColumns, settings);
 
          // only count the plotted folds that are needed to select the next line type. For that reason, we don't want to count the unity fold, nor the fold just plotted
          // That's foldValue and 1.0f are not counted
-         chart.AddDeviationCurvesForFoldValue(foldValue, _dimensionFactory, deviationCurves, 
-            (column, curve) => curve.UpdateDeviationCurve(column.Name, chart.PlottedFolds().Except(new[] { foldValue, 1.0f }).Count()));
+         chart.AddDeviationCurvesForFoldValue(foldValue, _dimensionFactory, deviationCurves,
+            (column, curve) => curve.UpdateDeviationCurve(column.Name, chart.PlottedFolds().Except(new[] {foldValue, 1.0f}).Count()));
 
 
          //adding one of the deviation lines to the legend. Workaround for now until the presenter is adjusted for Predicted vs. Observed Chart.
@@ -141,26 +142,22 @@ namespace OSPSuite.Core.Services
             RepositoryName = Identity
          };
 
-         var deviationCurves = createDeviationRepositories(foldValue:1, observationColumns, settings).ToList();
+         var deviationCurves = createDeviationRepositories(foldValue: 1, observationColumns, settings);
          chart.AddDeviationCurvesForFoldValue(foldValue: 1, _dimensionFactory, deviationCurves, (column, curve) => curve.UpdateIdentityCurve(Identity));
 
          chart.UpdateAxesVisibility();
          return deviationCurves;
       }
 
-      private IEnumerable<DataRepository> createDeviationRepositories(float foldValue, IReadOnlyList<DataColumn> observationColumns,
+      private IReadOnlyList<DataRepository> createDeviationRepositories(float foldValue, IReadOnlyList<DataColumn> observationColumns,
          DeviationLineSettings settings)
       {
          var uniqueDimensions = observationColumns.Select(dataColumn => _dimensionFactory.MergedDimensionFor(dataColumn))
             .DistinctBy(dimension =>
                dimension.DisplayName); //We are using display name here as it is the only way to identify unique merge dimensions
 
-         foreach (var mergedDimension in uniqueDimensions)
-         {
-            var repository = createDeviationRepository(foldValue, observationColumns, mergedDimension, settings);
-            if (repository != null)
-               yield return repository;
-         }
+         return uniqueDimensions.Select(dim => createDeviationRepository(foldValue, observationColumns, dim, settings))
+            .Where(x => x != null).ToList();
       }
 
       private DataRepository createDeviationRepository(float foldValue, IReadOnlyList<DataColumn> dataColumns,
@@ -278,7 +275,7 @@ namespace OSPSuite.Core.Services
       {
          var curve = new Curve
          {
-            Name = Captions.ParameterIdentification.CreateCurveNameForPredictedVsObserved(observationColumn.Repository.Name,
+            Name = CreateCurveNameForPredictedVsObserved(observationColumn.Repository.Name,
                simulationResultColumn.Repository.Name)
          };
          curve.SetxData(observationColumn, _dimensionFactory);
