@@ -868,7 +868,7 @@ namespace OSPSuite.Assets
 
       public static class ParameterIdentification
       {
-             public static readonly string ParameterSelection = "Parameters";
+         public static readonly string ParameterSelection = "Parameters";
          public static readonly string OutputSelection = "Outputs";
          public static readonly string DataSelection = "Data";
          public static readonly string Configuration = "Configuration";
