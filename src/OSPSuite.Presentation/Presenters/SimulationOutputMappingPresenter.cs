@@ -53,14 +53,13 @@ namespace OSPSuite.Presentation.Presenters
       private ISimulation _simulation;
       public bool IsLatched { get; set; }
 
-      public SimulationOutputMappingPresenter(
-         ISimulationOutputMappingView view,
+      public SimulationOutputMappingPresenter(ISimulationOutputMappingView view,
          IEntitiesInSimulationRetriever entitiesInSimulationRetriever,
          IObservedDataRepository observedDataRepository,
          ISimulationOutputMappingToOutputMappingDTOMapper outputMappingDTOMapper,
          IQuantityToSimulationQuantitySelectionDTOMapper simulationQuantitySelectionDTOMapper,
          IObservedDataTask observedDataTask,
-         IEventPublisher eventPublisher) : base(view)
+         IEventPublisher eventPublisher, IOutputMappingMatchingTask outputMappingMatchingTask) : base(view)
       {
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
          _observedDataRepository = observedDataRepository;
@@ -68,7 +67,7 @@ namespace OSPSuite.Presentation.Presenters
          _simulationQuantitySelectionDTOMapper = simulationQuantitySelectionDTOMapper;
          _noneEntry = new SimulationQuantitySelectionDTO(null, null, Captions.SimulationUI.NoneEditorNullText);
          _eventPublisher = eventPublisher;
-         _outputMappingMatchingTask = new OutputMappingMatchingTask(_entitiesInSimulationRetriever);
+         _outputMappingMatchingTask = outputMappingMatchingTask;
          _listOfOutputMappingDTOs = new NotifyList<SimulationOutputMappingDTO>();
          _observedDataTask = observedDataTask;
       }
@@ -139,11 +138,10 @@ namespace OSPSuite.Presentation.Presenters
 
       public void UpdateSimulationOutputMappings(SimulationOutputMappingDTO simulationOutputMappingDTO)
       {
-         
-
          if (Equals(simulationOutputMappingDTO.Output, _noneEntry))
          {
             _simulation.RemoveOutputMappings(simulationOutputMappingDTO.ObservedData);
+            _eventPublisher.PublishEvent(new SimulationOutputMappingsChangedEvent(_simulation));
             return;
          }
 

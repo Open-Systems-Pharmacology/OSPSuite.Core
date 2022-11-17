@@ -28,7 +28,6 @@ namespace OSPSuite.Presentation.Presenters
       private readonly List<DataRepository> _identityRepositories;
       private readonly IObservedDataRepository _observedDataRepository;
       private readonly List<DataRepository> _deviationLineRepositories;
-      private bool _axesInitialized;
 
       public SimulationPredictedVsObservedChartPresenter(ISimulationVsObservedDataView view, ChartPresenterContext chartPresenterContext,
          IPredictedVsObservedChartService predictedVsObservedChartService, IObservedDataRepository observedDataRepository)
@@ -41,7 +40,6 @@ namespace OSPSuite.Presentation.Presenters
          _deviationLineRepositories = new List<DataRepository>();
 
          ChartDisplayPresenter.AddDeviationLinesEvent += (o, e) => addDeviationLines(e.FoldValue);
-         
       }
 
       protected override void UpdateAnalysis()
@@ -58,13 +56,8 @@ namespace OSPSuite.Presentation.Presenters
          //this has been the case for having only one plot with exclusively 0 values
          if (!_identityRepositories.Any())
             return;
-
-         //The chart will not come into initialization if no observed data was available
-         if (ChartIsBeingCreated || !_axesInitialized)
-         {
-            _predictedVsObservedChartService.ConfigureAxesDimensionAndTitle(observationColumns, Chart);
-            _axesInitialized = true;
-         }
+         
+         _predictedVsObservedChartService.ConfigureAxesDimensionAndTitle(observationColumns, Chart);
 
          //plot the already added and saved deviation lines
          Chart.DeviationFoldValues.Each(addDeviationLines);

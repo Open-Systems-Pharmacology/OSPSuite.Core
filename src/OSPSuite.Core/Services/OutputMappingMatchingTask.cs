@@ -1,8 +1,9 @@
 ﻿using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Events;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Core.Services
 {
@@ -29,9 +30,11 @@ namespace OSPSuite.Core.Services
    public class OutputMappingMatchingTask : IOutputMappingMatchingTask
    {
       private readonly IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
+      private readonly IEventPublisher _eventPublisher;
 
-      public OutputMappingMatchingTask (IEntitiesInSimulationRetriever entitiesInSimulationRetriever)
+      public OutputMappingMatchingTask (IEntitiesInSimulationRetriever entitiesInSimulationRetriever, IEventPublisher eventPublisher)
       {
+         _eventPublisher = eventPublisher;
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
       }
 
@@ -39,8 +42,11 @@ namespace OSPSuite.Core.Services
       {
          var newOutputMapping = mapMatchingOutput(observedData, simulation);
 
-         if (newOutputMapping.Output != null)
-            simulation.OutputMappings.Add(newOutputMapping);
+         if (newOutputMapping.Output == null) 
+            return;
+         
+         simulation.OutputMappings.Add(newOutputMapping);
+         _eventPublisher.PublishEvent(new SimulationOutputMappingsChangedEvent(simulation));
       }
       private OutputMapping mapMatchingOutput(DataRepository observedData, ISimulation simulation)
       {

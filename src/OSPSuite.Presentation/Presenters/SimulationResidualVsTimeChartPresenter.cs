@@ -29,7 +29,6 @@ namespace OSPSuite.Presentation.Presenters
       private readonly IResidualCalculator _residualCalculator;
       private DataRepository _zeroRepository = new DataRepository();
       private IReadOnlyCollection<OutputResiduals> _allOutputResiduals;
-      private bool _axesInitialized;
 
       public SimulationResidualVsTimeChartPresenter(ISimulationVsObservedDataView view, ChartPresenterContext chartPresenterContext,
          IObservedDataRepository observedDataRepository, IResidualCalculatorFactory residualCalculatorFactory,
@@ -51,14 +50,9 @@ namespace OSPSuite.Presentation.Presenters
             return;
 
          _zeroRepository = _residualsVsTimeChartService.AddZeroMarkerCurveToChart(Chart, minObservedDataTime(availableObservedData), maxObservedDataTime(availableObservedData));
-         AddDataRepositoriesToEditor(new[] {_zeroRepository});
+         AddDataRepositoriesToEditor(new[] { _zeroRepository });
 
-         //The chart will not come into initialization if no observed data was available
-         if (ChartIsBeingCreated || !_axesInitialized)
-         {
-            _residualsVsTimeChartService.ConfigureChartAxis(Chart);
-            _axesInitialized = true;
-         }
+         _residualsVsTimeChartService.ConfigureChartAxis(Chart);
 
          UpdateChartFromTemplate();
          View.SetTotalError(simulationResidual.TotalError);
