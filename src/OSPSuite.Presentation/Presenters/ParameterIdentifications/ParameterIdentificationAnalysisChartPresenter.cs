@@ -51,7 +51,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          {
             _isMultipleRun = _parameterIdentification.Results.Count > 1;
             UpdateAnalysisBasedOn(_parameterIdentification.Results);
-            ChartEditorPresenter.SetOutputMappings(_parameterIdentification.OutputMappings);
+            ChartEditorPresenter.AddOutputMappings(_parameterIdentification.OutputMappings);
          }
 
          Refresh();

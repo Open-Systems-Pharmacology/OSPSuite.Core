@@ -195,12 +195,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void Refresh();
 
       /// <summary>
-      /// Sets the output mappings of Simulation Outputs and their mapped Observed Data
-      /// </summary>
-      void SetOutputMappings(OutputMappings outputMappings);
-
-      /// <summary>
-      /// Adds the output mappings to the existing ones 
+      /// Adds the output mappings to to the underlying data browser presenter (used for linking)
       /// </summary>
       void AddOutputMappings(OutputMappings outputMappings);
 
@@ -423,10 +418,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void AddOutputMappings(OutputMappings outputMappings)
       {
-         foreach (var outputMapping in outputMappings) 
-         {
-            _dataBrowserPresenter.AllOutputMappings.Add(outputMapping);
-         }
+         _dataBrowserPresenter.AddOutputMappings(outputMappings);
       }
 
       public void AddLinkSimDataMenuItem() => _view.AddLinkSimulationObservedMenuItemCheckBox();
@@ -702,11 +694,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _curveSettingsPresenter.Refresh();
          _axisSettingsPresenter.Refresh();
          updateUsedColumns();
-      }
-
-      public void SetOutputMappings(OutputMappings outputMappings)
-      {
-         _dataBrowserPresenter.AllOutputMappings = outputMappings;
       }
 
       private bool canHandle(ChartEvent chartEvent)
