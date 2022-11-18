@@ -214,7 +214,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_chart_editor_presenter_should_be_updated()
       {
-         A.CallTo(() => _chartEditorPresenter.SetOutputMappings(A<OutputMappings>._)).MustHaveHappened(2, Times.Exactly);
+         A.CallTo(() => _chartEditorPresenter.AddOutputMappings(A<OutputMappings>._)).MustHaveHappened(2, Times.Exactly);
       }
    }
 }

@@ -58,10 +58,13 @@ namespace OSPSuite.Core.Domain
          return All.Where(x => x.UsesObservedData(dataRepository));
       }
 
-      ///fullOutputPath: Full path of the output including simulation name
-      public virtual IEnumerable<DataRepository> AllDataRepositoryMappedTo(string fullOutputPath) 
+      /// <summary>
+      ///    Returns all observed data mapped to the output with path <paramref name="fullOutputPath" />
+      /// </summary>
+      /// <param name="fullOutputPath">Full path of the output including simulation name</param>
+      public virtual IEnumerable<DataRepository> AllDataRepositoryMappedTo(string fullOutputPath)
       {
-         return All.Where(x => x.FullOutputPath == fullOutputPath).Select(x => x.WeightedObservedData.ObservedData);
+         return All.Where(x => string.Equals(x.FullOutputPath, fullOutputPath)).Select(x => x.WeightedObservedData.ObservedData);
       }
 
       public virtual IEnumerable<DataRepository> AllDataRepositoryMappedFor(ISimulation simulation)

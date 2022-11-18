@@ -330,7 +330,7 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _fakeOutputMappings.AllDataRepositoryMappedTo(_column1.PathAsString)).Returns(_linkedDataRepositories);
          _allDataColumnDTOs[0].Used = true;
          _allDataColumnDTOs[1].Used = false;
-         sut.AllOutputMappings = _fakeOutputMappings;
+         sut.AddOutputMappings(_fakeOutputMappings);
       }
 
       protected override void Because()
