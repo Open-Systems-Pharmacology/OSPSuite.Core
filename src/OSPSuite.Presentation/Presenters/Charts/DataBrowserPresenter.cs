@@ -8,6 +8,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
+using static OSPSuite.Assets.Captions.Chart.DataBrowser;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
@@ -43,7 +44,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    For the column Id given, this returns whether or not the data is being used
       /// </summary>
-      /// <param name="dataColumn">The data colum</param>
+      /// <param name="dataColumn">The data column</param>
       /// <returns>true if the data is used in the chart otherwise false</returns>
       bool IsUsed(DataColumn dataColumn);
 
@@ -77,19 +78,19 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       /// <summary>
       ///    Is called from the view when the column selection is changed by the user
-      /// </summary>
+      /// </summary>s
       void SelectedDataColumnsChanged();
+
+      /// <summary>
+      /// Adds the output mappings (reference used to link observed data to output)
+      /// </summary>
+      void AddOutputMappings(OutputMappings outputMappings);
 
       /// <summary>
       ///    Returns all the DataColumns for the curves that are visible in the chart
       /// </summary>
       IReadOnlyList<DataColumn> GetAllUsedDataColumns();
-
-      /// <summary>
-      /// List of all the mappings of Simulation Outputs and their corresponding Observed Data
-      /// </summary>
-      OutputMappings AllOutputMappings { get; set; }
-
+      
       /// <summary>
       /// Changes the bool that defines whether the corresponding observed data used state
       /// should be updated when their linked output used state is updated
@@ -108,12 +109,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly List<DataColumn> _allDataColumns = new List<DataColumn>();
       private Func<DataColumn, PathElements> _displayQuantityPathDefinition;
       private bool _isLinkedMappedOutputs;
+      private readonly HashSet<OutputMappings> _allOutputMappings = new HashSet<OutputMappings>();
       public event EventHandler<ColumnsEventArgs> SelectionChanged = delegate { };
       public event EventHandler<UsedColumnsEventArgs> UsedChanged = delegate { };
       
       public DataBrowserPresenter(IDataBrowserView view) : base(view)
       {
-         AllOutputMappings = new OutputMappings();
       }
 
       public void SetDisplayQuantityPathDefinition(Func<DataColumn, PathElements> displayQuantityPathDefinition)
@@ -181,15 +182,16 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private IReadOnlyList<DataColumnDTO> getLinkedObservedDataFromOutputPath(string outputPath)
       {
-         var linkedObservedDataRepositories = AllOutputMappings.AllDataRepositoryMappedTo(outputPath);
+         var linkedObservedDataRepositories = _allOutputMappings.SelectMany(x=>x.AllDataRepositoryMappedTo(outputPath));
          return getDataColumnDTOsFromDataRepositories(linkedObservedDataRepositories);
       }
 
       private IReadOnlyList<DataColumnDTO> getDataColumnDTOsFromDataRepositories(IEnumerable<DataRepository> linkedObservedDataRepositories)
       {
          return _dataColumnDTOCache.Where(x => linkedObservedDataRepositories.Contains(x.DataColumn.Repository)).ToList();
-
       }
+
+      public void AddOutputMappings(OutputMappings outputMappings) => _allOutputMappings.Add(outputMappings);
 
       public void UpdateUsedStateForSelection(bool used)
       {
@@ -205,8 +207,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          return _dataColumnDTOCache.Where(x => x.Used).Select(x => x.DataColumn).ToList();
       }
-
-      public OutputMappings AllOutputMappings { get; set; }
 
       public void OutputObservedDataLinkingChanged(bool isLinkedMappedOutputs)
       {
@@ -272,25 +272,25 @@ namespace OSPSuite.Presentation.Presenters.Charts
       protected override void SetDefaultColumnSettings()
       {
          //-1 actively removes the grouping for this column if there was one till now - specifying none leaves everything as is.
-         AddColumnSettings(BrowserColumns.RepositoryName).WithCaption(Captions.Chart.DataBrowser.RepositoryName).GroupIndex = -1;
+         AddColumnSettings(BrowserColumns.RepositoryName).WithCaption(RepositoryName).GroupIndex = -1;
          AddColumnSettings(BrowserColumns.Simulation).WithCaption(Captions.SimulationPath);
          AddColumnSettings(BrowserColumns.TopContainer).WithCaption(Captions.TopContainerPath);
          AddColumnSettings(BrowserColumns.Container).WithCaption(Captions.ContainerPath);
          AddColumnSettings(BrowserColumns.BottomCompartment).WithCaption(Captions.BottomCompartmentPath);
          AddColumnSettings(BrowserColumns.Molecule).WithCaption(Captions.MoleculePath);
          AddColumnSettings(BrowserColumns.Name).WithCaption(Captions.NamePath);
-         AddColumnSettings(BrowserColumns.BaseGridName).WithCaption(Captions.Chart.DataBrowser.BaseGridName).WithVisible(false);
-         AddColumnSettings(BrowserColumns.ColumnId).WithCaption(Captions.Chart.DataBrowser.ColumnId).WithVisible(false);
-         AddColumnSettings(BrowserColumns.OrderIndex).WithCaption(Captions.Chart.DataBrowser.OrderIndex).WithVisible(false);
-         AddColumnSettings(BrowserColumns.DimensionName).WithCaption(Captions.Chart.DataBrowser.DimensionName);
+         AddColumnSettings(BrowserColumns.BaseGridName).WithCaption(BaseGridName).WithVisible(false);
+         AddColumnSettings(BrowserColumns.ColumnId).WithCaption(ColumnId).WithVisible(false);
+         AddColumnSettings(BrowserColumns.OrderIndex).WithCaption(OrderIndex).WithVisible(false);
+         AddColumnSettings(BrowserColumns.DimensionName).WithCaption(DimensionName);
          AddColumnSettings(BrowserColumns.QuantityType).WithCaption(Captions.Chart.DataBrowser.QuantityType).WithVisible(false);
-         AddColumnSettings(BrowserColumns.QuantityName).WithCaption(Captions.Chart.DataBrowser.QuantityName);
-         AddColumnSettings(BrowserColumns.HasRelatedColumns).WithCaption(Captions.Chart.DataBrowser.HasRelatedColumns).WithVisible(false);
+         AddColumnSettings(BrowserColumns.QuantityName).WithCaption(QuantityName);
+         AddColumnSettings(BrowserColumns.HasRelatedColumns).WithCaption(HasRelatedColumns).WithVisible(false);
          AddColumnSettings(BrowserColumns.Origin).WithCaption(Captions.Chart.DataBrowser.Origin).WithVisible(false);
-         AddColumnSettings(BrowserColumns.Date).WithCaption(Captions.Chart.DataBrowser.Date).WithVisible(false);
-         AddColumnSettings(BrowserColumns.Category).WithCaption(Captions.Chart.DataBrowser.Category).WithVisible(false);
-         AddColumnSettings(BrowserColumns.Source).WithCaption(Captions.Chart.DataBrowser.Source).WithVisible(false);
-         AddColumnSettings(BrowserColumns.Used).WithCaption(Captions.Chart.DataBrowser.Used).WithVisible(true);
+         AddColumnSettings(BrowserColumns.Date).WithCaption(Date).WithVisible(false);
+         AddColumnSettings(BrowserColumns.Category).WithCaption(Category).WithVisible(false);
+         AddColumnSettings(BrowserColumns.Source).WithCaption(Source).WithVisible(false);
+         AddColumnSettings(BrowserColumns.Used).WithCaption(Used).WithVisible(true);
       }
    }
 }
