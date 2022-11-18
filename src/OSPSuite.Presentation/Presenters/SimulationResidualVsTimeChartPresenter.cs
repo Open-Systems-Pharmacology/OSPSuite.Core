@@ -43,8 +43,6 @@ namespace OSPSuite.Presentation.Presenters
 
       protected override void UpdateAnalysis()
       {
-         var simulationResidual = _residualCalculator.Calculate(_simulation.ResultsDataRepository, _simulation.OutputMappings.All);
-         _allOutputResiduals = simulationResidual.AllOutputResiduals;
          var availableObservedData = getAllAvailableObservedData();
          if (!availableObservedData.Any())
             return;
@@ -55,12 +53,14 @@ namespace OSPSuite.Presentation.Presenters
          _residualsVsTimeChartService.ConfigureChartAxis(Chart);
 
          UpdateChartFromTemplate();
-         View.SetTotalError(simulationResidual.TotalError);
       }
 
       protected override void AddRunResultToChart()
       {
+         var simulationResidual = _residualCalculator.Calculate(_simulation.ResultsDataRepository, _simulation.OutputMappings.All);
+         _allOutputResiduals = simulationResidual.AllOutputResiduals;
          _allOutputResiduals.GroupBy(x => x.FullOutputPath).Each(addOutputToScatter);
+         View.SetTotalError(simulationResidual.TotalError);
       }
 
       private void addOutputToScatter(IGrouping<string, OutputResiduals> outputMappingsByOutput)
