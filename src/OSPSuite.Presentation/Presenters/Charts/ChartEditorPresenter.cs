@@ -200,6 +200,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void AddOutputMappings(OutputMappings outputMappings);
 
       /// <summary>
+      /// Removes the specified  output mappings from the underlying data browser presenter (used for linking)
+      /// </summary>
+      void RemoveOutputMappings(OutputMappings outputMappings);
+
+      /// <summary>
       ///    Adds the control for linking the (de)selection of outputs and observed data
       /// </summary>
       void AddLinkSimDataMenuItem();
@@ -208,6 +213,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Sets the visibility of the control for linking the (de)selection of outputs and observed data 
       /// </summary>
       void SetLinkSimDataMenuItemVisibility(bool isVisible);
+
+      /// <summary>
+      ///    Removes all the saved OutputMappings from the DataBrowser list
+      /// </summary>
+      void RemoveAllOutputMappings();
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -420,10 +430,18 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          _dataBrowserPresenter.AddOutputMappings(outputMappings);
       }
+      public void RemoveOutputMappings(OutputMappings outputMappings)
+      {
+         _dataBrowserPresenter.RemoveOutputMappings(outputMappings);
+      }
 
       public void AddLinkSimDataMenuItem() => _view.AddLinkSimulationObservedMenuItemCheckBox();
 
       public void SetLinkSimDataMenuItemVisibility(bool isVisible) => _view.SetlinkSimDataMenuItemVisisbility(isVisible);
+      public void RemoveAllOutputMappings()
+      {
+         _dataBrowserPresenter.RemoveAllOutputMappings();
+      }
 
       public void OnDragDrop(IDragEvent dropEvent) => DragDrop(this, dropEvent);
 
