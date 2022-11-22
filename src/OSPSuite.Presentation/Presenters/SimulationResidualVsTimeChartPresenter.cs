@@ -33,7 +33,7 @@ namespace OSPSuite.Presentation.Presenters
       public SimulationResidualVsTimeChartPresenter(ISimulationVsObservedDataView view, ChartPresenterContext chartPresenterContext,
          IObservedDataRepository observedDataRepository, IResidualCalculatorFactory residualCalculatorFactory,
          IResidualsVsTimeChartService residualsVsTimeChartService)
-         : base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis,
+         : base(view, chartPresenterContext, ApplicationIcons.ResidualVsTimeAnalysis,
             PresenterConstants.PresenterKeys.SimulationPredictedVsObservedChartPresenter)
       {
          _observedDataRepository = observedDataRepository;
