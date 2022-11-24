@@ -1,5 +1,4 @@
 ﻿using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.CoreConstants;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
