@@ -7,7 +7,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core
 {
-   public static class CoreConstants
+   public static class PKSimCoreConstants
    {
       // TODO: remove common code from PK-sim when this is promoted to Core
 

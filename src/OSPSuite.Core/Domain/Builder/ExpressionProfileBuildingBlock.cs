@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       public override string Name
       {
-         get => CoreConstants.ContainerName.ExpressionProfileName(MoleculeName, Species, Category);
+         get => PKSimCoreConstants.ContainerName.ExpressionProfileName(MoleculeName, Species, Category);
          set
          {
             if (string.Equals(Name, value))
@@ -30,7 +30,7 @@ namespace OSPSuite.Core.Domain.Builder
                return;
             }
 
-            var (moleculeName, species, category) = CoreConstants.ContainerName.NamesFromExpressionProfileName(value);
+            var (moleculeName, species, category) = PKSimCoreConstants.ContainerName.NamesFromExpressionProfileName(value);
             if (string.IsNullOrEmpty(moleculeName))
                return;
 
