@@ -44,7 +44,6 @@ namespace OSPSuite.Presentation.Presenters
 
          if (!_simulation.ResultsDataRepository.IsNull())
          {
-            AddRunResultToChart();
             UpdateAnalysis();
             ChartEditorPresenter.AddOutputMappings(_simulation.OutputMappings);
          }
@@ -81,8 +80,6 @@ namespace OSPSuite.Presentation.Presenters
          _simulation.OutputMappings.All.GroupBy(x => x.FullOutputPath).Each(AddObservedDataForOutput);
       }
 
-      protected abstract void AddRunResultToChart();
-      
       public void Handle(SimulationOutputMappingsChangedEvent eventToHandle)
       {
          updateForAnalysableEvents(eventToHandle);

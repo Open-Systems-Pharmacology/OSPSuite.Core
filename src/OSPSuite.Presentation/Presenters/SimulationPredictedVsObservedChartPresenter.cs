@@ -43,6 +43,8 @@ namespace OSPSuite.Presentation.Presenters
 
       protected override void UpdateAnalysis()
       {
+         addRunResultToChart();
+
          var allAvailableObservedData = getAllAvailableObservedData();
          if (!allAvailableObservedData.Any())
             return;
@@ -86,7 +88,7 @@ namespace OSPSuite.Presentation.Presenters
          _deviationLineRepositories.Clear();
       }
 
-      protected override void AddRunResultToChart()
+      private void addRunResultToChart()
       {
          addPredictedVsObservedToChart(_simulation.ResultsDataRepository, (column, curve) =>
          {

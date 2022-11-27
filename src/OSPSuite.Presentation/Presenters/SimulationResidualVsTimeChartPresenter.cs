@@ -43,6 +43,8 @@ namespace OSPSuite.Presentation.Presenters
 
       protected override void UpdateAnalysis()
       {
+         addRunResultToChart();
+
          var availableObservedData = getAllAvailableObservedData();
          if (!availableObservedData.Any())
             return;
@@ -55,7 +57,7 @@ namespace OSPSuite.Presentation.Presenters
          UpdateChartFromTemplate();
       }
 
-      protected override void AddRunResultToChart()
+      private void addRunResultToChart()
       {
          var simulationResidual = _residualCalculator.Calculate(_simulation.ResultsDataRepository, _simulation.OutputMappings.All);
          _allOutputResiduals = simulationResidual.AllOutputResiduals;
