@@ -42,6 +42,17 @@ namespace OSPSuite.Helpers
          return _concentrationDimension;
       }
 
+      public static IDimension ConcentrationMassDimensionForSpecs()
+      {
+         if (_concentrationDimension == null)
+         {
+            _concentrationDimension = new Dimension(new BaseDimensionRepresentation { AmountExponent = 3, LengthExponent = -1 }, Constants.Dimension.MASS_CONCENTRATION, "mg/l");
+            _concentrationDimension.AddUnit(new Unit("mg/l", 1E6, 0));
+         }
+
+         return _concentrationDimension;
+      }
+
       public static IEnumerable<IDimension> ExtendedDimensionsForSpecs()
       {
          return new[] {ConcentrationDimensionForSpecs(), Constants.Dimension.NO_DIMENSION, FractionDimensionForSpecs()};
