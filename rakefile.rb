@@ -35,6 +35,7 @@ task :copy_to_mobi do
 end
 
 task :create_local_nuget do
+  FileUtils.rm_f Dir.glob("./nuget_repo/*.nupkg")
   versionId = "12.0.0-" + generate_code(5)
   puts("Your version is " + versionId)
   exec("dotnet", "pack", "-p:PackageVersion="+ versionId, "--configuration", "Debug", "--output", "nuget_repo", "--no-build") 
