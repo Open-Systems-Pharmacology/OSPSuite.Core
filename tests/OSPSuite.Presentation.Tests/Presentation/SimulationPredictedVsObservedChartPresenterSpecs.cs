@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Simulations;
 using OSPSuite.Core.Domain;
@@ -33,6 +34,7 @@ namespace OSPSuite.Presentation.Presentation
       private IChartTemplatingTask _chartTemplatingTask;
       private IPresentationSettingsTask _presentationSettingsTask;
       private IDimensionFactory _dimensionFactory;
+      private IDisplayUnitRetriever _displayUnitRetriever;
       protected SimulationPredictedVsObservedChart _predictedVsObservedChart;
       private ParameterIdentificationRunResult _parameterIdentificationRunResult;
       private ResidualsResult _residualResults;
@@ -62,8 +64,8 @@ namespace OSPSuite.Presentation.Presentation
          _dataColumnToPathElementsMapper = A.Fake<IDataColumnToPathElementsMapper>();
          _chartTemplatingTask = A.Fake<IChartTemplatingTask>();
          _presentationSettingsTask = A.Fake<IPresentationSettingsTask>();
-         _dimensionFactory = A.Fake<IDimensionFactory>();
-         _predictedVsObservedService = A.Fake<IPredictedVsObservedChartService>();
+         _dimensionFactory = new DimensionFactory();
+         _displayUnitRetriever = A.Fake<IDisplayUnitRetriever>();
          _chartEditorLayoutTask = A.Fake<IChartEditorLayoutTask>();
          _projectRetriever = A.Fake<IProjectRetriever>();
          _chartEditorPresenter = A.Fake<IChartEditorPresenter>();
@@ -79,6 +81,10 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _chartPresenterContext.ProjectRetriever).Returns(_projectRetriever);
          A.CallTo(() => _chartPresenterContext.EditorPresenter).Returns(_chartEditorPresenter);
          A.CallTo(() => _chartEditorAndDisplayPresenter.EditorPresenter).Returns(_chartEditorPresenter);
+
+         A.CallTo(() => _displayUnitRetriever.PreferredUnitFor(A<DataColumn>.Ignored)).Returns(new Unit("mg/l", 1.0, 1.0));
+
+         _predictedVsObservedService = new PredictedVsObservedChartService(_dimensionFactory, _displayUnitRetriever);
 
          _calculationData = DomainHelperForSpecs.ObservedData();
          _calculationData.Name = "calculation observed data";
@@ -142,8 +148,6 @@ namespace OSPSuite.Presentation.Presentation
          _calculationData.Add(_concentrationDataColumn);
          A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(A<ISimulation>._)).Returns(new List<DataRepository>() { _calculationData });
 
-         A.CallTo(() => _predictedVsObservedService.AddIdentityCurves(A<List<DataColumn>>._, _predictedVsObservedChart)).Returns(new List<DataRepository>() { DomainHelperForSpecs.ObservedData() });
-
          sut.InitializeAnalysis(_predictedVsObservedChart);
       }
    }
@@ -166,7 +170,6 @@ namespace OSPSuite.Presentation.Presentation
       {
          A.CallTo(() => _chartEditorPresenter.AddDataRepositories(A<IEnumerable<DataRepository>>._)).MustNotHaveHappened();
       }
-
    }
 
    public class When_the_results_have_preferred_and_non_preferred_dimensions : concern_for_SimulationPredictedVsObservedChartPresenter
@@ -177,18 +180,9 @@ namespace OSPSuite.Presentation.Presentation
       }
 
       [Observation]
-      public void the_x_axis_dimension_is_updated()
-      {
-         A.CallTo(() => _predictedVsObservedService.ConfigureAxesDimensionAndTitle(
-            A<IReadOnlyList<DataColumn>>.That.Contains(_calculationData.FirstDataColumn()),
-            _predictedVsObservedChart)).MustHaveHappened();
-      }
-
-      [Observation]
       public void adds_curve_for_concentration_column()
       {
-         A.CallTo(() => _predictedVsObservedService.AddCurvesFor(A<IEnumerable<DataColumn>>._,
-            _concentrationDataColumn, A<PredictedVsObservedChart>._, A<Action<DataColumn, Curve>>._)).MustHaveHappened();
+         sut.Chart.Curves.FirstOrDefault(curve => curve.yData.Repository.Name.Equals(_calculationData.Name)).ShouldNotBeNull();
       }
 
       [Observation]
@@ -215,6 +209,21 @@ namespace OSPSuite.Presentation.Presentation
       public void the_chart_editor_presenter_should_be_updated()
       {
          A.CallTo(() => _chartEditorPresenter.AddOutputMappings(A<OutputMappings>._)).MustHaveHappened(2, Times.Exactly);
+      }
+   }
+
+   public class When_calculation_and_observation_have_different_dimensions : concern_for_SimulationPredictedVsObservedChartPresenter
+   {
+      protected override void Because()
+      {
+         _calculationData.AllButBaseGridAsArray[0].Dimension = DomainHelperForSpecs.ConcentrationMassDimensionForSpecs();
+         sut.InitializeAnalysis(_predictedVsObservedChart, _simulation);
+      }
+
+      [Observation]
+      public void the_axes_should_have_same_dimensions()
+      {
+         sut.Chart.Axes.First().UnitName.ShouldBeEqualTo(sut.Chart.Axes.Last().UnitName);
       }
    }
 }
