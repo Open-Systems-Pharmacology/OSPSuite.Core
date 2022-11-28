@@ -2,6 +2,7 @@
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 
+/*
 namespace OSPSuite.Core.Serialization.Xml
 {
    public class ExpressionProfileBuildingBlockXmlSerializer : BuildingBlockXmlSerializer<ExpressionProfileBuildingBlock>
@@ -12,4 +13,4 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.Name);
       }
    }
-}
+}*/

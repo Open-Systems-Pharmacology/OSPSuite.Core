@@ -98,6 +98,10 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
+   public class ExpressionProfileBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<ExpressionProfileBuildingBlock, ExpressionParameter>
+   {
+   }
+
    public class MoleculeStartValuesBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<MoleculeStartValuesBuildingBlock, IMoleculeStartValue>
    {
    }
