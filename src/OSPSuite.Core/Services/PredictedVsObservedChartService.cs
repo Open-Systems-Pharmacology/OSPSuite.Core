@@ -108,9 +108,6 @@ namespace OSPSuite.Core.Services
 
       public IEnumerable<DataRepository> AddDeviationLine(float foldValue, List<DataColumn> observationColumns, PredictedVsObservedChart chart)
       {
-         if (chart.HasDeviationCurveFor(foldValue))
-            return Enumerable.Empty<DataRepository>();
-
          var settings = new DeviationLineSettings
          {
             LineType = DeviationLineType.Deviation,
@@ -122,7 +119,7 @@ namespace OSPSuite.Core.Services
          // only count the plotted folds that are needed to select the next line type. For that reason, we don't want to count the unity fold, nor the fold just plotted
          // That's foldValue and 1.0f are not counted
          chart.AddDeviationCurvesForFoldValue(foldValue, _dimensionFactory, deviationCurves,
-            (column, curve) => curve.UpdateDeviationCurve(column.Name, chart.PlottedFolds().Except(new[] {foldValue, 1.0f}).Count()));
+            (column, curve) => curve.UpdateDeviationCurve(column.Name, chart.PlottedFolds().Except(new[] { foldValue, 1.0f }).Count()));
 
 
          //adding one of the deviation lines to the legend. Workaround for now until the presenter is adjusted for Predicted vs. Observed Chart.
@@ -131,6 +128,7 @@ namespace OSPSuite.Core.Services
             upperDeviationLine.VisibleInLegend = true;
 
          chart.UpdateAxesVisibility();
+         chart.AddToDeviationFoldValue(foldValue);
          return deviationCurves;
       }
 
