@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Domain.Builder
 {
    public class ExpressionProfileBuildingBlock : StartValueBuildingBlock<ExpressionParameter>
    {
-      public override string Icon => Type.IconName;
+      public override string Icon => TempAssets.IconNames.Enzyme;
 
       public virtual string MoleculeName { get; private set; }
 
