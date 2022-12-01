@@ -61,7 +61,7 @@ namespace OSPSuite.Presentation.Presenters
          _predictedVsObservedChartService.ConfigureAxesDimensionAndTitle(observationColumns, Chart);
 
          //plot the already added and saved deviation lines
-         Chart.DeviationFoldValues.Each(addDeviationLines);
+         Chart.DeviationFoldValues.Each(addDeviationLineWithoutCheck);
 
          AddDataRepositoriesToEditor(_identityRepositories.Union(allAvailableObservedData.Union(_deviationLineRepositories)));
          UpdateChartFromTemplate();
@@ -129,10 +129,17 @@ namespace OSPSuite.Presentation.Presenters
 
       private void addDeviationLines(float foldValue)
       {
+         if (Chart.HasDeviationCurveFor(foldValue))
+            return;
+
+         addDeviationLineWithoutCheck(foldValue);
+      }
+
+      private void addDeviationLineWithoutCheck(float foldValue)
+      {
          var observationColumns = getAllAvailableObservedData().Select(x => x.FirstDataColumn()).ToList();
          _deviationLineRepositories.AddRange(
             _predictedVsObservedChartService.AddDeviationLine(foldValue, observationColumns, Chart));
-         Chart.AddToDeviationFoldValue(foldValue);
          AddDataRepositoriesToEditor(_deviationLineRepositories);
          ChartChanged();
       }
