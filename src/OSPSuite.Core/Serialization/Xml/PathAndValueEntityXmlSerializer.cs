@@ -11,7 +11,6 @@ namespace OSPSuite.Core.Serialization.Xml
          base.PerformMapping();
          Map(x => x.Dimension);
          Map(x => x.ContainerPath);
-         Map(x => x.StartValue);
          MapReference(x => x.Formula);
       }
 
