@@ -4,8 +4,7 @@ using System.Xml.Linq;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
-   /*
-   public abstract class ExpressionParameterXmlSerialize : PathAndValueEntityXmlSerializer<ExpressionParameter>
+   public class ExpressionParameterXmlSerialize : PathAndValueEntityXmlSerializer<ExpressionParameter>
    {
       public override void PerformMapping()
       {
@@ -13,8 +12,8 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.StartValue);
       }
    }
-   */
-
+   
+   /*
    public abstract class ExpressionParameterXmlSerialize<T> : EntityXmlSerializer<T> where T : ExpressionParameter
    {
       public override void PerformMapping()
@@ -38,4 +37,5 @@ namespace OSPSuite.Core.Serialization.Xml
          return startValueElement.AddDisplayUnitFor(startValue);
       }
    }
+   */
 }
