@@ -2,7 +2,7 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
-   public class PathAndValueEntityXmlSerializer<T> : EntityXmlSerializer<T> where T : PathAndValueEntity
+   public abstract class PathAndValueEntityXmlSerializer<T> : EntityXmlSerializer<T> where T : PathAndValueEntity
    {
       public override void PerformMapping()
       {

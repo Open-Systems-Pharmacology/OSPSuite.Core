@@ -1,4 +1,5 @@
-﻿using OSPSuite.Core.Extensions;
+﻿using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Domain.Builder
 {
@@ -9,23 +10,14 @@ namespace OSPSuite.Core.Domain.Builder
       /// </summary>
       public double? StartValue { get; set; }
 
-      public ExpressionParameter(IParameter parameter)
+      public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
-         Name = parameter.Name;
+         base.UpdatePropertiesFrom(source, cloneManager);
 
-         //not sure we need to be checking hte if else here
-         if (parameter.Formula == null)
-            StartValue = parameter.Value;
-         else
-            Formula = parameter.Formula;
-         
-         Path = new ObjectPath(parameter.EntityPath().ToPathArray());
-         Dimension = parameter.Dimension;
-         DisplayUnit = parameter.DisplayUnit;
-      }
+         if (!(source is ExpressionParameter sourceExpressionParameter)) 
+            return;
 
-      public ExpressionParameter()
-      {
+         StartValue = sourceExpressionParameter.StartValue;
       }
    }
 }

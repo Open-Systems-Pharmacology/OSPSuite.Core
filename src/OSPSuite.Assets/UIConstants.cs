@@ -18,6 +18,8 @@ namespace OSPSuite.Assets
 
    public static class Captions
    {
+      public static readonly string Species = "Species";
+      public static readonly string Category = "Category";
       public static readonly string ConfirmationDialog = "Confirmation";
       public static readonly string Excel = "Excel®";
       public static readonly string EmptyColumn = " ";
