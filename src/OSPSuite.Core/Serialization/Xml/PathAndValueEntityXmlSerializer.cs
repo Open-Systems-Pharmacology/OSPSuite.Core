@@ -1,11 +1,10 @@
-/*
 using System.Xml.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Serialization.Xml.Extensions;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
-   public abstract class ExpressionParameterXmlSerializer : PathAndValueEntityXmlSerializer
+   public abstract class PathAndValueEntityXmlSerializer<T> : EntityXmlSerializer<T> where T : ExpressionParameter
    {
       public override void PerformMapping()
       {
@@ -29,4 +28,3 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 }
-*/
