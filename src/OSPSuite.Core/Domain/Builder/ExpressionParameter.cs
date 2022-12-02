@@ -12,8 +12,13 @@ namespace OSPSuite.Core.Domain.Builder
       public ExpressionParameter(IParameter parameter)
       {
          Name = parameter.Name;
-         StartValue = parameter.Value;
-         Formula = parameter.Formula;
+
+         //not sure we need to be checking hte if else here
+         if (parameter.Formula == null)
+            StartValue = parameter.Value;
+         else
+            Formula = parameter.Formula;
+         
          Path = new ObjectPath(parameter.EntityPath().ToPathArray());
          Dimension = parameter.Dimension;
          DisplayUnit = parameter.DisplayUnit;
