@@ -18,5 +18,9 @@ namespace OSPSuite.Core.Domain.Builder
          Dimension = parameter.Dimension;
          DisplayUnit = parameter.DisplayUnit;
       }
+
+      public ExpressionParameter()
+      {
+      }
    }
 }
