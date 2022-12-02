@@ -46,7 +46,6 @@ namespace OSPSuite.Presentation.Presenters
          {
             UpdateAnalysis();
             ChartEditorPresenter.AddOutputMappings(_simulation.OutputMappings);
-            AddRunResultToChart();
          }
 
          Refresh();
@@ -81,8 +80,6 @@ namespace OSPSuite.Presentation.Presenters
          _simulation.OutputMappings.All.GroupBy(x => x.FullOutputPath).Each(AddObservedDataForOutput);
       }
 
-      protected abstract void AddRunResultToChart();
-      
       public void Handle(SimulationOutputMappingsChangedEvent eventToHandle)
       {
          updateForAnalysableEvents(eventToHandle);

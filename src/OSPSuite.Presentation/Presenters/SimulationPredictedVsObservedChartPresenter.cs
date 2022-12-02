@@ -4,7 +4,6 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Simulations;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Services;
@@ -44,6 +43,8 @@ namespace OSPSuite.Presentation.Presenters
 
       protected override void UpdateAnalysis()
       {
+         addRunResultToChart();
+
          var allAvailableObservedData = getAllAvailableObservedData();
          if (!allAvailableObservedData.Any())
             return;
@@ -56,11 +57,11 @@ namespace OSPSuite.Presentation.Presenters
          //this has been the case for having only one plot with exclusively 0 values
          if (!_identityRepositories.Any())
             return;
-         
+
          _predictedVsObservedChartService.ConfigureAxesDimensionAndTitle(observationColumns, Chart);
 
          //plot the already added and saved deviation lines
-         Chart.DeviationFoldValues.Each(addDeviationLines);
+         Chart.DeviationFoldValues.Each(addDeviationLineWithoutCheck);
 
          AddDataRepositoriesToEditor(_identityRepositories.Union(allAvailableObservedData.Union(_deviationLineRepositories)));
          UpdateChartFromTemplate();
@@ -87,7 +88,7 @@ namespace OSPSuite.Presentation.Presenters
          _deviationLineRepositories.Clear();
       }
 
-      protected override void AddRunResultToChart()
+      private void addRunResultToChart()
       {
          addPredictedVsObservedToChart(_simulation.ResultsDataRepository, (column, curve) =>
          {
@@ -128,10 +129,17 @@ namespace OSPSuite.Presentation.Presenters
 
       private void addDeviationLines(float foldValue)
       {
+         if (Chart.HasDeviationCurveFor(foldValue))
+            return;
+
+         addDeviationLineWithoutCheck(foldValue);
+      }
+
+      private void addDeviationLineWithoutCheck(float foldValue)
+      {
          var observationColumns = getAllAvailableObservedData().Select(x => x.FirstDataColumn()).ToList();
          _deviationLineRepositories.AddRange(
             _predictedVsObservedChartService.AddDeviationLine(foldValue, observationColumns, Chart));
-         Chart.AddToDeviationFoldValue(foldValue);
          AddDataRepositoriesToEditor(_deviationLineRepositories);
          ChartChanged();
       }

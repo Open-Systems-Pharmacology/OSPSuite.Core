@@ -104,6 +104,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          Chart.Clear();
          ChartEditorPresenter.RemoveAllDataRepositories();
+         ChartEditorPresenter.RemoveAllOutputMappings();
       }
 
       protected void AddCurvesFor(IEnumerable<DataColumn> columns, Action<DataColumn, Curve> action)

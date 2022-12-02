@@ -101,6 +101,16 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// sets the group row format of the gridView to the specified string.
       /// </summary>
       void SetGroupRowFormat(GridGroupRowFormats format);
+
+      /// <summary>
+      /// Removed the specified output mappings from the list the DataBrowser keeps.
+      /// </summary>
+      void RemoveOutputMappings(OutputMappings outputMappings);
+
+      /// <summary>
+      /// Removed all the output mappings from the list the DataBrowser keeps.
+      /// </summary>
+      void RemoveAllOutputMappings();
    }
 
    public class DataBrowserPresenter : PresenterWithColumnSettings<IDataBrowserView, IDataBrowserPresenter>, IDataBrowserPresenter
@@ -192,6 +202,16 @@ namespace OSPSuite.Presentation.Presenters.Charts
       }
 
       public void AddOutputMappings(OutputMappings outputMappings) => _allOutputMappings.Add(outputMappings);
+
+      public void RemoveOutputMappings(OutputMappings outputMappings)
+      {
+         _allOutputMappings.Remove(outputMappings);
+      }
+
+      public void RemoveAllOutputMappings()
+      {
+         _allOutputMappings.Clear();
+      }
 
       public void UpdateUsedStateForSelection(bool used)
       {
