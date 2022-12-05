@@ -5,7 +5,7 @@ namespace OSPSuite.Core.Comparison
    public class ExpressionProfileBuildingBlockDiffBuilder : StartValueBuildingBlockDiffBuilder<ExpressionParameter>
    {
       public ExpressionProfileBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) : base(objectBaseDiffBuilder, enumerableComparer)
-      {
+      { 
       }
    }
 
