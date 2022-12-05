@@ -1,12 +1,11 @@
 ﻿using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Domain.Builder
 {
    public class ExpressionParameter : PathAndValueEntity, IStartValue
    {
       /// <summary>
-      /// Do not use! When refactoring on promotion to core, this should be removed
+      ///    Do not use! When refactoring on promotion to core, this should be removed
       /// </summary>
       public double? StartValue { get; set; }
 
@@ -14,7 +13,7 @@ namespace OSPSuite.Core.Domain.Builder
       {
          base.UpdatePropertiesFrom(source, cloneManager);
 
-         if (!(source is ExpressionParameter sourceExpressionParameter)) 
+         if (!(source is ExpressionParameter sourceExpressionParameter))
             return;
 
          StartValue = sourceExpressionParameter.StartValue;

@@ -1,10 +1,8 @@
-﻿using OSPSuite.Core.Domain.Formulas;
+﻿using System;
+using System.Linq;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace OSPSuite.Core.Domain.Builder
 {
