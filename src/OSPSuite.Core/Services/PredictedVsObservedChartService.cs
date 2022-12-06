@@ -108,9 +108,6 @@ namespace OSPSuite.Core.Services
 
       public IEnumerable<DataRepository> AddDeviationLine(float foldValue, List<DataColumn> observationColumns, PredictedVsObservedChart chart)
       {
-         if (chart.HasDeviationCurveFor(foldValue))
-            return Enumerable.Empty<DataRepository>();
-
          var settings = new DeviationLineSettings
          {
             LineType = DeviationLineType.Deviation,
