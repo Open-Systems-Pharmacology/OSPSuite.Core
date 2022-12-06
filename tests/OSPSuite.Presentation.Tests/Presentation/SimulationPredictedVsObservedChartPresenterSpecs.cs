@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
+using NPOI.SS.Formula.Functions;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
@@ -224,6 +225,54 @@ namespace OSPSuite.Presentation.Presentation
       public void the_axes_should_have_same_dimensions()
       {
          sut.Chart.Axes.First().UnitName.ShouldBeEqualTo(sut.Chart.Axes.Last().UnitName);
+      }
+   }
+
+   public class When_adding_deviation_lines_multiple_times : concern_for_SimulationPredictedVsObservedChartPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.UpdateAnalysisBasedOn(_simulation);
+      }
+
+      protected override void Because()
+      {
+         _chartPresenterContext.EditorAndDisplayPresenter.DisplayPresenter.AddDeviationLinesEvent += Raise.With(new AddDeviationLinesEventArgs(2));
+         _chartPresenterContext.EditorAndDisplayPresenter.DisplayPresenter.AddDeviationLinesEvent += Raise.With(new AddDeviationLinesEventArgs(2));
+      }
+
+      [Observation]
+      public void only_one_deviation_line_should_have_been_added()
+      {
+         sut.Chart.Curves.Count().ShouldBeEqualTo(4);
+         sut.Chart.Curves.Count(curve => curve.Name.Equals("2-fold deviation")).ShouldBeEqualTo(1);
+         sut.Chart.Curves.Count(curve => curve.Name.Equals("2-fold deviation Lower")).ShouldBeEqualTo(1);
+
+      }
+   }
+
+   public class When_updating_the_simulation : concern_for_SimulationPredictedVsObservedChartPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.UpdateAnalysisBasedOn(_simulation);
+         _chartPresenterContext.EditorAndDisplayPresenter.DisplayPresenter.AddDeviationLinesEvent += Raise.With(new AddDeviationLinesEventArgs(2));
+      }
+
+      protected override void Because()
+      {
+         sut.UpdateAnalysisBasedOn(_simulation);
+      }
+
+      [Observation]
+      public void deviation_lines_should_be_present()
+      {
+         sut.Chart.Curves.Count().ShouldBeEqualTo(4);
+         sut.Chart.Curves.Count(curve => curve.Name.Equals("2-fold deviation")).ShouldBeEqualTo(1);
+         sut.Chart.Curves.Count(curve => curve.Name.Equals("2-fold deviation Lower")).ShouldBeEqualTo(1);
+
       }
    }
 }
