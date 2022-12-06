@@ -1071,6 +1071,17 @@ namespace OSPSuite.Core.Helpers
          AreEqualFormula(x1.Formula, x2.Formula);
       }
 
+      public static void AreEqualExpressionParameters(ExpressionParameter x1, ExpressionParameter x2)
+      {
+         if (!AssertBothNotNull(x1, x2)) return;
+         AreEqualObjectPath(x1.Path, x2.Path);
+         AssertAreEqualNullableDouble(x1.StartValue, x2.StartValue);
+         AreEqualUnit(x1.DisplayUnit, x2.DisplayUnit);
+         AreEqualDimension(x1.Dimension, x2.Dimension);
+         AssertAreEqual(x1.ValueOrigin, x2.ValueOrigin);
+         AreEqualFormula(x1.Formula, x2.Formula);
+      }
+
       public static void AreEqualBuildingBlock(IBuildingBlock x1, IBuildingBlock x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
