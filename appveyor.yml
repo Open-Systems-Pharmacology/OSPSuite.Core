@@ -27,7 +27,7 @@ before_build:
   - nuget restore
 
 build:
-  publish_nuget: false
+  publish_nuget: true
   verbosity: minimal
   publish_nuget_symbols: false
   use_snupkg_format: true
