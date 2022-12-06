@@ -4,7 +4,7 @@ namespace OSPSuite.Core.Domain.Builder
 {
    public class ExpressionProfileBuildingBlock : StartValueBuildingBlock<ExpressionParameter>
    {
-      public override string Icon => TempAssets.IconNames.Enzyme;
+      public override string Icon { set; get; } //TODO: temporarily not deducted from Type, because of serialization. possibly changing the order of definition could help
 
       public virtual string MoleculeName { get; private set; }
 
