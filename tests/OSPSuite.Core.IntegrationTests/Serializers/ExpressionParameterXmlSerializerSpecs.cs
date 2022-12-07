@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using OSPSuite.BDDHelper;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
@@ -8,11 +9,11 @@ namespace OSPSuite.Core.Serializers
 {
    public class ExpressionParameterXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
    {
-      [Test]
+      [Observation]
       public void TestSerialization()
       {
-         IFormula formula = CreateObject<ExplicitFormula>().WithName("F.Erika").WithDimension(DimensionLength).WithFormulaString("A * 2");
-         IFormulaUsablePath fup = new FormulaUsablePath(new[] { "aa", "bb" }).WithAlias("b").WithDimension(DimensionLength);
+         var formula = CreateObject<ExplicitFormula>().WithName("F.Erika").WithDimension(DimensionLength).WithFormulaString("A * 2");
+         var fup = new FormulaUsablePath("aa", "bb").WithAlias("b").WithDimension(DimensionLength);
          formula.AddObjectPath(fup);
 
 

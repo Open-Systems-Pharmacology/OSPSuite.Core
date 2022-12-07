@@ -11,33 +11,13 @@ namespace OSPSuite.Core.Domain.Builder
       BindingPartner
    }
 
-   public static class TempAssets
-   {
-      public static class Captions
-      {
-         public static readonly string Species = "Species";
-         public static readonly string Category = "Category";
-
-         public static string Transporter = "Transporter";
-         public static string Protein = "Protein";
-         public static string Enzyme = "Enzyme";
-      }
-
-      public static class IconNames
-      {
-         public static string Transporter = "Transporter";
-         public static string Protein = "Protein";
-         public static string Enzyme = "Enzyme";
-      }
-   }
-
    public static class ExpressionTypes
    {
-      public static ExpressionType TransportProtein = new ExpressionType(TempAssets.IconNames.Transporter, TempAssets.Captions.Transporter, ExpressionTypesId.Transport);
-      public static ExpressionType MetabolizingEnzyme = new ExpressionType(TempAssets.IconNames.Enzyme, TempAssets.Captions.Enzyme, ExpressionTypesId.Enzyme);
-      public static ExpressionType ProteinBindingPartner = new ExpressionType(TempAssets.IconNames.Protein, TempAssets.Captions.Protein, ExpressionTypesId.BindingPartner);
+      public static ExpressionType TransportProtein = new ExpressionType(ExpressionTypesId.Transport, Assets.IconNames.Transporter, Assets.Captions.Transporter);
+      public static ExpressionType MetabolizingEnzyme = new ExpressionType(ExpressionTypesId.Enzyme, Assets.IconNames.Enzyme, Assets.Captions.Enzyme);
+      public static ExpressionType ProteinBindingPartner = new ExpressionType(ExpressionTypesId.BindingPartner, Assets.IconNames.Protein, Assets.Captions.Protein);
 
-      private static List<ExpressionType> _types = new List<ExpressionType>
+      private static readonly List<ExpressionType> _types = new List<ExpressionType>
       {
          TransportProtein,
          MetabolizingEnzyme,
@@ -55,7 +35,7 @@ namespace OSPSuite.Core.Domain.Builder
       public ExpressionTypesId Id { get; }
       public string IconName { get; }
       public string DisplayName { get; }
-      public ExpressionType(string iconName, string displayName, ExpressionTypesId expressionTypesId)
+      public ExpressionType(ExpressionTypesId expressionTypesId, string iconName, string displayName)
       {
          Id = expressionTypesId;
          IconName = iconName;

@@ -55,5 +55,8 @@
       public const string MOBI = "MoBi";
       public const string PARAMETER_IDENTIFICATION = "ParameterIdentification";
       public const string SENSITIVITY_ANALYSIS = "SensitivityAnalysis";
+      public static string Transporter = "Transporter";
+      public static string Protein = "Protein";
+      public static string Enzyme = "Enzyme";
    }
 }

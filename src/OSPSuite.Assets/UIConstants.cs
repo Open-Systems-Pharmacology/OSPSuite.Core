@@ -18,6 +18,9 @@ namespace OSPSuite.Assets
 
    public static class Captions
    {
+      public static string Transporter = "Transporter";
+      public static string Protein = "Protein";
+      public static string Enzyme = "Enzyme";
       public static readonly string Species = "Species";
       public static readonly string Category = "Category";
       public static readonly string ConfirmationDialog = "Confirmation";
