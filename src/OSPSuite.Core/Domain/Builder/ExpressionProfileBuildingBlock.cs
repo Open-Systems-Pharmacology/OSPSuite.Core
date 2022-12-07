@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Core.Domain.Services;
+using static OSPSuite.Core.Domain.Constants.ContainerName;
 
 namespace OSPSuite.Core.Domain.Builder
 {
@@ -18,7 +19,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       public override string Name
       {
-         get => PKSimCoreConstants.ContainerName.ExpressionProfileName(MoleculeName, Species, Category);
+         get => ExpressionProfileName(MoleculeName, Species, Category);
          set
          {
             if (string.Equals(Name, value))
@@ -26,7 +27,7 @@ namespace OSPSuite.Core.Domain.Builder
                return;
             }
 
-            var (moleculeName, species, category) = PKSimCoreConstants.ContainerName.NamesFromExpressionProfileName(value);
+            var (moleculeName, species, category) = NamesFromExpressionProfileName(value);
             if (string.IsNullOrEmpty(moleculeName))
                return;
 
