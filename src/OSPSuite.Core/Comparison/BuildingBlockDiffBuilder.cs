@@ -4,15 +4,15 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Comparison
 {
-   public abstract class BuildingBlockDiffBuilder<T> : DiffBuilder<IBuildingBlock<T>> where T : class, IObjectBase
+   public abstract class BuildingBlockDiffBuilder<TBuildingBlock, TBuilder> : DiffBuilder<TBuildingBlock> where TBuildingBlock : class, IBuildingBlock<TBuilder> where TBuilder : class, IObjectBase
    {
       private readonly ObjectBaseDiffBuilder _objectBaseDiffBuilder;
       private readonly EnumerableComparer _enumerableComparer;
-      private readonly Func<T, object> _equalityProperty;
-      protected Func<T, string> _presentObjectDetailsFunc;
+      private readonly Func<TBuilder, object> _equalityProperty;
+      protected Func<TBuilder, string> _presentObjectDetailsFunc;
 
       protected BuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder,
-         EnumerableComparer enumerableComparer, Func<T, object> equalityProperty)
+         EnumerableComparer enumerableComparer, Func<TBuilder, object> equalityProperty)
       {
          _objectBaseDiffBuilder = objectBaseDiffBuilder;
          _equalityProperty = equalityProperty;
@@ -24,21 +24,21 @@ namespace OSPSuite.Core.Comparison
       {
       }
 
-      public override void Compare(IComparison<IBuildingBlock<T>> comparison)
+      public override void Compare(IComparison<TBuildingBlock> comparison)
       {
          _objectBaseDiffBuilder.Compare(comparison);
          _enumerableComparer.CompareEnumerables(comparison, x => x, _equalityProperty, _presentObjectDetailsFunc);
       }
    }
 
-   public class MoleculeBuildingBlockDiffBuilder : BuildingBlockDiffBuilder<IMoleculeBuilder>
+   public class MoleculeBuildingBlockDiffBuilder : BuildingBlockDiffBuilder<IMoleculeBuildingBlock, IMoleculeBuilder>
    {
       public MoleculeBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) : base(objectBaseDiffBuilder, enumerableComparer)
       {
       }
    }
 
-   public class SpatialStructureDiffBuilder : BuildingBlockDiffBuilder<IContainer>
+   public class SpatialStructureDiffBuilder : BuildingBlockDiffBuilder<SpatialStructure, IContainer>
    {
       public SpatialStructureDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer)
          : base(objectBaseDiffBuilder, enumerableComparer)
@@ -46,14 +46,14 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public class ReactionBuildingBlockDiffBuilder : BuildingBlockDiffBuilder<IReactionBuilder>
+   public class ReactionBuildingBlockDiffBuilder : BuildingBlockDiffBuilder<IReactionBuildingBlock, IReactionBuilder>
    {
       public ReactionBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) : base(objectBaseDiffBuilder, enumerableComparer)
       {
       }
    }
 
-   public class PassiveTransportBuildingBlockDiffBuilder : BuildingBlockDiffBuilder<ITransportBuilder>
+   public class PassiveTransportBuildingBlockDiffBuilder : BuildingBlockDiffBuilder<PassiveTransportBuildingBlock, ITransportBuilder>
    {
       public PassiveTransportBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer)
          : base(objectBaseDiffBuilder, enumerableComparer)
@@ -61,7 +61,7 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public class EventGroupBuildingBlocksDiffBuilder : BuildingBlockDiffBuilder<IEventGroupBuilder>
+   public class EventGroupBuildingBlocksDiffBuilder : BuildingBlockDiffBuilder<IEventGroupBuildingBlock, IEventGroupBuilder>
    {
       public EventGroupBuildingBlocksDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer)
          : base(objectBaseDiffBuilder, enumerableComparer)
@@ -69,7 +69,7 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public class ObserverBuildingBlocksDiffBuilder : BuildingBlockDiffBuilder<IObserverBuilder>
+   public class ObserverBuildingBlocksDiffBuilder : BuildingBlockDiffBuilder<IObserverBuildingBlock, IObserverBuilder>
    {
       public ObserverBuildingBlocksDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer)
          : base(objectBaseDiffBuilder, enumerableComparer)
@@ -77,7 +77,7 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public abstract class StartValueBuildingBlockDiffBuilder<TStartValue> : BuildingBlockDiffBuilder<TStartValue> where TStartValue : class, IStartValue
+   public abstract class StartValueBuildingBlockDiffBuilder<TBuildingBlock, TStartValue> : BuildingBlockDiffBuilder<TBuildingBlock, TStartValue> where TStartValue : class, IStartValue where TBuildingBlock : class, IBuildingBlock<TStartValue>
    {
       private readonly UnitFormatter _unitFormatter = new UnitFormatter();
 
@@ -101,14 +101,14 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public class MoleculeStartValueBuildingBlockDiffBuilder : StartValueBuildingBlockDiffBuilder<IMoleculeStartValue>
+   public class MoleculeStartValueBuildingBlockDiffBuilder : StartValueBuildingBlockDiffBuilder<IMoleculeStartValuesBuildingBlock, IMoleculeStartValue>
    {
       public MoleculeStartValueBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) : base(objectBaseDiffBuilder, enumerableComparer)
       {
       }
    }
 
-   public class ParameterStartValueBuildingBlockDiffBuilder : StartValueBuildingBlockDiffBuilder<IParameterStartValue>
+   public class ParameterStartValueBuildingBlockDiffBuilder : StartValueBuildingBlockDiffBuilder<IParameterStartValuesBuildingBlock, IParameterStartValue>
    {
       public ParameterStartValueBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) : base(objectBaseDiffBuilder, enumerableComparer)
       {
