@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       public ExpressionType Type { set; get; }
 
-      public int PKSimVersion { set; get; }
+      public string PKSimVersion { set; get; }
 
       public virtual string Category { get; private set; }
 
