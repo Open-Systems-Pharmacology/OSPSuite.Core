@@ -38,7 +38,7 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public class SpatialStructureDiffBuilder : BuildingBlockDiffBuilder<SpatialStructure, IContainer>
+   public class SpatialStructureDiffBuilder : BuildingBlockDiffBuilder<ISpatialStructure, IContainer>
    {
       public SpatialStructureDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer)
          : base(objectBaseDiffBuilder, enumerableComparer)
@@ -53,7 +53,7 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public class PassiveTransportBuildingBlockDiffBuilder : BuildingBlockDiffBuilder<PassiveTransportBuildingBlock, ITransportBuilder>
+   public class PassiveTransportBuildingBlockDiffBuilder : BuildingBlockDiffBuilder<IPassiveTransportBuildingBlock, ITransportBuilder>
    {
       public PassiveTransportBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer)
          : base(objectBaseDiffBuilder, enumerableComparer)

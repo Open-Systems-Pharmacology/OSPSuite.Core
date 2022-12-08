@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Core.Domain.Builder
 {
@@ -17,7 +16,7 @@ namespace OSPSuite.Core.Domain.Builder
       public static ExpressionType MetabolizingEnzyme = new ExpressionType(ExpressionTypesId.Enzyme, Assets.IconNames.Enzyme, Assets.Captions.Enzyme);
       public static ExpressionType ProteinBindingPartner = new ExpressionType(ExpressionTypesId.BindingPartner, Assets.IconNames.Protein, Assets.Captions.Protein);
 
-      private static readonly List<ExpressionType> _types = new List<ExpressionType>
+      private static readonly ICache<ExpressionTypesId, ExpressionType> _typesCache = new Cache<ExpressionTypesId, ExpressionType>(x => x.Id)
       {
          TransportProtein,
          MetabolizingEnzyme,
@@ -26,7 +25,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       public static ExpressionType ById(ExpressionTypesId expressionTypeId)
       {
-         return _types.First(x => Equals(x.Id, expressionTypeId));
+         return _typesCache[expressionTypeId];
       }
    }
 
@@ -41,5 +40,11 @@ namespace OSPSuite.Core.Domain.Builder
          IconName = iconName;
          DisplayName = displayName;
       }
+
+      public override string ToString()
+      {
+         return DisplayName;
+      }
+
    }
 }

@@ -13,11 +13,8 @@ namespace OSPSuite.Core.Comparison
       {
          base.Compare(comparison);
          CompareValues(x => x.PKSimVersion, x => x.PKSimVersion, comparison);
-         CompareStringValues(x => x.MoleculeName, x => x.MoleculeName, comparison);
-         CompareStringValues(x => x.Species, x => x.Species, comparison);
-         CompareStringValues(x => x.Category, x => x.Category, comparison);
          CompareStringValues(x => x.Name, x => x.Name, comparison);
-         CompareValues(x => x.Type, x => x.Type, comparison, (x,y) => Equals(x.DisplayName, y.DisplayName), (x,y) => y.DisplayName);
+         CompareValues(x => x.Type, x => x.Type, comparison);
       }
    }
 

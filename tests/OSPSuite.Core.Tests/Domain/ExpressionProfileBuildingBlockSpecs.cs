@@ -55,8 +55,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   //commenting out, as long as we do not have an icon based on type
-   /*
+
    public class when_reading_the_icon_name_for_the_building_block : concern_for_ExpressionProfileBuildingBlock
    {
       [Observation]
@@ -71,7 +70,7 @@ namespace OSPSuite.Core.Domain
          sut.Type = ExpressionTypes.ProteinBindingPartner;
          sut.Icon.ShouldBeEqualTo("Protein");
       }
-   }*/
+   }
 
    public class when_setting_the_name_of_the_building_block : concern_for_ExpressionProfileBuildingBlock
    {
