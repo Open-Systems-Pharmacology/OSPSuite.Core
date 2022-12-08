@@ -58,8 +58,9 @@ namespace OSPSuite.Core.Serialization.Xml
          AttributeMapperRepository.AddAttributeMapper(new ValueOriginSourceXmlAttributeMapper<SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new ValueOriginDeterminationMethodXmlAttributeMapper<SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new RunStatusXmlAttributeMapper());
+         AttributeMapperRepository.AddAttributeMapper(new ExpressionTypeXmlAttributeMapper());
 
- 
+
          AttributeMapperRepository.ReferenceMapper = new ObjectReferenceMapper();
       }
 

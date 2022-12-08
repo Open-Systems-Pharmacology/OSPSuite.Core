@@ -98,6 +98,15 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
+   public class ExpressionProfileBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<ExpressionProfileBuildingBlock, ExpressionParameter>
+   {
+      public override void PerformMapping()
+      {
+         base.PerformMapping();
+         Map(x => x.Type);
+      }
+   }
+
    public class MoleculeStartValuesBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<MoleculeStartValuesBuildingBlock, IMoleculeStartValue>
    {
    }

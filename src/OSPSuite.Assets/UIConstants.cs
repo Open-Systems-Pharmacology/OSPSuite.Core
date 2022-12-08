@@ -18,6 +18,11 @@ namespace OSPSuite.Assets
 
    public static class Captions
    {
+      public static readonly string Transporter = "Transporter";
+      public static readonly string Protein = "Protein";
+      public static readonly string Enzyme = "Enzyme";
+      public static readonly string Species = "Species";
+      public static readonly string Category = "Category";
       public static readonly string ConfirmationDialog = "Confirmation";
       public static readonly string Excel = "Excel®";
       public static readonly string EmptyColumn = " ";
@@ -2294,6 +2299,7 @@ namespace OSPSuite.Assets
       public static readonly string Formulation = "Formulation";
       public static readonly string SensitivityParameter = "Sensitivity Parameter";
       public static readonly string SensitivityAnalysis = "Sensitivity Analysis";
+      public static readonly string ExpressionProfileBuildingBlock = "Expression Profile Building Block";
    }
 
    public static class ToolTips

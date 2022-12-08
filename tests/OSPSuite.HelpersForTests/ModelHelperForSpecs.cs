@@ -1174,6 +1174,9 @@ namespace OSPSuite.Helpers
          if (sourceObject.IsAnImplementationOf<NormalDistributionFormula>())
             return new NormalDistributionFormula().WithDimension(_dimensionFactory.NoDimension).WithId(id).DowncastTo<T>();
 
+         if (sourceObject.IsAnImplementationOf<ExpressionParameter>())
+            return new ExpressionParameter().WithDimension(_dimensionFactory.NoDimension).WithId(id).DowncastTo<T>();
+
          return default(T);
       }
 
