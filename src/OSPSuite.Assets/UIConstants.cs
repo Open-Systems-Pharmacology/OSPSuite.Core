@@ -2296,6 +2296,7 @@ namespace OSPSuite.Assets
       public static readonly string Formulation = "Formulation";
       public static readonly string SensitivityParameter = "Sensitivity Parameter";
       public static readonly string SensitivityAnalysis = "Sensitivity Analysis";
+      public static readonly string ExpressionProfileBuildingBlock = "Expression Profile Building Block";
    }
 
    public static class ToolTips
