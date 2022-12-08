@@ -36,7 +36,7 @@ namespace OSPSuite.Core.Domain
          _expressionProfileBuildingBlock.Name = "Molecule|Species|Name";
          _expressionProfileBuildingBlock.Type = ExpressionTypes.MetabolizingEnzyme;
          _expressionProfileBuildingBlock.Type = ExpressionTypes.MetabolizingEnzyme;
-         _expressionProfileBuildingBlock.PKSimVersion = 11;
+         _expressionProfileBuildingBlock.PKSimVersion = "11.1";
          _expressionProfileBuildingBlock.Add(new ExpressionParameter().WithName("name1"));
       }
 
@@ -50,7 +50,7 @@ namespace OSPSuite.Core.Domain
       {
          sut.Name.ShouldBeEqualTo("Molecule|Species|Name");
          sut.Type.ShouldBeEqualTo(ExpressionTypes.MetabolizingEnzyme);
-         sut.PKSimVersion.ShouldBeEqualTo(11);
+         sut.PKSimVersion.ShouldBeEqualTo("11.1");
          sut.Count().ShouldBeEqualTo(1);
       }
    }
