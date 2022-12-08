@@ -50,6 +50,7 @@ skip_commits:
 branches:
   only:
     - develop
+    - OSMOSES
 
 test:
   assemblies:
