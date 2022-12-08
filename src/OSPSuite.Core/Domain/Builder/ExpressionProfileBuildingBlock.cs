@@ -45,6 +45,7 @@ namespace OSPSuite.Core.Domain.Builder
 
          Type = sourceExpressionProfile.Type;
          PKSimVersion = sourceExpressionProfile.PKSimVersion;
+         Name = sourceExpressionProfile.Name;
       }
    }
 }
