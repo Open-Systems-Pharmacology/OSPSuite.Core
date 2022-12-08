@@ -34,6 +34,7 @@ namespace OSPSuite.Core.Domain.Builder
             Species = species;
             Category = category;
             MoleculeName = moleculeName;
+            OnPropertyChanged(() => Name);
          }
       }
 
@@ -45,6 +46,9 @@ namespace OSPSuite.Core.Domain.Builder
 
          Type = sourceExpressionProfile.Type;
          PKSimVersion = sourceExpressionProfile.PKSimVersion;
+
+         // Name is required because our base objects will the private property
+         // But in this case the name is decomposed and stored in 3 other properties
          Name = sourceExpressionProfile.Name;
       }
    }
