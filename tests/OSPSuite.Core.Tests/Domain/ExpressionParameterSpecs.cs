@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class when_instantiating_new_ExpressionParameter : concern_for_ExpressionParameter
+   public class When_instantiating_new_ExpressionParameter : concern_for_ExpressionParameter
    {
       [Observation]
       public void name_should_be_last_element_in_ObjectPath()
@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class when_setting_expression_parameter_name : concern_for_MoleculeStartValue
+   public class When_setting_expression_parameter_name : concern_for_MoleculeStartValue
    {
       protected override void Because()
       {
@@ -59,7 +59,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public abstract class when_testing_equivalency_in_expression_parameters : concern_for_MoleculeStartValue
+   public abstract class When_testing_equivalency_in_expression_parameters : concern_for_MoleculeStartValue
    {
       protected MoleculeStartValue _comparable;
       protected bool _result;
@@ -85,7 +85,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public abstract class expression_parameter_equivalency_should_test_negative : when_testing_equivalency_in_expression_parameters
+   public abstract class expression_parameter_equivalency_should_test_negative : When_testing_equivalency_in_expression_parameters
    {
       [Observation]
       public void should_not_be_equivalent()
@@ -94,7 +94,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class when_testing_expression_parameters_with_different_scale_factor : equivalency_should_test_negative
+   public class When_testing_expression_parameters_with_different_scale_factor : equivalency_should_test_negative
    {
       protected override void Context()
       {
@@ -103,7 +103,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class when_testing_expression_parameters_with_different_moleculename : equivalency_should_test_negative
+   public class When_testing_expression_parameters_with_different_moleculename : equivalency_should_test_negative
    {
       protected override void Context()
       {
@@ -112,7 +112,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class when_testing_expression_parameters_with_different_isPresent : equivalency_should_test_negative
+   public class When_testing_expression_parameters_with_different_isPresent : equivalency_should_test_negative
    {
       protected override void Context()
       {
@@ -123,7 +123,7 @@ namespace OSPSuite.Core.Domain
 
    }
 
-   public class when_testing_equivalent_expression_parameters : when_testing_equivalency_in_expression_parameters
+   public class When_testing_equivalent_expression_parameters : When_testing_equivalency_in_expression_parameters
    {
       [Observation]
       public void empty_expression_parameters_should_be_equivalent()

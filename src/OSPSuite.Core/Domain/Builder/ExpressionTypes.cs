@@ -1,42 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public static class TempAssets
+
+   public enum ExpressionTypesId
    {
-      public static class Captions
-      {
-         public static readonly string Species = "Species";
-         public static readonly string Category = "Category";
-
-         public static string Transporter = "Transporter";
-         public static string Protein = "Protein";
-         public static string Enzyme = "Enzyme";
-      }
-
-      public static class IconNames
-      {
-         public static string Transporter = "Transporter";
-         public static string Protein = "Protein";
-         public static string Enzyme = "Enzyme";
-      }
+      Transport,
+      Enzyme,
+      BindingPartner
    }
 
    public static class ExpressionTypes
    {
-      public static ExpressionType TransportProtein = new ExpressionType(TempAssets.IconNames.Transporter, TempAssets.Captions.Transporter);
-      public static ExpressionType MetabolizingEnzyme = new ExpressionType(TempAssets.IconNames.Enzyme, TempAssets.Captions.Enzyme);
-      public static ExpressionType ProteinBindingPartner = new ExpressionType(TempAssets.IconNames.Protein, TempAssets.Captions.Protein);
+      public static ExpressionType TransportProtein = new ExpressionType(ExpressionTypesId.Transport, Assets.IconNames.Transporter, Assets.Captions.Transporter);
+      public static ExpressionType MetabolizingEnzyme = new ExpressionType(ExpressionTypesId.Enzyme, Assets.IconNames.Enzyme, Assets.Captions.Enzyme);
+      public static ExpressionType ProteinBindingPartner = new ExpressionType(ExpressionTypesId.BindingPartner, Assets.IconNames.Protein, Assets.Captions.Protein);
+
+      private static readonly List<ExpressionType> _types = new List<ExpressionType>
+      {
+         TransportProtein,
+         MetabolizingEnzyme,
+         ProteinBindingPartner
+      };
+
+      public static ExpressionType ById(ExpressionTypesId expressionTypeId)
+      {
+         return _types.First(x => Equals(x.Id, expressionTypeId));
+      }
    }
 
    public class ExpressionType
    {
+      public ExpressionTypesId Id { get; }
       public string IconName { get; }
       public string DisplayName { get; }
-      public ExpressionType(string iconName, string displayName)
+      public ExpressionType(ExpressionTypesId expressionTypesId, string iconName, string displayName)
       {
+         Id = expressionTypesId;
          IconName = iconName;
          DisplayName = displayName;
       }

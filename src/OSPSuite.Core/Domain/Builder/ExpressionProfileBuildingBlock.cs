@@ -1,10 +1,11 @@
 ﻿using OSPSuite.Core.Domain.Services;
+using static OSPSuite.Core.Domain.Constants.ContainerName;
 
 namespace OSPSuite.Core.Domain.Builder
 {
    public class ExpressionProfileBuildingBlock : StartValueBuildingBlock<ExpressionParameter>
    {
-      public override string Icon { set; get; } //TODO: temporarily not deducted from Type, because of serialization. possibly changing the order of definition could help
+      public override string Icon => Type.IconName;
 
       public virtual string MoleculeName { get; private set; }
 
@@ -18,7 +19,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       public override string Name
       {
-         get => PKSimCoreConstants.ContainerName.ExpressionProfileName(MoleculeName, Species, Category);
+         get => ExpressionProfileName(MoleculeName, Species, Category);
          set
          {
             if (string.Equals(Name, value))
@@ -26,7 +27,7 @@ namespace OSPSuite.Core.Domain.Builder
                return;
             }
 
-            var (moleculeName, species, category) = PKSimCoreConstants.ContainerName.NamesFromExpressionProfileName(value);
+            var (moleculeName, species, category) = NamesFromExpressionProfileName(value);
             if (string.IsNullOrEmpty(moleculeName))
                return;
 
