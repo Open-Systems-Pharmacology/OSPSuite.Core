@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Services
       private Unit _myDefaultUnit;
       private IDimension _dimension1;
       private Parameter _parameter;
-      private IMoleculeStartValue _moleculeStartValue;
+      private MoleculeStartValue _moleculeStartValue;
       private MoleculeStartValuesBuildingBlock _moleculeStartValueBuildingBlock;
       private Container _topContainer;
 

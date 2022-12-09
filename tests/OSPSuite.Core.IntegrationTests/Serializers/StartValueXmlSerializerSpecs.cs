@@ -17,7 +17,7 @@ namespace OSPSuite.Core.Serializers
          x1.Value = 2.5;
          x1.ScaleDivisor = 1e-2;
 
-         IMoleculeStartValue x2 = SerializeAndDeserialize(x1);
+         MoleculeStartValue x2 = SerializeAndDeserialize(x1);
 
          AssertForSpecs.AreEqualMoleculeStartValue(x1, x2);
       }

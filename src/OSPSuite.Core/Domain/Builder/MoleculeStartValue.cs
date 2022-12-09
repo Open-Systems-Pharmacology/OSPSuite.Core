@@ -2,23 +2,23 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public interface IMoleculeStartValue : IStartValue, IWithScaleDivisor
-   {
-      bool IsPresent { set; get; }
+   // public interface IMoleculeStartValue : IStartValue, IWithScaleDivisor
+   // {
+   //    bool IsPresent { set; get; }
+   //
+   //    string MoleculeName { get; }
+   //
+   //    /// <summary>
+   //    ///    Tests whether or not the value is public-member-equivalent to the target
+   //    /// </summary>
+   //    /// <param name="moleculeStartValue">The comparable object</param>
+   //    /// <returns>True if all the public members are equal, otherwise false</returns>
+   //    bool IsEquivalentTo(MoleculeStartValue moleculeStartValue);
+   //
+   //    bool NegativeValuesAllowed { get; set; }
+   // }
 
-      string MoleculeName { get; }
-
-      /// <summary>
-      ///    Tests whether or not the value is public-member-equivalent to the target
-      /// </summary>
-      /// <param name="moleculeStartValue">The comparable object</param>
-      /// <returns>True if all the public members are equal, otherwise false</returns>
-      bool IsEquivalentTo(IMoleculeStartValue moleculeStartValue);
-
-      bool NegativeValuesAllowed { get; set; }
-   }
-
-   public class MoleculeStartValue : StartValueBase, IMoleculeStartValue
+   public class MoleculeStartValue : StartValueBase, IWithScaleDivisor
    {
       private bool _isPresent;
       private double _scaleDivisor;
@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Domain.Builder
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
-         var sourceMoleculeStartValue = source as IMoleculeStartValue;
+         var sourceMoleculeStartValue = source as MoleculeStartValue;
          if (sourceMoleculeStartValue == null) return;
          IsPresent = sourceMoleculeStartValue.IsPresent;
          ScaleDivisor = sourceMoleculeStartValue.ScaleDivisor;
@@ -49,15 +49,12 @@ namespace OSPSuite.Core.Domain.Builder
 
       public string MoleculeName => Name;
 
-      public bool IsEquivalentTo(IMoleculeStartValue moleculeStartValue)
+      public bool IsEquivalentTo(MoleculeStartValue moleculeStartValue)
       {
-         var isBaseEquivalent = false;
-
-         if(moleculeStartValue is PathAndValueEntity pathAndValueEntity)
-            isBaseEquivalent = IsEquivalentTo(pathAndValueEntity);
+         var isBaseEquivalent = base.IsEquivalentTo(moleculeStartValue);
 
          var isEquivalent =
-            (IsPresent == moleculeStartValue.IsPresent) &&
+            IsPresent == moleculeStartValue.IsPresent &&
             NullableEqualsCheck(MoleculeName, moleculeStartValue.MoleculeName) &&
             ValueComparer.AreValuesEqual(ScaleDivisor, moleculeStartValue.ScaleDivisor);
 

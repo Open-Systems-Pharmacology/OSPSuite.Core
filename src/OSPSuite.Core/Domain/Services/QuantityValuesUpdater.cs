@@ -137,12 +137,12 @@ namespace OSPSuite.Core.Domain.Services
          molecule.Formula = _formulaFactory.CreateMoleculeAmountReferenceToStartValue(startValue);
       }
 
-      private IFormula createConstantFormula(IMoleculeStartValue moleculeStartValue)
+      private IFormula createConstantFormula(MoleculeStartValue moleculeStartValue)
       {
          return _formulaFactory.ConstantFormula(moleculeStartValue.Value.Value, moleculeStartValue.Dimension);
       }
 
-      private bool startValueShouldBeSetAsConstantFormula(IMoleculeStartValue moleculeStartValue, IMoleculeAmount molecule)
+      private bool startValueShouldBeSetAsConstantFormula(MoleculeStartValue moleculeStartValue, IMoleculeAmount molecule)
       {
          if (!moleculeStartValue.Value.HasValue)
             return false;

@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Domain.Builder
       ///    Return the molecules values defined in the configuration for which a molecule also exists in the Molecule building
       ///    block
       /// </summary>
-      IEnumerable<IMoleculeStartValue> AllPresentMoleculeValues();
+      IEnumerable<MoleculeStartValue> AllPresentMoleculeValues();
 
       /// <summary>
       ///    Return the names of all molecules defined in the configuration that will be present in the model
@@ -171,7 +171,7 @@ namespace OSPSuite.Core.Domain.Builder
          return Molecules.AllPresentFor(MoleculeStartValues);
       }
 
-      public virtual IEnumerable<IMoleculeStartValue> AllPresentMoleculeValues()
+      public virtual IEnumerable<MoleculeStartValue> AllPresentMoleculeValues()
       {
          var moleculeNames = Molecules.Select(x => x.Name);
          return MoleculeStartValues.Where(msv => moleculeNames.Contains(msv.MoleculeName))
