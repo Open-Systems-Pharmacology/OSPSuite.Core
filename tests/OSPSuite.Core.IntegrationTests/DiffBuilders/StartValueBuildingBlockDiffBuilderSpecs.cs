@@ -135,7 +135,7 @@ namespace OSPSuite.Core.DiffBuilders
 
          parameterStartValueB = new ParameterStartValue().WithName("MSVb");
          parameterStartValueB.ContainerPath = new ObjectPath("Root", "Liver", "Cell");
-         parameterStartValueB.StartValue = 10;
+         parameterStartValueB.Value = 10;
          parameterStartValueB.Dimension = DomainHelperForSpecs.TimeDimensionForSpecs();
 
          parameterStartValuesBuildingBlock2.Add(parameterStartValueA);

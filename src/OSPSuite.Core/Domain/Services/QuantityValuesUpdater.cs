@@ -63,7 +63,7 @@ namespace OSPSuite.Core.Domain.Services
             else
             {
                var constantFormula = parameter.Formula as ConstantFormula;
-               var parameterValue = parameterStartValue.StartValue.GetValueOrDefault(double.NaN);
+               var parameterValue = parameterStartValue.Value.GetValueOrDefault(double.NaN);
                if (constantFormula == null)
                {
                   if (parameterStartValue.OverrideFormulaWithValue)
@@ -139,15 +139,15 @@ namespace OSPSuite.Core.Domain.Services
 
       private IFormula createConstantFormula(IMoleculeStartValue moleculeStartValue)
       {
-         return _formulaFactory.ConstantFormula(moleculeStartValue.StartValue.Value, moleculeStartValue.Dimension);
+         return _formulaFactory.ConstantFormula(moleculeStartValue.Value.Value, moleculeStartValue.Dimension);
       }
 
       private bool startValueShouldBeSetAsConstantFormula(IMoleculeStartValue moleculeStartValue, IMoleculeAmount molecule)
       {
-         if (!moleculeStartValue.StartValue.HasValue)
+         if (!moleculeStartValue.Value.HasValue)
             return false;
 
-         var msvValue = moleculeStartValue.StartValue.Value;
+         var msvValue = moleculeStartValue.Value.Value;
          double? currentConstantMoleculeValue;
 
          if (moleculeStartValue.IsAmountBased())

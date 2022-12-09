@@ -178,39 +178,39 @@ namespace OSPSuite.Helpers
       private void setMoleculeStartValues(IMoleculeStartValuesBuildingBlock moleculesStartValues)
       {
          var art_plasma_A = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.ArterialBlood, ConstantsForSpecs.Plasma, "A")];
-         art_plasma_A.StartValue = 1;
+         art_plasma_A.Value = 1;
 
          var lng_plasma_A = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma, "A")];
-         lng_plasma_A.StartValue = 6;
+         lng_plasma_A.Value = 6;
 
          var ven_plasma_A = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "A")];
-         ven_plasma_A.StartValue = 1;
+         ven_plasma_A.Value = 1;
 
          var lng_plasma_B = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma, "B")];
-         lng_plasma_B.StartValue = 7;
+         lng_plasma_B.Value = 7;
 
          var ven_plasma_B = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "B")];
-         ven_plasma_B.StartValue = 0.4;
+         ven_plasma_B.Value = 0.4;
 
          setAllIsPresentForMoleculeToFalse(moleculesStartValues, "C", "D", "E", "F", "Enz");
          var lng_cell_C = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, "C")];
          lng_cell_C.IsPresent = true;
-         lng_cell_C.StartValue = 0;
+         lng_cell_C.Value = 0;
 
          var bon_cell_C = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "C")];
          bon_cell_C.IsPresent = true;
-         bon_cell_C.StartValue = 0;
+         bon_cell_C.Value = 0;
 
          var lng_plasma_D = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma, "D")];
-         lng_plasma_D.StartValue = 8;
+         lng_plasma_D.Value = 8;
          lng_plasma_D.IsPresent = true;
 
          var ven_plasma_D = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "D")];
-         ven_plasma_D.StartValue = 0;
+         ven_plasma_D.Value = 0;
          ven_plasma_D.IsPresent = true;
 
          var bon_cell_E = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "E")];
-         bon_cell_E.StartValue = 2;
+         bon_cell_E.Value = 2;
          bon_cell_E.IsPresent = true;
          var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("RelExp").WithName("RelExpNormE");
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("RelExp").WithAlias("RelExp"));
@@ -219,7 +219,7 @@ namespace OSPSuite.Helpers
          bon_cell_E.ScaleDivisor = 2.5;
 
          var ven_plasma_E = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "E")];
-         ven_plasma_E.StartValue = 0;
+         ven_plasma_E.Value = 0;
          ven_plasma_E.IsPresent = true;
 
          var ven_plasma_F = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "F")];

@@ -96,7 +96,7 @@ namespace OSPSuite.Core.Comparison
             return string.Equals(name, display) ? name : $"{name} ({display})";
          }
 
-         var value = startValue.ConvertToDisplayUnit(startValue.StartValue);
+         var value = startValue.ConvertToDisplayUnit(startValue.Value);
          return _unitFormatter.Format(value, startValue.DisplayUnit);
       }
    }

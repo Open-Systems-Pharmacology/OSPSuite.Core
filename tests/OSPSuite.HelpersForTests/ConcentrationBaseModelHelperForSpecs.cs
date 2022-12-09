@@ -90,12 +90,12 @@ namespace OSPSuite.Helpers
       private void setMoleculeStartValues(IMoleculeStartValuesBuildingBlock moleculeStartValues)
       {
          var organsim_A = moleculeStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, "A")];
-         organsim_A.StartValue = 5;
+         organsim_A.Value = 5;
 
 
          var lung_B = moleculeStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, "B")];
          lung_B.Formula = null;
-         lung_B.StartValue = 100;
+         lung_B.Value = 100;
       }
 
       private IReactionBuildingBlock getReactions()

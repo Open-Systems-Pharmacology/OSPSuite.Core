@@ -31,7 +31,11 @@ namespace OSPSuite.Core.Domain.Builder
 
       public bool IsEquivalentTo(IParameterStartValue parameterStartValue)
       {
-         var isBaseEquivalent = base.IsEquivalentTo(parameterStartValue);
+         var isBaseEquivalent = false;
+
+         if (parameterStartValue is PathAndValueEntity pathAndValueEntity)
+            isBaseEquivalent = IsEquivalentTo(pathAndValueEntity);
+
          var isEquivalent = NullableEqualsCheck(ParameterName, parameterStartValue.ParameterName);
 
          return isBaseEquivalent && isEquivalent;

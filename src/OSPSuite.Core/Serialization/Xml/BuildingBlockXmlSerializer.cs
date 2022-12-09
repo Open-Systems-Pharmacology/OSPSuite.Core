@@ -98,7 +98,7 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class ExpressionProfileBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<ExpressionProfileBuildingBlock, ExpressionParameter>
+   public class ExpressionProfileBuildingBlockXmlSerializer : BuildingBlockXmlSerializer<ExpressionProfileBuildingBlock, ExpressionParameter>
    {
       public override void PerformMapping()
       {

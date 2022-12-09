@@ -14,6 +14,11 @@ namespace OSPSuite.Core.Domain
       Unit DisplayUnit { get; set; }
    }
 
+   public interface IWithNullableValue
+   {
+      double? Value { get; set; }
+   }
+
    public interface IWithValue
    {
       double Value { get; set; }

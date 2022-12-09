@@ -179,7 +179,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          var psv = new ParameterStartValue
          {
-            StartValue = startValue,
+            Value = startValue,
             Dimension = dimension,
             Id = _idGenerator.NewId(),
             Path = parameterPath,

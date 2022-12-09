@@ -177,11 +177,11 @@ namespace OSPSuite.Core.DiffBuilders
 
          var msv1 = new ParameterStartValue().WithName("Tada");
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
-         msv1.StartValue = 2;
+         msv1.Value = 2;
 
          var msv2 = new ParameterStartValue().WithName("Tada");
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
-         msv1.StartValue = 3;
+         msv1.Value = 3;
 
          _object1 = msv1;
          _object2 = msv2;
@@ -202,11 +202,11 @@ namespace OSPSuite.Core.DiffBuilders
 
          var msv1 = new ParameterStartValue().WithName("Tada");
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
-         msv1.StartValue = null;
+         msv1.Value = null;
 
          var msv2 = new ParameterStartValue().WithName("Tada");
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
-         msv2.StartValue = null;
+         msv2.Value = null;
 
          _object1 = msv1;
          _object2 = msv2;
@@ -227,11 +227,11 @@ namespace OSPSuite.Core.DiffBuilders
 
          var msv1 = new ParameterStartValue().WithName("Tada");
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
-         msv1.StartValue = 5;
+         msv1.Value = 5;
 
          var msv2 = new ParameterStartValue().WithName("Tada");
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
-         msv2.StartValue = null;
+         msv2.Value = null;
 
          _object1 = msv1;
          _object2 = msv2;

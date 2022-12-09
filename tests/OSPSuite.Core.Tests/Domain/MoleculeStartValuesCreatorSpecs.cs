@@ -99,11 +99,11 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void constant_formula_molecules_have_double_start_value()
       {
-         _result[new ObjectPath(_rootContainerString, _childContainerString, M1)].StartValue.ShouldBeEqualTo(5.0);
-         _result[new ObjectPath(_rootContainerString, M1)].StartValue.ShouldBeEqualTo(5.0);
+         _result[new ObjectPath(_rootContainerString, _childContainerString, M1)].Value.ShouldBeEqualTo(5.0);
+         _result[new ObjectPath(_rootContainerString, M1)].Value.ShouldBeEqualTo(5.0);
 
-         _result[new ObjectPath(_rootContainerString, _childContainerString, M2)].StartValue.ShouldBeNull();
-         _result[new ObjectPath(_rootContainerString, M2)].StartValue.ShouldBeNull();
+         _result[new ObjectPath(_rootContainerString, _childContainerString, M2)].Value.ShouldBeNull();
+         _result[new ObjectPath(_rootContainerString, M2)].Value.ShouldBeNull();
 
 
       }

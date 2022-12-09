@@ -113,7 +113,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         sut.StartValue = null;
+         sut.Value = null;
       }
    }
 
@@ -121,8 +121,8 @@ namespace OSPSuite.Core.Domain
    {
       protected override void Context()
       {
-         base.Context();
-         sut.StartValue = _comparable.StartValue + 1.0;
+         base.Context();   
+         sut.Value = _comparable.Value + 1.0;
       }
    }
 
@@ -174,8 +174,8 @@ namespace OSPSuite.Core.Domain
          sut.Path = new ObjectPath("A", "B", "Name");
          _comparable.Path = sut.Path.Clone<IObjectPath>();
 
-         sut.StartValue = 1.0;
-         _comparable.StartValue = sut.StartValue;
+         sut.Value = 1.0;
+         _comparable.Value = sut.Value;
 
          sut.Formula = new ExplicitFormula("MV");
          _comparable.Formula = new ExplicitFormula("MV");

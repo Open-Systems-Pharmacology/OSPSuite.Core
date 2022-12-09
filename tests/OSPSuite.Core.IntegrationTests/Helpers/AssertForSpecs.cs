@@ -1053,7 +1053,7 @@ namespace OSPSuite.Core.Helpers
          Assert.AreEqual(x1.IsPresent, x2.IsPresent);
          AreEqualObjectPath(x1.ContainerPath, x2.ContainerPath);
          AreEqualStrings(x1.MoleculeName, x2.MoleculeName);
-         AssertAreEqualNullableDouble(x1.StartValue, x2.StartValue);
+         AssertAreEqualNullableDouble(x1.Value, x2.Value);
          Assert.AreEqual(x1.ScaleDivisor, x2.ScaleDivisor, 1e-10);
          AssertAreEqual(x1.ValueOrigin, x2.ValueOrigin);
          AreEqualFormula(x1.Formula, x2.Formula);
@@ -1063,7 +1063,7 @@ namespace OSPSuite.Core.Helpers
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualObjectPath(x1.Path, x2.Path);
-         AssertAreEqualNullableDouble(x1.StartValue, x2.StartValue);
+         AssertAreEqualNullableDouble(x1.Value, x2.Value);
          AreEqualUnit(x1.DisplayUnit, x2.DisplayUnit);
          AreEqualDimension(x1.Dimension, x2.Dimension);
          AssertAreEqual(x1.ValueOrigin, x2.ValueOrigin);
@@ -1075,10 +1075,9 @@ namespace OSPSuite.Core.Helpers
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualObjectPath(x1.Path, x2.Path);
-         AssertAreEqualNullableDouble(x1.StartValue, x2.StartValue);
+         AssertAreEqualNullableDouble(x1.Value, x2.Value);
          AreEqualUnit(x1.DisplayUnit, x2.DisplayUnit);
          AreEqualDimension(x1.Dimension, x2.Dimension);
-         AssertAreEqual(x1.ValueOrigin, x2.ValueOrigin);
          AreEqualFormula(x1.Formula, x2.Formula);
       }
 

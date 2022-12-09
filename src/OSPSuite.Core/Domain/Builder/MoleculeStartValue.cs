@@ -51,7 +51,10 @@ namespace OSPSuite.Core.Domain.Builder
 
       public bool IsEquivalentTo(IMoleculeStartValue moleculeStartValue)
       {
-         var isBaseEquivalent = base.IsEquivalentTo(moleculeStartValue);
+         var isBaseEquivalent = false;
+
+         if(moleculeStartValue is PathAndValueEntity pathAndValueEntity)
+            isBaseEquivalent = IsEquivalentTo(pathAndValueEntity);
 
          var isEquivalent =
             (IsPresent == moleculeStartValue.IsPresent) &&

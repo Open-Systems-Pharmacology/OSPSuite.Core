@@ -46,7 +46,7 @@ namespace OSPSuite.Core.Services
          _psv = new ParameterStartValue
          {
             OverrideFormulaWithValue = false,
-            StartValue = 10,
+            Value = 10,
             Path = new ObjectPath("Organism","P")
          };
          _buildConfiguration.ParameterStartValues = new ParameterStartValuesBuildingBlock {_psv};
@@ -82,7 +82,7 @@ namespace OSPSuite.Core.Services
          _psv = new ParameterStartValue
          {
             OverrideFormulaWithValue = true,
-            StartValue = 10,
+            Value = 10,
             Path = new ObjectPath("Organism", "P")
          };
          _buildConfiguration.ParameterStartValues = new ParameterStartValuesBuildingBlock { _psv };

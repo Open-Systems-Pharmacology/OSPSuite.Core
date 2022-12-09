@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Serialization.Xml
       public override void PerformMapping()
       {
          base.PerformMapping();
-         Map(x => x.StartValue);
+         Map(x => x.Value);
       }
    }
 }

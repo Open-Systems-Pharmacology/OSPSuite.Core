@@ -73,7 +73,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private static void setMoleculeStartValue(IMoleculeBuilder moleculeBuilder, IMoleculeStartValue moleculeStartValue)
       {
-         moleculeStartValue.StartValue = moleculeBuilder.GetDefaultMoleculeStartValue();
+         moleculeStartValue.Value = moleculeBuilder.GetDefaultMoleculeStartValue();
       }
 
       public IMoleculeStartValue CreateMoleculeStartValue(IObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null)
