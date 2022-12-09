@@ -363,16 +363,26 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void applyConfiguration(ImporterConfiguration configuration)
       {
          var excelColumnNames = _columnMappingPresenter.GetAllAvailableExcelColumns();
-         var listOfNonExistingColumns = configuration.Parameters.Where(parameter => !excelColumnNames.Contains(parameter.ColumnName) && parameter.ComesFromColumn()).ToList();
+         var listOfNonExistingParameters = configuration.Parameters.Where(parameter => !excelColumnNames.Contains(parameter.ColumnName) && parameter.ComesFromColumn()).ToList();
+         var listOfNonExistingColumns = listOfNonExistingParameters.Select(x => x.ColumnName).ToList();
+
+         foreach (var parameter in configuration.Parameters.OfType<MappingDataFormatParameter>())
+         {
+            if (!parameter.MappedColumn.LloqColumn.IsNullOrEmpty() && !excelColumnNames.Contains(parameter.MappedColumn.LloqColumn))
+               listOfNonExistingColumns.Add(parameter.MappedColumn.LloqColumn);
+
+            if (!parameter.MappedColumn.Unit.ColumnName.IsNullOrEmpty() && !excelColumnNames.Contains(parameter.MappedColumn.Unit.ColumnName))
+               listOfNonExistingColumns.Add(parameter.MappedColumn.Unit.ColumnName);
+         }
 
          if (listOfNonExistingColumns.Any())
          {
-            var confirm = _dialogCreator.MessageBoxYesNo(Captions.Importer.ConfirmDroppingExcelColumns(string.Join("\n", listOfNonExistingColumns.Select(x => x.ColumnName))));
+            var confirm = _dialogCreator.MessageBoxYesNo(Captions.Importer.ConfirmDroppingExcelColumns(string.Join("\n", listOfNonExistingColumns)));
 
             if (confirm == ViewResult.No)
                return;
 
-            foreach (var element in listOfNonExistingColumns)
+            foreach (var element in listOfNonExistingParameters)
             {
                configuration.RemoveParameter(element);
             }
