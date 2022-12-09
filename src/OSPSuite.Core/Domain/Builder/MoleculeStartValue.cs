@@ -2,22 +2,6 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   // public interface IMoleculeStartValue : IStartValue, IWithScaleDivisor
-   // {
-   //    bool IsPresent { set; get; }
-   //
-   //    string MoleculeName { get; }
-   //
-   //    /// <summary>
-   //    ///    Tests whether or not the value is public-member-equivalent to the target
-   //    /// </summary>
-   //    /// <param name="moleculeStartValue">The comparable object</param>
-   //    /// <returns>True if all the public members are equal, otherwise false</returns>
-   //    bool IsEquivalentTo(MoleculeStartValue moleculeStartValue);
-   //
-   //    bool NegativeValuesAllowed { get; set; }
-   // }
-
    public class MoleculeStartValue : StartValueBase, IWithScaleDivisor
    {
       private bool _isPresent;

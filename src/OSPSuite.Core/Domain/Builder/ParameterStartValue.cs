@@ -2,27 +2,6 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   // public interface IParameterStartValue : IStartValue, IWithDefaultState
-   // {
-   //    string ParameterName { get; }
-   //
-   //    /// <summary>
-   //    ///    Tests whether or not the value is public-member-equivalent to the target
-   //    /// </summary>
-   //    /// <param name="parameterStartValue">The comparable object</param>
-   //    /// <returns>True if all the public members are equal, otherwise false</returns>
-   //    bool IsEquivalentTo(ParameterStartValue parameterStartValue);
-   //
-   //    /// <summary>
-   //    ///    This option is only used at the moment in PKSim when cloning a simulation. The goal is to not replace the formula of
-   //    ///    a parameter
-   //    ///    changed in the simulation with constant. This parameter is temporary is should not be serialized or updated when
-   //    ///    cloning etc.
-   //    ///    Default value is <c>true</c>
-   //    /// </summary>
-   //    bool OverrideFormulaWithValue { get; set; }
-   // }
-
    public class ParameterStartValue : StartValueBase, IWithDefaultState
    {
       public string ParameterName => Name;
