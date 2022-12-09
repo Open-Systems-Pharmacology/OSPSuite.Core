@@ -393,7 +393,7 @@ namespace OSPSuite.Core.Domain.Services
             Validation.StartValueDefinedForNonPhysicalContainer(moleculeStartValue.MoleculeName, moleculeStartValue.ContainerPath.PathAsString));
       }
 
-      private static ValidationMessage buildValidationMessage(IBuildingBlock buildingBlock, IMoleculeStartValue moleculeStartValue,
+      private static ValidationMessage buildValidationMessage(IBuildingBlock buildingBlock, MoleculeStartValue moleculeStartValue,
          string validationDescription)
       {
          return new ValidationMessage(NotificationType.Warning, validationDescription, moleculeStartValue, buildingBlock);
@@ -420,7 +420,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private class StartValueAndContainer
       {
-         public IMoleculeStartValue MoleculeStartValue { get; set; }
+         public MoleculeStartValue MoleculeStartValue { get; set; }
          public IContainer Container { get; set; }
       }
    }

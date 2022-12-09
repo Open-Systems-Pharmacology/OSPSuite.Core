@@ -490,7 +490,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_identify_an_issue_with_start_values_being_defined_for_logical_containers()
       {
-         _result.ValidationResult.Messages.Count(message => message.Object.IsAnImplementationOf<IMoleculeStartValue>()).ShouldBeEqualTo(2);
+         _result.ValidationResult.Messages.Count(message => message.Object.IsAnImplementationOf<MoleculeStartValue>()).ShouldBeEqualTo(2);
       }
    }
 

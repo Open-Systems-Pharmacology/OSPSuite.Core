@@ -19,7 +19,7 @@ namespace OSPSuite.Core.Serializers
 
          var x1 = new ExpressionParameter
          {
-            StartValue = 2.0,
+            Value = 2.0,
             Formula = formula
          };
 

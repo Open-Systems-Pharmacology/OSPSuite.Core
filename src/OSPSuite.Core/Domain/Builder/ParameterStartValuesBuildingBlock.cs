@@ -2,11 +2,11 @@ using OSPSuite.Assets;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public interface IParameterStartValuesBuildingBlock : IStartValuesBuildingBlock<IParameterStartValue>
+   public interface IParameterStartValuesBuildingBlock : IStartValuesBuildingBlock<ParameterStartValue>
    {
    }
 
-   public class ParameterStartValuesBuildingBlock : StartValueBuildingBlock<IParameterStartValue>, IParameterStartValuesBuildingBlock
+   public class ParameterStartValuesBuildingBlock : StartValueBuildingBlock<ParameterStartValue>, IParameterStartValuesBuildingBlock
    {
       public ParameterStartValuesBuildingBlock()
       {

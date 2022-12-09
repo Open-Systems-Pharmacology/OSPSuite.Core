@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using OSPSuite.Utility.Collections;
+﻿using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
 using OSPSuite.Core.Domain.Services;
@@ -39,22 +37,15 @@ namespace OSPSuite.Core.Domain.Builder
       void Remove(IObjectPath objectPath);
    }
 
-   public abstract class StartValueBuildingBlock<T> : BuildingBlock, IStartValuesBuildingBlock<T> where T : class, IStartValue
+   public abstract class StartValueBuildingBlock<T> : PathAndValueEntityBuildingBlock<T>, IStartValuesBuildingBlock<T> where T : class, IStartValue
    {
-      private readonly ICache<IObjectPath, T> _allStartValues;
-
       public string SpatialStructureId { get; set; }
       public string MoleculeBuildingBlockId { get; set; }
 
       public bool Uses(IBuildingBlock buildingBlock)
       {
-         return (refersTo(buildingBlock, SpatialStructureId))
-                || (refersTo(buildingBlock, MoleculeBuildingBlockId));
-      }
-
-      public void Remove(IObjectPath objectPath)
-      {
-         Remove(this[objectPath]);
+         return refersTo(buildingBlock, SpatialStructureId)
+                || refersTo(buildingBlock, MoleculeBuildingBlockId);
       }
 
       private bool refersTo(IBuildingBlock buildingBlock, string idToCheck)
@@ -64,24 +55,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       protected StartValueBuildingBlock()
       {
-         _allStartValues = new Cache<IObjectPath, T>(x => x.Path, x => null);
-      }
-
-      public T this[IObjectPath objectPath]
-      {
-         get { return _allStartValues[objectPath]; }
-         set { _allStartValues[objectPath] = value; }
-      }
-
-      public void Add(T startValue)
-      {
-         _allStartValues.Add(startValue);
-      }
-
-      public void Remove(T startValue)
-      {
-         if (startValue == null) return;
-         _allStartValues.Remove(startValue.Path);
+         _allValues = new Cache<IObjectPath, T>(x => x.Path, x => null);
       }
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
@@ -90,7 +64,6 @@ namespace OSPSuite.Core.Domain.Builder
          var sourceStartValeBuidlingBlock = source as IStartValuesBuildingBlock<T>;
          if (sourceStartValeBuidlingBlock == null) return;
 
-         sourceStartValeBuidlingBlock.Each(startValue => Add(cloneManager.Clone(startValue)));
          MoleculeBuildingBlockId = sourceStartValeBuidlingBlock.MoleculeBuildingBlockId;
          SpatialStructureId = sourceStartValeBuidlingBlock.SpatialStructureId;
       }
@@ -98,17 +71,7 @@ namespace OSPSuite.Core.Domain.Builder
       public override void AcceptVisitor(IVisitor visitor)
       {
          base.AcceptVisitor(visitor);
-         _allStartValues.Each(msv => msv.AcceptVisitor(visitor));
-      }
-
-      public IEnumerator<T> GetEnumerator()
-      {
-         return _allStartValues.GetEnumerator();
-      }
-
-      IEnumerator IEnumerable.GetEnumerator()
-      {
-         return GetEnumerator();
+         _allValues.Each(msv => msv.AcceptVisitor(visitor));
       }
    }
 }

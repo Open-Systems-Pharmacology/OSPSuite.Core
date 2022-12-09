@@ -5,7 +5,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain.Services
 {
-   public interface IMoleculeStartValuesCreator : IEmptyStartValueCreator<IMoleculeStartValue>
+   public interface IMoleculeStartValuesCreator : IEmptyStartValueCreator<MoleculeStartValue>
    {
       IMoleculeStartValuesBuildingBlock CreateFrom(ISpatialStructure spatialStructure, IMoleculeBuildingBlock moleculeBuildingBlock);
 
@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Domain.Services
       /// </param>
       /// <param name="valueOrigin">The value origin for the value</param>
       /// <returns>a MoleculeStartValue object</returns>
-      IMoleculeStartValue CreateMoleculeStartValue(IObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null);
+      MoleculeStartValue CreateMoleculeStartValue(IObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null);
    }
 
    internal class MoleculeStartValuesCreator : IMoleculeStartValuesCreator
@@ -65,18 +65,18 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private void setMoleculeStartValueFormula(IFormula formula, IMoleculeStartValue moleculeStartValue, IBuildingBlock moleculesStartValues)
+      private void setMoleculeStartValueFormula(IFormula formula, MoleculeStartValue moleculeStartValue, IBuildingBlock moleculesStartValues)
       {
          if (!formula.IsConstant())
             moleculeStartValue.Formula = _cloneManagerForBuildingBlock.Clone(formula, moleculesStartValues.FormulaCache);
       }
 
-      private static void setMoleculeStartValue(IMoleculeBuilder moleculeBuilder, IMoleculeStartValue moleculeStartValue)
+      private static void setMoleculeStartValue(IMoleculeBuilder moleculeBuilder, MoleculeStartValue moleculeStartValue)
       {
-         moleculeStartValue.StartValue = moleculeBuilder.GetDefaultMoleculeStartValue();
+         moleculeStartValue.Value = moleculeBuilder.GetDefaultMoleculeStartValue();
       }
 
-      public IMoleculeStartValue CreateMoleculeStartValue(IObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null)
+      public MoleculeStartValue CreateMoleculeStartValue(IObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null)
       {
          var msv = new MoleculeStartValue
          {
@@ -93,7 +93,7 @@ namespace OSPSuite.Core.Domain.Services
          return msv;
       }
 
-      public IMoleculeStartValue CreateEmptyStartValue(IDimension dimension)
+      public MoleculeStartValue CreateEmptyStartValue(IDimension dimension)
       {
          return CreateMoleculeStartValue(ObjectPath.Empty, string.Empty, dimension);
       }

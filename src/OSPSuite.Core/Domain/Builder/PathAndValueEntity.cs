@@ -6,7 +6,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public abstract class PathAndValueEntity : Entity, IUsingFormula, IWithDisplayUnit, IWithValueOrigin
+   public abstract class PathAndValueEntity : Entity, IUsingFormula, IWithDisplayUnit, IWithPath, IWithNullableValue
    {
       private IObjectPath _containerPath;
       protected IFormula _formula;
@@ -62,21 +62,11 @@ namespace OSPSuite.Core.Domain.Builder
          set => SetProperty(ref _displayUnit, value);
       }
 
-      public ValueOrigin ValueOrigin { get; }
 
       public IObjectPath Path
       {
          get => ContainerPath.Clone<IObjectPath>().AndAdd(Name);
          set => entityFullPathToComponents(value);
-      }
-
-      public void UpdateValueOriginFrom(ValueOrigin sourceValueOrigin)
-      {
-         if (Equals(ValueOrigin, sourceValueOrigin))
-            return;
-
-         ValueOrigin.UpdateFrom(sourceValueOrigin);
-         OnPropertyChanged(() => ValueOrigin);
       }
 
       /// <summary>
@@ -132,6 +122,8 @@ namespace OSPSuite.Core.Domain.Builder
          set => SetProperty(ref _value, value);
       }
 
+      public ValueOrigin ValueOrigin { get; }
+
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
@@ -146,6 +138,15 @@ namespace OSPSuite.Core.Domain.Builder
          ValueOrigin.UpdateAllFrom(sourcePathAndValueEntity.ValueOrigin);
       }
 
+      public void UpdateValueOriginFrom(ValueOrigin sourceValueOrigin)
+      {
+         if (Equals(ValueOrigin, sourceValueOrigin))
+            return;
+
+         ValueOrigin.UpdateFrom(sourceValueOrigin);
+         OnPropertyChanged(() => ValueOrigin);
+      }
+      
       public override string ToString() => $"Path={ContainerPath}, Name={Name}";
    }
 }

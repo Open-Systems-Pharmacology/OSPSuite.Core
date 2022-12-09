@@ -129,15 +129,15 @@ namespace OSPSuite.Core.Helpers
          }
 
          // StartValue Types
-         if (x1.IsAnImplementationOf<IMoleculeStartValue>())
+         if (x1.IsAnImplementationOf<MoleculeStartValue>())
          {
-            AreEqualMoleculeStartValue((IMoleculeStartValue) x1, (IMoleculeStartValue) x2);
+            AreEqualMoleculeStartValue(x1 as MoleculeStartValue, x2 as MoleculeStartValue);
             return;
          }
 
-         if (x1.IsAnImplementationOf<IParameterStartValue>())
+         if (x1.IsAnImplementationOf<ParameterStartValue>())
          {
-            AreEqualParameterStartValue((IParameterStartValue) x1, (IParameterStartValue) x2);
+            AreEqualParameterStartValue(x1 as ParameterStartValue, x2 as ParameterStartValue);
             return;
          }
 
@@ -1047,23 +1047,23 @@ namespace OSPSuite.Core.Helpers
          AreEqualEnumerableOfNamedObjects(x1.Transports, x2.Transports, x => x.Name);
       }
 
-      public static void AreEqualMoleculeStartValue(IMoleculeStartValue x1, IMoleculeStartValue x2)
+      public static void AreEqualMoleculeStartValue(MoleculeStartValue x1, MoleculeStartValue x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          Assert.AreEqual(x1.IsPresent, x2.IsPresent);
          AreEqualObjectPath(x1.ContainerPath, x2.ContainerPath);
          AreEqualStrings(x1.MoleculeName, x2.MoleculeName);
-         AssertAreEqualNullableDouble(x1.StartValue, x2.StartValue);
+         AssertAreEqualNullableDouble(x1.Value, x2.Value);
          Assert.AreEqual(x1.ScaleDivisor, x2.ScaleDivisor, 1e-10);
          AssertAreEqual(x1.ValueOrigin, x2.ValueOrigin);
          AreEqualFormula(x1.Formula, x2.Formula);
       }
 
-      public static void AreEqualParameterStartValue(IParameterStartValue x1, IParameterStartValue x2)
+      public static void AreEqualParameterStartValue(ParameterStartValue x1, ParameterStartValue x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualObjectPath(x1.Path, x2.Path);
-         AssertAreEqualNullableDouble(x1.StartValue, x2.StartValue);
+         AssertAreEqualNullableDouble(x1.Value, x2.Value);
          AreEqualUnit(x1.DisplayUnit, x2.DisplayUnit);
          AreEqualDimension(x1.Dimension, x2.Dimension);
          AssertAreEqual(x1.ValueOrigin, x2.ValueOrigin);
@@ -1075,10 +1075,9 @@ namespace OSPSuite.Core.Helpers
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualObjectPath(x1.Path, x2.Path);
-         AssertAreEqualNullableDouble(x1.StartValue, x2.StartValue);
+         AssertAreEqualNullableDouble(x1.Value, x2.Value);
          AreEqualUnit(x1.DisplayUnit, x2.DisplayUnit);
          AreEqualDimension(x1.Dimension, x2.Dimension);
-         AssertAreEqual(x1.ValueOrigin, x2.ValueOrigin);
          AreEqualFormula(x1.Formula, x2.Formula);
       }
 

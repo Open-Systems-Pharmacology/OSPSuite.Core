@@ -18,9 +18,9 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   internal class ExpressionParameterDiffBuilder : StartValueDiffBuilder<ExpressionParameter>
+   internal class ExpressionParameterDiffBuilder : PathAndValueEntityDiffBuilder<ExpressionParameter>
    {
-      public ExpressionParameterDiffBuilder(IObjectComparer objectComparer, EntityDiffBuilder entityDiffBuilder, WithValueOriginComparison<ExpressionParameter> valueOriginComparison) : base(objectComparer, entityDiffBuilder, valueOriginComparison)
+      public ExpressionParameterDiffBuilder(IObjectComparer objectComparer, EntityDiffBuilder entityDiffBuilder) : base(objectComparer, entityDiffBuilder)
       {
       }
    }

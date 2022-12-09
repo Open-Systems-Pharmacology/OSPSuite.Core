@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Services
 
    public class When_updating_the_parameter_of_a_given_model_with_a_parameter_start_value_that_should_not_override_the_parameter_formula : concern_for_QuantityValuesUpdater
    {
-      private IParameterStartValue _psv;
+      private ParameterStartValue _psv;
       private IFormula _explicitFormula;
       private Parameter _parameter;
 
@@ -46,7 +46,7 @@ namespace OSPSuite.Core.Services
          _psv = new ParameterStartValue
          {
             OverrideFormulaWithValue = false,
-            StartValue = 10,
+            Value = 10,
             Path = new ObjectPath("Organism","P")
          };
          _buildConfiguration.ParameterStartValues = new ParameterStartValuesBuildingBlock {_psv};
@@ -69,7 +69,7 @@ namespace OSPSuite.Core.Services
 
    public class When_updating_the_parameter_of_a_given_model_with_a_parameter_start_value_that_should_override_the_parameter_formula : concern_for_QuantityValuesUpdater
    {
-      private IParameterStartValue _psv;
+      private ParameterStartValue _psv;
       private IFormula _explicitFormula;
       private Parameter _parameter;
 
@@ -82,7 +82,7 @@ namespace OSPSuite.Core.Services
          _psv = new ParameterStartValue
          {
             OverrideFormulaWithValue = true,
-            StartValue = 10,
+            Value = 10,
             Path = new ObjectPath("Organism", "P")
          };
          _buildConfiguration.ParameterStartValues = new ParameterStartValuesBuildingBlock { _psv };

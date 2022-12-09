@@ -1,22 +1,6 @@
-﻿using OSPSuite.Core.Domain.Services;
-
-namespace OSPSuite.Core.Domain.Builder
+﻿namespace OSPSuite.Core.Domain.Builder
 {
-   public class ExpressionParameter : PathAndValueEntity, IStartValue
+   public class ExpressionParameter : PathAndValueEntity
    {
-      /// <summary>
-      ///    Do not use! When refactoring on promotion to core, this should be removed
-      /// </summary>
-      public double? StartValue { get; set; }
-
-      public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
-      {
-         base.UpdatePropertiesFrom(source, cloneManager);
-
-         if (!(source is ExpressionParameter sourceExpressionParameter))
-            return;
-
-         StartValue = sourceExpressionParameter.StartValue;
-      }
    }
 }

@@ -98,7 +98,7 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class ExpressionProfileBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<ExpressionProfileBuildingBlock, ExpressionParameter>
+   public class ExpressionProfileBuildingBlockXmlSerializer : BuildingBlockXmlSerializer<ExpressionProfileBuildingBlock, ExpressionParameter>
    {
       public override void PerformMapping()
       {
@@ -107,11 +107,11 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class MoleculeStartValuesBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<MoleculeStartValuesBuildingBlock, IMoleculeStartValue>
+   public class MoleculeStartValuesBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<MoleculeStartValuesBuildingBlock, MoleculeStartValue>
    {
    }
 
-   public class ParameterStartValuesBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<ParameterStartValuesBuildingBlock, IParameterStartValue>
+   public class ParameterStartValuesBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<ParameterStartValuesBuildingBlock, ParameterStartValue>
    {
    }
 

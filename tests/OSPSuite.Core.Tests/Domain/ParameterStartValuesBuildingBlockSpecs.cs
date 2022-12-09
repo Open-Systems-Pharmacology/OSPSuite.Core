@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Domain
 
    public class When_settting_a_parameter_start_value_by_object_path : concern_for_ParameterStartValuesBuildingBlock
    {
-      IParameterStartValue _psv;
+      ParameterStartValue _psv;
 
       protected override void Context()
       {
