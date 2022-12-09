@@ -295,13 +295,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var columnDescription = dataSheet.GetColumnDescription(currentParameter.ColumnName);
          var element = row.Data.ElementAt(columnDescription.Index).Trim();
 
+         //unit comes from a column
          if (!currentParameter.MappedColumn.Unit.ColumnName.IsNullOrEmpty())
          {
-            ColumnDescription unitColumnDescription = null;
-            if (!string.IsNullOrEmpty(currentParameter.MappedColumn.Unit.ColumnName))
-               unitColumnDescription = dataSheet.GetColumnDescription(currentParameter.MappedColumn.Unit.ColumnName);
-            if (unitColumnDescription == null)
-               throw new MissingColumnException(dataSheet.SheetName, currentParameter.MappedColumn.Unit.ColumnName);
+            checkThatMappedColumnExists(currentParameter.MappedColumn.Unit.ColumnName, dataSheet);
          }
 
          var unit = currentParameter.MappedColumn.Unit.ExtractUnit(columnName => dataSheet.GetColumnDescription(columnName).Index, row.Data);
@@ -330,15 +327,19 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          };
       }
 
+      private static void checkThatMappedColumnExists(string columnName, DataSheet dataSheet)
+      {
+         var columnDescription = dataSheet.GetColumnDescription(columnName);
+         if (columnDescription == null)
+            throw new MissingColumnException(dataSheet.SheetName, columnName);
+      }
+
       private SimulationPoint parseMappingOnSameGivenColumn(MappingDataFormatParameter currentParameter, DataSheet dataSheet, UnformattedRow row)
       {
+         //Lloq comes from a column
          if (!currentParameter.MappedColumn.LloqColumn.IsNullOrEmpty())
          {
-            ColumnDescription lloqColumnDescription = null;
-            if (!string.IsNullOrEmpty(currentParameter.MappedColumn.LloqColumn))
-               lloqColumnDescription = dataSheet.GetColumnDescription(currentParameter.MappedColumn.LloqColumn);
-            if (lloqColumnDescription == null)
-               throw new MissingColumnException(dataSheet.SheetName, currentParameter.MappedColumn.LloqColumn);
+            checkThatMappedColumnExists(currentParameter.MappedColumn.LloqColumn, dataSheet);
          }
 
          var lloqIndex = string.IsNullOrWhiteSpace(currentParameter.MappedColumn.LloqColumn)
