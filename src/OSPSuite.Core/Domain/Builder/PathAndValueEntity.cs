@@ -19,6 +19,7 @@ namespace OSPSuite.Core.Domain.Builder
          Dimension = Constants.Dimension.NO_DIMENSION;
          Value = null;
          ContainerPath = ObjectPath.Empty;
+         ValueOrigin = new ValueOrigin();
       }
 
       private void entityFullPathToComponents(IObjectPath fullPath)
@@ -121,6 +122,8 @@ namespace OSPSuite.Core.Domain.Builder
          set => SetProperty(ref _value, value);
       }
 
+      public ValueOrigin ValueOrigin { get; }
+
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
@@ -132,8 +135,18 @@ namespace OSPSuite.Core.Domain.Builder
          DisplayUnit = sourcePathAndValueEntity.DisplayUnit;
          Dimension = sourcePathAndValueEntity.Dimension;
          Formula = cloneManager.Clone(sourcePathAndValueEntity.Formula);
+         ValueOrigin.UpdateAllFrom(sourcePathAndValueEntity.ValueOrigin);
       }
 
+      public void UpdateValueOriginFrom(ValueOrigin sourceValueOrigin)
+      {
+         if (Equals(ValueOrigin, sourceValueOrigin))
+            return;
+
+         ValueOrigin.UpdateFrom(sourceValueOrigin);
+         OnPropertyChanged(() => ValueOrigin);
+      }
+      
       public override string ToString() => $"Path={ContainerPath}, Name={Name}";
    }
 }

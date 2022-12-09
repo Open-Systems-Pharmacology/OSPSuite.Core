@@ -64,7 +64,7 @@ namespace OSPSuite.Core.Domain.Builder
          return isBaseEquivalent && isEquivalent;
       }
 
-      public virtual double ScaleDivisor
+      public double ScaleDivisor
       {
          get => _scaleDivisor;
          set => SetProperty(ref _scaleDivisor, value);
