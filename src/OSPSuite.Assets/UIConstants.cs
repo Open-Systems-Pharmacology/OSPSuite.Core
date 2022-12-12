@@ -1996,6 +1996,7 @@ namespace OSPSuite.Assets
    {
       public static string AsDeveloperOnly(string menuName) => $"{menuName} (Developer only)...";
 
+      public static readonly string NewExpressionProfile = "Add &Expression Profile";
       public static readonly string ExportToExcel = "Export to Excel...";
       public static readonly string CopyToClipboard = "Copy to Clipboard";
       public static readonly string ResetZoom = "Reset Zoom";
@@ -2068,6 +2069,7 @@ namespace OSPSuite.Assets
 
    public static class MenuDescriptions
    {
+      public static readonly string NewExpressionProfileDescription = "Create a new expression profile...";
       public static readonly string UpdateChartTemplateFromCurrentSettings = "Updates the template from current chart settings";
       public static readonly string ApplyTemplateToCurrentChart = "Applies the template to the current chart";
       public static readonly string CreateNewTemplateFromCurrentChartSettings = "Create new template from current chart settings";
