@@ -3,7 +3,7 @@ using static OSPSuite.Core.Domain.Constants.ContainerName;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public class ExpressionProfileBuildingBlock : PathAndValueEntityBuildingBlock<ExpressionParameter>
+   public class ExpressionProfileBuildingBlock : PathAndValueEntityBuildingBlockSourcedFromPKSimBuildingBlock<ExpressionParameter>
    {
       public override string Icon => Type.IconName;
 
@@ -13,7 +13,6 @@ namespace OSPSuite.Core.Domain.Builder
 
       public ExpressionType Type { set; get; }
 
-      public string PKSimVersion { set; get; }
 
       public virtual string Category { get; private set; }
 
@@ -45,7 +44,6 @@ namespace OSPSuite.Core.Domain.Builder
          if (sourceExpressionProfile == null) return;
 
          Type = sourceExpressionProfile.Type;
-         PKSimVersion = sourceExpressionProfile.PKSimVersion;
 
          // Name is required because our base objects will the private property
          // But in this case the name is decomposed and stored in 3 other properties
