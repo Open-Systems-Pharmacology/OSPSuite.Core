@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public abstract class PathAndValueEntityBuildingBlockSourcedFromPKSimBuildingBlock<T> : PathAndValueEntityBuildingBlock<T> where T : class, IWithPath, IObjectBase
+   public abstract class PathAndValueEntityBuildingBlockFromPKSim<T> : PathAndValueEntityBuildingBlock<T> where T : class, IWithPath, IObjectBase
    {
       public string PKSimVersion { set; get; }
 
@@ -10,7 +10,7 @@ namespace OSPSuite.Core.Domain.Builder
       {
          base.UpdatePropertiesFrom(source, cloneManager);
 
-         var pathAndValueEntityBuildingBlock = source as PathAndValueEntityBuildingBlockSourcedFromPKSimBuildingBlock<T>;
+         var pathAndValueEntityBuildingBlock = source as PathAndValueEntityBuildingBlockFromPKSim<T>;
          if (pathAndValueEntityBuildingBlock == null)
             return;
 

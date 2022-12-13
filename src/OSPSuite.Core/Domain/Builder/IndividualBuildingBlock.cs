@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public class IndividualBuildingBlock : PathAndValueEntityBuildingBlockSourcedFromPKSimBuildingBlock<IndividualParameter>
+   public class IndividualBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<IndividualParameter>
    {
       public CoreOriginData OriginData { get; set; }
 

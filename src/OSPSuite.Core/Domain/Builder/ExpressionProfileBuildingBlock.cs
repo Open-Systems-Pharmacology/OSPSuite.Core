@@ -3,7 +3,7 @@ using static OSPSuite.Core.Domain.Constants.ContainerName;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public class ExpressionProfileBuildingBlock : PathAndValueEntityBuildingBlockSourcedFromPKSimBuildingBlock<ExpressionParameter>
+   public class ExpressionProfileBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<ExpressionParameter>
    {
       public override string Icon => Type.IconName;
 
