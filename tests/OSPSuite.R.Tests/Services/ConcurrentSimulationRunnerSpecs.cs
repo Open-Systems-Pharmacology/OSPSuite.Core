@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core;
@@ -455,6 +456,42 @@ namespace OSPSuite.R.Services
       {
          var res = sut.RunConcurrently();
          res[0].Succeeded.ShouldBeTrue();
+      }
+   }
+
+   public class When_running_a_simulation_that_crashes : concern_for_ConcurrentSimulationRunner
+   {
+      private Simulation _simulation;
+      private IContainerTask _containerTask;
+      private string[] _allMoleculePaths;
+      private IEnumerable<double> _moleculesStartValues;
+      private ConcurrentRunSimulationBatch _concurrentRunSimulationBatch;
+      private ConcurrencyManagerResult<SimulationResults>[] _results;
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("ErrorSim.pkml"));
+
+         _containerTask = Api.GetContainerTask();
+         _allMoleculePaths = _containerTask.AllMoleculesPathsIn(_simulation);
+         _moleculesStartValues = _allMoleculePaths.Select(x => _containerTask.GetValueByPath(_simulation, x, true));
+
+         _concurrentRunSimulationBatch = new ConcurrentRunSimulationBatch(_simulation, new SimulationBatchOptions { VariableMolecules = _allMoleculePaths });
+         _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { InitialValues = _moleculesStartValues.ToArray() });
+         sut.AddSimulationBatch(_concurrentRunSimulationBatch);
+      }
+
+      protected override void Because()
+      {
+         _results = sut.RunConcurrently();
+      }
+
+      [Observation]
+      public void an_error_message_should_result()
+      {
+         _results[0].ErrorMessage.ShouldNotBeEmpty();
+         Assert.True(false);
       }
    }
 
