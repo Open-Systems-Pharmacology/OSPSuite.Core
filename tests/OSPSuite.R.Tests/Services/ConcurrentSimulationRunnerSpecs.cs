@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core;
@@ -9,6 +9,8 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.R.Domain;
+using OSPSuite.Utility.Extensions;
+using SimulationRunOptions = OSPSuite.R.Domain.SimulationRunOptions;
 
 namespace OSPSuite.R.Services
 {
@@ -63,10 +65,11 @@ namespace OSPSuite.R.Services
    {
       private ConcurrencyManagerResult<SimulationResults>[] _results;
       private ConcurrentRunSimulationBatch _concurrentRunSimulationBatch;
+
       protected override void Context()
       {
          base.Context();
-         sut.SimulationRunOptions = new Domain.SimulationRunOptions { NumberOfCoresToUse = 19 };
+         sut.SimulationRunOptions = new SimulationRunOptions { NumberOfCoresToUse = 19 };
          var modelCoreSimulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("Aciclovir.pkml"));
 
          _concurrentRunSimulationBatch = new ConcurrentRunSimulationBatch(modelCoreSimulation, new SimulationBatchOptions { VariableParameters = new[] { "Aciclovir|Lipophilicity" } });
@@ -218,7 +221,6 @@ namespace OSPSuite.R.Services
 
       protected override void Because()
       {
-
          _simulationBatchRunValues.Add(new SimulationBatchRunValues
          {
             InitialValues = new[] { 10.0 },
@@ -268,13 +270,13 @@ namespace OSPSuite.R.Services
             {
                VariableMolecules = new[]
                {
-                  new[] {"Organism", "Kidney", "Intracellular", "Caffeine"}.ToPathString()
+                  new[] { "Organism", "Kidney", "Intracellular", "Caffeine" }.ToPathString()
                },
 
                VariableParameters = new[]
                {
-                  new[] {"Organism", "Liver", "Volume"}.ToPathString(),
-                  new[] {"Organism", "Hematocrit"}.ToPathString(),
+                  new[] { "Organism", "Liver", "Volume" }.ToPathString(),
+                  new[] { "Organism", "Hematocrit" }.ToPathString(),
                }
             }
          );
@@ -310,7 +312,6 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_be_able_to_simulate_the_simulation_for_multiple_runs()
       {
-
          foreach (var id in _ids)
          {
             var result = Api.GetSimulationBatchFactory().Create(_simulation, _concurrentRunSimulationBatch.SimulationBatchOptions).Run(_simulationBatchRunValues.FirstOrDefault(v => v.Id == id));
@@ -340,8 +341,8 @@ namespace OSPSuite.R.Services
             {
                VariableParameters = new[]
                {
-                  new[] {"Organism", "Liver", "Volume"}.ToPathString(),
-                  new[] {"Organism", "Hematocrit"}.ToPathString(),
+                  new[] { "Organism", "Liver", "Volume" }.ToPathString(),
+                  new[] { "Organism", "Hematocrit" }.ToPathString(),
                }
             }
          );
@@ -397,8 +398,8 @@ namespace OSPSuite.R.Services
             {
                VariableParameters = new[]
                {
-                  new[] {"Organism", "Liver", "Volume"}.ToPathString(),
-                  new[] {"Organism", "Hematocrit"}.ToPathString(),
+                  new[] { "Organism", "Liver", "Volume" }.ToPathString(),
+                  new[] { "Organism", "Hematocrit" }.ToPathString(),
                }
             }
          );
@@ -410,8 +411,8 @@ namespace OSPSuite.R.Services
             {
                VariableParameters = new[]
                {
-                  new[] {"Organism", "Liver", "Volume"}.ToPathString(),
-                  new[] {"Organism", "Hematocrit"}.ToPathString(),
+                  new[] { "Organism", "Liver", "Volume" }.ToPathString(),
+                  new[] { "Organism", "Hematocrit" }.ToPathString(),
                }
             }
          );
@@ -423,8 +424,8 @@ namespace OSPSuite.R.Services
             {
                VariableParameters = new[]
                {
-                  new[] {"Organism", "Liver", "Volume"}.ToPathString(),
-                  new[] {"Organism", "Hematocrit"}.ToPathString(),
+                  new[] { "Organism", "Liver", "Volume" }.ToPathString(),
+                  new[] { "Organism", "Hematocrit" }.ToPathString(),
                }
             }
          );
@@ -467,6 +468,7 @@ namespace OSPSuite.R.Services
       private IEnumerable<double> _moleculesStartValues;
       private ConcurrentRunSimulationBatch _concurrentRunSimulationBatch;
       private ConcurrencyManagerResult<SimulationResults>[] _results;
+      private string _fullMessage;
 
       protected override void Context()
       {
@@ -480,6 +482,16 @@ namespace OSPSuite.R.Services
          _concurrentRunSimulationBatch = new ConcurrentRunSimulationBatch(_simulation, new SimulationBatchOptions { VariableMolecules = _allMoleculePaths });
          _concurrentRunSimulationBatch.AddSimulationBatchRunValues(new SimulationBatchRunValues { InitialValues = _moleculesStartValues.ToArray() });
          sut.AddSimulationBatch(_concurrentRunSimulationBatch);
+
+         var simulationRunner = Api.GetSimulationRunner();
+         try
+         {
+            simulationRunner.Run(new SimulationRunArgs { Simulation = _simulation });
+         }
+         catch (Exception exception)
+         {
+            _fullMessage = exception.FullMessage();
+         }
       }
 
       protected override void Because()
@@ -490,8 +502,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void an_error_message_should_result()
       {
-         _results[0].ErrorMessage.ShouldNotBeEmpty();
-         Assert.True(false);
+         _results[0].ErrorMessage.ShouldBeEqualTo(_fullMessage);
       }
    }
 

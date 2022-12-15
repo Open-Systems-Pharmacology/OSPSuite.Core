@@ -12,7 +12,7 @@ namespace OSPSuite.R.Domain
       public string Id { get; set; }
       public IModelCoreSimulation Simulation { get; }
       private readonly List<SimulationBatchRunValues> _simulationBatchRunValues = new List<SimulationBatchRunValues>();
-
+      public SimulationRunOptions SimulationRunOptions { set; get; }
       public IReadOnlyList<SimulationBatchRunValues> SimulationBatchRunValues => _simulationBatchRunValues;
 
       public SimulationBatchOptions SimulationBatchOptions { get; }
@@ -32,7 +32,7 @@ namespace OSPSuite.R.Domain
 
       internal SimulationBatch AddNewBatch()
       {
-         var batch = Api.GetSimulationBatchFactory().Create(Simulation, SimulationBatchOptions);
+         var batch = Api.GetSimulationBatchFactory().Create(Simulation, SimulationBatchOptions, SimulationRunOptions);
          _simulationBatches.Enqueue(batch);
          return batch;
       }
