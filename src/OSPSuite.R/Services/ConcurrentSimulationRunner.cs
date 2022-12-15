@@ -111,7 +111,7 @@ namespace OSPSuite.R.Services
          return _concurrencyManager.RunAsync(
             batches,
             //Use {} to specify using the overload without return value
-            (batch, ct) => { batch.AddNewBatch(); },
+            (batch, ct) => { batch.AddNewBatch(SimulationRunOptions); },
             _cancellationTokenSource.Token,
             numberOfCoresToUse());
       }
