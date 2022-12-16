@@ -30,9 +30,9 @@ namespace OSPSuite.R.Domain
          Id = generateId();
       }
 
-      internal SimulationBatch AddNewBatch()
+      internal SimulationBatch AddNewBatch(SimulationRunOptions simulationRunOptions)
       {
-         var batch = Api.GetSimulationBatchFactory().Create(Simulation, SimulationBatchOptions);
+         var batch = Api.GetSimulationBatchFactory().Create(Simulation, SimulationBatchOptions, simulationRunOptions);
          _simulationBatches.Enqueue(batch);
          return batch;
       }

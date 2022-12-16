@@ -47,7 +47,7 @@ namespace OSPSuite.R.Services
       protected override void Context()
       {
          base.Context();
-         _simulationRunResults = new SimulationRunResults(true, Enumerable.Empty<SolverWarning>(),
+         _simulationRunResults = new SimulationRunResults(Enumerable.Empty<SolverWarning>(),
             DomainHelperForSpecs.IndividualSimulationDataRepositoryFor("Sim"));
          _simulation = new ModelCoreSimulation();
          A.CallTo(_simModelManager).WithReturnType<SimulationRunResults>().Returns(_simulationRunResults);
