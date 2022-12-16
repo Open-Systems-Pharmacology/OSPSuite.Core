@@ -1357,6 +1357,8 @@ namespace OSPSuite.Assets
       public static readonly string SimpleParseErrorMessage = "There were errors while parsing your data. Navigate to the sheets to read the concrete error.";
       public static readonly string FoldValueMustBeGreaterThanOne = "Fold value must be a number greater than one.";
 
+      public static  string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
+
       public static string ParseErrorMessage(IEnumerable<string> errors) => $"There were errors while parsing your data: {string.Join(". ", errors)}";
 
       public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) =>
