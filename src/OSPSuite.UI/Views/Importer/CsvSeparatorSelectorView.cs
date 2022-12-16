@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using OSPSuite.Assets;
+﻿using System.Collections.Generic;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
+using OSPSuite.Utility.Extensions;
+using static OSPSuite.Assets.Captions.Importer;
 
 namespace OSPSuite.UI.Views.Importer
 {
-   public partial class CsvSeparatorSelectorView : BaseModalView, ICsvSeparatorSelectorView
+   public partial class CSVSeparatorSelectorView : BaseModalView, ICSVSeparatorSelectorView
    {
       private ICsvSeparatorSelectorPresenter _presenter;
-      public CsvSeparatorSelectorView()
+      private const char Comma = ',';
+      private readonly List<char> _columnSeparatorList = new List<char> { Comma, '.', ' ', ';' };
+
+      public CSVSeparatorSelectorView()
       {
          InitializeComponent();
          fillSeparatorComboBox();
@@ -19,17 +22,15 @@ namespace OSPSuite.UI.Views.Importer
       public override void InitializeResources()
       {
          base.InitializeResources();
-         separatorDescriptionLabelControl.Appearance.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
+         previewMemoEdit.Enabled = false;
+         previewMemoEdit.Properties.LinesCount = 3;
+         previewMemoEdit.Properties.AutoHeight = true;
+         Caption = SeparatorSelection;
       }
 
       private void fillSeparatorComboBox()
       {
-         var separatorList = new List<char>() {',', '.', ' ', ';'};
-
-         foreach (var separator in separatorList)
-         {
-            separatorComboBoxEdit.Properties.Items.Add(separator);
-         }
+         _columnSeparatorList.Each(separator=> separatorComboBoxEdit.Properties.Items.Add(separator));
       }
 
       private void onSeparatorChanged()
@@ -42,10 +43,15 @@ namespace OSPSuite.UI.Views.Importer
          _presenter = presenter;
       }
 
-      public void SetDescription(string description)
+      public void SetPreview(string previewText)
       {
-         separatorDescriptionLabelControl.Text = description;
+         previewMemoEdit.Text = previewText;
          separatorComboBoxEdit.SelectedIndex = 0;
+      }
+
+      public void SetInstructions(string fileName)
+      {
+         fileNameLabel.Text = fileName;
       }
    }
 }
