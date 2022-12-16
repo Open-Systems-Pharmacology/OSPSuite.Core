@@ -226,9 +226,19 @@ namespace OSPSuite.Presentation.Services
       [Observation]
       public void should_import_simple_data_from_csv()
       {
-         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+         var csvSeparatorSelector = IoC.Resolve<ICsvSeparatorSelector>();
+         A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>.Ignored)).Returns(new CSVSeparators { ColumnSeparator = ';', DecimalSeparator = ',' });
+
+         var importFromConfiguration = sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(
-               "IntegrationSample1.csv")).Count.ShouldBeEqualTo(1);
+               "IntegrationSample1.csv"));
+
+
+         importFromConfiguration.Count.ShouldBeEqualTo(1);
+         var column = importFromConfiguration.First().Columns.First(x => x.Name.Equals("Concentration"));
+         column.ConvertToDisplayValues(column.Values).ShouldContain(0.2168224f, 0.4386293f);
+
+         // importFromConfiguration.First().Columns
       }
 
       [Observation]

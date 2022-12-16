@@ -6,7 +6,9 @@ using OSPSuite.Infrastructure.Import.Services;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 {
-   public interface ICsvDataSourceFile : IDataSourceFile {}
+   public interface ICsvDataSourceFile : IDataSourceFile
+   {
+   }
 
    public class CsvDataSourceFile : DataSourceFile, ICsvDataSourceFile
    {
@@ -16,12 +18,14 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
       {
          _csvSeparatorSelector = csvSeparatorSelector;
       }
+
       protected override void LoadFromFile(string path)
       {
-         var separator = _csvSeparatorSelector.GetCsvSeparator(path);
+         var csvSeparators = _csvSeparatorSelector.GetCsvSeparator(path);
 
          //if separator selection dialog was cancelled, abort
-         if (!(separator is char separatorCharacter)) return;
+         if (csvSeparators == null)
+            return;
 
          //we keep a copy of the already loaded sheets, in case the reading fails
          var alreadyLoadedDataSheets = DataSheets.Clone();
@@ -29,11 +33,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
          try
          {
-            using (var reader = new CsvReaderDisposer(path, separatorCharacter))
+            using (var reader = new CsvReaderDisposer(path, csvSeparators.ColumnSeparator))
             {
                var csv = reader.Csv;
                var headers = csv.GetFieldHeaders();
-               var rows = new List<List<string>>(headers.Length);
 
                var dataSheet = new DataSheet
                {
@@ -47,7 +50,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                while (csv.ReadNextRecord())
                {
                   csv.CopyCurrentRecordTo(currentRow);
-                  var rowList = currentRow.ToList();
+                  var rowList = currentRow.Select(x => x.Replace(csvSeparators.DecimalSeparator, '.')).ToList();
                   var levels = getMeasurementLevels(rowList);
                   dataSheet.CalculateColumnDescription(levels);
                   dataSheet.AddRow(rowList);
@@ -73,7 +76,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
          foreach (var item in dataList)
          {
-            if (Double.TryParse(item, out var doubleValue))
+            if (double.TryParse(item, out _))
                resultList.Add(ColumnDescription.MeasurementLevel.Numeric);
             else
                resultList.Add(ColumnDescription.MeasurementLevel.Discrete);

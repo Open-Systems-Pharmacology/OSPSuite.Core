@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -56,7 +57,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          {
             var mappedColumn = parameter.MappedColumn;
 
-            if (mappedColumn?.Unit == null || mappedColumn?.Dimension != null)
+            if (mappedColumn?.Unit == null || mappedColumn.Dimension != null)
                continue;
 
             var concreteColumnInfo = columnInfos[mappedColumn.Name];
@@ -87,7 +88,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       private void setSecondaryColumnUnit(ColumnInfoCache columnInfos)
       {
-         var mappings = Parameters.OfType<MappingDataFormatParameter>();
+         var mappings = Parameters.OfType<MappingDataFormatParameter>().ToList();
          foreach (var column in columnInfos.Where(c => !c.IsAuxiliary))
          {
             foreach (var relatedColumn in columnInfos.RelatedColumnsFrom(column.Name))
@@ -106,7 +107,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          }
       }
 
-      protected abstract string ExtractLloq(string description, DataSheet dataSheet, List<string> keys, ref double rank);
+      protected abstract string ExtractLLOQ(string description, DataSheet dataSheet, List<string> keys, ref double rank);
 
       protected abstract UnitDescription ExtractUnits(string description, DataSheet dataSheet, List<string> keys,
          IReadOnlyList<IDimension> supportedDimensions, ref double rank);
@@ -129,11 +130,11 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                keys.Remove(headerKey);
                var units = ExtractUnits(headerKey, dataSheet, keys, header.SupportedDimensions, ref rank);
 
-               var col = new Column()
+               var col = new Column
                {
                   Name = headerName,
                   Unit = units,
-                  LloqColumn = ExtractLloq(headerKey, dataSheet, keys, ref rank)
+                  LloqColumn = ExtractLLOQ(headerKey, dataSheet, keys, ref rank)
                };
                if (columnInfos[headerName].IsAuxiliary)
                {
@@ -181,7 +182,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             {
                Name = header,
                Unit = units,
-               LloqColumn = ExtractLloq(headerKey, dataSheet, keys, ref rank)
+               LloqColumn = ExtractLLOQ(headerKey, dataSheet, keys, ref rank)
             };
             if (columnInfos[header].IsAuxiliary)
             {
@@ -222,7 +223,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                .Where(p => p.IsGroupingCriterion())
                .Select(p => p.ColumnName);
 
-         return buildDataSets(dataSheet, groupingCriteria, columnInfos);
+         return buildDataSets(dataSheet, groupingCriteria.ToList(), columnInfos);
       }
 
       private string rowId(IEnumerable<string> parameters, DataSheet dataSheet, UnformattedRow row)
@@ -238,7 +239,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             );
       }
 
-      private IEnumerable<ParsedDataSet> buildDataSets(DataSheet dataSheet, IEnumerable<string> groupingParameters,
+      private IEnumerable<ParsedDataSet> buildDataSets(DataSheet dataSheet, IReadOnlyList<string> groupingParameters,
          Cache<string, ColumnInfo> columnInfos)
       {
          var cachedUnformattedRows = new Cache<string, List<UnformattedRow>>();
@@ -304,7 +305,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var unit = currentParameter.MappedColumn.Unit.ExtractUnit(columnName => dataSheet.GetColumnDescription(columnName).Index, row.Data);
 
          if (double.TryParse(element, out var result))
-            return new SimulationPoint()
+            return new SimulationPoint
             {
                Measurement = result,
                Unit = unit,
@@ -313,14 +314,14 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          if (element.StartsWith("<"))
          {
             result = element.Substring(1).ConvertedTo<double>();
-            return new SimulationPoint()
+            return new SimulationPoint
             {
                Lloq = result,
                Unit = unit
             };
          }
 
-         return new SimulationPoint()
+         return new SimulationPoint
          {
             Measurement = double.NaN,
             Unit = unit

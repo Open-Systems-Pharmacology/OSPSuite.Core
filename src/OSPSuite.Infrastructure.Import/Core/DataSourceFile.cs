@@ -1,18 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
    /// <summary>
-   /// Single file containing the data, e.g. excel file or csv file
+   ///    Single file containing the data, e.g. excel file or csv file
    /// </summary>
    public interface IDataSourceFile
    {
-	   string Path { get; set; }
+      string Path { get; set; }
       IDataFormat Format { get; set; }
+
       IList<IDataFormat> AvailableFormats { get; set; }
+
       //Stores what sheet was used to calculate the format
       //so the presenter can actually select such a sheet
       //as active when initialized
@@ -27,9 +28,10 @@ namespace OSPSuite.Infrastructure.Import.Core
       public IDataFormat Format { get; set; }
 
       private IList<IDataFormat> _availableFormats;
-      public IList<IDataFormat> AvailableFormats 
+
+      public IList<IDataFormat> AvailableFormats
       {
-         get => _availableFormats; 
+         get => _availableFormats;
          set
          {
             _availableFormats = value;
@@ -39,16 +41,22 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public string FormatCalculatedFrom { get; set; }
       public DataSheetCollection DataSheets { get; } = new DataSheetCollection();
+
       protected DataSourceFile(IImportLogger logger)
       {
          _logger = logger;
       }
-      
+
       private string _path;
-      public string Path 
+
+      public string Path
       {
-         get  => _path; 
-         set { _path = value; LoadFromFile(value); }
+         get => _path;
+         set
+         {
+            _path = value;
+            LoadFromFile(value);
+         }
       }
 
       protected abstract void LoadFromFile(string path);
