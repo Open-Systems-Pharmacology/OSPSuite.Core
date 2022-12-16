@@ -29,12 +29,19 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public string Error { get; }
 
-      public SimulationRunResults(bool success, IEnumerable<SolverWarning> warnings, DataRepository results, string error = null)
+      public SimulationRunResults(IEnumerable<SolverWarning> warnings, string error)
       {
-         Success = success;
-         Warnings = warnings;
-         Results = results;
          Error = error;
+         Results = new DataRepository();
+         Success = false;
+         Warnings = warnings;
+      }
+
+      public SimulationRunResults(IEnumerable<SolverWarning> warnings, DataRepository results)
+      {
+         Results = results;
+         Success = true;
+         Warnings = warnings;
       }
    }
 }
