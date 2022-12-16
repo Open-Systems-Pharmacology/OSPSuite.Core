@@ -8,12 +8,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 {
    public class DataFormatNonmem : AbstractColumnsDataFormat
    {
-      private const string _name = "Nonmem";
-      private const string _description = "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/797";
-      public override string Name => _name;
-      public override string Description => _description;
+      public override string Name => "Nonmem";
+      public override string Description => "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/797";
 
-      protected override string ExtractLloq(string description, DataSheet dataSheet, List<string> keys, ref double rank)
+      protected override string ExtractLLOQ(string description, DataSheet dataSheet, List<string> keys, ref double rank)
       {
          var lloqKey = dataSheet.GetHeaders().FindHeader(description + "_LLOQ");
          if (lloqKey == null)

@@ -1,21 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Infrastructure.Import.Core.Extensions;
-using System.Text.RegularExpressions;
 using OSPSuite.Core.Import;
+using OSPSuite.Infrastructure.Import.Core.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 {
    public class MixColumnsDataFormat : AbstractColumnsDataFormat
    {
-      private const string _name = "Mixin";
-      private const string _description = "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/639\rhttps://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/797";
-      public override string Name => _name;
-      public override string Description => _description;
-      
-      protected override string ExtractLloq(string description, DataSheet dataSheet, List<string> keys, ref double rank)
+      public override string Name => "Mixin";
+      public override string Description => "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/639\rhttps://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/797";
+
+      protected override string ExtractLLOQ(string description, DataSheet dataSheet, List<string> keys, ref double rank)
       {
          if (dataSheet.GetColumn(description).Any(element => element.Trim().StartsWith("<")))
          {
@@ -28,6 +25,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          {
             return "";
          }
+
          keys.Remove(lloqKey);
          rank++;
          return lloqKey;

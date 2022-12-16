@@ -453,6 +453,9 @@ namespace OSPSuite.Assets
          public static readonly string NewDataStetsWillBeImported = "New datasets that will be imported";
          public static readonly string ReloadData = "Reload Data";
          public static readonly string SeparatorSelection = "Separator Selection";
+         public static readonly string DecimalSeparator = "Decimal Separator";
+         public static readonly string ColumnSeparator = "Column Separator";
+
          public static string LLOQInconsistentValuesAt(string dataRepositoryName) => $"There were different LLOQ values detected for the data from a single source. Please check data under name {dataRepositoryName}. Are you sure you want to continue with import?";
          public static string CsvSeparatorInstructions(string fileName) => $"Please select the separators for '{fileName}':";
 
