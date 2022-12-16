@@ -111,8 +111,11 @@ namespace OSPSuite.Core.Domain.Services
          var warnings = WarningsFrom(_simModelSimulation);
          var error = errorFromException ?? (hasResults ? null : Error.SimulationDidNotProduceResults);
 
-         var success = error == null;
-         return new SimulationRunResults(success, warnings, success ? getResults() : null, error);
+         
+         if (error == null)
+            return new SimulationRunResults(warnings, getResults());
+
+         return new SimulationRunResults(warnings, error);
       }
 
       private bool simulationHasResults(Simulation simModelSimulation) => simModelSimulation.AllValues.Any();
