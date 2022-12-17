@@ -15,7 +15,8 @@ namespace OSPSuite.Core.Serializers
             FormulaComparison = FormulaComparison.Value,
             OnlyComputingRelevant = true,
             RelativeTolerance = 1e-2,
-            ShowValueOrigin = false
+            ShowValueOrigin = false,
+            CompareHiddenEntities = true
          };
 
 

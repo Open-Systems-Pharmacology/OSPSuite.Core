@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Comparison
       public FormulaComparison FormulaComparison { get; set; }
 
       /// <summary>
-      /// Specifies if hidden entities for PKSim (such as hidden parameters or constant formula) should be part of the comparison. This settings is application dependant (default is <c>false</c>)
+      /// Specifies if hidden entities for PKSim (such as hidden parameters or constant formula) should be part of the comparison. This settings is application dependent (default is <c>false</c>)
       /// </summary>
       public bool CompareHiddenEntities { get; set; }
 
