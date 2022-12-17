@@ -1,27 +1,26 @@
 ﻿using DevExpress.XtraLayout.Utils;
-using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.Utility.Format;
+using static OSPSuite.Assets.Captions.ParameterIdentification;
 
 namespace OSPSuite.UI.Views
 {
    public partial class SimulationVsObservedDataView : BaseUserControl, ISimulationVsObservedDataView
    {
       private ISimulationVsObservedDataPresenter _presenter;
-      private readonly IFormatter<double> _doubleFormatter;
+      private readonly IFormatter<double> _doubleFormatter = new DoubleFormatter();
 
       public SimulationVsObservedDataView()
       {
          InitializeComponent();
          totalErrorLayoutControlItem.TextVisible = true;
          totalErrorLayoutControlItem.Visibility = LayoutVisibility.Never;
-         totalErrorLayoutControlItem.Text = Captions.ParameterIdentification.TotalError; ;
          totalErrorTextEdit.ReadOnly = true;
-         _doubleFormatter = new DoubleFormatter();
       }
 
       public void SetAnalysisView(IView view)
@@ -38,6 +37,12 @@ namespace OSPSuite.UI.Views
       public void AttachPresenter(ISimulationVsObservedDataPresenter presenter)
       {
          _presenter = presenter;
+      }
+
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         totalErrorLayoutControlItem.Text = TotalError.FormatForLabel();
       }
    }
 }
