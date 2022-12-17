@@ -24,7 +24,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
          var csvSeparators = _csvSeparatorSelector.GetCsvSeparator(path);
 
          //if separator selection dialog was cancelled, abort
-         if (csvSeparators == null)
+         if (csvSeparators.ColumnSeparator == null)
             return;
 
          //we keep a copy of the already loaded sheets, in case the reading fails
@@ -33,7 +33,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
          try
          {
-            using (var reader = new CsvReaderDisposer(path, csvSeparators.ColumnSeparator))
+            using (var reader = new CsvReaderDisposer(path, csvSeparators.ColumnSeparator.Value))
             {
                var csv = reader.Csv;
                var headers = csv.GetFieldHeaders();

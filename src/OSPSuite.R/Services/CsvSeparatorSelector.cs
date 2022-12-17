@@ -4,7 +4,7 @@ namespace OSPSuite.R.Services
 {
    public interface ICsvDynamicSeparatorSelector : ICsvSeparatorSelector
    {
-      CSVSeparators CsvSeparators { set; }
+      (char? ColumnSeparator, char DecimalSeparator) CsvSeparators { set; }
    }
 
    /// <summary>
@@ -12,9 +12,9 @@ namespace OSPSuite.R.Services
    /// </summary>
    public class CsvSeparatorSelector : ICsvDynamicSeparatorSelector
    {
-      public CSVSeparators CsvSeparators { get; set; }
+      public (char? ColumnSeparator, char DecimalSeparator) CsvSeparators { get; set; }
 
-      public CSVSeparators GetCsvSeparator(string fileName)
+      public (char? ColumnSeparator, char DecimalSeparator) GetCsvSeparator(string fileName)
       {
          return CsvSeparators;
       }

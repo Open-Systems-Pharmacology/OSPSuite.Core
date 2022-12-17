@@ -12,7 +12,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    public interface ICSVSeparatorSelectorPresenter : IDisposablePresenter
    {
       void SetFileName(string fileName);
-      CSVSeparators GetCSVSeparators();
+      (char? ColumnSeparator, char DecimalSeparator) GetCSVSeparators();
       bool Canceled();
       int PreviewLineCount { get; }
       void SetColumnSeparator(char selectedSeparator);
@@ -60,13 +60,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          return text.ToString().WithEllipsis();
       }
 
-      public CSVSeparators GetCSVSeparators()
+      public (char? ColumnSeparator, char DecimalSeparator) GetCSVSeparators()
       {
-         return new CSVSeparators
-         {
-            ColumnSeparator = _columnSeparator,
-            DecimalSeparator = _decimalSeparator
-         };
+         return (_columnSeparator, _decimalSeparator);
       }
 
       public bool Canceled()
