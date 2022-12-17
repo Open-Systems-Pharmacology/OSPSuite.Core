@@ -7,6 +7,7 @@ using OSPSuite.Utility.Extensions;
 using System;
 using System.IO;
 using System.Linq;
+using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.R.Services
 {
@@ -26,6 +27,7 @@ namespace OSPSuite.R.Services
 
    public class When_importing_data_from_r : concern_for_DataImporter
    {
+
       [Observation]
       public void should_throw_on_invalid_file_name()
       {

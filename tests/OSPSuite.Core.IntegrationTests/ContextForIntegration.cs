@@ -16,14 +16,14 @@ using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Container.Castle;
-using OSPSuite.Utility.Container;
-using OSPSuite.Utility.Events;
-using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
-using OSPSuite.Presentation.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
+using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Presentation.Core;
+using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Core
 {
@@ -83,7 +83,7 @@ namespace OSPSuite.Core
          container.RegisterImplementationOf(progressManager);
 
          var csvSeparatorSelector = A.Fake<ICsvSeparatorSelector>();
-         A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>.Ignored)).Returns(';');
+         A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>.Ignored)).Returns(new CSVSeparators { ColumnSeparator = ';', DecimalSeparator = '.' });
          container.RegisterImplementationOf(csvSeparatorSelector);
 
 
@@ -106,9 +106,9 @@ namespace OSPSuite.Core
       private static void initGroupRepository()
       {
          var groupRepository = IoC.Resolve<IGroupRepository>();
-         var moBiGroup = new Group {Name = Constants.Groups.MOBI, Id = "1"};
-         var undefinedGroup = new Group {Name = Constants.Groups.UNDEFINED, Id = "0"};
-         var solverSettingsGroup = new Group {Name = Constants.Groups.SOLVER_SETTINGS, Id = "2"};
+         var moBiGroup = new Group { Name = Constants.Groups.MOBI, Id = "1" };
+         var undefinedGroup = new Group { Name = Constants.Groups.UNDEFINED, Id = "0" };
+         var solverSettingsGroup = new Group { Name = Constants.Groups.SOLVER_SETTINGS, Id = "2" };
          groupRepository.AddGroup(moBiGroup);
          groupRepository.AddGroup(solverSettingsGroup);
          groupRepository.AddGroup(undefinedGroup);
@@ -128,14 +128,12 @@ namespace OSPSuite.Core
          dimensionFactory.AddMergingInformation(concentrationDimensionsMergingInformation);
       }
 
-
       private void initPKParameters()
       {
          var pkParameterRepository = IoC.Resolve<IPKParameterRepository>();
          var pKParameterLoader = IoC.Resolve<IPKParameterRepositoryLoader>();
          pKParameterLoader.Load(pkParameterRepository, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Files.PK_PARAMETERS_FILE_NAME));
       }
-
 
       public override void GlobalCleanup()
       {

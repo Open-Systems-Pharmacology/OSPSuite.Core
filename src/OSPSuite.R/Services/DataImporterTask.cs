@@ -7,7 +7,6 @@ using OSPSuite.Core.Import;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
@@ -21,8 +20,8 @@ namespace OSPSuite.R.Services
       void SaveConfiguration(ImporterConfiguration configuration, string path);
       IReadOnlyList<DataRepository> ImportExcelFromConfiguration(string configurationPath, string dataPath = null);
       IReadOnlyList<DataRepository> ImportExcelFromConfiguration(ImporterConfiguration configuration, string dataPath);
-      IReadOnlyList<DataRepository> ImportCsvFromConfiguration(string configurationPath, string dataPath, char columnSeparator);
-      IReadOnlyList<DataRepository> ImportCsvFromConfiguration(ImporterConfiguration configuration, string dataPath, char columnSeparator);
+      IReadOnlyList<DataRepository> ImportCsvFromConfiguration(string configurationPath, string dataPath, char columnSeparator, char decimalSeparator = '.');
+      IReadOnlyList<DataRepository> ImportCsvFromConfiguration(ImporterConfiguration configuration, string dataPath, char columnSeparator, char decimalSeparator = '.');
       MappingDataFormatParameter GetTime(ImporterConfiguration configuration);
       MappingDataFormatParameter GetMeasurement(ImporterConfiguration configuration);
       MappingDataFormatParameter GetError(ImporterConfiguration configuration);
@@ -98,15 +97,15 @@ namespace OSPSuite.R.Services
       public IReadOnlyList<DataRepository> ImportCsvFromConfiguration(
          string configurationPath,
          string dataPath,
-         char columnSeparator) =>
-         ImportCsvFromConfiguration(GetConfiguration(configurationPath), dataPath, columnSeparator);
+         char columnSeparator, char decimalSeparator = '.') =>
+         ImportCsvFromConfiguration(GetConfiguration(configurationPath), dataPath, columnSeparator, decimalSeparator);
 
       public IReadOnlyList<DataRepository> ImportCsvFromConfiguration(
          ImporterConfiguration configuration,
          string dataPath,
-         char columnSeparator)
+         char columnSeparator, char decimalSeparator = '.')
       {
-         _csvSeparatorSelector.CsvSeparator = columnSeparator;
+         _csvSeparatorSelector.CsvSeparators = new CSVSeparators { ColumnSeparator = columnSeparator, DecimalSeparator = decimalSeparator };
          return _dataImporter.ImportFromConfiguration(
             configuration,
             _metaDataCategories,
@@ -119,9 +118,9 @@ namespace OSPSuite.R.Services
       public ImporterConfiguration GetConfiguration(string filePath)
       {
          var configuration = _pkmlPersistor.Load<ImporterConfiguration>(filePath);
-         if (!string.IsNullOrEmpty(configuration.NamingConventions)) 
+         if (!string.IsNullOrEmpty(configuration.NamingConventions))
             return configuration;
-         
+
          var separator = Constants.ImporterConstants.NAMING_PATTERN_SEPARATORS.First();
          var keys = new List<string>
          {
@@ -214,7 +213,7 @@ namespace OSPSuite.R.Services
 
       public void SetAllLoadedSheet(ImporterConfiguration configuration, string sheet)
       {
-         SetAllLoadedSheet(configuration, new[] {sheet});
+         SetAllLoadedSheet(configuration, new[] { sheet });
       }
 
       public string[] GetAllGroupingColumns(ImporterConfiguration configuration)
