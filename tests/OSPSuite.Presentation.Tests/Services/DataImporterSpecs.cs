@@ -227,7 +227,7 @@ namespace OSPSuite.Presentation.Services
       public void should_import_simple_data_from_csv()
       {
          var csvSeparatorSelector = IoC.Resolve<ICsvSeparatorSelector>();
-         A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>.Ignored)).Returns(new CSVSeparators { ColumnSeparator = ';', DecimalSeparator = ',' });
+         A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>.Ignored)).Returns((';', ','));
 
          var importFromConfiguration = sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
             getFileFullName(

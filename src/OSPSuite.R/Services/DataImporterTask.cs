@@ -105,7 +105,7 @@ namespace OSPSuite.R.Services
          string dataPath,
          char columnSeparator, char decimalSeparator = '.')
       {
-         _csvSeparatorSelector.CsvSeparators = new CSVSeparators { ColumnSeparator = columnSeparator, DecimalSeparator = decimalSeparator };
+         _csvSeparatorSelector.CsvSeparators = (';', ',');
          return _dataImporter.ImportFromConfiguration(
             configuration,
             _metaDataCategories,

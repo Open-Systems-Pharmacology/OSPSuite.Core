@@ -20,7 +20,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       protected override void Context()
       {
          var csvSeparatorSelector = A.Fake<ICsvSeparatorSelector>();
-         A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>._)).Returns(new CSVSeparators { ColumnSeparator = ',', DecimalSeparator = '.' });
+         A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>._)).Returns((',', '.'));
 
          sut = new CsvDataSourceFile(A.Fake<IImportLogger>(), csvSeparatorSelector);
       }

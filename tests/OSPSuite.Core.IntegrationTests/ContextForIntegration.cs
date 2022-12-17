@@ -83,7 +83,7 @@ namespace OSPSuite.Core
          container.RegisterImplementationOf(progressManager);
 
          var csvSeparatorSelector = A.Fake<ICsvSeparatorSelector>();
-         A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>.Ignored)).Returns(new CSVSeparators { ColumnSeparator = ';', DecimalSeparator = '.' });
+         A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>.Ignored)).Returns((';', ','));
          container.RegisterImplementationOf(csvSeparatorSelector);
 
 
