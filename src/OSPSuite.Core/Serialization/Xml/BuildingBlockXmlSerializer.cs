@@ -98,7 +98,25 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class ExpressionProfileBuildingBlockXmlSerializer : BuildingBlockXmlSerializer<ExpressionProfileBuildingBlock, ExpressionParameter>
+   public class PathAndValueEntityBuildingBlockFromPKSimXmlSerializer<TBuildingBlock, TBuilder> : BuildingBlockXmlSerializer<TBuildingBlock, TBuilder> where TBuilder : PathAndValueEntity where TBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<TBuilder>
+   {
+      public override void PerformMapping()
+      {
+         base.PerformMapping();
+         Map(x => x.PKSimVersion);
+      }
+   }
+
+   public class IndividualBuildingBlockXmlSerializer : PathAndValueEntityBuildingBlockFromPKSimXmlSerializer<IndividualBuildingBlock, IndividualParameter>
+   {
+      public override void PerformMapping()
+      {
+         base.PerformMapping();
+         Map(x => x.OriginData);
+      }
+   }
+
+   public class ExpressionProfileBuildingBlockXmlSerializer : PathAndValueEntityBuildingBlockFromPKSimXmlSerializer<ExpressionProfileBuildingBlock, ExpressionParameter>
    {
       public override void PerformMapping()
       {

@@ -2,10 +2,18 @@
 
 namespace OSPSuite.Core.Domain.Builder
 {
+   public class OriginDataCache : Cache<string, string>
+   {
+      public OriginDataCache() : base(onMissingKey: x => string.Empty)
+      {
+      }
+
+      public ValueOrigin ValueOrigin { set; get; }
+      // public CalculationMethodCache CalculationMethodCache { set; get; }
+   }
+
    public class IndividualBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<IndividualParameter>
    {
-      public Cache<string, string> OriginData { set; get; } = new Cache<string, string>();
-      public ValueOrigin ValueOrigin { set; get; }
-      public CalculationMethodCache CalculationMethodCache { set; get; }
+      public OriginDataCache OriginData { get; } = new OriginDataCache();
    }
 }
