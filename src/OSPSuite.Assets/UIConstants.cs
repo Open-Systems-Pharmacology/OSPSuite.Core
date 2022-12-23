@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using static OSPSuite.Utility.Resources.Constants;
 
 namespace OSPSuite.Assets
 {
