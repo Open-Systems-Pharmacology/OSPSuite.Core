@@ -438,4 +438,23 @@ namespace OSPSuite.Presentation.Services
          A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column(s) \n \n 'LLOQ' \n \n is missing at least from the sheet \n \n 'Sheet1' \n \n that you are trying to load.")).MustHaveHappened();
       }
    }
+
+   public class When_trying_to_import_file_with_duplicate_headers : concern_for_DataImporter
+   {
+      protected override void Because()
+      {
+         var parameterList = createTestParameters("TestInputMolecule", new UnitDescription("h"), new UnitDescription("mg/l"),
+            _massConcentrationDimension);
+         var parameterListMolecularWeight = new List<DataFormatParameter>(parameterList);
+         _importerConfiguration.CloneParametersFrom(parameterList);
+         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings, getFileFullName("IntegrationSampleDuplicateHeader.xlsx"));
+      }
+
+      [Observation]
+      public void should_import_simple_data_from_excel()
+      {
+         A.CallTo(() => _dialogCreator.MessageBoxError(A<string>.That.Contains("In sheet Sheet1 the headers"))).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxError(A<string>.That.Contains("Dose"))).MustHaveHappened();
+      }
+   }
 }

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
 
@@ -33,7 +36,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                   SheetName = reader.CurrentSheet.SheetName
                };
                var headers = reader.CurrentRow;
-     
+
+               checkSheetForDuplicateHeaders(headers, reader);
+
                for (var j = 0; j < headers.Count; j++)
                   rawSheetData.AddColumn(headers[j], j);
 
@@ -56,6 +61,15 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
             DataSheets.CopySheetsFrom(alreadyLoadedDataSheets);
             _logger.AddError(ex.Message);
             throw new InvalidObservedDataFileException(ex.Message);
+         }
+      }
+
+      private static void checkSheetForDuplicateHeaders(List<string> headers, ExcelReader reader)
+      {
+         var headerDuplicates = headers.GroupBy(x => x).Where(g => g.Count() > 1).Select(x => x.Key).ToList();
+         if (headerDuplicates.Count() != 0)
+         {
+            throw new DataFileWithDuplicateHeaderException(Error.SheetWithDuplicateHeader(reader.CurrentSheet.SheetName, headerDuplicates));
          }
       }
    }
