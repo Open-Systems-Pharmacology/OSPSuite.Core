@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Builder
 {
@@ -10,11 +11,16 @@ namespace OSPSuite.Core.Domain.Builder
 
       public IReadOnlyList<OriginDataItem> AllDataItems => _cache.ToList();
 
-      public ValueOrigin ValueOrigin { set; get; }
+      public ValueOrigin ValueOrigin { set; get; } = new ValueOrigin();
 
       public void AddOriginDataItem(OriginDataItem originDataItem)
       {
          _cache[originDataItem.Name]= originDataItem;
+      }
+
+      public void UpdateFrom(OriginDataItems sourceOriginData)
+      {
+         sourceOriginData.AllDataItems.Each(AddOriginDataItem);
       }
    }
 }
