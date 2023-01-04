@@ -1177,6 +1177,9 @@ namespace OSPSuite.Helpers
          if (sourceObject.IsAnImplementationOf<ExpressionParameter>())
             return new ExpressionParameter().WithDimension(_dimensionFactory.NoDimension).WithId(id).DowncastTo<T>();
 
+         if (sourceObject.IsAnImplementationOf<IndividualParameter>())
+            return new IndividualParameter().WithDimension(_dimensionFactory.NoDimension).WithId(id).DowncastTo<T>();
+
          return default(T);
       }
 
