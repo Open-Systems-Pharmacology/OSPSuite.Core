@@ -15,8 +15,7 @@ namespace OSPSuite.Core.Domain.Builder
             return;
          
          OriginData.ValueOrigin.UpdateAllFrom(sourceIndividualBuildingBlock.OriginData.ValueOrigin);
-
-         sourceIndividualBuildingBlock.OriginData.AllDataItems.Each(x => OriginData.AddOriginDataItem(x));
+         OriginData.UpdateFrom(sourceIndividualBuildingBlock.OriginData);
       }
    }
 }
