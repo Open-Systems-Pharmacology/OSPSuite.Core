@@ -24,31 +24,31 @@
     </DataBrowserColumnSettings>
     <CurveOptionsColumnSettings>
       <GridColumnSettings columnName="Id" caption="Id" visible="0" groupIndex="-1" visibleIndex="-1" width="0" />
-      <GridColumnSettings columnName="Name" caption="Curve Name" visible="1" groupIndex="-1" visibleIndex="0" width="0" />
-      <GridColumnSettings columnName="xData" caption="x-Data" visible="0" groupIndex="-1" visibleIndex="-1" width="0" />
-      <GridColumnSettings columnName="yData" caption="y-Data" visible="0" groupIndex="-1" visibleIndex="-1" width="0" />
-      <GridColumnSettings columnName="yAxisType" caption="y-Axis" visible="1" groupIndex="-1" visibleIndex="4" width="0" />
-      <GridColumnSettings columnName="InterpolationMode" caption="Interpolation" visible="0" groupIndex="-1" visibleIndex="-1" width="0" />
-      <GridColumnSettings columnName="Color" caption="Color" visible="1" groupIndex="-1" visibleIndex="1" width="0" />
-      <GridColumnSettings columnName="LineStyle" caption="Style" visible="1" groupIndex="-1" visibleIndex="2" width="0" />
-      <GridColumnSettings columnName="Symbol" caption="Symbol" visible="1" groupIndex="-1" visibleIndex="3" width="0" />
-      <GridColumnSettings columnName="LineThickness" caption="Thickness" visible="0" groupIndex="-1" visibleIndex="-1" width="0" />
-      <GridColumnSettings columnName="Visible" caption="Visible" visible="1" groupIndex="-1" visibleIndex="5" width="0" />
-      <GridColumnSettings columnName="VisibleInLegend" caption="In Legend" visible="1" groupIndex="-1" visibleIndex="100" width="0" />
-      <GridColumnSettings columnName="ShowLowerLimitOfQuantification" caption="LLOQ" visible="0" groupIndex="-1" visibleIndex="-1" width="0" />
+      <GridColumnSettings columnName="Name" caption="Curve Name" visible="1" groupIndex="-1" visibleIndex="1" width="183" />
+      <GridColumnSettings columnName="xData" caption="x-Data" visible="0" groupIndex="-1" visibleIndex="-1" width="20" />
+      <GridColumnSettings columnName="yData" caption="y-Data" visible="0" groupIndex="-1" visibleIndex="-1" width="20" />
+      <GridColumnSettings columnName="yAxisType" caption="y-Axis" visible="1" groupIndex="-1" visibleIndex="0" width="38" />
+      <GridColumnSettings columnName="InterpolationMode" caption="Interpolation" visible="0" groupIndex="-1" visibleIndex="-1" width="20" />
+      <GridColumnSettings columnName="Color" caption="Color" visible="1" groupIndex="-1" visibleIndex="2" width="43" />
+      <GridColumnSettings columnName="LineStyle" caption="Style" visible="1" groupIndex="-1" visibleIndex="3" width="45" />
+      <GridColumnSettings columnName="Symbol" caption="Symbol" visible="1" groupIndex="-1" visibleIndex="4" width="46" />
+      <GridColumnSettings columnName="LineThickness" caption="Thickness" visible="0" groupIndex="-1" visibleIndex="-1" width="20" />
+      <GridColumnSettings columnName="Visible" caption="Visible" visible="1" groupIndex="-1" visibleIndex="5" width="37" />
+      <GridColumnSettings columnName="VisibleInLegend" caption="In Legend" visible="1" groupIndex="-1" visibleIndex="6" width="50" />
+      <GridColumnSettings columnName="ShowLowerLimitOfQuantification" caption="LLOQ" visible="0" groupIndex="-1" visibleIndex="-1" width="20" />
     </CurveOptionsColumnSettings>
     <AxisOptionsColumnSettings>
-      <GridColumnSettings columnName="AxisType" caption="Axis" visible="1" groupIndex="-1" visibleIndex="100" width="0" />
-      <GridColumnSettings columnName="Caption" caption="Caption" visible="1" groupIndex="-1" visibleIndex="100" width="0" />
-      <GridColumnSettings columnName="Dimension" caption="Dimension" visible="0" groupIndex="-1" visibleIndex="-1" width="0" />
-      <GridColumnSettings columnName="UnitName" caption="Unit" visible="1" groupIndex="-1" visibleIndex="100" width="0" />
-      <GridColumnSettings columnName="Scaling" caption="Scaling" visible="1" groupIndex="-1" visibleIndex="100" width="0" />
-      <GridColumnSettings columnName="NumberMode" caption="Numbers" visible="1" groupIndex="-1" visibleIndex="100" width="0" />
-      <GridColumnSettings columnName="Min" caption="Min" visible="1" groupIndex="-1" visibleIndex="100" width="0" />
-      <GridColumnSettings columnName="Max" caption="Max" visible="1" groupIndex="-1" visibleIndex="100" width="0" />
-      <GridColumnSettings columnName="GridLines" caption="Grid" visible="1" groupIndex="-1" visibleIndex="100" width="0" />
-      <GridColumnSettings columnName="DefaultLineStyle" caption="Default Linestyle" visible="1" groupIndex="-1" visibleIndex="100" width="0" />
-      <GridColumnSettings columnName="DefaultColor" caption="Default Color" visible="1" groupIndex="-1" visibleIndex="100" width="0" />
+      <GridColumnSettings columnName="AxisType" caption="Axis" visible="1" groupIndex="-1" visibleIndex="0" width="35" />
+      <GridColumnSettings columnName="Caption" caption="Caption" visible="0" groupIndex="-1" visibleIndex="-1" width="39" />
+      <GridColumnSettings columnName="Dimension" caption="Dimension" visible="1" groupIndex="-1" visibleIndex="1" width="128" />
+      <GridColumnSettings columnName="UnitName" caption="Unit" visible="1" groupIndex="-1" visibleIndex="2" width="81" />
+      <GridColumnSettings columnName="Scaling" caption="Scaling" visible="1" groupIndex="-1" visibleIndex="3" width="76" />
+      <GridColumnSettings columnName="NumberMode" caption="Numbers" visible="0" groupIndex="-1" visibleIndex="-1" width="39" />
+      <GridColumnSettings columnName="Min" caption="Min" visible="1" groupIndex="-1" visibleIndex="4" width="53" />
+      <GridColumnSettings columnName="Max" caption="Max" visible="1" groupIndex="-1" visibleIndex="5" width="76" />
+      <GridColumnSettings columnName="GridLines" caption="Grid" visible="1" groupIndex="-1" visibleIndex="6" width="36" />
+      <GridColumnSettings columnName="DefaultLineStyle" caption="Default Linestyle" visible="1" groupIndex="-1" visibleIndex="7" width="78" />
+      <GridColumnSettings columnName="DefaultColor" caption="Default Color" visible="0" groupIndex="-1" visibleIndex="-1" width="116" />
     </AxisOptionsColumnSettings>
   </EditorSettings>
 </ChartEditorAndDisplaySettings>
