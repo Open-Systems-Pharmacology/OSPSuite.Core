@@ -103,7 +103,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       {
          var dataSource = _parser.For(fileName);
 
-         if (dataSource.DataSheets == null) return null;
+         if (dataSource.DataSheets == null) return null; //here we could add a check
 
 
          foreach (var sheetName in dataSource.DataSheets.GetDataSheetNames())
