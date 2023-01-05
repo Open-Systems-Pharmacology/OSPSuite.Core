@@ -67,6 +67,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
       private static void checkSheetForDuplicateHeaders(List<string> headers, ExcelReader reader)
       {
          var headerDuplicates = headers.GroupBy(x => x).Where(g => g.Count() > 1).Select(x => x.Key).ToList();
+
+         //since an empty header could have multiple occurrences we remove from the duplicate list
+         headerDuplicates.Remove("");
+         
          if (headerDuplicates.Count() != 0)
          {
             throw new DataFileWithDuplicateHeaderException(Error.SheetWithDuplicateHeader(reader.CurrentSheet.SheetName, headerDuplicates));
