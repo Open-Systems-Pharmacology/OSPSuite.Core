@@ -120,7 +120,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          }
 
          if (lloqValue != null)
-            dataInfo.LLOQ = Convert.ToSingle(dimension?.UnitValueToBaseUnitValue(dimension.FindUnit(lloqValue.Unit), lloqValue.Lloq));
+            dataInfo.LLOQ = Convert.ToSingle(dimension?.UnitValueToBaseUnitValue(dimension.FindUnit(lloqValue.Unit, true), lloqValue.Lloq));
 
          dataColumn.Values = values;
 
