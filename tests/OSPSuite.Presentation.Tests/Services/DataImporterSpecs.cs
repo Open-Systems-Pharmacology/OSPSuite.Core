@@ -237,8 +237,6 @@ namespace OSPSuite.Presentation.Services
          importFromConfiguration.Count.ShouldBeEqualTo(1);
          var column = importFromConfiguration.First().Columns.First(x => x.Name.Equals("Concentration"));
          column.ConvertToDisplayValues(column.Values).ShouldContain(0.2168224f, 0.4386293f);
-
-         // importFromConfiguration.First().Columns
       }
 
       [Observation]
