@@ -69,7 +69,7 @@ namespace OSPSuite.UI
 
          public static int ScaleForScreenDPI(int size, int? maxSize = null)
          {
-            var proposedSize = (int) (_scaleFactor * size);
+            var proposedSize = (int)(_scaleFactor * size);
             return Math.Min(proposedSize, maxSize.GetValueOrDefault(proposedSize));
          }
 
@@ -77,11 +77,10 @@ namespace OSPSuite.UI
          {
             using (var graphics = Graphics.FromHwnd(IntPtr.Zero))
             {
-               if (graphics.DpiX >= 200)
-                  return 2;
-
                if (graphics.DpiX > 120)
-                  return 1.5;
+               {
+                  return graphics.DpiX / 96;
+               }
 
                return graphics.DpiX > 96 ? 1.25 : 1.0;
             }
