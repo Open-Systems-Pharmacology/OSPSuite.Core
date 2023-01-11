@@ -49,6 +49,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Data\IntegrationSampleDuplicateHeader.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Data\IntegrationSampleMissingColumn.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

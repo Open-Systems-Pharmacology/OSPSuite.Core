@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
 
@@ -50,7 +51,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                while (csv.ReadNextRecord())
                {
                   csv.CopyCurrentRecordTo(currentRow);
-                  var rowList = currentRow.Select(x => x.Replace(csvSeparators.DecimalSeparator, '.')).ToList();
+                  var currentCultureDecimalSeparator = Convert.ToChar(Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator);
+                  var rowList = currentRow.Select(x => x.Replace(csvSeparators.DecimalSeparator, currentCultureDecimalSeparator)).ToList();
                   var levels = getMeasurementLevels(rowList);
                   dataSheet.CalculateColumnDescription(levels);
                   dataSheet.AddRow(rowList);
