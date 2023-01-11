@@ -1,5 +1,4 @@
 ﻿using OSPSuite.Core.Domain.Services;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Builder
 {
