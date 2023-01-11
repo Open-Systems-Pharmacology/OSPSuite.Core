@@ -103,8 +103,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       {
          var dataSource = _parser.For(fileName);
 
-         //if no Datasheets were loaded, either the CsvSeparator Dialog was cancelled, or the file was empty.
-         //in those cases abort the import process.
+         //if no DataSheets were loaded, meaning the CsvSeparator Dialog was cancelled, abort the import process without further messages.
          if (dataSource.DataSheets == null || !dataSource.DataSheets.Any()) 
             return null;
 

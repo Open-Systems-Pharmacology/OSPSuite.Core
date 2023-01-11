@@ -1360,6 +1360,7 @@ namespace OSPSuite.Assets
       public static readonly string CannotRemoveBaseGridColumnStillInUse = "Cannot remove base grid column still used by other columns";
       public static readonly string SimpleParseErrorMessage = "There were errors while parsing your data. Navigate to the sheets to read the concrete error.";
       public static readonly string FoldValueMustBeGreaterThanOne = "Fold value must be a number greater than one.";
+      public static readonly string ImporterEmptyFile = "The file you are trying to load is empty.";
 
       public static  string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
 
