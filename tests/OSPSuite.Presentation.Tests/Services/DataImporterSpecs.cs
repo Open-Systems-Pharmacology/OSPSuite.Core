@@ -273,6 +273,16 @@ namespace OSPSuite.Presentation.Services
          A.CallTo(() => _dialogCreator.MessageBoxError(Error.UnsupportedFileFormat(invalidFileName))).MustHaveHappened();
       }
 
+
+      [Observation]
+      public void should_identify_empty_file_as_having_invalid_file_format()
+      {
+         var invalidFileName = getFileFullName("emptyFile.xlsx");
+         sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings, invalidFileName).Count
+            .ShouldBeEqualTo(0);
+         A.CallTo(() => _dialogCreator.MessageBoxError(Error.InvalidObservedDataFile(Error.ImporterEmptyFile))).MustHaveHappened();
+      }
+
       //so we should simply pass to the metadataCategories the value of the MW and check against it.
       //then check that the exception gets thrown when we have set teh dataImporterSettings (let's make this default)
       //and it does not get thrown when we are doing for MoBi. For MoBi also check that we get the correct MW (the one coming from the
