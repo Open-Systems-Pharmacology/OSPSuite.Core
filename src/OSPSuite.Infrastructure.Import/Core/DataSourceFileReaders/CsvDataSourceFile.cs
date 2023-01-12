@@ -63,6 +63,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
                DataSheets.AddSheet(dataSheet);
             }
+
+            //if the file was empty
+            if (DataSheets.GetDataSheetNames().Count == 0)
+               throw new ImporterEmptyFileException();
          }
          catch (Exception e)
          {

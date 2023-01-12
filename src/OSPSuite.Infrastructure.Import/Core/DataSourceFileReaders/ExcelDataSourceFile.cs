@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Services;
+using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 
 namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
@@ -55,6 +56,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
                DataSheets.AddSheet(rawSheetData);
             }
+
+            //if the file was empty
+            if (DataSheets.GetDataSheetNames().Count == 0)
+               throw new ImporterEmptyFileException();
          }
          catch (Exception ex)
          {
