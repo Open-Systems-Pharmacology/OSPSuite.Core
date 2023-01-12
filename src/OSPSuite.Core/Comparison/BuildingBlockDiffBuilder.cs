@@ -77,12 +77,12 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public abstract class StartValueBuildingBlockDiffBuilder<TBuildingBlock, TStartValue> : BuildingBlockDiffBuilder<TBuildingBlock, TStartValue> where TStartValue : class, IStartValue where TBuildingBlock : class, IBuildingBlock<TStartValue>
+   public abstract class StartValueBuildingBlockDiffBuilder<TBuildingBlock, TStartValue> : PathAndAndValueEntityBuildingBlockDiffBuilder<TBuildingBlock, TStartValue> where TStartValue : StartValueBase, IStartValue where TBuildingBlock : class, IBuildingBlock<TStartValue>
    {
       private readonly UnitFormatter _unitFormatter = new UnitFormatter();
 
       protected StartValueBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) :
-         base(objectBaseDiffBuilder, enumerableComparer, x => x.Path)
+         base(objectBaseDiffBuilder, enumerableComparer)
       {
          _presentObjectDetailsFunc = startValueDisplayFor;
       }
