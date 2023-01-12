@@ -6,7 +6,7 @@
       <GridColumnSettings columnName="RepositoryName" caption="Repository" visible="1" groupIndex="-1" visibleIndex="0" width="0" />
       <GridColumnSettings columnName="Simulation" caption="Simulation" visible="0" groupIndex="-1" visibleIndex="-1" width="0" />
       <GridColumnSettings columnName="TopContainer" caption="Top Container" visible="0" groupIndex="-1" visibleIndex="-1" width="0" />
-      <GridColumnSettings columnName="Container" caption="Organ" visible="1" groupIndex="1" visibleIndex="1" width="0" />
+      <GridColumnSettings columnName="Container" caption="Organ" visible="1" groupIndex="-1" visibleIndex="1" width="0" />
       <GridColumnSettings columnName="BottomCompartment" caption="Compartment" visible="1" groupIndex="-1" visibleIndex="3" width="0" sortColumnName="OrderIndex" />
       <GridColumnSettings columnName="Molecule" caption="Molecule" visible="1" groupIndex="-1" visibleIndex="2" width="0" />
       <GridColumnSettings columnName="Name" caption="Name" visible="1" groupIndex="-1" visibleIndex="4" width="0" />
