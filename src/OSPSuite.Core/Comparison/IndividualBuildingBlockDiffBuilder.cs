@@ -26,34 +26,4 @@ namespace OSPSuite.Core.Comparison
       {
       }
    }
-
-   public class OriginDataItemsDiffBuilder : DiffBuilder<OriginDataItems>
-   {
-      private readonly EnumerableComparer _enumerableComparer;
-
-      public OriginDataItemsDiffBuilder(EnumerableComparer enumerableComparer)
-      {
-         _enumerableComparer = enumerableComparer;
-      }
-      public override void Compare(IComparison<OriginDataItems> comparison)
-      {
-         _enumerableComparer.CompareEnumerables(comparison, x => x.AllDataItems, x => x.Name);
-      }
-   }
-
-   public class OriginDataItemDiffBuilder : DiffBuilder<OriginDataItem>
-   {
-      public override void Compare(IComparison<OriginDataItem> comparison)
-      {
-         CompareStringValues(x => x.Name, x => x.Name, comparison);
-         CompareStringValues(x => x.Value, x => x.Value, comparison);
-
-         if (comparison.Settings.OnlyComputingRelevant)
-            return;
-
-         CompareStringValues(x => x.DisplayName, x => x.DisplayName, comparison);
-         CompareStringValues(x => x.Icon, x => x.Icon, comparison);
-         CompareStringValues(x => x.Description, x => x.Description, comparison);
-      }
-   }
 }
