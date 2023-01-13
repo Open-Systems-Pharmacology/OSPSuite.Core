@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Comparison
 {
-   public class IndividualBuildingBlockDiffBuilder : PathAndAndValueEntityBuildingBlockDiffBuilder<IndividualBuildingBlock, IndividualParameter>
+   public class IndividualBuildingBlockDiffBuilder : PathAndValueEntityBuildingBlockDiffBuilder<IndividualBuildingBlock, IndividualParameter>
    {
       private readonly IObjectComparer _objectComparer;
 
