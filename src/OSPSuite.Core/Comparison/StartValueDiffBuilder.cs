@@ -3,7 +3,7 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Comparison
 {
-   internal abstract class PathAndValueEntityDiffBuilder<T> : DiffBuilder<T> where T : PathAndValueEntity
+   public abstract class PathAndValueEntityDiffBuilder<T> : DiffBuilder<T> where T : PathAndValueEntity
    {
       protected IObjectComparer _objectComparer;
       protected EntityDiffBuilder _entityDiffBuilder;
