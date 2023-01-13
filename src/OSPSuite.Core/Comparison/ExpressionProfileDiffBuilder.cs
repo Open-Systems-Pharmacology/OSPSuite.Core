@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Comparison
 {
-   public class ExpressionProfileBuildingBlockDiffBuilder : BuildingBlockDiffBuilder<ExpressionProfileBuildingBlock, ExpressionParameter>
+   public class ExpressionProfileBuildingBlockDiffBuilder : PathAndValueEntityBuildingBlockDiffBuilder<ExpressionProfileBuildingBlock, ExpressionParameter>
    {
       public ExpressionProfileBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) : base(objectBaseDiffBuilder, enumerableComparer)
       {
