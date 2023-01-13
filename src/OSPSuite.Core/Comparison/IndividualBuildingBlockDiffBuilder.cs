@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Comparison
 {
-   public class IndividualBuildingBlockDiffBuilder : PathAndValueEntityBuildingBlockDiffBuilder<IndividualBuildingBlock, IndividualParameter>
+   public class IndividualBuildingBlockDiffBuilder : PathAndValueEntityBuildingBlockFromPKSimDiffBuilder<IndividualBuildingBlock, IndividualParameter>
    {
       private readonly IObjectComparer _objectComparer;
 
@@ -14,8 +14,6 @@ namespace OSPSuite.Core.Comparison
       public override void Compare(IComparison<IndividualBuildingBlock> comparison)
       {
          base.Compare(comparison);
-         CompareValues(x => x.PKSimVersion, x => x.PKSimVersion, comparison);
-         CompareStringValues(x => x.Name, x => x.Name, comparison);
          _objectComparer.Compare(comparison.ChildComparison(x => x.OriginData));
       }
    }
