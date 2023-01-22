@@ -8,6 +8,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Import;
@@ -128,6 +129,18 @@ namespace OSPSuite.Presentation.Services
                Unit = concentrationUnitDescription,
                LloqColumn = "LLOQ"
             }));
+
+         return parameterList;
+      }
+
+      protected List<DataFormatParameter> createTestParametersWithGroupByColumn(string moleculeColumnName, UnitDescription timeUnitDescription,
+         UnitDescription concentrationUnitDescription, IDimension _timeConcentrationDimension)
+      {
+         var parameterList = createBaseParameters("TestInputMolecule", new UnitDescription("h"));
+
+         parameterList.Add(new GroupByDataFormatParameter("GroupBy"));
+
+         parameterList.Add(new MetaDataFormatParameter("Gender", "Gender", true));
 
          return parameterList;
       }
@@ -444,6 +457,25 @@ namespace OSPSuite.Presentation.Services
       public void should_throw_exception()
       {
          A.CallTo(() => _dialogCreator.MessageBoxError("The mapped column(s) \n \n 'LLOQ' \n \n is missing at least from the sheet \n \n 'Sheet1' \n \n that you are trying to load.")).MustHaveHappened();
+      }
+   }
+
+   public class When_importing_excel_with_goupBy_defined_before_mapping : concern_for_DataImporter
+   {
+      protected override void Because()
+      {
+         var parameterList = createTestParametersWithGroupByColumn("TestInputMolecule", new UnitDescription("h"), new UnitDescription("mg/l"),
+            _massConcentrationDimension);
+         _importerConfiguration.CloneParametersFrom(parameterList);
+      }
+
+      [Observation]
+      public void should_import_values_correctly()
+      {
+         var result = sut.ImportFromConfiguration(_importerConfiguration, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName(
+               "IntegrationSampleWithGroupBy.xlsx"));
+         result.First().ExtendedProperties["Gender"].ValueAsObject.ToString().ShouldBeEqualTo("F");
       }
    }
 
