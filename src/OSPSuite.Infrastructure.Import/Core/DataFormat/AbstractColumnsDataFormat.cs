@@ -218,10 +218,17 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          if (missingColumns.Any())
             throw new MissingColumnException(dataSheet.SheetName, missingColumns);
 
-         var groupingCriteria =
+         //we first isolate the mapping parameters
+         var mappingCriteria =
             Parameters
-               .Where(p => p.IsGroupingCriterion())
+               .Where(p => p.IsGroupingCriterion() && !p.IsAnImplementationOf<GroupByDataFormatParameter>())
                .Select(p => p.ColumnName);
+
+         //and then add the grouping criteria, in order to have exactly the same order in the ParsedDataSet
+         //that will be created as in the mappings in the dataSource
+         var groupingCriteria = mappingCriteria.Union(Parameters
+            .Where(p => p.IsGroupingCriterion() && p.IsAnImplementationOf<GroupByDataFormatParameter>())
+            .Select(p => p.ColumnName));
 
          return buildDataSets(dataSheet, groupingCriteria.ToList(), columnInfos);
       }
