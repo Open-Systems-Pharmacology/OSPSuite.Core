@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
@@ -53,12 +54,18 @@ namespace OSPSuite.Core.Domain.Mappers
 
       private void addMolecule(ExpressionParameter expressionParameter, PathElements pathElements, int bottomCompartmentIndex)
       {
-         addMolecule(pathElements, expressionParameter.Path.ElementAt(bottomCompartmentIndex + 1));
+         addMolecule(pathElements, expressionParameter.Path.ElementAt(moleculeNameIndex(bottomCompartmentIndex)));
+      }
+
+      private static int moleculeNameIndex(int bottomCompartmentIndex)
+      {
+         // If a Molecule Name exists it is always the next one after the bottom compartment
+         return bottomCompartmentIndex + 1;
       }
 
       private void addMolecule(MoleculeStartValue msv, PathElements pathElements, int bottomCompartmentIndex)
       {
-         addMolecule(pathElements, msv.Path.ElementAt(bottomCompartmentIndex + 1));
+         addMolecule(pathElements, msv.Path.ElementAt(moleculeNameIndex(bottomCompartmentIndex)));
       }
 
       private static void addMolecule(PathElements pathElements, string displayName)
@@ -75,28 +82,53 @@ namespace OSPSuite.Core.Domain.Mappers
       {
          var pathElements = new PathElements();
 
-
-         if (pathAndValueEntity.Path.Count > bottomCompartmentIndex)
+         if (hasContainerPaths(pathAndValueEntity, bottomCompartmentIndex))
             addContainerPaths(pathAndValueEntity, pathElements, bottomCompartmentIndex);
-         if (pathAndValueEntity.Path.Count >= bottomCompartmentIndex)
+         if (hasBottomCompartment(pathAndValueEntity, bottomCompartmentIndex))
             addBottomCompartment(pathAndValueEntity, pathElements, bottomCompartmentIndex);
-         if (pathAndValueEntity.Path.Count >= 2)
+         if (hasNameAndTopContainer(pathAndValueEntity))
             addNameAndTopContainer(pathAndValueEntity, pathElements);
 
          return pathElements;
       }
 
+      private static bool hasNameAndTopContainer(PathAndValueEntity pathAndValueEntity)
+      {
+         // Name and top container are present as long as the path has at least 2 elements
+         return pathAndValueEntity.Path.Count >= 2;
+      }
+
+      private static bool hasBottomCompartment(PathAndValueEntity pathAndValueEntity, int bottomCompartmentIndex)
+      {
+         // Bottom compartment is present if there are enough elements
+         return pathAndValueEntity.Path.Count >= bottomCompartmentIndex;
+      }
+
+      private static bool hasContainerPaths(PathAndValueEntity pathAndValueEntity, int bottomCompartmentIndex)
+      {
+         // Container paths are present if there are more elements than the bottom compartment
+         return pathAndValueEntity.Path.Count > bottomCompartmentIndex;
+      }
+
+      // Index of the next-to-last element in the path (-1 to offset from count to 0-based index and -1 for next-to-last)
       private static int secondLastPathElementIndex(PathAndValueEntity pathAndValueEntity) => pathAndValueEntity.Path.Count - 2;
+
+      // Index of the next-to-next-to-last element in the path (-1 to offset from count to 0-based index and -2 for next-to-next-to-last)
       private static int thirdLastPathElementIndex(PathAndValueEntity pathAndValueEntity) => pathAndValueEntity.Path.Count - 3;
 
       private void addContainerPaths(PathAndValueEntity pathAndValueEntity, PathElements pathElements, int bottomCompartmentIndex)
       {
-         // Skip 1 (the top container) and take until one before the bottom compartment to create a combined ContainerPathElement
-         var containerPath = pathAndValueEntity.Path.Skip(1).Take(bottomCompartmentIndex - 1).ToString(Constants.DISPLAY_PATH_SEPARATOR);
+         var containerPath = allElementsBetweenTopContainerAndBottomCompartment(pathAndValueEntity, bottomCompartmentIndex).ToString(Constants.DISPLAY_PATH_SEPARATOR);
          if (string.IsNullOrEmpty(containerPath))
             return;
 
          pathElements.Add(PathElementId.Container, new PathElement { DisplayName = containerPath });
+      }
+
+      private static IEnumerable<string> allElementsBetweenTopContainerAndBottomCompartment(PathAndValueEntity pathAndValueEntity, int bottomCompartmentIndex)
+      {
+         // Skip 1 (the top container) and take until one before the bottom compartment to create a combined ContainerPathElement
+         return pathAndValueEntity.Path.Skip(1).Take(bottomCompartmentIndex - 1);
       }
 
       private void addBottomCompartment(PathAndValueEntity pathAndValueEntity, PathElements pathElements, int bottomCompartmentIndex)
