@@ -1424,8 +1424,16 @@ namespace OSPSuite.Assets
          return $"Number of processor to use should greater than 0 and less than or equal to  the number of processor on the machine ({processorCount} processors)";
       }
 
+      public static string NameAlreadyExists(string name)
+      {
+         return $"'{name}' already exists.";
+      }
+
       public static string NameAlreadyExistsInContainerType(string name, string containerType)
       {
+         if(string.IsNullOrEmpty(containerType))
+            return NameAlreadyExists(name);
+
          return $"'{name}' already exists in {containerType}.";
       }
 
