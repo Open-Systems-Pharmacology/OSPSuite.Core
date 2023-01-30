@@ -22,6 +22,7 @@ namespace OSPSuite.Presentation.Presentation
       protected IEntity _container;
       protected PathElements _pathElements;
       protected IDisplayNameProvider _displayNameProvider;
+      protected IPathAndValueEntityToPathElementsMapper _pathAndValueEntityToPathElementsMapper;
 
       protected override void Context()
       {
@@ -29,7 +30,8 @@ namespace OSPSuite.Presentation.Presentation
          _displayNameProvider = A.Fake<IDisplayNameProvider>();
          _container = new Container().WithName("ROOT");
          _pathElements = new PathElements();
-         sut = new DiffItemToDiffItemDTOMapper(_pathToPathElementMapper, _displayNameProvider);
+         _pathAndValueEntityToPathElementsMapper = A.Fake<IPathAndValueEntityToPathElementsMapper>();
+         sut = new DiffItemToDiffItemDTOMapper(_pathToPathElementMapper, _displayNameProvider, _pathAndValueEntityToPathElementsMapper);
 
          A.CallTo(() => _pathToPathElementMapper.MapFrom(_container)).Returns(_pathElements);
          A.CallTo(() => _displayNameProvider.DisplayNameFor(A<object>._)).ReturnsLazily(x =>
@@ -43,6 +45,26 @@ namespace OSPSuite.Presentation.Presentation
       {
          _dto = sut.MapFrom(_diffItem);
       }
+   }
+
+   public class When_mapping_a_PathAndValueEntity : concern_for_DiffItemToDiffItemDTOMapper
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _diffItem = new PropertyValueDiffItem
+         {
+            Object1 = new MoleculeStartValue(),
+            Object2 = new MoleculeStartValue()
+         };
+      }
+
+      [Observation]
+      public void the_correct_mapper_should_be_used()
+      {
+         A.CallTo(() => _pathAndValueEntityToPathElementsMapper.MapFrom(_diffItem.Object1 as MoleculeStartValue)).MustHaveHappened();
+      }
+
    }
 
    public class When_mapping_a_property_diff_item_for_an_entity_to_a_diff_item_dto : concern_for_DiffItemToDiffItemDTOMapper
@@ -151,8 +173,8 @@ namespace OSPSuite.Presentation.Presentation
          base.Context();
          _diffItem = new PropertyValueDiffItem
          {
-            Object1 = new CalculationMethod {Category = "Cat", Name = "PKSim"},
-            Object2 = new CalculationMethod {Category = "Cat", Name = "RR"},
+            Object1 = new CalculationMethod { Category = "Cat", Name = "PKSim" },
+            Object2 = new CalculationMethod { Category = "Cat", Name = "RR" },
             CommonAncestor = _container,
          };
       }
