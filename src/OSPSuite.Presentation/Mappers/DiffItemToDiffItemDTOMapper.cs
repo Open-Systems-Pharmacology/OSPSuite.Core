@@ -91,22 +91,10 @@ namespace OSPSuite.Presentation.Mappers
       {
          Func<PathElements> pathElementsMapper = () => mapPathElementsAsIEntity(propertyDiffItem.CommonAncestor);
 
-         if (propertyDiffItem.Object1.GetType() == propertyDiffItem.Object2.GetType() && propertyDiffItem.Object1.IsAnImplementationOf<PathAndValueEntity>())
-            pathElementsMapper = () => mapPathElementsAsPathAndValueEntity(propertyDiffItem);
+         if (propertyDiffItem.Object1.IsAnImplementationOf<PathAndValueEntity>())
+            pathElementsMapper = () => _pathAndValueEntityToPathElementsMapper.MapFrom(propertyDiffItem.Object1.DowncastTo<PathAndValueEntity>());
 
          updateDiffItem(propertyDiffItem.FormattedValue1, propertyDiffItem.FormattedValue2, propertyDiffItem.PropertyName, objectNameFrom(propertyDiffItem), itemIsMissing: false, pathElementsMapper);
-      }
-
-      private PathElements mapPathElementsAsPathAndValueEntity(PropertyValueDiffItem propertyDiffItem)
-      {
-         var object1 = propertyDiffItem.Object1 as PathAndValueEntity;
-         var object2 = propertyDiffItem.Object2 as PathAndValueEntity;
-
-         if (object1 == null || object2 == null || !string.Equals(object2.Path.PathAsString, object1.Path.PathAsString))
-            return new PathElements();
-
-
-         return _pathAndValueEntityToPathElementsMapper.MapFrom(object1);
       }
 
       private string objectNameFrom(DiffItem diffItem)
