@@ -35,7 +35,7 @@ namespace OSPSuite.UI.Views
       {
       }
 
-      public ApplicationIcon ApplicationIcon
+      public virtual ApplicationIcon ApplicationIcon
       {
          get => _applicationIcon;
          set

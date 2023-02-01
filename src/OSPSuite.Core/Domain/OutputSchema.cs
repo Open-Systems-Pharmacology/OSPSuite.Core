@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
@@ -48,6 +49,16 @@ namespace OSPSuite.Core.Domain
 
             return Intervals.Select(x => x.EndTime.Value).Max();
          }
+      }
+
+      public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
+      {
+         base.UpdatePropertiesFrom(source, cloneManager);
+         var sourceOutputSchema = source as OutputSchema;
+         if (sourceOutputSchema == null)
+            return;
+         
+         AddTimePoints(sourceOutputSchema.TimePoints);
       }
 
       /// <summary>

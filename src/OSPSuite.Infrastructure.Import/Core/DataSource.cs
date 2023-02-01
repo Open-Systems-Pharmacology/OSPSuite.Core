@@ -6,6 +6,7 @@ using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
@@ -263,6 +264,13 @@ namespace OSPSuite.Infrastructure.Import.Core
                   if (column.Key.Column.Dimension == null)
                   {
                      var firstNonEmptyUnit = column.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit));
+
+                     if (firstNonEmptyUnit == null)
+                     {
+                        errors.Add(dataSet, new NoUnitColumnValues(columnInfo.DisplayName));
+                        continue;
+                     }
+
                      
                      var dimensionOfFirstUnit = columnInfo.SupportedDimensions.FirstOrDefault(x => x.FindUnit(firstNonEmptyUnit.Unit, ignoreCase: true) != null);
 

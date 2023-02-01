@@ -47,7 +47,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
       private void adjustHeight(IResizableView view, int height)
       {
-         layoutItemProperties.AdjustControlHeight(height);
+         layoutItemProperties.AdjustControlHeight(height, layoutControl);
          view.Repaint();
       }
 
@@ -71,7 +71,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          base.InitializeResources();
          layoutItemOptimizedParameters.TextVisible = false;
          layoutGroupRunResultProperties.Text = Captions.ParameterIdentification.RunResultsProperties;
-         layoutItemButtonTransfer.AdjustLargeButtonSize();
+         layoutItemButtonTransfer.AdjustLargeButtonSize(layoutControl);
          btnTransferToSimulations.InitWithImage(ApplicationIcons.Commit, Captions.ParameterIdentification.TransferToSimulation);
       }
    }

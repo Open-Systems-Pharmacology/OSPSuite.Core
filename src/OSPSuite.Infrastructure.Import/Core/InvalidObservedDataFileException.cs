@@ -8,4 +8,11 @@ namespace OSPSuite.Infrastructure.Import.Core
       {
       }
    }
+
+   public class DataFileWithDuplicateHeaderException : AbstractImporterException
+   {
+      public DataFileWithDuplicateHeaderException(string exceptionMessage = "") : base(exceptionMessage)
+      {
+      }
+   }
 }

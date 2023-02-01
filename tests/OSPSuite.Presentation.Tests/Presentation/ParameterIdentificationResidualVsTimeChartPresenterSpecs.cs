@@ -5,6 +5,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.ParameterIdentifications;
@@ -12,7 +13,6 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
-using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Services;
@@ -35,6 +35,7 @@ namespace OSPSuite.Presentation.Presentation
       protected OptimizationRunResult _optimizationRunResult;
       protected IDimensionFactory _dimensionFactory;
       protected ResidualsResult _residualResults;
+      protected ResidualsVsTimeChartService _residualsVsTimeChartService;
       private IChartEditorLayoutTask _chartEditorLayoutTask;
       private IProjectRetriever _projectRetreiver;
       private ChartPresenterContext _chartPresenterContext;
@@ -45,6 +46,7 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          _presentationSettingsTask = A.Fake<IPresentationSettingsTask>();
+         _residualsVsTimeChartService = A.Fake<ResidualsVsTimeChartService>();
          _view = A.Fake<IParameterIdentificationSingleRunAnalysisView>();
          _chartEditorAndDisplayPresenter = A.Fake<IChartEditorAndDisplayPresenter>();
          _curveNamer = A.Fake<ICurveNamer>();
@@ -65,7 +67,7 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _chartPresenterContext.ProjectRetriever).Returns(_projectRetreiver);
 
 
-         sut = new ParameterIdentificationResidualVsTimeChartPresenter(_view, _chartPresenterContext);
+         sut = new ParameterIdentificationResidualVsTimeChartPresenter(_view, _chartPresenterContext, _residualsVsTimeChartService);
 
          _residualVsTimeChart = new ParameterIdentificationResidualVsTimeChart().WithAxes();
          _parameterIdentification = A.Fake<ParameterIdentification>();

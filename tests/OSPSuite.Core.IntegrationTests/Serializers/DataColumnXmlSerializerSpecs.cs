@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Serializers
          var dr1 = new DataRepository("id") {x1};
          var dr2 = SerializeAndDeserialize(dr1);
          var x2 = dr2.AllButBaseGrid().First();
-         AssertForSpecs.AreEqualMcDataColumn(x1, x2);
+         AssertForSpecs.AreEqualDataColumn(x1, x2);
       }
 
       [Test]
@@ -46,7 +46,7 @@ namespace OSPSuite.Core.Serializers
          var dr2 = SerializeAndDeserialize(dr1);
 
          var x2 = dr2.AllButBaseGrid().First(x => x.IsNamed("Columbus"));
-         AssertForSpecs.AreEqualMcDataColumn(x1, x2);
+         AssertForSpecs.AreEqualDataColumn(x1, x2);
          x2.RelatedColumns.First().Dimension.ShouldNotBeNull();
       }
 
@@ -66,7 +66,7 @@ namespace OSPSuite.Core.Serializers
          var dr2 = SerializeAndDeserialize(dr1);
          var x2 = dr2.AllButBaseGrid().First(x => x.IsNamed("Columbus"));
 
-         AssertForSpecs.AreEqualMcDataColumn(x1, x2);
+         AssertForSpecs.AreEqualDataColumn(x1, x2);
       }
    }
 }

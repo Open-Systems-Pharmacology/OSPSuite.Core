@@ -6,8 +6,7 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
-using OSPSuite.Core.Extensions;
-using OSPSuite.Core.Services.ParameterIdentifications;
+using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.Utility.Extensions;
@@ -18,16 +17,24 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
    {
    }
 
-   public class ParameterIdentificationPredictedVsObservedChartPresenter : ParameterIdentificationSingleRunAnalysisPresenter<ParameterIdentificationPredictedVsObservedChart>, IParameterIdentificationPredictedVsObservedChartPresenter
+   public class ParameterIdentificationPredictedVsObservedChartPresenter :
+      ParameterIdentificationSingleRunAnalysisPresenter<ParameterIdentificationPredictedVsObservedChart>,
+      IParameterIdentificationPredictedVsObservedChartPresenter
    {
       private readonly IPredictedVsObservedChartService _predictedVsObservedChartService;
       private readonly List<DataRepository> _identityRepositories;
+      private readonly List<DataRepository> _deviationLineRepositories;
 
-      public ParameterIdentificationPredictedVsObservedChartPresenter(IParameterIdentificationSingleRunAnalysisView view, ChartPresenterContext chartPresenterContext, IPredictedVsObservedChartService predictedVsObservedChartService) :
-         base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis, PresenterConstants.PresenterKeys.ParameterIdentificationPredictedVsActualChartPresenter)
+      public ParameterIdentificationPredictedVsObservedChartPresenter(IParameterIdentificationSingleRunAnalysisView view,
+         ChartPresenterContext chartPresenterContext, IPredictedVsObservedChartService predictedVsObservedChartService) :
+         base(view, chartPresenterContext, ApplicationIcons.PredictedVsObservedAnalysis,
+            PresenterConstants.PresenterKeys.ParameterIdentificationPredictedVsObservedChartPresenter)
       {
          _predictedVsObservedChartService = predictedVsObservedChartService;
          _identityRepositories = new List<DataRepository>();
+         _deviationLineRepositories = new List<DataRepository>();
+
+         ChartDisplayPresenter.AddDeviationLinesEvent += (o, e) => addDeviationLines(e.FoldValue);
       }
 
       protected override void UpdateAnalysisBasedOn(IReadOnlyList<ParameterIdentificationRunResult> parameterIdentificationResults)
@@ -41,9 +48,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _identityRepositories.AddRange(_predictedVsObservedChartService.AddIdentityCurves(observationColumns, Chart));
 
          if (ChartIsBeingCreated)
-            _predictedVsObservedChartService.SetXAxisDimension(observationColumns, Chart);
+            _predictedVsObservedChartService.ConfigureAxesDimensionAndTitle(observationColumns, Chart);
 
-         AddDataRepositoriesToEditor(_identityRepositories.Union(_parameterIdentification.AllObservedData));
+         //plot the already added and saved deviation lines
+         Chart.DeviationFoldValues.Each(addDeviationLineWithoutCheck);
+
+         AddDataRepositoriesToEditor(_identityRepositories.Union(_parameterIdentification.AllObservedData).Union(_deviationLineRepositories));
          UpdateChartFromTemplate();
       }
 
@@ -52,12 +62,14 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          base.ChartChanged();
          Chart.UpdateAxesVisibility();
          _chartPresenterContext.DisplayPresenter.Refresh();
+         _chartPresenterContext.EditorPresenter.Refresh();
       }
 
       protected override void ClearChartAndDataRepositories()
       {
          base.ClearChartAndDataRepositories();
          _identityRepositories.Clear();
+         _deviationLineRepositories.Clear();
       }
 
       protected override void AddRunResultToChart(ParameterIdentificationRunResult runResult)
@@ -65,7 +77,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          addPredictedVsObservedToChart(runResult.BestResult.SimulationResults, (column, curve) =>
          {
             curve.Description = CurveDescription(curve.Name, runResult);
-            curve.Name = column.PathAsString;
+            curve.Name = NameForColumn(column);
          });
       }
 
@@ -79,6 +91,23 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       {
          var calculationColumns = calculationColumnsToPlot(simulationResult);
          calculationColumns.Each(x => plotCalculationColumn(x, action));
+      }
+
+      private void addDeviationLines(float foldValue)
+      {
+         if (Chart.HasDeviationCurveFor(foldValue))
+            return;
+
+         addDeviationLineWithoutCheck(foldValue);
+      }
+
+      private void addDeviationLineWithoutCheck(float foldValue)
+      {
+         var observationColumns = _parameterIdentification.AllObservedData.Select(x => x.FirstDataColumn()).ToList();
+         _deviationLineRepositories.AddRange(
+            _predictedVsObservedChartService.AddDeviationLine(foldValue, observationColumns, Chart));
+         AddDataRepositoriesToEditor(_deviationLineRepositories);
+         ChartChanged();
       }
 
       private void plotCalculationColumn(DataColumn calculationColumn, Action<DataColumn, Curve> action)
@@ -117,6 +146,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       {
          base.Clear();
          _identityRepositories.Each(x => Chart.RemoveCurvesForDataRepository(x));
+         _deviationLineRepositories.Each(x => Chart.RemoveCurvesForDataRepository(x));
       }
 
       private static bool isCalculationOrCalculationAuxiliaryColumn(DataColumn column)

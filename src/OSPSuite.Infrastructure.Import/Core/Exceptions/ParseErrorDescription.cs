@@ -17,6 +17,14 @@ namespace OSPSuite.Infrastructure.Import.Core.Exceptions
       }
    }
 
+   public class NoUnitColumnValues : ParseErrorDescription
+   {
+      public NoUnitColumnValues(string mappingName)
+      {
+         Message = Error.NoUnitColumnValues(mappingName);
+      }
+   }
+
    public class NaNParseErrorDescription : ParseErrorDescription
    {
       public NaNParseErrorDescription()

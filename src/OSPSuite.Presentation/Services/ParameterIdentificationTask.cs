@@ -34,6 +34,7 @@ namespace OSPSuite.Presentation.Services
       private readonly ISimulationSelector _simulationSelector;
       private readonly IHeavyWorkManager _heavyWorkManager;
       private readonly IParameterAnalysableParameterSelector _parameterSelector;
+      private readonly IOutputMappingMatchingTask _outputMappingMatchingTask;
 
       public ParameterIdentificationTask(
          IParameterIdentificationFactory parameterIdentificationFactory,
@@ -50,7 +51,8 @@ namespace OSPSuite.Presentation.Services
          IDialogCreator dialogCreator,
          ISimulationSelector simulationSelector,
          IHeavyWorkManager heavyWorkManager,
-         IParameterAnalysableParameterSelector parameterSelector)
+         IParameterAnalysableParameterSelector parameterSelector,
+         IOutputMappingMatchingTask outputMappingMatchingTask)
       {
          _parameterIdentificationFactory = parameterIdentificationFactory;
          _withIdRepository = withIdRepository;
@@ -67,6 +69,7 @@ namespace OSPSuite.Presentation.Services
          _simulationSelector = simulationSelector;
          _heavyWorkManager = heavyWorkManager;
          _parameterSelector = parameterSelector;
+         _outputMappingMatchingTask = outputMappingMatchingTask;
       }
 
       public void AddToProject(ParameterIdentification parameterIdentification)
@@ -194,47 +197,12 @@ namespace OSPSuite.Presentation.Services
 
       private void addOutputMappingsFor(ISimulation simulation, ParameterIdentification parameterIdentification)
       {
-         foreach (var keyValue in _entitiesInSimulationRetriever.OutputsFrom(simulation).KeyValues)
-         {
-            var output = keyValue.Value;
-            var outputPath = keyValue.Key;
-            observedDataInSimulationMatchingOutputs(outputPath, simulation).Each(obs => addOutputMapping(output, outputPath, obs, simulation, parameterIdentification));
-         }
-      }
-
-      private void addOutputMapping(IQuantity output, string outputPath, DataRepository observedData, ISimulation simulation, ParameterIdentification parameterIdentification)
-      {
-         if (parameterIdentification.UsesObservedData(observedData))
-            return;
-
-         parameterIdentification.AddOutputMapping(new OutputMapping
-         {
-            OutputSelection = new SimulationQuantitySelection(simulation, new QuantitySelection(outputPath, output.QuantityType)),
-            WeightedObservedData = new WeightedObservedData(observedData),
-            Scaling = DefaultScalingFor(output)
-         });
+         simulation.OutputMappings.All.Each(parameterIdentification.AddOutputMapping);
       }
 
       public Scalings DefaultScalingFor(IQuantity output)
       {
-         return output.IsFraction() ? Scalings.Linear : Scalings.Log;
-      }
-
-      private IEnumerable<DataRepository> observedDataInSimulationMatchingOutputs(string outputPath, ISimulation simulation)
-      {
-         return AllObservedDataUsedBy(simulation).Where(obs => observedDataMatchesOutput(obs, outputPath));
-      }
-
-      private bool observedDataMatchesOutput(DataRepository observedData, string outputPath)
-      {
-         var organ = observedData.ExtendedPropertyValueFor(Constants.ObservedData.ORGAN);
-         var compartment = observedData.ExtendedPropertyValueFor(Constants.ObservedData.COMPARTMENT);
-         var molecule = observedData.ExtendedPropertyValueFor(Constants.ObservedData.MOLECULE);
-
-         if (organ == null || compartment == null || molecule == null)
-            return false;
-
-         return outputPath.Contains(organ) && outputPath.Contains(compartment) && outputPath.Contains(molecule);
+         return _outputMappingMatchingTask.DefaultScalingFor(output);
       }
 
       private ISimulation simulationContaining(IParameter parameter)

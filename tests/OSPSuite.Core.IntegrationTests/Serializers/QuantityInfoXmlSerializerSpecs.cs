@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Serializers
          bool ismatch = mapper.IsMatch(typeof (List<string>));
          ismatch = mapper.IsMatch(typeof (IList<string>));
          QuantityInfo x2 = SerializeAndDeserialize(x1);
-         AssertForSpecs.AreEqualMcQuantityInfo(x1, x2);
+         AssertForSpecs.AreEqualQuantityInfo(x1, x2);
       }
 
       [Test]
@@ -29,7 +29,7 @@ namespace OSPSuite.Core.Serializers
          var path = new List<string>();
          QuantityInfo x1 = new QuantityInfo(path, QuantityType.Parameter);
          QuantityInfo x2 = SerializeAndDeserialize(x1);
-         AssertForSpecs.AreEqualMcQuantityInfo(x1, x2);
+         AssertForSpecs.AreEqualQuantityInfo(x1, x2);
       }
    }
 }

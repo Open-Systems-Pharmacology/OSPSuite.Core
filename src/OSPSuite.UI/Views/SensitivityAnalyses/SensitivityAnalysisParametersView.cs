@@ -1,10 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using System.Windows.Forms;
 using DevExpress.Data;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
-using OSPSuite.Utility.Extensions;
 using DevExpress.Utils;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Repository;
@@ -13,6 +9,8 @@ using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.DTO.SensitivityAnalyses;
 using OSPSuite.Presentation.Extensions;
@@ -22,6 +20,7 @@ using OSPSuite.Presentation.Views.SensitivityAnalyses;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.SensitivityAnalyses
 {
@@ -33,8 +32,6 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
       private readonly ComboBoxUnitParameter _comboBoxUnit;
       private readonly RepositoryItemButtonEdit _removeButtonRepository = new UxRemoveButtonRepository();
       private IGridViewColumn _colName;
-      private const int PANEL_WIDTH = 250;
-      private const int PANEL_HEIGHT = 29;
 
       public SensitivityAnalysisParametersView(IImageListRetriever imageListRetriever, IToolTipCreator toolTipCreator)
       {
@@ -93,9 +90,25 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          }
       }
 
-      public void SetNMaxView(IView view) => panelSetNMax.FillWith(view);
+      public void SetNMaxView(IView view) => addView(labelSetNMax, view);
 
-      public void SetRangeView(IView view) => panelSetRange.FillWith(view);
+      public void SetRangeView(IView view) => addView(labelSetRange, view);
+
+      public void RefreshParameterHeight()
+      {
+         layoutItemTablePanel.AdjustControlHeight(tablePanel.Height);
+      }
+
+      // layoutItemTablePanel
+      private void addView(LabelControl labelControl, IView view)
+      {
+         var control = view.DowncastTo<Control>();
+         var rowIndex = tablePanel.GetRow(labelControl);
+         //+1 since the control to add will be in the next column
+         var colIndex = tablePanel.GetColumn(labelControl) + 1;
+         tablePanel.Controls.Add(control);
+         tablePanel.SetCell(control, rowIndex, colIndex);
+      }
 
       public override void InitializeBinding()
       {
@@ -103,7 +116,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          _colName = _gridViewBinder.Bind(x => x.Name)
             .WithCaption(Captions.Name)
             .WithOnValueUpdating((o, e) => OnEvent(() => _presenter.ChangeName(o, e.NewValue)));
-            
+
          _colName.XtraColumn.SortMode = ColumnSortMode.Value;
          _colName.XtraColumn.SortOrder = ColumnSortOrder.Ascending;
 
@@ -151,24 +164,13 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
       {
          base.InitializeResources();
          layoutItemParameters.TextVisible = false;
-         layoutItemRemoveAll.AdjustLargeButtonSize();
+         layoutItemRemoveAll.AdjustLargeButtonSize(layoutControl);
          btnRemoveAll.InitWithImage(ApplicationIcons.Remove, Captions.SensitivityAnalysis.RemoveAll);
 
-         updatePanelSize(panelSetNMax);
-         updatePanelSize(panelSetRange);
-
-         layoutControlItemSetNMax.Text = Captions.SensitivityAnalysis.NumberOfSteps.FormatForLabel();
-         layoutControlItemSetRange.Text = Captions.SensitivityAnalysis.VariationRange.FormatForLabel();
+         labelSetNMax.Text = Captions.SensitivityAnalysis.NumberOfSteps.FormatForLabel();
+         labelSetRange.Text = Captions.SensitivityAnalysis.VariationRange.FormatForLabel();
 
          multiSetValueControlGroup.Text = Captions.SensitivityAnalysis.UpdateMultipleSensitivityParameters;
-         lblNumberOfParameters.AsDescription();
-      }
-
-      private void updatePanelSize(PanelControl panelControl)
-      {
-         var panelSize = new Size(PANEL_WIDTH, PANEL_HEIGHT);
-         panelControl.MinimumSize = panelSize;
-         panelControl.MaximumSize = panelSize;
       }
    }
 }

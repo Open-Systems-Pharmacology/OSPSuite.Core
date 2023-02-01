@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
@@ -17,6 +16,16 @@ namespace OSPSuite.Starter.Domain
       public IEnumerable<CurveChart> Charts
       {
          get { yield break; }
+      }
+
+      public OutputMappings OutputMappings { get; set; }
+      public DataRepository ResultsDataRepository { get; set; }
+      public void RemoveUsedObservedData(DataRepository dataRepository)
+      {
+      }
+
+      public void RemoveOutputMappings(DataRepository dataRepository)
+      {
       }
 
       public OutputSchema OutputSchema => Settings.OutputSchema;
@@ -56,5 +65,7 @@ namespace OSPSuite.Starter.Domain
       {
          return true;
       }
+
+      public bool HasChanged { get; set; }
    }
 }

@@ -10,7 +10,7 @@ namespace OSPSuite.Core.Comparison
    {
       /// <summary>
       ///    Compare the object <paramref name="object1" /> and <paramref name="object2" /> using the default settings and
-      ///    returns a report containg the difference between the two objects
+      ///    returns a report containing the difference between the two objects
       /// </summary>
       /// <param name="object1"> First object to compare </param>
       /// <param name="object2"> Second object to compare </param>
@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Comparison
       ///    Compare the object <paramref name="object1" /> and <paramref name="object2" /> using the given
       ///    <paramref
       ///       name="settings" />
-      ///    and returns a report containg the difference between the two objects
+      ///    and returns a report containing the difference between the two objects
       /// </summary>
       /// <param name="object1"> First object to compare </param>
       /// <param name="object2"> Second object to compare </param>

@@ -2,6 +2,7 @@
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Collections;
+using static OSPSuite.Core.Domain.Constants.Dimension;
 
 namespace OSPSuite.Core.Domain
 {
@@ -25,7 +26,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Dimension of pk parameter
       /// </summary>
-      public virtual IDimension Dimension { get; set; }
+      public virtual IDimension Dimension { get; set; } = NO_DIMENSION;
 
       /// <summary>
       ///    Name of PK Output (Cmax, Tmax etc...)

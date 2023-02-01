@@ -39,6 +39,12 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
          yield return CreateMenuButton.WithCaption(MenuNames.ExportToExcel)
             .WithActionCommand(chartDisplayPresenter.ExportToExcel)
             .WithIcon(ApplicationIcons.Excel);
+
+         if (curveChart.IsAnImplementationOf<PredictedVsObservedChart>())
+         {
+            yield return CreateMenuButton.WithCaption(MenuNames.AddDeviationLines)
+               .WithActionCommand(chartDisplayPresenter.AddDeviationLines);
+         }
       }
    }
 

@@ -24,6 +24,8 @@ using OSPSuite.Core.Extensions;
 using OSPSuite.UI.Mappers;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;
+using static System.Int32;
+using static OSPSuite.UI.UIConstants.Size;
 
 namespace OSPSuite.UI.Controls
 {
@@ -306,14 +308,15 @@ namespace OSPSuite.UI.Controls
 
             try
             {
-               int height = viewInfo.CalcRealViewHeight(new Rectangle(0, 0, Int32.MaxValue, Int32.MaxValue));
+               int height = viewInfo.CalcRealViewHeight(new Rectangle(0, 0, MaxValue, MaxValue));
                viewInfo.CalcRealViewHeight(oldBounds);
 
                var scrollInfo = (ScrollInfo) fi.GetValue(this);
                if (scrollInfo.HScrollVisible)
                   height += scrollInfo.HScrollSize;
 
-               return height;
+               //We had this extra height for each row as some is always missing on larger scaling.
+               return height + RowCount * COMPUTED_EXTRA_HEIGHT;
             }
             catch (Exception)
             {

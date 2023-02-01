@@ -26,9 +26,11 @@ namespace OSPSuite.Core.Services
       private IFormulaTask _formulaTask;
       private IDataRepositoryTask _dataRepositoryTask;
       private IModelFinalizer _modelFinalizer;
+      private IEntityPathResolver _entityPathResolver;
 
       protected override void Context()
       {
+         _entityPathResolver = A.Fake<IEntityPathResolver>();
          _objectPathFactory = new ObjectPathFactory(new AliasCreator());
          _dimensionFactory = DimensionFactoryForSpecs.Factory;
          _objectBaseFactory = new ObjectBaseFactoryForSpecs(_dimensionFactory);
@@ -41,7 +43,7 @@ namespace OSPSuite.Core.Services
          _model = new Model().WithName("Model");
          _root = new Container().WithName("Root");
          _model.Root = _root;
-         sut = new SimulationExportCreator(_objectPathFactory, _tableFormulaToTableFormulaExportMapper, _concentrationBasedFormulaUpdater);
+         sut = new SimulationExportCreator(_objectPathFactory, _tableFormulaToTableFormulaExportMapper, _concentrationBasedFormulaUpdater, _entityPathResolver);
       }
    }
 

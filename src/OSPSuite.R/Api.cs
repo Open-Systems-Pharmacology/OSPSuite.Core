@@ -65,6 +65,8 @@ namespace OSPSuite.R
 
       public static IDataImporterTask GetDataImporterTask() => resolveTask<IDataImporterTask>();
 
+      public static ISimulationTask GetSimulationTask() => resolveTask<ISimulationTask>();
+
       /// <summary>
       /// Forces the Garbage collection 
       /// </summary>

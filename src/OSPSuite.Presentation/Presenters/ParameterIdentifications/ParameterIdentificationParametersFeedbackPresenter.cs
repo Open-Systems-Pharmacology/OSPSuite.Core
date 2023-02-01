@@ -22,7 +22,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
    {
       private readonly IParameterIdentificationExportTask _exportTask;
       private readonly Cache<string, ParameterFeedbackDTO> _parametersDTO = new Cache<string, ParameterFeedbackDTO>(x => x.Name);
-      private readonly Cache<string, IRunPropertyDTO> _allProperties = new Cache<string, IRunPropertyDTO>(x => x.Name);
+      private readonly List<IRunPropertyDTO> _allProperties = new List<IRunPropertyDTO>();
       private RunPropertyDTO<RunStatus> _runStatusProperty;
       private IReadOnlyCollection<IdentificationParameterHistory> _parametersHistory;
       private IReadOnlyList<float> _totalErrorHistory;

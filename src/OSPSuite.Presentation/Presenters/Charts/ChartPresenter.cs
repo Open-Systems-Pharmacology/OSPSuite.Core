@@ -114,6 +114,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          addTemplateButtons();
 
          ChartEditorPresenter.AddUsedInMenuItem();
+         ChartEditorPresenter.AddLinkSimDataMenuItem();
       }
 
       public void Handle(ChartTemplatesChangedEvent eventToHandle)

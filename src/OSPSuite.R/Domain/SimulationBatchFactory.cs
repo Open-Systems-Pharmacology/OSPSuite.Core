@@ -6,7 +6,7 @@ namespace OSPSuite.R.Domain
 {
    public interface ISimulationBatchFactory
    {
-      SimulationBatch Create(IModelCoreSimulation modelCoreSimulation, SimulationBatchOptions simulationBatchOptions);
+      SimulationBatch Create(IModelCoreSimulation modelCoreSimulation, SimulationBatchOptions simulationBatchOptions, SimulationRunOptions simulationRunOptions = null);
    }
 
    public class SimulationBatchFactory : DynamicFactory<SimulationBatch>, ISimulationBatchFactory
@@ -15,10 +15,10 @@ namespace OSPSuite.R.Domain
       {
       }
 
-      public SimulationBatch Create(IModelCoreSimulation modelCoreSimulation, SimulationBatchOptions simulationBatchOptions)
+      public SimulationBatch Create(IModelCoreSimulation modelCoreSimulation, SimulationBatchOptions simulationBatchOptions, SimulationRunOptions simulationRunOptions = null)
       {
          var simulationBatch = Create();
-         simulationBatch.Initialize(modelCoreSimulation, simulationBatchOptions);
+         simulationBatch.Initialize(modelCoreSimulation, simulationBatchOptions, simulationRunOptions);
          return simulationBatch;
       }
    }

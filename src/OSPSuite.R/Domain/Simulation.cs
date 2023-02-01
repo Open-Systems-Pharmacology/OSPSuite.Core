@@ -5,6 +5,7 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Visitor;
 
@@ -19,6 +20,17 @@ namespace OSPSuite.R.Domain
       public bool ComesFromPKSim { get; } = false;
       public bool UsesObservedData(DataRepository observedData) => false;
       public IEnumerable<CurveChart> Charts { get; } = new List<CurveChart>();
+      public OutputMappings OutputMappings { get; set; }
+      public DataRepository ResultsDataRepository { get; set; }
+      public void RemoveUsedObservedData(DataRepository dataRepository)
+      {
+         // nothing to do in R
+      }
+
+      public void RemoveOutputMappings(DataRepository dataRepository)
+      {
+         // nothing to do in R
+      }
 
       public void RemoveAnalysis(ISimulationAnalysis simulationAnalysis)
       {
@@ -92,7 +104,11 @@ namespace OSPSuite.R.Domain
          set => CoreSimulation.Model = value;
       }
 
-      public IBuildConfiguration BuildConfiguration => CoreSimulation.BuildConfiguration;
+      public IBuildConfiguration BuildConfiguration
+      {
+         get => CoreSimulation.BuildConfiguration;
+         set => CoreSimulation.BuildConfiguration = value;
+      }
 
       public OutputSelections OutputSelections => CoreSimulation.OutputSelections;
 
@@ -113,5 +129,6 @@ namespace OSPSuite.R.Domain
       public double? MolWeightFor(IQuantity quantity) => CoreSimulation.MolWeightFor(quantity);
 
       public double? MolWeightFor(string quantityPath) => CoreSimulation.MolWeightFor(quantityPath);
+      public bool HasChanged { get; set; }
    }
 }

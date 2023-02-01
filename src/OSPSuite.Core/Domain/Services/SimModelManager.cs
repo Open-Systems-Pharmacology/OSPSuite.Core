@@ -3,6 +3,7 @@ using System.Timers;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.SimModel;
+using static OSPSuite.Assets.Captions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -55,7 +56,10 @@ namespace OSPSuite.Core.Domain.Services
             doIfNotCanceled(() => FinalizeSimulation(_simModelSimulation));
             doIfNotCanceled(simulate);
 
-            return new SimulationRunResults(!_canceled, WarningsFrom( _simModelSimulation), getResults(simulation));
+            if(!_canceled)
+               return new SimulationRunResults(WarningsFrom( _simModelSimulation), getResults(simulation));
+
+            return new SimulationRunResults(WarningsFrom(_simModelSimulation), SimulationWasCanceled);
          }
          finally
          {

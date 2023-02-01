@@ -64,8 +64,15 @@ namespace OSPSuite.Core.Domain
       public const double DOUBLE_RELATIVE_EPSILON = 1e-5;
       public const double DOUBLE_PERCENTILE_RELATIVE_TOLERANCE = 1e-2;
 
+      //For fractions only, the minimum threshold used for comparison.  (<= 0.01%)
+      public const float MIN_FRACTION_RELATIVE_COMPARISON_THRESHOLD = 1e-4F;
+
+      //Max suggested output points. User can decide to still go ahead with the simulation
+      public const float MAX_NUMBER_OF_SUGGESTED_OUTPUT_POINTS = 50000;
+      
       public const float FLOAT_RELATIVE_EPSILON = 0.00001f;
       public const double CONFIDENCE_INTERVAL_ALPHA = 0.05;
+
 
       public const string PROJECT_UNDEFINED = "Undefined";
       public const string DISPLAY_PATH_SEPARATOR = "-";

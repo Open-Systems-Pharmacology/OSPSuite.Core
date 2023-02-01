@@ -76,7 +76,7 @@ namespace OSPSuite.Core.Domain
          var dimension2 = A.Fake<IDimension>();
          A.CallTo(() => dimension2.Name).Returns(Constants.Dimension.MOLAR_CONCENTRATION);
          A.CallTo(() => _quantity.Dimension).Returns(dimension2);
-         sut.DimensionsAreConsistent().ShouldBeTrue();
+         sut.DimensionsAreConsistentForParameterIdentification().ShouldBeTrue();
       }
 
       [Observation]
@@ -89,7 +89,7 @@ namespace OSPSuite.Core.Domain
          var dimension2 = A.Fake<IDimension>();
          A.CallTo(() => dimension2.Name).Returns(Constants.Dimension.MASS_AMOUNT);
          A.CallTo(() => _quantity.Dimension).Returns(dimension2);
-         sut.DimensionsAreConsistent().ShouldBeTrue();
+         sut.DimensionsAreConsistentForParameterIdentification().ShouldBeTrue();
       }
 
       [Observation]
@@ -102,21 +102,31 @@ namespace OSPSuite.Core.Domain
          var dimension2 = A.Fake<IDimension>();
          A.CallTo(() => dimension2.BaseUnit).Returns(new Unit("base", 1, 0));
          A.CallTo(() => _quantity.Dimension).Returns(dimension2);
-         sut.DimensionsAreConsistent().ShouldBeTrue();
+         sut.DimensionsAreConsistentForParameterIdentification().ShouldBeTrue();
       }
 
       [Observation]
       public void should_return_invalid_if_at_least_one_dimension_is_null()
       {
          A.CallTo(() => _quantity.Dimension).Returns(null);
-         sut.DimensionsAreConsistent().ShouldBeFalse();
+         sut.DimensionsAreConsistentForParameterIdentification().ShouldBeFalse();
       }
 
       [Observation]
       public void should_return_invalid_otherwise()
       {
          A.CallTo(() => _quantity.Dimension).Returns(A.Fake<IDimension>());
-         sut.DimensionsAreConsistent().ShouldBeFalse();
+         sut.DimensionsAreConsistentForParameterIdentification().ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_return_true_for_simulation_if_output_is_null()
+      {
+         sut = new OutputMapping
+         {
+            WeightedObservedData = new WeightedObservedData(_dataRepository)
+         };
+         sut.SimulationDimensionsAreConsistent(_dataRepository).ShouldBeTrue();
       }
    }
 }

@@ -21,7 +21,9 @@ namespace OSPSuite.Infrastructure.Import.Core
       }
 
       public string DisplayName { get; set; }
+
       public bool IsMandatory { get; set; }
+
       public string BaseGridName { get; set; }
 
       /// <summary>

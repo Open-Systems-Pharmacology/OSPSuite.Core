@@ -1,7 +1,9 @@
 ﻿using System;
+using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Serialization.Chart;
+using OSPSuite.Serializer;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -15,6 +17,11 @@ namespace OSPSuite.Core.Serialization.Xml
 
    public class ParameterIdentificationPredictedVsObservedChartXmlSerializer : CurveChartXmlSerializer<ParameterIdentificationPredictedVsObservedChart>
    {
+      public override void PerformMapping()
+      {
+         base.PerformMapping();
+         Map(x => x.DeviationFoldValues);
+      }
    }
 
    public class ParameterIdentificationCorrelationMatrixXmlSerializer : ObjectBaseXmlSerializer<ParameterIdentificationCorrelationMatrix>
@@ -37,7 +44,7 @@ namespace OSPSuite.Core.Serialization.Xml
    {
    }
 
-   public abstract class ParameterIdentificationAnalysisChartWithLocalRepositoriesXmlSerializer<T> : CurveChartXmlSerializer<T> where T : ParameterIdentificationAnalysisChartWithLocalRepositories
+   public abstract class ParameterIdentificationAnalysisChartWithLocalRepositoriesXmlSerializer<T> : CurveChartXmlSerializer<T> where T : AnalysisChartWithLocalRepositories
    {
       public override void PerformMapping()
       {

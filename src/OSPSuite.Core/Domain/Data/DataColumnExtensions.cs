@@ -14,6 +14,8 @@ namespace OSPSuite.Core.Domain.Data
 
       public static bool IsObservationAuxiliary(this DataColumn column) => dataColumnIs(column, ColumnOrigins.ObservationAuxiliary);
 
+      public static bool IsDeviation(this DataColumn column) => dataColumnIs(column, ColumnOrigins.DeviationLine);
+
       private static bool dataColumnIs(DataColumn column, ColumnOrigins columnOrigin) => column.DataInfo?.Origin == columnOrigin;
    }
 }

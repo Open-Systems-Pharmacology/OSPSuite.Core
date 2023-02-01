@@ -53,6 +53,8 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       {
          gridParameters.RefreshDataSource();
          gridProperties.RefreshDataSource();
+         //We are doing it here as for some reasons, the row count is not calculated properly in the BindTo
+         layoutItemRunProperties.AdjustGridViewHeight(gridViewProperties, layoutControl);
       }
 
       public void BindTo(IEnumerable<ParameterFeedbackDTO> parametersDTO, IEnumerable<IRunPropertyDTO> propertiesDTO)
@@ -120,7 +122,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          base.InitializeResources();
          layoutItemParameters.TextVisible = false;
          layoutItemRunProperties.TextVisible = false;
-         layoutItemExportParametersHistory.AdjustLargeButtonSize();
+         layoutItemExportParametersHistory.AdjustLargeButtonSize(layoutControl);
          btnExportParametersHistory.InitWithImage(ApplicationIcons.Excel, Captions.ParameterIdentification.ExportParametersHistory);
       }
    }

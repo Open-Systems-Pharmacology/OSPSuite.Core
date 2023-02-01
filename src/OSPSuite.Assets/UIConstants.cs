@@ -1,10 +1,10 @@
-﻿using System;
+﻿using OSPSuite.Assets.Extensions;
+using OSPSuite.Utility.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using OSPSuite.Assets.Extensions;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Assets
 {
@@ -80,6 +80,7 @@ namespace OSPSuite.Assets
       public static readonly string DiagramBackground = "Diagram Background";
       public static readonly string ChartColor = "Chart Color";
       public static readonly string UseSelected = "Use selected";
+      public static readonly string LinkDataToSimulations = "Link Data to Simulations";
       public static readonly string MetaData = "Meta Data";
       public static readonly string AddDataPoint = "Add Data Point";
       public static readonly string AddMetaData = "Add Meta Data";
@@ -200,6 +201,8 @@ namespace OSPSuite.Assets
       public static readonly string ChartExportOptions = "Chart Export Options";
       public static readonly string No = "No";
       public static readonly string Yes = "Yes";
+      public static readonly string ReallyRemoveObservedDataFromSimulation = $"Really remove {ObjectTypes.ObservedData} from the simulation?\nHint: {ObjectTypes.ObservedData} will not be deleted from the project";
+      public static readonly string SimulationWasCanceled = "Simulation was canceled";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
@@ -339,6 +342,16 @@ namespace OSPSuite.Assets
 
       public static string ReallyClearHistory = "Really clear command history? This action is irreversible even if the project is not saved afterwards.";
 
+      public static class SimulationUI
+      {
+         public static readonly string ObservedDataSelection = "Observed Data";
+         public static readonly string PredictedVsObservedSimulation = "Predicted vs Observed";
+         public static readonly string ResidualsVsTimeSimulation = "Residuals vs Time";
+         public static readonly string Outputs = "Simulation Outputs";
+         public static readonly string ObservedData = "Observed Data";
+         public static readonly string NoneEditorNullText = "<None>";
+      }
+
       public static class Importer
       {
          public static readonly string ImportAll = "Import All";
@@ -440,8 +453,11 @@ namespace OSPSuite.Assets
          public static readonly string NewDataStetsWillBeImported = "New datasets that will be imported";
          public static readonly string ReloadData = "Reload Data";
          public static readonly string SeparatorSelection = "Separator Selection";
+         public static readonly string DecimalSeparator = "Decimal Separator";
+         public static readonly string ColumnSeparator = "Column Separator";
+
          public static string LLOQInconsistentValuesAt(string dataRepositoryName) => $"There were different LLOQ values detected for the data from a single source. Please check data under name {dataRepositoryName}. Are you sure you want to continue with import?";
-         public static string CsvSeparatorDescription(string fileName) => $"Please select the separator for the file \r\n'{fileName}':";
+         public static string CsvSeparatorInstructions(string fileName) => $"Please select the separators for '{fileName}':";
 
          public static readonly string SheetFormatNotSupported =
             "The format of the sheet you are trying to use is not supported.You can find a documentation of the supported formats<href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats > here </href>";
@@ -569,14 +585,15 @@ namespace OSPSuite.Assets
             return $"{missingObjectType} '{missingObjectName}' is missing from {containerType} '{containerName}'";
          }
 
-         public static string ConnectionBetween(string firstNeigborPath, string secondNeigborPath)
+         public static string ConnectionBetween(string firstNeighborPath, string secondNeighborPath)
          {
-            return $"Between '{firstNeigborPath}' and '{secondNeigborPath}'";
+            return $"Between '{firstNeighborPath}' and '{secondNeighborPath}'";
          }
 
          public static readonly string NoDifferenceFound = "No difference found.";
          public static readonly string Stationary = "Stationary";
          public static readonly string IsStateVariable = "Is state variable";
+         public static readonly string Criteria = "Criteria";
       }
 
       public static class Commands
@@ -894,6 +911,10 @@ namespace OSPSuite.Assets
          public static readonly string RemoveLLOQMode = "Remove data below LLOQ";
          public static readonly string TimeProfileAnalysis = "Time Profile";
          public static readonly string PredictedVsObservedAnalysis = "Predicted vs. Observed";
+         public static readonly string SimulatedChartAxis = "Simulated";
+         public static readonly string ObservedChartAxis = "Observed";
+         public static readonly string MarkerDeviation = "Marker_Deviation";
+         public static readonly string Deviation = "Deviation";
          public static readonly string ResidualsVsTimeAnalysis = "Residuals vs. Time";
          public static readonly string ResidualHistogramAnalysis = "Histogram of Residuals";
          public static readonly string RunResultsProperties = "Parameter Identification Run Properties";
@@ -1289,6 +1310,24 @@ namespace OSPSuite.Assets
          {
             public static string CurrentValue = "<Current value>";
          }
+
+         public static class GroupRowFormat
+         {
+            public static string Simulation = "Simulation";
+            public static string Time = "Time";
+            public static string Observation = "Observation";
+            public static string DeviationLine = "Deviation Lines";
+            public static string Undefined = "Undefined"; 
+         }
+
+         public static class DeviationLines
+         {
+            public static string SpecifyFoldValue = "Specify deviation fold value";
+            public static string DeviationLineDescription = "Will create two deviation lines according to the given fold value which has to be greater than 1 (foldValue >1). An x-fold deviation range includes simulated values within x-fold and 1/x-fold of observed values.";
+            public static string DeviationLineNameUpper(float foldValue) => $"{foldValue}-fold deviation";
+            public static string DeviationLineNameLower(float foldValue) => $"{foldValue}-fold deviation Lower";
+
+         }
       }
    }
 
@@ -1320,11 +1359,22 @@ namespace OSPSuite.Assets
       public static readonly string UnsupportedFileType = "The type of file that you are trying to open is not currently supported";
       public static readonly string CannotRemoveBaseGridColumnStillInUse = "Cannot remove base grid column still used by other columns";
       public static readonly string SimpleParseErrorMessage = "There were errors while parsing your data. Navigate to the sheets to read the concrete error.";
+      public static readonly string FoldValueMustBeGreaterThanOne = "Fold value must be a number greater than one.";
+      public static readonly string ImporterEmptyFile = "The file you are trying to load is empty.";
+
+      public static  string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
 
       public static string ParseErrorMessage(IEnumerable<string> errors) => $"There were errors while parsing your data: {string.Join(". ", errors)}";
 
       public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) =>
          $"It was not possible to plot the data sets. Please, check your configuration for any missing grouping or meta data parameter. An error occur while plotting data set number:{sheetName + 1} produced the following error: {exceptionMessage}";
+
+      public static string SheetWithDuplicateHeader(string sheetName, IEnumerable<string> duplicateHeaders)
+      {
+         var sb = new StringBuilder();
+         sb.AppendLine($"In sheet {sheetName} the headers \n \n{string.Join("\n", duplicateHeaders)} \nare duplicated.");
+         return sb.ToString();
+      }
 
       public static string InvalidObservedDataFile(string exceptionMessage)
       {
@@ -1644,6 +1694,8 @@ namespace OSPSuite.Assets
          }
       }
 
+      public static string SimulationDidNotProduceResults = "Simulation did not produce results";
+
       public static string DuplicatedIndividualResultsForId(int individualId) => $"Individual results for individual with id '{individualId}' were defined more than once!";
 
       public static string DuplicatedPKParameterSensitivityFor(string id) => $"PKParameter sensitivity results for '{id}' were defined more than once!";
@@ -1725,7 +1777,7 @@ namespace OSPSuite.Assets
 
       public static string TypeNotSupported(string typeName) => $"{typeName} is not currently been handled";
 
-      public static string CannotSetValueByPathUsingWildCard(string path) => $"Setting value by path is not supported for path containing wildcard ({path})";
+      public static string CannotAccessValueByPathUsingWildCard(string path) => $"Accessing value by path is not supported for path containing wildcard ({path})";
    }
 
    public static class Validation
@@ -1922,6 +1974,9 @@ namespace OSPSuite.Assets
       public static string ParameterWithPathNotFoundInBaseIndividual(string parameterPath) => $"Parameter '{parameterPath}' was not found in individual and will be ignored.";
 
       public static string UserDefinedPKParameterAlreadyExistsAndWillBeReplaced(string pkParameterName) => $"User Defined PK-Parameter '{pkParameterName}' already exists and will be replaced.";
+
+      public static string LargeNumberOfOutputPoints(int numberOfPoints) =>
+         $"The selected output resolution will generate {numberOfPoints} points and may severely impact the software performance.\nAre you sure you want to run with these setting? If not, consider changing output resolution in simulations settings";
    }
 
    public static class RibbonCategories
@@ -2010,6 +2065,7 @@ namespace OSPSuite.Assets
       public static readonly string StartSensitivityAnalysis = "Start Sensitivity Analysis...";
       public static readonly string ClearHistory = "Clear History";
       public static readonly string ColorGroupObservedData = "Color by folder when adding to chart";
+      public static readonly string AddDeviationLines = "Add deviation lines...";
 
       public static readonly string Help = "Help";
 
@@ -2258,6 +2314,7 @@ namespace OSPSuite.Assets
    {
       public static readonly string ToolTipForAxis = "Double click to edit axis";
       public static readonly string UseSelectedCurvesToolTip = "Adds or removes all the selected curves at once.";
+      public static readonly string LinkSimulationObservedToolTip = "Links the simulation outputs to their mapped observed data, so that when a simulation output is (de)selected the corresponding observed data gets (de)selected as well.";
       public static readonly string AddUnitMap = "Add new default unit for a specific dimension";
       public static readonly string LoadUnits = "Load default units from file";
       public static readonly string SaveUnits = "Save default units to file";

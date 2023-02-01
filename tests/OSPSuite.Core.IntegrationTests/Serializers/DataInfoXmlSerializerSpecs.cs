@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Serializers
          DataInfo x1 = new DataInfo(ColumnOrigins.Observation, AuxiliaryType.ArithmeticStdDev, "cm", "Dog", 2.4);
          x1.ExtendedProperties.Add(new ExtendedProperty<int>() {Name = "Age", Value = 34});
          DataInfo x2 = SerializeAndDeserialize(x1);
-         AssertForSpecs.AreEqualMcDataInfo(x1, x2);
+         AssertForSpecs.AreEqualDataInfo(x1, x2);
       }
    }
 }

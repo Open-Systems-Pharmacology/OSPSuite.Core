@@ -25,14 +25,14 @@ namespace OSPSuite.R.Domain
 
       public ConcurrentRunSimulationBatch(IModelCoreSimulation simulation, SimulationBatchOptions simulationBatchOptions)
       {
-         Simulation = simulation;
+         Simulation = Api.GetSimulationTask().CloneForBatchRun(simulation);
          SimulationBatchOptions = simulationBatchOptions;
          Id = generateId();
       }
 
-      internal SimulationBatch AddNewBatch()
+      internal SimulationBatch AddNewBatch(SimulationRunOptions simulationRunOptions)
       {
-         var batch = Api.GetSimulationBatchFactory().Create(Simulation, SimulationBatchOptions);
+         var batch = Api.GetSimulationBatchFactory().Create(Simulation, SimulationBatchOptions, simulationRunOptions);
          _simulationBatches.Enqueue(batch);
          return batch;
       }

@@ -19,7 +19,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private ParameterIdentificationRunState _lastState;
       private ParameterIdentificationRunState _currentState;
 
-      public SingleParameterIdentificationFeedbackPresenter(ISingleParameterIdentificationFeedbackView view,
+      public SingleParameterIdentificationFeedbackPresenter(
+         ISingleParameterIdentificationFeedbackView view,
          IParameterIdentificationParametersFeedbackPresenter parametersFeedbackPresenter,
          IParameterIdentificationPredictedVsObservedFeedbackPresenter predictedVsObservedFeedbackPresenter,
          IParameterIdentificationTimeProfileFeedbackPresenter timeProfileFeedbackPresenter,

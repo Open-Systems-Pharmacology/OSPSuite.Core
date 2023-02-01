@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -53,7 +54,28 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public string QuantityType => DataColumn.QuantityInfo.Type.ToString();
       public bool HasRelatedColumns => DataColumn.RelatedColumns.Any();
       public string Origin => DataColumn.DataInfo.Origin.ToString();
-      public string Category => DataColumn.DataInfo.Category;
+      public string Category => categoryFromOrigin(DataColumn.DataInfo.Origin);
+
+      private string categoryFromOrigin(ColumnOrigins dataInfoOrigin)
+      {
+         switch (dataInfoOrigin)
+         {
+            case ColumnOrigins.BaseGrid:
+               return Captions.Chart.GroupRowFormat.Time;
+            case ColumnOrigins.Calculation:
+            case ColumnOrigins.CalculationAuxiliary:
+               return Captions.Chart.GroupRowFormat.Simulation;
+            case ColumnOrigins.Observation:
+            case ColumnOrigins.ObservationAuxiliary:
+               return Captions.Chart.GroupRowFormat.Observation;
+            case ColumnOrigins.DeviationLine:
+               return Captions.Chart.GroupRowFormat.DeviationLine;
+            case ColumnOrigins.Undefined:
+               return Captions.Chart.GroupRowFormat.Undefined;
+            default:
+               throw new ArgumentOutOfRangeException(nameof(dataInfoOrigin), dataInfoOrigin, null);
+         }
+      }
 
       public bool Used
       {

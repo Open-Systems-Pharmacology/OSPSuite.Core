@@ -7,7 +7,7 @@ using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.SimModel;
 using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
+using static OSPSuite.Core.Domain.Constants;
 
 namespace OSPSuite.Core.Domain
 {
@@ -30,35 +30,33 @@ namespace OSPSuite.Core.Domain
 
    public class DataFactory : IDataFactory
    {
-      private readonly IObjectPathFactory _objectPathFactory;
       private readonly IDisplayUnitRetriever _displayUnitRetriever;
       private readonly IDataRepositoryTask _dataRepositoryTask;
       private readonly IDimensionFactory _dimensionFactory;
 
       public DataFactory(
          IDimensionFactory dimensionFactory,
-         IObjectPathFactory objectPathFactory,
          IDisplayUnitRetriever displayUnitRetriever,
          IDataRepositoryTask dataRepositoryTask)
       {
          _dimensionFactory = dimensionFactory;
-         _objectPathFactory = objectPathFactory;
          _displayUnitRetriever = displayUnitRetriever;
          _dataRepositoryTask = dataRepositoryTask;
       }
 
-      public DataRepository CreateRepository(IModelCoreSimulation simulation, Simulation simModelSimulation, string repositoryName = Constants.DEFAULT_SIMULATION_RESULTS_NAME)
+      public DataRepository CreateRepository(IModelCoreSimulation simulation, Simulation simModelSimulation, string repositoryName = DEFAULT_SIMULATION_RESULTS_NAME)
       {
          var repository = new DataRepository().WithName(repositoryName);
-         var allPersitableQuantities = new Cache<string, IQuantity>(q => _objectPathFactory.CreateAbsoluteObjectPath(q).ToString(), x => null);
+         var allPersitableQuantities = new Cache<string, IQuantity>(q => q.Id, x => null);
          allPersitableQuantities.AddRange(simulation.Model.Root.GetAllChildren<IQuantity>(x => x.Persistable));
 
          var time = createTimeGrid(simModelSimulation.SimulationTimes);
          foreach (var quantityValue in simModelSimulation.AllValues)
          {
-            var quantity = allPersitableQuantities[quantityValue.Path];
+            var quantity = allPersitableQuantities[quantityValue.EntityId];
 
-            if (quantity == null) continue;
+            if (quantity == null)
+               continue;
 
             repository.Add(createColumn(time, quantity, quantityValue, quantityValue.Path.ToPathArray(), simulation));
          }
@@ -73,7 +71,7 @@ namespace OSPSuite.Core.Domain
             DataInfo =
             {
                Origin = ColumnOrigins.Calculation,
-               ComparisonThreshold = (float) quantityValues.ComparisonThreshold
+               ComparisonThreshold = CalculateComparisonThreshold(quantity, quantityValues.ComparisonThreshold)
             },
             Values = new List<float>(quantityValues.Values.ToFloatArray()),
             QuantityInfo = new QuantityInfo(quantityPath, quantity.QuantityType),
@@ -97,11 +95,22 @@ namespace OSPSuite.Core.Domain
       /// </returns>
       private BaseGrid createTimeGrid(double[] values)
       {
-         return new BaseGrid(Constants.TIME, _dimensionFactory.Dimension(Constants.Dimension.TIME))
+         return new BaseGrid(TIME, _dimensionFactory.Dimension(Constants.Dimension.TIME))
          {
-            QuantityInfo = new QuantityInfo(new List<string> {Constants.TIME}, QuantityType.BaseGrid),
+            QuantityInfo = new QuantityInfo(new List<string> {TIME}, QuantityType.BaseGrid),
             Values = new List<float>(values.ToFloatArray())
          };
+      }
+
+      //Exposing this one publicly so that we can test it (hard to test with SimModel being involved in the mix)
+      public float CalculateComparisonThreshold(IQuantity quantity, double defaultThreshold)
+      {
+         var defaultThresholdAsFloat = (float) defaultThreshold;
+         if (!quantity.IsFraction())
+            return defaultThresholdAsFloat;
+
+         //faction, we return the max between default threshold and our min
+         return Math.Max(defaultThresholdAsFloat, MIN_FRACTION_RELATIVE_COMPARISON_THRESHOLD);
       }
    }
 }

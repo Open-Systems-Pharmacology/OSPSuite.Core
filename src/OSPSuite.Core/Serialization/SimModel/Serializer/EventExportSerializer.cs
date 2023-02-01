@@ -15,7 +15,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Serializer
       }
    }
 
-   public class AssignmentExportSerializer : SimModelSerializerBase<AssigmentExport>
+   public class AssignmentExportSerializer : SimModelSerializerBase<AssignmentExport>
    {
       public override void PerformMapping()
       {

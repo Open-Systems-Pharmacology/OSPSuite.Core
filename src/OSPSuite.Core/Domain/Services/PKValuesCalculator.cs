@@ -7,6 +7,7 @@ using OSPSuite.Core.Maths.Interpolations;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using static System.Double;
+using static OSPSuite.Core.Domain.Constants.PKParameters;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -63,35 +64,47 @@ namespace OSPSuite.Core.Domain.Services
          var lastInterval = allIntervals[LAST_INTERVAL];
          var fullInterval = allIntervals[FULL_RANGE_INTERVAL];
 
-         setCmaxAndTmax(pk, firstInterval, Constants.PKParameters.C_max_tD1_tD2, Constants.PKParameters.Tmax_tD1_tD2);
-         setValue(pk, Constants.PKParameters.Ctrough_tD2, firstInterval, x => x.CTrough);
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_tD1_tD2, firstInterval, x => x.AucTend);
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_inf_tD1, firstInterval, x => x.AucInf);
-         setValue(pk, Constants.PKParameters.Thalf, firstInterval, x => x.Thalf);
-         setValue(pk, Constants.PKParameters.MRT, firstInterval, x => x.Mrt);
+         //First interval
+         setCmaxAndTmax(pk, firstInterval, C_max_tD1_tD2, Tmax_tD1_tD2);
+         setValue(pk, Ctrough_tD2, firstInterval, x => x.CTrough);
+         setValueAndNormalize(pk, AUC_tD1_tD2, firstInterval, x => x.AucTend);
+         setValueAndNormalize(pk, AUC_inf_tD1, firstInterval, x => x.AucInf);
+         setValue(pk, Thalf, firstInterval, x => x.Thalf);
+         setValue(pk, MRT, firstInterval, x => x.Mrt);
 
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_tDLast_minus_1_tDLast, lastMinusOneInterval, x => x.AucTend);
+         //One minus last interval
+         setValueAndNormalize(pk, AUC_tDLast_minus_1_tDLast, lastMinusOneInterval, x => x.AucTend);
 
-         setCmaxAndTmax(pk, lastInterval, Constants.PKParameters.C_max_tDLast_tDEnd, Constants.PKParameters.Tmax_tDLast_tDEnd);
-         setValue(pk, Constants.PKParameters.Ctrough_tDLast, lastInterval, x => x.CTrough);
-         setValue(pk, Constants.PKParameters.Thalf_tDLast_tEnd, lastInterval, x => x.Thalf);
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_inf_tDLast, lastInterval, x => x.AucInf);
+         //Last Interval
+         setCmaxAndTmax(pk, lastInterval, C_max_tDLast_tDEnd, Tmax_tDLast_tDEnd);
+         setValue(pk, Ctrough_tDLast, lastInterval, x => x.CTrough);
+         setValue(pk, Thalf_tDLast_tEnd, lastInterval, x => x.Thalf);
+         setValueAndNormalize(pk, AUC_inf_tDLast, lastInterval, x => x.AucInf);
 
-         setCmaxAndTmax(pk, fullInterval, Constants.PKParameters.C_max, Constants.PKParameters.Tmax);
+         setCommonPKValues(pk, fullInterval);
       }
 
       private void setSingleDosingPKValues(ICache<string, double> pk, PKInterval interval)
       {
-         setCmaxAndTmax(pk, interval, Constants.PKParameters.C_max, Constants.PKParameters.Tmax);
-         setValue(pk, Constants.PKParameters.C_tEnd, interval, x => x.CTrough);
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_tEnd, interval, x => x.AucTend);
-         setValueAndNormalize(pk, Constants.PKParameters.AUC_inf, interval, x => x.AucInf);
-         setValue(pk, Constants.PKParameters.Thalf, interval, x => x.Thalf);
-         setValue(pk, Constants.PKParameters.MRT, interval, x => x.Mrt);
-         setValue(pk, Constants.PKParameters.FractionAucEndToInf, interval, x => x.FractionAucEndToInf);
-         setValue(pk, Constants.PKParameters.CL, interval, x => x.CL);
-         setValue(pk, Constants.PKParameters.Vss, interval, x => x.Vss);
-         setValue(pk, Constants.PKParameters.Vd, interval, x => x.Vd);
+         setCommonPKValues(pk, interval);
+         setValueAndNormalize(pk, AUC_inf, interval, x => x.AucInf);
+         setValue(pk, Thalf, interval, x => x.Thalf);
+         setValue(pk, MRT, interval, x => x.Mrt);
+         setValue(pk, FractionAucEndToInf, interval, x => x.FractionAucEndToInf);
+         setValue(pk, CL, interval, x => x.CL);
+         setValue(pk, Vss, interval, x => x.Vss);
+         setValue(pk, Vd, interval, x => x.Vd);
+      }
+
+      private void setCommonPKValues(ICache<string, double> pk, PKInterval interval)
+      {
+         //Calculated for full interval
+         setCmaxAndTmax(pk, interval, C_max, Tmax);
+
+         //T end 
+         setValue(pk, C_tEnd, interval, x => x.CTrough);
+
+         setValueAndNormalize(pk, AUC_tEnd, interval, x => x.AucTend);
       }
 
       private void setCmaxAndTmax(ICache<string, double> pk, PKInterval interval, string cmaxName, string tMaxName)
@@ -110,11 +123,10 @@ namespace OSPSuite.Core.Domain.Services
          pk[parameterName] = value;
       }
 
-
       private void setValueAndNormalize(ICache<string, double> pk, string parameterName, PKInterval pkInterval, Func<PKInterval, double> valueFunc)
       {
          setValue(pk, parameterName, pkInterval, valueFunc);
-         pk[Constants.PKParameters.NormalizedName(parameterName)] = pkInterval.NormalizeValue(valueFunc);
+         pk[NormalizedName(parameterName)] = pkInterval.NormalizeValue(valueFunc);
       }
 
       private PKValues pkValuesFrom(ICache<string, double> pk)

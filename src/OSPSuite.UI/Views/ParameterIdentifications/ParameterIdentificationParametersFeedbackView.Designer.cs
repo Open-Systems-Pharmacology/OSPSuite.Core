@@ -33,14 +33,14 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       private void InitializeComponent()
       {
          this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
-         this.gridProperties = new UxGridControl();
-         this.gridViewProperties = new UxGridView();
-         this.gridParameters = new UxGridControl();
-         this.gridViewParameters = new UxGridView();
+         this.btnExportParametersHistory = new DevExpress.XtraEditors.SimpleButton();
+         this.gridProperties = new OSPSuite.UI.Controls.UxGridControl();
+         this.gridViewProperties = new OSPSuite.UI.Controls.UxGridView();
+         this.gridParameters = new OSPSuite.UI.Controls.UxGridControl();
+         this.gridViewParameters = new OSPSuite.UI.Controls.UxGridView();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutItemParameters = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemRunProperties = new DevExpress.XtraLayout.LayoutControlItem();
-         this.btnExportParametersHistory = new DevExpress.XtraEditors.SimpleButton();
          this.layoutItemExportParametersHistory = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem = new DevExpress.XtraLayout.EmptySpaceItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
@@ -59,6 +59,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          // 
          // layoutControl
          // 
+         this.layoutControl.AllowCustomization = false;
          this.layoutControl.Controls.Add(this.btnExportParametersHistory);
          this.layoutControl.Controls.Add(this.gridProperties);
          this.layoutControl.Controls.Add(this.gridParameters);
@@ -70,12 +71,21 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          this.layoutControl.TabIndex = 0;
          this.layoutControl.Text = "layoutControl1";
          // 
+         // btnExportParametersHistory
+         // 
+         this.btnExportParametersHistory.Location = new System.Drawing.Point(311, 2);
+         this.btnExportParametersHistory.Name = "btnExportParametersHistory";
+         this.btnExportParametersHistory.Size = new System.Drawing.Size(305, 22);
+         this.btnExportParametersHistory.StyleController = this.layoutControl;
+         this.btnExportParametersHistory.TabIndex = 6;
+         this.btnExportParametersHistory.Text = "btnExportParametersHistory";
+         // 
          // gridProperties
          // 
-         this.gridProperties.Location = new System.Drawing.Point(125, 28);
+         this.gridProperties.Location = new System.Drawing.Point(134, 28);
          this.gridProperties.MainView = this.gridViewProperties;
          this.gridProperties.Name = "gridProperties";
-         this.gridProperties.Size = new System.Drawing.Size(491, 20);
+         this.gridProperties.Size = new System.Drawing.Size(482, 76);
          this.gridProperties.TabIndex = 5;
          this.gridProperties.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridViewProperties});
@@ -91,10 +101,10 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          // 
          // gridParameters
          // 
-         this.gridParameters.Location = new System.Drawing.Point(2, 52);
+         this.gridParameters.Location = new System.Drawing.Point(2, 108);
          this.gridParameters.MainView = this.gridViewParameters;
          this.gridParameters.Name = "gridParameters";
-         this.gridParameters.Size = new System.Drawing.Size(614, 538);
+         this.gridParameters.Size = new System.Drawing.Size(614, 482);
          this.gridParameters.TabIndex = 4;
          this.gridParameters.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridViewParameters});
@@ -117,7 +127,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
             this.layoutItemRunProperties,
             this.layoutItemExportParametersHistory,
             this.emptySpaceItem});
-         this.layoutControlGroup.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup.Name = "layoutControlGroup";
          this.layoutControlGroup.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
          this.layoutControlGroup.Size = new System.Drawing.Size(618, 592);
@@ -126,9 +135,9 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          // layoutItemParameters
          // 
          this.layoutItemParameters.Control = this.gridParameters;
-         this.layoutItemParameters.Location = new System.Drawing.Point(0, 50);
+         this.layoutItemParameters.Location = new System.Drawing.Point(0, 106);
          this.layoutItemParameters.Name = "layoutItemParameters";
-         this.layoutItemParameters.Size = new System.Drawing.Size(618, 542);
+         this.layoutItemParameters.Size = new System.Drawing.Size(618, 486);
          this.layoutItemParameters.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemParameters.TextVisible = false;
          // 
@@ -137,19 +146,10 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          this.layoutItemRunProperties.Control = this.gridProperties;
          this.layoutItemRunProperties.Location = new System.Drawing.Point(0, 26);
          this.layoutItemRunProperties.Name = "layoutItemRunProperties";
-         this.layoutItemRunProperties.Size = new System.Drawing.Size(618, 24);
+         this.layoutItemRunProperties.Size = new System.Drawing.Size(618, 80);
          this.layoutItemRunProperties.TextSize = new System.Drawing.Size(120, 13);
          // 
-         // btnExportParametersHistory
-         // 
-         this.btnExportParametersHistory.Location = new System.Drawing.Point(311, 2);
-         this.btnExportParametersHistory.Name = "btnExportParametersHistory";
-         this.btnExportParametersHistory.Size = new System.Drawing.Size(305, 22);
-         this.btnExportParametersHistory.StyleController = this.layoutControl;
-         this.btnExportParametersHistory.TabIndex = 6;
-         this.btnExportParametersHistory.Text = "btnExportParametersHistory";
-         // 
-         // layoutControlItem1
+         // layoutItemExportParametersHistory
          // 
          this.layoutItemExportParametersHistory.Control = this.btnExportParametersHistory;
          this.layoutItemExportParametersHistory.Location = new System.Drawing.Point(309, 0);
@@ -190,8 +190,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       }
 
       #endregion
-
-      private DevExpress.XtraLayout.LayoutControl layoutControl;
       private UxGridControl gridParameters;
       private UxGridView gridViewParameters;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup;
@@ -202,5 +200,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       private DevExpress.XtraEditors.SimpleButton btnExportParametersHistory;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemExportParametersHistory;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem;
+      private UxLayoutControl layoutControl;
    }
 }

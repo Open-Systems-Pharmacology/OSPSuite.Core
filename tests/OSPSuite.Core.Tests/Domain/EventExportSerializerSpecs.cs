@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Domain
    {
       private XElement _xmlResult;
       private EventExport _eventExport;
-      private AssigmentExport _assigmentExport;
+      private AssignmentExport _assignmentExport;
 
       protected override void Context()
       {
@@ -32,11 +32,11 @@ namespace OSPSuite.Core.Domain
          _eventExport = new EventExport();
          _eventExport.EntityId = "Bla";
          _eventExport.ConditionFormulaId = 1;
-         _assigmentExport = new AssigmentExport();
-         _assigmentExport.NewFormulaId = 2;
-         _assigmentExport.ObjectId = 3;
-         _assigmentExport.UseAsValue = true;
-         _eventExport.AssignmentList.Add(_assigmentExport);
+         _assignmentExport = new AssignmentExport();
+         _assignmentExport.NewFormulaId = 2;
+         _assignmentExport.ObjectId = 3;
+         _assignmentExport.UseAsValue = true;
+         _eventExport.AssignmentList.Add(_assignmentExport);
          _eventExport.Id = 4;
       }
       protected override void Because()
@@ -65,33 +65,33 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          _repository = new SimModelSerializerRepository();
-         sut = (AssignmentExportSerializer) _repository.SerializerFor<AssigmentExport>();
+         sut = (AssignmentExportSerializer) _repository.SerializerFor<AssignmentExport>();
       }
    }
    
    public class When_Serializing_a_assigment_export : concern_for_AssigmentExportSerializer
    {
-      private AssigmentExport _assigmentExport;
+      private AssignmentExport _assignmentExport;
       private XElement _xmlResultElement;
 
       protected override void Context()
       {
          base.Context();
-         _assigmentExport = new AssigmentExport();
-         _assigmentExport.NewFormulaId = 2;
-         _assigmentExport.ObjectId = 3;
-         _assigmentExport.UseAsValue = true;
+         _assignmentExport = new AssignmentExport();
+         _assignmentExport.NewFormulaId = 2;
+         _assignmentExport.ObjectId = 3;
+         _assignmentExport.UseAsValue = true;
       }
       protected override void Because()
       {
-         _xmlResultElement= sut.Serialize(_assigmentExport, new SimModelSerializationContext());
+         _xmlResultElement= sut.Serialize(_assignmentExport, new SimModelSerializationContext());
       }
       [Observation]
       public void should_have_created_the_correct_assigment_node()
       {
          _xmlResultElement.Name.LocalName.ShouldBeEqualTo(SimModelSchemaConstants.Assigment);
-         Convert.ToInt32(_xmlResultElement.Attribute("objectId").Value).ShouldBeEqualTo(_assigmentExport.ObjectId);
-         Convert.ToInt32(_xmlResultElement.Attribute("newFormulaId").Value).ShouldBeEqualTo(_assigmentExport.NewFormulaId);
+         Convert.ToInt32(_xmlResultElement.Attribute("objectId").Value).ShouldBeEqualTo(_assignmentExport.ObjectId);
+         Convert.ToInt32(_xmlResultElement.Attribute("newFormulaId").Value).ShouldBeEqualTo(_assignmentExport.NewFormulaId);
          Convert.ToBoolean(Convert.ToInt32( _xmlResultElement.Attribute("useAsValue").Value)).ShouldBeTrue();
       }
    }

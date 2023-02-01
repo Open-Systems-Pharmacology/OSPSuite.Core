@@ -11,7 +11,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Build configuration used to create the simulation. May be null
       /// </summary>
-      IBuildConfiguration BuildConfiguration { get; }
+      IBuildConfiguration BuildConfiguration { get; set; }
 
       OutputSelections OutputSelections { get; }
 
