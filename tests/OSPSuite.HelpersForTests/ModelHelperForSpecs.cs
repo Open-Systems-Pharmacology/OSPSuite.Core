@@ -1159,8 +1159,8 @@ namespace OSPSuite.Helpers
          if (sourceObject.IsAnImplementationOf<IParameter>())
             return new Parameter().WithId(id).WithDimension(_dimensionFactory.NoDimension).DowncastTo<T>();
 
-         if (sourceObject.IsAnImplementationOf<SpatialStructure>())
-            return new SpatialStructure().WithId(id).DowncastTo<T>();
+         if (sourceObject.IsAnImplementationOf<BuildingBlock>())
+            return newBuildingBlockWithId(sourceObject as BuildingBlock, id).DowncastTo<T>();
 
          if (sourceObject.IsAnImplementationOf<ConstantFormula>())
             return new ConstantFormula().WithDimension(_dimensionFactory.NoDimension).WithId(id).DowncastTo<T>();
@@ -1180,8 +1180,48 @@ namespace OSPSuite.Helpers
          if (sourceObject.IsAnImplementationOf<IndividualParameter>())
             return new IndividualParameter().WithDimension(_dimensionFactory.NoDimension).WithId(id).DowncastTo<T>();
 
+         if (sourceObject.IsAnImplementationOf<PKSimModule>())
+            return new PKSimModule().WithId(id).DowncastTo<T>();
+
+         if (sourceObject.IsAnImplementationOf<Module>())
+            return new Module().WithId(id).DowncastTo<T>();
+
          return default(T);
       }
+
+      private T newBuildingBlockWithId<T>(T sourceObject, string id) where T: BuildingBlock
+      {
+         BuildingBlock bb = default(T);
+         if (sourceObject.IsAnImplementationOf<SpatialStructure>())
+            bb = new SpatialStructure();
+
+         if (sourceObject.IsAnImplementationOf<MoleculeBuildingBlock>())
+            bb = new MoleculeBuildingBlock();
+
+         if (sourceObject.IsAnImplementationOf<ReactionBuildingBlock>())
+            bb = new ReactionBuildingBlock();
+
+         if (sourceObject.IsAnImplementationOf<PassiveTransportBuildingBlock>())
+            bb = new PassiveTransportBuildingBlock();
+
+         if (sourceObject.IsAnImplementationOf<ObserverBuildingBlock>())
+            bb = new ObserverBuildingBlock();
+
+         if (sourceObject.IsAnImplementationOf<EventGroupBuildingBlock>())
+            bb = new EventGroupBuildingBlock();
+
+         if (sourceObject.IsAnImplementationOf<MoleculeStartValuesBuildingBlock>())
+            bb = new MoleculeStartValuesBuildingBlock();
+
+         if (sourceObject.IsAnImplementationOf<ParameterStartValuesBuildingBlock>())
+            bb = new ParameterStartValuesBuildingBlock();
+         
+         if (bb != null)
+            return bb.WithId(id).DowncastTo<T>();
+
+         return null;
+      }
+
 
       public T Create<T>(string id) where T : class, IObjectBase
       {
