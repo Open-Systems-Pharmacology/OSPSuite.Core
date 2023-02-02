@@ -1183,8 +1183,8 @@ namespace OSPSuite.Helpers
          if (sourceObject.IsAnImplementationOf<PKSimModule>())
             return new PKSimModule().WithId(id).DowncastTo<T>();
 
-         if (sourceObject.IsAnImplementationOf<ExtensionModule>())
-            return new ExtensionModule().WithId(id).DowncastTo<T>();
+         if (sourceObject.IsAnImplementationOf<Module>())
+            return new Module().WithId(id).DowncastTo<T>();
 
          return default(T);
       }

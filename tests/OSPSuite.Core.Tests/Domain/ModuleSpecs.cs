@@ -7,7 +7,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
-   public class concern_for_Module<T> : ContextSpecification<T> where T: BaseModule, new()
+   public class concern_for_Module<T> : ContextSpecification<T> where T: Module, new()
    {
       protected override void Context()
       {
@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_the_module_is_cloned<T> : concern_for_Module<T> where T : BaseModule, new()
+   public class When_the_module_is_cloned<T> : concern_for_Module<T> where T : Module, new()
    {
       protected T _clone;
       private DimensionFactoryForIntegrationTests _dimensionFactory;
@@ -62,7 +62,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_the_extension_module_is_cloned : When_the_module_is_cloned<ExtensionModule>
+   public class When_the_extension_module_is_cloned : When_the_module_is_cloned<Module>
    {
 
    }
