@@ -38,6 +38,7 @@ namespace OSPSuite.Core.Domain
          if (!(source is Module sourceModule))
             return;
 
+         // Cloning these properties within the update for now. It could change based on specs
          MoleculeBlock = cloneManager.Clone(sourceModule.MoleculeBlock);
          ReactionBlock = cloneManager.Clone(sourceModule.ReactionBlock);
          PassiveTransport = cloneManager.Clone(sourceModule.PassiveTransport);
