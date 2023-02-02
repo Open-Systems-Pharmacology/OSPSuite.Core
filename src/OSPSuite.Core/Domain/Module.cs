@@ -5,8 +5,18 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class BaseModule : ObjectBase
+   public class Module : ObjectBase
    {
+      public Module() : this(userEditable:true)
+      {
+
+      }
+
+      protected Module(bool userEditable)
+      {
+         UserEditable = userEditable;
+      }
+      
       public IMoleculeBuildingBlock MoleculeBlock { set; get; }
       public IReactionBuildingBlock ReactionBlock { set; get; }
       public IPassiveTransportBuildingBlock PassiveTransport { set; get; }
@@ -16,13 +26,13 @@ namespace OSPSuite.Core.Domain
       public IList<IMoleculeStartValuesBuildingBlock> MoleculeStartValueBlockCollection { set; get; } = new List<IMoleculeStartValuesBuildingBlock>();
       public IList<IParameterStartValuesBuildingBlock> ParametersStartValueBlockCollection { set; get; } = new List<IParameterStartValuesBuildingBlock>();
 
-      public abstract bool UserEditable { get; }
+      public bool UserEditable { get; }
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
          
-         if (!(source is BaseModule sourceModule))
+         if (!(source is Module sourceModule))
             return;
 
          MoleculeBlock = cloneManager.Clone(sourceModule.MoleculeBlock);
@@ -37,15 +47,12 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class ExtensionModule : BaseModule
+   public class PKSimModule : Module
    {
-      public override bool UserEditable => true;
-   }
-
-   public class PKSimModule : BaseModule
-   {
-      public override bool UserEditable => false;
-
+      public PKSimModule() : base(userEditable:false)
+      {
+         
+      }
       public string PKSimVersion { set; get; }
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
