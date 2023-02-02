@@ -1,0 +1,84 @@
+﻿using FakeItEasy;
+using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Services;
+using OSPSuite.Helpers;
+
+namespace OSPSuite.Core.Domain
+{
+   public class concern_for_Module<T> : ContextSpecification<T> where T: BaseModule, new()
+   {
+      protected override void Context()
+      {
+         sut = new T
+         {
+            PassiveTransport = new PassiveTransportBuildingBlock(),
+            SpatialStructure = new SpatialStructure(),
+            ObserverBlock = new ObserverBuildingBlock(),
+            EventBlock = new EventGroupBuildingBlock(),
+            ReactionBlock = new ReactionBuildingBlock(),
+            MoleculeBlock = new MoleculeBuildingBlock()
+         };
+         
+         sut.MoleculeStartValueBlockCollection.Add(new MoleculeStartValuesBuildingBlock());
+         sut.ParametersStartValueBlockCollection.Add(new ParameterStartValuesBuildingBlock());
+      }
+   }
+
+   public class When_the_module_is_cloned<T> : concern_for_Module<T> where T : BaseModule, new()
+   {
+      protected T _clone;
+      private DimensionFactoryForIntegrationTests _dimensionFactory;
+      private IModelFinalizer _modelFinalizer;
+      private CloneManagerForModel _cloneManager;
+
+      protected override void Context()
+      {
+         base.Context();
+         _modelFinalizer = A.Fake<IModelFinalizer>();
+         _dimensionFactory = new DimensionFactoryForIntegrationTests();
+         _cloneManager = new CloneManagerForModel(new ObjectBaseFactoryForSpecs(_dimensionFactory), new DataRepositoryTask(), _modelFinalizer);
+      }
+
+      protected override void Because()
+      {
+         _clone = _cloneManager.Clone(sut);
+      }
+
+      [Observation]
+      public void should_have_created_a_clone_with_the_same_properties()
+      {
+         _clone.PassiveTransport.ShouldNotBeNull();
+         _clone.SpatialStructure.ShouldNotBeNull();
+         _clone.ObserverBlock.ShouldNotBeNull();
+         _clone.EventBlock.ShouldNotBeNull();
+         _clone.ReactionBlock.ShouldNotBeNull();
+         _clone.MoleculeBlock.ShouldNotBeNull();
+
+         _clone.MoleculeStartValueBlockCollection.ShouldNotBeEmpty();
+         _clone.ParametersStartValueBlockCollection.ShouldNotBeNull();
+         
+      }
+   }
+
+   public class When_the_extension_module_is_cloned : When_the_module_is_cloned<ExtensionModule>
+   {
+
+   }
+
+   public class When_the_pksim_module_is_cloned : When_the_module_is_cloned<PKSimModule>
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.PKSimVersion = "PKSimVersion";
+      }
+
+      [Observation]
+      public void should_have_created_a_clone_with_the_same_PKSimVersion()
+      {
+         _clone.PKSimVersion.ShouldBeEqualTo("PKSimVersion");
+      }
+   }
+}
