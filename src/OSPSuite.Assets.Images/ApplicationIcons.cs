@@ -47,6 +47,8 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon BoxWhiskerAnalysisRed = AddNamedIcon("BoxWhiskerAnalysisRed");
       public static readonly ApplicationIcon Brain = AddNamedIcon("Brain");
       public static readonly ApplicationIcon BuildingBlockExplorer = AddNamedIcon("BuildingBlockExplorer");
+      public static readonly ApplicationIcon ModuleExplorer = AddNamedIcon("ModuleExplorer"); // TODO add an icon svg file. Presently just a copy of BBExplorer svg
+      public static readonly ApplicationIcon ModuleFolder = AddNamedIcon("ModuleFolder"); // TODO add icon svg file. Presently just a copy of Folder svg
       public static readonly ApplicationIcon Caecum = AddNamedIcon("Caecum");
       public static readonly ApplicationIcon Cancel = AddNamedIcon("Cancel");
       public static readonly ApplicationIcon Cat = AddNamedIcon("Cat");
