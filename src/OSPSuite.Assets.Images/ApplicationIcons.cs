@@ -47,8 +47,6 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon BoxWhiskerAnalysisRed = AddNamedIcon("BoxWhiskerAnalysisRed");
       public static readonly ApplicationIcon Brain = AddNamedIcon("Brain");
       public static readonly ApplicationIcon BuildingBlockExplorer = AddNamedIcon("BuildingBlockExplorer");
-      public static readonly ApplicationIcon ModuleExplorer = AddNamedIcon("ModuleExplorer"); // TODO add an icon svg file. Presently just a copy of BBExplorer svg
-      public static readonly ApplicationIcon ModuleFolder = AddNamedIcon("ModuleFolder"); // TODO add icon svg file. Presently just a copy of Folder svg
       public static readonly ApplicationIcon Caecum = AddNamedIcon("Caecum");
       public static readonly ApplicationIcon Cancel = AddNamedIcon("Cancel");
       public static readonly ApplicationIcon Cat = AddNamedIcon("Cat");
@@ -495,6 +493,8 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ExpressionProfileFolder = AddNamedIcon("ExpressionProfileFolder");
       public static readonly ApplicationIcon OSPSuite = AddNamedIcon("OSPSuite");
       public static readonly ApplicationIcon RedCross = AddNamedIcon("RedCross");
+      public static readonly ApplicationIcon ModuleExplorer = AddNamedIcon("ModuleExplorer"); // TODO add an icon svg file. Presently just a copy of BBExplorer svg
+      public static readonly ApplicationIcon ModuleFolder = AddNamedIcon("ModuleFolder"); // TODO add icon svg file. Presently just a copy of Folder svg
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
       private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((SvgImage) null);

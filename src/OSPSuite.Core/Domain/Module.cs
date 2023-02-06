@@ -7,8 +7,8 @@ namespace OSPSuite.Core.Domain
 {
    public class Module : ObjectBase
    {
-      private readonly List<IMoleculeStartValuesBuildingBlock> _moleculeStartValuesBlockCollection = new List<IMoleculeStartValuesBuildingBlock>();
-      private readonly List<IParameterStartValuesBuildingBlock> _parameterStartValuesBlockCollection = new List<IParameterStartValuesBuildingBlock>();
+      private readonly List<IMoleculeStartValuesBuildingBlock> _moleculeStartValuesCollection = new List<IMoleculeStartValuesBuildingBlock>();
+      private readonly List<IParameterStartValuesBuildingBlock> _parameterStartValuesCollection = new List<IParameterStartValuesBuildingBlock>();
 
       public Module() : this(userEditable:true)
       {
@@ -26,8 +26,8 @@ namespace OSPSuite.Core.Domain
       public ISpatialStructure SpatialStructure { set; get; }
       public IObserverBuildingBlock ObserverBlock { set; get; }
       public IEventGroupBuildingBlock EventBlock { set; get; }
-      public IReadOnlyList<IMoleculeStartValuesBuildingBlock> MoleculeStartValuesBlockCollection => _moleculeStartValuesBlockCollection;
-      public IReadOnlyList<IParameterStartValuesBuildingBlock> ParameterStartValuesBlockCollection => _parameterStartValuesBlockCollection;
+      public IReadOnlyList<IMoleculeStartValuesBuildingBlock> MoleculeStartValuesCollection => _moleculeStartValuesCollection;
+      public IReadOnlyList<IParameterStartValuesBuildingBlock> ParameterStartValuesCollection => _parameterStartValuesCollection;
 
       public bool UserEditable { get; }
 
@@ -46,18 +46,18 @@ namespace OSPSuite.Core.Domain
          ObserverBlock = cloneManager.Clone(sourceModule.ObserverBlock);
          EventBlock = cloneManager.Clone(sourceModule.EventBlock);
 
-         sourceModule.MoleculeStartValuesBlockCollection.Each(x => _moleculeStartValuesBlockCollection.Add(cloneManager.Clone(x)));
-         sourceModule.ParameterStartValuesBlockCollection.Each(x => _parameterStartValuesBlockCollection.Add(cloneManager.Clone(x)));
+         sourceModule.MoleculeStartValuesCollection.Each(x => _moleculeStartValuesCollection.Add(cloneManager.Clone(x)));
+         sourceModule.ParameterStartValuesCollection.Each(x => _parameterStartValuesCollection.Add(cloneManager.Clone(x)));
       }
 
       public void AddParameterStartValueBlock(IParameterStartValuesBuildingBlock parameterStartValuesBuildingBlock)
       {
-         _parameterStartValuesBlockCollection.Add(parameterStartValuesBuildingBlock);
+         _parameterStartValuesCollection.Add(parameterStartValuesBuildingBlock);
       }
 
       public void AddMoleculeStartValueBlock(IMoleculeStartValuesBuildingBlock moleculeStartValuesBuildingBlock)
       {
-         _moleculeStartValuesBlockCollection.Add(moleculeStartValuesBuildingBlock);
+         _moleculeStartValuesCollection.Add(moleculeStartValuesBuildingBlock);
       }
    }
 

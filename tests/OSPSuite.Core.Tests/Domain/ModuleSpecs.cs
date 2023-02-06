@@ -56,8 +56,8 @@ namespace OSPSuite.Core.Domain
          _clone.ReactionBlock.ShouldNotBeNull();
          _clone.MoleculeBlock.ShouldNotBeNull();
 
-         _clone.MoleculeStartValuesBlockCollection.ShouldNotBeEmpty();
-         _clone.ParameterStartValuesBlockCollection.ShouldNotBeNull();
+         _clone.MoleculeStartValuesCollection.ShouldNotBeEmpty();
+         _clone.ParameterStartValuesCollection.ShouldNotBeNull();
          
       }
    }
