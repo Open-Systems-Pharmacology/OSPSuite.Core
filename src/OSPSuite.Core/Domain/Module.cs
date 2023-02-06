@@ -7,8 +7,8 @@ namespace OSPSuite.Core.Domain
 {
    public class Module : ObjectBase
    {
-      private readonly List<IMoleculeStartValuesBuildingBlock> _moleculeStartValueBlockCollection = new List<IMoleculeStartValuesBuildingBlock>();
-      private readonly List<IParameterStartValuesBuildingBlock> _parametersStartValueBlockCollection = new List<IParameterStartValuesBuildingBlock>();
+      private readonly List<IMoleculeStartValuesBuildingBlock> _moleculeStartValuesCollection = new List<IMoleculeStartValuesBuildingBlock>();
+      private readonly List<IParameterStartValuesBuildingBlock> _parameterStartValuesCollection = new List<IParameterStartValuesBuildingBlock>();
 
       public Module() : this(userEditable:true)
       {
@@ -20,14 +20,14 @@ namespace OSPSuite.Core.Domain
          UserEditable = userEditable;
       }
       
-      public IMoleculeBuildingBlock MoleculeBlock { set; get; }
-      public IReactionBuildingBlock ReactionBlock { set; get; }
+      public IMoleculeBuildingBlock Molecule { set; get; }
+      public IReactionBuildingBlock Reaction { set; get; }
       public IPassiveTransportBuildingBlock PassiveTransport { set; get; }
       public ISpatialStructure SpatialStructure { set; get; }
-      public IObserverBuildingBlock ObserverBlock { set; get; }
-      public IEventGroupBuildingBlock EventBlock { set; get; }
-      public IReadOnlyList<IMoleculeStartValuesBuildingBlock> MoleculeStartValueBlockCollection => _moleculeStartValueBlockCollection;
-      public IReadOnlyList<IParameterStartValuesBuildingBlock> ParametersStartValueBlockCollection => _parametersStartValueBlockCollection;
+      public IObserverBuildingBlock Observer { set; get; }
+      public IEventGroupBuildingBlock EventGroup { set; get; }
+      public IReadOnlyList<IMoleculeStartValuesBuildingBlock> MoleculeStartValuesCollection => _moleculeStartValuesCollection;
+      public IReadOnlyList<IParameterStartValuesBuildingBlock> ParameterStartValuesCollection => _parameterStartValuesCollection;
 
       public bool UserEditable { get; }
 
@@ -39,25 +39,25 @@ namespace OSPSuite.Core.Domain
             return;
 
          // Cloning these properties within the update for now. It could change based on specs
-         MoleculeBlock = cloneManager.Clone(sourceModule.MoleculeBlock);
-         ReactionBlock = cloneManager.Clone(sourceModule.ReactionBlock);
+         Molecule = cloneManager.Clone(sourceModule.Molecule);
+         Reaction = cloneManager.Clone(sourceModule.Reaction);
          PassiveTransport = cloneManager.Clone(sourceModule.PassiveTransport);
          SpatialStructure = cloneManager.Clone(sourceModule.SpatialStructure);
-         ObserverBlock = cloneManager.Clone(sourceModule.ObserverBlock);
-         EventBlock = cloneManager.Clone(sourceModule.EventBlock);
+         Observer = cloneManager.Clone(sourceModule.Observer);
+         EventGroup = cloneManager.Clone(sourceModule.EventGroup);
 
-         sourceModule.MoleculeStartValueBlockCollection.Each(x => _moleculeStartValueBlockCollection.Add(cloneManager.Clone(x)));
-         sourceModule.ParametersStartValueBlockCollection.Each(x => _parametersStartValueBlockCollection.Add(cloneManager.Clone(x)));
+         sourceModule.MoleculeStartValuesCollection.Each(x => _moleculeStartValuesCollection.Add(cloneManager.Clone(x)));
+         sourceModule.ParameterStartValuesCollection.Each(x => _parameterStartValuesCollection.Add(cloneManager.Clone(x)));
       }
 
       public void AddParameterStartValueBlock(IParameterStartValuesBuildingBlock parameterStartValuesBuildingBlock)
       {
-         _parametersStartValueBlockCollection.Add(parameterStartValuesBuildingBlock);
+         _parameterStartValuesCollection.Add(parameterStartValuesBuildingBlock);
       }
 
       public void AddMoleculeStartValueBlock(IMoleculeStartValuesBuildingBlock moleculeStartValuesBuildingBlock)
       {
-         _moleculeStartValueBlockCollection.Add(moleculeStartValuesBuildingBlock);
+         _moleculeStartValuesCollection.Add(moleculeStartValuesBuildingBlock);
       }
    }
 

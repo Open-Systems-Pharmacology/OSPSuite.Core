@@ -15,10 +15,10 @@ namespace OSPSuite.Core.Domain
          {
             PassiveTransport = new PassiveTransportBuildingBlock(),
             SpatialStructure = new SpatialStructure(),
-            ObserverBlock = new ObserverBuildingBlock(),
-            EventBlock = null,
-            ReactionBlock = new ReactionBuildingBlock(),
-            MoleculeBlock = new MoleculeBuildingBlock()
+            Observer = new ObserverBuildingBlock(),
+            EventGroup = null,
+            Reaction = new ReactionBuildingBlock(),
+            Molecule = new MoleculeBuildingBlock()
          };
          
          sut.AddMoleculeStartValueBlock(new MoleculeStartValuesBuildingBlock());
@@ -51,13 +51,13 @@ namespace OSPSuite.Core.Domain
       {
          _clone.PassiveTransport.ShouldNotBeNull();
          _clone.SpatialStructure.ShouldNotBeNull();
-         _clone.ObserverBlock.ShouldNotBeNull();
-         _clone.EventBlock.ShouldBeNull();
-         _clone.ReactionBlock.ShouldNotBeNull();
-         _clone.MoleculeBlock.ShouldNotBeNull();
+         _clone.Observer.ShouldNotBeNull();
+         _clone.EventGroup.ShouldBeNull();
+         _clone.Reaction.ShouldNotBeNull();
+         _clone.Molecule.ShouldNotBeNull();
 
-         _clone.MoleculeStartValueBlockCollection.ShouldNotBeEmpty();
-         _clone.ParametersStartValueBlockCollection.ShouldNotBeNull();
+         _clone.MoleculeStartValuesCollection.ShouldNotBeEmpty();
+         _clone.ParameterStartValuesCollection.ShouldNotBeNull();
          
       }
    }
