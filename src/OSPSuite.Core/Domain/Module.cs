@@ -20,12 +20,12 @@ namespace OSPSuite.Core.Domain
          UserEditable = userEditable;
       }
       
-      public IMoleculeBuildingBlock MoleculeBlock { set; get; }
-      public IReactionBuildingBlock ReactionBlock { set; get; }
+      public IMoleculeBuildingBlock Molecule { set; get; }
+      public IReactionBuildingBlock Reaction { set; get; }
       public IPassiveTransportBuildingBlock PassiveTransport { set; get; }
       public ISpatialStructure SpatialStructure { set; get; }
-      public IObserverBuildingBlock ObserverBlock { set; get; }
-      public IEventGroupBuildingBlock EventBlock { set; get; }
+      public IObserverBuildingBlock Observer { set; get; }
+      public IEventGroupBuildingBlock EventGroup { set; get; }
       public IReadOnlyList<IMoleculeStartValuesBuildingBlock> MoleculeStartValuesCollection => _moleculeStartValuesCollection;
       public IReadOnlyList<IParameterStartValuesBuildingBlock> ParameterStartValuesCollection => _parameterStartValuesCollection;
 
@@ -39,12 +39,12 @@ namespace OSPSuite.Core.Domain
             return;
 
          // Cloning these properties within the update for now. It could change based on specs
-         MoleculeBlock = cloneManager.Clone(sourceModule.MoleculeBlock);
-         ReactionBlock = cloneManager.Clone(sourceModule.ReactionBlock);
+         Molecule = cloneManager.Clone(sourceModule.Molecule);
+         Reaction = cloneManager.Clone(sourceModule.Reaction);
          PassiveTransport = cloneManager.Clone(sourceModule.PassiveTransport);
          SpatialStructure = cloneManager.Clone(sourceModule.SpatialStructure);
-         ObserverBlock = cloneManager.Clone(sourceModule.ObserverBlock);
-         EventBlock = cloneManager.Clone(sourceModule.EventBlock);
+         Observer = cloneManager.Clone(sourceModule.Observer);
+         EventGroup = cloneManager.Clone(sourceModule.EventGroup);
 
          sourceModule.MoleculeStartValuesCollection.Each(x => _moleculeStartValuesCollection.Add(cloneManager.Clone(x)));
          sourceModule.ParameterStartValuesCollection.Each(x => _parameterStartValuesCollection.Add(cloneManager.Clone(x)));
