@@ -263,15 +263,8 @@ namespace OSPSuite.Infrastructure.Import.Core
                   //if unit comes from a column
                   if (column.Key.Column.Dimension == null)
                   {
-                     var firstNonEmptyUnit = column.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit));
+                     var firstNonEmptyUnit = column.Value.FirstOrDefault(x => x.Unit != null);
 
-                     if (firstNonEmptyUnit == null)
-                     {
-                        errors.Add(dataSet, new NoUnitColumnValues(columnInfo.DisplayName));
-                        continue;
-                     }
-
-                     
                      var dimensionOfFirstUnit = columnInfo.SupportedDimensions.FirstOrDefault(x => x.FindUnit(firstNonEmptyUnit.Unit, ignoreCase: true) != null);
 
                      for (var i = 0; i < column.Value.Count(); i++)

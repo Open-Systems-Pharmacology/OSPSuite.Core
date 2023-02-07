@@ -613,9 +613,9 @@ namespace OSPSuite.Infrastructure.Import
       }
 
       [Observation]
-      public void should_ignore_casing()
+      public void should_have_set_the_error_to_dimensionless()
       {
-         sut.ValidateDataSourceUnits(_columnInfos).ErrorsFor(_dataSet).FirstOrDefault(error => error.Message.Equals(Error.NoUnitColumnValues("Concentration")))
+         sut.ValidateDataSourceUnits(_columnInfos).ErrorsFor(_dataSet).FirstOrDefault(error => error.Message.Equals(Error.InconsistentDimensionBetweenUnitsException("Concentration")))
             .ShouldNotBeNull();
       }
    }
