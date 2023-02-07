@@ -263,9 +263,10 @@ namespace OSPSuite.Infrastructure.Import.Core
                   //if unit comes from a column
                   if (column.Key.Column.Dimension == null)
                   {
-                     var firstNonEmptyUnit = column.Value.FirstOrDefault(x => x.Unit != null);
+                     var firstValueWithNonEmptyUnit = column.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit));
+                     var firstNonEmptyUnit = firstValueWithNonEmptyUnit == null ? "" : firstValueWithNonEmptyUnit.Unit;
 
-                     var dimensionOfFirstUnit = columnInfo.SupportedDimensions.FirstOrDefault(x => x.FindUnit(firstNonEmptyUnit.Unit, ignoreCase: true) != null);
+                     var dimensionOfFirstUnit = columnInfo.SupportedDimensions.FirstOrDefault(x => x.FindUnit(firstNonEmptyUnit, ignoreCase: true) != null);
 
                      for (var i = 0; i < column.Value.Count(); i++)
                      {

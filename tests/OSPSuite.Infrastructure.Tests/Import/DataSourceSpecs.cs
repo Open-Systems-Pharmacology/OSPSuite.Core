@@ -615,8 +615,7 @@ namespace OSPSuite.Infrastructure.Import
       [Observation]
       public void should_have_set_the_error_to_dimensionless()
       {
-         sut.ValidateDataSourceUnits(_columnInfos).ErrorsFor(_dataSet).FirstOrDefault(error => error.Message.Equals(Error.InconsistentDimensionBetweenUnitsException("Concentration")))
-            .ShouldNotBeNull();
+         sut.DataSets.KeyValues.First().Value.Data.First().Data.ToList()[1].Value[1].Unit.ShouldBeEmpty();
       }
    }
 
