@@ -164,6 +164,11 @@ namespace OSPSuite.Infrastructure.Import
          sut = new DataSource(_fakedImporter);
          sut.DataSets.Add("sheet1", _fakeDataSet);
       }
+
+      protected string getFirstMeasurementUnit()
+      {
+         return sut.DataSets.KeyValues.First().Value.Data.First().Data.ToList()[1].Value[1].Unit;
+      }
    }
 
    public class When_validating_empty_data_source : concern_for_DataSource
@@ -615,7 +620,7 @@ namespace OSPSuite.Infrastructure.Import
       [Observation]
       public void should_have_set_the_error_to_dimensionless()
       {
-         sut.DataSets.KeyValues.First().Value.Data.First().Data.ToList()[1].Value[1].Unit.ShouldBeEmpty();
+         getFirstMeasurementUnit().ShouldBeEmpty();
       }
    }
 
