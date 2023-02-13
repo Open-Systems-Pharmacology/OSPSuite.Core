@@ -4,6 +4,11 @@ using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain
 {
+   public interface IWithProhibitedNames : IWithName
+   {
+      bool IsNameUnique(string name);
+   }
+   
    public interface IWithDimension
    {
       IDimension Dimension { get; set; }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Extensions;
@@ -58,6 +59,24 @@ namespace OSPSuite.Core.Domain
       public void AddMoleculeStartValueBlock(IMoleculeStartValuesBuildingBlock moleculeStartValuesBuildingBlock)
       {
          _moleculeStartValuesCollection.Add(moleculeStartValuesBuildingBlock);
+      }
+
+      public IReadOnlyList<IBuildingBlock> AllBuildingBlocks()
+      {
+         var buildingBlocks = new List<IBuildingBlock>
+         {
+            SpatialStructure,
+            EventGroup,
+            PassiveTransport,
+            Molecule,
+            Observer,
+            Reaction,
+         };
+
+         buildingBlocks.AddRange(ParameterStartValuesCollection);
+         buildingBlocks.AddRange(MoleculeStartValuesCollection);
+
+         return buildingBlocks.Where(x => x != null).ToList();
       }
    }
 
