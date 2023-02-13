@@ -34,21 +34,12 @@ namespace OSPSuite.Core.Domain
             .WithError(error);
       }
 
-      public static IBusinessRule NotEmptyName
-      {
-         get { return NonEmptyRule<IWithName>(x => x.Name, Validation.NameIsRequired); }
-      }
+      public static IBusinessRule NotEmptyName { get; }  = NonEmptyRule<IWithName>(x => x.Name, Validation.NameIsRequired);
 
-      public static IBusinessRule UniqueName
-      {
-         get
-         {
-            return CreateRule.For<IWithProhibitedNames>()
-               .Property(x => x.Name)
-               .WithRule((dto, name) => dto.IsNameUnique(name))
-               .WithError((dto, newName) => Error.NameAlreadyExists(newName));
-         }
-      }
+      public static IBusinessRule UniqueName { get; } = CreateRule.For<IWithProhibitedNames>()
+         .Property(x => x.Name)
+         .WithRule((dto, name) => dto.IsNameUnique(name))
+         .WithError((dto, newName) => Error.NameAlreadyExists(newName));
    }
 
    public static class ScaleDivisorRules
