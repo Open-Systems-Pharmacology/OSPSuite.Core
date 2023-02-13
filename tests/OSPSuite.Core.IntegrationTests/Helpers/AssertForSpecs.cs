@@ -30,6 +30,18 @@ namespace OSPSuite.Core.Helpers
             return;
          }
 
+         if (x1.IsAnImplementationOf<PKSimModule>())
+         {
+            AreEqualPKSimModule(x1 as PKSimModule, x2 as PKSimModule);
+            return;
+         }
+
+         if (x1.IsAnImplementationOf<Module>())
+         {
+            AreEqualModule(x1 as Module, x2 as Module);
+            return;
+         }
+
          if (x1.IsAnImplementationOf<OutputInterval>())
          {
             AreEqualOutputInterval(x1 as OutputInterval, x2 as OutputInterval);
@@ -317,6 +329,27 @@ namespace OSPSuite.Core.Helpers
          }
 
          Assert.Fail("No McAssert.Equal available for Type " + x1.GetType().Name);
+      }
+
+      private static void AreEqualPKSimModule(PKSimModule m1, PKSimModule m2)
+      {
+         AreEqualModule(m1, m2);
+         AreEqualStrings(m1.PKSimVersion, m2.PKSimVersion);
+      }
+
+      private static void AreEqualModule(Module m1, Module m2)
+      {
+         AreEqualBuildingBlock(m1.PassiveTransport, m2.PassiveTransport);
+         AreEqualBuildingBlock(m1.SpatialStructure, m2.SpatialStructure);
+         AreEqualBuildingBlock(m1.EventGroup, m2.EventGroup);
+         AreEqualBuildingBlock(m1.Molecule, m2.Molecule);
+         AreEqualBuildingBlock(m1.Observer, m2.Observer);
+         AreEqualBuildingBlock(m1.Reaction, m2.Reaction);
+
+         m1.MoleculeStartValuesCollection.Each((x, i) => AreEqualBuildingBlock(x, m2.MoleculeStartValuesCollection[i]));
+         m1.ParameterStartValuesCollection.Each((x, i) => AreEqualBuildingBlock(x, m2.ParameterStartValuesCollection[i]));
+
+         AreEqualObjectBase(m1, m2);
       }
 
       public static bool AreEqualIndividualValueCache(IndividualValuesCache x1, IndividualValuesCache x2)
