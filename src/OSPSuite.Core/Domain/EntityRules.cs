@@ -33,6 +33,22 @@ namespace OSPSuite.Core.Domain
             .WithRule((o, u) => u != null)
             .WithError(error);
       }
+
+      public static IBusinessRule NotEmptyName
+      {
+         get { return NonEmptyRule<IWithName>(x => x.Name, Validation.NameIsRequired); }
+      }
+
+      public static IBusinessRule UniqueName
+      {
+         get
+         {
+            return CreateRule.For<IWithProhibitedNames>()
+               .Property(x => x.Name)
+               .WithRule((dto, name) => dto.IsNameUnique(name))
+               .WithError((dto, newName) => Error.NameAlreadyExists(newName));
+         }
+      }
    }
 
    public static class ScaleDivisorRules
@@ -56,10 +72,7 @@ namespace OSPSuite.Core.Domain
          NotEmptyName
       };
 
-      public static IBusinessRule NotEmptyName
-      {
-         get { return GenericRules.NonEmptyRule<IEntity>(x => x.Name, Validation.NameIsRequired); }
-      }
+      public static IBusinessRule NotEmptyName => GenericRules.NotEmptyName;
 
       public static IEnumerable<IBusinessRule> All()
       {
