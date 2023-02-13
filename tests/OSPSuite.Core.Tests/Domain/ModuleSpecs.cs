@@ -1,4 +1,6 @@
-﻿using FakeItEasy;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
@@ -23,6 +25,28 @@ namespace OSPSuite.Core.Domain
          
          sut.AddMoleculeStartValueBlock(new MoleculeStartValuesBuildingBlock());
          sut.AddParameterStartValueBlock(new ParameterStartValuesBuildingBlock());
+      }
+   }
+
+   public class When_getting_the_list_of_building_blocks : concern_for_Module<Module>
+   {
+      private IReadOnlyList<IBuildingBlock> _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut.EventGroup = new EventGroupBuildingBlock();
+      }
+
+      protected override void Because()
+      {
+         _result = sut.AllBuildingBlocks();
+      }
+
+      [Observation] 
+      public void the_list_should_include_all_the_building_blocks()
+      {
+         _result.ShouldOnlyContain(sut.PassiveTransport, sut.EventGroup, sut.Molecule, sut.Reaction, sut.Observer, sut.SpatialStructure, sut.ParameterStartValuesCollection.First(), sut.MoleculeStartValuesCollection.First());
       }
    }
 
