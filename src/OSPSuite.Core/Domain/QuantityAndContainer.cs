@@ -58,9 +58,9 @@ namespace OSPSuite.Core.Domain
 
       public IEnumerable<T> GetChildren<T>() where T : class, IEntity => _container.GetChildren<T>();
 
-      public IEnumerable<IContainer> GetNeighborsFrom(IEnumerable<INeighborhood> neighborhoods) => _container.GetNeighborsFrom(neighborhoods);
+      public IReadOnlyList<IContainer> GetNeighborsFrom(IReadOnlyList<INeighborhood> neighborhoods) => _container.GetNeighborsFrom(neighborhoods);
 
-      public IEnumerable<INeighborhood> GetNeighborhoods(IEnumerable<INeighborhood> neighborhoods) => _container.GetNeighborhoods(neighborhoods);
+      public IReadOnlyList<INeighborhood> GetNeighborhoods(IReadOnlyList<INeighborhood> neighborhoods) => _container.GetNeighborhoods(neighborhoods);
 
       public IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>() where TContainer : class, IContainer => GetAllContainersAndSelf<TContainer>(x => true);
 

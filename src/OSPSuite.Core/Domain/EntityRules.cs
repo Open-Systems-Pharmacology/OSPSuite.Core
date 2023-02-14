@@ -67,7 +67,7 @@ namespace OSPSuite.Core.Domain
 
       public static IEnumerable<IBusinessRule> All()
       {
-         return _allEntityRules;
+         return _allEntityRules; 
       }
    }
 }

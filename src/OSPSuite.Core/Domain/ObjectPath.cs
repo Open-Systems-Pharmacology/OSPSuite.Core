@@ -78,9 +78,8 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       void RemoveFirst();
 
-
       /// <summary>
-      /// Replaces the path with the path entries in <paramref name="pathEntries"/>
+      ///    Replaces the path with the path entries in <paramref name="pathEntries" />
       /// </summary>
       /// <param name="pathEntries">Path entries used to replace the path</param>
       void ReplaceWith(IEnumerable<string> pathEntries);
@@ -97,11 +96,11 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    String separating elements of the <see cref="FormulaUsablePath" /> in String Representation
       /// </summary>
-      public const string PATH_DELIMITER  = "|";
+      public const string PATH_DELIMITER = "|";
 
       protected readonly List<string> _pathEntries;
 
-      public static IObjectPath Empty { get; } =  new ObjectPath();
+      public static IObjectPath Empty { get; } = new ObjectPath();
 
       public ObjectPath() : this(new List<string>())
       {
@@ -129,6 +128,7 @@ namespace OSPSuite.Core.Domain
                returnString.Append(PATH_DELIMITER);
                returnString.Append(str);
             }
+
             return returnString.ToString().Substring(PATH_DELIMITER.Length);
          }
       }
@@ -197,7 +197,6 @@ namespace OSPSuite.Core.Domain
 
          return resolvePath<T>(dependentObject, usePath);
       }
-
 
       public virtual T Clone<T>() where T : IObjectPath
       {
@@ -278,6 +277,7 @@ namespace OSPSuite.Core.Domain
             if (!_pathEntries[i].Equals(entry)) return false;
             i++;
          }
+
          return true;
       }
 
@@ -299,13 +299,11 @@ namespace OSPSuite.Core.Domain
                hashCode = hashCode ^ _pathEntries[i].GetHashCode();
             }
          }
+
          return hashCode;
       }
 
-      public override string ToString()
-      {
-         return PathAsString;
-      }
+      public override string ToString() => PathAsString;
 
       public static implicit operator string(ObjectPath objectPath)
       {

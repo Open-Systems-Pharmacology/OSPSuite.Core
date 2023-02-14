@@ -106,7 +106,7 @@ namespace OSPSuite.Core.Domain
       public void should_have_updated_the_path()
       {
          sut = new ObjectPath("A", "B");
-         sut.ReplaceWith(new []{"C", "D"});
+         sut.ReplaceWith(new[] {"C", "D"});
          sut.PathAsString.ShouldBeEqualTo("C|D");
       }
    }
@@ -125,7 +125,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_have_remove_the_element()
       {
-         sut = new ObjectPath("A", "B","C");
+         sut = new ObjectPath("A", "B", "C");
          sut.RemoveAt(1);
          sut.ShouldOnlyContain("A", "C");
       }

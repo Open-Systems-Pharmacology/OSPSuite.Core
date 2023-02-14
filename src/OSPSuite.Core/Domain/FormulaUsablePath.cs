@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -32,8 +32,7 @@ namespace OSPSuite.Core.Domain
          {
             Alias = Alias,
             Dimension = Dimension
-         }
-            .DowncastTo<T>();
+         }.DowncastTo<T>();
       }
 
       public bool Equals(FormulaUsablePath other)

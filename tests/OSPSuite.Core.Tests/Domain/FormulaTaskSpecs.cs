@@ -8,7 +8,13 @@ using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Helpers;
+using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
+using static OSPSuite.Core.Domain.Constants;
+using static OSPSuite.Core.Domain.Constants.Parameters;
+using static OSPSuite.Core.Domain.ObjectPath;
+using static OSPSuite.Core.Domain.ObjectPathKeywords;
 
 namespace OSPSuite.Core.Domain
 {
@@ -241,7 +247,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_have_created_an_explicit_formula_that_is_the_sum_of_the_defined_parameers()
+      public void should_have_created_an_explicit_formula_that_is_the_sum_of_the_defined_parameters()
       {
          var explicitFormula = _parameter.Formula.DowncastTo<ExplicitFormula>();
          explicitFormula.FormulaString.ShouldBeEqualTo("P_1 + P_2");
@@ -249,7 +255,147 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_expanding_a_dynamic_formula__in_a_model_at_a_formula_useable_satisfying_their_own_criteria :
+   public class When_replacing_the_neighborhood_keyword_in_a_well_defined_path : concern_for_FormulaTask
+   {
+      private IParameter _liverCellParameter;
+      private IContainer _rootContainer;
+      private FormulaUsablePath _objectPath;
+      private Container _liver;
+      private Container _liverCell;
+      private Container _liverPlasma;
+      private Neighborhood _neighborhood_liver_cell_liver_pls;
+      private IParameter _neighborhoodParameter;
+      private Model _model;
+
+      protected override void Context()
+      {
+         base.Context();
+         _model = new Model();
+         _rootContainer = new Container().WithName("ROOT");
+         _liver = new Container().WithName("Liver");
+         _liverCell = new Container().WithName("Intracellular").WithParentContainer(_liver);
+         _liverPlasma = new Container().WithName("Plasma").WithParentContainer(_liver);
+
+         _neighborhood_liver_cell_liver_pls = new Neighborhood
+         {
+            FirstNeighbor = _liverCell,
+            SecondNeighbor = _liverPlasma
+         };
+
+         _model.Root = _rootContainer;
+         _model.Neighborhoods = new Container().WithName(NEIGHBORHOODS);
+         _model.Neighborhoods.Add(_neighborhood_liver_cell_liver_pls);
+         _neighborhoodParameter = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName("K").WithParentContainer(_neighborhood_liver_cell_liver_pls);
+         _liverCellParameter = new Parameter().WithName("P").WithParentContainer(_liverCell);
+
+         _rootContainer.Add(_liver);
+         _liverCellParameter.Formula = new ExplicitFormula("K+10");
+         //..|<NBH>|..|..|Plasma|<NBH>|K
+         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, NBH, PARENT_CONTAINER, PARENT_CONTAINER, "Plasma", NBH, _neighborhoodParameter.Name) {Alias = "K"};
+         _liverCellParameter.Formula.AddObjectPath(_objectPath);
+      }
+
+      protected override void Because()
+      {
+         sut.ExpandNeighborhoodReferencesIn(_model);
+      }
+
+      [Observation]
+      public void should_have_replaced_the_nbh_with_the_actual_path_to_the_neighborhood()
+      {
+         _liverCellParameter.Value.ShouldBeEqualTo(20);
+      }
+   }
+
+   public class When_replacing_the_neighborhood_keyword_in_a_path_missing_one_container : concern_for_FormulaTask
+   {
+      private IParameter _liverCellParameter;
+      private IContainer _rootContainer;
+      private FormulaUsablePath _objectPath;
+      private Container _liver;
+      private Container _liverCell;
+      private Container _liverPlasma;
+      private Neighborhood _neighborhood_liver_cell_liver_pls;
+      private IParameter _neighborhoodParameter;
+      private Model _model;
+
+      protected override void Context()
+      {
+         base.Context();
+         _model = new Model();
+         _rootContainer = new Container().WithName("ROOT");
+         _liver = new Container().WithName("Liver");
+         _liverCell = new Container().WithName("Intracellular").WithParentContainer(_liver);
+         _liverPlasma = new Container().WithName("Plasma").WithParentContainer(_liver);
+
+         _neighborhood_liver_cell_liver_pls = new Neighborhood
+         {
+            FirstNeighbor = _liverCell,
+            SecondNeighbor = _liverPlasma
+         };
+
+         _model.Root = _rootContainer;
+         _model.Neighborhoods = new Container().WithName(NEIGHBORHOODS);
+         _model.Neighborhoods.Add(_neighborhood_liver_cell_liver_pls);
+         _neighborhoodParameter = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName("K").WithParentContainer(_neighborhood_liver_cell_liver_pls);
+         _liverCellParameter = new Parameter().WithName("P").WithParentContainer(_liverCell);
+
+         _rootContainer.Add(_liver);
+         _liverCellParameter.Formula = new ExplicitFormula("K+10");
+         //..|<NBH>|..|..|Interstitial|<NBH>|K_<==_does_not_exist_in_the_model
+         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, NBH, PARENT_CONTAINER, PARENT_CONTAINER, "Interstitial", NBH, _neighborhoodParameter.Name) { Alias = "K" };
+         _liverCellParameter.Formula.AddObjectPath(_objectPath);
+      }
+
+      [Observation]
+      public void should_have_replaced_the_nbh_with_the_actual_path_to_the_neighborhood()
+      {
+         The.Action(() => sut.ExpandNeighborhoodReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
+   public class When_replacing_the_neighborhood_keyword_in_between_two_containers_without_neighborhood : concern_for_FormulaTask
+   {
+      private IParameter _liverCellParameter;
+      private IContainer _rootContainer;
+      private FormulaUsablePath _objectPath;
+      private Container _liver;
+      private Container _liverCell;
+      private Neighborhood _neighborhood_liver_cell_liver_pls;
+      private IParameter _neighborhoodParameter;
+      private Model _model;
+
+      protected override void Context()
+      {
+         base.Context();
+         _model = new Model();
+         _rootContainer = new Container().WithName("ROOT");
+         _liver = new Container().WithName("Liver");
+         _liverCell = new Container().WithName("Intracellular").WithParentContainer(_liver);
+
+         _neighborhood_liver_cell_liver_pls = new Neighborhood();
+
+         _model.Root = _rootContainer;
+         _model.Neighborhoods = new Container().WithName(NEIGHBORHOODS);
+         _model.Neighborhoods.Add(_neighborhood_liver_cell_liver_pls);
+         _neighborhoodParameter = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName("K").WithParentContainer(_neighborhood_liver_cell_liver_pls);
+         _liverCellParameter = new Parameter().WithName("P").WithParentContainer(_liverCell);
+
+         _rootContainer.Add(_liver);
+         _liverCellParameter.Formula = new ExplicitFormula("K+10");
+         //..|<NBH>|..|..|Plasma|<NBH>|K_<==_does_not_exist_in_the_model
+         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, NBH, PARENT_CONTAINER, PARENT_CONTAINER, "Plasma", NBH, _neighborhoodParameter.Name) { Alias = "K" };
+         _liverCellParameter.Formula.AddObjectPath(_objectPath);
+      }
+
+      [Observation]
+      public void should_have_replaced_the_nbh_with_the_actual_path_to_the_neighborhood()
+      {
+         The.Action(() => sut.ExpandNeighborhoodReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
+   public class When_expanding_a_dynamic_formula_in_a_model_at_a_formula_useable_satisfying_their_own_criteria :
       concern_for_FormulaTask
    {
       private IModel _model;
@@ -320,10 +466,10 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_simply_add_it_and_return_the_volume_alias()
       {
-         _alias.ShouldBeEqualTo(Constants.VOLUME_ALIAS);
-         var volumeReference = _explicitFormula.ObjectPaths.Find(x => x.Alias == Constants.VOLUME_ALIAS);
+         _alias.ShouldBeEqualTo(VOLUME_ALIAS);
+         var volumeReference = _explicitFormula.ObjectPaths.Find(x => x.Alias == VOLUME_ALIAS);
          volumeReference.ShouldNotBeNull();
-         volumeReference.PathAsString.ShouldBeEqualTo(new[] {ObjectPath.PARENT_CONTAINER, Constants.Parameters.VOLUME}.ToPathString());
+         volumeReference.PathAsString.ShouldBeEqualTo(new[] {PARENT_CONTAINER, VOLUME}.ToPathString());
       }
    }
 
@@ -336,7 +482,7 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _explicitFormula = new ExplicitFormula();
-         _explicitFormula.AddObjectPath(new FormulaUsablePath(ObjectPath.PARENT_CONTAINER, Constants.Parameters.VOLUME).WithAlias(Constants.VOLUME_ALIAS));
+         _explicitFormula.AddObjectPath(new FormulaUsablePath(PARENT_CONTAINER, VOLUME).WithAlias(VOLUME_ALIAS));
       }
 
       protected override void Because()
@@ -347,7 +493,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_simply_use_it()
       {
-         _alias.ShouldBeEqualTo(Constants.VOLUME_ALIAS);
+         _alias.ShouldBeEqualTo(VOLUME_ALIAS);
       }
    }
 
@@ -361,7 +507,7 @@ namespace OSPSuite.Core.Domain
          base.Context();
          _explicitFormula = new ExplicitFormula();
          //another path
-         _explicitFormula.AddObjectPath(new FormulaUsablePath(ObjectPath.PARENT_CONTAINER, ObjectPath.PARENT_CONTAINER, Constants.Parameters.VOLUME, Constants.Parameters.VOLUME).WithAlias(Constants.VOLUME_ALIAS));
+         _explicitFormula.AddObjectPath(new FormulaUsablePath(PARENT_CONTAINER, PARENT_CONTAINER, VOLUME, VOLUME).WithAlias(VOLUME_ALIAS));
       }
 
       protected override void Because()
@@ -372,7 +518,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_not_use_the_default_volume_alias()
       {
-         _alias.ShouldNotBeEqualTo(Constants.VOLUME_ALIAS);
+         _alias.ShouldNotBeEqualTo(VOLUME_ALIAS);
       }
    }
 
