@@ -3,6 +3,7 @@ using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain
 {
@@ -77,6 +78,12 @@ namespace OSPSuite.Core.Domain
          buildingBlocks.AddRange(MoleculeStartValuesCollection);
 
          return buildingBlocks.Where(x => x != null).ToList();
+      }
+
+      public override void AcceptVisitor(IVisitor visitor)
+      {
+         base.AcceptVisitor(visitor);
+         AllBuildingBlocks().Each(x => x.AcceptVisitor(visitor));
       }
    }
 
