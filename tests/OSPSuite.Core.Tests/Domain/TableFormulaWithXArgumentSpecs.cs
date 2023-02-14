@@ -75,7 +75,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_retun_the_interpolated_value_if_the_argument_is_not_one_of_the_defined_sample()
+      public void should_return_the_interpolated_value_if_the_argument_is_not_one_of_the_defined_sample()
       {
          _xArgumentObject.Value = 1.5;
          _parameter.Value.ShouldBeEqualTo(15);

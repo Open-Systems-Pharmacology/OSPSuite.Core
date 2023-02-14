@@ -130,7 +130,7 @@ namespace OSPSuite.Core.Domain.Services
 
       /// <summary>
       ///    Finalizes the transports in molecule parent container. Transport are
-      ///    alway created in a Molecule specific sub container, that's why we start
+      ///    always created in a Molecule specific sub container, that's why we start
       ///    with them. This could be a Event Group or Neighborhood
       /// </summary>
       /// <param name="cloneModel">The clone model.</param>
@@ -144,11 +144,11 @@ namespace OSPSuite.Core.Domain.Services
 
             var sourceTransports = moleculeContainer.GetChildren<ITransport>();
             var tmp = cloneMoleculeContainer.GetChildren<ITransport>();
-            finalizeTranports(cloneModel, tmp, sourceTransports);
+            finalizeTransports(cloneModel, tmp, sourceTransports);
          }
       }
 
-      private void finalizeTranports(IModel cloneModel, IEnumerable<ITransport> tmp, IEnumerable<ITransport> sourceTransports)
+      private void finalizeTransports(IModel cloneModel, IEnumerable<ITransport> tmp, IEnumerable<ITransport> sourceTransports)
       {
          var cloneTransports = new Cache<string, ITransport>(x => x.Name);
 
@@ -161,10 +161,10 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private void resolveAmounts(IModel cloneModel, ITransport sourcerTransport, ITransport cloneTransport)
+      private void resolveAmounts(IModel cloneModel, ITransport sourceTransport, ITransport cloneTransport)
       {
-         var sourceAmountPath = _objectPathFactory.CreateAbsoluteObjectPath(sourcerTransport.SourceAmount);
-         var targetAmountPath = _objectPathFactory.CreateAbsoluteObjectPath(sourcerTransport.TargetAmount);
+         var sourceAmountPath = _objectPathFactory.CreateAbsoluteObjectPath(sourceTransport.SourceAmount);
+         var targetAmountPath = _objectPathFactory.CreateAbsoluteObjectPath(sourceTransport.TargetAmount);
 
          cloneTransport.SourceAmount = sourceAmountPath.Resolve<IMoleculeAmount>(cloneModel.Root);
          cloneTransport.TargetAmount = targetAmountPath.Resolve<IMoleculeAmount>(cloneModel.Root);
@@ -181,7 +181,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private ICache<string, INeighborhood> createNeighborhoodCache(IModel model)
       {
-         var cloneNeighborhoods = new Cache<string, INeighborhood>(nh => nh.Name);
+         var cloneNeighborhoods = new Cache<string, INeighborhood>(x => x.Name);
          cloneNeighborhoods.AddRange(model.Neighborhoods.GetChildren<INeighborhood>());
          return cloneNeighborhoods;
       }

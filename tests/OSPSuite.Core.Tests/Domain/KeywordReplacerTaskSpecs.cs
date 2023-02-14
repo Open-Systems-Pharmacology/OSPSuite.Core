@@ -5,6 +5,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
+using static OSPSuite.Core.Domain.ObjectPathKeywords;
 
 namespace OSPSuite.Core.Domain
 {
@@ -23,7 +24,7 @@ namespace OSPSuite.Core.Domain
          _model.Root = A.Fake<IContainer>().WithName(_modelName);
          A.CallTo(() => _model.Root.GetChildren<IContainer>())
             .Returns(new[] {new Container().WithName(ConstantsForSpecs.Organism), new Container().WithName("B")});
-         _objPathFirstNeighbor = new FormulaUsablePath(new[] {ObjectPathKeywords.FIRST_NEIGHBOR, "A"});
+         _objPathFirstNeighbor = new FormulaUsablePath(new[] {FIRST_NEIGHBOR, "A"});
          _objPathMolecule = new FormulaUsablePath(new[] {"B"});
          _objPathOrganism = new FormulaUsablePath(new[] {ConstantsForSpecs.Organism, "C"});
          sut = new KeywordReplacerTask(new ObjectPathFactory(new AliasCreator()));
@@ -70,7 +71,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         _objPathMolecule = new FormulaUsablePath(new[] {ObjectPathKeywords.MOLECULE});
+         _objPathMolecule = new FormulaUsablePath(new[] {MOLECULE});
          _moleculeName = "REPLACED";
          _moleculeContainer = new Container().WithName(_modelName);
          var moleculeParameter = new Parameter().WithFormula(A.Fake<IFormula>());
@@ -113,7 +114,7 @@ namespace OSPSuite.Core.Domain
          _moleculeContainer = new Container().WithName("CYP").WithContainerType(ContainerType.Molecule);
          _parameter = DomainHelperForSpecs.ConstantParameterWithValue(4).WithName("P").WithParentContainer(_moleculeContainer);
          _parameter.Formula = new ExplicitFormula();
-         _objectPath = new FormulaUsablePath("SIM", ObjectPathKeywords.MOLECULE, "test");
+         _objectPath = new FormulaUsablePath("SIM", MOLECULE, "test");
          _parameter.Formula.AddObjectPath(_objectPath);
       }
 

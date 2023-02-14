@@ -11,7 +11,7 @@ namespace OSPSuite.Core.Domain.Mappers
    ///    <para></para>
    ///    Creates Top-Container named "NEIGHBORHOODS", all mapped neighborhoods
    ///    <para></para>
-   ///    are added as childs of this top container
+   ///    are added as children of this top container
    /// </summary>
    public interface INeighborhoodCollectionToContainerMapper : IBuilderMapper<IModel, IContainer>
    {
@@ -23,7 +23,8 @@ namespace OSPSuite.Core.Domain.Mappers
       private readonly INeighborhoodBuilderToNeighborhoodMapper _neighborhoodMapper;
       private readonly IObjectPathFactory _objectPathFactory;
 
-      public NeighborhoodCollectionToContainerMapper(IObjectBaseFactory objectBaseFactory,
+      public NeighborhoodCollectionToContainerMapper(
+         IObjectBaseFactory objectBaseFactory,
          INeighborhoodBuilderToNeighborhoodMapper neighborhoodMapper,
          IObjectPathFactory objectPathFactory)
       {
@@ -84,7 +85,7 @@ namespace OSPSuite.Core.Domain.Mappers
       }
 
       /// <summary>
-      ///    Returns molecules which will be created in both neighbours of the neighbourhood
+      ///    Returns molecules which will be created in both neighbors of the neighborhood
       /// </summary>
       private IEnumerable<string> moleculeNamesFor(INeighborhoodBuilder neighborhoodBuilder,
          ICache<string, IList<string>> moleculesStartValuesForFloatingMolecules)
@@ -92,7 +93,7 @@ namespace OSPSuite.Core.Domain.Mappers
          var pathToFirstNeighbor = _objectPathFactory.CreateAbsoluteObjectPath(neighborhoodBuilder.FirstNeighbor).ToString();
          var pathToSecondNeighbor = _objectPathFactory.CreateAbsoluteObjectPath(neighborhoodBuilder.SecondNeighbor).ToString();
 
-         // check if both neighbours has at least 1 molecule (if not - return empty list)
+         // check if both neighbors has at least 1 molecule (if not - return empty list)
          if (!moleculesStartValuesForFloatingMolecules.Contains(pathToFirstNeighbor) ||
              !moleculesStartValuesForFloatingMolecules.Contains(pathToSecondNeighbor))
             return new List<string>();

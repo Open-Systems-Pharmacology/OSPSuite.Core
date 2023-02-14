@@ -260,13 +260,13 @@ namespace OSPSuite.Core.Domain.Services
 
          model.Root.AddTag(new Tag(Constants.ROOT_CONTAINER_TAG));
 
-         //Add each container defined in the spatial strucutre and direct child of the root container
+         //Add each container defined in the spatial structure and direct child of the root container
          foreach (var topContainer in buildConfiguration.SpatialStructure.TopContainers)
          {
             model.Root.Add(_containerMapper.MapFrom(topContainer, buildConfiguration));
          }
 
-         // Add the neibghborhoods
+         // Add the neighborhoods
          model.Neighborhoods = _neighborhoodsMapper.MapFrom(model, buildConfiguration);
       }
 

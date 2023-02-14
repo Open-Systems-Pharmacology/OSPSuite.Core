@@ -1724,6 +1724,8 @@ namespace OSPSuite.Assets
 
       public static string UnitIsNotDefinedInDimension(string unit, string dimension) => $"Unit '{unit}' is not defined in dimension '{dimension}'.";
 
+      public static string CouldNotFindNeighborhoodBetween(string container1, string container2) => $"Could not find neighborhood between '{container1}' and '{container2}'";
+      
       public static class SensitivityAnalysis
       {
          public static readonly string NoSimulationDefined = "No simulation defined";

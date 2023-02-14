@@ -64,15 +64,15 @@ namespace OSPSuite.Core.Domain
       IEnumerable<T> GetChildren<T>(Func<T, bool> predicate) where T : class, IEntity;
 
       /// <summary>
-      ///    returns the neighbors from the container connected by the given neigborhoods.
+      ///    returns the neighbors from the container connected by the given neighborhoods.
       /// </summary>
-      IEnumerable<IContainer> GetNeighborsFrom(IEnumerable<INeighborhood> neighborhoods);
+      IReadOnlyList<IContainer> GetNeighborsFrom(IReadOnlyList<INeighborhood> neighborhoods);
 
       /// <summary>
       ///    returns the neighborhoods connecting the container with its neighbors.
       /// </summary>
       /// <param name="neighborhoods"> The possible neighborhoods. </param>
-      IEnumerable<INeighborhood> GetNeighborhoods(IEnumerable<INeighborhood> neighborhoods);
+      IReadOnlyList<INeighborhood> GetNeighborhoods(IReadOnlyList<INeighborhood> neighborhoods);
 
       /// <summary>
       ///    Returns all children containers defined and the container itself, if the container is form type
@@ -204,30 +204,30 @@ namespace OSPSuite.Core.Domain
                 select castChild;
       }
 
-      public virtual IEnumerable<IContainer> GetNeighborsFrom(IEnumerable<INeighborhood> neighborhoods)
+      public virtual IReadOnlyList<IContainer> GetNeighborsFrom(IReadOnlyList<INeighborhood> neighborhoods)
       {
-         var allNeighborhoods = neighborhoods.ToList();
-         var first = from neighborhood in GetNeighborhoods(allNeighborhoods)
+         var first = from neighborhood in GetNeighborhoods(neighborhoods)
                      where neighborhood.FirstNeighbor != this
                      select neighborhood.FirstNeighbor;
 
-         var second = from neighborhood in GetNeighborhoods(allNeighborhoods)
+         var second = from neighborhood in GetNeighborhoods(neighborhoods)
                       where neighborhood.SecondNeighbor != this
                       select neighborhood.SecondNeighbor;
-         return first.Union(second);
+
+         return first.Union(second).ToList();
       }
 
-      public virtual IEnumerable<INeighborhood> GetNeighborhoods(IEnumerable<INeighborhood> neighborhoods)
+      public virtual IReadOnlyList<INeighborhood> GetNeighborhoods(IReadOnlyList<INeighborhood> neighborhoods)
       {
-         var allNeighborhoods = neighborhoods.ToList();
-         var first = from neighborhood in allNeighborhoods
+         var first = from neighborhood in neighborhoods
                      where neighborhood.FirstNeighbor == this
                      select neighborhood;
 
-         var second = from neighborhood in allNeighborhoods
+         var second = from neighborhood in neighborhoods
                       where neighborhood.SecondNeighbor == this
                       select neighborhood;
-         return first.Union(second);
+
+         return first.Union(second).ToList();
       }
 
       public IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>() where TContainer : class, IContainer => GetAllContainersAndSelf<TContainer>(x => true);
