@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Extensions;
+using static OSPSuite.Core.Domain.ObjectPath;
+using static OSPSuite.Core.Domain.ObjectPathKeywords;
 
 namespace OSPSuite.Helpers
 {
@@ -103,9 +105,9 @@ namespace OSPSuite.Helpers
 
       private IEventGroupBuildingBlock getEventGroups()
       {
-         var eventGroupBuiderCollection = _objectBaseFactory.Create<IEventGroupBuildingBlock>();
-         eventGroupBuiderCollection.Add(createBolusApplication(eventGroupBuiderCollection.FormulaCache));
-         return eventGroupBuiderCollection;
+         var eventGroupBuilderCollection = _objectBaseFactory.Create<IEventGroupBuildingBlock>();
+         eventGroupBuilderCollection.Add(createBolusApplication(eventGroupBuilderCollection.FormulaCache));
+         return eventGroupBuilderCollection;
       }
 
       private IEventGroupBuilder createBolusApplication(IFormulaCache cache)
@@ -158,8 +160,8 @@ namespace OSPSuite.Helpers
          var moleculeAPath = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma, "D");
          moleculeAPath.Add("RelExpNorm");
          var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("RelExp + RelExpGlobal").WithName("RelExpNormD");
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.MOLECULE, "RelExpGlobal"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER, "RelExp").WithAlias("RelExp"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(MOLECULE, "RelExpGlobal"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER, "RelExp").WithAlias("RelExp"));
          parameterStartValues.AddFormula(formula);
 
          parameterStartValues[moleculeAPath].Formula = formula;
@@ -435,7 +437,7 @@ namespace OSPSuite.Helpers
          var relExpGlobal = newConstantParameter("RelExpGlobal", 0).WithMode(ParameterBuildMode.Global);
          IFormula moleculeReferenceFormula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("RelExpGlobal");
          formulaCache.Add(moleculeReferenceFormula);
-         moleculeReferenceFormula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.MOLECULE, "RelExpGlobal").WithAlias("RelExpGlobal"));
+         moleculeReferenceFormula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(MOLECULE, "RelExpGlobal").WithAlias("RelExpGlobal"));
          var relExpLocalFromGlobal =
             _objectBaseFactory.Create<IParameter>()
                .WithName("RelExpLocal")
@@ -455,7 +457,7 @@ namespace OSPSuite.Helpers
          moleculeE.IsFloating = false;
 
          moleculeE.AddParameter(newConstantParameter("RelExp", 0).WithMode(ParameterBuildMode.Local));
-         
+
          //create a couple of NaN Parameters. Only a few should be created in the simulation
          moleculeE.AddParameter(newConstantParameter("NaNParam", double.NaN).WithMode(ParameterBuildMode.Local));
          moleculeE.AddParameter(newConstantParameter("OtherNaNParam", double.NaN).WithMode(ParameterBuildMode.Local));
@@ -515,7 +517,7 @@ namespace OSPSuite.Helpers
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("A/2").WithName("B_StartF")
             .WithDimension(amountDimension);
 
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER, "A").WithAlias("A"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER, "A").WithAlias("A"));
 
          //Add reference to global parameters in reaction
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("R1", "k2").WithAlias("k2"));
@@ -534,7 +536,7 @@ namespace OSPSuite.Helpers
             .WithName("EnzymeStartFormula")
             .WithFormulaString("RelExp * ProteinContent");
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("RelExp"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.MOLECULE, "ProteinContent"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(MOLECULE, "ProteinContent"));
          formulaCache.Add(formula);
          return formula;
       }
@@ -549,9 +551,9 @@ namespace OSPSuite.Helpers
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("k1").WithAlias("k1"));
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("R1", "k2"));
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, "fu").WithAlias("fu"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER, "A").WithAlias("A"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER, "B").WithAlias("B"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER, "C").WithAlias("C"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER, "A").WithAlias("A"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER, "B").WithAlias("B"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER, "C").WithAlias("C"));
 
          formulaCache.Add(formula);
 
@@ -579,10 +581,10 @@ namespace OSPSuite.Helpers
 
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("VmaxAbs*RelExp*C/(Km+C)").WithName("MM1");
          formula.AddObjectPath(
-            _objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.NEIGHBORHOOD, ObjectPathKeywords.MOLECULE, ObjectPathKeywords.REALIZATION, "VmaxAbs").WithAlias("VmaxAbs"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.NEIGHBORHOOD, ObjectPathKeywords.MOLECULE, ObjectPathKeywords.REALIZATION, "Km").WithAlias("Km"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.SOURCE, ObjectPathKeywords.MOLECULE, "C").WithAlias("C"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.SOURCE, ObjectPathKeywords.TRANSPORTER, "RelExp").WithAlias("RelExp"));
+            _objectPathFactory.CreateFormulaUsablePathFrom(NEIGHBORHOOD, MOLECULE, REALIZATION, "VmaxAbs").WithAlias("VmaxAbs"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(NEIGHBORHOOD, MOLECULE, REALIZATION, "Km").WithAlias("Km"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(SOURCE, MOLECULE, "C").WithAlias("C"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(SOURCE, TRANSPORTER, "RelExp").WithAlias("RelExp"));
 
          formulaCache.Add(formula);
 
@@ -597,8 +599,8 @@ namespace OSPSuite.Helpers
 
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("VMaxAbs*C/(1+C)").WithName("MM2");
          formula.AddObjectPath(
-            _objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.NEIGHBORHOOD, ObjectPathKeywords.MOLECULE, ObjectPathKeywords.REALIZATION, "VmaxAbs").WithAlias("VMaxAbs"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.SOURCE, ObjectPathKeywords.MOLECULE, "C").WithAlias("C"));
+            _objectPathFactory.CreateFormulaUsablePathFrom(NEIGHBORHOOD, MOLECULE, REALIZATION, "VmaxAbs").WithAlias("VMaxAbs"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(SOURCE, MOLECULE, "C").WithAlias("C"));
 
          formulaCache.Add(formula);
 
@@ -612,8 +614,8 @@ namespace OSPSuite.Helpers
             return formula;
 
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("M/V").WithName("ConcFormula");
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER).WithAlias("M"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER, ObjectPath.PARENT_CONTAINER, ConstantsForSpecs.Volume).WithAlias("V"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER).WithAlias("M"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER, PARENT_CONTAINER, ConstantsForSpecs.Volume).WithAlias("V"));
 
          formulaCache.Add(formula);
 
@@ -820,6 +822,22 @@ namespace OSPSuite.Helpers
          art.Add(newConstantParameter(ConstantsForSpecs.Q, 2));
          organism.Add(art);
 
+         var parameterReferencingNeighborhood = newConstantParameter("RefParam", 10);
+         parameterReferencingNeighborhood.Formula = new ExplicitFormula("K *10").WithName("FormulaReferencingNBH");
+         //referencing parameter K between art_pls and bone_pls
+
+         var objectPath = _objectPathFactory.CreateFormulaUsablePathFrom(
+            PARENT_CONTAINER, 
+            NBH, 
+            PARENT_CONTAINER, PARENT_CONTAINER, PARENT_CONTAINER, ConstantsForSpecs.Bone, ConstantsForSpecs.Plasma, 
+            NBH, "K");
+
+         objectPath.Alias = "K";
+         parameterReferencingNeighborhood.Formula.AddObjectPath(objectPath);
+         artPlasma.Add(parameterReferencingNeighborhood);
+         spatialStructure.AddFormula(parameterReferencingNeighborhood.Formula);
+
+
          //LUNG
          var lung = CreateContainerWithName(ConstantsForSpecs.Lung)
             .WithMode(ContainerMode.Logical);
@@ -849,6 +867,7 @@ namespace OSPSuite.Helpers
          bonePlasma.Add(newConstantParameter(ConstantsForSpecs.pH, 7.5));
          bonePlasma.AddTag(new Tag(bone.Name));
          bone.Add(bonePlasma);
+
 
          var boneCell = CreateContainerWithName(ConstantsForSpecs.Cell).WithMode(ContainerMode.Physical);
          boneCell.Add(newConstantParameter(ConstantsForSpecs.Volume, 1));
@@ -883,6 +902,8 @@ namespace OSPSuite.Helpers
          spatialStructure.AddTopContainer(organism);
 
          var neighborhood1 = _neighborhoodFactory.CreateBetween(artPlasma, bonePlasma).WithName("art_pls_to_bon_pls");
+         //this is a constant parmaeter that will be referenced from arterial plasma compartment
+         neighborhood1.AddParameter(newConstantParameter("K", 10));
          spatialStructure.AddNeighborhood(neighborhood1);
          var neighborhood2 = _neighborhoodFactory.CreateBetween(lngPlasma, artPlasma).WithName("lng_pls_to_art_pls");
          spatialStructure.AddNeighborhood(neighborhood2);
@@ -927,8 +948,8 @@ namespace OSPSuite.Helpers
       {
          var formula = _objectBaseFactory.Create<ExplicitFormula>()
             .WithFormulaString("SumProcessRateLung + SumProcessRateBone").WithName("FabsFormula");
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(Constants.NEIGHBORHOODS, "lng_pls_to_lng_cell", ObjectPathKeywords.MOLECULE, ConstantsForSpecs.SumProcessRate).WithAlias("SumProcessRateLung"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(Constants.NEIGHBORHOODS, "bon_pls_to_bon_cell", ObjectPathKeywords.MOLECULE, ConstantsForSpecs.SumProcessRate).WithAlias("SumProcessRateBone"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(Constants.NEIGHBORHOODS, "lng_pls_to_lng_cell", MOLECULE, ConstantsForSpecs.SumProcessRate).WithAlias("SumProcessRateLung"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(Constants.NEIGHBORHOODS, "bon_pls_to_bon_cell", MOLECULE, ConstantsForSpecs.SumProcessRate).WithAlias("SumProcessRateBone"));
          formulaCache.Add(formula);
          return formula;
       }
@@ -960,7 +981,7 @@ namespace OSPSuite.Helpers
 
 
          var dynamicFormula = _objectBaseFactory.Create<SumFormula>().WithName("SumFormula");
-         dynamicFormula.Criteria = Create.Criteria(x => x.With(Constants.Parameters.PROCESS_RATE).And.With(ObjectPathKeywords.NEIGHBORHOOD).And.With(ObjectPathKeywords.MOLECULE));
+         dynamicFormula.Criteria = Create.Criteria(x => x.With(Constants.Parameters.PROCESS_RATE).And.With(NEIGHBORHOOD).And.With(MOLECULE));
          formulaCache.Add(dynamicFormula);
          return dynamicFormula;
       }
@@ -980,8 +1001,8 @@ namespace OSPSuite.Helpers
             return formula;
 
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("Q*C").WithName("Convection");
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.SOURCE, ObjectPath.PARENT_CONTAINER, "Q").WithAlias("Q"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.SOURCE, ObjectPathKeywords.MOLECULE, "C").WithAlias("C"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(SOURCE, PARENT_CONTAINER, "Q").WithAlias("Q"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(SOURCE, MOLECULE, "C").WithAlias("C"));
 
          formulaCache.Add(formula);
 
@@ -996,12 +1017,12 @@ namespace OSPSuite.Helpers
 
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("fu*P*SA*(C1-C2/K)*logMA").WithName("Diffusion");
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, "fu").WithAlias("fu"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.SOURCE, ObjectPathKeywords.MOLECULE, "C").WithAlias("C1"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.TARGET, ObjectPathKeywords.MOLECULE, "C").WithAlias("C2"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.NEIGHBORHOOD, ObjectPathKeywords.MOLECULE, "K").WithAlias("K"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.MOLECULE, "logMA").WithAlias("logMA"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.SOURCE, ObjectPath.PARENT_CONTAINER, "P").WithAlias("P"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.NEIGHBORHOOD, "SA").WithAlias("SA"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(SOURCE, MOLECULE, "C").WithAlias("C1"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(TARGET, MOLECULE, "C").WithAlias("C2"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(NEIGHBORHOOD, MOLECULE, "K").WithAlias("K"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(MOLECULE, "logMA").WithAlias("logMA"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(SOURCE, PARENT_CONTAINER, "P").WithAlias("P"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(NEIGHBORHOOD, "SA").WithAlias("SA"));
 
          formulaCache.Add(formula);
 
@@ -1011,7 +1032,7 @@ namespace OSPSuite.Helpers
       private IFormula GlobalMoleculeDepParamFormula_1(IFormulaCache formulaCache)
       {
          var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("MW").WithName("GlobalMoleculeDepParamFormula_1");
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.MOLECULE, "MW").WithAlias("MW"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(MOLECULE, "MW").WithAlias("MW"));
 
          formulaCache.Add(formula);
 
@@ -1032,10 +1053,10 @@ namespace OSPSuite.Helpers
       private IFormula PartitionCoeff_1()
       {
          var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("pH1/pH2*logMA*HelpMe").WithName("PartitionCoeff_1");
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.MOLECULE, "logMA").WithAlias("logMA"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.FIRST_NEIGHBOR, "pH").WithAlias("pH1"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.FIRST_NEIGHBOR, ObjectPathKeywords.MOLECULE, "HelpMe").WithAlias("HelpMe"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.SECOND_NEIGHBOR, "pH").WithAlias("pH2"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(MOLECULE, "logMA").WithAlias("logMA"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(FIRST_NEIGHBOR, "pH").WithAlias("pH1"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(FIRST_NEIGHBOR, MOLECULE, "HelpMe").WithAlias("HelpMe"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(SECOND_NEIGHBOR, "pH").WithAlias("pH2"));
 
          return formula;
       }
@@ -1043,9 +1064,9 @@ namespace OSPSuite.Helpers
       private IFormula PartitionCoeff_2()
       {
          var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("pH1/pH2*logMA").WithName("PartitionCoeff_2");
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.MOLECULE, "logMA").WithAlias("logMA"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.FIRST_NEIGHBOR, "pH").WithAlias("pH1"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPathKeywords.SECOND_NEIGHBOR, "pH").WithAlias("pH2"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(MOLECULE, "logMA").WithAlias("logMA"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(FIRST_NEIGHBOR, "pH").WithAlias("pH1"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(SECOND_NEIGHBOR, "pH").WithAlias("pH2"));
 
          return formula;
       }
@@ -1057,7 +1078,7 @@ namespace OSPSuite.Helpers
             return formula;
 
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("M/2").WithName("AmountObs");
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER).WithAlias("M"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER).WithAlias("M"));
          formula.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
          formulaCache.Add(formula);
          return formula;
@@ -1070,7 +1091,7 @@ namespace OSPSuite.Helpers
             return formula;
 
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("M/4").WithName("FractionObs");
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER).WithAlias("M"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER).WithAlias("M"));
          formula.Dimension = _dimensionFactory.Dimension(Constants.Dimension.FRACTION);
          formulaCache.Add(formula);
          return formula;
@@ -1083,14 +1104,13 @@ namespace OSPSuite.Helpers
             return formula;
 
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("M1+M2").WithName("ContainerObs");
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, ObjectPathKeywords.MOLECULE).WithAlias("M1"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, ObjectPathKeywords.MOLECULE).WithAlias("M2"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, MOLECULE).WithAlias("M1"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, MOLECULE).WithAlias("M2"));
          formula.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
 
          formulaCache.Add(formula);
          return formula;
       }
-
 
       private IFormula InContainerObs(IFormulaCache formulaCache)
       {
@@ -1099,8 +1119,8 @@ namespace OSPSuite.Helpers
             return formula;
 
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("M1+M2").WithName("InContainerObs");
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, ObjectPathKeywords.MOLECULE).WithAlias("M1"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, ObjectPathKeywords.MOLECULE).WithAlias("M2"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, MOLECULE).WithAlias("M1"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, MOLECULE).WithAlias("M2"));
          formula.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
 
          formulaCache.Add(formula);
@@ -1189,7 +1209,7 @@ namespace OSPSuite.Helpers
          return default(T);
       }
 
-      private T newBuildingBlockWithId<T>(T sourceObject, string id) where T: BuildingBlock
+      private T newBuildingBlockWithId<T>(T sourceObject, string id) where T : BuildingBlock
       {
          BuildingBlock bb = default(T);
          if (sourceObject.IsAnImplementationOf<SpatialStructure>())
@@ -1215,13 +1235,12 @@ namespace OSPSuite.Helpers
 
          if (sourceObject.IsAnImplementationOf<ParameterStartValuesBuildingBlock>())
             bb = new ParameterStartValuesBuildingBlock();
-         
+
          if (bb != null)
             return bb.WithId(id).DowncastTo<T>();
 
          return null;
       }
-
 
       public T Create<T>(string id) where T : class, IObjectBase
       {
