@@ -823,7 +823,10 @@ namespace OSPSuite.Helpers
          organism.Add(art);
 
          var parameterReferencingNeighborhood = newConstantParameter("RefParam", 10);
-         parameterReferencingNeighborhood.Formula = new ExplicitFormula("K *10").WithName("FormulaReferencingNBH");
+         var refFormula = _objectBaseFactory.Create<ExplicitFormula>()
+            .WithFormulaString("K*10")
+            .WithName("FormulaReferencingNBH");
+         parameterReferencingNeighborhood.Formula = refFormula;
          //referencing parameter K between art_pls and bone_pls
 
          var objectPath = _objectPathFactory.CreateFormulaUsablePathFrom(
@@ -835,7 +838,7 @@ namespace OSPSuite.Helpers
          objectPath.Alias = "K";
          parameterReferencingNeighborhood.Formula.AddObjectPath(objectPath);
          artPlasma.Add(parameterReferencingNeighborhood);
-         spatialStructure.AddFormula(parameterReferencingNeighborhood.Formula);
+         spatialStructure.FormulaCache.Add(refFormula);
 
 
          //LUNG
