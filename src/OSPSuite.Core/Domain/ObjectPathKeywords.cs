@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Domain
    public static class ObjectPathKeywords
    {
       //list of all keywords defined
-      private static readonly IList<string> _allKeywords = new List<string>();
+      private static readonly List<string> _allKeywords = new List<string>();
 
       /// <summary>
       ///    String representing a reference to local Molecule
@@ -73,6 +73,6 @@ namespace OSPSuite.Core.Domain
          return keyword;
       }
 
-      public static IEnumerable<string> All => _allKeywords;
+      public static IReadOnlyList<string> All => _allKeywords;
    }
 }
