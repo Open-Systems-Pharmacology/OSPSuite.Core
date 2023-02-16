@@ -22,6 +22,6 @@ namespace OSPSuite.Core.Domain.Services
    public interface IKeywordInTagsReplacer : IKeywordReplacer
    {
       void ReplaceIn(Tags tags);
-      void ReplaceIn(IDescriptorCondition descriptorCondition);
+      void ReplaceIn(ITagCondition descriptorCondition);
    }
 }

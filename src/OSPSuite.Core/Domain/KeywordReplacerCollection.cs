@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Replace the criteria value with all possible replacement induced by a IKeywordInTagReplacer
       /// </summary>
-      void ReplaceIn(IDescriptorCondition descriptorCondition);
+      void ReplaceIn(ITagCondition tagCondition);
    }
 
    public class KeywordReplacerCollection : IKeywordReplacerCollection
@@ -82,9 +82,9 @@ namespace OSPSuite.Core.Domain
          _allTagReplacer.Each(r => r.ReplaceIn(tags));
       }
 
-      public void ReplaceIn(IDescriptorCondition descriptorCondition)
+      public void ReplaceIn(ITagCondition tagCondition)
       {
-         _allTagReplacer.Each(r => r.ReplaceIn(descriptorCondition));
+         _allTagReplacer.Each(r => r.ReplaceIn(tagCondition));
       }
 
       private void replaceTagsIn(IEntity entity)

@@ -25,9 +25,9 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         var cond1 = A.Fake<IDescriptorCondition>();
+         var cond1 = A.Fake<ITagCondition>();
          A.CallTo(() => cond1.IsSatisfiedBy(_entityCriteria)).Returns(true);
-         var cond2 = A.Fake<IDescriptorCondition>();
+         var cond2 = A.Fake<ITagCondition>();
          A.CallTo(() => cond2.IsSatisfiedBy(_entityCriteria)).Returns(false);
          sut.Add(cond1);
          sut.Add(cond2);
@@ -77,9 +77,9 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         var cond1 = A.Fake<IDescriptorCondition>();
+         var cond1 = A.Fake<ITagCondition>();
          A.CallTo(() => cond1.IsSatisfiedBy(_entityCriteria)).Returns(true);
-         var cond2 = A.Fake<IDescriptorCondition>();
+         var cond2 = A.Fake<ITagCondition>();
          A.CallTo(() => cond2.IsSatisfiedBy(_entityCriteria)).Returns(false);
          sut.Add(cond1);
          sut.Add(cond2);
@@ -98,9 +98,9 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         var cond1 = A.Fake<IDescriptorCondition>();
+         var cond1 = A.Fake<ITagCondition>();
          A.CallTo(() => cond1.IsSatisfiedBy(_entityCriteria)).Returns(true);
-         var cond2 = A.Fake<IDescriptorCondition>();
+         var cond2 = A.Fake<ITagCondition>();
          A.CallTo(() => cond2.IsSatisfiedBy(_entityCriteria)).Returns(true);
          sut.Add(cond1);
          sut.Add(cond2);
