@@ -30,11 +30,11 @@ namespace OSPSuite.Core.Services
 
       protected override void Context()
       {
-         _entityPathResolver = A.Fake<IEntityPathResolver>();
-         _objectPathFactory = new ObjectPathFactory(new AliasCreator());
+         _entityPathResolver = new EntityPathResolverForSpecs();
+         _objectPathFactory = new ObjectPathFactoryForSpecs();
          _dimensionFactory = DimensionFactoryForSpecs.Factory;
          _objectBaseFactory = new ObjectBaseFactoryForSpecs(_dimensionFactory);
-         _formulaTask= new FormulaTask(_objectPathFactory, _objectBaseFactory, new AliasCreator(),_dimensionFactory);
+         _formulaTask= new FormulaTask(_objectPathFactory, _objectBaseFactory, new AliasCreator(),_dimensionFactory, _entityPathResolver);
          _tableFormulaToTableFormulaExportMapper = A.Fake<ITableFormulaToTableFormulaExportMapper>();
          _dataRepositoryTask = A.Fake<IDataRepositoryTask>();
          _modelFinalizer = new ModelFinalizer(_objectPathFactory, new ReferencesResolver());
