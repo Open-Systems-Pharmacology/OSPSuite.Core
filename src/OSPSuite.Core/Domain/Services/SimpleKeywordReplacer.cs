@@ -36,7 +36,7 @@ namespace OSPSuite.Core.Domain.Services
          tags.Replace(_keyword, _replacement);
       }
 
-      public void ReplaceIn(IDescriptorCondition descriptorCondition)
+      public void ReplaceIn(ITagCondition descriptorCondition)
       {
          descriptorCondition.Replace(_keyword, _replacement);
       }

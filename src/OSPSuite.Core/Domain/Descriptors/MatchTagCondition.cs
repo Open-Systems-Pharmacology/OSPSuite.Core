@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Domain.Descriptors
          return entityDescriptor.Tags.Contains(Tag);
       }
 
-      public override IDescriptorCondition CloneCondition()
+      public override ITagCondition CloneCondition()
       {
          return new MatchTagCondition(Tag);
       }

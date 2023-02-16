@@ -37,6 +37,14 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
+   public class InParentConditionXmlSerializer : TagConditionXmlSerializer<InParentCondition>
+   {
+      public override void PerformMapping()
+      {
+         /*nothing to do*/
+      }
+   }
+
    public class InContainerConditionXmlSerializer : TagConditionXmlSerializer<InContainerCondition>
    {
    }

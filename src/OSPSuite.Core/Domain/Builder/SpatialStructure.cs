@@ -155,16 +155,16 @@ namespace OSPSuite.Core.Domain.Builder
       }
 
       /// <summary>
-      ///    Copy the references for first and second Neighbor from <paramref name="sourcecNeighborhoodBuilder" /> to
+      ///    Copy the references for first and second Neighbor from <paramref name="sourceNeighborhoodBuilder" /> to
       ///    <paramref name="targetNeighborhoodBuilder" />.
       /// </summary>
-      /// <param name="sourcecNeighborhoodBuilder">The source neighborhood builder to copy neighbors from.</param>
+      /// <param name="sourceNeighborhoodBuilder">The source neighborhood builder to copy neighbors from.</param>
       /// <param name="targetNeighborhoodBuilder">The neighborhood builder to copy neighbors to.</param>
-      private void updateNeighborsReferences(INeighborhoodBuilder sourcecNeighborhoodBuilder, INeighborhoodBuilder targetNeighborhoodBuilder)
+      private void updateNeighborsReferences(INeighborhoodBuilder sourceNeighborhoodBuilder, INeighborhoodBuilder targetNeighborhoodBuilder)
       {
          var objectPathFactory = new ObjectPathFactory(new AliasCreator());
-         var firstPath = objectPathFactory.CreateAbsoluteObjectPath(sourcecNeighborhoodBuilder.FirstNeighbor);
-         var secondPath = objectPathFactory.CreateAbsoluteObjectPath(sourcecNeighborhoodBuilder.SecondNeighbor);
+         var firstPath = objectPathFactory.CreateAbsoluteObjectPath(sourceNeighborhoodBuilder.FirstNeighbor);
+         var secondPath = objectPathFactory.CreateAbsoluteObjectPath(sourceNeighborhoodBuilder.SecondNeighbor);
 
          foreach (var topContainer in TopContainers)
          {

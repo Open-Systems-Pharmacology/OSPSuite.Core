@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
@@ -61,18 +61,21 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IAliasCreator _aliasCreator;
       private readonly IDimensionFactory _dimensionFactory;
+      private readonly IEntityPathResolver _entityPathResolver;
       private readonly ICache<string, IList<ExplicitFormula>> _originIdToFormulaCache = new Cache<string, IList<ExplicitFormula>>();
 
       public FormulaTask(
          IObjectPathFactory objectPathFactory,
          IObjectBaseFactory objectBaseFactory,
          IAliasCreator aliasCreator,
-         IDimensionFactory dimensionFactory)
+         IDimensionFactory dimensionFactory,
+         IEntityPathResolver entityPathResolver)
       {
          _objectPathFactory = objectPathFactory;
          _objectBaseFactory = objectBaseFactory;
          _aliasCreator = aliasCreator;
          _dimensionFactory = dimensionFactory;
+         _entityPathResolver = entityPathResolver;
       }
 
       public void CheckFormulaOriginIn(IModel model)
@@ -195,7 +198,7 @@ namespace OSPSuite.Core.Domain.Services
             throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path.ToPathString()));
 
          return container;
-      } 
+      }
 
       public void ExpandDynamicFormulaIn(IModel model) => ExpandDynamicFormulaIn(model.Root);
 
@@ -211,13 +214,33 @@ namespace OSPSuite.Core.Domain.Services
             if (dynamicFormula.Criteria.IsSatisfiedBy(entityUsingFormula))
                throw new CircularReferenceInSumFormulaException(dynamicFormula.Name, entityUsingFormula.Name);
 
+            dynamicFormula.Criteria = updateDynamicFormulaCriteria(dynamicFormula, entityUsingFormula);
             entityUsingFormula.Formula = dynamicFormula.ExpandUsing(allFormulaUsable, _objectPathFactory, _objectBaseFactory);
          });
       }
 
+      private DescriptorCriteria updateDynamicFormulaCriteria(DynamicFormula formula, IUsingFormula usingFormula)
+      {
+         //we need to replace IN PARENT criteria with actual criteria matching the parent of the usingFormula
+         var criteria = formula.Criteria;
+         var allInParentTags = criteria.Where(x => x.IsAnImplementationOf<InParentCondition>()).ToList();
+         var parent = usingFormula.ParentContainer;
+         if (!allInParentTags.Any() || parent == null)
+            return criteria;
+
+         //we clone the criteria and remove all instances of InParentCondition. Then we add the criteria to the parent specifically
+         var modifiedCriteria = criteria.Clone();
+         allInParentTags.Each(x => modifiedCriteria.RemoveByTag<InParentCondition>(x.Tag));
+
+         //add to the formula the link to parent. We use the consolidated path here so that we do not deal with the root container as criteria
+         var parentPath = _entityPathResolver.PathFor(parent).ToPathArray();
+         parentPath.Each(x=> modifiedCriteria.Add(new InContainerCondition(x)));
+         return modifiedCriteria;
+      }
+
       public string AddParentVolumeReferenceToFormula(IFormula formula)
       {
-         string volumeAlias = _aliasCreator.CreateAliasFrom(VOLUME_ALIAS, formula.ObjectPaths.Select(p => p.Alias));
+         var volumeAlias = _aliasCreator.CreateAliasFrom(VOLUME_ALIAS, formula.ObjectPaths.Select(p => p.Alias));
 
          //possible reference
          var volumeReferencePath = _objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER, VOLUME)

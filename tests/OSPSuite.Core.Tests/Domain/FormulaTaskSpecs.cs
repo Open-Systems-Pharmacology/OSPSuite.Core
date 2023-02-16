@@ -24,14 +24,16 @@ namespace OSPSuite.Core.Domain
       private IObjectPathFactory _objectPathFactory;
       private IAliasCreator _aliasCreator;
       private IDimensionFactory _dimensionFactory;
+      private IEntityPathResolver _entityPathResolver;
 
       protected override void Context()
       {
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
-         _objectPathFactory = new ObjectPathFactory(new AliasCreator());
+         _objectPathFactory = new ObjectPathFactoryForSpecs();
          _aliasCreator = new AliasCreator();
          _dimensionFactory = A.Fake<IDimensionFactory>();
-         sut = new FormulaTask(_objectPathFactory, _objectBaseFactory, _aliasCreator, _dimensionFactory);
+         _entityPathResolver = new EntityPathResolverForSpecs();
+         sut = new FormulaTask(_objectPathFactory, _objectBaseFactory, _aliasCreator, _dimensionFactory,_entityPathResolver);
       }
    }
 
@@ -255,6 +257,68 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_expanding_all_dynamic_formula_in_a_model_using_in_parent_criteria : concern_for_FormulaTask
+   {
+      private IModel _model;
+      private IParameter _parameter;
+      private IParameter _p1;
+      private IParameter _p2;
+      private Container _container1;
+      private Container _container2;
+      private Container _subContainer1;
+      private Container _subContainer2;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _objectBaseFactory.Create<ExplicitFormula>()).Returns(new ExplicitFormula());
+         _model = new Model();
+         _container1 = new Container().WithName("Container1");
+         _container2 = new Container().WithName("Container2");
+         _subContainer1 = new Container().WithName("SubContainer1").WithParentContainer(_container1);
+         _subContainer2 = new Container().WithName("SubContainer2").WithParentContainer(_container2);
+
+         _p1 = new Parameter().WithName("p1").WithFormula(new ConstantFormula(1));
+         _p1.AddTag("toto");
+         _p2 = new Parameter().WithName("p2").WithFormula(new ConstantFormula(2));
+         _p2.AddTag("toto");
+         var root = new Container();
+         _model.Root = root;
+         root.Add(_container1);
+         root.Add(_container2);
+         _parameter = new Parameter().WithName("Dynamic");
+         _container1.Add(_parameter);
+         _container1.Add(_p1);
+         _subContainer1.Add(_p1);
+         //this parameter is not in the same parent and should not be used
+         _subContainer2.Add(_p2);
+         root.Add(new Parameter().WithName("p3").WithFormula(new ConstantFormula(3)));
+         var sumFormula = new SumFormula
+         {
+            Criteria = Create.Criteria(x => x.With("toto").InParent())
+         };
+         _parameter.Formula = sumFormula;
+      }
+
+      protected override void Because()
+      {
+         sut.ExpandDynamicFormulaIn(_model);
+      }
+
+      [Observation]
+      public void should_replace_all_dynamic_formula_with_the_corresponding_explicit_formula()
+      {
+         _parameter.Formula.IsExplicit().ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_have_created_an_explicit_formula_that_is_the_sum_of_the_defined_parameters()
+      {
+         var explicitFormula = _parameter.Formula.DowncastTo<ExplicitFormula>();
+         explicitFormula.FormulaString.ShouldBeEqualTo("P_1");
+         explicitFormula.ObjectPaths.Count().ShouldBeEqualTo(1);
+      }
+   }
    public class When_replacing_the_neighborhood_keyword_in_a_well_defined_path : concern_for_FormulaTask
    {
       private IParameter _liverCellParameter;
