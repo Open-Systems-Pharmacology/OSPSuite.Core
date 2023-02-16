@@ -231,6 +231,8 @@ namespace OSPSuite.Core.Domain.Services
          //we clone the criteria and remove all instances of InParentCondition. Then we add the criteria to the parent specifically
          var modifiedCriteria = criteria.Clone();
          allInParentTags.Each(x => modifiedCriteria.RemoveByTag<InParentCondition>(x.Tag));
+         if (modifiedCriteria.Operator != CriteriaOperator.And)
+            throw new OSPSuiteException(Error.InParentTagCanOnlyBeUsedWithAndOperator);
 
          //add to the formula the link to parent. We use the consolidated path here so that we do not deal with the root container as criteria
          var parentPath = _entityPathResolver.PathFor(parent).ToPathArray();

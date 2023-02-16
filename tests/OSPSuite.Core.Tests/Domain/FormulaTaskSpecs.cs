@@ -282,13 +282,13 @@ namespace OSPSuite.Core.Domain
          _p1.AddTag("toto");
          _p2 = new Parameter().WithName("p2").WithFormula(new ConstantFormula(2));
          _p2.AddTag("toto");
-         var root = new Container();
+         //simulate a real ROOT Container
+         var root = new Container().WithContainerType(ContainerType.Simulation);
          _model.Root = root;
          root.Add(_container1);
          root.Add(_container2);
          _parameter = new Parameter().WithName("Dynamic");
          _container1.Add(_parameter);
-         _container1.Add(_p1);
          _subContainer1.Add(_p1);
          //this parameter is not in the same parent and should not be used
          _subContainer2.Add(_p2);
@@ -304,7 +304,7 @@ namespace OSPSuite.Core.Domain
       {
          sut.ExpandDynamicFormulaIn(_model);
       }
-
+         
       [Observation]
       public void should_replace_all_dynamic_formula_with_the_corresponding_explicit_formula()
       {
@@ -319,6 +319,47 @@ namespace OSPSuite.Core.Domain
          explicitFormula.ObjectPaths.Count().ShouldBeEqualTo(1);
       }
    }
+
+   public class When_expanding_all_dynamic_formula_in_a_model_using_in_parent_criteria_but_the_criteria_is_OR : concern_for_FormulaTask
+   {
+      private IModel _model;
+      private IParameter _parameter;
+      private IParameter _p1;
+      private IParameter _p2;
+      private Container _container1;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _objectBaseFactory.Create<ExplicitFormula>()).Returns(new ExplicitFormula());
+         _model = new Model();
+         _container1 = new Container().WithName("Container1");
+
+         _p1 = new Parameter().WithName("p1").WithFormula(new ConstantFormula(1));
+         _p1.AddTag("toto");
+         _p2 = new Parameter().WithName("p2").WithFormula(new ConstantFormula(2));
+         _p2.AddTag("toto");
+         var root = new Container();
+         _model.Root = root;
+         root.Add(_container1);
+         _parameter = new Parameter().WithName("Dynamic");
+         _container1.Add(_parameter);
+         _container1.Add(_p1);
+         var sumFormula = new SumFormula
+         {
+            Criteria = Create.Criteria(x => x.With("toto").InParent())
+         };
+         sumFormula.Criteria.Operator = CriteriaOperator.Or;
+         _parameter.Formula = sumFormula;
+      }
+
+      [Observation]
+      public void should_throw_an_exception()
+      {
+        The.Action(() => sut.ExpandDynamicFormulaIn(_model)).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
    public class When_replacing_the_neighborhood_keyword_in_a_well_defined_path : concern_for_FormulaTask
    {
       private IParameter _liverCellParameter;
