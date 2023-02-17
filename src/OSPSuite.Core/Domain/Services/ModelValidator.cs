@@ -84,7 +84,7 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      protected void CheckPath(IUsingFormula entity, IObjectPath objectPathToCheck, ResolveErrorBehavior resolveErrorBehavior)
+      protected void CheckPath(IUsingFormula entity, ObjectPath objectPathToCheck, ResolveErrorBehavior resolveErrorBehavior)
       {
          var builder = _buildConfiguration.BuilderFor(entity);
          var objectWithError = builder ?? entity;

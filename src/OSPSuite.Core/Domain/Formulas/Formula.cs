@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Domain.Formulas
       ///    Object path to IFormulaUsable-entities used in current formula
       ///    <para></para>
       /// </summary>
-      IReadOnlyList<IFormulaUsablePath> ObjectPaths { get; }
+      IReadOnlyList<FormulaUsablePath> ObjectPaths { get; }
 
       /// <summary>
       ///    Concrete IFormulaUsable-entities used by current formula
@@ -61,13 +61,13 @@ namespace OSPSuite.Core.Domain.Formulas
       ///    Adds a new path reference to the Formulas.
       /// </summary>
       /// <param name="newPath"> The new reference. </param>
-      void AddObjectPath(IFormulaUsablePath newPath);
+      void AddObjectPath(FormulaUsablePath newPath);
 
       /// <summary>
       ///    Removes the specified path reference from formula.
       /// </summary>
       /// <param name="pathToRemove"> The reference to remove. </param>
-      void RemoveObjectPath(IFormulaUsablePath pathToRemove);
+      void RemoveObjectPath(FormulaUsablePath pathToRemove);
 
       /// <summary>
       ///    Removes all object paths defined in the formula
@@ -78,7 +78,7 @@ namespace OSPSuite.Core.Domain.Formulas
    public abstract class Formula : ObjectBase, IFormula
    {
       private readonly List<IObjectReference> _objectReferences = new List<IObjectReference>();
-      private List<IFormulaUsablePath> _objectPaths = new List<IFormulaUsablePath>();
+      private List<FormulaUsablePath> _objectPaths = new List<FormulaUsablePath>();
       public virtual IDimension Dimension { get; set; } = Constants.Dimension.NO_DIMENSION;
 
       public virtual IReadOnlyList<IObjectReference> ObjectReferences => _objectReferences;
@@ -113,7 +113,7 @@ namespace OSPSuite.Core.Domain.Formulas
          }
       }
 
-      public virtual IReadOnlyList<IFormulaUsablePath> ObjectPaths
+      public virtual IReadOnlyList<FormulaUsablePath> ObjectPaths
       {
          get => _objectPaths;
          set
@@ -137,7 +137,7 @@ namespace OSPSuite.Core.Domain.Formulas
       ///    Adds a new reference to the Formulas.
       /// </summary>
       /// <param name="newPath"> The new reference. </param>
-      public virtual void AddObjectPath(IFormulaUsablePath newPath)
+      public virtual void AddObjectPath(FormulaUsablePath newPath)
       {
          _objectPaths.Add(newPath);
       }
@@ -146,7 +146,7 @@ namespace OSPSuite.Core.Domain.Formulas
       ///    Removes the specified reference from formula.
       /// </summary>
       /// <param name="pathToRemove"> The reference to remove. </param>
-      public virtual void RemoveObjectPath(IFormulaUsablePath pathToRemove)
+      public virtual void RemoveObjectPath(FormulaUsablePath pathToRemove)
       {
          _objectPaths.Remove(pathToRemove);
       }
@@ -164,7 +164,7 @@ namespace OSPSuite.Core.Domain.Formulas
          var srcFormula = source as Formula;
          if (srcFormula == null) return;
 
-         srcFormula.ObjectPaths.Each(path => _objectPaths.Add(path.Clone<IFormulaUsablePath>()));
+         srcFormula.ObjectPaths.Each(path => _objectPaths.Add(path.Clone<FormulaUsablePath>()));
          Dimension = srcFormula.Dimension;
       }
 

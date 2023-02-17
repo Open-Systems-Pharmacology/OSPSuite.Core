@@ -23,7 +23,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Returns a consolidated absolute object path for the given entity
       /// </summary>
-      IObjectPath ObjectPathFor(IEntity entity, bool addSimulationName = false);
+      ObjectPath ObjectPathFor(IEntity entity, bool addSimulationName = false);
    }
 
    public class EntityPathResolver : IEntityPathResolver
@@ -45,13 +45,13 @@ namespace OSPSuite.Core.Domain.Services
          return ObjectPathFor(entity, addSimulationName: true).ToString();
       }
 
-      public virtual IObjectPath ObjectPathFor(IEntity entity, bool addSimulationName = false)
+      public virtual ObjectPath ObjectPathFor(IEntity entity, bool addSimulationName = false)
       {
          var objectPath = _objectPathFactory.CreateAbsoluteObjectPath(entity);
          return convertedPath(objectPath, entity.RootContainer, addSimulationName);
       }
 
-      private IObjectPath convertedPath(IObjectPath objectPath, IContainer rootContainer, bool addSimulationName)
+      private ObjectPath convertedPath(ObjectPath objectPath, IContainer rootContainer, bool addSimulationName)
       {
          if (!objectPath.Any())
             return objectPath;
@@ -71,7 +71,7 @@ namespace OSPSuite.Core.Domain.Services
          return objectPath;
       }
 
-      private IObjectPath removeFirstEntryOf(IObjectPath objectPath)
+      private ObjectPath removeFirstEntryOf(ObjectPath objectPath)
       {
          objectPath.Remove(objectPath[0]);
          return objectPath;

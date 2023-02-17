@@ -4,7 +4,7 @@ using OSPSuite.BDDHelper.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_ObjectPath : ContextSpecification<IObjectPath>
+   public abstract class concern_for_ObjectPath : ContextSpecification<ObjectPath>
    {
       protected override void Context()
       {

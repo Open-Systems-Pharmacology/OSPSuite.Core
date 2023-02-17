@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Domain.Services
       /// </param>
       /// <param name="valueOrigin">The value origin for the value</param>
       /// <returns>a MoleculeStartValue object</returns>
-      MoleculeStartValue CreateMoleculeStartValue(IObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null);
+      MoleculeStartValue CreateMoleculeStartValue(ObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null);
    }
 
    internal class MoleculeStartValuesCreator : IMoleculeStartValuesCreator
@@ -76,7 +76,7 @@ namespace OSPSuite.Core.Domain.Services
          moleculeStartValue.Value = moleculeBuilder.GetDefaultMoleculeStartValue();
       }
 
-      public MoleculeStartValue CreateMoleculeStartValue(IObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null)
+      public MoleculeStartValue CreateMoleculeStartValue(ObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null)
       {
          var msv = new MoleculeStartValue
          {

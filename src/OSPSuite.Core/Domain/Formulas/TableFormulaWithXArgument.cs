@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Domain.Formulas
       /// <summary>
       ///    Adds path to the object with table formula
       /// </summary>
-      public void AddTableObjectPath(IFormulaUsablePath tableObjectPath)
+      public void AddTableObjectPath(FormulaUsablePath tableObjectPath)
       {
          TableObjectAlias = tableObjectPath.Alias;
          AddObjectPath(tableObjectPath);
@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Domain.Formulas
       /// <summary>
       ///    Adds path to the object with x-argument
       /// </summary>
-      public void AddXArgumentObjectPath(IFormulaUsablePath xArgumentObjectPath)
+      public void AddXArgumentObjectPath(FormulaUsablePath xArgumentObjectPath)
       {
          XArgumentAlias = xArgumentObjectPath.Alias;
          AddObjectPath(xArgumentObjectPath);

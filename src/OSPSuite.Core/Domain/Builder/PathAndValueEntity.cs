@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Domain.Builder
 {
    public abstract class PathAndValueEntity : Entity, IUsingFormula, IWithDisplayUnit, IWithPath, IWithNullableValue
    {
-      private IObjectPath _containerPath;
+      private ObjectPath _containerPath;
       protected IFormula _formula;
       private Unit _displayUnit;
       private IDimension _dimension;
@@ -22,12 +22,12 @@ namespace OSPSuite.Core.Domain.Builder
          ValueOrigin = new ValueOrigin();
       }
 
-      private void entityFullPathToComponents(IObjectPath fullPath)
+      private void entityFullPathToComponents(ObjectPath fullPath)
       {
          if (fullPath.Any())
          {
             Name = fullPath.Last();
-            ContainerPath = fullPath.Clone<IObjectPath>();
+            ContainerPath = fullPath.Clone<ObjectPath>();
             if (ContainerPath.Count > 0)
                ContainerPath.RemoveAt(ContainerPath.Count - 1);
          }
@@ -38,7 +38,7 @@ namespace OSPSuite.Core.Domain.Builder
          }
       }
 
-      public IObjectPath ContainerPath
+      public ObjectPath ContainerPath
       {
          get => _containerPath;
          set => SetProperty(ref _containerPath, value);
@@ -63,9 +63,9 @@ namespace OSPSuite.Core.Domain.Builder
       }
 
 
-      public IObjectPath Path
+      public ObjectPath Path
       {
-         get => ContainerPath.Clone<IObjectPath>().AndAdd(Name);
+         get => ContainerPath.Clone<ObjectPath>().AndAdd(Name);
          set => entityFullPathToComponents(value);
       }
 
@@ -131,7 +131,7 @@ namespace OSPSuite.Core.Domain.Builder
          if (sourcePathAndValueEntity == null) return;
 
          Value = sourcePathAndValueEntity.Value;
-         ContainerPath = sourcePathAndValueEntity.ContainerPath.Clone<IObjectPath>();
+         ContainerPath = sourcePathAndValueEntity.ContainerPath.Clone<ObjectPath>();
          DisplayUnit = sourcePathAndValueEntity.DisplayUnit;
          Dimension = sourcePathAndValueEntity.Dimension;
          Formula = cloneManager.Clone(sourcePathAndValueEntity.Formula);

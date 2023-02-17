@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Domain.Builder
       /// </summary>
       /// <param name="objectPath"></param>
       /// <returns></returns>
-      T this[IObjectPath objectPath] { get; set; }
+      T this[ObjectPath objectPath] { get; set; }
 
       /// <summary>
       ///    Id of the spatial structure used to create the parameter start values.
@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Domain.Builder
       /// <summary>
       ///    Removes the start value with path <paramref name="objectPath" /> if available. Does nothing otherwise
       /// </summary>
-      void Remove(IObjectPath objectPath);
+      void Remove(ObjectPath objectPath);
    }
 
    public abstract class StartValueBuildingBlock<T> : PathAndValueEntityBuildingBlock<T>, IStartValuesBuildingBlock<T> where T : class, IStartValue
@@ -55,7 +55,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       protected StartValueBuildingBlock()
       {
-         _allValues = new Cache<IObjectPath, T>(x => x.Path, x => null);
+         _allValues = new Cache<ObjectPath, T>(x => x.Path, x => null);
       }
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)

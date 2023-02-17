@@ -17,12 +17,12 @@ namespace OSPSuite.Core.Domain.Builder
       ///    <para></para>
       ///    Must be defined relative to the root container of the application
       /// </summary>
-      IObjectPath RelativeContainerPath { get; set; }
+      ObjectPath RelativeContainerPath { get; set; }
    }
 
    public class ApplicationMoleculeBuilder : Entity, IApplicationMoleculeBuilder
    {
-      public IObjectPath RelativeContainerPath { get; set; }
+      public ObjectPath RelativeContainerPath { get; set; }
       public IFormula Formula { get; set; }
       public IDimension Dimension { get; set; }
 
@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain.Builder
          var srcAppMoleculeBuilder = source as IApplicationMoleculeBuilder;
          if (srcAppMoleculeBuilder == null) return;
 
-         RelativeContainerPath = srcAppMoleculeBuilder.RelativeContainerPath.Clone<IObjectPath>();
+         RelativeContainerPath = srcAppMoleculeBuilder.RelativeContainerPath.Clone<ObjectPath>();
          Formula = cloneManager.Clone(srcAppMoleculeBuilder.Formula);
          Dimension = srcAppMoleculeBuilder.Dimension;
       }

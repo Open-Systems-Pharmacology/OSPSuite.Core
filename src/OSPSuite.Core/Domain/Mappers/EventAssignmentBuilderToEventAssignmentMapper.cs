@@ -49,7 +49,7 @@ namespace OSPSuite.Core.Domain.Mappers
             .WithDimension(assignmentBuilder.Dimension)
             .WithFormula(_formulaMapper.MapFrom(assignmentBuilder.Formula, buildConfiguration));
 
-         assignment.ObjectPath = assignmentBuilder.ObjectPath.Clone<IObjectPath>();
+         assignment.ObjectPath = assignmentBuilder.ObjectPath.Clone<ObjectPath>();
          assignment.UseAsValue = assignmentBuilder.UseAsValue;
 
          buildConfiguration.AddBuilderReference(assignment, assignmentBuilder);

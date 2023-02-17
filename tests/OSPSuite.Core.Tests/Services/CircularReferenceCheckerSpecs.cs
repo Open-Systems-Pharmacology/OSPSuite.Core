@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Services
    public abstract class concern_for_CircularReferenceChecker : ContextSpecification<ICircularReferenceChecker>
    {
       protected IFormula _formula;
-      protected List<IFormulaUsablePath> _objectPaths;
+      protected List<FormulaUsablePath> _objectPaths;
       protected IQuantity _testObject;
       protected IObjectPathFactory _objectPathFactory;
       private IObjectTypeResolver _objectTypeResolver;
@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Services
       protected override void Context()
       {
          _formula = A.Fake<IFormula>();
-         _objectPaths = new List<IFormulaUsablePath>();
+         _objectPaths = new List<FormulaUsablePath>();
          A.CallTo(() => _formula.ObjectPaths).Returns(_objectPaths);
          _testObject = A.Fake<IQuantity>();
          _testObject.Formula = _formula;
@@ -50,12 +50,12 @@ namespace OSPSuite.Core.Services
    public class When_checking_a_self_reference : concern_for_CircularReferenceChecker
    {
       private bool _result;
-      private IFormulaUsablePath _path;
+      private FormulaUsablePath _path;
 
       protected override void Context()
       {
          base.Context();
-         _path = A.Fake<IFormulaUsablePath>();
+         _path = A.Fake<FormulaUsablePath>();
          A.CallTo(() => _path.Resolve<IUsingFormula>(_testObject)).Returns(_testObject);
          _objectPaths.Add(_path);
       }
@@ -75,7 +75,7 @@ namespace OSPSuite.Core.Services
    public class When_checking_a_two_step_reference : concern_for_CircularReferenceChecker
    {
       private bool _result;
-      private IFormulaUsablePath _path;
+      private FormulaUsablePath _path;
 
       protected override void Context()
       {
@@ -84,12 +84,12 @@ namespace OSPSuite.Core.Services
 
          var stepFormula = A.Fake<IFormula>();
 
-         var otherPath = A.Fake<IFormulaUsablePath>();
+         var otherPath = A.Fake<FormulaUsablePath>();
          otherPath.Alias = "ToTestObject";
          A.CallTo(() => otherPath.Resolve<IUsingFormula>(stepOne)).Returns(_testObject);
 
 
-         _path = A.Fake<IFormulaUsablePath>();
+         _path = A.Fake<FormulaUsablePath>();
          _path.Alias = "ToStepOne";
          A.CallTo(() => _path.Resolve<IUsingFormula>(_testObject)).Returns(stepOne);
          stepOne.Formula = stepFormula;

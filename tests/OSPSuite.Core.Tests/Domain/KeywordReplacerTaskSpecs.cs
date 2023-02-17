@@ -12,9 +12,9 @@ namespace OSPSuite.Core.Domain
    public abstract class concern_for_KeywordReplacerTask : ContextSpecification<IKeywordReplacerTask>
    {
       protected string _modelName;
-      protected IFormulaUsablePath _objPathFirstNeighbor;
-      protected IFormulaUsablePath _objPathMolecule;
-      protected IFormulaUsablePath _objPathOrganism;
+      protected FormulaUsablePath _objPathFirstNeighbor;
+      protected FormulaUsablePath _objPathMolecule;
+      protected FormulaUsablePath _objPathOrganism;
       protected IModel _model;
 
       protected override void Context()

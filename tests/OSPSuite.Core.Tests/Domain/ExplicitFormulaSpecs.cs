@@ -10,8 +10,8 @@ namespace OSPSuite.Core.Domain
       protected IFormulaUsable _x;
       protected IFormulaUsable _y;
       protected IUsingFormula _usingObj;
-      protected IFormulaUsablePath _pathX;
-      protected IFormulaUsablePath _pathY;
+      protected FormulaUsablePath _pathX;
+      protected FormulaUsablePath _pathY;
 
       protected override void Context()
       {
@@ -22,12 +22,12 @@ namespace OSPSuite.Core.Domain
          _y = A.Fake<IFormulaUsable>();
          A.CallTo(() => _y.Value).Returns(3);
 
-         _pathX = A.Fake<IFormulaUsablePath>();
+         _pathX = A.Fake<FormulaUsablePath>();
          A.CallTo(() => _pathX.Alias).Returns("x");
          A.CallTo(() => _pathX.Resolve<IFormulaUsable>(_usingObj)).Returns(_x);
 
 
-         _pathY = A.Fake<IFormulaUsablePath>();
+         _pathY = A.Fake<FormulaUsablePath>();
          A.CallTo(() => _pathY.Alias).Returns("y");
          A.CallTo(() => _pathY.Resolve<IFormulaUsable>(_usingObj)).Returns(_y);
 

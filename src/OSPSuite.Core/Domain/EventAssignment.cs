@@ -31,7 +31,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Path to IUsingFormulaEntity object, whose formula will be changed
       /// </summary>
-      public IObjectPath ObjectPath { get; set; }
+      public ObjectPath ObjectPath { get; set; }
 
       /// <summary>
       ///    Defines whether the formula itself or the VALUE of the formula
@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain
          var sourceEventAssignment = source as IEventAssignment;
          if (sourceEventAssignment == null) return;
          UseAsValue = sourceEventAssignment.UseAsValue;
-         ObjectPath = sourceEventAssignment.ObjectPath.Clone<IObjectPath>();
+         ObjectPath = sourceEventAssignment.ObjectPath.Clone<ObjectPath>();
          Dimension = sourceEventAssignment.Dimension;
       }
    }

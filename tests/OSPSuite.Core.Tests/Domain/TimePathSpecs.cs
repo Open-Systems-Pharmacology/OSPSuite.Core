@@ -5,7 +5,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_TimePath : ContextSpecification<IFormulaUsablePath>
+   public abstract class concern_for_TimePath : ContextSpecification<TimePath>
    {
       protected IDimension _time;
 
@@ -38,7 +38,7 @@ namespace OSPSuite.Core.Domain
          _res.GetType().ShouldBeEqualTo(typeof(TimeParameter));
       }
       [Observation]
-      public void returned_object_should_have_diemension_time()
+      public void returned_object_should_have_dimension_time()
       {
          _res.Dimension.ShouldBeEqualTo(_time);
       }

@@ -17,7 +17,7 @@ namespace OSPSuite.Core.Serializers
          x1.Formula = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(23.4);
          x1.CreateProcessRateParameter = true;
          IFormula f1 = CreateObject<ExplicitFormula>().WithDimension(DimensionLength).WithFormulaString("3*Patty");
-         IFormulaUsablePath fup = new FormulaUsablePath(new[] {"Patricia"}).WithAlias("Patty").WithDimension(DimensionLength);
+         var fup = new FormulaUsablePath(new[] {"Patricia"}).WithAlias("Patty").WithDimension(DimensionLength);
          f1.AddObjectPath(fup);
          //WithValue to avoid formula evaluation in McAssertForSpecs-comparison.
          IParameter p1 = CreateObject<Parameter>().WithName("Patricia").WithFormula(f1).WithValue(3.1);

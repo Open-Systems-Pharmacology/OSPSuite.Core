@@ -95,7 +95,7 @@ namespace OSPSuite.Core.Domain.Formulas
       ///    Returns the used object path with the given <paramref name="alias" /> in the <paramref name="formula" /> or null if
       ///    the <paramref name="alias" /> is not used.
       /// </summary>
-      public static IFormulaUsablePath FormulaUsablePathBy(this IFormula formula, string alias)
+      public static FormulaUsablePath FormulaUsablePathBy(this IFormula formula, string alias)
       {
          return formula.ObjectPaths.FirstOrDefault(x => string.Equals(x.Alias, alias));
       }

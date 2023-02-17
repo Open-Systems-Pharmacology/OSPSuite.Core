@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Services
       ///    Returns <c>true</c> if the usage of <paramref name="path" /> in the formula of <paramref name="referenceObject" />
       ///    would result in circular references otherwise <c>false</c>
       /// </summary>
-      bool HasCircularReference(IObjectPath path, IEntity referenceObject);
+      bool HasCircularReference(ObjectPath path, IEntity referenceObject);
 
       /// <summary>
       ///    Check the given <paramref name="model" /> for circular references and returns any problem that may have been found
@@ -38,7 +38,7 @@ namespace OSPSuite.Core.Services
          _entityReferenceCache = new Cache<IEntity, List<IEntity>>(x => new List<IEntity>());
       }
 
-      public bool HasCircularReference(IObjectPath path, IEntity referenceObject)
+      public bool HasCircularReference(ObjectPath path, IEntity referenceObject)
       {
          try
          {

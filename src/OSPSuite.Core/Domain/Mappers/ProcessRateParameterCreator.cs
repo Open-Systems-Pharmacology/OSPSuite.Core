@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain.Mappers
          }
       }
 
-      private bool isRelativePath(IObjectPath objectPath)
+      private bool isRelativePath(ObjectPath objectPath)
       {
          if (!objectPath.Any())
             return false;
