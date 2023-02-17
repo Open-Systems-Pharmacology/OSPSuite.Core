@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Domain
 
 
          _pathY = A.Fake<FormulaUsablePath>();
-         _pathY.Alias = "y"
+         _pathY.Alias = "y";
          A.CallTo(() => _pathY.Resolve<IFormulaUsable>(_usingObj)).Returns(_y);
 
 

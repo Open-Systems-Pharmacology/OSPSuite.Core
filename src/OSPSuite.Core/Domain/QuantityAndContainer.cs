@@ -34,6 +34,12 @@ namespace OSPSuite.Core.Domain
 
       public IReadOnlyList<IEntity> Children => _container.Children;
 
+      public ObjectPath ParentPath
+      {
+         get => _container.ParentPath;
+         set => _container.ParentPath = value;
+      }
+
       public ContainerMode Mode
       {
          get => _container.Mode;

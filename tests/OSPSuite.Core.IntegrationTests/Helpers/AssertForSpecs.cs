@@ -532,6 +532,7 @@ namespace OSPSuite.Core.Helpers
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualEntity(x1, x2);
+         AreEqualObjectPath(x1.ParentPath, x2.ParentPath);
          Assert.AreEqual(x1.Mode, x2.Mode);
          AreEqualEnumerableOfNamedObjects(x1.Children, x2.Children, x => x.Name);
       }
