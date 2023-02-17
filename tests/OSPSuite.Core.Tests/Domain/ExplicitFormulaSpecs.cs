@@ -23,12 +23,12 @@ namespace OSPSuite.Core.Domain
          A.CallTo(() => _y.Value).Returns(3);
 
          _pathX = A.Fake<FormulaUsablePath>();
-         A.CallTo(() => _pathX.Alias).Returns("x");
+         _pathX.Alias = "x";
          A.CallTo(() => _pathX.Resolve<IFormulaUsable>(_usingObj)).Returns(_x);
 
 
          _pathY = A.Fake<FormulaUsablePath>();
-         A.CallTo(() => _pathY.Alias).Returns("y");
+         _pathY.Alias = "y"
          A.CallTo(() => _pathY.Resolve<IFormulaUsable>(_usingObj)).Returns(_y);
 
 
