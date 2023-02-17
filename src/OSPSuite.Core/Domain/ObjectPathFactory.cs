@@ -18,8 +18,8 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       /// <param name="entries">entries used to create the path</param>
       FormulaUsablePath CreateFormulaUsablePathFrom(params string[] entries);
-
-      FormulaUsablePath CreateFormulaUsablePathFrom(IEnumerable<string> entries);
+      FormulaUsablePath CreateFormulaUsablePathFrom(IReadOnlyCollection<string> entries);
+      FormulaUsablePath CreateFormulaUsablePathFrom(ObjectPath objectPath);
 
       /// <summary>
       /// Creates an object path representing the Time Parameter
@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Domain
       TimePath CreateTimePath(IDimension timeDimension);
 
       ObjectPath CreateObjectPathFrom(params string[] entries);
-      ObjectPath CreateObjectPathFrom(IEnumerable<string> entries);
+      ObjectPath CreateObjectPathFrom(IReadOnlyCollection<string> entries);
 
       ObjectPath CreateAbsoluteObjectPath(IEntity entity);
 
@@ -88,28 +88,25 @@ namespace OSPSuite.Core.Domain
 
       public FormulaUsablePath CreateFormulaUsablePathFrom(params string[] entries)
       {
-         return CreateFormulaUsablePathFrom(entries.AsEnumerable());
+         return CreateFormulaUsablePathFrom(entries.ToList());
       }
 
-      public FormulaUsablePath CreateFormulaUsablePathFrom(IEnumerable<string> entries)
+      public FormulaUsablePath CreateFormulaUsablePathFrom(IReadOnlyCollection<string> entries)
       {
-         var newFormulaUseablePath = new FormulaUsablePath();
-         entries.Each(newFormulaUseablePath.Add);
-         newFormulaUseablePath.Alias = createAliasFrom(entries.Last());
-         return newFormulaUseablePath;
+         return new FormulaUsablePath(entries)
+         {
+            Alias = createAliasFrom(entries.Last())
+         };
       }
 
-      public ObjectPath CreateObjectPathFrom(params string[] entries)
+      public FormulaUsablePath CreateFormulaUsablePathFrom(ObjectPath objectPath)
       {
-         return CreateObjectPathFrom(entries.AsEnumerable());
+         return CreateFormulaUsablePathFrom(objectPath.DowncastTo<IReadOnlyCollection<string>>());
       }
 
-      public ObjectPath CreateObjectPathFrom(IEnumerable<string> entries)
-      {
-         var newObjectPath = new ObjectPath();
-         entries.Each(newObjectPath.Add);
-         return newObjectPath;
-      }
+      public ObjectPath CreateObjectPathFrom(params string[] entries) => CreateObjectPathFrom(entries.ToList());
+
+      public ObjectPath CreateObjectPathFrom(IReadOnlyCollection<string> entries) => new ObjectPath(entries);
 
       public TimePath CreateTimePath(IDimension timeDimension)
       {

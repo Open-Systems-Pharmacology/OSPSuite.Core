@@ -28,6 +28,10 @@ namespace OSPSuite.Core.Domain
       {
       }
 
+      public ObjectPath(ObjectPath from) : this(from._pathEntries)
+      {
+      }
+
       public ObjectPath(params string[] pathEntries) : this(pathEntries.ToList())
       {
       }

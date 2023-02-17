@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Domain
       {
       }
 
-      public FormulaUsablePath(FormulaUsablePath from) : base(from._pathEntries)
+      public FormulaUsablePath(ObjectPath from) : base(from)
       {
       }
 
