@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using NPOI.SS.Formula.Functions;
+using NUnit.Framework;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
@@ -22,7 +23,7 @@ namespace OSPSuite.Core.Serializers
             .WithDimension(DimensionLength);
          t1.AddParameter(transporterParameter);
          IFormula f1 = CreateObject<ExplicitFormula>().WithDimension(DimensionLength).WithFormulaString("3*Patty");
-         IFormulaUsablePath fup = new FormulaUsablePath(new[] {"Patricia"}).WithAlias("Patty").WithDimension(DimensionLength);
+         var fup = new FormulaUsablePath(new[] {"Patricia"}).WithAlias("Patty").WithDimension(DimensionLength);
          f1.AddObjectPath(fup);
          IParameter p1 = CreateObject<Parameter>().WithName("Patricia").WithFormula(f1).WithValue(3.1).WithMode(ParameterBuildMode.Property);
          IParameter p2 = CreateObject<Parameter>().WithName("Pascal").WithFormula(f1).WithValue(3.2).WithMode(ParameterBuildMode.Local);

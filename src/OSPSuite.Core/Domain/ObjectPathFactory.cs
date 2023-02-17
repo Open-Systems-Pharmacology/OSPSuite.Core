@@ -11,32 +11,32 @@ namespace OSPSuite.Core.Domain
       /// Creates the AbsoluteObjectPath to the specified entity.
       /// </summary>
       /// <param name="entity">The ref entity.</param>
-      IFormulaUsablePath CreateAbsoluteFormulaUsablePath(IFormulaUsable entity);
+      FormulaUsablePath CreateAbsoluteFormulaUsablePath(IFormulaUsable entity);
 
       /// <summary>
       /// Creates a object path containing the given path entries
       /// </summary>
       /// <param name="entries">entries used to create the path</param>
-      IFormulaUsablePath CreateFormulaUsablePathFrom(params string[] entries);
+      FormulaUsablePath CreateFormulaUsablePathFrom(params string[] entries);
 
-      IFormulaUsablePath CreateFormulaUsablePathFrom(IEnumerable<string> entries);
+      FormulaUsablePath CreateFormulaUsablePathFrom(IEnumerable<string> entries);
 
       /// <summary>
       /// Creates an object path representing the Time Parameter
       /// </summary>
       TimePath CreateTimePath(IDimension timeDimension);
 
-      IObjectPath CreateObjectPathFrom(params string[] entries);
-      IObjectPath CreateObjectPathFrom(IEnumerable<string> entries);
+      ObjectPath CreateObjectPathFrom(params string[] entries);
+      ObjectPath CreateObjectPathFrom(IEnumerable<string> entries);
 
-      IObjectPath CreateAbsoluteObjectPath(IEntity entity);
+      ObjectPath CreateAbsoluteObjectPath(IEntity entity);
 
       /// <summary>
       /// Creates a ObjectPath representing the relative Position of usedObject according to usingObject
       /// </summary>
-      IObjectPath CreateRelativeObjectPath(IEntity usingObject, IEntity usedObject);
+      ObjectPath CreateRelativeObjectPath(IEntity usingObject, IEntity usedObject);
 
-      IFormulaUsablePath CreateRelativeFormulaUsablePath(IEntity usingObject, IFormulaUsable usedObject);
+      FormulaUsablePath CreateRelativeFormulaUsablePath(IEntity usingObject, IFormulaUsable usedObject);
    }
 
    public class ObjectPathFactory : IObjectPathFactory
@@ -48,7 +48,7 @@ namespace OSPSuite.Core.Domain
          _aliasCreator = aliasCreator;
       }
 
-      public IFormulaUsablePath CreateAbsoluteFormulaUsablePath(IFormulaUsable entity)
+      public FormulaUsablePath CreateAbsoluteFormulaUsablePath(IFormulaUsable entity)
       {
          var newFormulaUseablePath = new FormulaUsablePath();
          addPathEntry(entity, newFormulaUseablePath);
@@ -57,7 +57,7 @@ namespace OSPSuite.Core.Domain
          return newFormulaUseablePath;
       }
 
-      public IObjectPath CreateAbsoluteObjectPath(IEntity entity)
+      public ObjectPath CreateAbsoluteObjectPath(IEntity entity)
       {
          var newObjectPath = new ObjectPath();
          addPathEntry(entity, newObjectPath);
@@ -86,12 +86,12 @@ namespace OSPSuite.Core.Domain
          return _aliasCreator.CreateAliasFrom(name);
       }
 
-      public IFormulaUsablePath CreateFormulaUsablePathFrom(params string[] entries)
+      public FormulaUsablePath CreateFormulaUsablePathFrom(params string[] entries)
       {
          return CreateFormulaUsablePathFrom(entries.AsEnumerable());
       }
 
-      public IFormulaUsablePath CreateFormulaUsablePathFrom(IEnumerable<string> entries)
+      public FormulaUsablePath CreateFormulaUsablePathFrom(IEnumerable<string> entries)
       {
          var newFormulaUseablePath = new FormulaUsablePath();
          entries.Each(newFormulaUseablePath.Add);
@@ -99,12 +99,12 @@ namespace OSPSuite.Core.Domain
          return newFormulaUseablePath;
       }
 
-      public IObjectPath CreateObjectPathFrom(params string[] entries)
+      public ObjectPath CreateObjectPathFrom(params string[] entries)
       {
          return CreateObjectPathFrom(entries.AsEnumerable());
       }
 
-      public IObjectPath CreateObjectPathFrom(IEnumerable<string> entries)
+      public ObjectPath CreateObjectPathFrom(IEnumerable<string> entries)
       {
          var newObjectPath = new ObjectPath();
          entries.Each(newObjectPath.Add);
@@ -119,14 +119,14 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       /// Creates a ObjectPath representing the relative Position of usedObject according to usingObject
       /// </summary>
-      public IObjectPath CreateRelativeObjectPath(IEntity usingObject, IEntity usedObject)
+      public ObjectPath CreateRelativeObjectPath(IEntity usingObject, IEntity usedObject)
       {
          var objectPath = new ObjectPath();
          addRelativePathEntries(usingObject, usedObject, objectPath);
          return objectPath;
       }
 
-      public IFormulaUsablePath CreateRelativeFormulaUsablePath(IEntity usingObject, IFormulaUsable usedObject)
+      public FormulaUsablePath CreateRelativeFormulaUsablePath(IEntity usingObject, IFormulaUsable usedObject)
       {
          var newFormulaUseablePath = new FormulaUsablePath();
          addRelativePathEntries(usingObject, usedObject, newFormulaUseablePath);

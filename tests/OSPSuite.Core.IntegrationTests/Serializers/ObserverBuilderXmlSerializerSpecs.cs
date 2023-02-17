@@ -48,7 +48,7 @@ namespace OSPSuite.Core.Serializers
          x1.AddMoleculeName("CO2");
 
          ExplicitFormula f1 = CreateObject<ExplicitFormula>().WithName("Fortunato").WithDimension(DimensionLength);
-         IFormulaUsablePath fup = new FormulaUsablePath(new string[] {"aa", "bb"}).WithAlias("b").WithDimension(DimensionLength);
+         var fup = new FormulaUsablePath(new string[] {"aa", "bb"}).WithAlias("b").WithDimension(DimensionLength);
          f1.AddObjectPath(fup);
 
          IFormulaCache formulaCache = new FormulaCache();

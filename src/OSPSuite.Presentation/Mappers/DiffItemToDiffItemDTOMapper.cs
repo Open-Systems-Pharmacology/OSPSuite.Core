@@ -105,7 +105,7 @@ namespace OSPSuite.Presentation.Mappers
             displayIf<IReactionPartnerBuilder>(diffItem, x => x.MoleculeName) ??
             displayIf<UsedCalculationMethod>(diffItem, x => x.Category) ??
             displayIf<CalculationMethod>(diffItem, x => displayNameFor(new Category<CalculationMethod> { Name = x.Category })) ??
-            displayIf<IObjectPath>(diffItem, x => ancestorDisplayName(diffItem)) ??
+            displayIf<ObjectPath>(diffItem, x => ancestorDisplayName(diffItem)) ??
             displayIf<ValuePoint>(diffItem, x => ancestorDisplayName(diffItem)) ??
             displayIf<PathAndValueEntity>(diffItem, x => x.Name) ??
             _displayNameProvider.DisplayNameFor(diffItem.Object1);

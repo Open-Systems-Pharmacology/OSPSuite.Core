@@ -31,7 +31,7 @@ namespace OSPSuite.Core.Services
       private IProject _project;
       private ParameterIdentification _parameterIdentification;
       private DataRepository _simulationDataRepository;
-      private IObjectPath _initialObjectPath;
+      private ObjectPath _initialObjectPath;
       private DataRepository _observationDataRepository;
       private ResidualsResult _residualsResult;
 

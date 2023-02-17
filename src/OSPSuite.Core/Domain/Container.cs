@@ -24,6 +24,11 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       IReadOnlyList<IEntity> Children { get; }
 
+      /// <summary>
+      /// Returns the path to the parent container.
+      /// It should only be set if the container has no parent in the hierarchy. Otherwise, it will be null
+      /// </summary>
+      ObjectPath ParentPath { get; set; }
 
       /// <summary>
       ///    Add the given child to the container
@@ -92,15 +97,14 @@ namespace OSPSuite.Core.Domain
 
    public class Container : Entity, IContainer
    {
-      private readonly List<IEntity> _children;
-      private ContainerMode _mode;
+      private readonly List<IEntity> _children = new List<IEntity>();
+      
+      private ContainerMode _mode = ContainerMode.Logical;
+      
       private ContainerType _containerType;
 
-      public Container()
-      {
-         _children = new List<IEntity>();
-         Mode = ContainerMode.Logical;
-      }
+      //Path to parent container is null by default. In this case, it will be evaluated from container structure
+      private ObjectPath _parentPath;
 
       public virtual IReadOnlyList<IEntity> Children => _children;
 
@@ -135,6 +139,12 @@ namespace OSPSuite.Core.Domain
       {
          get => _mode;
          set => SetProperty(ref _mode, value);
+      }
+
+      public ObjectPath ParentPath
+      {
+         get => _parentPath;
+         set => SetProperty(ref _parentPath, value);
       }
 
       public ContainerType ContainerType
@@ -190,10 +200,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Returns all children of type <typeparamref name="T" />
       /// </summary>
-      public virtual IEnumerable<T> GetChildren<T>() where T : class, IEntity
-      {
-         return GetChildren<T>(x => true);
-      }
+      public virtual IEnumerable<T> GetChildren<T>() where T : class, IEntity => GetChildren<T>(x => true);
 
       public virtual IEnumerable<T> GetChildren<T>(Func<T, bool> predicate) where T : class, IEntity
       {
@@ -250,6 +257,7 @@ namespace OSPSuite.Core.Domain
 
          Mode = container.Mode;
          ContainerType = container.ContainerType;
+         ParentPath = container.ParentPath?.Clone<ObjectPath>();
       }
 
       public IEnumerator<IEntity> GetEnumerator()

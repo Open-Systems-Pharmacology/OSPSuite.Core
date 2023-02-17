@@ -8,9 +8,9 @@ namespace OSPSuite.Core.Domain.Builder
 {
    public abstract class PathAndValueEntityBuildingBlock<T> : BuildingBlock, IBuildingBlock<T> where T: class, IWithPath, IObjectBase
    {
-      protected ICache<IObjectPath, T> _allValues = new Cache<IObjectPath, T>(x => x.Path, x => null);
+      protected ICache<ObjectPath, T> _allValues = new Cache<ObjectPath, T>(x => x.Path, x => null);
 
-      public T this[IObjectPath objectPath]
+      public T this[ObjectPath objectPath]
       {
          get => _allValues[objectPath];
          set => _allValues[objectPath] = value;
@@ -29,7 +29,7 @@ namespace OSPSuite.Core.Domain.Builder
       }
 
 
-      public void Remove(IObjectPath objectPath)
+      public void Remove(ObjectPath objectPath)
       {
          Remove(this[objectPath]);
       }

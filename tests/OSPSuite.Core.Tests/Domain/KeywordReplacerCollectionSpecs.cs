@@ -19,8 +19,8 @@ namespace OSPSuite.Core.Domain
       private IParameter _parameter;
       private IKeywordInObjectPathReplacer _replacement;
       private IKeywordInTagsReplacer _replacementTag;
-      private IFormulaUsablePath _objectPath1;
-      private IFormulaUsablePath _objectPath2;
+      private FormulaUsablePath _objectPath1;
+      private FormulaUsablePath _objectPath2;
 
       protected override void Context()
       {

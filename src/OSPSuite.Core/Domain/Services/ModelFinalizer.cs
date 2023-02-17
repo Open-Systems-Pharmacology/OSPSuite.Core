@@ -39,7 +39,7 @@ namespace OSPSuite.Core.Domain.Services
          finalizeReactions(sourceReactionContainerCache, cloneReactionContainerCache);
       }
 
-      private void finalizeReactions(ICache<IObjectPath, IContainer> sourceReactionContainerCache, ICache<IObjectPath, IContainer> cloneReactionContainerCache)
+      private void finalizeReactions(ICache<ObjectPath, IContainer> sourceReactionContainerCache, ICache<ObjectPath, IContainer> cloneReactionContainerCache)
       {
          foreach (var keyValue in sourceReactionContainerCache.KeyValues)
          {
@@ -68,15 +68,15 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private Cache<IObjectPath, IContainer> createReactionContainerCache(IModel model)
+      private Cache<ObjectPath, IContainer> createReactionContainerCache(IModel model)
       {
-         var cache = new Cache<IObjectPath, IContainer>();
+         var cache = new Cache<ObjectPath, IContainer>();
          var reactionContainer = model.Root.GetAllChildren<IContainer>(x => x.Children.Any(child => child.IsAnImplementationOf<IReaction>()));
          reactionContainer.Each(cont => cache.Add(_objectPathFactory.CreateAbsoluteObjectPath(cont), cont));
          return cache;
       }
 
-      private void finalizeEventTransports(IModel cloneModel, ICache<IObjectPath, IEventGroup> sourceEventGroups, ICache<IObjectPath, IEventGroup> cloneEventGroups)
+      private void finalizeEventTransports(IModel cloneModel, ICache<ObjectPath, IEventGroup> sourceEventGroups, ICache<ObjectPath, IEventGroup> cloneEventGroups)
       {
          foreach (var sourceKeyValues in sourceEventGroups.KeyValues)
          {
@@ -100,9 +100,9 @@ namespace OSPSuite.Core.Domain.Services
          finalizeTransportsInMoleculeParentContainer(cloneModel, sourceEventGroup, cloneEventGroup);
       }
 
-      private Cache<IObjectPath, IEventGroup> createEventGroupCache(IModel model)
+      private Cache<ObjectPath, IEventGroup> createEventGroupCache(IModel model)
       {
-         var cache = new Cache<IObjectPath, IEventGroup>();
+         var cache = new Cache<ObjectPath, IEventGroup>();
          var eventGroups = model.Root.GetAllChildren<IEventGroup>();
          eventGroups.Each(eg => cache.Add(_objectPathFactory.CreateAbsoluteObjectPath(eg), eg));
          return cache;

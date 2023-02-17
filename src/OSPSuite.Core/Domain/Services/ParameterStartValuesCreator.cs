@@ -29,7 +29,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="parameterPath">The path of the parameter</param>
       /// <param name="parameter">The Parameter object that has the start value and dimension to use</param>
       /// <returns>A new ParameterStartValue</returns>
-      ParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, IParameter parameter);
+      ParameterStartValue CreateParameterStartValue(ObjectPath parameterPath, IParameter parameter);
 
       /// <summary>
       ///    Creates and returns a new parameter start value with <paramref name="startValue">startValue</paramref> as StartValue
@@ -45,17 +45,17 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="valueOrigin">Value origin for this parameter start value</param>
       /// <param name="isDefault">Value indicating if the value stored is the default value from the parameter.</param>
       /// <returns>A new ParameterStartValue</returns>
-      ParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, double startValue, IDimension dimension, Unit displayUnit = null,
+      ParameterStartValue CreateParameterStartValue(ObjectPath parameterPath, double startValue, IDimension dimension, Unit displayUnit = null,
          ValueOrigin valueOrigin = null, bool isDefault = false);
    }
 
    internal class ParameterStartValuesCreator : IParameterStartValuesCreator
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
-      private readonly IObjectPathFactory _objectPathFactory;
+      private readonly ObjectPathFactory _objectPathFactory;
       private readonly IIdGenerator _idGenerator;
 
-      public ParameterStartValuesCreator(IObjectBaseFactory objectBaseFactory, IObjectPathFactory objectPathFactory, IIdGenerator idGenerator)
+      public ParameterStartValuesCreator(IObjectBaseFactory objectBaseFactory, ObjectPathFactory objectPathFactory, IIdGenerator idGenerator)
       {
          _objectBaseFactory = objectBaseFactory;
          _objectPathFactory = objectPathFactory;
@@ -174,7 +174,7 @@ namespace OSPSuite.Core.Domain.Services
          return CreateParameterStartValue(parameterPath, parameter);
       }
 
-      public ParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, double startValue, IDimension dimension,
+      public ParameterStartValue CreateParameterStartValue(ObjectPath parameterPath, double startValue, IDimension dimension,
          Unit displayUnit = null, ValueOrigin valueOrigin = null, bool isDefault = false)
       {
          var psv = new ParameterStartValue
@@ -191,7 +191,7 @@ namespace OSPSuite.Core.Domain.Services
          return psv;
       }
 
-      public ParameterStartValue CreateParameterStartValue(IObjectPath parameterPath, IParameter parameter)
+      public ParameterStartValue CreateParameterStartValue(ObjectPath parameterPath, IParameter parameter)
       {
          return CreateParameterStartValue(parameterPath, parameter.Value, parameter.Dimension, parameter.DisplayUnit, parameter.ValueOrigin,
             parameter.IsDefault);

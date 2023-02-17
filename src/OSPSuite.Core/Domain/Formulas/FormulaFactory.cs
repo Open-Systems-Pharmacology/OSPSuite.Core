@@ -101,7 +101,7 @@ namespace OSPSuite.Core.Domain.Formulas
             .WithFormulaString(formulaString);
       }
 
-      private IFormulaUsablePath createVolumeReferencePath(params string[] pathToVolumeParameter)
+      private FormulaUsablePath createVolumeReferencePath(params string[] pathToVolumeParameter)
       {
          return _objectPathFactory.CreateFormulaUsablePathFrom(pathToVolumeParameter)
             .WithAlias(Constants.VOLUME_ALIAS)

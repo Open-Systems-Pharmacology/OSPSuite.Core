@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Domain
       ///    formula. For formula, used ReplaceReferences Returns true if the object path was changed otherwise false
       /// </summary>
       /// <param name="objectPath"> </param>
-      void ReplaceIn(IObjectPath objectPath);
+      void ReplaceIn(ObjectPath objectPath);
 
       /// <summary>
       ///    Adds the replacement.
@@ -105,7 +105,7 @@ namespace OSPSuite.Core.Domain
          dynamicFormula?.Criteria.Each(ReplaceIn);
       }
 
-      public void ReplaceIn(IObjectPath objectPath)
+      public void ReplaceIn(ObjectPath objectPath)
       {
          _allObjectPathReplacer.Each(r => r.ReplaceIn(objectPath));
       }

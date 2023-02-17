@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Serializers
          x1.OneTime = true;
 
          IFormula f1 = CreateObject<ExplicitFormula>().WithDimension(DimensionLength).WithFormulaString("3*Patty");
-         IFormulaUsablePath fup = new FormulaUsablePath(new string[] {"Patricia"}).WithAlias("Patty").WithDimension(DimensionLength);
+         var fup = new FormulaUsablePath(new string[] {"Patricia"}).WithAlias("Patty").WithDimension(DimensionLength);
          f1.AddObjectPath(fup);
          IFormula f2 = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(23.4);
 

@@ -127,9 +127,9 @@ namespace OSPSuite.Core.Domain.Services
                return false;
 
             //check that formula have the same references using the same alias
-            var firstObjectPathCache = new Cache<string, IFormulaUsablePath>(x => x.Alias);
+            var firstObjectPathCache = new Cache<string, FormulaUsablePath>(x => x.Alias);
             firstObjectPathCache.AddRange(firstExplicit.ObjectPaths);
-            var secondObjectPathCache = new Cache<string, IFormulaUsablePath>(x => x.Alias);
+            var secondObjectPathCache = new Cache<string, FormulaUsablePath>(x => x.Alias);
             secondObjectPathCache.AddRange(secondExplicit.ObjectPaths);
 
 
@@ -151,13 +151,13 @@ namespace OSPSuite.Core.Domain.Services
 
       public void ExpandNeighborhoodReferencesIn(IModel model)
       {
-         void updatePath(IUsingFormula usingFormula, IFormulaUsablePath path) => updateNeighborhoodReferencingPath(model, path, usingFormula);
+         void updatePath(IUsingFormula usingFormula, FormulaUsablePath path) => updateNeighborhoodReferencingPath(model, path, usingFormula);
 
          model.Root.GetAllChildren<IUsingFormula>(x => x.Formula.IsReferencingNeighborhood())
             .Each(x => x.Formula.ObjectPaths.Each(path => updatePath(x, path)));
       }
 
-      private void updateNeighborhoodReferencingPath(IModel model, IFormulaUsablePath formulaUsablePath, IUsingFormula usingFormula)
+      private void updateNeighborhoodReferencingPath(IModel model, FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula)
       {
          var pathAsList = formulaUsablePath.ToList();
          var firstIndex = pathAsList.FindIndex(x => x == NBH);

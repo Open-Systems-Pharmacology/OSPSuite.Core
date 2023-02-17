@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Domain.Repositories
       void AddFavorite(string favorite);
       void AddFavorites(IEnumerable<string> favorites);
       void RemoveFavorite(string favorite);
-      bool Contains(IObjectPath parameterPath);
+      bool Contains(ObjectPath parameterPath);
       void Clear();
       Favorites Favorites { get; }
    }

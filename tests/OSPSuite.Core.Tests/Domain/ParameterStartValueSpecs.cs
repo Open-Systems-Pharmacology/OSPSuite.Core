@@ -172,7 +172,7 @@ namespace OSPSuite.Core.Domain
          _comparable = new ParameterStartValue();
 
          sut.Path = new ObjectPath("A", "B", "Name");
-         _comparable.Path = sut.Path.Clone<IObjectPath>();
+         _comparable.Path = sut.Path.Clone<ObjectPath>();
 
          sut.Value = 1.0;
          _comparable.Value = sut.Value;

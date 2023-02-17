@@ -66,7 +66,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    Create a new object path based on the given object path where the keyword have been replaced with the appropriate
       ///    names from the root container
       /// </summary>
-      IObjectPath CreateModelPathFor(IObjectPath objectPath, IContainer rootContainer);
+      ObjectPath CreateModelPathFor(ObjectPath objectPath, IContainer rootContainer);
 
       /// <summary>
       ///    Replaces recursively the keywords used in formula defined in neighborhoods and UsingEntityFormula with the
@@ -175,11 +175,11 @@ namespace OSPSuite.Core.Domain.Services
          eventGroup.GetAllChildren<IEventAssignment>().Select(x => x.ObjectPath).Each(keywordReplacer.ReplaceIn);
       }
 
-      public IObjectPath CreateModelPathFor(IObjectPath objectPath, IContainer rootContainer)
+      public ObjectPath CreateModelPathFor(ObjectPath objectPath, IContainer rootContainer)
       {
          var keywordReplacer = new KeywordReplacerCollection();
          addCommonModelReplacersTo(keywordReplacer, rootContainer);
-         var modelPath = objectPath.Clone<IObjectPath>();
+         var modelPath = objectPath.Clone<ObjectPath>();
          keywordReplacer.ReplaceIn(modelPath);
          return modelPath;
       }

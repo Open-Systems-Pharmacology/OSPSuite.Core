@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Domain.Services
       /// returns true if a replacement was done, otherwise false
       /// </summary>
       /// <param name="objectPath">The object path.</param>
-      void ReplaceIn(IObjectPath objectPath);
+      void ReplaceIn(ObjectPath objectPath);
    }
 
    public interface IKeywordInTagsReplacer : IKeywordReplacer

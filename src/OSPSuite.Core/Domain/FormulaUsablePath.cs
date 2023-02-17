@@ -1,20 +1,20 @@
 using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IFormulaUsablePath : IWithDimension, IObjectPath
-   {
-      string Alias { get; set; }
-   }
-
-   public class FormulaUsablePath : ObjectPath, IFormulaUsablePath
+   public class FormulaUsablePath : ObjectPath, IWithDimension
    {
       public string Alias { get; set; }
-      public IDimension Dimension { get; set; }
+      public virtual IDimension Dimension { get; set; }
 
       public FormulaUsablePath()
+      {
+      }
+
+      public FormulaUsablePath(FormulaUsablePath from) : base(from._pathEntries)
       {
       }
 

@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Services
    
    public class When_told_to_replace_keyword_using_simple_key_replacer_in_a_Path_conntaining_keyWord : concern_for_SimpleKeywordReplacer
    {
-      private IFormulaUsablePath _path;
+      private FormulaUsablePath _path;
 
       protected override void Context()
       {
@@ -38,7 +38,7 @@ namespace OSPSuite.Core.Services
          _path.Contains(_keyword).ShouldBeFalse();
       }
       [Observation]
-      public void should_have_added_replacment_from_in_path()
+      public void should_have_added_replacement_from_in_path()
       {
          _path.Contains(_replacement).ShouldBeTrue();
       }
@@ -50,9 +50,9 @@ namespace OSPSuite.Core.Services
    }
 
    
-   public class When_told_to_replace_keyword_using_simple_key_replacer_in_a_path_not_conntaining_keyword : concern_for_SimpleKeywordReplacer
+   public class When_told_to_replace_keyword_using_simple_key_replacer_in_a_path_not_containing_keyword : concern_for_SimpleKeywordReplacer
    {
-      private IFormulaUsablePath _path;
+      private FormulaUsablePath _path;
 
       protected override void Context()
       {

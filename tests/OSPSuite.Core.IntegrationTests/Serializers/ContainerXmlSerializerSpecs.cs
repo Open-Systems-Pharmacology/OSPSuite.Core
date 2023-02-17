@@ -10,20 +10,21 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestSerializationEmptyContainer()
       {
-         Container x1 = CreateObject<Container>().WithName("Conrad").WithMode(ContainerMode.Logical);
-         IContainer x2 = SerializeAndDeserialize(x1);
+         var x1 = CreateObject<Container>().WithName("Conrad").WithMode(ContainerMode.Logical);
+         x1.ParentPath = new ObjectPath("A", "B");
+         var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualContainer(x2, x1);
       }
 
       [Test]
       public void TestSerializationNonEmptyContainer()
       {
-         Container x1 = CreateObject<Container>().WithName("Conrad").WithMode(ContainerMode.Physical);
-         Observer o1 = CreateObject<Observer>().WithName("Oberon").WithParentContainer(x1);
-         Container c1 = CreateObject<Container>().WithName("Carolin").WithMode(ContainerMode.Logical);
+         var x1 = CreateObject<Container>().WithName("Conrad").WithMode(ContainerMode.Physical);
+         var o1 = CreateObject<Observer>().WithName("Oberon").WithParentContainer(x1);
+         var c1 = CreateObject<Container>().WithName("Carolin").WithMode(ContainerMode.Logical);
          x1.Add(c1);
 
-         IContainer x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
 
          AssertForSpecs.AreEqualContainer(x2, x1);
       }

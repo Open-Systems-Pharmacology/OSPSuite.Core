@@ -25,9 +25,9 @@ namespace OSPSuite.Core.Domain
       private IParameter _processRateParameter;
       private IProcessBuilder _processBuilder;
       private IBuildConfiguration _buildConfiguration;
-      private IFormulaUsablePath _formulaUsablePathB;
-      private IFormulaUsablePath _formulaUsablePathA;
-      private IFormulaUsablePath _formulaUsablePathFU;
+      private FormulaUsablePath _formulaUsablePathB;
+      private FormulaUsablePath _formulaUsablePathA;
+      private FormulaUsablePath _formulaUsablePathFU;
       private FormulaUsablePath _formulaUsablePathBW;
 
       protected override void Context()

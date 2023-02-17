@@ -310,15 +310,15 @@ namespace OSPSuite.Core.Helpers
             return;
          }
 
-         if (x1.IsAnImplementationOf<IFormulaUsablePath>())
+         if (x1.IsAnImplementationOf<FormulaUsablePath>())
          {
-            AreEqualFormulaUsablePath((IFormulaUsablePath) x1, (IFormulaUsablePath) x2);
+            AreEqualFormulaUsablePath(x1.DowncastTo<FormulaUsablePath>(), x2.DowncastTo<FormulaUsablePath>());
             return;
          }
 
-         if (x1.IsAnImplementationOf<IObjectPath>())
+         if (x1.IsAnImplementationOf<ObjectPath>())
          {
-            AreEqualObjectPath((IObjectPath) x1, (IObjectPath) x2);
+            AreEqualObjectPath(x1.DowncastTo<ObjectPath>(), x2.DowncastTo<ObjectPath>());
             return;
          }
 
@@ -462,13 +462,13 @@ namespace OSPSuite.Core.Helpers
          }
       }
 
-      public static void AreEqualObjectPath(IObjectPath x1, IObjectPath x2)
+      public static void AreEqualObjectPath(ObjectPath x1, ObjectPath x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AssertAreEqual(x1.PathAsString, x2.PathAsString);
       }
 
-      public static void AreEqualFormulaUsablePath(IFormulaUsablePath x1, IFormulaUsablePath x2)
+      public static void AreEqualFormulaUsablePath(FormulaUsablePath x1, FormulaUsablePath x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualObjectPath(x1, x2);
@@ -532,6 +532,7 @@ namespace OSPSuite.Core.Helpers
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualEntity(x1, x2);
+         AreEqualObjectPath(x1.ParentPath, x2.ParentPath);
          Assert.AreEqual(x1.Mode, x2.Mode);
          AreEqualEnumerableOfNamedObjects(x1.Children, x2.Children, x => x.Name);
       }
