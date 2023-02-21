@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using OSPSuite.Presentation.Core;
+using OSPSuite.Presentation.MenuAndBars;
+using OSPSuite.Presentation.UICommands;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Presentation.Core;
-using OSPSuite.Presentation.MenuAndBars;
-using OSPSuite.Presentation.UICommands;
 
 namespace OSPSuite.Presentation.Repositories
 {
@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.Repositories
 
    public abstract class MenuBarItemRepository : IMenuBarItemRepository
    {
-      private readonly IContainer _container;
+      protected readonly IContainer _container;
       private readonly ICache<string, IMenuBarItem> _menuBarItemList;
 
       protected MenuBarItemRepository(IContainer container)

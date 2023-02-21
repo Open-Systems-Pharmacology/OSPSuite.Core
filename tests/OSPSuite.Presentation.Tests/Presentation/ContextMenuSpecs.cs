@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.Presentation.Presenters.ContextMenus;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.ContextMenus;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Presentation.Presentation
 {
@@ -39,7 +40,7 @@ namespace OSPSuite.Presentation.Presentation
    public class TestContextMenu : ContextMenu
    {
       public TestContextMenu(IContextMenuView view)
-         : base(view)
+         : base(view, A.Fake<IContainer>())
       {
       }
    }
