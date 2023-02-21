@@ -4,15 +4,23 @@ using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Diagram.Elements;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Presenters.Journal;
+using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
    public class JournalDiagramBackgroundContextMenuFactory : IContextMenuSpecificationFactory<IViewItem>
    {
+      private readonly IContainer _container;
+
+      public JournalDiagramBackgroundContextMenuFactory(IContainer container)
+      {
+         _container = container;
+      }
+
       public IContextMenu CreateFor(IViewItem viewItem, IPresenterWithContextMenu<IViewItem> presenter)
       {
-         return new JournalDiagramBackgroundContextMenu(viewItem.DowncastTo<JournalDiagramBackground>(), presenter.DowncastTo<IJournalDiagramPresenter>());
+         return new JournalDiagramBackgroundContextMenu(viewItem.DowncastTo<JournalDiagramBackground>(), presenter.DowncastTo<IJournalDiagramPresenter>(), _container);
       }
 
       public bool IsSatisfiedBy(IViewItem viewItem, IPresenterWithContextMenu<IViewItem> presenter)
@@ -24,8 +32,8 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
    public class JournalDiagramBackgroundContextMenu : ContextMenu<JournalDiagramBackground, IJournalDiagramPresenter>
    {
-      public JournalDiagramBackgroundContextMenu(JournalDiagramBackground diagramBackground, IJournalDiagramPresenter context)
-         : base(diagramBackground, context)
+      public JournalDiagramBackgroundContextMenu(JournalDiagramBackground diagramBackground, IJournalDiagramPresenter context, IContainer container)
+         : base(diagramBackground, context, container)
       {
       }
 

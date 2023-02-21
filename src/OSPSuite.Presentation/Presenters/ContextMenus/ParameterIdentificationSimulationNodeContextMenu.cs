@@ -7,12 +7,13 @@ using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
    public class ParameterIdentificationSimulationNodeContextMenu : ContextMenu<ISimulation, IParameterIdentificationSimulationSelectionPresenter>
    {
-      public ParameterIdentificationSimulationNodeContextMenu(ISimulation simulation, IParameterIdentificationSimulationSelectionPresenter presenter) : base(simulation, presenter)
+      public ParameterIdentificationSimulationNodeContextMenu(ISimulation simulation, IParameterIdentificationSimulationSelectionPresenter presenter, IContainer container) : base(simulation, presenter, container)
       {
       }
 
@@ -30,9 +31,16 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
    public class ParameterIdentificationSimulationNodeContextMenuFactory : IContextMenuSpecificationFactory<ITreeNode>
    {
+      private readonly IContainer _container;
+
+      public ParameterIdentificationSimulationNodeContextMenuFactory(IContainer container)
+      {
+         _container = container;
+      }
+
       public IContextMenu CreateFor(ITreeNode treeNode, IPresenterWithContextMenu<ITreeNode> presenter)
       {
-         return new ParameterIdentificationSimulationNodeContextMenu(treeNode.TagAsObject.DowncastTo<ISimulation>(), presenter.DowncastTo<IParameterIdentificationSimulationSelectionPresenter>());
+         return new ParameterIdentificationSimulationNodeContextMenu(treeNode.TagAsObject.DowncastTo<ISimulation>(), presenter.DowncastTo<IParameterIdentificationSimulationSelectionPresenter>(), _container);
       }
 
       public bool IsSatisfiedBy(ITreeNode treeNode, IPresenterWithContextMenu<ITreeNode> presenter)

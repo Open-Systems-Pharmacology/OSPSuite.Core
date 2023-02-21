@@ -31,15 +31,17 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
    public abstract class ContextMenu : IContextMenu
    {
       protected readonly IContextMenuView _view;
+      private readonly IContainer _container;
 
-      protected ContextMenu()
-         : this(IoC.Resolve<IContextMenuView>())
+      protected ContextMenu(IContainer container)
+         : this(container.Resolve<IContextMenuView>(), container)
       {
       }
 
-      protected ContextMenu(IContextMenuView view)
+      protected ContextMenu(IContextMenuView view, IContainer container)
       {
          _view = view;
+         _container = container;
       }
 
       public void ActivateFirstMenu()
@@ -55,8 +57,11 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
    public abstract class ContextMenu<T> : ContextMenu
    {
-      protected ContextMenu(T objectRequestingContextMenu)
+      protected readonly IContainer _container;
+
+      protected ContextMenu(T objectRequestingContextMenu, IContainer container) : base(container)
       {
+         _container = container;
          AllMenuItemsFor(objectRequestingContextMenu).Each(_view.AddMenuItem);
       }
 
@@ -65,8 +70,10 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
    public abstract class ContextMenu<TObject, TContext> : ContextMenu
    {
-      protected ContextMenu(TObject objectRequestingContextMenu, TContext context)
+      protected readonly IContainer _container;
+      protected ContextMenu(TObject objectRequestingContextMenu, TContext context, IContainer container) : base(container)
       {
+         _container = container;
          AllMenuItemsFor(objectRequestingContextMenu, context).Each(_view.AddMenuItem);
       }
 
