@@ -54,7 +54,10 @@ namespace OSPSuite.Core.Domain.Mappers
 
       private void addMolecule(ExpressionParameter expressionParameter, PathElements pathElements, int bottomCompartmentIndex)
       {
-         addMolecule(pathElements, expressionParameter.Path.ElementAt(moleculeNameIndex(bottomCompartmentIndex)));
+         if(bottomCompartmentIndex < 0)
+            addMolecule(pathElements, expressionParameter.Path.ElementAt(0));
+         else
+            addMolecule(pathElements, expressionParameter.Path.ElementAt(moleculeNameIndex(bottomCompartmentIndex)));
       }
 
       private static int moleculeNameIndex(int bottomCompartmentIndex)
@@ -101,13 +104,13 @@ namespace OSPSuite.Core.Domain.Mappers
       private static bool hasBottomCompartment(PathAndValueEntity pathAndValueEntity, int bottomCompartmentIndex)
       {
          // Bottom compartment is present if there are enough elements
-         return pathAndValueEntity.Path.Count >= bottomCompartmentIndex;
+         return pathAndValueEntity.Path.Count >= bottomCompartmentIndex && bottomCompartmentIndex > 0;
       }
 
       private static bool hasContainerPaths(PathAndValueEntity pathAndValueEntity, int bottomCompartmentIndex)
       {
          // Container paths are present if there are more elements than the bottom compartment
-         return pathAndValueEntity.Path.Count > bottomCompartmentIndex;
+         return pathAndValueEntity.Path.Count > bottomCompartmentIndex && bottomCompartmentIndex > 0;
       }
 
       // Index of the next-to-last element in the path (-1 to offset from count to 0-based index and -1 for next-to-last)
