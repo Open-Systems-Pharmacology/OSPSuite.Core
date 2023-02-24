@@ -20,6 +20,33 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_mapping_reference_concentration : concern_for_PathAndValueEntityToPathElementsMapper
+   {
+      private PathElements _result;
+      private ExpressionParameter _expressionParameter;
+
+      protected override void Context()
+      {
+         base.Context();
+         _expressionParameter = new ExpressionParameter
+         {
+            Path = new ObjectPath(_moleculeName, _parameterName)
+         };
+      }
+
+      protected override void Because()
+      {
+         _result = sut.MapFrom(_expressionParameter);
+      }
+
+      [Observation]
+      public void the_result_should_map_PathElementId_correctly()
+      {
+         _result[PathElementId.Name].DisplayName.ShouldBeEqualTo(_parameterName);
+         _result[PathElementId.Molecule].DisplayName.ShouldBeEqualTo(_moleculeName); ;
+      }
+   }
+
    public class When_mapping_molecule_start_values_to_path_elements : concern_for_PathAndValueEntityToPathElementsMapper
    {
       private PathElements _result;
