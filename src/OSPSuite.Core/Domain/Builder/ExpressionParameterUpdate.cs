@@ -1,8 +1,8 @@
 ﻿namespace OSPSuite.Core.Domain.Builder
 {
-   public class ExpressionParameterUpdateDTO : IWithName
+   public class ExpressionParameterUpdate : IWithName
    {
-      public ExpressionParameterUpdateDTO(ExpressionParameter expressionParameter)
+      public ExpressionParameterUpdate(ExpressionParameter expressionParameter)
       {
          Path = expressionParameter.Path;
          OriginalValue = expressionParameter.Value;
