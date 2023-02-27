@@ -129,14 +129,14 @@ namespace OSPSuite.UI.Controls
       {
          if (e.Column.ReadOnly)
          {
-            e.Appearance.BackColor = GetColorFor("ReadOnly");
-            e.Appearance.BackColor2 = GetColorFor("ReadOnly");
+            e.Appearance.BackColor = getColorFor("ReadOnly");
+            e.Appearance.BackColor2 = getColorFor("ReadOnly");
 
-            e.Appearance.ForeColor = GetColorFor("DisabledText");
+            e.Appearance.ForeColor = getColorFor("DisabledText");
          }
       }
 
-      private static Color GetColorFor(string @readonly)
+      private static Color getColorFor(string @readonly)
       {
          return CommonSkins.GetSkin(DevExpress.LookAndFeel.UserLookAndFeel.Default).Colors[@readonly];
       }
