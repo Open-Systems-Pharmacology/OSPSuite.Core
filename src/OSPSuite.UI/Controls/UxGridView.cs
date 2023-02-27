@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using DevExpress.Skins;
 using DevExpress.Utils;
 using DevExpress.Utils.Menu;
 using DevExpress.XtraEditors;
@@ -120,6 +121,24 @@ namespace OSPSuite.UI.Controls
          PopupMenuShowing += OnPopupMenuShowing;
          OptionsSelection.MultiSelect = true;
          OptionsSelection.MultiSelectMode = GridMultiSelectMode.CellSelect;
+
+         RowCellStyle += updateRowCellStyle;
+      }
+
+      private void updateRowCellStyle(object o, RowCellStyleEventArgs e)
+      {
+         if (e.Column.ReadOnly)
+         {
+            e.Appearance.BackColor = GetColorFor("ReadOnly");
+            e.Appearance.BackColor2 = GetColorFor("ReadOnly");
+
+            e.Appearance.ForeColor = GetColorFor("DisabledText");
+         }
+      }
+
+      private static Color GetColorFor(string @readonly)
+      {
+         return CommonSkins.GetSkin(DevExpress.LookAndFeel.UserLookAndFeel.Default).Colors[@readonly];
       }
 
       private void onRowCellStyle(object sender, RowCellStyleEventArgs e)
