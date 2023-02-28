@@ -40,7 +40,6 @@ namespace OSPSuite.UI.Views.Journal
          InitializeComponent();
          _gridViewBinder = new GridViewBinder<RelatedItem>(gridView);
          gridView.AllowsFiltering = false;
-         gridView.ShouldUseColorForDisabledCell = false;
 
          var toolTipController = new ToolTipController();
          toolTipController.GetActiveObjectInfo += onToolTipControllerGetActiveObjectInfo;

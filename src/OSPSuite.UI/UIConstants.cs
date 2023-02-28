@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using DevExpress.Skins;
 using OSPSuite.Assets;
 
 namespace OSPSuite.UI
@@ -128,6 +129,15 @@ namespace OSPSuite.UI
             DARK_SIDE,
             HIGH_CONTRAST
          };
+      }
+
+      public static Color BackgroundDisabled => skinColorFor("ReadOnly");
+      public static Color TextDisabled => skinColorFor("DisabledText");
+      
+      
+      private static Color skinColorFor(string state)
+      {
+         return CommonSkins.GetSkin(DevExpress.LookAndFeel.UserLookAndFeel.Default).Colors[state];
       }
    }
 }

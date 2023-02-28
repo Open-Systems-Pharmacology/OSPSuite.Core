@@ -28,7 +28,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          InitializeComponent();
          gridView.AllowsFiltering = false;
          gridView.MultiSelect = true;
-         gridView.ShouldUseColorForDisabledCell = false;
          gridView.ShowColumnHeaders = false;
          _gridViewBinder = new GridViewBinder<IRunPropertyDTO>(gridView);
          _textRepositoryItem = new RepositoryItemTextEdit();

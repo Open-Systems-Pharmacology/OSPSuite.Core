@@ -31,7 +31,6 @@ namespace OSPSuite.UI.Views.Charts
 
          gridView.AllowsFiltering = true;
          gridView.ShowColumnChooser = true;
-         gridView.ShouldUseColorForDisabledCell = false;
          gridView.OptionsView.ShowGroupPanel = true;
          gridView.MultiSelect = true;
          gridView.MouseDown += (o, e) => OnEvent(viewMouseDown, e);

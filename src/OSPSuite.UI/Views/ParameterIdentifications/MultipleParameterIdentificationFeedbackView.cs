@@ -32,7 +32,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          _gridViewBinder = new GridViewBinder<MultiOptimizationRunResultDTO>(gridView);
          _repositoryItemDescription = new RepositoryItemMemoEdit();
          gridView.AllowsFiltering = false;
-         gridView.ShouldUseColorForDisabledCell = false;
          gridView.MultiSelect = true;
          gridView.OptionsView.RowAutoHeight = true;
          var toolTipController = new ToolTipController();

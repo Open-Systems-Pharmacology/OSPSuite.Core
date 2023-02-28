@@ -55,7 +55,9 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void DisableRepositoryColumns()
       {
-         if (_dataTable == null) return;
+         if (_dataTable == null) 
+            return;
+         
          foreach (DataColumn column in _dataTable.Columns)
          {
             if (ColumnIsInDataRepository(column))

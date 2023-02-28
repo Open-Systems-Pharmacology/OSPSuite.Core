@@ -25,7 +25,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          _gridViewBinder = new GridViewBinder<OptimizedParameterDTO>(gridView);
          _optimizedParametersBinder = new OptimizedParametersBinder(imageListRetriever, toolTipCreator);
          gridView.AllowsFiltering = false;
-         gridView.ShouldUseColorForDisabledCell = false;
       }
 
       public void AttachPresenter(ISingleParameterIdentificationResultsPresenter presenter)

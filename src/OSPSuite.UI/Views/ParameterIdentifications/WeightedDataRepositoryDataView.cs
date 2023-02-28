@@ -8,6 +8,7 @@ using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
 using OSPSuite.UI.Views.ObservedData;
 using OSPSuite.Utility.Extensions;
@@ -79,7 +80,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          if (gridViewColumn == null)
             return;
          gridViewColumn.OptionsColumn.AllowEdit = false;
-         gridViewColumn.AppearanceCell.BackColor = Colors.Disabled;
+         gridViewColumn.AppearanceCell.UpdateAppearanceColors(UIConstants.BackgroundDisabled, UIConstants.TextDisabled);
       }
 
       private GridColumn gridViewColumnFromDataColumn(DataColumn column)

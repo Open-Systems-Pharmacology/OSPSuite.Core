@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Drawing;
-using OSPSuite.Utility.Exceptions;
-using DevExpress.Utils;
 using DevExpress.XtraPivotGrid;
-using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.UI.Controls
 {
@@ -49,7 +46,7 @@ namespace OSPSuite.UI.Controls
       {
          //added null checks to prevent the editor to crash when editting the view
          //e.g. GlobalPKAnalysisView@PKSim
-         if (e == null || e.Value  == null || e.Field != ParameterField) return;
+         if (e == null || e.Value == null || e.Field != ParameterField) return;
          e.DisplayText = _parameterDisplayFunc(e.Value.ToString());
       }
 
@@ -57,13 +54,7 @@ namespace OSPSuite.UI.Controls
       {
          if (e.DataField != ValueField) return;
          if (e.Value == null)
-            updateAppearanceBackColor(e.Appearance, Colors.Disabled);
-      }
-
-      private void updateAppearanceBackColor(AppearanceObject appearance, Color color)
-      {
-         appearance.BackColor = color;
-         appearance.BackColor2 = color;
+            e.Appearance.UpdateAppearanceColors(UIConstants.BackgroundDisabled, UIConstants.TextDisabled);
       }
 
       private void onCustomSummary(PivotGridCustomSummaryEventArgs e)

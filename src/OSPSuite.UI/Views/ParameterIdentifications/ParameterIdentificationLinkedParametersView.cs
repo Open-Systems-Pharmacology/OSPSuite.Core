@@ -31,7 +31,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          gridView.AllowsFiltering = false;
          _gridViewBinder = new GridViewBinder<LinkedParameterDTO>(gridView);
          _pathElementsBinder = new PathElementsBinder<LinkedParameterDTO>(imageListRetriever);
-         gridView.ShouldUseColorForDisabledCell = false;
          _disableRemoveButtonRepository.Buttons[0].Enabled = false;
          _disabledUnlinkButtonRepository.Buttons[0].Enabled = false;
       }

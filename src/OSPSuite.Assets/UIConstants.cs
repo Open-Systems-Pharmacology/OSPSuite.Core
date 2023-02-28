@@ -2458,8 +2458,6 @@ namespace OSPSuite.Assets
       /// </summary>
       public static Color ChartDiagramBack = Color.White;
 
-      public static Color Disabled = Color.FromArgb(255, 247, 247, 249);
-
       public static Color BelowLLOQ => Color.LightSkyBlue;
       public static Color DefaultRowColor => Color.White;
 

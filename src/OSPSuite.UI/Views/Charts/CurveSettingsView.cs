@@ -71,7 +71,6 @@ namespace OSPSuite.UI.Views.Charts
 
          gridView.AllowsFiltering = true;
          gridView.ShowColumnChooser = true;
-         gridView.ShouldUseColorForDisabledCell = false;
          gridView.OptionsView.ShowGroupPanel = false;
          gridView.PopupMenuShowing += onPopupMenuShowing;
 

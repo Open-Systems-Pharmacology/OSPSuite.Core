@@ -28,7 +28,6 @@ namespace OSPSuite.UI.Views.Comparisons
       {
          _pathElementsBinder = pathElementsBinder;
          InitializeComponent();
-         gridView.ShouldUseColorForDisabledCell = false;
          gridView.MultiSelect = true;
 
          _gridViewBinder = new GridViewBinder<DiffItemDTO>(gridView);

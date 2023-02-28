@@ -17,14 +17,12 @@ namespace OSPSuite.Starter.Forms
    {
       private readonly ValueOriginBinder<ParameterDTO> _valueOriginBinder;
       private readonly GridViewBinder<ParameterDTO> _gridViewBinder;
-      private List<ParameterDTO> _allParameters;
-      private ParameterDTO _firstParmaeter;
+      private readonly ParameterDTO _firstParameter;
 
       public GridViewForm(ValueOriginBinder<ParameterDTO> valueOriginBinder)
       {
          _valueOriginBinder = valueOriginBinder;
          InitializeComponent();
-         gridView.ShouldUseColorForDisabledCell = false;
          gridView.OptionsSelection.MultiSelectMode = GridMultiSelectMode.CellSelect;
          gridView.OptionsSelection.EnableAppearanceFocusedRow = true;
          gridView.OptionsSelection.EnableAppearanceFocusedCell = true;
@@ -34,11 +32,11 @@ namespace OSPSuite.Starter.Forms
 
          initializeBinding();
 
-         _allParameters = generateDummyContent().ToList();
-         _gridViewBinder.BindToSource(_allParameters.ToBindingList());
+         var allParameters = generateDummyContent().ToList();
+         _gridViewBinder.BindToSource(allParameters.ToBindingList());
 
-         _firstParmaeter = _allParameters[0];
-         _firstParmaeter.PropertyChanged += propertyChanged;
+         _firstParameter = allParameters[0];
+         _firstParameter.PropertyChanged += propertyChanged;
       }
 
       private void propertyChanged(object sender, PropertyChangedEventArgs e)
@@ -66,9 +64,6 @@ namespace OSPSuite.Starter.Forms
 
       private bool canEditValueOrigin(ParameterDTO parameter)
       {
-//         if (!parameter.NameIsOneOf("Prameter_2", "Prameter_4"))
-//            return false;
-
          return true;
       }
 
@@ -76,8 +71,8 @@ namespace OSPSuite.Starter.Forms
       {
          parameterDTO.UpdateValueOriginFrom(newValueOrigin);
 
-         //Also update first parmaeter with same value origin to test update
-         _firstParmaeter.UpdateValueOriginFrom(newValueOrigin);
+         //Also update first parameter with same value origin to test update
+         _firstParameter.UpdateValueOriginFrom(newValueOrigin);
       }
 
       private IEnumerable<ParameterDTO> generateDummyContent()

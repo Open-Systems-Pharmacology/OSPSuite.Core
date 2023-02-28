@@ -39,7 +39,6 @@ namespace OSPSuite.UI.Views
          gridView.GroupFormat = "[#image]{1}";
          _gridViewBinder = new GridViewBinder<QuantitySelectionDTO>(gridView);
          _pathElementsBinder = pathElementsBinder;
-         gridView.ShouldUseColorForDisabledCell = false;
          gridView.OptionsSelection.EnableAppearanceFocusedRow = true;
          gridView.ShowColumnChooser = true;
          gridView.EndGrouping += (o, e) => OnEvent(gridViewEndGrouping);

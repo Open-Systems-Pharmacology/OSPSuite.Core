@@ -143,14 +143,7 @@ namespace OSPSuite.UI.Views
          AdjustHeight();
       }
 
-      public bool ReadOnly
-      {
-         set
-         {
-            _valueColumn.ReadOnly = value;
-            gridView.ShouldUseColorForDisabledCell = !value;
-         }
-      }
+      public bool ReadOnly { set => _valueColumn.ReadOnly = value; }
 
       public void AdjustHeight()
       {

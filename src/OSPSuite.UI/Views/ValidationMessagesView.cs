@@ -24,7 +24,6 @@ namespace OSPSuite.UI.Views
          InitializeComponent();
          _imageListRetriever = imageListRetriever;
          _toolTipCreator = toolTipCreator;
-         gridView.ShouldUseColorForDisabledCell = false;
          _messageRepositoryItem = new RepositoryItemMemoEdit {AutoHeight = true};
          gridView.OptionsView.RowAutoHeight = true;
          var toolTipController = new ToolTipController {ImageList = imageListRetriever.AllImages16x16};

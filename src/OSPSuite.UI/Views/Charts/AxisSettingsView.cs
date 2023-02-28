@@ -43,7 +43,6 @@ namespace OSPSuite.UI.Views.Charts
          gridView.OptionsCustomization.AllowGroup = false;
          gridView.OptionsView.ShowGroupPanel = false;
          gridView.ShowColumnChooser = true;
-         gridView.ShouldUseColorForDisabledCell = false;
 
          _dimensionRepository = new UxRepositoryItemComboBox(gridView);
          _unitRepository = new UxRepositoryItemComboBox(gridView);

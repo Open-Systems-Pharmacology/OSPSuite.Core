@@ -18,7 +18,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       {
          InitializeComponent();
          _gridViewBinder = new GridViewBinder<ParameterConfidenceIntervalDTO>(gridView);
-         gridView.ShouldUseColorForDisabledCell = false;
          gridView.AllowsFiltering = false;
          gridView.MultiSelect = true;
       }

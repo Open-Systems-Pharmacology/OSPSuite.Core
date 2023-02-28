@@ -21,6 +21,7 @@ using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
 using OSPSuite.Assets;
 using OSPSuite.Core.Extensions;
+using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Mappers;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;
@@ -40,10 +41,6 @@ namespace OSPSuite.UI.Controls
 
       protected override string ViewName => "UxGridView";
 
-      /// <summary>
-      ///    Color used for cell that are locked/disabled (End of gradient)
-      /// </summary>
-      protected Color _colorDisabled = Colors.Disabled;
 
       public UxGridView(GridControl gridControl) : base(gridControl)
       {
@@ -61,14 +58,6 @@ namespace OSPSuite.UI.Controls
          var r = new Rectangle(e.Bounds.Left + 5, e.Bounds.Top + 5, e.Bounds.Width - 5, e.Bounds.Height - 5);
          e.Graphics.DrawString(message, font, Brushes.Black, r);
       }
-
-      /// <summary>
-      ///    True if the grid view should use the  color "_colorDisabled" to display the color in lock cells otherwise false
-      ///    Default is true
-      /// </summary>
-      [Browsable(false)]
-      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-      public bool ShouldUseColorForDisabledCell { get; set; }
 
       /// <summary>
       ///    True if the grid view should show the column chooser
@@ -100,7 +89,6 @@ namespace OSPSuite.UI.Controls
 
       protected virtual void DoInit()
       {
-         ShouldUseColorForDisabledCell = true;
          ShowColumnChooser = false;
          ShowArrowInRowIndicator = false;
          KeyDown += onKeyDownDefaultBehavior;
@@ -111,7 +99,6 @@ namespace OSPSuite.UI.Controls
          OptionsSelection.EnableAppearanceFocusedCell = false;
          OptionsSelection.EnableAppearanceFocusedRow = false;
          OptionsNavigation.AutoFocusNewRow = true;
-         RowCellStyle += onRowCellStyle;
          PopupMenuShowing += disableColumnChooser;
          _clipboardCopyTask = new ClipboardTask();
          _gridViewToDataTableMapper = new GridViewToDataTableMapper();
@@ -122,16 +109,6 @@ namespace OSPSuite.UI.Controls
          OptionsSelection.MultiSelectMode = GridMultiSelectMode.CellSelect;
       }
 
-      private void onRowCellStyle(object sender, RowCellStyleEventArgs e)
-      {
-         if (!ShouldUseColorForDisabledCell) return;
-         if (e.Column == null) return;
-         if (e.Column.OptionsColumn.AllowEdit) return;
-         if (!e.Column.OptionsColumn.ReadOnly) return;
-
-         //column is readonly
-         AdjustAppearance(e, false);
-      }
 
       /// <summary>
       ///    If the row is enabled, use the default color for enabled, otherwise set the back color to disabled
@@ -140,18 +117,12 @@ namespace OSPSuite.UI.Controls
       {
          if (isEnabled)
             e.CombineAppearance(Appearance.Row);
-         else
-         {
-            AdjustAppearance(e, _colorDisabled);
-         }
       }
 
       public void AdjustAppearance(RowCellStyleEventArgs e, bool isEnabled)
       {
          if (isEnabled)
             e.CombineAppearance(Appearance.Row);
-         else
-            AdjustAppearance(e, _colorDisabled);
       }
 
       public void AdjustAppearance(RowCellStyleEventArgs e, Color color)
@@ -167,7 +138,7 @@ namespace OSPSuite.UI.Controls
          if (rowHasFocus(e.RowHandle))
             e.CombineAppearance(Appearance.FocusedRow);
          else
-            UpdateAppearanceBackColor(e.Appearance, color);
+            e.Appearance.UpdateAppearanceColors(backGround:color, foreGround:e.Appearance.ForeColor);
       }
 
       public void UpdateAppearanceBackColor(AppearanceObject appearance, Color color)

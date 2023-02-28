@@ -73,14 +73,12 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       {
          optimizedParametersView.AllowsFiltering = false;
          optimizedParametersView.SynchronizeClones = false;
-         optimizedParametersView.ShouldUseColorForDisabledCell = false;
          optimizedParametersView.OptionsCustomization.AllowSort = true;
       }
 
       private void initializeMainView()
       {
          mainView.AllowsFiltering = false;
-         mainView.ShouldUseColorForDisabledCell = false;
          mainView.MultiSelect = true;
          mainView.OptionsDetail.AllowExpandEmptyDetails = false;
          mainView.MasterRowGetChildList += mainViewMasterRowGetChildList;

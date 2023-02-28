@@ -39,7 +39,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
       private void initGridView(UxGridView gridView)
       {
-         gridView.ShouldUseColorForDisabledCell = false;
          gridView.AllowsFiltering = false;
          gridView.MultiSelect = true;
       }

@@ -49,7 +49,6 @@ namespace OSPSuite.UI.Views.Journal
          _imageListRetriever = imageListRetriever;
          InitializeComponent();
          _gridViewBinder = new GridViewBinder<JournalPageDTO>(gridView);
-         gridView.ShouldUseColorForDisabledCell = false;
          gridView.ShowColumnChooser = true;
          _rowFontSize = AppearanceObject.DefaultFont.Size;
          PopupBarManager = new BarManager {Form = this, Images = imageListRetriever.AllImagesForContextMenu};

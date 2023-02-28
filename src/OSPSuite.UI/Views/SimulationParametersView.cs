@@ -12,7 +12,6 @@ using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Binders;
 using OSPSuite.UI.Controls;
-using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Format;
 
@@ -34,7 +33,6 @@ namespace OSPSuite.UI.Views
          _pathElementsBinder = new PathElementsBinder<SimulationParameterSelectionDTO>(imageListRetriever);
          gridView.AllowsFiltering = true;
          gridView.MultiSelect = true;
-         gridView.ShouldUseColorForDisabledCell = false;
          gridView.OptionsFind.ShowCloseButton = false;
          gridView.OptionsFind.AlwaysVisible = true;
          gridView.GroupFormat = "[#image]{1}";
