@@ -132,6 +132,18 @@ namespace OSPSuite.Core.Domain
 
       public static class Parameters
       {
+         public static readonly IReadOnlyList<string> AllGlobalRelExpParameters = new[]
+         {
+            REL_EXP_BLOOD_CELLS,
+            REL_EXP_PLASMA,
+            REL_EXP_VASCULAR_ENDOTHELIUM,
+         };
+         
+         public const string REL_EXP = "Relative expression";
+         public const string REL_EXP_BLOOD_CELLS = "Relative expression in blood cells";
+         public const string REL_EXP_PLASMA = "Relative expression in plasma";
+         public const string REL_EXP_VASCULAR_ENDOTHELIUM = "Relative expression in vascular endothelium";
+
          public const string RESOLUTION = "Resolution";
          public const string START_VALUE = "Start value";
          public const string START_TIME = "Start time";
