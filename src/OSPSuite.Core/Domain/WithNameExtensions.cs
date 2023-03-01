@@ -7,12 +7,12 @@ namespace OSPSuite.Core.Domain
    {
       public static bool HasGlobalExpressionName(this IWithName withName)
       {
-         return AllGlobalRelExpParameters.Contains(withName.Name);
+         return withName != null && AllGlobalRelExpParameters.Contains(withName.Name);
       }
 
-      public static bool HasExpressionName(this IWithName parameter)
+      public static bool HasExpressionName(this IWithName withName)
       {
-         return HasGlobalExpressionName(parameter) || parameter.IsNamed(REL_EXP);
+         return withName != null && (HasGlobalExpressionName(withName) || withName.IsNamed(REL_EXP));
       }
    }
 }
