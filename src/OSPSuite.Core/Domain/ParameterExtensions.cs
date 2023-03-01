@@ -46,18 +46,5 @@ namespace OSPSuite.Core.Domain
       {
          return parameter.IsFixedValue || parameter.Formula.IsConstant() || parameter.Formula.IsDistributed();
       }
-
-      public static bool IsGlobalExpression(this IParameter parameter)
-      {
-         return parameter != null && parameter.HasGlobalExpressionName();
-      }
-
-      public static bool IsExpression(this IParameter parameter)
-      {
-         if (parameter == null)
-            return false;
-
-         return parameter.IsGlobalExpression() || parameter.HasExpressionName();
-      }
    }
 }
