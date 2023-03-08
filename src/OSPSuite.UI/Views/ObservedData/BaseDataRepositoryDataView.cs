@@ -92,7 +92,7 @@ namespace OSPSuite.UI.Views.ObservedData
          if (table == null) return;
 
          var color = _presenter.BackgroundColorForRow(sourceRow);
-         gridView.AdjustAppearance(e, color);
+         gridView.AdjustAppearance(e, color, e.Appearance.ForeColor);
       }
 
       public override ApplicationIcon ApplicationIcon => ApplicationIcons.Parameters;

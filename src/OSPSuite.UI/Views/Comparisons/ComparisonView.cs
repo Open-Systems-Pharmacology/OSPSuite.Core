@@ -61,7 +61,7 @@ namespace OSPSuite.UI.Views.Comparisons
          if (dto == null) return;
 
          if (dto.ItemIsMissing)
-            gridView.AdjustAppearance(e, Colors.ADDED_OR_MISSING);
+            gridView.AdjustAppearance(e, Colors.ADDED_OR_MISSING, e.Appearance.ForeColor);
 
       }
 

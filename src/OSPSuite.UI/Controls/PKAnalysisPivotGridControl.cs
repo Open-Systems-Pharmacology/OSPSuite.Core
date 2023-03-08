@@ -57,7 +57,7 @@ namespace OSPSuite.UI.Controls
       {
          if (e.DataField != ValueField) return;
          if (e.Value == null)
-            updateAppearanceBackColor(e.Appearance, Colors.Disabled);
+            updateAppearanceBackColor(e.Appearance, UIConstants.Colors.Disabled);
       }
 
       private void updateAppearanceBackColor(AppearanceObject appearance, Color color)
