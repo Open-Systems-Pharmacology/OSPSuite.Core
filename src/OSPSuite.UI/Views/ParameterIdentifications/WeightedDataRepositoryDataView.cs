@@ -79,7 +79,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          if (gridViewColumn == null)
             return;
          gridViewColumn.OptionsColumn.AllowEdit = false;
-         gridViewColumn.AppearanceCell.BackColor = Colors.Disabled;
+         gridViewColumn.AppearanceCell.BackColor = UIConstants.Colors.Disabled;
       }
 
       private GridColumn gridViewColumnFromDataColumn(DataColumn column)
