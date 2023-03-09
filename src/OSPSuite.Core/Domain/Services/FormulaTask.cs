@@ -178,7 +178,7 @@ namespace OSPSuite.Core.Domain.Services
          var container1 = getContainerOrThrow(pathToFirstContainer, usingFormula);
          var container2 = getContainerOrThrow(pathToSecondContainer, usingFormula);
 
-         var allNeighborhoods = model.Neighborhoods.GetAllChildren<INeighborhood>();
+         var allNeighborhoods = model.Neighborhoods.GetAllChildren<Neighborhood>();
          var allNeighborhoodsConnectedToContainer1 = container1.GetNeighborhoods(allNeighborhoods);
          var neighborhoodsBetweenContainer1AndContainer2 = container2.GetNeighborhoods(allNeighborhoodsConnectedToContainer1);
          if (neighborhoodsBetweenContainer1AndContainer2.Count == 0)

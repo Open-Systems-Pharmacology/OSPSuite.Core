@@ -4,6 +4,7 @@ using System.Drawing;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Diagram;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Presentation.Diagram.Elements;
 using OSPSuite.Presentation.Extensions;
 

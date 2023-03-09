@@ -58,9 +58,9 @@ namespace OSPSuite.Core.Domain
       /// <param name="neighborhood">parent neighborhood container</param>
       /// <param name="criteriaForFirstContainer">criteria that should be met by the first container of the neighborhood</param>
       /// <param name="criteriaForSecondContainer">criteria that should be met by the second container of the neighborhood</param>
-      internal static IEnumerable<INeighborhood> AllNeighborhoodsFor(this IContainer neighborhood, DescriptorCriteria criteriaForFirstContainer, DescriptorCriteria criteriaForSecondContainer)
+      internal static IEnumerable<Neighborhood> AllNeighborhoodsFor(this IContainer neighborhood, DescriptorCriteria criteriaForFirstContainer, DescriptorCriteria criteriaForSecondContainer)
       {
-         return neighborhood.GetChildren<INeighborhood>(n => n.StrictlySatisfies(criteriaForFirstContainer, criteriaForSecondContainer));
+         return neighborhood.GetChildren<Neighborhood>(n => n.StrictlySatisfies(criteriaForFirstContainer, criteriaForSecondContainer));
       }
 
       /// <summary>

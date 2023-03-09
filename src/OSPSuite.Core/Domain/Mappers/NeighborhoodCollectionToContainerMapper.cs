@@ -21,16 +21,13 @@ namespace OSPSuite.Core.Domain.Mappers
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly INeighborhoodBuilderToNeighborhoodMapper _neighborhoodMapper;
-      private readonly IObjectPathFactory _objectPathFactory;
 
       public NeighborhoodCollectionToContainerMapper(
          IObjectBaseFactory objectBaseFactory,
-         INeighborhoodBuilderToNeighborhoodMapper neighborhoodMapper,
-         IObjectPathFactory objectPathFactory)
+         INeighborhoodBuilderToNeighborhoodMapper neighborhoodMapper)
       {
          _objectBaseFactory = objectBaseFactory;
          _neighborhoodMapper = neighborhoodMapper;
-         _objectPathFactory = objectPathFactory;
       }
 
       public IContainer MapFrom(IModel model, IBuildConfiguration buildConfiguration)
@@ -87,11 +84,11 @@ namespace OSPSuite.Core.Domain.Mappers
       /// <summary>
       ///    Returns molecules which will be created in both neighbors of the neighborhood
       /// </summary>
-      private IEnumerable<string> moleculeNamesFor(INeighborhoodBuilder neighborhoodBuilder,
+      private IEnumerable<string> moleculeNamesFor(NeighborhoodBuilder neighborhoodBuilder,
          ICache<string, IList<string>> moleculesStartValuesForFloatingMolecules)
       {
-         var pathToFirstNeighbor = _objectPathFactory.CreateAbsoluteObjectPath(neighborhoodBuilder.FirstNeighbor).ToString();
-         var pathToSecondNeighbor = _objectPathFactory.CreateAbsoluteObjectPath(neighborhoodBuilder.SecondNeighbor).ToString();
+         var pathToFirstNeighbor = neighborhoodBuilder.FirstNeighborPath.PathAsString;
+         var pathToSecondNeighbor = neighborhoodBuilder.SecondNeighborPath.PathAsString;
 
          // check if both neighbors has at least 1 molecule (if not - return empty list)
          if (!moleculesStartValuesForFloatingMolecules.Contains(pathToFirstNeighbor) ||

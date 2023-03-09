@@ -30,7 +30,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public void CreatePassiveTransport(IModel model, ITransportBuilder passiveTransportBuilder, IBuildConfiguration buildConfiguration)
       {
-         var allNeighborhoods = model.Neighborhoods.GetChildren<INeighborhood>().ToList();
+         var allNeighborhoods = model.Neighborhoods.GetChildren<Neighborhood>().ToList();
 
          foreach (var molecule in buildConfiguration.Molecules.AllFloating())
          {
@@ -40,7 +40,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public void CreateActiveTransport(IModel model, IBuildConfiguration buildConfiguration)
       {
-         var allNeighborhoods = model.Neighborhoods.GetChildren<INeighborhood>().ToList();
+         var allNeighborhoods = model.Neighborhoods.GetChildren<Neighborhood>().ToList();
          var molecules = buildConfiguration.Molecules;
          foreach (var molecule in molecules.AllFloating())
          {
@@ -59,7 +59,7 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private void addPassiveTransportToModel(IModel model, ITransportBuilder passiveTransportBuilder, IEnumerable<INeighborhood> allNeighborhoods,
+      private void addPassiveTransportToModel(IModel model, ITransportBuilder passiveTransportBuilder, IEnumerable<Neighborhood> allNeighborhoods,
          IMoleculeBuilder molecule, IBuildConfiguration buildConfiguration)
       {
          // first check if the molecule should be transported
@@ -76,7 +76,7 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private void addActiveTransportToModel(IModel model, ITransportBuilder activeTransportBuilder, IEnumerable<INeighborhood> allNeighborhoods,
+      private void addActiveTransportToModel(IModel model, ITransportBuilder activeTransportBuilder, IEnumerable<Neighborhood> allNeighborhoods,
          IMoleculeBuilder molecule, TransporterMoleculeContainer transporterMolecule, IBuildConfiguration buildConfiguration)
       {
          var neighborhoods = getNeighborhoodsForActiveTransport(activeTransportBuilder, allNeighborhoods, molecule.Name, transporterMolecule.Name);
@@ -92,7 +92,7 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private IEnumerable<INeighborhood> getNeighborhoodsForActiveTransport(ITransportBuilder transport, IEnumerable<INeighborhood> allNeighborhoods,
+      private IEnumerable<Neighborhood> getNeighborhoodsForActiveTransport(ITransportBuilder transport, IEnumerable<Neighborhood> allNeighborhoods,
          string moleculeName, string transporterName)
       {
          try
@@ -110,21 +110,21 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private IEnumerable<INeighborhood> getNeighborhoodsForPassiveTransport(ITransportBuilder passiveTransportBuilder,
-         IEnumerable<INeighborhood> allNeighborhoods, string moleculeName)
+      private IEnumerable<Neighborhood> getNeighborhoodsForPassiveTransport(ITransportBuilder passiveTransportBuilder,
+         IEnumerable<Neighborhood> allNeighborhoods, string moleculeName)
       {
          return getNeighborhoodsByNeighborCriteria(allNeighborhoods, passiveTransportBuilder.SourceCriteria, passiveTransportBuilder.TargetCriteria,
             moleculeName);
       }
 
-      private IEnumerable<INeighborhood> getNeighborhoodsByNeighborCriteria(IEnumerable<INeighborhood> neighborhoods,
+      private IEnumerable<Neighborhood> getNeighborhoodsByNeighborCriteria(IEnumerable<Neighborhood> neighborhoods,
          DescriptorCriteria conditionsForOneNeighbor,
          DescriptorCriteria conditionsForTheOtherNeighbor, string name)
       {
          return getNeighborhoodsByNeighborCriteria(neighborhoods, conditionsForOneNeighbor, conditionsForTheOtherNeighbor, new[] {name});
       }
 
-      private IEnumerable<INeighborhood> getNeighborhoodsByNeighborCriteria(IEnumerable<INeighborhood> neighborhoods,
+      private IEnumerable<Neighborhood> getNeighborhoodsByNeighborCriteria(IEnumerable<Neighborhood> neighborhoods,
          DescriptorCriteria conditionsForOneNeighbor,
          DescriptorCriteria conditionsForTheOtherNeighbor, IEnumerable<string> moleculeNames)
       {
@@ -135,13 +135,13 @@ namespace OSPSuite.Core.Domain.Services
             select neighborhood;
       }
 
-      private IContainer addPassiveTransportToNeighborhood(INeighborhood neighborhood, string moleculeName, ITransport transport)
+      private IContainer addPassiveTransportToNeighborhood(Neighborhood neighborhood, string moleculeName, ITransport transport)
       {
          return _moleculePropertiesContainerTask.NeighborhoodMoleculeContainerFor(neighborhood, moleculeName)
             .WithChild(transport);
       }
 
-      private IContainer addActiveTransportToNeighborhood(INeighborhood neighborhood, ITransport transport,
+      private IContainer addActiveTransportToNeighborhood(Neighborhood neighborhood, ITransport transport,
          TransporterMoleculeContainer transporterMolecule, string transportedMoleculeName, IBuildConfiguration buildConfiguration)
       {
          return _moleculePropertiesContainerTask.NeighborhoodMoleculeTransportContainerFor(neighborhood, transportedMoleculeName, transporterMolecule,
@@ -149,7 +149,7 @@ namespace OSPSuite.Core.Domain.Services
             .WithChild(transport);
       }
 
-      private ITransport mapFrom(ITransportBuilder transportBuilder, INeighborhood neighborhood, string moleculeName,
+      private ITransport mapFrom(ITransportBuilder transportBuilder, Neighborhood neighborhood, string moleculeName,
          IBuildConfiguration buildConfiguration)
       {
          var transport = _transportMapper.MapFrom(transportBuilder, buildConfiguration);

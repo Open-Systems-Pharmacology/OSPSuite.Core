@@ -82,10 +82,12 @@ namespace OSPSuite.Core.Domain
    internal class When_removing_a_container_in_SpatialStructure : concern_for_ContainerTask
    {
       private ISpatialStructure _spatialStructure;
-      private INeighborhoodBuilder _firstNeighborRemove;
-      private INeighborhoodBuilder _secondNeighborRemove;
+      private NeighborhoodBuilder _firstNeighborRemove;
+      private NeighborhoodBuilder _secondNeighborRemove;
       private IContainer _containerToRemove;
       private IContainer _parent;
+      private ObjectPath _containerToRemovePath;
+      private NeighborhoodBuilder _thirdNeighborhood;
 
       protected override void Context()
       {
@@ -94,14 +96,25 @@ namespace OSPSuite.Core.Domain
          _parent = A.Fake<IContainer>();
          _containerToRemove = A.Fake<IContainer>();
          _containerToRemove.ParentContainer = _parent;
-         _firstNeighborRemove = new NeighborhoodBuilder().WithFirstNeighbor(_containerToRemove).WithSecondNeighbor(A.Fake<IContainer>());
-         _secondNeighborRemove = new NeighborhoodBuilder().WithFirstNeighbor(A.Fake<IContainer>()).WithSecondNeighbor(_containerToRemove);
+         _containerToRemovePath = new ObjectPath("_containerToRemovePath");
+
+         _firstNeighborRemove = new NeighborhoodBuilder
+         {
+            FirstNeighborPath = _containerToRemovePath,
+            SecondNeighborPath = new ObjectPath("anotherContainer"),
+         };
+         _secondNeighborRemove = new NeighborhoodBuilder
+         {
+            FirstNeighborPath = new ObjectPath("anotherContainer"),
+            SecondNeighborPath = _containerToRemovePath,
+         };
+         _thirdNeighborhood = new NeighborhoodBuilder();
          A.CallTo(() => _spatialStructure.Neighborhoods).Returns(new[]
-            {
-               new NeighborhoodBuilder().WithFirstNeighbor(A.Fake<IContainer>()).WithSecondNeighbor(A.Fake<IContainer>()),
-               _firstNeighborRemove,
-               _secondNeighborRemove
-            });
+         {
+            _thirdNeighborhood,
+            _firstNeighborRemove,
+            _secondNeighborRemove
+         });
       }
 
       protected override void Because()
@@ -122,9 +135,9 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_have_calles_remove_child_at_parent()
+      public void should_have_called_remove_child_at_parent()
       {
-         A.CallTo(() => _parent.RemoveChild(_containerToRemove));
+         A.CallTo(() => _parent.RemoveChild(_containerToRemove)).MustHaveHappened();
       }
    }
 
@@ -193,7 +206,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_create_a_cache_containg_all_the_matching_children()
+      public void should_create_a_cache_containing_all_the_matching_children()
       {
          _cache.ShouldOnlyContain(_para1, _para2);
       }

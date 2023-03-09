@@ -15,7 +15,7 @@ namespace OSPSuite.Helpers
          if (typeof(T).IsAnImplementationOf<IMoleculeAmount>())
             return new MoleculeAmount().DowncastTo<T>();
          
-         if (typeof(T).IsAnImplementationOf<INeighborhoodBuilder>())
+         if (typeof(T).IsAnImplementationOf<NeighborhoodBuilder>())
             return new NeighborhoodBuilder().DowncastTo<T>();
 
          return A.Fake<T>();

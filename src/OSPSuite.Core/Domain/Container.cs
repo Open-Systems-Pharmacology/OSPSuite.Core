@@ -71,13 +71,13 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    returns the neighbors from the container connected by the given neighborhoods.
       /// </summary>
-      IReadOnlyList<IContainer> GetNeighborsFrom(IReadOnlyList<INeighborhood> neighborhoods);
+      IReadOnlyList<IContainer> GetNeighborsFrom(IReadOnlyList<Neighborhood> neighborhoods);
 
       /// <summary>
       ///    returns the neighborhoods connecting the container with its neighbors.
       /// </summary>
       /// <param name="neighborhoods"> The possible neighborhoods. </param>
-      IReadOnlyList<INeighborhood> GetNeighborhoods(IReadOnlyList<INeighborhood> neighborhoods);
+      IReadOnlyList<Neighborhood> GetNeighborhoods(IReadOnlyList<Neighborhood> neighborhoods);
 
       /// <summary>
       ///    Returns all children containers defined and the container itself, if the container is form type
@@ -211,7 +211,7 @@ namespace OSPSuite.Core.Domain
                 select castChild;
       }
 
-      public virtual IReadOnlyList<IContainer> GetNeighborsFrom(IReadOnlyList<INeighborhood> neighborhoods)
+      public virtual IReadOnlyList<IContainer> GetNeighborsFrom(IReadOnlyList<Neighborhood> neighborhoods)
       {
          var first = from neighborhood in GetNeighborhoods(neighborhoods)
                      where neighborhood.FirstNeighbor != this
@@ -224,7 +224,7 @@ namespace OSPSuite.Core.Domain
          return first.Union(second).ToList();
       }
 
-      public virtual IReadOnlyList<INeighborhood> GetNeighborhoods(IReadOnlyList<INeighborhood> neighborhoods)
+      public virtual IReadOnlyList<Neighborhood> GetNeighborhoods(IReadOnlyList<Neighborhood> neighborhoods)
       {
          var first = from neighborhood in neighborhoods
                      where neighborhood.FirstNeighbor == this

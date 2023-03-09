@@ -164,7 +164,7 @@ namespace OSPSuite.Core.Domain.Services
 
             foreach (var step in steps)
             {
-               //call each build process with the model and the buildconfiguration 
+               //call each build process with the model and the buildConfiguration 
                result.Add(step(model, buildConfiguration));
 
                progress?.IncrementProgress();

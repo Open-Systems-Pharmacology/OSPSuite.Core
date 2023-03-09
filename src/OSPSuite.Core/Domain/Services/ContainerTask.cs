@@ -60,7 +60,7 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       string CreateUniqueName(IEnumerable<IWithName> usedNames, string baseName, bool canUseBaseName = false);
 
-      IEnumerable<INeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ISpatialStructure spatialStructure, IContainer container);
+      IEnumerable<NeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ISpatialStructure spatialStructure, IContainer container);
 
       /// <summary>
       ///    Returns a cache of all children satisfying <paramref name="predicate" /> by path defined in the
@@ -122,7 +122,7 @@ namespace OSPSuite.Core.Domain.Services
          containerToRemove.ParentContainer.RemoveChild(containerToRemove);
       }
 
-      public IEnumerable<INeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ISpatialStructure spatialStructure, IContainer container)
+      public IEnumerable<NeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ISpatialStructure spatialStructure, IContainer container)
       {
          return spatialStructure.Neighborhoods.Where(neighborhood => neighborhood.IsConnectedTo(container));
       }

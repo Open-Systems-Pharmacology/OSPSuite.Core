@@ -13,7 +13,6 @@ namespace OSPSuite.Core.Mappers
    {
       protected IContainerBuilderToContainerMapper _containerMapper;
       protected IObjectBaseFactory _objectBaseFactory;
-      protected IObjectPathFactory _objectPathFactory;
       protected ICloneManagerForModel _cloneManagerForModel;
       protected IKeywordReplacerTask _keywordReplacerTask;
       protected IParameterBuilderToParameterMapper _parameterMapper;
@@ -22,18 +21,17 @@ namespace OSPSuite.Core.Mappers
       {
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          _containerMapper = A.Fake<IContainerBuilderToContainerMapper>();
-         _objectPathFactory = A.Fake<IObjectPathFactory>();
          _cloneManagerForModel = A.Fake<ICloneManagerForModel>();
          _keywordReplacerTask = A.Fake<IKeywordReplacerTask>();
          _parameterMapper = A.Fake<IParameterBuilderToParameterMapper>();
-         sut = new NeighborhoodBuilderToNeighborhoodMapper(_objectBaseFactory, _containerMapper, _objectPathFactory, _keywordReplacerTask, _cloneManagerForModel, _parameterMapper);
+         sut = new NeighborhoodBuilderToNeighborhoodMapper(_objectBaseFactory, _containerMapper, _keywordReplacerTask, _cloneManagerForModel, _parameterMapper);
       }
    }
 
    public class When_mapping_a_neighborhood_builder_to_a_neighborhood : concern_for_NeighborhoodBuilderToNeighborhoodMapper
    {
-      private INeighborhoodBuilder _neighborhoodBuilder;
-      private INeighborhood _neighborhood;
+      private NeighborhoodBuilder _neighborhoodBuilder;
+      private Neighborhood _neighborhood;
       private IEnumerable<string> _moleculeNames;
       private IContainer _rootContainer;
       private string _molecule1;
@@ -53,25 +51,23 @@ namespace OSPSuite.Core.Mappers
          _buildConfiguration = A.Fake<IBuildConfiguration>();
          _model = A.Fake<IModel>();
          _model.Root = _rootContainer;
-         _neighborhoodBuilder = A.Fake<INeighborhoodBuilder>().WithName("tralala");
-         _neighborhoodBuilder.FirstNeighbor = A.Fake<IContainer>();
-         _neighborhoodBuilder.SecondNeighbor = A.Fake<IContainer>();
-         A.CallTo(() => _neighborhoodBuilder.MoleculeProperties).Returns(A.Fake<IContainer>());
-         var para1 = A.Fake<IParameter>();
-         var para2 = A.Fake<IParameter>();
-         A.CallTo(() => _neighborhoodBuilder.Parameters).Returns(new[] {para1, para2});
-         _clonePara1 = A.Fake<IParameter>();
-         _clonePara2 = A.Fake<IParameter>();
-         var firstNeighborBuilderPath = A.Fake<ObjectPath>();
-         var secondNeighborBuilderPath = A.Fake<ObjectPath>();
-         A.CallTo(() => _objectPathFactory.CreateAbsoluteObjectPath(_neighborhoodBuilder.FirstNeighbor)).Returns(firstNeighborBuilderPath);
-         A.CallTo(() => _objectPathFactory.CreateAbsoluteObjectPath(_neighborhoodBuilder.SecondNeighbor)).Returns(secondNeighborBuilderPath);
+         _neighborhoodBuilder =new NeighborhoodBuilder().WithName("tralala");
+         _neighborhoodBuilder.Add(new Container().WithName(Constants.MOLECULE_PROPERTIES));
+
+         var para1 = new Parameter().WithName("Para1");
+         var para2 = new Parameter().WithName("Para2");
+         _neighborhoodBuilder.AddParameter(para1);
+         _neighborhoodBuilder.AddParameter(para2);
+         _clonePara1 = new Parameter().WithName("Para1");
+         _clonePara2 = new Parameter().WithName("Para2");
+         _neighborhoodBuilder.FirstNeighborPath = A.Fake<ObjectPath>();
+         _neighborhoodBuilder.SecondNeighborPath = A.Fake<ObjectPath>();
          var firstNeighborModelPath = A.Fake<ObjectPath>();
          var secondNeighborModelPath = A.Fake<ObjectPath>();
          _firstNeighborInModel = A.Fake<IContainer>();
          _secondNeighborInModel = A.Fake<IContainer>();
-         A.CallTo(() => _keywordReplacerTask.CreateModelPathFor(firstNeighborBuilderPath, _model.Root)).Returns(firstNeighborModelPath);
-         A.CallTo(() => _keywordReplacerTask.CreateModelPathFor(secondNeighborBuilderPath, _model.Root)).Returns(secondNeighborModelPath);
+         A.CallTo(() => _keywordReplacerTask.CreateModelPathFor(_neighborhoodBuilder.FirstNeighborPath, _model.Root)).Returns(firstNeighborModelPath);
+         A.CallTo(() => _keywordReplacerTask.CreateModelPathFor(_neighborhoodBuilder.SecondNeighborPath, _model.Root)).Returns(secondNeighborModelPath);
          A.CallTo(() => firstNeighborModelPath.Resolve<IContainer>(_rootContainer)).Returns(_firstNeighborInModel);
          A.CallTo(() => secondNeighborModelPath.Resolve<IContainer>(_rootContainer)).Returns(_secondNeighborInModel);
          _moleculeContainer = A.Fake<IContainer>();
@@ -79,7 +75,7 @@ namespace OSPSuite.Core.Mappers
          _molecule1 = "molecule1";
          _molecule2 = "molecule2";
          _moleculeNames = new List<string> {_molecule1, _molecule2};
-         A.CallTo(() => _objectBaseFactory.Create<INeighborhood>()).Returns(A.Fake<INeighborhood>());
+         A.CallTo(() => _objectBaseFactory.Create<Neighborhood>()).Returns(new Neighborhood());
          A.CallTo(() => _parameterMapper.MapFrom(para1, _buildConfiguration)).Returns(_clonePara1);
          A.CallTo(() => _parameterMapper.MapFrom(para2, _buildConfiguration)).Returns(_clonePara2);
       }
@@ -92,14 +88,13 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_return_a_neighborhood_whose_name_was_set_to_the_name_of_the_neighborhood_builder()
       {
-         A.CallTo(() => _neighborhood.UpdatePropertiesFrom(_neighborhoodBuilder, _cloneManagerForModel)).MustHaveHappened();
+         _neighborhood.Name.ShouldBeEqualTo(_neighborhoodBuilder.Name);
       }
 
       [Observation]
       public void should_have_added_a_clone_of_the_neighborhood_parameters_to_the_created_neighborhood()
       {
-         A.CallTo(() => _neighborhood.Add(_clonePara1)).MustHaveHappened();
-         A.CallTo(() => _neighborhood.Add(_clonePara2)).MustHaveHappened();
+         _neighborhood.AllParameters().ShouldContain(_clonePara1, _clonePara2);
       }
 
       [Observation]

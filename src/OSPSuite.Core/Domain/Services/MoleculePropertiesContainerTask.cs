@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <exception cref="MissingMoleculeContainerException">
       ///    is thorwn if the container does not exist in the root for the molecule
       /// </exception>
-      IContainer NeighborhoodMoleculeContainerFor(INeighborhood neighborhood, string moleculeName);
+      IContainer NeighborhoodMoleculeContainerFor(Neighborhood neighborhood, string moleculeName);
 
       /// <summary>
       ///    Creates the global molecule container for the molecule and add parameters with the build modes other than "Local"
@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Domain.Services
       /// Returns (and creates if not already there) the sub container for the transport process named <paramref name="transportName"/> 
       /// in the <paramref name="neighborhood"/> for the transporter <paramref name="transporterMolecule"/>
       /// </summary>
-      IContainer NeighborhoodMoleculeTransportContainerFor(INeighborhood neighborhood, string transportedMoleculeName, TransporterMoleculeContainer transporterMolecule, string transportName, IBuildConfiguration buildConfiguration);
+      IContainer NeighborhoodMoleculeTransportContainerFor(Neighborhood neighborhood, string transportedMoleculeName, TransporterMoleculeContainer transporterMolecule, string transportName, IBuildConfiguration buildConfiguration);
    }
 
    internal class MoleculePropertiesContainerTask : IMoleculePropertiesContainerTask
@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Domain.Services
          _keywordReplacer = keywordReplacer;
       }
 
-      public IContainer NeighborhoodMoleculeContainerFor(INeighborhood neighborhood, string moleculeName)
+      public IContainer NeighborhoodMoleculeContainerFor(Neighborhood neighborhood, string moleculeName)
       {
          var moleculeContainer = neighborhood.GetSingleChildByName<IContainer>(moleculeName);
          if (moleculeContainer == null)
@@ -111,7 +111,7 @@ namespace OSPSuite.Core.Domain.Services
          return _parameterCollectionMapper.MapLocalFrom(container, buildConfiguration);
       }
 
-      public IContainer NeighborhoodMoleculeTransportContainerFor(INeighborhood neighborhood, string transportedMoleculeName,TransporterMoleculeContainer transporterMolecule, string transportName, IBuildConfiguration buildConfiguration)
+      public IContainer NeighborhoodMoleculeTransportContainerFor(Neighborhood neighborhood, string transportedMoleculeName,TransporterMoleculeContainer transporterMolecule, string transportName, IBuildConfiguration buildConfiguration)
       {
          var moleculeContainer = NeighborhoodMoleculeContainerFor(neighborhood, transportedMoleculeName);
          var transportContainer = moleculeContainer.EntityAt<IContainer>(transporterMolecule.TransportName);

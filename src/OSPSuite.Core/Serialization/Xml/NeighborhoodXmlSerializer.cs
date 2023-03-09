@@ -3,7 +3,7 @@ using OSPSuite.Core.Domain;
 namespace OSPSuite.Core.Serialization.Xml
 {
    //necessary for PkSimNeighborhood
-   public class NeighborhoodXmlSerializerBase<TNeighborhood> : ContainerXmlSerializer<TNeighborhood> where TNeighborhood : class, INeighborhood
+   public class NeighborhoodXmlSerializerBase<TNeighborhood> : ContainerXmlSerializer<TNeighborhood> where TNeighborhood :  Neighborhood
    {
       public override void PerformMapping()
       {
