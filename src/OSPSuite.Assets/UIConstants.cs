@@ -2267,7 +2267,7 @@ namespace OSPSuite.Assets
       public static readonly string Formula = "Formula";
       public static readonly string Simulation = "Simulation";
       public static readonly string ExplicitFormula = "Formula";
-      public static readonly string NeighborhoodBuilder = "Neighborhood";
+      public static readonly string Neighborhood = "Neighborhood";
       public static readonly string PassiveTransportBuilder = "Passive Transport";
       public static readonly string ActiveTransportBuilder = "Active Transport";
       public static readonly string TransportBuilder = "Transport";
@@ -2286,7 +2286,7 @@ namespace OSPSuite.Assets
       public static readonly string SumFormula = "Sum Formula";
       public static readonly string Quantities = "Quantities";
       public static readonly string Model = "Model";
-      public static readonly string MoleculeList = "Moleculelist";
+      public static readonly string MoleculeList = "Molecule List";
       public static readonly string SolverProperty = "Solver Property";
       public static readonly string SimulationSettings = "Simulation Settings";
       public static readonly string OutputSelections = "Output Selections";
