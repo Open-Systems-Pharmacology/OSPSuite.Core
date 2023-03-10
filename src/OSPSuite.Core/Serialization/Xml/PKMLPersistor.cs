@@ -74,11 +74,11 @@ namespace OSPSuite.Core.Serialization.Xml
          T loadedObject;
          int version;
          using (var serializationContext = SerializationTransaction.Create(
-            _container,
-            dimensionFactory ?? _dimensionFactory,
-            objectBaseFactory ?? _objectBaseFactory,
-            withIdRepository ?? new WithIdRepository(),
-            cloneManagerForModel ?? _cloneManagerForModel))
+                   _container,
+                   dimensionFactory ?? _dimensionFactory,
+                   objectBaseFactory ?? _objectBaseFactory,
+                   withIdRepository ?? new WithIdRepository(),
+                   cloneManagerForModel ?? _cloneManagerForModel))
          {
             var element = XElement.Load(pkmlFileFullPath);
             version = element.GetPKMLVersion();
@@ -124,8 +124,18 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          switch (loadedObject)
          {
+            case IBuildConfiguration buildConfiguration:
+               resolveReferenceIfRequired(buildConfiguration.SpatialStructure);
+               break;
+            case IModelCoreSimulation simulation:
+               _referencesResolver.ResolveReferencesIn(simulation.Model);
+               resolveReferenceIfRequired(simulation.BuildConfiguration);
+               break;
             case SimulationTransfer simulationTransfer:
-               _referencesResolver.ResolveReferencesIn(simulationTransfer.Simulation.Model);
+               resolveReferenceIfRequired(simulationTransfer.Simulation);
+               break;
+            case ISpatialStructure spatialStructure:
+               spatialStructure.ResolveReferencesInNeighborhoods();
                break;
             default:
                return;

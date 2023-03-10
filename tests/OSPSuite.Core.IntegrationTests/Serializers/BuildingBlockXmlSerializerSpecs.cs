@@ -55,11 +55,8 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexObserverBB()
       {
-         ObserverBuildingBlock x1 = _buildConfiguration.Observers as ObserverBuildingBlock;
-         Assert.IsNotNull(x1);
-
-         IObserverBuildingBlock x2 = SerializeAndDeserialize(x1);
-
+         var x1 = _buildConfiguration.Observers;
+         var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualBuildingBlock(x2, x1);
       }
    }
@@ -69,12 +66,8 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexMoleculeBB()
       {
-         MoleculeBuildingBlock x1 = _buildConfiguration.Molecules as MoleculeBuildingBlock;
-         Assert.IsNotNull(x1);
-
-
-         IMoleculeBuildingBlock x2 = SerializeAndDeserialize(x1);
-
+         var x1 = _buildConfiguration.Molecules;
+         var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualBuildingBlock(x2, x1);
       }
    }
@@ -84,11 +77,8 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexPassiveTransportBB()
       {
-         PassiveTransportBuildingBlock x1 = _buildConfiguration.PassiveTransports as PassiveTransportBuildingBlock;
-         Assert.IsNotNull(x1);
-
-         IPassiveTransportBuildingBlock x2 = SerializeAndDeserialize(x1);
-
+         var x1 = _buildConfiguration.PassiveTransports;
+         var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualBuildingBlock(x2, x1);
       }
    }
@@ -98,11 +88,8 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexReactionBB()
       {
-         ReactionBuildingBlock x1 = _buildConfiguration.Reactions as ReactionBuildingBlock;
-         Assert.IsNotNull(x1);
-
-         IReactionBuildingBlock x2 = SerializeAndDeserialize(x1);
-
+         var x1 = _buildConfiguration.Reactions;
+         var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualBuildingBlock(x2, x1);
       }
    }
@@ -112,17 +99,15 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexEventGroupBB()
       {
-         EventGroupBuildingBlock x1 = _buildConfiguration.EventGroups as EventGroupBuildingBlock;
-         Assert.IsNotNull(x1);
-         ApplicationBuilder a1 = CreateObject<ApplicationBuilder>().WithName("App.Builder");
+         var x1 = _buildConfiguration.EventGroups;
+         var a1 = CreateObject<ApplicationBuilder>().WithName("App.Builder");
          x1.Add(a1);
          var applicationMoleculeBuilder = CreateObject<ApplicationMoleculeBuilder>().WithName("AppMolecule");
-         IFormula f2 = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(3.4);
+         var f2 = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(3.4);
          applicationMoleculeBuilder.Formula = f2;
          applicationMoleculeBuilder.RelativeContainerPath = new ObjectPath(new[] {"A", "B"});
          a1.AddMolecule(applicationMoleculeBuilder);
-         IEventGroupBuildingBlock x2 = SerializeAndDeserialize(x1);
-
+         var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualBuildingBlock(x2, x1);
       }
    }
@@ -132,10 +117,8 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexSpatialStructure()
       {
-         SpatialStructure x1 = _buildConfiguration.SpatialStructure as SpatialStructure;
-         Assert.IsNotNull(x1);
-
-         ISpatialStructure x2 = SerializeAndDeserialize(x1);
+         var x1 = _buildConfiguration.SpatialStructure;
+         var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualSpatialStructure(x2, x1);
       }
    }
@@ -145,11 +128,8 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexMoleculeStartValuesBuildingBlock()
       {
-         MoleculeStartValuesBuildingBlock x1 = _buildConfiguration.MoleculeStartValues as MoleculeStartValuesBuildingBlock;
-         Assert.IsNotNull(x1);
-
-         IMoleculeStartValuesBuildingBlock x2 = SerializeAndDeserialize(x1);
-
+         var x1 = _buildConfiguration.MoleculeStartValues;
+         var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualMoleculeStartValuesBuildingBlock(x2, x1);
       }
    }
@@ -159,9 +139,8 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexParameterStartValuesBuildingBlock()
       {
-         ParameterStartValuesBuildingBlock x1 = _buildConfiguration.ParameterStartValues as ParameterStartValuesBuildingBlock;
-         Assert.IsNotNull(x1);
-         IParameterStartValuesBuildingBlock x2 = SerializeAndDeserialize(x1);
+         var x1 = _buildConfiguration.ParameterStartValues;
+         var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualParameterStartValuesBuildingBlock(x2, x1);
       }
    }
@@ -171,11 +150,9 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexBuildConfiguration()
       {
-         BuildConfiguration x1 = _buildConfiguration as BuildConfiguration;
+         var x1 = _buildConfiguration;
          Assert.IsNotNull(x1);
-
-         IBuildConfiguration x2 = SerializeAndDeserialize(x1);
-
+         var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualBuildConfiguration(x2, x1);
       }
    }

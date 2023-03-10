@@ -936,6 +936,7 @@ namespace OSPSuite.Helpers
 
          spatialStructure.AddNeighborhood(neighborhood6);
 
+         spatialStructure.ResolveReferencesInNeighborhoods();
          return spatialStructure;
       }
 

@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Diagram;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Presentation.Diagram.Elements;
 using OSPSuite.Presentation.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Diagram
 {
@@ -27,13 +27,13 @@ namespace OSPSuite.Presentation.Diagram
       {
          CurrentInsertLocation = new PointF(10, 10);
          UpdateMethods = new Dictionary<Type, Action<IObjectBase, IBaseNode>>();
-         RegisterUpdateMethod(typeof (IContainer), UpdateContainer);
-         RegisterUpdateMethod(typeof (INeighborhoodBase), UpdateNeighborhoodBase);
+         RegisterUpdateMethod< IContainer>(UpdateContainer);
+         RegisterUpdateMethod< INeighborhoodBase>(UpdateNeighborhoodBase);
       }
 
       public PointF CurrentInsertLocation
       {
-         get { return _currentInsertLocation; }
+         get => _currentInsertLocation;
          set
          {
             _previousInsertLocation = _currentInsertLocation;
@@ -58,7 +58,7 @@ namespace OSPSuite.Presentation.Diagram
          return CurrentInsertLocation == PreviousInsertLocation;
       }
 
-      public bool MustHandleExisting(string id) 
+      public bool MustHandleExisting(string id)
       {
          if (string.IsNullOrEmpty(id) || PkModel == null)
             return false;
@@ -83,6 +83,7 @@ namespace OSPSuite.Presentation.Diagram
          {
             DiagramModel.EndUpdate();
          }
+
          IsInitialized = true;
       }
 
@@ -100,7 +101,7 @@ namespace OSPSuite.Presentation.Diagram
          {
             containerNode.CalculateBounds();
             // to adjust neighborhoodlinks to possibly smaller container node
-            containerNode.PostLayoutStep();         
+            containerNode.PostLayoutStep();
          }
 
          foreach (var node in DiagramModel.GetAllChildren<IBaseNode>())
@@ -109,13 +110,13 @@ namespace OSPSuite.Presentation.Diagram
          }
       }
 
-      public void RefreshDiagramFromModel() 
+      public void RefreshDiagramFromModel()
       {
          try
          {
             DiagramModel.BeginUpdate();
             // do not couple already existing nodes again
-            UpdateDiagramModel(PkModel, DiagramModel, coupleAll: false); 
+            UpdateDiagramModel(PkModel, DiagramModel, coupleAll: false);
          }
          finally
          {
@@ -153,7 +154,7 @@ namespace OSPSuite.Presentation.Diagram
          if (entity?.ParentContainer != null)
          {
             parentContainerBase = (IContainerBase) DiagramModel.GetNode(entity.ParentContainer.Id);
-            if (parentContainerBase == null) 
+            if (parentContainerBase == null)
                return; //do not add container or parameter in containers not shown, e.g. in globalmoleculedependentproperties
 
             // therefore the node for neighborhoodsContainer has to be created (see InitializeWith)
@@ -167,16 +168,17 @@ namespace OSPSuite.Presentation.Diagram
 
       protected virtual bool DecoupleObjectBase(IObjectBase objectBase, bool recursive)
       {
-         if (objectBase.GetType() == typeof (Container))
+         if (objectBase.GetType() == typeof(Container))
          {
             var container = objectBase.DowncastTo<IContainer>();
             if (recursive)
             {
                foreach (var child in container.Children)
                {
-                  DecoupleObjectBase(child,recursive: true);
+                  DecoupleObjectBase(child, recursive: true);
                }
             }
+
             return Decouple<IContainer, IContainerNode>(container);
          }
 
@@ -201,24 +203,25 @@ namespace OSPSuite.Presentation.Diagram
          var neighborhoodBase = neighborhoodBaseAsEntity as INeighborhoodBase;
          var neighborhoodBaseNode = neighborhoodNodeAsBaseNode as INeighborhoodNode;
          neighborhoodBaseNode.Description = neighborhoodBase.Name;
-         
+
          if (!string.IsNullOrEmpty(neighborhoodBase.Description))
             neighborhoodBaseNode.Description += Environment.NewLine + neighborhoodBase.Description;
          else
             neighborhoodBaseNode.Description += Environment.NewLine + "Neighborhood between " + neighborhoodBase.FirstNeighbor.EntityPath() + " and " + neighborhoodBase.SecondNeighbor.EntityPath();
       }
 
-      protected void RegisterUpdateMethod(Type entityType, Action<IObjectBase, IBaseNode> updateMethod)
+      protected void RegisterUpdateMethod<T>(Action<IObjectBase, IBaseNode> updateMethod)
       {
-         UpdateMethods.Add(entityType, updateMethod);
+         UpdateMethods.Add(typeof(T), updateMethod);
       }
 
       protected virtual IBaseNode AddObjectBase(IContainerBase parent, IObjectBase objectBase, bool recursive, bool coupleAll)
       {
-         IBaseNode node = AddNeighborhood(objectBase as INeighborhoodBase);
-         if (node != null) return node;
-         node = AddContainer(parent, objectBase as IContainer, recursive, coupleAll);
-         return node;
+         var node = AddNeighborhood(objectBase as INeighborhoodBase);
+         if (node != null)
+            return node;
+
+         return AddContainer(parent, objectBase as IContainer, recursive, coupleAll);
       }
 
       protected TNode Update<TObject, TNode>(TObject objectBase)
@@ -237,30 +240,33 @@ namespace OSPSuite.Presentation.Diagram
             node.Description += "\n" + objectBase.Description;
 
          // update further properties, if available);
-         if (UpdateMethods.ContainsKey(typeof (TObject)))
-            UpdateMethods[typeof (TObject)](objectBase, node);
+         if (UpdateMethods.ContainsKey(typeof(TObject)))
+            UpdateMethods[typeof(TObject)](objectBase, node);
 
          node.SetColorFrom(DiagramOptions.DiagramColors);
          return node;
       }
 
+      /// <summary>
+      ///    Returns the node corresponding to the param <paramref name="withId" /> or null if not found of if
+      ///    <paramref name="withId" /> is null
+      /// </summary>
       protected TNode NodeFor<TNode>(IWithId withId) where TNode : class, IBaseNode
       {
-         return DiagramModel.GetNode<TNode>(withId.Id);
+         return withId == null ? null : DiagramModel.GetNode<TNode>(withId.Id);
       }
 
       protected TNode AddAndCoupleNode<TObject, TNode>(IContainerBase parentContainerBase, TObject objectBase, bool coupleAll)
          where TObject : class, IObjectBase
          where TNode : class, IBaseNode, new()
       {
-         if (objectBase == null) return null;
          var node = NodeFor<TNode>(objectBase);
          if (node == null)
          {
             node = DiagramModel.CreateNode<TNode>(objectBase.Id, CurrentInsertLocation, parentContainerBase);
             Update<TObject, TNode>(objectBase);
             // couple only once at creation
-            Couple(objectBase, node); 
+            Couple(objectBase, node);
          }
          else
          {
@@ -268,12 +274,13 @@ namespace OSPSuite.Presentation.Diagram
             if (coupleAll)
                Couple(objectBase, node); // if called by InitializeWith
          }
+
          return node;
       }
 
       protected virtual TContainerNode AddContainer(IContainerBase parent, IContainer container, bool recursive, bool coupleAll)
       {
-         if (container == null || container.GetType() != typeof (Container))
+         if (container == null || container.GetType() != typeof(Container))
             return null;
 
          var containerNode = AddAndCoupleNode<IContainer, TContainerNode>(parent, container, coupleAll);
@@ -293,10 +300,10 @@ namespace OSPSuite.Presentation.Diagram
             return null;
 
          var firstNeighborContainerNode = NodeFor<IContainerNode>(neighborhood.FirstNeighbor);
-         var secondNeighborContainerNode = NodeFor <IContainerNode>(neighborhood.SecondNeighbor);
+         var secondNeighborContainerNode = NodeFor<IContainerNode>(neighborhood.SecondNeighbor);
 
          if (firstNeighborContainerNode == null || secondNeighborContainerNode == null)
-            return null; 
+            return null;
 
          var neighborhoodNode = NodeFor<TNeighborhoodNode>(neighborhood);
 
@@ -357,7 +364,7 @@ namespace OSPSuite.Presentation.Diagram
          if (!MustHandleExisting(objectBase.Id)) return;
          RemoveObjectBase(objectBase, true);
          //because cannot undo this action, reset undo stack
-         DiagramModel.ClearUndoStack(); 
+         DiagramModel.ClearUndoStack();
       }
 
       protected virtual bool RemoveObjectBase(IObjectBase objectBase, bool recursive)

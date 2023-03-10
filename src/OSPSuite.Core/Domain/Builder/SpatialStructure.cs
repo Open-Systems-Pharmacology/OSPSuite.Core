@@ -59,6 +59,11 @@ namespace OSPSuite.Core.Domain.Builder
       IEnumerable<IContainer> PhysicalContainers { get; }
 
       IReadOnlyList<NeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ObjectPath containerPath);
+
+      /// <summary>
+      ///    Ensures that all references to containers are resolved.
+      /// </summary>
+      void ResolveReferencesInNeighborhoods();
    }
 
    public class SpatialStructure : BuildingBlock, ISpatialStructure
@@ -74,6 +79,11 @@ namespace OSPSuite.Core.Domain.Builder
       }
 
       public IReadOnlyList<IContainer> TopContainers => _allTopContainers;
+
+
+      public void Add(IContainer topContainer) => AddTopContainer(topContainer);
+
+      public void Remove(IContainer topContainer) => RemoveTopContainer(topContainer);
 
       public void AddTopContainer(IContainer container)
       {
@@ -98,15 +108,9 @@ namespace OSPSuite.Core.Domain.Builder
          }
       }
 
-      public void AddNeighborhood(NeighborhoodBuilder neighborhoodBuilder)
-      {
-         NeighborhoodsContainer.Add(neighborhoodBuilder);
-      }
+      public void AddNeighborhood(NeighborhoodBuilder neighborhoodBuilder) => NeighborhoodsContainer.Add(neighborhoodBuilder);
 
-      public void RemoveNeighborhood(NeighborhoodBuilder neighborhoodBuilder)
-      {
-         NeighborhoodsContainer.RemoveChild(neighborhoodBuilder);
-      }
+      public void RemoveNeighborhood(NeighborhoodBuilder neighborhoodBuilder) => NeighborhoodsContainer.RemoveChild(neighborhoodBuilder);
 
       public IEnumerable<IContainer> PhysicalContainers
       {
@@ -124,7 +128,13 @@ namespace OSPSuite.Core.Domain.Builder
          }
       }
 
-      public IReadOnlyList<NeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ObjectPath containerPath) => Neighborhoods.Where(x => x.IsConnectedTo(containerPath)).ToList();
+      public IReadOnlyList<NeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ObjectPath containerPath) =>
+         Neighborhoods.Where(x => x.IsConnectedTo(containerPath)).ToList();
+
+      public void ResolveReferencesInNeighborhoods()
+      {
+         Neighborhoods.Each(x => x.ResolveReference(this));
+      }
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
@@ -136,18 +146,17 @@ namespace OSPSuite.Core.Domain.Builder
          sourceSpatialStructure.TopContainers.Each(c => AddTopContainer(cloneManager.Clone(c)));
          NeighborhoodsContainer = cloneManager.Clone(sourceSpatialStructure.NeighborhoodsContainer);
          GlobalMoleculeDependentProperties = cloneManager.Clone(sourceSpatialStructure.GlobalMoleculeDependentProperties);
+
+         //once all neighborhood have been updated, we can safely update the references
+         ResolveReferencesInNeighborhoods();
       }
 
       public override void AcceptVisitor(IVisitor visitor)
       {
          base.AcceptVisitor(visitor);
-         if (GlobalMoleculeDependentProperties != null)
-            GlobalMoleculeDependentProperties.AcceptVisitor(visitor);
-
-         TopContainers.Each(container => container.AcceptVisitor(visitor));
-
-         if (NeighborhoodsContainer != null)
-            NeighborhoodsContainer.AcceptVisitor(visitor);
+         GlobalMoleculeDependentProperties?.AcceptVisitor(visitor);
+         TopContainers.Each(x => x.AcceptVisitor(visitor));
+         NeighborhoodsContainer?.AcceptVisitor(visitor);
       }
 
       public IEnumerator<IContainer> GetEnumerator()
@@ -169,14 +178,6 @@ namespace OSPSuite.Core.Domain.Builder
          return GetEnumerator();
       }
 
-      public void Add(IContainer container)
-      {
-         _allTopContainers.Add(container);
-      }
-
-      public void Remove(IContainer container)
-      {
-         _allTopContainers.Remove(container);
-      }
+    
    }
 }

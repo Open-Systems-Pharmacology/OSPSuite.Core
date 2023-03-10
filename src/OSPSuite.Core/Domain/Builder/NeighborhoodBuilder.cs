@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Builder
 {
@@ -19,12 +20,13 @@ namespace OSPSuite.Core.Domain.Builder
    public class NeighborhoodBuilder : Container, INeighborhoodBase
    {
       //We define a property set for the first neighbor only to be compatible with serialization prior to v12
-      public IContainer FirstNeighbor { get; set; }
+      public IContainer FirstNeighbor { get; private set; }
 
       //We define a property set for the second neighbor only to be compatible with serialization prior to v12
-      public IContainer SecondNeighbor { get; set; }
+      public IContainer SecondNeighbor { get; private set; }
 
       public ObjectPath FirstNeighborPath { get; set; }
+
       public ObjectPath SecondNeighborPath { get; set; }
 
       public NeighborhoodBuilder()
@@ -45,11 +47,29 @@ namespace OSPSuite.Core.Domain.Builder
          return Equals(FirstNeighborPath, containerPath) || Equals(SecondNeighborPath, containerPath);
       }
 
-      public void ResolveReference(IContainer container)
+      /// <summary>
+      ///    Tries to resolve the reference to the first and second neighbor.
+      ///    This method should be called after deserialization or when a new container is added to the structure
+      /// </summary>
+      public void ResolveReference(IReadOnlyList<IContainer> topContainers) => topContainers.Each(resolveReferenceIfRequired);
+
+      /// <summary>
+      ///    Tries to resolve the reference to the first and second neighbor.
+      ///    This method should be called after deserialization or when a new container is added to the structure
+      /// </summary>
+      private void resolveReferenceIfRequired(IContainer container)
       {
-         FirstNeighbor = FirstNeighborPath.Resolve<IContainer>(container);
-         SecondNeighbor = SecondNeighborPath.Resolve<IContainer>(container);
+         //only update if undefined
+         FirstNeighbor = FirstNeighbor ?? FirstNeighborPath.Resolve<IContainer>(container);
+         SecondNeighbor = SecondNeighbor ?? SecondNeighborPath.Resolve<IContainer>(container);
       }
+
+      /// <summary>
+      ///    Tries to resolve the reference to the first and second neighbor.
+      ///    This method should be called after deserialization or when a new container is added to the structure
+      /// </summary>
+      /// <param name="spatialStructure">Spatial structure used to resolve containers (in all top containers)</param>
+      public void ResolveReference(ISpatialStructure spatialStructure) => ResolveReference(spatialStructure.TopContainers);
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
