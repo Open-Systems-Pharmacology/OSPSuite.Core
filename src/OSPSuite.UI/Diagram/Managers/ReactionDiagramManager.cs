@@ -17,7 +17,7 @@ namespace OSPSuite.UI.Diagram.Managers
    {
       public ReactionDiagramManager()
       {
-         RegisterUpdateMethod(typeof (IReactionBuilder), UpdateReactionBuilder);
+         RegisterUpdateMethod<IReactionBuilder>(UpdateReactionBuilder);
       }
 
       protected override void UpdateDiagramModel(T reactionBuildingBlock, IDiagramModel diagramModel, bool coupleAll)

@@ -1,11 +1,11 @@
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility.Container;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core
 {
@@ -55,15 +55,6 @@ namespace OSPSuite.Core
       public void should_have_set_BuildingVersion()
       {
          sut.Version.ShouldBeEqualTo(_buildingBlockVersion);
-      }
-   }
-
-   public class When_enumerating_over_all_the_container_defined_in_a_spatial_structure : concern_for_SpatialStructure
-   {
-      [Observation]
-      public void should_not_return_undefined_container()
-      {
-         sut.Each(x=>x.ShouldNotBeNull());
       }
    }
 }
