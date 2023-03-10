@@ -65,8 +65,8 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_have_set_the_neighbors_right()
       {
-         _result.FirstNeighborPath.ShouldBeEqualTo(_objectPathFactory.CreateAbsoluteObjectPath(_firstNeighbor));
-         _result.SecondNeighborPath.ShouldBeEqualTo(_objectPathFactory.CreateAbsoluteObjectPath(_secondNeighbor));
+         _result.FirstNeighborPath.PathAsString.ShouldBeEqualTo(_objectPathFactory.CreateAbsoluteObjectPath(_firstNeighbor));
+         _result.SecondNeighborPath.PathAsString.ShouldBeEqualTo(_objectPathFactory.CreateAbsoluteObjectPath(_secondNeighbor));
       }
    }
 }

@@ -47,8 +47,8 @@ namespace OSPSuite.Core
       [Observation]
       public void all_neighbors_should_be_cloned()
       {
-         sut.Neighborhoods.Each(neighbor => neighbor.FirstNeighbor.ShouldNotBeNull());
-         sut.Neighborhoods.Each(neighbor => neighbor.SecondNeighbor.ShouldNotBeNull());
+         sut.Neighborhoods.Each(neighbor => neighbor.FirstNeighborPath.ShouldNotBeNull());
+         sut.Neighborhoods.Each(neighbor => neighbor.SecondNeighborPath.ShouldNotBeNull());
       }
 
       [Observation]

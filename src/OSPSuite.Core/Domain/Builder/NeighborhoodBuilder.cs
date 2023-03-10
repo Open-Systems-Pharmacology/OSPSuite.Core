@@ -40,9 +40,9 @@ namespace OSPSuite.Core.Domain.Builder
 
       public void RemoveParameter(IParameter parameterToRemove) => RemoveChild(parameterToRemove);
 
-      public bool IsConnectedTo(IContainer container)
+      public bool IsConnectedTo(ObjectPath containerPath)
       {
-         return Equals(FirstNeighbor, container) || Equals(SecondNeighbor, container);
+         return Equals(FirstNeighborPath, containerPath) || Equals(SecondNeighborPath, containerPath);
       }
 
       public void ResolveReference(IContainer container)

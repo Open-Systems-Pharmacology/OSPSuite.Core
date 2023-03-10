@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -60,8 +61,6 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       string CreateUniqueName(IEnumerable<IWithName> usedNames, string baseName, bool canUseBaseName = false);
 
-      IEnumerable<NeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ISpatialStructure spatialStructure, IContainer container);
-
       /// <summary>
       ///    Returns a cache of all children satisfying <paramref name="predicate" /> by path defined in the
       ///    <paramref name="parentContainer" />
@@ -85,15 +84,17 @@ namespace OSPSuite.Core.Domain.Services
    public class ContainerTask : IContainerTask
    {
       private readonly IEntityPathResolver _entityPathResolver;
+      private readonly IObjectPathFactory _objectPathFactory;
       private readonly IObjectBaseFactory _objectBaseFactory;
 
       //format used to generate the unique name
-      private readonly string _uniqueNameFormat = "{0} ";
+      private const string _uniqueNameFormat = "{0} ";
 
-      public ContainerTask(IObjectBaseFactory objectBaseFactory, IEntityPathResolver entityPathResolver)
+      public ContainerTask(IObjectBaseFactory objectBaseFactory, IEntityPathResolver entityPathResolver, IObjectPathFactory objectPathFactory)
       {
          _objectBaseFactory = objectBaseFactory;
          _entityPathResolver = entityPathResolver;
+         _objectPathFactory = objectPathFactory;
       }
 
       public IContainer CreateOrRetrieveSubContainerByName(IContainer parentContainer, string subContainerName)
@@ -113,31 +114,19 @@ namespace OSPSuite.Core.Domain.Services
 
       public void RemoveContainerFrom(ISpatialStructure spatialStructure, IContainer containerToRemove)
       {
-         var neighborhoodBuilderToRemove = AllNeighborhoodBuildersConnectedWith(spatialStructure, containerToRemove);
-         foreach (var neighborhoodBuilder in neighborhoodBuilderToRemove.ToList())
-         {
-            spatialStructure.RemoveNeighborhood(neighborhoodBuilder);
-         }
-
+         var containerPath = _objectPathFactory.CreateAbsoluteObjectPath(containerToRemove);
+         spatialStructure.AllNeighborhoodBuildersConnectedWith(containerPath).Each(spatialStructure.RemoveNeighborhood);
          containerToRemove.ParentContainer.RemoveChild(containerToRemove);
       }
 
-      public IEnumerable<NeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ISpatialStructure spatialStructure, IContainer container)
-      {
-         return spatialStructure.Neighborhoods.Where(neighborhood => neighborhood.IsConnectedTo(container));
-      }
-
-      public string CreateUniqueName(IEnumerable<IWithName> usedNames, string baseName, bool canUseBaseName = false)
-      {
-         return CreateUniqueName(usedNames.Select(x => x.Name).ToList(), baseName, canUseBaseName);
-      }
+      public string CreateUniqueName(IEnumerable<IWithName> usedNames, string baseName, bool canUseBaseName = false) => CreateUniqueName(usedNames.Select(x => x.Name).ToList(), baseName, canUseBaseName);
 
       public string CreateUniqueName(IReadOnlyList<string> usedNames, string baseName, bool canUseBaseName = false)
       {
          if (!usedNames.Contains(baseName) && canUseBaseName)
             return baseName;
 
-         string baseFormat = string.Format(_uniqueNameFormat, baseName);
+         var baseFormat = string.Format(_uniqueNameFormat, baseName);
 
          //get all endings
          var allUsedNamesMatchingBaseFormat = usedNames.Where(n => n.StartsWith(baseFormat))
@@ -151,10 +140,8 @@ namespace OSPSuite.Core.Domain.Services
       {
          var allValues = new List<int>();
          foreach (var suffix in allUsedNamesMatchingBaseFormat)
-         {
             if (int.TryParse(suffix, out var value))
                allValues.Add(value);
-         }
 
          if (allValues.Count == 0)
             return 1;

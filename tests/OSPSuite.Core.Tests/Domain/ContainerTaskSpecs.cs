@@ -11,12 +11,14 @@ namespace OSPSuite.Core.Domain
    {
       protected IObjectBaseFactory _objectBaseFactory;
       protected IEntityPathResolver _entityPathResolver;
+      protected IObjectPathFactory _objectPathFactory;
 
       protected override void Context()
       {
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          _entityPathResolver = A.Fake<IEntityPathResolver>();
-         sut = new ContainerTask(_objectBaseFactory, _entityPathResolver);
+         _objectPathFactory = A.Fake<IObjectPathFactory>();
+         sut = new ContainerTask(_objectBaseFactory, _entityPathResolver, _objectPathFactory);
       }
    }
 
@@ -92,29 +94,29 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         _spatialStructure = A.Fake<ISpatialStructure>();
+         _spatialStructure = new SpatialStructure();
+         _spatialStructure.NeighborhoodsContainer = new Container();
          _parent = A.Fake<IContainer>();
          _containerToRemove = A.Fake<IContainer>();
          _containerToRemove.ParentContainer = _parent;
-         _containerToRemovePath = new ObjectPath("_containerToRemovePath");
-
+         _containerToRemovePath = new ObjectPath("containerToRemovePath");
+         A.CallTo(() => _objectPathFactory.CreateAbsoluteObjectPath(_containerToRemove)).Returns(_containerToRemovePath);
          _firstNeighborRemove = new NeighborhoodBuilder
          {
             FirstNeighborPath = _containerToRemovePath,
             SecondNeighborPath = new ObjectPath("anotherContainer"),
+            Name = "firstNeighborRemove"
          };
          _secondNeighborRemove = new NeighborhoodBuilder
          {
             FirstNeighborPath = new ObjectPath("anotherContainer"),
             SecondNeighborPath = _containerToRemovePath,
+            Name = "secondNeighborRemove"
          };
-         _thirdNeighborhood = new NeighborhoodBuilder();
-         A.CallTo(() => _spatialStructure.Neighborhoods).Returns(new[]
-         {
-            _thirdNeighborhood,
-            _firstNeighborRemove,
-            _secondNeighborRemove
-         });
+         _thirdNeighborhood = new NeighborhoodBuilder {Name = "thirdNeighborhood"};
+         _spatialStructure.AddNeighborhood(_firstNeighborRemove);
+         _spatialStructure.AddNeighborhood(_secondNeighborRemove);
+         _spatialStructure.AddNeighborhood(_thirdNeighborhood);
       }
 
       protected override void Because()
@@ -123,15 +125,9 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_call_remove_for_firstNeighborRemove()
+      public void should_remove_the_neighborhood_connected_to_the_container_to_remove()
       {
-         A.CallTo(() => _spatialStructure.RemoveNeighborhood(_firstNeighborRemove)).MustHaveHappened();
-      }
-
-      [Observation]
-      public void should_call_remove_for_secondNeighborRemove()
-      {
-         A.CallTo(() => _spatialStructure.RemoveNeighborhood(_secondNeighborRemove)).MustHaveHappened();
+         _spatialStructure.Neighborhoods.ShouldOnlyContain(_thirdNeighborhood);
       }
 
       [Observation]

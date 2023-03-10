@@ -52,17 +52,17 @@ namespace OSPSuite.Core.Domain.Mappers
          return neighborhoodsParentContainer;
       }
 
-      private ICache<string, IList<string>> presentMoleculesCachedByContainerPath(IEnumerable<string> namesOfFloatingMolecules, IBuildConfiguration buildConfiguration)
+      private ICache<string, List<string>> presentMoleculesCachedByContainerPath(IEnumerable<string> namesOfFloatingMolecules, IBuildConfiguration buildConfiguration)
       {
          var startValues =
             buildConfiguration.MoleculeStartValues.Where(msv => (msv.IsPresent &&
                                                                  namesOfFloatingMolecules.Contains(msv.MoleculeName))).ToList();
 
-         var moleculeStartValuesPerContainer = new Cache<string, IList<string>>();
+         var moleculeStartValuesPerContainer = new Cache<string, List<string>>();
 
          foreach (var msv in startValues)
          {
-            IList<string> moleculeNames;
+            List<string> moleculeNames;
             var path = msv.ContainerPath.ToString();
 
             if (moleculeStartValuesPerContainer.Contains(path))
@@ -84,8 +84,7 @@ namespace OSPSuite.Core.Domain.Mappers
       /// <summary>
       ///    Returns molecules which will be created in both neighbors of the neighborhood
       /// </summary>
-      private IEnumerable<string> moleculeNamesFor(NeighborhoodBuilder neighborhoodBuilder,
-         ICache<string, IList<string>> moleculesStartValuesForFloatingMolecules)
+      private IEnumerable<string> moleculeNamesFor(NeighborhoodBuilder neighborhoodBuilder, ICache<string, List<string>> moleculesStartValuesForFloatingMolecules)
       {
          var pathToFirstNeighbor = neighborhoodBuilder.FirstNeighborPath.PathAsString;
          var pathToSecondNeighbor = neighborhoodBuilder.SecondNeighborPath.PathAsString;

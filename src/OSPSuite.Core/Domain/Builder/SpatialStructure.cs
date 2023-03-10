@@ -57,6 +57,8 @@ namespace OSPSuite.Core.Domain.Builder
       ///    Returns all physical containers starting at "Root"
       /// </summary>
       IEnumerable<IContainer> PhysicalContainers { get; }
+
+      IReadOnlyList<NeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ObjectPath containerPath);
    }
 
    public class SpatialStructure : BuildingBlock, ISpatialStructure
@@ -121,6 +123,8 @@ namespace OSPSuite.Core.Domain.Builder
                yield return rootContainer;
          }
       }
+
+      public IReadOnlyList<NeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ObjectPath containerPath) => Neighborhoods.Where(x => x.IsConnectedTo(containerPath)).ToList();
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
