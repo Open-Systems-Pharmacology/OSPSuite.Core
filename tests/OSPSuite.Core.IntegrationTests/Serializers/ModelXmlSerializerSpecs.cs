@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Serializers
          x1.Root.Add(c2);
 
          x1.Neighborhoods = CreateObject<Container>().WithName(Constants.NEIGHBORHOODS);
-         INeighborhood n12 = CreateObject<Neighborhood>().WithName("Nina").WithFirstNeighbor(c1).WithSecondNeighbor(c2);
+         var n12 = CreateObject<Neighborhood>().WithName("Nina").WithFirstNeighbor(c1).WithSecondNeighbor(c2);
          x1.Neighborhoods.Add(n12);
 
          Model x2 = SerializeAndDeserialize(x1);

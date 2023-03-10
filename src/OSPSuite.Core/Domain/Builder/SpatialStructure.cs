@@ -1,35 +1,36 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
-using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Builder
 {
    public interface ISpatialStructure : IBuildingBlock<IContainer>
    {
       /// <summary>
-      ///    Container-structure with subcontainers and parameters (e.g. one container but for special modelling situation like
+      ///    Container-structure with subcontainers and parameters (e.g. one container but for special modeling situation like
       ///    mother/featus model, 2 root containers would be used)
       /// </summary>
-      IEnumerable<IContainer> TopContainers { get; }
+      IReadOnlyList<IContainer> TopContainers { get; }
 
       /// <summary>
-      ///    Add container in the top hiearchy level of the spatial structure
+      ///    Add container in the top hierarchy level of the spatial structure
       /// </summary>
       void AddTopContainer(IContainer container);
 
       /// <summary>
-      ///    Remove container from the top hiearchy level of the spatial structure
+      ///    Remove container from the top hierarchy level of the spatial structure
       /// </summary>
       void RemoveTopContainer(IContainer container);
 
       /// <summary>
       ///    All neighborhoods defined for the spatial structure
       /// </summary>
-      IEnumerable<INeighborhoodBuilder> Neighborhoods { get; }
+      IReadOnlyList<NeighborhoodBuilder> Neighborhoods { get; }
 
       /// <summary>
       ///    Container which contains all NeighborhoodBuilder
@@ -39,9 +40,9 @@ namespace OSPSuite.Core.Domain.Builder
       /// <summary>
       ///    Add neighborhood to spatial structure
       /// </summary>
-      void AddNeighborhood(INeighborhoodBuilder neighborhoodBuilder);
+      void AddNeighborhood(NeighborhoodBuilder neighborhoodBuilder);
 
-      void RemoveNeighborhood(INeighborhoodBuilder neighborhoodBuilder);
+      void RemoveNeighborhood(NeighborhoodBuilder neighborhoodBuilder);
 
       /// <summary>
       ///    Molecule-dependent properties, which must be defined only
@@ -56,11 +57,13 @@ namespace OSPSuite.Core.Domain.Builder
       ///    Returns all physical containers starting at "Root"
       /// </summary>
       IEnumerable<IContainer> PhysicalContainers { get; }
+
+      IReadOnlyList<NeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ObjectPath containerPath);
    }
 
    public class SpatialStructure : BuildingBlock, ISpatialStructure
    {
-      private readonly IList<IContainer> _allTopContainers;
+      private readonly List<IContainer> _allTopContainers;
       public IContainer GlobalMoleculeDependentProperties { get; set; }
       public IContainer NeighborhoodsContainer { get; set; }
 
@@ -70,10 +73,7 @@ namespace OSPSuite.Core.Domain.Builder
          _allTopContainers = new List<IContainer>();
       }
 
-      public IEnumerable<IContainer> TopContainers
-      {
-         get { return _allTopContainers; }
-      }
+      public IReadOnlyList<IContainer> TopContainers => _allTopContainers;
 
       public void AddTopContainer(IContainer container)
       {
@@ -87,23 +87,23 @@ namespace OSPSuite.Core.Domain.Builder
          _allTopContainers.Remove(container);
       }
 
-      public IEnumerable<INeighborhoodBuilder> Neighborhoods
+      public IReadOnlyList<NeighborhoodBuilder> Neighborhoods
       {
          get
          {
             if (NeighborhoodsContainer == null)
-               return Enumerable.Empty<INeighborhoodBuilder>();
+               return Array.Empty<NeighborhoodBuilder>();
 
-            return NeighborhoodsContainer.GetChildren<INeighborhoodBuilder>();
+            return NeighborhoodsContainer.GetChildren<NeighborhoodBuilder>().ToList();
          }
       }
 
-      public void AddNeighborhood(INeighborhoodBuilder neighborhoodBuilder)
+      public void AddNeighborhood(NeighborhoodBuilder neighborhoodBuilder)
       {
          NeighborhoodsContainer.Add(neighborhoodBuilder);
       }
 
-      public void RemoveNeighborhood(INeighborhoodBuilder neighborhoodBuilder)
+      public void RemoveNeighborhood(NeighborhoodBuilder neighborhoodBuilder)
       {
          NeighborhoodsContainer.RemoveChild(neighborhoodBuilder);
       }
@@ -124,6 +124,8 @@ namespace OSPSuite.Core.Domain.Builder
          }
       }
 
+      public IReadOnlyList<NeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ObjectPath containerPath) => Neighborhoods.Where(x => x.IsConnectedTo(containerPath)).ToList();
+
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
@@ -133,12 +135,6 @@ namespace OSPSuite.Core.Domain.Builder
 
          sourceSpatialStructure.TopContainers.Each(c => AddTopContainer(cloneManager.Clone(c)));
          NeighborhoodsContainer = cloneManager.Clone(sourceSpatialStructure.NeighborhoodsContainer);
-         foreach (var neighborhoodBuilder in Neighborhoods)
-         {
-            var sourceNeighborhood = neighborhoodBuilderSourceFor(neighborhoodBuilder, sourceSpatialStructure.Neighborhoods);
-            updateNeighborsReferences(sourceNeighborhood, neighborhoodBuilder);
-         }
-
          GlobalMoleculeDependentProperties = cloneManager.Clone(sourceSpatialStructure.GlobalMoleculeDependentProperties);
       }
 
@@ -152,40 +148,6 @@ namespace OSPSuite.Core.Domain.Builder
 
          if (NeighborhoodsContainer != null)
             NeighborhoodsContainer.AcceptVisitor(visitor);
-      }
-
-      /// <summary>
-      ///    Copy the references for first and second Neighbor from <paramref name="sourceNeighborhoodBuilder" /> to
-      ///    <paramref name="targetNeighborhoodBuilder" />.
-      /// </summary>
-      /// <param name="sourceNeighborhoodBuilder">The source neighborhood builder to copy neighbors from.</param>
-      /// <param name="targetNeighborhoodBuilder">The neighborhood builder to copy neighbors to.</param>
-      private void updateNeighborsReferences(INeighborhoodBuilder sourceNeighborhoodBuilder, INeighborhoodBuilder targetNeighborhoodBuilder)
-      {
-         var objectPathFactory = new ObjectPathFactory(new AliasCreator());
-         var firstPath = objectPathFactory.CreateAbsoluteObjectPath(sourceNeighborhoodBuilder.FirstNeighbor);
-         var secondPath = objectPathFactory.CreateAbsoluteObjectPath(sourceNeighborhoodBuilder.SecondNeighbor);
-
-         foreach (var topContainer in TopContainers)
-         {
-            var firstNeighbor = firstPath.Resolve<IContainer>(topContainer);
-            var secondNeighbor = secondPath.Resolve<IContainer>(topContainer);
-
-            if (firstNeighbor != null)
-               targetNeighborhoodBuilder.FirstNeighbor = firstNeighbor;
-
-            if (secondNeighbor != null)
-               targetNeighborhoodBuilder.SecondNeighbor = secondNeighbor;
-
-            //both neighbors set. early exit
-            if (targetNeighborhoodBuilder.FirstNeighbor != null && targetNeighborhoodBuilder.SecondNeighbor != null)
-               return;
-         }
-      }
-
-      private INeighborhoodBuilder neighborhoodBuilderSourceFor(INeighborhoodBuilder neighborhoodBuilder, IEnumerable<INeighborhoodBuilder> sourceNeighborhoods)
-      {
-         return sourceNeighborhoods.FindByName(neighborhoodBuilder.Name);
       }
 
       public IEnumerator<IContainer> GetEnumerator()

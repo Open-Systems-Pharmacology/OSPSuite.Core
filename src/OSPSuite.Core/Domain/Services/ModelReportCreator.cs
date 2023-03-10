@@ -88,7 +88,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private void reportFor(IContainer container)
       {
-         if (container.IsAnImplementationOf<INeighborhood>())
+         if (container.IsAnImplementationOf<Neighborhood>())
             return;
          if (container.IsAnImplementationOf<ITransport>())
             return;
@@ -127,7 +127,7 @@ namespace OSPSuite.Core.Domain.Services
          _report.AppendLine();
       }
 
-      private void reportFor(INeighborhood neighborhood)
+      private void reportFor(Neighborhood neighborhood)
       {
          _report.AppendFormat("Neighborhood: {0}", neighborhood.Name);
          _report.AppendLine();
@@ -380,7 +380,7 @@ namespace OSPSuite.Core.Domain.Services
          if (model == null) return;
          addSeparatorFor("NEIGHBORHOODS");
 
-         foreach (var neighborhood in model.Neighborhoods.GetAllChildren<INeighborhood>())
+         foreach (var neighborhood in model.Neighborhoods.GetAllChildren<Neighborhood>())
          {
             reportFor(neighborhood);
          }

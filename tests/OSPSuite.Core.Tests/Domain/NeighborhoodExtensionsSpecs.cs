@@ -4,18 +4,18 @@ using OSPSuite.BDDHelper.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_neighborhood_extensions : StaticContextSpecification
+   public abstract class concern_for_NeighborhoodExtensions : StaticContextSpecification
    {
-      protected INeighborhood _neighborhood;
+      protected Neighborhood _neighborhood;
 
       protected override void Context()
       {
-         _neighborhood = A.Fake<INeighborhood>();
+         _neighborhood = A.Fake<Neighborhood>();
       }
    }
 
    
-   public class When_setting_the_first_neighbor_of_a_neighborhood_with_the_extension : concern_for_neighborhood_extensions
+   public class When_setting_the_first_neighbor_of_a_neighborhood_with_the_extension : concern_for_NeighborhoodExtensions
    {
       private IContainer _firstContainer;
 
@@ -37,7 +37,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_setting_the_second_neighbor_of_a_neighborhood_with_the_extension : concern_for_neighborhood_extensions
+   public class When_setting_the_second_neighbor_of_a_neighborhood_with_the_extension : concern_for_NeighborhoodExtensions
    {
       private IContainer _firstContainer;
 

@@ -1,49 +1,65 @@
 using System.Collections.Generic;
+using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public interface INeighborhoodBuilder : INeighborhoodBase
+   public interface INeighborhoodBase : IContainer
    {
-      IContainer MoleculeProperties { get; }
-      IEnumerable<IParameter> Parameters { get; }
-      void AddParameter(IParameter newParameter);
-      void RemoveParameter(IParameter parameterToRemove);
-      bool IsConnectedTo(IContainer container);
+      /// <summary>
+      ///    First neighbor in the neighborhood.
+      /// </summary>
+      IContainer FirstNeighbor { get; }
+
+      /// <summary>
+      ///    Second neighbor in the neighborhood.
+      /// </summary>
+      IContainer SecondNeighbor { get; }
    }
 
-   public class NeighborhoodBuilder : Container, INeighborhoodBuilder
+   public class NeighborhoodBuilder : Container, INeighborhoodBase
    {
+      //We define a property set for the first neighbor only to be compatible with serialization prior to v12
       public IContainer FirstNeighbor { get; set; }
+
+      //We define a property set for the second neighbor only to be compatible with serialization prior to v12
       public IContainer SecondNeighbor { get; set; }
+
+      public ObjectPath FirstNeighborPath { get; set; }
+      public ObjectPath SecondNeighborPath { get; set; }
 
       public NeighborhoodBuilder()
       {
          ContainerType = ContainerType.Neighborhood;
       }
 
-      public IContainer MoleculeProperties
+      public IContainer MoleculeProperties => this.Container(Constants.MOLECULE_PROPERTIES);
+
+      public IEnumerable<IParameter> Parameters => GetChildren<IParameter>();
+
+      public void AddParameter(IParameter newParameter) => Add(newParameter);
+
+      public void RemoveParameter(IParameter parameterToRemove) => RemoveChild(parameterToRemove);
+
+      public bool IsConnectedTo(ObjectPath containerPath)
       {
-         get { return this.GetSingleChildByName<IContainer>(Constants.MOLECULE_PROPERTIES); }
+         return Equals(FirstNeighborPath, containerPath) || Equals(SecondNeighborPath, containerPath);
       }
 
-      public IEnumerable<IParameter> Parameters
+      public void ResolveReference(IContainer container)
       {
-         get { return GetChildren<IParameter>(); }
+         FirstNeighbor = FirstNeighborPath.Resolve<IContainer>(container);
+         SecondNeighbor = SecondNeighborPath.Resolve<IContainer>(container);
       }
 
-      public void AddParameter(IParameter newParameter)
+      public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
-         Add(newParameter);
-      }
+         base.UpdatePropertiesFrom(source, cloneManager);
+         var sourceNeighborhood = source as NeighborhoodBuilder;
+         if (sourceNeighborhood == null)
+            return;
 
-      public void RemoveParameter(IParameter parameterToRemove)
-      {
-         RemoveChild(parameterToRemove);
-      }
-
-      public bool IsConnectedTo(IContainer container)
-      {
-         return Equals(FirstNeighbor, container) || Equals(SecondNeighbor, container);
+         FirstNeighborPath = sourceNeighborhood.FirstNeighborPath;
+         SecondNeighborPath = sourceNeighborhood.SecondNeighborPath;
       }
    }
 }

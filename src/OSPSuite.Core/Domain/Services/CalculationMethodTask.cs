@@ -130,11 +130,14 @@ namespace OSPSuite.Core.Domain.Services
          _keywordReplacerTask.ReplaceIn(neighborhood, _model.Root);
       }
 
-      private static INeighborhood neighborhoodAncestorFor(IEntity entity)
+      private static Neighborhood neighborhoodAncestorFor(IEntity entity)
       {
-         if (entity == null) return null;
-         if (entity.IsAnImplementationOf<INeighborhood>())
-            return entity.DowncastTo<INeighborhood>();
+         if (entity == null) 
+            return null;
+
+         if (entity.IsAnImplementationOf<Neighborhood>())
+            return entity.DowncastTo<Neighborhood>();
+
          return neighborhoodAncestorFor(entity.ParentContainer);
       }
 

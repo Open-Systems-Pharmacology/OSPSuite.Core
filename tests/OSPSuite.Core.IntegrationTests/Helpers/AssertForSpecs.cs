@@ -80,9 +80,9 @@ namespace OSPSuite.Core.Helpers
          }
 
          // Types derived from other Builder
-         if (x1.IsAnImplementationOf<INeighborhoodBuilder>())
+         if (x1.IsAnImplementationOf<NeighborhoodBuilder>())
          {
-            AreEqualNeighborhoodBuilder((INeighborhoodBuilder) x1, (INeighborhoodBuilder) x2);
+            AreEqualNeighborhoodBuilder(x1.DowncastTo<NeighborhoodBuilder>(), x2.DowncastTo<NeighborhoodBuilder>());
             return;
          }
 
@@ -273,9 +273,9 @@ namespace OSPSuite.Core.Helpers
          }
 
          // Types derived from ObjectBase and Container
-         if (x1.IsAnImplementationOf<INeighborhood>())
+         if (x1.IsAnImplementationOf<Neighborhood>())
          {
-            AreEqualNeighborhood((INeighborhood) x1, (INeighborhood) x2);
+            AreEqualNeighborhood(x1.DowncastTo<Neighborhood>(), x2.DowncastTo<Neighborhood>());
             return;
          }
 
@@ -537,7 +537,7 @@ namespace OSPSuite.Core.Helpers
          AreEqualEnumerableOfNamedObjects(x1.Children, x2.Children, x => x.Name);
       }
 
-      public static void AreEqualNeighborhood(INeighborhood x1, INeighborhood x2)
+      public static void AreEqualNeighborhood(Neighborhood x1, Neighborhood x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualContainer(x1, x2);
@@ -1032,12 +1032,12 @@ namespace OSPSuite.Core.Helpers
          x2.ModifierNames.ShouldOnlyContain(x1.ModifierNames.ToArray());
       }
 
-      public static void AreEqualNeighborhoodBuilder(INeighborhoodBuilder x1, INeighborhoodBuilder x2)
+      public static void AreEqualNeighborhoodBuilder(NeighborhoodBuilder x1, NeighborhoodBuilder x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualContainer(x1, x2);
-         AreEqualContainer(x1.FirstNeighbor, x2.FirstNeighbor);
-         AreEqualContainer(x1.SecondNeighbor, x2.SecondNeighbor);
+         AreEqualObjectPath(x1.FirstNeighborPath, x2.FirstNeighborPath);
+         AreEqualObjectPath(x1.SecondNeighborPath, x2.SecondNeighborPath);
          AreEqualContainer(x1.MoleculeProperties, x2.MoleculeProperties);
       }
 

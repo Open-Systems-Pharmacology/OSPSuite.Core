@@ -143,7 +143,7 @@ namespace OSPSuite.Core
          var A = _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "A");
          var B = _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "B");
 
-         var allContainingTransporter1 = _model.Neighborhoods.GetAllChildren<INeighborhood>()
+         var allContainingTransporter1 = _model.Neighborhoods.GetAllChildren<Neighborhood>()
             .SelectMany(x => x.GetAllChildren<IContainer>()).Where(c => c.ContainsName("My Transport1"));
 
          allContainingTransporter1.ShouldOnlyContain(A, B);
@@ -154,7 +154,7 @@ namespace OSPSuite.Core
       {
          var A = _model.MoleculeContainerInNeighborhood("bon_pls_to_bon_cell", "A");
 
-         var allContainingTransporter1 = _model.Neighborhoods.GetAllChildren<INeighborhood>()
+         var allContainingTransporter1 = _model.Neighborhoods.GetAllChildren<Neighborhood>()
             .SelectMany(x => x.GetAllChildren<IContainer>()).Where(c => c.ContainsName("My Transport2"));
 
          allContainingTransporter1.ShouldOnlyContain(A);
@@ -462,12 +462,12 @@ namespace OSPSuite.Core
    {
       internal static IContainer MoleculeContainerInNeighborhood(this IModel model, string neighborhoodName, string moleculeName)
       {
-         return model.Neighborhoods.GetSingleChildByName<INeighborhood>(neighborhoodName).GetSingleChildByName<IContainer>(moleculeName);
+         return model.Neighborhoods.GetSingleChildByName<Neighborhood>(neighborhoodName).Container(moleculeName);
       }
 
       internal static IContainer ModelOrganCompartment(this IModel model, string organName, string compartmentName)
       {
-         return model.Root.GetSingleChildByName<IContainer>(ConstantsForSpecs.Organism).GetSingleChildByName<IContainer>(organName).GetSingleChildByName<IContainer>(compartmentName);
+         return model.Root.GetSingleChildByName<IContainer>(ConstantsForSpecs.Organism).Container(organName).Container(compartmentName);
       }
 
       internal static IMoleculeAmount ModelOrganCompartmentMolecule(this IModel model, string organName, string compartmentName, string moleculeName)

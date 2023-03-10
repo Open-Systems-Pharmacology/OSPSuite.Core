@@ -108,7 +108,7 @@ namespace OSPSuite.Core.Domain.Services
          return cache;
       }
 
-      private void finalizeNeighborhoods(IModel cloneModel, IEnumerable<INeighborhood> sourceNeighborhoods, ICache<string, INeighborhood> cloneNeighborhoods)
+      private void finalizeNeighborhoods(IModel cloneModel, IEnumerable<Neighborhood> sourceNeighborhoods, ICache<string, Neighborhood> cloneNeighborhoods)
       {
          foreach (var sourceNeighborhood in sourceNeighborhoods)
          {
@@ -118,7 +118,7 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private void finalizeTransportsInNeighborhood(IModel cloneModel, INeighborhood sourceNeighborhood, INeighborhood cloneNeighborhood)
+      private void finalizeTransportsInNeighborhood(IModel cloneModel, Neighborhood sourceNeighborhood, Neighborhood cloneNeighborhood)
       {
          finalizeTransportsInMoleculeParentContainer(cloneModel, sourceNeighborhood, cloneNeighborhood);
          foreach (var sourceMoleculeContainer in sourceNeighborhood.GetChildren<IContainer>())
@@ -170,7 +170,7 @@ namespace OSPSuite.Core.Domain.Services
          cloneTransport.TargetAmount = targetAmountPath.Resolve<IMoleculeAmount>(cloneModel.Root);
       }
 
-      private void resolveNeighbors(IModel cloneModel, INeighborhood sourceNeighborhood, INeighborhood cloneNeighborhood)
+      private void resolveNeighbors(IModel cloneModel, Neighborhood sourceNeighborhood, Neighborhood cloneNeighborhood)
       {
          var firstNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(sourceNeighborhood.FirstNeighbor);
          var secondNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(sourceNeighborhood.SecondNeighbor);
@@ -179,10 +179,10 @@ namespace OSPSuite.Core.Domain.Services
          cloneNeighborhood.SecondNeighbor = secondNeighborPath.Resolve<IContainer>(cloneModel.Root);
       }
 
-      private ICache<string, INeighborhood> createNeighborhoodCache(IModel model)
+      private ICache<string, Neighborhood> createNeighborhoodCache(IModel model)
       {
-         var cloneNeighborhoods = new Cache<string, INeighborhood>(x => x.Name);
-         cloneNeighborhoods.AddRange(model.Neighborhoods.GetChildren<INeighborhood>());
+         var cloneNeighborhoods = new Cache<string, Neighborhood>(x => x.Name);
+         cloneNeighborhoods.AddRange(model.Neighborhoods.GetChildren<Neighborhood>());
          return cloneNeighborhoods;
       }
    }

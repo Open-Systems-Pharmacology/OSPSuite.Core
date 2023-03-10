@@ -14,10 +14,10 @@ namespace OSPSuite.Core.Serializers
       public void TestSerialization()
       {
          var x1 = CreateObject<NeighborhoodBuilder>().WithName("Nena.Builder")
-            .WithMode(ContainerMode.Physical)
-            .WithFirstNeighbor(C1)
-            .WithSecondNeighbor(C2);
+            .WithMode(ContainerMode.Physical);
 
+         x1.FirstNeighborPath = new ObjectPath("A|B|C");
+         x1.SecondNeighborPath = new ObjectPath("D|E|F");
          x1.Add(CreateObject<Container>().WithMode(ContainerMode.Logical).WithName(Constants.MOLECULE_PROPERTIES));
 
          var K = CreateObject<Parameter>().WithName("K").WithFormula(CreateObject<ConstantFormula>().WithValue(23.4));

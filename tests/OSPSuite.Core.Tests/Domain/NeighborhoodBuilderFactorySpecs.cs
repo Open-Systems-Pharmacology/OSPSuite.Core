@@ -9,30 +9,31 @@ namespace OSPSuite.Core.Domain
    public abstract class concern_for_NeighborhoodBuilderFactory : ContextSpecification<INeighborhoodBuilderFactory>
    {
       private IObjectBaseFactory _objectBaseFactory;
+      protected IObjectPathFactory _objectPathFactory;
 
       protected override void Context()
       {
-         _objectBaseFactory =new TestObjectBaseFactory();
-         sut = new NeighborhoodBuilderFactory(_objectBaseFactory);
+         _objectBaseFactory = new TestObjectBaseFactory();
+         _objectPathFactory = new ObjectPathFactoryForSpecs();
+         sut = new NeighborhoodBuilderFactory(_objectBaseFactory, _objectPathFactory);
       }
    }
 
-   
-
-   
-   public class When_creating_a_new_neigborhood_builder : concern_for_NeighborhoodBuilderFactory
+   public class When_creating_a_new_neighborhood_builder : concern_for_NeighborhoodBuilderFactory
    {
-      private INeighborhoodBuilder _result;
+      private NeighborhoodBuilder _result;
 
       protected override void Because()
       {
-         _result= sut.Create();
+         _result = sut.Create();
       }
+
       [Observation]
-      public void should_create_a_new_neiighborhood_builder()
+      public void should_create_a_new_neighborhood_builder()
       {
          _result.ShouldNotBeNull();
       }
+
       [Observation]
       public void should_have_set_the_right_molecule_properties_container()
       {
@@ -43,18 +44,17 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   
    class When_creating_a_neighborhood_between_two_containers : concern_for_NeighborhoodBuilderFactory
    {
       private IContainer _secondNeighbor;
       private IContainer _firstNeighbor;
-      private INeighborhoodBuilder _result;
+      private NeighborhoodBuilder _result;
 
       protected override void Context()
       {
          base.Context();
-         _firstNeighbor = A.Fake<IContainer>();
-         _secondNeighbor = A.Fake<IContainer>();
+         _firstNeighbor = new Container().WithName("A");
+         _secondNeighbor = new Container().WithName("B");
       }
 
       protected override void Because()
@@ -65,8 +65,8 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_have_set_the_neighbors_right()
       {
-         _result.FirstNeighbor.ShouldBeEqualTo(_firstNeighbor);      
-         _result.SecondNeighbor.ShouldBeEqualTo(_secondNeighbor);
+         _result.FirstNeighborPath.PathAsString.ShouldBeEqualTo(_objectPathFactory.CreateAbsoluteObjectPath(_firstNeighbor));
+         _result.SecondNeighborPath.PathAsString.ShouldBeEqualTo(_objectPathFactory.CreateAbsoluteObjectPath(_secondNeighbor));
       }
    }
-}	
+}

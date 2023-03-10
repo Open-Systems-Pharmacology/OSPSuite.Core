@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Domain
 {
    public class BothNeighborsSatisfyingCriteriaException : OSPSuiteException
    {
-      public BothNeighborsSatisfyingCriteriaException(INeighborhood neighborhood) : base(Error.BothNeighborsSatisfying(neighborhood.Name))
+      public BothNeighborsSatisfyingCriteriaException(Neighborhood neighborhood) : base(Error.BothNeighborsSatisfying(neighborhood.Name))
       {
       }
    }
