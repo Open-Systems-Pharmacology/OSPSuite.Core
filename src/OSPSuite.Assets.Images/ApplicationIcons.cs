@@ -498,6 +498,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ExtensionModulesFolder = AddNamedIcon("ExtensionModulesFolder"); // TODO add icon svg file. Presently just a copy of Folder svg
       public static readonly ApplicationIcon Module = AddNamedIcon("Module"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
       public static readonly ApplicationIcon Neighborhood = AddNamedIcon("OSPSuite", "Neighborhood"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
+      public static readonly ApplicationIcon Neighbor = AddNamedIcon("OSPSuite", "Neighbor"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
       private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((SvgImage) null);
