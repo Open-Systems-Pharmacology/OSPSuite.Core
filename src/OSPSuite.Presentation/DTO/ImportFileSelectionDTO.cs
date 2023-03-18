@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using DevExpress.Utils.Svg;
 using OSPSuite.Assets;
@@ -62,7 +63,9 @@ namespace OSPSuite.Presentation.DTO
 
       public string Message => Messages.ToString("\n");
 
-      public ApplicationIcon Image => imageFrom(Status);
+      public Image Image => Icon.ToImage();
+
+      public ApplicationIcon Icon => imageFrom(Status);
 
       private ApplicationIcon imageFrom(NotificationType status)
       {
