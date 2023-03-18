@@ -18,7 +18,7 @@ namespace OSPSuite.Starter.Domain
          get { yield break; }
       }
 
-      public OutputMappings OutputMappings { get; set; }
+      public OutputMappings OutputMappings { get; set; } = new OutputMappings();
       public DataRepository ResultsDataRepository { get; set; }
       public void RemoveUsedObservedData(DataRepository dataRepository)
       {

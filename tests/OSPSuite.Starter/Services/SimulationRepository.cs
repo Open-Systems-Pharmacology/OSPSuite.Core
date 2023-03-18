@@ -39,7 +39,7 @@ namespace OSPSuite.Starter.Services
          {
             BuildConfiguration = buildConfiguration,
             Model = result.Model,
-            Name = "Test"
+            Name = "Test",
          };
 
          var allPersistable = simulation.All<IQuantity>().Where(x => x.Persistable).ToList();
