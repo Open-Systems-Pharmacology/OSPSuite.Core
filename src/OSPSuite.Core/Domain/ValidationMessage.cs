@@ -56,7 +56,7 @@ namespace OSPSuite.Core.Domain
       }
 
       /// <summary>
-      ///    Returns details if available on the error (usefull to aggregate more than one error for a given  object)
+      ///    Returns details if available on the error (useful to aggregate more than one error for a given  object)
       /// </summary>
       public virtual IEnumerable<string> Details => _details;
    }
