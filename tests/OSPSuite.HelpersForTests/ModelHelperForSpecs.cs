@@ -164,7 +164,9 @@ namespace OSPSuite.Helpers
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER, "RelExp").WithAlias("RelExp"));
          parameterStartValues.AddFormula(formula);
 
-         parameterStartValues[moleculeAPath].Formula = formula;
+         var parameterStartValue = _parameterStartValuesCreator.CreateParameterStartValue(moleculeAPath, 0, Constants.Dimension.NO_DIMENSION);
+         parameterStartValue.Formula = formula;
+         parameterStartValues.Add(parameterStartValue);
 
          var parameterPath = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "FormulaParameterOverwritten");
          parameterStartValues.Add(_parameterStartValuesCreator.CreateParameterStartValue(parameterPath, 300, Constants.Dimension.NO_DIMENSION));
@@ -830,9 +832,9 @@ namespace OSPSuite.Helpers
          //referencing parameter K between art_pls and bone_pls
 
          var objectPath = _objectPathFactory.CreateFormulaUsablePathFrom(
-            PARENT_CONTAINER, 
-            NBH, 
-            PARENT_CONTAINER, PARENT_CONTAINER, PARENT_CONTAINER, ConstantsForSpecs.Bone, ConstantsForSpecs.Plasma, 
+            PARENT_CONTAINER,
+            NBH,
+            PARENT_CONTAINER, PARENT_CONTAINER, PARENT_CONTAINER, ConstantsForSpecs.Bone, ConstantsForSpecs.Plasma,
             NBH, "K");
 
          objectPath.Alias = "K";

@@ -161,7 +161,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Observer_AmoutObs_1_should_have_only_been_created_for_molecules_A_and_B_in_art_plasma_and_lung_plasma_and_ven_plasma_and_bone_plasma_und_molecule_D_in_lung_plasma_and_ven_plasma_and_molecule_E_in_ven_plasma()
+      public void Observer_AmountObs_1_should_have_only_been_created_for_molecules_A_and_B_in_art_plasma_and_lung_plasma_and_ven_plasma_and_bone_plasma_und_molecule_D_in_lung_plasma_and_ven_plasma_and_molecule_E_in_ven_plasma()
       {
          string observerName = "AmountObs_1";
          var allContainingObserver = _model.Root.GetAllChildren<IContainer>().Where(c => c.ContainsName(observerName));
@@ -184,7 +184,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Observer_AmoutObs_2_should_have_only_been_created_for_molecules_C_in_lung_cell_and_bone_cell_and_molecule_E_in_bone_cell()
+      public void Observer_AmountObs_2_should_have_only_been_created_for_molecules_C_in_lung_cell_and_bone_cell_and_molecule_E_in_bone_cell()
       {
          string observerName = "AmountObs_2";
          var lung_cell_C = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, "C");
@@ -195,7 +195,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void Observer_AmoutObs_3_should_have_only_been_created_for_molecules_A_B_D_in_lung_cell_and_bone_cell()
+      public void Observer_AmountObs_3_should_have_only_been_created_for_molecules_A_B_D_in_lung_cell_and_bone_cell()
       {
          string observerName = "AmountObs_3";
          var lung_cell_A = _model.ModelOrganCompartmentMolecule(ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, "A");
@@ -450,7 +450,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_be_able_to_resolve_global_parmaeters_defined_in_reaction_referencing_other_global_parameters_from_another_reaction()
+      public void should_be_able_to_resolve_global_parameters_defined_in_reaction_referencing_other_global_parameters_from_another_reaction()
       {
          var r2k2Global = _model.Root.EntityAt<IParameter>("R2", "k2");
          var r1k2Global = _model.Root.EntityAt<IParameter>("R1", "k2");

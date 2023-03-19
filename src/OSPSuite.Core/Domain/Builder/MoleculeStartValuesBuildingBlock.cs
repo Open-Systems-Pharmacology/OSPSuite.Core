@@ -31,8 +31,6 @@ namespace OSPSuite.Core.Domain.Builder
          return string.Equals(idToCheck, buildingBlock.Id);
       }
 
-
-
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
@@ -42,6 +40,5 @@ namespace OSPSuite.Core.Domain.Builder
          MoleculeBuildingBlockId = sourceMoleculeStartValueBuildingBlock.MoleculeBuildingBlockId;
          SpatialStructureId = sourceMoleculeStartValueBuildingBlock.SpatialStructureId;
       }
-
    }
 }

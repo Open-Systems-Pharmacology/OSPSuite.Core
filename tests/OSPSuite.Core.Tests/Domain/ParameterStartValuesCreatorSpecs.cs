@@ -1,7 +1,9 @@
 ﻿using FakeItEasy;
 using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
@@ -12,8 +14,33 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
-         A.CallTo(() => _objectBaseFactory.Create<ParameterStartValuesBuildingBlock>()).Returns(new ParameterStartValuesBuildingBlock());
-         sut = new ParameterStartValuesCreator(_objectBaseFactory,new ObjectPathFactory(new AliasCreator()), new IdGenerator());
+         sut = new ParameterStartValuesCreator(_objectBaseFactory,new ObjectPathFactoryForSpecs(), new IdGenerator());
+      }
+   }
+
+   public class When_creating_a_parameter_start_value_for_a_parameter_and_object_path : concern_for_ParameterStartValuesCreator
+   {
+      private ObjectPath _objectPath;
+      private IParameter _parameter;
+      private ParameterStartValue _psv;
+
+      protected override void Context()
+      {
+         base.Context();
+         _objectPath =new ObjectPath("A", "B", "C");
+         _parameter = DomainHelperForSpecs.ConstantParameterWithValue(5).WithDimension(DomainHelperForSpecs.FractionDimensionForSpecs());
+      }
+      protected override void Because()
+      {
+         _psv = sut.CreateParameterStartValue(_objectPath, _parameter);
+      }
+
+      [Observation]
+      public void should_return_a_parameter_start_value_using_the_provided_path_as_well_as_the_dimension_and_the_value_of_the_parameter()
+      {
+         _psv.Path.ToString().ShouldBeEqualTo(_objectPath.ToString());
+         _psv.Dimension.ShouldBeEqualTo(_parameter.Dimension);
+         _psv.Value.ShouldBeEqualTo(_parameter.Value);
       }
    }
 
