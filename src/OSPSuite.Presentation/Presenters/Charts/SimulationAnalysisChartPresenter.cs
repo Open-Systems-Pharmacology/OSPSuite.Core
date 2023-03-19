@@ -83,7 +83,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          var categoryColumnSettings = Column(BrowserColumns.Category);
          categoryColumnSettings.Visible = false;
-         categoryColumnSettings.GroupIndex = 1;
+         categoryColumnSettings.GroupIndex = 0;
          ChartEditorPresenter.ApplyColumnSettings(categoryColumnSettings);
       }
 

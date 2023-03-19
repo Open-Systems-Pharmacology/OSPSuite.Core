@@ -4,19 +4,19 @@ namespace OSPSuite.R.Services
 {
    public interface ICsvDynamicSeparatorSelector : ICsvSeparatorSelector
    {
-      char? CsvSeparator { set; }
+      CSVSeparators CsvSeparators { set; }
    }
 
    /// <summary>
-   /// This class is used by the CsvDataSourceFile ro correclty parse csv files
+   ///    This class is used by the CsvDataSourceFile ro correctly parse csv files
    /// </summary>
    public class CsvSeparatorSelector : ICsvDynamicSeparatorSelector
    {
-      public char? CsvSeparator { get; set; }
+      public CSVSeparators CsvSeparators { get; set; }
 
-      public char? GetCsvSeparator(string fileName)
+      public CSVSeparators GetCsvSeparator(string fileName)
       {
-         return CsvSeparator;
+         return CsvSeparators;
       }
    }
 }

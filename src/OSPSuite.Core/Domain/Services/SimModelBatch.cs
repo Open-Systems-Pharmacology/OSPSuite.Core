@@ -22,6 +22,16 @@ namespace OSPSuite.Core.Domain.Services
       private string _simulationResultsName;
       private bool _calculateSensitivities;
 
+      /// <summary>
+      ///    This property is only required by the export of a model to C++ and must be set to true in this case BEFORE
+      ///    the SimModel simulation is loaded from XML.
+      /// </summary>
+      public bool KeepXMLNodeInSimModelSimulation { get; set; }
+
+      public bool CheckForNegativeValues { get; set; }
+
+      public bool TreatConstantMoleculesAsParameters { get; set; } = true;
+
       public SimModelBatch(ISimModelExporter simModelExporter, ISimModelSimulationFactory simModelSimulationFactory, IDataFactory dataFactory) : base(
          simModelExporter, simModelSimulationFactory)
       {
@@ -53,7 +63,7 @@ namespace OSPSuite.Core.Domain.Services
          var simulationExport = CreateSimulationExport(_modelCoreSimulation, SimModelExportMode.Optimized, variableMoleculePaths);
          var simulation = CreateSimulation(simulationExport, x =>
          {
-            x.CheckForNegativeValues = false;
+            x.CheckForNegativeValues = CheckForNegativeValues;
             x.KeepXMLNodeAsString = KeepXMLNodeInSimModelSimulation;
          });
          setVariableParameters(simulation, variableParameterPaths);
@@ -65,7 +75,7 @@ namespace OSPSuite.Core.Domain.Services
       private void setVariableParameters(Simulation simulation, IReadOnlyList<string> variableParameterPaths)
       {
          _allVariableParameters = SetVariableParameters(simulation, variableParameterPaths, _calculateSensitivities);
-         VariableParameterPaths =  _allVariableParameters.Select(x => x.Path).ToList();
+         VariableParameterPaths = _allVariableParameters.Select(x => x.Path).ToList();
       }
 
       private void setVariableMolecules(Simulation simulation, IReadOnlyList<string> variableMoleculePaths)
@@ -101,7 +111,11 @@ namespace OSPSuite.Core.Domain.Services
          var warnings = WarningsFrom(_simModelSimulation);
          var error = errorFromException ?? (hasResults ? null : Error.SimulationDidNotProduceResults);
 
-         return new SimulationRunResults(success: error == null, warnings, getResults(), error);
+         
+         if (error == null)
+            return new SimulationRunResults(warnings, getResults());
+
+         return new SimulationRunResults(warnings, error);
       }
 
       private bool simulationHasResults(Simulation simModelSimulation) => simModelSimulation.AllValues.Any();
@@ -171,14 +185,6 @@ namespace OSPSuite.Core.Domain.Services
       {
          _simModelSimulation.ExportToCode(outputFolder, CodeExportLanguage.Cpp, exportMode, modelName);
       }
-
-      /// <summary>
-      /// This property is only required by the export of a model to C++ and must be set to true in this case BEFORE
-      /// the SimModel simulation is loaded from XML.
-      /// </summary>
-      public bool KeepXMLNodeInSimModelSimulation { get; set; }
-
-      public bool TreatConstantMoleculesAsParameters { get; set; } = true;
 
       #region Disposable properties
 

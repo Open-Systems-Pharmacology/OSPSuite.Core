@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using FakeItEasy;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
 
@@ -160,6 +163,11 @@ namespace OSPSuite.Infrastructure.Import
 
          sut = new DataSource(_fakedImporter);
          sut.DataSets.Add("sheet1", _fakeDataSet);
+      }
+
+      protected string getFirstMeasurementUnit()
+      {
+         return sut.DataSets.KeyValues.First().Value.Data.First().Data.ToList()[1].Value[1].Unit;
       }
    }
 
@@ -486,6 +494,133 @@ namespace OSPSuite.Infrastructure.Import
       public void should_ignore_casing()
       {
          sut.ValidateDataSourceUnits(_columnInfos);
+      }
+   }
+
+
+   public class When_validating_missing_unit_column : concern_for_DataSource
+   {
+      private DataSet _dataSet;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
+         {
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Time",
+                     Unit = new UnitDescription("s")
+                  },
+                  ColumnInfo = _columnInfos["Time"]
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint()
+                  {
+                     Unit = "s",
+                     Measurement = 0,
+                     Lloq = double.NaN
+                  },
+                  new SimulationPoint()
+                  {
+                     Unit = "s",
+                     Measurement = 1,
+                     Lloq = double.NaN
+                  },
+                  new SimulationPoint()
+                  {
+                     Unit = "s",
+                     Measurement = 2,
+                     Lloq = double.NaN
+                  }
+               }
+            },
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Concentration",
+                     Unit = new UnitDescription("")
+                  },
+                  ColumnInfo = _columnInfos["Concentration"]
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint()
+                  {
+                     Unit = "",
+                     Measurement = 10,
+                     Lloq = 1
+                  },
+                  new SimulationPoint()
+                  {
+                     Unit = "",
+                     Measurement = 0.1,
+                     Lloq = 1
+                  },
+                  new SimulationPoint()
+                  {
+                     Unit = "",
+                     Measurement = double.NaN,
+                     Lloq = 1
+                  }
+               }
+            },
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Error",
+                     Unit = new UnitDescription("pmol/l"),
+                     Dimension = Constants.Dimension.NO_DIMENSION
+                  },
+                  ColumnInfo = _columnInfos["Error"]
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint()
+                  {
+                     Unit = "pmol/l",
+                     Measurement = 10,
+                     Lloq = 1
+                  },
+                  new SimulationPoint()
+                  {
+                     Unit = "pmol/l",
+                     Measurement = 0.1,
+                     Lloq = 1
+                  },
+                  new SimulationPoint()
+                  {
+                     Unit = "pmol/l",
+                     Measurement = double.NaN,
+                     Lloq = 1
+                  }
+               }
+            }
+         };
+         _dataSet = new DataSet();
+         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
+         sut.DataSets.Clear();
+
+      }
+
+      protected override void Because()
+      {
+         sut.DataSets.Add("sheet1", _dataSet);
+      }
+
+      [Observation]
+      public void should_have_set_the_error_to_dimensionless()
+      {
+         getFirstMeasurementUnit().ShouldBeEmpty();
       }
    }
 

@@ -37,7 +37,7 @@ namespace OSPSuite.Core.Services
 
          _simulationResults = DomainHelperForSpecs.SimulationDataRepositoryFor("Sim");
          _simulationDataColumn = _simulationResults.AllButBaseGrid().First();
-         _simulationRunResultsList = new List<SimulationRunResults> {new SimulationRunResults(true, Enumerable.Empty<SolverWarning>(), _simulationResults)};
+         _simulationRunResultsList = new List<SimulationRunResults> {new SimulationRunResults(Enumerable.Empty<SolverWarning>(), _simulationResults)};
 
          _observedData = DomainHelperForSpecs.ObservedDataRepository2WithLLOQ().WithName("Obs");
          _observedDataColumn = _observedData.AllButBaseGrid().First();

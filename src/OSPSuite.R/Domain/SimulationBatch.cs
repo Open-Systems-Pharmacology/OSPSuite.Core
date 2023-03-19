@@ -77,8 +77,10 @@ namespace OSPSuite.R.Domain
          _simulationResultsCreator = simulationResultsCreator;
       }
 
-      public void Initialize(IModelCoreSimulation simulation, SimulationBatchOptions simulationBatchOptions)
+      public void Initialize(IModelCoreSimulation simulation, SimulationBatchOptions simulationBatchOptions, SimulationRunOptions simulationRunOptions)
       {
+         _simModelBatch.CheckForNegativeValues = simulationRunOptions?.CheckForNegativeValues ?? true;
+
          //SimModel optionally caches XML used for loading a simulation as string.
          //This XML string was used e.g. by the old Matlab-/R-Toolbox when saving a simulation to XML.
          //C++ export also depends on the original XML string at the moment (not quite clear why).

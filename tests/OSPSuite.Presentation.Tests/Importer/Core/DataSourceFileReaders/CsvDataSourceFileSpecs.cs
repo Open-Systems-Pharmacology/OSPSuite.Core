@@ -1,14 +1,14 @@
-﻿using FakeItEasy;
-using NUnit.Framework;
-using OSPSuite.BDDHelper;
-using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Infrastructure.Import.Services;
-using System;
+﻿using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using FakeItEasy;
+using NUnit.Framework;
+using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
+using OSPSuite.Infrastructure.Import.Services;
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
@@ -20,7 +20,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       protected override void Context()
       {
          var csvSeparatorSelector = A.Fake<ICsvSeparatorSelector>();
-         A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>._)).Returns(',');
+         A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>._)).Returns(new CSVSeparators { ColumnSeparator = ',', DecimalSeparator = '.' });
 
          sut = new CsvDataSourceFile(A.Fake<IImportLogger>(), csvSeparatorSelector);
       }
@@ -37,6 +37,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          base.Context();
          _csvFilePath = getFileFullName(_csvFileCorrect);
       }
+
       protected override void Because()
       {
          sut.Path = _csvFilePath;
@@ -47,7 +48,6 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       {
          sut.Path.ShouldBeEqualTo(_csvFilePath);
       }
-
 
       [TestCase]
       public void headers_are_read()
@@ -63,7 +63,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void body_is_read()
       {
-         sut.DataSheets.ElementAt(0).GetDataRow(0).Count().ShouldBeEqualTo(5); 
+         sut.DataSheets.ElementAt(0).GetDataRow(0).Count().ShouldBeEqualTo(5);
 
          //actually the problem here is the way we have written the test. this should be changed
          var headers = sut.DataSheets.ElementAt(0).GetHeaders();
@@ -99,14 +99,13 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
                DateTimeFormat = { DateSeparator = "/" }
             };
           */
-         var culturesList = new string[] { "de - DE", "es-AR", "zh - Hans" , "ja-JP", "en - US"  };
+         var culturesList = new string[] { "de - DE", "es-AR", "zh - Hans", "ja-JP", "en - US" };
          foreach (var culture in culturesList)
          {
             CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
             sut.DataSheets.ElementAt(0).GetColumnDescription("header5").Level.ShouldBeEqualTo(ColumnDescription.MeasurementLevel.Numeric);
          }
       }
-
    }
 
    public class When_reading_corrupt_csv : ConcernForCsvDataSourceFile

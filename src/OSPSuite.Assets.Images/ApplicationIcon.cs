@@ -31,20 +31,14 @@ namespace OSPSuite.Assets
 
       public static implicit operator SvgImage(ApplicationIcon icon) => icon.ToSvgImage();
 
+      public static implicit operator Image(ApplicationIcon icon) => icon.ToImage();
+
       public virtual Image ToImage() => ToImage(IconSizes.Size16x16);
 
       public virtual Image ToImage(IconSize imageSize)
       {
          return _bitmap?.Render(imageSize, null)
             ?? new Bitmap(imageSize.Width, imageSize.Height);
-         /*Bitmap target = new Bitmap(
-            (int)imageSize.Width,
-            (int)imageSize.Height);
-         using (Graphics g = Graphics.FromImage(target))
-         {
-            _bitmap.RenderToGraphics(g,
-               SvgPaletteHelper.GetSvgPalette(LookAndFeel, ObjectState.Normal));
-         }*/
       }
 
       public virtual SvgImage ToSvgImage() => _image;
