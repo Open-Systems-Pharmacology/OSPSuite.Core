@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Domain
 
    public class When_retrieving_the_present_molecules_based_on_the_given_molecule_values : concern_for_MoleculeBuildingBlock
    {
-      private IMoleculeStartValuesBuildingBlock _moleculeStartValues;
+      private MoleculeStartValuesBuildingBlock _moleculeStartValues;
       private IEnumerable<IMoleculeBuilder> _results;
       private MoleculeBuilder _molecule;
       private MoleculeBuilder _drug;

@@ -19,7 +19,7 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _baseFactory = A.Fake<IObjectBaseFactory>();
-         A.CallTo(() => _baseFactory.Create<IMoleculeStartValuesBuildingBlock>()).ReturnsLazily(() => new MoleculeStartValuesBuildingBlock());
+         A.CallTo(() => _baseFactory.Create<MoleculeStartValuesBuildingBlock>()).ReturnsLazily(() => new MoleculeStartValuesBuildingBlock());
          _cloneManagerForBuildingBlock = A.Fake<ICloneManagerForBuildingBlock>();
          sut = new MoleculeStartValuesCreator(_baseFactory, new ObjectPathFactory(new AliasCreator()),
             new IdGenerator(), _cloneManagerForBuildingBlock);
@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Domain
 
    internal class when_generating_new_start_values_building_block : concern_for_MoleculeStartValuesCreator
    {
-      private IMoleculeStartValuesBuildingBlock _result;
+      private MoleculeStartValuesBuildingBlock _result;
 
       protected override void Because()
       {
@@ -44,7 +44,7 @@ namespace OSPSuite.Core.Domain
 
    internal class when_generating_new_non_empty_start_values_building_block : concern_for_MoleculeStartValuesCreator
    {
-      private IMoleculeStartValuesBuildingBlock _result;
+      private MoleculeStartValuesBuildingBlock _result;
       private SpatialStructure _spatialStructure;
       private MoleculeBuildingBlock _moleculeBuildingBlock;
       private IFormula _defaultStartFormula;

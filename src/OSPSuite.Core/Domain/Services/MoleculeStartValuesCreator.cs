@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Domain.Services
 {
    public interface IMoleculeStartValuesCreator : IEmptyStartValueCreator<MoleculeStartValue>
    {
-      IMoleculeStartValuesBuildingBlock CreateFrom(ISpatialStructure spatialStructure, IMoleculeBuildingBlock moleculeBuildingBlock);
+      MoleculeStartValuesBuildingBlock CreateFrom(ISpatialStructure spatialStructure, IMoleculeBuildingBlock moleculeBuildingBlock);
 
       /// <summary>
       ///    Creates a molecule start value
@@ -41,9 +41,9 @@ namespace OSPSuite.Core.Domain.Services
          _idGenerator = idGenerator;
       }
 
-      public IMoleculeStartValuesBuildingBlock CreateFrom(ISpatialStructure spatialStructure, IMoleculeBuildingBlock moleculeBuildingBlock)
+      public MoleculeStartValuesBuildingBlock CreateFrom(ISpatialStructure spatialStructure, IMoleculeBuildingBlock moleculeBuildingBlock)
       {
-         var moleculesStartValues = _objectBaseFactory.Create<IMoleculeStartValuesBuildingBlock>();
+         var moleculesStartValues = _objectBaseFactory.Create<MoleculeStartValuesBuildingBlock>();
          moleculesStartValues.SpatialStructureId = spatialStructure.Id;
          moleculesStartValues.MoleculeBuildingBlockId = moleculeBuildingBlock.Id;
          foreach (var container in spatialStructure.PhysicalContainers)
@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain.Services
          return moleculesStartValues;
       }
 
-      private void addMoleculesFrom(IMoleculeStartValuesBuildingBlock moleculesStartValuesBuildingBlock, IEntity container, IEnumerable<IMoleculeBuilder> molecules)
+      private void addMoleculesFrom(MoleculeStartValuesBuildingBlock moleculesStartValuesBuildingBlock, IEntity container, IEnumerable<IMoleculeBuilder> molecules)
       {
          foreach (var molecule in molecules)
          {

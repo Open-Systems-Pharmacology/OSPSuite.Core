@@ -1150,14 +1150,14 @@ namespace OSPSuite.Core.Helpers
          AreEqualEnumerableOfNamedObjects(x1.Neighborhoods, x2.Neighborhoods, x => x.Id);
       }
 
-      public static void AreEqualMoleculeStartValuesBuildingBlock(IMoleculeStartValuesBuildingBlock x1, IMoleculeStartValuesBuildingBlock x2)
+      public static void AreEqualMoleculeStartValuesBuildingBlock(MoleculeStartValuesBuildingBlock x1, MoleculeStartValuesBuildingBlock x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualObjectBase(x1, x2);
          AreEqualEnumerableOfNamedObjects(x1, x2, x => x.Path.ToString()); //Justified, because MoleculePath must be unique to use index operator
       }
 
-      public static void AreEqualParameterStartValuesBuildingBlock(IParameterStartValuesBuildingBlock x1, IParameterStartValuesBuildingBlock x2)
+      public static void AreEqualParameterStartValuesBuildingBlock(ParameterStartValuesBuildingBlock x1, ParameterStartValuesBuildingBlock x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualObjectBase(x1, x2);

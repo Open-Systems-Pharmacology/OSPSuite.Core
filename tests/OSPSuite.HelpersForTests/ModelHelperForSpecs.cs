@@ -70,7 +70,7 @@ namespace OSPSuite.Helpers
             Dimension = amountDimension,
             IsPresent = true
          });
-         buildConfiguration.ParameterStartValues = _parameterStartValuesCreator.CreateFrom(buildConfiguration.SpatialStructure, buildConfiguration.Molecules);
+         buildConfiguration.ParameterStartValues = _objectBaseFactory.Create<ParameterStartValuesBuildingBlock>();
          setMoleculeStartValues(buildConfiguration.MoleculeStartValues);
          setParameterStartValues(buildConfiguration.ParameterStartValues);
 
@@ -154,7 +154,7 @@ namespace OSPSuite.Helpers
          return conditionFormula;
       }
 
-      private void setParameterStartValues(IParameterStartValuesBuildingBlock parameterStartValues)
+      private void setParameterStartValues(ParameterStartValuesBuildingBlock parameterStartValues)
       {
          //set a parameter start value to a formula 
          var moleculeAPath = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma, "D");
@@ -177,7 +177,7 @@ namespace OSPSuite.Helpers
          parameterStartValues.Add(_parameterStartValuesCreator.CreateParameterStartValue(nanParameterNotNaN, 10, Constants.Dimension.NO_DIMENSION));
       }
 
-      private void setMoleculeStartValues(IMoleculeStartValuesBuildingBlock moleculesStartValues)
+      private void setMoleculeStartValues(MoleculeStartValuesBuildingBlock moleculesStartValues)
       {
          var art_plasma_A = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.ArterialBlood, ConstantsForSpecs.Plasma, "A")];
          art_plasma_A.Value = 1;
@@ -228,7 +228,7 @@ namespace OSPSuite.Helpers
          ven_plasma_F.IsPresent = true;
       }
 
-      private void setAllIsPresentForMoleculeToFalse(IMoleculeStartValuesBuildingBlock moleculesStartValues, params string[] moleculeNames)
+      private void setAllIsPresentForMoleculeToFalse(MoleculeStartValuesBuildingBlock moleculesStartValues, params string[] moleculeNames)
       {
          foreach (var moleculesStartValue in moleculesStartValues)
          {

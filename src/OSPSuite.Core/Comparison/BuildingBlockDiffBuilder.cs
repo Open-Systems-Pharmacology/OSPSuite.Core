@@ -101,14 +101,14 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public class MoleculeStartValueBuildingBlockDiffBuilder : StartValueBuildingBlockDiffBuilder<IMoleculeStartValuesBuildingBlock, MoleculeStartValue>
+   public class MoleculeStartValueBuildingBlockDiffBuilder : StartValueBuildingBlockDiffBuilder<MoleculeStartValuesBuildingBlock, MoleculeStartValue>
    {
       public MoleculeStartValueBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) : base(objectBaseDiffBuilder, enumerableComparer)
       {
       }
    }
 
-   public class ParameterStartValueBuildingBlockDiffBuilder : StartValueBuildingBlockDiffBuilder<IParameterStartValuesBuildingBlock, ParameterStartValue>
+   public class ParameterStartValueBuildingBlockDiffBuilder : StartValueBuildingBlockDiffBuilder<ParameterStartValuesBuildingBlock, ParameterStartValue>
    {
       public ParameterStartValueBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) : base(objectBaseDiffBuilder, enumerableComparer)
       {

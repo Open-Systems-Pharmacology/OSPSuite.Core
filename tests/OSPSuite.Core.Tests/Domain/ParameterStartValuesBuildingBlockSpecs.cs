@@ -4,7 +4,7 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_ParameterStartValuesBuildingBlock : ContextSpecification<IParameterStartValuesBuildingBlock>
+   public abstract class concern_for_ParameterStartValuesBuildingBlock : ContextSpecification<ParameterStartValuesBuildingBlock>
    {
       protected override void Context()
       {
@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_settting_a_parameter_start_value_by_object_path : concern_for_ParameterStartValuesBuildingBlock
+   public class When_setting_a_parameter_start_value_by_object_path : concern_for_ParameterStartValuesBuildingBlock
    {
       ParameterStartValue _psv;
 
