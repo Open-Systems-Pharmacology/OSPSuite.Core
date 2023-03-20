@@ -206,10 +206,7 @@ namespace OSPSuite.Core.Domain.Services
          return outputSelection;
       }
 
-      private ISimulationSettings settingsFor(IModelCoreSimulation simulation)
-      {
-         return simulation.SimulationSettings;
-      }
+      private SimulationSettings settingsFor(IModelCoreSimulation simulation) => simulation.Settings;
 
       private OutputSelections outputSelectionsFor(IModelCoreSimulation simulation)
       {

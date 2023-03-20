@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Domain.Builder
    /// </summary>
    public interface IBuildConfiguration : IVisitable<IVisitor>
    {
-      IMoleculeBuildingBlock Molecules { set; get; }
+      MoleculeBuildingBlock Molecules { set; get; }
       IReactionBuildingBlock Reactions { set; get; }
       IPassiveTransportBuildingBlock PassiveTransports { set; get; }
       ISpatialStructure SpatialStructure { set; get; }
@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Domain.Builder
       ParameterStartValuesBuildingBlock ParameterStartValues { set; get; }
       IObserverBuildingBlock Observers { get; set; }
       IEventGroupBuildingBlock EventGroups { get; set; }
-      ISimulationSettings SimulationSettings { get; set; }
+      SimulationSettings SimulationSettings { get; set; }
 
       /// <summary>
       ///    Return the molecules defined in the configuration that will be present in the model
@@ -138,11 +138,11 @@ namespace OSPSuite.Core.Domain.Builder
       public virtual MoleculeStartValuesBuildingBlock MoleculeStartValues { get; set; }
       public virtual ParameterStartValuesBuildingBlock ParameterStartValues { get; set; }
       public virtual IObserverBuildingBlock Observers { get; set; }
-      public virtual IMoleculeBuildingBlock Molecules { get; set; }
+      public virtual MoleculeBuildingBlock Molecules { get; set; }
       public virtual IReactionBuildingBlock Reactions { get; set; }
       public virtual IPassiveTransportBuildingBlock PassiveTransports { get; set; }
       public virtual IEventGroupBuildingBlock EventGroups { get; set; }
-      public virtual ISimulationSettings SimulationSettings { get; set; }
+      public virtual SimulationSettings SimulationSettings { get; set; }
 
       public SimModelExportMode SimModelExportMode { get; set; } = SimModelExportMode.Full;
 

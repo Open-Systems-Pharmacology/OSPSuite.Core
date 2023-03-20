@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Domain.Mappers
          _cloneManagerForModel = cloneManagerForModel;
       }
 
-      public IFormula MapFrom(IFormula formulaBuilder, IBuildConfiguration buildConfiguration)
+      public IFormula MapFrom(IFormula formulaBuilder, SimulationConfiguration simulationConfiguration)
       {
          return _cloneManagerForModel.Clone(formulaBuilder);
       }

@@ -11,9 +11,9 @@ namespace OSPSuite.Core.Converters.v7_3
    public class Converter710To730 : IObjectConverter,
       IVisitor<ParameterStartValuesBuildingBlock>,
       IVisitor<IPassiveTransportBuildingBlock>,
-      IVisitor<ISimulationSettings>,
+      IVisitor<SimulationSettings>,
       IVisitor<IEventGroupBuildingBlock>,
-      IVisitor<IMoleculeBuildingBlock>,
+      IVisitor<MoleculeBuildingBlock>,
       IVisitor<IReactionBuildingBlock>,
       IVisitor<ISpatialStructure>,
       IVisitor<ISimulation>
@@ -73,7 +73,7 @@ namespace OSPSuite.Core.Converters.v7_3
          ConvertAllParametersIn(eventGroupBuildingBlock);
       }
 
-      public void Visit(IMoleculeBuildingBlock moleculeBuildingBlock)
+      public void Visit(MoleculeBuildingBlock moleculeBuildingBlock)
       {
          ConvertAllParametersIn(moleculeBuildingBlock);
       }
@@ -109,7 +109,7 @@ namespace OSPSuite.Core.Converters.v7_3
          ConvertAllParametersIn(passiveTransportBuildingBlock);
       }
 
-      public void Visit(ISimulationSettings simulationSettings)
+      public void Visit(SimulationSettings simulationSettings)
       {
          ConvertAllParametersIn(simulationSettings.Solver);
          ConvertAllParametersIn(simulationSettings.OutputSchema);

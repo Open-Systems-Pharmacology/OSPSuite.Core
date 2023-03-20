@@ -13,12 +13,12 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       /// <param name="moleculeBuildingBlock">Molecule building block to validate</param>
       /// <returns>The validation results corresponding to the validation</returns>
-      ValidationResult Validate(IMoleculeBuildingBlock moleculeBuildingBlock);
+      ValidationResult Validate(MoleculeBuildingBlock moleculeBuildingBlock);
    }
 
    internal class MoleculeBuildingBlockValidator : IMoleculeBuildingBlockValidator
    {
-      public ValidationResult Validate(IMoleculeBuildingBlock moleculeBuildingBlock)
+      public ValidationResult Validate(MoleculeBuildingBlock moleculeBuildingBlock)
       {
          var validationResults = new ValidationResult();
 

@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Mappers
       protected IReactionPartner _prod2;
       protected IContainer _container;
       protected string _modifier;
-      protected IBuildConfiguration _buildConfiguration;
+      protected SimulationConfiguration _simulationConfiguration;
       protected IProcessRateParameterCreator _processRateParameterCreator;
       private IDimensionFactory _dimensionFactory;
       protected IDimension _amountPerTimeDimension;
@@ -45,7 +45,7 @@ namespace OSPSuite.Core.Mappers
          _modifier = "MOD";
          _reactionBuilder = A.Fake<IReactionBuilder>().WithName("MyReaction");
          _reactionBuilder.Dimension = _amountPerTimeDimension;
-         _buildConfiguration = A.Fake<IBuildConfiguration>();
+         _simulationConfiguration = new SimulationConfiguration();
          _reactionBuilder.Formula = A.Fake<IFormula>();
          var edPartner1 = A.Fake<IReactionPartnerBuilder>();
          var edPartner2 = A.Fake<IReactionPartnerBuilder>();
@@ -57,17 +57,17 @@ namespace OSPSuite.Core.Mappers
          _prod2 = A.Fake<IReactionPartner>();
          _container = A.Fake<IContainer>();
          A.CallTo(() => _dimensionFactory.Dimension(Constants.Dimension.AMOUNT_PER_TIME)).Returns(_amountPerTimeDimension);
-         A.CallTo(() => _reactionPartnerMapper.MapFromLocal(edPartner1, _container, _buildConfiguration)).Returns(_educt1);
-         A.CallTo(() => _reactionPartnerMapper.MapFromLocal(edPartner2, _container, _buildConfiguration)).Returns(_educt2);
-         A.CallTo(() => _reactionPartnerMapper.MapFromLocal(prodPartner1, _container, _buildConfiguration)).Returns(_prod1);
-         A.CallTo(() => _reactionPartnerMapper.MapFromLocal(prodPartner2, _container, _buildConfiguration)).Returns(_prod2);
-         A.CallTo(() => _formulaMapper.MapFrom(_reactionBuilder.Formula, _buildConfiguration)).Returns(_reactionBuilder.Formula);
+         A.CallTo(() => _reactionPartnerMapper.MapFromLocal(edPartner1, _container, _simulationConfiguration)).Returns(_educt1);
+         A.CallTo(() => _reactionPartnerMapper.MapFromLocal(edPartner2, _container, _simulationConfiguration)).Returns(_educt2);
+         A.CallTo(() => _reactionPartnerMapper.MapFromLocal(prodPartner1, _container, _simulationConfiguration)).Returns(_prod1);
+         A.CallTo(() => _reactionPartnerMapper.MapFromLocal(prodPartner2, _container, _simulationConfiguration)).Returns(_prod2);
+         A.CallTo(() => _formulaMapper.MapFrom(_reactionBuilder.Formula, _simulationConfiguration)).Returns(_reactionBuilder.Formula);
          A.CallTo(() => _reactionBuilder.Educts).Returns(new[] { edPartner1, edPartner2 });
          A.CallTo(() => _reactionBuilder.Products).Returns(new[] { prodPartner1, prodPartner2 });
          A.CallTo(() => _reactionBuilder.Parameters).Returns(new IParameter[0]);
          A.CallTo(() => _reactionBuilder.ModifierNames).Returns(new[] { _modifier });
          A.CallTo(() => _objectBaseFactory.Create<IReaction>()).Returns(new Reaction());
-         A.CallTo(() => _parameterMapper.MapFrom(_reactionBuilder.Parameters, _buildConfiguration, ParameterBuildMode.Local)).Returns(new List<IParameter>());
+         A.CallTo(() => _parameterMapper.MapFrom(_reactionBuilder.Parameters, _simulationConfiguration, ParameterBuildMode.Local)).Returns(new List<IParameter>());
          _processRateParameterCreator = new ProcessRateParameterCreator(_objectBaseFactory,_formulaMapper);
          sut = new ReactionBuilderToReactionMapper(_objectBaseFactory, _reactionPartnerMapper, _formulaMapper, _parameterMapper,_processRateParameterCreator);
       }
@@ -77,17 +77,17 @@ namespace OSPSuite.Core.Mappers
    {
       protected override void Because()
       {
-         _reaction = sut.MapFromLocal(_reactionBuilder, _container,_buildConfiguration);
+         _reaction = sut.MapFromLocal(_reactionBuilder, _container, _simulationConfiguration);
       }
 
       [Observation]
-      public void should_return_a_reaction_with_the_educts_intitialized_as_specified_in_the_builder()
+      public void should_return_a_reaction_with_the_educts_initialized_as_specified_in_the_builder()
       {
          _reaction.Educts.ShouldOnlyContain(_educt1, _educt2);
       }
 
       [Observation]
-      public void should_return_a_reaction_with_the_products_intitialized_as_specified_in_the_builder()
+      public void should_return_a_reaction_with_the_products_initialized_as_specified_in_the_builder()
       {
          _reaction.Products.ShouldOnlyContain(_prod1, _prod2);
       }
@@ -105,7 +105,7 @@ namespace OSPSuite.Core.Mappers
       }
     
       [Observation]
-      public void should_return_a_reaction_with_the_modifiers_intitialized_as_specified_in_the_builder()
+      public void should_return_a_reaction_with_the_modifiers_initialized_as_specified_in_the_builder()
       {
          _reaction.ModifierNames.ShouldOnlyContain(_modifier);
       }
@@ -130,10 +130,10 @@ namespace OSPSuite.Core.Mappers
          _kinetic = A.Fake<IFormula>();
          _reactionBuilder.CreateProcessRateParameter = true;
          _reactionBuilder.ProcessRateParameterPersistable = true;
-         A.CallTo(() => _formulaMapper.MapFrom(_kinetic, _buildConfiguration)).ReturnsLazily(x => new ExplicitFormula("clone"));
+         A.CallTo(() => _formulaMapper.MapFrom(_kinetic, _simulationConfiguration)).ReturnsLazily(x => new ExplicitFormula("clone"));
          _reactionBuilder.Name = "Reaction";
          _reactionBuilder.Formula = _kinetic;
-         A.CallTo(() => _parameterMapper.MapFrom(_reactionBuilder.Parameters, _buildConfiguration)).Returns(new List<IParameter>());
+         A.CallTo(() => _parameterMapper.MapFrom(_reactionBuilder.Parameters, _simulationConfiguration)).Returns(new List<IParameter>());
          _processRateParameter = new Parameter();
          A.CallTo(() => _objectBaseFactory.Create<IParameter>()).Returns(_processRateParameter);
 
@@ -141,7 +141,7 @@ namespace OSPSuite.Core.Mappers
 
       protected override void Because()
       {
-         _reaction = sut.MapFromLocal(_reactionBuilder,_container, _buildConfiguration);
+         _reaction = sut.MapFromLocal(_reactionBuilder,_container, _simulationConfiguration);
          _processRateParameter = _reaction.GetSingleChildByName<IParameter>(Constants.Parameters.PROCESS_RATE);
       }
 

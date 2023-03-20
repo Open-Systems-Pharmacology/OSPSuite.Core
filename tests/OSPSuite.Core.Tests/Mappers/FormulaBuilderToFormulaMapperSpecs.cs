@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -24,12 +25,12 @@ namespace OSPSuite.Core.Mappers
       protected IFormula _mappedFormula;
       protected IFormula _formula;
       private IFormula _clonedFormula;
-      private IBuildConfiguration _buildConfiguration;
+      private SimulationConfiguration _simulationConfiguration;
 
       protected override void Context()
       {
          base.Context();
-         _buildConfiguration = A.Fake<IBuildConfiguration>();
+         _simulationConfiguration = new SimulationConfigurationForSpecs();
          _formula = A.Fake<IFormula>();
          _clonedFormula = A.Fake<IFormula>();
          A.CallTo(() => _cloneManagerForModel.Clone(_formula)).Returns(_clonedFormula);
@@ -38,7 +39,7 @@ namespace OSPSuite.Core.Mappers
 
       protected override void Because()
       {
-         _mappedFormula = sut.MapFrom(_formula, _buildConfiguration);
+         _mappedFormula = sut.MapFrom(_formula, _simulationConfiguration);
       }
 
       [Observation]
@@ -50,7 +51,7 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_return_null_if_the_given_formula_was_null()
       {
-         sut.MapFrom(null, _buildConfiguration).ShouldBeNull();
+         sut.MapFrom(null, _simulationConfiguration).ShouldBeNull();
       }
    }
 }

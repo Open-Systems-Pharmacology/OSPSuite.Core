@@ -34,7 +34,7 @@ namespace OSPSuite.R.Services
             // Initialize a BuildConfiguration with only SimulationSettings because some of the properties to complete the initialization are required
             BuildConfiguration = new BuildConfiguration
             {
-               SimulationSettings = _cloneManagerForModel.Clone(simulationToClone.SimulationSettings)
+               SimulationSettings = _cloneManagerForModel.Clone(simulationToClone.Settings)
             }
          };
 

@@ -46,35 +46,43 @@ namespace OSPSuite.Helpers
          _dimensionFactory = dimensionFactory;
       }
 
-      public IBuildConfiguration CreateBuildConfiguration()
+      public SimulationConfiguration CreateSimulationConfiguration()
       {
-         var buildConfiguration = new BuildConfigurationForSpecs
+         var module = new Module
          {
-            Molecules = getMolecules(),
-            Reactions = getReactions(),
-            PassiveTransports = getPassiveTransports(),
+            Molecule = getMolecules(),
+            Reaction = getReactions(),
+            PassiveTransport = getPassiveTransports(),
             SpatialStructure = getSpatialStructure(),
-            Observers = getObservers(),
-            EventGroups = getEventGroups(),
-            SimulationSettings = createSimulationConfiguration()
+            Observer = getObservers(),
+            EventGroup = getEventGroups(),
          };
 
-         allCalculationMethods().Each(buildConfiguration.AddCalculationMethod);
-         buildConfiguration.MoleculeStartValues = _moleculeStartValuesCreator.CreateFrom(buildConfiguration.SpatialStructure, buildConfiguration.Molecules);
+         var simulationConfiguration = new SimulationConfigurationForSpecs
+         {
+            SimulationSettings = createSimulationConfiguration(),
+            Module = module
+         };
+
+
+         allCalculationMethods().Each(simulationConfiguration.AddCalculationMethod);
+         var moleculeStartValues = _moleculeStartValuesCreator.CreateFrom(module.SpatialStructure, module.Molecule);
 
          //add one start values that does not exist in Molecules
-         buildConfiguration.MoleculeStartValues.Add(new MoleculeStartValue
+         moleculeStartValues.Add(new MoleculeStartValue
          {
             ContainerPath = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism),
             Name = "MoleculeThatDoesNotExist",
             Dimension = amountDimension,
             IsPresent = true
          });
-         buildConfiguration.ParameterStartValues = _objectBaseFactory.Create<ParameterStartValuesBuildingBlock>();
-         setMoleculeStartValues(buildConfiguration.MoleculeStartValues);
-         setParameterStartValues(buildConfiguration.ParameterStartValues);
+         var parameterStartValues = _objectBaseFactory.Create<ParameterStartValuesBuildingBlock>();
+         setMoleculeStartValues(moleculeStartValues);
+         setParameterStartValues(parameterStartValues);
 
-         return buildConfiguration;
+         module.AddMoleculeStartValueBlock(moleculeStartValues);
+         module.AddParameterStartValueBlock(parameterStartValues);
+         return simulationConfiguration;
       }
 
       private SimulationSettings createSimulationConfiguration()
@@ -304,9 +312,9 @@ namespace OSPSuite.Helpers
          return observers;
       }
 
-      private IMoleculeBuildingBlock getMolecules()
+      private MoleculeBuildingBlock getMolecules()
       {
-         var molecules = _objectBaseFactory.Create<IMoleculeBuildingBlock>();
+         var molecules = _objectBaseFactory.Create<MoleculeBuildingBlock>();
          molecules.Add(createMoleculeA(molecules.FormulaCache));
          molecules.Add(createMoleculeB(molecules.FormulaCache));
          molecules.Add(createMoleculeC(molecules.FormulaCache));

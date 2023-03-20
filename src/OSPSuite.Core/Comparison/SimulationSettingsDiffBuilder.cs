@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Comparison
 {
-   public class SimulationSettingsDiffBuilder : DiffBuilder<ISimulationSettings>
+   public class SimulationSettingsDiffBuilder : DiffBuilder<SimulationSettings>
    {
       private readonly ObjectBaseDiffBuilder _objectBaseDiffBuilder;
       private readonly EnumerableComparer _enumerableComparer;
@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Comparison
          _objectComparer = objectComparer;
       }
 
-      public override void Compare(IComparison<ISimulationSettings> comparison)
+      public override void Compare(IComparison<SimulationSettings> comparison)
       {
          _objectBaseDiffBuilder.Compare(comparison);
          _objectComparer.Compare(comparison.ChildComparison(x => x.OutputSchema));

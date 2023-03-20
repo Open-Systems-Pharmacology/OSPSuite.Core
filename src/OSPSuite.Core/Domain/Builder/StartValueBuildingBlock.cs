@@ -13,16 +13,14 @@ namespace OSPSuite.Core.Domain.Builder
       /// <returns></returns>
       T this[ObjectPath objectPath] { get; set; }
 
-
       /// <summary>
       ///    Removes the start value with path <paramref name="objectPath" /> if available. Does nothing otherwise
       /// </summary>
       void Remove(ObjectPath objectPath);
    }
 
-   public abstract class StartValueBuildingBlock<T> : PathAndValueEntityBuildingBlock<T>, IStartValuesBuildingBlock<T> where T : class, IStartValue
+   public abstract class StartValueBuildingBlock<T> : PathAndValueEntityBuildingBlock<T>, IStartValuesBuildingBlock<T> where T : PathAndValueEntity, IStartValue
    {
-
       protected StartValueBuildingBlock()
       {
          _allValues = new Cache<ObjectPath, T>(x => x.Path, x => null);

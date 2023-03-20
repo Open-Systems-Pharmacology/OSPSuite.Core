@@ -5,7 +5,6 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Visitor;
 
@@ -22,6 +21,7 @@ namespace OSPSuite.R.Domain
       public IEnumerable<CurveChart> Charts { get; } = new List<CurveChart>();
       public OutputMappings OutputMappings { get; set; }
       public DataRepository ResultsDataRepository { get; set; }
+
       public void RemoveUsedObservedData(DataRepository dataRepository)
       {
          // nothing to do in R
@@ -114,7 +114,13 @@ namespace OSPSuite.R.Domain
 
       public double? EndTime => CoreSimulation.EndTime;
 
-      public ISimulationSettings SimulationSettings => CoreSimulation.SimulationSettings;
+      public SimulationSettings Settings => CoreSimulation.Settings;
+
+      public SimulationConfiguration Configuration
+      {
+         get => CoreSimulation.Configuration;
+         set => CoreSimulation.Configuration = value;
+      }
 
       public IReactionBuildingBlock Reactions => CoreSimulation.Reactions;
 

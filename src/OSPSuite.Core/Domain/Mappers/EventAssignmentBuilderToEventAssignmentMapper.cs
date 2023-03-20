@@ -22,37 +22,37 @@ namespace OSPSuite.Core.Domain.Mappers
          _formulaMapper = formulaMapper;
       }
 
-      public IReadOnlyList<IEventAssignment> MapFrom(IEventAssignmentBuilder assignmentBuilder, IBuildConfiguration buildConfiguration)
+      public IReadOnlyList<IEventAssignment> MapFrom(IEventAssignmentBuilder assignmentBuilder, SimulationConfiguration simulationConfiguration)
       {
          if (!isForAllFloating(assignmentBuilder))
-            return new[] {createAssignment(assignmentBuilder, buildConfiguration)};
+            return new[] {createAssignment(assignmentBuilder, simulationConfiguration)};
 
-         return buildConfiguration.Molecules.AllFloating()
-            .Select(x => createMoleculeAssignment(x, assignmentBuilder, buildConfiguration))
+         return simulationConfiguration.Molecules.AllFloating()
+            .Select(x => createMoleculeAssignment(x, assignmentBuilder, simulationConfiguration))
             .ToList();
       }
 
-      private IEventAssignment createMoleculeAssignment(IMoleculeBuilder moleculeBuilder, IEventAssignmentBuilder assignmentBuilder, IBuildConfiguration buildConfiguration)
+      private IEventAssignment createMoleculeAssignment(IMoleculeBuilder moleculeBuilder, IEventAssignmentBuilder assignmentBuilder, SimulationConfiguration simulationConfiguration)
       {
          //We change the original name to ensure unicity in the container.
          //Assignment are named programatically and not by the user so there should not be any conflict.
          var name = $"{assignmentBuilder.Name}_{moleculeBuilder.Name}";
-         var assignment = createAssignment(assignmentBuilder, buildConfiguration, name);
+         var assignment = createAssignment(assignmentBuilder, simulationConfiguration, name);
          assignment.ObjectPath.Replace(ObjectPathKeywords.ALL_FLOATING_MOLECULES, moleculeBuilder.Name);
          return assignment;
       }
 
-      private IEventAssignment createAssignment(IEventAssignmentBuilder assignmentBuilder, IBuildConfiguration buildConfiguration, string name = null)
+      private IEventAssignment createAssignment(IEventAssignmentBuilder assignmentBuilder, SimulationConfiguration simulationConfiguration, string name = null)
       {
          var assignment = _objectBaseFactory.Create<IEventAssignment>()
             .WithName(name ?? assignmentBuilder.Name)
             .WithDimension(assignmentBuilder.Dimension)
-            .WithFormula(_formulaMapper.MapFrom(assignmentBuilder.Formula, buildConfiguration));
+            .WithFormula(_formulaMapper.MapFrom(assignmentBuilder.Formula, simulationConfiguration));
 
          assignment.ObjectPath = assignmentBuilder.ObjectPath.Clone<ObjectPath>();
          assignment.UseAsValue = assignmentBuilder.UseAsValue;
 
-         buildConfiguration.AddBuilderReference(assignment, assignmentBuilder);
+         simulationConfiguration.AddBuilderReference(assignment, assignmentBuilder);
 
          return assignment;
       }

@@ -6,7 +6,7 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_MoleculeBuildingBlock : ContextSpecification<IMoleculeBuildingBlock>
+   public abstract class concern_for_MoleculeBuildingBlock : ContextSpecification<MoleculeBuildingBlock>
    {
       protected override void Context()
       {
@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_accesed_through_index : concern_for_MoleculeBuildingBlock
+   public class When_accessed_through_index : concern_for_MoleculeBuildingBlock
    {
       private IMoleculeBuilder _result;
       private IMoleculeBuilder _drug;

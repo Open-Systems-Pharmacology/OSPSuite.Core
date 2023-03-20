@@ -15,6 +15,8 @@ namespace OSPSuite.Core.Serialization.Xml
       public override void PerformMapping()
       {
          base.PerformMapping();
+         Map(x => x.Configuration);
+         //TODO. This will be gone eventually
          Map(x => x.BuildConfiguration);
          Map(x => x.Model);
          Map(x => x.Creation);

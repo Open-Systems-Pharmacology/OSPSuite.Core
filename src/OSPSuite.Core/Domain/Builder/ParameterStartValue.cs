@@ -5,14 +5,12 @@ namespace OSPSuite.Core.Domain.Builder
    public class ParameterStartValue : StartValueBase, IWithDefaultState
    {
       public string ParameterName => Name;
-      public bool OverrideFormulaWithValue { get; set; } = true;
       public bool IsDefault { get; set; }
 
       public bool IsEquivalentTo(ParameterStartValue parameterStartValue)
       {
          var isBaseEquivalent = base.IsEquivalentTo(parameterStartValue);
          var isEquivalent = NullableEqualsCheck(ParameterName, parameterStartValue.ParameterName);
-
          return isBaseEquivalent && isEquivalent;
       }
 

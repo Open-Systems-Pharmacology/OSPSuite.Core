@@ -14,6 +14,10 @@ namespace OSPSuite.Core.Domain.Builder
       private IDimension _dimension;
       private double? _value;
 
+      //Reference to building block containing this entity. This does not have to be serialized
+
+      public  IBuildingBlock BuildingBlock { get; set; }
+
       protected PathAndValueEntity()
       {
          Dimension = Constants.Dimension.NO_DIMENSION;

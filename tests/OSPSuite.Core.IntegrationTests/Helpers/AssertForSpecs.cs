@@ -1164,6 +1164,14 @@ namespace OSPSuite.Core.Helpers
          AreEqualEnumerableOfNamedObjects(x1, x2, x => x.Path.ToString());
       }
 
+      public static void AreEqualSimulationConfiguration(SimulationConfiguration x1, SimulationConfiguration x2)
+      {
+         if (!AssertBothNotNull(x1, x2)) return;
+         AreEqualModule(x1.Module, x2.Module);
+         AreEqualCalculationMethodLists(x1.AllCalculationMethods, x2.AllCalculationMethods);
+         AreEqualSimulationSettings(x1.SimulationSettings, x2.SimulationSettings);
+      }
+
       public static void AreEqualBuildConfiguration(IBuildConfiguration x1, IBuildConfiguration x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
@@ -1188,7 +1196,7 @@ namespace OSPSuite.Core.Helpers
          }
       }
 
-      public static void AreEqualSimulationSettings(ISimulationSettings x1, ISimulationSettings x2)
+      public static void AreEqualSimulationSettings(SimulationSettings x1, SimulationSettings x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          Assert.AreEqual(x1.RandomSeed, x2.RandomSeed);

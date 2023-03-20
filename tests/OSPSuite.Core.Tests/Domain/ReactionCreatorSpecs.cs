@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
@@ -17,7 +18,7 @@ namespace OSPSuite.Core.Domain
       protected IContainer _rootContainer;
       protected IModel _model;
       protected IReactionBuilder _reactionBuilder;
-      protected IBuildConfiguration _buildConfiguration;
+      protected SimulationConfiguration _simulationConfiguration;
       protected IReactionPartnerBuilder _educt1;
       protected IReactionPartnerBuilder _educt2;
       protected IReactionPartnerBuilder _product1;
@@ -31,10 +32,10 @@ namespace OSPSuite.Core.Domain
          _keywordReplacerTask = A.Fake<IKeywordReplacerTask>();
          _containerTask = A.Fake<IContainerTask>();
          _parameterMapper = A.Fake<IParameterBuilderCollectionToParameterCollectionMapper>();
-
          sut = new ReactionCreator(_reactionMapper, _keywordReplacerTask, _containerTask, _parameterMapper);
 
          _model = A.Fake<IModel>();
+         _simulationConfiguration = new SimulationConfigurationForSpecs();
          _reactionBuilder = A.Fake<IReactionBuilder>();
          _reactionBuilder.ContainerCriteria = new DescriptorCriteria();
          _reactionBuilder.Description = "A great description";
@@ -49,19 +50,18 @@ namespace OSPSuite.Core.Domain
          A.CallTo(() => _reactionBuilder.Products).Returns(new[] {_product1});
          A.CallTo(() => _reactionBuilder.ModifierNames).Returns(new[] {"modifier"});
 
-         _buildConfiguration = A.Fake<IBuildConfiguration>();
          _rootContainer = new Container().WithMode(ContainerMode.Physical);
          _model.Root = _rootContainer;
          _globalContainer = new Container();
 
          _reaction = A.Fake<IReaction>().WithName(_reactionBuilder.Name);
-         A.CallTo(() => _reactionMapper.MapFromLocal(A<IReactionBuilder>._, A<IContainer>._, _buildConfiguration)).Returns(_reaction);
+         A.CallTo(() => _reactionMapper.MapFromLocal(A<IReactionBuilder>._, A<IContainer>._, _simulationConfiguration)).Returns(_reaction);
          A.CallTo(() => _containerTask.CreateOrRetrieveSubContainerByName(_rootContainer, _reactionBuilder.Name)).Returns(_globalContainer);
       }
 
       protected override void Because()
       {
-         _result = sut.CreateReaction(_reactionBuilder, _model, _buildConfiguration);
+         _result = sut.CreateReaction(_reactionBuilder, _model, _simulationConfiguration);
       }
    }
 
@@ -217,13 +217,13 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_create_the_reaction_in_all_container_satisyfing_the_criteria()
+      public void should_create_the_reaction_in_all_container_satisfying_the_criteria()
       {
          _liver.ContainsName(_reactionBuilder.Name).ShouldBeTrue();
       }
 
       [Observation]
-      public void should_not_create_the_reaction_in_container_not_satisfying_the_rection_criteria()
+      public void should_not_create_the_reaction_in_container_not_satisfying_the_reaction_criteria()
       {
          _rootContainer.ContainsName(_reactionBuilder.Name).ShouldBeFalse();
       }

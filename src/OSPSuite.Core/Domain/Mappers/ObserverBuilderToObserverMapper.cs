@@ -20,16 +20,16 @@ namespace OSPSuite.Core.Domain.Mappers
          _formulaMapper = formulaMapper;
       }
 
-      public IObserver MapFrom(IObserverBuilder observerBuilder, IBuildConfiguration buildConfiguration)
+      public IObserver MapFrom(IObserverBuilder observerBuilder, SimulationConfiguration simulationConfiguration)
       {
          var observer = _objectBaseFactory.Create<IObserver>()
             .WithName(observerBuilder.Name)
             .WithIcon(observerBuilder.Icon)
             .WithDescription(observerBuilder.Description)
             .WithDimension(observerBuilder.Dimension)
-            .WithFormula(_formulaMapper.MapFrom(observerBuilder.Formula,buildConfiguration));
+            .WithFormula(_formulaMapper.MapFrom(observerBuilder.Formula, simulationConfiguration));
 
-         buildConfiguration.AddBuilderReference(observer, observerBuilder);
+         simulationConfiguration.AddBuilderReference(observer, observerBuilder);
          return observer;
       }
    }

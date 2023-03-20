@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
       public IModelCoreSimulation MapFrom(ISimulation simulation, bool shouldCloneModel)
       {
-         return MapFrom(simulation, new BuildConfiguration {SimulationSettings = _cloneManagerForBuildingBlock.Clone(simulation.SimulationSettings)},shouldCloneModel);
+         return MapFrom(simulation, new BuildConfiguration {SimulationSettings = _cloneManagerForBuildingBlock.Clone(simulation.Settings)},shouldCloneModel);
       }
 
       public IModelCoreSimulation MapFrom(ISimulation simulation, IBuildConfiguration buildConfiguration, bool shouldCloneModel)

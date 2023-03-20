@@ -55,7 +55,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexObserverBB()
       {
-         var x1 = _buildConfiguration.Observers;
+         var x1 = _simulationConfiguration.Observers;
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualBuildingBlock(x2, x1);
       }
@@ -66,7 +66,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexMoleculeBB()
       {
-         var x1 = _buildConfiguration.Molecules;
+         var x1 = _simulationConfiguration.Molecules;
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualBuildingBlock(x2, x1);
       }
@@ -77,7 +77,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexPassiveTransportBB()
       {
-         var x1 = _buildConfiguration.PassiveTransports;
+         var x1 = _simulationConfiguration.PassiveTransports;
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualBuildingBlock(x2, x1);
       }
@@ -88,7 +88,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexReactionBB()
       {
-         var x1 = _buildConfiguration.Reactions;
+         var x1 = _simulationConfiguration.Reactions;
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualBuildingBlock(x2, x1);
       }
@@ -99,7 +99,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexEventGroupBB()
       {
-         var x1 = _buildConfiguration.EventGroups;
+         var x1 = _simulationConfiguration.EventGroups;
          var a1 = CreateObject<ApplicationBuilder>().WithName("App.Builder");
          x1.Add(a1);
          var applicationMoleculeBuilder = CreateObject<ApplicationMoleculeBuilder>().WithName("AppMolecule");
@@ -117,7 +117,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexSpatialStructure()
       {
-         var x1 = _buildConfiguration.SpatialStructure;
+         var x1 = _simulationConfiguration.SpatialStructure;
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualSpatialStructure(x2, x1);
       }
@@ -128,7 +128,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexMoleculeStartValuesBuildingBlock()
       {
-         var x1 = _buildConfiguration.MoleculeStartValues;
+         var x1 = _simulationConfiguration.Module.MoleculeStartValuesCollection[0];
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualMoleculeStartValuesBuildingBlock(x2, x1);
       }
@@ -139,7 +139,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexParameterStartValuesBuildingBlock()
       {
-         var x1 = _buildConfiguration.ParameterStartValues;
+         var x1 = _simulationConfiguration.Module.ParameterStartValuesCollection[0];
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualParameterStartValuesBuildingBlock(x2, x1);
       }
@@ -150,10 +150,10 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexBuildConfiguration()
       {
-         var x1 = _buildConfiguration;
+         var x1 = _simulationConfiguration;
          Assert.IsNotNull(x1);
          var x2 = SerializeAndDeserialize(x1);
-         AssertForSpecs.AreEqualBuildConfiguration(x2, x1);
+         AssertForSpecs.AreEqualSimulationConfiguration(x2, x1);
       }
    }
 }

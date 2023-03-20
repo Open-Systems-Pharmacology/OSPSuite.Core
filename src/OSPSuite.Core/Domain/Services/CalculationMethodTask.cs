@@ -1,19 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
    public interface ICalculationMethodTask
    {
-      void MergeCalculationMethodInModel(IModel model, IBuildConfiguration buildConfiguration);
+      void MergeCalculationMethodInModel(IModel model, SimulationConfiguration simulationConfiguration);
    }
 
    public class CalculationMethodTask : ICalculationMethodTask
@@ -26,13 +26,13 @@ namespace OSPSuite.Core.Domain.Services
       private EntityDescriptorMapList<IContainer> _allContainers;
       private IList<IParameter> _allBlackBoxParameters;
       private IModel _model;
-      private IBuildConfiguration _buildConfiguration;
+      private SimulationConfiguration _simulationConfiguration;
 
       public CalculationMethodTask(
-         IFormulaTask formulaTask, 
-         IKeywordReplacerTask keywordReplacerTask, 
+         IFormulaTask formulaTask,
+         IKeywordReplacerTask keywordReplacerTask,
          IFormulaBuilderToFormulaMapper formulaMapper,
-         IParameterBuilderToParameterMapper parameterMapper,  
+         IParameterBuilderToParameterMapper parameterMapper,
          IObjectPathFactory objectPathFactory)
       {
          _formulaTask = formulaTask;
@@ -42,17 +42,17 @@ namespace OSPSuite.Core.Domain.Services
          _objectPathFactory = objectPathFactory;
       }
 
-      public void MergeCalculationMethodInModel(IModel model, IBuildConfiguration buildConfiguration)
+      public void MergeCalculationMethodInModel(IModel model, SimulationConfiguration simulationConfiguration)
       {
          try
          {
-            _buildConfiguration = buildConfiguration;
+            _simulationConfiguration = simulationConfiguration;
             _allContainers = model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
             _allBlackBoxParameters = model.Root.GetAllChildren<IParameter>().Where(p => p.Formula.IsBlackBox()).ToList();
             _model = model;
-            foreach (var calculationMethod in buildConfiguration.AllCalculationMethods())
+            foreach (var calculationMethod in simulationConfiguration.AllCalculationMethods)
             {
-               var allMoleculesUsingMethod = allMoleculesUsing(calculationMethod, buildConfiguration.Molecules).ToList();
+               var allMoleculesUsingMethod = allMoleculesUsing(calculationMethod, simulationConfiguration.Molecules).ToList();
 
                createFormulaForBlackBoxParameters(calculationMethod, allMoleculesUsingMethod);
 
@@ -61,7 +61,7 @@ namespace OSPSuite.Core.Domain.Services
          }
          finally
          {
-            _buildConfiguration = null;
+            _simulationConfiguration = null;
             _allContainers.Clear();
             _allBlackBoxParameters.Clear();
             _model = null;
@@ -77,15 +77,15 @@ namespace OSPSuite.Core.Domain.Services
             {
                foreach (var container in allMoleculeContainersFor(containerDescriptor, molecule))
                {
-                  var exisitingParameter = container.GetSingleChildByName<IParameter>(helpParameter.Name);
+                  var exisitingParameter = container.Parameter(helpParameter.Name);
                   //does not exist yet
                   if (exisitingParameter == null)
                   {
-                     var parameter = _parameterMapper.MapFrom(helpParameter,_buildConfiguration);
+                     var parameter = _parameterMapper.MapFrom(helpParameter, _simulationConfiguration);
                      container.Add(parameter);
                      replaceKeyWordsIn(parameter, molecule.Name);
                   }
-                  else if (!formulasAreTheSameForParameter(exisitingParameter, helpParameter.Formula,molecule.Name))
+                  else if (!formulasAreTheSameForParameter(exisitingParameter, helpParameter.Formula, molecule.Name))
                      throw new OSPSuiteException(Error.HelpParameterAlreadyDefinedWithAnotherFormula(calculationMethod.Name, _objectPathFactory.CreateAbsoluteObjectPath(helpParameter).ToString()));
                }
             }
@@ -105,10 +105,10 @@ namespace OSPSuite.Core.Domain.Services
                   if (parameterIsNotBlackBoxParameter(parameter))
                      continue;
 
-                  //parmeter formula was not set yet
+                  //parameter formula was not set yet
                   if (parameter.Formula.IsBlackBox())
                   {
-                     parameter.Formula = _formulaMapper.MapFrom(formula,_buildConfiguration);
+                     parameter.Formula = _formulaMapper.MapFrom(formula, _simulationConfiguration);
                      replaceKeyWordsIn(parameter, molecule.Name);
                   }
                   else
@@ -124,7 +124,7 @@ namespace OSPSuite.Core.Domain.Services
       private void replaceKeyWordsIn(IParameter parameter, string moleculeName)
       {
          _keywordReplacerTask.ReplaceIn(parameter, _model.Root, moleculeName);
-         //check if parameter is in neighborhood. In that case, retrieve the neighborhood and repalce the keywords as well
+         //check if parameter is in neighborhood. In that case, retrieve the neighborhood and replace the keywords as well
          var neighborhood = neighborhoodAncestorFor(parameter);
          if (neighborhood == null) return;
          _keywordReplacerTask.ReplaceIn(neighborhood, _model.Root);
@@ -132,7 +132,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private static Neighborhood neighborhoodAncestorFor(IEntity entity)
       {
-         if (entity == null) 
+         if (entity == null)
             return null;
 
          if (entity.IsAnImplementationOf<Neighborhood>())
@@ -141,12 +141,12 @@ namespace OSPSuite.Core.Domain.Services
          return neighborhoodAncestorFor(entity.ParentContainer);
       }
 
-      private bool formulasAreTheSameForParameter(IParameter originalParameter, IFormula calculationMethodFormula,string moleculeName)
+      private bool formulasAreTheSameForParameter(IParameter originalParameter, IFormula calculationMethodFormula, string moleculeName)
       {
          var previousFormula = originalParameter.Formula;
          //needs to use the parameter in order to keep the hierarchy. Hence we set the formula in the parameter
-         originalParameter.Formula = _formulaMapper.MapFrom(calculationMethodFormula,_buildConfiguration);
-         
+         originalParameter.Formula = _formulaMapper.MapFrom(calculationMethodFormula, _simulationConfiguration);
+
          //check  if the formula set are the same. it is necessary to replace keywords before doing that
          replaceKeyWordsIn(originalParameter, moleculeName);
 
@@ -166,29 +166,29 @@ namespace OSPSuite.Core.Domain.Services
          return !_allBlackBoxParameters.Contains(parameter);
       }
 
-      private IEnumerable<IMoleculeBuilder> allMoleculesUsing(ICoreCalculationMethod calculationMethod, IMoleculeBuildingBlock moleculeBuildingBlock)
+      private IEnumerable<IMoleculeBuilder> allMoleculesUsing(ICoreCalculationMethod calculationMethod, MoleculeBuildingBlock moleculeBuildingBlock)
       {
          return from molecule in moleculeBuildingBlock
-                where molecule.IsFloatingXenobiotic
-                from usedCalculationMethod in molecule.UsedCalculationMethods
-                where usedCalculationMethod.CalculationMethod == calculationMethod.Name
-                select molecule;
+            where molecule.IsFloatingXenobiotic
+            from usedCalculationMethod in molecule.UsedCalculationMethods
+            where usedCalculationMethod.CalculationMethod == calculationMethod.Name
+            select molecule;
       }
 
       private IEnumerable<IContainer> allMoleculeContainersFor(DescriptorCriteria containerDescriptor, IMoleculeBuilder molecule)
       {
          return from container in _allContainers.AllSatisfiedBy(containerDescriptor)
-                let moleculeContainer = container.GetSingleChildByName<IContainer>(molecule.Name)
-                where moleculeContainer != null
-                select moleculeContainer;
+            let moleculeContainer = container.GetSingleChildByName<IContainer>(molecule.Name)
+            where moleculeContainer != null
+            select moleculeContainer;
       }
 
       private IEnumerable<IParameter> allMoleculeParameterForFormula(ParameterDescriptor parameterDescriptor, IMoleculeBuilder molecule)
       {
          return from container in allMoleculeContainersFor(parameterDescriptor.ContainerCriteria, molecule)
-                let parameter = container.GetSingleChildByName<IParameter>(parameterDescriptor.ParameterName)
-                where parameter != null
-                select parameter;
+            let parameter = container.GetSingleChildByName<IParameter>(parameterDescriptor.ParameterName)
+            where parameter != null
+            select parameter;
       }
    }
 }

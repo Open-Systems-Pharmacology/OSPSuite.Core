@@ -16,7 +16,7 @@ namespace OSPSuite.Core
 {
    public abstract class concern_for_ModelConstructor : ContextForIntegration<IModelConstructor>
    {
-      protected IBuildConfiguration _buildConfiguration;
+      protected SimulationConfiguration _simulationConfiguration;
       protected CreationResult _result;
       protected IModel _model;
 
@@ -25,13 +25,13 @@ namespace OSPSuite.Core
       public override void GlobalContext()
       {
          base.GlobalContext();
-         _buildConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateBuildConfiguration();
+         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
       }
 
       protected override void Because()
       {
          sut = IoC.Resolve<IModelConstructor>();
-         _result = sut.CreateModelFrom(_buildConfiguration, _modelName);
+         _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
          _model = _result.Model;
       }
    }
@@ -383,7 +383,7 @@ namespace OSPSuite.Core
          var errorList = new List<string>();
          foreach (var entity in _model.Root.GetAllChildren<IEntity>())
          {
-            var builder = _buildConfiguration.BuilderFor(entity);
+            var builder = _simulationConfiguration.BuilderFor(entity);
             if (builder != null) continue;
             if (entity.IsNamed(Constants.NEIGHBORHOODS)) continue;
             errorList.Add($"No builder found for {entity.Name}");
@@ -481,8 +481,8 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         var moleculeStartValue = _buildConfiguration.MoleculeStartValues.First();
-         var physicalContainer = _buildConfiguration.SpatialStructure.TopContainers.Select(x => moleculeStartValue.ContainerPath.TryResolve<IContainer>(x)).First(x => x != null);
+         var moleculeStartValue = _simulationConfiguration.MoleculeStartValuesCollection[0].First();
+         var physicalContainer = _simulationConfiguration.SpatialStructure.TopContainers.Select(x => moleculeStartValue.ContainerPath.TryResolve<IContainer>(x)).First(x => x != null);
 
          physicalContainer.Mode = ContainerMode.Logical;
       }
@@ -499,8 +499,8 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         var paraToRemove = _buildConfiguration.Molecules["A"].Parameters.SingleOrDefault(para => para.Name == "logMA");
-         _buildConfiguration.Molecules["A"].RemoveParameter(paraToRemove);
+         var paraToRemove = _simulationConfiguration.Molecules["A"].Parameters.SingleOrDefault(para => para.Name == "logMA");
+         _simulationConfiguration.Molecules["A"].RemoveParameter(paraToRemove);
       }
 
       [Observation]

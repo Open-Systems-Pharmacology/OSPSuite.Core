@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -28,21 +29,21 @@ namespace OSPSuite.Core.Mappers
       private IObserverBuilder _observerBuilder;
       private IFormula _mappedFormula;
       private IObserver _observer;
-      private IBuildConfiguration _buildConfiguration;
+      private SimulationConfiguration _simulationConfiguration;
 
       protected override void Context()
       {
          base.Context();
-         _buildConfiguration = A.Fake<IBuildConfiguration>();
+         _simulationConfiguration = new SimulationConfigurationForSpecs();
          _observerBuilder = A.Fake<IObserverBuilder>().WithName("toto").WithDimension(A.Fake<IDimension>());
          _observerBuilder.Formula = A.Fake<IFormula>();
          _mappedFormula = A.Fake<IFormula>();
          A.CallTo(()=>_objectBaseFactory.Create<IObserver>()).Returns(A.Fake<IObserver>());
-         A.CallTo(() => _formulaMapper.MapFrom(_observerBuilder.Formula, _buildConfiguration)).Returns(_mappedFormula);
+         A.CallTo(() => _formulaMapper.MapFrom(_observerBuilder.Formula, _simulationConfiguration)).Returns(_mappedFormula);
       }
       protected override void Because()
       {
-         _observer = sut.MapFrom(_observerBuilder,_buildConfiguration);
+         _observer = sut.MapFrom(_observerBuilder,_simulationConfiguration);
       }
       [Observation]
       public void should_return_an_observer_whose_name_was_set_to_the_name_of_the_observer()
@@ -64,7 +65,7 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_have_added_a_reference_to_the_observer_builder_for_the_created_observer()
       {
-         A.CallTo(() => _buildConfiguration.AddBuilderReference(_observer, _observerBuilder)).MustHaveHappened();
+         A.CallTo(() => _simulationConfiguration.AddBuilderReference(_observer, _observerBuilder)).MustHaveHappened();
       }
    }
 
