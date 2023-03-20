@@ -215,7 +215,6 @@ namespace OSPSuite.UI.Views.Commands
          else if (!_presenter.CanRollBackTo(historyItemId))
          {
             e.Appearance.BackColor = UIConstants.Colors.Disabled;
-            e.Appearance.ForeColor = UIConstants.Colors.TextDisabled;
          }
       }
    }
