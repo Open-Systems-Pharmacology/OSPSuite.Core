@@ -12,7 +12,6 @@ namespace OSPSuite.UI
       {
          // These colors change with the skin, so we use a method to read the latest up-to-date value from the skin
          public static Color Disabled => skinColorFor("ReadOnly");
-         public static Color TextDisabled => skinColorFor("DisabledText");
 
          private static Color skinColorFor(string state)
          {

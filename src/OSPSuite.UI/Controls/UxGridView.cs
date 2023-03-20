@@ -137,7 +137,7 @@ namespace OSPSuite.UI.Controls
             e.CombineAppearance(Appearance.Row);
          else
          {
-            AdjustAppearance(e, UIConstants.Colors.Disabled, UIConstants.Colors.TextDisabled);
+            AdjustAppearance(e, UIConstants.Colors.Disabled);
          }
       }
 
@@ -146,28 +146,26 @@ namespace OSPSuite.UI.Controls
          if (isEnabled)
             e.CombineAppearance(Appearance.Row);
          else
-            AdjustAppearance(e, UIConstants.Colors.Disabled, UIConstants.Colors.TextDisabled);
+            AdjustAppearance(e, UIConstants.Colors.Disabled);
       }
 
-      public void AdjustAppearance(RowCellStyleEventArgs e, Color backgroundColor, Color foregroundColor)
+      public void AdjustAppearance(RowCellStyleEventArgs e, Color backgroundColor)
       {
          if (rowHasFocus(e.RowHandle))
             e.CombineAppearance(Appearance.FocusedCell);
          else
          {
             UpdateAppearanceBackColor(e.Appearance, backgroundColor);
-            e.Appearance.ForeColor = foregroundColor;
          }
       }
 
-      public void AdjustAppearance(RowStyleEventArgs e, Color backgroundColor, Color foregroundColor)
+      public void AdjustAppearance(RowStyleEventArgs e, Color backgroundColor)
       {
          if (rowHasFocus(e.RowHandle))
             e.CombineAppearance(Appearance.FocusedRow);
          else
          {
             UpdateAppearanceBackColor(e.Appearance, backgroundColor);
-            e.Appearance.ForeColor = foregroundColor;
          }
       }
 
