@@ -1,151 +1,47 @@
-﻿using System.Linq;
-using FakeItEasy;
+﻿using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
-using OSPSuite.Core.Domain.Descriptors;
-using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_ParameterStartValuesCreatorSpecs : ContextSpecification<IParameterStartValuesCreator>
+   public abstract class concern_for_ParameterStartValuesCreator : ContextSpecification<IParameterStartValuesCreator>
    {
       protected IObjectBaseFactory _objectBaseFactory;
 
       protected override void Context()
       {
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
-         A.CallTo(() => _objectBaseFactory.Create<IParameterStartValuesBuildingBlock>()).Returns(new ParameterStartValuesBuildingBlock());
-         sut = new ParameterStartValuesCreator(_objectBaseFactory,new ObjectPathFactory(new AliasCreator()), new IdGenerator());
+         sut = new ParameterStartValuesCreator(_objectBaseFactory,new ObjectPathFactoryForSpecs(), new IdGenerator());
       }
    }
 
-   public class When_creating_parameter_start_values : concern_for_ParameterStartValuesCreatorSpecs
+   public class When_creating_a_parameter_start_value_for_a_parameter_and_object_path : concern_for_ParameterStartValuesCreator
    {
-      private IParameterStartValuesBuildingBlock _parameterStartValues;
-      private ISpatialStructure _spatialStructure;
-      private IMoleculeBuildingBlock _molecules;
-      private IParameter _globalParameter;
+      private ObjectPath _objectPath;
+      private IParameter _parameter;
+      private ParameterStartValue _psv;
 
       protected override void Context()
       {
          base.Context();
-         var drugMoleculeBuilder = createMoleculeBuilder("Drug");
-         var localParameterWithCondition = DomainHelperForSpecs.ConstantParameterWithValue(3)
-            .WithName("LocalParameterWithCondition")
-            .WithMode(ParameterBuildMode.Local)
-            .WithParentContainer(drugMoleculeBuilder);
-
-         localParameterWithCondition.ContainerCriteria = Create.Criteria(x => x.With("Cell"));
-
-         _molecules = new MoleculeBuildingBlock
-         {
-            drugMoleculeBuilder, 
-            createMoleculeBuilder("Other")
-         };
-         _spatialStructure = new SpatialStructure
-         {
-            NeighborhoodsContainer = new Container().WithName(Constants.NEIGHBORHOODS), 
-            GlobalMoleculeDependentProperties = new Container()
-         };
-         _globalParameter = new Parameter().WithName("GlobalMoleculeParameter").WithFormula(new ConstantFormula(2));
-         _spatialStructure.GlobalMoleculeDependentProperties.Add(_globalParameter);
-         var topContainer = new Container().WithName("Organism");
-         var organ =new Container().WithName("Organ").WithParentContainer(topContainer);
-         var cell = new Container().WithName("Cell").WithParentContainer(organ).WithMode(ContainerMode.Physical);
-         var interstitial = new Container().WithName("Interstitial").WithParentContainer(organ).WithMode(ContainerMode.Physical);
-
-         var mp = new Container().WithName(Constants.MOLECULE_PROPERTIES).WithParentContainer(organ);
-         new Parameter().WithName("Local").WithFormula(new ConstantFormula(3)).WithParentContainer(mp);
-
-         _spatialStructure.AddTopContainer(topContainer);
-         var neighborhood = new NeighborhoodBuilder().WithName("A2B");
-         var nmp = new Container().WithName(Constants.MOLECULE_PROPERTIES).WithParentContainer(neighborhood);
-         new Parameter().WithName("Hallo").WithFormula(new ConstantFormula(4)).WithParentContainer(nmp);
-         _spatialStructure.AddNeighborhood(neighborhood);
-
-
+         _objectPath =new ObjectPath("A", "B", "C");
+         _parameter = DomainHelperForSpecs.ConstantParameterWithValue(5).WithDimension(DomainHelperForSpecs.FractionDimensionForSpecs());
       }
-
-      private static MoleculeBuilder createMoleculeBuilder(string moleculeName)
-      {
-         var drug = new MoleculeBuilder().WithName(moleculeName);
-         drug.AddParameter(new Parameter().WithName("MoleculeProperty").WithFormula(new ConstantFormula(1)).WithMode(ParameterBuildMode.Global));
-         drug.AddParameter(new Parameter().WithName("NaNParameter").WithFormula(new ConstantFormula(double.NaN)).WithMode(ParameterBuildMode.Global));
-         return drug;
-      }
-
       protected override void Because()
       {
-         _parameterStartValues = sut.CreateFrom(_spatialStructure, _molecules);
+         _psv = sut.CreateParameterStartValue(_objectPath, _parameter);
       }
 
       [Observation]
-      public void should_create_parameter_start_values_building_block()
+      public void should_return_a_parameter_start_value_using_the_provided_path_as_well_as_the_dimension_and_the_value_of_the_parameter()
       {
-         A.CallTo(() => _objectBaseFactory.Create<IParameterStartValuesBuildingBlock>()).MustHaveHappened();
-         _parameterStartValues.ShouldNotBeNull();
+         _psv.Path.ToString().ShouldBeEqualTo(_objectPath.ToString());
+         _psv.Dimension.ShouldBeEqualTo(_parameter.Dimension);
+         _psv.Value.ShouldBeEqualTo(_parameter.Value);
       }
-
-      [Observation]
-      public void should_create_start_values_for_global_molecule_properties_for_all_molecules()
-      {
-         parameterStartValueForPathShouldExists(_parameterStartValues, "Drug|GlobalMoleculeParameter");
-         parameterStartValueForPathShouldExists(_parameterStartValues, "Other|GlobalMoleculeParameter");
-      }
-
-      [Observation]
-      public void should_create_start_values_for_local_molecule_parameters_with_conditions()
-      {
-         parameterStartValueForPathShouldExists(_parameterStartValues, "Organism|Organ|Cell|Drug|LocalParameterWithCondition");
-         parameterStartValueForPathShouldNotExist(_parameterStartValues, "Organism|Organ|Interstitial|Drug|LocalParameterWithCondition");
-      }
-
-      [Observation]
-      public void should_create_start_values_for_local_molecule_properties_for_all_molecules()
-      {
-         parameterStartValueForPathShouldExists(_parameterStartValues, "Organism|Organ|Drug|Local");
-         parameterStartValueForPathShouldExists(_parameterStartValues, "Organism|Organ|Other|Local");
-      }
-
-      [Observation]
-      public void should_create_start_values_for_molecule_properties()
-      {
-         parameterStartValueForPathShouldExists(_parameterStartValues, "Drug|MoleculeProperty");
-         parameterStartValueForPathShouldExists(_parameterStartValues, "Other|MoleculeProperty");
-      }
-      [Observation]
-      public void should_create_StartValues_for_Neighborhood_parameters()
-      {
-         parameterStartValueForPathShouldExists(_parameterStartValues, $"{Constants.NEIGHBORHOODS}|A2B|Drug|Hallo");
-         parameterStartValueForPathShouldExists(_parameterStartValues, $"{Constants.NEIGHBORHOODS}|A2B|Other|Hallo");
-      }
-
-      [Observation] 
-      public void should_not_create_any_paths_to_molecule_properties()
-      {
-         _parameterStartValues.Any(psv=>psv.Path.Contains(Constants.MOLECULE_PROPERTIES)).ShouldBeFalse();
-      }
-
-      [Observation]
-      public void should_not_create_any_path_entries_for_parameter_with_a_nan_value()
-      {
-         parameterStartValueForPathShouldNotExist(_parameterStartValues, "Drug|NaNParameter");
-         parameterStartValueForPathShouldNotExist(_parameterStartValues, "Other|NaNParameter");
-      }
-
-      private void parameterStartValueForPathShouldExists(IParameterStartValuesBuildingBlock buildingBlock,string pathAsString )
-      {
-         buildingBlock[new ObjectPath(pathAsString.ToPathArray())].ShouldNotBeNull();
-      }
-
-      private void parameterStartValueForPathShouldNotExist(IParameterStartValuesBuildingBlock buildingBlock, string pathAsString)
-      {
-         buildingBlock[new ObjectPath(pathAsString.ToPathArray())].ShouldBeNull();
-      }
-
    }
+
 }	

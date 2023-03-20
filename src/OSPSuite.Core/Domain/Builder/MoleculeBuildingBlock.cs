@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Domain.Builder
    {
       IMoleculeBuilder this[string moleculeName] { get; }
       IEnumerable<IMoleculeBuilder> AllFloating();
-      IEnumerable<IMoleculeBuilder> AllPresentFor(IMoleculeStartValuesBuildingBlock moleculesStartValues);
+      IEnumerable<IMoleculeBuilder> AllPresentFor(MoleculeStartValuesBuildingBlock moleculesStartValues);
    }
 
    public class MoleculeBuildingBlock : BuildingBlock<IMoleculeBuilder>, IMoleculeBuildingBlock
@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Domain.Builder
          return this.Where(x => x.IsFloating);
       }
 
-      public IEnumerable<IMoleculeBuilder> AllPresentFor(IMoleculeStartValuesBuildingBlock moleculesStartValues)
+      public IEnumerable<IMoleculeBuilder> AllPresentFor(MoleculeStartValuesBuildingBlock moleculesStartValues)
       {
          var moleculeNames = (from moleculeStartValue in moleculesStartValues
                               where moleculeStartValue.IsPresent

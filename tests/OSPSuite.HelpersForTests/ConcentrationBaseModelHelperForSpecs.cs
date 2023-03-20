@@ -81,13 +81,13 @@ namespace OSPSuite.Helpers
          buildConfiguration.MoleculeStartValues = _moleculeStartValuesCreator.CreateFrom(buildConfiguration.SpatialStructure, buildConfiguration.Molecules);
          var objectPathForContainerThatDoesNotExist = _objectPathFactory.CreateObjectPathFrom("TOTO", "TATA");
          buildConfiguration.MoleculeStartValues.Add(_moleculeStartValuesCreator.CreateMoleculeStartValue(objectPathForContainerThatDoesNotExist, "A", _concentrationDimension));
-         buildConfiguration.ParameterStartValues = _parameterStartValuesCreator.CreateFrom(buildConfiguration.SpatialStructure, buildConfiguration.Molecules);
+         buildConfiguration.ParameterStartValues = _objectBaseFactory.Create<ParameterStartValuesBuildingBlock>();
 
          setMoleculeStartValues(buildConfiguration.MoleculeStartValues);
          return buildConfiguration;
       }
 
-      private void setMoleculeStartValues(IMoleculeStartValuesBuildingBlock moleculeStartValues)
+      private void setMoleculeStartValues(MoleculeStartValuesBuildingBlock moleculeStartValues)
       {
          var organsim_A = moleculeStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, "A")];
          organsim_A.Value = 5;

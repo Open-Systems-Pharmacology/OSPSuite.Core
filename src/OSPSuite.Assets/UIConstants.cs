@@ -207,6 +207,7 @@ namespace OSPSuite.Assets
       public static readonly string No = "No";
       public static readonly string Yes = "Yes";
       public static readonly string ReallyRemoveObservedDataFromSimulation = $"Really remove {ObjectTypes.ObservedData} from the simulation?\nHint: {ObjectTypes.ObservedData} will not be deleted from the project";
+      public static readonly string SimulationWasCanceled = "Simulation was canceled";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
@@ -457,8 +458,11 @@ namespace OSPSuite.Assets
          public static readonly string NewDataStetsWillBeImported = "New datasets that will be imported";
          public static readonly string ReloadData = "Reload Data";
          public static readonly string SeparatorSelection = "Separator Selection";
+         public static readonly string DecimalSeparator = "Decimal Separator";
+         public static readonly string ColumnSeparator = "Column Separator";
+
          public static string LLOQInconsistentValuesAt(string dataRepositoryName) => $"There were different LLOQ values detected for the data from a single source. Please check data under name {dataRepositoryName}. Are you sure you want to continue with import?";
-         public static string CsvSeparatorDescription(string fileName) => $"Please select the separator for the file \r\n'{fileName}':";
+         public static string CsvSeparatorInstructions(string fileName) => $"Please select the separators for '{fileName}':";
 
          public static readonly string SheetFormatNotSupported =
             "The format of the sheet you are trying to use is not supported.You can find a documentation of the supported formats<href =https://docs.open-systems-pharmacology.org/shared-tools-and-example-workflows/import-edit-observed-data#supported-formats > here </href>";
@@ -1361,11 +1365,21 @@ namespace OSPSuite.Assets
       public static readonly string CannotRemoveBaseGridColumnStillInUse = "Cannot remove base grid column still used by other columns";
       public static readonly string SimpleParseErrorMessage = "There were errors while parsing your data. Navigate to the sheets to read the concrete error.";
       public static readonly string FoldValueMustBeGreaterThanOne = "Fold value must be a number greater than one.";
+      public static readonly string ImporterEmptyFile = "The file you are trying to load is empty.";
+
+      public static  string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
 
       public static string ParseErrorMessage(IEnumerable<string> errors) => $"There were errors while parsing your data: {string.Join(". ", errors)}";
 
       public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) =>
          $"It was not possible to plot the data sets. Please, check your configuration for any missing grouping or meta data parameter. An error occur while plotting data set number:{sheetName + 1} produced the following error: {exceptionMessage}";
+
+      public static string SheetWithDuplicateHeader(string sheetName, IEnumerable<string> duplicateHeaders)
+      {
+         var sb = new StringBuilder();
+         sb.AppendLine($"In sheet {sheetName} the headers \n \n{string.Join("\n", duplicateHeaders)} \nare duplicated.");
+         return sb.ToString();
+      }
 
       public static string InvalidObservedDataFile(string exceptionMessage)
       {

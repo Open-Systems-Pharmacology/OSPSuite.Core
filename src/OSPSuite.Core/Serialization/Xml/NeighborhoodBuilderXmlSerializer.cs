@@ -3,7 +3,7 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
-   public class NeighborhoodBuilderXmlSerializer : ContainerXmlSerializer<NeighborhoodBuilder>
+   public abstract class NeighborhoodBuilderXmlSerializerBase<TNeighborhoodBuilder> : ContainerXmlSerializer<TNeighborhoodBuilder> where TNeighborhoodBuilder : NeighborhoodBuilder
    {
       public override void PerformMapping()
       {
@@ -17,7 +17,7 @@ namespace OSPSuite.Core.Serialization.Xml
          MapReference(x => x.SecondNeighbor);
       }
 
-      protected override XElement TypedSerialize(NeighborhoodBuilder neighborhoodBuilder, SerializationContext context)
+      protected override XElement TypedSerialize(TNeighborhoodBuilder neighborhoodBuilder, SerializationContext context)
       {
          var element = base.TypedSerialize(neighborhoodBuilder, context);
 
@@ -27,5 +27,9 @@ namespace OSPSuite.Core.Serialization.Xml
 
          return element;
       }
+   }
+
+   public class NeighborhoodBuilderXmlSerializer : NeighborhoodBuilderXmlSerializerBase<NeighborhoodBuilder>
+   {
    }
 }

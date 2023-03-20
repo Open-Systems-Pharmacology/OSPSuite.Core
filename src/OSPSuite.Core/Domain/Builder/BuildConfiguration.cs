@@ -17,8 +17,8 @@ namespace OSPSuite.Core.Domain.Builder
       IReactionBuildingBlock Reactions { set; get; }
       IPassiveTransportBuildingBlock PassiveTransports { set; get; }
       ISpatialStructure SpatialStructure { set; get; }
-      IMoleculeStartValuesBuildingBlock MoleculeStartValues { set; get; }
-      IParameterStartValuesBuildingBlock ParameterStartValues { set; get; }
+      MoleculeStartValuesBuildingBlock MoleculeStartValues { set; get; }
+      ParameterStartValuesBuildingBlock ParameterStartValues { set; get; }
       IObserverBuildingBlock Observers { get; set; }
       IEventGroupBuildingBlock EventGroups { get; set; }
       ISimulationSettings SimulationSettings { get; set; }
@@ -135,8 +135,8 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly List<ICoreCalculationMethod> _allCalculationMethods;
       private readonly ICache<IObjectBase, IObjectBase> _builderCache;
       public virtual ISpatialStructure SpatialStructure { get; set; }
-      public virtual IMoleculeStartValuesBuildingBlock MoleculeStartValues { get; set; }
-      public virtual IParameterStartValuesBuildingBlock ParameterStartValues { get; set; }
+      public virtual MoleculeStartValuesBuildingBlock MoleculeStartValues { get; set; }
+      public virtual ParameterStartValuesBuildingBlock ParameterStartValues { get; set; }
       public virtual IObserverBuildingBlock Observers { get; set; }
       public virtual IMoleculeBuildingBlock Molecules { get; set; }
       public virtual IReactionBuildingBlock Reactions { get; set; }

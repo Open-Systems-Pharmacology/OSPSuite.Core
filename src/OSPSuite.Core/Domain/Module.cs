@@ -9,8 +9,8 @@ namespace OSPSuite.Core.Domain
 {
    public class Module : ObjectBase
    {
-      private readonly List<IMoleculeStartValuesBuildingBlock> _moleculeStartValuesCollection = new List<IMoleculeStartValuesBuildingBlock>();
-      private readonly List<IParameterStartValuesBuildingBlock> _parameterStartValuesCollection = new List<IParameterStartValuesBuildingBlock>();
+      private readonly List<MoleculeStartValuesBuildingBlock> _moleculeStartValuesCollection = new List<MoleculeStartValuesBuildingBlock>();
+      private readonly List<ParameterStartValuesBuildingBlock> _parameterStartValuesCollection = new List<ParameterStartValuesBuildingBlock>();
 
       public Module() : this(userEditable:true)
       {
@@ -28,8 +28,8 @@ namespace OSPSuite.Core.Domain
       public ISpatialStructure SpatialStructure { set; get; }
       public IObserverBuildingBlock Observer { set; get; }
       public IEventGroupBuildingBlock EventGroup { set; get; }
-      public IReadOnlyList<IMoleculeStartValuesBuildingBlock> MoleculeStartValuesCollection => _moleculeStartValuesCollection;
-      public IReadOnlyList<IParameterStartValuesBuildingBlock> ParameterStartValuesCollection => _parameterStartValuesCollection;
+      public IReadOnlyList<MoleculeStartValuesBuildingBlock> MoleculeStartValuesCollection => _moleculeStartValuesCollection;
+      public IReadOnlyList<ParameterStartValuesBuildingBlock> ParameterStartValuesCollection => _parameterStartValuesCollection;
 
       public bool UserEditable { get; }
 
@@ -52,12 +52,12 @@ namespace OSPSuite.Core.Domain
          sourceModule.ParameterStartValuesCollection.Each(x => _parameterStartValuesCollection.Add(cloneManager.Clone(x)));
       }
 
-      public void AddParameterStartValueBlock(IParameterStartValuesBuildingBlock parameterStartValuesBuildingBlock)
+      public void AddParameterStartValueBlock(ParameterStartValuesBuildingBlock parameterStartValuesBuildingBlock)
       {
          _parameterStartValuesCollection.Add(parameterStartValuesBuildingBlock);
       }
 
-      public void AddMoleculeStartValueBlock(IMoleculeStartValuesBuildingBlock moleculeStartValuesBuildingBlock)
+      public void AddMoleculeStartValueBlock(MoleculeStartValuesBuildingBlock moleculeStartValuesBuildingBlock)
       {
          _moleculeStartValuesCollection.Add(moleculeStartValuesBuildingBlock);
       }

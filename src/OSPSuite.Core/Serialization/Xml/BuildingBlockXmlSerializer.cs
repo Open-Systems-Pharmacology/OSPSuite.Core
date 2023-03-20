@@ -1,9 +1,9 @@
 using System.Xml.Linq;
-using OSPSuite.Serializer;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Serialization.Xml.Extensions;
+using OSPSuite.Serializer;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -90,12 +90,7 @@ namespace OSPSuite.Core.Serialization.Xml
       where TBuildingBlock : class, IStartValuesBuildingBlock<TStartValue>
       where TStartValue : class, IStartValue
    {
-      public override void PerformMapping()
-      {
-         base.PerformMapping();
-         Map(x => x.SpatialStructureId);
-         Map(x => x.MoleculeBuildingBlockId);
-      }
+     
    }
 
    public class PathAndValueEntityBuildingBlockFromPKSimXmlSerializer<TBuildingBlock, TBuilder> : BuildingBlockXmlSerializer<TBuildingBlock, TBuilder> where TBuilder : PathAndValueEntity where TBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<TBuilder>
@@ -127,6 +122,12 @@ namespace OSPSuite.Core.Serialization.Xml
 
    public class MoleculeStartValuesBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<MoleculeStartValuesBuildingBlock, MoleculeStartValue>
    {
+      public override void PerformMapping()
+      {
+         base.PerformMapping();
+         Map(x => x.SpatialStructureId);
+         Map(x => x.MoleculeBuildingBlockId);
+      }
    }
 
    public class ParameterStartValuesBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<ParameterStartValuesBuildingBlock, ParameterStartValue>

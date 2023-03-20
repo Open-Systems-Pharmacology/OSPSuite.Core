@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Converters.v6_1
       IVisitor<IBuildConfiguration>,
       IVisitor<IModelCoreSimulation>,
       IVisitor<IEventGroupBuildingBlock>,
-      IVisitor<IMoleculeStartValuesBuildingBlock>
+      IVisitor<MoleculeStartValuesBuildingBlock>
 
    {
       private readonly IIdGenerator _idGenerator;
@@ -77,7 +77,7 @@ namespace OSPSuite.Core.Converters.v6_1
          _converted = false;
       }
 
-      public void Visit(IMoleculeStartValuesBuildingBlock moleculeStartValuesBuilding)
+      public void Visit(MoleculeStartValuesBuildingBlock moleculeStartValuesBuilding)
       {
          Visit(moleculeStartValuesBuilding.DowncastTo<IBuildingBlock>());
          moleculeStartValuesBuilding.Each(msv => msv.NegativeValuesAllowed = true);
