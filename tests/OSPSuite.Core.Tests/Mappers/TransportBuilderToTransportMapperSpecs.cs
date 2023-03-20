@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
@@ -68,7 +69,7 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_have_added_the_transport_builder_as_reference_to_the_transport()
       {
-         A.CallTo(() => _simulationConfiguration.AddBuilderReference(_transport, _passiveTransportBuilder)).MustHaveHappened();
+         _simulationConfiguration.BuilderFor(_transport).ShouldBeEqualTo(_passiveTransportBuilder);
       }
    }
 

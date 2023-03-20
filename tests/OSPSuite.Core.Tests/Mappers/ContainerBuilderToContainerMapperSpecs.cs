@@ -55,9 +55,9 @@ namespace OSPSuite.Core.Mappers
       }
 
       [Observation]
-      public void should_have_referenced_the_parameter_with_the_parmaeter_builder()
+      public void should_have_referenced_the_parameter_with_the_parameter_builder()
       {
-         A.CallTo(() => _simulationConfiguration.AddBuilderReference(_clonedParameter,_parameterBuilder)).MustHaveHappened();
+         _simulationConfiguration.BuilderFor(_clonedParameter).ShouldBeEqualTo(_parameterBuilder);
       }
    }
 }	

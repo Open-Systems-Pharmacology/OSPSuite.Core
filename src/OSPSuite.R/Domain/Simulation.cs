@@ -104,12 +104,6 @@ namespace OSPSuite.R.Domain
          set => CoreSimulation.Model = value;
       }
 
-      public IBuildConfiguration BuildConfiguration
-      {
-         get => CoreSimulation.BuildConfiguration;
-         set => CoreSimulation.BuildConfiguration = value;
-      }
-
       public OutputSelections OutputSelections => CoreSimulation.OutputSelections;
 
       public double? EndTime => CoreSimulation.EndTime;

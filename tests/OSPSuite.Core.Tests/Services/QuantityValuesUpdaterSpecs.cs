@@ -30,4 +30,4 @@ namespace OSPSuite.Core.Services
          _simulationConfiguration = new SimulationConfigurationForSpecs();
       }
    }
-}
+ }

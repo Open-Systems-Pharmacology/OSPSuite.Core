@@ -48,15 +48,13 @@ namespace OSPSuite.Helpers
 
       public SimulationConfiguration CreateSimulationConfiguration()
       {
-         var module = new Module
-         {
-            Molecule = getMolecules(),
-            Reaction = getReactions(),
-            PassiveTransport = getPassiveTransports(),
-            SpatialStructure = getSpatialStructure(),
-            Observer = getObservers(),
-            EventGroup = getEventGroups(),
-         };
+         var module = _objectBaseFactory.Create<Module>();
+         module.Molecule = getMolecules();
+         module.Reaction = getReactions();
+         module.PassiveTransport = getPassiveTransports();
+         module.SpatialStructure = getSpatialStructure();
+         module.Observer = getObservers();
+         module.EventGroup = getEventGroups();
 
          var simulationConfiguration = new SimulationConfigurationForSpecs
          {
@@ -68,14 +66,10 @@ namespace OSPSuite.Helpers
          allCalculationMethods().Each(simulationConfiguration.AddCalculationMethod);
          var moleculeStartValues = _moleculeStartValuesCreator.CreateFrom(module.SpatialStructure, module.Molecule);
 
-         //add one start values that does not exist in Molecules
-         moleculeStartValues.Add(new MoleculeStartValue
-         {
-            ContainerPath = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism),
-            Name = "MoleculeThatDoesNotExist",
-            Dimension = amountDimension,
-            IsPresent = true
-         });
+         //add one start values that does not exist in Molecules@"
+         var moleculeStartValue = _moleculeStartValuesCreator.CreateMoleculeStartValue(_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism), "MoleculeThatDoesNotExist", amountDimension);
+         moleculeStartValue.IsPresent = true;
+         moleculeStartValues.Add(moleculeStartValue);
          var parameterStartValues = _objectBaseFactory.Create<ParameterStartValuesBuildingBlock>();
          setMoleculeStartValues(moleculeStartValues);
          setParameterStartValues(parameterStartValues);

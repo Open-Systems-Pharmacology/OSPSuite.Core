@@ -40,7 +40,7 @@ namespace OSPSuite.Core
    public class When_deserializing_a_valid_simulation_file_containing_some_licenses : concern_for_SimulationPersistor
    {
       [Observation]
-      public void should_return_a_simulation_transfer_containing_a_valid_simulation_and_license()
+      public void should_return_a_simulation_transfer_containing_a_valid_simulation()
       {
          var x1 = new SimulationTransfer {Simulation = _simulation};
          x1.Favorites.Add("F1");

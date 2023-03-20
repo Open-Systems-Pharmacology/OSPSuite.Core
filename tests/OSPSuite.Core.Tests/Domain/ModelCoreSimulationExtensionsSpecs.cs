@@ -1,10 +1,7 @@
-﻿using FakeItEasy;
-using OSPSuite.BDDHelper;
+﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
@@ -19,7 +16,7 @@ namespace OSPSuite.Core.Domain
          root.Add(new EventGroup());
          _simulation.Model = new Model();
          _simulation.Model.Root = root;
-         _simulation.BuildConfiguration = new BuildConfiguration();
+         _simulation.Configuration = new SimulationConfigurationForSpecs();
          var reactionBuildingBlock = new ReactionBuildingBlock();
          var reactionAtoB = new ReactionBuilder();
          var reactionBtoA = new ReactionBuilder();
@@ -34,7 +31,7 @@ namespace OSPSuite.Core.Domain
          reactionBuildingBlock.Add(reactionAtoB);
          reactionBuildingBlock.Add(reactionBtoA);
 
-         _simulation.BuildConfiguration.Reactions = reactionBuildingBlock;
+         _simulation.Configuration.Module.Reaction = reactionBuildingBlock;
       }
 
       [Observation]

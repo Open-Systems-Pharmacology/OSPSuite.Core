@@ -65,7 +65,7 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_have_added_a_reference_to_the_observer_builder_for_the_created_observer()
       {
-         A.CallTo(() => _simulationConfiguration.AddBuilderReference(_observer, _observerBuilder)).MustHaveHappened();
+         _simulationConfiguration.BuilderFor(_observer).ShouldBeEqualTo(_observerBuilder);
       }
    }
 

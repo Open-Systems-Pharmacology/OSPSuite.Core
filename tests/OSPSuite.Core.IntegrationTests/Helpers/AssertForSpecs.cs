@@ -445,7 +445,7 @@ namespace OSPSuite.Core.Helpers
          Assert.AreEqual(l1.Count(), l2.Count());
          foreach (var name in l1.Keys)
          {
-            Assert.IsTrue(l2.ContainsKey(name));
+            Assert.IsTrue(l2.ContainsKey(name), $"{name} is missing from l2");
             AreEqual(l1[name], l2[name]);
          }
       }
@@ -1255,7 +1255,7 @@ namespace OSPSuite.Core.Helpers
       public static void AreEqualSimulation(IModelCoreSimulation x1, IModelCoreSimulation x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
-         AreEqualBuildConfiguration(x1.BuildConfiguration, x2.BuildConfiguration);
+         AreEqualSimulationConfiguration(x1.Configuration, x2.Configuration);
          AreEqualModel(x1.Model, x2.Model);
       }
 

@@ -124,12 +124,15 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          switch (loadedObject)
          {
-            case IBuildConfiguration buildConfiguration:
-               resolveReferenceIfRequired(buildConfiguration.SpatialStructure);
+            case Module module:
+               resolveReferenceIfRequired(module.SpatialStructure);
+               break;
+            case SimulationConfiguration simulationConfiguration:
+               resolveReferenceIfRequired(simulationConfiguration.Module);
                break;
             case IModelCoreSimulation simulation:
                _referencesResolver.ResolveReferencesIn(simulation.Model);
-               resolveReferenceIfRequired(simulation.BuildConfiguration);
+               resolveReferenceIfRequired(simulation.Configuration);
                break;
             case SimulationTransfer simulationTransfer:
                resolveReferenceIfRequired(simulationTransfer.Simulation);

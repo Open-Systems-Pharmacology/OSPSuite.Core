@@ -109,7 +109,7 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_add_the_builder_to_the_build_configuration_cache()
       {
-         A.CallTo(() => _simulationConfiguration.AddBuilderReference(_moleculeAmount, _moleculeBuilder)).MustHaveHappened();
+         _simulationConfiguration.BuilderFor(_moleculeAmount).ShouldBeEqualTo(_moleculeBuilder);
       }
 
       [Observation]

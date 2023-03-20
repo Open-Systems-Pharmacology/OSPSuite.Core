@@ -70,10 +70,9 @@ namespace OSPSuite.Core.Domain
 
       //Max suggested output points. User can decide to still go ahead with the simulation
       public const float MAX_NUMBER_OF_SUGGESTED_OUTPUT_POINTS = 50000;
-      
+
       public const float FLOAT_RELATIVE_EPSILON = 0.00001f;
       public const double CONFIDENCE_INTERVAL_ALPHA = 0.05;
-
 
       public const string PROJECT_UNDEFINED = "Undefined";
       public const string DISPLAY_PATH_SEPARATOR = "-";
@@ -102,8 +101,7 @@ namespace OSPSuite.Core.Domain
       public const byte RANGE_AREA_TRANSPARENCY = 255 - RANGE_AREA_OPACITY;
       public const int FEEDBACK_REFRESH_TIME = 1000; //refresh time in ms
       public const int DEFAULT_SENSITIVITY_NUMBER_OF_STEPS = 2;
-      public const double DEFAULT_SENSITIVITY_VARIATION_RANGE = 0.1; 
-
+      public const double DEFAULT_SENSITIVITY_VARIATION_RANGE = 0.1;
 
       //sensitivity values below this value will be set to zero
       public const double SENSITIVITY_THRESHOLD = 1.0e-4;
@@ -119,7 +117,6 @@ namespace OSPSuite.Core.Domain
       public const int RELATIVE_ITEM_MAX_FILE_SIZE_IN_BYTES = 50 * MB_TO_BYTES;
       public const string RELATIVE_ITEM_FILE_ITEM_TYPE = "File";
 
-   
       public static class Files
       {
          public const string LICENSE_AGREEMENT_FILE_NAME = "Open Systems Pharmacology Suite License.pdf";
@@ -138,7 +135,7 @@ namespace OSPSuite.Core.Domain
             REL_EXP_PLASMA,
             REL_EXP_VASCULAR_ENDOTHELIUM,
          };
-         
+
          public const string REL_EXP = "Relative expression";
          public const string REL_EXP_BLOOD_CELLS = "Relative expression in blood cells";
          public const string REL_EXP_PLASMA = "Relative expression in plasma";
@@ -336,7 +333,7 @@ namespace OSPSuite.Core.Domain
          public const string VOLUME_PER_BODY_WEIGHT = "Volume per body weight";
 
          public static readonly IDimension NO_DIMENSION = new UnitSystem.Dimension(new BaseDimensionRepresentation(), DIMENSIONLESS, string.Empty);
-         
+
          public static class Units
          {
             public const string Seconds = "s";
@@ -358,7 +355,6 @@ namespace OSPSuite.Core.Domain
          public const string VALUE = "Value";
          public const string UNIT = "Unit";
       }
-
 
       public static class SensitivityAnalysisResults
       {
@@ -569,6 +565,8 @@ namespace OSPSuite.Core.Domain
          public const string KEYS = "Keys";
          public const string VALUE_ORIGIN = "ValueOrigin";
          public const string PERCENTILES = "Percentiles";
+         public const string SIMULATION_CONFIGURATION = "SimulationConfiguration";
+
 
          public static class Attribute
          {
@@ -659,9 +657,8 @@ namespace OSPSuite.Core.Domain
 
       public static class ChartFontOptions
       {
-
          public const string DEFAULT_FONT_FAMILY_NAME = "Microsoft Sans Serif";
-         
+
          public const int DEFAULT_FONT_SIZE_LEGEND = 8;
          public const int DEFAULT_FONT_SIZE_AXIS = 10;
          public const int DEFAULT_FONT_SIZE_TITLE = 16;
@@ -671,22 +668,21 @@ namespace OSPSuite.Core.Domain
          public const int DEFAULT_FONT_SIZE_TITLE_FOR_PARAMETER_IDENTIFICATION_FEEDBACK = 12;
 
          //IMPORTANT: Default font sizes need to be in the list of AllFontSizes otherwise UI binding won't work
-         public static readonly IReadOnlyList<int> AllFontSizes = new[] { DEFAULT_FONT_SIZE_LEGEND, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
+         public static readonly IReadOnlyList<int> AllFontSizes = new[] {DEFAULT_FONT_SIZE_LEGEND, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
 
-         public static readonly IReadOnlyList<string> AllFontFamilies = new[] { "Arial", "Helvetica", "Tahoma", "Times New Roman", DEFAULT_FONT_FAMILY_NAME };
-
+         public static readonly IReadOnlyList<string> AllFontFamilies = new[] {"Arial", "Helvetica", "Tahoma", "Times New Roman", DEFAULT_FONT_FAMILY_NAME};
 
          public static readonly Color DEFAULT_FONT_COLOR_WATERMARK = Color.Black;
       }
 
       public static class MultiCurveOptions
       {
-         public static readonly IReadOnlyList<bool?> AllBooleanOptions= new bool?[] { null, false, true };
+         public static readonly IReadOnlyList<bool?> AllBooleanOptions = new bool?[] {null, false, true};
       }
 
       public static class ImporterConstants
       {
-         public static readonly string[] NAMING_PATTERN_SEPARATORS = { ".", ",", "-", "_" };
+         public static readonly string[] NAMING_PATTERN_SEPARATORS = {".", ",", "-", "_"};
          public static readonly string Undefined = "Undefined";
          public static readonly string GroupingBySuffix = "_GroupBy";
       }

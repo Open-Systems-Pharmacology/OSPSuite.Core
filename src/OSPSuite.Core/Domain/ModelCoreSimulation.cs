@@ -9,11 +9,6 @@ namespace OSPSuite.Core.Domain
    public interface IModelCoreSimulation : IObjectBase, IWithCreationMetaData, IWithModel, IMolWeightFinder
    {
       /// <summary>
-      ///    Build configuration used to create the simulation. May be null
-      /// </summary>
-      IBuildConfiguration BuildConfiguration { get; set; }
-
-      /// <summary>
       ///    Simulation configuration used to create the simulation. May be null
       /// </summary>
       SimulationConfiguration Configuration { get; set; }
@@ -58,17 +53,15 @@ namespace OSPSuite.Core.Domain
 
       public SimulationConfiguration Configuration { get; set; }
 
-      public IBuildConfiguration BuildConfiguration { get; set; }
-
       public double? EndTime => Settings?.OutputSchema?.EndTime;
 
       public OutputSelections OutputSelections => Settings?.OutputSelections;
 
       public SimulationSettings Settings => Configuration?.SimulationSettings;
 
-      public IReactionBuildingBlock Reactions => BuildConfiguration?.Reactions;
+      public IReactionBuildingBlock Reactions => Configuration?.Reactions;
 
-      public IReadOnlyList<string> CompoundNames => BuildConfiguration?.AllPresentMolecules().AllNames();
+      public IReadOnlyList<string> CompoundNames => Configuration?.AllPresentMolecules().AllNames();
 
       public IEnumerable<T> All<T>() where T : class, IEntity => Model?.Root.GetAllChildren<T>().Union(allFromSettings<T>()) ?? Enumerable.Empty<T>();
 
@@ -103,7 +96,7 @@ namespace OSPSuite.Core.Domain
 
          Model?.AcceptVisitor(visitor);
 
-         BuildConfiguration?.AcceptVisitor(visitor);
+         Configuration?.AcceptVisitor(visitor);
       }
    }
 }

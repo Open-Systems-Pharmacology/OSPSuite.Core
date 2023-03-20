@@ -50,11 +50,13 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
 
-         _moleculeStartValues = new MoleculeStartValuesBuildingBlock();
-         _moleculeStartValues.Add(new MoleculeStartValue{Name = "drug", IsPresent = true});
-         _moleculeStartValues.Add(new MoleculeStartValue{Name = "molecule", IsPresent = true });
-         _moleculeStartValues.Add(new MoleculeStartValue{Name = "moleculeThatDoesNotExist", IsPresent = true });
-         _moleculeStartValues.Add(new MoleculeStartValue{Name = "moleculeThatDoesExistButNotPresent", IsPresent = false });
+         _moleculeStartValues = new MoleculeStartValuesBuildingBlock
+         {
+            new MoleculeStartValue {Name = "drug", IsPresent = true},
+            new MoleculeStartValue {Name = "molecule", IsPresent = true},
+            new MoleculeStartValue{Name = "moleculeThatDoesNotExist", IsPresent = true },
+            new MoleculeStartValue{Name = "moleculeThatDoesExistButNotPresent", IsPresent = false }
+         };
 
          _drug = new MoleculeBuilder().WithName("drug");
          sut.Add(_drug);
