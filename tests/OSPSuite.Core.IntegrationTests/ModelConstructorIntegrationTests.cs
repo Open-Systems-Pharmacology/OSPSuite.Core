@@ -440,13 +440,14 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_have_updated_the_formula_of_any_formula_parameter_in_the_spatial_structure_whose_value_was_overwritten_in_the_parameter_start_value_with_a_constant_formula()
+      public void should_have_updated_the_formula_of_any_formula_parameter_in_the_spatial_structure_whose_value_was_overwritten_in_the_parameter_start_value_with_a_formula_and_a_constant()
       {
          var bone_cell = _model.ModelOrganCompartment(ConstantsForSpecs.Bone, ConstantsForSpecs.Cell);
          var parameter = bone_cell.Parameter("FormulaParameterOverwritten");
-         parameter.Formula.IsConstant().ShouldBeTrue();
          parameter.Value.ShouldBeEqualTo(300);
-         parameter.IsFixedValue.ShouldBeFalse();
+         parameter.IsFixedValue.ShouldBeTrue();
+         //formula is kept
+         parameter.Formula.IsConstant().ShouldBeFalse();
       }
 
       [Observation]
