@@ -70,7 +70,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateParameterValueFromParameterStartValues(IModel model, SimulationConfiguration simulationConfiguration)
       {
-         simulationConfiguration.ParameterStartValuesCollection.SelectMany(x => x).Each(x => updateParameterValueFromStartValue(model, x));
+         simulationConfiguration?.ParameterStartValues .Each(x => updateParameterValueFromStartValue(model, x));
       }
 
       private void updateParameterValueFromStartValue(IModel model, PathAndValueEntity pathAndValueEntity)

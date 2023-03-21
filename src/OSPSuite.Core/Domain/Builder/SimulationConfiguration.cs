@@ -34,8 +34,8 @@ namespace OSPSuite.Core.Domain.Builder
       public virtual MoleculeBuildingBlock Molecules => Module?.Molecule;
       public virtual IPassiveTransportBuildingBlock PassiveTransports => Module?.PassiveTransport;
       public virtual IReactionBuildingBlock Reactions => Module?.Reaction;
-      public virtual IReadOnlyList<ParameterStartValuesBuildingBlock> ParameterStartValuesCollection => Module?.ParameterStartValuesCollection;
-      public virtual IReadOnlyList<MoleculeStartValuesBuildingBlock> MoleculeStartValuesCollection => Module?.MoleculeStartValuesCollection;
+      public virtual ParameterStartValuesBuildingBlock ParameterStartValues => Module?.ParameterStartValuesCollection.FirstOrDefault();
+      public virtual MoleculeStartValuesBuildingBlock MoleculeStartValues => Module?.MoleculeStartValuesCollection.FirstOrDefault();
       public virtual IEventGroupBuildingBlock EventGroups => Module?.EventGroup;
       public virtual IObserverBuildingBlock Observers => Module?.Observer;
 
@@ -64,10 +64,11 @@ namespace OSPSuite.Core.Domain.Builder
 
       public virtual IEnumerable<MoleculeStartValue> AllPresentMoleculeValuesFor(IEnumerable<string> moleculeNames)
       {
-         if (Module.Molecule == null)
+         if (Module?.MoleculeStartValuesCollection.FirstOrDefault() == null)
             return Enumerable.Empty<MoleculeStartValue>();
 
-         return Module.MoleculeStartValuesCollection.SelectMany(x => x)
+         //TODO. This should only use the selected one not the first one
+         return Module.MoleculeStartValuesCollection[0]
             .Where(msv => moleculeNames.Contains(msv.MoleculeName))
             .Where(msv => msv.IsPresent);
       }

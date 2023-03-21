@@ -481,7 +481,7 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         var moleculeStartValue = _simulationConfiguration.MoleculeStartValuesCollection[0].First();
+         var moleculeStartValue = _simulationConfiguration.MoleculeStartValues.First();
          var physicalContainer = _simulationConfiguration.SpatialStructure.TopContainers.Select(x => moleculeStartValue.ContainerPath.TryResolve<IContainer>(x)).First(x => x != null);
 
          physicalContainer.Mode = ContainerMode.Logical;
