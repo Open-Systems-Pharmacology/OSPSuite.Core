@@ -145,7 +145,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class BuildConfigurationXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   public class SimulationConfigurationXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexBuildConfiguration()
