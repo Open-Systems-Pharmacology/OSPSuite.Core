@@ -32,8 +32,8 @@ namespace OSPSuite.Core.Services
          _observerMapper = A.Fake<IObserverBuilderToObserverMapper>();
          _simulationConfiguration = A.Fake<SimulationConfiguration>();
          _observerBuildingBlock = new ObserverBuildingBlock();
+         A.CallTo(() => _simulationConfiguration.Observers).Returns(_observerBuildingBlock);
          _model = A.Fake<IModel>();
-         _simulationConfiguration.Module.Observer = _observerBuildingBlock;
          A.CallTo(() => _simulationConfiguration.AllPresentMolecules()).Returns(new[] {A.Fake<IMoleculeBuilder>().WithName(_molecule1), A.Fake<IMoleculeBuilder>().WithName(_molecule2)});
          _rootContainer = new Container();
 
