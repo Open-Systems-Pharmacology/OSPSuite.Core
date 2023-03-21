@@ -39,17 +39,17 @@ namespace OSPSuite.Core.Domain.Mappers
          _parameterFactory = parameterFactory;
       }
 
-      public IEventGroup MapFrom(IEventGroupBuilder eventGroupBuilder, IBuildConfiguration buildConfiguration)
+      public IEventGroup MapFrom(IEventGroupBuilder eventGroupBuilder, SimulationConfiguration simulationConfiguration)
       {
          var eventGroup = _objectBaseFactory.Create<IEventGroup>();
-         buildConfiguration.AddBuilderReference(eventGroup, eventGroupBuilder);
+         simulationConfiguration.AddBuilderReference(eventGroup, eventGroupBuilder);
          eventGroup.UpdatePropertiesFrom(eventGroupBuilder, _cloneManagerForModel);
          eventGroup.EventGroupType = eventGroupBuilder.EventGroupType;
-         createEventGroupStructure(eventGroupBuilder, eventGroup, buildConfiguration);
+         createEventGroupStructure(eventGroupBuilder, eventGroup, simulationConfiguration);
          return eventGroup;
       }
 
-      private void createEventGroupStructure(IEventGroupBuilder eventGroupBuilder, IEventGroup eventGroup, IBuildConfiguration buildConfiguration)
+      private void createEventGroupStructure(IEventGroupBuilder eventGroupBuilder, IEventGroup eventGroup, SimulationConfiguration simulationConfiguration)
       {
          foreach (var childBuilder in eventGroupBuilder.Children)
          {
@@ -59,21 +59,21 @@ namespace OSPSuite.Core.Domain.Mappers
 
             if (childBuilder.IsAnImplementationOf<IEventGroupBuilder>())
             {
-               var childEventGroup = MapFrom(childBuilder.DowncastTo<IEventGroupBuilder>(), buildConfiguration);
+               var childEventGroup = MapFrom(childBuilder.DowncastTo<IEventGroupBuilder>(), simulationConfiguration);
                eventGroup.Add(childEventGroup);
 
                if (childBuilder.IsAnImplementationOf<IApplicationBuilder>())
-                  createApplication(childBuilder.DowncastTo<IApplicationBuilder>(), childEventGroup, buildConfiguration);
+                  createApplication(childBuilder.DowncastTo<IApplicationBuilder>(), childEventGroup, simulationConfiguration);
             }
 
             else if (childBuilder.IsAnImplementationOf<IEventBuilder>())
-               eventGroup.Add(_eventMapper.MapFrom(childBuilder.DowncastTo<IEventBuilder>(), buildConfiguration));
+               eventGroup.Add(_eventMapper.MapFrom(childBuilder.DowncastTo<IEventBuilder>(), simulationConfiguration));
 
             else if (childBuilder.IsAnImplementationOf<IParameter>())
-               eventGroup.Add(_parameterMapper.MapFrom(childBuilder.DowncastTo<IParameter>(), buildConfiguration));
+               eventGroup.Add(_parameterMapper.MapFrom(childBuilder.DowncastTo<IParameter>(), simulationConfiguration));
 
             else if (childBuilder.IsAnImplementationOf<IContainer>())
-               eventGroup.Add(_containerMapper.MapFrom(childBuilder.DowncastTo<IContainer>(), buildConfiguration));
+               eventGroup.Add(_containerMapper.MapFrom(childBuilder.DowncastTo<IContainer>(), simulationConfiguration));
 
             else
                eventGroup.Add(_cloneManagerForModel.Clone(childBuilder));
@@ -85,9 +85,9 @@ namespace OSPSuite.Core.Domain.Mappers
          return childBuilder.IsAnImplementationOf<ITransportBuilder>() || childBuilder.IsAnImplementationOf<IApplicationMoleculeBuilder>();
       }
 
-      private void createApplication(IApplicationBuilder applicationBuilder, IEventGroup eventGroup, IBuildConfiguration buildConfiguration)
+      private void createApplication(IApplicationBuilder applicationBuilder, IEventGroup eventGroup, SimulationConfiguration simulationConfiguration)
       {
-         var molecules = buildConfiguration.Molecules;
+         var molecules = simulationConfiguration.Molecules;
 
          //---- add molecule amounts
          foreach (var appMolecule in applicationBuilder.Molecules)
@@ -95,8 +95,8 @@ namespace OSPSuite.Core.Domain.Mappers
             //get container for the molecule
             var moleculeContainer = appMolecule.RelativeContainerPath.Resolve<IContainer>(eventGroup);
 
-            var molecule = _moleculeMapper.MapFrom(molecules[applicationBuilder.MoleculeName], moleculeContainer, buildConfiguration);
-            molecule.Formula = _formulaMapper.MapFrom(appMolecule.Formula, buildConfiguration);
+            var molecule = _moleculeMapper.MapFrom(molecules[applicationBuilder.MoleculeName], moleculeContainer, simulationConfiguration);
+            molecule.Formula = _formulaMapper.MapFrom(appMolecule.Formula, simulationConfiguration);
 
             moleculeContainer.Add(molecule);
 

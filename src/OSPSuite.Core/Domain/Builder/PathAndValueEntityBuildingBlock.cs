@@ -6,7 +6,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public abstract class PathAndValueEntityBuildingBlock<T> : BuildingBlock, IBuildingBlock<T> where T: class, IWithPath, IObjectBase
+   public abstract class PathAndValueEntityBuildingBlock<T> : BuildingBlock, IBuildingBlock<T> where T : PathAndValueEntity
    {
       protected ICache<ObjectPath, T> _allValues = new Cache<ObjectPath, T>(x => x.Path, x => null);
 
@@ -16,10 +16,10 @@ namespace OSPSuite.Core.Domain.Builder
          set => _allValues[objectPath] = value;
       }
 
-
       public void Add(T startValue)
       {
          _allValues.Add(startValue);
+         startValue.BuildingBlock = this;
       }
 
       public void Remove(T startValue)
@@ -27,7 +27,6 @@ namespace OSPSuite.Core.Domain.Builder
          if (startValue == null) return;
          _allValues.Remove(startValue.Path);
       }
-
 
       public void Remove(ObjectPath objectPath)
       {

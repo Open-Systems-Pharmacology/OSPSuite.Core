@@ -113,7 +113,7 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         var interval = _simulation.BuildConfiguration.SimulationSettings.OutputSchema.Intervals.ElementAt(0);
+         var interval = _simulation.Settings.OutputSchema.Intervals.ElementAt(0);
          interval.GetSingleChildByName<IParameter>(Constants.Parameters.END_TIME).Value = 5000000;
          interval.GetSingleChildByName<IParameter>(Constants.Parameters.RESOLUTION).Value = 10000;
       }

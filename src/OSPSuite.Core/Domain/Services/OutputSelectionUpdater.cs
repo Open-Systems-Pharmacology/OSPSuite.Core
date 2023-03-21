@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public void UpdateOutputsIn(IModelCoreSimulation simulation, IEnumerable<QuantitySelection> usedOutputsForSimulation)
       {
-         var outputSelection = simulation.SimulationSettings.OutputSelections;
+         var outputSelection = simulation.Settings.OutputSelections;
          var usedOutputsList = usedOutputsForSimulation.ToList();
 
          //Remove the one mapped in the simulation that are not used 

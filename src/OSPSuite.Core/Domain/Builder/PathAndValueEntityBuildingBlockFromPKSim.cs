@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public abstract class PathAndValueEntityBuildingBlockFromPKSim<T> : PathAndValueEntityBuildingBlock<T> where T : class, IWithPath, IObjectBase
+   public abstract class PathAndValueEntityBuildingBlockFromPKSim<T> : PathAndValueEntityBuildingBlock<T> where T : PathAndValueEntity
    {
       public string PKSimVersion { set; get; }
 

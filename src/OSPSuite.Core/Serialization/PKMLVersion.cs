@@ -6,8 +6,8 @@
       public const int V5_4_1 = 5;
       public const int V5_5_1 = 6;
       public const int V5_6_1 = 7;
-      public const int NON_CONVERTABLE_VERSION= V5_6_1;
       public const int V6_0_1 = 8;
+      public const int NON_CONVERTABLE_VERSION = V6_0_1;
       public const int V6_1_1 = 9;
       public const int V6_2_1 = 10;
       public const int V6_3_1 = 11;

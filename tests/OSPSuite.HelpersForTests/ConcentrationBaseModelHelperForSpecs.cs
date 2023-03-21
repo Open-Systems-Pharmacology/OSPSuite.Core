@@ -50,9 +50,9 @@ namespace OSPSuite.Helpers
          {
             _reactionDimensionRetriever.SelectedDimensionMode = ReactionDimensionMode.ConcentrationBased;
 
-            var buildConfig = createBuildConfiguration();
-            var model = createModel(buildConfig);
-            return new ModelCoreSimulation { BuildConfiguration = buildConfig, Model = model };
+            var simulationConfiguration = createSimulationConfiguration();
+            var model = createModel(simulationConfiguration);
+            return new ModelCoreSimulation { Configuration = simulationConfiguration, Model = model };
          }
          finally
          {
@@ -60,31 +60,33 @@ namespace OSPSuite.Helpers
          }
       }
 
-      private IModel createModel(IBuildConfiguration buildConfiguration)
+      private IModel createModel(SimulationConfiguration simulationConfiguration)
       {
-         var result = _modelConstructor.CreateModelFrom(buildConfiguration, "SpecModel");
+         var result = _modelConstructor.CreateModelFrom(simulationConfiguration, "SpecModel");
          return result.Model;
       }
 
-      private IBuildConfiguration createBuildConfiguration()
+      private SimulationConfiguration createSimulationConfiguration()
       {
-         var buildConfiguration = new BuildConfigurationForSpecs();
-         buildConfiguration.Molecules = getMolecules();
-         buildConfiguration.Reactions = getReactions();
-         buildConfiguration.SpatialStructure = getSpatialStructure();
-         buildConfiguration.PassiveTransports = new PassiveTransportBuildingBlock();
-         buildConfiguration.Observers = new ObserverBuildingBlock();
-         buildConfiguration.EventGroups = new EventGroupBuildingBlock();
-         buildConfiguration.SimulationSettings = createSimulationConfiguration();
+         var simulationConfiguration = new SimulationConfigurationForSpecs();
+         var module = simulationConfiguration.Module;
+         module.Molecule = getMolecules();
+         module.Reaction = getReactions();
+         module.SpatialStructure = getSpatialStructure();
+         module.PassiveTransport = new PassiveTransportBuildingBlock();
+         module.Observer = new ObserverBuildingBlock();
+         module.EventGroup = new EventGroupBuildingBlock();
+         simulationConfiguration.SimulationSettings = createSimulationSettings();
 
 
-         buildConfiguration.MoleculeStartValues = _moleculeStartValuesCreator.CreateFrom(buildConfiguration.SpatialStructure, buildConfiguration.Molecules);
+         var moleculeStartValues = _moleculeStartValuesCreator.CreateFrom(module.SpatialStructure, module.Molecule);
          var objectPathForContainerThatDoesNotExist = _objectPathFactory.CreateObjectPathFrom("TOTO", "TATA");
-         buildConfiguration.MoleculeStartValues.Add(_moleculeStartValuesCreator.CreateMoleculeStartValue(objectPathForContainerThatDoesNotExist, "A", _concentrationDimension));
-         buildConfiguration.ParameterStartValues = _objectBaseFactory.Create<ParameterStartValuesBuildingBlock>();
+         moleculeStartValues.Add(_moleculeStartValuesCreator.CreateMoleculeStartValue(objectPathForContainerThatDoesNotExist, "A", _concentrationDimension));
 
-         setMoleculeStartValues(buildConfiguration.MoleculeStartValues);
-         return buildConfiguration;
+         module.AddMoleculeStartValueBlock(moleculeStartValues);
+         module.AddParameterStartValueBlock(_objectBaseFactory.Create<ParameterStartValuesBuildingBlock>());
+         setMoleculeStartValues(moleculeStartValues);
+         return simulationConfiguration;
       }
 
       private void setMoleculeStartValues(MoleculeStartValuesBuildingBlock moleculeStartValues)
@@ -133,9 +135,9 @@ namespace OSPSuite.Helpers
          return formula;
       }
 
-      private IMoleculeBuildingBlock getMolecules()
+      private MoleculeBuildingBlock getMolecules()
       {
-         var molecules = _objectBaseFactory.Create<IMoleculeBuildingBlock>();
+         var molecules = _objectBaseFactory.Create<MoleculeBuildingBlock>();
 
          var moleculeA = _moleculeBuilderFactory.Create(molecules.FormulaCache).WithName("A");
          moleculeA.DefaultStartFormula = _objectBaseFactory.Create<ConstantFormula>()
@@ -190,7 +192,7 @@ namespace OSPSuite.Helpers
             .WithDimension(_volumeDimension);
       }
 
-      private SimulationSettings createSimulationConfiguration()
+      private SimulationSettings createSimulationSettings()
       {
          return new SimulationSettings {Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = _outputSchemaFactory.Create(0, 1440, 240), OutputSelections = new OutputSelections()};
       }

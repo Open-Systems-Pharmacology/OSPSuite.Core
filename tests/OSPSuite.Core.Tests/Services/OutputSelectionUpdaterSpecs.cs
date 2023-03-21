@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Services
          _mappedOutputs = new List<QuantitySelection>();
          _simulation = A.Fake<IModelCoreSimulation>();
          _outputSelection = new OutputSelections();
-         _simulation.SimulationSettings.OutputSelections = _outputSelection;
+         _simulation.Settings.OutputSelections = _outputSelection;
       }
    }
 

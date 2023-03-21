@@ -60,7 +60,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    Replace the keywords used in the event group and all the defined event with the appropriate names from the root
       ///    container.
       /// </summary>
-      void ReplaceIn(IEventGroup eventGroup, IContainer rootContainer, IEventGroupBuilder eventGroupBuilder, IMoleculeBuildingBlock molecules);
+      void ReplaceIn(IEventGroup eventGroup, IContainer rootContainer, IEventGroupBuilder eventGroupBuilder, MoleculeBuildingBlock molecules);
 
       /// <summary>
       ///    Create a new object path based on the given object path where the keyword have been replaced with the appropriate
@@ -155,7 +155,7 @@ namespace OSPSuite.Core.Domain.Services
          transportContainer.GetAllChildren<IUsingFormula>().Each(keywordReplacer.ReplaceIn);
       }
 
-      public void ReplaceIn(IEventGroup eventGroup, IContainer rootContainer, IEventGroupBuilder eventGroupBuilder, IMoleculeBuildingBlock molecules)
+      public void ReplaceIn(IEventGroup eventGroup, IContainer rootContainer, IEventGroupBuilder eventGroupBuilder, MoleculeBuildingBlock molecules)
       {
          var keywordReplacer = new KeywordReplacerCollection();
          addCommonModelReplacersTo(keywordReplacer, rootContainer);

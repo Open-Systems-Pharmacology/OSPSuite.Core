@@ -39,7 +39,7 @@ namespace OSPSuite.Core.Serializers
 
    public abstract class ModellingXmlSerializerWithModelBaseSpecs : ModellingXmlSerializerBaseSpecs
    {
-      protected IBuildConfiguration _buildConfiguration;
+      protected SimulationConfiguration _simulationConfiguration;
       protected IObjectPathFactory _objectPathFactory;
       protected IMoleculeStartValuesCreator _moleculeStartValuesCreator;
       protected CreationResult _result;
@@ -57,14 +57,14 @@ namespace OSPSuite.Core.Serializers
       {
          _objectPathFactory = IoC.Resolve<IObjectPathFactory>();
          _moleculeStartValuesCreator = IoC.Resolve<IMoleculeStartValuesCreator>();
-         _buildConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateBuildConfiguration();
+         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
          _modelConstructor = IoC.Resolve<IModelConstructor>();
-         _result = _modelConstructor.CreateModelFrom(_buildConfiguration, "MyModel");
+         _result = _modelConstructor.CreateModelFrom(_simulationConfiguration, "MyModel");
          _model = _result.Model;
          _simulation = new ModelCoreSimulation
          {
             Id = "SimulationId",
-            BuildConfiguration = _buildConfiguration,
+            Configuration = _simulationConfiguration,
             Model = _model
          };
       }

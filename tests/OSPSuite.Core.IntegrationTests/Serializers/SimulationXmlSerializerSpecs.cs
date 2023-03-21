@@ -13,11 +13,11 @@ namespace OSPSuite.Core.Serializers
       public void TestComplexSimulation()
       {
          //CONTEXT
-         ModelCoreSimulation x1 = _simulation as ModelCoreSimulation;
+         var x1 = _simulation;
          Assert.IsNotNull(x1);
 
          //ACT
-         IModelCoreSimulation x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
          var refResolver = new ReferencesResolver();
          refResolver.ResolveReferencesIn(x2.Model);
          //ASSERT

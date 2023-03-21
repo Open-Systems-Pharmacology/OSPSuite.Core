@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
@@ -24,7 +25,7 @@ namespace OSPSuite.Core.Domain
       private IFormula _kinetic;
       private IParameter _processRateParameter;
       private IProcessBuilder _processBuilder;
-      private IBuildConfiguration _buildConfiguration;
+      private SimulationConfiguration _simulationConfiguration;
       private FormulaUsablePath _formulaUsablePathB;
       private FormulaUsablePath _formulaUsablePathA;
       private FormulaUsablePath _formulaUsablePathFU;
@@ -33,7 +34,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         _buildConfiguration = A.Fake<IBuildConfiguration>();
+         _simulationConfiguration = new SimulationConfigurationForSpecs();
          _processBuilder = new ReactionBuilder();
          _processBuilder.CreateProcessRateParameter = true;
          _kinetic = new ExplicitFormula("(A+B)*fu/BW");
@@ -47,7 +48,7 @@ namespace OSPSuite.Core.Domain
          _kinetic.AddObjectPath(_formulaUsablePathBW);
          _processBuilder.CreateProcessRateParameter = true;
          _processBuilder.ProcessRateParameterPersistable = true;
-         A.CallTo(() => _formulaMapper.MapFrom(_kinetic, _buildConfiguration)).Returns(_kinetic);
+         A.CallTo(() => _formulaMapper.MapFrom(_kinetic, _simulationConfiguration)).Returns(_kinetic);
          _processBuilder.Name = "Reaction";
          _processBuilder.Formula = _kinetic;
          _processRateParameter = new Parameter();
@@ -57,7 +58,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _processRateParameter = sut.CreateProcessRateParameterFor(_processBuilder, _buildConfiguration);
+         _processRateParameter = sut.CreateProcessRateParameterFor(_processBuilder, _simulationConfiguration);
       }
 
       [Observation]

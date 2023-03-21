@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Domain.Services
 
    public interface IModelValidator
    {
-      ValidationResult Validate(IObjectBase objectToValidate, IBuildConfiguration buildConfiguration);
+      ValidationResult Validate(IObjectBase objectToValidate, SimulationConfiguration simulationConfiguration);
    }
 
    /// <summary>
@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IObjectTypeResolver _objectTypeResolver;
       private readonly IObjectPathFactory _objectPathFactory;
       private readonly IEnumerable<string> _keywords;
-      private IBuildConfiguration _buildConfiguration;
+      private SimulationConfiguration _simulationConfiguration;
       private ValidationResult _result;
 
       protected ModelValidator(IObjectTypeResolver objectTypeResolver, IObjectPathFactory objectPathFactory)
@@ -64,7 +64,7 @@ namespace OSPSuite.Core.Domain.Services
       protected void CheckFormulaIn(IUsingFormula entity, IFormula formulaToCheck, ResolveErrorBehavior resolveErrorBehavior)
       {
          var entityAbsolutePath = _objectPathFactory.CreateAbsoluteObjectPath(entity).ToPathString();
-         var builder = _buildConfiguration.BuilderFor(entity);
+         var builder = _simulationConfiguration.BuilderFor(entity);
          var objectWithError = builder ?? entity;
 
          // Dynamic formula may contain object path that will be resolved per instance. It cannot be checked here
@@ -86,7 +86,7 @@ namespace OSPSuite.Core.Domain.Services
 
       protected void CheckPath(IUsingFormula entity, ObjectPath objectPathToCheck, ResolveErrorBehavior resolveErrorBehavior)
       {
-         var builder = _buildConfiguration.BuilderFor(entity);
+         var builder = _simulationConfiguration.BuilderFor(entity);
          var objectWithError = builder ?? entity;
          var entityAbsolutePath = _objectPathFactory.CreateAbsoluteObjectPath(entity).ToString();
          var entityType = _objectTypeResolver.TypeFor(entity);
@@ -128,19 +128,19 @@ namespace OSPSuite.Core.Domain.Services
       ///    Starts a validation run for the specified object to validate.
       /// </summary>
       /// <param name="objectToValidate">The object to validate.</param>
-      /// <param name="buildConfiguration">Build configuration used to create the model</param>
-      public ValidationResult Validate(IObjectBase objectToValidate, IBuildConfiguration buildConfiguration)
+      /// <param name="simulationConfiguration">Simulation configuration used to create the model</param>
+      public ValidationResult Validate(IObjectBase objectToValidate, SimulationConfiguration simulationConfiguration)
       {
          try
          {
             _result = new ValidationResult();
-            _buildConfiguration = buildConfiguration;
+            _simulationConfiguration = simulationConfiguration;
             objectToValidate.AcceptVisitor(this);
             return _result;
          }
          finally
          {
-            _buildConfiguration = null;
+            _simulationConfiguration = null;
             _result = null;
          }
       }
@@ -213,7 +213,7 @@ namespace OSPSuite.Core.Domain.Services
 
    internal class ModelNameValidator : IModelValidator
    {
-      public ValidationResult Validate(IObjectBase objectToValidate, IBuildConfiguration buildConfiguration)
+      public ValidationResult Validate(IObjectBase objectToValidate, SimulationConfiguration simulationConfiguration)
       {
          var model = objectToValidate as IModel;
          var result = new ValidationResult();

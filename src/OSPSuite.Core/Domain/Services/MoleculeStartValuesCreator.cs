@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Domain.Services
 {
    public interface IMoleculeStartValuesCreator : IEmptyStartValueCreator<MoleculeStartValue>
    {
-      MoleculeStartValuesBuildingBlock CreateFrom(ISpatialStructure spatialStructure, IMoleculeBuildingBlock moleculeBuildingBlock);
+      MoleculeStartValuesBuildingBlock CreateFrom(ISpatialStructure spatialStructure, MoleculeBuildingBlock moleculeBuildingBlock);
 
       /// <summary>
       ///    Creates a molecule start value
@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Domain.Services
          _idGenerator = idGenerator;
       }
 
-      public MoleculeStartValuesBuildingBlock CreateFrom(ISpatialStructure spatialStructure, IMoleculeBuildingBlock moleculeBuildingBlock)
+      public MoleculeStartValuesBuildingBlock CreateFrom(ISpatialStructure spatialStructure, MoleculeBuildingBlock moleculeBuildingBlock)
       {
          var moleculesStartValues = _objectBaseFactory.Create<MoleculeStartValuesBuildingBlock>();
          moleculesStartValues.SpatialStructureId = spatialStructure.Id;

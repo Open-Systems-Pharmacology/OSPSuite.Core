@@ -6,29 +6,31 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
-   public interface IBuildConfigurationValidator
+   public interface ISimulationConfigurationValidator
    {
-      ValidationResult Validate(IBuildConfiguration buildConfiguration);
+      ValidationResult Validate(SimulationConfiguration simulationConfiguration);
    }
 
-   class BuildConfigurationValidator : IBuildConfigurationValidator
+   class SimulationConfigurationValidator : ISimulationConfigurationValidator
    {
-      public ValidationResult Validate(IBuildConfiguration buildConfiguration)
+      public ValidationResult Validate(SimulationConfiguration simulationConfiguration)
       {
          var validationResult = new ValidationResult();
-         validateBuildingBlockWithFormulaCache(buildConfiguration.Molecules, validationResult);
-         validateBuildingBlockWithFormulaCache(buildConfiguration.Reactions, validationResult);
-         validateBuildingBlockWithFormulaCache(buildConfiguration.SpatialStructure, validationResult);
-         validateBuildingBlockWithFormulaCache(buildConfiguration.PassiveTransports, validationResult);
-         validateBuildingBlockWithFormulaCache(buildConfiguration.Observers, validationResult);
-         validateEventGroupBuildingBlock(buildConfiguration.EventGroups, buildConfiguration.Molecules, validationResult);
-         validateBuildingBlockWithFormulaCache(buildConfiguration.MoleculeStartValues, validationResult);
-         validateBuildingBlockWithFormulaCache(buildConfiguration.ParameterStartValues, validationResult);
-         buildConfiguration.AllCalculationMethods().Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
+         //TODO
+         var module = simulationConfiguration.Module;
+         validateBuildingBlockWithFormulaCache(module?.Molecule, validationResult);
+         validateBuildingBlockWithFormulaCache(module?.Reaction, validationResult);
+         validateBuildingBlockWithFormulaCache(module?.SpatialStructure, validationResult);
+         validateBuildingBlockWithFormulaCache(module?.PassiveTransport, validationResult);
+         validateBuildingBlockWithFormulaCache(module?.Observer, validationResult);
+         validateEventGroupBuildingBlock(module?.EventGroup, module?.Molecule, validationResult);
+         module?.MoleculeStartValuesCollection.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
+         module?.ParameterStartValuesCollection.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
+         simulationConfiguration.AllCalculationMethods.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
          return validationResult;
       }
 
-      private void validateEventGroupBuildingBlock(IEventGroupBuildingBlock eventGroups, IMoleculeBuildingBlock moleculeBuildingBlock, ValidationResult validationResult)
+      private void validateEventGroupBuildingBlock(IEventGroupBuildingBlock eventGroups, MoleculeBuildingBlock moleculeBuildingBlock, ValidationResult validationResult)
       {
          var allMolecules = moleculeBuildingBlock.Select(mb => mb.Name);
          foreach (var eventGroup in eventGroups)

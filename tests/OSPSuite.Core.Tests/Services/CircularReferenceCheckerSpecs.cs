@@ -123,7 +123,7 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         _result = sut.CheckCircularReferencesIn(_model, A.Fake<IBuildConfiguration>());
+         _result = sut.CheckCircularReferencesIn(_model, new SimulationConfigurationForSpecs());
       }
 
       protected Parameter CreateParameter(string name, string objectPath)
@@ -183,7 +183,7 @@ namespace OSPSuite.Core.Services
       private Model _model;
       protected Parameter _parameter1;
       protected Parameter _parameter2;
-      private IBuildConfiguration _buildConfiguration;
+      private SimulationConfiguration _simulationConfiguration;
       protected ValidationResult _results;
 
       protected override void Context()
@@ -195,12 +195,12 @@ namespace OSPSuite.Core.Services
          _model = new Model {Root = new ARootContainer {_container}.WithName("ROOT")};
          _container.Add(_parameter1);
          _container.Add(_parameter2);
-         _buildConfiguration = A.Fake<IBuildConfiguration>();
+         _simulationConfiguration = new SimulationConfigurationForSpecs();
       }
 
       protected override void Because()
       {
-         _results = sut.CheckCircularReferencesIn(_model, _buildConfiguration);
+         _results = sut.CheckCircularReferencesIn(_model, _simulationConfiguration);
       }
    }
 

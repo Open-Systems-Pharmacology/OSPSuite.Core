@@ -29,23 +29,23 @@ namespace OSPSuite.Core.Domain.Mappers
          _assignmentMapper = assignmentMapper;
       }
 
-      public IEvent MapFrom(IEventBuilder eventBuilder, IBuildConfiguration buildConfiguration)
+      public IEvent MapFrom(IEventBuilder eventBuilder, SimulationConfiguration simulationConfiguration)
       {
          var modelEvent = _objectBaseFactory.Create<IEvent>()
             .WithName(eventBuilder.Name)
             .WithDimension(eventBuilder.Dimension)
             .WithDescription(eventBuilder.Description)
-            .WithFormula(_formulaMapper.MapFrom(eventBuilder.Formula, buildConfiguration));
+            .WithFormula(_formulaMapper.MapFrom(eventBuilder.Formula, simulationConfiguration));
 
-         buildConfiguration.AddBuilderReference(modelEvent, eventBuilder);
+         simulationConfiguration.AddBuilderReference(modelEvent, eventBuilder);
 
          eventBuilder.Assignments
-            .SelectMany(x => _assignmentMapper.MapFrom(x, buildConfiguration))
+            .SelectMany(x => _assignmentMapper.MapFrom(x, simulationConfiguration))
             .Each(modelEvent.AddAssignment);
 
          foreach (var param in eventBuilder.Parameters)
          {
-            modelEvent.Add(_parameterMapper.MapFrom(param, buildConfiguration));
+            modelEvent.Add(_parameterMapper.MapFrom(param, simulationConfiguration));
          }
 
          modelEvent.OneTime = eventBuilder.OneTime;

@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Domain.Mappers
       /// </summary>
       /// <param name="neighborhoodBuilder">Neighborhood builder to be mapped</param>
       /// <param name="model">Model, required to link neighbor containers in model</param>
-      /// <param name="buildConfiguration">Build configuration</param>
+      /// <param name="simulationConfiguration">Simulation configuration</param>
       /// <param name="moleculeNames">
       ///    All molecules present in both neighbors, required to create molecule properties
       ///    subcontainers
@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Domain.Mappers
       /// <param name="moleculeNamesWithCopyPropertiesRequired">Molecules having CopyMoleculeDependentProperties=true</param>
       /// <returns></returns>
       Neighborhood MapFrom(NeighborhoodBuilder neighborhoodBuilder, IModel model,
-         IBuildConfiguration buildConfiguration, IEnumerable<string> moleculeNames,
+         SimulationConfiguration simulationConfiguration, IEnumerable<string> moleculeNames,
          IEnumerable<string> moleculeNamesWithCopyPropertiesRequired);
    }
 
@@ -48,25 +48,26 @@ namespace OSPSuite.Core.Domain.Mappers
          _parameterMapper = parameterMapper;
       }
 
-      public Neighborhood MapFrom(NeighborhoodBuilder neighborhoodBuilder, IModel model,
-         IBuildConfiguration buildConfiguration,
+      public Neighborhood MapFrom(NeighborhoodBuilder neighborhoodBuilder, 
+         IModel model,
+         SimulationConfiguration simulationConfiguration,
          IEnumerable<string> moleculeNames,
          IEnumerable<string> moleculeNamesWithCopyPropertiesRequired)
       {
          var neighborhood = _objectBaseFactory.Create<Neighborhood>();
          neighborhood.UpdatePropertiesFrom(neighborhoodBuilder, _cloneManagerForModel);
-         buildConfiguration.AddBuilderReference(neighborhood, neighborhoodBuilder);
+         simulationConfiguration.AddBuilderReference(neighborhood, neighborhoodBuilder);
          neighborhood.FirstNeighbor = resolveReference(model, neighborhoodBuilder.FirstNeighborPath);
          neighborhood.SecondNeighbor = resolveReference(model, neighborhoodBuilder.SecondNeighborPath);
 
          if (neighborhoodBuilder.MoleculeProperties != null)
          {
             moleculeNames.Each(moleculeName => neighborhood.Add(
-               createMoleculePropertiesFor(neighborhoodBuilder, moleculeName, model.Root, buildConfiguration, moleculeNamesWithCopyPropertiesRequired)));
+               createMoleculePropertiesFor(neighborhoodBuilder, moleculeName, model.Root, simulationConfiguration, moleculeNamesWithCopyPropertiesRequired)));
          }
 
          //Add neighborhood parameter to the neighborhood (clone the existing parameter)
-         neighborhoodBuilder.Parameters.Each(param => neighborhood.Add(_parameterMapper.MapFrom(param, buildConfiguration)));
+         neighborhoodBuilder.Parameters.Each(param => neighborhood.Add(_parameterMapper.MapFrom(param, simulationConfiguration)));
          return neighborhood;
       }
 
@@ -78,11 +79,11 @@ namespace OSPSuite.Core.Domain.Mappers
 
       private IContainer createMoleculePropertiesFor(NeighborhoodBuilder neighborhoodBuilder,
          string moleculeName, IContainer rootContainer,
-         IBuildConfiguration buildConfiguration,
+         SimulationConfiguration simulationConfiguration,
          IEnumerable<string> moleculeNamesWithCopyPropertiesRequired)
       {
          //Create a new model container from the neighborhood container 
-         var moleculePropertiesContainer = _containerMapper.MapFrom(neighborhoodBuilder.MoleculeProperties, buildConfiguration);
+         var moleculePropertiesContainer = _containerMapper.MapFrom(neighborhoodBuilder.MoleculeProperties, simulationConfiguration);
          moleculePropertiesContainer.ContainerType = ContainerType.Molecule;
 
          //Assignment molecule properties subcontainer name from <MOLECULE_PROPERTIES>

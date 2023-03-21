@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Domain
          UserEditable = userEditable;
       }
       
-      public IMoleculeBuildingBlock Molecule { set; get; }
+      public MoleculeBuildingBlock Molecule { set; get; }
       public IReactionBuildingBlock Reaction { set; get; }
       public IPassiveTransportBuildingBlock PassiveTransport { set; get; }
       public ISpatialStructure SpatialStructure { set; get; }

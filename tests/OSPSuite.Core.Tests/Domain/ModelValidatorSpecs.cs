@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
@@ -15,13 +16,13 @@ namespace OSPSuite.Core.Domain
       protected IFormula _validFormula;
       protected IFormula _invalidFormula;
       protected IObjectPathFactory _objectPathFactory;
-      protected IBuildConfiguration _buildConfiguration;
+      protected SimulationConfiguration _simulationConfiguration;
       protected IObjectTypeResolver _objectTypeResolver;
 
       protected override void Context()
       {
-         _objectPathFactory = new ObjectPathFactory(new AliasCreator());
-         _buildConfiguration = A.Fake<IBuildConfiguration>();
+         _objectPathFactory = new ObjectPathFactoryForSpecs();
+         _simulationConfiguration =new SimulationConfigurationForSpecs();
          _validFormula = new ExplicitFormula("5*PAR1");
          _validFormula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("ROOT", "VALID", "PARA1").WithAlias("PAR1"));
          _invalidFormula = new ExplicitFormula("toto");
@@ -57,7 +58,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _results = sut.Validate(_validContainer, _buildConfiguration);
+         _results = sut.Validate(_validContainer, _simulationConfiguration);
       }
 
       [Observation]
@@ -79,7 +80,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _results = sut.Validate(_rootContainer, _buildConfiguration);
+         _results = sut.Validate(_rootContainer, _simulationConfiguration);
       }
 
       [Observation]
@@ -101,7 +102,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _results = sut.Validate(_validContainer, _buildConfiguration);
+         _results = sut.Validate(_validContainer, _simulationConfiguration);
       }
 
       [Observation]
@@ -119,16 +120,16 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          var reactions = new ReactionBuildingBlock {new ReactionBuilder().WithName("REACTION")};
-         _buildConfiguration.Reactions = reactions;
+         _simulationConfiguration.Module.Reaction = reactions;
 
          var passiveTransports = new PassiveTransportBuildingBlock {new TransportBuilder().WithName("TRANSPORT")};
-         _buildConfiguration.PassiveTransports = passiveTransports;
+         _simulationConfiguration.Module.PassiveTransport = passiveTransports;
          sut = new ValidatorForReactionsAndTransports(_objectTypeResolver, _objectPathFactory); ;
       }
 
       protected override void Because()
       {
-         _results = sut.Validate(_rootContainer, _buildConfiguration);
+         _results = sut.Validate(_rootContainer, _simulationConfiguration);
       }
 
       [Observation]
@@ -151,7 +152,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _results = sut.Validate(_validContainer, _buildConfiguration);
+         _results = sut.Validate(_validContainer, _simulationConfiguration);
       }
 
       [Observation]
@@ -180,7 +181,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _results = sut.Validate(_validContainer, _buildConfiguration);
+         _results = sut.Validate(_validContainer, _simulationConfiguration);
       }
 
       [Observation]
@@ -205,7 +206,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _results = sut.Validate(_rootContainer, _buildConfiguration);
+         _results = sut.Validate(_rootContainer, _simulationConfiguration);
       }
 
       [Observation]
@@ -232,7 +233,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _results = sut.Validate(_validContainer, _buildConfiguration);
+         _results = sut.Validate(_validContainer, _simulationConfiguration);
       }
 
       [Observation]

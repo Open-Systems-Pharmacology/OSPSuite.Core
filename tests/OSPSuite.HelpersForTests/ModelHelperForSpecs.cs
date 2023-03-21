@@ -46,35 +46,37 @@ namespace OSPSuite.Helpers
          _dimensionFactory = dimensionFactory;
       }
 
-      public IBuildConfiguration CreateBuildConfiguration()
+      public SimulationConfiguration CreateSimulationConfiguration()
       {
-         var buildConfiguration = new BuildConfigurationForSpecs
+         var module = _objectBaseFactory.Create<Module>();
+         module.Molecule = getMolecules();
+         module.Reaction = getReactions();
+         module.PassiveTransport = getPassiveTransports();
+         module.SpatialStructure = getSpatialStructure();
+         module.Observer = getObservers();
+         module.EventGroup = getEventGroups();
+
+         var simulationConfiguration = new SimulationConfigurationForSpecs
          {
-            Molecules = getMolecules(),
-            Reactions = getReactions(),
-            PassiveTransports = getPassiveTransports(),
-            SpatialStructure = getSpatialStructure(),
-            Observers = getObservers(),
-            EventGroups = getEventGroups(),
-            SimulationSettings = createSimulationConfiguration()
+            SimulationSettings = createSimulationConfiguration(),
+            Module = module
          };
 
-         allCalculationMethods().Each(buildConfiguration.AddCalculationMethod);
-         buildConfiguration.MoleculeStartValues = _moleculeStartValuesCreator.CreateFrom(buildConfiguration.SpatialStructure, buildConfiguration.Molecules);
 
-         //add one start values that does not exist in Molecules
-         buildConfiguration.MoleculeStartValues.Add(new MoleculeStartValue
-         {
-            ContainerPath = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism),
-            Name = "MoleculeThatDoesNotExist",
-            Dimension = amountDimension,
-            IsPresent = true
-         });
-         buildConfiguration.ParameterStartValues = _objectBaseFactory.Create<ParameterStartValuesBuildingBlock>();
-         setMoleculeStartValues(buildConfiguration.MoleculeStartValues);
-         setParameterStartValues(buildConfiguration.ParameterStartValues);
+         allCalculationMethods().Each(simulationConfiguration.AddCalculationMethod);
+         var moleculeStartValues = _moleculeStartValuesCreator.CreateFrom(module.SpatialStructure, module.Molecule);
 
-         return buildConfiguration;
+         //add one start values that does not exist in Molecules@"
+         var moleculeStartValue = _moleculeStartValuesCreator.CreateMoleculeStartValue(_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism), "MoleculeThatDoesNotExist", amountDimension);
+         moleculeStartValue.IsPresent = true;
+         moleculeStartValues.Add(moleculeStartValue);
+         var parameterStartValues = _objectBaseFactory.Create<ParameterStartValuesBuildingBlock>();
+         setMoleculeStartValues(moleculeStartValues);
+         setParameterStartValues(parameterStartValues);
+
+         module.AddMoleculeStartValueBlock(moleculeStartValues);
+         module.AddParameterStartValueBlock(parameterStartValues);
+         return simulationConfiguration;
       }
 
       private SimulationSettings createSimulationConfiguration()
@@ -304,9 +306,9 @@ namespace OSPSuite.Helpers
          return observers;
       }
 
-      private IMoleculeBuildingBlock getMolecules()
+      private MoleculeBuildingBlock getMolecules()
       {
-         var molecules = _objectBaseFactory.Create<IMoleculeBuildingBlock>();
+         var molecules = _objectBaseFactory.Create<MoleculeBuildingBlock>();
          molecules.Add(createMoleculeA(molecules.FormulaCache));
          molecules.Add(createMoleculeB(molecules.FormulaCache));
          molecules.Add(createMoleculeC(molecules.FormulaCache));

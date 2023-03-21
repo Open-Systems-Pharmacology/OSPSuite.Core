@@ -16,12 +16,12 @@ namespace OSPSuite.Core.Domain.Mappers
          _cloneManagerForModel = cloneManagerForModel;
       }
 
-      public IParameter MapFrom(IParameter parameterBuilder, IBuildConfiguration buildConfiguration)
+      public IParameter MapFrom(IParameter parameterBuilder, SimulationConfiguration simulationConfiguration)
       {
          var parameter = _cloneManagerForModel.Clone(parameterBuilder);
          //We reset the container criteria explicitly in the model instance 
          parameter.ContainerCriteria = null;
-         buildConfiguration.AddBuilderReference(parameter, parameterBuilder);
+         simulationConfiguration.AddBuilderReference(parameter, parameterBuilder);
          return parameter;
       }
    }

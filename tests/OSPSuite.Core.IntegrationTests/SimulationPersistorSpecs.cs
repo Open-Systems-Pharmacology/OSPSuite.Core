@@ -40,7 +40,7 @@ namespace OSPSuite.Core
    public class When_deserializing_a_valid_simulation_file_containing_some_licenses : concern_for_SimulationPersistor
    {
       [Observation]
-      public void should_return_a_simulation_transfer_containing_a_valid_simulation_and_license()
+      public void should_return_a_simulation_transfer_containing_a_valid_simulation()
       {
          var x1 = new SimulationTransfer {Simulation = _simulation};
          x1.Favorites.Add("F1");
@@ -63,7 +63,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_throw_an_exception()
       {
-         _pkmlPersistor.SaveToPKML(_simulation.BuildConfiguration.MoleculeStartValues, _filePath);
+         _pkmlPersistor.SaveToPKML(_simulation.Configuration.SpatialStructure, _filePath);
          File.Exists(_filePath).ShouldBeTrue();
 
          var deserializationObjectBaseRepository = IoC.Resolve<IWithIdRepository>();

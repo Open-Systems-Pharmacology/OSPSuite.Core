@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Domain
 {
    public abstract class concern_for_MoleculeBuildingBlockValidator : ContextSpecification<IMoleculeBuildingBlockValidator>
    {
-      protected IMoleculeBuildingBlock _moleculeBuildingBlock;
+      protected MoleculeBuildingBlock _moleculeBuildingBlock;
       protected IMoleculeBuilder _molecule1;
       protected IMoleculeBuilder _molecule2;
       protected IParameter _validParameter;

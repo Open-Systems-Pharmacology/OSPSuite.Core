@@ -6,7 +6,7 @@ namespace OSPSuite.Core.Domain.Mappers
 {
    public interface IProcessRateParameterCreator
    {
-      IParameter CreateProcessRateParameterFor(IProcessBuilder processBuilder, IBuildConfiguration buildConfiguration);
+      IParameter CreateProcessRateParameterFor(IProcessBuilder processBuilder, SimulationConfiguration simulationConfiguration);
    }
 
    public class ProcessRateParameterCreator : IProcessRateParameterCreator
@@ -20,13 +20,13 @@ namespace OSPSuite.Core.Domain.Mappers
          _formulaMapper = formulaMapper;
       }
 
-      public IParameter CreateProcessRateParameterFor(IProcessBuilder processBuilder, IBuildConfiguration buildConfiguration)
+      public IParameter CreateProcessRateParameterFor(IProcessBuilder processBuilder, SimulationConfiguration simulationConfiguration)
       {
          var parameter = _objectBaseFactory
             .Create<IParameter>()
             .WithName(Constants.Parameters.PROCESS_RATE)
             .WithDimension(processBuilder.Dimension)
-            .WithFormula(_formulaMapper.MapFrom(processBuilder.Formula, buildConfiguration));
+            .WithFormula(_formulaMapper.MapFrom(processBuilder.Formula, simulationConfiguration));
 
          parameter.Visible = false;
          parameter.Editable = false;
@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
          addAdditionalParentReference(parameter.Formula);
 
-         buildConfiguration.AddBuilderReference(parameter, processBuilder);
+         simulationConfiguration.AddBuilderReference(parameter, processBuilder);
 
          if (processBuilder.ProcessRateParameterPersistable)
             parameter.Persistable = true;

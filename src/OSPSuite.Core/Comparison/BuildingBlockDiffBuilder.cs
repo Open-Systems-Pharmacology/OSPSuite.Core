@@ -31,7 +31,7 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public class MoleculeBuildingBlockDiffBuilder : BuildingBlockDiffBuilder<IMoleculeBuildingBlock, IMoleculeBuilder>
+   public class MoleculeBuildingBlockDiffBuilder : BuildingBlockDiffBuilder<MoleculeBuildingBlock, IMoleculeBuilder>
    {
       public MoleculeBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) : base(objectBaseDiffBuilder, enumerableComparer)
       {

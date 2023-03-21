@@ -30,33 +30,31 @@ namespace OSPSuite.Core.Domain.Mappers
          _neighborhoodMapper = neighborhoodMapper;
       }
 
-      public IContainer MapFrom(IModel model, IBuildConfiguration buildConfiguration)
+      public IContainer MapFrom(IModel model, SimulationConfiguration simulationConfiguration)
       {
-         var moleculeNames = buildConfiguration.AllPresentFloatingMoleculeNames();
+         var moleculeNames = simulationConfiguration.AllPresentFloatingMoleculeNames();
 
          var neighborhoodsParentContainer = _objectBaseFactory.Create<IContainer>()
             .WithMode(ContainerMode.Logical)
             .WithName(Constants.NEIGHBORHOODS);
 
-         var startValuesForFloatingMolecules = presentMoleculesCachedByContainerPath(moleculeNames, buildConfiguration);
+         var startValuesForFloatingMolecules = presentMoleculesCachedByContainerPath(moleculeNames, simulationConfiguration);
 
-         var moleculeNamesCopyProperties = buildConfiguration.AllPresentXenobioticFloatingMoleculeNames();
+         var moleculeNamesCopyProperties = simulationConfiguration.AllPresentXenobioticFloatingMoleculeNames();
 
-         buildConfiguration.SpatialStructure.Neighborhoods.Each(nb =>
+         simulationConfiguration.SpatialStructure.Neighborhoods.Each(nb =>
             neighborhoodsParentContainer.Add(_neighborhoodMapper.MapFrom(nb,
                model,
-               buildConfiguration,
+               simulationConfiguration,
                moleculeNamesFor(nb, startValuesForFloatingMolecules),
                moleculeNamesCopyProperties)));
 
          return neighborhoodsParentContainer;
       }
 
-      private ICache<string, List<string>> presentMoleculesCachedByContainerPath(IEnumerable<string> namesOfFloatingMolecules, IBuildConfiguration buildConfiguration)
+      private ICache<string, List<string>> presentMoleculesCachedByContainerPath(IEnumerable<string> namesOfFloatingMolecules, SimulationConfiguration simulationConfiguration)
       {
-         var startValues =
-            buildConfiguration.MoleculeStartValues.Where(msv => (msv.IsPresent &&
-                                                                 namesOfFloatingMolecules.Contains(msv.MoleculeName))).ToList();
+         var startValues = simulationConfiguration.AllPresentMoleculeValuesFor(namesOfFloatingMolecules).ToList();
 
          var moleculeStartValuesPerContainer = new Cache<string, List<string>>();
 

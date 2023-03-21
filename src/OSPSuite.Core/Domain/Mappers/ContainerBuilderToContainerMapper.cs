@@ -22,26 +22,26 @@ namespace OSPSuite.Core.Domain.Mappers
          _cloneManagerForModel = cloneManagerForModel;
       }
 
-      public IContainer MapFrom(IContainer containerBuilder, IBuildConfiguration buildConfiguration)
+      public IContainer MapFrom(IContainer containerBuilder, SimulationConfiguration simulationConfiguration)
       {
          var container= _cloneManagerForModel.Clone(containerBuilder);
-         addBuilderReference(container, containerBuilder, buildConfiguration);
+         addBuilderReference(container, containerBuilder, simulationConfiguration);
          return container;
       }
 
-      private void addBuilderReference(IContainer container, IContainer containerBuilder, IBuildConfiguration buildConfiguration)
+      private void addBuilderReference(IContainer container, IContainer containerBuilder, SimulationConfiguration simulationConfiguration)
       {
          if (container == null || containerBuilder == null) return;
 
-         buildConfiguration.AddBuilderReference(container, containerBuilder);
+         simulationConfiguration.AddBuilderReference(container, containerBuilder);
 
          foreach (var childBuilder in containerBuilder.Children)
          {
             var child = container.GetSingleChildByName(childBuilder.Name);
             if(child.IsAnImplementationOf<IContainer>())
-               addBuilderReference(child.DowncastTo<IContainer>(), childBuilder as IContainer, buildConfiguration);
+               addBuilderReference(child.DowncastTo<IContainer>(), childBuilder as IContainer, simulationConfiguration);
             else
-               buildConfiguration.AddBuilderReference(child, childBuilder);
+               simulationConfiguration.AddBuilderReference(child, childBuilder);
          }
       }
    }

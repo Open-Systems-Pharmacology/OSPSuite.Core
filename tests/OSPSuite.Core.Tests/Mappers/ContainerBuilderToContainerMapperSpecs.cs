@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -24,7 +25,7 @@ namespace OSPSuite.Core.Mappers
    {
       private IContainer _containerBuilder;
       private IContainer _clonedContainer;
-      private IBuildConfiguration _buildConfiguration;
+      private SimulationConfiguration _simulationConfiguration;
       private IParameter _parameterBuilder;
       private IParameter _clonedParameter;
       private IContainer _result;
@@ -38,13 +39,13 @@ namespace OSPSuite.Core.Mappers
          _clonedContainer = new Container();
          _clonedParameter = new Parameter().WithName("toto");
          _clonedContainer.Add(_clonedParameter);
-         _buildConfiguration = A.Fake<IBuildConfiguration>();
+         _simulationConfiguration = new SimulationConfigurationForSpecs();
          A.CallTo(() => _cloneManagerForModel.Clone(_containerBuilder)).Returns(_clonedContainer);
       }
 
       protected override void Because()
       {
-         _result = sut.MapFrom(_containerBuilder, _buildConfiguration);
+         _result = sut.MapFrom(_containerBuilder, _simulationConfiguration);
       }
 
       [Observation]
@@ -54,9 +55,9 @@ namespace OSPSuite.Core.Mappers
       }
 
       [Observation]
-      public void should_have_referenced_the_parameter_with_the_parmaeter_builder()
+      public void should_have_referenced_the_parameter_with_the_parameter_builder()
       {
-         A.CallTo(() => _buildConfiguration.AddBuilderReference(_clonedParameter,_parameterBuilder)).MustHaveHappened();
+         _simulationConfiguration.BuilderFor(_clonedParameter).ShouldBeEqualTo(_parameterBuilder);
       }
    }
 }	

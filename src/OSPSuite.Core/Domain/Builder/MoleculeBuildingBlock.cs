@@ -4,37 +4,31 @@ using OSPSuite.Assets;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public interface IMoleculeBuildingBlock : IBuildingBlock<IMoleculeBuilder>
-   {
-      IMoleculeBuilder this[string moleculeName] { get; }
-      IEnumerable<IMoleculeBuilder> AllFloating();
-      IEnumerable<IMoleculeBuilder> AllPresentFor(MoleculeStartValuesBuildingBlock moleculesStartValues);
-   }
-
-   public class MoleculeBuildingBlock : BuildingBlock<IMoleculeBuilder>, IMoleculeBuildingBlock
+   public class MoleculeBuildingBlock : BuildingBlock<IMoleculeBuilder>
    {
       public MoleculeBuildingBlock()
       {
          Icon = IconNames.MOLECULE;
       }
-      public IMoleculeBuilder this[string moleculeName]
-      {
-         get { return this.FirstOrDefault(moleculeBuilder => moleculeBuilder.Name == moleculeName); }
-      }
 
-      public IEnumerable<IMoleculeBuilder> AllFloating()
+      public IMoleculeBuilder this[string moleculeName] => this.FindByName(moleculeName);
+
+      public IEnumerable<IMoleculeBuilder> AllFloating() => this.Where(x => x.IsFloating);
+
+      public IEnumerable<IMoleculeBuilder> AllPresentFor(IEnumerable<MoleculeStartValuesBuildingBlock> moleculesStartValues)
       {
-         return this.Where(x => x.IsFloating);
+         var moleculeNames = moleculesStartValues.SelectMany(x => x)
+            .Where(moleculeStartValue => moleculeStartValue.IsPresent)
+            .Select(moleculeStartValue => moleculeStartValue.MoleculeName)
+            .Distinct();
+
+
+         return moleculeNames.Select(moleculeName => this[moleculeName]).Where(m => m != null);
       }
 
       public IEnumerable<IMoleculeBuilder> AllPresentFor(MoleculeStartValuesBuildingBlock moleculesStartValues)
       {
-         var moleculeNames = (from moleculeStartValue in moleculesStartValues
-                              where moleculeStartValue.IsPresent
-                              select moleculeStartValue.MoleculeName).Distinct();
-
-
-         return moleculeNames.Select(moleculeName => this[moleculeName]).Where(m => m != null);
+         return AllPresentFor(new[] {moleculesStartValues});
       }
    }
 }

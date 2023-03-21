@@ -32,33 +32,33 @@ namespace OSPSuite.Core.Domain.Mappers
          _processRateParameterCreator = processRateParameterCreator;
       }
 
-      public ITransport MapFrom(ITransportBuilder transportBuilder, IBuildConfiguration buildConfiguration)
+      public ITransport MapFrom(ITransportBuilder transportBuilder, SimulationConfiguration simulationConfiguration)
       {
          var transport = _objectBaseFactory.Create<ITransport>()
             .WithName(transportBuilder.Name)
             .WithIcon(transportBuilder.Icon)
             .WithDimension(transportBuilder.Dimension)
-            .WithFormula(_formulaMapper.MapFrom(transportBuilder.Formula, buildConfiguration));
+            .WithFormula(_formulaMapper.MapFrom(transportBuilder.Formula, simulationConfiguration));
 
-         buildConfiguration.AddBuilderReference(transport, transportBuilder);
+         simulationConfiguration.AddBuilderReference(transport, transportBuilder);
 
-         addLocalParameters(transport, transportBuilder, buildConfiguration);
+         addLocalParameters(transport, transportBuilder, simulationConfiguration);
 
          //lastly, add parameter rate transporter if required
          if (transportBuilder.CreateProcessRateParameter)
-            transport.Add(processRateParameterFor(transportBuilder, buildConfiguration));
+            transport.Add(processRateParameterFor(transportBuilder, simulationConfiguration));
 
          return transport;
       }
 
-      private void addLocalParameters(ITransport transport, ITransportBuilder transportBuilder, IBuildConfiguration buildConfiguration)
+      private void addLocalParameters(ITransport transport, ITransportBuilder transportBuilder, SimulationConfiguration simulationConfiguration)
       {
-         transport.AddChildren(_parameterMapper.MapLocalFrom(transportBuilder, buildConfiguration));
+         transport.AddChildren(_parameterMapper.MapLocalFrom(transportBuilder, simulationConfiguration));
       }
 
-      private IParameter processRateParameterFor(ITransportBuilder transportBuilder, IBuildConfiguration buildConfiguration)
+      private IParameter processRateParameterFor(ITransportBuilder transportBuilder, SimulationConfiguration simulationConfiguration)
       {
-         var parameter = _processRateParameterCreator.CreateProcessRateParameterFor(transportBuilder, buildConfiguration);
+         var parameter = _processRateParameterCreator.CreateProcessRateParameterFor(transportBuilder, simulationConfiguration);
 
          parameter.AddTag(ObjectPathKeywords.MOLECULE);
          parameter.AddTag(ObjectPathKeywords.NEIGHBORHOOD);

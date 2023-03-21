@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Services
       ///    Check the given <paramref name="model" /> for circular references and returns any problem that may have been found
       ///    during check
       /// </summary>
-      ValidationResult CheckCircularReferencesIn(IModel model, IBuildConfiguration buildConfiguration);
+      ValidationResult CheckCircularReferencesIn(IModel model, SimulationConfiguration simulationConfiguration);
    }
 
    internal class CircularReferenceChecker : ICircularReferenceChecker
@@ -58,7 +58,7 @@ namespace OSPSuite.Core.Services
          }
       }
 
-      public ValidationResult CheckCircularReferencesIn(IModel model, IBuildConfiguration buildConfiguration)
+      public ValidationResult CheckCircularReferencesIn(IModel model, SimulationConfiguration simulationConfiguration)
       {
          var validationResult = new ValidationResult();
 
@@ -66,7 +66,7 @@ namespace OSPSuite.Core.Services
          {
             var allUsingFormulas = model.Root.GetAllChildren<IUsingFormula>();
             allUsingFormulas.Each(buildEntityReferenceCache);
-            allUsingFormulas.Each(x => checkCircularReferencesIn(x, buildConfiguration, validationResult));
+            allUsingFormulas.Each(x => checkCircularReferencesIn(x, simulationConfiguration, validationResult));
             return validationResult;
          }
          finally
@@ -98,14 +98,14 @@ namespace OSPSuite.Core.Services
          }
       }
 
-      private void checkCircularReferencesIn(IUsingFormula usingFormula, IBuildConfiguration buildConfiguration, ValidationResult validationResult)
+      private void checkCircularReferencesIn(IUsingFormula usingFormula, SimulationConfiguration simulationConfiguration, ValidationResult validationResult)
       {
          var references = _entityReferenceCache[usingFormula];
          if (!references.Contains(usingFormula))
             return;
 
          var entityAbsolutePath = _objectPathFactory.CreateAbsoluteObjectPath(usingFormula).ToPathString();
-         var builder = buildConfiguration.BuilderFor(usingFormula);
+         var builder = simulationConfiguration.BuilderFor(usingFormula);
          var objectWithError = builder ?? usingFormula;
          var entityType = _objectTypeResolver.TypeFor(usingFormula);
          var allReferencesName = references.Distinct().AllNames();

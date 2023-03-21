@@ -158,7 +158,7 @@ namespace OSPSuite.Core
       {
          var simulationTransfer = LoadPKMLFile(pkmlName);
          var modelConstructor = IoC.Resolve<IModelConstructor>();
-         var result = modelConstructor.CreateModelFrom(simulationTransfer.Simulation.BuildConfiguration, pkmlName);
+         var result = modelConstructor.CreateModelFrom(simulationTransfer.Simulation.Configuration, pkmlName);
          return result;
       }
    }

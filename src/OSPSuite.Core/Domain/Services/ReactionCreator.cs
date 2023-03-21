@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Domain.Services
 {
    internal interface IReactionCreator
    {
-      bool CreateReaction(IReactionBuilder reactionBuilder, IModel model, IBuildConfiguration buildConfiguration);
+      bool CreateReaction(IReactionBuilder reactionBuilder, IModel model, SimulationConfiguration simulationConfiguration);
    }
 
    internal class ReactionCreator : IReactionCreator, IVisitor<IContainer>
@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IParameterBuilderCollectionToParameterCollectionMapper _parameterMapper;
       private IModel _model;
       private bool _createdInstance;
-      private IBuildConfiguration _buildConfiguration;
+      private SimulationConfiguration _simulationConfiguration;
       private IReactionBuilder _reactionBuilder;
 
       public ReactionCreator(IReactionBuilderToReactionMapper reactionMapper, IKeywordReplacerTask keywordReplacerTask,
@@ -33,11 +33,11 @@ namespace OSPSuite.Core.Domain.Services
          _parameterMapper = parameterMapper;
       }
 
-      public bool CreateReaction(IReactionBuilder reactionBuilder, IModel model, IBuildConfiguration buildConfiguration)
+      public bool CreateReaction(IReactionBuilder reactionBuilder, IModel model, SimulationConfiguration simulationConfiguration)
       {
          _reactionBuilder = reactionBuilder;
          _model = model;
-         _buildConfiguration = buildConfiguration;
+         _simulationConfiguration = simulationConfiguration;
          try
          {
             //global container should be created before creating local reaction so that path replacement works
@@ -55,7 +55,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             _reactionBuilder = null;
             _model = null;
-            _buildConfiguration = null;
+            _simulationConfiguration = null;
          }
       }
 
@@ -66,10 +66,10 @@ namespace OSPSuite.Core.Domain.Services
             .WithIcon(_reactionBuilder.Icon)
             .WithDescription(_reactionBuilder.Description);
 
-         _buildConfiguration.AddBuilderReference(globalReactionContainer, _reactionBuilder);
+         _simulationConfiguration.AddBuilderReference(globalReactionContainer, _reactionBuilder);
 
          //"Local"-Parameters will be filled in elsewhere (by the Reaction-Mapper)
-         _parameterMapper.MapGlobalOrPropertyFrom(_reactionBuilder, _buildConfiguration).Each(globalReactionContainer.Add);
+         _parameterMapper.MapGlobalOrPropertyFrom(_reactionBuilder, _simulationConfiguration).Each(globalReactionContainer.Add);
 
          _keywordReplacerTask.ReplaceIn(globalReactionContainer, _model.Root, _reactionBuilder.Name);
          return globalReactionContainer;
@@ -79,7 +79,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          if (!canCreateReactionIn(container)) return;
          _createdInstance = true;
-         container.Add(_reactionMapper.MapFromLocal(_reactionBuilder, container, _buildConfiguration));
+         container.Add(_reactionMapper.MapFromLocal(_reactionBuilder, container, _simulationConfiguration));
      }
 
       private bool canCreateReactionIn(IContainer container)
