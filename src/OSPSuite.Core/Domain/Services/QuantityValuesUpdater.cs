@@ -70,7 +70,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateParameterValueFromParameterStartValues(IModel model, SimulationConfiguration simulationConfiguration)
       {
-         simulationConfiguration?.ParameterStartValues .Each(x => updateParameterValueFromStartValue(model, x));
+         simulationConfiguration?.ParameterStartValues.Each(x => updateParameterValueFromStartValue(model, x));
       }
 
       private void updateParameterValueFromStartValue(IModel model, PathAndValueEntity pathAndValueEntity)
@@ -82,24 +82,24 @@ namespace OSPSuite.Core.Domain.Services
          if (parameter == null)
             return;
 
+         //Formula is defined, we update in the parameter instance
          if (pathAndValueEntity.Formula != null)
          {
             parameter.Formula = _cloneManagerForModel.Clone(pathAndValueEntity.Formula);
+            
+            //ensures that the parameter is seen as using the formula
+            parameter.IsFixedValue = false;
             _keywordReplacerTask.ReplaceIn(parameter, model.Root);
          }
-         else
+
+         //If the value is defined, this will be used instead of the formula (even if set previously)
+         if (pathAndValueEntity.Value != null)
          {
-            var constantFormula = parameter.Formula as ConstantFormula;
-            var parameterValue = pathAndValueEntity.Value.GetValueOrDefault(double.NaN);
-            if (constantFormula == null)
-            {
-               parameter.Formula = _formulaFactory.ConstantFormula(parameterValue, parameter.Dimension);
-               parameter.IsFixedValue = false;
-            }
-            else
-            {
+            var parameterValue = pathAndValueEntity.Value.Value;
+            if (parameter.Formula is ConstantFormula constantFormula)
                constantFormula.Value = parameterValue;
-            }
+            else
+               parameter.Value = parameterValue;
          }
       }
 
