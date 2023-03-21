@@ -30,14 +30,14 @@ namespace OSPSuite.Core.Domain.Builder
 
       //TODO
       //just helper method to transition easily to new API
-      public ISpatialStructure SpatialStructure => Module?.SpatialStructure;
-      public MoleculeBuildingBlock Molecules => Module?.Molecule;
-      public IPassiveTransportBuildingBlock PassiveTransports => Module?.PassiveTransport;
-      public IReactionBuildingBlock Reactions => Module?.Reaction;
-      public IReadOnlyList<ParameterStartValuesBuildingBlock> ParameterStartValuesCollection => Module?.ParameterStartValuesCollection;
-      public IReadOnlyList<MoleculeStartValuesBuildingBlock> MoleculeStartValuesCollection => Module?.MoleculeStartValuesCollection;
-      public IEventGroupBuildingBlock EventGroups => Module?.EventGroup;
-      public IObserverBuildingBlock Observers => Module?.Observer;
+      public virtual ISpatialStructure SpatialStructure => Module?.SpatialStructure;
+      public virtual MoleculeBuildingBlock Molecules => Module?.Molecule;
+      public virtual IPassiveTransportBuildingBlock PassiveTransports => Module?.PassiveTransport;
+      public virtual IReactionBuildingBlock Reactions => Module?.Reaction;
+      public virtual IReadOnlyList<ParameterStartValuesBuildingBlock> ParameterStartValuesCollection => Module?.ParameterStartValuesCollection;
+      public virtual IReadOnlyList<MoleculeStartValuesBuildingBlock> MoleculeStartValuesCollection => Module?.MoleculeStartValuesCollection;
+      public virtual IEventGroupBuildingBlock EventGroups => Module?.EventGroup;
+      public virtual IObserverBuildingBlock Observers => Module?.Observer;
 
       public void AddExpressionProfile(ExpressionProfileBuildingBlock expressionProfile) => _expressionProfiles.Add(expressionProfile);
 
