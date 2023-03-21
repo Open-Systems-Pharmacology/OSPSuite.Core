@@ -10,6 +10,10 @@ namespace OSPSuite.Core.Domain.Builder
 {
    public class SimulationConfiguration : IVisitable<IVisitor>
    {
+      private readonly List<ExpressionProfileBuildingBlock> _expressionProfiles = new List<ExpressionProfileBuildingBlock>();
+      private readonly ICache<IObjectBase, IObjectBase> _builderCache = new Cache<IObjectBase, IObjectBase>(onMissingKey: x => null);
+      private readonly List<ICoreCalculationMethod> _allCalculationMethods = new List<ICoreCalculationMethod>();
+
       public SimModelExportMode SimModelExportMode { get; set; } = SimModelExportMode.Full;
 
       public bool ShouldValidate { get; set; } = true;
@@ -19,12 +23,8 @@ namespace OSPSuite.Core.Domain.Builder
       public virtual Module Module { get; set; }
       public virtual IndividualBuildingBlock Individual { get; set; }
       public virtual SimulationSettings SimulationSettings { get; set; }
-      private readonly List<ExpressionProfileBuildingBlock> _expressionProfiles = new List<ExpressionProfileBuildingBlock>();
 
-      private readonly ICache<IObjectBase, IObjectBase> _builderCache = new Cache<IObjectBase, IObjectBase>(onMissingKey: x => null);
-      private readonly List<ICoreCalculationMethod> _allCalculationMethods = new List<ICoreCalculationMethod>();
-
-      public IReadOnlyList<ExpressionProfileBuildingBlock> ExpressionProfiles => _expressionProfiles;
+      public virtual IReadOnlyList<ExpressionProfileBuildingBlock> ExpressionProfiles => _expressionProfiles;
 
       public virtual IReadOnlyList<ICoreCalculationMethod> AllCalculationMethods => _allCalculationMethods;
 
@@ -39,7 +39,7 @@ namespace OSPSuite.Core.Domain.Builder
       public virtual IEventGroupBuildingBlock EventGroups => Module?.EventGroup;
       public virtual IObserverBuildingBlock Observers => Module?.Observer;
 
-      public void AddExpressionProfile(ExpressionProfileBuildingBlock expressionProfile) => _expressionProfiles.Add(expressionProfile);
+      public virtual void AddExpressionProfile(ExpressionProfileBuildingBlock expressionProfile) => _expressionProfiles.Add(expressionProfile);
 
       public virtual void AddCalculationMethod(ICoreCalculationMethod calculationMethodToAdd)
       {
