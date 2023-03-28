@@ -36,11 +36,11 @@ namespace OSPSuite.Core.Converters.v12
       public (int convertedToVersion, bool conversionHappened) ConvertXml(XElement element)
       {
          _converted = false;
-         element.DescendantsAndSelfNamed("Simulation").Each(convertSimulation);
+         element.DescendantsAndSelfNamed("Simulation").Each(ConvertSimulation);
          return (PKMLVersion.V12_0, _converted);
       }
 
-      private void convertSimulation(XElement simulationElement)
+      public void ConvertSimulation(XElement simulationElement)
       {
          //use to list because the node will be deleted
          simulationElement.Descendants("BuildConfiguration").ToList().Each(convertBuildConfigurationToSimulationConfiguration);
