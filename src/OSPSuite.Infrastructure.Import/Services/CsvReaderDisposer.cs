@@ -15,7 +15,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       public CsvReaderDisposer(string fileFullPath, char delimiter = ',')
       {
          _fsReader = new FileStream(fileFullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-         _csv = new CsvReader(new StreamReader(_fsReader, Encoding.Default), hasHeaders: true, delimiter: delimiter);
+         _csv = new CsvReader(new StreamReader(_fsReader, Encoding.UTF8), hasHeaders: true, delimiter: delimiter);
       }
 
       protected virtual void Cleanup()
