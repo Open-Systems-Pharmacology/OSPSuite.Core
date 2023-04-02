@@ -1,6 +1,6 @@
-﻿using OSPSuite.Assets;
+﻿using System.Collections.Generic;
+using OSPSuite.Assets;
 using OSPSuite.Utility.Extensions;
-using System.Collections.Generic;
 
 namespace OSPSuite.Infrastructure.Import.Core.Exceptions
 {

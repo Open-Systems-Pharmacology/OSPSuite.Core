@@ -11,6 +11,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       public int Index { get; private set; }
       public IEnumerable<string> Data { get; private set; }
+
       public UnformattedRow(int index, IEnumerable<string> data)
       {
          Index = index;
@@ -21,7 +22,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    public class DataSheet
    {
       private readonly List<List<string>> _rawDataTable = new List<List<string>>();
-      private List<string> _emptyColumns = new List<string>();
+      private readonly List<string> _emptyColumns = new List<string>();
 
       protected Cache<string, ColumnDescription> _headers =
          new Cache<string, ColumnDescription>(); //we have to ensure headers and RawSheetData sizes match
@@ -33,6 +34,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          {
             _headers.Add(header, reference.GetColumnDescription(header));
          }
+
          _rawDataTable = new List<List<string>>();
          SheetName = reference.SheetName;
       }
@@ -57,6 +59,7 @@ namespace OSPSuite.Infrastructure.Import.Core
             columnName = Guid.NewGuid().ToString();
             _emptyColumns.Add(columnName);
          }
+
          _headers.Add(columnName, new ColumnDescription(columnIndex));
       }
 
@@ -69,15 +72,16 @@ namespace OSPSuite.Infrastructure.Import.Core
          });
       }
 
-      public void AddRow( IEnumerable<string> row)
+      public void AddRow(IEnumerable<string> row)
       {
          var rowList = row.ToList();
 
          if (_headers.Count > rowList.Count)
          {
-            for ( var i = rowList.Count; i < _headers.Count; i++  )
+            for (var i = rowList.Count; i < _headers.Count; i++)
                rowList.Add("");
          }
+
          if (rowList.Count > _headers.Count)
          {
             rowList = rowList.GetRange(0, _headers.Count);
@@ -105,7 +109,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       public DataTable ToDataTable()
       {
          var resultTable = new DataTable();
-         var indexList = _headers.Select( h => h.Index);
+         var indexList = _headers.Select(h => h.Index);
 
          // Add columns.
          foreach (var header in _headers.Keys)
@@ -163,6 +167,7 @@ namespace OSPSuite.Infrastructure.Import.Core
             {
                header.DecrementIndex();
             }
+
             _headers.Remove(headerName);
             _rawDataTable.ForEach(row => row.RemoveAt(index));
          }
@@ -170,7 +175,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public void RemoveEmptyRows()
       {
-         for (var i = _rawDataTable.Count -1; i >= 0; i--)
+         for (var i = _rawDataTable.Count - 1; i >= 0; i--)
          {
             if (_rawDataTable[i].All(x => x.IsNullOrEmpty()))
                _rawDataTable.RemoveAt(i);

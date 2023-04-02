@@ -59,8 +59,8 @@ namespace OSPSuite.Infrastructure.Import.Services
       private readonly IDimension _molWeightDimension;
 
       public Importer(
-         IoC container, 
-         IDataSourceFileParser parser, 
+         IoC container,
+         IDataSourceFileParser parser,
          IDataSetToDataRepositoryMapper dataRepositoryMapper,
          IDimensionFactory dimensionFactory)
       {
@@ -104,7 +104,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          var dataSource = _parser.For(fileName);
 
          //if no DataSheets were loaded, meaning the CsvSeparator Dialog was cancelled, abort the import process without further messages.
-         if (dataSource.DataSheets == null || !dataSource.DataSheets.Any()) 
+         if (dataSource.DataSheets == null || !dataSource.DataSheets.Any())
             return null;
 
 

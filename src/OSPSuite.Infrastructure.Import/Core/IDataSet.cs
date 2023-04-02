@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace OSPSuite.Infrastructure.Import.Core
@@ -14,7 +13,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    }
 
    /// <summary>
-   /// Data from a single experiment
+   ///    Data from a single experiment
    /// </summary>
    public interface IDataSet
    {
@@ -28,7 +27,10 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       private List<ParsedDataSet> _data { get; } = new List<ParsedDataSet>();
 
-      public IReadOnlyList<ParsedDataSet> Data { get => _data; }
+      public IReadOnlyList<ParsedDataSet> Data
+      {
+         get => _data;
+      }
 
       public void AddData(IEnumerable<ParsedDataSet> range)
       {
@@ -42,12 +44,12 @@ namespace OSPSuite.Infrastructure.Import.Core
             //any SimulationPoint
             dataSet => dataSet.Data.Any(
                //belonging to a mandatory column
-               pair => pair.Key.ColumnInfo.IsMandatory && 
-               //is NaN or marked as NaN
-               pair.Value.Any(
-                  point => point.Measurement == indicator || 
-                  double.IsNaN(point.Measurement)
-               )
+               pair => pair.Key.ColumnInfo.IsMandatory &&
+                       //is NaN or marked as NaN
+                       pair.Value.Any(
+                          point => point.Measurement == indicator ||
+                                   double.IsNaN(point.Measurement)
+                       )
             )
          );
       }
@@ -77,5 +79,4 @@ namespace OSPSuite.Infrastructure.Import.Core
          }
       }
    }
-
 }

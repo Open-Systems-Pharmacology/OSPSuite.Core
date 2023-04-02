@@ -19,16 +19,16 @@ namespace OSPSuite.Infrastructure.Import.Core
       )
       {
          Description = groupingParameters.Select(x =>
-         {
-            //All rows should share the same value for the groupingParameters
-            var columnDescription = columnHandler.GetColumnDescription(x);
-            var columnValue = columnDescription != null ? rawData.First().Data.ElementAt(columnDescription.Index) : x;
-            return new InstantiatedMetaData()
             {
-               Id = columnDescription?.Index ?? -1,//-1 stands for no real position
-               Value = columnValue
-            };
-         }
+               //All rows should share the same value for the groupingParameters
+               var columnDescription = columnHandler.GetColumnDescription(x);
+               var columnValue = columnDescription != null ? rawData.First().Data.ElementAt(columnDescription.Index) : x;
+               return new InstantiatedMetaData()
+               {
+                  Id = columnDescription?.Index ?? -1, //-1 stands for no real position
+                  Value = columnValue
+               };
+            }
          );
          Data = parsedData;
       }
@@ -40,6 +40,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          {
             result = result.Replace($"{{{mappings.ElementAt(i).Id}}}", $"{Description.ElementAt(i).Value}");
          }
+
          return result;
       }
 

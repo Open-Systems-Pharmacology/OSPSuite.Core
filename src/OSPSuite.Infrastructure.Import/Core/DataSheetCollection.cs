@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -68,17 +67,19 @@ namespace OSPSuite.Infrastructure.Import.Core
             {
                ds.AddRow(drv.Row.ItemArray.Select(c => c.ToString()));
             }
+
             filteredDataSheets.AddSheet(ds);
          }
 
          return filteredDataSheets;
       }
 
-      public void CopySheetsFrom (DataSheetCollection dataSheetsToCopy)
+      public void CopySheetsFrom(DataSheetCollection dataSheetsToCopy)
       {
          Clear();
          _dataSheets.AddRange(dataSheetsToCopy._dataSheets);
       }
+
       public Cache<string, IDataSet> GetDataSets(IDataFormat format, ColumnInfoCache columnInfos)
       {
          var dataSets = new Cache<string, IDataSet>();

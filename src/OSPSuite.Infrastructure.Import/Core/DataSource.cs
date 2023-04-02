@@ -1,18 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
    public class ParseErrors
    {
-      private Cache<IDataSet, List<ParseErrorDescription>> _errors = new Cache<IDataSet, List<ParseErrorDescription>>(onMissingKey: _ => new List<ParseErrorDescription>());
+      private readonly Cache<IDataSet, List<ParseErrorDescription>> _errors = new Cache<IDataSet, List<ParseErrorDescription>>(onMissingKey: _ => new List<ParseErrorDescription>());
 
       public bool Any() => _errors.Any();
 
@@ -22,7 +20,7 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public void Add(IDataSet key, ParseErrorDescription x)
       {
-         Add(key, new List<ParseErrorDescription>() { x });
+         Add(key, new List<ParseErrorDescription>() {x});
       }
 
       public void Add(ParseErrors other)
@@ -110,6 +108,7 @@ namespace OSPSuite.Infrastructure.Import.Core
                errors.Add(dataSet.Value, new EmptyDataSetsParseErrorDescription(emptyDataSetsNames));
             }
          }
+
          return errors;
       }
 
@@ -151,6 +150,7 @@ namespace OSPSuite.Infrastructure.Import.Core
             sheetIndex++;
             accumulatedIndexes += countOnSheet;
          }
+
          return null;
       }
 
@@ -241,6 +241,7 @@ namespace OSPSuite.Infrastructure.Import.Core
                }
             }
          }
+
          return errors;
       }
 
@@ -258,7 +259,7 @@ namespace OSPSuite.Infrastructure.Import.Core
                   var column = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == columnInfo.Name);
 
                   if (column.Key == null || column.Key.ErrorDeviation == Constants.STD_DEV_GEOMETRIC)
-                        continue;
+                     continue;
 
                   //if unit comes from a column
                   if (column.Key.Column.Dimension == null)
@@ -294,6 +295,7 @@ namespace OSPSuite.Infrastructure.Import.Core
                }
             }
          }
+
          return errors;
       }
 
