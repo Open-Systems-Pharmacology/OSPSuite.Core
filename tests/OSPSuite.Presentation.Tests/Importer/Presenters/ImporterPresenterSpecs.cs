@@ -44,7 +44,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _dataSource = dataSource;
       }
 
-      protected override bool confirmDroppingOfLoadedSheets()
+      protected override bool ConfirmDroppingOfLoadedSheets()
       {
          return false;
       }

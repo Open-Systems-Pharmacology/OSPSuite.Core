@@ -1,29 +1,29 @@
-﻿using FakeItEasy;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FakeItEasy;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Utility.Container;
-using System.Collections.Generic;
-using System.Linq;
+using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Import;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Utility.Collections;
-using OSPSuite.Core.Import;
-using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Container;
 
-namespace OSPSuite.Presentation.Importer.Services 
+namespace OSPSuite.Presentation.Importer.Services
 {
    class ParsedDataSetTest : ParsedDataSet
    {
       public ParsedDataSetTest() : base
-         (
-            new List<string>(), 
-            A.Fake<DataSheet>(), 
-            new List<UnformattedRow>(), 
-            new Dictionary<ExtendedColumn, IList<SimulationPoint>>())
+      (
+         new List<string>(),
+         A.Fake<DataSheet>(),
+         new List<UnformattedRow>(),
+         new Dictionary<ExtendedColumn, IList<SimulationPoint>>())
       {
       }
 
@@ -33,6 +33,7 @@ namespace OSPSuite.Presentation.Importer.Services
          Description = description;
       }
    }
+
    public abstract class ConcernForImporter : ContextSpecification<OSPSuite.Infrastructure.Import.Services.Importer>
    {
       protected DataSheet _basicFormat;
@@ -59,9 +60,9 @@ namespace OSPSuite.Presentation.Importer.Services
          var dataFormat = A.Fake<IDataFormat>();
          _columnInfos = new ColumnInfoCache
          {
-            new ColumnInfo() { DisplayName = "Time" },
-            new ColumnInfo() { DisplayName = "Concentration" },
-            new ColumnInfo() { DisplayName = "Error" }
+            new ColumnInfo() {DisplayName = "Time"},
+            new ColumnInfo() {DisplayName = "Concentration"},
+            new ColumnInfo() {DisplayName = "Error"}
          };
 
          _columnInfos["Time"].SupportedDimensions.Add(_fakedTimeDimension);
@@ -95,10 +96,10 @@ namespace OSPSuite.Presentation.Importer.Services
       private string _fileName;
       private string _fileExtension;
       private Cache<string, IDataSet> _dataSets;
-      private IEnumerable<MetaDataMappingConverter> _mappings;
+      private IReadOnlyList<MetaDataMappingConverter> _mappings;
       private string _prefix;
       private string _postfix;
-      
+
       protected override void Because()
       {
          base.Because();
@@ -143,7 +144,7 @@ namespace OSPSuite.Presentation.Importer.Services
          _dataSets = new Cache<string, IDataSet>()
          {
             {
-               "key1", 
+               "key1",
                new DataSet()
             },
             {
@@ -151,8 +152,8 @@ namespace OSPSuite.Presentation.Importer.Services
                new DataSet()
             }
          };
-         _dataSets["key1"].AddData(new List<ParsedDataSet>() { parsedDataSet1 } );
-         _dataSets["key2"].AddData(new List<ParsedDataSet>() { parsedDataSet2 });
+         _dataSets["key1"].AddData(new List<ParsedDataSet>() {parsedDataSet1});
+         _dataSets["key2"].AddData(new List<ParsedDataSet>() {parsedDataSet2});
          _mappings = new List<MetaDataMappingConverter>()
          {
             new MetaDataMappingConverter()
@@ -240,9 +241,9 @@ namespace OSPSuite.Presentation.Importer.Services
          var dataFormat = A.Fake<IDataFormat>();
          _columnInfos = new ColumnInfoCache()
          {
-            new ColumnInfo() { DisplayName = "Time" },
-            new ColumnInfo() { DisplayName = "Concentration" },
-            new ColumnInfo() { DisplayName = "Error" }
+            new ColumnInfo() {DisplayName = "Time"},
+            new ColumnInfo() {DisplayName = "Concentration"},
+            new ColumnInfo() {DisplayName = "Error"}
          };
          _metaDataCategories = new List<MetaDataCategory>()
          {
@@ -280,7 +281,7 @@ namespace OSPSuite.Presentation.Importer.Services
             {
                {
                   "Organ",
-                  new ColumnDescription(0, new List<string>() { "PeripheralVenousBlood" }, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(0, new List<string>() {"PeripheralVenousBlood"}, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Time [min]",
@@ -316,7 +317,7 @@ namespace OSPSuite.Presentation.Importer.Services
             {
                {
                   "Organ",
-                  new ColumnDescription(0, new List<string>() { "PeripheralVenousBlood" }, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(0, new List<string>() {"PeripheralVenousBlood"}, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Time",
@@ -324,12 +325,11 @@ namespace OSPSuite.Presentation.Importer.Services
                },
                {
                   "Time_unit",
-                  new ColumnDescription(5, new List<string>() { "min" }, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(5, new List<string>() {"min"}, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "lloq",
                   new ColumnDescription(5, null, ColumnDescription.MeasurementLevel.Numeric)
-                  
                },
                {
                   "Concentration",
@@ -337,7 +337,7 @@ namespace OSPSuite.Presentation.Importer.Services
                },
                {
                   "Concentration_unit",
-                  new ColumnDescription(5, new List<string>() { "pmol/l" }, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(5, new List<string>() {"pmol/l"}, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Error",
@@ -345,7 +345,7 @@ namespace OSPSuite.Presentation.Importer.Services
                },
                {
                   "Error_unit",
-                  new ColumnDescription(5, new List<string>() { "pmol/l" }, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(5, new List<string>() {"pmol/l"}, ColumnDescription.MeasurementLevel.Discrete)
                }
             }
          );
@@ -369,11 +369,11 @@ namespace OSPSuite.Presentation.Importer.Services
             {
                {
                   "Organ",
-                  new ColumnDescription(0, new List<string>() { "PeripheralVenousBlood" }, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(0, new List<string>() {"PeripheralVenousBlood"}, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Time [min]",
-                  new ColumnDescription(5, null,ColumnDescription.MeasurementLevel.Numeric )
+                  new ColumnDescription(5, null, ColumnDescription.MeasurementLevel.Numeric)
                },
                {
                   "lloq",
@@ -385,7 +385,7 @@ namespace OSPSuite.Presentation.Importer.Services
                },
                {
                   "Concentration_unit",
-                  new ColumnDescription(5, new List<string>() { "pmol/l" }, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(5, new List<string>() {"pmol/l"}, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Error",
@@ -393,8 +393,7 @@ namespace OSPSuite.Presentation.Importer.Services
                },
                {
                   "Error_unit",
-                  new ColumnDescription(5, new List<string>() { "pmol/l" }, ColumnDescription.MeasurementLevel.Discrete)
-                  
+                  new ColumnDescription(5, new List<string>() {"pmol/l"}, ColumnDescription.MeasurementLevel.Discrete)
                }
             }
          );
@@ -418,7 +417,7 @@ namespace OSPSuite.Presentation.Importer.Services
             {
                {
                   "Time [invalidUnit]",
-                  new ColumnDescription(5, null,ColumnDescription.MeasurementLevel.Numeric )
+                  new ColumnDescription(5, null, ColumnDescription.MeasurementLevel.Numeric)
                },
                {
                   "Concentration",
@@ -426,7 +425,7 @@ namespace OSPSuite.Presentation.Importer.Services
                },
                {
                   "Concentration_unit",
-                  new ColumnDescription(5, new List<string>() { "pmol/l" }, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(5, new List<string>() {"pmol/l"}, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Error",
@@ -434,8 +433,7 @@ namespace OSPSuite.Presentation.Importer.Services
                },
                {
                   "Error_unit",
-                  new ColumnDescription(5, new List<string>() { "pmol/l" }, ColumnDescription.MeasurementLevel.Discrete)
-
+                  new ColumnDescription(5, new List<string>() {"pmol/l"}, ColumnDescription.MeasurementLevel.Discrete)
                }
             }
          );
@@ -449,22 +447,22 @@ namespace OSPSuite.Presentation.Importer.Services
       }
    }
 
-
    public class When_checking_missing_mapping_for_empty_column : ConcernForImporter2
    {
       private IEnumerable<DataFormatParameter> _parameterList;
+
       protected override void Because()
       {
          _parameterList = new List<DataFormatParameter>
-            {
-               new MappingDataFormatParameter("time  [h]",
-                  new Column() { Name = "Time", Dimension = _fakedTimeDimension, Unit = new UnitDescription() }),
-               new MappingDataFormatParameter("conc  [mg/l]",
-                  new Column()
-                  {
-                     Name = "Concentration", Dimension = _fakedConcentrationDimension, Unit = new UnitDescription("mg/l")
-                  })
-            };
+         {
+            new MappingDataFormatParameter("time  [h]",
+               new Column() {Name = "Time", Dimension = _fakedTimeDimension, Unit = new UnitDescription()}),
+            new MappingDataFormatParameter("conc  [mg/l]",
+               new Column()
+               {
+                  Name = "Concentration", Dimension = _fakedConcentrationDimension, Unit = new UnitDescription("mg/l")
+               })
+         };
       }
 
       [TestCase]
@@ -473,5 +471,4 @@ namespace OSPSuite.Presentation.Importer.Services
          sut.CheckWhetherAllDataColumnsAreMapped(_columnInfos, _parameterList).MissingUnit.First().ShouldBeEqualTo("Time");
       }
    }
-
 }

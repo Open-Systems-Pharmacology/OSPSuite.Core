@@ -33,7 +33,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          Data = parsedData;
       }
 
-      public string NameFromConvention(IEnumerable<MetaDataMappingConverter> mappings, string convention, string fileName, string sheetName)
+      public string NameFromConvention(IReadOnlyList<MetaDataMappingConverter> mappings, string convention, string fileName, string sheetName)
       {
          var result = convention.Replace($"{{{Constants.FILE}}}", fileName).Replace($"{{{Constants.SHEET}}}", sheetName);
          for (var i = 0; i < mappings.Count(); i++)

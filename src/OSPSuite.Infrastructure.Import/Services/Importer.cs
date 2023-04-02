@@ -28,7 +28,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          string namingConvention,
          string fileName,
          Cache<string, IDataSet> dataSets,
-         IEnumerable<MetaDataMappingConverter> mappings
+         IReadOnlyList<MetaDataMappingConverter> mappings
       );
 
       int GetImageIndex(DataFormatParameter parameter);
@@ -135,7 +135,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          string namingConvention,
          string fileName,
          Cache<string, IDataSet> dataSets,
-         IEnumerable<MetaDataMappingConverter> mappings
+         IReadOnlyList<MetaDataMappingConverter> mappings
       )
       {
          fileName = Path.GetFileNameWithoutExtension(fileName);
