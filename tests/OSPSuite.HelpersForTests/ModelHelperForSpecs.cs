@@ -10,6 +10,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility.Extensions;
 using static OSPSuite.Core.Domain.ObjectPath;
 using static OSPSuite.Core.Domain.ObjectPathKeywords;
+using static OSPSuite.Helpers.ConstantsForSpecs;
 
 namespace OSPSuite.Helpers
 {
@@ -67,7 +68,7 @@ namespace OSPSuite.Helpers
          var moleculeStartValues = _moleculeStartValuesCreator.CreateFrom(module.SpatialStructure, module.Molecule);
 
          //add one start values that does not exist in Molecules@"
-         var moleculeStartValue = _moleculeStartValuesCreator.CreateMoleculeStartValue(_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism), "MoleculeThatDoesNotExist", amountDimension);
+         var moleculeStartValue = _moleculeStartValuesCreator.CreateMoleculeStartValue(_objectPathFactory.CreateObjectPathFrom(Organism), "MoleculeThatDoesNotExist", amountDimension);
          moleculeStartValue.IsPresent = true;
          moleculeStartValues.Add(moleculeStartValue);
          var parameterStartValues = _objectBaseFactory.Create<ParameterStartValuesBuildingBlock>();
@@ -76,7 +77,39 @@ namespace OSPSuite.Helpers
 
          module.AddMoleculeStartValueBlock(moleculeStartValues);
          module.AddParameterStartValueBlock(parameterStartValues);
+
+         simulationConfiguration.Individual = getIndividual();
+
          return simulationConfiguration;
+      }
+
+      private IndividualBuildingBlock getIndividual()
+      {
+         //create a new individual building block with one parameter that will override a value that already exists
+         //and one parameter that does not exist in the spatial structure and will be added to the simulation
+         var individual = _objectBaseFactory.Create<IndividualBuildingBlock>();
+         individual.Add(new IndividualParameter
+         {
+            //original value is 10
+            Path = _objectPathFactory.CreateObjectPathFrom(Organism, ArterialBlood, P),
+            Value = 20
+         });
+
+         individual.Add(new IndividualParameter
+         {
+            //new parameter that does not exist
+            Path = _objectPathFactory.CreateObjectPathFrom(Organism, ArterialBlood, "NEW_PARAM"),
+            Value = 10,
+            Dimension = amountPerTimeDimension
+         });
+         //dummy parameter that does not fit in the structure
+         individual.Add(new IndividualParameter
+         {
+            //new parameter that does not exist
+            Path = _objectPathFactory.CreateObjectPathFrom(Organism, "DOES_NOT_EXIST", "NOPE"),
+            Value = 10,
+         });
+         return individual;
       }
 
       private SimulationSettings createSimulationConfiguration()
@@ -95,9 +128,9 @@ namespace OSPSuite.Helpers
          cm1.Category = "PartitionCoeff";
          cm1.AddOutputFormula(PartitionCoeff_1(), new ParameterDescriptor("K", Create.Criteria(x => x.With("Cell2Plasma"))));
          var helpMeLungPlasma = newConstantParameter("HelpMe", 10);
-         cm1.AddHelpParameter(helpMeLungPlasma, Create.Criteria(x => x.With(ConstantsForSpecs.Lung).And.With(ConstantsForSpecs.Plasma)));
+         cm1.AddHelpParameter(helpMeLungPlasma, Create.Criteria(x => x.With(Lung).And.With(Plasma)));
          var helpMeBonePlasma = newConstantParameter("HelpMe", 20);
-         cm1.AddHelpParameter(helpMeBonePlasma, Create.Criteria(x => x.With(ConstantsForSpecs.Bone).And.With(ConstantsForSpecs.Plasma)));
+         cm1.AddHelpParameter(helpMeBonePlasma, Create.Criteria(x => x.With(Bone).And.With(Plasma)));
 
          var cm2 = _objectBaseFactory.Create<ICoreCalculationMethod>().WithName("CM2");
          cm2.Category = "PartitionCoeff";
@@ -115,7 +148,7 @@ namespace OSPSuite.Helpers
       private IEventGroupBuilder createBolusApplication(IFormulaCache cache)
       {
          var eventGroup = _objectBaseFactory.Create<IEventGroupBuilder>().WithName("Bolus Application");
-         eventGroup.SourceCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.ArterialBlood).And.With(ConstantsForSpecs.Plasma));
+         eventGroup.SourceCriteria = Create.Criteria(x => x.With(ArterialBlood).And.With(Plasma));
 
          var eventBuilder = _objectBaseFactory.Create<IEventBuilder>()
             .WithName("application")
@@ -126,7 +159,7 @@ namespace OSPSuite.Helpers
             .WithName("BLA")
             .WithFormula(createBolusDosisFormula(cache));
          eventAssignment.UseAsValue = true;
-         eventAssignment.ObjectPath = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.ArterialBlood, ConstantsForSpecs.Plasma, "A");
+         eventAssignment.ObjectPath = _objectPathFactory.CreateObjectPathFrom(Organism, ArterialBlood, Plasma, "A");
          eventBuilder.AddAssignment(eventAssignment);
          eventBuilder.AddParameter(newConstantParameter("StartTime", 10));
          eventGroup.Add(eventBuilder);
@@ -139,8 +172,8 @@ namespace OSPSuite.Helpers
             .WithFormulaString("A+10")
             .WithName("BolusDosis");
          dosisFormula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(
-            ConstantsForSpecs.Organism, ConstantsForSpecs.ArterialBlood,
-            ConstantsForSpecs.Plasma, "A").WithAlias("A"));
+            Organism, ArterialBlood,
+            Plasma, "A").WithAlias("A"));
          cache.Add(dosisFormula);
          return dosisFormula;
       }
@@ -159,7 +192,7 @@ namespace OSPSuite.Helpers
       private void setParameterStartValues(ParameterStartValuesBuildingBlock parameterStartValues)
       {
          //set a parameter start value to a formula 
-         var moleculeAPath = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma, "D");
+         var moleculeAPath = _objectPathFactory.CreateObjectPathFrom(Organism, Lung, Plasma, "D");
          moleculeAPath.Add("RelExpNorm");
          var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("RelExp + RelExpGlobal").WithName("RelExpNormD");
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(MOLECULE, "RelExpGlobal"));
@@ -170,12 +203,12 @@ namespace OSPSuite.Helpers
          parameterStartValue.Formula = formula;
          parameterStartValues.Add(parameterStartValue);
 
-         var parameterPath = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "FormulaParameterOverwritten");
+         var parameterPath = _objectPathFactory.CreateObjectPathFrom(Organism, Bone, Cell, "FormulaParameterOverwritten");
          parameterStartValues.Add(_parameterStartValuesCreator.CreateParameterStartValue(parameterPath, 300, Constants.Dimension.NO_DIMENSION));
 
 
          //overwrite to make sure we have a value for a given path
-         var nanParameterNotNaN = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "E", "OtherNaNParam");
+         var nanParameterNotNaN = _objectPathFactory.CreateObjectPathFrom(Organism, Bone, Cell, "E", "OtherNaNParam");
 
          //NAN parameters are not added to the PSV by default
          parameterStartValues.Add(_parameterStartValuesCreator.CreateParameterStartValue(nanParameterNotNaN, 10, Constants.Dimension.NO_DIMENSION));
@@ -183,39 +216,39 @@ namespace OSPSuite.Helpers
 
       private void setMoleculeStartValues(MoleculeStartValuesBuildingBlock moleculesStartValues)
       {
-         var art_plasma_A = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.ArterialBlood, ConstantsForSpecs.Plasma, "A")];
+         var art_plasma_A = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Organism, ArterialBlood, Plasma, "A")];
          art_plasma_A.Value = 1;
 
-         var lng_plasma_A = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma, "A")];
+         var lng_plasma_A = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Organism, Lung, Plasma, "A")];
          lng_plasma_A.Value = 6;
 
-         var ven_plasma_A = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "A")];
+         var ven_plasma_A = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Organism, VenousBlood, Plasma, "A")];
          ven_plasma_A.Value = 1;
 
-         var lng_plasma_B = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma, "B")];
+         var lng_plasma_B = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Organism, Lung, Plasma, "B")];
          lng_plasma_B.Value = 7;
 
-         var ven_plasma_B = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "B")];
+         var ven_plasma_B = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Organism, VenousBlood, Plasma, "B")];
          ven_plasma_B.Value = 0.4;
 
          setAllIsPresentForMoleculeToFalse(moleculesStartValues, "C", "D", "E", "F", "Enz");
-         var lng_cell_C = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, "C")];
+         var lng_cell_C = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Organism, Lung, Cell, "C")];
          lng_cell_C.IsPresent = true;
          lng_cell_C.Value = 0;
 
-         var bon_cell_C = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "C")];
+         var bon_cell_C = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Organism, Bone, Cell, "C")];
          bon_cell_C.IsPresent = true;
          bon_cell_C.Value = 0;
 
-         var lng_plasma_D = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Plasma, "D")];
+         var lng_plasma_D = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Organism, Lung, Plasma, "D")];
          lng_plasma_D.Value = 8;
          lng_plasma_D.IsPresent = true;
 
-         var ven_plasma_D = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "D")];
+         var ven_plasma_D = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Organism, VenousBlood, Plasma, "D")];
          ven_plasma_D.Value = 0;
          ven_plasma_D.IsPresent = true;
 
-         var bon_cell_E = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "E")];
+         var bon_cell_E = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Organism, Bone, Cell, "E")];
          bon_cell_E.Value = 2;
          bon_cell_E.IsPresent = true;
          var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("RelExp").WithName("RelExpNormE");
@@ -224,11 +257,11 @@ namespace OSPSuite.Helpers
          bon_cell_E.Formula = formula;
          bon_cell_E.ScaleDivisor = 2.5;
 
-         var ven_plasma_E = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "E")];
+         var ven_plasma_E = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Organism, VenousBlood, Plasma, "E")];
          ven_plasma_E.Value = 0;
          ven_plasma_E.IsPresent = true;
 
-         var ven_plasma_F = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, "F")];
+         var ven_plasma_F = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Organism, Bone, Cell, "F")];
          ven_plasma_F.IsPresent = true;
       }
 
@@ -249,7 +282,7 @@ namespace OSPSuite.Helpers
          amountObserver1.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
          amountObserver1.MoleculeList.ForAll = true;
          amountObserver1.Formula = AmountObs(observers.FormulaCache);
-         amountObserver1.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma));
+         amountObserver1.ContainerCriteria = Create.Criteria(x => x.With(Plasma));
          observers.Add(amountObserver1);
 
          var amountObserver2 = _objectBaseFactory.Create<IAmountObserverBuilder>().WithName("AmountObs_2");
@@ -258,7 +291,7 @@ namespace OSPSuite.Helpers
          amountObserver2.Formula = AmountObs(observers.FormulaCache);
          amountObserver2.AddMoleculeName("C");
          amountObserver2.AddMoleculeName("E");
-         amountObserver2.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Cell));
+         amountObserver2.ContainerCriteria = Create.Criteria(x => x.With(Cell));
          observers.Add(amountObserver2);
 
          var amountObserver3 = _objectBaseFactory.Create<IAmountObserverBuilder>().WithName("AmountObs_3");
@@ -267,7 +300,7 @@ namespace OSPSuite.Helpers
          amountObserver3.Formula = AmountObs(observers.FormulaCache);
          amountObserver3.AddMoleculeNameToExclude("C");
          amountObserver3.AddMoleculeNameToExclude("E");
-         amountObserver3.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Cell));
+         amountObserver3.ContainerCriteria = Create.Criteria(x => x.With(Cell));
          observers.Add(amountObserver3);
 
          var containerObserverBuilder = _objectBaseFactory.Create<IContainerObserverBuilder>().WithName("ContainerObs_1");
@@ -275,7 +308,7 @@ namespace OSPSuite.Helpers
          containerObserverBuilder.MoleculeList.ForAll = false;
          containerObserverBuilder.AddMoleculeName("C");
          containerObserverBuilder.Formula = ContainerObs(observers.FormulaCache);
-         containerObserverBuilder.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Organism));
+         containerObserverBuilder.ContainerCriteria = Create.Criteria(x => x.With(Organism));
          observers.Add(containerObserverBuilder);
 
 
@@ -283,7 +316,7 @@ namespace OSPSuite.Helpers
          fractionObserver.Dimension = _dimensionFactory.Dimension(Constants.Dimension.FRACTION);
          fractionObserver.MoleculeList.ForAll = true;
          fractionObserver.Formula = FractionObs(observers.FormulaCache);
-         fractionObserver.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma));
+         fractionObserver.ContainerCriteria = Create.Criteria(x => x.With(Plasma));
          observers.Add(fractionObserver);
 
 
@@ -292,7 +325,7 @@ namespace OSPSuite.Helpers
          observedInOrganismLungPlasma.MoleculeList.ForAll = false;
          observedInOrganismLungPlasma.AddMoleculeName("C");
          observedInOrganismLungPlasma.Formula = InContainerObs(observers.FormulaCache);
-         observedInOrganismLungPlasma.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma).And.InContainer(ConstantsForSpecs.Lung));
+         observedInOrganismLungPlasma.ContainerCriteria = Create.Criteria(x => x.With(Plasma).And.InContainer(Lung));
          observers.Add(observedInOrganismLungPlasma);
 
          var observedInOrganismNotLungPlasma = _objectBaseFactory.Create<IContainerObserverBuilder>().WithName("NotInContainerObserver");
@@ -300,7 +333,7 @@ namespace OSPSuite.Helpers
          observedInOrganismNotLungPlasma.MoleculeList.ForAll = false;
          observedInOrganismNotLungPlasma.AddMoleculeName("C");
          observedInOrganismNotLungPlasma.Formula = InContainerObs(observers.FormulaCache);
-         observedInOrganismNotLungPlasma.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma).And.NotInContainer(ConstantsForSpecs.Lung));
+         observedInOrganismNotLungPlasma.ContainerCriteria = Create.Criteria(x => x.With(Plasma).And.NotInContainer(Lung));
          observers.Add(observedInOrganismNotLungPlasma);
 
          return observers;
@@ -328,7 +361,7 @@ namespace OSPSuite.Helpers
 
          var localParameterWithCriteria = newConstantParameter("LocalWithCriteria", 0).WithMode(ParameterBuildMode.Local);
          //Create a local parameter that should only be defined in Plasma
-         localParameterWithCriteria.ContainerCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma));
+         localParameterWithCriteria.ContainerCriteria = Create.Criteria(x => x.With(Plasma));
          moleculeA.AddParameter(localParameterWithCriteria);
 
 
@@ -351,8 +384,8 @@ namespace OSPSuite.Helpers
          realization1.AddParameter(newConstantParameter("GlobalRealizationParameter", 2, ParameterBuildMode.Global));
 
          realization1.TransportType = TransportType.Influx;
-         realization1.SourceCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma));
-         realization1.TargetCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Cell));
+         realization1.SourceCriteria = Create.Criteria(x => x.With(Plasma));
+         realization1.TargetCriteria = Create.Criteria(x => x.With(Cell));
          transporter1.AddActiveTransportRealization(realization1);
          var transporter2 = _objectBaseFactory.Create<TransporterMoleculeContainer>().WithName("E");
          transporter2.TransportName = "My Transport2";
@@ -365,8 +398,8 @@ namespace OSPSuite.Helpers
          realization2.AddParameter(newConstantParameter("Km", 66));
          realization2.AddParameter(newConstantParameter("VmaxAbs", 2));
          realization2.TransportType = TransportType.Efflux;
-         realization2.SourceCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Cell));
-         realization2.TargetCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma));
+         realization2.SourceCriteria = Create.Criteria(x => x.With(Cell));
+         realization2.TargetCriteria = Create.Criteria(x => x.With(Plasma));
          realization2.CreateProcessRateParameter = true;
          transporter2.AddActiveTransportRealization(realization2);
          moleculeA.AddTransporterMoleculeContainer(transporter1);
@@ -390,8 +423,8 @@ namespace OSPSuite.Helpers
          realization1.AddParameter(newConstantParameter("VmaxAbs", 1));
 
          realization1.TransportType = TransportType.Influx;
-         realization1.SourceCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma));
-         realization1.TargetCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Cell));
+         realization1.SourceCriteria = Create.Criteria(x => x.With(Plasma));
+         realization1.TargetCriteria = Create.Criteria(x => x.With(Cell));
          transporter1.AddActiveTransportRealization(realization1);
          var transporter2 = _objectBaseFactory.Create<TransporterMoleculeContainer>().WithName("XXX");
          transporter2.TransportName = "My Transport2";
@@ -404,8 +437,8 @@ namespace OSPSuite.Helpers
 
          realization2.AddParameter(newConstantParameter("VmaxAbs", 2));
          realization2.TransportType = TransportType.Efflux;
-         realization2.SourceCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Cell));
-         realization2.TargetCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma));
+         realization2.SourceCriteria = Create.Criteria(x => x.With(Cell));
+         realization2.TargetCriteria = Create.Criteria(x => x.With(Plasma));
          transporter2.AddActiveTransportRealization(realization2);
          moleculeB.AddTransporterMoleculeContainer(transporter1);
          moleculeB.AddTransporterMoleculeContainer(transporter2);
@@ -554,7 +587,7 @@ namespace OSPSuite.Helpers
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("k1*k2*fu*A*B*C").WithName("R1");
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("k1").WithAlias("k1"));
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("R1", "k2"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, "fu").WithAlias("fu"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(Organism, "fu").WithAlias("fu"));
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER, "A").WithAlias("A"));
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER, "B").WithAlias("B"));
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER, "C").WithAlias("C"));
@@ -619,7 +652,7 @@ namespace OSPSuite.Helpers
 
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("M/V").WithName("ConcFormula");
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER).WithAlias("M"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER, PARENT_CONTAINER, ConstantsForSpecs.Volume).WithAlias("V"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER, PARENT_CONTAINER, Volume).WithAlias("V"));
 
          formulaCache.Add(formula);
 
@@ -691,13 +724,13 @@ namespace OSPSuite.Helpers
             .WithDimension(amountPerTimeDimension);
 
          T1_1.TransportType = TransportType.Convection;
-         T1_1.SourceCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma)
-            .And.With(ConstantsForSpecs.ArterialBlood));
+         T1_1.SourceCriteria = Create.Criteria(x => x.With(Plasma)
+            .And.With(ArterialBlood));
 
-         T1_1.TargetCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma)
-            .And.Not(ConstantsForSpecs.ArterialBlood)
-            .And.Not(ConstantsForSpecs.Lung)
-            .And.Not(ConstantsForSpecs.VenousBlood));
+         T1_1.TargetCriteria = Create.Criteria(x => x.With(Plasma)
+            .And.Not(ArterialBlood)
+            .And.Not(Lung)
+            .And.Not(VenousBlood));
 
          T1_1.Formula = Convection(passiveTransportBuilderCollection.FormulaCache);
 
@@ -711,13 +744,13 @@ namespace OSPSuite.Helpers
             .WithDimension(amountPerTimeDimension);
 
          T1_2.TransportType = TransportType.Convection;
-         T1_2.SourceCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma)
-            .And.Not(ConstantsForSpecs.ArterialBlood)
-            .And.Not(ConstantsForSpecs.Lung)
-            .And.Not(ConstantsForSpecs.VenousBlood));
+         T1_2.SourceCriteria = Create.Criteria(x => x.With(Plasma)
+            .And.Not(ArterialBlood)
+            .And.Not(Lung)
+            .And.Not(VenousBlood));
 
-         T1_2.TargetCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma)
-            .And.With(ConstantsForSpecs.VenousBlood));
+         T1_2.TargetCriteria = Create.Criteria(x => x.With(Plasma)
+            .And.With(VenousBlood));
 
          T1_2.Formula = Convection(passiveTransportBuilderCollection.FormulaCache);
          passiveTransportBuilderCollection.Add(T1_2);
@@ -728,11 +761,11 @@ namespace OSPSuite.Helpers
             .WithDimension(amountPerTimeDimension);
 
          T1_3.TransportType = TransportType.Convection;
-         T1_3.SourceCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma)
-            .And.With(ConstantsForSpecs.VenousBlood));
+         T1_3.SourceCriteria = Create.Criteria(x => x.With(Plasma)
+            .And.With(VenousBlood));
 
-         T1_3.TargetCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma)
-            .And.With(ConstantsForSpecs.Lung));
+         T1_3.TargetCriteria = Create.Criteria(x => x.With(Plasma)
+            .And.With(Lung));
 
          T1_3.Formula = Convection(passiveTransportBuilderCollection.FormulaCache);
          passiveTransportBuilderCollection.Add(T1_3);
@@ -743,11 +776,11 @@ namespace OSPSuite.Helpers
             .WithDimension(amountPerTimeDimension);
 
          T1_4.TransportType = TransportType.Convection;
-         T1_4.SourceCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma)
-            .And.With(ConstantsForSpecs.Lung));
+         T1_4.SourceCriteria = Create.Criteria(x => x.With(Plasma)
+            .And.With(Lung));
 
-         T1_4.TargetCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma)
-            .And.With(ConstantsForSpecs.ArterialBlood));
+         T1_4.TargetCriteria = Create.Criteria(x => x.With(Plasma)
+            .And.With(ArterialBlood));
 
          T1_4.Formula = Convection(passiveTransportBuilderCollection.FormulaCache);
          passiveTransportBuilderCollection.Add(T1_4);
@@ -758,8 +791,8 @@ namespace OSPSuite.Helpers
             .WithDimension(amountPerTimeDimension);
 
          T2.TransportType = TransportType.Diffusion;
-         T2.SourceCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Plasma));
-         T2.TargetCriteria = Create.Criteria(x => x.With(ConstantsForSpecs.Cell));
+         T2.SourceCriteria = Create.Criteria(x => x.With(Plasma));
+         T2.TargetCriteria = Create.Criteria(x => x.With(Cell));
 
          T2.Formula = Diffusion(passiveTransportBuilderCollection.FormulaCache);
          passiveTransportBuilderCollection.Add(T2);
@@ -772,28 +805,28 @@ namespace OSPSuite.Helpers
          var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE");
 
          var organism = _objectBaseFactory.Create<IContainer>()
-            .WithName(ConstantsForSpecs.Organism)
+            .WithName(Organism)
             .WithMode(ContainerMode.Logical);
-         organism.AddTag(new Tag(ConstantsForSpecs.Organism));
+         organism.AddTag(new Tag(Organism));
 
          //global molecule dependent param (a la K_rbc)
          var someGlobalMoleculeDepParam = _objectBaseFactory.Create<IParameter>().WithName("XYZ").WithFormula(GlobalMoleculeDepParamFormula_1(spatialStructure.FormulaCache));
          spatialStructure.GlobalMoleculeDependentProperties.Add(someGlobalMoleculeDepParam);
 
          //Create a parameter with formula in Organism with absolute path
-         var bw = newConstantParameter(ConstantsForSpecs.BW, 20);
+         var bw = newConstantParameter(BW, 20);
          organism.Add(bw);
 
          var tableParameter =
             _objectBaseFactory.Create<IParameter>()
-               .WithName(ConstantsForSpecs.TableParameter1)
+               .WithName(TableParameter1)
                .WithFormula(TableFormula1(spatialStructure.FormulaCache));
          tableParameter.Persistable = true;
          organism.Add(tableParameter);
 
          var tableParameter2 =
             _objectBaseFactory.Create<IParameter>()
-               .WithName(ConstantsForSpecs.TableParameter2)
+               .WithName(TableParameter2)
                .WithFormula(TableFormula2(spatialStructure.FormulaCache));
          organism.Add(tableParameter2);
 
@@ -816,14 +849,15 @@ namespace OSPSuite.Helpers
                distributedParameter, mean);
 
          //ART
-         var art = CreateContainerWithName(ConstantsForSpecs.ArterialBlood)
+         var art = CreateContainerWithName(ArterialBlood)
             .WithMode(ContainerMode.Logical);
 
-         var artPlasma = CreateContainerWithName(ConstantsForSpecs.Plasma).WithMode(ContainerMode.Physical);
-         artPlasma.Add(newConstantParameter(ConstantsForSpecs.Volume, 2));
+         var artPlasma = CreateContainerWithName(Plasma).WithMode(ContainerMode.Physical);
+         artPlasma.Add(newConstantParameter(Volume, 2));
          art.Add(artPlasma);
          artPlasma.AddTag(new Tag(art.Name));
-         art.Add(newConstantParameter(ConstantsForSpecs.Q, 2));
+         art.Add(newConstantParameter(Q, 2));
+         art.Add(newConstantParameter(P, 10));
          organism.Add(art);
 
          var parameterReferencingNeighborhood = newConstantParameter("RefParam", 10);
@@ -836,7 +870,7 @@ namespace OSPSuite.Helpers
          var objectPath = _objectPathFactory.CreateFormulaUsablePathFrom(
             PARENT_CONTAINER,
             NBH,
-            PARENT_CONTAINER, PARENT_CONTAINER, PARENT_CONTAINER, ConstantsForSpecs.Bone, ConstantsForSpecs.Plasma,
+            PARENT_CONTAINER, PARENT_CONTAINER, PARENT_CONTAINER, Bone, Plasma,
             NBH, "K");
 
          objectPath.Alias = "K";
@@ -846,39 +880,39 @@ namespace OSPSuite.Helpers
 
 
          //LUNG
-         var lung = CreateContainerWithName(ConstantsForSpecs.Lung)
+         var lung = CreateContainerWithName(Lung)
             .WithMode(ContainerMode.Logical);
 
-         var lngPlasma = CreateContainerWithName(ConstantsForSpecs.Plasma).WithMode(ContainerMode.Physical);
-         lngPlasma.Add(newConstantParameter(ConstantsForSpecs.Volume, 2));
-         lngPlasma.Add(newConstantParameter(ConstantsForSpecs.pH, 7.5));
+         var lngPlasma = CreateContainerWithName(Plasma).WithMode(ContainerMode.Physical);
+         lngPlasma.Add(newConstantParameter(Volume, 2));
+         lngPlasma.Add(newConstantParameter(pH, 7.5));
          lngPlasma.AddTag(new Tag(lung.Name));
          lung.Add(lngPlasma);
 
-         var lngCell = CreateContainerWithName(ConstantsForSpecs.Cell).WithMode(ContainerMode.Physical);
-         lngCell.Add(newConstantParameter(ConstantsForSpecs.Volume, 1));
-         lngCell.Add(newConstantParameter(ConstantsForSpecs.pH, 7));
+         var lngCell = CreateContainerWithName(Cell).WithMode(ContainerMode.Physical);
+         lngCell.Add(newConstantParameter(Volume, 1));
+         lngCell.Add(newConstantParameter(pH, 7));
          lngCell.AddTag(new Tag(lung.Name));
          lung.Add(lngCell);
 
-         lung.Add(newConstantParameter(ConstantsForSpecs.Q, 3));
-         lung.Add(newConstantParameter(ConstantsForSpecs.P, 2));
+         lung.Add(newConstantParameter(Q, 3));
+         lung.Add(newConstantParameter(P, 2));
          organism.Add(lung);
 
          //BONE
-         var bone = CreateContainerWithName(ConstantsForSpecs.Bone)
+         var bone = CreateContainerWithName(Bone)
             .WithMode(ContainerMode.Logical);
 
-         var bonePlasma = CreateContainerWithName(ConstantsForSpecs.Plasma).WithMode(ContainerMode.Physical);
-         bonePlasma.Add(newConstantParameter(ConstantsForSpecs.Volume, 2));
-         bonePlasma.Add(newConstantParameter(ConstantsForSpecs.pH, 7.5));
+         var bonePlasma = CreateContainerWithName(Plasma).WithMode(ContainerMode.Physical);
+         bonePlasma.Add(newConstantParameter(Volume, 2));
+         bonePlasma.Add(newConstantParameter(pH, 7.5));
          bonePlasma.AddTag(new Tag(bone.Name));
          bone.Add(bonePlasma);
 
 
-         var boneCell = CreateContainerWithName(ConstantsForSpecs.Cell).WithMode(ContainerMode.Physical);
-         boneCell.Add(newConstantParameter(ConstantsForSpecs.Volume, 1));
-         boneCell.Add(newConstantParameter(ConstantsForSpecs.pH, 7));
+         var boneCell = CreateContainerWithName(Cell).WithMode(ContainerMode.Physical);
+         boneCell.Add(newConstantParameter(Volume, 1));
+         boneCell.Add(newConstantParameter(pH, 7));
          var moleculeProperties = CreateContainerWithName(Constants.MOLECULE_PROPERTIES).WithMode(ContainerMode.Logical);
          boneCell.Add(moleculeProperties);
          moleculeProperties.Add(newConstantParameter(Constants.ONTOGENY_FACTOR, 5));
@@ -891,21 +925,21 @@ namespace OSPSuite.Helpers
          spatialStructure.AddFormula(formulaParameter.Formula);
          boneCell.Add(formulaParameter);
 
-         bone.Add(newConstantParameter(ConstantsForSpecs.Q, 3));
-         bone.Add(newConstantParameter(ConstantsForSpecs.P, 2));
+         bone.Add(newConstantParameter(Q, 3));
+         bone.Add(newConstantParameter(P, 2));
          organism.Add(bone);
 
          //VEN
-         var ven = CreateContainerWithName(ConstantsForSpecs.VenousBlood)
+         var ven = CreateContainerWithName(VenousBlood)
             .WithMode(ContainerMode.Logical);
-         var venPlasma = CreateContainerWithName(ConstantsForSpecs.Plasma).WithMode(ContainerMode.Physical);
-         venPlasma.Add(newConstantParameter(ConstantsForSpecs.Volume, 2));
+         var venPlasma = CreateContainerWithName(Plasma).WithMode(ContainerMode.Physical);
+         venPlasma.Add(newConstantParameter(Volume, 2));
          ven.Add(venPlasma);
-         ven.Add(newConstantParameter(ConstantsForSpecs.Q, 2));
+         ven.Add(newConstantParameter(Q, 2));
          venPlasma.AddTag(new Tag(ven.Name));
          organism.Add(ven);
 
-         organism.Add(newConstantParameter(ConstantsForSpecs.fu, 1));
+         organism.Add(newConstantParameter(fu, 1));
          spatialStructure.AddTopContainer(organism);
 
          var neighborhood1 = _neighborhoodFactory.CreateBetween(artPlasma, bonePlasma).WithName("art_pls_to_bon_pls");
@@ -925,7 +959,7 @@ namespace OSPSuite.Helpers
          neighborhood5.MoleculeProperties.Add(K);
          neighborhood5.AddParameter(newConstantParameter("SA", 22));
          spatialStructure.AddNeighborhood(neighborhood5);
-         var sumProcessRate = _objectBaseFactory.Create<IParameter>().WithName(ConstantsForSpecs.SumProcessRate)
+         var sumProcessRate = _objectBaseFactory.Create<IParameter>().WithName(SumProcessRate)
             .WithFormula(SumFormula(spatialStructure.FormulaCache));
          neighborhood5.MoleculeProperties.Add(sumProcessRate);
 
@@ -934,7 +968,7 @@ namespace OSPSuite.Helpers
          K = _objectBaseFactory.Create<IParameter>().WithName("K").WithFormula(BlackBoxPartitionCoeffFormula(spatialStructure.FormulaCache));
          neighborhood6.MoleculeProperties.Add(K);
          neighborhood6.AddParameter(newConstantParameter("SA", 22));
-         sumProcessRate = _objectBaseFactory.Create<IParameter>().WithName(ConstantsForSpecs.SumProcessRate)
+         sumProcessRate = _objectBaseFactory.Create<IParameter>().WithName(SumProcessRate)
             .WithFormula(SumFormula(spatialStructure.FormulaCache));
          neighborhood6.MoleculeProperties.Add(sumProcessRate);
 
@@ -947,7 +981,7 @@ namespace OSPSuite.Helpers
       private IFormula BMI(IFormulaCache formulaCache)
       {
          var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("BW * 2").WithName("BMI");
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.BW).WithAlias("BW"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(Organism, BW).WithAlias("BW"));
          formulaCache.Add(formula);
          return formula;
       }
@@ -956,8 +990,8 @@ namespace OSPSuite.Helpers
       {
          var formula = _objectBaseFactory.Create<ExplicitFormula>()
             .WithFormulaString("SumProcessRateLung + SumProcessRateBone").WithName("FabsFormula");
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(Constants.NEIGHBORHOODS, "lng_pls_to_lng_cell", MOLECULE, ConstantsForSpecs.SumProcessRate).WithAlias("SumProcessRateLung"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(Constants.NEIGHBORHOODS, "bon_pls_to_bon_cell", MOLECULE, ConstantsForSpecs.SumProcessRate).WithAlias("SumProcessRateBone"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(Constants.NEIGHBORHOODS, "lng_pls_to_lng_cell", MOLECULE, SumProcessRate).WithAlias("SumProcessRateLung"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(Constants.NEIGHBORHOODS, "bon_pls_to_bon_cell", MOLECULE, SumProcessRate).WithAlias("SumProcessRateBone"));
          formulaCache.Add(formula);
          return formula;
       }
@@ -1024,7 +1058,7 @@ namespace OSPSuite.Helpers
             return formula;
 
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("fu*P*SA*(C1-C2/K)*logMA").WithName("Diffusion");
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, "fu").WithAlias("fu"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(Organism, "fu").WithAlias("fu"));
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(SOURCE, MOLECULE, "C").WithAlias("C1"));
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(TARGET, MOLECULE, "C").WithAlias("C2"));
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(NEIGHBORHOOD, MOLECULE, "K").WithAlias("K"));
@@ -1112,8 +1146,8 @@ namespace OSPSuite.Helpers
             return formula;
 
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("M1+M2").WithName("ContainerObs");
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, MOLECULE).WithAlias("M1"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, MOLECULE).WithAlias("M2"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(Organism, Lung, Cell, MOLECULE).WithAlias("M1"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(Organism, Bone, Cell, MOLECULE).WithAlias("M2"));
          formula.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
 
          formulaCache.Add(formula);
@@ -1127,8 +1161,8 @@ namespace OSPSuite.Helpers
             return formula;
 
          formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("M1+M2").WithName("InContainerObs");
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, ConstantsForSpecs.Cell, MOLECULE).WithAlias("M1"));
-         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Bone, ConstantsForSpecs.Cell, MOLECULE).WithAlias("M2"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(Organism, Lung, Cell, MOLECULE).WithAlias("M1"));
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(Organism, Bone, Cell, MOLECULE).WithAlias("M2"));
          formula.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
 
          formulaCache.Add(formula);
