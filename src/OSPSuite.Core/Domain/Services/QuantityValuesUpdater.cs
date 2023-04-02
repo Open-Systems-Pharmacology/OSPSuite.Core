@@ -33,17 +33,20 @@ namespace OSPSuite.Core.Domain.Services
       private readonly ICloneManagerForModel _cloneManagerForModel;
       private readonly IFormulaFactory _formulaFactory;
       private readonly IConcentrationBasedFormulaUpdater _concentrationBasedFormulaUpdater;
+      private readonly IParameterFactory _parameterFactory;
 
       public QuantityValuesUpdater(
          IKeywordReplacerTask keywordReplacerTask,
          ICloneManagerForModel cloneManagerForModel,
          IFormulaFactory formulaFactory,
-         IConcentrationBasedFormulaUpdater concentrationBasedFormulaUpdater)
+         IConcentrationBasedFormulaUpdater concentrationBasedFormulaUpdater,
+         IParameterFactory parameterFactory)
       {
          _keywordReplacerTask = keywordReplacerTask;
          _cloneManagerForModel = cloneManagerForModel;
          _formulaFactory = formulaFactory;
          _concentrationBasedFormulaUpdater = concentrationBasedFormulaUpdater;
+         _parameterFactory = parameterFactory;
       }
 
       public void UpdateQuantitiesValues(IModel model, SimulationConfiguration simulationConfiguration)
@@ -65,7 +68,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateParameterFromIndividualValues(IModel model, SimulationConfiguration simulationConfiguration)
       {
-         simulationConfiguration.Individual?.Each(x => updateParameterValueFromStartValue(model, x));
+         simulationConfiguration.Individual?.Each(x => updateParameterValueFromStartValue(model, x, canCreateParameter: true));
       }
 
       private void updateParameterValueFromParameterStartValues(IModel model, SimulationConfiguration simulationConfiguration)
@@ -73,10 +76,28 @@ namespace OSPSuite.Core.Domain.Services
          simulationConfiguration?.ParameterStartValues.Each(x => updateParameterValueFromStartValue(model, x));
       }
 
-      private void updateParameterValueFromStartValue(IModel model, PathAndValueEntity pathAndValueEntity)
+      private IParameter getOrAddModelParameter(IModel model, PathAndValueEntity pathAndValueEntity, bool canCreateParameter)
       {
          var pathInModel = _keywordReplacerTask.CreateModelPathFor(pathAndValueEntity.Path, model.Root);
          var parameter = pathInModel.Resolve<IParameter>(model.Root);
+         if (parameter != null || !canCreateParameter)
+            return parameter;
+
+         //Parameter does not exist in the model. We will create it if possible
+         var parentContainerPathInModel = _keywordReplacerTask.CreateModelPathFor(pathAndValueEntity.ContainerPath, model.Root);
+         var parentContainer = parentContainerPathInModel.Resolve<IContainer>(model.Root);
+
+         //container does not exist, we do not add new structure to the existing model. Only parameters
+         if (parentContainer == null)
+            return null;
+
+         return _parameterFactory.CreateParameter(pathAndValueEntity.Name, dimension: pathAndValueEntity.Dimension, displayUnit: pathAndValueEntity.DisplayUnit)
+            .WithParentContainer(parentContainer);
+      }
+
+      private void updateParameterValueFromStartValue(IModel model, PathAndValueEntity pathAndValueEntity, bool canCreateParameter = false)
+      {
+         var parameter = getOrAddModelParameter(model, pathAndValueEntity, canCreateParameter);
 
          //this can happen if the parameter does not exist in the model
          if (parameter == null)
@@ -86,7 +107,7 @@ namespace OSPSuite.Core.Domain.Services
          if (pathAndValueEntity.Formula != null)
          {
             parameter.Formula = _cloneManagerForModel.Clone(pathAndValueEntity.Formula);
-            
+
             //ensures that the parameter is seen as using the formula
             parameter.IsFixedValue = false;
             _keywordReplacerTask.ReplaceIn(parameter, model.Root);

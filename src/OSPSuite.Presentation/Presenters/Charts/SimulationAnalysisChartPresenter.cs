@@ -39,7 +39,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
             base.InitializeAnalysis(simulationAnalysis.DowncastTo<TChart>());
             _chartIsNew = !Chart.Curves.Any();
             UpdateAnalysisBasedOn(analysable);
-         }
+         
          finally
          {
             _isInitializing = false;
