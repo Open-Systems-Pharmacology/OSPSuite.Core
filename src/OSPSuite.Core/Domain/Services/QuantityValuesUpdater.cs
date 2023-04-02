@@ -10,8 +10,8 @@ namespace OSPSuite.Core.Domain.Services
    public interface IQuantityValuesUpdater
    {
       /// <summary>
-      ///    Update the values of all <see cref="Quantity" /> defined in the <paramref name="model" /> based on the values
-      ///    provided in the <paramref name="simulationConfiguration" />.
+      ///    Update the values of all <see cref="Quantity" /> defined in the model based on the values
+      ///    provided in the <paramref name="modelConfiguration" />.
       ///    More specifically, <see cref="Parameter" /> values or formula as well as <see cref="MoleculeAmount" /> start values
       ///    or formula will be updated.
       /// </summary>
@@ -19,12 +19,8 @@ namespace OSPSuite.Core.Domain.Services
       ///    This completely overrides the defaults defined in the <see cref="MoleculeBuildingBlock" /> and
       ///    <see cref="SpatialStructure" />.
       /// </remarks>
-      /// <param name="model">The model whose quantities will be updated</param>
-      /// <param name="simulationConfiguration">
-      ///    The build configuration containing molecule and parameter start values used
-      ///    to    update.
-      /// </param>
-      void UpdateQuantitiesValues(IModel model, SimulationConfiguration simulationConfiguration);
+      /// <param name="modelConfiguration">The model whose quantities will be updated</param>
+      void UpdateQuantitiesValues(ModelConfiguration modelConfiguration);
    }
 
    public class QuantityValuesUpdater : IQuantityValuesUpdater
@@ -49,35 +45,36 @@ namespace OSPSuite.Core.Domain.Services
          _parameterFactory = parameterFactory;
       }
 
-      public void UpdateQuantitiesValues(IModel model, SimulationConfiguration simulationConfiguration)
+      public void UpdateQuantitiesValues(ModelConfiguration modelConfiguration)
       {
-         updateMoleculeAmountFromMoleculeStartValues(model, simulationConfiguration);
+         updateMoleculeAmountFromMoleculeStartValues(modelConfiguration);
 
-         updateParameterFromIndividualValues(model, simulationConfiguration);
+         updateParameterFromIndividualValues(modelConfiguration);
 
-         updateParameterFromExpressionProfiles(model, simulationConfiguration);
+         updateParameterFromExpressionProfiles(modelConfiguration);
 
          //PSV are applied last
-         updateParameterValueFromParameterStartValues(model, simulationConfiguration);
+         updateParameterValueFromParameterStartValues(modelConfiguration);
       }
 
-      private void updateParameterFromExpressionProfiles(IModel model, SimulationConfiguration simulationConfiguration)
+      private void updateParameterFromExpressionProfiles(ModelConfiguration modelConfiguration)
       {
-         simulationConfiguration.ExpressionProfiles?.SelectMany(x => x).Each(x => updateParameterValueFromStartValue(model, x));
+         modelConfiguration.SimulationConfiguration.ExpressionProfiles?.SelectMany(x => x).Each(x => updateParameterValueFromStartValue(modelConfiguration, x));
       }
 
-      private void updateParameterFromIndividualValues(IModel model, SimulationConfiguration simulationConfiguration)
+      private void updateParameterFromIndividualValues(ModelConfiguration modelConfiguration)
       {
-         simulationConfiguration.Individual?.Each(x => updateParameterValueFromStartValue(model, x, canCreateParameter: true));
+         modelConfiguration.SimulationConfiguration.Individual?.Each(x => updateParameterValueFromStartValue(modelConfiguration, x, canCreateParameter: true));
       }
 
-      private void updateParameterValueFromParameterStartValues(IModel model, SimulationConfiguration simulationConfiguration)
+      private void updateParameterValueFromParameterStartValues(ModelConfiguration modelConfiguration)
       {
-         simulationConfiguration?.ParameterStartValues.Each(x => updateParameterValueFromStartValue(model, x));
+         modelConfiguration.SimulationConfiguration.ParameterStartValues.Each(x => updateParameterValueFromStartValue(modelConfiguration, x));
       }
 
-      private IParameter getOrAddModelParameter(IModel model, PathAndValueEntity pathAndValueEntity, bool canCreateParameter)
+      private IParameter getOrAddModelParameter(ModelConfiguration modelConfiguration, PathAndValueEntity pathAndValueEntity, bool canCreateParameter)
       {
+         var (model, simulationConfiguration) = modelConfiguration;
          var pathInModel = _keywordReplacerTask.CreateModelPathFor(pathAndValueEntity.Path, model.Root);
          var parameter = pathInModel.Resolve<IParameter>(model.Root);
          if (parameter != null || !canCreateParameter)
@@ -91,14 +88,18 @@ namespace OSPSuite.Core.Domain.Services
          if (parentContainer == null)
             return null;
 
-         return _parameterFactory.CreateParameter(pathAndValueEntity.Name, dimension: pathAndValueEntity.Dimension, displayUnit: pathAndValueEntity.DisplayUnit)
+         parameter = _parameterFactory.CreateParameter(pathAndValueEntity.Name, dimension: pathAndValueEntity.Dimension, displayUnit: pathAndValueEntity.DisplayUnit)
             .WithParentContainer(parentContainer);
+
+         simulationConfiguration.AddBuilderReference(parameter, pathAndValueEntity);
+
+         return parameter;
       }
 
-      private void updateParameterValueFromStartValue(IModel model, PathAndValueEntity pathAndValueEntity, bool canCreateParameter = false)
+      private void updateParameterValueFromStartValue(ModelConfiguration modelConfiguration, PathAndValueEntity pathAndValueEntity, bool canCreateParameter = false)
       {
-         var parameter = getOrAddModelParameter(model, pathAndValueEntity, canCreateParameter);
-
+         var parameter = getOrAddModelParameter(modelConfiguration, pathAndValueEntity, canCreateParameter);
+         var (model, _) = modelConfiguration;
          //this can happen if the parameter does not exist in the model
          if (parameter == null)
             return;
@@ -124,8 +125,9 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private void updateMoleculeAmountFromMoleculeStartValues(IModel model, SimulationConfiguration simulationConfiguration)
+      private void updateMoleculeAmountFromMoleculeStartValues(ModelConfiguration modelConfiguration)
       {
+         var (model, simulationConfiguration) = modelConfiguration;
          foreach (var moleculeStartValue in simulationConfiguration.AllPresentMoleculeValues())
          {
             //this can happen if the molecule start value contains entry for container that do not exist in the model

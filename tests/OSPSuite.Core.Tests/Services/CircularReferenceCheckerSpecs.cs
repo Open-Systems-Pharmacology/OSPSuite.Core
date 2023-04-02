@@ -123,7 +123,7 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         _result = sut.CheckCircularReferencesIn(_model, new SimulationConfigurationForSpecs());
+         _result = sut.CheckCircularReferencesIn(new ModelConfiguration(_model, new SimulationConfigurationForSpecs()));
       }
 
       protected Parameter CreateParameter(string name, string objectPath)
@@ -200,7 +200,7 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         _results = sut.CheckCircularReferencesIn(_model, _simulationConfiguration);
+         _results = sut.CheckCircularReferencesIn(new ModelConfiguration(_model, _simulationConfiguration));
       }
    }
 

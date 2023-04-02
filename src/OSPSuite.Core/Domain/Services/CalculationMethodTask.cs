@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Domain.Services
 {
    public interface ICalculationMethodTask
    {
-      void MergeCalculationMethodInModel(IModel model, SimulationConfiguration simulationConfiguration);
+      void MergeCalculationMethodInModel(ModelConfiguration modelConfiguration);
    }
 
    public class CalculationMethodTask : ICalculationMethodTask
@@ -42,17 +42,16 @@ namespace OSPSuite.Core.Domain.Services
          _objectPathFactory = objectPathFactory;
       }
 
-      public void MergeCalculationMethodInModel(IModel model, SimulationConfiguration simulationConfiguration)
+      public void MergeCalculationMethodInModel(ModelConfiguration modelConfiguration)
       {
          try
          {
-            _simulationConfiguration = simulationConfiguration;
-            _allContainers = model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
-            _allBlackBoxParameters = model.Root.GetAllChildren<IParameter>().Where(p => p.Formula.IsBlackBox()).ToList();
-            _model = model;
-            foreach (var calculationMethod in simulationConfiguration.AllCalculationMethods)
+            (_model, _simulationConfiguration) = modelConfiguration;
+            _allContainers = _model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
+            _allBlackBoxParameters = _model.Root.GetAllChildren<IParameter>().Where(p => p.Formula.IsBlackBox()).ToList();
+            foreach (var calculationMethod in _simulationConfiguration.AllCalculationMethods)
             {
-               var allMoleculesUsingMethod = allMoleculesUsing(calculationMethod, simulationConfiguration.Molecules).ToList();
+               var allMoleculesUsingMethod = allMoleculesUsing(calculationMethod, _simulationConfiguration.Molecules).ToList();
 
                createFormulaForBlackBoxParameters(calculationMethod, allMoleculesUsingMethod);
 
@@ -77,15 +76,15 @@ namespace OSPSuite.Core.Domain.Services
             {
                foreach (var container in allMoleculeContainersFor(containerDescriptor, molecule))
                {
-                  var exisitingParameter = container.Parameter(helpParameter.Name);
+                  var existingParameter = container.Parameter(helpParameter.Name);
                   //does not exist yet
-                  if (exisitingParameter == null)
+                  if (existingParameter == null)
                   {
                      var parameter = _parameterMapper.MapFrom(helpParameter, _simulationConfiguration);
                      container.Add(parameter);
                      replaceKeyWordsIn(parameter, molecule.Name);
                   }
-                  else if (!formulasAreTheSameForParameter(exisitingParameter, helpParameter.Formula, molecule.Name))
+                  else if (!formulasAreTheSameForParameter(existingParameter, helpParameter.Formula, molecule.Name))
                      throw new OSPSuiteException(Error.HelpParameterAlreadyDefinedWithAnotherFormula(calculationMethod.Name, _objectPathFactory.CreateAbsoluteObjectPath(helpParameter).ToString()));
                }
             }

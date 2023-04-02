@@ -51,7 +51,7 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         sut.CreateObservers(_model, _simulationConfiguration);
+         sut.CreateObservers(new ModelConfiguration(_model, _simulationConfiguration));
       }
    }
 

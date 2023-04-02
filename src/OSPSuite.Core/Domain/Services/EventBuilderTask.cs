@@ -19,9 +19,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Adds events defined by build configuration to the given model
       /// </summary>
-      /// <param name="model">the model where the observers should be defined</param>
-      /// <param name="simulationConfiguration">the simulation configuration</param>
-      void CreateEvents(IModel model, SimulationConfiguration simulationConfiguration);
+      void CreateEvents(ModelConfiguration modelConfiguration);
    }
 
    internal class EventBuilderTask : IEventBuilderTask
@@ -45,13 +43,12 @@ namespace OSPSuite.Core.Domain.Services
          _eventGroupMapper = eventGroupMapper;
       }
 
-      public void CreateEvents(IModel model, SimulationConfiguration simulationConfiguration)
+      public void CreateEvents(ModelConfiguration modelConfiguration)
       {
          try
          {
-            _model = model;
-            _simulationConfiguration = simulationConfiguration;
-            _allModelContainerDescriptors = model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
+            (_model, _simulationConfiguration) = modelConfiguration;
+            _allModelContainerDescriptors = _model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
 
             _sourceCriteriaTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
             _applicationTransportTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
@@ -67,7 +64,7 @@ namespace OSPSuite.Core.Domain.Services
 
             foreach (var eventGroupBuilder in _simulationConfiguration.EventGroups)
             {
-               createEventGroupFrom(eventGroupBuilder, simulationConfiguration.Molecules);
+               createEventGroupFrom(eventGroupBuilder, _simulationConfiguration.Molecules);
             }
          }
          finally

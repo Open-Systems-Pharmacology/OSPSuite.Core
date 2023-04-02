@@ -24,8 +24,8 @@ namespace OSPSuite.Core.Domain
 
       public void Deconstruct(out IModel model, out ValidationResult validationResult)
       {
-         validationResult = ValidationResult;
          model = Model;
+         validationResult = ValidationResult;
       }
    }
 }
