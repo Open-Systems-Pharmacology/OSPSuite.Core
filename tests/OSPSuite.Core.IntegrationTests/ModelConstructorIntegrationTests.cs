@@ -499,8 +499,9 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         var moleculeStartValue = _simulationConfiguration.MoleculeStartValues.First();
-         var physicalContainer = _simulationConfiguration.SpatialStructure.TopContainers.Select(x => moleculeStartValue.ContainerPath.TryResolve<IContainer>(x)).First(x => x != null);
+         var moleculeStartValue = _simulationConfiguration.MoleculeStartValues.SelectMany(x=>x).First();
+         var physicalContainer = _simulationConfiguration.SpatialStructures.SelectMany(x=>x.TopContainers)
+            .Select(x => moleculeStartValue.ContainerPath.TryResolve<IContainer>(x)).First(x => x != null);
 
          physicalContainer.Mode = ContainerMode.Logical;
       }
@@ -517,8 +518,9 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         var paraToRemove = _simulationConfiguration.Molecules["A"].Parameters.SingleOrDefault(para => para.Name == "logMA");
-         _simulationConfiguration.Molecules["A"].RemoveParameter(paraToRemove);
+         var molecule = _simulationConfiguration.MoleculeByName("A");
+         var paraToRemove = molecule.Parameters.SingleOrDefault(para => para.Name == "logMA");
+         molecule.RemoveParameter(paraToRemove);
       }
 
       [Observation]

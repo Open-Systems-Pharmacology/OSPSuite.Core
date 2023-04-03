@@ -126,11 +126,14 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
+         var module = new Module();
          var reactions = new ReactionBuildingBlock {new ReactionBuilder().WithName("REACTION")};
-         _simulationConfiguration.Module.Reaction = reactions;
+         module.Reaction = reactions;
 
          var passiveTransports = new PassiveTransportBuildingBlock {new TransportBuilder().WithName("TRANSPORT")};
-         _simulationConfiguration.Module.PassiveTransport = passiveTransports;
+         module.PassiveTransport = passiveTransports;
+
+         _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module));
          sut = new ValidatorForReactionsAndTransports(_objectTypeResolver, _objectPathFactory);
       }
 

@@ -69,13 +69,16 @@ namespace OSPSuite.Helpers
       private SimulationConfiguration createSimulationConfiguration()
       {
          var simulationConfiguration = new SimulationConfigurationForSpecs();
-         var module = simulationConfiguration.Module;
-         module.Molecule = getMolecules();
-         module.Reaction = getReactions();
-         module.SpatialStructure = getSpatialStructure();
-         module.PassiveTransport = new PassiveTransportBuildingBlock();
-         module.Observer = new ObserverBuildingBlock();
-         module.EventGroup = new EventGroupBuildingBlock();
+         
+         var module = new Module
+         {
+            Molecule = getMolecules(),
+            Reaction = getReactions(),
+            SpatialStructure = getSpatialStructure(),
+            PassiveTransport = new PassiveTransportBuildingBlock(),
+            Observer = new ObserverBuildingBlock(),
+            EventGroup = new EventGroupBuildingBlock()
+         };
          simulationConfiguration.SimulationSettings = createSimulationSettings();
 
 
@@ -86,6 +89,9 @@ namespace OSPSuite.Helpers
          module.AddMoleculeStartValueBlock(moleculeStartValues);
          module.AddParameterStartValueBlock(_objectBaseFactory.Create<ParameterStartValuesBuildingBlock>());
          setMoleculeStartValues(moleculeStartValues);
+
+         var moduleConfiguration = new ModuleConfiguration(module, moleculeStartValues);
+         simulationConfiguration.AddModuleConfiguration(moduleConfiguration);
          return simulationConfiguration;
       }
 

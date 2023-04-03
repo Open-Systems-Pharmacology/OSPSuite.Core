@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Domain.Mappers
          if (!isForAllFloating(assignmentBuilder))
             return new[] {createAssignment(assignmentBuilder, simulationConfiguration)};
 
-         return simulationConfiguration.Molecules.AllFloating()
+         return simulationConfiguration.AllFloatingMolecules()
             .Select(x => createMoleculeAssignment(x, assignmentBuilder, simulationConfiguration))
             .ToList();
       }

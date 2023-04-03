@@ -1,4 +1,5 @@
-﻿using OSPSuite.Core.Domain.Builder;
+﻿using System.Linq;
+using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Extensions;
 
@@ -87,15 +88,13 @@ namespace OSPSuite.Core.Domain.Mappers
 
       private void createApplication(IApplicationBuilder applicationBuilder, IEventGroup eventGroup, SimulationConfiguration simulationConfiguration)
       {
-         var molecules = simulationConfiguration.Molecules;
-
          //---- add molecule amounts
          foreach (var appMolecule in applicationBuilder.Molecules)
          {
             //get container for the molecule
             var moleculeContainer = appMolecule.RelativeContainerPath.Resolve<IContainer>(eventGroup);
 
-            var molecule = _moleculeMapper.MapFrom(molecules[applicationBuilder.MoleculeName], moleculeContainer, simulationConfiguration);
+            var molecule = _moleculeMapper.MapFrom(simulationConfiguration.MoleculeByName(applicationBuilder.MoleculeName), moleculeContainer, simulationConfiguration);
             molecule.Formula = _formulaMapper.MapFrom(appMolecule.Formula, simulationConfiguration);
 
             moleculeContainer.Add(molecule);

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -58,8 +60,10 @@ namespace OSPSuite.Core.Domain.Services
          //Add global molecule dependent parameters
          if (moleculeBuilder.IsFloatingXenobiotic)
          {
-            var globalMoleculeDependentProperties = simulationConfiguration.SpatialStructure.GlobalMoleculeDependentProperties;
-            globalMoleculeContainer.AddChildren(addAllParametersFrom(globalMoleculeDependentProperties, simulationConfiguration));
+            simulationConfiguration.SpatialStructures.Select(x=>x.GlobalMoleculeDependentProperties).Each(x =>
+            {
+               globalMoleculeContainer.AddChildren(addAllParametersFrom(x, simulationConfiguration));
+            });
          }
 
          //Only non local parameters from the molecule are added to the global container 

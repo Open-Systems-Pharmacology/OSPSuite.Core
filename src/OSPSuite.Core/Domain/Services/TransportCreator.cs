@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain.Services
          var (model, simulationConfiguration) = modelConfiguration;
          var allNeighborhoods = model.Neighborhoods.GetChildren<Neighborhood>().ToList();
 
-         foreach (var molecule in simulationConfiguration.Molecules.AllFloating())
+         foreach (var molecule in simulationConfiguration.AllFloatingMolecules())
          {
             addPassiveTransportToModel(passiveTransportBuilder, allNeighborhoods, molecule, modelConfiguration);
          }
@@ -43,19 +43,23 @@ namespace OSPSuite.Core.Domain.Services
       {
          var (model, simulationConfiguration) = modelConfiguration;
          var allNeighborhoods = model.Neighborhoods.GetChildren<Neighborhood>().ToList();
-         var molecules = simulationConfiguration.Molecules;
-         foreach (var molecule in molecules.AllFloating())
+         //TODO can we have a transport define in one grabbing a molecule from another module?
+         foreach (var module in simulationConfiguration.ModuleConfigurations.Select(x=>x.Module).Where(x=>x.Molecule!=null))
          {
-            foreach (var transporterMolecule in molecule.TransporterMoleculeContainerCollection)
+            var molecules = module.Molecule;
+            foreach (var molecule in molecules.AllFloating())
             {
-               var transporter = molecules[transporterMolecule.Name];
-               // transporter not available in molecules (can happen when swapping building block)
-               if (transporter == null)
-                  continue;
-
-               foreach (var activeTransport in transporterMolecule.ActiveTransportRealizations)
+               foreach (var transporterMolecule in molecule.TransporterMoleculeContainerCollection)
                {
-                  addActiveTransportToModel(activeTransport, allNeighborhoods, molecule, transporterMolecule, modelConfiguration);
+                  var transporter = molecules[transporterMolecule.Name];
+                  // transporter not available in molecules (can happen when swapping building block)
+                  if (transporter == null)
+                     continue;
+
+                  foreach (var activeTransport in transporterMolecule.ActiveTransportRealizations)
+                  {
+                     addActiveTransportToModel(activeTransport, allNeighborhoods, molecule, transporterMolecule, modelConfiguration);
+                  }
                }
             }
          }

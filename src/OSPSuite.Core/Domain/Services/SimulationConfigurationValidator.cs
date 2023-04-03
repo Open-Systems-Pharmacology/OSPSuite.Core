@@ -16,18 +16,21 @@ namespace OSPSuite.Core.Domain.Services
       public ValidationResult Validate(SimulationConfiguration simulationConfiguration)
       {
          var validationResult = new ValidationResult();
-         //TODO
-         var module = simulationConfiguration.Module;
-         validateBuildingBlockWithFormulaCache(module?.Molecule, validationResult);
-         validateBuildingBlockWithFormulaCache(module?.Reaction, validationResult);
-         validateBuildingBlockWithFormulaCache(module?.SpatialStructure, validationResult);
-         validateBuildingBlockWithFormulaCache(module?.PassiveTransport, validationResult);
-         validateBuildingBlockWithFormulaCache(module?.Observer, validationResult);
-         validateEventGroupBuildingBlock(module?.EventGroup, module?.Molecule, validationResult);
-         module?.MoleculeStartValuesCollection.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
-         module?.ParameterStartValuesCollection.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
+         simulationConfiguration.ModuleConfigurations.Each(x => validateModule(x.Module, validationResult));
          simulationConfiguration.AllCalculationMethods.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
          return validationResult;
+      }
+
+      private void validateModule(Module module, ValidationResult validationResult)
+      {
+         validateBuildingBlockWithFormulaCache(module.Molecule, validationResult);
+         validateBuildingBlockWithFormulaCache(module.Reaction, validationResult);
+         validateBuildingBlockWithFormulaCache(module.SpatialStructure, validationResult);
+         validateBuildingBlockWithFormulaCache(module.PassiveTransport, validationResult);
+         validateBuildingBlockWithFormulaCache(module.Observer, validationResult);
+         validateEventGroupBuildingBlock(module.EventGroup, module?.Molecule, validationResult);
+         module.MoleculeStartValuesCollection.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
+         module.ParameterStartValuesCollection.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
       }
 
       private void validateEventGroupBuildingBlock(IEventGroupBuildingBlock eventGroups, MoleculeBuildingBlock moleculeBuildingBlock, ValidationResult validationResult)

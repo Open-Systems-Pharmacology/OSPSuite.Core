@@ -60,11 +60,9 @@ namespace OSPSuite.Helpers
          var simulationConfiguration = new SimulationConfigurationForSpecs
          {
             SimulationSettings = createSimulationConfiguration(),
-            Module = module
          };
 
-
-         allCalculationMethods().Each(simulationConfiguration.AddCalculationMethod);
+           allCalculationMethods().Each(simulationConfiguration.AddCalculationMethod);
          var moleculeStartValues = _moleculeStartValuesCreator.CreateFrom(module.SpatialStructure, module.Molecule);
 
          //add one start values that does not exist in Molecules@"
@@ -79,6 +77,9 @@ namespace OSPSuite.Helpers
          module.AddParameterStartValueBlock(parameterStartValues);
 
          simulationConfiguration.Individual = getIndividual();
+
+         var moduleConfiguration = new ModuleConfiguration(module, moleculeStartValues, parameterStartValues);
+         simulationConfiguration.AddModuleConfiguration(moduleConfiguration);
 
          return simulationConfiguration;
       }

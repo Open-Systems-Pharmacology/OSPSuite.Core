@@ -56,6 +56,14 @@ namespace OSPSuite.Core.Domain
          _moleculeStartValuesCollection.Add(moleculeStartValuesBuildingBlock);
       }
 
+      public virtual IEnumerable<IMoleculeBuilder> AllPresentMolecules()
+      {
+         if (Molecule == null)
+            return Enumerable.Empty<IMoleculeBuilder>();
+
+         return Molecule.AllPresentFor(MoleculeStartValuesCollection);
+      }
+
       public IReadOnlyList<IBuildingBlock> AllBuildingBlocks()
       {
          var buildingBlocks = new List<IBuildingBlock>

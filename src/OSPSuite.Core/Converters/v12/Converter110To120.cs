@@ -14,7 +14,8 @@ namespace OSPSuite.Core.Converters.v12
       IVisitor<ISpatialStructure>,
       IVisitor<SimulationTransfer>,
       IVisitor<IModelCoreSimulation>,
-      IVisitor<SimulationConfiguration>
+      IVisitor<SimulationConfiguration>,
+      IVisitor<ModuleConfiguration>
    {
       private readonly IObjectPathFactory _objectPathFactory;
       private bool _converted;
@@ -121,7 +122,12 @@ namespace OSPSuite.Core.Converters.v12
 
       public void Visit(SimulationConfiguration simulationConfiguration)
       {
-         Visit(simulationConfiguration.SpatialStructure);
+         simulationConfiguration.ModuleConfigurations.Each(Visit);
+      }
+
+      public void Visit(ModuleConfiguration moduleConfiguration)
+      {
+         moduleConfiguration.AcceptVisitor(this);
       }
    }
 }

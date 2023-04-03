@@ -1,4 +1,5 @@
-﻿using OSPSuite.BDDHelper;
+﻿using System.Linq;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Converters.v9;
 using OSPSuite.Core.Domain;
@@ -22,7 +23,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_have_converted_the_outdated_dimensions_into_updated_dimensions()
       {
-         var reaction = _simulation.Configuration.Reactions.FindByName("R1").Parameter("k1");
+         var reaction = _simulation.Configuration.Reactions.SelectMany(x=>x).FindByName("R1").Parameter("k1");
          reaction.Dimension.Name.ShouldBeEqualTo("Inversed time");
       }
 

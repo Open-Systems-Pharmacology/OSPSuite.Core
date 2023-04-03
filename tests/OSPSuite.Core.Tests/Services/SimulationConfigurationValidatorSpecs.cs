@@ -33,17 +33,21 @@ namespace OSPSuite.Core.Services
          _eventBuildingBlock.Add(_applicationBuilder);
          _moleculeBuildingBlock = new MoleculeBuildingBlock().WithName("Molecules");
          _moleculeBuildingBlock.Add(new MoleculeBuilder().WithName("A"));
-         var module = new Module();
-         _simulationConfiguration = new SimulationConfiguration {Module = module};
 
-         module.Molecule = _moleculeBuildingBlock;
+         var module = new Module
+         {
+            Molecule = _moleculeBuildingBlock,
+            Observer = new ObserverBuildingBlock(),
+            PassiveTransport = new PassiveTransportBuildingBlock(),
+            Reaction = new ReactionBuildingBlock(),
+            SpatialStructure = new SpatialStructure(),
+            EventGroup = _eventBuildingBlock
+         };
          module.AddMoleculeStartValueBlock(new MoleculeStartValuesBuildingBlock());
-         module.Observer = new ObserverBuildingBlock();
          module.AddParameterStartValueBlock(new ParameterStartValuesBuildingBlock());
-         module.PassiveTransport = new PassiveTransportBuildingBlock();
-         module.Reaction = new ReactionBuildingBlock();
-         module.SpatialStructure = new SpatialStructure();
-         module.EventGroup = _eventBuildingBlock;
+
+         _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module));
+
       }
 
       protected override void Because()

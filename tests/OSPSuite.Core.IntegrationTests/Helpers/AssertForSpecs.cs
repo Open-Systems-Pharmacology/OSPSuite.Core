@@ -1167,7 +1167,7 @@ namespace OSPSuite.Core.Helpers
       public static void AreEqualSimulationConfiguration(SimulationConfiguration x1, SimulationConfiguration x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
-         AreEqualModule(x1.Module, x2.Module);
+         AreEqualModuleConfigurationLists(x1.ModuleConfigurations, x2.ModuleConfigurations);
          AreEqualCalculationMethodLists(x1.AllCalculationMethods, x2.AllCalculationMethods);
          AreEqualSimulationSettings(x1.SimulationSettings, x2.SimulationSettings);
       }
@@ -1185,6 +1185,22 @@ namespace OSPSuite.Core.Helpers
          AreEqualMoleculeStartValuesBuildingBlock(x1.MoleculeStartValues, x2.MoleculeStartValues);
          AreEqualCalculationMethodLists(x1.AllCalculationMethods(), x2.AllCalculationMethods());
          AreEqualSimulationSettings(x1.SimulationSettings, x2.SimulationSettings);
+      }
+
+      public static void AreEqualModuleConfiguration(ModuleConfiguration x1, ModuleConfiguration x2)
+      {
+         AreEqualModule(x1.Module, x2.Module);
+         AreEqualParameterStartValuesBuildingBlock(x1.SelectedParameterStartValues, x2.SelectedParameterStartValues);
+         AreEqualMoleculeStartValuesBuildingBlock(x1.SelectedMoleculeStartValues, x2.SelectedMoleculeStartValues);
+      }
+
+      public static void AreEqualModuleConfigurationLists(IEnumerable<ModuleConfiguration> x1, IEnumerable<ModuleConfiguration> x2)
+      {
+         Assert.AreEqual(x1.Count(), x2.Count());
+         for (int i = 0; i < x1.Count(); i++)
+         {
+            AreEqualModuleConfiguration(x1.ElementAt(i), x2.ElementAt(i));
+         }
       }
 
       public static void AreEqualCalculationMethodLists(IEnumerable<ICoreCalculationMethod> x1, IEnumerable<ICoreCalculationMethod> x2)
