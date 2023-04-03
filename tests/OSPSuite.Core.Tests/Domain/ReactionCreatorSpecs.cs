@@ -61,7 +61,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _result = sut.CreateReaction(_reactionBuilder, _model, _simulationConfiguration);
+         _result = sut.CreateReaction(_reactionBuilder, new ModelConfiguration(_model, _simulationConfiguration));
       }
    }
 

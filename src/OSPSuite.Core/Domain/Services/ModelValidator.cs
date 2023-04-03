@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Domain.Services
 
    public interface IModelValidator
    {
-      ValidationResult Validate(IObjectBase objectToValidate, SimulationConfiguration simulationConfiguration);
+      ValidationResult Validate(ModelConfiguration modelConfiguration);
    }
 
    /// <summary>
@@ -127,15 +127,14 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Starts a validation run for the specified object to validate.
       /// </summary>
-      /// <param name="objectToValidate">The object to validate.</param>
-      /// <param name="simulationConfiguration">Simulation configuration used to create the model</param>
-      public ValidationResult Validate(IObjectBase objectToValidate, SimulationConfiguration simulationConfiguration)
+      public ValidationResult Validate(ModelConfiguration modelConfiguration)
       {
          try
          {
+            var (model, simulationConfiguration) = modelConfiguration;
             _result = new ValidationResult();
             _simulationConfiguration = simulationConfiguration;
-            objectToValidate.AcceptVisitor(this);
+            model.AcceptVisitor(this);
             return _result;
          }
          finally
@@ -213,18 +212,16 @@ namespace OSPSuite.Core.Domain.Services
 
    internal class ModelNameValidator : IModelValidator
    {
-      public ValidationResult Validate(IObjectBase objectToValidate, SimulationConfiguration simulationConfiguration)
+      public ValidationResult Validate(ModelConfiguration modelConfiguration)
       {
-         var model = objectToValidate as IModel;
+         var (model, _) = modelConfiguration;
          var result = new ValidationResult();
-         if (model == null)
-            return result;
 
          var allTopContainerNames = model.Root.GetChildren<IContainer>().AllNames();
          if (!allTopContainerNames.Contains(model.Name))
             return result;
 
-         result.AddMessage(NotificationType.Error, objectToValidate, Validation.ModelNameCannotBeNamedLikeATopContainer(allTopContainerNames));
+         result.AddMessage(NotificationType.Error, model, Validation.ModelNameCannotBeNamedLikeATopContainer(allTopContainerNames));
          return result;
       }
    }

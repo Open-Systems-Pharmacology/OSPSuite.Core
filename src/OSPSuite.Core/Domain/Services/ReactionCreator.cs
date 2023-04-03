@@ -1,15 +1,15 @@
 using System.Linq;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Visitor;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.Services
 {
    internal interface IReactionCreator
    {
-      bool CreateReaction(IReactionBuilder reactionBuilder, IModel model, SimulationConfiguration simulationConfiguration);
+      bool CreateReaction(IReactionBuilder reactionBuilder, ModelConfiguration modelConfiguration);
    }
 
    internal class ReactionCreator : IReactionCreator, IVisitor<IContainer>
@@ -24,8 +24,8 @@ namespace OSPSuite.Core.Domain.Services
       private IReactionBuilder _reactionBuilder;
 
       public ReactionCreator(IReactionBuilderToReactionMapper reactionMapper, IKeywordReplacerTask keywordReplacerTask,
-                                     IContainerTask containerTask,
-                                     IParameterBuilderCollectionToParameterCollectionMapper parameterMapper)
+         IContainerTask containerTask,
+         IParameterBuilderCollectionToParameterCollectionMapper parameterMapper)
       {
          _reactionMapper = reactionMapper;
          _keywordReplacerTask = keywordReplacerTask;
@@ -33,11 +33,11 @@ namespace OSPSuite.Core.Domain.Services
          _parameterMapper = parameterMapper;
       }
 
-      public bool CreateReaction(IReactionBuilder reactionBuilder, IModel model, SimulationConfiguration simulationConfiguration)
+      public bool CreateReaction(IReactionBuilder reactionBuilder, ModelConfiguration modelConfiguration)
       {
          _reactionBuilder = reactionBuilder;
-         _model = model;
-         _simulationConfiguration = simulationConfiguration;
+         _model = modelConfiguration.Model;
+         _simulationConfiguration = modelConfiguration.SimulationConfiguration;
          try
          {
             //global container should be created before creating local reaction so that path replacement works
@@ -80,7 +80,7 @@ namespace OSPSuite.Core.Domain.Services
          if (!canCreateReactionIn(container)) return;
          _createdInstance = true;
          container.Add(_reactionMapper.MapFromLocal(_reactionBuilder, container, _simulationConfiguration));
-     }
+      }
 
       private bool canCreateReactionIn(IContainer container)
       {

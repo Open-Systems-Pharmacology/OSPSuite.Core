@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Services
 {
@@ -19,10 +19,11 @@ namespace OSPSuite.Core.Services
       bool HasCircularReference(ObjectPath path, IEntity referenceObject);
 
       /// <summary>
-      ///    Check the given <paramref name="model" /> for circular references and returns any problem that may have been found
+      ///    Check the given <paramref name="modelConfiguration" /> for circular references and returns any problem that may have
+      ///    been found
       ///    during check
       /// </summary>
-      ValidationResult CheckCircularReferencesIn(IModel model, SimulationConfiguration simulationConfiguration);
+      ValidationResult CheckCircularReferencesIn(ModelConfiguration modelConfiguration);
    }
 
    internal class CircularReferenceChecker : ICircularReferenceChecker
@@ -58,12 +59,13 @@ namespace OSPSuite.Core.Services
          }
       }
 
-      public ValidationResult CheckCircularReferencesIn(IModel model, SimulationConfiguration simulationConfiguration)
+      public ValidationResult CheckCircularReferencesIn(ModelConfiguration modelConfiguration)
       {
          var validationResult = new ValidationResult();
 
          try
          {
+            var (model, simulationConfiguration) = modelConfiguration;
             var allUsingFormulas = model.Root.GetAllChildren<IUsingFormula>();
             allUsingFormulas.Each(buildEntityReferenceCache);
             allUsingFormulas.Each(x => checkCircularReferencesIn(x, simulationConfiguration, validationResult));

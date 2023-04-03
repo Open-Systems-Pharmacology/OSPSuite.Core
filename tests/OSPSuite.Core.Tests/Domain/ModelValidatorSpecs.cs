@@ -18,11 +18,13 @@ namespace OSPSuite.Core.Domain
       protected IObjectPathFactory _objectPathFactory;
       protected SimulationConfiguration _simulationConfiguration;
       protected IObjectTypeResolver _objectTypeResolver;
+      protected Model _model;
+      protected ModelConfiguration _modelConfiguration;
 
       protected override void Context()
       {
          _objectPathFactory = new ObjectPathFactoryForSpecs();
-         _simulationConfiguration =new SimulationConfigurationForSpecs();
+         _simulationConfiguration = new SimulationConfigurationForSpecs();
          _validFormula = new ExplicitFormula("5*PAR1");
          _validFormula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("ROOT", "VALID", "PARA1").WithAlias("PAR1"));
          _invalidFormula = new ExplicitFormula("toto");
@@ -43,6 +45,8 @@ namespace OSPSuite.Core.Domain
          _rootContainer.Add(_validContainer);
          _rootContainer.Add(_invalidContainer);
          _objectTypeResolver = A.Fake<IObjectTypeResolver>();
+         _model = new Model();
+         _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration);
       }
    }
 
@@ -58,7 +62,8 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _results = sut.Validate(_validContainer, _simulationConfiguration);
+         _model.Root = _validContainer;
+         _results = sut.Validate(_modelConfiguration);
       }
 
       [Observation]
@@ -75,12 +80,13 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         sut = new ValidatorForQuantities(_objectTypeResolver, _objectPathFactory); ;
+         sut = new ValidatorForQuantities(_objectTypeResolver, _objectPathFactory);
       }
 
       protected override void Because()
       {
-         _results = sut.Validate(_rootContainer, _simulationConfiguration);
+         _model.Root = _invalidContainer;
+         _results = sut.Validate(_modelConfiguration);
       }
 
       [Observation]
@@ -97,12 +103,13 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         sut = new ValidatorForReactionsAndTransports(_objectTypeResolver, _objectPathFactory); ;
+         sut = new ValidatorForReactionsAndTransports(_objectTypeResolver, _objectPathFactory);
       }
 
       protected override void Because()
       {
-         _results = sut.Validate(_validContainer, _simulationConfiguration);
+         _model.Root = _validContainer;
+         _results = sut.Validate(_modelConfiguration);
       }
 
       [Observation]
@@ -124,12 +131,13 @@ namespace OSPSuite.Core.Domain
 
          var passiveTransports = new PassiveTransportBuildingBlock {new TransportBuilder().WithName("TRANSPORT")};
          _simulationConfiguration.Module.PassiveTransport = passiveTransports;
-         sut = new ValidatorForReactionsAndTransports(_objectTypeResolver, _objectPathFactory); ;
+         sut = new ValidatorForReactionsAndTransports(_objectTypeResolver, _objectPathFactory);
       }
 
       protected override void Because()
       {
-         _results = sut.Validate(_rootContainer, _simulationConfiguration);
+         _model.Root = _rootContainer;
+         _results = sut.Validate(_modelConfiguration);
       }
 
       [Observation]
@@ -147,12 +155,13 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _validContainer.Add(new MoleculeAmount().WithName("Valid").WithFormula(_validFormula));
-         sut = new ValidatorForQuantities(_objectTypeResolver, _objectPathFactory); ;
+         sut = new ValidatorForQuantities(_objectTypeResolver, _objectPathFactory);
       }
 
       protected override void Because()
       {
-         _results = sut.Validate(_validContainer, _simulationConfiguration);
+         _model.Root = _validContainer;
+         _results = sut.Validate(_modelConfiguration);
       }
 
       [Observation]
@@ -176,12 +185,13 @@ namespace OSPSuite.Core.Domain
 
          //a referenced entity that exists but not usable in formula
          _validContainer.Add(new Container().WithName("PARA5"));
-         sut = new ValidatorForQuantities(_objectTypeResolver, _objectPathFactory); ;
+         sut = new ValidatorForQuantities(_objectTypeResolver, _objectPathFactory);
       }
 
       protected override void Because()
       {
-         _results = sut.Validate(_validContainer, _simulationConfiguration);
+         _model.Root = _validContainer;
+         _results = sut.Validate(_modelConfiguration);
       }
 
       [Observation]
@@ -190,7 +200,6 @@ namespace OSPSuite.Core.Domain
          _results.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
       }
    }
-
 
    internal class When_validating_the_references_used_in_a_quantity_inside_a_container_where_some_references_were_not_found : concern_for_ModelValidator
    {
@@ -206,7 +215,8 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _results = sut.Validate(_rootContainer, _simulationConfiguration);
+         _model.Root = _rootContainer;
+         _results = sut.Validate(_modelConfiguration);
       }
 
       [Observation]
@@ -216,8 +226,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-
-   internal class When_validating_the_references_used_in_a_parameter_with_sum_formula_: concern_for_ModelValidator
+   internal class When_validating_the_references_used_in_a_parameter_with_sum_formula : concern_for_ModelValidator
    {
       private ValidationResult _results;
 
@@ -228,12 +237,13 @@ namespace OSPSuite.Core.Domain
          sumFormula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("..", "..", "f_vas").WithAlias("f_vas_#i"));
          _validContainer.Add(new Parameter().WithName("DynamicParam").WithFormula(sumFormula));
 
-         sut = new ValidatorForQuantities(_objectTypeResolver, _objectPathFactory); ;
+         sut = new ValidatorForQuantities(_objectTypeResolver, _objectPathFactory);
       }
 
       protected override void Because()
       {
-         _results = sut.Validate(_validContainer, _simulationConfiguration);
+         _model.Root = _validContainer;
+         _results = sut.Validate(_modelConfiguration);
       }
 
       [Observation]

@@ -15,9 +15,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Adds observers defined by simulationConfiguration to the given model
       /// </summary>
-      /// <param name="model">the model where the observers should be defined</param>
-      /// <param name="simulationConfiguration">the simulation configuration</param>
-      void CreateObservers(IModel model, SimulationConfiguration simulationConfiguration);
+      void CreateObservers(ModelConfiguration modelConfiguration);
    }
 
    internal class ObserverBuilderTask : IObserverBuilderTask
@@ -31,8 +29,8 @@ namespace OSPSuite.Core.Domain.Services
       private SimulationConfiguration _simulationConfiguration;
 
       public ObserverBuilderTask(
-         IObserverBuilderToObserverMapper observerMapper, 
-         IContainerTask containerTask, 
+         IObserverBuilderToObserverMapper observerMapper,
+         IContainerTask containerTask,
          IKeywordReplacerTask keywordReplacerTask)
       {
          _observerMapper = observerMapper;
@@ -40,8 +38,9 @@ namespace OSPSuite.Core.Domain.Services
          _keywordReplacerTask = keywordReplacerTask;
       }
 
-      public void CreateObservers(IModel model, SimulationConfiguration simulationConfiguration)
+      public void CreateObservers(ModelConfiguration modelConfiguration)
       {
+         var (model, simulationConfiguration) = modelConfiguration;
          _allContainerDescriptors = model.Root.GetAllChildren<IContainer>().ToEntityDescriptorMapList();
          _simulationConfiguration = simulationConfiguration;
          var observers = simulationConfiguration.Observers;
@@ -57,7 +56,7 @@ namespace OSPSuite.Core.Domain.Services
          }
          finally
          {
-              _allContainerDescriptors = null;
+            _allContainerDescriptors = null;
             _simulationConfiguration = null;
          }
       }
@@ -117,6 +116,7 @@ namespace OSPSuite.Core.Domain.Services
                   moleculeContainer = _containerTask.CreateOrRetrieveSubContainerByName(container, moleculeBuilder.Name).WithContainerType(ContainerType.Molecule);
                   _simulationConfiguration.AddBuilderReference(moleculeContainer, observerBuilder);
                }
+
                var observer = addObserverInContainer(observerBuilder, moleculeContainer, moleculeBuilder.QuantityType);
                _keywordReplacerTask.ReplaceIn(observer, model.Root, moleculeBuilder.Name);
             }
