@@ -15,7 +15,7 @@ namespace OSPSuite.Presentation.DTO.ParameterIdentifications
 
       public LLOQMode LLOQMode
       {
-         get { return _parameterIdentificationConfiguration.LLOQMode; }
+         get => _parameterIdentificationConfiguration.LLOQMode;
          set
          {
             _parameterIdentificationConfiguration.LLOQMode = value;
@@ -28,7 +28,7 @@ namespace OSPSuite.Presentation.DTO.ParameterIdentifications
 
       public RemoveLLOQMode RemoveLLOQMode
       {
-         get { return _parameterIdentificationConfiguration.RemoveLLOQMode; }
+         get => _parameterIdentificationConfiguration.RemoveLLOQMode;
          set
          {
             _parameterIdentificationConfiguration.RemoveLLOQMode = value;
@@ -39,7 +39,7 @@ namespace OSPSuite.Presentation.DTO.ParameterIdentifications
 
       public bool CalculateJacobian
       {
-         get { return _parameterIdentificationConfiguration.CalculateJacobian; }
+         get => _parameterIdentificationConfiguration.CalculateJacobian;
          set
          {
             _parameterIdentificationConfiguration.CalculateJacobian = value;
@@ -57,8 +57,8 @@ namespace OSPSuite.Presentation.DTO.ParameterIdentifications
 
       public ParameterIdentificationRunMode ParameterIdentificationRunMode
       {
-         get { return _parameterIdentificationConfiguration.RunMode; }
-         set { _parameterIdentificationConfiguration.RunMode = value; }
+         get => _parameterIdentificationConfiguration.RunMode;
+         set => _parameterIdentificationConfiguration.RunMode = value;
       }
 
    }

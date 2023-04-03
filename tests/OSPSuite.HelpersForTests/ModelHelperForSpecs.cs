@@ -1242,9 +1242,6 @@ namespace OSPSuite.Helpers
          if (sourceObject.IsAnImplementationOf<IndividualParameter>())
             return new IndividualParameter().WithDimension(_dimensionFactory.NoDimension).WithId(id).DowncastTo<T>();
 
-         if (sourceObject.IsAnImplementationOf<PKSimModule>())
-            return new PKSimModule().WithId(id).DowncastTo<T>();
-
          if (sourceObject.IsAnImplementationOf<Module>())
             return new Module().WithId(id).DowncastTo<T>();
 

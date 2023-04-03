@@ -23,7 +23,7 @@ namespace OSPSuite.Core.Domain
       private IObjectBaseFactory _objectBaseFactory;
       private IDataRepositoryTask _repositoryTask;
       private IDimensionFactory _dimensionFactory;
-      private OriginDataItem _originDataItem;
+      private IExtendedProperty _originDataItem;
 
       protected override void Context()
       {
@@ -37,16 +37,14 @@ namespace OSPSuite.Core.Domain
          _sourceIndividualBuildingBlock.Name = "An Individual";
          _sourceIndividualBuildingBlock.PKSimVersion = "11.1";
          _sourceIndividualBuildingBlock.Add(new IndividualParameter().WithName("name1"));
-         _originDataItem = new OriginDataItem
+         _originDataItem = new ExtendedProperty<string>()
          {
             Description = "Description",
-            DisplayName = "DisplayName",
-            Icon = "Icon",
+            FullName = "DisplayName",
             Name = "Name",
             Value = "Value"
          };
-         _sourceIndividualBuildingBlock.OriginData.AddOriginDataItem(_originDataItem);
-         _sourceIndividualBuildingBlock.OriginData.ValueOrigin = new ValueOrigin { Description = "ValueOrigin" };
+         _sourceIndividualBuildingBlock.OriginData.Add(_originDataItem);
 
       }
 
@@ -61,15 +59,13 @@ namespace OSPSuite.Core.Domain
          sut.Name.ShouldBeEqualTo("An Individual");
          sut.PKSimVersion.ShouldBeEqualTo("11.1");
          sut.Count().ShouldBeEqualTo(1);
-         sut.OriginData.AllDataItems.Count.ShouldBeEqualTo(1);
-         var clonedOriginDataItem = sut.OriginData.AllDataItems.First();
+         sut.OriginData.All.Length.ShouldBeEqualTo(1);
+         var clonedOriginDataItem = sut.OriginData.All.First();
 
          clonedOriginDataItem.DisplayName.ShouldBeEqualTo(_originDataItem.DisplayName);
          clonedOriginDataItem.Description.ShouldBeEqualTo(_originDataItem.Description);
-         clonedOriginDataItem.Icon.ShouldBeEqualTo(_originDataItem.Icon);
          clonedOriginDataItem.Name.ShouldBeEqualTo(_originDataItem.Name);
-         clonedOriginDataItem.Value.ShouldBeEqualTo(_originDataItem.Value);
-         sut.OriginData.ValueOrigin.Description.ShouldBeEqualTo(_sourceIndividualBuildingBlock.OriginData.ValueOrigin.Description);
+         clonedOriginDataItem.ValueAsObject.ShouldBeEqualTo(_originDataItem.ValueAsObject);
       }
    }
 }
