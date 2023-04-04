@@ -12,7 +12,6 @@ using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
@@ -224,8 +223,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
                Id = md.MetaDataId,
                Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets.GetDataSheetByName(sheetName).GetColumnDescription(md.ColumnName).Index : -1
             }).ToList();
-            
-         var mappings   = dataMappings.Union
+
+         var mappings = dataMappings.Union
          (
             dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
@@ -247,7 +246,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             throw new ImporterParsingException(errors);
          }
-
 
          var keys = new List<string>()
          {
@@ -275,7 +273,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void ResetMappingBasedOnCurrentSheet()
       {
-         if (confirmDroppingOfLoadedSheets())
+         if (ConfirmDroppingOfLoadedSheets())
             return;
 
          try
@@ -409,7 +407,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _confirmationPresenter.SetDataSetNames(_dataSource.NamesFromConvention()); //this could probably be in the apply
          //About NanSettings: we do actually read the nanSettings in import dataSheets
          //we just never update the editor on the view, which actually is a problem
-         var sheets = new Cache<string, DataSheet>();
+
          foreach (var sheetName in _configuration.LoadedSheets)
          {
             _importerDataPresenter.ImportedSheets.AddSheet(_dataSourceFile.DataSheets.GetDataSheetByName(sheetName));
@@ -429,7 +427,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _importerDataPresenter.DisableImportedSheets();
       }
 
-      protected virtual bool confirmDroppingOfLoadedSheets()
+      protected virtual bool ConfirmDroppingOfLoadedSheets()
       {
          return _dataSource.DataSets.Count != 0 && _dialogCreator.MessageBoxYesNo(Captions.Importer.ActionWillEraseLoadedData) != ViewResult.Yes;
       }
@@ -443,7 +441,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void LoadConfigurationWithoutImporting()
       {
-         if (confirmDroppingOfLoadedSheets())
+         if (ConfirmDroppingOfLoadedSheets())
             return;
 
          ResetMappingBasedOnCurrentSheet();

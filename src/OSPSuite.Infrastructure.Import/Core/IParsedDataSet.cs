@@ -19,27 +19,28 @@ namespace OSPSuite.Infrastructure.Import.Core
       )
       {
          Description = groupingParameters.Select(x =>
-         {
-            //All rows should share the same value for the groupingParameters
-            var columnDescription = columnHandler.GetColumnDescription(x);
-            var columnValue = columnDescription != null ? rawData.First().Data.ElementAt(columnDescription.Index) : x;
-            return new InstantiatedMetaData()
             {
-               Id = columnDescription?.Index ?? -1,//-1 stands for no real position
-               Value = columnValue
-            };
-         }
+               //All rows should share the same value for the groupingParameters
+               var columnDescription = columnHandler.GetColumnDescription(x);
+               var columnValue = columnDescription != null ? rawData.First().Data.ElementAt(columnDescription.Index) : x;
+               return new InstantiatedMetaData()
+               {
+                  Id = columnDescription?.Index ?? -1, //-1 stands for no real position
+                  Value = columnValue
+               };
+            }
          );
          Data = parsedData;
       }
 
-      public string NameFromConvention(IEnumerable<MetaDataMappingConverter> mappings, string convention, string fileName, string sheetName)
+      public string NameFromConvention(IReadOnlyList<MetaDataMappingConverter> mappings, string convention, string fileName, string sheetName)
       {
          var result = convention.Replace($"{{{Constants.FILE}}}", fileName).Replace($"{{{Constants.SHEET}}}", sheetName);
          for (var i = 0; i < mappings.Count(); i++)
          {
             result = result.Replace($"{{{mappings.ElementAt(i).Id}}}", $"{Description.ElementAt(i).Value}");
          }
+
          return result;
       }
 

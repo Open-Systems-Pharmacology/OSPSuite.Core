@@ -19,7 +19,7 @@ namespace OSPSuite.Helpers
          massDimension.AddUnit(new Unit("mg", 0.001, 0));
 
          var concentrationDimension = new Dimension(new BaseDimensionRepresentation(), DimensionNames.Concentration, "mol");
-
+         
          factory.AddDimension(massDimension);
          factory.AddDimension(concentrationDimension);
          factory.AddDimension(amountDimension);

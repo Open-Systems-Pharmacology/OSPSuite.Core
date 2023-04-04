@@ -1,6 +1,6 @@
-﻿using OSPSuite.Core.Domain;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Core.Import
 {
@@ -15,7 +15,12 @@ namespace OSPSuite.Core.Import
       {
          _parameters = new List<DataFormatParameter>(parameters);
       }
-      public void AddParameter(DataFormatParameter parameter) { _parameters.Add(parameter); }
+
+      public void AddParameter(DataFormatParameter parameter)
+      {
+         _parameters.Add(parameter);
+      }
+
       public IReadOnlyList<string> LoadedSheets => _loadedSheets.ToList();
       public string FileName { get; set; }
       public string NamingConventions { get; set; }

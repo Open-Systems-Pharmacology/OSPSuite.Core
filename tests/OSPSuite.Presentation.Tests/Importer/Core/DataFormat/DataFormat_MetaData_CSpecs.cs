@@ -1,57 +1,47 @@
-﻿using FakeItEasy;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FakeItEasy;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Import;
+using OSPSuite.Helpers;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Utility.Collections;
-using OSPSuite.Core.Import;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
-   public abstract class ConcernforDataFormat_DataFormatHeadersWithUnits : ContextSpecification<DataFormatHeadersWithUnits>
+   public abstract class concern_for_DataFormatHeadersWithUnits : ContextSpecification<DataFormatHeadersWithUnits>
    {
       protected DataSheet _basicFormat;
       protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
-      protected IDimension _fakedTimeDimension;
-      protected IDimension _fakedConcentrationDimension;
-      protected IDimension _fakedErrorDimension;
 
       protected override void Context()
       {
-         _fakedTimeDimension = A.Fake<IDimension>();
-         _fakedConcentrationDimension = A.Fake<IDimension>();
-         _fakedErrorDimension = A.Fake<IDimension>();
-
          _columnInfos = new ColumnInfoCache
          {
-            new ColumnInfo() { DisplayName = "Time", Name = "Time", IsMandatory = true },
-            new ColumnInfo() { DisplayName = "Concentration", Name = "Concentration", IsMandatory = true },
-            new ColumnInfo() { DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration" }
+            new ColumnInfo() {DisplayName = "Time", Name = "Time", IsMandatory = true},
+            new ColumnInfo() {DisplayName = "Concentration", Name = "Concentration", IsMandatory = true},
+            new ColumnInfo() {DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration"}
          };
 
-         _columnInfos["Time"].SupportedDimensions.Add(_fakedTimeDimension);
-         _columnInfos["Concentration"].SupportedDimensions.Add(_fakedConcentrationDimension);
-         _columnInfos["Error"].SupportedDimensions.Add(_fakedErrorDimension);
+         _columnInfos["Time"].SupportedDimensions.Add(DimensionFactoryForSpecs.TimeDimension);
+         _columnInfos["Concentration"].SupportedDimensions.Add(DimensionFactoryForSpecs.ConcentrationDimension);
+         _columnInfos["Error"].SupportedDimensions.Add(DimensionFactoryForSpecs.ConcentrationDimension);
          _metaDataCategories = new List<MetaDataCategory>()
          {
-            new MetaDataCategory() { Name = "Organ" },
-            new MetaDataCategory() { Name = "Compartment" },
-            new MetaDataCategory() { Name = "Species" },
-            new MetaDataCategory() { Name = "Dose" },
-            new MetaDataCategory() { Name = "Molecule" },
-            new MetaDataCategory() { Name = "Route" }
+            new MetaDataCategory() {Name = "Organ"},
+            new MetaDataCategory() {Name = "Compartment"},
+            new MetaDataCategory() {Name = "Species"},
+            new MetaDataCategory() {Name = "Dose"},
+            new MetaDataCategory() {Name = "Molecule"},
+            new MetaDataCategory() {Name = "Route"}
          };
 
-         A.CallTo(() => _fakedTimeDimension.HasUnit("min")).Returns(true);
-         A.CallTo(() => _fakedConcentrationDimension.HasUnit("pmol/l")).Returns(true);
-         A.CallTo(() => _fakedErrorDimension.HasUnit("pmol/l")).Returns(true);
          sut = new DataFormatHeadersWithUnits();
          _basicFormat = new TestDataSheet
          (
@@ -59,50 +49,50 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             {
                {
                   "Organ",
-                  new ColumnDescription(0, new List<string>() { "PeripheralVenousBlood" }, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(0, new List<string>() {"PeripheralVenousBlood"}, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Compartment",
-                  new ColumnDescription(1, new List<string>() { "Arterialized" }, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(1, new List<string>() {"Arterialized"}, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Species",
-                  new ColumnDescription(2, new List<string>() { "Human" }, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(2, new List<string>() {"Human"}, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Dose",
-                  new ColumnDescription(3, new List<string>() { "75 [g] glucose" }, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(3, new List<string>() {"75 [g] glucose"}, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Molecule",
-                  new ColumnDescription(4, new List<string>() { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" }, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(4, new List<string>() {"GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon"}, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Time [min]",
                   new ColumnDescription(5, null, ColumnDescription.MeasurementLevel.Numeric)
                },
                {
-                  "Concentration (molar) [pmol/l]",
+                  "Concentration (molar) [mol]",
                   new ColumnDescription(6, null, ColumnDescription.MeasurementLevel.Numeric)
                },
                {
-                  "Error [pmol/l]",
+                  "Error [mol]",
                   new ColumnDescription(7, null, ColumnDescription.MeasurementLevel.Numeric)
                },
                {
                   "Route",
-                  new ColumnDescription(8, new List<string>() { "po" }, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(8, new List<string>() {"po"}, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Groupe Id",
-                  new ColumnDescription(9, new List<string>() { "H", "T2DM" }, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(9, new List<string>() {"H", "T2DM"}, ColumnDescription.MeasurementLevel.Discrete)
                }
             }
          );
       }
    }
 
-   public class When_checking_format : ConcernforDataFormat_DataFormatHeadersWithUnits
+   public class When_checking_format : concern_for_DataFormatHeadersWithUnits
    {
       [TestCase]
       public void identify_basic_format()
@@ -159,7 +149,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       }
    }
 
-   public class When_listing_parameters : ConcernforDataFormat_DataFormatHeadersWithUnits
+   public class When_listing_parameters : concern_for_DataFormatHeadersWithUnits
    {
       protected override void Because()
       {
@@ -179,21 +169,21 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       [TestCase]
       public void identify_error_column()
       {
-         var errorParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Error [pmol/l]");
+         var errorParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Error [mol]");
          (errorParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = errorParameter as MappingDataFormatParameter;
          mapping.MappedColumn.Name.ShouldBeEqualTo("Error");
-         mapping.MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("pmol/l");
+         mapping.MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("mol");
       }
 
       [TestCase]
       public void identify_measurement_column_without_the_name_on_the_headings()
       {
-         var measurementParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Concentration (molar) [pmol/l]");
+         var measurementParameter = sut.Parameters.FirstOrDefault(p => p.ColumnName == "Concentration (molar) [mol]");
          (measurementParameter is MappingDataFormatParameter).ShouldBeTrue();
          var mapping = measurementParameter as MappingDataFormatParameter;
          mapping.MappedColumn.Name.ShouldBeEqualTo("Concentration");
-         mapping.MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("pmol/l");
+         mapping.MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo("mol");
       }
 
       [TestCase]
@@ -201,7 +191,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       {
          var metadataParameters = sut.Parameters.Where(p => p is MetaDataFormatParameter).ToList();
          metadataParameters.Count.ShouldBeEqualTo(6);
-         foreach (var name in new[] { "Organ", "Compartment", "Species", "Dose", "Route", "Molecule" })
+         foreach (var name in new[] {"Organ", "Compartment", "Species", "Dose", "Route", "Molecule"})
          {
             metadataParameters.FirstOrDefault(parameter => parameter.ColumnName == name).ShouldNotBeNull();
          }
@@ -215,11 +205,12 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       }
    }
 
-   public class When_parsing_format : ConcernforDataFormat_DataFormatHeadersWithUnits
+   public class When_parsing_format : concern_for_DataFormatHeadersWithUnits
    {
       private DataSheet _mockedData;
-      private string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
-      private string[] _groupIds = new string[] { "H", "T2DM" };
+      private readonly string[] _molecules = new string[] {"GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon"};
+      private readonly string[] _groupIds = new string[] {"H", "T2DM"};
+
       protected override void Context()
       {
          base.Context();
@@ -227,23 +218,23 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          A.CallTo(() => _mockedData.GetHeaders()).Returns(_basicFormat.GetHeaders());
          A.CallTo(() => _mockedData.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
          foreach (var molecule in _molecules)
-            foreach (var groupId in _groupIds)
-               for (var time = 0; time < 10; time++)
+         foreach (var groupId in _groupIds)
+            for (var time = 0; time < 10; time++)
+            {
+               _basicFormat.AddRow(new List<string>()
                {
-                  _basicFormat.AddRow(new List<string>()
-                  {
-                     "PeripheralVenousBlood",
-                     "Arterialized",
-                     "Human",
-                     "75 [g] glucose",
-                     molecule,
-                     $"time",
-                     "0",
-                     "0",
-                     "po",
-                     groupId
-                  });
-               }
+                  "PeripheralVenousBlood",
+                  "Arterialized",
+                  "Human",
+                  "75 [g] glucose",
+                  molecule,
+                  $"time",
+                  "0",
+                  "0",
+                  "po",
+                  groupId
+               });
+            }
       }
 
       protected override void Because()
@@ -270,9 +261,9 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          A.CallTo(() => _mockedData.GetRows(A<Func<IEnumerable<string>, bool>>.Ignored)).ReturnsLazily(
             param => new List<UnformattedRow>()
             {
-               new UnformattedRow(0, new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", $"<{0.01}", "0", "po", "<GroupId>" }),
-               new UnformattedRow(1, new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", $"   <{0.01}", "0", "po", "<GroupId>" }),
-               new UnformattedRow(2, new List<string>() { "PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "0", "po", "<GroupId>" })
+               new UnformattedRow(0, new List<string>() {"PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", $"<{0.01}", "0", "po", "<GroupId>"}),
+               new UnformattedRow(1, new List<string>() {"PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", $"   <{0.01}", "0", "po", "<GroupId>"}),
+               new UnformattedRow(2, new List<string>() {"PeripheralVenousBlood", "Arterialized", "Human", "75 [g] glucose", "<Molecule>", "99", "10", "0", "po", "<GroupId>"})
             });
 
          var data = sut.Parse
@@ -292,11 +283,12 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       }
    }
 
-   public class When_parsing_format_with_missing_molecule_mapping : ConcernforDataFormat_DataFormatHeadersWithUnits
+   public class When_parsing_format_with_missing_molecule_mapping : concern_for_DataFormatHeadersWithUnits
    {
       private DataSheet _mockedDataSheet;
-      private string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
-      private string[] _groupIds = new string[] { "H", "T2DM" };
+      private readonly string[] _molecules = new string[] {"GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon"};
+      private readonly string[] _groupIds = new string[] {"H", "T2DM"};
+
       protected override void Context()
       {
          base.Context();
@@ -304,23 +296,23 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
          A.CallTo(() => _mockedDataSheet.GetHeaders()).Returns(_basicFormat.GetHeaders());
          A.CallTo(() => _mockedDataSheet.GetColumnDescription(A<string>.Ignored)).ReturnsLazily(columnName => _basicFormat.GetColumnDescription(columnName.Arguments[0].ToString()));
          foreach (var molecule in _molecules)
-            foreach (var groupId in _groupIds)
-               for (var time = 0; time < 10; time++)
+         foreach (var groupId in _groupIds)
+            for (var time = 0; time < 10; time++)
+            {
+               _basicFormat.AddRow(new List<string>()
                {
-                  _basicFormat.AddRow(new List<string>()
-                  {
-                     "PeripheralVenousBlood",
-                     "Arterialized",
-                     "Human",
-                     "75 [g] glucose",
-                     molecule,
-                     $"time",
-                     "0",
-                     "0",
-                     "po",
-                     groupId
-                  });
-               }
+                  "PeripheralVenousBlood",
+                  "Arterialized",
+                  "Human",
+                  "75 [g] glucose",
+                  molecule,
+                  $"time",
+                  "0",
+                  "0",
+                  "po",
+                  groupId
+               });
+            }
       }
 
       protected override void Because()
