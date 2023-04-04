@@ -72,17 +72,17 @@ namespace OSPSuite.Helpers
          
          var module = new Module
          {
-            Molecule = getMolecules(),
-            Reaction = getReactions(),
+            Molecules = getMolecules(),
+            Reactions = getReactions(),
             SpatialStructure = getSpatialStructure(),
-            PassiveTransport = new PassiveTransportBuildingBlock(),
-            Observer = new ObserverBuildingBlock(),
-            EventGroup = new EventGroupBuildingBlock()
+            PassiveTransports = new PassiveTransportBuildingBlock(),
+            Observers = new ObserverBuildingBlock(),
+            EventGroups = new EventGroupBuildingBlock()
          };
          simulationConfiguration.SimulationSettings = createSimulationSettings();
 
 
-         var moleculeStartValues = _moleculeStartValuesCreator.CreateFrom(module.SpatialStructure, module.Molecule);
+         var moleculeStartValues = _moleculeStartValuesCreator.CreateFrom(module.SpatialStructure, module.Molecules);
          var objectPathForContainerThatDoesNotExist = _objectPathFactory.CreateObjectPathFrom("TOTO", "TATA");
          moleculeStartValues.Add(_moleculeStartValuesCreator.CreateMoleculeStartValue(objectPathForContainerThatDoesNotExist, "A", _concentrationDimension));
 

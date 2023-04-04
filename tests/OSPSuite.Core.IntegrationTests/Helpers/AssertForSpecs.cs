@@ -333,12 +333,12 @@ namespace OSPSuite.Core.Helpers
 
       private static void AreEqualModule(Module m1, Module m2)
       {
-         AreEqualBuildingBlock(m1.PassiveTransport, m2.PassiveTransport);
+         AreEqualBuildingBlock(m1.PassiveTransports, m2.PassiveTransports);
          AreEqualBuildingBlock(m1.SpatialStructure, m2.SpatialStructure);
-         AreEqualBuildingBlock(m1.EventGroup, m2.EventGroup);
-         AreEqualBuildingBlock(m1.Molecule, m2.Molecule);
-         AreEqualBuildingBlock(m1.Observer, m2.Observer);
-         AreEqualBuildingBlock(m1.Reaction, m2.Reaction);
+         AreEqualBuildingBlock(m1.EventGroups, m2.EventGroups);
+         AreEqualBuildingBlock(m1.Molecules, m2.Molecules);
+         AreEqualBuildingBlock(m1.Observers, m2.Observers);
+         AreEqualBuildingBlock(m1.Reactions, m2.Reactions);
 
          m1.MoleculeStartValuesCollection.Each((x, i) => AreEqualBuildingBlock(x, m2.MoleculeStartValuesCollection[i]));
          m1.ParameterStartValuesCollection.Each((x, i) => AreEqualBuildingBlock(x, m2.ParameterStartValuesCollection[i]));

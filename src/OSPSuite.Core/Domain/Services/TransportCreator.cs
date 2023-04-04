@@ -44,9 +44,9 @@ namespace OSPSuite.Core.Domain.Services
          var (model, simulationConfiguration) = modelConfiguration;
          var allNeighborhoods = model.Neighborhoods.GetChildren<Neighborhood>().ToList();
          //TODO can we have a transport define in one grabbing a molecule from another module?
-         foreach (var module in simulationConfiguration.ModuleConfigurations.Select(x=>x.Module).Where(x=>x.Molecule!=null))
+         foreach (var module in simulationConfiguration.ModuleConfigurations.Select(x=>x.Module).Where(x=>x.Molecules!=null))
          {
-            var molecules = module.Molecule;
+            var molecules = module.Molecules;
             foreach (var molecule in molecules.AllFloating())
             {
                foreach (var transporterMolecule in molecule.TransporterMoleculeContainerCollection)

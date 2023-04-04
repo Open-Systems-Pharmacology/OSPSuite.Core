@@ -50,12 +50,12 @@ namespace OSPSuite.Helpers
       public SimulationConfiguration CreateSimulationConfiguration()
       {
          var module = _objectBaseFactory.Create<Module>();
-         module.Molecule = getMolecules();
-         module.Reaction = getReactions();
-         module.PassiveTransport = getPassiveTransports();
+         module.Molecules = getMolecules();
+         module.Reactions = getReactions();
+         module.PassiveTransports = getPassiveTransports();
          module.SpatialStructure = getSpatialStructure();
-         module.Observer = getObservers();
-         module.EventGroup = getEventGroups();
+         module.Observers = getObservers();
+         module.EventGroups = getEventGroups();
 
          var simulationConfiguration = new SimulationConfigurationForSpecs
          {
@@ -63,7 +63,7 @@ namespace OSPSuite.Helpers
          };
 
            allCalculationMethods().Each(simulationConfiguration.AddCalculationMethod);
-         var moleculeStartValues = _moleculeStartValuesCreator.CreateFrom(module.SpatialStructure, module.Molecule);
+         var moleculeStartValues = _moleculeStartValuesCreator.CreateFrom(module.SpatialStructure, module.Molecules);
 
          //add one start values that does not exist in Molecules@"
          var moleculeStartValue = _moleculeStartValuesCreator.CreateMoleculeStartValue(_objectPathFactory.CreateObjectPathFrom(Organism), "MoleculeThatDoesNotExist", amountDimension);

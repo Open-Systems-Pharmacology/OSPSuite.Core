@@ -23,12 +23,12 @@ namespace OSPSuite.Core.Domain.Services
 
       private void validateModule(Module module, ValidationResult validationResult)
       {
-         validateBuildingBlockWithFormulaCache(module.Molecule, validationResult);
-         validateBuildingBlockWithFormulaCache(module.Reaction, validationResult);
+         validateBuildingBlockWithFormulaCache(module.Molecules, validationResult);
+         validateBuildingBlockWithFormulaCache(module.Reactions, validationResult);
          validateBuildingBlockWithFormulaCache(module.SpatialStructure, validationResult);
-         validateBuildingBlockWithFormulaCache(module.PassiveTransport, validationResult);
-         validateBuildingBlockWithFormulaCache(module.Observer, validationResult);
-         validateEventGroupBuildingBlock(module.EventGroup, module?.Molecule, validationResult);
+         validateBuildingBlockWithFormulaCache(module.PassiveTransports, validationResult);
+         validateBuildingBlockWithFormulaCache(module.Observers, validationResult);
+         validateEventGroupBuildingBlock(module.EventGroups, module.Molecules, validationResult);
          module.MoleculeStartValuesCollection.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
          module.ParameterStartValuesCollection.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
       }

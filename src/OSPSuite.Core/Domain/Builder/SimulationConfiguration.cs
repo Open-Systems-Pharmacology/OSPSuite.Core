@@ -35,15 +35,15 @@ namespace OSPSuite.Core.Domain.Builder
       public virtual void AddCalculationMethod(ICoreCalculationMethod calculationMethodToAdd) => _allCalculationMethods.Add(calculationMethodToAdd);
 
       public virtual IReadOnlyList<ISpatialStructure> SpatialStructures => all(x => x.SpatialStructure);
-      public virtual IReadOnlyList<IPassiveTransportBuildingBlock> PassiveTransports => all(x => x.PassiveTransport);
-      public virtual IReadOnlyList<IReactionBuildingBlock> Reactions => all(x => x.Reaction);
+      public virtual IReadOnlyList<IPassiveTransportBuildingBlock> PassiveTransports => all(x => x.PassiveTransports);
+      public virtual IReadOnlyList<IReactionBuildingBlock> Reactions => all(x => x.Reactions);
       public virtual IReadOnlyList<ParameterStartValuesBuildingBlock> ParameterStartValues => all(x => x.ParameterStartValuesCollection);
       public virtual IReadOnlyList<MoleculeStartValuesBuildingBlock> MoleculeStartValues => all(x => x.MoleculeStartValuesCollection);
-      public virtual IReadOnlyList<IEventGroupBuildingBlock> EventGroups => all(x => x.EventGroup);
-      public virtual IReadOnlyList<IObserverBuildingBlock> Observers => all(x => x.Observer);
+      public virtual IReadOnlyList<IEventGroupBuildingBlock> EventGroups => all(x => x.EventGroups);
+      public virtual IReadOnlyList<IObserverBuildingBlock> Observers => all(x => x.Observers);
 
       //There are ways to cache this a bit better
-      public virtual IReadOnlyList<MoleculeBuildingBlock> Molecules => all(x => x.Molecule);
+      public virtual IReadOnlyList<MoleculeBuildingBlock> Molecules => all(x => x.Molecules);
 
       public IMoleculeBuilder MoleculeByName(string name)
       {
@@ -53,7 +53,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       private IReadOnlyList<T> all<T>(Func<Module, T> propAccess) where T : IBuildingBlock =>
          _moduleConfigurations.Select(x => propAccess(x.Module)).ToList();
-
+         
       private IReadOnlyList<T> all<T>(Func<Module, IReadOnlyList<T>> propAccess) where T : IBuildingBlock =>
          _moduleConfigurations.SelectMany(x => propAccess(x.Module)).ToList();
 

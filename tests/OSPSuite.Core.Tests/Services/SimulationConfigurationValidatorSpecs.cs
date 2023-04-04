@@ -36,16 +36,17 @@ namespace OSPSuite.Core.Services
 
          var module = new Module
          {
-            Molecule = _moleculeBuildingBlock,
-            Observer = new ObserverBuildingBlock(),
-            PassiveTransport = new PassiveTransportBuildingBlock(),
-            Reaction = new ReactionBuildingBlock(),
+            Molecules = _moleculeBuildingBlock,
+            Observers = new ObserverBuildingBlock(),
+            PassiveTransports = new PassiveTransportBuildingBlock(),
+            Reactions = new ReactionBuildingBlock(),
             SpatialStructure = new SpatialStructure(),
-            EventGroup = _eventBuildingBlock
+            EventGroups = _eventBuildingBlock
          };
          module.AddMoleculeStartValueBlock(new MoleculeStartValuesBuildingBlock());
          module.AddParameterStartValueBlock(new ParameterStartValuesBuildingBlock());
 
+         _simulationConfiguration = new SimulationConfiguration();
          _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module));
 
       }

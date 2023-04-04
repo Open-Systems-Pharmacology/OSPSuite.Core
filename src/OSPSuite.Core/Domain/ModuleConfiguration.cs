@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Utility.Visitor;
@@ -19,6 +20,12 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public ParameterStartValuesBuildingBlock SelectedParameterStartValues { get; }
 
+      [Obsolete("For serialization")]
+      public ModuleConfiguration()
+      {
+      }
+
+
       public ModuleConfiguration(Module module, MoleculeStartValuesBuildingBlock selectedMoleculeStartValueBuilding = null, ParameterStartValuesBuildingBlock selectedParameterStartValues = null)
       {
          Module = module;
@@ -33,18 +40,18 @@ namespace OSPSuite.Core.Domain
 
       public virtual IEnumerable<IMoleculeBuilder> AllPresentMolecules()
       {
-         if (Module.Molecule == null || SelectedMoleculeStartValues == null)
+         if (Module.Molecules == null || SelectedMoleculeStartValues == null)
             return Enumerable.Empty<IMoleculeBuilder>();
 
-         return Module.Molecule.AllPresentFor(SelectedMoleculeStartValues);
+         return Module.Molecules.AllPresentFor(SelectedMoleculeStartValues);
       }
 
       public virtual IEnumerable<MoleculeStartValue> AllPresentMoleculeValues()
       {
-         if (Module.Molecule == null)
+         if (Module.Molecules == null)
             return Enumerable.Empty<MoleculeStartValue>();
 
-         return AllPresentMoleculeValuesFor(Module.Molecule.Select(x => x.Name));
+         return AllPresentMoleculeValuesFor(Module.Molecules.Select(x => x.Name));
       }
 
       public virtual IEnumerable<MoleculeStartValue> AllPresentMoleculeValuesFor(IEnumerable<string> moleculeNames)

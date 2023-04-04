@@ -128,10 +128,10 @@ namespace OSPSuite.Core.Domain
          base.Context();
          var module = new Module();
          var reactions = new ReactionBuildingBlock {new ReactionBuilder().WithName("REACTION")};
-         module.Reaction = reactions;
+         module.Reactions = reactions;
 
          var passiveTransports = new PassiveTransportBuildingBlock {new TransportBuilder().WithName("TRANSPORT")};
-         module.PassiveTransport = passiveTransports;
+         module.PassiveTransports = passiveTransports;
 
          _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module));
          sut = new ValidatorForReactionsAndTransports(_objectTypeResolver, _objectPathFactory);
