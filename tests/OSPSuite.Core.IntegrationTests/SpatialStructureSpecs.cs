@@ -34,7 +34,7 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _sourceSpatialStructure = _simulationConfiguration.SpatialStructure;
+         _sourceSpatialStructure = _simulationConfiguration.SpatialStructures[0];
          _sourceSpatialStructure.Version = _buildingBlockVersion;
          _cloneManager = IoC.Resolve<ICloneManagerForBuildingBlock>();
       }

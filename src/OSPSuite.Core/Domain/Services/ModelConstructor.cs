@@ -279,13 +279,13 @@ namespace OSPSuite.Core.Domain.Services
          model.Root.AddTag(new Tag(Constants.ROOT_CONTAINER_TAG));
 
          //Add each container defined in the spatial structure and direct child of the root container
-         foreach (var topContainer in simulationConfiguration.SpatialStructure.TopContainers)
+         foreach (var topContainer in simulationConfiguration.SpatialStructures.SelectMany(x=>x.TopContainers))
          {
             model.Root.Add(_containerMapper.MapFrom(topContainer, simulationConfiguration));
          }
 
          // Add the neighborhoods
-         model.Neighborhoods = _neighborhoodsMapper.MapFrom(model, simulationConfiguration);
+         model.Neighborhoods = _neighborhoodsMapper.MapFrom(modelConfiguration);
       }
 
       private ValidationResult checkCircularReferences(ModelConfiguration modelConfiguration)
@@ -304,16 +304,17 @@ namespace OSPSuite.Core.Domain.Services
 
       private void createPassiveTransports(ModelConfiguration modelConfiguration)
       {
-         modelConfiguration.SimulationConfiguration.PassiveTransports?.Each(t => _transportCreator.CreatePassiveTransport(t, modelConfiguration));
+         modelConfiguration.SimulationConfiguration.PassiveTransports.SelectMany(x=>x).Each(t => _transportCreator.CreatePassiveTransport(t, modelConfiguration));
       }
 
       private IEnumerable<ValidationMessage> createReactions(ModelConfiguration modelConfiguration)
       {
          var (model, simulationConfiguration) = modelConfiguration;
-         var messages = simulationConfiguration.Reactions?
-            .Where(r => !_reactionCreator.CreateReaction(r, modelConfiguration))
+         var messages = simulationConfiguration.Reactions
+            .SelectMany(bb=>bb, (bb, r)=>new {bb, r})
+            .Where(x => !_reactionCreator.CreateReaction(x.r, modelConfiguration))
             .Select(
-               r => new ValidationMessage(NotificationType.Warning, Validation.WarningNoReactionCreated(r.Name), r, simulationConfiguration.Reactions))
+               x => new ValidationMessage(NotificationType.Warning, Validation.WarningNoReactionCreated(x.r.Name), x.r, x.bb))
             .ToList();
 
          model.Root.GetAllContainersAndSelf<IContainer>(x => x.ContainerType == ContainerType.Reaction)
@@ -376,14 +377,16 @@ namespace OSPSuite.Core.Domain.Services
 
       private IEnumerable<ValidationMessage> createMoleculeAmounts(ModelConfiguration modelConfiguration)
       {
-         var (model, simulationConfiguration) = modelConfiguration;
-         var molecules = simulationConfiguration.Molecules;
+         var (_, simulationConfiguration) = modelConfiguration;
          var presentMolecules = allPresentMoleculesInContainers(modelConfiguration).ToList();
 
          var moleculesWithPhysicalContainers = presentMolecules.Where(containerIsPhysical);
-         moleculesWithPhysicalContainers.Each(x => addMoleculeToContainer(simulationConfiguration, x.Container, molecules[x.MoleculeStartValue.MoleculeName]));
+         moleculesWithPhysicalContainers.Each(x =>
+         {
+            addMoleculeToContainer(simulationConfiguration, x.Container, simulationConfiguration.MoleculeByName(x.MoleculeStartValue.MoleculeName));
+         });
 
-         return new MoleculeBuildingBlockValidator().Validate(molecules).Messages.Concat(createValidationMessagesForPresentMolecules(presentMolecules));
+         return new MoleculeBuildingBlockValidator().Validate(simulationConfiguration.Molecules).Messages.Concat(createValidationMessagesForPresentMolecules(presentMolecules));
       }
 
       private static bool containerIsPhysical(StartValueAndContainer startValueAndContainer)

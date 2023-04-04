@@ -10,8 +10,6 @@ namespace OSPSuite.Helpers
    {
       public SimulationConfigurationForSpecs()
       {
-         //Just create a default one for now
-         Module = new Module();
       }
 
       public override void ClearCache()

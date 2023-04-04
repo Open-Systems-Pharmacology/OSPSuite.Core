@@ -8,7 +8,6 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Helpers;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Services
@@ -32,7 +31,7 @@ namespace OSPSuite.Core.Services
          _observerMapper = A.Fake<IObserverBuilderToObserverMapper>();
          _simulationConfiguration = A.Fake<SimulationConfiguration>();
          _observerBuildingBlock = new ObserverBuildingBlock();
-         A.CallTo(() => _simulationConfiguration.Observers).Returns(_observerBuildingBlock);
+         A.CallTo(() => _simulationConfiguration.Observers).Returns(new []{_observerBuildingBlock, });
          _model = A.Fake<IModel>();
          A.CallTo(() => _simulationConfiguration.AllPresentMolecules()).Returns(new[] {A.Fake<IMoleculeBuilder>().WithName(_molecule1), A.Fake<IMoleculeBuilder>().WithName(_molecule2)});
          _rootContainer = new Container();

@@ -14,12 +14,12 @@ namespace OSPSuite.Core.Domain
 
       public bool ReadOnly { get; set; } = false;
 
-      public MoleculeBuildingBlock Molecule { set; get; }
-      public IReactionBuildingBlock Reaction { set; get; }
-      public IPassiveTransportBuildingBlock PassiveTransport { set; get; }
+      public MoleculeBuildingBlock Molecules { set; get; }
+      public IReactionBuildingBlock Reactions { set; get; }
+      public IPassiveTransportBuildingBlock PassiveTransports { set; get; }
       public ISpatialStructure SpatialStructure { set; get; }
-      public IObserverBuildingBlock Observer { set; get; }
-      public IEventGroupBuildingBlock EventGroup { set; get; }
+      public IObserverBuildingBlock Observers { set; get; }
+      public IEventGroupBuildingBlock EventGroups { set; get; }
       public IReadOnlyList<MoleculeStartValuesBuildingBlock> MoleculeStartValuesCollection => _moleculeStartValuesCollection;
       public IReadOnlyList<ParameterStartValuesBuildingBlock> ParameterStartValuesCollection => _parameterStartValuesCollection;
       public virtual ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
@@ -33,12 +33,12 @@ namespace OSPSuite.Core.Domain
 
          ReadOnly = sourceModule.ReadOnly;
          // Cloning these properties within the update for now. It could change based on specs
-         Molecule = cloneManager.Clone(sourceModule.Molecule);
-         Reaction = cloneManager.Clone(sourceModule.Reaction);
-         PassiveTransport = cloneManager.Clone(sourceModule.PassiveTransport);
+         Molecules = cloneManager.Clone(sourceModule.Molecules);
+         Reactions = cloneManager.Clone(sourceModule.Reactions);
+         PassiveTransports = cloneManager.Clone(sourceModule.PassiveTransports);
          SpatialStructure = cloneManager.Clone(sourceModule.SpatialStructure);
-         Observer = cloneManager.Clone(sourceModule.Observer);
-         EventGroup = cloneManager.Clone(sourceModule.EventGroup);
+         Observers = cloneManager.Clone(sourceModule.Observers);
+         EventGroups = cloneManager.Clone(sourceModule.EventGroups);
 
          sourceModule.MoleculeStartValuesCollection.Each(x => _moleculeStartValuesCollection.Add(cloneManager.Clone(x)));
          sourceModule.ParameterStartValuesCollection.Each(x => _parameterStartValuesCollection.Add(cloneManager.Clone(x)));
@@ -56,16 +56,24 @@ namespace OSPSuite.Core.Domain
          _moleculeStartValuesCollection.Add(moleculeStartValuesBuildingBlock);
       }
 
+      public virtual IEnumerable<IMoleculeBuilder> AllPresentMolecules()
+      {
+         if (Molecules == null)
+            return Enumerable.Empty<IMoleculeBuilder>();
+
+         return Molecules.AllPresentFor(MoleculeStartValuesCollection);
+      }
+
       public IReadOnlyList<IBuildingBlock> AllBuildingBlocks()
       {
          var buildingBlocks = new List<IBuildingBlock>
          {
             SpatialStructure,
-            EventGroup,
-            PassiveTransport,
-            Molecule,
-            Observer,
-            Reaction,
+            EventGroups,
+            PassiveTransports,
+            Molecules,
+            Observers,
+            Reactions,
          };
 
          buildingBlocks.AddRange(ParameterStartValuesCollection);

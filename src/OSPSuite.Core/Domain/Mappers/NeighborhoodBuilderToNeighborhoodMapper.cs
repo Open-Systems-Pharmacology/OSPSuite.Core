@@ -15,17 +15,15 @@ namespace OSPSuite.Core.Domain.Mappers
       ///    Maps neighborhood builder object into a neighborhood
       /// </summary>
       /// <param name="neighborhoodBuilder">Neighborhood builder to be mapped</param>
-      /// <param name="model">Model, required to link neighbor containers in model</param>
-      /// <param name="simulationConfiguration">Simulation configuration</param>
+      /// <param name="modelConfiguration">Model, required to link neighbor containers in model</param>
       /// <param name="moleculeNames">
       ///    All molecules present in both neighbors, required to create molecule properties
       ///    subcontainers
       /// </param>
       /// <param name="moleculeNamesWithCopyPropertiesRequired">Molecules having CopyMoleculeDependentProperties=true</param>
       /// <returns></returns>
-      Neighborhood MapFrom(NeighborhoodBuilder neighborhoodBuilder, IModel model,
-         SimulationConfiguration simulationConfiguration, IEnumerable<string> moleculeNames,
-         IEnumerable<string> moleculeNamesWithCopyPropertiesRequired);
+      Neighborhood MapFrom(NeighborhoodBuilder neighborhoodBuilder, IEnumerable<string> moleculeNames,
+         IEnumerable<string> moleculeNamesWithCopyPropertiesRequired, ModelConfiguration modelConfiguration);
    }
 
    public class NeighborhoodBuilderToNeighborhoodMapper : INeighborhoodBuilderToNeighborhoodMapper
@@ -48,12 +46,10 @@ namespace OSPSuite.Core.Domain.Mappers
          _parameterMapper = parameterMapper;
       }
 
-      public Neighborhood MapFrom(NeighborhoodBuilder neighborhoodBuilder, 
-         IModel model,
-         SimulationConfiguration simulationConfiguration,
-         IEnumerable<string> moleculeNames,
-         IEnumerable<string> moleculeNamesWithCopyPropertiesRequired)
+      public Neighborhood MapFrom(NeighborhoodBuilder neighborhoodBuilder, IEnumerable<string> moleculeNames,
+         IEnumerable<string> moleculeNamesWithCopyPropertiesRequired, ModelConfiguration modelConfiguration)
       {
+         var (model, simulationConfiguration) = modelConfiguration;
          var neighborhood = _objectBaseFactory.Create<Neighborhood>();
          neighborhood.UpdatePropertiesFrom(neighborhoodBuilder, _cloneManagerForModel);
          simulationConfiguration.AddBuilderReference(neighborhood, neighborhoodBuilder);
@@ -63,7 +59,7 @@ namespace OSPSuite.Core.Domain.Mappers
          if (neighborhoodBuilder.MoleculeProperties != null)
          {
             moleculeNames.Each(moleculeName => neighborhood.Add(
-               createMoleculePropertiesFor(neighborhoodBuilder, moleculeName, model.Root, simulationConfiguration, moleculeNamesWithCopyPropertiesRequired)));
+               createMoleculePropertiesFor(neighborhoodBuilder, moleculeName, moleculeNamesWithCopyPropertiesRequired, modelConfiguration)));
          }
 
          //Add neighborhood parameter to the neighborhood (clone the existing parameter)
@@ -78,11 +74,10 @@ namespace OSPSuite.Core.Domain.Mappers
       }
 
       private IContainer createMoleculePropertiesFor(NeighborhoodBuilder neighborhoodBuilder,
-         string moleculeName, IContainer rootContainer,
-         SimulationConfiguration simulationConfiguration,
-         IEnumerable<string> moleculeNamesWithCopyPropertiesRequired)
+         string moleculeName, IEnumerable<string> moleculeNamesWithCopyPropertiesRequired, ModelConfiguration modelConfiguration)
       {
          //Create a new model container from the neighborhood container 
+         var (model, simulationConfiguration) = modelConfiguration;
          var moleculePropertiesContainer = _containerMapper.MapFrom(neighborhoodBuilder.MoleculeProperties, simulationConfiguration);
          moleculePropertiesContainer.ContainerType = ContainerType.Molecule;
 
@@ -90,7 +85,7 @@ namespace OSPSuite.Core.Domain.Mappers
          //to concrete molecule name
          moleculePropertiesContainer.Name = moleculeName;
 
-         _keywordReplacerTask.ReplaceIn(moleculePropertiesContainer, rootContainer, moleculeName);
+         _keywordReplacerTask.ReplaceIn(moleculePropertiesContainer, model.Root, moleculeName);
 
          //remove children if molecule properties should not be copied
          if (!moleculeNamesWithCopyPropertiesRequired.Contains(moleculeName))

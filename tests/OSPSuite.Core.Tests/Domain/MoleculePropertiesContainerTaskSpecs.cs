@@ -73,8 +73,6 @@ namespace OSPSuite.Core.Domain
          A.CallTo(() => _parameterCollectionMapper.MapGlobalOrPropertyFrom(_moleculeBuilder, _simulationConfiguration))
             .Returns(new[] {_para1, _para2});
 
-
-      
          _globalMoleculeDepParam1 = new Parameter().WithName("GMDP1");
          _globalMoleculeDepParam2 = new Parameter().WithName("GMDP2");
 
@@ -84,8 +82,13 @@ namespace OSPSuite.Core.Domain
          A.CallTo(() => _parameterCollectionMapper.MapAllFrom(_globalMoleculeDependentProperties, _simulationConfiguration))
             .Returns(new[] {_globalMoleculeDepParam1, _globalMoleculeDepParam2});
 
-         _simulationConfiguration.Module.SpatialStructure = A.Fake<ISpatialStructure>();
-         A.CallTo(() => _simulationConfiguration.SpatialStructure.GlobalMoleculeDependentProperties).Returns(_globalMoleculeDependentProperties);
+         var spatialStructure = A.Fake<ISpatialStructure>();
+         A.CallTo(() => spatialStructure.GlobalMoleculeDependentProperties).Returns(_globalMoleculeDependentProperties);
+         var module = new Module
+         {
+            SpatialStructure = spatialStructure
+         };
+         _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module));
       }
 
       protected override void Because()
@@ -188,8 +191,13 @@ namespace OSPSuite.Core.Domain
          A.CallTo(() => _parameterCollectionMapper.MapGlobalOrPropertyFrom(_globalMoleculeDependentProperties, _simulationConfiguration))
             .Returns(new[] {_globalMoleculeDepParam1});
 
-         _simulationConfiguration.Module.SpatialStructure = A.Fake<ISpatialStructure>();
-         A.CallTo(() => _simulationConfiguration.SpatialStructure.GlobalMoleculeDependentProperties).Returns(_globalMoleculeDependentProperties);
+         var spatialStructure = A.Fake<ISpatialStructure>();
+         A.CallTo(() => spatialStructure.GlobalMoleculeDependentProperties).Returns(_globalMoleculeDependentProperties);
+         var module = new Module
+         {
+            SpatialStructure = spatialStructure
+         };
+         _simulationConfiguration.AddModuleConfiguration( new ModuleConfiguration(module));
       }
 
       protected override void Because()

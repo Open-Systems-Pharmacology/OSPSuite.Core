@@ -69,23 +69,29 @@ namespace OSPSuite.Helpers
       private SimulationConfiguration createSimulationConfiguration()
       {
          var simulationConfiguration = new SimulationConfigurationForSpecs();
-         var module = simulationConfiguration.Module;
-         module.Molecule = getMolecules();
-         module.Reaction = getReactions();
-         module.SpatialStructure = getSpatialStructure();
-         module.PassiveTransport = new PassiveTransportBuildingBlock();
-         module.Observer = new ObserverBuildingBlock();
-         module.EventGroup = new EventGroupBuildingBlock();
+         
+         var module = new Module
+         {
+            Molecules = getMolecules(),
+            Reactions = getReactions(),
+            SpatialStructure = getSpatialStructure(),
+            PassiveTransports = new PassiveTransportBuildingBlock(),
+            Observers = new ObserverBuildingBlock(),
+            EventGroups = new EventGroupBuildingBlock()
+         };
          simulationConfiguration.SimulationSettings = createSimulationSettings();
 
 
-         var moleculeStartValues = _moleculeStartValuesCreator.CreateFrom(module.SpatialStructure, module.Molecule);
+         var moleculeStartValues = _moleculeStartValuesCreator.CreateFrom(module.SpatialStructure, module.Molecules);
          var objectPathForContainerThatDoesNotExist = _objectPathFactory.CreateObjectPathFrom("TOTO", "TATA");
          moleculeStartValues.Add(_moleculeStartValuesCreator.CreateMoleculeStartValue(objectPathForContainerThatDoesNotExist, "A", _concentrationDimension));
 
          module.AddMoleculeStartValueBlock(moleculeStartValues);
          module.AddParameterStartValueBlock(_objectBaseFactory.Create<ParameterStartValuesBuildingBlock>());
          setMoleculeStartValues(moleculeStartValues);
+
+         var moduleConfiguration = new ModuleConfiguration(module, moleculeStartValues);
+         simulationConfiguration.AddModuleConfiguration(moduleConfiguration);
          return simulationConfiguration;
       }
 

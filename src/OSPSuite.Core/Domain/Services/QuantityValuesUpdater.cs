@@ -69,7 +69,8 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateParameterValueFromParameterStartValues(ModelConfiguration modelConfiguration)
       {
-         modelConfiguration.SimulationConfiguration.ParameterStartValues.Each(x => updateParameterValueFromStartValue(modelConfiguration, x));
+         modelConfiguration.SimulationConfiguration.ParameterStartValues.SelectMany(x => x)
+            .Each(psv => updateParameterValueFromStartValue(modelConfiguration, psv));
       }
 
       private IParameter getOrAddModelParameter(ModelConfiguration modelConfiguration, PathAndValueEntity pathAndValueEntity, bool canCreateParameter)

@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Core.Serialization.Xml.Extensions;
+using OSPSuite.Serializer.Xml.Extensions;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
 
@@ -14,7 +15,8 @@ namespace OSPSuite.Core.Converters.v12
       IVisitor<ISpatialStructure>,
       IVisitor<SimulationTransfer>,
       IVisitor<IModelCoreSimulation>,
-      IVisitor<SimulationConfiguration>
+      IVisitor<SimulationConfiguration>,
+      IVisitor<ModuleConfiguration>
    {
       private readonly IObjectPathFactory _objectPathFactory;
       private bool _converted;
@@ -54,25 +56,34 @@ namespace OSPSuite.Core.Converters.v12
 
          var moleculeStartValueCollectionElement = new XElement("MoleculeStartValuesCollection");
          var parameterStartValueCollectionElement = new XElement("ParameterStartValuesCollection");
-         var moduleElement = new XElement("Module");
          var simulationConfigurationElement = new XElement(Constants.Serialization.SIMULATION_CONFIGURATION);
-         simulationConfigurationElement.Add(moduleElement);
+         var moduleConfigurationList = new XElement("ModuleConfigurations");
+         var moduleConfiguration = new XElement("ModuleConfiguration");
+         var moduleElement = new XElement("Module");
+         moduleConfigurationList.Add(moduleConfiguration);
+         moduleConfiguration.Add(moduleElement);
+         simulationConfigurationElement.Add(moduleConfigurationList);
 
-         moduleElement.Add(getAndRename(buildConfigurationElement, "Molecules", "Molecule"));
-         moduleElement.Add(getAndRename(buildConfigurationElement, "Reactions", "Reaction"));
-         moduleElement.Add(getAndRename(buildConfigurationElement, "PassiveTransports", "PassiveTransport"));
+         moduleElement.Add(buildConfigurationElement.Element("Molecules"));
+         moduleElement.Add(buildConfigurationElement.Element("Reactions"));
+         moduleElement.Add(buildConfigurationElement.Element("PassiveTransports"));
          //already singular
          moduleElement.Add(buildConfigurationElement.Element("SpatialStructure"));
-         moduleElement.Add(getAndRename(buildConfigurationElement, "Observers", "Observer"));
-         moduleElement.Add(getAndRename(buildConfigurationElement, "EventGroups", "EventGroup"));
+         moduleElement.Add(buildConfigurationElement.Element("Observers"));
+         moduleElement.Add(buildConfigurationElement.Element("EventGroups"));
 
          var parameterStartValuesElement = buildConfigurationElement.Element("ParameterStartValues");
+         var parameterStartValuesId = parameterStartValuesElement.Attribute("id").Value;
          parameterStartValuesElement.Name = "ParameterStartValuesBuildingBlock";
          parameterStartValueCollectionElement.Add(parameterStartValuesElement);
 
          var moleculeStartValueElement = buildConfigurationElement.Element("MoleculeStartValues");
+         var moleculeStartValuesId = moleculeStartValueElement.Attribute("id").Value;
          moleculeStartValueElement.Name = "MoleculeStartValuesBuildingBlock";
          moleculeStartValueCollectionElement.Add(moleculeStartValueElement);
+
+         moduleConfiguration.AddAttribute("selectedMoleculeStartValues", moleculeStartValuesId);
+         moduleConfiguration.AddAttribute("selectedParameterStartValues", parameterStartValuesId);
 
          moduleElement.Add(parameterStartValueCollectionElement);
          moduleElement.Add(moleculeStartValueCollectionElement);
@@ -86,13 +97,6 @@ namespace OSPSuite.Core.Converters.v12
 
          simulationNode.Add(simulationConfigurationElement);
          _converted = true;
-      }
-
-      private XElement getAndRename(XElement element, string oldName, string newName)
-      {
-         var childElement = element.Element(oldName);
-         childElement.Name = newName;
-         return childElement;
       }
 
       private void performConversion(object objectToUpdate) => this.Visit(objectToUpdate);
@@ -121,7 +125,14 @@ namespace OSPSuite.Core.Converters.v12
 
       public void Visit(SimulationConfiguration simulationConfiguration)
       {
-         Visit(simulationConfiguration.SpatialStructure);
+         simulationConfiguration.ModuleConfigurations.Each(Visit);
+      }
+
+      public void Visit(ModuleConfiguration moduleConfiguration)
+      {
+         //I am using the actual visit here so that it will itself manage to find the most appropriate visitor implementation 
+         //for children of the configuration
+         moduleConfiguration.AcceptVisitor(this);
       }
    }
 }

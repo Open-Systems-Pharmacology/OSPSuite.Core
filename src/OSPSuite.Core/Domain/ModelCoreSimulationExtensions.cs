@@ -39,7 +39,7 @@ namespace OSPSuite.Core.Domain
          var allApplications = applicationEventGroup.SelectMany(x => x.GetAllChildren<IContainer>(c => c.ContainerType == ContainerType.Application))
             .ToList();
 
-         return getApplicationsForAppliedAncestorMolecule(simulation.Reactions, moleculeName, allApplications, new List<string>());
+         return getApplicationsForAppliedAncestorMolecule(simulation.Reactions.SelectMany(x=>x), moleculeName, allApplications, new List<string>());
       }
 
       private static IReadOnlyList<IContainer> getApplicationsForAppliedAncestorMolecule(IEnumerable<IReactionBuilder> reactions, string moleculeName,

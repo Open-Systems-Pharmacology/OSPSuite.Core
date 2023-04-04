@@ -83,7 +83,7 @@ namespace OSPSuite.Core.Mappers
 
       protected override void Because()
       {
-         _neighborhood = sut.MapFrom(_neighborhoodBuilder, _model, _simulationConfiguration, _moleculeNames, _moleculeNames);
+         _neighborhood = sut.MapFrom(_neighborhoodBuilder,  _moleculeNames, _moleculeNames, new ModelConfiguration(_model, _simulationConfiguration));
       }
 
       [Observation]

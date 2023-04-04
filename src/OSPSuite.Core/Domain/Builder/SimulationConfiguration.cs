@@ -11,6 +11,7 @@ namespace OSPSuite.Core.Domain.Builder
    public class SimulationConfiguration : IVisitable<IVisitor>
    {
       private readonly List<ExpressionProfileBuildingBlock> _expressionProfiles = new List<ExpressionProfileBuildingBlock>();
+      private readonly List<ModuleConfiguration> _moduleConfigurations = new List<ModuleConfiguration>();
       private readonly ICache<IObjectBase, IObjectBase> _builderCache = new Cache<IObjectBase, IObjectBase>(onMissingKey: x => null);
       private readonly List<ICoreCalculationMethod> _allCalculationMethods = new List<ICoreCalculationMethod>();
 
@@ -20,58 +21,52 @@ namespace OSPSuite.Core.Domain.Builder
       public bool ShowProgress { get; set; } = true;
       public bool PerformCircularReferenceCheck { get; set; } = true;
 
-      public virtual Module Module { get; set; }
       public virtual IndividualBuildingBlock Individual { get; set; }
       public virtual SimulationSettings SimulationSettings { get; set; }
 
       public virtual IReadOnlyList<ExpressionProfileBuildingBlock> ExpressionProfiles => _expressionProfiles;
-
       public virtual IReadOnlyList<ICoreCalculationMethod> AllCalculationMethods => _allCalculationMethods;
-
-      //TODO
-      //just helper method to transition easily to new API
-      public virtual ISpatialStructure SpatialStructure => Module?.SpatialStructure;
-      public virtual MoleculeBuildingBlock Molecules => Module?.Molecule;
-      public virtual IPassiveTransportBuildingBlock PassiveTransports => Module?.PassiveTransport;
-      public virtual IReactionBuildingBlock Reactions => Module?.Reaction;
-      public virtual ParameterStartValuesBuildingBlock ParameterStartValues => Module?.ParameterStartValuesCollection.FirstOrDefault();
-      public virtual MoleculeStartValuesBuildingBlock MoleculeStartValues => Module?.MoleculeStartValuesCollection.FirstOrDefault();
-      public virtual IEventGroupBuildingBlock EventGroups => Module?.EventGroup;
-      public virtual IObserverBuildingBlock Observers => Module?.Observer;
+      public virtual IReadOnlyList<ModuleConfiguration> ModuleConfigurations => _moduleConfigurations;
 
       public virtual void AddExpressionProfile(ExpressionProfileBuildingBlock expressionProfile) => _expressionProfiles.Add(expressionProfile);
 
-      public virtual void AddCalculationMethod(ICoreCalculationMethod calculationMethodToAdd)
+      public virtual void AddModuleConfiguration(ModuleConfiguration moduleConfiguration) => _moduleConfigurations.Add(moduleConfiguration);
+
+      public virtual void AddCalculationMethod(ICoreCalculationMethod calculationMethodToAdd) => _allCalculationMethods.Add(calculationMethodToAdd);
+
+      public virtual IReadOnlyList<ISpatialStructure> SpatialStructures => all(x => x.SpatialStructure);
+      public virtual IReadOnlyList<IPassiveTransportBuildingBlock> PassiveTransports => all(x => x.PassiveTransports);
+      public virtual IReadOnlyList<IReactionBuildingBlock> Reactions => all(x => x.Reactions);
+      public virtual IReadOnlyList<ParameterStartValuesBuildingBlock> ParameterStartValues => all(x => x.ParameterStartValuesCollection);
+      public virtual IReadOnlyList<MoleculeStartValuesBuildingBlock> MoleculeStartValues => all(x => x.MoleculeStartValuesCollection);
+      public virtual IReadOnlyList<IEventGroupBuildingBlock> EventGroups => all(x => x.EventGroups);
+      public virtual IReadOnlyList<IObserverBuildingBlock> Observers => all(x => x.Observers);
+
+      //There are ways to cache this a bit better
+      public virtual IReadOnlyList<MoleculeBuildingBlock> Molecules => all(x => x.Molecules);
+
+      public IMoleculeBuilder MoleculeByName(string name)
       {
-         _allCalculationMethods.Add(calculationMethodToAdd);
+         //NOT EFFICIENT!!
+         return Molecules.SelectMany(x => x).FindByName(name);
       }
 
-      public virtual IEnumerable<IMoleculeBuilder> AllPresentMolecules()
-      {
-         if (Module?.Molecule == null)
-            return Enumerable.Empty<IMoleculeBuilder>();
+      private IReadOnlyList<T> all<T>(Func<Module, T> propAccess) where T : IBuildingBlock =>
+         _moduleConfigurations.Select(x => propAccess(x.Module)).ToList();
+         
+      private IReadOnlyList<T> all<T>(Func<Module, IReadOnlyList<T>> propAccess) where T : IBuildingBlock =>
+         _moduleConfigurations.SelectMany(x => propAccess(x.Module)).ToList();
 
-         return Module.Molecule.AllPresentFor(Module.MoleculeStartValuesCollection);
-      }
+      public virtual IEnumerable<IMoleculeBuilder> AllPresentMolecules() => 
+         _moduleConfigurations.SelectMany(x => x.AllPresentMolecules());
 
-      public virtual IEnumerable<MoleculeStartValue> AllPresentMoleculeValues()
-      {
-         if (Module?.Molecule == null)
-            return Enumerable.Empty<MoleculeStartValue>();
+      public virtual IEnumerable<MoleculeStartValue> AllPresentMoleculeValues() =>
+         _moduleConfigurations.SelectMany(x => x.AllPresentMoleculeValues());
 
-         return AllPresentMoleculeValuesFor(Module.Molecule.Select(x => x.Name));
-      }
+      public virtual IEnumerable<MoleculeStartValue> AllPresentMoleculeValuesFor(IEnumerable<string> moleculeNames) => 
+         _moduleConfigurations.SelectMany(x => x.AllPresentMoleculeValuesFor(moleculeNames));
 
-      public virtual IEnumerable<MoleculeStartValue> AllPresentMoleculeValuesFor(IEnumerable<string> moleculeNames)
-      {
-         if (Module?.MoleculeStartValuesCollection.FirstOrDefault() == null)
-            return Enumerable.Empty<MoleculeStartValue>();
-
-         //TODO. This should only use the selected one not the first one
-         return Module.MoleculeStartValuesCollection[0]
-            .Where(msv => moleculeNames.Contains(msv.MoleculeName))
-            .Where(msv => msv.IsPresent);
-      }
+      public virtual IEnumerable<IMoleculeBuilder> AllFloatingMolecules() => Molecules.SelectMany(x => x.AllFloating());
 
       public virtual IReadOnlyList<string> AllPresentMoleculeNames() => AllPresentMoleculeNames(x => true);
 
@@ -106,7 +101,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       public virtual void AcceptVisitor(IVisitor visitor)
       {
-         Module?.AcceptVisitor(visitor);
+         ModuleConfigurations.Each(x => x.AcceptVisitor(visitor));
          Individual?.AcceptVisitor(visitor);
          _expressionProfiles.Each(x => x.AcceptVisitor(visitor));
       }

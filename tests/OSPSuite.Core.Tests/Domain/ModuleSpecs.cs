@@ -15,12 +15,12 @@ namespace OSPSuite.Core.Domain
       {
          sut = new Module()
          {
-            PassiveTransport = new PassiveTransportBuildingBlock(),
+            PassiveTransports = new PassiveTransportBuildingBlock(),
             SpatialStructure = new SpatialStructure(),
-            Observer = new ObserverBuildingBlock(),
-            EventGroup = null,
-            Reaction = new ReactionBuildingBlock(),
-            Molecule = new MoleculeBuildingBlock()
+            Observers = new ObserverBuildingBlock(),
+            EventGroups = null,
+            Reactions = new ReactionBuildingBlock(),
+            Molecules = new MoleculeBuildingBlock()
          };
 
          sut.AddMoleculeStartValueBlock(new MoleculeStartValuesBuildingBlock());
@@ -50,7 +50,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         sut.EventGroup = new EventGroupBuildingBlock();
+         sut.EventGroups = new EventGroupBuildingBlock();
       }
 
       protected override void Because()
@@ -61,7 +61,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void the_list_should_include_all_the_building_blocks()
       {
-         _result.ShouldOnlyContain(sut.PassiveTransport, sut.EventGroup, sut.Molecule, sut.Reaction, sut.Observer, sut.SpatialStructure, sut.ParameterStartValuesCollection.First(), sut.MoleculeStartValuesCollection.First());
+         _result.ShouldOnlyContain(sut.PassiveTransports, sut.EventGroups, sut.Molecules, sut.Reactions, sut.Observers, sut.SpatialStructure, sut.ParameterStartValuesCollection.First(), sut.MoleculeStartValuesCollection.First());
       }
    }
 
@@ -89,12 +89,12 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_have_created_a_clone_with_the_same_properties()
       {
-         _clone.PassiveTransport.ShouldNotBeNull();
+         _clone.PassiveTransports.ShouldNotBeNull();
          _clone.SpatialStructure.ShouldNotBeNull();
-         _clone.Observer.ShouldNotBeNull();
-         _clone.EventGroup.ShouldBeNull();
-         _clone.Reaction.ShouldNotBeNull();
-         _clone.Molecule.ShouldNotBeNull();
+         _clone.Observers.ShouldNotBeNull();
+         _clone.EventGroups.ShouldBeNull();
+         _clone.Reactions.ShouldNotBeNull();
+         _clone.Molecules.ShouldNotBeNull();
 
          _clone.MoleculeStartValuesCollection.ShouldNotBeEmpty();
          _clone.ParameterStartValuesCollection.ShouldNotBeNull();

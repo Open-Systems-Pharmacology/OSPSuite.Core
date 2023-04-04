@@ -128,7 +128,7 @@ namespace OSPSuite.Core.Serialization.Xml
                resolveReferenceIfRequired(module.SpatialStructure);
                break;
             case SimulationConfiguration simulationConfiguration:
-               resolveReferenceIfRequired(simulationConfiguration.Module);
+               simulationConfiguration.ModuleConfigurations.Each(x => resolveReferenceIfRequired(x.Module));
                break;
             case IModelCoreSimulation simulation:
                _referencesResolver.ResolveReferencesIn(simulation.Model);

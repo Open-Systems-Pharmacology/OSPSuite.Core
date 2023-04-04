@@ -11,12 +11,14 @@ namespace OSPSuite.Core.Domain
 
       protected override void Context()
       {
-         _simulation = new ModelCoreSimulation();
-         var root = new Container();
-         root.Add(new EventGroup());
-         _simulation.Model = new Model();
-         _simulation.Model.Root = root;
-         _simulation.Configuration = new SimulationConfigurationForSpecs();
+         _simulation = new ModelCoreSimulation
+         {
+            Model = new Model
+            {
+               Root = new Container { new EventGroup() }
+            },
+            Configuration = new SimulationConfigurationForSpecs()
+         };
          var reactionBuildingBlock = new ReactionBuildingBlock();
          var reactionAtoB = new ReactionBuilder();
          var reactionBtoA = new ReactionBuilder();
@@ -31,7 +33,9 @@ namespace OSPSuite.Core.Domain
          reactionBuildingBlock.Add(reactionAtoB);
          reactionBuildingBlock.Add(reactionBtoA);
 
-         _simulation.Configuration.Module.Reaction = reactionBuildingBlock;
+         var module = new Module {Reactions = reactionBuildingBlock};
+         var moduleConfiguration = new ModuleConfiguration(module);
+         _simulation.Configuration.AddModuleConfiguration(moduleConfiguration);
       }
 
       [Observation]

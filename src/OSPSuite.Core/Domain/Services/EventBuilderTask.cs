@@ -54,7 +54,9 @@ namespace OSPSuite.Core.Domain.Services
             _applicationTransportTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
 
             //Cache all containers where the event group builder will be created using the source criteria
-            foreach (var eventGroupBuilder in _simulationConfiguration.EventGroups)
+            var allEventGroupBuilders = _simulationConfiguration.EventGroups.SelectMany(x => x).ToList();
+
+            foreach (var eventGroupBuilder in allEventGroupBuilders)
             {
                if (_sourceCriteriaTargetContainerCache.Contains(eventGroupBuilder.SourceCriteria))
                   continue;
@@ -62,10 +64,7 @@ namespace OSPSuite.Core.Domain.Services
                _sourceCriteriaTargetContainerCache.Add(eventGroupBuilder.SourceCriteria, _allModelContainerDescriptors.AllSatisfiedBy(eventGroupBuilder.SourceCriteria));
             }
 
-            foreach (var eventGroupBuilder in _simulationConfiguration.EventGroups)
-            {
-               createEventGroupFrom(eventGroupBuilder, _simulationConfiguration.Molecules);
-            }
+            allEventGroupBuilders.Each(createEventGroupFrom);
          }
          finally
          {
@@ -82,7 +81,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Adds event group to all model containers with defined criteria
       /// </summary>
-      private void createEventGroupFrom(IEventGroupBuilder eventGroupBuilder, MoleculeBuildingBlock molecules)
+      private void createEventGroupFrom(IEventGroupBuilder eventGroupBuilder)
       {
          foreach (var sourceContainer in _sourceCriteriaTargetContainerCache[eventGroupBuilder.SourceCriteria])
          {
@@ -103,10 +102,10 @@ namespace OSPSuite.Core.Domain.Services
          foreach (var childEventGroup in eventGroup.GetAllContainersAndSelf<IEventGroup>())
          {
             var childEventGroupBuilder = _simulationConfiguration.BuilderFor(childEventGroup).DowncastTo<IEventGroupBuilder>();
-            if (childEventGroupBuilder is IApplicationBuilder applicationBuilder) 
+            if (childEventGroupBuilder is IApplicationBuilder applicationBuilder)
                addApplicationTransports(applicationBuilder, childEventGroup);
 
-            _keywordReplacerTask.ReplaceIn(childEventGroup, _model.Root, childEventGroupBuilder, _simulationConfiguration.Molecules);
+            _keywordReplacerTask.ReplaceIn(childEventGroup, _model.Root, childEventGroupBuilder);
          }
       }
 
