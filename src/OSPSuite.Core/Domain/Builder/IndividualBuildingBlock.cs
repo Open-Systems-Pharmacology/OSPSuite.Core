@@ -4,7 +4,7 @@ namespace OSPSuite.Core.Domain.Builder
 {
    public class IndividualBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<IndividualParameter>
    {
-      public OriginDataItems OriginData { get; } = new OriginDataItems();
+      public ExtendedProperties OriginData { get; } = new ExtendedProperties();
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
@@ -12,8 +12,7 @@ namespace OSPSuite.Core.Domain.Builder
          var sourceIndividualBuildingBlock = source as IndividualBuildingBlock;
          if (sourceIndividualBuildingBlock == null)
             return;
-         
-         OriginData.ValueOrigin.UpdateAllFrom(sourceIndividualBuildingBlock.OriginData.ValueOrigin);
+
          OriginData.UpdateFrom(sourceIndividualBuildingBlock.OriginData);
       }
    }

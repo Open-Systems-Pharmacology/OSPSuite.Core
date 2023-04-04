@@ -30,15 +30,15 @@ namespace OSPSuite.Core.Helpers
             return;
          }
 
-         if (x1.IsAnImplementationOf<PKSimModule>())
-         {
-            AreEqualPKSimModule(x1 as PKSimModule, x2 as PKSimModule);
-            return;
-         }
-
          if (x1.IsAnImplementationOf<Module>())
          {
             AreEqualModule(x1 as Module, x2 as Module);
+            return;
+         }
+
+         if (x1.IsAnImplementationOf<IExtendedProperty>())
+         {
+            AreEqualExtendedProperty(x1 as IExtendedProperty, x2 as IExtendedProperty);
             return;
          }
 
@@ -329,12 +329,6 @@ namespace OSPSuite.Core.Helpers
          }
 
          Assert.Fail("No McAssert.Equal available for Type " + x1.GetType().Name);
-      }
-
-      private static void AreEqualPKSimModule(PKSimModule m1, PKSimModule m2)
-      {
-         AreEqualModule(m1, m2);
-         AreEqualStrings(m1.PKSimVersion, m2.PKSimVersion);
       }
 
       private static void AreEqualModule(Module m1, Module m2)
@@ -993,6 +987,12 @@ namespace OSPSuite.Core.Helpers
          AreEqualEnumerableOfNamedObjects(x1.ActiveTransportRealizations, x2.ActiveTransportRealizations, x => x.Name);
       }
 
+      public static void AreEqualExtendedProperties(ExtendedProperties x1, ExtendedProperties x2)
+      {
+         if (!AssertBothNotNull(x1, x2)) return;
+         AreEqualEnumerableOfNamedObjects(x1, x2, x => x.Name);
+      }
+
       public static void AreEqualProcessBuilder(IProcessBuilder x1, IProcessBuilder x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
@@ -1216,6 +1216,17 @@ namespace OSPSuite.Core.Helpers
          Assert.AreEqual(x1.RelTol, x2.RelTol);
          AreEqualStrings(x1.Name, x2.Name);
          Assert.AreEqual(x1.UseJacobian, x2.UseJacobian);
+      }
+
+      private static void AreEqualExtendedProperty(IExtendedProperty x1, IExtendedProperty x2)
+      {
+         if (!AssertBothNotNull(x1, x2)) return;
+         Assert.AreEqual(x1.ValueAsObject, x2.ValueAsObject);
+         Assert.AreEqual(x1.ReadOnly, x2.ReadOnly);
+         Assert.AreEqual(x1.Type, x2.Type);
+         Assert.AreEqual(x1.Description, x2.Description);
+         Assert.AreEqual(x1.FullName, x2.FullName);
+         Assert.AreEqual(x1.DisplayName, x2.DisplayName);
       }
 
       private static void AreEqualOutputInterval(OutputInterval x1, OutputInterval x2)

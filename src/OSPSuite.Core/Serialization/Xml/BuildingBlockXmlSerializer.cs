@@ -107,7 +107,7 @@ namespace OSPSuite.Core.Serialization.Xml
       public override void PerformMapping()
       {
          base.PerformMapping();
-         Map(x => x.OriginData);
+         MapEnumerable(x => x.OriginData, x => x.OriginData.Add);
       }
    }
 

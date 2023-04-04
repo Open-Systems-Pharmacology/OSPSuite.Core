@@ -12,16 +12,8 @@ namespace OSPSuite.Core.Domain
       private readonly List<MoleculeStartValuesBuildingBlock> _moleculeStartValuesCollection = new List<MoleculeStartValuesBuildingBlock>();
       private readonly List<ParameterStartValuesBuildingBlock> _parameterStartValuesCollection = new List<ParameterStartValuesBuildingBlock>();
 
-      public Module() : this(userEditable:true)
-      {
+      public bool ReadOnly { get; set; } = false;
 
-      }
-
-      protected Module(bool userEditable)
-      {
-         UserEditable = userEditable;
-      }
-      
       public MoleculeBuildingBlock Molecule { set; get; }
       public IReactionBuildingBlock Reaction { set; get; }
       public IPassiveTransportBuildingBlock PassiveTransport { set; get; }
@@ -30,16 +22,16 @@ namespace OSPSuite.Core.Domain
       public IEventGroupBuildingBlock EventGroup { set; get; }
       public IReadOnlyList<MoleculeStartValuesBuildingBlock> MoleculeStartValuesCollection => _moleculeStartValuesCollection;
       public IReadOnlyList<ParameterStartValuesBuildingBlock> ParameterStartValuesCollection => _parameterStartValuesCollection;
-
-      public bool UserEditable { get; }
+      public virtual ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
-         
+
          if (!(source is Module sourceModule))
             return;
 
+         ReadOnly = sourceModule.ReadOnly;
          // Cloning these properties within the update for now. It could change based on specs
          Molecule = cloneManager.Clone(sourceModule.Molecule);
          Reaction = cloneManager.Clone(sourceModule.Reaction);
@@ -50,6 +42,8 @@ namespace OSPSuite.Core.Domain
 
          sourceModule.MoleculeStartValuesCollection.Each(x => _moleculeStartValuesCollection.Add(cloneManager.Clone(x)));
          sourceModule.ParameterStartValuesCollection.Each(x => _parameterStartValuesCollection.Add(cloneManager.Clone(x)));
+
+         ExtendedProperties.UpdateFrom(sourceModule.ExtendedProperties);
       }
 
       public void AddParameterStartValueBlock(ParameterStartValuesBuildingBlock parameterStartValuesBuildingBlock)
@@ -85,23 +79,21 @@ namespace OSPSuite.Core.Domain
          base.AcceptVisitor(visitor);
          AllBuildingBlocks().Each(x => x.AcceptVisitor(visitor));
       }
-   }
 
-   public class PKSimModule : Module
-   {
-      public PKSimModule() : base(userEditable:false)
+      public void AddExtendedProperty<T>(string propertyName, T property)
       {
-         
+         ExtendedProperties[propertyName] = new ExtendedProperty<T> {Name = propertyName, Value = property};
       }
-      public string PKSimVersion { set; get; }
 
-      public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
+      /// <summary>
+      /// </summary>
+      /// <param name="propertyName"></param>
+      /// <returns></returns>
+      public string ExtendedPropertyValueFor(string propertyName) => ExtendedPropertyValueFor<string>(propertyName);
+
+      public T ExtendedPropertyValueFor<T>(string propertyName)
       {
-         base.UpdatePropertiesFrom(source, cloneManager);
-         if (!(source is PKSimModule sourcePKSimModule))
-            return;
-
-         PKSimVersion = sourcePKSimModule.PKSimVersion;
+         return ExtendedProperties.Contains(propertyName) ? ExtendedProperties[propertyName].ValueAsObject.ConvertedTo<T>() : default(T);
       }
    }
 }

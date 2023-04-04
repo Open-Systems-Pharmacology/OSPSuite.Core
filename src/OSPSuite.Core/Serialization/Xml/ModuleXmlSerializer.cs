@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Serialization.Xml
 {
-   public class ModuleXmlSerializer<T> : ObjectBaseXmlSerializer<T> where T : Module
+   public class ModuleXmlSerializer : ObjectBaseXmlSerializer<Module>
    {
       public override void PerformMapping()
       {
@@ -15,19 +15,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.EventGroup);
          MapEnumerable(x => x.MoleculeStartValuesCollection, x => x.AddMoleculeStartValueBlock);
          MapEnumerable(x => x.ParameterStartValuesCollection, x => x.AddParameterStartValueBlock);
-      }
-   }
-
-   public class ExtensionModuleXmlSerializer : ModuleXmlSerializer<Module>
-   {
-   }
-
-   public class PKSimModuleXmlSerializer : ModuleXmlSerializer<PKSimModule>
-   {
-      public override void PerformMapping()
-      {
-         base.PerformMapping();
-         Map(x => x.PKSimVersion);
+         MapEnumerable(x => x.ExtendedProperties, x => x.ExtendedProperties.Add);
       }
    }
 }
