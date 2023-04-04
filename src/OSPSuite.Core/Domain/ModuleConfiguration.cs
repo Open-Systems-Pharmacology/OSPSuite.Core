@@ -13,12 +13,12 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Reference to selected molecule start value in the Module (can be null if none is used)
       /// </summary>
-      public MoleculeStartValuesBuildingBlock SelectedMoleculeStartValues { get; }
+      public MoleculeStartValuesBuildingBlock SelectedMoleculeStartValues { get; set; }
 
       /// <summary>
       ///    Reference to selected parameter start value in the Module (can be null if none is used)
       /// </summary>
-      public ParameterStartValuesBuildingBlock SelectedParameterStartValues { get; }
+      public ParameterStartValuesBuildingBlock SelectedParameterStartValues { get; set; }
 
       [Obsolete("For serialization")]
       public ModuleConfiguration()
