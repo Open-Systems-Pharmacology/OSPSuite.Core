@@ -148,16 +148,22 @@ namespace OSPSuite.Core.Domain.Services
 
       private ValidationResult validateModel(ModelConfiguration modelConfiguration)
       {
-         var (_, simulationConfiguration) = modelConfiguration;
          if (!modelConfiguration.ShouldValidate)
             return new ValidationResult();
 
+         var (_, simulationConfiguration) = modelConfiguration;
+
+         //Validation needs to happen at the very end of the process
+         var reactionAndTransportValidation = validate<ValidatorForReactionsAndTransports>(modelConfiguration);
+         var observersAndEventsValidation = validate<ValidatorForObserversAndEvents>(modelConfiguration);
          var modelValidation = validate<ValidatorForQuantities>(modelConfiguration);
+
+         var validation = new ValidationResult(reactionAndTransportValidation, observersAndEventsValidation, modelValidation);
          if (!simulationConfiguration.PerformCircularReferenceCheck)
-            return new ValidationResult(modelValidation.Messages);
+            return validation;
 
          var circularReferenceValidation = checkCircularReferences(modelConfiguration);
-         return new ValidationResult(modelValidation.Messages.Union(circularReferenceValidation.Messages));
+         return new ValidationResult(validation, circularReferenceValidation);
       }
 
       private CreationResult buildProcess(ModelConfiguration modelConfiguration,
@@ -244,8 +250,7 @@ namespace OSPSuite.Core.Domain.Services
 
          createPassiveTransports(modelConfiguration);
 
-         var validationResult = validate<ValidatorForReactionsAndTransports>(modelConfiguration);
-         return new ValidationResult(reactionMessages.Union(validationResult.Messages));
+         return new ValidationResult(reactionMessages);
       }
 
       private ValidationResult createObserversAndEvents(ModelConfiguration modelConfiguration)
@@ -255,7 +260,7 @@ namespace OSPSuite.Core.Domain.Services
          // Observers needs to be created last as they might reference parameters defined in the event builder
          _observerBuilderTask.CreateObservers(modelConfiguration);
 
-         return validate<ValidatorForObserversAndEvents>(modelConfiguration);
+         return new ValidationResult();
       }
 
       private ValidationResult validate<TValidationVisitor>(ModelConfiguration modelConfiguration)
@@ -279,7 +284,7 @@ namespace OSPSuite.Core.Domain.Services
          model.Root.AddTag(new Tag(Constants.ROOT_CONTAINER_TAG));
 
          //Add each container defined in the spatial structure and direct child of the root container
-         foreach (var topContainer in simulationConfiguration.SpatialStructures.SelectMany(x=>x.TopContainers))
+         foreach (var topContainer in simulationConfiguration.SpatialStructures.SelectMany(x => x.TopContainers))
          {
             model.Root.Add(_containerMapper.MapFrom(topContainer, simulationConfiguration));
          }
@@ -304,14 +309,14 @@ namespace OSPSuite.Core.Domain.Services
 
       private void createPassiveTransports(ModelConfiguration modelConfiguration)
       {
-         modelConfiguration.SimulationConfiguration.PassiveTransports.SelectMany(x=>x).Each(t => _transportCreator.CreatePassiveTransport(t, modelConfiguration));
+         modelConfiguration.SimulationConfiguration.PassiveTransports.SelectMany(x => x).Each(t => _transportCreator.CreatePassiveTransport(t, modelConfiguration));
       }
 
       private IEnumerable<ValidationMessage> createReactions(ModelConfiguration modelConfiguration)
       {
          var (model, simulationConfiguration) = modelConfiguration;
          var messages = simulationConfiguration.Reactions
-            .SelectMany(bb=>bb, (bb, r)=>new {bb, r})
+            .SelectMany(bb => bb, (bb, r) => new {bb, r})
             .Where(x => !_reactionCreator.CreateReaction(x.r, modelConfiguration))
             .Select(
                x => new ValidationMessage(NotificationType.Warning, Validation.WarningNoReactionCreated(x.r.Name), x.r, x.bb))
@@ -381,10 +386,7 @@ namespace OSPSuite.Core.Domain.Services
          var presentMolecules = allPresentMoleculesInContainers(modelConfiguration).ToList();
 
          var moleculesWithPhysicalContainers = presentMolecules.Where(containerIsPhysical);
-         moleculesWithPhysicalContainers.Each(x =>
-         {
-            addMoleculeToContainer(simulationConfiguration, x.Container, simulationConfiguration.MoleculeByName(x.MoleculeStartValue.MoleculeName));
-         });
+         moleculesWithPhysicalContainers.Each(x => { addMoleculeToContainer(simulationConfiguration, x.Container, simulationConfiguration.MoleculeByName(x.MoleculeStartValue.MoleculeName)); });
 
          return new MoleculeBuildingBlockValidator().Validate(simulationConfiguration.Molecules).Messages.Concat(createValidationMessagesForPresentMolecules(presentMolecules));
       }

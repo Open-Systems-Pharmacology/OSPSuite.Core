@@ -524,10 +524,10 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_return_a_successful_validation()
+      public void should_return_an_invalid_validation()
       {
          _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
-         _result.ValidationResult.Messages.Count().ShouldBeEqualTo(1, _result.ValidationResult.Messages.Select(x => x.Text).ToString("\n"));
+         _result.ValidationResult.Messages.Count().ShouldBeEqualTo(3, _result.ValidationResult.Messages.Select(x => x.Text).ToString("\n"));
       }
    }
 
