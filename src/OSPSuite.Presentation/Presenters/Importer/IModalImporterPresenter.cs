@@ -104,13 +104,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _results = Array.Empty<DataRepository>();
          _configuration = null;
 
-         if (!string.IsNullOrEmpty(configurationId))
+         _view.Display();
+
+         //in case we are reloading from configuration, reset the Id
+         if (!string.IsNullOrEmpty(configurationId) && _configuration != null)
          {
             _configuration.Id = configurationId;
             _results.Each(r => r.ConfigurationId = configurationId);
          }
 
-         _view.Display();
          return (_results, _configuration);
       }
    }
