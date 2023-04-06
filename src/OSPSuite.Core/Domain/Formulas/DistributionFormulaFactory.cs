@@ -1,5 +1,6 @@
 ﻿using System;
 using OSPSuite.Core.Domain.UnitSystem;
+using static OSPSuite.Core.Domain.Constants.Dimension;
 using static OSPSuite.Core.Domain.Constants.Distribution;
 
 namespace OSPSuite.Core.Domain.Formulas
@@ -42,7 +43,7 @@ namespace OSPSuite.Core.Domain.Formulas
       public NormalDistributionFormula CreateNormalDistributionFormulaFor(IDistributedParameter distributedParameter, IParameter meanParameter, IParameter deviationParameter) =>
          createDistribution<NormalDistributionFormula>(meanParameter.Dimension, configureNormalDistribution(meanParameter.Name, deviationParameter.Name));
 
-      private Action<DistributionFormula, IDimension> configureNormalDistribution(string meanParameterName = null, string deviationParameterName = null) => (distributionFormula, dimension) =>
+      private Action<DistributionFormula, IDimension> configureNormalDistribution(string meanParameterName = MEAN, string deviationParameterName = DEVIATION) => (distributionFormula, dimension) =>
       {
          addObjectPathToDistributionFormula(distributionFormula, meanParameterName, MEAN, dimension);
          addObjectPathToDistributionFormula(distributionFormula, deviationParameterName, DEVIATION, dimension);
@@ -51,22 +52,22 @@ namespace OSPSuite.Core.Domain.Formulas
       public DiscreteDistributionFormula CreateDiscreteDistributionFormulaFor(IDistributedParameter distributedParameter, IParameter meanParameter) =>
          createDistribution<DiscreteDistributionFormula>(meanParameter.Dimension, configureDiscreteDistribution(meanParameter.Name));
 
-      private Action<DistributionFormula, IDimension> configureDiscreteDistribution(string meanParameterName = null) => (distributionFormula, dimension) =>
+      private Action<DistributionFormula, IDimension> configureDiscreteDistribution(string meanParameterName = MEAN) => (distributionFormula, dimension) =>
          addObjectPathToDistributionFormula(distributionFormula, meanParameterName, MEAN, dimension);
 
       public LogNormalDistributionFormula CreateLogNormalDistributionFormulaFor(IDistributedParameter distributedParameter, IParameter meanParameter, IParameter deviationParameter) =>
-         createDistribution<LogNormalDistributionFormula>(meanParameter.Dimension, configureLogNormalDistributionDistribution(meanParameter.Name, deviationParameter.Name));
+         createDistribution<LogNormalDistributionFormula>(meanParameter.Dimension, configureLogNormalDistribution(meanParameter.Name, deviationParameter.Name));
 
-      private Action<DistributionFormula, IDimension> configureLogNormalDistributionDistribution(string meanParameterName = null, string deviationParameter = null) => (distributionFormula, dimension) =>
+      private Action<DistributionFormula, IDimension> configureLogNormalDistribution(string meanParameterName = MEAN, string deviationParameter = GEOMETRIC_DEVIATION) => (distributionFormula, dimension) =>
       {
          addObjectPathToDistributionFormula(distributionFormula, meanParameterName, MEAN, dimension);
-         addObjectPathToDistributionFormula(distributionFormula, deviationParameter, GEOMETRIC_DEVIATION, null);
+         addObjectPathToDistributionFormula(distributionFormula, deviationParameter, GEOMETRIC_DEVIATION, NO_DIMENSION);
       };
 
       public UniformDistributionFormula CreateUniformDistributionFormulaFor(IDistributedParameter distributedParameter, IParameter minParameter, IParameter maxParameter) =>
-         createDistribution<UniformDistributionFormula>(minParameter.Dimension, configureUniformDistributionDistribution(minParameter.Name, maxParameter.Name));
+         createDistribution<UniformDistributionFormula>(minParameter.Dimension, configureUniformDistribution(minParameter.Name, maxParameter.Name));
 
-      private Action<DistributionFormula, IDimension> configureUniformDistributionDistribution(string minParameterName = null, string maxParameterName = null) => (distributionFormula, dimension) =>
+      private Action<DistributionFormula, IDimension> configureUniformDistribution(string minParameterName = MINIMUM, string maxParameterName = MAXIMUM) => (distributionFormula, dimension) =>
       {
          addObjectPathToDistributionFormula(distributionFormula, minParameterName, MINIMUM, dimension);
          addObjectPathToDistributionFormula(distributionFormula, maxParameterName, MAXIMUM, dimension);
@@ -79,9 +80,9 @@ namespace OSPSuite.Core.Domain.Formulas
             case DistributionType.Normal:
                return createDistribution<NormalDistributionFormula>(dimension, configureNormalDistribution());
             case DistributionType.LogNormal:
-               return createDistribution<LogNormalDistributionFormula>(dimension, configureLogNormalDistributionDistribution());
+               return createDistribution<LogNormalDistributionFormula>(dimension, configureLogNormalDistribution());
             case DistributionType.Uniform:
-               return createDistribution<UniformDistributionFormula>(dimension, configureLogNormalDistributionDistribution());
+               return createDistribution<UniformDistributionFormula>(dimension, configureUniformDistribution());
             case DistributionType.Discrete:
                return createDistribution<DiscreteDistributionFormula>(dimension, configureDiscreteDistribution());
             default:
@@ -98,12 +99,12 @@ namespace OSPSuite.Core.Domain.Formulas
          return distribution;
       }
 
-      private void addObjectPathToDistributionFormula(DistributionFormula distribution, string usedParameter, string alias, IDimension dimension)
+      private void addObjectPathToDistributionFormula(DistributionFormula distribution, string parameterName, string alias, IDimension dimension)
       {
          var usedParameterPath = _objectPathFactory
-            .CreateFormulaUsablePathFrom(ObjectPath.PARENT_CONTAINER, usedParameter ?? alias)
+            .CreateFormulaUsablePathFrom(parameterName)
             .WithAlias(alias)
-            .WithDimension(dimension ?? Constants.Dimension.NO_DIMENSION);
+            .WithDimension(dimension ?? NO_DIMENSION);
 
          distribution.AddObjectPath(usedParameterPath);
       }

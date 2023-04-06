@@ -64,8 +64,10 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateParameterFromIndividualValues(ModelConfiguration modelConfiguration)
       {
-         //Order by distribution to ensure that distributed parameter 
-         modelConfiguration.SimulationConfiguration.Individual?.Each(x => updateParameterValueFromStartValue(modelConfiguration, x, canCreateParameter: true));
+         //Order by distribution to ensure that distributed parameter are loaded BEFORE their sub parameters.
+         //not use descending otherwise parameter without distribution are returned fist
+         modelConfiguration.SimulationConfiguration.Individual?.OrderByDescending(x => x.DistributionType)
+            .Each(x => updateParameterValueFromStartValue(modelConfiguration, x, canCreateParameter: true));
       }
 
       private void updateParameterValueFromParameterStartValues(ModelConfiguration modelConfiguration)
@@ -98,13 +100,10 @@ namespace OSPSuite.Core.Domain.Services
 
          //if the distribution is undefined or the value is set, we create a default parameter to ensure that the value will take precedence.
          //Otherwise, we create a distributed parameter and assume that required sub-parameters will be created as well
-         parameter = distributionType == null || value!=null ? 
-            _parameterFactory.CreateParameter(name, dimension: dimension, displayUnit: displayUnit) : 
-            _parameterFactory.CreateDistributedParameter(name, distributionType.Value, dimension: dimension, displayUnit: displayUnit);
+         parameter = distributionType == null || value != null ? _parameterFactory.CreateParameter(name, dimension: dimension, displayUnit: displayUnit) : _parameterFactory.CreateDistributedParameter(name, distributionType.Value, dimension: dimension, displayUnit: displayUnit);
 
-         parameter.ParentContainer = parentContainer;
          simulationConfiguration.AddBuilderReference(parameter, pathAndValueEntity);
-         return parameter;
+         return parameter.WithParentContainer(parentContainer);
       }
 
       private void updateParameterValueFromStartValue(ModelConfiguration modelConfiguration, PathAndValueEntity pathAndValueEntity, bool canCreateParameter = false)
