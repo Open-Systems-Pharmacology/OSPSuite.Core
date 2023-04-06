@@ -15,6 +15,7 @@ namespace OSPSuite.Core.Domain
       private IObjectBaseFactory _objectBaseFactory;
       protected IConcentrationBasedFormulaUpdater _concentrationBasedFormulaUpdater;
       protected IDisplayUnitRetriever _displayUnitRetriever;
+      private IDistributionFormulaFactory _distributionFormulaFactory;
 
       protected override void Context()
       {
@@ -23,7 +24,8 @@ namespace OSPSuite.Core.Domain
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          _concentrationBasedFormulaUpdater = A.Fake<IConcentrationBasedFormulaUpdater>();
          _displayUnitRetriever = A.Fake<IDisplayUnitRetriever>();
-         sut = new ParameterFactory(_formulaFactory, _objectBaseFactory, _dimensionFactory, _concentrationBasedFormulaUpdater, _displayUnitRetriever);
+         _distributionFormulaFactory= A.Fake<IDistributionFormulaFactory>();
+         sut = new ParameterFactory(_formulaFactory, _objectBaseFactory, _dimensionFactory, _concentrationBasedFormulaUpdater, _displayUnitRetriever, _distributionFormulaFactory);
       }
    }
 

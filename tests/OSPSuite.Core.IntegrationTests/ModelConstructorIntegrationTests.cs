@@ -474,6 +474,15 @@ namespace OSPSuite.Core
          NEW_PARAM_arterial_blood.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.AMOUNT_PER_TIME);
       }
 
+
+      [Observation]
+      public void should_have_created_a_new_distributed_parameter_defined_in_the_individual_for_entries_that_do_not_exist_in_the_spatial_structure()
+      {
+         var NEW_PARAM_DISTRIBUTED_blood = _model.Root.EntityAt<IDistributedParameter>(Organism, ArterialBlood, "NEW_PARAM_DISTRIBUTED");
+         NEW_PARAM_DISTRIBUTED_blood.Value.ShouldBeEqualTo(10);
+         NEW_PARAM_DISTRIBUTED_blood.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.AMOUNT_PER_TIME);
+      }
+
    }
 
    internal static class ModelExtensionsForSpecs
@@ -524,10 +533,10 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_return_a_successful_validation()
+      public void should_return_an_invalid_validation()
       {
          _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
-         _result.ValidationResult.Messages.Count().ShouldBeEqualTo(1, _result.ValidationResult.Messages.Select(x => x.Text).ToString("\n"));
+         _result.ValidationResult.Messages.Count().ShouldBeEqualTo(3, _result.ValidationResult.Messages.Select(x => x.Text).ToString("\n"));
       }
    }
 

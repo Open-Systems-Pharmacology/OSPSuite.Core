@@ -4,6 +4,5 @@ namespace OSPSuite.Core.Serialization.Xml
 {
    public class IndividualParameterXmlSerializer : PathAndValueEntityXmlSerializer<IndividualParameter>
    {
-
    }
 }

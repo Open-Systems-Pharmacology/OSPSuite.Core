@@ -62,7 +62,7 @@ namespace OSPSuite.Helpers
             SimulationSettings = createSimulationConfiguration(),
          };
 
-           allCalculationMethods().Each(simulationConfiguration.AddCalculationMethod);
+         allCalculationMethods().Each(simulationConfiguration.AddCalculationMethod);
          var moleculeStartValues = _moleculeStartValuesCreator.CreateFrom(module.SpatialStructure, module.Molecules);
 
          //add one start values that does not exist in Molecules@"
@@ -103,6 +103,40 @@ namespace OSPSuite.Helpers
             Value = 10,
             Dimension = amountPerTimeDimension
          });
+
+         //putting this one first to show that order does not matter
+         individual.Add(new IndividualParameter
+         {
+            //new parameter that does not exist
+            Path = _objectPathFactory.CreateObjectPathFrom(Organism, ArterialBlood, "NEW_PARAM_DISTRIBUTED", Constants.Distribution.MEAN),
+            Value = 10,
+            Dimension = amountPerTimeDimension
+         });
+
+         individual.Add(new IndividualParameter
+         {
+            //new parameter that does not exist
+            Path = _objectPathFactory.CreateObjectPathFrom(Organism, ArterialBlood, "NEW_PARAM_DISTRIBUTED"),
+            DistributionType = DistributionType.Normal,
+            Dimension = amountPerTimeDimension
+         });
+         
+         individual.Add(new IndividualParameter
+         {
+            //new parameter that does not exist
+            Path = _objectPathFactory.CreateObjectPathFrom(Organism, ArterialBlood, "NEW_PARAM_DISTRIBUTED", Constants.Distribution.DEVIATION),
+            Value = 2,
+            Dimension = amountPerTimeDimension
+         });
+
+         individual.Add(new IndividualParameter
+         {
+            //new parameter that does not exist
+            Path = _objectPathFactory.CreateObjectPathFrom(Organism, ArterialBlood, "NEW_PARAM_DISTRIBUTED", Constants.Distribution.PERCENTILE),
+            Value = 0.5
+         });
+
+
          //dummy parameter that does not fit in the structure
          individual.Add(new IndividualParameter
          {

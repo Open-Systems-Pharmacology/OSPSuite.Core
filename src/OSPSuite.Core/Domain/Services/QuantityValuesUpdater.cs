@@ -64,7 +64,10 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateParameterFromIndividualValues(ModelConfiguration modelConfiguration)
       {
-         modelConfiguration.SimulationConfiguration.Individual?.Each(x => updateParameterValueFromStartValue(modelConfiguration, x, canCreateParameter: true));
+         //Order by distribution to ensure that distributed parameter are loaded BEFORE their sub parameters.
+         //not use descending otherwise parameter without distribution are returned fist
+         modelConfiguration.SimulationConfiguration.Individual?.OrderByDescending(x => x.DistributionType)
+            .Each(x => updateParameterValueFromStartValue(modelConfiguration, x, canCreateParameter: true));
       }
 
       private void updateParameterValueFromParameterStartValues(ModelConfiguration modelConfiguration)
@@ -89,12 +92,18 @@ namespace OSPSuite.Core.Domain.Services
          if (parentContainer == null)
             return null;
 
-         parameter = _parameterFactory.CreateParameter(pathAndValueEntity.Name, dimension: pathAndValueEntity.Dimension, displayUnit: pathAndValueEntity.DisplayUnit)
-            .WithParentContainer(parentContainer);
+         var dimension = pathAndValueEntity.Dimension;
+         var name = pathAndValueEntity.Name;
+         var displayUnit = pathAndValueEntity.DisplayUnit;
+         var distributionType = pathAndValueEntity.DistributionType;
+         var value = pathAndValueEntity.Value;
+
+         //if the distribution is undefined or the value is set, we create a default parameter to ensure that the value will take precedence.
+         //Otherwise, we create a distributed parameter and assume that required sub-parameters will be created as well
+         parameter = distributionType == null || value != null ? _parameterFactory.CreateParameter(name, dimension: dimension, displayUnit: displayUnit) : _parameterFactory.CreateDistributedParameter(name, distributionType.Value, dimension: dimension, displayUnit: displayUnit);
 
          simulationConfiguration.AddBuilderReference(parameter, pathAndValueEntity);
-
-         return parameter;
+         return parameter.WithParentContainer(parentContainer);
       }
 
       private void updateParameterValueFromStartValue(ModelConfiguration modelConfiguration, PathAndValueEntity pathAndValueEntity, bool canCreateParameter = false)

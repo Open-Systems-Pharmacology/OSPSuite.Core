@@ -1,8 +1,8 @@
-﻿using OSPSuite.Utility.Collections;
+﻿using OSPSuite.Assets;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-
    public enum ExpressionTypesId
    {
       Transport,
@@ -12,9 +12,9 @@ namespace OSPSuite.Core.Domain.Builder
 
    public static class ExpressionTypes
    {
-      public static ExpressionType TransportProtein = new ExpressionType(ExpressionTypesId.Transport, Assets.IconNames.Transporter, Assets.Captions.Transporter);
-      public static ExpressionType MetabolizingEnzyme = new ExpressionType(ExpressionTypesId.Enzyme, Assets.IconNames.Enzyme, Assets.Captions.Enzyme);
-      public static ExpressionType ProteinBindingPartner = new ExpressionType(ExpressionTypesId.BindingPartner, Assets.IconNames.Protein, Assets.Captions.Protein);
+      public static ExpressionType TransportProtein = new ExpressionType(ExpressionTypesId.Transport, IconNames.Transporter, Captions.Transporter);
+      public static ExpressionType MetabolizingEnzyme = new ExpressionType(ExpressionTypesId.Enzyme, IconNames.Enzyme, Captions.Enzyme);
+      public static ExpressionType ProteinBindingPartner = new ExpressionType(ExpressionTypesId.BindingPartner, IconNames.Protein, Captions.Protein);
 
       private static readonly ICache<ExpressionTypesId, ExpressionType> _typesCache = new Cache<ExpressionTypesId, ExpressionType>(x => x.Id)
       {
@@ -34,6 +34,7 @@ namespace OSPSuite.Core.Domain.Builder
       public ExpressionTypesId Id { get; }
       public string IconName { get; }
       public string DisplayName { get; }
+
       public ExpressionType(ExpressionTypesId expressionTypesId, string iconName, string displayName)
       {
          Id = expressionTypesId;
@@ -45,6 +46,5 @@ namespace OSPSuite.Core.Domain.Builder
       {
          return DisplayName;
       }
-
    }
 }

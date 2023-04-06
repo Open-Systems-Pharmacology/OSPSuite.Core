@@ -153,6 +153,13 @@ namespace OSPSuite.Core.Helpers
             return;
          }
 
+
+         if (x1.IsAnImplementationOf<IndividualParameter>())
+         {
+            AreEqualIndividualParameter(x1 as IndividualParameter, x2 as IndividualParameter);
+            return;
+         }
+
          // Types derived from Event
          if (x1.IsAnImplementationOf<IEventGroup>())
          {
@@ -1081,38 +1088,40 @@ namespace OSPSuite.Core.Helpers
          AreEqualEnumerableOfNamedObjects(x1.Transports, x2.Transports, x => x.Name);
       }
 
-      public static void AreEqualMoleculeStartValue(MoleculeStartValue x1, MoleculeStartValue x2)
+      public static void AreEqualPathAndValueEntity(PathAndValueEntity x1, PathAndValueEntity x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
-         Assert.AreEqual(x1.IsPresent, x2.IsPresent);
-         AreEqualObjectPath(x1.ContainerPath, x2.ContainerPath);
-         AreEqualStrings(x1.MoleculeName, x2.MoleculeName);
+         AreEqualObjectPath(x1.Path, x2.Path);
          AssertAreEqualNullableDouble(x1.Value, x2.Value);
-         Assert.AreEqual(x1.ScaleDivisor, x2.ScaleDivisor, 1e-10);
          AssertAreEqual(x1.ValueOrigin, x2.ValueOrigin);
          AreEqualFormula(x1.Formula, x2.Formula);
+         AreEqualUnit(x1.DisplayUnit, x2.DisplayUnit);
+         AreEqualDimension(x1.Dimension, x2.Dimension);
+      }
+      public static void AreEqualMoleculeStartValue(MoleculeStartValue x1, MoleculeStartValue x2)
+      {
+         AreEqualPathAndValueEntity(x1, x2);
+         Assert.AreEqual(x1.IsPresent, x2.IsPresent);
+         AreEqualStrings(x1.MoleculeName, x2.MoleculeName);
+         Assert.AreEqual(x1.ScaleDivisor, x2.ScaleDivisor, 1e-10);
       }
 
       public static void AreEqualParameterStartValue(ParameterStartValue x1, ParameterStartValue x2)
       {
-         if (!AssertBothNotNull(x1, x2)) return;
-         AreEqualObjectPath(x1.Path, x2.Path);
-         AssertAreEqualNullableDouble(x1.Value, x2.Value);
-         AreEqualUnit(x1.DisplayUnit, x2.DisplayUnit);
-         AreEqualDimension(x1.Dimension, x2.Dimension);
+         AreEqualPathAndValueEntity(x1, x2);
          AssertAreEqual(x1.ValueOrigin, x2.ValueOrigin);
          Assert.AreEqual(x1.IsDefault, x2.IsDefault);
-         AreEqualFormula(x1.Formula, x2.Formula);
       }
 
       public static void AreEqualExpressionParameters(ExpressionParameter x1, ExpressionParameter x2)
       {
-         if (!AssertBothNotNull(x1, x2)) return;
-         AreEqualObjectPath(x1.Path, x2.Path);
-         AssertAreEqualNullableDouble(x1.Value, x2.Value);
-         AreEqualUnit(x1.DisplayUnit, x2.DisplayUnit);
-         AreEqualDimension(x1.Dimension, x2.Dimension);
-         AreEqualFormula(x1.Formula, x2.Formula);
+         AreEqualPathAndValueEntity(x1, x2);
+      }
+
+      public static void AreEqualIndividualParameter(IndividualParameter x1, IndividualParameter x2)
+      {
+         AreEqualPathAndValueEntity(x1, x2);
+         Assert.AreEqual(x1.DistributionType, x2.DistributionType);
       }
 
       public static void AreEqualBuildingBlock(IBuildingBlock x1, IBuildingBlock x2)
@@ -1158,6 +1167,13 @@ namespace OSPSuite.Core.Helpers
       }
 
       public static void AreEqualParameterStartValuesBuildingBlock(ParameterStartValuesBuildingBlock x1, ParameterStartValuesBuildingBlock x2)
+      {
+         if (!AssertBothNotNull(x1, x2)) return;
+         AreEqualObjectBase(x1, x2);
+         AreEqualEnumerableOfNamedObjects(x1, x2, x => x.Path.ToString());
+      }
+
+      public static void AreEqualIndividualBuildingBlock(IndividualBuildingBlock x1, IndividualBuildingBlock x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualObjectBase(x1, x2);

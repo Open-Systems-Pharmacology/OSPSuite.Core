@@ -1,7 +1,6 @@
 using NUnit.Framework;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Helpers;
 
 namespace OSPSuite.Core.Serializers
@@ -11,13 +10,17 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestSerialization()
       {
-         var x1 = new MoleculeStartValue {ContainerPath = new ObjectPath("aa", "bb"), Name = "H2", Dimension = new Dimension(new BaseDimensionRepresentation(), Constants.Dimension.MOLAR_AMOUNT, "mol")};
+         var x1 = new MoleculeStartValue
+         {
+            ContainerPath = new ObjectPath("aa", "bb"), 
+            Name = "H2", 
+            Dimension = DimensionTime,
+            IsPresent = true,
+            Value = 2.5,
+            ScaleDivisor = 1e-2
+         };
 
-         x1.IsPresent = true;
-         x1.Value = 2.5;
-         x1.ScaleDivisor = 1e-2;
-
-         MoleculeStartValue x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
 
          AssertForSpecs.AreEqualMoleculeStartValue(x1, x2);
       }

@@ -5,6 +5,7 @@ using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Descriptors;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Serialization.Chart;
@@ -59,6 +60,7 @@ namespace OSPSuite.Core.Serialization.Xml
          AttributeMapperRepository.AddAttributeMapper(new ValueOriginDeterminationMethodXmlAttributeMapper<SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new RunStatusXmlAttributeMapper());
          AttributeMapperRepository.AddAttributeMapper(new ExpressionTypeXmlAttributeMapper());
+         AttributeMapperRepository.AddAttributeMapper(new DistributionTypeXmlSerializer());
 
 
          AttributeMapperRepository.ReferenceMapper = new ObjectReferenceMapper();
