@@ -1,14 +1,14 @@
-﻿using OSPSuite.BDDHelper;
+﻿using System.Linq;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
-using System.Linq;
 
 namespace OSPSuite.Core.Domain
 {
-   public class concern_for_IndividualBuildingBlock : ContextSpecification<IndividualBuildingBlock>
+   public abstract class concern_for_IndividualBuildingBlock : ContextSpecification<IndividualBuildingBlock>
    {
       protected override void Context()
       {
@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class when_updating_properties_of_individual : concern_for_IndividualBuildingBlock
+   public class When_updating_properties_of_individual : concern_for_IndividualBuildingBlock
    {
       private IndividualBuildingBlock _sourceIndividualBuildingBlock;
       private ICloneManager _cloneManager;
@@ -45,7 +45,6 @@ namespace OSPSuite.Core.Domain
             Value = "Value"
          };
          _sourceIndividualBuildingBlock.OriginData.Add(_originDataItem);
-
       }
 
       protected override void Because()
@@ -66,6 +65,44 @@ namespace OSPSuite.Core.Domain
          clonedOriginDataItem.Description.ShouldBeEqualTo(_originDataItem.Description);
          clonedOriginDataItem.Name.ShouldBeEqualTo(_originDataItem.Name);
          clonedOriginDataItem.ValueAsObject.ShouldBeEqualTo(_originDataItem.ValueAsObject);
+      }
+   }
+
+   public class When_retrieving_a_individual_parameter_by_path : concern_for_IndividualBuildingBlock
+   {
+      private IndividualParameter _individualParameter1;
+      private IndividualParameter _individualParameter2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _individualParameter1 = new IndividualParameter
+         {
+            Path = new ObjectPath("A", "B", "C")
+         };
+         _individualParameter2 = new IndividualParameter
+         {
+            Path = new ObjectPath("A", "B", "C", "D")
+         };
+
+         sut = new IndividualBuildingBlock
+         {
+            _individualParameter1,
+            _individualParameter2
+         };
+      }
+
+      [Observation]
+      public void should_return_the_expected_parameter()
+      {
+         sut.FindByPath("A|B|C").ShouldBeEqualTo(_individualParameter1);
+         sut.FindByPath("A|B|C|D").ShouldBeEqualTo(_individualParameter2);
+      }
+
+      [Observation]
+      public void should_return_null_if_the_parameter_by_path_is_not_found()
+      {
+         sut.FindByPath("NOPE").ShouldBeNull();
       }
    }
 }

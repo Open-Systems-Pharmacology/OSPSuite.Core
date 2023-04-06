@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
@@ -8,13 +9,15 @@ namespace OSPSuite.Core.Domain.Builder
 {
    public abstract class PathAndValueEntityBuildingBlock<T> : BuildingBlock, IBuildingBlock<T> where T : PathAndValueEntity
    {
-      protected ICache<ObjectPath, T> _allValues = new Cache<ObjectPath, T>(x => x.Path, x => null);
+      protected Cache<ObjectPath, T> _allValues = new Cache<ObjectPath, T>(x => x.Path, x => null);
 
       public T this[ObjectPath objectPath]
       {
          get => _allValues[objectPath];
          set => _allValues[objectPath] = value;
       }
+
+      public T FindByPath(string objectPath) => _allValues[new ObjectPath(objectPath.ToPathArray())];
 
       public void Add(T startValue)
       {
@@ -25,12 +28,12 @@ namespace OSPSuite.Core.Domain.Builder
       public void Remove(T startValue)
       {
          if (startValue == null) return;
-         _allValues.Remove(startValue.Path);
+         Remove(startValue.Path);
       }
 
       public void Remove(ObjectPath objectPath)
       {
-         Remove(this[objectPath]);
+         _allValues.Remove(objectPath);
       }
 
       public IEnumerator<T> GetEnumerator()
