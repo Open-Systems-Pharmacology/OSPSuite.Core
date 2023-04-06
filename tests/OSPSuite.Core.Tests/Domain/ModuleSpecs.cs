@@ -1,11 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using FakeItEasy;
-using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
@@ -174,7 +171,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void nothing_should_be_added()
       {
-         The.Action(() => sut.AddBuildingBlock(_buildingBlock)).ShouldThrowAn<OSPSuiteException> ();
+         The.Action(() => sut.AddBuildingBlock(_buildingBlock)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -188,6 +185,7 @@ namespace OSPSuite.Core.Domain
          _buildingBlock = null;
          sut = new Module();
       }
+
       protected override void Because()
       {
          _buildingBlock = null;
