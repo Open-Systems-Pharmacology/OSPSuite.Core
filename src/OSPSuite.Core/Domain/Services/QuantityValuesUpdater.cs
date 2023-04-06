@@ -80,7 +80,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          var parameter = getParameter(modelConfiguration, individualParameter);
          if (parameter != null)
-            return parameter;
+            return parameter.WithUpdatedMetaFrom(individualParameter);
 
          var (model, simulationConfiguration) = modelConfiguration;
          //Parameter does not exist in the model. We will create it if possible
@@ -102,12 +102,9 @@ namespace OSPSuite.Core.Domain.Services
             _parameterFactory.CreateParameter(name, dimension: dimension, displayUnit: displayUnit) : 
             _parameterFactory.CreateDistributedParameter(name, distributionType.Value, dimension: dimension, displayUnit: displayUnit);
 
-         //Update meta properties if defined
-         parameter.Origin.UpdatePropertiesFrom(individualParameter.Origin);
-         parameter.Info.UpdatePropertiesFrom(individualParameter.Info);
-
          simulationConfiguration.AddBuilderReference(parameter, individualParameter);
-         return parameter.WithParentContainer(parentContainer);
+         return parameter.WithUpdatedMetaFrom(individualParameter)
+            .WithParentContainer(parentContainer);
       }
 
       private IParameter getParameter(ModelConfiguration modelConfiguration, PathAndValueEntity pathAndValueEntity)
