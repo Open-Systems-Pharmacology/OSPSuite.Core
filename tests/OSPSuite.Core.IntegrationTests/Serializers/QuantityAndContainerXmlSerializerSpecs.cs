@@ -80,7 +80,7 @@ namespace OSPSuite.Core.Serializers
          _dp.Add(dpMean);
          _dp.Add(dpDeviation);
          _dp.Add(dpPercentile);
-         IDistributionFormula noDiFo = CreateObject<NormalDistributionFormula>().WithDimension(DimensionLength);
+         var noDiFo = CreateObject<NormalDistributionFormula>().WithDimension(DimensionLength);
          noDiFo.AddObjectPath(new FormulaUsablePath(new[] {Constants.Distribution.MEAN}) {Alias = Constants.Distribution.MEAN, Dimension = DimensionLength});
          noDiFo.AddObjectPath(new FormulaUsablePath(new[] {Constants.Distribution.DEVIATION}) {Alias = Constants.Distribution.DEVIATION, Dimension = DimensionLength});
          noDiFo.AddObjectPath(new FormulaUsablePath(new[] {Constants.Distribution.PERCENTILE}) {Alias = Constants.Distribution.PERCENTILE, Dimension = DimensionLength});

@@ -14,8 +14,15 @@ namespace OSPSuite.Core.Domain.Builder
       private IDimension _dimension;
       private double? _value;
 
+      /// <summary>
+      /// Only set for a parameter that is a distributed parameter.
+      /// This is required in order to be able to create distributed parameter dynamically in the simulation
+      /// </summary>
+      public DistributionType? DistributionType { get; set; }
+
+
       //Reference to building block containing this entity. This does not have to be serialized
-      public  IBuildingBlock BuildingBlock { get; set; }
+      public IBuildingBlock BuildingBlock { get; set; }
 
       protected PathAndValueEntity()
       {
@@ -91,7 +98,8 @@ namespace OSPSuite.Core.Domain.Builder
             NullableEqualsCheck(Dimension, target.Dimension, x => x.ToString()) &&
             NullableEqualsCheck(Icon, target.Icon) &&
             NullableEqualsCheck(Description, target.Description) &&
-            NullableEqualsCheck(Name, target.Name);
+            NullableEqualsCheck(Name, target.Name) &&
+            DistributionType.GetValueOrDefault().Equals(target.DistributionType.GetValueOrDefault());
       }
 
       /// <summary>
@@ -137,6 +145,7 @@ namespace OSPSuite.Core.Domain.Builder
          ContainerPath = sourcePathAndValueEntity.ContainerPath.Clone<ObjectPath>();
          DisplayUnit = sourcePathAndValueEntity.DisplayUnit;
          Dimension = sourcePathAndValueEntity.Dimension;
+         DistributionType = sourcePathAndValueEntity.DistributionType;
          Formula = cloneManager.Clone(sourcePathAndValueEntity.Formula);
          ValueOrigin.UpdateAllFrom(sourcePathAndValueEntity.ValueOrigin);
       }

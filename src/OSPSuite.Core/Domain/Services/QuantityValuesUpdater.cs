@@ -64,6 +64,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateParameterFromIndividualValues(ModelConfiguration modelConfiguration)
       {
+         //Order by distribution to ensure that distributed parameter 
          modelConfiguration.SimulationConfiguration.Individual?.Each(x => updateParameterValueFromStartValue(modelConfiguration, x, canCreateParameter: true));
       }
 
@@ -89,11 +90,20 @@ namespace OSPSuite.Core.Domain.Services
          if (parentContainer == null)
             return null;
 
-         parameter = _parameterFactory.CreateParameter(pathAndValueEntity.Name, dimension: pathAndValueEntity.Dimension, displayUnit: pathAndValueEntity.DisplayUnit)
-            .WithParentContainer(parentContainer);
+         var dimension = pathAndValueEntity.Dimension;
+         var name = pathAndValueEntity.Name;
+         var displayUnit = pathAndValueEntity.DisplayUnit;
+         var distributionType = pathAndValueEntity.DistributionType;
+         var value = pathAndValueEntity.Value;
 
+         //if the distribution is undefined or the value is set, we create a default parameter to ensure that the value will take precedence.
+         //Otherwise, we create a distributed parameter and assume that required sub-parameters will be created as well
+         parameter = distributionType == null || value!=null ? 
+            _parameterFactory.CreateParameter(name, dimension: dimension, displayUnit: displayUnit) : 
+            _parameterFactory.CreateDistributedParameter(name, distributionType.Value, dimension: dimension, displayUnit: displayUnit);
+
+         parameter.ParentContainer = parentContainer;
          simulationConfiguration.AddBuilderReference(parameter, pathAndValueEntity);
-
          return parameter;
       }
 
