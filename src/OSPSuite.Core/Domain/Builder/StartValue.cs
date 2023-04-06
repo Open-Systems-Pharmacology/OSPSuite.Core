@@ -10,7 +10,8 @@
 
    public abstract class StartValueBase : PathAndValueEntity, IStartValue
    {
-      public double? StartValue { 
+      public double? StartValue
+      {
          get => Value;
          set => Value = value;
       }

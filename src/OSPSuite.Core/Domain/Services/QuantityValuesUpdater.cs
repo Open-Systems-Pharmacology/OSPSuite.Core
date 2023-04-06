@@ -59,7 +59,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateParameterFromExpressionProfiles(ModelConfiguration modelConfiguration)
       {
-         modelConfiguration.SimulationConfiguration.ExpressionProfiles?.SelectMany(x => x).Each(x => updateParameterValueFromStartValue(modelConfiguration, x));
+         modelConfiguration.SimulationConfiguration.ExpressionProfiles?.SelectMany(x => x).Each(x => updateParameterValueFromStartValue(modelConfiguration, x, getParameter));
       }
 
       private void updateParameterFromIndividualValues(ModelConfiguration modelConfiguration)
@@ -67,52 +67,64 @@ namespace OSPSuite.Core.Domain.Services
          //Order by distribution to ensure that distributed parameter are loaded BEFORE their sub parameters.
          //not use descending otherwise parameter without distribution are returned fist
          modelConfiguration.SimulationConfiguration.Individual?.OrderByDescending(x => x.DistributionType)
-            .Each(x => updateParameterValueFromStartValue(modelConfiguration, x, canCreateParameter: true));
+            .Each(x => updateParameterValueFromStartValue(modelConfiguration, x, getOrAddModelParameter));
       }
 
       private void updateParameterValueFromParameterStartValues(ModelConfiguration modelConfiguration)
       {
          modelConfiguration.SimulationConfiguration.ParameterStartValues.SelectMany(x => x)
-            .Each(psv => updateParameterValueFromStartValue(modelConfiguration, psv));
+            .Each(psv => updateParameterValueFromStartValue(modelConfiguration, psv, getParameter));
       }
 
-      private IParameter getOrAddModelParameter(ModelConfiguration modelConfiguration, PathAndValueEntity pathAndValueEntity, bool canCreateParameter)
+      private IParameter getOrAddModelParameter(ModelConfiguration modelConfiguration, IndividualParameter individualParameter)
       {
-         var (model, simulationConfiguration) = modelConfiguration;
-         var pathInModel = _keywordReplacerTask.CreateModelPathFor(pathAndValueEntity.Path, model.Root);
-         var parameter = pathInModel.Resolve<IParameter>(model.Root);
-         if (parameter != null || !canCreateParameter)
+         var parameter = getParameter(modelConfiguration, individualParameter);
+         if (parameter != null)
             return parameter;
 
+         var (model, simulationConfiguration) = modelConfiguration;
          //Parameter does not exist in the model. We will create it if possible
-         var parentContainerPathInModel = _keywordReplacerTask.CreateModelPathFor(pathAndValueEntity.ContainerPath, model.Root);
+         var parentContainerPathInModel = _keywordReplacerTask.CreateModelPathFor(individualParameter.ContainerPath, model.Root);
          var parentContainer = parentContainerPathInModel.Resolve<IContainer>(model.Root);
 
          //container does not exist, we do not add new structure to the existing model. Only parameters
          if (parentContainer == null)
             return null;
 
-         var dimension = pathAndValueEntity.Dimension;
-         var name = pathAndValueEntity.Name;
-         var displayUnit = pathAndValueEntity.DisplayUnit;
-         var distributionType = pathAndValueEntity.DistributionType;
-         var value = pathAndValueEntity.Value;
+         var name = individualParameter.Name;
+         var dimension = individualParameter.Dimension;
+         var displayUnit = individualParameter.DisplayUnit;
+         var distributionType = individualParameter.DistributionType;
 
          //if the distribution is undefined or the value is set, we create a default parameter to ensure that the value will take precedence.
          //Otherwise, we create a distributed parameter and assume that required sub-parameters will be created as well
-         parameter = distributionType == null || value != null ? _parameterFactory.CreateParameter(name, dimension: dimension, displayUnit: displayUnit) : _parameterFactory.CreateDistributedParameter(name, distributionType.Value, dimension: dimension, displayUnit: displayUnit);
+         parameter = distributionType == null || individualParameter.Value != null ? 
+            _parameterFactory.CreateParameter(name, dimension: dimension, displayUnit: displayUnit) : 
+            _parameterFactory.CreateDistributedParameter(name, distributionType.Value, dimension: dimension, displayUnit: displayUnit);
 
-         simulationConfiguration.AddBuilderReference(parameter, pathAndValueEntity);
+         //Update meta properties if defined
+         parameter.Origin.UpdatePropertiesFrom(individualParameter.Origin);
+         parameter.Info.UpdatePropertiesFrom(individualParameter.Info);
+
+         simulationConfiguration.AddBuilderReference(parameter, individualParameter);
          return parameter.WithParentContainer(parentContainer);
       }
 
-      private void updateParameterValueFromStartValue(ModelConfiguration modelConfiguration, PathAndValueEntity pathAndValueEntity, bool canCreateParameter = false)
+      private IParameter getParameter(ModelConfiguration modelConfiguration, PathAndValueEntity pathAndValueEntity)
       {
-         var parameter = getOrAddModelParameter(modelConfiguration, pathAndValueEntity, canCreateParameter);
          var (model, _) = modelConfiguration;
+         var pathInModel = _keywordReplacerTask.CreateModelPathFor(pathAndValueEntity.Path, model.Root);
+         return pathInModel.Resolve<IParameter>(model.Root);
+      }
+
+      private void updateParameterValueFromStartValue<T>(ModelConfiguration modelConfiguration, T pathAndValueEntity, Func<ModelConfiguration, T, IParameter> getParameterFunc) where T : PathAndValueEntity
+      {
+         var parameter = getParameterFunc(modelConfiguration, pathAndValueEntity);
          //this can happen if the parameter does not exist in the model
          if (parameter == null)
             return;
+
+         var (model, _) = modelConfiguration;
 
          //Formula is defined, we update in the parameter instance
          if (pathAndValueEntity.Formula != null)
