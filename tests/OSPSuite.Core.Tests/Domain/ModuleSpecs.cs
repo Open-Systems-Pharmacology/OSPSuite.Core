@@ -6,6 +6,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -43,6 +44,34 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_removing_start_values_building_blocks : concern_for_Module
+   {
+      private MoleculeStartValuesBuildingBlock _moleculeStartValuesBuildingBlock;
+      private ParameterStartValuesBuildingBlock _parameterStartValuesBuildingBlock;
+
+      protected override void Context()
+      {
+         base.Context();
+         _moleculeStartValuesBuildingBlock = new MoleculeStartValuesBuildingBlock().WithId("newMoleculeStartValues");
+         _parameterStartValuesBuildingBlock = new ParameterStartValuesBuildingBlock().WithId("newParameterStartValues");
+      }
+
+      protected override void Because()
+      {
+         sut.AddMoleculeStartValueBlock(_moleculeStartValuesBuildingBlock);
+         sut.AddParameterStartValueBlock(_parameterStartValuesBuildingBlock);
+         sut.RemoveMoleculeStartValueBlock(_moleculeStartValuesBuildingBlock);
+      }
+
+      [Observation]
+      public void the_correct_molecule_start_values_should_have_been_removed()
+      {
+         sut.ParameterStartValuesCollection.Count.ShouldBeEqualTo(2);
+         sut.MoleculeStartValuesCollection.Count.ShouldBeEqualTo(1);
+         sut.MoleculeStartValuesCollection.FindById(_moleculeStartValuesBuildingBlock.Id).ShouldBeNull();
+      }
+   }
+
    public class When_getting_the_list_of_building_blocks : concern_for_Module
    {
       private IReadOnlyList<IBuildingBlock> _result;
@@ -61,7 +90,8 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void the_list_should_include_all_the_building_blocks()
       {
-         _result.ShouldOnlyContain(sut.PassiveTransports, sut.EventGroups, sut.Molecules, sut.Reactions, sut.Observers, sut.SpatialStructure, sut.ParameterStartValuesCollection.First(), sut.MoleculeStartValuesCollection.First());
+         _result.ShouldOnlyContain(sut.PassiveTransports, sut.EventGroups, sut.Molecules, sut.Reactions, sut.Observers, sut.SpatialStructure,
+            sut.ParameterStartValuesCollection.First(), sut.MoleculeStartValuesCollection.First());
       }
    }
 
@@ -100,6 +130,71 @@ namespace OSPSuite.Core.Domain
          _clone.ParameterStartValuesCollection.ShouldNotBeNull();
 
          _clone.ExtendedPropertyValueFor("PKSimVersion").ShouldBeEqualTo("1.2.3");
+      }
+   }
+
+   class When_adding_a_building_block_to_a_module : concern_for_Module
+   {
+      protected IBuildingBlock _buildingBlock;
+
+      protected override void Context()
+      {
+         base.Context();
+         _buildingBlock = new ReactionBuildingBlock().WithId("newReactionBuildingBlock");
+         sut = new Module();
+      }
+
+      protected override void Because()
+      {
+         sut.AddBuildingBlock(_buildingBlock);
+      }
+
+      [Observation]
+      public void should_add_a_reaction()
+      {
+         sut.Reactions.ShouldBeEqualTo(_buildingBlock);
+         sut.AllBuildingBlocks().Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   class When_adding_a_not_supported_building_block_to_a_module : concern_for_Module
+   {
+      protected IBuildingBlock _buildingBlock;
+
+      protected override void Context()
+      {
+         base.Context();
+         _buildingBlock = new ExpressionProfileBuildingBlock();
+         sut = new Module();
+      }
+
+      [Observation]
+      public void nothing_should_be_added()
+      {
+         The.Action(() => sut.AddBuildingBlock(_buildingBlock)).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
+   class When_adding_a_null_building_block_to_a_module : concern_for_Module
+   {
+      protected IBuildingBlock _buildingBlock;
+
+      protected override void Context()
+      {
+         base.Context();
+         _buildingBlock = null;
+         sut = new Module();
+      }
+
+      protected override void Because()
+      {
+         _buildingBlock = null;
+      }
+
+      [Observation]
+      public void nothing_should_be_added()
+      {
+         sut.AllBuildingBlocks().Count.ShouldBeEqualTo(0);
       }
    }
 }
