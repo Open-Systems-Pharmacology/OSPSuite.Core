@@ -56,6 +56,16 @@ namespace OSPSuite.Core.Domain
          _moleculeStartValuesCollection.Add(moleculeStartValuesBuildingBlock);
       }
 
+      public void RemoveParameterStartValueBlock(ParameterStartValuesBuildingBlock parameterStartValuesBuildingBlock)
+      {
+         _parameterStartValuesCollection.Remove(parameterStartValuesBuildingBlock);
+      }
+
+      public void RemoveMoleculeStartValueBlock(MoleculeStartValuesBuildingBlock moleculeStartValuesBuildingBlock)
+      {
+         _moleculeStartValuesCollection.Remove(moleculeStartValuesBuildingBlock);
+      }
+
       public virtual IEnumerable<IMoleculeBuilder> AllPresentMolecules()
       {
          if (Molecules == null)
@@ -90,7 +100,7 @@ namespace OSPSuite.Core.Domain
 
       public void AddExtendedProperty<T>(string propertyName, T property)
       {
-         ExtendedProperties[propertyName] = new ExtendedProperty<T> {Name = propertyName, Value = property};
+         ExtendedProperties[propertyName] = new ExtendedProperty<T> { Name = propertyName, Value = property };
       }
 
       /// <summary>

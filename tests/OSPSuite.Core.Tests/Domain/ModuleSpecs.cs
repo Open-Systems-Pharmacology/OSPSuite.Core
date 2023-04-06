@@ -43,6 +43,34 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_removing_start_values_building_blocks : concern_for_Module
+   {
+      private MoleculeStartValuesBuildingBlock _moleculeStartValuesBuildingBlock;
+      private ParameterStartValuesBuildingBlock _parameterStartValuesBuildingBlock;
+
+      protected override void Context()
+      {
+         base.Context();
+         _moleculeStartValuesBuildingBlock = new MoleculeStartValuesBuildingBlock().WithId("newMoleculeStartValues");
+         _parameterStartValuesBuildingBlock = new ParameterStartValuesBuildingBlock().WithId("newParameterStartValues");
+      }
+
+      protected override void Because()
+      {
+         sut.AddMoleculeStartValueBlock(_moleculeStartValuesBuildingBlock);
+         sut.AddParameterStartValueBlock(_parameterStartValuesBuildingBlock);
+         sut.RemoveMoleculeStartValueBlock(_moleculeStartValuesBuildingBlock);
+      }
+
+      [Observation]
+      public void the_correct_molecule_start_values_should_have_been_removed()
+      {
+         sut.ParameterStartValuesCollection.Count.ShouldBeEqualTo(2);
+         sut.MoleculeStartValuesCollection.Count.ShouldBeEqualTo(1);
+         sut.MoleculeStartValuesCollection.FindById(_moleculeStartValuesBuildingBlock.Id).ShouldBeNull();
+      }
+   }
+
    public class When_getting_the_list_of_building_blocks : concern_for_Module
    {
       private IReadOnlyList<IBuildingBlock> _result;
@@ -61,7 +89,8 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void the_list_should_include_all_the_building_blocks()
       {
-         _result.ShouldOnlyContain(sut.PassiveTransports, sut.EventGroups, sut.Molecules, sut.Reactions, sut.Observers, sut.SpatialStructure, sut.ParameterStartValuesCollection.First(), sut.MoleculeStartValuesCollection.First());
+         _result.ShouldOnlyContain(sut.PassiveTransports, sut.EventGroups, sut.Molecules, sut.Reactions, sut.Observers, sut.SpatialStructure,
+            sut.ParameterStartValuesCollection.First(), sut.MoleculeStartValuesCollection.First());
       }
    }
 
