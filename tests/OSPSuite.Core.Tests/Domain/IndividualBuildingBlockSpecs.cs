@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
@@ -36,7 +38,20 @@ namespace OSPSuite.Core.Domain
          _cloneManager = new CloneManagerForBuildingBlock(_objectBaseFactory, _repositoryTask);
          _sourceIndividualBuildingBlock.Name = "An Individual";
          _sourceIndividualBuildingBlock.PKSimVersion = "11.1";
-         _sourceIndividualBuildingBlock.Add(new IndividualParameter().WithName("name1"));
+         var individualParameter = new IndividualParameter().WithName("name1");
+         individualParameter.DistributionType = DistributionType.Discrete;
+         individualParameter.Origin = new ParameterOrigin
+         {
+            SimulationId = "SimId",
+            BuilingBlockId = "BbId",
+            ParameterId = "ParamId"
+         };
+         individualParameter.Info = new ParameterInfo
+         {
+            ReadOnly = true
+         };
+
+         _sourceIndividualBuildingBlock.Add(individualParameter);
          _originDataItem = new ExtendedProperty<string>()
          {
             Description = "Description",
@@ -53,11 +68,19 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void the_updated_expression_profile_should_have_properties_set()
+      public void the_updated_individual_should_have_properties_set()
       {
          sut.Name.ShouldBeEqualTo("An Individual");
          sut.PKSimVersion.ShouldBeEqualTo("11.1");
          sut.Count().ShouldBeEqualTo(1);
+
+         var clonedIndividualParameter = sut.First();
+         clonedIndividualParameter.DistributionType.ShouldBeEqualTo(DistributionType.Discrete);
+         clonedIndividualParameter.Origin.SimulationId.ShouldBeEqualTo("SimId");
+         clonedIndividualParameter.Origin.BuilingBlockId.ShouldBeEqualTo("BbId");
+         clonedIndividualParameter.Origin.ParameterId.ShouldBeEqualTo("ParamId");
+         clonedIndividualParameter.Info.ReadOnly.ShouldBeTrue();
+
          sut.OriginData.All.Length.ShouldBeEqualTo(1);
          var clonedOriginDataItem = sut.OriginData.All.First();
 

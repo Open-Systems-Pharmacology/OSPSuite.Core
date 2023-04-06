@@ -11,7 +11,6 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.ContainerPath);
          MapReference(x => x.Formula);
          Map(x => x.Value);
-         Map(x => x.DistributionType);
       }
    }
 }
