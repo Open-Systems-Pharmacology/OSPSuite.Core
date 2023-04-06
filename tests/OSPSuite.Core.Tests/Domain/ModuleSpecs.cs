@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using FakeItEasy;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -129,6 +133,70 @@ namespace OSPSuite.Core.Domain
          _clone.ParameterStartValuesCollection.ShouldNotBeNull();
 
          _clone.ExtendedPropertyValueFor("PKSimVersion").ShouldBeEqualTo("1.2.3");
+      }
+   }
+
+   class When_adding_a_building_block_to_a_module : concern_for_Module
+   {
+      protected IBuildingBlock _buildingBlock;
+
+      protected override void Context()
+      {
+         base.Context();
+         _buildingBlock = new ReactionBuildingBlock().WithId("newReactionBuildingBlock");
+         sut = new Module();
+      }
+
+      protected override void Because()
+      {
+         sut.AddBuildingBlock(_buildingBlock);
+      }
+
+      [Observation]
+      public void should_add_a_reaction()
+      {
+         sut.Reactions.ShouldBeEqualTo(_buildingBlock);
+         sut.AllBuildingBlocks().Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   class When_adding_a_not_supported_building_block_to_a_module : concern_for_Module
+   {
+      protected IBuildingBlock _buildingBlock;
+
+      protected override void Context()
+      {
+         base.Context();
+         _buildingBlock = new ExpressionProfileBuildingBlock();
+         sut = new Module();
+      }
+
+      [Observation]
+      public void nothing_should_be_added()
+      {
+         The.Action(() => sut.AddBuildingBlock(_buildingBlock)).ShouldThrowAn<OSPSuiteException> ();
+      }
+   }
+
+   class When_adding_a_null_building_block_to_a_module : concern_for_Module
+   {
+      protected IBuildingBlock _buildingBlock;
+
+      protected override void Context()
+      {
+         base.Context();
+         _buildingBlock = null;
+         sut = new Module();
+      }
+      protected override void Because()
+      {
+         _buildingBlock = null;
+      }
+
+      [Observation]
+      public void nothing_should_be_added()
+      {
+         sut.AllBuildingBlocks().Count.ShouldBeEqualTo(0);
       }
    }
 }

@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
 
@@ -64,6 +66,76 @@ namespace OSPSuite.Core.Domain
       public void RemoveMoleculeStartValueBlock(MoleculeStartValuesBuildingBlock moleculeStartValuesBuildingBlock)
       {
          _moleculeStartValuesCollection.Remove(moleculeStartValuesBuildingBlock);
+      }
+
+      public void AddBuildingBlock(IBuildingBlock buildingBlock)
+      {
+         switch (buildingBlock)
+         {
+            case MoleculeBuildingBlock molecule:
+               Molecules = molecule;
+               break;
+            case IReactionBuildingBlock reaction:
+               Reactions = reaction;
+               break;
+            case ISpatialStructure spatialStructure:
+               SpatialStructure = spatialStructure;
+               break;
+            case IPassiveTransportBuildingBlock passiveTransport:
+               PassiveTransports = passiveTransport;
+               break;
+            case IEventGroupBuildingBlock eventGroup:
+               EventGroups = eventGroup;
+               break;
+            case IObserverBuildingBlock observer:
+               Observers = observer;
+               break;
+            case ParameterStartValuesBuildingBlock parameterStartValues:
+               AddParameterStartValueBlock(parameterStartValues);
+               break;
+            case MoleculeStartValuesBuildingBlock moleculeStartValues:
+               AddMoleculeStartValueBlock(moleculeStartValues);
+               break;
+            case null:
+               return;
+            default:
+               throw new OSPSuiteException(Error.BuildingBlockTypeNotSupported(buildingBlock.Name));
+         }
+      }
+
+      public void RemoveBuildingBlock( IBuildingBlock buildingBlock)
+      {
+         switch (buildingBlock)
+         {
+            case MoleculeBuildingBlock molecule:
+               Molecules = null;
+               break;
+            case IReactionBuildingBlock reaction:
+               Reactions = null;
+               break;
+            case ISpatialStructure spatialStructure:
+               SpatialStructure = null;
+               break;
+            case IPassiveTransportBuildingBlock passiveTransport:
+               PassiveTransports = null;
+               break;
+            case IEventGroupBuildingBlock eventGroup:
+               EventGroups = null;
+               break;
+            case IObserverBuildingBlock observer:
+               Observers = null;
+               break;
+            case ParameterStartValuesBuildingBlock parameterStartValues:
+               RemoveParameterStartValueBlock(parameterStartValues);
+               break;
+            case MoleculeStartValuesBuildingBlock moleculeStartValues:
+               RemoveMoleculeStartValueBlock(moleculeStartValues);
+               break;
+            case null:
+               return;
+            default:
+               throw new OSPSuiteException(Error.BuildingBlockTypeNotSupported(buildingBlock.Name));
+         }
       }
 
       public virtual IEnumerable<IMoleculeBuilder> AllPresentMolecules()

@@ -1592,6 +1592,7 @@ namespace OSPSuite.Assets
       {
          return $"Cannot add molecule '{moleculeName}' into both molecules to include and molecules to exclude lists";
       }
+      public static string BuildingBlockTypeNotSupported(string objectName) => $"BuildingBlock type for {objectName} is not supported";
 
       public const string NotImplemented = "This feature is not implemented yet";
 
