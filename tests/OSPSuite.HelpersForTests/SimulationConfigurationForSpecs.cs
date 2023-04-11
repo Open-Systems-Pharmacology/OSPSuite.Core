@@ -7,7 +7,7 @@ namespace OSPSuite.Helpers
    /// </summary>
    public class SimulationConfigurationForSpecs : SimulationConfiguration
    {
-      public override void ClearCache()
+      public override void ClearBuilderCache()
       {
          /*do nothing*/
       }

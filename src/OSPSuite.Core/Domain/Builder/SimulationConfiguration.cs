@@ -55,10 +55,10 @@ namespace OSPSuite.Core.Domain.Builder
       public IMoleculeBuilder MoleculeByName(string name) => _molecules[name];
 
       private IReadOnlyList<T> all<T>(Func<Module, T> propAccess) where T : IBuildingBlock =>
-         _moduleConfigurations.Select(x => propAccess(x.Module)).ToList();
+         _moduleConfigurations.Select(x => propAccess(x.Module)).Where(x => x != null).ToList();
 
       private IEnumerable<T> allBuilder<T>(Func<Module, IBuildingBlock<T>> propAccess) where T : IBuilder =>
-         _moduleConfigurations.SelectMany(x => propAccess(x.Module));
+         all(propAccess).SelectMany(x => x);
 
       private IEnumerable<T> allStartValueBuilder<T>(Func<ModuleConfiguration, IBuildingBlock<T>> propAccess) where T : IStartValue =>
          _moduleConfigurations.Select(propAccess).Where(x => x != null).SelectMany(x => x);
@@ -123,8 +123,9 @@ namespace OSPSuite.Core.Domain.Builder
       }
 
       //Internal because this should not be called outside of core.
-      internal virtual void Freeze()
+      internal void Freeze()
       {
+         ClearCache();
          _passiveTransports.AddRange(allBuilder(x => x.PassiveTransports));
          _reactions.AddRange(allBuilder(x => x.Reactions));
          _eventGroups.AddRange(allBuilder(x => x.EventGroups));
@@ -134,9 +135,9 @@ namespace OSPSuite.Core.Domain.Builder
          _moleculeStartValues.AddRange(allStartValueBuilder(x => x.SelectedMoleculeStartValues));
       }
 
-      public virtual void ClearCache()
+      internal void ClearCache()
       {
-         _builderCache.Clear();
+         ClearBuilderCache();
          _passiveTransports.Clear();
          _reactions.Clear();
          _eventGroups.Clear();
@@ -144,6 +145,11 @@ namespace OSPSuite.Core.Domain.Builder
          _molecules.Clear();
          _parameterStartValues.Clear();
          _moleculeStartValues.Clear();
+      }
+
+      public virtual void ClearBuilderCache()
+      {
+         _builderCache.Clear();
       }
    }
 }
