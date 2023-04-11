@@ -21,8 +21,8 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly ObjectBaseCache<IEventGroupBuilder> _eventGroups = new ObjectBaseCache<IEventGroupBuilder>();
       private readonly ObjectBaseCache<IObserverBuilder> _observers = new ObjectBaseCache<IObserverBuilder>();
       private readonly ObjectBaseCache<IMoleculeBuilder> _molecules = new ObjectBaseCache<IMoleculeBuilder>();
-      private readonly Cache<ObjectPath, ParameterStartValue> _parameterStartValues = new Cache<ObjectPath, ParameterStartValue>(x => x.Path, x => null);
-      private readonly Cache<ObjectPath, MoleculeStartValue> _moleculeStartValues = new Cache<ObjectPath, MoleculeStartValue>(x => x.Path, x => null);
+      private readonly StartValueCache<ParameterStartValue> _parameterStartValues = new StartValueCache<ParameterStartValue>();
+      private readonly StartValueCache<MoleculeStartValue> _moleculeStartValues = new StartValueCache<MoleculeStartValue>();
 
       public SimModelExportMode SimModelExportMode { get; set; } = SimModelExportMode.Full;
 
@@ -56,6 +56,12 @@ namespace OSPSuite.Core.Domain.Builder
 
       private IReadOnlyList<T> all<T>(Func<Module, T> propAccess) where T : IBuildingBlock =>
          _moduleConfigurations.Select(x => propAccess(x.Module)).ToList();
+
+      private IEnumerable<T> allBuilder<T>(Func<Module, IBuildingBlock<T>> propAccess) where T : IBuilder =>
+         _moduleConfigurations.SelectMany(x => propAccess(x.Module));
+
+      private IEnumerable<T> allStartValueBuilder<T>(Func<ModuleConfiguration, IBuildingBlock<T>> propAccess) where T : IStartValue =>
+         _moduleConfigurations.Select(propAccess).Where(x => x != null).SelectMany(x => x);
 
       public virtual IEnumerable<IMoleculeBuilder> AllPresentMolecules()
       {
@@ -116,13 +122,28 @@ namespace OSPSuite.Core.Domain.Builder
          _expressionProfiles.Each(x => x.AcceptVisitor(visitor));
       }
 
-      public virtual void Freeze()
+      //Internal because this should not be called outside of core.
+      internal virtual void Freeze()
       {
+         _passiveTransports.AddRange(allBuilder(x => x.PassiveTransports));
+         _reactions.AddRange(allBuilder(x => x.Reactions));
+         _eventGroups.AddRange(allBuilder(x => x.EventGroups));
+         _observers.AddRange(allBuilder(x => x.Observers));
+         _molecules.AddRange(allBuilder(x => x.Molecules));
+         _parameterStartValues.AddRange(allStartValueBuilder(x => x.SelectedParameterStartValues));
+         _moleculeStartValues.AddRange(allStartValueBuilder(x => x.SelectedMoleculeStartValues));
       }
 
       public virtual void ClearCache()
       {
          _builderCache.Clear();
+         _passiveTransports.Clear();
+         _reactions.Clear();
+         _eventGroups.Clear();
+         _observers.Clear();
+         _molecules.Clear();
+         _parameterStartValues.Clear();
+         _moleculeStartValues.Clear();
       }
    }
 }

@@ -27,12 +27,16 @@ namespace OSPSuite.Core
       {
          base.GlobalContext();
          _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
+         //Freeze in constructor in case access is also required to properties for setup
+         _simulationConfiguration.Freeze();
       }
 
       protected override void Because()
       {
          sut = IoC.Resolve<IModelConstructor>();
          _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
+         //Freeze in the test so that we can access the properties. This needs to be done AFTER the model creation 
+         _simulationConfiguration.Freeze();
          _model = _result.Model;
       }
    }
