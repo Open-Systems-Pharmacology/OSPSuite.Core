@@ -1,6 +1,6 @@
 ﻿namespace OSPSuite.Core.Domain.Builder
 {
-   public interface IStartValue : IUsingFormula, IWithDisplayUnit, IWithPath, IWithValueOrigin, IWithNullableValue
+   public interface IStartValue : IUsingFormula, IWithDisplayUnit, IWithPath, IWithValueOrigin, IWithNullableValue, IBuilder
    {
       /// <summary>
       ///    Obsolete for serialization only

@@ -82,7 +82,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public CreationResult CreateModelFrom(SimulationConfiguration simulationConfiguration, string modelName)
       {
-         try
+         using (new SimulationConfigurationDisposer(simulationConfiguration))
          {
             var model = _objectBaseFactory.Create<IModel>().WithName(modelName);
             var modelConfiguration = new ModelConfiguration(model, simulationConfiguration);
@@ -112,10 +112,6 @@ namespace OSPSuite.Core.Domain.Services
             finalizeModel(model);
 
             return creationResult;
-         }
-         finally
-         {
-            simulationConfiguration.ClearCache();
          }
       }
 
@@ -309,17 +305,16 @@ namespace OSPSuite.Core.Domain.Services
 
       private void createPassiveTransports(ModelConfiguration modelConfiguration)
       {
-         modelConfiguration.SimulationConfiguration.PassiveTransports.SelectMany(x => x).Each(t => _transportCreator.CreatePassiveTransport(t, modelConfiguration));
+         modelConfiguration.SimulationConfiguration.PassiveTransports.Each(t => _transportCreator.CreatePassiveTransport(t, modelConfiguration));
       }
 
       private IEnumerable<ValidationMessage> createReactions(ModelConfiguration modelConfiguration)
       {
          var (model, simulationConfiguration) = modelConfiguration;
          var messages = simulationConfiguration.Reactions
-            .SelectMany(bb => bb, (bb, r) => new {bb, r})
-            .Where(x => !_reactionCreator.CreateReaction(x.r, modelConfiguration))
+            .Where(x => !_reactionCreator.CreateReaction(x, modelConfiguration))
             .Select(
-               x => new ValidationMessage(NotificationType.Warning, Validation.WarningNoReactionCreated(x.r.Name), x.r, x.bb))
+               x => new ValidationMessage(NotificationType.Warning, Validation.WarningNoReactionCreated(x.Name),x, x.BuildingBlock))
             .ToList();
 
          model.Root.GetAllContainersAndSelf<IContainer>(x => x.ContainerType == ContainerType.Reaction)

@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Domain.Builder
    ///    Base builder interface for all builder creating amount changing objects
    ///    Contains all information used for every kind of amount change
    /// </summary>
-   public interface IProcessBuilder : IContainer, IUsingFormula, IContainsParameters
+   public interface IProcessBuilder : IContainer, IUsingFormula, IContainsParameters, IBuilder
    {
       /// <summary>
       ///    If set to true, a parameter rate named ProcessRate will be generated in the simulation.Its formula
@@ -37,6 +37,7 @@ namespace OSPSuite.Core.Domain.Builder
       private bool _createProcessRateParameter;
       private bool _processRateParameterPersistable;
       public IDimension Dimension { get; set; }
+      public IBuildingBlock BuildingBlock { get; set; }
 
       public bool CreateProcessRateParameter
       {
@@ -88,5 +89,6 @@ namespace OSPSuite.Core.Domain.Builder
          CreateProcessRateParameter = srcProcessBuilder.CreateProcessRateParameter;
          ProcessRateParameterPersistable = srcProcessBuilder.ProcessRateParameterPersistable;
       }
+
    }
 }

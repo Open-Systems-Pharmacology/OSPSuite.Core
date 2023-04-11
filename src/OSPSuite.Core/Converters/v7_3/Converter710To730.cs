@@ -85,10 +85,10 @@ namespace OSPSuite.Core.Converters.v7_3
 
       public void Visit(ISpatialStructure spatialStructure)
       {
-         ConvertAllParametersIn(spatialStructure);
+         spatialStructure.Each(ConvertAllParametersIn);
       }
 
-      public void ConvertAllParametersIn<T>(IBuildingBlock<T> buildingBlock) where T : class, IContainer
+      public void ConvertAllParametersIn<T>(IBuildingBlock<T> buildingBlock) where T : class, IContainer, IBuilder
       {
          buildingBlock.Each(ConvertAllParametersIn);
       }

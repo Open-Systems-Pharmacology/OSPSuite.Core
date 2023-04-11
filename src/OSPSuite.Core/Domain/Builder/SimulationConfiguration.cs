@@ -12,8 +12,17 @@ namespace OSPSuite.Core.Domain.Builder
    {
       private readonly List<ExpressionProfileBuildingBlock> _expressionProfiles = new List<ExpressionProfileBuildingBlock>();
       private readonly List<ModuleConfiguration> _moduleConfigurations = new List<ModuleConfiguration>();
-      private readonly ICache<IObjectBase, IObjectBase> _builderCache = new Cache<IObjectBase, IObjectBase>(onMissingKey: x => null);
       private readonly List<ICoreCalculationMethod> _allCalculationMethods = new List<ICoreCalculationMethod>();
+
+      //Temporary objects used for model construction only
+      private readonly Cache<IObjectBase, IObjectBase> _builderCache = new Cache<IObjectBase, IObjectBase>(onMissingKey: x => null);
+      private readonly ObjectBaseCache<ITransportBuilder> _passiveTransports = new ObjectBaseCache<ITransportBuilder>();
+      private readonly ObjectBaseCache<IReactionBuilder> _reactions = new ObjectBaseCache<IReactionBuilder>();
+      private readonly ObjectBaseCache<IEventGroupBuilder> _eventGroups = new ObjectBaseCache<IEventGroupBuilder>();
+      private readonly ObjectBaseCache<IObserverBuilder> _observers = new ObjectBaseCache<IObserverBuilder>();
+      private readonly ObjectBaseCache<IMoleculeBuilder> _molecules = new ObjectBaseCache<IMoleculeBuilder>();
+      private readonly Cache<ObjectPath, ParameterStartValue> _parameterStartValues = new Cache<ObjectPath, ParameterStartValue>(x => x.Path, x => null);
+      private readonly Cache<ObjectPath, MoleculeStartValue> _moleculeStartValues = new Cache<ObjectPath, MoleculeStartValue>(x => x.Path, x => null);
 
       public SimModelExportMode SimModelExportMode { get; set; } = SimModelExportMode.Full;
 
@@ -35,38 +44,41 @@ namespace OSPSuite.Core.Domain.Builder
       public virtual void AddCalculationMethod(ICoreCalculationMethod calculationMethodToAdd) => _allCalculationMethods.Add(calculationMethodToAdd);
 
       public virtual IReadOnlyList<ISpatialStructure> SpatialStructures => all(x => x.SpatialStructure);
-      public virtual IReadOnlyList<IPassiveTransportBuildingBlock> PassiveTransports => all(x => x.PassiveTransports);
-      public virtual IReadOnlyList<IReactionBuildingBlock> Reactions => all(x => x.Reactions);
-      public virtual IReadOnlyList<ParameterStartValuesBuildingBlock> ParameterStartValues => all(x => x.ParameterStartValuesCollection);
-      public virtual IReadOnlyList<MoleculeStartValuesBuildingBlock> MoleculeStartValues => all(x => x.MoleculeStartValuesCollection);
-      public virtual IReadOnlyList<IEventGroupBuildingBlock> EventGroups => all(x => x.EventGroups);
-      public virtual IReadOnlyList<IObserverBuildingBlock> Observers => all(x => x.Observers);
+      public virtual IReadOnlyCollection<ITransportBuilder> PassiveTransports => _passiveTransports;
+      public virtual IReadOnlyCollection<IReactionBuilder> Reactions => _reactions;
+      public virtual IReadOnlyCollection<IEventGroupBuilder> EventGroups => _eventGroups;
+      public virtual IReadOnlyCollection<IObserverBuilder> Observers => _observers;
+      public virtual IReadOnlyCollection<IMoleculeBuilder> Molecules => _molecules;
+      public virtual IReadOnlyCollection<ParameterStartValue> ParameterStartValues => _parameterStartValues;
+      public virtual IReadOnlyCollection<MoleculeStartValue> MoleculeStartValues => _moleculeStartValues;
 
-      //There are ways to cache this a bit better
-      public virtual IReadOnlyList<MoleculeBuildingBlock> Molecules => all(x => x.Molecules);
-
-      public IMoleculeBuilder MoleculeByName(string name)
-      {
-         //NOT EFFICIENT!!
-         return Molecules.SelectMany(x => x).FindByName(name);
-      }
+      public IMoleculeBuilder MoleculeByName(string name) => _molecules[name];
 
       private IReadOnlyList<T> all<T>(Func<Module, T> propAccess) where T : IBuildingBlock =>
          _moduleConfigurations.Select(x => propAccess(x.Module)).ToList();
-         
-      private IReadOnlyList<T> all<T>(Func<Module, IReadOnlyList<T>> propAccess) where T : IBuildingBlock =>
-         _moduleConfigurations.SelectMany(x => propAccess(x.Module)).ToList();
 
-      public virtual IEnumerable<IMoleculeBuilder> AllPresentMolecules() => 
-         _moduleConfigurations.SelectMany(x => x.AllPresentMolecules());
+      public virtual IEnumerable<IMoleculeBuilder> AllPresentMolecules()
+      {
+         var moleculeNames = _moleculeStartValues
+            .Where(moleculeStartValue => moleculeStartValue.IsPresent)
+            .Select(moleculeStartValue => moleculeStartValue.MoleculeName)
+            .Distinct();
+
+
+         return moleculeNames.Select(x => _molecules[x]).Where(m => m != null);
+      }
 
       public virtual IEnumerable<MoleculeStartValue> AllPresentMoleculeValues() =>
-         _moduleConfigurations.SelectMany(x => x.AllPresentMoleculeValues());
+         AllPresentMoleculeValuesFor(_molecules.Select(x => x.Name));
 
-      public virtual IEnumerable<MoleculeStartValue> AllPresentMoleculeValuesFor(IEnumerable<string> moleculeNames) => 
-         _moduleConfigurations.SelectMany(x => x.AllPresentMoleculeValuesFor(moleculeNames));
+      public virtual IEnumerable<MoleculeStartValue> AllPresentMoleculeValuesFor(IEnumerable<string> moleculeNames)
+      {
+         return _moleculeStartValues
+            .Where(msv => moleculeNames.Contains(msv.MoleculeName))
+            .Where(msv => msv.IsPresent);
+      }
 
-      public virtual IEnumerable<IMoleculeBuilder> AllFloatingMolecules() => Molecules.SelectMany(x => x.AllFloating());
+      public virtual IEnumerable<IMoleculeBuilder> AllFloatingMolecules() => Molecules.Where(x => x.IsFloating);
 
       public virtual IReadOnlyList<string> AllPresentMoleculeNames() => AllPresentMoleculeNames(x => true);
 
@@ -90,8 +102,6 @@ namespace OSPSuite.Core.Domain.Builder
 
       public virtual IObjectBase BuilderFor(IObjectBase modelObject) => _builderCache[modelObject];
 
-      public virtual void ClearCache() => _builderCache.Clear();
-
       public virtual void AddBuilderReference(IObjectBase modelObject, IObjectBase builder)
       {
          _builderCache[modelObject] = builder;
@@ -104,6 +114,15 @@ namespace OSPSuite.Core.Domain.Builder
          ModuleConfigurations.Each(x => x.AcceptVisitor(visitor));
          Individual?.AcceptVisitor(visitor);
          _expressionProfiles.Each(x => x.AcceptVisitor(visitor));
+      }
+
+      public virtual void Freeze()
+      {
+      }
+
+      public virtual void ClearCache()
+      {
+         _builderCache.Clear();
       }
    }
 }

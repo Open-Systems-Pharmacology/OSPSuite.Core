@@ -23,10 +23,10 @@ namespace OSPSuite.Core.Domain
       SimulationSettings Settings { get; }
 
       /// <summary>
-      ///    The reaction building block used to create the simulation. This is only use as meta information
+      ///    The reactions used to create the simulation. This is only use as meta information
       ///    on model creation for now. Adding <see cref="Reaction" /> to the building block will not change the model structure
       /// </summary>
-      IReadOnlyList<IReactionBuildingBlock> Reactions { get; }
+      IReadOnlyCollection<IReactionBuilder> Reactions { get; }
 
       /// <summary>
       ///    Name of all compounds used in the simulation
@@ -59,7 +59,7 @@ namespace OSPSuite.Core.Domain
 
       public SimulationSettings Settings => Configuration?.SimulationSettings;
 
-      public IReadOnlyList<IReactionBuildingBlock> Reactions => Configuration?.Reactions;
+      public IReadOnlyCollection<IReactionBuilder> Reactions => Configuration?.Reactions;
 
       public IReadOnlyList<string> CompoundNames => Configuration?.AllPresentMolecules().AllNames();
 

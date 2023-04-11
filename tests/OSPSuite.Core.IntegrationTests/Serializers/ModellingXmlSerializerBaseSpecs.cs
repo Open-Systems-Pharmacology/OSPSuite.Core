@@ -46,6 +46,7 @@ namespace OSPSuite.Core.Serializers
       protected IModel _model;
       protected IModelCoreSimulation _simulation;
       protected IModelConstructor _modelConstructor;
+      protected Module _module;
 
       public override void GlobalContext()
       {
@@ -58,6 +59,7 @@ namespace OSPSuite.Core.Serializers
          _objectPathFactory = IoC.Resolve<IObjectPathFactory>();
          _moleculeStartValuesCreator = IoC.Resolve<IMoleculeStartValuesCreator>();
          _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
+         _module = _simulationConfiguration.ModuleConfigurations[0].Module;
          _modelConstructor = IoC.Resolve<IModelConstructor>();
          _result = _modelConstructor.CreateModelFrom(_simulationConfiguration, "MyModel");
          _model = _result.Model;

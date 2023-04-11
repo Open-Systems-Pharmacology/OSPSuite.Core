@@ -7,7 +7,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public interface IMoleculeBuilder : IContainer, IContainsParameters, IWithDisplayUnit
+   public interface IMoleculeBuilder : IContainer, IContainsParameters, IWithDisplayUnit, IBuilder
    {
       /// <summary>
       ///    Default start formula. Dimension depends on settings used in the project (Amount or Concentration)
@@ -76,6 +76,7 @@ namespace OSPSuite.Core.Domain.Builder
       public QuantityType QuantityType { get; set; }
       public bool IsXenobiotic { get; set; }
       public IDimension Dimension { get; set; }
+      public IBuildingBlock BuildingBlock { get; set; }
 
       public MoleculeBuilder()
       {
@@ -144,5 +145,6 @@ namespace OSPSuite.Core.Domain.Builder
          get => _displayUnit ?? Dimension?.DefaultUnit;
          set => SetProperty(ref _displayUnit, value);
       }
+
    }
 }

@@ -6,15 +6,13 @@ using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public abstract class PathAndValueEntity : Entity, IUsingFormula, IWithDisplayUnit, IWithPath, IWithNullableValue
+   public abstract class PathAndValueEntity : Entity, IUsingFormula, IWithDisplayUnit, IWithPath, IWithNullableValue, IBuilder
    {
       private ObjectPath _containerPath;
       protected IFormula _formula;
       private Unit _displayUnit;
       private IDimension _dimension;
       private double? _value;
-
-      //Reference to building block containing this entity. This does not have to be serialized
       public IBuildingBlock BuildingBlock { get; set; }
 
       protected PathAndValueEntity()

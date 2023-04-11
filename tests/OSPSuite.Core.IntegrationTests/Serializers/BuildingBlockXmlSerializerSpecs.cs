@@ -5,7 +5,6 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Helpers;
-using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
@@ -56,7 +55,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexObserverBB()
       {
-         var x1 = _simulationConfiguration.Observers.First();
+         var x1 = _module.Observers;
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualBuildingBlock(x2, x1);
       }
@@ -67,7 +66,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexMoleculeBB()
       {
-         var x1 = _simulationConfiguration.Molecules.First();
+         var x1 = _module.Molecules;
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualBuildingBlock(x2, x1);
       }
@@ -78,7 +77,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexPassiveTransportBB()
       {
-         var x1 = _simulationConfiguration.PassiveTransports.First();
+         var x1 = _module.PassiveTransports;
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualBuildingBlock(x2, x1);
       }
@@ -89,7 +88,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexReactionBB()
       {
-         var x1 = _simulationConfiguration.Reactions[0];
+         var x1 = _module.Reactions;
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualBuildingBlock(x2, x1);
       }
@@ -100,7 +99,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexEventGroupBB()
       {
-         var x1 = _simulationConfiguration.EventGroups[0];
+         var x1 = _module.EventGroups;
          var a1 = CreateObject<ApplicationBuilder>().WithName("App.Builder");
          x1.Add(a1);
          var applicationMoleculeBuilder = CreateObject<ApplicationMoleculeBuilder>().WithName("AppMolecule");

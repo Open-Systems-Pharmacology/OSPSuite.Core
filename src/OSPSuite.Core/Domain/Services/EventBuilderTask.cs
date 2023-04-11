@@ -54,9 +54,7 @@ namespace OSPSuite.Core.Domain.Services
             _applicationTransportTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
 
             //Cache all containers where the event group builder will be created using the source criteria
-            var allEventGroupBuilders = _simulationConfiguration.EventGroups.SelectMany(x => x).ToList();
-
-            foreach (var eventGroupBuilder in allEventGroupBuilders)
+            foreach (var eventGroupBuilder in _simulationConfiguration.EventGroups)
             {
                if (_sourceCriteriaTargetContainerCache.Contains(eventGroupBuilder.SourceCriteria))
                   continue;
@@ -64,7 +62,7 @@ namespace OSPSuite.Core.Domain.Services
                _sourceCriteriaTargetContainerCache.Add(eventGroupBuilder.SourceCriteria, _allModelContainerDescriptors.AllSatisfiedBy(eventGroupBuilder.SourceCriteria));
             }
 
-            allEventGroupBuilders.Each(createEventGroupFrom);
+            _simulationConfiguration.EventGroups.Each(createEventGroupFrom);
          }
          finally
          {

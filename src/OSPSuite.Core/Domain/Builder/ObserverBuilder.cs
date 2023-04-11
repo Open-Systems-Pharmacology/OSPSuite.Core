@@ -26,6 +26,7 @@ namespace OSPSuite.Core.Domain.Builder
       public IFormula Formula { get; set; }
       public IDimension Dimension { get; set; }
       public DescriptorCriteria ContainerCriteria { get; set; }
+      public IBuildingBlock BuildingBlock { get; set; }
 
       public ObserverBuilder()
       {
@@ -45,15 +46,13 @@ namespace OSPSuite.Core.Domain.Builder
          _moleculeList.UpdatePropertiesFrom(sourceObserverBuilder.MoleculeList, cloneManager);
       }
 
-      public MoleculeList MoleculeList
-      {
-         get { return _moleculeList; }
-      }
+      public MoleculeList MoleculeList => _moleculeList;
 
       public bool ForAll
       {
-         get { return MoleculeList.ForAll; }
-         set { MoleculeList.ForAll = value; }
+         get => MoleculeList.ForAll;
+         set => MoleculeList.ForAll = value;
       }
+
    }
 }

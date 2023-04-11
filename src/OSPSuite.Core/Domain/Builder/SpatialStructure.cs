@@ -9,7 +9,7 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public interface ISpatialStructure : IBuildingBlock<IContainer>
+   public interface ISpatialStructure : IBuildingBlock, IEnumerable<IContainer>
    {
       /// <summary>
       ///    Container-structure with subcontainers and parameters (e.g. one container but for special modeling situation like

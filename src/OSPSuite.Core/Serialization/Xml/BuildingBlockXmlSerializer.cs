@@ -43,7 +43,7 @@ namespace OSPSuite.Core.Serialization.Xml
 
    public abstract class BuildingBlockXmlSerializer<TBuildingBlock, TBuilder> : BuildingBlockXmlSerializer<TBuildingBlock>
       where TBuildingBlock : class, IBuildingBlock, IBuildingBlock<TBuilder>
-      where TBuilder : class, IObjectBase
+      where TBuilder : class, IBuilder
    {
       protected BuildingBlockXmlSerializer(string name)
          : base(name)
