@@ -105,13 +105,13 @@ namespace OSPSuite.Core.Domain.Builder
          _allElements = builders.ToList();
       }
 
-      public virtual void Add(TBuilder builderToAdd)
+      public void Add(TBuilder builderToAdd)
       {
          _allElements.Add(builderToAdd);
          builderToAdd.BuildingBlock = this;
       }
 
-      public virtual void Remove(TBuilder builderToRemove)
+      public void Remove(TBuilder builderToRemove)
       {
          _allElements.Remove(builderToRemove);
          builderToRemove.BuildingBlock = null;
