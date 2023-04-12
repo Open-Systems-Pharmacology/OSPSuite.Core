@@ -4,7 +4,7 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Comparison
 {
-   public abstract class BuildingBlockDiffBuilder<TBuildingBlock, TBuilder> : DiffBuilder<TBuildingBlock> where TBuildingBlock : class, IBuildingBlock<TBuilder> where TBuilder : class, IObjectBase
+   public abstract class BuildingBlockDiffBuilder<TBuildingBlock, TBuilder> : DiffBuilder<TBuildingBlock> where TBuildingBlock : class, IBuildingBlock<TBuilder> where TBuilder : class, IBuilder
    {
       private readonly ObjectBaseDiffBuilder _objectBaseDiffBuilder;
       private readonly EnumerableComparer _enumerableComparer;
@@ -38,11 +38,21 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public class SpatialStructureDiffBuilder : BuildingBlockDiffBuilder<ISpatialStructure, IContainer>
+   public class SpatialStructureDiffBuilder : DiffBuilder<ISpatialStructure>
    {
+      private readonly ObjectBaseDiffBuilder _objectBaseDiffBuilder;
+      private readonly EnumerableComparer _enumerableComparer;
+
       public SpatialStructureDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer)
-         : base(objectBaseDiffBuilder, enumerableComparer)
       {
+         _objectBaseDiffBuilder = objectBaseDiffBuilder;
+         _enumerableComparer = enumerableComparer;
+      }
+
+      public override void Compare(IComparison<ISpatialStructure> comparison)
+      {
+         _objectBaseDiffBuilder.Compare(comparison);
+         _enumerableComparer.CompareEnumerables(comparison, x => x, x => x.Name);
       }
    }
 

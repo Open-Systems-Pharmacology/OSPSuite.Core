@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Visitor;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.Builder
 {
@@ -64,7 +64,13 @@ namespace OSPSuite.Core.Domain.Builder
       }
    }
 
-   public interface IBuildingBlock<TBuilder> : IBuildingBlock, IEnumerable<TBuilder> where TBuilder : class, IObjectBase
+   public interface IBuilder : IObjectBase
+   {
+      //Reference to building block containing this entity. This does not have to be serialized
+      IBuildingBlock BuildingBlock { get; set; }
+   }
+
+   public interface IBuildingBlock<TBuilder> : IBuildingBlock, IEnumerable<TBuilder> where TBuilder : IBuilder
    {
       /// <summary>
       ///    Adds the specified builder.
@@ -86,9 +92,9 @@ namespace OSPSuite.Core.Domain.Builder
    ///    each of them containing the information to build a modelObject
    /// </summary>
    /// <typeparam name="TBuilder">The type of the builder.</typeparam>
-   public abstract class BuildingBlock<TBuilder> : BuildingBlock, IBuildingBlock<TBuilder> where TBuilder : class, IObjectBase
+   public abstract class BuildingBlock<TBuilder> : BuildingBlock, IBuildingBlock<TBuilder> where TBuilder : class, IBuilder
    {
-      private readonly IList<TBuilder> _allElements;
+      private readonly List<TBuilder> _allElements;
 
       protected BuildingBlock() : this(new List<TBuilder>())
       {
@@ -102,11 +108,13 @@ namespace OSPSuite.Core.Domain.Builder
       public void Add(TBuilder builderToAdd)
       {
          _allElements.Add(builderToAdd);
+         builderToAdd.BuildingBlock = this;
       }
 
       public void Remove(TBuilder builderToRemove)
       {
          _allElements.Remove(builderToRemove);
+         builderToRemove.BuildingBlock = null;
       }
 
       /// <summary>

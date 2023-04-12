@@ -27,12 +27,16 @@ namespace OSPSuite.Core
       {
          base.GlobalContext();
          _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
+         //Freeze in constructor in case access is also required to properties for setup
+         _simulationConfiguration.Freeze();
       }
 
       protected override void Because()
       {
          sut = IoC.Resolve<IModelConstructor>();
          _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
+         //Freeze in the test so that we can access the properties. This needs to be done AFTER the model creation 
+         _simulationConfiguration.Freeze();
          _model = _result.Model;
       }
    }
@@ -474,7 +478,6 @@ namespace OSPSuite.Core
          NEW_PARAM_arterial_blood.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.AMOUNT_PER_TIME);
       }
 
-
       [Observation]
       public void should_have_created_a_new_distributed_parameter_defined_in_the_individual_for_entries_that_do_not_exist_in_the_spatial_structure()
       {
@@ -482,7 +485,6 @@ namespace OSPSuite.Core
          NEW_PARAM_DISTRIBUTED_blood.Value.ShouldBeEqualTo(10);
          NEW_PARAM_DISTRIBUTED_blood.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.AMOUNT_PER_TIME);
       }
-
    }
 
    internal static class ModelExtensionsForSpecs
@@ -508,8 +510,8 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         var moleculeStartValue = _simulationConfiguration.MoleculeStartValues.SelectMany(x=>x).First();
-         var physicalContainer = _simulationConfiguration.SpatialStructures.SelectMany(x=>x.TopContainers)
+         var moleculeStartValue = _simulationConfiguration.MoleculeStartValues.First();
+         var physicalContainer = _simulationConfiguration.SpatialStructures.SelectMany(x => x.TopContainers)
             .Select(x => moleculeStartValue.ContainerPath.TryResolve<IContainer>(x)).First(x => x != null);
 
          physicalContainer.Mode = ContainerMode.Logical;

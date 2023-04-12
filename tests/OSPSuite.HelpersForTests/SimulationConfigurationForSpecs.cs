@@ -1,5 +1,4 @@
-﻿using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Builder;
+﻿using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Helpers
 {
@@ -8,11 +7,7 @@ namespace OSPSuite.Helpers
    /// </summary>
    public class SimulationConfigurationForSpecs : SimulationConfiguration
    {
-      public SimulationConfigurationForSpecs()
-      {
-      }
-
-      public override void ClearCache()
+      public override void ClearBuilderCache()
       {
          /*do nothing*/
       }

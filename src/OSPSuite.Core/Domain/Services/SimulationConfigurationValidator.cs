@@ -35,6 +35,9 @@ namespace OSPSuite.Core.Domain.Services
 
       private void validateEventGroupBuildingBlock(IEventGroupBuildingBlock eventGroups, MoleculeBuildingBlock moleculeBuildingBlock, ValidationResult validationResult)
       {
+         if (eventGroups == null || moleculeBuildingBlock == null)
+            return;
+
          var allMolecules = moleculeBuildingBlock.Select(mb => mb.Name);
          foreach (var eventGroup in eventGroups)
          {
@@ -50,6 +53,9 @@ namespace OSPSuite.Core.Domain.Services
 
       private void validateBuildingBlockWithFormulaCache(IBuildingBlock buildingBlockWithFormulaCache, ValidationResult validationResult)
       {
+         if (buildingBlockWithFormulaCache == null)
+            return;
+
          foreach (var formula in buildingBlockWithFormulaCache.FormulaCache.Where(f => f.IsExplicit()).Cast<ExplicitFormula>())
          {
             var (valid, message) = formula.IsValid();

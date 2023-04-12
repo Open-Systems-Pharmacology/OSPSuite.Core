@@ -1143,7 +1143,7 @@ namespace OSPSuite.Core.Helpers
          Assert.AreEqual(x1.CreationMode, x2.CreationMode);
       }
 
-      public static void AreEqualBuildingBlock<TBuilder>(IBuildingBlock<TBuilder> x1, IBuildingBlock<TBuilder> x2) where TBuilder : class, IObjectBase
+      public static void AreEqualBuildingBlock<TBuilder>(IBuildingBlock<TBuilder> x1, IBuildingBlock<TBuilder> x2) where TBuilder : class, IBuilder
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualBuildingBlock((IBuildingBlock) x1, x2);

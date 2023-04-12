@@ -165,9 +165,9 @@ namespace OSPSuite.Core.Domain.Services
          return !_allBlackBoxParameters.Contains(parameter);
       }
 
-      private IEnumerable<IMoleculeBuilder> allMoleculesUsing(ICoreCalculationMethod calculationMethod, IReadOnlyList<MoleculeBuildingBlock> moleculeBuildingBlocks)
+      private IEnumerable<IMoleculeBuilder> allMoleculesUsing(ICoreCalculationMethod calculationMethod, IReadOnlyCollection<IMoleculeBuilder> molecules)
       {
-         return moleculeBuildingBlocks.SelectMany(x => x)
+         return molecules
             .Where(molecule => molecule.IsFloatingXenobiotic)
             .SelectMany(molecule => molecule.UsedCalculationMethods, (molecule, usedCalculationMethod) => new {molecule, usedCalculationMethod})
             .Where(x => x.usedCalculationMethod.CalculationMethod == calculationMethod.Name)

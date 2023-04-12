@@ -47,11 +47,11 @@ namespace OSPSuite.Core.Domain.Services
          var presentMolecules = simulationConfiguration.AllPresentMolecules().ToList();
          try
          {
-            foreach (var observerBuilder in observers.SelectMany(x=>x.AmountObserverBuilders))
+            foreach (var observerBuilder in observers.OfType<IAmountObserverBuilder>())
                createAmountObserver(observerBuilder, model, presentMolecules);
 
 
-            foreach (var observerBuilder in observers.SelectMany(x => x.ContainerObserverBuilders))
+            foreach (var observerBuilder in observers.OfType<IContainerObserverBuilder>())
                createContainerObserver(observerBuilder, model, presentMolecules);
          }
          finally

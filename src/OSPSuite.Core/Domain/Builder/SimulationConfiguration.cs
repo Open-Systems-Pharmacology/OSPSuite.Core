@@ -12,8 +12,17 @@ namespace OSPSuite.Core.Domain.Builder
    {
       private readonly List<ExpressionProfileBuildingBlock> _expressionProfiles = new List<ExpressionProfileBuildingBlock>();
       private readonly List<ModuleConfiguration> _moduleConfigurations = new List<ModuleConfiguration>();
-      private readonly ICache<IObjectBase, IObjectBase> _builderCache = new Cache<IObjectBase, IObjectBase>(onMissingKey: x => null);
       private readonly List<ICoreCalculationMethod> _allCalculationMethods = new List<ICoreCalculationMethod>();
+
+      //Temporary objects used for model construction only
+      private readonly Cache<IObjectBase, IObjectBase> _builderCache = new Cache<IObjectBase, IObjectBase>(onMissingKey: x => null);
+      private readonly ObjectBaseCache<ITransportBuilder> _passiveTransports = new ObjectBaseCache<ITransportBuilder>();
+      private readonly ObjectBaseCache<IReactionBuilder> _reactions = new ObjectBaseCache<IReactionBuilder>();
+      private readonly ObjectBaseCache<IEventGroupBuilder> _eventGroups = new ObjectBaseCache<IEventGroupBuilder>();
+      private readonly ObjectBaseCache<IObserverBuilder> _observers = new ObjectBaseCache<IObserverBuilder>();
+      private readonly ObjectBaseCache<IMoleculeBuilder> _molecules = new ObjectBaseCache<IMoleculeBuilder>();
+      private readonly StartValueCache<ParameterStartValue> _parameterStartValues = new StartValueCache<ParameterStartValue>();
+      private readonly StartValueCache<MoleculeStartValue> _moleculeStartValues = new StartValueCache<MoleculeStartValue>();
 
       public SimModelExportMode SimModelExportMode { get; set; } = SimModelExportMode.Full;
 
@@ -35,38 +44,47 @@ namespace OSPSuite.Core.Domain.Builder
       public virtual void AddCalculationMethod(ICoreCalculationMethod calculationMethodToAdd) => _allCalculationMethods.Add(calculationMethodToAdd);
 
       public virtual IReadOnlyList<ISpatialStructure> SpatialStructures => all(x => x.SpatialStructure);
-      public virtual IReadOnlyList<IPassiveTransportBuildingBlock> PassiveTransports => all(x => x.PassiveTransports);
-      public virtual IReadOnlyList<IReactionBuildingBlock> Reactions => all(x => x.Reactions);
-      public virtual IReadOnlyList<ParameterStartValuesBuildingBlock> ParameterStartValues => all(x => x.ParameterStartValuesCollection);
-      public virtual IReadOnlyList<MoleculeStartValuesBuildingBlock> MoleculeStartValues => all(x => x.MoleculeStartValuesCollection);
-      public virtual IReadOnlyList<IEventGroupBuildingBlock> EventGroups => all(x => x.EventGroups);
-      public virtual IReadOnlyList<IObserverBuildingBlock> Observers => all(x => x.Observers);
+      public virtual IReadOnlyCollection<ITransportBuilder> PassiveTransports => _passiveTransports;
+      public virtual IReadOnlyCollection<IReactionBuilder> Reactions => _reactions;
+      public virtual IReadOnlyCollection<IEventGroupBuilder> EventGroups => _eventGroups;
+      public virtual IReadOnlyCollection<IObserverBuilder> Observers => _observers;
+      public virtual IReadOnlyCollection<IMoleculeBuilder> Molecules => _molecules;
+      public virtual IReadOnlyCollection<ParameterStartValue> ParameterStartValues => _parameterStartValues;
+      public virtual IReadOnlyCollection<MoleculeStartValue> MoleculeStartValues => _moleculeStartValues;
 
-      //There are ways to cache this a bit better
-      public virtual IReadOnlyList<MoleculeBuildingBlock> Molecules => all(x => x.Molecules);
-
-      public IMoleculeBuilder MoleculeByName(string name)
-      {
-         //NOT EFFICIENT!!
-         return Molecules.SelectMany(x => x).FindByName(name);
-      }
+      public IMoleculeBuilder MoleculeByName(string name) => _molecules[name];
 
       private IReadOnlyList<T> all<T>(Func<Module, T> propAccess) where T : IBuildingBlock =>
-         _moduleConfigurations.Select(x => propAccess(x.Module)).ToList();
-         
-      private IReadOnlyList<T> all<T>(Func<Module, IReadOnlyList<T>> propAccess) where T : IBuildingBlock =>
-         _moduleConfigurations.SelectMany(x => propAccess(x.Module)).ToList();
+         _moduleConfigurations.Select(x => propAccess(x.Module)).Where(x => x != null).ToList();
 
-      public virtual IEnumerable<IMoleculeBuilder> AllPresentMolecules() => 
-         _moduleConfigurations.SelectMany(x => x.AllPresentMolecules());
+      private IEnumerable<T> allBuilder<T>(Func<Module, IBuildingBlock<T>> propAccess) where T : IBuilder =>
+         all(propAccess).SelectMany(x => x);
+
+      private IEnumerable<T> allStartValueBuilder<T>(Func<ModuleConfiguration, IBuildingBlock<T>> propAccess) where T : IStartValue =>
+         _moduleConfigurations.Select(propAccess).Where(x => x != null).SelectMany(x => x);
+
+      public virtual IEnumerable<IMoleculeBuilder> AllPresentMolecules()
+      {
+         var moleculeNames = _moleculeStartValues
+            .Where(moleculeStartValue => moleculeStartValue.IsPresent)
+            .Select(moleculeStartValue => moleculeStartValue.MoleculeName)
+            .Distinct();
+
+
+         return moleculeNames.Select(x => _molecules[x]).Where(m => m != null);
+      }
 
       public virtual IEnumerable<MoleculeStartValue> AllPresentMoleculeValues() =>
-         _moduleConfigurations.SelectMany(x => x.AllPresentMoleculeValues());
+         AllPresentMoleculeValuesFor(_molecules.Select(x => x.Name));
 
-      public virtual IEnumerable<MoleculeStartValue> AllPresentMoleculeValuesFor(IEnumerable<string> moleculeNames) => 
-         _moduleConfigurations.SelectMany(x => x.AllPresentMoleculeValuesFor(moleculeNames));
+      public virtual IEnumerable<MoleculeStartValue> AllPresentMoleculeValuesFor(IEnumerable<string> moleculeNames)
+      {
+         return _moleculeStartValues
+            .Where(msv => moleculeNames.Contains(msv.MoleculeName))
+            .Where(msv => msv.IsPresent);
+      }
 
-      public virtual IEnumerable<IMoleculeBuilder> AllFloatingMolecules() => Molecules.SelectMany(x => x.AllFloating());
+      public virtual IEnumerable<IMoleculeBuilder> AllFloatingMolecules() => Molecules.Where(x => x.IsFloating);
 
       public virtual IReadOnlyList<string> AllPresentMoleculeNames() => AllPresentMoleculeNames(x => true);
 
@@ -90,8 +108,6 @@ namespace OSPSuite.Core.Domain.Builder
 
       public virtual IObjectBase BuilderFor(IObjectBase modelObject) => _builderCache[modelObject];
 
-      public virtual void ClearCache() => _builderCache.Clear();
-
       public virtual void AddBuilderReference(IObjectBase modelObject, IObjectBase builder)
       {
          _builderCache[modelObject] = builder;
@@ -104,6 +120,36 @@ namespace OSPSuite.Core.Domain.Builder
          ModuleConfigurations.Each(x => x.AcceptVisitor(visitor));
          Individual?.AcceptVisitor(visitor);
          _expressionProfiles.Each(x => x.AcceptVisitor(visitor));
+      }
+
+      //Internal because this should not be called outside of core.
+      internal void Freeze()
+      {
+         ClearCache();
+         _passiveTransports.AddRange(allBuilder(x => x.PassiveTransports));
+         _reactions.AddRange(allBuilder(x => x.Reactions));
+         _eventGroups.AddRange(allBuilder(x => x.EventGroups));
+         _observers.AddRange(allBuilder(x => x.Observers));
+         _molecules.AddRange(allBuilder(x => x.Molecules));
+         _parameterStartValues.AddRange(allStartValueBuilder(x => x.SelectedParameterStartValues));
+         _moleculeStartValues.AddRange(allStartValueBuilder(x => x.SelectedMoleculeStartValues));
+      }
+
+      internal void ClearCache()
+      {
+         ClearBuilderCache();
+         _passiveTransports.Clear();
+         _reactions.Clear();
+         _eventGroups.Clear();
+         _observers.Clear();
+         _molecules.Clear();
+         _parameterStartValues.Clear();
+         _moleculeStartValues.Clear();
+      }
+
+      public virtual void ClearBuilderCache()
+      {
+         _builderCache.Clear();
       }
    }
 }

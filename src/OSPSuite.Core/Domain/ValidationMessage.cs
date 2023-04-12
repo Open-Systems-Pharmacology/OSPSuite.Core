@@ -11,7 +11,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Gets the type of the message.
       /// </summary>
-      public virtual NotificationType NotificationType { get; private set; }
+      public virtual NotificationType NotificationType { get; }
 
       /// <summary>
       ///    Gets the  text describing the validation problem
@@ -21,13 +21,13 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    returns the underlying object for which the validation message was created. (e.g Builder object)
       /// </summary>
-      public virtual IObjectBase Object { get; private set; }
+      public virtual IObjectBase Object { get; }
 
       /// <summary>
       ///    returns the Building Block object where the Object is defined. Building Block is only set if the object
       ///    is a builder. It is typically null when dealing with objects defined in a simulation
       /// </summary>
-      public virtual IBuildingBlock BuildingBlock { get; private set; }
+      public virtual IBuildingBlock BuildingBlock { get; }
 
       /// <summary>
       ///    Initializes a new instance of the <see cref="ValidationMessage" /> class.
