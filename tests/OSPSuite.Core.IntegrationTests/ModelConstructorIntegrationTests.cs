@@ -35,7 +35,6 @@ namespace OSPSuite.Core
       {
          sut = IoC.Resolve<IModelConstructor>();
          _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
-         //Freeze in the test so that we can access the properties. This needs to be done AFTER the model creation 
          _model = _result.Model;
          _simulationBuilder = _result.SimulationBuilder;
       }
