@@ -10,7 +10,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Services
 {
-   public interface ICircularReferenceChecker
+   internal interface ICircularReferenceChecker
    {
       /// <summary>
       ///    Returns <c>true</c> if the usage of <paramref name="path" /> in the formula of <paramref name="referenceObject" />
@@ -65,10 +65,10 @@ namespace OSPSuite.Core.Services
 
          try
          {
-            var (model, simulationConfiguration) = modelConfiguration;
+            var (model, simulationBuilder) = modelConfiguration;
             var allUsingFormulas = model.Root.GetAllChildren<IUsingFormula>();
             allUsingFormulas.Each(buildEntityReferenceCache);
-            allUsingFormulas.Each(x => checkCircularReferencesIn(x, simulationConfiguration, validationResult));
+            allUsingFormulas.Each(x => checkCircularReferencesIn(x, simulationBuilder, validationResult));
             return validationResult;
          }
          finally
@@ -100,14 +100,14 @@ namespace OSPSuite.Core.Services
          }
       }
 
-      private void checkCircularReferencesIn(IUsingFormula usingFormula, SimulationConfiguration simulationConfiguration, ValidationResult validationResult)
+      private void checkCircularReferencesIn(IUsingFormula usingFormula, SimulationBuilder simulationBuilder, ValidationResult validationResult)
       {
          var references = _entityReferenceCache[usingFormula];
          if (!references.Contains(usingFormula))
             return;
 
          var entityAbsolutePath = _objectPathFactory.CreateAbsoluteObjectPath(usingFormula).ToPathString();
-         var builder = simulationConfiguration.BuilderFor(usingFormula);
+         var builder = simulationBuilder.BuilderFor(usingFormula);
          var objectWithError = builder ?? usingFormula;
          var entityType = _objectTypeResolver.TypeFor(usingFormula);
          var allReferencesName = references.Distinct().AllNames();

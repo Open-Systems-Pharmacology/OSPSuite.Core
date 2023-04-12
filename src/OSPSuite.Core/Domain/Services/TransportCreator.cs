@@ -8,13 +8,13 @@ using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain.Services
 {
-   public interface ITransportCreator
+   internal interface ITransportCreator
    {
       void CreatePassiveTransport(ITransportBuilder passiveTransportBuilder, ModelConfiguration modelConfiguration);
       void CreateActiveTransport(ModelConfiguration modelConfiguration);
    }
 
-   public class TransportCreator : ITransportCreator
+   internal class TransportCreator : ITransportCreator
    {
       private readonly ITransportBuilderToTransportMapper _transportMapper;
       private readonly IKeywordReplacerTask _keywordReplacerTask;
@@ -41,25 +41,20 @@ namespace OSPSuite.Core.Domain.Services
 
       public void CreateActiveTransport(ModelConfiguration modelConfiguration)
       {
-         var (model, simulationConfiguration) = modelConfiguration;
+         var (model, simulationBuilder) = modelConfiguration;
          var allNeighborhoods = model.Neighborhoods.GetChildren<Neighborhood>().ToList();
-         //TODO can we have a transport define in one grabbing a molecule from another module?
-         foreach (var module in simulationConfiguration.ModuleConfigurations.Select(x=>x.Module).Where(x=>x.Molecules!=null))
+         foreach (var molecule in simulationBuilder.AllFloatingMolecules())
          {
-            var molecules = module.Molecules;
-            foreach (var molecule in molecules.AllFloating())
+            foreach (var transporterMolecule in molecule.TransporterMoleculeContainerCollection)
             {
-               foreach (var transporterMolecule in molecule.TransporterMoleculeContainerCollection)
-               {
-                  var transporter = molecules[transporterMolecule.Name];
-                  // transporter not available in molecules (can happen when swapping building block)
-                  if (transporter == null)
-                     continue;
+               var transporter = simulationBuilder.MoleculeByName(transporterMolecule.Name);
+               // transporter not available in molecules (can happen when swapping building block)
+               if (transporter == null)
+                  continue;
 
-                  foreach (var activeTransport in transporterMolecule.ActiveTransportRealizations)
-                  {
-                     addActiveTransportToModel(activeTransport, allNeighborhoods, molecule, transporterMolecule, modelConfiguration);
-                  }
+               foreach (var activeTransport in transporterMolecule.ActiveTransportRealizations)
+               {
+                  addActiveTransportToModel(activeTransport, allNeighborhoods, molecule, transporterMolecule, modelConfiguration);
                }
             }
          }
@@ -68,7 +63,7 @@ namespace OSPSuite.Core.Domain.Services
       private void addPassiveTransportToModel(ITransportBuilder passiveTransportBuilder, IEnumerable<Neighborhood> allNeighborhoods,
          IMoleculeBuilder molecule, ModelConfiguration modelConfiguration)
       {
-         var (model, simulationConfiguration) = modelConfiguration;
+         var (model, simulationBuilder) = modelConfiguration;
          // first check if the molecule should be transported
          if (!passiveTransportBuilder.TransportsMolecule(molecule.Name))
             return;
@@ -77,7 +72,7 @@ namespace OSPSuite.Core.Domain.Services
 
          foreach (var neighborhood in neighborhoods)
          {
-            var passiveTransport = mapFrom(passiveTransportBuilder, neighborhood, molecule.Name, simulationConfiguration);
+            var passiveTransport = mapFrom(passiveTransportBuilder, neighborhood, molecule.Name, simulationBuilder);
             addPassiveTransportToNeighborhood(neighborhood, molecule.Name, passiveTransport);
             _keywordReplacerTask.ReplaceIn(passiveTransport, model.Root, molecule.Name, neighborhood);
          }
@@ -151,17 +146,17 @@ namespace OSPSuite.Core.Domain.Services
       }
 
       private IContainer addActiveTransportToNeighborhood(Neighborhood neighborhood, ITransport transport,
-         TransporterMoleculeContainer transporterMolecule, string transportedMoleculeName, SimulationConfiguration simulationConfiguration)
+         TransporterMoleculeContainer transporterMolecule, string transportedMoleculeName, SimulationBuilder simulationBuilder)
       {
          return _moleculePropertiesContainerTask.NeighborhoodMoleculeTransportContainerFor(neighborhood, transportedMoleculeName, transporterMolecule,
-               transport.Name, simulationConfiguration)
+               transport.Name, simulationBuilder)
             .WithChild(transport);
       }
 
       private ITransport mapFrom(ITransportBuilder transportBuilder, Neighborhood neighborhood, string moleculeName,
-         SimulationConfiguration simulationConfiguration)
+         SimulationBuilder simulationBuilder)
       {
-         var transport = _transportMapper.MapFrom(transportBuilder, simulationConfiguration);
+         var transport = _transportMapper.MapFrom(transportBuilder, simulationBuilder);
          transport.SourceAmount = neighborhood.GetNeighborSatisfying(transportBuilder.SourceCriteria)
             .GetSingleChildByName<IMoleculeAmount>(moleculeName);
          transport.TargetAmount = neighborhood.GetNeighborSatisfying(transportBuilder.TargetCriteria)

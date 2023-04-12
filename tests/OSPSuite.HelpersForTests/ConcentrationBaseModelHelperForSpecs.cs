@@ -68,7 +68,7 @@ namespace OSPSuite.Helpers
 
       private SimulationConfiguration createSimulationConfiguration()
       {
-         var simulationConfiguration = new SimulationConfigurationForSpecs();
+         var simulationConfiguration = new SimulationConfiguration();
          
          var module = new Module
          {
@@ -87,10 +87,11 @@ namespace OSPSuite.Helpers
          moleculeStartValues.Add(_moleculeStartValuesCreator.CreateMoleculeStartValue(objectPathForContainerThatDoesNotExist, "A", _concentrationDimension));
 
          module.AddMoleculeStartValueBlock(moleculeStartValues);
-         module.AddParameterStartValueBlock(_objectBaseFactory.Create<ParameterStartValuesBuildingBlock>());
+         var parameterStartValues = _objectBaseFactory.Create<ParameterStartValuesBuildingBlock>();
+         module.AddParameterStartValueBlock(parameterStartValues);
          setMoleculeStartValues(moleculeStartValues);
 
-         var moduleConfiguration = new ModuleConfiguration(module, moleculeStartValues);
+         var moduleConfiguration = new ModuleConfiguration(module, moleculeStartValues, parameterStartValues);
          simulationConfiguration.AddModuleConfiguration(moduleConfiguration);
          return simulationConfiguration;
       }

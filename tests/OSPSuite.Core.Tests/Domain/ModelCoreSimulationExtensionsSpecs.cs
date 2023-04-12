@@ -17,7 +17,7 @@ namespace OSPSuite.Core.Domain
             {
                Root = new Container { new EventGroup() }
             },
-            Configuration = new SimulationConfigurationForSpecs()
+            Configuration = new SimulationConfiguration()
          };
          var reactionBuildingBlock = new ReactionBuildingBlock();
          var reactionAtoB = new ReactionBuilder();
@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Domain
          reactionBuildingBlock.Add(reactionBtoA);
 
          var module = new Module {Reactions = reactionBuildingBlock};
-         var moduleConfiguration = new ModuleConfiguration(module);
+         var moduleConfiguration = new ModuleConfiguration(module, null, null);
          _simulation.Configuration.AddModuleConfiguration(moduleConfiguration);
       }
 

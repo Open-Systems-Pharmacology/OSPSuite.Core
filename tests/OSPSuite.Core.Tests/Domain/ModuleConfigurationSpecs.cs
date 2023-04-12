@@ -1,0 +1,63 @@
+﻿using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain.Builder;
+
+namespace OSPSuite.Core.Domain
+{
+   public abstract class concern_for_ModuleConfiguration : ContextSpecification<ModuleConfiguration>
+   {
+      protected Module _module;
+      protected MoleculeStartValuesBuildingBlock _moleculeStartValuesBuildingBlock1;
+      protected MoleculeStartValuesBuildingBlock _moleculeStartValuesBuildingBlock2;
+      protected ParameterStartValuesBuildingBlock _parameterStartValuesBuildingBlock;
+
+      protected override void Context()
+      {
+         _module = new Module()
+         {
+            PassiveTransports = new PassiveTransportBuildingBlock(),
+            SpatialStructure = new SpatialStructure(),
+            Observers = new ObserverBuildingBlock(),
+            EventGroups = null,
+            Reactions = new ReactionBuildingBlock(),
+            Molecules = new MoleculeBuildingBlock()
+         };
+
+         _moleculeStartValuesBuildingBlock1 = new MoleculeStartValuesBuildingBlock();
+         _moleculeStartValuesBuildingBlock2 = new MoleculeStartValuesBuildingBlock();
+         _module.AddMoleculeStartValueBlock(_moleculeStartValuesBuildingBlock1);
+         _module.AddMoleculeStartValueBlock(_moleculeStartValuesBuildingBlock2);
+          _parameterStartValuesBuildingBlock = new ParameterStartValuesBuildingBlock();
+         _module.AddParameterStartValueBlock(_parameterStartValuesBuildingBlock);
+
+         sut =new ModuleConfiguration(_module);
+      }
+   }
+
+   public class When_creating_new_module_configuration_from_a_module : concern_for_ModuleConfiguration
+   {
+      [Observation]
+      public void should_return_the_fist_molecule_start_value_and_parameter_start_value_if_one_is_defined()
+      {
+         sut.SelectedMoleculeStartValues.ShouldBeEqualTo(_moleculeStartValuesBuildingBlock1);
+         sut.SelectedParameterStartValues.ShouldBeEqualTo(_parameterStartValuesBuildingBlock);
+      }
+   }
+
+
+   public class When_creating_new_module_configuration_from_a_module_with_predefined_start_values : concern_for_ModuleConfiguration
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut = new ModuleConfiguration(_module, _moleculeStartValuesBuildingBlock2, _parameterStartValuesBuildingBlock);
+      }
+
+      [Observation]
+      public void should_return_the_expected_molecule_and_parameter_start_values()
+      {
+         sut.SelectedMoleculeStartValues.ShouldBeEqualTo(_moleculeStartValuesBuildingBlock2);
+         sut.SelectedParameterStartValues.ShouldBeEqualTo(_parameterStartValuesBuildingBlock);
+      }
+   }
+}

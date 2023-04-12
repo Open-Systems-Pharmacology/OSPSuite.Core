@@ -11,12 +11,12 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
-   public interface ICalculationMethodTask
+   internal interface ICalculationMethodTask
    {
       void MergeCalculationMethodInModel(ModelConfiguration modelConfiguration);
    }
 
-   public class CalculationMethodTask : ICalculationMethodTask
+   internal class CalculationMethodTask : ICalculationMethodTask
    {
       private readonly IFormulaTask _formulaTask;
       private readonly IKeywordReplacerTask _keywordReplacerTask;
@@ -27,6 +27,7 @@ namespace OSPSuite.Core.Domain.Services
       private IList<IParameter> _allBlackBoxParameters;
       private IModel _model;
       private SimulationConfiguration _simulationConfiguration;
+      private SimulationBuilder _simulationBuilder;
 
       public CalculationMethodTask(
          IFormulaTask formulaTask,
@@ -46,12 +47,12 @@ namespace OSPSuite.Core.Domain.Services
       {
          try
          {
-            (_model, _simulationConfiguration) = modelConfiguration;
+            (_model, _simulationConfiguration, _simulationBuilder ) = modelConfiguration;
             _allContainers = _model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
             _allBlackBoxParameters = _model.Root.GetAllChildren<IParameter>().Where(p => p.Formula.IsBlackBox()).ToList();
             foreach (var calculationMethod in _simulationConfiguration.AllCalculationMethods)
             {
-               var allMoleculesUsingMethod = allMoleculesUsing(calculationMethod, _simulationConfiguration.Molecules).ToList();
+               var allMoleculesUsingMethod = allMoleculesUsing(calculationMethod, _simulationBuilder.Molecules).ToList();
 
                createFormulaForBlackBoxParameters(calculationMethod, allMoleculesUsingMethod);
 
@@ -61,6 +62,7 @@ namespace OSPSuite.Core.Domain.Services
          finally
          {
             _simulationConfiguration = null;
+            _simulationBuilder = null;
             _allContainers.Clear();
             _allBlackBoxParameters.Clear();
             _model = null;
@@ -80,7 +82,7 @@ namespace OSPSuite.Core.Domain.Services
                   //does not exist yet
                   if (existingParameter == null)
                   {
-                     var parameter = _parameterMapper.MapFrom(helpParameter, _simulationConfiguration);
+                     var parameter = _parameterMapper.MapFrom(helpParameter, _simulationBuilder);
                      container.Add(parameter);
                      replaceKeyWordsIn(parameter, molecule.Name);
                   }
@@ -107,7 +109,7 @@ namespace OSPSuite.Core.Domain.Services
                   //parameter formula was not set yet
                   if (parameter.Formula.IsBlackBox())
                   {
-                     parameter.Formula = _formulaMapper.MapFrom(formula, _simulationConfiguration);
+                     parameter.Formula = _formulaMapper.MapFrom(formula, _simulationBuilder);
                      replaceKeyWordsIn(parameter, molecule.Name);
                   }
                   else
@@ -144,7 +146,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          var previousFormula = originalParameter.Formula;
          //needs to use the parameter in order to keep the hierarchy. Hence we set the formula in the parameter
-         originalParameter.Formula = _formulaMapper.MapFrom(calculationMethodFormula, _simulationConfiguration);
+         originalParameter.Formula = _formulaMapper.MapFrom(calculationMethodFormula, _simulationBuilder);
 
          //check  if the formula set are the same. it is necessary to replace keywords before doing that
          replaceKeyWordsIn(originalParameter, moleculeName);

@@ -12,30 +12,30 @@ namespace OSPSuite.Core.Domain.Mappers
       /// <summary>
       ///    Only parameters having one of <paramref name="parameterBuildModesToMap" /> will be mapped or all if <paramref name="parameterBuildModesToMap" /> was not specified
       /// </summary>
-      IEnumerable<IParameter> MapFrom(IEnumerable<IParameter> parameterBuilders, SimulationConfiguration simulationConfiguration, params ParameterBuildMode[] parameterBuildModesToMap);
+      IEnumerable<IParameter> MapFrom(IEnumerable<IParameter> parameterBuilders, SimulationBuilder simulationBuilder, params ParameterBuildMode[] parameterBuildModesToMap);
 
       /// <summary>
       ///    Only direct children parameters  of <paramref name="container"/> having one of <paramref name="parameterBuildModesToMap" /> will be mapped or all if <paramref name="parameterBuildModesToMap" /> was not specified
       /// </summary>
-      IEnumerable<IParameter> MapFrom(IContainer container, SimulationConfiguration simulationConfiguration, params ParameterBuildMode[] parameterBuildModesToMap);
+      IEnumerable<IParameter> MapFrom(IContainer container, SimulationBuilder simulationBuilder, params ParameterBuildMode[] parameterBuildModesToMap);
 
       /// <summary>
       ///    Only direct children parameters  of <paramref name="container"/> of type <see cref="ParameterBuildMode.Global"/> or <seealso cref="ParameterBuildMode.Property"/> will be mapped
       /// </summary>
-      IEnumerable<IParameter> MapGlobalOrPropertyFrom(IContainer container, SimulationConfiguration simulationConfiguration);
+      IEnumerable<IParameter> MapGlobalOrPropertyFrom(IContainer container, SimulationBuilder simulationBuilder);
 
       /// <summary>
       ///    Only direct children parameters  of <paramref name="container"/> of type <see cref="ParameterBuildMode.Local"/> will be mapped
       /// </summary>
-      IEnumerable<IParameter> MapLocalFrom(IContainer container, SimulationConfiguration simulationConfiguration);
+      IEnumerable<IParameter> MapLocalFrom(IContainer container, SimulationBuilder simulationBuilder);
 
       /// <summary>
       ///    All direct children parameters  of <paramref name="container"/>  will be mapped
       /// </summary>
-      IEnumerable<IParameter> MapAllFrom(IContainer container, SimulationConfiguration simulationConfiguration);
+      IEnumerable<IParameter> MapAllFrom(IContainer container, SimulationBuilder simulationBuilder);
    }
 
-   public class ParameterBuilderCollectionToParameterCollectionMapper : IParameterBuilderCollectionToParameterCollectionMapper
+   internal class ParameterBuilderCollectionToParameterCollectionMapper : IParameterBuilderCollectionToParameterCollectionMapper
    {
       private readonly IParameterBuilderToParameterMapper _parameterMapper;
 
@@ -44,30 +44,30 @@ namespace OSPSuite.Core.Domain.Mappers
          _parameterMapper = parameterMapper;
       }
 
-      public IEnumerable<IParameter> MapFrom(IEnumerable<IParameter> parameterBuilders, SimulationConfiguration simulationConfiguration, params ParameterBuildMode[] parameterBuildModesToMap)
+      public IEnumerable<IParameter> MapFrom(IEnumerable<IParameter> parameterBuilders, SimulationBuilder simulationBuilder, params ParameterBuildMode[] parameterBuildModesToMap)
       {
          return parameterBuilders.Where(p => canBeMapped(p, parameterBuildModesToMap))
-            .Select(parameterBuilder => _parameterMapper.MapFrom(parameterBuilder, simulationConfiguration)).ToList();
+            .Select(parameterBuilder => _parameterMapper.MapFrom(parameterBuilder, simulationBuilder)).ToList();
       }
 
-      public IEnumerable<IParameter> MapFrom(IContainer container, SimulationConfiguration simulationConfiguration, params ParameterBuildMode[] parameterBuildModesToMap)
+      public IEnumerable<IParameter> MapFrom(IContainer container, SimulationBuilder simulationBuilder, params ParameterBuildMode[] parameterBuildModesToMap)
       {
-         return MapFrom(container.GetChildren<IParameter>(), simulationConfiguration, parameterBuildModesToMap);
+         return MapFrom(container.GetChildren<IParameter>(), simulationBuilder, parameterBuildModesToMap);
       }
 
-      public IEnumerable<IParameter> MapGlobalOrPropertyFrom(IContainer container, SimulationConfiguration simulationConfiguration)
+      public IEnumerable<IParameter> MapGlobalOrPropertyFrom(IContainer container, SimulationBuilder simulationBuilder)
       {
-         return MapFrom(container, simulationConfiguration, ParameterBuildMode.Global, ParameterBuildMode.Property);
+         return MapFrom(container, simulationBuilder, ParameterBuildMode.Global, ParameterBuildMode.Property);
       }
 
-      public IEnumerable<IParameter> MapLocalFrom(IContainer container, SimulationConfiguration simulationConfiguration)
+      public IEnumerable<IParameter> MapLocalFrom(IContainer container, SimulationBuilder simulationBuilder)
       {
-         return MapFrom(container, simulationConfiguration, ParameterBuildMode.Local);
+         return MapFrom(container, simulationBuilder, ParameterBuildMode.Local);
       }
 
-      public IEnumerable<IParameter> MapAllFrom(IContainer container, SimulationConfiguration simulationConfiguration)
+      public IEnumerable<IParameter> MapAllFrom(IContainer container, SimulationBuilder simulationBuilder)
       {
-         return MapFrom(container, simulationConfiguration);
+         return MapFrom(container, simulationBuilder);
       }
 
       private bool canBeMapped(IParameter parameter, params ParameterBuildMode[] parameterBuildModesToMap)

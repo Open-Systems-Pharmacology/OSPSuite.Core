@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Domain.Services
       Delete
    }
 
-   public interface IModelValidator
+   internal interface IModelValidator
    {
       ValidationResult Validate(ModelConfiguration modelConfiguration);
    }
@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IObjectTypeResolver _objectTypeResolver;
       private readonly IObjectPathFactory _objectPathFactory;
       private readonly IEnumerable<string> _keywords;
-      private SimulationConfiguration _simulationConfiguration;
+      private SimulationBuilder _simulationBuilder;
       private ValidationResult _result;
 
       protected ModelValidator(IObjectTypeResolver objectTypeResolver, IObjectPathFactory objectPathFactory)
@@ -64,7 +64,7 @@ namespace OSPSuite.Core.Domain.Services
       protected void CheckFormulaIn(IUsingFormula entity, IFormula formulaToCheck, ResolveErrorBehavior resolveErrorBehavior)
       {
          var entityAbsolutePath = _objectPathFactory.CreateAbsoluteObjectPath(entity).ToPathString();
-         var builder = _simulationConfiguration.BuilderFor(entity);
+         var builder = _simulationBuilder.BuilderFor(entity);
          var objectWithError = builder ?? entity;
 
          // Dynamic formula may contain object path that will be resolved per instance. It cannot be checked here
@@ -86,7 +86,7 @@ namespace OSPSuite.Core.Domain.Services
 
       protected void CheckPath(IUsingFormula entity, ObjectPath objectPathToCheck, ResolveErrorBehavior resolveErrorBehavior)
       {
-         var builder = _simulationConfiguration.BuilderFor(entity);
+         var builder = _simulationBuilder.BuilderFor(entity);
          var objectWithError = builder ?? entity;
          var entityAbsolutePath = _objectPathFactory.CreateAbsoluteObjectPath(entity).ToString();
          var entityType = _objectTypeResolver.TypeFor(entity);
@@ -131,15 +131,15 @@ namespace OSPSuite.Core.Domain.Services
       {
          try
          {
-            var (model, simulationConfiguration) = modelConfiguration;
+            var (model, simulationBuilder) = modelConfiguration;
             _result = new ValidationResult();
-            _simulationConfiguration = simulationConfiguration;
+            _simulationBuilder = simulationBuilder;
             model.AcceptVisitor(this);
             return _result;
          }
          finally
          {
-            _simulationConfiguration = null;
+            _simulationBuilder = null;
             _result = null;
          }
       }

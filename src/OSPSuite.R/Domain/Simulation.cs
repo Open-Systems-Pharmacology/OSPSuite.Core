@@ -116,7 +116,7 @@ namespace OSPSuite.R.Domain
          set => CoreSimulation.Configuration = value;
       }
 
-      public IReadOnlyCollection<IReactionBuilder> Reactions => CoreSimulation.Reactions;
+      public IReadOnlyCollection<IReactionBuildingBlock> Reactions => CoreSimulation.Reactions;
 
       public IReadOnlyList<string> CompoundNames => CoreSimulation.CompoundNames;
 

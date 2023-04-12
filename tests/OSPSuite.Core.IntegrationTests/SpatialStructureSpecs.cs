@@ -9,14 +9,16 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core
 {
-   public abstract class concern_for_SpatialStructure : ContextForIntegration<ISpatialStructure>
+   internal abstract class concern_for_SpatialStructure : ContextForIntegration<ISpatialStructure>
    {
       protected SimulationConfiguration _simulationConfiguration;
+      protected SimulationBuilder _simulationBuilder;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
          _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
       }
 
       protected override void Context()
@@ -25,7 +27,7 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_told_to_update_properties_from_a_source_spatial_structure_with_clone_manager_for_building_blocks : concern_for_SpatialStructure
+   internal class When_told_to_update_properties_from_a_source_spatial_structure_with_clone_manager_for_building_blocks : concern_for_SpatialStructure
    {
       private ISpatialStructure _sourceSpatialStructure;
       private ICloneManagerForBuildingBlock _cloneManager;
@@ -34,7 +36,7 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _sourceSpatialStructure = _simulationConfiguration.SpatialStructures[0];
+         _sourceSpatialStructure = _simulationBuilder.SpatialStructures[0];
          _sourceSpatialStructure.Version = _buildingBlockVersion;
          _cloneManager = IoC.Resolve<ICloneManagerForBuildingBlock>();
       }

@@ -57,7 +57,7 @@ namespace OSPSuite.Helpers
          module.Observers = getObservers();
          module.EventGroups = getEventGroups();
 
-         var simulationConfiguration = new SimulationConfigurationForSpecs
+         var simulationConfiguration = new SimulationConfiguration()
          {
             SimulationSettings = createSimulationConfiguration(),
          };

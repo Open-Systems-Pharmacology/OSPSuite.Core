@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Domain.Mappers
    /// <summary>
    ///    Maps neighborhood builder object into a neighborhood
    /// </summary>
-   public interface INeighborhoodBuilderToNeighborhoodMapper
+   internal interface INeighborhoodBuilderToNeighborhoodMapper
    {
       /// <summary>
       ///    Maps neighborhood builder object into a neighborhood
@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Domain.Mappers
          IEnumerable<string> moleculeNamesWithCopyPropertiesRequired, ModelConfiguration modelConfiguration);
    }
 
-   public class NeighborhoodBuilderToNeighborhoodMapper : INeighborhoodBuilderToNeighborhoodMapper
+   internal class NeighborhoodBuilderToNeighborhoodMapper : INeighborhoodBuilderToNeighborhoodMapper
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IContainerBuilderToContainerMapper _containerMapper;
@@ -34,10 +34,12 @@ namespace OSPSuite.Core.Domain.Mappers
       private readonly ICloneManagerForModel _cloneManagerForModel;
       private readonly IParameterBuilderToParameterMapper _parameterMapper;
 
-      public NeighborhoodBuilderToNeighborhoodMapper(IObjectBaseFactory objectBaseFactory,
+      public NeighborhoodBuilderToNeighborhoodMapper(
+         IObjectBaseFactory objectBaseFactory,
          IContainerBuilderToContainerMapper containerMapper,
          IKeywordReplacerTask keywordReplacerTask,
-         ICloneManagerForModel cloneManagerForModel, IParameterBuilderToParameterMapper parameterMapper)
+         ICloneManagerForModel cloneManagerForModel, 
+         IParameterBuilderToParameterMapper parameterMapper)
       {
          _objectBaseFactory = objectBaseFactory;
          _containerMapper = containerMapper;

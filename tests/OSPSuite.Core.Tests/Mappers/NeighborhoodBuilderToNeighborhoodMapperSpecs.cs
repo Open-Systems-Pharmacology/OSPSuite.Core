@@ -10,7 +10,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
-   public abstract class concern_for_NeighborhoodBuilderToNeighborhoodMapper : ContextSpecification<INeighborhoodBuilderToNeighborhoodMapper>
+   internal abstract class concern_for_NeighborhoodBuilderToNeighborhoodMapper : ContextSpecification<INeighborhoodBuilderToNeighborhoodMapper>
    {
       protected IContainerBuilderToContainerMapper _containerMapper;
       protected IObjectBaseFactory _objectBaseFactory;
@@ -29,7 +29,7 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
-   public class When_mapping_a_neighborhood_builder_to_a_neighborhood : concern_for_NeighborhoodBuilderToNeighborhoodMapper
+   internal class When_mapping_a_neighborhood_builder_to_a_neighborhood : concern_for_NeighborhoodBuilderToNeighborhoodMapper
    {
       private NeighborhoodBuilder _neighborhoodBuilder;
       private Neighborhood _neighborhood;
@@ -44,12 +44,13 @@ namespace OSPSuite.Core.Mappers
       private IContainer _secondNeighborInModel;
       private SimulationConfiguration _simulationConfiguration;
       private IContainer _moleculeContainer;
+      private SimulationBuilder _simulationBuilder;
 
       protected override void Context()
       {
          base.Context();
          _rootContainer = A.Fake<IContainer>().WithName("ROOT");
-         _simulationConfiguration = new SimulationConfigurationForSpecs();
+         _simulationConfiguration = new SimulationConfiguration();
          _model = A.Fake<IModel>();
          _model.Root = _rootContainer;
          _neighborhoodBuilder =new NeighborhoodBuilder().WithName("tralala");
@@ -72,18 +73,19 @@ namespace OSPSuite.Core.Mappers
          A.CallTo(() => firstNeighborModelPath.Resolve<IContainer>(_rootContainer)).Returns(_firstNeighborInModel);
          A.CallTo(() => secondNeighborModelPath.Resolve<IContainer>(_rootContainer)).Returns(_secondNeighborInModel);
          _moleculeContainer = A.Fake<IContainer>();
-         A.CallTo(() => _containerMapper.MapFrom(_neighborhoodBuilder.MoleculeProperties, _simulationConfiguration)).Returns(_moleculeContainer);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         A.CallTo(() => _containerMapper.MapFrom(_neighborhoodBuilder.MoleculeProperties, _simulationBuilder)).Returns(_moleculeContainer);
          _molecule1 = "molecule1";
          _molecule2 = "molecule2";
          _moleculeNames = new List<string> {_molecule1, _molecule2};
          A.CallTo(() => _objectBaseFactory.Create<Neighborhood>()).Returns(new Neighborhood());
-         A.CallTo(() => _parameterMapper.MapFrom(para1, _simulationConfiguration)).Returns(_clonePara1);
-         A.CallTo(() => _parameterMapper.MapFrom(para2, _simulationConfiguration)).Returns(_clonePara2);
+         A.CallTo(() => _parameterMapper.MapFrom(para1, _simulationBuilder)).Returns(_clonePara1);
+         A.CallTo(() => _parameterMapper.MapFrom(para2, _simulationBuilder)).Returns(_clonePara2);
       }
 
       protected override void Because()
       {
-         _neighborhood = sut.MapFrom(_neighborhoodBuilder,  _moleculeNames, _moleculeNames, new ModelConfiguration(_model, _simulationConfiguration));
+         _neighborhood = sut.MapFrom(_neighborhoodBuilder,  _moleculeNames, _moleculeNames, new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder));
       }
 
       [Observation]

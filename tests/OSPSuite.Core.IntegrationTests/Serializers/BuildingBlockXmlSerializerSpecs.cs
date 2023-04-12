@@ -8,7 +8,7 @@ using OSPSuite.Core.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class BuildingBlockWithFormulaCacheXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class BuildingBlockWithFormulaCacheXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestSimpleBB()
@@ -61,7 +61,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class MoleculeBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class MoleculeBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexMoleculeBB()
@@ -72,7 +72,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class PassiveTransportBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class PassiveTransportBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexPassiveTransportBB()
@@ -83,7 +83,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class ReactionBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class ReactionBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexReactionBB()
@@ -94,7 +94,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class EventGroupBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class EventGroupBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexEventGroupBB()
@@ -112,18 +112,18 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class SpatialStructureXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class SpatialStructureXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexSpatialStructure()
       {
-         var x1 = _simulationConfiguration.SpatialStructures[0];
+         var x1 = _simulationBuilder.SpatialStructures[0];
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualSpatialStructure(x2, x1);
       }
    }
 
-   public class MoleculeStartValuesBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class MoleculeStartValuesBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexMoleculeStartValuesBuildingBlock()
@@ -134,7 +134,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class ParameterStartValuesBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class ParameterStartValuesBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexParameterStartValuesBuildingBlock()
@@ -145,7 +145,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class SimulationConfigurationXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class SimulationConfigurationXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexBuildConfiguration()

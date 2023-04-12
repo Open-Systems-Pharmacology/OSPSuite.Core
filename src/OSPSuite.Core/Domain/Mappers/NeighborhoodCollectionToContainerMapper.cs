@@ -14,11 +14,11 @@ namespace OSPSuite.Core.Domain.Mappers
    ///    <para></para>
    ///    are added as children of this top container
    /// </summary>
-   public interface INeighborhoodCollectionToContainerMapper : IMapper<ModelConfiguration, IContainer>
+   internal interface INeighborhoodCollectionToContainerMapper : IMapper<ModelConfiguration, IContainer>
    {
    }
 
-   public class NeighborhoodCollectionToContainerMapper : INeighborhoodCollectionToContainerMapper
+   internal class NeighborhoodCollectionToContainerMapper : INeighborhoodCollectionToContainerMapper
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly INeighborhoodBuilderToNeighborhoodMapper _neighborhoodMapper;
@@ -33,18 +33,18 @@ namespace OSPSuite.Core.Domain.Mappers
 
       public IContainer MapFrom(ModelConfiguration modelConfiguration)
       {
-         var (_, simulationConfiguration) = modelConfiguration;
-         var moleculeNames = simulationConfiguration.AllPresentFloatingMoleculeNames();
+         var (_, simulationBuilder) = modelConfiguration;
+         var moleculeNames = simulationBuilder.AllPresentFloatingMoleculeNames();
 
          var neighborhoodsParentContainer = _objectBaseFactory.Create<IContainer>()
             .WithMode(ContainerMode.Logical)
             .WithName(Constants.NEIGHBORHOODS);
 
-         var startValuesForFloatingMolecules = presentMoleculesCachedByContainerPath(moleculeNames, simulationConfiguration);
+         var startValuesForFloatingMolecules = presentMoleculesCachedByContainerPath(moleculeNames, simulationBuilder);
 
-         var moleculeNamesCopyProperties = simulationConfiguration.AllPresentXenobioticFloatingMoleculeNames();
+         var moleculeNamesCopyProperties = simulationBuilder.AllPresentXenobioticFloatingMoleculeNames();
 
-         simulationConfiguration.SpatialStructures.SelectMany(x => x.Neighborhoods).Each(nb =>
+         simulationBuilder.SpatialStructures.SelectMany(x => x.Neighborhoods).Each(nb =>
             neighborhoodsParentContainer.Add(_neighborhoodMapper.MapFrom(nb,
                moleculeNamesFor(nb, startValuesForFloatingMolecules),
                moleculeNamesCopyProperties, modelConfiguration)));
@@ -52,9 +52,9 @@ namespace OSPSuite.Core.Domain.Mappers
          return neighborhoodsParentContainer;
       }
 
-      private ICache<string, List<string>> presentMoleculesCachedByContainerPath(IEnumerable<string> namesOfFloatingMolecules, SimulationConfiguration simulationConfiguration)
+      private ICache<string, List<string>> presentMoleculesCachedByContainerPath(IEnumerable<string> namesOfFloatingMolecules, SimulationBuilder simulationBuilder)
       {
-         var startValues = simulationConfiguration.AllPresentMoleculeValuesFor(namesOfFloatingMolecules).ToList();
+         var startValues = simulationBuilder.AllPresentMoleculeValuesFor(namesOfFloatingMolecules).ToList();
 
          var moleculeStartValuesPerContainer = new Cache<string, List<string>>();
 

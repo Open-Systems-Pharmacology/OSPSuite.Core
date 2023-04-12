@@ -15,20 +15,20 @@ using IContainer = OSPSuite.Core.Domain.IContainer;
 
 namespace OSPSuite.Core
 {
-   public abstract class concern_for_ModelConstructor : ContextForIntegration<IModelConstructor>
+   internal abstract class concern_for_ModelConstructor : ContextForIntegration<IModelConstructor>
    {
       protected SimulationConfiguration _simulationConfiguration;
       protected CreationResult _result;
       protected IModel _model;
 
       protected string _modelName = "MyModel";
+      protected SimulationBuilder _simulationBuilder;
 
-      public override void GlobalContext()
+      protected override void Context()
       {
-         base.GlobalContext();
+         base.Context();
+         //we create the simulation in context as some tests are modifying it
          _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
-         //Freeze in constructor in case access is also required to properties for setup
-         _simulationConfiguration.Freeze();
       }
 
       protected override void Because()
@@ -36,12 +36,12 @@ namespace OSPSuite.Core
          sut = IoC.Resolve<IModelConstructor>();
          _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
          //Freeze in the test so that we can access the properties. This needs to be done AFTER the model creation 
-         _simulationConfiguration.Freeze();
          _model = _result.Model;
+         _simulationBuilder = _result.SimulationBuilder;
       }
    }
 
-   public class When_running_the_case_study : concern_for_ModelConstructor
+   internal class When_running_the_case_study : concern_for_ModelConstructor
    {
       [Observation]
       public void should_return_a_successful_validation()
@@ -388,7 +388,7 @@ namespace OSPSuite.Core
          var errorList = new List<string>();
          foreach (var entity in _model.Root.GetAllChildren<IEntity>())
          {
-            var builder = _simulationConfiguration.BuilderFor(entity);
+            var builder = _simulationBuilder.BuilderFor(entity);
             if (builder != null) continue;
             if (entity.IsNamed(Constants.NEIGHBORHOODS)) continue;
             errorList.Add($"No builder found for {entity.Name}");
@@ -505,13 +505,16 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_a_molecule_start_value_is_defined_for_logical_container : concern_for_ModelConstructor
+   internal class When_a_molecule_start_value_is_defined_for_logical_container : concern_for_ModelConstructor
    {
       protected override void Context()
       {
          base.Context();
-         var moleculeStartValue = _simulationConfiguration.MoleculeStartValues.First();
-         var physicalContainer = _simulationConfiguration.SpatialStructures.SelectMany(x => x.TopContainers)
+         //we use a sim builder here to modify the configuration on the fly
+         var simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+
+         var moleculeStartValue = simulationBuilder.MoleculeStartValues.First();
+         var physicalContainer = simulationBuilder.SpatialStructures.SelectMany(x => x.TopContainers)
             .Select(x => moleculeStartValue.ContainerPath.TryResolve<IContainer>(x)).First(x => x != null);
 
          physicalContainer.Mode = ContainerMode.Logical;
@@ -524,12 +527,14 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_running_the_case_study_with_a_missing_parameter : concern_for_ModelConstructor
+   internal class When_running_the_case_study_with_a_missing_parameter : concern_for_ModelConstructor
    {
       protected override void Context()
       {
          base.Context();
-         var molecule = _simulationConfiguration.MoleculeByName("A");
+         //we use a sim builder here to modify the configuration on the fly
+         var simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         var molecule = simulationBuilder.MoleculeByName("A");
          var paraToRemove = molecule.Parameters.SingleOrDefault(para => para.Name == "logMA");
          molecule.RemoveParameter(paraToRemove);
       }
@@ -542,7 +547,7 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_naming_the_model_like_a_distributed_parameter_sub_parameter : concern_for_ModelConstructor
+   internal class When_naming_the_model_like_a_distributed_parameter_sub_parameter : concern_for_ModelConstructor
    {
       protected override void Context()
       {
@@ -557,7 +562,7 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_naming_the_model_like_the_neighborhood_container : concern_for_ModelConstructor
+   internal class When_naming_the_model_like_the_neighborhood_container : concern_for_ModelConstructor
    {
       protected override void Context()
       {
@@ -572,7 +577,7 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_naming_the_model_like_the_organism_container : concern_for_ModelConstructor
+   internal class When_naming_the_model_like_the_organism_container : concern_for_ModelConstructor
    {
       protected override void Context()
       {

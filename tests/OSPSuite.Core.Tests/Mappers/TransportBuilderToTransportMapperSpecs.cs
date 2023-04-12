@@ -12,17 +12,19 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Mappers
 {
-   public abstract class concern_for_TransportBuilderToTransportMapper : ContextSpecification<ITransportBuilderToTransportMapper>
+   internal abstract class concern_for_TransportBuilderToTransportMapper : ContextSpecification<ITransportBuilderToTransportMapper>
    {
       protected IObjectBaseFactory _objectBaseFactory;
       protected IFormulaBuilderToFormulaMapper _formulaBuilderToFormulaMapper;
       protected IParameterBuilderCollectionToParameterCollectionMapper _parameterMapper;
       protected SimulationConfiguration _simulationConfiguration;
       protected IProcessRateParameterCreator _processRateParameterCreator;
+      protected SimulationBuilder _simulationBuilder;
 
       protected override void Context()
       {
-         _simulationConfiguration = new SimulationConfigurationForSpecs();
+         _simulationConfiguration = new SimulationConfiguration();
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          A.CallTo(() => _objectBaseFactory.Create<ITransport>()).Returns(new Transport());
          _formulaBuilderToFormulaMapper = A.Fake<IFormulaBuilderToFormulaMapper>();
@@ -32,7 +34,7 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
-   public class When_mapping_a_transport_builder_to_a_transport : concern_for_TransportBuilderToTransportMapper
+   internal class When_mapping_a_transport_builder_to_a_transport : concern_for_TransportBuilderToTransportMapper
    {
       private ITransportBuilder _passiveTransportBuilder;
       private IFormula _kinetic;
@@ -43,15 +45,15 @@ namespace OSPSuite.Core.Mappers
          base.Context();
          _passiveTransportBuilder = new TransportBuilder {TransportType = TransportType.Efflux};
          _kinetic = A.Fake<IFormula>();
-         A.CallTo(() => _formulaBuilderToFormulaMapper.MapFrom(_kinetic, _simulationConfiguration)).Returns(_kinetic);
+         A.CallTo(() => _formulaBuilderToFormulaMapper.MapFrom(_kinetic, _simulationBuilder)).Returns(_kinetic);
          _passiveTransportBuilder.Name = "PassiveTransport";
          _passiveTransportBuilder.Formula = _kinetic;
-         A.CallTo(() => _parameterMapper.MapFrom(_passiveTransportBuilder.Parameters, _simulationConfiguration)).Returns(new List<IParameter>());
+         A.CallTo(() => _parameterMapper.MapFrom(_passiveTransportBuilder.Parameters, _simulationBuilder)).Returns(new List<IParameter>());
       }
 
       protected override void Because()
       {
-         _transport = sut.MapFrom(_passiveTransportBuilder, _simulationConfiguration);
+         _transport = sut.MapFrom(_passiveTransportBuilder, _simulationBuilder);
       }
 
       [Observation]
@@ -69,11 +71,11 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_have_added_the_transport_builder_as_reference_to_the_transport()
       {
-         _simulationConfiguration.BuilderFor(_transport).ShouldBeEqualTo(_passiveTransportBuilder);
+         _simulationBuilder.BuilderFor(_transport).ShouldBeEqualTo(_passiveTransportBuilder);
       }
    }
 
-   public class When_mapping_an_active_influx_transport_builder_to_a_transport_for_which_a_parameter_rate_should_be_generated : concern_for_TransportBuilderToTransportMapper
+   internal class When_mapping_an_active_influx_transport_builder_to_a_transport_for_which_a_parameter_rate_should_be_generated : concern_for_TransportBuilderToTransportMapper
    {
       private ITransportBuilder _transportBuilder;
       private IFormula _kinetic;
@@ -86,19 +88,19 @@ namespace OSPSuite.Core.Mappers
          _transportBuilder = new TransportBuilder();
          _kinetic = A.Fake<IFormula>();
          _transportBuilder.CreateProcessRateParameter = true;
-         A.CallTo(() => _formulaBuilderToFormulaMapper.MapFrom(_kinetic, _simulationConfiguration)).ReturnsLazily(x => new ExplicitFormula("clone"));
+         A.CallTo(() => _formulaBuilderToFormulaMapper.MapFrom(_kinetic, _simulationBuilder)).ReturnsLazily(x => new ExplicitFormula("clone"));
 
          _transportBuilder.TransportType = TransportType.Influx;
          _transportBuilder.Name = "Active Transport";
          _transportBuilder.Formula = _kinetic;
-         A.CallTo(() => _parameterMapper.MapFrom(_transportBuilder.Parameters, _simulationConfiguration)).Returns(new List<IParameter>());
+         A.CallTo(() => _parameterMapper.MapFrom(_transportBuilder.Parameters, _simulationBuilder)).Returns(new List<IParameter>());
          _processRateParameter = new Parameter();
          A.CallTo(() => _objectBaseFactory.Create<IParameter>()).Returns(_processRateParameter);
       }
 
       protected override void Because()
       {
-         _transport = sut.MapFrom(_transportBuilder, _simulationConfiguration);
+         _transport = sut.MapFrom(_transportBuilder, _simulationBuilder);
          _processRateParameter = _transport.GetSingleChildByName<IParameter>(Constants.Parameters.PROCESS_RATE);
       }
 
@@ -152,7 +154,7 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
-   public class When_mapping_an_active_efflux_transport_builder_to_a_transport_for_which_a_parameter_rate_should_be_generated : concern_for_TransportBuilderToTransportMapper
+   internal class When_mapping_an_active_efflux_transport_builder_to_a_transport_for_which_a_parameter_rate_should_be_generated : concern_for_TransportBuilderToTransportMapper
    {
       private ITransportBuilder _transportBuilder;
       private IFormula _kinetic;
@@ -165,19 +167,19 @@ namespace OSPSuite.Core.Mappers
          _transportBuilder = new TransportBuilder();
          _kinetic = A.Fake<IFormula>();
          _transportBuilder.CreateProcessRateParameter = true;
-         A.CallTo(() => _formulaBuilderToFormulaMapper.MapFrom(_kinetic, _simulationConfiguration)).ReturnsLazily(x => new ExplicitFormula("clone"));
+         A.CallTo(() => _formulaBuilderToFormulaMapper.MapFrom(_kinetic, _simulationBuilder)).ReturnsLazily(x => new ExplicitFormula("clone"));
 
          _transportBuilder.TransportType = TransportType.Efflux;
          _transportBuilder.Name = "Active Transport";
          _transportBuilder.Formula = _kinetic;
-         A.CallTo(() => _parameterMapper.MapFrom(_transportBuilder.Parameters, _simulationConfiguration)).Returns(new List<IParameter>());
+         A.CallTo(() => _parameterMapper.MapFrom(_transportBuilder.Parameters, _simulationBuilder)).Returns(new List<IParameter>());
          _processRateParameter = new Parameter();
          A.CallTo(() => _objectBaseFactory.Create<IParameter>()).Returns(_processRateParameter);
       }
 
       protected override void Because()
       {
-         _transport = sut.MapFrom(_transportBuilder, _simulationConfiguration);
+         _transport = sut.MapFrom(_transportBuilder, _simulationBuilder);
          _processRateParameter = _transport.GetSingleChildByName<IParameter>(Constants.Parameters.PROCESS_RATE);
       }
 
@@ -237,7 +239,7 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
-   public class When_mapping_a_passive_builder_to_a_transport_for_which_a_parameter_rate_should_be_generated : concern_for_TransportBuilderToTransportMapper
+   internal class When_mapping_a_passive_builder_to_a_transport_for_which_a_parameter_rate_should_be_generated : concern_for_TransportBuilderToTransportMapper
    {
       private ITransportBuilder _transportBuilder;
       private IFormula _kinetic;
@@ -250,19 +252,19 @@ namespace OSPSuite.Core.Mappers
          _transportBuilder = new TransportBuilder();
          _kinetic = A.Fake<IFormula>();
          _transportBuilder.CreateProcessRateParameter = true;
-         A.CallTo(() => _formulaBuilderToFormulaMapper.MapFrom(_kinetic, _simulationConfiguration)).ReturnsLazily(x => new ExplicitFormula("clone"));
+         A.CallTo(() => _formulaBuilderToFormulaMapper.MapFrom(_kinetic, _simulationBuilder)).ReturnsLazily(x => new ExplicitFormula("clone"));
 
          _transportBuilder.TransportType = TransportType.Diffusion;
          _transportBuilder.Name = "PassiveTransport";
          _transportBuilder.Formula = _kinetic;
-         A.CallTo(() => _parameterMapper.MapFrom(_transportBuilder.Parameters, _simulationConfiguration)).Returns(new List<IParameter>());
+         A.CallTo(() => _parameterMapper.MapFrom(_transportBuilder.Parameters, _simulationBuilder)).Returns(new List<IParameter>());
          _processRateParameter = new Parameter();
          A.CallTo(() => _objectBaseFactory.Create<IParameter>()).Returns(_processRateParameter);
       }
 
       protected override void Because()
       {
-         _transport = sut.MapFrom(_transportBuilder, _simulationConfiguration);
+         _transport = sut.MapFrom(_transportBuilder, _simulationBuilder);
          _processRateParameter = _transport.GetSingleChildByName<IParameter>(Constants.Parameters.PROCESS_RATE);
       }
 

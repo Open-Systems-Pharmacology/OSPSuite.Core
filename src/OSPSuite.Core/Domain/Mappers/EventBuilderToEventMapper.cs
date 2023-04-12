@@ -7,11 +7,11 @@ namespace OSPSuite.Core.Domain.Mappers
    /// <summary>
    ///    Maps event builder object to an model event
    /// </summary>
-   public interface IEventBuilderToEventMapper : IBuilderMapper<IEventBuilder, IEvent>
+   internal interface IEventBuilderToEventMapper : IBuilderMapper<IEventBuilder, IEvent>
    {
    }
 
-   public class EventBuilderToEventMapper : IEventBuilderToEventMapper
+   internal class EventBuilderToEventMapper : IEventBuilderToEventMapper
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IParameterBuilderToParameterMapper _parameterMapper;
@@ -29,23 +29,23 @@ namespace OSPSuite.Core.Domain.Mappers
          _assignmentMapper = assignmentMapper;
       }
 
-      public IEvent MapFrom(IEventBuilder eventBuilder, SimulationConfiguration simulationConfiguration)
+      public IEvent MapFrom(IEventBuilder eventBuilder, SimulationBuilder simulationBuilder)
       {
          var modelEvent = _objectBaseFactory.Create<IEvent>()
             .WithName(eventBuilder.Name)
             .WithDimension(eventBuilder.Dimension)
             .WithDescription(eventBuilder.Description)
-            .WithFormula(_formulaMapper.MapFrom(eventBuilder.Formula, simulationConfiguration));
+            .WithFormula(_formulaMapper.MapFrom(eventBuilder.Formula, simulationBuilder));
 
-         simulationConfiguration.AddBuilderReference(modelEvent, eventBuilder);
+         simulationBuilder.AddBuilderReference(modelEvent, eventBuilder);
 
          eventBuilder.Assignments
-            .SelectMany(x => _assignmentMapper.MapFrom(x, simulationConfiguration))
+            .SelectMany(x => _assignmentMapper.MapFrom(x, simulationBuilder))
             .Each(modelEvent.AddAssignment);
 
          foreach (var param in eventBuilder.Parameters)
          {
-            modelEvent.Add(_parameterMapper.MapFrom(param, simulationConfiguration));
+            modelEvent.Add(_parameterMapper.MapFrom(param, simulationBuilder));
          }
 
          modelEvent.OneTime = eventBuilder.OneTime;

@@ -1,15 +1,18 @@
 using System.Linq;
+using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Domain
 {
    public class CreationResult
    {
       public virtual IModel Model { get; }
+      public SimulationBuilder SimulationBuilder { get; }
       public virtual ValidationResult ValidationResult { get; private set; }
 
-      public CreationResult(IModel model)
+      public CreationResult(IModel model, SimulationBuilder simulationBuilder)
       {
          Model = model;
+         SimulationBuilder = simulationBuilder;
          ValidationResult = new ValidationResult();
       }
 

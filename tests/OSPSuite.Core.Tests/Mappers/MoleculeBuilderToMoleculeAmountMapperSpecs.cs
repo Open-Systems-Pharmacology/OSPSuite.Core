@@ -12,7 +12,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
-   public abstract class concern_for_MoleculeBuilderToMoleculeAmountMapper : ContextSpecification<IMoleculeBuilderToMoleculeAmountMapper>
+   internal abstract class concern_for_MoleculeBuilderToMoleculeAmountMapper : ContextSpecification<IMoleculeBuilderToMoleculeAmountMapper>
    {
       protected IFormulaBuilderToFormulaMapper _formulaMapper;
       protected IObjectBaseFactory _objectBaseFactory;
@@ -35,11 +35,11 @@ namespace OSPSuite.Core.Mappers
          sut = new MoleculeBuilderToMoleculeAmountMapper(_objectBaseFactory, _formulaMapper, _parameterMapper, _dimensionFactory,
             _keywordReplacerTask, _formulaFactory, _parameterFactory);
 
-         _simulationConfiguration = new SimulationConfigurationForSpecs();
+         _simulationConfiguration = new SimulationConfiguration();
       }
    }
 
-   public class When_mapping_a_molecule_builder_to_a_molecule_amount : concern_for_MoleculeBuilderToMoleculeAmountMapper
+   internal class When_mapping_a_molecule_builder_to_a_molecule_amount : concern_for_MoleculeBuilderToMoleculeAmountMapper
    {
       private IMoleculeBuilder _moleculeBuilder;
       private IMoleculeAmount _moleculeAmount;
@@ -52,6 +52,7 @@ namespace OSPSuite.Core.Mappers
       private IParameter _parameterBuilder1;
       private IParameter _parameterBuilder2;
       private IParameter _parameterBuilder3;
+      private SimulationBuilder _simulationBuilder;
 
       protected override void Context()
       {
@@ -76,15 +77,16 @@ namespace OSPSuite.Core.Mappers
          _para3 = new Parameter().WithName("P3");
          A.CallTo(() => _objectBaseFactory.Create<IMoleculeAmount>()).Returns(new MoleculeAmount());
          A.CallTo(() => _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT)).Returns(_amountDimension);
-         A.CallTo(() => _formulaMapper.MapFrom(_moleculeBuilder.DefaultStartFormula, _simulationConfiguration)).Returns(_mappedFormula);
-         A.CallTo(() => _parameterMapper.MapFrom(_parameterBuilder1, _simulationConfiguration)).Returns(_para1);
-         A.CallTo(() => _parameterMapper.MapFrom(_parameterBuilder2, _simulationConfiguration)).Returns(_para2);
-         A.CallTo(() => _parameterMapper.MapFrom(_parameterBuilder3, _simulationConfiguration)).Returns(_para3);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         A.CallTo(() => _formulaMapper.MapFrom(_moleculeBuilder.DefaultStartFormula, _simulationBuilder)).Returns(_mappedFormula);
+         A.CallTo(() => _parameterMapper.MapFrom(_parameterBuilder1, _simulationBuilder)).Returns(_para1);
+         A.CallTo(() => _parameterMapper.MapFrom(_parameterBuilder2, _simulationBuilder)).Returns(_para2);
+         A.CallTo(() => _parameterMapper.MapFrom(_parameterBuilder3, _simulationBuilder)).Returns(_para3);
       }
 
       protected override void Because()
       {
-         _moleculeAmount = sut.MapFrom(_moleculeBuilder, _targetContainer, _simulationConfiguration);
+         _moleculeAmount = sut.MapFrom(_moleculeBuilder, _targetContainer, _simulationBuilder);
       }
 
       [Observation]
@@ -109,7 +111,7 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_add_the_builder_to_the_build_configuration_cache()
       {
-         _simulationConfiguration.BuilderFor(_moleculeAmount).ShouldBeEqualTo(_moleculeBuilder);
+         _simulationBuilder.BuilderFor(_moleculeAmount).ShouldBeEqualTo(_moleculeBuilder);
       }
 
       [Observation]
@@ -119,7 +121,7 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
-   public class When_mapping_a_molecule_builder_using_concentration_to_a_molecule_amount : concern_for_MoleculeBuilderToMoleculeAmountMapper
+   internal class When_mapping_a_molecule_builder_using_concentration_to_a_molecule_amount : concern_for_MoleculeBuilderToMoleculeAmountMapper
    {
       private IMoleculeBuilder _moleculeBuilder;
       private IMoleculeAmount _moleculeAmount;
@@ -127,6 +129,7 @@ namespace OSPSuite.Core.Mappers
       private IDimension _concentrationDimension;
       private IFormula _startValueReferenceFormula;
       private IContainer _targetContainer;
+      private SimulationBuilder _simulationBuilder;
 
       protected override void Context()
       {
@@ -138,7 +141,8 @@ namespace OSPSuite.Core.Mappers
          _moleculeBuilder = A.Fake<IMoleculeBuilder>().WithDimension(_concentrationDimension);
          _moleculeBuilder.DisplayUnit = A.Fake<Unit>();
          _mappedFormula = A.Fake<IFormula>();
-         A.CallTo(() => _formulaMapper.MapFrom(_moleculeBuilder.DefaultStartFormula, _simulationConfiguration)).Returns(_mappedFormula);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         A.CallTo(() => _formulaMapper.MapFrom(_moleculeBuilder.DefaultStartFormula, _simulationBuilder)).Returns(_mappedFormula);
          A.CallTo(() => _objectBaseFactory.Create<IMoleculeAmount>()).ReturnsLazily(() => new MoleculeAmount());
          var startValueParameter = new Parameter().WithName(Constants.Parameters.START_VALUE);
          A.CallTo(() => _parameterFactory.CreateStartValueParameter(A<IMoleculeAmount>._, _mappedFormula, _moleculeBuilder.DisplayUnit)).Returns(startValueParameter);
@@ -147,7 +151,7 @@ namespace OSPSuite.Core.Mappers
 
       protected override void Because()
       {
-         _moleculeAmount = sut.MapFrom(_moleculeBuilder, _targetContainer, _simulationConfiguration);
+         _moleculeAmount = sut.MapFrom(_moleculeBuilder, _targetContainer, _simulationBuilder);
       }
 
       [Observation]
