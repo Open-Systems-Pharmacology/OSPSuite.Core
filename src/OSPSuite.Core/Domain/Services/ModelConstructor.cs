@@ -82,37 +82,35 @@ namespace OSPSuite.Core.Domain.Services
 
       public CreationResult CreateModelFrom(SimulationConfiguration simulationConfiguration, string modelName)
       {
-         using (new SimulationConfigurationDisposer(simulationConfiguration))
-         {
-            var model = _objectBaseFactory.Create<IModel>().WithName(modelName);
-            var modelConfiguration = new ModelConfiguration(model, simulationConfiguration);
-            var creationResult = buildProcess(modelConfiguration,
-               //One function per process step
-               checkSimulationConfiguration,
-               createModelStructure,
-               validateModelName,
-               createProcesses,
-               createObserversAndEvents,
-               setQuantitiesValues);
+         var model = _objectBaseFactory.Create<IModel>().WithName(modelName);
+         var simulationBuilder = new SimulationBuilder(simulationConfiguration);
+         var modelConfiguration = new ModelConfiguration(model, simulationConfiguration, simulationBuilder);
+         var creationResult = buildProcess(modelConfiguration,
+            //One function per process step
+            checkSimulationConfiguration,
+            createModelStructure,
+            validateModelName,
+            createProcesses,
+            createObserversAndEvents,
+            setQuantitiesValues);
 
-            if (creationResult.State == ValidationState.Invalid)
-               return creationResult;
-
-            //replace all keywords define in the model structure once all build processes have been executed
-            _keywordReplacerTask.ReplaceIn(model.Root);
-
-            //This needs to be done before we validate the model to ensure that all references can be found
-            _formulaTask.ExpandNeighborhoodReferencesIn(model);
-
-            creationResult.Add(validateModel(modelConfiguration));
-
-            if (creationResult.State == ValidationState.Invalid)
-               return creationResult;
-
-            finalizeModel(model);
-
+         if (creationResult.State == ValidationState.Invalid)
             return creationResult;
-         }
+
+         //replace all keywords define in the model structure once all build processes have been executed
+         _keywordReplacerTask.ReplaceIn(model.Root);
+
+         //This needs to be done before we validate the model to ensure that all references can be found
+         _formulaTask.ExpandNeighborhoodReferencesIn(model);
+
+         creationResult.Add(validateModel(modelConfiguration));
+
+         if (creationResult.State == ValidationState.Invalid)
+            return creationResult;
+
+         finalizeModel(model);
+
+         return creationResult;
       }
 
       private void finalizeModel(IModel model)
@@ -147,15 +145,13 @@ namespace OSPSuite.Core.Domain.Services
          if (!modelConfiguration.ShouldValidate)
             return new ValidationResult();
 
-         var (_, simulationConfiguration) = modelConfiguration;
-
          //Validation needs to happen at the very end of the process
          var reactionAndTransportValidation = validate<ValidatorForReactionsAndTransports>(modelConfiguration);
          var observersAndEventsValidation = validate<ValidatorForObserversAndEvents>(modelConfiguration);
          var modelValidation = validate<ValidatorForQuantities>(modelConfiguration);
 
          var validation = new ValidationResult(reactionAndTransportValidation, observersAndEventsValidation, modelValidation);
-         if (!simulationConfiguration.PerformCircularReferenceCheck)
+         if (!modelConfiguration.SimulationConfiguration.PerformCircularReferenceCheck)
             return validation;
 
          var circularReferenceValidation = checkCircularReferences(modelConfiguration);
@@ -165,13 +161,12 @@ namespace OSPSuite.Core.Domain.Services
       private CreationResult buildProcess(ModelConfiguration modelConfiguration,
          params Func<ModelConfiguration, ValidationResult>[] steps)
       {
-         var (model, simulationConfiguration) = modelConfiguration;
-         var result = new CreationResult(model);
+         var result = new CreationResult(modelConfiguration.Model, modelConfiguration.SimulationBuilder);
          IProgressUpdater progress = null;
 
          try
          {
-            if (simulationConfiguration.ShowProgress)
+            if (modelConfiguration.SimulationConfiguration.ShowProgress)
             {
                progress = _progressManager.Create();
                progress.Initialize(steps.Length, Messages.CreatingModel);
@@ -199,11 +194,10 @@ namespace OSPSuite.Core.Domain.Services
 
       private ValidationResult checkSimulationConfiguration(ModelConfiguration modelConfiguration)
       {
-         var (_, simulationConfiguration) = modelConfiguration;
          if (!modelConfiguration.ShouldValidate)
             return new ValidationResult();
 
-         return _simulationConfigurationValidator.Validate(simulationConfiguration);
+         return _simulationConfigurationValidator.Validate(modelConfiguration.SimulationConfiguration);
       }
 
       private ValidationResult createModelStructure(ModelConfiguration modelConfiguration)
@@ -305,7 +299,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private void createPassiveTransports(ModelConfiguration modelConfiguration)
       {
-         modelConfiguration.SimulationConfiguration.PassiveTransports.Each(t => _transportCreator.CreatePassiveTransport(t, modelConfiguration));
+         modelConfiguration.SimulationBuilder.PassiveTransports.Each(t => _transportCreator.CreatePassiveTransport(t, modelConfiguration));
       }
 
       private IEnumerable<ValidationMessage> createReactions(ModelConfiguration modelConfiguration)
@@ -314,7 +308,7 @@ namespace OSPSuite.Core.Domain.Services
          var messages = simulationConfiguration.Reactions
             .Where(x => !_reactionCreator.CreateReaction(x, modelConfiguration))
             .Select(
-               x => new ValidationMessage(NotificationType.Warning, Validation.WarningNoReactionCreated(x.Name),x, x.BuildingBlock))
+               x => new ValidationMessage(NotificationType.Warning, Validation.WarningNoReactionCreated(x.Name), x, x.BuildingBlock))
             .ToList();
 
          model.Root.GetAllContainersAndSelf<IContainer>(x => x.ContainerType == ContainerType.Reaction)
@@ -377,13 +371,13 @@ namespace OSPSuite.Core.Domain.Services
 
       private IEnumerable<ValidationMessage> createMoleculeAmounts(ModelConfiguration modelConfiguration)
       {
-         var (_, simulationConfiguration) = modelConfiguration;
+         var (_, simulationBuilder) = modelConfiguration;
          var presentMolecules = allPresentMoleculesInContainers(modelConfiguration).ToList();
 
          var moleculesWithPhysicalContainers = presentMolecules.Where(containerIsPhysical);
-         moleculesWithPhysicalContainers.Each(x => { addMoleculeToContainer(simulationConfiguration, x.Container, simulationConfiguration.MoleculeByName(x.MoleculeStartValue.MoleculeName)); });
+         moleculesWithPhysicalContainers.Each(x => { addMoleculeToContainer(simulationBuilder, x.Container, simulationBuilder.MoleculeByName(x.MoleculeStartValue.MoleculeName)); });
 
-         return new MoleculeBuildingBlockValidator().Validate(simulationConfiguration.Molecules).Messages.Concat(createValidationMessagesForPresentMolecules(presentMolecules));
+         return new MoleculeBuildingBlockValidator().Validate(simulationBuilder.Molecules).Messages.Concat(createValidationMessagesForPresentMolecules(presentMolecules));
       }
 
       private static bool containerIsPhysical(StartValueAndContainer startValueAndContainer)
@@ -391,9 +385,9 @@ namespace OSPSuite.Core.Domain.Services
          return startValueAndContainer.Container != null && startValueAndContainer.Container.Mode == ContainerMode.Physical;
       }
 
-      private void addMoleculeToContainer(SimulationConfiguration simulationConfiguration, IContainer container, IMoleculeBuilder moleculeBuilder)
+      private void addMoleculeToContainer(SimulationBuilder simulationBuilder, IContainer container, IMoleculeBuilder moleculeBuilder)
       {
-         container.Add(_moleculeMapper.MapFrom(moleculeBuilder, container, simulationConfiguration));
+         container.Add(_moleculeMapper.MapFrom(moleculeBuilder, container, simulationBuilder));
       }
 
       private IEnumerable<ValidationMessage> createValidationMessagesForPresentMolecules(List<StartValueAndContainer> presentMolecules)

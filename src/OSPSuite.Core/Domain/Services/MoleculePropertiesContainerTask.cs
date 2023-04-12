@@ -6,7 +6,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
-   public interface IMoleculePropertiesContainerTask
+   internal interface IMoleculePropertiesContainerTask
    {
       /// <summary>
       ///    Retrieves the sub container in the neighborhood whose name is equal to the name of the given molecule.
@@ -20,13 +20,14 @@ namespace OSPSuite.Core.Domain.Services
       ///    Creates the global molecule container for the molecule and add parameters with the build modes other than "Local"
       ///    into the created molecule container
       /// </summary>
-      IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, IMoleculeBuilder moleculeBuilder, SimulationConfiguration simulationConfiguration);
+      IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, IMoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder);
 
       /// <summary>
-      /// Returns (and creates if not already there) the sub container for the transport process named <paramref name="transportName"/> 
-      /// in the <paramref name="neighborhood"/> for the transporter <paramref name="transporterMolecule"/>
+      ///    Returns (and creates if not already there) the sub container for the transport process named
+      ///    <paramref name="transportName" />
+      ///    in the <paramref name="neighborhood" /> for the transporter <paramref name="transporterMolecule" />
       /// </summary>
-      IContainer NeighborhoodMoleculeTransportContainerFor(Neighborhood neighborhood, string transportedMoleculeName, TransporterMoleculeContainer transporterMolecule, string transportName, SimulationConfiguration simulationConfiguration);
+      IContainer NeighborhoodMoleculeTransportContainerFor(Neighborhood neighborhood, string transportedMoleculeName, TransporterMoleculeContainer transporterMolecule, string transportName, SimulationBuilder simulationBuilder);
    }
 
    internal class MoleculePropertiesContainerTask : IMoleculePropertiesContainerTask
@@ -52,32 +53,29 @@ namespace OSPSuite.Core.Domain.Services
          return moleculeContainer;
       }
 
-      public IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, IMoleculeBuilder moleculeBuilder, SimulationConfiguration simulationConfiguration)
+      public IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, IMoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder)
       {
-         var globalMoleculeContainer = addContainerUnder(rootContainer, moleculeBuilder, moleculeBuilder.Name, simulationConfiguration)
+         var globalMoleculeContainer = addContainerUnder(rootContainer, moleculeBuilder, moleculeBuilder.Name, simulationBuilder)
             .WithContainerType(ContainerType.Molecule);
 
          //Add global molecule dependent parameters
          if (moleculeBuilder.IsFloatingXenobiotic)
          {
-            simulationConfiguration.SpatialStructures.Select(x=>x.GlobalMoleculeDependentProperties).Each(x =>
-            {
-               globalMoleculeContainer.AddChildren(addAllParametersFrom(x, simulationConfiguration));
-            });
+            simulationBuilder.SpatialStructures.Select(x => x.GlobalMoleculeDependentProperties).Each(x => { globalMoleculeContainer.AddChildren(addAllParametersFrom(x, simulationBuilder)); });
          }
 
          //Only non local parameters from the molecule are added to the global container 
          //Local parameters will be filled in elsewhere (by the MoleculeAmount-Mapper)
-         globalMoleculeContainer.AddChildren(allGlobalOrPropertyParametersFrom(moleculeBuilder, simulationConfiguration));
+         globalMoleculeContainer.AddChildren(allGlobalOrPropertyParametersFrom(moleculeBuilder, simulationBuilder));
 
          foreach (var transporterMoleculeContainer in moleculeBuilder.TransporterMoleculeContainerCollection)
          {
-            addContainerWithParametersUnder(globalMoleculeContainer, transporterMoleculeContainer, transporterMoleculeContainer.TransportName, simulationConfiguration);
+            addContainerWithParametersUnder(globalMoleculeContainer, transporterMoleculeContainer, transporterMoleculeContainer.TransportName, simulationBuilder);
          }
 
          foreach (var interactionContainer in moleculeBuilder.InteractionContainerCollection)
          {
-            addContainerWithParametersUnder(globalMoleculeContainer, interactionContainer, interactionContainer.Name, simulationConfiguration);
+            addContainerWithParametersUnder(globalMoleculeContainer, interactionContainer, interactionContainer.Name, simulationBuilder);
          }
 
          _keywordReplacer.ReplaceIn(globalMoleculeContainer, rootContainer, moleculeBuilder.Name);
@@ -85,37 +83,37 @@ namespace OSPSuite.Core.Domain.Services
          return globalMoleculeContainer;
       }
 
-
-      private IContainer addContainerUnder(IContainer parentContainer, IContainer templateContainer, string newContainerName, SimulationConfiguration simulationConfiguration)
+      private IContainer addContainerUnder(IContainer parentContainer, IContainer templateContainer, string newContainerName, SimulationBuilder simulationBuilder)
       {
          var instanceContainer = _containerTask.CreateOrRetrieveSubContainerByName(parentContainer, newContainerName);
-         simulationConfiguration.AddBuilderReference(instanceContainer, templateContainer);
+         simulationBuilder.AddBuilderReference(instanceContainer, templateContainer);
          instanceContainer.Icon = templateContainer.Icon;
          instanceContainer.Description = templateContainer.Description;
          return instanceContainer;
       }
 
-      private IContainer addContainerWithParametersUnder(IContainer parentContainer, IContainer templateContainer, string newContainerName, SimulationConfiguration simulationConfiguration)
+      private IContainer addContainerWithParametersUnder(IContainer parentContainer, IContainer templateContainer, string newContainerName, SimulationBuilder simulationBuilder)
       {
-         return addContainerUnder(parentContainer, templateContainer, newContainerName, simulationConfiguration)
-            .WithChildren(allGlobalOrPropertyParametersFrom(templateContainer, simulationConfiguration));
-       }
-
-      private IEnumerable<IParameter> allGlobalOrPropertyParametersFrom(IContainer container, SimulationConfiguration simulationConfiguration)
-      {
-         return _parameterCollectionMapper.MapGlobalOrPropertyFrom(container, simulationConfiguration);
-      }
-      private IEnumerable<IParameter> addAllParametersFrom(IContainer container, SimulationConfiguration simulationConfiguration)
-      {
-         return _parameterCollectionMapper.MapAllFrom(container, simulationConfiguration);
+         return addContainerUnder(parentContainer, templateContainer, newContainerName, simulationBuilder)
+            .WithChildren(allGlobalOrPropertyParametersFrom(templateContainer, simulationBuilder));
       }
 
-      private IEnumerable<IParameter> allLocalParametersFrom(IContainer container, SimulationConfiguration simulationConfiguration)
+      private IEnumerable<IParameter> allGlobalOrPropertyParametersFrom(IContainer container, SimulationBuilder simulationBuilder)
       {
-         return _parameterCollectionMapper.MapLocalFrom(container, simulationConfiguration);
+         return _parameterCollectionMapper.MapGlobalOrPropertyFrom(container, simulationBuilder);
       }
 
-      public IContainer NeighborhoodMoleculeTransportContainerFor(Neighborhood neighborhood, string transportedMoleculeName,TransporterMoleculeContainer transporterMolecule, string transportName, SimulationConfiguration simulationConfiguration)
+      private IEnumerable<IParameter> addAllParametersFrom(IContainer container, SimulationBuilder simulationBuilder)
+      {
+         return _parameterCollectionMapper.MapAllFrom(container, simulationBuilder);
+      }
+
+      private IEnumerable<IParameter> allLocalParametersFrom(IContainer container, SimulationBuilder simulationBuilder)
+      {
+         return _parameterCollectionMapper.MapLocalFrom(container, simulationBuilder);
+      }
+
+      public IContainer NeighborhoodMoleculeTransportContainerFor(Neighborhood neighborhood, string transportedMoleculeName, TransporterMoleculeContainer transporterMolecule, string transportName, SimulationBuilder simulationBuilder)
       {
          var moleculeContainer = NeighborhoodMoleculeContainerFor(neighborhood, transportedMoleculeName);
          var transportContainer = moleculeContainer.EntityAt<IContainer>(transporterMolecule.TransportName);
@@ -123,7 +121,7 @@ namespace OSPSuite.Core.Domain.Services
             return transportContainer;
 
          return _containerTask.CreateOrRetrieveSubContainerByName(moleculeContainer, transporterMolecule.TransportName)
-            .WithChildren(allLocalParametersFrom(transporterMolecule, simulationConfiguration));
+            .WithChildren(allLocalParametersFrom(transporterMolecule, simulationBuilder));
       }
    }
 }

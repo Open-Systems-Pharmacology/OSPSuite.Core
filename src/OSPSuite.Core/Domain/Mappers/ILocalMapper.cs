@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Domain.Mappers
       /// </summary>
       /// <param name="input">The input.</param>
       /// <param name="container">The local information.</param>
-      /// <param name="simulationConfiguration">The build configuration</param>
-      TOutput MapFromLocal(TInput input, TLocal container, SimulationConfiguration simulationConfiguration);
+      /// <param name="simulationBuilder">The build configuration</param>
+      TOutput MapFromLocal(TInput input, TLocal container, SimulationBuilder simulationBuilder);
    }
 }

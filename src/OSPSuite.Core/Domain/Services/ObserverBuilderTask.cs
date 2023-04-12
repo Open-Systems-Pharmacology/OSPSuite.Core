@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Domain.Services
 
       //cache only used to speed up task
       private EntityDescriptorMapList<IContainer> _allContainerDescriptors;
-      private SimulationConfiguration _simulationConfiguration;
+      private SimulationBuilder _simulationBuilder;
 
       public ObserverBuilderTask(
          IObserverBuilderToObserverMapper observerMapper,
@@ -40,11 +40,11 @@ namespace OSPSuite.Core.Domain.Services
 
       public void CreateObservers(ModelConfiguration modelConfiguration)
       {
-         var (model, simulationConfiguration) = modelConfiguration;
+         var (model, simulationBuilder) = modelConfiguration;
          _allContainerDescriptors = model.Root.GetAllChildren<IContainer>().ToEntityDescriptorMapList();
-         _simulationConfiguration = simulationConfiguration;
-         var observers = simulationConfiguration.Observers;
-         var presentMolecules = simulationConfiguration.AllPresentMolecules().ToList();
+         _simulationBuilder = simulationBuilder;
+         var observers = simulationBuilder.Observers;
+         var presentMolecules = simulationBuilder.AllPresentMolecules().ToList();
          try
          {
             foreach (var observerBuilder in observers.OfType<IAmountObserverBuilder>())
@@ -57,7 +57,7 @@ namespace OSPSuite.Core.Domain.Services
          finally
          {
             _allContainerDescriptors = null;
-            _simulationConfiguration = null;
+            _simulationBuilder = null;
          }
       }
 
@@ -114,7 +114,7 @@ namespace OSPSuite.Core.Domain.Services
                {
                   //should only happen for a logical container.
                   moleculeContainer = _containerTask.CreateOrRetrieveSubContainerByName(container, moleculeBuilder.Name).WithContainerType(ContainerType.Molecule);
-                  _simulationConfiguration.AddBuilderReference(moleculeContainer, observerBuilder);
+                  _simulationBuilder.AddBuilderReference(moleculeContainer, observerBuilder);
                }
 
                var observer = addObserverInContainer(observerBuilder, moleculeContainer, moleculeBuilder.QuantityType);
@@ -125,7 +125,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private IObserver addObserverInContainer(IObserverBuilder observerBuilder, IContainer observerContainer, QuantityType moleculeType)
       {
-         var observer = _observerMapper.MapFrom(observerBuilder, _simulationConfiguration);
+         var observer = _observerMapper.MapFrom(observerBuilder, _simulationBuilder);
          observer.QuantityType = QuantityType.Observer | moleculeType;
          observerContainer.Add(observer);
          return observer;

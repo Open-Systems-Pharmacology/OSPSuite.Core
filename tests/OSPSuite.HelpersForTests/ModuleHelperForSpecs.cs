@@ -26,7 +26,7 @@ namespace OSPSuite.Helpers
 
       public SimulationConfiguration CreateSimulationConfiguration()
       {
-         var simulationConfiguration = new SimulationConfigurationForSpecs
+         var simulationConfiguration = new SimulationConfiguration
          {
             SimulationSettings = createSimulationConfiguration(),
          };
@@ -120,7 +120,7 @@ namespace OSPSuite.Helpers
          spatialStructure.AddTopContainer(organism);
 
          var neighborhood1 = _neighborhoodFactory.CreateBetween(artPlasma, bonePlasma).WithName("art_pls_to_bon_pls");
-         //this is a constant parmaeter that will be referenced from arterial plasma compartment
+         //this is a constant parameter that will be referenced from arterial plasma compartment
          neighborhood1.AddParameter(newConstantParameter("K", 10));
          spatialStructure.AddNeighborhood(neighborhood1);
          var neighborhood2 = _neighborhoodFactory.CreateBetween(lngPlasma, artPlasma).WithName("lng_pls_to_art_pls");

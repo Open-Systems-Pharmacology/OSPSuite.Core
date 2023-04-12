@@ -1,14 +1,11 @@
 using NUnit.Framework;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Helpers;
-using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class SimulationXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class SimulationXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
    {
-
       [Test]
       public void TestComplexSimulation()
       {

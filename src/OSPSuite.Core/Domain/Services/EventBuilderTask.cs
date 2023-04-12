@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Domain.Services
    /// <summary>
    ///    Creates events in model using events-building block configuration
    /// </summary>
-   public interface IEventBuilderTask
+   internal interface IEventBuilderTask
    {
       /// <summary>
       ///    Adds events defined by build configuration to the given model
@@ -31,7 +31,7 @@ namespace OSPSuite.Core.Domain.Services
       private EntityDescriptorMapList<IContainer> _allModelContainerDescriptors;
       private ICache<DescriptorCriteria, IEnumerable<IContainer>> _sourceCriteriaTargetContainerCache;
       private ICache<DescriptorCriteria, IEnumerable<IContainer>> _applicationTransportTargetContainerCache;
-      private SimulationConfiguration _simulationConfiguration;
+      private SimulationBuilder _simulationBuilder;
 
       public EventBuilderTask(
          IKeywordReplacerTask keywordReplacerTask,
@@ -47,14 +47,14 @@ namespace OSPSuite.Core.Domain.Services
       {
          try
          {
-            (_model, _simulationConfiguration) = modelConfiguration;
+            (_model, _simulationBuilder) = modelConfiguration;
             _allModelContainerDescriptors = _model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
 
             _sourceCriteriaTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
             _applicationTransportTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
 
             //Cache all containers where the event group builder will be created using the source criteria
-            foreach (var eventGroupBuilder in _simulationConfiguration.EventGroups)
+            foreach (var eventGroupBuilder in _simulationBuilder.EventGroups)
             {
                if (_sourceCriteriaTargetContainerCache.Contains(eventGroupBuilder.SourceCriteria))
                   continue;
@@ -62,7 +62,7 @@ namespace OSPSuite.Core.Domain.Services
                _sourceCriteriaTargetContainerCache.Add(eventGroupBuilder.SourceCriteria, _allModelContainerDescriptors.AllSatisfiedBy(eventGroupBuilder.SourceCriteria));
             }
 
-            _simulationConfiguration.EventGroups.Each(createEventGroupFrom);
+            _simulationBuilder.EventGroups.Each(createEventGroupFrom);
          }
          finally
          {
@@ -72,7 +72,7 @@ namespace OSPSuite.Core.Domain.Services
             _sourceCriteriaTargetContainerCache = null;
             _applicationTransportTargetContainerCache.Clear();
             _applicationTransportTargetContainerCache = null;
-            _simulationConfiguration = null;
+            _simulationBuilder = null;
          }
       }
 
@@ -93,13 +93,13 @@ namespace OSPSuite.Core.Domain.Services
       private void createEventGroupInContainer(IEventGroupBuilder eventGroupBuilder, IContainer sourceContainer)
       {
          //this creates recursively all event groups for the given builder
-         var eventGroup = _eventGroupMapper.MapFrom(eventGroupBuilder, _simulationConfiguration);
+         var eventGroup = _eventGroupMapper.MapFrom(eventGroupBuilder, _simulationBuilder);
          sourceContainer.Add(eventGroup);
 
          //needs to add the requires transport into model only for the added event group
          foreach (var childEventGroup in eventGroup.GetAllContainersAndSelf<IEventGroup>())
          {
-            var childEventGroupBuilder = _simulationConfiguration.BuilderFor(childEventGroup).DowncastTo<IEventGroupBuilder>();
+            var childEventGroupBuilder = _simulationBuilder.BuilderFor(childEventGroup).DowncastTo<IEventGroupBuilder>();
             if (childEventGroupBuilder is IApplicationBuilder applicationBuilder)
                addApplicationTransports(applicationBuilder, childEventGroup);
 
@@ -137,7 +137,7 @@ namespace OSPSuite.Core.Domain.Services
                if (targetAmount == null)
                   throw new OSPSuiteException(Validation.CannotCreateApplicationTargetNotFound(appTransport.Name, moleculeName, targetContainer.Name));
 
-               var transport = _transportMapper.MapFrom(appTransport, _simulationConfiguration);
+               var transport = _transportMapper.MapFrom(appTransport, _simulationBuilder);
 
                transport.SourceAmount = sourceAmount;
                transport.TargetAmount = targetAmount;

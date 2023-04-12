@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Domain.Mappers
    ///    <para></para>
    ///    (by the global molecule properties mapper)
    /// </summary>
-   public interface IMoleculeBuilderToMoleculeAmountMapper
+   internal interface IMoleculeBuilderToMoleculeAmountMapper
    {
       /// <summary>
       ///    Maps the <paramref name="moleculeBuilder" /> to a MoleculeAmount. <paramref name="targetContainer" /> is where the
@@ -27,12 +27,12 @@ namespace OSPSuite.Core.Domain.Mappers
       ///    Container where the molecule amount will be added. This is required in order to evaluate
       ///    local parameters container criteria
       /// </param>
-      /// <param name="simulationConfiguration">Build configuration</param>
+      /// <param name="simulationBuilder">Simulation builder</param>
       /// <returns></returns>
-      IMoleculeAmount MapFrom(IMoleculeBuilder moleculeBuilder, IContainer targetContainer, SimulationConfiguration simulationConfiguration);
+      IMoleculeAmount MapFrom(IMoleculeBuilder moleculeBuilder, IContainer targetContainer, SimulationBuilder simulationBuilder);
    }
 
-   public class MoleculeBuilderToMoleculeAmountMapper : IMoleculeBuilderToMoleculeAmountMapper
+   internal class MoleculeBuilderToMoleculeAmountMapper : IMoleculeBuilderToMoleculeAmountMapper
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IFormulaBuilderToFormulaMapper _formulaMapper;
@@ -57,7 +57,7 @@ namespace OSPSuite.Core.Domain.Mappers
          _amountDimension = dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
       }
 
-      public IMoleculeAmount MapFrom(IMoleculeBuilder moleculeBuilder, IContainer targetContainer, SimulationConfiguration simulationConfiguration)
+      public IMoleculeAmount MapFrom(IMoleculeBuilder moleculeBuilder, IContainer targetContainer, SimulationBuilder simulationBuilder)
       {
          //molecule amount always in amount
          var moleculeAmount = _objectBaseFactory.Create<IMoleculeAmount>()
@@ -69,9 +69,9 @@ namespace OSPSuite.Core.Domain.Mappers
             .WithDimension(_amountDimension)
             .WithDisplayUnit(_amountDimension.UnitOrDefault(_amountDimension.DefaultUnit.Name));
 
-         simulationConfiguration.AddBuilderReference(moleculeAmount, moleculeBuilder);
+         simulationBuilder.AddBuilderReference(moleculeAmount, moleculeBuilder);
 
-         createMoleculeAmountDefaultFormula(moleculeBuilder, simulationConfiguration, moleculeAmount);
+         createMoleculeAmountDefaultFormula(moleculeBuilder, simulationBuilder, moleculeAmount);
 
          //map parameters. Only parameters having BuildMode="Local" will
          //be added to the molecule amount. Global/Property-Parameters
@@ -80,19 +80,19 @@ namespace OSPSuite.Core.Domain.Mappers
             .Where(x => x.BuildMode == ParameterBuildMode.Local)
             .Where(x => x.ContainerCriteria?.IsSatisfiedBy(targetContainer) ?? true);
 
-         allLocalParameters.Each(x => moleculeAmount.Add(_parameterMapper.MapFrom(x, simulationConfiguration)));
+         allLocalParameters.Each(x => moleculeAmount.Add(_parameterMapper.MapFrom(x, simulationBuilder)));
 
          _keywordReplacerTask.ReplaceIn(moleculeAmount);
          return moleculeAmount;
       }
 
-      private void createMoleculeAmountDefaultFormula(IMoleculeBuilder moleculeBuilder, SimulationConfiguration simulationConfiguration, IMoleculeAmount moleculeAmount)
+      private void createMoleculeAmountDefaultFormula(IMoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder, IMoleculeAmount moleculeAmount)
       {
          //set start value formula to the default. If user has specified
          //a new start value in MoleculesStartValueCollection-BB, default formula
          //will be overwritten during setting of molecule start values
 
-         var modelFormula = _formulaMapper.MapFrom(moleculeBuilder.DefaultStartFormula, simulationConfiguration);
+         var modelFormula = _formulaMapper.MapFrom(moleculeBuilder.DefaultStartFormula, simulationBuilder);
 
          //amount based, we can just the formula as is
          if (moleculeBuilder.IsAmountBased())
@@ -103,7 +103,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
          //create a start value parameter that will be referenced in the molecule formula 
          var startValueParameter = _parameterFactory.CreateStartValueParameter(moleculeAmount, modelFormula, moleculeBuilder.DisplayUnit);
-         simulationConfiguration.AddBuilderReference(startValueParameter, moleculeBuilder);
+         simulationBuilder.AddBuilderReference(startValueParameter, moleculeBuilder);
          moleculeAmount.Add(startValueParameter);
          moleculeAmount.Formula = _formulaFactory.CreateMoleculeAmountReferenceToStartValue(startValueParameter);
       }

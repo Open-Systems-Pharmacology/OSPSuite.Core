@@ -5,11 +5,10 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
-   public abstract class concern_for_FormulaBuilderToFormulaMapper : ContextSpecification<IFormulaBuilderToFormulaMapper>
+   internal abstract class concern_for_FormulaBuilderToFormulaMapper : ContextSpecification<IFormulaBuilderToFormulaMapper>
    {
       protected ICloneManagerForModel _cloneManagerForModel;
 
@@ -20,26 +19,28 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
-   public class When_mapping_a_formula_from_a_formula_builder : concern_for_FormulaBuilderToFormulaMapper
+   internal class When_mapping_a_formula_from_a_formula_builder : concern_for_FormulaBuilderToFormulaMapper
    {
       protected IFormula _mappedFormula;
       protected IFormula _formula;
       private IFormula _clonedFormula;
       private SimulationConfiguration _simulationConfiguration;
+      private SimulationBuilder _simulationBuilder;
 
       protected override void Context()
       {
          base.Context();
-         _simulationConfiguration = new SimulationConfigurationForSpecs();
+         _simulationConfiguration = new SimulationConfiguration();
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _formula = A.Fake<IFormula>();
          _clonedFormula = A.Fake<IFormula>();
          A.CallTo(() => _cloneManagerForModel.Clone(_formula)).Returns(_clonedFormula);
-         A.CallTo(() => _cloneManagerForModel.Clone((IFormula)null)).Returns(null);
+         A.CallTo(() => _cloneManagerForModel.Clone((IFormula) null)).Returns(null);
       }
 
       protected override void Because()
       {
-         _mappedFormula = sut.MapFrom(_formula, _simulationConfiguration);
+         _mappedFormula = sut.MapFrom(_formula, _simulationBuilder);
       }
 
       [Observation]
@@ -51,7 +52,7 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_return_null_if_the_given_formula_was_null()
       {
-         sut.MapFrom(null, _simulationConfiguration).ShouldBeNull();
+         sut.MapFrom(null, _simulationBuilder).ShouldBeNull();
       }
    }
 }

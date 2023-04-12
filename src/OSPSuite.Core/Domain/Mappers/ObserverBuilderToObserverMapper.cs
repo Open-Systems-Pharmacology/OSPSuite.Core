@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Domain.Mappers
    {
    }
 
-   public class ObserverBuilderToObserverMapper : IObserverBuilderToObserverMapper
+   internal class ObserverBuilderToObserverMapper : IObserverBuilderToObserverMapper
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IFormulaBuilderToFormulaMapper _formulaMapper;
@@ -20,16 +20,16 @@ namespace OSPSuite.Core.Domain.Mappers
          _formulaMapper = formulaMapper;
       }
 
-      public IObserver MapFrom(IObserverBuilder observerBuilder, SimulationConfiguration simulationConfiguration)
+      public IObserver MapFrom(IObserverBuilder observerBuilder, SimulationBuilder simulationBuilder)
       {
          var observer = _objectBaseFactory.Create<IObserver>()
             .WithName(observerBuilder.Name)
             .WithIcon(observerBuilder.Icon)
             .WithDescription(observerBuilder.Description)
             .WithDimension(observerBuilder.Dimension)
-            .WithFormula(_formulaMapper.MapFrom(observerBuilder.Formula, simulationConfiguration));
+            .WithFormula(_formulaMapper.MapFrom(observerBuilder.Formula, simulationBuilder));
 
-         simulationConfiguration.AddBuilderReference(observer, observerBuilder);
+         simulationBuilder.AddBuilderReference(observer, observerBuilder);
          return observer;
       }
    }

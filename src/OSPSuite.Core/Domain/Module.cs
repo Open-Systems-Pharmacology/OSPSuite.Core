@@ -16,12 +16,12 @@ namespace OSPSuite.Core.Domain
 
       public bool ReadOnly { get; set; } = false;
 
+      public IEventGroupBuildingBlock EventGroups { set; get; }
       public MoleculeBuildingBlock Molecules { set; get; }
+      public IObserverBuildingBlock Observers { set; get; }
       public IReactionBuildingBlock Reactions { set; get; }
       public IPassiveTransportBuildingBlock PassiveTransports { set; get; }
       public ISpatialStructure SpatialStructure { set; get; }
-      public IObserverBuildingBlock Observers { set; get; }
-      public IEventGroupBuildingBlock EventGroups { set; get; }
       public IReadOnlyList<MoleculeStartValuesBuildingBlock> MoleculeStartValuesCollection => _moleculeStartValuesCollection;
       public IReadOnlyList<ParameterStartValuesBuildingBlock> ParameterStartValuesCollection => _parameterStartValuesCollection;
       public virtual ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
@@ -103,26 +103,26 @@ namespace OSPSuite.Core.Domain
          }
       }
 
-      public void RemoveBuildingBlock( IBuildingBlock buildingBlock)
+      public void RemoveBuildingBlock(IBuildingBlock buildingBlock)
       {
          switch (buildingBlock)
          {
-            case MoleculeBuildingBlock molecule:
+            case MoleculeBuildingBlock _:
                Molecules = null;
                break;
-            case IReactionBuildingBlock reaction:
+            case IReactionBuildingBlock _:
                Reactions = null;
                break;
-            case ISpatialStructure spatialStructure:
+            case ISpatialStructure _:
                SpatialStructure = null;
                break;
-            case IPassiveTransportBuildingBlock passiveTransport:
+            case IPassiveTransportBuildingBlock _:
                PassiveTransports = null;
                break;
-            case IEventGroupBuildingBlock eventGroup:
+            case IEventGroupBuildingBlock _:
                EventGroups = null;
                break;
-            case IObserverBuildingBlock observer:
+            case IObserverBuildingBlock _:
                Observers = null;
                break;
             case ParameterStartValuesBuildingBlock parameterStartValues:
@@ -172,7 +172,7 @@ namespace OSPSuite.Core.Domain
 
       public void AddExtendedProperty<T>(string propertyName, T property)
       {
-         ExtendedProperties[propertyName] = new ExtendedProperty<T> { Name = propertyName, Value = property };
+         ExtendedProperties[propertyName] = new ExtendedProperty<T> {Name = propertyName, Value = property};
       }
 
       /// <summary>

@@ -7,7 +7,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
-   public interface IQuantityValuesUpdater
+   internal interface IQuantityValuesUpdater
    {
       /// <summary>
       ///    Update the values of all <see cref="Quantity" /> defined in the model based on the values
@@ -23,7 +23,7 @@ namespace OSPSuite.Core.Domain.Services
       void UpdateQuantitiesValues(ModelConfiguration modelConfiguration);
    }
 
-   public class QuantityValuesUpdater : IQuantityValuesUpdater
+   internal class QuantityValuesUpdater : IQuantityValuesUpdater
    {
       private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly ICloneManagerForModel _cloneManagerForModel;
@@ -72,7 +72,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateParameterValueFromParameterStartValues(ModelConfiguration modelConfiguration)
       {
-         modelConfiguration.SimulationConfiguration.ParameterStartValues
+         modelConfiguration.SimulationBuilder.ParameterStartValues
             .Each(psv => updateParameterValueFromStartValue(modelConfiguration, psv, getParameter));
       }
 

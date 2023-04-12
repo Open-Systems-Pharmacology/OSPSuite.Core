@@ -4,6 +4,6 @@ namespace OSPSuite.Core.Domain.Mappers
 {
    public interface IBuilderMapper<in TInput, out TOutput>
    {
-      TOutput MapFrom(TInput input, SimulationConfiguration simulationConfiguration);
+      TOutput MapFrom(TInput input, SimulationBuilder simulationBuilder);
    }
 }

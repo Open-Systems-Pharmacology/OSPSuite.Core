@@ -8,7 +8,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
-   public abstract class concern_for_reaction_partner_builder_to_reaction_partner_mapper : ContextSpecification<IReactionPartnerBuilderToReactionPartnerMapper>
+   internal abstract class concern_for_reaction_partner_builder_to_reaction_partner_mapper : ContextSpecification<IReactionPartnerBuilderToReactionPartnerMapper>
    {
       protected override void Context()
       {
@@ -16,19 +16,21 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
-   public class When_mapping_a_reaction_partner_builder_to_a_reaction_partner : concern_for_reaction_partner_builder_to_reaction_partner_mapper
+   internal class When_mapping_a_reaction_partner_builder_to_a_reaction_partner : concern_for_reaction_partner_builder_to_reaction_partner_mapper
    {
       private IReactionPartnerBuilder _reactionPartnerBuilder;
       private IReactionPartner _reactionPartner;
       private IContainer _container;
       private IMoleculeAmount _moleculeAmount;
       private SimulationConfiguration _simulationConfiguration;
+      private SimulationBuilder _simulationBuilder;
 
       protected override void Context()
       {
          base.Context();
          _reactionPartnerBuilder = A.Fake<IReactionPartnerBuilder>();
-         _simulationConfiguration = new SimulationConfigurationForSpecs();
+         _simulationConfiguration = new SimulationConfiguration();
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _container = new Container();
          _reactionPartnerBuilder.MoleculeName = "Drug";
          _moleculeAmount = A.Fake<IMoleculeAmount>().WithName("Drug");
@@ -38,7 +40,7 @@ namespace OSPSuite.Core.Mappers
 
       protected override void Because()
       {
-         _reactionPartner = sut.MapFromLocal(_reactionPartnerBuilder, _container, _simulationConfiguration);
+         _reactionPartner = sut.MapFromLocal(_reactionPartnerBuilder, _container, _simulationBuilder);
       }
 
       [Observation]
@@ -54,18 +56,20 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
-   public class When_mapping_a_reaction_partner_builder_to_a_reaction_partner_missing_a_amount : concern_for_reaction_partner_builder_to_reaction_partner_mapper
+   internal class When_mapping_a_reaction_partner_builder_to_a_reaction_partner_missing_a_amount : concern_for_reaction_partner_builder_to_reaction_partner_mapper
    {
       private IReactionPartnerBuilder _reactionPartnerBuilder;
       private IContainer _container;
       private SimulationConfiguration _simulationConfiguration;
+      private SimulationBuilder _simulationBuilder;
 
       protected override void Context()
       {
          base.Context();
          _reactionPartnerBuilder = A.Fake<IReactionPartnerBuilder>();
          _container = new Container();
-         _simulationConfiguration = new SimulationConfigurationForSpecs();
+         _simulationConfiguration = new SimulationConfiguration();
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _reactionPartnerBuilder.MoleculeName = "Drug";
          _reactionPartnerBuilder.StoichiometricCoefficient = 1.1;
       }
@@ -73,7 +77,7 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_throw_a_MissingMoleculeAmountException()
       {
-         The.Action(() => sut.MapFromLocal(_reactionPartnerBuilder, _container, _simulationConfiguration)).ShouldThrowAn<MissingMoleculeAmountException>();
+         The.Action(() => sut.MapFromLocal(_reactionPartnerBuilder, _container, _simulationBuilder)).ShouldThrowAn<MissingMoleculeAmountException>();
       }
    }
 }

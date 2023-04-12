@@ -133,7 +133,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   class When_adding_a_building_block_to_a_module : concern_for_Module
+   public class When_adding_a_building_block_to_a_module : concern_for_Module
    {
       protected IBuildingBlock _buildingBlock;
 
@@ -157,7 +157,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   class When_adding_a_not_supported_building_block_to_a_module : concern_for_Module
+   public class When_adding_a_not_supported_building_block_to_a_module : concern_for_Module
    {
       protected IBuildingBlock _buildingBlock;
 
@@ -175,7 +175,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   class When_adding_a_null_building_block_to_a_module : concern_for_Module
+   public class When_adding_a_null_building_block_to_a_module : concern_for_Module
    {
       protected IBuildingBlock _buildingBlock;
 

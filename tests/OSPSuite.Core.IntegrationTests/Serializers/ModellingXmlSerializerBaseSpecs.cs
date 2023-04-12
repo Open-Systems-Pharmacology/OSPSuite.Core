@@ -37,7 +37,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public abstract class ModellingXmlSerializerWithModelBaseSpecs : ModellingXmlSerializerBaseSpecs
+   internal abstract class ModellingXmlSerializerWithModelBaseSpecs : ModellingXmlSerializerBaseSpecs
    {
       protected SimulationConfiguration _simulationConfiguration;
       protected IObjectPathFactory _objectPathFactory;
@@ -47,6 +47,7 @@ namespace OSPSuite.Core.Serializers
       protected IModelCoreSimulation _simulation;
       protected IModelConstructor _modelConstructor;
       protected Module _module;
+      protected SimulationBuilder _simulationBuilder;
 
       public override void GlobalContext()
       {
@@ -59,6 +60,7 @@ namespace OSPSuite.Core.Serializers
          _objectPathFactory = IoC.Resolve<IObjectPathFactory>();
          _moleculeStartValuesCreator = IoC.Resolve<IMoleculeStartValuesCreator>();
          _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _module = _simulationConfiguration.ModuleConfigurations[0].Module;
          _modelConstructor = IoC.Resolve<IModelConstructor>();
          _result = _modelConstructor.CreateModelFrom(_simulationConfiguration, "MyModel");

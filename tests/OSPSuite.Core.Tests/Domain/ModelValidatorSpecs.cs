@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          _objectPathFactory = new ObjectPathFactoryForSpecs();
-         _simulationConfiguration = new SimulationConfigurationForSpecs();
+         _simulationConfiguration = new SimulationConfiguration();
          _validFormula = new ExplicitFormula("5*PAR1");
          _validFormula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("ROOT", "VALID", "PARA1").WithAlias("PAR1"));
          _invalidFormula = new ExplicitFormula("toto");
@@ -46,7 +46,7 @@ namespace OSPSuite.Core.Domain
          _rootContainer.Add(_invalidContainer);
          _objectTypeResolver = A.Fake<IObjectTypeResolver>();
          _model = new Model();
-         _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration);
+         _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, new SimulationBuilder(_simulationConfiguration));
       }
    }
 
