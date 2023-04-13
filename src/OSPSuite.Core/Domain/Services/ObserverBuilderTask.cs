@@ -47,11 +47,11 @@ namespace OSPSuite.Core.Domain.Services
          var presentMolecules = simulationBuilder.AllPresentMolecules().ToList();
          try
          {
-            foreach (var observerBuilder in observers.OfType<IAmountObserverBuilder>())
+            foreach (var observerBuilder in observers.OfType<AmountObserverBuilder>())
                createAmountObserver(observerBuilder, model, presentMolecules);
 
 
-            foreach (var observerBuilder in observers.OfType<IContainerObserverBuilder>())
+            foreach (var observerBuilder in observers.OfType<ContainerObserverBuilder>())
                createContainerObserver(observerBuilder, model, presentMolecules);
          }
          finally
@@ -64,7 +64,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Retrieves molecules for which the given observer can be created
       /// </summary>
-      private IEnumerable<IMoleculeBuilder> moleculeBuildersValidFor(MoleculeList moleculeList, IEnumerable<IMoleculeBuilder> allMolecules)
+      private IEnumerable<MoleculeBuilder> moleculeBuildersValidFor(MoleculeList moleculeList, IEnumerable<MoleculeBuilder> allMolecules)
       {
          if (moleculeList.ForAll)
             return allMolecules.Where(molecule => !moleculeList.MoleculeNamesToExclude.Contains(molecule.Name));
@@ -77,14 +77,14 @@ namespace OSPSuite.Core.Domain.Services
       ///    in the spatial structure of the model.
       ///    Typical example: "Concentration"-Observer (M/V)
       /// </summary>
-      private void createAmountObserver(IAmountObserverBuilder observerBuilder, IModel model, IEnumerable<IMoleculeBuilder> presentMolecules)
+      private void createAmountObserver(AmountObserverBuilder observerBuilder, IModel model, IEnumerable<MoleculeBuilder> presentMolecules)
       {
          var moleculeNamesForObserver = moleculeBuildersValidFor(observerBuilder.MoleculeList, presentMolecules)
             .Select(x => x.Name).ToList();
 
          foreach (var container in _allContainerDescriptors.AllSatisfiedBy(observerBuilder.ContainerCriteria))
          {
-            var amountsForObserver = container.GetChildren<IMoleculeAmount>(ma => moleculeNamesForObserver.Contains(ma.Name));
+            var amountsForObserver = container.GetChildren<MoleculeAmount>(ma => moleculeNamesForObserver.Contains(ma.Name));
 
             foreach (var amount in amountsForObserver)
             {
@@ -100,7 +100,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    of the model.
       ///    Typical example is average drug concentration in an organ
       /// </summary>
-      private void createContainerObserver(IContainerObserverBuilder observerBuilder, IModel model, IEnumerable<IMoleculeBuilder> presentMolecules)
+      private void createContainerObserver(ContainerObserverBuilder observerBuilder, IModel model, IEnumerable<MoleculeBuilder> presentMolecules)
       {
          var moleculeBuildersForObserver = moleculeBuildersValidFor(observerBuilder.MoleculeList, presentMolecules).ToList();
          //retrieve a list here to avoid endless loop if observers criteria is not well defined
@@ -123,7 +123,7 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private IObserver addObserverInContainer(IObserverBuilder observerBuilder, IContainer observerContainer, QuantityType moleculeType)
+      private Observer addObserverInContainer(ObserverBuilder observerBuilder, IContainer observerContainer, QuantityType moleculeType)
       {
          var observer = _observerMapper.MapFrom(observerBuilder, _simulationBuilder);
          observer.QuantityType = QuantityType.Observer | moleculeType;

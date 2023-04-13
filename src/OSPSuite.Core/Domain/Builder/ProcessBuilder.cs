@@ -16,22 +16,7 @@ namespace OSPSuite.Core.Domain.Builder
    ///    Base builder interface for all builder creating amount changing objects
    ///    Contains all information used for every kind of amount change
    /// </summary>
-   public interface IProcessBuilder : IContainer, IUsingFormula, IContainsParameters, IBuilder
-   {
-      /// <summary>
-      ///    If set to true, a parameter rate named ProcessRate will be generated in the simulation.Its formula
-      ///    will be set to the rate of the created process. Default is false
-      /// </summary>
-      bool CreateProcessRateParameter { get; set; }
-
-      bool ProcessRateParameterPersistable { get; set; }
-   }
-
-   /// <summary>
-   ///    Base builder interface for all builder creating amount changing objects
-   ///    Contains all information used for every kind of amount change
-   /// </summary>
-   public abstract class ProcessBuilder : Container, IProcessBuilder
+   public abstract class ProcessBuilder : Container, IUsingFormula
    {
       private IFormula _formula;
       private bool _createProcessRateParameter;
@@ -39,6 +24,10 @@ namespace OSPSuite.Core.Domain.Builder
       public IDimension Dimension { get; set; }
       public IBuildingBlock BuildingBlock { get; set; }
 
+      /// <summary>
+      ///    If set to true, a parameter rate named ProcessRate will be generated in the simulation.Its formula
+      ///    will be set to the rate of the created process. Default is false
+      /// </summary>
       public bool CreateProcessRateParameter
       {
          get => _createProcessRateParameter;
@@ -82,13 +71,12 @@ namespace OSPSuite.Core.Domain.Builder
       {
          base.UpdatePropertiesFrom(source, cloneManager);
 
-         var srcProcessBuilder = source as IProcessBuilder;
+         var srcProcessBuilder = source as ProcessBuilder;
          if (srcProcessBuilder == null) return;
 
          Dimension = srcProcessBuilder.Dimension;
          CreateProcessRateParameter = srcProcessBuilder.CreateProcessRateParameter;
          ProcessRateParameterPersistable = srcProcessBuilder.ProcessRateParameterPersistable;
       }
-
    }
 }

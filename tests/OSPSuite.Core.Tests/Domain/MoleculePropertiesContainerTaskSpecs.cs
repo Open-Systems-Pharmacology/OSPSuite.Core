@@ -50,7 +50,7 @@ namespace OSPSuite.Core.Domain
    internal class When_creating_the_global_molecule_container_for_a_given_molecule_builder : concern_for_MoleculePropertiesContainerTask
    {
       private IContainer _result;
-      private IMoleculeBuilder _moleculeBuilder;
+      private MoleculeBuilder _moleculeBuilder;
       private IContainer _moleculeContainer;
       private IParameter _para1;
       private IParameter _para2;
@@ -84,8 +84,10 @@ namespace OSPSuite.Core.Domain
          A.CallTo(() => _parameterCollectionMapper.MapAllFrom(_globalMoleculeDependentProperties, _simulationBuilder))
             .Returns(new[] {_globalMoleculeDepParam1, _globalMoleculeDepParam2});
 
-         var spatialStructure = A.Fake<ISpatialStructure>();
-         A.CallTo(() => spatialStructure.GlobalMoleculeDependentProperties).Returns(_globalMoleculeDependentProperties);
+         var spatialStructure = new SpatialStructure
+         {
+            GlobalMoleculeDependentProperties = _globalMoleculeDependentProperties
+         };
          var module = new Module
          {
             SpatialStructure = spatialStructure
@@ -122,7 +124,7 @@ namespace OSPSuite.Core.Domain
    internal class When_creating_the_global_molecule_container_for_a_given_molecule_builder_with_interaction_containers : concern_for_MoleculePropertiesContainerTask
    {
       private IContainer _result;
-      private IMoleculeBuilder _moleculeBuilder;
+      private MoleculeBuilder _moleculeBuilder;
       private IParameter _para;
 
       protected override void Context()
@@ -166,7 +168,7 @@ namespace OSPSuite.Core.Domain
    internal class When_creating_the_global_molecule_container_for_a_given_xenobiotic_molecule_builder : concern_for_MoleculePropertiesContainerTask
    {
       private IContainer _result;
-      private IMoleculeBuilder _moleculeBuilder;
+      private MoleculeBuilder _moleculeBuilder;
       private IContainer _moleculeContainer;
       private IParameter _para1;
       private IContainer _globalMoleculeDependentProperties;
@@ -175,7 +177,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         _moleculeBuilder = A.Fake<IMoleculeBuilder>().WithName("tralal");
+         _moleculeBuilder =new MoleculeBuilder().WithName("tralala");
          _moleculeBuilder.IsFloating = true;
          _moleculeBuilder.IsXenobiotic = false;
          _moleculeContainer = A.Fake<IContainer>();
@@ -193,8 +195,10 @@ namespace OSPSuite.Core.Domain
          A.CallTo(() => _parameterCollectionMapper.MapGlobalOrPropertyFrom(_globalMoleculeDependentProperties, _simulationBuilder))
             .Returns(new[] {_globalMoleculeDepParam1});
 
-         var spatialStructure = A.Fake<ISpatialStructure>();
-         A.CallTo(() => spatialStructure.GlobalMoleculeDependentProperties).Returns(_globalMoleculeDependentProperties);
+         var spatialStructure = new SpatialStructure
+         {
+            GlobalMoleculeDependentProperties = _globalMoleculeDependentProperties
+         };
          var module = new Module
          {
             SpatialStructure = spatialStructure

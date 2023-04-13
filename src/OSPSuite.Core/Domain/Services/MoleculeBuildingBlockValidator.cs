@@ -16,14 +16,14 @@ namespace OSPSuite.Core.Domain.Services
       /// <returns>The validation results corresponding to the validation</returns>
       ValidationResult Validate(MoleculeBuildingBlock moleculeBuildingBlock);
 
-      ValidationResult Validate(IReadOnlyCollection<IMoleculeBuilder> molecules);
+      ValidationResult Validate(IReadOnlyCollection<MoleculeBuilder> molecules);
    }
 
    internal class MoleculeBuildingBlockValidator : IMoleculeBuildingBlockValidator
    {
       public ValidationResult Validate(MoleculeBuildingBlock moleculeBuildingBlock) => Validate(moleculeBuildingBlock.ToList());
 
-      public ValidationResult Validate(IReadOnlyCollection<IMoleculeBuilder> molecules)
+      public ValidationResult Validate(IReadOnlyCollection<MoleculeBuilder> molecules)
       {
          var validationResults = new ValidationResult();
          foreach (var molecule in molecules.Where(m => m.IsFloating))

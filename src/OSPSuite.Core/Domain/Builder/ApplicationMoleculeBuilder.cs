@@ -4,25 +4,15 @@ using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   /// <summary>
-   ///    Location and start formula for the molecule amounts
-   ///    <para></para>
-   ///    which are defined within any application subcontainer.
-   ///    Formula is the start formula of the application molecule amount for the given compartment
-   /// </summary>
-   public interface IApplicationMoleculeBuilder : IUsingFormula
+   public class ApplicationMoleculeBuilder : Entity, IUsingFormula
    {
       /// <summary>
       ///    Path to the container where the molecule amount will be created
       ///    <para></para>
       ///    Must be defined relative to the root container of the application
       /// </summary>
-      ObjectPath RelativeContainerPath { get; set; }
-   }
-
-   public class ApplicationMoleculeBuilder : Entity, IApplicationMoleculeBuilder
-   {
       public ObjectPath RelativeContainerPath { get; set; }
+
       public IFormula Formula { get; set; }
       public IDimension Dimension { get; set; }
 
@@ -30,7 +20,7 @@ namespace OSPSuite.Core.Domain.Builder
       {
          base.UpdatePropertiesFrom(source, cloneManager);
 
-         var srcAppMoleculeBuilder = source as IApplicationMoleculeBuilder;
+         var srcAppMoleculeBuilder = source as ApplicationMoleculeBuilder;
          if (srcAppMoleculeBuilder == null) return;
 
          RelativeContainerPath = srcAppMoleculeBuilder.RelativeContainerPath.Clone<ObjectPath>();

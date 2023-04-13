@@ -92,9 +92,9 @@ namespace OSPSuite.Core.Domain
       ///    found for
       ///    the given <paramref name="quantity" />, returns <c>null</c>.
       ///    We use the following logic:
-      ///    For a <see cref="IMoleculeAmount" /> a MolWeight parameter will be searched directly in the global container named
+      ///    For a <see cref="MoleculeAmount" /> a MolWeight parameter will be searched directly in the global container named
       ///    after the molecule.
-      ///    For all other quantities (e.g. <see cref="IObserver" />,  <see cref="IParameter" />) a MolWeight parameter will be
+      ///    For all other quantities (e.g. <see cref="Observer" />,  <see cref="IParameter" />) a MolWeight parameter will be
       ///    searched in the global container named after the parent.
       /// </summary>
       /// <param name="quantity">Quantity for which the molweight parameter should be retrieved</param>

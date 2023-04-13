@@ -76,14 +76,14 @@ namespace OSPSuite.Core.Domain
    public class When_the_parameter_factory_is_creating_a_start_value_parameter_for_a_given_molecule_amount_and_formula : concern_for_ParameterFactory
    {
       private IFormula _modelFormulaToUse;
-      private IMoleculeAmount _moleculeAmount;
+      private MoleculeAmount _moleculeAmount;
       private IParameter _parameter;
 
       protected override void Context()
       {
          base.Context();
          _modelFormulaToUse = A.Fake<IFormula>();
-         _moleculeAmount = A.Fake<IMoleculeAmount>();
+         _moleculeAmount = A.Fake<MoleculeAmount>();
       }
 
       protected override void Because()

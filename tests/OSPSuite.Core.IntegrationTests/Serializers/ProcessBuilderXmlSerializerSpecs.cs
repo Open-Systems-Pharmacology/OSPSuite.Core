@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Serializers
          x1.AddParameter(p1);
          x1.AddParameter(p2);
 
-         ITransportBuilder x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
 
          AssertForSpecs.AreEqualProcessBuilder(x1, x2);
       }
@@ -48,7 +48,7 @@ namespace OSPSuite.Core.Serializers
          x1.CreateProcessRateParameter = true;
          x1.ProcessRateParameterPersistable = true;
 
-         ITransportBuilder x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
 
          AssertForSpecs.AreEqualTransportBuilder(x1, x2);
       }
@@ -59,7 +59,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestSerialization()
       {
-         TransportBuilder x1 = CreateObject<TransportBuilder>().WithName("Passionata.Builder");
+         var x1 = CreateObject<TransportBuilder>().WithName("Passionata.Builder");
          x1.Formula = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(23.4);
 
 

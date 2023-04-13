@@ -18,14 +18,14 @@ namespace OSPSuite.Core.Domain
    
    public class When_creating_a_new_SpatialStructure : concern_for_SpatialStructureFactory
    {
-      private ISpatialStructure _result;
+      private SpatialStructure _result;
 
       protected override void Because()
       {
          _result = sut.Create();
       }
       [Observation]
-      public void should_return_a_proper_initialised_spatial_structure()
+      public void should_return_a_proper_initialized_spatial_structure()
       {
          _result.ShouldNotBeNull();
       }

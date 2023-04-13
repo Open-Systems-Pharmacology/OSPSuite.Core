@@ -101,8 +101,8 @@ namespace OSPSuite.Presentation.Mappers
       {
          return
             displayIf<IFormula>(diffItem, x => ancestorDisplayName(diffItem)) ??
-            displayIf<IReactionPartner>(diffItem, x => x.Partner.Name) ??
-            displayIf<IReactionPartnerBuilder>(diffItem, x => x.MoleculeName) ??
+            displayIf<ReactionPartner>(diffItem, x => x.Partner.Name) ??
+            displayIf<ReactionPartnerBuilder>(diffItem, x => x.MoleculeName) ??
             displayIf<UsedCalculationMethod>(diffItem, x => x.Category) ??
             displayIf<CalculationMethod>(diffItem, x => displayNameFor(new Category<CalculationMethod> { Name = x.Category })) ??
             displayIf<ObjectPath>(diffItem, x => ancestorDisplayName(diffItem)) ??

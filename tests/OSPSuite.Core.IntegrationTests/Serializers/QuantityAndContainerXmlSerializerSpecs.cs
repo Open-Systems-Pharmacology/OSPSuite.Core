@@ -57,7 +57,7 @@ namespace OSPSuite.Core.Serializers
          x1.Value = 2.3;
          x1.ScaleDivisor = 0.345;
 
-         IMoleculeAmount x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualMoleculeAmount(x2, x1);
       }
    }

@@ -4,7 +4,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Mappers
 {
-   public interface IReactionBuilderToReactionMapper : ILocalMapper<IReactionBuilder, IContainer, IReaction>
+   public interface IReactionBuilderToReactionMapper : ILocalMapper<ReactionBuilder, IContainer, Reaction>
    {
    }
 
@@ -32,9 +32,9 @@ namespace OSPSuite.Core.Domain.Mappers
          _processRateParameterCreator = processRateParameterCreator;
       }
 
-      public IReaction MapFromLocal(IReactionBuilder reactionBuilder, IContainer container, SimulationBuilder simulationBuilder)
+      public Reaction MapFromLocal(ReactionBuilder reactionBuilder, IContainer container, SimulationBuilder simulationBuilder)
       {
-         var reaction = _objectBaseFactory.Create<IReaction>()
+         var reaction = _objectBaseFactory.Create<Reaction>()
             .WithName(reactionBuilder.Name)
             .WithDescription(reactionBuilder.Description)
             .WithIcon(reactionBuilder.Icon)
@@ -53,12 +53,12 @@ namespace OSPSuite.Core.Domain.Mappers
          return reaction;
       }
 
-      private IFormula createReactionKinetic(IReactionBuilder reactionBuilder, SimulationBuilder simulationBuilder)
+      private IFormula createReactionKinetic(ReactionBuilder reactionBuilder, SimulationBuilder simulationBuilder)
       {
          return _formulaMapper.MapFrom(reactionBuilder.Formula, simulationBuilder);
       }
 
-      private IParameter processRateParameterFor(IReactionBuilder reactionBuilder, SimulationBuilder simulationBuilder)
+      private IParameter processRateParameterFor(ReactionBuilder reactionBuilder, SimulationBuilder simulationBuilder)
       {
          return _processRateParameterCreator.CreateProcessRateParameterFor(reactionBuilder, simulationBuilder);
       }

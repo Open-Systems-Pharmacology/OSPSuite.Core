@@ -41,8 +41,8 @@ namespace OSPSuite.Core.Mappers
 
    internal class When_mapping_a_molecule_builder_to_a_molecule_amount : concern_for_MoleculeBuilderToMoleculeAmountMapper
    {
-      private IMoleculeBuilder _moleculeBuilder;
-      private IMoleculeAmount _moleculeAmount;
+      private MoleculeBuilder _moleculeBuilder;
+      private MoleculeAmount _moleculeAmount;
       private IFormula _mappedFormula;
       private IParameter _para1;
       private IParameter _para2;
@@ -75,7 +75,7 @@ namespace OSPSuite.Core.Mappers
          _para1 = new Parameter().WithName("P1");
          _para2 = new Parameter().WithName("P2");
          _para3 = new Parameter().WithName("P3");
-         A.CallTo(() => _objectBaseFactory.Create<IMoleculeAmount>()).Returns(new MoleculeAmount());
+         A.CallTo(() => _objectBaseFactory.Create<MoleculeAmount>()).Returns(new MoleculeAmount());
          A.CallTo(() => _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT)).Returns(_amountDimension);
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          A.CallTo(() => _formulaMapper.MapFrom(_moleculeBuilder.DefaultStartFormula, _simulationBuilder)).Returns(_mappedFormula);
@@ -123,8 +123,8 @@ namespace OSPSuite.Core.Mappers
 
    internal class When_mapping_a_molecule_builder_using_concentration_to_a_molecule_amount : concern_for_MoleculeBuilderToMoleculeAmountMapper
    {
-      private IMoleculeBuilder _moleculeBuilder;
-      private IMoleculeAmount _moleculeAmount;
+      private MoleculeBuilder _moleculeBuilder;
+      private MoleculeAmount _moleculeAmount;
       private IFormula _mappedFormula;
       private IDimension _concentrationDimension;
       private IFormula _startValueReferenceFormula;
@@ -138,14 +138,14 @@ namespace OSPSuite.Core.Mappers
          _concentrationDimension = A.Fake<IDimension>();
          _startValueReferenceFormula = A.Fake<IFormula>();
          A.CallTo(() => _concentrationDimension.Name).Returns(Constants.Dimension.MOLAR_CONCENTRATION);
-         _moleculeBuilder = A.Fake<IMoleculeBuilder>().WithDimension(_concentrationDimension);
+         _moleculeBuilder =new MoleculeBuilder().WithDimension(_concentrationDimension);
          _moleculeBuilder.DisplayUnit = A.Fake<Unit>();
          _mappedFormula = A.Fake<IFormula>();
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          A.CallTo(() => _formulaMapper.MapFrom(_moleculeBuilder.DefaultStartFormula, _simulationBuilder)).Returns(_mappedFormula);
-         A.CallTo(() => _objectBaseFactory.Create<IMoleculeAmount>()).ReturnsLazily(() => new MoleculeAmount());
+         A.CallTo(() => _objectBaseFactory.Create<MoleculeAmount>()).ReturnsLazily(() => new MoleculeAmount());
          var startValueParameter = new Parameter().WithName(Constants.Parameters.START_VALUE);
-         A.CallTo(() => _parameterFactory.CreateStartValueParameter(A<IMoleculeAmount>._, _mappedFormula, _moleculeBuilder.DisplayUnit)).Returns(startValueParameter);
+         A.CallTo(() => _parameterFactory.CreateStartValueParameter(A<MoleculeAmount>._, _mappedFormula, _moleculeBuilder.DisplayUnit)).Returns(startValueParameter);
          A.CallTo(() => _formulaFactory.CreateMoleculeAmountReferenceToStartValue(startValueParameter)).Returns(_startValueReferenceFormula);
       }
 

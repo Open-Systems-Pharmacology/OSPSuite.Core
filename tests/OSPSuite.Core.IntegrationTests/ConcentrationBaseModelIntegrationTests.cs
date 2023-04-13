@@ -22,13 +22,13 @@ namespace OSPSuite.Core
          _organism = _simulation.Model.Root.GetSingleChildByName<IContainer>(ConstantsForSpecs.Organism);
       }
 
-      protected IMoleculeAmount Organsim_Molecule_A => _organism.EntityAt<IMoleculeAmount>("A");
+      protected MoleculeAmount Organsim_Molecule_A => _organism.EntityAt<MoleculeAmount>("A");
 
-      protected IMoleculeAmount Organism_Molecule_B => _organism.EntityAt<IMoleculeAmount>("B");
+      protected MoleculeAmount Organism_Molecule_B => _organism.EntityAt<MoleculeAmount>("B");
 
-      protected IMoleculeAmount Lung_Molecule_A => _organism.EntityAt<IMoleculeAmount>(ConstantsForSpecs.Lung, "A");
+      protected MoleculeAmount Lung_Molecule_A => _organism.EntityAt<MoleculeAmount>(ConstantsForSpecs.Lung, "A");
 
-      protected IMoleculeAmount Lung_Molecule_B => _organism.EntityAt<IMoleculeAmount>(ConstantsForSpecs.Lung, "B");
+      protected MoleculeAmount Lung_Molecule_B => _organism.EntityAt<MoleculeAmount>(ConstantsForSpecs.Lung, "B");
 
       protected IParameter Organism_StartValue_A => startValueFor(Organsim_Molecule_A);
 

@@ -9,40 +9,9 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public interface ISpatialStructure : IBuildingBlock, IEnumerable<IContainer>
+   public class SpatialStructure : BuildingBlock, IEnumerable<IContainer>
    {
-      /// <summary>
-      ///    Container-structure with subcontainers and parameters (e.g. one container but for special modeling situation like
-      ///    mother/featus model, 2 root containers would be used)
-      /// </summary>
-      IReadOnlyList<IContainer> TopContainers { get; }
-
-      /// <summary>
-      ///    Add container in the top hierarchy level of the spatial structure
-      /// </summary>
-      void AddTopContainer(IContainer container);
-
-      /// <summary>
-      ///    Remove container from the top hierarchy level of the spatial structure
-      /// </summary>
-      void RemoveTopContainer(IContainer container);
-
-      /// <summary>
-      ///    All neighborhoods defined for the spatial structure
-      /// </summary>
-      IReadOnlyList<NeighborhoodBuilder> Neighborhoods { get; }
-
-      /// <summary>
-      ///    Container which contains all NeighborhoodBuilder
-      /// </summary>
-      IContainer NeighborhoodsContainer { get; set; }
-
-      /// <summary>
-      ///    Add neighborhood to spatial structure
-      /// </summary>
-      void AddNeighborhood(NeighborhoodBuilder neighborhoodBuilder);
-
-      void RemoveNeighborhood(NeighborhoodBuilder neighborhoodBuilder);
+      private readonly List<IContainer> _allTopContainers;
 
       /// <summary>
       ///    Molecule-dependent properties, which must be defined only
@@ -51,25 +20,11 @@ namespace OSPSuite.Core.Domain.Builder
       ///    <para></para>
       ///    Examples: K_rbc (part. coeff. plasma to red blood cells), B2P, ...
       /// </summary>
-      IContainer GlobalMoleculeDependentProperties { get; set; }
-
-      /// <summary>
-      ///    Returns all physical containers starting at "Root"
-      /// </summary>
-      IEnumerable<IContainer> PhysicalContainers { get; }
-
-      IReadOnlyList<NeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ObjectPath containerPath);
-
-      /// <summary>
-      ///    Ensures that all references to containers are resolved.
-      /// </summary>
-      void ResolveReferencesInNeighborhoods();
-   }
-
-   public class SpatialStructure : BuildingBlock, ISpatialStructure
-   {
-      private readonly List<IContainer> _allTopContainers;
       public IContainer GlobalMoleculeDependentProperties { get; set; }
+
+      /// <summary>
+      ///    Container which contains all NeighborhoodBuilder
+      /// </summary>
       public IContainer NeighborhoodsContainer { get; set; }
 
       public SpatialStructure()
@@ -78,13 +33,19 @@ namespace OSPSuite.Core.Domain.Builder
          _allTopContainers = new List<IContainer>();
       }
 
+      /// <summary>
+      ///    Container-structure with subcontainers and parameters (e.g. one container but for special modeling situation like
+      ///    mother/featus model, 2 root containers would be used)
+      /// </summary>
       public IReadOnlyList<IContainer> TopContainers => _allTopContainers;
-
 
       public void Add(IContainer topContainer) => AddTopContainer(topContainer);
 
       public void Remove(IContainer topContainer) => RemoveTopContainer(topContainer);
 
+      /// <summary>
+      ///    Add container in the top hierarchy level of the spatial structure
+      /// </summary>
       public void AddTopContainer(IContainer container)
       {
          // Ensure that parent Container is null , may occur when adding already existing Container as Top Container (Load/Copy&Paste)
@@ -92,11 +53,17 @@ namespace OSPSuite.Core.Domain.Builder
          _allTopContainers.Add(container);
       }
 
+      /// <summary>
+      ///    Remove container from the top hierarchy level of the spatial structure
+      /// </summary>
       public void RemoveTopContainer(IContainer container)
       {
          _allTopContainers.Remove(container);
       }
 
+      /// <summary>
+      ///    All neighborhoods defined for the spatial structure
+      /// </summary>
       public IReadOnlyList<NeighborhoodBuilder> Neighborhoods
       {
          get
@@ -108,9 +75,16 @@ namespace OSPSuite.Core.Domain.Builder
          }
       }
 
+      /// <summary>
+      ///    Add neighborhood to spatial structure
+      /// </summary>
       public void AddNeighborhood(NeighborhoodBuilder neighborhoodBuilder) => NeighborhoodsContainer.Add(neighborhoodBuilder);
 
       public void RemoveNeighborhood(NeighborhoodBuilder neighborhoodBuilder) => NeighborhoodsContainer.RemoveChild(neighborhoodBuilder);
+
+      /// <summary>
+      ///    Returns all physical containers starting at "Root"
+      /// </summary>
 
       public IEnumerable<IContainer> PhysicalContainers
       {
@@ -131,6 +105,9 @@ namespace OSPSuite.Core.Domain.Builder
       public IReadOnlyList<NeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ObjectPath containerPath) =>
          Neighborhoods.Where(x => x.IsConnectedTo(containerPath)).ToList();
 
+      /// <summary>
+      ///    Ensures that all references to containers are resolved.
+      /// </summary>
       public void ResolveReferencesInNeighborhoods()
       {
          Neighborhoods.Each(x => x.ResolveReference(this));
@@ -140,7 +117,7 @@ namespace OSPSuite.Core.Domain.Builder
       {
          base.UpdatePropertiesFrom(source, cloneManager);
 
-         var sourceSpatialStructure = source as ISpatialStructure;
+         var sourceSpatialStructure = source as SpatialStructure;
          if (sourceSpatialStructure == null) return;
 
          sourceSpatialStructure.TopContainers.Each(c => AddTopContainer(cloneManager.Clone(c)));
@@ -177,7 +154,5 @@ namespace OSPSuite.Core.Domain.Builder
       {
          return GetEnumerator();
       }
-
-    
    }
 }

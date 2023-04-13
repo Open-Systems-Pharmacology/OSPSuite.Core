@@ -36,20 +36,20 @@ namespace OSPSuite.Presentation.Presentation
    public class When_the_simulation_quantity_selection_presenter_is_editing_the_settings_based_on_the_available_molecules_in_a_simulation : concern_for_QuantitySelectionPresenter
    {
       private List<IQuantity> _allQuantities;
-      private IObserver _observer1;
-      private IObserver _observer2;
-      private IObserver _observer3;
+      private Observer _observer1;
+      private Observer _observer2;
+      private Observer _observer3;
       private QuantitySelectionDTO _dto;
       private List<QuantitySelectionDTO> _selectedQuantitiesDTO;
 
       protected override void Context()
       {
          base.Context();
-         _observer1 = A.Fake<IObserver>();
+         _observer1 = new Observer();
          _observer1.Persistable = true;
-         _observer2 = A.Fake<IObserver>();
+         _observer2 = new Observer();
          _observer2.Persistable = true;
-         _observer3 = A.Fake<IObserver>();
+         _observer3 = new Observer();
          _observer3.Persistable = false;
          _dto = new QuantitySelectionDTO();
          _quantities.AddRange(new[] {_observer1, _observer2, _observer3});

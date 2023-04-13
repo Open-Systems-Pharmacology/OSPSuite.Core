@@ -62,7 +62,7 @@ namespace OSPSuite.Core.Serialization.Xml
    }
 
    //do not user the generic builder since enumeration returns all containers
-   public abstract class SpatialStructureXmlSerializerBase<T> : BuildingBlockXmlSerializer<T> where T : class, ISpatialStructure
+   public abstract class SpatialStructureXmlSerializerBase<T> : BuildingBlockXmlSerializer<T> where T : SpatialStructure
    {
       protected SpatialStructureXmlSerializerBase(string name)
          : base(name)
@@ -90,7 +90,6 @@ namespace OSPSuite.Core.Serialization.Xml
       where TBuildingBlock : class, IStartValuesBuildingBlock<TStartValue>
       where TStartValue : class, IStartValue
    {
-     
    }
 
    public class PathAndValueEntityBuildingBlockFromPKSimXmlSerializer<TBuildingBlock, TBuilder> : BuildingBlockXmlSerializer<TBuildingBlock, TBuilder> where TBuilder : PathAndValueEntity where TBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<TBuilder>
@@ -134,19 +133,19 @@ namespace OSPSuite.Core.Serialization.Xml
    {
    }
 
-   public class MoleculeBuildingBlockXmlSerializer : BuildingBlockXmlSerializer<MoleculeBuildingBlock, IMoleculeBuilder>
+   public class MoleculeBuildingBlockXmlSerializer : BuildingBlockXmlSerializer<MoleculeBuildingBlock, MoleculeBuilder>
    {
    }
 
-   public class ObserverBuildingBlockXmlSerializer : BuildingBlockXmlSerializer<ObserverBuildingBlock, IObserverBuilder>
+   public class ObserverBuildingBlockXmlSerializer : BuildingBlockXmlSerializer<ObserverBuildingBlock, ObserverBuilder>
    {
    }
 
-   public class PassiveTransportBuildingBlockXmlSerializer : BuildingBlockXmlSerializer<PassiveTransportBuildingBlock, ITransportBuilder>
+   public class PassiveTransportBuildingBlockXmlSerializer : BuildingBlockXmlSerializer<PassiveTransportBuildingBlock, TransportBuilder>
    {
    }
 
-   public abstract class ReactionBuildingBlockXmlSerializerBase<T> : BuildingBlockXmlSerializer<T, IReactionBuilder> where T : class, IReactionBuildingBlock
+   public abstract class ReactionBuildingBlockXmlSerializerBase<T> : BuildingBlockXmlSerializer<T, ReactionBuilder> where T : ReactionBuildingBlock
    {
       protected ReactionBuildingBlockXmlSerializerBase()
       {
@@ -162,7 +161,7 @@ namespace OSPSuite.Core.Serialization.Xml
    {
    }
 
-   public class EventGroupBuildingBlockXmlSerializer : BuildingBlockXmlSerializer<EventGroupBuildingBlock, IEventGroupBuilder>
+   public class EventGroupBuildingBlockXmlSerializer : BuildingBlockXmlSerializer<EventGroupBuildingBlock, EventGroupBuilder>
    {
    }
 }

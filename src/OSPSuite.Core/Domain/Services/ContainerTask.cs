@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <remarks> No unregister at a repository is performed</remarks>
       /// <param name="spatialStructure">The spatial structure.</param>
       /// <param name="containerToRemove">The container to remove.</param>
-      void RemoveContainerFrom(ISpatialStructure spatialStructure, IContainer containerToRemove);
+      void RemoveContainerFrom(SpatialStructure spatialStructure, IContainer containerToRemove);
 
       /// <summary>
       ///    Returns a unique child name in the parent container with the suffix baseName.
@@ -73,7 +73,7 @@ namespace OSPSuite.Core.Domain.Services
       PathCache<TChildren> CacheAllChildren<TChildren>(IContainer parentContainer) where TChildren : class, IEntity;
 
       /// <summary>
-      /// Returns a cache of all elements in the <paramref name="enumerable"/>
+      ///    Returns a cache of all elements in the <paramref name="enumerable" />
       /// </summary>
       /// <typeparam name="T"></typeparam>
       /// <param name="enumerable"></param>
@@ -112,7 +112,7 @@ namespace OSPSuite.Core.Domain.Services
          return parentContainer.GetSingleChildByName<IContainer>(subContainerName);
       }
 
-      public void RemoveContainerFrom(ISpatialStructure spatialStructure, IContainer containerToRemove)
+      public void RemoveContainerFrom(SpatialStructure spatialStructure, IContainer containerToRemove)
       {
          var containerPath = _objectPathFactory.CreateAbsoluteObjectPath(containerToRemove);
          spatialStructure.AllNeighborhoodBuildersConnectedWith(containerPath).Each(spatialStructure.RemoveNeighborhood);

@@ -4,18 +4,18 @@ using OSPSuite.Assets;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public class MoleculeBuildingBlock : BuildingBlock<IMoleculeBuilder>
+   public class MoleculeBuildingBlock : BuildingBlock<MoleculeBuilder>
    {
       public MoleculeBuildingBlock()
       {
          Icon = IconNames.MOLECULE;
       }
 
-      public IMoleculeBuilder this[string moleculeName] => this.FindByName(moleculeName);
+      public MoleculeBuilder this[string moleculeName] => this.FindByName(moleculeName);
 
-      public IEnumerable<IMoleculeBuilder> AllFloating() => this.Where(x => x.IsFloating);
+      public IEnumerable<MoleculeBuilder> AllFloating() => this.Where(x => x.IsFloating);
 
-      public IEnumerable<IMoleculeBuilder> AllPresentFor(IEnumerable<MoleculeStartValuesBuildingBlock> moleculesStartValues)
+      public IEnumerable<MoleculeBuilder> AllPresentFor(IEnumerable<MoleculeStartValuesBuildingBlock> moleculesStartValues)
       {
          var moleculeNames = moleculesStartValues.SelectMany(x => x)
             .Where(moleculeStartValue => moleculeStartValue.IsPresent)
@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Domain.Builder
          return moleculeNames.Select(moleculeName => this[moleculeName]).Where(m => m != null);
       }
 
-      public IEnumerable<IMoleculeBuilder> AllPresentFor(MoleculeStartValuesBuildingBlock moleculesStartValues)
+      public IEnumerable<MoleculeBuilder> AllPresentFor(MoleculeStartValuesBuildingBlock moleculesStartValues)
       {
          return AllPresentFor(new[] {moleculesStartValues});
       }

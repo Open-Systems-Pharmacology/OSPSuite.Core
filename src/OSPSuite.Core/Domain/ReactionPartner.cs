@@ -2,27 +2,20 @@
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IReactionPartner
+   public class ReactionPartner
    {
-      double StoichiometricCoefficient { get; }
-      IMoleculeAmount Partner { get; }
+      public double StoichiometricCoefficient { get; }
+      public MoleculeAmount Partner { get; }
+
+      [Obsolete("For serialization")]
+      public ReactionPartner()
+      {
+      }
+
+      public ReactionPartner(double stoichiometricCoefficient, MoleculeAmount partner)
+      {
+         StoichiometricCoefficient = stoichiometricCoefficient;
+         Partner = partner;
+      }
    }
-
-    public class ReactionPartner : IReactionPartner
-    {
-       public double StoichiometricCoefficient { get; private set; }
-       public IMoleculeAmount Partner { get; private set; }
-
-       [Obsolete("For serialization")]
-       public ReactionPartner()
-       {
-       }
-
-       public ReactionPartner(double stoichiometricCoefficient, IMoleculeAmount partner)
-       {
-          StoichiometricCoefficient = stoichiometricCoefficient;
-          Partner = partner;
-       }
-
-    }
 }

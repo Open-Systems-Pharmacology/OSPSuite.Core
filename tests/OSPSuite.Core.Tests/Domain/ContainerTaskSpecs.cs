@@ -83,7 +83,7 @@ namespace OSPSuite.Core.Domain
 
    internal class When_removing_a_container_in_SpatialStructure : concern_for_ContainerTask
    {
-      private ISpatialStructure _spatialStructure;
+      private SpatialStructure _spatialStructure;
       private NeighborhoodBuilder _firstNeighborRemove;
       private NeighborhoodBuilder _secondNeighborRemove;
       private IContainer _containerToRemove;

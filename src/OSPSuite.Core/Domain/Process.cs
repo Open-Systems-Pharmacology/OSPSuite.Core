@@ -15,14 +15,14 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       /// <param name="amount"></param>
       /// <returns></returns>
-      bool Uses(IMoleculeAmount amount);
+      bool Uses(MoleculeAmount amount);
    }
 
    public abstract class Process : Container, IProcess
    {
       public IDimension Dimension { get; set; }
       public IFormula Formula { get; set; }
-      public abstract bool Uses(IMoleculeAmount amount);
+      public abstract bool Uses(MoleculeAmount amount);
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {

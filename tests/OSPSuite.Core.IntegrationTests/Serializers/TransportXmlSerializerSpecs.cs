@@ -13,8 +13,8 @@ namespace OSPSuite.Core.Serializers
       {
          Transport x1 = CreateObject<Transport>().WithName("Trevor").WithDimension(DimensionLength);
          IContainer c1 = CreateObject<Container>().WithName("Conrad");
-         IMoleculeAmount sourceAmount = CreateObject<MoleculeAmount>().WithName("Source").WithParentContainer(c1);
-         IMoleculeAmount targetAmount = CreateObject<MoleculeAmount>().WithName("Target").WithParentContainer(c1);
+         var sourceAmount = CreateObject<MoleculeAmount>().WithName("Source").WithParentContainer(c1);
+         var targetAmount = CreateObject<MoleculeAmount>().WithName("Target").WithParentContainer(c1);
          x1.SourceAmount = sourceAmount;
          x1.TargetAmount = targetAmount;
 

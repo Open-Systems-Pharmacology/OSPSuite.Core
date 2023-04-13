@@ -9,11 +9,11 @@ namespace OSPSuite.Core.Domain.Builder
    {
       private readonly SimulationConfiguration _simulationConfiguration;
 
-      private readonly ObjectBaseCache<ITransportBuilder> _passiveTransports = new ObjectBaseCache<ITransportBuilder>();
-      private readonly ObjectBaseCache<IReactionBuilder> _reactions = new ObjectBaseCache<IReactionBuilder>();
-      private readonly ObjectBaseCache<IEventGroupBuilder> _eventGroups = new ObjectBaseCache<IEventGroupBuilder>();
-      private readonly ObjectBaseCache<IObserverBuilder> _observers = new ObjectBaseCache<IObserverBuilder>();
-      private readonly ObjectBaseCache<IMoleculeBuilder> _molecules = new ObjectBaseCache<IMoleculeBuilder>();
+      private readonly ObjectBaseCache<TransportBuilder> _passiveTransports = new ObjectBaseCache<TransportBuilder>();
+      private readonly ObjectBaseCache<ReactionBuilder> _reactions = new ObjectBaseCache<ReactionBuilder>();
+      private readonly ObjectBaseCache<EventGroupBuilder> _eventGroups = new ObjectBaseCache<EventGroupBuilder>();
+      private readonly ObjectBaseCache<ObserverBuilder> _observers = new ObjectBaseCache<ObserverBuilder>();
+      private readonly ObjectBaseCache<MoleculeBuilder> _molecules = new ObjectBaseCache<MoleculeBuilder>();
       private readonly StartValueCache<ParameterStartValue> _parameterStartValues = new StartValueCache<ParameterStartValue>();
       private readonly StartValueCache<MoleculeStartValue> _moleculeStartValues = new StartValueCache<MoleculeStartValue>();
 
@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Domain.Builder
       private IEnumerable<T> allStartValueBuilder<T>(Func<ModuleConfiguration, IBuildingBlock<T>> propAccess) where T : IStartValue =>
          _simulationConfiguration.ModuleConfigurations.Select(propAccess).Where(x => x != null).SelectMany(x => x);
 
-      internal IEnumerable<IMoleculeBuilder> AllPresentMolecules()
+      internal IEnumerable<MoleculeBuilder> AllPresentMolecules()
       {
          var moleculeNames = _moleculeStartValues
             .Where(moleculeStartValue => moleculeStartValue.IsPresent)
@@ -62,12 +62,12 @@ namespace OSPSuite.Core.Domain.Builder
             .Where(msv => msv.IsPresent);
       }
 
-      internal IEnumerable<IMoleculeBuilder> AllFloatingMolecules() => Molecules.Where(x => x.IsFloating);
+      internal IEnumerable<MoleculeBuilder> AllFloatingMolecules() => Molecules.Where(x => x.IsFloating);
 
       internal IReadOnlyList<string> AllPresentMoleculeNames() => AllPresentMoleculeNames(x => true);
 
       //Uses toArray so that the marshaling to R works out of the box (array vs list)
-      internal IReadOnlyList<string> AllPresentMoleculeNames(Func<IMoleculeBuilder, bool> query) =>
+      internal IReadOnlyList<string> AllPresentMoleculeNames(Func<MoleculeBuilder, bool> query) =>
          AllPresentMolecules().Where(query).Select(x => x.Name).ToArray();
 
       internal IReadOnlyList<string> AllPresentFloatingMoleculeNames() =>
@@ -95,15 +95,15 @@ namespace OSPSuite.Core.Domain.Builder
          _moleculeStartValues.AddRange(allStartValueBuilder(x => x.SelectedMoleculeStartValues));
       }
 
-      internal IReadOnlyList<ISpatialStructure> SpatialStructures => all(x => x.SpatialStructure);
-      internal IReadOnlyCollection<ITransportBuilder> PassiveTransports => _passiveTransports;
-      internal IReadOnlyCollection<IReactionBuilder> Reactions => _reactions;
-      internal IReadOnlyCollection<IEventGroupBuilder> EventGroups => _eventGroups;
-      internal IReadOnlyCollection<IObserverBuilder> Observers => _observers;
-      internal IReadOnlyCollection<IMoleculeBuilder> Molecules => _molecules;
+      internal IReadOnlyList<SpatialStructure> SpatialStructures => all(x => x.SpatialStructure);
+      internal IReadOnlyCollection<TransportBuilder> PassiveTransports => _passiveTransports;
+      internal IReadOnlyCollection<ReactionBuilder> Reactions => _reactions;
+      internal IReadOnlyCollection<EventGroupBuilder> EventGroups => _eventGroups;
+      internal IReadOnlyCollection<ObserverBuilder> Observers => _observers;
+      internal IReadOnlyCollection<MoleculeBuilder> Molecules => _molecules;
       internal IReadOnlyCollection<ParameterStartValue> ParameterStartValues => _parameterStartValues;
       internal IReadOnlyCollection<MoleculeStartValue> MoleculeStartValues => _moleculeStartValues;
 
-      internal IMoleculeBuilder MoleculeByName(string name) => _molecules[name];
+      internal MoleculeBuilder MoleculeByName(string name) => _molecules[name];
    }
 }

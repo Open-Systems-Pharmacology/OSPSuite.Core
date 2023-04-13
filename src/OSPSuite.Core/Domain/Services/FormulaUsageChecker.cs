@@ -1,6 +1,6 @@
-﻿using OSPSuite.Utility.Visitor;
-using OSPSuite.Core.Domain.Builder;
+﻿using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -14,7 +14,11 @@ namespace OSPSuite.Core.Domain.Services
       bool FormulaUsedIn(IObjectBase objectBase, IFormula formula);
    }
 
-   public class FormulaUsageChecker : IVisitor<IUsingFormula>, IVisitor<IParameter>, IVisitor<IMoleculeBuilder>, IFormulaUsageChecker
+   public class FormulaUsageChecker :
+      IVisitor<IUsingFormula>,
+      IVisitor<IParameter>,
+      IVisitor<MoleculeBuilder>,
+      IFormulaUsageChecker
    {
       private IFormula _formula;
 
@@ -50,7 +54,7 @@ namespace OSPSuite.Core.Domain.Services
          _formulaUsed = usingFormula.Formula == _formula;
       }
 
-      public void Visit(IMoleculeBuilder moleculeBuilder)
+      public void Visit(MoleculeBuilder moleculeBuilder)
       {
          if (_formulaUsed) return;
          _formulaUsed = moleculeBuilder.DefaultStartFormula.Equals(_formula);

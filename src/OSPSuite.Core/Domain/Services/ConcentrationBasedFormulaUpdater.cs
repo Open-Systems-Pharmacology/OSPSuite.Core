@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Domain.Services
       /// This is required because the formula was designed for the <paramref name="molecule"/> but will be silently attached to the start value parameter
       /// defined under the <paramref name="molecule"/>.
       /// </summary>
-      void UpdateRelativePathForStartValueMolecule(IMoleculeAmount molecule, IFormula moleculeFormulaToUse);
+      void UpdateRelativePathForStartValueMolecule(MoleculeAmount molecule, IFormula moleculeFormulaToUse);
    }
 
    public class ConcentrationBasedFormulaUpdater : IConcentrationBasedFormulaUpdater
@@ -72,7 +72,7 @@ namespace OSPSuite.Core.Domain.Services
          return updateFormulaToAmountBase(concentrationFormula, _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT));
       }
 
-      public void UpdateRelativePathForStartValueMolecule(IMoleculeAmount molecule, IFormula moleculeFormulaToUse)
+      public void UpdateRelativePathForStartValueMolecule(MoleculeAmount molecule, IFormula moleculeFormulaToUse)
       {
          foreach (var objectPath in moleculeFormulaToUse.ObjectPaths.Where(x=>x.Any()))
          {

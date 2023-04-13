@@ -9,11 +9,11 @@ namespace OSPSuite.Presentation.Presentation
 {
    public abstract class concern_for_PresenterSubject : ContextSpecification<PresenterSubject>
    {
-      protected IReactionBuildingBlock _buildingBlock;
+      protected ReactionBuildingBlock _buildingBlock;
 
       protected override void Context()
       {
-         _buildingBlock = A.Fake<IReactionBuildingBlock>();
+         _buildingBlock = A.Fake<ReactionBuildingBlock>();
          sut = new PresenterSubject {Subject = _buildingBlock};
       }
    }
@@ -21,13 +21,13 @@ namespace OSPSuite.Presentation.Presentation
    public class When_checking_if_a_presenter_matches_another_presenter : concern_for_PresenterSubject
    {
       private ISubjectPresenter _presenterToMatch;
-      private IReactionBuildingBlock _anotherBuildingBlock;
+      private ReactionBuildingBlock _anotherBuildingBlock;
 
       protected override void Context()
       {
          base.Context();
          _presenterToMatch = A.Fake<ISubjectPresenter>();
-         _anotherBuildingBlock = A.Fake<IReactionBuildingBlock>();
+         _anotherBuildingBlock = A.Fake<ReactionBuildingBlock>();
       }
 
       [Observation]

@@ -6,53 +6,48 @@ namespace OSPSuite.Core.Domain.Builder
 {
    public interface ICoreCalculationMethodRepository
    {
-      IEnumerable<ICoreCalculationMethod> GetAllCalculationMethodsFor(string category);
-      void AddCalculationMethod(ICoreCalculationMethod calculationMethod);
-      IEnumerable<ICoreCalculationMethod> GetAllCategoriesDefault();
-      IEnumerable<ICoreCalculationMethod> All();
+      IEnumerable<CoreCalculationMethod> GetAllCalculationMethodsFor(string category);
+      void AddCalculationMethod(CoreCalculationMethod calculationMethod);
+      IEnumerable<CoreCalculationMethod> GetAllCategoriesDefault();
+      IEnumerable<CoreCalculationMethod> All();
    }
 
    public class CoreCalculationMethodRepository : ICoreCalculationMethodRepository
    {
-      private readonly IList<ICoreCalculationMethod> _allMethods;
+      private readonly List<CoreCalculationMethod> _allMethods;
       private bool _cachedDefaults;
-      private IEnumerable<ICoreCalculationMethod> _defaults;
+      private IEnumerable<CoreCalculationMethod> _defaults;
 
       public CoreCalculationMethodRepository()
       {
-         _allMethods = new List<ICoreCalculationMethod>();
+         _allMethods = new List<CoreCalculationMethod>();
       }
 
-      public IEnumerable<ICoreCalculationMethod> GetAllCalculationMethodsFor(string category)
+      public IEnumerable<CoreCalculationMethod> GetAllCalculationMethodsFor(string category)
       {
          return _allMethods.Where(cm => cm.Category.Equals(category));
       }
 
-      public void AddCalculationMethod(ICoreCalculationMethod calculationMethod)
+      public void AddCalculationMethod(CoreCalculationMethod calculationMethod)
       {
          _allMethods.Add(calculationMethod);
       }
 
-      public IEnumerable<ICoreCalculationMethod> GetAllCategoriesDefault()
+      public IEnumerable<CoreCalculationMethod> GetAllCategoriesDefault()
       {
          if (!_cachedDefaults)
          {
-            var defaults = new List<ICoreCalculationMethod>();
+            var defaults = new List<CoreCalculationMethod>();
             GetAllCategories().Each(cat => defaults.Add(GetAllCalculationMethodsFor(cat).First()));
             _defaults = defaults;
             _cachedDefaults = true;
          }
+
          return _defaults;
       }
 
-      public IEnumerable<ICoreCalculationMethod> All()
-      {
-         return _allMethods.Select(x => x);
-      }
+      public IEnumerable<CoreCalculationMethod> All() => _allMethods.Select(x => x);
 
-      public IEnumerable<string> GetAllCategories()
-      {
-         return _allMethods.Select(cm => cm.Category).Distinct();
-      }
+      public IEnumerable<string> GetAllCategories() => _allMethods.Select(cm => cm.Category).Distinct();
    }
 }

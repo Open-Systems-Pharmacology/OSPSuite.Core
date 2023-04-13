@@ -24,9 +24,9 @@ namespace OSPSuite.Core.Mappers
 
    internal class When_mapping_an_observer_from_an_observer_builder : concern_for_ObserverBuilderToObserverMapper
    {
-      private IObserverBuilder _observerBuilder;
+      private ObserverBuilder _observerBuilder;
       private IFormula _mappedFormula;
-      private IObserver _observer;
+      private Observer _observer;
       private SimulationConfiguration _simulationConfiguration;
       private SimulationBuilder _simulationBuilder;
 
@@ -35,10 +35,10 @@ namespace OSPSuite.Core.Mappers
          base.Context();
          _simulationConfiguration = new SimulationConfiguration();
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
-         _observerBuilder = A.Fake<IObserverBuilder>().WithName("toto").WithDimension(A.Fake<IDimension>());
+         _observerBuilder =new ObserverBuilder().WithName("toto").WithDimension(A.Fake<IDimension>());
          _observerBuilder.Formula = A.Fake<IFormula>();
          _mappedFormula = A.Fake<IFormula>();
-         A.CallTo(() => _objectBaseFactory.Create<IObserver>()).Returns(A.Fake<IObserver>());
+         A.CallTo(() => _objectBaseFactory.Create<Observer>()).Returns(A.Fake<Observer>());
          A.CallTo(() => _formulaMapper.MapFrom(_observerBuilder.Formula, _simulationBuilder)).Returns(_mappedFormula);
       }
 

@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    Creates the global molecule container for the molecule and add parameters with the build modes other than "Local"
       ///    into the created molecule container
       /// </summary>
-      IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, IMoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder);
+      IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, MoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder);
 
       /// <summary>
       ///    Returns (and creates if not already there) the sub container for the transport process named
@@ -53,7 +53,7 @@ namespace OSPSuite.Core.Domain.Services
          return moleculeContainer;
       }
 
-      public IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, IMoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder)
+      public IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, MoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder)
       {
          var globalMoleculeContainer = addContainerUnder(rootContainer, moleculeBuilder, moleculeBuilder.Name, simulationBuilder)
             .WithContainerType(ContainerType.Molecule);

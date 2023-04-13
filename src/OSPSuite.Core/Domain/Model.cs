@@ -81,7 +81,7 @@ namespace OSPSuite.Core.Domain
 
          switch (entity)
          {
-            case IMoleculeAmount _:
+            case MoleculeAmount _:
             case IContainer container when container.ContainerType == ContainerType.Molecule:
                return entity.Name;
          }

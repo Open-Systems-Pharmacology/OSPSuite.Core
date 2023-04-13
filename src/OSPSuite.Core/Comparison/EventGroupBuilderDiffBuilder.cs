@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Comparison
 {
-   public class EventGroupBuilderDiffBuilder : DiffBuilder<IEventGroupBuilder>
+   public class EventGroupBuilderDiffBuilder : DiffBuilder<EventGroupBuilder>
    {
       private readonly ContainerDiffBuilder _containerDiffBuilder;
 
@@ -11,7 +11,7 @@ namespace OSPSuite.Core.Comparison
          _containerDiffBuilder = containerDiffBuilder;
       }
 
-      public override void Compare(IComparison<IEventGroupBuilder> comparison)
+      public override void Compare(IComparison<EventGroupBuilder> comparison)
       {
          _containerDiffBuilder.Compare(comparison);
          CompareValues(x => x.SourceCriteria, x => x.SourceCriteria, comparison);

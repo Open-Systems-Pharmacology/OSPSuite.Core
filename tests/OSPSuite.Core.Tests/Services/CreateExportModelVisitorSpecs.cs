@@ -52,8 +52,8 @@ namespace OSPSuite.Core.Services
       private ExplicitFormula _altFormula;
       private Parameter _changedEntity;
       private SimulationExport _res;
-      private IEvent _event;
-      private IEventAssignment _assignment;
+      private Event _event;
+      private EventAssignment _assignment;
 
       protected override void Context()
       {
@@ -115,9 +115,9 @@ namespace OSPSuite.Core.Services
    public abstract class When_visiting_a_reaction : concern_for_CreateExportModelVisitor
    {
       protected SimulationExport _simulationExport;
-      private IMoleculeAmount _spA;
-      private IMoleculeAmount _spB;
-      protected IReaction _reaction;
+      private MoleculeAmount _spA;
+      private MoleculeAmount _spB;
+      protected Reaction _reaction;
       protected IDimension _reactionDimension;
       protected Parameter _volume;
       protected ExplicitFormula _kinetic;

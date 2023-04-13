@@ -2,7 +2,7 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Domain.Mappers
 {
-   public interface IReactionPartnerBuilderToReactionPartnerMapper : ILocalMapper<IReactionPartnerBuilder, IContainer, IReactionPartner>
+   public interface IReactionPartnerBuilderToReactionPartnerMapper : ILocalMapper<ReactionPartnerBuilder, IContainer, ReactionPartner>
    {
    }
 
@@ -19,9 +19,9 @@ namespace OSPSuite.Core.Domain.Mappers
       ///    the reaction is created
       /// </param>
       /// <param name="simulationBuilder">Simulation Builder</param>
-      public IReactionPartner MapFromLocal(IReactionPartnerBuilder reactionPartnerBuilder, IContainer container, SimulationBuilder simulationBuilder)
+      public ReactionPartner MapFromLocal(ReactionPartnerBuilder reactionPartnerBuilder, IContainer container, SimulationBuilder simulationBuilder)
       {
-         var moleculeAmount = container.GetSingleChildByName<IMoleculeAmount>(reactionPartnerBuilder.MoleculeName);
+         var moleculeAmount = container.GetSingleChildByName<MoleculeAmount>(reactionPartnerBuilder.MoleculeName);
          if (moleculeAmount == null)
             throw new MissingMoleculeAmountException(container.Name, reactionPartnerBuilder.MoleculeName);
 

@@ -2,7 +2,7 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
-   public class ProcessBuilderXmlSerializer<T> : ContainerXmlSerializer<T> where T : class, IProcessBuilder
+   public class ProcessBuilderXmlSerializer<T> : ContainerXmlSerializer<T> where T : ProcessBuilder
    {
       public override void PerformMapping()
       {
@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class TranportBuilderXmlSerializer : ProcessBuilderXmlSerializer<TransportBuilder>
+   public class TransportBuilderXmlSerializer : ProcessBuilderXmlSerializer<TransportBuilder>
    {
       public override void PerformMapping()
       {

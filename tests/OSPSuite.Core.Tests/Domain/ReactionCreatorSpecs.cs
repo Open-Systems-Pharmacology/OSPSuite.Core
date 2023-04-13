@@ -16,13 +16,13 @@ namespace OSPSuite.Core.Domain
       protected IParameterBuilderCollectionToParameterCollectionMapper _parameterMapper;
       protected IContainer _rootContainer;
       protected IModel _model;
-      protected IReactionBuilder _reactionBuilder;
+      protected ReactionBuilder _reactionBuilder;
       protected SimulationConfiguration _simulationConfiguration;
-      protected IReactionPartnerBuilder _educt1;
-      protected IReactionPartnerBuilder _educt2;
-      protected IReactionPartnerBuilder _product1;
+      protected ReactionPartnerBuilder _educt1;
+      protected ReactionPartnerBuilder _educt2;
+      protected ReactionPartnerBuilder _product1;
       protected IContainer _globalContainer;
-      protected IReaction _reaction;
+      protected Reaction _reaction;
       protected bool _result;
       protected SimulationBuilder _simulationBuilder;
 
@@ -37,26 +37,33 @@ namespace OSPSuite.Core.Domain
          _model = A.Fake<IModel>();
          _simulationConfiguration = new SimulationConfiguration();
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
-         _reactionBuilder = A.Fake<IReactionBuilder>();
+         _reactionBuilder = new ReactionBuilder();
          _reactionBuilder.ContainerCriteria = new DescriptorCriteria();
          _reactionBuilder.Description = "A great description";
          _reactionBuilder.Name = "Reaction";
-         _educt1 = A.Fake<IReactionPartnerBuilder>();
-         _educt1.MoleculeName = "sp1";
-         _educt2 = A.Fake<IReactionPartnerBuilder>();
-         _educt2.MoleculeName = "sp2";
-         _product1 = A.Fake<IReactionPartnerBuilder>();
-         _product1.MoleculeName = "sp3";
-         A.CallTo(() => _reactionBuilder.Educts).Returns(new[] {_educt1, _educt2});
-         A.CallTo(() => _reactionBuilder.Products).Returns(new[] {_product1});
-         A.CallTo(() => _reactionBuilder.ModifierNames).Returns(new[] {"modifier"});
+         _educt1 = new ReactionPartnerBuilder
+         {
+            MoleculeName = "sp1"
+         };
+         _educt2 = new ReactionPartnerBuilder
+         {
+            MoleculeName = "sp2"
+         };
+         _product1 = new ReactionPartnerBuilder
+         {
+            MoleculeName = "sp3"
+         };
+         _reactionBuilder.AddEduct(_educt1);
+         _reactionBuilder.AddEduct(_educt2);
+         _reactionBuilder.AddProduct(_product1);
+         _reactionBuilder.AddModifier("modifier");
 
          _rootContainer = new Container().WithMode(ContainerMode.Physical);
          _model.Root = _rootContainer;
          _globalContainer = new Container();
 
-         _reaction = A.Fake<IReaction>().WithName(_reactionBuilder.Name);
-         A.CallTo(() => _reactionMapper.MapFromLocal(A<IReactionBuilder>._, A<IContainer>._, _simulationBuilder)).Returns(_reaction);
+         _reaction = new Reaction().WithName(_reactionBuilder.Name);
+         A.CallTo(() => _reactionMapper.MapFromLocal(A<ReactionBuilder>._, A<IContainer>._, _simulationBuilder)).Returns(_reaction);
          A.CallTo(() => _containerTask.CreateOrRetrieveSubContainerByName(_rootContainer, _reactionBuilder.Name)).Returns(_globalContainer);
       }
 
@@ -78,43 +85,43 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          //root container has all species
-         _rootContainer.Add(A.Fake<IMoleculeAmount>().WithName("sp1"));
-         _rootContainer.Add(A.Fake<IMoleculeAmount>().WithName("sp2"));
-         _rootContainer.Add(A.Fake<IMoleculeAmount>().WithName("sp3"));
-         _rootContainer.Add(A.Fake<IMoleculeAmount>().WithName("modifier"));
+         _rootContainer.Add(new MoleculeAmount().WithName("sp1"));
+         _rootContainer.Add(new MoleculeAmount().WithName("sp2"));
+         _rootContainer.Add(new MoleculeAmount().WithName("sp3"));
+         _rootContainer.Add(new MoleculeAmount().WithName("modifier"));
 
          //Liver has only two species
          _liver = new Container().WithName("Liver").WithMode(ContainerMode.Physical);
-         _liver.Add(A.Fake<IMoleculeAmount>().WithName("sp1"));
-         _liver.Add(A.Fake<IMoleculeAmount>().WithName("sp3"));
+         _liver.Add(new MoleculeAmount().WithName("sp1"));
+         _liver.Add(new MoleculeAmount().WithName("sp3"));
          _rootContainer.Add(_liver);
 
          //SubLiver has all species
          _subLiver = new Container().WithName("SubLiver").WithMode(ContainerMode.Physical);
-         _subLiver.Add(A.Fake<IMoleculeAmount>().WithName("sp1"));
-         _subLiver.Add(A.Fake<IMoleculeAmount>().WithName("sp2"));
-         _subLiver.Add(A.Fake<IMoleculeAmount>().WithName("sp3"));
-         _subLiver.Add(A.Fake<IMoleculeAmount>().WithName("modifier"));
+         _subLiver.Add(new MoleculeAmount().WithName("sp1"));
+         _subLiver.Add(new MoleculeAmount().WithName("sp2"));
+         _subLiver.Add(new MoleculeAmount().WithName("sp3"));
+         _subLiver.Add(new MoleculeAmount().WithName("modifier"));
          _liver.Add(_subLiver);
 
          //kidney has only one species
          _kidney = new Container().WithName("Kidney").WithMode(ContainerMode.Physical);
-         _kidney.Add(A.Fake<IMoleculeAmount>().WithName("sp1"));
+         _kidney.Add(new MoleculeAmount().WithName("sp1"));
          _rootContainer.Add(_kidney);
 
          //SubKidney has only modifier
          _subKidney = new Container().WithName("SubKidney").WithMode(ContainerMode.Physical);
-         _subKidney.Add(A.Fake<IMoleculeAmount>().WithName("sp1"));
-         _subKidney.Add(A.Fake<IMoleculeAmount>().WithName("sp2"));
-         _subKidney.Add(A.Fake<IMoleculeAmount>().WithName("sp3"));
+         _subKidney.Add(new MoleculeAmount().WithName("sp1"));
+         _subKidney.Add(new MoleculeAmount().WithName("sp2"));
+         _subKidney.Add(new MoleculeAmount().WithName("sp3"));
          _rootContainer.Add(_subKidney);
 
          //help container has all species but is logical
          _helpContainer = new Container().WithName("Helper").WithMode(ContainerMode.Logical);
-         _helpContainer.Add(A.Fake<IMoleculeAmount>().WithName("sp1"));
-         _helpContainer.Add(A.Fake<IMoleculeAmount>().WithName("sp2"));
-         _helpContainer.Add(A.Fake<IMoleculeAmount>().WithName("sp3"));
-         _helpContainer.Add(A.Fake<IMoleculeAmount>().WithName("modifier"));
+         _helpContainer.Add(new MoleculeAmount().WithName("sp1"));
+         _helpContainer.Add(new MoleculeAmount().WithName("sp2"));
+         _helpContainer.Add(new MoleculeAmount().WithName("sp3"));
+         _helpContainer.Add(new MoleculeAmount().WithName("modifier"));
          _rootContainer.Add(_helpContainer);
       }
 
@@ -167,10 +174,10 @@ namespace OSPSuite.Core.Domain
 
          //help container has all species but is logical
          _helpContainer = new Container().WithName("Helper").WithMode(ContainerMode.Logical);
-         _helpContainer.Add(A.Fake<IMoleculeAmount>().WithName("sp1"));
-         _helpContainer.Add(A.Fake<IMoleculeAmount>().WithName("sp2"));
-         _helpContainer.Add(A.Fake<IMoleculeAmount>().WithName("sp3"));
-         _helpContainer.Add(A.Fake<IMoleculeAmount>().WithName("modifier"));
+         _helpContainer.Add(new MoleculeAmount().WithName("sp1"));
+         _helpContainer.Add(new MoleculeAmount().WithName("sp2"));
+         _helpContainer.Add(new MoleculeAmount().WithName("sp3"));
+         _helpContainer.Add(new MoleculeAmount().WithName("modifier"));
          _rootContainer.Add(_helpContainer);
       }
 
@@ -203,17 +210,17 @@ namespace OSPSuite.Core.Domain
          _reactionBuilder.ContainerCriteria = Create.Criteria(x => x.With("Liver"));
 
          //root container has all species but does not match the criteria
-         _rootContainer.Add(A.Fake<IMoleculeAmount>().WithName("sp1"));
-         _rootContainer.Add(A.Fake<IMoleculeAmount>().WithName("sp2"));
-         _rootContainer.Add(A.Fake<IMoleculeAmount>().WithName("sp3"));
-         _rootContainer.Add(A.Fake<IMoleculeAmount>().WithName("modifier"));
+         _rootContainer.Add(new MoleculeAmount().WithName("sp1"));
+         _rootContainer.Add(new MoleculeAmount().WithName("sp2"));
+         _rootContainer.Add(new MoleculeAmount().WithName("sp3"));
+         _rootContainer.Add(new MoleculeAmount().WithName("modifier"));
 
          //Liver has all species and matches the criteria
          _liver = new Container().WithName("Liver").WithMode(ContainerMode.Physical);
-         _liver.Add(A.Fake<IMoleculeAmount>().WithName("sp1"));
-         _liver.Add(A.Fake<IMoleculeAmount>().WithName("sp2"));
-         _liver.Add(A.Fake<IMoleculeAmount>().WithName("sp3"));
-         _liver.Add(A.Fake<IMoleculeAmount>().WithName("modifier"));
+         _liver.Add(new MoleculeAmount().WithName("sp1"));
+         _liver.Add(new MoleculeAmount().WithName("sp2"));
+         _liver.Add(new MoleculeAmount().WithName("sp3"));
+         _liver.Add(new MoleculeAmount().WithName("modifier"));
          _rootContainer.Add(_liver);
       }
 

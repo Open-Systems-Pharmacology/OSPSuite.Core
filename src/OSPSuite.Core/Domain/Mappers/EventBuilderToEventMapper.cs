@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Domain.Mappers
    /// <summary>
    ///    Maps event builder object to an model event
    /// </summary>
-   internal interface IEventBuilderToEventMapper : IBuilderMapper<IEventBuilder, IEvent>
+   internal interface IEventBuilderToEventMapper : IBuilderMapper<EventBuilder, Event>
    {
    }
 
@@ -29,9 +29,9 @@ namespace OSPSuite.Core.Domain.Mappers
          _assignmentMapper = assignmentMapper;
       }
 
-      public IEvent MapFrom(IEventBuilder eventBuilder, SimulationBuilder simulationBuilder)
+      public Event MapFrom(EventBuilder eventBuilder, SimulationBuilder simulationBuilder)
       {
-         var modelEvent = _objectBaseFactory.Create<IEvent>()
+         var modelEvent = _objectBaseFactory.Create<Event>()
             .WithName(eventBuilder.Name)
             .WithDimension(eventBuilder.Dimension)
             .WithDescription(eventBuilder.Description)

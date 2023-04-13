@@ -46,7 +46,7 @@ namespace OSPSuite.Helpers
          return module;
       }
 
-      private ISpatialStructure getSpatialStructureModule1()
+      private SpatialStructure getSpatialStructureModule1()
       {
          var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE");
 

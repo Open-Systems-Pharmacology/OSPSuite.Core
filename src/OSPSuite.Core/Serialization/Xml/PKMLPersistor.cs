@@ -137,7 +137,7 @@ namespace OSPSuite.Core.Serialization.Xml
             case SimulationTransfer simulationTransfer:
                resolveReferenceIfRequired(simulationTransfer.Simulation);
                break;
-            case ISpatialStructure spatialStructure:
+            case SpatialStructure spatialStructure:
                spatialStructure.ResolveReferencesInNeighborhoods();
                break;
             default:
