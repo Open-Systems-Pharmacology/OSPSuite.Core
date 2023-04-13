@@ -1367,6 +1367,8 @@ namespace OSPSuite.Assets
       public static readonly string FoldValueMustBeGreaterThanOne = "Fold value must be a number greater than one.";
       public static readonly string ImporterEmptyFile = "The file you are trying to load is empty.";
 
+      public static string CannotFindParentContainerWithPath(string parentPath, string containerName)=> $"Cannot find parent container '{parentPath}' defined as target of container '{containerName}'";
+
       public static  string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
 
       public static string ParseErrorMessage(IEnumerable<string> errors) => $"There were errors while parsing your data: {string.Join(". ", errors)}";

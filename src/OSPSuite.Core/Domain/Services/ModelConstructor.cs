@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
-using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Events;
@@ -18,13 +17,11 @@ namespace OSPSuite.Core.Domain.Services
 
    internal class ModelConstructor : IModelConstructor
    {
-      private readonly IContainerBuilderToContainerMapper _containerMapper;
       private readonly IMoleculePropertiesContainerTask _moleculePropertiesContainerTask;
       private readonly IMoleculeBuilderToMoleculeAmountMapper _moleculeMapper;
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IObserverBuilderTask _observerBuilderTask;
       private readonly IReactionCreator _reactionCreator;
-      private readonly INeighborhoodCollectionToContainerMapper _neighborhoodsMapper;
       private readonly IReferencesResolver _referencesResolver;
       private readonly IEventBuilderTask _eventBuilderTask;
       private readonly IKeywordReplacerTask _keywordReplacerTask;
@@ -37,14 +34,13 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IQuantityValuesUpdater _quantityValuesUpdater;
       private readonly IModelValidatorFactory _modelValidatorFactory;
       private readonly ICircularReferenceChecker _circularReferenceChecker;
+      private readonly ISpatialStructureMerger _spatialStructureMerger;
 
       public ModelConstructor(
          IObjectBaseFactory objectBaseFactory,
          IObserverBuilderTask observerBuilderTask,
          IReactionCreator reactionCreator,
          IMoleculePropertiesContainerTask moleculePropertiesContainerTask,
-         IContainerBuilderToContainerMapper containerMapper,
-         INeighborhoodCollectionToContainerMapper neighborhoodsMapper,
          IMoleculeBuilderToMoleculeAmountMapper moleculeMapper,
          IReferencesResolver referencesResolver,
          IEventBuilderTask eventBuilderTask,
@@ -57,7 +53,8 @@ namespace OSPSuite.Core.Domain.Services
          IParameterBuilderToParameterMapper parameterMapper,
          IQuantityValuesUpdater quantityValuesUpdater,
          IModelValidatorFactory modelValidatorFactory,
-         ICircularReferenceChecker circularReferenceChecker)
+         ICircularReferenceChecker circularReferenceChecker,
+         ISpatialStructureMerger spatialStructureMerger)
       {
          _objectBaseFactory = objectBaseFactory;
          _simulationConfigurationValidator = simulationConfigurationValidator;
@@ -65,11 +62,10 @@ namespace OSPSuite.Core.Domain.Services
          _quantityValuesUpdater = quantityValuesUpdater;
          _modelValidatorFactory = modelValidatorFactory;
          _circularReferenceChecker = circularReferenceChecker;
+         _spatialStructureMerger = spatialStructureMerger;
          _observerBuilderTask = observerBuilderTask;
          _reactionCreator = reactionCreator;
          _moleculePropertiesContainerTask = moleculePropertiesContainerTask;
-         _containerMapper = containerMapper;
-         _neighborhoodsMapper = neighborhoodsMapper;
          _moleculeMapper = moleculeMapper;
          _referencesResolver = referencesResolver;
          _eventBuilderTask = eventBuilderTask;
@@ -264,23 +260,9 @@ namespace OSPSuite.Core.Domain.Services
 
       private void copySpatialStructure(ModelConfiguration modelConfiguration)
       {
-         var (model, simulationConfiguration) = modelConfiguration;
-         // Create Root Container for the model with the name of the model
-         model.Root = _objectBaseFactory.Create<IContainer>()
-            .WithName(model.Name)
-            .WithMode(ContainerMode.Logical)
-            .WithContainerType(ContainerType.Simulation);
-
-         model.Root.AddTag(new Tag(Constants.ROOT_CONTAINER_TAG));
-
-         //Add each container defined in the spatial structure and direct child of the root container
-         foreach (var topContainer in simulationConfiguration.SpatialStructures.SelectMany(x => x.TopContainers))
-         {
-            model.Root.Add(_containerMapper.MapFrom(topContainer, simulationConfiguration));
-         }
-
-         // Add the neighborhoods
-         model.Neighborhoods = _neighborhoodsMapper.MapFrom(modelConfiguration);
+         var model = modelConfiguration.Model;
+         model.Root = _spatialStructureMerger.MergeContainerStructure(modelConfiguration);
+         model.Neighborhoods = _spatialStructureMerger.MergeNeighborhoods(modelConfiguration);
       }
 
       private ValidationResult checkCircularReferences(ModelConfiguration modelConfiguration)
