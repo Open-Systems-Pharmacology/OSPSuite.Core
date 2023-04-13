@@ -63,7 +63,7 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public class PassiveTransportBuildingBlockDiffBuilder : BuildingBlockDiffBuilder<ReactionBuildingBlock, ReactionBuilder>
+   public class PassiveTransportBuildingBlockDiffBuilder : BuildingBlockDiffBuilder<PassiveTransportBuildingBlock, TransportBuilder>
    {
       public PassiveTransportBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer)
          : base(objectBaseDiffBuilder, enumerableComparer)
@@ -71,7 +71,7 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public class EventGroupBuildingBlocksDiffBuilder : BuildingBlockDiffBuilder<ReactionBuildingBlock, ReactionBuilder>
+   public class EventGroupBuildingBlocksDiffBuilder : BuildingBlockDiffBuilder<EventGroupBuildingBlock, EventGroupBuilder>
    {
       public EventGroupBuildingBlocksDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer)
          : base(objectBaseDiffBuilder, enumerableComparer)
@@ -79,7 +79,7 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public class ObserverBuildingBlocksDiffBuilder : BuildingBlockDiffBuilder<ReactionBuildingBlock, ReactionBuilder>
+   public class ObserverBuildingBlocksDiffBuilder : BuildingBlockDiffBuilder<ObserverBuildingBlock, ObserverBuilder>
    {
       public ObserverBuildingBlocksDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer)
          : base(objectBaseDiffBuilder, enumerableComparer)
