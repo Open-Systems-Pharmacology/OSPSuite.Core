@@ -1,26 +1,37 @@
 namespace OSPSuite.Core.Domain.Builder
 {
    /// <summary>
-   /// Factory class to create well defined new <see cref="NeighborhoodBuilder"/>
+   ///    Factory class to create well defined new <see cref="NeighborhoodBuilder" />
    /// </summary>
    public interface INeighborhoodBuilderFactory
    {
       /// <summary>
-      /// Creates a new instance of a <see cref="NeighborhoodBuilder"/>.
+      ///    Creates a new instance of a <see cref="NeighborhoodBuilder" />.
       /// </summary>
-      ///<returns> the new  <see cref="NeighborhoodBuilder"/></returns>
+      /// <returns> the new  <see cref="NeighborhoodBuilder" /></returns>
       NeighborhoodBuilder Create();
+
       /// <summary>
-      /// Creates a new <see cref="NeighborhoodBuilder"/> between <paramref name="firstNeighbor"/> and <paramref name="secondNeighbor"/>.
+      ///    Creates a new <see cref="NeighborhoodBuilder" /> between <paramref name="firstNeighbor" /> and
+      ///    <paramref name="secondNeighbor" />.
       /// </summary>
       /// <param name="firstNeighbor">The first neighbor.</param>
       /// <param name="secondNeighbor">The second neighbor.</param>
-      ///<returns> the new  <see cref="NeighborhoodBuilder"/></returns>
+      /// <returns> the new  <see cref="NeighborhoodBuilder" /></returns>
       NeighborhoodBuilder CreateBetween(IContainer firstNeighbor, IContainer secondNeighbor);
+
+      /// <summary>
+      ///    Creates a new <see cref="NeighborhoodBuilder" /> between <paramref name="firstNeighborPath" /> and
+      ///    <paramref name="secondNeighborPath" />.
+      /// </summary>
+      /// <param name="firstNeighborPath">The first neighbor path.</param>
+      /// <param name="secondNeighborPath">The second neighbor path.</param>
+      /// <returns> the new  <see cref="NeighborhoodBuilder" /></returns>
+      NeighborhoodBuilder CreateBetween(ObjectPath firstNeighborPath, ObjectPath secondNeighborPath);
    }
 
    /// <summary>
-   /// Factory class to create well defined new <see cref="NeighborhoodBuilder"/>
+   ///    Factory class to create well defined new <see cref="NeighborhoodBuilder" />
    /// </summary>
    public class NeighborhoodBuilderFactory : INeighborhoodBuilderFactory
    {
@@ -28,7 +39,7 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly IObjectPathFactory _objectPathFactory;
 
       /// <summary>
-      /// Initializes a new instance of the <see cref="NeighborhoodBuilderFactory"/> class.
+      ///    Initializes a new instance of the <see cref="NeighborhoodBuilderFactory" /> class.
       /// </summary>
       public NeighborhoodBuilderFactory(IObjectBaseFactory objectBaseFactory, IObjectPathFactory objectPathFactory)
       {
@@ -37,9 +48,9 @@ namespace OSPSuite.Core.Domain.Builder
       }
 
       /// <summary>
-      /// Creates a new instance of a <see cref="NeighborhoodBuilder"/>.
+      ///    Creates a new instance of a <see cref="NeighborhoodBuilder" />.
       /// </summary>
-      ///<returns> the new  <see cref="NeighborhoodBuilder"/></returns>
+      /// <returns> the new  <see cref="NeighborhoodBuilder" /></returns>
       public NeighborhoodBuilder Create()
       {
          var neighborhoodBuilder = CreateNeighborhoodBuilder().WithMode(ContainerMode.Logical);
@@ -52,27 +63,20 @@ namespace OSPSuite.Core.Domain.Builder
          return neighborhoodBuilder;
       }
 
-      protected NeighborhoodBuilder CreateNeighborhoodBuilder()
-      {
-         return _objectBaseFactory.Create<NeighborhoodBuilder>();
-      }
+      protected NeighborhoodBuilder CreateNeighborhoodBuilder() => _objectBaseFactory.Create<NeighborhoodBuilder>();
 
-      protected IContainer CreateMoleculeProperties()
-      {
-         return _objectBaseFactory.Create<IContainer>();
-      }
+      protected IContainer CreateMoleculeProperties() => _objectBaseFactory.Create<IContainer>();
 
-      /// <summary>
-      /// Creates a new <see cref="NeighborhoodBuilder"/> between <paramref name="firstNeighbor"/> and <paramref name="secondNeighbor"/>.
-      /// </summary>
-      /// <param name="firstNeighbor">The first neighbor.</param>
-      /// <param name="secondNeighbor">The second neighbor.</param>
-      ///<returns> the new  <see cref="NeighborhoodBuilder"/></returns>
       public NeighborhoodBuilder CreateBetween(IContainer firstNeighbor, IContainer secondNeighbor)
       {
+         return CreateBetween(_objectPathFactory.CreateAbsoluteObjectPath(firstNeighbor), _objectPathFactory.CreateAbsoluteObjectPath(secondNeighbor));
+      }
+
+      public NeighborhoodBuilder CreateBetween(ObjectPath firstNeighborPath, ObjectPath secondNeighborPath)
+      {
          var neighborhoodBuilder = Create();
-         neighborhoodBuilder.FirstNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(firstNeighbor);
-         neighborhoodBuilder.SecondNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(secondNeighbor);
+         neighborhoodBuilder.FirstNeighborPath = firstNeighborPath;
+         neighborhoodBuilder.SecondNeighborPath = secondNeighborPath;
          return neighborhoodBuilder;
       }
    }

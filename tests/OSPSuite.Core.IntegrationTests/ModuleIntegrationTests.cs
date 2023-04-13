@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
+using static OSPSuite.Helpers.ConstantsForSpecs;
 
 namespace OSPSuite.Core
 {
@@ -40,6 +41,16 @@ namespace OSPSuite.Core
       public void should_return_a_successful_validation()
       {
          _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Valid, _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
+      }
+
+      [Observation]
+      public void should_have_added_a_tumor_organ_in_heart_organ()
+      {
+         var tumor = _model.ModelOrganCompartment(Heart, Tumor);
+         tumor.ShouldNotBeNull();
+
+         var tumor_pls = tumor.Container(Plasma);
+         tumor_pls.ShouldNotBeNull();
       }
    }
 }

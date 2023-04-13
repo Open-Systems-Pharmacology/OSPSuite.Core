@@ -10,6 +10,7 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
+using static OSPSuite.Core.Domain.Constants;
 using static OSPSuite.Helpers.ConstantsForSpecs;
 using IContainer = OSPSuite.Core.Domain.IContainer;
 
@@ -218,7 +219,7 @@ namespace OSPSuite.Core
       {
          string observerName = "ContainerObs_1";
 
-         var organism = _model.Root.GetSingleChildByName<IContainer>(Organism);
+         var organism = _model.Root.GetSingleChildByName<IContainer>(ORGANISM);
          var moleculeContainer = organism.GetSingleChildByName<IContainer>("C");
          moleculeContainer.ContainsName(observerName).ShouldBeTrue();
       }
@@ -321,9 +322,9 @@ namespace OSPSuite.Core
          var processRateParameter = _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "A")
             .GetSingleChildByName<IContainer>("My Transport1")
             .GetSingleChildByName<IContainer>("Transporter #1")
-            .GetSingleChildByName<IParameter>(Constants.Parameters.PROCESS_RATE);
+            .GetSingleChildByName<IParameter>(Parameters.PROCESS_RATE);
 
-         processRateParameter.Tags.Contains(Constants.Parameters.PROCESS_RATE).ShouldBeTrue();
+         processRateParameter.Tags.Contains(Parameters.PROCESS_RATE).ShouldBeTrue();
          processRateParameter.Tags.Contains("lng_pls_to_lng_cell").ShouldBeTrue();
          processRateParameter.Tags.Contains("A").ShouldBeTrue();
       }
@@ -334,7 +335,7 @@ namespace OSPSuite.Core
          var processRateParameter = _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "A")
             .GetSingleChildByName<IContainer>("My Transport1")
             .GetSingleChildByName<IContainer>("Transporter #1")
-            .GetSingleChildByName<IParameter>(Constants.Parameters.PROCESS_RATE);
+            .GetSingleChildByName<IParameter>(Parameters.PROCESS_RATE);
 
          processRateParameter.Editable.ShouldBeFalse();
          processRateParameter.Visible.ShouldBeFalse();
@@ -346,9 +347,9 @@ namespace OSPSuite.Core
          var processRateParameter = _model.MoleculeContainerInNeighborhood("bon_pls_to_bon_cell", "A")
             .GetSingleChildByName<IContainer>("My Transport2")
             .GetSingleChildByName<IContainer>("Transporter #2")
-            .GetSingleChildByName<IParameter>(Constants.Parameters.PROCESS_RATE);
+            .GetSingleChildByName<IParameter>(Parameters.PROCESS_RATE);
 
-         processRateParameter.Tags.Contains(Constants.Parameters.PROCESS_RATE).ShouldBeTrue();
+         processRateParameter.Tags.Contains(Parameters.PROCESS_RATE).ShouldBeTrue();
          processRateParameter.Tags.Contains("bon_pls_to_bon_cell").ShouldBeTrue();
          processRateParameter.Tags.Contains("A").ShouldBeTrue();
       }
@@ -369,7 +370,7 @@ namespace OSPSuite.Core
          var formula = _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "A").GetSingleChildByName<IParameter>(SumProcessRate)
             .Formula.DowncastTo<ExplicitFormula>();
          formula.ObjectPaths.Count().ShouldBeEqualTo(1);
-         formula.ObjectPaths.ElementAt(0).ShouldContain("lng_pls_to_lng_cell", "A", "My Transport1", "Transporter #1", Constants.Parameters.PROCESS_RATE);
+         formula.ObjectPaths.ElementAt(0).ShouldContain("lng_pls_to_lng_cell", "A", "My Transport1", "Transporter #1", Parameters.PROCESS_RATE);
       }
 
       [Observation]
@@ -378,7 +379,7 @@ namespace OSPSuite.Core
          var formula = _model.MoleculeContainerInNeighborhood("bon_pls_to_bon_cell", "A").GetSingleChildByName<IParameter>(SumProcessRate)
             .Formula.DowncastTo<ExplicitFormula>();
          formula.ObjectPaths.Count().ShouldBeEqualTo(1);
-         formula.ObjectPaths.ElementAt(0).ShouldContain("bon_pls_to_bon_cell", "A", "My Transport2", "Transporter #2", Constants.Parameters.PROCESS_RATE);
+         formula.ObjectPaths.ElementAt(0).ShouldContain("bon_pls_to_bon_cell", "A", "My Transport2", "Transporter #2", Parameters.PROCESS_RATE);
       }
 
       [Observation]
@@ -389,7 +390,7 @@ namespace OSPSuite.Core
          {
             var builder = _simulationBuilder.BuilderFor(entity);
             if (builder != null) continue;
-            if (entity.IsNamed(Constants.NEIGHBORHOODS)) continue;
+            if (entity.IsNamed(NEIGHBORHOODS)) continue;
             errorList.Add($"No builder found for {entity.Name}");
          }
 
@@ -401,15 +402,15 @@ namespace OSPSuite.Core
       {
          var bone_cell_F = _model.ModelOrganCompartmentMolecule(Bone, Cell, "F");
          bone_cell_F.ShouldNotBeNull();
-         bone_cell_F.ContainsName(Constants.ONTOGENY_FACTOR).ShouldBeTrue();
-         bone_cell_F.ContainsName(Constants.HALF_LIFE).ShouldBeTrue();
-         bone_cell_F.ContainsName(Constants.DEGRADATION_COEFF).ShouldBeTrue();
+         bone_cell_F.ContainsName(ONTOGENY_FACTOR).ShouldBeTrue();
+         bone_cell_F.ContainsName(HALF_LIFE).ShouldBeTrue();
+         bone_cell_F.ContainsName(DEGRADATION_COEFF).ShouldBeTrue();
 
          var bone_cell_E = _model.ModelOrganCompartmentMolecule(Bone, Cell, "E");
          bone_cell_E.ShouldNotBeNull();
-         bone_cell_E.ContainsName(Constants.ONTOGENY_FACTOR).ShouldBeFalse();
-         bone_cell_E.ContainsName(Constants.HALF_LIFE).ShouldBeFalse();
-         bone_cell_E.ContainsName(Constants.DEGRADATION_COEFF).ShouldBeFalse();
+         bone_cell_E.ContainsName(ONTOGENY_FACTOR).ShouldBeFalse();
+         bone_cell_E.ContainsName(HALF_LIFE).ShouldBeFalse();
+         bone_cell_E.ContainsName(DEGRADATION_COEFF).ShouldBeFalse();
       }
 
       [Observation]
@@ -465,42 +466,24 @@ namespace OSPSuite.Core
       [Observation]
       public void should_have_update_the_value_of_a_parameter_defined_in_the_individual_that_exists_in_the_spatial_structure()
       {
-         var P_arterial_blood = _model.Root.EntityAt<IParameter>(Organism, ArterialBlood, P);
+         var P_arterial_blood = _model.Root.EntityAt<IParameter>(ORGANISM, ArterialBlood, P);
          P_arterial_blood.Value.ShouldBeEqualTo(20);
       }
 
       [Observation]
       public void should_have_created_a_new_parameter_defined_in_the_individual_for_entries_that_do_not_exist_in_the_spatial_structure()
       {
-         var NEW_PARAM_arterial_blood = _model.Root.EntityAt<IParameter>(Organism, ArterialBlood, "NEW_PARAM");
+         var NEW_PARAM_arterial_blood = _model.Root.EntityAt<IParameter>(ORGANISM, ArterialBlood, "NEW_PARAM");
          NEW_PARAM_arterial_blood.Value.ShouldBeEqualTo(10);
-         NEW_PARAM_arterial_blood.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.AMOUNT_PER_TIME);
+         NEW_PARAM_arterial_blood.Dimension.Name.ShouldBeEqualTo(Dimension.AMOUNT_PER_TIME);
       }
 
       [Observation]
       public void should_have_created_a_new_distributed_parameter_defined_in_the_individual_for_entries_that_do_not_exist_in_the_spatial_structure()
       {
-         var NEW_PARAM_DISTRIBUTED_blood = _model.Root.EntityAt<IDistributedParameter>(Organism, ArterialBlood, "NEW_PARAM_DISTRIBUTED");
+         var NEW_PARAM_DISTRIBUTED_blood = _model.Root.EntityAt<IDistributedParameter>(ORGANISM, ArterialBlood, "NEW_PARAM_DISTRIBUTED");
          NEW_PARAM_DISTRIBUTED_blood.Value.ShouldBeEqualTo(10);
-         NEW_PARAM_DISTRIBUTED_blood.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.AMOUNT_PER_TIME);
-      }
-   }
-
-   internal static class ModelExtensionsForSpecs
-   {
-      internal static IContainer MoleculeContainerInNeighborhood(this IModel model, string neighborhoodName, string moleculeName)
-      {
-         return model.Neighborhoods.GetSingleChildByName<Neighborhood>(neighborhoodName).Container(moleculeName);
-      }
-
-      internal static IContainer ModelOrganCompartment(this IModel model, string organName, string compartmentName)
-      {
-         return model.Root.GetSingleChildByName<IContainer>(Organism).Container(organName).Container(compartmentName);
-      }
-
-      internal static MoleculeAmount ModelOrganCompartmentMolecule(this IModel model, string organName, string compartmentName, string moleculeName)
-      {
-         return model.ModelOrganCompartment(organName, compartmentName).GetSingleChildByName<MoleculeAmount>(moleculeName);
+         NEW_PARAM_DISTRIBUTED_blood.Dimension.Name.ShouldBeEqualTo(Dimension.AMOUNT_PER_TIME);
       }
    }
 
@@ -566,7 +549,7 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _modelName = Constants.NEIGHBORHOODS;
+         _modelName = NEIGHBORHOODS;
       }
 
       [Observation]
@@ -581,7 +564,7 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _modelName = Constants.ORGANISM;
+         _modelName = ORGANISM;
       }
 
       [Observation]
