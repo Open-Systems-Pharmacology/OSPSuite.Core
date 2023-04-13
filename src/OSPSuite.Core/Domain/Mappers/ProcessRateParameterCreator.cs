@@ -6,7 +6,7 @@ namespace OSPSuite.Core.Domain.Mappers
 {
    internal interface IProcessRateParameterCreator
    {
-      IParameter CreateProcessRateParameterFor(ProcessBuilder processBuilder, SimulationBuilder simulationBuilder);
+      IParameter CreateProcessRateParameterFor(IProcessBuilder processBuilder, SimulationBuilder simulationBuilder);
    }
 
    internal class ProcessRateParameterCreator : IProcessRateParameterCreator
@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Domain.Mappers
          _formulaMapper = formulaMapper;
       }
 
-      public IParameter CreateProcessRateParameterFor(ProcessBuilder processBuilder, SimulationBuilder simulationBuilder)
+      public IParameter CreateProcessRateParameterFor(IProcessBuilder processBuilder, SimulationBuilder simulationBuilder)
       {
          var parameter = _objectBaseFactory
             .Create<IParameter>()

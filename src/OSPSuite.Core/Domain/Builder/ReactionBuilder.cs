@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Domain.Builder
    /// <summary>
    ///    Contains all Information needed to create a <see cref="Reaction" /> with the <see cref="IModelConstructor" />
    /// </summary>
-   public class ReactionBuilder : ProcessBuilder, IBuilder
+   public class ReactionBuilder : ProcessBuilder
    {
       private readonly List<ReactionPartnerBuilder> _educts;
       private readonly List<ReactionPartnerBuilder> _products;

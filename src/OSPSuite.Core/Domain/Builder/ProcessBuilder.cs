@@ -12,11 +12,22 @@ namespace OSPSuite.Core.Domain.Builder
       void RemoveParameter(IParameter parameter);
    }
 
+   public interface IProcessBuilder : IContainer, IUsingFormula, IBuilder, IContainsParameters
+   {
+      /// <summary>
+      ///    If set to true, a parameter rate named ProcessRate will be generated in the simulation.Its formula
+      ///    will be set to the rate of the created process. Default is false
+      /// </summary>
+      bool CreateProcessRateParameter { get; set; }
+
+      bool ProcessRateParameterPersistable { get; set; }
+   }
+
    /// <summary>
    ///    Base builder interface for all builder creating amount changing objects
    ///    Contains all information used for every kind of amount change
    /// </summary>
-   public abstract class ProcessBuilder : Container, IUsingFormula
+   public abstract class ProcessBuilder : Container, IProcessBuilder
    {
       private IFormula _formula;
       private bool _createProcessRateParameter;
