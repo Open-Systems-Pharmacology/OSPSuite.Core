@@ -144,7 +144,7 @@ namespace OSPSuite.Helpers
          spatialStructure.AddNeighborhood(neighborhood6);
 
          spatialStructure.ResolveReferencesInNeighborhoods();
-         return spatialStructure; 
+         return spatialStructure;
       }
 
       private IContainer createContainerWithName(string containerName, ContainerMode containerMode = ContainerMode.Logical)
@@ -193,7 +193,7 @@ namespace OSPSuite.Helpers
          spatialStructure.AddTopContainer(lung);
 
          //new neighborhood between pls and int
-         var neighborhood = _neighborhoodFactory.CreateBetween(lngPlasma, lngInt).WithName("lng_pls_to_lng_int");
+         var neighborhood = _neighborhoodFactory.CreateBetween(lngPlasma, lngInt, lung.ParentPath).WithName("lng_pls_to_lng_int");
          neighborhood.AddParameter(newConstantParameter("SA", 10));
          spatialStructure.AddNeighborhood(neighborhood);
 
@@ -204,10 +204,11 @@ namespace OSPSuite.Helpers
          heart.Add(newConstantParameter(Volume, 20));
          heart.Add(newConstantParameter(pH, 2));
          heart.Add(heartPlasma);
-
          heart.ParentPath = new ObjectPath(ORGANISM);
+
+         spatialStructure.AddTopContainer(heart);
          //new neighborhood between pls and int
-         var neighborhood2 = _neighborhoodFactory.CreateBetween(lngPlasma, heartPlasma).WithName("lng_pls_to_hrt_pls");
+         var neighborhood2 = _neighborhoodFactory.CreateBetween(lngPlasma, heartPlasma, lung.ParentPath).WithName("lng_pls_to_hrt_pls");
          neighborhood2.AddParameter(newConstantParameter("SA", 10));
          spatialStructure.AddNeighborhood(neighborhood2);
 
@@ -232,7 +233,7 @@ namespace OSPSuite.Helpers
          spatialStructure.AddTopContainer(tumor);
 
          //new neighborhood between pls and int
-         var neighborhood = _neighborhoodFactory.CreateBetween(new ObjectPath(ORGANISM, Heart, Tumor, Plasma ), new ObjectPath(ORGANISM, Heart, Plasma)).WithName("kid_tmr_pls_to_hrt_pls");
+         var neighborhood = _neighborhoodFactory.CreateBetween(new ObjectPath(Tumor, Plasma), new ObjectPath(Plasma), new ObjectPath(ORGANISM, Heart)).WithName("kid_tmr_pls_to_hrt_pls");
          spatialStructure.AddNeighborhood(neighborhood);
 
          module.SpatialStructure = spatialStructure;

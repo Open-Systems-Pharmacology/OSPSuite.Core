@@ -17,8 +17,12 @@ namespace OSPSuite.Core.Domain.Builder
       /// </summary>
       /// <param name="firstNeighbor">The first neighbor.</param>
       /// <param name="secondNeighbor">The second neighbor.</param>
+      /// <param name="parentPath">
+      ///    Optional parent path that will be added to the path created for first and second neighbor
+      ///    (useful for dynamic structure)
+      /// </param>
       /// <returns> the new  <see cref="NeighborhoodBuilder" /></returns>
-      NeighborhoodBuilder CreateBetween(IContainer firstNeighbor, IContainer secondNeighbor);
+      NeighborhoodBuilder CreateBetween(IContainer firstNeighbor, IContainer secondNeighbor, ObjectPath parentPath = null);
 
       /// <summary>
       ///    Creates a new <see cref="NeighborhoodBuilder" /> between <paramref name="firstNeighborPath" /> and
@@ -26,8 +30,12 @@ namespace OSPSuite.Core.Domain.Builder
       /// </summary>
       /// <param name="firstNeighborPath">The first neighbor path.</param>
       /// <param name="secondNeighborPath">The second neighbor path.</param>
+      /// <param name="parentPath">
+      ///    Optional parent path that will be added to the path created for first and second neighbor
+      ///    (useful for dynamic structure)
+      /// </param>
       /// <returns> the new  <see cref="NeighborhoodBuilder" /></returns>
-      NeighborhoodBuilder CreateBetween(ObjectPath firstNeighborPath, ObjectPath secondNeighborPath);
+      NeighborhoodBuilder CreateBetween(ObjectPath firstNeighborPath, ObjectPath secondNeighborPath, ObjectPath parentPath = null);
    }
 
    /// <summary>
@@ -67,17 +75,22 @@ namespace OSPSuite.Core.Domain.Builder
 
       protected IContainer CreateMoleculeProperties() => _objectBaseFactory.Create<IContainer>();
 
-      public NeighborhoodBuilder CreateBetween(IContainer firstNeighbor, IContainer secondNeighbor)
+      public NeighborhoodBuilder CreateBetween(IContainer firstNeighbor, IContainer secondNeighbor, ObjectPath parentPath = null)
       {
-         return CreateBetween(_objectPathFactory.CreateAbsoluteObjectPath(firstNeighbor), _objectPathFactory.CreateAbsoluteObjectPath(secondNeighbor));
+         return CreateBetween(_objectPathFactory.CreateAbsoluteObjectPath(firstNeighbor), _objectPathFactory.CreateAbsoluteObjectPath(secondNeighbor), parentPath);
       }
 
-      public NeighborhoodBuilder CreateBetween(ObjectPath firstNeighborPath, ObjectPath secondNeighborPath)
+      public NeighborhoodBuilder CreateBetween(ObjectPath firstNeighborPath, ObjectPath secondNeighborPath, ObjectPath parentPath = null)
       {
          var neighborhoodBuilder = Create();
-         neighborhoodBuilder.FirstNeighborPath = firstNeighborPath;
-         neighborhoodBuilder.SecondNeighborPath = secondNeighborPath;
+         neighborhoodBuilder.FirstNeighborPath = mergePath(parentPath, firstNeighborPath);
+         neighborhoodBuilder.SecondNeighborPath = mergePath(parentPath, secondNeighborPath) ;
          return neighborhoodBuilder;
+      }
+
+      private ObjectPath mergePath(ObjectPath parentPath, ObjectPath objectPath)
+      {
+         return parentPath == null ? objectPath : new ObjectPath(parentPath, objectPath);
       }
    }
 }

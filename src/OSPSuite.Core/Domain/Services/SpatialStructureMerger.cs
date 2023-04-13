@@ -51,13 +51,14 @@ namespace OSPSuite.Core.Domain.Services
          if (!allSpatialStructures.Any())
             return;
 
+         var firstSpatialStructure = allSpatialStructures[0];
          var allOtherSpatialStructures = allSpatialStructures.Skip(1).ToList();
 
          // First step: We create the container structure.
          // This is done by adding all top containers defined in the FIRST spatial structure
          // Then we are going to merge all other top container defined in the other spatial structures
          //Add each container defined in the spatial structure and direct child of the root container
-         foreach (var topContainer in allSpatialStructures.First().TopContainers)
+         foreach (var topContainer in firstSpatialStructure.TopContainers)
          {
             root.Add(_containerMapper.MapFrom(topContainer, simulationConfiguration));
          }
@@ -88,17 +89,17 @@ namespace OSPSuite.Core.Domain.Services
          if (parentContainer == null)
             throw new OSPSuiteException(Error.CannotFindParentContainerWithPath(topContainer.ParentPath.PathAsString, topContainer.Name));
 
-         parentContainer.Add(_containerMapper.MapFrom(topContainer, simulationConfiguration));
+         addOrReplaceContainer(topContainer, parentContainer);
       }
 
-      private static void addOrReplaceContainer(IContainer topContainer, IContainer root)
+      private static void addOrReplaceContainer(IContainer containerToAdd, IContainer parentContainer)
       {
-         var existingContainer = root.Container(topContainer.Name);
+         var existingContainer = parentContainer.Container(containerToAdd.Name);
          if (existingContainer != null)
-            root.RemoveChild(existingContainer);
+            parentContainer.RemoveChild(existingContainer);
 
          //add in any case
-         root.Add(topContainer);
+         parentContainer.Add(containerToAdd);
       }
 
       public IContainer MergeNeighborhoods(ModelConfiguration modelConfiguration)

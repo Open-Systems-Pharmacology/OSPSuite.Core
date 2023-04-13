@@ -44,11 +44,13 @@ namespace OSPSuite.Core.Domain.Mappers
 
          var moleculeNamesCopyProperties = simulationBuilder.AllPresentXenobioticFloatingMoleculeNames();
 
-         simulationBuilder.SpatialStructures.SelectMany(x => x.Neighborhoods).Each(nb =>
-            neighborhoodsParentContainer.Add(_neighborhoodMapper.MapFrom(nb,
-               moleculeNamesFor(nb, startValuesForFloatingMolecules),
-               moleculeNamesCopyProperties, modelConfiguration)));
+         //we use a cache to ensure that we are replacing neighborhoods defined in multiple structures
+         var neighborhoodCache = new ObjectBaseCache<Neighborhood>();
+         var allNeighborhoodBuilder = simulationBuilder.SpatialStructures.SelectMany(x => x.Neighborhoods);
+         neighborhoodCache.AddRange(allNeighborhoodBuilder.Select(nb =>
+            _neighborhoodMapper.MapFrom(nb, moleculeNamesFor(nb, startValuesForFloatingMolecules), moleculeNamesCopyProperties, modelConfiguration)));
 
+         neighborhoodsParentContainer.AddChildren(neighborhoodCache);
          return neighborhoodsParentContainer;
       }
 

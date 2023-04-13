@@ -1710,7 +1710,7 @@ namespace OSPSuite.Assets
          }
       }
 
-      public static string SimulationDidNotProduceResults = "Simulation did not produce results";
+      public const string SimulationDidNotProduceResults = "Simulation did not produce results";
 
       public static string DuplicatedIndividualResultsForId(int individualId) => $"Individual results for individual with id '{individualId}' were defined more than once!";
 
@@ -1742,6 +1742,10 @@ namespace OSPSuite.Assets
       public static string UnitIsNotDefinedInDimension(string unit, string dimension) => $"Unit '{unit}' is not defined in dimension '{dimension}'.";
 
       public static string CouldNotFindNeighborhoodBetween(string container1, string container2) => $"Could not find neighborhood between '{container1}' and '{container2}'";
+
+      public static string FirstNeighborNotDefinedFor(string neighborhoodName) => $"First neighbor is undefined for neighborhood '{neighborhoodName}'";
+      
+      public static string SecondNeighborNotDefinedFor(string neighborhoodName) => $"Second neighbor is undefined for neighborhood '{neighborhoodName}'";
 
       public const string InParentTagCanOnlyBeUsedWithAndOperator = "IN PARENT tag can only be used with AND operator";
 

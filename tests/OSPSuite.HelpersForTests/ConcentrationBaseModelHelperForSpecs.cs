@@ -98,11 +98,11 @@ namespace OSPSuite.Helpers
 
       private void setMoleculeStartValues(MoleculeStartValuesBuildingBlock moleculeStartValues)
       {
-         var organsim_A = moleculeStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, "A")];
+         var organsim_A = moleculeStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, "A")];
          organsim_A.Value = 5;
 
 
-         var lung_B = moleculeStartValues[_objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.Lung, "B")];
+         var lung_B = moleculeStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ConstantsForSpecs.Lung, "B")];
          lung_B.Formula = null;
          lung_B.Value = 100;
       }
@@ -176,7 +176,7 @@ namespace OSPSuite.Helpers
          var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE");
 
          var organism = _objectBaseFactory.Create<IContainer>()
-            .WithName(ConstantsForSpecs.Organism)
+            .WithName(Constants.ORGANISM)
             .WithMode(ContainerMode.Physical);
 
          var lung = _objectBaseFactory.Create<IContainer>()

@@ -199,10 +199,10 @@ namespace OSPSuite.Core.Domain.Services
       private ValidationResult createModelStructure(ModelConfiguration modelConfiguration)
       {
          // copy spatial structure with neighborhoods 
-         copySpatialStructure(modelConfiguration);
+         var spatialStructureValidation = copySpatialStructure(modelConfiguration);
 
          // add molecules with IsPresent=true
-         var moleculeMessages = createMoleculeAmounts(modelConfiguration);
+         var moleculeAmountValidation = createMoleculeAmounts(modelConfiguration);
 
          // create local molecule properties container in the spatial structure
          addLocalParametersToMolecule(modelConfiguration);
@@ -213,10 +213,14 @@ namespace OSPSuite.Core.Domain.Services
          // create calculation methods dependent formula and parameters
          createMoleculeCalculationMethodsFormula(modelConfiguration);
 
-         // replace all keywords define in the model structure
-         _keywordReplacerTask.ReplaceIn(modelConfiguration.Model.Root);
+         var validation = new ValidationResult(spatialStructureValidation, moleculeAmountValidation);
+         if (validation.ValidationState != ValidationState.Invalid)
+         {
+            // replace all keywords define in the model structure
+            _keywordReplacerTask.ReplaceIn(modelConfiguration.Model.Root);
+         }
 
-         return new ValidationResult(moleculeMessages);
+         return validation;
       }
 
       private ValidationResult validateModelName(ModelConfiguration modelConfiguration)
@@ -258,11 +262,13 @@ namespace OSPSuite.Core.Domain.Services
          return _modelValidatorFactory.Create<TValidationVisitor>().Validate(modelConfiguration);
       }
 
-      private void copySpatialStructure(ModelConfiguration modelConfiguration)
+      private ValidationResult copySpatialStructure(ModelConfiguration modelConfiguration)
       {
          var model = modelConfiguration.Model;
          model.Root = _spatialStructureMerger.MergeContainerStructure(modelConfiguration);
          model.Neighborhoods = _spatialStructureMerger.MergeNeighborhoods(modelConfiguration);
+
+         return validate<SpatialStructureValidator>(modelConfiguration);
       }
 
       private ValidationResult checkCircularReferences(ModelConfiguration modelConfiguration)
@@ -351,7 +357,7 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private IEnumerable<ValidationMessage> createMoleculeAmounts(ModelConfiguration modelConfiguration)
+      private ValidationResult createMoleculeAmounts(ModelConfiguration modelConfiguration)
       {
          var (_, simulationBuilder) = modelConfiguration;
          var presentMolecules = allPresentMoleculesInContainers(modelConfiguration).ToList();
@@ -359,7 +365,8 @@ namespace OSPSuite.Core.Domain.Services
          var moleculesWithPhysicalContainers = presentMolecules.Where(containerIsPhysical);
          moleculesWithPhysicalContainers.Each(x => { addMoleculeToContainer(simulationBuilder, x.Container, simulationBuilder.MoleculeByName(x.MoleculeStartValue.MoleculeName)); });
 
-         return new MoleculeBuildingBlockValidator().Validate(simulationBuilder.Molecules).Messages.Concat(createValidationMessagesForPresentMolecules(presentMolecules));
+         return new MoleculeBuildingBlockValidator().Validate(simulationBuilder.Molecules)
+            .AddMessagesFrom(createValidationMessagesForPresentMolecules(presentMolecules));
       }
 
       private static bool containerIsPhysical(StartValueAndContainer startValueAndContainer)
@@ -372,13 +379,15 @@ namespace OSPSuite.Core.Domain.Services
          container.Add(_moleculeMapper.MapFrom(moleculeBuilder, container, simulationBuilder));
       }
 
-      private IEnumerable<ValidationMessage> createValidationMessagesForPresentMolecules(List<StartValueAndContainer> presentMolecules)
+      private ValidationResult createValidationMessagesForPresentMolecules(List<StartValueAndContainer> presentMolecules)
       {
          var moleculesWithoutPhysicalContainers = presentMolecules.Where(x => !containerIsPhysical(x));
-         return moleculesWithoutPhysicalContainers.Select(x =>
+         var messages = moleculesWithoutPhysicalContainers.Select(x =>
             x.Container == null
                ? createValidationMessageForNullContainer(x)
                : createValidationMessageForMoleculesWithNonPhysicalContainer(x));
+
+         return new ValidationResult(messages);
       }
 
       private ValidationMessage createValidationMessageForMoleculesWithNonPhysicalContainer(StartValueAndContainer startValueAndContainer)
