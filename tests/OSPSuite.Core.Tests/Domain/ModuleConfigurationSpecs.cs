@@ -27,10 +27,10 @@ namespace OSPSuite.Core.Domain
          _moleculeStartValuesBuildingBlock2 = new MoleculeStartValuesBuildingBlock();
          _module.AddMoleculeStartValueBlock(_moleculeStartValuesBuildingBlock1);
          _module.AddMoleculeStartValueBlock(_moleculeStartValuesBuildingBlock2);
-          _parameterStartValuesBuildingBlock = new ParameterStartValuesBuildingBlock();
+         _parameterStartValuesBuildingBlock = new ParameterStartValuesBuildingBlock();
          _module.AddParameterStartValueBlock(_parameterStartValuesBuildingBlock);
 
-         sut =new ModuleConfiguration(_module);
+         sut = new ModuleConfiguration(_module);
       }
    }
 
@@ -43,7 +43,6 @@ namespace OSPSuite.Core.Domain
          sut.SelectedParameterStartValues.ShouldBeEqualTo(_parameterStartValuesBuildingBlock);
       }
    }
-
 
    public class When_creating_new_module_configuration_from_a_module_with_predefined_start_values : concern_for_ModuleConfiguration
    {
@@ -58,6 +57,26 @@ namespace OSPSuite.Core.Domain
       {
          sut.SelectedMoleculeStartValues.ShouldBeEqualTo(_moleculeStartValuesBuildingBlock2);
          sut.SelectedParameterStartValues.ShouldBeEqualTo(_parameterStartValuesBuildingBlock);
+      }
+   }
+
+   public class When_returning_the_building_block_by_type_for_a_module_configuration : concern_for_ModuleConfiguration
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut = new ModuleConfiguration(_module, _moleculeStartValuesBuildingBlock2, _parameterStartValuesBuildingBlock);
+      }
+
+      [Observation]
+      public void should_return_the_expected_objects()
+      {
+         sut.BuildingBlock<PassiveTransportBuildingBlock>().ShouldBeEqualTo(_module.PassiveTransports);
+         sut.BuildingBlock<SpatialStructure>().ShouldBeEqualTo(_module.SpatialStructure);
+         sut.BuildingBlock<ObserverBuildingBlock>().ShouldBeEqualTo(_module.Observers);
+         sut.BuildingBlock<EventGroupBuildingBlock>().ShouldBeNull();
+         sut.BuildingBlock<ReactionBuildingBlock>().ShouldBeEqualTo(_module.Reactions);
+         sut.BuildingBlock<MoleculeBuildingBlock>().ShouldBeEqualTo(_module.Molecules);
       }
    }
 }
