@@ -102,9 +102,6 @@ namespace OSPSuite.Core.Domain.Services
          parentContainer.Add(containerToAdd);
       }
 
-      public IContainer MergeNeighborhoods(ModelConfiguration modelConfiguration)
-      {
-         return _neighborhoodsMapper.MapFrom(modelConfiguration);
-      }
+      public IContainer MergeNeighborhoods(ModelConfiguration modelConfiguration) => _neighborhoodsMapper.MapFrom(modelConfiguration);
    }
 }
