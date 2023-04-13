@@ -16,12 +16,12 @@ namespace OSPSuite.Core.Domain
 
       public bool ReadOnly { get; set; } = false;
 
-      public IEventGroupBuildingBlock EventGroups { set; get; }
+      public EventGroupBuildingBlock EventGroups { set; get; }
       public MoleculeBuildingBlock Molecules { set; get; }
-      public IObserverBuildingBlock Observers { set; get; }
-      public IReactionBuildingBlock Reactions { set; get; }
-      public IPassiveTransportBuildingBlock PassiveTransports { set; get; }
-      public ISpatialStructure SpatialStructure { set; get; }
+      public ObserverBuildingBlock Observers { set; get; }
+      public ReactionBuildingBlock Reactions { set; get; }
+      public PassiveTransportBuildingBlock PassiveTransports { set; get; }
+      public SpatialStructure SpatialStructure { set; get; }
       public IReadOnlyList<MoleculeStartValuesBuildingBlock> MoleculeStartValuesCollection => _moleculeStartValuesCollection;
       public IReadOnlyList<ParameterStartValuesBuildingBlock> ParameterStartValuesCollection => _parameterStartValuesCollection;
       public virtual ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
@@ -75,19 +75,19 @@ namespace OSPSuite.Core.Domain
             case MoleculeBuildingBlock molecule:
                Molecules = molecule;
                break;
-            case IReactionBuildingBlock reaction:
+            case ReactionBuildingBlock reaction:
                Reactions = reaction;
                break;
-            case ISpatialStructure spatialStructure:
+            case SpatialStructure spatialStructure:
                SpatialStructure = spatialStructure;
                break;
-            case IPassiveTransportBuildingBlock passiveTransport:
+            case PassiveTransportBuildingBlock passiveTransport:
                PassiveTransports = passiveTransport;
                break;
-            case IEventGroupBuildingBlock eventGroup:
+            case EventGroupBuildingBlock eventGroup:
                EventGroups = eventGroup;
                break;
-            case IObserverBuildingBlock observer:
+            case ObserverBuildingBlock observer:
                Observers = observer;
                break;
             case ParameterStartValuesBuildingBlock parameterStartValues:
@@ -110,19 +110,19 @@ namespace OSPSuite.Core.Domain
             case MoleculeBuildingBlock _:
                Molecules = null;
                break;
-            case IReactionBuildingBlock _:
+            case ReactionBuildingBlock _:
                Reactions = null;
                break;
-            case ISpatialStructure _:
+            case SpatialStructure _:
                SpatialStructure = null;
                break;
-            case IPassiveTransportBuildingBlock _:
+            case PassiveTransportBuildingBlock _:
                PassiveTransports = null;
                break;
-            case IEventGroupBuildingBlock _:
+            case EventGroupBuildingBlock _:
                EventGroups = null;
                break;
-            case IObserverBuildingBlock _:
+            case ObserverBuildingBlock _:
                Observers = null;
                break;
             case ParameterStartValuesBuildingBlock parameterStartValues:
@@ -136,14 +136,6 @@ namespace OSPSuite.Core.Domain
             default:
                throw new OSPSuiteException(Error.BuildingBlockTypeNotSupported(buildingBlock.Name));
          }
-      }
-
-      public virtual IEnumerable<IMoleculeBuilder> AllPresentMolecules()
-      {
-         if (Molecules == null)
-            return Enumerable.Empty<IMoleculeBuilder>();
-
-         return Molecules.AllPresentFor(MoleculeStartValuesCollection);
       }
 
       public IReadOnlyList<IBuildingBlock> AllBuildingBlocks()

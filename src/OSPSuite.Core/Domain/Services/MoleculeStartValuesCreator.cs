@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Domain.Services
 {
    public interface IMoleculeStartValuesCreator : IEmptyStartValueCreator<MoleculeStartValue>
    {
-      MoleculeStartValuesBuildingBlock CreateFrom(ISpatialStructure spatialStructure, MoleculeBuildingBlock moleculeBuildingBlock);
+      MoleculeStartValuesBuildingBlock CreateFrom(SpatialStructure spatialStructure, MoleculeBuildingBlock moleculeBuildingBlock);
 
       /// <summary>
       ///    Creates a molecule start value
@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Domain.Services
          _idGenerator = idGenerator;
       }
 
-      public MoleculeStartValuesBuildingBlock CreateFrom(ISpatialStructure spatialStructure, MoleculeBuildingBlock moleculeBuildingBlock)
+      public MoleculeStartValuesBuildingBlock CreateFrom(SpatialStructure spatialStructure, MoleculeBuildingBlock moleculeBuildingBlock)
       {
          var moleculesStartValues = _objectBaseFactory.Create<MoleculeStartValuesBuildingBlock>();
          moleculesStartValues.SpatialStructureId = spatialStructure.Id;
@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain.Services
          return moleculesStartValues;
       }
 
-      private void addMoleculesFrom(MoleculeStartValuesBuildingBlock moleculesStartValuesBuildingBlock, IEntity container, IEnumerable<IMoleculeBuilder> molecules)
+      private void addMoleculesFrom(MoleculeStartValuesBuildingBlock moleculesStartValuesBuildingBlock, IEntity container, IEnumerable<MoleculeBuilder> molecules)
       {
          foreach (var molecule in molecules)
          {
@@ -71,7 +71,7 @@ namespace OSPSuite.Core.Domain.Services
             moleculeStartValue.Formula = _cloneManagerForBuildingBlock.Clone(formula, moleculesStartValues.FormulaCache);
       }
 
-      private static void setMoleculeStartValue(IMoleculeBuilder moleculeBuilder, MoleculeStartValue moleculeStartValue)
+      private static void setMoleculeStartValue(MoleculeBuilder moleculeBuilder, MoleculeStartValue moleculeStartValue)
       {
          moleculeStartValue.Value = moleculeBuilder.GetDefaultMoleculeStartValue();
       }

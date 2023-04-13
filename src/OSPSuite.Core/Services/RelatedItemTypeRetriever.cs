@@ -41,10 +41,10 @@ namespace OSPSuite.Core.Services
       private static bool shouldPluralize<T>(T relatedObject) where T : class
       {
          return relatedObject.IsAnImplementationOf<MoleculeBuildingBlock>() ||
-                relatedObject.IsAnImplementationOf<IReactionBuildingBlock>() ||
-                relatedObject.IsAnImplementationOf<IPassiveTransportBuildingBlock>() ||
-                relatedObject.IsAnImplementationOf<IObserverBuildingBlock>() ||
-                relatedObject.IsAnImplementationOf<IEventGroupBuildingBlock>();
+                relatedObject.IsAnImplementationOf<ReactionBuildingBlock>() ||
+                relatedObject.IsAnImplementationOf<PassiveTransportBuildingBlock>() ||
+                relatedObject.IsAnImplementationOf<ObserverBuildingBlock>() ||
+                relatedObject.IsAnImplementationOf<EventGroupBuildingBlock>();
       }
    }
 }

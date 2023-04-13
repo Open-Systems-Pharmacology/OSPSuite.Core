@@ -4,7 +4,7 @@ using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_MoleculeAmount : ContextSpecification<IMoleculeAmount>
+   public abstract class concern_for_MoleculeAmount : ContextSpecification<MoleculeAmount>
    {
       protected override void Context()
       {

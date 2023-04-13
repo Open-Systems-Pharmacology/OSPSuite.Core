@@ -9,7 +9,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core
 {
-   internal abstract class concern_for_SpatialStructure : ContextForIntegration<ISpatialStructure>
+   internal abstract class concern_for_SpatialStructure : ContextForIntegration<SpatialStructure>
    {
       protected SimulationConfiguration _simulationConfiguration;
       protected SimulationBuilder _simulationBuilder;
@@ -29,7 +29,7 @@ namespace OSPSuite.Core
 
    internal class When_told_to_update_properties_from_a_source_spatial_structure_with_clone_manager_for_building_blocks : concern_for_SpatialStructure
    {
-      private ISpatialStructure _sourceSpatialStructure;
+      private SpatialStructure _sourceSpatialStructure;
       private ICloneManagerForBuildingBlock _cloneManager;
       private const uint _buildingBlockVersion = 5;
 

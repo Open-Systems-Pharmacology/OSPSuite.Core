@@ -141,9 +141,9 @@ namespace OSPSuite.Core.Domain
 
    public class When_cloning_a_building_block : concern_for_CloneManagerForBuildingBlock
    {
-      private ISpatialStructure _buildingBlock;
+      private SpatialStructure _buildingBlock;
       private IContainer _container;
-      private ISpatialStructure _clone;
+      private SpatialStructure _clone;
 
       protected override void Context()
       {

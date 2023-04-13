@@ -13,7 +13,7 @@ namespace OSPSuite.Core.DiffBuilders
          var moleculeBuildingBlock1 = new MoleculeBuildingBlock().WithName("Tada");
          var moleculeBuilderA = new MoleculeBuilder().WithName("MSVa");
          var moleculeBuilderB = new MoleculeBuilder().WithName("MSVb");
-         
+
          moleculeBuildingBlock1.Add(moleculeBuilderA);
          moleculeBuildingBlock1.Add(moleculeBuilderB);
 
@@ -21,7 +21,7 @@ namespace OSPSuite.Core.DiffBuilders
          var moleculeBuildingBlock2 = new MoleculeBuildingBlock().WithName("Tada");
          moleculeBuilderA = new MoleculeBuilder().WithName("MSVa");
          moleculeBuilderB = new MoleculeBuilder().WithName("MSVb");
-         
+
 
          moleculeBuildingBlock2.Add(moleculeBuilderA);
          moleculeBuildingBlock2.Add(moleculeBuilderB);
@@ -93,7 +93,6 @@ namespace OSPSuite.Core.DiffBuilders
 
          _object1 = moleculeBuildingBlock1;
          _object2 = moleculeBuildingBlock2;
-
       }
 
       [Observation]
@@ -102,7 +101,7 @@ namespace OSPSuite.Core.DiffBuilders
          _report.Count.ShouldBeEqualTo(1);
       }
    }
-  
+
    public class When_comparing_two_building_blocks_with_missing_child_builder : concern_for_ObjectComparer
    {
       protected override void Context()
@@ -169,20 +168,19 @@ namespace OSPSuite.Core.DiffBuilders
    {
       protected override void Context()
       {
-         
          base.Context();
          var observerBuildingBlock1 = new ObserverBuildingBlock().WithName("Tada");
-          IObserverBuilder observerBuilderA = new ContainerObserverBuilder().WithName("OBS");
+         var observerBuilderA = new ContainerObserverBuilder().WithName("OBS");
          var observerBuilderB = new ContainerObserverBuilder().WithName("ObsB");
 
          observerBuildingBlock1.Add(observerBuilderA);
          observerBuildingBlock1.Add(observerBuilderB);
 
          var observerBuildingBlock2 = new ObserverBuildingBlock().WithName("Tada");
-         observerBuilderA = new AmountObserverBuilder().WithName("OBS");
+         var otherObserverBuilderA = new AmountObserverBuilder().WithName("OBS");
          observerBuilderB = new ContainerObserverBuilder().WithName("ObsB");
 
-         observerBuildingBlock2.Add(observerBuilderA);
+         observerBuildingBlock2.Add(otherObserverBuilderA);
          observerBuildingBlock2.Add(observerBuilderB);
 
          _object1 = observerBuildingBlock1;
@@ -200,20 +198,19 @@ namespace OSPSuite.Core.DiffBuilders
    {
       protected override void Context()
       {
-
          base.Context();
          var observerBuildingBlock1 = new EventGroupBuildingBlock().WithName("Tada");
-         IEventGroupBuilder observerBuilderA = new ApplicationBuilder().WithName("EGA");
+         var observerBuilderA = new ApplicationBuilder().WithName("EGA");
          var observerBuilderB = new ApplicationBuilder().WithName("EGB");
 
          observerBuildingBlock1.Add(observerBuilderA);
          observerBuildingBlock1.Add(observerBuilderB);
 
          var observerBuildingBlock2 = new EventGroupBuildingBlock().WithName("Tada");
-         observerBuilderA = new EventGroupBuilder().WithName("EGA");
+         var eventGroupBuilderA = new EventGroupBuilder().WithName("EGA");
          observerBuilderB = new ApplicationBuilder().WithName("EGB");
 
-         observerBuildingBlock2.Add(observerBuilderA);
+         observerBuildingBlock2.Add(eventGroupBuilderA);
          observerBuildingBlock2.Add(observerBuilderB);
 
          _object1 = observerBuildingBlock1;

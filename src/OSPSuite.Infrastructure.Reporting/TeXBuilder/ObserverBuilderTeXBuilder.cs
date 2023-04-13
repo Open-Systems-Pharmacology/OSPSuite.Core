@@ -7,7 +7,7 @@ using OSPSuite.TeXReporting.Items;
 
 namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
 {
-   class ObserverBuilderTeXBuilder : OSPSuiteTeXBuilder<IObserverBuilder>
+   class ObserverBuilderTeXBuilder : OSPSuiteTeXBuilder<ObserverBuilder>
    {
       private readonly ITeXBuilderRepository _builderRepository;
       private const string PROPERTY_PROMPT_FORMAT = "{0}: {1}\n";
@@ -24,7 +24,7 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
          _builderRepository = builderRepository;
       }
 
-      public override void Build(IObserverBuilder observerBuilder, OSPSuiteTracker buildTracker)
+      public override void Build(ObserverBuilder observerBuilder, OSPSuiteTracker buildTracker)
       {
          var listToReport = new List<object>();
          listToReport.AddRange(this.ReportDescription(observerBuilder, buildTracker));

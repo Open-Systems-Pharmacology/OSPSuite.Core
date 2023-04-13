@@ -2,11 +2,7 @@
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IMoleculeAmount : IQuantityAndContainer, IWithScaleDivisor
-   {
-   }
-
-   public class MoleculeAmount : QuantityAndContainer, IMoleculeAmount
+   public class MoleculeAmount : QuantityAndContainer, IWithScaleDivisor
    {
       public double ScaleDivisor { get; set; }
 
@@ -22,7 +18,7 @@ namespace OSPSuite.Core.Domain
       {
          base.UpdatePropertiesFrom(source, cloneManager);
 
-         var sourceMoleculeAmount = source as IMoleculeAmount;
+         var sourceMoleculeAmount = source as MoleculeAmount;
          if (sourceMoleculeAmount == null) return;
          ScaleDivisor = sourceMoleculeAmount.ScaleDivisor;
          QuantityType = sourceMoleculeAmount.QuantityType;

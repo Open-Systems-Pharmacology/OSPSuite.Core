@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Domain
    {
       private IFormula _kinetic;
       private IParameter _processRateParameter;
-      private IProcessBuilder _processBuilder;
+      private ProcessBuilder _processBuilder;
       private SimulationConfiguration _simulationConfiguration;
       private FormulaUsablePath _formulaUsablePathB;
       private FormulaUsablePath _formulaUsablePathA;

@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Domain.Builder
       /// <summary>
       ///    Specific localized realizations of the transport process
       /// </summary>
-      public virtual IEnumerable<ITransportBuilder> ActiveTransportRealizations => GetChildren<ITransportBuilder>();
+      public virtual IEnumerable<TransportBuilder> ActiveTransportRealizations => GetChildren<TransportBuilder>();
 
       public virtual IEnumerable<IParameter> Parameters => GetChildren<IParameter>();
 
@@ -24,12 +24,12 @@ namespace OSPSuite.Core.Domain.Builder
       /// <summary>
       ///    Add a new localized realization of the transport process
       /// </summary>
-      public virtual void AddActiveTransportRealization(ITransportBuilder activeTransportBuilder) => Add(activeTransportBuilder);
+      public virtual void AddActiveTransportRealization(TransportBuilder activeTransportBuilder) => Add(activeTransportBuilder);
 
       /// <summary>
       ///    Remove a localized realization of the transport process
       /// </summary>
-      public virtual void RemoveActiveTransportRealization(ITransportBuilder activeTransportBuilderToRemove)
+      public virtual void RemoveActiveTransportRealization(TransportBuilder activeTransportBuilderToRemove)
       {
          RemoveChild(activeTransportBuilderToRemove);
       }

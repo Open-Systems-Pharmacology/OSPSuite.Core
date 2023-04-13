@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Domain.Services
 {
    internal interface IReactionCreator
    {
-      bool CreateReaction(IReactionBuilder reactionBuilder, ModelConfiguration modelConfiguration);
+      bool CreateReaction(ReactionBuilder reactionBuilder, ModelConfiguration modelConfiguration);
    }
 
    internal class ReactionCreator : IReactionCreator, IVisitor<IContainer>
@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Domain.Services
       private IModel _model;
       private bool _createdInstance;
       private SimulationBuilder _simulationBuilder;
-      private IReactionBuilder _reactionBuilder;
+      private ReactionBuilder _reactionBuilder;
 
       public ReactionCreator(IReactionBuilderToReactionMapper reactionMapper, IKeywordReplacerTask keywordReplacerTask,
          IContainerTask containerTask,
@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain.Services
          _parameterMapper = parameterMapper;
       }
 
-      public bool CreateReaction(IReactionBuilder reactionBuilder, ModelConfiguration modelConfiguration)
+      public bool CreateReaction(ReactionBuilder reactionBuilder, ModelConfiguration modelConfiguration)
       {
          _reactionBuilder = reactionBuilder;
          (_model, _simulationBuilder) = modelConfiguration;
@@ -83,7 +83,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private bool canCreateReactionIn(IContainer container)
       {
-         var allMoleculeNames = container.GetChildren<IMoleculeAmount>().Select(x => x.Name).ToList();
+         var allMoleculeNames = container.GetChildren<MoleculeAmount>().Select(x => x.Name).ToList();
 
          return container.Mode == ContainerMode.Physical
                 && allMoleculeNames.ContainsAll(_reactionBuilder.Educts.Select(x => x.MoleculeName))

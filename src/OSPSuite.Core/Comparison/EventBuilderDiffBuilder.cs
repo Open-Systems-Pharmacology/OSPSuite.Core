@@ -4,7 +4,7 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Comparison
 {
-   public class EventBuilderDiffBuilder : DiffBuilder<IEventBuilder>
+   public class EventBuilderDiffBuilder : DiffBuilder<EventBuilder>
    {
       private readonly EntityDiffBuilder _entityDiffBuilder;
       private readonly EnumerableComparer _enumerableComparer;
@@ -17,13 +17,13 @@ namespace OSPSuite.Core.Comparison
          _objectComparer = objectComparer;
       }
 
-      public override void Compare(IComparison<IEventBuilder> comparison)
+      public override void Compare(IComparison<EventBuilder> comparison)
       {
          _entityDiffBuilder.Compare(comparison);
          CompareValues(x => x.OneTime, x => x.OneTime, comparison);
          _objectComparer.Compare(comparison.FormulaComparison());
          _enumerableComparer.CompareEnumerables(comparison, x => x.Assignments, item => item.ObjectPath);
-         _enumerableComparer.CompareEnumerables(comparison, x => x.GetChildren<IEntity>(i => !i.IsAnImplementationOf<IEventAssignmentBuilder>()), item => item.Name);
+         _enumerableComparer.CompareEnumerables(comparison, x => x.GetChildren<IEntity>(i => !i.IsAnImplementationOf<EventAssignmentBuilder>()), item => item.Name);
       }
    }
 }

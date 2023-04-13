@@ -16,14 +16,14 @@ namespace OSPSuite.Core.Domain
 
    public class When_accessed_through_index : concern_for_MoleculeBuildingBlock
    {
-      private IMoleculeBuilder _result;
-      private IMoleculeBuilder _drug;
+      private MoleculeBuilder _result;
+      private MoleculeBuilder _drug;
 
       protected override void Context()
       {
          base.Context();
-         sut.Add(A.Fake<IMoleculeBuilder>().WithName("Protein"));
-         _drug = A.Fake<IMoleculeBuilder>().WithName("Drug");
+         sut.Add(A.Fake<MoleculeBuilder>().WithName("Protein"));
+         _drug = A.Fake<MoleculeBuilder>().WithName("Drug");
          sut.Add(_drug);
       }
 
@@ -42,7 +42,7 @@ namespace OSPSuite.Core.Domain
    public class When_retrieving_the_present_molecules_based_on_the_given_molecule_values : concern_for_MoleculeBuildingBlock
    {
       private MoleculeStartValuesBuildingBlock _moleculeStartValues;
-      private IEnumerable<IMoleculeBuilder> _results;
+      private IEnumerable<MoleculeBuilder> _results;
       private MoleculeBuilder _molecule;
       private MoleculeBuilder _drug;
 

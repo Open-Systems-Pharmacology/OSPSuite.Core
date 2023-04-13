@@ -107,10 +107,10 @@ namespace OSPSuite.Helpers
          lung_B.Value = 100;
       }
 
-      private IReactionBuildingBlock getReactions()
+      private ReactionBuildingBlock getReactions()
       {
-         var reactions = _objectBaseFactory.Create<IReactionBuildingBlock>();
-         var R1 = _objectBaseFactory.Create<IReactionBuilder>()
+         var reactions = _objectBaseFactory.Create<ReactionBuildingBlock>();
+         var R1 = _objectBaseFactory.Create<ReactionBuilder>()
             .WithName("R1")
             .WithKinetic(R1Formula(reactions.FormulaCache))
             .WithDimension(_concentrationPerTimeDimension);
@@ -171,7 +171,7 @@ namespace OSPSuite.Helpers
          return molecules;
       }
 
-      private ISpatialStructure getSpatialStructure()
+      private SpatialStructure getSpatialStructure()
       {
          var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE");
 

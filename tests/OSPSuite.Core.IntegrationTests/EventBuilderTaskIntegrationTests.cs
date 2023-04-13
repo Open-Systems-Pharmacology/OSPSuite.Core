@@ -13,7 +13,7 @@ namespace OSPSuite.Core
 
    public class When_creating_simulation_with_many_floating_molecules_and_nested_applications_and_nonapplication_eventgroups : concern_for_EventBuilderTask
    {
-      private List<IEventGroup> _allEventGroups;
+      private List<EventGroup> _allEventGroups;
       private const string C1 = "C1";
       private const string C2 = "C2";
       private const string C3 = "C3";
@@ -24,7 +24,7 @@ namespace OSPSuite.Core
       {
          base.GlobalContext();
          _creationResult = CreateFrom("EventsAppKeywordReplacement");
-         _allEventGroups = _creationResult.Model.Root.GetAllChildren<IEventGroup>().ToList();
+         _allEventGroups = _creationResult.Model.Root.GetAllChildren<EventGroup>().ToList();
       }
 
       [Observation]
@@ -49,13 +49,13 @@ namespace OSPSuite.Core
 
    public class When_creating_simulation_using_an_event_with_a_keyword_all_floating : concern_for_EventBuilderTask
    {
-      private List<IEventGroup> _allEventGroups;
+      private List<EventGroup> _allEventGroups;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
          _creationResult = CreateFrom("simulation_with_urine_emptying");
-         _allEventGroups = _creationResult.Model.Root.GetAllChildren<IEventGroup>().ToList();
+         _allEventGroups = _creationResult.Model.Root.GetAllChildren<EventGroup>().ToList();
       }
 
       [Observation]

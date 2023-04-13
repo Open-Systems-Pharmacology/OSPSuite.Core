@@ -69,7 +69,7 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private void addHelpParametersFor(ICoreCalculationMethod calculationMethod, IList<IMoleculeBuilder> allMoleculesUsingMethod)
+      private void addHelpParametersFor(CoreCalculationMethod calculationMethod, IList<MoleculeBuilder> allMoleculesUsingMethod)
       {
          foreach (var helpParameter in calculationMethod.AllHelpParameters())
          {
@@ -93,7 +93,7 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private void createFormulaForBlackBoxParameters(ICoreCalculationMethod calculationMethod, IList<IMoleculeBuilder> allMoleculesUsingMethod)
+      private void createFormulaForBlackBoxParameters(CoreCalculationMethod calculationMethod, IList<MoleculeBuilder> allMoleculesUsingMethod)
       {
          foreach (var formula in calculationMethod.AllOutputFormulas())
          {
@@ -167,7 +167,7 @@ namespace OSPSuite.Core.Domain.Services
          return !_allBlackBoxParameters.Contains(parameter);
       }
 
-      private IEnumerable<IMoleculeBuilder> allMoleculesUsing(ICoreCalculationMethod calculationMethod, IReadOnlyCollection<IMoleculeBuilder> molecules)
+      private IEnumerable<MoleculeBuilder> allMoleculesUsing(CoreCalculationMethod calculationMethod, IReadOnlyCollection<MoleculeBuilder> molecules)
       {
          return molecules
             .Where(molecule => molecule.IsFloatingXenobiotic)
@@ -176,7 +176,7 @@ namespace OSPSuite.Core.Domain.Services
             .Select(x => x.molecule);
       }
 
-      private IEnumerable<IContainer> allMoleculeContainersFor(DescriptorCriteria containerDescriptor, IMoleculeBuilder molecule)
+      private IEnumerable<IContainer> allMoleculeContainersFor(DescriptorCriteria containerDescriptor, MoleculeBuilder molecule)
       {
          return from container in _allContainers.AllSatisfiedBy(containerDescriptor)
             let moleculeContainer = container.GetSingleChildByName<IContainer>(molecule.Name)
@@ -184,7 +184,7 @@ namespace OSPSuite.Core.Domain.Services
             select moleculeContainer;
       }
 
-      private IEnumerable<IParameter> allMoleculeParameterForFormula(ParameterDescriptor parameterDescriptor, IMoleculeBuilder molecule)
+      private IEnumerable<IParameter> allMoleculeParameterForFormula(ParameterDescriptor parameterDescriptor, MoleculeBuilder molecule)
       {
          return from container in allMoleculeContainersFor(parameterDescriptor.ContainerCriteria, molecule)
             let parameter = container.GetSingleChildByName<IParameter>(parameterDescriptor.ParameterName)

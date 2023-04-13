@@ -5,14 +5,14 @@ using OSPSuite.Utility.Extensions;
 namespace OSPSuite.Core.Domain.Mappers
 {
    /// <summary>
-   ///    Mapper for the creation of a Transport in the model from <see cref="ITransportBuilder" />.
+   ///    Mapper for the creation of a Transport in the model from <see cref="TransportBuilder" />.
    /// </summary>
-   internal interface ITransportBuilderToTransportMapper : IBuilderMapper<ITransportBuilder, ITransport>
+   internal interface ITransportBuilderToTransportMapper : IBuilderMapper<TransportBuilder, Transport>
    {
    }
 
    /// <summary>
-   ///    Mapper for the creation of a Transport in the model from <see cref="ITransportBuilder" />.
+   ///    Mapper for the creation of a Transport in the model from <see cref="TransportBuilder" />.
    /// </summary>
    internal class TransportBuilderToTransportMapper : ITransportBuilderToTransportMapper
    {
@@ -32,9 +32,9 @@ namespace OSPSuite.Core.Domain.Mappers
          _processRateParameterCreator = processRateParameterCreator;
       }
 
-      public ITransport MapFrom(ITransportBuilder transportBuilder, SimulationBuilder simulationBuilder)
+      public Transport MapFrom(TransportBuilder transportBuilder, SimulationBuilder simulationBuilder)
       {
-         var transport = _objectBaseFactory.Create<ITransport>()
+         var transport = _objectBaseFactory.Create<Transport>()
             .WithName(transportBuilder.Name)
             .WithIcon(transportBuilder.Icon)
             .WithDimension(transportBuilder.Dimension)
@@ -51,12 +51,12 @@ namespace OSPSuite.Core.Domain.Mappers
          return transport;
       }
 
-      private void addLocalParameters(ITransport transport, ITransportBuilder transportBuilder, SimulationBuilder simulationBuilder)
+      private void addLocalParameters(Transport transport, TransportBuilder transportBuilder, SimulationBuilder simulationBuilder)
       {
          transport.AddChildren(_parameterMapper.MapLocalFrom(transportBuilder, simulationBuilder));
       }
 
-      private IParameter processRateParameterFor(ITransportBuilder transportBuilder, SimulationBuilder simulationBuilder)
+      private IParameter processRateParameterFor(TransportBuilder transportBuilder, SimulationBuilder simulationBuilder)
       {
          var parameter = _processRateParameterCreator.CreateProcessRateParameterFor(transportBuilder, simulationBuilder);
 
@@ -66,7 +66,7 @@ namespace OSPSuite.Core.Domain.Mappers
          return parameter;
       }
 
-      private IReadOnlyList<string> transportTypeTagsFor(ITransportBuilder transportBuilder)
+      private IReadOnlyList<string> transportTypeTagsFor(TransportBuilder transportBuilder)
       {
          if (!transportBuilder.TransportType.Is(TransportType.Active))
             return new[] {Constants.PASSIVE};

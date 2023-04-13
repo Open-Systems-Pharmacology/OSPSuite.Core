@@ -2,11 +2,7 @@
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IObserver : IQuantity
-   {
-   }
-
-   public class Observer : Quantity, IObserver
+   public class Observer : Quantity
    {
       public Observer()
       {

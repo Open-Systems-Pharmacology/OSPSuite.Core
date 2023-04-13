@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Comparison
 {
-   public class EventAssignmentBuilderDiffBuilder : DiffBuilder<IEventAssignmentBuilder>
+   public class EventAssignmentBuilderDiffBuilder : DiffBuilder<EventAssignmentBuilder>
    {
       private readonly EntityDiffBuilder _entityDiffBuilder;
       private readonly IObjectComparer _objectComparer;
@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Comparison
          _objectComparer = objectComparer;
       }
 
-      public override void Compare(IComparison<IEventAssignmentBuilder> comparison)
+      public override void Compare(IComparison<EventAssignmentBuilder> comparison)
       {
          _entityDiffBuilder.Compare(comparison);
          CompareValues(x => x.UseAsValue, x => x.UseAsValue, comparison);

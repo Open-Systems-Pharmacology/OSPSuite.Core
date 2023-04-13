@@ -157,9 +157,9 @@ namespace OSPSuite.Helpers
          return _outputSchemaFactory.Create(0, 1440, 240);
       }
 
-      private IEnumerable<ICoreCalculationMethod> allCalculationMethods()
+      private IEnumerable<CoreCalculationMethod> allCalculationMethods()
       {
-         var cm1 = _objectBaseFactory.Create<ICoreCalculationMethod>().WithName("CM1");
+         var cm1 = _objectBaseFactory.Create<CoreCalculationMethod>().WithName("CM1");
          cm1.Category = "PartitionCoeff";
          cm1.AddOutputFormula(PartitionCoeff_1(), new ParameterDescriptor("K", Create.Criteria(x => x.With("Cell2Plasma"))));
          var helpMeLungPlasma = newConstantParameter("HelpMe", 10);
@@ -167,30 +167,30 @@ namespace OSPSuite.Helpers
          var helpMeBonePlasma = newConstantParameter("HelpMe", 20);
          cm1.AddHelpParameter(helpMeBonePlasma, Create.Criteria(x => x.With(Bone).And.With(Plasma)));
 
-         var cm2 = _objectBaseFactory.Create<ICoreCalculationMethod>().WithName("CM2");
+         var cm2 = _objectBaseFactory.Create<CoreCalculationMethod>().WithName("CM2");
          cm2.Category = "PartitionCoeff";
          cm2.AddOutputFormula(PartitionCoeff_2(), new ParameterDescriptor("K", Create.Criteria(x => x.With("Cell2Plasma"))));
          return new[] {cm1, cm2};
       }
 
-      private IEventGroupBuildingBlock getEventGroups()
+      private EventGroupBuildingBlock getEventGroups()
       {
-         var eventGroupBuilderCollection = _objectBaseFactory.Create<IEventGroupBuildingBlock>();
+         var eventGroupBuilderCollection = _objectBaseFactory.Create<EventGroupBuildingBlock>();
          eventGroupBuilderCollection.Add(createBolusApplication(eventGroupBuilderCollection.FormulaCache));
          return eventGroupBuilderCollection;
       }
 
-      private IEventGroupBuilder createBolusApplication(IFormulaCache cache)
+      private EventGroupBuilder createBolusApplication(IFormulaCache cache)
       {
-         var eventGroup = _objectBaseFactory.Create<IEventGroupBuilder>().WithName("Bolus Application");
+         var eventGroup = _objectBaseFactory.Create<EventGroupBuilder>().WithName("Bolus Application");
          eventGroup.SourceCriteria = Create.Criteria(x => x.With(ArterialBlood).And.With(Plasma));
 
-         var eventBuilder = _objectBaseFactory.Create<IEventBuilder>()
+         var eventBuilder = _objectBaseFactory.Create<EventBuilder>()
             .WithName("application")
             .WithFormula(conditionForBolusApp(cache));
          eventBuilder.OneTime = true;
 
-         var eventAssignment = _objectBaseFactory.Create<IEventAssignmentBuilder>()
+         var eventAssignment = _objectBaseFactory.Create<EventAssignmentBuilder>()
             .WithName("BLA")
             .WithFormula(createBolusDosisFormula(cache));
          eventAssignment.UseAsValue = true;
@@ -309,18 +309,18 @@ namespace OSPSuite.Helpers
          }
       }
 
-      private IObserverBuildingBlock getObservers()
+      private ObserverBuildingBlock getObservers()
       {
-         var observers = _objectBaseFactory.Create<IObserverBuildingBlock>();
+         var observers = _objectBaseFactory.Create<ObserverBuildingBlock>();
 
-         var amountObserver1 = _objectBaseFactory.Create<IAmountObserverBuilder>().WithName("AmountObs_1");
+         var amountObserver1 = _objectBaseFactory.Create<AmountObserverBuilder>().WithName("AmountObs_1");
          amountObserver1.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
          amountObserver1.MoleculeList.ForAll = true;
          amountObserver1.Formula = AmountObs(observers.FormulaCache);
          amountObserver1.ContainerCriteria = Create.Criteria(x => x.With(Plasma));
          observers.Add(amountObserver1);
 
-         var amountObserver2 = _objectBaseFactory.Create<IAmountObserverBuilder>().WithName("AmountObs_2");
+         var amountObserver2 = _objectBaseFactory.Create<AmountObserverBuilder>().WithName("AmountObs_2");
          amountObserver2.MoleculeList.ForAll = false;
          amountObserver2.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
          amountObserver2.Formula = AmountObs(observers.FormulaCache);
@@ -329,7 +329,7 @@ namespace OSPSuite.Helpers
          amountObserver2.ContainerCriteria = Create.Criteria(x => x.With(Cell));
          observers.Add(amountObserver2);
 
-         var amountObserver3 = _objectBaseFactory.Create<IAmountObserverBuilder>().WithName("AmountObs_3");
+         var amountObserver3 = _objectBaseFactory.Create<AmountObserverBuilder>().WithName("AmountObs_3");
          amountObserver3.MoleculeList.ForAll = true;
          amountObserver3.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
          amountObserver3.Formula = AmountObs(observers.FormulaCache);
@@ -338,7 +338,7 @@ namespace OSPSuite.Helpers
          amountObserver3.ContainerCriteria = Create.Criteria(x => x.With(Cell));
          observers.Add(amountObserver3);
 
-         var containerObserverBuilder = _objectBaseFactory.Create<IContainerObserverBuilder>().WithName("ContainerObs_1");
+         var containerObserverBuilder = _objectBaseFactory.Create<ContainerObserverBuilder>().WithName("ContainerObs_1");
          containerObserverBuilder.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
          containerObserverBuilder.MoleculeList.ForAll = false;
          containerObserverBuilder.AddMoleculeName("C");
@@ -347,7 +347,7 @@ namespace OSPSuite.Helpers
          observers.Add(containerObserverBuilder);
 
 
-         var fractionObserver = _objectBaseFactory.Create<IAmountObserverBuilder>().WithName("FractionObserver_1");
+         var fractionObserver = _objectBaseFactory.Create<AmountObserverBuilder>().WithName("FractionObserver_1");
          fractionObserver.Dimension = _dimensionFactory.Dimension(Constants.Dimension.FRACTION);
          fractionObserver.MoleculeList.ForAll = true;
          fractionObserver.Formula = FractionObs(observers.FormulaCache);
@@ -355,7 +355,7 @@ namespace OSPSuite.Helpers
          observers.Add(fractionObserver);
 
 
-         var observedInOrganismLungPlasma = _objectBaseFactory.Create<IContainerObserverBuilder>().WithName("InContainerObserver");
+         var observedInOrganismLungPlasma = _objectBaseFactory.Create<ContainerObserverBuilder>().WithName("InContainerObserver");
          observedInOrganismLungPlasma.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
          observedInOrganismLungPlasma.MoleculeList.ForAll = false;
          observedInOrganismLungPlasma.AddMoleculeName("C");
@@ -363,7 +363,7 @@ namespace OSPSuite.Helpers
          observedInOrganismLungPlasma.ContainerCriteria = Create.Criteria(x => x.With(Plasma).And.InContainer(Lung));
          observers.Add(observedInOrganismLungPlasma);
 
-         var observedInOrganismNotLungPlasma = _objectBaseFactory.Create<IContainerObserverBuilder>().WithName("NotInContainerObserver");
+         var observedInOrganismNotLungPlasma = _objectBaseFactory.Create<ContainerObserverBuilder>().WithName("NotInContainerObserver");
          observedInOrganismNotLungPlasma.Dimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
          observedInOrganismNotLungPlasma.MoleculeList.ForAll = false;
          observedInOrganismNotLungPlasma.AddMoleculeName("C");
@@ -387,7 +387,7 @@ namespace OSPSuite.Helpers
          return molecules;
       }
 
-      private IMoleculeBuilder createMoleculeA(IFormulaCache formulaCache)
+      private MoleculeBuilder createMoleculeA(IFormulaCache formulaCache)
       {
          var moleculeA = defaultMolecule("A", 1, 2, QuantityType.Drug, formulaCache);
          var oneGlobalParameter = newConstantParameter("oneGlobalParameter", 33).WithMode(ParameterBuildMode.Global);
@@ -408,7 +408,7 @@ namespace OSPSuite.Helpers
          transporter1.AddParameter(newConstantParameter("LocalTransportParameter", 250));
 
          var realization1 =
-            _objectBaseFactory.Create<ITransportBuilder>().WithName("Transporter #1")
+            _objectBaseFactory.Create<TransportBuilder>().WithName("Transporter #1")
                .WithKinetic(MM1FormulaFrom(formulaCache))
                .WithDimension(amountPerTimeDimension);
 
@@ -424,7 +424,7 @@ namespace OSPSuite.Helpers
          transporter1.AddActiveTransportRealization(realization1);
          var transporter2 = _objectBaseFactory.Create<TransporterMoleculeContainer>().WithName("E");
          transporter2.TransportName = "My Transport2";
-         var realization2 = _objectBaseFactory.Create<ITransportBuilder>()
+         var realization2 = _objectBaseFactory.Create<TransportBuilder>()
             .WithName("Transporter #2")
             .WithKinetic(MM1FormulaFrom(formulaCache))
             .WithDimension(amountPerTimeDimension);
@@ -442,7 +442,7 @@ namespace OSPSuite.Helpers
          return moleculeA;
       }
 
-      private IMoleculeBuilder createMoleculeB(IFormulaCache formulaCache)
+      private MoleculeBuilder createMoleculeB(IFormulaCache formulaCache)
       {
          var moleculeB = defaultMolecule("B", 2, 2, QuantityType.Drug, formulaCache);
          moleculeB.DefaultStartFormula = B_StartF(formulaCache);
@@ -450,7 +450,7 @@ namespace OSPSuite.Helpers
 
          var transporter1 = _objectBaseFactory.Create<TransporterMoleculeContainer>().WithName("D");
          transporter1.TransportName = "My Transport1";
-         var realization1 = _objectBaseFactory.Create<ITransportBuilder>()
+         var realization1 = _objectBaseFactory.Create<TransportBuilder>()
             .WithName("Transporter #1")
             .WithKinetic(MM2FormulaFrom(formulaCache))
             .WithDimension(amountPerTimeDimension);
@@ -464,7 +464,7 @@ namespace OSPSuite.Helpers
          var transporter2 = _objectBaseFactory.Create<TransporterMoleculeContainer>().WithName("XXX");
          transporter2.TransportName = "My Transport2";
          var realization2 =
-            _objectBaseFactory.Create<ITransportBuilder>()
+            _objectBaseFactory.Create<TransportBuilder>()
                .WithName("Transporter #2")
                .WithKinetic(MM2FormulaFrom(formulaCache))
                .WithDimension(amountPerTimeDimension);
@@ -480,7 +480,7 @@ namespace OSPSuite.Helpers
          return moleculeB;
       }
 
-      private IMoleculeBuilder createMoleculeC(IFormulaCache formulaCache)
+      private MoleculeBuilder createMoleculeC(IFormulaCache formulaCache)
       {
          var moleculeC = defaultMolecule("C", 3, 3, QuantityType.Drug, formulaCache);
          var globalParameter = newConstantParameter("C_Global", 5, ParameterBuildMode.Global);
@@ -496,7 +496,7 @@ namespace OSPSuite.Helpers
          return moleculeC;
       }
 
-      private IMoleculeBuilder createMoleculeD(IFormulaCache formulaCache)
+      private MoleculeBuilder createMoleculeD(IFormulaCache formulaCache)
       {
          var moleculeD = defaultMolecule("D", 3, 3, QuantityType.Transporter, formulaCache);
 
@@ -523,7 +523,7 @@ namespace OSPSuite.Helpers
          return moleculeD;
       }
 
-      private IMoleculeBuilder createMoleculeE(IFormulaCache formulaCache)
+      private MoleculeBuilder createMoleculeE(IFormulaCache formulaCache)
       {
          var moleculeE = defaultMolecule("E", 4, 5, QuantityType.Transporter, formulaCache);
          moleculeE.IsFloating = false;
@@ -537,7 +537,7 @@ namespace OSPSuite.Helpers
          return moleculeE;
       }
 
-      private IMoleculeBuilder createMoleculeF(IFormulaCache formulaCache)
+      private MoleculeBuilder createMoleculeF(IFormulaCache formulaCache)
       {
          var moleculeF = defaultMolecule("F", 4, 5, QuantityType.Enzyme, formulaCache);
          moleculeF.IsXenobiotic = false;
@@ -553,7 +553,7 @@ namespace OSPSuite.Helpers
          return moleculeF;
       }
 
-      private IMoleculeBuilder defaultMolecule(string name, double MW, double logMA, QuantityType quantityType, IFormulaCache formulaCache)
+      private MoleculeBuilder defaultMolecule(string name, double MW, double logMA, QuantityType quantityType, IFormulaCache formulaCache)
       {
          var molecule = _moleculeBuilderFactory.Create(formulaCache).WithName(name);
          molecule.QuantityType = quantityType;
@@ -703,10 +703,10 @@ namespace OSPSuite.Helpers
             .WithMode(parameterBuildMode);
       }
 
-      private IReactionBuildingBlock getReactions()
+      private ReactionBuildingBlock getReactions()
       {
-         var reactions = _objectBaseFactory.Create<IReactionBuildingBlock>();
-         var R1 = _objectBaseFactory.Create<IReactionBuilder>()
+         var reactions = _objectBaseFactory.Create<ReactionBuildingBlock>();
+         var R1 = _objectBaseFactory.Create<ReactionBuilder>()
             .WithName("R1")
             .WithKinetic(R1Formula(reactions.FormulaCache))
             .WithDimension(amountPerTimeDimension);
@@ -728,7 +728,7 @@ namespace OSPSuite.Helpers
          R1.AddProduct(new ReactionPartnerBuilder("C", 1));
 
 
-         var R2 = _objectBaseFactory.Create<IReactionBuilder>()
+         var R2 = _objectBaseFactory.Create<ReactionBuilder>()
             .WithName("R2")
             .WithKinetic(R1Formula(reactions.FormulaCache))
             .WithDimension(amountPerTimeDimension);
@@ -750,11 +750,11 @@ namespace OSPSuite.Helpers
          return reactions;
       }
 
-      private IPassiveTransportBuildingBlock getPassiveTransports()
+      private PassiveTransportBuildingBlock getPassiveTransports()
       {
-         var passiveTransportBuilderCollection = _objectBaseFactory.Create<IPassiveTransportBuildingBlock>();
+         var passiveTransportBuilderCollection = _objectBaseFactory.Create<PassiveTransportBuildingBlock>();
          //T1_1 "Blutfluss Arterial Blood=> Tissue Organ"
-         var T1_1 = _objectBaseFactory.Create<ITransportBuilder>()
+         var T1_1 = _objectBaseFactory.Create<TransportBuilder>()
             .WithName("T1_1")
             .WithDimension(amountPerTimeDimension);
 
@@ -774,7 +774,7 @@ namespace OSPSuite.Helpers
          passiveTransportBuilderCollection.Add(T1_1);
 
          //T1_2 "Blutfluss Tissue Organ => VenousBlood"
-         var T1_2 = _objectBaseFactory.Create<ITransportBuilder>()
+         var T1_2 = _objectBaseFactory.Create<TransportBuilder>()
             .WithName("T1_2")
             .WithDimension(amountPerTimeDimension);
 
@@ -791,7 +791,7 @@ namespace OSPSuite.Helpers
          passiveTransportBuilderCollection.Add(T1_2);
 
          //T1_3 "Blutfluss VenousBlood => Lung"
-         var T1_3 = _objectBaseFactory.Create<ITransportBuilder>()
+         var T1_3 = _objectBaseFactory.Create<TransportBuilder>()
             .WithName("T1_3")
             .WithDimension(amountPerTimeDimension);
 
@@ -806,7 +806,7 @@ namespace OSPSuite.Helpers
          passiveTransportBuilderCollection.Add(T1_3);
 
          //T1_4 "Blutfluss  Lung => ArterialBlood"
-         var T1_4 = _objectBaseFactory.Create<ITransportBuilder>()
+         var T1_4 = _objectBaseFactory.Create<TransportBuilder>()
             .WithName("T1_4")
             .WithDimension(amountPerTimeDimension);
 
@@ -821,7 +821,7 @@ namespace OSPSuite.Helpers
          passiveTransportBuilderCollection.Add(T1_4);
 
          //T2
-         var T2 = _objectBaseFactory.Create<ITransportBuilder>()
+         var T2 = _objectBaseFactory.Create<TransportBuilder>()
             .WithName("T2")
             .WithDimension(amountPerTimeDimension);
 
@@ -835,7 +835,7 @@ namespace OSPSuite.Helpers
          return passiveTransportBuilderCollection;
       }
 
-      private ISpatialStructure getSpatialStructure()
+      private SpatialStructure getSpatialStructure()
       {
          var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE");
 

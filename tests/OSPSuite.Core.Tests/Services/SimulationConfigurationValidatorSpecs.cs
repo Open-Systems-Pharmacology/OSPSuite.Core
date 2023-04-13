@@ -20,8 +20,8 @@ namespace OSPSuite.Core.Services
    {
       private SimulationConfiguration _simulationConfiguration;
       private ValidationResult _validationResults;
-      private IEventGroupBuildingBlock _eventBuildingBlock;
-      private IApplicationBuilder _applicationBuilder;
+      private EventGroupBuildingBlock _eventBuildingBlock;
+      private ApplicationBuilder _applicationBuilder;
       private MoleculeBuildingBlock _moleculeBuildingBlock;
 
       protected override void Context()

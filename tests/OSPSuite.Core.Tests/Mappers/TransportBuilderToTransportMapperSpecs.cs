@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Mappers
          _simulationConfiguration = new SimulationConfiguration();
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
-         A.CallTo(() => _objectBaseFactory.Create<ITransport>()).Returns(new Transport());
+         A.CallTo(() => _objectBaseFactory.Create<Transport>()).Returns(new Transport());
          _formulaBuilderToFormulaMapper = A.Fake<IFormulaBuilderToFormulaMapper>();
          _parameterMapper = A.Fake<IParameterBuilderCollectionToParameterCollectionMapper>();
          _processRateParameterCreator = new ProcessRateParameterCreator(_objectBaseFactory, _formulaBuilderToFormulaMapper);
@@ -36,9 +36,9 @@ namespace OSPSuite.Core.Mappers
 
    internal class When_mapping_a_transport_builder_to_a_transport : concern_for_TransportBuilderToTransportMapper
    {
-      private ITransportBuilder _passiveTransportBuilder;
+      private TransportBuilder _passiveTransportBuilder;
       private IFormula _kinetic;
-      private ITransport _transport;
+      private Transport _transport;
 
       protected override void Context()
       {
@@ -77,9 +77,9 @@ namespace OSPSuite.Core.Mappers
 
    internal class When_mapping_an_active_influx_transport_builder_to_a_transport_for_which_a_parameter_rate_should_be_generated : concern_for_TransportBuilderToTransportMapper
    {
-      private ITransportBuilder _transportBuilder;
+      private TransportBuilder _transportBuilder;
       private IFormula _kinetic;
-      private ITransport _transport;
+      private Transport _transport;
       private IParameter _processRateParameter;
 
       protected override void Context()
@@ -156,9 +156,9 @@ namespace OSPSuite.Core.Mappers
 
    internal class When_mapping_an_active_efflux_transport_builder_to_a_transport_for_which_a_parameter_rate_should_be_generated : concern_for_TransportBuilderToTransportMapper
    {
-      private ITransportBuilder _transportBuilder;
+      private TransportBuilder _transportBuilder;
       private IFormula _kinetic;
-      private ITransport _transport;
+      private Transport _transport;
       private IParameter _processRateParameter;
 
       protected override void Context()
@@ -241,9 +241,9 @@ namespace OSPSuite.Core.Mappers
 
    internal class When_mapping_a_passive_builder_to_a_transport_for_which_a_parameter_rate_should_be_generated : concern_for_TransportBuilderToTransportMapper
    {
-      private ITransportBuilder _transportBuilder;
+      private TransportBuilder _transportBuilder;
       private IFormula _kinetic;
-      private ITransport _transport;
+      private Transport _transport;
       private IParameter _processRateParameter;
 
       protected override void Context()

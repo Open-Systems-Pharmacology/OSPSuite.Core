@@ -6,7 +6,7 @@ using OSPSuite.Core.Serialization.Xml.Extensions;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
-   public class MoleculeBuilderXmlSerializer<T> : ContainerXmlSerializer<T> where T : class, IMoleculeBuilder
+   public class MoleculeBuilderXmlSerializer<T> : ContainerXmlSerializer<T> where T :  MoleculeBuilder
    {
       public override void PerformMapping()
       {

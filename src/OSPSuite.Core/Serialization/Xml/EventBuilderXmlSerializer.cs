@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class EventGroupBuilderBaseXmlSerializer<T> : ContainerXmlSerializer<T> where T : IEventGroupBuilder
+   public class EventGroupBuilderBaseXmlSerializer<T> : ContainerXmlSerializer<T> where T : EventGroupBuilder
    {
       public override void PerformMapping()
       {

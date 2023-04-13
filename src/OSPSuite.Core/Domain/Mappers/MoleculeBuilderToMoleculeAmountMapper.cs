@@ -29,7 +29,7 @@ namespace OSPSuite.Core.Domain.Mappers
       /// </param>
       /// <param name="simulationBuilder">Simulation builder</param>
       /// <returns></returns>
-      IMoleculeAmount MapFrom(IMoleculeBuilder moleculeBuilder, IContainer targetContainer, SimulationBuilder simulationBuilder);
+      MoleculeAmount MapFrom(MoleculeBuilder moleculeBuilder, IContainer targetContainer, SimulationBuilder simulationBuilder);
    }
 
    internal class MoleculeBuilderToMoleculeAmountMapper : IMoleculeBuilderToMoleculeAmountMapper
@@ -57,10 +57,10 @@ namespace OSPSuite.Core.Domain.Mappers
          _amountDimension = dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
       }
 
-      public IMoleculeAmount MapFrom(IMoleculeBuilder moleculeBuilder, IContainer targetContainer, SimulationBuilder simulationBuilder)
+      public MoleculeAmount MapFrom(MoleculeBuilder moleculeBuilder, IContainer targetContainer, SimulationBuilder simulationBuilder)
       {
          //molecule amount always in amount
-         var moleculeAmount = _objectBaseFactory.Create<IMoleculeAmount>()
+         var moleculeAmount = _objectBaseFactory.Create<MoleculeAmount>()
             .WithName(moleculeBuilder.Name)
             .WithDescription(moleculeBuilder.Description)
             .WithContainerType(ContainerType.Molecule)
@@ -86,7 +86,7 @@ namespace OSPSuite.Core.Domain.Mappers
          return moleculeAmount;
       }
 
-      private void createMoleculeAmountDefaultFormula(IMoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder, IMoleculeAmount moleculeAmount)
+      private void createMoleculeAmountDefaultFormula(MoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder, MoleculeAmount moleculeAmount)
       {
          //set start value formula to the default. If user has specified
          //a new start value in MoleculesStartValueCollection-BB, default formula

@@ -12,7 +12,7 @@ using OSPSuite.Utility.Visitor;
 namespace OSPSuite.Core.Converters.v12
 {
    public class Converter110To120 : IObjectConverter,
-      IVisitor<ISpatialStructure>,
+      IVisitor<SpatialStructure>,
       IVisitor<SimulationTransfer>,
       IVisitor<IModelCoreSimulation>,
       IVisitor<SimulationConfiguration>,
@@ -101,7 +101,7 @@ namespace OSPSuite.Core.Converters.v12
 
       private void performConversion(object objectToUpdate) => this.Visit(objectToUpdate);
 
-      public void Visit(ISpatialStructure spatialStructure)
+      public void Visit(SpatialStructure spatialStructure)
       {
          spatialStructure.Neighborhoods.Each(updateNeighborsPathIn);
       }

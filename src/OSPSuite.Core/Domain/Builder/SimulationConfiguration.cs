@@ -10,7 +10,7 @@ namespace OSPSuite.Core.Domain.Builder
    {
       private readonly List<ExpressionProfileBuildingBlock> _expressionProfiles = new List<ExpressionProfileBuildingBlock>();
       private readonly List<ModuleConfiguration> _moduleConfigurations = new List<ModuleConfiguration>();
-      private readonly List<ICoreCalculationMethod> _allCalculationMethods = new List<ICoreCalculationMethod>();
+      private readonly List<CoreCalculationMethod> _allCalculationMethods = new List<CoreCalculationMethod>();
       public SimModelExportMode SimModelExportMode { get; set; } = SimModelExportMode.Full;
 
       public bool ShouldValidate { get; set; } = true;
@@ -21,14 +21,14 @@ namespace OSPSuite.Core.Domain.Builder
       public virtual SimulationSettings SimulationSettings { get; set; }
 
       public virtual IReadOnlyList<ExpressionProfileBuildingBlock> ExpressionProfiles => _expressionProfiles;
-      public virtual IReadOnlyList<ICoreCalculationMethod> AllCalculationMethods => _allCalculationMethods;
+      public virtual IReadOnlyList<CoreCalculationMethod> AllCalculationMethods => _allCalculationMethods;
       public virtual IReadOnlyList<ModuleConfiguration> ModuleConfigurations => _moduleConfigurations;
 
       public virtual void AddExpressionProfile(ExpressionProfileBuildingBlock expressionProfile) => _expressionProfiles.Add(expressionProfile);
 
       public virtual void AddModuleConfiguration(ModuleConfiguration moduleConfiguration) => _moduleConfigurations.Add(moduleConfiguration);
 
-      public virtual void AddCalculationMethod(ICoreCalculationMethod calculationMethodToAdd) => _allCalculationMethods.Add(calculationMethodToAdd);
+      public virtual void AddCalculationMethod(CoreCalculationMethod calculationMethodToAdd) => _allCalculationMethods.Add(calculationMethodToAdd);
 
       public IReadOnlyList<T> All<T>() where T : class, IBuildingBlock
       {

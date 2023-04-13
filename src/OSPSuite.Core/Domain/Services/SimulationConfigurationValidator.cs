@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain.Services
          module.ParameterStartValuesCollection.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
       }
 
-      private void validateEventGroupBuildingBlock(IEventGroupBuildingBlock eventGroups, MoleculeBuildingBlock moleculeBuildingBlock, ValidationResult validationResult)
+      private void validateEventGroupBuildingBlock(EventGroupBuildingBlock eventGroups, MoleculeBuildingBlock moleculeBuildingBlock, ValidationResult validationResult)
       {
          if (eventGroups == null || moleculeBuildingBlock == null)
             return;
@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Domain.Services
          var allMolecules = moleculeBuildingBlock.Select(mb => mb.Name);
          foreach (var eventGroup in eventGroups)
          {
-            var applicationBuilders = eventGroup.GetAllContainersAndSelf<IApplicationBuilder>();
+            var applicationBuilders = eventGroup.GetAllContainersAndSelf<ApplicationBuilder>();
             foreach (var applicationBuilder in applicationBuilders.Where(applicationBuilder => !allMolecules.Contains(applicationBuilder.MoleculeName)))
             {
                validationResult.AddMessage(NotificationType.Error, applicationBuilder, Validation.ApplicatedMoleculeNotPresent(applicationBuilder.MoleculeName, applicationBuilder.Name, moleculeBuildingBlock.Name), eventGroups);

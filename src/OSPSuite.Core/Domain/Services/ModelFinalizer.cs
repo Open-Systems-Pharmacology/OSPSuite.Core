@@ -51,19 +51,19 @@ namespace OSPSuite.Core.Domain.Services
 
       private void finalizeReactionsInContainer(IContainer sourceContainer, IContainer cloneContainer)
       {
-         foreach (var sourceReaction in sourceContainer.GetChildren<IReaction>())
+         foreach (var sourceReaction in sourceContainer.GetChildren<Reaction>())
          {
-            var cloneReaction = cloneContainer.GetSingleChildByName<IReaction>(sourceReaction.Name);
+            var cloneReaction = cloneContainer.GetSingleChildByName<Reaction>(sourceReaction.Name);
             finalizePartners(cloneContainer, sourceReaction.Products, cloneReaction.AddProduct);
             finalizePartners(cloneContainer, sourceReaction.Educts, cloneReaction.AddEduct);
          }
       }
 
-      private void finalizePartners(IContainer cloneContainer, IEnumerable<IReactionPartner> sourcePartners, Action<IReactionPartner> addPartner)
+      private void finalizePartners(IContainer cloneContainer, IEnumerable<ReactionPartner> sourcePartners, Action<ReactionPartner> addPartner)
       {
          foreach (var reactionPartner in sourcePartners)
          {
-            var clonePartner = cloneContainer.GetSingleChildByName<IMoleculeAmount>(reactionPartner.Partner.Name);
+            var clonePartner = cloneContainer.GetSingleChildByName<MoleculeAmount>(reactionPartner.Partner.Name);
             addPartner(new ReactionPartner(reactionPartner.StoichiometricCoefficient, clonePartner));
          }
       }
@@ -71,12 +71,12 @@ namespace OSPSuite.Core.Domain.Services
       private Cache<ObjectPath, IContainer> createReactionContainerCache(IModel model)
       {
          var cache = new Cache<ObjectPath, IContainer>();
-         var reactionContainer = model.Root.GetAllChildren<IContainer>(x => x.Children.Any(child => child.IsAnImplementationOf<IReaction>()));
+         var reactionContainer = model.Root.GetAllChildren<IContainer>(x => x.Children.Any(child => child.IsAnImplementationOf<Reaction>()));
          reactionContainer.Each(cont => cache.Add(_objectPathFactory.CreateAbsoluteObjectPath(cont), cont));
          return cache;
       }
 
-      private void finalizeEventTransports(IModel cloneModel, ICache<ObjectPath, IEventGroup> sourceEventGroups, ICache<ObjectPath, IEventGroup> cloneEventGroups)
+      private void finalizeEventTransports(IModel cloneModel, ICache<ObjectPath, EventGroup> sourceEventGroups, ICache<ObjectPath, EventGroup> cloneEventGroups)
       {
          foreach (var sourceKeyValues in sourceEventGroups.KeyValues)
          {
@@ -100,10 +100,10 @@ namespace OSPSuite.Core.Domain.Services
          finalizeTransportsInMoleculeParentContainer(cloneModel, sourceEventGroup, cloneEventGroup);
       }
 
-      private Cache<ObjectPath, IEventGroup> createEventGroupCache(IModel model)
+      private Cache<ObjectPath, EventGroup> createEventGroupCache(IModel model)
       {
-         var cache = new Cache<ObjectPath, IEventGroup>();
-         var eventGroups = model.Root.GetAllChildren<IEventGroup>();
+         var cache = new Cache<ObjectPath, EventGroup>();
+         var eventGroups = model.Root.GetAllChildren<EventGroup>();
          eventGroups.Each(eg => cache.Add(_objectPathFactory.CreateAbsoluteObjectPath(eg), eg));
          return cache;
       }
@@ -142,15 +142,15 @@ namespace OSPSuite.Core.Domain.Services
          {
             var cloneMoleculeContainer = cloneContainer.GetSingleChildByName<IContainer>(moleculeContainer.Name);
 
-            var sourceTransports = moleculeContainer.GetChildren<ITransport>();
-            var tmp = cloneMoleculeContainer.GetChildren<ITransport>();
+            var sourceTransports = moleculeContainer.GetChildren<Transport>();
+            var tmp = cloneMoleculeContainer.GetChildren<Transport>();
             finalizeTransports(cloneModel, tmp, sourceTransports);
          }
       }
 
-      private void finalizeTransports(IModel cloneModel, IEnumerable<ITransport> tmp, IEnumerable<ITransport> sourceTransports)
+      private void finalizeTransports(IModel cloneModel, IEnumerable<Transport> tmp, IEnumerable<Transport> sourceTransports)
       {
-         var cloneTransports = new Cache<string, ITransport>(x => x.Name);
+         var cloneTransports = new Cache<string, Transport>(x => x.Name);
 
          cloneTransports.AddRange(tmp);
 
@@ -161,13 +161,13 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private void resolveAmounts(IModel cloneModel, ITransport sourceTransport, ITransport cloneTransport)
+      private void resolveAmounts(IModel cloneModel, Transport sourceTransport, Transport cloneTransport)
       {
          var sourceAmountPath = _objectPathFactory.CreateAbsoluteObjectPath(sourceTransport.SourceAmount);
          var targetAmountPath = _objectPathFactory.CreateAbsoluteObjectPath(sourceTransport.TargetAmount);
 
-         cloneTransport.SourceAmount = sourceAmountPath.Resolve<IMoleculeAmount>(cloneModel.Root);
-         cloneTransport.TargetAmount = targetAmountPath.Resolve<IMoleculeAmount>(cloneModel.Root);
+         cloneTransport.SourceAmount = sourceAmountPath.Resolve<MoleculeAmount>(cloneModel.Root);
+         cloneTransport.TargetAmount = targetAmountPath.Resolve<MoleculeAmount>(cloneModel.Root);
       }
 
       private void resolveNeighbors(IModel cloneModel, Neighborhood sourceNeighborhood, Neighborhood cloneNeighborhood)

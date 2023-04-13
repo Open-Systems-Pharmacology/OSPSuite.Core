@@ -61,7 +61,7 @@ namespace OSPSuite.Core
       [Observation]
       public void transport_T1_1_should_have_local_parameters_set()
       {
-         var transports = _model.Neighborhoods.GetAllChildren<ITransport>(t => t.Name.Equals("T1_1"));
+         var transports = _model.Neighborhoods.GetAllChildren<Transport>(t => t.Name.Equals("T1_1"));
 
          foreach (var transport in transports)
          {
@@ -131,7 +131,7 @@ namespace OSPSuite.Core
       public void reaction_R1_should_only_take_place_in_bone_cell_and_lung_cell()
       {
          var organism = _model.Root;
-         var allContainingR1 = from reaction in organism.GetAllChildren<IReaction>()
+         var allContainingR1 = from reaction in organism.GetAllChildren<Reaction>()
             where reaction.Name.Equals("R1")
             select reaction.ParentContainer;
 
@@ -498,9 +498,9 @@ namespace OSPSuite.Core
          return model.Root.GetSingleChildByName<IContainer>(Organism).Container(organName).Container(compartmentName);
       }
 
-      internal static IMoleculeAmount ModelOrganCompartmentMolecule(this IModel model, string organName, string compartmentName, string moleculeName)
+      internal static MoleculeAmount ModelOrganCompartmentMolecule(this IModel model, string organName, string compartmentName, string moleculeName)
       {
-         return model.ModelOrganCompartment(organName, compartmentName).GetSingleChildByName<IMoleculeAmount>(moleculeName);
+         return model.ModelOrganCompartment(organName, compartmentName).GetSingleChildByName<MoleculeAmount>(moleculeName);
       }
    }
 

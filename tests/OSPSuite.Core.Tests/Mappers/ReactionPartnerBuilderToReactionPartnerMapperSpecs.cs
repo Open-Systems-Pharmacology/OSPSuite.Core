@@ -4,11 +4,10 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
-using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
-   internal abstract class concern_for_reaction_partner_builder_to_reaction_partner_mapper : ContextSpecification<IReactionPartnerBuilderToReactionPartnerMapper>
+   internal abstract class concern_for_ReactionPartnerBuilderToReactionPartnerMapper : ContextSpecification<IReactionPartnerBuilderToReactionPartnerMapper>
    {
       protected override void Context()
       {
@@ -16,24 +15,24 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
-   internal class When_mapping_a_reaction_partner_builder_to_a_reaction_partner : concern_for_reaction_partner_builder_to_reaction_partner_mapper
+   internal class When_mapping_a_reaction_partner_builder_to_a_reaction_partner : concern_for_ReactionPartnerBuilderToReactionPartnerMapper
    {
-      private IReactionPartnerBuilder _reactionPartnerBuilder;
-      private IReactionPartner _reactionPartner;
+      private ReactionPartnerBuilder _reactionPartnerBuilder;
+      private ReactionPartner _reactionPartner;
       private IContainer _container;
-      private IMoleculeAmount _moleculeAmount;
+      private MoleculeAmount _moleculeAmount;
       private SimulationConfiguration _simulationConfiguration;
       private SimulationBuilder _simulationBuilder;
 
       protected override void Context()
       {
          base.Context();
-         _reactionPartnerBuilder = A.Fake<IReactionPartnerBuilder>();
+         _reactionPartnerBuilder = new ReactionPartnerBuilder();
          _simulationConfiguration = new SimulationConfiguration();
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _container = new Container();
          _reactionPartnerBuilder.MoleculeName = "Drug";
-         _moleculeAmount = A.Fake<IMoleculeAmount>().WithName("Drug");
+         _moleculeAmount = new MoleculeAmount().WithName("Drug");
          _container.Add(_moleculeAmount);
          _reactionPartnerBuilder.StoichiometricCoefficient = 1.1;
       }
@@ -56,9 +55,9 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
-   internal class When_mapping_a_reaction_partner_builder_to_a_reaction_partner_missing_a_amount : concern_for_reaction_partner_builder_to_reaction_partner_mapper
+   internal class When_mapping_a_reaction_partner_builder_to_a_reaction_partner_missing_a_amount : concern_for_ReactionPartnerBuilderToReactionPartnerMapper
    {
-      private IReactionPartnerBuilder _reactionPartnerBuilder;
+      private ReactionPartnerBuilder _reactionPartnerBuilder;
       private IContainer _container;
       private SimulationConfiguration _simulationConfiguration;
       private SimulationBuilder _simulationBuilder;
@@ -66,7 +65,7 @@ namespace OSPSuite.Core.Mappers
       protected override void Context()
       {
          base.Context();
-         _reactionPartnerBuilder = A.Fake<IReactionPartnerBuilder>();
+         _reactionPartnerBuilder = new ReactionPartnerBuilder();
          _container = new Container();
          _simulationConfiguration = new SimulationConfiguration();
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);

@@ -10,12 +10,12 @@ namespace OSPSuite.Core.Converters.v7_3
 {
    public class Converter710To730 : IObjectConverter,
       IVisitor<ParameterStartValuesBuildingBlock>,
-      IVisitor<IPassiveTransportBuildingBlock>,
+      IVisitor<PassiveTransportBuildingBlock>,
       IVisitor<SimulationSettings>,
-      IVisitor<IEventGroupBuildingBlock>,
+      IVisitor<EventGroupBuildingBlock>,
       IVisitor<MoleculeBuildingBlock>,
-      IVisitor<IReactionBuildingBlock>,
-      IVisitor<ISpatialStructure>,
+      IVisitor<ReactionBuildingBlock>,
+      IVisitor<SpatialStructure>,
       IVisitor<ISimulation>
    {
       private bool _converted = false;
@@ -68,7 +68,7 @@ namespace OSPSuite.Core.Converters.v7_3
          parameterStartValuesBuildingBlock.Each(ConvertWithDefaultStateObjectToDefault);
       }
 
-      public void Visit(IEventGroupBuildingBlock eventGroupBuildingBlock)
+      public void Visit(EventGroupBuildingBlock eventGroupBuildingBlock)
       {
          ConvertAllParametersIn(eventGroupBuildingBlock);
       }
@@ -78,12 +78,12 @@ namespace OSPSuite.Core.Converters.v7_3
          ConvertAllParametersIn(moleculeBuildingBlock);
       }
 
-      public void Visit(IReactionBuildingBlock reactionBuildingBlock)
+      public void Visit(ReactionBuildingBlock reactionBuildingBlock)
       {
          ConvertAllParametersIn(reactionBuildingBlock);
       }
 
-      public void Visit(ISpatialStructure spatialStructure)
+      public void Visit(SpatialStructure spatialStructure)
       {
          spatialStructure.Each(ConvertAllParametersIn);
       }
@@ -104,7 +104,7 @@ namespace OSPSuite.Core.Converters.v7_3
          _converted = true;
       }
 
-      public void Visit(IPassiveTransportBuildingBlock passiveTransportBuildingBlock)
+      public void Visit(PassiveTransportBuildingBlock passiveTransportBuildingBlock)
       {
          ConvertAllParametersIn(passiveTransportBuildingBlock);
       }

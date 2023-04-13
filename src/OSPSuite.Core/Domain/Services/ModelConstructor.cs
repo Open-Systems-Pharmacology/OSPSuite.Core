@@ -357,7 +357,7 @@ namespace OSPSuite.Core.Domain.Services
          foreach (var moleculeName in moleculeNames)
          {
             // check if molecule amount already exists
-            var moleculeAmount = moleculePropertiesContainerTemplate.ParentContainer.GetSingleChildByName<IMoleculeAmount>(moleculeName);
+            var moleculeAmount = moleculePropertiesContainerTemplate.ParentContainer.GetSingleChildByName<MoleculeAmount>(moleculeName);
             if (moleculeAmount == null)
                continue;
 
@@ -385,7 +385,7 @@ namespace OSPSuite.Core.Domain.Services
          return startValueAndContainer.Container != null && startValueAndContainer.Container.Mode == ContainerMode.Physical;
       }
 
-      private void addMoleculeToContainer(SimulationBuilder simulationBuilder, IContainer container, IMoleculeBuilder moleculeBuilder)
+      private void addMoleculeToContainer(SimulationBuilder simulationBuilder, IContainer container, MoleculeBuilder moleculeBuilder)
       {
          container.Add(_moleculeMapper.MapFrom(moleculeBuilder, container, simulationBuilder));
       }

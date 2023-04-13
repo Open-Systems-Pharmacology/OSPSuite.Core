@@ -154,7 +154,7 @@ namespace OSPSuite.Core.Domain.Services
             if (container == null || container.Mode != ContainerMode.Physical)
                continue;
 
-            var molecule = container.EntityAt<IMoleculeAmount>(moleculeStartValue.MoleculeName);
+            var molecule = container.EntityAt<MoleculeAmount>(moleculeStartValue.MoleculeName);
             if (molecule == null)
                throw new ArgumentException(Error.CouldNotFindMoleculeInContainer(moleculeStartValue.MoleculeName, moleculeStartValue.ContainerPath.PathAsString));
 
@@ -182,7 +182,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    The <paramref name="moleculeFormulaToUse" /> can be changed since this is suppose to be a clone of the
       ///    original molecule start value
       /// </remarks>
-      private void updateMoleculeAmountFormula(IMoleculeAmount molecule, IFormula moleculeFormulaToUse)
+      private void updateMoleculeAmountFormula(MoleculeAmount molecule, IFormula moleculeFormulaToUse)
       {
          if (moleculeFormulaToUse.IsAmountBased())
          {
@@ -204,7 +204,7 @@ namespace OSPSuite.Core.Domain.Services
          return _formulaFactory.ConstantFormula(moleculeStartValue.Value.Value, moleculeStartValue.Dimension);
       }
 
-      private bool startValueShouldBeSetAsConstantFormula(MoleculeStartValue moleculeStartValue, IMoleculeAmount molecule)
+      private bool startValueShouldBeSetAsConstantFormula(MoleculeStartValue moleculeStartValue, MoleculeAmount molecule)
       {
          if (!moleculeStartValue.Value.HasValue)
             return false;

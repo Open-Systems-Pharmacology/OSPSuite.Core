@@ -1,92 +1,67 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
    /// <summary>
    ///    A Reaction converts molecules to other
    /// </summary>
-   public interface IReaction : IProcess
+   public class Reaction : Process
    {
-      /// <summary>
-      ///    Gets the educts of the reaction.
-      /// </summary>
-      /// <value>The educts.</value>
-      IEnumerable<IReactionPartner> Educts { get; }
-
-      /// <summary>
-      ///    Gets the products of the reaction.
-      /// </summary>
-      /// <value>The products.</value>
-      IEnumerable<IReactionPartner> Products { get; }
-
-      /// <summary>
-      ///    Gets the Modifier Names.
-      /// </summary>
-      /// <value>The products.</value>
-      IEnumerable<string> ModifierNames { get; }
-
-      /// <summary>
-      ///    Adds the modifier name.
-      /// </summary>
-      /// <param name="modifierName">Name of the modifier.</param>
-      void AddModifier(string modifierName);
-
-      /// <summary>
-      ///    Adds the educt to the reactions educt list.
-      /// </summary>
-      /// <param name="newEduct">The new educt.</param>
-      void AddEduct(IReactionPartner newEduct);
-
-      /// <summary>
-      ///    Adds the product to the reactions product list.
-      /// </summary>
-      /// <param name="newProduct">The new product.</param>
-      void AddProduct(IReactionPartner newProduct);
-   }
-
-   public class Reaction : Process, IReaction
-   {
-      private readonly List<IReactionPartner> _educts;
-      private readonly List<IReactionPartner> _products;
+      private readonly List<ReactionPartner> _educts;
+      private readonly List<ReactionPartner> _products;
       private readonly List<string> _modifier;
 
       public Reaction()
       {
-         _educts = new List<IReactionPartner>();
-         _products = new List<IReactionPartner>();
+         _educts = new List<ReactionPartner>();
+         _products = new List<ReactionPartner>();
          _modifier = new List<string>();
          ContainerType = ContainerType.Reaction;
          Icon = IconNames.REACTION;
       }
 
-      public IEnumerable<IReactionPartner> Educts => _educts;
+      /// <summary>
+      ///    Gets the educts of the reaction.
+      /// </summary>
+      /// <value>The educts.</value>
+      public IEnumerable<ReactionPartner> Educts => _educts;
 
-      public void AddModifier(string modifierName)
-      {
-         _modifier.Add(modifierName);
-      }
+      /// <summary>
+      ///    Adds the modifier name.
+      /// </summary>
+      /// <param name="modifierName">Name of the modifier.</param>
+      public void AddModifier(string modifierName) => _modifier.Add(modifierName);
 
       /// <summary>
       ///    Adds the educt to the reactions educt list.
       /// </summary>
       /// <param name="newEduct">The new educt.</param>
-      public void AddEduct(IReactionPartner newEduct) => _educts.Add(newEduct);
+      public void AddEduct(ReactionPartner newEduct) => _educts.Add(newEduct);
 
-      public IEnumerable<IReactionPartner> Products => _products;
+      /// <summary>
+      ///    Gets the products of the reaction.
+      /// </summary>
+      /// <value>The products.</value>
 
+      public IEnumerable<ReactionPartner> Products => _products;
+
+      /// <summary>
+      ///    Gets the Modifier Names.
+      /// </summary>
+      /// <value>The products.</value>
       public IEnumerable<string> ModifierNames => _modifier;
 
       /// <summary>
       ///    Adds the product to the reactions product list.
       /// </summary>
       /// <param name="newProduct">The new product.</param>
-      public void AddProduct(IReactionPartner newProduct) => _products.Add(newProduct);
+      public void AddProduct(ReactionPartner newProduct) => _products.Add(newProduct);
 
-      public override bool Uses(IMoleculeAmount amount)
+      public override bool Uses(MoleculeAmount amount)
       {
          return
             _educts.Any(x => Equals(x.Partner, amount)) ||
@@ -97,7 +72,7 @@ namespace OSPSuite.Core.Domain
       {
          base.UpdatePropertiesFrom(source, cloneManager);
 
-         var srcReaction = source as IReaction;
+         var srcReaction = source as Reaction;
          if (srcReaction == null) return;
          srcReaction.ModifierNames.Each(AddModifier);
          //Educts/Products should NOT be cloned

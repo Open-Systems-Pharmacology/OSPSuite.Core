@@ -164,46 +164,46 @@ namespace OSPSuite.Core.Domain.Services
    }
 
    internal class ValidatorForReactionsAndTransports : ModelValidator,
-      IVisitor<IReaction>,
-      IVisitor<ITransport>
+      IVisitor<Reaction>,
+      IVisitor<Transport>
    {
       public ValidatorForReactionsAndTransports(IObjectTypeResolver objectTypeResolver, IObjectPathFactory objectPathFactory)
          : base(objectTypeResolver, objectPathFactory)
       {
       }
 
-      public void Visit(IReaction reaction)
+      public void Visit(Reaction reaction)
       {
          CheckReferences(reaction);
       }
 
-      public void Visit(ITransport transport)
+      public void Visit(Transport transport)
       {
          CheckReferences(transport);
       }
    }
 
    internal class ValidatorForObserversAndEvents : ModelValidator,
-      IVisitor<IEvent>,
-      IVisitor<IObserver>,
-      IVisitor<IEventAssignment>
+      IVisitor<Event>,
+      IVisitor<Observer>,
+      IVisitor<EventAssignment>
    {
       public ValidatorForObserversAndEvents(IObjectTypeResolver objectTypeResolver, IObjectPathFactory objectPathFactory)
          : base(objectTypeResolver, objectPathFactory)
       {
       }
 
-      public void Visit(IEvent oneEvent)
+      public void Visit(Event oneEvent)
       {
          CheckReferences(oneEvent);
       }
 
-      public void Visit(IObserver observer)
+      public void Visit(Observer observer)
       {
          CheckReferences(observer, ResolveErrorBehavior.DeleteAndWarning);
       }
 
-      public void Visit(IEventAssignment eventAssignment)
+      public void Visit(EventAssignment eventAssignment)
       {
          CheckReferences(eventAssignment);
          CheckPath(eventAssignment, eventAssignment.ObjectPath, ResolveErrorBehavior.Error);

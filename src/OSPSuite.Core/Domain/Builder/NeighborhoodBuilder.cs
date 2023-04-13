@@ -69,7 +69,7 @@ namespace OSPSuite.Core.Domain.Builder
       ///    This method should be called after deserialization or when a new container is added to the structure
       /// </summary>
       /// <param name="spatialStructure">Spatial structure used to resolve containers (in all top containers)</param>
-      public void ResolveReference(ISpatialStructure spatialStructure) => ResolveReference(spatialStructure.TopContainers);
+      public void ResolveReference(SpatialStructure spatialStructure) => ResolveReference(spatialStructure.TopContainers);
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {

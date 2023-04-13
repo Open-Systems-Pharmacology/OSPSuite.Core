@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Comparison
 {
-   public class TransporterBuilderDiffBuilder : DiffBuilder<ITransportBuilder>
+   public class TransporterBuilderDiffBuilder : DiffBuilder<TransportBuilder>
    {
       private readonly ContainerDiffBuilder _containerDiffBuilder;
       private readonly IObjectComparer _objectComparer;
@@ -15,7 +15,7 @@ namespace OSPSuite.Core.Comparison
          _moleculeDependentBuilderDiffBuilder = moleculeDependentBuilderDiffBuilder;
       }
 
-      public override void Compare(IComparison<ITransportBuilder> comparison)
+      public override void Compare(IComparison<TransportBuilder> comparison)
       {
          _containerDiffBuilder.Compare(comparison);
          CompareValues(x => x.SourceCriteria, x => x.SourceCriteria, comparison);

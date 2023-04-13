@@ -19,14 +19,7 @@ namespace OSPSuite.Core.Domain.Builder
       bool UseAsValue { get; set; }
    }
 
-   /// <summary>
-   ///    Defines new formula for a using formula object
-   /// </summary>
-   public interface IEventAssignmentBuilder : IAssignment
-   {
-   }
-
-   public class EventAssignmentBuilder : Entity, IEventAssignmentBuilder
+   public class EventAssignmentBuilder : Entity, IAssignment
    {
       public ObjectPath ObjectPath { get; set; }
 
@@ -42,7 +35,7 @@ namespace OSPSuite.Core.Domain.Builder
       {
          base.UpdatePropertiesFrom(source, cloneManager);
 
-         var srcEventAssignmentBuilder = source as IEventAssignmentBuilder;
+         var srcEventAssignmentBuilder = source as EventAssignmentBuilder;
          if (srcEventAssignmentBuilder == null) return;
 
          UseAsValue = srcEventAssignmentBuilder.UseAsValue;

@@ -23,12 +23,12 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
    }
 
    public class SimulationExportCreator :
-      IVisitor<IReaction>,
-      IVisitor<IObserver>,
+      IVisitor<Reaction>,
+      IVisitor<Observer>,
       IVisitor<IParameter>,
-      IVisitor<IMoleculeAmount>,
-      IVisitor<ITransport>,
-      IVisitor<IEvent>,
+      IVisitor<MoleculeAmount>,
+      IVisitor<Transport>,
+      IVisitor<Event>,
       ISimulationExportCreator
    {
       private readonly IObjectPathFactory _objectPathFactory;
@@ -74,7 +74,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          }
       }
 
-      public void Visit(IObserver observer)
+      public void Visit(Observer observer)
       {
          var observerExport = new QuantityExport();
          mapQuantity(observer, observerExport);
@@ -101,7 +101,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          createRHS(parameter, parameter, parameter.RHSFormula, mapFormula);
       }
 
-      private void createRHSforAmount(IProcess process, IMoleculeAmount moleculeAmount, double stoichiometricCoefficient)
+      private void createRHSforAmount(IProcess process, MoleculeAmount moleculeAmount, double stoichiometricCoefficient)
       {
          createVariableExport(moleculeAmount);
 
@@ -112,7 +112,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          rhsExport.Equation = stoichiometricCoefficient == -1.0 ? $"-({rhsExport.Equation})" : $"{stoichiometricCoefficient}*({rhsExport.Equation})";
       }
 
-      private ExplicitFormulaExport createProcessRHS(IMoleculeAmount moleculeAmount, IProcess process)
+      private ExplicitFormulaExport createProcessRHS(MoleculeAmount moleculeAmount, IProcess process)
       {
          return createRHS(moleculeAmount, process, process.Formula, (p, f) => mapProcessFormula(process));
       }
@@ -142,7 +142,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          _modelExport.ParameterList.Add(paraExport.Id, paraExport);
       }
 
-      public void Visit(IMoleculeAmount moleculeAmount)
+      public void Visit(MoleculeAmount moleculeAmount)
       {
          if (canBeExportedAsParameter(moleculeAmount))
             createParameterExport(moleculeAmount, canBeVaried: false);
@@ -150,7 +150,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
             createVariableExport(moleculeAmount);
       }
 
-      private bool canBeExportedAsParameter(IMoleculeAmount moleculeAmount)
+      private bool canBeExportedAsParameter(MoleculeAmount moleculeAmount)
       {
          if (isMoleculeInVariableMoleculePathsList(moleculeAmount) || isSystemVariable(moleculeAmount))
             return false;
@@ -158,12 +158,12 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          return !_allProcesses.Any(x => x.Uses(moleculeAmount));
       }
 
-      private bool isMoleculeInVariableMoleculePathsList(IMoleculeAmount moleculeAmount)
+      private bool isMoleculeInVariableMoleculePathsList(MoleculeAmount moleculeAmount)
       {
          return _variableMoleculePaths.Contains(_entityPathResolver.PathFor(moleculeAmount));
       }
 
-      private void createVariableExport(IMoleculeAmount moleculeAmount)
+      private void createVariableExport(MoleculeAmount moleculeAmount)
       {
          createVariableExport(moleculeAmount, moleculeAmount.ScaleDivisor);
       }
@@ -192,13 +192,13 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          return _modelExport.VariableList.Contains(idFor(objectBase));
       }
 
-      public void Visit(ITransport transport)
+      public void Visit(Transport transport)
       {
          createRHSforAmount(transport, transport.SourceAmount, -1);
          createRHSforAmount(transport, transport.TargetAmount, 1);
       }
 
-      public void Visit(IReaction reaction)
+      public void Visit(Reaction reaction)
       {
          foreach (var reactionPartner in reaction.Educts)
          {
@@ -215,7 +215,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
       ///    Visit the specified object.
       /// </summary>
       /// <param name="eventToVisit">The object to visit.</param>
-      public void Visit(IEvent eventToVisit)
+      public void Visit(Event eventToVisit)
       {
          var eventExport = new EventExport
          {
@@ -228,13 +228,13 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
          foreach (var assignment in eventToVisit.Assignments)
          {
             var alternateFormula = assignment.Formula;
-            var assigmentExport = new AssignmentExport
+            var assignmentExport = new AssignmentExport
             {
                ObjectId = idFor(assignment.ChangedEntity),
                NewFormulaId = mapFormula(assignment, alternateFormula).Id,
                UseAsValue = assignment.UseAsValue
             };
-            eventExport.AssignmentList.Add(assigmentExport);
+            eventExport.AssignmentList.Add(assignmentExport);
          }
 
          _modelExport.EventList.Add(eventExport);

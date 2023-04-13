@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Domain.Builder
       /// Create a molecule builder containing the expected default parameter and formula
       /// </summary>
       /// <returns></returns>
-      IMoleculeBuilder Create(IFormulaCache formulaCache);
+      MoleculeBuilder Create(IFormulaCache formulaCache);
    }
 
    public class MoleculeBuilderFactory : IMoleculeBuilderFactory
@@ -26,9 +26,9 @@ namespace OSPSuite.Core.Domain.Builder
          _objectBaseFactory = objectBaseFactory;
       }
 
-      public IMoleculeBuilder Create(IFormulaCache formulaCache)
+      public MoleculeBuilder Create(IFormulaCache formulaCache)
       {
-         var moleculeBuilder = _objectBaseFactory.Create<IMoleculeBuilder>()
+         var moleculeBuilder = _objectBaseFactory.Create<MoleculeBuilder>()
             .WithDimension(_reactionDimensionRetriever.MoleculeDimension);
         
          moleculeBuilder.QuantityType = QuantityType.Drug;

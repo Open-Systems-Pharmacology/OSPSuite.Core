@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Domain
       ///    The parameter won't be added to the <paramref name="moleculeAmount" />.
       ///    The object paths used in <paramref name="modelFormulaToUse" /> will be edited to ensure proper reference
       /// </remarks>
-      IParameter CreateStartValueParameter(IMoleculeAmount moleculeAmount, IFormula modelFormulaToUse, Unit displayUnit = null);
+      IParameter CreateStartValueParameter(MoleculeAmount moleculeAmount, IFormula modelFormulaToUse, Unit displayUnit = null);
 
       /// <summary>
       ///    Creates a parameter named <paramref name="name" /> with a constant formula of value <paramref name="value" />. It
@@ -86,7 +86,7 @@ namespace OSPSuite.Core.Domain
          return CreateParameter(Constants.Parameters.VOLUME, value: 1, dimension: volumeDimension, groupName: Constants.Groups.ORGAN_VOLUMES);
       }
 
-      public IParameter CreateStartValueParameter(IMoleculeAmount moleculeAmount, IFormula modelFormulaToUse, Unit displayUnit = null)
+      public IParameter CreateStartValueParameter(MoleculeAmount moleculeAmount, IFormula modelFormulaToUse, Unit displayUnit = null)
       {
          _concentrationBasedFormulaUpdater.UpdateRelativePathForStartValueMolecule(moleculeAmount, modelFormulaToUse);
          return CreateParameter(Constants.Parameters.START_VALUE, dimension: modelFormulaToUse.Dimension, displayUnit: displayUnit, formula: modelFormulaToUse);

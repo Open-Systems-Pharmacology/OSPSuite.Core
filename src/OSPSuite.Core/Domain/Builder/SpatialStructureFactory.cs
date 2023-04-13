@@ -2,7 +2,7 @@ namespace OSPSuite.Core.Domain.Builder
 {
    public interface ISpatialStructureFactory
    {
-      ISpatialStructure Create();
+      SpatialStructure Create();
    }
 
    public class SpatialStructureFactory : ISpatialStructureFactory
@@ -14,9 +14,9 @@ namespace OSPSuite.Core.Domain.Builder
          _objectBaseFactory = objectBaseFactory;
       }
 
-      public virtual ISpatialStructure Create()
+      public virtual SpatialStructure Create()
       {
-         ISpatialStructure spatialStructure = CreateSpatialStructure();
+         var spatialStructure = CreateSpatialStructure();
          var neighborhoods = CreateNeighborhoods()
             .WithName(Constants.NEIGHBORHOODS)
             .WithMode(ContainerMode.Logical);
@@ -42,9 +42,9 @@ namespace OSPSuite.Core.Domain.Builder
          return _objectBaseFactory.Create<IContainer>();
       }
 
-      protected virtual ISpatialStructure CreateSpatialStructure()
+      protected virtual SpatialStructure CreateSpatialStructure()
       {
-         return _objectBaseFactory.Create<ISpatialStructure>();
+         return _objectBaseFactory.Create<SpatialStructure>();
       }
    }
 }

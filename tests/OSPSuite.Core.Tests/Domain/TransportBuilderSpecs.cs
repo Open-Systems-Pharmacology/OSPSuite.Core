@@ -13,7 +13,7 @@ using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_TransportBuilder : ContextSpecification<ITransportBuilder>
+   public abstract class concern_for_TransportBuilder : ContextSpecification<TransportBuilder>
    {
 
       protected override void Context()
@@ -143,7 +143,7 @@ namespace OSPSuite.Core.Domain
 
    public class when_cloning_transport_builder_for_building_block : concern_for_TransportBuilder
    {
-      protected ITransportBuilder _clone;
+      protected TransportBuilder _clone;
       protected ICloneManagerForBuildingBlock _cloneManagerForBuildingBlock;
       private IDataRepositoryTask _dataRepositoryTask;
 

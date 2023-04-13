@@ -17,7 +17,7 @@ namespace OSPSuite.Core.Services
       protected IObserverBuilderToObserverMapper _observerMapper;
       protected SimulationConfiguration _simulationConfiguration;
       private IModel _model;
-      protected IObserverBuildingBlock _observerBuildingBlock;
+      protected ObserverBuildingBlock _observerBuildingBlock;
       protected IContainer _rootContainer;
       protected IContainer _rootNeighborhood;
       protected IContainer _organism;
@@ -81,8 +81,8 @@ namespace OSPSuite.Core.Services
 
    internal class When_creating_the_container_observers_in_a_model_based_on_the_build_configuration : concern_for_ObserverBuilderTask
    {
-      private IObserverBuilder _obs1;
-      private IObserverBuilder _obs2;
+      private ObserverBuilder _obs1;
+      private ObserverBuilder _obs2;
       private IContainer _molecule2Amount;
       private IContainer _molecule1Amount;
       private DescriptorCriteria _observerCriteria;
@@ -130,12 +130,12 @@ namespace OSPSuite.Core.Services
 
    internal class When_creating_the_amount_observer_in_a_model_based_on_the_build_configuration : concern_for_ObserverBuilderTask
    {
-      private IAmountObserverBuilder _obs1;
-      private IAmountObserverBuilder _obs2;
-      private IMoleculeAmount _molecule1Container1;
-      private IMoleculeAmount _molecule2Container1;
-      private IMoleculeAmount _molecule1Container2;
-      private IMoleculeAmount _molecule2Container2;
+      private AmountObserverBuilder _obs1;
+      private AmountObserverBuilder _obs2;
+      private MoleculeAmount _molecule1Container1;
+      private MoleculeAmount _molecule2Container1;
+      private MoleculeAmount _molecule1Container2;
+      private MoleculeAmount _molecule2Container2;
 
       protected override void Context()
       {
@@ -176,15 +176,15 @@ namespace OSPSuite.Core.Services
          _molecule1Container2.Children.Count().ShouldBeEqualTo(1);
          _molecule2Container2.Children.Count().ShouldBeEqualTo(1);
 
-         _molecule1Container1.Children.First().DowncastTo<IObserver>().QuantityType.Is(QuantityType.Drug).ShouldBeTrue();
-         _molecule1Container2.Children.First().DowncastTo<IObserver>().QuantityType.Is(QuantityType.Drug).ShouldBeTrue();
-         _molecule2Container2.Children.First().DowncastTo<IObserver>().QuantityType.Is(QuantityType.Enzyme).ShouldBeTrue();
+         _molecule1Container1.Children.First().DowncastTo<Observer>().QuantityType.Is(QuantityType.Drug).ShouldBeTrue();
+         _molecule1Container2.Children.First().DowncastTo<Observer>().QuantityType.Is(QuantityType.Drug).ShouldBeTrue();
+         _molecule2Container2.Children.First().DowncastTo<Observer>().QuantityType.Is(QuantityType.Enzyme).ShouldBeTrue();
       }
 
       [Observation]
       public void should_create_one_observer_only_for_the_molecule_for_which_the_observer_was_defined_if_the_physical_container_satisfies_the_observer_criteria_and_if_the_observer_is_not_for_all()
       {
-         //one for observer 1 and and observer 2 since container 1 is the only one satifying observer 2 conditions
+         //one for observer 1 and and observer 2 since container 1 is the only one satisfying observer 2 conditions
          _molecule2Container1.Children.Count().ShouldBeEqualTo(2);
       }
    }

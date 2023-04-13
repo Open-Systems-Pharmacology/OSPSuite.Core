@@ -33,12 +33,12 @@ namespace OSPSuite.Core.Domain
 
    public class When_replacing_the_keyword_in_a_reaction : concern_for_KeywordReplacerTask
    {
-      private IReaction _reaction;
+      private Reaction _reaction;
 
       protected override void Context()
       {
          base.Context();
-         _reaction = A.Fake<IReaction>().WithFormula(A.Fake<IFormula>());
+         _reaction = new Reaction().WithFormula(A.Fake<IFormula>());
          A.CallTo(() => _reaction.Formula.ObjectPaths).Returns(new[] {_objPathFirstNeighbor, _objPathMolecule, _objPathOrganism});
       }
 

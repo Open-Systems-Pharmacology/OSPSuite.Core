@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Services
    {
       protected IFormula _formula;
       protected MoleculeBuildingBlock _buildingBlock;
-      protected IMoleculeBuilder _moleculeBuilder;
+      protected MoleculeBuilder _moleculeBuilder;
 
       protected override void Context()
       {

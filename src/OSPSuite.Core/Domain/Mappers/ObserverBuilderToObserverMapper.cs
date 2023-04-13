@@ -5,7 +5,7 @@ namespace OSPSuite.Core.Domain.Mappers
    /// <summary>
    ///    Maps Observer Builder object to its counterpart in the simulation
    /// </summary>
-   public interface IObserverBuilderToObserverMapper : IBuilderMapper<IObserverBuilder, IObserver>
+   public interface IObserverBuilderToObserverMapper : IBuilderMapper<ObserverBuilder, Observer>
    {
    }
 
@@ -20,9 +20,9 @@ namespace OSPSuite.Core.Domain.Mappers
          _formulaMapper = formulaMapper;
       }
 
-      public IObserver MapFrom(IObserverBuilder observerBuilder, SimulationBuilder simulationBuilder)
+      public Observer MapFrom(ObserverBuilder observerBuilder, SimulationBuilder simulationBuilder)
       {
-         var observer = _objectBaseFactory.Create<IObserver>()
+         var observer = _objectBaseFactory.Create<Observer>()
             .WithName(observerBuilder.Name)
             .WithIcon(observerBuilder.Icon)
             .WithDescription(observerBuilder.Description)
