@@ -56,7 +56,7 @@ namespace OSPSuite.Core.Domain.Services
          var firstSpatialStructure = allSpatialStructures[0];
          var allOtherSpatialStructures = allSpatialStructures.Skip(1).ToList();
          var mapTopContainerToModelContainer = mapContainer(simulationBuilder);
-         var mergeTopContainerIntoModel = mergeTopContainerInStructure(root, simulationBuilder);
+         var mergeTopContainerIntoModel = mergeTopContainerInStructure(root);
 
          // First step: We create the container structure.
          // This is done by adding all top containers defined in the FIRST spatial structure
@@ -70,7 +70,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private Func<IContainer, IContainer> mapContainer(SimulationBuilder simulationBuilder) => container => _containerMapper.MapFrom(container, simulationBuilder);
 
-      private Action<IContainer> mergeTopContainerInStructure(IContainer root, SimulationBuilder simulationBuilder) => topContainer =>
+      private Action<IContainer> mergeTopContainerInStructure(IContainer root) => topContainer =>
       {
          //probably should never happen
          if (topContainer == null)
@@ -80,10 +80,10 @@ namespace OSPSuite.Core.Domain.Services
          if (topContainer.ParentPath == null)
             addOrReplaceContainer(topContainer, root);
          else
-            insertTopContainerIntoStructure(topContainer, root, simulationBuilder);
+            insertTopContainerIntoStructure(topContainer, root);
       };
 
-      private void insertTopContainerIntoStructure(IContainer topContainer, IContainer root, SimulationBuilder simulationConfiguration)
+      private void insertTopContainerIntoStructure(IContainer topContainer, IContainer root)
       {
          var parentContainer = topContainer.ParentPath.Resolve<IContainer>(root);
          if (parentContainer == null)
