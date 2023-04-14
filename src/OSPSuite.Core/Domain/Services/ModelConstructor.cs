@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
-using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Events;
@@ -18,13 +17,11 @@ namespace OSPSuite.Core.Domain.Services
 
    internal class ModelConstructor : IModelConstructor
    {
-      private readonly IContainerBuilderToContainerMapper _containerMapper;
       private readonly IMoleculePropertiesContainerTask _moleculePropertiesContainerTask;
       private readonly IMoleculeBuilderToMoleculeAmountMapper _moleculeMapper;
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IObserverBuilderTask _observerBuilderTask;
       private readonly IReactionCreator _reactionCreator;
-      private readonly INeighborhoodCollectionToContainerMapper _neighborhoodsMapper;
       private readonly IReferencesResolver _referencesResolver;
       private readonly IEventBuilderTask _eventBuilderTask;
       private readonly IKeywordReplacerTask _keywordReplacerTask;
@@ -37,14 +34,13 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IQuantityValuesUpdater _quantityValuesUpdater;
       private readonly IModelValidatorFactory _modelValidatorFactory;
       private readonly IModelCircularReferenceChecker _circularReferenceChecker;
+      private readonly ISpatialStructureMerger _spatialStructureMerger;
 
       public ModelConstructor(
          IObjectBaseFactory objectBaseFactory,
          IObserverBuilderTask observerBuilderTask,
          IReactionCreator reactionCreator,
          IMoleculePropertiesContainerTask moleculePropertiesContainerTask,
-         IContainerBuilderToContainerMapper containerMapper,
-         INeighborhoodCollectionToContainerMapper neighborhoodsMapper,
          IMoleculeBuilderToMoleculeAmountMapper moleculeMapper,
          IReferencesResolver referencesResolver,
          IEventBuilderTask eventBuilderTask,
@@ -57,7 +53,8 @@ namespace OSPSuite.Core.Domain.Services
          IParameterBuilderToParameterMapper parameterMapper,
          IQuantityValuesUpdater quantityValuesUpdater,
          IModelValidatorFactory modelValidatorFactory,
-         IModelCircularReferenceChecker circularReferenceChecker)
+         IModelCircularReferenceChecker circularReferenceChecker,
+         ISpatialStructureMerger spatialStructureMerger)
       {
          _objectBaseFactory = objectBaseFactory;
          _simulationConfigurationValidator = simulationConfigurationValidator;
@@ -65,11 +62,10 @@ namespace OSPSuite.Core.Domain.Services
          _quantityValuesUpdater = quantityValuesUpdater;
          _modelValidatorFactory = modelValidatorFactory;
          _circularReferenceChecker = circularReferenceChecker;
+         _spatialStructureMerger = spatialStructureMerger;
          _observerBuilderTask = observerBuilderTask;
          _reactionCreator = reactionCreator;
          _moleculePropertiesContainerTask = moleculePropertiesContainerTask;
-         _containerMapper = containerMapper;
-         _neighborhoodsMapper = neighborhoodsMapper;
          _moleculeMapper = moleculeMapper;
          _referencesResolver = referencesResolver;
          _eventBuilderTask = eventBuilderTask;
@@ -203,10 +199,10 @@ namespace OSPSuite.Core.Domain.Services
       private ValidationResult createModelStructure(ModelConfiguration modelConfiguration)
       {
          // copy spatial structure with neighborhoods 
-         copySpatialStructure(modelConfiguration);
+         var spatialStructureValidation = copySpatialStructure(modelConfiguration);
 
          // add molecules with IsPresent=true
-         var moleculeMessages = createMoleculeAmounts(modelConfiguration);
+         var moleculeAmountValidation = createMoleculeAmounts(modelConfiguration);
 
          // create local molecule properties container in the spatial structure
          addLocalParametersToMolecule(modelConfiguration);
@@ -217,10 +213,14 @@ namespace OSPSuite.Core.Domain.Services
          // create calculation methods dependent formula and parameters
          createMoleculeCalculationMethodsFormula(modelConfiguration);
 
-         // replace all keywords define in the model structure
-         _keywordReplacerTask.ReplaceIn(modelConfiguration.Model.Root);
+         var validation = new ValidationResult(spatialStructureValidation, moleculeAmountValidation);
+         if (validation.ValidationState != ValidationState.Invalid)
+         {
+            // replace all keywords define in the model structure
+            _keywordReplacerTask.ReplaceIn(modelConfiguration.Model.Root);
+         }
 
-         return new ValidationResult(moleculeMessages);
+         return validation;
       }
 
       private ValidationResult validateModelName(ModelConfiguration modelConfiguration)
@@ -262,25 +262,13 @@ namespace OSPSuite.Core.Domain.Services
          return _modelValidatorFactory.Create<TValidationVisitor>().Validate(modelConfiguration);
       }
 
-      private void copySpatialStructure(ModelConfiguration modelConfiguration)
+      private ValidationResult copySpatialStructure(ModelConfiguration modelConfiguration)
       {
-         var (model, simulationConfiguration) = modelConfiguration;
-         // Create Root Container for the model with the name of the model
-         model.Root = _objectBaseFactory.Create<IContainer>()
-            .WithName(model.Name)
-            .WithMode(ContainerMode.Logical)
-            .WithContainerType(ContainerType.Simulation);
+         var model = modelConfiguration.Model;
+         model.Root = _spatialStructureMerger.MergeContainerStructure(modelConfiguration);
+         model.Neighborhoods = _spatialStructureMerger.MergeNeighborhoods(modelConfiguration);
 
-         model.Root.AddTag(new Tag(Constants.ROOT_CONTAINER_TAG));
-
-         //Add each container defined in the spatial structure and direct child of the root container
-         foreach (var topContainer in simulationConfiguration.SpatialStructures.SelectMany(x => x.TopContainers))
-         {
-            model.Root.Add(_containerMapper.MapFrom(topContainer, simulationConfiguration));
-         }
-
-         // Add the neighborhoods
-         model.Neighborhoods = _neighborhoodsMapper.MapFrom(modelConfiguration);
+         return validate<SpatialStructureValidator>(modelConfiguration);
       }
 
       private ValidationResult checkCircularReferences(ModelConfiguration modelConfiguration)
@@ -369,7 +357,7 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private IEnumerable<ValidationMessage> createMoleculeAmounts(ModelConfiguration modelConfiguration)
+      private ValidationResult createMoleculeAmounts(ModelConfiguration modelConfiguration)
       {
          var (_, simulationBuilder) = modelConfiguration;
          var presentMolecules = allPresentMoleculesInContainers(modelConfiguration).ToList();
@@ -377,7 +365,8 @@ namespace OSPSuite.Core.Domain.Services
          var moleculesWithPhysicalContainers = presentMolecules.Where(containerIsPhysical);
          moleculesWithPhysicalContainers.Each(x => { addMoleculeToContainer(simulationBuilder, x.Container, simulationBuilder.MoleculeByName(x.MoleculeStartValue.MoleculeName)); });
 
-         return new MoleculeBuildingBlockValidator().Validate(simulationBuilder.Molecules).Messages.Concat(createValidationMessagesForPresentMolecules(presentMolecules));
+         return new MoleculeBuildingBlockValidator().Validate(simulationBuilder.Molecules)
+            .AddMessagesFrom(createValidationMessagesForPresentMolecules(presentMolecules));
       }
 
       private static bool containerIsPhysical(StartValueAndContainer startValueAndContainer)
@@ -390,13 +379,15 @@ namespace OSPSuite.Core.Domain.Services
          container.Add(_moleculeMapper.MapFrom(moleculeBuilder, container, simulationBuilder));
       }
 
-      private IEnumerable<ValidationMessage> createValidationMessagesForPresentMolecules(List<StartValueAndContainer> presentMolecules)
+      private ValidationResult createValidationMessagesForPresentMolecules(List<StartValueAndContainer> presentMolecules)
       {
          var moleculesWithoutPhysicalContainers = presentMolecules.Where(x => !containerIsPhysical(x));
-         return moleculesWithoutPhysicalContainers.Select(x =>
+         var messages = moleculesWithoutPhysicalContainers.Select(x =>
             x.Container == null
                ? createValidationMessageForNullContainer(x)
                : createValidationMessageForMoleculesWithNonPhysicalContainer(x));
+
+         return new ValidationResult(messages);
       }
 
       private ValidationMessage createValidationMessageForMoleculesWithNonPhysicalContainer(StartValueAndContainer startValueAndContainer)

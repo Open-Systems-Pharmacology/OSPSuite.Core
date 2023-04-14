@@ -23,10 +23,10 @@ namespace OSPSuite.Core.Domain
          _model = A.Fake<IModel>().WithName(_modelName);
          _model.Root = A.Fake<IContainer>().WithName(_modelName);
          A.CallTo(() => _model.Root.GetChildren<IContainer>())
-            .Returns(new[] {new Container().WithName(ConstantsForSpecs.Organism), new Container().WithName("B")});
+            .Returns(new[] {new Container().WithName(Constants.ORGANISM), new Container().WithName("B")});
          _objPathFirstNeighbor = new FormulaUsablePath(new[] {FIRST_NEIGHBOR, "A"});
          _objPathMolecule = new FormulaUsablePath(new[] {"B"});
-         _objPathOrganism = new FormulaUsablePath(new[] {ConstantsForSpecs.Organism, "C"});
+         _objPathOrganism = new FormulaUsablePath(new[] {Constants.ORGANISM, "C"});
          sut = new KeywordReplacerTask(new ObjectPathFactory(new AliasCreator()));
       }
    }
@@ -58,7 +58,7 @@ namespace OSPSuite.Core.Domain
       public void should_have_replace_the_organism_keyword_with_the_global_path_to_the_organism_container_in_the_model()
       {
          _objPathOrganism.ElementAt(0).ShouldBeEqualTo(_modelName);
-         _objPathOrganism.ElementAt(1).ShouldBeEqualTo(ConstantsForSpecs.Organism);
+         _objPathOrganism.ElementAt(1).ShouldBeEqualTo(Constants.ORGANISM);
          _objPathOrganism.ElementAt(2).ShouldBeEqualTo("C");
       }
    }
@@ -95,7 +95,7 @@ namespace OSPSuite.Core.Domain
       public void should_have_replace_the_organism_keyword_with_the_global_path_to_the_organism_container_in_the_model()
       {
          _objPathOrganism.ElementAt(0).ShouldBeEqualTo(_modelName);
-         _objPathOrganism.ElementAt(1).ShouldBeEqualTo(ConstantsForSpecs.Organism);
+         _objPathOrganism.ElementAt(1).ShouldBeEqualTo(Constants.ORGANISM);
          _objPathOrganism.ElementAt(2).ShouldBeEqualTo("C");
       }
    }

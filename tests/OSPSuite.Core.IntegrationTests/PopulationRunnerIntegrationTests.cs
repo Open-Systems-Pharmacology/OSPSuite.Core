@@ -52,13 +52,13 @@ namespace OSPSuite.Core
 
          dt.Columns.Add(Constants.Population.INDIVIDUAL_ID_COLUMN);
 
-         var path = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
+         var path = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM,
             ConstantsForSpecs.ArterialBlood,
             ConstantsForSpecs.Plasma,
             "A").PathAsString;
          dt.Columns.Add(path);
 
-         path = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
+         path = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM,
             ConstantsForSpecs.VenousBlood,
             ConstantsForSpecs.Plasma,
             "A").PathAsString;
@@ -80,10 +80,10 @@ namespace OSPSuite.Core
          dt.Columns.Add(Constants.Population.TIME_COLUMN);
          dt.Columns.Add(Constants.Population.VALUE_COLUMN);
 
-         var path = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
+         var path = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM,
             ConstantsForSpecs.TableParameter1).PathAsString;
 
-         var path2 = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
+         var path2 = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM,
             ConstantsForSpecs.TableParameter2).PathAsString;
 
          int individualId = 0;
@@ -109,12 +109,12 @@ namespace OSPSuite.Core
          var dt = new DataTable("PopParams");
          dt.Columns.Add(Constants.Population.INDIVIDUAL_ID_COLUMN);
 
-         var path = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
+         var path = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM,
             ConstantsForSpecs.BW).PathAsString;
          dt.Columns.Add(path);
 
          //test model has event, which sets "Organism|ArterialBlood|Plasma|A" += 10 at t=StartTime
-         path = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
+         path = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM,
             ConstantsForSpecs.ArterialBlood,
             ConstantsForSpecs.Plasma,
             ConstantsForSpecs.BolusApplication,
@@ -122,7 +122,7 @@ namespace OSPSuite.Core
             ConstantsForSpecs.StartTime).PathAsString;
          dt.Columns.Add(path);
 
-          path = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
+          path = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM,
              ConstantsForSpecs.Lung,
              ConstantsForSpecs.Plasma,
             ConstantsForSpecs.pH).PathAsString;
@@ -141,7 +141,7 @@ namespace OSPSuite.Core
       protected float[] arterialPlasmaValuesFor(IndividualResults individualResults)
       {
          var path = _objectPathFactory.CreateObjectPathFrom(_simulation.Model.Root.Name,
-            ConstantsForSpecs.Organism,
+            Constants.ORGANISM,
             ConstantsForSpecs.ArterialBlood,
             ConstantsForSpecs.Plasma, "A").PathAsString;
          return individualResults.AllValues.First(v => v.QuantityPath.Equals(path)).Values;
@@ -150,7 +150,7 @@ namespace OSPSuite.Core
       protected float[] venousPlasmaValuesFor(IndividualResults individualResults)
       {
          var path = _objectPathFactory.CreateObjectPathFrom(_simulation.Model.Root.Name,
-            ConstantsForSpecs.Organism,
+            Constants.ORGANISM,
             ConstantsForSpecs.VenousBlood,
             ConstantsForSpecs.Plasma, "A").PathAsString;
          return individualResults.AllValues.First(v => v.QuantityPath.Equals(path)).Values;

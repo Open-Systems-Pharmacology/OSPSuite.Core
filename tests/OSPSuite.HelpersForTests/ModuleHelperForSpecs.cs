@@ -33,9 +33,11 @@ namespace OSPSuite.Helpers
 
          var module1 = createModule1();
          var module2 = createModule2();
+         var module3 = createModule3();
 
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module3));
          return simulationConfiguration;
       }
 
@@ -48,7 +50,7 @@ namespace OSPSuite.Helpers
 
       private SpatialStructure getSpatialStructureModule1()
       {
-         var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE");
+         var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE MODULE 1");
 
          var organism = _objectBaseFactory.Create<IContainer>()
             .WithName(ORGANISM)
@@ -142,7 +144,7 @@ namespace OSPSuite.Helpers
          spatialStructure.AddNeighborhood(neighborhood6);
 
          spatialStructure.ResolveReferencesInNeighborhoods();
-         return spatialStructure; 
+         return spatialStructure;
       }
 
       private IContainer createContainerWithName(string containerName, ContainerMode containerMode = ContainerMode.Logical)
@@ -158,10 +160,83 @@ namespace OSPSuite.Helpers
             .WithMode(parameterBuildMode);
       }
 
+      //Module 2 will introduce
+      //1. A replacement of the lung container
+      //2. a new organ structure  for heart
+      //3. a new neighborhood between lung pls and heart pls
       private Module createModule2()
       {
          var module = _objectBaseFactory.Create<Module>().WithName("Module2");
+         var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE MODULE 2");
 
+         //LUNG with other parameters and interstitial compartment
+         var lung = createContainerWithName(Lung);
+
+         var lngPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
+         lngPlasma.Add(newConstantParameter(Volume, 20));
+         lngPlasma.Add(newConstantParameter(pH, 2));
+         lung.Add(lngPlasma);
+
+         var lngCell = createContainerWithName(Cell, ContainerMode.Physical);
+         lngCell.Add(newConstantParameter(Volume, 10));
+         lngCell.Add(newConstantParameter(pH, 2));
+         lung.Add(lngCell);
+
+         var lngInt = createContainerWithName(Interstitial, ContainerMode.Physical);
+         lngInt.Add(newConstantParameter(Volume, 10));
+         lngInt.Add(newConstantParameter(pH, 2));
+         lung.Add(lngInt);
+
+         //it will be added to the organism
+         lung.ParentPath = new ObjectPath(ORGANISM);
+
+         spatialStructure.AddTopContainer(lung);
+
+         //new neighborhood between pls and int
+         var neighborhood = _neighborhoodFactory.CreateBetween(lngPlasma, lngInt, lung.ParentPath).WithName("lng_pls_to_lng_int");
+         neighborhood.AddParameter(newConstantParameter("SA", 10));
+         spatialStructure.AddNeighborhood(neighborhood);
+
+
+         //LUNG with other parameters and interstitial compartment
+         var heart = createContainerWithName(Heart);
+         var heartPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
+         heart.Add(newConstantParameter(Volume, 20));
+         heart.Add(newConstantParameter(pH, 2));
+         heart.Add(heartPlasma);
+         heart.ParentPath = new ObjectPath(ORGANISM);
+
+         spatialStructure.AddTopContainer(heart);
+         //new neighborhood between pls and int
+         var neighborhood2 = _neighborhoodFactory.CreateBetween(lngPlasma, heartPlasma, lung.ParentPath).WithName("lng_pls_to_hrt_pls");
+         neighborhood2.AddParameter(newConstantParameter("SA", 10));
+         spatialStructure.AddNeighborhood(neighborhood2);
+
+         module.SpatialStructure = spatialStructure;
+         return module;
+      }
+
+      //Module 3 will add a tumor organ in the heart organ created above
+      private Module createModule3()
+      {
+         var module = _objectBaseFactory.Create<Module>().WithName("Module3");
+         var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE MODULE 3");
+
+         var tumor = createContainerWithName(Tumor);
+         var tumorPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
+         tumorPlasma.Add(newConstantParameter(Volume, 20));
+         tumorPlasma.Add(newConstantParameter(pH, 2));
+         tumor.Add(tumorPlasma);
+
+         //tumor located between heart and lung
+         tumor.ParentPath = new ObjectPath(ORGANISM, Heart);
+         spatialStructure.AddTopContainer(tumor);
+
+         //new neighborhood between pls and int
+         var neighborhood = _neighborhoodFactory.CreateBetween(new ObjectPath(Tumor, Plasma), new ObjectPath(Plasma), new ObjectPath(ORGANISM, Heart)).WithName("kid_tmr_pls_to_hrt_pls");
+         spatialStructure.AddNeighborhood(neighborhood);
+
+         module.SpatialStructure = spatialStructure;
          return module;
       }
 

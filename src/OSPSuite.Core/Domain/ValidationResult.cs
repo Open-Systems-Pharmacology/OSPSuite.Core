@@ -28,9 +28,10 @@ namespace OSPSuite.Core.Domain
       {
       }
 
-      public void AddMessagesFrom(ValidationResult validationResult)
+      public ValidationResult AddMessagesFrom(ValidationResult validationResult)
       {
          validationResult.Messages.Each(message => AddMessage(message.NotificationType, message.Object, message.Text, message.BuildingBlock, message.Details));
+         return this;
       }
 
       public virtual void AddMessage(NotificationType notificationType, IObjectBase invalidObject, string notification, IBuildingBlock buildingBlock = null, IEnumerable<string> details = null)
