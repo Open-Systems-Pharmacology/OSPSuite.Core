@@ -19,7 +19,7 @@ namespace OSPSuite.Core
       {
          base.GlobalContext();
          _simulation = IoC.Resolve<ConcentrationBaseModelHelperForSpecs>().CreateSimulation();
-         _organism = _simulation.Model.Root.GetSingleChildByName<IContainer>(ConstantsForSpecs.Organism);
+         _organism = _simulation.Model.Root.GetSingleChildByName<IContainer>(Constants.ORGANISM);
       }
 
       protected MoleculeAmount Organsim_Molecule_A => _organism.EntityAt<MoleculeAmount>("A");

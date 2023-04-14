@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Domain
       {
       }
 
-      public ObjectPath(ObjectPath from) : this(from._pathEntries)
+      public ObjectPath(params ObjectPath[] from) : this(from.SelectMany(x=>x._pathEntries))
       {
       }
 
