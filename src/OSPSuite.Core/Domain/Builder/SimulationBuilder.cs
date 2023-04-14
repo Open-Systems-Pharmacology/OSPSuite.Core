@@ -25,7 +25,7 @@ namespace OSPSuite.Core.Domain.Builder
          performMerge();
       }
 
-      internal IObjectBase BuilderFor(IObjectBase modelObject) => _builderCache[modelObject];
+      public IObjectBase BuilderFor(IObjectBase modelObject) => _builderCache[modelObject];
 
       internal void AddBuilderReference(IObjectBase modelObject, IObjectBase builder)
       {

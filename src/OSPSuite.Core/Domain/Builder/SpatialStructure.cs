@@ -34,8 +34,8 @@ namespace OSPSuite.Core.Domain.Builder
       }
 
       /// <summary>
-      ///    Container-structure with subcontainers and parameters (e.g. one container but for special modeling situation like
-      ///    mother/featus model, 2 root containers would be used)
+      ///    Container-structure with sub-containers and parameters (e.g. one container but for special modeling situation like
+      ///    mother/fetus model, 2 root containers would be used)
       /// </summary>
       public IReadOnlyList<IContainer> TopContainers => _allTopContainers;
 

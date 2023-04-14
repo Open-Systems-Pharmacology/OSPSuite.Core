@@ -8,7 +8,6 @@ using DevExpress.Utils;
 using DevExpress.XtraTreeList;
 using DevExpress.XtraTreeList.Nodes;
 using OSPSuite.Presentation.Core;
-using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.UI.Controls;
@@ -20,7 +19,7 @@ namespace OSPSuite.UI.Binders
    {
       private readonly UxTreeView _treeView;
       private TreeListHitInfo _hitInfo;
-      private IExplorerPresenter _presenter;
+      private ICanDragDropPresenter _presenter;
       private DragDropInfo _dragDropInfo;
 
       public TreeNodeExplorerViewDragDropBinder(UxTreeView treeView)
@@ -28,7 +27,7 @@ namespace OSPSuite.UI.Binders
          _treeView = treeView;
       }
 
-      public void InitializeDragAndDrop(IExplorerPresenter presenter)
+      public void InitializeDragAndDrop(ICanDragDropPresenter presenter)
       {
          _presenter = presenter;
          _treeView.CalcNodeDragImageIndex += (o, e) => onEvent(calcNodeDragImageIndex, e);

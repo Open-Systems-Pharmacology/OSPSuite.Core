@@ -10,7 +10,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Services
 {
-   internal abstract class concern_for_CircularReferenceChecker : ContextSpecification<ICircularReferenceChecker>
+   internal abstract class concern_for_CircularReferenceChecker : ContextSpecification<CircularReferenceChecker>
    {
       protected IFormula _formula;
       protected List<FormulaUsablePath> _objectPaths;
