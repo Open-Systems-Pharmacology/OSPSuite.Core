@@ -10,14 +10,17 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Services
 {
-   internal interface ICircularReferenceChecker
+   public interface ICircularReferenceChecker
    {
       /// <summary>
       ///    Returns <c>true</c> if the usage of <paramref name="path" /> in the formula of <paramref name="referenceObject" />
       ///    would result in circular references otherwise <c>false</c>
       /// </summary>
       bool HasCircularReference(ObjectPath path, IEntity referenceObject);
+   }
 
+   internal interface IModelCircularReferenceChecker
+   {
       /// <summary>
       ///    Check the given <paramref name="modelConfiguration" /> for circular references and returns any problem that may have
       ///    been found
@@ -26,7 +29,7 @@ namespace OSPSuite.Core.Services
       ValidationResult CheckCircularReferencesIn(ModelConfiguration modelConfiguration);
    }
 
-   internal class CircularReferenceChecker : ICircularReferenceChecker
+   internal class CircularReferenceChecker : ICircularReferenceChecker, IModelCircularReferenceChecker
    {
       private readonly IObjectPathFactory _objectPathFactory;
       private readonly IObjectTypeResolver _objectTypeResolver;

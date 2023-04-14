@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IParameterBuilderToParameterMapper _parameterMapper;
       private readonly IQuantityValuesUpdater _quantityValuesUpdater;
       private readonly IModelValidatorFactory _modelValidatorFactory;
-      private readonly ICircularReferenceChecker _circularReferenceChecker;
+      private readonly IModelCircularReferenceChecker _circularReferenceChecker;
       private readonly ISpatialStructureMerger _spatialStructureMerger;
 
       public ModelConstructor(
@@ -53,7 +53,7 @@ namespace OSPSuite.Core.Domain.Services
          IParameterBuilderToParameterMapper parameterMapper,
          IQuantityValuesUpdater quantityValuesUpdater,
          IModelValidatorFactory modelValidatorFactory,
-         ICircularReferenceChecker circularReferenceChecker,
+         IModelCircularReferenceChecker circularReferenceChecker,
          ISpatialStructureMerger spatialStructureMerger)
       {
          _objectBaseFactory = objectBaseFactory;

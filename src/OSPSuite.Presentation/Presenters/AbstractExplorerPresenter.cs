@@ -17,9 +17,31 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters
 {
+   public interface ICanDragDropPresenter
+   {
+      /// <summary>
+      ///    returns true is the <paramref name="node" /> can be dragged otherwise false
+      /// </summary>
+      /// <param name="node">node to drag</param>
+      bool CanDrag(ITreeNode node);
+
+      /// <summary>
+      ///    returns true is the <paramref name="dragNode" /> can be dragged under <paramref name="targetNode" /> otherwise false
+      /// </summary>
+      bool CanDrop(ITreeNode dragNode, ITreeNode targetNode);
+
+      /// <summary>
+      ///    Moves the <paramref name="dragNode" /> under the <paramref name="targetNode" />
+      /// </summary>
+      /// <param name="dragNode">Node being dragged</param>
+      /// <param name="targetNode">Node under which the dragged node should be attached</param>
+      void MoveNode(ITreeNode dragNode, ITreeNode targetNode);
+   }
+   
    public interface IExplorerPresenter :
       IPresenterWithContextMenu<ITreeNode>,
       IPresenterWithContextMenu<IReadOnlyList<ITreeNode>>,
+      ICanDragDropPresenter,
       IListener<ProjectCreatedEvent>,
       IListener<ProjectClosedEvent>
 
@@ -79,24 +101,6 @@ namespace OSPSuite.Presentation.Presenters
       ///    indirect).
       /// </summary>
       void RemoveEmptyClassifications();
-
-      /// <summary>
-      ///    returns true is the <paramref name="node" /> can be dragged otherwise false
-      /// </summary>
-      /// <param name="node">node to drag</param>
-      bool CanDrag(ITreeNode node);
-
-      /// <summary>
-      ///    returns true is the <paramref name="dragNode" /> can be dragged under <paramref name="targetNode" /> otherwise false
-      /// </summary>
-      bool CanDrop(ITreeNode dragNode, ITreeNode targetNode);
-
-      /// <summary>
-      ///    Moves the <paramref name="dragNode" /> under the <paramref name="targetNode" />
-      /// </summary>
-      /// <param name="dragNode">Node being dragged</param>
-      /// <param name="targetNode">Node under which the dragged node should be attached</param>
-      void MoveNode(ITreeNode dragNode, ITreeNode targetNode);
 
       /// <summary>
       ///    Removes node from the view. The node won't be destroyed
