@@ -1,4 +1,3 @@
-using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -8,6 +7,7 @@ using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
+using System.Linq;
 
 namespace OSPSuite.Core.Domain
 {
@@ -157,7 +157,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _clone = sut.CloneBuildingBlock(_buildingBlock);
+         _clone = sut.Clone(_buildingBlock);
       }
 
       [Observation]
