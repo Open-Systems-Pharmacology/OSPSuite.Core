@@ -26,6 +26,11 @@ namespace OSPSuite.Core.Domain
       public IReadOnlyList<ParameterStartValuesBuildingBlock> ParameterStartValuesCollection => _parameterStartValuesCollection;
       public virtual ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
+      public Module()
+      {
+         Icon = IconNames.Module;
+      }
+      
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
