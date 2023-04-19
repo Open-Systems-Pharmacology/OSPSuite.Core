@@ -58,5 +58,6 @@
       public static string Transporter = "Transporter";
       public static string Protein = "Protein";
       public static string Enzyme = "Enzyme";
+      public const string Module = "MODULE";
    }
 }
