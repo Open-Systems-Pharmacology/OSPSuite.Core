@@ -1,4 +1,5 @@
-﻿using OSPSuite.Core.Domain.Builder;
+﻿using System.Diagnostics;
+using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Services;
 
@@ -74,5 +75,7 @@ namespace OSPSuite.Core.Domain
          //First/Second neighbor should NOT be cloned
          //Instead, some Model-Finalizer must be called
       }
+
+      public bool IsDefined => FirstNeighbor != null && SecondNeighbor != null;
    }
 }

@@ -3,7 +3,6 @@ using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Mappers
 {
@@ -48,7 +47,9 @@ namespace OSPSuite.Core.Domain.Mappers
          var neighborhoodCache = new ObjectBaseCache<Neighborhood>();
          var allNeighborhoodBuilder = simulationBuilder.SpatialStructures.SelectMany(x => x.Neighborhoods);
          neighborhoodCache.AddRange(allNeighborhoodBuilder.Select(nb =>
-            _neighborhoodMapper.MapFrom(nb, moleculeNamesFor(nb, startValuesForFloatingMolecules), moleculeNamesCopyProperties, modelConfiguration)));
+               _neighborhoodMapper.MapFrom(nb, moleculeNamesFor(nb, startValuesForFloatingMolecules), moleculeNamesCopyProperties, modelConfiguration))
+            //can be null if the neighbors are not defined in the merged spatial structure
+            .Where(x => x != null));
 
          neighborhoodsParentContainer.AddChildren(neighborhoodCache);
          return neighborhoodsParentContainer;
