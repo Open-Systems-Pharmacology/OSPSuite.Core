@@ -49,10 +49,10 @@ namespace OSPSuite.Core.Services
 
          var module = new Module
          {
-            Observers = _observerBuildingBlock,
-            Molecules = _moleculeBuildingBlock,
+            _observerBuildingBlock,
+            _moleculeBuildingBlock,
+            _moleculeStartValues
          };
-         module.AddMoleculeStartValueBlock(_moleculeStartValues);
          _simulationConfiguration = new SimulationConfiguration();
          _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module));
 

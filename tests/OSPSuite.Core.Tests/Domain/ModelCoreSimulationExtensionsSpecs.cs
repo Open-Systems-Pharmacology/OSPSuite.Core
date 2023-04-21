@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain
          reactionBuildingBlock.Add(reactionAtoB);
          reactionBuildingBlock.Add(reactionBtoA);
 
-         var module = new Module {Reactions = reactionBuildingBlock};
+         var module = new Module {reactionBuildingBlock};
          var moduleConfiguration = new ModuleConfiguration(module, null, null);
          _simulation.Configuration.AddModuleConfiguration(moduleConfiguration);
       }

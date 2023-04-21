@@ -13,15 +13,15 @@ namespace OSPSuite.Core.Serializers
          var module1 = CreateObject<Module>().WithName("Module1");
 
          module1.AddExtendedProperty("PKSimVersion", "version1");
-         module1.EventGroups = CreateObject<EventGroupBuildingBlock>().WithName("EventGroup");
-         module1.PassiveTransports = CreateObject<PassiveTransportBuildingBlock>().WithName("PassiveTransport");
-         module1.Molecules = CreateObject<MoleculeBuildingBlock>().WithName("Molecule");
-         module1.Reactions = CreateObject<ReactionBuildingBlock>().WithName("Reaction");
-         module1.SpatialStructure = CreateObject<SpatialStructure>().WithName("SpatialStructure");
-         module1.Observers = CreateObject<ObserverBuildingBlock>().WithName("Observer");
+         module1.Add(CreateObject<EventGroupBuildingBlock>().WithName("EventGroup"));
+         module1.Add(CreateObject<PassiveTransportBuildingBlock>().WithName("PassiveTransport"));
+         module1.Add(CreateObject<MoleculeBuildingBlock>().WithName("Molecule"));
+         module1.Add(CreateObject<ReactionBuildingBlock>().WithName("Reaction"));
+         module1.Add(CreateObject<SpatialStructure>().WithName("SpatialStructure"));
+         module1.Add(CreateObject<ObserverBuildingBlock>().WithName("Observer"));
 
-         module1.AddMoleculeStartValueBlock(CreateObject<MoleculeStartValuesBuildingBlock>().WithName("MSVBB"));
-         module1.AddParameterStartValueBlock(CreateObject<ParameterStartValuesBuildingBlock>().WithName("PSVBB"));
+         module1.Add(CreateObject<MoleculeStartValuesBuildingBlock>().WithName("MSVBB"));
+         module1.Add(CreateObject<ParameterStartValuesBuildingBlock>().WithName("PSVBB"));
 
          var module2 = SerializeAndDeserialize(module1);
 
