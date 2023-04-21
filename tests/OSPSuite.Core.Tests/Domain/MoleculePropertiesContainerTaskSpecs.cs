@@ -90,7 +90,7 @@ namespace OSPSuite.Core.Domain
          };
          var module = new Module
          {
-            SpatialStructure = spatialStructure
+            spatialStructure
          };
          _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module));
       }
@@ -201,7 +201,7 @@ namespace OSPSuite.Core.Domain
          };
          var module = new Module
          {
-            SpatialStructure = spatialStructure
+            spatialStructure
          };
          _simulationConfiguration.AddModuleConfiguration( new ModuleConfiguration(module));
       }

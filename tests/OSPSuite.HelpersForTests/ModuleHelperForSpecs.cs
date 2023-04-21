@@ -44,7 +44,7 @@ namespace OSPSuite.Helpers
       private Module createModule1()
       {
          var module = _objectBaseFactory.Create<Module>().WithName("Module1");
-         module.SpatialStructure = getSpatialStructureModule1();
+         module.Add(getSpatialStructureModule1());
          return module;
       }
 
@@ -214,7 +214,7 @@ namespace OSPSuite.Helpers
          neighborhood2.AddParameter(newConstantParameter("SA", 10));
          spatialStructure.AddNeighborhood(neighborhood2);
 
-         module.SpatialStructure = spatialStructure;
+         module.Add(spatialStructure);
          return module;
       }
 
@@ -238,7 +238,7 @@ namespace OSPSuite.Helpers
          var neighborhood = _neighborhoodFactory.CreateBetween(new ObjectPath(Tumor, Plasma), new ObjectPath(Plasma), new ObjectPath(ORGANISM, Heart)).WithName("kid_tmr_pls_to_hrt_pls");
          spatialStructure.AddNeighborhood(neighborhood);
 
-         module.SpatialStructure = spatialStructure;
+         module.Add(spatialStructure);
          return module;
       }
 

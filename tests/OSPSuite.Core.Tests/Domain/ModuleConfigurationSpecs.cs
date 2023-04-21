@@ -15,20 +15,19 @@ namespace OSPSuite.Core.Domain
       {
          _module = new Module()
          {
-            PassiveTransports = new PassiveTransportBuildingBlock(),
-            SpatialStructure = new SpatialStructure(),
-            Observers = new ObserverBuildingBlock(),
-            EventGroups = null,
-            Reactions = new ReactionBuildingBlock(),
-            Molecules = new MoleculeBuildingBlock()
+            new PassiveTransportBuildingBlock(),
+            new SpatialStructure(),
+            new ObserverBuildingBlock(),
+            new ReactionBuildingBlock(),
+            new MoleculeBuildingBlock()
          };
 
          _moleculeStartValuesBuildingBlock1 = new MoleculeStartValuesBuildingBlock();
          _moleculeStartValuesBuildingBlock2 = new MoleculeStartValuesBuildingBlock();
-         _module.AddMoleculeStartValueBlock(_moleculeStartValuesBuildingBlock1);
-         _module.AddMoleculeStartValueBlock(_moleculeStartValuesBuildingBlock2);
+         _module.Add(_moleculeStartValuesBuildingBlock1);
+         _module.Add(_moleculeStartValuesBuildingBlock2);
          _parameterStartValuesBuildingBlock = new ParameterStartValuesBuildingBlock();
-         _module.AddParameterStartValueBlock(_parameterStartValuesBuildingBlock);
+         _module.Add(_parameterStartValuesBuildingBlock);
 
          sut = new ModuleConfiguration(_module);
       }

@@ -54,40 +54,53 @@ namespace OSPSuite.Core.Converters.v12
          if (simulationNode == null)
             return;
 
-         var moleculeStartValueCollectionElement = new XElement("MoleculeStartValuesCollection");
-         var parameterStartValueCollectionElement = new XElement("ParameterStartValuesCollection");
          var simulationConfigurationElement = new XElement(Constants.Serialization.SIMULATION_CONFIGURATION);
          var moduleConfigurationList = new XElement("ModuleConfigurations");
          var moduleConfiguration = new XElement("ModuleConfiguration");
          var moduleElement = new XElement("Module");
+         var buildingBlockList = new XElement("BuildingBlocks");
+         moduleElement.Add(buildingBlockList);
          moduleConfigurationList.Add(moduleConfiguration);
          moduleConfiguration.Add(moduleElement);
          simulationConfigurationElement.Add(moduleConfigurationList);
 
-         moduleElement.Add(buildConfigurationElement.Element("Molecules"));
-         moduleElement.Add(buildConfigurationElement.Element("Reactions"));
-         moduleElement.Add(buildConfigurationElement.Element("PassiveTransports"));
-         //already singular
-         moduleElement.Add(buildConfigurationElement.Element("SpatialStructure"));
-         moduleElement.Add(buildConfigurationElement.Element("Observers"));
-         moduleElement.Add(buildConfigurationElement.Element("EventGroups"));
+         var buildingBlockElement = buildConfigurationElement.Element("Molecules");
+         buildingBlockElement.Name = "MoleculeBuildingBlock";
+         buildingBlockList.Add(buildingBlockElement);
 
+         buildingBlockElement = buildConfigurationElement.Element("Reactions");
+         buildingBlockElement.Name = "ReactionBuildingBlock";
+         buildingBlockList.Add(buildingBlockElement);
+
+         buildingBlockElement = buildConfigurationElement.Element("PassiveTransports");
+         buildingBlockElement.Name = "PassiveTransportBuildingBlock";
+         buildingBlockList.Add(buildingBlockElement);
+
+         //already singular
+         buildingBlockList.Add(buildConfigurationElement.Element("SpatialStructure"));
+
+         buildingBlockElement = buildConfigurationElement.Element("Observers");
+         buildingBlockElement.Name = "ObserverBuildingBlock";
+         buildingBlockList.Add(buildingBlockElement);
+
+         buildingBlockElement = buildConfigurationElement.Element("EventGroups");
+         buildingBlockElement.Name = "EventGroupBuildingBlock";
+         buildingBlockList.Add(buildingBlockElement);
+         
          var parameterStartValuesElement = buildConfigurationElement.Element("ParameterStartValues");
          var parameterStartValuesId = parameterStartValuesElement.Attribute("id").Value;
          parameterStartValuesElement.Name = "ParameterStartValuesBuildingBlock";
-         parameterStartValueCollectionElement.Add(parameterStartValuesElement);
+         buildingBlockList.Add(parameterStartValuesElement);
 
          var moleculeStartValueElement = buildConfigurationElement.Element("MoleculeStartValues");
          var moleculeStartValuesId = moleculeStartValueElement.Attribute("id").Value;
          moleculeStartValueElement.Name = "MoleculeStartValuesBuildingBlock";
-         moleculeStartValueCollectionElement.Add(moleculeStartValueElement);
+         buildingBlockList.Add(moleculeStartValueElement);
 
          moduleConfiguration.AddAttribute("selectedMoleculeStartValues", moleculeStartValuesId);
          moduleConfiguration.AddAttribute("selectedParameterStartValues", parameterStartValuesId);
 
-         moduleElement.Add(parameterStartValueCollectionElement);
-         moduleElement.Add(moleculeStartValueCollectionElement);
-
+      
          var simulationSettings = buildConfigurationElement.Element("SimulationSettings");
          var allCalculationMethods = buildConfigurationElement.Element("AllCalculationMethods");
          buildConfigurationElement.Remove();

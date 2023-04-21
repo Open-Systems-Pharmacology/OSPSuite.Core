@@ -14,18 +14,16 @@ namespace OSPSuite.Core.Domain
    {
       protected override void Context()
       {
-         sut = new Module()
+         sut = new Module
          {
-            PassiveTransports = new PassiveTransportBuildingBlock(),
-            SpatialStructure = new SpatialStructure(),
-            Observers = new ObserverBuildingBlock(),
-            EventGroups = null,
-            Reactions = new ReactionBuildingBlock(),
-            Molecules = new MoleculeBuildingBlock()
+            new PassiveTransportBuildingBlock(),
+            new SpatialStructure(),
+            new ObserverBuildingBlock(),
+            new ReactionBuildingBlock(),
+            new MoleculeBuildingBlock(),
+            new MoleculeStartValuesBuildingBlock(),
+            new ParameterStartValuesBuildingBlock()
          };
-
-         sut.AddMoleculeStartValueBlock(new MoleculeStartValuesBuildingBlock());
-         sut.AddParameterStartValueBlock(new ParameterStartValuesBuildingBlock());
       }
    }
 
@@ -58,9 +56,9 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.AddMoleculeStartValueBlock(_moleculeStartValuesBuildingBlock);
-         sut.AddParameterStartValueBlock(_parameterStartValuesBuildingBlock);
-         sut.RemoveMoleculeStartValueBlock(_moleculeStartValuesBuildingBlock);
+         sut.Add(_moleculeStartValuesBuildingBlock);
+         sut.Add(_parameterStartValuesBuildingBlock);
+         sut.Remove(_moleculeStartValuesBuildingBlock);
       }
 
       [Observation]
@@ -79,12 +77,12 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         sut.EventGroups = new EventGroupBuildingBlock();
+         sut.Add(new EventGroupBuildingBlock());
       }
 
       protected override void Because()
       {
-         _result = sut.AllBuildingBlocks();
+         _result = sut.BuildingBlocks;
       }
 
       [Observation]
@@ -136,65 +134,52 @@ namespace OSPSuite.Core.Domain
    public class When_adding_a_building_block_to_a_module : concern_for_Module
    {
       protected IBuildingBlock _buildingBlock;
+      private SpatialStructure _spatialStructure;
 
       protected override void Context()
       {
          base.Context();
          _buildingBlock = new ReactionBuildingBlock().WithId("newReactionBuildingBlock");
          sut = new Module();
+         _spatialStructure = new SpatialStructure();
+         sut.Add(_spatialStructure);
       }
 
       protected override void Because()
       {
-         sut.AddBuildingBlock(_buildingBlock);
+         sut.Add(_buildingBlock);
+      }
+
+      [Observation]
+      public void should_set_the_reference_to_the_module_in_the_building_block()
+      {
+         sut.Reactions.Module.ShouldBeEqualTo(sut);
+         sut.SpatialStructure.Module.ShouldBeEqualTo(sut);
       }
 
       [Observation]
       public void should_add_a_reaction()
       {
          sut.Reactions.ShouldBeEqualTo(_buildingBlock);
-         sut.AllBuildingBlocks().Count.ShouldBeEqualTo(1);
+         sut.BuildingBlocks.Count.ShouldBeEqualTo(2);
       }
    }
 
-   public class When_adding_a_not_supported_building_block_to_a_module : concern_for_Module
+   public class When_adding_a_building_block_that_already_exists_by_type_to_a_module : concern_for_Module
    {
       protected IBuildingBlock _buildingBlock;
 
       protected override void Context()
       {
          base.Context();
-         _buildingBlock = new ExpressionProfileBuildingBlock();
-         sut = new Module();
+         _buildingBlock = new ReactionBuildingBlock();
+         sut = new Module {_buildingBlock};
       }
 
       [Observation]
-      public void nothing_should_be_added()
+      public void should_throw_an_exception()
       {
-         The.Action(() => sut.AddBuildingBlock(_buildingBlock)).ShouldThrowAn<OSPSuiteException>();
-      }
-   }
-
-   public class When_adding_a_null_building_block_to_a_module : concern_for_Module
-   {
-      protected IBuildingBlock _buildingBlock;
-
-      protected override void Context()
-      {
-         base.Context();
-         _buildingBlock = null;
-         sut = new Module();
-      }
-
-      protected override void Because()
-      {
-         _buildingBlock = null;
-      }
-
-      [Observation]
-      public void nothing_should_be_added()
-      {
-         sut.AllBuildingBlocks().Count.ShouldBeEqualTo(0);
+         The.Action(() => sut.Add(new ReactionBuildingBlock())).ShouldThrowAn<OSPSuiteException>();
       }
    }
 }

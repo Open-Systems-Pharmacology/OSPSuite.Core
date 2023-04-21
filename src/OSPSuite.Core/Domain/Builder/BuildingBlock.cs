@@ -24,6 +24,12 @@ namespace OSPSuite.Core.Domain.Builder
       uint Version { set; get; }
 
       void AddFormula(IFormula formula);
+
+      /// <summary>
+      ///    Reference to module containing this building block. May be null if the building block is not in a module
+      ///    (Individual, Expressions)
+      /// </summary>
+      Module Module { get; set; }
    }
 
    /// <summary>
@@ -35,6 +41,7 @@ namespace OSPSuite.Core.Domain.Builder
       public IFormulaCache FormulaCache { get; }
       public uint Version { set; get; }
       public CreationMetaData Creation { get; set; }
+      public Module Module { get; set; }
 
       public void AddFormula(IFormula formula)
       {
@@ -64,11 +71,7 @@ namespace OSPSuite.Core.Domain.Builder
       }
    }
 
-   public interface IBuilder : IObjectBase
-   {
-      //Reference to building block containing this entity. This does not have to be serialized
-      IBuildingBlock BuildingBlock { get; set; }
-   }
+ 
 
    public interface IBuildingBlock<TBuilder> : IBuildingBlock, IEnumerable<TBuilder> where TBuilder : IBuilder
    {
