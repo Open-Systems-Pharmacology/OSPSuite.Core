@@ -150,4 +150,23 @@ namespace OSPSuite.Core.Domain
          sut.StrictlySatisfies(_aNonExistingCriteria, _criteriaForSecondNeighbor).ShouldBeFalse();
       }
    }
+
+   public class When_verifying_if_a_neighborhood_is_valid : concern_for_Neighborhood
+   {
+      [Observation]
+      public void should_return_true_if_both_neighbors_are_defined()
+      {
+         sut.IsDefined.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_return_false_if_at_least_one_neighbor_is_undefined()
+      {
+         sut.FirstNeighbor = null;
+         sut.IsDefined.ShouldBeFalse();
+         sut.FirstNeighbor = sut.SecondNeighbor;
+         sut.SecondNeighbor = null;
+         sut.IsDefined.ShouldBeFalse();
+      }
+   }
 }

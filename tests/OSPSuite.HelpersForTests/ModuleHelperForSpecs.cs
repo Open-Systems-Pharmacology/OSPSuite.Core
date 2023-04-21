@@ -141,7 +141,9 @@ namespace OSPSuite.Helpers
          neighborhood6.AddTag("Cell2Plasma");
          neighborhood6.AddParameter(newConstantParameter("SA", 22));
 
-         spatialStructure.AddNeighborhood(neighborhood6);
+         var neighborhood7 = _neighborhoodFactory.CreateBetween(bonePlasma, boneCell).WithName("does_not_match_existing");
+         neighborhood7.FirstNeighborPath = new ObjectPath("Organism", "NOPE");
+         spatialStructure.AddNeighborhood(neighborhood7);
 
          spatialStructure.ResolveReferencesInNeighborhoods();
          return spatialStructure;

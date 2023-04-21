@@ -52,5 +52,11 @@ namespace OSPSuite.Core
          var tumor_pls = tumor.Container(Plasma);
          tumor_pls.ShouldNotBeNull();
       }
+
+      [Observation]
+      public void should_have_removed_neighborhoods_pointing_to_invalid_neighbors()
+      {
+         _model.Neighborhoods.FindByName("does_not_match_existing").ShouldBeNull();
+      }
    }
 }

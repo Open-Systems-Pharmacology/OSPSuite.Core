@@ -116,10 +116,10 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private void addNotificationType(NotificationType notificationType, IObjectBase builder, string notification)
+      private void addNotificationType(NotificationType notificationType, IObjectBase invalidObject, string notification)
       {
-         //Although the builder is defined in the configuration, we do not know (yet) from which building block it is coming from=>hence nulls
-         _result.AddMessage(notificationType, builder, notification);
+         var builder = invalidObject as IBuilder;
+         _result.AddMessage(notificationType, invalidObject, notification, builder?.BuildingBlock);
       }
 
       private bool containsKeyWords(IEnumerable<string> reference) => _keywords.Any(reference.Contains);
