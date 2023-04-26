@@ -1280,6 +1280,15 @@ namespace OSPSuite.Helpers
          if (sourceObject.IsAnImplementationOf<Module>())
             return new Module().WithId(id).DowncastTo<T>();
 
+         if (sourceObject.IsAnImplementationOf<ModuleConfiguration>())
+            return new ModuleConfiguration().DowncastTo<T>();
+
+         if (sourceObject.IsAnImplementationOf<SimulationConfiguration>())
+            return new SimulationConfiguration().DowncastTo<T>();
+
+         if (sourceObject.IsAnImplementationOf<OutputSelections>())
+            return new OutputSelections().DowncastTo<T>();
+
          return default(T);
       }
 
@@ -1309,6 +1318,9 @@ namespace OSPSuite.Helpers
 
          if (sourceObject.IsAnImplementationOf<ParameterStartValuesBuildingBlock>())
             bb = new ParameterStartValuesBuildingBlock();
+
+         if (sourceObject.IsAnImplementationOf<SimulationSettings>())
+            bb = new SimulationSettings();
 
          if (bb != null)
             return bb.WithId(id).DowncastTo<T>();

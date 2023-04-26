@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain
 {
-   public class ModuleConfiguration : IVisitable<IVisitor>
+   public class ModuleConfiguration : IVisitable<IVisitor>, IUpdatable
    {
-      public Module Module { get; }
+      public Module Module { get; private set; }
 
       /// <summary>
       ///    Reference to selected molecule start value in the Module (can be null if none is used)
@@ -75,6 +76,17 @@ namespace OSPSuite.Core.Domain
             default:
                return null;
          }
+      }
+
+      public void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
+      {
+         if (!(source is ModuleConfiguration sourceConfiguration))
+            return;
+
+         Module = cloneManager.Clone(sourceConfiguration.Module);
+
+         SelectedMoleculeStartValues = Module.MoleculeStartValuesCollection.FindByName(sourceConfiguration.SelectedMoleculeStartValues?.Name);
+         SelectedParameterStartValues = Module.ParameterStartValuesCollection.FindByName(sourceConfiguration.SelectedParameterStartValues?.Name);
       }
    }
 }

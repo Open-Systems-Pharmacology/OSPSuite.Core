@@ -32,6 +32,11 @@ namespace OSPSuite.Core.Domain
 
       public virtual ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
+      public Module()
+      {
+         Icon = IconNames.Module;
+      }
+
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
@@ -53,6 +58,7 @@ namespace OSPSuite.Core.Domain
             if (existingBuildingBlock != null)
                throw new OSPSuiteException(Error.BuildingBlockTypeAlreadyAddedToModule(buildingBlock.Name, type.Name));
          }
+
          buildingBlock.Module = this;
          _buildingBlocks.Add(buildingBlock);
       }
@@ -75,7 +81,7 @@ namespace OSPSuite.Core.Domain
 
       public void AddExtendedProperty<T>(string propertyName, T property)
       {
-         ExtendedProperties[propertyName] = new ExtendedProperty<T> {Name = propertyName, Value = property};
+         ExtendedProperties[propertyName] = new ExtendedProperty<T> { Name = propertyName, Value = property };
       }
 
       /// <summary>
