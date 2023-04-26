@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain.Data
          BaseGrid = baseGrid;
          QuantityInfo = new QuantityInfo(new List<string>(), QuantityType.Undefined);
          var defaultUnitName = dimension != null ? dimension.DefaultUnitName : string.Empty;
-         DataInfo = new DataInfo(ColumnOrigins.Undefined) {DisplayUnitName = defaultUnitName};
+         DataInfo = new DataInfo(ColumnOrigins.Undefined) { DisplayUnitName = defaultUnitName };
          IsInternal = false;
       }
 
@@ -142,7 +142,7 @@ namespace OSPSuite.Core.Domain.Data
       /// </summary>
       public virtual double Value
       {
-         set => ValuesAsArray = new[] {value};
+         set => ValuesAsArray = new[] { value };
       }
 
       /// <summary>
@@ -209,6 +209,17 @@ namespace OSPSuite.Core.Domain.Data
       }
 
       public virtual IReadOnlyCollection<DataColumn> RelatedColumns => RelatedColumnsCache;
+
+      public virtual float GetValueAt(int baseIndex)
+      {
+         if (Values == null || !Values.Any())
+            return float.NaN;
+         
+         if (baseIndex >= 0 && baseIndex < Values.Count)
+            return Values[baseIndex];
+
+         return float.NaN;
+      }
 
       public virtual float GetValue(float baseValue)
       {

@@ -319,12 +319,15 @@ namespace OSPSuite.UI.Binders
 
          // works for different base grids
          _dataTable.BeginLoadData();
-         foreach (var baseValue in baseGrid.Values)
+         
+         for(int baseIndex =0; baseIndex < baseGrid.Values.Count; baseIndex++)
+         // foreach (var baseValue in baseGrid.Values)
          {
+            var baseValue = baseGrid.Values[baseIndex];
             try
             {
-               double x = xDimension.BaseUnitValueToUnitValue(xUnit, xData.GetValue(baseValue));
-               double y = yDimension.BaseUnitValueToUnitValue(yUnit, yData.GetValue(baseValue));
+               double x = xDimension.BaseUnitValueToUnitValue(xUnit, xData.GetValueAt(baseIndex));
+               double y = yDimension.BaseUnitValueToUnitValue(yUnit, yData.GetValueAt(baseIndex));
 
                if (!isValidXValue(x) || !IsValidYValue(y))
                   continue;
@@ -332,12 +335,12 @@ namespace OSPSuite.UI.Binders
                var row = _dataTable.NewRow();
                row[X] = x;
                row[Y] = y;
-               row[INDEX_OF_VALUE_IN_CURVE] = baseGrid.IndexOf(baseValue);
+               row[INDEX_OF_VALUE_IN_CURVE] = baseIndex;
 
                if (HasLLOQ)
                   row[LLOQ_SUFFIX] = LLOQ;
 
-               AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseValue);
+               AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseIndex);
 
                _dataTable.Rows.Add(row);
             }
@@ -356,7 +359,7 @@ namespace OSPSuite.UI.Binders
          _dataTable.EndLoadData();
       }
 
-      protected abstract bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue);
+      protected abstract bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, int baseIndex);
 
       private BaseGrid activeBaseGrid(DataColumn xData, DataColumn yData)
       {
