@@ -357,7 +357,7 @@ namespace OSPSuite.UI.Binders
 
       /// <summary>
       /// If the <paramref name="dataColumn"/> BaseGrid is the same as <paramref name="baseGrid"/> then return the value
-      /// of <paramref name="dataColumn"/> at <paramref name="baseGrid"/>. Otherwise interpolate from the <paramref name="baseGrid"/> at <paramref name="baseGridIndex"/>
+      /// of <paramref name="dataColumn"/> at <paramref name="baseGridIndex"/>. Otherwise interpolate from the <paramref name="baseGrid"/> at <paramref name="baseGridIndex"/>
       /// </summary>
       protected static float ValueInBaseUnit(DataColumn dataColumn, BaseGrid baseGrid, int baseGridIndex)
       {
