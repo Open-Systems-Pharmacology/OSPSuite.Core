@@ -337,7 +337,7 @@ namespace OSPSuite.UI.Binders
                if (HasLLOQ)
                   row[LLOQ_SUFFIX] = LLOQ;
 
-               AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseValue);
+               AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseValue, baseIndex);
 
                _dataTable.Rows.Add(row);
             }
@@ -368,7 +368,7 @@ namespace OSPSuite.UI.Binders
          return dataColumn.GetValue(baseValue);
       }
 
-      protected abstract bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue);
+      protected abstract bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue, int baseIndex);
 
       private BaseGrid activeBaseGrid(DataColumn xData, DataColumn yData)
       {
