@@ -22,7 +22,7 @@ namespace OSPSuite.UI.Binders
          UpdateLineSeries(_lineSeries);
       }
 
-      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, int baseIndex)
+      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue)
       {
          //no related values here
          return true;
