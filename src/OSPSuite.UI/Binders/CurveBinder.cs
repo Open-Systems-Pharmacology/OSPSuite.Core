@@ -309,35 +309,20 @@ namespace OSPSuite.UI.Binders
          if (!dimensionsConsistentToAxisUnits())
             return;
 
-         var baseGrid = activeBaseGrid(Curve.xData, ActiveYData);
-
-         // works for different base grids
-         _dataTable.BeginLoadData();
-
-         if (baseGrid.Values != null && baseGrid.Values.Any())
-         {
-            refreshAllValues(baseGrid);
-         }
-
-         if (_xAxis.NumberMode == NumberModes.Relative)
-            setRelativeValues(X);
-
-         if (_yAxis.NumberMode == NumberModes.Relative)
-            setRelativeValues(Y);
-
-         _dataTable.EndLoadData();
-      }
-
-      private void refreshAllValues(BaseGrid baseGrid)
-      {
-         var xData = Curve.xData;
-         var yData = ActiveYData;
          var xDimension = Curve.xDimension;
          var yDimension = Curve.yDimension;
          var xUnit = xDimension.Unit(_xAxis.UnitName);
          var yUnit = yDimension.Unit(_yAxis.UnitName);
-         for (var baseIndex = 0; baseIndex < baseGrid.Values.Count; baseIndex++)
+         var xData = Curve.xData;
+         var yData = ActiveYData;
+         var baseGrid = activeBaseGrid(xData, yData);
+
+         // works for different base grids
+         _dataTable.BeginLoadData();
+         
+         for(int baseIndex =0; baseIndex < baseGrid.Values.Count; baseIndex++)
          {
+            var baseValue = baseGrid.Values[baseIndex];
             try
             {
                double x = xDimension.BaseUnitValueToUnitValue(xUnit, xData.GetValueAt(baseIndex));
@@ -363,6 +348,14 @@ namespace OSPSuite.UI.Binders
                //can  happen when plotting X vs Y and using different base grid
             }
          }
+
+         if (_xAxis.NumberMode == NumberModes.Relative)
+            setRelativeValues(X);
+
+         if (_yAxis.NumberMode == NumberModes.Relative)
+            setRelativeValues(Y);
+
+         _dataTable.EndLoadData();
       }
 
       protected abstract bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, int baseIndex);
