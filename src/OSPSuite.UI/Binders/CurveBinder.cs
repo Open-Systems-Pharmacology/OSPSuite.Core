@@ -321,6 +321,7 @@ namespace OSPSuite.UI.Binders
          _dataTable.BeginLoadData();
          
          for(int baseIndex =0; baseIndex < baseGrid.Values.Count; baseIndex++)
+         // foreach (var baseValue in baseGrid.Values)
          {
             var baseValue = baseGrid.Values[baseIndex];
             try
