@@ -15,9 +15,9 @@ namespace OSPSuite.UI.Binders
       {
       }
 
-      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue, int baseIndex)
+      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, BaseGrid baseGrid, int baseIndex)
       {
-         var stdDev = ValueInBaseUnit(Curve.yData, baseValue, baseIndex);
+         var stdDev = ValueInBaseUnit(Curve.yData, baseGrid, baseIndex);
          if (!IsValidValue(stdDev) || stdDev == 0)
             stdDev = 1;
 

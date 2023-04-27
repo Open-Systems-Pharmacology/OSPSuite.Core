@@ -323,8 +323,8 @@ namespace OSPSuite.UI.Binders
          {
             try
             {
-               double x = xDimension.BaseUnitValueToUnitValue(xUnit, ValueInBaseUnit(xData, baseValue, baseIndex));
-               double y = yDimension.BaseUnitValueToUnitValue(yUnit, ValueInBaseUnit(yData, baseValue, baseIndex));
+               double x = xDimension.BaseUnitValueToUnitValue(xUnit, ValueInBaseUnit(xData, baseGrid, baseIndex));
+               double y = yDimension.BaseUnitValueToUnitValue(yUnit, ValueInBaseUnit(yData, baseGrid, baseIndex));
 
                if (!isValidXValue(x) || !IsValidYValue(y))
                   return;
@@ -337,7 +337,7 @@ namespace OSPSuite.UI.Binders
                if (HasLLOQ)
                   row[LLOQ_SUFFIX] = LLOQ;
 
-               AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseValue, baseIndex);
+               AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseGrid, baseIndex);
 
                _dataTable.Rows.Add(row);
             }
@@ -356,19 +356,18 @@ namespace OSPSuite.UI.Binders
       }
 
       /// <summary>
-      /// Compares the <paramref name="dataColumn"/> base grid value at the <paramref name="baseIndex"/>. If it
-      /// is the same as <paramref name="baseValue"/> then we can use indexing to retrieve the value, otherwise use interpolation
+      /// If the <paramref name="dataColumn"/> BaseGrid is the same as <paramref name="baseGrid"/> then return the value
+      /// of <paramref name="dataColumn"/> at <paramref name="baseGrid"/>. Otherwise interpolate from the <paramref name="baseGrid"/> at <paramref name="baseGridIndex"/>
       /// </summary>
-      /// <returns>The value of the data column in base units for the given <paramref name="baseValue"/></returns>
-      protected static float ValueInBaseUnit(DataColumn dataColumn, float baseValue, int baseIndex)
+      protected static float ValueInBaseUnit(DataColumn dataColumn, BaseGrid baseGrid, int baseGridIndex)
       {
-         if ((dataColumn.BaseGrid.Count > baseIndex) && (Math.Abs(dataColumn.BaseGrid[baseIndex] - baseValue) < float.Epsilon))
-            return dataColumn.Values[baseIndex];
+         if (baseGrid == dataColumn.BaseGrid)
+            return dataColumn.Values[baseGridIndex];
          
-         return dataColumn.GetValue(baseValue);
+         return dataColumn.GetValue(baseGrid[baseGridIndex]);
       }
 
-      protected abstract bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue, int baseIndex);
+      protected abstract bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, BaseGrid baseGrid, int baseIndex);
 
       private BaseGrid activeBaseGrid(DataColumn xData, DataColumn yData)
       {
