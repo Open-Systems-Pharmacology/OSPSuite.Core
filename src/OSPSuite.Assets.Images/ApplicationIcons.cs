@@ -494,9 +494,9 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon OSPSuite = AddNamedIcon("OSPSuite");
       public static readonly ApplicationIcon RedCross = AddNamedIcon("RedCross");
       public static readonly ApplicationIcon ModuleExplorer = AddNamedIcon("ModuleExplorer"); // TODO add an icon svg file. Presently just a copy of BBExplorer svg
-      public static readonly ApplicationIcon PKSimModulesFolder = AddNamedIcon("PKSimModulesFolder"); // TODO add icon svg file. Presently just a copy of Folder svg
-      public static readonly ApplicationIcon ExtensionModulesFolder = AddNamedIcon("ExtensionModulesFolder"); // TODO add icon svg file. Presently just a copy of Folder svg
+      public static readonly ApplicationIcon ModulesFolder = AddNamedIcon("ModulesFolder"); // TODO add icon svg file. Presently just a copy of Folder svg
       public static readonly ApplicationIcon Module = AddNamedIcon("Module"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
+      public static readonly ApplicationIcon PKSimModule = AddNamedIcon("PKSimModule"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
       public static readonly ApplicationIcon Neighborhood = AddNamedIcon("OSPSuite", "Neighborhood"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
       public static readonly ApplicationIcon Neighbor = AddNamedIcon("OSPSuite", "Neighbor"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
 
