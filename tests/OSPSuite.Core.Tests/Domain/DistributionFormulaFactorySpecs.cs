@@ -93,6 +93,33 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_updating_the_value_of_a_discrete_distribution_mean_parameter : concern_for_DistributionFormulaFactory
+   {
+      protected DiscreteDistributionFormula _discreteDistribution;
+      protected IParameter _meanParam;
+
+      protected override void Context()
+      {
+         base.Context();
+         _meanParam = new Parameter().WithName(Constants.Distribution.MEAN).WithDimension(_dim).WithValue(0.43);
+         _distributedParam.Add(_meanParam);
+         _discreteDistribution = sut.CreateDiscreteDistributionFormulaFor(_distributedParam, _meanParam);
+         _distributedParam.Formula = _discreteDistribution;
+      }
+
+      protected override void Because()
+      {
+         _meanParam.Value = 0.43 * 0.92;
+         _distributedParam.IsFixedValue = false;
+      }
+
+      [Observation]
+      public void distributed_parameter_should_return_correct_value()
+      {
+         _distributedParam.Value.ShouldBeEqualTo(0.43 * 0.92);
+      }
+   }
+
    public class When_creating_lognormal_distribution : concern_for_DistributionFormulaFactory
    {
       protected LogNormalDistributionFormula _logNormalDistribution;

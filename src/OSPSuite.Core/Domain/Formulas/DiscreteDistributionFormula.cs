@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Domain.Formulas
       {
          return percentile >= 0.5 ? Mean(refObject) : 0; 
       }
-
+         
       public override double ProbabilityDensityFor(double value, IUsingFormula refObject)
       {
          return value == Mean(refObject) ? 1 : 0;
