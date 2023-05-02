@@ -45,7 +45,7 @@ namespace OSPSuite.Core.Domain
             return;
 
          ReadOnly = sourceModule.ReadOnly;
-         _buildingBlocks.AddRange(sourceModule.BuildingBlocks.Select(cloneManager.Clone));
+         sourceModule.BuildingBlocks.Select(cloneManager.Clone).Each(Add);
          ExtendedProperties.UpdateFrom(sourceModule.ExtendedProperties);
       }
 
