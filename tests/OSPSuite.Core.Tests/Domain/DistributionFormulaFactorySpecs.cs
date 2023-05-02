@@ -13,12 +13,16 @@ namespace OSPSuite.Core.Domain
    {
       protected IDistributedParameter _distributedParam;
       protected IDimension _dim;
-      protected IObjectBaseFactory _objectBaseFacotry;
+      protected IObjectBaseFactory _objectBaseFactory;
       private Utility.Container.IContainer _container;
 
       protected override void Context()
       {
-         var percentileParam = new Parameter().WithName(Constants.Distribution.PERCENTILE).WithDimension(_dim).WithValue(0.5);
+         var percentileParam = new Parameter()
+            .WithName(Constants.Distribution.PERCENTILE)
+            .WithDimension(_dim)
+            .WithValue(0.5);
+
          _dim = new Dimension(new BaseDimensionRepresentation(), "dimenion", "unit");
          _distributedParam = new DistributedParameter().WithName("P1").WithDimension(_dim);
          _distributedParam.Add(percentileParam);
@@ -105,6 +109,7 @@ namespace OSPSuite.Core.Domain
          _distributedParam.Add(_meanParam);
          _discreteDistribution = sut.CreateDiscreteDistributionFormulaFor(_distributedParam, _meanParam);
          _distributedParam.Formula = _discreteDistribution;
+         _distributedParam.Percentile = 0.5;
       }
 
       protected override void Because()
