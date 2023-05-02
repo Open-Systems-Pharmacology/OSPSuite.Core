@@ -91,9 +91,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void distributed_parameter_should_return_correct_value()
       {
-         var distr = new DiscreteDistributionFormula();
-
-         _distributedParam.Value.ShouldBeEqualTo(distr.CalculateValueFromPercentile(_distributedParam.Percentile, _distributedParam), 1e-5);
+         _distributedParam.Value.ShouldBeEqualTo(_distributedParam.MeanParameter.Value);
       }
    }
 

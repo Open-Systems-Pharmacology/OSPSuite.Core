@@ -14,13 +14,8 @@ namespace OSPSuite.Core.Domain
       }
 
       public static T WithValue<T>(this T withValue, double value) where T : IWithValue
-      {
-         //A using formula for which no formula is defined? We create a constant formula
-         if (withValue is IUsingFormula usingFormula && usingFormula.Formula == null)
-            usingFormula.Formula = new ConstantFormula(value);
-         else
-            withValue.Value = value;
-   
+      { 
+         withValue.Value = value;
          return withValue;
       }
 
