@@ -128,6 +128,8 @@ namespace OSPSuite.Core.Domain
          _clone.ParameterStartValuesCollection.ShouldNotBeNull();
 
          _clone.ExtendedPropertyValueFor("PKSimVersion").ShouldBeEqualTo("1.2.3");
+
+         _clone.PassiveTransports.Module.ShouldBeEqualTo(_clone);
       }
    }
 
