@@ -14,14 +14,14 @@ namespace OSPSuite.Core.Domain.Formulas
 
       public override double CalculatePercentileForValue(double value, IUsingFormula refObject)
       {
-         return value < Mean(refObject) ? 0 : 0.5; 
+         return 0.5; 
       }
 
       public override double CalculateValueFromPercentile(double percentile, IUsingFormula refObject)
       {
-         return percentile >= 0.5 ? Mean(refObject) : 0; 
+         return Mean(refObject); 
       }
-
+         
       public override double ProbabilityDensityFor(double value, IUsingFormula refObject)
       {
          return value == Mean(refObject) ? 1 : 0;

@@ -13,12 +13,16 @@ namespace OSPSuite.Core.Domain
    {
       protected IDistributedParameter _distributedParam;
       protected IDimension _dim;
-      protected IObjectBaseFactory _objectBaseFacotry;
+      protected IObjectBaseFactory _objectBaseFactory;
       private Utility.Container.IContainer _container;
 
       protected override void Context()
       {
-         var percentileParam = new Parameter().WithName(Constants.Distribution.PERCENTILE).WithDimension(_dim).WithValue(0.5);
+         var percentileParam = new Parameter()
+            .WithName(Constants.Distribution.PERCENTILE)
+            .WithDimension(_dim)
+            .WithValue(0.5);
+
          _dim = new Dimension(new BaseDimensionRepresentation(), "dimenion", "unit");
          _distributedParam = new DistributedParameter().WithName("P1").WithDimension(_dim);
          _distributedParam.Add(percentileParam);
@@ -87,9 +91,35 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void distributed_parameter_should_return_correct_value()
       {
-         var distr = new DiscreteDistributionFormula();
+         _distributedParam.Value.ShouldBeEqualTo(_distributedParam.MeanParameter.Value);
+      }
+   }
 
-         _distributedParam.Value.ShouldBeEqualTo(distr.CalculateValueFromPercentile(_distributedParam.Percentile, _distributedParam), 1e-5);
+   public class When_updating_the_value_of_a_discrete_distribution_mean_parameter : concern_for_DistributionFormulaFactory
+   {
+      protected DiscreteDistributionFormula _discreteDistribution;
+      protected IParameter _meanParam;
+
+      protected override void Context()
+      {
+         base.Context();
+         _meanParam = new Parameter().WithName(Constants.Distribution.MEAN).WithDimension(_dim).WithValue(0.43);
+         _distributedParam.Add(_meanParam);
+         _discreteDistribution = sut.CreateDiscreteDistributionFormulaFor(_distributedParam, _meanParam);
+         _distributedParam.Formula = _discreteDistribution;
+         _distributedParam.Percentile = 0.5;
+      }
+
+      protected override void Because()
+      {
+         _meanParam.Value = 0.43 * 0.92;
+         _distributedParam.IsFixedValue = false;
+      }
+
+      [Observation]
+      public void distributed_parameter_should_return_correct_value()
+      {
+         _distributedParam.Value.ShouldBeEqualTo(0.43 * 0.92);
       }
    }
 
