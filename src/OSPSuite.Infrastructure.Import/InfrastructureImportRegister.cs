@@ -1,7 +1,5 @@
-﻿using OSPSuite.Core;
-using OSPSuite.Infrastructure.Import.Core;
+﻿using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
-using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Infrastructure.Import
@@ -17,7 +15,6 @@ namespace OSPSuite.Infrastructure.Import
          });
 
          container.Register<IDataFormat, MixColumnsDataFormat>("ColumnsDataFormat.v3");
-
       }
    }
 }

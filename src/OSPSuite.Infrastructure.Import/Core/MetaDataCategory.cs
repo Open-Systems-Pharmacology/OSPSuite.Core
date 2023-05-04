@@ -1,6 +1,6 @@
-﻿using OSPSuite.Core.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
@@ -52,6 +52,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       public int MaxLength { get; set; }
 
       public object DefaultValue { get; set; }
+
       public MetaDataCategory()
       {
          ListOfValues = new Dictionary<string, string>();

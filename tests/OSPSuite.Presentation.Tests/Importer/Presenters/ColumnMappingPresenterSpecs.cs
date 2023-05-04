@@ -218,6 +218,41 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
+   public class When_resetting_error_unit : concern_for_ColumnMappingPresenter
+   {
+      private List<DataFormatParameter> _errorUnitParameters;
+
+      protected override void Context()
+      {
+         base.Context();
+         var concentration =
+            new MappingDataFormatParameter("Observation", new Column() { Name = "Concentration", Unit = new UnitDescription("mol/l") });
+         var error = new MappingDataFormatParameter("Error",
+            new Column() { Name = "Error", Unit = new UnitDescription("ng/l"), ErrorStdDev = null });
+         _errorUnitParameters = CreateParameters(concentration, error);
+         A.CallTo(() => _basicFormat.Parameters).Returns(_errorUnitParameters);
+         
+      }
+
+      protected override void Because()
+      {
+         UpdateSettings();
+      }
+
+      [Observation]
+      public void the_unit_should_be_set()
+      {
+         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit.SelectedUnit
+            .ShouldBeEqualTo("ng/l");
+      }
+
+      [Observation]
+      public void the_standard_deviation_should_be_arithmetic()
+      {
+         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_ARITHMETIC);
+      }
+   }
+
    public class When_updating_description_for_model_with_first_error_type : concern_for_ColumnMappingPresenter
    {
       protected override void Context()

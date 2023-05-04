@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -76,7 +75,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             else
             {
                var supportedDimensions = concreteColumnInfo.SupportedDimensions;
-               var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.HasUnit(mappedColumn.Unit.SelectedUnit));
+               var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.SupportsUnit(mappedColumn.Unit.SelectedUnit, ignoreCase: true));
 
                if (dimensionForUnit == null)
                   mappedColumn.Unit = new UnitDescription(UnitDescription.InvalidUnit);
@@ -159,7 +158,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       protected string ValidateUnit(string unit, IReadOnlyList<IDimension> supportedDimensions)
       {
-         return supportedDimensions.Any(x => x.HasUnit(unit)) ? unit : UnitDescription.InvalidUnit;
+         var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.SupportsUnit(unit, ignoreCase: true));
+         if (dimensionForUnit == null)
+            return UnitDescription.InvalidUnit;
+
+         //We know it exists here as it was found previously
+         return dimensionForUnit.FindUnit(unit, ignoreCase: true).Name;
       }
 
       protected virtual void ExtractNonQualifiedHeadings(List<string> keys, List<string> missingKeys, Cache<string, ColumnInfo> columnInfos,

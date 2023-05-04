@@ -65,16 +65,12 @@ namespace OSPSuite.Presentation.Presentation
 
       public class When_generating_the_zero_marker : concern_for_ResidualsVsTimeChartService
       {
-
-         private DataRepository _zeroMarkerDataRepository;
          private readonly float _minObservedDataTime = 1;
          private readonly float _maxObservedDataTime = 10;
 
-
          protected override void Because()
          {
-            _zeroMarkerDataRepository =
-               sut.AddZeroMarkerCurveToChart(_residualsVsTimeChart, _minObservedDataTime, _maxObservedDataTime);
+            sut.AddZeroMarkerCurveToChart(_residualsVsTimeChart, _minObservedDataTime, _maxObservedDataTime);
          }
 
          [Observation]
@@ -82,7 +78,6 @@ namespace OSPSuite.Presentation.Presentation
          {
             _residualsVsTimeChart.Curves.Count.ShouldBeEqualTo(1);
          }
-
 
          [Observation]
          public void the_zero_curve_should_be_correctly_named()
@@ -102,6 +97,26 @@ namespace OSPSuite.Presentation.Presentation
          {
             _residualsVsTimeChart.Curves.First().xData.InternalValues[0].ShouldBeEqualTo(1);
             _residualsVsTimeChart.Curves.First().xData.InternalValues[1].ShouldBeEqualTo(10);
+         }
+      }
+
+      public class When_generating_the_zero_marker_for_an_observed_data_having_only_one_data_point : concern_for_ResidualsVsTimeChartService
+      {
+         private readonly float _minObservedDataTime = 1;
+         private readonly float _maxObservedDataTime = 1;
+
+         protected override void Because()
+         {
+            sut.AddZeroMarkerCurveToChart(_residualsVsTimeChart, _minObservedDataTime, _maxObservedDataTime);
+         }
+
+         [Observation]
+         public void should_have_created_the_zero_curve_in_the_chart_with_only_one_value()
+         {
+            _residualsVsTimeChart.Curves.Count.ShouldBeEqualTo(1);
+            var curve = _residualsVsTimeChart.Curves.First();
+            curve.Name.ShouldBeEqualTo("Zero");
+            curve.xData.InternalValues[0].ShouldBeEqualTo(1);
          }
       }
    }

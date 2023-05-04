@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Services
@@ -30,7 +29,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          var trimmedText = text.TrimmedValue();
          var openBracketIndex = trimmedText.LastIndexOf("[", StringComparison.Ordinal);
          var closeBracketIndex = trimmedText.LastIndexOf("]", StringComparison.Ordinal);
-         
+
          //No open bracket or close bracket is not the last element => invalid unit
          if (openBracketIndex < 0 || closeBracketIndex != trimmedText.Length - 1)
             return (string.Empty, string.Empty);

@@ -9,7 +9,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       {
       }
 
-      public MissingColumnException(string sheetName, string missingColumn) : base(Error.MissingColumnException(sheetName, new List<string>() { missingColumn }))
+      public MissingColumnException(string sheetName, string missingColumn) : base(Error.MissingColumnException(sheetName, new List<string>() {missingColumn}))
       {
       }
    }

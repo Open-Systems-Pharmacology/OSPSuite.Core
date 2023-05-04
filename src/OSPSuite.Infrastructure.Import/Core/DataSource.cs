@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
@@ -12,7 +12,8 @@ namespace OSPSuite.Infrastructure.Import.Core
 {
    public class ParseErrors
    {
-      private Cache<IDataSet, List<ParseErrorDescription>> _errors = new Cache<IDataSet, List<ParseErrorDescription>>(onMissingKey: _ => new List<ParseErrorDescription>());
+      private readonly Cache<IDataSet, List<ParseErrorDescription>> _errors =
+         new Cache<IDataSet, List<ParseErrorDescription>>(onMissingKey: _ => new List<ParseErrorDescription>());
 
       public bool Any() => _errors.Any();
 
@@ -106,10 +107,12 @@ namespace OSPSuite.Infrastructure.Import.Core
                if (emptyDataSets.Count == 0)
                   continue;
 
-               var emptyDataSetsNames = emptyDataSets.Select(d => string.Join(".", d.Description.Where(metaData => metaData.Value != null).Select(metaData => metaData.Value)));
+               var emptyDataSetsNames = emptyDataSets.Select(d =>
+                  string.Join(".", d.Description.Where(metaData => metaData.Value != null).Select(metaData => metaData.Value)));
                errors.Add(dataSet.Value, new EmptyDataSetsParseErrorDescription(emptyDataSetsNames));
             }
          }
+
          return errors;
       }
 
@@ -151,6 +154,7 @@ namespace OSPSuite.Infrastructure.Import.Core
             sheetIndex++;
             accumulatedIndexes += countOnSheet;
          }
+
          return null;
       }
 
@@ -181,7 +185,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          return null;
       }
 
-      //checks that the dimension of all the units coming from columns for error have the same dimension to the corresponding measurement
+      //checks that the dimension of all the error units coming from columns to have the same dimension to the corresponding measurement unit
       private ParseErrors validateErrorAgainstMeasurement(ColumnInfoCache columnInfos)
       {
          var errors = new ParseErrors();
@@ -195,6 +199,7 @@ namespace OSPSuite.Infrastructure.Import.Core
                   {
                      var measurementColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == column.Name);
                      var errorColumn = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == relatedColumn.Name);
+
                      if (errorColumn.Key == null || errorColumn.Key.ErrorDeviation == Constants.STD_DEV_GEOMETRIC)
                         continue;
 
@@ -209,39 +214,48 @@ namespace OSPSuite.Infrastructure.Import.Core
 
                      if (errorDimension == null)
                      {
-                        for (var i = 0; i < measurementColumn.Value.Count(); i++)
-                        {
-                           if (double.IsNaN(errorColumn.Value.ElementAt(i).Measurement))
-                              continue;
-
-                           var measurementSupportedDimension = column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(measurementColumn.Value.ElementAt(i).Unit));
-                           var errorSupportedDimension = column.SupportedDimensions.FirstOrDefault(x => x.HasUnit(errorColumn.Value.ElementAt(i).Unit));
-                           if (measurementSupportedDimension != errorSupportedDimension)
-                           {
-                              errors.Add(dataSet, new ErrorUnitParseErrorDescription());
-                              continue;
-                           }
-                        }
+                        validateErrorFromColumnDimension(measurementColumn.Value, errorColumn.Value, column, errors, dataSet);
                      }
                      else
                      {
-                        //if the dimension of the error is dimensionless (fe for geometric standard deviation)
-                        //it is OK for it not to be of the smae dimension as the dimension of the measurement
-                        if (errorDimension == Constants.Dimension.NO_DIMENSION
-                            || errorDimension.Name == Constants.Dimension.FRACTION)
-                           continue;
-
-                        if (measurementDimension != errorDimension)
-                        {
-                           errors.Add(dataSet, new ErrorUnitParseErrorDescription());
-                           continue;
-                        }
+                        validateManuallySetErrorDimension(errorDimension, measurementDimension, errors, dataSet);
                      }
                   }
                }
             }
          }
+
          return errors;
+      }
+
+      private static void validateManuallySetErrorDimension(IDimension errorDimension, IDimension measurementDimension, ParseErrors errors,
+         IDataSet dataSet)
+      {
+         //if the dimension of the error is dimensionless (fe for geometric standard deviation)
+         //it is OK for it not to be of the same dimension as the dimension of the measurement
+         if (errorDimension == Constants.Dimension.NO_DIMENSION
+             || errorDimension.Name == Constants.Dimension.FRACTION)
+            return;
+
+         if (measurementDimension != errorDimension)
+            errors.Add(dataSet, new ErrorUnitParseErrorDescription());
+      }
+
+      private static void validateErrorFromColumnDimension(IList<SimulationPoint> measurementValues, IList<SimulationPoint> errorValues, ColumnInfo column, ParseErrors errors,
+         IDataSet dataSet)
+      {
+         for (var i = 0; i < measurementValues.Count(); i++)
+         {
+            if (double.IsNaN(errorValues.ElementAt(i).Measurement))
+               continue;
+
+            var measurementSupportedDimension = column.SupportedDimensions.FirstOrDefault(x =>
+               x.SupportsUnit(measurementValues.ElementAt(i).Unit, ignoreCase: true));
+            var errorSupportedDimension =
+               column.SupportedDimensions.FirstOrDefault(x => x.SupportsUnit(errorValues.ElementAt(i).Unit, ignoreCase: true));
+            if (measurementSupportedDimension != errorSupportedDimension)
+               errors.Add(dataSet, new ErrorUnitParseErrorDescription());
+         }
       }
 
       //checks that all units coming from a mapped column unit belong to a valid dimension for this mapping
@@ -255,46 +269,50 @@ namespace OSPSuite.Infrastructure.Import.Core
             {
                foreach (var set in dataSet.Data)
                {
-                  var column = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == columnInfo.Name);
+                  var columnValuesPair = set.Data.FirstOrDefault(x => x.Key.ColumnInfo.Name == columnInfo.Name);
 
-                  if (column.Key == null || column.Key.ErrorDeviation == Constants.STD_DEV_GEOMETRIC)
-                        continue;
+                  if (columnValuesPair.Key == null || columnValuesPair.Key.ErrorDeviation == Constants.STD_DEV_GEOMETRIC)
+                     continue;
 
                   //if unit comes from a column
-                  if (column.Key.Column.Dimension == null)
-                  {
-                     var firstValueWithNonEmptyUnit = column.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit));
-                     var firstNonEmptyUnit = firstValueWithNonEmptyUnit == null ? "" : firstValueWithNonEmptyUnit.Unit;
-
-                     var dimensionOfFirstUnit = columnInfo.SupportedDimensions.FirstOrDefault(x => x.FindUnit(firstNonEmptyUnit, ignoreCase: true) != null);
-
-                     for (var i = 0; i < column.Value.Count(); i++)
-                     {
-                        var currentValue = column.Value.ElementAt(i);
-                        if (double.IsNaN(currentValue.Measurement))
-                           continue;
-
-                        var dimension = columnInfo.SupportedDimensions.FirstOrDefault(x => x.FindUnit(currentValue.Unit, ignoreCase: true) != null);
-
-                        //if the unit specified does not belong to one of the supported dimensions of the mapping
-                        if (dimension == null)
-                        {
-                           errors.Add(dataSet, new InvalidDimensionParseErrorDescription(currentValue.Unit, columnInfo.DisplayName));
-                           continue;
-                        }
-
-                        //if the unit specified is not of the same dimension as the other units of the same data set
-                        if (dimension != dimensionOfFirstUnit)
-                        {
-                           errors.Add(dataSet, new InconsistentDimensionBetweenUnitsParseErrorDescription(columnInfo.DisplayName));
-                           continue;
-                        }
-                     }
-                  }
+                  if (columnValuesPair.Key.Column.Dimension == null)
+                     validateUnitComingFromColumnDimension(columnValuesPair.Value, columnInfo, errors, dataSet);
                }
             }
          }
+
          return errors;
+      }
+
+      private static void validateUnitComingFromColumnDimension(IList<SimulationPoint> simulationPointsList, ColumnInfo columnInfo, ParseErrors errors, IDataSet dataSet)
+      {
+         var firstValueWithNonEmptyUnit = simulationPointsList.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit));
+         var firstNonEmptyUnit = firstValueWithNonEmptyUnit == null ? "" : firstValueWithNonEmptyUnit.Unit;
+
+         var dimensionOfFirstUnit =
+            columnInfo.SupportedDimensions.FirstOrDefault(x => x.SupportsUnit(firstNonEmptyUnit, ignoreCase: true));
+
+         for (var i = 0; i < simulationPointsList.Count(); i++)
+         {
+            var currentValue = simulationPointsList.ElementAt(i);
+            if (double.IsNaN(currentValue.Measurement))
+               continue;
+
+            var dimension = columnInfo.SupportedDimensions.FirstOrDefault(x => x.SupportsUnit(currentValue.Unit, ignoreCase: true));
+
+            //if the unit specified does not belong to one of the supported dimensions of the mapping
+            if (dimension == null)
+            {
+               errors.Add(dataSet, new InvalidDimensionParseErrorDescription(currentValue.Unit, columnInfo.DisplayName));
+               continue;
+            }
+
+            //if the unit specified is not of the same dimension as the other units of the same data set
+            if (dimension != dimensionOfFirstUnit)
+            {
+               errors.Add(dataSet, new InconsistentDimensionBetweenUnitsParseErrorDescription(columnInfo.DisplayName));
+            }
+         }
       }
 
       public ParseErrors ValidateDataSourceUnits(ColumnInfoCache columnInfos)
@@ -325,7 +343,8 @@ namespace OSPSuite.Infrastructure.Import.Core
       public string Name { get; }
       public IReadOnlyList<MetaDataInstance> MetaDataDescription { get; }
 
-      public ImportedDataSet(string fileName, string sheetName, ParsedDataSet parsedDataSet, string name, IReadOnlyList<MetaDataInstance> metaDataDescription)
+      public ImportedDataSet(string fileName, string sheetName, ParsedDataSet parsedDataSet, string name,
+         IReadOnlyList<MetaDataInstance> metaDataDescription)
       {
          FileName = fileName;
          SheetName = sheetName;

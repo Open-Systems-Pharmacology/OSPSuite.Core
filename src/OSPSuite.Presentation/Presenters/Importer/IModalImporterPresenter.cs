@@ -5,7 +5,6 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.Views.Importer;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
@@ -80,7 +79,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          string path,
          string configurationId = null
       )
-      {         
+      {
          _importerPresenter.SetSettings(metaDataCategories, columnInfos, dataImporterSettings);
          (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) emptyImport = (Array.Empty<DataRepository>(), null);
 
@@ -100,19 +99,20 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) importDataSets(string configurationId)
       {
-         
          _view.FillImporterPanel(_importerPresenter.BaseView);
 
          _results = Array.Empty<DataRepository>();
          _configuration = null;
 
-         if (!string.IsNullOrEmpty(configurationId))
+         _view.Display();
+
+         //in case we are reloading from configuration, reset the Id
+         if (!string.IsNullOrEmpty(configurationId) && _configuration != null)
          {
             _configuration.Id = configurationId;
             _results.Each(r => r.ConfigurationId = configurationId);
          }
 
-         _view.Display();
          return (_results, _configuration);
       }
    }

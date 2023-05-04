@@ -31,7 +31,6 @@ namespace OSPSuite.Infrastructure.Import.Services
          return importedPKAnalysis;
       }
 
-
       private void validateConsistencyWithSimulation(IModelCoreSimulation simulation, SimulationPKParametersImport importedPKParameter)
       {
          var allQuantities = _entitiesInSimulationRetriever.OutputsFrom(simulation);
@@ -61,7 +60,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          }
       }
 
-      private Task<SimulationPKParametersImport> importPKAnalysesFromFile(string fileFullPath, IModelCoreSimulation modelCoreSimulation,  CancellationToken cancellationToken)
+      private Task<SimulationPKParametersImport> importPKAnalysesFromFile(string fileFullPath, IModelCoreSimulation modelCoreSimulation, CancellationToken cancellationToken)
       {
          return Task.Run(() =>
          {
