@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using DevExpress.Data.Async.Helpers;
 using DevExpress.Utils.Svg;
 using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Assets
@@ -497,7 +495,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon RedCross = AddNamedIcon("RedCross");
       public static readonly ApplicationIcon ModuleExplorer = AddNamedIcon("ModuleExplorer"); // TODO add an icon svg file. Presently just a copy of BBExplorer svg
       public static readonly ApplicationIcon ModulesFolder = AddNamedIcon("ModulesFolder"); // TODO add icon svg file. Presently just a copy of Folder svg
-      public static readonly ApplicationIcon Module = AddNamedIcon("Module"); // TODO add icon svg ffferile. Presently just a copy of BBExplorer svg
+      public static readonly ApplicationIcon Module = AddNamedIcon("Module"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
       public static readonly ApplicationIcon PKSimModule = AddNamedIcon("PKSimModule"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
       public static readonly ApplicationIcon Neighborhood = AddNamedIcon("OSPSuite", "Neighborhood"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
       public static readonly ApplicationIcon Neighbor = AddNamedIcon("OSPSuite", "Neighbor"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
