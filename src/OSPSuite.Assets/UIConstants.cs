@@ -1548,9 +1548,9 @@ namespace OSPSuite.Assets
 
       public static readonly string UnknownParameterBuildMode = "Unknown molecule parameter build mode";
       public static readonly string ConstMoleculeParameterInNeighborhood = "Constant parameters are not allowed in the molecule properties container of the neighborhood";
-      public static readonly string NullParameter = "Cannot create parameter start value: parameter not found in target container";
-      public static readonly string NullMoleculeAmount = "Cannot create molecule amount start value: molecule amount not found in target container";
-      public static readonly string NullMoleculeStartValue = "Cannot create molecule amount start value: molecule container not found";
+      public static readonly string NullParameter = "Cannot create parameter value: parameter not found in target container";
+      public static readonly string NullMoleculeAmount = "Cannot create molecule initial condition: molecule amount not found in target container";
+      public static readonly string NullInitialCondition = "Cannot create molecule initial condition: molecule container not found";
       public static readonly string NullFormulaCachePassedToClone = "Formula cache passed to clone function is null";
       public static readonly string EmptyMoleculeName = "Molecule name is empty";
       public static readonly string TransportMoleculeNamesNotSet = "Transport molecule names object passed is not set";
@@ -1909,12 +1909,12 @@ namespace OSPSuite.Assets
 
       public static string StartValueDefinedForNonPhysicalContainer(string moleculeName, string containerPath)
       {
-         return $"Molecule start value defined for molecule '{moleculeName}' in non-physical container '{containerPath}'";
+         return $"Initial condition defined for molecule '{moleculeName}' in non-physical container '{containerPath}'";
       }
 
       public static string StartValueDefinedForContainerThatCannotBeResolved(string moleculeName, string containerPath)
       {
-         return $"Molecule start value defined for molecule '{moleculeName}' in a container '{containerPath}' that cannot be resolved";
+         return $"Initial condition defined for molecule '{moleculeName}' in a container '{containerPath}' that cannot be resolved";
       }
 
       public static string CircularReferenceFoundInFormula(string entity, string entityType, string entityPath, IReadOnlyList<string> references)
@@ -2268,8 +2268,8 @@ namespace OSPSuite.Assets
       public static readonly string PassiveTransportBuildingBlock = "Passive Transport Building Block";
       public static readonly string ObserverBuildingBlock = "Observer Building Block";
       public static readonly string EventGroupBuildingBlock = "Event Group Building Block";
-      public static readonly string ParameterStartValuesBuildingBlock = "Parameter Start Values Building Block";
-      public static readonly string MoleculeStartValuesBuildingBlock = "Molecule Start Values Building Block";
+      public static readonly string ParameterValuesBuildingBlock = "Parameter Values Building Block";
+      public static readonly string InitialConditionsBuildingBlock = "Initial Conditions Building Block";
       public static readonly string Molecule = "Molecule";
       public static readonly string TransporterMoleculeContainer = "Transporter Molecule";
       public static readonly string ActiveTransport = "Active Transport";
@@ -2299,8 +2299,8 @@ namespace OSPSuite.Assets
       public static readonly string Default = "Default";
       public static readonly string ReactionPartnerBuilder = "Reaction Partner";
       public static readonly string ConstantFormula = "Constant Formula";
-      public static readonly string ParameterStartValue = "Parameter Start Value";
-      public static readonly string MoleculeStartValue = "Molecule Start Value";
+      public static readonly string ParameterValue = "Parameter Value";
+      public static readonly string InitialCondition = "Initial Condition";
       public static readonly string ValuePoint = "Value Point";
       public static readonly string TableFormula = "Table";
       public static readonly string BlackBoxFormula = "Calculation Method";

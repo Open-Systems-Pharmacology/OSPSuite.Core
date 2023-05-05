@@ -5,12 +5,12 @@ using OSPSuite.Core.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class MoleculeStartValueXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class InitialConditionXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
       {
-         var x1 = new MoleculeStartValue
+         var x1 = new InitialCondition
          {
             ContainerPath = new ObjectPath("aa", "bb"), 
             Name = "H2", 
@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Serializers
 
          var x2 = SerializeAndDeserialize(x1);
 
-         AssertForSpecs.AreEqualMoleculeStartValue(x1, x2);
+         AssertForSpecs.AreEqualInitialConditions(x1, x2);
       }
    }
 

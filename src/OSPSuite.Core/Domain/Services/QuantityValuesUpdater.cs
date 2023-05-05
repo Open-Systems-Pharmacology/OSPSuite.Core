@@ -47,7 +47,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public void UpdateQuantitiesValues(ModelConfiguration modelConfiguration)
       {
-         updateMoleculeAmountFromMoleculeStartValues(modelConfiguration);
+         updateMoleculeAmountFromInitialConditions(modelConfiguration);
 
          updateParameterFromIndividualValues(modelConfiguration);
 
@@ -144,33 +144,33 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private void updateMoleculeAmountFromMoleculeStartValues(ModelConfiguration modelConfiguration)
+      private void updateMoleculeAmountFromInitialConditions(ModelConfiguration modelConfiguration)
       {
          var (model, simulationConfiguration) = modelConfiguration;
-         foreach (var moleculeStartValue in simulationConfiguration.AllPresentMoleculeValues())
+         foreach (var initialCondition in simulationConfiguration.AllPresentMoleculeValues())
          {
-            //this can happen if the molecule start value contains entry for container that do not exist in the model
-            var container = moleculeStartValue.ContainerPath.Resolve<IContainer>(model.Root);
+            //this can happen if the initial condition contains entry for container that do not exist in the model
+            var container = initialCondition.ContainerPath.Resolve<IContainer>(model.Root);
             if (container == null || container.Mode != ContainerMode.Physical)
                continue;
 
-            var molecule = container.EntityAt<MoleculeAmount>(moleculeStartValue.MoleculeName);
+            var molecule = container.EntityAt<MoleculeAmount>(initialCondition.MoleculeName);
             if (molecule == null)
-               throw new ArgumentException(Error.CouldNotFindMoleculeInContainer(moleculeStartValue.MoleculeName, moleculeStartValue.ContainerPath.PathAsString));
+               throw new ArgumentException(Error.CouldNotFindMoleculeInContainer(initialCondition.MoleculeName, initialCondition.ContainerPath.PathAsString));
 
-            if (moleculeStartValue.Formula != null)
+            if (initialCondition.Formula != null)
             {
                //use a clone here because we want a different instance for each molecule
-               updateMoleculeAmountFormula(molecule, _cloneManagerForModel.Clone(moleculeStartValue.Formula));
+               updateMoleculeAmountFormula(molecule, _cloneManagerForModel.Clone(initialCondition.Formula));
                _keywordReplacerTask.ReplaceIn(molecule, model.Root);
             }
-            else if (startValueShouldBeSetAsConstantFormula(moleculeStartValue, molecule))
+            else if (startValueShouldBeSetAsConstantFormula(initialCondition, molecule))
             {
-               updateMoleculeAmountFormula(molecule, createConstantFormula(moleculeStartValue));
+               updateMoleculeAmountFormula(molecule, createConstantFormula(initialCondition));
             }
 
-            molecule.ScaleDivisor = moleculeStartValue.ScaleDivisor;
-            molecule.NegativeValuesAllowed = moleculeStartValue.NegativeValuesAllowed;
+            molecule.ScaleDivisor = initialCondition.ScaleDivisor;
+            molecule.NegativeValuesAllowed = initialCondition.NegativeValuesAllowed;
          }
       }
 
@@ -180,7 +180,7 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       /// <remarks>
       ///    The <paramref name="moleculeFormulaToUse" /> can be changed since this is suppose to be a clone of the
-      ///    original molecule start value
+      ///    original initial condition
       /// </remarks>
       private void updateMoleculeAmountFormula(MoleculeAmount molecule, IFormula moleculeFormulaToUse)
       {
@@ -199,20 +199,20 @@ namespace OSPSuite.Core.Domain.Services
          molecule.Formula = _formulaFactory.CreateMoleculeAmountReferenceToStartValue(startValue);
       }
 
-      private IFormula createConstantFormula(MoleculeStartValue moleculeStartValue)
+      private IFormula createConstantFormula(InitialCondition initialCondition)
       {
-         return _formulaFactory.ConstantFormula(moleculeStartValue.Value.Value, moleculeStartValue.Dimension);
+         return _formulaFactory.ConstantFormula(initialCondition.Value.Value, initialCondition.Dimension);
       }
 
-      private bool startValueShouldBeSetAsConstantFormula(MoleculeStartValue moleculeStartValue, MoleculeAmount molecule)
+      private bool startValueShouldBeSetAsConstantFormula(InitialCondition initialCondition, MoleculeAmount molecule)
       {
-         if (!moleculeStartValue.Value.HasValue)
+         if (!initialCondition.Value.HasValue)
             return false;
 
-         var msvValue = moleculeStartValue.Value.Value;
+         var msvValue = initialCondition.Value.Value;
          double? currentConstantMoleculeValue;
 
-         if (moleculeStartValue.IsAmountBased())
+         if (initialCondition.IsAmountBased())
             currentConstantMoleculeValue = calculateConstantValueFor(molecule);
          else
          {

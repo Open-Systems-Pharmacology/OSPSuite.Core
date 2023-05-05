@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_setting_expression_parameter_name : concern_for_MoleculeStartValue
+   public class When_setting_expression_parameter_name : concern_for_InitialCondition
    {
       protected override void Because()
       {
@@ -59,15 +59,15 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public abstract class When_testing_equivalency_in_expression_parameters : concern_for_MoleculeStartValue
+   public abstract class When_testing_equivalency_in_expression_parameters : concern_for_InitialCondition
    {
-      protected MoleculeStartValue _comparable;
+      protected InitialCondition _comparable;
       protected bool _result;
 
       protected override void Context()
       {
-         sut = new MoleculeStartValue();
-         _comparable = new MoleculeStartValue();
+         sut = new InitialCondition();
+         _comparable = new InitialCondition();
 
          sut.IsPresent = true;
          _comparable.IsPresent = true;

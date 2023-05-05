@@ -54,15 +54,15 @@ namespace OSPSuite.Presentation.Presentation
          base.Context();
          _diffItem = new PropertyValueDiffItem
          {
-            Object1 = new MoleculeStartValue(),
-            Object2 = new MoleculeStartValue()
+            Object1 = new InitialCondition(),
+            Object2 = new InitialCondition()
          };
       }
 
       [Observation]
       public void the_correct_mapper_should_be_used()
       {
-         A.CallTo(() => _pathAndValueEntityToPathElementsMapper.MapFrom(_diffItem.Object1 as MoleculeStartValue)).MustHaveHappened();
+         A.CallTo(() => _pathAndValueEntityToPathElementsMapper.MapFrom(_diffItem.Object1 as InitialCondition)).MustHaveHappened();
       }
 
    }

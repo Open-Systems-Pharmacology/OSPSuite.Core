@@ -18,8 +18,8 @@ namespace OSPSuite.Core.Domain.Mappers
          {
             case ParameterStartValue psv:
                return mapAsParameterStartValue(psv);
-            case MoleculeStartValue msv:
-               return mapAsMoleculeStartValue(msv);
+            case InitialCondition msv:
+               return mapAsInitialCondition(msv);
             case ExpressionParameter expressionParameter:
                return mapAsExpressionParameter(expressionParameter);
             case IndividualParameter individualParameter:
@@ -43,7 +43,7 @@ namespace OSPSuite.Core.Domain.Mappers
          return pathElements;
       }
 
-      private PathElements mapAsMoleculeStartValue(MoleculeStartValue msv)
+      private PathElements mapAsInitialCondition(InitialCondition msv)
       {
          var bottomCompartmentIndex = secondLastPathElementIndex(msv);
          var pathElements = mapAsPathAndValueEntity(msv, bottomCompartmentIndex);
@@ -66,7 +66,7 @@ namespace OSPSuite.Core.Domain.Mappers
          return bottomCompartmentIndex + 1;
       }
 
-      private void addMolecule(MoleculeStartValue msv, PathElements pathElements, int bottomCompartmentIndex)
+      private void addMolecule(InitialCondition msv, PathElements pathElements, int bottomCompartmentIndex)
       {
          addMolecule(pathElements, msv.Path.ElementAt(moleculeNameIndex(bottomCompartmentIndex)));
       }

@@ -111,9 +111,9 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public class MoleculeStartValueBuildingBlockDiffBuilder : StartValueBuildingBlockDiffBuilder<MoleculeStartValuesBuildingBlock, MoleculeStartValue>
+   public class InitialConditionsBuildingBlockDiffBuilder : StartValueBuildingBlockDiffBuilder<InitialConditionsBuildingBlock, InitialCondition>
    {
-      public MoleculeStartValueBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) : base(objectBaseDiffBuilder, enumerableComparer)
+      public InitialConditionsBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) : base(objectBaseDiffBuilder, enumerableComparer)
       {
       }
    }

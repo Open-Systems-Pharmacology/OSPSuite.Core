@@ -10,7 +10,7 @@ namespace OSPSuite.Core.Domain.Services
    public interface IParameterStartValuesCreator : IEmptyStartValueCreator<ParameterStartValue>
    {
       /// <summary>
-      ///    Creates and returns a new parameter start value based on <paramref name="parameter">parameter</paramref>
+      ///    Creates and returns a new parameter value based on <paramref name="parameter">parameter</paramref>
       /// </summary>
       /// <param name="parameterPath">The path of the parameter</param>
       /// <param name="parameter">The Parameter object that has the start value and dimension to use</param>
@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Domain.Services
       ParameterStartValue CreateParameterStartValue(ObjectPath parameterPath, IParameter parameter);
 
       /// <summary>
-      ///    Creates and returns a new parameter start value with <paramref name="startValue">startValue</paramref> as StartValue
+      ///    Creates and returns a new parameter value with <paramref name="startValue">startValue</paramref> as StartValue
       ///    and <paramref name="dimension">dimension</paramref> as dimension
       /// </summary>
       /// <param name="parameterPath">the path of the parameter</param>
@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    The display unit of the start value. If not set, the default unit of the
       ///    <paramref name="dimension" />will be used
       /// </param>
-      /// <param name="valueOrigin">Value origin for this parameter start value</param>
+      /// <param name="valueOrigin">Value origin for this parameter value</param>
       /// <param name="isDefault">Value indicating if the value stored is the default value from the parameter.</param>
       /// <returns>A new ParameterStartValue</returns>
       ParameterStartValue CreateParameterStartValue(ObjectPath parameterPath, double startValue, IDimension dimension, Unit displayUnit = null,

@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Domain
             new ObserverBuildingBlock(),
             new ReactionBuildingBlock(),
             new MoleculeBuildingBlock(),
-            new MoleculeStartValuesBuildingBlock(),
+            new InitialConditionsBuildingBlock(),
             new ParameterStartValuesBuildingBlock()
          };
       }
@@ -44,29 +44,29 @@ namespace OSPSuite.Core.Domain
 
    public class When_removing_start_values_building_blocks : concern_for_Module
    {
-      private MoleculeStartValuesBuildingBlock _moleculeStartValuesBuildingBlock;
+      private InitialConditionsBuildingBlock _initialConditionsBuildingBlock;
       private ParameterStartValuesBuildingBlock _parameterStartValuesBuildingBlock;
 
       protected override void Context()
       {
          base.Context();
-         _moleculeStartValuesBuildingBlock = new MoleculeStartValuesBuildingBlock().WithId("newMoleculeStartValues");
+         _initialConditionsBuildingBlock = new InitialConditionsBuildingBlock().WithId("newInitialConditions");
          _parameterStartValuesBuildingBlock = new ParameterStartValuesBuildingBlock().WithId("newParameterStartValues");
       }
 
       protected override void Because()
       {
-         sut.Add(_moleculeStartValuesBuildingBlock);
+         sut.Add(_initialConditionsBuildingBlock);
          sut.Add(_parameterStartValuesBuildingBlock);
-         sut.Remove(_moleculeStartValuesBuildingBlock);
+         sut.Remove(_initialConditionsBuildingBlock);
       }
 
       [Observation]
       public void the_correct_molecule_start_values_should_have_been_removed()
       {
          sut.ParameterStartValuesCollection.Count.ShouldBeEqualTo(2);
-         sut.MoleculeStartValuesCollection.Count.ShouldBeEqualTo(1);
-         sut.MoleculeStartValuesCollection.FindById(_moleculeStartValuesBuildingBlock.Id).ShouldBeNull();
+         sut.InitialConditionsCollection.Count.ShouldBeEqualTo(1);
+         sut.InitialConditionsCollection.FindById(_initialConditionsBuildingBlock.Id).ShouldBeNull();
       }
    }
 
@@ -89,7 +89,7 @@ namespace OSPSuite.Core.Domain
       public void the_list_should_include_all_the_building_blocks()
       {
          _result.ShouldOnlyContain(sut.PassiveTransports, sut.EventGroups, sut.Molecules, sut.Reactions, sut.Observers, sut.SpatialStructure,
-            sut.ParameterStartValuesCollection.First(), sut.MoleculeStartValuesCollection.First());
+            sut.ParameterStartValuesCollection.First(), sut.InitialConditionsCollection.First());
       }
    }
 
@@ -124,7 +124,7 @@ namespace OSPSuite.Core.Domain
          _clone.Reactions.ShouldNotBeNull();
          _clone.Molecules.ShouldNotBeNull();
 
-         _clone.MoleculeStartValuesCollection.ShouldNotBeEmpty();
+         _clone.InitialConditionsCollection.ShouldNotBeEmpty();
          _clone.ParameterStartValuesCollection.ShouldNotBeNull();
 
          _clone.ExtendedPropertyValueFor("PKSimVersion").ShouldBeEqualTo("1.2.3");

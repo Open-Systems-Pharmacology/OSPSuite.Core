@@ -4,15 +4,15 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_MoleculeStartValue : ContextSpecification<MoleculeStartValue>
+   public abstract class concern_for_InitialCondition : ContextSpecification<InitialCondition>
    {
       protected override void Context()
       {
-         sut = new MoleculeStartValue {ContainerPath = new ObjectPath("Path1", "Path2"), Name = "Name"};
+         sut = new InitialCondition {ContainerPath = new ObjectPath("Path1", "Path2"), Name = "Name"};
       }
    }
 
-   public class when_instantiating_new_MoleculeStartValue : concern_for_MoleculeStartValue
+   public class when_instantiating_new_initial_condition : concern_for_InitialCondition
    {
       [Observation]
       public void name_should_be_last_element_in_ObjectPath()
@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class when_setting_molecule_name : concern_for_MoleculeStartValue
+   public class when_setting_molecule_name : concern_for_InitialCondition
    {
       protected override void Because()
       {
@@ -59,15 +59,15 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public abstract class when_testing_equivalency_in_msv : concern_for_MoleculeStartValue
+   public abstract class when_testing_equivalency_in_msv : concern_for_InitialCondition
    {
-      protected MoleculeStartValue _comparable;
+      protected InitialCondition _comparable;
       protected bool _result;
 
       protected override void Context()
       {
-         sut = new MoleculeStartValue();
-         _comparable = new MoleculeStartValue();
+         sut = new InitialCondition();
+         _comparable = new InitialCondition();
 
          sut.IsPresent = true;
          _comparable.IsPresent = true;
@@ -103,7 +103,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class when_testing_msv_with_different_moleculename : equivalency_should_test_negative
+   public class when_testing_msv_with_different_molecule_name : equivalency_should_test_negative
    {
       protected override void Context()
       {

@@ -123,14 +123,14 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   internal class MoleculeStartValuesBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class InitialConditionsBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
    {
       [Test]
-      public void TestComplexMoleculeStartValuesBuildingBlock()
+      public void TestComplexInitialConditionsBuildingBlock()
       {
-         var x1 = _simulationConfiguration.ModuleConfigurations[0].SelectedMoleculeStartValues;
+         var x1 = _simulationConfiguration.ModuleConfigurations[0].SelectedInitialConditions;
          var x2 = SerializeAndDeserialize(x1);
-         AssertForSpecs.AreEqualMoleculeStartValuesBuildingBlock(x2, x1);
+         AssertForSpecs.AreEqualInitialConditionsBuildingBlock(x2, x1);
       }
    }
 

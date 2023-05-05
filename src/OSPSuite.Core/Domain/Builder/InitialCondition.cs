@@ -2,13 +2,13 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public class MoleculeStartValue : StartValueBase, IWithScaleDivisor
+   public class InitialCondition : StartValueBase, IWithScaleDivisor
    {
       private bool _isPresent;
       private double _scaleDivisor;
       public bool NegativeValuesAllowed { get; set; }
 
-      public MoleculeStartValue()
+      public InitialCondition()
       {
          Rules.Add(ScaleDivisorRules.ScaleDivisorStrictlyPositive);
          ScaleDivisor = Constants.DEFAULT_SCALE_DIVISOR;
@@ -18,11 +18,11 @@ namespace OSPSuite.Core.Domain.Builder
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
-         var sourceMoleculeStartValue = source as MoleculeStartValue;
-         if (sourceMoleculeStartValue == null) return;
-         IsPresent = sourceMoleculeStartValue.IsPresent;
-         ScaleDivisor = sourceMoleculeStartValue.ScaleDivisor;
-         NegativeValuesAllowed = sourceMoleculeStartValue.NegativeValuesAllowed;
+         var sourceInitialCondition = source as InitialCondition;
+         if (sourceInitialCondition == null) return;
+         IsPresent = sourceInitialCondition.IsPresent;
+         ScaleDivisor = sourceInitialCondition.ScaleDivisor;
+         NegativeValuesAllowed = sourceInitialCondition.NegativeValuesAllowed;
       }
 
       public bool IsPresent
@@ -33,14 +33,14 @@ namespace OSPSuite.Core.Domain.Builder
 
       public string MoleculeName => Name;
 
-      public bool IsEquivalentTo(MoleculeStartValue moleculeStartValue)
+      public bool IsEquivalentTo(InitialCondition initialCondition)
       {
-         var isBaseEquivalent = base.IsEquivalentTo(moleculeStartValue);
+         var isBaseEquivalent = base.IsEquivalentTo(initialCondition);
 
          var isEquivalent =
-            IsPresent == moleculeStartValue.IsPresent &&
-            NullableEqualsCheck(MoleculeName, moleculeStartValue.MoleculeName) &&
-            ValueComparer.AreValuesEqual(ScaleDivisor, moleculeStartValue.ScaleDivisor);
+            IsPresent == initialCondition.IsPresent &&
+            NullableEqualsCheck(MoleculeName, initialCondition.MoleculeName) &&
+            ValueComparer.AreValuesEqual(ScaleDivisor, initialCondition.ScaleDivisor);
 
          return isBaseEquivalent && isEquivalent;
       }

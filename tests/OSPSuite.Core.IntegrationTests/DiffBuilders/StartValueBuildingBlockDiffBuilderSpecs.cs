@@ -14,26 +14,26 @@ namespace OSPSuite.Core.DiffBuilders
       protected override void Context()
       {
          base.Context();
-         var moleculeStartValuesBuildingBlock1 = new MoleculeStartValuesBuildingBlock().WithName("Tada");
-         var moleculeStartValueA = new MoleculeStartValue().WithName("MSVa");
-         moleculeStartValueA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
-         var moleculeStartValueB = new MoleculeStartValue().WithName("MSVb");
-         moleculeStartValueB.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
-         moleculeStartValuesBuildingBlock1.Add(moleculeStartValueA);
-         moleculeStartValuesBuildingBlock1.Add(moleculeStartValueB);
+         var initialConditionsBuildingBlock1 = new InitialConditionsBuildingBlock().WithName("Tada");
+         var initialConditionA = new InitialCondition().WithName("MSVa");
+         initialConditionA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         var initialConditionB = new InitialCondition().WithName("MSVb");
+         initialConditionB.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         initialConditionsBuildingBlock1.Add(initialConditionA);
+         initialConditionsBuildingBlock1.Add(initialConditionB);
 
 
-         var moleculeStartValuesBuildingBlock2 = new MoleculeStartValuesBuildingBlock().WithName("Tada");
-         moleculeStartValueA = new MoleculeStartValue().WithName("MSVa");
-         moleculeStartValueA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
-         moleculeStartValueB = new MoleculeStartValue().WithName("MSVb");
-         moleculeStartValueB.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         var initialConditionsBuildingBlock2 = new InitialConditionsBuildingBlock().WithName("Tada");
+         initialConditionA = new InitialCondition().WithName("MSVa");
+         initialConditionA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         initialConditionB = new InitialCondition().WithName("MSVb");
+         initialConditionB.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
 
-         moleculeStartValuesBuildingBlock2.Add(moleculeStartValueA);
-         moleculeStartValuesBuildingBlock2.Add(moleculeStartValueB);
+         initialConditionsBuildingBlock2.Add(initialConditionA);
+         initialConditionsBuildingBlock2.Add(initialConditionB);
 
-         _object1 = moleculeStartValuesBuildingBlock1;
-         _object2 = moleculeStartValuesBuildingBlock2;
+         _object1 = initialConditionsBuildingBlock1;
+         _object2 = initialConditionsBuildingBlock2;
       }
 
       [Observation]
@@ -48,26 +48,26 @@ namespace OSPSuite.Core.DiffBuilders
       protected override void Context()
       {
          base.Context();
-         var moleculeStartValuesBuildingBlock1 = new MoleculeStartValuesBuildingBlock().WithName("Tada");
-         var moleculeStartValueA = new MoleculeStartValue().WithName("MSVa");
-         moleculeStartValueA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
-         var moleculeStartValueB = new MoleculeStartValue().WithName("MSVb");
-         moleculeStartValueB.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
-         moleculeStartValuesBuildingBlock1.Add(moleculeStartValueA);
-         moleculeStartValuesBuildingBlock1.Add(moleculeStartValueB);
+         var initialConditionsBuildingBlock1 = new InitialConditionsBuildingBlock().WithName("Tada");
+         var initialConditionA = new InitialCondition().WithName("MSVa");
+         initialConditionA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         var initialConditionB = new InitialCondition().WithName("MSVb");
+         initialConditionB.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         initialConditionsBuildingBlock1.Add(initialConditionA);
+         initialConditionsBuildingBlock1.Add(initialConditionB);
 
 
-         var moleculeStartValuesBuildingBlock2 = new MoleculeStartValuesBuildingBlock().WithName("Toto");
-         moleculeStartValueA = new MoleculeStartValue().WithName("MSVa");
-         moleculeStartValueA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
-         moleculeStartValueB = new MoleculeStartValue().WithName("MSVb");
-         moleculeStartValueB.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         var initialConditionsBuildingBlock2 = new InitialConditionsBuildingBlock().WithName("Toto");
+         initialConditionA = new InitialCondition().WithName("MSVa");
+         initialConditionA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         initialConditionB = new InitialCondition().WithName("MSVb");
+         initialConditionB.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
 
-         moleculeStartValuesBuildingBlock2.Add(moleculeStartValueA);
-         moleculeStartValuesBuildingBlock2.Add(moleculeStartValueB);
+         initialConditionsBuildingBlock2.Add(initialConditionA);
+         initialConditionsBuildingBlock2.Add(initialConditionB);
 
-         _object1 = moleculeStartValuesBuildingBlock1;
-         _object2 = moleculeStartValuesBuildingBlock2;
+         _object1 = initialConditionsBuildingBlock1;
+         _object2 = initialConditionsBuildingBlock2;
          _comparerSettings.OnlyComputingRelevant = false;
       }
 
@@ -83,25 +83,25 @@ namespace OSPSuite.Core.DiffBuilders
       protected override void Context()
       {
          base.Context();
-         var moleculeStartValuesBuildingBlock1 = new MoleculeStartValuesBuildingBlock().WithName("Tada");
-         var moleculeStartValueA = new MoleculeStartValue().WithName("MSVa");
-         moleculeStartValueA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
-         var moleculeStartValueB = new MoleculeStartValue().WithName("MSVb");
-         moleculeStartValueB.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
-         moleculeStartValuesBuildingBlock1.Add(moleculeStartValueA);
-         moleculeStartValuesBuildingBlock1.Add(moleculeStartValueB);
+         var initialConditionsBuildingBlock1 = new InitialConditionsBuildingBlock().WithName("Tada");
+         var initialConditionA = new InitialCondition().WithName("MSVa");
+         initialConditionA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         var initialConditionB = new InitialCondition().WithName("MSVb");
+         initialConditionB.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         initialConditionsBuildingBlock1.Add(initialConditionA);
+         initialConditionsBuildingBlock1.Add(initialConditionB);
 
-         var moleculeStartValuesBuildingBlock2 = new MoleculeStartValuesBuildingBlock().WithName("Tada");
-         moleculeStartValueA = new MoleculeStartValue().WithName("MSVa");
-         moleculeStartValueA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
-         moleculeStartValueB = new MoleculeStartValue().WithName("MSVb");
-         moleculeStartValueB.ContainerPath = new ObjectPath("Root", "Liver", "Cell");
+         var initialConditionsBuildingBlock2 = new InitialConditionsBuildingBlock().WithName("Tada");
+         initialConditionA = new InitialCondition().WithName("MSVa");
+         initialConditionA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         initialConditionB = new InitialCondition().WithName("MSVb");
+         initialConditionB.ContainerPath = new ObjectPath("Root", "Liver", "Cell");
 
-         moleculeStartValuesBuildingBlock2.Add(moleculeStartValueA);
-         moleculeStartValuesBuildingBlock2.Add(moleculeStartValueB);
+         initialConditionsBuildingBlock2.Add(initialConditionA);
+         initialConditionsBuildingBlock2.Add(initialConditionB);
 
-         _object1 = moleculeStartValuesBuildingBlock1;
-         _object2 = moleculeStartValuesBuildingBlock2;
+         _object1 = initialConditionsBuildingBlock1;
+         _object2 = initialConditionsBuildingBlock2;
       }
 
       [Observation]

@@ -10,7 +10,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
-   internal abstract class concern_for_MoleculeStartValuesCreator : ContextSpecification<MoleculeStartValuesCreator>
+   internal abstract class concern_for_InitialConditionsCreator : ContextSpecification<InitialConditionsCreator>
    {
       private IObjectBaseFactory _baseFactory;
       protected ICloneManagerForBuildingBlock _cloneManagerForBuildingBlock;
@@ -19,16 +19,16 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _baseFactory = A.Fake<IObjectBaseFactory>();
-         A.CallTo(() => _baseFactory.Create<MoleculeStartValuesBuildingBlock>()).ReturnsLazily(() => new MoleculeStartValuesBuildingBlock());
+         A.CallTo(() => _baseFactory.Create<InitialConditionsBuildingBlock>()).ReturnsLazily(() => new InitialConditionsBuildingBlock());
          _cloneManagerForBuildingBlock = A.Fake<ICloneManagerForBuildingBlock>();
-         sut = new MoleculeStartValuesCreator(_baseFactory, new ObjectPathFactory(new AliasCreator()),
+         sut = new InitialConditionsCreator(_baseFactory, new ObjectPathFactory(new AliasCreator()),
             new IdGenerator(), _cloneManagerForBuildingBlock);
       }
    }
 
-   internal class when_generating_new_start_values_building_block : concern_for_MoleculeStartValuesCreator
+   internal class when_generating_new_start_values_building_block : concern_for_InitialConditionsCreator
    {
-      private MoleculeStartValuesBuildingBlock _result;
+      private InitialConditionsBuildingBlock _result;
 
       protected override void Because()
       {
@@ -42,9 +42,9 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   internal class when_generating_new_non_empty_start_values_building_block : concern_for_MoleculeStartValuesCreator
+   internal class when_generating_new_non_empty_start_values_building_block : concern_for_InitialConditionsCreator
    {
-      private MoleculeStartValuesBuildingBlock _result;
+      private InitialConditionsBuildingBlock _result;
       private SpatialStructure _spatialStructure;
       private MoleculeBuildingBlock _moleculeBuildingBlock;
       private IFormula _defaultStartFormula;

@@ -29,7 +29,7 @@ namespace OSPSuite.Core.Domain.Services
          validateBuildingBlockWithFormulaCache(module.PassiveTransports, validationResult);
          validateBuildingBlockWithFormulaCache(module.Observers, validationResult);
          validateEventGroupBuildingBlock(module.EventGroups, module.Molecules, validationResult);
-         module.MoleculeStartValuesCollection.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
+         module.InitialConditionsCollection.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
          module.ParameterStartValuesCollection.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
       }
 

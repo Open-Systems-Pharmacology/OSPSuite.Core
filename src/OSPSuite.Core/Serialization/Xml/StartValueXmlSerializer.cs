@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class MoleculeStartValueXmlSerializer : StartValueXmlSerializer<MoleculeStartValue>
+   public class InitialConditionXmlSerializer : StartValueXmlSerializer<InitialCondition>
    {
       public override void PerformMapping()
       {

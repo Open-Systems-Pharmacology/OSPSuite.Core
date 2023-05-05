@@ -174,6 +174,7 @@ namespace OSPSuite.Core.Domain
          public const string ENABLE_SUPERSATURATION = "Enable supersaturation";
          public const string URINE_EMPTYING_ENABLE = "Urine emptying enabled";
          public const string PARTICLE_SIZE_DISTRIBUTION = "Particle size distribution";
+         public const string CHILD_PUGH_SCORE = "Child-Pugh score";
          public const string NUMBER_OF_BINS = "Number of bins";
          public const string TOTAL_DRUG_MASS = "Total drug mass";
          public const string ParameterCompoundTypeBase = "Compound type ";
@@ -220,7 +221,8 @@ namespace OSPSuite.Core.Domain
             TRANS_ABSORPTION_SINK,
             PARA_ABSORPTION_SINK,
             GESTATIONAL_AGE,
-            PLASMA_PROTEIN_BINDING_PARTNER
+            PLASMA_PROTEIN_BINDING_PARTNER,
+            CHILD_PUGH_SCORE
          };
 
          public static readonly IReadOnlyCollection<string> AllWithListOfValues = new List<string>(Halogens.Union(AllCategorialParameters));

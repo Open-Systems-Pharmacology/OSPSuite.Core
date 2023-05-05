@@ -16,7 +16,7 @@ namespace OSPSuite.Helpers
 {
    public class ModelHelperForSpecs
    {
-      private readonly IMoleculeStartValuesCreator _moleculeStartValuesCreator;
+      private readonly IInitialConditionsCreator _initialConditionsCreator;
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IObjectPathFactory _objectPathFactory;
       private readonly IDimensionFactory _dimensionFactory;
@@ -31,7 +31,7 @@ namespace OSPSuite.Helpers
 
       private IDimension amountDimension => _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
 
-      public ModelHelperForSpecs(IObjectBaseFactory objectBaseFactory, IParameterStartValuesCreator parameterStartValuesCreator, IMoleculeStartValuesCreator moleculeStartValuesCreator,
+      public ModelHelperForSpecs(IObjectBaseFactory objectBaseFactory, IParameterStartValuesCreator parameterStartValuesCreator, IInitialConditionsCreator initialConditionsCreator,
          IObjectPathFactory objectPathFactory, IDimensionFactory dimensionFactory, ISpatialStructureFactory spatialStructureFactory,
          INeighborhoodBuilderFactory neighborhoodFactory, IOutputSchemaFactory outputSchemaFactory, IMoleculeBuilderFactory moleculeBuilderFactory, ISolverSettingsFactory solverSettingsFactory)
       {
@@ -42,7 +42,7 @@ namespace OSPSuite.Helpers
          _solverSettingsFactory = solverSettingsFactory;
          _spatialStructureFactory = spatialStructureFactory;
          _parameterStartValuesCreator = parameterStartValuesCreator;
-         _moleculeStartValuesCreator = moleculeStartValuesCreator;
+         _initialConditionsCreator = initialConditionsCreator;
          _objectPathFactory = objectPathFactory;
          _dimensionFactory = dimensionFactory;
       }
@@ -63,22 +63,22 @@ namespace OSPSuite.Helpers
          };
 
          allCalculationMethods().Each(simulationConfiguration.AddCalculationMethod);
-         var moleculeStartValues = _moleculeStartValuesCreator.CreateFrom(module.SpatialStructure, module.Molecules);
+         var initialConditions = _initialConditionsCreator.CreateFrom(module.SpatialStructure, module.Molecules);
 
          //add one start values that does not exist in Molecules@"
-         var moleculeStartValue = _moleculeStartValuesCreator.CreateMoleculeStartValue(_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM), "MoleculeThatDoesNotExist", amountDimension);
-         moleculeStartValue.IsPresent = true;
-         moleculeStartValues.Add(moleculeStartValue);
+         var initialCondition = _initialConditionsCreator.CreateInitialCondition(_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM), "MoleculeThatDoesNotExist", amountDimension);
+         initialCondition.IsPresent = true;
+         initialConditions.Add(initialCondition);
          var parameterStartValues = _objectBaseFactory.Create<ParameterStartValuesBuildingBlock>();
-         setMoleculeStartValues(moleculeStartValues);
+         setInitialConditions(initialConditions);
          setParameterStartValues(parameterStartValues);
 
-         module.Add(moleculeStartValues);
+         module.Add(initialConditions);
          module.Add(parameterStartValues);
 
          simulationConfiguration.Individual = getIndividual();
 
-         var moduleConfiguration = new ModuleConfiguration(module, moleculeStartValues, parameterStartValues);
+         var moduleConfiguration = new ModuleConfiguration(module, initialConditions, parameterStartValues);
          simulationConfiguration.AddModuleConfiguration(moduleConfiguration);
 
          return simulationConfiguration;
@@ -226,7 +226,7 @@ namespace OSPSuite.Helpers
 
       private void setParameterStartValues(ParameterStartValuesBuildingBlock parameterStartValues)
       {
-         //set a parameter start value to a formula 
+         //set a parameter value to a formula 
          var moleculeAPath = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, Lung, Plasma, "D");
          moleculeAPath.Add("RelExpNorm");
          var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("RelExp + RelExpGlobal").WithName("RelExpNormD");
@@ -249,7 +249,7 @@ namespace OSPSuite.Helpers
          parameterStartValues.Add(_parameterStartValuesCreator.CreateParameterStartValue(nanParameterNotNaN, 10, Constants.Dimension.NO_DIMENSION));
       }
 
-      private void setMoleculeStartValues(MoleculeStartValuesBuildingBlock moleculesStartValues)
+      private void setInitialConditions(InitialConditionsBuildingBlock moleculesStartValues)
       {
          var art_plasma_A = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ArterialBlood, Plasma, "A")];
          art_plasma_A.Value = 1;
@@ -300,7 +300,7 @@ namespace OSPSuite.Helpers
          ven_plasma_F.IsPresent = true;
       }
 
-      private void setAllIsPresentForMoleculeToFalse(MoleculeStartValuesBuildingBlock moleculesStartValues, params string[] moleculeNames)
+      private void setAllIsPresentForMoleculeToFalse(InitialConditionsBuildingBlock moleculesStartValues, params string[] moleculeNames)
       {
          foreach (var moleculesStartValue in moleculesStartValues)
          {
@@ -1313,8 +1313,8 @@ namespace OSPSuite.Helpers
          if (sourceObject.IsAnImplementationOf<EventGroupBuildingBlock>())
             bb = new EventGroupBuildingBlock();
 
-         if (sourceObject.IsAnImplementationOf<MoleculeStartValuesBuildingBlock>())
-            bb = new MoleculeStartValuesBuildingBlock();
+         if (sourceObject.IsAnImplementationOf<InitialConditionsBuildingBlock>())
+            bb = new InitialConditionsBuildingBlock();
 
          if (sourceObject.IsAnImplementationOf<ParameterStartValuesBuildingBlock>())
             bb = new ParameterStartValuesBuildingBlock();

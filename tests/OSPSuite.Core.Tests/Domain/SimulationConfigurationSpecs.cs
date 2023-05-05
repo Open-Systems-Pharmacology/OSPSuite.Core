@@ -29,7 +29,7 @@ namespace OSPSuite.Core.Domain
             Name = "module"
          };
          module.Add(new SpatialStructure().WithName("spatial structure"));
-         module.Add(new MoleculeStartValuesBuildingBlock());
+         module.Add(new InitialConditionsBuildingBlock());
          module.Add(new ParameterStartValuesBuildingBlock());
          sut.AddModuleConfiguration(new ModuleConfiguration(module));
 

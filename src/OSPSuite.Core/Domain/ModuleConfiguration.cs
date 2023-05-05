@@ -11,12 +11,12 @@ namespace OSPSuite.Core.Domain
       public Module Module { get; private set; }
 
       /// <summary>
-      ///    Reference to selected molecule start value in the Module (can be null if none is used)
+      ///    Reference to selected initial conditions in the Module (can be null if none is used)
       /// </summary>
-      public MoleculeStartValuesBuildingBlock SelectedMoleculeStartValues { get; set; }
+      public InitialConditionsBuildingBlock SelectedInitialConditions { get; set; }
 
       /// <summary>
-      ///    Reference to selected parameter start value in the Module (can be null if none is used)
+      ///    Reference to selected parameter value in the Module (can be null if none is used)
       /// </summary>
       public ParameterStartValuesBuildingBlock SelectedParameterStartValues { get; set; }
 
@@ -26,25 +26,25 @@ namespace OSPSuite.Core.Domain
       }
 
       /// <summary>
-      ///    Create a new module configuration for the given module and will assign the first molecule and parameter start values
+      ///    Create a new module configuration for the given module and will assign the first molecule and parameter values
       ///    if defined
       /// </summary>
       /// <param name="module">Module</param>
-      public ModuleConfiguration(Module module) : this(module, module.MoleculeStartValuesCollection.FirstOrDefault(), module.ParameterStartValuesCollection.FirstOrDefault())
+      public ModuleConfiguration(Module module) : this(module, module.InitialConditionsCollection.FirstOrDefault(), module.ParameterStartValuesCollection.FirstOrDefault())
       {
          Module = module;
       }
 
       /// <summary>
-      ///    Create a new module configuration for the given module and the selected molecule and parameter start values
+      ///    Create a new module configuration for the given module and the selected molecule and parameter values
       /// </summary>
       /// <param name="module">Module</param>
-      /// <param name="selectedMoleculeStartValueBuilding">molecule start values. Assuming this belongs to the module or is null</param>
-      /// <param name="selectedParameterStartValues">parameter start values. Assuming this belongs to the module or is null</param>
-      public ModuleConfiguration(Module module, MoleculeStartValuesBuildingBlock selectedMoleculeStartValueBuilding, ParameterStartValuesBuildingBlock selectedParameterStartValues)
+      /// <param name="selectedInitialConditionBuilding">Initial Conditions. Assuming this belongs to the module or is null</param>
+      /// <param name="selectedParameterStartValues">Parameter values. Assuming this belongs to the module or is null</param>
+      public ModuleConfiguration(Module module, InitialConditionsBuildingBlock selectedInitialConditionBuilding, ParameterStartValuesBuildingBlock selectedParameterStartValues)
       {
          Module = module;
-         SelectedMoleculeStartValues = selectedMoleculeStartValueBuilding;
+         SelectedInitialConditions = selectedInitialConditionBuilding;
          SelectedParameterStartValues = selectedParameterStartValues;
       }
 
@@ -69,8 +69,8 @@ namespace OSPSuite.Core.Domain
                return Module.PassiveTransports as T;
             case Type spStrType when spStrType == typeof(SpatialStructure):
                return Module.SpatialStructure as T;
-            case Type molStartValuesType when molStartValuesType == typeof(MoleculeStartValuesBuildingBlock):
-               return SelectedMoleculeStartValues as T;
+            case Type molStartValuesType when molStartValuesType == typeof(InitialConditionsBuildingBlock):
+               return SelectedInitialConditions as T;
             case Type paramStartValuesType when paramStartValuesType == typeof(ParameterStartValuesBuildingBlock):
                return SelectedParameterStartValues as T;
             default:
@@ -85,7 +85,7 @@ namespace OSPSuite.Core.Domain
 
          Module = cloneManager.Clone(sourceConfiguration.Module);
 
-         SelectedMoleculeStartValues = Module.MoleculeStartValuesCollection.FindByName(sourceConfiguration.SelectedMoleculeStartValues?.Name);
+         SelectedInitialConditions = Module.InitialConditionsCollection.FindByName(sourceConfiguration.SelectedInitialConditions?.Name);
          SelectedParameterStartValues = Module.ParameterStartValuesCollection.FindByName(sourceConfiguration.SelectedParameterStartValues?.Name);
       }
    }

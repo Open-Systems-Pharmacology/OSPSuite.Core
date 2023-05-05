@@ -15,7 +15,7 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly ObjectBaseCache<ObserverBuilder> _observers = new ObjectBaseCache<ObserverBuilder>();
       private readonly ObjectBaseCache<MoleculeBuilder> _molecules = new ObjectBaseCache<MoleculeBuilder>();
       private readonly StartValueCache<ParameterStartValue> _parameterStartValues = new StartValueCache<ParameterStartValue>();
-      private readonly StartValueCache<MoleculeStartValue> _moleculeStartValues = new StartValueCache<MoleculeStartValue>();
+      private readonly StartValueCache<InitialCondition> _initialConditions = new StartValueCache<InitialCondition>();
 
       private readonly Cache<IObjectBase, IObjectBase> _builderCache = new Cache<IObjectBase, IObjectBase>(onMissingKey: x => null);
 
@@ -43,21 +43,21 @@ namespace OSPSuite.Core.Domain.Builder
 
       internal IEnumerable<MoleculeBuilder> AllPresentMolecules()
       {
-         var moleculeNames = _moleculeStartValues
-            .Where(moleculeStartValue => moleculeStartValue.IsPresent)
-            .Select(moleculeStartValue => moleculeStartValue.MoleculeName)
+         var moleculeNames = _initialConditions
+            .Where(initialCondition => initialCondition.IsPresent)
+            .Select(initialCondition => initialCondition.MoleculeName)
             .Distinct();
 
 
          return moleculeNames.Select(x => _molecules[x]).Where(m => m != null);
       }
 
-      internal IEnumerable<MoleculeStartValue> AllPresentMoleculeValues() =>
+      internal IEnumerable<InitialCondition> AllPresentMoleculeValues() =>
          AllPresentMoleculeValuesFor(_molecules.Select(x => x.Name));
 
-      internal IEnumerable<MoleculeStartValue> AllPresentMoleculeValuesFor(IEnumerable<string> moleculeNames)
+      internal IEnumerable<InitialCondition> AllPresentMoleculeValuesFor(IEnumerable<string> moleculeNames)
       {
-         return _moleculeStartValues
+         return _initialConditions
             .Where(msv => moleculeNames.Contains(msv.MoleculeName))
             .Where(msv => msv.IsPresent);
       }
@@ -92,7 +92,7 @@ namespace OSPSuite.Core.Domain.Builder
          _observers.AddRange(allBuilder(x => x.Observers));
          _molecules.AddRange(allBuilder(x => x.Molecules));
          _parameterStartValues.AddRange(allStartValueBuilder(x => x.SelectedParameterStartValues));
-         _moleculeStartValues.AddRange(allStartValueBuilder(x => x.SelectedMoleculeStartValues));
+         _initialConditions.AddRange(allStartValueBuilder(x => x.SelectedInitialConditions));
       }
 
       internal IReadOnlyList<SpatialStructure> SpatialStructures => all(x => x.SpatialStructure);
@@ -102,7 +102,7 @@ namespace OSPSuite.Core.Domain.Builder
       internal IReadOnlyCollection<ObserverBuilder> Observers => _observers;
       internal IReadOnlyCollection<MoleculeBuilder> Molecules => _molecules;
       internal IReadOnlyCollection<ParameterStartValue> ParameterStartValues => _parameterStartValues;
-      internal IReadOnlyCollection<MoleculeStartValue> MoleculeStartValues => _moleculeStartValues;
+      internal IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
 
       internal MoleculeBuilder MoleculeByName(string name) => _molecules[name];
    }

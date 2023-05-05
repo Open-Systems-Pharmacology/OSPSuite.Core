@@ -15,11 +15,11 @@ namespace OSPSuite.Core.DiffBuilders
       {
          base.Context();
 
-         var msv1 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv1 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv1.IsPresent = true;
          msv1.ScaleDivisor = 10;
-         var msv2 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv2 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv2.IsPresent = true;
          msv2.ScaleDivisor = 10;
@@ -41,10 +41,10 @@ namespace OSPSuite.Core.DiffBuilders
       {
          base.Context();
 
-         var msv1 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv1 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv1.IsPresent = true;
-         var msv2 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv2 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv2.IsPresent = false;
 
@@ -65,11 +65,11 @@ namespace OSPSuite.Core.DiffBuilders
       {
          base.Context();
 
-         var msv1 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv1 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv1.IsPresent = true;
          msv1.ScaleDivisor = 1;
-         var msv2 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv2 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv2.IsPresent = true;
          msv2.ScaleDivisor = 10;
@@ -91,12 +91,12 @@ namespace OSPSuite.Core.DiffBuilders
       {
          base.Context();
 
-         var msv1 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv1 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv1.IsPresent = true;
          msv1.ScaleDivisor = 1;
          msv1.ValueOrigin.Description = "DESC1";
-         var msv2 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv2 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv2.IsPresent = true;
          msv2.ScaleDivisor = 10;
@@ -121,12 +121,12 @@ namespace OSPSuite.Core.DiffBuilders
       {
          base.Context();
 
-         var msv1 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv1 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv1.IsPresent = true;
          msv1.ScaleDivisor = 1;
          msv1.ValueOrigin.Description = "DESC1";
-         var msv2 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv2 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv2.IsPresent = true;
          msv2.ScaleDivisor = 10;

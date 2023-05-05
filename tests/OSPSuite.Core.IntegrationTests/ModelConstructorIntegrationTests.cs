@@ -495,9 +495,9 @@ namespace OSPSuite.Core
          //we use a sim builder here to modify the configuration on the fly
          var simulationBuilder = new SimulationBuilder(_simulationConfiguration);
 
-         var moleculeStartValue = simulationBuilder.MoleculeStartValues.First();
+         var initialCondition = simulationBuilder.InitialConditions.First();
          var physicalContainer = simulationBuilder.SpatialStructures.SelectMany(x => x.TopContainers)
-            .Select(x => moleculeStartValue.ContainerPath.TryResolve<IContainer>(x)).First(x => x != null);
+            .Select(x => initialCondition.ContainerPath.TryResolve<IContainer>(x)).First(x => x != null);
 
          physicalContainer.Mode = ContainerMode.Logical;
       }
@@ -505,7 +505,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_identify_an_issue_with_start_values_being_defined_for_logical_containers()
       {
-         _result.ValidationResult.Messages.Count(message => message.Object.IsAnImplementationOf<MoleculeStartValue>()).ShouldBeEqualTo(2);
+         _result.ValidationResult.Messages.Count(message => message.Object.IsAnImplementationOf<InitialCondition>()).ShouldBeEqualTo(2);
       }
    }
 

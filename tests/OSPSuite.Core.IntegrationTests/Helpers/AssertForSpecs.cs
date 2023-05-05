@@ -141,9 +141,9 @@ namespace OSPSuite.Core.Helpers
          }
 
          // StartValue Types
-         if (x1.IsAnImplementationOf<MoleculeStartValue>())
+         if (x1.IsAnImplementationOf<InitialCondition>())
          {
-            AreEqualMoleculeStartValue(x1 as MoleculeStartValue, x2 as MoleculeStartValue);
+            AreEqualInitialConditions(x1 as InitialCondition, x2 as InitialCondition);
             return;
          }
 
@@ -347,7 +347,7 @@ namespace OSPSuite.Core.Helpers
          AreEqualBuildingBlock(m1.Observers, m2.Observers);
          AreEqualBuildingBlock(m1.Reactions, m2.Reactions);
 
-         m1.MoleculeStartValuesCollection.Each((x, i) => AreEqualBuildingBlock(x, m2.MoleculeStartValuesCollection[i]));
+         m1.InitialConditionsCollection.Each((x, i) => AreEqualBuildingBlock(x, m2.InitialConditionsCollection[i]));
          m1.ParameterStartValuesCollection.Each((x, i) => AreEqualBuildingBlock(x, m2.ParameterStartValuesCollection[i]));
 
          AreEqualObjectBase(m1, m2);
@@ -1099,7 +1099,7 @@ namespace OSPSuite.Core.Helpers
          AreEqualDimension(x1.Dimension, x2.Dimension);
       }
 
-      public static void AreEqualMoleculeStartValue(MoleculeStartValue x1, MoleculeStartValue x2)
+      public static void AreEqualInitialConditions(InitialCondition x1, InitialCondition x2)
       {
          AreEqualPathAndValueEntity(x1, x2);
          Assert.AreEqual(x1.IsPresent, x2.IsPresent);
@@ -1160,7 +1160,7 @@ namespace OSPSuite.Core.Helpers
          AreEqualEnumerableOfNamedObjects(x1.Neighborhoods, x2.Neighborhoods, x => x.Id);
       }
 
-      public static void AreEqualMoleculeStartValuesBuildingBlock(MoleculeStartValuesBuildingBlock x1, MoleculeStartValuesBuildingBlock x2)
+      public static void AreEqualInitialConditionsBuildingBlock(InitialConditionsBuildingBlock x1, InitialConditionsBuildingBlock x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
          AreEqualObjectBase(x1, x2);
@@ -1193,7 +1193,7 @@ namespace OSPSuite.Core.Helpers
       {
          AreEqualModule(x1.Module, x2.Module);
          AreEqualParameterStartValuesBuildingBlock(x1.SelectedParameterStartValues, x2.SelectedParameterStartValues);
-         AreEqualMoleculeStartValuesBuildingBlock(x1.SelectedMoleculeStartValues, x2.SelectedMoleculeStartValues);
+         AreEqualInitialConditionsBuildingBlock(x1.SelectedInitialConditions, x2.SelectedInitialConditions);
       }
 
       public static void AreEqualModuleConfigurationLists(IEnumerable<ModuleConfiguration> x1, IEnumerable<ModuleConfiguration> x2)

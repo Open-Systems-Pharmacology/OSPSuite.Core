@@ -3,20 +3,20 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public class MoleculeStartValuesBuildingBlock : StartValueBuildingBlock<MoleculeStartValue>
+   public class InitialConditionsBuildingBlock : StartValueBuildingBlock<InitialCondition>
    {
-      public MoleculeStartValuesBuildingBlock()
+      public InitialConditionsBuildingBlock()
       {
-         Icon = IconNames.MOLECULE_START_VALUES;
+         Icon = IconNames.INITIAL_CONDITIONS;
       }
 
       /// <summary>
-      ///    Id of the spatial structure used to create the parameter start values.
+      ///    Id of the spatial structure used to create the parameter values.
       /// </summary>
       public string SpatialStructureId { get; set; }
 
       /// <summary>
-      ///    Id of the molecule building block used to create the parameter start values
+      ///    Id of the molecule building block used to create the parameter values
       /// </summary>
       public string MoleculeBuildingBlockId { get; set; }
 
@@ -34,11 +34,11 @@ namespace OSPSuite.Core.Domain.Builder
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
-         var sourceMoleculeStartValueBuildingBlock = source as MoleculeStartValuesBuildingBlock;
-         if (sourceMoleculeStartValueBuildingBlock == null) return;
+         var sourceInitialConditionsBuildingBlock = source as InitialConditionsBuildingBlock;
+         if (sourceInitialConditionsBuildingBlock == null) return;
 
-         MoleculeBuildingBlockId = sourceMoleculeStartValueBuildingBlock.MoleculeBuildingBlockId;
-         SpatialStructureId = sourceMoleculeStartValueBuildingBlock.SpatialStructureId;
+         MoleculeBuildingBlockId = sourceInitialConditionsBuildingBlock.MoleculeBuildingBlockId;
+         SpatialStructureId = sourceInitialConditionsBuildingBlock.SpatialStructureId;
       }
    }
 }

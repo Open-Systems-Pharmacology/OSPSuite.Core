@@ -59,27 +59,27 @@ namespace OSPSuite.Core.Domain.Mappers
       {
          var startValues = simulationBuilder.AllPresentMoleculeValuesFor(namesOfFloatingMolecules).ToList();
 
-         var moleculeStartValuesPerContainer = new Cache<string, List<string>>();
+         var initialConditionsPerContainer = new Cache<string, List<string>>();
 
          foreach (var msv in startValues)
          {
             List<string> moleculeNames;
             var path = msv.ContainerPath.ToString();
 
-            if (moleculeStartValuesPerContainer.Contains(path))
+            if (initialConditionsPerContainer.Contains(path))
             {
-               moleculeNames = moleculeStartValuesPerContainer[path];
+               moleculeNames = initialConditionsPerContainer[path];
             }
             else
             {
                moleculeNames = new List<string>();
-               moleculeStartValuesPerContainer.Add(path, moleculeNames);
+               initialConditionsPerContainer.Add(path, moleculeNames);
             }
 
             moleculeNames.Add(msv.MoleculeName);
          }
 
-         return moleculeStartValuesPerContainer;
+         return initialConditionsPerContainer;
       }
 
       /// <summary>

@@ -6,7 +6,7 @@ namespace OSPSuite.Core.Domain.Builder
    {
       public ParameterStartValuesBuildingBlock()
       {
-         Icon = IconNames.PARAMETER_START_VALUES;
+         Icon = IconNames.PARAMETER_VALUES;
       }
    }
 }

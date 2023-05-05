@@ -18,6 +18,7 @@ namespace OSPSuite.Core.Converters.v12
       IVisitor<SimulationConfiguration>,
       IVisitor<ModuleConfiguration>
    {
+      private const string _initialConditionsBuildingBlockName = "InitialConditionsBuildingBlock";
       private readonly IObjectPathFactory _objectPathFactory;
       private bool _converted;
 
@@ -39,7 +40,20 @@ namespace OSPSuite.Core.Converters.v12
       {
          _converted = false;
          element.DescendantsAndSelfNamed("Simulation").Each(ConvertSimulation);
+         element.DescendantsAndSelfNamed("MoleculeStartValue").Each(convertMoleculeStartValue);
+         element.DescendantsAndSelfNamed("MoleculeStartValuesBuildingBlock").Each(convertMoleculeStartValuesBuildingBlock);
          return (PKMLVersion.V12_0, _converted);
+      }
+
+      private void convertMoleculeStartValuesBuildingBlock(XElement element)
+      {
+         element.Name = _initialConditionsBuildingBlockName;
+      }
+
+      private void convertMoleculeStartValue(XElement msvElement)
+      {
+         msvElement.Name = "InitialCondition";
+         _converted = true;
       }
 
       public void ConvertSimulation(XElement simulationElement)
@@ -94,10 +108,10 @@ namespace OSPSuite.Core.Converters.v12
 
          var moleculeStartValueElement = buildConfigurationElement.Element("MoleculeStartValues");
          var moleculeStartValuesId = moleculeStartValueElement.Attribute("id").Value;
-         moleculeStartValueElement.Name = "MoleculeStartValuesBuildingBlock";
+         moleculeStartValueElement.Name = _initialConditionsBuildingBlockName;
          buildingBlockList.Add(moleculeStartValueElement);
 
-         moduleConfiguration.AddAttribute("selectedMoleculeStartValues", moleculeStartValuesId);
+         moduleConfiguration.AddAttribute("selectedInitialConditions", moleculeStartValuesId);
          moduleConfiguration.AddAttribute("selectedParameterStartValues", parameterStartValuesId);
 
       
