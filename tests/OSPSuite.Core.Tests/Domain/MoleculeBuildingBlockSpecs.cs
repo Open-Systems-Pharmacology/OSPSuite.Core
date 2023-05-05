@@ -70,7 +70,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_only_return_the_available_molecules_that_are_defined_as_present_in_the_molecule_start_value_building_block()
+      public void should_only_return_the_available_molecules_that_are_defined_as_present_in_the_initial_condition_building_block()
       {
          _results.ShouldOnlyContain(_drug,_molecule);
       }

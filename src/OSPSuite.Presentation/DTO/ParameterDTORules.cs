@@ -25,12 +25,12 @@ namespace OSPSuite.Presentation.DTO
             .WithError((p, value) => rulesFor(p, value).Message);
       }
 
-      public static IBusinessRule ParameterIsValid<TParameterContainer, TProperty>(Expression<Func<TParameterContainer, TProperty>> parameterValue , Func<TParameterContainer, IParameterDTO> parmeterDelegate)
+      public static IBusinessRule ParameterIsValid<TParameterContainer, TProperty>(Expression<Func<TParameterContainer, TProperty>> parameterValue , Func<TParameterContainer, IParameterDTO> parameterDelegate)
       {
          return CreateRule.For<TParameterContainer>()
             .Property(parameterValue)
-            .WithRule((parameterContainer, value) => rulesFor(parmeterDelegate(parameterContainer), value).IsEmpty)
-            .WithError((parameterContainer, value) => rulesFor(parmeterDelegate(parameterContainer), value).Message);
+            .WithRule((parameterContainer, value) => rulesFor(parameterDelegate(parameterContainer), value).IsEmpty)
+            .WithError((parameterContainer, value) => rulesFor(parameterDelegate(parameterContainer), value).Message);
       }
    }
 }

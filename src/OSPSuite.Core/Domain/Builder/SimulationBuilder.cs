@@ -58,8 +58,8 @@ namespace OSPSuite.Core.Domain.Builder
       internal IEnumerable<InitialCondition> AllPresentMoleculeValuesFor(IEnumerable<string> moleculeNames)
       {
          return _initialConditions
-            .Where(msv => moleculeNames.Contains(msv.MoleculeName))
-            .Where(msv => msv.IsPresent);
+            .Where(initialCondition => moleculeNames.Contains(initialCondition.MoleculeName))
+            .Where(initialCondition => initialCondition.IsPresent);
       }
 
       internal IEnumerable<MoleculeBuilder> AllFloatingMolecules() => Molecules.Where(x => x.IsFloating);

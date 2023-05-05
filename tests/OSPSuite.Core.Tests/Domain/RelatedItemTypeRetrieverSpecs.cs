@@ -26,13 +26,13 @@ namespace OSPSuite.Core.Domain
    public class When_shortening_types : concern_for_RelatedItemTypeRetriever
    {
       [Observation]
-      public void parameter_start_values_building_block_should_shorten_correctly()
+      public void parameter_values_building_block_should_shorten_correctly()
       {
          sut.TypeFor(new ParameterValuesBuildingBlock()).ShouldBeEqualTo("PVs");
       }
 
       [Observation]
-      public void molecule_start_values_building_block_should_shorten_correctly()
+      public void initial_conditions_building_block_should_shorten_correctly()
       {
          sut.TypeFor(new InitialConditionsBuildingBlock()).ShouldBeEqualTo("ICs");
       }

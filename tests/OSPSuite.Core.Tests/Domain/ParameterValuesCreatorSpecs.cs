@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_creating_a_parameter_start_value_for_a_parameter_and_object_path : concern_for_ParameterValuesCreator
+   public class When_creating_a_parameter_value_for_a_parameter_and_object_path : concern_for_ParameterValuesCreator
    {
       private ObjectPath _objectPath;
       private IParameter _parameter;
@@ -36,7 +36,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_return_a_parameter_start_value_using_the_provided_path_as_well_as_the_dimension_and_the_value_of_the_parameter()
+      public void should_return_a_parameter_value_using_the_provided_path_as_well_as_the_dimension_and_the_value_of_the_parameter()
       {
          _psv.Path.ToString().ShouldBeEqualTo(_objectPath.ToString());
          _psv.Dimension.ShouldBeEqualTo(_parameter.Dimension);

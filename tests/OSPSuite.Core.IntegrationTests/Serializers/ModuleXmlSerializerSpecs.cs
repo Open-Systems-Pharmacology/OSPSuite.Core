@@ -20,8 +20,8 @@ namespace OSPSuite.Core.Serializers
          module1.Add(CreateObject<SpatialStructure>().WithName("SpatialStructure"));
          module1.Add(CreateObject<ObserverBuildingBlock>().WithName("Observer"));
 
-         module1.Add(CreateObject<InitialConditionsBuildingBlock>().WithName("MSVBB"));
-         module1.Add(CreateObject<ParameterValuesBuildingBlock>().WithName("PSVBB"));
+         module1.Add(CreateObject<InitialConditionsBuildingBlock>().WithName("ICBB"));
+         module1.Add(CreateObject<ParameterValuesBuildingBlock>().WithName("PVBB"));
 
          var module2 = SerializeAndDeserialize(module1);
 

@@ -9,7 +9,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.DiffBuilders
 {
-   public class When_comparing_two_molecule_start_values_with_same_properties : concern_for_ObjectComparer
+   public class When_comparing_two_initial_conditions_with_same_properties : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -35,7 +35,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_molecule_start_values_with_different_is_present_setting : concern_for_ObjectComparer
+   public class When_comparing_two_initial_conditions_with_different_is_present_setting : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -59,7 +59,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_molecule_start_values_with_different_scale_divisor : concern_for_ObjectComparer
+   public class When_comparing_two_initial_conditions_with_different_scale_divisor : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -85,7 +85,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_molecule_start_values_with_different_scale_divisor_and_the_value_origin_should_be_visible : concern_for_ObjectComparer
+   public class When_comparing_two_initial_conditions_with_different_scale_divisor_and_the_value_origin_should_be_visible : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -115,7 +115,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_molecule_start_values_with_different_scale_divisor_and_the_value_origin_should_not_be_visible : concern_for_ObjectComparer
+   public class When_comparing_two_initial_conditions_with_different_scale_divisor_and_the_value_origin_should_not_be_visible : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -145,7 +145,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_parmeter_start_values_with_different_formulas : concern_for_ObjectComparer
+   public class When_comparing_two_parameter_values_with_different_formulas : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -169,7 +169,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_parmeter_start_values_with_different_values : concern_for_ObjectComparer
+   public class When_comparing_two_parameter_values_with_different_values : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -194,7 +194,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_parameter_start_values_with_two_null_values : concern_for_ObjectComparer
+   public class When_comparing_two_parameter_values_with_two_null_values : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -219,7 +219,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_parameter_start_values_with_one_null_values : concern_for_ObjectComparer
+   public class When_comparing_two_parameter_values_with_one_null_values : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -245,7 +245,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_parmeter_start_values_with_different_formulas_and_only_value_compare :concern_for_ObjectComparer
+   public class When_comparing_two_parameter_values_with_different_formulas_and_only_value_compare :concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -269,7 +269,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_parmeter_start_values_with_different_dimensions : concern_for_ObjectComparer
+   public class When_comparing_two_parameter_values_with_different_dimensions : concern_for_ObjectComparer
    {
       protected override void Context()
       {

@@ -9,7 +9,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.DiffBuilders
 {
-   public class When_comparing_two_start_value_building_blocks : concern_for_ObjectComparer
+   public class When_comparing_two_initial_conditions_building_blocks : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -43,7 +43,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_start_value_building_blocks_with_different_names : concern_for_ObjectComparer
+   public class When_comparing_two_initial_conditions_building_blocks_with_different_names : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -78,7 +78,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_start_value_building_blocks_with_a_missing_start_value : concern_for_ObjectComparer
+   public class When_comparing_two_initial_conditions_building_blocks_with_a_missing_initial_condition : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -111,7 +111,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_parameter_start_value_building_blocks_with_a_missing_start_value :
+   public class When_comparing_two_parameter_value_building_blocks_with_a_missing_parameter_value :
       concern_for_ObjectComparer
    {
       protected override void Context()
@@ -152,7 +152,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
 
       [Observation]
-      public void should_use_the_start_value_in_display_unit_if_available()
+      public void should_use_the_parameter_value_in_display_unit_if_available()
       {
          _report[0].DowncastTo<MissingDiffItem>().PresentObjectDetails.Contains("HELLO").ShouldBeTrue();
          _report[1].DowncastTo<MissingDiffItem>().PresentObjectDetails.Contains("10").ShouldBeTrue();

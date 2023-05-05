@@ -39,7 +39,7 @@ namespace OSPSuite.Core.Domain
    public class When_creating_new_module_configuration_from_a_module : concern_for_ModuleConfiguration
    {
       [Observation]
-      public void should_return_the_fist_molecule_start_value_and_parameter_start_value_if_one_is_defined()
+      public void should_return_the_fist_initial_condition_and_parameter_value_if_one_is_defined()
       {
          sut.SelectedInitialConditions.ShouldBeEqualTo(_initialConditionsBuildingBlock1);
          sut.SelectedParameterValues.ShouldBeEqualTo(_parameterValuesBuildingBlock);
@@ -55,7 +55,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_return_the_expected_molecule_and_parameter_start_values()
+      public void should_return_the_expected_molecule_and_parameter_values()
       {
          sut.SelectedInitialConditions.ShouldBeEqualTo(_initialConditionsBuildingBlock2);
          sut.SelectedParameterValues.ShouldBeEqualTo(_parameterValuesBuildingBlock);

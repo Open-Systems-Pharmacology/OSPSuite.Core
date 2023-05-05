@@ -445,7 +445,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_have_updated_the_formula_of_any_formula_parameter_in_the_spatial_structure_whose_value_was_overwritten_in_the_parameter_start_value_with_a_formula_and_a_constant()
+      public void should_have_updated_the_formula_of_any_formula_parameter_in_the_spatial_structure_whose_value_was_overwritten_in_the_parameter_value_with_a_formula_and_a_constant()
       {
          var bone_cell = _model.ModelOrganCompartment(Bone, Cell);
          var parameter = bone_cell.Parameter("FormulaParameterOverwritten");
@@ -487,7 +487,7 @@ namespace OSPSuite.Core
       }
    }
 
-   internal class When_a_molecule_start_value_is_defined_for_logical_container : concern_for_ModelConstructor
+   internal class When_a_initial_condition_is_defined_for_logical_container : concern_for_ModelConstructor
    {
       protected override void Context()
       {
@@ -503,7 +503,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_identify_an_issue_with_start_values_being_defined_for_logical_containers()
+      public void should_identify_an_issue_with_initial_condition_being_defined_for_logical_containers()
       {
          _result.ValidationResult.Messages.Count(message => message.Object.IsAnImplementationOf<InitialCondition>()).ShouldBeEqualTo(2);
       }

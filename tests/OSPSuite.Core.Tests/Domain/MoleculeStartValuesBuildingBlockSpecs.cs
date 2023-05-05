@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   internal class when_checking_if_a_building_block_is_referenced_by_the_start_values_building_block_without_a_reference: concern_for_InitialConditionsBuildingBlock
+   internal class when_checking_if_a_building_block_is_referenced_by_the_initial_conditions_building_block_without_a_reference: concern_for_InitialConditionsBuildingBlock
    {
       private IBuildingBlock _buildingBlock;
       private bool _result;
@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   internal class when_checking_if_a_molecule_building_block_is_referenced_by_the_start_values_building_block : concern_for_InitialConditionsBuildingBlock
+   internal class when_checking_if_a_molecule_building_block_is_referenced_by_the_initial_conditions_building_block : concern_for_InitialConditionsBuildingBlock
    {
       private IBuildingBlock _buildingBlock;
       private bool _result;
@@ -67,7 +67,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   internal class when_checking_if_a_spatial_structure_is_referenced_by_the_start_values_building_block : concern_for_InitialConditionsBuildingBlock
+   internal class when_checking_if_a_spatial_structure_is_referenced_by_the_initial_conditions_building_block : concern_for_InitialConditionsBuildingBlock
    {
       private IBuildingBlock _buildingBlock;
       private bool _result;
@@ -93,7 +93,7 @@ namespace OSPSuite.Core.Domain
       }
    }
    
-   internal class when_adding_molecule_start_values_twice : concern_for_InitialConditionsBuildingBlock
+   internal class when_adding_initial_conditions_twice : concern_for_InitialConditionsBuildingBlock
    {
       private IFormula _formula;
 
@@ -116,7 +116,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   internal class when_adding_molecule_start_values_with_matching_id_to_building_block : concern_for_InitialConditionsBuildingBlock
+   internal class when_adding_initial_conditions_with_matching_id_to_building_block : concern_for_InitialConditionsBuildingBlock
    {
       private IFormula _formula, _addedFormula;
       protected override void Context()
@@ -140,7 +140,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   internal class when_adding_molecule_start_values_to_building_block : concern_for_InitialConditionsBuildingBlock
+   internal class when_adding_initial_conditions_to_building_block : concern_for_InitialConditionsBuildingBlock
    {
       private IFormula _formula;
 

@@ -35,7 +35,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class when_creating_parameter_start_value_with_empty_path : concern_for_ParameterValue
+   public class when_creating_parameter_value_with_empty_path : concern_for_ParameterValue
    {
       protected override void Context()
       {
@@ -81,7 +81,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public abstract class equivalency_should_test_false : equivalent_parameter_start_values_setup
+   public abstract class equivalency_should_test_false : equivalent_parameter_values_setup
    {
       [Observation]
       public void should_not_be_equivalent()
@@ -162,7 +162,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public abstract class equivalent_parameter_start_values_setup : concern_for_ParameterValue
+   public abstract class equivalent_parameter_values_setup : concern_for_ParameterValue
    {
       protected ParameterValue _comparable;
       protected bool _result;
@@ -200,7 +200,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class when_comparing_equivalent_parameter_start_values : equivalent_parameter_start_values_setup
+   public class when_comparing_equivalent_parameter_values : equivalent_parameter_values_setup
    {
       [Observation]
       public void equivalency_should_be_true()
@@ -209,7 +209,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class when_comparing_reference_equal_start_values : when_comparing_equivalent_parameter_start_values
+   public class when_comparing_reference_equal_start_values : when_comparing_equivalent_parameter_values
    {
       protected override void Because()
       {

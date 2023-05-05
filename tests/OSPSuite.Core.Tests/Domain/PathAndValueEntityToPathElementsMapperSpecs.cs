@@ -47,7 +47,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_mapping_molecule_start_values_to_path_elements : concern_for_PathAndValueEntityToPathElementsMapper
+   public class When_mapping_initial_conditions_to_path_elements : concern_for_PathAndValueEntityToPathElementsMapper
    {
       private PathElements _result;
       private InitialCondition _msv;
@@ -137,7 +137,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_mapping_parameter_start_values_to_path_elements : concern_for_PathAndValueEntityToPathElementsMapper
+   public class When_mapping_parameter_values_to_path_elements : concern_for_PathAndValueEntityToPathElementsMapper
    {
       private PathElements _result;
       private ParameterValue _psv;

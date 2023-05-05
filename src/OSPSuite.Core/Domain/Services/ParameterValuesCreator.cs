@@ -18,11 +18,11 @@ namespace OSPSuite.Core.Domain.Services
       ParameterValue CreateParameterValue(ObjectPath parameterPath, IParameter parameter);
 
       /// <summary>
-      ///    Creates and returns a new parameter value with <paramref name="startValue">startValue</paramref> as StartValue
+      ///    Creates and returns a new parameter value with <paramref name="value">startValue</paramref> as StartValue
       ///    and <paramref name="dimension">dimension</paramref> as dimension
       /// </summary>
       /// <param name="parameterPath">the path of the parameter</param>
-      /// <param name="startValue">the value to be used as StartValue</param>
+      /// <param name="value">the value to be used as starting value</param>
       /// <param name="dimension">the dimension of the parameter</param>
       /// <param name="displayUnit">
       ///    The display unit of the start value. If not set, the default unit of the
@@ -31,7 +31,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="valueOrigin">Value origin for this parameter value</param>
       /// <param name="isDefault">Value indicating if the value stored is the default value from the parameter.</param>
       /// <returns>A new ParameterValue</returns>
-      ParameterValue CreateParameterValue(ObjectPath parameterPath, double startValue, IDimension dimension, Unit displayUnit = null,
+      ParameterValue CreateParameterValue(ObjectPath parameterPath, double value, IDimension dimension, Unit displayUnit = null,
          ValueOrigin valueOrigin = null, bool isDefault = false);
    }
 
@@ -49,12 +49,12 @@ namespace OSPSuite.Core.Domain.Services
       }
 
       
-      public ParameterValue CreateParameterValue(ObjectPath parameterPath, double startValue, IDimension dimension,
+      public ParameterValue CreateParameterValue(ObjectPath parameterPath, double value, IDimension dimension,
          Unit displayUnit = null, ValueOrigin valueOrigin = null, bool isDefault = false)
       {
-         var psv = new ParameterValue
+         var parameterValue = new ParameterValue
          {
-            Value = startValue,
+            Value = value,
             Dimension = dimension,
             Id = _idGenerator.NewId(),
             Path = parameterPath,
@@ -62,8 +62,8 @@ namespace OSPSuite.Core.Domain.Services
             IsDefault = isDefault
          };
 
-         psv.ValueOrigin.UpdateAllFrom(valueOrigin);
-         return psv;
+         parameterValue.ValueOrigin.UpdateAllFrom(valueOrigin);
+         return parameterValue;
       }
 
       public ParameterValue CreateParameterValue(ObjectPath parameterPath, IParameter parameter)

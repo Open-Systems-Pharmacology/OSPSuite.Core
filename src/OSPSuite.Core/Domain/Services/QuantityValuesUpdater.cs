@@ -53,7 +53,7 @@ namespace OSPSuite.Core.Domain.Services
 
          updateParameterFromExpressionProfiles(modelConfiguration);
 
-         //PSV are applied last
+         //PV are applied last
          updateParameterValueFromParameterValues(modelConfiguration);
       }
 
@@ -73,7 +73,7 @@ namespace OSPSuite.Core.Domain.Services
       private void updateParameterValueFromParameterValues(ModelConfiguration modelConfiguration)
       {
          modelConfiguration.SimulationBuilder.ParameterValues
-            .Each(psv => updateParameterValueFromStartValue(modelConfiguration, psv, getParameter));
+            .Each(pv => updateParameterValueFromStartValue(modelConfiguration, pv, getParameter));
       }
 
       private IParameter getOrAddModelParameter(ModelConfiguration modelConfiguration, IndividualParameter individualParameter)

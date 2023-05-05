@@ -62,7 +62,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void the_correct_molecule_start_values_should_have_been_removed()
+      public void the_correct_initial_conditions_should_have_been_removed()
       {
          sut.ParameterValuesCollection.Count.ShouldBeEqualTo(2);
          sut.InitialConditionsCollection.Count.ShouldBeEqualTo(1);

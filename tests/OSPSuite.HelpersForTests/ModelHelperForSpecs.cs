@@ -245,7 +245,7 @@ namespace OSPSuite.Helpers
          //overwrite to make sure we have a value for a given path
          var nanParameterNotNaN = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, Bone, Cell, "E", "OtherNaNParam");
 
-         //NAN parameters are not added to the PSV by default
+         //NAN parameters are not added to the PV by default
          parameterValues.Add(_parameterValuesCreator.CreateParameterValue(nanParameterNotNaN, 10, Constants.Dimension.NO_DIMENSION));
       }
 

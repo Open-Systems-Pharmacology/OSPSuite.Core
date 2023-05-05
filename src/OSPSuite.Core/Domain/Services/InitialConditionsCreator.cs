@@ -78,7 +78,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public InitialCondition CreateInitialCondition(ObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null)
       {
-         var msv = new InitialCondition
+         var initialCondition = new InitialCondition
          {
             Id = _idGenerator.NewId(),
             IsPresent = true,
@@ -89,8 +89,8 @@ namespace OSPSuite.Core.Domain.Services
             NegativeValuesAllowed = false,
          };
 
-         msv.ValueOrigin.UpdateAllFrom(valueOrigin);
-         return msv;
+         initialCondition.ValueOrigin.UpdateAllFrom(valueOrigin);
+         return initialCondition;
       }
 
       public InitialCondition CreateEmptyStartValue(IDimension dimension)

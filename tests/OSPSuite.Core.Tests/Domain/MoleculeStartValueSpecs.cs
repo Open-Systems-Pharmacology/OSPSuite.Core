@@ -126,7 +126,7 @@ namespace OSPSuite.Core.Domain
    public class when_testing_equivalent_msv : when_testing_equivalency_in_msv
    {
       [Observation]
-      public void empty_start_value_should_be_equivalent()
+      public void empty_initial_condition_should_be_equivalent()
       {
          _result.ShouldBeTrue();
       }

@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_setting_a_parameter_start_value_by_object_path : concern_for_ParameterValuesBuildingBlock
+   public class When_setting_a_parameter_value_by_object_path : concern_for_ParameterValuesBuildingBlock
    {
       ParameterValue _psv;
 
@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_be_able_to_retrieve_the_same_parameter_start_value_by_path()
+      public void should_be_able_to_retrieve_the_same_parameter_value_by_path()
       {
          sut[_psv.Path].ShouldBeEqualTo(_psv);
       }
