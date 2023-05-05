@@ -88,7 +88,7 @@ namespace OSPSuite.Core.Domain.Builder
       ///    Gets the default start value for the Molecule
       /// </summary>
       /// <returns>The default value if the formula is a constant, otherwise null</returns>
-      public double? GetDefaultMoleculeStartValue()
+      public double? GetDefaultInitialCondition()
       {
          if (DefaultStartFormula.IsConstant())
             return DefaultStartFormula.Calculate(null);

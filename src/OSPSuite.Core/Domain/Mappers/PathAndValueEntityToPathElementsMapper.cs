@@ -16,10 +16,10 @@ namespace OSPSuite.Core.Domain.Mappers
       {
          switch (input)
          {
-            case ParameterStartValue psv:
-               return mapAsParameterStartValue(psv);
-            case MoleculeStartValue msv:
-               return mapAsMoleculeStartValue(msv);
+            case ParameterValue parameterValue:
+               return mapAsParameterValue(parameterValue);
+            case InitialCondition initialCondition:
+               return mapAsInitialCondition(initialCondition);
             case ExpressionParameter expressionParameter:
                return mapAsExpressionParameter(expressionParameter);
             case IndividualParameter individualParameter:
@@ -43,11 +43,11 @@ namespace OSPSuite.Core.Domain.Mappers
          return pathElements;
       }
 
-      private PathElements mapAsMoleculeStartValue(MoleculeStartValue msv)
+      private PathElements mapAsInitialCondition(InitialCondition initialCondition)
       {
-         var bottomCompartmentIndex = secondLastPathElementIndex(msv);
-         var pathElements = mapAsPathAndValueEntity(msv, bottomCompartmentIndex);
-         addMolecule(msv, pathElements, bottomCompartmentIndex);
+         var bottomCompartmentIndex = secondLastPathElementIndex(initialCondition);
+         var pathElements = mapAsPathAndValueEntity(initialCondition, bottomCompartmentIndex);
+         addMolecule(initialCondition, pathElements, bottomCompartmentIndex);
 
          return pathElements;
       }
@@ -66,9 +66,9 @@ namespace OSPSuite.Core.Domain.Mappers
          return bottomCompartmentIndex + 1;
       }
 
-      private void addMolecule(MoleculeStartValue msv, PathElements pathElements, int bottomCompartmentIndex)
+      private void addMolecule(InitialCondition initialCondition, PathElements pathElements, int bottomCompartmentIndex)
       {
-         addMolecule(pathElements, msv.Path.ElementAt(moleculeNameIndex(bottomCompartmentIndex)));
+         addMolecule(pathElements, initialCondition.Path.ElementAt(moleculeNameIndex(bottomCompartmentIndex)));
       }
 
       private static void addMolecule(PathElements pathElements, string displayName)
@@ -76,9 +76,9 @@ namespace OSPSuite.Core.Domain.Mappers
          pathElements.Add(PathElementId.Molecule, new PathElement { DisplayName = displayName });
       }
 
-      private PathElements mapAsParameterStartValue(ParameterStartValue psv)
+      private PathElements mapAsParameterValue(ParameterValue parameterValue)
       {
-         return mapAsPathAndValueEntity(psv, secondLastPathElementIndex(psv));
+         return mapAsPathAndValueEntity(parameterValue, secondLastPathElementIndex(parameterValue));
       }
 
       private PathElements mapAsPathAndValueEntity(PathAndValueEntity pathAndValueEntity, int bottomCompartmentIndex)

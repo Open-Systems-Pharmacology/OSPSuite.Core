@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Serializers
    {
       protected SimulationConfiguration _simulationConfiguration;
       protected IObjectPathFactory _objectPathFactory;
-      protected IMoleculeStartValuesCreator _moleculeStartValuesCreator;
+      protected IInitialConditionsCreator _initialConditionsCreator;
       protected CreationResult _result;
       protected IModel _model;
       protected IModelCoreSimulation _simulation;
@@ -58,7 +58,7 @@ namespace OSPSuite.Core.Serializers
       protected virtual void InitializeSimulation()
       {
          _objectPathFactory = IoC.Resolve<IObjectPathFactory>();
-         _moleculeStartValuesCreator = IoC.Resolve<IMoleculeStartValuesCreator>();
+         _initialConditionsCreator = IoC.Resolve<IInitialConditionsCreator>();
          _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _module = _simulationConfiguration.ModuleConfigurations[0].Module;

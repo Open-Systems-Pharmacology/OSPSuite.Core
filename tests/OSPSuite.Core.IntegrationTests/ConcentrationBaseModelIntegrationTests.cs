@@ -66,7 +66,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_have_created_the_molecule_start_value_formula_parameter_in_concentration()
+      public void should_have_created_the_initial_condition_formula_parameter_in_concentration()
       {
          Organism_StartValue_A.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_CONCENTRATION);
          Organism_StartValue_B.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_CONCENTRATION);

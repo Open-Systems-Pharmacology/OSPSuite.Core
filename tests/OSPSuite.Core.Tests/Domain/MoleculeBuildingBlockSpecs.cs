@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Domain
 
    public class When_retrieving_the_present_molecules_based_on_the_given_molecule_values : concern_for_MoleculeBuildingBlock
    {
-      private MoleculeStartValuesBuildingBlock _moleculeStartValues;
+      private InitialConditionsBuildingBlock _initialConditions;
       private IEnumerable<MoleculeBuilder> _results;
       private MoleculeBuilder _molecule;
       private MoleculeBuilder _drug;
@@ -50,12 +50,12 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
 
-         _moleculeStartValues = new MoleculeStartValuesBuildingBlock
+         _initialConditions = new InitialConditionsBuildingBlock
          {
-            new MoleculeStartValue {Name = "drug", IsPresent = true},
-            new MoleculeStartValue {Name = "molecule", IsPresent = true},
-            new MoleculeStartValue{Name = "moleculeThatDoesNotExist", IsPresent = true },
-            new MoleculeStartValue{Name = "moleculeThatDoesExistButNotPresent", IsPresent = false }
+            new InitialCondition {Name = "drug", IsPresent = true},
+            new InitialCondition {Name = "molecule", IsPresent = true},
+            new InitialCondition{Name = "moleculeThatDoesNotExist", IsPresent = true },
+            new InitialCondition{Name = "moleculeThatDoesExistButNotPresent", IsPresent = false }
          };
 
          _drug = new MoleculeBuilder().WithName("drug");
@@ -66,11 +66,11 @@ namespace OSPSuite.Core.Domain
       }
       protected override void Because()
       {
-         _results=  sut.AllPresentFor(_moleculeStartValues);
+         _results=  sut.AllPresentFor(_initialConditions);
       }
 
       [Observation]
-      public void should_only_return_the_available_molecules_that_are_defined_as_present_in_the_molecule_start_value_building_block()
+      public void should_only_return_the_available_molecules_that_are_defined_as_present_in_the_initial_condition_building_block()
       {
          _results.ShouldOnlyContain(_drug,_molecule);
       }

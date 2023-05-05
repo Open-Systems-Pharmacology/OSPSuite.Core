@@ -147,7 +147,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_use_the_identification_parameter_start_value_if_the_corresponding_identification_parameter_is_fixed()
+      public void should_use_the_identification_parameter_value_if_the_corresponding_identification_parameter_is_fixed()
       {
          A.CallTo(() => _parameterTask.SetParameterValue(_linkedParameter4.Parameter, _identificationParameter3.StartValue, _linkedParameter4.Simulation)).MustHaveHappened();
       }

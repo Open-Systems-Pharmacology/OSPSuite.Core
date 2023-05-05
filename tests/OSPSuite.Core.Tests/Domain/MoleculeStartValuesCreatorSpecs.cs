@@ -10,7 +10,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
-   internal abstract class concern_for_MoleculeStartValuesCreator : ContextSpecification<MoleculeStartValuesCreator>
+   internal abstract class concern_for_InitialConditionsCreator : ContextSpecification<InitialConditionsCreator>
    {
       private IObjectBaseFactory _baseFactory;
       protected ICloneManagerForBuildingBlock _cloneManagerForBuildingBlock;
@@ -19,16 +19,16 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _baseFactory = A.Fake<IObjectBaseFactory>();
-         A.CallTo(() => _baseFactory.Create<MoleculeStartValuesBuildingBlock>()).ReturnsLazily(() => new MoleculeStartValuesBuildingBlock());
+         A.CallTo(() => _baseFactory.Create<InitialConditionsBuildingBlock>()).ReturnsLazily(() => new InitialConditionsBuildingBlock());
          _cloneManagerForBuildingBlock = A.Fake<ICloneManagerForBuildingBlock>();
-         sut = new MoleculeStartValuesCreator(_baseFactory, new ObjectPathFactory(new AliasCreator()),
+         sut = new InitialConditionsCreator(_baseFactory, new ObjectPathFactory(new AliasCreator()),
             new IdGenerator(), _cloneManagerForBuildingBlock);
       }
    }
 
-   internal class when_generating_new_start_values_building_block : concern_for_MoleculeStartValuesCreator
+   internal class when_generating_new_start_values_building_block : concern_for_InitialConditionsCreator
    {
-      private MoleculeStartValuesBuildingBlock _result;
+      private InitialConditionsBuildingBlock _result;
 
       protected override void Because()
       {
@@ -36,15 +36,15 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void start_values_building_block_should_contain_no_start_values()
+      public void initial_conditions_building_block_should_contain_no_initial_conditions()
       {
          _result.Count().ShouldBeEqualTo(0);
       }
    }
 
-   internal class when_generating_new_non_empty_start_values_building_block : concern_for_MoleculeStartValuesCreator
+   internal class when_generating_new_non_empty_initial_conditions_building_block : concern_for_InitialConditionsCreator
    {
-      private MoleculeStartValuesBuildingBlock _result;
+      private InitialConditionsBuildingBlock _result;
       private SpatialStructure _spatialStructure;
       private MoleculeBuildingBlock _moleculeBuildingBlock;
       private IFormula _defaultStartFormula;
@@ -77,27 +77,27 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void number_of_start_values_must_be_correct()
+      public void number_of_initial_conditions_must_be_correct()
       {
          _result.Count().ShouldBeEqualTo(4);
       }
 
       [Observation]
-      public void should_have_set_each_start_values_as_not_allowing_negative_values()
+      public void should_have_set_each_initial_condition_as_not_allowing_negative_values()
       {
-         _result.Each(msv => msv.NegativeValuesAllowed.ShouldBeFalse());
+         _result.Each(initialCondition => initialCondition.NegativeValuesAllowed.ShouldBeFalse());
       }
 
   
       [Observation]
-      public void explicit_formula_cloned_in_start_value()
+      public void explicit_formula_cloned_in_initial_condition()
       {
          _result[new ObjectPath(_rootContainerString, _childContainerString, "M2")].Formula.ToString().ShouldBeEqualTo("M/V");
          _result[new ObjectPath(_rootContainerString, "M2")].Formula.ToString().ShouldBeEqualTo("M/V");
       }
 
       [Observation]
-      public void constant_formula_molecules_have_double_start_value()
+      public void constant_formula_molecules_have_double_initial_condition()
       {
          _result[new ObjectPath(_rootContainerString, _childContainerString, M1)].Value.ShouldBeEqualTo(5.0);
          _result[new ObjectPath(_rootContainerString, M1)].Value.ShouldBeEqualTo(5.0);

@@ -10,10 +10,10 @@ namespace OSPSuite.Helpers
 {
    public class ConcentrationBaseModelHelperForSpecs
    {
-      private readonly IMoleculeStartValuesCreator _moleculeStartValuesCreator;
+      private readonly IInitialConditionsCreator _initialConditionsCreator;
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IObjectPathFactory _objectPathFactory;
-      private readonly IParameterStartValuesCreator _parameterStartValuesCreator;
+      private readonly IParameterValuesCreator _parameterValuesCreator;
       private readonly ISpatialStructureFactory _spatialStructureFactory;
       private readonly IOutputSchemaFactory _outputSchemaFactory;
       private readonly IMoleculeBuilderFactory _moleculeBuilderFactory;
@@ -24,7 +24,7 @@ namespace OSPSuite.Helpers
       private readonly IDimension _concentrationPerTimeDimension;
       private readonly IDimension _volumeDimension;
 
-      public ConcentrationBaseModelHelperForSpecs(IObjectBaseFactory objectBaseFactory, IParameterStartValuesCreator parameterStartValuesCreator, IMoleculeStartValuesCreator moleculeStartValuesCreator,
+      public ConcentrationBaseModelHelperForSpecs(IObjectBaseFactory objectBaseFactory, IParameterValuesCreator parameterValuesCreator, IInitialConditionsCreator initialConditionsCreator,
          IObjectPathFactory objectPathFactory, IDimensionFactory dimensionFactory, ISpatialStructureFactory spatialStructureFactory,
          IOutputSchemaFactory outputSchemaFactory, IMoleculeBuilderFactory moleculeBuilderFactory,
          IReactionDimensionRetriever reactionDimensionRetriever, IModelConstructor modelConstructor, ISolverSettingsFactory solverSettingsFactory)
@@ -36,8 +36,8 @@ namespace OSPSuite.Helpers
          _solverSettingsFactory = solverSettingsFactory;
          _reactionDimensionRetriever = reactionDimensionRetriever.DowncastTo<ReactionDimensionRetrieverForSpecs>();
          _spatialStructureFactory = spatialStructureFactory;
-         _parameterStartValuesCreator = parameterStartValuesCreator;
-         _moleculeStartValuesCreator = moleculeStartValuesCreator;
+         _parameterValuesCreator = parameterValuesCreator;
+         _initialConditionsCreator = initialConditionsCreator;
          _objectPathFactory = objectPathFactory;
          _concentrationDimension = dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
          _concentrationPerTimeDimension = dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION_PER_TIME);
@@ -82,27 +82,27 @@ namespace OSPSuite.Helpers
          simulationConfiguration.SimulationSettings = createSimulationSettings();
 
 
-         var moleculeStartValues = _moleculeStartValuesCreator.CreateFrom(module.SpatialStructure, module.Molecules);
+         var initialConditions = _initialConditionsCreator.CreateFrom(module.SpatialStructure, module.Molecules);
          var objectPathForContainerThatDoesNotExist = _objectPathFactory.CreateObjectPathFrom("TOTO", "TATA");
-         moleculeStartValues.Add(_moleculeStartValuesCreator.CreateMoleculeStartValue(objectPathForContainerThatDoesNotExist, "A", _concentrationDimension));
+         initialConditions.Add(_initialConditionsCreator.CreateInitialCondition(objectPathForContainerThatDoesNotExist, "A", _concentrationDimension));
 
-         module.Add(moleculeStartValues);
-         var parameterStartValues = _objectBaseFactory.Create<ParameterStartValuesBuildingBlock>();
-         module.Add(parameterStartValues);
-         setMoleculeStartValues(moleculeStartValues);
+         module.Add(initialConditions);
+         var parameterValues = _objectBaseFactory.Create<ParameterValuesBuildingBlock>();
+         module.Add(parameterValues);
+         setInitialConditions(initialConditions);
 
-         var moduleConfiguration = new ModuleConfiguration(module, moleculeStartValues, parameterStartValues);
+         var moduleConfiguration = new ModuleConfiguration(module, initialConditions, parameterValues);
          simulationConfiguration.AddModuleConfiguration(moduleConfiguration);
          return simulationConfiguration;
       }
 
-      private void setMoleculeStartValues(MoleculeStartValuesBuildingBlock moleculeStartValues)
+      private void setInitialConditions(InitialConditionsBuildingBlock initialConditions)
       {
-         var organsim_A = moleculeStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, "A")];
+         var organsim_A = initialConditions[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, "A")];
          organsim_A.Value = 5;
 
 
-         var lung_B = moleculeStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ConstantsForSpecs.Lung, "B")];
+         var lung_B = initialConditions[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ConstantsForSpecs.Lung, "B")];
          lung_B.Formula = null;
          lung_B.Value = 100;
       }

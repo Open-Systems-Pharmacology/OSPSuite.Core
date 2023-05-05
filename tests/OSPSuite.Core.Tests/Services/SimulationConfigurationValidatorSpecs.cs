@@ -42,8 +42,8 @@ namespace OSPSuite.Core.Services
             new ReactionBuildingBlock(),
             new SpatialStructure(),
             _eventBuildingBlock,
-            new MoleculeStartValuesBuildingBlock(),
-            new ParameterStartValuesBuildingBlock()
+            new InitialConditionsBuildingBlock(),
+            new ParameterValuesBuildingBlock()
          };
 
          _simulationConfiguration = new SimulationConfiguration();

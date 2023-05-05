@@ -90,7 +90,7 @@ namespace OSPSuite.Core.Domain.Mappers
       {
          //set start value formula to the default. If user has specified
          //a new start value in MoleculesStartValueCollection-BB, default formula
-         //will be overwritten during setting of molecule start values
+         //will be overwritten during setting of initial condition
 
          var modelFormula = _formulaMapper.MapFrom(moleculeBuilder.DefaultStartFormula, simulationBuilder);
 

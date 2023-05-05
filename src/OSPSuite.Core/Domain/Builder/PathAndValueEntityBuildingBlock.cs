@@ -19,16 +19,16 @@ namespace OSPSuite.Core.Domain.Builder
 
       public T FindByPath(string objectPath) => _allValues[new ObjectPath(objectPath.ToPathArray())];
 
-      public void Add(T startValue)
+      public void Add(T pathAndValueEntity)
       {
-         _allValues.Add(startValue);
-         startValue.BuildingBlock = this;
+         _allValues.Add(pathAndValueEntity);
+         pathAndValueEntity.BuildingBlock = this;
       }
 
-      public void Remove(T startValue)
+      public void Remove(T pathAndValueEntity)
       {
-         if (startValue == null) return;
-         Remove(startValue.Path);
+         if (pathAndValueEntity == null) return;
+         Remove(pathAndValueEntity.Path);
       }
 
       public void Remove(ObjectPath objectPath)

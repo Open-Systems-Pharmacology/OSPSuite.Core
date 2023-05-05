@@ -119,7 +119,7 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class MoleculeStartValuesBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<MoleculeStartValuesBuildingBlock, MoleculeStartValue>
+   public class InitialConditionsBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<InitialConditionsBuildingBlock, InitialCondition>
    {
       public override void PerformMapping()
       {
@@ -129,7 +129,7 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class ParameterStartValuesBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<ParameterStartValuesBuildingBlock, ParameterStartValue>
+   public class ParameterValuesBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<ParameterValuesBuildingBlock, ParameterValue>
    {
    }
 

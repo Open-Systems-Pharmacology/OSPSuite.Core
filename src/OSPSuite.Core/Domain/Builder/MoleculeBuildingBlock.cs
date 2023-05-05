@@ -15,18 +15,18 @@ namespace OSPSuite.Core.Domain.Builder
 
       public IEnumerable<MoleculeBuilder> AllFloating() => this.Where(x => x.IsFloating);
 
-      public IEnumerable<MoleculeBuilder> AllPresentFor(IEnumerable<MoleculeStartValuesBuildingBlock> moleculesStartValues)
+      public IEnumerable<MoleculeBuilder> AllPresentFor(IEnumerable<InitialConditionsBuildingBlock> initialConditions)
       {
-         var moleculeNames = moleculesStartValues.SelectMany(x => x)
-            .Where(moleculeStartValue => moleculeStartValue.IsPresent)
-            .Select(moleculeStartValue => moleculeStartValue.MoleculeName)
+         var moleculeNames = initialConditions.SelectMany(x => x)
+            .Where(initialCondition => initialCondition.IsPresent)
+            .Select(initialCondition => initialCondition.MoleculeName)
             .Distinct();
 
 
          return moleculeNames.Select(moleculeName => this[moleculeName]).Where(m => m != null);
       }
 
-      public IEnumerable<MoleculeBuilder> AllPresentFor(MoleculeStartValuesBuildingBlock moleculesStartValues)
+      public IEnumerable<MoleculeBuilder> AllPresentFor(InitialConditionsBuildingBlock moleculesStartValues)
       {
          return AllPresentFor(new[] {moleculesStartValues});
       }

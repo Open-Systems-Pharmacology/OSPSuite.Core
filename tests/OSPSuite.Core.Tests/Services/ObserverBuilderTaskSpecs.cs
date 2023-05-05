@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Services
       private MoleculeBuilder _molecule1;
       private MoleculeBuilder _molecule2;
       private MoleculeBuildingBlock _moleculeBuildingBlock;
-      private MoleculeStartValuesBuildingBlock _moleculeStartValues;
+      private InitialConditionsBuildingBlock _initialConditions;
       protected SimulationBuilder _simulationBuilder;
 
       protected override void Context()
@@ -41,17 +41,17 @@ namespace OSPSuite.Core.Services
          {
             _molecule1, _molecule2
          };
-         _moleculeStartValues = new MoleculeStartValuesBuildingBlock
+         _initialConditions = new InitialConditionsBuildingBlock
          {
-            new MoleculeStartValue {Path = new ObjectPath("Liver", _molecule1Name), IsPresent = true},
-            new MoleculeStartValue {Path = new ObjectPath("Liver", _molecule2Name), IsPresent = true},
+            new InitialCondition {Path = new ObjectPath("Liver", _molecule1Name), IsPresent = true},
+            new InitialCondition {Path = new ObjectPath("Liver", _molecule2Name), IsPresent = true},
          };
 
          var module = new Module
          {
             _observerBuildingBlock,
             _moleculeBuildingBlock,
-            _moleculeStartValues
+            _initialConditions
          };
          _simulationConfiguration = new SimulationConfiguration();
          _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module));

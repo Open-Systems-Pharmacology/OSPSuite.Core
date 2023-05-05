@@ -10,9 +10,9 @@ namespace OSPSuite.Core.Domain
    public abstract class concern_for_ModuleConfiguration : ContextSpecification<ModuleConfiguration>
    {
       protected Module _module;
-      protected MoleculeStartValuesBuildingBlock _moleculeStartValuesBuildingBlock1;
-      protected MoleculeStartValuesBuildingBlock _moleculeStartValuesBuildingBlock2;
-      protected ParameterStartValuesBuildingBlock _parameterStartValuesBuildingBlock;
+      protected InitialConditionsBuildingBlock _initialConditionsBuildingBlock1;
+      protected InitialConditionsBuildingBlock _initialConditionsBuildingBlock2;
+      protected ParameterValuesBuildingBlock _parameterValuesBuildingBlock;
 
       protected override void Context()
       {
@@ -25,12 +25,12 @@ namespace OSPSuite.Core.Domain
             new MoleculeBuildingBlock()
          };
 
-         _moleculeStartValuesBuildingBlock1 = new MoleculeStartValuesBuildingBlock();
-         _moleculeStartValuesBuildingBlock2 = new MoleculeStartValuesBuildingBlock();
-         _module.Add(_moleculeStartValuesBuildingBlock1);
-         _module.Add(_moleculeStartValuesBuildingBlock2);
-         _parameterStartValuesBuildingBlock = new ParameterStartValuesBuildingBlock();
-         _module.Add(_parameterStartValuesBuildingBlock);
+         _initialConditionsBuildingBlock1 = new InitialConditionsBuildingBlock();
+         _initialConditionsBuildingBlock2 = new InitialConditionsBuildingBlock();
+         _module.Add(_initialConditionsBuildingBlock1);
+         _module.Add(_initialConditionsBuildingBlock2);
+         _parameterValuesBuildingBlock = new ParameterValuesBuildingBlock();
+         _module.Add(_parameterValuesBuildingBlock);
 
          sut = new ModuleConfiguration(_module);
       }
@@ -39,10 +39,10 @@ namespace OSPSuite.Core.Domain
    public class When_creating_new_module_configuration_from_a_module : concern_for_ModuleConfiguration
    {
       [Observation]
-      public void should_return_the_fist_molecule_start_value_and_parameter_start_value_if_one_is_defined()
+      public void should_return_the_fist_initial_condition_and_parameter_value_if_one_is_defined()
       {
-         sut.SelectedMoleculeStartValues.ShouldBeEqualTo(_moleculeStartValuesBuildingBlock1);
-         sut.SelectedParameterStartValues.ShouldBeEqualTo(_parameterStartValuesBuildingBlock);
+         sut.SelectedInitialConditions.ShouldBeEqualTo(_initialConditionsBuildingBlock1);
+         sut.SelectedParameterValues.ShouldBeEqualTo(_parameterValuesBuildingBlock);
       }
    }
 
@@ -51,14 +51,14 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         sut = new ModuleConfiguration(_module, _moleculeStartValuesBuildingBlock2, _parameterStartValuesBuildingBlock);
+         sut = new ModuleConfiguration(_module, _initialConditionsBuildingBlock2, _parameterValuesBuildingBlock);
       }
 
       [Observation]
-      public void should_return_the_expected_molecule_and_parameter_start_values()
+      public void should_return_the_expected_molecule_and_parameter_values()
       {
-         sut.SelectedMoleculeStartValues.ShouldBeEqualTo(_moleculeStartValuesBuildingBlock2);
-         sut.SelectedParameterStartValues.ShouldBeEqualTo(_parameterStartValuesBuildingBlock);
+         sut.SelectedInitialConditions.ShouldBeEqualTo(_initialConditionsBuildingBlock2);
+         sut.SelectedParameterValues.ShouldBeEqualTo(_parameterValuesBuildingBlock);
       }
    }
 
@@ -74,8 +74,8 @@ namespace OSPSuite.Core.Domain
          _dataRepositoryTask = A.Fake<IDataRepositoryTask>();
          _cloneManager = new CloneManagerForBuildingBlock(new ObjectBaseFactoryForSpecs(new DimensionFactoryForIntegrationTests()), _dataRepositoryTask);
          
-         sut.SelectedMoleculeStartValues = _moleculeStartValuesBuildingBlock2;
-         sut.SelectedParameterStartValues = null;
+         sut.SelectedInitialConditions = _initialConditionsBuildingBlock2;
+         sut.SelectedParameterValues = null;
       }
 
       protected override void Because()
@@ -86,9 +86,9 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void the_cloned_building_block_should_have_the_properly_selected_start_values()
       {
-         _result.SelectedParameterStartValues.ShouldBeNull();
-         _result.SelectedMoleculeStartValues.ShouldNotBeEqualTo(sut.SelectedMoleculeStartValues);
-         _result.SelectedMoleculeStartValues.Name.ShouldBeEqualTo(sut.SelectedMoleculeStartValues.Name);
+         _result.SelectedParameterValues.ShouldBeNull();
+         _result.SelectedInitialConditions.ShouldNotBeEqualTo(sut.SelectedInitialConditions);
+         _result.SelectedInitialConditions.Name.ShouldBeEqualTo(sut.SelectedInitialConditions.Name);
       }
 
       [Observation]
@@ -104,7 +104,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         sut = new ModuleConfiguration(_module, _moleculeStartValuesBuildingBlock2, _parameterStartValuesBuildingBlock);
+         sut = new ModuleConfiguration(_module, _initialConditionsBuildingBlock2, _parameterValuesBuildingBlock);
       }
 
       [Observation]

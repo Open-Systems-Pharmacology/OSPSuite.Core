@@ -29,8 +29,8 @@ namespace OSPSuite.Core.Domain
             Name = "module"
          };
          module.Add(new SpatialStructure().WithName("spatial structure"));
-         module.Add(new MoleculeStartValuesBuildingBlock());
-         module.Add(new ParameterStartValuesBuildingBlock());
+         module.Add(new InitialConditionsBuildingBlock());
+         module.Add(new ParameterValuesBuildingBlock());
          sut.AddModuleConfiguration(new ModuleConfiguration(module));
 
          sut.PerformCircularReferenceCheck = !sut.PerformCircularReferenceCheck;

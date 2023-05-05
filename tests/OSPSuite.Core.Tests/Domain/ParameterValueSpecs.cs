@@ -4,20 +4,20 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_ExpressionParameter : ContextSpecification<ExpressionParameter>
+   public abstract class concern_for_ParameterValue : ContextSpecification<ParameterValue>
    {
       protected override void Context()
       {
-         sut = new ExpressionParameter() { ContainerPath = new ObjectPath("Path1", "Path2"), Name = "Name" };
+         sut = new ParameterValue {ContainerPath = new ObjectPath("Path1", "Path2"), Name = "Name"};
       }
    }
 
-   public class When_instantiating_new_ExpressionParameter : concern_for_ExpressionParameter
+   public class when_instantiating_new_ParameterValue : concern_for_ParameterValue
    {
       [Observation]
       public void name_should_be_last_element_in_ObjectPath()
       {
-         sut.Name.ShouldBeEqualTo("Name");
+         sut.ParameterName.ShouldBeEqualTo("Name");
       }
 
       [Observation]
@@ -33,7 +33,27 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_setting_expression_parameter_name : concern_for_InitialCondition
+   public class when_creating_parameter_value_with_empty_path : concern_for_ParameterValue
+   {
+      protected override void Context()
+      {
+         sut = new ParameterValue();
+      }
+
+      [Observation]
+      public void container_path_should_be_empty()
+      {
+         sut.ContainerPath.ShouldBeEqualTo(ObjectPath.Empty);
+      }
+
+      [Observation]
+      public void name_should_be_null()
+      {
+         sut.ParameterName.ShouldBeEqualTo(ObjectPath.Empty.ToString());
+      }
+   }
+
+   public class when_setting_parameter_name : concern_for_ParameterValue
    {
       protected override void Because()
       {
@@ -43,7 +63,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void parameter_name_should_be_updated()
       {
-         sut.MoleculeName.ShouldBeEqualTo("Name2");
+         sut.ParameterName.ShouldBeEqualTo("Name2");
       }
 
       [Observation]

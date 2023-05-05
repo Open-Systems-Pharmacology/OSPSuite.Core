@@ -47,14 +47,14 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   internal class MoleculeStartValueDiffBuilder : StartValueDiffBuilder<MoleculeStartValue>
+   internal class InitialConditionDiffBuilder : StartValueDiffBuilder<InitialCondition>
    {
-      public MoleculeStartValueDiffBuilder(IObjectComparer objectComparer, EntityDiffBuilder entityDiffBuilder, WithValueOriginComparison<MoleculeStartValue> valueOriginComparison)
+      public InitialConditionDiffBuilder(IObjectComparer objectComparer, EntityDiffBuilder entityDiffBuilder, WithValueOriginComparison<InitialCondition> valueOriginComparison)
          : base(objectComparer, entityDiffBuilder, valueOriginComparison)
       {
       }
 
-      protected override void ComparePathAndEntityValues(IComparison<MoleculeStartValue> comparison)
+      protected override void ComparePathAndEntityValues(IComparison<InitialCondition> comparison)
       {
          base.ComparePathAndEntityValues(comparison);
          CompareValues(x => x.IsPresent, x => x.IsPresent, comparison);
@@ -63,9 +63,9 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   internal class ParameterStartValueDiffBuilder : StartValueDiffBuilder<ParameterStartValue>
+   internal class ParameterValueDiffBuilder : StartValueDiffBuilder<ParameterValue>
    {
-      public ParameterStartValueDiffBuilder(IObjectComparer objectComparer, EntityDiffBuilder entityDiffBuilder, WithValueOriginComparison<ParameterStartValue> valueOriginComparison)
+      public ParameterValueDiffBuilder(IObjectComparer objectComparer, EntityDiffBuilder entityDiffBuilder, WithValueOriginComparison<ParameterValue> valueOriginComparison)
          : base(objectComparer, entityDiffBuilder, valueOriginComparison)
       {
       }

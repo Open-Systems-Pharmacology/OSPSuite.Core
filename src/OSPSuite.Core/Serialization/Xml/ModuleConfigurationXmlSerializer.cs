@@ -8,8 +8,8 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          //is this right? Or is this a real instance of a module?
          Map(x => x.Module);
-         MapReference(x => x.SelectedMoleculeStartValues);
-         MapReference(x => x.SelectedParameterStartValues);
+         MapReference(x => x.SelectedInitialConditions);
+         MapReference(x => x.SelectedParameterValues);
       }
    }
 }

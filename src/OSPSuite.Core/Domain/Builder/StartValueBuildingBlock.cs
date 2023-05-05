@@ -29,7 +29,7 @@ namespace OSPSuite.Core.Domain.Builder
       public override void AcceptVisitor(IVisitor visitor)
       {
          base.AcceptVisitor(visitor);
-         _allValues.Each(msv => msv.AcceptVisitor(visitor));
+         _allValues.Each(initialCondition => initialCondition.AcceptVisitor(visitor));
       }
    }
 }

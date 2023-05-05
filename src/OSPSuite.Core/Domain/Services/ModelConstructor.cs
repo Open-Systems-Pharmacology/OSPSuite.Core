@@ -363,15 +363,15 @@ namespace OSPSuite.Core.Domain.Services
          var presentMolecules = allPresentMoleculesInContainers(modelConfiguration).ToList();
 
          var moleculesWithPhysicalContainers = presentMolecules.Where(containerIsPhysical);
-         moleculesWithPhysicalContainers.Each(x => { addMoleculeToContainer(simulationBuilder, x.Container, simulationBuilder.MoleculeByName(x.MoleculeStartValue.MoleculeName)); });
+         moleculesWithPhysicalContainers.Each(x => { addMoleculeToContainer(simulationBuilder, x.Container, simulationBuilder.MoleculeByName(x.InitialCondition.MoleculeName)); });
 
          return new MoleculeBuildingBlockValidator().Validate(simulationBuilder.Molecules)
             .AddMessagesFrom(createValidationMessagesForPresentMolecules(presentMolecules));
       }
 
-      private static bool containerIsPhysical(StartValueAndContainer startValueAndContainer)
+      private static bool containerIsPhysical(InitialConditionAndContainer initialConditionAndContainer)
       {
-         return startValueAndContainer.Container != null && startValueAndContainer.Container.Mode == ContainerMode.Physical;
+         return initialConditionAndContainer.Container != null && initialConditionAndContainer.Container.Mode == ContainerMode.Physical;
       }
 
       private void addMoleculeToContainer(SimulationBuilder simulationBuilder, IContainer container, MoleculeBuilder moleculeBuilder)
@@ -379,7 +379,7 @@ namespace OSPSuite.Core.Domain.Services
          container.Add(_moleculeMapper.MapFrom(moleculeBuilder, container, simulationBuilder));
       }
 
-      private ValidationResult createValidationMessagesForPresentMolecules(List<StartValueAndContainer> presentMolecules)
+      private ValidationResult createValidationMessagesForPresentMolecules(List<InitialConditionAndContainer> presentMolecules)
       {
          var moleculesWithoutPhysicalContainers = presentMolecules.Where(x => !containerIsPhysical(x));
          var messages = moleculesWithoutPhysicalContainers.Select(x =>
@@ -390,41 +390,41 @@ namespace OSPSuite.Core.Domain.Services
          return new ValidationResult(messages);
       }
 
-      private ValidationMessage createValidationMessageForMoleculesWithNonPhysicalContainer(StartValueAndContainer startValueAndContainer)
+      private ValidationMessage createValidationMessageForMoleculesWithNonPhysicalContainer(InitialConditionAndContainer initialConditionAndContainer)
       {
-         var moleculeStartValue = startValueAndContainer.MoleculeStartValue;
-         var message = Validation.StartValueDefinedForNonPhysicalContainer(moleculeStartValue.MoleculeName, moleculeStartValue.ContainerPath.PathAsString);
-         return buildValidationMessage(moleculeStartValue, message);
+         var initialCondition = initialConditionAndContainer.InitialCondition;
+         var message = Validation.StartValueDefinedForNonPhysicalContainer(initialCondition.MoleculeName, initialCondition.ContainerPath.PathAsString);
+         return buildValidationMessage(initialCondition, message);
       }
 
-      private static ValidationMessage buildValidationMessage(MoleculeStartValue moleculeStartValue,
+      private static ValidationMessage buildValidationMessage(InitialCondition initialCondition,
          string validationDescription)
       {
-         return new ValidationMessage(NotificationType.Warning, validationDescription, moleculeStartValue, moleculeStartValue.BuildingBlock);
+         return new ValidationMessage(NotificationType.Warning, validationDescription, initialCondition, initialCondition.BuildingBlock);
       }
 
-      private ValidationMessage createValidationMessageForNullContainer(StartValueAndContainer startValueAndContainer)
+      private ValidationMessage createValidationMessageForNullContainer(InitialConditionAndContainer initialConditionAndContainer)
       {
-         var moleculeStartValue = startValueAndContainer.MoleculeStartValue;
-         var message = Validation.StartValueDefinedForContainerThatCannotBeResolved(moleculeStartValue.MoleculeName, moleculeStartValue.ContainerPath.PathAsString);
-         return buildValidationMessage(moleculeStartValue, message);
+         var initialCondition = initialConditionAndContainer.InitialCondition;
+         var message = Validation.StartValueDefinedForContainerThatCannotBeResolved(initialCondition.MoleculeName, initialCondition.ContainerPath.PathAsString);
+         return buildValidationMessage(initialCondition, message);
       }
 
-      private static IEnumerable<StartValueAndContainer> allPresentMoleculesInContainers(ModelConfiguration modelConfiguration)
+      private static IEnumerable<InitialConditionAndContainer> allPresentMoleculesInContainers(ModelConfiguration modelConfiguration)
       {
          var (model, simulationConfiguration) = modelConfiguration;
          var root = model.Root;
-         return from moleculeStartValue in simulationConfiguration.AllPresentMoleculeValues()
-            select new StartValueAndContainer
+         return from initialCondition in simulationConfiguration.AllPresentMoleculeValues()
+            select new InitialConditionAndContainer
             {
-               MoleculeStartValue = moleculeStartValue,
-               Container = moleculeStartValue.ContainerPath.Resolve<IContainer>(root)
+               InitialCondition = initialCondition,
+               Container = initialCondition.ContainerPath.Resolve<IContainer>(root)
             };
       }
 
-      private class StartValueAndContainer
+      private class InitialConditionAndContainer
       {
-         public MoleculeStartValue MoleculeStartValue { get; set; }
+         public InitialCondition InitialCondition { get; set; }
          public IContainer Container { get; set; }
       }
    }

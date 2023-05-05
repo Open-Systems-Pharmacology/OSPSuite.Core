@@ -26,9 +26,9 @@ namespace OSPSuite.Core.Domain
       public PassiveTransportBuildingBlock PassiveTransports => buildingBlockByType<PassiveTransportBuildingBlock>();
       public SpatialStructure SpatialStructure => buildingBlockByType<SpatialStructure>();
 
-      public IReadOnlyList<MoleculeStartValuesBuildingBlock> MoleculeStartValuesCollection => buildingBlocksByType<MoleculeStartValuesBuildingBlock>();
+      public IReadOnlyList<InitialConditionsBuildingBlock> InitialConditionsCollection => buildingBlocksByType<InitialConditionsBuildingBlock>();
 
-      public IReadOnlyList<ParameterStartValuesBuildingBlock> ParameterStartValuesCollection => buildingBlocksByType<ParameterStartValuesBuildingBlock>();
+      public IReadOnlyList<ParameterValuesBuildingBlock> ParameterValuesCollection => buildingBlocksByType<ParameterValuesBuildingBlock>();
 
       public virtual ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
@@ -63,7 +63,7 @@ namespace OSPSuite.Core.Domain
          _buildingBlocks.Add(buildingBlock);
       }
 
-      private bool isSingle(IBuildingBlock buildingBlock) => !(buildingBlock.IsAnImplementationOf<MoleculeStartValuesBuildingBlock>() || buildingBlock.IsAnImplementationOf<ParameterStartValuesBuildingBlock>());
+      private bool isSingle(IBuildingBlock buildingBlock) => !(buildingBlock.IsAnImplementationOf<InitialConditionsBuildingBlock>() || buildingBlock.IsAnImplementationOf<ParameterValuesBuildingBlock>());
 
       public void Remove(IBuildingBlock buildingBlock)
       {

@@ -9,7 +9,7 @@ using OSPSuite.Utility.Visitor;
 namespace OSPSuite.Core.Converters.v7_3
 {
    public class Converter710To730 : IObjectConverter,
-      IVisitor<ParameterStartValuesBuildingBlock>,
+      IVisitor<ParameterValuesBuildingBlock>,
       IVisitor<PassiveTransportBuildingBlock>,
       IVisitor<SimulationSettings>,
       IVisitor<EventGroupBuildingBlock>,
@@ -63,9 +63,9 @@ namespace OSPSuite.Core.Converters.v7_3
          ConvertAllParametersIn(simulation.Model.Root);
       }
 
-      public void Visit(ParameterStartValuesBuildingBlock parameterStartValuesBuildingBlock)
+      public void Visit(ParameterValuesBuildingBlock parameterValuesBuildingBlock)
       {
-         parameterStartValuesBuildingBlock.Each(ConvertWithDefaultStateObjectToDefault);
+         parameterValuesBuildingBlock.Each(ConvertWithDefaultStateObjectToDefault);
       }
 
       public void Visit(EventGroupBuildingBlock eventGroupBuildingBlock)
