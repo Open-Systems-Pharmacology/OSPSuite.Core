@@ -7,13 +7,6 @@ namespace OSPSuite.Core.Domain.Builder
       public string ParameterName => Name;
       public bool IsDefault { get; set; }
 
-      public bool IsEquivalentTo(ParameterValue parameterValue)
-      {
-         var isBaseEquivalent = base.IsEquivalentTo(parameterValue);
-         var isEquivalent = NullableEqualsCheck(ParameterName, parameterValue.ParameterName);
-         return isBaseEquivalent && isEquivalent;
-      }
-
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);

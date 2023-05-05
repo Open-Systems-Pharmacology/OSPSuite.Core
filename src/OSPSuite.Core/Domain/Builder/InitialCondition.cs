@@ -33,18 +33,6 @@ namespace OSPSuite.Core.Domain.Builder
 
       public string MoleculeName => Name;
 
-      public bool IsEquivalentTo(InitialCondition initialCondition)
-      {
-         var isBaseEquivalent = base.IsEquivalentTo(initialCondition);
-
-         var isEquivalent =
-            IsPresent == initialCondition.IsPresent &&
-            NullableEqualsCheck(MoleculeName, initialCondition.MoleculeName) &&
-            ValueComparer.AreValuesEqual(ScaleDivisor, initialCondition.ScaleDivisor);
-
-         return isBaseEquivalent && isEquivalent;
-      }
-
       public double ScaleDivisor
       {
          get => _scaleDivisor;

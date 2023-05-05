@@ -68,54 +68,7 @@ namespace OSPSuite.Core.Domain.Builder
          get => ContainerPath.Clone<ObjectPath>().AndAdd(Name);
          set => entityFullPathToComponents(value);
       }
-
-      /// <summary>
-      ///    Tests whether or not the value is public-member-equivalent to the target
-      /// </summary>
-      /// <param name="target">The comparable object</param>
-      /// <returns>True if all the public members are equal, otherwise false</returns>
-      protected bool IsEquivalentTo(PathAndValueEntity target)
-      {
-         if (ReferenceEquals(this, target))
-            return true;
-
-         return
-            NullableEqualsCheck(ContainerPath, target.ContainerPath) &&
-            NullableEqualsCheck(Path, target.Path) &&
-            Value.HasValue == target.Value.HasValue &&
-            (!Value.HasValue || ValueComparer.AreValuesEqual(Value.GetValueOrDefault(), target.Value.GetValueOrDefault())) &&
-            NullableEqualsCheck(Formula, target.Formula, x => x.ToString()) &&
-            NullableEqualsCheck(Dimension, target.Dimension, x => x.ToString()) &&
-            NullableEqualsCheck(Icon, target.Icon) &&
-            NullableEqualsCheck(Description, target.Description) &&
-            NullableEqualsCheck(Name, target.Name);
-      }
-
-      /// <summary>
-      ///    Compares two objects of the same type first checking for null, then for .Equals
-      /// </summary>
-      /// <typeparam name="T">The type being compared</typeparam>
-      /// <param name="first">The first element being compared</param>
-      /// <param name="second">The second element being compared</param>
-      /// <param name="transform">
-      ///    An optional transform done on the parameter before .Equals. Often this is .ToString
-      ///    making the the comparison the same as first.ToString().Equals(second.ToString())
-      /// </param>
-      /// <returns>
-      ///    The result of the transform and .Equals calls as outlined if first is not null. If first is null, returns true
-      ///    if second is null
-      /// </returns>
-      protected bool NullableEqualsCheck<T>(T first, T second, Func<T, object> transform = null) where T : class
-      {
-         if (first == null)
-            return second == null;
-
-         if (second == null)
-            return false;
-
-         return transform?.Invoke(first).Equals(transform(second)) ?? first.Equals(second);
-      }
-
+      
       public double? Value
       {
          get => _value;

@@ -118,17 +118,17 @@ namespace OSPSuite.Core.Converters.v12
          buildingBlockList.Add(buildingBlockElement);
          
          var parameterStartValuesElement = buildConfigurationElement.Element("ParameterStartValues");
-         var parameterStartValuesId = parameterStartValuesElement.Attribute("id").Value;
+         var selectedParameterValuesId = parameterStartValuesElement.Attribute("id").Value;
          parameterStartValuesElement.Name = _parameterValuesBuildingBlockName;
          buildingBlockList.Add(parameterStartValuesElement);
 
          var moleculeStartValueElement = buildConfigurationElement.Element("MoleculeStartValues");
-         var moleculeStartValuesId = moleculeStartValueElement.Attribute("id").Value;
+         var selectedInitialConditionsId = moleculeStartValueElement.Attribute("id").Value;
          moleculeStartValueElement.Name = _initialConditionsBuildingBlockName;
          buildingBlockList.Add(moleculeStartValueElement);
 
-         moduleConfiguration.AddAttribute("selectedInitialConditions", moleculeStartValuesId);
-         moduleConfiguration.AddAttribute("selectedParameterValues", parameterStartValuesId);
+         moduleConfiguration.AddAttribute("selectedInitialConditions", selectedInitialConditionsId);
+         moduleConfiguration.AddAttribute("selectedParameterValues", selectedParameterValuesId);
 
       
          var simulationSettings = buildConfigurationElement.Element("SimulationSettings");
