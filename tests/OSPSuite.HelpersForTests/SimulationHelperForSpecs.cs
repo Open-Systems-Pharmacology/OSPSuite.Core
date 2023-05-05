@@ -9,9 +9,9 @@ namespace OSPSuite.Helpers
    {
       private readonly IModelConstructor _modelConstructor;
 
-      public SimulationHelperForSpecs(IObjectBaseFactory objectBaseFactory, IParameterStartValuesCreator parameterStartValuesCreator, IInitialConditionsCreator initialConditionsCreator, IObjectPathFactory objectPathFactory, IDimensionFactory dimensionFactory, IModelConstructor modelConstructor,
+      public SimulationHelperForSpecs(IObjectBaseFactory objectBaseFactory, IParameterValuesCreator parameterValuesCreator, IInitialConditionsCreator initialConditionsCreator, IObjectPathFactory objectPathFactory, IDimensionFactory dimensionFactory, IModelConstructor modelConstructor,
          ISpatialStructureFactory spatialStructureFactory, INeighborhoodBuilderFactory neighborhoodFactory, IOutputSchemaFactory outputSchemaFactory, IMoleculeBuilderFactory moleculeBuilderFactory, ISolverSettingsFactory solverSettingsFactory)
-         : base(objectBaseFactory, parameterStartValuesCreator, initialConditionsCreator, objectPathFactory,
+         : base(objectBaseFactory, parameterValuesCreator, initialConditionsCreator, objectPathFactory,
             dimensionFactory, spatialStructureFactory, neighborhoodFactory, outputSchemaFactory, moleculeBuilderFactory, solverSettingsFactory)
       {
          _modelConstructor = modelConstructor;

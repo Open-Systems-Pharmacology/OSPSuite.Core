@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly ObjectBaseCache<EventGroupBuilder> _eventGroups = new ObjectBaseCache<EventGroupBuilder>();
       private readonly ObjectBaseCache<ObserverBuilder> _observers = new ObjectBaseCache<ObserverBuilder>();
       private readonly ObjectBaseCache<MoleculeBuilder> _molecules = new ObjectBaseCache<MoleculeBuilder>();
-      private readonly StartValueCache<ParameterStartValue> _parameterStartValues = new StartValueCache<ParameterStartValue>();
+      private readonly StartValueCache<ParameterValue> _parameterValues = new StartValueCache<ParameterValue>();
       private readonly StartValueCache<InitialCondition> _initialConditions = new StartValueCache<InitialCondition>();
 
       private readonly Cache<IObjectBase, IObjectBase> _builderCache = new Cache<IObjectBase, IObjectBase>(onMissingKey: x => null);
@@ -91,7 +91,7 @@ namespace OSPSuite.Core.Domain.Builder
          _eventGroups.AddRange(allBuilder(x => x.EventGroups));
          _observers.AddRange(allBuilder(x => x.Observers));
          _molecules.AddRange(allBuilder(x => x.Molecules));
-         _parameterStartValues.AddRange(allStartValueBuilder(x => x.SelectedParameterStartValues));
+         _parameterValues.AddRange(allStartValueBuilder(x => x.SelectedParameterValues));
          _initialConditions.AddRange(allStartValueBuilder(x => x.SelectedInitialConditions));
       }
 
@@ -101,7 +101,7 @@ namespace OSPSuite.Core.Domain.Builder
       internal IReadOnlyCollection<EventGroupBuilder> EventGroups => _eventGroups;
       internal IReadOnlyCollection<ObserverBuilder> Observers => _observers;
       internal IReadOnlyCollection<MoleculeBuilder> Molecules => _molecules;
-      internal IReadOnlyCollection<ParameterStartValue> ParameterStartValues => _parameterStartValues;
+      internal IReadOnlyCollection<ParameterValue> ParameterValues => _parameterValues;
       internal IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
 
       internal MoleculeBuilder MoleculeByName(string name) => _molecules[name];

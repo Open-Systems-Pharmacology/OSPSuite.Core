@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Domain
 
       public IReadOnlyList<InitialConditionsBuildingBlock> InitialConditionsCollection => buildingBlocksByType<InitialConditionsBuildingBlock>();
 
-      public IReadOnlyList<ParameterStartValuesBuildingBlock> ParameterStartValuesCollection => buildingBlocksByType<ParameterStartValuesBuildingBlock>();
+      public IReadOnlyList<ParameterValuesBuildingBlock> ParameterValuesCollection => buildingBlocksByType<ParameterValuesBuildingBlock>();
 
       public virtual ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
@@ -63,7 +63,7 @@ namespace OSPSuite.Core.Domain
          _buildingBlocks.Add(buildingBlock);
       }
 
-      private bool isSingle(IBuildingBlock buildingBlock) => !(buildingBlock.IsAnImplementationOf<InitialConditionsBuildingBlock>() || buildingBlock.IsAnImplementationOf<ParameterStartValuesBuildingBlock>());
+      private bool isSingle(IBuildingBlock buildingBlock) => !(buildingBlock.IsAnImplementationOf<InitialConditionsBuildingBlock>() || buildingBlock.IsAnImplementationOf<ParameterValuesBuildingBlock>());
 
       public void Remove(IBuildingBlock buildingBlock)
       {

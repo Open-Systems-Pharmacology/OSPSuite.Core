@@ -30,7 +30,7 @@ namespace OSPSuite.Core.Domain
          };
          module.Add(new SpatialStructure().WithName("spatial structure"));
          module.Add(new InitialConditionsBuildingBlock());
-         module.Add(new ParameterStartValuesBuildingBlock());
+         module.Add(new ParameterValuesBuildingBlock());
          sut.AddModuleConfiguration(new ModuleConfiguration(module));
 
          sut.PerformCircularReferenceCheck = !sut.PerformCircularReferenceCheck;

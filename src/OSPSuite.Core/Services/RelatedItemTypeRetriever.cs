@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Services
 
       private static bool isStartValueBuildingBlock<T>(T relatedObject) where T : class
       {
-         return relatedObject.IsAnImplementationOf<ParameterStartValuesBuildingBlock>() ||
+         return relatedObject.IsAnImplementationOf<ParameterValuesBuildingBlock>() ||
                 relatedObject.IsAnImplementationOf<InitialConditionsBuildingBlock>();
       }
 

@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Reference to selected parameter value in the Module (can be null if none is used)
       /// </summary>
-      public ParameterStartValuesBuildingBlock SelectedParameterStartValues { get; set; }
+      public ParameterValuesBuildingBlock SelectedParameterValues { get; set; }
 
       [Obsolete("For serialization")]
       public ModuleConfiguration()
@@ -30,7 +30,7 @@ namespace OSPSuite.Core.Domain
       ///    if defined
       /// </summary>
       /// <param name="module">Module</param>
-      public ModuleConfiguration(Module module) : this(module, module.InitialConditionsCollection.FirstOrDefault(), module.ParameterStartValuesCollection.FirstOrDefault())
+      public ModuleConfiguration(Module module) : this(module, module.InitialConditionsCollection.FirstOrDefault(), module.ParameterValuesCollection.FirstOrDefault())
       {
          Module = module;
       }
@@ -40,12 +40,12 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       /// <param name="module">Module</param>
       /// <param name="selectedInitialConditionBuilding">Initial Conditions. Assuming this belongs to the module or is null</param>
-      /// <param name="selectedParameterStartValues">Parameter values. Assuming this belongs to the module or is null</param>
-      public ModuleConfiguration(Module module, InitialConditionsBuildingBlock selectedInitialConditionBuilding, ParameterStartValuesBuildingBlock selectedParameterStartValues)
+      /// <param name="selectedParameterValues">Parameter values. Assuming this belongs to the module or is null</param>
+      public ModuleConfiguration(Module module, InitialConditionsBuildingBlock selectedInitialConditionBuilding, ParameterValuesBuildingBlock selectedParameterValues)
       {
          Module = module;
          SelectedInitialConditions = selectedInitialConditionBuilding;
-         SelectedParameterStartValues = selectedParameterStartValues;
+         SelectedParameterValues = selectedParameterValues;
       }
 
       public void AcceptVisitor(IVisitor visitor)
@@ -71,8 +71,8 @@ namespace OSPSuite.Core.Domain
                return Module.SpatialStructure as T;
             case Type molStartValuesType when molStartValuesType == typeof(InitialConditionsBuildingBlock):
                return SelectedInitialConditions as T;
-            case Type paramStartValuesType when paramStartValuesType == typeof(ParameterStartValuesBuildingBlock):
-               return SelectedParameterStartValues as T;
+            case Type paramStartValuesType when paramStartValuesType == typeof(ParameterValuesBuildingBlock):
+               return SelectedParameterValues as T;
             default:
                return null;
          }
@@ -86,7 +86,7 @@ namespace OSPSuite.Core.Domain
          Module = cloneManager.Clone(sourceConfiguration.Module);
 
          SelectedInitialConditions = Module.InitialConditionsCollection.FindByName(sourceConfiguration.SelectedInitialConditions?.Name);
-         SelectedParameterStartValues = Module.ParameterStartValuesCollection.FindByName(sourceConfiguration.SelectedParameterStartValues?.Name);
+         SelectedParameterValues = Module.ParameterValuesCollection.FindByName(sourceConfiguration.SelectedParameterValues?.Name);
       }
    }
 }

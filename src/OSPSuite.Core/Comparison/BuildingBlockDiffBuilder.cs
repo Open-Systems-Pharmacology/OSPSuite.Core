@@ -118,9 +118,9 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public class ParameterStartValueBuildingBlockDiffBuilder : StartValueBuildingBlockDiffBuilder<ParameterStartValuesBuildingBlock, ParameterStartValue>
+   public class ParameterValueBuildingBlockDiffBuilder : StartValueBuildingBlockDiffBuilder<ParameterValuesBuildingBlock, ParameterValue>
    {
-      public ParameterStartValueBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) : base(objectBaseDiffBuilder, enumerableComparer)
+      public ParameterValueBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) : base(objectBaseDiffBuilder, enumerableComparer)
       {
       }
    }

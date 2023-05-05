@@ -151,10 +151,10 @@ namespace OSPSuite.Core.DiffBuilders
       {
          base.Context();
 
-         var msv1 = new ParameterStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv1 = new ParameterValue().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
 
-         var msv2 = new ParameterStartValue().WithName("Tada").WithFormula(new ExplicitFormula("2"));
+         var msv2 = new ParameterValue().WithName("Tada").WithFormula(new ExplicitFormula("2"));
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
 
 
@@ -175,11 +175,11 @@ namespace OSPSuite.Core.DiffBuilders
       {
          base.Context();
 
-         var msv1 = new ParameterStartValue().WithName("Tada");
+         var msv1 = new ParameterValue().WithName("Tada");
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv1.Value = 2;
 
-         var msv2 = new ParameterStartValue().WithName("Tada");
+         var msv2 = new ParameterValue().WithName("Tada");
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv1.Value = 3;
 
@@ -200,11 +200,11 @@ namespace OSPSuite.Core.DiffBuilders
       {
          base.Context();
 
-         var msv1 = new ParameterStartValue().WithName("Tada");
+         var msv1 = new ParameterValue().WithName("Tada");
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv1.Value = null;
 
-         var msv2 = new ParameterStartValue().WithName("Tada");
+         var msv2 = new ParameterValue().WithName("Tada");
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv2.Value = null;
 
@@ -225,11 +225,11 @@ namespace OSPSuite.Core.DiffBuilders
       {
          base.Context();
 
-         var msv1 = new ParameterStartValue().WithName("Tada");
+         var msv1 = new ParameterValue().WithName("Tada");
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv1.Value = 5;
 
-         var msv2 = new ParameterStartValue().WithName("Tada");
+         var msv2 = new ParameterValue().WithName("Tada");
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv2.Value = null;
 
@@ -253,10 +253,10 @@ namespace OSPSuite.Core.DiffBuilders
 
          _comparerSettings.FormulaComparison = FormulaComparison.Value;
 
-         var msv1 = new ParameterStartValue().WithName("Tada").WithFormula(new ExplicitFormula("1+1"));
+         var msv1 = new ParameterValue().WithName("Tada").WithFormula(new ExplicitFormula("1+1"));
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
 
-         var msv2 = new ParameterStartValue().WithName("Tada").WithFormula(new ExplicitFormula("2"));
+         var msv2 = new ParameterValue().WithName("Tada").WithFormula(new ExplicitFormula("2"));
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          _object1 = msv1;
          _object2 = msv2;
@@ -278,10 +278,10 @@ namespace OSPSuite.Core.DiffBuilders
          _comparerSettings.FormulaComparison = FormulaComparison.Value;
 
          var dim = A.Fake<IDimension>();
-         var msv1 = new ParameterStartValue().WithName("Tada").WithFormula(new ConstantFormula(2)).WithDimension(dim);
+         var msv1 = new ParameterValue().WithName("Tada").WithFormula(new ConstantFormula(2)).WithDimension(dim);
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
          var dim2 = A.Fake<IDimension>();
-         var msv2 = new ParameterStartValue().WithName("Tada").WithFormula(new ConstantFormula(2)).WithDimension(dim2);
+         var msv2 = new ParameterValue().WithName("Tada").WithFormula(new ConstantFormula(2)).WithDimension(dim2);
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          _object1 = msv1;
          _object2 = msv2;

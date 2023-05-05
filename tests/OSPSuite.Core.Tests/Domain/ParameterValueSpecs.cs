@@ -6,15 +6,15 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_ParameterStartValue : ContextSpecification<ParameterStartValue>
+   public abstract class concern_for_ParameterValue : ContextSpecification<ParameterValue>
    {
       protected override void Context()
       {
-         sut = new ParameterStartValue {ContainerPath = new ObjectPath("Path1", "Path2"), Name = "Name"};
+         sut = new ParameterValue {ContainerPath = new ObjectPath("Path1", "Path2"), Name = "Name"};
       }
    }
 
-   public class when_instantiating_new_ParameterStartValue : concern_for_ParameterStartValue
+   public class when_instantiating_new_ParameterValue : concern_for_ParameterValue
    {
       [Observation]
       public void name_should_be_last_element_in_ObjectPath()
@@ -35,11 +35,11 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class when_creating_parameter_start_value_with_empty_path : concern_for_ParameterStartValue
+   public class when_creating_parameter_start_value_with_empty_path : concern_for_ParameterValue
    {
       protected override void Context()
       {
-         sut = new ParameterStartValue();
+         sut = new ParameterValue();
       }
 
       [Observation]
@@ -55,7 +55,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class when_setting_parameter_name : concern_for_ParameterStartValue
+   public class when_setting_parameter_name : concern_for_ParameterValue
    {
       protected override void Because()
       {
@@ -162,14 +162,14 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public abstract class equivalent_parameter_start_values_setup : concern_for_ParameterStartValue
+   public abstract class equivalent_parameter_start_values_setup : concern_for_ParameterValue
    {
-      protected ParameterStartValue _comparable;
+      protected ParameterValue _comparable;
       protected bool _result;
       protected override void Context()
       {
-         sut = new ParameterStartValue();
-         _comparable = new ParameterStartValue();
+         sut = new ParameterValue();
+         _comparable = new ParameterValue();
 
          sut.Path = new ObjectPath("A", "B", "Name");
          _comparable.Path = sut.Path.Clone<ObjectPath>();
@@ -217,15 +217,15 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class when_comparing_empty_start_values : concern_for_ParameterStartValue
+   public class when_comparing_empty_start_values : concern_for_ParameterValue
    {
-      protected ParameterStartValue _comparable;
+      protected ParameterValue _comparable;
       protected bool _result;
 
       protected override void Context()
       {
-         sut = new ParameterStartValue();
-         _comparable = new ParameterStartValue();
+         sut = new ParameterValue();
+         _comparable = new ParameterValue();
       }
 
       protected override void Because()

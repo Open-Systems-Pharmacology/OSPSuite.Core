@@ -4,22 +4,22 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_ParameterStartValuesBuildingBlock : ContextSpecification<ParameterStartValuesBuildingBlock>
+   public abstract class concern_for_ParameterValuesBuildingBlock : ContextSpecification<ParameterValuesBuildingBlock>
    {
       protected override void Context()
       {
-         sut = new ParameterStartValuesBuildingBlock();
+         sut = new ParameterValuesBuildingBlock();
       }
    }
 
-   public class When_setting_a_parameter_start_value_by_object_path : concern_for_ParameterStartValuesBuildingBlock
+   public class When_setting_a_parameter_start_value_by_object_path : concern_for_ParameterValuesBuildingBlock
    {
-      ParameterStartValue _psv;
+      ParameterValue _psv;
 
       protected override void Context()
       {
          base.Context();
-         _psv = new ParameterStartValue {Path = new ObjectPath("A, B, C")};
+         _psv = new ParameterValue {Path = new ObjectPath("A, B, C")};
       }
 
       protected override void Because()

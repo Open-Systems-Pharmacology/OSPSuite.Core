@@ -39,7 +39,7 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class ParameterStartValueXmlSerializer : StartValueXmlSerializer<ParameterStartValue>
+   public class ParameterValueXmlSerializer : StartValueXmlSerializer<ParameterValue>
    {
       public override void PerformMapping()
       {

@@ -16,8 +16,8 @@ namespace OSPSuite.Core.Domain.Mappers
       {
          switch (input)
          {
-            case ParameterStartValue psv:
-               return mapAsParameterStartValue(psv);
+            case ParameterValue psv:
+               return mapAsParameterValue(psv);
             case InitialCondition msv:
                return mapAsInitialCondition(msv);
             case ExpressionParameter expressionParameter:
@@ -76,7 +76,7 @@ namespace OSPSuite.Core.Domain.Mappers
          pathElements.Add(PathElementId.Molecule, new PathElement { DisplayName = displayName });
       }
 
-      private PathElements mapAsParameterStartValue(ParameterStartValue psv)
+      private PathElements mapAsParameterValue(ParameterValue psv)
       {
          return mapAsPathAndValueEntity(psv, secondLastPathElementIndex(psv));
       }

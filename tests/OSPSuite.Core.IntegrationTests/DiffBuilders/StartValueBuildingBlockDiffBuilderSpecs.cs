@@ -117,32 +117,32 @@ namespace OSPSuite.Core.DiffBuilders
       protected override void Context()
       {
          base.Context();
-         var parameterStartValuesBuildingBlock1 = new ParameterStartValuesBuildingBlock().WithName("Tada");
+         var parameterValuesBuildingBlock1 = new ParameterValuesBuildingBlock().WithName("Tada");
 
-         var parameterStartValueA = new ParameterStartValue().WithName("MSVa");
-         parameterStartValueA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         var parameterValueA = new ParameterValue().WithName("MSVa");
+         parameterValueA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
 
-         var parameterStartValueB = new ParameterStartValue().WithName("MSVb");
-         parameterStartValueB.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
-         parameterStartValueB.Formula = new ExplicitFormula("1+2").WithName("HELLO");
+         var parameterValueB = new ParameterValue().WithName("MSVb");
+         parameterValueB.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         parameterValueB.Formula = new ExplicitFormula("1+2").WithName("HELLO");
 
-         parameterStartValuesBuildingBlock1.Add(parameterStartValueA);
-         parameterStartValuesBuildingBlock1.Add(parameterStartValueB);
+         parameterValuesBuildingBlock1.Add(parameterValueA);
+         parameterValuesBuildingBlock1.Add(parameterValueB);
 
-         var parameterStartValuesBuildingBlock2 = new ParameterStartValuesBuildingBlock().WithName("Tada");
-         parameterStartValueA = new ParameterStartValue().WithName("MSVa");
-         parameterStartValueA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         var parameterValuesBuildingBlock2 = new ParameterValuesBuildingBlock().WithName("Tada");
+         parameterValueA = new ParameterValue().WithName("MSVa");
+         parameterValueA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
 
-         parameterStartValueB = new ParameterStartValue().WithName("MSVb");
-         parameterStartValueB.ContainerPath = new ObjectPath("Root", "Liver", "Cell");
-         parameterStartValueB.Value = 10;
-         parameterStartValueB.Dimension = DomainHelperForSpecs.TimeDimensionForSpecs();
+         parameterValueB = new ParameterValue().WithName("MSVb");
+         parameterValueB.ContainerPath = new ObjectPath("Root", "Liver", "Cell");
+         parameterValueB.Value = 10;
+         parameterValueB.Dimension = DomainHelperForSpecs.TimeDimensionForSpecs();
 
-         parameterStartValuesBuildingBlock2.Add(parameterStartValueA);
-         parameterStartValuesBuildingBlock2.Add(parameterStartValueB);
+         parameterValuesBuildingBlock2.Add(parameterValueA);
+         parameterValuesBuildingBlock2.Add(parameterValueB);
 
-         _object1 = parameterStartValuesBuildingBlock1;
-         _object2 = parameterStartValuesBuildingBlock2;
+         _object1 = parameterValuesBuildingBlock1;
+         _object2 = parameterValuesBuildingBlock2;
       }
 
       [Observation]

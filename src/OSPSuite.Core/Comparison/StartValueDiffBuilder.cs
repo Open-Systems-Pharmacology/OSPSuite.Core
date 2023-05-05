@@ -63,9 +63,9 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   internal class ParameterStartValueDiffBuilder : StartValueDiffBuilder<ParameterStartValue>
+   internal class ParameterValueDiffBuilder : StartValueDiffBuilder<ParameterValue>
    {
-      public ParameterStartValueDiffBuilder(IObjectComparer objectComparer, EntityDiffBuilder entityDiffBuilder, WithValueOriginComparison<ParameterStartValue> valueOriginComparison)
+      public ParameterValueDiffBuilder(IObjectComparer objectComparer, EntityDiffBuilder entityDiffBuilder, WithValueOriginComparison<ParameterValue> valueOriginComparison)
          : base(objectComparer, entityDiffBuilder, valueOriginComparison)
       {
       }

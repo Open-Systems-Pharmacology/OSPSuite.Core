@@ -13,7 +13,7 @@ namespace OSPSuite.Helpers
       private readonly IInitialConditionsCreator _initialConditionsCreator;
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IObjectPathFactory _objectPathFactory;
-      private readonly IParameterStartValuesCreator _parameterStartValuesCreator;
+      private readonly IParameterValuesCreator _parameterValuesCreator;
       private readonly ISpatialStructureFactory _spatialStructureFactory;
       private readonly IOutputSchemaFactory _outputSchemaFactory;
       private readonly IMoleculeBuilderFactory _moleculeBuilderFactory;
@@ -24,7 +24,7 @@ namespace OSPSuite.Helpers
       private readonly IDimension _concentrationPerTimeDimension;
       private readonly IDimension _volumeDimension;
 
-      public ConcentrationBaseModelHelperForSpecs(IObjectBaseFactory objectBaseFactory, IParameterStartValuesCreator parameterStartValuesCreator, IInitialConditionsCreator initialConditionsCreator,
+      public ConcentrationBaseModelHelperForSpecs(IObjectBaseFactory objectBaseFactory, IParameterValuesCreator parameterValuesCreator, IInitialConditionsCreator initialConditionsCreator,
          IObjectPathFactory objectPathFactory, IDimensionFactory dimensionFactory, ISpatialStructureFactory spatialStructureFactory,
          IOutputSchemaFactory outputSchemaFactory, IMoleculeBuilderFactory moleculeBuilderFactory,
          IReactionDimensionRetriever reactionDimensionRetriever, IModelConstructor modelConstructor, ISolverSettingsFactory solverSettingsFactory)
@@ -36,7 +36,7 @@ namespace OSPSuite.Helpers
          _solverSettingsFactory = solverSettingsFactory;
          _reactionDimensionRetriever = reactionDimensionRetriever.DowncastTo<ReactionDimensionRetrieverForSpecs>();
          _spatialStructureFactory = spatialStructureFactory;
-         _parameterStartValuesCreator = parameterStartValuesCreator;
+         _parameterValuesCreator = parameterValuesCreator;
          _initialConditionsCreator = initialConditionsCreator;
          _objectPathFactory = objectPathFactory;
          _concentrationDimension = dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
@@ -87,11 +87,11 @@ namespace OSPSuite.Helpers
          initialConditions.Add(_initialConditionsCreator.CreateInitialCondition(objectPathForContainerThatDoesNotExist, "A", _concentrationDimension));
 
          module.Add(initialConditions);
-         var parameterStartValues = _objectBaseFactory.Create<ParameterStartValuesBuildingBlock>();
-         module.Add(parameterStartValues);
+         var parameterValues = _objectBaseFactory.Create<ParameterValuesBuildingBlock>();
+         module.Add(parameterValues);
          setInitialConditions(initialConditions);
 
-         var moduleConfiguration = new ModuleConfiguration(module, initialConditions, parameterStartValues);
+         var moduleConfiguration = new ModuleConfiguration(module, initialConditions, parameterValues);
          simulationConfiguration.AddModuleConfiguration(moduleConfiguration);
          return simulationConfiguration;
       }

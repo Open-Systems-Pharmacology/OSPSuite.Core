@@ -129,7 +129,7 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class ParameterStartValuesBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<ParameterStartValuesBuildingBlock, ParameterStartValue>
+   public class ParameterValuesBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<ParameterValuesBuildingBlock, ParameterValue>
    {
    }
 

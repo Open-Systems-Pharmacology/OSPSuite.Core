@@ -140,12 +140,12 @@ namespace OSPSuite.Core.Domain
    public class When_mapping_parameter_start_values_to_path_elements : concern_for_PathAndValueEntityToPathElementsMapper
    {
       private PathElements _result;
-      private ParameterStartValue _psv;
+      private ParameterValue _psv;
 
       protected override void Context()
       {
          base.Context();
-         _psv = new ParameterStartValue
+         _psv = new ParameterValue
          {
             Path = new ObjectPath(_topContainer, _container1, _container2, _bottomCompartment, _parameterName)
          };

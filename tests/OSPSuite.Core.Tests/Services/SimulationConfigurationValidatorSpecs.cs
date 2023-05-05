@@ -43,7 +43,7 @@ namespace OSPSuite.Core.Services
             new SpatialStructure(),
             _eventBuildingBlock,
             new InitialConditionsBuildingBlock(),
-            new ParameterStartValuesBuildingBlock()
+            new ParameterValuesBuildingBlock()
          };
 
          _simulationConfiguration = new SimulationConfiguration();

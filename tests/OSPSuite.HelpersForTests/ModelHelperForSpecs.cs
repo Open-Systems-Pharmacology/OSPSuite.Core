@@ -20,7 +20,7 @@ namespace OSPSuite.Helpers
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IObjectPathFactory _objectPathFactory;
       private readonly IDimensionFactory _dimensionFactory;
-      private readonly IParameterStartValuesCreator _parameterStartValuesCreator;
+      private readonly IParameterValuesCreator _parameterValuesCreator;
       private readonly ISpatialStructureFactory _spatialStructureFactory;
       private readonly INeighborhoodBuilderFactory _neighborhoodFactory;
       private readonly IOutputSchemaFactory _outputSchemaFactory;
@@ -31,7 +31,7 @@ namespace OSPSuite.Helpers
 
       private IDimension amountDimension => _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
 
-      public ModelHelperForSpecs(IObjectBaseFactory objectBaseFactory, IParameterStartValuesCreator parameterStartValuesCreator, IInitialConditionsCreator initialConditionsCreator,
+      public ModelHelperForSpecs(IObjectBaseFactory objectBaseFactory, IParameterValuesCreator parameterValuesCreator, IInitialConditionsCreator initialConditionsCreator,
          IObjectPathFactory objectPathFactory, IDimensionFactory dimensionFactory, ISpatialStructureFactory spatialStructureFactory,
          INeighborhoodBuilderFactory neighborhoodFactory, IOutputSchemaFactory outputSchemaFactory, IMoleculeBuilderFactory moleculeBuilderFactory, ISolverSettingsFactory solverSettingsFactory)
       {
@@ -41,7 +41,7 @@ namespace OSPSuite.Helpers
          _moleculeBuilderFactory = moleculeBuilderFactory;
          _solverSettingsFactory = solverSettingsFactory;
          _spatialStructureFactory = spatialStructureFactory;
-         _parameterStartValuesCreator = parameterStartValuesCreator;
+         _parameterValuesCreator = parameterValuesCreator;
          _initialConditionsCreator = initialConditionsCreator;
          _objectPathFactory = objectPathFactory;
          _dimensionFactory = dimensionFactory;
@@ -69,16 +69,16 @@ namespace OSPSuite.Helpers
          var initialCondition = _initialConditionsCreator.CreateInitialCondition(_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM), "MoleculeThatDoesNotExist", amountDimension);
          initialCondition.IsPresent = true;
          initialConditions.Add(initialCondition);
-         var parameterStartValues = _objectBaseFactory.Create<ParameterStartValuesBuildingBlock>();
+         var parameterValues = _objectBaseFactory.Create<ParameterValuesBuildingBlock>();
          setInitialConditions(initialConditions);
-         setParameterStartValues(parameterStartValues);
+         setParameterValues(parameterValues);
 
          module.Add(initialConditions);
-         module.Add(parameterStartValues);
+         module.Add(parameterValues);
 
          simulationConfiguration.Individual = getIndividual();
 
-         var moduleConfiguration = new ModuleConfiguration(module, initialConditions, parameterStartValues);
+         var moduleConfiguration = new ModuleConfiguration(module, initialConditions, parameterValues);
          simulationConfiguration.AddModuleConfiguration(moduleConfiguration);
 
          return simulationConfiguration;
@@ -224,7 +224,7 @@ namespace OSPSuite.Helpers
          return conditionFormula;
       }
 
-      private void setParameterStartValues(ParameterStartValuesBuildingBlock parameterStartValues)
+      private void setParameterValues(ParameterValuesBuildingBlock parameterValues)
       {
          //set a parameter value to a formula 
          var moleculeAPath = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, Lung, Plasma, "D");
@@ -232,21 +232,21 @@ namespace OSPSuite.Helpers
          var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("RelExp + RelExpGlobal").WithName("RelExpNormD");
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(MOLECULE, "RelExpGlobal"));
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(PARENT_CONTAINER, "RelExp").WithAlias("RelExp"));
-         parameterStartValues.AddFormula(formula);
+         parameterValues.AddFormula(formula);
 
-         var parameterStartValue = _parameterStartValuesCreator.CreateParameterStartValue(moleculeAPath, 0, Constants.Dimension.NO_DIMENSION);
-         parameterStartValue.Formula = formula;
-         parameterStartValues.Add(parameterStartValue);
+         var parameterValue = _parameterValuesCreator.CreateParameterValue(moleculeAPath, 0, Constants.Dimension.NO_DIMENSION);
+         parameterValue.Formula = formula;
+         parameterValues.Add(parameterValue);
 
          var parameterPath = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, Bone, Cell, "FormulaParameterOverwritten");
-         parameterStartValues.Add(_parameterStartValuesCreator.CreateParameterStartValue(parameterPath, 300, Constants.Dimension.NO_DIMENSION));
+         parameterValues.Add(_parameterValuesCreator.CreateParameterValue(parameterPath, 300, Constants.Dimension.NO_DIMENSION));
 
 
          //overwrite to make sure we have a value for a given path
          var nanParameterNotNaN = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, Bone, Cell, "E", "OtherNaNParam");
 
          //NAN parameters are not added to the PSV by default
-         parameterStartValues.Add(_parameterStartValuesCreator.CreateParameterStartValue(nanParameterNotNaN, 10, Constants.Dimension.NO_DIMENSION));
+         parameterValues.Add(_parameterValuesCreator.CreateParameterValue(nanParameterNotNaN, 10, Constants.Dimension.NO_DIMENSION));
       }
 
       private void setInitialConditions(InitialConditionsBuildingBlock moleculesStartValues)
@@ -1316,8 +1316,8 @@ namespace OSPSuite.Helpers
          if (sourceObject.IsAnImplementationOf<InitialConditionsBuildingBlock>())
             bb = new InitialConditionsBuildingBlock();
 
-         if (sourceObject.IsAnImplementationOf<ParameterStartValuesBuildingBlock>())
-            bb = new ParameterStartValuesBuildingBlock();
+         if (sourceObject.IsAnImplementationOf<ParameterValuesBuildingBlock>())
+            bb = new ParameterValuesBuildingBlock();
 
          if (sourceObject.IsAnImplementationOf<SimulationSettings>())
             bb = new SimulationSettings();
