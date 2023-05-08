@@ -4,14 +4,14 @@ using OSPSuite.Core.Serialization.Xml.Extensions;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
-   public abstract class StartValueXmlSerializer<T> : EntityXmlSerializer<T> where T : StartValueBase
+   public abstract class StartValueXmlSerializer<T> : EntityXmlSerializer<T> where T : PathAndValueEntity
    {
       public override void PerformMapping()
       {
          base.PerformMapping();
          Map(x => x.Dimension);
          Map(x => x.ContainerPath);
-         Map(x => x.StartValue);
+         Map(x => x.Value);
          MapReference(x => x.Formula);
       }
 

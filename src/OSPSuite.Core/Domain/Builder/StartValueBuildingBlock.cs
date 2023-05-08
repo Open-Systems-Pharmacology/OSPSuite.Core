@@ -4,7 +4,7 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public interface IStartValuesBuildingBlock<T> : IBuildingBlock<T> where T : class, IStartValue
+   public interface IStartValuesBuildingBlock<T> : IBuildingBlock<T> where T : PathAndValueEntity
    {
       /// <summary>
       ///    Returns the start value registered for the given path. If not found, null is returned
@@ -19,7 +19,7 @@ namespace OSPSuite.Core.Domain.Builder
       void Remove(ObjectPath objectPath);
    }
 
-   public abstract class StartValueBuildingBlock<T> : PathAndValueEntityBuildingBlock<T>, IStartValuesBuildingBlock<T> where T : PathAndValueEntity, IStartValue
+   public abstract class StartValueBuildingBlock<T> : PathAndValueEntityBuildingBlock<T>, IStartValuesBuildingBlock<T> where T : PathAndValueEntity
    {
       protected StartValueBuildingBlock()
       {

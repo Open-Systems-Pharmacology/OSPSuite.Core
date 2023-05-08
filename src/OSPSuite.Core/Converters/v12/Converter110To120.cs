@@ -51,7 +51,19 @@ namespace OSPSuite.Core.Converters.v12
       private void convertParameterStartValue(XElement element)
       {
          element.Name = "ParameterValue";
+         replaceStartValueAttribute(element);
          _converted = true;
+      }
+
+      private void replaceStartValueAttribute(XElement element)
+      {
+         var attribute = element.Attribute("startValue");
+         if (attribute != null)
+         {
+            attribute.Remove();
+            element.AddAttribute("value", attribute.Value);
+            _converted = true;
+         }
       }
 
       private void convertParameterStartValuesBuildingBlock(XElement element)
@@ -66,9 +78,10 @@ namespace OSPSuite.Core.Converters.v12
          _converted = true;
       }
 
-      private void convertMoleculeStartValue(XElement msvElement)
+      private void convertMoleculeStartValue(XElement element)
       {
-         msvElement.Name = "InitialCondition";
+         element.Name = "InitialCondition";
+         replaceStartValueAttribute(element);
          _converted = true;
       }
 
@@ -116,7 +129,7 @@ namespace OSPSuite.Core.Converters.v12
          buildingBlockElement = buildConfigurationElement.Element("EventGroups");
          buildingBlockElement.Name = "EventGroupBuildingBlock";
          buildingBlockList.Add(buildingBlockElement);
-         
+
          var parameterStartValuesElement = buildConfigurationElement.Element("ParameterStartValues");
          var selectedParameterValuesId = parameterStartValuesElement.Attribute("id").Value;
          parameterStartValuesElement.Name = _parameterValuesBuildingBlockName;
@@ -130,7 +143,7 @@ namespace OSPSuite.Core.Converters.v12
          moduleConfiguration.AddAttribute("selectedInitialConditions", selectedInitialConditionsId);
          moduleConfiguration.AddAttribute("selectedParameterValues", selectedParameterValuesId);
 
-      
+
          var simulationSettings = buildConfigurationElement.Element("SimulationSettings");
          var allCalculationMethods = buildConfigurationElement.Element("AllCalculationMethods");
          buildConfigurationElement.Remove();

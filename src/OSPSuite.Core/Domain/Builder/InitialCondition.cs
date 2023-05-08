@@ -2,7 +2,7 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public class InitialCondition : StartValueBase, IWithScaleDivisor
+   public class InitialCondition : PathAndValueEntity, IWithScaleDivisor
    {
       private bool _isPresent;
       private double _scaleDivisor;

@@ -88,7 +88,7 @@ namespace OSPSuite.Core.Serialization.Xml
 
    public abstract class StartValuesBuildingBlockXmlSerializer<TBuildingBlock, TStartValue> : BuildingBlockXmlSerializer<TBuildingBlock, TStartValue>
       where TBuildingBlock : class, IStartValuesBuildingBlock<TStartValue>
-      where TStartValue : class, IStartValue
+      where TStartValue : PathAndValueEntity
    {
    }
 

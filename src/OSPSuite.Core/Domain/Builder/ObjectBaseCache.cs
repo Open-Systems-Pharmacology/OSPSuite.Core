@@ -23,7 +23,7 @@ namespace OSPSuite.Core.Domain.Builder
       }
    }
 
-   public class StartValueCache<T> : MergeCache<ObjectPath, T> where T : class, IStartValue
+   public class StartValueCache<T> : MergeCache<ObjectPath, T> where T : PathAndValueEntity
    {
       public StartValueCache() : base(x => x.Path)
       {
