@@ -16,16 +16,16 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.ValueOrigin);
       }
 
-      protected override void TypedDeserialize(T startValue, XElement startValueElement, SerializationContext serializationContext)
+      protected override void TypedDeserialize(T pathAndValueEntity, XElement element, SerializationContext serializationContext)
       {
-         base.TypedDeserialize(startValue, startValueElement, serializationContext);
-         startValueElement.UpdateDisplayUnit(startValue);
+         base.TypedDeserialize(pathAndValueEntity, element, serializationContext);
+         element.UpdateDisplayUnit(pathAndValueEntity);
       }
 
-      protected override XElement TypedSerialize(T startValue, SerializationContext serializationContext)
+      protected override XElement TypedSerialize(T pathAndValueEntity, SerializationContext serializationContext)
       {
-         var startValueElement = base.TypedSerialize(startValue, serializationContext);
-         return startValueElement.AddDisplayUnitFor(startValue);
+         var element = base.TypedSerialize(pathAndValueEntity, serializationContext);
+         return element.AddDisplayUnitFor(pathAndValueEntity);
       }
    }
 
