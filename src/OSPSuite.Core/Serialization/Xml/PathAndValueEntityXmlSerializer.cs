@@ -1,4 +1,6 @@
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Serialization.Xml.Extensions;
+using System.Xml.Linq;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -11,6 +13,39 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.ContainerPath);
          MapReference(x => x.Formula);
          Map(x => x.Value);
+         Map(x => x.ValueOrigin);
+      }
+
+      protected override void TypedDeserialize(T startValue, XElement startValueElement, SerializationContext serializationContext)
+      {
+         base.TypedDeserialize(startValue, startValueElement, serializationContext);
+         startValueElement.UpdateDisplayUnit(startValue);
+      }
+
+      protected override XElement TypedSerialize(T startValue, SerializationContext serializationContext)
+      {
+         var startValueElement = base.TypedSerialize(startValue, serializationContext);
+         return startValueElement.AddDisplayUnitFor(startValue);
+      }
+   }
+
+   public class InitialConditionXmlSerializer : PathAndValueEntityXmlSerializer<InitialCondition>
+   {
+      public override void PerformMapping()
+      {
+         base.PerformMapping();
+         Map(x => x.ScaleDivisor);
+         Map(x => x.IsPresent);
+         Map(x => x.NegativeValuesAllowed);
+      }
+   }
+
+   public class ParameterValueXmlSerializer : PathAndValueEntityXmlSerializer<ParameterValue>
+   {
+      public override void PerformMapping()
+      {
+         base.PerformMapping();
+         Map(x => x.IsDefault);
       }
    }
 }
