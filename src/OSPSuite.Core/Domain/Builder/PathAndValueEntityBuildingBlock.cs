@@ -4,6 +4,7 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.Builder
 {
@@ -44,6 +45,12 @@ namespace OSPSuite.Core.Domain.Builder
       IEnumerator IEnumerable.GetEnumerator()
       {
          return GetEnumerator();
+      }
+
+      public override void AcceptVisitor(IVisitor visitor)
+      {
+         base.AcceptVisitor(visitor);
+         _allValues.Each(initialCondition => initialCondition.AcceptVisitor(visitor));
       }
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)

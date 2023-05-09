@@ -2,7 +2,7 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public class ParameterValue : StartValueBase, IWithDefaultState
+   public class ParameterValue : PathAndValueEntity, IWithDefaultState
    {
       public string ParameterName => Name;
       public bool IsDefault { get; set; }

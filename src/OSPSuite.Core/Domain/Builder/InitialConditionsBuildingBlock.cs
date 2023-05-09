@@ -3,7 +3,7 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public class InitialConditionsBuildingBlock : StartValueBuildingBlock<InitialCondition>
+   public class InitialConditionsBuildingBlock : PathAndValueEntityBuildingBlock<InitialCondition>
    {
       public InitialConditionsBuildingBlock()
       {

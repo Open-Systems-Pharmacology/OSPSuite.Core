@@ -87,7 +87,7 @@ namespace OSPSuite.Core.Comparison
       }
    }
 
-   public abstract class StartValueBuildingBlockDiffBuilder<TBuildingBlock, TStartValue> : PathAndValueEntityBuildingBlockDiffBuilder<TBuildingBlock, TStartValue> where TStartValue : StartValueBase, IStartValue where TBuildingBlock : class, IBuildingBlock<TStartValue>
+   public abstract class StartValueBuildingBlockDiffBuilder<TBuildingBlock, TStartValue> : PathAndValueEntityBuildingBlockDiffBuilder<TBuildingBlock, TStartValue> where TStartValue : PathAndValueEntity where TBuildingBlock : class, IBuildingBlock<TStartValue>
    {
       private readonly UnitFormatter _unitFormatter = new UnitFormatter();
 

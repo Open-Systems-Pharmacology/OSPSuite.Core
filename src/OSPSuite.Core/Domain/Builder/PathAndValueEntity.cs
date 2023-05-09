@@ -6,7 +6,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public abstract class PathAndValueEntity : Entity, IUsingFormula, IWithDisplayUnit, IWithPath, IWithNullableValue, IBuilder
+   public abstract class PathAndValueEntity : Entity, IUsingFormula, IWithDisplayUnit, IWithPath, IWithNullableValue, IWithValueOrigin, IBuilder
    {
       private ObjectPath _containerPath;
       protected IFormula _formula;

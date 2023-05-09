@@ -86,13 +86,15 @@ namespace OSPSuite.Core.Serialization.Xml
    {
    }
 
-   public abstract class StartValuesBuildingBlockXmlSerializer<TBuildingBlock, TStartValue> : BuildingBlockXmlSerializer<TBuildingBlock, TStartValue>
-      where TBuildingBlock : class, IStartValuesBuildingBlock<TStartValue>
-      where TStartValue : class, IStartValue
+   public abstract class PathAndValueEntityBuildingBlockXmlSerializer<TBuildingBlock, TStartValue> : BuildingBlockXmlSerializer<TBuildingBlock, TStartValue>
+      where TBuildingBlock : PathAndValueEntityBuildingBlock<TStartValue>
+      where TStartValue : PathAndValueEntity
    {
    }
 
-   public class PathAndValueEntityBuildingBlockFromPKSimXmlSerializer<TBuildingBlock, TBuilder> : BuildingBlockXmlSerializer<TBuildingBlock, TBuilder> where TBuilder : PathAndValueEntity where TBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<TBuilder>
+   public class PathAndValueEntityBuildingBlockFromPKSimXmlSerializer<TBuildingBlock, TBuilder> : PathAndValueEntityBuildingBlockXmlSerializer<TBuildingBlock, TBuilder> 
+      where TBuilder : PathAndValueEntity 
+      where TBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<TBuilder>
    {
       public override void PerformMapping()
       {
@@ -119,7 +121,7 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class InitialConditionsBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<InitialConditionsBuildingBlock, InitialCondition>
+   public class InitialConditionsBuildingBlockXmlSerializer : PathAndValueEntityBuildingBlockXmlSerializer<InitialConditionsBuildingBlock, InitialCondition>
    {
       public override void PerformMapping()
       {
@@ -129,7 +131,7 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class ParameterValuesBuildingBlockXmlSerializer : StartValuesBuildingBlockXmlSerializer<ParameterValuesBuildingBlock, ParameterValue>
+   public class ParameterValuesBuildingBlockXmlSerializer : PathAndValueEntityBuildingBlockXmlSerializer<ParameterValuesBuildingBlock, ParameterValue>
    {
    }
 
