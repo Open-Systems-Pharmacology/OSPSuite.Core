@@ -104,5 +104,17 @@ namespace OSPSuite.Core.Domain
       {
          return GetEnumerator();
       }
+
+      public IReadOnlyList<IBuildingBlock> ReferringStartValueBuildingBlocks(IBuildingBlock buildingBlockToRemove)
+      {
+         return referringStartValueBuildingBlocks(buildingBlockToRemove, InitialConditionsCollection).ToList();
+      }
+      private IEnumerable<IBuildingBlock> referringStartValueBuildingBlocks(IBuildingBlock buildingBlockToRemove, IReadOnlyList<InitialConditionsBuildingBlock> buildingBlockCollection)
+      {
+         return buildingBlockCollection
+            .Where(bb => bb.Uses(buildingBlockToRemove))
+            .OfType<IBuildingBlock>()
+            .ToList();
+      }
    }
 }

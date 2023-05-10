@@ -27,6 +27,30 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_resolving_referred_molecule_building_blocks : concern_for_Module
+   {
+      private MoleculeBuildingBlock _moleculeBuildingBlock;
+      private IReadOnlyList<IBuildingBlock> _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         _moleculeBuildingBlock = new MoleculeBuildingBlock { Id = "1" };
+         sut.Add(new InitialConditionsBuildingBlock { MoleculeBuildingBlockId = "1", SpatialStructureId = "2" });
+      }
+
+      protected override void Because()
+      {
+         _result = sut.ReferringStartValueBuildingBlocks(_moleculeBuildingBlock);
+      }
+
+      [Observation]
+      public void should_find_only_building_block_with_reference()
+      {
+         _result.Count.ShouldBeEqualTo(1);
+      }
+   }
+
    public class When_settings_properties_via_extended_properties_in_a_module : concern_for_Module
    {
       [Observation]
