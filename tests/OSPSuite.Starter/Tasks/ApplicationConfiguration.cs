@@ -1,4 +1,5 @@
 using System.IO;
+using System.Reflection;
 using OSPSuite.Assets;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
@@ -18,5 +19,11 @@ namespace OSPSuite.Starter.Tasks
       public override string UserSettingsFileName { get; } = "UserSettings.xml";
       public override string ApplicationSettingsFileName { get; } = "ApplicationSettings.xml";
       public override string IssueTrackerUrl { get; } = "url";
+
+      // Assembly.GetExecutingAssembly() must be called where the constructor is called
+      // do not pull up
+      public ApplicationConfiguration() : base(Assembly.GetExecutingAssembly())
+      {
+      }
    }
 }
