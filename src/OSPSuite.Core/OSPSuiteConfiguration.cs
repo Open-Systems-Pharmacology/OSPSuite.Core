@@ -38,7 +38,6 @@ namespace OSPSuite.Core
       public string UserSettingsFilePath { get; }
       public string ApplicationSettingsFilePath { get; }
       public string OSPSuiteNameWithVersion { get; }
-      
       public abstract string WatermarkOptionLocation { get; }
       public abstract string ApplicationFolderPathName { get; }
       public virtual string LicenseAgreementFilePath { get; } = Constants.Files.LICENSE_AGREEMENT_FILE_NAME;
@@ -47,10 +46,13 @@ namespace OSPSuite.Core
       private readonly string _localFolder;
 
       /// <summary>
-      ///   Creates a configuration using the executing assembly and version
+      ///    Creates a configuration using the executing assembly and version
       /// </summary>
-      /// <param name="executingAssembly">Call this method System.Reflection.Assembly.GetExecutingAssembly() to generate the <paramref name="executingAssembly"/>.
-      /// This code must execute in the caller, do not pull up</param>
+      /// <param name="executingAssembly">
+      ///    Call this method System.Reflection.Assembly.GetExecutingAssembly() to generate the
+      ///    <paramref name="executingAssembly" />.
+      ///    This code must execute in the caller, do not pull up
+      /// </param>
       /// <param name="assemblyVersion"></param>
       protected OSPSuiteConfiguration(Assembly executingAssembly, Version assemblyVersion = null)
       {
