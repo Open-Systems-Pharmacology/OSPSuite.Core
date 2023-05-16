@@ -62,7 +62,7 @@ namespace OSPSuite.Core
          Version = combineVersions(Major, Minor);
          Build = _assemblyVersion.Build;
          FullVersion = combineVersions(Version, Build);
-         _localFolder = new FileInfo(executingAssembly.Location).DirectoryName;
+         _localFolder = executingAssembly != null ? new FileInfo(executingAssembly.Location).DirectoryName : new FileInfo(Assembly.GetExecutingAssembly().Location).DirectoryName;
 
          ReleaseDescription = retrieveReleaseDescription();
          _isReleasedVersion = string.Equals(FullVersion, ReleaseDescription);
