@@ -224,6 +224,11 @@ namespace OSPSuite.Presentation.Presenters
          _region.ToggleVisibility();
       }
 
+      protected virtual bool IsModuleNode(ITreeNode treeNode)
+      {
+         return treeNode.IsAnImplementationOf<ModuleNode>();
+      }
+
       protected virtual bool IsFolderNode(ITreeNode node)
       {
          return node.IsAnImplementationOf<RootNode>() || node.IsAnImplementationOf<ClassificationNode>();
@@ -259,7 +264,7 @@ namespace OSPSuite.Presentation.Presenters
 
       public virtual void NodeDoubleClicked(ITreeNode node)
       {
-         if (IsFolderNode(node))
+         if (IsFolderNode(node) || IsModuleNode(node))
             View.ToggleExpandState(node);
       }
 
