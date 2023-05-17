@@ -224,7 +224,7 @@ namespace OSPSuite.Presentation.Presenters
          _region.ToggleVisibility();
       }
 
-      public virtual bool IsModuleNode(ITreeNode treeNode)
+      protected virtual bool IsModuleNode(ITreeNode treeNode)
       {
          return treeNode.IsAnImplementationOf<ModuleNode>();
       }
