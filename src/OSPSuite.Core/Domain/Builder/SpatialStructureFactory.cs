@@ -1,3 +1,5 @@
+using OSPSuite.Assets;
+
 namespace OSPSuite.Core.Domain.Builder
 {
    public interface ISpatialStructureFactory
@@ -44,7 +46,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       protected virtual SpatialStructure CreateSpatialStructure()
       {
-         return _objectBaseFactory.Create<SpatialStructure>();
+         return _objectBaseFactory.Create<SpatialStructure>().WithName(DefaultNames.SpatialStructure);
       }
    }
 }
