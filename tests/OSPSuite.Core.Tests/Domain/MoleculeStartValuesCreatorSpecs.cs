@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using FakeItEasy;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
@@ -33,6 +34,12 @@ namespace OSPSuite.Core.Domain
       protected override void Because()
       {
          _result = sut.CreateFrom(new SpatialStructure(), new MoleculeBuildingBlock());
+      }
+
+      [Observation]
+      public void the_building_block_should_have_default_name()
+      {
+         _result.Name.ShouldBeEqualTo(DefaultNames.InitialConditions);
       }
 
       [Observation]

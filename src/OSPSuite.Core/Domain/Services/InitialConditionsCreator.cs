@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -43,7 +44,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public InitialConditionsBuildingBlock CreateFrom(SpatialStructure spatialStructure, MoleculeBuildingBlock moleculeBuildingBlock)
       {
-         var initialConditions = _objectBaseFactory.Create<InitialConditionsBuildingBlock>();
+         var initialConditions = _objectBaseFactory.Create<InitialConditionsBuildingBlock>().WithName(DefaultNames.InitialConditions);
          initialConditions.SpatialStructureId = spatialStructure.Id;
          initialConditions.MoleculeBuildingBlockId = moleculeBuildingBlock.Id;
          foreach (var container in spatialStructure.PhysicalContainers)

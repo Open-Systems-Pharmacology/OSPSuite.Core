@@ -103,6 +103,8 @@ namespace OSPSuite.Core.Converters.v12
          var moduleElement = new XElement("Module");
          var buildingBlockList = new XElement("BuildingBlocks");
          moduleElement.Add(buildingBlockList);
+         moduleElement.SetAttributeValue("name", simulationNode.GetAttribute("name"));
+         
          moduleConfigurationList.Add(moduleConfiguration);
          moduleConfiguration.Add(moduleElement);
          simulationConfigurationElement.Add(moduleConfigurationList);
@@ -114,7 +116,7 @@ namespace OSPSuite.Core.Converters.v12
          buildingBlockElement = buildConfigurationElement.Element("Reactions");
          buildingBlockElement.Name = "ReactionBuildingBlock";
          buildingBlockList.Add(buildingBlockElement);
-
+         
          buildingBlockElement = buildConfigurationElement.Element("PassiveTransports");
          buildingBlockElement.Name = "PassiveTransportBuildingBlock";
          buildingBlockList.Add(buildingBlockElement);
