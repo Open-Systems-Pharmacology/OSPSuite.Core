@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Domain.Builder
    public static class ExpressionTypes
    {
       public static ExpressionType TransportProtein = new ExpressionType(ExpressionTypesId.Transport, IconNames.Transporter, Captions.Transporter);
-      public static ExpressionType MetabolizingEnzyme = new ExpressionType(ExpressionTypesId.Enzyme, IconNames.Enzyme, Captions.Enzyme);
+      public static ExpressionType MetabolizingEnzyme = new ExpressionType(ExpressionTypesId.Enzyme, IconNames.Enzyme, Captions.MetabolizingEnzyme);
       public static ExpressionType ProteinBindingPartner = new ExpressionType(ExpressionTypesId.BindingPartner, IconNames.Protein, Captions.Protein);
 
       private static readonly ICache<ExpressionTypesId, ExpressionType> _typesCache = new Cache<ExpressionTypesId, ExpressionType>(x => x.Id)
