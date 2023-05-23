@@ -10,14 +10,13 @@ namespace OSPSuite.Core.Domain
    /// </summary>
    public class TimePath : FormulaUsablePath
    {
-      private readonly List<string> _path;
       private readonly TimeParameter _timeParameter;
 
       public TimePath()
       {
-         _path = new List<string> {Constants.TIME};
          _timeParameter = new TimeParameter();
          Alias = Constants.TIME;
+         _pathEntries.Add(Constants.TIME);
       }
 
 
