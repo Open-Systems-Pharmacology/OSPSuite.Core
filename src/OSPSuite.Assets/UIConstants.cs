@@ -34,9 +34,9 @@ namespace OSPSuite.Assets
    {
       public static readonly string Transporter = "Transporter";
       public static readonly string Protein = "Protein";
-      public static readonly string Enzyme = "Enzyme";
+      public static readonly string MetabolizingEnzyme = "Metabolizing Enzyme";
       public static readonly string Species = "Species";
-      public static readonly string Category = "Category";
+      public static readonly string Phenotype = "Phenotype";
       public static readonly string ConfirmationDialog = "Confirmation";
       public static readonly string Excel = "Excel®";
       public static readonly string EmptyColumn = " ";
