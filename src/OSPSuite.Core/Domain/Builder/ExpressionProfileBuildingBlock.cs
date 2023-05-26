@@ -75,6 +75,7 @@ namespace OSPSuite.Core.Domain.Builder
          // But in this case the name is decomposed and stored in 3 other properties
          Name = sourceExpressionProfile.Name;
 
+         _initialConditions.Clear();
          sourceExpressionProfile.InitialConditions.Each(initialCondition => AddInitialCondition(cloneManager.Clone(initialCondition)));
       }
    }
