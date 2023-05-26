@@ -92,8 +92,8 @@ namespace OSPSuite.Core.Serialization.Xml
    {
    }
 
-   public class PathAndValueEntityBuildingBlockFromPKSimXmlSerializer<TBuildingBlock, TBuilder> : PathAndValueEntityBuildingBlockXmlSerializer<TBuildingBlock, TBuilder> 
-      where TBuilder : PathAndValueEntity 
+   public class PathAndValueEntityBuildingBlockFromPKSimXmlSerializer<TBuildingBlock, TBuilder> : PathAndValueEntityBuildingBlockXmlSerializer<TBuildingBlock, TBuilder>
+      where TBuilder : PathAndValueEntity
       where TBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<TBuilder>
    {
       public override void PerformMapping()
@@ -118,17 +118,12 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          base.PerformMapping();
          Map(x => x.Type);
+         MapEnumerable(x => x.InitialConditions, x => x.AddInitialCondition);
       }
    }
 
    public class InitialConditionsBuildingBlockXmlSerializer : PathAndValueEntityBuildingBlockXmlSerializer<InitialConditionsBuildingBlock, InitialCondition>
    {
-      public override void PerformMapping()
-      {
-         base.PerformMapping();
-         Map(x => x.SpatialStructureId);
-         Map(x => x.MoleculeBuildingBlockId);
-      }
    }
 
    public class ParameterValuesBuildingBlockXmlSerializer : PathAndValueEntityBuildingBlockXmlSerializer<ParameterValuesBuildingBlock, ParameterValue>

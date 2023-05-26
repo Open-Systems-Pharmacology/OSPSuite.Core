@@ -50,7 +50,7 @@ namespace OSPSuite.Core.Domain.Builder
       public override void AcceptVisitor(IVisitor visitor)
       {
          base.AcceptVisitor(visitor);
-         _allValues.Each(initialCondition => initialCondition.AcceptVisitor(visitor));
+         _allValues.Each(x => x.AcceptVisitor(visitor));
       }
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)

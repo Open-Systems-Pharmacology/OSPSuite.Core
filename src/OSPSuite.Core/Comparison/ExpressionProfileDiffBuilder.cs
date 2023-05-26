@@ -12,6 +12,7 @@ namespace OSPSuite.Core.Comparison
       {
          base.Compare(comparison);
          CompareValues(x => x.Type, x => x.Type, comparison);
+         _enumerableComparer.CompareEnumerables(comparison, x => x.InitialConditions, x => x.Path);
       }
    }
 

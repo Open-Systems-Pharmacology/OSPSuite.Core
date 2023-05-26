@@ -69,7 +69,7 @@ namespace OSPSuite.Helpers
       private SimulationConfiguration createSimulationConfiguration()
       {
          var simulationConfiguration = new SimulationConfiguration();
-         
+
          var module = new Module
          {
             getMolecules(),
@@ -82,7 +82,7 @@ namespace OSPSuite.Helpers
          simulationConfiguration.SimulationSettings = createSimulationSettings();
 
 
-         var initialConditions = _initialConditionsCreator.CreateFrom(module.SpatialStructure, module.Molecules);
+         var initialConditions = _initialConditionsCreator.CreateFrom(module.SpatialStructure, module.Molecules.ToList());
          var objectPathForContainerThatDoesNotExist = _objectPathFactory.CreateObjectPathFrom("TOTO", "TATA");
          initialConditions.Add(_initialConditionsCreator.CreateInitialCondition(objectPathForContainerThatDoesNotExist, "A", _concentrationDimension));
 
@@ -201,7 +201,7 @@ namespace OSPSuite.Helpers
 
       private SimulationSettings createSimulationSettings()
       {
-         return new SimulationSettings {Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = _outputSchemaFactory.Create(0, 1440, 240), OutputSelections = new OutputSelections()};
+         return new SimulationSettings { Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = _outputSchemaFactory.Create(0, 1440, 240), OutputSelections = new OutputSelections() };
       }
    }
 }

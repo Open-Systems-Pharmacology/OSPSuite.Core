@@ -1,10 +1,14 @@
-﻿using OSPSuite.Core.Domain.Services;
+﻿using System.Collections.Generic;
+using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Visitor;
 using static OSPSuite.Core.Domain.Constants.ContainerName;
 
 namespace OSPSuite.Core.Domain.Builder
 {
    public class ExpressionProfileBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<ExpressionParameter>
    {
+      private readonly StartValueCache<InitialCondition> _initialConditions = new StartValueCache<InitialCondition>();
       public override string Icon => Type.IconName;
 
       public virtual string MoleculeName { get; private set; }
@@ -12,7 +16,6 @@ namespace OSPSuite.Core.Domain.Builder
       public string Species { get; private set; }
 
       public ExpressionType Type { set; get; }
-
 
       public virtual string Category { get; private set; }
 
@@ -37,6 +40,29 @@ namespace OSPSuite.Core.Domain.Builder
          }
       }
 
+      public void RemoveInitialCondition(InitialCondition initialCondition)
+      {
+         if (initialCondition == null)
+            return;
+         
+         _initialConditions.Remove(initialCondition.Path);
+         initialCondition.BuildingBlock = null;
+      }
+
+      public void AddInitialCondition(InitialCondition initialCondition)
+      {
+         _initialConditions.Add(initialCondition);
+         initialCondition.BuildingBlock = this;
+      }
+
+      public override void AcceptVisitor(IVisitor visitor)
+      {
+         base.AcceptVisitor(visitor);
+         _initialConditions.Each(ic => ic.AcceptVisitor(visitor));
+      }
+
+      public IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
+
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
@@ -48,6 +74,9 @@ namespace OSPSuite.Core.Domain.Builder
          // Name is required because our base objects will the private property
          // But in this case the name is decomposed and stored in 3 other properties
          Name = sourceExpressionProfile.Name;
+
+         _initialConditions.Clear();
+         sourceExpressionProfile.InitialConditions.Each(initialCondition => AddInitialCondition(cloneManager.Clone(initialCondition)));
       }
    }
 }

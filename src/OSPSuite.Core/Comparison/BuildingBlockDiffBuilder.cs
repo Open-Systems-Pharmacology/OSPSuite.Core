@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Comparison
    public abstract class BuildingBlockDiffBuilder<TBuildingBlock, TBuilder> : DiffBuilder<TBuildingBlock> where TBuildingBlock : class, IBuildingBlock<TBuilder> where TBuilder : class, IBuilder
    {
       private readonly ObjectBaseDiffBuilder _objectBaseDiffBuilder;
-      private readonly EnumerableComparer _enumerableComparer;
+      protected readonly EnumerableComparer _enumerableComparer;
       private readonly Func<TBuilder, object> _equalityProperty;
       protected Func<TBuilder, string> _presentObjectDetailsFunc;
 
