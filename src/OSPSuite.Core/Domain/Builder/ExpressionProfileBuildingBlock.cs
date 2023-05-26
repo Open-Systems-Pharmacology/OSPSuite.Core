@@ -40,6 +40,15 @@ namespace OSPSuite.Core.Domain.Builder
          }
       }
 
+      public void RemoveInitialCondition(InitialCondition initialCondition)
+      {
+         if (initialCondition == null)
+            return;
+         
+         _initialConditions.Remove(initialCondition.Path);
+         initialCondition.BuildingBlock = null;
+      }
+
       public void AddInitialCondition(InitialCondition initialCondition)
       {
          _initialConditions.Add(initialCondition);
