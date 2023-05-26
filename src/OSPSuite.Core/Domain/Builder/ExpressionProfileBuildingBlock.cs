@@ -61,7 +61,7 @@ namespace OSPSuite.Core.Domain.Builder
          _initialConditions.Each(ic => ic.AcceptVisitor(visitor));
       }
 
-      public IEnumerable<InitialCondition> InitialConditions => _initialConditions;
+      public IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
