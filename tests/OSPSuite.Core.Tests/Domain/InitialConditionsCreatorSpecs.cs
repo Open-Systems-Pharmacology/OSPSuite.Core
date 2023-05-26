@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using FakeItEasy;
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
@@ -33,7 +34,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _result = sut.CreateFrom(new SpatialStructure(), new MoleculeBuildingBlock());
+         _result = sut.CreateFrom(new SpatialStructure(), new List<MoleculeBuilder>());
       }
 
       [Observation]
@@ -80,7 +81,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _result = sut.CreateFrom(_spatialStructure, _moleculeBuildingBlock);
+         _result = sut.CreateFrom(_spatialStructure, _moleculeBuildingBlock.ToList());
       }
 
       [Observation]
@@ -95,7 +96,6 @@ namespace OSPSuite.Core.Domain
          _result.Each(initialCondition => initialCondition.NegativeValuesAllowed.ShouldBeFalse());
       }
 
-  
       [Observation]
       public void explicit_formula_cloned_in_initial_condition()
       {
@@ -111,10 +111,8 @@ namespace OSPSuite.Core.Domain
 
          _result[new ObjectPath(_rootContainerString, _childContainerString, M2)].Value.ShouldBeNull();
          _result[new ObjectPath(_rootContainerString, M2)].Value.ShouldBeNull();
-
-
       }
-      
+
       [Observation]
       public void constant_formula_molecules_have_null_formula_start_value()
       {

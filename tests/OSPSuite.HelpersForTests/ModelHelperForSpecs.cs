@@ -63,7 +63,7 @@ namespace OSPSuite.Helpers
          };
 
          allCalculationMethods().Each(simulationConfiguration.AddCalculationMethod);
-         var initialConditions = _initialConditionsCreator.CreateFrom(module.SpatialStructure, module.Molecules);
+         var initialConditions = _initialConditionsCreator.CreateFrom(module.SpatialStructure, module.Molecules.ToList());
 
          //add one start values that does not exist in Molecules@"
          var initialCondition = _initialConditionsCreator.CreateInitialCondition(_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM), "MoleculeThatDoesNotExist", amountDimension);
@@ -120,7 +120,7 @@ namespace OSPSuite.Helpers
             DistributionType = DistributionType.Normal,
             Dimension = amountPerTimeDimension
          });
-         
+
          individual.Add(new IndividualParameter
          {
             //new parameter that does not exist
@@ -149,7 +149,7 @@ namespace OSPSuite.Helpers
 
       private SimulationSettings createSimulationConfiguration()
       {
-         return new SimulationSettings {Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = createDefaultOutputSchema(), OutputSelections = new OutputSelections()};
+         return new SimulationSettings { Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = createDefaultOutputSchema(), OutputSelections = new OutputSelections() };
       }
 
       private OutputSchema createDefaultOutputSchema()
@@ -170,7 +170,7 @@ namespace OSPSuite.Helpers
          var cm2 = _objectBaseFactory.Create<CoreCalculationMethod>().WithName("CM2");
          cm2.Category = "PartitionCoeff";
          cm2.AddOutputFormula(PartitionCoeff_2(), new ParameterDescriptor("K", Create.Criteria(x => x.With("Cell2Plasma"))));
-         return new[] {cm1, cm2};
+         return new[] { cm1, cm2 };
       }
 
       private EventGroupBuildingBlock getEventGroups()
@@ -1288,6 +1288,9 @@ namespace OSPSuite.Helpers
 
          if (sourceObject.IsAnImplementationOf<OutputSelections>())
             return new OutputSelections().DowncastTo<T>();
+
+         if (sourceObject.IsAnImplementationOf<InitialCondition>())
+            return new InitialCondition().DowncastTo<T>();
 
          return default(T);
       }

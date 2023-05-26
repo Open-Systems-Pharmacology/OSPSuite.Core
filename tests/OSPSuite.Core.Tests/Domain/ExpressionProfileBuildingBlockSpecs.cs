@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
@@ -38,6 +39,12 @@ namespace OSPSuite.Core.Domain
          _expressionProfileBuildingBlock.Type = ExpressionTypes.MetabolizingEnzyme;
          _expressionProfileBuildingBlock.PKSimVersion = "11.1";
          _expressionProfileBuildingBlock.Add(new ExpressionParameter().WithName("name1"));
+         var initialCondition = new InitialCondition().WithName("ic1");
+         initialCondition.Path = new ObjectPath("path1");
+         _expressionProfileBuildingBlock.AddInitialCondition(initialCondition);
+
+         var clonedInitialCondition = new InitialCondition().WithName(initialCondition.Name);
+         clonedInitialCondition.Path = initialCondition.Path;
       }
 
       protected override void Because()
@@ -52,6 +59,7 @@ namespace OSPSuite.Core.Domain
          sut.Type.ShouldBeEqualTo(ExpressionTypes.MetabolizingEnzyme);
          sut.PKSimVersion.ShouldBeEqualTo("11.1");
          sut.Count().ShouldBeEqualTo(1);
+         sut.InitialConditions.Count().ShouldBeEqualTo(1);
       }
    }
 

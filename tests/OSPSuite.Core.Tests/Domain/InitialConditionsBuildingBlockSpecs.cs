@@ -16,83 +16,6 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   internal class when_checking_if_a_building_block_is_referenced_by_the_initial_conditions_building_block_without_a_reference: concern_for_InitialConditionsBuildingBlock
-   {
-      private IBuildingBlock _buildingBlock;
-      private bool _result;
-
-      protected override void Context()
-      {
-         base.Context();
-         _buildingBlock = A.Fake<IBuildingBlock>();
-
-         A.CallTo(() => _buildingBlock.Id).Returns("id");
-      }
-
-      protected override void Because()
-      {
-         _result = sut.Uses(_buildingBlock);
-      }
-
-      [Observation]
-      public void result_should_show_that_building_block_is_used()
-      {
-         _result.ShouldBeFalse();
-      }
-   }
-
-   internal class when_checking_if_a_molecule_building_block_is_referenced_by_the_initial_conditions_building_block : concern_for_InitialConditionsBuildingBlock
-   {
-      private IBuildingBlock _buildingBlock;
-      private bool _result;
-
-      protected override void Context()
-      {
-         base.Context();
-         sut.MoleculeBuildingBlockId = "id";
-         _buildingBlock = A.Fake<IBuildingBlock>();
-
-         A.CallTo(() => _buildingBlock.Id).Returns("id");
-      }
-
-      protected override void Because()
-      {
-         _result = sut.Uses(_buildingBlock);
-      }
-
-      [Observation]
-      public void result_should_show_that_building_block_is_used()
-      {
-         _result.ShouldBeTrue();
-      }
-   }
-
-   internal class when_checking_if_a_spatial_structure_is_referenced_by_the_initial_conditions_building_block : concern_for_InitialConditionsBuildingBlock
-   {
-      private IBuildingBlock _buildingBlock;
-      private bool _result;
-
-      protected override void Context()
-      {
-         base.Context();
-         sut.SpatialStructureId = "id";
-         _buildingBlock = A.Fake<IBuildingBlock>();
-
-         A.CallTo(() => _buildingBlock.Id).Returns("id");
-      }
-
-      protected override void Because()
-      {
-         _result = sut.Uses(_buildingBlock);
-      }
-
-      [Observation]
-      public void result_should_show_that_building_block_is_used()
-      {
-         _result.ShouldBeTrue();
-      }
-   }
-   
    internal class when_adding_initial_conditions_twice : concern_for_InitialConditionsBuildingBlock
    {
       private IFormula _formula;
@@ -119,6 +42,7 @@ namespace OSPSuite.Core.Domain
    internal class when_adding_initial_conditions_with_matching_id_to_building_block : concern_for_InitialConditionsBuildingBlock
    {
       private IFormula _formula, _addedFormula;
+
       protected override void Context()
       {
          base.Context();
@@ -152,7 +76,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.Add(new InitialCondition {Formula = _formula});
+         sut.Add(new InitialCondition { Formula = _formula });
       }
 
       [Observation]
@@ -160,6 +84,5 @@ namespace OSPSuite.Core.Domain
       {
          sut.FormulaCache.Any().ShouldBeFalse();
       }
-
    }
 }

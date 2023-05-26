@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Domain.Services
 {
    public interface IInitialConditionsCreator : IEmptyStartValueCreator<InitialCondition>
    {
-      InitialConditionsBuildingBlock CreateFrom(SpatialStructure spatialStructure, MoleculeBuildingBlock moleculeBuildingBlock);
+      InitialConditionsBuildingBlock CreateFrom(SpatialStructure spatialStructure, IReadOnlyList<MoleculeBuilder> molecules);
 
       /// <summary>
       ///    Creates an initial condition
@@ -42,27 +42,26 @@ namespace OSPSuite.Core.Domain.Services
          _idGenerator = idGenerator;
       }
 
-      public InitialConditionsBuildingBlock CreateFrom(SpatialStructure spatialStructure, MoleculeBuildingBlock moleculeBuildingBlock)
+      public InitialConditionsBuildingBlock CreateFrom(SpatialStructure spatialStructure, IReadOnlyList<MoleculeBuilder> molecules)
       {
          var initialConditions = _objectBaseFactory.Create<InitialConditionsBuildingBlock>().WithName(DefaultNames.InitialConditions);
-         initialConditions.SpatialStructureId = spatialStructure.Id;
-         initialConditions.MoleculeBuildingBlockId = moleculeBuildingBlock.Id;
+
          foreach (var container in spatialStructure.PhysicalContainers)
          {
-            addMoleculesFrom(initialConditions, container, moleculeBuildingBlock);
+            addMoleculesFrom(initialConditions, container, molecules);
          }
 
          return initialConditions;
       }
 
-      private void addMoleculesFrom(InitialConditionsBuildingBlock moleculesStartValuesBuildingBlock, IEntity container, IEnumerable<MoleculeBuilder> molecules)
+      private void addMoleculesFrom(InitialConditionsBuildingBlock initialConditionsBuildingBlock, IEntity container, IEnumerable<MoleculeBuilder> molecules)
       {
          foreach (var molecule in molecules)
          {
             var initialCondition = CreateInitialCondition(_objectPathFactory.CreateAbsoluteObjectPath(container), molecule.Name, molecule.Dimension, molecule.DisplayUnit);
             setInitialCondition(molecule, initialCondition);
-            setInitialConditionFormula(molecule.DefaultStartFormula, initialCondition, moleculesStartValuesBuildingBlock);
-            moleculesStartValuesBuildingBlock.Add(initialCondition);
+            setInitialConditionFormula(molecule.DefaultStartFormula, initialCondition, initialConditionsBuildingBlock);
+            initialConditionsBuildingBlock.Add(initialCondition);
          }
       }
 
