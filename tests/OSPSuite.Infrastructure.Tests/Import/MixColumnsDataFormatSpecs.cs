@@ -143,5 +143,27 @@ namespace OSPSuite.Infrastructure.Import
          errorMappingColumn.Unit.SelectedUnit.ShouldBeEqualTo(UnitDescription.InvalidUnit);
          errorMappingColumn.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_ARITHMETIC);
       }
+
+      public class When_setting_parameters_case_sensitive_unit : concern_for_MixColumnsDataFormat
+      {
+         protected override void Context()
+         {
+            base.Context();
+            _headers = new[] { "Time [h]", "Measurement [uM]"};
+         }
+
+         protected override void Because()
+         {
+            sut.SetParameters(_rawDataSheet, _columnInfos, _metaDataCategories);
+         }
+
+         [Observation]
+         public void correct_measurement_dimension_should_be_inferred()
+         {
+            var concentrationMappingColumn = sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Measurement [uM]").MappedColumn;
+            concentrationMappingColumn.Dimension.Name.ShouldBeEqualTo("Concentration");
+            concentrationMappingColumn.Unit.SelectedUnit.ShouldBeEqualTo("mol");
+         }
+      }
    }
 }
