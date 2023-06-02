@@ -80,10 +80,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                mappedColumn.Dimension = null;
             else
             {
-               var supportedDimensions = concreteColumnInfo.SupportedDimensions;
-               var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.SupportsUnit(mappedColumn.Unit.SelectedUnit, ignoreCase: true));
+               var dimensionForUnit = _dimensionFactory.DimensionForUnit(mappedColumn.Unit.SelectedUnit);
 
-               if (dimensionForUnit == null)
+               if (dimensionForUnit == null || !concreteColumnInfo.SupportedDimensions.Contains(dimensionForUnit))
                   mappedColumn.Unit = new UnitDescription(UnitDescription.InvalidUnit);
                else
                   mappedColumn.Dimension = dimensionForUnit;
@@ -165,8 +164,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       protected string ValidateUnit(string unit, IReadOnlyList<IDimension> supportedDimensions)
       {
          var dimensionForUnit = _dimensionFactory.DimensionForUnit(unit);
-         //var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.SupportsUnit(unit, ignoreCase: true));
-         if (dimensionForUnit == null)
+         
+         if (dimensionForUnit == null || !supportedDimensions.Contains(dimensionForUnit))
             return UnitDescription.InvalidUnit;
 
          //We know it exists here as it was found previously
