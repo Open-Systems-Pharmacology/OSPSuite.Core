@@ -54,6 +54,15 @@ namespace OSPSuite.Core
       }
 
       [Observation]
+      public void should_have_left_the_original_container_of_the_spatial_structure_intact()
+      {
+        var module2= _simulationConfiguration.ModuleConfigurations[1].Module;
+        var lungModule2 = module2.SpatialStructure.FindByName(Lung);
+        lungModule2.ShouldNotBeNull();
+        lungModule2.ParentContainer.ShouldBeNull();
+      }
+
+      [Observation]
       public void should_have_removed_neighborhoods_pointing_to_invalid_neighbors()
       {
          _model.Neighborhoods.FindByName("does_not_match_existing").ShouldBeNull();
