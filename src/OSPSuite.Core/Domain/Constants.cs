@@ -534,6 +534,7 @@ namespace OSPSuite.Core.Domain
 
       public static class Serialization
       {
+         public const string INITIAL_CONDITIONS = "InitialConditions";
          public const string MACRO_COMMAND = "MacroCommand";
          public const string SIMPLE_COMMAND = "SimpleCommand";
          public const string LABEL_COMMAND = "LabelCommand";

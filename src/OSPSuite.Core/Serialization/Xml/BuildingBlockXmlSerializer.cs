@@ -118,7 +118,7 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          base.PerformMapping();
          Map(x => x.Type);
-         MapEnumerable(x => x.InitialConditions, x => x.AddInitialCondition);
+         MapEnumerable<InitialCondition>(bb => bb, bb => bb.Add).WithMappingName(Constants.Serialization.INITIAL_CONDITIONS);
       }
    }
 

@@ -93,7 +93,7 @@ namespace OSPSuite.Core.Domain.Builder
          _molecules.AddRange(allBuilder(x => x.Molecules));
          _parameterValues.AddRange(allStartValueBuilder(x => x.SelectedParameterValues));
          _initialConditions.AddRange(allStartValueBuilder(x => x.SelectedInitialConditions)
-            .Concat(_simulationConfiguration.ExpressionProfiles.SelectMany(x => x.InitialConditions)));
+            .Concat(_simulationConfiguration.ExpressionProfiles.SelectMany<ExpressionProfileBuildingBlock, InitialCondition>(x => x)));
       }
 
       internal IReadOnlyList<SpatialStructure> SpatialStructures => all(x => x.SpatialStructure);

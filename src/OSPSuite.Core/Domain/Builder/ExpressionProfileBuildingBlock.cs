@@ -6,7 +6,7 @@ using static OSPSuite.Core.Domain.Constants.ContainerName;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public class ExpressionProfileBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<ExpressionParameter>
+   public class ExpressionProfileBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<ExpressionParameter>, IBuildingBlock<InitialCondition>
    {
       private readonly StartValueCache<InitialCondition> _initialConditions = new StartValueCache<InitialCondition>();
       public override string Icon => Type.IconName;
@@ -40,28 +40,11 @@ namespace OSPSuite.Core.Domain.Builder
          }
       }
 
-      public void RemoveInitialCondition(InitialCondition initialCondition)
-      {
-         if (initialCondition == null)
-            return;
-         
-         _initialConditions.Remove(initialCondition.Path);
-         initialCondition.BuildingBlock = null;
-      }
-
-      public void AddInitialCondition(InitialCondition initialCondition)
-      {
-         _initialConditions.Add(initialCondition);
-         initialCondition.BuildingBlock = this;
-      }
-
       public override void AcceptVisitor(IVisitor visitor)
       {
          base.AcceptVisitor(visitor);
          _initialConditions.Each(ic => ic.AcceptVisitor(visitor));
       }
-
-      public IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
@@ -76,7 +59,25 @@ namespace OSPSuite.Core.Domain.Builder
          Name = sourceExpressionProfile.Name;
 
          _initialConditions.Clear();
-         sourceExpressionProfile.InitialConditions.Each(initialCondition => AddInitialCondition(cloneManager.Clone(initialCondition)));
+         sourceExpressionProfile.Each<InitialCondition>(initialCondition => Add(cloneManager.Clone(initialCondition)));
+      }
+
+      public IEnumerator<InitialCondition> GetEnumerator()
+      {
+         return _initialConditions.GetEnumerator();
+      }
+
+      public void Add(InitialCondition pathAndValueEntity)
+      {
+         _initialConditions.Add(pathAndValueEntity);
+         pathAndValueEntity.BuildingBlock = this;
+      }
+
+      public void Remove(InitialCondition pathAndValueEntity)
+      {
+         if (pathAndValueEntity == null) 
+            return;
+         _initialConditions.Remove(pathAndValueEntity.Path);
       }
    }
 }
