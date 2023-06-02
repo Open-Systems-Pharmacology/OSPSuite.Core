@@ -6,7 +6,7 @@ using static OSPSuite.Core.Domain.Constants.ContainerName;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public class ExpressionProfileBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<ExpressionParameter>
+   public class ExpressionProfileBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<ExpressionParameter>, IBuildingBlockWithInitialConditions
    {
       private readonly StartValueCache<InitialCondition> _initialConditions = new StartValueCache<InitialCondition>();
       public override string Icon => Type.IconName;
