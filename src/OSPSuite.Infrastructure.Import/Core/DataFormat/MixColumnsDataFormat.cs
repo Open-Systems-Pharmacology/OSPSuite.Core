@@ -11,7 +11,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
    {
       public override string Name => "Mixin";
       public override string Description => "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/639\rhttps://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/797";
-
+      public MixColumnsDataFormat(IDimensionFactory dimensionFactory) : base(dimensionFactory)
+      {
+      }
       protected override string ExtractLLOQ(string description, DataSheet dataSheet, List<string> keys, ref double rank)
       {
          if (dataSheet.GetColumn(description).Any(element => element.Trim().StartsWith("<")))

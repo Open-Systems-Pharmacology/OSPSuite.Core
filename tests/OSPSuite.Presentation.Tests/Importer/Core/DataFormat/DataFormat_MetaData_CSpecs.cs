@@ -6,6 +6,7 @@ using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Helpers;
 using OSPSuite.Infrastructure.Import.Core;
@@ -19,9 +20,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       protected DataSheet _basicFormat;
       protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
+      protected IDimensionFactory _factory;
 
       protected override void Context()
       {
+         _factory = DimensionFactoryForSpecs.Factory;
          _columnInfos = new ColumnInfoCache
          {
             new ColumnInfo() {DisplayName = "Time", Name = "Time", IsMandatory = true},
@@ -42,7 +45,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             new MetaDataCategory() {Name = "Route"}
          };
 
-         sut = new DataFormatHeadersWithUnits();
+         sut = new DataFormatHeadersWithUnits(_factory);
          _basicFormat = new TestDataSheet
          (
             new Cache<string, ColumnDescription>()

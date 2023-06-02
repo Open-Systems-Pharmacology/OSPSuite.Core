@@ -11,6 +11,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       public override string Name => "Nonmem";
       public override string Description => "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/797";
 
+      public DataFormatNonmem(IDimensionFactory dimensionFactory) : base(dimensionFactory)
+      {
+      }
+
       protected override string ExtractLLOQ(string description, DataSheet dataSheet, List<string> keys, ref double rank)
       {
          var lloqKey = dataSheet.GetHeaders().FindHeader(description + "_LLOQ");

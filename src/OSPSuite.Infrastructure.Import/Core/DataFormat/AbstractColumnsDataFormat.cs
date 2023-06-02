@@ -18,6 +18,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       public IList<string> ExcelColumnNames { get; protected set; } = new List<string>();
 
+      protected readonly IDimensionFactory _dimensionFactory;
+
+      protected AbstractColumnsDataFormat(IDimensionFactory dimensionFactory)
+      {
+         _dimensionFactory = dimensionFactory;
+      }
       public double SetParameters(DataSheet rawDataSheet, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          if (NotCompatible(rawDataSheet, columnInfos))
@@ -158,7 +164,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       protected string ValidateUnit(string unit, IReadOnlyList<IDimension> supportedDimensions)
       {
-         var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.SupportsUnit(unit, ignoreCase: true));
+         var dimensionForUnit = _dimensionFactory.DimensionForUnit(unit);
+         //var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.SupportsUnit(unit, ignoreCase: true));
          if (dimensionForUnit == null)
             return UnitDescription.InvalidUnit;
 

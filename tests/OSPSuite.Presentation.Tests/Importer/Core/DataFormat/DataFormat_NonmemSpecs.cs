@@ -9,6 +9,8 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Core.Import;
+using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Presentation.Importer.Core.DataFormat
 {
@@ -25,11 +27,13 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected Cache<string, ColumnDescription> _headersCache;
+      protected IDimensionFactory _factory;
       protected string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
       protected string[] _groupIds = new string[] { "H", "T2DM" };
 
       protected override void Context()
       {
+         _factory = DimensionFactoryForSpecs.Factory;
          _columnInfos = new ColumnInfoCache
          {
             new ColumnInfo() { DisplayName = "Time", IsMandatory = true },
@@ -46,7 +50,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             new MetaDataCategory() {Name = "Route"}
          };
 
-         sut = new DataFormatNonmem();
+         sut = new DataFormatNonmem(_factory);
          _headersCache = new Cache<string, ColumnDescription>(){
                {
                   "Organ",
