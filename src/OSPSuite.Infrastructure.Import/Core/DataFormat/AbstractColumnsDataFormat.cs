@@ -24,6 +24,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       {
          _dimensionFactory = dimensionFactory;
       }
+
       public double SetParameters(DataSheet rawDataSheet, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          if (NotCompatible(rawDataSheet, columnInfos))
@@ -164,7 +165,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       protected string ValidateUnit(string unit, IReadOnlyList<IDimension> supportedDimensions)
       {
          var dimensionForUnit = _dimensionFactory.DimensionForUnit(unit);
-         
+
          if (dimensionForUnit == null || !supportedDimensions.Contains(dimensionForUnit))
             return UnitDescription.InvalidUnit;
 
@@ -287,7 +288,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             if (currentParameter == null) continue;
             Func<MappingDataFormatParameter, DataSheet, UnformattedRow, SimulationPoint> mappingsParser =
                currentParameter.MappedColumn.LloqColumn == null
-                  ? (Func<MappingDataFormatParameter, DataSheet, UnformattedRow, SimulationPoint>) parseMappingOnSameColumn
+                  ? (Func<MappingDataFormatParameter, DataSheet, UnformattedRow, SimulationPoint>)parseMappingOnSameColumn
                   : parseMappingOnSameGivenColumn;
 
             dictionary.Add

@@ -18,7 +18,7 @@ namespace OSPSuite.Infrastructure.Import
       protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected IDimensionFactory _factory;
-      protected IEnumerable<string> _headers { get; set; } = new[] {"Time [h]", "Concentration [mol]", "Error [mol]"};
+      protected IEnumerable<string> _headers { get; set; } = new[] { "Time [h]", "Concentration [mol]", "Error [mol]" };
 
       protected override void Context()
       {
@@ -26,24 +26,26 @@ namespace OSPSuite.Infrastructure.Import
          sut = new MixColumnsDataFormat(_factory);
          _rawDataSheet = A.Fake<DataSheet>();
          A.CallTo(() => _rawDataSheet.GetHeaders()).ReturnsLazily(() => _headers);
-         A.CallTo(() => _rawDataSheet.GetColumnDescription(A<string>.Ignored)).Returns(new ColumnDescription(0) {Level = ColumnDescription.MeasurementLevel.Numeric});
+         A.CallTo(() => _rawDataSheet.GetColumnDescription(A<string>.Ignored))
+            .Returns(new ColumnDescription(0) { Level = ColumnDescription.MeasurementLevel.Numeric });
          _columnInfos = new ColumnInfoCache
          {
-            new ColumnInfo {DisplayName = "Time", Name = "Time"},
-            new ColumnInfo {DisplayName = "Concentration", Name = "Concentration"},
-            new ColumnInfo {DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration"}
+            new ColumnInfo { DisplayName = "Time", Name = "Time" },
+            new ColumnInfo { DisplayName = "Concentration", Name = "Concentration" },
+            new ColumnInfo { DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration" }
          };
          _columnInfos["Time"].SupportedDimensions.Add(DimensionFactoryForSpecs.TimeDimension);
          _columnInfos["Concentration"].SupportedDimensions.Add(DimensionFactoryForSpecs.ConcentrationDimension);
+         _columnInfos["Concentration"].SupportedDimensions.Add(DimensionFactoryForSpecs.LengthDimension);
          _columnInfos["Error"].SupportedDimensions.Add(DimensionFactoryForSpecs.ConcentrationDimension);
          _metaDataCategories = new List<MetaDataCategory>()
          {
-            new MetaDataCategory {Name = "Organ"},
-            new MetaDataCategory {Name = "Compartment"},
-            new MetaDataCategory {Name = "Species"},
-            new MetaDataCategory {Name = "Dose"},
-            new MetaDataCategory {Name = "Molecule"},
-            new MetaDataCategory {Name = "Route"}
+            new MetaDataCategory { Name = "Organ" },
+            new MetaDataCategory { Name = "Compartment" },
+            new MetaDataCategory { Name = "Species" },
+            new MetaDataCategory { Name = "Dose" },
+            new MetaDataCategory { Name = "Molecule" },
+            new MetaDataCategory { Name = "Route" }
          };
       }
    }
@@ -58,7 +60,8 @@ namespace OSPSuite.Infrastructure.Import
       [Observation]
       public void infers_unit_from_header_for_measurement_and_error()
       {
-         var concentrationMappingColumn = sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Concentration [mol]").MappedColumn;
+         var concentrationMappingColumn =
+            sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Concentration [mol]").MappedColumn;
          concentrationMappingColumn.Dimension.Name.ShouldBeEqualTo("Concentration");
          concentrationMappingColumn.Unit.SelectedUnit.ShouldBeEqualTo("mol");
 
@@ -74,7 +77,7 @@ namespace OSPSuite.Infrastructure.Import
       protected override void Context()
       {
          base.Context();
-         _headers = new[] {"Time [h]", "Concentration [mol]", "Error"};
+         _headers = new[] { "Time [h]", "Concentration [mol]", "Error" };
       }
 
       protected override void Because()
@@ -85,7 +88,8 @@ namespace OSPSuite.Infrastructure.Import
       [Observation]
       public void infers_unit_from_header_for_measurement_and_error()
       {
-         var concentrationMappingColumn = sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Concentration [mol]").MappedColumn;
+         var concentrationMappingColumn =
+            sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Concentration [mol]").MappedColumn;
          concentrationMappingColumn.Dimension.Name.ShouldBeEqualTo("Concentration");
          concentrationMappingColumn.Unit.SelectedUnit.ShouldBeEqualTo("mol");
 
@@ -110,7 +114,8 @@ namespace OSPSuite.Infrastructure.Import
       [Observation]
       public void infers_unit_from_header_for_measurement_and_error()
       {
-         var concentrationMappingColumn = sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Concentration [MoL]").MappedColumn;
+         var concentrationMappingColumn =
+            sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Concentration [MoL]").MappedColumn;
          concentrationMappingColumn.Dimension.Name.ShouldBeEqualTo("Concentration");
          concentrationMappingColumn.Unit.SelectedUnit.ShouldBeEqualTo("mol");
 
@@ -124,7 +129,7 @@ namespace OSPSuite.Infrastructure.Import
       protected override void Context()
       {
          base.Context();
-         _headers = new[] {"Time [h]", "Concentration [mol]", "Error [lol]"};
+         _headers = new[] { "Time [h]", "Concentration [mol]", "Error [lol]" };
       }
 
       protected override void Because()
@@ -135,7 +140,8 @@ namespace OSPSuite.Infrastructure.Import
       [Observation]
       public void infers_unit_from_header_for_measurement_and_error()
       {
-         var concentrationMappingColumn = sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Concentration [mol]").MappedColumn;
+         var concentrationMappingColumn =
+            sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Concentration [mol]").MappedColumn;
          concentrationMappingColumn.Dimension.Name.ShouldBeEqualTo("Concentration");
          concentrationMappingColumn.Unit.SelectedUnit.ShouldBeEqualTo("mol");
 
@@ -149,7 +155,7 @@ namespace OSPSuite.Infrastructure.Import
          protected override void Context()
          {
             base.Context();
-            _headers = new[] { "Time [h]", "Measurement [uM]"};
+            _headers = new[] { "Time [h]", "Measurement [um]" };
          }
 
          protected override void Because()
@@ -160,9 +166,10 @@ namespace OSPSuite.Infrastructure.Import
          [Observation]
          public void correct_measurement_dimension_should_be_inferred()
          {
-            var concentrationMappingColumn = sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Measurement [uM]").MappedColumn;
-            concentrationMappingColumn.Dimension.Name.ShouldBeEqualTo("Concentration");
-            concentrationMappingColumn.Unit.SelectedUnit.ShouldBeEqualTo("mol");
+            var concentrationMappingColumn =
+               sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Measurement [um]").MappedColumn;
+            concentrationMappingColumn.Dimension.Name.ShouldBeEqualTo("Length");
+            concentrationMappingColumn.Unit.SelectedUnit.ShouldBeEqualTo("um");
          }
       }
    }
