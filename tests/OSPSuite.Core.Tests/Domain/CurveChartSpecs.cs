@@ -6,7 +6,6 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
@@ -285,6 +284,15 @@ namespace OSPSuite.Core.Domain
          sut.Name.ShouldBeEqualTo(_other.Name);
          sut.Title.ShouldBeEqualTo(_other.Title);
          sut.Description.ShouldBeEqualTo(_other.Description);
+      }
+   }
+
+   public class When_removing_a_data_repository_from_a_chart_that_is_null : concern_for_CurveChart
+   {
+      [Observation]
+      public void should_not_crash()
+      {
+         sut.RemoveCurvesForDataRepository(null);
       }
    }
 }

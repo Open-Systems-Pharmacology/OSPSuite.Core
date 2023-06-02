@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
+using NPOI.HPSF;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
@@ -159,6 +160,23 @@ namespace OSPSuite.Presentation.Presentation
       {
          //zero marker removed
          _residualVsTimeChart.Curves.Count.ShouldBeEqualTo(_residualResults.AllOutputResiduals.Count);
+      }
+   }
+
+   public class When_clearing_the_simulation_residual_vs_time_chart_presenter_that_was_initialized_without_observed_data : concern_for_SimulationResidualVsTimeChartPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(A<ISimulation>._)).Returns(Enumerable.Empty<DataRepository>());
+
+         sut.InitializeAnalysis(_residualVsTimeChart, _simulation);
+      }
+
+      [Observation]
+      public void should_not_crash()
+      {
+         sut.Clear();
       }
    }
 }
