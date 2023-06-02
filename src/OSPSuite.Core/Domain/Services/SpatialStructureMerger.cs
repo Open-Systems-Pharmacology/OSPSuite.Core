@@ -55,20 +55,24 @@ namespace OSPSuite.Core.Domain.Services
 
          var firstSpatialStructure = allSpatialStructures[0];
          var allOtherSpatialStructures = allSpatialStructures.Skip(1).ToList();
-         var mapTopContainerToModelContainer = mapContainer(simulationBuilder);
+         var mapToModelContainer = mapContainerDef(simulationBuilder);
          var mergeTopContainerIntoModel = mergeTopContainerInStructure(root);
 
          // First step: We create the container structure.
          // This is done by adding all top containers defined in the FIRST spatial structure
-         // Then we are going to merge all other top container defined in the other spatial structures
-         //Add each container defined in the spatial structure and direct child of the root container
-         root.AddChildren(firstSpatialStructure.TopContainers.Select(mapTopContainerToModelContainer));
+         // Then we merge all other top containers defined in the other spatial structures
+       
+         // Add each container defined in the spatial structure and direct child of the root container
+         root.AddChildren(firstSpatialStructure.TopContainers.Select(mapToModelContainer));
 
          //Merge all other spatial structures
-         allOtherSpatialStructures.SelectMany(x => x.TopContainers).Each(mergeTopContainerIntoModel);
+         allOtherSpatialStructures.SelectMany(x => x.TopContainers)
+            //make sure we map the container to a model container so that we do not change the original containers
+            .Select(mapToModelContainer)
+            .Each(mergeTopContainerIntoModel);
       }
 
-      private Func<IContainer, IContainer> mapContainer(SimulationBuilder simulationBuilder) => container => _containerMapper.MapFrom(container, simulationBuilder);
+      private Func<IContainer, IContainer> mapContainerDef(SimulationBuilder simulationBuilder) => container => _containerMapper.MapFrom(container, simulationBuilder);
 
       private Action<IContainer> mergeTopContainerInStructure(IContainer root) => topContainer =>
       {
