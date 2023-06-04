@@ -40,7 +40,10 @@ namespace OSPSuite.Helpers
          timeDimension.AddUnit(new Unit(Constants.Dimension.Units.Weeks, 60 * 24 * 7, 0));
          timeDimension.AddUnit(new Unit(Constants.Dimension.Units.Years, 60 * 24 * 365, 0));
          factory.AddDimension(timeDimension);
-         
+
+         var MWDimension = new Dimension(new BaseDimensionRepresentation(), Constants.Dimension.MOLECULAR_WEIGHT, "");
+         factory.AddDimension(MWDimension);
+
          return factory;
       }
 

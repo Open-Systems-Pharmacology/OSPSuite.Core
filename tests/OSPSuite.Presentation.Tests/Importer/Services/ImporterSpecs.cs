@@ -14,6 +14,7 @@ using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Container;
+using static DevExpress.Data.Filtering.Helpers.SubExprHelper.ThreadHoppingFiltering;
 
 namespace OSPSuite.Presentation.Importer.Services
 {
@@ -216,14 +217,14 @@ namespace OSPSuite.Presentation.Importer.Services
       protected IDialogCreator _dialogCreator;
       protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
-      protected IDimensionFactory _fakedDimensionFactory;
+      protected IDimensionFactory _factory;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
          _container = A.Fake<IContainer>();
          _dialogCreator = A.Fake<IDialogCreator>();
-         _fakedDimensionFactory = A.Fake<IDimensionFactory>();
+         _factory = DimensionFactoryForSpecs.Factory;
          var dataFormat = A.Fake<IDataFormat>();
          _columnInfos = new ColumnInfoCache()
          {
@@ -247,14 +248,14 @@ namespace OSPSuite.Presentation.Importer.Services
 
          A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>
          {
-            new DataFormatHeadersWithUnits(_fakedDimensionFactory),
-            new DataFormatNonmem(_fakedDimensionFactory),
-            new MixColumnsDataFormat(_fakedDimensionFactory)
+            new DataFormatHeadersWithUnits(_factory),
+            new DataFormatNonmem(_factory),
+            new MixColumnsDataFormat(_factory)
          });
          _parser = A.Fake<IDataSourceFileParser>();
          _dataRepositoryMapper = A.Fake<IDataSetToDataRepositoryMapper>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
-         sut = new OSPSuite.Infrastructure.Import.Services.Importer(_container, _parser, _dataRepositoryMapper, _fakedDimensionFactory);
+         sut = new OSPSuite.Infrastructure.Import.Services.Importer(_container, _parser, _dataRepositoryMapper, _factory);
       }
    }
 
