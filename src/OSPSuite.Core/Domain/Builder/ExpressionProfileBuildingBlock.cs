@@ -6,7 +6,7 @@ using static OSPSuite.Core.Domain.Constants.ContainerName;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public class ExpressionProfileBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<ExpressionParameter>
+   public class ExpressionProfileBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<ExpressionParameter>, ILookupBuildingBlock<InitialCondition>
    {
       private readonly StartValueCache<InitialCondition> _initialConditions = new StartValueCache<InitialCondition>();
       public override string Icon => Type.IconName;
@@ -18,6 +18,11 @@ namespace OSPSuite.Core.Domain.Builder
       public ExpressionType Type { set; get; }
 
       public virtual string Category { get; private set; }
+
+      InitialCondition ILookupBuildingBlock<InitialCondition>.ByPath(ObjectPath path)
+      {
+         return _initialConditions[path];
+      }
 
       public override string Name
       {
@@ -44,7 +49,7 @@ namespace OSPSuite.Core.Domain.Builder
       {
          if (initialCondition == null)
             return;
-         
+
          _initialConditions.Remove(initialCondition.Path);
          initialCondition.BuildingBlock = null;
       }
@@ -62,6 +67,7 @@ namespace OSPSuite.Core.Domain.Builder
       }
 
       public IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
+      public IReadOnlyCollection<ExpressionParameter> ExpressionParameters => _allValues;
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
@@ -76,7 +82,26 @@ namespace OSPSuite.Core.Domain.Builder
          Name = sourceExpressionProfile.Name;
 
          _initialConditions.Clear();
-         sourceExpressionProfile.InitialConditions.Each(initialCondition => AddInitialCondition(cloneManager.Clone(initialCondition)));
+         sourceExpressionProfile.InitialConditions.Each(initialCondition =>
+            AddInitialCondition(cloneManager.Clone(initialCondition)));
+      }
+
+      public IEnumerator<InitialCondition> GetEnumerator()
+      {
+         return _initialConditions.GetEnumerator();
+      }
+
+      public void Add(InitialCondition pathAndValueEntity)
+      {
+         _initialConditions.Add(pathAndValueEntity);
+         pathAndValueEntity.BuildingBlock = this;
+      }
+
+      public void Remove(InitialCondition pathAndValueEntity)
+      {
+         if (pathAndValueEntity == null)
+            return;
+         _initialConditions.Remove(pathAndValueEntity.Path);
       }
    }
 }

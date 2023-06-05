@@ -59,7 +59,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateParameterFromExpressionProfiles(ModelConfiguration modelConfiguration)
       {
-         modelConfiguration.SimulationConfiguration.ExpressionProfiles?.SelectMany(x => x).Each(x => updateParameterValueFromStartValue(modelConfiguration, x, getParameter));
+         modelConfiguration.SimulationConfiguration.ExpressionProfiles?.SelectMany(x => x.ExpressionParameters).Each(x => updateParameterValueFromStartValue(modelConfiguration, x, getParameter));
       }
 
       private void updateParameterFromIndividualValues(ModelConfiguration modelConfiguration)

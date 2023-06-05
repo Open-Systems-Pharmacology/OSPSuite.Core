@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Domain
          _expressionProfileBuildingBlock.Add(new ExpressionParameter().WithName("name1"));
          var initialCondition = new InitialCondition().WithName("ic1");
          initialCondition.Path = new ObjectPath("path1");
-         _expressionProfileBuildingBlock.AddInitialCondition(initialCondition);
+         _expressionProfileBuildingBlock.Add(initialCondition);
 
          var clonedInitialCondition = new InitialCondition().WithName(initialCondition.Name);
          clonedInitialCondition.Path = initialCondition.Path;
@@ -58,8 +58,8 @@ namespace OSPSuite.Core.Domain
          sut.Name.ShouldBeEqualTo("Molecule|Species|Name");
          sut.Type.ShouldBeEqualTo(ExpressionTypes.MetabolizingEnzyme);
          sut.PKSimVersion.ShouldBeEqualTo("11.1");
-         sut.Count().ShouldBeEqualTo(1);
-         sut.InitialConditions.Count().ShouldBeEqualTo(1);
+         sut.Count<ExpressionParameter>().ShouldBeEqualTo(1);
+         sut.Count<InitialCondition>().ShouldBeEqualTo(1);
       }
    }
 
