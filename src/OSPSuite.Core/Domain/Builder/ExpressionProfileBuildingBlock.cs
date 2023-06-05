@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain.Builder
          _initialConditions.Add(initialCondition);
          initialCondition.BuildingBlock = this;
       }
-      
+
       public override void AcceptVisitor(IVisitor visitor)
       {
          base.AcceptVisitor(visitor);
@@ -62,7 +62,8 @@ namespace OSPSuite.Core.Domain.Builder
       }
 
       public IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
-      
+      public IReadOnlyCollection<ExpressionParameter> ExpressionParameters => _allValues;
+
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
@@ -76,7 +77,7 @@ namespace OSPSuite.Core.Domain.Builder
          Name = sourceExpressionProfile.Name;
 
          _initialConditions.Clear();
-         sourceExpressionProfile.InitialConditions.Each(initialCondition => 
+         sourceExpressionProfile.InitialConditions.Each(initialCondition =>
             AddInitialCondition(cloneManager.Clone(initialCondition)));
       }
 
@@ -93,7 +94,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       public void Remove(InitialCondition pathAndValueEntity)
       {
-         if (pathAndValueEntity == null) 
+         if (pathAndValueEntity == null)
             return;
          _initialConditions.Remove(pathAndValueEntity.Path);
       }
