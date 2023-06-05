@@ -174,6 +174,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             new Column() { Name = "Error", Unit = new UnitDescription("g/l"), ErrorStdDev = Constants.STD_DEV_GEOMETRIC });
          _errorUnitParameters = CreateParameters(concentration, error);
          A.CallTo(() => _basicFormat.Parameters).Returns(_errorUnitParameters);
+         A.CallTo(() => _basicFormat.GetColumnByName<MappingDataFormatParameter>("Error")).Returns(error);
          UpdateSettings();
       }
 
@@ -203,6 +204,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             new Column() { Name = "Error", Unit = new UnitDescription("g/l"), ErrorStdDev = Constants.STD_DEV_ARITHMETIC });
          _errorUnitParameters = CreateParameters(concentration, error);
          A.CallTo(() => _basicFormat.Parameters).Returns(_errorUnitParameters);
+         A.CallTo(() => _basicFormat.GetColumnByName<MappingDataFormatParameter>("Error")).Returns(error);
          UpdateSettings();
       }
 
@@ -232,6 +234,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             new Column() { Name = "Error", Unit = new UnitDescription("ng/l"), ErrorStdDev = null });
          _errorUnitParameters = CreateParameters(concentration, error);
          A.CallTo(() => _basicFormat.Parameters).Returns(_errorUnitParameters);
+         A.CallTo(() => _basicFormat.GetColumnByName<MappingDataFormatParameter>("Error")).Returns(error);
       }
 
       protected override void Because()
