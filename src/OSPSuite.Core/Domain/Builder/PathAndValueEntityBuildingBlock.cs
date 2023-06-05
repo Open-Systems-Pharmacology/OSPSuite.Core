@@ -8,7 +8,7 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public abstract class PathAndValueEntityBuildingBlock<T> : BuildingBlock, IBuildingBlock<T> where T : PathAndValueEntity
+   public abstract class PathAndValueEntityBuildingBlock<T> : BuildingBlock, ILookupBuildingBlock<T> where T : PathAndValueEntity
    {
       protected Cache<ObjectPath, T> _allValues = new Cache<ObjectPath, T>(x => x.Path, x => null);
 
@@ -45,6 +45,11 @@ namespace OSPSuite.Core.Domain.Builder
       IEnumerator IEnumerable.GetEnumerator()
       {
          return GetEnumerator();
+      }
+
+      T ILookupBuildingBlock<T>.ByPath(ObjectPath path)
+      {
+         return this[path];
       }
 
       public override void AcceptVisitor(IVisitor visitor)

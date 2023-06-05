@@ -6,7 +6,7 @@ using static OSPSuite.Core.Domain.Constants.ContainerName;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public class ExpressionProfileBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<ExpressionParameter>, IBuildingBlock<InitialCondition>
+   public class ExpressionProfileBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<ExpressionParameter>, ILookupBuildingBlock<InitialCondition>
    {
       private readonly StartValueCache<InitialCondition> _initialConditions = new StartValueCache<InitialCondition>();
       public override string Icon => Type.IconName;
@@ -18,6 +18,11 @@ namespace OSPSuite.Core.Domain.Builder
       public ExpressionType Type { set; get; }
 
       public virtual string Category { get; private set; }
+
+      InitialCondition ILookupBuildingBlock<InitialCondition>.ByPath(ObjectPath path)
+      {
+         return _initialConditions[path];
+      }
 
       public override string Name
       {
