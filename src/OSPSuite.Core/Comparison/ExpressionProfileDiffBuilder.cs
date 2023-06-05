@@ -1,5 +1,4 @@
-﻿using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Builder;
+﻿using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Comparison
 {
@@ -13,7 +12,7 @@ namespace OSPSuite.Core.Comparison
       {
          base.Compare(comparison);
          CompareValues(x => x.Type, x => x.Type, comparison);
-         _enumerableComparer.CompareEnumerables<ExpressionProfileBuildingBlock, InitialCondition, ObjectPath>(comparison, x => x, x => x.Path);
+         _enumerableComparer.CompareEnumerables(comparison, x => x.InitialConditions, x => x.Path);
       }
    }
 

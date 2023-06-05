@@ -40,12 +40,29 @@ namespace OSPSuite.Core.Domain.Builder
          }
       }
 
+      public void RemoveInitialCondition(InitialCondition initialCondition)
+      {
+         if (initialCondition == null)
+            return;
+
+         _initialConditions.Remove(initialCondition.Path);
+         initialCondition.BuildingBlock = null;
+      }
+
+      public void AddInitialCondition(InitialCondition initialCondition)
+      {
+         _initialConditions.Add(initialCondition);
+         initialCondition.BuildingBlock = this;
+      }
+      
       public override void AcceptVisitor(IVisitor visitor)
       {
          base.AcceptVisitor(visitor);
          _initialConditions.Each(ic => ic.AcceptVisitor(visitor));
       }
 
+      public IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
+      
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
@@ -59,7 +76,8 @@ namespace OSPSuite.Core.Domain.Builder
          Name = sourceExpressionProfile.Name;
 
          _initialConditions.Clear();
-         sourceExpressionProfile.Each<InitialCondition>(initialCondition => Add(cloneManager.Clone(initialCondition)));
+         sourceExpressionProfile.InitialConditions.Each(initialCondition => 
+            AddInitialCondition(cloneManager.Clone(initialCondition)));
       }
 
       public IEnumerator<InitialCondition> GetEnumerator()
