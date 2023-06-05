@@ -156,14 +156,15 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_unit_is_properly_set()
       {
-         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Observation").MappedColumn.Unit
-            .ShouldBeEqualTo(_basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit);
+         _basicFormat.GetColumnByName<MappingDataFormatParameter>("Observation").MappedColumn.Unit
+            .ShouldBeEqualTo(_basicFormat.GetColumnByName<MappingDataFormatParameter>("Error").MappedColumn.Unit);
       }
    }
 
    public class When_initializing_geometric_error_unit : concern_for_ColumnMappingPresenter
    {
       private List<DataFormatParameter> _errorUnitParameters;
+
       protected override void Context()
       {
          base.Context();
@@ -184,7 +185,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_unit_is_properly_set()
       {
-         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit.SelectedUnit
+         _basicFormat.GetColumnByName<MappingDataFormatParameter>("Error").MappedColumn.Unit.SelectedUnit
             .ShouldBeEmpty();
       }
    }
@@ -213,7 +214,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_unit_is_not_changed()
       {
-         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit.SelectedUnit
+         _basicFormat.GetColumnByName<MappingDataFormatParameter>("Error").MappedColumn.Unit.SelectedUnit
             .ShouldBeEqualTo("g/l");
       }
    }
@@ -231,7 +232,6 @@ namespace OSPSuite.Presentation.Importer.Presenters
             new Column() { Name = "Error", Unit = new UnitDescription("ng/l"), ErrorStdDev = null });
          _errorUnitParameters = CreateParameters(concentration, error);
          A.CallTo(() => _basicFormat.Parameters).Returns(_errorUnitParameters);
-         
       }
 
       protected override void Because()
@@ -242,14 +242,14 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_unit_should_be_set()
       {
-         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit.SelectedUnit
+         _basicFormat.GetColumnByName<MappingDataFormatParameter>("Error").MappedColumn.Unit.SelectedUnit
             .ShouldBeEqualTo("ng/l");
       }
 
       [Observation]
       public void the_standard_deviation_should_be_arithmetic()
       {
-         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_ARITHMETIC);
+         _basicFormat.GetColumnByName<MappingDataFormatParameter>("Error").MappedColumn.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_ARITHMETIC);
       }
    }
 

@@ -20,8 +20,13 @@ namespace OSPSuite.R.Services
       void SaveConfiguration(ImporterConfiguration configuration, string path);
       IReadOnlyList<DataRepository> ImportExcelFromConfiguration(string configurationPath, string dataPath = null);
       IReadOnlyList<DataRepository> ImportExcelFromConfiguration(ImporterConfiguration configuration, string dataPath);
-      IReadOnlyList<DataRepository> ImportCsvFromConfiguration(string configurationPath, string dataPath, char columnSeparator, char decimalSeparator = '.');
-      IReadOnlyList<DataRepository> ImportCsvFromConfiguration(ImporterConfiguration configuration, string dataPath, char columnSeparator, char decimalSeparator = '.');
+
+      IReadOnlyList<DataRepository> ImportCsvFromConfiguration(string configurationPath, string dataPath, char columnSeparator,
+         char decimalSeparator = '.');
+
+      IReadOnlyList<DataRepository> ImportCsvFromConfiguration(ImporterConfiguration configuration, string dataPath, char columnSeparator,
+         char decimalSeparator = '.');
+
       MappingDataFormatParameter GetTime(ImporterConfiguration configuration);
       MappingDataFormatParameter GetMeasurement(ImporterConfiguration configuration);
       MappingDataFormatParameter GetError(ImporterConfiguration configuration);

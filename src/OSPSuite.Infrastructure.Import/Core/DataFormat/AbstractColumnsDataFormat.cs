@@ -33,6 +33,16 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          return 1 + setParameters(rawDataSheet, columnInfos, metaDataCategories);
       }
 
+      public IEnumerable<T> GetParameters<T>() where T : DataFormatParameter
+      {
+         return Parameters.OfType<T>();
+      }
+
+      public T GetColumnByName<T>(string columnName) where T : DataFormatParameter
+      {
+         return Parameters.OfType<T>().FirstOrDefault(x => x.ColumnName == columnName);
+      }
+
       protected bool NotCompatible(DataSheet dataSheet, ColumnInfoCache columnInfos)
       {
          return (dataSheet.GetHeaders()
@@ -59,7 +69,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       private void setDimensionsForMappings(ColumnInfoCache columnInfos)
       {
-         foreach (var parameter in Parameters.OfType<MappingDataFormatParameter>())
+         foreach (var parameter in GetParameters<MappingDataFormatParameter>())
          {
             var mappedColumn = parameter.MappedColumn;
 
@@ -83,7 +93,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             {
                var dimensionForUnit = _dimensionFactory.DimensionForUnit(mappedColumn.Unit.SelectedUnit);
 
-               if (dimensionForUnit == null || !concreteColumnInfo.SupportedDimensions.Contains(dimensionForUnit))
+               if (dimensionForUnit == null || !concreteColumnInfo.SupportsDimension(dimensionForUnit))
                   mappedColumn.Unit = new UnitDescription(UnitDescription.InvalidUnit);
                else
                   mappedColumn.Dimension = dimensionForUnit;
@@ -93,7 +103,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       private void setSecondaryColumnUnit(ColumnInfoCache columnInfos)
       {
-         var mappings = Parameters.OfType<MappingDataFormatParameter>().ToList();
+         var mappings = GetParameters<MappingDataFormatParameter>().ToList();
          foreach (var column in columnInfos.Where(c => !c.IsAuxiliary))
          {
             foreach (var relatedColumn in columnInfos.RelatedColumnsFrom(column.Name))
@@ -181,8 +191,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             var headerKey = keys.FirstOrDefault
             (h =>
                dataSheet.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Numeric &&
-               Parameters
-                  .OfType<MappingDataFormatParameter>()
+               GetParameters<MappingDataFormatParameter>()
                   .All(m => m.ColumnName != h)
             );
             if (headerKey == null) continue;
@@ -279,7 +288,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var dictionary = new Dictionary<ExtendedColumn, IList<SimulationPoint>>();
 
          //Add time mapping
-         var mappingParameters = Parameters.OfType<MappingDataFormatParameter>().ToList();
+         var mappingParameters = GetParameters<MappingDataFormatParameter>().ToList();
 
          var dataSet = rawDataSet.ToList();
          foreach (var columnInfo in columnInfos)

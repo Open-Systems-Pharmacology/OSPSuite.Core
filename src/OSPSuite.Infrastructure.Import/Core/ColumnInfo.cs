@@ -63,6 +63,11 @@ namespace OSPSuite.Infrastructure.Import.Core
       {
          get => !IsBase && !IsAuxiliary;
       }
+
+      public bool SupportsDimension(IDimension dimensionForUnit)
+      {
+         return SupportedDimensions.Contains(dimensionForUnit);
+      }
    }
 
    public class ColumnInfoCache : Cache<string, ColumnInfo>

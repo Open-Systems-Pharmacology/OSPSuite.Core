@@ -21,5 +21,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       IList<string> ExcelColumnNames { get; }
       IEnumerable<ParsedDataSet> Parse(DataSheet dataSheet, ColumnInfoCache columnInfos);
       UnitDescription ExtractUnitDescriptions(string description, IReadOnlyList<IDimension> supportedDimensions);
+      T GetColumnByName<T>(string columnName) where T : DataFormatParameter;
+      IEnumerable<T> GetParameters<T>() where T : DataFormatParameter;
    }
 }

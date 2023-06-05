@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -61,11 +60,11 @@ namespace OSPSuite.Infrastructure.Import
       public void infers_unit_from_header_for_measurement_and_error()
       {
          var concentrationMappingColumn =
-            sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Concentration [mol]").MappedColumn;
+            sut.GetColumnByName<MappingDataFormatParameter>("Concentration [mol]").MappedColumn;
          concentrationMappingColumn.Dimension.Name.ShouldBeEqualTo("Concentration");
          concentrationMappingColumn.Unit.SelectedUnit.ShouldBeEqualTo("mol");
 
-         var errorMappingColumn = sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Error [mol]").MappedColumn;
+         var errorMappingColumn = sut.GetColumnByName<MappingDataFormatParameter>("Error [mol]").MappedColumn;
          errorMappingColumn.Dimension.Name.ShouldBeEqualTo("Concentration");
          errorMappingColumn.Unit.SelectedUnit.ShouldBeEqualTo("mol");
          errorMappingColumn.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_ARITHMETIC);
@@ -89,11 +88,11 @@ namespace OSPSuite.Infrastructure.Import
       public void infers_unit_from_header_for_measurement_and_error()
       {
          var concentrationMappingColumn =
-            sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Concentration [mol]").MappedColumn;
+            sut.GetColumnByName<MappingDataFormatParameter>("Concentration [mol]").MappedColumn;
          concentrationMappingColumn.Dimension.Name.ShouldBeEqualTo("Concentration");
          concentrationMappingColumn.Unit.SelectedUnit.ShouldBeEqualTo("mol");
 
-         var errorMappingColumn = sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Error").MappedColumn;
+         var errorMappingColumn = sut.GetColumnByName<MappingDataFormatParameter>("Error").MappedColumn;
          errorMappingColumn.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_GEOMETRIC);
       }
    }
@@ -115,11 +114,11 @@ namespace OSPSuite.Infrastructure.Import
       public void infers_unit_from_header_for_measurement_and_error()
       {
          var concentrationMappingColumn =
-            sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Concentration [MoL]").MappedColumn;
+            sut.GetColumnByName<MappingDataFormatParameter>("Concentration [MoL]").MappedColumn;
          concentrationMappingColumn.Dimension.Name.ShouldBeEqualTo("Concentration");
          concentrationMappingColumn.Unit.SelectedUnit.ShouldBeEqualTo("mol");
 
-         var errorMappingColumn = sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Error").MappedColumn;
+         var errorMappingColumn = sut.GetColumnByName<MappingDataFormatParameter>("Error").MappedColumn;
          errorMappingColumn.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_GEOMETRIC);
       }
    }
@@ -141,11 +140,11 @@ namespace OSPSuite.Infrastructure.Import
       public void infers_unit_from_header_for_measurement_and_error()
       {
          var concentrationMappingColumn =
-            sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Concentration [mol]").MappedColumn;
+            sut.GetColumnByName<MappingDataFormatParameter>("Concentration [mol]").MappedColumn;
          concentrationMappingColumn.Dimension.Name.ShouldBeEqualTo("Concentration");
          concentrationMappingColumn.Unit.SelectedUnit.ShouldBeEqualTo("mol");
 
-         var errorMappingColumn = sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Error [lol]").MappedColumn;
+         var errorMappingColumn = sut.GetColumnByName<MappingDataFormatParameter>("Error [lol]").MappedColumn;
          errorMappingColumn.Unit.SelectedUnit.ShouldBeEqualTo(UnitDescription.InvalidUnit);
          errorMappingColumn.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_ARITHMETIC);
       }
@@ -167,7 +166,7 @@ namespace OSPSuite.Infrastructure.Import
          public void correct_measurement_dimension_should_be_inferred()
          {
             var concentrationMappingColumn =
-               sut.Parameters.OfType<MappingDataFormatParameter>().First(x => x.ColumnName == "Measurement [um]").MappedColumn;
+               sut.GetColumnByName<MappingDataFormatParameter>("Measurement [um]").MappedColumn;
             concentrationMappingColumn.Dimension.Name.ShouldBeEqualTo("Length");
             concentrationMappingColumn.Unit.SelectedUnit.ShouldBeEqualTo("um");
          }

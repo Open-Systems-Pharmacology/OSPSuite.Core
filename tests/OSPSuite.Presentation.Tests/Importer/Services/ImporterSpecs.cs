@@ -14,7 +14,6 @@ using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Presentation.Importer.Core.DataFormat;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Container;
-using static DevExpress.Data.Filtering.Helpers.SubExprHelper.ThreadHoppingFiltering;
 
 namespace OSPSuite.Presentation.Importer.Services
 {
@@ -56,9 +55,9 @@ namespace OSPSuite.Presentation.Importer.Services
          var dataFormat = A.Fake<IDataFormat>();
          _columnInfos = new ColumnInfoCache
          {
-            new ColumnInfo() {DisplayName = "Time"},
-            new ColumnInfo() {DisplayName = "Concentration"},
-            new ColumnInfo() {DisplayName = "Error"}
+            new ColumnInfo() { DisplayName = "Time" },
+            new ColumnInfo() { DisplayName = "Concentration" },
+            new ColumnInfo() { DisplayName = "Error" }
          };
 
          _columnInfos["Time"].SupportedDimensions.Add(DimensionFactoryForSpecs.TimeDimension);
@@ -66,7 +65,7 @@ namespace OSPSuite.Presentation.Importer.Services
          _columnInfos["Error"].SupportedDimensions.Add(DimensionFactoryForSpecs.ConcentrationDimension);
 
          A.CallTo(() => dataFormat.SetParameters(_basicFormat, _columnInfos, null)).Returns(1);
-         A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() {dataFormat});
+         A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>() { dataFormat });
          _parser = A.Fake<IDataSourceFileParser>();
          _dataRepositoryMapper = A.Fake<IDataSetToDataRepositoryMapper>();
          A.CallTo(() => _container.Resolve<IDataSourceFileParser>()).Returns(_parser);
@@ -145,8 +144,8 @@ namespace OSPSuite.Presentation.Importer.Services
                new DataSet()
             }
          };
-         _dataSets["key1"].AddData(new List<ParsedDataSet>() {parsedDataSet1});
-         _dataSets["key2"].AddData(new List<ParsedDataSet>() {parsedDataSet2});
+         _dataSets["key1"].AddData(new List<ParsedDataSet>() { parsedDataSet1 });
+         _dataSets["key2"].AddData(new List<ParsedDataSet>() { parsedDataSet2 });
          _mappings = new List<MetaDataMappingConverter>()
          {
             new MetaDataMappingConverter()
@@ -228,18 +227,18 @@ namespace OSPSuite.Presentation.Importer.Services
          var dataFormat = A.Fake<IDataFormat>();
          _columnInfos = new ColumnInfoCache()
          {
-            new ColumnInfo() {DisplayName = "Time"},
-            new ColumnInfo() {DisplayName = "Concentration"},
-            new ColumnInfo() {DisplayName = "Error"}
+            new ColumnInfo() { DisplayName = "Time" },
+            new ColumnInfo() { DisplayName = "Concentration" },
+            new ColumnInfo() { DisplayName = "Error" }
          };
          _metaDataCategories = new List<MetaDataCategory>()
          {
-            new MetaDataCategory() {Name = "Organ"},
-            new MetaDataCategory() {Name = "Compartment"},
-            new MetaDataCategory() {Name = "Species"},
-            new MetaDataCategory() {Name = "Dose"},
-            new MetaDataCategory() {Name = "Molecule"},
-            new MetaDataCategory() {Name = "Route"}
+            new MetaDataCategory() { Name = "Organ" },
+            new MetaDataCategory() { Name = "Compartment" },
+            new MetaDataCategory() { Name = "Species" },
+            new MetaDataCategory() { Name = "Dose" },
+            new MetaDataCategory() { Name = "Molecule" },
+            new MetaDataCategory() { Name = "Route" }
          };
 
          _columnInfos["Time"].SupportedDimensions.Add(DimensionFactoryForSpecs.TimeDimension);
@@ -269,7 +268,7 @@ namespace OSPSuite.Presentation.Importer.Services
             {
                {
                   "Organ",
-                  new ColumnDescription(0, new List<string>() {"PeripheralVenousBlood"}, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(0, new List<string>() { "PeripheralVenousBlood" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Time [min]",
@@ -305,7 +304,7 @@ namespace OSPSuite.Presentation.Importer.Services
             {
                {
                   "Organ",
-                  new ColumnDescription(0, new List<string>() {"PeripheralVenousBlood"}, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(0, new List<string>() { "PeripheralVenousBlood" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Time",
@@ -313,7 +312,7 @@ namespace OSPSuite.Presentation.Importer.Services
                },
                {
                   "Time_unit",
-                  new ColumnDescription(5, new List<string>() {"min"}, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(5, new List<string>() { "min" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "lloq",
@@ -325,7 +324,7 @@ namespace OSPSuite.Presentation.Importer.Services
                },
                {
                   "Concentration_unit",
-                  new ColumnDescription(5, new List<string>() {"mol"}, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(5, new List<string>() { "mol" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Error",
@@ -333,7 +332,7 @@ namespace OSPSuite.Presentation.Importer.Services
                },
                {
                   "Error_unit",
-                  new ColumnDescription(5, new List<string>() {"mol"}, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(5, new List<string>() { "mol" }, ColumnDescription.MeasurementLevel.Discrete)
                }
             }
          );
@@ -357,7 +356,7 @@ namespace OSPSuite.Presentation.Importer.Services
             {
                {
                   "Organ",
-                  new ColumnDescription(0, new List<string>() {"PeripheralVenousBlood"}, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(0, new List<string>() { "PeripheralVenousBlood" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Time [min]",
@@ -373,7 +372,7 @@ namespace OSPSuite.Presentation.Importer.Services
                },
                {
                   "Concentration_unit",
-                  new ColumnDescription(5, new List<string>() {"mol"}, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(5, new List<string>() { "mol" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Error",
@@ -381,7 +380,7 @@ namespace OSPSuite.Presentation.Importer.Services
                },
                {
                   "Error_unit",
-                  new ColumnDescription(5, new List<string>() {"mol"}, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(5, new List<string>() { "mol" }, ColumnDescription.MeasurementLevel.Discrete)
                }
             }
          );
@@ -413,7 +412,7 @@ namespace OSPSuite.Presentation.Importer.Services
                },
                {
                   "Concentration_unit",
-                  new ColumnDescription(5, new List<string>() {"mol"}, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(5, new List<string>() { "mol" }, ColumnDescription.MeasurementLevel.Discrete)
                },
                {
                   "Error",
@@ -421,7 +420,7 @@ namespace OSPSuite.Presentation.Importer.Services
                },
                {
                   "Error_unit",
-                  new ColumnDescription(5, new List<string>() {"mol"}, ColumnDescription.MeasurementLevel.Discrete)
+                  new ColumnDescription(5, new List<string>() { "mol" }, ColumnDescription.MeasurementLevel.Discrete)
                }
             }
          );
@@ -431,7 +430,8 @@ namespace OSPSuite.Presentation.Importer.Services
       public void the_invalid_unit_is_detected()
       {
          var formats = sut.AvailableFormats(_basicFormat, _columnInfos, _metaDataCategories);
-         (formats.First().Parameters.First(parameter => parameter.ColumnName == "Time [invalidUnit]") as MappingDataFormatParameter).MappedColumn.Unit.SelectedUnit.ShouldBeEqualTo(UnitDescription.InvalidUnit);
+         formats.First().GetColumnByName<MappingDataFormatParameter>("Time [invalidUnit]").MappedColumn.Unit
+            .SelectedUnit.ShouldBeEqualTo(UnitDescription.InvalidUnit);
       }
    }
 
@@ -444,7 +444,7 @@ namespace OSPSuite.Presentation.Importer.Services
          _parameterList = new List<DataFormatParameter>
          {
             new MappingDataFormatParameter("time  [h]",
-               new Column() {Name = "Time", Dimension = DimensionFactoryForSpecs.TimeDimension, Unit = new UnitDescription()}),
+               new Column() { Name = "Time", Dimension = DimensionFactoryForSpecs.TimeDimension, Unit = new UnitDescription() }),
             new MappingDataFormatParameter("conc  [mg/l]",
                new Column()
                {
