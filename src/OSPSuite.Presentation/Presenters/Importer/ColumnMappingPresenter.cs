@@ -540,10 +540,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
             .Where
             (
                cn =>
-                  _format.Parameters.OfType<MappingDataFormatParameter>().All(p =>
+                  _format.GetParameters<MappingDataFormatParameter>().All(p =>
                      p.ColumnName != cn && p.MappedColumn?.Unit?.ColumnName != cn && p.MappedColumn?.LloqColumn != cn) &&
-                  _format.Parameters.OfType<MetaDataFormatParameter>().All(p => p.ColumnName != cn) &&
-                  _format.Parameters.OfType<GroupByDataFormatParameter>().All(p => p.ColumnName != cn)
+                  _format.GetParameters<MetaDataFormatParameter>().All(p => p.ColumnName != cn) &&
+                  _format.GetParameters<GroupByDataFormatParameter>().All(p => p.ColumnName != cn)
             );
       }
 
