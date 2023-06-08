@@ -16,7 +16,8 @@ namespace OSPSuite.Core.Converters.v12
       IVisitor<SimulationTransfer>,
       IVisitor<IModelCoreSimulation>,
       IVisitor<SimulationConfiguration>,
-      IVisitor<ModuleConfiguration>
+      IVisitor<ModuleConfiguration>,
+      IVisitor<ParameterValuesBuildingBlock>
    {
       private const string _initialConditionsBuildingBlockName = "InitialConditionsBuildingBlock";
       private const string _parameterValuesBuildingBlockName = "ParameterValuesBuildingBlock";
@@ -184,6 +185,15 @@ namespace OSPSuite.Core.Converters.v12
       public void Visit(SimulationConfiguration simulationConfiguration)
       {
          simulationConfiguration.ModuleConfigurations.Each(Visit);
+      }
+
+      public void Visit(ParameterValuesBuildingBlock buildingBlock)
+      {
+         buildingBlock.Each(x =>
+         {
+            if (x.Formula != null)
+               x.Value = null;
+         });
       }
 
       public void Visit(ModuleConfiguration moduleConfiguration)
