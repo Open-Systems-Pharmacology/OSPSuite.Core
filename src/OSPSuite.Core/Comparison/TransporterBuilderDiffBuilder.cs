@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Comparison
          _containerDiffBuilder.Compare(comparison);
          CompareValues(x => x.SourceCriteria, x => x.SourceCriteria, comparison);
          CompareValues(x => x.TargetCriteria, x => x.TargetCriteria, comparison);
-         _objectComparer.Compare(comparison.ChildComparison(x => x.Dimension));
+         _objectComparer.Compare(comparison.DimensionComparison());
          _moleculeDependentBuilderDiffBuilder.Compare(comparison);
          _objectComparer.Compare(comparison.FormulaComparison());
       }

@@ -17,7 +17,7 @@ namespace OSPSuite.Core.Comparison
       {
          _entityDiffBuilder.Compare(comparison);
          CompareValues(x => x.UseAsValue, x => x.UseAsValue, comparison);
-         _objectComparer.Compare(comparison.ChildComparison(x => x.Dimension));
+         _objectComparer.Compare(comparison.DimensionComparison());
          _objectComparer.Compare(comparison.FormulaComparison());
       }
    }
