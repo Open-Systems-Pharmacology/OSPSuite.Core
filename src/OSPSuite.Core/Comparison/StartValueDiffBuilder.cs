@@ -22,7 +22,8 @@ namespace OSPSuite.Core.Comparison
       protected virtual void ComparePathAndEntityValues(IComparison<T> comparison)
       {
          _entityDiffBuilder.Compare(comparison);
-         CompareValues(x => x.Dimension, x => x.Dimension, comparison);
+         _objectComparer.Compare(comparison.DimensionComparison());
+
          CompareValues(x => x.ContainerPath, x => x.ContainerPath, comparison);
 
          // Always Compare Value and Formula, independent from settings as these are two different properties of a start value

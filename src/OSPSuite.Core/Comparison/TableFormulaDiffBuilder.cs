@@ -8,12 +8,14 @@ namespace OSPSuite.Core.Comparison
 {
    public class TableFormulaDiffBuilder : DiffBuilder<TableFormula>
    {
+      private readonly IObjectComparer _objectComparer;
       private readonly ObjectBaseDiffBuilder _objectBaseDiffBuilder;
       private readonly EnumerableComparer _enumerableComparer;
       private readonly IDisplayNameProvider _displayNameProvider;
 
-      public TableFormulaDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer, IDisplayNameProvider displayNameProvider)
+      public TableFormulaDiffBuilder(IObjectComparer objectComparer, ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer, IDisplayNameProvider displayNameProvider)
       {
+         _objectComparer = objectComparer;
          _objectBaseDiffBuilder = objectBaseDiffBuilder;
          _enumerableComparer = enumerableComparer;
          _displayNameProvider = displayNameProvider;
@@ -22,7 +24,7 @@ namespace OSPSuite.Core.Comparison
       public override void Compare(IComparison<TableFormula> comparison)
       {
          _objectBaseDiffBuilder.Compare(comparison);
-         CompareValues(x => x.Dimension, x => x.Dimension, comparison);
+         _objectComparer.Compare(comparison.DimensionComparison());
          CompareStringValues(x => x.XName, x => x.XName, comparison);
          CompareStringValues(x => x.YName, x => x.YName, comparison);
          CompareValues(x => x.UseDerivedValues, x => x.UseDerivedValues, comparison);

@@ -280,7 +280,7 @@ namespace OSPSuite.Core.DiffBuilders
          var dim = A.Fake<IDimension>();
          var msv1 = new ParameterValue().WithName("Tada").WithFormula(new ConstantFormula(2)).WithDimension(dim);
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
-         var dim2 = A.Fake<IDimension>();
+         var dim2 = new Dimension(new BaseDimensionRepresentation(), "name", "name");
          var msv2 = new ParameterValue().WithName("Tada").WithFormula(new ConstantFormula(2)).WithDimension(dim2);
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          _object1 = msv1;
