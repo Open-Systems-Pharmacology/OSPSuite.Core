@@ -16,7 +16,8 @@ namespace OSPSuite.Core.Converters.v12
       IVisitor<SimulationTransfer>,
       IVisitor<IModelCoreSimulation>,
       IVisitor<SimulationConfiguration>,
-      IVisitor<ModuleConfiguration>
+      IVisitor<ModuleConfiguration>,
+      IVisitor<ParameterValuesBuildingBlock>
    {
       private const string _initialConditionsBuildingBlockName = "InitialConditionsBuildingBlock";
       private const string _parameterValuesBuildingBlockName = "ParameterValuesBuildingBlock";
@@ -184,6 +185,19 @@ namespace OSPSuite.Core.Converters.v12
       public void Visit(SimulationConfiguration simulationConfiguration)
       {
          simulationConfiguration.ModuleConfigurations.Each(Visit);
+      }
+
+      public void Visit(ParameterValuesBuildingBlock buildingBlock)
+      {
+         // In building blocks prior to v12 (parameter start values building blocks) it was possible to have parameter values
+         // with both formula and value. In those cases, the formula would always be used and the value ignored
+         // In v12 the logic is modified, if there is a value, it overrides the formula, so for building blocks older than v12
+         // the value, which would have been ignored anyway, has to be removed when there is a formula
+         buildingBlock.Each(x =>
+         {
+            if (x.Formula != null)
+               x.Value = null;
+         });
       }
 
       public void Visit(ModuleConfiguration moduleConfiguration)

@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Castle.Components.DictionaryAdapter.Xml;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Converters.v12;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core
 {
@@ -66,6 +70,25 @@ namespace OSPSuite.Core
          urineEmptyingStartEvent.Assignments.Count().ShouldBeEqualTo(2);
          urineEmptyingStartEvent.Assignments.Find(x => x.ObjectPath.PathAsString.Contains("C1")).ShouldNotBeNull();
          urineEmptyingStartEvent.Assignments.Find(x => x.ObjectPath.PathAsString.Contains("C2")).ShouldNotBeNull();
+      }
+   }
+
+   public class concern_for_Converter110To120 : ContextWithLoadedSimulation<Converter110To120>
+   {
+      private CreationResult _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         var simulationTransfer = LoadPKMLFile("simulation_with_urine_emptying");
+         var modelConstructor = IoC.Resolve<IModelConstructor>();
+         _result = modelConstructor.CreateModelFrom(simulationTransfer.Simulation.Configuration, "simulation_with_urine_emptying");
+      }
+
+      [Observation]
+      public void all_parameter_values_have_only_formula_or_value_not_both()
+      {
+         _result.SimulationBuilder.ParameterValues.Where(x => x.Value.HasValue).All(x => x.Formula == null).ShouldBeTrue();
       }
    }
 }
