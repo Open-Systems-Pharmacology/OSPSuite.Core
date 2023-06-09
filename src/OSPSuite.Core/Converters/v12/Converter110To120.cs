@@ -189,6 +189,10 @@ namespace OSPSuite.Core.Converters.v12
 
       public void Visit(ParameterValuesBuildingBlock buildingBlock)
       {
+         // In building blocks prior to v12 (parameter start values building blocks) it was possible to have parameter values
+         // with both formula and value. In those cases, the formula would always be used and the value ignored
+         // In v12 the logic is modified, if there is a value, it overrides the formula, so for building blocks older than v12
+         // the value, which would have been ignored anyway, has to be removed when there is a formula
          buildingBlock.Each(x =>
          {
             if (x.Formula != null)
