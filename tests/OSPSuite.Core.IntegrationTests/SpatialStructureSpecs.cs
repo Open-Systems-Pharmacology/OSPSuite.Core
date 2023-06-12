@@ -1,5 +1,6 @@
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
@@ -9,7 +10,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core
 {
-   internal abstract class concern_for_SpatialStructure : ContextForIntegration<SpatialStructure>
+   public abstract class concern_for_SpatialStructure : ContextForIntegration<SpatialStructure>
    {
       protected SimulationConfiguration _simulationConfiguration;
       protected SimulationBuilder _simulationBuilder;
@@ -24,6 +25,41 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          sut = new SpatialStructure();
+      }
+   }
+
+   public class When_getting_the_caption_of_a_building_block_without_a_module : concern_for_SpatialStructure
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Name = "spatialStructure";
+      }
+
+      [Observation]
+      public void the_display_name_is_only_the_building_block_name()
+      {
+         sut.DisplayName.ShouldBeEqualTo("spatialStructure");
+      }
+   }
+
+   public class When_getting_the_caption_of_a_building_block_within_a_module : concern_for_SpatialStructure
+   {
+      private Module _module;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut.Name = "spatialStructure";
+         _module = new Module().WithName("moduleName");
+         _module.Add(sut);
+      }
+
+      [Observation]
+      public void the_display_name_contains_the_module_name_and_the_building_block_name()
+      {
+         sut.DisplayName.Contains("moduleName").ShouldBeTrue();
+         sut.DisplayName.Contains("spatialStructure").ShouldBeTrue();
       }
    }
 

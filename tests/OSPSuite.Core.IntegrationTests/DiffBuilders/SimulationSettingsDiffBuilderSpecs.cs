@@ -130,7 +130,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
 
       [Observation]
-      public void Shoukld_return_the_differences()
+      public void Should_return_the_differences()
       {
          _report.Count.ShouldBeEqualTo(2);
       }
