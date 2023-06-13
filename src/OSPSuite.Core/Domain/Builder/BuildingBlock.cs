@@ -30,6 +30,8 @@ namespace OSPSuite.Core.Domain.Builder
       ///    (Individual, Expressions)
       /// </summary>
       Module Module { get; set; }
+
+      string DisplayName { get; }
    }
 
    /// <summary>
@@ -42,6 +44,13 @@ namespace OSPSuite.Core.Domain.Builder
       public uint Version { set; get; }
       public CreationMetaData Creation { get; set; }
       public Module Module { get; set; }
+
+      public string DisplayName => Module != null ? $"{Module.Name} - {Name}" : Name;
+
+      public override string ToString()
+      {
+         return DisplayName;
+      }
 
       public void AddFormula(IFormula formula)
       {
