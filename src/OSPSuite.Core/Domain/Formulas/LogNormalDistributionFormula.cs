@@ -8,6 +8,10 @@ namespace OSPSuite.Core.Domain.Formulas
 {
    public class LogNormalDistributionFormula : DistributionFormula
    {
+      public LogNormalDistributionFormula() : base(DistributionType.LogNormal)
+      {
+      }
+
       protected override double CalculateFor(IReadOnlyList<IObjectReference> usedObjects, IUsingFormula refObject)
       {
          var distributedParameter = refObject.ConvertedTo<IDistributedParameter>();

@@ -1281,7 +1281,7 @@ namespace OSPSuite.Helpers
             return new Module().WithId(id).DowncastTo<T>();
 
          if (sourceObject.IsAnImplementationOf<ModuleConfiguration>())
-            return new ModuleConfiguration().DowncastTo<T>();
+            return new ModuleConfiguration(new Module()).DowncastTo<T>();
 
          if (sourceObject.IsAnImplementationOf<SimulationConfiguration>())
             return new SimulationConfiguration().DowncastTo<T>();
