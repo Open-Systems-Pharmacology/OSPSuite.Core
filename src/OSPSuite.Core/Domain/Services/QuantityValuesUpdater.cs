@@ -49,9 +49,10 @@ namespace OSPSuite.Core.Domain.Services
       {
          updateMoleculeAmountFromInitialConditions(modelConfiguration);
 
-         updateParameterFromIndividualValues(modelConfiguration);
-
+         //Add expressions profile before individual as some settings might be overwritten in the individual for aging
          updateParameterFromExpressionProfiles(modelConfiguration);
+
+         updateParameterFromIndividualValues(modelConfiguration);
 
          //PV are applied last
          updateParameterValueFromParameterValues(modelConfiguration);
