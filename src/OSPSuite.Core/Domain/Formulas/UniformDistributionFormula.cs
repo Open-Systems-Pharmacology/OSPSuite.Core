@@ -7,6 +7,10 @@ namespace OSPSuite.Core.Domain.Formulas
 {
    public class UniformDistributionFormula : DistributionFormula
    {
+      public UniformDistributionFormula() : base(DistributionType.Uniform)
+      {
+      }
+
       protected override double CalculateFor(IReadOnlyList<IObjectReference> usedObjects, IUsingFormula refObject)
       {
          var distributedParameter = refObject.ConvertedTo<IDistributedParameter>();

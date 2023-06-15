@@ -109,6 +109,16 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
+   public class DistributedTableFormulaXmlSerializer : TableFormulaXmlSerializerBase<DistributedTableFormula>
+   {
+      public override void PerformMapping()
+      {
+         base.PerformMapping();
+         Map(x => x.Percentile);
+         MapEnumerable(x => x.AllDistributionMetaData(), x => x.AddDistributionMetaData);
+      }
+   }
+
    public class TableFormulaWithXArgumentXmlSerializer : FormulaXmlSerializer<TableFormulaWithXArgument>
    {
       public override void PerformMapping()

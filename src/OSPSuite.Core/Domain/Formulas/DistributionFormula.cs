@@ -5,6 +5,13 @@ namespace OSPSuite.Core.Domain.Formulas
 {
    public abstract class DistributionFormula : Formula
    {
+      public DistributionType DistributionType { get; }
+
+      protected DistributionFormula(DistributionType distributionType)
+      {
+         DistributionType = distributionType;
+      }
+
       /// <summary>
       ///    returns the percentile for the current value of the quantity
       /// </summary>

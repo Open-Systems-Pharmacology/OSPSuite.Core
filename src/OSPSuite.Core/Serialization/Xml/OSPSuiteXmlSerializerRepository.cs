@@ -54,6 +54,7 @@ namespace OSPSuite.Core.Serialization.Xml
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<ColumnOrigins, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<AuxiliaryType, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<CriteriaOperator, SerializationContext>());
+         AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<DistributionType, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new LLOQModeXmlAttributeMapper<SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new LLOQUsageXmlAttributeMapper<SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new ValueOriginSourceXmlAttributeMapper<SerializationContext>());

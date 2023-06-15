@@ -6,6 +6,10 @@ namespace OSPSuite.Core.Domain.Formulas
 {
    public class DiscreteDistributionFormula : DistributionFormula
    {
+      public DiscreteDistributionFormula() : base(DistributionType.Discrete)
+      {
+      }
+
       protected override double CalculateFor(IReadOnlyList<IObjectReference> usedObjects, IUsingFormula dependentObject)
       {
          var distributedParameter = dependentObject.ConvertedTo<IDistributedParameter>();

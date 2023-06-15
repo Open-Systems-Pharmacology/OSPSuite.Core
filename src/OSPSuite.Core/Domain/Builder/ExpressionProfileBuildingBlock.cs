@@ -67,6 +67,7 @@ namespace OSPSuite.Core.Domain.Builder
       }
 
       public IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
+
       public IReadOnlyCollection<ExpressionParameter> ExpressionParameters => _allValues;
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
@@ -86,7 +87,7 @@ namespace OSPSuite.Core.Domain.Builder
             AddInitialCondition(cloneManager.Clone(initialCondition)));
       }
 
-      public IEnumerator<InitialCondition> GetEnumerator()
+      IEnumerator<InitialCondition> IEnumerable<InitialCondition>.GetEnumerator()
       {
          return _initialConditions.GetEnumerator();
       }
@@ -101,6 +102,7 @@ namespace OSPSuite.Core.Domain.Builder
       {
          if (pathAndValueEntity == null)
             return;
+
          _initialConditions.Remove(pathAndValueEntity.Path);
       }
    }

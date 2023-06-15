@@ -501,6 +501,10 @@ namespace OSPSuite.Core.Helpers
          AssertAreEqual(x1.Dimension, x2.Dimension);
       }
 
+      public static void AreEqualDistributedTableFormula(DistributedTableFormula x1, DistributedTableFormula x2)
+      {
+
+      }
       public static void AreEqualAxis(Axis x1, Axis x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
