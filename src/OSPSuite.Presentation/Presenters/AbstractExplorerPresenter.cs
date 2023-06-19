@@ -264,8 +264,13 @@ namespace OSPSuite.Presentation.Presenters
 
       public virtual void NodeDoubleClicked(ITreeNode node)
       {
-         if (IsFolderNode(node) || IsModuleNode(node))
+         if (IsExpandable(node))
             View.ToggleExpandState(node);
+      }
+
+      protected virtual bool IsExpandable(ITreeNode node)
+      {
+         return IsFolderNode(node) || IsModuleNode(node);
       }
 
       /// <summary>
