@@ -21,10 +21,15 @@ namespace OSPSuite.Core
       protected string _modelName = "MyModel";
       protected SimulationBuilder _simulationBuilder;
 
+      protected override void Context()
+      {
+         base.Context();
+         throw new Exception();
+      }
+
       public override void GlobalContext()
       {
          base.GlobalContext();
-         throw new Exception();
          _simulationConfiguration = IoC.Resolve<ModuleHelperForSpecs>().CreateSimulationConfiguration();
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
       }
