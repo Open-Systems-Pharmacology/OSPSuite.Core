@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -23,6 +24,7 @@ namespace OSPSuite.Core
       public override void GlobalContext()
       {
          base.GlobalContext();
+         throw new Exception();
          _simulationConfiguration = IoC.Resolve<ModuleHelperForSpecs>().CreateSimulationConfiguration();
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
       }
