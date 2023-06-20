@@ -21,12 +21,6 @@ namespace OSPSuite.Core
       protected string _modelName = "MyModel";
       protected SimulationBuilder _simulationBuilder;
 
-      protected override void Context()
-      {
-         base.Context();
-         throw new Exception();
-      }
-
       public override void GlobalContext()
       {
          base.GlobalContext();
@@ -44,6 +38,12 @@ namespace OSPSuite.Core
 
    internal class When_running_the_case_study_for_module_integration : concern_for_ModuleIntegration
    {
+      protected override void Because()
+      {
+         base.Because();
+         throw new Exception();
+      }
+
       [Observation]
       public void should_return_a_successful_validation()
       {
