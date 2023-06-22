@@ -23,8 +23,64 @@ namespace OSPSuite.Core.Domain
          _baseFactory = A.Fake<IObjectBaseFactory>();
          A.CallTo(() => _baseFactory.Create<InitialConditionsBuildingBlock>()).ReturnsLazily(() => new InitialConditionsBuildingBlock());
          _cloneManagerForBuildingBlock = A.Fake<ICloneManagerForBuildingBlock>();
-         sut = new InitialConditionsCreator(_baseFactory, new ObjectPathFactory(new AliasCreator()),
+         sut = new InitialConditionsCreator(_baseFactory, new EntityPathResolver(new ObjectPathFactory(new AliasCreator())),
             new IdGenerator(), _cloneManagerForBuildingBlock);
+      }
+   }
+
+   internal class when_adding_initial_conditions_to_expression_profile : concern_for_InitialConditionsCreator
+   {
+      private MoleculeBuilder _molecule;
+      private Container _container;
+      private ExpressionProfileBuildingBlock _expressionProfile;
+      protected override void Context()
+      {
+         base.Context();
+         _molecule = new MoleculeBuilder().WithName("moleculeName").WithDimension(Constants.Dimension.NO_DIMENSION);
+         _molecule.DefaultStartFormula = new ExplicitFormula("y = mx + b)");
+         _expressionProfile = new ExpressionProfileBuildingBlock().WithName("moleculeName");
+         var topContainer = new Container
+         {
+            ContainerType = ContainerType.Organ,
+            Mode = ContainerMode.Physical,
+            Name = "topContainer"
+         };
+
+         _container = new Container
+         {
+            ContainerType = ContainerType.Organ,
+            Mode = ContainerMode.Physical,
+            Name = "physicalContainer"
+         };
+
+         _container.Add(new Container
+         {
+            ContainerType = ContainerType.Molecule,
+            Name = _expressionProfile.MoleculeName,
+            Mode = ContainerMode.Logical
+         });
+         topContainer.Add(_container);
+
+         A.CallTo(() => _cloneManagerForBuildingBlock.Clone(_molecule.DefaultStartFormula, _expressionProfile.FormulaCache)).Returns(new ExplicitFormula("y = mx + b)"));
+      }
+
+      protected override void Because()
+      {
+         sut.CreateForExpressionInContainers(_expressionProfile, new []{ _container }, _molecule);
+      }
+
+      [Observation]
+      public void initial_conditions_should_be_created_for_physical_containers_with_molecules()
+      {
+         _expressionProfile.InitialConditions.Count.ShouldBeEqualTo(1);
+         _expressionProfile.InitialConditions.First().Path.ToString().ShouldBeEqualTo("topContainer|physicalContainer|moleculeName");
+         _expressionProfile.InitialConditions.First().Formula.ToString().ShouldBeEqualTo("y = mx + b)");
+      }
+
+      [Observation]
+      public void the_clone_manager_is_used_to_clone_the_formula_and_add_to_the_cache()
+      {
+         A.CallTo(() => _cloneManagerForBuildingBlock.Clone(_molecule.DefaultStartFormula, _expressionProfile.FormulaCache)).MustHaveHappened();
       }
    }
 

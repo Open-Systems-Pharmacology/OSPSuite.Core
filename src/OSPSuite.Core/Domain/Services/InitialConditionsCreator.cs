@@ -3,6 +3,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -23,21 +24,27 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="valueOrigin">The value origin for the value</param>
       /// <returns>an InitialCondition object</returns>
       InitialCondition CreateInitialCondition(ObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null);
+
+      /// <summary>
+      ///    Creates a new initial conditions for the <paramref name="molecule" /> in the <paramref name="containers" /> and adds
+      ///    them to the <paramref name="buildingBlock" />, initializing the default values and formulae.
+      /// </summary>
+      void CreateForExpressionInContainers(ExpressionProfileBuildingBlock buildingBlock, IReadOnlyList<IContainer> containers, MoleculeBuilder molecule);
    }
 
    internal class InitialConditionsCreator : IInitialConditionsCreator
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
-      private readonly IObjectPathFactory _objectPathFactory;
+      private readonly IEntityPathResolver _entityPathResolver;
       private readonly IIdGenerator _idGenerator;
       private readonly ICloneManagerForBuildingBlock _cloneManagerForBuildingBlock;
 
       public InitialConditionsCreator(
-         IObjectBaseFactory objectBaseFactory, IObjectPathFactory objectPathFactory, IIdGenerator idGenerator,
+         IObjectBaseFactory objectBaseFactory, IEntityPathResolver entityPathResolver, IIdGenerator idGenerator,
          ICloneManagerForBuildingBlock cloneManagerForBuildingBlock)
       {
          _objectBaseFactory = objectBaseFactory;
-         _objectPathFactory = objectPathFactory;
+         _entityPathResolver = entityPathResolver;
          _cloneManagerForBuildingBlock = cloneManagerForBuildingBlock;
          _idGenerator = idGenerator;
       }
@@ -54,21 +61,31 @@ namespace OSPSuite.Core.Domain.Services
          return initialConditions;
       }
 
+      private InitialCondition createInitialCondition(IBuildingBlock initialConditionsBuildingBlock, IEntity container, MoleculeBuilder molecule)
+      {
+         var initialCondition = CreateInitialCondition(_entityPathResolver.ObjectPathFor(container), molecule.Name, molecule.Dimension, molecule.DisplayUnit);
+         setInitialCondition(molecule, initialCondition);
+         setInitialConditionFormula(molecule.DefaultStartFormula, initialCondition, initialConditionsBuildingBlock);
+         return initialCondition;
+      }
+
       private void addMoleculesFrom(InitialConditionsBuildingBlock initialConditionsBuildingBlock, IEntity container, IEnumerable<MoleculeBuilder> molecules)
       {
          foreach (var molecule in molecules)
          {
-            var initialCondition = CreateInitialCondition(_objectPathFactory.CreateAbsoluteObjectPath(container), molecule.Name, molecule.Dimension, molecule.DisplayUnit);
-            setInitialCondition(molecule, initialCondition);
-            setInitialConditionFormula(molecule.DefaultStartFormula, initialCondition, initialConditionsBuildingBlock);
-            initialConditionsBuildingBlock.Add(initialCondition);
+            initialConditionsBuildingBlock.Add(createInitialCondition(initialConditionsBuildingBlock, container, molecule));
          }
       }
 
-      private void setInitialConditionFormula(IFormula formula, InitialCondition initialCondition, IBuildingBlock moleculesStartValues)
+      public void CreateForExpressionInContainers(ExpressionProfileBuildingBlock buildingBlock, IReadOnlyList<IContainer> containers, MoleculeBuilder molecule)
+      {
+         containers.Each(container => { buildingBlock.AddInitialCondition(createInitialCondition(buildingBlock, container, molecule)); });
+      }
+
+      private void setInitialConditionFormula(IFormula formula, InitialCondition initialCondition, IBuildingBlock buildingBlock)
       {
          if (!formula.IsConstant())
-            initialCondition.Formula = _cloneManagerForBuildingBlock.Clone(formula, moleculesStartValues.FormulaCache);
+            initialCondition.Formula = _cloneManagerForBuildingBlock.Clone(formula, buildingBlock.FormulaCache);
       }
 
       private static void setInitialCondition(MoleculeBuilder moleculeBuilder, InitialCondition initialCondition)
