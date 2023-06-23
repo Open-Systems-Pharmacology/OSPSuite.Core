@@ -42,7 +42,11 @@ namespace OSPSuite.Core.Domain.Data
       Undefined,
       ArithmeticStdDev,
       GeometricStdDev,
+
+      //Use to specify that the related column is the arithmetic mean data of a range plot
       ArithmeticMeanPop,
+
+      //Use to specify that the related column is the geometric mean data of a range plot
       GeometricMeanPop
    }
 

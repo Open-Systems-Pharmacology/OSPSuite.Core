@@ -359,15 +359,21 @@ namespace OSPSuite.Presentation.Presentation
 
    public class When_the_chart_display_presenter_is_exporting_the_displayed_chart_to_excel : concern_for_ChartDisplayPresenter
    {
+      protected override void Context()
+      {
+         base.Context();
+         sut.PreExportHook = x => x;
+      }
+
       protected override void Because()
       {
          sut.ExportToExcel();
       }
 
       [Observation]
-      public void should_use_the_chart_export_task_to_expor_the_char_to_excel()
+      public void should_use_the_chart_export_task_to_export_the_char_to_excel()
       {
-         A.CallTo(() => _chartExportTask.ExportToExcel(_curveChart)).MustHaveHappened();
+         A.CallTo(() => _chartExportTask.ExportToExcel(_curveChart, sut.PreExportHook)).MustHaveHappened();
       }
    }
 }

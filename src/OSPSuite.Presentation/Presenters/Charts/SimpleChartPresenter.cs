@@ -6,11 +6,8 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Events;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Views.Charts;
-using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Charts
@@ -67,30 +64,43 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Refresh the display after external changes were made to the chart
       /// </summary>
       void Refresh();
+
+      /// <summary>
+      /// Hook that can be executed on the dataColumn to modify them, reorder them etc..
+      /// </summary>
+      Func<IEnumerable<DataColumn>, IEnumerable<DataColumn>> PreExportHook { get; set; }
    }
 
    public class SimpleChartPresenter : AbstractCommandCollectorPresenter<ISimpleChartView, ISimpleChartPresenter>, ISimpleChartPresenter
    {
       private readonly IChartDisplayPresenter _chartDisplayPresenter;
-      private readonly IEventPublisher _eventPublisher;
       private readonly IPresentationUserSettings _presentationUserSettings;
       private readonly IDimensionFactory _dimensionFactory;
       public CurveChart Chart { get; protected set; }
       private readonly IChartFactory _chartFactory;
 
-      public SimpleChartPresenter(ISimpleChartView view, IChartDisplayPresenter chartDisplayPresenter, IChartFactory chartFactory,
-         IEventPublisher eventPublisher, IPresentationUserSettings presentationUserSettings, IDimensionFactory dimensionFactory)
+      public SimpleChartPresenter(
+         ISimpleChartView view,
+         IChartDisplayPresenter chartDisplayPresenter,
+         IChartFactory chartFactory,
+         IPresentationUserSettings presentationUserSettings,
+         IDimensionFactory dimensionFactory)
          : base(view)
       {
          _chartDisplayPresenter = chartDisplayPresenter;
          _chartFactory = chartFactory;
-         _eventPublisher = eventPublisher;
          _presentationUserSettings = presentationUserSettings;
          _dimensionFactory = dimensionFactory;
          _view.AddView(_chartDisplayPresenter.View);
          _chartDisplayPresenter.DisableCurveAndAxisEdits();
          LogLinSelectionEnabled = false;
          AddSubPresenters(_chartDisplayPresenter);
+      }
+
+      public Func<IEnumerable<DataColumn>, IEnumerable<DataColumn>> PreExportHook
+      {
+         get => _chartDisplayPresenter.PreExportHook;
+         set => _chartDisplayPresenter.PreExportHook = value;
       }
 
       public Action<int> HotTracked
