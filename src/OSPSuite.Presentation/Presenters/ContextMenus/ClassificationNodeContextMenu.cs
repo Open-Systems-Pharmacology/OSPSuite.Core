@@ -23,7 +23,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
          var allMenuItems = new List<IMenuBarItem>(AllCustomMenuItemsFor(classificationNode, presenter));
          allMenuItems.AddRange(new[]
          {
-            RenameGroupMenuFor(classificationNode, presenter),
+            RenameGroupMenuFor(classificationNode, presenter, allMenuItems.Any()),
             CreateGroupMenuFor(classificationNode, presenter),
          });
          var groupMenu = AddClassificationMenu(classificationNode, presenter);
@@ -44,11 +44,16 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
          return ClassificationCommonContextMenuItems.CreateClassificationUnderMenu(classificationNode, presenter);
       }
 
-      protected IMenuBarButton RenameGroupMenuFor(ClassificationNode classificationNode, TPresenter presenter)
+      protected IMenuBarButton RenameGroupMenuFor(ClassificationNode classificationNode, TPresenter presenter, bool asGroupStarter)
       {
-         return CreateMenuButton.WithCaption(MenuNames.Rename)
+         var menu =  CreateMenuButton.WithCaption(MenuNames.Rename)
             .WithActionCommand(() => presenter.RenameClassification(classificationNode))
             .WithIcon(ApplicationIcons.Rename);
+
+         if (asGroupStarter)
+            menu.AsGroupStarter();
+
+         return menu;
       }
 
       protected static IMenuBarSubMenu AddClassificationMenu(ClassificationNode classificationNode, TPresenter presenter)
