@@ -101,6 +101,7 @@ namespace OSPSuite.UI.Views
          var previouslySelectedNode = selectedNodes;
          var canClearSelection = previouslySelectedNode.Count == 1 || !showingPopup;
 
+         _presenter.ResetActiveClassification();
          //this call may  reset the current selection of node
          manageSelectedNodes(selectedNode, canClearSelection);
 
