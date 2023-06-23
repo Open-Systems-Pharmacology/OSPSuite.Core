@@ -28,8 +28,9 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Creates a new initial conditions for the <paramref name="molecule" /> in the <paramref name="containers" /> and adds
       ///    them to the <paramref name="buildingBlock" />, initializing the default values and formulae.
+      ///    The <paramref name="containers"/> list are containers where an initial condition will be created for each using the container path
       /// </summary>
-      void CreateForExpressionInContainers(ExpressionProfileBuildingBlock buildingBlock, IReadOnlyList<IContainer> containers, MoleculeBuilder molecule);
+      void AddToExpressionProfile(ExpressionProfileBuildingBlock buildingBlock, IReadOnlyList<IContainer> containers, MoleculeBuilder molecule);
    }
 
    internal class InitialConditionsCreator : IInitialConditionsCreator
@@ -77,7 +78,7 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      public void CreateForExpressionInContainers(ExpressionProfileBuildingBlock buildingBlock, IReadOnlyList<IContainer> containers, MoleculeBuilder molecule)
+      public void AddToExpressionProfile(ExpressionProfileBuildingBlock buildingBlock, IReadOnlyList<IContainer> containers, MoleculeBuilder molecule)
       {
          containers.Each(container => { buildingBlock.AddInitialCondition(createInitialCondition(buildingBlock, container, molecule)); });
       }

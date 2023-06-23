@@ -66,7 +66,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.CreateForExpressionInContainers(_expressionProfile, new []{ _container }, _molecule);
+         sut.AddToExpressionProfile(_expressionProfile, new []{ _container }, _molecule);
       }
 
       [Observation]
