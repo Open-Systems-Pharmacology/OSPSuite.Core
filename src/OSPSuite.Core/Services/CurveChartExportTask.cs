@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
@@ -12,7 +14,12 @@ namespace OSPSuite.Core.Services
 {
    public interface ICurveChartExportTask
    {
-      void ExportToExcel(CurveChart chart);
+      /// <summary>
+      /// Export the chart to excel
+      /// </summary>
+      /// <param name="chart">Chart to export</param>
+      /// <param name="preExportHook">Hook that can be executed on the dataColumn to modify them, reorder them etc..</param>
+      void ExportToExcel(CurveChart chart, Func<IEnumerable<DataColumn>, IEnumerable<DataColumn>> preExportHook = null);
    }
 
    public class CurveChartExportTask : ICurveChartExportTask
@@ -28,7 +35,7 @@ namespace OSPSuite.Core.Services
          _dimensionFactory = dimensionFactory;
       }
 
-      public void ExportToExcel(CurveChart chart)
+      public void ExportToExcel(CurveChart chart, Func<IEnumerable<DataColumn>, IEnumerable<DataColumn>> preExportHook = null)
       {
          if (chart == null)
             return;
@@ -46,14 +53,17 @@ namespace OSPSuite.Core.Services
          visibleCurves.Each(curve => dataColumnCache[curve.yData] = curve);
 
          //Base grid are added by default to the export unless the data represents an amount vs obs data. In that case, the base grid might be another column
-         var otherColumnsToExport = visibleCurves.Select(x => x.xData).Where(x => !x.IsBaseGrid());
+         var otherColumnsToExport = visibleCurves.Select(x => x.xData).Where(x => !x.IsBaseGrid()).ToList();
 
          var exportOptions = new DataColumnExportOptions
          {
             ColumnNameRetriever = col => dataColumnCache[col]?.Name ?? col.Name,
             DimensionRetriever = _dimensionFactory.MergedDimensionFor
          };
-         _dataRepositoryExportTask.ExportToExcel(dataColumnCache.Keys.Union(otherColumnsToExport), fileName, exportOptions: exportOptions);
+
+         var allColumns = dataColumnCache.Keys.Union(otherColumnsToExport);
+         var allColumnsToExport = preExportHook?.Invoke(allColumns) ?? allColumns;
+         _dataRepositoryExportTask.ExportToExcel(allColumnsToExport, fileName, exportOptions: exportOptions);
       }
    }
 }

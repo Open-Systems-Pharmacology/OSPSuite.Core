@@ -29,10 +29,9 @@ namespace OSPSuite.Presentation.Presentation
          _view = A.Fake<ISimpleChartView>();
          _chartFactory = A.Fake<IChartFactory>();
          _chartDisplayPresenter = A.Fake<IChartDisplayPresenter>();
-         _eventPublisher = A.Fake<IEventPublisher>();
          _dimensionFactory= A.Fake<IDimensionFactory>();
          _presentationUserSettings = A.Fake<IPresentationUserSettings>();
-         sut = new SimpleChartPresenter(_view, _chartDisplayPresenter, _chartFactory,_eventPublisher, _presentationUserSettings, _dimensionFactory);
+         sut = new SimpleChartPresenter(_view, _chartDisplayPresenter, _chartFactory, _presentationUserSettings, _dimensionFactory);
 
          _presentationUserSettings.DefaultChartYScaling = Scalings.Log;
          A.CallTo(() => _chartFactory.Create<CurveChart>()).ReturnsLazily(() => new CurveChart {DefaultYAxisScaling = _presentationUserSettings.DefaultChartYScaling});
