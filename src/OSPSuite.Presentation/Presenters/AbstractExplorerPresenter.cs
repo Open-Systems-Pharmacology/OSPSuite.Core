@@ -207,9 +207,12 @@ namespace OSPSuite.Presentation.Presenters
 
       private void addClassifiableUnderActiveClassification(IClassifiable classifiable)
       {
+         //If we have an active classification, of th right type and our classifiable was not under a parent already,
+         //we add it under the active classification
          if ((_activeClassification?.ClassificationType == classifiable.ClassificationType) && classifiable.Parent == null)
             classifiable.Parent = _activeClassification;
 
+         //In all cases, we reset the active classification
          ResetActiveClassification();
       }
 
@@ -342,8 +345,6 @@ namespace OSPSuite.Presentation.Presenters
 
       public virtual IEnumerable<IMenuBarItem> AllCustomMenuItemsFor(ClassificationNode classificationNode)
       {
-         ResetActiveClassification();
-
          //by default, no custom menus
          return Enumerable.Empty<IMenuBarItem>();
       }
