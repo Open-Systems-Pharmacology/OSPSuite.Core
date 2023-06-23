@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.Core;
+using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters.Classifications;
 using OSPSuite.Presentation.Presenters.Nodes;
@@ -49,6 +50,7 @@ namespace OSPSuite.Presentation.Presenters
       void NodeDoubleClicked(ITreeNode node);
 
       IEnumerable<ClassificationTemplate> AvailableClassificationCategories(ITreeNode<IClassification> parentClassificationNode);
+
 
       void AddToClassificationTree(ITreeNode<IClassification> parentNode, string category);
 
@@ -160,6 +162,11 @@ namespace OSPSuite.Presentation.Presenters
       ///    directly in the view otherwise
       /// </summary>
       void AddClassifiableNodeToView(ITreeNode classifiableNode, ITreeNode<IClassification> classificationNode = null);
+
+      /// <summary>
+      /// Returns a list of app specific menu items to be display under a given classification node
+      /// </summary>
+      IEnumerable<IMenuBarItem> AllCustomMenuItemsFor(ClassificationNode classificationNode);
    }
 
    public abstract class AbstractExplorerPresenter<TView, TPresenter> : AbstractPresenter<TView, TPresenter>, IExplorerPresenter
@@ -260,6 +267,7 @@ namespace OSPSuite.Presentation.Presenters
       }
 
       public abstract void ShowContextMenu(ITreeNode node, Point popupLocation);
+
       public abstract void ShowContextMenu(IReadOnlyList<ITreeNode> treeNodes, Point popupLocation);
 
       public virtual void NodeDoubleClicked(ITreeNode node)
@@ -322,6 +330,12 @@ namespace OSPSuite.Presentation.Presenters
          }
          else
             _view.AddNode(classifiableNode);
+      }
+
+      public virtual IEnumerable<IMenuBarItem> AllCustomMenuItemsFor(ClassificationNode classificationNode)
+      {
+         //by default, no custom menus
+         return Enumerable.Empty<IMenuBarItem>();
       }
 
       public virtual void RenameClassification(ITreeNode<IClassification> classificationNode)
