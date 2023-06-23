@@ -1,18 +1,18 @@
 configuration: Debug
-image: Visual Studio 2019
+image: Visual Studio 2022
 
 version: '{build}'
 
 init:
-- ps: Update-AppveyorBuild -Version "12.0.$($env:appveyor_build_version)"
+- ps: Update-AppveyorBuild -Version "$($env:ospsuite_version).$($env:appveyor_build_version)"
 
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
-  version: '12.0.$(build_number)'
-  assembly_version: '12.0.$(build_number)'
-  file_version: '12.0.$(build_number)'
-  informational_version: '12.0.$(build_number)'
+  version: '$($env:ospsuite_version).$(build_number)'
+  assembly_version: '$($env:ospsuite_version).$(build_number)'
+  file_version: '$($env:ospsuite_version).$(build_number)'
+  informational_version: '$($env:ospsuite_version).$(build_number)'
 
 before_build:
   - nuget sources add -name bddhelper -source https://ci.appveyor.com/nuget/ospsuite-bddhelper 
@@ -30,7 +30,6 @@ build:
   publish_nuget: true
   verbosity: minimal
   publish_nuget_symbols: true
-  use_snupkg_format: true
   project: OSPSuite.Core.sln
 
 skip_branch_with_pr: true
@@ -50,7 +49,6 @@ skip_commits:
 branches:
   only:
     - develop
-    - OSMOSES
 
 test:
   assemblies:
