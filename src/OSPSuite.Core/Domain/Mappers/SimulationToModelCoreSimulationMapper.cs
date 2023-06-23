@@ -3,19 +3,21 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Mappers
 {
-   public interface ISimulationToModelCoreSimulationMapper 
+   public interface ISimulationToModelCoreSimulationMapper
    {
       /// <summary>
-      /// Returns a new <see cref="ModelCoreSimulation"/> based on <paramref name="simulation"/>. If <paramref name="shouldCloneModel"/> is set to <c>true</c>, 
-      /// the model of the <paramref name="simulation"/> will be cloned. Otherwise it will be simply referenced
+      ///    Returns a new <see cref="ModelCoreSimulation" /> based on <paramref name="simulation" />. If
+      ///    <paramref name="shouldCloneModel" /> is set to <c>true</c>,
+      ///    the model of the <paramref name="simulation" /> will be cloned. Otherwise it will be simply referenced
       /// </summary>
       IModelCoreSimulation MapFrom(ISimulation simulation, bool shouldCloneModel);
 
       /// <summary>
-      /// Returns a new <see cref="ModelCoreSimulation"/> based on <paramref name="simulation"/> and <paramref name="buildConfiguration"/>. If <paramref name="shouldCloneModel"/> is set to <c>true</c>, 
-      /// the model of the <paramref name="simulation"/> will be cloned. Otherwise it will be simply referenced
+      ///    Returns a new <see cref="ModelCoreSimulation" /> based on <paramref name="simulation" /> and
+      ///    <paramref name="simulationConfiguration" />. If <paramref name="shouldCloneModel" /> is set to <c>true</c>,
+      ///    the model of the <paramref name="simulation" /> will be cloned. Otherwise it will be simply referenced
       /// </summary>
-      IModelCoreSimulation MapFrom(ISimulation simulation, IBuildConfiguration buildConfiguration, bool shouldCloneModel);
+      IModelCoreSimulation MapFrom(ISimulation simulation, SimulationConfiguration simulationConfiguration, bool shouldCloneModel);
    }
 
    public class SimulationToModelCoreSimulationMapper : ISimulationToModelCoreSimulationMapper
@@ -33,15 +35,15 @@ namespace OSPSuite.Core.Domain.Mappers
 
       public IModelCoreSimulation MapFrom(ISimulation simulation, bool shouldCloneModel)
       {
-         return MapFrom(simulation, new BuildConfiguration {SimulationSettings = _cloneManagerForBuildingBlock.Clone(simulation.SimulationSettings)},shouldCloneModel);
+         return MapFrom(simulation, new SimulationConfiguration {SimulationSettings = _cloneManagerForBuildingBlock.Clone(simulation.Settings)}, shouldCloneModel);
       }
 
-      public IModelCoreSimulation MapFrom(ISimulation simulation, IBuildConfiguration buildConfiguration, bool shouldCloneModel)
+      public IModelCoreSimulation MapFrom(ISimulation simulation, SimulationConfiguration simulationConfiguration, bool shouldCloneModel)
       {
          var modelToUse = modelFrom(simulation.Model, shouldCloneModel);
          return new ModelCoreSimulation
          {
-            BuildConfiguration = buildConfiguration,
+            Configuration = simulationConfiguration,
             Model = modelToUse,
             Creation = simulation.Creation,
             Id = _idGenerator.NewId(),

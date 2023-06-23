@@ -4,7 +4,7 @@ using DevExpress.XtraEditors.DXErrorProvider;
 
 namespace OSPSuite.Presentation.DTO
 {
-     public abstract class DxValidatableDTO : ValidatableDTO , IDXDataErrorInfo
+   public abstract class DxValidatableDTO : ValidatableDTO, IDXDataErrorInfo
    {
       public virtual void GetPropertyError(string propertyName, ErrorInfo info)
       {
@@ -14,7 +14,7 @@ namespace OSPSuite.Presentation.DTO
       public virtual void GetError(ErrorInfo info)
       {
          this.UpdateError(info);
-      }     
+      }
    }
 
    public abstract class DxValidatableDTO<T> : DxValidatableDTO where T : IValidatable, INotifier

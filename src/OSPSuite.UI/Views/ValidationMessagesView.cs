@@ -37,7 +37,6 @@ namespace OSPSuite.UI.Views
          _gridViewBinder = new GridViewBinder<ValidationMessageDTO>(gridView);
 
          _gridViewBinder.Bind(x => x.Status)
-            .WithCaption(Captions.ParameterIdentification.Status)
             .WithRepository(statusRepositoryFor)
             .AsReadOnly();
 

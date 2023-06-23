@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
-   public interface IQuantityValuesUpdater
+   internal interface IQuantityValuesUpdater
    {
       /// <summary>
-      ///    Update the values of all <see cref="Quantity" /> defined in the <paramref name="model" /> based on the values
-      ///    provided in the <paramref name="buildConfiguration" />.
+      ///    Update the values of all <see cref="Quantity" /> defined in the model based on the values
+      ///    provided in the <paramref name="modelConfiguration" />.
       ///    More specifically, <see cref="Parameter" /> values or formula as well as <see cref="MoleculeAmount" /> start values
       ///    or formula will be updated.
       /// </summary>
@@ -17,98 +19,159 @@ namespace OSPSuite.Core.Domain.Services
       ///    This completely overrides the defaults defined in the <see cref="MoleculeBuildingBlock" /> and
       ///    <see cref="SpatialStructure" />.
       /// </remarks>
-      /// <param name="model">The model whose quantities will be updated</param>
-      /// <param name="buildConfiguration">The build configuration containing molecule and parameter start values used to update.</param>
-      void UpdateQuantitiesValues(IModel model, IBuildConfiguration buildConfiguration);
+      /// <param name="modelConfiguration">The model whose quantities will be updated</param>
+      void UpdateQuantitiesValues(ModelConfiguration modelConfiguration);
    }
 
-   public class QuantityValuesUpdater : IQuantityValuesUpdater
+   internal class QuantityValuesUpdater : IQuantityValuesUpdater
    {
       private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly ICloneManagerForModel _cloneManagerForModel;
       private readonly IFormulaFactory _formulaFactory;
       private readonly IConcentrationBasedFormulaUpdater _concentrationBasedFormulaUpdater;
+      private readonly IParameterFactory _parameterFactory;
 
-      public QuantityValuesUpdater(IKeywordReplacerTask keywordReplacerTask, ICloneManagerForModel cloneManagerForModel,
-         IFormulaFactory formulaFactory, IConcentrationBasedFormulaUpdater concentrationBasedFormulaUpdater)
+      public QuantityValuesUpdater(
+         IKeywordReplacerTask keywordReplacerTask,
+         ICloneManagerForModel cloneManagerForModel,
+         IFormulaFactory formulaFactory,
+         IConcentrationBasedFormulaUpdater concentrationBasedFormulaUpdater,
+         IParameterFactory parameterFactory)
       {
          _keywordReplacerTask = keywordReplacerTask;
          _cloneManagerForModel = cloneManagerForModel;
          _formulaFactory = formulaFactory;
          _concentrationBasedFormulaUpdater = concentrationBasedFormulaUpdater;
+         _parameterFactory = parameterFactory;
       }
 
-      public void UpdateQuantitiesValues(IModel model, IBuildConfiguration buildConfiguration)
+      public void UpdateQuantitiesValues(ModelConfiguration modelConfiguration)
       {
-         updateParameterValueFromParameterStartValues(model, buildConfiguration);
-         updateMoleculeAmountFromMoleculeStartValues(model, buildConfiguration);
+         updateMoleculeAmountFromInitialConditions(modelConfiguration);
+
+         //Add expressions profile before individual as some settings might be overwritten in the individual for aging
+         updateParameterFromExpressionProfiles(modelConfiguration);
+
+         updateParameterFromIndividualValues(modelConfiguration);
+
+         //PV are applied last
+         updateParameterValueFromParameterValues(modelConfiguration);
       }
 
-      private void updateParameterValueFromParameterStartValues(IModel model, IBuildConfiguration buildConfiguration)
+      private void updateParameterFromExpressionProfiles(ModelConfiguration modelConfiguration)
       {
-         foreach (var parameterStartValue in buildConfiguration.ParameterStartValues)
+         modelConfiguration.SimulationConfiguration.ExpressionProfiles?.SelectMany(x => x.ExpressionParameters).Each(x => updateParameterValueFromStartValue(modelConfiguration, x, getParameter));
+      }
+
+      private void updateParameterFromIndividualValues(ModelConfiguration modelConfiguration)
+      {
+         //Order by distribution to ensure that distributed parameter are loaded BEFORE their sub parameters.
+         //not use descending otherwise parameter without distribution are returned fist
+         modelConfiguration.SimulationConfiguration.Individual?.OrderByDescending(x => x.DistributionType)
+            .Each(x => updateParameterValueFromStartValue(modelConfiguration, x, getOrAddModelParameter));
+      }
+
+      private void updateParameterValueFromParameterValues(ModelConfiguration modelConfiguration)
+      {
+         modelConfiguration.SimulationBuilder.ParameterValues
+            .Each(pv => updateParameterValueFromStartValue(modelConfiguration, pv, getParameter));
+      }
+
+      private IParameter getOrAddModelParameter(ModelConfiguration modelConfiguration, IndividualParameter individualParameter)
+      {
+         var parameter = getParameter(modelConfiguration, individualParameter);
+         if (parameter != null)
+            return parameter.WithUpdatedMetaFrom(individualParameter);
+
+         var (model, simulationConfiguration) = modelConfiguration;
+         //Parameter does not exist in the model. We will create it if possible
+         var parentContainerPathInModel = _keywordReplacerTask.CreateModelPathFor(individualParameter.ContainerPath, model.Root);
+         var parentContainer = parentContainerPathInModel.Resolve<IContainer>(model.Root);
+
+         //container does not exist, we do not add new structure to the existing model. Only parameters
+         if (parentContainer == null)
+            return null;
+
+         var name = individualParameter.Name;
+         var dimension = individualParameter.Dimension;
+         var displayUnit = individualParameter.DisplayUnit;
+         var distributionType = individualParameter.DistributionType;
+
+         //if the distribution is undefined or the value is set, we create a default parameter to ensure that the value will take precedence.
+         //Otherwise, we create a distributed parameter and assume that required sub-parameters will be created as well
+         parameter = distributionType == null || individualParameter.Value != null ? 
+            _parameterFactory.CreateParameter(name, dimension: dimension, displayUnit: displayUnit) : 
+            _parameterFactory.CreateDistributedParameter(name, distributionType.Value, dimension: dimension, displayUnit: displayUnit);
+
+         simulationConfiguration.AddBuilderReference(parameter, individualParameter);
+         return parameter.WithUpdatedMetaFrom(individualParameter)
+            .WithParentContainer(parentContainer);
+      }
+
+      private IParameter getParameter(ModelConfiguration modelConfiguration, PathAndValueEntity pathAndValueEntity)
+      {
+         var (model, _) = modelConfiguration;
+         var pathInModel = _keywordReplacerTask.CreateModelPathFor(pathAndValueEntity.Path, model.Root);
+         return pathInModel.Resolve<IParameter>(model.Root);
+      }
+
+      private void updateParameterValueFromStartValue<T>(ModelConfiguration modelConfiguration, T pathAndValueEntity, Func<ModelConfiguration, T, IParameter> getParameterFunc) where T : PathAndValueEntity
+      {
+         var parameter = getParameterFunc(modelConfiguration, pathAndValueEntity);
+         //this can happen if the parameter does not exist in the model
+         if (parameter == null)
+            return;
+
+         var (model, _) = modelConfiguration;
+
+         //Formula is defined, we update in the parameter instance
+         if (pathAndValueEntity.Formula != null)
          {
-            var pathInModel = _keywordReplacerTask.CreateModelPathFor(parameterStartValue.Path, model.Root);
-            var parameter = pathInModel.Resolve<IParameter>(model.Root);
+            parameter.Formula = _cloneManagerForModel.Clone(pathAndValueEntity.Formula);
 
-            //this can happen if the parameter belongs to a molecule locale properties and the molecule was not created in the container
-            if (parameter == null)
-               continue;
+            //ensures that the parameter is seen as using the formula
+            parameter.IsFixedValue = false;
+            _keywordReplacerTask.ReplaceIn(parameter, model.Root);
+         }
 
-            if (parameterStartValue.Formula != null)
-            {
-               parameter.Formula = _cloneManagerForModel.Clone(parameterStartValue.Formula);
-               _keywordReplacerTask.ReplaceIn(parameter, model.Root);
-            }
+         //If the value is defined, this will be used instead of the formula (even if set previously)
+         if (pathAndValueEntity.Value != null)
+         {
+            var parameterValue = pathAndValueEntity.Value.Value;
+            if (parameter.Formula is ConstantFormula constantFormula)
+               constantFormula.Value = parameterValue;
             else
-            {
-               var constantFormula = parameter.Formula as ConstantFormula;
-               var parameterValue = parameterStartValue.StartValue.GetValueOrDefault(double.NaN);
-               if (constantFormula == null)
-               {
-                  if (parameterStartValue.OverrideFormulaWithValue)
-                     parameter.Formula = _formulaFactory.ConstantFormula(parameterValue, parameter.Dimension);
-                  else
-                     parameter.Value = parameterValue;
-               }
-               else
-               {
-                  constantFormula.Value = parameterValue;
-               }
-            }
-
-            //Ensure that parameter in simulation appears no to have been fixed by the user when updated from PSV
-            if (parameterStartValue.OverrideFormulaWithValue)
-               parameter.IsFixedValue = false;
+               parameter.Value = parameterValue;
          }
       }
 
-      private void updateMoleculeAmountFromMoleculeStartValues(IModel model, IBuildConfiguration buildConfiguration)
+      private void updateMoleculeAmountFromInitialConditions(ModelConfiguration modelConfiguration)
       {
-         foreach (var moleculeStartValue in buildConfiguration.AllPresentMoleculeValues())
+         var (model, simulationConfiguration) = modelConfiguration;
+         foreach (var initialCondition in simulationConfiguration.AllPresentMoleculeValues())
          {
-            //this can happen if the molecule start value contains entry for container that do not exist in the model
-            var container = moleculeStartValue.ContainerPath.Resolve<IContainer>(model.Root);
+            //this can happen if the initial condition contains entry for container that do not exist in the model
+            var container = initialCondition.ContainerPath.Resolve<IContainer>(model.Root);
             if (container == null || container.Mode != ContainerMode.Physical)
                continue;
 
-            var molecule = container.EntityAt<IMoleculeAmount>(moleculeStartValue.MoleculeName);
+            var molecule = container.EntityAt<MoleculeAmount>(initialCondition.MoleculeName);
             if (molecule == null)
-               throw new ArgumentException(Error.CouldNotFindMoleculeInContainer(moleculeStartValue.MoleculeName, moleculeStartValue.ContainerPath.PathAsString));
+               throw new ArgumentException(Error.CouldNotFindMoleculeInContainer(initialCondition.MoleculeName, initialCondition.ContainerPath.PathAsString));
 
-            if (moleculeStartValue.Formula != null)
+            if (initialCondition.Formula != null)
             {
                //use a clone here because we want a different instance for each molecule
-               updateMoleculeAmountFormula(molecule, _cloneManagerForModel.Clone(moleculeStartValue.Formula));
+               updateMoleculeAmountFormula(molecule, _cloneManagerForModel.Clone(initialCondition.Formula));
                _keywordReplacerTask.ReplaceIn(molecule, model.Root);
             }
-            else if (startValueShouldBeSetAsConstantFormula(moleculeStartValue, molecule))
+            else if (startValueShouldBeSetAsConstantFormula(initialCondition, molecule))
             {
-               updateMoleculeAmountFormula(molecule, createConstantFormula(moleculeStartValue));
+               updateMoleculeAmountFormula(molecule, createConstantFormula(initialCondition));
             }
 
-            molecule.ScaleDivisor = moleculeStartValue.ScaleDivisor;
-            molecule.NegativeValuesAllowed = moleculeStartValue.NegativeValuesAllowed;
+            molecule.ScaleDivisor = initialCondition.ScaleDivisor;
+            molecule.NegativeValuesAllowed = initialCondition.NegativeValuesAllowed;
          }
       }
 
@@ -118,9 +181,9 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       /// <remarks>
       ///    The <paramref name="moleculeFormulaToUse" /> can be changed since this is suppose to be a clone of the
-      ///    original molecule start value
+      ///    original initial condition
       /// </remarks>
-      private void updateMoleculeAmountFormula(IMoleculeAmount molecule, IFormula moleculeFormulaToUse)
+      private void updateMoleculeAmountFormula(MoleculeAmount molecule, IFormula moleculeFormulaToUse)
       {
          if (moleculeFormulaToUse.IsAmountBased())
          {
@@ -137,20 +200,20 @@ namespace OSPSuite.Core.Domain.Services
          molecule.Formula = _formulaFactory.CreateMoleculeAmountReferenceToStartValue(startValue);
       }
 
-      private IFormula createConstantFormula(IMoleculeStartValue moleculeStartValue)
+      private IFormula createConstantFormula(InitialCondition initialCondition)
       {
-         return _formulaFactory.ConstantFormula(moleculeStartValue.StartValue.Value, moleculeStartValue.Dimension);
+         return _formulaFactory.ConstantFormula(initialCondition.Value.Value, initialCondition.Dimension);
       }
 
-      private bool startValueShouldBeSetAsConstantFormula(IMoleculeStartValue moleculeStartValue, IMoleculeAmount molecule)
+      private bool startValueShouldBeSetAsConstantFormula(InitialCondition initialCondition, MoleculeAmount molecule)
       {
-         if (!moleculeStartValue.StartValue.HasValue)
+         if (!initialCondition.Value.HasValue)
             return false;
 
-         var msvValue = moleculeStartValue.StartValue.Value;
+         var msvValue = initialCondition.Value.Value;
          double? currentConstantMoleculeValue;
 
-         if (moleculeStartValue.IsAmountBased())
+         if (initialCondition.IsAmountBased())
             currentConstantMoleculeValue = calculateConstantValueFor(molecule);
          else
          {

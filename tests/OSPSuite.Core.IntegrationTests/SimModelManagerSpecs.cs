@@ -65,8 +65,8 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_repository_with_number_of_amounts_and_observers_and_persistent_parameter_plus_one_extra_column_for_time()
       {
-         int numberOfAmounts = _simulation.Model.Root.GetAllChildren<IMoleculeAmount>().Count();
-         int numberOfObservers = _simulation.Model.Root.GetAllChildren<IObserver>().Count();
+         int numberOfAmounts = _simulation.Model.Root.GetAllChildren<MoleculeAmount>().Count();
+         int numberOfObservers = _simulation.Model.Root.GetAllChildren<Observer>().Count();
          int numberOfPersistentParameter = _simulation.Model.Root.GetAllChildren<IParameter>(parameter => parameter.Persistable).Count();
          _results.Count().ShouldBeEqualTo(numberOfAmounts + numberOfObservers + numberOfPersistentParameter + 1);
       }
@@ -113,7 +113,7 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         var interval = _simulation.BuildConfiguration.SimulationSettings.OutputSchema.Intervals.ElementAt(0);
+         var interval = _simulation.Settings.OutputSchema.Intervals.ElementAt(0);
          interval.GetSingleChildByName<IParameter>(Constants.Parameters.END_TIME).Value = 5000000;
          interval.GetSingleChildByName<IParameter>(Constants.Parameters.RESOLUTION).Value = 10000;
       }

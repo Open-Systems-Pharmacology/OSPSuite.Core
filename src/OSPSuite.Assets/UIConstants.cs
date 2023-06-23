@@ -16,8 +16,27 @@ namespace OSPSuite.Assets
       public static Size SensitivityFeedbackEditorSize = new Size(350, 120);
    }
 
+   public static class DefaultNames
+   {
+      public static readonly string MoleculeBuildingBlock = "Molecules";
+      public static readonly string Module = "Module";
+      public static readonly string ReactionBuildingBlock = "Reaction";
+      public static readonly string SpatialStructure = "Organism";
+      public static readonly string PassiveTransportBuildingBlock = "Passive Transports";
+      public static readonly string EventBuildingBlock = "Events";
+      public static readonly string ObserverBuildingBlock = "Observer";
+      public static readonly string SimulationSettings = "Simulation Settings";
+      public static readonly string ParameterValues = "Parameter Values";
+      public static readonly string InitialConditions = "Initial Conditions";
+   }
+
    public static class Captions
    {
+      public static readonly string Transporter = "Transporter";
+      public static readonly string Protein = "Protein";
+      public static readonly string MetabolizingEnzyme = "Metabolizing Enzyme";
+      public static readonly string Species = "Species";
+      public static readonly string Phenotype = "Phenotype";
       public static readonly string ConfirmationDialog = "Confirmation";
       public static readonly string Excel = "Excel®";
       public static readonly string EmptyColumn = " ";
@@ -1362,6 +1381,8 @@ namespace OSPSuite.Assets
       public static readonly string FoldValueMustBeGreaterThanOne = "Fold value must be a number greater than one.";
       public static readonly string ImporterEmptyFile = "The file you are trying to load is empty.";
 
+      public static string CannotFindParentContainerWithPath(string parentPath, string containerName)=> $"Cannot find parent container '{parentPath}' defined as target of container '{containerName}'";
+
       public static  string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
 
       public static string ParseErrorMessage(IEnumerable<string> errors) => $"There were errors while parsing your data: {string.Join(". ", errors)}";
@@ -1433,8 +1454,16 @@ namespace OSPSuite.Assets
          return $"Number of processor to use should greater than 0 and less than or equal to  the number of processor on the machine ({processorCount} processors)";
       }
 
+      public static string NameAlreadyExists(string name)
+      {
+         return $"'{name}' already exists.";
+      }
+
       public static string NameAlreadyExistsInContainerType(string name, string containerType)
       {
+         if(string.IsNullOrEmpty(containerType))
+            return NameAlreadyExists(name);
+
          return $"'{name}' already exists in {containerType}.";
       }
 
@@ -1533,9 +1562,9 @@ namespace OSPSuite.Assets
 
       public static readonly string UnknownParameterBuildMode = "Unknown molecule parameter build mode";
       public static readonly string ConstMoleculeParameterInNeighborhood = "Constant parameters are not allowed in the molecule properties container of the neighborhood";
-      public static readonly string NullParameter = "Cannot create parameter start value: parameter not found in target container";
-      public static readonly string NullMoleculeAmount = "Cannot create molecule amount start value: molecule amount not found in target container";
-      public static readonly string NullMoleculeStartValue = "Cannot create molecule amount start value: molecule container not found";
+      public static readonly string NullParameter = "Cannot create parameter value: parameter not found in target container";
+      public static readonly string NullMoleculeAmount = "Cannot create molecule initial condition: molecule amount not found in target container";
+      public static readonly string NullInitialCondition = "Cannot create molecule initial condition: molecule container not found";
       public static readonly string NullFormulaCachePassedToClone = "Formula cache passed to clone function is null";
       public static readonly string EmptyMoleculeName = "Molecule name is empty";
       public static readonly string TransportMoleculeNamesNotSet = "Transport molecule names object passed is not set";
@@ -1579,6 +1608,7 @@ namespace OSPSuite.Assets
       {
          return $"Cannot add molecule '{moleculeName}' into both molecules to include and molecules to exclude lists";
       }
+      public static string BuildingBlockTypeAlreadyAddedToModule(string objectName, string type) => $"BuildingBlock '{type}' for '{objectName}' was already added to module";
 
       public const string NotImplemented = "This feature is not implemented yet";
 
@@ -1694,7 +1724,7 @@ namespace OSPSuite.Assets
          }
       }
 
-      public static string SimulationDidNotProduceResults = "Simulation did not produce results";
+      public const string SimulationDidNotProduceResults = "Simulation did not produce results";
 
       public static string DuplicatedIndividualResultsForId(int individualId) => $"Individual results for individual with id '{individualId}' were defined more than once!";
 
@@ -1724,6 +1754,14 @@ namespace OSPSuite.Assets
       public static string CouldNotFindDimensionWithUnit(string unit) => $"Could not find dimension containing unit '{unit}'.";
 
       public static string UnitIsNotDefinedInDimension(string unit, string dimension) => $"Unit '{unit}' is not defined in dimension '{dimension}'.";
+
+      public static string CouldNotFindNeighborhoodBetween(string container1, string container2) => $"Could not find neighborhood between '{container1}' and '{container2}'";
+
+      public static string FirstNeighborNotDefinedFor(string neighborhoodName) => $"First neighbor is undefined for neighborhood '{neighborhoodName}'";
+      
+      public static string SecondNeighborNotDefinedFor(string neighborhoodName) => $"Second neighbor is undefined for neighborhood '{neighborhoodName}'";
+
+      public const string InParentTagCanOnlyBeUsedWithAndOperator = "IN PARENT tag can only be used with AND operator";
 
       public static class SensitivityAnalysis
       {
@@ -1885,12 +1923,12 @@ namespace OSPSuite.Assets
 
       public static string StartValueDefinedForNonPhysicalContainer(string moleculeName, string containerPath)
       {
-         return $"Molecule start value defined for molecule '{moleculeName}' in non-physical container '{containerPath}'";
+         return $"Initial condition defined for molecule '{moleculeName}' in non-physical container '{containerPath}'";
       }
 
       public static string StartValueDefinedForContainerThatCannotBeResolved(string moleculeName, string containerPath)
       {
-         return $"Molecule start value defined for molecule '{moleculeName}' in a container '{containerPath}' that cannot be resolved";
+         return $"Initial condition defined for molecule '{moleculeName}' in a container '{containerPath}' that cannot be resolved";
       }
 
       public static string CircularReferenceFoundInFormula(string entity, string entityType, string entityPath, IReadOnlyList<string> references)
@@ -2005,6 +2043,7 @@ namespace OSPSuite.Assets
    {
       public static string AsDeveloperOnly(string menuName) => $"{menuName} (Developer only)...";
 
+      public static readonly string NewExpressionProfile = "Add &Expression Profile";
       public static readonly string ExportToExcel = "Export to Excel...";
       public static readonly string CopyToClipboard = "Copy to Clipboard";
       public static readonly string ResetZoom = "Reset Zoom";
@@ -2077,6 +2116,7 @@ namespace OSPSuite.Assets
 
    public static class MenuDescriptions
    {
+      public static readonly string NewExpressionProfileDescription = "Create a new expression profile...";
       public static readonly string UpdateChartTemplateFromCurrentSettings = "Updates the template from current chart settings";
       public static readonly string ApplyTemplateToCurrentChart = "Applies the template to the current chart";
       public static readonly string CreateNewTemplateFromCurrentChartSettings = "Create new template from current chart settings";
@@ -2242,8 +2282,8 @@ namespace OSPSuite.Assets
       public static readonly string PassiveTransportBuildingBlock = "Passive Transport Building Block";
       public static readonly string ObserverBuildingBlock = "Observer Building Block";
       public static readonly string EventGroupBuildingBlock = "Event Group Building Block";
-      public static readonly string ParameterStartValuesBuildingBlock = "Parameter Start Values Building Block";
-      public static readonly string MoleculeStartValuesBuildingBlock = "Molecule Start Values Building Block";
+      public static readonly string ParameterValuesBuildingBlock = "Parameter Values Building Block";
+      public static readonly string InitialConditionsBuildingBlock = "Initial Conditions Building Block";
       public static readonly string Molecule = "Molecule";
       public static readonly string TransporterMoleculeContainer = "Transporter Molecule";
       public static readonly string ActiveTransport = "Active Transport";
@@ -2262,7 +2302,7 @@ namespace OSPSuite.Assets
       public static readonly string Formula = "Formula";
       public static readonly string Simulation = "Simulation";
       public static readonly string ExplicitFormula = "Formula";
-      public static readonly string NeighborhoodBuilder = "Neighborhood";
+      public static readonly string Neighborhood = "Neighborhood";
       public static readonly string PassiveTransportBuilder = "Passive Transport";
       public static readonly string ActiveTransportBuilder = "Active Transport";
       public static readonly string TransportBuilder = "Transport";
@@ -2273,15 +2313,15 @@ namespace OSPSuite.Assets
       public static readonly string Default = "Default";
       public static readonly string ReactionPartnerBuilder = "Reaction Partner";
       public static readonly string ConstantFormula = "Constant Formula";
-      public static readonly string ParameterStartValue = "Parameter Start Value";
-      public static readonly string MoleculeStartValue = "Molecule Start Value";
+      public static readonly string ParameterValue = "Parameter Value";
+      public static readonly string InitialCondition = "Initial Condition";
       public static readonly string ValuePoint = "Value Point";
       public static readonly string TableFormula = "Table";
       public static readonly string BlackBoxFormula = "Calculation Method";
       public static readonly string SumFormula = "Sum Formula";
       public static readonly string Quantities = "Quantities";
       public static readonly string Model = "Model";
-      public static readonly string MoleculeList = "Moleculelist";
+      public static readonly string MoleculeList = "Molecule List";
       public static readonly string SolverProperty = "Solver Property";
       public static readonly string SimulationSettings = "Simulation Settings";
       public static readonly string OutputSelections = "Output Selections";
@@ -2308,6 +2348,7 @@ namespace OSPSuite.Assets
       public static readonly string Formulation = "Formulation";
       public static readonly string SensitivityParameter = "Sensitivity Parameter";
       public static readonly string SensitivityAnalysis = "Sensitivity Analysis";
+      public static readonly string ExpressionProfileBuildingBlock = "Expression Profile Building Block";
    }
 
    public static class ToolTips
@@ -2451,8 +2492,6 @@ namespace OSPSuite.Assets
       ///    Color used for a diagram back color
       /// </summary>
       public static Color ChartDiagramBack = Color.White;
-
-      public static Color Disabled = Color.FromArgb(255, 247, 247, 249);
 
       public static Color BelowLLOQ => Color.LightSkyBlue;
       public static Color DefaultRowColor => Color.White;

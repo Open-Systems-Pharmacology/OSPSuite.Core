@@ -5,15 +5,23 @@ using OSPSuite.Core.Diagram;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Presenters.Journal;
+using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
    public class JournalPageNodeContextMenuFactory : IContextMenuSpecificationFactory<IReadOnlyList<IBaseNode>>
    {
+      private readonly IContainer _container;
+
+      public JournalPageNodeContextMenuFactory(IContainer container)
+      {
+         _container = container;
+      }
+
       public IContextMenu CreateFor(IReadOnlyList<IBaseNode> nodes, IPresenterWithContextMenu<IReadOnlyList<IBaseNode>> presenter)
       {
-         return new JournalPageNodeContextMenu(nodes.Cast<IJournalPageNode>().ToList(), presenter.DowncastTo<IJournalDiagramPresenter>());
+         return new JournalPageNodeContextMenu(nodes.Cast<IJournalPageNode>().ToList(), presenter.DowncastTo<IJournalDiagramPresenter>(), _container);
       }
 
       public bool IsSatisfiedBy(IReadOnlyList<IBaseNode> baseNodes, IPresenterWithContextMenu<IReadOnlyList<IBaseNode>> presenter)
@@ -25,8 +33,8 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
    public class JournalPageNodeContextMenu : ContextMenu<IReadOnlyList<IJournalPageNode>, IJournalDiagramPresenter>
    {
-      public JournalPageNodeContextMenu(IReadOnlyList<IJournalPageNode> baseNode, IJournalDiagramPresenter presenter)
-         : base(baseNode, presenter)
+      public JournalPageNodeContextMenu(IReadOnlyList<IJournalPageNode> baseNode, IJournalDiagramPresenter presenter, IContainer container)
+         : base(baseNode, presenter, container)
       {
       }
 

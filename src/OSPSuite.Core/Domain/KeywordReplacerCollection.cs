@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Domain
       ///    formula. For formula, used ReplaceReferences Returns true if the object path was changed otherwise false
       /// </summary>
       /// <param name="objectPath"> </param>
-      void ReplaceIn(IObjectPath objectPath);
+      void ReplaceIn(ObjectPath objectPath);
 
       /// <summary>
       ///    Adds the replacement.
@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Replace the criteria value with all possible replacement induced by a IKeywordInTagReplacer
       /// </summary>
-      void ReplaceIn(IDescriptorCondition descriptorCondition);
+      void ReplaceIn(ITagCondition tagCondition);
    }
 
    public class KeywordReplacerCollection : IKeywordReplacerCollection
@@ -82,9 +82,9 @@ namespace OSPSuite.Core.Domain
          _allTagReplacer.Each(r => r.ReplaceIn(tags));
       }
 
-      public void ReplaceIn(IDescriptorCondition descriptorCondition)
+      public void ReplaceIn(ITagCondition tagCondition)
       {
-         _allTagReplacer.Each(r => r.ReplaceIn(descriptorCondition));
+         _allTagReplacer.Each(r => r.ReplaceIn(tagCondition));
       }
 
       private void replaceTagsIn(IEntity entity)
@@ -105,7 +105,7 @@ namespace OSPSuite.Core.Domain
          dynamicFormula?.Criteria.Each(ReplaceIn);
       }
 
-      public void ReplaceIn(IObjectPath objectPath)
+      public void ReplaceIn(ObjectPath objectPath)
       {
          _allObjectPathReplacer.Each(r => r.ReplaceIn(objectPath));
       }

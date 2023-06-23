@@ -2,7 +2,7 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
-   public class ObserverBuilderXmlSerializer<T> : EntityXmlSerializer<T> where T : class, IObserverBuilder
+   public class ObserverBuilderXmlSerializer<T> : EntityXmlSerializer<T> where T : ObserverBuilder
    {
       public override void PerformMapping()
       {

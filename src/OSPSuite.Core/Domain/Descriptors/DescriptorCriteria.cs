@@ -11,7 +11,7 @@ namespace OSPSuite.Core.Domain.Descriptors
       Or
    }
 
-   public class DescriptorCriteria : List<IDescriptorCondition>, ISpecification<IEntity>, ISpecification<EntityDescriptor>
+   public class DescriptorCriteria : List<ITagCondition>, ISpecification<IEntity>, ISpecification<EntityDescriptor>
    {
       //Default behavior
       public CriteriaOperator Operator { get; set; } = CriteriaOperator.And;

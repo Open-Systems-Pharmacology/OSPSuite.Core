@@ -175,7 +175,7 @@ namespace OSPSuite.R.Services
       protected override void Context()
       {
          base.Context();
-         _userDefinedPKParameter = new UserDefinedPKParameter {Name = "MyParam"};
+         _userDefinedPKParameter = new UserDefinedPKParameter {Name = "AnotherParam"};
       }
 
       [Observation]

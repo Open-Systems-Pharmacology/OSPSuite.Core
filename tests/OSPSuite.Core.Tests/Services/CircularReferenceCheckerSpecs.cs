@@ -10,10 +10,10 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Services
 {
-   public abstract class concern_for_CircularReferenceChecker : ContextSpecification<ICircularReferenceChecker>
+   internal abstract class concern_for_CircularReferenceChecker : ContextSpecification<CircularReferenceChecker>
    {
       protected IFormula _formula;
-      protected List<IFormulaUsablePath> _objectPaths;
+      protected List<FormulaUsablePath> _objectPaths;
       protected IQuantity _testObject;
       protected IObjectPathFactory _objectPathFactory;
       private IObjectTypeResolver _objectTypeResolver;
@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Services
       protected override void Context()
       {
          _formula = A.Fake<IFormula>();
-         _objectPaths = new List<IFormulaUsablePath>();
+         _objectPaths = new List<FormulaUsablePath>();
          A.CallTo(() => _formula.ObjectPaths).Returns(_objectPaths);
          _testObject = A.Fake<IQuantity>();
          _testObject.Formula = _formula;
@@ -31,7 +31,7 @@ namespace OSPSuite.Core.Services
       }
    }
 
-   public class When_checking_a_time_reference : concern_for_CircularReferenceChecker
+   internal class When_checking_a_time_reference : concern_for_CircularReferenceChecker
    {
       private bool _result;
 
@@ -47,15 +47,15 @@ namespace OSPSuite.Core.Services
       }
    }
 
-   public class When_checking_a_self_reference : concern_for_CircularReferenceChecker
+   internal class When_checking_a_self_reference : concern_for_CircularReferenceChecker
    {
       private bool _result;
-      private IFormulaUsablePath _path;
+      private FormulaUsablePath _path;
 
       protected override void Context()
       {
          base.Context();
-         _path = A.Fake<IFormulaUsablePath>();
+         _path = A.Fake<FormulaUsablePath>();
          A.CallTo(() => _path.Resolve<IUsingFormula>(_testObject)).Returns(_testObject);
          _objectPaths.Add(_path);
       }
@@ -72,10 +72,10 @@ namespace OSPSuite.Core.Services
       }
    }
 
-   public class When_checking_a_two_step_reference : concern_for_CircularReferenceChecker
+   internal class When_checking_a_two_step_reference : concern_for_CircularReferenceChecker
    {
       private bool _result;
-      private IFormulaUsablePath _path;
+      private FormulaUsablePath _path;
 
       protected override void Context()
       {
@@ -84,12 +84,12 @@ namespace OSPSuite.Core.Services
 
          var stepFormula = A.Fake<IFormula>();
 
-         var otherPath = A.Fake<IFormulaUsablePath>();
+         var otherPath = A.Fake<FormulaUsablePath>();
          otherPath.Alias = "ToTestObject";
          A.CallTo(() => otherPath.Resolve<IUsingFormula>(stepOne)).Returns(_testObject);
 
 
-         _path = A.Fake<IFormulaUsablePath>();
+         _path = A.Fake<FormulaUsablePath>();
          _path.Alias = "ToStepOne";
          A.CallTo(() => _path.Resolve<IUsingFormula>(_testObject)).Returns(stepOne);
          stepOne.Formula = stepFormula;
@@ -108,7 +108,7 @@ namespace OSPSuite.Core.Services
       }
    }
 
-   public abstract class When_checking_a_simple_tree_structure : concern_for_CircularReferenceChecker
+   internal abstract class When_checking_a_simple_tree_structure : concern_for_CircularReferenceChecker
    {
       private Container _container;
       private Model _model;
@@ -123,7 +123,8 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         _result = sut.CheckCircularReferencesIn(_model, A.Fake<IBuildConfiguration>());
+         var simulationConfiguration = new SimulationConfiguration();
+         _result = sut.CheckCircularReferencesIn(new ModelConfiguration(_model, simulationConfiguration, new SimulationBuilder(simulationConfiguration)));
       }
 
       protected Parameter CreateParameter(string name, string objectPath)
@@ -140,7 +141,7 @@ namespace OSPSuite.Core.Services
       }
    }
 
-   public class When_checking_a_simple_tree_structure_without_circular_references : When_checking_a_simple_tree_structure
+   internal class When_checking_a_simple_tree_structure_without_circular_references : When_checking_a_simple_tree_structure
    {
       protected override void Context()
       {
@@ -160,7 +161,7 @@ namespace OSPSuite.Core.Services
       }
    }
 
-   public class When_checking_a_simple_tree_structure_with_circular_references : When_checking_a_simple_tree_structure
+   internal class When_checking_a_simple_tree_structure_with_circular_references : When_checking_a_simple_tree_structure
    {
       protected override void Context()
       {
@@ -177,13 +178,13 @@ namespace OSPSuite.Core.Services
       }
    }
 
-   public abstract class When_checking_circular_references_in_a_model : concern_for_CircularReferenceChecker
+   internal abstract class When_checking_circular_references_in_a_model : concern_for_CircularReferenceChecker
    {
       private Container _container;
       private Model _model;
       protected Parameter _parameter1;
       protected Parameter _parameter2;
-      private IBuildConfiguration _buildConfiguration;
+      private SimulationConfiguration _simulationConfiguration;
       protected ValidationResult _results;
 
       protected override void Context()
@@ -195,16 +196,16 @@ namespace OSPSuite.Core.Services
          _model = new Model {Root = new ARootContainer {_container}.WithName("ROOT")};
          _container.Add(_parameter1);
          _container.Add(_parameter2);
-         _buildConfiguration = A.Fake<IBuildConfiguration>();
+         _simulationConfiguration = new SimulationConfiguration();
       }
 
       protected override void Because()
       {
-         _results = sut.CheckCircularReferencesIn(_model, _buildConfiguration);
+         _results = sut.CheckCircularReferencesIn(new ModelConfiguration(_model, _simulationConfiguration, new SimulationBuilder(_simulationConfiguration)));
       }
    }
 
-   public class When_validating_the_references_used_in_a_quantity_resulting_in_formula_with_circular_references : When_checking_circular_references_in_a_model
+   internal class When_validating_the_references_used_in_a_quantity_resulting_in_formula_with_circular_references : When_checking_circular_references_in_a_model
    {
       protected override void Context()
       {
@@ -226,7 +227,7 @@ namespace OSPSuite.Core.Services
       }
    }
 
-   public class When_validating_the_references_used_in_a_quantity_resulting_in_formula_with_a_rhs_circular_references : When_checking_circular_references_in_a_model
+   internal class When_validating_the_references_used_in_a_quantity_resulting_in_formula_with_a_rhs_circular_references : When_checking_circular_references_in_a_model
    {
       protected override void Context()
       {

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Domain
 {
@@ -24,12 +24,17 @@ namespace OSPSuite.Core.Domain
          _messages.AddRange(messages);
       }
 
-      public void AddMessagesFrom(ValidationResult validationResult)
+      public ValidationResult(params ValidationResult[] validationResults) : this(validationResults.SelectMany(x => x.Messages))
       {
-         validationResult.Messages.Each(message => AddMessage(message.NotificationType, message.Object, message.Text, message.BuildingBlock, message.Details));
       }
 
-      public virtual void  AddMessage(NotificationType notificationType, IObjectBase invalidObject, string notification, IBuildingBlock buildingBlock = null, IEnumerable<string> details = null)
+      public ValidationResult AddMessagesFrom(ValidationResult validationResult)
+      {
+         validationResult.Messages.Each(message => AddMessage(message.NotificationType, message.Object, message.Text, message.BuildingBlock, message.Details));
+         return this;
+      }
+
+      public virtual void AddMessage(NotificationType notificationType, IObjectBase invalidObject, string notification, IBuildingBlock buildingBlock = null, IEnumerable<string> details = null)
       {
          if (!_messages.Contains(invalidObject))
          {
@@ -46,6 +51,7 @@ namespace OSPSuite.Core.Domain
                existingNotification.Text = Validation.MultipleNotificationsFor(notificationType.ToString(), invalidObject.Name);
                existingNotification.AddDetail(oldNotification);
             }
+
             existingNotification.AddDetail(notification);
             addDetailsToMessage(existingNotification, details);
          }

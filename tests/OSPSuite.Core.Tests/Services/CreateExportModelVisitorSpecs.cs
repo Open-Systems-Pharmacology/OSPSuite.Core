@@ -30,11 +30,11 @@ namespace OSPSuite.Core.Services
 
       protected override void Context()
       {
-         _entityPathResolver = A.Fake<IEntityPathResolver>();
-         _objectPathFactory = new ObjectPathFactory(new AliasCreator());
+         _entityPathResolver = new EntityPathResolverForSpecs();
+         _objectPathFactory = new ObjectPathFactoryForSpecs();
          _dimensionFactory = DimensionFactoryForSpecs.Factory;
          _objectBaseFactory = new ObjectBaseFactoryForSpecs(_dimensionFactory);
-         _formulaTask= new FormulaTask(_objectPathFactory, _objectBaseFactory, new AliasCreator(),_dimensionFactory);
+         _formulaTask= new FormulaTask(_objectPathFactory, _objectBaseFactory, new AliasCreator(),_dimensionFactory, _entityPathResolver);
          _tableFormulaToTableFormulaExportMapper = A.Fake<ITableFormulaToTableFormulaExportMapper>();
          _dataRepositoryTask = A.Fake<IDataRepositoryTask>();
          _modelFinalizer = new ModelFinalizer(_objectPathFactory, new ReferencesResolver());
@@ -52,8 +52,8 @@ namespace OSPSuite.Core.Services
       private ExplicitFormula _altFormula;
       private Parameter _changedEntity;
       private SimulationExport _res;
-      private IEvent _event;
-      private IEventAssignment _assignment;
+      private Event _event;
+      private EventAssignment _assignment;
 
       protected override void Context()
       {
@@ -115,9 +115,9 @@ namespace OSPSuite.Core.Services
    public abstract class When_visiting_a_reaction : concern_for_CreateExportModelVisitor
    {
       protected SimulationExport _simulationExport;
-      private IMoleculeAmount _spA;
-      private IMoleculeAmount _spB;
-      protected IReaction _reaction;
+      private MoleculeAmount _spA;
+      private MoleculeAmount _spB;
+      protected Reaction _reaction;
       protected IDimension _reactionDimension;
       protected Parameter _volume;
       protected ExplicitFormula _kinetic;

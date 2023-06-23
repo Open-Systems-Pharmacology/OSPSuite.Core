@@ -7,13 +7,14 @@ using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters.Nodes;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
    public abstract class ClassificationNodeContextMenu<TPresenter> : ContextMenu<ClassificationNode, TPresenter> where TPresenter : IExplorerPresenter
    {
-      protected ClassificationNodeContextMenu(ClassificationNode objectRequestingContextMenu, TPresenter presenter)
-         : base(objectRequestingContextMenu, presenter)
+      protected ClassificationNodeContextMenu(ClassificationNode objectRequestingContextMenu, TPresenter presenter, IContainer container)
+         : base(objectRequestingContextMenu, presenter, container)
       {
       }
 
@@ -73,7 +74,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
       public bool IsSatisfiedBy(ITreeNode treeNode, IPresenterWithContextMenu<ITreeNode> presenter)
       {
-         return isSatisifiedBy(treeNode, presenter);
+         return isSatisfiedBy(treeNode, presenter);
       }
 
       public IContextMenu CreateFor(IViewItem viewItem, IPresenterWithContextMenu<IViewItem> presenter)
@@ -85,10 +86,10 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
       public bool IsSatisfiedBy(IViewItem viewItem, IPresenterWithContextMenu<IViewItem> presenter)
       {
-         return isSatisifiedBy(viewItem,presenter);
+         return isSatisfiedBy(viewItem,presenter);
       }
 
-      private bool isSatisifiedBy(object obj, IPresenter presenter)
+      private bool isSatisfiedBy(object obj, IPresenter presenter)
       {
          if (!obj.IsAnImplementationOf<ClassificationNode>()) return false;
 

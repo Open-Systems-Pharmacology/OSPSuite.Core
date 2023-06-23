@@ -58,7 +58,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Converters\v12\" />
     <Folder Include="Converters\v11\" />
+    <Folder Include="Converters\v6_1\" />
   </ItemGroup>
 
 </Project>

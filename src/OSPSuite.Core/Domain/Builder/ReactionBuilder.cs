@@ -1,67 +1,39 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Builder
 {
    /// <summary>
-   ///    Contains all Information needed to create a <see cref="IReaction" /> with the <see cref="IModelConstructor" />
+   ///    Contains all Information needed to create a <see cref="Reaction" /> with the <see cref="IModelConstructor" />
    /// </summary>
-   public interface IReactionBuilder : IProcessBuilder
+   public class ReactionBuilder : ProcessBuilder
    {
-      IEnumerable<IReactionPartnerBuilder> Educts { get; }
-      IEnumerable<IReactionPartnerBuilder> Products { get; }
-      void AddEduct(IReactionPartnerBuilder educt);
-      void AddProduct(IReactionPartnerBuilder product);
-      void RemoveEduct(IReactionPartnerBuilder educt);
-      void RemoveProduct(IReactionPartnerBuilder product);
-      IEnumerable<string> ModifierNames { get; }
-      void AddModifier(string modifierName);
-      void RemoveModifier(string modifierToRemove);
-      void ClearModifiers();
+      private readonly List<ReactionPartnerBuilder> _educts;
+      private readonly List<ReactionPartnerBuilder> _products;
+      private readonly List<string> _modifier;
 
       /// <summary>
       ///    Criteria for containers where reaction should be created
       /// </summary>
-      DescriptorCriteria ContainerCriteria { set; get; }
-
-      /// <summary>
-      ///    Returns an educt partner for molecule <paramref name="moleculeName" /> or null if not found
-      /// </summary>
-      IReactionPartnerBuilder EductBy(string moleculeName);
-
-      /// <summary>
-      ///    Returns an product partner for molecule <paramref name="moleculeName" /> or null if not found
-      /// </summary>
-      IReactionPartnerBuilder ProductBy(string moleculeName);
-   }
-
-   /// <summary>
-   ///    Contains all Information needed to create a <see cref="IReaction" /> with the <see cref="IModelConstructor" />
-   /// </summary>
-   public class ReactionBuilder : ProcessBuilder, IReactionBuilder
-   {
-      private readonly List<IReactionPartnerBuilder> _educts;
-      private readonly List<IReactionPartnerBuilder> _products;
-      private readonly List<string> _modifier;
       public DescriptorCriteria ContainerCriteria { get; set; }
 
       public ReactionBuilder()
       {
-         _educts = new List<IReactionPartnerBuilder>();
-         _products = new List<IReactionPartnerBuilder>();
+         _educts = new List<ReactionPartnerBuilder>();
+         _products = new List<ReactionPartnerBuilder>();
          _modifier = new List<string>();
          ContainerCriteria = new DescriptorCriteria();
          Icon = IconNames.REACTION;
          ContainerType = ContainerType.Reaction;
       }
 
-      public IEnumerable<IReactionPartnerBuilder> Educts => _educts;
-      public IEnumerable<IReactionPartnerBuilder> Products => _products;
+      public IEnumerable<ReactionPartnerBuilder> Educts => _educts;
+      public IEnumerable<ReactionPartnerBuilder> Products => _products;
 
-      public void AddEduct(IReactionPartnerBuilder educt)
+      public void AddEduct(ReactionPartnerBuilder educt)
       {
          if (_educts.Contains(educt))
          {
@@ -72,7 +44,7 @@ namespace OSPSuite.Core.Domain.Builder
          OnChanged();
       }
 
-      public void AddProduct(IReactionPartnerBuilder product)
+      public void AddProduct(ReactionPartnerBuilder product)
       {
          if (_products.Contains(product))
          {
@@ -83,9 +55,9 @@ namespace OSPSuite.Core.Domain.Builder
          OnChanged();
       }
 
-      public void RemoveEduct(IReactionPartnerBuilder educt) => _educts.Remove(educt);
+      public void RemoveEduct(ReactionPartnerBuilder educt) => _educts.Remove(educt);
 
-      public void RemoveProduct(IReactionPartnerBuilder product) => _products.Remove(product);
+      public void RemoveProduct(ReactionPartnerBuilder product) => _products.Remove(product);
 
       public IEnumerable<string> ModifierNames => _modifier;
 
@@ -95,6 +67,7 @@ namespace OSPSuite.Core.Domain.Builder
          {
             throw new NotUniqueNameException(modifierName, Name);
          }
+
          _modifier.Add(modifierName);
          OnChanged();
       }
@@ -106,12 +79,18 @@ namespace OSPSuite.Core.Domain.Builder
 
       public void ClearModifiers() => _modifier.Clear();
 
-      public IReactionPartnerBuilder EductBy(string moleculeName)
+      /// <summary>
+      ///    Returns an educt partner for molecule <paramref name="moleculeName" /> or null if not found
+      /// </summary>
+      public ReactionPartnerBuilder EductBy(string moleculeName)
       {
          return _educts.Find(x => string.Equals(x.MoleculeName, moleculeName));
       }
 
-      public IReactionPartnerBuilder ProductBy(string moleculeName)
+      /// <summary>
+      ///    Returns an product partner for molecule <paramref name="moleculeName" /> or null if not found
+      /// </summary>
+      public ReactionPartnerBuilder ProductBy(string moleculeName)
       {
          return _products.Find(x => string.Equals(x.MoleculeName, moleculeName));
       }
@@ -120,7 +99,7 @@ namespace OSPSuite.Core.Domain.Builder
       {
          base.UpdatePropertiesFrom(source, cloneManager);
 
-         var srcReactionBuilder = source as IReactionBuilder;
+         var srcReactionBuilder = source as ReactionBuilder;
          if (srcReactionBuilder == null) return;
 
          srcReactionBuilder.Educts.Each(e => AddEduct(e.Clone()));

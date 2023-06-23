@@ -49,14 +49,14 @@ namespace OSPSuite.Core
          _dataFactory = A.Fake<IDataFactory>();
          _variableParameterPaths = new[]
          {
-            _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.BW).PathAsString,
-            _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.TableParameter1).PathAsString,
+            _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ConstantsForSpecs.BW).PathAsString,
+            _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ConstantsForSpecs.TableParameter1).PathAsString,
          };
 
          _variableSpeciesPath = new []
          {
-            _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.ArterialBlood, ConstantsForSpecs.Plasma, "A").PathAsString,
-            _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "B").PathAsString,
+            _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ConstantsForSpecs.ArterialBlood, ConstantsForSpecs.Plasma, "A").PathAsString,
+            _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "B").PathAsString,
          };
 
          sut = new SimModelBatch(simModelExporter, simModelSimulationFactory, _dataFactory);

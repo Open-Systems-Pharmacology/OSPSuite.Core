@@ -52,7 +52,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Meta Information for this parameter
       /// </summary>
-      ParameterInfo Info { get; set; }
+      ParameterInfo Info { get;  }
 
       /// <summary>
       ///    PK-Sim Building block type of building block in which this parameter is defined.
@@ -95,7 +95,8 @@ namespace OSPSuite.Core.Domain
       void ClearRHSFormula();
 
       /// <summary>
-      ///    Criteria for containers where parameter should be created. This is only useful in builder and is not used in parameter instances
+      ///    Criteria for containers where parameter should be created. This is only useful in builder and is not used in
+      ///    parameter instances
       /// </summary>
       DescriptorCriteria ContainerCriteria { set; get; }
    }
@@ -104,8 +105,8 @@ namespace OSPSuite.Core.Domain
    {
       public virtual ParameterBuildMode BuildMode { get; set; }
       public virtual IFormula RHSFormula { get; set; }
-      public virtual ParameterInfo Info { get; set; }
-      public virtual ParameterOrigin Origin { get; private set; }
+      public virtual ParameterInfo Info { get; } = new ParameterInfo();
+      public virtual ParameterOrigin Origin { get; } = new ParameterOrigin();
       public virtual double? DefaultValue { get; set; }
 
       public DescriptorCriteria ContainerCriteria { set; get; }
@@ -118,9 +119,7 @@ namespace OSPSuite.Core.Domain
          Persistable = false;
          BuildMode = ParameterBuildMode.Local;
          QuantityType = QuantityType.Parameter;
-         Info = new ParameterInfo();
          Icon = IconNames.PARAMETER;
-         Origin = new ParameterOrigin();
          Rules.AddRange(ParameterRules.All());
          NegativeValuesAllowed = true;
       }
@@ -138,10 +137,12 @@ namespace OSPSuite.Core.Domain
       {
          base.UpdatePropertiesFrom(source, cloneManager);
          var sourceParameter = source as IParameter;
-         if (sourceParameter == null) return;
+         if (sourceParameter == null) 
+            return;
+
          BuildMode = sourceParameter.BuildMode;
-         Info = sourceParameter.Info.Clone();
-         Origin = sourceParameter.Origin.Clone();
+         Info.UpdatePropertiesFrom(sourceParameter.Info);
+         Origin.UpdatePropertiesFrom(sourceParameter.Origin);
          DefaultValue = sourceParameter.DefaultValue;
          IsDefault = sourceParameter.IsDefault;
          ContainerCriteria = sourceParameter.ContainerCriteria?.Clone();

@@ -1,6 +1,4 @@
-﻿using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Domain.UnitSystem;
+﻿using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.R.Domain;
 using CorePersistor = OSPSuite.Core.Serialization.Exchange.ISimulationPersistor;
@@ -18,12 +16,7 @@ namespace OSPSuite.R.Services
       private readonly CorePersistor _simulationPersistor;
       private readonly IObjectIdResetter _objectIdResetter;
 
-      public SimulationPersister(
-         CorePersistor simulationPersistor,
-         IDimensionFactory dimensionFactory,
-         IObjectBaseFactory objectBaseFactory,
-         ICloneManagerForModel cloneManagerForModel,
-         IObjectIdResetter objectIdResetter)
+      public SimulationPersister(CorePersistor simulationPersistor, IObjectIdResetter objectIdResetter)
       {
          _simulationPersistor = simulationPersistor;
          _objectIdResetter = objectIdResetter;
@@ -33,7 +26,7 @@ namespace OSPSuite.R.Services
       {
          var simulationTransfer = _simulationPersistor.Load(fileName);
          var simulation = simulationTransfer.Simulation;
-         if(resetIds)
+         if (resetIds)
             _objectIdResetter.ResetIdFor(simulation);
 
          return new Simulation(simulation);

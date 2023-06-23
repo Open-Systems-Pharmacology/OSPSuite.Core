@@ -9,7 +9,7 @@ namespace OSPSuite.Presentation.Core
    {
       public static IMenuBarButton WithCaption(string caption)
       {
-         return new MenuBarButton {Caption = caption};
+         return new MenuBarButton { Caption = caption };
       }
    }
 
@@ -17,15 +17,15 @@ namespace OSPSuite.Presentation.Core
    {
       public static IMenuBarCheckItem WithCaption(string caption)
       {
-         return new MenuBarCheckButton {Caption = caption};
+         return new MenuBarCheckButton { Caption = caption };
       }
    }
 
    public static class MenuBarItemExtensions
    {
-      public static IMenuBarButton WithCommand<TCommand>(this IMenuBarButton menuBarItem) where TCommand : IUICommand
+      public static IMenuBarButton WithCommand<TCommand>(this IMenuBarButton menuBarItem, IContainer container) where TCommand : IUICommand
       {
-         return menuBarItem.WithCommand(IoC.Resolve<TCommand>());
+         return menuBarItem.WithCommand(container.Resolve<TCommand>());
       }
 
       public static T WithActionCommand<T>(this T menuBarItem, Action actionToExecute) where T : IMenuBarButton
@@ -33,11 +33,11 @@ namespace OSPSuite.Presentation.Core
          return menuBarItem.WithCommand(new ExecuteActionUICommand(actionToExecute));
       }
 
-      public static IMenuBarButton WithCommandFor<TCommand, TObject>(this IMenuBarButton menuBarItem, TObject entity)
+      public static IMenuBarButton WithCommandFor<TCommand, TObject>(this IMenuBarButton menuBarItem, TObject entity, IContainer container)
          where TCommand : IObjectUICommand<TObject>
          where TObject : class
       {
-         return menuBarItem.WithCommand(IoC.Resolve<TCommand>().For(entity));
+         return menuBarItem.WithCommand(container.Resolve<TCommand>().For(entity));
       }
 
       public static IMenuBarButton WithEnabled(this IMenuBarButton menuBarItem, bool enabled)

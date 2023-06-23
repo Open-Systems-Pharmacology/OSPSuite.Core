@@ -1,6 +1,6 @@
-﻿using OSPSuite.Serializer;
-using OSPSuite.Core.Domain;
+﻿using OSPSuite.Core.Domain;
 using OSPSuite.Core.Serialization.Xml;
+using OSPSuite.Serializer;
 
 namespace OSPSuite.Core.Serialization.Exchange
 {
@@ -17,7 +17,6 @@ namespace OSPSuite.Core.Serialization.Exchange
          MapEnumerable(x => x.AllObservedData, x => x.AllObservedData.Add);
          //This needs to be done after observed data serialization to ensure that the observed data were deserialized
          Map(x => x.OutputMappings);
-
       }
    }
 }

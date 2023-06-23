@@ -6,6 +6,7 @@ using OSPSuite.Presentation.Presenters.Main;
 using OSPSuite.Presentation.Repositories;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Starter.Presenters
 {
@@ -15,9 +16,12 @@ namespace OSPSuite.Starter.Presenters
 
    public class MenuAndToolBarPresenter : AbstractMenuAndToolBarPresenter, IMenuAndToolBarPresenter
    {
-      private int _menuId = 0;
-      public MenuAndToolBarPresenter(IMenuAndToolBarView view, IMenuBarItemRepository menuBarItemRepository, IMRUProvider mruProvider) : base(view, menuBarItemRepository, mruProvider)
+      private int _menuId;
+      private readonly IContainer _container;
+
+      public MenuAndToolBarPresenter(IMenuAndToolBarView view, IMenuBarItemRepository menuBarItemRepository, IMRUProvider mruProvider, IContainer container) : base(view, menuBarItemRepository, mruProvider)
       {
+         _container = container;
       }
 
       protected override void DisableMenuBarItemsForProgramStart()
@@ -34,7 +38,7 @@ namespace OSPSuite.Starter.Presenters
          _view.AddPageGroupToPage(createSensitivityAnalysis(), "Modeling");
          _view.AddPageGroupToPage(createSensitivityAnalysisAnalyses(), "Modeling");
 
-         _view.AddPageHeaderItemLinks(CommonMenuBarButtons.Help(new MenuBarItemId("Help", _menuId++)));
+         _view.AddPageHeaderItemLinks(CommonMenuBarButtons.Help(new MenuBarItemId("Help", _menuId++), _container));
       }
 
       private IButtonGroup createSensitivityAnalysisAnalyses()
@@ -46,7 +50,7 @@ namespace OSPSuite.Starter.Presenters
 
       private IMenuBarItem createSensitivityAnalysisAnalysesButton()
       {
-         return SensitivityAnalysisMenuBarButtons.SensitivityAnalysisPKParameterAnalysis(new MenuBarItemId("Sensitivity Analysis", _menuId++));
+         return SensitivityAnalysisMenuBarButtons.SensitivityAnalysisPKParameterAnalysis(new MenuBarItemId("Sensitivity Analysis", _menuId++), _container);
       }
 
       private IButtonGroup createSensitivityAnalysis()
@@ -59,12 +63,12 @@ namespace OSPSuite.Starter.Presenters
 
       private IMenuBarItem createSensitivityAnalysisShowVisualFeedbackButton()
       {
-         return SensitivityAnalysisMenuBarButtons.SensitivityAnalysisFeedbackView(new MenuBarItemId("Show Visual Feedback SA", _menuId++));
+         return SensitivityAnalysisMenuBarButtons.SensitivityAnalysisFeedbackView(new MenuBarItemId("Show Visual Feedback SA", _menuId++), _container);
       }
 
       private IMenuBarItem createSensitivityAnalysisRunButton()
       {
-         return SensitivityAnalysisMenuBarButtons.RunSensitivityAnalysis(new MenuBarItemId("Run SA", _menuId++));
+         return SensitivityAnalysisMenuBarButtons.RunSensitivityAnalysis(new MenuBarItemId("Run SA", _menuId++), _container);
       }
 
       private IButtonGroup createParameterIdentificationConfidenceIntervals()
@@ -90,42 +94,42 @@ namespace OSPSuite.Starter.Presenters
 
       private IMenuBarItem createPredictionIntervalButton()
       {
-         return ParameterIdentificationMenuBarButtons.TimeProfilePredictionInterval(new MenuBarItemId("Prediction Interval", _menuId++));
+         return ParameterIdentificationMenuBarButtons.TimeProfilePredictionInterval(new MenuBarItemId("Prediction Interval", _menuId++), _container);
       }
 
       private IMenuBarItem createVisualPredictiveCheckButton()
       {
-         return ParameterIdentificationMenuBarButtons.TimeProfileVPCInterval(new MenuBarItemId("Visual Predictive Check", _menuId++));
+         return ParameterIdentificationMenuBarButtons.TimeProfileVPCInterval(new MenuBarItemId("Visual Predictive Check", _menuId++), _container);
       }
 
       private IMenuBarItem createConfidenceIntervalButton()
       {
-         return ParameterIdentificationMenuBarButtons.TimeProfileConfidenceInterval(new MenuBarItemId("Confidence Interval", _menuId++));
+         return ParameterIdentificationMenuBarButtons.TimeProfileConfidenceInterval(new MenuBarItemId("Confidence Interval", _menuId++), _container);
       }
 
       private IMenuBarItem createCorrelationMatrixButton()
       {
-         return ParameterIdentificationMenuBarButtons.CorrelationMatrixParameterIdentification(new MenuBarItemId("Correlation Matrix", _menuId++));
+         return ParameterIdentificationMenuBarButtons.CorrelationMatrixParameterIdentification(new MenuBarItemId("Correlation Matrix", _menuId++), _container);
       }
 
       private IMenuBarItem createCovarianceMatrixButton()
       {
-         return ParameterIdentificationMenuBarButtons.CovarianceMatrixParameterIdentification(new MenuBarItemId("Covariance Matrix", _menuId++));
+         return ParameterIdentificationMenuBarButtons.CovarianceMatrixParameterIdentification(new MenuBarItemId("Covariance Matrix", _menuId++), _container);
       }
 
       private IMenuBarItem createHistogramOfResidualsButton()
       {
-         return ParameterIdentificationMenuBarButtons.ResidualHistogramParameterIdentification(new MenuBarItemId("Histogram of Residuals", _menuId++));
+         return ParameterIdentificationMenuBarButtons.ResidualHistogramParameterIdentification(new MenuBarItemId("Histogram of Residuals", _menuId++), _container);
       }
 
       private IMenuBarItem createResidualsVsTimeButton()
       {
-         return ParameterIdentificationMenuBarButtons.ResidualsVsTimeParameterIdentification(new MenuBarItemId("Residual Vs. Time", _menuId++));
+         return ParameterIdentificationMenuBarButtons.ResidualsVsTimeParameterIdentification(new MenuBarItemId("Residual Vs. Time", _menuId++), _container);
       }
 
       private IMenuBarItem createPredictedVsObservedButton()
       {
-         return ParameterIdentificationMenuBarButtons.PredictedVsObservedParameterIdentification(new MenuBarItemId("Predicted Vs. Observed", _menuId++));
+         return ParameterIdentificationMenuBarButtons.PredictedVsObservedParameterIdentification(new MenuBarItemId("Predicted Vs. Observed", _menuId++), _container);
       }
 
       private IButtonGroup createParameterIdentification()
@@ -138,17 +142,17 @@ namespace OSPSuite.Starter.Presenters
 
       private IMenuBarItem createParameterIdentificationShowVisualFeedbackButton()
       {
-         return ParameterIdentificationMenuBarButtons.ParameterIdentificationFeedbackView(new MenuBarItemId("Show Visual Feedback", _menuId++));
+         return ParameterIdentificationMenuBarButtons.ParameterIdentificationFeedbackView(new MenuBarItemId("Show Visual Feedback", _menuId++), _container);
       }
 
       private IMenuBarItem createTimeProfileButton()
       {
-         return ParameterIdentificationMenuBarButtons.TimeProfileParameterIdentification(new MenuBarItemId("Time Profile", _menuId++));
+         return ParameterIdentificationMenuBarButtons.TimeProfileParameterIdentification(new MenuBarItemId("Time Profile", _menuId++), _container);
       }
 
       private IMenuBarItem createParameterIdentificationRunButton()
       {
-         return ParameterIdentificationMenuBarButtons.RunParameterIdentification(new MenuBarItemId("Run", _menuId++));
+         return ParameterIdentificationMenuBarButtons.RunParameterIdentification(new MenuBarItemId("Run", _menuId++), _container);
       }
 
       private IButtonGroup createGroupModelling()

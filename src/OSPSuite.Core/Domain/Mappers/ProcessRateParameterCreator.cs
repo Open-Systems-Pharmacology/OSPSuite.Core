@@ -4,12 +4,12 @@ using OSPSuite.Core.Domain.Formulas;
 
 namespace OSPSuite.Core.Domain.Mappers
 {
-   public interface IProcessRateParameterCreator
+   internal interface IProcessRateParameterCreator
    {
-      IParameter CreateProcessRateParameterFor(IProcessBuilder processBuilder, IBuildConfiguration buildConfiguration);
+      IParameter CreateProcessRateParameterFor(IProcessBuilder processBuilder, SimulationBuilder simulationBuilder);
    }
 
-   public class ProcessRateParameterCreator : IProcessRateParameterCreator
+   internal class ProcessRateParameterCreator : IProcessRateParameterCreator
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IFormulaBuilderToFormulaMapper _formulaMapper;
@@ -20,13 +20,13 @@ namespace OSPSuite.Core.Domain.Mappers
          _formulaMapper = formulaMapper;
       }
 
-      public IParameter CreateProcessRateParameterFor(IProcessBuilder processBuilder, IBuildConfiguration buildConfiguration)
+      public IParameter CreateProcessRateParameterFor(IProcessBuilder processBuilder, SimulationBuilder simulationBuilder)
       {
          var parameter = _objectBaseFactory
             .Create<IParameter>()
             .WithName(Constants.Parameters.PROCESS_RATE)
             .WithDimension(processBuilder.Dimension)
-            .WithFormula(_formulaMapper.MapFrom(processBuilder.Formula, buildConfiguration));
+            .WithFormula(_formulaMapper.MapFrom(processBuilder.Formula, simulationBuilder));
 
          parameter.Visible = false;
          parameter.Editable = false;
@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
          addAdditionalParentReference(parameter.Formula);
 
-         buildConfiguration.AddBuilderReference(parameter, processBuilder);
+         simulationBuilder.AddBuilderReference(parameter, processBuilder);
 
          if (processBuilder.ProcessRateParameterPersistable)
             parameter.Persistable = true;
@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain.Mappers
          }
       }
 
-      private bool isRelativePath(IObjectPath objectPath)
+      private bool isRelativePath(ObjectPath objectPath)
       {
          if (!objectPath.Any())
             return false;

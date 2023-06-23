@@ -13,9 +13,11 @@ namespace OSPSuite.Helpers
       public const string Cell = "Cell";
       public const string VenousBlood = "VenousBlood";
       public const string Lung = "Lung";
+      public const string Heart = "Heart";
+      public const string Tumor = "Tumor";
       public const string Plasma = "Plasma";
+      public const string Interstitial = "Interstitial";
       public const string ArterialBlood = "ArterialBlood";
-      public const string Organism = "Organism";
       public const string SumProcessRate = "SumProcessRate";
 
       public const string BolusApplication = "Bolus Application";

@@ -7,29 +7,25 @@ using OSPSuite.Core.Domain.UnitSystem;
 namespace OSPSuite.Core.Domain.Builder
 {
    /// <summary>
-   ///    Base interface for all observer builder types
+   ///    Base class for all concrete observer builders
    /// </summary>
-   public interface IObserverBuilder : IUsingFormula, IMoleculeDependentBuilder
+   public class ObserverBuilder : Entity, IUsingFormula, IMoleculeDependentBuilder
    {
+      public IFormula Formula { get; set; }
+      public IDimension Dimension { get; set; }
+
       /// <summary>
       ///    Criteria for containers where given observer should be created
       /// </summary>
-      DescriptorCriteria ContainerCriteria { get; set; }
-   }
-
-   /// <summary>
-   ///    Base class for all concrete observer builders
-   /// </summary>
-   public class ObserverBuilder : Entity, IObserverBuilder
-   {
-      private readonly MoleculeList _moleculeList;
-      public IFormula Formula { get; set; }
-      public IDimension Dimension { get; set; }
       public DescriptorCriteria ContainerCriteria { get; set; }
+
+      public MoleculeList MoleculeList { get; }
+
+      public IBuildingBlock BuildingBlock { get; set; }
 
       public ObserverBuilder()
       {
-         _moleculeList = new MoleculeList {ForAll = false};
+         MoleculeList = new MoleculeList {ForAll = false};
          ContainerCriteria = new DescriptorCriteria();
          Icon = IconNames.OBSERVER;
       }
@@ -38,22 +34,17 @@ namespace OSPSuite.Core.Domain.Builder
       {
          base.UpdatePropertiesFrom(source, cloneManager);
 
-         var sourceObserverBuilder = source as IObserverBuilder;
+         var sourceObserverBuilder = source as ObserverBuilder;
          if (sourceObserverBuilder == null) return;
          Dimension = sourceObserverBuilder.Dimension;
          ContainerCriteria = sourceObserverBuilder.ContainerCriteria.Clone();
-         _moleculeList.UpdatePropertiesFrom(sourceObserverBuilder.MoleculeList, cloneManager);
-      }
-
-      public MoleculeList MoleculeList
-      {
-         get { return _moleculeList; }
+         MoleculeList.UpdatePropertiesFrom(sourceObserverBuilder.MoleculeList, cloneManager);
       }
 
       public bool ForAll
       {
-         get { return MoleculeList.ForAll; }
-         set { MoleculeList.ForAll = value; }
+         get => MoleculeList.ForAll;
+         set => MoleculeList.ForAll = value;
       }
    }
 }

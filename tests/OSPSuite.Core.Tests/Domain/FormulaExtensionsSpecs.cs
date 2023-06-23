@@ -52,4 +52,22 @@ namespace OSPSuite.Core.Domain
          new ConstantFormula().IsCachable().ShouldBeFalse();
       }
    }
+
+   public class When_checking_if_a_formula_is_referencing_neighborhood : concern_for_FormulaExtensions
+   {
+      [Observation]
+      public void should_return_true_if_the_formula_contains_at_least_one_path_referencing_the_neighborhood_keyword()
+      {
+         var formula = new ExplicitFormula();
+         formula.AddObjectPath(new FormulaUsablePath("A", "B"));
+         formula.AddObjectPath(new FormulaUsablePath("A", ObjectPathKeywords.NBH));
+         formula.IsReferencingNeighborhood().ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_return_false_otherwise()
+      {
+         new ExplicitFormula().IsReferencingNeighborhood().ShouldBeFalse();
+      }
+   }
 }

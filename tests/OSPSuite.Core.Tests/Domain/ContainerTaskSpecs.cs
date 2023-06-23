@@ -11,12 +11,14 @@ namespace OSPSuite.Core.Domain
    {
       protected IObjectBaseFactory _objectBaseFactory;
       protected IEntityPathResolver _entityPathResolver;
+      protected IObjectPathFactory _objectPathFactory;
 
       protected override void Context()
       {
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          _entityPathResolver = A.Fake<IEntityPathResolver>();
-         sut = new ContainerTask(_objectBaseFactory, _entityPathResolver);
+         _objectPathFactory = A.Fake<IObjectPathFactory>();
+         sut = new ContainerTask(_objectBaseFactory, _entityPathResolver, _objectPathFactory);
       }
    }
 
@@ -81,27 +83,40 @@ namespace OSPSuite.Core.Domain
 
    internal class When_removing_a_container_in_SpatialStructure : concern_for_ContainerTask
    {
-      private ISpatialStructure _spatialStructure;
-      private INeighborhoodBuilder _firstNeighborRemove;
-      private INeighborhoodBuilder _secondNeighborRemove;
+      private SpatialStructure _spatialStructure;
+      private NeighborhoodBuilder _firstNeighborRemove;
+      private NeighborhoodBuilder _secondNeighborRemove;
       private IContainer _containerToRemove;
       private IContainer _parent;
+      private ObjectPath _containerToRemovePath;
+      private NeighborhoodBuilder _thirdNeighborhood;
 
       protected override void Context()
       {
          base.Context();
-         _spatialStructure = A.Fake<ISpatialStructure>();
+         _spatialStructure = new SpatialStructure();
+         _spatialStructure.NeighborhoodsContainer = new Container();
          _parent = A.Fake<IContainer>();
          _containerToRemove = A.Fake<IContainer>();
          _containerToRemove.ParentContainer = _parent;
-         _firstNeighborRemove = new NeighborhoodBuilder().WithFirstNeighbor(_containerToRemove).WithSecondNeighbor(A.Fake<IContainer>());
-         _secondNeighborRemove = new NeighborhoodBuilder().WithFirstNeighbor(A.Fake<IContainer>()).WithSecondNeighbor(_containerToRemove);
-         A.CallTo(() => _spatialStructure.Neighborhoods).Returns(new[]
-            {
-               new NeighborhoodBuilder().WithFirstNeighbor(A.Fake<IContainer>()).WithSecondNeighbor(A.Fake<IContainer>()),
-               _firstNeighborRemove,
-               _secondNeighborRemove
-            });
+         _containerToRemovePath = new ObjectPath("containerToRemovePath");
+         A.CallTo(() => _objectPathFactory.CreateAbsoluteObjectPath(_containerToRemove)).Returns(_containerToRemovePath);
+         _firstNeighborRemove = new NeighborhoodBuilder
+         {
+            FirstNeighborPath = _containerToRemovePath,
+            SecondNeighborPath = new ObjectPath("anotherContainer"),
+            Name = "firstNeighborRemove"
+         };
+         _secondNeighborRemove = new NeighborhoodBuilder
+         {
+            FirstNeighborPath = new ObjectPath("anotherContainer"),
+            SecondNeighborPath = _containerToRemovePath,
+            Name = "secondNeighborRemove"
+         };
+         _thirdNeighborhood = new NeighborhoodBuilder {Name = "thirdNeighborhood"};
+         _spatialStructure.AddNeighborhood(_firstNeighborRemove);
+         _spatialStructure.AddNeighborhood(_secondNeighborRemove);
+         _spatialStructure.AddNeighborhood(_thirdNeighborhood);
       }
 
       protected override void Because()
@@ -110,21 +125,15 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_call_remove_for_firstNeighborRemove()
+      public void should_remove_the_neighborhood_connected_to_the_container_to_remove()
       {
-         A.CallTo(() => _spatialStructure.RemoveNeighborhood(_firstNeighborRemove)).MustHaveHappened();
+         _spatialStructure.Neighborhoods.ShouldOnlyContain(_thirdNeighborhood);
       }
 
       [Observation]
-      public void should_call_remove_for_secondNeighborRemove()
+      public void should_have_called_remove_child_at_parent()
       {
-         A.CallTo(() => _spatialStructure.RemoveNeighborhood(_secondNeighborRemove)).MustHaveHappened();
-      }
-
-      [Observation]
-      public void should_have_calles_remove_child_at_parent()
-      {
-         A.CallTo(() => _parent.RemoveChild(_containerToRemove));
+         A.CallTo(() => _parent.RemoveChild(_containerToRemove)).MustHaveHappened();
       }
    }
 
@@ -193,7 +202,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_create_a_cache_containg_all_the_matching_children()
+      public void should_create_a_cache_containing_all_the_matching_children()
       {
          _cache.ShouldOnlyContain(_para1, _para2);
       }

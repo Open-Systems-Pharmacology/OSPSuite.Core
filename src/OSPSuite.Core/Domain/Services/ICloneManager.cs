@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       /// <typeparam name="T">Any class inherited from <see cref="IUpdatable" /></typeparam>
       /// <param name="objectToClone">Source object to be cloned</param>
-      /// <returns>Cloned object</returns>
+      /// <returns>Cloned object, or null if <paramref name="objectToClone"></paramref> is null</returns>
       T Clone<T>(T objectToClone) where T : class, IUpdatable;
    }
 }

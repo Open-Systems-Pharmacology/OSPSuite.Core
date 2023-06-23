@@ -6,11 +6,11 @@ namespace OSPSuite.Core.Domain
 {
    public abstract class concern_for_object_path_extensions : StaticContextSpecification
    {
-      protected IFormulaUsablePath _formulaUsablePath;
+      protected FormulaUsablePath _formulaUsablePath;
 
       protected override void Context()
       {
-         _formulaUsablePath = A.Fake<IFormulaUsablePath>();
+         _formulaUsablePath = A.Fake<FormulaUsablePath>();
       }
    }
 

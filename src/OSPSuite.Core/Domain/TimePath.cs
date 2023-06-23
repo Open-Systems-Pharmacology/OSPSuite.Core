@@ -8,42 +8,39 @@ namespace OSPSuite.Core.Domain
    /// <summary>
    ///    represents a reference to the Simulation time
    /// </summary>
-   public class TimePath : IFormulaUsablePath
+   public class TimePath : FormulaUsablePath
    {
-      private readonly List<string> _path;
       private readonly TimeParameter _timeParameter;
-      public string Alias { set; get; }
 
       public TimePath()
       {
-         _path = new List<string> {Constants.TIME};
          _timeParameter = new TimeParameter();
          Alias = Constants.TIME;
+         _pathEntries.Add(Constants.TIME);
       }
 
-      public string PathAsString => "TIME";
 
-      public void Add(string pathEntry)
+      public override void Add(string pathEntry)
       {
          /*nothing to do here*/
       }
 
-      public void Replace(string entry, string replacement)
+      public override void Replace(string entry, string replacement)
       {
          /*nothing to do here*/
       }
 
-      public void Replace(string entry, IEnumerable<string> replacements)
+      public override void Replace(string entry, IEnumerable<string> replacements)
       {
          /*nothing to do here*/
       }
 
-      public void Remove(string entry)
+      public override void Remove(string entry)
       {
          /*nothing to do here*/
       }
 
-      public T Resolve<T>(IEntity dependentObject) where T : class
+      public override T Resolve<T>(IEntity dependentObject)
       {
          _timeParameter.ParentContainer = dependentObject.RootContainer;
          return _timeParameter.DowncastTo<T>();
@@ -55,12 +52,12 @@ namespace OSPSuite.Core.Domain
          set => _timeParameter.Dimension = value;
       }
 
-      public T Clone<T>() where T : IObjectPath
+      public override T Clone<T>()
       {
          return new TimePath {TimeDimension = TimeDimension, Alias = Alias}.DowncastTo<T>();
       }
 
-      public string this[int index]
+      public override string this[int index]
       {
          get => Constants.TIME;
          set
@@ -69,22 +66,22 @@ namespace OSPSuite.Core.Domain
          }
       }
 
-      public void RemoveAt(int index)
+      public override void RemoveAt(int index)
       {
          /*nothing to do here*/
       }
 
-      public void RemoveFirst()
+      public override void RemoveFirst()
       {
          /*nothing to do here*/
       }
 
-      public void ReplaceWith(IEnumerable<string> pathEntries)
+      public override void ReplaceWith(IEnumerable<string> pathEntries)
       {
          /*nothing to do here*/
       }
 
-      public void AddAtFront(string pathEntry)
+      public override void AddAtFront(string pathEntry)
       {
          /*nothing to do here*/
       }
@@ -100,24 +97,13 @@ namespace OSPSuite.Core.Domain
          return PathAsString.GetHashCode();
       }
 
-      IEnumerator IEnumerable.GetEnumerator()
-      {
-         return GetEnumerator();
-      }
-
-      public IEnumerator<string> GetEnumerator()
-      {
-         return _path.GetEnumerator();
-      }
-
       public override string ToString()
       {
          return PathAsString;
       }
 
-      public int Count => _path.Count;
 
-      public IDimension Dimension
+      public override IDimension Dimension
       {
          get => TimeDimension;
          set => TimeDimension = value;

@@ -29,8 +29,8 @@ namespace OSPSuite.Core.Batch.Mappers
             Name = simulation.Name,
             Times = displayValuesFor(results.BaseGrid),
             ParameterValues = parameterValuesFor(simulation.Model),
-            AbsTol = simulation.SimulationSettings.Solver.AbsTol,
-            RelTol = simulation.SimulationSettings.Solver.RelTol,
+            AbsTol = simulation.Settings.Solver.AbsTol,
+            RelTol = simulation.Settings.Solver.RelTol,
          };
 
          results.AllButBaseGrid().Each(c => simulationExport.OutputValues.Add(quantityResultsFrom(c)));

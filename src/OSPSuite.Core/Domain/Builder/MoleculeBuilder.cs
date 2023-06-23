@@ -7,75 +7,32 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public interface IMoleculeBuilder : IContainer, IContainsParameters, IWithDisplayUnit
+   public class MoleculeBuilder : Container, IContainsParameters, IWithDisplayUnit, IBuilder
    {
+      private readonly ICache<string, UsedCalculationMethod> _usedCalculationMethods;
+      private Unit _displayUnit;
+
       /// <summary>
       ///    Default start formula. Dimension depends on settings used in the project (Amount or Concentration)
       /// </summary>
-      IFormula DefaultStartFormula { get; set; }
+      public IFormula DefaultStartFormula { get; set; }
 
       /// <summary>
       ///    Set to true, the molecule will be floating in the spatial structure. (e.g. Not stationary)
       /// </summary>
-      bool IsFloating { get; set; }
+      public bool IsFloating { get; set; }
 
-      QuantityType QuantityType { get; set; }
-
-      /// <summary>
-      ///    Specifies the list of transporter by which the molecule will be transported.
-      /// </summary>
-      IEnumerable<TransporterMoleculeContainer> TransporterMoleculeContainerCollection { get; }
-
-      void AddTransporterMoleculeContainer(TransporterMoleculeContainer transporterMolecule);
-      void RemoveTransporterMoleculeContainer(TransporterMoleculeContainer transporterMoleculeToRemove);
-
-      /// <summary>
-      ///    Specifies the list of interactions that the molecule can trigger
-      /// </summary>
-      IEnumerable<InteractionContainer> InteractionContainerCollection { get; }
-
-      void AddInteractionContainer(InteractionContainer interactionContainer);
-      void RemoveInteractionContainer(InteractionContainer interactionContainer);
-
-      /// <summary>
-      ///    Add the calculation method (category and name) to the molecule builder.
-      ///    If a method was already added for the same category, an exception will be thrown
-      /// </summary>
-      void AddUsedCalculationMethod(UsedCalculationMethod calculationMethod);
-
-      /// <summary>
-      ///    Add the calculation method (category and name) to the molecule builder.
-      ///    If a method was already added for the same category, an exception will be thrown
-      /// </summary>
-      void AddUsedCalculationMethod(ICoreCalculationMethod calculationMethod);
-
-      IEnumerable<UsedCalculationMethod> UsedCalculationMethods { get; }
+      public QuantityType QuantityType { get; set; }
 
       /// <summary>
       ///    Set to true, represents a molecule that is being simulated (such as Compound, Inhibitor, DrugComplex) etc
       ///    Set to false, represents a molecule that is individual specific such as en Enzyme, Protein, Transporter, FcRn etc.
       ///    Default value is true
       /// </summary>
-      bool IsXenobiotic { get; set; }
-
-      bool IsFloatingXenobiotic { get; }
-
-      /// <summary>
-      ///    Gets the default start value for the Molecule
-      /// </summary>
-      /// <returns>The default value if the formula is a constant, otherwise null</returns>
-      double? GetDefaultMoleculeStartValue();
-   }
-
-   public class MoleculeBuilder : Container, IMoleculeBuilder
-   {
-      private readonly ICache<string, UsedCalculationMethod> _usedCalculationMethods;
-      private Unit _displayUnit;
-      public IFormula DefaultStartFormula { get; set; }
-      public bool IsFloating { get; set; }
-      public QuantityType QuantityType { get; set; }
       public bool IsXenobiotic { get; set; }
+
       public IDimension Dimension { get; set; }
+      public IBuildingBlock BuildingBlock { get; set; }
 
       public MoleculeBuilder()
       {
@@ -90,21 +47,35 @@ namespace OSPSuite.Core.Domain.Builder
 
       public IEnumerable<IParameter> Parameters => GetChildren<IParameter>();
 
+      /// <summary>
+      ///    Specifies the list of transporter by which the molecule will be transported.
+      /// </summary>
       public IEnumerable<TransporterMoleculeContainer> TransporterMoleculeContainerCollection => GetChildren<TransporterMoleculeContainer>();
 
       public void AddTransporterMoleculeContainer(TransporterMoleculeContainer transporterMolecule) => Add(transporterMolecule);
 
       public void RemoveTransporterMoleculeContainer(TransporterMoleculeContainer transporterMoleculeToRemove) => RemoveChild(transporterMoleculeToRemove);
 
+      /// <summary>
+      ///    Specifies the list of interactions that the molecule can trigger
+      /// </summary>
       public IEnumerable<InteractionContainer> InteractionContainerCollection => GetChildren<InteractionContainer>();
 
       public void AddInteractionContainer(InteractionContainer interactionContainer) => Add(interactionContainer);
 
       public void RemoveInteractionContainer(InteractionContainer interactionContainer) => RemoveChild(interactionContainer);
 
+      /// <summary>
+      ///    Add the calculation method (category and name) to the molecule builder.
+      ///    If a method was already added for the same category, an exception will be thrown
+      /// </summary>
       public void AddUsedCalculationMethod(UsedCalculationMethod calculationMethod) => _usedCalculationMethods.Add(calculationMethod);
 
-      public void AddUsedCalculationMethod(ICoreCalculationMethod calculationMethod)
+      /// <summary>
+      ///    Add the calculation method (category and name) to the molecule builder.
+      ///    If a method was already added for the same category, an exception will be thrown
+      /// </summary>
+      public void AddUsedCalculationMethod(CoreCalculationMethod calculationMethod)
       {
          AddUsedCalculationMethod(new UsedCalculationMethod(calculationMethod.Category, calculationMethod.Name));
       }
@@ -113,7 +84,11 @@ namespace OSPSuite.Core.Domain.Builder
 
       public bool IsFloatingXenobiotic => IsFloating && IsXenobiotic;
 
-      public double? GetDefaultMoleculeStartValue()
+      /// <summary>
+      ///    Gets the default start value for the Molecule
+      /// </summary>
+      /// <returns>The default value if the formula is a constant, otherwise null</returns>
+      public double? GetDefaultInitialCondition()
       {
          if (DefaultStartFormula.IsConstant())
             return DefaultStartFormula.Calculate(null);
@@ -125,7 +100,7 @@ namespace OSPSuite.Core.Domain.Builder
       {
          base.UpdatePropertiesFrom(source, cloneManager);
 
-         var sourceMoleculeBuilder = source as IMoleculeBuilder;
+         var sourceMoleculeBuilder = source as MoleculeBuilder;
          if (sourceMoleculeBuilder == null) return;
 
          IsFloating = sourceMoleculeBuilder.IsFloating;

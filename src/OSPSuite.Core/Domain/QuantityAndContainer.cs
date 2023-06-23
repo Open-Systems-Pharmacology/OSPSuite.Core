@@ -34,6 +34,12 @@ namespace OSPSuite.Core.Domain
 
       public IReadOnlyList<IEntity> Children => _container.Children;
 
+      public ObjectPath ParentPath
+      {
+         get => _container.ParentPath;
+         set => _container.ParentPath = value;
+      }
+
       public ContainerMode Mode
       {
          get => _container.Mode;
@@ -58,9 +64,9 @@ namespace OSPSuite.Core.Domain
 
       public IEnumerable<T> GetChildren<T>() where T : class, IEntity => _container.GetChildren<T>();
 
-      public IEnumerable<IContainer> GetNeighborsFrom(IEnumerable<INeighborhood> neighborhoods) => _container.GetNeighborsFrom(neighborhoods);
+      public IReadOnlyList<IContainer> GetNeighborsFrom(IReadOnlyList<Neighborhood> neighborhoods) => _container.GetNeighborsFrom(neighborhoods);
 
-      public IEnumerable<INeighborhood> GetNeighborhoods(IEnumerable<INeighborhood> neighborhoods) => _container.GetNeighborhoods(neighborhoods);
+      public IReadOnlyList<Neighborhood> GetNeighborhoods(IReadOnlyList<Neighborhood> neighborhoods) => _container.GetNeighborhoods(neighborhoods);
 
       public IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>() where TContainer : class, IContainer => GetAllContainersAndSelf<TContainer>(x => true);
 

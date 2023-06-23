@@ -5,15 +5,16 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
+using static OSPSuite.Core.Domain.ObjectPathKeywords;
 
 namespace OSPSuite.Core.Domain
 {
    public abstract class concern_for_KeywordReplacerTask : ContextSpecification<IKeywordReplacerTask>
    {
       protected string _modelName;
-      protected IFormulaUsablePath _objPathFirstNeighbor;
-      protected IFormulaUsablePath _objPathMolecule;
-      protected IFormulaUsablePath _objPathOrganism;
+      protected FormulaUsablePath _objPathFirstNeighbor;
+      protected FormulaUsablePath _objPathMolecule;
+      protected FormulaUsablePath _objPathOrganism;
       protected IModel _model;
 
       protected override void Context()
@@ -22,22 +23,22 @@ namespace OSPSuite.Core.Domain
          _model = A.Fake<IModel>().WithName(_modelName);
          _model.Root = A.Fake<IContainer>().WithName(_modelName);
          A.CallTo(() => _model.Root.GetChildren<IContainer>())
-            .Returns(new[] {new Container().WithName(ConstantsForSpecs.Organism), new Container().WithName("B")});
-         _objPathFirstNeighbor = new FormulaUsablePath(new[] {ObjectPathKeywords.FIRST_NEIGHBOR, "A"});
+            .Returns(new[] {new Container().WithName(Constants.ORGANISM), new Container().WithName("B")});
+         _objPathFirstNeighbor = new FormulaUsablePath(new[] {FIRST_NEIGHBOR, "A"});
          _objPathMolecule = new FormulaUsablePath(new[] {"B"});
-         _objPathOrganism = new FormulaUsablePath(new[] {ConstantsForSpecs.Organism, "C"});
+         _objPathOrganism = new FormulaUsablePath(new[] {Constants.ORGANISM, "C"});
          sut = new KeywordReplacerTask(new ObjectPathFactory(new AliasCreator()));
       }
    }
 
    public class When_replacing_the_keyword_in_a_reaction : concern_for_KeywordReplacerTask
    {
-      private IReaction _reaction;
+      private Reaction _reaction;
 
       protected override void Context()
       {
          base.Context();
-         _reaction = A.Fake<IReaction>().WithFormula(A.Fake<IFormula>());
+         _reaction = new Reaction().WithFormula(A.Fake<IFormula>());
          A.CallTo(() => _reaction.Formula.ObjectPaths).Returns(new[] {_objPathFirstNeighbor, _objPathMolecule, _objPathOrganism});
       }
 
@@ -57,7 +58,7 @@ namespace OSPSuite.Core.Domain
       public void should_have_replace_the_organism_keyword_with_the_global_path_to_the_organism_container_in_the_model()
       {
          _objPathOrganism.ElementAt(0).ShouldBeEqualTo(_modelName);
-         _objPathOrganism.ElementAt(1).ShouldBeEqualTo(ConstantsForSpecs.Organism);
+         _objPathOrganism.ElementAt(1).ShouldBeEqualTo(Constants.ORGANISM);
          _objPathOrganism.ElementAt(2).ShouldBeEqualTo("C");
       }
    }
@@ -70,7 +71,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         _objPathMolecule = new FormulaUsablePath(new[] {ObjectPathKeywords.MOLECULE});
+         _objPathMolecule = new FormulaUsablePath(new[] {MOLECULE});
          _moleculeName = "REPLACED";
          _moleculeContainer = new Container().WithName(_modelName);
          var moleculeParameter = new Parameter().WithFormula(A.Fake<IFormula>());
@@ -94,7 +95,7 @@ namespace OSPSuite.Core.Domain
       public void should_have_replace_the_organism_keyword_with_the_global_path_to_the_organism_container_in_the_model()
       {
          _objPathOrganism.ElementAt(0).ShouldBeEqualTo(_modelName);
-         _objPathOrganism.ElementAt(1).ShouldBeEqualTo(ConstantsForSpecs.Organism);
+         _objPathOrganism.ElementAt(1).ShouldBeEqualTo(Constants.ORGANISM);
          _objPathOrganism.ElementAt(2).ShouldBeEqualTo("C");
       }
    }
@@ -113,7 +114,7 @@ namespace OSPSuite.Core.Domain
          _moleculeContainer = new Container().WithName("CYP").WithContainerType(ContainerType.Molecule);
          _parameter = DomainHelperForSpecs.ConstantParameterWithValue(4).WithName("P").WithParentContainer(_moleculeContainer);
          _parameter.Formula = new ExplicitFormula();
-         _objectPath = new FormulaUsablePath("SIM", ObjectPathKeywords.MOLECULE, "test");
+         _objectPath = new FormulaUsablePath("SIM", MOLECULE, "test");
          _parameter.Formula.AddObjectPath(_objectPath);
       }
 

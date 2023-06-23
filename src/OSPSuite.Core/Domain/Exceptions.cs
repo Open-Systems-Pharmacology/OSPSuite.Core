@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Domain
 {
    public class BothNeighborsSatisfyingCriteriaException : OSPSuiteException
    {
-      public BothNeighborsSatisfyingCriteriaException(INeighborhood neighborhood) : base(Error.BothNeighborsSatisfying(neighborhood.Name))
+      public BothNeighborsSatisfyingCriteriaException(Neighborhood neighborhood) : base(Error.BothNeighborsSatisfying(neighborhood.Name))
       {
       }
    }
@@ -128,7 +128,7 @@ namespace OSPSuite.Core.Domain
 
    public class UnableToResolvePathException : OSPSuiteException
    {
-      public UnableToResolvePathException(IObjectPath objectPath, IEntity currentEntity)
+      public UnableToResolvePathException(ObjectPath objectPath, IEntity currentEntity)
          : base($"Unable to resolve path '{objectPath}' for entity '{currentEntity.Name}' with path '{currentEntity.EntityPath()}'")
 
       {

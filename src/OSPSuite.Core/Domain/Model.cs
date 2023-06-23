@@ -1,4 +1,6 @@
-﻿using OSPSuite.Core.Domain.Services;
+﻿using System.Collections.Generic;
+using System.Linq;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Visitor;
 
@@ -33,6 +35,11 @@ namespace OSPSuite.Core.Domain
       ///    3-Otherwise, returns an empty string
       /// </summary>
       string MoleculeNameFor(IEntity entity);
+
+      /// <summary>
+      ///    returns the name of all molecule present in the model;
+      /// </summary>
+      IReadOnlyList<string> AllPresentMoleculeNames { get; }
    }
 
    public class Model : ObjectBase, IModel
@@ -74,13 +81,15 @@ namespace OSPSuite.Core.Domain
 
          switch (entity)
          {
-            case IMoleculeAmount _:
+            case MoleculeAmount _:
             case IContainer container when container.ContainerType == ContainerType.Molecule:
                return entity.Name;
          }
 
          return MoleculeNameFor(entity.ParentContainer);
       }
+
+      public IReadOnlyList<string> AllPresentMoleculeNames => Root?.GetChildren<IContainer>(x => x.ContainerType == ContainerType.Molecule).AllNames();
 
       public double? MolWeightFor(string quantityPath)
       {

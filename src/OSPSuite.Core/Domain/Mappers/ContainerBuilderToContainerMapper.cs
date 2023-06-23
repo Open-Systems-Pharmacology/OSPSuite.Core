@@ -1,19 +1,21 @@
-﻿using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain.Builder;
+﻿using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Mappers
 {
    /// <summary>
-   /// Maps container used in a building block to model container <para></para>
-   /// At the moment, there is no special ContainerBuilder class, so the mapper <para></para>
-   /// will just create the clone of the input container
+   ///    Maps container used in a building block to model container
+   ///    <para></para>
+   ///    At the moment, there is no special ContainerBuilder class, so the mapper
+   ///    <para></para>
+   ///    will just create the clone of the input container
    /// </summary>
    public interface IContainerBuilderToContainerMapper : IBuilderMapper<IContainer, IContainer>
    {
    }
 
-   public class ContainerBuilderToContainerMapper : IContainerBuilderToContainerMapper
+   internal class ContainerBuilderToContainerMapper : IContainerBuilderToContainerMapper
    {
       private readonly ICloneManagerForModel _cloneManagerForModel;
 
@@ -22,26 +24,26 @@ namespace OSPSuite.Core.Domain.Mappers
          _cloneManagerForModel = cloneManagerForModel;
       }
 
-      public IContainer MapFrom(IContainer containerBuilder, IBuildConfiguration buildConfiguration)
+      public IContainer MapFrom(IContainer containerBuilder, SimulationBuilder simulationBuilder)
       {
-         var container= _cloneManagerForModel.Clone(containerBuilder);
-         addBuilderReference(container, containerBuilder, buildConfiguration);
+         var container = _cloneManagerForModel.Clone(containerBuilder);
+         addBuilderReference(container, containerBuilder, simulationBuilder);
          return container;
       }
 
-      private void addBuilderReference(IContainer container, IContainer containerBuilder, IBuildConfiguration buildConfiguration)
+      private void addBuilderReference(IContainer container, IContainer containerBuilder, SimulationBuilder simulationBuilder)
       {
          if (container == null || containerBuilder == null) return;
 
-         buildConfiguration.AddBuilderReference(container, containerBuilder);
+         simulationBuilder.AddBuilderReference(container, containerBuilder);
 
          foreach (var childBuilder in containerBuilder.Children)
          {
             var child = container.GetSingleChildByName(childBuilder.Name);
-            if(child.IsAnImplementationOf<IContainer>())
-               addBuilderReference(child.DowncastTo<IContainer>(), childBuilder as IContainer, buildConfiguration);
+            if (child.IsAnImplementationOf<IContainer>())
+               addBuilderReference(child.DowncastTo<IContainer>(), childBuilder as IContainer, simulationBuilder);
             else
-               buildConfiguration.AddBuilderReference(child, childBuilder);
+               simulationBuilder.AddBuilderReference(child, childBuilder);
          }
       }
    }

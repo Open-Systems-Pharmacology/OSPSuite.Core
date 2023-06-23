@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Services
 {
@@ -16,16 +16,20 @@ namespace OSPSuite.Core.Services
       ///    Returns <c>true</c> if the usage of <paramref name="path" /> in the formula of <paramref name="referenceObject" />
       ///    would result in circular references otherwise <c>false</c>
       /// </summary>
-      bool HasCircularReference(IObjectPath path, IEntity referenceObject);
-
-      /// <summary>
-      ///    Check the given <paramref name="model" /> for circular references and returns any problem that may have been found
-      ///    during check
-      /// </summary>
-      ValidationResult CheckCircularReferencesIn(IModel model, IBuildConfiguration buildConfiguration);
+      bool HasCircularReference(ObjectPath path, IEntity referenceObject);
    }
 
-   internal class CircularReferenceChecker : ICircularReferenceChecker
+   internal interface IModelCircularReferenceChecker
+   {
+      /// <summary>
+      ///    Check the given <paramref name="modelConfiguration" /> for circular references and returns any problem that may have
+      ///    been found
+      ///    during check
+      /// </summary>
+      ValidationResult CheckCircularReferencesIn(ModelConfiguration modelConfiguration);
+   }
+
+   internal class CircularReferenceChecker : ICircularReferenceChecker, IModelCircularReferenceChecker
    {
       private readonly IObjectPathFactory _objectPathFactory;
       private readonly IObjectTypeResolver _objectTypeResolver;
@@ -38,7 +42,7 @@ namespace OSPSuite.Core.Services
          _entityReferenceCache = new Cache<IEntity, List<IEntity>>(x => new List<IEntity>());
       }
 
-      public bool HasCircularReference(IObjectPath path, IEntity referenceObject)
+      public bool HasCircularReference(ObjectPath path, IEntity referenceObject)
       {
          try
          {
@@ -58,15 +62,16 @@ namespace OSPSuite.Core.Services
          }
       }
 
-      public ValidationResult CheckCircularReferencesIn(IModel model, IBuildConfiguration buildConfiguration)
+      public ValidationResult CheckCircularReferencesIn(ModelConfiguration modelConfiguration)
       {
          var validationResult = new ValidationResult();
 
          try
          {
+            var (model, simulationBuilder) = modelConfiguration;
             var allUsingFormulas = model.Root.GetAllChildren<IUsingFormula>();
             allUsingFormulas.Each(buildEntityReferenceCache);
-            allUsingFormulas.Each(x => checkCircularReferencesIn(x, buildConfiguration, validationResult));
+            allUsingFormulas.Each(x => checkCircularReferencesIn(x, simulationBuilder, validationResult));
             return validationResult;
          }
          finally
@@ -98,14 +103,14 @@ namespace OSPSuite.Core.Services
          }
       }
 
-      private void checkCircularReferencesIn(IUsingFormula usingFormula, IBuildConfiguration buildConfiguration, ValidationResult validationResult)
+      private void checkCircularReferencesIn(IUsingFormula usingFormula, SimulationBuilder simulationBuilder, ValidationResult validationResult)
       {
          var references = _entityReferenceCache[usingFormula];
          if (!references.Contains(usingFormula))
             return;
 
          var entityAbsolutePath = _objectPathFactory.CreateAbsoluteObjectPath(usingFormula).ToPathString();
-         var builder = buildConfiguration.BuilderFor(usingFormula);
+         var builder = simulationBuilder.BuilderFor(usingFormula);
          var objectWithError = builder ?? usingFormula;
          var entityType = _objectTypeResolver.TypeFor(usingFormula);
          var allReferencesName = references.Distinct().AllNames();

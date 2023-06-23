@@ -20,9 +20,9 @@ namespace OSPSuite.Core.Services
       }
    }
    
-   public class When_told_to_replace_keyword_with_a_path_in_a_path_conntaining_keyword : concern_for_KeywordWithPathReplacer
+   public class When_told_to_replace_keyword_with_a_path_in_a_path_containing_keyword : concern_for_KeywordWithPathReplacer
    {
-      private IFormulaUsablePath _path;
+      private FormulaUsablePath _path;
 
       protected override void Context()
       {
@@ -53,9 +53,9 @@ namespace OSPSuite.Core.Services
    }
 
    
-   public class When_told_to_replace_keyword_with_a_path_in_a_path_not_conntaining_keyword : concern_for_KeywordWithPathReplacer 
+   public class When_told_to_replace_keyword_with_a_path_in_a_path_not_containing_keyword : concern_for_KeywordWithPathReplacer 
    {
-      private IFormulaUsablePath _path;
+      private FormulaUsablePath _path;
 
       protected override void Context()
       {

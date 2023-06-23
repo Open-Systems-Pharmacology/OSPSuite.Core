@@ -34,17 +34,17 @@ namespace OSPSuite.Core.Services
 
       private static bool isStartValueBuildingBlock<T>(T relatedObject) where T : class
       {
-         return relatedObject.IsAnImplementationOf<IParameterStartValuesBuildingBlock>() ||
-                relatedObject.IsAnImplementationOf<IMoleculeStartValuesBuildingBlock>();
+         return relatedObject.IsAnImplementationOf<ParameterValuesBuildingBlock>() ||
+                relatedObject.IsAnImplementationOf<InitialConditionsBuildingBlock>();
       }
 
       private static bool shouldPluralize<T>(T relatedObject) where T : class
       {
-         return relatedObject.IsAnImplementationOf<IMoleculeBuildingBlock>() ||
-                relatedObject.IsAnImplementationOf<IReactionBuildingBlock>() ||
-                relatedObject.IsAnImplementationOf<IPassiveTransportBuildingBlock>() ||
-                relatedObject.IsAnImplementationOf<IObserverBuildingBlock>() ||
-                relatedObject.IsAnImplementationOf<IEventGroupBuildingBlock>();
+         return relatedObject.IsAnImplementationOf<MoleculeBuildingBlock>() ||
+                relatedObject.IsAnImplementationOf<ReactionBuildingBlock>() ||
+                relatedObject.IsAnImplementationOf<PassiveTransportBuildingBlock>() ||
+                relatedObject.IsAnImplementationOf<ObserverBuildingBlock>() ||
+                relatedObject.IsAnImplementationOf<EventGroupBuildingBlock>();
       }
    }
 }

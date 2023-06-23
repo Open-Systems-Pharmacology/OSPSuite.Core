@@ -20,7 +20,7 @@ namespace OSPSuite.R.Services
       IParameter[] AllParametersMatching(IModelCoreSimulation simulation, string path);
       IContainer[] AllContainersMatching(IModelCoreSimulation simulation, string path);
       IQuantity[] AllQuantitiesMatching(IModelCoreSimulation simulation, string path);
-      IMoleculeAmount[] AllMoleculesMatching(IModelCoreSimulation simulation, string path);
+      MoleculeAmount[] AllMoleculesMatching(IModelCoreSimulation simulation, string path);
 
       /// <summary>
       ///    Returns all parameter matching <paramref name="path" /> that could meaningfully be used in a SA analysis.
@@ -31,7 +31,7 @@ namespace OSPSuite.R.Services
       IParameter[] AllParametersMatching(IContainer container, string path);
       IContainer[] AllContainersMatching(IContainer container, string path);
       IQuantity[] AllQuantitiesMatching(IContainer container, string path);
-      IMoleculeAmount[] AllMoleculesMatching(IContainer container, string path);
+      MoleculeAmount[] AllMoleculesMatching(IContainer container, string path);
 
       string[] AllQuantityPathsIn(IContainer container);
       string[] AllContainerPathsIn(IContainer container);
@@ -125,7 +125,7 @@ namespace OSPSuite.R.Services
       public IQuantity[] AllQuantitiesMatching(IModelCoreSimulation simulation, string path) =>
          AllQuantitiesMatching(simulation?.Model?.Root, path);
 
-      public IMoleculeAmount[] AllMoleculesMatching(IModelCoreSimulation simulation, string path) =>
+      public MoleculeAmount[] AllMoleculesMatching(IModelCoreSimulation simulation, string path) =>
          AllMoleculesMatching(simulation?.Model?.Root, path);
 
       public IParameter[] AllParametersForSensitivityAnalysisMatching(ISimulation simulation, string path)
@@ -145,14 +145,14 @@ namespace OSPSuite.R.Services
       public IQuantity[] AllQuantitiesMatching(IContainer container, string path) =>
          allEntitiesMatching<IQuantity>(container, path);
 
-      public IMoleculeAmount[] AllMoleculesMatching(IContainer container, string path) =>
-         allEntitiesMatching<IMoleculeAmount>(container, path);
+      public MoleculeAmount[] AllMoleculesMatching(IContainer container, string path) =>
+         allEntitiesMatching<MoleculeAmount>(container, path);
 
       public string[] AllQuantityPathsIn(IContainer container) => allEntityPathIn<IQuantity>(container);
 
       public string[] AllContainerPathsIn(IContainer container) => allEntityPathIn<IContainer>(container, isRealContainer);
 
-      public string[] AllMoleculesPathsIn(IContainer container) => allEntityPathIn<IMoleculeAmount>(container);
+      public string[] AllMoleculesPathsIn(IContainer container) => allEntityPathIn<MoleculeAmount>(container);
 
       public string[] AllParameterPathsIn(IContainer container) => allEntityPathIn<IParameter>(container);
 
@@ -214,7 +214,7 @@ namespace OSPSuite.R.Services
          return _coreContainerTask.CacheAllChildrenSatisfying(container, filterFunc ?? (x => true)).Keys.ToArray();
       }
 
-      private bool isRealContainer(IContainer container) => !container.IsAnImplementationOf<IDistributedParameter>() && !container.IsAnImplementationOf<IMoleculeAmount>();
+      private bool isRealContainer(IContainer container) => !container.IsAnImplementationOf<IDistributedParameter>() && !container.IsAnImplementationOf<MoleculeAmount>();
 
       private bool isStateVariableParameter(IParameter parameter) => parameter.RHSFormula != null;
 

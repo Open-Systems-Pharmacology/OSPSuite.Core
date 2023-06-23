@@ -213,7 +213,9 @@ namespace OSPSuite.UI.Views.Commands
          if (_presenter.IsLabel(historyItemId))
             e.Appearance.BackColor = _historyBrowserConfiguration.LabelColor;
          else if (!_presenter.CanRollBackTo(historyItemId))
-            e.Appearance.BackColor = _historyBrowserConfiguration.NotReversibleColor;
+         {
+            e.Appearance.BackColor = UIConstants.Colors.Disabled;
+         }
       }
    }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using DevExpress.Utils.Svg;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Utility.Extensions;
@@ -41,25 +40,20 @@ namespace OSPSuite.Presentation.DTO
 
       public bool FileDefined => !string.IsNullOrEmpty(FilePath);
 
-      public IEnumerable<string> Messages
+
+      public virtual IEnumerable<string> Messages
       {
          get => _messages;
-         set
-         {
-            _messages = value;
-            OnPropertyChanged(() => Messages);
-         }
+         set => SetProperty(ref _messages, value);
       }
 
-      public NotificationType Status
+
+      public virtual NotificationType Status
       {
          get => _status;
-         set
-         {
-            _status = value;
-            OnPropertyChanged(() => Status);
-         }
+         set => SetProperty(ref _status, value);
       }
+
 
       public string Message => Messages.ToString("\n");
 

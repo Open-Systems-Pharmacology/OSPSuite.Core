@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Domain
       ///    The parameter won't be added to the <paramref name="moleculeAmount" />.
       ///    The object paths used in <paramref name="modelFormulaToUse" /> will be edited to ensure proper reference
       /// </remarks>
-      IParameter CreateStartValueParameter(IMoleculeAmount moleculeAmount, IFormula modelFormulaToUse, Unit displayUnit = null);
+      IParameter CreateStartValueParameter(MoleculeAmount moleculeAmount, IFormula modelFormulaToUse, Unit displayUnit = null);
 
       /// <summary>
       ///    Creates a parameter named <paramref name="name" /> with a constant formula of value <paramref name="value" />. It
@@ -34,6 +34,13 @@ namespace OSPSuite.Core.Domain
       ///    is defined, sets the given dimension in the parameter
       /// </summary>
       IParameter CreateParameter(string name, double? value = null, IDimension dimension = null, string groupName = null, IFormula formula = null, Unit displayUnit = null);
+
+      /// <summary>
+      ///    Creates a parameter named <paramref name="name" /> with a constant formula of value <paramref name="value" />. It
+      ///    the <paramref name="dimension" />
+      ///    is defined, sets the given dimension in the parameter
+      /// </summary>
+      IParameter CreateDistributedParameter(string name, DistributionType distributionType, double? value = null, IDimension dimension = null, string groupName = null, Unit displayUnit = null);
    }
 
    public class ParameterFactory : IParameterFactory
@@ -43,15 +50,22 @@ namespace OSPSuite.Core.Domain
       private readonly IDimensionFactory _dimensionFactory;
       private readonly IConcentrationBasedFormulaUpdater _concentrationBasedFormulaUpdater;
       private readonly IDisplayUnitRetriever _displayUnitRetriever;
+      private readonly IDistributionFormulaFactory _distributionFormulaFactory;
 
-      public ParameterFactory(IFormulaFactory formulaFactory, IObjectBaseFactory objectBaseFactory, IDimensionFactory dimensionFactory,
-         IConcentrationBasedFormulaUpdater concentrationBasedFormulaUpdater, IDisplayUnitRetriever displayUnitRetriever)
+      public ParameterFactory(
+         IFormulaFactory formulaFactory,
+         IObjectBaseFactory objectBaseFactory,
+         IDimensionFactory dimensionFactory,
+         IConcentrationBasedFormulaUpdater concentrationBasedFormulaUpdater,
+         IDisplayUnitRetriever displayUnitRetriever,
+         IDistributionFormulaFactory distributionFormulaFactory)
       {
          _formulaFactory = formulaFactory;
          _objectBaseFactory = objectBaseFactory;
          _dimensionFactory = dimensionFactory;
          _concentrationBasedFormulaUpdater = concentrationBasedFormulaUpdater;
          _displayUnitRetriever = displayUnitRetriever;
+         _distributionFormulaFactory = distributionFormulaFactory;
       }
 
       public IParameter CreateConcentrationParameter(IFormulaCache formulaCache)
@@ -72,7 +86,7 @@ namespace OSPSuite.Core.Domain
          return CreateParameter(Constants.Parameters.VOLUME, value: 1, dimension: volumeDimension, groupName: Constants.Groups.ORGAN_VOLUMES);
       }
 
-      public IParameter CreateStartValueParameter(IMoleculeAmount moleculeAmount, IFormula modelFormulaToUse, Unit displayUnit = null)
+      public IParameter CreateStartValueParameter(MoleculeAmount moleculeAmount, IFormula modelFormulaToUse, Unit displayUnit = null)
       {
          _concentrationBasedFormulaUpdater.UpdateRelativePathForStartValueMolecule(moleculeAmount, modelFormulaToUse);
          return CreateParameter(Constants.Parameters.START_VALUE, dimension: modelFormulaToUse.Dimension, displayUnit: displayUnit, formula: modelFormulaToUse);
@@ -88,6 +102,19 @@ namespace OSPSuite.Core.Domain
             .WithName(name)
             .WithDimension(dimensionToUse)
             .WithFormula(formulaToUse)
+            .WithDisplayUnit(displayUnitToUse)
+            .WithGroup(groupName ?? Constants.Groups.MOBI);
+      }
+
+      public IParameter CreateDistributedParameter(string name, DistributionType distributionType, double? value = null, IDimension dimension = null, string groupName = null, Unit displayUnit = null)
+      {
+         var dimensionToUse = dimension ?? _dimensionFactory.NoDimension;
+         var displayUnitToUse = displayUnit ?? _displayUnitRetriever.PreferredUnitFor(dimensionToUse);
+
+         return _objectBaseFactory.Create<IDistributedParameter>()
+            .WithName(name)
+            .WithDimension(dimensionToUse)
+            .WithFormula(_distributionFormulaFactory.CreateFor(distributionType, dimensionToUse))
             .WithDisplayUnit(displayUnitToUse)
             .WithGroup(groupName ?? Constants.Groups.MOBI);
       }

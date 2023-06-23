@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Domain
    public static class ObjectPathKeywords
    {
       //list of all keywords defined
-      private static readonly IList<string> _allKeywords = new List<string>();
+      private static readonly List<string> _allKeywords = new List<string>();
 
       /// <summary>
       ///    String representing a reference to local Molecule
@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Domain
       public static readonly string TARGET = addKeyword("TARGET");
 
       /// <summary>
-      ///    String representing a reference to the Neighborhood there the transport is created
+      ///    String representing a reference to the Neighborhood where the transport is created
       /// </summary>
       public static readonly string NEIGHBORHOOD = addKeyword("NEIGHBORHOOD");
 
@@ -61,12 +61,18 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public static readonly string ALL_FLOATING_MOLECULES = addKeyword("ALL_FLOATING_MOLECULES");
 
+      /// <summary>
+      /// Represents the keywords allowing us to identify a neighborhood between two containers
+      /// For example CONTAINER1|/<NBH/>CONTAINER2/<NBH/> means the neighborhood between CONTAINER1 and CONTAINER2
+      /// </summary>
+      public static readonly string NBH = addKeyword("<NBH>");
+
       private static string addKeyword(string keyword)
       {
          _allKeywords.Add(keyword);
          return keyword;
       }
 
-      public static IEnumerable<string> All => _allKeywords;
+      public static IReadOnlyList<string> All => _allKeywords;
    }
 }

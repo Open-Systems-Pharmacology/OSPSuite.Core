@@ -106,7 +106,7 @@ namespace OSPSuite.Core.Services
    public class When_updating_the_references_used_in_a_start_value_formula : concern_for_ConcentrationBasedFormulaUpdater
    {
       private IFormula _formula;
-      private IMoleculeAmount _molecule;
+      private MoleculeAmount _molecule;
 
       protected override void Context()
       {

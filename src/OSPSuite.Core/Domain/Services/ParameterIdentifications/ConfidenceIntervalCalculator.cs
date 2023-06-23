@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
    public interface IConfidenceIntervalCalculator
    {
       /// <summary>
-      ///    Returns a cache {ParmeterPath, Value} containing the confidence interval for each parameter of the parameter
+      ///    Returns a cache {ParameterPath, Value} containing the confidence interval for each parameter of the parameter
       ///    identification. For an unknown path, the cache will return NaN
       /// </summary>
       ICache<string, double> ConfidenceIntervalFrom(JacobianMatrix jacobianMatrix, ResidualsResult residualsResult);

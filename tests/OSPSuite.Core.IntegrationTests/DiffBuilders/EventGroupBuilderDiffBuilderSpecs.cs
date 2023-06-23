@@ -135,7 +135,7 @@ namespace OSPSuite.Core.DiffBuilders
 
    public class When_comparing_EventGroup_with_different_properties : concern_for_ObjectComparer
    {
-      private IEventAssignmentBuilder _eventAssignmentBuilder1;
+      private EventAssignmentBuilder _eventAssignmentBuilder1;
       private IParameter _p1;
       private ExplicitFormula _explicitFormula1;
       private EventBuilder _e1;

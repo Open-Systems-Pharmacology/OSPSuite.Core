@@ -6,8 +6,8 @@ namespace OSPSuite.Core.Domain
 {
    public abstract class concern_for_NotMatchTagCondition : ContextSpecification<NotMatchTagCondition>
    {
-      protected IDescriptorCondition _match;
-      protected IDescriptorCondition _doNotMatch;
+      protected ITagCondition _match;
+      protected ITagCondition _doNotMatch;
       protected EntityDescriptor _entityCriteria;
 
       protected override void Context()

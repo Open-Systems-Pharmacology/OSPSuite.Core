@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Domain
    
    public class When_we_create_an_absolute_path_to_a_top_container : concern_for_ObjectPathFactory
    {
-      private IObjectPath _objectPath;
+      private ObjectPath _objectPath;
 
       protected override void Because()
       {
@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain
    
    public class When_we_create_an_absolute_path_to_an_entity_without_a_parent_container : concern_for_ObjectPathFactory
    {
-      private IObjectPath _objectPath;
+      private ObjectPath _objectPath;
       private IEntity _aParameter;
 
       protected override void Context()
@@ -79,7 +79,7 @@ namespace OSPSuite.Core.Domain
    
    public class When_we_create_an_absolute_path_to_a_root_container : concern_for_ObjectPathFactory
    {
-      private IObjectPath _objectPath;
+      private ObjectPath _objectPath;
       private IEntity _rootContainer;
 
       protected override void Context()
@@ -104,7 +104,7 @@ namespace OSPSuite.Core.Domain
    
    public class When_we_create_an_absolute_path_to_parameter : concern_for_ObjectPathFactory
    {
-      private IFormulaUsablePath _formulaUsablePath;
+      private FormulaUsablePath _formulaUsablePath;
 
       protected override void Because()
       {
@@ -128,7 +128,7 @@ namespace OSPSuite.Core.Domain
    
    public class When_creating_a_time_path_object_path : concern_for_ObjectPathFactory
    {
-      private IFormulaUsablePath _timePath;
+      private FormulaUsablePath _timePath;
       private IDimension _timeDimension;
 
       protected override void Context()
@@ -156,7 +156,7 @@ namespace OSPSuite.Core.Domain
    
    public class When_creating_a_relative_path_to_ourself:concern_for_ObjectPathFactory
    {
-      private IObjectPath _path;
+      private ObjectPath _path;
       protected override void Because()
       {
          _path = sut.CreateRelativeObjectPath(_parameter, _parameter);

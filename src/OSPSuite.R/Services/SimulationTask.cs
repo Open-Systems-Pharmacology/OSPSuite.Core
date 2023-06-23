@@ -7,8 +7,9 @@ namespace OSPSuite.R.Services
    public interface ISimulationTask
    {
       /// <summary>
-      /// Returns a clone of the simulation that can be used during batch run.
-      /// This simulation will contain the minimal information required to run. Configuration settings (e.g. some building blocks) will not be copied over
+      ///    Returns a clone of the simulation that can be used during batch run.
+      ///    This simulation will contain the minimal information required to run. Configuration settings (e.g. some building
+      ///    blocks) will not be copied over
       /// </summary>
       /// <param name="simulation">Simulation to clone</param>
       IModelCoreSimulation CloneForBatchRun(IModelCoreSimulation simulation);
@@ -32,9 +33,9 @@ namespace OSPSuite.R.Services
             Model = _cloneManagerForModel.CloneModel(simulationToClone.Model),
             // None of the other properties are required to complete the simulation
             // Initialize a BuildConfiguration with only SimulationSettings because some of the properties to complete the initialization are required
-            BuildConfiguration = new BuildConfiguration
+            Configuration = new SimulationConfiguration
             {
-               SimulationSettings = _cloneManagerForModel.Clone(simulationToClone.SimulationSettings)
+               SimulationSettings = _cloneManagerForModel.Clone(simulationToClone.Settings)
             }
          };
 

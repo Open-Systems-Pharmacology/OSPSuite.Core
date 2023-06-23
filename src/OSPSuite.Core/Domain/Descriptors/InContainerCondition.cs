@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Domain.Descriptors
       {
       }
 
-      public override IDescriptorCondition CloneCondition() => new InContainerCondition(Tag);
+      public override ITagCondition CloneCondition() => new InContainerCondition(Tag);
 
       public override bool IsSatisfiedBy(EntityDescriptor entityDescriptor)
       {

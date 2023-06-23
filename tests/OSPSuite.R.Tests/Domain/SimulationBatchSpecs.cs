@@ -40,7 +40,7 @@ namespace OSPSuite.R.Domain
          base.GlobalContext();
 
          // Force an error during simulation run
-         _simulation.SimulationSettings.Solver.MxStep = 3;
+         _simulation.Settings.Solver.MxStep = 3;
          _simulationBatchOptions = new SimulationBatchOptions
          {
             VariableMolecules = new[]

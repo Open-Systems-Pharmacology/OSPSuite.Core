@@ -31,7 +31,19 @@
 
       public ParameterOrigin Clone()
       {
-         return new ParameterOrigin {BuilingBlockId = BuilingBlockId, ParameterId = ParameterId, SimulationId = SimulationId};
+         var clone = new ParameterOrigin();
+         clone.UpdatePropertiesFrom(this);
+         return clone;
+      }
+
+      public void UpdatePropertiesFrom(ParameterOrigin parameterOrigin)
+      {
+         if (parameterOrigin == null)
+            return;
+
+         BuilingBlockId = parameterOrigin.BuilingBlockId;
+         SimulationId = parameterOrigin.SimulationId;
+         ParameterId = parameterOrigin.ParameterId;
       }
    }
 }

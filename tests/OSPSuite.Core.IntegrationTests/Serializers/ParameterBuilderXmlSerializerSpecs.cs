@@ -53,7 +53,7 @@ namespace OSPSuite.Core.Serializers
          Parameter x1 = CreateObject<Parameter>().WithName("Peter").WithFormula(f1);
          x1.BuildMode = ParameterBuildMode.Local;
 
-         IFormulaUsablePath fup = new FormulaUsablePath(new[] {"Patricia"}).WithAlias("Patty").WithDimension(DimensionLength);
+         var fup = new FormulaUsablePath(new[] {"Patricia"}).WithAlias("Patty").WithDimension(DimensionLength);
          f1.AddObjectPath(fup);
 
          x1.Value = 3.4;

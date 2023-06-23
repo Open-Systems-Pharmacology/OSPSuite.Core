@@ -39,12 +39,7 @@ namespace OSPSuite.UI.Controls
       private DataTable rectangularSelectionOnlyTable => _gridViewToDataTableMapper.MapFrom(this, GetSelectedRows(), GetSelectedCells);
 
       protected override string ViewName => "UxGridView";
-
-      /// <summary>
-      ///    Color used for cell that are locked/disabled (End of gradient)
-      /// </summary>
-      protected Color _colorDisabled = Colors.Disabled;
-
+      
       public UxGridView(GridControl gridControl) : base(gridControl)
       {
          DoInit();
@@ -142,7 +137,7 @@ namespace OSPSuite.UI.Controls
             e.CombineAppearance(Appearance.Row);
          else
          {
-            AdjustAppearance(e, _colorDisabled);
+            AdjustAppearance(e, UIConstants.Colors.Disabled);
          }
       }
 
@@ -151,23 +146,27 @@ namespace OSPSuite.UI.Controls
          if (isEnabled)
             e.CombineAppearance(Appearance.Row);
          else
-            AdjustAppearance(e, _colorDisabled);
+            AdjustAppearance(e, UIConstants.Colors.Disabled);
       }
 
-      public void AdjustAppearance(RowCellStyleEventArgs e, Color color)
+      public void AdjustAppearance(RowCellStyleEventArgs e, Color backgroundColor)
       {
          if (rowHasFocus(e.RowHandle))
             e.CombineAppearance(Appearance.FocusedCell);
          else
-            UpdateAppearanceBackColor(e.Appearance, color);
+         {
+            UpdateAppearanceBackColor(e.Appearance, backgroundColor);
+         }
       }
 
-      public void AdjustAppearance(RowStyleEventArgs e, Color color)
+      public void AdjustAppearance(RowStyleEventArgs e, Color backgroundColor)
       {
          if (rowHasFocus(e.RowHandle))
             e.CombineAppearance(Appearance.FocusedRow);
          else
-            UpdateAppearanceBackColor(e.Appearance, color);
+         {
+            UpdateAppearanceBackColor(e.Appearance, backgroundColor);
+         }
       }
 
       public void UpdateAppearanceBackColor(AppearanceObject appearance, Color color)

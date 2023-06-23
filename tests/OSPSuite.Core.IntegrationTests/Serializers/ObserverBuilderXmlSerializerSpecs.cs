@@ -13,20 +13,20 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestSerializationObserverBuilderWithoutFormula()
       {
-         ContainerObserverBuilder x1 = CreateObject<ContainerObserverBuilder>().WithName("Oberon.Builder");
+         var x1 = CreateObject<ContainerObserverBuilder>().WithName("Oberon.Builder");
          x1.MoleculeList.ForAll = true;
          x1.AddMoleculeName("H2O");
          x1.AddMoleculeName("CO2");
          x1.AddMoleculeNameToExclude("NO2");
 
-         IObserverBuilder x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualObserverBuilder(x2, x1);
       }
 
       [Test]
       public void TestSerializationObserverBuilderWithConstantFormula()
       {
-         ContainerObserverBuilder x1 = CreateObject<ContainerObserverBuilder>()
+         var x1 = CreateObject<ContainerObserverBuilder>()
             .WithName("Obasi.Builder").WithDimension(DimensionLength);
          x1.MoleculeList.ForAll = false;
          x1.AddMoleculeName("H2O");
@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Serializers
 
          x1.Formula = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(23.4);
 
-         IObserverBuilder x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
 
          AssertForSpecs.AreEqualObserverBuilder(x2, x1);
       }
@@ -42,13 +42,13 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestSerializationObserverBuilderWithExplicitFormula()
       {
-         ContainerObserverBuilder x1 = CreateObject<ContainerObserverBuilder>().WithName("Oberon.Builder");
+         var x1 = CreateObject<ContainerObserverBuilder>().WithName("Oberon.Builder");
          x1.ForAll = false;
          x1.AddMoleculeName("H2O");
          x1.AddMoleculeName("CO2");
 
          ExplicitFormula f1 = CreateObject<ExplicitFormula>().WithName("Fortunato").WithDimension(DimensionLength);
-         IFormulaUsablePath fup = new FormulaUsablePath(new string[] {"aa", "bb"}).WithAlias("b").WithDimension(DimensionLength);
+         var fup = new FormulaUsablePath(new string[] {"aa", "bb"}).WithAlias("b").WithDimension(DimensionLength);
          f1.AddObjectPath(fup);
 
          IFormulaCache formulaCache = new FormulaCache();
@@ -57,7 +57,7 @@ namespace OSPSuite.Core.Serializers
          x1.Formula = formulaCache[f1.Id];
 
          //SerializeAndDeserializeGeneral(formulaCache);
-         IObserverBuilder x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
 
          AssertForSpecs.AreEqualObserverBuilder(x2, x1);
       }
@@ -72,7 +72,7 @@ namespace OSPSuite.Core.Serializers
          x1.ForAll = true;
          x1.ContainerCriteria = Create.Criteria(x => x.With("Organ").And.Not("Compartment").And.InContainer("Liver").And.NotInContainer("Cell"));
          x1.Dimension = DimensionLength;
-         IAmountObserverBuilder x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualAmountObserverBuilder(x2, x1);
       }
    }

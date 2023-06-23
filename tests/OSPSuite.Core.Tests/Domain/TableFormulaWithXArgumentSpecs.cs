@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Domain
       protected IDimension _dimensionLength;
       protected TableFormula _tableFormula;
       protected IParameter _xArgumentObject, _tableObject;
-      protected IMoleculeAmount _dependentObject;
+      protected MoleculeAmount _dependentObject;
       private Container _container;
       protected IParameter _parameter;
       protected const string _tableObjectAlias = "T1";
@@ -75,7 +75,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_retun_the_interpolated_value_if_the_argument_is_not_one_of_the_defined_sample()
+      public void should_return_the_interpolated_value_if_the_argument_is_not_one_of_the_defined_sample()
       {
          _xArgumentObject.Value = 1.5;
          _parameter.Value.ShouldBeEqualTo(15);

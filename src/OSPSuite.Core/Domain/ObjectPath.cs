@@ -7,86 +7,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IObjectPath : IReadOnlyCollection<string>
-   {
-      /// <summary>
-      ///    Single string describing the path
-      /// </summary>
-      string PathAsString { get; }
-
-      /// <summary>
-      ///    Add one entry at the end of the path
-      /// </summary>
-      /// <param name="pathEntry">path entry to add</param>
-      void Add(string pathEntry);
-
-      /// <summary>
-      ///    Add one entry at the front of the path
-      /// </summary>
-      /// <param name="pathEntry">path entry to add</param>
-      void AddAtFront(string pathEntry);
-
-      /// <summary>
-      ///    Replace the first matching path entry with the given replacement if the entry is used in the current path
-      /// </summary>
-      /// <param name="entry">path entry to be replaced</param>
-      /// <param name="replacement">replacements for the path entry</param>
-      void Replace(string entry, string replacement);
-
-      /// <summary>
-      ///    Replace the first matching path entry with the given replacements if the entry is used in the current path
-      ///    returns true if a replacement was performed otherwise false
-      /// </summary>
-      /// <param name="entry">path entry to be replaced</param>
-      /// <param name="replacements">list of replacements for the path entry </param>
-      void Replace(string entry, IEnumerable<string> replacements);
-
-      /// <summary>
-      ///    Removes the first occurrence of specified <paramref name="entry" />.
-      /// </summary>
-      /// <param name="entry">The entry to be removed.</param>
-      void Remove(string entry);
-
-      /// <summary>
-      ///    Returns the entity of type <typeparamref name="T" /> with the given path relative to the
-      ///    <paramref name="refEntity" />
-      /// </summary>
-      /// <exception cref="Exception">
-      ///    is thrown if object could not be retrieve or if the specified type <typeparamref name="T" /> does not match the
-      ///    retrieved type
-      /// </exception>
-      T Resolve<T>(IEntity refEntity) where T : class;
-
-      T Clone<T>() where T : IObjectPath;
-
-      /// <summary>
-      ///    Gets or set the item at the given index (Should be used for replace only)
-      ///    Throws an exception if the index is bigger than the actual size of the path
-      /// </summary>
-      string this[int index] { get; set; }
-
-      /// <summary>
-      ///    Remove the path element defined at the given index.
-      ///    Throws an exception if the index is bigger than the actual size of the path
-      /// </summary>
-      /// <param name="index">The zero-based index of the item to remove</param>
-      void RemoveAt(int index);
-
-      /// <summary>
-      ///    Removes the first element. This is equivalent to RemoveAt(0).
-      ///    Throws an exception if the path does not contain any element
-      /// </summary>
-      void RemoveFirst();
-
-
-      /// <summary>
-      /// Replaces the path with the path entries in <paramref name="pathEntries"/>
-      /// </summary>
-      /// <param name="pathEntries">Path entries used to replace the path</param>
-      void ReplaceWith(IEnumerable<string> pathEntries);
-   }
-
-   public class ObjectPath : IObjectPath
+   public class ObjectPath : IReadOnlyCollection<string>
    {
       /// <summary>
       ///    String indicating that the referenced objectBase is located in a
@@ -97,13 +18,17 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    String separating elements of the <see cref="FormulaUsablePath" /> in String Representation
       /// </summary>
-      public const string PATH_DELIMITER  = "|";
+      public const string PATH_DELIMITER = "|";
 
       protected readonly List<string> _pathEntries;
 
-      public static IObjectPath Empty { get; } =  new ObjectPath();
+      public static ObjectPath Empty { get; } = new ObjectPath();
 
       public ObjectPath() : this(new List<string>())
+      {
+      }
+
+      public ObjectPath(params ObjectPath[] from) : this(from.SelectMany(x=>x._pathEntries))
       {
       }
 
@@ -116,6 +41,9 @@ namespace OSPSuite.Core.Domain
          _pathEntries = pathEntries.ToList();
       }
 
+      /// <summary>
+      ///    Single string describing the path
+      /// </summary>
       public virtual string PathAsString
       {
          get
@@ -129,16 +57,26 @@ namespace OSPSuite.Core.Domain
                returnString.Append(PATH_DELIMITER);
                returnString.Append(str);
             }
+
             return returnString.ToString().Substring(PATH_DELIMITER.Length);
          }
       }
 
-      public void Add(string pathEntry)
+      /// <summary>
+      ///    Add one entry at the end of the path
+      /// </summary>
+      /// <param name="pathEntry">path entry to add</param>
+      public virtual void Add(string pathEntry)
       {
          _pathEntries.Add(pathEntry);
       }
 
-      public void Replace(string entry, string replacement)
+      /// <summary>
+      ///    Replace the first matching path entry with the given replacement if the entry is used in the current path
+      /// </summary>
+      /// <param name="entry">path entry to be replaced</param>
+      /// <param name="replacement">replacements for the path entry</param>
+      public virtual void Replace(string entry, string replacement)
       {
          int index = _pathEntries.IndexOf(entry);
          if (index == Constants.NOT_FOUND_INDEX)
@@ -147,7 +85,13 @@ namespace OSPSuite.Core.Domain
          _pathEntries[index] = replacement;
       }
 
-      public void Replace(string entry, IEnumerable<string> replacements)
+      /// <summary>
+      ///    Replace the first matching path entry with the given replacements if the entry is used in the current path
+      ///    returns true if a replacement was performed otherwise false
+      /// </summary>
+      /// <param name="entry">path entry to be replaced</param>
+      /// <param name="replacements">list of replacements for the path entry </param>
+      public virtual void Replace(string entry, IEnumerable<string> replacements)
       {
          int index = _pathEntries.IndexOf(entry);
          if (index == Constants.NOT_FOUND_INDEX)
@@ -160,11 +104,23 @@ namespace OSPSuite.Core.Domain
          }
       }
 
-      public void Remove(string entry)
+      /// <summary>
+      ///    Removes the first occurrence of specified <paramref name="entry" />.
+      /// </summary>
+      /// <param name="entry">The entry to be removed.</param>
+      public virtual void Remove(string entry)
       {
          _pathEntries.Remove(entry);
       }
 
+      /// <summary>
+      ///    Returns the entity of type <typeparamref name="T" /> with the given path relative to the
+      ///    <paramref name="refEntity" />
+      /// </summary>
+      /// <exception cref="Exception">
+      ///    is thrown if object could not be retrieve or if the specified type <typeparamref name="T" /> does not match the
+      ///    retrieved type
+      /// </exception>
       public virtual T Resolve<T>(IEntity refEntity) where T : class
       {
          if (_pathEntries.Count == 0)
@@ -198,29 +154,39 @@ namespace OSPSuite.Core.Domain
          return resolvePath<T>(dependentObject, usePath);
       }
 
-
-      public virtual T Clone<T>() where T : IObjectPath
+      public virtual T Clone<T>() where T : ObjectPath
       {
          return new ObjectPath(_pathEntries).DowncastTo<T>();
       }
 
-      public string this[int index]
+      /// <summary>
+      ///    Gets or set the item at the given index (Should be used for replace only)
+      ///    Throws an exception if the index is bigger than the actual size of the path
+      /// </summary>
+      public virtual string this[int index]
       {
          get => _pathEntries[index];
          set => _pathEntries[index] = value;
       }
 
-      public void RemoveAt(int index)
-      {
-         _pathEntries.RemoveAt(index);
-      }
+      /// <summary>
+      ///    Remove the path element defined at the given index.
+      ///    Throws an exception if the index is bigger than the actual size of the path
+      /// </summary>
+      /// <param name="index">The zero-based index of the item to remove</param>
+      public virtual void RemoveAt(int index) => _pathEntries.RemoveAt(index);
 
-      public void RemoveFirst()
-      {
-         RemoveAt(0);
-      }
+      /// <summary>
+      ///    Removes the first element. This is equivalent to RemoveAt(0).
+      ///    Throws an exception if the path does not contain any element
+      /// </summary>
+      public virtual void RemoveFirst() => RemoveAt(0);
 
-      public void ReplaceWith(IEnumerable<string> pathEntries)
+      /// <summary>
+      ///    Replaces the path with the path entries in <paramref name="pathEntries" />
+      /// </summary>
+      /// <param name="pathEntries">Path entries used to replace the path</param>
+      public virtual void ReplaceWith(IEnumerable<string> pathEntries)
       {
          _pathEntries.Clear();
          _pathEntries.AddRange(pathEntries);
@@ -236,7 +202,11 @@ namespace OSPSuite.Core.Domain
          return GetEnumerator();
       }
 
-      public void AddAtFront(string pathEntry)
+      /// <summary>
+      ///    Add one entry at the front of the path
+      /// </summary>
+      /// <param name="pathEntry">path entry to add</param>
+      public virtual void AddAtFront(string pathEntry)
       {
          _pathEntries.Insert(0, pathEntry);
       }
@@ -278,6 +248,7 @@ namespace OSPSuite.Core.Domain
             if (!_pathEntries[i].Equals(entry)) return false;
             i++;
          }
+
          return true;
       }
 
@@ -299,13 +270,11 @@ namespace OSPSuite.Core.Domain
                hashCode = hashCode ^ _pathEntries[i].GetHashCode();
             }
          }
+
          return hashCode;
       }
 
-      public override string ToString()
-      {
-         return PathAsString;
-      }
+      public override string ToString() => PathAsString;
 
       public static implicit operator string(ObjectPath objectPath)
       {

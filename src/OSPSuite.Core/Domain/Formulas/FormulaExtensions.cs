@@ -38,6 +38,15 @@ namespace OSPSuite.Core.Domain.Formulas
       }
 
       /// <summary>
+      ///    Returns true if the formula  contains at least one entry using neighborhood reference  otherwise false
+      /// </summary>
+      /// <param name="formula"></param>
+      public static bool IsReferencingNeighborhood(this IFormula formula)
+      {
+         return formula.ObjectPaths.Any(x => x.Contains(ObjectPathKeywords.NBH));
+      }
+
+      /// <summary>
       ///    Returns true the formula is a dynamic formula otherwise false
       /// </summary>
       public static bool IsDynamic(this IFormula formula)
@@ -83,9 +92,10 @@ namespace OSPSuite.Core.Domain.Formulas
       }
 
       /// <summary>
-      /// Returns the used object path with the given <paramref name="alias"/> in the <paramref name="formula"/> or null if the <paramref name="alias"/> is not used.
+      ///    Returns the used object path with the given <paramref name="alias" /> in the <paramref name="formula" /> or null if
+      ///    the <paramref name="alias" /> is not used.
       /// </summary>
-      public static IFormulaUsablePath FormulaUsablePathBy(this IFormula formula, string alias)
+      public static FormulaUsablePath FormulaUsablePathBy(this IFormula formula, string alias)
       {
          return formula.ObjectPaths.FirstOrDefault(x => string.Equals(x.Alias, alias));
       }

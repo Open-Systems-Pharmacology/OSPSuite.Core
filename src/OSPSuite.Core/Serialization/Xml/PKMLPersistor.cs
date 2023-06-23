@@ -74,11 +74,11 @@ namespace OSPSuite.Core.Serialization.Xml
          T loadedObject;
          int version;
          using (var serializationContext = SerializationTransaction.Create(
-            _container,
-            dimensionFactory ?? _dimensionFactory,
-            objectBaseFactory ?? _objectBaseFactory,
-            withIdRepository ?? new WithIdRepository(),
-            cloneManagerForModel ?? _cloneManagerForModel))
+                   _container,
+                   dimensionFactory ?? _dimensionFactory,
+                   objectBaseFactory ?? _objectBaseFactory,
+                   withIdRepository ?? new WithIdRepository(),
+                   cloneManagerForModel ?? _cloneManagerForModel))
          {
             var element = XElement.Load(pkmlFileFullPath);
             version = element.GetPKMLVersion();
@@ -124,8 +124,21 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          switch (loadedObject)
          {
+            case Module module:
+               resolveReferenceIfRequired(module.SpatialStructure);
+               break;
+            case SimulationConfiguration simulationConfiguration:
+               simulationConfiguration.ModuleConfigurations.Each(x => resolveReferenceIfRequired(x.Module));
+               break;
+            case IModelCoreSimulation simulation:
+               _referencesResolver.ResolveReferencesIn(simulation.Model);
+               resolveReferenceIfRequired(simulation.Configuration);
+               break;
             case SimulationTransfer simulationTransfer:
-               _referencesResolver.ResolveReferencesIn(simulationTransfer.Simulation.Model);
+               resolveReferenceIfRequired(simulationTransfer.Simulation);
+               break;
+            case SpatialStructure spatialStructure:
+               spatialStructure.ResolveReferencesInNeighborhoods();
                break;
             default:
                return;
@@ -149,7 +162,7 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          return !(entityToSerialize.IsAnImplementationOf<IBuildingBlock>() ||
                   entityToSerialize.IsAnImplementationOf<IModelCoreSimulation>() ||
-                  entityToSerialize.IsAnImplementationOf<IBuildConfiguration>() ||
+                  entityToSerialize.IsAnImplementationOf<SimulationConfiguration>() ||
                   entityToSerialize.IsAnImplementationOf<IModel>() ||
                   entityToSerialize.IsAnImplementationOf<DataRepository>());
       }

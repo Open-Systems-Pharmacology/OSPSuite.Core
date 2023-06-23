@@ -1,4 +1,3 @@
-using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -8,6 +7,7 @@ using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
+using System.Linq;
 
 namespace OSPSuite.Core.Domain
 {
@@ -141,9 +141,9 @@ namespace OSPSuite.Core.Domain
 
    public class When_cloning_a_building_block : concern_for_CloneManagerForBuildingBlock
    {
-      private ISpatialStructure _buildingBlock;
+      private SpatialStructure _buildingBlock;
       private IContainer _container;
-      private ISpatialStructure _clone;
+      private SpatialStructure _clone;
 
       protected override void Context()
       {
@@ -157,7 +157,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _clone = sut.CloneBuildingBlock(_buildingBlock);
+         _clone = sut.Clone(_buildingBlock);
       }
 
       [Observation]

@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Domain.Formulas
       ///    Add path to the object with table formula
       /// </summary>
       /// <param name="tableObjectPath"></param>
-      public void AddTableObjectPath(IFormulaUsablePath tableObjectPath)
+      public void AddTableObjectPath(FormulaUsablePath tableObjectPath)
       {
          TableObjectAlias = tableObjectPath.Alias;
          AddObjectPath(tableObjectPath);
@@ -31,7 +31,7 @@ namespace OSPSuite.Core.Domain.Formulas
       ///    Add path to the object with offset formula
       /// </summary>
       /// <param name="offsetObjectPath"></param>
-      public void AddOffsetObjectPath(IFormulaUsablePath offsetObjectPath)
+      public void AddOffsetObjectPath(FormulaUsablePath offsetObjectPath)
       {
          OffsetObjectAlias = offsetObjectPath.Alias;
          AddObjectPath(offsetObjectPath);

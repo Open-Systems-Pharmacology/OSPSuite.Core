@@ -19,49 +19,30 @@ namespace OSPSuite.Core
       {
          base.GlobalContext();
          _simulation = IoC.Resolve<ConcentrationBaseModelHelperForSpecs>().CreateSimulation();
-         _organism = _simulation.Model.Root.GetSingleChildByName<IContainer>(ConstantsForSpecs.Organism);
+         _organism = _simulation.Model.Root.GetSingleChildByName<IContainer>(Constants.ORGANISM);
       }
 
-      protected IMoleculeAmount Organsim_Molecule_A
-      {
-         get { return _organism.EntityAt<IMoleculeAmount>("A"); }
-      }
-      protected IMoleculeAmount Organism_Molecule_B
-      {
-         get { return _organism.EntityAt<IMoleculeAmount>("B"); }
-      }
-      protected IMoleculeAmount Lung_Molecule_A
-      {
-         get { return _organism.EntityAt<IMoleculeAmount>(ConstantsForSpecs.Lung, "A"); }
-      }
-      protected IMoleculeAmount Lung_Molecule_B
-      {
-         get { return _organism.EntityAt<IMoleculeAmount>(ConstantsForSpecs.Lung, "B"); }
-      }
-      protected IParameter Organism_StartValue_A
-      {
-         get { return startValueFor(Organsim_Molecule_A); }
-      }
-      protected IParameter Organism_StartValue_B
-      {
-         get { return startValueFor(Organism_Molecule_B); }
-      }
-      protected IParameter Lung_StartValue_A
-      {
-         get { return startValueFor(Lung_Molecule_A); }
-      }
-      protected IParameter Lung_StartValue_B
-      {
-         get { return startValueFor(Lung_Molecule_B); }
-      }
+      protected MoleculeAmount Organsim_Molecule_A => _organism.EntityAt<MoleculeAmount>("A");
+
+      protected MoleculeAmount Organism_Molecule_B => _organism.EntityAt<MoleculeAmount>("B");
+
+      protected MoleculeAmount Lung_Molecule_A => _organism.EntityAt<MoleculeAmount>(ConstantsForSpecs.Lung, "A");
+
+      protected MoleculeAmount Lung_Molecule_B => _organism.EntityAt<MoleculeAmount>(ConstantsForSpecs.Lung, "B");
+
+      protected IParameter Organism_StartValue_A => startValueFor(Organsim_Molecule_A);
+
+      protected IParameter Organism_StartValue_B => startValueFor(Organism_Molecule_B);
+
+      protected IParameter Lung_StartValue_A => startValueFor(Lung_Molecule_A);
+
+      protected IParameter Lung_StartValue_B => startValueFor(Lung_Molecule_B);
+
       private IParameter startValueFor(IContainer molecule)
       {
          return molecule.EntityAt<IParameter>(Constants.Parameters.START_VALUE);
       }
-      protected IParameter Volume
-      {
-         get { return _organism.EntityAt<IParameter>(Constants.Parameters.VOLUME); }
-      }
+      protected IParameter Volume => _organism.EntityAt<IParameter>(Constants.Parameters.VOLUME);
    }
 
    public class When_creating_a_concentration_based_model : concern_for_ConcentrationBaseModelIntegrationTests
@@ -85,7 +66,7 @@ namespace OSPSuite.Core
       }
 
       [Observation]
-      public void should_have_created_the_molecule_start_value_formula_parameter_in_concentration()
+      public void should_have_created_the_initial_condition_formula_parameter_in_concentration()
       {
          Organism_StartValue_A.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_CONCENTRATION);
          Organism_StartValue_B.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.MOLAR_CONCENTRATION);

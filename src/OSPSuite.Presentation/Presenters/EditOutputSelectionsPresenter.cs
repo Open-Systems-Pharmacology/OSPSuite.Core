@@ -17,7 +17,7 @@ namespace OSPSuite.Presentation.Presenters
       {
       }
 
-      public void Edit(ISimulationSettings simulationSettings)
+      public void Edit(SimulationSettings simulationSettings)
       {
          _outputSelection = simulationSettings.OutputSelections;
          _view.BindTo(_outputSelection.AllOutputs);

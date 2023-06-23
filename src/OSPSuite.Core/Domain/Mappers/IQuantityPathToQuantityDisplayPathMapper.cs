@@ -83,7 +83,7 @@ namespace OSPSuite.Core.Domain.Mappers
          return _dataColumnToPathElementsMapper.MapFrom(column, simulation?.Model.Root);
       }
 
-      private PathElements displayPathForQuantity(IContainer rootContainer, IObjectPath objectPath)
+      private PathElements displayPathForQuantity(IContainer rootContainer, ObjectPath objectPath)
       {
          return _pathToPathElementsMapper.MapFrom(rootContainer, objectPath.ToList());
       }

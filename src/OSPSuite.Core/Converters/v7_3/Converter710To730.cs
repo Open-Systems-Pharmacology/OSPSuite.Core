@@ -9,13 +9,13 @@ using OSPSuite.Utility.Visitor;
 namespace OSPSuite.Core.Converters.v7_3
 {
    public class Converter710To730 : IObjectConverter,
-      IVisitor<IParameterStartValuesBuildingBlock>,
-      IVisitor<IPassiveTransportBuildingBlock>,
-      IVisitor<ISimulationSettings>,
-      IVisitor<IEventGroupBuildingBlock>,
-      IVisitor<IMoleculeBuildingBlock>,
-      IVisitor<IReactionBuildingBlock>,
-      IVisitor<ISpatialStructure>,
+      IVisitor<ParameterValuesBuildingBlock>,
+      IVisitor<PassiveTransportBuildingBlock>,
+      IVisitor<SimulationSettings>,
+      IVisitor<EventGroupBuildingBlock>,
+      IVisitor<MoleculeBuildingBlock>,
+      IVisitor<ReactionBuildingBlock>,
+      IVisitor<SpatialStructure>,
       IVisitor<ISimulation>
    {
       private bool _converted = false;
@@ -63,32 +63,32 @@ namespace OSPSuite.Core.Converters.v7_3
          ConvertAllParametersIn(simulation.Model.Root);
       }
 
-      public void Visit(IParameterStartValuesBuildingBlock parameterStartValuesBuildingBlock)
+      public void Visit(ParameterValuesBuildingBlock parameterValuesBuildingBlock)
       {
-         parameterStartValuesBuildingBlock.Each(ConvertWithDefaultStateObjectToDefault);
+         parameterValuesBuildingBlock.Each(ConvertWithDefaultStateObjectToDefault);
       }
 
-      public void Visit(IEventGroupBuildingBlock eventGroupBuildingBlock)
+      public void Visit(EventGroupBuildingBlock eventGroupBuildingBlock)
       {
          ConvertAllParametersIn(eventGroupBuildingBlock);
       }
 
-      public void Visit(IMoleculeBuildingBlock moleculeBuildingBlock)
+      public void Visit(MoleculeBuildingBlock moleculeBuildingBlock)
       {
          ConvertAllParametersIn(moleculeBuildingBlock);
       }
 
-      public void Visit(IReactionBuildingBlock reactionBuildingBlock)
+      public void Visit(ReactionBuildingBlock reactionBuildingBlock)
       {
          ConvertAllParametersIn(reactionBuildingBlock);
       }
 
-      public void Visit(ISpatialStructure spatialStructure)
+      public void Visit(SpatialStructure spatialStructure)
       {
-         ConvertAllParametersIn(spatialStructure);
+         spatialStructure.Each(ConvertAllParametersIn);
       }
 
-      public void ConvertAllParametersIn<T>(IBuildingBlock<T> buildingBlock) where T : class, IContainer
+      public void ConvertAllParametersIn<T>(IBuildingBlock<T> buildingBlock) where T : class, IContainer, IBuilder
       {
          buildingBlock.Each(ConvertAllParametersIn);
       }
@@ -104,12 +104,12 @@ namespace OSPSuite.Core.Converters.v7_3
          _converted = true;
       }
 
-      public void Visit(IPassiveTransportBuildingBlock passiveTransportBuildingBlock)
+      public void Visit(PassiveTransportBuildingBlock passiveTransportBuildingBlock)
       {
          ConvertAllParametersIn(passiveTransportBuildingBlock);
       }
 
-      public void Visit(ISimulationSettings simulationSettings)
+      public void Visit(SimulationSettings simulationSettings)
       {
          ConvertAllParametersIn(simulationSettings.Solver);
          ConvertAllParametersIn(simulationSettings.OutputSchema);

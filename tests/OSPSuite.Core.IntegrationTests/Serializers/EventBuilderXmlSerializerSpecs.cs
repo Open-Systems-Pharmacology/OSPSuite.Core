@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Serializers
          x1.Dimension = DimensionLength;
          x1.Formula = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(23.4);
 
-         IEventAssignmentBuilder x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
          
          AssertForSpecs.AreEqualEventAssignmentBuilder(x1, x2);
       }
@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Serializers
          x1.OneTime = true;
 
          IFormula f1 = CreateObject<ExplicitFormula>().WithDimension(DimensionLength).WithFormulaString("3*Patty");
-         IFormulaUsablePath fup = new FormulaUsablePath(new string[] {"Patricia"}).WithAlias("Patty").WithDimension(DimensionLength);
+         var fup = new FormulaUsablePath(new string[] {"Patricia"}).WithAlias("Patty").WithDimension(DimensionLength);
          f1.AddObjectPath(fup);
          IFormula f2 = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(23.4);
 
@@ -44,8 +44,8 @@ namespace OSPSuite.Core.Serializers
          x1.AddParameter(p1);
          x1.AddParameter(p2);
 
-         IEventAssignmentBuilder eab1 = CreateObject<EventAssignmentBuilder>().WithDimension(DimensionLength).WithFormula(f1).WithName("eab1");
-         IEventAssignmentBuilder eab2 = CreateObject<EventAssignmentBuilder>().WithFormula(f2).WithName("eab2");
+         var eab1 = CreateObject<EventAssignmentBuilder>().WithDimension(DimensionLength).WithFormula(f1).WithName("eab1");
+         var eab2 = CreateObject<EventAssignmentBuilder>().WithFormula(f2).WithName("eab2");
 
          x1.AddAssignment(eab1);
          x1.AddAssignment(eab2);
@@ -89,7 +89,7 @@ namespace OSPSuite.Core.Serializers
          a1.AddTransport(CreateObject<TransportBuilder>().WithName("PassiveTranport").WithFormula(f1));
 
 
-         IEventGroupBuilder x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
          
          AssertForSpecs.AreEqualEventGroupBuilder(x1, x2);
       }
@@ -137,12 +137,12 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestSerialization()
       {
-         ApplicationMoleculeBuilder x1 = CreateObject<ApplicationMoleculeBuilder>().WithName("AppMoleculeBuilder");
+         var x1 = CreateObject<ApplicationMoleculeBuilder>().WithName("AppMoleculeBuilder");
          IFormula f2 = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(3.4);
          x1.Formula = f2;
          x1.RelativeContainerPath = new ObjectPath(new[] {"A", "B"});
 
-         IApplicationMoleculeBuilder x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualApplicationMoleculeBuilder(x1, x2);
       }
    }

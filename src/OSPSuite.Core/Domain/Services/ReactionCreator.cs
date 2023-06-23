@@ -1,15 +1,15 @@
 using System.Linq;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Visitor;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.Services
 {
    internal interface IReactionCreator
    {
-      bool CreateReaction(IReactionBuilder reactionBuilder, IModel model, IBuildConfiguration buildConfiguration);
+      bool CreateReaction(ReactionBuilder reactionBuilder, ModelConfiguration modelConfiguration);
    }
 
    internal class ReactionCreator : IReactionCreator, IVisitor<IContainer>
@@ -20,12 +20,12 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IParameterBuilderCollectionToParameterCollectionMapper _parameterMapper;
       private IModel _model;
       private bool _createdInstance;
-      private IBuildConfiguration _buildConfiguration;
-      private IReactionBuilder _reactionBuilder;
+      private SimulationBuilder _simulationBuilder;
+      private ReactionBuilder _reactionBuilder;
 
       public ReactionCreator(IReactionBuilderToReactionMapper reactionMapper, IKeywordReplacerTask keywordReplacerTask,
-                                     IContainerTask containerTask,
-                                     IParameterBuilderCollectionToParameterCollectionMapper parameterMapper)
+         IContainerTask containerTask,
+         IParameterBuilderCollectionToParameterCollectionMapper parameterMapper)
       {
          _reactionMapper = reactionMapper;
          _keywordReplacerTask = keywordReplacerTask;
@@ -33,11 +33,10 @@ namespace OSPSuite.Core.Domain.Services
          _parameterMapper = parameterMapper;
       }
 
-      public bool CreateReaction(IReactionBuilder reactionBuilder, IModel model, IBuildConfiguration buildConfiguration)
+      public bool CreateReaction(ReactionBuilder reactionBuilder, ModelConfiguration modelConfiguration)
       {
          _reactionBuilder = reactionBuilder;
-         _model = model;
-         _buildConfiguration = buildConfiguration;
+         (_model, _simulationBuilder) = modelConfiguration;
          try
          {
             //global container should be created before creating local reaction so that path replacement works
@@ -55,7 +54,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             _reactionBuilder = null;
             _model = null;
-            _buildConfiguration = null;
+            _simulationBuilder = null;
          }
       }
 
@@ -66,10 +65,10 @@ namespace OSPSuite.Core.Domain.Services
             .WithIcon(_reactionBuilder.Icon)
             .WithDescription(_reactionBuilder.Description);
 
-         _buildConfiguration.AddBuilderReference(globalReactionContainer, _reactionBuilder);
+         _simulationBuilder.AddBuilderReference(globalReactionContainer, _reactionBuilder);
 
          //"Local"-Parameters will be filled in elsewhere (by the Reaction-Mapper)
-         _parameterMapper.MapGlobalOrPropertyFrom(_reactionBuilder, _buildConfiguration).Each(globalReactionContainer.Add);
+         _parameterMapper.MapGlobalOrPropertyFrom(_reactionBuilder, _simulationBuilder).Each(globalReactionContainer.Add);
 
          _keywordReplacerTask.ReplaceIn(globalReactionContainer, _model.Root, _reactionBuilder.Name);
          return globalReactionContainer;
@@ -79,12 +78,12 @@ namespace OSPSuite.Core.Domain.Services
       {
          if (!canCreateReactionIn(container)) return;
          _createdInstance = true;
-         container.Add(_reactionMapper.MapFromLocal(_reactionBuilder, container, _buildConfiguration));
-     }
+         container.Add(_reactionMapper.MapFromLocal(_reactionBuilder, container, _simulationBuilder));
+      }
 
       private bool canCreateReactionIn(IContainer container)
       {
-         var allMoleculeNames = container.GetChildren<IMoleculeAmount>().Select(x => x.Name).ToList();
+         var allMoleculeNames = container.GetChildren<MoleculeAmount>().Select(x => x.Name).ToList();
 
          return container.Mode == ContainerMode.Physical
                 && allMoleculeNames.ContainsAll(_reactionBuilder.Educts.Select(x => x.MoleculeName))

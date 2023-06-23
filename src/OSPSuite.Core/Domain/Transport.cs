@@ -2,23 +2,17 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface ITransport : IProcess
+   public class Transport : Process
    {
-      IMoleculeAmount SourceAmount { get; set; }
-      IMoleculeAmount TargetAmount { get; set; }
-   }
-
-   public class Transport : Process, ITransport
-   {
-      public IMoleculeAmount SourceAmount { get; set; }
-      public IMoleculeAmount TargetAmount { get; set; }
+      public MoleculeAmount SourceAmount { get; set; }
+      public MoleculeAmount TargetAmount { get; set; }
 
       public Transport()
       {
          ContainerType = ContainerType.Transport;
       }
 
-      public override bool Uses(IMoleculeAmount amount)
+      public override bool Uses(MoleculeAmount amount)
       {
          return Equals(SourceAmount, amount) || Equals(TargetAmount, amount);
       }
@@ -27,7 +21,7 @@ namespace OSPSuite.Core.Domain
       {
          base.UpdatePropertiesFrom(source, cloneManager);
 
-         var srcTransport = source as ITransport;
+         var srcTransport = source as Transport;
          if (srcTransport == null) return;
 
          //Source/Target molecule amount should NOT be cloned

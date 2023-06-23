@@ -17,7 +17,7 @@ namespace OSPSuite.Core.Serializers
          x1.Formula = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(23.4);
          x1.CreateProcessRateParameter = true;
          IFormula f1 = CreateObject<ExplicitFormula>().WithDimension(DimensionLength).WithFormulaString("3*Patty");
-         IFormulaUsablePath fup = new FormulaUsablePath(new[] {"Patricia"}).WithAlias("Patty").WithDimension(DimensionLength);
+         var fup = new FormulaUsablePath(new[] {"Patricia"}).WithAlias("Patty").WithDimension(DimensionLength);
          f1.AddObjectPath(fup);
          //WithValue to avoid formula evaluation in McAssertForSpecs-comparison.
          IParameter p1 = CreateObject<Parameter>().WithName("Patricia").WithFormula(f1).WithValue(3.1);
@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Serializers
          x1.AddParameter(p1);
          x1.AddParameter(p2);
 
-         ITransportBuilder x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
 
          AssertForSpecs.AreEqualProcessBuilder(x1, x2);
       }
@@ -48,7 +48,7 @@ namespace OSPSuite.Core.Serializers
          x1.CreateProcessRateParameter = true;
          x1.ProcessRateParameterPersistable = true;
 
-         ITransportBuilder x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
 
          AssertForSpecs.AreEqualTransportBuilder(x1, x2);
       }
@@ -59,7 +59,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestSerialization()
       {
-         TransportBuilder x1 = CreateObject<TransportBuilder>().WithName("Passionata.Builder");
+         var x1 = CreateObject<TransportBuilder>().WithName("Passionata.Builder");
          x1.Formula = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(23.4);
 
 

@@ -61,7 +61,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_not_have_randomized_the_start_values_of_fixed_paramters()
+      public void should_not_have_randomized_the_start_values_of_fixed_parameters()
       {
          var ip = _result.AllIdentificationParameters[1];
          ip.StartValue.ShouldBeEqualTo(30);

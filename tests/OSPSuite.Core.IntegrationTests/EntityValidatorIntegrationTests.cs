@@ -27,7 +27,7 @@ namespace OSPSuite.Core
       public override void GlobalContext()
       {
          base.GlobalContext();
-         var interval = _simulation.SimulationSettings.OutputSchema.Intervals.First();
+         var interval = _simulation.Settings.OutputSchema.Intervals.First();
          //120 pts per hour
          interval.Resolution.ValueInDisplayUnit = 120;
 
@@ -54,7 +54,7 @@ namespace OSPSuite.Core
       public override void GlobalContext()
       {
          base.GlobalContext();
-         var interval = _simulation.SimulationSettings.OutputSchema.Intervals.First();
+         var interval = _simulation.Settings.OutputSchema.Intervals.First();
          //4 pts per hour
          interval.Resolution.ValueInDisplayUnit = 1;
 
@@ -81,7 +81,7 @@ namespace OSPSuite.Core
       public override void GlobalContext()
       {
          base.GlobalContext();
-         var interval = _simulation.SimulationSettings.OutputSchema.Intervals.First();
+         var interval = _simulation.Settings.OutputSchema.Intervals.First();
          //10 pts per hour
          interval.Resolution.ValueInDisplayUnit = 10;
 

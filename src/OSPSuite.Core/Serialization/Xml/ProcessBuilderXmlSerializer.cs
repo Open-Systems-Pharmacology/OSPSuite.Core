@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class TranportBuilderXmlSerializer : ProcessBuilderXmlSerializer<TransportBuilder>
+   public class TransportBuilderXmlSerializer : ProcessBuilderXmlSerializer<TransportBuilder>
    {
       public override void PerformMapping()
       {

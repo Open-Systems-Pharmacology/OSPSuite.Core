@@ -78,7 +78,7 @@ namespace OSPSuite.Core
             scan.WithConvention(new OSPSuiteRegistrationConvention(registerConcreteType: true));
          });
 
-
+         container.Register<IModelCircularReferenceChecker, CircularReferenceChecker>();
          container.Register(typeof(IHistoryManager<>), typeof(HistoryManager<>));
 
          //this should be registered as singleton

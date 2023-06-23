@@ -2,14 +2,7 @@
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   /// <summary>
-   ///    EventGroups building block
-   /// </summary>
-   public interface IEventGroupBuildingBlock : IBuildingBlock<IEventGroupBuilder>
-   {
-   }
-
-   public class EventGroupBuildingBlock : BuildingBlock<IEventGroupBuilder>, IEventGroupBuildingBlock
+   public class EventGroupBuildingBlock : BuildingBlock<EventGroupBuilder>
    {
       public EventGroupBuildingBlock()
       {
