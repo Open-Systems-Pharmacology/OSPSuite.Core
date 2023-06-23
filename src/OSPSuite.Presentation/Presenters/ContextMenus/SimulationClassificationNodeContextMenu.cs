@@ -4,7 +4,7 @@ using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
-   internal class SimulationClassificationNodeContextMenu : ClassificationNodeContextMenu<IExplorerPresenter>
+   internal class SimulationClassificationNodeContextMenu : ExplorerClassificationNodeContextMenu
    {
       public SimulationClassificationNodeContextMenu(ClassificationNode objectRequestingContextMenu, IExplorerPresenter presenter, IContainer container)
          : base(objectRequestingContextMenu, presenter, container)

@@ -4,7 +4,7 @@ using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
-   internal class ComparisonGroupingFolderContextMenu : ClassificationNodeContextMenu<IExplorerPresenter>
+   internal class ComparisonGroupingFolderContextMenu : ExplorerClassificationNodeContextMenu
    {
       public ComparisonGroupingFolderContextMenu(ClassificationNode classificationNode, IExplorerPresenter presenter, IContainer container)
          : base(classificationNode, presenter, container)
