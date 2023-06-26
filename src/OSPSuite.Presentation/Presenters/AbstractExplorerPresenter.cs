@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.Core;
+using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters.Classifications;
 using OSPSuite.Presentation.Presenters.Nodes;
@@ -37,7 +38,7 @@ namespace OSPSuite.Presentation.Presenters
       /// <param name="targetNode">Node under which the dragged node should be attached</param>
       void MoveNode(ITreeNode dragNode, ITreeNode targetNode);
    }
-   
+
    public interface IExplorerPresenter :
       IPresenterWithContextMenu<ITreeNode>,
       IPresenterWithContextMenu<IReadOnlyList<ITreeNode>>,
@@ -160,6 +161,16 @@ namespace OSPSuite.Presentation.Presenters
       ///    directly in the view otherwise
       /// </summary>
       void AddClassifiableNodeToView(ITreeNode classifiableNode, ITreeNode<IClassification> classificationNode = null);
+
+      /// <summary>
+      ///    Returns a list of app specific menu items to be display under a given classification node
+      /// </summary>
+      IEnumerable<IMenuBarItem> AllCustomMenuItemsFor(ClassificationNode classificationNode);
+
+      /// <summary>
+      ///    Ensure that the last selected classification is reset
+      /// </summary>
+      void ResetActiveClassification();
    }
 
    public abstract class AbstractExplorerPresenter<TView, TPresenter> : AbstractPresenter<TView, TPresenter>, IExplorerPresenter
@@ -173,6 +184,7 @@ namespace OSPSuite.Presentation.Presenters
       protected readonly IProjectRetriever _projectRetriever;
       protected readonly IClassificationPresenter _classificationPresenter;
       private bool _initialized;
+      private IClassification _activeClassification;
 
       protected AbstractExplorerPresenter(TView view, IRegionResolver regionResolver,
          IClassificationPresenter classificationPresenter, IToolTipPartCreator toolTipPartCreator, RegionName regionName, IProjectRetriever projectRetriever)
@@ -193,6 +205,21 @@ namespace OSPSuite.Presentation.Presenters
 
       protected abstract void AddProjectToTree(IProject project);
 
+      private void addClassifiableUnderActiveClassification(IClassifiable classifiable)
+      {
+         //If we have an active classification, of th right type and our classifiable was not under a parent already,
+         //we add it under the active classification
+         if ((_activeClassification?.ClassificationType == classifiable.ClassificationType) && classifiable.Parent == null)
+            classifiable.Parent = _activeClassification;
+
+         //In all cases, we reset the active classification
+         ResetActiveClassification();
+      }
+
+      public void ResetActiveClassification() => SetActiveClassification(null);
+
+      protected void SetActiveClassification(IClassification classification) =>_activeClassification = classification;
+
       public virtual void CreateClassificationUnder(ITreeNode<IClassification> parentClassificationNode)
       {
          if (parentClassificationNode == null) return;
@@ -209,30 +236,19 @@ namespace OSPSuite.Presentation.Presenters
 
       public virtual void RemoveNodeFor(IWithId objectWithId)
       {
+         ResetActiveClassification();
          var node = NodeFor(objectWithId);
          if (node == null) return;
          _view.DestroyNode(node);
       }
 
-      public virtual void RemoveNodesFor(IEnumerable<IWithId> removedObjects)
-      {
-         removedObjects.Each(RemoveNodeFor);
-      }
+      public virtual void RemoveNodesFor(IEnumerable<IWithId> removedObjects) => removedObjects.Each(RemoveNodeFor);
 
-      public virtual void ToggleVisibility()
-      {
-         _region.ToggleVisibility();
-      }
+      public virtual void ToggleVisibility() => _region.ToggleVisibility();
 
-      protected virtual bool IsModuleNode(ITreeNode treeNode)
-      {
-         return treeNode.IsAnImplementationOf<ModuleNode>();
-      }
+      protected virtual bool IsModuleNode(ITreeNode treeNode) => treeNode.IsAnImplementationOf<ModuleNode>();
 
-      protected virtual bool IsFolderNode(ITreeNode node)
-      {
-         return node.IsAnImplementationOf<RootNode>() || node.IsAnImplementationOf<ClassificationNode>();
-      }
+      protected virtual bool IsFolderNode(ITreeNode node) => node.IsAnImplementationOf<RootNode>() || node.IsAnImplementationOf<ClassificationNode>();
 
       public virtual ITreeNode NodeFor(IWithId objectWithId)
       {
@@ -260,6 +276,7 @@ namespace OSPSuite.Presentation.Presenters
       }
 
       public abstract void ShowContextMenu(ITreeNode node, Point popupLocation);
+
       public abstract void ShowContextMenu(IReadOnlyList<ITreeNode> treeNodes, Point popupLocation);
 
       public virtual void NodeDoubleClicked(ITreeNode node)
@@ -268,10 +285,7 @@ namespace OSPSuite.Presentation.Presenters
             View.ToggleExpandState(node);
       }
 
-      protected virtual bool IsExpandable(ITreeNode node)
-      {
-         return IsFolderNode(node) || IsModuleNode(node);
-      }
+      protected virtual bool IsExpandable(ITreeNode node) => IsFolderNode(node) || IsModuleNode(node);
 
       /// <summary>
       ///    Removes a classification tree node from the view
@@ -280,10 +294,13 @@ namespace OSPSuite.Presentation.Presenters
       public virtual void RemoveClassification(ITreeNode<IClassification> nodeToRemove)
       {
          _classificationPresenter.RemoveClassification(nodeToRemove);
+         ResetActiveClassification();
       }
 
       public virtual void RemoveChildrenClassifications(ITreeNode<IClassification> parentClassificationNode, bool removeParent = false, bool removeData = false)
       {
+         ResetActiveClassification();
+
          if (removeData)
          {
             if (!RemoveDataUnderClassification(parentClassificationNode))
@@ -308,6 +325,8 @@ namespace OSPSuite.Presentation.Presenters
 
       public virtual ITreeNode AddClassifiableToTree<T>(T classifiable, RootNodeType rootNodeType, Func<ITreeNode<IClassification>, T, ITreeNode> addClassifiableToTree) where T : IClassifiable
       {
+         addClassifiableUnderActiveClassification(classifiable);
+
          var parent = classifiable.Parent ?? rootNodeType;
          var parentNode = NodeFor(parent).DowncastTo<ITreeNode<IClassification>>();
          return addClassifiableToTree(parentNode, classifiable);
@@ -322,6 +341,12 @@ namespace OSPSuite.Presentation.Presenters
          }
          else
             _view.AddNode(classifiableNode);
+      }
+
+      public virtual IEnumerable<IMenuBarItem> AllCustomMenuItemsFor(ClassificationNode classificationNode)
+      {
+         //by default, no custom menus
+         return Enumerable.Empty<IMenuBarItem>();
       }
 
       public virtual void RenameClassification(ITreeNode<IClassification> classificationNode)

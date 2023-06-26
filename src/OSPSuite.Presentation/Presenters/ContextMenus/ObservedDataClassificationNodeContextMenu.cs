@@ -6,21 +6,16 @@ using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
-   internal class ObservedDataClassificationNodeContextMenu : ClassificationNodeContextMenu<IExplorerPresenter>
+   internal class ObservedDataClassificationNodeContextMenu : ExplorerClassificationNodeContextMenu
    {
       public ObservedDataClassificationNodeContextMenu(ClassificationNode objectRequestingContextMenu, IExplorerPresenter presenter, IContainer container)
          : base(objectRequestingContextMenu, presenter, container)
       {
       }
 
-      protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(ClassificationNode classificationNode, IExplorerPresenter presenter)
+      protected override IEnumerable<IMenuBarItem> AllCustomMenuItemsFor(ClassificationNode classificationNode, IExplorerPresenter presenter)
       {
-         yield return ObservedDataClassificationCommonContextMenuItems.EditMultipleMetaData(classificationNode, _container);
-
-         foreach (var item in base.AllMenuItemsFor(classificationNode, presenter))
-         {
-            yield return item;
-         }
+         return new[] {ObservedDataClassificationCommonContextMenuItems.EditMultipleMetaData(classificationNode, _container)};
       }
    }
 

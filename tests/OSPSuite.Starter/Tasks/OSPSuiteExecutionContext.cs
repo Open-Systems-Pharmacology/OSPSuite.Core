@@ -18,7 +18,6 @@ namespace OSPSuite.Starter.Tasks
       private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       private readonly ICompression _compress;
       private readonly IEventPublisher _eventPublisher;
-      private readonly IContainer _container;
 
       public OSPSuiteExecutionContext(
          IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository, 
@@ -29,9 +28,11 @@ namespace OSPSuite.Starter.Tasks
          _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
          _compress = compress;
          _eventPublisher = eventPublisher;
-         _container = container;
+         Container = container;
          Project = new TestProject();
       }
+
+      public IContainer Container { get; }
 
       public string TypeFor<T>(T obj) where T : class
       {
@@ -70,10 +71,10 @@ namespace OSPSuite.Starter.Tasks
       public byte[] Serialize<TObject>(TObject objectToSerialize)
       {
          if (typeof (TObject) != typeof (IDiagramModel))
-            return new byte[0];
+            return Array.Empty<byte>();
 
          var serializer = _modelingXmlSerializerRepository.SerializerFor<IDiagramModel>();
-         using (var serializationContext = SerializationTransaction.Create(_container))
+         using (var serializationContext = SerializationTransaction.Create(Container))
             return _compress.Compress(XmlHelper.XmlContentToByte(serializer.Serialize(objectToSerialize, serializationContext)));
 
       }
@@ -84,7 +85,7 @@ namespace OSPSuite.Starter.Tasks
             return default(TObject);
 
          var serializer = _modelingXmlSerializerRepository.SerializerFor<IDiagramModel>();
-         using (var serializationContext = SerializationTransaction.Create(_container))
+         using (var serializationContext = SerializationTransaction.Create(Container))
          {
             var outputToDeserialize = XmlHelper.ElementFromBytes(_compress.Decompress(serializationByte));
             return (TObject)serializer.Deserialize(outputToDeserialize, serializationContext);
@@ -118,5 +119,6 @@ namespace OSPSuite.Starter.Tasks
       {
          
       }
+
    }
 }
