@@ -62,27 +62,27 @@ namespace OSPSuite.Core.Domain.Builder
             .Where(initialCondition => initialCondition.IsPresent);
       }
 
-      internal IEnumerable<MoleculeBuilder> AllFloatingMolecules() => Molecules.Where(x => x.IsFloating);
+      public IEnumerable<MoleculeBuilder> AllFloatingMolecules() => Molecules.Where(x => x.IsFloating);
 
-      internal IReadOnlyList<string> AllPresentMoleculeNames() => AllPresentMoleculeNames(x => true);
+      public IReadOnlyList<string> AllPresentMoleculeNames() => AllPresentMoleculeNames(x => true);
 
       //Uses toArray so that the marshaling to R works out of the box (array vs list)
-      internal IReadOnlyList<string> AllPresentMoleculeNames(Func<MoleculeBuilder, bool> query) =>
+      public IReadOnlyList<string> AllPresentMoleculeNames(Func<MoleculeBuilder, bool> query) =>
          AllPresentMolecules().Where(query).Select(x => x.Name).ToArray();
 
-      internal IReadOnlyList<string> AllPresentFloatingMoleculeNames() =>
+      public IReadOnlyList<string> AllPresentFloatingMoleculeNames() =>
          AllPresentMoleculeNames(m => m.IsFloating);
 
-      internal IReadOnlyList<string> AllPresentStationaryMoleculeNames() =>
+      public IReadOnlyList<string> AllPresentStationaryMoleculeNames() =>
          AllPresentMoleculeNames(m => !m.IsFloating);
 
-      internal IReadOnlyList<string> AllPresentXenobioticFloatingMoleculeNames() =>
+      public IReadOnlyList<string> AllPresentXenobioticFloatingMoleculeNames() =>
          AllPresentMoleculeNames(m => m.IsFloating && m.IsXenobiotic);
 
-      internal IReadOnlyList<string> AllPresentEndogenousStationaryMoleculeNames() =>
+      public IReadOnlyList<string> AllPresentEndogenousStationaryMoleculeNames() =>
          AllPresentMoleculeNames(m => !m.IsFloating && !m.IsXenobiotic);
 
-      internal IReadOnlyList<string> AllPresentEndogenousMoleculeNames() => AllPresentMoleculeNames(m => !m.IsXenobiotic);
+      public IReadOnlyList<string> AllPresentEndogenousMoleculeNames() => AllPresentMoleculeNames(m => !m.IsXenobiotic);
 
       private void performMerge()
       {
