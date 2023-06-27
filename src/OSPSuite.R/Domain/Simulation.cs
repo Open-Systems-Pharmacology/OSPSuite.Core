@@ -50,7 +50,7 @@ namespace OSPSuite.R.Domain
          BuildConfiguration = new SimulationBuilder(Configuration);
       }
 
-      public SimulationBuilder BuildConfiguration { get; set; }
+      public SimulationBuilder BuildConfiguration { get; }
 
       public string Name
       {
