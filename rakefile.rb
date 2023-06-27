@@ -34,18 +34,21 @@ task :copy_to_mobi do
   copy_to_app '../MoBi/src/MoBi/bin/Debug/net472'
 end
 
-task :create_local_nuget, [:arg1, :arg2] do |t, args|
+task :create_local_nuget, [:arg1, :arg2, :arg3] do |t, args|
   FileUtils.rm_f Dir.glob("./nuget_repo/*.nupkg")
   versionId = "12.0.0-" + generate_code(5)
   puts("Your version is " + versionId.red)
   system("dotnet", "pack", "-p:PackageVersion="+ versionId, "--configuration", "Debug", "--output", "nuget_repo", "--no-build") 
-
-  if args.to_hash.values.include? "-m"
+  if args.to_hash.values.include? "m"
     update_mobi(versionId)
   end
-  if args.to_hash.values.include? "-p"
+  if args.to_hash.values.include? "p"
     update_pksim(versionId)
   end
+  if args.to_hash.values.include? "r"
+    update_ospsuite_r(versionId)
+  end
+  
 
 end
 
@@ -58,6 +61,16 @@ def find_token(file, regex)
     return nil
   end
   return matches[1]
+end
+
+def update_ospsuite_r(versionId)
+  puts("updating OSPSuite-R")
+  token = find_token("../OSPSuite-R/packages.config", /<package id="OSPSuite.Core" version="(.*)"/)
+  if(token.nil?)
+    return
+  end
+  
+  Utils.replace_tokens({token => versionId}, "../OSPSuite-R/packages.config")
 end
 
 def update_mobi(versionId)
