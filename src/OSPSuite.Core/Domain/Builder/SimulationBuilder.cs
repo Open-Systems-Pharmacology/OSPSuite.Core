@@ -62,7 +62,7 @@ namespace OSPSuite.Core.Domain.Builder
             .Where(initialCondition => initialCondition.IsPresent);
       }
 
-      public IEnumerable<MoleculeBuilder> AllFloatingMolecules() => Molecules.Where(x => x.IsFloating);
+      internal IEnumerable<MoleculeBuilder> AllFloatingMolecules() => Molecules.Where(x => x.IsFloating);
 
       public IReadOnlyList<string> AllPresentMoleculeNames() => AllPresentMoleculeNames(x => true);
 
