@@ -225,6 +225,8 @@ namespace OSPSuite.Presentation.Presenters
       {
          if (node is ClassificationNode classificationNode)
             SetActiveClassification(classificationNode.Tag);
+         else
+            ResetActiveClassification();
       }
 
       protected void SetActiveClassification(IClassification classification) => _activeClassification = classification;
