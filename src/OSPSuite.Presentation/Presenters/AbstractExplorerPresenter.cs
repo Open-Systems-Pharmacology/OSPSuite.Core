@@ -171,6 +171,12 @@ namespace OSPSuite.Presentation.Presenters
       ///    Ensure that the last selected classification is reset
       /// </summary>
       void ResetActiveClassification();
+
+      /// <summary>
+      ///    This is called whenever a node is selected
+      /// </summary>
+      /// <param name="node"></param>
+      void NodeClick(ITreeNode node);
    }
 
    public abstract class AbstractExplorerPresenter<TView, TPresenter> : AbstractPresenter<TView, TPresenter>, IExplorerPresenter
@@ -211,14 +217,19 @@ namespace OSPSuite.Presentation.Presenters
          //we add it under the active classification
          if ((_activeClassification?.ClassificationType == classifiable.ClassificationType) && classifiable.Parent == null)
             classifiable.Parent = _activeClassification;
-
-         //In all cases, we reset the active classification
-         ResetActiveClassification();
       }
 
       public void ResetActiveClassification() => SetActiveClassification(null);
 
-      protected void SetActiveClassification(IClassification classification) =>_activeClassification = classification;
+      public virtual void NodeClick(ITreeNode node)
+      {
+         if (node is ClassificationNode classificationNode)
+            SetActiveClassification(classificationNode.Tag);
+         else
+            ResetActiveClassification();
+      }
+
+      protected void SetActiveClassification(IClassification classification) => _activeClassification = classification;
 
       public virtual void CreateClassificationUnder(ITreeNode<IClassification> parentClassificationNode)
       {
@@ -236,7 +247,6 @@ namespace OSPSuite.Presentation.Presenters
 
       public virtual void RemoveNodeFor(IWithId objectWithId)
       {
-         ResetActiveClassification();
          var node = NodeFor(objectWithId);
          if (node == null) return;
          _view.DestroyNode(node);
@@ -294,7 +304,6 @@ namespace OSPSuite.Presentation.Presenters
       public virtual void RemoveClassification(ITreeNode<IClassification> nodeToRemove)
       {
          _classificationPresenter.RemoveClassification(nodeToRemove);
-         ResetActiveClassification();
       }
 
       public virtual void RemoveChildrenClassifications(ITreeNode<IClassification> parentClassificationNode, bool removeParent = false, bool removeData = false)
