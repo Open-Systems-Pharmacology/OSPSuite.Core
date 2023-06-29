@@ -125,7 +125,7 @@ namespace OSPSuite.Core.Domain
          });
          topContainer.Add(_container);
 
-         A.CallTo(() => _cloneManagerForBuildingBlock.Clone(_molecule.DefaultStartFormula, _expressionProfile.FormulaCache)).Returns(new ExplicitFormula("y = mx + b)"));
+         A.CallTo(() => _cloneManagerForBuildingBlock.Clone(_molecule.DefaultStartFormula, _expressionProfile.FormulaCache)).Returns(new ExplicitFormula("y = mx + b"));
       }
 
       protected override void Because()
