@@ -28,6 +28,70 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   internal class When_creating_initial_conditions_from_molecule_without_a_formula : concern_for_InitialConditionsCreator
+   {
+      private MoleculeBuilder _molecule;
+      private Container _container;
+      private InitialCondition _initialCondition;
+
+      protected override void Context()
+      {
+         base.Context();
+         _molecule = new MoleculeBuilder().WithName("moleculeName").WithDimension(Constants.Dimension.NO_DIMENSION);
+         _molecule.DefaultStartFormula = new ExplicitFormula("y = mx + b");
+         _container = new Container
+         {
+            ContainerType = ContainerType.Organ,
+            Mode = ContainerMode.Physical,
+            Name = "topContainer"
+         };
+      }
+
+      protected override void Because()
+      {
+         _initialCondition = sut.CreateInitialCondition(_container, _molecule);
+      }
+
+      [Observation]
+      public void the_formula_used_should_be_the_default_start_formula_of_the_builder()
+      {
+         _initialCondition.Formula.ShouldBeEqualTo(_molecule.DefaultStartFormula);
+      }
+   }
+
+   internal class When_creating_initial_conditions_from_molecule_with_a_formula : concern_for_InitialConditionsCreator
+   {
+      private MoleculeBuilder _molecule;
+      private Container _container;
+      private ExplicitFormula _formula;
+      private InitialCondition _initialCondition;
+
+      protected override void Context()
+      {
+         base.Context();
+         _molecule = new MoleculeBuilder().WithName("moleculeName").WithDimension(Constants.Dimension.NO_DIMENSION);
+         _molecule.DefaultStartFormula = new ExplicitFormula("y = mx + b");
+         _formula = new ExplicitFormula("y = mx + b");
+         _container = new Container
+         {
+            ContainerType = ContainerType.Organ,
+            Mode = ContainerMode.Physical,
+            Name = "topContainer"
+         };
+      }
+
+      protected override void Because()
+      {
+         _initialCondition = sut.CreateInitialCondition(_container, _molecule, _formula);
+      }
+
+      [Observation]
+      public void the_formula_used_should_be_the_formula_supplied_to_the_creator()
+      {
+         _initialCondition.Formula.ShouldBeEqualTo(_formula);
+      }
+   }
+
    internal class when_adding_initial_conditions_to_expression_profile : concern_for_InitialConditionsCreator
    {
       private MoleculeBuilder _molecule;
@@ -37,7 +101,7 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _molecule = new MoleculeBuilder().WithName("moleculeName").WithDimension(Constants.Dimension.NO_DIMENSION);
-         _molecule.DefaultStartFormula = new ExplicitFormula("y = mx + b)");
+         _molecule.DefaultStartFormula = new ExplicitFormula("y = mx + b");
          _expressionProfile = new ExpressionProfileBuildingBlock().WithName("moleculeName");
          var topContainer = new Container
          {
@@ -61,7 +125,7 @@ namespace OSPSuite.Core.Domain
          });
          topContainer.Add(_container);
 
-         A.CallTo(() => _cloneManagerForBuildingBlock.Clone(_molecule.DefaultStartFormula, _expressionProfile.FormulaCache)).Returns(new ExplicitFormula("y = mx + b)"));
+         A.CallTo(() => _cloneManagerForBuildingBlock.Clone(_molecule.DefaultStartFormula, _expressionProfile.FormulaCache)).Returns(new ExplicitFormula("y = mx + b"));
       }
 
       protected override void Because()
@@ -74,7 +138,7 @@ namespace OSPSuite.Core.Domain
       {
          _expressionProfile.InitialConditions.Count.ShouldBeEqualTo(1);
          _expressionProfile.InitialConditions.First().Path.ToString().ShouldBeEqualTo("topContainer|physicalContainer|moleculeName");
-         _expressionProfile.InitialConditions.First().Formula.ToString().ShouldBeEqualTo("y = mx + b)");
+         _expressionProfile.InitialConditions.First().Formula.ToString().ShouldBeEqualTo("y = mx + b");
       }
 
       [Observation]
