@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
@@ -31,6 +32,12 @@ namespace OSPSuite.Core.Domain.Services
       ///    The <paramref name="containers"/> list are containers where an initial condition will be created for each using the container path
       /// </summary>
       void AddToExpressionProfile(ExpressionProfileBuildingBlock buildingBlock, IReadOnlyList<IContainer> containers, MoleculeBuilder molecule);
+
+      /// <summary>
+      ///   Creates a new initial conditions for the <paramref name="molecule" /> using the path of the <paramref name="container" />.
+      ///   If supplied, the <paramref name="defaultStartFormula" /> will be used as the formula for the initial condition.
+      /// </summary>
+      InitialCondition CreateInitialCondition(IEntity container, MoleculeBuilder molecule, IFormula defaultStartFormula = null);
    }
 
    internal class InitialConditionsCreator : IInitialConditionsCreator
@@ -62,11 +69,19 @@ namespace OSPSuite.Core.Domain.Services
          return initialConditions;
       }
 
-      private InitialCondition createInitialCondition(IBuildingBlock initialConditionsBuildingBlock, IEntity container, MoleculeBuilder molecule)
+      public InitialCondition CreateInitialCondition(IEntity container, MoleculeBuilder molecule, IFormula defaultStartFormula = null)
       {
          var initialCondition = CreateInitialCondition(_entityPathResolver.ObjectPathFor(container), molecule.Name, molecule.Dimension, molecule.DisplayUnit);
          setInitialCondition(molecule, initialCondition);
-         setInitialConditionFormula(molecule.DefaultStartFormula, initialCondition, initialConditionsBuildingBlock);
+         setInitialConditionFormula(defaultStartFormula ?? molecule.DefaultStartFormula, initialCondition, formula => formula);
+         return initialCondition;
+      }
+      
+      private InitialCondition createInitialConditionForBuildingBlock(IBuildingBlock initialConditionsBuildingBlock, IEntity container, MoleculeBuilder molecule)
+      {
+         var initialCondition = CreateInitialCondition(_entityPathResolver.ObjectPathFor(container), molecule.Name, molecule.Dimension, molecule.DisplayUnit);
+         setInitialCondition(molecule, initialCondition);
+         setInitialConditionFormula(molecule.DefaultStartFormula, initialCondition, formula => _cloneManagerForBuildingBlock.Clone(formula, initialConditionsBuildingBlock.FormulaCache));
          return initialCondition;
       }
 
@@ -74,19 +89,19 @@ namespace OSPSuite.Core.Domain.Services
       {
          foreach (var molecule in molecules)
          {
-            initialConditionsBuildingBlock.Add(createInitialCondition(initialConditionsBuildingBlock, container, molecule));
+            initialConditionsBuildingBlock.Add(createInitialConditionForBuildingBlock(initialConditionsBuildingBlock, container, molecule));
          }
       }
 
       public void AddToExpressionProfile(ExpressionProfileBuildingBlock buildingBlock, IReadOnlyList<IContainer> containers, MoleculeBuilder molecule)
       {
-         containers.Each(container => { buildingBlock.AddInitialCondition(createInitialCondition(buildingBlock, container, molecule)); });
+         containers.Each(container => { buildingBlock.AddInitialCondition(createInitialConditionForBuildingBlock(buildingBlock, container, molecule)); });
       }
 
-      private void setInitialConditionFormula(IFormula formula, InitialCondition initialCondition, IBuildingBlock buildingBlock)
+      private void setInitialConditionFormula(IFormula formula, InitialCondition initialCondition, Func<IFormula, IFormula>createFormulaFrom)
       {
          if (!formula.IsConstant())
-            initialCondition.Formula = _cloneManagerForBuildingBlock.Clone(formula, buildingBlock.FormulaCache);
+            initialCondition.Formula = createFormulaFrom(formula);
       }
 
       private static void setInitialCondition(MoleculeBuilder moleculeBuilder, InitialCondition initialCondition)
