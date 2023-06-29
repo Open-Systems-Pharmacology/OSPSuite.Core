@@ -86,7 +86,7 @@ namespace OSPSuite.Core.Domain.Services
       private InitialCondition createInitialConditionWithValue(IEntity container, MoleculeBuilder molecule)
       {
          var initialCondition = CreateInitialCondition(_entityPathResolver.ObjectPathFor(container), molecule.Name, molecule.Dimension, molecule.DisplayUnit);
-         setInitialCondition(molecule, initialCondition);
+         initialCondition.Value = molecule.GetDefaultInitialCondition();
          return initialCondition;
       }
 
@@ -107,11 +107,6 @@ namespace OSPSuite.Core.Domain.Services
       {
          if (!formula.IsConstant())
             initialCondition.Formula = createFormulaFrom(formula);
-      }
-
-      private static void setInitialCondition(MoleculeBuilder moleculeBuilder, InitialCondition initialCondition)
-      {
-         initialCondition.Value = moleculeBuilder.GetDefaultInitialCondition();
       }
 
       public InitialCondition CreateInitialCondition(ObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null)
