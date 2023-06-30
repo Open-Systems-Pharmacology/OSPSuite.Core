@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
-using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 
 namespace OSPSuite.Infrastructure.Import
@@ -22,6 +20,7 @@ namespace OSPSuite.Infrastructure.Import
       protected IDimension _fakedErrorDimension;
       protected IImporter _fakedImporter;
       protected IDataSet _fakeDataSet;
+      protected IDimensionFactory _dimensionFactory;
 
       protected override void Context()
       {
@@ -31,6 +30,7 @@ namespace OSPSuite.Infrastructure.Import
          _fakedErrorDimension = A.Fake<IDimension>();
          _fakedImporter = A.Fake<IImporter>();
          _fakeDataSet = new DataSet();
+         _dimensionFactory = A.Fake<IDimensionFactory>();
 
          _columnInfos = new ColumnInfoCache
          {
@@ -162,7 +162,7 @@ namespace OSPSuite.Infrastructure.Import
          });
 
 
-         sut = new DataSource(_fakedImporter);
+         sut = new DataSource(_fakedImporter, _dimensionFactory);
          sut.DataSets.Add("sheet1", _fakeDataSet);
       }
 
@@ -174,8 +174,6 @@ namespace OSPSuite.Infrastructure.Import
 
    public class When_validating_empty_data_source : concern_for_DataSource
    {
-      protected IDimensionFactory _dimensionFactory;
-
       protected override void Context()
       {
          base.Context();

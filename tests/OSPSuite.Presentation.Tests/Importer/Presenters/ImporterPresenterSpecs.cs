@@ -10,6 +10,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
+using OSPSuite.Helpers;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
@@ -37,9 +38,10 @@ namespace OSPSuite.Presentation.Importer.Presenters
          ISourceFilePresenter sourceFilePresenter,
          IDialogCreator dialogCreator,
          IPKMLPersistor pkmlPersistor,
-         IDataSource dataSource
+         IDataSource dataSource,
+         IDimensionFactory dimensionFactory
       ) : base(view, dataRepositoryMapper, importer, nanPresenter, importerDataPresenter, confirmationPresenter, columnMappingPresenter,
-         sourceFilePresenter, dialogCreator, pkmlPersistor)
+         sourceFilePresenter, dialogCreator, pkmlPersistor, dimensionFactory)
       {
          _dataSource = dataSource;
       }
@@ -70,9 +72,11 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IDataSourceFile _dataSourceFile;
       protected ImporterConfiguration _importerConfiguration;
       protected IPKMLPersistor _pkmlPeristor;
+      protected IDimensionFactory _dimensionFactory;
 
       protected override void Context()
       {
+         _dimensionFactory = new DimensionFactoryForIntegrationTests();
          _dataImporterSettings = new DataImporterSettings();
          base.Context();
          _mapper = A.Fake<IDataSetToDataRepositoryMapper>();
@@ -137,7 +141,8 @@ namespace OSPSuite.Presentation.Importer.Presenters
             _sourceFilePresenter,
             _dialogCreator,
             _pkmlPeristor,
-            _dataSource);
+            _dataSource,
+            _dimensionFactory);
          _importerConfiguration = A.Fake<ImporterConfiguration>();
          sut.LoadConfiguration(_importerConfiguration, "");
          sut.SetSettings(_metaDataCategories, new ColumnInfoCache(), _dataImporterSettings);

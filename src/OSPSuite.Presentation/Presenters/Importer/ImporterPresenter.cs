@@ -4,6 +4,7 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
@@ -72,7 +73,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IColumnMappingPresenter columnMappingPresenter,
          ISourceFilePresenter sourceFilePresenter,
          IDialogCreator dialogCreator,
-         IPKMLPersistor pkmlPersistor) : base(view)
+         IPKMLPersistor pkmlPersistor,
+         IDimensionFactory dimensionFactory) : base(view)
       {
          _importerDataPresenter = importerDataPresenter;
          _confirmationPresenter = confirmationPresenter;
@@ -80,7 +82,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _nanPresenter = nanPresenter;
          _sourceFilePresenter = sourceFilePresenter;
          _dataRepositoryMapper = dataRepositoryMapper;
-         _dataSource = new DataSource(importer);
+         _dataSource = new DataSource(importer, dimensionFactory);
          _pkmlPersistor = pkmlPersistor;
          _importer = importer;
          _dialogCreator = dialogCreator;

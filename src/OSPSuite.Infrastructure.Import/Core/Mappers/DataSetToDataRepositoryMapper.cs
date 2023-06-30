@@ -69,9 +69,10 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       private bool convertParsedDataColumnAndReturnWarningFlag(DataRepository dataRepository, KeyValuePair<ExtendedColumn, IList<SimulationPoint>> columnAndData, string fileName)
       {
          DataColumn dataColumn;
-         var unit = columnAndData.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit))?.Unit ?? Constants.Dimension.NO_DIMENSION.DefaultUnitName;
+         var unitName = columnAndData.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit))?.Unit ?? Constants.Dimension.NO_DIMENSION.DefaultUnitName;
          var warningFlag = false;
-         var dimension = columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.SupportedDimensions.FirstOrDefault(x => x.FindUnit(unit, ignoreCase: true) != null);
+
+         var dimension = columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.DimensionForUnit(unitName);
 
          if (columnAndData.Key.ColumnInfo.IsBase)
             dataColumn = new BaseGrid(columnAndData.Key.ColumnInfo.Name, dimension);
@@ -88,7 +89,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
          var dataInfo = new DataInfo(ColumnOrigins.Undefined);
          dataColumn.DataInfo = dataInfo;
-         dataInfo.DisplayUnitName = unit;
+         dataInfo.DisplayUnitName = unitName;
 
          var values = new float[columnAndData.Value.Count];
          var i = 0;
@@ -113,7 +114,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             var adjustedValue = truncateUsingLLOQ(value);
             if (double.IsNaN(adjustedValue))
                values[i++] = float.NaN;
-            else if (unit != null && !string.IsNullOrEmpty(value.Unit))
+            else if (unitName != null && !string.IsNullOrEmpty(value.Unit))
                values[i++] = (float) dataColumn.Dimension.UnitValueToBaseUnitValue(dimension?.FindUnit(value.Unit, ignoreCase: true), adjustedValue);
             else
                values[i++] = (float) adjustedValue;

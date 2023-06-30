@@ -64,9 +64,14 @@ namespace OSPSuite.Infrastructure.Import.Core
          get => !IsBase && !IsAuxiliary;
       }
 
-      public bool SupportsDimension(IDimension dimensionForUnit)
+      public IDimension DimensionForUnit(string unitName)
       {
-         return SupportedDimensions.Contains(dimensionForUnit);
+         var matches = SupportedDimensions.Where(x => x.SupportsUnit(unitName, ignoreCase: true)).ToList();
+         if (!matches.Any())
+            return null;
+
+         //Try to find the first one that matches EXACTLY 
+         return matches.FirstOrDefault(x => x.SupportsUnit(unitName, ignoreCase: false)) ?? matches.First();
       }
    }
 

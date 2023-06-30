@@ -67,12 +67,14 @@ namespace OSPSuite.Infrastructure.Import.Core
       private readonly IImporter _importer;
       private readonly ImporterConfiguration _configuration;
       private IReadOnlyList<MetaDataMappingConverter> _mappings;
+      private readonly IDimensionFactory _dimensionFactory;
       public Cache<string, IDataSet> DataSets { get; } = new Cache<string, IDataSet>();
 
-      public DataSource(IImporter importer)
+      public DataSource(IImporter importer, IDimensionFactory dimensionFactory)
       {
          _importer = importer;
          _configuration = new ImporterConfiguration();
+         _dimensionFactory = dimensionFactory;
       }
 
       public void SetDataFormat(IDataFormat dataFormat)
@@ -228,7 +230,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          return errors;
       }
 
-      private static void validateManuallySetErrorDimension(IDimension errorDimension, IDimension measurementDimension, ParseErrors errors,
+      private void validateManuallySetErrorDimension(IDimension errorDimension, IDimension measurementDimension, ParseErrors errors,
          IDataSet dataSet)
       {
          //if the dimension of the error is dimensionless (fe for geometric standard deviation)
@@ -241,7 +243,7 @@ namespace OSPSuite.Infrastructure.Import.Core
             errors.Add(dataSet, new ErrorUnitParseErrorDescription());
       }
 
-      private static void validateErrorFromColumnDimension(IList<SimulationPoint> measurementValues, IList<SimulationPoint> errorValues, ColumnInfo column, ParseErrors errors,
+      private void validateErrorFromColumnDimension(IList<SimulationPoint> measurementValues, IList<SimulationPoint> errorValues, ColumnInfo column, ParseErrors errors,
          IDataSet dataSet)
       {
          for (var i = 0; i < measurementValues.Count(); i++)
@@ -249,10 +251,9 @@ namespace OSPSuite.Infrastructure.Import.Core
             if (double.IsNaN(errorValues.ElementAt(i).Measurement))
                continue;
 
-            var measurementSupportedDimension = column.SupportedDimensions.FirstOrDefault(x =>
-               x.SupportsUnit(measurementValues.ElementAt(i).Unit, ignoreCase: true));
-            var errorSupportedDimension =
-               column.SupportedDimensions.FirstOrDefault(x => x.SupportsUnit(errorValues.ElementAt(i).Unit, ignoreCase: true));
+            var measurementSupportedDimension = column.DimensionForUnit(measurementValues.ElementAt(i).Unit);
+            var errorSupportedDimension = column.DimensionForUnit(errorValues.ElementAt(i).Unit);
+
             if (measurementSupportedDimension != errorSupportedDimension)
                errors.Add(dataSet, new ErrorUnitParseErrorDescription());
          }
@@ -284,13 +285,12 @@ namespace OSPSuite.Infrastructure.Import.Core
          return errors;
       }
 
-      private static void validateUnitComingFromColumnDimension(IList<SimulationPoint> simulationPointsList, ColumnInfo columnInfo, ParseErrors errors, IDataSet dataSet)
+      private void validateUnitComingFromColumnDimension(IList<SimulationPoint> simulationPointsList, ColumnInfo columnInfo, ParseErrors errors, IDataSet dataSet)
       {
          var firstValueWithNonEmptyUnit = simulationPointsList.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit));
          var firstNonEmptyUnit = firstValueWithNonEmptyUnit == null ? "" : firstValueWithNonEmptyUnit.Unit;
 
-         var dimensionOfFirstUnit =
-            columnInfo.SupportedDimensions.FirstOrDefault(x => x.SupportsUnit(firstNonEmptyUnit, ignoreCase: true));
+         var dimensionOfFirstUnit = columnInfo.DimensionForUnit(firstNonEmptyUnit);
 
          for (var i = 0; i < simulationPointsList.Count(); i++)
          {
@@ -298,7 +298,8 @@ namespace OSPSuite.Infrastructure.Import.Core
             if (double.IsNaN(currentValue.Measurement))
                continue;
 
-            var dimension = columnInfo.SupportedDimensions.FirstOrDefault(x => x.SupportsUnit(currentValue.Unit, ignoreCase: true));
+            var currentUnit = currentValue.Unit;
+            var dimension = columnInfo.DimensionForUnit(currentUnit);
 
             //if the unit specified does not belong to one of the supported dimensions of the mapping
             if (dimension == null)
