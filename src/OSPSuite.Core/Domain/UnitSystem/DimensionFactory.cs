@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
@@ -112,12 +113,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public IDimension DimensionForUnit(string unitName)
       {
-         var matches = Dimensions.Where(x => x.SupportsUnit(unitName, ignoreCase: true)).ToList();
-         if (!matches.Any())
-            return null;
-
-         //Try to find the first one that matches EXACTLY 
-         return matches.FirstOrDefault(x => x.SupportsUnit(unitName, ignoreCase: false)) ?? matches.First();
+         return Dimension.DimensionForUnit(unitName);
       }
 
       public (IDimension dimension, Unit unit) FindUnit(string unitName)
