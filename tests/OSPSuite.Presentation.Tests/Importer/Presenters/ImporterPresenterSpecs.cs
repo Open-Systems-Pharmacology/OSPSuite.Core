@@ -38,10 +38,9 @@ namespace OSPSuite.Presentation.Importer.Presenters
          ISourceFilePresenter sourceFilePresenter,
          IDialogCreator dialogCreator,
          IPKMLPersistor pkmlPersistor,
-         IDataSource dataSource,
-         IDimensionFactory dimensionFactory
+         IDataSource dataSource
       ) : base(view, dataRepositoryMapper, importer, nanPresenter, importerDataPresenter, confirmationPresenter, columnMappingPresenter,
-         sourceFilePresenter, dialogCreator, pkmlPersistor, dimensionFactory)
+         sourceFilePresenter, dialogCreator, pkmlPersistor)
       {
          _dataSource = dataSource;
       }
@@ -141,8 +140,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             _sourceFilePresenter,
             _dialogCreator,
             _pkmlPeristor,
-            _dataSource,
-            _dimensionFactory);
+            _dataSource);
          _importerConfiguration = A.Fake<ImporterConfiguration>();
          sut.LoadConfiguration(_importerConfiguration, "");
          sut.SetSettings(_metaDataCategories, new ColumnInfoCache(), _dataImporterSettings);

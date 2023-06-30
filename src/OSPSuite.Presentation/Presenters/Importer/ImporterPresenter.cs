@@ -73,8 +73,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IColumnMappingPresenter columnMappingPresenter,
          ISourceFilePresenter sourceFilePresenter,
          IDialogCreator dialogCreator,
-         IPKMLPersistor pkmlPersistor,
-         IDimensionFactory dimensionFactory) : base(view)
+         IPKMLPersistor pkmlPersistor) : base(view)
       {
          _importerDataPresenter = importerDataPresenter;
          _confirmationPresenter = confirmationPresenter;
@@ -82,7 +81,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _nanPresenter = nanPresenter;
          _sourceFilePresenter = sourceFilePresenter;
          _dataRepositoryMapper = dataRepositoryMapper;
-         _dataSource = new DataSource(importer, dimensionFactory);
+         _dataSource = new DataSource(importer);
          _pkmlPersistor = pkmlPersistor;
          _importer = importer;
          _dialogCreator = dialogCreator;

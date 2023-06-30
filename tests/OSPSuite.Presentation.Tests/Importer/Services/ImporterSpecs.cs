@@ -247,9 +247,9 @@ namespace OSPSuite.Presentation.Importer.Services
 
          A.CallTo(() => _container.ResolveAll<IDataFormat>()).Returns(new List<IDataFormat>
          {
-            new DataFormatHeadersWithUnits(_factory),
-            new DataFormatNonmem(_factory),
-            new MixColumnsDataFormat(_factory)
+            new DataFormatHeadersWithUnits(),
+            new DataFormatNonmem(),
+            new MixColumnsDataFormat()
          });
          _parser = A.Fake<IDataSourceFileParser>();
          _dataRepositoryMapper = A.Fake<IDataSetToDataRepositoryMapper>();

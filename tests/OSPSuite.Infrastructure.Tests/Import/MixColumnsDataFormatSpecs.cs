@@ -16,13 +16,11 @@ namespace OSPSuite.Infrastructure.Import
       protected DataSheet _rawDataSheet;
       protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
-      protected IDimensionFactory _factory;
       protected IEnumerable<string> _headers { get; set; } = new[] { "Time [h]", "Concentration [mol]", "Error [mol]" };
 
       protected override void Context()
       {
-         _factory = DimensionFactoryForSpecs.Factory;
-         sut = new MixColumnsDataFormat(_factory);
+         sut = new MixColumnsDataFormat();
          _rawDataSheet = A.Fake<DataSheet>();
          A.CallTo(() => _rawDataSheet.GetHeaders()).ReturnsLazily(() => _headers);
          A.CallTo(() => _rawDataSheet.GetColumnDescription(A<string>.Ignored))

@@ -57,7 +57,6 @@ namespace OSPSuite.Infrastructure.Import.Services
       private readonly IDataSourceFileParser _parser;
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       private readonly IDimension _molWeightDimension;
-      private readonly IDimensionFactory _dimensionFactory;
 
       public Importer(
          IoC container,
@@ -69,7 +68,6 @@ namespace OSPSuite.Infrastructure.Import.Services
          _parser = parser;
          _dataRepositoryMapper = dataRepositoryMapper;
          _molWeightDimension = dimensionFactory.Dimension(Constants.Dimension.MOLECULAR_WEIGHT);
-         _dimensionFactory = dimensionFactory;
       }
 
       public IEnumerable<IDataFormat> AvailableFormats(DataSheet dataSheet, ColumnInfoCache columnInfos,
@@ -307,7 +305,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          DataImporterSettings dataImporterSettings
       )
       {
-         var dataSource = new DataSource(this, _dimensionFactory);
+         var dataSource = new DataSource(this);
          IDataSourceFile dataSourceFile = null;
 
          dataSourceFile = LoadFile(columnInfos, fileName, metaDataCategories);

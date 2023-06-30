@@ -67,14 +67,12 @@ namespace OSPSuite.Infrastructure.Import.Core
       private readonly IImporter _importer;
       private readonly ImporterConfiguration _configuration;
       private IReadOnlyList<MetaDataMappingConverter> _mappings;
-      private readonly IDimensionFactory _dimensionFactory;
       public Cache<string, IDataSet> DataSets { get; } = new Cache<string, IDataSet>();
 
-      public DataSource(IImporter importer, IDimensionFactory dimensionFactory)
+      public DataSource(IImporter importer)
       {
          _importer = importer;
          _configuration = new ImporterConfiguration();
-         _dimensionFactory = dimensionFactory;
       }
 
       public void SetDataFormat(IDataFormat dataFormat)

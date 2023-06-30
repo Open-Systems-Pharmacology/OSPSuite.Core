@@ -10,18 +10,12 @@ namespace OSPSuite.Core.Domain.UnitSystem
    {
       private readonly Cache<string, IDimension> _dimensions = new Cache<string, IDimension>(dim => dim.Name);
       private readonly List<IDimensionMergingInformation> _allMergingInformation = new List<IDimensionMergingInformation>();
-      private readonly IDimensionHelperService _dimensionHelperService;
 
       public IEnumerable<IDimension> Dimensions => _dimensions;
 
       public IDimension[] DimensionsSortedByName => Dimensions.OrderBy(x => x.Name).ToArray();
 
       public string[] DimensionNamesSortedByName => _dimensions.Keys.OrderBy(x => x).ToArray();
-
-      public DimensionFactory(IDimensionHelperService dimensionHelperService)
-      {
-         _dimensionHelperService = dimensionHelperService;
-      }
 
       public void AddDimension(IDimension dimension)
       {
@@ -118,7 +112,12 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public IDimension DimensionForUnit(string unitName)
       {
-         return _dimensionHelperService.DimensionForUnitFromDimensionsList(unitName, Dimensions.ToList());
+         var matches = Dimensions.Where(x => x.SupportsUnit(unitName, ignoreCase: true)).ToList();
+         if (!matches.Any())
+            return null;
+
+         //Try to find the first one that matches EXACTLY 
+         return matches.FirstOrDefault(x => x.SupportsUnit(unitName, ignoreCase: false)) ?? matches.First();
       }
 
       public (IDimension dimension, Unit unit) FindUnit(string unitName)

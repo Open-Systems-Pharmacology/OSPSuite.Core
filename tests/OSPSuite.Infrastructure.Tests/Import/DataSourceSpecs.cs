@@ -28,8 +28,8 @@ namespace OSPSuite.Infrastructure.Import
          _fakedConcentrationDimensionMolar = A.Fake<IDimension>();
          _fakedConcentrationDimensionMass = A.Fake<IDimension>();
          _fakedErrorDimension = A.Fake<IDimension>();
-         _fakedImporter = A.Fake<IImporter>();
          _fakeDataSet = new DataSet();
+         _fakedImporter = A.Fake<IImporter>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
 
          _columnInfos = new ColumnInfoCache
@@ -162,7 +162,7 @@ namespace OSPSuite.Infrastructure.Import
          });
 
 
-         sut = new DataSource(_fakedImporter, _dimensionFactory);
+         sut = new DataSource(_fakedImporter);
          sut.DataSets.Add("sheet1", _fakeDataSet);
       }
 

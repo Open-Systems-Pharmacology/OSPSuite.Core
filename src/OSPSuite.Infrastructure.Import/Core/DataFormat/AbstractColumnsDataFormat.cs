@@ -168,7 +168,6 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       protected string ValidateUnit(string unit, ColumnInfo columnInfo)
       {
-         //OK, here we could keep this code as is, or we could use the helper
          var dimensionForUnit = columnInfo.DimensionForUnit(unit);
 
          if (dimensionForUnit == null)
