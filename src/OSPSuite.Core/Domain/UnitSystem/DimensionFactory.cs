@@ -113,7 +113,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public IDimension DimensionForUnit(string unitName)
       {
-         return Dimension.DimensionForUnit(unitName);
+         return Dimensions.DimensionForUnit(unitName);
       }
 
       public (IDimension dimension, Unit unit) FindUnit(string unitName)
