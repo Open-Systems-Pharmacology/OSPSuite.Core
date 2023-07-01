@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Extensions;
-using OSPSuite.Core.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
 
@@ -192,7 +191,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
          //We have a real merged dimension
          var displayName = MergedDimensionNameFor(hasDimension.Dimension);
-         return new MergedDimensionFor<T>(hasDimension.Dimension, targetDimensions, converters) {DisplayName = displayName};
+         return new MergedDimensionFor<T>(hasDimension.Dimension, targetDimensions, converters) { DisplayName = displayName };
       }
 
       public virtual string MergedDimensionNameFor(IDimension sourceDimension) => sourceDimension.DisplayName;

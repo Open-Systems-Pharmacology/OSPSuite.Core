@@ -1,6 +1,6 @@
-﻿using OSPSuite.Core.Domain.UnitSystem;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Extensions
 {

@@ -32,14 +32,15 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       public DataSetToDataRepositoryMappingResult ConvertImportDataSet(ImportedDataSet dataSet)
       {
          var sheetName = dataSet.SheetName;
-         var dataRepository = new DataRepository {Name = dataSet.Name};
+         var dataRepository = new DataRepository { Name = dataSet.Name };
 
          addExtendedPropertyForSource(dataSet.FileName, sheetName, dataRepository);
 
          foreach (var metaDataDescription in dataSet.MetaDataDescription)
          {
             if (!metaDataDescription.Value.IsNullOrEmpty())
-               dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>() {Name = metaDataDescription.Name, Value = metaDataDescription.Value});
+               dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>()
+                  { Name = metaDataDescription.Name, Value = metaDataDescription.Value });
          }
 
          var warningFlag = false;
@@ -66,10 +67,12 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          return new DataSetToDataRepositoryMappingResult(dataRepository, warningFlag ? Captions.Importer.LLOQInconsistentValuesAt(dataSet.Name) : "");
       }
 
-      private bool convertParsedDataColumnAndReturnWarningFlag(DataRepository dataRepository, KeyValuePair<ExtendedColumn, IList<SimulationPoint>> columnAndData, string fileName)
+      private bool convertParsedDataColumnAndReturnWarningFlag(DataRepository dataRepository,
+         KeyValuePair<ExtendedColumn, IList<SimulationPoint>> columnAndData, string fileName)
       {
          DataColumn dataColumn;
-         var unitName = columnAndData.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit))?.Unit ?? Constants.Dimension.NO_DIMENSION.DefaultUnitName;
+         var unitName = columnAndData.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit))?.Unit ??
+                        Constants.Dimension.NO_DIMENSION.DefaultUnitName;
          var warningFlag = false;
 
          var dimension = columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.DimensionForUnit(unitName);
@@ -115,13 +118,14 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             if (double.IsNaN(adjustedValue))
                values[i++] = float.NaN;
             else if (unitName != null && !string.IsNullOrEmpty(value.Unit))
-               values[i++] = (float) dataColumn.Dimension.UnitValueToBaseUnitValue(dimension?.FindUnit(value.Unit, ignoreCase: true), adjustedValue);
+               values[i++] = (float)dataColumn.Dimension.UnitValueToBaseUnitValue(dimension?.FindUnit(value.Unit, ignoreCase: true), adjustedValue);
             else
-               values[i++] = (float) adjustedValue;
+               values[i++] = (float)adjustedValue;
          }
 
          if (lloqValue != null)
-            dataInfo.LLOQ = Convert.ToSingle(dimension?.UnitValueToBaseUnitValue(dimension.FindUnit(lloqValue.Unit, ignoreCase: true), lloqValue.Lloq));
+            dataInfo.LLOQ =
+               Convert.ToSingle(dimension?.UnitValueToBaseUnitValue(dimension.FindUnit(lloqValue.Unit, ignoreCase: true), lloqValue.Lloq));
 
          dataColumn.Values = values;
 
@@ -198,7 +202,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       private static void addExtendedPropertyForSource(string fileName, string sheetName, DataRepository dataRepository)
       {
          // dataRepository.ExtendedProperties.Add(new ExtendedProperty<string> {Name = Constants.FILE, Value = fileName});
-         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string> {Name = Constants.SHEET, Value = sheetName});
+         dataRepository.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.SHEET, Value = sheetName });
       }
 
       private static bool containsColumnByName(IEnumerable<DataColumn> columns, string name)

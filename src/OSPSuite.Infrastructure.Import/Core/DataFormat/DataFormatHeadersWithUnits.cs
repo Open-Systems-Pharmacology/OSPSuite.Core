@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Services;
 
@@ -21,7 +20,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          return null;
       }
 
-      protected override UnitDescription ExtractUnits(string description, DataSheet dataSheet, List<string> keys, ColumnInfo columnInfo, ref double rank)
+      protected override UnitDescription ExtractUnits(string description, DataSheet dataSheet, List<string> keys, ColumnInfo columnInfo,
+         ref double rank)
       {
          var (_, unit) = UnitExtractor.ExtractNameAndUnit(description);
 

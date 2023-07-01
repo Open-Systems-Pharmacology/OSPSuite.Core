@@ -6,7 +6,6 @@ using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
@@ -241,7 +240,8 @@ namespace OSPSuite.Infrastructure.Import.Core
             errors.Add(dataSet, new ErrorUnitParseErrorDescription());
       }
 
-      private void validateErrorFromColumnDimension(IList<SimulationPoint> measurementValues, IList<SimulationPoint> errorValues, ColumnInfo column, ParseErrors errors,
+      private void validateErrorFromColumnDimension(IList<SimulationPoint> measurementValues, IList<SimulationPoint> errorValues, ColumnInfo column,
+         ParseErrors errors,
          IDataSet dataSet)
       {
          for (var i = 0; i < measurementValues.Count(); i++)
@@ -283,7 +283,8 @@ namespace OSPSuite.Infrastructure.Import.Core
          return errors;
       }
 
-      private void validateUnitComingFromColumnDimension(IList<SimulationPoint> simulationPointsList, ColumnInfo columnInfo, ParseErrors errors, IDataSet dataSet)
+      private void validateUnitComingFromColumnDimension(IList<SimulationPoint> simulationPointsList, ColumnInfo columnInfo, ParseErrors errors,
+         IDataSet dataSet)
       {
          var firstValueWithNonEmptyUnit = simulationPointsList.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit));
          var firstNonEmptyUnit = firstValueWithNonEmptyUnit == null ? "" : firstValueWithNonEmptyUnit.Unit;

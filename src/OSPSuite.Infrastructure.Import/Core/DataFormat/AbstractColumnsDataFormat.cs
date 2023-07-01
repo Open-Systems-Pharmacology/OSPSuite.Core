@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
-using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core.Extensions;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
