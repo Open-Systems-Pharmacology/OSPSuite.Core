@@ -6,7 +6,7 @@ namespace OSPSuite.Core.Extensions
 {
    public static class DimensionsListExtensions
    {
-      public static IDimension DimensionForUnit(this List<IDimension> dimensionList, string unitName)
+      public static IDimension DimensionForUnit(this IEnumerable<IDimension> dimensionList, string unitName)
       {
          var matches = dimensionList.Where(x => x.SupportsUnit(unitName, ignoreCase: true)).ToList();
          if (!matches.Any())
@@ -14,11 +14,6 @@ namespace OSPSuite.Core.Extensions
 
          //Try to find the first one that matches EXACTLY 
          return matches.FirstOrDefault(x => x.SupportsUnit(unitName, ignoreCase: false)) ?? matches.First();
-      }
-
-      public static IDimension DimensionForUnit(this IEnumerable<IDimension> dimensionList, string unitName)
-      {
-         return dimensionList.ToList().DimensionForUnit(unitName);
       }
    }
 }
