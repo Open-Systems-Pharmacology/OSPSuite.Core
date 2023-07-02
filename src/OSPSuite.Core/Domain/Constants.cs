@@ -317,6 +317,7 @@ namespace OSPSuite.Core.Domain
       {
          public const string VOLUME = "Volume";
          public const string MOLAR_CONCENTRATION = "Concentration (molar)";
+         public const string LENGTH = "Length";
          public const string MASS_CONCENTRATION = "Concentration (mass)";
          public const string DIMENSIONLESS = "Dimensionless";
          public const string MOLAR_AMOUNT = "Amount";
