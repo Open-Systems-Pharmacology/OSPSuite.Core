@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Serializers
       {
          base.GlobalContext();
          var dimensionFactory = IoC.Resolve<IDimensionFactory>();
-         DimensionLength = dimensionFactory.Dimension("Length");
+         DimensionLength = dimensionFactory.Dimension(Constants.Dimension.LENGTH);
          DimensionTime = dimensionFactory.Dimension(Constants.Dimension.TIME);
          DimensionMolarConcentration = dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
          DimensionMassConcentration = dimensionFactory.Dimension(Constants.Dimension.MASS_CONCENTRATION);

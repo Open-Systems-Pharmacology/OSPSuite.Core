@@ -27,6 +27,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       protected IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
       protected ColumnInfoCache _columnInfos;
+      protected IDimensionFactory _dimensionFactory;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
 
       protected List<DataFormatParameter> _parameters = new List<DataFormatParameter>()
@@ -50,6 +51,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _basicFormat = A.Fake<IDataFormat>();
          _view = A.Fake<IColumnMappingView>();
          _importer = A.Fake<IImporter>();
+         _dimensionFactory = new DimensionFactoryForIntegrationTests();
       }
 
       protected void UpdateSettings()
@@ -100,7 +102,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             A<IEnumerable<DataFormatParameter>>.Ignored)).Returns(new MappingProblem()
             { MissingMapping = new List<string>(), MissingUnit = new List<string>() });
 
-         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter);
+         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter, _dimensionFactory);
       }
 
       protected List<DataFormatParameter> CreateParameters(MappingDataFormatParameter concentration, MappingDataFormatParameter error)
@@ -621,7 +623,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          }
 
          _model = new ColumnMappingDTO(ColumnMappingDTO.ColumnType.Mapping, "Concentration", mappingSource, 0);
-         A.CallTo(() => _basicFormat.ExtractUnitDescriptions(A<string>.Ignored, A<IReadOnlyList<IDimension>>.Ignored))
+         A.CallTo(() => _basicFormat.ExtractUnitDescriptions(A<string>.Ignored, A<ColumnInfo>.Ignored))
             .Returns(new UnitDescription(newUnitDescription));
 
          //Act

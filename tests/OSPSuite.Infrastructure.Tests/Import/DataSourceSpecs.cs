@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
-using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 
 namespace OSPSuite.Infrastructure.Import
@@ -22,6 +20,7 @@ namespace OSPSuite.Infrastructure.Import
       protected IDimension _fakedErrorDimension;
       protected IImporter _fakedImporter;
       protected IDataSet _fakeDataSet;
+      protected IDimensionFactory _dimensionFactory;
 
       protected override void Context()
       {
@@ -29,14 +28,15 @@ namespace OSPSuite.Infrastructure.Import
          _fakedConcentrationDimensionMolar = A.Fake<IDimension>();
          _fakedConcentrationDimensionMass = A.Fake<IDimension>();
          _fakedErrorDimension = A.Fake<IDimension>();
-         _fakedImporter = A.Fake<IImporter>();
          _fakeDataSet = new DataSet();
+         _fakedImporter = A.Fake<IImporter>();
+         _dimensionFactory = A.Fake<IDimensionFactory>();
 
          _columnInfos = new ColumnInfoCache
          {
-            new ColumnInfo() {DisplayName = "Time", Name = "Time"},
-            new ColumnInfo() {DisplayName = "Concentration", Name = "Concentration"},
-            new ColumnInfo() {DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration"}
+            new ColumnInfo() { DisplayName = "Time", Name = "Time" },
+            new ColumnInfo() { DisplayName = "Concentration", Name = "Concentration" },
+            new ColumnInfo() { DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration" }
          };
 
          _columnInfos["Time"].SupportedDimensions.Add(_fakedTimeDimension);
@@ -174,16 +174,14 @@ namespace OSPSuite.Infrastructure.Import
 
    public class When_validating_empty_data_source : concern_for_DataSource
    {
-      protected IDimensionFactory _dimensionFactory;
-
       protected override void Context()
       {
          base.Context();
          _columnInfos = new ColumnInfoCache
          {
-            new ColumnInfo() {DisplayName = "Time", Name = "Time", IsMandatory = true, BaseGridName = "Time"},
-            new ColumnInfo() {DisplayName = "Concentration", Name = "Concentration", IsMandatory = true, BaseGridName = "Time"},
-            new ColumnInfo() {DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration", BaseGridName = "Time"}
+            new ColumnInfo() { DisplayName = "Time", Name = "Time", IsMandatory = true, BaseGridName = "Time" },
+            new ColumnInfo() { DisplayName = "Concentration", Name = "Concentration", IsMandatory = true, BaseGridName = "Time" },
+            new ColumnInfo() { DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration", BaseGridName = "Time" }
          };
          var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
          {
@@ -225,7 +223,8 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          var dataSet = new DataSet();
-         dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
+         dataSet.AddData(new List<ParsedDataSet>()
+            { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          _dimensionFactory = A.Fake<IDimensionFactory>();
          var fractionDimension = A.Fake<IDimension>();
          A.CallTo(() => fractionDimension.Name).Returns(Constants.Dimension.FRACTION);
@@ -241,7 +240,7 @@ namespace OSPSuite.Infrastructure.Import
       public void throw_on_empty_dataset()
       {
          var sheets = new DataSheetCollection();
-         var sheet = new DataSheet() {SheetName = "sheet1"};
+         var sheet = new DataSheet() { SheetName = "sheet1" };
          sheets.AddSheet(sheet);
          sut.AddSheets(sheets, _columnInfos, "").Any().ShouldBeTrue();
       }
@@ -356,7 +355,8 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
+         _dataSet.AddData(new List<ParsedDataSet>()
+            { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          sut.DataSets.Clear();
       }
 
@@ -481,7 +481,8 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
+         _dataSet.AddData(new List<ParsedDataSet>()
+            { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          sut.DataSets.Clear();
       }
 
@@ -606,7 +607,8 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
+         _dataSet.AddData(new List<ParsedDataSet>()
+            { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          sut.DataSets.Clear();
       }
 
@@ -729,7 +731,8 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
+         _dataSet.AddData(new List<ParsedDataSet>()
+            { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          sut.DataSets.Clear();
       }
 
@@ -852,7 +855,8 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
+         _dataSet.AddData(new List<ParsedDataSet>()
+            { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          sut.DataSets.Clear();
       }
 
@@ -943,7 +947,8 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
+         _dataSet.AddData(new List<ParsedDataSet>()
+            { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          sut.DataSets.Clear();
       }
 
@@ -1017,7 +1022,8 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
+         _dataSet.AddData(new List<ParsedDataSet>()
+            { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          sut.DataSets.Clear();
       }
 
@@ -1091,7 +1097,8 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
+         _dataSet.AddData(new List<ParsedDataSet>()
+            { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
          sut.DataSets.Clear();
       }
 

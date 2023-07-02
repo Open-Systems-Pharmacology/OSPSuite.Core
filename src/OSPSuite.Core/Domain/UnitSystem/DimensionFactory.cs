@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
 
@@ -111,12 +112,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
       public IDimension DimensionForUnit(string unitName)
       {
-         var matches = Dimensions.Where(x => x.SupportsUnit(unitName, ignoreCase: true)).ToList();
-         if (!matches.Any())
-            return null;
-
-         //Try to find the first one that matches EXACTLY 
-         return matches.FirstOrDefault(x => x.SupportsUnit(unitName, ignoreCase: false)) ?? matches.First();
+         return Dimensions.DimensionForUnit(unitName);
       }
 
       public (IDimension dimension, Unit unit) FindUnit(string unitName)
@@ -195,7 +191,7 @@ namespace OSPSuite.Core.Domain.UnitSystem
 
          //We have a real merged dimension
          var displayName = MergedDimensionNameFor(hasDimension.Dimension);
-         return new MergedDimensionFor<T>(hasDimension.Dimension, targetDimensions, converters) {DisplayName = displayName};
+         return new MergedDimensionFor<T>(hasDimension.Dimension, targetDimensions, converters) { DisplayName = displayName };
       }
 
       public virtual string MergedDimensionNameFor(IDimension sourceDimension) => sourceDimension.DisplayName;

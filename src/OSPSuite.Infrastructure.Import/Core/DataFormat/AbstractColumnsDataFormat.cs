@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Extensions;
 using OSPSuite.Utility.Collections;
@@ -17,13 +16,6 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       public IList<DataFormatParameter> Parameters { get; private set; }
 
       public IList<string> ExcelColumnNames { get; protected set; } = new List<string>();
-
-      protected readonly IDimensionFactory _dimensionFactory;
-
-      protected AbstractColumnsDataFormat(IDimensionFactory dimensionFactory)
-      {
-         _dimensionFactory = dimensionFactory;
-      }
 
       public double SetParameters(DataSheet rawDataSheet, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
@@ -91,9 +83,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                mappedColumn.Dimension = null;
             else
             {
-               var dimensionForUnit = _dimensionFactory.DimensionForUnit(mappedColumn.Unit.SelectedUnit);
+               var dimensionForUnit = concreteColumnInfo.DimensionForUnit(mappedColumn.Unit.SelectedUnit);
 
-               if (dimensionForUnit == null || !concreteColumnInfo.SupportsDimension(dimensionForUnit))
+               if (dimensionForUnit == null)
                   mappedColumn.Unit = new UnitDescription(UnitDescription.InvalidUnit);
                else
                   mappedColumn.Dimension = dimensionForUnit;
@@ -125,12 +117,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       protected abstract string ExtractLLOQ(string description, DataSheet dataSheet, List<string> keys, ref double rank);
 
       protected abstract UnitDescription ExtractUnits(string description, DataSheet dataSheet, List<string> keys,
-         IReadOnlyList<IDimension> supportedDimensions, ref double rank);
+         ColumnInfo columnInfo, ref double rank);
 
-      public UnitDescription ExtractUnitDescriptions(string description, IReadOnlyList<IDimension> supportedDimensions)
+      public UnitDescription ExtractUnitDescriptions(string description, ColumnInfo columnInfo)
       {
          var rank = 0.0;
-         return ExtractUnits(description, dataSheet: null, keys: null, supportedDimensions, ref rank);
+         return ExtractUnits(description, dataSheet: null, keys: null, columnInfo, ref rank);
       }
 
       protected virtual void ExtractQualifiedHeadings(List<string> keys, List<string> missingKeys, Cache<string, ColumnInfo> columnInfos,
@@ -143,7 +135,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             if (headerKey != null)
             {
                keys.Remove(headerKey);
-               var units = ExtractUnits(headerKey, dataSheet, keys, header.SupportedDimensions, ref rank);
+               var units = ExtractUnits(headerKey, dataSheet, keys, header, ref rank);
 
                var col = new Column
                {
@@ -172,11 +164,11 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          }
       }
 
-      protected string ValidateUnit(string unit, IReadOnlyList<IDimension> supportedDimensions)
+      protected string ValidateUnit(string unit, ColumnInfo columnInfo)
       {
-         var dimensionForUnit = _dimensionFactory.DimensionForUnit(unit);
+         var dimensionForUnit = columnInfo.DimensionForUnit(unit);
 
-         if (dimensionForUnit == null || !supportedDimensions.Contains(dimensionForUnit))
+         if (dimensionForUnit == null)
             return UnitDescription.InvalidUnit;
 
          //We know it exists here as it was found previously
@@ -196,7 +188,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             );
             if (headerKey == null) continue;
             keys.Remove(headerKey);
-            var units = ExtractUnits(headerKey, dataSheet, keys, columnInfos[header].SupportedDimensions, ref rank);
+            var units = ExtractUnits(headerKey, dataSheet, keys, columnInfos[header], ref rank);
 
             var col = new Column()
             {

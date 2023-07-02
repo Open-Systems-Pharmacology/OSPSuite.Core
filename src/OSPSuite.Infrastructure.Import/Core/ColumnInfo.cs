@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Infrastructure.Import.Core
@@ -64,9 +65,9 @@ namespace OSPSuite.Infrastructure.Import.Core
          get => !IsBase && !IsAuxiliary;
       }
 
-      public bool SupportsDimension(IDimension dimensionForUnit)
+      public IDimension DimensionForUnit(string unitName)
       {
-         return SupportedDimensions.Contains(dimensionForUnit);
+         return SupportedDimensions.DimensionForUnit(unitName);
       }
    }
 

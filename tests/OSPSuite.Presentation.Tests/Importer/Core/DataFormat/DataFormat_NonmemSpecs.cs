@@ -5,9 +5,7 @@ using FakeItEasy;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
-using OSPSuite.Helpers;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Utility.Collections;
@@ -28,13 +26,11 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
       protected ColumnInfoCache _columnInfos;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
       protected Cache<string, ColumnDescription> _headersCache;
-      protected IDimensionFactory _factory;
       protected string[] _molecules = new string[] { "GLP-1_7-36 total", "Glucose", "Insuline", "GIP_total", "Glucagon" };
       protected string[] _groupIds = new string[] { "H", "T2DM" };
 
       protected override void Context()
       {
-         _factory = DimensionFactoryForSpecs.Factory;
          _columnInfos = new ColumnInfoCache
          {
             new ColumnInfo() { DisplayName = "Time", IsMandatory = true },
@@ -51,7 +47,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataFormat
             new MetaDataCategory() { Name = "Route" }
          };
 
-         sut = new DataFormatNonmem(_factory);
+         sut = new DataFormatNonmem();
          _headersCache = new Cache<string, ColumnDescription>()
          {
             {
