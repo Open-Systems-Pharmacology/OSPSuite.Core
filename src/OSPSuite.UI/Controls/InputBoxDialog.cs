@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using DevExpress.XtraEditors.Controls;
 using OSPSuite.Assets;
 using OSPSuite.UI.Extensions;
@@ -10,11 +11,14 @@ namespace OSPSuite.UI.Controls
 {
    public partial class InputBoxDialog : BaseModalView
    {
-      internal IEnumerable<string> NotAllowedValues { get; set; }
-      internal string FormPrompt { get; set; }
-      internal string DefaultValue { get; set; }
-      internal IEnumerable<string> Values { get; set; }
-      internal string FormCaption { get; set; }
+      private IEnumerable<string> _notAllowedValues;
+      private string _formPrompt;
+      private string _defaultValue;
+      private IEnumerable<string> _values;
+      private string _formCaption;
+      private bool _hasError;
+
+      public override bool HasError => _hasError;
 
       public InputBoxDialog()
       {
@@ -41,11 +45,11 @@ namespace OSPSuite.UI.Controls
       {
          var inputBoxDialog = new InputBoxDialog
          {
-            FormPrompt = prompt,
-            FormCaption = title,
-            DefaultValue = defaultValue ?? string.Empty,
-            Values = predefinedValues ?? Enumerable.Empty<string>(),
-            NotAllowedValues = forbiddenValues ?? Enumerable.Empty<string>()
+            _formPrompt = prompt,
+            _formCaption = title,
+            _defaultValue = defaultValue ?? string.Empty,
+            _values = predefinedValues ?? Enumerable.Empty<string>(),
+            _notAllowedValues = (forbiddenValues ?? Enumerable.Empty<string>()).Select(x => x.ToLower())
          };
 
          inputBoxDialog.ApplicationIcon = ApplicationIcons.IconByNameOrDefault(iconName, ApplicationIcons.DefaultIcon);
@@ -60,15 +64,15 @@ namespace OSPSuite.UI.Controls
       private void onLoad(object sender, EventArgs e)
       {
          //use reverse because cbInput shows last item first
-         var listOfValues = Values.Reverse().Cast<object>().ToList();
+         var listOfValues = _values.Reverse().Cast<object>().ToList();
          cbInput.Properties.Items.AddRange(listOfValues);
          cbInput.Properties.AllowRemoveMRUItems = false;
-         lblPrompt.Text = FormPrompt;
-         Text = FormCaption;
+         lblPrompt.Text = _formPrompt;
+         Text = _formCaption;
          cbInput.SelectionStart = 0;
          cbInput.SelectionLength = cbInput.Text.Length;
          cbInput.EditValueChanging += validateInput;
-         cbInput.EditValue = DefaultValue;
+         cbInput.EditValue = _defaultValue;
          cbInput.Focus();
       }
 
@@ -77,10 +81,22 @@ namespace OSPSuite.UI.Controls
          var value = e.NewValue.ToString().Trim();
          if (string.IsNullOrEmpty(value))
             OnValidationError(cbInput, "Please enter a value");
-         else if (NotAllowedValues.Contains(value))
+         else if (_notAllowedValues.Contains(value.ToLower()))
             OnValidationError(cbInput, $"{e.NewValue} is not allowed");
          else
             OnClearError(cbInput);
+      }
+
+      protected override void OnClearError(Control control)
+      {
+         _hasError = false;
+         base.OnClearError(control);
+      }
+
+      protected override void OnValidationError(Control control, string error)
+      {
+         _hasError = true;
+         base.OnValidationError(control, error);
       }
    }
 }
