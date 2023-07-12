@@ -3,11 +3,13 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public class IndividualParameter : PathAndValueEntity
+   public class IndividualParameter : PathAndValueEntity, IWithDefaultState
    {
       public ParameterOrigin Origin { get; set; }
 
       public ParameterInfo Info { get; set; }
+
+      public bool IsDefault { get; set; }
 
       /// <summary>
       ///    Only set for a parameter that is a distributed parameter.
@@ -24,6 +26,8 @@ namespace OSPSuite.Core.Domain.Builder
          DistributionType = sourceIndividualParameter.DistributionType;
          Info = sourceIndividualParameter.Info?.Clone();
          Origin = sourceIndividualParameter.Origin?.Clone();
+         IsDefault = sourceIndividualParameter.IsDefault;
       }
+
    }
 }
