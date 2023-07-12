@@ -62,6 +62,7 @@ namespace OSPSuite.Core.Domain
       {
          parameter.Origin.UpdatePropertiesFrom(individualParameter.Origin);
          parameter.Info.UpdatePropertiesFrom(individualParameter.Info);
+         parameter.IsDefault = individualParameter.IsDefault;
          return parameter;
       }
    }

@@ -10,6 +10,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.DistributionType);
          Map(x => x.Origin);
          Map(x => x.Info);
+         Map(x => x.IsDefault);
       }
    }
 }
