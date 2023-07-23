@@ -211,7 +211,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private void setAxesCaptions(DataRepository observedData)
       {
          Chart.XAxis.Caption = observedData.BaseGrid.Name;
-         Chart.YAxis.Caption = observedData.AllButBaseGridAsArray.FirstOrDefault()?.Name;
+         Chart.YAxis.Caption = observedData.ObservationColumns().FirstOrDefault()?.Name;
       }
 
       private void addCurvesToChart(DataRepository observedData)
