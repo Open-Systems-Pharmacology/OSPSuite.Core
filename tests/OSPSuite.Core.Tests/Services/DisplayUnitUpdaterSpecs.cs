@@ -163,9 +163,9 @@ namespace OSPSuite.Core.Services
          _curveChart = new CurveChart().WithAxes();
          _unit1 = new Unit("XX", 1, 0);
 
-         _axisX = _curveChart.AxisBy(AxisTypes.X);
+         _axisX = _curveChart.XAxis;
          _axisX.UnitName = "OldX";
-         _axisY = _curveChart.AxisBy(AxisTypes.Y);
+         _axisY = _curveChart.YAxis;
          _axisY.UnitName = "OldY";
 
          A.CallTo(() => _displayUnitRetriever.PreferredUnitFor(_axisX, _axisX.Unit)).Returns(_unit1);

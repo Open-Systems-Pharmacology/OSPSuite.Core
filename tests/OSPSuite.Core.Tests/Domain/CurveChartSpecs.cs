@@ -25,8 +25,8 @@ namespace OSPSuite.Core.Domain
          _dimensionFactory = A.Fake<IDimensionFactory>();
          sut = new CurveChart().WithAxes();
 
-         _xAxis = sut.AxisBy(AxisTypes.X);
-         _yAxis = sut.AxisBy(AxisTypes.Y);
+         _xAxis = sut.XAxis;
+         _yAxis = sut.YAxis;
 
          _obsData1 = DomainHelperForSpecs.ObservedData();
          _obsData2 = DomainHelperForSpecs.ObservedData();
@@ -196,7 +196,7 @@ namespace OSPSuite.Core.Domain
          base.Context();
          _dimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
          _y2Axis = sut.AddNewAxisFor(AxisTypes.Y2);
-         _yAxis = sut.AxisBy(AxisTypes.Y);
+         _yAxis = sut.YAxis;
          _yAxis.Dimension = _dimension;
          _yAxis.UnitName = _dimension.DefaultUnitName;
          _yAxis.SetRange(10, 20);

@@ -75,6 +75,8 @@ namespace OSPSuite.Core.Chart
 
       public Axis XAxis => AxisBy(AxisTypes.X);
 
+      public Axis YAxis => AxisBy(AxisTypes.Y);
+
       public Axis YAxisFor(Curve curve) => AxisBy(curve.yAxisType);
 
       public IReadOnlyCollection<Curve> Curves => _curves;

@@ -200,12 +200,18 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private Axis getXAxis(CurveChart chart)
       {
-         return chart.AxisBy(AxisTypes.X);
+         return chart.XAxis;
       }
 
       private Axis getYAxis(CurveChart chart)
       {
-         return chart.AxisBy(AxisTypes.Y);
+         return chart.YAxis;
+      }
+
+      private void setAxesCaptions(DataRepository observedData)
+      {
+         Chart.XAxis.Caption = observedData.BaseGrid.Name;
+         Chart.YAxis.Caption = observedData.AllButBaseGridAsArray.FirstOrDefault()?.Name;
       }
 
       private void addCurvesToChart(DataRepository observedData)
@@ -216,9 +222,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
             var curve = Chart.CreateCurve(c.BaseGrid, c, observedData.Name, _dimensionFactory);
 
             Chart.UpdateCurveColorAndStyle(curve, c, allObservations);
-
             Chart.AddCurve(curve);
          });
+
+         setAxesCaptions(observedData);
       }
    }
 }

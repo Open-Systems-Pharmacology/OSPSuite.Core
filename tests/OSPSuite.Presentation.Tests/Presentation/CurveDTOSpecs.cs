@@ -65,8 +65,8 @@ namespace OSPSuite.Presentation.Presentation
       protected override void InitializeChart()
       {
          base.InitializeChart();
-         _chart.AxisBy(AxisTypes.X).Dimension = _xDataColumn.Dimension;
-         _chart.AxisBy(AxisTypes.Y).Dimension = _yDataColumn.Dimension;
+         _chart.XAxis.Dimension = _xDataColumn.Dimension;
+         _chart.YAxis.Dimension = _yDataColumn.Dimension;
       }
 
       protected override void Context()
@@ -87,8 +87,8 @@ namespace OSPSuite.Presentation.Presentation
       protected override void InitializeChart()
       {
          base.InitializeChart();
-         _chart.AxisBy(AxisTypes.X).Dimension = _xDataColumn.Dimension;
-         _chart.AxisBy(AxisTypes.Y).Dimension = DomainHelperForSpecs.FractionDimensionForSpecs();
+         _chart.XAxis.Dimension = _xDataColumn.Dimension;
+         _chart.YAxis.Dimension = DomainHelperForSpecs.FractionDimensionForSpecs();
       }
 
       protected override void Context()
@@ -115,8 +115,8 @@ namespace OSPSuite.Presentation.Presentation
       protected override void InitializeChart()
       {
          base.InitializeChart();
-         _chart.AxisBy(AxisTypes.X).Dimension = DomainHelperForSpecs.FractionDimensionForSpecs();
-         _chart.AxisBy(AxisTypes.Y).Dimension = _yDataColumn.Dimension;
+         _chart.XAxis.Dimension = DomainHelperForSpecs.FractionDimensionForSpecs();
+         _chart.YAxis.Dimension = _yDataColumn.Dimension;
       }
 
       protected override void Context()
