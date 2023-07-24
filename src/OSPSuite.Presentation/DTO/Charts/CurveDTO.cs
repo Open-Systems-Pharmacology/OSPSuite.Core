@@ -94,7 +94,7 @@ namespace OSPSuite.Presentation.DTO.Charts
 
       private bool dataDimensionMatchesXAxis(DataColumn dataColumn)
       {
-         return dimensionsHaveSharedUnits(_chart.AxisBy(AxisTypes.X), dataColumn.Dimension);
+         return dimensionsHaveSharedUnits(_chart.XAxis, dataColumn.Dimension);
       }
 
       private bool dataDimensionMatchesYAxis(DataColumn dataColumn)

@@ -326,8 +326,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
             }
          });
 
-         Chart.AxisBy(AxisTypes.X).SetRange(xMin, xMax);
-         Chart.AxisBy(AxisTypes.Y).SetRange(yMin, yMax);
+         Chart.XAxis.SetRange(xMin, xMax);
+         Chart.YAxis.SetRange(yMin, yMax);
 
          RefreshAxisBinders();
       }

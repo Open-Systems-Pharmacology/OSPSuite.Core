@@ -53,7 +53,7 @@ namespace OSPSuite.Presentation.Presentation
       {
          _userSettings.DefaultChartYScaling = scale;
          _result = sut.CreateChartFor(_repository, Scalings.Log);
-         _result.AxisBy(AxisTypes.Y).Scaling.ShouldBeEqualTo(Scalings.Log);
+         _result.YAxis.Scaling.ShouldBeEqualTo(Scalings.Log);
       }
    }
 
@@ -65,7 +65,7 @@ namespace OSPSuite.Presentation.Presentation
       {
          _userSettings.DefaultChartYScaling = scale;
          _result = sut.CreateChartFor(_repository);
-         _result.AxisBy(AxisTypes.Y).Scaling.ShouldBeEqualTo(_userSettings.DefaultChartYScaling);
+         _result.YAxis.Scaling.ShouldBeEqualTo(_userSettings.DefaultChartYScaling);
       }
    }
 

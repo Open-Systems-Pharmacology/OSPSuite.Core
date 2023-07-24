@@ -53,9 +53,9 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
             curve.VisibleInLegend = false;
          });
 
-         Chart.AxisBy(AxisTypes.X).Caption = Captions.ParameterIdentification.NumberOfEvaluations;
-         Chart.AxisBy(AxisTypes.Y).Caption = Captions.ParameterIdentification.TotalError;
-         Chart.AxisBy(AxisTypes.Y).Scaling = Scalings.Linear;
+         Chart.XAxis.Caption = Captions.ParameterIdentification.NumberOfEvaluations;
+         Chart.YAxis.Caption = Captions.ParameterIdentification.TotalError;
+         Chart.YAxis.Scaling = Scalings.Linear;
       }
 
       protected void AddCurvesFor(DataRepository dataRepository, Action<DataColumn, Curve> action = null)

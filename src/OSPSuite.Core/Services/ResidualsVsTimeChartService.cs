@@ -110,8 +110,8 @@ namespace OSPSuite.Core.Services
 
       public void ConfigureChartAxis(AnalysisChartWithLocalRepositories chart)
       {
-         chart.AxisBy(AxisTypes.Y).Caption = Residuals;
-         chart.AxisBy(AxisTypes.Y).Scaling = Scalings.Linear;
+         chart.YAxis.Caption = Residuals;
+         chart.YAxis.Scaling = Scalings.Linear;
       }
 
       public DataRepository GetOrCreateScatterDataRepositoryInChart(AnalysisChartWithLocalRepositories chart, OutputResiduals outputResidual, int? runIndex = null)

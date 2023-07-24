@@ -74,11 +74,11 @@ namespace OSPSuite.Presentation.Presentation
          _curveChart.AddAxis(new Axis(AxisTypes.X) {Dimension = _curve.xDimension});
          _curveChart.AddAxis(new Axis(AxisTypes.Y) {Dimension = _curve.yDimension});
 
-         _xAxisBinder = createAxisBinderFor(_curveChart.AxisBy(AxisTypes.X));
-         _yAxisBinder = createAxisBinderFor(_curveChart.AxisBy(AxisTypes.Y));
+         _xAxisBinder = createAxisBinderFor(_curveChart.XAxis);
+         _yAxisBinder = createAxisBinderFor(_curveChart.YAxis);
 
-         A.CallTo(() => _axisBinderFactory.Create(_curveChart.AxisBy(AxisTypes.X), _chartDisplayView.ChartControl, _curveChart)).Returns(_xAxisBinder);
-         A.CallTo(() => _axisBinderFactory.Create(_curveChart.AxisBy(AxisTypes.Y), _chartDisplayView.ChartControl, _curveChart)).Returns(_yAxisBinder);
+         A.CallTo(() => _axisBinderFactory.Create(_curveChart.XAxis, _chartDisplayView.ChartControl, _curveChart)).Returns(_xAxisBinder);
+         A.CallTo(() => _axisBinderFactory.Create(_curveChart.YAxis, _chartDisplayView.ChartControl, _curveChart)).Returns(_yAxisBinder);
 
          SetupChart();
          sut.Edit(_curveChart);
@@ -148,8 +148,8 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void axis_returned_should_be_correct()
       {
-         _resultX.ShouldBeEqualTo(_curveChart.AxisBy(AxisTypes.X));
-         _resultY.ShouldBeEqualTo(_curveChart.AxisBy(AxisTypes.Y));
+         _resultX.ShouldBeEqualTo(_curveChart.XAxis);
+         _resultY.ShouldBeEqualTo(_curveChart.YAxis);
       }
    }
 

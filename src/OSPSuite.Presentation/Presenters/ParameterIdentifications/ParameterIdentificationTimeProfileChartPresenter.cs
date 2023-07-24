@@ -80,7 +80,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private void adjustAxes(DataColumn calculatedColumn)
       {
-         Chart.AxisBy(AxisTypes.Y).UnitName = _displayUnitRetriever.PreferredUnitFor(calculatedColumn).Name;
+         Chart.YAxis.UnitName = _displayUnitRetriever.PreferredUnitFor(calculatedColumn).Name;
       }
    }
 }
