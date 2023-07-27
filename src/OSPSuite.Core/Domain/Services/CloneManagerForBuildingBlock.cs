@@ -54,11 +54,6 @@ namespace OSPSuite.Core.Domain.Services
 
       public override T Clone<T>(T objectToClone)
       {
-         // CoreCalculationMethod is a special case, because it is a building block
-         // but manages the formula cache in its UpdateProperties method during clone
-         if (objectToClone is CoreCalculationMethod calculationMethod)
-            return Clone(calculationMethod, new FormulaCache()) as T;
-         
          if(objectToClone is IBuildingBlock buildingBlock)
             return cloneBuildingBlock(buildingBlock) as T;
          

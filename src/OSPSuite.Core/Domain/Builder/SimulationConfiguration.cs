@@ -53,7 +53,7 @@ namespace OSPSuite.Core.Domain.Builder
          ShowProgress = sourceConfiguration.ShowProgress;
          PerformCircularReferenceCheck = sourceConfiguration.PerformCircularReferenceCheck;
          sourceConfiguration.ExpressionProfiles.Each(x => AddExpressionProfile(cloneManager.Clone(x)));
-         sourceConfiguration.AllCalculationMethods.Each(x => AddCalculationMethod(cloneManager.Clone(x)));
+         sourceConfiguration.AllCalculationMethods.Each(AddCalculationMethod);
          sourceConfiguration.ModuleConfigurations.Each(x => AddModuleConfiguration(cloneManager.Clone(x)));
          SimulationSettings = cloneManager.Clone(sourceConfiguration.SimulationSettings);
          Individual = cloneManager.Clone(sourceConfiguration.Individual);
