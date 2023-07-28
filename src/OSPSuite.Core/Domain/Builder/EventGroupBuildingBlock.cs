@@ -6,7 +6,7 @@ namespace OSPSuite.Core.Domain.Builder
    {
       public EventGroupBuildingBlock()
       {
-         Icon = IconNames.EVENT_GROUP;
+         Icon = IconNames.EVENT;
       }
    }
 }

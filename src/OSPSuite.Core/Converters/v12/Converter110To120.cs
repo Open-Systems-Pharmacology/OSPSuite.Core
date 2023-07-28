@@ -46,7 +46,14 @@ namespace OSPSuite.Core.Converters.v12
          element.DescendantsAndSelfNamed("ParameterStartValue").Each(convertParameterStartValue);
          element.DescendantsAndSelfNamed("MoleculeStartValuesBuildingBlock").Each(convertMoleculeStartValuesBuildingBlock);
          element.DescendantsAndSelfNamed("ParameterStartValuesBuildingBlock").Each(convertParameterStartValuesBuildingBlock);
+         element.DescendantsAndSelfNamed("EventGroupBuildingBlock").Each(convertEventGroupBuildingBlock);
          return (PKMLVersion.V12_0, _converted);
+      }
+
+      private void convertEventGroupBuildingBlock(XElement eventGroupNode)
+      {
+         eventGroupNode.SetAttributeValue("icon", "Event");
+         _converted = true;
       }
 
       private void convertParameterStartValue(XElement element)
