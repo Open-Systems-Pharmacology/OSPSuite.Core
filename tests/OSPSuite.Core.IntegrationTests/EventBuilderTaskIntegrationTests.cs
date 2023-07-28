@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Castle.Components.DictionaryAdapter.Xml;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Converters.v12;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core
@@ -76,19 +77,26 @@ namespace OSPSuite.Core
    public class concern_for_Converter110To120 : ContextWithLoadedSimulation<Converter110To120>
    {
       private CreationResult _result;
+      private SimulationTransfer _simulationTransfer;
 
       protected override void Context()
       {
          base.Context();
-         var simulationTransfer = LoadPKMLFile("simulation_with_urine_emptying");
+         _simulationTransfer = LoadPKMLFile("simulation_with_urine_emptying");
          var modelConstructor = IoC.Resolve<IModelConstructor>();
-         _result = modelConstructor.CreateModelFrom(simulationTransfer.Simulation.Configuration, "simulation_with_urine_emptying");
+         _result = modelConstructor.CreateModelFrom(_simulationTransfer.Simulation.Configuration, "simulation_with_urine_emptying");
       }
 
       [Observation]
       public void all_parameter_values_have_only_formula_or_value_not_both()
       {
          _result.SimulationBuilder.ParameterValues.Where(x => x.Value.HasValue).All(x => x.Formula == null).ShouldBeTrue();
+      }
+
+      [Observation]
+      public void all_event_group_should_have_icon_name_changed()
+      {
+         _simulationTransfer.Simulation.Configuration.ModuleConfigurations.Select(x => x.BuildingBlock<EventGroupBuildingBlock>()).All(x => x.Icon == "Event").ShouldBeTrue();
       }
    }
 }

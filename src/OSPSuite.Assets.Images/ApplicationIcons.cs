@@ -496,9 +496,15 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ModuleExplorer = AddNamedIcon("ModuleExplorer"); // TODO add an icon svg file. Presently just a copy of BBExplorer svg
       public static readonly ApplicationIcon ModulesFolder = AddNamedIcon("ModulesFolder"); // TODO add icon svg file. Presently just a copy of Folder svg
       public static readonly ApplicationIcon Module = AddNamedIcon("Module"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
-      public static readonly ApplicationIcon PKSimModule = AddNamedIcon("PKSimModule"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
       public static readonly ApplicationIcon Neighborhood = AddNamedIcon("OSPSuite", "Neighborhood"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
       public static readonly ApplicationIcon Neighbor = AddNamedIcon("OSPSuite", "Neighbor"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
+      public static readonly ApplicationIcon TransporterRed = AddNamedIcon("TransporterRed", "TransporterRed");
+      public static readonly ApplicationIcon TransporterGreen = AddNamedIcon("TransporterGreen", "TransporterGreen");
+      public static readonly ApplicationIcon EnzymeRed = AddNamedIcon("EnzymeRed", "EnzymeRed");
+      public static readonly ApplicationIcon EnzymeGreen = AddNamedIcon("EnzymeGreen", "EnzymeGreen");
+      public static readonly ApplicationIcon ProteinRed = AddNamedIcon("ProteinRed", "ProteinRed");
+      public static readonly ApplicationIcon ProteinGreen = AddNamedIcon("ProteinGreen", "ProteinGreen");
+      
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
       private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((SvgImage) null);
