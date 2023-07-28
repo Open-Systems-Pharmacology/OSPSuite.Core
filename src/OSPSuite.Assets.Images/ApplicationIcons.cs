@@ -498,12 +498,12 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon Module = AddNamedIcon("Module"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
       public static readonly ApplicationIcon Neighborhood = AddNamedIcon("OSPSuite", "Neighborhood"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
       public static readonly ApplicationIcon Neighbor = AddNamedIcon("OSPSuite", "Neighbor"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
-      public static readonly ApplicationIcon TransporterRed = AddNamedIcon("TransporterRed", "TransporterRed"); // TODO add icon svg file. Presently just a copy of Transporter svg
-      public static readonly ApplicationIcon TransporterGreen = AddNamedIcon("TransporterGreen", "TransporterGreen"); // TODO add icon svg file. Presently just a copy of Transporter svg
-      public static readonly ApplicationIcon EnzymeRed = AddNamedIcon("EnzymeRed", "EnzymeRed"); // TODO add icon svg file. Presently just a copy of Enzyme svg
-      public static readonly ApplicationIcon EnzymeGreen = AddNamedIcon("EnzymeGreen", "EnzymeGreen"); // TODO add icon svg file. Presently just a copy of Enzyme svg
-      public static readonly ApplicationIcon ProteinRed = AddNamedIcon("ProteinRed", "ProteinRed"); // TODO add icon svg file. Presently just a copy of Protein svg
-      public static readonly ApplicationIcon ProteinGreen = AddNamedIcon("ProteinGreen", "ProteinGreen"); // TODO add icon svg file. Presently just a copy of Protein svg
+      public static readonly ApplicationIcon TransporterRed = AddNamedIcon("TransporterRed", "TransporterRed");
+      public static readonly ApplicationIcon TransporterGreen = AddNamedIcon("TransporterGreen", "TransporterGreen");
+      public static readonly ApplicationIcon EnzymeRed = AddNamedIcon("EnzymeRed", "EnzymeRed");
+      public static readonly ApplicationIcon EnzymeGreen = AddNamedIcon("EnzymeGreen", "EnzymeGreen");
+      public static readonly ApplicationIcon ProteinRed = AddNamedIcon("ProteinRed", "ProteinRed");
+      public static readonly ApplicationIcon ProteinGreen = AddNamedIcon("ProteinGreen", "ProteinGreen");
       
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
