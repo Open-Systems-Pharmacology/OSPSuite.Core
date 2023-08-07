@@ -8,6 +8,7 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Import;
 using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Serializer.Xml.Extensions;
 using OSPSuite.Utility.Exceptions;
@@ -164,7 +165,8 @@ namespace OSPSuite.Core.Serialization.Xml
                   entityToSerialize.IsAnImplementationOf<IModelCoreSimulation>() ||
                   entityToSerialize.IsAnImplementationOf<SimulationConfiguration>() ||
                   entityToSerialize.IsAnImplementationOf<IModel>() ||
-                  entityToSerialize.IsAnImplementationOf<DataRepository>());
+                  entityToSerialize.IsAnImplementationOf<DataRepository>() || 
+                  entityToSerialize.IsAnImplementationOf<ImporterConfiguration>());
       }
 
       private XElement serializeFormulas(IFormulaCache formulas, SerializationContext serializationContext)
