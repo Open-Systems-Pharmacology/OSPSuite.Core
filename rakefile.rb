@@ -25,14 +25,6 @@ task :cover do
 	
 	Coverage.cover(filter, targetProjects)
 end
-  
-task :copy_to_pksim do
-  copy_to_app '../PK-Sim/src/PKSim/bin/Debug/net472'
-end
-
-task :copy_to_mobi do
-  copy_to_app '../MoBi/src/MoBi/bin/Debug/net472'
-end
 
 task :create_local_nuget, [:arg1, :arg2, :arg3] do |t, args|
   FileUtils.rm_f Dir.glob("./nuget_repo/*.nupkg")
@@ -103,17 +95,6 @@ end
 def generate_code(number)
   charset = Array('A'..'Z') + Array('a'..'z')
   Array.new(number) { charset.sample }.join
-end
-
-def copy_to_app(app_target_relative_path)
-  app_target_path = File.join(solution_dir, app_target_relative_path)
-  source_dir = File.join(tests_dir, 'OSPSuite.Starter', 'bin', 'Debug', "net472")
-
-  copy_dependencies source_dir,  app_target_path do
-    copy_file 'OSPSuite.*.dll'
-    copy_file 'OSPSuite.*.pdb'
-end
-
 end
 
 def solution_dir
