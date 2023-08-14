@@ -48,15 +48,20 @@ namespace OSPSuite.Core.Domain.Builder
          if (!(source is SimulationConfiguration sourceConfiguration))
             return;
 
-         SimModelExportMode = sourceConfiguration.SimModelExportMode;
-         ShouldValidate = sourceConfiguration.ShouldValidate;
-         ShowProgress = sourceConfiguration.ShowProgress;
-         PerformCircularReferenceCheck = sourceConfiguration.PerformCircularReferenceCheck;
+         CopyPropertiesFrom(sourceConfiguration);
          sourceConfiguration.ExpressionProfiles.Each(x => AddExpressionProfile(cloneManager.Clone(x)));
          sourceConfiguration.AllCalculationMethods.Each(AddCalculationMethod);
          sourceConfiguration.ModuleConfigurations.Each(x => AddModuleConfiguration(cloneManager.Clone(x)));
          SimulationSettings = cloneManager.Clone(sourceConfiguration.SimulationSettings);
          Individual = cloneManager.Clone(sourceConfiguration.Individual);
+      }
+
+      public void CopyPropertiesFrom(SimulationConfiguration sourceConfiguration)
+      {
+         SimModelExportMode = sourceConfiguration.SimModelExportMode;
+         ShouldValidate = sourceConfiguration.ShouldValidate;
+         ShowProgress = sourceConfiguration.ShowProgress;
+         PerformCircularReferenceCheck = sourceConfiguration.PerformCircularReferenceCheck;
       }
    }
 }
