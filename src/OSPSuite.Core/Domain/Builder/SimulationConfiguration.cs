@@ -56,6 +56,11 @@ namespace OSPSuite.Core.Domain.Builder
          Individual = cloneManager.Clone(sourceConfiguration.Individual);
       }
 
+      /// <summary>
+      /// Copies the properties from <paramref name="sourceConfiguration"/> but does not clone any of the building blocks
+      /// or module configurations.
+      /// </summary>
+      /// <param name="sourceConfiguration"></param>
       public void CopyPropertiesFrom(SimulationConfiguration sourceConfiguration)
       {
          SimModelExportMode = sourceConfiguration.SimModelExportMode;
