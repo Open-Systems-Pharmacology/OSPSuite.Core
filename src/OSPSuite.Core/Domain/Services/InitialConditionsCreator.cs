@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
@@ -38,6 +39,8 @@ namespace OSPSuite.Core.Domain.Services
       ///   If supplied, the <paramref name="defaultStartFormula" /> will be used as the formula for the initial condition.
       /// </summary>
       InitialCondition CreateInitialCondition(IEntity container, MoleculeBuilder molecule, IFormula defaultStartFormula = null);
+
+      InitialCondition CreateInitialCondition(ObjectPath moleculeAmountPath, MoleculeAmount moleculeAmount);
    }
 
    internal class InitialConditionsCreator : IInitialConditionsCreator
@@ -75,7 +78,18 @@ namespace OSPSuite.Core.Domain.Services
          setInitialConditionFormula(defaultStartFormula ?? molecule.DefaultStartFormula, initialCondition, formula => formula);
          return initialCondition;
       }
-      
+
+      public InitialCondition CreateInitialCondition(ObjectPath moleculeAmountPath, MoleculeAmount moleculeAmount)
+      {
+         var containerPath = moleculeAmountPath.Clone<ObjectPath>();
+         containerPath.RemoveAt(containerPath.Count - 1);
+
+         var initialCondition = CreateInitialCondition(containerPath, moleculeAmountPath.Last(), moleculeAmount.Dimension, moleculeAmount.DisplayUnit, moleculeAmount.ValueOrigin);
+         initialCondition.Value = moleculeAmount.Value;
+         initialCondition.ScaleDivisor = moleculeAmount.ScaleDivisor;
+         return initialCondition;
+      }
+
       private InitialCondition createInitialConditionForBuildingBlock(IBuildingBlock initialConditionsBuildingBlock, IEntity container, MoleculeBuilder molecule)
       {
          var initialCondition = createInitialConditionWithValue(container, molecule);
