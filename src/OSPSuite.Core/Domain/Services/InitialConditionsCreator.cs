@@ -40,6 +40,10 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       InitialCondition CreateInitialCondition(IEntity container, MoleculeBuilder molecule, IFormula defaultStartFormula = null);
 
+      /// <summary>
+      ///   Creates a new initial conditions with <paramref name="moleculeAmountPath"/> using properties from the <paramref name="moleculeAmount"/>
+      /// </summary>
+      /// <returns></returns>
       InitialCondition CreateInitialCondition(ObjectPath moleculeAmountPath, MoleculeAmount moleculeAmount);
    }
 
