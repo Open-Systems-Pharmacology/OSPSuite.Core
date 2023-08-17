@@ -92,6 +92,36 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   internal class When_creating_initial_conditions_from_molecule_amount : concern_for_InitialConditionsCreator
+   {
+      private InitialCondition _initialCondition;
+      private MoleculeAmount _moleculeAmount;
+      private ObjectPath _amountPath;
+
+      protected override void Context()
+      {
+         base.Context();
+         _moleculeAmount = new MoleculeAmount().WithName("moleculeName").WithDimension(Constants.Dimension.NO_DIMENSION);
+         _moleculeAmount.Value = 10;
+         _moleculeAmount.ScaleDivisor = 4;
+         _amountPath = new ObjectPath("the", "path");
+      }
+
+      protected override void Because()
+      {
+         _initialCondition = sut.CreateInitialCondition(_amountPath, _moleculeAmount);
+      }
+
+      [Observation]
+      public void the_properties_of_initial_condition_should_be_taken_from_the_molecule_amount()
+      {
+         _initialCondition.Path.ToString().ShouldBeEqualTo(_amountPath);
+         _initialCondition.ScaleDivisor.ShouldBeEqualTo(_moleculeAmount.ScaleDivisor);
+         _initialCondition.Value.ShouldBeEqualTo(_moleculeAmount.Value);
+         _initialCondition.Dimension.ShouldBeEqualTo(_moleculeAmount.Dimension);
+      }
+   }
+
    internal class when_adding_initial_conditions_to_expression_profile : concern_for_InitialConditionsCreator
    {
       private MoleculeBuilder _molecule;
