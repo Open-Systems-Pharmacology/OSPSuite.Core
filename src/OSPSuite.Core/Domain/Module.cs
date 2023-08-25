@@ -32,6 +32,26 @@ namespace OSPSuite.Core.Domain
 
       public virtual ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
+      public string Version => versionCalculation(BuildingBlocks);
+
+      public string VersionWith(ParameterValuesBuildingBlock selectedParameterValues, InitialConditionsBuildingBlock selectedInitialConditions)
+      {
+         var buildingBlocks = BuildingBlocks.Where(isSingle).ToList();
+         
+         if(selectedParameterValues != null)
+            buildingBlocks.Add(selectedParameterValues);
+
+         if (selectedInitialConditions != null)
+            buildingBlocks.Add(selectedInitialConditions);
+
+         return versionCalculation(buildingBlocks);
+      }
+
+      private string versionCalculation(IEnumerable<IBuildingBlock> buildingBlocks)
+      {
+         return string.Join("", buildingBlocks.Select(x => x.Version.ToString()).ToArray()).GetHashCode().ToString();
+      }
+
       public Module()
       {
          Icon = IconNames.Module;
