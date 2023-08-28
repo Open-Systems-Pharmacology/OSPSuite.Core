@@ -175,7 +175,7 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _buildingBlock = new ReactionBuildingBlock();
-         sut = new Module {_buildingBlock};
+         sut = new Module { _buildingBlock };
       }
 
       [Observation]
@@ -215,6 +215,34 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_building_blocks_with_same_version_but_different_types_should_give_different_version : concern_for_Module
+   {
+      private string _initialVersion;
+
+      protected override void Context()
+      {
+         var initialConditionsBuildingBlock = new InitialConditionsBuildingBlock { Version = 1 };
+         sut = new Module
+         {
+            initialConditionsBuildingBlock
+         };
+
+         _initialVersion = sut.Version;
+
+         sut.Remove(initialConditionsBuildingBlock);
+      }
+
+      protected override void Because()
+      {
+         sut.Add(new MoleculeBuildingBlock { Version = 1 });
+      }
+
+      [Observation]
+      public void the_version_should_not_match()
+      {
+         sut.Version.ShouldNotBeEqualTo(_initialVersion);
+      }
+   }
 
    public class When_adding_a_building_block : concern_for_Module
    {
@@ -243,7 +271,7 @@ namespace OSPSuite.Core.Domain
          sut.Version.ShouldNotBeEqualTo(_preAddVersion);
       }
    }
-   
+
    public class When_calculating_a_context_specific_version_for_a_module : concern_for_Module
    {
       private InitialConditionsBuildingBlock _initialConditionsBuildingBlock;

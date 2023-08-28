@@ -49,7 +49,12 @@ namespace OSPSuite.Core.Domain
 
       private string versionCalculation(IEnumerable<IBuildingBlock> buildingBlocks)
       {
-         return string.Join("", buildingBlocks.Select(x => x.Version.ToString()).ToArray()).GetHashCode().ToString();
+         return string.Join(string.Empty, buildingBlocks.Select(typedVersionFor).ToArray()).GetHashCode().ToString();
+      }
+
+      private static string typedVersionFor(IBuildingBlock x)
+      {
+         return x.GetType() + x.Version.ToString();
       }
 
       public Module()
