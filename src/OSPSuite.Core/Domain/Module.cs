@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain
 
       private static string typedVersionFor(IBuildingBlock x)
       {
-         return x.GetType() + x.Version.ToString();
+         return $"{x.GetType()}{x.Version}";
       }
 
       public Module()
