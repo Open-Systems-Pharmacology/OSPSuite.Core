@@ -175,13 +175,132 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _buildingBlock = new ReactionBuildingBlock();
-         sut = new Module {_buildingBlock};
+         sut = new Module { _buildingBlock };
       }
 
       [Observation]
       public void should_throw_an_exception()
       {
          The.Action(() => sut.Add(new ReactionBuildingBlock())).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
+   public class When_removing_a_building_block : concern_for_Module
+   {
+      private string _preAddVersion;
+      private InitialConditionsBuildingBlock _initialConditionsBuildingBlock;
+
+      protected override void Context()
+      {
+         _initialConditionsBuildingBlock = new InitialConditionsBuildingBlock();
+         sut = new Module
+         {
+            _initialConditionsBuildingBlock,
+            new ParameterValuesBuildingBlock(),
+            new EventGroupBuildingBlock()
+         };
+
+         _preAddVersion = sut.Version;
+      }
+
+      protected override void Because()
+      {
+         sut.Remove(_initialConditionsBuildingBlock);
+      }
+
+      [Observation]
+      public void the_version_should_not_match()
+      {
+         sut.Version.ShouldNotBeEqualTo(_preAddVersion);
+      }
+   }
+
+   public class When_building_blocks_with_same_version_but_different_types_should_give_different_version : concern_for_Module
+   {
+      private string _initialVersion;
+
+      protected override void Context()
+      {
+         var initialConditionsBuildingBlock = new InitialConditionsBuildingBlock { Version = 1 };
+         sut = new Module
+         {
+            initialConditionsBuildingBlock
+         };
+
+         _initialVersion = sut.Version;
+
+         sut.Remove(initialConditionsBuildingBlock);
+      }
+
+      protected override void Because()
+      {
+         sut.Add(new MoleculeBuildingBlock { Version = 1 });
+      }
+
+      [Observation]
+      public void the_version_should_not_match()
+      {
+         sut.Version.ShouldNotBeEqualTo(_initialVersion);
+      }
+   }
+
+   public class When_adding_a_building_block : concern_for_Module
+   {
+      private string _preAddVersion;
+
+      protected override void Context()
+      {
+         sut = new Module
+         {
+            new InitialConditionsBuildingBlock(),
+            new ParameterValuesBuildingBlock(),
+            new EventGroupBuildingBlock()
+         };
+
+         _preAddVersion = sut.Version;
+      }
+
+      protected override void Because()
+      {
+         sut.Add(new MoleculeBuildingBlock());
+      }
+
+      [Observation]
+      public void the_version_should_not_match()
+      {
+         sut.Version.ShouldNotBeEqualTo(_preAddVersion);
+      }
+   }
+
+   public class When_calculating_a_context_specific_version_for_a_module : concern_for_Module
+   {
+      private InitialConditionsBuildingBlock _initialConditionsBuildingBlock;
+      private ParameterValuesBuildingBlock _parameterValuesBuildingBlock;
+      private string _originalVersion;
+
+      protected override void Context()
+      {
+         _initialConditionsBuildingBlock = new InitialConditionsBuildingBlock();
+         _parameterValuesBuildingBlock = new ParameterValuesBuildingBlock();
+         sut = new Module
+         {
+            _initialConditionsBuildingBlock,
+            _parameterValuesBuildingBlock,
+            new EventGroupBuildingBlock()
+         };
+         _originalVersion = sut.VersionWith(_parameterValuesBuildingBlock, _initialConditionsBuildingBlock);
+      }
+
+      protected override void Because()
+      {
+         sut.Add(new InitialConditionsBuildingBlock());
+         sut.Add(new ParameterValuesBuildingBlock());
+      }
+
+      [Observation]
+      public void the_context_specific_version_should_match_the_original_context_specific_version()
+      {
+         sut.VersionWith(_parameterValuesBuildingBlock, _initialConditionsBuildingBlock).ShouldBeEqualTo(_originalVersion);
       }
    }
 }
