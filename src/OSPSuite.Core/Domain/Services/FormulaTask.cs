@@ -37,6 +37,16 @@ namespace OSPSuite.Core.Domain.Services
       void ExpandNeighborhoodReferencesIn(IModel model);
 
       /// <summary>
+      ///    Ensures that all object paths referencing lumen segments are expanded
+      /// </summary>
+      void ExpandLumenSegmentReferencesIn(IModel model);
+
+      /// <summary>
+      ///    Expands all dynamic references defined in <paramref name="model" />
+      /// </summary>
+      void ExpandDynamicReferencesIn(IModel model);
+
+      /// <summary>
       ///    Resolves all dynamic formulas defined in <paramref name="model" />
       /// </summary>
       void ExpandDynamicFormulaIn(IModel model);
@@ -149,6 +159,12 @@ namespace OSPSuite.Core.Domain.Services
          return true;
       }
 
+      public void ExpandDynamicReferencesIn(IModel model)
+      {
+         ExpandNeighborhoodReferencesIn(model);
+         ExpandLumenSegmentReferencesIn(model);
+      }
+
       public void ExpandNeighborhoodReferencesIn(IModel model)
       {
          void updatePath(IUsingFormula usingFormula, FormulaUsablePath path) => updateNeighborhoodReferencingPath(model, path, usingFormula);
@@ -188,6 +204,34 @@ namespace OSPSuite.Core.Domain.Services
          var neighborhoodPath = _objectPathFactory.CreateAbsoluteObjectPath(neighborhoodsBetweenContainer1AndContainer2[0]);
          restOfPath.Each(neighborhoodPath.Add);
          formulaUsablePath.ReplaceWith(neighborhoodPath);
+      }
+
+      public void ExpandLumenSegmentReferencesIn(IModel model)
+      {
+         model.Root.GetAllChildren<IUsingFormula>(x => x.Formula.IsReferencingLumenSegment())
+            .Each(x => x.Formula.ObjectPaths.Each(path => updateLumenSegmentReferencingPath(path, x)));
+      }
+
+      private void updateLumenSegmentReferencingPath(FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula)
+      {
+         var pathAsList = formulaUsablePath.ToList();
+         var firstIndex = pathAsList.FindIndex(x => x == LUMEN_SEGMENT);
+         var lastIndex = pathAsList.FindLastIndex(x => x == LUMEN_SEGMENT);
+         if (firstIndex == 0)
+            throw new OSPSuiteException(Error.KeywordCannotBeInFirstPosition(LUMEN_SEGMENT, formulaUsablePath.ToPathString()));
+
+         if (firstIndex != lastIndex)
+            throw new OSPSuiteException(Error.KeywordCanOnlyBeUsedOnce(LUMEN_SEGMENT, formulaUsablePath.ToPathString()));
+
+         //let's get the path BEFORE the LUMEN_SEGMENT and update the formula path accordingly
+         var pathToContainer = pathAsList.Take(firstIndex).ToList();
+         var container = getContainerOrThrow(pathToContainer, usingFormula);
+         //This will need to be saved and added back to the path once we have figured out the actual neighborhood path
+         var restOfPath = pathAsList.Skip(lastIndex + 1).ToList();
+
+         var lumenSegmentPath = _objectPathFactory.CreateObjectPathFrom(ORGANISM, LUMEN, container.Name);
+         restOfPath.Each(lumenSegmentPath.Add);
+         formulaUsablePath.ReplaceWith(lumenSegmentPath);
       }
 
       private IContainer getContainerOrThrow(IReadOnlyList<string> path, IUsingFormula usingFormula)
@@ -238,7 +282,7 @@ namespace OSPSuite.Core.Domain.Services
 
          //add to the formula the link to parent. We use the consolidated path here so that we do not deal with the root container as criteria
          var parentPath = _entityPathResolver.PathFor(parent).ToPathArray();
-         parentPath.Each(x=> modifiedCriteria.Add(new InContainerCondition(x)));
+         parentPath.Each(x => modifiedCriteria.Add(new InContainerCondition(x)));
          return modifiedCriteria;
       }
 

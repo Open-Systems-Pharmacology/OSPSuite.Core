@@ -65,7 +65,7 @@ namespace OSPSuite.Core.Domain.Services
          FormulaCache = formulaCache ?? throw new ArgumentNullException(Error.NullFormulaCachePassedToClone);
 
          return base.Clone(objectToClone);
-      }
+      }  
 
       public IFormulaCache FormulaCache
       {

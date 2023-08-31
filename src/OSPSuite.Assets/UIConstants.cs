@@ -2,6 +2,7 @@
 using OSPSuite.Utility.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -1762,6 +1763,10 @@ namespace OSPSuite.Assets
       public static string SecondNeighborNotDefinedFor(string neighborhoodName) => $"Second neighbor is undefined for neighborhood '{neighborhoodName}'";
 
       public const string InParentTagCanOnlyBeUsedWithAndOperator = "IN PARENT tag can only be used with AND operator";
+
+      public static string KeywordCannotBeInFirstPosition(string keyword, string path) => $"Keyword '{keyword}' cannot be used in first position in '{path}'";
+
+      public static string KeywordCanOnlyBeUsedOnce(string keyword, string path) => $"Keyword '{keyword}' can only be used once in '{path}'";
 
       public static class SensitivityAnalysis
       {

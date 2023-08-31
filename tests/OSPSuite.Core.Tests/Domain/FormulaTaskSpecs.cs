@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain
          _aliasCreator = new AliasCreator();
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _entityPathResolver = new EntityPathResolverForSpecs();
-         sut = new FormulaTask(_objectPathFactory, _objectBaseFactory, _aliasCreator, _dimensionFactory,_entityPathResolver);
+         sut = new FormulaTask(_objectPathFactory, _objectBaseFactory, _aliasCreator, _dimensionFactory, _entityPathResolver);
       }
    }
 
@@ -304,7 +304,7 @@ namespace OSPSuite.Core.Domain
       {
          sut.ExpandDynamicFormulaIn(_model);
       }
-         
+
       [Observation]
       public void should_replace_all_dynamic_formula_with_the_corresponding_explicit_formula()
       {
@@ -356,7 +356,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_throw_an_exception()
       {
-        The.Action(() => sut.ExpandDynamicFormulaIn(_model)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.ExpandDynamicFormulaIn(_model)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -402,7 +402,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.ExpandNeighborhoodReferencesIn(_model);
+         sut.ExpandDynamicReferencesIn(_model);
       }
 
       [Observation]
@@ -448,14 +448,14 @@ namespace OSPSuite.Core.Domain
          _rootContainer.Add(_liver);
          _liverCellParameter.Formula = new ExplicitFormula("K+10");
          //..|<NBH>|..|..|Interstitial|<NBH>|K_<==_does_not_exist_in_the_model
-         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, NBH, PARENT_CONTAINER, PARENT_CONTAINER, "Interstitial", NBH, _neighborhoodParameter.Name) { Alias = "K" };
+         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, NBH, PARENT_CONTAINER, PARENT_CONTAINER, "Interstitial", NBH, _neighborhoodParameter.Name) {Alias = "K"};
          _liverCellParameter.Formula.AddObjectPath(_objectPath);
       }
 
       [Observation]
-      public void should_have_replaced_the_nbh_with_the_actual_path_to_the_neighborhood()
+      public void should_throw_an_exception()
       {
-         The.Action(() => sut.ExpandNeighborhoodReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.ExpandDynamicReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -489,14 +489,204 @@ namespace OSPSuite.Core.Domain
          _rootContainer.Add(_liver);
          _liverCellParameter.Formula = new ExplicitFormula("K+10");
          //..|<NBH>|..|..|Plasma|<NBH>|K_<==_does_not_exist_in_the_model
-         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, NBH, PARENT_CONTAINER, PARENT_CONTAINER, "Plasma", NBH, _neighborhoodParameter.Name) { Alias = "K" };
+         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, NBH, PARENT_CONTAINER, PARENT_CONTAINER, "Plasma", NBH, _neighborhoodParameter.Name) {Alias = "K"};
          _liverCellParameter.Formula.AddObjectPath(_objectPath);
       }
 
       [Observation]
-      public void should_have_replaced_the_nbh_with_the_actual_path_to_the_neighborhood()
+      public void should_throw_an_exception()
       {
-         The.Action(() => sut.ExpandNeighborhoodReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.ExpandDynamicReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
+   public abstract class concern_for_lumen_segment_path_resolution : concern_for_FormulaTask
+   {
+      protected FormulaUsablePath _objectPath;
+      protected Container _smallIntestine;
+      protected Model _model;
+      protected Container _mucosa;
+      protected Container _duodenumMucosa;
+      protected Container _organism;
+      protected Container _lumen;
+      protected Container _duodenumLumen;
+      protected IParameter _volumeDuodenumLumen;
+      protected Container _duodenumMucosaIntracellular;
+
+      protected override void Context()
+      {
+         base.Context();
+         _model = new Model();
+         _organism = new Container().WithName(ORGANISM);
+         _smallIntestine = new Container().WithName("SmallIntestine").Under(_organism);
+         _mucosa = new Container().WithName("Mucosa").Under(_smallIntestine);
+         _duodenumMucosa = new Container().WithName("Duodenum").Under(_mucosa);
+         _duodenumMucosaIntracellular = new Container().WithName("Intracellular").Under(_duodenumMucosa);
+
+         _lumen = new Container().WithName(LUMEN).Under(_organism);
+         _duodenumLumen = new Container().WithName("Duodenum").Under(_lumen);
+         _volumeDuodenumLumen = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName(VOLUME).Under(_duodenumLumen);
+
+         _model.Root = _organism;
+      }
+   }
+
+   public class When_replacing_the_lumen_segment_keyword_in_a_well_defined_absolute_path : concern_for_lumen_segment_path_resolution
+   {
+      protected Parameter _parameterReferencingAbsoluteLumenSegment;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         _parameterReferencingAbsoluteLumenSegment = new Parameter().WithName("P").WithParentContainer(_organism);
+         _parameterReferencingAbsoluteLumenSegment.Formula = new ExplicitFormula("V+10");
+         //Organism|SmallIntestine|Mucosa|Duodenum|LumenSegment|V
+         _objectPath = new FormulaUsablePath(ORGANISM, _smallIntestine.Name, _mucosa.Name, _duodenumMucosa.Name, LUMEN_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
+         _parameterReferencingAbsoluteLumenSegment.Formula.AddObjectPath(_objectPath);
+      }
+
+      protected override void Because()
+      {
+         sut.ExpandLumenSegmentReferencesIn(_model);
+      }
+
+      [Observation]
+      public void should_have_replaced_the_lumen_segment_with_the_actual_path_to_the_lumen_segment()
+      {
+         _parameterReferencingAbsoluteLumenSegment.Value.ShouldBeEqualTo(20);
+      }
+   }
+
+   public class When_replacing_the_lumen_segment_keyword_in_a_well_defined_relative_path : concern_for_lumen_segment_path_resolution
+   {
+      protected Parameter _parameterReferencingRelativeLumenSegment;
+
+      protected override void Context()
+      {
+         base.Context();
+
+
+         _parameterReferencingRelativeLumenSegment = new Parameter().WithName("P").WithParentContainer(_duodenumMucosaIntracellular);
+         _parameterReferencingRelativeLumenSegment.Formula = new ExplicitFormula("V+10");
+         //..|..|LumenSegment|V
+         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, PARENT_CONTAINER, LUMEN_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
+         _parameterReferencingRelativeLumenSegment.Formula.AddObjectPath(_objectPath);
+      }
+
+      protected override void Because()
+      {
+         sut.ExpandLumenSegmentReferencesIn(_model);
+      }
+
+      [Observation]
+      public void should_have_replaced_the_lumen_segment_with_the_actual_path_to_the_lumen_segment()
+      {
+         _parameterReferencingRelativeLumenSegment.Value.ShouldBeEqualTo(20);
+      }
+   }
+
+   public class When_replacing_the_lumen_segment_keyword_in_using_a_relative_path_to_a_container_that_does_not_exist_in_lumen : concern_for_lumen_segment_path_resolution
+   {
+      protected Parameter _parameterReferencingRelativeLumenSegment;
+
+      protected override void Context()
+      {
+         base.Context();
+         //we put the parameter in smallIntestine and the path will be looking for this
+         _parameterReferencingRelativeLumenSegment = new Parameter().WithName("P").WithParentContainer(_smallIntestine);
+         _parameterReferencingRelativeLumenSegment.Formula = new ExplicitFormula("V+10");
+         //..|LumenSegment|V which will be SmallIntestine|LumenSegment which will become Organism|Lumen|SmallIntestine which does not exist in our context
+         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, LUMEN_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
+         _parameterReferencingRelativeLumenSegment.Formula.AddObjectPath(_objectPath);
+      }
+
+      protected override void Because()
+      {
+         sut.ExpandLumenSegmentReferencesIn(_model);
+      }
+
+      [Observation]
+      public void evaluating_the_formula_should_throw_an_exception()
+      {
+         The.Action(() =>
+         {
+            var x = _parameterReferencingRelativeLumenSegment.Value;
+         }).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
+   public class When_replacing_the_lumen_segment_keyword_in_using_absolute_path_to_a_container_that_does_not_exist_in_lumen : concern_for_lumen_segment_path_resolution
+   {
+      protected Parameter _parameterReferencingAbsoluteLumenSegment;
+
+      protected override void Context()
+      {
+         base.Context();
+         //we put the parameter in smallIntestine and the path will be looking for this
+         _parameterReferencingAbsoluteLumenSegment = new Parameter().WithName("P").WithParentContainer(_smallIntestine);
+         _parameterReferencingAbsoluteLumenSegment.Formula = new ExplicitFormula("V+10");
+         //..|LumenSegment|V which will be SmallIntestine|LumenSegment which will become Organism|Lumen|SmallIntestine which does not exist in our context
+         _objectPath = new FormulaUsablePath(ORGANISM, _smallIntestine.Name, LUMEN_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
+         _parameterReferencingAbsoluteLumenSegment.Formula.AddObjectPath(_objectPath);
+      }
+
+      protected override void Because()
+      {
+         sut.ExpandLumenSegmentReferencesIn(_model);
+      }
+
+      [Observation]
+      public void evaluating_the_formula_should_throw_an_exception()
+      {
+         The.Action(() =>
+         {
+            var x = _parameterReferencingAbsoluteLumenSegment.Value;
+         }).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
+   public class When_using_the_lumen_segment_keyword_in_path_multiple_times : concern_for_lumen_segment_path_resolution
+   {
+      protected Parameter _parameterReferencingAbsoluteLumenSegment;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         _parameterReferencingAbsoluteLumenSegment = new Parameter().WithName("P").WithParentContainer(_organism);
+         _parameterReferencingAbsoluteLumenSegment.Formula = new ExplicitFormula("V+10");
+         //Organism|SmallIntestine|Mucosa|Duodenum|LumenSegment|V
+         _objectPath = new FormulaUsablePath(ORGANISM, _smallIntestine.Name, LUMEN_SEGMENT, _duodenumMucosa.Name, LUMEN_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
+         _parameterReferencingAbsoluteLumenSegment.Formula.AddObjectPath(_objectPath);
+      }
+
+      [Observation]
+      public void should_throw_an_exception()
+      {
+         The.Action(() => sut.ExpandLumenSegmentReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
+   public class When_using_the_lumen_segment_keyword_at_the_beginning_of_a_path : concern_for_lumen_segment_path_resolution
+   {
+      protected Parameter _parameterReferencingAbsoluteLumenSegment;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         _parameterReferencingAbsoluteLumenSegment = new Parameter().WithName("P").WithParentContainer(_organism);
+         _parameterReferencingAbsoluteLumenSegment.Formula = new ExplicitFormula("V+10");
+         //Organism|SmallIntestine|Mucosa|Duodenum|LumenSegment|V
+         _objectPath = new FormulaUsablePath(LUMEN_SEGMENT, _smallIntestine.Name, _volumeDuodenumLumen.Name) {Alias = "V"};
+         _parameterReferencingAbsoluteLumenSegment.Formula.AddObjectPath(_objectPath);
+      }
+
+      [Observation]
+      public void should_throw_an_exception()
+      {
+         The.Action(() => sut.ExpandLumenSegmentReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
