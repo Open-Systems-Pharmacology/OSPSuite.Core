@@ -32,16 +32,6 @@ namespace OSPSuite.Core.Domain.Services
       bool FormulasAreTheSame(IFormula firstFormula, IFormula secondFormula);
 
       /// <summary>
-      ///    Ensures that all object paths referencing neighborhoods between containers are expanded
-      /// </summary>
-      void ExpandNeighborhoodReferencesIn(IModel model);
-
-      /// <summary>
-      ///    Ensures that all object paths referencing lumen segments are expanded
-      /// </summary>
-      void ExpandLumenSegmentReferencesIn(IModel model);
-
-      /// <summary>
       ///    Expands all dynamic references defined in <paramref name="model" />
       /// </summary>
       void ExpandDynamicReferencesIn(IModel model);
@@ -165,7 +155,11 @@ namespace OSPSuite.Core.Domain.Services
          ExpandLumenSegmentReferencesIn(model);
       }
 
-      public void ExpandNeighborhoodReferencesIn(IModel model)
+      /// <summary>
+      ///    Ensures that all object paths referencing neighborhoods between containers are expanded
+      /// </summary>
+      /// <remarks>Internal for testing</remarks>
+      internal void ExpandNeighborhoodReferencesIn(IModel model)
       {
          void updatePath(IUsingFormula usingFormula, FormulaUsablePath path) => updateNeighborhoodReferencingPath(model, path, usingFormula);
 
@@ -206,7 +200,11 @@ namespace OSPSuite.Core.Domain.Services
          formulaUsablePath.ReplaceWith(neighborhoodPath);
       }
 
-      public void ExpandLumenSegmentReferencesIn(IModel model)
+      /// <summary>
+      ///    Ensures that all object paths referencing lumen segments are expanded
+      /// </summary>
+      /// <remarks>Internal for testing</remarks>
+      internal void ExpandLumenSegmentReferencesIn(IModel model)
       {
          model.Root.GetAllChildren<IUsingFormula>(x => x.Formula.IsReferencingLumenSegment())
             .Each(x => x.Formula.ObjectPaths.Each(path => updateLumenSegmentReferencingPath(path, x)));

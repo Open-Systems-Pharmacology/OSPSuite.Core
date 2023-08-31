@@ -18,7 +18,7 @@ using static OSPSuite.Core.Domain.ObjectPathKeywords;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_FormulaTask : ContextSpecification<IFormulaTask>
+   public abstract class concern_for_FormulaTask : ContextSpecification<FormulaTask>
    {
       protected IObjectBaseFactory _objectBaseFactory;
       private IObjectPathFactory _objectPathFactory;
@@ -402,7 +402,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.ExpandDynamicReferencesIn(_model);
+         sut.ExpandNeighborhoodReferencesIn(_model);
       }
 
       [Observation]
@@ -455,7 +455,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_throw_an_exception()
       {
-         The.Action(() => sut.ExpandDynamicReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.ExpandNeighborhoodReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -496,7 +496,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_throw_an_exception()
       {
-         The.Action(() => sut.ExpandDynamicReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.ExpandNeighborhoodReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -565,7 +565,6 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-
 
          _parameterReferencingRelativeLumenSegment = new Parameter().WithName("P").WithParentContainer(_duodenumMucosaIntracellular);
          _parameterReferencingRelativeLumenSegment.Formula = new ExplicitFormula("V+10");
