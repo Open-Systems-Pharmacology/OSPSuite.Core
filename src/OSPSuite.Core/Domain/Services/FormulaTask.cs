@@ -224,10 +224,10 @@ namespace OSPSuite.Core.Domain.Services
          //let's get the path BEFORE the LUMEN_SEGMENT and update the formula path accordingly
          var pathToContainer = pathAsList.Take(firstIndex).ToList();
          var container = getContainerOrThrow(pathToContainer, usingFormula);
-         //This will need to be saved and added back to the path once we have figured out the actual neighborhood path
-         var restOfPath = pathAsList.Skip(lastIndex + 1).ToList();
-         var lumenSegmentPath = _objectPathFactory.CreateObjectPathFrom(ORGANISM, LUMEN, container.Name);
-         restOfPath.Each(lumenSegmentPath.Add);
+         //Point to our absolute ORGANISM|LUMEN|container path
+         var lumenSegmentPath  = new List<string> {ORGANISM, LUMEN, container.Name};
+         //we add the rest of the path that was provided after the keyword
+         lumenSegmentPath.AddRange(pathAsList.Skip(lastIndex + 1));
          formulaUsablePath.ReplaceWith(lumenSegmentPath);
       }
 
