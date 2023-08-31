@@ -25,6 +25,7 @@ namespace OSPSuite.Core.Domain
       public const string NEIGHBORHOODS = "Neighborhoods";
       public const string EVENTS = "Events";
       public const string ORGANISM = "Organism";
+      public const string LUMEN = "Lumen";
       public const string APPLICATIONS = "Applications";
       public const string ROOT = "ROOT";
       public const string NAME_PROPERTY = "Name";

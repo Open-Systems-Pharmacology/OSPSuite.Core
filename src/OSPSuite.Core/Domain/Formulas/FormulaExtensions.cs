@@ -8,75 +8,53 @@ namespace OSPSuite.Core.Domain.Formulas
       /// <summary>
       ///    Returns true the formula is a distributed otherwise false
       /// </summary>
-      public static bool IsDistributed(this IFormula formula)
-      {
-         return formula.IsAnImplementationOf<DistributionFormula>();
-      }
+      public static bool IsDistributed(this IFormula formula) => formula.IsAnImplementationOf<DistributionFormula>();
 
       /// <summary>
       ///    Returns true the formula is a black box formula otherwise false
       /// </summary>
-      public static bool IsBlackBox(this IFormula formula)
-      {
-         return formula.IsAnImplementationOf<BlackBoxFormula>();
-      }
+      public static bool IsBlackBox(this IFormula formula) => formula.IsAnImplementationOf<BlackBoxFormula>();
 
       /// <summary>
       ///    Returns true the formula is a constant formula otherwise false
       /// </summary>
-      public static bool IsConstant(this IFormula formula)
-      {
-         return formula.IsAnImplementationOf<ConstantFormula>();
-      }
+      public static bool IsConstant(this IFormula formula) => formula.IsAnImplementationOf<ConstantFormula>();
 
       /// <summary>
       ///    Returns true the formula is an explicit formula otherwise false
       /// </summary>
-      public static bool IsExplicit(this IFormula formula)
-      {
-         return formula.IsAnImplementationOf<ExplicitFormula>();
-      }
+      public static bool IsExplicit(this IFormula formula) => formula.IsAnImplementationOf<ExplicitFormula>();
 
       /// <summary>
       ///    Returns true if the formula  contains at least one entry using neighborhood reference  otherwise false
       /// </summary>
       /// <param name="formula"></param>
-      public static bool IsReferencingNeighborhood(this IFormula formula)
-      {
-         return formula.ObjectPaths.Any(x => x.Contains(ObjectPathKeywords.NBH));
-      }
+      public static bool IsReferencingNeighborhood(this IFormula formula) => formula.ObjectPaths.Any(x => x.Contains(ObjectPathKeywords.NBH));
 
+      /// <summary>
+      ///    Returns true if the formula  contains at least one entry using lumen segment reference  otherwise false
+      /// </summary>
+      /// <param name="formula"></param>
+      public static bool IsReferencingLumenSegment(this IFormula formula) => formula.ObjectPaths.Any(x => x.Contains(ObjectPathKeywords.LUMEN_SEGMENT));
       /// <summary>
       ///    Returns true the formula is a dynamic formula otherwise false
       /// </summary>
-      public static bool IsDynamic(this IFormula formula)
-      {
-         return formula.IsAnImplementationOf<DynamicFormula>();
-      }
+      public static bool IsDynamic(this IFormula formula) => formula.IsAnImplementationOf<DynamicFormula>();
 
       /// <summary>
       ///    Returns true the formula is a table formula (without offset) otherwise false
       /// </summary>
-      public static bool IsTable(this IFormula formula)
-      {
-         return formula.IsAnImplementationOf<TableFormula>();
-      }
+      public static bool IsTable(this IFormula formula) => formula.IsAnImplementationOf<TableFormula>();
 
       /// <summary>
       ///    Returns true the formula is a table formula (with offset) otherwise false
       /// </summary>
-      public static bool IsTableWithOffSet(this IFormula formula)
-      {
-         return formula.IsAnImplementationOf<TableFormulaWithOffset>();
-      }
+      public static bool IsTableWithOffSet(this IFormula formula) => formula.IsAnImplementationOf<TableFormulaWithOffset>();
 
       /// <summary>
       ///    Returns true the formula is a table formula with argument otherwise false
       /// </summary>
-      public static bool IsTableWithXArgument(this IFormula formula)
-      {
-         return formula.IsAnImplementationOf<TableFormulaWithXArgument>();
-      }
+      public static bool IsTableWithXArgument(this IFormula formula) => formula.IsAnImplementationOf<TableFormulaWithXArgument>();
 
       /// <summary>
       ///    Returns true if the formula can be added to a <see cref="FormulaCache" /> otherwise false

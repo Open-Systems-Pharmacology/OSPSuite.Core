@@ -62,10 +62,20 @@ namespace OSPSuite.Core.Domain
       public static readonly string ALL_FLOATING_MOLECULES = addKeyword("ALL_FLOATING_MOLECULES");
 
       /// <summary>
-      /// Represents the keywords allowing us to identify a neighborhood between two containers
-      /// For example CONTAINER1|/<NBH/>CONTAINER2/<NBH/> means the neighborhood between CONTAINER1 and CONTAINER2
+      ///    Represents the keywords allowing us to identify a neighborhood between two containers
+      ///    For example CONTAINER1|/<NBH />CONTAINER2/<NBH /> means the neighborhood between CONTAINER1 and CONTAINER2
       /// </summary>
       public static readonly string NBH = addKeyword("<NBH>");
+
+      /// <summary>
+      ///    Search for a compartment with the same name as the last part preceding the keyword under Lumen
+      /// </summary>
+      /// <example>
+      ///   <code>
+      ///      ..|..|LUMEN_SEGMENT|MOLECULE => Organism|Lumen|Duodenum|MOLECULE
+      ///   </code>
+      /// </example>
+      public static readonly string LUMEN_SEGMENT = addKeyword("LUMEN_SEGMENT");
 
       private static string addKeyword(string keyword)
       {

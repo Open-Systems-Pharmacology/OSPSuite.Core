@@ -97,7 +97,7 @@ namespace OSPSuite.Core.Domain.Services
          _keywordReplacerTask.ReplaceIn(model.Root);
 
          //This needs to be done before we validate the model to ensure that all references can be found
-         _formulaTask.ExpandNeighborhoodReferencesIn(model);
+         _formulaTask.ExpandDynamicReferencesIn(model);
 
          creationResult.Add(validateModel(modelConfiguration));
 

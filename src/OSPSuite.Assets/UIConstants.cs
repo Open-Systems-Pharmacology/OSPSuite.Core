@@ -1763,6 +1763,10 @@ namespace OSPSuite.Assets
 
       public const string InParentTagCanOnlyBeUsedWithAndOperator = "IN PARENT tag can only be used with AND operator";
 
+      public static string KeywordCannotBeInFirstPosition(string keyword, string path) => $"Keyword '{keyword}' cannot be used in first position in '{path}'";
+
+      public static string KeywordCanOnlyBeUsedOnce(string keyword, string path) => $"Keyword '{keyword}' can only be used once in '{path}'";
+
       public static class SensitivityAnalysis
       {
          public static readonly string NoSimulationDefined = "No simulation defined";
