@@ -226,7 +226,6 @@ namespace OSPSuite.Core.Domain.Services
          var container = getContainerOrThrow(pathToContainer, usingFormula);
          //This will need to be saved and added back to the path once we have figured out the actual neighborhood path
          var restOfPath = pathAsList.Skip(lastIndex + 1).ToList();
-
          var lumenSegmentPath = _objectPathFactory.CreateObjectPathFrom(ORGANISM, LUMEN, container.Name);
          restOfPath.Each(lumenSegmentPath.Add);
          formulaUsablePath.ReplaceWith(lumenSegmentPath);
