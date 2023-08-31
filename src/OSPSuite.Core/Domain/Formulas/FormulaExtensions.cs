@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Domain.Formulas
       public static bool IsReferencingNeighborhood(this IFormula formula) => formula.ObjectPaths.Any(x => x.Contains(ObjectPathKeywords.NBH));
 
       /// <summary>
-      ///    Returns true if the formula  contains at least one entry using neighborhood reference  otherwise false
+      ///    Returns true if the formula  contains at least one entry using lumen segment reference  otherwise false
       /// </summary>
       /// <param name="formula"></param>
       public static bool IsReferencingLumenSegment(this IFormula formula) => formula.ObjectPaths.Any(x => x.Contains(ObjectPathKeywords.LUMEN_SEGMENT));

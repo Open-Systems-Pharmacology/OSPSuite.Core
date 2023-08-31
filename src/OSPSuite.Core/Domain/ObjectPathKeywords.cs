@@ -71,13 +71,6 @@ namespace OSPSuite.Core.Domain
       ///    Search for a compartment with the same name as the last part preceding the keyword under Lumen
       /// </summary>
       /// <example>
-      ///   Absolute Path:
-      ///   <code>
-      ///      Organism|SmallIntestine|Mucosa|Duodenum|LUMEN_SEGMENT => Organism|Lumen|Duodenum
-      ///      Organism|SmallIntestine|Duodenum|LUMEN_SEGMENT|Volume  => Organism|Lumen|Duodenum|Volume
-      ///      Organism|SmallIntestine|Duodenum|LUMEN_SEGMENT|Intracellular => Organism|Lumen|Duodenum|Intracellular
-      ///   </code>
-      ///   Relative Path from local ref point Organism|LargeIntestine|Mucosa|Duodenum|Intracellular
       ///   <code>
       ///      ..|..|LUMEN_SEGMENT|MOLECULE => Organism|Lumen|Duodenum|MOLECULE
       ///   </code>

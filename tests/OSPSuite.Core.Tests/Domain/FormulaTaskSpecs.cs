@@ -512,12 +512,14 @@ namespace OSPSuite.Core.Domain
       protected Container _duodenumLumen;
       protected IParameter _volumeDuodenumLumen;
       protected Container _duodenumMucosaIntracellular;
+      protected IParameter _height;
 
       protected override void Context()
       {
          base.Context();
          _model = new Model();
          _organism = new Container().WithName(ORGANISM);
+         _height = DomainHelperForSpecs.ConstantParameterWithValue(1).WithName("Height").Under(_organism);
          _smallIntestine = new Container().WithName("SmallIntestine").Under(_organism);
          _mucosa = new Container().WithName("Mucosa").Under(_smallIntestine);
          _duodenumMucosa = new Container().WithName("Duodenum").Under(_mucosa);
@@ -526,6 +528,7 @@ namespace OSPSuite.Core.Domain
          _lumen = new Container().WithName(LUMEN).Under(_organism);
          _duodenumLumen = new Container().WithName("Duodenum").Under(_lumen);
          _volumeDuodenumLumen = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName(VOLUME).Under(_duodenumLumen);
+         
 
          _model.Root = _organism;
       }
@@ -544,6 +547,7 @@ namespace OSPSuite.Core.Domain
          //Organism|SmallIntestine|Mucosa|Duodenum|LumenSegment|V
          _objectPath = new FormulaUsablePath(ORGANISM, _smallIntestine.Name, _mucosa.Name, _duodenumMucosa.Name, LUMEN_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
          _parameterReferencingAbsoluteLumenSegment.Formula.AddObjectPath(_objectPath);
+         _parameterReferencingAbsoluteLumenSegment.Formula.AddObjectPath(new FormulaUsablePath(ORGANISM, _height.Name) { Alias = "H" });
       }
 
       protected override void Because()

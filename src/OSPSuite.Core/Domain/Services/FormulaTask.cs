@@ -207,7 +207,7 @@ namespace OSPSuite.Core.Domain.Services
       internal void ExpandLumenSegmentReferencesIn(IModel model)
       {
          model.Root.GetAllChildren<IUsingFormula>(x => x.Formula.IsReferencingLumenSegment())
-            .Each(x => x.Formula.ObjectPaths.Each(path => updateLumenSegmentReferencingPath(path, x)));
+            .Each(x => x.Formula.ObjectPaths.Where(path => path.Contains(LUMEN_SEGMENT)).Each(path => updateLumenSegmentReferencingPath(path, x)));
       }
 
       private void updateLumenSegmentReferencingPath(FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula)
@@ -225,7 +225,7 @@ namespace OSPSuite.Core.Domain.Services
          var pathToContainer = pathAsList.Take(firstIndex).ToList();
          var container = getContainerOrThrow(pathToContainer, usingFormula);
          //Point to our absolute ORGANISM|LUMEN|container path
-         var lumenSegmentPath  = new List<string> {ORGANISM, LUMEN, container.Name};
+         var lumenSegmentPath = new List<string> {ORGANISM, LUMEN, container.Name};
          //we add the rest of the path that was provided after the keyword
          lumenSegmentPath.AddRange(pathAsList.Skip(lastIndex + 1));
          formulaUsablePath.ReplaceWith(lumenSegmentPath);
