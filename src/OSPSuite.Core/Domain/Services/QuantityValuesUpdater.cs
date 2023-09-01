@@ -66,7 +66,7 @@ namespace OSPSuite.Core.Domain.Services
       private void updateParameterFromIndividualValues(ModelConfiguration modelConfiguration)
       {
          //Order by distribution to ensure that distributed parameter are loaded BEFORE their sub parameters.
-         //not use descending otherwise parameter without distribution are returned fist
+         //note: use descending otherwise parameter without distribution are returned fist
          modelConfiguration.SimulationConfiguration.Individual?.OrderByDescending(x => x.DistributionType)
             .Each(x => updateParameterValueFromStartValue(modelConfiguration, x, getOrAddModelParameter));
       }
