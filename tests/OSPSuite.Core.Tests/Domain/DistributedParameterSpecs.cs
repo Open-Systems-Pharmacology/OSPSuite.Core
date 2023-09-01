@@ -35,13 +35,13 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void Paremters_parentcontainer_should_be_sut()
+      public void parameters_parent_container_should_be_sut()
       {
          _meanParameter.ParentContainer.ShouldBeEqualTo(sut);
       }
    }
 
-   public class When_the_percentile_of_a_distribued_parameter_is_set : concern_for_DistributedParameter
+   public class When_the_percentile_of_a_distributed_parameter_is_set : concern_for_DistributedParameter
    {
       private double _percentileValue;
 
@@ -156,6 +156,21 @@ namespace OSPSuite.Core.Domain
       public void the_value_of_the_percentile_should_be_the_original_value()
       {
          sut.Percentile.ShouldBeEqualTo(0.5);
+      }
+   }
+
+   public class When_setting_the_is_default_flag_of_distributed_parameter : concern_for_DistributedParameter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut = new DistributedParameter();
+      }
+
+      [Observation]
+      public void should_not_crash_if_the_percentile_parameter_is_not_defined()
+      {
+         sut.IsFixedValue = false;
       }
    }
 }

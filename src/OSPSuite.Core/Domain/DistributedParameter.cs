@@ -132,9 +132,14 @@ namespace OSPSuite.Core.Domain
          set
          {
             //percentile set first so that correct value is available if a value event is raised
-            PercentileParameter.IsFixedValue = value;
+            //Note: Percentile parameter may be null when constructing the distributed parameter dynamically
+            if (PercentileParameter != null)
+               PercentileParameter.IsFixedValue = value;
+
             base.IsFixedValue = value;
-            OnPropertyChanged(() => Percentile);
+
+            if (PercentileParameter != null)
+               OnPropertyChanged(() => Percentile);
          }
       }
 
