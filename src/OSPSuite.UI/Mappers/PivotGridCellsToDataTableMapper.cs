@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Data;
 using System.Text;
-using OSPSuite.Utility.Extensions;
 using DevExpress.XtraPivotGrid;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Mappers
 {
@@ -12,21 +12,21 @@ namespace OSPSuite.UI.Mappers
       private const string TABLE_NAME = "Pivot";
       private const string FIELD_SEPARATOR = " - ";
 
-      public DataTable MapSelectionFrom(PivotGridCells pivotGridCells, Func<string, string> displayNameRetreiver, Func<PivotCellEventArgs, object> valueToDisplayConverter = null)
+      public DataTable MapSelectionFrom(PivotGridCells pivotGridCells, Func<string, string> displayNameRetriever, Func<PivotCellEventArgs, object> valueToDisplayConverter = null)
       {
-         return map(pivotGridCells, displayNameRetreiver, valueToDisplayConverter, y => selectionContainsRow(pivotGridCells, y), x => selectionContainsColumn(pivotGridCells, x));
+         return map(pivotGridCells, displayNameRetriever, valueToDisplayConverter, y => selectionContainsRow(pivotGridCells, y), x => selectionContainsColumn(pivotGridCells, x));
       }
 
-      public DataTable MapFrom(PivotGridCells pivotGridCells, Func<string, string> displayNameRetreiver, Func<PivotCellEventArgs, object> valueToDisplayConverter = null)
+      public DataTable MapFrom(PivotGridCells pivotGridCells, Func<string, string> displayNameRetriever, Func<PivotCellEventArgs, object> valueToDisplayConverter = null)
       {
-         return map(pivotGridCells, displayNameRetreiver, valueToDisplayConverter, y => true, x => true);
+         return map(pivotGridCells, displayNameRetriever, valueToDisplayConverter, y => true, x => true);
       }
 
-      private static DataTable map(PivotGridCells pivotGridCells, Func<string, string> displayNameRetreiver, Func<PivotCellEventArgs, object> valueToDisplayConverter, Func<int, bool> shouldUseRow, Func<int, bool> shouldUseColumn)
+      private static DataTable map(PivotGridCells pivotGridCells, Func<string, string> displayNameRetriever, Func<PivotCellEventArgs, object> valueToDisplayConverter, Func<int, bool> shouldUseRow, Func<int, bool> shouldUseColumn)
       {
          var dt = new DataTable(TABLE_NAME);
          configureDataTable(pivotGridCells, dt, shouldUseColumn);
-         fillTableFromSource(pivotGridCells, dt, displayNameRetreiver, valueToDisplayConverter ?? getDoubleForDataTable, shouldUseRow, shouldUseColumn);
+         fillTableFromSource(pivotGridCells, dt, displayNameRetriever, valueToDisplayConverter ?? getDoubleForDataTable, shouldUseRow, shouldUseColumn);
          return dt;
       }
 
@@ -34,12 +34,12 @@ namespace OSPSuite.UI.Mappers
       {
          // When selection is empty, use focused cell instead. DevExpress single focused cell is not 'Selection'
          if (pivotGridCells.Selection.IsEmpty)
-            return isFfocusedCellInRow(pivotGridCells, y);
+            return isFocusedCellInRow(pivotGridCells, y);
 
          return pivotGridCells.Selection.Contains(pivotGridCells.Selection.X, y);
       }
 
-      private static bool isFfocusedCellInRow(PivotGridCells pivotGridCells, int y)
+      private static bool isFocusedCellInRow(PivotGridCells pivotGridCells, int y)
       {
          return pivotGridCells.FocusedCell.Y == y;
       }
@@ -59,7 +59,7 @@ namespace OSPSuite.UI.Mappers
       }
 
       private static void fillTableFromSource(PivotGridCells pivotGridCells,
-         DataTable dt, Func<string, string> displayNameRetreiver,
+         DataTable dt, Func<string, string> displayNameRetriever,
          Func<PivotCellEventArgs, object> valueToDisplayConverter,
          Func<int, bool> shouldUseRow, Func<int, bool> shouldUseColumn)
       {
@@ -69,12 +69,13 @@ namespace OSPSuite.UI.Mappers
                continue;
 
             var row = dt.NewRow();
-            row[PARAMETER_COLUMN_NAME] = getRowName(pivotGridCells, rowIndex, displayNameRetreiver);
+            row[PARAMETER_COLUMN_NAME] = getRowName(pivotGridCells, rowIndex, displayNameRetriever);
             for (var i = 0; i < pivotGridCells.ColumnCount; i++)
             {
                if (shouldUseColumn(i))
                   row[getColumnName(pivotGridCells, i)] = valueToDisplayConverter(pivotGridCells.GetCellInfo(i, rowIndex));
             }
+
             dt.Rows.Add(row);
          }
       }
@@ -103,10 +104,10 @@ namespace OSPSuite.UI.Mappers
          }
       }
 
-      private static string getRowName(PivotGridCells input, int rowIndex, Func<string, string> displayNameRetreiver)
+      private static string getRowName(PivotGridCells input, int rowIndex, Func<string, string> displayNameRetriever)
       {
          var pivotCellEventArgs = input.GetCellInfo(0, rowIndex);
-         return displayNameRetreiver(pivotCellEventArgs.GetFieldValue(pivotCellEventArgs.RowField).ToString());
+         return displayNameRetriever(pivotCellEventArgs.GetFieldValue(pivotCellEventArgs.RowField).ToString());
       }
 
       private static string getColumnName(PivotGridCells input, int columnIndex)
@@ -115,8 +116,12 @@ namespace OSPSuite.UI.Mappers
          var pivotCellEventArgs = input.GetCellInfo(columnIndex, 0);
          pivotCellEventArgs.GetColumnFields().Each(field =>
          {
-            stringBuilder.Append(pivotCellEventArgs.GetFieldValue(field).ToString());
-            stringBuilder.Append(FIELD_SEPARATOR);
+            var fieldValue = pivotCellEventArgs.GetFieldValue(field);
+            if (fieldValue != null)
+            {
+               stringBuilder.Append(fieldValue);
+               stringBuilder.Append(FIELD_SEPARATOR);
+            }
          });
 
          return stringBuilder.ToString().Trim(FIELD_SEPARATOR.ToCharArray());
