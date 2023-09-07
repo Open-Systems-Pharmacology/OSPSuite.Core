@@ -119,7 +119,7 @@ namespace OSPSuite.UI.Mappers
             var fieldValue = pivotCellEventArgs.GetFieldValue(field);
             if (fieldValue != null)
             {
-               stringBuilder.Append(pivotCellEventArgs.GetFieldValue(field).ToString());
+               stringBuilder.Append(fieldValue);
                stringBuilder.Append(FIELD_SEPARATOR);
             }
          });
