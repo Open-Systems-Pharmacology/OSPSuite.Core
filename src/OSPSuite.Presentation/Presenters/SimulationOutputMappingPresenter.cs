@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Repositories;
@@ -46,6 +47,7 @@ namespace OSPSuite.Presentation.Presenters
       private readonly IEventPublisher _eventPublisher;
       private readonly List<SimulationQuantitySelectionDTO> _allAvailableOutputs = new List<SimulationQuantitySelectionDTO>();
       private readonly IOutputMappingMatchingTask _outputMappingMatchingTask;
+      private readonly IOSPSuiteExecutionContext _executionContext;
       private readonly SimulationQuantitySelectionDTO _noneEntry;
 
       private readonly NotifyList<SimulationOutputMappingDTO> _listOfOutputMappingDTOs;
@@ -59,7 +61,9 @@ namespace OSPSuite.Presentation.Presenters
          ISimulationOutputMappingToOutputMappingDTOMapper outputMappingDTOMapper,
          IQuantityToSimulationQuantitySelectionDTOMapper simulationQuantitySelectionDTOMapper,
          IObservedDataTask observedDataTask,
-         IEventPublisher eventPublisher, IOutputMappingMatchingTask outputMappingMatchingTask) : base(view)
+         IEventPublisher eventPublisher, 
+         IOutputMappingMatchingTask outputMappingMatchingTask, 
+         IOSPSuiteExecutionContext executionContext) : base(view)
       {
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
          _observedDataRepository = observedDataRepository;
@@ -68,6 +72,7 @@ namespace OSPSuite.Presentation.Presenters
          _noneEntry = new SimulationQuantitySelectionDTO(null, null, Captions.SimulationUI.NoneEditorNullText);
          _eventPublisher = eventPublisher;
          _outputMappingMatchingTask = outputMappingMatchingTask;
+         _executionContext = executionContext;
          _listOfOutputMappingDTOs = new NotifyList<SimulationOutputMappingDTO>();
          _observedDataTask = observedDataTask;
       }
@@ -155,6 +160,7 @@ namespace OSPSuite.Presentation.Presenters
       public void MarkSimulationAsChanged()
       {
          _simulation.HasChanged = true;
+         _executionContext.ProjectChanged();
          _eventPublisher.PublishEvent(new SimulationOutputMappingsChangedEvent(_simulation));
       }
 
