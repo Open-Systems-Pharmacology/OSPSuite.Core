@@ -19,12 +19,12 @@ namespace OSPSuite.Core.Commands
       string BuildingBlockName { get; set; }
    }
 
-   public interface IOSPSuiteCommmand<in TContext> : IOSPSuiteCommand, ICommand<TContext> where TContext : IOSPSuiteExecutionContext
+   public interface IOSPSuiteCommand<in TContext> : IOSPSuiteCommand, ICommand<TContext> where TContext : IOSPSuiteExecutionContext
    {
 
    }
 
-   public abstract class OSPSuiteCommand<TContext> : Command, IOSPSuiteCommmand<TContext> where TContext : IOSPSuiteExecutionContext
+   public abstract class OSPSuiteCommand<TContext> : Command, IOSPSuiteCommand<TContext> where TContext : IOSPSuiteExecutionContext
    {
       public void Execute(TContext context)
       {
@@ -63,7 +63,7 @@ namespace OSPSuite.Core.Commands
       public abstract void RestoreExecutionData(TContext context);
    }
 
-   public class OSPSuiteMacroCommand<TContext> : MacroCommand<TContext>, IOSPSuiteCommmand<TContext> where TContext : IOSPSuiteExecutionContext
+   public class OSPSuiteMacroCommand<TContext> : MacroCommand<TContext>, IOSPSuiteCommand<TContext> where TContext : IOSPSuiteExecutionContext
    {
       public OSPSuiteMacroCommand()
       {
@@ -87,13 +87,13 @@ namespace OSPSuite.Core.Commands
          set => AddExtendedProperty(Constants.Command.BUILDING_BLOCK_NAME, value);
       }
 
-      public new IEnumerable<IOSPSuiteCommmand<TContext>> All()
+      public new IEnumerable<IOSPSuiteCommand<TContext>> All()
       {
-         return base.All().Select(command => command.DowncastTo<IOSPSuiteCommmand<TContext>>());
+         return base.All().Select(command => command.DowncastTo<IOSPSuiteCommand<TContext>>());
       }
    }
 
-   public class OSPSuiteEmptyCommand<TContext> : EmptyCommand<TContext>, IOSPSuiteCommmand<TContext> where TContext : IOSPSuiteExecutionContext
+   public class OSPSuiteEmptyCommand<TContext> : EmptyCommand<TContext>, IOSPSuiteCommand<TContext> where TContext : IOSPSuiteExecutionContext
    {
       public string BuildingBlockType { get; set; }
       public string BuildingBlockName { get; set; }
