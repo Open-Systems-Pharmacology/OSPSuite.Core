@@ -11,7 +11,7 @@ namespace OSPSuite.Infrastructure.Export
          ExportToExcelTask.ExportDataTableToExcel(dataTable, fileName, openExcel);
       }
 
-      public void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel)
+      public void ExportDataTablesToExcel(IReadOnlyList<DataTable> dataTables, string fileName, bool openExcel)
       {
          ExportToExcelTask.ExportDataTablesToExcel(dataTables, fileName, openExcel);
       }

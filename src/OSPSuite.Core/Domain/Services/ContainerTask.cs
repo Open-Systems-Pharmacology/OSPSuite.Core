@@ -88,7 +88,7 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IObjectBaseFactory _objectBaseFactory;
 
       //format used to generate the unique name
-      private const string _uniqueNameFormat = "{0} ";
+      private const string _uniqueNameSeparator = " ";
 
       public ContainerTask(IObjectBaseFactory objectBaseFactory, IEntityPathResolver entityPathResolver, IObjectPathFactory objectPathFactory)
       {
@@ -118,15 +118,18 @@ namespace OSPSuite.Core.Domain.Services
          spatialStructure.AllNeighborhoodBuildersConnectedWith(containerPath).Each(spatialStructure.RemoveNeighborhood);
          containerToRemove.ParentContainer.RemoveChild(containerToRemove);
       }
-
-      public string CreateUniqueName(IEnumerable<IWithName> usedNames, string baseName, bool canUseBaseName = false) => CreateUniqueName(usedNames.Select(x => x.Name).ToList(), baseName, canUseBaseName);
-
-      public string CreateUniqueName(IReadOnlyList<string> usedNames, string baseName, bool canUseBaseName = false)
+      /// <summary>
+      ///    Returns a unique child name with the suffix baseName.
+      ///    e.g baseName_* where * is a number so that the returned value does not exist in <paramref name="usedNames" />.
+      ///    if <paramref name="canUseBaseName" /> is true, the provided base name can be used as returned value if the name does
+      ///    not  exist in <paramref name="usedNames" />.
+      /// </summary>
+      public static string RetrieveUniqueName(IReadOnlyList<string> usedNames, string baseName, bool canUseBaseName = false, string uniqueNameSeparator = _uniqueNameSeparator)
       {
          if (!usedNames.Contains(baseName) && canUseBaseName)
             return baseName;
 
-         var baseFormat = string.Format(_uniqueNameFormat, baseName);
+         var baseFormat = $"{baseName}{uniqueNameSeparator}";
 
          //get all endings
          var allUsedNamesMatchingBaseFormat = usedNames.Where(n => n.StartsWith(baseFormat))
@@ -136,7 +139,11 @@ namespace OSPSuite.Core.Domain.Services
          return $"{baseFormat}{getNextAvailableIndexBasedOn(allUsedNamesMatchingBaseFormat)}";
       }
 
-      private int getNextAvailableIndexBasedOn(IEnumerable<string> allUsedNamesMatchingBaseFormat)
+      public string CreateUniqueName(IEnumerable<IWithName> usedNames, string baseName, bool canUseBaseName = false) => CreateUniqueName(usedNames.Select(x => x.Name).ToList(), baseName, canUseBaseName);
+
+      public string CreateUniqueName(IReadOnlyList<string> usedNames, string baseName, bool canUseBaseName = false) => RetrieveUniqueName(usedNames, baseName, canUseBaseName);
+
+      private static int getNextAvailableIndexBasedOn(IEnumerable<string> allUsedNamesMatchingBaseFormat)
       {
          var allValues = new List<int>();
          foreach (var suffix in allUsedNamesMatchingBaseFormat)
