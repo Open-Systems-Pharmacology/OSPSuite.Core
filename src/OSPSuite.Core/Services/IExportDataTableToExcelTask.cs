@@ -9,6 +9,6 @@ namespace OSPSuite.Core.Services
    public interface IExportDataTableToExcelTask
    {
       void ExportDataTableToExcel(DataTable dataTable, string fileName, bool openExcel);
-      void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel);
+      void ExportDataTablesToExcel(IReadOnlyList<DataTable> dataTables, string fileName, bool openExcel);
    }
 }

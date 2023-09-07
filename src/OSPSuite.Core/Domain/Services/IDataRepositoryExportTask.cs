@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Export the given data tables to excel
       /// </summary>
-      void ExportToExcel(IEnumerable<DataTable> dataTables, string fileName, bool launchExcel = true);
+      void ExportToExcel(IReadOnlyList<DataTable> dataTables, string fileName, bool launchExcel = true);
 
       /// <summary>
       ///    Export the given data repository to excel using the ToDataTable function
@@ -64,7 +64,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Export the given data tables to excel
       /// </summary>
-      Task ExportToExcelAsync(IEnumerable<DataTable> dataTables, string fileName, bool launchExcel = true);
+      Task ExportToExcelAsync(IReadOnlyList<DataTable> dataTables, string fileName, bool launchExcel = true);
 
       /// <summary>
       ///    Export the given data repository to excel using the ToDataTable function

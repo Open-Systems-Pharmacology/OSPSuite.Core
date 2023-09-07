@@ -24,13 +24,13 @@ namespace OSPSuite.Infrastructure.Export
       public void ExportToExcel(IEnumerable<DataColumn> dataColumns, string fileName, bool launchExcel = true, DataColumnExportOptions exportOptions = null) =>
          ExportToExcel(ToDataTable(dataColumns, exportOptions), fileName, launchExcel);
 
-      public void ExportToExcel(IEnumerable<DataTable> dataTables, string fileName, bool launchExcel = true) =>
+      public void ExportToExcel(IReadOnlyList<DataTable> dataTables, string fileName, bool launchExcel = true) =>
          ExportToExcelTask.ExportDataTablesToExcel(dataTables, fileName, launchExcel);
 
       public Task ExportToExcelAsync(IEnumerable<DataColumn> dataColumns, string fileName, bool launchExcel = true, DataColumnExportOptions exportOptions = null) =>
          ExportToExcelAsync(ToDataTable(dataColumns, exportOptions), fileName, launchExcel);
 
-      public Task ExportToExcelAsync(IEnumerable<DataTable> dataTables, string fileName, bool launchExcel = true) =>
+      public Task ExportToExcelAsync(IReadOnlyList<DataTable> dataTables, string fileName, bool launchExcel = true) =>
          Task.Run(() => ExportToExcelTask.ExportDataTablesToExcel(dataTables, fileName, launchExcel));
 
       public Task ExportToCsvAsync(IEnumerable<DataColumn> dataColumns, string fileName, DataColumnExportOptions exportOptions = null)
