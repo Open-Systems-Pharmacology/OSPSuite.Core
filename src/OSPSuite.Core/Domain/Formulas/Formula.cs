@@ -102,7 +102,7 @@ namespace OSPSuite.Core.Domain.Formulas
             _objectReferences.Add(objectReference);
          }
 
-         OnChanged();
+         // OnChanged();
       }
 
       private void onReferencePropertyChanged(object sender, PropertyChangedEventArgs e)
