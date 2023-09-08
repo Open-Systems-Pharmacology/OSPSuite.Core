@@ -127,12 +127,12 @@ namespace OSPSuite.Core.Domain
          public const string TEX_TEMPLATE_FOLDER_NAME = "TeXTemplates";
       }
 
-      public static class Organs
+      public static class Organ
       {
          public const string LUMEN = "Lumen";
       }
 
-      public static class Compartments
+      public static class Compartment
       {
          public const string STOMACH = "Stomach";
          public const string DUODENUM = "Duodenum";

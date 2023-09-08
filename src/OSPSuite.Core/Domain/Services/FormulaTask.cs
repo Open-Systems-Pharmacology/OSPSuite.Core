@@ -222,7 +222,7 @@ namespace OSPSuite.Core.Domain.Services
          getPathsReferencingKeyword(model, referencesLumenSegment).Each(x => updateLumenSegmentReferencingPath(x.path, x.usingFormula));
 
          //Previous or next lumen segment. We create a list so that we can find by index
-         var allLumenSegmentsList = Compartments.AllLumenSegments.ToList();
+         var allLumenSegmentsList = Compartment.AllLumenSegments.ToList();
          void updatePath(FormulaUsablePath path, IUsingFormula usingFormula) => updateLumenNavigationSegmentReferencingPath(path, usingFormula, allLumenSegmentsList);
          getPathsReferencingKeyword(model, referencesLumenNavigation).Each(x => updatePath(x.path, x.usingFormula));
       }
@@ -243,7 +243,7 @@ namespace OSPSuite.Core.Domain.Services
          var pathToContainer = pathAsList.Take(firstIndex).ToList();
          var container = getContainerOrThrow(pathToContainer, usingFormula);
          //Point to our absolute ORGANISM|LUMEN|container path
-         var lumenSegmentPath = new List<string> {ORGANISM, Organs.LUMEN, container.Name};
+         var lumenSegmentPath = new List<string> {ORGANISM, Organ.LUMEN, container.Name};
          //we add the rest of the path that was provided after the keyword
          lumenSegmentPath.AddRange(pathAsList.Skip(lastIndex + 1));
          formulaUsablePath.ReplaceWith(lumenSegmentPath);
@@ -276,7 +276,7 @@ namespace OSPSuite.Core.Domain.Services
 
          //not Lumen segment?
          var lumen = currentLumenSegment.ParentContainer;
-         if (currentSegmentIndex == -1 || !lumen.IsNamed(Organs.LUMEN))
+         if (currentSegmentIndex == -1 || !lumen.IsNamed(Organ.LUMEN))
             throw new OSPSuiteException(Error.ContainerIsNotLumenSegment(currentLumenSegment.EntityPath()));
 
          //are we first segment and going backwards or last segment and going forward?

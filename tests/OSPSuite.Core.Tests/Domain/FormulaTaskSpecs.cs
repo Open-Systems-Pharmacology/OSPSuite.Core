@@ -12,7 +12,7 @@ using OSPSuite.Helpers;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using static OSPSuite.Core.Domain.Constants;
-using static OSPSuite.Core.Domain.Constants.Organs;
+using static OSPSuite.Core.Domain.Constants.Organ;
 using static OSPSuite.Core.Domain.Constants.Parameters;
 using static OSPSuite.Core.Domain.ObjectPath;
 using static OSPSuite.Core.Domain.ObjectPathKeywords;
@@ -523,11 +523,11 @@ namespace OSPSuite.Core.Domain
          _height = DomainHelperForSpecs.ConstantParameterWithValue(1).WithName("Height").Under(_organism);
          _smallIntestine = new Container().WithName("SmallIntestine").Under(_organism);
          _mucosa = new Container().WithName("Mucosa").Under(_smallIntestine);
-         _duodenumMucosa = new Container().WithName(Compartments.DUODENUM).Under(_mucosa);
+         _duodenumMucosa = new Container().WithName(Compartment.DUODENUM).Under(_mucosa);
          _duodenumMucosaIntracellular = new Container().WithName("Intracellular").Under(_duodenumMucosa);
 
          _lumen = new Container().WithName(LUMEN).Under(_organism);
-         _duodenumLumen = new Container().WithName(Compartments.DUODENUM).Under(_lumen);
+         _duodenumLumen = new Container().WithName(Compartment.DUODENUM).Under(_lumen);
          _volumeDuodenumLumen = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName(VOLUME).Under(_duodenumLumen);
 
 
@@ -716,10 +716,10 @@ namespace OSPSuite.Core.Domain
          _height = DomainHelperForSpecs.ConstantParameterWithValue(1).WithName("Height").Under(_organism);
          _lumen = new Container().WithName(LUMEN).Under(_organism);
          _liver = new Container().WithName("Liver").Under(_organism);
-         _stomachLumen = new Container().WithName(Compartments.STOMACH).Under(_lumen);
-         _duodenumLumen = new Container().WithName(Compartments.DUODENUM).Under(_lumen);
-         _upperJejunumLumen = new Container().WithName(Compartments.UPPER_JEJUNUM).Under(_lumen);
-         _rectumLumen = new Container().WithName(Compartments.RECTUM).Under(_lumen);
+         _stomachLumen = new Container().WithName(Compartment.STOMACH).Under(_lumen);
+         _duodenumLumen = new Container().WithName(Compartment.DUODENUM).Under(_lumen);
+         _upperJejunumLumen = new Container().WithName(Compartment.UPPER_JEJUNUM).Under(_lumen);
+         _rectumLumen = new Container().WithName(Compartment.RECTUM).Under(_lumen);
          _volumeDuodenumLumen = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName(VOLUME).Under(_duodenumLumen);
 
 
