@@ -12,6 +12,7 @@ using OSPSuite.Helpers;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using static OSPSuite.Core.Domain.Constants;
+using static OSPSuite.Core.Domain.Constants.Organs;
 using static OSPSuite.Core.Domain.Constants.Parameters;
 using static OSPSuite.Core.Domain.ObjectPath;
 using static OSPSuite.Core.Domain.ObjectPathKeywords;
@@ -522,13 +523,13 @@ namespace OSPSuite.Core.Domain
          _height = DomainHelperForSpecs.ConstantParameterWithValue(1).WithName("Height").Under(_organism);
          _smallIntestine = new Container().WithName("SmallIntestine").Under(_organism);
          _mucosa = new Container().WithName("Mucosa").Under(_smallIntestine);
-         _duodenumMucosa = new Container().WithName("Duodenum").Under(_mucosa);
+         _duodenumMucosa = new Container().WithName(Compartments.DUODENUM).Under(_mucosa);
          _duodenumMucosaIntracellular = new Container().WithName("Intracellular").Under(_duodenumMucosa);
 
          _lumen = new Container().WithName(LUMEN).Under(_organism);
-         _duodenumLumen = new Container().WithName("Duodenum").Under(_lumen);
+         _duodenumLumen = new Container().WithName(Compartments.DUODENUM).Under(_lumen);
          _volumeDuodenumLumen = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName(VOLUME).Under(_duodenumLumen);
-         
+
 
          _model.Root = _organism;
       }
@@ -547,7 +548,7 @@ namespace OSPSuite.Core.Domain
          //Organism|SmallIntestine|Mucosa|Duodenum|LumenSegment|V
          _objectPath = new FormulaUsablePath(ORGANISM, _smallIntestine.Name, _mucosa.Name, _duodenumMucosa.Name, LUMEN_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
          _parameterReferencingAbsoluteLumenSegment.Formula.AddObjectPath(_objectPath);
-         _parameterReferencingAbsoluteLumenSegment.Formula.AddObjectPath(new FormulaUsablePath(ORGANISM, _height.Name) { Alias = "H" });
+         _parameterReferencingAbsoluteLumenSegment.Formula.AddObjectPath(new FormulaUsablePath(ORGANISM, _height.Name) {Alias = "H"});
       }
 
       protected override void Because()
@@ -684,6 +685,159 @@ namespace OSPSuite.Core.Domain
          //Organism|SmallIntestine|Mucosa|Duodenum|LumenSegment|V
          _objectPath = new FormulaUsablePath(LUMEN_SEGMENT, _smallIntestine.Name, _volumeDuodenumLumen.Name) {Alias = "V"};
          _parameterReferencingAbsoluteLumenSegment.Formula.AddObjectPath(_objectPath);
+      }
+
+      [Observation]
+      public void should_throw_an_exception()
+      {
+         The.Action(() => sut.ExpandLumenSegmentReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
+   public abstract class concern_for_lumen_next_previous_segment_path_resolution : concern_for_FormulaTask
+   {
+      protected FormulaUsablePath _objectPath;
+      protected Model _model;
+      protected Container _organism;
+      protected Container _lumen;
+      protected IParameter _volumeDuodenumLumen;
+      protected IParameter _height;
+      protected Container _stomachLumen;
+      protected Container _duodenumLumen;
+      protected Container _upperJejunumLumen;
+      protected Container _rectumLumen;
+      protected Container _liver;
+
+      protected override void Context()
+      {
+         base.Context();
+         _model = new Model();
+         _organism = new Container().WithName(ORGANISM);
+         _height = DomainHelperForSpecs.ConstantParameterWithValue(1).WithName("Height").Under(_organism);
+         _lumen = new Container().WithName(LUMEN).Under(_organism);
+         _liver = new Container().WithName("Liver").Under(_organism);
+         _stomachLumen = new Container().WithName(Compartments.STOMACH).Under(_lumen);
+         _duodenumLumen = new Container().WithName(Compartments.DUODENUM).Under(_lumen);
+         _upperJejunumLumen = new Container().WithName(Compartments.UPPER_JEJUNUM).Under(_lumen);
+         _rectumLumen = new Container().WithName(Compartments.RECTUM).Under(_lumen);
+         _volumeDuodenumLumen = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName(VOLUME).Under(_duodenumLumen);
+
+
+         _model.Root = _organism;
+      }
+   }
+
+   public class When_replacing_the_lumen_next_segment_keyword_in_a_well_defined_relative_path : concern_for_lumen_next_previous_segment_path_resolution
+   {
+      protected Parameter _parameterReferencingRelativeLumenNextSegment;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         _parameterReferencingRelativeLumenNextSegment = new Parameter().WithName("P").WithParentContainer(_stomachLumen);
+         _parameterReferencingRelativeLumenNextSegment.Formula = new ExplicitFormula("V+10");
+         //..|LUMEN_NEXT_SEGMENT|V
+         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, LUMEN_NEXT_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
+         _parameterReferencingRelativeLumenNextSegment.Formula.AddObjectPath(_objectPath);
+      }
+
+      protected override void Because()
+      {
+         sut.ExpandLumenSegmentReferencesIn(_model);
+      }
+
+      [Observation]
+      public void should_have_replaced_the_lumen_segment_with_the_actual_path_to_the_lumen_segment()
+      {
+         _parameterReferencingRelativeLumenNextSegment.Value.ShouldBeEqualTo(20);
+      }
+   }
+
+   public class When_replacing_the_lumen_previous_segment_keyword_in_a_well_defined_relative_path : concern_for_lumen_next_previous_segment_path_resolution
+   {
+      protected Parameter _parameterReferencingRelativeLumenNextSegment;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         _parameterReferencingRelativeLumenNextSegment = new Parameter().WithName("P").WithParentContainer(_upperJejunumLumen);
+         _parameterReferencingRelativeLumenNextSegment.Formula = new ExplicitFormula("V+10");
+         //..|LUMEN_PREVIOUS_SEGMENT|V
+         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, LUMEN_PREVIOUS_SEGMENT, _volumeDuodenumLumen.Name) { Alias = "V" };
+         _parameterReferencingRelativeLumenNextSegment.Formula.AddObjectPath(_objectPath);
+      }
+
+      protected override void Because()
+      {
+         sut.ExpandLumenSegmentReferencesIn(_model);
+      }
+
+      [Observation]
+      public void should_have_replaced_the_lumen_segment_with_the_actual_path_to_the_lumen_segment()
+      {
+         _parameterReferencingRelativeLumenNextSegment.Value.ShouldBeEqualTo(20);
+      }
+   }
+
+   public class When_replacing_the_lumen_next_segment_keyword_in_a_container_that_has_no_next_segment_such_as_rectum : concern_for_lumen_next_previous_segment_path_resolution
+   {
+      protected Parameter _parameterReferencingRelativeLumenNextSegment;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         _parameterReferencingRelativeLumenNextSegment = new Parameter().WithName("P").WithParentContainer(_rectumLumen);
+         _parameterReferencingRelativeLumenNextSegment.Formula = new ExplicitFormula("V+10");
+         //..|LUMEN_NEXT_SEGMENT|V
+         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, LUMEN_NEXT_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
+         _parameterReferencingRelativeLumenNextSegment.Formula.AddObjectPath(_objectPath);
+      }
+
+      [Observation]
+      public void should_throw_an_exception()
+      {
+         The.Action(() => sut.ExpandLumenSegmentReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
+   public class When_replacing_the_lumen_next_segment_keyword_in_a_container_that_is_not_a_lumen_segment : concern_for_lumen_next_previous_segment_path_resolution
+   {
+      protected Parameter _parameterReferencingRelativeLumenNextSegment;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         _parameterReferencingRelativeLumenNextSegment = new Parameter().WithName("P").WithParentContainer(_liver);
+         _parameterReferencingRelativeLumenNextSegment.Formula = new ExplicitFormula("V+10");
+         //..|LUMEN_NEXT_SEGMENT|V
+         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, LUMEN_NEXT_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
+         _parameterReferencingRelativeLumenNextSegment.Formula.AddObjectPath(_objectPath);
+      }
+
+      [Observation]
+      public void should_throw_an_exception()
+      {
+         The.Action(() => sut.ExpandLumenSegmentReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+      }
+   }
+
+   public class When_replacing_the_lumen_previous_segment_keyword_in_a_container_that_has_no_next_segment_such_as_stomach : concern_for_lumen_next_previous_segment_path_resolution
+   {
+      protected Parameter _parameterReferencingRelativeLumenNextSegment;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         _parameterReferencingRelativeLumenNextSegment = new Parameter().WithName("P").WithParentContainer(_stomachLumen);
+         _parameterReferencingRelativeLumenNextSegment.Formula = new ExplicitFormula("V+10");
+         //..|LUMEN_PREVIOUS_SEGMENT|V
+         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, LUMEN_PREVIOUS_SEGMENT, _volumeDuodenumLumen.Name) { Alias = "V" };
+         _parameterReferencingRelativeLumenNextSegment.Formula.AddObjectPath(_objectPath);
       }
 
       [Observation]

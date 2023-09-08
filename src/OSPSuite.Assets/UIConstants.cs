@@ -1767,6 +1767,13 @@ namespace OSPSuite.Assets
 
       public static string KeywordCanOnlyBeUsedOnce(string keyword, string path) => $"Keyword '{keyword}' can only be used once in '{path}'";
 
+      public static string LumenNavigationKeywordLCanOnlyBeUsedOnce(string path) => $"Only one lumen navigation keyword can be used once in '{path}'";
+
+      public static string ContainerIsNotLumenSegment(string path) => $"Container '{path}' is not a lumen segment";
+
+      public static string CannotNavigateBeyondLumenSegment(string keyword, string path) => $"Usage of keyword '{keyword}' is not valid for '{path}'";
+
+
       public static class SensitivityAnalysis
       {
          public static readonly string NoSimulationDefined = "No simulation defined";

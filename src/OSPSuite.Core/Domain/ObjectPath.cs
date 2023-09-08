@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Domain
       {
       }
 
-      public ObjectPath(params ObjectPath[] from) : this(from.SelectMany(x=>x._pathEntries))
+      public ObjectPath(params ObjectPath[] from) : this(from.SelectMany(x => x._pathEntries))
       {
       }
 
@@ -282,5 +282,11 @@ namespace OSPSuite.Core.Domain
       }
 
       public int Count => _pathEntries.Count;
+
+      public bool Contains(string entry)
+      {
+         //todo Optimize this
+         return _pathEntries.Contains(entry);
+      }
    }
 }

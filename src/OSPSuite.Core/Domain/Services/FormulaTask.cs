@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
@@ -155,19 +156,26 @@ namespace OSPSuite.Core.Domain.Services
          ExpandLumenSegmentReferencesIn(model);
       }
 
+      private IEnumerable<(IUsingFormula usingFormula, FormulaUsablePath path)> getPathsReferencingKeyword(IModel model, Func<FormulaUsablePath, bool> referencesKeyword)
+      {
+         return model.Root.GetAllChildren<IUsingFormula>(x => x.Formula.ObjectPaths.Any(referencesKeyword))
+            .SelectMany(usingFormula => usingFormula.Formula.ObjectPaths.Where(referencesKeyword)
+               .Select(path => (usingFormula, path)));
+      }
+
+      private bool referencesNeighborhood(ObjectPath path) => path.Contains(NBH);
+
       /// <summary>
       ///    Ensures that all object paths referencing neighborhoods between containers are expanded
       /// </summary>
       /// <remarks>Internal for testing</remarks>
       internal void ExpandNeighborhoodReferencesIn(IModel model)
       {
-         void updatePath(IUsingFormula usingFormula, FormulaUsablePath path) => updateNeighborhoodReferencingPath(model, path, usingFormula);
-
-         model.Root.GetAllChildren<IUsingFormula>(x => x.Formula.IsReferencingNeighborhood())
-            .Each(x => x.Formula.ObjectPaths.Each(path => updatePath(x, path)));
+         void updatePath(FormulaUsablePath path, IUsingFormula usingFormula) => updateNeighborhoodReferencingPath(path, usingFormula, model);
+         getPathsReferencingKeyword(model, referencesNeighborhood).Each(x => updatePath(x.path, x.usingFormula));
       }
 
-      private void updateNeighborhoodReferencingPath(IModel model, FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula)
+      private void updateNeighborhoodReferencingPath(FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula, IModel model)
       {
          var pathAsList = formulaUsablePath.ToList();
          var firstIndex = pathAsList.FindIndex(x => x == NBH);
@@ -200,21 +208,31 @@ namespace OSPSuite.Core.Domain.Services
          formulaUsablePath.ReplaceWith(neighborhoodPath);
       }
 
+      private static bool referencesLumenSegment(ObjectPath path) => path.Contains(LUMEN_SEGMENT);
+
+      private static bool referencesLumenNavigation(ObjectPath path) => path.Contains(LUMEN_NEXT_SEGMENT) || path.Contains(LUMEN_PREVIOUS_SEGMENT);
+
       /// <summary>
       ///    Ensures that all object paths referencing lumen segments are expanded
       /// </summary>
       /// <remarks>Internal for testing</remarks>
       internal void ExpandLumenSegmentReferencesIn(IModel model)
       {
-         model.Root.GetAllChildren<IUsingFormula>(x => x.Formula.IsReferencingLumenSegment())
-            .Each(x => x.Formula.ObjectPaths.Where(path => path.Contains(LUMEN_SEGMENT)).Each(path => updateLumenSegmentReferencingPath(path, x)));
+         //Lumen Segments
+         getPathsReferencingKeyword(model, referencesLumenSegment).Each(x => updateLumenSegmentReferencingPath(x.path, x.usingFormula));
+
+         //Previous or next lumen segment. We create a list so that we can find by index
+         var allLumenSegmentsList = Compartments.AllLumenSegments.ToList();
+         void updatePath(FormulaUsablePath path, IUsingFormula usingFormula) => updateLumenNavigationSegmentReferencingPath(path, usingFormula, allLumenSegmentsList);
+         getPathsReferencingKeyword(model, referencesLumenNavigation).Each(x => updatePath(x.path, x.usingFormula));
       }
 
       private void updateLumenSegmentReferencingPath(FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula)
       {
          var pathAsList = formulaUsablePath.ToList();
-         var firstIndex = pathAsList.FindIndex(x => x == LUMEN_SEGMENT);
-         var lastIndex = pathAsList.FindLastIndex(x => x == LUMEN_SEGMENT);
+         var firstIndex = pathAsList.IndexOf(LUMEN_SEGMENT);
+         var lastIndex = pathAsList.LastIndexOf(LUMEN_SEGMENT);
+
          if (firstIndex == 0)
             throw new OSPSuiteException(Error.KeywordCannotBeInFirstPosition(LUMEN_SEGMENT, formulaUsablePath.ToPathString()));
 
@@ -225,10 +243,51 @@ namespace OSPSuite.Core.Domain.Services
          var pathToContainer = pathAsList.Take(firstIndex).ToList();
          var container = getContainerOrThrow(pathToContainer, usingFormula);
          //Point to our absolute ORGANISM|LUMEN|container path
-         var lumenSegmentPath = new List<string> {ORGANISM, LUMEN, container.Name};
+         var lumenSegmentPath = new List<string> {ORGANISM, Organs.LUMEN, container.Name};
          //we add the rest of the path that was provided after the keyword
          lumenSegmentPath.AddRange(pathAsList.Skip(lastIndex + 1));
          formulaUsablePath.ReplaceWith(lumenSegmentPath);
+      }
+
+      private void updateLumenNavigationSegmentReferencingPath(FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula, List<string> allLumenSegments)
+      {
+         var pathAsList = formulaUsablePath.ToList();
+         var indexNext = pathAsList.IndexOf(LUMEN_NEXT_SEGMENT);
+         var indexPrevious = pathAsList.IndexOf(LUMEN_PREVIOUS_SEGMENT);
+
+         if (indexNext != -1 && indexPrevious != -1)
+            throw new OSPSuiteException(Error.LumenNavigationKeywordLCanOnlyBeUsedOnce(formulaUsablePath.ToPathString()));
+
+         var indexKeyword = indexNext != -1 ? indexNext : indexPrevious;
+         //to know which direction we want to go in the segments array
+         var step = indexNext != -1 ? 1 : -1;
+
+         //We retrieve the path to the lumen segment of interest
+         var pathToCurrentLumenSegment = pathAsList.Take(indexKeyword).ToList();
+
+         //This will need to be saved and added back to the path once we have figured out the actual path
+         var restOfPath = pathAsList.Skip(indexKeyword + 1).ToList();
+
+         //we use resolve to that an exception is thrown
+         var currentLumenSegment = getContainerOrThrow(pathToCurrentLumenSegment, usingFormula);
+
+         //Do we have an actual lumen segment?
+         var currentSegmentIndex = allLumenSegments.IndexOf(currentLumenSegment.Name);
+
+         //not Lumen segment?
+         var lumen = currentLumenSegment.ParentContainer;
+         if (currentSegmentIndex == -1 || !lumen.IsNamed(Organs.LUMEN))
+            throw new OSPSuiteException(Error.ContainerIsNotLumenSegment(currentLumenSegment.EntityPath()));
+
+         //are we first segment and going backwards or last segment and going forward?
+         var navigationIndex = currentSegmentIndex + step;
+         if (navigationIndex < 0 || navigationIndex >= allLumenSegments.Count)
+            throw new OSPSuiteException(Error.CannotNavigateBeyondLumenSegment(pathAsList[indexKeyword], currentLumenSegment.EntityPath()));
+
+         //we can now reconstruct the path to the next or previous lumen segment
+         var targetSegmentPath = _objectPathFactory.CreateAbsoluteObjectPath(lumen).AndAdd(allLumenSegments[navigationIndex]);
+         restOfPath.Each(targetSegmentPath.Add);
+         formulaUsablePath.ReplaceWith(targetSegmentPath);
       }
 
       private IContainer getContainerOrThrow(IReadOnlyList<string> path, IUsingFormula usingFormula)
