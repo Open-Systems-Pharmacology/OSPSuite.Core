@@ -101,8 +101,6 @@ namespace OSPSuite.Core.Domain.Formulas
             objectReference.Object.PropertyChanged += onReferencePropertyChanged;
             _objectReferences.Add(objectReference);
          }
-
-         // OnChanged();
       }
 
       private void onReferencePropertyChanged(object sender, PropertyChangedEventArgs e)
