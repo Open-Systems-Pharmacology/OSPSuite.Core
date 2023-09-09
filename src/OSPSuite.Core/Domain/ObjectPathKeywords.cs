@@ -71,11 +71,42 @@ namespace OSPSuite.Core.Domain
       ///    Search for a compartment with the same name as the last part preceding the keyword under Lumen
       /// </summary>
       /// <example>
-      ///   <code>
+      ///    <code>
       ///      ..|..|LUMEN_SEGMENT|MOLECULE => Organism|Lumen|Duodenum|MOLECULE
       ///   </code>
       /// </example>
       public static readonly string LUMEN_SEGMENT = addKeyword("LUMEN_SEGMENT");
+
+      /// <summary>
+      ///    Search for the next segment in lumen
+      /// </summary>
+      /// <example>
+      ///    Assuming the formula is used in a parameter in Caecum
+      ///    <code>
+      ///      ..|LUMEN_NEXT_SEGMENT|P1.. => Organism|Lumen|ColonAscendens|P1
+      ///    </code>
+      ///    Also works with absolute paths:
+      ///    <code>
+      ///      Organism|Lumen|Stomach|LUMEN_NEXT_SEGMENT|P1 => Organism|Lumen|Duodenum|P1
+      ///    </code>
+      /// </example>
+      public static readonly string LUMEN_NEXT_SEGMENT = addKeyword("LUMEN_NEXT_SEGMENT");
+
+
+      /// <summary>
+      ///    Search for the previous segment in lumen
+      /// </summary>
+      /// <example>
+      ///    Assuming the formula is used in a parameter in ColonAscendens
+      ///    <code>
+      ///      ..|LUMEN_PREVIOUS_SEGMENT|P1.. => Organism|Lumen|Caecum|P1
+      ///    </code>
+      ///    Also works with absolute paths:
+      ///    <code>
+      ///      Organism|Lumen|ColonAscendens|LUMEN_PREVIOUS_SEGMENT|P1 => Organism|Lumen|Caecum|P1
+      ///    </code>
+      /// </example>
+      public static readonly string LUMEN_PREVIOUS_SEGMENT = addKeyword("LUMEN_PREVIOUS_SEGMENT");
 
       private static string addKeyword(string keyword)
       {

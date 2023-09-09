@@ -42,8 +42,7 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public static T TryResolve<T>(this ObjectPath objectPath, IEntity refEntity) where T : class
       {
-         bool isFound;
-         var result = TryResolve<T>(objectPath, refEntity, out isFound);
+         var result = TryResolve<T>(objectPath, refEntity, out var isFound);
          return isFound ? result : null;
       }
    }

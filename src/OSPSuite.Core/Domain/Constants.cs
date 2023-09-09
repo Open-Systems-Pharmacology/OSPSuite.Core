@@ -25,7 +25,6 @@ namespace OSPSuite.Core.Domain
       public const string NEIGHBORHOODS = "Neighborhoods";
       public const string EVENTS = "Events";
       public const string ORGANISM = "Organism";
-      public const string LUMEN = "Lumen";
       public const string APPLICATIONS = "Applications";
       public const string ROOT = "ROOT";
       public const string NAME_PROPERTY = "Name";
@@ -128,6 +127,53 @@ namespace OSPSuite.Core.Domain
          public const string TEX_TEMPLATE_FOLDER_NAME = "TeXTemplates";
       }
 
+      public static class Organ
+      {
+         public const string LUMEN = "Lumen";
+      }
+
+      public static class Compartment
+      {
+         public const string STOMACH = "Stomach";
+         public const string DUODENUM = "Duodenum";
+         public const string UPPER_JEJUNUM = "UpperJejunum";
+         public const string LOWER_JEJUNUM = "LowerJejunum";
+         public const string UPPER_ILEUM = "UpperIleum";
+         public const string LOWER_ILEUM = "LowerIleum";
+         public const string CAECUM = "Caecum";
+         public const string COLON_ASCENDENS = "ColonAscendens";
+         public const string COLON_TRANSVERSUM = "ColonTransversum";
+         public const string COLON_DESCENDENS = "ColonDescendens";
+         public const string COLON_SIGMOID = "ColonSigmoid";
+         public const string RECTUM = "Rectum";
+
+         public static readonly IReadOnlyList<string> LumenSegmentsDuodenumToLowerIleum = new List<string>
+         {
+            DUODENUM,
+            UPPER_JEJUNUM,
+            LOWER_JEJUNUM,
+            UPPER_ILEUM,
+            LOWER_ILEUM
+         };
+
+         public static readonly IReadOnlyList<string> LumenSegmentsDuodenumToCaecum = new List<string>(LumenSegmentsDuodenumToLowerIleum)
+         {
+            CAECUM
+         };
+
+         public static readonly IReadOnlyList<string> LumenSegmentsDuodenumToRectum = new List<string>(LumenSegmentsDuodenumToCaecum)
+         {
+            COLON_ASCENDENS,
+            COLON_TRANSVERSUM,
+            COLON_DESCENDENS,
+            COLON_SIGMOID,
+            RECTUM
+         };
+
+         public static readonly IReadOnlyList<string> AllLumenSegments =
+            new List<string>(new[] {STOMACH}.Concat(LumenSegmentsDuodenumToRectum));
+      }
+
       public static class Parameters
       {
          public static readonly IReadOnlyList<string> AllGlobalRelExpParameters = new[]
@@ -227,9 +273,8 @@ namespace OSPSuite.Core.Domain
          };
 
          public static readonly IReadOnlyCollection<string> AllWithListOfValues = new List<string>(Halogens.Union(AllCategorialParameters));
-
-         //end of  delete
       }
+      //end of  delete
 
       public static class RegistryPaths
       {
@@ -458,7 +503,7 @@ namespace OSPSuite.Core.Domain
          public const string DEFAULT = MPFIT;
       }
 
-      public class CategoryOptimizations
+      public static class CategoryOptimizations
       {
          public const string COMPOUND = "Compound";
          public const string CATEGORY = "Category";
@@ -572,7 +617,6 @@ namespace OSPSuite.Core.Domain
          public const string PERCENTILES = "Percentiles";
          public const string SIMULATION_CONFIGURATION = "SimulationConfiguration";
 
-
          public static class Attribute
          {
             public const string PATH = "path";
@@ -633,10 +677,7 @@ namespace OSPSuite.Core.Domain
       public const string IN_PARENT = "In parent";
       public const string LLOQ = "LLOQ";
 
-      public static string NameWithUnitFor(string name, IDimension dimension)
-      {
-         return NameWithUnitFor(name, dimension?.DefaultUnit);
-      }
+      public static string NameWithUnitFor(string name, IDimension dimension) => NameWithUnitFor(name, dimension?.DefaultUnit);
 
       public static string NameWithUnitFor(string name, Unit unit)
       {
