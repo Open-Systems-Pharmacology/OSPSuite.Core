@@ -219,7 +219,7 @@ namespace OSPSuite.Core.Domain.Services
       internal void ExpandLumenSegmentReferencesIn(IModel model)
       {
          //Lumen Segments
-         getPathsReferencingKeyword(model, referencesLumenSegment).Each(x => updateLumenSegmentReferencingPath(x.path, x.usingFormula));
+         getPathsReferencingKeyword(model, referencesLumenSegment).Each(x => updateLumenSegmentReferencingPath(x.path, x.usingFormula, model));
 
          //Previous or next lumen segment. We create a list so that we can find by index
          var allLumenSegmentsList = Compartment.AllLumenSegments.ToList();
@@ -227,7 +227,7 @@ namespace OSPSuite.Core.Domain.Services
          getPathsReferencingKeyword(model, referencesLumenNavigation).Each(x => updatePath(x.path, x.usingFormula));
       }
 
-      private void updateLumenSegmentReferencingPath(FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula)
+      private void updateLumenSegmentReferencingPath(FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula, IModel model)
       {
          var pathAsList = formulaUsablePath.ToList();
          var firstIndex = pathAsList.IndexOf(LUMEN_SEGMENT);
@@ -243,7 +243,7 @@ namespace OSPSuite.Core.Domain.Services
          var pathToContainer = pathAsList.Take(firstIndex).ToList();
          var container = getContainerOrThrow(pathToContainer, usingFormula);
          //Point to our absolute ORGANISM|LUMEN|container path
-         var lumenSegmentPath = new List<string> {ORGANISM, Organ.LUMEN, container.Name};
+         var lumenSegmentPath = new List<string> {model.Root.Name, ORGANISM, Organ.LUMEN, container.Name};
          //we add the rest of the path that was provided after the keyword
          lumenSegmentPath.AddRange(pathAsList.Skip(lastIndex + 1));
          formulaUsablePath.ReplaceWith(lumenSegmentPath);

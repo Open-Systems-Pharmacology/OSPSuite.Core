@@ -130,6 +130,7 @@ namespace OSPSuite.Core.Domain
       public static class Organ
       {
          public const string LUMEN = "Lumen";
+         public const string MUCOSA = "Mucosa";
       }
 
       public static class Compartment

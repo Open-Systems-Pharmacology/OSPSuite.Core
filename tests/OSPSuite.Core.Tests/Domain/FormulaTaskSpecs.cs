@@ -26,6 +26,7 @@ namespace OSPSuite.Core.Domain
       private IAliasCreator _aliasCreator;
       private IDimensionFactory _dimensionFactory;
       private IEntityPathResolver _entityPathResolver;
+      protected IKeywordReplacerTask _keywordReplacerTask;
 
       protected override void Context()
       {
@@ -34,6 +35,7 @@ namespace OSPSuite.Core.Domain
          _aliasCreator = new AliasCreator();
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _entityPathResolver = new EntityPathResolverForSpecs();
+         _keywordReplacerTask = new KeywordReplacerTask(_objectPathFactory);
          sut = new FormulaTask(_objectPathFactory, _objectBaseFactory, _aliasCreator, _dimensionFactory, _entityPathResolver);
       }
    }
@@ -514,15 +516,17 @@ namespace OSPSuite.Core.Domain
       protected IParameter _volumeDuodenumLumen;
       protected Container _duodenumMucosaIntracellular;
       protected IParameter _height;
+      private Container _root;
 
       protected override void Context()
       {
          base.Context();
+         _root = new Container().WithName(ROOT);
          _model = new Model();
-         _organism = new Container().WithName(ORGANISM);
+         _organism = new Container().WithName(ORGANISM).Under(_root);
          _height = DomainHelperForSpecs.ConstantParameterWithValue(1).WithName("Height").Under(_organism);
          _smallIntestine = new Container().WithName("SmallIntestine").Under(_organism);
-         _mucosa = new Container().WithName("Mucosa").Under(_smallIntestine);
+         _mucosa = new Container().WithName(MUCOSA).Under(_smallIntestine);
          _duodenumMucosa = new Container().WithName(Compartment.DUODENUM).Under(_mucosa);
          _duodenumMucosaIntracellular = new Container().WithName("Intracellular").Under(_duodenumMucosa);
 
@@ -531,7 +535,7 @@ namespace OSPSuite.Core.Domain
          _volumeDuodenumLumen = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName(VOLUME).Under(_duodenumLumen);
 
 
-         _model.Root = _organism;
+         _model.Root = _root;
       }
    }
 
@@ -549,6 +553,9 @@ namespace OSPSuite.Core.Domain
          _objectPath = new FormulaUsablePath(ORGANISM, _smallIntestine.Name, _mucosa.Name, _duodenumMucosa.Name, LUMEN_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
          _parameterReferencingAbsoluteLumenSegment.Formula.AddObjectPath(_objectPath);
          _parameterReferencingAbsoluteLumenSegment.Formula.AddObjectPath(new FormulaUsablePath(ORGANISM, _height.Name) {Alias = "H"});
+
+         //to mimic what happens in the model construction, we should expand keywords
+         _keywordReplacerTask.ReplaceIn(_model.Root);
       }
 
       protected override void Because()
@@ -576,6 +583,9 @@ namespace OSPSuite.Core.Domain
          //..|..|LumenSegment|V
          _objectPath = new FormulaUsablePath(PARENT_CONTAINER, PARENT_CONTAINER, LUMEN_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
          _parameterReferencingRelativeLumenSegment.Formula.AddObjectPath(_objectPath);
+
+         //to mimic what happens in the model construction, we should expand keywords
+         _keywordReplacerTask.ReplaceIn(_model.Root);
       }
 
       protected override void Because()
@@ -603,6 +613,9 @@ namespace OSPSuite.Core.Domain
          //..|LumenSegment|V which will be SmallIntestine|LumenSegment which will become Organism|Lumen|SmallIntestine which does not exist in our context
          _objectPath = new FormulaUsablePath(PARENT_CONTAINER, LUMEN_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
          _parameterReferencingRelativeLumenSegment.Formula.AddObjectPath(_objectPath);
+  
+         //to mimic what happens in the model construction, we should expand keywords
+         _keywordReplacerTask.ReplaceIn(_model.Root);
       }
 
       protected override void Because()
@@ -633,6 +646,9 @@ namespace OSPSuite.Core.Domain
          //..|LumenSegment|V which will be SmallIntestine|LumenSegment which will become Organism|Lumen|SmallIntestine which does not exist in our context
          _objectPath = new FormulaUsablePath(ORGANISM, _smallIntestine.Name, LUMEN_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
          _parameterReferencingAbsoluteLumenSegment.Formula.AddObjectPath(_objectPath);
+
+         //to mimic what happens in the model construction, we should expand keywords
+         _keywordReplacerTask.ReplaceIn(_model.Root);
       }
 
       protected override void Because()
@@ -707,12 +723,14 @@ namespace OSPSuite.Core.Domain
       protected Container _upperJejunumLumen;
       protected Container _rectumLumen;
       protected Container _liver;
+      private Container _root;
 
       protected override void Context()
       {
          base.Context();
+         _root = new Container().WithName(ROOT);
          _model = new Model();
-         _organism = new Container().WithName(ORGANISM);
+         _organism = new Container().WithName(ORGANISM).Under(_root);
          _height = DomainHelperForSpecs.ConstantParameterWithValue(1).WithName("Height").Under(_organism);
          _lumen = new Container().WithName(LUMEN).Under(_organism);
          _liver = new Container().WithName("Liver").Under(_organism);
@@ -723,7 +741,7 @@ namespace OSPSuite.Core.Domain
          _volumeDuodenumLumen = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName(VOLUME).Under(_duodenumLumen);
 
 
-         _model.Root = _organism;
+         _model.Root = _root;
       }
    }
 
@@ -765,7 +783,7 @@ namespace OSPSuite.Core.Domain
          _parameterReferencingRelativeLumenNextSegment = new Parameter().WithName("P").WithParentContainer(_upperJejunumLumen);
          _parameterReferencingRelativeLumenNextSegment.Formula = new ExplicitFormula("V+10");
          //..|LUMEN_PREVIOUS_SEGMENT|V
-         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, LUMEN_PREVIOUS_SEGMENT, _volumeDuodenumLumen.Name) { Alias = "V" };
+         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, LUMEN_PREVIOUS_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
          _parameterReferencingRelativeLumenNextSegment.Formula.AddObjectPath(_objectPath);
       }
 
@@ -836,7 +854,7 @@ namespace OSPSuite.Core.Domain
          _parameterReferencingRelativeLumenNextSegment = new Parameter().WithName("P").WithParentContainer(_stomachLumen);
          _parameterReferencingRelativeLumenNextSegment.Formula = new ExplicitFormula("V+10");
          //..|LUMEN_PREVIOUS_SEGMENT|V
-         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, LUMEN_PREVIOUS_SEGMENT, _volumeDuodenumLumen.Name) { Alias = "V" };
+         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, LUMEN_PREVIOUS_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
          _parameterReferencingRelativeLumenNextSegment.Formula.AddObjectPath(_objectPath);
       }
 
