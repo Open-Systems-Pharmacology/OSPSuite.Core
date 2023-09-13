@@ -41,8 +41,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    Expands all dynamic references defined in <paramref name="rootContainer" />
       /// </summary>
       /// <param name="rootContainer">Root container of the spatial structure</param>
-      /// <param name="neighborhoodsContainer">Neighborhoods container of the spatial structure</param>
-      void ExpandDynamicReferencesIn(IContainer rootContainer, IContainer neighborhoodsContainer);
+      void ExpandDynamicReferencesIn(IContainer rootContainer);
 
       /// <summary>
       ///    Resolves all dynamic formulas defined in <paramref name="model" />
@@ -157,11 +156,11 @@ namespace OSPSuite.Core.Domain.Services
          return true;
       }
 
-      public void ExpandDynamicReferencesIn(IModel model) => ExpandDynamicReferencesIn(model.Root, model.Neighborhoods);
+      public void ExpandDynamicReferencesIn(IModel model) => ExpandDynamicReferencesIn(model.Root);
 
-      public void ExpandDynamicReferencesIn(IContainer rootContainer, IContainer neighborhoodsContainer)
+      public void ExpandDynamicReferencesIn(IContainer rootContainer)
       {
-         ExpandNeighborhoodReferencesIn(rootContainer, neighborhoodsContainer);
+         ExpandNeighborhoodReferencesIn(rootContainer);
          ExpandLumenSegmentReferencesIn(rootContainer);
       }
 
@@ -178,8 +177,9 @@ namespace OSPSuite.Core.Domain.Services
       ///    Ensures that all object paths referencing neighborhoods between containers are expanded
       /// </summary>
       /// <remarks>Internal for testing</remarks>
-      internal void ExpandNeighborhoodReferencesIn(IContainer rootContainer, IContainer neighborhoodsContainer)
+      internal void ExpandNeighborhoodReferencesIn(IContainer rootContainer)
       {
+         var neighborhoodsContainer = rootContainer.Container(NEIGHBORHOODS);
          void updatePath(FormulaUsablePath path, IUsingFormula usingFormula) => updateNeighborhoodReferencingPath(path, usingFormula, neighborhoodsContainer);
          getPathsReferencingKeyword(rootContainer, referencesNeighborhood).Each(x => updatePath(x.path, x.usingFormula));
       }
@@ -205,7 +205,7 @@ namespace OSPSuite.Core.Domain.Services
          var container1 = getContainerOrThrow(pathToFirstContainer, usingFormula);
          var container2 = getContainerOrThrow(pathToSecondContainer, usingFormula);
 
-         var allNeighborhoods = neighborhoods.GetAllChildren<Neighborhood>();
+         var allNeighborhoods = neighborhoods?.GetAllChildren<Neighborhood>() ?? Array.Empty<Neighborhood>();
          var allNeighborhoodsConnectedToContainer1 = container1.GetNeighborhoods(allNeighborhoods);
          var neighborhoodsBetweenContainer1AndContainer2 = container2.GetNeighborhoods(allNeighborhoodsConnectedToContainer1);
          if (neighborhoodsBetweenContainer1AndContainer2.Count == 0)

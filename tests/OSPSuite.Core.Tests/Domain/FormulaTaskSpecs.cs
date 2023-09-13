@@ -405,7 +405,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.ExpandNeighborhoodReferencesIn(_model.Root, _model.Neighborhoods);
+         sut.ExpandNeighborhoodReferencesIn(_model.Root);
       }
 
       [Observation]
@@ -458,7 +458,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_throw_an_exception()
       {
-         The.Action(() => sut.ExpandNeighborhoodReferencesIn(_model.Root, _model.Neighborhoods)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.ExpandNeighborhoodReferencesIn(_model.Root)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -499,8 +499,8 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_throw_an_exception()
       {
-         The.Action(() => sut.ExpandNeighborhoodReferencesIn(_model.Root, _model.Neighborhoods)).ShouldThrowAn<OSPSuiteException>();
-      }
+         The.Action(() => sut.ExpandNeighborhoodReferencesIn(_model.Root)).ShouldThrowAn<OSPSuiteException>();
+      }  
    }
 
    public abstract class concern_for_lumen_segment_path_resolution : concern_for_FormulaTask
