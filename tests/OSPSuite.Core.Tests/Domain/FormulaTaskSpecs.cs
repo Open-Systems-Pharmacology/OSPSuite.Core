@@ -405,7 +405,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.ExpandNeighborhoodReferencesIn(_model);
+         sut.ExpandNeighborhoodReferencesIn(_model.Root, _model.Neighborhoods);
       }
 
       [Observation]
@@ -458,7 +458,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_throw_an_exception()
       {
-         The.Action(() => sut.ExpandNeighborhoodReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.ExpandNeighborhoodReferencesIn(_model.Root, _model.Neighborhoods)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -499,7 +499,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_throw_an_exception()
       {
-         The.Action(() => sut.ExpandNeighborhoodReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.ExpandNeighborhoodReferencesIn(_model.Root, _model.Neighborhoods)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -560,7 +560,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.ExpandLumenSegmentReferencesIn(_model);
+         sut.ExpandLumenSegmentReferencesIn(_model.Root);
       }
 
       [Observation]
@@ -590,7 +590,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.ExpandLumenSegmentReferencesIn(_model);
+         sut.ExpandLumenSegmentReferencesIn(_model.Root);
       }
 
       [Observation]
@@ -620,7 +620,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.ExpandLumenSegmentReferencesIn(_model);
+         sut.ExpandLumenSegmentReferencesIn(_model.Root);
       }
 
       [Observation]
@@ -653,7 +653,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.ExpandLumenSegmentReferencesIn(_model);
+         sut.ExpandLumenSegmentReferencesIn(_model.Root);
       }
 
       [Observation]
@@ -684,7 +684,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_throw_an_exception()
       {
-         The.Action(() => sut.ExpandLumenSegmentReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.ExpandLumenSegmentReferencesIn(_model.Root)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -706,7 +706,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_throw_an_exception()
       {
-         The.Action(() => sut.ExpandLumenSegmentReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.ExpandLumenSegmentReferencesIn(_model.Root)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -762,7 +762,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.ExpandLumenSegmentReferencesIn(_model);
+         sut.ExpandLumenSegmentReferencesIn(_model.Root);
       }
 
       [Observation]
@@ -789,7 +789,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.ExpandLumenSegmentReferencesIn(_model);
+         sut.ExpandLumenSegmentReferencesIn(_model.Root);
       }
 
       [Observation]
@@ -817,7 +817,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_throw_an_exception()
       {
-         The.Action(() => sut.ExpandLumenSegmentReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.ExpandLumenSegmentReferencesIn(_model.Root)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -839,7 +839,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_throw_an_exception()
       {
-         The.Action(() => sut.ExpandLumenSegmentReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.ExpandLumenSegmentReferencesIn(_model.Root)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
@@ -861,7 +861,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_throw_an_exception()
       {
-         The.Action(() => sut.ExpandLumenSegmentReferencesIn(_model)).ShouldThrowAn<OSPSuiteException>();
+         The.Action(() => sut.ExpandLumenSegmentReferencesIn(_model.Root)).ShouldThrowAn<OSPSuiteException>();
       }
    }
 

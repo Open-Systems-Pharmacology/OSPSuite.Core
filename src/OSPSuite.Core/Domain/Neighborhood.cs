@@ -5,7 +5,7 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain
 {
-   public class Neighborhood : Container, INeighborhoodBase
+   public class Neighborhood : Container
    {
       public IContainer FirstNeighbor { get; set; }
 

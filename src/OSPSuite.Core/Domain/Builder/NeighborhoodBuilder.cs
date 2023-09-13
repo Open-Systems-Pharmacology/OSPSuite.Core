@@ -19,15 +19,34 @@ namespace OSPSuite.Core.Domain.Builder
 
    public class NeighborhoodBuilder : Container, INeighborhoodBase
    {
+      private ObjectPath _firstNeighborPath;
+      private ObjectPath _secondNeighborPath;
+
       //We define a property set for the first neighbor only to be compatible with serialization prior to v12
       public IContainer FirstNeighbor { get; private set; }
 
       //We define a property set for the second neighbor only to be compatible with serialization prior to v12
       public IContainer SecondNeighbor { get; private set; }
 
-      public ObjectPath FirstNeighborPath { get; set; }
+      public ObjectPath FirstNeighborPath
+      {
+         get => _firstNeighborPath;
+         set
+         {
+            _firstNeighborPath = value;
+            FirstNeighbor = null;
+         }
+      }
 
-      public ObjectPath SecondNeighborPath { get; set; }
+      public ObjectPath SecondNeighborPath
+      {
+         get => _secondNeighborPath;
+         set
+         {
+            _secondNeighborPath = value;
+            SecondNeighbor = null;
+         }
+      }
 
       public NeighborhoodBuilder()
       {
