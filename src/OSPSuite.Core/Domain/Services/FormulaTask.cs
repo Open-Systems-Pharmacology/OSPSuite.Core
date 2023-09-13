@@ -38,14 +38,20 @@ namespace OSPSuite.Core.Domain.Services
       void ExpandDynamicReferencesIn(IModel model);
 
       /// <summary>
+      ///    Expands all dynamic references defined in <paramref name="rootContainer" />
+      /// </summary>
+      /// <param name="rootContainer">Root container of the spatial structure</param>
+      void ExpandDynamicReferencesIn(IContainer rootContainer);
+
+      /// <summary>
       ///    Resolves all dynamic formulas defined in <paramref name="model" />
       /// </summary>
       void ExpandDynamicFormulaIn(IModel model);
 
       /// <summary>
-      ///    Resolves all dynamic formulas defined in <paramref name="container" />
+      ///    Resolves all dynamic formulas defined in <paramref name="rootContainer" />
       /// </summary>
-      void ExpandDynamicFormulaIn(IContainer container);
+      void ExpandDynamicFormulaIn(IContainer rootContainer);
 
       /// <summary>
       ///    Adds a reference to the parent container volume in the object path used by the <paramref name="formula" /> and
@@ -150,15 +156,17 @@ namespace OSPSuite.Core.Domain.Services
          return true;
       }
 
-      public void ExpandDynamicReferencesIn(IModel model)
+      public void ExpandDynamicReferencesIn(IModel model) => ExpandDynamicReferencesIn(model.Root);
+
+      public void ExpandDynamicReferencesIn(IContainer rootContainer)
       {
-         ExpandNeighborhoodReferencesIn(model);
-         ExpandLumenSegmentReferencesIn(model);
+         ExpandNeighborhoodReferencesIn(rootContainer);
+         ExpandLumenSegmentReferencesIn(rootContainer);
       }
 
-      private IEnumerable<(IUsingFormula usingFormula, FormulaUsablePath path)> getPathsReferencingKeyword(IModel model, Func<FormulaUsablePath, bool> referencesKeyword)
+      private IEnumerable<(IUsingFormula usingFormula, FormulaUsablePath path)> getPathsReferencingKeyword(IContainer rootContainer, Func<FormulaUsablePath, bool> referencesKeyword)
       {
-         return model.Root.GetAllChildren<IUsingFormula>(x => x.Formula.ObjectPaths.Any(referencesKeyword))
+         return rootContainer.GetAllChildren<IUsingFormula>(x => x.Formula.ObjectPaths.Any(referencesKeyword))
             .SelectMany(usingFormula => usingFormula.Formula.ObjectPaths.Where(referencesKeyword)
                .Select(path => (usingFormula, path)));
       }
@@ -169,13 +177,14 @@ namespace OSPSuite.Core.Domain.Services
       ///    Ensures that all object paths referencing neighborhoods between containers are expanded
       /// </summary>
       /// <remarks>Internal for testing</remarks>
-      internal void ExpandNeighborhoodReferencesIn(IModel model)
+      internal void ExpandNeighborhoodReferencesIn(IContainer rootContainer)
       {
-         void updatePath(FormulaUsablePath path, IUsingFormula usingFormula) => updateNeighborhoodReferencingPath(path, usingFormula, model);
-         getPathsReferencingKeyword(model, referencesNeighborhood).Each(x => updatePath(x.path, x.usingFormula));
+         var neighborhoodsContainer = rootContainer.Container(NEIGHBORHOODS);
+         void updatePath(FormulaUsablePath path, IUsingFormula usingFormula) => updateNeighborhoodReferencingPath(path, usingFormula, neighborhoodsContainer);
+         getPathsReferencingKeyword(rootContainer, referencesNeighborhood).Each(x => updatePath(x.path, x.usingFormula));
       }
 
-      private void updateNeighborhoodReferencingPath(FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula, IModel model)
+      private void updateNeighborhoodReferencingPath(FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula, IContainer neighborhoods)
       {
          var pathAsList = formulaUsablePath.ToList();
          var firstIndex = pathAsList.FindIndex(x => x == NBH);
@@ -196,7 +205,7 @@ namespace OSPSuite.Core.Domain.Services
          var container1 = getContainerOrThrow(pathToFirstContainer, usingFormula);
          var container2 = getContainerOrThrow(pathToSecondContainer, usingFormula);
 
-         var allNeighborhoods = model.Neighborhoods.GetAllChildren<Neighborhood>();
+         var allNeighborhoods = neighborhoods?.GetAllChildren<Neighborhood>() ?? Array.Empty<Neighborhood>();
          var allNeighborhoodsConnectedToContainer1 = container1.GetNeighborhoods(allNeighborhoods);
          var neighborhoodsBetweenContainer1AndContainer2 = container2.GetNeighborhoods(allNeighborhoodsConnectedToContainer1);
          if (neighborhoodsBetweenContainer1AndContainer2.Count == 0)
@@ -216,18 +225,18 @@ namespace OSPSuite.Core.Domain.Services
       ///    Ensures that all object paths referencing lumen segments are expanded
       /// </summary>
       /// <remarks>Internal for testing</remarks>
-      internal void ExpandLumenSegmentReferencesIn(IModel model)
+      internal void ExpandLumenSegmentReferencesIn(IContainer rootContainer)
       {
          //Lumen Segments
-         getPathsReferencingKeyword(model, referencesLumenSegment).Each(x => updateLumenSegmentReferencingPath(x.path, x.usingFormula, model));
+         getPathsReferencingKeyword(rootContainer, referencesLumenSegment).Each(x => updateLumenSegmentReferencingPath(x.path, x.usingFormula, rootContainer));
 
          //Previous or next lumen segment. We create a list so that we can find by index
          var allLumenSegmentsList = Compartment.AllLumenSegments.ToList();
          void updatePath(FormulaUsablePath path, IUsingFormula usingFormula) => updateLumenNavigationSegmentReferencingPath(path, usingFormula, allLumenSegmentsList);
-         getPathsReferencingKeyword(model, referencesLumenNavigation).Each(x => updatePath(x.path, x.usingFormula));
+         getPathsReferencingKeyword(rootContainer, referencesLumenNavigation).Each(x => updatePath(x.path, x.usingFormula));
       }
 
-      private void updateLumenSegmentReferencingPath(FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula, IModel model)
+      private void updateLumenSegmentReferencingPath(FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula, IContainer rootContainer)
       {
          var pathAsList = formulaUsablePath.ToList();
          var firstIndex = pathAsList.IndexOf(LUMEN_SEGMENT);
@@ -243,7 +252,7 @@ namespace OSPSuite.Core.Domain.Services
          var pathToContainer = pathAsList.Take(firstIndex).ToList();
          var container = getContainerOrThrow(pathToContainer, usingFormula);
          //Point to our absolute ORGANISM|LUMEN|container path
-         var lumenSegmentPath = new List<string> {model.Root.Name, ORGANISM, Organ.LUMEN, container.Name};
+         var lumenSegmentPath = new List<string> {rootContainer.Name, ORGANISM, Organ.LUMEN, container.Name};
          //we add the rest of the path that was provided after the keyword
          lumenSegmentPath.AddRange(pathAsList.Skip(lastIndex + 1));
          formulaUsablePath.ReplaceWith(lumenSegmentPath);
@@ -302,10 +311,10 @@ namespace OSPSuite.Core.Domain.Services
 
       public void ExpandDynamicFormulaIn(IModel model) => ExpandDynamicFormulaIn(model.Root);
 
-      public void ExpandDynamicFormulaIn(IContainer container)
+      public void ExpandDynamicFormulaIn(IContainer rootContainer)
       {
-         var allFormulaUsable = container.GetAllChildren<IFormulaUsable>().ToEntityDescriptorMapList();
-         var allEntityUsingDynamicFormula = container.GetAllChildren<IUsingFormula>(x => x.Formula.IsDynamic());
+         var allFormulaUsable = rootContainer.GetAllChildren<IFormulaUsable>().ToEntityDescriptorMapList();
+         var allEntityUsingDynamicFormula = rootContainer.GetAllChildren<IUsingFormula>(x => x.Formula.IsDynamic());
 
          allEntityUsingDynamicFormula.Each(entityUsingFormula =>
          {
