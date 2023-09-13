@@ -1,11 +1,10 @@
-﻿using System.Diagnostics;
-using OSPSuite.Core.Domain.Builder;
+﻿using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain
 {
-   public class Neighborhood : Container
+   public class Neighborhood : Container, INeighborhoodBase
    {
       public IContainer FirstNeighbor { get; set; }
 

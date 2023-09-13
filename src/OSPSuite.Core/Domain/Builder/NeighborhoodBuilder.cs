@@ -22,10 +22,8 @@ namespace OSPSuite.Core.Domain.Builder
       private ObjectPath _firstNeighborPath;
       private ObjectPath _secondNeighborPath;
 
-      //We define a property set for the first neighbor only to be compatible with serialization prior to v12
       public IContainer FirstNeighbor { get; private set; }
 
-      //We define a property set for the second neighbor only to be compatible with serialization prior to v12
       public IContainer SecondNeighbor { get; private set; }
 
       public ObjectPath FirstNeighborPath
