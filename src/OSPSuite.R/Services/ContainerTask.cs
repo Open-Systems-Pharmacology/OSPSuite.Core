@@ -83,7 +83,6 @@ namespace OSPSuite.R.Services
       /// <param name="throwIfNotFound">Should an error be thrown if the quantity by path is not found?</param>
       void SetValueByPath(IModelCoreSimulation simulation, string path, double value, bool throwIfNotFound);
 
-
       /// <summary>
       ///    Gets the value of the quantity by path
       /// </summary>
@@ -101,8 +100,8 @@ namespace OSPSuite.R.Services
       private readonly ICoreContainerTask _coreContainerTask;
       private readonly IOSPSuiteLogger _logger;
       private static readonly string ALL_BUT_PATH_DELIMITER = $"[^{ObjectPath.PATH_DELIMITER}]*";
-      private static readonly string PATH_DELIMITER = $"\\{ObjectPath.PATH_DELIMITER}";
-      private static readonly string OPTIONAL_PATH_DELIMITER = $"(\\{PATH_DELIMITER})?";
+      private static readonly string PATH_DELIMITER = $@"\{ObjectPath.PATH_DELIMITER}";
+      private static readonly string OPTIONAL_PATH_DELIMITER = $"(.*{PATH_DELIMITER})?";
 
       public ContainerTask(
          IEntityPathResolver entityPathResolver,
@@ -252,17 +251,24 @@ namespace OSPSuite.R.Services
       private string createSearchPattern(string[] path)
       {
          var pattern = new List<string>();
-         foreach (var entry in path)
+
+         void addPathDelimiter(int index)
+         {
+            var lastIndex = path.Length - 1;
+            if (index < lastIndex)
+               pattern.Add(PATH_DELIMITER);
+         }
+
+         path.Each((entry, index) =>
          {
             if (string.Equals(entry, WILD_CARD))
             {
                // At least one occurrence of a path entry => anything except ObjectPath.PATH_DELIMITER, repeated once
                pattern.Add($"{ALL_BUT_PATH_DELIMITER}?");
-               pattern.Add(PATH_DELIMITER);
+               addPathDelimiter(index);
             }
             else if (string.Equals(entry, WILD_CARD_RECURSIVE))
             {
-               pattern.Add(".*"); //Match anything
                pattern.Add(OPTIONAL_PATH_DELIMITER);
             }
             else
@@ -271,11 +277,10 @@ namespace OSPSuite.R.Services
                   .Replace(WILD_CARD, ALL_BUT_PATH_DELIMITER)
                   .Replace("(", "\\(")
                   .Replace(")", "\\)"));
-               pattern.Add(PATH_DELIMITER);
+               addPathDelimiter(index);
             }
-         }
+         });
 
-         pattern.RemoveAt(pattern.Count - 1);
          var searchPattern = pattern.ToString("");
          return $"^{searchPattern}$";
       }
