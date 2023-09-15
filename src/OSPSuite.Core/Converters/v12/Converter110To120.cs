@@ -77,12 +77,14 @@ namespace OSPSuite.Core.Converters.v12
       private void convertParameterStartValuesBuildingBlock(XElement element)
       {
          element.Name = _parameterValuesBuildingBlockName;
+         element.SetAttributeValue("icon", "ParameterValues");
          _converted = true;
       }
 
       private void convertMoleculeStartValuesBuildingBlock(XElement element)
       {
          element.Name = _initialConditionsBuildingBlockName;
+         element.SetAttributeValue("icon", "InitialConditions");
          _converted = true;
       }
 
