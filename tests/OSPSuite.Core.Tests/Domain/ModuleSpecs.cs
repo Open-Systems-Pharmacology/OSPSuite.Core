@@ -212,7 +212,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void the_version_should_not_match()
+      public void the_version_should_match()
       {
          sut.Version.ShouldBeEqualTo(_initialVersion);
       }

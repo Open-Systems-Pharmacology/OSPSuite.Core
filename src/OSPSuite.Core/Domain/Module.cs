@@ -49,6 +49,7 @@ namespace OSPSuite.Core.Domain
 
       private string versionCalculation(IEnumerable<IBuildingBlock> buildingBlocks)
       {
+         // Use OrderBy to ensure alphabetical ordering
          return string.Join(string.Empty, buildingBlocks.Select(typedVersionFor).OrderBy(x => x).ToArray()).GetHashCode().ToString();
       }
 
