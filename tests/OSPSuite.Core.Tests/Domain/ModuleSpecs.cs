@@ -184,7 +184,40 @@ namespace OSPSuite.Core.Domain
          The.Action(() => sut.Add(new ReactionBuildingBlock())).ShouldThrowAn<OSPSuiteException>();
       }
    }
+   
+   public class When_comparing_module_versions_with_different_ordering_of_building_block : concern_for_Module
+   {
+      private string _initialVersion;
 
+      protected override void Context()
+      {
+         sut = new Module
+         {
+            new InitialConditionsBuildingBlock(),
+            new ParameterValuesBuildingBlock(),
+            new EventGroupBuildingBlock()
+         };
+
+         _initialVersion = sut.Version;
+      }
+
+      protected override void Because()
+      {
+         sut = new Module
+         {
+            new ParameterValuesBuildingBlock(),
+            new InitialConditionsBuildingBlock(),
+            new EventGroupBuildingBlock()
+         };
+      }
+
+      [Observation]
+      public void the_version_should_match()
+      {
+         sut.Version.ShouldBeEqualTo(_initialVersion);
+      }
+   }
+   
    public class When_removing_a_building_block : concern_for_Module
    {
       private string _preAddVersion;

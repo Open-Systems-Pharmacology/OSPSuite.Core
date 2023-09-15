@@ -28,6 +28,7 @@ namespace OSPSuite.Core.Domain.Builder
       public virtual void AddExpressionProfile(ExpressionProfileBuildingBlock expressionProfile) => _expressionProfiles.Add(expressionProfile);
 
       public virtual void AddModuleConfiguration(ModuleConfiguration moduleConfiguration) => _moduleConfigurations.Add(moduleConfiguration);
+      public virtual void RemoveModuleConfiguration(ModuleConfiguration moduleConfiguration) => _moduleConfigurations.Remove(moduleConfiguration);
 
       public virtual void AddCalculationMethod(CoreCalculationMethod calculationMethodToAdd) => _allCalculationMethods.Add(calculationMethodToAdd);
 
