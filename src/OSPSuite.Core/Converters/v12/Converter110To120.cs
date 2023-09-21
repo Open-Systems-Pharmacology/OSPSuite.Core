@@ -76,16 +76,26 @@ namespace OSPSuite.Core.Converters.v12
 
       private void convertParameterStartValuesBuildingBlock(XElement element)
       {
-         element.Name = _parameterValuesBuildingBlockName;
-         element.SetAttributeValue("icon", "ParameterValues");
+         updateToParameterValuesElement(element);
          _converted = true;
       }
 
       private void convertMoleculeStartValuesBuildingBlock(XElement element)
       {
+         updateToInitialConditionsElement(element);
+         _converted = true;
+      }
+
+      private static void updateToInitialConditionsElement(XElement element)
+      {
          element.Name = _initialConditionsBuildingBlockName;
          element.SetAttributeValue("icon", "InitialConditions");
-         _converted = true;
+      }
+      
+      private static void updateToParameterValuesElement(XElement element)
+      {
+         element.Name = _parameterValuesBuildingBlockName;
+         element.SetAttributeValue("icon", "ParameterValues");
       }
 
       private void convertMoleculeStartValue(XElement element)
@@ -144,12 +154,12 @@ namespace OSPSuite.Core.Converters.v12
 
          var parameterStartValuesElement = buildConfigurationElement.Element("ParameterStartValues");
          var selectedParameterValuesId = parameterStartValuesElement.Attribute("id").Value;
-         parameterStartValuesElement.Name = _parameterValuesBuildingBlockName;
+         updateToParameterValuesElement(parameterStartValuesElement);
          buildingBlockList.Add(parameterStartValuesElement);
 
          var moleculeStartValueElement = buildConfigurationElement.Element("MoleculeStartValues");
          var selectedInitialConditionsId = moleculeStartValueElement.Attribute("id").Value;
-         moleculeStartValueElement.Name = _initialConditionsBuildingBlockName;
+         updateToInitialConditionsElement(moleculeStartValueElement);
          buildingBlockList.Add(moleculeStartValueElement);
 
          moduleConfiguration.AddAttribute("selectedInitialConditions", selectedInitialConditionsId);
