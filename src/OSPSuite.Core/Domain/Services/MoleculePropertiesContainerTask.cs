@@ -70,7 +70,7 @@ namespace OSPSuite.Core.Domain.Services
                .Each(p =>
                {
                   if (globalMoleculeContainer.ContainsName(p.Name))
-                     validationResult.AddMessage(NotificationType.Warning, p, Warning.GlobalParameterIsDefinedInMultipleSpatialStructure(p.Name));
+                     validationResult.AddMessage(NotificationType.Warning, p, Warning.GlobalParameterIsDefinedInMultipleSpatialStructures(p.Name));
                   else
                      globalMoleculeContainer.Add(p);
                });

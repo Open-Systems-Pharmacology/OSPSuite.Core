@@ -301,7 +301,7 @@ namespace OSPSuite.Core.Domain
       public void should_give_a_warning_that_a_parameter_was_defined_twice_from_two_different_spatial_structure()
       {
          _validationResult.Messages.Count().ShouldBeEqualTo(1);
-         _validationResult.Messages.ElementAt(0).Text.ShouldBeEqualTo(Warning.GlobalParameterIsDefinedInMultipleSpatialStructure(_globalMoleculeDepParam1.Name));
+         _validationResult.Messages.ElementAt(0).Text.ShouldBeEqualTo(Warning.GlobalParameterIsDefinedInMultipleSpatialStructures(_globalMoleculeDepParam1.Name));
       }
    }
 }
