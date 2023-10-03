@@ -209,7 +209,7 @@ namespace OSPSuite.Core.Domain.Services
          var allNeighborhoodsConnectedToContainer1 = container1.GetNeighborhoods(allNeighborhoods);
          var neighborhoodsBetweenContainer1AndContainer2 = container2.GetNeighborhoods(allNeighborhoodsConnectedToContainer1);
          if (neighborhoodsBetweenContainer1AndContainer2.Count == 0)
-            throw new OSPSuiteException(Error.CouldNotFindNeighborhoodBetween(container1.EntityPath(), container2.EntityPath()));
+            throw new OSPSuiteException(Error.CouldNotFindNeighborhoodBetween(container1.EntityPath(), container2.EntityPath(), usingFormula.Formula?.Name, usingFormula.EntityPath()));
 
          //recreate the path for this neighborhood and add the rest of the path. Validation of this path will be done later
          var neighborhoodPath = _objectPathFactory.CreateAbsoluteObjectPath(neighborhoodsBetweenContainer1AndContainer2[0]);

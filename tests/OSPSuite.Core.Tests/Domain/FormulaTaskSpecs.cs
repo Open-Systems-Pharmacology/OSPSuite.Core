@@ -472,6 +472,7 @@ namespace OSPSuite.Core.Domain
       private Neighborhood _neighborhood_liver_cell_liver_pls;
       private IParameter _neighborhoodParameter;
       private Model _model;
+      private Container _plasmaCEll;
 
       protected override void Context()
       {
@@ -480,6 +481,7 @@ namespace OSPSuite.Core.Domain
          _rootContainer = new Container().WithName("ROOT");
          _liver = new Container().WithName("Liver");
          _liverCell = new Container().WithName("Intracellular").WithParentContainer(_liver);
+         _plasmaCEll = new Container().WithName("Plasma").WithParentContainer(_liver);
 
          _neighborhood_liver_cell_liver_pls = new Neighborhood();
 
