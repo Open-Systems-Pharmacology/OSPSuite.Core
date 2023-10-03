@@ -98,7 +98,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _result = sut.CreateGlobalMoleculeContainerFor(_rootContainer, _moleculeBuilder, _simulationBuilder, new ValidationResult());
+         _result = sut.CreateGlobalMoleculeContainerFor(_rootContainer, _moleculeBuilder, _simulationBuilder);
       }
 
       [Observation]
@@ -150,7 +150,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _result = sut.CreateGlobalMoleculeContainerFor(_rootContainer, _moleculeBuilder, _simulationBuilder, new ValidationResult());
+         _result = sut.CreateGlobalMoleculeContainerFor(_rootContainer, _moleculeBuilder, _simulationBuilder);
       }
 
       [Observation]
@@ -209,7 +209,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _result = sut.CreateGlobalMoleculeContainerFor(_rootContainer, _moleculeBuilder, _simulationBuilder, new ValidationResult());
+         _result = sut.CreateGlobalMoleculeContainerFor(_rootContainer, _moleculeBuilder, _simulationBuilder);
       }
 
       [Observation]
@@ -236,9 +236,11 @@ namespace OSPSuite.Core.Domain
       private IContainer _result;
       private MoleculeBuilder _moleculeBuilder;
       private IContainer _moleculeContainer;
-      private IContainer _globalMoleculeDependentProperties;
+      private IContainer _globalMoleculeDependentProperties1;
       private IParameter _globalMoleculeDepParam1;
       private ValidationResult _validationResult;
+      private Parameter _globalMoleculeDepParam2;
+      private Container _globalMoleculeDependentProperties2;
 
       protected override void Context()
       {
@@ -250,23 +252,31 @@ namespace OSPSuite.Core.Domain
          _validationResult = new ValidationResult();
          A.CallTo(() => _containerTask.CreateOrRetrieveSubContainerByName(_rootContainer, _moleculeBuilder.Name)).Returns(_moleculeContainer);
 
-         _globalMoleculeDependentProperties = new Container();
+         _globalMoleculeDependentProperties1 = new Container();
 
          _globalMoleculeDepParam1 = new Parameter().WithName("GMDP1");
-
-         _globalMoleculeDependentProperties.Add(_globalMoleculeDepParam1);
+        
+         _globalMoleculeDependentProperties1.Add(_globalMoleculeDepParam1);
      
-         A.CallTo(() => _parameterCollectionMapper.MapAllFrom(_globalMoleculeDependentProperties, _simulationBuilder))
+         A.CallTo(() => _parameterCollectionMapper.MapAllFrom(_globalMoleculeDependentProperties1, _simulationBuilder))
             .Returns(new[] { _globalMoleculeDepParam1 });
+
+
+         _globalMoleculeDependentProperties2 = new Container();
+         _globalMoleculeDepParam2 = new Parameter().WithName("GMDP2");
+
+
+         A.CallTo(() => _parameterCollectionMapper.MapAllFrom(_globalMoleculeDependentProperties2, _simulationBuilder))
+            .Returns(new[] { _globalMoleculeDepParam2 });
 
 
          var spatialStructure1 = new SpatialStructure
          {
-            GlobalMoleculeDependentProperties = _globalMoleculeDependentProperties
+            GlobalMoleculeDependentProperties = _globalMoleculeDependentProperties1
          };
          var spatialStructure2 = new SpatialStructure
          {
-            GlobalMoleculeDependentProperties = _globalMoleculeDependentProperties
+            GlobalMoleculeDependentProperties = _globalMoleculeDependentProperties2
          };
          var module1 = new Module
          {
@@ -282,7 +292,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _result = sut.CreateGlobalMoleculeContainerFor(_rootContainer, _moleculeBuilder, _simulationBuilder, _validationResult);
+         _result = sut.CreateGlobalMoleculeContainerFor(_rootContainer, _moleculeBuilder, _simulationBuilder);
       }
 
       [Observation]
@@ -294,14 +304,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_add_the_global_molecule_parameter_only_once()
       {
-         _moleculeContainer.ContainsName(_globalMoleculeDepParam1.Name).ShouldBeTrue();
-      }
-
-      [Observation]
-      public void should_give_a_warning_that_a_parameter_was_defined_twice_from_two_different_spatial_structure()
-      {
-         _validationResult.Messages.Count().ShouldBeEqualTo(1);
-         _validationResult.Messages.ElementAt(0).Text.ShouldBeEqualTo(Warning.GlobalParameterIsDefinedInMultipleSpatialStructures(_globalMoleculeDepParam1.Name));
+         _moleculeContainer.ContainsName(_globalMoleculeDepParam2.Name).ShouldBeTrue();
       }
    }
 }

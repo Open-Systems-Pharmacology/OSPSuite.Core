@@ -4,7 +4,6 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Extensions;
@@ -209,12 +208,12 @@ namespace OSPSuite.Core.Domain.Services
          addLocalParametersToMolecule(modelConfiguration);
 
          // create global molecule properties container in the spatial structure
-         var createGlobalMoleculeContainerValidation = createGlobalMoleculeContainers(modelConfiguration);
+         createGlobalMoleculeContainers(modelConfiguration);
 
          // create calculation methods dependent formula and parameters
          createMoleculeCalculationMethodsFormula(modelConfiguration);
 
-         var validation = new ValidationResult(createGlobalMoleculeContainerValidation, spatialStructureValidation, moleculeAmountValidation);
+         var validation = new ValidationResult(spatialStructureValidation, moleculeAmountValidation);
          if (validation.ValidationState != ValidationState.Invalid)
          {
             // replace all keywords define in the model structure
@@ -306,17 +305,14 @@ namespace OSPSuite.Core.Domain.Services
          return messages;
       }
 
-      private ValidationResult createGlobalMoleculeContainers(ModelConfiguration modelConfiguration)
+      private void createGlobalMoleculeContainers(ModelConfiguration modelConfiguration)
       {
          var (model, simulationConfiguration) = modelConfiguration;
-         var validationResult = new ValidationResult();
 
          void createGlobalContainer(MoleculeBuilder moleculeBuilder) =>
-            _moleculePropertiesContainerTask.CreateGlobalMoleculeContainerFor(model.Root, moleculeBuilder, simulationConfiguration, validationResult);
+            _moleculePropertiesContainerTask.CreateGlobalMoleculeContainerFor(model.Root, moleculeBuilder, simulationConfiguration);
 
          simulationConfiguration.AllPresentMolecules().Each(createGlobalContainer);
-
-         return validationResult;
       }
 
       private void addLocalParametersToMolecule(ModelConfiguration modelConfiguration)

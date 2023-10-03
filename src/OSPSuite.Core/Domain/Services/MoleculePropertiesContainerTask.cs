@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    Creates the global molecule container for the molecule and add parameters with the build modes other than "Local"
       ///    into the created molecule container
       /// </summary>
-      IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, MoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder, ValidationResult validationResult);
+      IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, MoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder);
 
       /// <summary>
       ///    Returns (and creates if not already there) the sub container for the transport process named
@@ -56,25 +56,16 @@ namespace OSPSuite.Core.Domain.Services
          return moleculeContainer;
       }
 
-      public IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, MoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder, ValidationResult validationResult)
+      public IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, MoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder)
       {
          var globalMoleculeContainer = addContainerUnder(rootContainer, moleculeBuilder, moleculeBuilder.Name, simulationBuilder)
             .WithContainerType(ContainerType.Molecule);
 
+         var lastSpatialStructureGlobalMoleculeContainer = simulationBuilder.SpatialStructures.LastOrDefault()?.GlobalMoleculeDependentProperties;
+
          //Add global molecule dependent parameters
-         if (moleculeBuilder.IsFloatingXenobiotic)
-         {
-            simulationBuilder.SpatialStructures
-               .Select(x => x.GlobalMoleculeDependentProperties)
-               .SelectMany(x=> addAllParametersFrom(x, simulationBuilder))
-               .Each(p =>
-               {
-                  if (globalMoleculeContainer.ContainsName(p.Name))
-                     validationResult.AddMessage(NotificationType.Warning, p, Warning.GlobalParameterIsDefinedInMultipleSpatialStructures(p.Name));
-                  else
-                     globalMoleculeContainer.Add(p);
-               });
-         }
+         if (moleculeBuilder.IsFloatingXenobiotic && lastSpatialStructureGlobalMoleculeContainer!=null) 
+            globalMoleculeContainer.AddChildren(addAllParametersFrom(lastSpatialStructureGlobalMoleculeContainer, simulationBuilder));
 
          //Only non local parameters from the molecule are added to the global container 
          //Local parameters will be filled in elsewhere (by the MoleculeAmount-Mapper)
