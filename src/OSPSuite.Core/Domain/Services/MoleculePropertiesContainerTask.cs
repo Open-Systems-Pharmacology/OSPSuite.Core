@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Utility.Extensions;
@@ -20,7 +21,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    Creates the global molecule container for the molecule and add parameters with the build modes other than "Local"
       ///    into the created molecule container
       /// </summary>
-      IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, MoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder);
+      IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, MoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder, ValidationResult validationResult);
 
       /// <summary>
       ///    Returns (and creates if not already there) the sub container for the transport process named
@@ -36,7 +37,9 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IParameterBuilderCollectionToParameterCollectionMapper _parameterCollectionMapper;
       private readonly IKeywordReplacerTask _keywordReplacer;
 
-      public MoleculePropertiesContainerTask(IContainerTask containerTask, IParameterBuilderCollectionToParameterCollectionMapper parameterCollectionMapper,
+      public MoleculePropertiesContainerTask(
+         IContainerTask containerTask, 
+         IParameterBuilderCollectionToParameterCollectionMapper parameterCollectionMapper,
          IKeywordReplacerTask keywordReplacer)
       {
          _containerTask = containerTask;
@@ -53,7 +56,7 @@ namespace OSPSuite.Core.Domain.Services
          return moleculeContainer;
       }
 
-      public IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, MoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder)
+      public IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, MoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder, ValidationResult validationResult)
       {
          var globalMoleculeContainer = addContainerUnder(rootContainer, moleculeBuilder, moleculeBuilder.Name, simulationBuilder)
             .WithContainerType(ContainerType.Molecule);
@@ -61,7 +64,16 @@ namespace OSPSuite.Core.Domain.Services
          //Add global molecule dependent parameters
          if (moleculeBuilder.IsFloatingXenobiotic)
          {
-            simulationBuilder.SpatialStructures.Select(x => x.GlobalMoleculeDependentProperties).Each(x => { globalMoleculeContainer.AddChildren(addAllParametersFrom(x, simulationBuilder)); });
+            simulationBuilder.SpatialStructures
+               .Select(x => x.GlobalMoleculeDependentProperties)
+               .SelectMany(x=> addAllParametersFrom(x, simulationBuilder))
+               .Each(p =>
+               {
+                  if (globalMoleculeContainer.ContainsName(p.Name))
+                     validationResult.AddMessage(NotificationType.Warning, p, Warning.GlobalParameterIsDefinedInMultipleSpatialStructure(p.Name));
+                  else
+                     globalMoleculeContainer.Add(p);
+               });
          }
 
          //Only non local parameters from the molecule are added to the global container 

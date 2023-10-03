@@ -2027,6 +2027,9 @@ namespace OSPSuite.Assets
 
       public static string LargeNumberOfOutputPoints(int numberOfPoints) =>
          $"The selected output resolution will generate {numberOfPoints} points and may severely impact the software performance.\nAre you sure you want to run with these setting? If not, consider changing output resolution in simulations settings";
+
+      public static string GlobalParameterIsDefinedInMultipleSpatialStructure(string parameterName) =>
+         $"The parameter '{parameterName}' is defined in multiple spatial structures. Only one instance will be created which might lead to unexpected results.";
    }
 
    public static class RibbonCategories
