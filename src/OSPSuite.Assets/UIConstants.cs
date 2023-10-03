@@ -1755,7 +1755,8 @@ namespace OSPSuite.Assets
 
       public static string UnitIsNotDefinedInDimension(string unit, string dimension) => $"Unit '{unit}' is not defined in dimension '{dimension}'.";
 
-      public static string CouldNotFindNeighborhoodBetween(string container1, string container2) => $"Could not find neighborhood between '{container1}' and '{container2}'";
+      public static string CouldNotFindNeighborhoodBetween(string container1, string container2, string formulaName, string usingFormulaPath) => 
+         $"Could not find neighborhood between '{container1}' and '{container2}' referenced by formula '{formulaName}' used by '{usingFormulaPath}'";
 
       public static string FirstNeighborNotDefinedFor(string neighborhoodName) => $"First neighbor is undefined for neighborhood '{neighborhoodName}'";
       
