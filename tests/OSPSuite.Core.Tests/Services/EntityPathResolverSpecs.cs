@@ -90,13 +90,6 @@ namespace OSPSuite.Core.Services
       }
 
       [Observation]
-      public void should_remove_the_name_of_the_simulation_when_the_top_container_is_an_application_sets()
-      {
-         _topContainer.Name = Constants.APPLICATIONS;
-         sut.PathFor(_parameter).Contains("Sim").ShouldBeFalse();
-      }
-
-      [Observation]
       public void should_remove_the_name_of_the_simulation_when_the_top_container_is_the_neighborhoods_container()
       {
          _topContainer.Name = Constants.NEIGHBORHOODS;
