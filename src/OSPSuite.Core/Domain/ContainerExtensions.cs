@@ -184,5 +184,13 @@ namespace OSPSuite.Core.Domain
       {
          return container?.GetSingleChild<TChild>(x => true);
       }
+
+
+      public static IEnumerable<(IUsingFormula usingFormula, FormulaUsablePath path)> GetPathsReferencing(this IContainer container, Func<FormulaUsablePath, bool> predicate)
+      {
+         return container.GetAllChildren<IUsingFormula>(x => x.Formula.ObjectPaths.Any(predicate))
+            .SelectMany(usingFormula => usingFormula.Formula.ObjectPaths.Where(predicate)
+               .Select(path => (usingFormula, path)));
+      }
    }
 }

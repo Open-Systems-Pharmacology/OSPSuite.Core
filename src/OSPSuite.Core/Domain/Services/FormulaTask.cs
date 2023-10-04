@@ -164,12 +164,7 @@ namespace OSPSuite.Core.Domain.Services
          ExpandLumenSegmentReferencesIn(rootContainer);
       }
 
-      private IEnumerable<(IUsingFormula usingFormula, FormulaUsablePath path)> getPathsReferencingKeyword(IContainer rootContainer, Func<FormulaUsablePath, bool> referencesKeyword)
-      {
-         return rootContainer.GetAllChildren<IUsingFormula>(x => x.Formula.ObjectPaths.Any(referencesKeyword))
-            .SelectMany(usingFormula => usingFormula.Formula.ObjectPaths.Where(referencesKeyword)
-               .Select(path => (usingFormula, path)));
-      }
+  
 
       private bool referencesNeighborhood(ObjectPath path) => path.Contains(NBH);
 
@@ -181,7 +176,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          var neighborhoodsContainer = rootContainer.Container(NEIGHBORHOODS);
          void updatePath(FormulaUsablePath path, IUsingFormula usingFormula) => updateNeighborhoodReferencingPath(path, usingFormula, neighborhoodsContainer);
-         getPathsReferencingKeyword(rootContainer, referencesNeighborhood).Each(x => updatePath(x.path, x.usingFormula));
+         rootContainer.GetPathsReferencing(referencesNeighborhood).Each(x => updatePath(x.path, x.usingFormula));
       }
 
       private void updateNeighborhoodReferencingPath(FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula, IContainer neighborhoods)
@@ -228,12 +223,12 @@ namespace OSPSuite.Core.Domain.Services
       internal void ExpandLumenSegmentReferencesIn(IContainer rootContainer)
       {
          //Lumen Segments
-         getPathsReferencingKeyword(rootContainer, referencesLumenSegment).Each(x => updateLumenSegmentReferencingPath(x.path, x.usingFormula, rootContainer));
+         rootContainer.GetPathsReferencing(referencesLumenSegment).Each(x => updateLumenSegmentReferencingPath(x.path, x.usingFormula, rootContainer));
 
          //Previous or next lumen segment. We create a list so that we can find by index
          var allLumenSegmentsList = Compartment.AllLumenSegments.ToList();
          void updatePath(FormulaUsablePath path, IUsingFormula usingFormula) => updateLumenNavigationSegmentReferencingPath(path, usingFormula, allLumenSegmentsList);
-         getPathsReferencingKeyword(rootContainer, referencesLumenNavigation).Each(x => updatePath(x.path, x.usingFormula));
+         rootContainer.GetPathsReferencing(referencesLumenNavigation).Each(x => updatePath(x.path, x.usingFormula));
       }
 
       private void updateLumenSegmentReferencingPath(FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula, IContainer rootContainer)
