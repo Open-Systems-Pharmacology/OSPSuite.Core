@@ -4,6 +4,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.Services
@@ -66,22 +67,26 @@ namespace OSPSuite.Core.Domain.Services
          var entityAbsolutePath = _objectPathFactory.CreateAbsoluteObjectPath(entity).ToPathString();
          var builder = _simulationBuilder.BuilderFor(entity);
          var objectWithError = builder ?? entity;
+         void checkPathInEntity(ObjectPath objectPath) => CheckPath(entity, objectPath, resolveErrorBehavior);
 
-         // Dynamic formula may contain object path that will be resolved per instance. It cannot be checked here
-         if (formulaToCheck.IsDynamic())
-            return;
-
-
-         if (formulaToCheck.IsBlackBox())
+         switch (formulaToCheck)
          {
-            addNotificationType(NotificationType.Error, objectWithError, Validation.FormulaIsBlackBoxIn(entity.Name, entityAbsolutePath));
-            return;
+            // Dynamic formula may contain object path that will be resolved per instance. It cannot be checked here
+            case DynamicFormula _:
+               return;
+            case BlackBoxFormula _:
+               addNotificationType(NotificationType.Error, objectWithError, Validation.FormulaIsBlackBoxIn(entity.Name, entityAbsolutePath));
+               return;
+
+            //Table formula with offset may use an x argument that is not defined. A dynamic check will be done in the formula itself
+            //so in this case, we only check the path to the table that should be defined
+            case TableFormulaWithXArgument formulaWithXArgument:
+               checkPathInEntity(formulaWithXArgument.FormulaUsablePathBy(formulaWithXArgument.TableObjectAlias));
+               return;
          }
 
-         foreach (var objectPath in formulaToCheck.ObjectPaths)
-         {
-            CheckPath(entity, objectPath, resolveErrorBehavior);
-         }
+         //in all other cases, we check the object path used in the formula
+         formulaToCheck.ObjectPaths.Each(checkPathInEntity);
       }
 
       protected void CheckPath(IUsingFormula entity, ObjectPath objectPathToCheck, ResolveErrorBehavior resolveErrorBehavior)

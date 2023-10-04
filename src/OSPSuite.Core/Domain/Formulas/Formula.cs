@@ -95,12 +95,21 @@ namespace OSPSuite.Core.Domain.Formulas
          foreach (var reference in ObjectPaths)
          {
             var objectReference = new ObjectReference(reference.Resolve<IFormulaUsable>(dependentEntity), reference.Alias);
-            if (objectReference.Object == null)
-               throw new UnableToResolvePathException(reference, dependentEntity);
+            ValidateObjectReference(objectReference, reference, dependentEntity);
 
-            objectReference.Object.PropertyChanged += onReferencePropertyChanged;
-            _objectReferences.Add(objectReference);
+            //Object can be null if the object could not be found and the underlying check did not throw
+            if (objectReference.Object != null)
+            {
+               objectReference.Object.PropertyChanged += onReferencePropertyChanged;
+               _objectReferences.Add(objectReference);
+            }
          }
+      }
+
+      protected virtual void ValidateObjectReference(ObjectReference objectReference, FormulaUsablePath reference, IEntity dependentEntity)
+      {
+         if (objectReference.Object == null)
+            throw new UnableToResolvePathException(reference, dependentEntity);
       }
 
       private void onReferencePropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -121,7 +130,7 @@ namespace OSPSuite.Core.Domain.Formulas
          }
       }
 
-      public virtual bool AreReferencesResolved => (ObjectReferences.Count() == ObjectPaths.Count());
+      public virtual bool AreReferencesResolved => (ObjectReferences.Count == ObjectPaths.Count);
 
       private void checkAliases(IEnumerable<string> aliases)
       {
@@ -191,7 +200,7 @@ namespace OSPSuite.Core.Domain.Formulas
       /// </summary>
       public virtual (double value, bool success) TryCalculate(IUsingFormula refObject)
       {
-         var usedObjects = GetUsedObjectsFrom(refObject, throwOnMissingRef:false);
+         var usedObjects = GetUsedObjectsFrom(refObject, throwOnMissingRef: false);
          return TryCalculateFor(usedObjects, refObject);
       }
 
@@ -234,11 +243,12 @@ namespace OSPSuite.Core.Domain.Formulas
          }
       }
 
-      protected IFormulaUsable GetReferencedEntityByAlias(string alias, IUsingFormula refObject)
-      {
-         return GetUsedObjectsFrom(refObject).First(objectReference => string.Equals(objectReference.Alias, alias)).Object;
-      }
-   }
+      protected IFormulaUsable GetReferencedEntityByAlias(string alias, IUsingFormula refObject) 
+         => GetUsedObjectsFrom(refObject).First(x => string.Equals(x.Alias, alias)).Object;
+
+      protected T GetReferencedEntityByAlias<T>(string alias, IUsingFormula refObject) where T : class, IFormulaUsable 
+         => GetReferencedEntityByAlias(alias, refObject) as T;
+    }
 
    public abstract class FormulaWithFormulaString : Formula
    {

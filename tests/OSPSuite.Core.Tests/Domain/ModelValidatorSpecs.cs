@@ -255,4 +255,60 @@ namespace OSPSuite.Core.Domain
          _results.ValidationState.ShouldBeEqualTo(ValidationState.Valid);
       }
    }
+
+   internal class When_validating_a_table_formula_with_x_argument_for_which_the_x_args_cannot_be_resolved : concern_for_ModelValidator
+   {
+      private ValidationResult _results;
+
+      protected override void Context()
+      {
+         base.Context();
+         var tableFormulaWithXArgs = new TableFormulaWithXArgument();
+         var tableParameter = new Parameter().WithName("TableParameter").WithFormula(new TableFormula());
+         tableFormulaWithXArgs.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("..", tableParameter.Name).WithAlias(tableFormulaWithXArgs.TableObjectAlias));
+         _validContainer.Add(tableParameter);
+         _validContainer.Add(new Parameter().WithName("TableFormulaWithXArgumentParameter").WithFormula(tableFormulaWithXArgs));
+
+         sut = new ValidatorForQuantities(_objectTypeResolver, _objectPathFactory);
+      }
+
+      protected override void Because()
+      {
+         _model.Root = _validContainer;
+         _results = sut.Validate(_modelConfiguration);
+      }
+
+      [Observation]
+      public void should_return_a_valid_state()
+      {
+         _results.ValidationState.ShouldBeEqualTo(ValidationState.Valid);
+      }
+   }
+
+   internal class When_validating_a_table_formula_with_x_argument_for_which_the_table_args_cannot_be_resolved : concern_for_ModelValidator
+   {
+      private ValidationResult _results;
+
+      protected override void Context()
+      {
+         base.Context();
+         var tableFormulaWithXArgs = new TableFormulaWithXArgument();
+         tableFormulaWithXArgs.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("..", "NotFound").WithAlias(tableFormulaWithXArgs.TableObjectAlias));
+         _validContainer.Add(new Parameter().WithName("TableFormulaWithXArgumentParameter").WithFormula(tableFormulaWithXArgs));
+
+         sut = new ValidatorForQuantities(_objectTypeResolver, _objectPathFactory);
+      }
+
+      protected override void Because()
+      {
+         _model.Root = _validContainer;
+         _results = sut.Validate(_modelConfiguration);
+      }
+
+      [Observation]
+      public void should_return_an_invalid_state()
+      {
+         _results.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
+      }
+   }
 }
