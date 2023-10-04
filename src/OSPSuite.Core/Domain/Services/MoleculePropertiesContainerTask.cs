@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Utility.Extensions;
@@ -36,7 +37,9 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IParameterBuilderCollectionToParameterCollectionMapper _parameterCollectionMapper;
       private readonly IKeywordReplacerTask _keywordReplacer;
 
-      public MoleculePropertiesContainerTask(IContainerTask containerTask, IParameterBuilderCollectionToParameterCollectionMapper parameterCollectionMapper,
+      public MoleculePropertiesContainerTask(
+         IContainerTask containerTask, 
+         IParameterBuilderCollectionToParameterCollectionMapper parameterCollectionMapper,
          IKeywordReplacerTask keywordReplacer)
       {
          _containerTask = containerTask;
@@ -58,11 +61,11 @@ namespace OSPSuite.Core.Domain.Services
          var globalMoleculeContainer = addContainerUnder(rootContainer, moleculeBuilder, moleculeBuilder.Name, simulationBuilder)
             .WithContainerType(ContainerType.Molecule);
 
+         var lastSpatialStructureGlobalMoleculeContainer = simulationBuilder.SpatialStructures.LastOrDefault()?.GlobalMoleculeDependentProperties;
+
          //Add global molecule dependent parameters
-         if (moleculeBuilder.IsFloatingXenobiotic)
-         {
-            simulationBuilder.SpatialStructures.Select(x => x.GlobalMoleculeDependentProperties).Each(x => { globalMoleculeContainer.AddChildren(addAllParametersFrom(x, simulationBuilder)); });
-         }
+         if (moleculeBuilder.IsFloatingXenobiotic && lastSpatialStructureGlobalMoleculeContainer!=null) 
+            globalMoleculeContainer.AddChildren(addAllParametersFrom(lastSpatialStructureGlobalMoleculeContainer, simulationBuilder));
 
          //Only non local parameters from the molecule are added to the global container 
          //Local parameters will be filled in elsewhere (by the MoleculeAmount-Mapper)

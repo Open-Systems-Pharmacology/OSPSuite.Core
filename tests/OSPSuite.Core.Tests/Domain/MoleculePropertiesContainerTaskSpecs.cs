@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using System.Linq;
 using FakeItEasy;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
@@ -177,7 +178,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         _moleculeBuilder =new MoleculeBuilder().WithName("tralala");
+         _moleculeBuilder = new MoleculeBuilder().WithName("tralala");
          _moleculeBuilder.IsFloating = true;
          _moleculeBuilder.IsXenobiotic = false;
          _moleculeContainer = A.Fake<IContainer>();
@@ -203,7 +204,7 @@ namespace OSPSuite.Core.Domain
          {
             spatialStructure
          };
-         _simulationConfiguration.AddModuleConfiguration( new ModuleConfiguration(module));
+         _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module));
       }
 
       protected override void Because()
@@ -227,6 +228,83 @@ namespace OSPSuite.Core.Domain
       public void should_not_add_all_global_molecule_dependent_parameters_to_molecule_container()
       {
          A.CallTo(() => _moleculeContainer.Add(_globalMoleculeDepParam1)).MustNotHaveHappened();
+      }
+   }
+
+   internal class When_creating_the_global_molecule_container_for_a_given_xenobiotic_molecule_builder_and_a_parameter_was_already_added_from_another_spatial_structure : concern_for_MoleculePropertiesContainerTask
+   {
+      private IContainer _result;
+      private MoleculeBuilder _moleculeBuilder;
+      private IContainer _moleculeContainer;
+      private IContainer _globalMoleculeDependentProperties1;
+      private IParameter _globalMoleculeDepParam1;
+      private ValidationResult _validationResult;
+      private Parameter _globalMoleculeDepParam2;
+      private Container _globalMoleculeDependentProperties2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _moleculeBuilder = new MoleculeBuilder().WithName("tralala");
+         _moleculeBuilder.IsFloating = true;
+         _moleculeBuilder.IsXenobiotic = true;
+         _moleculeContainer = new Container();
+         _validationResult = new ValidationResult();
+         A.CallTo(() => _containerTask.CreateOrRetrieveSubContainerByName(_rootContainer, _moleculeBuilder.Name)).Returns(_moleculeContainer);
+
+         _globalMoleculeDependentProperties1 = new Container();
+
+         _globalMoleculeDepParam1 = new Parameter().WithName("GMDP1");
+        
+         _globalMoleculeDependentProperties1.Add(_globalMoleculeDepParam1);
+     
+         A.CallTo(() => _parameterCollectionMapper.MapAllFrom(_globalMoleculeDependentProperties1, _simulationBuilder))
+            .Returns(new[] { _globalMoleculeDepParam1 });
+
+
+         _globalMoleculeDependentProperties2 = new Container();
+         _globalMoleculeDepParam2 = new Parameter().WithName("GMDP2");
+
+
+         A.CallTo(() => _parameterCollectionMapper.MapAllFrom(_globalMoleculeDependentProperties2, _simulationBuilder))
+            .Returns(new[] { _globalMoleculeDepParam2 });
+
+
+         var spatialStructure1 = new SpatialStructure
+         {
+            GlobalMoleculeDependentProperties = _globalMoleculeDependentProperties1
+         };
+         var spatialStructure2 = new SpatialStructure
+         {
+            GlobalMoleculeDependentProperties = _globalMoleculeDependentProperties2
+         };
+         var module1 = new Module
+         {
+            spatialStructure1
+         };
+         var module2 = new Module
+         {
+            spatialStructure2
+         };
+         _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+         _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+      }
+
+      protected override void Because()
+      {
+         _result = sut.CreateGlobalMoleculeContainerFor(_rootContainer, _moleculeBuilder, _simulationBuilder);
+      }
+
+      [Observation]
+      public void should_create_a_molecule_container_into_the_global_molecule_container_and_return_the_newly_created_container()
+      {
+         _result.ShouldBeEqualTo(_moleculeContainer);
+      }
+
+      [Observation]
+      public void should_add_the_global_molecule_parameter_only_once()
+      {
+         _moleculeContainer.ContainsName(_globalMoleculeDepParam2.Name).ShouldBeTrue();
       }
    }
 }

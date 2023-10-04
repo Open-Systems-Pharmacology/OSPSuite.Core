@@ -308,8 +308,11 @@ namespace OSPSuite.Core.Domain.Services
       private void createGlobalMoleculeContainers(ModelConfiguration modelConfiguration)
       {
          var (model, simulationConfiguration) = modelConfiguration;
-         simulationConfiguration.AllPresentMolecules()
-            .Each(m => _moleculePropertiesContainerTask.CreateGlobalMoleculeContainerFor(model.Root, m, simulationConfiguration));
+
+         void createGlobalContainer(MoleculeBuilder moleculeBuilder) =>
+            _moleculePropertiesContainerTask.CreateGlobalMoleculeContainerFor(model.Root, moleculeBuilder, simulationConfiguration);
+
+         simulationConfiguration.AllPresentMolecules().Each(createGlobalContainer);
       }
 
       private void addLocalParametersToMolecule(ModelConfiguration modelConfiguration)
