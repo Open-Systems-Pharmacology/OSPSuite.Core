@@ -3,6 +3,7 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
@@ -29,20 +30,20 @@ namespace OSPSuite.Core.Domain.Services
       private readonly ICloneManagerForModel _cloneManagerForModel;
       private readonly IFormulaFactory _formulaFactory;
       private readonly IConcentrationBasedFormulaUpdater _concentrationBasedFormulaUpdater;
-      private readonly IParameterFactory _parameterFactory;
+      private readonly IIndividualParameterToParameterMapper _individualParameterToParameterMapper;
 
       public QuantityValuesUpdater(
          IKeywordReplacerTask keywordReplacerTask,
          ICloneManagerForModel cloneManagerForModel,
          IFormulaFactory formulaFactory,
          IConcentrationBasedFormulaUpdater concentrationBasedFormulaUpdater,
-         IParameterFactory parameterFactory)
+         IIndividualParameterToParameterMapper individualParameterToParameterMapper)
       {
          _keywordReplacerTask = keywordReplacerTask;
          _cloneManagerForModel = cloneManagerForModel;
          _formulaFactory = formulaFactory;
          _concentrationBasedFormulaUpdater = concentrationBasedFormulaUpdater;
-         _parameterFactory = parameterFactory;
+         _individualParameterToParameterMapper = individualParameterToParameterMapper;
       }
 
       public void UpdateQuantitiesValues(ModelConfiguration modelConfiguration)
@@ -92,20 +93,10 @@ namespace OSPSuite.Core.Domain.Services
          if (parentContainer == null)
             return null;
 
-         var name = individualParameter.Name;
-         var dimension = individualParameter.Dimension;
-         var displayUnit = individualParameter.DisplayUnit;
-         var distributionType = individualParameter.DistributionType;
-
-         //if the distribution is undefined or the value is set, we create a default parameter to ensure that the value will take precedence.
-         //Otherwise, we create a distributed parameter and assume that required sub-parameters will be created as well
-         parameter = distributionType == null || individualParameter.Value != null ? 
-            _parameterFactory.CreateParameter(name, dimension: dimension, displayUnit: displayUnit) : 
-            _parameterFactory.CreateDistributedParameter(name, distributionType.Value, dimension: dimension, displayUnit: displayUnit);
+         parameter = _individualParameterToParameterMapper.MapFrom(individualParameter);
 
          simulationConfiguration.AddBuilderReference(parameter, individualParameter);
-         return parameter.WithUpdatedMetaFrom(individualParameter)
-            .WithParentContainer(parentContainer);
+         return parameter.WithParentContainer(parentContainer);
       }
 
       private IParameter getParameter(ModelConfiguration modelConfiguration, PathAndValueEntity pathAndValueEntity)
