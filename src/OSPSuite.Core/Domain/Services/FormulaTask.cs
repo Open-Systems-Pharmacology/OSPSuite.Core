@@ -208,7 +208,7 @@ namespace OSPSuite.Core.Domain.Services
 
          //recreate the path for this neighborhood and add the rest of the path. Validation of this path will be done later
          var neighborhoodPath = _objectPathFactory.CreateAbsoluteObjectPath(neighborhoodsBetweenContainer1AndContainer2[0]);
-         restOfPath.Each(neighborhoodPath.Add);
+         neighborhoodPath.AddRange(restOfPath);
          formulaUsablePath.ReplaceWith(neighborhoodPath);
       }
 
@@ -290,7 +290,7 @@ namespace OSPSuite.Core.Domain.Services
 
          //we can now reconstruct the path to the next or previous lumen segment
          var targetSegmentPath = _objectPathFactory.CreateAbsoluteObjectPath(lumen).AndAdd(allLumenSegments[navigationIndex]);
-         restOfPath.Each(targetSegmentPath.Add);
+         targetSegmentPath.AddRange(restOfPath);
          formulaUsablePath.ReplaceWith(targetSegmentPath);
       }
 

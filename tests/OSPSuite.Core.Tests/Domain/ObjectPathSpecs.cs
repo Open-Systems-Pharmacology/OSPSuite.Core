@@ -130,4 +130,15 @@ namespace OSPSuite.Core.Domain
          sut.ShouldOnlyContain("A", "C");
       }
    }
+
+   public class When_concatenating_two_object_paths : concern_for_ObjectPath
+   {
+      [Observation]
+      public void should_modify_the_first_object_path_and_add_the_entries_of_the_second_object_path()
+      {
+         sut = new ObjectPath("A", "B", "C");
+         sut.ConcatWith(new ObjectPath("D", "E"));
+         sut.ShouldOnlyContainInOrder("A", "B", "C", "D", "E");
+      }
+   }
 }
