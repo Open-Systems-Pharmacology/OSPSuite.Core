@@ -25,11 +25,11 @@ namespace OSPSuite.Core.Domain.Mappers
 
          //if the distribution is undefined or the value is set, we create a default parameter to ensure that the value will take precedence.
          //Otherwise, we create a distributed parameter and assume that required sub-parameters will be created as well
-         var distributedParameter = distributionType == null || individualParameter.Value != null ? 
+         var parameter = distributionType == null || individualParameter.Value != null ? 
             _parameterFactory.CreateParameter(name, dimension: dimension, displayUnit: displayUnit) : 
             _parameterFactory.CreateDistributedParameter(name, distributionType.Value, dimension: dimension, displayUnit: displayUnit);
 
-         return distributedParameter.WithUpdatedMetaFrom(individualParameter);
+         return parameter.WithUpdatedMetaFrom(individualParameter);
       }
    }
 }
