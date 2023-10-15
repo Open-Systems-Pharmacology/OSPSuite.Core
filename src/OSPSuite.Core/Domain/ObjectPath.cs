@@ -66,10 +66,13 @@ namespace OSPSuite.Core.Domain
       ///    Add one entry at the end of the path
       /// </summary>
       /// <param name="pathEntry">path entry to add</param>
-      public virtual void Add(string pathEntry)
-      {
-         _pathEntries.Add(pathEntry);
-      }
+      public virtual void Add(string pathEntry) => _pathEntries.Add(pathEntry);
+
+      /// <summary>
+      ///    Add entries at the end of the path
+      /// </summary>
+      /// <param name="pathEntriesToAdd">path entries to add</param>
+      public virtual void AddRange(IEnumerable<string> pathEntriesToAdd) => pathEntriesToAdd.Each(Add);
 
       /// <summary>
       ///    Replace the first matching path entry with the given replacement if the entry is used in the current path
@@ -190,6 +193,11 @@ namespace OSPSuite.Core.Domain
       {
          _pathEntries.Clear();
          _pathEntries.AddRange(pathEntries);
+      }
+
+      public virtual void ConcatWith(ObjectPath objectPath)
+      {
+         AddRange(objectPath._pathEntries);
       }
 
       public IEnumerator<string> GetEnumerator()
