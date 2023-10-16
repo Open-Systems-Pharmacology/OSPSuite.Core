@@ -51,11 +51,11 @@ namespace OSPSuite.Core.Domain.Mappers
       public Neighborhood MapFrom(NeighborhoodBuilder neighborhoodBuilder, IEnumerable<string> moleculeNames,
          IEnumerable<string> moleculeNamesWithCopyPropertiesRequired, ModelConfiguration modelConfiguration)
       {
-         var (model, simulationConfiguration, replacementContext) = modelConfiguration;
+         var (model, simulationBuilder, replacementContext) = modelConfiguration;
 
          var neighborhood = _objectBaseFactory.Create<Neighborhood>();
          neighborhood.UpdatePropertiesFrom(neighborhoodBuilder, _cloneManagerForModel);
-         simulationConfiguration.AddBuilderReference(neighborhood, neighborhoodBuilder);
+         simulationBuilder.AddBuilderReference(neighborhood, neighborhoodBuilder);
          neighborhood.FirstNeighbor = resolveReference(model, neighborhoodBuilder.FirstNeighborPath, replacementContext);
          neighborhood.SecondNeighbor = resolveReference(model, neighborhoodBuilder.SecondNeighborPath, replacementContext);
 
@@ -66,23 +66,24 @@ namespace OSPSuite.Core.Domain.Mappers
          if (neighborhoodBuilder.MoleculeProperties != null)
          {
             moleculeNames.Each(moleculeName => neighborhood.Add(
-               createMoleculePropertiesFor(neighborhoodBuilder, moleculeName, moleculeNamesWithCopyPropertiesRequired, simulationConfiguration, replacementContext)));
+               createMoleculePropertiesFor(neighborhoodBuilder, moleculeName, moleculeNamesWithCopyPropertiesRequired, modelConfiguration)));
          }
 
          //Add neighborhood parameter to the neighborhood (clone the existing parameter)
-         neighborhoodBuilder.Parameters.Each(param => neighborhood.Add(_parameterMapper.MapFrom(param, simulationConfiguration)));
+         neighborhoodBuilder.Parameters.Each(param => neighborhood.Add(_parameterMapper.MapFrom(param, simulationBuilder)));
          return neighborhood;
       }
 
       private IContainer resolveReference(IModel model, ObjectPath objectPath, ReplacementContext replacementContext)
       {
          var objectPathInModel = _keywordReplacerTask.CreateModelPathFor(objectPath, replacementContext);
-         return objectPathInModel.Resolve<IContainer>(replacementContext.RootContainer);
+         return objectPathInModel.Resolve<IContainer>(model.Root);
       }
 
       private IContainer createMoleculePropertiesFor(NeighborhoodBuilder neighborhoodBuilder,
-         string moleculeName, IEnumerable<string> moleculeNamesWithCopyPropertiesRequired, SimulationBuilder simulationBuilder, ReplacementContext replacementContext)
+         string moleculeName, IEnumerable<string> moleculeNamesWithCopyPropertiesRequired, ModelConfiguration modelConfiguration)
       {
+         var (_, simulationBuilder, replacementContext) = modelConfiguration;
          //Create a new model container from the neighborhood container 
          var moleculePropertiesContainer = _containerMapper.MapFrom(neighborhoodBuilder.MoleculeProperties, simulationBuilder);
          moleculePropertiesContainer.ContainerType = ContainerType.Molecule;

@@ -9,7 +9,7 @@ using static OSPSuite.Core.Domain.ObjectPathKeywords;
 
 namespace OSPSuite.Core.Domain
 {
-   internal abstract class concern_for_KeywordReplacerTask : ContextSpecification<IKeywordReplacerTask>
+   public abstract class concern_for_KeywordReplacerTask : ContextSpecification<IKeywordReplacerTask>
    {
       protected string _modelName;
       protected FormulaUsablePath _objPathFirstNeighbor;
@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   internal class When_replacing_the_keyword_in_a_reaction : concern_for_KeywordReplacerTask
+   public class When_replacing_the_keyword_in_a_reaction : concern_for_KeywordReplacerTask
    {
       private Reaction _reaction;
 
@@ -65,7 +65,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   internal class When_replacing_the_keyword_in_a_molecule_properties_container : concern_for_KeywordReplacerTask
+   public class When_replacing_the_keyword_in_a_molecule_properties_container : concern_for_KeywordReplacerTask
    {
       private IContainer _moleculeContainer;
       private string _moleculeName;
@@ -102,7 +102,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   internal class When_replacing_keywords_in_a_parameter_defined_in_a_global_molecule_container : concern_for_KeywordReplacerTask
+   public class When_replacing_keywords_in_a_parameter_defined_in_a_global_molecule_container : concern_for_KeywordReplacerTask
    {
       private IParameter _parameter;
       private IContainer _rootContainer;

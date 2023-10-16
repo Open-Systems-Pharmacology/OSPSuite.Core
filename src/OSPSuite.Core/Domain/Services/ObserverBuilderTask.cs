@@ -48,11 +48,11 @@ namespace OSPSuite.Core.Domain.Services
          try
          {
             foreach (var observerBuilder in observers.OfType<AmountObserverBuilder>())
-               createAmountObserver(observerBuilder, replacementContext, presentMolecules);
+               createAmountObserver(observerBuilder, presentMolecules, replacementContext);
 
 
             foreach (var observerBuilder in observers.OfType<ContainerObserverBuilder>())
-               createContainerObserver(observerBuilder, replacementContext, presentMolecules);
+               createContainerObserver(observerBuilder, presentMolecules, replacementContext);
          }
          finally
          {
@@ -77,7 +77,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    in the spatial structure of the model.
       ///    Typical example: "Concentration"-Observer (M/V)
       /// </summary>
-      private void createAmountObserver(AmountObserverBuilder observerBuilder, ReplacementContext replacementContext, IEnumerable<MoleculeBuilder> presentMolecules)
+      private void createAmountObserver(AmountObserverBuilder observerBuilder, IEnumerable<MoleculeBuilder> presentMolecules, ReplacementContext replacementContext)
       {
          var moleculeNamesForObserver = moleculeBuildersValidFor(observerBuilder.MoleculeList, presentMolecules)
             .Select(x => x.Name).ToList();
@@ -100,7 +100,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    of the model.
       ///    Typical example is average drug concentration in an organ
       /// </summary>
-      private void createContainerObserver(ContainerObserverBuilder observerBuilder, ReplacementContext replacementContext, IEnumerable<MoleculeBuilder> presentMolecules)
+      private void createContainerObserver(ContainerObserverBuilder observerBuilder, IEnumerable<MoleculeBuilder> presentMolecules, ReplacementContext replacementContext)
       {
          var moleculeBuildersForObserver = moleculeBuildersValidFor(observerBuilder.MoleculeList, presentMolecules).ToList();
          //retrieve a list here to avoid endless loop if observers criteria is not well defined
