@@ -40,7 +40,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public void CreateObservers(ModelConfiguration modelConfiguration)
       {
-         var (model, simulationBuilder) = modelConfiguration;
+         var (model, simulationBuilder, replacementContext) = modelConfiguration;
          _allContainerDescriptors = model.Root.GetAllChildren<IContainer>().ToEntityDescriptorMapList();
          _simulationBuilder = simulationBuilder;
          var observers = simulationBuilder.Observers;
@@ -48,11 +48,11 @@ namespace OSPSuite.Core.Domain.Services
          try
          {
             foreach (var observerBuilder in observers.OfType<AmountObserverBuilder>())
-               createAmountObserver(observerBuilder, model, presentMolecules);
+               createAmountObserver(observerBuilder, replacementContext, presentMolecules);
 
 
             foreach (var observerBuilder in observers.OfType<ContainerObserverBuilder>())
-               createContainerObserver(observerBuilder, model, presentMolecules);
+               createContainerObserver(observerBuilder, replacementContext, presentMolecules);
          }
          finally
          {
@@ -77,7 +77,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    in the spatial structure of the model.
       ///    Typical example: "Concentration"-Observer (M/V)
       /// </summary>
-      private void createAmountObserver(AmountObserverBuilder observerBuilder, IModel model, IEnumerable<MoleculeBuilder> presentMolecules)
+      private void createAmountObserver(AmountObserverBuilder observerBuilder, ReplacementContext replacementContext, IEnumerable<MoleculeBuilder> presentMolecules)
       {
          var moleculeNamesForObserver = moleculeBuildersValidFor(observerBuilder.MoleculeList, presentMolecules)
             .Select(x => x.Name).ToList();
@@ -89,7 +89,7 @@ namespace OSPSuite.Core.Domain.Services
             foreach (var amount in amountsForObserver)
             {
                var observer = addObserverInContainer(observerBuilder, amount, amount.QuantityType);
-               _keywordReplacerTask.ReplaceIn(observer, model.Root, amount.Name);
+               _keywordReplacerTask.ReplaceIn(observer, amount.Name, replacementContext);
             }
          }
       }
@@ -100,7 +100,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    of the model.
       ///    Typical example is average drug concentration in an organ
       /// </summary>
-      private void createContainerObserver(ContainerObserverBuilder observerBuilder, IModel model, IEnumerable<MoleculeBuilder> presentMolecules)
+      private void createContainerObserver(ContainerObserverBuilder observerBuilder, ReplacementContext replacementContext, IEnumerable<MoleculeBuilder> presentMolecules)
       {
          var moleculeBuildersForObserver = moleculeBuildersValidFor(observerBuilder.MoleculeList, presentMolecules).ToList();
          //retrieve a list here to avoid endless loop if observers criteria is not well defined
@@ -118,7 +118,7 @@ namespace OSPSuite.Core.Domain.Services
                }
 
                var observer = addObserverInContainer(observerBuilder, moleculeContainer, moleculeBuilder.QuantityType);
-               _keywordReplacerTask.ReplaceIn(observer, model.Root, moleculeBuilder.Name);
+               _keywordReplacerTask.ReplaceIn(observer, moleculeBuilder.Name, replacementContext);
             }
          }
       }

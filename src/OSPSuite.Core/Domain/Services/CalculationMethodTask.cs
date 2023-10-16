@@ -28,6 +28,7 @@ namespace OSPSuite.Core.Domain.Services
       private IModel _model;
       private SimulationConfiguration _simulationConfiguration;
       private SimulationBuilder _simulationBuilder;
+      private ReplacementContext _replacementContext;
 
       public CalculationMethodTask(
          IFormulaTask formulaTask,
@@ -47,7 +48,8 @@ namespace OSPSuite.Core.Domain.Services
       {
          try
          {
-            (_model, _simulationConfiguration, _simulationBuilder ) = modelConfiguration;
+            (_model, _simulationBuilder, _replacementContext)  = modelConfiguration;
+            _simulationConfiguration = modelConfiguration.SimulationConfiguration;
             _allContainers = _model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
             _allBlackBoxParameters = _model.Root.GetAllChildren<IParameter>().Where(p => p.Formula.IsBlackBox()).ToList();
             foreach (var calculationMethod in _simulationConfiguration.AllCalculationMethods)
@@ -124,11 +126,11 @@ namespace OSPSuite.Core.Domain.Services
 
       private void replaceKeyWordsIn(IParameter parameter, string moleculeName)
       {
-         _keywordReplacerTask.ReplaceIn(parameter, _model.Root, moleculeName);
+         _keywordReplacerTask.ReplaceIn(parameter, moleculeName, _replacementContext);
          //check if parameter is in neighborhood. In that case, retrieve the neighborhood and replace the keywords as well
          var neighborhood = neighborhoodAncestorFor(parameter);
          if (neighborhood == null) return;
-         _keywordReplacerTask.ReplaceIn(neighborhood, _model.Root);
+         _keywordReplacerTask.ReplaceIn(neighborhood, _replacementContext);
       }
 
       private static Neighborhood neighborhoodAncestorFor(IEntity entity)

@@ -9,13 +9,14 @@ using static OSPSuite.Core.Domain.ObjectPathKeywords;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_KeywordReplacerTask : ContextSpecification<IKeywordReplacerTask>
+   internal abstract class concern_for_KeywordReplacerTask : ContextSpecification<IKeywordReplacerTask>
    {
       protected string _modelName;
       protected FormulaUsablePath _objPathFirstNeighbor;
       protected FormulaUsablePath _objPathMolecule;
       protected FormulaUsablePath _objPathOrganism;
       protected IModel _model;
+      protected ReplacementContext _replacementContext;
 
       protected override void Context()
       {
@@ -28,10 +29,11 @@ namespace OSPSuite.Core.Domain
          _objPathMolecule = new FormulaUsablePath(new[] {"B"});
          _objPathOrganism = new FormulaUsablePath(new[] {Constants.ORGANISM, "C"});
          sut = new KeywordReplacerTask(new ObjectPathFactory(new AliasCreator()));
+         _replacementContext = new ReplacementContext(_model);
       }
    }
 
-   public class When_replacing_the_keyword_in_a_reaction : concern_for_KeywordReplacerTask
+   internal class When_replacing_the_keyword_in_a_reaction : concern_for_KeywordReplacerTask
    {
       private Reaction _reaction;
 
@@ -44,7 +46,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.ReplaceInReactionContainer(_reaction, _model.Root);
+         sut.ReplaceInReactionContainer(_reaction, _replacementContext);
       }
 
       [Observation]
@@ -63,7 +65,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_replacing_the_keyword_in_a_molecule_properties_container : concern_for_KeywordReplacerTask
+   internal class When_replacing_the_keyword_in_a_molecule_properties_container : concern_for_KeywordReplacerTask
    {
       private IContainer _moleculeContainer;
       private string _moleculeName;
@@ -81,7 +83,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.ReplaceIn(_moleculeContainer, _model.Root, _moleculeName);
+         sut.ReplaceIn(_moleculeContainer, _moleculeName, _replacementContext);
       }
 
       [Observation]
@@ -100,7 +102,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_replacing_keywords_in_a_parameter_defined_in_a_global_molecule_container : concern_for_KeywordReplacerTask
+   internal class When_replacing_keywords_in_a_parameter_defined_in_a_global_molecule_container : concern_for_KeywordReplacerTask
    {
       private IParameter _parameter;
       private IContainer _rootContainer;
@@ -116,11 +118,12 @@ namespace OSPSuite.Core.Domain
          _parameter.Formula = new ExplicitFormula();
          _objectPath = new FormulaUsablePath("SIM", MOLECULE, "test");
          _parameter.Formula.AddObjectPath(_objectPath);
+         _replacementContext = new ReplacementContext(_rootContainer);
       }
 
       protected override void Because()
       {
-         sut.ReplaceIn(_parameter, _rootContainer);
+         sut.ReplaceIn(_parameter, _replacementContext);
       }
 
       [Observation]

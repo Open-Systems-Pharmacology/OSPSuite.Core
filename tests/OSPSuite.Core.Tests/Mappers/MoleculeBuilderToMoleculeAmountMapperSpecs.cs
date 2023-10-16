@@ -17,7 +17,6 @@ namespace OSPSuite.Core.Mappers
       protected IFormulaBuilderToFormulaMapper _formulaMapper;
       protected IObjectBaseFactory _objectBaseFactory;
       protected IParameterBuilderToParameterMapper _parameterMapper;
-      protected IKeywordReplacerTask _keywordReplacerTask;
       protected IFormulaFactory _formulaFactory;
       protected IDimensionFactory _dimensionFactory;
       protected IParameterFactory _parameterFactory;
@@ -28,12 +27,10 @@ namespace OSPSuite.Core.Mappers
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          _formulaMapper = A.Fake<IFormulaBuilderToFormulaMapper>();
          _parameterMapper = A.Fake<IParameterBuilderToParameterMapper>();
-         _keywordReplacerTask = A.Fake<IKeywordReplacerTask>();
          _formulaFactory = A.Fake<IFormulaFactory>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _parameterFactory = A.Fake<IParameterFactory>();
-         sut = new MoleculeBuilderToMoleculeAmountMapper(_objectBaseFactory, _formulaMapper, _parameterMapper, _dimensionFactory,
-            _keywordReplacerTask, _formulaFactory, _parameterFactory);
+         sut = new MoleculeBuilderToMoleculeAmountMapper(_objectBaseFactory, _formulaMapper, _parameterMapper, _dimensionFactory, _formulaFactory, _parameterFactory);
 
          _simulationConfiguration = new SimulationConfiguration();
       }
@@ -112,12 +109,6 @@ namespace OSPSuite.Core.Mappers
       public void should_add_the_builder_to_the_build_configuration_cache()
       {
          _simulationBuilder.BuilderFor(_moleculeAmount).ShouldBeEqualTo(_moleculeBuilder);
-      }
-
-      [Observation]
-      public void should_replace_keywords_including_molecule()
-      {
-         A.CallTo(() => _keywordReplacerTask.ReplaceIn(_moleculeAmount)).MustHaveHappened();
       }
    }
 

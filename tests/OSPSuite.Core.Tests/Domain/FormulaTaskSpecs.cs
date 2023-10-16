@@ -3,6 +3,7 @@ using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
@@ -19,7 +20,7 @@ using static OSPSuite.Core.Domain.ObjectPathKeywords;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_FormulaTask : ContextSpecification<FormulaTask>
+   internal abstract class concern_for_FormulaTask : ContextSpecification<FormulaTask>
    {
       protected IObjectBaseFactory _objectBaseFactory;
       private IObjectPathFactory _objectPathFactory;
@@ -40,7 +41,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_checking_if_two_formula_of_different_types_are_the_same : concern_for_FormulaTask
+   internal class When_checking_if_two_formula_of_different_types_are_the_same : concern_for_FormulaTask
    {
       [Observation]
       public void should_return_false()
@@ -55,7 +56,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_checking_if_two_blackbox_formulas_are_the_same : concern_for_FormulaTask
+   internal class When_checking_if_two_blackbox_formulas_are_the_same : concern_for_FormulaTask
    {
       [Observation]
       public void should_return_true()
@@ -64,7 +65,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_checking_if_two_distributed_formula_having_the_same_distribution_type_are_the_same : concern_for_FormulaTask
+   internal class When_checking_if_two_distributed_formula_having_the_same_distribution_type_are_the_same : concern_for_FormulaTask
    {
       [Observation]
       public void should_return_true()
@@ -76,7 +77,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_checking_if_two_constant_formula_are_the_same : concern_for_FormulaTask
+   internal class When_checking_if_two_constant_formula_are_the_same : concern_for_FormulaTask
    {
       [Observation]
       public void should_return_true_if_the_value_are_the_same()
@@ -91,7 +92,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_checking_if_two_explicit_formula_using_the_same_formula_string_and_the_references_are_the_same : concern_for_FormulaTask
+   internal class When_checking_if_two_explicit_formula_using_the_same_formula_string_and_the_references_are_the_same : concern_for_FormulaTask
    {
       private ExplicitFormula _formula1;
       private ExplicitFormula _formula2;
@@ -115,7 +116,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_checking_if_two_explicit_formula_using_the_same_formula_string_but_different_references_are_the_same : concern_for_FormulaTask
+   internal class When_checking_if_two_explicit_formula_using_the_same_formula_string_but_different_references_are_the_same : concern_for_FormulaTask
    {
       private ExplicitFormula _formula1;
       private ExplicitFormula _formula2;
@@ -139,7 +140,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_checking_if_two_explicit_formula_using_diffent_formula_string_but_the_same_references_are_the_same : concern_for_FormulaTask
+   internal class When_checking_if_two_explicit_formula_using_diffent_formula_string_but_the_same_references_are_the_same : concern_for_FormulaTask
    {
       private ExplicitFormula _formula1;
       private ExplicitFormula _formula2;
@@ -163,7 +164,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_checking_if_two_explicit_formula_using_different_formula_string_and_different_references_are_the_same : concern_for_FormulaTask
+   internal class When_checking_if_two_explicit_formula_using_different_formula_string_and_different_references_are_the_same : concern_for_FormulaTask
    {
       private ExplicitFormula _formula1;
       private ExplicitFormula _formula2;
@@ -186,7 +187,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_checking_if_two_explicit_formula_using_the_same_formula_string_and_the_references_but_diffent_aliases_are_the_same : concern_for_FormulaTask
+   internal class When_checking_if_two_explicit_formula_using_the_same_formula_string_and_the_references_but_diffent_aliases_are_the_same : concern_for_FormulaTask
    {
       private ExplicitFormula _formula1;
       private ExplicitFormula _formula2;
@@ -210,7 +211,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_expanding_all_dynamic_formula_in_a_model : concern_for_FormulaTask
+   internal class When_expanding_all_dynamic_formula_in_a_model : concern_for_FormulaTask
    {
       private IModel _model;
       private IParameter _parameter;
@@ -260,7 +261,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_expanding_all_dynamic_formula_in_a_model_using_in_parent_criteria : concern_for_FormulaTask
+   internal class When_expanding_all_dynamic_formula_in_a_model_using_in_parent_criteria : concern_for_FormulaTask
    {
       private IModel _model;
       private IParameter _parameter;
@@ -323,7 +324,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_expanding_all_dynamic_formula_in_a_model_using_in_parent_criteria_but_the_criteria_is_OR : concern_for_FormulaTask
+   internal class When_expanding_all_dynamic_formula_in_a_model_using_in_parent_criteria_but_the_criteria_is_OR : concern_for_FormulaTask
    {
       private IModel _model;
       private IParameter _parameter;
@@ -363,7 +364,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_replacing_the_neighborhood_keyword_in_a_well_defined_path : concern_for_FormulaTask
+   internal class When_replacing_the_neighborhood_keyword_in_a_well_defined_path : concern_for_FormulaTask
    {
       private IParameter _liverCellParameter;
       private IContainer _rootContainer;
@@ -415,7 +416,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_replacing_the_neighborhood_keyword_in_a_path_missing_one_container : concern_for_FormulaTask
+   internal class When_replacing_the_neighborhood_keyword_in_a_path_missing_one_container : concern_for_FormulaTask
    {
       private IParameter _liverCellParameter;
       private IContainer _rootContainer;
@@ -462,7 +463,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_replacing_the_neighborhood_keyword_in_between_two_containers_without_neighborhood : concern_for_FormulaTask
+   internal class When_replacing_the_neighborhood_keyword_in_between_two_containers_without_neighborhood : concern_for_FormulaTask
    {
       private IParameter _liverCellParameter;
       private IContainer _rootContainer;
@@ -505,7 +506,7 @@ namespace OSPSuite.Core.Domain
       }  
    }
 
-   public abstract class concern_for_lumen_segment_path_resolution : concern_for_FormulaTask
+   internal abstract class concern_for_lumen_segment_path_resolution : concern_for_FormulaTask
    {
       protected FormulaUsablePath _objectPath;
       protected Container _smallIntestine;
@@ -519,6 +520,7 @@ namespace OSPSuite.Core.Domain
       protected Container _duodenumMucosaIntracellular;
       protected IParameter _height;
       private Container _root;
+      protected ModelConfiguration _modelConfiguration;
 
       protected override void Context()
       {
@@ -538,10 +540,12 @@ namespace OSPSuite.Core.Domain
 
 
          _model.Root = _root;
+         var simulationConfiguration =  new SimulationConfiguration();
+         _modelConfiguration = new ModelConfiguration(_model, simulationConfiguration, new SimulationBuilder(simulationConfiguration));
       }
    }
 
-   public class When_replacing_the_lumen_segment_keyword_in_a_well_defined_absolute_path : concern_for_lumen_segment_path_resolution
+   internal class When_replacing_the_lumen_segment_keyword_in_a_well_defined_absolute_path : concern_for_lumen_segment_path_resolution
    {
       protected Parameter _parameterReferencingAbsoluteLumenSegment;
 
@@ -557,7 +561,7 @@ namespace OSPSuite.Core.Domain
          _parameterReferencingAbsoluteLumenSegment.Formula.AddObjectPath(new FormulaUsablePath(ORGANISM, _height.Name) {Alias = "H"});
 
          //to mimic what happens in the model construction, we should expand keywords
-         _keywordReplacerTask.ReplaceIn(_model.Root);
+         _keywordReplacerTask.ReplaceIn(_modelConfiguration);
       }
 
       protected override void Because()
@@ -572,7 +576,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_replacing_the_lumen_segment_keyword_in_a_well_defined_relative_path : concern_for_lumen_segment_path_resolution
+   internal class When_replacing_the_lumen_segment_keyword_in_a_well_defined_relative_path : concern_for_lumen_segment_path_resolution
    {
       protected Parameter _parameterReferencingRelativeLumenSegment;
 
@@ -587,7 +591,7 @@ namespace OSPSuite.Core.Domain
          _parameterReferencingRelativeLumenSegment.Formula.AddObjectPath(_objectPath);
 
          //to mimic what happens in the model construction, we should expand keywords
-         _keywordReplacerTask.ReplaceIn(_model.Root);
+         _keywordReplacerTask.ReplaceIn(_modelConfiguration);
       }
 
       protected override void Because()
@@ -602,7 +606,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_replacing_the_lumen_segment_keyword_in_using_a_relative_path_to_a_container_that_does_not_exist_in_lumen : concern_for_lumen_segment_path_resolution
+   internal class When_replacing_the_lumen_segment_keyword_in_using_a_relative_path_to_a_container_that_does_not_exist_in_lumen : concern_for_lumen_segment_path_resolution
    {
       protected Parameter _parameterReferencingRelativeLumenSegment;
 
@@ -615,9 +619,9 @@ namespace OSPSuite.Core.Domain
          //..|LumenSegment|V which will be SmallIntestine|LumenSegment which will become Organism|Lumen|SmallIntestine which does not exist in our context
          _objectPath = new FormulaUsablePath(PARENT_CONTAINER, LUMEN_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
          _parameterReferencingRelativeLumenSegment.Formula.AddObjectPath(_objectPath);
-  
+
          //to mimic what happens in the model construction, we should expand keywords
-         _keywordReplacerTask.ReplaceIn(_model.Root);
+         _keywordReplacerTask.ReplaceIn(_modelConfiguration);
       }
 
       protected override void Because()
@@ -635,7 +639,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_replacing_the_lumen_segment_keyword_in_using_absolute_path_to_a_container_that_does_not_exist_in_lumen : concern_for_lumen_segment_path_resolution
+   internal class When_replacing_the_lumen_segment_keyword_in_using_absolute_path_to_a_container_that_does_not_exist_in_lumen : concern_for_lumen_segment_path_resolution
    {
       protected Parameter _parameterReferencingAbsoluteLumenSegment;
 
@@ -650,7 +654,7 @@ namespace OSPSuite.Core.Domain
          _parameterReferencingAbsoluteLumenSegment.Formula.AddObjectPath(_objectPath);
 
          //to mimic what happens in the model construction, we should expand keywords
-         _keywordReplacerTask.ReplaceIn(_model.Root);
+         _keywordReplacerTask.ReplaceIn(_modelConfiguration);
       }
 
       protected override void Because()
@@ -668,7 +672,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_using_the_lumen_segment_keyword_in_path_multiple_times : concern_for_lumen_segment_path_resolution
+   internal class When_using_the_lumen_segment_keyword_in_path_multiple_times : concern_for_lumen_segment_path_resolution
    {
       protected Parameter _parameterReferencingAbsoluteLumenSegment;
 
@@ -690,7 +694,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_using_the_lumen_segment_keyword_at_the_beginning_of_a_path : concern_for_lumen_segment_path_resolution
+   internal class When_using_the_lumen_segment_keyword_at_the_beginning_of_a_path : concern_for_lumen_segment_path_resolution
    {
       protected Parameter _parameterReferencingAbsoluteLumenSegment;
 
@@ -712,7 +716,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public abstract class concern_for_lumen_next_previous_segment_path_resolution : concern_for_FormulaTask
+   internal abstract class concern_for_lumen_next_previous_segment_path_resolution : concern_for_FormulaTask
    {
       protected FormulaUsablePath _objectPath;
       protected Model _model;
@@ -747,7 +751,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_replacing_the_lumen_next_segment_keyword_in_a_well_defined_relative_path : concern_for_lumen_next_previous_segment_path_resolution
+   internal class When_replacing_the_lumen_next_segment_keyword_in_a_well_defined_relative_path : concern_for_lumen_next_previous_segment_path_resolution
    {
       protected Parameter _parameterReferencingRelativeLumenNextSegment;
 
@@ -774,7 +778,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_replacing_the_lumen_previous_segment_keyword_in_a_well_defined_relative_path : concern_for_lumen_next_previous_segment_path_resolution
+   internal class When_replacing_the_lumen_previous_segment_keyword_in_a_well_defined_relative_path : concern_for_lumen_next_previous_segment_path_resolution
    {
       protected Parameter _parameterReferencingRelativeLumenNextSegment;
 
@@ -801,7 +805,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_replacing_the_lumen_next_segment_keyword_in_a_container_that_has_no_next_segment_such_as_rectum : concern_for_lumen_next_previous_segment_path_resolution
+   internal class When_replacing_the_lumen_next_segment_keyword_in_a_container_that_has_no_next_segment_such_as_rectum : concern_for_lumen_next_previous_segment_path_resolution
    {
       protected Parameter _parameterReferencingRelativeLumenNextSegment;
 
@@ -823,7 +827,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_replacing_the_lumen_next_segment_keyword_in_a_container_that_is_not_a_lumen_segment : concern_for_lumen_next_previous_segment_path_resolution
+   internal class When_replacing_the_lumen_next_segment_keyword_in_a_container_that_is_not_a_lumen_segment : concern_for_lumen_next_previous_segment_path_resolution
    {
       protected Parameter _parameterReferencingRelativeLumenNextSegment;
 
@@ -845,7 +849,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_replacing_the_lumen_previous_segment_keyword_in_a_container_that_has_no_next_segment_such_as_stomach : concern_for_lumen_next_previous_segment_path_resolution
+   internal class When_replacing_the_lumen_previous_segment_keyword_in_a_container_that_has_no_next_segment_such_as_stomach : concern_for_lumen_next_previous_segment_path_resolution
    {
       protected Parameter _parameterReferencingRelativeLumenNextSegment;
 
@@ -867,7 +871,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_expanding_a_dynamic_formula_in_a_model_at_a_formula_useable_satisfying_their_own_criteria :
+   internal class When_expanding_a_dynamic_formula_in_a_model_at_a_formula_useable_satisfying_their_own_criteria :
       concern_for_FormulaTask
    {
       private IModel _model;
@@ -919,7 +923,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_adding_a_reference_to_the_volume_of_parent_container_for_a_formula_without_any_reference_to_volume : concern_for_FormulaTask
+   internal class When_adding_a_reference_to_the_volume_of_parent_container_for_a_formula_without_any_reference_to_volume : concern_for_FormulaTask
    {
       private IFormula _explicitFormula;
       private string _alias;
@@ -945,7 +949,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_adding_a_reference_to_the_volume_of_parent_container_for_an_existing_reference_to_volume : concern_for_FormulaTask
+   internal class When_adding_a_reference_to_the_volume_of_parent_container_for_an_existing_reference_to_volume : concern_for_FormulaTask
    {
       private IFormula _explicitFormula;
       private string _alias;
@@ -969,7 +973,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_adding_a_reference_to_the_volume_of_parent_container_for_an_existing_reference_to_volume_but_with_a_different_path : concern_for_FormulaTask
+   internal class When_adding_a_reference_to_the_volume_of_parent_container_for_an_existing_reference_to_volume_but_with_a_different_path : concern_for_FormulaTask
    {
       private IFormula _explicitFormula;
       private string _alias;
@@ -994,7 +998,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_validating_the_formula_origin_id : concern_for_FormulaTask
+   internal class When_validating_the_formula_origin_id : concern_for_FormulaTask
    {
       private IModel _model;
       private ExplicitFormula _rhsFormula1;

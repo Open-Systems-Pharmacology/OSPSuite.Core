@@ -63,7 +63,7 @@ namespace OSPSuite.Core.Domain.Services
       private void addPassiveTransportToModel(TransportBuilder passiveTransportBuilder, IEnumerable<Neighborhood> allNeighborhoods,
          MoleculeBuilder molecule, ModelConfiguration modelConfiguration)
       {
-         var (model, simulationBuilder) = modelConfiguration;
+         var (_, simulationBuilder, replacementContext) = modelConfiguration;
          // first check if the molecule should be transported
          if (!passiveTransportBuilder.TransportsMolecule(molecule.Name))
             return;
@@ -74,25 +74,24 @@ namespace OSPSuite.Core.Domain.Services
          {
             var passiveTransport = mapFrom(passiveTransportBuilder, neighborhood, molecule.Name, simulationBuilder);
             addPassiveTransportToNeighborhood(neighborhood, molecule.Name, passiveTransport);
-            _keywordReplacerTask.ReplaceIn(passiveTransport, model.Root, molecule.Name, neighborhood);
+            _keywordReplacerTask.ReplaceIn(passiveTransport, molecule.Name, neighborhood, replacementContext);
          }
       }
 
       private void addActiveTransportToModel(TransportBuilder activeTransportBuilder, IEnumerable<Neighborhood> allNeighborhoods,
          MoleculeBuilder molecule, TransporterMoleculeContainer transporterMolecule, ModelConfiguration modelConfiguration)
       {
-         var (model, simulationConfiguration) = modelConfiguration;
+         var (model, simulationBuilder, replacementContext) = modelConfiguration;
          var neighborhoods = getNeighborhoodsForActiveTransport(activeTransportBuilder, allNeighborhoods, molecule.Name, transporterMolecule.Name);
 
          foreach (var neighborhood in neighborhoods)
          {
-            var activeTransport = mapFrom(activeTransportBuilder, neighborhood, molecule.Name, simulationConfiguration);
+            var activeTransport = mapFrom(activeTransportBuilder, neighborhood, molecule.Name, simulationBuilder);
             var activeTransportInMolecule =
-               addActiveTransportToNeighborhood(neighborhood, activeTransport, transporterMolecule, molecule.Name, simulationConfiguration);
+               addActiveTransportToNeighborhood(neighborhood, activeTransport, transporterMolecule, molecule.Name, simulationBuilder);
 
-            simulationConfiguration.AddBuilderReference(activeTransportInMolecule, activeTransportBuilder);
-            _keywordReplacerTask.ReplaceIn(activeTransport, model.Root, molecule.Name, neighborhood, transporterMolecule.TransportName,
-               transporterMolecule.Name);
+            simulationBuilder.AddBuilderReference(activeTransportInMolecule, activeTransportBuilder);
+            _keywordReplacerTask.ReplaceIn(activeTransport, molecule.Name, neighborhood, transporterMolecule.TransportName, transporterMolecule.Name, replacementContext);
          }
       }
 
@@ -114,11 +113,9 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private IEnumerable<Neighborhood> getNeighborhoodsForPassiveTransport(TransportBuilder passiveTransportBuilder,
-         IEnumerable<Neighborhood> allNeighborhoods, string moleculeName)
+      private IEnumerable<Neighborhood> getNeighborhoodsForPassiveTransport(TransportBuilder passiveTransportBuilder, IEnumerable<Neighborhood> allNeighborhoods, string moleculeName)
       {
-         return getNeighborhoodsByNeighborCriteria(allNeighborhoods, passiveTransportBuilder.SourceCriteria, passiveTransportBuilder.TargetCriteria,
-            moleculeName);
+         return getNeighborhoodsByNeighborCriteria(allNeighborhoods, passiveTransportBuilder.SourceCriteria, passiveTransportBuilder.TargetCriteria, moleculeName);
       }
 
       private IEnumerable<Neighborhood> getNeighborhoodsByNeighborCriteria(IEnumerable<Neighborhood> neighborhoods,
@@ -148,8 +145,8 @@ namespace OSPSuite.Core.Domain.Services
       private IContainer addActiveTransportToNeighborhood(Neighborhood neighborhood, Transport transport,
          TransporterMoleculeContainer transporterMolecule, string transportedMoleculeName, SimulationBuilder simulationBuilder)
       {
-         return _moleculePropertiesContainerTask.NeighborhoodMoleculeTransportContainerFor(neighborhood, transportedMoleculeName, transporterMolecule,
-               transport.Name, simulationBuilder)
+         return _moleculePropertiesContainerTask
+            .NeighborhoodMoleculeTransportContainerFor(neighborhood, transportedMoleculeName, transporterMolecule, transport.Name, simulationBuilder)
             .WithChild(transport);
       }
 
@@ -159,6 +156,7 @@ namespace OSPSuite.Core.Domain.Services
          var transport = _transportMapper.MapFrom(transportBuilder, simulationBuilder);
          transport.SourceAmount = neighborhood.GetNeighborSatisfying(transportBuilder.SourceCriteria)
             .GetSingleChildByName<MoleculeAmount>(moleculeName);
+        
          transport.TargetAmount = neighborhood.GetNeighborSatisfying(transportBuilder.TargetCriteria)
             .GetSingleChildByName<MoleculeAmount>(moleculeName);
          return transport;

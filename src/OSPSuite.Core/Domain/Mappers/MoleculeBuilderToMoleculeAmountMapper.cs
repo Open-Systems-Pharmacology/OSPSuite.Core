@@ -37,7 +37,6 @@ namespace OSPSuite.Core.Domain.Mappers
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IFormulaBuilderToFormulaMapper _formulaMapper;
       private readonly IParameterBuilderToParameterMapper _parameterMapper;
-      private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly IFormulaFactory _formulaFactory;
       private readonly IParameterFactory _parameterFactory;
       private readonly IDimension _amountDimension;
@@ -45,13 +44,13 @@ namespace OSPSuite.Core.Domain.Mappers
       public MoleculeBuilderToMoleculeAmountMapper(IObjectBaseFactory objectBaseFactory,
          IFormulaBuilderToFormulaMapper formulaMapper,
          IParameterBuilderToParameterMapper parameterMapper,
-         IDimensionFactory dimensionFactory, IKeywordReplacerTask keywordReplacerTask, IFormulaFactory formulaFactory,
+         IDimensionFactory dimensionFactory, 
+         IFormulaFactory formulaFactory,
          IParameterFactory parameterFactory)
       {
          _objectBaseFactory = objectBaseFactory;
          _formulaMapper = formulaMapper;
          _parameterMapper = parameterMapper;
-         _keywordReplacerTask = keywordReplacerTask;
          _formulaFactory = formulaFactory;
          _parameterFactory = parameterFactory;
          _amountDimension = dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
@@ -82,7 +81,6 @@ namespace OSPSuite.Core.Domain.Mappers
 
          allLocalParameters.Each(x => moleculeAmount.Add(_parameterMapper.MapFrom(x, simulationBuilder)));
 
-         _keywordReplacerTask.ReplaceIn(moleculeAmount);
          return moleculeAmount;
       }
 

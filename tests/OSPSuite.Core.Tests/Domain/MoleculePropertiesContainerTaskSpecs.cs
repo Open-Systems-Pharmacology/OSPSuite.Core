@@ -7,6 +7,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
@@ -18,6 +19,8 @@ namespace OSPSuite.Core.Domain
       protected IKeywordReplacerTask _keywordReplacer;
       protected SimulationConfiguration _simulationConfiguration;
       protected SimulationBuilder _simulationBuilder;
+      protected ModelConfiguration _modelConfiguration;
+      private Model _model;
 
       protected override void Context()
       {
@@ -27,6 +30,11 @@ namespace OSPSuite.Core.Domain
          _rootContainer = new Container();
          _parameterCollectionMapper = A.Fake<IParameterBuilderCollectionToParameterCollectionMapper>();
          _keywordReplacer = A.Fake<IKeywordReplacerTask>();
+         _model = new Model
+         {
+            Root = _rootContainer
+         };
+         _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder);
          sut = new MoleculePropertiesContainerTask(_containerTask, _parameterCollectionMapper, _keywordReplacer);
       }
    }
@@ -98,7 +106,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _result = sut.CreateGlobalMoleculeContainerFor(_rootContainer, _moleculeBuilder, _simulationBuilder);
+         _result = sut.CreateGlobalMoleculeContainerFor( _moleculeBuilder, _modelConfiguration);
       }
 
       [Observation]
@@ -150,7 +158,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _result = sut.CreateGlobalMoleculeContainerFor(_rootContainer, _moleculeBuilder, _simulationBuilder);
+         _result = sut.CreateGlobalMoleculeContainerFor(_moleculeBuilder, _modelConfiguration);
       }
 
       [Observation]
@@ -209,7 +217,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _result = sut.CreateGlobalMoleculeContainerFor(_rootContainer, _moleculeBuilder, _simulationBuilder);
+         _result = sut.CreateGlobalMoleculeContainerFor(_moleculeBuilder, _modelConfiguration);
       }
 
       [Observation]
@@ -292,7 +300,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _result = sut.CreateGlobalMoleculeContainerFor(_rootContainer, _moleculeBuilder, _simulationBuilder);
+         _result = sut.CreateGlobalMoleculeContainerFor(_moleculeBuilder, _modelConfiguration);
       }
 
       [Observation]
