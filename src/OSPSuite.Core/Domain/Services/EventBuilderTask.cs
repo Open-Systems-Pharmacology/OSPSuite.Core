@@ -27,11 +27,9 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly ITransportBuilderToTransportMapper _transportMapper;
       private readonly IEventGroupBuilderToEventGroupMapper _eventGroupMapper;
-      private IModel _model;
       private EntityDescriptorMapList<IContainer> _allModelContainerDescriptors;
       private ICache<DescriptorCriteria, IEnumerable<IContainer>> _sourceCriteriaTargetContainerCache;
       private ICache<DescriptorCriteria, IEnumerable<IContainer>> _applicationTransportTargetContainerCache;
-      private SimulationBuilder _simulationBuilder;
 
       public EventBuilderTask(
          IKeywordReplacerTask keywordReplacerTask,
@@ -47,14 +45,14 @@ namespace OSPSuite.Core.Domain.Services
       {
          try
          {
-            (_model, _simulationBuilder) = modelConfiguration;
-            _allModelContainerDescriptors = _model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
+            var (model, simulationBuilder) = modelConfiguration;
+            _allModelContainerDescriptors = model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
 
             _sourceCriteriaTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
             _applicationTransportTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
 
             //Cache all containers where the event group builder will be created using the source criteria
-            foreach (var eventGroupBuilder in _simulationBuilder.EventGroups)
+            foreach (var eventGroupBuilder in simulationBuilder.EventGroups)
             {
                if (_sourceCriteriaTargetContainerCache.Contains(eventGroupBuilder.SourceCriteria))
                   continue;
@@ -62,52 +60,51 @@ namespace OSPSuite.Core.Domain.Services
                _sourceCriteriaTargetContainerCache.Add(eventGroupBuilder.SourceCriteria, _allModelContainerDescriptors.AllSatisfiedBy(eventGroupBuilder.SourceCriteria));
             }
 
-            _simulationBuilder.EventGroups.Each(createEventGroupFrom);
+            simulationBuilder.EventGroups.Each(x => createEventGroupFrom(x, modelConfiguration));
          }
          finally
          {
-            _model = null;
             _allModelContainerDescriptors = null;
             _sourceCriteriaTargetContainerCache.Clear();
             _sourceCriteriaTargetContainerCache = null;
             _applicationTransportTargetContainerCache.Clear();
             _applicationTransportTargetContainerCache = null;
-            _simulationBuilder = null;
          }
       }
 
       /// <summary>
       ///    Adds event group to all model containers with defined criteria
       /// </summary>
-      private void createEventGroupFrom(EventGroupBuilder eventGroupBuilder)
+      private void createEventGroupFrom(EventGroupBuilder eventGroupBuilder, ModelConfiguration modelConfiguration)
       {
          foreach (var sourceContainer in _sourceCriteriaTargetContainerCache[eventGroupBuilder.SourceCriteria])
          {
-            createEventGroupInContainer(eventGroupBuilder, sourceContainer);
+            createEventGroupInContainer(eventGroupBuilder, sourceContainer, modelConfiguration);
          }
       }
 
       /// <summary>
       ///    Adds event group to source container where event takes place
       /// </summary>
-      private void createEventGroupInContainer(EventGroupBuilder eventGroupBuilder, IContainer sourceContainer)
+      private void createEventGroupInContainer(EventGroupBuilder eventGroupBuilder, IContainer sourceContainer, ModelConfiguration modelConfiguration)
       {
          //this creates recursively all event groups for the given builder
-         var eventGroup = _eventGroupMapper.MapFrom(eventGroupBuilder, _simulationBuilder);
+         var (_, simulationBuilder, replacementContext) = modelConfiguration;
+         var eventGroup = _eventGroupMapper.MapFrom(eventGroupBuilder, simulationBuilder);
          sourceContainer.Add(eventGroup);
 
          //needs to add the requires transport into model only for the added event group
          foreach (var childEventGroup in eventGroup.GetAllContainersAndSelf<EventGroup>())
          {
-            var childEventGroupBuilder = _simulationBuilder.BuilderFor(childEventGroup).DowncastTo<EventGroupBuilder>();
+            var childEventGroupBuilder = simulationBuilder.BuilderFor(childEventGroup).DowncastTo<EventGroupBuilder>();
             if (childEventGroupBuilder is ApplicationBuilder applicationBuilder)
-               addApplicationTransports(applicationBuilder, childEventGroup);
+               addApplicationTransports(applicationBuilder, childEventGroup, modelConfiguration);
 
-            _keywordReplacerTask.ReplaceIn(childEventGroup, _model.Root, childEventGroupBuilder);
+            _keywordReplacerTask.ReplaceIn(childEventGroup, childEventGroupBuilder, replacementContext);
          }
       }
 
-      private void addApplicationTransports(ApplicationBuilder applicationBuilder, EventGroup eventGroup)
+      private void addApplicationTransports(ApplicationBuilder applicationBuilder, EventGroup eventGroup, ModelConfiguration modelConfiguration)
       {
          var allEventGroupParentChildContainers = eventGroup.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
          foreach (var appTransport in applicationBuilder.Transports)
@@ -116,14 +113,15 @@ namespace OSPSuite.Core.Domain.Services
             if (!_applicationTransportTargetContainerCache.Contains(transportBuilder.TargetCriteria))
                _applicationTransportTargetContainerCache.Add(appTransport.TargetCriteria, _allModelContainerDescriptors.AllSatisfiedBy(transportBuilder.TargetCriteria));
 
-            addApplicationTransportToModel(transportBuilder, allEventGroupParentChildContainers, applicationBuilder.MoleculeName);
+            addApplicationTransportToModel(transportBuilder, allEventGroupParentChildContainers, applicationBuilder.MoleculeName, modelConfiguration);
          }
       }
 
-      private void addApplicationTransportToModel(TransportBuilder appTransport, EntityDescriptorMapList<IContainer> allEventGroupParentChildContainers, string moleculeName)
+      private void addApplicationTransportToModel(TransportBuilder appTransport, EntityDescriptorMapList<IContainer> allEventGroupParentChildContainers, string moleculeName, ModelConfiguration modelConfiguration)
       {
          var appTransportSourceContainers = sourceContainersFor(appTransport, allEventGroupParentChildContainers);
          var appTransportTargetContainers = _applicationTransportTargetContainerCache[appTransport.TargetCriteria].ToList();
+         var (_, simulationBuilder, replacementContext) = modelConfiguration;
 
          foreach (var sourceContainer in appTransportSourceContainers)
          {
@@ -137,12 +135,12 @@ namespace OSPSuite.Core.Domain.Services
                if (targetAmount == null)
                   throw new OSPSuiteException(Validation.CannotCreateApplicationTargetNotFound(appTransport.Name, moleculeName, targetContainer.Name));
 
-               var transport = _transportMapper.MapFrom(appTransport, _simulationBuilder);
+               var transport = _transportMapper.MapFrom(appTransport, simulationBuilder);
 
                transport.SourceAmount = sourceAmount;
                transport.TargetAmount = targetAmount;
 
-               _keywordReplacerTask.ReplaceIn(transport, _model.Root, moleculeName);
+               _keywordReplacerTask.ReplaceIn(transport, moleculeName, replacementContext);
 
                //At the moment, no neighborhoods between application sub-containers and
                //spatial structure sub-containers are defined. Application transports are

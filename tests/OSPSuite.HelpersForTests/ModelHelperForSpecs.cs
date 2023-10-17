@@ -149,7 +149,7 @@ namespace OSPSuite.Helpers
 
       private SimulationSettings createSimulationConfiguration()
       {
-         return new SimulationSettings { Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = createDefaultOutputSchema(), OutputSelections = new OutputSelections() };
+         return new SimulationSettings {Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = createDefaultOutputSchema(), OutputSelections = new OutputSelections()};
       }
 
       private OutputSchema createDefaultOutputSchema()
@@ -170,7 +170,7 @@ namespace OSPSuite.Helpers
          var cm2 = _objectBaseFactory.Create<CoreCalculationMethod>().WithName("CM2");
          cm2.Category = "PartitionCoeff";
          cm2.AddOutputFormula(PartitionCoeff_2(), new ParameterDescriptor("K", Create.Criteria(x => x.With("Cell2Plasma"))));
-         return new[] { cm1, cm2 };
+         return new[] {cm1, cm2};
       }
 
       private EventGroupBuildingBlock getEventGroups()

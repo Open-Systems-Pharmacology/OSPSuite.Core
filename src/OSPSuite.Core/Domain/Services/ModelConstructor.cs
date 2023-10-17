@@ -94,7 +94,7 @@ namespace OSPSuite.Core.Domain.Services
             return creationResult;
 
          //replace all keywords define in the model structure once all build processes have been executed
-         _keywordReplacerTask.ReplaceIn(model.Root);
+         _keywordReplacerTask.ReplaceIn(modelConfiguration);
 
          //This needs to be done before we validate the model to ensure that all references can be found
          _formulaTask.ExpandDynamicReferencesIn(model);
@@ -214,10 +214,11 @@ namespace OSPSuite.Core.Domain.Services
          createMoleculeCalculationMethodsFormula(modelConfiguration);
 
          var validation = new ValidationResult(spatialStructureValidation, moleculeAmountValidation);
+         
          if (validation.ValidationState != ValidationState.Invalid)
          {
             // replace all keywords define in the model structure
-            _keywordReplacerTask.ReplaceIn(modelConfiguration.Model.Root);
+            _keywordReplacerTask.ReplaceIn(modelConfiguration);
          }
 
          return validation;
@@ -266,6 +267,9 @@ namespace OSPSuite.Core.Domain.Services
       {
          var model = modelConfiguration.Model;
          model.Root = _spatialStructureMerger.MergeContainerStructure(modelConfiguration);
+         //we update the replacement context first when the root container is created so that we can replace keywords from the root container
+         modelConfiguration.UpdateReplacementContext();
+
          model.Neighborhoods = _spatialStructureMerger.MergeNeighborhoods(modelConfiguration);
 
          return validate<SpatialStructureValidator>(modelConfiguration);
@@ -292,7 +296,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private IEnumerable<ValidationMessage> createReactions(ModelConfiguration modelConfiguration)
       {
-         var (model, simulationConfiguration) = modelConfiguration;
+         var (model, simulationConfiguration, replacementContext) = modelConfiguration;
          var messages = simulationConfiguration.Reactions
             .Where(x => !_reactionCreator.CreateReaction(x, modelConfiguration))
             .Select(
@@ -300,7 +304,7 @@ namespace OSPSuite.Core.Domain.Services
             .ToList();
 
          model.Root.GetAllContainersAndSelf<IContainer>(x => x.ContainerType == ContainerType.Reaction)
-            .Each(x => _keywordReplacerTask.ReplaceInReactionContainer(x, model.Root));
+            .Each(x => _keywordReplacerTask.ReplaceInReactionContainer(x, replacementContext));
 
          return messages;
       }
@@ -310,7 +314,7 @@ namespace OSPSuite.Core.Domain.Services
          var (model, simulationConfiguration) = modelConfiguration;
 
          void createGlobalContainer(MoleculeBuilder moleculeBuilder) =>
-            _moleculePropertiesContainerTask.CreateGlobalMoleculeContainerFor(model.Root, moleculeBuilder, simulationConfiguration);
+            _moleculePropertiesContainerTask.CreateGlobalMoleculeContainerFor(moleculeBuilder, modelConfiguration);
 
          simulationConfiguration.AllPresentMolecules().Each(createGlobalContainer);
       }
@@ -344,7 +348,7 @@ namespace OSPSuite.Core.Domain.Services
       private void addLocalStructureMoleculeParametersToMoleculeAmount(IEnumerable<string> moleculeNames,
          IContainer moleculePropertiesContainerTemplate, ModelConfiguration modelConfiguration, Func<IParameter, bool> query)
       {
-         var (model, simulationConfiguration) = modelConfiguration;
+         var (model, simulationConfiguration, replacementContext) = modelConfiguration;
          foreach (var moleculeName in moleculeNames)
          {
             // check if molecule amount already exists
@@ -356,7 +360,7 @@ namespace OSPSuite.Core.Domain.Services
             moleculePropertiesContainerTemplate.GetChildren<IParameter>().Where(query)
                .Each(parameter => moleculeAmount.Add(_parameterMapper.MapFrom(parameter, simulationConfiguration)));
 
-            _keywordReplacerTask.ReplaceIn(moleculeAmount, model.Root, moleculeName);
+            _keywordReplacerTask.ReplaceIn(moleculeAmount, moleculeName, replacementContext);
          }
       }
 

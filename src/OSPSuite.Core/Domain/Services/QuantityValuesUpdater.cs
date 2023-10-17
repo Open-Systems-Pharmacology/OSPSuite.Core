@@ -84,9 +84,9 @@ namespace OSPSuite.Core.Domain.Services
          if (parameter != null)
             return parameter.WithUpdatedMetaFrom(individualParameter);
 
-         var (model, simulationConfiguration) = modelConfiguration;
+         var (model, simulationBuilder, replacementContext) = modelConfiguration;
          //Parameter does not exist in the model. We will create it if possible
-         var parentContainerPathInModel = _keywordReplacerTask.CreateModelPathFor(individualParameter.ContainerPath, model.Root);
+         var parentContainerPathInModel = _keywordReplacerTask.CreateModelPathFor(individualParameter.ContainerPath, replacementContext);
          var parentContainer = parentContainerPathInModel.Resolve<IContainer>(model.Root);
 
          //container does not exist, we do not add new structure to the existing model. Only parameters
@@ -95,14 +95,14 @@ namespace OSPSuite.Core.Domain.Services
 
          parameter = _individualParameterToParameterMapper.MapFrom(individualParameter);
 
-         simulationConfiguration.AddBuilderReference(parameter, individualParameter);
+         simulationBuilder.AddBuilderReference(parameter, individualParameter);
          return parameter.WithParentContainer(parentContainer);
       }
 
       private IParameter getParameter(ModelConfiguration modelConfiguration, PathAndValueEntity pathAndValueEntity)
       {
-         var (model, _) = modelConfiguration;
-         var pathInModel = _keywordReplacerTask.CreateModelPathFor(pathAndValueEntity.Path, model.Root);
+         var (model, _, replacementContext) = modelConfiguration;
+         var pathInModel = _keywordReplacerTask.CreateModelPathFor(pathAndValueEntity.Path, replacementContext);
          return pathInModel.Resolve<IParameter>(model.Root);
       }
 
@@ -113,7 +113,7 @@ namespace OSPSuite.Core.Domain.Services
          if (parameter == null)
             return;
 
-         var (model, _) = modelConfiguration;
+         var (model, _, replacementContext) = modelConfiguration;
 
          //Formula is defined, we update in the parameter instance
          if (pathAndValueEntity.Formula != null)
@@ -122,7 +122,7 @@ namespace OSPSuite.Core.Domain.Services
 
             //ensures that the parameter is seen as using the formula
             parameter.IsFixedValue = false;
-            _keywordReplacerTask.ReplaceIn(parameter, model.Root);
+            _keywordReplacerTask.ReplaceIn(parameter, replacementContext);
          }
 
          //If the value is defined, this will be used instead of the formula (even if set previously)
@@ -138,8 +138,8 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateMoleculeAmountFromInitialConditions(ModelConfiguration modelConfiguration)
       {
-         var (model, simulationConfiguration) = modelConfiguration;
-         foreach (var initialCondition in simulationConfiguration.AllPresentMoleculeValues())
+         var (model, simulationBuilder, replacementContext) = modelConfiguration;
+         foreach (var initialCondition in simulationBuilder.AllPresentMoleculeValues())
          {
             //this can happen if the initial condition contains entry for container that do not exist in the model
             var container = initialCondition.ContainerPath.Resolve<IContainer>(model.Root);
@@ -154,7 +154,7 @@ namespace OSPSuite.Core.Domain.Services
             {
                //use a clone here because we want a different instance for each molecule
                updateMoleculeAmountFormula(molecule, _cloneManagerForModel.Clone(initialCondition.Formula));
-               _keywordReplacerTask.ReplaceIn(molecule, model.Root);
+               _keywordReplacerTask.ReplaceIn(molecule, replacementContext);
             }
             else if (startValueShouldBeSetAsConstantFormula(initialCondition, molecule))
             {

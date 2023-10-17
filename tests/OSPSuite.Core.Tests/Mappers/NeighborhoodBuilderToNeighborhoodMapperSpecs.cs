@@ -45,6 +45,7 @@ namespace OSPSuite.Core.Mappers
       private SimulationConfiguration _simulationConfiguration;
       private IContainer _moleculeContainer;
       private SimulationBuilder _simulationBuilder;
+      private ModelConfiguration _modelConfiguration;
 
       protected override void Context()
       {
@@ -68,8 +69,6 @@ namespace OSPSuite.Core.Mappers
          var secondNeighborModelPath = A.Fake<ObjectPath>();
          _firstNeighborInModel = A.Fake<IContainer>();
          _secondNeighborInModel = A.Fake<IContainer>();
-         A.CallTo(() => _keywordReplacerTask.CreateModelPathFor(_neighborhoodBuilder.FirstNeighborPath, _model.Root)).Returns(firstNeighborModelPath);
-         A.CallTo(() => _keywordReplacerTask.CreateModelPathFor(_neighborhoodBuilder.SecondNeighborPath, _model.Root)).Returns(secondNeighborModelPath);
          A.CallTo(() => firstNeighborModelPath.Resolve<IContainer>(_rootContainer)).Returns(_firstNeighborInModel);
          A.CallTo(() => secondNeighborModelPath.Resolve<IContainer>(_rootContainer)).Returns(_secondNeighborInModel);
          _moleculeContainer = A.Fake<IContainer>();
@@ -81,11 +80,17 @@ namespace OSPSuite.Core.Mappers
          A.CallTo(() => _objectBaseFactory.Create<Neighborhood>()).Returns(new Neighborhood());
          A.CallTo(() => _parameterMapper.MapFrom(para1, _simulationBuilder)).Returns(_clonePara1);
          A.CallTo(() => _parameterMapper.MapFrom(para2, _simulationBuilder)).Returns(_clonePara2);
+
+         _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder);
+         _modelConfiguration.UpdateReplacementContext();
+
+         A.CallTo(() => _keywordReplacerTask.CreateModelPathFor(_neighborhoodBuilder.FirstNeighborPath, _modelConfiguration.ReplacementContext)).Returns(firstNeighborModelPath);
+         A.CallTo(() => _keywordReplacerTask.CreateModelPathFor(_neighborhoodBuilder.SecondNeighborPath, _modelConfiguration.ReplacementContext)).Returns(secondNeighborModelPath);
       }
 
       protected override void Because()
       {
-         _neighborhood = sut.MapFrom(_neighborhoodBuilder,  _moleculeNames, _moleculeNames, new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder));
+         _neighborhood = sut.MapFrom(_neighborhoodBuilder,  _moleculeNames, _moleculeNames, _modelConfiguration);
       }
 
       [Observation]

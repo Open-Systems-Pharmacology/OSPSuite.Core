@@ -16,6 +16,7 @@ namespace OSPSuite.Core.Domain
       protected FormulaUsablePath _objPathMolecule;
       protected FormulaUsablePath _objPathOrganism;
       protected IModel _model;
+      protected ReplacementContext _replacementContext;
 
       protected override void Context()
       {
@@ -28,6 +29,7 @@ namespace OSPSuite.Core.Domain
          _objPathMolecule = new FormulaUsablePath(new[] {"B"});
          _objPathOrganism = new FormulaUsablePath(new[] {Constants.ORGANISM, "C"});
          sut = new KeywordReplacerTask(new ObjectPathFactory(new AliasCreator()));
+         _replacementContext = new ReplacementContext(_model);
       }
    }
 
@@ -44,7 +46,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.ReplaceInReactionContainer(_reaction, _model.Root);
+         sut.ReplaceInReactionContainer(_reaction, _replacementContext);
       }
 
       [Observation]
@@ -81,7 +83,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.ReplaceIn(_moleculeContainer, _model.Root, _moleculeName);
+         sut.ReplaceIn(_moleculeContainer, _moleculeName, _replacementContext);
       }
 
       [Observation]
@@ -116,11 +118,12 @@ namespace OSPSuite.Core.Domain
          _parameter.Formula = new ExplicitFormula();
          _objectPath = new FormulaUsablePath("SIM", MOLECULE, "test");
          _parameter.Formula.AddObjectPath(_objectPath);
+         _replacementContext = new ReplacementContext(_rootContainer);
       }
 
       protected override void Because()
       {
-         sut.ReplaceIn(_parameter, _rootContainer);
+         sut.ReplaceIn(_parameter, _replacementContext);
       }
 
       [Observation]

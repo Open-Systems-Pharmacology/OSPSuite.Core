@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
@@ -25,6 +26,7 @@ namespace OSPSuite.Core.Domain
       protected Reaction _reaction;
       protected bool _result;
       protected SimulationBuilder _simulationBuilder;
+      private ModelConfiguration _modelConfiguration;
 
       protected override void Context()
       {
@@ -65,11 +67,13 @@ namespace OSPSuite.Core.Domain
          _reaction = new Reaction().WithName(_reactionBuilder.Name);
          A.CallTo(() => _reactionMapper.MapFromLocal(A<ReactionBuilder>._, A<IContainer>._, _simulationBuilder)).Returns(_reaction);
          A.CallTo(() => _containerTask.CreateOrRetrieveSubContainerByName(_rootContainer, _reactionBuilder.Name)).Returns(_globalContainer);
+
+         _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder);
       }
 
       protected override void Because()
       {
-         _result = sut.CreateReaction(_reactionBuilder, new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder));
+         _result = sut.CreateReaction(_reactionBuilder, _modelConfiguration);
       }
    }
 

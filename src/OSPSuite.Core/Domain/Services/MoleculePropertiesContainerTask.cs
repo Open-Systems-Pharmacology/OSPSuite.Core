@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    Creates the global molecule container for the molecule and add parameters with the build modes other than "Local"
       ///    into the created molecule container
       /// </summary>
-      IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, MoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder);
+      IContainer CreateGlobalMoleculeContainerFor(MoleculeBuilder moleculeBuilder, ModelConfiguration modelConfiguration);
 
       /// <summary>
       ///    Returns (and creates if not already there) the sub container for the transport process named
@@ -56,9 +56,10 @@ namespace OSPSuite.Core.Domain.Services
          return moleculeContainer;
       }
 
-      public IContainer CreateGlobalMoleculeContainerFor(IContainer rootContainer, MoleculeBuilder moleculeBuilder, SimulationBuilder simulationBuilder)
+      public IContainer CreateGlobalMoleculeContainerFor(MoleculeBuilder moleculeBuilder, ModelConfiguration modelConfiguration)
       {
-         var globalMoleculeContainer = addContainerUnder(rootContainer, moleculeBuilder, moleculeBuilder.Name, simulationBuilder)
+         var (model, simulationBuilder, replacementContext) = modelConfiguration;
+         var globalMoleculeContainer = addContainerUnder(model.Root, moleculeBuilder, moleculeBuilder.Name, simulationBuilder)
             .WithContainerType(ContainerType.Molecule);
 
          var lastSpatialStructureGlobalMoleculeContainer = simulationBuilder.SpatialStructures.LastOrDefault()?.GlobalMoleculeDependentProperties;
@@ -81,7 +82,7 @@ namespace OSPSuite.Core.Domain.Services
             addContainerWithParametersUnder(globalMoleculeContainer, interactionContainer, interactionContainer.Name, simulationBuilder);
          }
 
-         _keywordReplacer.ReplaceIn(globalMoleculeContainer, rootContainer, moleculeBuilder.Name);
+         _keywordReplacer.ReplaceIn(globalMoleculeContainer, moleculeBuilder.Name, replacementContext);
 
          return globalMoleculeContainer;
       }
