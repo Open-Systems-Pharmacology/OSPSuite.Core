@@ -5,7 +5,7 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_KeywordReplacerCollection : ContextSpecification<IKeywordReplacerCollection>
+   public abstract class concern_for_KeywordReplacerCollection : ContextSpecification<KeywordReplacerCollection>
    {
       protected override void Context()
       {

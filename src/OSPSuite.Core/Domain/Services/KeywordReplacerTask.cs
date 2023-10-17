@@ -138,14 +138,14 @@ namespace OSPSuite.Core.Domain.Services
          addMoleculeReplacersTo(keywordReplacer, moleculeName);
          addCommonNeighborhoodReplacersTo(keywordReplacer, neighborhood);
 
-         keywordReplacer.AddReplacement(new KeywordWithPathReplacer(SOURCE,
-            _objectPathFactory.CreateAbsoluteObjectPath(realization.SourceAmount.ParentContainer)));
-         keywordReplacer.AddReplacement(new KeywordWithPathReplacer(TARGET,
-            _objectPathFactory.CreateAbsoluteObjectPath(realization.TargetAmount.ParentContainer)));
-         keywordReplacer.AddReplacement(new KeywordWithPathReplacer(REALIZATION, new ObjectPath(transportName, realization.Name)));
-         keywordReplacer.AddReplacement(new SimpleKeywordReplacer(TRANSPORT, transportName));
-         keywordReplacer.AddReplacement(new SimpleKeywordReplacer(TRANSPORTER, transporterName));
+         keywordReplacer.AddReplacements(
+            new KeywordWithPathReplacer(SOURCE, _objectPathFactory.CreateAbsoluteObjectPath(realization.SourceAmount.ParentContainer)),
+            new KeywordWithPathReplacer(TARGET, _objectPathFactory.CreateAbsoluteObjectPath(realization.TargetAmount.ParentContainer)),
+            new KeywordWithPathReplacer(REALIZATION, new ObjectPath(transportName, realization.Name)),
+            new SimpleKeywordReplacer(TRANSPORT, transportName),
+            new SimpleKeywordReplacer(TRANSPORTER, transporterName));
          keywordReplacer.ReplaceIn(realization);
+
          replaceInContainer(realization, replacementContext);
 
          //replaceInContainer only replaces standard keywords. Transport specific keywords need to be replaced in all children explicitly
@@ -186,14 +186,16 @@ namespace OSPSuite.Core.Domain.Services
       {
          //When we validate the whole configuration, we update the replacement context to make sure that the replacement context is up to date
          modelConfiguration.UpdateReplacementContext();
-         replaceInContainer(modelConfiguration.Model.Root, modelConfiguration.ReplacementContext);
+
+         var (model, _, replacementContext) = modelConfiguration;
+         //neighborhood replacements
+         model.Root.GetAllChildren<Neighborhood>().Each(x => ReplaceIn(x, replacementContext));
+
+         replaceInContainer(model.Root, replacementContext);
       }
 
       private void replaceInContainer(IContainer container, ReplacementContext replacementContext)
       {
-         //neighborhood replacements
-         container.GetAllChildren<Neighborhood>().Each(x => ReplaceIn(x, replacementContext));
-
          void replace(IUsingFormula usingFormula)
          {
             switch (usingFormula)
@@ -233,26 +235,28 @@ namespace OSPSuite.Core.Domain.Services
          keywordReplacer.ReplaceIn(observer);
       }
 
-      private void addCommonModelReplacersTo(IKeywordReplacerCollection keywordReplacer, ReplacementContext replacementContext)
+      private void addCommonModelReplacersTo(KeywordReplacerCollection keywordReplacer, ReplacementContext replacementContext)
       {
          //Replace the predefined keywords 
-         keywordReplacer.AddReplacement(new TopContainerPathReplacer(replacementContext.RootContainerName, replacementContext.TopContainerNames));
-         keywordReplacer.AddReplacement(new TopContainerPathReplacer(replacementContext.RootContainerName, new[] {MOLECULE, Constants.NEIGHBORHOODS}));
+         keywordReplacer.AddReplacements(
+            new TopContainerPathReplacer(replacementContext.RootContainerName, replacementContext.TopContainerNames),
+            new TopContainerPathReplacer(replacementContext.RootContainerName, new[] {MOLECULE, Constants.NEIGHBORHOODS}));
       }
 
-      private void addCommonNeighborhoodReplacersTo(IKeywordReplacerCollection keywordReplacer, Neighborhood neighborhood)
+      private void addCommonNeighborhoodReplacersTo(KeywordReplacerCollection keywordReplacer, Neighborhood neighborhood)
       {
          if (neighborhood == null)
             return;
 
-         keywordReplacer.AddReplacement(new KeywordWithPathReplacer(FIRST_NEIGHBOR, _objectPathFactory.CreateAbsoluteObjectPath(neighborhood.FirstNeighbor)));
-         keywordReplacer.AddReplacement(new KeywordWithPathReplacer(SECOND_NEIGHBOR, _objectPathFactory.CreateAbsoluteObjectPath(neighborhood.SecondNeighbor)));
-         keywordReplacer.AddReplacement(new KeywordWithPathReplacer(NEIGHBORHOOD, _objectPathFactory.CreateAbsoluteObjectPath(neighborhood)));
-         //should be placed after the KeywordWithPathReplacer so that NEIGHBORHOOD is only replaced if not found yet
-         keywordReplacer.AddReplacement(new SimpleKeywordReplacer(NEIGHBORHOOD, neighborhood.Name));
+         keywordReplacer.AddReplacements(
+            new KeywordWithPathReplacer(FIRST_NEIGHBOR, _objectPathFactory.CreateAbsoluteObjectPath(neighborhood.FirstNeighbor)),
+            new KeywordWithPathReplacer(SECOND_NEIGHBOR, _objectPathFactory.CreateAbsoluteObjectPath(neighborhood.SecondNeighbor)),
+            new KeywordWithPathReplacer(NEIGHBORHOOD, _objectPathFactory.CreateAbsoluteObjectPath(neighborhood)),
+            //should be placed after the KeywordWithPathReplacer so that NEIGHBORHOOD is only replaced if not found yet
+            new SimpleKeywordReplacer(NEIGHBORHOOD, neighborhood.Name));
       }
 
-      private void addMoleculeReplacersTo(IKeywordReplacerCollection keywordReplacer, string moleculeName)
+      private void addMoleculeReplacersTo(KeywordReplacerCollection keywordReplacer, string moleculeName)
       {
          if (string.IsNullOrEmpty(moleculeName))
             return;
