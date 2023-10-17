@@ -33,6 +33,12 @@ namespace OSPSuite.Core.Domain.Services
       void ReplaceInReactionContainer(IContainer reactionContainer, ReplacementContext replacementContext);
 
       /// <summary>
+      ///    Replace the keywords used in the root container of a spatial structure (all formulas as well as neighborhoods)
+      ///    container
+      /// </summary>
+      void ReplaceInSpatialStructure(IContainer rootContainer, ReplacementContext replacementContext);
+
+      /// <summary>
       ///    Replace the keywords used in the observer formula with the appropriate names from the root container.
       ///    The Molecule keyword will also be replaced with the moleculeName
       /// </summary>
@@ -108,7 +114,24 @@ namespace OSPSuite.Core.Domain.Services
          if (reaction != null)
             keywordReplacer.ReplaceIn(reaction);
 
-         replaceInContainer(reactionContainer, replacementContext);
+         replaceInAllUsingFormulasDefinedIn(reactionContainer, replacementContext);
+      }
+
+      public void ReplaceIn(ModelConfiguration modelConfiguration)
+      {
+         //When we validate the whole configuration, we update the replacement context to make sure that the replacement context is up to date
+         modelConfiguration.UpdateReplacementContext();
+
+         var (model, _, replacementContext) = modelConfiguration;
+         ReplaceInSpatialStructure(model.Root, replacementContext);
+      }
+
+      public void ReplaceInSpatialStructure(IContainer rootContainer, ReplacementContext replacementContext)
+      {
+         //neighborhood replacements
+         rootContainer.GetAllChildren<Neighborhood>().Each(x => ReplaceIn(x, replacementContext));
+
+         replaceInAllUsingFormulasDefinedIn(rootContainer, replacementContext);
       }
 
       public void ReplaceIn(Neighborhood neighborhood, ReplacementContext replacementContext)
@@ -146,7 +169,7 @@ namespace OSPSuite.Core.Domain.Services
             new SimpleKeywordReplacer(TRANSPORTER, transporterName));
          keywordReplacer.ReplaceIn(realization);
 
-         replaceInContainer(realization, replacementContext);
+         replaceInAllUsingFormulasDefinedIn(realization, replacementContext);
 
          //replaceInContainer only replaces standard keywords. Transport specific keywords need to be replaced in all children explicitly
          var transportContainer = realization.ParentContainer ?? realization;
@@ -182,19 +205,7 @@ namespace OSPSuite.Core.Domain.Services
          return modelPath;
       }
 
-      public void ReplaceIn(ModelConfiguration modelConfiguration)
-      {
-         //When we validate the whole configuration, we update the replacement context to make sure that the replacement context is up to date
-         modelConfiguration.UpdateReplacementContext();
-
-         var (model, _, replacementContext) = modelConfiguration;
-         //neighborhood replacements
-         model.Root.GetAllChildren<Neighborhood>().Each(x => ReplaceIn(x, replacementContext));
-
-         replaceInContainer(model.Root, replacementContext);
-      }
-
-      private void replaceInContainer(IContainer container, ReplacementContext replacementContext)
+      private void replaceInAllUsingFormulasDefinedIn(IContainer container, ReplacementContext replacementContext)
       {
          void replace(IUsingFormula usingFormula)
          {

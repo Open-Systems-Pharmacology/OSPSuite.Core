@@ -13,7 +13,6 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   
    public class When_replacing_the_keywords_in_an_entity : concern_for_KeywordReplacerCollection
    {
       private IParameter _parameter;
@@ -42,10 +41,11 @@ namespace OSPSuite.Core.Domain
       {
          sut.ReplaceIn(_parameter);
       }
+
       [Observation]
       public void should_replace_the_keywords_in_its_underlying_formula()
       {
-        A.CallTo(() =>  _replacement.ReplaceIn(_objectPath1)).MustHaveHappened();
+         A.CallTo(() => _replacement.ReplaceIn(_objectPath1)).MustHaveHappened();
       }
 
       [Observation]
