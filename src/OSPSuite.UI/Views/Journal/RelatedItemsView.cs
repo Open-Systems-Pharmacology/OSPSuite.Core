@@ -20,7 +20,7 @@ using OSPSuite.UI.Services;
 
 namespace OSPSuite.UI.Views.Journal
 {
-   public partial class RelatedItemsView : BaseResizableUserControl, IRelatedItemsView
+   public partial class RelatedItemsView : BaseUserControl, IRelatedItemsView
    {
       private readonly IImageListRetriever _imageListRetriever;
       private readonly IToolTipCreator _toolTipCreator;
@@ -121,16 +121,14 @@ namespace OSPSuite.UI.Views.Journal
 
       private RepositoryItem getReloadRelatedItemRepository(RelatedItem item)
       {
-         _reloadRelatedItemRepository.Buttons[0].ToolTip = item.IsFile ? 
-            Captions.Journal.ToolTip.ExportRelatedItemToFile(item.Name) : 
-            Captions.Journal.ToolTip.ReloadRelatedItem(item.Name, item.ItemType);
+         _reloadRelatedItemRepository.Buttons[0].ToolTip = item.IsFile ? Captions.Journal.ToolTip.ExportRelatedItemToFile(item.Name) : Captions.Journal.ToolTip.ReloadRelatedItem(item.Name, item.ItemType);
 
          return _reloadRelatedItemRepository;
       }
 
       private void updateRelatedItemsForComparison(BaseEdit baseEdit, RelatedItem relatedItem)
       {
-         if(baseEdit.ReadOnly) return;
+         if (baseEdit.ReadOnly) return;
          OnEvent(() => _presenter.StartComparisonFor(relatedItem));
       }
 
@@ -184,14 +182,13 @@ namespace OSPSuite.UI.Views.Journal
       public void BindTo(IEnumerable<RelatedItem> relatedItems)
       {
          _gridViewBinder.BindToSource(relatedItems);
-         AdjustHeight();
+         //this will trigger a refresh of the grid and ensures that added or removed items are visible
+         gridView.LayoutChanged();
       }
 
       public void DeleteBinding()
       {
          _gridViewBinder.DeleteBinding();
       }
-
-      public override int OptimalHeight => gridView.OptimalHeight + layoutItemGrid.Padding.Height + layoutItemAddRelatedItem.Height;
    }
 }
