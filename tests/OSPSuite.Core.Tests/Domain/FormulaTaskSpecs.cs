@@ -234,8 +234,10 @@ namespace OSPSuite.Core.Domain
          root.Add(_p1);
          root.Add(_p2);
          root.Add(new Parameter().WithName("p3").WithFormula(new ConstantFormula(3)));
-         var sumFormula = new SumFormula();
-         sumFormula.Criteria = Create.Criteria(x => x.With("toto"));
+         var sumFormula = new SumFormula
+         {
+            Criteria = Create.Criteria(x => x.With("toto"))
+         };
          _parameter.Formula = sumFormula;
 
          root.Add(_parameter);
@@ -804,6 +806,35 @@ namespace OSPSuite.Core.Domain
          _parameterReferencingRelativeLumenNextSegment.Value.ShouldBeEqualTo(20);
       }
    }
+
+   internal class When_replacing_the_lumen_previous_segment_keyword_in_a_well_defined_relative_path_in_a_formula_for_RHS : concern_for_lumen_next_previous_segment_path_resolution
+   {
+      protected Parameter _parameterReferencingRelativeLumenNextSegment;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         _parameterReferencingRelativeLumenNextSegment = new Parameter().WithName("P").WithParentContainer(_upperJejunumLumen);
+         _parameterReferencingRelativeLumenNextSegment.WithFormula(new ConstantFormula(5));
+         _parameterReferencingRelativeLumenNextSegment.RHSFormula = new ExplicitFormula("V+10");
+         //..|LUMEN_PREVIOUS_SEGMENT|V
+         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, LUMEN_PREVIOUS_SEGMENT, _volumeDuodenumLumen.Name) { Alias = "V" };
+         _parameterReferencingRelativeLumenNextSegment.RHSFormula.AddObjectPath(_objectPath);
+      }
+
+      protected override void Because()
+      {
+         sut.ExpandLumenSegmentReferencesIn(_model.Root);
+      }
+
+      [Observation]
+      public void should_have_replaced_the_lumen_segment_with_the_actual_path_to_the_lumen_segment()
+      {
+         _parameterReferencingRelativeLumenNextSegment.RHSFormula.Calculate(_parameterReferencingRelativeLumenNextSegment).ShouldBeEqualTo(20);
+      }
+   }
+
 
    internal class When_replacing_the_lumen_next_segment_keyword_in_a_container_that_has_no_next_segment_such_as_rectum : concern_for_lumen_next_previous_segment_path_resolution
    {

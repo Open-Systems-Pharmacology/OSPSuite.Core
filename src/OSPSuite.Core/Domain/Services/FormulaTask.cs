@@ -175,13 +175,14 @@ namespace OSPSuite.Core.Domain.Services
       internal void ExpandNeighborhoodReferencesIn(IContainer rootContainer)
       {
          var neighborhoodsContainer = rootContainer.Container(NEIGHBORHOODS);
-         void updatePath(FormulaUsablePath path, IUsingFormula usingFormula) => updateNeighborhoodReferencingPath(path, usingFormula, neighborhoodsContainer);
-         rootContainer.GetPathsReferencing(referencesNeighborhood).Each(x => updatePath(x.path, x.usingFormula));
+         void updatePath(EntityFormulaPath entityFormulaPath) => updateNeighborhoodReferencingPath(entityFormulaPath, neighborhoodsContainer);
+         rootContainer.GetPathsReferencing(referencesNeighborhood).Each(updatePath);
       }
 
-      private void updateNeighborhoodReferencingPath(FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula, IContainer neighborhoods)
+      private void updateNeighborhoodReferencingPath(EntityFormulaPath entityFormulaPath, IContainer neighborhoods)
       {
-         var pathAsList = formulaUsablePath.ToList();
+         var (entity, path, formula) = entityFormulaPath;
+         var pathAsList = path.ToList();
          var firstIndex = pathAsList.FindIndex(x => x == NBH);
          var lastIndex = pathAsList.FindLastIndex(x => x == NBH);
 
@@ -197,19 +198,19 @@ namespace OSPSuite.Core.Domain.Services
          var restOfPath = pathAsList.Skip(lastIndex + 1).ToList();
 
          //we use resolve to that an exception is thrown
-         var container1 = getContainerOrThrow(pathToFirstContainer, usingFormula);
-         var container2 = getContainerOrThrow(pathToSecondContainer, usingFormula);
+         var container1 = getContainerOrThrow(pathToFirstContainer, entity);
+         var container2 = getContainerOrThrow(pathToSecondContainer, entity);
 
          var allNeighborhoods = neighborhoods?.GetAllChildren<Neighborhood>() ?? Array.Empty<Neighborhood>();
          var allNeighborhoodsConnectedToContainer1 = container1.GetNeighborhoods(allNeighborhoods);
          var neighborhoodsBetweenContainer1AndContainer2 = container2.GetNeighborhoods(allNeighborhoodsConnectedToContainer1);
          if (neighborhoodsBetweenContainer1AndContainer2.Count == 0)
-            throw new OSPSuiteException(Error.CouldNotFindNeighborhoodBetween(container1.EntityPath(), container2.EntityPath(), usingFormula.Formula?.Name, usingFormula.EntityPath()));
+            throw new OSPSuiteException(Error.CouldNotFindNeighborhoodBetween(container1.EntityPath(), container2.EntityPath(), formula?.Name, entity.EntityPath()));
 
          //recreate the path for this neighborhood and add the rest of the path. Validation of this path will be done later
          var neighborhoodPath = _objectPathFactory.CreateAbsoluteObjectPath(neighborhoodsBetweenContainer1AndContainer2[0]);
          neighborhoodPath.AddRange(restOfPath);
-         formulaUsablePath.ReplaceWith(neighborhoodPath);
+         path.ReplaceWith(neighborhoodPath);
       }
 
       private static bool referencesLumenSegment(ObjectPath path) => path.Contains(LUMEN_SEGMENT);
@@ -223,44 +224,46 @@ namespace OSPSuite.Core.Domain.Services
       internal void ExpandLumenSegmentReferencesIn(IContainer rootContainer)
       {
          //Lumen Segments
-         rootContainer.GetPathsReferencing(referencesLumenSegment).Each(x => updateLumenSegmentReferencingPath(x.path, x.usingFormula, rootContainer));
+         rootContainer.GetPathsReferencing(referencesLumenSegment).Each(x => updateLumenSegmentReferencingPath(x, rootContainer));
 
          //Previous or next lumen segment. We create a list so that we can find by index
          var allLumenSegmentsList = Compartment.AllLumenSegments.ToList();
-         void updatePath(FormulaUsablePath path, IUsingFormula usingFormula) => updateLumenNavigationSegmentReferencingPath(path, usingFormula, allLumenSegmentsList);
-         rootContainer.GetPathsReferencing(referencesLumenNavigation).Each(x => updatePath(x.path, x.usingFormula));
+         void updatePath(EntityFormulaPath entityFormulaPath) => updateLumenNavigationSegmentReferencingPath(entityFormulaPath, allLumenSegmentsList);
+         rootContainer.GetPathsReferencing(referencesLumenNavigation).Each(updatePath);
       }
 
-      private void updateLumenSegmentReferencingPath(FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula, IContainer rootContainer)
+      private void updateLumenSegmentReferencingPath(EntityFormulaPath entityFormulaPath, IContainer rootContainer)
       {
-         var pathAsList = formulaUsablePath.ToList();
+         var (entity,  path) = entityFormulaPath;
+         var pathAsList = path.ToList();
          var firstIndex = pathAsList.IndexOf(LUMEN_SEGMENT);
          var lastIndex = pathAsList.LastIndexOf(LUMEN_SEGMENT);
 
          if (firstIndex == 0)
-            throw new OSPSuiteException(Error.KeywordCannotBeInFirstPosition(LUMEN_SEGMENT, formulaUsablePath.ToPathString()));
+            throw new OSPSuiteException(Error.KeywordCannotBeInFirstPosition(LUMEN_SEGMENT, path.ToPathString()));
 
          if (firstIndex != lastIndex)
-            throw new OSPSuiteException(Error.KeywordCanOnlyBeUsedOnce(LUMEN_SEGMENT, formulaUsablePath.ToPathString()));
+            throw new OSPSuiteException(Error.KeywordCanOnlyBeUsedOnce(LUMEN_SEGMENT, path.ToPathString()));
 
          //let's get the path BEFORE the LUMEN_SEGMENT and update the formula path accordingly
          var pathToContainer = pathAsList.Take(firstIndex).ToList();
-         var container = getContainerOrThrow(pathToContainer, usingFormula);
+         var container = getContainerOrThrow(pathToContainer, entity);
          //Point to our absolute ORGANISM|LUMEN|container path
          var lumenSegmentPath = new List<string> {rootContainer.Name, ORGANISM, Organ.LUMEN, container.Name};
          //we add the rest of the path that was provided after the keyword
          lumenSegmentPath.AddRange(pathAsList.Skip(lastIndex + 1));
-         formulaUsablePath.ReplaceWith(lumenSegmentPath);
+         path.ReplaceWith(lumenSegmentPath);
       }
 
-      private void updateLumenNavigationSegmentReferencingPath(FormulaUsablePath formulaUsablePath, IUsingFormula usingFormula, List<string> allLumenSegments)
+      private void updateLumenNavigationSegmentReferencingPath(EntityFormulaPath entityFormulaPath, List<string> allLumenSegments)
       {
-         var pathAsList = formulaUsablePath.ToList();
+         var (entity, path) = entityFormulaPath;
+         var pathAsList = path.ToList();
          var indexNext = pathAsList.IndexOf(LUMEN_NEXT_SEGMENT);
          var indexPrevious = pathAsList.IndexOf(LUMEN_PREVIOUS_SEGMENT);
 
          if (indexNext != -1 && indexPrevious != -1)
-            throw new OSPSuiteException(Error.LumenNavigationKeywordLCanOnlyBeUsedOnce(formulaUsablePath.ToPathString()));
+            throw new OSPSuiteException(Error.LumenNavigationKeywordLCanOnlyBeUsedOnce(path.ToPathString()));
 
          var indexKeyword = indexNext != -1 ? indexNext : indexPrevious;
          //to know which direction we want to go in the segments array
@@ -273,7 +276,7 @@ namespace OSPSuite.Core.Domain.Services
          var restOfPath = pathAsList.Skip(indexKeyword + 1).ToList();
 
          //we use resolve to that an exception is thrown
-         var currentLumenSegment = getContainerOrThrow(pathToCurrentLumenSegment, usingFormula);
+         var currentLumenSegment = getContainerOrThrow(pathToCurrentLumenSegment, entity);
 
          //Do we have an actual lumen segment?
          var currentSegmentIndex = allLumenSegments.IndexOf(currentLumenSegment.Name);
@@ -291,13 +294,13 @@ namespace OSPSuite.Core.Domain.Services
          //we can now reconstruct the path to the next or previous lumen segment
          var targetSegmentPath = _objectPathFactory.CreateAbsoluteObjectPath(lumen).AndAdd(allLumenSegments[navigationIndex]);
          targetSegmentPath.AddRange(restOfPath);
-         formulaUsablePath.ReplaceWith(targetSegmentPath);
+         path.ReplaceWith(targetSegmentPath);
       }
 
-      private IContainer getContainerOrThrow(IReadOnlyList<string> path, IUsingFormula usingFormula)
+      private IContainer getContainerOrThrow(IReadOnlyList<string> path, IEntity entity)
       {
          //we use resolve to that an exception is thrown
-         var container = new ObjectPath(path).Resolve<IContainer>(usingFormula);
+         var container = new ObjectPath(path).Resolve<IContainer>(entity);
          if (container == null)
             throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path.ToPathString()));
 
