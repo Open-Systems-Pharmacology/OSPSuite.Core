@@ -43,6 +43,8 @@
 
   <ItemGroup>
     <None Remove="Icons.zip" />
+    <None Remove="Icons\PKSimModuleGreen.svg" />
+    <None Remove="Icons\PKSimModuleRed.svg" />
   </ItemGroup>
 
   <ItemGroup>

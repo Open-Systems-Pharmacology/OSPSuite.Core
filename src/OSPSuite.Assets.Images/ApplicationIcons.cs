@@ -506,6 +506,9 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ProteinGreen = AddNamedIcon("ProteinGreen", "ProteinGreen");
       public static readonly ApplicationIcon ModuleGreen = AddNamedIcon("ModuleGreen"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
       public static readonly ApplicationIcon ModuleRed = AddNamedIcon("ModuleRed"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
+      public static readonly ApplicationIcon PKSimModule = AddNamedIcon("PKSimModule"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
+      public static readonly ApplicationIcon PKSimModuleGreen = AddNamedIcon("PKSimModuleGreen"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
+      public static readonly ApplicationIcon PKSimModuleRed = AddNamedIcon("PKSimModuleRed"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
 
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon

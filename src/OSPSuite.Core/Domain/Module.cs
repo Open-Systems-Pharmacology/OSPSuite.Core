@@ -17,7 +17,10 @@ namespace OSPSuite.Core.Domain
       private T buildingBlockByType<T>() where T : IBuildingBlock => _buildingBlocks.OfType<T>().SingleOrDefault();
       private IReadOnlyList<T> buildingBlocksByType<T>() where T : IBuildingBlock => _buildingBlocks.OfType<T>().ToList();
 
-      public bool ReadOnly { get; set; } = false;
+      public bool IsPKSimModule =>
+         ExtendedProperties.Contains(Constants.PK_SIM_VERSION) &&
+         ExtendedProperties.Contains(Constants.PK_SIM_MODULE_IMPORT_VERSION) &&
+         ExtendedProperties[Constants.PK_SIM_MODULE_IMPORT_VERSION].ValueAsObject.Equals(Version);
 
       public EventGroupBuildingBlock EventGroups => buildingBlockByType<EventGroupBuildingBlock>();
       public MoleculeBuildingBlock Molecules => buildingBlockByType<MoleculeBuildingBlock>();
@@ -70,7 +73,6 @@ namespace OSPSuite.Core.Domain
          if (!(source is Module sourceModule))
             return;
 
-         ReadOnly = sourceModule.ReadOnly;
          sourceModule.BuildingBlocks.Select(cloneManager.Clone).Each(Add);
          ExtendedProperties.UpdateFrom(sourceModule.ExtendedProperties);
       }
