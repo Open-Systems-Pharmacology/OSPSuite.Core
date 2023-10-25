@@ -11,9 +11,13 @@ Please mark relevant options with an `x` in the brackets.
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] This change requires a documentation update
+- [ ] This change requires documentation changes (link at least one documentation issue):
 - [ ] Algorithm update - updates algorithm documentation/questions/answers etc.
 - [ ] Other (please describe):
+
+https://github.com/Open-Systems-Pharmacology/docs
+https://github.com/Open-Systems-Pharmacology/developer-docs
+
 
 # How Has This Been Tested?
 
@@ -33,6 +37,7 @@ Mark everything that needs to be checked before merging the PR.
 - [ ] Check if the code is well tested
 - [ ] Check if the code is readable and well formatted
 - [ ] Additional checks (document below if any)
+- [ ] Check if documentation update issue(s) are created if the option `This change requires a documentation update` above is selected
 
 # Screenshots (if appropriate):
 

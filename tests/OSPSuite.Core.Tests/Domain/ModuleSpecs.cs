@@ -336,4 +336,45 @@ namespace OSPSuite.Core.Domain
          sut.VersionWith(_parameterValuesBuildingBlock, _initialConditionsBuildingBlock).ShouldBeEqualTo(_originalVersion);
       }
    }
+
+   public class When_testing_if_the_extension_module_is_not_a_pk_sim_module : concern_for_Module
+   {
+      [Observation]
+      public void the_module_indicates_it_is_not_a_pk_sim_module()
+      {
+         sut.IsPKSimModule.ShouldBeFalse();
+      }
+   }
+
+   public class When_testing_if_the_pk_sim_module_with_version_mismatch_is_a_pk_sim_module : concern_for_Module
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.AddExtendedProperty(Constants.PK_SIM_VERSION, "1");
+         sut.AddExtendedProperty(Constants.PK_SIM_MODULE_IMPORT_VERSION, "someString");
+      }
+
+      [Observation]
+      public void the_module_indicates_it_is_not_a_pk_sim_module()
+      {
+         sut.IsPKSimModule.ShouldBeFalse();
+      }
+   }
+
+   public class When_testing_if_the_pk_sim_module_is_a_pk_sim_module : concern_for_Module
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.AddExtendedProperty(Constants.PK_SIM_VERSION, "1");
+         sut.AddExtendedProperty(Constants.PK_SIM_MODULE_IMPORT_VERSION, sut.Version);
+      }
+
+      [Observation]
+      public void the_module_indicates_it_is_a_pk_sim_module()
+      {
+         sut.IsPKSimModule.ShouldBeTrue();
+      }
+   }
 }

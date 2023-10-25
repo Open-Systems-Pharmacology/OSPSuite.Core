@@ -42,10 +42,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Icons.zip" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
 
