@@ -7,7 +7,7 @@ namespace OSPSuite.Presentation.Presenters.Nodes
    {
       public ModuleNode(Module module) : base(module)
       {
-         Icon = module.IsPKSimModule ? ApplicationIcons.PKSimModule : ApplicationIcons.Module;
+         Icon = ApplicationIcons.IconByName(module.Icon);
       }
    }
 }

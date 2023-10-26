@@ -17,10 +17,15 @@ namespace OSPSuite.Core.Domain
       private T buildingBlockByType<T>() where T : IBuildingBlock => _buildingBlocks.OfType<T>().SingleOrDefault();
       private IReadOnlyList<T> buildingBlocksByType<T>() where T : IBuildingBlock => _buildingBlocks.OfType<T>().ToList();
 
-      public bool IsPKSimModule =>
-         ExtendedProperties.Contains(Constants.PK_SIM_VERSION) &&
-         ExtendedProperties.Contains(Constants.PK_SIM_MODULE_IMPORT_VERSION) &&
-         ExtendedProperties[Constants.PK_SIM_MODULE_IMPORT_VERSION].ValueAsObject.Equals(Version);
+      /// <summary>
+      /// Module is a PKSim module if created in PKSim and the module version
+      /// matches the version when it was first imported
+      /// </summary>
+      public bool IsPKSimModule => !string.IsNullOrEmpty(PKSimVersion) && Equals(Version, ModuleImportVersion);
+
+      public string ModuleImportVersion { get; set; }
+
+      public string PKSimVersion { get; set; }
 
       public EventGroupBuildingBlock EventGroups => buildingBlockByType<EventGroupBuildingBlock>();
       public MoleculeBuildingBlock Molecules => buildingBlockByType<MoleculeBuildingBlock>();
@@ -32,8 +37,6 @@ namespace OSPSuite.Core.Domain
       public IReadOnlyList<InitialConditionsBuildingBlock> InitialConditionsCollection => buildingBlocksByType<InitialConditionsBuildingBlock>();
 
       public IReadOnlyList<ParameterValuesBuildingBlock> ParameterValuesCollection => buildingBlocksByType<ParameterValuesBuildingBlock>();
-
-      public virtual ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
       public string Version => versionCalculation(BuildingBlocks);
 
@@ -61,9 +64,12 @@ namespace OSPSuite.Core.Domain
          return $"{x.GetType()}{x.Version}";
       }
 
-      public Module()
-      {
-         Icon = IconNames.Module;
+      public override string Icon {
+         get => IsPKSimModule ? IconNames.PKSimModule : IconNames.Module;
+         set
+         {
+            // Do not set from outside
+         }
       }
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
@@ -74,7 +80,8 @@ namespace OSPSuite.Core.Domain
             return;
 
          sourceModule.BuildingBlocks.Select(cloneManager.Clone).Each(Add);
-         ExtendedProperties.UpdateFrom(sourceModule.ExtendedProperties);
+         PKSimVersion = sourceModule.PKSimVersion;
+         ModuleImportVersion = sourceModule.ModuleImportVersion;
       }
 
       public void Add(IBuildingBlock buildingBlock)
@@ -105,22 +112,6 @@ namespace OSPSuite.Core.Domain
       {
          base.AcceptVisitor(visitor);
          BuildingBlocks.Each(x => x.AcceptVisitor(visitor));
-      }
-
-      public void AddExtendedProperty<T>(string propertyName, T property)
-      {
-         ExtendedProperties[propertyName] = new ExtendedProperty<T> { Name = propertyName, Value = property };
-      }
-
-      /// <summary>
-      /// </summary>
-      /// <param name="propertyName"></param>
-      /// <returns></returns>
-      public string ExtendedPropertyValueFor(string propertyName) => ExtendedPropertyValueFor<string>(propertyName);
-
-      public T ExtendedPropertyValueFor<T>(string propertyName)
-      {
-         return ExtendedProperties.Contains(propertyName) ? ExtendedProperties[propertyName].ValueAsObject.ConvertedTo<T>() : default(T);
       }
 
       public IEnumerator<IBuildingBlock> GetEnumerator()
