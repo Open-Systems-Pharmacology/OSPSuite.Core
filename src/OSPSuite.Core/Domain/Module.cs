@@ -4,6 +4,7 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
@@ -16,11 +17,27 @@ namespace OSPSuite.Core.Domain
 
       private T buildingBlockByType<T>() where T : IBuildingBlock => _buildingBlocks.OfType<T>().SingleOrDefault();
       private IReadOnlyList<T> buildingBlocksByType<T>() where T : IBuildingBlock => _buildingBlocks.OfType<T>().ToList();
+      private readonly ExtendedPropertyStore<Module> _extendedPropertyStore;
 
+      /// <summary>
+      /// Module is a PKSim module if created in PKSim and the module version
+      /// matches the version when it was first imported
+      /// </summary>
       public bool IsPKSimModule =>
-         ExtendedProperties.Contains(Constants.PK_SIM_VERSION) &&
-         ExtendedProperties.Contains(Constants.PK_SIM_MODULE_IMPORT_VERSION) &&
-         ExtendedProperties[Constants.PK_SIM_MODULE_IMPORT_VERSION].ValueAsObject.Equals(Version);
+         !string.IsNullOrEmpty(PKSimVersion) && 
+         Equals(Version, _extendedPropertyStore.Get(x => x.ModuleImportVersion));
+
+      public string ModuleImportVersion
+      {
+         get { return _extendedPropertyStore.Get(x => x.ModuleImportVersion); }
+         set { _extendedPropertyStore.Set(x => x.ModuleImportVersion, value); }
+      }
+
+      public string PKSimVersion
+      {
+         get { return _extendedPropertyStore.Get(x => x.PKSimVersion); }
+         set { _extendedPropertyStore.Set(x => x.PKSimVersion, value); }
+      }
 
       public EventGroupBuildingBlock EventGroups => buildingBlockByType<EventGroupBuildingBlock>();
       public MoleculeBuildingBlock Molecules => buildingBlockByType<MoleculeBuildingBlock>();
@@ -29,6 +46,7 @@ namespace OSPSuite.Core.Domain
       public PassiveTransportBuildingBlock PassiveTransports => buildingBlockByType<PassiveTransportBuildingBlock>();
       public SpatialStructure SpatialStructure => buildingBlockByType<SpatialStructure>();
 
+
       public IReadOnlyList<InitialConditionsBuildingBlock> InitialConditionsCollection => buildingBlocksByType<InitialConditionsBuildingBlock>();
 
       public IReadOnlyList<ParameterValuesBuildingBlock> ParameterValuesCollection => buildingBlocksByType<ParameterValuesBuildingBlock>();
@@ -36,6 +54,13 @@ namespace OSPSuite.Core.Domain
       public virtual ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
 
       public string Version => versionCalculation(BuildingBlocks);
+      
+      public Module()
+      {
+         _extendedPropertyStore = new ExtendedPropertyStore<Module>(ExtendedProperties);
+         _extendedPropertyStore.ConfigureProperty(x => x.ModuleImportVersion);
+         _extendedPropertyStore.ConfigureProperty(x => x.PKSimVersion);
+      }
 
       public string VersionWith(ParameterValuesBuildingBlock selectedParameterValues, InitialConditionsBuildingBlock selectedInitialConditions)
       {
@@ -61,9 +86,12 @@ namespace OSPSuite.Core.Domain
          return $"{x.GetType()}{x.Version}";
       }
 
-      public Module()
-      {
-         Icon = IconNames.Module;
+      public override string Icon {
+         get => IsPKSimModule ? IconNames.PKSimModule : IconNames.Module;
+         set
+         {
+            // Do not set from outside
+         }
       }
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
@@ -109,7 +137,12 @@ namespace OSPSuite.Core.Domain
 
       public void AddExtendedProperty<T>(string propertyName, T property)
       {
-         ExtendedProperties[propertyName] = new ExtendedProperty<T> { Name = propertyName, Value = property };
+         AddExtendedProperty(new ExtendedProperty<T> { Name = propertyName, Value = property });
+      }
+
+      public void AddExtendedProperty(IExtendedProperty extendedProperty)
+      { 
+         ExtendedProperties[extendedProperty.Name] = extendedProperty;
       }
 
       /// <summary>
