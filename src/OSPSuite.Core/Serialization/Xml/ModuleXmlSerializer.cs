@@ -8,7 +8,8 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          base.PerformMapping();
          MapEnumerable(x => x.BuildingBlocks, x => x.Add);
-         MapEnumerable(x => x.ExtendedProperties, x => x.AddExtendedProperty);
+         Map(x => x.PKSimVersion);
+         Map(x => x.ModuleImportVersion);
       }
    }
 }

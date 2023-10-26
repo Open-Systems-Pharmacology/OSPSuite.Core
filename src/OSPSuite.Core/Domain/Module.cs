@@ -4,7 +4,6 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
@@ -17,27 +16,16 @@ namespace OSPSuite.Core.Domain
 
       private T buildingBlockByType<T>() where T : IBuildingBlock => _buildingBlocks.OfType<T>().SingleOrDefault();
       private IReadOnlyList<T> buildingBlocksByType<T>() where T : IBuildingBlock => _buildingBlocks.OfType<T>().ToList();
-      private readonly ExtendedPropertyStore<Module> _extendedPropertyStore;
 
       /// <summary>
       /// Module is a PKSim module if created in PKSim and the module version
       /// matches the version when it was first imported
       /// </summary>
-      public bool IsPKSimModule =>
-         !string.IsNullOrEmpty(PKSimVersion) && 
-         Equals(Version, _extendedPropertyStore.Get(x => x.ModuleImportVersion));
+      public bool IsPKSimModule => !string.IsNullOrEmpty(PKSimVersion) && Equals(Version, ModuleImportVersion);
 
-      public string ModuleImportVersion
-      {
-         get { return _extendedPropertyStore.Get(x => x.ModuleImportVersion); }
-         set { _extendedPropertyStore.Set(x => x.ModuleImportVersion, value); }
-      }
+      public string ModuleImportVersion { get; set; }
 
-      public string PKSimVersion
-      {
-         get { return _extendedPropertyStore.Get(x => x.PKSimVersion); }
-         set { _extendedPropertyStore.Set(x => x.PKSimVersion, value); }
-      }
+      public string PKSimVersion { get; set; }
 
       public EventGroupBuildingBlock EventGroups => buildingBlockByType<EventGroupBuildingBlock>();
       public MoleculeBuildingBlock Molecules => buildingBlockByType<MoleculeBuildingBlock>();
@@ -46,21 +34,11 @@ namespace OSPSuite.Core.Domain
       public PassiveTransportBuildingBlock PassiveTransports => buildingBlockByType<PassiveTransportBuildingBlock>();
       public SpatialStructure SpatialStructure => buildingBlockByType<SpatialStructure>();
 
-
       public IReadOnlyList<InitialConditionsBuildingBlock> InitialConditionsCollection => buildingBlocksByType<InitialConditionsBuildingBlock>();
 
       public IReadOnlyList<ParameterValuesBuildingBlock> ParameterValuesCollection => buildingBlocksByType<ParameterValuesBuildingBlock>();
 
-      public virtual ExtendedProperties ExtendedProperties { get; } = new ExtendedProperties();
-
       public string Version => versionCalculation(BuildingBlocks);
-      
-      public Module()
-      {
-         _extendedPropertyStore = new ExtendedPropertyStore<Module>(ExtendedProperties);
-         _extendedPropertyStore.ConfigureProperty(x => x.ModuleImportVersion);
-         _extendedPropertyStore.ConfigureProperty(x => x.PKSimVersion);
-      }
 
       public string VersionWith(ParameterValuesBuildingBlock selectedParameterValues, InitialConditionsBuildingBlock selectedInitialConditions)
       {
@@ -102,7 +80,8 @@ namespace OSPSuite.Core.Domain
             return;
 
          sourceModule.BuildingBlocks.Select(cloneManager.Clone).Each(Add);
-         ExtendedProperties.UpdateFrom(sourceModule.ExtendedProperties);
+         PKSimVersion = sourceModule.PKSimVersion;
+         ModuleImportVersion = sourceModule.ModuleImportVersion;
       }
 
       public void Add(IBuildingBlock buildingBlock)
@@ -133,27 +112,6 @@ namespace OSPSuite.Core.Domain
       {
          base.AcceptVisitor(visitor);
          BuildingBlocks.Each(x => x.AcceptVisitor(visitor));
-      }
-
-      public void AddExtendedProperty<T>(string propertyName, T property)
-      {
-         AddExtendedProperty(new ExtendedProperty<T> { Name = propertyName, Value = property });
-      }
-
-      public void AddExtendedProperty(IExtendedProperty extendedProperty)
-      { 
-         ExtendedProperties[extendedProperty.Name] = extendedProperty;
-      }
-
-      /// <summary>
-      /// </summary>
-      /// <param name="propertyName"></param>
-      /// <returns></returns>
-      public string ExtendedPropertyValueFor(string propertyName) => ExtendedPropertyValueFor<string>(propertyName);
-
-      public T ExtendedPropertyValueFor<T>(string propertyName)
-      {
-         return ExtendedProperties.Contains(propertyName) ? ExtendedProperties[propertyName].ValueAsObject.ConvertedTo<T>() : default(T);
       }
 
       public IEnumerator<IBuildingBlock> GetEnumerator()

@@ -27,21 +27,6 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_settings_properties_via_extended_properties_in_a_module : concern_for_Module
-   {
-      [Observation]
-      public void should_be_able_to_update_the_value_for_different_types()
-      {
-         sut.AddExtendedProperty("a double", 1.2);
-         sut.ExtendedPropertyValueFor<double>("a double").ShouldBeEqualTo(1.2);
-         sut.ExtendedPropertyValueFor("a double").ShouldBeEqualTo("1.2");
-
-         sut.AddExtendedProperty("a string", "value");
-         sut.ExtendedPropertyValueFor<string>("a string").ShouldBeEqualTo("value");
-         sut.ExtendedPropertyValueFor("a string").ShouldBeEqualTo("value");
-      }
-   }
-
    public class When_removing_start_values_building_blocks : concern_for_Module
    {
       private InitialConditionsBuildingBlock _initialConditionsBuildingBlock;

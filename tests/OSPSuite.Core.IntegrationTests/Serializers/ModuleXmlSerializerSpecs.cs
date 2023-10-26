@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Serializers
       {
          var module1 = CreateObject<Module>().WithName("Module1");
 
-         module1.AddExtendedProperty("PKSimVersion", "version1");
+         module1.PKSimVersion = "version1";
          module1.Add(CreateObject<EventGroupBuildingBlock>().WithName("EventGroup"));
          module1.Add(CreateObject<PassiveTransportBuildingBlock>().WithName("PassiveTransport"));
          module1.Add(CreateObject<MoleculeBuildingBlock>().WithName("Molecule"));
