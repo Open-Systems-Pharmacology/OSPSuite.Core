@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Batch
       /// <summary>
       /// Time Array used in the simulation
       /// </summary>
-      public float[] Times { get; set; }
+      public BatchValues Times { get; set; }
 
       /// <summary>
       /// Absolute tolerance used in the simulation
