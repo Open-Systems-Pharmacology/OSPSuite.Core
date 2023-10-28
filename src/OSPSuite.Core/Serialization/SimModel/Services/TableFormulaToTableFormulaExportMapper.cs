@@ -14,7 +14,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
       public TableFormulaExport MapFrom(TableFormula input)
       {
          var export = new TableFormulaExport();
-         input.AllPoints().Each(export.AddPoint);
+         input.AllPoints.Each(export.AddPoint);
 
          export.UseDerivedValues = input.UseDerivedValues;
 

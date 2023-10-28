@@ -621,7 +621,7 @@ namespace OSPSuite.Core.Helpers
          AreEqualUnit(x1.YDisplayUnit, x2.YDisplayUnit);
          Assert.AreEqual(x1.XName, x2.XName);
          Assert.AreEqual(x1.YName, x2.YName);
-         AreEqualEnumerableWithSameOrder(x1.AllPoints(), x2.AllPoints());
+         AreEqualEnumerableWithSameOrder(x1.AllPoints, x2.AllPoints);
       }
 
       public static void AreEqualExplicitFormula(ExplicitFormula x1, ExplicitFormula x2)

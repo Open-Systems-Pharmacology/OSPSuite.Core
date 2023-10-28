@@ -96,7 +96,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_return_them_sorted_by_time()
       {
-         sut.AllPoints().ShouldOnlyContainInOrder(_p1, _p2, _p3);
+         sut.AllPoints.ShouldOnlyContainInOrder(_p1, _p2, _p3);
       }
    }
 
@@ -119,7 +119,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_not_add_the_same_point_twice()
       {
-         sut.AllPoints().ShouldOnlyContainInOrder(_p1, _p2);
+         sut.AllPoints.ShouldOnlyContainInOrder(_p1, _p2);
       }
    }
 
@@ -163,7 +163,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void the_table_formula_should_not_contain_any_points()
       {
-         sut.AllPoints().Count().ShouldBeEqualTo(0);
+         sut.AllPoints.Count().ShouldBeEqualTo(0);
       }
    }
 
@@ -213,7 +213,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_have_removed_that_point()
       {
-         sut.AllPoints().ShouldOnlyContain(_p2);
+         sut.AllPoints.ShouldOnlyContain(_p2);
       }
    }
 
@@ -240,7 +240,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_have_removed_that_point()
       {
-         sut.AllPoints().ShouldOnlyContain(_p2);
+         sut.AllPoints.ShouldOnlyContain(_p2);
       }
    }
 
@@ -267,7 +267,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_not_remove_the_existing_points()
       {
-         sut.AllPoints().ShouldOnlyContain(_p1, _p2);
+         sut.AllPoints.ShouldOnlyContain(_p1, _p2);
       }
    }
 

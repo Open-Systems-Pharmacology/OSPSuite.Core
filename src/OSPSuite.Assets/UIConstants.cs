@@ -583,16 +583,16 @@ namespace OSPSuite.Assets
          public static readonly string ObjectPath = "Path";
          public static readonly string ExcludeMolecule = "Exclude Molecule";
          public static readonly string IncludeMolecule = "Include Molecule";
+         public static readonly string Count = "Number of item";
          public static readonly string Assignment = "Assignment";
          public static readonly string OneObjectIsNull = "One object used in the comparison is null";
          public static readonly string Connection = "Connection";
          public static readonly string SourceAmount = "Source Amount";
          public static readonly string TargetAmount = "Target Amount";
 
-         public static string PropertyDiffers(string propertyName, string value1, string value2)
-         {
-            return $"{propertyName.Pluralize()} are not equal ({value1} ≠ {value2})";
-         }
+         public static string PropertyDiffers(string propertyName, int value1, int value2) => PropertyDiffers(propertyName, $"{value1}", $"{value2}");
+
+         public static string PropertyDiffers(string propertyName, string value1, string value2) => $"{propertyName.Pluralize()} are not equal ({value1} ≠ {value2})";
 
          public static string DifferentTypes(string type1, string type2)
          {

@@ -290,7 +290,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private void reportFor(TableFormula tableFormula, int noOfTabs)
       {
-         foreach (var valuePoint in tableFormula.AllPoints())
+         foreach (var valuePoint in tableFormula.AllPoints)
          {
             _report.AppendFormat("{0}{1}; {2}   RestartSolver = {3}", tabs(noOfTabs), valuePoint.X, valuePoint.Y, valuePoint.RestartSolver);
             _report.AppendLine();

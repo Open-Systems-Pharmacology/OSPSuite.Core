@@ -17,13 +17,13 @@ namespace OSPSuite.Core.Serializers
 
          var x2 = SerializeAndDeserialize(x1);
 
-         x2.AllPoints().Count().ShouldBeEqualTo(2);
+         x2.AllPoints.Count().ShouldBeEqualTo(2);
 
-         x2.AllPoints().ElementAt(0).X.ShouldBeEqualTo(0);
-         x2.AllPoints().ElementAt(0).Y.ShouldBeEqualTo(1);
+         x2.AllPoints.ElementAt(0).X.ShouldBeEqualTo(0);
+         x2.AllPoints.ElementAt(0).Y.ShouldBeEqualTo(1);
 
-         x2.AllPoints().ElementAt(1).X.ShouldBeEqualTo(2);
-         x2.AllPoints().ElementAt(1).Y.ShouldBeEqualTo(3);
+         x2.AllPoints.ElementAt(1).X.ShouldBeEqualTo(2);
+         x2.AllPoints.ElementAt(1).Y.ShouldBeEqualTo(3);
 
          x2.AllDistributionMetaData().Count().ShouldBeEqualTo(2);
          var distributionMetaData = x2.AllDistributionMetaData().ElementAt(0);
