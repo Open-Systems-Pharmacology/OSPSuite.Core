@@ -4,6 +4,7 @@ using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Comparison
 {
@@ -59,6 +60,39 @@ namespace OSPSuite.Core.Comparison
          );
       }
 
+      public void CompareEnumerablesByIndex<TParent, TItem>(IComparison<TParent> comparison,
+         Func<TParent, IEnumerable<TItem>> getEnumeration)
+         where TParent : class
+         where TItem : class
+      {
+         var object1 = comparison.Object1;
+         var object2 = comparison.Object2;
+         var list1 = getEnumeration(object1).ToList();
+         var list2 = getEnumeration(object2).ToList();
+
+         if (list1.Count != list2.Count)
+         {
+            comparison.Add( new PropertyValueDiffItem
+            {
+               Object1 = comparison.Object1,
+               Object2 = comparison.Object2,
+               CommonAncestor = comparison.CommonAncestor,
+               PropertyName = Captions.Diff.Count,
+               FormattedValue1 = $"{list1.Count}",
+               FormattedValue2 = $"{list2.Count}",
+               Description = Captions.Diff.PropertyDiffers(Captions.Diff.Count, list1.Count, list2.Count)
+            });
+            return;
+         }
+
+         list1.Each((entity1, index) =>
+         {
+            var entity2 = list2[index];
+            var childComparison = new Comparison<TItem>(entity1, entity2, comparison.Settings, comparison.Report, object1);
+            _objectComparer.Compare(childComparison);
+         });
+      }
+
       public void CompareEnumerables<TParent, TItem>(IComparison<TParent> comparison,
          Func<TParent, IEnumerable<TItem>> getEnumeration,
          Func<TItem, TItem, bool> equalityFunc,
@@ -72,6 +106,9 @@ namespace OSPSuite.Core.Comparison
          var object2 = comparison.Object2;
          var list1 = getEnumeration(object1).ToList();
          var list2 = getEnumeration(object2).ToList();
+         string getMissingType(TItem item) => missingItemType ?? _objectTypeResolver.TypeFor(item);
+         string getDetails(TItem item) => presentObjectDetailsFunc?.Invoke(item) ?? string.Empty;
+
 
          foreach (var entity1 in list1)
          {
@@ -82,11 +119,7 @@ namespace OSPSuite.Core.Comparison
                _objectComparer.Compare(childComparison);
             }
             else
-            {
-               var missingObjectType = missingItemType ?? _objectTypeResolver.TypeFor(entity1);
-               var presentObjectDetails = presentObjectDetailsFunc?.Invoke(entity1) ?? string.Empty;
-               comparison.Add(missingItem(object1, object2, entity1, null, missingObjectType, identifierRetrieverFunc(entity1), presentObjectDetails));
-            }
+               comparison.Add(missingItem(object1, object2, entity1, null, getMissingType(entity1), identifierRetrieverFunc(entity1), getDetails(entity1)));
          }
 
          //all common entity have been added. Add missing entity from object1 base on object2
@@ -95,9 +128,7 @@ namespace OSPSuite.Core.Comparison
             if (list1.Any(item => equalityFunc(item, entity2)))
                continue;
 
-            var missingObjectType = missingItemType ?? _objectTypeResolver.TypeFor(entity2);
-            var presentObjectDetails = presentObjectDetailsFunc?.Invoke(entity2) ?? string.Empty;
-            comparison.Add(missingItem(object1, object2, null, entity2, missingObjectType, identifierRetrieverFunc(entity2), presentObjectDetails));
+            comparison.Add(missingItem(object1, object2, null, entity2, getMissingType(entity2), identifierRetrieverFunc(entity2), getDetails(entity2)));
          }
       }
 

@@ -60,7 +60,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.XDimension).WithMappingName(Constants.Serialization.Attribute.X_DIMENSION);
          Map(x => x.XName);
          Map(x => x.YName);
-         MapEnumerable(x => x.AllPoints(), addPoint);
+         MapEnumerable(x => x.AllPoints, addPoint);
          Map(x => x.UseDerivedValues);
       }
 

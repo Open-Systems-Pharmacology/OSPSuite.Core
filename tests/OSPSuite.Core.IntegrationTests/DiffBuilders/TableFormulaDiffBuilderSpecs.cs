@@ -36,4 +36,34 @@ namespace OSPSuite.Core.DiffBuilders
          _report.Count.ShouldBeEqualTo(5);
       }
    }
+
+   public class When_comparing_two_table_formula_with_different_number_of_points : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var parameter1 = new Parameter().WithName("P");
+         var formula1 = new TableFormula();
+         formula1.AddPoint(10, 1);
+         formula1.AddPoint(20, 2); 
+         formula1.AddPoint(30, 3); 
+         parameter1.Formula = formula1;
+
+         var parameter2 = new Parameter().WithName("P");
+         var formula2 = new TableFormula();
+         formula2.AddPoint(10, 1); 
+         formula2.AddPoint(20, 2); 
+         parameter2.Formula = formula2;
+
+         _object1 = parameter1;
+         _object2 = parameter2;
+      }
+
+      [Observation]
+      public void should_report_a_difference()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
 }
