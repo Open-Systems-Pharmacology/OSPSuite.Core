@@ -60,7 +60,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
 
       [Observation]
-      public void should_report_the_path_entries_and_different_entries_as_difference()
+      public void should_report_a_difference()
       {
          _report.Count.ShouldBeEqualTo(1);
       }
