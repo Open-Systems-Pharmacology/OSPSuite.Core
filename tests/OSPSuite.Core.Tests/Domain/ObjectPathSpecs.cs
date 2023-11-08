@@ -141,4 +141,35 @@ namespace OSPSuite.Core.Domain
          sut.ShouldOnlyContainInOrder("A", "B", "C", "D", "E");
       }
    }
+
+   public class When_testing_if_one_path_starts_with_another : concern_for_ObjectPath
+   {
+      [Observation]
+      public void if_the_first_path_is_not_long_enough_then_false()
+      {
+         sut = new ObjectPath("A", "B", "C");
+         sut.StartsWith(new ObjectPath("A", "B", "C", "D")).ShouldBeFalse();
+      }
+
+      [Observation]
+      public void if_the_paths_are_the_same_then_true()
+      {
+         sut = new ObjectPath("A", "B", "C");
+         sut.StartsWith(new ObjectPath("A", "B", "C")).ShouldBeTrue();
+      }
+
+      [Observation]
+      public void if_the_paths_is_contained_then_true()
+      {
+         sut = new ObjectPath("A", "B", "C");
+         sut.StartsWith(new ObjectPath("A", "B")).ShouldBeTrue();
+      }
+
+      [Observation]
+      public void if_the_paths_is_not_contained_then_false()
+      {
+         sut = new ObjectPath("A", "B", "C");
+         sut.StartsWith(new ObjectPath("A", "C")).ShouldBeFalse();
+      }
+   }
 }

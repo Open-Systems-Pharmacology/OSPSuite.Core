@@ -296,5 +296,13 @@ namespace OSPSuite.Core.Domain
          //todo Optimize this
          return _pathEntries.Contains(entry);
       }
+
+      public bool StartsWith(ObjectPath otherPath)
+      {
+         if (Count < otherPath.Count)
+            return false;
+
+         return !otherPath.Where((x, i) => _pathEntries[i] != x).Any();
+      }
    }
 }
