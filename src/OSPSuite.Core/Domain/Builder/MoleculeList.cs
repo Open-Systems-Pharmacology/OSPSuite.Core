@@ -23,14 +23,14 @@ namespace OSPSuite.Core.Domain.Builder
       ///    <para />
       ///    Otherwise (<see cref="ForAll" />=true) not relevant
       /// </summary>
-      public virtual IEnumerable<string> MoleculeNames => _moleculeNamesToInclude;
+      public virtual IReadOnlyList<string> MoleculeNames => _moleculeNamesToInclude;
 
       /// <summary>
       ///    If <see cref="ForAll" /> is set to true, molecules from this list will be excluded from use.
       ///    <para />
       ///    Otherwise (<see cref="ForAll" />=false) not relevant
       /// </summary>
-      public virtual IEnumerable<string> MoleculeNamesToExclude => _moleculeNamesToExclude;
+      public virtual IReadOnlyList<string> MoleculeNamesToExclude => _moleculeNamesToExclude;
 
       /// <summary>
       ///    Add molecule name to use. If molecule name already exists in the list or in
