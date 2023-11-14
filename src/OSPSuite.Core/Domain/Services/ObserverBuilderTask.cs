@@ -48,11 +48,11 @@ namespace OSPSuite.Core.Domain.Services
          try
          {
             foreach (var observerBuilder in observers.OfType<AmountObserverBuilder>())
-               createAmountObserver(observerBuilder, presentMolecules, replacementContext);
+               createAmountObserver(observerBuilder, presentMolecules, replacementContext, simulationBuilder);
 
 
             foreach (var observerBuilder in observers.OfType<ContainerObserverBuilder>())
-               createContainerObserver(observerBuilder, presentMolecules, replacementContext);
+               createContainerObserver(observerBuilder, presentMolecules, replacementContext, simulationBuilder);
          }
          finally
          {
@@ -77,9 +77,9 @@ namespace OSPSuite.Core.Domain.Services
       ///    in the spatial structure of the model.
       ///    Typical example: "Concentration"-Observer (M/V)
       /// </summary>
-      private void createAmountObserver(AmountObserverBuilder observerBuilder, IEnumerable<MoleculeBuilder> presentMolecules, ReplacementContext replacementContext)
+      private void createAmountObserver(AmountObserverBuilder observerBuilder, IEnumerable<MoleculeBuilder> presentMolecules, ReplacementContext replacementContext, SimulationBuilder simulationBuilder)
       {
-         var moleculeNamesForObserver = moleculeBuildersValidFor(observerBuilder.MoleculeList, presentMolecules)
+         var moleculeNamesForObserver = moleculeBuildersValidFor(simulationBuilder.MoleculeListFor(observerBuilder), presentMolecules)
             .Select(x => x.Name).ToList();
 
          foreach (var container in _allContainerDescriptors.AllSatisfiedBy(observerBuilder.ContainerCriteria))
@@ -100,9 +100,9 @@ namespace OSPSuite.Core.Domain.Services
       ///    of the model.
       ///    Typical example is average drug concentration in an organ
       /// </summary>
-      private void createContainerObserver(ContainerObserverBuilder observerBuilder, IEnumerable<MoleculeBuilder> presentMolecules, ReplacementContext replacementContext)
+      private void createContainerObserver(ContainerObserverBuilder observerBuilder, IEnumerable<MoleculeBuilder> presentMolecules, ReplacementContext replacementContext, SimulationBuilder simulationBuilder)
       {
-         var moleculeBuildersForObserver = moleculeBuildersValidFor(observerBuilder.MoleculeList, presentMolecules).ToList();
+         var moleculeBuildersForObserver = moleculeBuildersValidFor(simulationBuilder.MoleculeListFor(observerBuilder), presentMolecules).ToList();
          //retrieve a list here to avoid endless loop if observers criteria is not well defined
          foreach (var container in _allContainerDescriptors.AllSatisfiedBy(observerBuilder.ContainerCriteria))
          {

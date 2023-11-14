@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Builder
 {
@@ -16,6 +17,7 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly ObjectBaseCache<MoleculeBuilder> _molecules = new ObjectBaseCache<MoleculeBuilder>();
       private readonly StartValueCache<ParameterValue> _parameterValues = new StartValueCache<ParameterValue>();
       private readonly StartValueCache<InitialCondition> _initialConditions = new StartValueCache<InitialCondition>();
+      private readonly Cache<IMoleculeDependentBuilder, MoleculeList> _moleculeListCache = new Cache<IMoleculeDependentBuilder, MoleculeList>();
 
       private readonly Cache<IObjectBase, IObjectBase> _builderCache = new Cache<IObjectBase, IObjectBase>(onMissingKey: x => null);
 
@@ -47,7 +49,6 @@ namespace OSPSuite.Core.Domain.Builder
             .Where(initialCondition => initialCondition.IsPresent)
             .Select(initialCondition => initialCondition.MoleculeName)
             .Distinct();
-
 
          return moleculeNames.Select(x => _molecules[x]).Where(m => m != null);
       }
@@ -86,14 +87,38 @@ namespace OSPSuite.Core.Domain.Builder
 
       private void performMerge()
       {
-         _passiveTransports.AddRange(allBuilder(x => x.PassiveTransports));
+         cacheMoleculeDependentBuilders(x => x.PassiveTransports, _passiveTransports);
          _reactions.AddRange(allBuilder(x => x.Reactions));
          _eventGroups.AddRange(allBuilder(x => x.EventGroups));
-         _observers.AddRange(allBuilder(x => x.Observers));
+         cacheMoleculeDependentBuilders(x => x.Observers, _observers);
          _molecules.AddRange(allBuilder(x => x.Molecules));
          _parameterValues.AddRange(allStartValueBuilder(x => x.SelectedParameterValues));
          _initialConditions.AddRange(allStartValueBuilder(x => x.SelectedInitialConditions)
             .Concat(_simulationConfiguration.ExpressionProfiles.SelectMany(x => x.InitialConditions)));
+      }
+
+      private void cacheMoleculeDependentBuilders<T>(Func<Module, IBuildingBlock<T>> propAccess, ObjectBaseCache<T> cache) where T : class, IMoleculeDependentBuilder
+      {
+         var builders = allBuilder(propAccess).ToList();
+         cache.AddRange(builders);
+         cacheMoleculeLists(builders, cache);
+      }
+
+      private void cacheMoleculeLists<T>(IReadOnlyList<T> allBuilders, ObjectBaseCache<T> builderCache) where T : class, IMoleculeDependentBuilder
+      {
+         builderCache.Each(builderUsedInSimulation => combineMoleculeLists(allBuilders.Where(x => x.IsNamed(builderUsedInSimulation.Name)), builderUsedInSimulation));
+      }
+
+      private void combineMoleculeLists(IEnumerable<IMoleculeDependentBuilder> builders, IMoleculeDependentBuilder builderUsedInSimulation)
+      {
+         _moleculeListCache[builderUsedInSimulation] = builderUsedInSimulation.MoleculeList.Clone();
+         builders.Each(x => addMolecules(x, _moleculeListCache[builderUsedInSimulation]));
+      }
+
+      private void addMolecules(IMoleculeDependentBuilder builder, MoleculeList moleculeList)
+      {
+         builder.MoleculeList.MoleculeNames.Each(moleculeList.AddMoleculeName);
+         builder.MoleculeList.MoleculeNamesToExclude.Each(moleculeList.AddMoleculeNameToExclude);
       }
 
       internal IReadOnlyList<SpatialStructure> SpatialStructures => all(x => x.SpatialStructure);
@@ -104,6 +129,7 @@ namespace OSPSuite.Core.Domain.Builder
       internal IReadOnlyCollection<MoleculeBuilder> Molecules => _molecules;
       internal IReadOnlyCollection<ParameterValue> ParameterValues => _parameterValues;
       internal IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
+      internal MoleculeList MoleculeListFor(IMoleculeDependentBuilder builder) => _moleculeListCache[builder];
 
       internal MoleculeBuilder MoleculeByName(string name) => _molecules[name];
    }
