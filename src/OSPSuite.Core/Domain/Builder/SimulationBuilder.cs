@@ -88,12 +88,9 @@ namespace OSPSuite.Core.Domain.Builder
       private void performMerge()
       {
          cacheMoleculeDependentBuilders(x => x.PassiveTransports, _passiveTransports);
-
          _reactions.AddRange(allBuilder(x => x.Reactions));
          _eventGroups.AddRange(allBuilder(x => x.EventGroups));
-
          cacheMoleculeDependentBuilders(x => x.Observers, _observers);
-
          _molecules.AddRange(allBuilder(x => x.Molecules));
          _parameterValues.AddRange(allStartValueBuilder(x => x.SelectedParameterValues));
          _initialConditions.AddRange(allStartValueBuilder(x => x.SelectedInitialConditions)
@@ -109,13 +106,13 @@ namespace OSPSuite.Core.Domain.Builder
 
       private void cacheMoleculeLists<T>(IReadOnlyList<T> allBuilders, ObjectBaseCache<T> builderCache) where T : class, IMoleculeDependentBuilder
       {
-         builderCache.Each(builder => { combineMoleculeLists(allBuilders.Where(x => string.Equals(x.Name, builder.Name)).ToList(), builder); });
+         builderCache.Each(builderUsedInSimulation => combineMoleculeLists(allBuilders.Where(x => x.IsNamed(builderUsedInSimulation.Name)), builderUsedInSimulation));
       }
 
-      private void combineMoleculeLists(IReadOnlyList<IMoleculeDependentBuilder> builders, IMoleculeDependentBuilder lastBuilder)
+      private void combineMoleculeLists(IEnumerable<IMoleculeDependentBuilder> builders, IMoleculeDependentBuilder builderUsedInSimulation)
       {
-         _moleculeListCache[lastBuilder] = lastBuilder.MoleculeList.Clone();
-         builders.Each(x => addMolecules(x, _moleculeListCache[lastBuilder]));
+         _moleculeListCache[builderUsedInSimulation] = builderUsedInSimulation.MoleculeList.Clone();
+         builders.Each(x => addMolecules(x, _moleculeListCache[builderUsedInSimulation]));
       }
 
       private void addMolecules(IMoleculeDependentBuilder builder, MoleculeList moleculeList)
