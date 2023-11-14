@@ -65,7 +65,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          var (_, simulationBuilder, replacementContext) = modelConfiguration;
          // first check if the molecule should be transported
-         if (!passiveTransportBuilder.TransportsMolecule(molecule.Name))
+         if (!simulationBuilder.MoleculeListFor(passiveTransportBuilder).Uses(molecule.Name))
             return;
 
          var neighborhoods = getNeighborhoodsForPassiveTransport(passiveTransportBuilder, allNeighborhoods, molecule.Name);
