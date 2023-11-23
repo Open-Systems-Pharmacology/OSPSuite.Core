@@ -74,6 +74,7 @@ namespace OSPSuite.Core.Domain.Services
          //create the temporary GLOBAL MOLECULE PROPERTIES THAT WILL BE REMOVED AT THE END but used as based for copying
          var allGlobalMoleculeContainers = allSpatialStructures
             .Select(x => x.GlobalMoleculeDependentProperties)
+            .Select(mapToModelContainer)
             .ToList();
 
 
@@ -115,13 +116,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          //we do have a special case to deal with when dealing with MoleculeProperties container that we merge instead of replacing
          if (containerToAdd.IsNamed(Constants.MOLECULE_PROPERTIES))
-         {
-            var existingContainer = parentContainer.Container(containerToAdd.Name);
-            if (existingContainer == null)
-               parentContainer.Add(containerToAdd);
-            else
-               mergeContainers(existingContainer, containerToAdd);
-         }
+            addOrMergeContainer(parentContainer, containerToAdd);
          else
             addOrReplaceInContainer(parentContainer, containerToAdd);
       }
@@ -130,6 +125,15 @@ namespace OSPSuite.Core.Domain.Services
       private void mergeContainers(IContainer targetContainer, IContainer containerToMerge)
       {
          containerToMerge.Children.Each(x => addOrReplaceInContainer(targetContainer, x));
+      }
+
+      private void addOrMergeContainer(IContainer parentContainer, IContainer containerToAddOrMerge)
+      {
+         var existingContainer = parentContainer.Container(containerToAddOrMerge.Name);
+         if (existingContainer == null)
+            parentContainer.Add(containerToAddOrMerge);
+         else
+            mergeContainers(existingContainer, containerToAddOrMerge);
       }
 
       private void addOrReplaceInContainer(IContainer container, IEntity objectToReplace)
