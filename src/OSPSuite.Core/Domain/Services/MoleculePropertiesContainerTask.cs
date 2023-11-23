@@ -59,7 +59,7 @@ namespace OSPSuite.Core.Domain.Services
          var globalMoleculeContainer = addContainerUnder(model.Root, moleculeBuilder, moleculeBuilder.Name, simulationBuilder)
             .WithContainerType(ContainerType.Molecule);
 
-         //this is the container that wil be used to create all the local molecule containers
+         //this is the container that will be used to create all the local molecule containers
          var spatialStructureGlobalMoleculeContainer = model.Root.Container(Constants.MOLECULE_PROPERTIES);
                   
          //Add global molecule dependent parameters
