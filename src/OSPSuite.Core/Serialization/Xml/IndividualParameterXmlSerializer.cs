@@ -7,7 +7,6 @@ namespace OSPSuite.Core.Serialization.Xml
       public override void PerformMapping()
       {
          base.PerformMapping();
-         Map(x => x.DistributionType);
          Map(x => x.Origin);
          Map(x => x.Info);
          Map(x => x.IsDefault);

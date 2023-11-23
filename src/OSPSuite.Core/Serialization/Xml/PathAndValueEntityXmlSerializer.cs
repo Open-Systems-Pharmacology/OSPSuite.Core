@@ -9,6 +9,7 @@ namespace OSPSuite.Core.Serialization.Xml
       public override void PerformMapping()
       {
          base.PerformMapping();
+         Map(x => x.DistributionType);
          Map(x => x.Dimension);
          Map(x => x.ContainerPath);
          MapReference(x => x.Formula);
