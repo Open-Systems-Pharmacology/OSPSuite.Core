@@ -61,7 +61,7 @@ namespace OSPSuite.Core.Domain.Services
          // First step: We create the container structure.
          // This is done by adding all top containers defined in the FIRST spatial structure
          // Then we merge all other top containers defined in the other spatial structures
-       
+
          // Add each container defined in the spatial structure and direct child of the root container
          root.AddChildren(firstSpatialStructure.TopContainers.Select(mapToModelContainer));
 
@@ -70,6 +70,22 @@ namespace OSPSuite.Core.Domain.Services
             //make sure we map the container to a model container so that we do not change the original containers
             .Select(mapToModelContainer)
             .Each(mergeTopContainerIntoModel);
+
+         //create the temporary GLOBAL MOLECULE PROPERTIES THAT WILL BE REMOVED AT THE END but used as based for copying
+         var allGlobalMoleculeContainers = allSpatialStructures
+            .Select(x => x.GlobalMoleculeDependentProperties)
+            .Select(mapToModelContainer)
+            .ToList();
+
+
+         var firstGlobalMoleculeContainer = allGlobalMoleculeContainers.FirstOrDefault();
+         var otherGlobalMoleculeContainer = allGlobalMoleculeContainers.Skip(1).ToList();
+
+         if (firstGlobalMoleculeContainer != null)
+         {
+            otherGlobalMoleculeContainer.Each(x => mergeContainers(firstGlobalMoleculeContainer, x));
+            root.Add(firstGlobalMoleculeContainer);
+         }
       }
 
       private Func<IContainer, IContainer> mapContainerDef(SimulationBuilder simulationBuilder) => container => _containerMapper.MapFrom(container, simulationBuilder);
@@ -96,14 +112,37 @@ namespace OSPSuite.Core.Domain.Services
          addOrReplaceContainer(topContainer, parentContainer);
       }
 
-      private static void addOrReplaceContainer(IContainer containerToAdd, IContainer parentContainer)
+      private void addOrReplaceContainer(IContainer containerToAdd, IContainer parentContainer)
       {
-         var existingContainer = parentContainer.Container(containerToAdd.Name);
-         if (existingContainer != null)
-            parentContainer.RemoveChild(existingContainer);
+         //we do have a special case to deal with when dealing with MoleculeProperties container that we merge instead of replacing
+         if (containerToAdd.IsNamed(Constants.MOLECULE_PROPERTIES))
+            addOrMergeContainer(parentContainer, containerToAdd);
+         else
+            addOrReplaceInContainer(parentContainer, containerToAdd);
+      }
 
-         //add in any case
-         parentContainer.Add(containerToAdd);
+      //Adds or replace all children from the containerToMerge into the targetContainer
+      private void mergeContainers(IContainer targetContainer, IContainer containerToMerge)
+      {
+         containerToMerge.Children.Each(x => addOrReplaceInContainer(targetContainer, x));
+      }
+
+      private void addOrMergeContainer(IContainer parentContainer, IContainer containerToAddOrMerge)
+      {
+         var existingContainer = parentContainer.Container(containerToAddOrMerge.Name);
+         if (existingContainer == null)
+            parentContainer.Add(containerToAddOrMerge);
+         else
+            mergeContainers(existingContainer, containerToAddOrMerge);
+      }
+
+      private void addOrReplaceInContainer(IContainer container, IEntity objectToReplace)
+      {
+         var existingChild = container.GetSingleChildByName(objectToReplace.Name);
+         if (existingChild != null)
+            container.RemoveChild(existingChild);
+
+         container.Add(objectToReplace);
       }
 
       public IContainer MergeNeighborhoods(ModelConfiguration modelConfiguration) => _neighborhoodsMapper.MapFrom(modelConfiguration);
