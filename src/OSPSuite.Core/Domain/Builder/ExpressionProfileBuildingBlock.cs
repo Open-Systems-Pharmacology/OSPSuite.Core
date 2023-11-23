@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Domain.Builder
 {
    public class ExpressionProfileBuildingBlock : PathAndValueEntityBuildingBlockFromPKSim<ExpressionParameter>, ILookupBuildingBlock<InitialCondition>
    {
-      private readonly StartValueCache<InitialCondition> _initialConditions = new StartValueCache<InitialCondition>();
+      private readonly PathAndValueEntityCache<InitialCondition> _initialConditions = new PathAndValueEntityCache<InitialCondition>();
       public override string Icon => Type.IconName;
 
       public virtual string MoleculeName { get; private set; }
