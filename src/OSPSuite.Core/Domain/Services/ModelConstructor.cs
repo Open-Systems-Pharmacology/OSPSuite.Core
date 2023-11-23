@@ -214,7 +214,7 @@ namespace OSPSuite.Core.Domain.Services
          createMoleculeCalculationMethodsFormula(modelConfiguration);
 
          var validation = new ValidationResult(spatialStructureValidation, moleculeAmountValidation);
-         
+
          if (validation.ValidationState != ValidationState.Invalid)
          {
             // replace all keywords define in the model structure
@@ -317,13 +317,19 @@ namespace OSPSuite.Core.Domain.Services
             _moleculePropertiesContainerTask.CreateGlobalMoleculeContainerFor(moleculeBuilder, modelConfiguration);
 
          simulationConfiguration.AllPresentMolecules().Each(createGlobalContainer);
+
+         //once the global properties have been created, we can remove the global container only used as template
+         var globalMoleculeContainer = model.Root.Container(Constants.MOLECULE_PROPERTIES);
+         if (globalMoleculeContainer != null)
+            model.Root.RemoveChild(globalMoleculeContainer);
       }
 
       private void addLocalParametersToMolecule(ModelConfiguration modelConfiguration)
       {
          var (model, simulationConfiguration) = modelConfiguration;
          // retrieve all molecules container defined int the spatial structure
-         var allMoleculePropertiesContainer = model.Root.GetAllChildren<IContainer>(x => x.IsNamed(Constants.MOLECULE_PROPERTIES)).ToList();
+         // We filter our the global molecule container that is created under root. Only interested in LOCAL Containers
+         var allMoleculePropertiesContainer = model.Root.GetAllChildren<IContainer>(x => x.ParentContainer!= model.Root && x.IsNamed(Constants.MOLECULE_PROPERTIES)).ToList();
 
          var allPresentMolecules = simulationConfiguration.AllPresentXenobioticFloatingMoleculeNames();
          var allEndogenous = simulationConfiguration.AllPresentEndogenousStationaryMoleculeNames();
@@ -332,6 +338,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             addLocalStructureMoleculeParametersToMoleculeAmount(allPresentMolecules, moleculePropertiesContainer, modelConfiguration,
                x => !isEndogenousParameter(x));
+
             addLocalStructureMoleculeParametersToMoleculeAmount(allEndogenous, moleculePropertiesContainer, modelConfiguration,
                isEndogenousParameter);
 

@@ -1,5 +1,8 @@
 ﻿using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Core.Domain.Services;
+using System.Linq;
 using static OSPSuite.Core.Domain.Constants;
 using static OSPSuite.Helpers.ConstantsForSpecs;
 
@@ -11,17 +14,26 @@ namespace OSPSuite.Helpers
       private readonly ISolverSettingsFactory _solverSettingsFactory;
       private readonly IOutputSchemaFactory _outputSchemaFactory;
       private readonly ISpatialStructureFactory _spatialStructureFactory;
-      private readonly IParameterFactory _parameterFactory;
       private readonly INeighborhoodBuilderFactory _neighborhoodFactory;
+      private readonly IInitialConditionsCreator _initialConditionsCreator;
+      private readonly ModelHelperForSpecs _modelHelper;
 
-      public ModuleHelperForSpecs(IObjectBaseFactory objectBaseFactory, ISolverSettingsFactory solverSettingsFactory, IOutputSchemaFactory outputSchemaFactory, ISpatialStructureFactory spatialStructureFactory, IParameterFactory parameterFactory, INeighborhoodBuilderFactory neighborhoodFactory)
+      public ModuleHelperForSpecs(
+         IObjectBaseFactory objectBaseFactory,
+         ISolverSettingsFactory solverSettingsFactory,
+         IOutputSchemaFactory outputSchemaFactory,
+         ISpatialStructureFactory spatialStructureFactory,
+         INeighborhoodBuilderFactory neighborhoodFactory,
+         IInitialConditionsCreator initialConditionsCreator,
+         ModelHelperForSpecs modelHelper)
       {
          _objectBaseFactory = objectBaseFactory;
          _solverSettingsFactory = solverSettingsFactory;
          _outputSchemaFactory = outputSchemaFactory;
          _spatialStructureFactory = spatialStructureFactory;
-         _parameterFactory = parameterFactory;
          _neighborhoodFactory = neighborhoodFactory;
+         _initialConditionsCreator = initialConditionsCreator;
+         _modelHelper = modelHelper;
       }
 
       public SimulationConfiguration CreateSimulationConfiguration()
@@ -45,7 +57,31 @@ namespace OSPSuite.Helpers
       {
          var module = _objectBaseFactory.Create<Module>().WithName("Module1");
          module.Add(getSpatialStructureModule1());
+         module.Add(getMoleculesModule1());
+
+         var initialConditions = _initialConditionsCreator.CreateFrom(module.SpatialStructure, module.Molecules.ToList());
+         module.Add(initialConditions);
+
          return module;
+      }
+
+      private MoleculeBuildingBlock getMoleculesModule1()
+      {
+         var molecules = _objectBaseFactory.Create<MoleculeBuildingBlock>();
+         molecules.Add(createMoleculeA(molecules.FormulaCache));
+         return molecules;
+      }
+
+      private MoleculeBuilder createMoleculeA(IFormulaCache formulaCache)
+      {
+         var moleculeC = _modelHelper.DefaultMolecule("A", 3, 3, QuantityType.Drug, formulaCache);
+         var globalParameter = newConstantParameter("A_Global", 5, ParameterBuildMode.Global);
+         var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("A_Global_Formula").WithFormulaString("2+2");
+         globalParameter.Formula = formula;
+         formulaCache.Add(formula);
+         moleculeC.Add(globalParameter);
+         moleculeC.IsFloating = true;
+         return moleculeC;
       }
 
       private SpatialStructure getSpatialStructureModule1()
@@ -60,11 +96,15 @@ namespace OSPSuite.Helpers
          var bw = newConstantParameter(BW, 20);
          organism.Add(bw);
 
-
-         var organismMoleculeProperties = _objectBaseFactory.Create<IContainer>().WithName(MOLECULE_PROPERTIES)
+         var globalMoleculeProperties = _objectBaseFactory.Create<IContainer>().WithName(MOLECULE_PROPERTIES)
             .WithMode(ContainerMode.Logical)
             .WithContainerType(ContainerType.Molecule);
-         organism.Add(organismMoleculeProperties);
+
+         //add two parameters. One will be replaced when merging the second module
+         globalMoleculeProperties.Add(newConstantParameter("P1", 10));
+         globalMoleculeProperties.Add(newConstantParameter("P2", 20));
+
+         spatialStructure.GlobalMoleculeDependentProperties = globalMoleculeProperties;
 
          //ART
          var art = createContainerWithName(ArterialBlood);
@@ -157,10 +197,7 @@ namespace OSPSuite.Helpers
       }
 
       private IParameter newConstantParameter(string name, double value, ParameterBuildMode parameterBuildMode = ParameterBuildMode.Local)
-      {
-         return _parameterFactory.CreateParameter(name, value)
-            .WithMode(parameterBuildMode);
-      }
+         => _modelHelper.NewConstantParameter(name, value, parameterBuildMode);
 
       //Module 2 will introduce
       //1. A replacement of the lung container
@@ -170,6 +207,15 @@ namespace OSPSuite.Helpers
       {
          var module = _objectBaseFactory.Create<Module>().WithName("Module2");
          var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE MODULE 2");
+
+         var globalMoleculeProperties = _objectBaseFactory.Create<IContainer>().WithName(MOLECULE_PROPERTIES)
+            .WithMode(ContainerMode.Logical)
+            .WithContainerType(ContainerType.Molecule);
+
+         //add two parameters. One will be replaced when merging the second module
+         globalMoleculeProperties.Add(newConstantParameter("P1", 100, ParameterBuildMode.Global));
+         globalMoleculeProperties.Add(newConstantParameter("P3", 30, ParameterBuildMode.Global));
+         spatialStructure.GlobalMoleculeDependentProperties = globalMoleculeProperties;
 
          //LUNG with other parameters and interstitial compartment
          var lung = createContainerWithName(Lung);
