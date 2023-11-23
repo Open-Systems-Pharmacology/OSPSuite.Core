@@ -72,10 +72,8 @@ namespace OSPSuite.Core.Domain.Services
             .Each(mergeTopContainerIntoModel);
 
          //create the temporary GLOBAL MOLECULE PROPERTIES THAT WILL BE REMOVED AT THE END but used as based for copying
-         var allGlobalMoleculeContainers = simulationBuilder
-            .SpatialStructures
-            .Select(x => x?.GlobalMoleculeDependentProperties)
-            .Where(x => x != null)
+         var allGlobalMoleculeContainers = allSpatialStructures
+            .Select(x => x.GlobalMoleculeDependentProperties)
             .ToList();
 
 
