@@ -38,7 +38,7 @@ namespace OSPSuite.Core.Domain.Services
       ///   Creates a new initial conditions for the <paramref name="molecule" /> using the path of the <paramref name="container" />.
       ///   If supplied, the <paramref name="defaultStartFormula" /> will be used as the formula for the initial condition.
       /// </summary>
-      InitialCondition CreateInitialCondition(IEntity container, MoleculeBuilder molecule, IFormula defaultStartFormula = null);
+      InitialCondition CreateInitialCondition(IContainer container, MoleculeBuilder molecule, IFormula defaultStartFormula = null);
 
       /// <summary>
       ///   Creates a new initial conditions with <paramref name="moleculeAmountPath"/> using properties from the <paramref name="moleculeAmount"/>
@@ -76,7 +76,7 @@ namespace OSPSuite.Core.Domain.Services
          return initialConditions;
       }
 
-      public InitialCondition CreateInitialCondition(IEntity container, MoleculeBuilder molecule, IFormula defaultStartFormula = null)
+      public InitialCondition CreateInitialCondition(IContainer container, MoleculeBuilder molecule, IFormula defaultStartFormula = null)
       {
          var initialCondition = createInitialConditionWithValue(container, molecule);
          setInitialConditionFormula(defaultStartFormula ?? molecule.DefaultStartFormula, initialCondition, formula => formula);
@@ -94,21 +94,31 @@ namespace OSPSuite.Core.Domain.Services
          return initialCondition;
       }
 
-      private InitialCondition createInitialConditionForBuildingBlock(IBuildingBlock initialConditionsBuildingBlock, IEntity container, MoleculeBuilder molecule)
+      private InitialCondition createInitialConditionForBuildingBlock(IBuildingBlock initialConditionsBuildingBlock, IContainer container, MoleculeBuilder molecule)
       {
          var initialCondition = createInitialConditionWithValue(container, molecule);
          setInitialConditionFormula(molecule.DefaultStartFormula, initialCondition, formula => _cloneManagerForBuildingBlock.Clone(formula, initialConditionsBuildingBlock.FormulaCache));
          return initialCondition;
       }
 
-      private InitialCondition createInitialConditionWithValue(IEntity container, MoleculeBuilder molecule)
+      private InitialCondition createInitialConditionWithValue(IContainer container, MoleculeBuilder molecule)
       {
-         var initialCondition = CreateInitialCondition(_entityPathResolver.ObjectPathFor(container), molecule.Name, molecule.Dimension, molecule.DisplayUnit);
+         var initialCondition = CreateInitialCondition(objectPathForContainer(container), molecule.Name, molecule.Dimension, molecule.DisplayUnit);
          initialCondition.Value = molecule.GetDefaultInitialCondition();
          return initialCondition;
       }
 
-      private void addMoleculesFrom(InitialConditionsBuildingBlock initialConditionsBuildingBlock, IEntity container, IEnumerable<MoleculeBuilder> molecules)
+      private ObjectPath objectPathForContainer(IContainer container)
+      {
+         var objectPathForInitialCondition = _entityPathResolver.ObjectPathFor(container);
+         var rootContainer = container.RootContainer;
+         if (rootContainer.ParentPath != null)
+            objectPathForInitialCondition.AddAtFront(rootContainer.ParentPath);
+
+         return objectPathForInitialCondition;
+      }
+
+      private void addMoleculesFrom(InitialConditionsBuildingBlock initialConditionsBuildingBlock, IContainer container, IEnumerable<MoleculeBuilder> molecules)
       {
          foreach (var molecule in molecules)
          {
