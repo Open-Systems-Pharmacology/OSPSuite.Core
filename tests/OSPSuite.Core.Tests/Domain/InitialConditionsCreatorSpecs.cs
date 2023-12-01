@@ -107,7 +107,7 @@ namespace OSPSuite.Core.Domain
             ContainerType = ContainerType.Organ,
             Mode = ContainerMode.Physical,
             Name = "topContainer",
-            ParentPath = new ObjectPath("ItGoesSomewhere")
+            ParentPath = new ObjectPath("ItGoesSomewhere", "Else")
          };
       }
 
@@ -119,7 +119,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void the_initial_condition_should_have_root_container_parent_path()
       {
-         _initialCondition.Path.PathAsString.ShouldBeEqualTo("ItGoesSomewhere|topContainer|moleculeName");
+         _initialCondition.Path.Equals(new ObjectPath("ItGoesSomewhere", "Else", "topContainer", "moleculeName")).ShouldBeTrue();
       }
    }
 
