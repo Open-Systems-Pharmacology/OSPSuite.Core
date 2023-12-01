@@ -92,6 +92,37 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   internal class When_creating_initial_conditions_in_a_container_with_parent_path_at_root : concern_for_InitialConditionsCreator
+   {
+      private MoleculeBuilder _molecule;
+      private Container _container;
+      private InitialCondition _initialCondition;
+
+      protected override void Context()
+      {
+         base.Context();
+         _molecule = new MoleculeBuilder().WithName("moleculeName").WithDimension(Constants.Dimension.NO_DIMENSION);
+         _container = new Container
+         {
+            ContainerType = ContainerType.Organ,
+            Mode = ContainerMode.Physical,
+            Name = "topContainer",
+            ParentPath = new ObjectPath("ItGoesSomewhere", "Else")
+         };
+      }
+
+      protected override void Because()
+      {
+         _initialCondition = sut.CreateInitialCondition(_container, _molecule);
+      }
+
+      [Observation]
+      public void the_initial_condition_should_have_root_container_parent_path()
+      {
+         _initialCondition.Path.Equals(new ObjectPath("ItGoesSomewhere", "Else", "topContainer", "moleculeName")).ShouldBeTrue();
+      }
+   }
+
    internal class When_creating_initial_conditions_from_molecule_amount : concern_for_InitialConditionsCreator
    {
       private InitialCondition _initialCondition;

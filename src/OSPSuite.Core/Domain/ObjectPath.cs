@@ -219,6 +219,14 @@ namespace OSPSuite.Core.Domain
          _pathEntries.Insert(0, pathEntry);
       }
 
+      /// <summary>
+      ///   Add a multipart <paramref name="pathToAdd"/> at the front
+      /// </summary>
+      public virtual void AddAtFront(ObjectPath pathToAdd)
+      {
+         pathToAdd.Reverse().Each(AddAtFront);
+      }
+
       private T resolvePath<T>(IEntity currentEntity, IEnumerable<string> path) where T : class
       {
          if (currentEntity == null)
