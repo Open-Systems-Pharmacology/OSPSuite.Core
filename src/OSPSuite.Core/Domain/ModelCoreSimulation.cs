@@ -94,6 +94,8 @@ namespace OSPSuite.Core.Domain
       {
          base.AcceptVisitor(visitor);
 
+         Settings?.AcceptVisitor(visitor);
+
          Model?.AcceptVisitor(visitor);
 
          Configuration?.AcceptVisitor(visitor);
