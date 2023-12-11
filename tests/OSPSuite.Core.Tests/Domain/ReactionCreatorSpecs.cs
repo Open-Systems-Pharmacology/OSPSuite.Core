@@ -60,8 +60,6 @@ namespace OSPSuite.Core.Domain
          _reactionBuilder.AddProduct(_product1);
          _reactionBuilder.AddModifier("modifier");
 
-
-
          _rootContainer = new Container().WithMode(ContainerMode.Physical);
          _model.Root = _rootContainer;
          _globalContainer = new Container();
