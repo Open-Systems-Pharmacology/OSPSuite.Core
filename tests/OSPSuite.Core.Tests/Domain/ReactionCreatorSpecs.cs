@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Domain
       protected bool _result;
       protected SimulationBuilder _simulationBuilder;
       private ModelConfiguration _modelConfiguration;
-
+      
       protected override void Context()
       {
          _reactionMapper = A.Fake<IReactionBuilderToReactionMapper>();
@@ -60,6 +60,8 @@ namespace OSPSuite.Core.Domain
          _reactionBuilder.AddProduct(_product1);
          _reactionBuilder.AddModifier("modifier");
 
+
+
          _rootContainer = new Container().WithMode(ContainerMode.Physical);
          _model.Root = _rootContainer;
          _globalContainer = new Container();
@@ -77,7 +79,43 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   internal class When_creating_the_reaction_based_on_a_given_builder_in_a_container_hieararchy : concern_for_ReactionCreator
+   internal class When_creating_the_reaction_based_on_a_given_builder_in_a_container_hierarchy_without_global_parameters_in_the_reaction : When_creating_the_reaction_based_on_a_given_builder_in_a_container_hierarchy
+   {
+      [Observation]
+      public void the_global_container_is_not_created()
+      {
+         A.CallTo(() => _containerTask.CreateOrRetrieveSubContainerByName(_rootContainer, _reactionBuilder.Name)).MustNotHaveHappened();
+      }
+   }
+
+   internal class When_creating_the_reaction_based_on_a_given_builder_in_a_container_hierarchy_with_global_parameters_in_the_reaction : When_creating_the_reaction_based_on_a_given_builder_in_a_container_hierarchy
+   {
+      private Parameter _globalParameter;
+
+      protected override void Context()
+      {
+         base.Context();
+         _globalParameter = new Parameter
+         {
+            BuildMode = ParameterBuildMode.Global
+         };
+         _reactionBuilder.Add(_globalParameter);
+      }
+
+      [Observation]
+      public void the_global_container_is_not_created()
+      {
+         A.CallTo(() => _containerTask.CreateOrRetrieveSubContainerByName(_rootContainer, _reactionBuilder.Name)).MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_have_updated_the_description_of_the_reaction_in_the_global_container()
+      {
+         _globalContainer.Description.ShouldBeEqualTo(_reactionBuilder.Description);
+      }
+   }
+
+   internal abstract class When_creating_the_reaction_based_on_a_given_builder_in_a_container_hierarchy : concern_for_ReactionCreator
    {
       private IContainer _liver;
       private IContainer _kidney;
@@ -142,11 +180,6 @@ namespace OSPSuite.Core.Domain
          _subLiver.ContainsName(_reactionBuilder.Name).ShouldBeTrue();
       }
 
-      [Observation]
-      public void should_have_updated_the_description_of_the_reaction_in_the_global_container()
-      {
-         _globalContainer.Description.ShouldBeEqualTo(_reactionBuilder.Description);
-      }
 
       [Observation]
       public void should_not_create_the_reaction_in_any_container_for_which_at_least_one_educt_or_one_product()
