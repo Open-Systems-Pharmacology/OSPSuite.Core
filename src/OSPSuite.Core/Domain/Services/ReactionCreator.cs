@@ -47,9 +47,14 @@ namespace OSPSuite.Core.Domain.Services
          return true;
       }
 
-      private IContainer createReactionPropertiesContainer(ReactionBuilder reactionBuilder, ModelConfiguration modelConfiguration)
+      private void createReactionPropertiesContainer(ReactionBuilder reactionBuilder, ModelConfiguration modelConfiguration)
       {
          var (model, simulationBuilder, replacementContext) = modelConfiguration;
+
+         //Do we have non local parameters in this container? If not, no need to create a global container
+         if (reactionBuilder.Parameters.All(x => x.BuildMode == ParameterBuildMode.Local))
+            return;
+
          var globalReactionContainer = _containerTask.CreateOrRetrieveSubContainerByName(model.Root, reactionBuilder.Name)
             .WithContainerType(ContainerType.Reaction)
             .WithIcon(reactionBuilder.Icon)
@@ -61,7 +66,6 @@ namespace OSPSuite.Core.Domain.Services
          _parameterMapper.MapGlobalOrPropertyFrom(reactionBuilder, simulationBuilder).Each(globalReactionContainer.Add);
 
          _keywordReplacerTask.ReplaceIn(globalReactionContainer, reactionBuilder.Name, replacementContext);
-         return globalReactionContainer;
       }
 
       private Func<IContainer, Reaction> createLocalReactionDef(ReactionBuilder reactionBuilder, SimulationBuilder simulationBuilder) => container
