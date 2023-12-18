@@ -48,14 +48,8 @@ namespace OSPSuite.Core.Domain
          return isFound ? result : null;
       }
 
-      public static ObjectPath ToObjectPath(this string pathAsString)
-      {
-         return ToObjectPath(pathAsString.ToPathArray());
-      }
+      public static ObjectPath ToObjectPath(this string pathAsString) => ToObjectPath(pathAsString.ToPathArray());
 
-      public static ObjectPath ToObjectPath(this IReadOnlyCollection<string> pathAsArray)
-      {
-         return new ObjectPath(pathAsArray);
-      }
+      public static ObjectPath ToObjectPath(this IReadOnlyCollection<string> pathAsArray) => new ObjectPath(pathAsArray);
    }
 }
