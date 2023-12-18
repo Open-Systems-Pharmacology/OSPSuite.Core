@@ -75,7 +75,7 @@ namespace OSPSuite.Core.Services
 
          var simulationRunResults = new SimulationRunResults(Enumerable.Empty<SolverWarning>(), simResults);
          A.CallTo(() => _simModelManager.RunSimulation(_simulation, null)).Returns(simulationRunResults);
-         sut = new ScaleDivisorCalculator(_simModelManager, _containerTask, _objectPathFactory);
+         sut = new ScaleDivisorCalculator(_simModelManager, _containerTask);
       }
    }
 

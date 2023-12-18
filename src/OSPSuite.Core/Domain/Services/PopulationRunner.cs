@@ -13,7 +13,6 @@ namespace OSPSuite.Core.Domain.Services
 {
    public class PopulationRunner : SimModelManagerBase, IPopulationRunner
    {
-      private readonly IObjectPathFactory _objectPathFactory;
       private readonly IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
       public event EventHandler<MultipleSimulationsProgressEventArgs> SimulationProgress = delegate { };
 
@@ -28,10 +27,8 @@ namespace OSPSuite.Core.Domain.Services
       public PopulationRunner(
          ISimModelExporter simModelExporter, 
          ISimModelSimulationFactory simModelSimulationFactory, 
-         IObjectPathFactory objectPathFactory,
          IEntitiesInSimulationRetriever entitiesInSimulationRetriever) : base(simModelExporter, simModelSimulationFactory)
       {
-         _objectPathFactory = objectPathFactory;
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
       }
 
@@ -147,7 +144,7 @@ namespace OSPSuite.Core.Domain.Services
          foreach (var result in simulation.AllValues)
          {
             //Add quantity name and remove simulation name
-            var quantityPath = _objectPathFactory.CreateObjectPathFrom(result.Path.ToPathArray());
+            var quantityPath = result.Path.ToObjectPath();
             quantityPath.Remove(_simulationName);
             results.Add(quantityValuesFor(quantityPath.ToString(), result, simulationTimesLength));
          }
