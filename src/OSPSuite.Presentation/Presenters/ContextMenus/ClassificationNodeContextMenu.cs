@@ -30,7 +30,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
          if (groupMenu.AllItems().Any())
             allMenuItems.Add(groupMenu);
 
-         groupMenu.AddItem(ClassificationCommonContextMenuItems.RemoveClassificationMainMenu(classificationNode, presenter));
+         allMenuItems.Add(ClassificationCommonContextMenuItems.RemoveClassificationMainMenu(classificationNode, presenter));
          return allMenuItems;
       }
 
