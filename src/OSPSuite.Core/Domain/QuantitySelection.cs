@@ -7,7 +7,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Full path of selected quantity which serves as id for the quantity
       /// </summary>
-      public virtual string Path { get; }
+      public virtual string Path { get; set; }
 
       public virtual QuantityType QuantityType { get; }
 
