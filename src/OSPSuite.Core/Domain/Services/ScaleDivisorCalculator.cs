@@ -86,16 +86,14 @@ namespace OSPSuite.Core.Domain.Services
    {
       private readonly ISimModelManager _simModelManager;
       private readonly IContainerTask _containerTask;
-      private readonly IObjectPathFactory _objectPathFactory;
       private PathCache<MoleculeAmount> _allMoleculeAmounts;
       private ScaleDivisorOptions _scaleDivisorOptions;
       private string _simulationName;
 
-      public ScaleDivisorCalculator(ISimModelManager simModelManager, IContainerTask containerTask, IObjectPathFactory objectPathFactory)
+      public ScaleDivisorCalculator(ISimModelManager simModelManager, IContainerTask containerTask)
       {
          _simModelManager = simModelManager;
          _containerTask = containerTask;
-         _objectPathFactory = objectPathFactory;
       }
 
       public async Task<IReadOnlyCollection<ScaleDivisor>> CalculateScaleDivisorsAsync(IModelCoreSimulation simulation, ScaleDivisorOptions scaleDivisorOptions)
@@ -169,7 +167,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private string pathWithoutSimulationName(string simulationPath)
       {
-         var quantityPath = _objectPathFactory.CreateObjectPathFrom(simulationPath.ToPathArray());
+         var quantityPath = simulationPath.ToObjectPath();
          quantityPath.Remove(_simulationName);
          return quantityPath.PathAsString;
       }

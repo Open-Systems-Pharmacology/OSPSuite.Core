@@ -26,8 +26,8 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       TimePath CreateTimePath(IDimension timeDimension);
 
-      ObjectPath CreateObjectPathFrom(params string[] entries);
-      ObjectPath CreateObjectPathFrom(IReadOnlyCollection<string> entries);
+      // ObjectPath CreateObjectPathFrom(params string[] entries);
+      // ObjectPath CreateObjectPathFrom(IReadOnlyCollection<string> entries);
 
       ObjectPath CreateAbsoluteObjectPath(IEntity entity);
 
@@ -104,9 +104,9 @@ namespace OSPSuite.Core.Domain
          return CreateFormulaUsablePathFrom(objectPath.DowncastTo<IReadOnlyCollection<string>>());
       }
 
-      public ObjectPath CreateObjectPathFrom(params string[] entries) => CreateObjectPathFrom(entries.ToList());
-
-      public ObjectPath CreateObjectPathFrom(IReadOnlyCollection<string> entries) => new ObjectPath(entries);
+      // public ObjectPath CreateObjectPathFrom(params string[] entries) => CreateObjectPathFrom(entries.ToList());
+      //
+      // public ObjectPath CreateObjectPathFrom(IReadOnlyCollection<string> entries) => new ObjectPath(entries);
 
       public TimePath CreateTimePath(IDimension timeDimension)
       {

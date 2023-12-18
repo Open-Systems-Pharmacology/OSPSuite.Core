@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -44,6 +46,16 @@ namespace OSPSuite.Core.Domain
       {
          var result = TryResolve<T>(objectPath, refEntity, out var isFound);
          return isFound ? result : null;
+      }
+
+      public static ObjectPath ToObjectPath(this string pathAsString)
+      {
+         return ToObjectPath(pathAsString.ToPathArray());
+      }
+
+      public static ObjectPath ToObjectPath(this IReadOnlyCollection<string> pathAsArray)
+      {
+         return new ObjectPath(pathAsArray);
       }
    }
 }

@@ -83,7 +83,7 @@ namespace OSPSuite.Helpers
 
 
          var initialConditions = _initialConditionsCreator.CreateFrom(module.SpatialStructure, module.Molecules.ToList());
-         var objectPathForContainerThatDoesNotExist = _objectPathFactory.CreateObjectPathFrom("TOTO", "TATA");
+         var objectPathForContainerThatDoesNotExist = new ObjectPath("TOTO", "TATA");
          initialConditions.Add(_initialConditionsCreator.CreateInitialCondition(objectPathForContainerThatDoesNotExist, "A", _concentrationDimension));
 
          module.Add(initialConditions);
@@ -98,11 +98,11 @@ namespace OSPSuite.Helpers
 
       private void setInitialConditions(InitialConditionsBuildingBlock initialConditions)
       {
-         var organsim_A = initialConditions[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, "A")];
+         var organsim_A = initialConditions[new ObjectPath(Constants.ORGANISM, "A")];
          organsim_A.Value = 5;
 
 
-         var lung_B = initialConditions[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ConstantsForSpecs.Lung, "B")];
+         var lung_B = initialConditions[new ObjectPath(Constants.ORGANISM, ConstantsForSpecs.Lung, "B")];
          lung_B.Formula = null;
          lung_B.Value = 100;
       }

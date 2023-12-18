@@ -78,7 +78,7 @@ namespace OSPSuite.Helpers
          var initialConditions = _initialConditionsCreator.CreateFrom(module.SpatialStructure, module.Molecules.ToList());
 
          //add one start values that does not exist in Molecules@"
-         var initialCondition = _initialConditionsCreator.CreateInitialCondition(_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM), "MoleculeThatDoesNotExist", amountDimension);
+         var initialCondition = _initialConditionsCreator.CreateInitialCondition(Constants.ORGANISM.ToObjectPath(), "MoleculeThatDoesNotExist", amountDimension);
          initialCondition.IsPresent = true;
          initialConditions.Add(initialCondition);
          var parameterValues = _objectBaseFactory.Create<ParameterValuesBuildingBlock>();
@@ -104,14 +104,14 @@ namespace OSPSuite.Helpers
          individual.Add(new IndividualParameter
          {
             //original value is 10
-            Path = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ArterialBlood, P),
+            Path = new ObjectPath(Constants.ORGANISM, ArterialBlood, P),
             Value = 20
          });
 
          individual.Add(new IndividualParameter
          {
             //new parameter that does not exist
-            Path = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ArterialBlood, "NEW_PARAM"),
+            Path = new ObjectPath(Constants.ORGANISM, ArterialBlood, "NEW_PARAM"),
             Value = 10,
             Dimension = amountPerTimeDimension
          });
@@ -120,7 +120,7 @@ namespace OSPSuite.Helpers
          individual.Add(new IndividualParameter
          {
             //new parameter that does not exist
-            Path = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ArterialBlood, "NEW_PARAM_DISTRIBUTED", Constants.Distribution.MEAN),
+            Path = new ObjectPath(Constants.ORGANISM, ArterialBlood, "NEW_PARAM_DISTRIBUTED", Constants.Distribution.MEAN),
             Value = 10,
             Dimension = amountPerTimeDimension
          });
@@ -128,7 +128,7 @@ namespace OSPSuite.Helpers
          individual.Add(new IndividualParameter
          {
             //new parameter that does not exist
-            Path = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ArterialBlood, "NEW_PARAM_DISTRIBUTED"),
+            Path = new ObjectPath(Constants.ORGANISM, ArterialBlood, "NEW_PARAM_DISTRIBUTED"),
             DistributionType = DistributionType.Normal,
             Dimension = amountPerTimeDimension
          });
@@ -136,7 +136,7 @@ namespace OSPSuite.Helpers
          individual.Add(new IndividualParameter
          {
             //new parameter that does not exist
-            Path = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ArterialBlood, "NEW_PARAM_DISTRIBUTED", Constants.Distribution.DEVIATION),
+            Path = new ObjectPath(Constants.ORGANISM, ArterialBlood, "NEW_PARAM_DISTRIBUTED", Constants.Distribution.DEVIATION),
             Value = 2,
             Dimension = amountPerTimeDimension
          });
@@ -144,7 +144,7 @@ namespace OSPSuite.Helpers
          individual.Add(new IndividualParameter
          {
             //new parameter that does not exist
-            Path = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ArterialBlood, "NEW_PARAM_DISTRIBUTED", Constants.Distribution.PERCENTILE),
+            Path = new ObjectPath(Constants.ORGANISM, ArterialBlood, "NEW_PARAM_DISTRIBUTED", Constants.Distribution.PERCENTILE),
             Value = 0.5
          });
 
@@ -153,7 +153,7 @@ namespace OSPSuite.Helpers
          individual.Add(new IndividualParameter
          {
             //new parameter that does not exist
-            Path = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, "DOES_NOT_EXIST", "NOPE"),
+            Path = new ObjectPath(Constants.ORGANISM, "DOES_NOT_EXIST", "NOPE"),
             Value = 10,
          });
          return individual;
@@ -206,7 +206,7 @@ namespace OSPSuite.Helpers
             .WithName("BLA")
             .WithFormula(createBolusDosisFormula(cache));
          eventAssignment.UseAsValue = true;
-         eventAssignment.ObjectPath = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ArterialBlood, Plasma, "A");
+         eventAssignment.ObjectPath = new ObjectPath(Constants.ORGANISM, ArterialBlood, Plasma, "A");
          eventBuilder.AddAssignment(eventAssignment);
          eventBuilder.AddParameter(NewConstantParameter("StartTime", 10));
          eventGroup.Add(eventBuilder);
@@ -239,7 +239,7 @@ namespace OSPSuite.Helpers
       private void setParameterValues(ParameterValuesBuildingBlock parameterValues)
       {
          //set a parameter value to a formula 
-         var moleculeAPath = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, Lung, Plasma, "D");
+         var moleculeAPath = new ObjectPath(Constants.ORGANISM, Lung, Plasma, "D");
          moleculeAPath.Add("RelExpNorm");
          var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("RelExp + RelExpGlobal").WithName("RelExpNormD");
          formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(MOLECULE, "RelExpGlobal"));
@@ -250,12 +250,12 @@ namespace OSPSuite.Helpers
          parameterValue.Formula = formula;
          parameterValues.Add(parameterValue);
 
-         var parameterPath = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, Bone, Cell, "FormulaParameterOverwritten");
+         var parameterPath = new ObjectPath(Constants.ORGANISM, Bone, Cell, "FormulaParameterOverwritten");
          parameterValues.Add(_parameterValuesCreator.CreateParameterValue(parameterPath, 300, Constants.Dimension.NO_DIMENSION));
 
 
          //overwrite to make sure we have a value for a given path
-         var nanParameterNotNaN = _objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, Bone, Cell, "E", "OtherNaNParam");
+         var nanParameterNotNaN = new ObjectPath(Constants.ORGANISM, Bone, Cell, "E", "OtherNaNParam");
 
          //NAN parameters are not added to the PV by default
          parameterValues.Add(_parameterValuesCreator.CreateParameterValue(nanParameterNotNaN, 10, Constants.Dimension.NO_DIMENSION));
@@ -263,39 +263,39 @@ namespace OSPSuite.Helpers
 
       private void setInitialConditions(InitialConditionsBuildingBlock moleculesStartValues)
       {
-         var art_plasma_A = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, ArterialBlood, Plasma, "A")];
+         var art_plasma_A = moleculesStartValues[new ObjectPath(Constants.ORGANISM, ArterialBlood, Plasma, "A")];
          art_plasma_A.Value = 1;
 
-         var lng_plasma_A = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, Lung, Plasma, "A")];
+         var lng_plasma_A = moleculesStartValues[new ObjectPath(Constants.ORGANISM, Lung, Plasma, "A")];
          lng_plasma_A.Value = 6;
 
-         var ven_plasma_A = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, VenousBlood, Plasma, "A")];
+         var ven_plasma_A = moleculesStartValues[new ObjectPath(Constants.ORGANISM, VenousBlood, Plasma, "A")];
          ven_plasma_A.Value = 1;
 
-         var lng_plasma_B = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, Lung, Plasma, "B")];
+         var lng_plasma_B = moleculesStartValues[new ObjectPath(Constants.ORGANISM, Lung, Plasma, "B")];
          lng_plasma_B.Value = 7;
 
-         var ven_plasma_B = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, VenousBlood, Plasma, "B")];
+         var ven_plasma_B = moleculesStartValues[new ObjectPath(Constants.ORGANISM, VenousBlood, Plasma, "B")];
          ven_plasma_B.Value = 0.4;
 
          setAllIsPresentForMoleculeToFalse(moleculesStartValues, "C", "D", "E", "F", "Enz");
-         var lng_cell_C = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, Lung, Cell, "C")];
+         var lng_cell_C = moleculesStartValues[new ObjectPath(Constants.ORGANISM, Lung, Cell, "C")];
          lng_cell_C.IsPresent = true;
          lng_cell_C.Value = 0;
 
-         var bon_cell_C = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, Bone, Cell, "C")];
+         var bon_cell_C = moleculesStartValues[new ObjectPath(Constants.ORGANISM, Bone, Cell, "C")];
          bon_cell_C.IsPresent = true;
          bon_cell_C.Value = 0;
 
-         var lng_plasma_D = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, Lung, Plasma, "D")];
+         var lng_plasma_D = moleculesStartValues[new ObjectPath(Constants.ORGANISM, Lung, Plasma, "D")];
          lng_plasma_D.Value = 8;
          lng_plasma_D.IsPresent = true;
 
-         var ven_plasma_D = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, VenousBlood, Plasma, "D")];
+         var ven_plasma_D = moleculesStartValues[new ObjectPath(Constants.ORGANISM, VenousBlood, Plasma, "D")];
          ven_plasma_D.Value = 0;
          ven_plasma_D.IsPresent = true;
 
-         var bon_cell_E = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, Bone, Cell, "E")];
+         var bon_cell_E = moleculesStartValues[new ObjectPath(Constants.ORGANISM, Bone, Cell, "E")];
          bon_cell_E.Value = 2;
          bon_cell_E.IsPresent = true;
          var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("RelExp").WithName("RelExpNormE");
@@ -304,11 +304,11 @@ namespace OSPSuite.Helpers
          bon_cell_E.Formula = formula;
          bon_cell_E.ScaleDivisor = 2.5;
 
-         var ven_plasma_E = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, VenousBlood, Plasma, "E")];
+         var ven_plasma_E = moleculesStartValues[new ObjectPath(Constants.ORGANISM, VenousBlood, Plasma, "E")];
          ven_plasma_E.Value = 0;
          ven_plasma_E.IsPresent = true;
 
-         var ven_plasma_F = moleculesStartValues[_objectPathFactory.CreateObjectPathFrom(Constants.ORGANISM, Bone, Cell, "F")];
+         var ven_plasma_F = moleculesStartValues[new ObjectPath(Constants.ORGANISM, Bone, Cell, "F")];
          ven_plasma_F.IsPresent = true;
       }
 
