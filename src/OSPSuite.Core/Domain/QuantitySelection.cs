@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Domain
       {
       }
 
-      public QuantitySelection(string path, QuantityType quantityType)
+      public QuantitySelection(string path, QuantityType quantityType = QuantityType.Undefined)
       {
          Path = path;
          QuantityType = quantityType;
