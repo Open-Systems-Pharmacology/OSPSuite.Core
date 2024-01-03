@@ -1,5 +1,9 @@
-﻿using OSPSuite.Core.Domain.Builder;
+﻿using System.Collections.Generic;
+using System.Linq;
+using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -33,22 +37,24 @@ namespace OSPSuite.Core.Domain.Services
       /// <returns>A new ParameterValue</returns>
       ParameterValue CreateParameterValue(ObjectPath parameterPath, double value, IDimension dimension, Unit displayUnit = null,
          ValueOrigin valueOrigin = null, bool isDefault = false);
+
+      /// <summary>
+      ///    Create and return a list of parameter values based on the <paramref name="spatialStructure" /> and
+      ///    <paramref name="molecules" />. The list includes parameter values for all physical containers
+      ///    in the spatial structure and all molecule parameters that are local and have constant formula
+      /// </summary>
+      IReadOnlyList<ParameterValue> CreateFrom(SpatialStructure spatialStructure, IReadOnlyList<MoleculeBuilder> molecules);
    }
 
-   internal class ParameterValuesCreator : IParameterValuesCreator
+   internal class ParameterValuesCreator : PathAndValueCreator, IParameterValuesCreator
    {
-      private readonly IObjectBaseFactory _objectBaseFactory;
-      private readonly ObjectPathFactory _objectPathFactory;
       private readonly IIdGenerator _idGenerator;
 
-      public ParameterValuesCreator(IObjectBaseFactory objectBaseFactory, ObjectPathFactory objectPathFactory, IIdGenerator idGenerator)
+      public ParameterValuesCreator(IIdGenerator idGenerator, IEntityPathResolver entityPathResolver) : base(entityPathResolver)
       {
-         _objectBaseFactory = objectBaseFactory;
-         _objectPathFactory = objectPathFactory;
          _idGenerator = idGenerator;
       }
 
-      
       public ParameterValue CreateParameterValue(ObjectPath parameterPath, double value, IDimension dimension,
          Unit displayUnit = null, ValueOrigin valueOrigin = null, bool isDefault = false)
       {
@@ -66,12 +72,35 @@ namespace OSPSuite.Core.Domain.Services
          return parameterValue;
       }
 
+      public IReadOnlyList<ParameterValue> CreateFrom(SpatialStructure spatialStructure, IReadOnlyList<MoleculeBuilder> molecules)
+      {
+         var parameterValues = new List<ParameterValue>();
+         spatialStructure.PhysicalContainers.Each(container => addParametersFrom(parameterValues, container, molecules));
+         return parameterValues;
+      }
+
+      private void addParametersFrom(List<ParameterValue> parameterValues, IContainer container, IReadOnlyList<MoleculeBuilder> molecules) => 
+         molecules.Each(x => addParametersFrom(parameterValues, container, x));
+
+      private void addParametersFrom(List<ParameterValue> parameterValues, IContainer container, MoleculeBuilder molecule)
+      {
+         molecule.Parameters.Where(shouldCreateFor).Each(x => parameterValues.Add(CreateParameterValue(objectPathForParameterInContainer(container, x.Name, molecule.Name), x)));
+      }
+
+      private static bool shouldCreateFor(IParameter x) => x.BuildMode == ParameterBuildMode.Local && x.Formula.IsConstant();
+
+      private ObjectPath objectPathForParameterInContainer(IContainer container, string parameterName, string moleculeName)
+      {
+         var pathForParameterInContainer = ObjectPathForContainer(container);
+         pathForParameterInContainer.AddRange(new[] { moleculeName, parameterName });
+         return pathForParameterInContainer;
+      }
+
       public ParameterValue CreateParameterValue(ObjectPath parameterPath, IParameter parameter)
       {
          return CreateParameterValue(parameterPath, parameter.Value, parameter.Dimension, parameter.DisplayUnit, parameter.ValueOrigin,
             parameter.IsDefault);
       }
-
 
       public ParameterValue CreateEmptyStartValue(IDimension dimension) => CreateParameterValue(ObjectPath.Empty, 0.0, dimension);
    }

@@ -47,19 +47,17 @@ namespace OSPSuite.Core.Domain.Services
       InitialCondition CreateInitialCondition(ObjectPath moleculeAmountPath, MoleculeAmount moleculeAmount);
    }
 
-   internal class InitialConditionsCreator : IInitialConditionsCreator
+   internal class InitialConditionsCreator : PathAndValueCreator, IInitialConditionsCreator
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
-      private readonly IEntityPathResolver _entityPathResolver;
       private readonly IIdGenerator _idGenerator;
       private readonly ICloneManagerForBuildingBlock _cloneManagerForBuildingBlock;
 
       public InitialConditionsCreator(
          IObjectBaseFactory objectBaseFactory, IEntityPathResolver entityPathResolver, IIdGenerator idGenerator,
-         ICloneManagerForBuildingBlock cloneManagerForBuildingBlock)
+         ICloneManagerForBuildingBlock cloneManagerForBuildingBlock) : base(entityPathResolver)
       {
          _objectBaseFactory = objectBaseFactory;
-         _entityPathResolver = entityPathResolver;
          _cloneManagerForBuildingBlock = cloneManagerForBuildingBlock;
          _idGenerator = idGenerator;
       }
@@ -103,19 +101,9 @@ namespace OSPSuite.Core.Domain.Services
 
       private InitialCondition createInitialConditionWithValue(IContainer container, MoleculeBuilder molecule)
       {
-         var initialCondition = CreateInitialCondition(objectPathForContainer(container), molecule.Name, molecule.Dimension, molecule.DisplayUnit);
+         var initialCondition = CreateInitialCondition(ObjectPathForContainer(container), molecule.Name, molecule.Dimension, molecule.DisplayUnit);
          initialCondition.Value = molecule.GetDefaultInitialCondition();
          return initialCondition;
-      }
-
-      private ObjectPath objectPathForContainer(IContainer container)
-      {
-         var objectPathForInitialCondition = _entityPathResolver.ObjectPathFor(container);
-         var rootContainer = container.RootContainer;
-         if (rootContainer.ParentPath != null)
-            objectPathForInitialCondition.AddAtFront(rootContainer.ParentPath);
-
-         return objectPathForInitialCondition;
       }
 
       private void addMoleculesFrom(InitialConditionsBuildingBlock initialConditionsBuildingBlock, IContainer container, IEnumerable<MoleculeBuilder> molecules)
