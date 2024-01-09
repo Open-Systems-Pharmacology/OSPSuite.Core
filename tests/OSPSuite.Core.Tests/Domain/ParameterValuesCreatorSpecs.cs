@@ -81,4 +81,38 @@ namespace OSPSuite.Core.Domain
          _parameterValues.Select(x => x.Path.ToString()).ShouldOnlyContain("Top|physicalContainer|Molecule1|constantFormulaParameterName", "Top|Molecule1|constantFormulaParameterName");
       }
    }
+
+   public class When_creating_expression_parameters_from_proteins_and_organ : concern_for_ParameterValuesCreator
+   {
+      private IContainer _organContainer;
+      private IReadOnlyList<MoleculeBuilder> _molecules;
+      private MoleculeBuilder _protein;
+      private IReadOnlyList<ParameterValue> _parameterValues;
+      private Container _compartmentContainer;
+
+      protected override void Context()
+      {
+         base.Context();
+         _protein = new MoleculeBuilder().WithName("protein");
+         _protein.QuantityType = QuantityType.Transporter;
+         _protein.AddParameter(new Parameter().WithName(Constants.Parameters.REL_EXP));
+         _protein.AddParameter(new Parameter().WithName("some other parameter"));
+
+         _molecules = new[] { _protein };
+         _organContainer = new Container().WithName("organ").WithMode(ContainerMode.Physical);
+         _compartmentContainer = new Container().WithName("compartment").WithMode(ContainerMode.Physical);
+         _organContainer.Add(_compartmentContainer);
+      }
+
+      protected override void Because()
+      {
+         _parameterValues = sut.CreateExpressionFrom(_organContainer, _molecules);
+      }
+
+      [Observation]
+      public void the_parameter_values_should_include_expression_parameters_for_the_organ()
+      {
+         _parameterValues.Select(x => x.Path.ToString()).ShouldOnlyContain($"organ|protein|{Constants.Parameters.REL_EXP}", $"organ|compartment|protein|{Constants.Parameters.REL_EXP}");
+      }
+   }
 }
