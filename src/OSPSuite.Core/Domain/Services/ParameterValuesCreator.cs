@@ -4,7 +4,7 @@ using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Utility.Extensions;
+using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -84,7 +84,7 @@ namespace OSPSuite.Core.Domain.Services
          spatialStructure.PhysicalContainers.SelectMany(container => createFrom(container, molecules, isLocalWithConstantFormula)).ToList();
 
       public IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, IReadOnlyList<MoleculeBuilder> molecules) => 
-         physicalContainer.GetAllContainersAndSelf<IContainer>(x => x.Mode.Equals(ContainerMode.Physical)).SelectMany(container => createFrom(container, molecules, x => x.IsExpression())).ToList();
+         physicalContainer.GetAllContainersAndSelf<IContainer>(x => x.Mode.Is(ContainerMode.Physical)).SelectMany(container => createFrom(container, molecules, x => x.IsExpression())).ToList();
 
       private IReadOnlyList<ParameterValue> createFrom(IContainer container, IReadOnlyList<MoleculeBuilder> molecules, Func<IParameter, bool> createFor) => 
          molecules.SelectMany(x => createFrom(container, x, createFor)).ToList();
