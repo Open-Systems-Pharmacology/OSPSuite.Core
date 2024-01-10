@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Utility.Extensions;
+using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -44,6 +45,13 @@ namespace OSPSuite.Core.Domain.Services
       ///    in the spatial structure and all molecule parameters that are local and have constant formula
       /// </summary>
       IReadOnlyList<ParameterValue> CreateFrom(SpatialStructure spatialStructure, IReadOnlyList<MoleculeBuilder> molecules);
+
+      /// <summary>
+      ///   Create and return a list of parameter values based on the <paramref name="physicalContainer" /> and <paramref name="molecules" />.
+      ///   The returned values will only include parameters for those containers and molecules that are relevant for expression profile.
+      /// </summary>
+      /// <returns></returns>
+      IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, IReadOnlyList<MoleculeBuilder> molecules);
    }
 
    internal class ParameterValuesCreator : PathAndValueCreator, IParameterValuesCreator
@@ -72,22 +80,19 @@ namespace OSPSuite.Core.Domain.Services
          return parameterValue;
       }
 
-      public IReadOnlyList<ParameterValue> CreateFrom(SpatialStructure spatialStructure, IReadOnlyList<MoleculeBuilder> molecules)
-      {
-         var parameterValues = new List<ParameterValue>();
-         spatialStructure.PhysicalContainers.Each(container => addParametersFrom(parameterValues, container, molecules));
-         return parameterValues;
-      }
+      public IReadOnlyList<ParameterValue> CreateFrom(SpatialStructure spatialStructure, IReadOnlyList<MoleculeBuilder> molecules) => 
+         spatialStructure.PhysicalContainers.SelectMany(container => createFrom(container, molecules, isLocalWithConstantFormula)).ToList();
 
-      private void addParametersFrom(List<ParameterValue> parameterValues, IContainer container, IReadOnlyList<MoleculeBuilder> molecules) => 
-         molecules.Each(x => addParametersFrom(parameterValues, container, x));
+      public IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, IReadOnlyList<MoleculeBuilder> molecules) => 
+         physicalContainer.GetAllContainersAndSelf<IContainer>(x => x.Mode.Is(ContainerMode.Physical)).SelectMany(container => createFrom(container, molecules, x => x.IsExpression())).ToList();
 
-      private void addParametersFrom(List<ParameterValue> parameterValues, IContainer container, MoleculeBuilder molecule)
-      {
-         molecule.Parameters.Where(shouldCreateFor).Each(x => parameterValues.Add(CreateParameterValue(objectPathForParameterInContainer(container, x.Name, molecule.Name), x)));
-      }
+      private IEnumerable<ParameterValue> createFrom(IContainer container, IReadOnlyList<MoleculeBuilder> molecules, Func<IParameter, bool> createFor) => 
+         molecules.SelectMany(x => createFrom(container, x, createFor));
 
-      private static bool shouldCreateFor(IParameter x) => x.BuildMode == ParameterBuildMode.Local && x.Formula.IsConstant();
+      private IEnumerable<ParameterValue> createFrom(IContainer container, MoleculeBuilder molecule, Func<IParameter, bool> createFor) => 
+         molecule.Parameters.Where(createFor).Select(x => CreateParameterValue(objectPathForParameterInContainer(container, x.Name, molecule.Name), x));
+
+      private static bool isLocalWithConstantFormula(IParameter x) => x.BuildMode == ParameterBuildMode.Local && x.Formula.IsConstant();
 
       private ObjectPath objectPathForParameterInContainer(IContainer container, string parameterName, string moleculeName)
       {
