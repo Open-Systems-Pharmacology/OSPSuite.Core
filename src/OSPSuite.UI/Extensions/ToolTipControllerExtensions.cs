@@ -12,7 +12,7 @@ namespace OSPSuite.UI.Extensions
          toolTipController.ShowBeak = false;
          toolTipController.AllowHtmlText = true;
          toolTipController.ImageList = imageListRetriever.AllImages16x16;
-         toolTipController.AutoPopDelay = 10000;
+         toolTipController.AutoPopDelay = 20000;
          toolTipController.InitialDelay = delayInMilliseconds;
          return toolTipController;
       }
