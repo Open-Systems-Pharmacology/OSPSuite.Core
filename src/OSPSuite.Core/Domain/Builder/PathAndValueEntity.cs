@@ -85,9 +85,11 @@ namespace OSPSuite.Core.Domain.Builder
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
-         var sourcePathAndValueEntity = source as PathAndValueEntity;
-         if (sourcePathAndValueEntity == null) return;
 
+         if (!(source is PathAndValueEntity sourcePathAndValueEntity)) 
+            return;
+
+         DistributionType = sourcePathAndValueEntity.DistributionType;
          Value = sourcePathAndValueEntity.Value;
          ContainerPath = sourcePathAndValueEntity.ContainerPath.Clone<ObjectPath>();
          DisplayUnit = sourcePathAndValueEntity.DisplayUnit;

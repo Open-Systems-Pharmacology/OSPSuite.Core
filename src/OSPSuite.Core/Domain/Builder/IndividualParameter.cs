@@ -14,9 +14,9 @@ namespace OSPSuite.Core.Domain.Builder
       {
          base.UpdatePropertiesFrom(source, cloneManager);
          var sourceIndividualParameter = source as IndividualParameter;
-         if (sourceIndividualParameter == null) return;
+         if (sourceIndividualParameter == null) 
+            return;
 
-         DistributionType = sourceIndividualParameter.DistributionType;
          Info = sourceIndividualParameter.Info?.Clone();
          Origin = sourceIndividualParameter.Origin?.Clone();
          IsDefault = sourceIndividualParameter.IsDefault;
