@@ -260,6 +260,9 @@ namespace OSPSuite.Presentation.Diagram
          where TObject : class, IObjectBase
          where TNode : class, IBaseNode, new()
       {
+         if (objectBase == null) 
+            return null;
+
          var node = NodeFor<TNode>(objectBase);
          if (node == null)
          {
@@ -285,11 +288,13 @@ namespace OSPSuite.Presentation.Diagram
 
          var containerNode = AddAndCoupleNode<IContainer, TContainerNode>(parent, container, coupleAll);
 
-         if (recursive)
-            foreach (var child in container.Children)
-            {
-               AddObjectBase(containerNode, child, true, coupleAll);
-            }
+         if (!recursive) 
+            return containerNode;
+
+         foreach (var child in container.Children)
+         {
+            AddObjectBase(containerNode, child, true, coupleAll);
+         }
 
          return containerNode;
       }
