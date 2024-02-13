@@ -3,7 +3,6 @@ using System.Data;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Presentation.Mappers.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.ObservedData;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -18,6 +17,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       void DisableRepositoryColumns();
       void SelectRow(int rowIndex);
       IEnumerable<string> GetValidationMessagesForWeight(string weightValue);
+      void Clear();
    }
 
    public class WeightedDataRepositoryDataPresenter : BaseDataRepositoryDataPresenter<IWeightedDataRepositoryDataView, IWeightedDataRepositoryDataPresenter>, IWeightedDataRepositoryDataPresenter
@@ -30,10 +30,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _weightedDataRepositoryToDataTableMapper = weightedDataRepositoryToDataTableMapper;
       }
 
-      protected override DataTable MapDataTableFromColumns()
-      {
-         return _weightedDataRepositoryToDataTableMapper.MapFrom(_weightedObservedData);
-      }
+      protected override DataTable MapDataTableFromColumns() => _weightedDataRepositoryToDataTableMapper.MapFrom(_weightedObservedData);
 
       public void EditObservedData(WeightedObservedData weightedObservedData)
       {
@@ -41,10 +38,13 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          EditObservedData(weightedObservedData.ObservedData);
       }
 
-      public void ChangeWeight(int weightIndex, float newWeight)
+      public void Clear()
       {
-         _weightedObservedData.Weights[weightIndex] = newWeight;
+         _weightedObservedData = null;
+         _view.Clear();
       }
+
+      public void ChangeWeight(int weightIndex, float newWeight) => _weightedObservedData.Weights[weightIndex] = newWeight;
 
       public bool ColumnIsInDataRepository(DataColumn column)
       {
@@ -68,9 +68,9 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public IEnumerable<string> GetValidationMessagesForWeight(string weightValue)
       {
          if (!float.TryParse(weightValue, out var proposedValue))
-            return new[] {Error.ValueIsRequired};
+            return new[] { Error.ValueIsRequired };
 
-         return isValidWeight(proposedValue) ? Enumerable.Empty<string>() : new[] {Error.WeightValueCannotBeNegative};
+         return isValidWeight(proposedValue) ? Enumerable.Empty<string>() : new[] { Error.WeightValueCannotBeNegative };
       }
 
       private bool isValidWeight(float value) => value >= 0;

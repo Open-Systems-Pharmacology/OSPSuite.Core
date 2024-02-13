@@ -1,17 +1,17 @@
 ﻿using System;
-using OSPSuite.Utility.Events;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
    public interface IParameterIdentificationDataSelectionPresenter : IParameterIdentificationItemPresenter,
-      IListener<ObservedDataAddedToAnalysableEvent>, 
-      IListener<ObservedDataRemovedFromAnalysableEvent>, 
-      IListener<RenamedEvent>, 
-      IListener<SimulationRemovedEvent>, 
+      IListener<ObservedDataAddedToAnalysableEvent>,
+      IListener<ObservedDataRemovedFromAnalysableEvent>,
+      IListener<RenamedEvent>,
+      IListener<SimulationRemovedEvent>,
       IListener<SimulationReplacedInParameterAnalyzableEvent>
    {
       event EventHandler<SimulationEventArgs> SimulationAdded;
@@ -22,7 +22,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
    {
       private readonly IParameterIdentificationSimulationSelectionPresenter _simulationSelectionPresenter;
       private readonly IParameterIdentificationOutputMappingPresenter _outputMappingPresenter;
-      private readonly IParameterIdentificationWeightedObservedDataCollectorPresenter _weightedObservedDataCollectorPresenter;
+      private readonly IParameterIdentificationWeightedObservedDataPresenter _weightedObservedDataPresenter;
       private ParameterIdentification _parameterIdentification;
       public event EventHandler<SimulationEventArgs> SimulationAdded = delegate { };
       public event EventHandler<SimulationEventArgs> SimulationRemoved = delegate { };
@@ -30,15 +30,15 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public ParameterIdentificationDataSelectionPresenter(IParameterIdentificationDataSelectionView view,
          IParameterIdentificationSimulationSelectionPresenter simulationSelectionPresenter,
          IParameterIdentificationOutputMappingPresenter outputMappingPresenter,
-         IParameterIdentificationWeightedObservedDataCollectorPresenter weightedObservedDataCollectorPresenter) : base(view)
+         IParameterIdentificationWeightedObservedDataPresenter weightedObservedDataPresenter) : base(view)
       {
          _simulationSelectionPresenter = simulationSelectionPresenter;
          _outputMappingPresenter = outputMappingPresenter;
-         _weightedObservedDataCollectorPresenter = weightedObservedDataCollectorPresenter;
+         _weightedObservedDataPresenter = weightedObservedDataPresenter;
          view.AddSimulationSelectionView(_simulationSelectionPresenter.BaseView);
          view.AddOutputMappingView(_outputMappingPresenter.BaseView);
-         view.AddWeightedObservedDataCollectorView(_weightedObservedDataCollectorPresenter.BaseView);
-         AddSubPresenters(_simulationSelectionPresenter, _outputMappingPresenter, _weightedObservedDataCollectorPresenter);
+         view.AddWeightedObservedDataCollectorView(_weightedObservedDataPresenter.BaseView);
+         AddSubPresenters(_simulationSelectionPresenter, _outputMappingPresenter, _weightedObservedDataPresenter);
 
          _simulationSelectionPresenter.SimulationAdded += (o, e) => simulationAdded(e);
          _simulationSelectionPresenter.SimulationRemoved += (o, e) => simulationRemoved(e);
@@ -48,20 +48,11 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _outputMappingPresenter.ObservedDataSelected += (o, e) => observedDataSelected(e.WeightedObservedData);
       }
 
-      private void observedDataUnmapped(WeightedObservedData weightedObservedData)
-      {
-         _weightedObservedDataCollectorPresenter.RemoveObservedData(weightedObservedData);
-      }
+      private void observedDataUnmapped(WeightedObservedData weightedObservedData) => _weightedObservedDataPresenter.Clear(weightedObservedData);
 
-      private void observedDataSelected(WeightedObservedData weightedObservedData)
-      {
-         _weightedObservedDataCollectorPresenter.SelectObservedData(weightedObservedData);
-      }
+      private void observedDataSelected(WeightedObservedData weightedObservedData) => _weightedObservedDataPresenter.Edit(weightedObservedData);
 
-      private void observedDataMapped(WeightedObservedData weightedObservedData)
-      {
-         _weightedObservedDataCollectorPresenter.AddObservedData(weightedObservedData);
-      }
+      private void observedDataMapped(WeightedObservedData weightedObservedData) => _weightedObservedDataPresenter.Edit(weightedObservedData);
 
       private void simulationAdded(SimulationEventArgs e)
       {
@@ -72,7 +63,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private void updateOutputAndWeightsPresenters()
       {
          _outputMappingPresenter.Refresh();
-         _weightedObservedDataCollectorPresenter.Refresh();
          ViewChanged();
       }
 
@@ -87,7 +77,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _parameterIdentification = parameterIdentification;
          _simulationSelectionPresenter.EditParameterIdentification(_parameterIdentification);
          _outputMappingPresenter.EditParameterIdentification(_parameterIdentification);
-         _weightedObservedDataCollectorPresenter.EditParameterIdentification(_parameterIdentification);
       }
 
       public void Handle(ObservedDataAddedToAnalysableEvent eventToHandle)
@@ -104,10 +93,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          return identificationUsesSimulation(analysableEvent.Analysable as ISimulation);
       }
 
-      private bool identificationUsesSimulation(ISimulation simulation)
-      {
-         return _parameterIdentification.UsesSimulation(simulation);
-      }
+      private bool identificationUsesSimulation(ISimulation simulation) => _parameterIdentification.UsesSimulation(simulation);
 
       public void Handle(ObservedDataRemovedFromAnalysableEvent eventToHandle)
       {
@@ -124,21 +110,14 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _outputMappingPresenter.Refresh();
       }
 
-      private bool canHandle(RenamedEvent eventToHandle)
-      {
-         return identificationUsesSimulation(eventToHandle.RenamedObject as ISimulation);
-      }
+      private bool canHandle(RenamedEvent eventToHandle) => identificationUsesSimulation(eventToHandle.RenamedObject as ISimulation);
 
-      public void Handle(SimulationRemovedEvent eventToHandle)
-      {
-         refreshSubPresenters();
-      }
+      public void Handle(SimulationRemovedEvent eventToHandle) => refreshSubPresenters();
 
       private void refreshSubPresenters()
       {
          _simulationSelectionPresenter.Refresh();
          _outputMappingPresenter.Refresh();
-         _weightedObservedDataCollectorPresenter.Refresh();
       }
 
       public void Handle(SimulationReplacedInParameterAnalyzableEvent eventToHandle)
@@ -147,9 +126,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
             refreshSubPresenters();
       }
 
-      private bool canHandle(SimulationReplacedInParameterAnalyzableEvent eventToHandle)
-      {
-         return Equals(eventToHandle.ParameterAnalysable, _parameterIdentification);
-      }
+      private bool canHandle(SimulationReplacedInParameterAnalyzableEvent eventToHandle) => Equals(eventToHandle.ParameterAnalysable, _parameterIdentification);
    }
 }
