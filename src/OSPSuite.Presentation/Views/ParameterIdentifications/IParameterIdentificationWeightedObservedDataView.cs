@@ -6,5 +6,6 @@ namespace OSPSuite.Presentation.Views.ParameterIdentifications
    {
       void AddDataView(IView view);
       void AddChartView(IView view);
+      void SetTitle(string displayName);
    }
 }

@@ -30,7 +30,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl = new UxLayoutControl();
+         this.layoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
          this.panelChart = new DevExpress.XtraEditors.PanelControl();
          this.panelData = new DevExpress.XtraEditors.PanelControl();
          this.layoutControlGroup = new DevExpress.XtraLayout.LayoutControlGroup();
@@ -50,6 +50,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          // 
          // layoutControl
          // 
+         this.layoutControl.AllowCustomization = false;
          this.layoutControl.Controls.Add(this.panelChart);
          this.layoutControl.Controls.Add(this.panelData);
          this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -63,55 +64,52 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          // 
          // panelChart
          // 
-         this.panelChart.Location = new System.Drawing.Point(12, 267);
+         this.panelChart.Location = new System.Drawing.Point(12, 284);
          this.panelChart.Name = "panelChart";
-         this.panelChart.Size = new System.Drawing.Size(857, 327);
+         this.panelChart.Size = new System.Drawing.Size(857, 310);
          this.panelChart.TabIndex = 5;
          // 
          // panelData
          // 
-         this.panelData.Location = new System.Drawing.Point(12, 12);
+         this.panelData.Location = new System.Drawing.Point(12, 33);
          this.panelData.Name = "panelData";
-         this.panelData.Size = new System.Drawing.Size(857, 246);
+         this.panelData.Size = new System.Drawing.Size(857, 237);
          this.panelData.TabIndex = 4;
          // 
          // layoutControlGroup
          // 
          this.layoutControlGroup.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
-         this.layoutControlGroup.GroupBordersVisible = false;
          this.layoutControlGroup.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutPanelChart,
             this.layoutPanelData,
             this.splitterItem1});
-         this.layoutControlGroup.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup.Name = "Root";
          this.layoutControlGroup.Size = new System.Drawing.Size(881, 606);
-         this.layoutControlGroup.TextVisible = false;
          // 
          // layoutPanelChart
          // 
          this.layoutPanelChart.Control = this.panelData;
          this.layoutPanelChart.Location = new System.Drawing.Point(0, 0);
          this.layoutPanelChart.Name = "layoutPanelChart";
-         this.layoutPanelChart.Size = new System.Drawing.Size(861, 250);
+         this.layoutPanelChart.Size = new System.Drawing.Size(861, 241);
          this.layoutPanelChart.TextSize = new System.Drawing.Size(0, 0);
          this.layoutPanelChart.TextVisible = false;
          // 
          // layoutPanelData
          // 
          this.layoutPanelData.Control = this.panelChart;
-         this.layoutPanelData.Location = new System.Drawing.Point(0, 255);
+         this.layoutPanelData.Location = new System.Drawing.Point(0, 251);
          this.layoutPanelData.Name = "layoutPanelData";
-         this.layoutPanelData.Size = new System.Drawing.Size(861, 331);
+         this.layoutPanelData.Size = new System.Drawing.Size(861, 314);
          this.layoutPanelData.TextSize = new System.Drawing.Size(0, 0);
          this.layoutPanelData.TextVisible = false;
          // 
          // splitterItem1
          // 
          this.splitterItem1.AllowHotTrack = true;
-         this.splitterItem1.Location = new System.Drawing.Point(0, 250);
+         this.splitterItem1.Location = new System.Drawing.Point(0, 241);
          this.splitterItem1.Name = "splitterItem1";
-         this.splitterItem1.Size = new System.Drawing.Size(861, 5);
+         this.splitterItem1.Size = new System.Drawing.Size(861, 10);
          // 
          // ParameterIdentificationWeightedObservedDataView
          // 

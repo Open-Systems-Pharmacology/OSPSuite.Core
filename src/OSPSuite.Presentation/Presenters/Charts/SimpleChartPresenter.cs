@@ -66,9 +66,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void Refresh();
 
       /// <summary>
-      /// Hook that can be executed on the dataColumn to modify them, reorder them etc..
+      ///    Hook that can be executed on the dataColumn to modify them, reorder them etc..
       /// </summary>
       Func<IEnumerable<DataColumn>, IEnumerable<DataColumn>> PreExportHook { get; set; }
+
+      void Clear();
    }
 
    public class SimpleChartPresenter : AbstractCommandCollectorPresenter<ISimpleChartView, ISimpleChartPresenter>, ISimpleChartPresenter
@@ -102,6 +104,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
          get => _chartDisplayPresenter.PreExportHook;
          set => _chartDisplayPresenter.PreExportHook = value;
       }
+
+      public void Clear() => _chartDisplayPresenter.Clear();
 
       public Action<int> HotTracked
       {
@@ -146,15 +150,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public CurveChart Plot(DataRepository dataRepository, Scalings scale)
       {
          Chart = _chartFactory.CreateChartFor(dataRepository, scale);
-         setChartScalingForObservedData(new[] {dataRepository});
+         setChartScalingForObservedData(new[] { dataRepository });
          bindToChart();
          return Chart;
       }
 
-      public CurveChart Plot(DataRepository dataRepository)
-      {
-         return Plot(dataRepository, _presentationUserSettings.DefaultChartYScaling);
-      }
+      public CurveChart Plot(DataRepository dataRepository) => Plot(dataRepository, _presentationUserSettings.DefaultChartYScaling);
 
       public CurveChart PlotObservedData(IEnumerable<DataRepository> observedData)
       {
@@ -175,20 +176,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          Chart.DefaultYAxisScaling = Scalings.Linear;
       }
 
-      private bool shouldUseLinearScaling(IReadOnlyList<DataRepository> observedData)
-      {
-         return observedData.Any(dataRepositoryHasFraction);
-      }
+      private bool shouldUseLinearScaling(IReadOnlyList<DataRepository> observedData) => observedData.Any(dataRepositoryHasFraction);
 
-      private bool dataRepositoryHasFraction(DataRepository dataRepository)
-      {
-         return dataRepository.AllButBaseGrid().Any(x => x.IsFraction());
-      }
+      private bool dataRepositoryHasFraction(DataRepository dataRepository) => dataRepository.AllButBaseGrid().Any(x => x.IsFraction());
 
-      public CurveChart PlotObservedData(DataRepository observedData)
-      {
-         return PlotObservedData(new[] {observedData}).WithName(observedData.Name);
-      }
+      public CurveChart PlotObservedData(DataRepository observedData) => PlotObservedData(new[] { observedData }).WithName(observedData.Name);
 
       private void setScaleInView(CurveChart chart)
       {
@@ -198,15 +190,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _view.SetChartScale(yAxis.Scaling);
       }
 
-      private Axis getXAxis(CurveChart chart)
-      {
-         return chart.XAxis;
-      }
+      private Axis getXAxis(CurveChart chart) => chart.XAxis;
 
-      private Axis getYAxis(CurveChart chart)
-      {
-         return chart.YAxis;
-      }
+      private Axis getYAxis(CurveChart chart) => chart.YAxis;
 
       private void setAxesCaptions(DataRepository observedData)
       {

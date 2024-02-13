@@ -222,6 +222,7 @@ namespace OSPSuite.Assets
       public static readonly string Yes = "Yes";
       public static readonly string ReallyRemoveObservedDataFromSimulation = $"Really remove {ObjectTypes.ObservedData} from the simulation?\nHint: {ObjectTypes.ObservedData} will not be deleted from the project";
       public static readonly string SimulationWasCanceled = "Simulation was canceled";
+      public static readonly string SelectMappingToShowObservedData = "Select mapping to show observed data";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
