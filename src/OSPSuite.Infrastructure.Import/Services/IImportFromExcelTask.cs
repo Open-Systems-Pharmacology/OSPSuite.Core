@@ -11,7 +11,7 @@ namespace OSPSuite.Infrastructure.Import.Services
    public interface IImportFromExcelTask
    {
       /// <summary>
-      /// Retrieves all the appropriate sheet names from an excel file
+      ///    Retrieves all the appropriate sheet names from an excel file
       /// </summary>
       /// <param name="fileName">The filename and path of the excel file</param>
       /// <param name="excludeEmptySheets">Excludes empty sheets from the list if set to true</param>
@@ -19,7 +19,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       IReadOnlyList<string> RetrieveExcelSheets(string fileName, bool excludeEmptySheets = false);
 
       /// <summary>
-      /// Gets the DataTable for the filepath, and sheet indicated
+      ///    Gets the DataTable for the filepath, and sheet indicated
       /// </summary>
       /// <param name="filePath">The path to the excel file</param>
       /// <param name="sheetName">the sheet in the file to convert</param>
@@ -28,7 +28,7 @@ namespace OSPSuite.Infrastructure.Import.Services
       DataTable GetDataTables(string filePath, string sheetName, bool firstRowAsCaption);
 
       /// <summary>
-      /// Gets all the DataTables from the Excel workbook at the specified filePath
+      ///    Gets all the DataTables from the Excel workbook at the specified filePath
       /// </summary>
       /// <param name="filePath">The path to the excel file</param>
       /// <param name="firstRowAsCaption">Whether or not the first row in the sheet should be interpreted as a caption</param>
@@ -81,7 +81,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          while (reader.MoveToNextSheet())
          {
             if (!string.IsNullOrEmpty(sheetName) && !reader.CurrentSheet.SheetName.Equals(sheetName)) continue;
-            var dataTable = new DataTable { TableName = reader.CurrentSheet.SheetName };
+            var dataTable = new DataTable {TableName = reader.CurrentSheet.SheetName};
             if (!reader.MoveToNextRow())
             {
                dataTablesList.Add(dataTable);

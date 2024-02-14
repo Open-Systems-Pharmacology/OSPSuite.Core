@@ -1,16 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
-using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Infrastructure.Import
 {
@@ -24,11 +21,10 @@ namespace OSPSuite.Infrastructure.Import
       protected IImporter _fakedImporter;
       protected IDataSet _fakeDataSet;
 
-
       protected override void Context()
       {
          _fakedTimeDimension = A.Fake<IDimension>();
-         _fakedConcentrationDimensionMolar = A.Fake<IDimension>(); 
+         _fakedConcentrationDimensionMolar = A.Fake<IDimension>();
          _fakedConcentrationDimensionMass = A.Fake<IDimension>();
          _fakedErrorDimension = A.Fake<IDimension>();
          _fakedImporter = A.Fake<IImporter>();
@@ -36,9 +32,9 @@ namespace OSPSuite.Infrastructure.Import
 
          _columnInfos = new ColumnInfoCache
          {
-            new ColumnInfo() { DisplayName = "Time", Name ="Time" },
-            new ColumnInfo() { DisplayName = "Concentration", Name = "Concentration"},
-            new ColumnInfo() { DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration"}
+            new ColumnInfo() {DisplayName = "Time", Name = "Time"},
+            new ColumnInfo() {DisplayName = "Concentration", Name = "Concentration"},
+            new ColumnInfo() {DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration"}
          };
 
          _columnInfos["Time"].SupportedDimensions.Add(_fakedTimeDimension);
@@ -157,12 +153,20 @@ namespace OSPSuite.Infrastructure.Import
          A.CallTo(() => _fakedConcentrationDimensionMolar.FindUnit("ng/ml", true)).Returns(null);
          A.CallTo(() => _fakedConcentrationDimensionMass.FindUnit("pmol/l", true)).Returns(null);
 
-         _fakeDataSet.AddData(new List<ParsedDataSet>() {new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(),
-            parsedData)});
-               
+         _fakeDataSet.AddData(new List<ParsedDataSet>()
+         {
+            new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(),
+               parsedData)
+         });
+
 
          sut = new DataSource(_fakedImporter);
          sut.DataSets.Add("sheet1", _fakeDataSet);
+      }
+
+      protected string getFirstMeasurementUnit()
+      {
+         return sut.DataSets.KeyValues.First().Value.Data.First().Data.ToList()[1].Value[1].Unit;
       }
    }
 
@@ -175,9 +179,9 @@ namespace OSPSuite.Infrastructure.Import
          base.Context();
          _columnInfos = new ColumnInfoCache
          {
-            new ColumnInfo() { DisplayName = "Time", Name = "Time", IsMandatory = true, BaseGridName = "Time" },
-            new ColumnInfo() { DisplayName = "Concentration", Name = "Concentration", IsMandatory = true, BaseGridName = "Time" },
-            new ColumnInfo() { DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration", BaseGridName = "Time" }
+            new ColumnInfo() {DisplayName = "Time", Name = "Time", IsMandatory = true, BaseGridName = "Time"},
+            new ColumnInfo() {DisplayName = "Concentration", Name = "Concentration", IsMandatory = true, BaseGridName = "Time"},
+            new ColumnInfo() {DisplayName = "Error", Name = "Error", IsMandatory = false, RelatedColumnOf = "Concentration", BaseGridName = "Time"}
          };
          var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
          {
@@ -219,7 +223,7 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          var dataSet = new DataSet();
-         dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
+         dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
          _dimensionFactory = A.Fake<IDimensionFactory>();
          var fractionDimension = A.Fake<IDimension>();
          A.CallTo(() => fractionDimension.Name).Returns(Constants.Dimension.FRACTION);
@@ -235,11 +239,12 @@ namespace OSPSuite.Infrastructure.Import
       public void throw_on_empty_dataset()
       {
          var sheets = new DataSheetCollection();
-         var sheet = new DataSheet() { SheetName = "sheet1" };
+         var sheet = new DataSheet() {SheetName = "sheet1"};
          sheets.AddSheet(sheet);
          sut.AddSheets(sheets, _columnInfos, "").Any().ShouldBeTrue();
       }
    }
+
    public class When_validating_geometric_error : concern_for_DataSource
    {
       private DataSet _dataSet;
@@ -349,9 +354,8 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
+         _dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
          sut.DataSets.Clear();
-         
       }
 
       protected override void Because()
@@ -475,9 +479,8 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
+         _dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
          sut.DataSets.Clear();
-
       }
 
       protected override void Because()
@@ -491,7 +494,6 @@ namespace OSPSuite.Infrastructure.Import
          sut.ValidateDataSourceUnits(_columnInfos);
       }
    }
-
 
    public class When_validating_missing_unit_column : concern_for_DataSource
    {
@@ -602,9 +604,8 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
+         _dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
          sut.DataSets.Clear();
-
       }
 
       protected override void Because()
@@ -613,10 +614,9 @@ namespace OSPSuite.Infrastructure.Import
       }
 
       [Observation]
-      public void should_ignore_casing()
+      public void should_have_set_the_error_to_dimensionless()
       {
-         sut.ValidateDataSourceUnits(_columnInfos).ErrorsFor(_dataSet).FirstOrDefault(error => error.Message.Equals(Error.NoUnitColumnValues("Concentration")))
-            .ShouldNotBeNull();
+         getFirstMeasurementUnit().ShouldBeEmpty();
       }
    }
 
@@ -727,9 +727,10 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
+         _dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
          sut.DataSets.Clear();
       }
+
       protected override void Because()
       {
          sut.DataSets.Add("sheet1", _dataSet);
@@ -740,7 +741,6 @@ namespace OSPSuite.Infrastructure.Import
       {
          sut.ValidateDataSourceUnits(_columnInfos);
       }
-
    }
 
    public class When_validating_inconsistent_column_input_units : concern_for_DataSource
@@ -850,9 +850,10 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
+         _dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
          sut.DataSets.Clear();
       }
+
       protected override void Because()
       {
          sut.DataSets.Add("sheet1", _dataSet);
@@ -903,7 +904,7 @@ namespace OSPSuite.Infrastructure.Import
                   {
                      Name = "Concentration",
                      Unit = new UnitDescription("pmol/l"),
-                     Dimension =  _fakedConcentrationDimensionMass
+                     Dimension = _fakedConcentrationDimensionMass
                   },
                   ColumnInfo = _columnInfos["Concentration"]
                },
@@ -940,9 +941,10 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
+         _dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
          sut.DataSets.Clear();
       }
+
       protected override void Because()
       {
          sut.DataSets.Add("sheet1", _dataSet);
@@ -991,7 +993,7 @@ namespace OSPSuite.Infrastructure.Import
                   {
                      Name = "Concentration",
                      Unit = new UnitDescription("pmol/l"),
-                     Dimension =  null
+                     Dimension = null
                   },
                   ColumnInfo = _columnInfos["Concentration"]
                },
@@ -1013,9 +1015,10 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
+         _dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
          sut.DataSets.Clear();
       }
+
       protected override void Because()
       {
          sut.DataSets.Add("sheet1", _dataSet);
@@ -1064,7 +1067,7 @@ namespace OSPSuite.Infrastructure.Import
                   {
                      Name = "Concentration",
                      Unit = new UnitDescription("pmol/l"),
-                     Dimension =  null
+                     Dimension = null
                   },
                   ColumnInfo = _columnInfos["Concentration"]
                },
@@ -1086,9 +1089,10 @@ namespace OSPSuite.Infrastructure.Import
             }
          };
          _dataSet = new DataSet();
-         _dataSet.AddData(new List<ParsedDataSet>() { { new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData) } });
+         _dataSet.AddData(new List<ParsedDataSet>() {{new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData)}});
          sut.DataSets.Clear();
       }
+
       protected override void Because()
       {
          sut.DataSets.Add("sheet1", _dataSet);

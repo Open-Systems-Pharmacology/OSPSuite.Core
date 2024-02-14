@@ -87,10 +87,10 @@ namespace OSPSuite.Infrastructure.Import.Services
 
       private static string createRegexPattern()
       {
-         return "^" + //beginning of phrase
-                "(?<header>.+)" + //a series of at least one letters and numbers only that we call header
+         return "^" +                //beginning of phrase
+                "(?<header>.+)" +    //a series of at least one letters and numbers only that we call header
                 "\\s*\\[.*\\]\\s*" + // [..] with padding before and after (not mandatory)
-                "$"; //end of phrase      
+                "$";                 //end of phrase      
       }
 
       private void validateHeaders(string[] headers)

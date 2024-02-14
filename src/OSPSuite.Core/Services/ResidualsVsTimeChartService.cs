@@ -5,6 +5,7 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
@@ -64,8 +65,18 @@ namespace OSPSuite.Core.Services
       {
          var id = $"{chart.Id}-{ZERO}";
          var dataRepository = createEmptyRepository(id, ZERO, ZERO);
-         dataRepository.BaseGrid.Values = new[] {minObservedDataTime, maxObservedDataTime};
-         dataRepository.FirstDataColumn().Values = new[] {0f, 0f};
+         
+         var times = new List<float>{minObservedDataTime};
+         var values = new List<float> { 0f};
+         //min and max can be equal if the observed data is a single point
+         if (!ValueComparer.AreValuesEqual(minObservedDataTime, maxObservedDataTime))
+         {
+            times.Add(maxObservedDataTime);
+            values.Add(0f);
+         }
+
+         dataRepository.BaseGrid.Values = times;
+         dataRepository.FirstDataColumn().Values = values;
          return dataRepository;
       }
 

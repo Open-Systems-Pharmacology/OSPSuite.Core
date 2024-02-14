@@ -131,7 +131,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private bool unitNotSet(Column column)
       {
          //when unit is not set and also columnName is not set
-         return (column.Unit.SelectedUnit == null || column.Unit.SelectedUnit == "?" ) 
+         return (column.Unit.SelectedUnit == null || column.Unit.SelectedUnit == "?")
                 && string.IsNullOrEmpty(column.Unit.ColumnName);
       }
 
@@ -215,7 +215,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var column = ((MappingDataFormatParameter)model.Source).MappedColumn;
          if (!string.IsNullOrEmpty(_mappingParameterEditorPresenter.Unit.ColumnName))
          {
-            column.Unit = new UnitDescription(_rawData.GetColumn(_mappingParameterEditorPresenter.Unit.ColumnName).FirstOrDefault(), _mappingParameterEditorPresenter.Unit.ColumnName);
+            column.Unit = new UnitDescription(_rawData.GetColumn(_mappingParameterEditorPresenter.Unit.ColumnName).FirstOrDefault(),
+               _mappingParameterEditorPresenter.Unit.ColumnName);
             column.Dimension = null;
             updateErrorDescriptionAfterMeasurementUnitIsSetFromColumn(model, column);
          }
@@ -721,7 +722,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
       }
 
-      private void invalidateErrorUnit()
+      private void validateErrorUnit()
       {
          var errorColumnDTO = _mappings?.FirstOrDefault(c => (c?.ColumnInfo != null) && !c.ColumnInfo.RelatedColumnOf.IsNullOrEmpty());
 
@@ -732,6 +733,22 @@ namespace OSPSuite.Presentation.Presenters.Importer
          if (measurementColumn == null) return;
 
          //either both measurement and error units should be coming from excel columns, or they should have the same dimension
+         checkErrorUnitAgainstMeasurementUnit(errorColumn, measurementColumn);
+
+         //if the unit is already automatically set but the Standard Deviation not,
+         //Then set the STD to Arithmetic
+         setDeviationWhenUnitNotNull(errorColumn);
+      }
+
+      private static void setDeviationWhenUnitNotNull(Column errorColumn)
+      {
+         if (errorColumn.Unit.SelectedUnit != null && errorColumn.Unit.SelectedUnit != UnitDescription.InvalidUnit
+                                                   && errorColumn.ErrorStdDev == null)
+            errorColumn.ErrorStdDev = Constants.STD_DEV_ARITHMETIC;
+      }
+
+      private static void checkErrorUnitAgainstMeasurementUnit(Column errorColumn, Column measurementColumn)
+      {
          if (errorColumn.ErrorStdDev != Constants.STD_DEV_GEOMETRIC &&
              ((errorColumn.Unit?.ColumnName.IsNullOrEmpty() != measurementColumn.Unit?.ColumnName.IsNullOrEmpty()) ||
               (measurementColumn.Unit?.ColumnName == null && measurementColumn.Dimension != errorColumn.Dimension)))
@@ -743,7 +760,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void ValidateMapping()
       {
-         invalidateErrorUnit();
+         validateErrorUnit();
 
          _mappingProblem = _importer.CheckWhetherAllDataColumnsAreMapped(_columnInfos, _mappings.Select(m => m.Source));
          setStatuses();
