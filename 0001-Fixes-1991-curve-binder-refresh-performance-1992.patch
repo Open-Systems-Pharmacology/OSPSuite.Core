@@ -1,0 +1,197 @@
+From cb0e5bd182bc5bf76c55488bfcb212a11779f445 Mon Sep 17 00:00:00 2001
+From: Robert McIntosh <261477+rwmcintosh@users.noreply.github.com>
+Date: Fri, 28 Apr 2023 05:14:51 -0400
+Subject: [PATCH] Fixes #1991 curve binder refresh performance (#1992)
+
+* We are frequently looking up the index of basegrid values so that we can use the index to get y value.
+In the refresh, we can avoid searching the list over and over by using the index in the first place
+
+* remove commented code
+
+* some more refactoring
+
+* Revert "some more refactoring"
+
+This reverts commit 42fcc65c97e0fb759110e75396093ebc65110188.
+
+* Revert "remove commented code"
+
+This reverts commit 4e4ff11525aa876d36f52ab1c13f6e33f4c37270.
+
+* Revert "We are frequently looking up the index of basegrid values so that we can use the index to get y value."
+
+This reverts commit 0eae16fa5d3df040bebb81fb2d8ec965110e92d1.
+
+* What about a step where we use indexing if we can, otherwise use GetValue which we know will interpolate
+
+* modify AddRElatedVAluesToRow
+
+* Check if basegrids are the same object rather than if they have the same values
+
+* typo
+---
+ .../Binders/ArithmeticMeanAreaCurveBinder.cs  |  4 +--
+ .../Binders/ArithmeticSTDCurveBinder.cs       |  4 +--
+ src/OSPSuite.UI/Binders/CurveBinder.cs        | 29 +++++++++++++------
+ .../Binders/GeometricMeanAreaCurveBinder.cs   |  4 +--
+ .../Binders/GeometricStdCurveBinder.cs        |  4 +--
+ .../Binders/SingleValueCurveBinder.cs         |  3 +-
+ 6 files changed, 30 insertions(+), 18 deletions(-)
+
+diff --git a/src/OSPSuite.UI/Binders/ArithmeticMeanAreaCurveBinder.cs b/src/OSPSuite.UI/Binders/ArithmeticMeanAreaCurveBinder.cs
+index 036c3507..3b49c1b5 100644
+--- a/src/OSPSuite.UI/Binders/ArithmeticMeanAreaCurveBinder.cs
++++ b/src/OSPSuite.UI/Binders/ArithmeticMeanAreaCurveBinder.cs
+@@ -14,9 +14,9 @@ public ArithmeticMeanAreaCurveBinder(Curve curve, ChartControl chartControl, Cur
+       {
+       }
+ 
+-      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue)
++      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, BaseGrid baseGrid, int baseIndex)
+       {
+-         var stdDev = yDimension.BaseUnitValueToUnitValue(yUnit, Curve.yData.GetValue(baseValue));
++         var stdDev = yDimension.BaseUnitValueToUnitValue(yUnit, ValueInBaseUnit(Curve.yData, baseGrid, baseIndex));
+          if (!IsValidValue(stdDev))
+             stdDev = 0;
+ 
+diff --git a/src/OSPSuite.UI/Binders/ArithmeticSTDCurveBinder.cs b/src/OSPSuite.UI/Binders/ArithmeticSTDCurveBinder.cs
+index 37e16a87..a7c78d18 100644
+--- a/src/OSPSuite.UI/Binders/ArithmeticSTDCurveBinder.cs
++++ b/src/OSPSuite.UI/Binders/ArithmeticSTDCurveBinder.cs
+@@ -14,10 +14,10 @@ public ArithmeticStdCurveBinder(Curve curve, ChartControl chartControl, CurveCha
+       {
+       }
+ 
+-      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue)
++      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, BaseGrid baseGrid, int baseIndex)
+       {
+          var relatedColumn = yData.GetRelatedColumn(AuxiliaryType.ArithmeticStdDev);
+-         var stdDev = yDimension.BaseUnitValueToUnitValue(yUnit, relatedColumn.GetValue(baseValue));
++         var stdDev = yDimension.BaseUnitValueToUnitValue(yUnit, ValueInBaseUnit(relatedColumn, baseGrid, baseIndex));
+          if (!IsValidValue(stdDev))
+             stdDev = 0;
+ 
+diff --git a/src/OSPSuite.UI/Binders/CurveBinder.cs b/src/OSPSuite.UI/Binders/CurveBinder.cs
+index fde06bfd..4bfafdce 100644
+--- a/src/OSPSuite.UI/Binders/CurveBinder.cs
++++ b/src/OSPSuite.UI/Binders/CurveBinder.cs
+@@ -319,25 +319,25 @@ private void refreshData()
+ 
+          // works for different base grids
+          _dataTable.BeginLoadData();
+-         foreach (var baseValue in baseGrid.Values)
++         baseGrid.Values.Each((baseValue, baseIndex) =>
+          {
+             try
+             {
+-               double x = xDimension.BaseUnitValueToUnitValue(xUnit, xData.GetValue(baseValue));
+-               double y = yDimension.BaseUnitValueToUnitValue(yUnit, yData.GetValue(baseValue));
++               double x = xDimension.BaseUnitValueToUnitValue(xUnit, ValueInBaseUnit(xData, baseGrid, baseIndex));
++               double y = yDimension.BaseUnitValueToUnitValue(yUnit, ValueInBaseUnit(yData, baseGrid, baseIndex));
+ 
+                if (!isValidXValue(x) || !IsValidYValue(y))
+-                  continue;
++                  return;
+ 
+                var row = _dataTable.NewRow();
+                row[X] = x;
+                row[Y] = y;
+-               row[INDEX_OF_VALUE_IN_CURVE] = baseGrid.IndexOf(baseValue);
++               row[INDEX_OF_VALUE_IN_CURVE] = baseIndex;
+ 
+                if (HasLLOQ)
+                   row[LLOQ_SUFFIX] = LLOQ;
+ 
+-               AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseValue);
++               AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseGrid, baseIndex);
+ 
+                _dataTable.Rows.Add(row);
+             }
+@@ -345,8 +345,7 @@ private void refreshData()
+             {
+                //can  happen when plotting X vs Y and using different base grid
+             }
+-         }
+-
++         });
+          if (_xAxis.NumberMode == NumberModes.Relative)
+             setRelativeValues(X);
+ 
+@@ -356,7 +355,19 @@ private void refreshData()
+          _dataTable.EndLoadData();
+       }
+ 
+-      protected abstract bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue);
++      /// <summary>
++      /// If the <paramref name="dataColumn"/> BaseGrid is the same as <paramref name="baseGrid"/> then return the value
++      /// of <paramref name="dataColumn"/> at <paramref name="baseGridIndex"/>. Otherwise interpolate from the <paramref name="baseGrid"/> at <paramref name="baseGridIndex"/>
++      /// </summary>
++      protected static float ValueInBaseUnit(DataColumn dataColumn, BaseGrid baseGrid, int baseGridIndex)
++      {
++         if (baseGrid == dataColumn.BaseGrid)
++            return dataColumn.Values[baseGridIndex];
++         
++         return dataColumn.GetValue(baseGrid[baseGridIndex]);
++      }
++
++      protected abstract bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, BaseGrid baseGrid, int baseIndex);
+ 
+       private BaseGrid activeBaseGrid(DataColumn xData, DataColumn yData)
+       {
+diff --git a/src/OSPSuite.UI/Binders/GeometricMeanAreaCurveBinder.cs b/src/OSPSuite.UI/Binders/GeometricMeanAreaCurveBinder.cs
+index 8228902e..cf8b2233 100644
+--- a/src/OSPSuite.UI/Binders/GeometricMeanAreaCurveBinder.cs
++++ b/src/OSPSuite.UI/Binders/GeometricMeanAreaCurveBinder.cs
+@@ -15,9 +15,9 @@ public GeometricMeanAreaCurveBinder(Curve curve, ChartControl chartControl, Curv
+       {
+       }
+ 
+-      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue)
++      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, BaseGrid baseGrid, int baseIndex)
+       {
+-         var stdDev = Curve.yData.GetValue(baseValue);
++         var stdDev = ValueInBaseUnit(Curve.yData, baseGrid, baseIndex);
+          if (!IsValidValue(stdDev) || stdDev == 0)
+             stdDev = 1;
+ 
+diff --git a/src/OSPSuite.UI/Binders/GeometricStdCurveBinder.cs b/src/OSPSuite.UI/Binders/GeometricStdCurveBinder.cs
+index 6395a426..48e32ddf 100644
+--- a/src/OSPSuite.UI/Binders/GeometricStdCurveBinder.cs
++++ b/src/OSPSuite.UI/Binders/GeometricStdCurveBinder.cs
+@@ -14,10 +14,10 @@ public GeometricStdCurveBinder(Curve curve, ChartControl chartControl, CurveChar
+       {
+       }
+ 
+-      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue)
++      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, BaseGrid baseGrid, int baseIndex)
+       {
+          var relatedColumn = yData.GetRelatedColumn(AuxiliaryType.GeometricStdDev);
+-         var stdDev = relatedColumn.GetValue(baseValue);
++         var stdDev = ValueInBaseUnit(relatedColumn, baseGrid, baseIndex);
+          if (!IsValidValue(stdDev) || stdDev == 0)
+             stdDev = 1;
+ 
+diff --git a/src/OSPSuite.UI/Binders/SingleValueCurveBinder.cs b/src/OSPSuite.UI/Binders/SingleValueCurveBinder.cs
+index 53d868a3..ca22274e 100644
+--- a/src/OSPSuite.UI/Binders/SingleValueCurveBinder.cs
++++ b/src/OSPSuite.UI/Binders/SingleValueCurveBinder.cs
+@@ -3,6 +3,7 @@
+ using DevExpress.XtraCharts;
+ using OSPSuite.Core.Chart;
+ using OSPSuite.Core.Chart.Mappers;
++using OSPSuite.Core.Domain.Data;
+ using OSPSuite.Core.Domain.UnitSystem;
+ using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
+ 
+@@ -22,7 +23,7 @@ protected override void RefreshSeries()
+          UpdateLineSeries(_lineSeries);
+       }
+ 
+-      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue)
++      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, BaseGrid baseGrid, int baseIndex)
+       {
+          //no related values here
+          return true;
+-- 
+2.36.0.windows.1
+
