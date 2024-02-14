@@ -4,7 +4,6 @@ using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
-using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -38,10 +37,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          e.ErrorText = validationMessages.First();
       }
 
-      private void gridViewOnCellValueChanged(CellValueChangedEventArgs e)
-      {
-         _presenter.ChangeWeight(gridView.GetDataSourceRowIndex(e.RowHandle), e.Value.ConvertedTo<float>());
-      }
+      private void gridViewOnCellValueChanged(CellValueChangedEventArgs e) => _presenter.ChangeWeight(gridView.GetDataSourceRowIndex(e.RowHandle), e.Value.ConvertedTo<float>());
 
       public override void InitializeResources()
       {
@@ -56,10 +52,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          disableRepositoryColumns();
       }
 
-      public void DisplayColumnReadOnly(DataColumn column)
-      {
-         displayColumnReadOnly(column);
-      }
+      public void DisplayColumnReadOnly(DataColumn column) => displayColumnReadOnly(column);
 
       public void SelectRow(int rowIndex)
       {
@@ -67,10 +60,9 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          gridView.FocusedRowHandle = gridView.GetRowHandle(rowIndex);
       }
 
-      private void disableRepositoryColumns()
-      {
-         _presenter.DisableRepositoryColumns();
-      }
+      public void Clear() => gridControl.DataSource = null;
+
+      private void disableRepositoryColumns() => _presenter.DisableRepositoryColumns();
 
       private void displayColumnReadOnly(DataColumn column)
       {
@@ -82,9 +74,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          gridViewColumn.AppearanceCell.BackColor = Colors.Disabled;
       }
 
-      private GridColumn gridViewColumnFromDataColumn(DataColumn column)
-      {
-         return gridView.Columns[column.ColumnName];
-      }
+      private GridColumn gridViewColumnFromDataColumn(DataColumn column) => gridView.Columns[column.ColumnName];
    }
 }
