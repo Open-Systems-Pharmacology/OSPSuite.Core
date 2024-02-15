@@ -319,25 +319,25 @@ namespace OSPSuite.UI.Binders
 
          // works for different base grids
          _dataTable.BeginLoadData();
-         foreach (var baseValue in baseGrid.Values)
+         baseGrid.Values.Each((baseValue, baseIndex) =>
          {
             try
             {
-               double x = xDimension.BaseUnitValueToUnitValue(xUnit, xData.GetValue(baseValue));
-               double y = yDimension.BaseUnitValueToUnitValue(yUnit, yData.GetValue(baseValue));
+               double x = xDimension.BaseUnitValueToUnitValue(xUnit, ValueInBaseUnit(xData, baseGrid, baseIndex));
+               double y = yDimension.BaseUnitValueToUnitValue(yUnit, ValueInBaseUnit(yData, baseGrid, baseIndex));
 
                if (!isValidXValue(x) || !IsValidYValue(y))
-                  continue;
+                  return;
 
                var row = _dataTable.NewRow();
                row[X] = x;
                row[Y] = y;
-               row[INDEX_OF_VALUE_IN_CURVE] = baseGrid.IndexOf(baseValue);
+               row[INDEX_OF_VALUE_IN_CURVE] = baseIndex;
 
                if (HasLLOQ)
                   row[LLOQ_SUFFIX] = LLOQ;
 
-               AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseValue);
+               AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseGrid, baseIndex);
 
                _dataTable.Rows.Add(row);
             }
@@ -345,8 +345,7 @@ namespace OSPSuite.UI.Binders
             {
                //can  happen when plotting X vs Y and using different base grid
             }
-         }
-
+         });
          if (_xAxis.NumberMode == NumberModes.Relative)
             setRelativeValues(X);
 
@@ -356,7 +355,19 @@ namespace OSPSuite.UI.Binders
          _dataTable.EndLoadData();
       }
 
-      protected abstract bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue);
+      /// <summary>
+      /// If the <paramref name="dataColumn"/> BaseGrid is the same as <paramref name="baseGrid"/> then return the value
+      /// of <paramref name="dataColumn"/> at <paramref name="baseGridIndex"/>. Otherwise interpolate from the <paramref name="baseGrid"/> at <paramref name="baseGridIndex"/>
+      /// </summary>
+      protected static float ValueInBaseUnit(DataColumn dataColumn, BaseGrid baseGrid, int baseGridIndex)
+      {
+         if (baseGrid == dataColumn.BaseGrid)
+            return dataColumn.Values[baseGridIndex];
+         
+         return dataColumn.GetValue(baseGrid[baseGridIndex]);
+      }
+
+      protected abstract bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, BaseGrid baseGrid, int baseIndex);
 
       private BaseGrid activeBaseGrid(DataColumn xData, DataColumn yData)
       {

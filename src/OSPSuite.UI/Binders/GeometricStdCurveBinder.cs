@@ -14,10 +14,10 @@ namespace OSPSuite.UI.Binders
       {
       }
 
-      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue)
+      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, BaseGrid baseGrid, int baseIndex)
       {
          var relatedColumn = yData.GetRelatedColumn(AuxiliaryType.GeometricStdDev);
-         var stdDev = relatedColumn.GetValue(baseValue);
+         var stdDev = ValueInBaseUnit(relatedColumn, baseGrid, baseIndex);
          if (!IsValidValue(stdDev) || stdDev == 0)
             stdDev = 1;
 
