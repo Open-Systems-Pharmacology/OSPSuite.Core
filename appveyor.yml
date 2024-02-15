@@ -49,7 +49,7 @@ skip_commits:
 
 branches:
   only:
-    - develop
+    - hotfix/11.3
 
 test:
   assemblies:
