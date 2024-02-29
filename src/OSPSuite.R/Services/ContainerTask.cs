@@ -232,6 +232,11 @@ namespace OSPSuite.R.Services
             return entity == null ? Array.Empty<T>() : new[] {entity};
          }
 
+         //last entry of path is the recursive wild cards => user probably want to get all possible children so 
+         //we modify the path accordingly
+         if (pathArray.Last() == WILD_CARD_RECURSIVE)
+            pathArray = pathArray.Append(WILD_CARD).ToArray();
+
          var regex = new Regex(createSearchPattern(pathArray), RegexOptions.IgnoreCase);
          var parentContainerPath = $"{_entityPathResolver.FullPathFor(container)}{ObjectPath.PATH_DELIMITER}";
 

@@ -172,6 +172,7 @@ namespace OSPSuite.R.Services
          sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, Constants.WILD_CARD)).ShouldOnlyContain(_organism.GetAllChildren<IParameter>());
          sut.AllParametersMatching(_liver, pathFrom(Constants.WILD_CARD_RECURSIVE, Constants.WILD_CARD)).ShouldOnlyContain(_liver.GetAllChildren<IParameter>());
          sut.AllParametersMatching(_organism, Constants.WILD_CARD).ShouldOnlyContain(_organism.GetChildren<IParameter>());
+         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE)).ShouldOnlyContain(_organism.GetAllChildren<IParameter>());
       }
    }
 
