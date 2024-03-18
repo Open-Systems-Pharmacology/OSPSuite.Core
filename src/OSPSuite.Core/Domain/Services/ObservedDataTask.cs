@@ -65,15 +65,18 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IDataRepositoryExportTask _dataRepositoryExportTask;
       private readonly IContainerTask _containerTask;
       private readonly IObjectTypeResolver _objectTypeResolver;
+      
+      private static bool _suppressWarningOnRemovingObservedDataEntry;
 
       protected ObservedDataTask(IDialogCreator dialogCreator, IOSPSuiteExecutionContext executionContext,
-         IDataRepositoryExportTask dataRepositoryExportTask, IContainerTask containerTask, IObjectTypeResolver objectTypeResolver)
+          IDataRepositoryExportTask dataRepositoryExportTask, IContainerTask containerTask,
+          IObjectTypeResolver objectTypeResolver)
       {
-         _dialogCreator = dialogCreator;
-         _executionContext = executionContext;
-         _dataRepositoryExportTask = dataRepositoryExportTask;
-         _containerTask = containerTask;
-         _objectTypeResolver = objectTypeResolver;
+          _dialogCreator = dialogCreator;
+          _executionContext = executionContext;
+          _dataRepositoryExportTask = dataRepositoryExportTask;
+          _containerTask = containerTask;
+          _objectTypeResolver = objectTypeResolver;
       }
 
       public bool Delete(DataRepository observedData)
@@ -178,6 +181,12 @@ namespace OSPSuite.Core.Domain.Services
          _executionContext.AddToHistory(new AddImporterConfigurationToProjectCommand(configuration).Run(_executionContext));
       }
 
+      public void SuppressWarningOnRemovingObservedDataEntryFromSimulation()
+      {
+          // _coreUserSettings.SuppressWarningOnRemovingObservedDataEntryFromSimulation = true;
+          _suppressWarningOnRemovingObservedDataEntry = true;
+      }
+
       public void RemoveUsedObservedDataFromSimulation(IReadOnlyList<UsedObservedData> usedObservedDataList)
       {
          if (!usedObservedDataList.Any())
@@ -195,9 +204,14 @@ namespace OSPSuite.Core.Domain.Services
             return;
          }
 
-         var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyRemoveObservedDataFromSimulation);
-         if (viewResult == ViewResult.No)
-            return;
+         //if (!_coreUserSettings.SuppressWarningOnRemovingObservedDataEntryFromSimulation)
+         if (!_suppressWarningOnRemovingObservedDataEntry)
+         {
+             var viewResult = _dialogCreator.MessageBoxConfirm(Captions.ReallyRemoveObservedDataFromSimulation,
+                 SuppressWarningOnRemovingObservedDataEntryFromSimulation);
+             if (viewResult == ViewResult.No)
+                 return;
+         }
 
          usedObservedDataList.GroupBy(x => x.Simulation).Each(x => removeUsedObservedDataFromSimulation(x, x.Key));
       }

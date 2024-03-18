@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
@@ -12,6 +8,11 @@ using OSPSuite.Presentation.Services;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Mappers;
 using OSPSuite.Utility;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace OSPSuite.UI.Services
 {
@@ -43,7 +44,7 @@ namespace OSPSuite.UI.Services
          XtraMessageBox.Show(createMessageBoxArgs(message, buttons, icon));
       }
 
-      private XtraMessageBoxArgs createMessageBoxArgs(string message, DialogResult[] buttons, Icon icon, int defaultButtonIndex = 0)
+      private XtraMessageBoxArgs createMessageBoxArgs(string message, DialogResult[] buttons, Icon icon, int defaultButtonIndex = 0, bool doNotShowAgainCheckBoxVisible = false)
       {
          var args = new XtraMessageBoxArgs
          {
@@ -52,12 +53,14 @@ namespace OSPSuite.UI.Services
             Buttons = buttons,
             Icon = icon,
             DefaultButtonIndex = defaultButtonIndex,
-            AllowHtmlText = DefaultBoolean.True
+            AllowHtmlText = DefaultBoolean.True,
+            DoNotShowAgainCheckBoxVisible = doNotShowAgainCheckBoxVisible,
+            DoNotShowAgainCheckBoxText =  UIConstants.DO_NOT_SHOW_THIS_AGAIN
          };
 
          if (containsHyperlink(message))
             args.HyperlinkClick += (o,e) => { System.Diagnostics.Process.Start(e.Link); };
-         
+
          return args;
       }
 
@@ -69,7 +72,7 @@ namespace OSPSuite.UI.Services
       public ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel, ViewResult defaultButton = ViewResult.Yes)
       {
          return showQuestionMessageBox(message, new[] {
-            DialogResult.Yes, DialogResult.No, DialogResult.Cancel}, yes, no, cancel, defaultButton);
+            DialogResult.Yes, DialogResult.No, DialogResult.Cancel}, yes, no, cancel, defaultButton, null);
       }
 
       public ViewResult MessageBoxYesNo(string message, ViewResult defaultButton = ViewResult.Yes)
@@ -80,16 +83,25 @@ namespace OSPSuite.UI.Services
       public ViewResult MessageBoxYesNo(string message, string yes, string no, ViewResult defaultButton = ViewResult.Yes)
       {
          return showQuestionMessageBox(message, new [] {
-            DialogResult.Yes, DialogResult.No}, yes, no, string.Empty, defaultButton);
+            DialogResult.Yes, DialogResult.No}, yes, no, string.Empty, defaultButton, null);
       }
 
-      private ViewResult showQuestionMessageBox(string message, IReadOnlyList<DialogResult> buttons, string yes, string no, string cancel, ViewResult defaultButton)
+      public ViewResult MessageBoxConfirm(string message, Action doNotShowAgain, ViewResult defaultButton = ViewResult.Yes)
+      {
+         return showQuestionMessageBox(message, new[] {
+            DialogResult.Yes, DialogResult.Cancel}, string.Empty, string.Empty, string.Empty, defaultButton, doNotShowAgain);
+      }
+
+      private ViewResult showQuestionMessageBox(string message, IReadOnlyList<DialogResult> buttons, string yes, string no, string cancel, ViewResult defaultButton, Action doNotShowAgain)
       {
          var currentLocalizer = Localizer.Active;
          try
          {
             Localizer.Active = new XtraMessageBoxLocalizer(yes, no, cancel);
-            return _mapper.MapFrom(XtraMessageBox.Show(createMessageBoxArgs(message, buttons.ToArray(), getIcon(SystemIcons.Question), defaultButtonFrom(defaultButton))));
+            var args = createMessageBoxArgs(message, buttons.ToArray(), getIcon(SystemIcons.Question), defaultButtonFrom(defaultButton), doNotShowAgain != null);
+            args.Closed += (sender, e) => onMessageBoxClosed(e, doNotShowAgain);
+            DialogResult input = XtraMessageBox.Show(args);
+            return _mapper.MapFrom(input);
          }
          finally
          {
@@ -97,9 +109,18 @@ namespace OSPSuite.UI.Services
          }
       }
 
+      private void onMessageBoxClosed(XtraMessageBoxClosedArgs e, Action doNotShowAgain)
+      {
+          // e.Visible gets whether the user checked the 'Do not show this message again' checkbox. Checked makes e.Visible = false 
+          if (!e.Visible && e.DialogResult == DialogResult.Yes)
+          {
+              doNotShowAgain?.Invoke();
+          }
+      }
+        
       private Icon getIcon(Icon icon)
       {
-         return DevExpress.Utils.Drawing.Helpers.StockIconHelper.GetWindows8AssociatedIcon(icon);
+          return DevExpress.Utils.Drawing.Helpers.StockIconHelper.GetWindows8AssociatedIcon(icon);
       }
 
       private int defaultButtonFrom(ViewResult defaultButton)
