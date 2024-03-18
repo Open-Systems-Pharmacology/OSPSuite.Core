@@ -22,6 +22,7 @@ namespace OSPSuite.UI
       public const int TOOL_TIP_INITIAL_DELAY = 500;
       public const int TOOL_TIP_INITIAL_DELAY_LONG = 1500;
       public const string EMPTY_COLUMN = " ";
+      public const string DO_NOT_SHOW_THIS_AGAIN = "Do not show this again";
 
       public const double DEFAULT_HTML_FONT_SIZE = 8.25;
 
