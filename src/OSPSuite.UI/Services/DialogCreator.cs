@@ -72,7 +72,7 @@ namespace OSPSuite.UI.Services
       public ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel, ViewResult defaultButton = ViewResult.Yes)
       {
          return showQuestionMessageBox(message, new[] {
-            DialogResult.Yes, DialogResult.No, DialogResult.Cancel}, yes, no, cancel, defaultButton, null);
+            DialogResult.Yes, DialogResult.No, DialogResult.Cancel}, yes, no, cancel, defaultButton);
       }
 
       public ViewResult MessageBoxYesNo(string message, ViewResult defaultButton = ViewResult.Yes)
@@ -83,7 +83,7 @@ namespace OSPSuite.UI.Services
       public ViewResult MessageBoxYesNo(string message, string yes, string no, ViewResult defaultButton = ViewResult.Yes)
       {
          return showQuestionMessageBox(message, new [] {
-            DialogResult.Yes, DialogResult.No}, yes, no, string.Empty, defaultButton, null);
+            DialogResult.Yes, DialogResult.No}, yes, no, string.Empty, defaultButton);
       }
 
       public ViewResult MessageBoxConfirm(string message, Action doNotShowAgain, ViewResult defaultButton = ViewResult.Yes)
@@ -92,7 +92,7 @@ namespace OSPSuite.UI.Services
             DialogResult.Yes, DialogResult.Cancel}, string.Empty, string.Empty, string.Empty, defaultButton, doNotShowAgain);
       }
 
-      private ViewResult showQuestionMessageBox(string message, IReadOnlyList<DialogResult> buttons, string yes, string no, string cancel, ViewResult defaultButton, Action doNotShowAgain)
+      private ViewResult showQuestionMessageBox(string message, IReadOnlyList<DialogResult> buttons, string yes, string no, string cancel, ViewResult defaultButton, Action doNotShowAgain = null)
       {
          var currentLocalizer = Localizer.Active;
          try
