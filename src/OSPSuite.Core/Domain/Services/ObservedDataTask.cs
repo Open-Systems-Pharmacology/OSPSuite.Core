@@ -60,206 +60,204 @@ namespace OSPSuite.Core.Domain.Services
 
    public abstract class ObservedDataTask : IObservedDataTask
    {
-      protected readonly IDialogCreator _dialogCreator;
-      private readonly IOSPSuiteExecutionContext _executionContext;
-      private readonly IDataRepositoryExportTask _dataRepositoryExportTask;
-      private readonly IContainerTask _containerTask;
-      private readonly IObjectTypeResolver _objectTypeResolver;
-      
-      private static bool _suppressWarningOnRemovingObservedDataEntry;
+       protected readonly IDialogCreator _dialogCreator;
+       private readonly IOSPSuiteExecutionContext _executionContext;
+       private readonly IDataRepositoryExportTask _dataRepositoryExportTask;
+       private readonly IContainerTask _containerTask;
+       private readonly IObjectTypeResolver _objectTypeResolver;
+       private readonly ICoreUserSettings _coreUserSettings;
 
-      protected ObservedDataTask(IDialogCreator dialogCreator, IOSPSuiteExecutionContext executionContext,
-          IDataRepositoryExportTask dataRepositoryExportTask, IContainerTask containerTask,
-          IObjectTypeResolver objectTypeResolver)
-      {
-          _dialogCreator = dialogCreator;
-          _executionContext = executionContext;
-          _dataRepositoryExportTask = dataRepositoryExportTask;
-          _containerTask = containerTask;
-          _objectTypeResolver = objectTypeResolver;
-      }
+       protected ObservedDataTask(IDialogCreator dialogCreator, IOSPSuiteExecutionContext executionContext,
+           IDataRepositoryExportTask dataRepositoryExportTask, IContainerTask containerTask,
+           IObjectTypeResolver objectTypeResolver, ICoreUserSettings coreUserSettings)
+       {
+           _dialogCreator = dialogCreator;
+           _executionContext = executionContext;
+           _dataRepositoryExportTask = dataRepositoryExportTask;
+           _containerTask = containerTask;
+           _objectTypeResolver = objectTypeResolver;
+           _coreUserSettings = coreUserSettings;
+       }
 
-      public bool Delete(DataRepository observedData)
-      {
-         return Delete(new[] { observedData });
-      }
+       public bool Delete(DataRepository observedData)
+       {
+           return Delete(new[] {observedData});
+       }
 
-      public bool Delete(IEnumerable<DataRepository> observedDataToBeRemoved, bool silent = false)
-      {
-         var observedDataToRemoveList = observedDataToBeRemoved.ToList();
-         if (!observedDataToRemoveList.Any())
-            return true;
+       public bool Delete(IEnumerable<DataRepository> observedDataToBeRemoved, bool silent = false)
+       {
+           var observedDataToRemoveList = observedDataToBeRemoved.ToList();
+           if (!observedDataToRemoveList.Any())
+               return true;
 
-         var usedInAnalyzablesCache = new Cache<DataRepository, IEnumerable<IUsesObservedData>>();
+           var usedInAnalyzablesCache = new Cache<DataRepository, IEnumerable<IUsesObservedData>>();
 
-         observedDataToRemoveList.Each(x => { usedInAnalyzablesCache[x] = allUsersOfObservedData(x); });
+           observedDataToRemoveList.Each(x => { usedInAnalyzablesCache[x] = allUsersOfObservedData(x); });
 
-         var observedDataThatCanBeRemoved = observedDataToRemoveList.Where(x => !usedInAnalyzablesCache[x].Any()).ToList();
-         var observedDataNotDeleted = observedDataToRemoveList.Except(observedDataThatCanBeRemoved);
-         var observedDataNotDeletedMessage = observedDataNotDeleted.Select(x => messageForObservedDataUsedByAnalysable(x, usedInAnalyzablesCache));
+           var observedDataThatCanBeRemoved = observedDataToRemoveList.Where(x => !usedInAnalyzablesCache[x].Any()).ToList();
+           var observedDataNotDeleted = observedDataToRemoveList.Except(observedDataThatCanBeRemoved);
+           var observedDataNotDeletedMessage = observedDataNotDeleted.Select(x => messageForObservedDataUsedByAnalysable(x, usedInAnalyzablesCache));
 
-         //not one observed data can be deleted because all of them are used
-         if (!observedDataThatCanBeRemoved.Any())
-            throw new CannotDeleteObservedDataException(observedDataNotDeletedMessage);
+           //not one observed data can be deleted because all of them are used
+           if (!observedDataThatCanBeRemoved.Any())
+               throw new CannotDeleteObservedDataException(observedDataNotDeletedMessage);
 
-         if (!silent)
-         {
-            var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyDeleteAllObservedData(observedDataNotDeletedMessage));
-            if (viewResult == ViewResult.No)
-               return false;
-         }
+           if (!silent)
+           {
+               var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyDeleteAllObservedData(observedDataNotDeletedMessage));
+               if (viewResult == ViewResult.No)
+                   return false;
+           }
 
-         return deleteAll(observedDataThatCanBeRemoved);
-      }
+           return deleteAll(observedDataThatCanBeRemoved);
+       }
 
-      private string messageForObservedDataUsedByAnalysable(DataRepository observedData,
-         Cache<DataRepository, IEnumerable<IUsesObservedData>> usersOfObservedDataCache)
-      {
-         var typeNamesUsingObservedData = usersOfObservedDataCache[observedData].Select(typeNamed).ToList();
-         return Error.CannotDeleteObservedData(observedData.Name, typeNamesUsingObservedData);
-      }
+       private string messageForObservedDataUsedByAnalysable(DataRepository observedData,
+           Cache<DataRepository, IEnumerable<IUsesObservedData>> usersOfObservedDataCache)
+       {
+           var typeNamesUsingObservedData = usersOfObservedDataCache[observedData].Select(typeNamed).ToList();
+           return Error.CannotDeleteObservedData(observedData.Name, typeNamesUsingObservedData);
+       }
 
-      private bool deleteAll(IEnumerable<DataRepository> observedDataToDelete)
-      {
-         var macroCommand = new OSPSuiteMacroCommand<IOSPSuiteExecutionContext>
-         {
-            CommandType = Command.CommandTypeDelete,
-            ObjectType = ObjectTypes.ObservedData,
-            Description = Command.ObservedDataDeletedFromProject,
-         };
+       private bool deleteAll(IEnumerable<DataRepository> observedDataToDelete)
+       {
+           var macroCommand = new OSPSuiteMacroCommand<IOSPSuiteExecutionContext>
+           {
+               CommandType = Command.CommandTypeDelete,
+               ObjectType = ObjectTypes.ObservedData,
+               Description = Command.ObservedDataDeletedFromProject,
+           };
 
-         observedDataToDelete.Each(x => macroCommand.Add(new RemoveObservedDataFromProjectCommand(x)));
-         _executionContext.AddToHistory(macroCommand.Run(_executionContext));
-         return true;
-      }
+           observedDataToDelete.Each(x => macroCommand.Add(new RemoveObservedDataFromProjectCommand(x)));
+           _executionContext.AddToHistory(macroCommand.Run(_executionContext));
+           return true;
+       }
 
-      public bool DeleteAll()
-      {
-         return Delete(_executionContext.Project.AllObservedData);
-      }
+       public bool DeleteAll()
+       {
+           return Delete(_executionContext.Project.AllObservedData);
+       }
 
-      public abstract void UpdateMolWeight(DataRepository observedData);
+       public abstract void UpdateMolWeight(DataRepository observedData);
 
-      private string typeNamed(IUsesObservedData usesObservedData)
-      {
-         return $"{_objectTypeResolver.TypeFor(usesObservedData).ToLowerInvariant()} '{usesObservedData.Name}'";
-      }
+       private string typeNamed(IUsesObservedData usesObservedData)
+       {
+           return $"{_objectTypeResolver.TypeFor(usesObservedData).ToLowerInvariant()} '{usesObservedData.Name}'";
+       }
 
-      public void Export(DataRepository observedData)
-      {
-         var file = _dialogCreator.AskForFileToSave(Captions.ExportObservedDataToExcel, Constants.Filter.EXCEL_SAVE_FILE_FILTER,
-            Constants.DirectoryKey.OBSERVED_DATA, observedData.Name);
-         if (string.IsNullOrEmpty(file)) return;
+       public void Export(DataRepository observedData)
+       {
+           var file = _dialogCreator.AskForFileToSave(Captions.ExportObservedDataToExcel, Constants.Filter.EXCEL_SAVE_FILE_FILTER,
+               Constants.DirectoryKey.OBSERVED_DATA, observedData.Name);
+           if (string.IsNullOrEmpty(file)) return;
 
-         _dataRepositoryExportTask.ExportToExcel(observedData, file, launchExcel: true);
-      }
+           _dataRepositoryExportTask.ExportToExcel(observedData, file, launchExcel: true);
+       }
 
-      private bool observedDataAlreadyExistsInProject(DataRepository observedData)
-      {
-         return _executionContext.Project.AllObservedData.ExistsById(observedData.Id);
-      }
+       private bool observedDataAlreadyExistsInProject(DataRepository observedData)
+       {
+           return _executionContext.Project.AllObservedData.ExistsById(observedData.Id);
+       }
 
-      private bool importerConfigurationAlreadyExistsInProject(ImporterConfiguration configuration)
-      {
-         return _executionContext.Project.AllImporterConfigurations.ExistsById(configuration.Id);
-      }
+       private bool importerConfigurationAlreadyExistsInProject(ImporterConfiguration configuration)
+       {
+           return _executionContext.Project.AllImporterConfigurations.ExistsById(configuration.Id);
+       }
 
-      public void AddObservedDataToProject(DataRepository observedData)
-      {
-         if (observedDataAlreadyExistsInProject(observedData))
-            return;
+       public void AddObservedDataToProject(DataRepository observedData)
+       {
+           if (observedDataAlreadyExistsInProject(observedData))
+               return;
 
-         observedData.Name = _containerTask.CreateUniqueName(_executionContext.Project.AllObservedData, observedData.Name, canUseBaseName: true);
-         _executionContext.AddToHistory(new AddObservedDataToProjectCommand(observedData).Run(_executionContext));
-      }
+           observedData.Name = _containerTask.CreateUniqueName(_executionContext.Project.AllObservedData, observedData.Name, canUseBaseName: true);
+           _executionContext.AddToHistory(new AddObservedDataToProjectCommand(observedData).Run(_executionContext));
+       }
 
-      public void AddImporterConfigurationToProject(ImporterConfiguration configuration)
-      {
-         if (importerConfigurationAlreadyExistsInProject(configuration))
-            return;
+       public void AddImporterConfigurationToProject(ImporterConfiguration configuration)
+       {
+           if (importerConfigurationAlreadyExistsInProject(configuration))
+               return;
 
-         _executionContext.AddToHistory(new AddImporterConfigurationToProjectCommand(configuration).Run(_executionContext));
-      }
+           _executionContext.AddToHistory(new AddImporterConfigurationToProjectCommand(configuration).Run(_executionContext));
+       }
 
-      public void SuppressWarningOnRemovingObservedDataEntryFromSimulation()
-      {
-          // _coreUserSettings.SuppressWarningOnRemovingObservedDataEntryFromSimulation = true;
-          _suppressWarningOnRemovingObservedDataEntry = true;
-      }
+       public void SuppressWarningOnRemovingObservedDataEntryFromSimulation()
+       {
+           _coreUserSettings.SuppressWarningOnRemovingObservedDataEntryFromSimulation = true;
+       }
 
-      public void RemoveUsedObservedDataFromSimulation(IReadOnlyList<UsedObservedData> usedObservedDataList)
-      {
-         if (!usedObservedDataList.Any())
-            return;
+       public void RemoveUsedObservedDataFromSimulation(IReadOnlyList<UsedObservedData> usedObservedDataList)
+       {
+           if (!usedObservedDataList.Any())
+               return;
 
-         foreach (var usedObservedData in usedObservedDataList)
-         {
-            var parameterIdentifications = findParameterIdentificationsUsing(usedObservedData).ToList();
-            if (!parameterIdentifications.Any())
-               continue;
+           foreach (var usedObservedData in usedObservedDataList)
+           {
+               var parameterIdentifications = findParameterIdentificationsUsing(usedObservedData).ToList();
+               if (!parameterIdentifications.Any())
+                   continue;
 
-            _dialogCreator.MessageBoxInfo(
-               Captions.ParameterIdentification.CannotRemoveObservedDataBeingUsedByParameterIdentification(observedDataFrom(usedObservedData).Name,
-                  parameterIdentifications.AllNames().ToList()));
-            return;
-         }
+               _dialogCreator.MessageBoxInfo(
+                   Captions.ParameterIdentification.CannotRemoveObservedDataBeingUsedByParameterIdentification(observedDataFrom(usedObservedData).Name,
+                       parameterIdentifications.AllNames().ToList()));
+               return;
+           }
 
-         //if (!_coreUserSettings.SuppressWarningOnRemovingObservedDataEntryFromSimulation)
-         if (!_suppressWarningOnRemovingObservedDataEntry)
-         {
-             var viewResult = _dialogCreator.MessageBoxConfirm(Captions.ReallyRemoveObservedDataFromSimulation,
-                 SuppressWarningOnRemovingObservedDataEntryFromSimulation);
-             if (viewResult == ViewResult.No)
-                 return;
-         }
+           if (!_coreUserSettings.SuppressWarningOnRemovingObservedDataEntryFromSimulation)
+           {
+               var viewResult = _dialogCreator.MessageBoxConfirm(Captions.ReallyRemoveObservedDataFromSimulation,
+                   SuppressWarningOnRemovingObservedDataEntryFromSimulation);
+               if (viewResult == ViewResult.No)
+                   return;
+           }
 
-         usedObservedDataList.GroupBy(x => x.Simulation).Each(x => removeUsedObservedDataFromSimulation(x, x.Key));
-      }
+           usedObservedDataList.GroupBy(x => x.Simulation).Each(x => removeUsedObservedDataFromSimulation(x, x.Key));
+       }
 
-      private IEnumerable<ParameterIdentification> findParameterIdentificationsUsing(UsedObservedData usedObservedData)
-      {
-         var observedData = observedDataFrom(usedObservedData);
-         var simulation = usedObservedData.Simulation;
+       private IEnumerable<ParameterIdentification> findParameterIdentificationsUsing(UsedObservedData usedObservedData)
+       {
+           var observedData = observedDataFrom(usedObservedData);
+           var simulation = usedObservedData.Simulation;
 
-         return from parameterIdentification in allParameterIdentifications()
-            let outputMappings = parameterIdentification.AllOutputMappingsFor(simulation)
-            where outputMappings.Any(x => x.UsesObservedData(observedData))
-            select parameterIdentification;
-      }
+           return from parameterIdentification in allParameterIdentifications()
+               let outputMappings = parameterIdentification.AllOutputMappingsFor(simulation)
+               where outputMappings.Any(x => x.UsesObservedData(observedData))
+               select parameterIdentification;
+       }
 
-      private void removeUsedObservedDataFromSimulation(IEnumerable<UsedObservedData> usedObservedData, ISimulation simulation)
-      {
-         _executionContext.Load(simulation);
+       private void removeUsedObservedDataFromSimulation(IEnumerable<UsedObservedData> usedObservedData, ISimulation simulation)
+       {
+           _executionContext.Load(simulation);
 
-         var observedDataList = observedDataListFrom(usedObservedData);
-         observedDataList.Each(simulation.RemoveUsedObservedData);
-         observedDataList.Each(simulation.RemoveOutputMappings);
+           var observedDataList = observedDataListFrom(usedObservedData);
+           observedDataList.Each(simulation.RemoveUsedObservedData);
+           observedDataList.Each(simulation.RemoveOutputMappings);
 
-         _executionContext.PublishEvent(new ObservedDataRemovedFromAnalysableEvent(simulation, observedDataList));
-         _executionContext.PublishEvent(new SimulationStatusChangedEvent(simulation));
-      }
+           _executionContext.PublishEvent(new ObservedDataRemovedFromAnalysableEvent(simulation, observedDataList));
+           _executionContext.PublishEvent(new SimulationStatusChangedEvent(simulation));
+       }
 
-      private DataRepository observedDataFrom(UsedObservedData usedObservedData)
-      {
-         return _executionContext.Project.ObservedDataBy(usedObservedData.Id);
-      }
+       private DataRepository observedDataFrom(UsedObservedData usedObservedData)
+       {
+           return _executionContext.Project.ObservedDataBy(usedObservedData.Id);
+       }
 
-      private IReadOnlyCollection<ParameterIdentification> allParameterIdentifications()
-      {
-         return _executionContext.Project.AllParameterIdentifications;
-      }
+       private IReadOnlyCollection<ParameterIdentification> allParameterIdentifications()
+       {
+           return _executionContext.Project.AllParameterIdentifications;
+       }
 
-      private IEnumerable<IUsesObservedData> allUsersOfObservedData(DataRepository observedData)
-      {
-         return _executionContext.Project.AllUsersOfObservedData.Where(x => x.UsesObservedData(observedData));
-      }
+       private IEnumerable<IUsesObservedData> allUsersOfObservedData(DataRepository observedData)
+       {
+           return _executionContext.Project.AllUsersOfObservedData.Where(x => x.UsesObservedData(observedData));
+       }
 
-      private IReadOnlyList<DataRepository> observedDataListFrom(IEnumerable<UsedObservedData> usedObservedData)
-      {
-         return usedObservedData.Select(observedDataFrom).ToList();
-      }
+       private IReadOnlyList<DataRepository> observedDataListFrom(IEnumerable<UsedObservedData> usedObservedData)
+       {
+           return usedObservedData.Select(observedDataFrom).ToList();
+       }
 
-      //TODO See if code can be merged between APPS
-      public abstract void Rename(DataRepository observedData);
+       //TODO See if code can be merged between APPS
+       public abstract void Rename(DataRepository observedData);
    }
 }
