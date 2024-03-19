@@ -55,7 +55,7 @@ namespace OSPSuite.UI.Services
             DefaultButtonIndex = defaultButtonIndex,
             AllowHtmlText = DefaultBoolean.True,
             DoNotShowAgainCheckBoxVisible = doNotShowAgainCheckBoxVisible,
-            DoNotShowAgainCheckBoxText =  UIConstants.DO_NOT_SHOW_THIS_AGAIN
+            DoNotShowAgainCheckBoxText =  UIConstants.DO_NOT_SHOW_THIS_AGAIN_UNTIL_RESTART
          };
 
          if (containsHyperlink(message))
