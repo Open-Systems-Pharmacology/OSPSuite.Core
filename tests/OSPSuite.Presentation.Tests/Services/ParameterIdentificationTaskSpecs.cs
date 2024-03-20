@@ -602,18 +602,27 @@ namespace OSPSuite.Presentation.Services
    {
       private ParameterIdentification _parameterIdentification;
       private ICloneObjectBasePresenter<ParameterIdentification> _cloneObjectBasePresenter;
+      private ParameterIdentification _clonedParameterIdentification;
 
       protected override void Context()
       {
          base.Context();
          _parameterIdentification = new ParameterIdentification {IsLoaded = false};
+         _clonedParameterIdentification = new ParameterIdentification();
          _cloneObjectBasePresenter = A.Fake<ICloneObjectBasePresenter<ParameterIdentification>>();
          A.CallTo(_applicationController).WithReturnType<ICloneObjectBasePresenter<ParameterIdentification>>().Returns(_cloneObjectBasePresenter);
+         A.CallTo(() => _cloneObjectBasePresenter.CreateCloneFor(_parameterIdentification)).Returns(_clonedParameterIdentification);
       }
 
       protected override void Because()
       {
          sut.Clone(_parameterIdentification);
+      }
+
+      [Observation]
+      public void the_cloned_parameter_identification_should_indicate_changes()
+      {
+         _clonedParameterIdentification.HasChanged.ShouldBeTrue();
       }
 
       [Observation]
