@@ -3,6 +3,7 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
@@ -56,6 +57,22 @@ namespace OSPSuite.Core.Domain
          individual.Add(organism);
 
          return individual;
+      }
+   }
+
+   public class When_cloning_a_with_changes_object_that_does_not_have_changes : concern_for_CloneManagerForModel
+   {
+      private IWithHasChanged _clonedObject;
+
+      protected override void Because()
+      {
+         _clonedObject = sut.Clone(new ParameterIdentification());
+      }
+
+      [Observation]
+      public void should_return_a_cloned_object()
+      {
+         _clonedObject.HasChanged.ShouldBeTrue();
       }
    }
 

@@ -248,9 +248,7 @@ namespace OSPSuite.Presentation.Services
 
          using (var clonePresenter = _applicationController.Start<ICloneObjectBasePresenter<ParameterIdentification>>())
          {
-            var clonedParameterIdentification = clonePresenter.CreateCloneFor(parameterIdentification);
-            clonedParameterIdentification.HasChanged = true;
-            return clonedParameterIdentification;
+            return clonePresenter.CreateCloneFor(parameterIdentification);
          }
       }
 
