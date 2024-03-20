@@ -7,7 +7,7 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.ParameterIdentifications
 {
-   public class ParameterIdentification : ObjectBase, IParameterAnalysable, IUsesObservedData
+   public class ParameterIdentification : ObjectBase, IParameterAnalysable, IUsesObservedData, IWithHasChanged
    {
       private readonly List<ISimulation> _allSimulations = new List<ISimulation>();
       private readonly List<IdentificationParameter> _allIdentificationParameters = new List<IdentificationParameter>();
