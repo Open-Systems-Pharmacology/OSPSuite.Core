@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using OSPSuite.Assets;
 
 namespace OSPSuite.UI.Services
 {
@@ -55,7 +56,7 @@ namespace OSPSuite.UI.Services
             DefaultButtonIndex = defaultButtonIndex,
             AllowHtmlText = DefaultBoolean.True,
             DoNotShowAgainCheckBoxVisible = doNotShowAgainCheckBoxVisible,
-            DoNotShowAgainCheckBoxText = UIConstants.DO_NOT_SHOW_THIS_AGAIN_UNTIL_RESTART
+            DoNotShowAgainCheckBoxText = Captions.DO_NOT_SHOW_THIS_AGAIN_UNTIL_RESTART
          };
 
          if (containsHyperlink(message))
