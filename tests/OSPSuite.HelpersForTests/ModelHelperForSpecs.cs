@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility.Extensions;
@@ -1280,6 +1281,9 @@ namespace OSPSuite.Helpers
 
          if (sourceObject.IsAnImplementationOf<NormalDistributionFormula>())
             return new NormalDistributionFormula().WithDimension(_dimensionFactory.NoDimension).WithId(id).DowncastTo<T>();
+
+         if(sourceObject.IsAnImplementationOf<ParameterIdentification>())
+            return new ParameterIdentification().WithId(id).DowncastTo<T>();
 
          if (sourceObject.IsAnImplementationOf<ExpressionParameter>())
             return new ExpressionParameter().WithDimension(_dimensionFactory.NoDimension).WithId(id).DowncastTo<T>();
