@@ -18,7 +18,7 @@ namespace OSPSuite.UI
             return CommonSkins.GetSkin(DevExpress.LookAndFeel.UserLookAndFeel.Default).Colors[state];
          }
       }
-      
+
       public const int TOOL_TIP_INITIAL_DELAY = 500;
       public const int TOOL_TIP_INITIAL_DELAY_LONG = 1500;
       public const string EMPTY_COLUMN = " ";
