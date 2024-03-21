@@ -62,7 +62,7 @@ namespace OSPSuite.Core.Services
       [Observation]
       public void should_throw_an_exception_notifying_the_user_that_no_observed_data_can_be_deleted()
       {
-         The.Action(() => sut.Delete(new[] {_obsData1, _obsData2})).ShouldThrowAn<CannotDeleteObservedDataException>();
+         The.Action(() => sut.Delete(new[] { _obsData1, _obsData2 })).ShouldThrowAn<CannotDeleteObservedDataException>();
       }
    }
 
@@ -90,7 +90,7 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         sut.Delete(new[] {_obsData1, _obsData2});
+         sut.Delete(new[] { _obsData1, _obsData2 });
       }
 
       [Observation]
@@ -133,7 +133,7 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         sut.Delete(new[] {_obsData1, _obsData2}, silent: true);
+         sut.Delete(new[] { _obsData1, _obsData2 }, silent: true);
       }
 
       [Observation]
