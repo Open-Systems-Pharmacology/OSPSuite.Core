@@ -6,7 +6,7 @@ using OSPSuite.Core.Import;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IProject : IObjectBase, IWithChartTemplates, IWithCreationMetaData
+   public interface IProject : IObjectBase, IWithChartTemplates, IWithCreationMetaData, IWithHasChanged
    {
       /// <summary>
       ///    Full path of project (empty if the project was not saved yet)

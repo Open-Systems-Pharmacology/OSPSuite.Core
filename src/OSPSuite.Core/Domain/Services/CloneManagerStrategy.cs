@@ -22,14 +22,12 @@ namespace OSPSuite.Core.Domain.Services
          if (objectToClone == null)
             return null;
 
-         var repository = objectToClone as DataRepository;
-         if (repository != null)
+         if (objectToClone is DataRepository repository)
          {
-            return cloneDataRepository(objectToClone.DowncastTo<DataRepository>()) as T;
+            return cloneDataRepository(repository) as T;
          }
 
-         var formulaToClone = objectToClone as IFormula;
-         if (formulaToClone != null)
+         if (objectToClone is IFormula formulaToClone)
             return CreateFormulaCloneFor(formulaToClone).DowncastTo<T>();
 
          var clone = _objectBaseFactory.CreateObjectBaseFrom(objectToClone);
@@ -40,6 +38,9 @@ namespace OSPSuite.Core.Domain.Services
 
          //it is necessary to update  the formula before the properties, since UpdatePropertiesFrom might use formula
          clone.UpdatePropertiesFrom(objectToClone, this);
+
+         if (clone is IWithHasChanged withHasChanged)
+            withHasChanged.HasChanged = true;
 
          return clone;
       }
