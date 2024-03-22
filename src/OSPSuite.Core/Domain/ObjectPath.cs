@@ -207,7 +207,6 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Add path entries to the end of the path
       /// </summary>
-      /// <param name="pathToAdd">path entry to add</param>
       public virtual void Add(string pathToAdd)
       {
          var pathElements = splitToElements(pathToAdd);
@@ -217,7 +216,6 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Add path entries to the front of the path
       /// </summary>
-      /// <param name="pathToAdd">path entry to add</param>
       public virtual void AddAtFront(string pathToAdd)
       {
          var pathElements = splitToElements(pathToAdd);
