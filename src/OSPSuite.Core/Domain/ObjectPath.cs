@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
@@ -229,7 +230,7 @@ namespace OSPSuite.Core.Domain
 
       private static string[] splitToElements(string pathToInsert)
       {
-         var pathItems = pathToInsert.Split(new[] {PATH_DELIMITER}, StringSplitOptions.None);
+         var pathItems = pathToInsert.ToPathArray();
          return pathItems;
       }
 
