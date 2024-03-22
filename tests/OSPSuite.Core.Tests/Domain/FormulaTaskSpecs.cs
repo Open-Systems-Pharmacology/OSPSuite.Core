@@ -289,7 +289,7 @@ namespace OSPSuite.Core.Domain
          _p2 = new Parameter().WithName("p2").WithFormula(new ConstantFormula(2));
          _p2.AddTag("toto");
          //simulate a real ROOT Container
-         var root = new Container().WithContainerType(ContainerType.Simulation);
+         var root = new Container().WithContainerType(ContainerType.Simulation).WithName("root");
          _model.Root = root;
          root.Add(_container1);
          root.Add(_container2);
@@ -391,7 +391,7 @@ namespace OSPSuite.Core.Domain
          {
             FirstNeighbor = _liverCell,
             SecondNeighbor = _liverPlasma
-         };
+         }.WithName("_neighborhood_liver_cell_liver_pls");
 
          _model.Root = _rootContainer;
          _model.Neighborhoods = new Container().WithName(NEIGHBORHOODS);
