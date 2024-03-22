@@ -12,21 +12,77 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_returning_the_path_as_string_from_an_object_path_with_only_one_entry : concern_for_ObjectPath
+   public class When_adding_elements_to_the_end_of_a_path : concern_for_ObjectPath
    {
       private string _entry;
 
       protected override void Context()
       {
          base.Context();
-         _entry = "toto";
+         _entry = "toto|tata";
+         sut.Add("first");
+      }
+
+      protected override void Because()
+      {
+         sut.Add(_entry);
+      }
+
+      [Observation]
+      public void should_return_the_entry()
+      {
+         sut.ToString().ShouldBeEqualTo($"first|{_entry}");
+      }
+
+      [Observation]
+      public void the_path_should_contain_two_elements()
+      {
+         sut.Count.ShouldBeEqualTo(3);
+      }
+
+      [Observation]
+      public void the_path_elements_should_match_strings_without_pipe()
+      {
+         sut[0].ShouldBeEqualTo("first");
+         sut[1].ShouldBeEqualTo("toto");
+         sut[2].ShouldBeEqualTo("tata");
+      }
+   }
+
+   public class When_adding_elements_to_the_front_of_a_path : concern_for_ObjectPath
+   {
+      private string _entry;
+
+      protected override void Context()
+      {
+         base.Context();
+         _entry = "toto|tata";
+         sut.Add("last");
+      }
+
+      protected override void Because()
+      {
          sut.AddAtFront(_entry);
       }
 
       [Observation]
       public void should_return_the_entry()
       {
-         sut.ToString().ShouldBeEqualTo(_entry);
+         sut.ToString().ShouldBeEqualTo($"{_entry}|last");
+      }
+
+      [Observation]
+      public void the_path_should_contain_two_elements()
+      {
+         sut.Count.ShouldBeEqualTo(3);
+      }
+
+      [Observation]
+      public void the_path_elements_should_match_strings_without_pipe()
+      {
+         sut[0].ShouldBeEqualTo("toto");
+         sut[1].ShouldBeEqualTo("tata");
+         sut[2].ShouldBeEqualTo("last");
       }
    }
 
@@ -106,7 +162,7 @@ namespace OSPSuite.Core.Domain
       public void should_have_updated_the_path()
       {
          sut = new ObjectPath("A", "B");
-         sut.ReplaceWith(new[] {"C", "D"});
+         sut.ReplaceWith(new[] { "C", "D" });
          sut.PathAsString.ShouldBeEqualTo("C|D");
       }
    }

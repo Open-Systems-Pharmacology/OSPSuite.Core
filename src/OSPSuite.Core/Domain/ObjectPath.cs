@@ -63,12 +63,6 @@ namespace OSPSuite.Core.Domain
       }
 
       /// <summary>
-      ///    Add one entry at the end of the path
-      /// </summary>
-      /// <param name="pathEntry">path entry to add</param>
-      public virtual void Add(string pathEntry) => _pathEntries.Add(pathEntry);
-
-      /// <summary>
       ///    Add entries at the end of the path
       /// </summary>
       /// <param name="pathEntriesToAdd">path entries to add</param>
@@ -211,20 +205,37 @@ namespace OSPSuite.Core.Domain
       }
 
       /// <summary>
-      ///    Add one entry at the front of the path
+      ///    Add path entries to the end of the path
       /// </summary>
-      /// <param name="pathEntry">path entry to add</param>
-      public virtual void AddAtFront(string pathEntry)
+      /// <param name="pathToAdd">path entry to add</param>
+      public virtual void Add(string pathToAdd)
       {
-         _pathEntries.Insert(0, pathEntry);
+         var pathElements = splitToElements(pathToAdd);
+         pathElements.Each(x => _pathEntries.Add(x));
       }
 
       /// <summary>
-      ///   Add a multipart <paramref name="pathToAdd"/> at the front
+      ///    Add path entries to the front of the path
+      /// </summary>
+      /// <param name="pathToAdd">path entry to add</param>
+      public virtual void AddAtFront(string pathToAdd)
+      {
+         var pathElements = splitToElements(pathToAdd);
+         pathElements.Reverse().Each(x => _pathEntries.Insert(0, x));
+      }
+
+      private static string[] splitToElements(string pathToInsert)
+      {
+         var pathItems = pathToInsert.Split(new[] {PATH_DELIMITER}, StringSplitOptions.None);
+         return pathItems;
+      }
+
+      /// <summary>
+      ///    Add a multipart <paramref name="pathToAdd" /> at the front
       /// </summary>
       public virtual void AddAtFront(ObjectPath pathToAdd)
       {
-         pathToAdd.Reverse().Each(AddAtFront);
+         AddAtFront(pathToAdd.PathAsString);
       }
 
       private T resolvePath<T>(IEntity currentEntity, IEnumerable<string> path) where T : class
