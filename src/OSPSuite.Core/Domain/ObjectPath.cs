@@ -219,6 +219,11 @@ namespace OSPSuite.Core.Domain
       public virtual void AddAtFront(string pathToAdd)
       {
          var pathElements = splitToElements(pathToAdd);
+         addAtFront(pathElements);
+      }
+
+      private void addAtFront(IReadOnlyList<string> pathElements)
+      {
          pathElements.Reverse().Each(x => _pathEntries.Insert(0, x));
       }
 
@@ -233,7 +238,7 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public virtual void AddAtFront(ObjectPath pathToAdd)
       {
-         AddAtFront(pathToAdd.PathAsString);
+         addAtFront(pathToAdd._pathEntries);
       }
 
       private T resolvePath<T>(IEntity currentEntity, IEnumerable<string> path) where T : class
