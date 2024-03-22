@@ -210,7 +210,7 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public virtual void Add(string pathToAdd)
       {
-         var pathElements = splitToElements(pathToAdd);
+         var pathElements = pathToAdd.ToPathArray();
          pathElements.Each(x => _pathEntries.Add(x));
       }
 
@@ -219,19 +219,13 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public virtual void AddAtFront(string pathToAdd)
       {
-         var pathElements = splitToElements(pathToAdd);
+         var pathElements = pathToAdd.ToPathArray();
          addAtFront(pathElements);
       }
 
       private void addAtFront(IReadOnlyList<string> pathElements)
       {
          pathElements.Reverse().Each(x => _pathEntries.Insert(0, x));
-      }
-
-      private static string[] splitToElements(string pathToInsert)
-      {
-         var pathItems = pathToInsert.ToPathArray();
-         return pathItems;
       }
 
       /// <summary>
