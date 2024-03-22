@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
@@ -36,10 +37,7 @@ namespace OSPSuite.Core.Domain
       {
       }
 
-      public ObjectPath(IEnumerable<string> pathEntries)
-      {
-         _pathEntries = pathEntries.ToList();
-      }
+      public ObjectPath(IEnumerable<string> pathEntries) => _pathEntries = pathEntries.ToList();
 
       /// <summary>
       ///    Single string describing the path
@@ -61,12 +59,6 @@ namespace OSPSuite.Core.Domain
             return returnString.ToString().Substring(PATH_DELIMITER.Length);
          }
       }
-
-      /// <summary>
-      ///    Add one entry at the end of the path
-      /// </summary>
-      /// <param name="pathEntry">path entry to add</param>
-      public virtual void Add(string pathEntry) => _pathEntries.Add(pathEntry);
 
       /// <summary>
       ///    Add entries at the end of the path
@@ -111,10 +103,7 @@ namespace OSPSuite.Core.Domain
       ///    Removes the first occurrence of specified <paramref name="entry" />.
       /// </summary>
       /// <param name="entry">The entry to be removed.</param>
-      public virtual void Remove(string entry)
-      {
-         _pathEntries.Remove(entry);
-      }
+      public virtual void Remove(string entry) => _pathEntries.Remove(entry);
 
       /// <summary>
       ///    Returns the entity of type <typeparamref name="T" /> with the given path relative to the
@@ -157,10 +146,7 @@ namespace OSPSuite.Core.Domain
          return resolvePath<T>(dependentObject, usePath);
       }
 
-      public virtual T Clone<T>() where T : ObjectPath
-      {
-         return new ObjectPath(_pathEntries).DowncastTo<T>();
-      }
+      public virtual T Clone<T>() where T : ObjectPath => new ObjectPath(_pathEntries).DowncastTo<T>();
 
       /// <summary>
       ///    Gets or set the item at the given index (Should be used for replace only)
@@ -195,37 +181,28 @@ namespace OSPSuite.Core.Domain
          _pathEntries.AddRange(pathEntries);
       }
 
-      public virtual void ConcatWith(ObjectPath objectPath)
-      {
-         AddRange(objectPath._pathEntries);
-      }
+      public virtual void ConcatWith(ObjectPath objectPath) => AddRange(objectPath._pathEntries);
 
-      public IEnumerator<string> GetEnumerator()
-      {
-         return _pathEntries.GetEnumerator();
-      }
+      public IEnumerator<string> GetEnumerator() => _pathEntries.GetEnumerator();
 
-      IEnumerator IEnumerable.GetEnumerator()
-      {
-         return GetEnumerator();
-      }
+      IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
       /// <summary>
-      ///    Add one entry at the front of the path
+      ///    Add path entries to the end of the path
       /// </summary>
-      /// <param name="pathEntry">path entry to add</param>
-      public virtual void AddAtFront(string pathEntry)
-      {
-         _pathEntries.Insert(0, pathEntry);
-      }
+      public virtual void Add(string pathToAdd) => pathToAdd.ToPathArray().Each(x => _pathEntries.Add(x));
 
       /// <summary>
-      ///   Add a multipart <paramref name="pathToAdd"/> at the front
+      ///    Add path entries to the front of the path
       /// </summary>
-      public virtual void AddAtFront(ObjectPath pathToAdd)
-      {
-         pathToAdd.Reverse().Each(AddAtFront);
-      }
+      public virtual void AddAtFront(string pathToAdd) => addAtFront(pathToAdd.ToPathArray());
+
+      private void addAtFront(IReadOnlyList<string> pathElements) => pathElements.Reverse().Each(x => _pathEntries.Insert(0, x));
+
+      /// <summary>
+      ///    Add a multipart <paramref name="pathToAdd" /> at the front
+      /// </summary>
+      public virtual void AddAtFront(ObjectPath pathToAdd) => addAtFront(pathToAdd._pathEntries);
 
       private T resolvePath<T>(IEntity currentEntity, IEnumerable<string> path) where T : class
       {
