@@ -65,18 +65,18 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IDataRepositoryExportTask _dataRepositoryExportTask;
       private readonly IContainerTask _containerTask;
       private readonly IObjectTypeResolver _objectTypeResolver;
-      private readonly ICoreUserSettings _coreUserSettings;
+      private readonly IConfirmationManager _confirmationManager;
 
       protected ObservedDataTask(IDialogCreator dialogCreator, IOSPSuiteExecutionContext executionContext,
          IDataRepositoryExportTask dataRepositoryExportTask, IContainerTask containerTask,
-         IObjectTypeResolver objectTypeResolver, ICoreUserSettings coreUserSettings)
+         IObjectTypeResolver objectTypeResolver, IConfirmationManager confirmationManager)
       {
          _dialogCreator = dialogCreator;
          _executionContext = executionContext;
          _dataRepositoryExportTask = dataRepositoryExportTask;
          _containerTask = containerTask;
          _objectTypeResolver = objectTypeResolver;
-         _coreUserSettings = coreUserSettings;
+         _confirmationManager = confirmationManager;
       }
 
       public bool Delete(DataRepository observedData)
@@ -183,7 +183,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public void SuppressWarningOnRemovingObservedDataEntryFromSimulation()
       {
-         _coreUserSettings.SuppressWarningOnRemovingObservedDataEntryFromSimulation = true;
+         _confirmationManager.SuppressConfirmation(ConfirmationFlags.ObservedDataEntryRemoved);
       }
 
       public void RemoveUsedObservedDataFromSimulation(IReadOnlyList<UsedObservedData> usedObservedDataList)
@@ -203,7 +203,7 @@ namespace OSPSuite.Core.Domain.Services
             return;
          }
 
-         if (!_coreUserSettings.SuppressWarningOnRemovingObservedDataEntryFromSimulation)
+         if(!_confirmationManager.IsConfirmationSuppressed(ConfirmationFlags.ObservedDataEntryRemoved))
          {
             var viewResult = _dialogCreator.MessageBoxConfirm(Captions.ReallyRemoveObservedDataFromSimulation,
                SuppressWarningOnRemovingObservedDataEntryFromSimulation);
