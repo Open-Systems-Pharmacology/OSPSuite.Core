@@ -18,10 +18,11 @@ namespace OSPSuite.UI
             return CommonSkins.GetSkin(DevExpress.LookAndFeel.UserLookAndFeel.Default).Colors[state];
          }
       }
-      
+
       public const int TOOL_TIP_INITIAL_DELAY = 500;
       public const int TOOL_TIP_INITIAL_DELAY_LONG = 1500;
       public const string EMPTY_COLUMN = " ";
+      public const string DO_NOT_SHOW_THIS_AGAIN_UNTIL_RESTART = "Do not show this again until restart";
 
       public const double DEFAULT_HTML_FONT_SIZE = 8.25;
 
