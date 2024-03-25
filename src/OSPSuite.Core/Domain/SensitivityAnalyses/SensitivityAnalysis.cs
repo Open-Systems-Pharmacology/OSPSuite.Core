@@ -7,7 +7,7 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.SensitivityAnalyses
 {
-   public class SensitivityAnalysis : ObjectBase, IParameterAnalysable, IVisitor, IWithHasChanged
+   public class SensitivityAnalysis : ObjectBase, IParameterAnalysable, IVisitor
    {
       public virtual ISimulation Simulation { get; set; }
       private readonly List<ISimulationAnalysis> _allSimulationAnalyses = new List<ISimulationAnalysis>();
