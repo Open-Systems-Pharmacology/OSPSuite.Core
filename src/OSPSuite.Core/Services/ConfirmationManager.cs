@@ -5,8 +5,7 @@ namespace OSPSuite.Core.Services
 {
    public enum ConfirmationFlags
    {
-      None = 0,
-      ObservedDataEntryRemoved = 1
+      ObservedDataEntryRemoved = 0
    }
 
    public interface IConfirmationManager
