@@ -1,14 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace OSPSuite.Core.Services
 {
-   [Flags]
    public enum ConfirmationFlags
    {
       None = 0,
-      ObservedDataEntryRemoved = 1 << 0,
-      AnotherConfirmation = 1 << 1,
-      YetAnotherConfirmation = 1 << 2,
+      ObservedDataEntryRemoved = 1
    }
 
    public interface IConfirmationManager
@@ -19,16 +17,16 @@ namespace OSPSuite.Core.Services
 
    public class ConfirmationManager : IConfirmationManager
    {
+      private readonly HashSet<ConfirmationFlags> _suppressedConfirmations = new HashSet<ConfirmationFlags>();
 
       public void SuppressConfirmation(ConfirmationFlags confirmation)
       {
-         suppressConfirmationFlags |= confirmation;
+         _suppressedConfirmations.Add(confirmation);
       }
 
       public bool IsConfirmationSuppressed(ConfirmationFlags confirmation)
       {
-         return (suppressConfirmationFlags & confirmation) == confirmation;
+         return _suppressedConfirmations.Contains(confirmation);
       }
-      private ConfirmationFlags suppressConfirmationFlags { get; set; }
    }
 }
