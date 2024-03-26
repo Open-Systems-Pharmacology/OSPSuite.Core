@@ -207,8 +207,8 @@ namespace OSPSuite.Core.Domain.Services
          {
             var viewResult = _dialogCreator.MessageBoxConfirm(Captions.ReallyRemoveObservedDataFromSimulation,
                SuppressWarningOnRemovingObservedDataEntryFromSimulation);
-            if (viewResult == ViewResult.No)
-               return;
+            if (viewResult != ViewResult.Yes)
+               return; 
          }
 
          usedObservedDataList.GroupBy(x => x.Simulation).Each(x => removeUsedObservedDataFromSimulation(x, x.Key));
