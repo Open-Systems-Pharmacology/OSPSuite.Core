@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Commands.Core;
@@ -10,7 +8,11 @@ using OSPSuite.Core.Import;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Command = OSPSuite.Assets.Command;
+using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -148,7 +150,16 @@ namespace OSPSuite.Core.Domain.Services
             Constants.DirectoryKey.OBSERVED_DATA, observedData.Name);
          if (string.IsNullOrEmpty(file)) return;
 
-         _dataRepositoryExportTask.ExportToExcel(observedData, file, launchExcel: true);
+         var lloqColumns = getLloqColumns(observedData);
+            
+         _dataRepositoryExportTask.ExportToExcel(observedData.Columns.Concat(lloqColumns), file, launchExcel: true);
+      }
+
+      private IEnumerable<DataColumn> getLloqColumns(DataRepository observedData)
+      {
+         return observedData.Columns
+            .Where(c => c.DataInfo.LLOQ != null)
+            .Select(c => new DataColumn($"LLOQ_{c.Name}", c.Dimension, c.BaseGrid) { Value = Convert.ToDouble(c.DataInfo.LLOQ) });
       }
 
       private bool observedDataAlreadyExistsInProject(DataRepository observedData)
