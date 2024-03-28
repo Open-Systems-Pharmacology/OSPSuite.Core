@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using FakeItEasy;
+﻿using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands;
@@ -7,6 +6,8 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OSPSuite.Core.Services
 {
@@ -60,7 +61,7 @@ namespace OSPSuite.Core.Services
       [Observation]
       public void should_throw_an_exception_notifying_the_user_that_no_observed_data_can_be_deleted()
       {
-         The.Action(() => sut.Delete(new[] {_obsData1, _obsData2})).ShouldThrowAn<CannotDeleteObservedDataException>();
+         The.Action(() => sut.Delete(new[] { _obsData1, _obsData2 })).ShouldThrowAn<CannotDeleteObservedDataException>();
       }
    }
 
@@ -88,7 +89,7 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         sut.Delete(new[] {_obsData1, _obsData2});
+         sut.Delete(new[] { _obsData1, _obsData2 });
       }
 
       [Observation]
@@ -131,13 +132,52 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         sut.Delete(new[] {_obsData1, _obsData2}, silent: true);
+         sut.Delete(new[] { _obsData1, _obsData2 }, silent: true);
       }
 
       [Observation]
       public void should_not_prompt_the_user_to_confirm()
       {
          A.CallTo(() => _dialogCreator.MessageBoxYesNo(A<string>._, ViewResult.Yes)).MustNotHaveHappened();
+      }
+   }
+
+   public class When_the_observed_data_task_exported_to_excel : concern_for_ObservedDataTask
+   {
+      private float _lloq;
+
+      protected override void Context()
+      {
+         base.Context();
+         _lloq = 1.2f;
+         _obsData1.Columns.Last().DataInfo.LLOQ = _lloq;
+         A.CallTo(() => _dialogCreator.AskForFileToSave(A<string>.Ignored, A<string>.Ignored, A<string>.Ignored, A<string>.Ignored, A<string>.Ignored)).Returns("export filename");
+      }
+
+      protected override void Because()
+      {
+         sut.Export(_obsData1);
+      }
+
+      [Observation]
+      public void should_export_included_lloq_Columns()
+      {
+         _ = A.CallTo(() => _dataRepositoryTask.ExportToExcel(
+               A<IEnumerable<DataColumn>>.That.Matches(observedData => observedDataIncludesLLOQColumn(observedData)),
+               A<string>._,
+               A<bool>.That.IsEqualTo(true),
+               A<DataColumnExportOptions>._))
+            .MustHaveHappened();
+      }
+
+      private bool observedDataIncludesLLOQColumn(IEnumerable<DataColumn> observedData)
+      {
+         var dataColumns = observedData as DataColumn[] ?? observedData.ToArray();
+
+         dataColumns.Count().ShouldBeEqualTo(3);
+         dataColumns.Count(c => c.Name.StartsWith("LLOQ")).ShouldBeEqualTo(1);
+         dataColumns.Single(od => od.Name.StartsWith("LLOQ")).Values[0].ShouldBeEqualTo(_lloq);
+         return true;
       }
    }
 
