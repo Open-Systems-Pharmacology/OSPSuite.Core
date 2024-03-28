@@ -55,6 +55,7 @@ namespace OSPSuite.Core
             scan.ExcludeType<PKParameterRepositoryLoader>();
             scan.ExcludeType<ParameterIdentificationRunner>();
             scan.ExcludeType<SensitivityAnalysisRunner>();
+            scan.ExcludeType<ConfirmationManager>();
 
             scan.ExcludeType(typeof(ExtendedProperty<>));
             scan.ExcludeType(typeof(HistoryManager<>));
@@ -89,6 +90,7 @@ namespace OSPSuite.Core
          container.Register<IPKParameterRepositoryLoader, PKParameterRepositoryLoader>(LifeStyle.Singleton);
          container.Register<IParameterIdentificationRunner, ParameterIdentificationRunner>(LifeStyle.Singleton);
          container.Register<ISensitivityAnalysisRunner, SensitivityAnalysisRunner>(LifeStyle.Singleton);
+         container.Register<IConfirmationManager, ConfirmationManager>(LifeStyle.Singleton);
 
          registerComparers(container);
 

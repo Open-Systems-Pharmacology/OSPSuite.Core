@@ -262,3 +262,4 @@ paket-files/
 /tests/OSPSuite.Core.Tests/include
 
 licenses.licx
+*.DotSettings
