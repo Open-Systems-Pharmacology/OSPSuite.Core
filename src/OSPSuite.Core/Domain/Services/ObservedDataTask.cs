@@ -150,12 +150,12 @@ namespace OSPSuite.Core.Domain.Services
             Constants.DirectoryKey.OBSERVED_DATA, observedData.Name);
          if (string.IsNullOrEmpty(file)) return;
 
-         var lloqColumns = getLloqColumns(observedData);
+         var lloqColumns = createLloqColumns(observedData);
             
          _dataRepositoryExportTask.ExportToExcel(observedData.Columns.Concat(lloqColumns), file, launchExcel: true);
       }
 
-      private IEnumerable<DataColumn> getLloqColumns(DataRepository observedData)
+      private IEnumerable<DataColumn> createLloqColumns(DataRepository observedData)
       {
          return observedData.Columns
             .Where(c => c.DataInfo.LLOQ != null)
