@@ -13,6 +13,7 @@ namespace OSPSuite.R.MinimalImplementations
       public ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel, ViewResult defaultButton) => ViewResult.Yes;
 
       public ViewResult MessageBoxYesNo(string message, ViewResult defaultButton) => ViewResult.Yes;
+      public ViewResult MessageBoxConfirm(string message, Action doNotShowAgain, ViewResult defaultButton = ViewResult.Yes) => ViewResult.Yes;
 
       public ViewResult MessageBoxYesNo(string message, string yes, string no, ViewResult defaultButton) => ViewResult.Yes;
 

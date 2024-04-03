@@ -18,6 +18,7 @@ namespace OSPSuite.Core.Services
       protected IDataRepositoryExportTask _dataRepositoryTask;
       protected IContainerTask _containerTask;
       protected IObjectTypeResolver _objectTypeResolver;
+      protected IConfirmationManager _confirmationManager;
       protected DataRepository _obsData1;
       protected DataRepository _obsData2;
       protected List<IUsesObservedData> _allUserOfObservedData = new List<IUsesObservedData>();
@@ -29,8 +30,9 @@ namespace OSPSuite.Core.Services
          _dataRepositoryTask = A.Fake<IDataRepositoryExportTask>();
          _containerTask = A.Fake<IContainerTask>();
          _objectTypeResolver = A.Fake<IObjectTypeResolver>();
+         _confirmationManager = A.Fake<IConfirmationManager>();
 
-         sut = new ObservedDataTaskForSpecs(_dialogCreator, _context, _dataRepositoryTask, _containerTask, _objectTypeResolver);
+         sut = new ObservedDataTaskForSpecs(_dialogCreator, _context, _dataRepositoryTask, _containerTask, _objectTypeResolver, _confirmationManager);
 
          _obsData1 = DomainHelperForSpecs.ObservedData("OBS1");
          _obsData2 = DomainHelperForSpecs.ObservedData("OBS2");
@@ -183,8 +185,8 @@ namespace OSPSuite.Core.Services
 
    internal class ObservedDataTaskForSpecs : ObservedDataTask
    {
-      public ObservedDataTaskForSpecs(IDialogCreator dialogCreator, IOSPSuiteExecutionContext executionContext, IDataRepositoryExportTask dataRepositoryTask, IContainerTask containerTask, IObjectTypeResolver objectTypeResolver) : base(dialogCreator, executionContext, dataRepositoryTask,
-         containerTask, objectTypeResolver)
+      public ObservedDataTaskForSpecs(IDialogCreator dialogCreator, IOSPSuiteExecutionContext executionContext, IDataRepositoryExportTask dataRepositoryTask, IContainerTask containerTask, IObjectTypeResolver objectTypeResolver, IConfirmationManager confirmationManager) : base(dialogCreator, executionContext, dataRepositoryTask,
+         containerTask, objectTypeResolver, confirmationManager)
       {
       }
 
