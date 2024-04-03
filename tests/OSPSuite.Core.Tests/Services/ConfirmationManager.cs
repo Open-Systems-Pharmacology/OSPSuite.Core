@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Services
       }
    }
 
-    internal class When_add_a_flag_that_already_exists : concern_for_ConfirmationManager
+    internal class When_adding_a_flag_that_already_exists : concern_for_ConfirmationManager
    {
       protected override void Because()
       {
