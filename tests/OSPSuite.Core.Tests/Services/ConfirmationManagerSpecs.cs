@@ -11,7 +11,7 @@ namespace OSPSuite.Core.Services
       }
    }
 
-   internal class When_add_a_suppression_flag : concern_for_ConfirmationManager
+   internal class When_adding_a_suppression_flag : concern_for_ConfirmationManager
    {
       protected override void Because()
       {
