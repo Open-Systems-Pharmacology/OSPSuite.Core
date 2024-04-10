@@ -96,15 +96,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          this.DoWithinLatch(() =>
          {
             UpdateCache();
-            updateOutputMapppingList();
-            _view.BindTo(_allOutputMappingDTOs);
+            updateOutputMappingList();
          });
+         _view.BindTo(_allOutputMappingDTOs);
       }
 
-      public void UpdateCache()
-      {
-         _allAvailableOutputs.Clear();
-      }
+      public void UpdateCache() => _allAvailableOutputs.Clear();
 
       public void AddOutputMapping()
       {
@@ -114,7 +111,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          OnStatusChanged();
       }
 
-      private void updateOutputMapppingList()
+      private void updateOutputMappingList()
       {
          _allOutputMappingDTOs.Clear();
          _parameterIdentification.AllOutputMappings.Each(x => _allOutputMappingDTOs.Add(mapFrom(x)));
@@ -137,20 +134,11 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          }
       }
 
-      private SimulationQuantitySelectionDTO mapFrom(ISimulation simulation, IQuantity quantity)
-      {
-         return _simulationQuantitySelectionDTOMapper.MapFrom(simulation, quantity);
-      }
+      private SimulationQuantitySelectionDTO mapFrom(ISimulation simulation, IQuantity quantity) => _simulationQuantitySelectionDTOMapper.MapFrom(simulation, quantity);
 
-      private OutputMappingDTO mapFrom(OutputMapping outputMapping)
-      {
-         return _outputMappingDTOMapper.MapFrom(outputMapping, AllAvailableOutputs);
-      }
+      private OutputMappingDTO mapFrom(OutputMapping outputMapping) => _outputMappingDTOMapper.MapFrom(outputMapping, AllAvailableOutputs);
 
-      public IEnumerable<DataRepository> AllObservedDataFor(OutputMappingDTO outputMappingDTO)
-      {
-         return allPossibleObservedDataForOutput(outputMappingDTO.Output);
-      }
+      public IEnumerable<DataRepository> AllObservedDataFor(OutputMappingDTO outputMappingDTO) => allPossibleObservedDataForOutput(outputMappingDTO.Output);
 
       private IEnumerable<DataRepository> allPossibleObservedDataForOutput(SimulationQuantitySelectionDTO outputSelectionDTO)
       {
@@ -165,7 +153,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void ObservedDataSelectionChanged(OutputMappingDTO dto, DataRepository newObservedData, DataRepository oldObservedData)
       {
-         var allOutputsUsingObservedData = _allOutputMappingDTOs.Where(x => Equals(x.ObservedData, newObservedData)).Except(new[] {dto}).ToList();
+         var allOutputsUsingObservedData = _allOutputMappingDTOs.Where(x => Equals(x.ObservedData, newObservedData)).Except(new[] { dto }).ToList();
 
          if (observedDataAlreadySelectedForSameOutput(dto.Output, newObservedData))
          {
@@ -197,10 +185,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          return allIds.Max() + 1;
       }
 
-      private bool observedDataAlreadySelectedForSameOutput(SimulationQuantitySelectionDTO outputDTO, DataRepository observedData)
-      {
-         return _allOutputMappingDTOs.Count(x => Equals(x.Output, outputDTO) && Equals(x.ObservedData, observedData)) > 1;
-      }
+      private bool observedDataAlreadySelectedForSameOutput(SimulationQuantitySelectionDTO outputDTO, DataRepository observedData) => _allOutputMappingDTOs.Count(x => Equals(x.Output, outputDTO) && Equals(x.ObservedData, observedData)) > 1;
 
       public void OutputSelectionChanged(OutputMappingDTO dto, SimulationQuantitySelectionDTO newOutput, SimulationQuantitySelectionDTO oldOutput)
       {
@@ -214,10 +199,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          dto.Scaling = _parameterIdentificationTask.DefaultScalingFor(newOutput.Quantity);
       }
 
-      public void Select(OutputMappingDTO outputMappingDTO)
-      {
-         this.DoWithinLatch(() => ObservedDataSelected(this, new ObservedDataEventArgs(outputMappingDTO.WeightedObservedData)));
-      }
+      public void Select(OutputMappingDTO outputMappingDTO) => this.DoWithinLatch(() => ObservedDataSelected(this, new ObservedDataEventArgs(outputMappingDTO.WeightedObservedData)));
 
       public void RemoveOutputMapping(OutputMappingDTO outputMappingDTO)
       {
@@ -234,9 +216,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
             ObservedDataUnmapped(this, new ObservedDataEventArgs(weightedObservedData));
       }
 
-      private void raiseObservedDataMappedFor(WeightedObservedData weightedObservedData)
-      {
-         ObservedDataMapped(this, new ObservedDataEventArgs(weightedObservedData));
-      }
+      private void raiseObservedDataMappedFor(WeightedObservedData weightedObservedData) => ObservedDataMapped(this, new ObservedDataEventArgs(weightedObservedData));
    }
 }

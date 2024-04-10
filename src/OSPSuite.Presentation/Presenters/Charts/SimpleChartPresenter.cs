@@ -67,6 +67,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Refresh the display after external changes were made to the chart
       /// </summary>
       void Refresh();
+
+      void Clear();
    }
 
    public class SimpleChartPresenter : AbstractCommandCollectorPresenter<ISimpleChartView, ISimpleChartPresenter>, ISimpleChartPresenter
@@ -92,6 +94,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
          LogLinSelectionEnabled = false;
          AddSubPresenters(_chartDisplayPresenter);
       }
+
+      public void Clear() => _chartDisplayPresenter.Clear();
 
       public Action<int> HotTracked
       {
@@ -136,15 +140,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public CurveChart Plot(DataRepository dataRepository, Scalings scale)
       {
          Chart = _chartFactory.CreateChartFor(dataRepository, scale);
-         setChartScalingForObservedData(new[] {dataRepository});
+         setChartScalingForObservedData(new[] { dataRepository });
          bindToChart();
          return Chart;
       }
 
-      public CurveChart Plot(DataRepository dataRepository)
-      {
-         return Plot(dataRepository, _presentationUserSettings.DefaultChartYScaling);
-      }
+      public CurveChart Plot(DataRepository dataRepository) => Plot(dataRepository, _presentationUserSettings.DefaultChartYScaling);
 
       public CurveChart PlotObservedData(IEnumerable<DataRepository> observedData)
       {
@@ -165,20 +166,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          Chart.DefaultYAxisScaling = Scalings.Linear;
       }
 
-      private bool shouldUseLinearScaling(IReadOnlyList<DataRepository> observedData)
-      {
-         return observedData.Any(dataRepositoryHasFraction);
-      }
+      private bool shouldUseLinearScaling(IReadOnlyList<DataRepository> observedData) => observedData.Any(dataRepositoryHasFraction);
 
-      private bool dataRepositoryHasFraction(DataRepository dataRepository)
-      {
-         return dataRepository.AllButBaseGrid().Any(x => x.IsFraction());
-      }
+      private bool dataRepositoryHasFraction(DataRepository dataRepository) => dataRepository.AllButBaseGrid().Any(x => x.IsFraction());
 
-      public CurveChart PlotObservedData(DataRepository observedData)
-      {
-         return PlotObservedData(new[] {observedData}).WithName(observedData.Name);
-      }
+      public CurveChart PlotObservedData(DataRepository observedData) => PlotObservedData(new[] { observedData }).WithName(observedData.Name);
 
       private void setScaleInView(CurveChart chart)
       {

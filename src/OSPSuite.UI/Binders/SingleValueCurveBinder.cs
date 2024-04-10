@@ -3,6 +3,7 @@ using System.Data;
 using DevExpress.XtraCharts;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Mappers;
+using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
@@ -22,7 +23,7 @@ namespace OSPSuite.UI.Binders
          UpdateLineSeries(_lineSeries);
       }
 
-      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, float baseValue)
+      protected override bool AddRelatedValuesToRow(DataRow row, DataColumn yData, IDimension yDimension, Unit yUnit, double y, BaseGrid baseGrid, int baseIndex)
       {
          //no related values here
          return true;

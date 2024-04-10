@@ -1,4 +1,5 @@
-﻿using OSPSuite.Assets;
+﻿using DevExpress.Utils;
+using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -17,22 +18,20 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          InitializeComponent();
 
          layoutControl.Resize += (o, e) => OnEvent(layoutControlResized);
-         VisibleChanged+= (o, e) =>OnEvent(ResizeView);
+         VisibleChanged += (o, e) => OnEvent(ResizeView);
       }
 
-      public void AttachPresenter(IParameterIdentificationWeightedObservedDataPresenter presenter)
-      {
-         _presenter = presenter;
-      }
+      public void AttachPresenter(IParameterIdentificationWeightedObservedDataPresenter presenter) => _presenter = presenter;
 
-      public void AddDataView(IView view)
-      {
-         panelData.FillWith(view);
-      }
+      public void AddDataView(IView view) => panelData.FillWith(view);
 
-      public void AddChartView(IView view)
+      public void AddChartView(IView view) => panelChart.FillWith(view);
+
+      public void SetTitle(string displayName)
       {
-         panelChart.FillWith(view);
+         layoutControlGroup.TextVisible = true;
+         layoutControlGroup.TextLocation = Locations.Top;
+         layoutControlGroup.Text = displayName;
       }
 
       public void ResizeView()
@@ -41,9 +40,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          layoutControl.Refresh();
       }
 
-      private void layoutControlResized()
-      {
-         ResizeView();
-      }
+      private void layoutControlResized() => ResizeView();
    }
 }

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -42,6 +42,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
       public void BindTo(IEnumerable<OutputMappingDTO> outputMappingList)
       {
          _gridViewBinder.BindToSource(outputMappingList);
+         selectFocusedElement();
       }
 
       public override void InitializeBinding()
@@ -77,30 +78,35 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          _gridViewBinder.Changed += NotifyViewChanged;
 
          btnAddOutput.Click += (o, e) => OnEvent(_presenter.AddOutputMapping);
-         _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.RemoveOutputMapping(_gridViewBinder.FocusedElement));
+         _removeButtonRepository.ButtonClick += (o, e) => OnEvent(removeMapping);
 
          gridView.FocusedRowChanged += (o, e) => OnEvent(gridViewRowChanged, e);
+      }
 
+      private void removeMapping()
+      {
+         _presenter.RemoveOutputMapping(_gridViewBinder.FocusedElement);
+         // The focused element could have changed after removing the mapping
+         selectFocusedElement();
       }
 
       private IFormatter<DataRepository> observedDataDisplay(OutputMappingDTO outputMappingDTO) => new WeightedObservedDataFormatter(outputMappingDTO);
 
-      private void gridViewRowChanged(FocusedRowChangedEventArgs e)
+      private void gridViewRowChanged(FocusedRowChangedEventArgs e) => selectFocusedElement();
+
+      private void selectFocusedElement() => selectItem(_gridViewBinder.FocusedElement);
+
+      private void selectItem(OutputMappingDTO selectedItem)
       {
-         var selectedItem = _gridViewBinder.ElementAt(e.FocusedRowHandle);
-         if (selectedItem == null) return;
+         if (selectedItem == null)
+            return;
+
          _presenter.Select(selectedItem);
       }
 
-      private RepositoryItem allOutputsRepository(OutputMappingDTO dto)
-      {
-         return RepositoryItemFor(_presenter.AllAvailableOutputs, _outputRepository);
-      }
+      private RepositoryItem allOutputsRepository(OutputMappingDTO dto) => RepositoryItemFor(_presenter.AllAvailableOutputs, _outputRepository);
 
-      private RepositoryItem allObservedDataRepository(OutputMappingDTO dto)
-      {
-         return RepositoryItemFor(_presenter.AllObservedDataFor(dto), _observedDataRepository);
-      }
+      private RepositoryItem allObservedDataRepository(OutputMappingDTO dto) => RepositoryItemFor(_presenter.AllObservedDataFor(dto), _observedDataRepository);
 
       protected RepositoryItem RepositoryItemFor<T>(IEnumerable<T> allItems, UxRepositoryItemComboBox listRepositoryItems)
       {
@@ -118,9 +124,6 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
       public override bool HasError => _gridViewBinder.HasError;
 
-      public void CloseEditor()
-      {
-         gridView.CloseEditor();
-      }
+      public void CloseEditor() => gridView.CloseEditor();
    }
 }

@@ -7,5 +7,6 @@ namespace OSPSuite.Presentation.Views.ParameterIdentifications
    {
       void DisplayColumnReadOnly(System.Data.DataColumn column);
       void SelectRow(int rowIndex);
+      void Clear();
    }
 }
