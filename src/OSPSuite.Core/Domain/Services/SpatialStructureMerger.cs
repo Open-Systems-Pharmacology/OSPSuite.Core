@@ -97,7 +97,7 @@ namespace OSPSuite.Core.Domain.Services
             return;
 
          //In this case, we add or replace the top container
-         if (topContainer.ParentPath == null)
+         if (topContainer.ParentPath == null || string.IsNullOrEmpty(topContainer.ParentPath.PathAsString))
             addOrReplaceContainer(topContainer, root);
          else
             insertTopContainerIntoStructure(topContainer, root);
