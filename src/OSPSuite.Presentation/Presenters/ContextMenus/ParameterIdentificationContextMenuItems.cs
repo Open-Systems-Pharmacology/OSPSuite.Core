@@ -89,6 +89,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
          yield return EditParameterIdentification(parameterIdentification, container)
             .AsGroupStarter();
+
          yield return RenameParameterIdentification(parameterIdentification, container);
 
          yield return CloneParameterIdentification(parameterIdentification, container)
