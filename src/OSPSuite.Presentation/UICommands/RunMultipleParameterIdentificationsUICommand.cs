@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OSPSuite.Presentation.UICommands
 {
-    public class RunMultipleParameterIdentificationsUICommand : ActiveObjectUICommand<IReadOnlyList<ParameterIdentification>>
+   public class RunMultipleParameterIdentificationsUICommand : ActiveObjectUICommand<IReadOnlyList<ParameterIdentification>>
    {
       private readonly IParameterIdentificationRunner _parameterIdentificationRunner;
 
@@ -17,7 +17,7 @@ namespace OSPSuite.Presentation.UICommands
          IActiveSubjectRetriever activeSubjectRetriever)
          : base(activeSubjectRetriever)
       {
-         this._parameterIdentificationRunner = parameterIdentificationRunner;
+         _parameterIdentificationRunner = parameterIdentificationRunner;
       }
 
       protected override async void PerformExecute()
