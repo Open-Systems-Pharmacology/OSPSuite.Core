@@ -30,9 +30,18 @@ namespace OSPSuite.Core.Domain
          return AllApplicationParametersOrderedByStartTimeFor(simulation, moleculeName);
       }
 
+      private static List<EventGroup> getEventGroupsFrom(IContainer container)
+      {
+         return container?.GetChildren<EventGroup>().ToList();
+      }
+
       private static IReadOnlyList<IContainer> allApplicationsForMolecule(IModelCoreSimulation simulation, string moleculeName)
       {
-         var applicationEventGroup = simulation.Model.Root.GetChildren<EventGroup>().ToList();
+         var applicationsFromEventContainer = getEventGroupsFrom(simulation.Model.Root.GetSingleChildByName<IContainer>(Constants.EVENTS));
+         var applicationEventGroup = getEventGroupsFrom(simulation.Model.Root);
+         if(applicationsFromEventContainer != null && applicationsFromEventContainer.Any())
+            applicationEventGroup.AddRange(applicationsFromEventContainer);
+
          if (!applicationEventGroup.Any())
             return new List<IContainer>();
 
