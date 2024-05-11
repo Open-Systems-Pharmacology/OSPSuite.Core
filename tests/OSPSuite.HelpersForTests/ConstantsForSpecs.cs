@@ -7,6 +7,7 @@ namespace OSPSuite.Helpers
       public const string fu ="fu";
       public const string Bone = "Bone";
       public const string P = "P";
+      public const string P2 = "P2";
       public const string pH = "pH";
       public const string Q = "Q";
       public const string Volume = "Volume";

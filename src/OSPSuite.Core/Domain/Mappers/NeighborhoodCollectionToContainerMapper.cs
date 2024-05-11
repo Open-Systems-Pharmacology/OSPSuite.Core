@@ -45,7 +45,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
          //we use a cache to ensure that we are replacing neighborhoods defined in multiple structures
          var neighborhoodCache = new ObjectBaseCache<Neighborhood>();
-         var allNeighborhoodBuilder = simulationBuilder.SpatialStructures.SelectMany(x => x.Neighborhoods);
+         var allNeighborhoodBuilder = simulationBuilder.SpatialStructureAndMergeBehaviors.SelectMany(x => x.Neighborhoods);
          neighborhoodCache.AddRange(allNeighborhoodBuilder.Select(nb =>
                _neighborhoodMapper.MapFrom(nb, moleculeNamesFor(nb, startValuesForFloatingMolecules), moleculeNamesCopyProperties, modelConfiguration))
             //can be null if the neighbors are not defined in the merged spatial structure

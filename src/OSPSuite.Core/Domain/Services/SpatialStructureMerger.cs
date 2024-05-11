@@ -49,18 +49,18 @@ namespace OSPSuite.Core.Domain.Services
 
       private void createMergedContainerStructureInRoot(IContainer root, SimulationBuilder simulationBuilder)
       {
-         var allSpatialStructures = simulationBuilder.SpatialStructures;
-         if (!allSpatialStructures.Any())
+         var allSpatialStructureAndMergeBehaviors = simulationBuilder.SpatialStructureAndMergeBehaviors;
+         if (!allSpatialStructureAndMergeBehaviors.Any())
             return;
 
-         var firstSpatialStructure = allSpatialStructures[0];
-         var allOtherSpatialStructures = allSpatialStructures.Skip(1).ToList();
+         var firstSpatialStructure = allSpatialStructureAndMergeBehaviors[0].spatialStructure;
+         var allOtherSpatialStructures = allSpatialStructureAndMergeBehaviors.Skip(1).ToList();
          var mapToModelContainer = mapContainerDef(simulationBuilder);
          var mergeTopContainerIntoModel = mergeTopContainerInStructure(root);
 
          // First step: We create the container structure.
          // This is done by adding all top containers defined in the FIRST spatial structure
-         // Then we merge all other top containers defined in the other spatial structures
+         // Then we merge all other top containers defined in the other spatial structures based on the merge behavior
 
          // Add each container defined in the spatial structure and direct child of the root container
          root.AddChildren(firstSpatialStructure.TopContainers.Select(mapToModelContainer));
@@ -72,7 +72,7 @@ namespace OSPSuite.Core.Domain.Services
             .Each(mergeTopContainerIntoModel);
 
          //create the temporary GLOBAL MOLECULE PROPERTIES THAT WILL BE REMOVED AT THE END but used as based for copying
-         var allGlobalMoleculeContainers = allSpatialStructures
+         var allGlobalMoleculeContainers = allSpatialStructureAndMergeBehaviors
             .Select(x => x.GlobalMoleculeDependentProperties)
             .Select(mapToModelContainer)
             .ToList();
