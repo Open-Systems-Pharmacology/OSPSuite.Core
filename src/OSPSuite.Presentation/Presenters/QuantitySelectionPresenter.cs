@@ -63,6 +63,12 @@ namespace OSPSuite.Presentation.Presenters
       ///    If sets to true, empty path columns will be hidden automatically. Default is false
       /// </summary>
       bool AutomaticallyHideEmptyColumns { get; set; }
+
+      /// <summary>
+      /// Clears the current selection and refreshes using any quantities from <paramref name="selections"/>
+      /// that are available in the simulation where the paths match
+      /// </summary>
+      void UpdateSelection(IReadOnlyList<QuantitySelection> selections);
    }
 
    public class QuantitySelectionPresenter : AbstractPresenter<IQuantitySelectionView, IQuantitySelectionPresenter>, IQuantitySelectionPresenter
@@ -114,6 +120,24 @@ namespace OSPSuite.Presentation.Presenters
          selectedDTO.Each(dto => dto.Selected = true);
       }
 
+      public void UpdateSelection(IReadOnlyList<QuantitySelection> selections)
+      {
+         DeselectAll();
+         selections.Each(select);
+         refreshView();
+      }
+
+      private void select(QuantitySelection outputSelection)
+      {
+         var dto = _allQuantityListPresenter.QuantityDTOByPath(outputSelection.Path);
+
+         if (dto == null) 
+            return;
+
+         _selectedQuantityListPresenter.Add(dto);
+         dto.Selected = true;
+      }
+
       private void updateSelection(object sender, QuantitySelectionChangedEventArgs e)
       {
          var selectedQuantities = e.QuantitySelections.ToList();
@@ -140,7 +164,7 @@ namespace OSPSuite.Presentation.Presenters
 
       public void DeselectAll()
       {
-         //cache locally as UpdateSelection will be triggerd
+         //cache locally as UpdateSelection will be triggered
          var allMolecules = _selectedQuantityListPresenter.AllQuantityDTOs.ToList();
          _selectedQuantityListPresenter.UpdateSelection(allMolecules, selected: false);
       }
