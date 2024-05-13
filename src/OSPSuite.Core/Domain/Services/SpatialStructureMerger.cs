@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain.Services
             return;
 
          var firstSpatialStructure = allSpatialStructureAndMergeBehaviors[0].spatialStructure;
-         var allOtherSpatialStructures = allSpatialStructureAndMergeBehaviors.Skip(1).ToList();
+         var allOtherSpatialStructuresWithMergeBehavior = allSpatialStructureAndMergeBehaviors.Skip(1).ToList();
          var mapToModelContainer = mapContainerDef(simulationBuilder);
          var mergeTopContainerIntoModel = mergeTopContainerInStructure(root);
 
@@ -66,14 +66,15 @@ namespace OSPSuite.Core.Domain.Services
          root.AddChildren(firstSpatialStructure.TopContainers.Select(mapToModelContainer));
 
          //Merge all other spatial structures
-         allOtherSpatialStructures.SelectMany(x => x.TopContainers)
-            //make sure we map the container to a model container so that we do not change the original containers
-            .Select(mapToModelContainer)
-            .Each(mergeTopContainerIntoModel);
+         //make sure we map the container to a model container so that we do not change the original containers
+
+         allOtherSpatialStructuresWithMergeBehavior.Select(x => new {x.mergeBehavior, topContainers = x.spatialStructure.TopContainers.Select(mapToModelContainer).ToList()})
+            .Each(x => x.topContainers.Each(topContainer => mergeTopContainerIntoModel(topContainer, x.mergeBehavior)));
 
          //create the temporary GLOBAL MOLECULE PROPERTIES THAT WILL BE REMOVED AT THE END but used as based for copying
+         //For molecule properties, we always merged as we used to and never replace
          var allGlobalMoleculeContainers = allSpatialStructureAndMergeBehaviors
-            .Select(x => x.GlobalMoleculeDependentProperties)
+            .Select(x=>x.spatialStructure.GlobalMoleculeDependentProperties)
             .Select(mapToModelContainer)
             .ToList();
 
@@ -90,7 +91,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private Func<IContainer, IContainer> mapContainerDef(SimulationBuilder simulationBuilder) => container => _containerMapper.MapFrom(container, simulationBuilder);
 
-      private Action<IContainer> mergeTopContainerInStructure(IContainer root) => topContainer =>
+      private Action<IContainer, MergeBehavior> mergeTopContainerInStructure(IContainer root) => (topContainer, mergeBehavior) =>
       {
          //probably should never happen
          if (topContainer == null)
@@ -98,24 +99,24 @@ namespace OSPSuite.Core.Domain.Services
 
          //In this case, we add or replace the top container
          if (topContainer.ParentPath == null || string.IsNullOrEmpty(topContainer.ParentPath.PathAsString))
-            addOrReplaceContainer(topContainer, root);
+            addOrReplaceContainer(topContainer, root, mergeBehavior);
          else
-            insertTopContainerIntoStructure(topContainer, root);
+            insertTopContainerIntoStructure(topContainer, root, mergeBehavior);
       };
 
-      private void insertTopContainerIntoStructure(IContainer topContainer, IContainer root)
+      private void insertTopContainerIntoStructure(IContainer topContainer, IContainer root, MergeBehavior mergeBehavior)
       {
          var parentContainer = topContainer.ParentPath.Resolve<IContainer>(root);
          if (parentContainer == null)
             throw new OSPSuiteException(Error.CannotFindParentContainerWithPath(topContainer.ParentPath.PathAsString, topContainer.Name));
 
-         addOrReplaceContainer(topContainer, parentContainer);
+         addOrReplaceContainer(topContainer, parentContainer, mergeBehavior);
       }
 
-      private void addOrReplaceContainer(IContainer containerToAdd, IContainer parentContainer)
+      private void addOrReplaceContainer(IContainer containerToAdd, IContainer parentContainer, MergeBehavior mergeBehavior)
       {
-         //we do have a special case to deal with when dealing with MoleculeProperties container that we merge instead of replacing
-         if (containerToAdd.IsNamed(Constants.MOLECULE_PROPERTIES))
+         //Merge behavior is merged or we have a special case to deal with when dealing with MoleculeProperties container that we merge instead of replacing
+         if (mergeBehavior == MergeBehavior.Extend || containerToAdd.IsNamed(Constants.MOLECULE_PROPERTIES))
             addOrMergeContainer(parentContainer, containerToAdd);
          else
             addOrReplaceInContainer(parentContainer, containerToAdd);
