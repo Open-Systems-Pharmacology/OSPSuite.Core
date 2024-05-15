@@ -63,7 +63,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_throw_an_exception()
       {
-         _pkmlPersistor.SaveToPKML(_simulationBuilder.SpatialStructures[0], _filePath);
+         _pkmlPersistor.SaveToPKML(_simulationBuilder.SpatialStructureAndMergeBehaviors[0].spatialStructure, _filePath);
          File.Exists(_filePath).ShouldBeTrue();
 
          var deserializationObjectBaseRepository = IoC.Resolve<IWithIdRepository>();

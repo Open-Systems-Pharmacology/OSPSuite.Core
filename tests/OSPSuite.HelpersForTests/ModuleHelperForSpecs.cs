@@ -1,8 +1,8 @@
-﻿using OSPSuite.Core.Domain;
+﻿using System.Linq;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
-using System.Linq;
 using static OSPSuite.Core.Domain.Constants;
 using static OSPSuite.Helpers.ConstantsForSpecs;
 
@@ -50,6 +50,21 @@ namespace OSPSuite.Helpers
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module3));
+         return simulationConfiguration;
+      }
+
+      public SimulationConfiguration CreateSimulationConfigurationForExtendMergeBehavior()
+      {
+         var simulationConfiguration = new SimulationConfiguration
+         {
+            SimulationSettings = createSimulationConfiguration(),
+         };
+
+         var module1 = createModule1();
+         var module2 = createModule2();
+
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2) {MergeBehavior = MergeBehavior.Extend});
          return simulationConfiguration;
       }
 
@@ -118,6 +133,16 @@ namespace OSPSuite.Helpers
 
 
          //LUNG
+         // Lung
+         //   - Plasma
+         //      - Volume
+         //      - pH
+         //   - Cell
+         //      - Volume
+         //      - pH
+         //   - Q
+         //   - P
+
          var lung = createContainerWithName(Lung);
 
          var lngPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
@@ -218,6 +243,17 @@ namespace OSPSuite.Helpers
          spatialStructure.GlobalMoleculeDependentProperties = globalMoleculeProperties;
 
          //LUNG with other parameters and interstitial compartment
+         // Lung
+         //   - Plasma
+         //      - Volume
+         //      - pH
+         //   - Cell
+         //      - Volume
+         //      - pH
+         //   - Interstitial
+         //      - Volume
+         //      - pH
+
          var lung = createContainerWithName(Lung);
 
          var lngPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
@@ -233,6 +269,8 @@ namespace OSPSuite.Helpers
          var lngInt = createContainerWithName(Interstitial, ContainerMode.Physical);
          lngInt.Add(newConstantParameter(Volume, 10));
          lngInt.Add(newConstantParameter(pH, 2));
+         lung.Add(newConstantParameter(Q, 5));
+         lung.Add(newConstantParameter(P2, 10));
          lung.Add(lngInt);
 
          //it will be added to the organism

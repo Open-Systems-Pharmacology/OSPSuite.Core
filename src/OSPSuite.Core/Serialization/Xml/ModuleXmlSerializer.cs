@@ -10,6 +10,7 @@ namespace OSPSuite.Core.Serialization.Xml
          MapEnumerable(x => x.BuildingBlocks, x => x.Add);
          Map(x => x.PKSimVersion);
          Map(x => x.ModuleImportVersion);
+         Map(x => x.DefaultMergeBehavior);
       }
    }
 }
