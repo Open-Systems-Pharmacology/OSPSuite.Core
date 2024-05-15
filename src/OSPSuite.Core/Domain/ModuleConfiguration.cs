@@ -6,26 +6,6 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain
 {
-   /// <summary>
-   ///    Merge behavior for merging spatial structures form different modules
-   /// </summary>
-   public enum MergeBehavior
-   {
-      /// <summary>
-      ///    A container being merged will overwrite existing containers if found (by name) This is the default behavior
-      /// </summary>
-      Overwrite,
-
-      /// <summary>
-      ///    If a container with the same name is found, we try to merge the content of the container being merged into the
-      ///    existing container according to the following logic
-      ///    * We add non existing children (by name) to the existing container
-      ///    * We replace existing parameter by name
-      ///    * We replace existing formula by name
-      ///    * if a child container with the same name is found, we recursively merge the content of the child container
-      /// </summary>
-      Extend
-   }
 
    public class ModuleConfiguration : IVisitable<IVisitor>, IUpdatable
    {
@@ -41,7 +21,10 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public ParameterValuesBuildingBlock SelectedParameterValues { get; set; }
 
-      public MergeBehavior MergeBehavior { get; set; } = MergeBehavior.Overwrite;
+      /// <summary>
+      /// Merge behavior for merging spatial structures form different modules. Default value will be taken from the module
+      /// </summary>
+      public MergeBehavior MergeBehavior { get; set; } 
 
       [Obsolete("For serialization")]
       public ModuleConfiguration()
@@ -56,6 +39,7 @@ namespace OSPSuite.Core.Domain
       public ModuleConfiguration(Module module) : this(module, module.InitialConditionsCollection.FirstOrDefault(), module.ParameterValuesCollection.FirstOrDefault())
       {
          Module = module;
+         MergeBehavior = module.DefaultMergeBehavior;
       }
 
       /// <summary>

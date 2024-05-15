@@ -115,7 +115,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private void addOrReplaceContainer(IContainer containerToAdd, IContainer parentContainer, MergeBehavior mergeBehavior)
       {
-         //Merge behavior is merged or we have a special case to deal with when dealing with MoleculeProperties container that we merge instead of replacing
+         //Merge behavior is extend or we have a special case to deal with when dealing with MoleculeProperties container that we merge instead of replacing
          if (mergeBehavior == MergeBehavior.Extend || containerToAdd.IsNamed(Constants.MOLECULE_PROPERTIES))
             addOrMergeContainer(parentContainer, containerToAdd);
          else
