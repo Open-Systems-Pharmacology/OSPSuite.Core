@@ -39,10 +39,10 @@ namespace OSPSuite.Presentation.DTO
 
       public bool Selected
       {
-         get { return _selected; }
+         get => _selected;
          set
          {
-            //this check is extremly important to avoid raising Selected event too many time 
+            //this check is extremely important to avoid raising Selected event too many times
             //which may result in total rebind of the UI
             if (_selected == value)
                return;

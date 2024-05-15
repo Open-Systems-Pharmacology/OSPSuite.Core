@@ -6,6 +6,7 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain
 {
+
    public class ModuleConfiguration : IVisitable<IVisitor>, IUpdatable
    {
       public Module Module { get; private set; }
@@ -20,6 +21,11 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public ParameterValuesBuildingBlock SelectedParameterValues { get; set; }
 
+      /// <summary>
+      /// Merge behavior for merging spatial structures form different modules. Default value will be taken from the module
+      /// </summary>
+      public MergeBehavior MergeBehavior { get; set; } 
+
       [Obsolete("For serialization")]
       public ModuleConfiguration()
       {
@@ -33,6 +39,7 @@ namespace OSPSuite.Core.Domain
       public ModuleConfiguration(Module module) : this(module, module.InitialConditionsCollection.FirstOrDefault(), module.ParameterValuesCollection.FirstOrDefault())
       {
          Module = module;
+         MergeBehavior = module.DefaultMergeBehavior;
       }
 
       /// <summary>

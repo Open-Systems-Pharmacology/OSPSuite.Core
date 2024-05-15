@@ -496,7 +496,7 @@ namespace OSPSuite.Core
          var simulationBuilder = new SimulationBuilder(_simulationConfiguration);
 
          var initialCondition = simulationBuilder.InitialConditions.First();
-         var physicalContainer = simulationBuilder.SpatialStructures.SelectMany(x => x.TopContainers)
+         var physicalContainer = simulationBuilder.SpatialStructureAndMergeBehaviors.SelectMany(x => x.spatialStructure.TopContainers)
             .Select(x => initialCondition.ContainerPath.TryResolve<IContainer>(x)).First(x => x != null);
 
          physicalContainer.Mode = ContainerMode.Logical;

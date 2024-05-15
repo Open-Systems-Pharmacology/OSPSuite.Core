@@ -32,6 +32,8 @@ namespace OSPSuite.Core.Domain
          _parameterValuesBuildingBlock = new ParameterValuesBuildingBlock();
          _module.Add(_parameterValuesBuildingBlock);
 
+         _module.DefaultMergeBehavior = MergeBehavior.Overwrite;
+
          sut = new ModuleConfiguration(_module);
       }
    }
@@ -39,10 +41,27 @@ namespace OSPSuite.Core.Domain
    public class When_creating_new_module_configuration_from_a_module : concern_for_ModuleConfiguration
    {
       [Observation]
+      public void should_have_set_the_merge_behavior_based_on_the_module()
+      {
+         sut.MergeBehavior.ShouldBeEqualTo(MergeBehavior.Overwrite);
+      }
+
+      [Observation]
       public void should_return_the_fist_initial_condition_and_parameter_value_if_one_is_defined()
       {
          sut.SelectedInitialConditions.ShouldBeEqualTo(_initialConditionsBuildingBlock1);
          sut.SelectedParameterValues.ShouldBeEqualTo(_parameterValuesBuildingBlock);
+      }
+   }
+
+   public class When_setting_the_merge_behavior_on_the_module_configuration : concern_for_ModuleConfiguration
+   {
+      [Observation]
+      public void should_not_change_the_default_merge_behavior_in_the_underlying_module()
+      {
+         sut.MergeBehavior.ShouldBeEqualTo(MergeBehavior.Overwrite);
+         sut.MergeBehavior = MergeBehavior.Extend;
+         _module.DefaultMergeBehavior.ShouldBeEqualTo(MergeBehavior.Overwrite);
       }
    }
 
@@ -73,7 +92,7 @@ namespace OSPSuite.Core.Domain
          base.Context();
          _dataRepositoryTask = A.Fake<IDataRepositoryTask>();
          _cloneManager = new CloneManagerForBuildingBlock(new ObjectBaseFactoryForSpecs(new DimensionFactoryForIntegrationTests()), _dataRepositoryTask);
-         
+
          sut.SelectedInitialConditions = _initialConditionsBuildingBlock2;
          sut.SelectedParameterValues = null;
       }

@@ -121,7 +121,9 @@ namespace OSPSuite.Core.Domain.Builder
          builder.MoleculeList.MoleculeNamesToExclude.Each(moleculeList.AddMoleculeNameToExclude);
       }
 
-      internal IReadOnlyList<SpatialStructure> SpatialStructures => all(x => x.SpatialStructure);
+      internal IReadOnlyList<(SpatialStructure spatialStructure, MergeBehavior mergeBehavior)> SpatialStructureAndMergeBehaviors =>
+         _simulationConfiguration.ModuleConfigurations.Where(x => x.Module.SpatialStructure != null).Select(x => (x.Module.SpatialStructure, x.MergeBehavior)).ToList();
+
       internal IReadOnlyCollection<TransportBuilder> PassiveTransports => _passiveTransports;
       internal IReadOnlyCollection<ReactionBuilder> Reactions => _reactions;
       internal IReadOnlyCollection<EventGroupBuilder> EventGroups => _eventGroups;

@@ -10,6 +10,27 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain
 {
+   /// <summary>
+   ///    Merge behavior for merging spatial structures form different modules
+   /// </summary>
+   public enum MergeBehavior
+   {
+      /// <summary>
+      ///    A container being merged will overwrite existing containers if found (by name) This is the default behavior
+      /// </summary>
+      Overwrite,
+
+      /// <summary>
+      ///    If a container with the same name is found, we try to merge the content of the container being merged into the
+      ///    existing container according to the following logic
+      ///    * We add non existing children (by name) to the existing container
+      ///    * We replace existing parameter by name
+      ///    * We replace existing formula by name
+      ///    * if a child container with the same name is found, we recursively merge the content of the child container
+      /// </summary>
+      Extend
+   }
+
    public class Module : ObjectBase, IEnumerable<IBuildingBlock>
    {
       private readonly List<IBuildingBlock> _buildingBlocks = new List<IBuildingBlock>();
@@ -18,14 +39,19 @@ namespace OSPSuite.Core.Domain
       private IReadOnlyList<T> buildingBlocksByType<T>() where T : IBuildingBlock => _buildingBlocks.OfType<T>().ToList();
 
       /// <summary>
-      /// Module is a PKSim module if created in PKSim and the module version
-      /// matches the version when it was first imported
+      ///    Module is a PKSim module if created in PKSim and the module version
+      ///    matches the version when it was first imported
       /// </summary>
       public bool IsPKSimModule => !string.IsNullOrEmpty(PKSimVersion) && Equals(Version, ModuleImportVersion);
 
       public string ModuleImportVersion { get; set; }
 
       public string PKSimVersion { get; set; }
+
+      /// <summary>
+      /// This is the Default Merge Behavior for the module that can be overwritten when using a module in a module configuration
+      /// </summary>
+      public MergeBehavior DefaultMergeBehavior { get; set; } = MergeBehavior.Overwrite;
 
       public EventGroupBuildingBlock EventGroups => buildingBlockByType<EventGroupBuildingBlock>();
       public MoleculeBuildingBlock Molecules => buildingBlockByType<MoleculeBuildingBlock>();
@@ -43,8 +69,8 @@ namespace OSPSuite.Core.Domain
       public string VersionWith(ParameterValuesBuildingBlock selectedParameterValues, InitialConditionsBuildingBlock selectedInitialConditions)
       {
          var buildingBlocks = BuildingBlocks.Where(isSingle).ToList();
-         
-         if(selectedParameterValues != null)
+
+         if (selectedParameterValues != null)
             buildingBlocks.Add(selectedParameterValues);
 
          if (selectedInitialConditions != null)
@@ -64,7 +90,8 @@ namespace OSPSuite.Core.Domain
          return $"{x.GetType()}{x.Version}";
       }
 
-      public override string Icon {
+      public override string Icon
+      {
          get => IsPKSimModule ? IconNames.PKSimModule : IconNames.Module;
          set
          {

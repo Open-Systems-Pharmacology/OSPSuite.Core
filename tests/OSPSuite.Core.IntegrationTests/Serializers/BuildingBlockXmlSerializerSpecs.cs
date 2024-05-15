@@ -117,7 +117,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestComplexSpatialStructure()
       {
-         var x1 = _simulationBuilder.SpatialStructures[0];
+         var x1 = _simulationBuilder.SpatialStructureAndMergeBehaviors[0].spatialStructure;
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualSpatialStructure(x2, x1);
       }
