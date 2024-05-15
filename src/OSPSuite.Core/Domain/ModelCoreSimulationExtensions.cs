@@ -32,12 +32,13 @@ namespace OSPSuite.Core.Domain
 
       private static IReadOnlyList<IContainer> allApplicationsForMolecule(IModelCoreSimulation simulation, string moleculeName)
       {
-         var applicationEventGroup = simulation.Model.Root.GetChildren<EventGroup>().ToList();
-         if (!applicationEventGroup.Any())
-            return new List<IContainer>();
-
-         var allApplications = applicationEventGroup.SelectMany(x => x.GetAllChildren<IContainer>(c => c.ContainerType == ContainerType.Application))
+         // Exclude organism containers since they will not contain applications and represent the majority of containers in a simulation
+         var containers = simulation.Model.Root.GetChildren<IContainer>(x => x.ContainerType != ContainerType.Organism);
+         var allApplications = containers.SelectMany(x => x.GetAllChildren<IContainer>(c => c.ContainerType == ContainerType.Application))
             .ToList();
+
+         if (!allApplications.Any())
+            return new List<IContainer>();
 
          var reactionCache = new ObjectBaseCache<ReactionBuilder>();
          reactionCache.AddRange(simulation.Reactions.SelectMany(x => x));
