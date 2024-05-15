@@ -155,8 +155,6 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    If the entity exists, it will be removed and replace by the new one, otherwise simply added
       /// </summary>
-      /// <param name="container"></param>
-      /// <param name="entityToAddOrReplace"></param>
       private void addOrReplaceInContainer(IContainer container, IEntity entityToAddOrReplace)
       {
          var existingChild = container.GetSingleChildByName(entityToAddOrReplace.Name);
