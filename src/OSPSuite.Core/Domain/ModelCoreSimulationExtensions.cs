@@ -30,23 +30,15 @@ namespace OSPSuite.Core.Domain
          return AllApplicationParametersOrderedByStartTimeFor(simulation, moleculeName);
       }
 
-      private static List<EventGroup> getEventGroupsFrom(IContainer container)
-      {
-         return container?.GetChildren<EventGroup>().ToList();
-      }
-
       private static IReadOnlyList<IContainer> allApplicationsForMolecule(IModelCoreSimulation simulation, string moleculeName)
       {
-         var applicationsFromEventContainer = getEventGroupsFrom(simulation.Model.Root.GetSingleChildByName<IContainer>(Constants.EVENTS));
-         var applicationEventGroup = getEventGroupsFrom(simulation.Model.Root);
-         if(applicationsFromEventContainer != null && applicationsFromEventContainer.Any())
-            applicationEventGroup.AddRange(applicationsFromEventContainer);
-
-         if (!applicationEventGroup.Any())
-            return new List<IContainer>();
-
-         var allApplications = applicationEventGroup.SelectMany(x => x.GetAllChildren<IContainer>(c => c.ContainerType == ContainerType.Application))
+         // Exclude organism containers since they will not contain applications and represent the majority of containers in a simulation
+         var containers = simulation.Model.Root.GetChildren<IContainer>(x => x.ContainerType != ContainerType.Organism);
+         var allApplications = containers.SelectMany(x => x.GetAllChildren<IContainer>(c => c.ContainerType == ContainerType.Application))
             .ToList();
+
+         if (!allApplications.Any())
+            return new List<IContainer>();
 
          var reactionCache = new ObjectBaseCache<ReactionBuilder>();
          reactionCache.AddRange(simulation.Reactions.SelectMany(x => x));
