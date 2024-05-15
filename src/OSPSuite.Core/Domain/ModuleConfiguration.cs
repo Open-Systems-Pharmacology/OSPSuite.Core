@@ -90,8 +90,8 @@ namespace OSPSuite.Core.Domain
          if (!(source is ModuleConfiguration sourceConfiguration))
             return;
 
+         MergeBehavior = sourceConfiguration.MergeBehavior;
          Module = cloneManager.Clone(sourceConfiguration.Module);
-
          SelectedInitialConditions = Module.InitialConditionsCollection.FindByName(sourceConfiguration.SelectedInitialConditions?.Name);
          SelectedParameterValues = Module.ParameterValuesCollection.FindByName(sourceConfiguration.SelectedParameterValues?.Name);
       }

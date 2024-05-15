@@ -68,6 +68,21 @@ namespace OSPSuite.Helpers
          return simulationConfiguration;
       }
 
+      public SimulationConfiguration CreateSimulationConfigurationForExtendMergeBehaviorWithRecursiveContainers()
+      {
+         var simulationConfiguration = new SimulationConfiguration
+         {
+            SimulationSettings = createSimulationConfiguration(),
+         };
+
+         var module4 = createModule4();
+         var module5 = createModule5();
+
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module4));
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module5) { MergeBehavior = MergeBehavior.Extend });
+         return simulationConfiguration;
+      }
+
       private Module createModule1()
       {
          var module = _objectBaseFactory.Create<Module>().WithName("Module1");
@@ -329,6 +344,134 @@ namespace OSPSuite.Helpers
       private SimulationSettings createSimulationConfiguration()
       {
          return new SimulationSettings {Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = _outputSchemaFactory.CreateDefault(), OutputSelections = new OutputSelections()};
+      }
+
+      private Module createModule4()
+      {
+         var module = _objectBaseFactory.Create<Module>().WithName("Module4");
+         var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE MODULE 4");
+
+         var organism = _objectBaseFactory.Create<IContainer>()
+            .WithName(ORGANISM)
+            .WithMode(ContainerMode.Logical);
+
+         //Create a parameter with formula in Organism with absolute path
+         var bw = newConstantParameter(BW, 20);
+         organism.Add(bw);
+
+         //Organism
+         // ArterialBlood
+         //   - Plasma
+         //      - Volume
+         //   - Q
+         //   - P
+         // Lung
+         //   - Plasma
+         //      - Volume
+         //      - pH
+         //   - Cell
+         //      - Volume
+         //      - pH
+         //   - Q
+         //   - P
+         // BW
+
+
+         var art = createContainerWithName(ArterialBlood);
+
+         var artPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
+         artPlasma.Add(newConstantParameter(Volume, 2));
+         art.Add(artPlasma);
+         art.Add(newConstantParameter(Q, 2));
+         art.Add(newConstantParameter(P, 10));
+         organism.Add(art);
+
+
+         
+         var lung = createContainerWithName(Lung);
+         var lngPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
+         lngPlasma.Add(newConstantParameter(Volume, 2));
+         lngPlasma.Add(newConstantParameter(pH, 7.5));
+         lung.Add(lngPlasma);
+
+         var lngCell = createContainerWithName(Cell, ContainerMode.Physical);
+         lngCell.Add(newConstantParameter(Volume, 1));
+         lngCell.Add(newConstantParameter(pH, 7));
+         lung.Add(lngCell);
+
+         lung.Add(newConstantParameter(Q, 3));
+         lung.Add(newConstantParameter(P, 2));
+         organism.Add(lung);
+
+         organism.Add(newConstantParameter(fu, 1));
+         spatialStructure.AddTopContainer(organism);
+
+         var neighborhood2 = _neighborhoodFactory.CreateBetween(lngPlasma, artPlasma).WithName("lng_pls_to_art_pls");
+         spatialStructure.AddNeighborhood(neighborhood2);
+
+         var neighborhood5 = _neighborhoodFactory.CreateBetween(lngPlasma, lngCell).WithName("lng_pls_to_lng_cell");
+         neighborhood5.AddTag("Cell2Plasma");
+         neighborhood5.AddParameter(newConstantParameter("SA", 22));
+         spatialStructure.AddNeighborhood(neighborhood5);
+
+         spatialStructure.ResolveReferencesInNeighborhoods();
+
+         module.Add(spatialStructure);
+         return module;
+      }
+
+      private Module createModule5()
+      {
+         var module = _objectBaseFactory.Create<Module>().WithName("Module5");
+         var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE MODULE 5");
+
+         var organism = _objectBaseFactory.Create<IContainer>()
+            .WithName(ORGANISM)
+            .WithMode(ContainerMode.Logical);
+
+         //Create a parameter with formula in Organism with absolute path
+         var bw = newConstantParameter(BW, 200);
+         organism.Add(bw);
+
+         //Organism
+         // ArterialBlood
+         //   - Plasma
+         //      - Volume <== THIS WILL OVERWRITE EXISTING VOLUME
+         //      - Q      <== new PARAMETER
+         //   - Interstitial <== NEW CONTAINER
+         //      - P
+         // Lung
+         //   - Plasma
+         //      - Volume <== THIS WILL OVERWRITE EXISTING VOLUME
+         //      - Q      <== new PARAMETER
+         //   - Interstitial <== NEW CONTAINER
+         //      - P
+         // BW <== THIS WILL OVERWRITE EXISTING BW
+
+
+         var art = createContainerWithName(ArterialBlood);
+
+         var artPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
+         artPlasma.Add(newConstantParameter(Volume, 10));
+         artPlasma.Add(newConstantParameter(Q, 11));
+         var artInterstitial = createContainerWithName(Interstitial, ContainerMode.Physical);
+         artInterstitial.Add(newConstantParameter(P, 12));
+         art.AddChildren(artPlasma, artInterstitial);
+         organism.Add(art);
+         
+
+         var lng = createContainerWithName(Lung);
+         var lngPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
+         lngPlasma.Add(newConstantParameter(Volume, 20));
+         lngPlasma.Add(newConstantParameter(Q, 21));
+         var lngInterstitial = createContainerWithName(Interstitial, ContainerMode.Physical);
+         lng.AddChildren(lngPlasma, lngInterstitial);
+         organism.Add(lng);
+
+         spatialStructure.AddTopContainer(organism);
+
+         module.Add(spatialStructure);
+         return module;
       }
    }
 }

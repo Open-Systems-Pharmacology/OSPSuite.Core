@@ -117,4 +117,47 @@ namespace OSPSuite.Core
          lung.Container(Interstitial).ShouldNotBeNull();
       }
    }
+
+   internal class When_running_the_case_study_for_module_integration_with_merge_behavior_extend_and_recursive_container : concern_for_ModuleIntegration
+   {
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _simulationConfiguration = IoC.Resolve<ModuleHelperForSpecs>().CreateSimulationConfigurationForExtendMergeBehaviorWithRecursiveContainers();
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+      }
+
+      [Observation]
+      public void should_have_added_the_missing_container_to_lung_and_arterial_blood()
+      {
+         var lngInt = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung, Interstitial);
+         lngInt.ShouldNotBeNull();
+
+         var artInt = _model.Root.EntityAt<Container>(Constants.ORGANISM, ArterialBlood, Interstitial);
+         artInt.ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_have_updating_existing_parameters()
+      {
+         var lungPls = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung, Plasma);
+         lungPls.Parameter(Volume).Value.ShouldBeEqualTo(20);
+         lungPls.Parameter(Q).Value.ShouldBeEqualTo(21);
+      }
+
+      [Observation]
+      public void should_have_kept_parameters_defined_in_the_source_container()
+      {
+         var lung = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung);
+         lung.Parameter(P).Value.ShouldBeEqualTo(2);
+      }
+
+      [Observation]
+      public void should_have_kept_existing_container()
+         {
+         var lungCell = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung, Cell);
+         lungCell.ShouldNotBeNull();
+      }
+   }
+
 }
