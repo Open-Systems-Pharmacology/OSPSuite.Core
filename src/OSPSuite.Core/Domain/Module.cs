@@ -109,6 +109,7 @@ namespace OSPSuite.Core.Domain
          sourceModule.BuildingBlocks.Select(cloneManager.Clone).Each(Add);
          PKSimVersion = sourceModule.PKSimVersion;
          ModuleImportVersion = sourceModule.ModuleImportVersion;
+         DefaultMergeBehavior = sourceModule.DefaultMergeBehavior;
       }
 
       public void Add(IBuildingBlock buildingBlock)

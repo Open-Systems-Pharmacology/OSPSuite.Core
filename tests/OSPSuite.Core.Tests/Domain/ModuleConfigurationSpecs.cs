@@ -95,6 +95,9 @@ namespace OSPSuite.Core.Domain
 
          sut.SelectedInitialConditions = _initialConditionsBuildingBlock2;
          sut.SelectedParameterValues = null;
+         sut.Module.DefaultMergeBehavior = MergeBehavior.Extend;
+         sut.Module.ModuleImportVersion = "1.2.3";
+         sut.MergeBehavior = MergeBehavior.Extend;
       }
 
       protected override void Because()
@@ -115,6 +118,9 @@ namespace OSPSuite.Core.Domain
       {
          _result.Module.ShouldNotBeEqualTo(sut.Module);
          _result.Module.Name.ShouldBeEqualTo(sut.Module.Name);
+         _result.Module.DefaultMergeBehavior.ShouldBeEqualTo(sut.Module.DefaultMergeBehavior);
+         _result.Module.ModuleImportVersion.ShouldBeEqualTo(sut.Module.ModuleImportVersion);
+         _result.MergeBehavior.ShouldBeEqualTo(sut.MergeBehavior);
       }
    }
 
