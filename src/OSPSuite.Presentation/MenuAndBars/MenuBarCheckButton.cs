@@ -22,6 +22,10 @@ namespace OSPSuite.Presentation.MenuAndBars
       public override void Click()
       {
          Checked = !Checked;
+         if (Command is NotImplementedCommand)
+            return;
+
+         base.Click();
       }
    }
 }
