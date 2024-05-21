@@ -76,9 +76,19 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithIcon(ApplicationIcons.AddToJournal);
       }
 
+      public static IMenuBarItem RunParameterIdentification(ParameterIdentification parameterIdentification, IContainer container)
+      {
+         return CreateMenuButton.WithCaption(MenuNames.RunParameterIdentification)
+            .WithIcon(ApplicationIcons.Run)
+            .WithCommandFor<RunParameterIdentificationUICommand, ParameterIdentification>(parameterIdentification, container);
+      }
+
       public static IEnumerable<IMenuBarItem> ContextMenuItemsFor(ParameterIdentification parameterIdentification, IContainer container)
       {
-         yield return EditParameterIdentification(parameterIdentification, container);
+         yield return RunParameterIdentification(parameterIdentification, container);
+
+         yield return EditParameterIdentification(parameterIdentification, container)
+            .AsGroupStarter();
 
          yield return RenameParameterIdentification(parameterIdentification, container);
 
