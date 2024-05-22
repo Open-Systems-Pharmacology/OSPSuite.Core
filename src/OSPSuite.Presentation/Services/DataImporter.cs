@@ -114,11 +114,11 @@ namespace OSPSuite.Presentation.Services
          return compareMetaData(sourceDataRepository, targetDataRepository) && compareMetaData(targetDataRepository, sourceDataRepository);
       }
 
-      private static bool compareMetaData(DataRepository repositoryOne, DataRepository repository2)
+      private static bool compareMetaData(DataRepository firstRepository, DataRepository secondRepository)
       {
          // do not compare the file name when checking for equivalent metadata
-         return repository2.ExtendedProperties.KeyValues.Where(x => !Equals(x.Key, Constants.FILE)).All(keyValuePair =>
-            hasEquivalentMetaData(repositoryOne.ExtendedProperties, keyValuePair)
+         return secondRepository.ExtendedProperties.KeyValues.Where(x => !Equals(x.Key, Constants.FILE)).All(keyValuePair =>
+            hasEquivalentMetaData(firstRepository.ExtendedProperties, keyValuePair)
          );
       }
 
