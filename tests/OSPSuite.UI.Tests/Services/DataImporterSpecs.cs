@@ -169,6 +169,29 @@ namespace OSPSuite.UI.Services
       }
    }
 
+   public class When_reloading_a_data_set_with_removed_meta_data : concern_for_DataImporter
+   {
+      private ReloadDataSets _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dataSetsToImport.FirstOrDefault(x => x.Name == "repo2").ExtendedProperties.Remove("Organ");
+      }
+
+      protected override void Because()
+      {
+         _result = sut.CalculateReloadDataSetsFromConfiguration(_dataSetsToImport, _existingDataSets);
+      }
+
+      [Test]
+      public void should_return_one_new_data_set()
+      {
+         _result.NewDataSets.Count().ShouldBeEqualTo(1);
+         _result.NewDataSets.Any(x => x.Name == "repo2").ShouldBeTrue();
+      }
+   }
+
    public class When_reloading_one_new_data_set_one_data_set_to_be_deleted : concern_for_DataImporter
    {
       private ReloadDataSets _result;
