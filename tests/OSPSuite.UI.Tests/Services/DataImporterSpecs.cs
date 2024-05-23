@@ -25,8 +25,6 @@ namespace OSPSuite.UI.Services
       protected IReadOnlyList<DataRepository> _existingDataSets;
       protected IReadOnlyList<DataRepository> _dataSetsToImport;
 
-
-
       public override void GlobalContext()
       {
          base.GlobalContext();
@@ -38,21 +36,46 @@ namespace OSPSuite.UI.Services
 
          A.CallTo(() => _applicationController.Start<IImporterReloadPresenter>()).Returns(_reloadPresenter);
          A.CallTo(() => _reloadPresenter.Canceled()).Returns(false);
-
       }
 
       protected override void Context()
       {
-         _existingDataSets = new List<DataRepository>()
+         _existingDataSets = new List<DataRepository>
          {
-            new DataRepository()
+            new DataRepository
             {
                Name = "repo1",
                ExtendedProperties =
                {
-                  new ExtendedProperty<string>() {Name = "Sheet", Value = "Sheet1"},
-                  new ExtendedProperty<string>() {Name = "Organ", Value = "Organ1"},
-                  new ExtendedProperty<string>() {Name = "Patient", Value = "Patient1"},
+                  new ExtendedProperty<string> { Name = "Sheet", Value = "Sheet1" },
+                  new ExtendedProperty<string> { Name = "Organ", Value = "Organ1" },
+                  new ExtendedProperty<string> { Name = "Patient", Value = "Patient1" },
+                  new ExtendedProperty<string> { Name = Constants.FILE, Value = "File1" }
+               }
+            },
+            new DataRepository
+            {
+               Name = "repo2",
+               ExtendedProperties =
+               {
+                  new ExtendedProperty<string> { Name = "Sheet", Value = "Sheet2" },
+                  new ExtendedProperty<string> { Name = "Organ", Value = "Organ2" },
+                  new ExtendedProperty<string> { Name = "Patient", Value = "Patient2" },
+                  new ExtendedProperty<string> { Name = Constants.FILE, Value = "File2" }
+               }
+            }
+         };
+         _dataSetsToImport = new List<DataRepository>
+         {
+            new DataRepository
+            {
+               Name = "repo1",
+               ExtendedProperties =
+               {
+                  new ExtendedProperty<string> { Name = "Sheet", Value = "Sheet1" },
+                  new ExtendedProperty<string> { Name = "Organ", Value = "Organ1" },
+                  new ExtendedProperty<string> { Name = "Patient", Value = "Patient1" },
+                  new ExtendedProperty<string> { Name = Constants.FILE, Value = "File1" }
                }
             },
             new DataRepository()
@@ -60,40 +83,17 @@ namespace OSPSuite.UI.Services
                Name = "repo2",
                ExtendedProperties =
                {
-                  new ExtendedProperty<string>() {Name = "Sheet", Value = "Sheet2"},
-                  new ExtendedProperty<string>() {Name = "Organ", Value = "Organ2"},
-                  new ExtendedProperty<string>() {Name = "Patient", Value = "Patient2"},
+                  new ExtendedProperty<string> { Name = "Sheet", Value = "Sheet2" },
+                  new ExtendedProperty<string> { Name = "Organ", Value = "Organ2" },
+                  new ExtendedProperty<string> { Name = "Patient", Value = "Patient2" },
+                  new ExtendedProperty<string> { Name = Constants.FILE, Value = "File2" }
                }
             }
          };
-         _dataSetsToImport = new List<DataRepository>()
-         {
-            new DataRepository()
-            {
-               Name = "repo1",
-               ExtendedProperties =
-               {
-                  new ExtendedProperty<string>() {Name = "Sheet", Value = "Sheet1"},
-                  new ExtendedProperty<string>() {Name = "Organ", Value = "Organ1"},
-                  new ExtendedProperty<string>() {Name = "Patient", Value = "Patient1"},
-               }
-            },
-            new DataRepository()
-            {
-               Name = "repo2",
-               ExtendedProperties =
-               {
-                  new ExtendedProperty<string>() {Name = "Sheet", Value = "Sheet2"},
-                  new ExtendedProperty<string>() {Name = "Organ", Value = "Organ2"},
-                  new ExtendedProperty<string>() {Name = "Patient", Value = "Patient2"},
-               }
-            }
-         };
-         sut = new DataImporter(_dialogCreator, _importer , _applicationController, _dimensionFactory);
+         sut = new DataImporter(_dialogCreator, _importer, _applicationController, _dimensionFactory);
       }
    }
 
-   
    public class When_reloading_only_existing_data_sets : concern_for_DataImporter
    {
       private ReloadDataSets _result;
@@ -124,6 +124,74 @@ namespace OSPSuite.UI.Services
       }
    }
 
+   public class When_reloading_a_data_set_with_only_file_name_changed : concern_for_DataImporter
+   {
+      private ReloadDataSets _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         _existingDataSets.FirstOrDefault(x => x.Name == "repo2").ExtendedProperties[Constants.FILE].ValueAsObject = "Another file";
+      }
+
+      protected override void Because()
+      {
+         _result = sut.CalculateReloadDataSetsFromConfiguration(_dataSetsToImport, _existingDataSets);
+      }
+
+      [Test]
+      public void should_return_no_new_data_sets()
+      {
+         _result.NewDataSets.Count().ShouldBeEqualTo(0);
+      }
+   }
+
+   public class When_reloading_a_data_set_with_new_meta_data : concern_for_DataImporter
+   {
+      private ReloadDataSets _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         _existingDataSets.FirstOrDefault(x => x.Name == "repo2").ExtendedProperties.Remove("Organ");
+      }
+
+      protected override void Because()
+      {
+         _result = sut.CalculateReloadDataSetsFromConfiguration(_dataSetsToImport, _existingDataSets);
+      }
+
+      [Test]
+      public void should_return_one_new_data_set()
+      {
+         _result.NewDataSets.Count().ShouldBeEqualTo(1);
+         _result.NewDataSets.Any(x => x.Name == "repo2").ShouldBeTrue();
+      }
+   }
+
+   public class When_reloading_a_data_set_with_removed_meta_data : concern_for_DataImporter
+   {
+      private ReloadDataSets _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dataSetsToImport.FirstOrDefault(x => x.Name == "repo2").ExtendedProperties.Remove("Organ");
+      }
+
+      protected override void Because()
+      {
+         _result = sut.CalculateReloadDataSetsFromConfiguration(_dataSetsToImport, _existingDataSets);
+      }
+
+      [Test]
+      public void should_return_one_new_data_set()
+      {
+         _result.NewDataSets.Count().ShouldBeEqualTo(1);
+         _result.NewDataSets.Any(x => x.Name == "repo2").ShouldBeTrue();
+      }
+   }
+
    public class When_reloading_one_new_data_set_one_data_set_to_be_deleted : concern_for_DataImporter
    {
       private ReloadDataSets _result;
@@ -133,7 +201,6 @@ namespace OSPSuite.UI.Services
          base.Context();
          _dataSetsToImport.FirstOrDefault(x => x.Name == "repo2").ExtendedProperties["Organ"].ValueAsObject = "Organ3";
          _dataSetsToImport.FirstOrDefault(x => x.Name == "repo2").Name = "repo3";
-
       }
 
       protected override void Because()
