@@ -67,16 +67,16 @@ namespace OSPSuite.Core.Domain.Services
 
          //Merge all other spatial structures
          //make sure we map the container to a model container so that we do not change the original containers
-
-         allOtherSpatialStructuresWithMergeBehavior.Select(x => new {x.mergeBehavior, topContainers = x.spatialStructure.TopContainers.Select(mapToModelContainer).ToList()})
-            .Each(x => x.topContainers.Each(topContainer => mergeTopContainerInStructure(topContainer, root, x.mergeBehavior)));
+         allOtherSpatialStructuresWithMergeBehavior
+             .Select(item => new { item.mergeBehavior, topContainers = item.spatialStructure.TopContainers.Select(mapToModelContainer).ToList(), item })
+             .Each(x => { x.topContainers.Each(topContainer => { tryMergeTopContainerInStructure(root, topContainer, x.mergeBehavior, x.item); }); });
 
          //create the temporary GLOBAL MOLECULE PROPERTIES THAT WILL BE REMOVED AT THE END but used as based for copying
          //For molecule properties, we always merged as we used to and never replace
          var allGlobalMoleculeContainers = allSpatialStructureAndMergeBehaviors
-            .Select(x => x.spatialStructure.GlobalMoleculeDependentProperties)
-            .Select(mapToModelContainer)
-            .ToList();
+         .Select(x => x.spatialStructure.GlobalMoleculeDependentProperties)
+         .Select(mapToModelContainer)
+         .ToList();
 
 
          var firstGlobalMoleculeContainer = allGlobalMoleculeContainers.FirstOrDefault();
@@ -86,6 +86,18 @@ namespace OSPSuite.Core.Domain.Services
          {
             otherGlobalMoleculeContainer.Each(x => mergeContainers(firstGlobalMoleculeContainer, x));
             root.Add(firstGlobalMoleculeContainer);
+         }
+      }
+
+      private void tryMergeTopContainerInStructure(IContainer root, IContainer topContainer, MergeBehavior mergeBehavior, (SpatialStructure spatialStructure, MergeBehavior mergeBehavior) item)
+      {
+         try
+         {
+            mergeTopContainerInStructure(topContainer, root, mergeBehavior);
+         }
+         catch (ContainerNotFoundException ex)
+         {
+            throw new OSPSuiteException(Error.CannotFindParentContainerWithPath(topContainer.ParentPath.PathAsString, topContainer.Name, item.spatialStructure.Name, item.spatialStructure.Module.Name));
          }
       }
 
@@ -108,7 +120,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          var parentContainer = topContainer.ParentPath.Resolve<IContainer>(root);
          if (parentContainer == null)
-            throw new OSPSuiteException(Error.CannotFindParentContainerWithPath(topContainer.ParentPath.PathAsString, topContainer.Name));
+            throw new ContainerNotFoundException();
 
          replaceOrMergeContainerIntoParent(parentContainer, topContainer, mergeBehavior);
       }
