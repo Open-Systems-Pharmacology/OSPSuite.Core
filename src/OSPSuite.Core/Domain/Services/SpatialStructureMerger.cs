@@ -74,9 +74,9 @@ namespace OSPSuite.Core.Domain.Services
          //create the temporary GLOBAL MOLECULE PROPERTIES THAT WILL BE REMOVED AT THE END but used as based for copying
          //For molecule properties, we always merged as we used to and never replace
          var allGlobalMoleculeContainers = allSpatialStructureAndMergeBehaviors
-         .Select(x => x.spatialStructure.GlobalMoleculeDependentProperties)
-         .Select(mapToModelContainer)
-         .ToList();
+            .Select(x => x.spatialStructure.GlobalMoleculeDependentProperties)
+            .Select(mapToModelContainer)
+            .ToList();
 
 
          var firstGlobalMoleculeContainer = allGlobalMoleculeContainers.FirstOrDefault();
