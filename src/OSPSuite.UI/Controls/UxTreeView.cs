@@ -13,6 +13,7 @@ using OSPSuite.Assets;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Views;
+using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Mappers;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
@@ -64,6 +65,7 @@ namespace OSPSuite.UI.Controls
          ToolTipForNode = node => node.ToolTip;
          ToolTipController = new ToolTipController();
          ToolTipController.GetActiveObjectInfo += (o, e) => ShowToolTip(e);
+         ToolTipController.Initialize();
          OptionsMenu.ShowExpandCollapseItems = false;
       }
 
