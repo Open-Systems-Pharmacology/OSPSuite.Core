@@ -68,8 +68,8 @@ namespace OSPSuite.Core.Domain.Services
          //Merge all other spatial structures
          //make sure we map the container to a model container so that we do not change the original containers
          allOtherSpatialStructuresWithMergeBehavior
-             .Select(item => new { item.mergeBehavior, topContainers = item.spatialStructure.TopContainers.Select(mapToModelContainer).ToList(), item })
-             .Each(x => { x.topContainers.Each(topContainer => { tryMergeTopContainerInStructure(root, topContainer, x.mergeBehavior, x.item); }); });
+             .Select(item => new { item.mergeBehavior, topContainers = item.spatialStructure.TopContainers.Select(mapToModelContainer).ToList(), item.spatialStructure })
+             .Each(x => { x.topContainers.Each(topContainer => { tryMergeTopContainerInStructure(root, topContainer, x.mergeBehavior, x.spatialStructure); }); });
 
          //create the temporary GLOBAL MOLECULE PROPERTIES THAT WILL BE REMOVED AT THE END but used as based for copying
          //For molecule properties, we always merged as we used to and never replace
@@ -89,7 +89,7 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private void tryMergeTopContainerInStructure(IContainer root, IContainer topContainer, MergeBehavior mergeBehavior, (SpatialStructure spatialStructure, MergeBehavior mergeBehavior) item)
+      private void tryMergeTopContainerInStructure(IContainer root, IContainer topContainer, MergeBehavior mergeBehavior, SpatialStructure spatialStructure)
       {
          try
          {
@@ -97,7 +97,7 @@ namespace OSPSuite.Core.Domain.Services
          }
          catch (ContainerNotFoundException ex)
          {
-            throw new OSPSuiteException(Error.CannotFindParentContainerWithPath(topContainer.ParentPath.PathAsString, topContainer.Name, item.spatialStructure.Name, item.spatialStructure.Module.Name));
+            throw new OSPSuiteException(Error.CannotFindParentContainerWithPath(topContainer.ParentPath.PathAsString, topContainer.Name, spatialStructure.Name, spatialStructure.Module.Name));
          }
       }
 
