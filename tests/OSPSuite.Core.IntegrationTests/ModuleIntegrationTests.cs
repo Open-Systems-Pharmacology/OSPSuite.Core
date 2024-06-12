@@ -80,6 +80,44 @@ namespace OSPSuite.Core
       }
    }
 
+   internal class When_running_the_case_study_for_module_integration_with_merge_behavior_override_to_extend : concern_for_ModuleIntegration
+   {
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _simulationConfiguration = IoC.Resolve<ModuleHelperForSpecs>().CreateSimulationConfigurationForExtendMergeBehaviorOverridingModuleBehavior();
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+      }
+
+      [Observation]
+      public void should_have_added_the_missing_parameters_to_lung()
+      {
+         var lung = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung);
+         lung.Parameter(P2).Value.ShouldBeEqualTo(10);
+      }
+
+      [Observation]
+      public void should_have_updating_existing_parameters()
+      {
+         var lung = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung);
+         lung.Parameter(Q).Value.ShouldBeEqualTo(5);
+      }
+
+      [Observation]
+      public void should_have_kept_parameters_defined_in_the_source_container()
+      {
+         var lung = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung);
+         lung.Parameter(P).Value.ShouldBeEqualTo(2);
+      }
+
+      [Observation]
+      public void should_have_added_the_existing_container()
+      {
+         var lung = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung);
+         lung.Container(Interstitial).ShouldNotBeNull();
+      }
+   }
+
    internal class When_running_the_case_study_for_module_integration_with_merge_behavior_extend : concern_for_ModuleIntegration
    {
       public override void GlobalContext()
