@@ -63,8 +63,26 @@ namespace OSPSuite.Helpers
          var module1 = createModule1();
          var module2 = createModule2();
 
+         module2.DefaultMergeBehavior = MergeBehavior.Extend;
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
-         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2) {MergeBehavior = MergeBehavior.Extend});
+         // Using this constructor to validate that the merge behavior is set correctly
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
+         return simulationConfiguration;
+      }
+
+      public SimulationConfiguration CreateSimulationConfigurationForExtendMergeBehaviorOverridingModuleBehavior()
+      {
+         var simulationConfiguration = new SimulationConfiguration
+         {
+            SimulationSettings = createSimulationConfiguration(),
+         };
+
+         var module1 = createModule1();
+         var module2 = createModule2();
+
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+         // Using this constructor to validate that the merge behavior is set correctly
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null) { MergeBehavior = MergeBehavior.Extend });
          return simulationConfiguration;
       }
 
@@ -79,7 +97,9 @@ namespace OSPSuite.Helpers
          var module5 = createModule5();
 
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module4));
-         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module5) { MergeBehavior = MergeBehavior.Extend });
+         module5.DefaultMergeBehavior = MergeBehavior.Extend;
+         // Using this constructor to validate that the merge behavior is set correctly
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module5));
          return simulationConfiguration;
       }
 
@@ -343,7 +363,7 @@ namespace OSPSuite.Helpers
 
       private SimulationSettings createSimulationConfiguration()
       {
-         return new SimulationSettings {Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = _outputSchemaFactory.CreateDefault(), OutputSelections = new OutputSelections()};
+         return new SimulationSettings { Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = _outputSchemaFactory.CreateDefault(), OutputSelections = new OutputSelections() };
       }
 
       private Module createModule4()
@@ -387,7 +407,6 @@ namespace OSPSuite.Helpers
          organism.Add(art);
 
 
-         
          var lung = createContainerWithName(Lung);
          var lngPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
          lngPlasma.Add(newConstantParameter(Volume, 2));
@@ -458,7 +477,7 @@ namespace OSPSuite.Helpers
          artInterstitial.Add(newConstantParameter(P, 12));
          art.AddChildren(artPlasma, artInterstitial);
          organism.Add(art);
-         
+
 
          var lng = createContainerWithName(Lung);
          var lngPlasma = createContainerWithName(Plasma, ContainerMode.Physical);

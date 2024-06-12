@@ -38,8 +38,6 @@ namespace OSPSuite.Core.Domain
       /// <param name="module">Module</param>
       public ModuleConfiguration(Module module) : this(module, module.InitialConditionsCollection.FirstOrDefault(), module.ParameterValuesCollection.FirstOrDefault())
       {
-         Module = module;
-         MergeBehavior = module.DefaultMergeBehavior;
       }
 
       /// <summary>
@@ -51,6 +49,7 @@ namespace OSPSuite.Core.Domain
       public ModuleConfiguration(Module module, InitialConditionsBuildingBlock selectedInitialConditionBuilding, ParameterValuesBuildingBlock selectedParameterValues)
       {
          Module = module;
+         MergeBehavior = module.DefaultMergeBehavior;
          SelectedInitialConditions = selectedInitialConditionBuilding;
          SelectedParameterValues = selectedParameterValues;
       }
