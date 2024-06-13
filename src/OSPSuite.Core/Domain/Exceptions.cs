@@ -149,11 +149,4 @@ namespace OSPSuite.Core.Domain
       {
       }
    }
-
-   public class ContainerNotFoundException : OSPSuiteException
-    {
-        public ContainerNotFoundException() : base()
-        {
-        }
-    }
 }

@@ -178,4 +178,11 @@ namespace OSPSuite.Core.Domain.Services
 
       public IContainer MergeNeighborhoods(ModelConfiguration modelConfiguration) => _neighborhoodsMapper.MapFrom(modelConfiguration);
    }
+
+   internal class ContainerNotFoundException : OSPSuiteException
+   {
+      public ContainerNotFoundException() : base()
+      {
+      }
+   }
 }
