@@ -84,5 +84,9 @@ namespace OSPSuite.Core.Extensions
          return EqualsByTolerance(value, equalValue, 1e-10);
       }
 
+      public static bool IsValid(this double? value)
+      {
+         return value.HasValue && value.Value.IsValid();
+      }
    }
 }

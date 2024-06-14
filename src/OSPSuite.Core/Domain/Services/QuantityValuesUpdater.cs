@@ -4,6 +4,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
@@ -126,7 +127,7 @@ namespace OSPSuite.Core.Domain.Services
          }
 
          //If the value is defined, this will be used instead of the formula (even if set previously)
-         if (pathAndValueEntity.Value != null)
+         if (pathAndValueEntity.Value.IsValid())
          {
             var parameterValue = pathAndValueEntity.Value.Value;
             if (parameter.Formula is ConstantFormula constantFormula)

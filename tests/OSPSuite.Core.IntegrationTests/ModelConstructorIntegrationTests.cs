@@ -487,6 +487,29 @@ namespace OSPSuite.Core
       }
    }
 
+   internal class When_a_parameter_value_is_defined_with_formula_and_nan_value : concern_for_ModelConstructor
+   {
+      private ParameterValue _parameterValue;
+
+      protected override void Context()
+      {
+         base.Context();
+         var simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+
+         _parameterValue = simulationBuilder.ParameterValues.First(x => x.Name.Equals("FormulaParameterOverwritten"));
+         _parameterValue.Value = double.NaN;
+         _parameterValue.Formula = new ExplicitFormula("1");
+      }
+
+      [Observation]
+      public void should_not_overwrite_the_formula_with_NaN_fixed_value()
+      {
+         var targetParameter = _parameterValue.Path.TryResolve<IParameter>(_result.Model.Root);
+         targetParameter.IsFixedValue.ShouldBeFalse();
+         targetParameter.Value.ShouldNotBeEqualTo(double.NaN);
+      }
+   }
+
    internal class When_a_initial_condition_is_defined_for_logical_container : concern_for_ModelConstructor
    {
       protected override void Context()
