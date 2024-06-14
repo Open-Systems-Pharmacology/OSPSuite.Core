@@ -126,7 +126,7 @@ namespace OSPSuite.Core.Domain.Services
          }
 
          //If the value is defined, this will be used instead of the formula (even if set previously)
-         if (pathAndValueEntity.Value != null)
+         if (pathAndValueEntity.Value.HasValue && !double.IsNaN(pathAndValueEntity.Value.Value))
          {
             var parameterValue = pathAndValueEntity.Value.Value;
             if (parameter.Formula is ConstantFormula constantFormula)
