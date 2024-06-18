@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Extensions;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
@@ -48,7 +46,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          try
          {
-            (_model, _simulationBuilder, _replacementContext)  = modelConfiguration;
+            (_model, _simulationBuilder, _replacementContext) = modelConfiguration;
             _simulationConfiguration = modelConfiguration.SimulationConfiguration;
             _allContainers = _model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
             _allBlackBoxParameters = _model.Root.GetAllChildren<IParameter>().Where(p => p.Formula.IsBlackBox()).ToList();
@@ -80,16 +78,14 @@ namespace OSPSuite.Core.Domain.Services
             {
                foreach (var container in allMoleculeContainersFor(containerDescriptor, molecule))
                {
+                  //make sure we remove the parameter if it exists already
                   var existingParameter = container.Parameter(helpParameter.Name);
-                  //does not exist yet
-                  if (existingParameter == null)
-                  {
-                     var parameter = _parameterMapper.MapFrom(helpParameter, _simulationBuilder);
-                     container.Add(parameter);
-                     replaceKeyWordsIn(parameter, molecule.Name);
-                  }
-                  else if (!formulasAreTheSameForParameter(existingParameter, helpParameter.Formula, molecule.Name))
-                     throw new OSPSuiteException(Error.HelpParameterAlreadyDefinedWithAnotherFormula(calculationMethod.Name, _objectPathFactory.CreateAbsoluteObjectPath(helpParameter).ToString()));
+                  if (existingParameter != null)
+                     container.RemoveChild(existingParameter);
+
+                  var parameter = _parameterMapper.MapFrom(helpParameter, _simulationBuilder);
+                  container.Add(parameter);
+                  replaceKeyWordsIn(parameter, molecule.Name);
                }
             }
          }
@@ -108,17 +104,8 @@ namespace OSPSuite.Core.Domain.Services
                   if (parameterIsNotBlackBoxParameter(parameter))
                      continue;
 
-                  //parameter formula was not set yet
-                  if (parameter.Formula.IsBlackBox())
-                  {
-                     parameter.Formula = _formulaMapper.MapFrom(formula, _simulationBuilder);
-                     replaceKeyWordsIn(parameter, molecule.Name);
-                  }
-                  else
-                  {
-                     if (!formulasAreTheSameForParameter(parameter, formula, molecule.Name))
-                        throw new OSPSuiteException(Error.TwoDifferentFormulaForSameParameter(parameter.Name, _objectPathFactory.CreateAbsoluteObjectPath(parameter).ToPathString()));
-                  }
+                  parameter.Formula = _formulaMapper.MapFrom(formula, _simulationBuilder);
+                  replaceKeyWordsIn(parameter, molecule.Name);
                }
             }
          }
@@ -144,30 +131,7 @@ namespace OSPSuite.Core.Domain.Services
          return neighborhoodAncestorFor(entity.ParentContainer);
       }
 
-      private bool formulasAreTheSameForParameter(IParameter originalParameter, IFormula calculationMethodFormula, string moleculeName)
-      {
-         var previousFormula = originalParameter.Formula;
-         //needs to use the parameter in order to keep the hierarchy. Hence we set the formula in the parameter
-         originalParameter.Formula = _formulaMapper.MapFrom(calculationMethodFormula, _simulationBuilder);
-
-         //check  if the formula set are the same. it is necessary to replace keywords before doing that
-         replaceKeyWordsIn(originalParameter, moleculeName);
-
-         try
-         {
-            return _formulaTask.FormulasAreTheSame(originalParameter.Formula, previousFormula);
-         }
-         finally
-         {
-            //reset the origianl formula in any case
-            originalParameter.Formula = previousFormula;
-         }
-      }
-
-      private bool parameterIsNotBlackBoxParameter(IParameter parameter)
-      {
-         return !_allBlackBoxParameters.Contains(parameter);
-      }
+      private bool parameterIsNotBlackBoxParameter(IParameter parameter) => !_allBlackBoxParameters.Contains(parameter);
 
       private IEnumerable<MoleculeBuilder> allMoleculesUsing(CoreCalculationMethod calculationMethod, IReadOnlyCollection<MoleculeBuilder> molecules)
       {

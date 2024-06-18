@@ -1590,11 +1590,6 @@ namespace OSPSuite.Assets
          return $"Cannot add help parameter '{parameterName}' with an undefined formula (null) in calculation method '{calculationMethod}' for category '{category}'";
       }
 
-      public static string TwoDifferentFormulaForSameParameter(string parameter, string parameterPath)
-      {
-         return $"Formula in parameter '{parameter}' with path '{parameterPath}' was described inconsistently by more than one calculation.";
-      }
-
       public static string HelpParameterAlreadyDefinedWithAnotherFormula(string calculationMethod, string parameterPath)
       {
          return $"There is another parameter defined at '{calculationMethod}' with another formula. Help parameter for calculation method {parameterPath} cannot be created";
