@@ -48,10 +48,7 @@ namespace OSPSuite.Core.Domain
 
       public string PKSimVersion { get; set; }
 
-      /// <summary>
-      /// This is the Default Merge Behavior for the module that can be overwritten when using a module in a module configuration
-      /// </summary>
-      public MergeBehavior DefaultMergeBehavior { get; set; } = MergeBehavior.Overwrite;
+      public MergeBehavior MergeBehavior { get; set; } = MergeBehavior.Overwrite;
 
       public EventGroupBuildingBlock EventGroups => buildingBlockByType<EventGroupBuildingBlock>();
       public MoleculeBuildingBlock Molecules => buildingBlockByType<MoleculeBuildingBlock>();
@@ -109,7 +106,7 @@ namespace OSPSuite.Core.Domain
          sourceModule.BuildingBlocks.Select(cloneManager.Clone).Each(Add);
          PKSimVersion = sourceModule.PKSimVersion;
          ModuleImportVersion = sourceModule.ModuleImportVersion;
-         DefaultMergeBehavior = sourceModule.DefaultMergeBehavior;
+         MergeBehavior = sourceModule.MergeBehavior;
       }
 
       public void Add(IBuildingBlock buildingBlock)

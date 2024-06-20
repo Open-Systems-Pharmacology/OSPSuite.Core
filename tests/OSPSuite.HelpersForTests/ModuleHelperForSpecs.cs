@@ -63,7 +63,7 @@ namespace OSPSuite.Helpers
          var module1 = createModule1();
          var module2 = createModule2();
 
-         module2.DefaultMergeBehavior = MergeBehavior.Extend;
+         module2.MergeBehavior = MergeBehavior.Extend;
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          // Using this constructor to validate that the merge behavior is set correctly
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
@@ -79,10 +79,10 @@ namespace OSPSuite.Helpers
 
          var module1 = createModule1();
          var module2 = createModule2();
+         module2.MergeBehavior = MergeBehavior.Extend;
 
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
-         // Using this constructor to validate that the merge behavior is set correctly
-         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null) { MergeBehavior = MergeBehavior.Extend });
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
          return simulationConfiguration;
       }
 
@@ -97,7 +97,7 @@ namespace OSPSuite.Helpers
          var module5 = createModule5();
 
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module4));
-         module5.DefaultMergeBehavior = MergeBehavior.Extend;
+         module5.MergeBehavior = MergeBehavior.Extend;
          // Using this constructor to validate that the merge behavior is set correctly
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module5));
          return simulationConfiguration;

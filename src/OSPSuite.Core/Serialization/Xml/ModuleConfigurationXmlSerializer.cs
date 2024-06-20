@@ -8,7 +8,6 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          //TODO is this right? Or is this a real instance of a module?
          Map(x => x.Module);
-         Map(x => x.MergeBehavior);
          MapReference(x => x.SelectedInitialConditions);
          MapReference(x => x.SelectedParameterValues);
       }
