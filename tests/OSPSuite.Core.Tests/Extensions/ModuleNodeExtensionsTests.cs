@@ -73,4 +73,30 @@ namespace OSPSuite.Core.Extensions
          _module.CanAdd(_passiveTransportBuildingBlock).ShouldBeTrue();
       }
    }
+
+   public class When_building_block_type_is_not_allowed_in_module : concern_for_ModuleExtensions
+   {
+      [Observation]
+      public void can_add_should_return_false()
+      {
+         var expressionBuildingBlock = new ExpressionProfileBuildingBlock();
+         var individualBuildingBlock = new IndividualBuildingBlock();
+         _module.CanAdd(expressionBuildingBlock).ShouldBeFalse();
+         _module.CanAdd(individualBuildingBlock).ShouldBeFalse();
+      }
+   }
+
+   public class When_module_can_have_multiple_instances_of_a_type : concern_for_ModuleExtensions
+   {
+
+      [Observation]
+      public void can_add_should_return_true()
+      {
+         _module.Add(new ParameterValuesBuildingBlock());
+         _module.CanAdd(new ParameterValuesBuildingBlock()).ShouldBeTrue();
+
+         _module.Add(new InitialConditionsBuildingBlock());
+         _module.CanAdd(new InitialConditionsBuildingBlock()).ShouldBeTrue();
+      }
+   }
 }

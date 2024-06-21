@@ -1,5 +1,6 @@
 ﻿using OSPSuite.Presentation;
 using System.Windows.Forms;
+using OSPSuite.Presentation.Core;
 
 namespace OSPSuite.UI.Extensions
 {

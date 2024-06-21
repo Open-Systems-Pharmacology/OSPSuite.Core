@@ -18,7 +18,13 @@ namespace OSPSuite.Core.Extensions
       /// <returns></returns>
       public static bool CanAdd<T>(this Module module, T buildingBlockToAdd) where T : IBuildingBlock
       {
-         var uniqueTypes = new HashSet<Type>
+         HashSet<Type> forbiddenTypes = new HashSet<Type>
+            {
+            typeof(ExpressionProfileBuildingBlock),
+            typeof(IndividualBuildingBlock)
+         };
+
+         HashSet<Type> uniqueTypes = new HashSet<Type>
          {
             typeof(MoleculeBuildingBlock),
             typeof(PassiveTransportBuildingBlock),
@@ -31,6 +37,11 @@ namespace OSPSuite.Core.Extensions
          };
 
          var buildingBlockTypeToAdd = buildingBlockToAdd.GetType();
+
+         // Check if the type to be added is in the forbiddenTypes set
+         bool isForbiddenType = forbiddenTypes.Any(forbiddenType => forbiddenType.IsAssignableFrom(buildingBlockTypeToAdd));
+         if(isForbiddenType)
+            return false;
 
          // Check if the type to be added or any of its base types are in the uniqueTypes set
          bool isSubtypeOfUniqueTypes = uniqueTypes.Any(uniqueType => uniqueType.IsAssignableFrom(buildingBlockTypeToAdd));
