@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 
@@ -20,73 +21,56 @@ namespace OSPSuite.Core.Extensions
       }
    }
 
-   [TestFixture]
-   public class ModuleNodeExtensionsTests : concern_for_ModuleExtensions
+
+   public class When_building_block_type_is_not_in_unique_types : concern_for_ModuleExtensions
+   {
+      private class CustomBuildingBlock : PassiveTransportBuildingBlock { }
+      [Observation]
+      public void can_add_should_return_true()
+      {
+         var customBuildingBlock = new CustomBuildingBlock();
+         _module.CanAdd(customBuildingBlock).ShouldBeTrue();
+      }
+   }
+
+   public class When_no_same_type_building_block_exists : concern_for_ModuleExtensions
+   {
+      [Observation]
+      public void can_add_should_return_true() =>
+         _module.CanAdd(_moleculeBuildingBlock).ShouldBeTrue();
+   }
+
+   public class When_same_type_building_block_already_exists : concern_for_ModuleExtensions
+   {
+      [Observation]
+      public void can_add_should_return_false()
+      {
+         _module.Add(_moleculeBuildingBlock);
+         var anotherMoleculeBuildingBlock = new MoleculeBuildingBlock();
+         _module.CanAdd(anotherMoleculeBuildingBlock).ShouldBeFalse();
+      }
+   }
+
+   public class When_subtype_building_block_already_exists : concern_for_ModuleExtensions
+   {
+      private class AdvancedMoleculeBuildingBlock : MoleculeBuildingBlock { }
+      [Observation]
+      public void can_add_should_return_false()
+      {
+         _module.Add(_moleculeBuildingBlock);
+         var anotherMoleculeBuildingBlock = new AdvancedMoleculeBuildingBlock();
+         _module.CanAdd(anotherMoleculeBuildingBlock).ShouldBeFalse();
+      }
+   }
+
+   public class When_different_type_building_block_exists : concern_for_ModuleExtensions
    {
 
       [Observation]
-      public void CanAdd_ShouldReturnTrue_WhenBuildingBlockTypeIsNotInUniqueTypes()
-      {
-         var customBuildingBlock = new CustomBuildingBlock();
-
-         var result = _module.CanAdd(customBuildingBlock);
-
-         Assert.IsTrue(result);
-      }
-
-      [Observation]
-      public void CanAdd_ShouldReturnTrue_WhenNoSameTypeBuildingBlockExists()
-      {
-         var result = _module.CanAdd(_moleculeBuildingBlock);
-
-         Assert.IsTrue(result);
-      }
-
-      [Observation]
-      public void CanAdd_ShouldReturnFalse_WhenSameTypeBuildingBlockAlreadyExists()
+      public void can_add_should_return_true()
       {
          _module.Add(_moleculeBuildingBlock);
-
-         var anotherMoleculeBuildingBlock = new MoleculeBuildingBlock();
-         var result = _module.CanAdd(anotherMoleculeBuildingBlock);
-
-         Assert.IsFalse(result);
+         _module.CanAdd(_passiveTransportBuildingBlock).ShouldBeTrue();
       }
-
-      [Observation]
-      public void CanAdd_ShouldReturnFalse_WhenSubtypeBuildingBlockAlreadyExists()
-      {
-         _module.Add(_moleculeBuildingBlock);
-
-         var anotherMoleculeBuildingBlock = new AdvancedMoleculeBuildingBlock(); // Assume this is a subtype
-         var result = _module.CanAdd(anotherMoleculeBuildingBlock);
-
-         Assert.IsFalse(result);
-      }
-
-      [Observation]
-      public void CanAdd_ShouldReturnFalse_WhenSupertypeBuildingBlockAlreadyExists()
-      {
-         _module.Add(_passiveTransportBuildingBlock);
-
-         var baseBuildingBlock = new CustomBuildingBlock(); // Assume this is a supertype
-         var result = _module.CanAdd(baseBuildingBlock);
-
-         Assert.IsFalse(result);
-      }
-
-      [Observation]
-      public void CanAdd_ShouldReturnTrue_WhenDifferentTypeBuildingBlockExists()
-      {
-         _module.Add(_moleculeBuildingBlock);
-
-         var result = _module.CanAdd(_passiveTransportBuildingBlock);
-
-         Assert.IsTrue(result);
-      }
-
-      private class CustomBuildingBlock : PassiveTransportBuildingBlock { }
-
-      private class AdvancedMoleculeBuildingBlock : MoleculeBuildingBlock { }
    }
 }

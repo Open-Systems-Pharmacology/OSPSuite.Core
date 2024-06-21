@@ -36,8 +36,8 @@ namespace OSPSuite.Presentation.Presenters
       /// </summary>
       /// <param name="dragNode">Node being dragged</param>
       /// <param name="targetNode">Node under which the dragged node should be attached</param>
-      /// <param name="keyState">enum representing keyState on the drop action</param>
-      void DropNode(ITreeNode dragNode, ITreeNode targetNode, DragDropKeyState keyState = DragDropKeyState.None);
+      /// <param name="keyFlags">enum representing keyState on the drop action</param>
+      void DropNode(ITreeNode dragNode, ITreeNode targetNode, DragDropKeyFlags keyFlags = DragDropKeyFlags.None);
    }
 
    public interface IExplorerPresenter :
@@ -370,7 +370,7 @@ namespace OSPSuite.Presentation.Presenters
          _classificationPresenter.RemoveEmptyClassifcations();
       }
 
-      public virtual void DropNode(ITreeNode dragNode, ITreeNode targetNode, DragDropKeyState keyState = DragDropKeyState.None)
+      public virtual void DropNode(ITreeNode dragNode, ITreeNode targetNode, DragDropKeyFlags keyFlags = DragDropKeyFlags.None)
       {
          var classificationNode = targetNode as ITreeNode<IClassification>;
          var classifiableNode = dragNode as ITreeNode<IClassifiable>;

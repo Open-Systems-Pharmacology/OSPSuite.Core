@@ -12,6 +12,7 @@ using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
+using OSPSuite.Presentation;
 
 namespace OSPSuite.UI.Binders
 {
@@ -45,9 +46,9 @@ namespace OSPSuite.UI.Binders
          var targetNode = _treeView.CalcHitInfo(p).Node;
 
          var draggedNodes = getDraggedNodesFrom(e);
-         DragDropKeyState keyState = DragDropKeyStateHelper.ConvertKeyState(e.KeyState);
+         var keyFlags = e.ConvertKeyState(e.KeyState);
 
-         draggedNodes.Each(node => _presenter.DropNode(node, nodeFrom(targetNode), keyState));
+         draggedNodes.Each(node => _presenter.DropNode(node, nodeFrom(targetNode), keyFlags));
 
          e.Effect = DragDropEffects.None;
       }
