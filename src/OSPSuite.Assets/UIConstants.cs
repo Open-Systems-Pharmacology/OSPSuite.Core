@@ -2189,6 +2189,8 @@ namespace OSPSuite.Assets
       public static readonly string CommandTypeReset = "Reset";
       public static readonly string CommandTypeConfigure = "Configure";
       public static readonly string CommandTypeRename = "Rename";
+      public static readonly string CommandTypeMove = "Move";
+      public static readonly string CommandTypeCopy = "Copy";
 
       public static readonly string MetaDataAddedToDataRepositories = "Meta Data added to multiple repositories";
       public static readonly string MetaDataRemovedFromDataRepositories = "Meta Data removed from multiple repositories";
