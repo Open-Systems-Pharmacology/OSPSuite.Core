@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using OSPSuite.Utility.Extensions;
 using DevExpress.Utils;
 using DevExpress.XtraTreeList;
 using DevExpress.XtraTreeList.Nodes;
@@ -12,6 +11,7 @@ using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Binders
 {
@@ -32,7 +32,7 @@ namespace OSPSuite.UI.Binders
          _presenter = presenter;
          _treeView.CalcNodeDragImageIndex += (o, e) => onEvent(calcNodeDragImageIndex, e);
 
-         _treeView.OptionsDragAndDrop.DragNodesMode =DragNodesMode.Multiple;
+         _treeView.OptionsDragAndDrop.DragNodesMode = DragNodesMode.Multiple;
          _treeView.AllowDrop = true;
 
          _treeView.DragOver += (o, e) => onEvent(treeViewDragOver, e);
@@ -45,7 +45,7 @@ namespace OSPSuite.UI.Binders
          var targetNode = _treeView.CalcHitInfo(p).Node;
 
          var draggedNodes = getDraggedNodesFrom(e);
-         var keyFlags = e.GetKeyFlags();
+         var keyFlags = e.AsKeyFlags();
 
          draggedNodes.Each(node => _presenter.DropNode(node, nodeFrom(targetNode), keyFlags));
 
@@ -95,7 +95,7 @@ namespace OSPSuite.UI.Binders
          var p = _treeView.PointToClient(Control.MousePosition);
          var targetNode = _treeView.CalcHitInfo(p).Node;
 
-         var treeNodes =  dragNodes.ToList();
+         var treeNodes = dragNodes.ToList();
 
          if (!treeNodes.All(_presenter.CanDrag))
             return DragDropEffects.None;
@@ -158,5 +158,4 @@ namespace OSPSuite.UI.Binders
          this.DoWithinExceptionHandler(() => action(e));
       }
    }
-
 }
