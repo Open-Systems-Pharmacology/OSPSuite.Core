@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OSPSuite.Presentation
+namespace OSPSuite.Presentation.Core
 {
 
    [Flags]

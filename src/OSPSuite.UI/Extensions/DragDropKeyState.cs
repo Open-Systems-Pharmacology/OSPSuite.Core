@@ -1,6 +1,5 @@
-﻿using System.Windows.Forms;
-using DevExpress.Utils.DragDrop;
-using OSPSuite.Presentation;
+﻿using OSPSuite.Presentation;
+using System.Windows.Forms;
 
 namespace OSPSuite.UI.Extensions
 {
