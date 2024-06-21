@@ -1,12 +1,7 @@
 ﻿using NUnit.Framework;
-using OSPSuite.Core.Domain.Builder;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OSPSuite.Core.Domain;
 using OSPSuite.BDDHelper;
+using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Extensions
 {
