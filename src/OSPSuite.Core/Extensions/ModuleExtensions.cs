@@ -13,20 +13,18 @@ namespace OSPSuite.Core.Extensions
       /// </summary>
       public static bool CanAdd<T>(this Module module, T buildingBlockToAdd) where T : IBuildingBlock
       {
-         var buildingBlockTypeToAdd = buildingBlockToAdd.GetType();
-
          // Check if the type to be added is in the forbiddenTypes set
-         if (isForbiddenType(buildingBlockTypeToAdd))
+         if (isForbiddenType(buildingBlockToAdd))
             return false;
 
          // Check if the type to be added or any of its base types are in the uniqueTypes set
-         if (!isUniqueType(buildingBlockTypeToAdd))
+         if (!isUniqueType(buildingBlockToAdd))
             return true;
 
-         return !buildingBlockTypeToAdd.IsAnImplementationOfAny(module.BuildingBlocks.Select(block => block.GetType()));
+         return !buildingBlockToAdd.IsAnImplementationOfAny(module.BuildingBlocks.Select(block => block.GetType()));
       }
 
-      private static bool isForbiddenType(Type buildingBlockTypeToAdd)
+      private static bool isForbiddenType(IBuildingBlock buildingBlockToAdd)
       {
          var forbiddenTypes = new HashSet<Type>
          {
@@ -34,10 +32,10 @@ namespace OSPSuite.Core.Extensions
             typeof(IndividualBuildingBlock)
          };
 
-         return buildingBlockTypeToAdd.IsAnImplementationOfAny(forbiddenTypes);
+         return buildingBlockToAdd.IsAnImplementationOfAny(forbiddenTypes);
       }
 
-      private static bool isUniqueType(Type buildingBlockTypeToAdd)
+      private static bool isUniqueType(IBuildingBlock buildingBlockToAdd)
       {
          var uniqueTypes = new HashSet<Type>
          {
@@ -49,7 +47,7 @@ namespace OSPSuite.Core.Extensions
             typeof(ObserverBuildingBlock)
          };
 
-         return buildingBlockTypeToAdd.IsAnImplementationOfAny(uniqueTypes);
+         return buildingBlockToAdd.IsAnImplementationOfAny(uniqueTypes);
       }
    }
 }
