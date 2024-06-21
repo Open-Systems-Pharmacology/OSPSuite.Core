@@ -18,6 +18,12 @@ namespace OSPSuite.UI.Extensions
          return dataBeingDragged != null && dataBeingDragged.IsAnImplementationOf(type);
       }
 
+      // Convert DragDropKeyState as integer to Enum DragDropKeyFlags 
+      // This is because the DragEventArgs.KeyState is an integer
+      // but on the events which are using it, it is being converted to DragDropKeyState for better readability
+      public static DragDropKeyFlags AsKeyFlags(this DragEventArgs dragEventArgs) =>
+         (DragDropKeyFlags)dragEventArgs.KeyState;
+
       public static T Data<T>(this DragEventArgs e)
       {
          try
