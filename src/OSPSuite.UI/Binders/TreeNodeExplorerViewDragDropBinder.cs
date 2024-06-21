@@ -12,7 +12,6 @@ using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
-using OSPSuite.Presentation;
 
 namespace OSPSuite.UI.Binders
 {
