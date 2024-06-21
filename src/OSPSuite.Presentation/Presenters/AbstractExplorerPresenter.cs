@@ -376,6 +376,7 @@ namespace OSPSuite.Presentation.Presenters
          _classificationPresenter.MoveNode(classifiableNode, classificationNode);
       }
 
+         //_classificationPresenter.MoveNode(classifiableNode, classificationNode);
       public virtual void RemoveNode(ITreeNode nodeToRemove)
       {
          _view.RemoveNode(nodeToRemove);
