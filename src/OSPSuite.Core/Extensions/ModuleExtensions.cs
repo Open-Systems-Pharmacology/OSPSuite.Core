@@ -29,8 +29,6 @@ namespace OSPSuite.Core.Extensions
             typeof(MoleculeBuildingBlock),
             typeof(PassiveTransportBuildingBlock),
             typeof(EventGroupBuildingBlock),
-            typeof(InitialConditionsBuildingBlock),
-            typeof(ParameterValuesBuildingBlock),
             typeof(ReactionBuildingBlock),
             typeof(SpatialStructure),
             typeof(ObserverBuildingBlock)
