@@ -45,7 +45,7 @@ namespace OSPSuite.UI.Binders
          var targetNode = _treeView.CalcHitInfo(p).Node;
 
          var draggedNodes = getDraggedNodesFrom(e);
-         var keyFlags = e.ConvertKeyState(e.KeyState);
+         var keyFlags = e.GetKeyFlags();
 
          draggedNodes.Each(node => _presenter.DropNode(node, nodeFrom(targetNode), keyFlags));
 
