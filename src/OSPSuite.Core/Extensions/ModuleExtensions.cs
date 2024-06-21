@@ -1,30 +1,45 @@
-﻿using OSPSuite.Core.Domain.Builder;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Extensions
 {
    public static class ModuleNodeExtensions
    {
       /// <summary>
-      /// Checks if a building block can be added to a module.
+      ///    Checks if a building block can be added to a module.
       /// </summary>
-      /// <typeparam name="T"></typeparam>
-      /// <param name="module"></param>
-      /// <param name="buildingBlockToAdd"></param>
-      /// <returns></returns>
       public static bool CanAdd<T>(this Module module, T buildingBlockToAdd) where T : IBuildingBlock
       {
-         HashSet<Type> forbiddenTypes = new HashSet<Type>
-            {
+         var buildingBlockTypeToAdd = buildingBlockToAdd.GetType();
+
+         // Check if the type to be added is in the forbiddenTypes set
+         if (isForbiddenType(buildingBlockTypeToAdd))
+            return false;
+
+         // Check if the type to be added or any of its base types are in the uniqueTypes set
+         if (!isUniqueType(buildingBlockTypeToAdd))
+            return true;
+
+         return !buildingBlockTypeToAdd.IsAnImplementationOfAny(module.BuildingBlocks.Select(block => block.GetType()));
+      }
+
+      private static bool isForbiddenType(Type buildingBlockTypeToAdd)
+      {
+         var forbiddenTypes = new HashSet<Type>
+         {
             typeof(ExpressionProfileBuildingBlock),
             typeof(IndividualBuildingBlock)
          };
 
-         HashSet<Type> uniqueTypes = new HashSet<Type>
+         return buildingBlockTypeToAdd.IsAnImplementationOfAny(forbiddenTypes);
+      }
+
+      private static bool isUniqueType(Type buildingBlockTypeToAdd)
+      {
+         var uniqueTypes = new HashSet<Type>
          {
             typeof(MoleculeBuildingBlock),
             typeof(PassiveTransportBuildingBlock),
@@ -34,23 +49,7 @@ namespace OSPSuite.Core.Extensions
             typeof(ObserverBuildingBlock)
          };
 
-         var buildingBlockTypeToAdd = buildingBlockToAdd.GetType();
-
-         // Check if the type to be added is in the forbiddenTypes set
-         bool isForbiddenType = forbiddenTypes.Any(forbiddenType => forbiddenType.IsAssignableFrom(buildingBlockTypeToAdd));
-         if(isForbiddenType)
-            return false;
-
-         // Check if the type to be added or any of its base types are in the uniqueTypes set
-         bool isSubtypeOfUniqueTypes = uniqueTypes.Any(uniqueType => uniqueType.IsAssignableFrom(buildingBlockTypeToAdd));
-
-         if (!isSubtypeOfUniqueTypes)
-            return true;
-
-         var existingBuildingBlockTypes = module.BuildingBlocks.Select(block => block.GetType());
-
-         return !existingBuildingBlockTypes.Any(existingType =>
-            existingType.IsAssignableFrom(buildingBlockTypeToAdd) || buildingBlockTypeToAdd.IsAssignableFrom(existingType));
+         return buildingBlockTypeToAdd.IsAnImplementationOfAny(uniqueTypes);
       }
    }
 }

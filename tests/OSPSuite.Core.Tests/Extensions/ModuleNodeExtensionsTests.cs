@@ -76,10 +76,15 @@ namespace OSPSuite.Core.Extensions
 
    public class When_building_block_type_is_not_allowed_in_module : concern_for_ModuleExtensions
    {
+      private class AdvancedExpressionProfileBuildingBlock : ExpressionProfileBuildingBlock
+      {
+
+      }
+
       [Observation]
       public void can_add_should_return_false()
       {
-         var expressionBuildingBlock = new ExpressionProfileBuildingBlock();
+         var expressionBuildingBlock = new AdvancedExpressionProfileBuildingBlock();
          var individualBuildingBlock = new IndividualBuildingBlock();
          _module.CanAdd(expressionBuildingBlock).ShouldBeFalse();
          _module.CanAdd(individualBuildingBlock).ShouldBeFalse();
