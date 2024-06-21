@@ -64,7 +64,7 @@ namespace OSPSuite.Core.Extensions
          Assert.IsFalse(result);
       }
 
-      [Test]
+      [Observation]
       public void CanAdd_ShouldReturnFalse_WhenSupertypeBuildingBlockAlreadyExists()
       {
          _module.Add(_passiveTransportBuildingBlock);
