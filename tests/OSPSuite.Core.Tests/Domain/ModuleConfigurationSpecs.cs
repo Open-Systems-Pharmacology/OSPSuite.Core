@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Domain
          _parameterValuesBuildingBlock = new ParameterValuesBuildingBlock();
          _module.Add(_parameterValuesBuildingBlock);
 
-         _module.DefaultMergeBehavior = MergeBehavior.Overwrite;
+         _module.MergeBehavior = MergeBehavior.Overwrite;
 
          sut = new ModuleConfiguration(_module);
       }
@@ -51,17 +51,6 @@ namespace OSPSuite.Core.Domain
       {
          sut.SelectedInitialConditions.ShouldBeEqualTo(_initialConditionsBuildingBlock1);
          sut.SelectedParameterValues.ShouldBeEqualTo(_parameterValuesBuildingBlock);
-      }
-   }
-
-   public class When_setting_the_merge_behavior_on_the_module_configuration : concern_for_ModuleConfiguration
-   {
-      [Observation]
-      public void should_not_change_the_default_merge_behavior_in_the_underlying_module()
-      {
-         sut.MergeBehavior.ShouldBeEqualTo(MergeBehavior.Overwrite);
-         sut.MergeBehavior = MergeBehavior.Extend;
-         _module.DefaultMergeBehavior.ShouldBeEqualTo(MergeBehavior.Overwrite);
       }
    }
 
@@ -95,9 +84,8 @@ namespace OSPSuite.Core.Domain
 
          sut.SelectedInitialConditions = _initialConditionsBuildingBlock2;
          sut.SelectedParameterValues = null;
-         sut.Module.DefaultMergeBehavior = MergeBehavior.Extend;
+         sut.Module.MergeBehavior = MergeBehavior.Extend;
          sut.Module.ModuleImportVersion = "1.2.3";
-         sut.MergeBehavior = MergeBehavior.Extend;
       }
 
       protected override void Because()
@@ -118,7 +106,7 @@ namespace OSPSuite.Core.Domain
       {
          _result.Module.ShouldNotBeEqualTo(sut.Module);
          _result.Module.Name.ShouldBeEqualTo(sut.Module.Name);
-         _result.Module.DefaultMergeBehavior.ShouldBeEqualTo(sut.Module.DefaultMergeBehavior);
+         _result.Module.MergeBehavior.ShouldBeEqualTo(sut.Module.MergeBehavior);
          _result.Module.ModuleImportVersion.ShouldBeEqualTo(sut.Module.ModuleImportVersion);
          _result.MergeBehavior.ShouldBeEqualTo(sut.MergeBehavior);
       }

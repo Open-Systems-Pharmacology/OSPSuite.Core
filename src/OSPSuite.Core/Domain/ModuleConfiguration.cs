@@ -22,9 +22,9 @@ namespace OSPSuite.Core.Domain
       public ParameterValuesBuildingBlock SelectedParameterValues { get; set; }
 
       /// <summary>
-      /// Merge behavior for merging spatial structures form different modules. Default value will be taken from the module
+      /// Merge behavior for merging spatial structures from different modules.
       /// </summary>
-      public MergeBehavior MergeBehavior { get; set; } 
+      public MergeBehavior MergeBehavior => Module.MergeBehavior;
 
       [Obsolete("For serialization")]
       public ModuleConfiguration()
@@ -49,7 +49,6 @@ namespace OSPSuite.Core.Domain
       public ModuleConfiguration(Module module, InitialConditionsBuildingBlock selectedInitialConditionBuilding, ParameterValuesBuildingBlock selectedParameterValues)
       {
          Module = module;
-         MergeBehavior = module.DefaultMergeBehavior;
          SelectedInitialConditions = selectedInitialConditionBuilding;
          SelectedParameterValues = selectedParameterValues;
       }
@@ -89,7 +88,6 @@ namespace OSPSuite.Core.Domain
          if (!(source is ModuleConfiguration sourceConfiguration))
             return;
 
-         MergeBehavior = sourceConfiguration.MergeBehavior;
          Module = cloneManager.Clone(sourceConfiguration.Module);
          SelectedInitialConditions = Module.InitialConditionsCollection.FindByName(sourceConfiguration.SelectedInitialConditions?.Name);
          SelectedParameterValues = Module.ParameterValuesCollection.FindByName(sourceConfiguration.SelectedParameterValues?.Name);
