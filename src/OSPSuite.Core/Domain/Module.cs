@@ -51,7 +51,6 @@ namespace OSPSuite.Core.Domain
       public string PKSimVersion { get; set; }
 
       public MergeBehavior MergeBehavior { get; set; } = MergeBehavior.Overwrite;
-      /// <summary>
 
       public EventGroupBuildingBlock EventGroups => buildingBlockByType<EventGroupBuildingBlock>();
       public MoleculeBuildingBlock Molecules => buildingBlockByType<MoleculeBuildingBlock>();
