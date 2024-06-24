@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
@@ -23,7 +25,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    If a container with the same name is found, we try to merge the content of the container being merged into the
       ///    existing container according to the following logic
-      ///    * We add non existing children (by name) to the existing container
+      ///    * We add non-existing children (by name) to the existing container
       ///    * We replace existing parameter by name
       ///    * We replace existing formula by name
       ///    * if a child container with the same name is found, we recursively merge the content of the child container
@@ -49,6 +51,7 @@ namespace OSPSuite.Core.Domain
       public string PKSimVersion { get; set; }
 
       public MergeBehavior MergeBehavior { get; set; } = MergeBehavior.Overwrite;
+      /// <summary>
 
       public EventGroupBuildingBlock EventGroups => buildingBlockByType<EventGroupBuildingBlock>();
       public MoleculeBuildingBlock Molecules => buildingBlockByType<MoleculeBuildingBlock>();
@@ -147,6 +150,38 @@ namespace OSPSuite.Core.Domain
       IEnumerator IEnumerable.GetEnumerator()
       {
          return GetEnumerator();
+      }
+
+      /// <summary>
+      ///    Checks if a building block can be added to a module.
+      /// </summary>
+      public bool CanAdd<T>(T buildingBlockToAdd) where T : IBuildingBlock
+      {
+         var forbiddenTypes = new HashSet<Type>
+         {
+            typeof(ExpressionProfileBuildingBlock),
+            typeof(IndividualBuildingBlock)
+         };
+
+         var uniqueTypes = new HashSet<Type>
+         {
+            typeof(MoleculeBuildingBlock),
+            typeof(PassiveTransportBuildingBlock),
+            typeof(EventGroupBuildingBlock),
+            typeof(ReactionBuildingBlock),
+            typeof(SpatialStructure),
+            typeof(ObserverBuildingBlock)
+         };
+
+         // Check if the type to be added is in the forbiddenTypes set
+         if (buildingBlockToAdd.IsAnImplementationOfAny(forbiddenTypes))
+            return false;
+
+         // Check if the type to be added or any of its base types are in the uniqueTypes set
+         if (!buildingBlockToAdd.IsAnImplementationOfAny(uniqueTypes))
+            return true;
+
+         return !buildingBlockToAdd.IsAnImplementationOfAny(BuildingBlocks.Select(block => block.GetType()));
       }
    }
 }

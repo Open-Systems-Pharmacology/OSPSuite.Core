@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -169,7 +170,7 @@ namespace OSPSuite.Core.Domain
          The.Action(() => sut.Add(new ReactionBuildingBlock())).ShouldThrowAn<OSPSuiteException>();
       }
    }
-   
+
    public class When_comparing_module_versions_with_different_ordering_of_building_block : concern_for_Module
    {
       private string _initialVersion;
@@ -202,7 +203,7 @@ namespace OSPSuite.Core.Domain
          sut.Version.ShouldBeEqualTo(_initialVersion);
       }
    }
-   
+
    public class When_removing_a_building_block : concern_for_Module
    {
       private string _preAddVersion;
@@ -360,6 +361,140 @@ namespace OSPSuite.Core.Domain
       public void the_module_indicates_it_is_a_pk_sim_module()
       {
          sut.IsPKSimModule.ShouldBeTrue();
+      }
+   }
+
+   public class When_checking_for_can_add : concern_for_Module
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.BuildingBlocks.ToList().Each(sut.Remove);
+      }
+   }
+
+   public class When_building_block_type_is_not_in_unique_types : When_checking_for_can_add
+   {
+      private CustomBuildingBlock _customBuildingBlock;
+
+      private class CustomBuildingBlock : PassiveTransportBuildingBlock
+      {
+      }
+
+      protected override void Context()
+      {
+         base.Context();
+         _customBuildingBlock = new CustomBuildingBlock();
+      }
+
+      [Observation]
+      public void can_add_should_return_true()
+      {
+         sut.CanAdd(_customBuildingBlock).ShouldBeTrue();
+      }
+   }
+
+   public class When_no_same_type_building_block_exists : When_checking_for_can_add
+   {
+      private MoleculeBuildingBlock _moleculeBuildingBlock;
+
+      protected override void Context()
+      {
+         base.Context();
+         _moleculeBuildingBlock = new MoleculeBuildingBlock();
+      }
+
+      [Observation]
+      public void can_add_should_return_true() =>
+         sut.CanAdd(_moleculeBuildingBlock).ShouldBeTrue();
+   }
+
+   public class When_same_type_building_block_already_exists : When_checking_for_can_add
+   {
+      private MoleculeBuildingBlock _anotherMoleculeBuildingBlock;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut.Add(new MoleculeBuildingBlock());
+         _anotherMoleculeBuildingBlock = new MoleculeBuildingBlock();
+      }
+
+      [Observation]
+      public void can_add_should_return_false()
+      {
+         sut.CanAdd(_anotherMoleculeBuildingBlock).ShouldBeFalse();
+      }
+   }
+
+   public class When_subtype_building_block_already_exists : When_checking_for_can_add
+   {
+      private class AdvancedMoleculeBuildingBlock : MoleculeBuildingBlock
+      {
+      }
+
+      private MoleculeBuildingBlock _moleculeBuildingBlock;
+      private AdvancedMoleculeBuildingBlock _anotherMoleculeBuildingBlock;
+
+      protected override void Context()
+      {
+         base.Context();
+         _moleculeBuildingBlock = new MoleculeBuildingBlock();
+         sut.Add(_moleculeBuildingBlock);
+         _anotherMoleculeBuildingBlock = new AdvancedMoleculeBuildingBlock();
+      }
+
+      [Observation]
+      public void can_add_should_return_false()
+      {
+         sut.CanAdd(_anotherMoleculeBuildingBlock).ShouldBeFalse();
+      }
+   }
+
+   public class When_different_type_building_block_exists : When_checking_for_can_add
+   {
+      private IBuildingBlock _passiveTransportBuildingBlock;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut.Add(new MoleculeBuildingBlock());
+         _passiveTransportBuildingBlock = new PassiveTransportBuildingBlock();
+      }
+
+      [Observation]
+      public void can_add_should_return_true()
+      {
+         sut.CanAdd(_passiveTransportBuildingBlock).ShouldBeTrue();
+      }
+   }
+
+   public class When_building_block_type_is_not_allowed_in_module : When_checking_for_can_add
+   {
+      private class AdvancedExpressionProfileBuildingBlock : ExpressionProfileBuildingBlock
+      {
+      }
+
+      [Observation]
+      public void can_add_should_return_false()
+      {
+         var expressionBuildingBlock = new AdvancedExpressionProfileBuildingBlock();
+         var individualBuildingBlock = new IndividualBuildingBlock();
+         sut.CanAdd(expressionBuildingBlock).ShouldBeFalse();
+         sut.CanAdd(individualBuildingBlock).ShouldBeFalse();
+      }
+   }
+
+   public class When_module_can_have_multiple_instances_of_a_type : When_checking_for_can_add
+   {
+      [Observation]
+      public void can_add_should_return_true()
+      {
+         sut.Add(new ParameterValuesBuildingBlock());
+         sut.CanAdd(new ParameterValuesBuildingBlock()).ShouldBeTrue();
+
+         sut.Add(new InitialConditionsBuildingBlock());
+         sut.CanAdd(new InitialConditionsBuildingBlock()).ShouldBeTrue();
       }
    }
 }
