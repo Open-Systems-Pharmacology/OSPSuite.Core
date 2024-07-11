@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.UnitSystem;
+using System.ComponentModel;
 
 namespace OSPSuite.Core.Domain
 {
@@ -75,7 +76,12 @@ namespace OSPSuite.Core.Domain
 
          //Add the root container unless our entity is already the root container
          if (rootContainer != null)
+         {
             objectPath.AddAtFront(rootContainer.Name);
+            
+            if (rootContainer.ParentPath != null)
+               objectPath.AddAtFront(rootContainer.ParentPath);
+         }
       }
 
       private string createAliasFrom(string name)
