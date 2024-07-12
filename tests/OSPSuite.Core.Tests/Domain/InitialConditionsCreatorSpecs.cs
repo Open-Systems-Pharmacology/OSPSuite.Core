@@ -119,6 +119,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void the_initial_condition_should_have_root_container_parent_path()
       {
+         var path = new ObjectPath("ItGoesSomewhere", "Else", "topContainer", "moleculeName");
          _initialCondition.Path.Equals(new ObjectPath("ItGoesSomewhere", "Else", "topContainer", "moleculeName")).ShouldBeTrue();
       }
    }

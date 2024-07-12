@@ -47,19 +47,21 @@ namespace OSPSuite.Core.Domain.Services
       InitialCondition CreateInitialCondition(ObjectPath moleculeAmountPath, MoleculeAmount moleculeAmount);
    }
 
-   internal class InitialConditionsCreator : PathAndValueCreator, IInitialConditionsCreator
+   internal class InitialConditionsCreator : IInitialConditionsCreator
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IIdGenerator _idGenerator;
       private readonly ICloneManagerForBuildingBlock _cloneManagerForBuildingBlock;
+      private readonly IEntityPathResolver _entityPathResolver;
 
       public InitialConditionsCreator(
          IObjectBaseFactory objectBaseFactory, IEntityPathResolver entityPathResolver, IIdGenerator idGenerator,
-         ICloneManagerForBuildingBlock cloneManagerForBuildingBlock) : base(entityPathResolver)
+         ICloneManagerForBuildingBlock cloneManagerForBuildingBlock) 
       {
          _objectBaseFactory = objectBaseFactory;
          _cloneManagerForBuildingBlock = cloneManagerForBuildingBlock;
          _idGenerator = idGenerator;
+         _entityPathResolver = entityPathResolver;
       }
 
       public InitialConditionsBuildingBlock CreateFrom(SpatialStructure spatialStructure, IReadOnlyList<MoleculeBuilder> molecules)
@@ -101,7 +103,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private InitialCondition createInitialConditionWithValue(IContainer container, MoleculeBuilder molecule)
       {
-         var initialCondition = CreateInitialCondition(ObjectPathForContainer(container), molecule.Name, molecule.Dimension, molecule.DisplayUnit);
+         var initialCondition = CreateInitialCondition(_entityPathResolver.ObjectPathFor(container), molecule.Name, molecule.Dimension, molecule.DisplayUnit);
          initialCondition.Value = molecule.GetDefaultInitialCondition();
          return initialCondition;
       }

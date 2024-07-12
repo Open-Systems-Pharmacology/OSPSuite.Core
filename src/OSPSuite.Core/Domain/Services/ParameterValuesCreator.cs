@@ -54,13 +54,15 @@ namespace OSPSuite.Core.Domain.Services
       IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, IReadOnlyList<MoleculeBuilder> molecules);
    }
 
-   internal class ParameterValuesCreator : PathAndValueCreator, IParameterValuesCreator
+   internal class ParameterValuesCreator : IParameterValuesCreator
    {
       private readonly IIdGenerator _idGenerator;
+      private readonly IEntityPathResolver _entityPathResolver;
 
-      public ParameterValuesCreator(IIdGenerator idGenerator, IEntityPathResolver entityPathResolver) : base(entityPathResolver)
+      public ParameterValuesCreator(IIdGenerator idGenerator, IEntityPathResolver entityPathResolver) 
       {
          _idGenerator = idGenerator;
+         _entityPathResolver = entityPathResolver;
       }
 
       public ParameterValue CreateParameterValue(ObjectPath parameterPath, double value, IDimension dimension,
@@ -96,7 +98,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private ObjectPath objectPathForParameterInContainer(IContainer container, string parameterName, string moleculeName)
       {
-         var pathForParameterInContainer = ObjectPathForContainer(container);
+         var pathForParameterInContainer = _entityPathResolver.ObjectPathFor(container); 
          pathForParameterInContainer.AddRange(new[] { moleculeName, parameterName });
          return pathForParameterInContainer;
       }
