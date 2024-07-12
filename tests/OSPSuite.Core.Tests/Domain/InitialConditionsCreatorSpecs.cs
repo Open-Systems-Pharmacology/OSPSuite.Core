@@ -119,7 +119,6 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void the_initial_condition_should_have_root_container_parent_path()
       {
-         var path = new ObjectPath("ItGoesSomewhere", "Else", "topContainer", "moleculeName");
          _initialCondition.Path.Equals(new ObjectPath("ItGoesSomewhere", "Else", "topContainer", "moleculeName")).ShouldBeTrue();
       }
    }
@@ -159,6 +158,7 @@ namespace OSPSuite.Core.Domain
       private MoleculeBuilder _molecule;
       private Container _container;
       private ExpressionProfileBuildingBlock _expressionProfile;
+
       protected override void Context()
       {
          base.Context();
@@ -192,7 +192,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.AddToExpressionProfile(_expressionProfile, new []{ _container }, _molecule);
+         sut.AddToExpressionProfile(_expressionProfile, new[] { _container }, _molecule);
       }
 
       [Observation]

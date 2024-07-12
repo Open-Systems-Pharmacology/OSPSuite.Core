@@ -1,36 +1,36 @@
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.UnitSystem;
-using System.ComponentModel;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
    public interface IObjectPathFactory
    {
       /// <summary>
-      /// Creates the AbsoluteObjectPath to the specified entity.
+      ///    Creates the AbsoluteObjectPath to the specified entity.
       /// </summary>
       /// <param name="entity">The ref entity.</param>
       FormulaUsablePath CreateAbsoluteFormulaUsablePath(IFormulaUsable entity);
 
       /// <summary>
-      /// Creates a object path containing the given path entries
+      ///    Creates a object path containing the given path entries
       /// </summary>
       /// <param name="entries">entries used to create the path</param>
       FormulaUsablePath CreateFormulaUsablePathFrom(params string[] entries);
+
       FormulaUsablePath CreateFormulaUsablePathFrom(IReadOnlyCollection<string> entries);
       FormulaUsablePath CreateFormulaUsablePathFrom(ObjectPath objectPath);
 
       /// <summary>
-      /// Creates an object path representing the Time Parameter
+      ///    Creates an object path representing the Time Parameter
       /// </summary>
       TimePath CreateTimePath(IDimension timeDimension);
 
       ObjectPath CreateAbsoluteObjectPath(IEntity entity);
 
       /// <summary>
-      /// Creates a ObjectPath representing the relative Position of usedObject according to usingObject
+      ///    Creates a ObjectPath representing the relative Position of usedObject according to usingObject
       /// </summary>
       ObjectPath CreateRelativeObjectPath(IEntity usingObject, IEntity usedObject);
 
@@ -78,7 +78,7 @@ namespace OSPSuite.Core.Domain
          if (rootContainer != null)
          {
             objectPath.AddAtFront(rootContainer.Name);
-            
+
             if (rootContainer.ParentPath != null)
                objectPath.AddAtFront(rootContainer.ParentPath);
          }
@@ -113,7 +113,7 @@ namespace OSPSuite.Core.Domain
       }
 
       /// <summary>
-      /// Creates a ObjectPath representing the relative Position of usedObject according to usingObject
+      ///    Creates a ObjectPath representing the relative Position of usedObject according to usingObject
       /// </summary>
       public ObjectPath CreateRelativeObjectPath(IEntity usingObject, IEntity usedObject)
       {
@@ -133,7 +133,7 @@ namespace OSPSuite.Core.Domain
 
       private void addRelativePathEntries(IEntity usingObject, IEntity usedObject, ObjectPath objectPath)
       {
-         if(usedObject.Equals(usingObject))
+         if (usedObject.Equals(usingObject))
          {
             objectPath.Add(ObjectPath.PARENT_CONTAINER);
             objectPath.Add(usedObject.Name);
@@ -148,10 +148,12 @@ namespace OSPSuite.Core.Domain
                usingPath.RemoveAt(0);
                usedPath.RemoveAt(0);
             }
+
             foreach (var pathSegment in usingPath)
             {
                objectPath.Add(ObjectPath.PARENT_CONTAINER);
             }
+
             foreach (var pathSegment in usedPath)
             {
                objectPath.Add(pathSegment);

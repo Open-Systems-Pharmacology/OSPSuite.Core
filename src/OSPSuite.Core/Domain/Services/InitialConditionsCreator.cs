@@ -30,18 +30,21 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Creates a new initial conditions for the <paramref name="molecule" /> in the <paramref name="containers" /> and adds
       ///    them to the <paramref name="buildingBlock" />, initializing the default values and formulae.
-      ///    The <paramref name="containers"/> list are containers where an initial condition will be created for each using the container path
+      ///    The <paramref name="containers" /> list are containers where an initial condition will be created for each using the
+      ///    container path
       /// </summary>
       void AddToExpressionProfile(ExpressionProfileBuildingBlock buildingBlock, IReadOnlyList<IContainer> containers, MoleculeBuilder molecule);
 
       /// <summary>
-      ///   Creates a new initial conditions for the <paramref name="molecule" /> using the path of the <paramref name="container" />.
-      ///   If supplied, the <paramref name="defaultStartFormula" /> will be used as the formula for the initial condition.
+      ///    Creates a new initial conditions for the <paramref name="molecule" /> using the path of the
+      ///    <paramref name="container" />.
+      ///    If supplied, the <paramref name="defaultStartFormula" /> will be used as the formula for the initial condition.
       /// </summary>
       InitialCondition CreateInitialCondition(IContainer container, MoleculeBuilder molecule, IFormula defaultStartFormula = null);
 
       /// <summary>
-      ///   Creates a new initial conditions with <paramref name="moleculeAmountPath"/> using properties from the <paramref name="moleculeAmount"/>
+      ///    Creates a new initial conditions with <paramref name="moleculeAmountPath" /> using properties from the
+      ///    <paramref name="moleculeAmount" />
       /// </summary>
       /// <returns></returns>
       InitialCondition CreateInitialCondition(ObjectPath moleculeAmountPath, MoleculeAmount moleculeAmount);
@@ -56,7 +59,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public InitialConditionsCreator(
          IObjectBaseFactory objectBaseFactory, IEntityPathResolver entityPathResolver, IIdGenerator idGenerator,
-         ICloneManagerForBuildingBlock cloneManagerForBuildingBlock) 
+         ICloneManagerForBuildingBlock cloneManagerForBuildingBlock)
       {
          _objectBaseFactory = objectBaseFactory;
          _cloneManagerForBuildingBlock = cloneManagerForBuildingBlock;
@@ -121,7 +124,7 @@ namespace OSPSuite.Core.Domain.Services
          containers.Each(container => { buildingBlock.AddInitialCondition(createInitialConditionForBuildingBlock(buildingBlock, container, molecule)); });
       }
 
-      private void setInitialConditionFormula(IFormula formula, InitialCondition initialCondition, Func<IFormula, IFormula>createFormulaFrom)
+      private void setInitialConditionFormula(IFormula formula, InitialCondition initialCondition, Func<IFormula, IFormula> createFormulaFrom)
       {
          if (!formula.IsConstant())
             initialCondition.Formula = createFormulaFrom(formula);
