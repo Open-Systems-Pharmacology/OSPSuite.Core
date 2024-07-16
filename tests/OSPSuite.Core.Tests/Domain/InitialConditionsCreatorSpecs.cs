@@ -158,6 +158,7 @@ namespace OSPSuite.Core.Domain
       private MoleculeBuilder _molecule;
       private Container _container;
       private ExpressionProfileBuildingBlock _expressionProfile;
+
       protected override void Context()
       {
          base.Context();
@@ -191,7 +192,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         sut.AddToExpressionProfile(_expressionProfile, new []{ _container }, _molecule);
+         sut.AddToExpressionProfile(_expressionProfile, new[] { _container }, _molecule);
       }
 
       [Observation]

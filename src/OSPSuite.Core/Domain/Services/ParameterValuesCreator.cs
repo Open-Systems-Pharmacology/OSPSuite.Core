@@ -47,20 +47,24 @@ namespace OSPSuite.Core.Domain.Services
       IReadOnlyList<ParameterValue> CreateFrom(SpatialStructure spatialStructure, IReadOnlyList<MoleculeBuilder> molecules);
 
       /// <summary>
-      ///   Create and return a list of parameter values based on the <paramref name="physicalContainer" /> and <paramref name="molecules" />.
-      ///   The returned values will only include parameters for those containers and molecules that are relevant for expression profile.
+      ///    Create and return a list of parameter values based on the <paramref name="physicalContainer" /> and
+      ///    <paramref name="molecules" />.
+      ///    The returned values will only include parameters for those containers and molecules that are relevant for expression
+      ///    profile.
       /// </summary>
       /// <returns></returns>
       IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, IReadOnlyList<MoleculeBuilder> molecules);
    }
 
-   internal class ParameterValuesCreator : PathAndValueCreator, IParameterValuesCreator
+   internal class ParameterValuesCreator : IParameterValuesCreator
    {
       private readonly IIdGenerator _idGenerator;
+      private readonly IEntityPathResolver _entityPathResolver;
 
-      public ParameterValuesCreator(IIdGenerator idGenerator, IEntityPathResolver entityPathResolver) : base(entityPathResolver)
+      public ParameterValuesCreator(IIdGenerator idGenerator, IEntityPathResolver entityPathResolver)
       {
          _idGenerator = idGenerator;
+         _entityPathResolver = entityPathResolver;
       }
 
       public ParameterValue CreateParameterValue(ObjectPath parameterPath, double value, IDimension dimension,
@@ -80,23 +84,23 @@ namespace OSPSuite.Core.Domain.Services
          return parameterValue;
       }
 
-      public IReadOnlyList<ParameterValue> CreateFrom(SpatialStructure spatialStructure, IReadOnlyList<MoleculeBuilder> molecules) => 
+      public IReadOnlyList<ParameterValue> CreateFrom(SpatialStructure spatialStructure, IReadOnlyList<MoleculeBuilder> molecules) =>
          spatialStructure.PhysicalContainers.SelectMany(container => createFrom(container, molecules, isLocalWithConstantFormula)).ToList();
 
-      public IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, IReadOnlyList<MoleculeBuilder> molecules) => 
+      public IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, IReadOnlyList<MoleculeBuilder> molecules) =>
          physicalContainer.GetAllContainersAndSelf<IContainer>(x => x.Mode.Is(ContainerMode.Physical)).SelectMany(container => createFrom(container, molecules, x => x.IsExpression())).ToList();
 
-      private IEnumerable<ParameterValue> createFrom(IContainer container, IReadOnlyList<MoleculeBuilder> molecules, Func<IParameter, bool> createFor) => 
+      private IEnumerable<ParameterValue> createFrom(IContainer container, IReadOnlyList<MoleculeBuilder> molecules, Func<IParameter, bool> createFor) =>
          molecules.SelectMany(x => createFrom(container, x, createFor));
 
-      private IEnumerable<ParameterValue> createFrom(IContainer container, MoleculeBuilder molecule, Func<IParameter, bool> createFor) => 
+      private IEnumerable<ParameterValue> createFrom(IContainer container, MoleculeBuilder molecule, Func<IParameter, bool> createFor) =>
          molecule.Parameters.Where(createFor).Select(x => CreateParameterValue(objectPathForParameterInContainer(container, x.Name, molecule.Name), x));
 
       private static bool isLocalWithConstantFormula(IParameter x) => x.BuildMode == ParameterBuildMode.Local && x.Formula.IsConstant();
 
       private ObjectPath objectPathForParameterInContainer(IContainer container, string parameterName, string moleculeName)
       {
-         var pathForParameterInContainer = ObjectPathForContainer(container);
+         var pathForParameterInContainer = _entityPathResolver.ObjectPathFor(container);
          pathForParameterInContainer.AddRange(new[] { moleculeName, parameterName });
          return pathForParameterInContainer;
       }
