@@ -179,7 +179,7 @@ namespace OSPSuite.Helpers
          //   - P
 
          var lung = createContainerWithName(Lung);
-
+         lung.AddTag("Tag1");
          var lngPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
          lngPlasma.Add(newConstantParameter(Volume, 2));
          lngPlasma.Add(newConstantParameter(pH, 7.5));
@@ -190,7 +190,10 @@ namespace OSPSuite.Helpers
          lngCell.Add(newConstantParameter(pH, 7));
          lung.Add(lngCell);
 
-         lung.Add(newConstantParameter(Q, 3));
+         var lungQ = newConstantParameter(Q, 3);
+         lungQ.AddTag("ParamTag1");
+         lung.Add(lungQ);
+
          lung.Add(newConstantParameter(P, 2));
          organism.Add(lung);
 
@@ -234,6 +237,7 @@ namespace OSPSuite.Helpers
 
          var neighborhood5 = _neighborhoodFactory.CreateBetween(lngPlasma, lngCell).WithName("lng_pls_to_lng_cell");
          neighborhood5.AddTag("Cell2Plasma");
+         neighborhood5.AddTag("NeighborhoodTag1");
          neighborhood5.AddParameter(newConstantParameter("SA", 22));
          spatialStructure.AddNeighborhood(neighborhood5);
 
@@ -295,6 +299,7 @@ namespace OSPSuite.Helpers
          lngPlasma.Add(newConstantParameter(Volume, 20));
          lngPlasma.Add(newConstantParameter(pH, 2));
          lung.Add(lngPlasma);
+         lung.AddTag("Tag2");
 
          var lngCell = createContainerWithName(Cell, ContainerMode.Physical);
          lngCell.Add(newConstantParameter(Volume, 10));
@@ -304,7 +309,11 @@ namespace OSPSuite.Helpers
          var lngInt = createContainerWithName(Interstitial, ContainerMode.Physical);
          lngInt.Add(newConstantParameter(Volume, 10));
          lngInt.Add(newConstantParameter(pH, 2));
-         lung.Add(newConstantParameter(Q, 5));
+         
+         var lungQ = newConstantParameter(Q, 5);
+         lungQ.AddTag("ParamTag2");
+         lung.Add(lungQ);
+
          lung.Add(newConstantParameter(P2, 10));
          lung.Add(lngInt);
 
@@ -332,6 +341,11 @@ namespace OSPSuite.Helpers
          var neighborhood2 = _neighborhoodFactory.CreateBetween(lngPlasma, heartPlasma, lung.ParentPath).WithName("lng_pls_to_hrt_pls");
          neighborhood2.AddParameter(newConstantParameter("SA", 10));
          spatialStructure.AddNeighborhood(neighborhood2);
+
+         //existing neighborhood between lngPlasma and lngCell
+         var neighborhood3 = _neighborhoodFactory.CreateBetween(lngPlasma, lngCell).WithName("lng_pls_to_lng_cell");
+         neighborhood3.AddTag("NeighborhoodTag2");
+         spatialStructure.AddNeighborhood(neighborhood3);
 
          module.Add(spatialStructure);
          return module;

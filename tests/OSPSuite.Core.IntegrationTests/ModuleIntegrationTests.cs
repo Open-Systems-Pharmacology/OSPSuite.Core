@@ -97,6 +97,30 @@ namespace OSPSuite.Core
       }
 
       [Observation]
+      public void should_have_merged_the_tag_at_the_container_level()
+      {
+         var lung = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung);
+         lung.Tags.Contains("Tag1").ShouldBeTrue();
+         lung.Tags.Contains("Tag2").ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_have_not_merged_the_tag_at_the_parameter_level()
+      {
+         var lungQ = _model.Root.EntityAt<Parameter>(Constants.ORGANISM, Lung, "Q");
+         lungQ.Tags.Contains("ParamTag1").ShouldBeFalse();
+         lungQ.Tags.Contains("ParamTag2").ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_have_merged_the_tag_at_the_neighborhood_level()
+      {
+         var lng_pls_to_lng_cell = _model.Root.EntityAt<Neighborhood>(Constants.NEIGHBORHOODS, "lng_pls_to_lng_cell");
+         lng_pls_to_lng_cell.Tags.Contains("NeighborhoodTag1").ShouldBeTrue();
+         lng_pls_to_lng_cell.Tags.Contains("NeighborhoodTag2").ShouldBeTrue();
+      }
+
+      [Observation]
       public void should_have_updating_existing_parameters()
       {
          var lung = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung);
