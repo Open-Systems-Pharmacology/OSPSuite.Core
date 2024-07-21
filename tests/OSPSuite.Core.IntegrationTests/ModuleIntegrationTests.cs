@@ -105,6 +105,13 @@ namespace OSPSuite.Core
       }
 
       [Observation]
+      public void should_have_updated_the_container_mode_to_the_one_of_the_merged_container()
+      {
+         var lung = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung);
+         lung.Mode.ShouldBeEqualTo(ContainerMode.Physical);
+      }
+
+      [Observation]
       public void should_have_not_merged_the_tag_at_the_parameter_level()
       {
          var lungQ = _model.Root.EntityAt<Parameter>(Constants.ORGANISM, Lung, "Q");

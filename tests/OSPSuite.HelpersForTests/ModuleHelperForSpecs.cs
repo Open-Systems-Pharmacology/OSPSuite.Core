@@ -177,8 +177,9 @@ namespace OSPSuite.Helpers
          //      - pH
          //   - Q
          //   - P
-
-         var lung = createContainerWithName(Lung);
+         
+         //set the container to being physical. It will become logical after update
+         var lung = createContainerWithName(Lung, ContainerMode.Logical);
          lung.AddTag("Tag1");
          var lngPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
          lngPlasma.Add(newConstantParameter(Volume, 2));
@@ -293,7 +294,7 @@ namespace OSPSuite.Helpers
          //      - Volume
          //      - pH
 
-         var lung = createContainerWithName(Lung);
+         var lung = createContainerWithName(Lung, ContainerMode.Physical);
 
          var lngPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
          lngPlasma.Add(newConstantParameter(Volume, 20));
@@ -343,7 +344,7 @@ namespace OSPSuite.Helpers
          spatialStructure.AddNeighborhood(neighborhood2);
 
          //existing neighborhood between lngPlasma and lngCell
-         var neighborhood3 = _neighborhoodFactory.CreateBetween(lngPlasma, lngCell).WithName("lng_pls_to_lng_cell");
+         var neighborhood3 = _neighborhoodFactory.CreateBetween(lngPlasma, lngCell, lung.ParentPath).WithName("lng_pls_to_lng_cell");
          neighborhood3.AddTag("NeighborhoodTag2");
          spatialStructure.AddNeighborhood(neighborhood3);
 
