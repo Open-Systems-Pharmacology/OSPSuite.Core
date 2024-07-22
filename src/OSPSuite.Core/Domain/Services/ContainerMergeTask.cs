@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
@@ -40,6 +42,7 @@ namespace OSPSuite.Core.Domain.Services
       public void MergeContainers(IContainer targetContainer, IContainer containerToMerge)
       {
          updateContainerProperties(targetContainer, containerToMerge);
+
          var allChildrenContainerToMerge = containerToMerge.GetChildren<IContainer>(x => !x.IsAnImplementationOf<IDistributedParameter>()).ToList();
          var allChildrenEntitiesToMerge = containerToMerge.GetChildren<IEntity>().Except(allChildrenContainerToMerge).ToList();
 
@@ -62,7 +65,22 @@ namespace OSPSuite.Core.Domain.Services
       private void updateContainerProperties(IContainer targetContainer, IContainer containerToMerge)
       {
          targetContainer.Mode = containerToMerge.Mode;
+         
+         var tagsToMerge = containerToMerge.Tags.Select(x => x.Value).ToString(", ");
+         var targetTags = targetContainer.Tags.Select(x => x.Value).ToString(", ");
+
+         if(tagsToMerge.Length > 0)
+            Console.WriteLine("Tags to Merge: " +  tagsToMerge);
+
+         if(targetTags.Length > 0)
+            Console.WriteLine("Existing tags: " + targetTags);
+   
          containerToMerge.Tags.Each(targetContainer.AddTag);
+
+         var mergedTags = targetContainer.Tags.Select(x => x.Value).ToString(", ");
+         if (mergedTags.Length > 0)
+            Console.WriteLine("Merged tags: " + mergedTags);
+
       }
    }
 }
