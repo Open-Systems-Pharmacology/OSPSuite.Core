@@ -71,8 +71,10 @@ namespace OSPSuite.Core.Domain.Mappers
 
       private void mergeNeighborhoodsInStructure(IContainer neighborhoods, IReadOnlyList<Neighborhood> neighborhoodsToMerge, MergeBehavior mergeBehavior)
       {
+         Console.WriteLine("Merge behavior:" + mergeBehavior);
          neighborhoodsToMerge.Each(neighborhoodToMerge =>
          {
+            Console.WriteLine("Neighborhood is: " + neighborhoodToMerge.Name);
             if (mergeBehavior == MergeBehavior.Extend)
                _containerMergeTask.AddOrMergeContainer(neighborhoods, neighborhoodToMerge);
             else

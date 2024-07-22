@@ -21,6 +21,10 @@ namespace OSPSuite.Core.Domain.Services
       public void AddOrMergeContainer(IContainer parentContainer, IContainer containerToMerge)
       {
          var existingContainer = parentContainer.Container(containerToMerge.Name);
+         Console.WriteLine("ParentContainer:" +  parentContainer.Name);
+         Console.WriteLine("Container to merge:" + containerToMerge.Name);
+         Console.WriteLine("Existing container in parent container:" + (existingContainer!=null).ToString());
+         Console.WriteLine("");
          if (existingContainer == null)
             parentContainer.Add(containerToMerge);
          else
