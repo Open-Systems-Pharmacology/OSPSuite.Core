@@ -119,8 +119,10 @@ namespace OSPSuite.Core
       public void should_have_merged_the_tag_at_the_neighborhood_level()
       {
          var lng_pls_to_lng_cell = _model.Root.EntityAt<Neighborhood>(Constants.NEIGHBORHOODS, "lng_pls_to_lng_cell");
-         lng_pls_to_lng_cell.Tags.Contains("NeighborhoodTag1").ShouldBeTrue();
-         lng_pls_to_lng_cell.Tags.Contains("NeighborhoodTag2").ShouldBeTrue();
+         var tags = lng_pls_to_lng_cell.Tags.Select(x => x.Value).ToString(", ");
+
+         lng_pls_to_lng_cell.Tags.Contains("NeighborhoodTag1").ShouldBeTrue(tags);
+         lng_pls_to_lng_cell.Tags.Contains("NeighborhoodTag2").ShouldBeTrue(tags);
       }
 
       [Observation]
