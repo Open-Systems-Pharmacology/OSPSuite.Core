@@ -81,6 +81,35 @@ namespace OSPSuite.Core
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfiguration();
    }
 
+   internal class When_running_the_case_study_for_module_integration_with_merge_behavior_extend_for_neighborhood : concern_for_ModuleIntegration
+   {
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehaviorOverridingModuleBehavior();
+
+      protected override void Because()
+      {
+         sut = IoC.Resolve<IModelConstructor>();
+         var moduleHelper = IoC.Resolve<ModuleHelperForSpecs>();
+         _simulationConfiguration = SimulationConfigurationBuilder()(moduleHelper);
+
+         Console.WriteLine(_simulationConfiguration.ModuleConfigurations[0].MergeBehavior);
+         Console.WriteLine(_simulationConfiguration.ModuleConfigurations[1].MergeBehavior);
+
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
+         _model = _result.Model;
+      }
+
+      [Observation]
+      public void should_have_merged_the_tag_at_the_neighborhood_level()
+      {
+         var lng_pls_to_lng_cell = _model.Root.EntityAt<Neighborhood>(Constants.NEIGHBORHOODS, "lng_pls_to_lng_cell");
+         var tags = lng_pls_to_lng_cell.Tags.Select(x => x.Value).ToString(", ");
+
+         lng_pls_to_lng_cell.Tags.Contains("NeighborhoodTag1").ShouldBeTrue(tags);
+         lng_pls_to_lng_cell.Tags.Contains("NeighborhoodTag2").ShouldBeTrue(tags);
+      }
+   }
+
    internal class When_running_the_case_study_for_module_integration_with_merge_behavior_override_to_extend : concern_for_ModuleIntegration
    {
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehaviorOverridingModuleBehavior();
@@ -113,16 +142,6 @@ namespace OSPSuite.Core
          var lungQ = _model.Root.EntityAt<Parameter>(Constants.ORGANISM, Lung, "Q");
          lungQ.Tags.Contains("ParamTag1").ShouldBeFalse();
          lungQ.Tags.Contains("ParamTag2").ShouldBeTrue();
-      }
-
-      [Observation]
-      public void should_have_merged_the_tag_at_the_neighborhood_level()
-      {
-         var lng_pls_to_lng_cell = _model.Root.EntityAt<Neighborhood>(Constants.NEIGHBORHOODS, "lng_pls_to_lng_cell");
-         var tags = lng_pls_to_lng_cell.Tags.Select(x => x.Value).ToString(", ");
-
-         lng_pls_to_lng_cell.Tags.Contains("NeighborhoodTag1").ShouldBeTrue(tags);
-         lng_pls_to_lng_cell.Tags.Contains("NeighborhoodTag2").ShouldBeTrue(tags);
       }
 
       [Observation]

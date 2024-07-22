@@ -65,20 +65,21 @@ namespace OSPSuite.Core.Domain.Services
       private void updateContainerProperties(IContainer targetContainer, IContainer containerToMerge)
       {
          targetContainer.Mode = containerToMerge.Mode;
-         
+
+         var isNeighborhood = containerToMerge.IsAnImplementationOf<Neighborhood>();
          var tagsToMerge = containerToMerge.Tags.Select(x => x.Value).ToString(", ");
          var targetTags = targetContainer.Tags.Select(x => x.Value).ToString(", ");
 
-         if(tagsToMerge.Length > 0)
+         if(isNeighborhood && tagsToMerge.Length > 0)
             Console.WriteLine("Tags to Merge: " +  tagsToMerge);
 
-         if(targetTags.Length > 0)
+         if (isNeighborhood && targetTags.Length > 0)
             Console.WriteLine("Existing tags: " + targetTags);
    
          containerToMerge.Tags.Each(targetContainer.AddTag);
 
          var mergedTags = targetContainer.Tags.Select(x => x.Value).ToString(", ");
-         if (mergedTags.Length > 0)
+         if (isNeighborhood && mergedTags.Length > 0)
             Console.WriteLine("Merged tags: " + mergedTags);
 
       }
