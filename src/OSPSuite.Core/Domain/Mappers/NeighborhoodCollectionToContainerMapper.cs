@@ -61,10 +61,16 @@ namespace OSPSuite.Core.Domain.Mappers
          //first step: Add the neighborhoods from the first structure
          neighborhoodsParentContainer.AddChildren(mapNeighborhoods(firstSpatialStructure));
 
+         if(allOtherSpatialStructuresWithMergeBehavior.Any())
+            Console.WriteLine("Neighborhood before map:" + allOtherSpatialStructuresWithMergeBehavior[0].spatialStructure.Neighborhoods.AllNames().ToString(", "));
+
          //now merge all other neighborhoods
-         allOtherSpatialStructuresWithMergeBehavior
-            .Select(x => new {x.mergeBehavior, neighborhoods = mapNeighborhoods(x.spatialStructure)})
-            .Each(x => mergeNeighborhoodsInStructure(neighborhoodsParentContainer, x.neighborhoods, x.mergeBehavior));
+         var t = allOtherSpatialStructuresWithMergeBehavior
+            .Select(x => new {x.mergeBehavior, neighborhoods = mapNeighborhoods(x.spatialStructure)});
+
+         Console.WriteLine("Neighborhoods: before merge: " + t.FirstOrDefault()?.neighborhoods.Count);
+
+         t.Each(x => mergeNeighborhoodsInStructure(neighborhoodsParentContainer, x.neighborhoods, x.mergeBehavior));
 
          return neighborhoodsParentContainer;
       }
@@ -72,6 +78,7 @@ namespace OSPSuite.Core.Domain.Mappers
       private void mergeNeighborhoodsInStructure(IContainer neighborhoods, IReadOnlyList<Neighborhood> neighborhoodsToMerge, MergeBehavior mergeBehavior)
       {
          Console.WriteLine("Merge behavior:" + mergeBehavior);
+         Console.WriteLine("Count neighborhood:" + neighborhoodsToMerge.Count);
          neighborhoodsToMerge.Each(neighborhoodToMerge =>
          {
             Console.WriteLine("Neighborhood is: " + neighborhoodToMerge.Name);

@@ -90,10 +90,6 @@ namespace OSPSuite.Core
          sut = IoC.Resolve<IModelConstructor>();
          var moduleHelper = IoC.Resolve<ModuleHelperForSpecs>();
          _simulationConfiguration = SimulationConfigurationBuilder()(moduleHelper);
-
-         Console.WriteLine(_simulationConfiguration.ModuleConfigurations[0].MergeBehavior);
-         Console.WriteLine(_simulationConfiguration.ModuleConfigurations[1].MergeBehavior);
-
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
          _model = _result.Model;

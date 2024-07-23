@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using OSPSuite.Utility.Extensions;
 
@@ -21,10 +20,6 @@ namespace OSPSuite.Core.Domain.Services
       public void AddOrMergeContainer(IContainer parentContainer, IContainer containerToMerge)
       {
          var existingContainer = parentContainer.Container(containerToMerge.Name);
-         Console.WriteLine("ParentContainer:" +  parentContainer.Name);
-         Console.WriteLine("Container to merge:" + containerToMerge.Name);
-         Console.WriteLine("Existing container in parent container:" + (existingContainer!=null).ToString());
-         Console.WriteLine("");
          if (existingContainer == null)
             parentContainer.Add(containerToMerge);
          else
@@ -74,18 +69,17 @@ namespace OSPSuite.Core.Domain.Services
          var tagsToMerge = containerToMerge.Tags.Select(x => x.Value).ToString(", ");
          var targetTags = targetContainer.Tags.Select(x => x.Value).ToString(", ");
 
-         if(isNeighborhood && tagsToMerge.Length > 0)
-            Console.WriteLine("Tags to Merge: " +  tagsToMerge);
+         if (isNeighborhood && tagsToMerge.Length > 0)
+            Console.WriteLine("Tags to Merge: " + tagsToMerge);
 
          if (isNeighborhood && targetTags.Length > 0)
             Console.WriteLine("Existing tags: " + targetTags);
-   
+
          containerToMerge.Tags.Each(targetContainer.AddTag);
 
          var mergedTags = targetContainer.Tags.Select(x => x.Value).ToString(", ");
          if (isNeighborhood && mergedTags.Length > 0)
             Console.WriteLine("Merged tags: " + mergedTags);
-
       }
    }
 }
