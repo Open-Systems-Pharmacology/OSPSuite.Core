@@ -96,7 +96,12 @@ namespace OSPSuite.Core.Domain.Mappers
          var startValuesForFloatingMolecules = presentMoleculesCachedByContainerPath(moleculeNames, simulationBuilder);
          var moleculeNamesCopyProperties = simulationBuilder.AllPresentXenobioticFloatingMoleculeNames();
 
-         return neighborhoodBuilder => _neighborhoodMapper.MapFrom(neighborhoodBuilder, moleculeNamesFor(neighborhoodBuilder, startValuesForFloatingMolecules), moleculeNamesCopyProperties, modelConfiguration);
+         return neighborhoodBuilder =>
+         {
+            var moleculesForNeighborhood = moleculeNamesFor(neighborhoodBuilder, startValuesForFloatingMolecules);
+            Console.WriteLine("For neighborhood:" + neighborhoodBuilder.Name + " we have the following molecules: " + moleculesForNeighborhood.ToString(", "));
+            return _neighborhoodMapper.MapFrom(neighborhoodBuilder, moleculesForNeighborhood, moleculeNamesCopyProperties, modelConfiguration);
+         };
       }
 
       private ICache<string, List<string>> presentMoleculesCachedByContainerPath(IEnumerable<string> namesOfFloatingMolecules, SimulationBuilder simulationBuilder)
@@ -129,12 +134,12 @@ namespace OSPSuite.Core.Domain.Mappers
       /// <summary>
       ///    Returns molecules which will be created in both neighbors of the neighborhood
       /// </summary>
-      private IEnumerable<string> moleculeNamesFor(NeighborhoodBuilder neighborhoodBuilder, ICache<string, List<string>> moleculesStartValuesForFloatingMolecules)
+      private IReadOnlyList<string> moleculeNamesFor(NeighborhoodBuilder neighborhoodBuilder, ICache<string, List<string>> moleculesStartValuesForFloatingMolecules)
       {
          var pathToFirstNeighbor = neighborhoodBuilder.FirstNeighborPath.PathAsString;
          var pathToSecondNeighbor = neighborhoodBuilder.SecondNeighborPath.PathAsString;
 
-         // check if both neighbors has at least 1 molecule (if not - return empty list)
+         // check if both neighbors have at least 1 molecule (if not - return empty list)
          if (!moleculesStartValuesForFloatingMolecules.Contains(pathToFirstNeighbor) ||
              !moleculesStartValuesForFloatingMolecules.Contains(pathToSecondNeighbor))
             return new List<string>();

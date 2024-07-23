@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
@@ -22,7 +23,7 @@ namespace OSPSuite.Core.Domain.Mappers
       /// </param>
       /// <param name="moleculeNamesWithCopyPropertiesRequired">Molecules having CopyMoleculeDependentProperties=true</param>
       /// <returns></returns>
-      Neighborhood MapFrom(NeighborhoodBuilder neighborhoodBuilder, IEnumerable<string> moleculeNames,
+      Neighborhood MapFrom(NeighborhoodBuilder neighborhoodBuilder, IReadOnlyList<string> moleculeNames,
          IEnumerable<string> moleculeNamesWithCopyPropertiesRequired, ModelConfiguration modelConfiguration);
    }
 
@@ -48,7 +49,7 @@ namespace OSPSuite.Core.Domain.Mappers
          _parameterMapper = parameterMapper;
       }
 
-      public Neighborhood MapFrom(NeighborhoodBuilder neighborhoodBuilder, IEnumerable<string> moleculeNames,
+      public Neighborhood MapFrom(NeighborhoodBuilder neighborhoodBuilder, IReadOnlyList<string> moleculeNames,
          IEnumerable<string> moleculeNamesWithCopyPropertiesRequired, ModelConfiguration modelConfiguration)
       {
          var (model, simulationBuilder, replacementContext) = modelConfiguration;
@@ -61,7 +62,17 @@ namespace OSPSuite.Core.Domain.Mappers
 
          //At least one neighbor cannot be found. We are ignoring this neighborhood
          if (!neighborhood.IsDefined)
+         {
+            Console.WriteLine("Cannot create neighborhood : " + neighborhoodBuilder.Name);
+            if(neighborhood.FirstNeighbor==null)
+               Console.WriteLine("Cannot create first neighbor : " + neighborhoodBuilder.FirstNeighborPath);
+
+            if (neighborhood.SecondNeighbor == null)
+               Console.WriteLine("Cannot create first neighbor : " + neighborhoodBuilder.SecondNeighborPath);
+            
             return null;
+
+         }
 
          if (neighborhoodBuilder.MoleculeProperties != null)
          {
