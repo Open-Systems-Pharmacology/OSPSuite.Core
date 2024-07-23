@@ -60,20 +60,9 @@ namespace OSPSuite.Core.Domain.Mappers
          neighborhood.FirstNeighbor = resolveReference(model, neighborhoodBuilder.FirstNeighborPath, replacementContext);
          neighborhood.SecondNeighbor = resolveReference(model, neighborhoodBuilder.SecondNeighborPath, replacementContext);
 
-         Console.WriteLine(neighborhoodBuilder.FirstNeighborPath);
          //At least one neighbor cannot be found. We are ignoring this neighborhood
          if (!neighborhood.IsDefined)
-         {
-            Console.WriteLine("Cannot create neighborhood : " + neighborhoodBuilder.Name);
-            if(neighborhood.FirstNeighbor==null)
-               Console.WriteLine("Cannot create first neighbor : " + neighborhoodBuilder.FirstNeighborPath);
-
-            if (neighborhood.SecondNeighbor == null)
-               Console.WriteLine("Cannot create second neighbor : " + neighborhoodBuilder.SecondNeighborPath);
-            
             return null;
-
-         }
 
          if (neighborhoodBuilder.MoleculeProperties != null)
          {

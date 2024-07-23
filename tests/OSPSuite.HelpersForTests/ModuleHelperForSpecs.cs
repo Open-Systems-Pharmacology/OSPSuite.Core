@@ -325,10 +325,8 @@ namespace OSPSuite.Helpers
          spatialStructure.AddTopContainer(lung);
 
          //new neighborhood between pls and int
-         var neighborhood = _neighborhoodFactory.CreateBetween(lngPlasma, lngInt, lung.ParentPath).WithName("lng_pls_to_lng_int");
-         Console.WriteLine("Neigbhorhood:"+ neighborhood.Name);
-         Console.WriteLine("First:" + neighborhood.FirstNeighborPath);
-         Console.WriteLine("Second:" + neighborhood.SecondNeighborPath);
+         var neighborhood = _neighborhoodFactory.CreateBetween(lngPlasma, lngInt).WithName("lng_pls_to_lng_int");
+
 
          neighborhood.AddParameter(newConstantParameter("SA", 10));
          spatialStructure.AddNeighborhood(neighborhood);
@@ -344,12 +342,12 @@ namespace OSPSuite.Helpers
 
          spatialStructure.AddTopContainer(heart);
          //new neighborhood between pls and int
-         var neighborhood2 = _neighborhoodFactory.CreateBetween(lngPlasma, heartPlasma, lung.ParentPath).WithName("lng_pls_to_hrt_pls");
+         var neighborhood2 = _neighborhoodFactory.CreateBetween(lngPlasma, heartPlasma).WithName("lng_pls_to_hrt_pls");
          neighborhood2.AddParameter(newConstantParameter("SA", 10));
          spatialStructure.AddNeighborhood(neighborhood2);
 
          //existing neighborhood between lngPlasma and lngCell
-         var neighborhood3 = _neighborhoodFactory.CreateBetween(lngPlasma, lngCell, lung.ParentPath).WithName("lng_pls_to_lng_cell");
+         var neighborhood3 = _neighborhoodFactory.CreateBetween(lngPlasma, lngCell).WithName("lng_pls_to_lng_cell");
          neighborhood3.AddTag("NeighborhoodTag2");
          spatialStructure.AddNeighborhood(neighborhood3);
 

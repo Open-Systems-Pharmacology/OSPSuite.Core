@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
@@ -64,22 +63,7 @@ namespace OSPSuite.Core.Domain.Services
       private void updateContainerProperties(IContainer targetContainer, IContainer containerToMerge)
       {
          targetContainer.Mode = containerToMerge.Mode;
-
-         var isNeighborhood = containerToMerge.IsAnImplementationOf<Neighborhood>();
-         var tagsToMerge = containerToMerge.Tags.Select(x => x.Value).ToString(", ");
-         var targetTags = targetContainer.Tags.Select(x => x.Value).ToString(", ");
-
-         if (isNeighborhood && tagsToMerge.Length > 0)
-            Console.WriteLine("Tags to Merge: " + tagsToMerge);
-
-         if (isNeighborhood && targetTags.Length > 0)
-            Console.WriteLine("Existing tags: " + targetTags);
-
          containerToMerge.Tags.Each(targetContainer.AddTag);
-
-         var mergedTags = targetContainer.Tags.Select(x => x.Value).ToString(", ");
-         if (isNeighborhood && mergedTags.Length > 0)
-            Console.WriteLine("Merged tags: " + mergedTags);
       }
    }
 }
