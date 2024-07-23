@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
@@ -325,6 +326,10 @@ namespace OSPSuite.Helpers
 
          //new neighborhood between pls and int
          var neighborhood = _neighborhoodFactory.CreateBetween(lngPlasma, lngInt, lung.ParentPath).WithName("lng_pls_to_lng_int");
+         Console.WriteLine("Neigbhorhood:"+ neighborhood.Name);
+         Console.WriteLine("First:" + neighborhood.FirstNeighborPath);
+         Console.WriteLine("Second:" + neighborhood.SecondNeighborPath);
+
          neighborhood.AddParameter(newConstantParameter("SA", 10));
          spatialStructure.AddNeighborhood(neighborhood);
 
