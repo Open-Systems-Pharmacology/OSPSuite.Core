@@ -143,7 +143,7 @@ namespace OSPSuite.Core.Domain
             var usingPath = new List<string>(CreateAbsoluteObjectPath(usingObject));
             var usedPath = new List<string>(CreateAbsoluteObjectPath(usedObject));
 
-            while (usingPath.Count() > 0 && usedPath.Count() > 0 && usingPath.First().Equals(usedPath.First()))
+            while (usingPath.Any() && usedPath.Any() && usingPath.First().Equals(usedPath.First()))
             {
                usingPath.RemoveAt(0);
                usedPath.RemoveAt(0);

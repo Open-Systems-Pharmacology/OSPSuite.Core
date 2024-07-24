@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -13,23 +14,21 @@ namespace OSPSuite.Core
 {
    internal abstract class concern_for_ModuleIntegration : ContextForIntegration<IModelConstructor>
    {
-      protected SimulationConfiguration _simulationConfiguration;
       protected CreationResult _result;
       protected IModel _model;
 
       protected string _modelName = "MyModel";
       protected SimulationBuilder _simulationBuilder;
+      protected SimulationConfiguration _simulationConfiguration;
 
-      public override void GlobalContext()
-      {
-         base.GlobalContext();
-         _simulationConfiguration = IoC.Resolve<ModuleHelperForSpecs>().CreateSimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
-      }
+      protected abstract Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder();
 
       protected override void Because()
       {
          sut = IoC.Resolve<IModelConstructor>();
+         var moduleHelper = IoC.Resolve<ModuleHelperForSpecs>();
+         _simulationConfiguration = SimulationConfigurationBuilder()(moduleHelper);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
          _model = _result.Model;
       }
@@ -78,22 +77,67 @@ namespace OSPSuite.Core
          moleculeAGlobalContainer.Parameter("P2").Value.ShouldBeEqualTo(20);
          moleculeAGlobalContainer.Parameter("P3").Value.ShouldBeEqualTo(30);
       }
+
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfiguration();
+   }
+
+   internal class When_running_the_case_study_for_module_integration_with_merge_behavior_extend_for_neighborhood : concern_for_ModuleIntegration
+   {
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehaviorOverridingModuleBehavior();
+
+      protected override void Because()
+      {
+         sut = IoC.Resolve<IModelConstructor>();
+         var moduleHelper = IoC.Resolve<ModuleHelperForSpecs>();
+         _simulationConfiguration = SimulationConfigurationBuilder()(moduleHelper);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
+         _model = _result.Model;
+      }
+
+      [Observation]
+      public void should_have_merged_the_tag_at_the_neighborhood_level()
+      {
+         var lng_pls_to_lng_cell = _model.Root.EntityAt<Neighborhood>(Constants.NEIGHBORHOODS, "lng_pls_to_lng_cell");
+         var tags = lng_pls_to_lng_cell.Tags.Select(x => x.Value).ToString(", ");
+
+         lng_pls_to_lng_cell.Tags.Contains("NeighborhoodTag1").ShouldBeTrue(tags);
+         lng_pls_to_lng_cell.Tags.Contains("NeighborhoodTag2").ShouldBeTrue(tags);
+      }
    }
 
    internal class When_running_the_case_study_for_module_integration_with_merge_behavior_override_to_extend : concern_for_ModuleIntegration
    {
-      public override void GlobalContext()
-      {
-         base.GlobalContext();
-         _simulationConfiguration = IoC.Resolve<ModuleHelperForSpecs>().CreateSimulationConfigurationForExtendMergeBehaviorOverridingModuleBehavior();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
-      }
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehaviorOverridingModuleBehavior();
 
       [Observation]
       public void should_have_added_the_missing_parameters_to_lung()
       {
          var lung = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung);
          lung.Parameter(P2).Value.ShouldBeEqualTo(10);
+      }
+
+      [Observation]
+      public void should_have_merged_the_tag_at_the_container_level()
+      {
+         var lung = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung);
+         lung.Tags.Contains("Tag1").ShouldBeTrue();
+         lung.Tags.Contains("Tag2").ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_have_updated_the_container_mode_to_the_one_of_the_merged_container()
+      {
+         var lung = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung);
+         lung.Mode.ShouldBeEqualTo(ContainerMode.Physical);
+      }
+
+      [Observation]
+      public void should_have_not_merged_the_tag_at_the_parameter_level()
+      {
+         var lungQ = _model.Root.EntityAt<Parameter>(Constants.ORGANISM, Lung, "Q");
+         lungQ.Tags.Contains("ParamTag1").ShouldBeFalse();
+         lungQ.Tags.Contains("ParamTag2").ShouldBeTrue();
       }
 
       [Observation]
@@ -120,12 +164,7 @@ namespace OSPSuite.Core
 
    internal class When_running_the_case_study_for_module_integration_with_merge_behavior_extend : concern_for_ModuleIntegration
    {
-      public override void GlobalContext()
-      {
-         base.GlobalContext();
-         _simulationConfiguration = IoC.Resolve<ModuleHelperForSpecs>().CreateSimulationConfigurationForExtendMergeBehavior();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
-      }
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehavior();
 
       [Observation]
       public void should_have_added_the_missing_parameters_to_lung()
@@ -158,12 +197,7 @@ namespace OSPSuite.Core
 
    internal class When_running_the_case_study_for_module_integration_with_merge_behavior_extend_and_recursive_container : concern_for_ModuleIntegration
    {
-      public override void GlobalContext()
-      {
-         base.GlobalContext();
-         _simulationConfiguration = IoC.Resolve<ModuleHelperForSpecs>().CreateSimulationConfigurationForExtendMergeBehaviorWithRecursiveContainers();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
-      }
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehaviorWithRecursiveContainers();
 
       [Observation]
       public void should_have_added_the_missing_container_to_lung_and_arterial_blood()
@@ -192,10 +226,9 @@ namespace OSPSuite.Core
 
       [Observation]
       public void should_have_kept_existing_container()
-         {
+      {
          var lungCell = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung, Cell);
          lungCell.ShouldNotBeNull();
       }
    }
-
 }

@@ -20,15 +20,18 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IContainerBuilderToContainerMapper _containerMapper;
       private readonly INeighborhoodCollectionToContainerMapper _neighborhoodsMapper;
+      private readonly IContainerMergeTask _containerMergeTask;
 
       public SpatialStructureMerger(
          IObjectBaseFactory objectBaseFactory,
          IContainerBuilderToContainerMapper containerMapper,
-         INeighborhoodCollectionToContainerMapper neighborhoodsMapper)
+         INeighborhoodCollectionToContainerMapper neighborhoodsMapper,
+         IContainerMergeTask containerMergeTask)
       {
          _objectBaseFactory = objectBaseFactory;
          _containerMapper = containerMapper;
          _neighborhoodsMapper = neighborhoodsMapper;
+         _containerMergeTask = containerMergeTask;
       }
 
       public IContainer MergeContainerStructure(ModelConfiguration modelConfiguration)
@@ -57,7 +60,6 @@ namespace OSPSuite.Core.Domain.Services
          var allOtherSpatialStructuresWithMergeBehavior = allSpatialStructureAndMergeBehaviors.Skip(1).ToList();
          var mapToModelContainer = mapContainerDef(simulationBuilder);
 
-
          // First step: We create the container structure.
          // This is done by adding all top containers defined in the FIRST spatial structure
          // Then we merge all other top containers defined in the other spatial structures based on the merge behavior
@@ -68,8 +70,8 @@ namespace OSPSuite.Core.Domain.Services
          //Merge all other spatial structures
          //make sure we map the container to a model container so that we do not change the original containers
          allOtherSpatialStructuresWithMergeBehavior
-             .Select(item => new { item.mergeBehavior, topContainers = item.spatialStructure.TopContainers.Select(mapToModelContainer).ToList(), item.spatialStructure })
-             .Each(x => { x.topContainers.Each(topContainer => { tryMergeTopContainerInStructure(root, topContainer, x.mergeBehavior, x.spatialStructure); }); });
+            .Select(x => new {x.mergeBehavior, topContainers = x.spatialStructure.TopContainers.Select(mapToModelContainer).ToList(), x.spatialStructure})
+            .Each(x => x.topContainers.Each(topContainer => tryMergeTopContainerInStructure(root, topContainer, x.mergeBehavior, x.spatialStructure)));
 
          //create the temporary GLOBAL MOLECULE PROPERTIES THAT WILL BE REMOVED AT THE END but used as based for copying
          //For molecule properties, we always merged as we used to and never replace
@@ -84,7 +86,7 @@ namespace OSPSuite.Core.Domain.Services
 
          if (firstGlobalMoleculeContainer != null)
          {
-            otherGlobalMoleculeContainer.Each(x => mergeContainers(firstGlobalMoleculeContainer, x));
+            otherGlobalMoleculeContainer.Each(x => _containerMergeTask.MergeContainers(firstGlobalMoleculeContainer, x));
             root.Add(firstGlobalMoleculeContainer);
          }
       }
@@ -95,7 +97,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             mergeTopContainerInStructure(topContainer, root, mergeBehavior);
          }
-         catch (ContainerNotFoundException ex)
+         catch (ContainerNotFoundException)
          {
             throw new OSPSuiteException(Error.CannotFindParentContainerWithPath(topContainer.ParentPath.PathAsString, topContainer.Name, spatialStructure.Name, spatialStructure.Module.Name));
          }
@@ -129,51 +131,9 @@ namespace OSPSuite.Core.Domain.Services
       {
          //Merge behavior is extend or we have a special case to deal with when dealing with MoleculeProperties container that we merge instead of replacing
          if (mergeBehavior == MergeBehavior.Extend || containerToMerge.IsNamed(Constants.MOLECULE_PROPERTIES))
-            addOrMergeContainer(parentContainer, containerToMerge);
+            _containerMergeTask.AddOrMergeContainer(parentContainer, containerToMerge);
          else
-            addOrReplaceInContainer(parentContainer, containerToMerge);
-      }
-
-      private void mergeContainers(IContainer targetContainer, IContainer containerToMerge)
-      {
-         var allChildrenContainerToMerge = containerToMerge.GetChildren<IContainer>(x => !x.IsAnImplementationOf<IDistributedParameter>()).ToList();
-         var allChildrenEntitiesToMerge = containerToMerge.GetChildren<IEntity>().Except(allChildrenContainerToMerge).ToList();
-
-         //First we do all containers (except distributed parameters which are to be seen as entities) recursively
-         allChildrenContainerToMerge.Each(x =>
-         {
-            var targetChildrenContainer = targetContainer.Container(x.Name);
-            //does not exist, we add it
-            if (targetChildrenContainer == null)
-               addOrReplaceInContainer(targetContainer, x);
-            //it exists, we need to merge
-            else
-               mergeContainers(targetChildrenContainer, x);
-         });
-
-         //then we add or replace all non containers entities
-         allChildrenEntitiesToMerge.Each(x => addOrReplaceInContainer(targetContainer, x));
-      }
-
-      private void addOrMergeContainer(IContainer parentContainer, IContainer containerToMerge)
-      {
-         var existingContainer = parentContainer.Container(containerToMerge.Name);
-         if (existingContainer == null)
-            parentContainer.Add(containerToMerge);
-         else
-            mergeContainers(existingContainer, containerToMerge);
-      }
-
-      /// <summary>
-      ///    If the entity exists, it will be removed and replace by the new one, otherwise simply added
-      /// </summary>
-      private void addOrReplaceInContainer(IContainer container, IEntity entityToAddOrReplace)
-      {
-         var existingChild = container.GetSingleChildByName(entityToAddOrReplace.Name);
-         if (existingChild != null)
-            container.RemoveChild(existingChild);
-
-         container.Add(entityToAddOrReplace);
+            _containerMergeTask.AddOrReplaceInContainer(parentContainer, containerToMerge);
       }
 
       public IContainer MergeNeighborhoods(ModelConfiguration modelConfiguration) => _neighborhoodsMapper.MapFrom(modelConfiguration);
@@ -181,8 +141,5 @@ namespace OSPSuite.Core.Domain.Services
 
    internal class ContainerNotFoundException : OSPSuiteException
    {
-      public ContainerNotFoundException() : base()
-      {
-      }
    }
 }

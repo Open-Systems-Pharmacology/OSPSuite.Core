@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Mappers
    {
       private NeighborhoodBuilder _neighborhoodBuilder;
       private Neighborhood _neighborhood;
-      private IEnumerable<string> _moleculeNames;
+      private List<string> _moleculeNames;
       private IContainer _rootContainer;
       private string _molecule1;
       private string _molecule2;

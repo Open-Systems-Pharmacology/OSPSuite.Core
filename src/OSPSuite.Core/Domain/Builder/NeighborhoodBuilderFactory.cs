@@ -17,12 +17,8 @@ namespace OSPSuite.Core.Domain.Builder
       /// </summary>
       /// <param name="firstNeighbor">The first neighbor.</param>
       /// <param name="secondNeighbor">The second neighbor.</param>
-      /// <param name="parentPath">
-      ///    Optional parent path that will be added to the path created for first and second neighbor
-      ///    (useful for dynamic structure)
-      /// </param>
       /// <returns> the new  <see cref="NeighborhoodBuilder" /></returns>
-      NeighborhoodBuilder CreateBetween(IContainer firstNeighbor, IContainer secondNeighbor, ObjectPath parentPath = null);
+      NeighborhoodBuilder CreateBetween(IContainer firstNeighbor, IContainer secondNeighbor);
 
       /// <summary>
       ///    Creates a new <see cref="NeighborhoodBuilder" /> between <paramref name="firstNeighborPath" /> and
@@ -75,9 +71,9 @@ namespace OSPSuite.Core.Domain.Builder
 
       protected IContainer CreateMoleculeProperties() => _objectBaseFactory.Create<IContainer>();
 
-      public NeighborhoodBuilder CreateBetween(IContainer firstNeighbor, IContainer secondNeighbor, ObjectPath parentPath = null)
+      public NeighborhoodBuilder CreateBetween(IContainer firstNeighbor, IContainer secondNeighbor)
       {
-         return CreateBetween(_objectPathFactory.CreateAbsoluteObjectPath(firstNeighbor), _objectPathFactory.CreateAbsoluteObjectPath(secondNeighbor), parentPath);
+         return CreateBetween(_objectPathFactory.CreateAbsoluteObjectPath(firstNeighbor), _objectPathFactory.CreateAbsoluteObjectPath(secondNeighbor));
       }
 
       public NeighborhoodBuilder CreateBetween(ObjectPath firstNeighborPath, ObjectPath secondNeighborPath, ObjectPath parentPath = null)
