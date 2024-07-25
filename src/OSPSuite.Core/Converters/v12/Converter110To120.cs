@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+
+using System.Linq;
 using System.Xml.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
@@ -21,6 +23,7 @@ namespace OSPSuite.Core.Converters.v12
    {
       private const string _initialConditionsBuildingBlockName = "InitialConditionsBuildingBlock";
       private const string _parameterValuesBuildingBlockName = "ParameterValuesBuildingBlock";
+      private const string _buildMode = "buildMode";
       private readonly IObjectPathFactory _objectPathFactory;
       private bool _converted;
 
@@ -47,12 +50,24 @@ namespace OSPSuite.Core.Converters.v12
          element.DescendantsAndSelfNamed("MoleculeStartValuesBuildingBlock").Each(convertMoleculeStartValuesBuildingBlock);
          element.DescendantsAndSelfNamed("ParameterStartValuesBuildingBlock").Each(convertParameterStartValuesBuildingBlock);
          element.DescendantsAndSelfNamed("EventGroupBuildingBlock").Each(convertEventGroupBuildingBlock);
+         element.DescendantsAndSelf().Where(x => x.GetAttribute(_buildMode) != null).Each(convertBuildMode);
          return (PKMLVersion.V12_0, _converted);
       }
 
       private void convertEventGroupBuildingBlock(XElement eventGroupNode)
       {
          eventGroupNode.SetAttributeValue("icon", "Event");
+         _converted = true;
+      }
+
+      private void convertBuildMode(XElement parameterNode)
+      {
+         var buildMode = parameterNode.GetAttribute(_buildMode);
+         // This way around, a check for null is not necessary
+         if (!"Property".Equals(buildMode))
+            return;
+
+         parameterNode.SetAttributeValue(_buildMode, "Global");
          _converted = true;
       }
 
@@ -91,7 +106,7 @@ namespace OSPSuite.Core.Converters.v12
          element.Name = _initialConditionsBuildingBlockName;
          element.SetAttributeValue("icon", "InitialConditions");
       }
-      
+
       private static void updateToParameterValuesElement(XElement element)
       {
          element.Name = _parameterValuesBuildingBlockName;
@@ -124,7 +139,7 @@ namespace OSPSuite.Core.Converters.v12
          var buildingBlockList = new XElement("BuildingBlocks");
          moduleElement.Add(buildingBlockList);
          moduleElement.SetAttributeValue("name", simulationNode.GetAttribute("name"));
-         
+
          moduleConfigurationList.Add(moduleConfiguration);
          moduleConfiguration.Add(moduleElement);
          simulationConfigurationElement.Add(moduleConfigurationList);
@@ -136,7 +151,7 @@ namespace OSPSuite.Core.Converters.v12
          buildingBlockElement = buildConfigurationElement.Element("Reactions");
          buildingBlockElement.Name = "ReactionBuildingBlock";
          buildingBlockList.Add(buildingBlockElement);
-         
+
          buildingBlockElement = buildConfigurationElement.Element("PassiveTransports");
          buildingBlockElement.Name = "PassiveTransportBuildingBlock";
          buildingBlockList.Add(buildingBlockElement);

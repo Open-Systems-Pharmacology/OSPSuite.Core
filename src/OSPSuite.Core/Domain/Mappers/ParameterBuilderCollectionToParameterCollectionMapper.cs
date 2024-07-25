@@ -10,27 +10,32 @@ namespace OSPSuite.Core.Domain.Mappers
    public interface IParameterBuilderCollectionToParameterCollectionMapper
    {
       /// <summary>
-      ///    Only parameters having one of <paramref name="parameterBuildModesToMap" /> will be mapped or all if <paramref name="parameterBuildModesToMap" /> was not specified
+      ///    Only parameters having one of <paramref name="parameterBuildModesToMap" /> will be mapped or all if
+      ///    <paramref name="parameterBuildModesToMap" /> was not specified
       /// </summary>
       IEnumerable<IParameter> MapFrom(IEnumerable<IParameter> parameterBuilders, SimulationBuilder simulationBuilder, params ParameterBuildMode[] parameterBuildModesToMap);
 
       /// <summary>
-      ///    Only direct children parameters  of <paramref name="container"/> having one of <paramref name="parameterBuildModesToMap" /> will be mapped or all if <paramref name="parameterBuildModesToMap" /> was not specified
+      ///    Only direct children parameters  of <paramref name="container" /> having one of
+      ///    <paramref name="parameterBuildModesToMap" /> will be mapped or all if <paramref name="parameterBuildModesToMap" />
+      ///    was not specified
       /// </summary>
       IEnumerable<IParameter> MapFrom(IContainer container, SimulationBuilder simulationBuilder, params ParameterBuildMode[] parameterBuildModesToMap);
 
       /// <summary>
-      ///    Only direct children parameters  of <paramref name="container"/> of type <see cref="ParameterBuildMode.Global"/> or <seealso cref="ParameterBuildMode.Property"/> will be mapped
+      ///    Only direct children parameters  of <paramref name="container" /> of type <see cref="ParameterBuildMode.Global" />
+      ///    or <seealso cref="ParameterBuildMode.Property" /> will be mapped
       /// </summary>
       IEnumerable<IParameter> MapGlobalOrPropertyFrom(IContainer container, SimulationBuilder simulationBuilder);
 
       /// <summary>
-      ///    Only direct children parameters  of <paramref name="container"/> of type <see cref="ParameterBuildMode.Local"/> will be mapped
+      ///    Only direct children parameters  of <paramref name="container" /> of type <see cref="ParameterBuildMode.Local" />
+      ///    will be mapped
       /// </summary>
       IEnumerable<IParameter> MapLocalFrom(IContainer container, SimulationBuilder simulationBuilder);
 
       /// <summary>
-      ///    All direct children parameters  of <paramref name="container"/>  will be mapped
+      ///    All direct children parameters  of <paramref name="container" />  will be mapped
       /// </summary>
       IEnumerable<IParameter> MapAllFrom(IContainer container, SimulationBuilder simulationBuilder);
    }
@@ -57,7 +62,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
       public IEnumerable<IParameter> MapGlobalOrPropertyFrom(IContainer container, SimulationBuilder simulationBuilder)
       {
-         return MapFrom(container, simulationBuilder, ParameterBuildMode.Global, ParameterBuildMode.Property);
+         return MapFrom(container, simulationBuilder, ParameterBuildMode.Global);
       }
 
       public IEnumerable<IParameter> MapLocalFrom(IContainer container, SimulationBuilder simulationBuilder)
