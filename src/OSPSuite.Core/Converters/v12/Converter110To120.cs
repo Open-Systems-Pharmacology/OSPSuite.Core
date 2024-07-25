@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-using System.Linq;
+﻿using System.Linq;
 using System.Xml.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
