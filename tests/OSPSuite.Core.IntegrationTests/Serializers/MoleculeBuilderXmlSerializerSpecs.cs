@@ -1,10 +1,8 @@
-﻿using NPOI.SS.Formula.Functions;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Helpers;
-using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
@@ -19,13 +17,13 @@ namespace OSPSuite.Core.Serializers
          x1.DefaultStartFormula = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(23.4);
          TransportBuilder t1 = CreateObject<TransportBuilder>().WithName("Passive Transport");
          IFormula consFormula = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(5);
-         IParameter transporterParameter = CreateObject<Parameter>().WithName("Passive Transport Param").WithFormula(consFormula).WithMode(ParameterBuildMode.Property)
+         IParameter transporterParameter = CreateObject<Parameter>().WithName("Passive Transport Param").WithFormula(consFormula).WithMode(ParameterBuildMode.Global)
             .WithDimension(DimensionLength);
          t1.AddParameter(transporterParameter);
          IFormula f1 = CreateObject<ExplicitFormula>().WithDimension(DimensionLength).WithFormulaString("3*Patty");
-         var fup = new FormulaUsablePath(new[] {"Patricia"}).WithAlias("Patty").WithDimension(DimensionLength);
+         var fup = new FormulaUsablePath(new[] { "Patricia" }).WithAlias("Patty").WithDimension(DimensionLength);
          f1.AddObjectPath(fup);
-         IParameter p1 = CreateObject<Parameter>().WithName("Patricia").WithFormula(f1).WithValue(3.1).WithMode(ParameterBuildMode.Property);
+         IParameter p1 = CreateObject<Parameter>().WithName("Patricia").WithFormula(f1).WithValue(3.1).WithMode(ParameterBuildMode.Global);
          IParameter p2 = CreateObject<Parameter>().WithName("Pascal").WithFormula(f1).WithValue(3.2).WithMode(ParameterBuildMode.Local);
          IParameter p3 = CreateObject<Parameter>().WithName("Paul").WithFormula(f1).WithValue(3.3);
 
@@ -50,7 +48,7 @@ namespace OSPSuite.Core.Serializers
 
          var interactionContainer = CreateObject<InteractionContainer>().WithName("Interactions");
          x1.AddInteractionContainer(interactionContainer);
-         
+
          var x2 = SerializeAndDeserialize(x1);
 
          AssertForSpecs.AreEqualMoleculeBuilder(x1, x2);

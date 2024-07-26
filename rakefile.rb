@@ -37,11 +37,6 @@ task :create_local_nuget, [:arg1, :arg2, :arg3] do |t, args|
   if args.to_hash.values.include? "p"
     update_pksim(versionId)
   end
-  if args.to_hash.values.include? "r"
-    update_ospsuite_r(versionId)
-  end
-  
-
 end
 
 private
@@ -53,16 +48,6 @@ def find_token(file, regex)
     return nil
   end
   return matches[1]
-end
-
-def update_ospsuite_r(versionId)
-  puts("updating OSPSuite-R")
-  token = find_token("../OSPSuite-R/packages.config", /<package id="OSPSuite.Core" version="(.*)"/)
-  if(token.nil?)
-    return
-  end
-  
-  Utils.replace_tokens({token => versionId}, "../OSPSuite-R/packages.config")
 end
 
 def update_mobi(versionId)

@@ -34,18 +34,18 @@ namespace OSPSuite.Helpers
       private IDimension amountDimension => _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
 
       public ModelHelperForSpecs(
-         IObjectBaseFactory objectBaseFactory, 
-         IParameterValuesCreator parameterValuesCreator, 
+         IObjectBaseFactory objectBaseFactory,
+         IParameterValuesCreator parameterValuesCreator,
          IInitialConditionsCreator initialConditionsCreator,
-         IObjectPathFactory objectPathFactory, 
-         IDimensionFactory dimensionFactory, 
+         IObjectPathFactory objectPathFactory,
+         IDimensionFactory dimensionFactory,
          ISpatialStructureFactory spatialStructureFactory,
-         INeighborhoodBuilderFactory neighborhoodFactory, 
-         IOutputSchemaFactory outputSchemaFactory, 
-         IMoleculeBuilderFactory moleculeBuilderFactory, 
+         INeighborhoodBuilderFactory neighborhoodFactory,
+         IOutputSchemaFactory outputSchemaFactory,
+         IMoleculeBuilderFactory moleculeBuilderFactory,
          ISolverSettingsFactory solverSettingsFactory,
          IParameterFactory parameterFactory
-         )
+      )
       {
          _objectBaseFactory = objectBaseFactory;
          _neighborhoodFactory = neighborhoodFactory;
@@ -162,7 +162,7 @@ namespace OSPSuite.Helpers
 
       private SimulationSettings createSimulationConfiguration()
       {
-         return new SimulationSettings {Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = createDefaultOutputSchema(), OutputSelections = new OutputSelections()};
+         return new SimulationSettings { Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = createDefaultOutputSchema(), OutputSelections = new OutputSelections() };
       }
 
       private OutputSchema createDefaultOutputSchema()
@@ -183,7 +183,7 @@ namespace OSPSuite.Helpers
          var cm2 = _objectBaseFactory.Create<CoreCalculationMethod>().WithName("CM2");
          cm2.Category = "PartitionCoeff";
          cm2.AddOutputFormula(PartitionCoeff_2(), new ParameterDescriptor("K", Create.Criteria(x => x.With("Cell2Plasma"))));
-         return new[] {cm1, cm2};
+         return new[] { cm1, cm2 };
       }
 
       private EventGroupBuildingBlock getEventGroups()
@@ -576,13 +576,13 @@ namespace OSPSuite.Helpers
          molecule.DisplayUnit = molecule.Dimension.DefaultUnit;
 
          var molweight = NewConstantParameter("MW", MW);
-         molweight.BuildMode = ParameterBuildMode.Property;
+         molweight.BuildMode = ParameterBuildMode.Global;
          molecule.AddParameter(molweight);
 
          if (!double.IsNaN(logMA))
          {
             var logMAParam = NewConstantParameter("logMA", logMA);
-            logMAParam.BuildMode = ParameterBuildMode.Property;
+            logMAParam.BuildMode = ParameterBuildMode.Global;
             molecule.AddParameter(logMAParam);
          }
 
@@ -711,7 +711,6 @@ namespace OSPSuite.Helpers
       {
          return _parameterFactory.CreateParameter(name, value)
             .WithMode(parameterBuildMode);
-
       }
 
       private ReactionBuildingBlock getReactions()
@@ -1282,7 +1281,7 @@ namespace OSPSuite.Helpers
          if (sourceObject.IsAnImplementationOf<NormalDistributionFormula>())
             return new NormalDistributionFormula().WithDimension(_dimensionFactory.NoDimension).WithId(id).DowncastTo<T>();
 
-         if(sourceObject.IsAnImplementationOf<ParameterIdentification>())
+         if (sourceObject.IsAnImplementationOf<ParameterIdentification>())
             return new ParameterIdentification().WithId(id).DowncastTo<T>();
 
          if (sourceObject.IsAnImplementationOf<ExpressionParameter>())
