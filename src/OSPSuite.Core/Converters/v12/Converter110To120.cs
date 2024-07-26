@@ -61,8 +61,8 @@ namespace OSPSuite.Core.Converters.v12
       private void convertBuildMode(XElement parameterNode)
       {
          var buildMode = parameterNode.GetAttribute(_buildMode);
-         // This way around, a check for null is not necessary
-         if (!"Property".Equals(buildMode))
+         
+         if (!string.Equals(buildMode, "Property"))
             return;
 
          parameterNode.SetAttributeValue(_buildMode, "Global");
