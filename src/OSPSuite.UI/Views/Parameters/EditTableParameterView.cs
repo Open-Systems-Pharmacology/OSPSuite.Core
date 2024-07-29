@@ -20,14 +20,8 @@ namespace OSPSuite.UI.Views.Parameters
       {
       }
 
-      public void AddView(IView baseView)
-      {
-         splitContainer.Panel1.FillWith(baseView);
-      }
+      public void AddView(IView baseView) => splitContainer.Panel1.FillWith(baseView);
 
-      public void AddChart(IView baseView)
-      {
-         splitContainer.Panel2.FillWith(baseView);
-      }
+      public void AddChart(IView baseView) => splitContainer.Panel2.FillWith(baseView);
    }
 }

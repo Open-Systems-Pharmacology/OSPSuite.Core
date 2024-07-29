@@ -14,10 +14,7 @@ namespace OSPSuite.UI.Core
          InitializeComponent();
       }
 
-      protected virtual void InitializeWithGrid(UxGridView gridView)
-      {
-         gridView.MouseDown += (sender, e) => OnGridViewMouseDown(gridView, e);
-      }
+      protected virtual void InitializeWithGrid(UxGridView gridView) => gridView.MouseDown += (sender, e) => OnGridViewMouseDown(gridView, e);
 
       protected virtual void OnGridViewMouseDown(UxGridView gridView, MouseEventArgs e)
       {
@@ -70,14 +67,8 @@ namespace OSPSuite.UI.Core
 
       protected virtual bool ColumnIsCheckBox(GridColumn column) => false;
 
-      protected virtual void OnValueColumnMouseDown(UxGridView gridView, GridColumn col, int rowHandle)
-      {
-         gridView.EditorShowMode = EditorShowMode.MouseUp;
-      }
+      protected virtual void OnValueColumnMouseDown(UxGridView gridView, GridColumn col, int rowHandle) => gridView.EditorShowMode = EditorShowMode.MouseUp;
 
-      protected virtual bool ColumnIsValue(GridColumn column)
-      {
-         return false;
-      }
+      protected virtual bool ColumnIsValue(GridColumn column) => false;
    }
 }

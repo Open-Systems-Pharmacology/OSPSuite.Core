@@ -67,25 +67,13 @@ namespace OSPSuite.UI.Views.Parameters
          _removePointRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.RemovePoint(_gridViewBinder.FocusedElement));
       }
 
-      private void onShowingEditor(object sender, CancelEventArgs e)
-      {
-         e.Cancel = !_editable;
-      }
+      private void onShowingEditor(object sender, CancelEventArgs e) => e.Cancel = !_editable;
 
-      protected override bool ColumnIsValue(GridColumn column)
-      {
-         return _columnX.XtraColumn == column || _columnX.XtraColumn == column;
-      }
+      protected override bool ColumnIsValue(GridColumn column) => _columnX.XtraColumn == column || _columnX.XtraColumn == column;
 
-      protected override bool ColumnIsButton(GridColumn column)
-      {
-         return _removeColumn.XtraColumn == column;
-      }
+      protected override bool ColumnIsButton(GridColumn column) => _removeColumn.XtraColumn == column;
 
-      public void AttachPresenter(ITableParameterPresenter presenter)
-      {
-         _presenter = presenter;
-      }
+      public void AttachPresenter(ITableParameterPresenter presenter) => _presenter = presenter;
 
       public override void InitializeResources()
       {
@@ -101,15 +89,9 @@ namespace OSPSuite.UI.Views.Parameters
          btnAddPoint.ToolTip = Captions.AddPoint;
       }
 
-      public void Clear()
-      {
-         _gridViewBinder.DeleteBinding();
-      }
+      public void Clear() => _gridViewBinder.DeleteBinding();
 
-      public void BindTo(IEnumerable<ValuePointDTO> allPoints)
-      {
-         _gridViewBinder.BindToSource(allPoints);
-      }
+      public void BindTo(IEnumerable<ValuePointDTO> allPoints) => _gridViewBinder.BindToSource(allPoints);
 
       public void EditPoint(ValuePointDTO pointToEdit)
       {

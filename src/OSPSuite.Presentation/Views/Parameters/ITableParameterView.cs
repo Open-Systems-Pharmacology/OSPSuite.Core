@@ -16,10 +16,4 @@ namespace OSPSuite.Presentation.Views.Parameters
       string Description { get; set; }
       string ImportToolTip { get; set; }
    }
-
-   public interface IEditTableParameterView : IModalView<IEditTableParameterPresenter>
-   {
-      void AddView(IView baseView);
-      void AddChart(IView baseView);
-   }
 }

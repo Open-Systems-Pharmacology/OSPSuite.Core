@@ -53,10 +53,7 @@ namespace OSPSuite.Presentation.Presenters.Parameters
          View.OkEnabled = CanClose;
       }
 
-      private void plotTable()
-      {
-         _chartPresenter.Plot(EditedFormula);
-      }
+      private void plotTable() => _chartPresenter.Plot(EditedFormula);
 
       public TableFormula EditedFormula => _tableParameterPresenter.EditedFormula;
    }

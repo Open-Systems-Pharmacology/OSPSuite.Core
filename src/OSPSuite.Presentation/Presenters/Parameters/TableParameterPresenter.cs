@@ -96,22 +96,11 @@ namespace OSPSuite.Presentation.Presenters.Parameters
 
       protected abstract TableFormula NewTableFormula();
 
-      private void notifyChange(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
-      {
-         ViewChanged();
-      }
+      private void notifyChange(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs) => ViewChanged();
 
-      public void SetXValue(ValuePointDTO valuePointDTO, double newValue)
-      {
-         //needed maybe if we have commands...
-         valuePointDTO.X = newValue;
-      }
+      public void SetXValue(ValuePointDTO valuePointDTO, double newValue) => valuePointDTO.X = newValue;
 
-      public void SetYValue(ValuePointDTO valuePointDTO, double newValue)
-      {
-         //needed maybe if we have commands...
-         valuePointDTO.Y = newValue;
-      }
+      public void SetYValue(ValuePointDTO valuePointDTO, double newValue) => valuePointDTO.Y = newValue;
 
       public string Description
       {
@@ -153,10 +142,7 @@ namespace OSPSuite.Presentation.Presenters.Parameters
          ViewChanged();
       }
 
-      public void RemovePoint(ValuePointDTO pointToRemove)
-      {
-         _allPoints.Remove(pointToRemove);
-      }
+      public void RemovePoint(ValuePointDTO pointToRemove) => _allPoints.Remove(pointToRemove);
 
       public void Save()
       {
