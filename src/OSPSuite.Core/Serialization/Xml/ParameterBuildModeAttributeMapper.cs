@@ -22,6 +22,9 @@ namespace OSPSuite.Core.Serialization.Xml
          if (string.IsNullOrEmpty(attributeValue))
             return ParameterBuildMode.Local;
 
+         if(string.Equals(attributeValue, "Property"))
+            return ParameterBuildMode.Global;
+
          return EnumHelper.ParseValue<ParameterBuildMode>(attributeValue);
       }
    }
