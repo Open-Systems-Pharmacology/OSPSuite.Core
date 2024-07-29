@@ -1,4 +1,5 @@
 using System.Linq;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Formulas
@@ -66,6 +67,15 @@ namespace OSPSuite.Core.Domain.Formulas
       public static FormulaUsablePath FormulaUsablePathBy(this IFormula formula, string alias)
       {
          return formula.ObjectPaths.FirstOrDefault(x => string.Equals(x.Alias, alias));
+      }
+
+      public static TFormula InitializedWith<TFormula>(this TFormula tableFormula, string xName, string yName, IDimension xDimension, IDimension yDimension) where TFormula : TableFormula
+      {
+         tableFormula.XName = xName;
+         tableFormula.YName = yName;
+         tableFormula.XDimension = xDimension;
+         tableFormula.Dimension = yDimension;
+         return tableFormula;
       }
    }
 }

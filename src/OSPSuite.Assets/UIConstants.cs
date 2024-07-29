@@ -224,6 +224,8 @@ namespace OSPSuite.Assets
       public static readonly string SimulationWasCanceled = "Simulation was canceled";
       public static readonly string SelectMappingToShowObservedData = "Select mapping to show observed data";
       public static readonly string DoNotShowThisAgainUntilRestart = "Do not show this again until restart";
+      public static readonly string AddPoint = "Add Point";
+      public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
@@ -1970,6 +1972,8 @@ namespace OSPSuite.Assets
          public static readonly string MaxGreaterThanMin = "Maximum value should be greater than minimum value.";
          public static readonly string ValueShouldBeBetweenMinAndMax = "Value should be greater than minimum value and smaller than maximum value.";
          public static readonly string MinShouldBeStrictlyGreaterThanZeroForLogScale = "Minimum value should be greater than zero or the scaling should be set to linear.";
+
+         public static string ValueShouldBeGreaterThanOrEqualToZero(string parameterName) => $"{parameterName} value should be greater than or equal to 0.";
 
          public static string MinimumMustBeGreaterThanOrEqualTo(string minDisplayValue, string displayUnit, string fullQuantityPath)
          {
