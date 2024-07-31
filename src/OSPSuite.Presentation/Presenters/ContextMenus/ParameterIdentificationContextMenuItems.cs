@@ -85,10 +85,11 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
       public static IEnumerable<IMenuBarItem> ContextMenuItemsFor(ParameterIdentification parameterIdentification, IContainer container)
       {
-         yield return RunParameterIdentification(parameterIdentification, container);
+         yield return EditParameterIdentification(parameterIdentification, container);
+            
 
-         yield return EditParameterIdentification(parameterIdentification, container)
-            .AsGroupStarter();
+         yield return RunParameterIdentification(parameterIdentification, container)
+            .AsGroupStarter(); 
 
          yield return RenameParameterIdentification(parameterIdentification, container);
 
