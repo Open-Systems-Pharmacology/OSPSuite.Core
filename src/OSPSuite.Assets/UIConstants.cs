@@ -225,6 +225,8 @@ namespace OSPSuite.Assets
       public static readonly string SelectMappingToShowObservedData = "Select mapping to show observed data";
       public static readonly string DoNotShowThisAgainUntilRestart = "Do not show this again until restart";
       public static readonly string AddPoint = "Add Point";
+      public static readonly string UseDerivedValues = "Use derivative values";
+
       public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
@@ -2387,6 +2389,8 @@ namespace OSPSuite.Assets
       public static readonly string DefaultLineStyleTitle = "Default Line Style for Curve";
       public static readonly string DoNotShowVersionUpdate = "Ignore this update";
       public static readonly string ClearHistory = "Clear the project history. This action is irreversible";
+      public static readonly string UseDerivedValues = "If checked, the first derivative of the entered table values is used";
+      public static readonly string RestartSolver = "Select to mark solver restart at t=X. Increases numerical accuracy  but may reduce solver speed";
 
       public static string ToolTipForLLOQ(string seriesName, string lloq)
       {

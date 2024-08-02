@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-using OSPSuite.Presentation.DTO;
+﻿using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters.Parameters;
 
 namespace OSPSuite.Presentation.Views.Parameters
 {
-   public interface ITableParameterView : IView<ITableParameterPresenter>
+   public interface ITableFormulaView : IView<ITableParameterPresenter>, IView<ITableFormulaPresenter>
    {
       void Clear();
-      void BindTo(IEnumerable<ValuePointDTO> allPoints);
+      void BindTo(TableFormulaDTO tableFormulaDTO);
       void EditPoint(ValuePointDTO pointToEdit);
       bool ImportVisible { set; }
       string YCaption { set; }
@@ -15,5 +14,7 @@ namespace OSPSuite.Presentation.Views.Parameters
       bool Editable { get; set; }
       string Description { get; set; }
       string ImportToolTip { get; set; }
+      void ShowUseDerivedValues(bool show);
+      void ShowRestartSolver(bool show);
    }
 }

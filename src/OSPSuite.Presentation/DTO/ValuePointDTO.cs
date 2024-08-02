@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility.Validation;
@@ -8,8 +7,11 @@ namespace OSPSuite.Presentation.DTO
 {
    public class ValuePointDTO : DxValidatableDTO
    {
-      private readonly IParameter _parameter;
-      private readonly TableFormula _tableFormula;
+      protected readonly TableFormula _tableFormula;
+
+      public ValuePoint ValuePoint { get; }
+
+      public bool RestartSolver { get; }
 
       private double _x;
 
@@ -29,12 +31,14 @@ namespace OSPSuite.Presentation.DTO
          set => SetProperty(ref _y, value);
       }
 
-      public ValuePointDTO(IParameter parameter, TableFormula tableFormula, ValuePoint point)
+
+      public ValuePointDTO(TableFormula tableFormula, ValuePoint point)
       {
-         _parameter = parameter;
          _tableFormula = tableFormula;
          X = convertToDisplayUnit(tableFormula.XDimension, tableFormula.XDisplayUnit, point.X);
          Y = convertToDisplayUnit(tableFormula.Dimension, tableFormula.YDisplayUnit, point.Y);
+         ValuePoint = point;
+         RestartSolver = point.RestartSolver;
          Rules.AddRange(AllRules.All());
       }
 
@@ -43,25 +47,8 @@ namespace OSPSuite.Presentation.DTO
          return dimension.BaseUnitValueToUnitValue(displayUnit, value);
       }
 
-      private bool validateYValue(double valueInDisplayUnit)
-      {
-         var yValue = _tableFormula.Dimension.UnitValueToBaseUnitValue(_tableFormula.YDisplayUnit, valueInDisplayUnit);
-         return _parameter.Validate(x => x.Value, yValue).IsEmpty;
-      }
-
-      private string errorMessageForYValue(double valueInDisplayUnit)
-      {
-         var yValue = _tableFormula.Dimension.UnitValueToBaseUnitValue(_tableFormula.YDisplayUnit, valueInDisplayUnit);
-         return _parameter.Validate(x => x.Value, yValue).Message;
-      }
-
       private static class AllRules
       {
-         private static IBusinessRule yValueShouldBeValidAccordingToParameter { get; } = CreateRule.For<ValuePointDTO>()
-            .Property(point => point.Y)
-            .WithRule((point, valueInDisplayUnit) => point.validateYValue(valueInDisplayUnit))
-            .WithError((point, valueInDisplayUnit) => point.errorMessageForYValue(valueInDisplayUnit));
-
          private static IBusinessRule xValueShouldBeGreaterOrEqualThanZero { get; } = CreateRule.For<ValuePointDTO>()
             .Property(point => point.X)
             .WithRule((point, value) => value >= 0)
@@ -70,7 +57,6 @@ namespace OSPSuite.Presentation.DTO
          public static IEnumerable<IBusinessRule> All()
          {
             yield return xValueShouldBeGreaterOrEqualThanZero;
-            yield return yValueShouldBeValidAccordingToParameter;
          }
       }
    }
