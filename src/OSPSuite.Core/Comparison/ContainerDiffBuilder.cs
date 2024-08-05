@@ -20,6 +20,7 @@ namespace OSPSuite.Core.Comparison
          //compare container specific properties
          CompareValues(x => x.ContainerType, x => x.ContainerType, comparison);
          CompareValues(x => x.Mode, x => x.Mode, comparison);
+         CompareValues(x => x.ParentPath, x => x.ParentPath, comparison);
 
          _enumerableComparer.CompareEnumerables(comparison, x => x.Children, item => item.Name);
       }
