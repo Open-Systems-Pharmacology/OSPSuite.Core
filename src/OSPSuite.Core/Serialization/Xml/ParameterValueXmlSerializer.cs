@@ -2,7 +2,7 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
-   public abstract class ParameterValueXmlSerializer<T> : PathAndValueEntityXmlSerializer<T> where T:ParameterValue
+   public abstract class ParameterValueXmlSerializer<T> : PathAndValueEntityXmlSerializer<T> where T : ParameterValue
    {
       public override void PerformMapping()
       {
@@ -13,15 +13,15 @@ namespace OSPSuite.Core.Serialization.Xml
       }
    }
 
-   public class ParameterValueXmlSerializer : ParameterValueXmlSerializer<ParameterValue> 
+   public class ParameterValueXmlSerializer : ParameterValueXmlSerializer<ParameterValue>
    {
    }
 
    public class IndividualParameterXmlSerializer : ParameterValueXmlSerializer<IndividualParameter>
    {
    }
+
    public class ExpressionParameterXmlSerializer : ParameterValueXmlSerializer<ExpressionParameter>
    {
    }
-
 }
