@@ -46,7 +46,8 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_a_successful_validation()
       {
-         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Valid, _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
+         //the case study creates a warning for a parameter not found
+         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.ValidWithWarnings, _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
       }
 
       [Observation]
@@ -548,7 +549,7 @@ namespace OSPSuite.Core
       public void should_return_an_invalid_validation()
       {
          _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
-         _result.ValidationResult.Messages.Count().ShouldBeEqualTo(3, _result.ValidationResult.Messages.Select(x => x.Text).ToString("\n"));
+         _result.ValidationResult.Messages.Count().ShouldBeEqualTo(4, _result.ValidationResult.Messages.Select(x => x.Text).ToString("\n"));
       }
    }
 
@@ -563,7 +564,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_be_able_to_create_the_model()
       {
-         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Valid);
+         _result.ValidationResult.ValidationState.ShouldNotBeEqualTo(ValidationState.Invalid);
       }
    }
 

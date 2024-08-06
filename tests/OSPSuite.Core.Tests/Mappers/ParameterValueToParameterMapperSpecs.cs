@@ -8,18 +8,18 @@ using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Mappers
 {
-   public class concern_for_IndividualParameterToParameterMapper : ContextSpecification<IndividualParameterToParameterMapper>
+   public abstract class concern_for_ParameterValueToParameterMapper : ContextSpecification<ParameterValueToParameterMapper>
    {
       protected IParameterFactory _parameterFactory;
 
       protected override void Context()
       {
          _parameterFactory = A.Fake<IParameterFactory>();
-         sut = new IndividualParameterToParameterMapper(_parameterFactory);
+         sut = new ParameterValueToParameterMapper(_parameterFactory);
       }
    }
 
-   public class When_mapping_a_distributed_individual_parameter_to_parameter : concern_for_IndividualParameterToParameterMapper
+   public class When_mapping_a_distributed_parameter_value_to_parameter_value : concern_for_ParameterValueToParameterMapper
    {
       private IndividualParameter _individualParameter;
 
@@ -51,7 +51,7 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
-   public class When_mapping_an_individual_parameter_with_constant_formula_to_a_parameter : concern_for_IndividualParameterToParameterMapper
+   public class When_mapping_an_parameter_value_with_constant_formula_to_a_parameter_value : concern_for_ParameterValueToParameterMapper
    {
       private IndividualParameter _individualParameter;
 

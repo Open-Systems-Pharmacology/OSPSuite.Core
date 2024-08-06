@@ -58,11 +58,11 @@ namespace OSPSuite.Core.Domain
          return parameter.HasGlobalExpressionName();
       }
 
-      public static IParameter WithUpdatedMetaFrom(this IParameter parameter, IndividualParameter individualParameter)
+      public static IParameter WithUpdatedMetaFrom(this IParameter parameter, ParameterValue parameterValue)
       {
-         parameter.Origin.UpdatePropertiesFrom(individualParameter.Origin);
-         parameter.Info.UpdatePropertiesFrom(individualParameter.Info);
-         parameter.IsDefault = individualParameter.IsDefault;
+         parameter.Origin.UpdatePropertiesFrom(parameterValue.Origin);
+         parameter.Info.UpdatePropertiesFrom(parameterValue.Info);
+         parameter.IsDefault = parameterValue.IsDefault;
          return parameter;
       }
    }
