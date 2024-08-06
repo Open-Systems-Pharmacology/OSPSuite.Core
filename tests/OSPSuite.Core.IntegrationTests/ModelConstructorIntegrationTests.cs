@@ -599,4 +599,15 @@ namespace OSPSuite.Core
          _result.ValidationResult.Messages.ElementAt(0).Text.ShouldBeEqualTo(Validation.ModelNameCannotBeNamedLikeATopContainer(_model.Root.GetChildren<IContainer>().AllNames()));
       }
    }
+
+   internal class When_a_parameter_is_added_dynamically_from_the_parameter_values_in_a_well_defined_container : concern_for_ModelConstructor
+   {
+      [Observation]
+      public void should_have_added_the_dynamic_parameter_in_the_target_container()
+      {
+         var parameter = _model.Root.EntityAt<IParameter>(ORGANISM, "NewParameterAddedFromParameterValues");
+         parameter.ShouldNotBeNull();
+         parameter.Value.ShouldBeEqualTo(10);
+      }
+   }
 }
