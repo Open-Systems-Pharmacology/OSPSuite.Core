@@ -60,6 +60,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Data\BlackBox.pkml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Data\EventsAppKeywordReplacement.pkml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
