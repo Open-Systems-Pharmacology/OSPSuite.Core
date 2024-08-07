@@ -40,13 +40,4 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.NegativeValuesAllowed);
       }
    }
-
-   public class ParameterValueXmlSerializer : PathAndValueEntityXmlSerializer<ParameterValue>
-   {
-      public override void PerformMapping()
-      {
-         base.PerformMapping();
-         Map(x => x.IsDefault);
-      }
-   }
 }

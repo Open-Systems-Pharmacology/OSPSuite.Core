@@ -16,14 +16,14 @@ namespace OSPSuite.Core.Domain.Mappers
       {
          switch (input)
          {
-            case ParameterValue parameterValue:
-               return mapAsParameterValue(parameterValue);
-            case InitialCondition initialCondition:
-               return mapAsInitialCondition(initialCondition);
             case ExpressionParameter expressionParameter:
                return mapAsExpressionParameter(expressionParameter);
             case IndividualParameter individualParameter:
                return mapAsIndividualParameter(individualParameter);
+            case ParameterValue parameterValue:
+               return mapAsParameterValue(parameterValue);
+            case InitialCondition initialCondition:
+               return mapAsInitialCondition(initialCondition);
             default:
                return new PathElements();
          }
@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
       private void addMolecule(ExpressionParameter expressionParameter, PathElements pathElements, int bottomCompartmentIndex)
       {
-         if(bottomCompartmentIndex < 0)
+         if (bottomCompartmentIndex < 0)
             addMolecule(pathElements, expressionParameter.Path.ElementAt(0));
          else
             addMolecule(pathElements, expressionParameter.Path.ElementAt(moleculeNameIndex(bottomCompartmentIndex)));
@@ -73,7 +73,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
       private static void addMolecule(PathElements pathElements, string displayName)
       {
-         pathElements.Add(PathElementId.Molecule, new PathElement { DisplayName = displayName });
+         pathElements.Add(PathElementId.Molecule, new PathElement {DisplayName = displayName});
       }
 
       private PathElements mapAsParameterValue(ParameterValue parameterValue)
@@ -125,7 +125,7 @@ namespace OSPSuite.Core.Domain.Mappers
          if (string.IsNullOrEmpty(containerPath))
             return;
 
-         pathElements.Add(PathElementId.Container, new PathElement { DisplayName = containerPath });
+         pathElements.Add(PathElementId.Container, new PathElement {DisplayName = containerPath});
       }
 
       private static IEnumerable<string> allElementsBetweenTopContainerAndBottomCompartment(PathAndValueEntity pathAndValueEntity, int bottomCompartmentIndex)
@@ -136,13 +136,13 @@ namespace OSPSuite.Core.Domain.Mappers
 
       private void addBottomCompartment(PathAndValueEntity pathAndValueEntity, PathElements pathElements, int bottomCompartmentIndex)
       {
-         pathElements.Add(PathElementId.BottomCompartment, new PathElement { DisplayName = pathAndValueEntity.Path.ElementAt(bottomCompartmentIndex) });
+         pathElements.Add(PathElementId.BottomCompartment, new PathElement {DisplayName = pathAndValueEntity.Path.ElementAt(bottomCompartmentIndex)});
       }
 
       private void addNameAndTopContainer(PathAndValueEntity pathAndValueEntity, PathElements pathElements)
       {
-         pathElements.Add(PathElementId.Name, new PathElement { DisplayName = pathAndValueEntity.Path.Last() });
-         pathElements.Add(PathElementId.TopContainer, new PathElement { DisplayName = pathAndValueEntity.Path.First() });
+         pathElements.Add(PathElementId.Name, new PathElement {DisplayName = pathAndValueEntity.Path.Last()});
+         pathElements.Add(PathElementId.TopContainer, new PathElement {DisplayName = pathAndValueEntity.Path.First()});
       }
    }
 }

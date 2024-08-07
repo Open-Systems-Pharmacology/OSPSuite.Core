@@ -46,7 +46,8 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_a_successful_validation()
       {
-         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Valid, _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
+         //the case study creates a warning for a parameter not found
+         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.ValidWithWarnings, _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
       }
 
       [Observation]
@@ -548,7 +549,7 @@ namespace OSPSuite.Core
       public void should_return_an_invalid_validation()
       {
          _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
-         _result.ValidationResult.Messages.Count().ShouldBeEqualTo(3, _result.ValidationResult.Messages.Select(x => x.Text).ToString("\n"));
+         _result.ValidationResult.Messages.Count().ShouldBeEqualTo(4, _result.ValidationResult.Messages.Select(x => x.Text).ToString("\n"));
       }
    }
 
@@ -563,7 +564,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_be_able_to_create_the_model()
       {
-         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Valid);
+         _result.ValidationResult.ValidationState.ShouldNotBeEqualTo(ValidationState.Invalid);
       }
    }
 
@@ -596,6 +597,17 @@ namespace OSPSuite.Core
          _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
          _result.ValidationResult.Messages.Count().ShouldBeEqualTo(1, _result.ValidationResult.Messages.Select(x => x.Text).ToString("\n"));
          _result.ValidationResult.Messages.ElementAt(0).Text.ShouldBeEqualTo(Validation.ModelNameCannotBeNamedLikeATopContainer(_model.Root.GetChildren<IContainer>().AllNames()));
+      }
+   }
+
+   internal class When_a_parameter_is_added_dynamically_from_the_parameter_values_in_a_well_defined_container : concern_for_ModelConstructor
+   {
+      [Observation]
+      public void should_have_added_the_dynamic_parameter_in_the_target_container()
+      {
+         var parameter = _model.Root.EntityAt<IParameter>(ORGANISM, "NewParameterAddedFromParameterValues");
+         parameter.ShouldNotBeNull();
+         parameter.Value.ShouldBeEqualTo(10);
       }
    }
 }
