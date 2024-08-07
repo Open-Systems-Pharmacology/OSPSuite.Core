@@ -12,7 +12,6 @@ namespace OSPSuite.Core.DiffBuilders
       {
          base.Context();
          _comparerSettings.OnlyComputingRelevant = false;
-
          _object1 = new Container {ContainerType = ContainerType.Formulation, Name = "O1" };
          _object2 = new Container {ContainerType = ContainerType.Event, Name = "O2" };
       }
@@ -114,7 +113,7 @@ namespace OSPSuite.Core.DiffBuilders
       public void should_return_a_report_containing_the_container_path_difference()
       {
          _report.Count().ShouldBeEqualTo(1);
-         Assert.IsTrue(_report.First().Description.StartsWith("Parent Paths are not equal"));
+         _report.First().Description.StartsWith("Parent Paths are not equal").ShouldBeTrue();
       }
    }
 }
