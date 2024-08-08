@@ -285,8 +285,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private ValidationResult setQuantitiesValues(ModelConfiguration modelConfiguration)
       {
-         _quantityValuesUpdater.UpdateQuantitiesValues(modelConfiguration);
-         return new ValidationResult();
+         return _quantityValuesUpdater.UpdateQuantitiesValues(modelConfiguration);
       }
 
       private void createPassiveTransports(ModelConfiguration modelConfiguration)

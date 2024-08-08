@@ -23,8 +23,7 @@ namespace OSPSuite.Core.Domain.Mappers
       IEnumerable<IParameter> MapFrom(IContainer container, SimulationBuilder simulationBuilder, params ParameterBuildMode[] parameterBuildModesToMap);
 
       /// <summary>
-      ///    Only direct children parameters  of <paramref name="container" /> of type <see cref="ParameterBuildMode.Global" />
-      ///    or <seealso cref="ParameterBuildMode.Property" /> will be mapped
+      ///    Only direct children parameters  of <paramref name="container" /> of type <see cref="ParameterBuildMode.Global" /> will be mapped
       /// </summary>
       IEnumerable<IParameter> MapGlobalOrPropertyFrom(IContainer container, SimulationBuilder simulationBuilder);
 

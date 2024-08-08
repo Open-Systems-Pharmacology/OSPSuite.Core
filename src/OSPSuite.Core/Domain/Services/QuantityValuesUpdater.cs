@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    <see cref="SpatialStructure" />.
       /// </remarks>
       /// <param name="modelConfiguration">The model whose quantities will be updated</param>
-      void UpdateQuantitiesValues(ModelConfiguration modelConfiguration);
+      ValidationResult UpdateQuantitiesValues(ModelConfiguration modelConfiguration);
    }
 
    internal class QuantityValuesUpdater : IQuantityValuesUpdater
@@ -31,72 +31,83 @@ namespace OSPSuite.Core.Domain.Services
       private readonly ICloneManagerForModel _cloneManagerForModel;
       private readonly IFormulaFactory _formulaFactory;
       private readonly IConcentrationBasedFormulaUpdater _concentrationBasedFormulaUpdater;
-      private readonly IIndividualParameterToParameterMapper _individualParameterToParameterMapper;
+      private readonly IParameterValueToParameterMapper _parameterValueToParameterMapper;
 
       public QuantityValuesUpdater(
          IKeywordReplacerTask keywordReplacerTask,
          ICloneManagerForModel cloneManagerForModel,
          IFormulaFactory formulaFactory,
          IConcentrationBasedFormulaUpdater concentrationBasedFormulaUpdater,
-         IIndividualParameterToParameterMapper individualParameterToParameterMapper)
+         IParameterValueToParameterMapper parameterValueToParameterMapper)
       {
          _keywordReplacerTask = keywordReplacerTask;
          _cloneManagerForModel = cloneManagerForModel;
          _formulaFactory = formulaFactory;
          _concentrationBasedFormulaUpdater = concentrationBasedFormulaUpdater;
-         _individualParameterToParameterMapper = individualParameterToParameterMapper;
+         _parameterValueToParameterMapper = parameterValueToParameterMapper;
       }
 
-      public void UpdateQuantitiesValues(ModelConfiguration modelConfiguration)
+      public ValidationResult UpdateQuantitiesValues(ModelConfiguration modelConfiguration)
       {
+         var valueUpdater = new ValueUpdaterParams(modelConfiguration);
          updateMoleculeAmountFromInitialConditions(modelConfiguration);
 
          //Add expressions profile before individual as some settings might be overwritten in the individual for aging
-         updateParameterFromExpressionProfiles(modelConfiguration);
+         updateParameterFromExpressionProfiles(valueUpdater);
 
-         updateParameterFromIndividualValues(modelConfiguration);
+         updateParameterFromIndividualValues(valueUpdater);
 
          //PV are applied last
-         updateParameterValueFromParameterValues(modelConfiguration);
+         updateParameterValueFromParameterValues(valueUpdater);
+
+         return valueUpdater.ValidationResult;
       }
 
-      private void updateParameterFromExpressionProfiles(ModelConfiguration modelConfiguration)
+      private void updateParameterFromExpressionProfiles(ValueUpdaterParams valueUpdater)
       {
-         modelConfiguration.SimulationConfiguration.ExpressionProfiles?.SelectMany(x => x.ExpressionParameters).Each(x => updateParameterValueFromStartValue(modelConfiguration, x, getParameter));
+         var addOrUpdateParameter = addOrUpdateParameterFromParameterValue(valueUpdater);
+         valueUpdater.ModelConfiguration.SimulationConfiguration.ExpressionProfiles?.SelectMany(x => x.ExpressionParameters)
+            .Each(addOrUpdateParameter);
       }
 
-      private void updateParameterFromIndividualValues(ModelConfiguration modelConfiguration)
+      private void updateParameterFromIndividualValues(ValueUpdaterParams valueUpdater)
       {
+         var addOrUpdateParameter = addOrUpdateParameterFromParameterValue(valueUpdater);
          //Order by distribution to ensure that distributed parameter are loaded BEFORE their sub parameters.
          //note: use descending otherwise parameter without distribution are returned fist
-         modelConfiguration.SimulationConfiguration.Individual?.OrderByDescending(x => x.DistributionType)
-            .Each(x => updateParameterValueFromStartValue(modelConfiguration, x, getOrAddModelParameter));
+         valueUpdater.ModelConfiguration.SimulationConfiguration.Individual?.OrderByDescending(x => x.DistributionType)
+            .Each(addOrUpdateParameter);
       }
 
-      private void updateParameterValueFromParameterValues(ModelConfiguration modelConfiguration)
+      private void updateParameterValueFromParameterValues(ValueUpdaterParams valueUpdater)
       {
-         modelConfiguration.SimulationBuilder.ParameterValues
-            .Each(pv => updateParameterValueFromStartValue(modelConfiguration, pv, getParameter));
+         var addOrUpdateParameter = addOrUpdateParameterFromParameterValue(valueUpdater);
+         valueUpdater.ModelConfiguration.SimulationBuilder.ParameterValues
+            .Each(addOrUpdateParameter);
       }
 
-      private IParameter getOrAddModelParameter(ModelConfiguration modelConfiguration, IndividualParameter individualParameter)
+      private IParameter getOrAddModelParameter(ValueUpdaterParams valueUpdater, ParameterValue parameterValue)
       {
-         var parameter = getParameter(modelConfiguration, individualParameter);
+         var (modelConfiguration, validationResult) = valueUpdater;
+         var parameter = getParameter(modelConfiguration, parameterValue);
          if (parameter != null)
-            return parameter.WithUpdatedMetaFrom(individualParameter);
+            return parameter.WithUpdatedMetaFrom(parameterValue);
 
          var (model, simulationBuilder, replacementContext) = modelConfiguration;
          //Parameter does not exist in the model. We will create it if possible
-         var parentContainerPathInModel = _keywordReplacerTask.CreateModelPathFor(individualParameter.ContainerPath, replacementContext);
+         var parentContainerPathInModel = _keywordReplacerTask.CreateModelPathFor(parameterValue.ContainerPath, replacementContext);
          var parentContainer = parentContainerPathInModel.Resolve<IContainer>(model.Root);
 
          //container does not exist, we do not add new structure to the existing model. Only parameters
          if (parentContainer == null)
+         {
+            validationResult.AddMessage(NotificationType.Warning, parameterValue, Warning.ContainerNotFoundParameterWillNotBeCreated(parentContainerPathInModel, parameterValue.ParameterName));
             return null;
+         }
 
-         parameter = _individualParameterToParameterMapper.MapFrom(individualParameter);
+         parameter = _parameterValueToParameterMapper.MapFrom(parameterValue);
 
-         simulationBuilder.AddBuilderReference(parameter, individualParameter);
+         simulationBuilder.AddBuilderReference(parameter, parameterValue);
          return parameter.WithParentContainer(parentContainer);
       }
 
@@ -107,19 +118,19 @@ namespace OSPSuite.Core.Domain.Services
          return pathInModel.Resolve<IParameter>(model.Root);
       }
 
-      private void updateParameterValueFromStartValue<T>(ModelConfiguration modelConfiguration, T pathAndValueEntity, Func<ModelConfiguration, T, IParameter> getParameterFunc) where T : PathAndValueEntity
+      private Action<ParameterValue> addOrUpdateParameterFromParameterValue(ValueUpdaterParams valueUpdater) => parameterValue =>
       {
-         var parameter = getParameterFunc(modelConfiguration, pathAndValueEntity);
+         var parameter = getOrAddModelParameter(valueUpdater, parameterValue);
          //this can happen if the parameter does not exist in the model
          if (parameter == null)
             return;
 
-         var (model, _, replacementContext) = modelConfiguration;
+         var (model, _, replacementContext) = valueUpdater.ModelConfiguration;
 
          //Formula is defined, we update in the parameter instance
-         if (pathAndValueEntity.Formula != null)
+         if (parameterValue.Formula != null)
          {
-            parameter.Formula = _cloneManagerForModel.Clone(pathAndValueEntity.Formula);
+            parameter.Formula = _cloneManagerForModel.Clone(parameterValue.Formula);
 
             //ensures that the parameter is seen as using the formula
             parameter.IsFixedValue = false;
@@ -127,15 +138,15 @@ namespace OSPSuite.Core.Domain.Services
          }
 
          //If the value is defined, this will be used instead of the formula (even if set previously)
-         if (pathAndValueEntity.Value.IsValid())
+         if (parameterValue.Value.IsValid())
          {
-            var parameterValue = pathAndValueEntity.Value.Value;
+            var actualParameterValue = parameterValue.Value.Value;
             if (parameter.Formula is ConstantFormula constantFormula)
-               constantFormula.Value = parameterValue;
+               constantFormula.Value = actualParameterValue;
             else
-               parameter.Value = parameterValue;
+               parameter.Value = actualParameterValue;
          }
-      }
+      };
 
       private void updateMoleculeAmountFromInitialConditions(ModelConfiguration modelConfiguration)
       {
@@ -226,6 +237,24 @@ namespace OSPSuite.Core.Domain.Services
          if (usingFormula.Formula.IsConstant())
             return usingFormula.Formula.Calculate(usingFormula);
          return null;
+      }
+
+      private class ValueUpdaterParams
+      {
+         public ModelConfiguration ModelConfiguration { get; }
+         public ValidationResult ValidationResult { get; }
+
+         public ValueUpdaterParams(ModelConfiguration modelConfiguration)
+         {
+            ModelConfiguration = modelConfiguration;
+            ValidationResult = new ValidationResult();
+         }
+
+         public void Deconstruct(out ModelConfiguration modelConfiguration, out ValidationResult validationResult)
+         {
+            modelConfiguration = ModelConfiguration;
+            validationResult = ValidationResult;
+         }
       }
    }
 }

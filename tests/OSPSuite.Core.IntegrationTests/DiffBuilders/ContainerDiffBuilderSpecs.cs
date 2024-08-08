@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -11,8 +12,8 @@ namespace OSPSuite.Core.DiffBuilders
       {
          base.Context();
          _comparerSettings.OnlyComputingRelevant = false;
-         _object1 = new Container {ContainerType = ContainerType.Formulation, Name = "O1"};
-         _object2 = new Container {ContainerType = ContainerType.Event, Name = "O2"};
+         _object1 = new Container {ContainerType = ContainerType.Formulation, Name = "O1" };
+         _object2 = new Container {ContainerType = ContainerType.Event, Name = "O2" };
       }
 
       [Observation]
@@ -94,6 +95,25 @@ namespace OSPSuite.Core.DiffBuilders
       {
          _report.Count().ShouldBeEqualTo(1);
          _report.ElementAt(0).CommonAncestor.ShouldBeEqualTo(_c111);
+      }
+   }
+
+   public class When_comparing_two_container_having_different_parentpath : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _comparerSettings.OnlyComputingRelevant = false;
+
+         _object1 = new Container { Name = "O1", ParentPath = new ObjectPath("A", "B") };
+         _object2 = new Container { Name = "O1", ParentPath = new ObjectPath("A", "C") };
+      }
+
+      [Observation]
+      public void should_return_a_report_containing_the_container_path_difference()
+      {
+         _report.Count().ShouldBeEqualTo(1);
+         _report.First().Description.StartsWith("Parent Paths are not equal").ShouldBeTrue();
       }
    }
 }
