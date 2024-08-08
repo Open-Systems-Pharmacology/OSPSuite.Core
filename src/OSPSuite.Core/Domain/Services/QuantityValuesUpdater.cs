@@ -32,19 +32,22 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IFormulaFactory _formulaFactory;
       private readonly IConcentrationBasedFormulaUpdater _concentrationBasedFormulaUpdater;
       private readonly IParameterValueToParameterMapper _parameterValueToParameterMapper;
+      private readonly ValidatorForForFormula _formulaValidator;
 
       public QuantityValuesUpdater(
          IKeywordReplacerTask keywordReplacerTask,
          ICloneManagerForModel cloneManagerForModel,
          IFormulaFactory formulaFactory,
          IConcentrationBasedFormulaUpdater concentrationBasedFormulaUpdater,
-         IParameterValueToParameterMapper parameterValueToParameterMapper)
+         IParameterValueToParameterMapper parameterValueToParameterMapper,
+         ValidatorForForFormula formulaValidator)
       {
          _keywordReplacerTask = keywordReplacerTask;
          _cloneManagerForModel = cloneManagerForModel;
          _formulaFactory = formulaFactory;
          _concentrationBasedFormulaUpdater = concentrationBasedFormulaUpdater;
          _parameterValueToParameterMapper = parameterValueToParameterMapper;
+         _formulaValidator = formulaValidator;
       }
 
       public ValidationResult UpdateQuantitiesValues(ModelConfiguration modelConfiguration)
@@ -138,14 +141,23 @@ namespace OSPSuite.Core.Domain.Services
          }
 
          //If the value is defined, this will be used instead of the formula (even if set previously)
-         if (parameterValue.Value.IsValid())
+         if (!parameterValue.Value.IsValid())
+            return;
+
+         var actualParameterValue = parameterValue.Value.Value;
+         if (parameter.Formula is ConstantFormula constantFormula)
          {
-            var actualParameterValue = parameterValue.Value.Value;
-            if (parameter.Formula is ConstantFormula constantFormula)
-               constantFormula.Value = actualParameterValue;
-            else
-               parameter.Value = actualParameterValue;
+            constantFormula.Value = actualParameterValue;
+            return;
          }
+
+         //now we have a non constant formula. Let's try to see if the reference can be resolved. If yes, we will simply set the value of the parameter
+         //Otherwise, we will create a new constant formula with the value
+
+         if (_formulaValidator.IsFormulaValid(parameter))
+            parameter.Value = actualParameterValue;
+         else
+            parameter.Formula = _formulaFactory.ConstantFormula(actualParameterValue, parameter.Dimension);
       };
 
       private void updateMoleculeAmountFromInitialConditions(ModelConfiguration modelConfiguration)
