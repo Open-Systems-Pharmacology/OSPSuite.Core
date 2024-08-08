@@ -328,7 +328,7 @@ namespace OSPSuite.Core.Domain.Services
          var (model, simulationConfiguration) = modelConfiguration;
          // retrieve all molecules container defined in the spatial structure
          // We filter our the global molecule container that is created under root. Only interested in LOCAL Containers
-         var allMoleculePropertiesContainer = model.Root.GetAllChildren<IContainer>(x => x.ParentContainer!= model.Root && x.IsNamed(Constants.MOLECULE_PROPERTIES)).ToList();
+         var allMoleculePropertiesContainer = model.Root.GetAllChildren<IContainer>(x => x.ParentContainer != model.Root && x.IsNamed(Constants.MOLECULE_PROPERTIES)).ToList();
 
          var allPresentMolecules = simulationConfiguration.AllPresentXenobioticFloatingMoleculeNames();
          var allEndogenous = simulationConfiguration.AllPresentEndogenousStationaryMoleculeNames();
@@ -410,8 +410,7 @@ namespace OSPSuite.Core.Domain.Services
          return buildValidationMessage(initialCondition, message);
       }
 
-      private static ValidationMessage buildValidationMessage(InitialCondition initialCondition,
-         string validationDescription)
+      private static ValidationMessage buildValidationMessage(InitialCondition initialCondition, string validationDescription)
       {
          return new ValidationMessage(NotificationType.Warning, validationDescription, initialCondition, initialCondition.BuildingBlock);
       }
