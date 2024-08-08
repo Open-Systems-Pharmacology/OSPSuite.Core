@@ -39,8 +39,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
       public async Task Run(ParameterIdentification parameterIdentification)
       {
-         if(parameterIdentification.IsLoaded != true) 
-            _executionContext.Load(parameterIdentification);
+          _executionContext.Load(parameterIdentification);
             
          if (!_entityValidationTask.Validate(parameterIdentification))
             return;
