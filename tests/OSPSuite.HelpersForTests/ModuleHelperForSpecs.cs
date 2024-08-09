@@ -41,7 +41,7 @@ namespace OSPSuite.Helpers
       {
          var simulationConfiguration = new SimulationConfiguration
          {
-            SimulationSettings = createSimulationConfiguration(),
+            SimulationSettings = CreateSimulationSettings(),
          };
 
          var module1 = createModule1();
@@ -58,7 +58,7 @@ namespace OSPSuite.Helpers
       {
          var simulationConfiguration = new SimulationConfiguration
          {
-            SimulationSettings = createSimulationConfiguration(),
+            SimulationSettings = CreateSimulationSettings(),
          };
 
          var module1 = createModule1();
@@ -75,7 +75,7 @@ namespace OSPSuite.Helpers
       {
          var simulationConfiguration = new SimulationConfiguration
          {
-            SimulationSettings = createSimulationConfiguration(),
+            SimulationSettings = CreateSimulationSettings(),
          };
 
          var module1 = createModule1();
@@ -91,7 +91,7 @@ namespace OSPSuite.Helpers
       {
          var simulationConfiguration = new SimulationConfiguration
          {
-            SimulationSettings = createSimulationConfiguration(),
+            SimulationSettings = CreateSimulationSettings(),
          };
 
          var module4 = createModule4();
@@ -126,7 +126,7 @@ namespace OSPSuite.Helpers
       private MoleculeBuilder createMoleculeA(IFormulaCache formulaCache)
       {
          var moleculeC = _modelHelper.DefaultMolecule("A", 3, 3, QuantityType.Drug, formulaCache);
-         var globalParameter = newConstantParameter("A_Global", 5, ParameterBuildMode.Global);
+         var globalParameter = NewConstantParameter("A_Global", 5, ParameterBuildMode.Global);
          var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("A_Global_Formula").WithFormulaString("2+2");
          globalParameter.Formula = formula;
          formulaCache.Add(formula);
@@ -135,16 +135,20 @@ namespace OSPSuite.Helpers
          return moleculeC;
       }
 
-      private SpatialStructure getSpatialStructureModule1()
+      public IContainer CreateOrganism()
       {
-         var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE MODULE 1");
-
-         var organism = _objectBaseFactory.Create<IContainer>()
+         return _objectBaseFactory.Create<IContainer>()
             .WithName(ORGANISM)
             .WithMode(ContainerMode.Logical);
+      }
+
+      private SpatialStructure getSpatialStructureModule1()
+      {
+         var spatialStructure = CreateSpatialStructure("SPATIAL STRUCTURE MODULE 1");
+         var organism = CreateOrganism();
 
          //Create a parameter with formula in Organism with absolute path
-         var bw = newConstantParameter(BW, 20);
+         var bw = NewConstantParameter(BW, 20);
          organism.Add(bw);
 
          var globalMoleculeProperties = _objectBaseFactory.Create<IContainer>().WithName(MOLECULE_PROPERTIES)
@@ -152,8 +156,8 @@ namespace OSPSuite.Helpers
             .WithContainerType(ContainerType.Molecule);
 
          //add two parameters. One will be replaced when merging the second module
-         globalMoleculeProperties.Add(newConstantParameter("P1", 10));
-         globalMoleculeProperties.Add(newConstantParameter("P2", 20));
+         globalMoleculeProperties.Add(NewConstantParameter("P1", 10));
+         globalMoleculeProperties.Add(NewConstantParameter("P2", 20));
 
          spatialStructure.GlobalMoleculeDependentProperties = globalMoleculeProperties;
 
@@ -161,10 +165,10 @@ namespace OSPSuite.Helpers
          var art = createContainerWithName(ArterialBlood);
 
          var artPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
-         artPlasma.Add(newConstantParameter(Volume, 2));
+         artPlasma.Add(NewConstantParameter(Volume, 2));
          art.Add(artPlasma);
-         art.Add(newConstantParameter(Q, 2));
-         art.Add(newConstantParameter(P, 10));
+         art.Add(NewConstantParameter(Q, 2));
+         art.Add(NewConstantParameter(P, 10));
          organism.Add(art);
 
 
@@ -183,20 +187,20 @@ namespace OSPSuite.Helpers
          var lung = createContainerWithName(Lung, ContainerMode.Logical);
          lung.AddTag("Tag1");
          var lngPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
-         lngPlasma.Add(newConstantParameter(Volume, 2));
-         lngPlasma.Add(newConstantParameter(pH, 7.5));
+         lngPlasma.Add(NewConstantParameter(Volume, 2));
+         lngPlasma.Add(NewConstantParameter(pH, 7.5));
          lung.Add(lngPlasma);
 
          var lngCell = createContainerWithName(Cell, ContainerMode.Physical);
-         lngCell.Add(newConstantParameter(Volume, 1));
-         lngCell.Add(newConstantParameter(pH, 7));
+         lngCell.Add(NewConstantParameter(Volume, 1));
+         lngCell.Add(NewConstantParameter(pH, 7));
          lung.Add(lngCell);
 
-         var lungQ = newConstantParameter(Q, 3);
+         var lungQ = NewConstantParameter(Q, 3);
          lungQ.AddTag("ParamTag1");
          lung.Add(lungQ);
 
-         lung.Add(newConstantParameter(P, 2));
+         lung.Add(NewConstantParameter(P, 2));
          organism.Add(lung);
 
          //BONE
@@ -204,31 +208,31 @@ namespace OSPSuite.Helpers
          organism.Add(bone);
 
          var bonePlasma = createContainerWithName(Plasma, ContainerMode.Physical);
-         bonePlasma.Add(newConstantParameter(Volume, 2));
-         bonePlasma.Add(newConstantParameter(pH, 7.5));
+         bonePlasma.Add(NewConstantParameter(Volume, 2));
+         bonePlasma.Add(NewConstantParameter(pH, 7.5));
          bone.Add(bonePlasma);
 
 
          var boneCell = createContainerWithName(Cell, ContainerMode.Physical);
-         boneCell.Add(newConstantParameter(Volume, 1));
-         boneCell.Add(newConstantParameter(pH, 7));
+         boneCell.Add(NewConstantParameter(Volume, 1));
+         boneCell.Add(NewConstantParameter(pH, 7));
          bone.Add(boneCell);
 
 
          //VEN
          var ven = createContainerWithName(VenousBlood);
          var venPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
-         venPlasma.Add(newConstantParameter(Volume, 2));
+         venPlasma.Add(NewConstantParameter(Volume, 2));
          ven.Add(venPlasma);
-         ven.Add(newConstantParameter(Q, 2));
+         ven.Add(NewConstantParameter(Q, 2));
          organism.Add(ven);
 
-         organism.Add(newConstantParameter(fu, 1));
+         organism.Add(NewConstantParameter(fu, 1));
          spatialStructure.AddTopContainer(organism);
 
          var neighborhood1 = _neighborhoodFactory.CreateBetween(artPlasma, bonePlasma).WithName("art_pls_to_bon_pls");
          //this is a constant parameter that will be referenced from arterial plasma compartment
-         neighborhood1.AddParameter(newConstantParameter("K", 10));
+         neighborhood1.AddParameter(NewConstantParameter("K", 10));
          spatialStructure.AddNeighborhood(neighborhood1);
          var neighborhood2 = _neighborhoodFactory.CreateBetween(lngPlasma, artPlasma).WithName("lng_pls_to_art_pls");
          spatialStructure.AddNeighborhood(neighborhood2);
@@ -240,12 +244,12 @@ namespace OSPSuite.Helpers
          var neighborhood5 = _neighborhoodFactory.CreateBetween(lngPlasma, lngCell).WithName("lng_pls_to_lng_cell");
          neighborhood5.AddTag("Cell2Plasma");
          neighborhood5.AddTag("NeighborhoodTag1");
-         neighborhood5.AddParameter(newConstantParameter("SA", 22));
+         neighborhood5.AddParameter(NewConstantParameter("SA", 22));
          spatialStructure.AddNeighborhood(neighborhood5);
 
          var neighborhood6 = _neighborhoodFactory.CreateBetween(bonePlasma, boneCell).WithName("bon_pls_to_bon_cell");
          neighborhood6.AddTag("Cell2Plasma");
-         neighborhood6.AddParameter(newConstantParameter("SA", 22));
+         neighborhood6.AddParameter(NewConstantParameter("SA", 22));
 
          var neighborhood7 = _neighborhoodFactory.CreateBetween(bonePlasma, boneCell).WithName("does_not_match_existing");
          neighborhood7.FirstNeighborPath = new ObjectPath("Organism", "NOPE");
@@ -262,7 +266,7 @@ namespace OSPSuite.Helpers
             .WithMode(containerMode);
       }
 
-      private IParameter newConstantParameter(string name, double value, ParameterBuildMode parameterBuildMode = ParameterBuildMode.Local)
+      public IParameter NewConstantParameter(string name, double value, ParameterBuildMode parameterBuildMode = ParameterBuildMode.Local)
          => _modelHelper.NewConstantParameter(name, value, parameterBuildMode);
 
       //Module 2 will introduce
@@ -272,15 +276,15 @@ namespace OSPSuite.Helpers
       private Module createModule2()
       {
          var module = _objectBaseFactory.Create<Module>().WithName("Module2");
-         var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE MODULE 2");
+         var spatialStructure = CreateSpatialStructure("SPATIAL STRUCTURE MODULE 2");
 
          var globalMoleculeProperties = _objectBaseFactory.Create<IContainer>().WithName(MOLECULE_PROPERTIES)
             .WithMode(ContainerMode.Logical)
             .WithContainerType(ContainerType.Molecule);
 
          //add two parameters. One will be replaced when merging the second module
-         globalMoleculeProperties.Add(newConstantParameter("P1", 100, ParameterBuildMode.Global));
-         globalMoleculeProperties.Add(newConstantParameter("P3", 30, ParameterBuildMode.Global));
+         globalMoleculeProperties.Add(NewConstantParameter("P1", 100, ParameterBuildMode.Global));
+         globalMoleculeProperties.Add(NewConstantParameter("P3", 30, ParameterBuildMode.Global));
          spatialStructure.GlobalMoleculeDependentProperties = globalMoleculeProperties;
 
          //LUNG with other parameters and interstitial compartment
@@ -298,25 +302,25 @@ namespace OSPSuite.Helpers
          var lung = createContainerWithName(Lung, ContainerMode.Physical);
 
          var lngPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
-         lngPlasma.Add(newConstantParameter(Volume, 20));
-         lngPlasma.Add(newConstantParameter(pH, 2));
+         lngPlasma.Add(NewConstantParameter(Volume, 20));
+         lngPlasma.Add(NewConstantParameter(pH, 2));
          lung.Add(lngPlasma);
          lung.AddTag("Tag2");
 
          var lngCell = createContainerWithName(Cell, ContainerMode.Physical);
-         lngCell.Add(newConstantParameter(Volume, 10));
-         lngCell.Add(newConstantParameter(pH, 2));
+         lngCell.Add(NewConstantParameter(Volume, 10));
+         lngCell.Add(NewConstantParameter(pH, 2));
          lung.Add(lngCell);
 
          var lngInt = createContainerWithName(Interstitial, ContainerMode.Physical);
-         lngInt.Add(newConstantParameter(Volume, 10));
-         lngInt.Add(newConstantParameter(pH, 2));
+         lngInt.Add(NewConstantParameter(Volume, 10));
+         lngInt.Add(NewConstantParameter(pH, 2));
          
-         var lungQ = newConstantParameter(Q, 5);
+         var lungQ = NewConstantParameter(Q, 5);
          lungQ.AddTag("ParamTag2");
          lung.Add(lungQ);
 
-         lung.Add(newConstantParameter(P2, 10));
+         lung.Add(NewConstantParameter(P2, 10));
          lung.Add(lngInt);
 
          //it will be added to the organism
@@ -328,22 +332,22 @@ namespace OSPSuite.Helpers
          var neighborhood = _neighborhoodFactory.CreateBetween(lngPlasma, lngInt).WithName("lng_pls_to_lng_int");
 
 
-         neighborhood.AddParameter(newConstantParameter("SA", 10));
+         neighborhood.AddParameter(NewConstantParameter("SA", 10));
          spatialStructure.AddNeighborhood(neighborhood);
 
 
          //LUNG with other parameters and interstitial compartment
          var heart = createContainerWithName(Heart);
          var heartPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
-         heart.Add(newConstantParameter(Volume, 20));
-         heart.Add(newConstantParameter(pH, 2));
+         heart.Add(NewConstantParameter(Volume, 20));
+         heart.Add(NewConstantParameter(pH, 2));
          heart.Add(heartPlasma);
          heart.ParentPath = new ObjectPath(ORGANISM);
 
          spatialStructure.AddTopContainer(heart);
          //new neighborhood between pls and int
          var neighborhood2 = _neighborhoodFactory.CreateBetween(lngPlasma, heartPlasma).WithName("lng_pls_to_hrt_pls");
-         neighborhood2.AddParameter(newConstantParameter("SA", 10));
+         neighborhood2.AddParameter(NewConstantParameter("SA", 10));
          spatialStructure.AddNeighborhood(neighborhood2);
 
          //existing neighborhood between lngPlasma and lngCell
@@ -359,12 +363,12 @@ namespace OSPSuite.Helpers
       private Module createModule3()
       {
          var module = _objectBaseFactory.Create<Module>().WithName("Module3");
-         var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE MODULE 3");
+         var spatialStructure = CreateSpatialStructure("SPATIAL STRUCTURE MODULE 3");
 
          var tumor = createContainerWithName(Tumor);
          var tumorPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
-         tumorPlasma.Add(newConstantParameter(Volume, 20));
-         tumorPlasma.Add(newConstantParameter(pH, 2));
+         tumorPlasma.Add(NewConstantParameter(Volume, 20));
+         tumorPlasma.Add(NewConstantParameter(pH, 2));
          tumor.Add(tumorPlasma);
 
          //tumor located between heart and lung
@@ -379,22 +383,27 @@ namespace OSPSuite.Helpers
          return module;
       }
 
-      private SimulationSettings createSimulationConfiguration()
+      public SimulationSettings CreateSimulationSettings()
       {
          return new SimulationSettings { Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = _outputSchemaFactory.CreateDefault(), OutputSelections = new OutputSelections() };
+      }
+
+      public SpatialStructure CreateSpatialStructure(string name = "SPATIAL STRUCTURE")
+      {
+         return _spatialStructureFactory.Create().WithName(name);
       }
 
       private Module createModule4()
       {
          var module = _objectBaseFactory.Create<Module>().WithName("Module4");
-         var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE MODULE 4");
+         var spatialStructure = CreateSpatialStructure("SPATIAL STRUCTURE MODULE 4");
 
          var organism = _objectBaseFactory.Create<IContainer>()
             .WithName(ORGANISM)
             .WithMode(ContainerMode.Logical);
 
          //Create a parameter with formula in Organism with absolute path
-         var bw = newConstantParameter(BW, 20);
+         var bw = NewConstantParameter(BW, 20);
          organism.Add(bw);
 
          //Organism
@@ -418,29 +427,29 @@ namespace OSPSuite.Helpers
          var art = createContainerWithName(ArterialBlood);
 
          var artPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
-         artPlasma.Add(newConstantParameter(Volume, 2));
+         artPlasma.Add(NewConstantParameter(Volume, 2));
          art.Add(artPlasma);
-         art.Add(newConstantParameter(Q, 2));
-         art.Add(newConstantParameter(P, 10));
+         art.Add(NewConstantParameter(Q, 2));
+         art.Add(NewConstantParameter(P, 10));
          organism.Add(art);
 
 
          var lung = createContainerWithName(Lung);
          var lngPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
-         lngPlasma.Add(newConstantParameter(Volume, 2));
-         lngPlasma.Add(newConstantParameter(pH, 7.5));
+         lngPlasma.Add(NewConstantParameter(Volume, 2));
+         lngPlasma.Add(NewConstantParameter(pH, 7.5));
          lung.Add(lngPlasma);
 
          var lngCell = createContainerWithName(Cell, ContainerMode.Physical);
-         lngCell.Add(newConstantParameter(Volume, 1));
-         lngCell.Add(newConstantParameter(pH, 7));
+         lngCell.Add(NewConstantParameter(Volume, 1));
+         lngCell.Add(NewConstantParameter(pH, 7));
          lung.Add(lngCell);
 
-         lung.Add(newConstantParameter(Q, 3));
-         lung.Add(newConstantParameter(P, 2));
+         lung.Add(NewConstantParameter(Q, 3));
+         lung.Add(NewConstantParameter(P, 2));
          organism.Add(lung);
 
-         organism.Add(newConstantParameter(fu, 1));
+         organism.Add(NewConstantParameter(fu, 1));
          spatialStructure.AddTopContainer(organism);
 
          var neighborhood2 = _neighborhoodFactory.CreateBetween(lngPlasma, artPlasma).WithName("lng_pls_to_art_pls");
@@ -448,7 +457,7 @@ namespace OSPSuite.Helpers
 
          var neighborhood5 = _neighborhoodFactory.CreateBetween(lngPlasma, lngCell).WithName("lng_pls_to_lng_cell");
          neighborhood5.AddTag("Cell2Plasma");
-         neighborhood5.AddParameter(newConstantParameter("SA", 22));
+         neighborhood5.AddParameter(NewConstantParameter("SA", 22));
          spatialStructure.AddNeighborhood(neighborhood5);
 
          spatialStructure.ResolveReferencesInNeighborhoods();
@@ -460,14 +469,14 @@ namespace OSPSuite.Helpers
       private Module createModule5()
       {
          var module = _objectBaseFactory.Create<Module>().WithName("Module5");
-         var spatialStructure = _spatialStructureFactory.Create().WithName("SPATIAL STRUCTURE MODULE 5");
+         var spatialStructure = CreateSpatialStructure("SPATIAL STRUCTURE MODULE 5");
 
          var organism = _objectBaseFactory.Create<IContainer>()
             .WithName(ORGANISM)
             .WithMode(ContainerMode.Logical);
 
          //Create a parameter with formula in Organism with absolute path
-         var bw = newConstantParameter(BW, 200);
+         var bw = NewConstantParameter(BW, 200);
          organism.Add(bw);
 
          //Organism
@@ -489,18 +498,18 @@ namespace OSPSuite.Helpers
          var art = createContainerWithName(ArterialBlood);
 
          var artPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
-         artPlasma.Add(newConstantParameter(Volume, 10));
-         artPlasma.Add(newConstantParameter(Q, 11));
+         artPlasma.Add(NewConstantParameter(Volume, 10));
+         artPlasma.Add(NewConstantParameter(Q, 11));
          var artInterstitial = createContainerWithName(Interstitial, ContainerMode.Physical);
-         artInterstitial.Add(newConstantParameter(P, 12));
+         artInterstitial.Add(NewConstantParameter(P, 12));
          art.AddChildren(artPlasma, artInterstitial);
          organism.Add(art);
 
 
          var lng = createContainerWithName(Lung);
          var lngPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
-         lngPlasma.Add(newConstantParameter(Volume, 20));
-         lngPlasma.Add(newConstantParameter(Q, 21));
+         lngPlasma.Add(NewConstantParameter(Volume, 20));
+         lngPlasma.Add(NewConstantParameter(Q, 21));
          var lngInterstitial = createContainerWithName(Interstitial, ContainerMode.Physical);
          lng.AddChildren(lngPlasma, lngInterstitial);
          organism.Add(lng);

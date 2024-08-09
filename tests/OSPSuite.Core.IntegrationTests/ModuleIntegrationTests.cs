@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Container;
@@ -229,6 +230,51 @@ namespace OSPSuite.Core
       {
          var lungCell = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung, Cell);
          lungCell.ShouldNotBeNull();
+      }
+   }
+
+   internal class When_constructing_a_simulation_based_on_an_invalid_parmaeter_overwritten_with_PV : concern_for_ModuleIntegration
+   {
+      [Observation]
+      public void should_be_able_to_construct_the_simulation()
+      {
+         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Valid, _result.ValidationResult.Messages.Select(x=>x.Text).ToString("\n"));
+      }
+
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder()
+      {
+         //Construct a simple configuration with one module, one spatial structure with one parameter with a formula that cannot be evaluated and 
+         //PV overrides the formula
+         return helper =>
+         {
+            var objectBaseFactory = IoC.Resolve<IObjectBaseFactory>();
+            var parameterValueCreator = IoC.Resolve<IParameterValuesCreator>();
+            var simulationConfiguration = new SimulationConfiguration
+            {
+               SimulationSettings = helper.CreateSimulationSettings()
+            };
+
+            var module = objectBaseFactory.Create<Module>();
+            var spatialStructure = helper.CreateSpatialStructure();
+            var organism = helper.CreateOrganism();
+            spatialStructure.AddTopContainer(organism);
+
+            var explicitFormula = new ExplicitFormula("foo");
+            explicitFormula.AddObjectPath(new FormulaUsablePath("foo").WithAlias("foo"));
+            var parameter = helper.NewConstantParameter("param", 10).WithFormula(explicitFormula);
+            organism.Add(parameter);
+
+            module.Add(spatialStructure);
+
+            var parameterValueBuildingBlock = objectBaseFactory.Create<ParameterValuesBuildingBlock>();
+            parameterValueBuildingBlock.Add(parameterValueCreator.CreateParameterValue(new ObjectPath(organism.Name, "param"), 10, Constants.Dimension.NO_DIMENSION));
+            module.Add(parameterValueBuildingBlock);
+            var moduleConfiguration = new ModuleConfiguration(module);
+            simulationConfiguration.AddModuleConfiguration(moduleConfiguration);
+
+            return simulationConfiguration;
+
+         };
       }
    }
 }
