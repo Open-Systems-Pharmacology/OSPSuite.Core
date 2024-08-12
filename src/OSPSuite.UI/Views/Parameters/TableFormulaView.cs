@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Windows.Forms;
+﻿using System.ComponentModel;
 using DevExpress.Utils;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Repository;
@@ -87,8 +85,6 @@ namespace OSPSuite.UI.Views.Parameters
       protected override bool ColumnIsValue(GridColumn column) => _columnX.XtraColumn == column || _columnX.XtraColumn == column;
 
       protected override bool ColumnIsButton(GridColumn column) => _removeColumn.XtraColumn == column;
-
-      public void AttachPresenter(ITableParameterPresenter presenter) => _presenter = presenter;
 
       public void AttachPresenter(ITableFormulaPresenter presenter) => _presenter = presenter;
 

@@ -3,7 +3,7 @@ using OSPSuite.Presentation.Presenters.Parameters;
 
 namespace OSPSuite.Presentation.Views.Parameters
 {
-   public interface ITableFormulaView : IView<ITableParameterPresenter>, IView<ITableFormulaPresenter>
+   public interface ITableFormulaView : IView<ITableFormulaPresenter>
    {
       void Clear();
       void BindTo(TableFormulaDTO tableFormulaDTO);
