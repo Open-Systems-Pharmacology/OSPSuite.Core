@@ -162,7 +162,7 @@ namespace OSPSuite.Helpers
 
       private SimulationSettings createSimulationConfiguration()
       {
-         return new SimulationSettings { Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = createDefaultOutputSchema(), OutputSelections = new OutputSelections() };
+         return new SimulationSettings {Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = createDefaultOutputSchema(), OutputSelections = new OutputSelections()};
       }
 
       private OutputSchema createDefaultOutputSchema()
@@ -183,7 +183,7 @@ namespace OSPSuite.Helpers
          var cm2 = _objectBaseFactory.Create<CoreCalculationMethod>().WithName("CM2");
          cm2.Category = "PartitionCoeff";
          cm2.AddOutputFormula(PartitionCoeff_2(), new ParameterDescriptor("K", Create.Criteria(x => x.With("Cell2Plasma"))));
-         return new[] { cm1, cm2 };
+         return new[] {cm1, cm2};
       }
 
       private EventGroupBuildingBlock getEventGroups()
@@ -260,6 +260,12 @@ namespace OSPSuite.Helpers
 
          //NAN parameters are not added to the PV by default
          parameterValues.Add(_parameterValuesCreator.CreateParameterValue(nanParameterNotNaN, 10, Constants.Dimension.NO_DIMENSION));
+
+
+         //dummy parameter that will be added dynamically to the organism 
+         parameterValues.Add(_parameterValuesCreator.CreateParameterValue(
+            new ObjectPath(Constants.ORGANISM, "NewParameterAddedFromParameterValues"),
+            10, Constants.Dimension.NO_DIMENSION));
       }
 
       private void setInitialConditions(InitialConditionsBuildingBlock moleculesStartValues)

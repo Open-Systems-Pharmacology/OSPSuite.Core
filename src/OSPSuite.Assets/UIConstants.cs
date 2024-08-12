@@ -2027,6 +2027,8 @@ namespace OSPSuite.Assets
 
       public static string ParameterWithPathNotFoundInBaseIndividual(string parameterPath) => $"Parameter '{parameterPath}' was not found in individual and will be ignored.";
 
+      public static string ContainerNotFoundParameterWillNotBeCreated(string containerPath, string parameterName) => $" Container '{containerPath}' was not found. Parameter '{parameterName}' will be ignored.";
+
       public static string UserDefinedPKParameterAlreadyExistsAndWillBeReplaced(string pkParameterName) => $"User Defined PK-Parameter '{pkParameterName}' already exists and will be replaced.";
 
       public static string LargeNumberOfOutputPoints(int numberOfPoints) =>
