@@ -5,7 +5,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Views.Parameters;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Parameters
 {
@@ -15,7 +14,6 @@ namespace OSPSuite.Presentation.Presenters.Parameters
       void RemovePoint(ValuePointDTO pointToRemove);
       void Edit(TableFormula tableFormula);
       void AddPoint();
-      TableFormula EditedFormula { get; }
       IEnumerable<ValuePointDTO> AllPoints { get; }
       void SetXValue(ValuePointDTO valuePointDTO, double newValue);
       void SetYValue(ValuePointDTO valuePointDTO, double newValue);
@@ -96,24 +94,6 @@ namespace OSPSuite.Presentation.Presenters.Parameters
       public virtual void SetRestartSolver(ValuePointDTO valuePointDTO, bool restart)
       {
          
-      }
-
-      public TableFormula EditedFormula
-      {
-         get
-         {
-            _editedFormula.ClearPoints();
-            _tableFormulaDTO.AllPoints.Each(p => _editedFormula.AddPoint(valuePointFrom(p)));
-            return _editedFormula;
-         }
-      }
-
-      private ValuePoint valuePointFrom(ValuePointDTO valuePointDTO)
-      {
-         //values are saved in display unit
-         return new ValuePoint(
-            _editedFormula.XDimension.UnitValueToBaseUnitValue(_editedFormula.XDisplayUnit, valuePointDTO.X),
-            _editedFormula.Dimension.UnitValueToBaseUnitValue(_editedFormula.YDisplayUnit, valuePointDTO.Y));
       }
 
       public void ImportTable()
