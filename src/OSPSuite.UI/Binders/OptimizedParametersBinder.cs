@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq.Expressions;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using DevExpress.Utils;
-using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
+using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
-using OSPSuite.Presentation.Services;
+using OSPSuite.Presentation.Formatters;
 using OSPSuite.UI.RepositoryItems;
 using OSPSuite.UI.Services;
-using OSPSuite.Presentation.Formatters;
 
 namespace OSPSuite.UI.Binders
 {
@@ -84,7 +82,7 @@ namespace OSPSuite.UI.Binders
 
       private IGridViewAutoBindColumn<OptimizedParameterDTO, ValueDTO> bindValue(Expression<Func<OptimizedParameterDTO, ValueDTO>> expression, string caption)
       {
-         var col =  bind(expression, caption)
+         var col = bind(expression, caption)
             .WithFormat(x => _valueFormatter);
 
          col.XtraColumn.OptionsColumn.AllowFocus = true;

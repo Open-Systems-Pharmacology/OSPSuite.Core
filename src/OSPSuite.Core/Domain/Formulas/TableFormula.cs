@@ -5,7 +5,6 @@ using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Maths.Interpolations;
-using OSPSuite.Utility;
 
 namespace OSPSuite.Core.Domain.Formulas
 {
