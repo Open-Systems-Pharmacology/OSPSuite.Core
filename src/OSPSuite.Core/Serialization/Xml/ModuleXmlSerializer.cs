@@ -11,6 +11,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.PKSimVersion);
          Map(x => x.ModuleImportVersion);
          Map(x => x.MergeBehavior);
+         Map(x => x.IsPKSimModule);
       }
    }
 }
