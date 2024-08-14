@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
-using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
@@ -326,29 +325,29 @@ namespace OSPSuite.Core.Domain
 
    public class When_changing_the_merge_behavior : concern_for_Module
    {
-       private string _preChangeVersion;
+      private string _preChangeVersion;
 
-       protected override void Context()
-       {
-           sut = new Module
-           {
-               new ParameterValuesBuildingBlock(),
-               new EventGroupBuildingBlock()
-           };
+      protected override void Context()
+      {
+         sut = new Module
+         {
+            new ParameterValuesBuildingBlock(),
+            new EventGroupBuildingBlock()
+         };
 
-           _preChangeVersion = sut.Version;
-       }
+         _preChangeVersion = sut.Version;
+      }
 
-       protected override void Because()
-       {
-           sut.MergeBehavior = MergeBehavior.Extend;
-       }
+      protected override void Because()
+      {
+         sut.MergeBehavior = MergeBehavior.Extend;
+      }
 
-       [Observation]
-       public void the_version_should_not_match()
-       {
-           sut.Version.ShouldNotBeEqualTo(_preChangeVersion);
-       }
+      [Observation]
+      public void the_version_should_not_match()
+      {
+         sut.Version.ShouldNotBeEqualTo(_preChangeVersion);
+      }
    }
 
    public class When_testing_if_the_extension_module_is_not_a_pk_sim_module : concern_for_Module
@@ -375,7 +374,7 @@ namespace OSPSuite.Core.Domain
          sut.IsPKSimModule.ShouldBeFalse();
       }
    }
-  
+
    public class When_checking_for_can_add : concern_for_Module
    {
       protected override void Context()
