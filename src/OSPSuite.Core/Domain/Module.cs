@@ -40,8 +40,7 @@ namespace OSPSuite.Core.Domain
       private IReadOnlyList<T> buildingBlocksByType<T>() where T : IBuildingBlock => _buildingBlocks.OfType<T>().ToList();
 
       /// <summary>
-      ///    Module is a PKSim module if created in PKSim and the module version
-      ///    matches the version when it was first imported
+      ///    Module is a PKSim module if created in PKSim
       /// </summary>
       public bool IsPKSimModule { get; set; }
 
