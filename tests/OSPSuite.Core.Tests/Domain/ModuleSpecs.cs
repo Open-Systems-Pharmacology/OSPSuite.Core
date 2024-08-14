@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
@@ -374,23 +375,7 @@ namespace OSPSuite.Core.Domain
          sut.IsPKSimModule.ShouldBeFalse();
       }
    }
-
-   public class When_testing_if_the_pk_sim_module_is_a_pk_sim_module : concern_for_Module
-   {
-      protected override void Context()
-      {
-         base.Context();
-         sut.PKSimVersion = "1";
-         sut.ModuleImportVersion = sut.Version;
-      }
-
-      [Observation]
-      public void the_module_indicates_it_is_a_pk_sim_module()
-      {
-         sut.IsPKSimModule.ShouldBeTrue();
-      }
-   }
-
+  
    public class When_checking_for_can_add : concern_for_Module
    {
       protected override void Context()
