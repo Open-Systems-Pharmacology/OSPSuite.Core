@@ -36,15 +36,13 @@ namespace OSPSuite.Core.Domain
    public class Module : ObjectBase, IEnumerable<IBuildingBlock>
    {
       private readonly List<IBuildingBlock> _buildingBlocks = new List<IBuildingBlock>();
-
       private T buildingBlockByType<T>() where T : IBuildingBlock => _buildingBlocks.OfType<T>().SingleOrDefault();
       private IReadOnlyList<T> buildingBlocksByType<T>() where T : IBuildingBlock => _buildingBlocks.OfType<T>().ToList();
 
       /// <summary>
-      ///    Module is a PKSim module if created in PKSim and the module version
-      ///    matches the version when it was first imported
+      ///    Module is a PKSim module if created in PKSim 
       /// </summary>
-      public bool IsPKSimModule => !string.IsNullOrEmpty(PKSimVersion) && Equals(Version, ModuleImportVersion);
+      public bool IsPKSimModule { get; set; }
 
       public string ModuleImportVersion { get; set; }
 
@@ -115,6 +113,7 @@ namespace OSPSuite.Core.Domain
          PKSimVersion = sourceModule.PKSimVersion;
          ModuleImportVersion = sourceModule.ModuleImportVersion;
          MergeBehavior = sourceModule.MergeBehavior;
+         IsPKSimModule = sourceModule.IsPKSimModule;
       }
 
       public void Add(IBuildingBlock buildingBlock)
