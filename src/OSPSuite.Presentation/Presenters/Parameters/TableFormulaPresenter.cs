@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Views.Parameters;
@@ -32,14 +33,12 @@ namespace OSPSuite.Presentation.Presenters.Parameters
 
    public abstract class TableFormulaPresenter<TView> : AbstractCommandCollectorPresenter<TView, ITableFormulaPresenter>, ITableFormulaPresenter where TView : ITableFormulaView
    {
-      protected readonly Func<TableFormula> _importTableFormula;
       protected TableFormula _editedFormula;
       protected TableFormulaDTO _tableFormulaDTO;
       public Action<TableFormula> ConfigureCreatedTableAction { get; set; }
 
-      protected TableFormulaPresenter(TView view, Func<TableFormula> importTableFormula) : base(view)
+      protected TableFormulaPresenter(TView view) : base(view)
       {
-         _importTableFormula = importTableFormula;
          view.ShowUseDerivedValues(show:false);
          view.ShowRestartSolver(show:false);
       }
@@ -98,15 +97,17 @@ namespace OSPSuite.Presentation.Presenters.Parameters
 
       public void ImportTable()
       {
-         var importedFormula = _importTableFormula();
-         if (importedFormula == null)
+         var importedData = ImportTablePoints();
+         if (importedData == null)
             return;
 
-         ApplyImportedFormula(importedFormula);
+         ApplyImportedTablePoints(importedData);
          ViewChanged();
       }
 
-      protected abstract void ApplyImportedFormula(TableFormula importedFormula);
+      protected abstract DataRepository ImportTablePoints();
+
+      protected abstract void ApplyImportedTablePoints(DataRepository importedTablePoints);
 
       public IEnumerable<ValuePointDTO> AllPoints => _tableFormulaDTO.AllPoints;
    }
