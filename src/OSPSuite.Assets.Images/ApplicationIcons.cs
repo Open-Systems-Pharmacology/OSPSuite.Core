@@ -496,8 +496,8 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ModuleExplorer = AddNamedIcon("ModuleExplorer");
       public static readonly ApplicationIcon ModulesFolder = AddNamedIcon("ModulesFolder");
       public static readonly ApplicationIcon Module = AddNamedIcon("Module");
-      public static readonly ApplicationIcon Neighborhood = AddNamedIcon("Neighborhood", "Neighborhood");
-      public static readonly ApplicationIcon Neighbor = AddNamedIcon("Neighbor", "Neighbor");
+      public static readonly ApplicationIcon Neighborhood = AddNamedIcon( "Neighborhood");
+      public static readonly ApplicationIcon Neighbor = AddNamedIcon("Neighbor");
       public static readonly ApplicationIcon TransporterRed = AddNamedIcon("TransporterRed", "TransporterRed");
       public static readonly ApplicationIcon TransporterGreen = AddNamedIcon("TransporterGreen", "TransporterGreen");
       public static readonly ApplicationIcon EnzymeRed = AddNamedIcon("EnzymeRed", "EnzymeRed");
