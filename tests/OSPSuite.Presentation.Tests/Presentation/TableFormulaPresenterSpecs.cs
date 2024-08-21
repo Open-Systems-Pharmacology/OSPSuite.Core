@@ -1,13 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Core.Maths.Interpolations;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters.Parameters;
 using OSPSuite.Presentation.Views.Parameters;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presentation
 {
@@ -18,16 +23,10 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          _view = A.Fake<ITableFormulaView>();
-         sut = new TableFormulaPresenterForSpecs(_view, ImportFunc);
+         sut = new TableFormulaPresenterForSpecs(_view);
       }
 
-      protected virtual TableFormula ImportFunc()
-      {
-         var tableFormula = new TableFormula();
-         tableFormula.AddPoint(new ValuePoint(1.0, 1.0));
-         tableFormula.AddPoint(new ValuePoint(2.0, 2.0));
-         return tableFormula;
-      }
+
    }
 
    internal class When_importing_a_table_formula : concern_for_TableFormulaPresenter
@@ -62,6 +61,7 @@ namespace OSPSuite.Presentation.Presentation
          base.Context();
          _tableFormula = new TableFormula();
          sut.Edit(_tableFormula);
+         sut.ImportedDataRepository = null;
       }
 
       protected override void Because()
@@ -73,11 +73,6 @@ namespace OSPSuite.Presentation.Presentation
       public void the_imported_table_should_not_be_applied()
       {
          sut.ImportedFormula.ShouldBeNull();
-      }
-
-      protected override TableFormula ImportFunc()
-      {
-         return null;
       }
    }
 
@@ -117,8 +112,30 @@ namespace OSPSuite.Presentation.Presentation
 
    internal class TableFormulaPresenterForSpecs : TableFormulaPresenter<ITableFormulaView>
    {
-      public TableFormulaPresenterForSpecs(ITableFormulaView view, Func<TableFormula> importTableFormula) : base(view, importTableFormula)
+      public DataRepository ImportedDataRepository { set; get; }
+      public TableFormulaPresenterForSpecs(ITableFormulaView view) : base(view)
       {
+         var baseGrid = new BaseGrid("id", "name", DimensionFactoryForSpecs.TimeDimension);
+         var dataColumn = new DataColumn("column", DimensionFactoryForSpecs.ConcentrationDimension, baseGrid)
+         {
+            InternalValues = new List<float>()
+         };
+
+         var dataRepository = new DataRepository
+         {
+            baseGrid,
+            dataColumn
+         };
+
+         baseGrid.InternalValues.AddRange(new[] { 1.0f, 2.0f });
+         dataColumn.InternalValues.AddRange(new[] { 1.0f, 2.0f });
+
+         ImportedDataRepository = dataRepository;
+      }
+
+      protected override DataRepository ImportTablePoints()
+      {
+         return ImportedDataRepository;
       }
 
       public override void SetXValue(ValuePointDTO valuePointDTO, double newValue)
@@ -141,9 +158,10 @@ namespace OSPSuite.Presentation.Presentation
          throw new NotImplementedException();
       }
 
-      protected override void ApplyImportedFormula(TableFormula importedFormula)
+      protected override void ApplyImportedTablePoints(DataRepository importedTablePoints)
       {
-         ImportedFormula = importedFormula;
+         ImportedFormula = new TableFormula(new LinearInterpolation());
+         importedTablePoints.BaseGrid.InternalValues.Each(x => { ImportedFormula.AddPoint(new ValuePoint(x, importedTablePoints.AllButBaseGridAsArray.Single().GetValue(x))); });
       }
 
       public TableFormula ImportedFormula { get; private set; }
