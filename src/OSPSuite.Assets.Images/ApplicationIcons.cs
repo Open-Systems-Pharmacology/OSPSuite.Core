@@ -493,22 +493,22 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ExpressionProfileFolder = AddNamedIcon("ExpressionProfileFolder");
       public static readonly ApplicationIcon OSPSuite = AddNamedIcon("OSPSuite");
       public static readonly ApplicationIcon RedCross = AddNamedIcon("RedCross");
-      public static readonly ApplicationIcon ModuleExplorer = AddNamedIcon("ModuleExplorer"); // TODO add an icon svg file. Presently just a copy of BBExplorer svg
-      public static readonly ApplicationIcon ModulesFolder = AddNamedIcon("ModulesFolder"); // TODO add icon svg file. Presently just a copy of Folder svg
-      public static readonly ApplicationIcon Module = AddNamedIcon("Module"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
-      public static readonly ApplicationIcon Neighborhood = AddNamedIcon("OSPSuite", "Neighborhood"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
-      public static readonly ApplicationIcon Neighbor = AddNamedIcon("OSPSuite", "Neighbor"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
+      public static readonly ApplicationIcon ModuleExplorer = AddNamedIcon("ModuleExplorer");
+      public static readonly ApplicationIcon ModulesFolder = AddNamedIcon("ModulesFolder");
+      public static readonly ApplicationIcon Module = AddNamedIcon("Module");
+      public static readonly ApplicationIcon Neighborhood = AddNamedIcon( "Neighborhood");
+      public static readonly ApplicationIcon Neighbor = AddNamedIcon("Neighbor");
       public static readonly ApplicationIcon TransporterRed = AddNamedIcon("TransporterRed", "TransporterRed");
       public static readonly ApplicationIcon TransporterGreen = AddNamedIcon("TransporterGreen", "TransporterGreen");
       public static readonly ApplicationIcon EnzymeRed = AddNamedIcon("EnzymeRed", "EnzymeRed");
       public static readonly ApplicationIcon EnzymeGreen = AddNamedIcon("EnzymeGreen", "EnzymeGreen");
       public static readonly ApplicationIcon ProteinRed = AddNamedIcon("ProteinRed", "ProteinRed");
       public static readonly ApplicationIcon ProteinGreen = AddNamedIcon("ProteinGreen", "ProteinGreen");
-      public static readonly ApplicationIcon ModuleGreen = AddNamedIcon("ModuleGreen"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
-      public static readonly ApplicationIcon ModuleRed = AddNamedIcon("ModuleRed"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
-      public static readonly ApplicationIcon PKSimModule = AddNamedIcon("PKSimModule"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
-      public static readonly ApplicationIcon PKSimModuleGreen = AddNamedIcon("PKSimModuleGreen"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
-      public static readonly ApplicationIcon PKSimModuleRed = AddNamedIcon("PKSimModuleRed"); // TODO add icon svg file. Presently just a copy of BBExplorer svg
+      public static readonly ApplicationIcon ModuleGreen = AddNamedIcon("ModuleGreen");
+      public static readonly ApplicationIcon ModuleRed = AddNamedIcon("ModuleRed");
+      public static readonly ApplicationIcon PKSimModule = AddNamedIcon("PKSimModule");
+      public static readonly ApplicationIcon PKSimModuleGreen = AddNamedIcon("PKSimModuleGreen");
+      public static readonly ApplicationIcon PKSimModuleRed = AddNamedIcon("PKSimModuleRed");
 
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
