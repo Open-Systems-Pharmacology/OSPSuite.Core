@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 
@@ -97,8 +98,8 @@ namespace OSPSuite.Core.Domain
 
    public class When_resolving_an_object_from_an_absolute_object_path_regarding_the_ref_entity : concern_for_ObjectPath
    {
-      private IContainer _organ;
-      private IParameter _parameter;
+      protected IContainer _organ;
+      protected IParameter _parameter;
 
       protected override void Context()
       {
@@ -113,6 +114,39 @@ namespace OSPSuite.Core.Domain
       public void should_return_the_desired_entity()
       {
          sut.Resolve<IParameter>(_organ).ShouldBeEqualTo(_parameter);
+      }
+   }
+
+   public class When_resolving_an_object_from_an_entity_with_parent_path : When_resolving_an_object_from_an_absolute_object_path_regarding_the_ref_entity
+   {
+      protected override void Context()
+      {
+         base.Context();
+         Random random = new Random();
+         int n = random.Next(1, 11);
+         var lstPaths = Enumerable.Range(0, n)
+            .Select(_ => GenerateRandomString(random, 8))
+            .ToList();
+
+         _organ.RootContainer.ParentPath = new ObjectPath(lstPaths);
+         lstPaths.Reverse();
+         foreach (var path in lstPaths)
+         {
+            sut.AddAtFront(path);
+         }
+      }
+
+      [Observation]
+      public void should_return_the_desired_entity()
+      {
+         sut.Resolve<IParameter>(_organ).ShouldBeEqualTo(_parameter);
+      }
+
+      private static string GenerateRandomString(Random random, int length)
+      {
+         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+         return new string(Enumerable.Repeat(chars, length)
+            .Select(s => s[random.Next(s.Length)]).ToArray());
       }
    }
 
