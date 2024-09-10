@@ -26,9 +26,17 @@ namespace OSPSuite.Core.Comparison
 
          CompareValues(x => x.ContainerPath, x => x.ContainerPath, comparison);
 
-         // Always Compare Value and Formula, independent from settings as these are two different properties of a start value
-         CompareNullableDoubleValues(x => x.Value, x => x.Value, comparison, x => x.DisplayUnit);
-         _objectComparer.Compare(comparison.FormulaComparison());
+         // if the distribution types are different then we cannot compare values since the value
+         // of a distributed PathAndValueEntity is not fully calculated until  it is turned into
+         // a parameter
+         if(!comparison.Object1.DistributionType.Equals(comparison.Object2.DistributionType))
+            CompareValues(x => x.DistributionType, x => x.DistributionType, comparison);
+         else
+         {
+            // Always Compare Value and Formula, independent of settings as these are two different properties of a start value
+            CompareNullableDoubleValues(x => x.Value, x => x.Value, comparison, x => x.DisplayUnit);
+            _objectComparer.Compare(comparison.FormulaComparison());
+         }
       }
    }
 
@@ -38,7 +46,6 @@ namespace OSPSuite.Core.Comparison
 
       protected StartValueDiffBuilder(IObjectComparer objectComparer, EntityDiffBuilder entityDiffBuilder, WithValueOriginComparison<T> valueOriginComparison) :base(objectComparer, entityDiffBuilder)
       {
-
          _valueOriginComparison = valueOriginComparison;
       }
 

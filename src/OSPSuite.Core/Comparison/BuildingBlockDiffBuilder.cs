@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 
@@ -6,9 +7,9 @@ namespace OSPSuite.Core.Comparison
 {
    public abstract class BuildingBlockDiffBuilder<TBuildingBlock, TBuilder> : DiffBuilder<TBuildingBlock> where TBuildingBlock : class, IBuildingBlock<TBuilder> where TBuilder : class, IBuilder
    {
-      private readonly ObjectBaseDiffBuilder _objectBaseDiffBuilder;
+      protected readonly ObjectBaseDiffBuilder _objectBaseDiffBuilder;
       protected readonly EnumerableComparer _enumerableComparer;
-      private readonly Func<TBuilder, object> _equalityProperty;
+      protected readonly Func<TBuilder, object> _equalityProperty;
       protected Func<TBuilder, string> _presentObjectDetailsFunc;
 
       protected BuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder,
@@ -27,7 +28,12 @@ namespace OSPSuite.Core.Comparison
       public override void Compare(IComparison<TBuildingBlock> comparison)
       {
          _objectBaseDiffBuilder.Compare(comparison);
-         _enumerableComparer.CompareEnumerables(comparison, x => x, _equalityProperty, _presentObjectDetailsFunc);
+         _enumerableComparer.CompareEnumerables(comparison, GetBuilders, _equalityProperty, _presentObjectDetailsFunc);
+      }
+
+      protected virtual IEnumerable<TBuilder> GetBuilders(TBuildingBlock buildingBlock)
+      {
+         return buildingBlock;
       }
    }
 

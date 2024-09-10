@@ -1,4 +1,8 @@
-﻿using OSPSuite.Core.Domain.Builder;
+﻿using System.Collections.Generic;
+using System.Linq;
+using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Comparison
 {
@@ -7,6 +11,17 @@ namespace OSPSuite.Core.Comparison
    {
       protected PathAndValueEntityBuildingBlockDiffBuilder(ObjectBaseDiffBuilder objectBaseDiffBuilder, EnumerableComparer enumerableComparer) : base(objectBaseDiffBuilder, enumerableComparer, x => x.Path)
       {
+
+      }
+
+      protected override IEnumerable<TBuilder> GetBuilders(TBuildingBlock buildingBlock)
+      {
+         return base.GetBuilders(buildingBlock).Where(x => !isSubParameter(x, buildingBlock.Where(parameter => parameter.IsDistributed()).Select(parameter => parameter.Path)));
+      }
+
+      private bool isSubParameter(TBuilder pathAndValueEntity, IEnumerable<ObjectPath> distributedPaths)
+      {
+         return distributedPaths.Any(x => pathAndValueEntity.ContainerPath.Equals(x));
       }
    }
 
