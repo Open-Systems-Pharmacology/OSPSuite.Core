@@ -158,4 +158,78 @@ namespace OSPSuite.Core.DiffBuilders
          _report[1].DowncastTo<MissingDiffItem>().PresentObjectDetails.Contains("10").ShouldBeTrue();
       }
    }
+
+   public class When_comparing_parameter_values_building_blocks_with_distributed_parameters_that_have_sub_parameter_differences : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var initialConditionsBuildingBlock1 = new InitialConditionsBuildingBlock().WithName("Tada");
+         var initialConditionA = new InitialCondition().WithName("MSVa");
+         initialConditionA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         initialConditionA.DistributionType = DistributionType.Normal;
+         var initialConditionB = new InitialCondition().WithName("MSVb");
+         initialConditionB.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         initialConditionsBuildingBlock1.Add(initialConditionA);
+         initialConditionsBuildingBlock1.Add(initialConditionB);
+         initialConditionsBuildingBlock1.Add(new InitialCondition
+         {
+            Path = new ObjectPath("Root", "Liver", "Plasma", "MSVa", "Median"),
+         });
+
+
+         var initialConditionsBuildingBlock2 = new InitialConditionsBuildingBlock().WithName("Tada");
+         initialConditionA = new InitialCondition().WithName("MSVa");
+         initialConditionA.DistributionType = DistributionType.Normal;
+         initialConditionA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         initialConditionB = new InitialCondition().WithName("MSVb");
+         initialConditionB.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+
+         initialConditionsBuildingBlock2.Add(initialConditionA);
+         initialConditionsBuildingBlock2.Add(initialConditionB);
+
+         _object1 = initialConditionsBuildingBlock1;
+         _object2 = initialConditionsBuildingBlock2;
+      }
+
+      [Observation]
+      public void should_not_report_any_differences()
+      {
+         _report.ShouldBeEmpty();
+      }
+   }
+
+   public class When_comparing_parameter_values_building_blocks_with_distributed_parameters_that_have_different_distribution_types : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var initialConditionsBuildingBlock1 = new InitialConditionsBuildingBlock().WithName("Tada");
+         var initialConditionA = new InitialCondition().WithName("MSVa");
+         initialConditionA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         initialConditionA.DistributionType = DistributionType.Normal;
+         var initialConditionB = new InitialCondition().WithName("MSVb");
+         initialConditionB.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         initialConditionsBuildingBlock1.Add(initialConditionA);
+         initialConditionsBuildingBlock1.Add(initialConditionB);
+
+         var initialConditionsBuildingBlock2 = new InitialConditionsBuildingBlock().WithName("Tada");
+         initialConditionA = new InitialCondition().WithName("MSVa");
+         initialConditionA.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+         initialConditionB = new InitialCondition().WithName("MSVb");
+         initialConditionB.ContainerPath = new ObjectPath("Root", "Liver", "Plasma");
+
+         initialConditionsBuildingBlock2.Add(initialConditionA);
+         initialConditionsBuildingBlock2.Add(initialConditionB);
+
+         _object1 = initialConditionsBuildingBlock1;
+         _object2 = initialConditionsBuildingBlock2;
+      }
+
+      [Observation]
+      public void should_report_the_different_distribution_type()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
 }

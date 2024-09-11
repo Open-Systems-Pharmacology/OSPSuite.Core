@@ -293,4 +293,33 @@ namespace OSPSuite.Core.DiffBuilders
          _report.Count.ShouldBeEqualTo(1);
       }
    }
+
+   public class When_comparing_two_initial_conditions_with_different_distribution_type : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+
+         var msv1 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
+         msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
+         msv1.IsPresent = true;
+         msv1.ScaleDivisor = 10;
+         
+         var msv2 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
+         msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
+         msv2.IsPresent = true;
+         msv2.ScaleDivisor = 10;
+
+         msv2.DistributionType = DistributionType.Normal;
+
+         _object1 = msv1;
+         _object2 = msv2;
+      }
+
+      [Observation]
+      public void should_not_report_any_differences()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
 }
