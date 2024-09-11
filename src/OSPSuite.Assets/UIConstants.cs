@@ -1905,9 +1905,9 @@ namespace OSPSuite.Assets
          return $"Multiple {notificationType}s were found for '{builderName}'";
       }
 
-      public static string ApplicatedMoleculeNotPresent(string moleculeName, string applicationBuilderName, string moleculeBuildingBlock)
+      public static string ApplicatedMoleculeNotPresent(string moleculeName, string applicationBuilderName)
       {
-         return $"Molecule: '{moleculeName}' applicated by Application builder {applicationBuilderName} is not definde in Molecules Building Block {moleculeBuildingBlock}";
+         return $"Molecule: '{moleculeName}' applicated by Application builder {applicationBuilderName} is not present in simulation";
       }
 
       public static string ValueGreaterThanMinSizeInPixelAndLessThanMaxSizeIsRequiredOrEmpty(int minSizeInPixel, int maxSizeInPixel)

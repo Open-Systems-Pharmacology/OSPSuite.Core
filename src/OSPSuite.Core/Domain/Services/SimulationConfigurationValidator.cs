@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
@@ -16,7 +17,13 @@ namespace OSPSuite.Core.Domain.Services
       public ValidationResult Validate(SimulationConfiguration simulationConfiguration)
       {
          var validationResult = new ValidationResult();
-         simulationConfiguration.ModuleConfigurations.Each(x => validateModule(x.Module, validationResult));
+         var allMolecules = simulationConfiguration.ModuleConfigurations.Where(x => x.Module.Molecules != null).SelectMany(x => x.Module.Molecules).ToList();
+         simulationConfiguration.ModuleConfigurations.Each(x =>
+         {
+            validateModule(x.Module, validationResult);
+            validateEventGroupBuildingBlock(x.Module.EventGroups, allMolecules, validationResult);
+         });
+
          simulationConfiguration.AllCalculationMethods.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
          return validationResult;
       }
@@ -28,23 +35,22 @@ namespace OSPSuite.Core.Domain.Services
          validateBuildingBlockWithFormulaCache(module.SpatialStructure, validationResult);
          validateBuildingBlockWithFormulaCache(module.PassiveTransports, validationResult);
          validateBuildingBlockWithFormulaCache(module.Observers, validationResult);
-         validateEventGroupBuildingBlock(module.EventGroups, module.Molecules, validationResult);
          module.InitialConditionsCollection.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
          module.ParameterValuesCollection.Each(cm => validateBuildingBlockWithFormulaCache(cm, validationResult));
       }
 
-      private void validateEventGroupBuildingBlock(EventGroupBuildingBlock eventGroups, MoleculeBuildingBlock moleculeBuildingBlock, ValidationResult validationResult)
+      private void validateEventGroupBuildingBlock(EventGroupBuildingBlock eventGroups, IReadOnlyList<MoleculeBuilder> allMolecules, ValidationResult validationResult)
       {
-         if (eventGroups == null || moleculeBuildingBlock == null)
+         if (eventGroups == null || allMolecules == null)
             return;
 
-         var allMolecules = moleculeBuildingBlock.Select(mb => mb.Name);
+         var allMoleculeNames = allMolecules.Select(mb => mb.Name);
          foreach (var eventGroup in eventGroups)
          {
             var applicationBuilders = eventGroup.GetAllContainersAndSelf<ApplicationBuilder>();
-            foreach (var applicationBuilder in applicationBuilders.Where(applicationBuilder => !allMolecules.Contains(applicationBuilder.MoleculeName)))
+            foreach (var applicationBuilder in applicationBuilders.Where(applicationBuilder => !allMoleculeNames.Contains(applicationBuilder.MoleculeName)))
             {
-               validationResult.AddMessage(NotificationType.Error, applicationBuilder, Validation.ApplicatedMoleculeNotPresent(applicationBuilder.MoleculeName, applicationBuilder.Name, moleculeBuildingBlock.Name), eventGroups);
+               validationResult.AddMessage(NotificationType.Error, applicationBuilder, Validation.ApplicatedMoleculeNotPresent(applicationBuilder.MoleculeName, applicationBuilder.Name), eventGroups);
             }
          }
 

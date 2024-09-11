@@ -93,7 +93,7 @@ namespace OSPSuite.Core.Domain.Services
          var eventGroup = _eventGroupMapper.MapFrom(eventGroupBuilder, simulationBuilder);
          sourceContainer.Add(eventGroup);
 
-         //needs to add the requires transport into model only for the added event group
+         //needs to add the required transport into model only for the added event group
          foreach (var childEventGroup in eventGroup.GetAllContainersAndSelf<EventGroup>())
          {
             var childEventGroupBuilder = simulationBuilder.BuilderFor(childEventGroup).DowncastTo<EventGroupBuilder>();
