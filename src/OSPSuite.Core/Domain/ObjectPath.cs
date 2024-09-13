@@ -128,7 +128,7 @@ namespace OSPSuite.Core.Domain
 
          var root = refEntity.RootContainer;
 
-         removeMatchingPaths(root, usePath);
+         removeMatchingParentPath(root, usePath);
 
          var firstEntry = usePath[0];
 
@@ -149,7 +149,7 @@ namespace OSPSuite.Core.Domain
          return resolvePath<T>(dependentObject, usePath);
       }
 
-      private void removeMatchingPaths(IContainer root, List<string> usePath)
+      private void removeMatchingParentPath(IContainer root, List<string> usePath)
       {
          var matchingElements = !string.IsNullOrEmpty(root?.ParentPath?.PathAsString) &&
                                 new ObjectPath(_pathEntries).PathAsString.StartsWith(root?.ParentPath?.PathAsString ?? string.Empty);
