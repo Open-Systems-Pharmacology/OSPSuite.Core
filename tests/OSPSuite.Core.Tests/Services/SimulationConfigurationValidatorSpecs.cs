@@ -34,9 +34,19 @@ namespace OSPSuite.Core.Services
          _moleculeBuildingBlock = new MoleculeBuildingBlock().WithName("Molecules");
          _moleculeBuildingBlock.Add(new MoleculeBuilder().WithName("A"));
 
-         var module = new Module
+         var moleculeModule = new Module
          {
             _moleculeBuildingBlock,
+            new ObserverBuildingBlock(),
+            new PassiveTransportBuildingBlock(),
+            new ReactionBuildingBlock(),
+            new SpatialStructure(),
+            new InitialConditionsBuildingBlock(),
+            new ParameterValuesBuildingBlock()
+         };
+
+         var eventModule = new Module
+         {
             new ObserverBuildingBlock(),
             new PassiveTransportBuildingBlock(),
             new ReactionBuildingBlock(),
@@ -47,7 +57,8 @@ namespace OSPSuite.Core.Services
          };
 
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module));
+         _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(moleculeModule));
+         _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(eventModule));
 
       }
 
@@ -70,7 +81,7 @@ namespace OSPSuite.Core.Services
             m.NotificationType.Equals(NotificationType.Error) &&
             m.BuildingBlock.Equals(_eventBuildingBlock) &&
             m.Object.Equals(_applicationBuilder) &&
-            m.Text.Equals(Validation.ApplicatedMoleculeNotPresent(_applicationBuilder.MoleculeName, _applicationBuilder.Name, _moleculeBuildingBlock.Name))).ShouldBeTrue();
+            m.Text.Equals(Validation.ApplicatedMoleculeNotPresent(_applicationBuilder.MoleculeName, _applicationBuilder.Name))).ShouldBeTrue();
       }
    }
 }
