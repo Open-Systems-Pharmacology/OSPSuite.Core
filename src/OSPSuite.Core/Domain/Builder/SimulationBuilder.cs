@@ -93,8 +93,10 @@ namespace OSPSuite.Core.Domain.Builder
          cacheMoleculeDependentBuilders(x => x.Observers, _observers);
          _molecules.AddRange(allBuilder(x => x.Molecules));
          _parameterValues.AddRange(allStartValueBuilder(x => x.SelectedParameterValues));
-         _initialConditions.AddRange(allStartValueBuilder(x => x.SelectedInitialConditions)
-            .Concat(_simulationConfiguration.ExpressionProfiles.SelectMany(x => x.InitialConditions)));
+
+         // Concat order is important so that the values from expression profiles are overwritten if duplicated
+         _initialConditions.AddRange(_simulationConfiguration.ExpressionProfiles.SelectMany(x => x.InitialConditions)
+            .Concat(allStartValueBuilder(x => x.SelectedInitialConditions)));
       }
 
       private void cacheMoleculeDependentBuilders<T>(Func<Module, IBuildingBlock<T>> propAccess, ObjectBaseCache<T> cache) where T : class, IMoleculeDependentBuilder

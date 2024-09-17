@@ -27,6 +27,8 @@ namespace OSPSuite.Core.Domain
       private ModuleConfiguration _moduleConfiguration1;
       private ModuleConfiguration _moduleConfiguration2;
       private ObserverBuilder _observerBuilder;
+      private ExpressionProfileBuildingBlock _expressionProfileBuildingBlock;
+      private InitialConditionsBuildingBlock _initialConditionsBuildingBlock;
 
       protected override void Context()
       {
@@ -40,8 +42,28 @@ namespace OSPSuite.Core.Domain
          _moduleConfiguration1.Module.Observers.AmountObserverBuilders.Each(x => x.MoleculeList.AddMoleculeName("molecule1"));
          _moduleConfiguration2.Module.Observers.AmountObserverBuilders.Each(x => x.MoleculeList.AddMoleculeName("molecule2"));
 
+
+         _expressionProfileBuildingBlock = new ExpressionProfileBuildingBlock
+         {
+            new InitialCondition { Value = 1.0 }.WithName("name")
+         };
+
+         _initialConditionsBuildingBlock = new InitialConditionsBuildingBlock
+         {
+            new InitialCondition { Value = 2.0 }.WithName("name")
+         };
+         _simulationConfiguration.AddExpressionProfile(_expressionProfileBuildingBlock);
+         _moduleConfiguration2.Module.Add(_initialConditionsBuildingBlock);
+         _moduleConfiguration2.SelectedInitialConditions = _initialConditionsBuildingBlock;
+
          sut = new SimulationBuilder(_simulationConfiguration);
          _observerBuilder = _moduleConfiguration2.Module.Observers.AmountObserverBuilders.First();
+      }
+
+      [Observation]
+      public void the_initial_condition_should_take_priority_over_the_expression()
+      {
+         sut.InitialConditions.Single().Value.ShouldBeEqualTo(2.0);
       }
 
       [Observation]
