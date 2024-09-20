@@ -151,8 +151,8 @@ namespace OSPSuite.Core.Domain
 
       private void removeMatchingParentPath(IContainer root, List<string> usePath)
       {
-         var matchingElements = !string.IsNullOrEmpty(root?.ParentPath?.PathAsString) &&
-                                new ObjectPath(_pathEntries).PathAsString.StartsWith(root?.ParentPath?.PathAsString ?? string.Empty);
+         var matchingElements = root?.ParentPath != null &&
+                                new ObjectPath(_pathEntries).StartsWith(root?.ParentPath);
 
          if (matchingElements)
             usePath.RemoveRange(0, root.ParentPath.Count);

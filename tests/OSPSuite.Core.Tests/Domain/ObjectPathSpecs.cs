@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Core.Domain
 {
@@ -122,11 +124,8 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         Random random = new Random();
-         int n = random.Next(1, 11);
-         var lstPaths = Enumerable.Range(0, n)
-            .Select(_ => GenerateRandomString(random, 8))
-            .ToList();
+
+         var lstPaths = new List<string> { "Path1", "Path2", "Path3" };
 
          _organ.RootContainer.ParentPath = new ObjectPath(lstPaths);
          lstPaths.Reverse();
@@ -140,13 +139,6 @@ namespace OSPSuite.Core.Domain
       public void should_return_the_desired_entity()
       {
          sut.Resolve<IParameter>(_organ).ShouldBeEqualTo(_parameter);
-      }
-
-      private static string GenerateRandomString(Random random, int length)
-      {
-         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-         return new string(Enumerable.Repeat(chars, length)
-            .Select(s => s[random.Next(s.Length)]).ToArray());
       }
    }
 
