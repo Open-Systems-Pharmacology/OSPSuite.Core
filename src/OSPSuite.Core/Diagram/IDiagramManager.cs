@@ -14,6 +14,7 @@ namespace OSPSuite.Core.Diagram
       bool InsertLocationHasChanged();
       void Cleanup();
       void RemoveObjectBase(IObjectBase objectBase);
+      void RefreshObjectBase(IObjectBase objectBase);
       void AddObjectBase(IObjectBase objectBase);
       void UpdateInsertLocation();
    }

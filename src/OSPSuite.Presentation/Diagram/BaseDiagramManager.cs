@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using OSPSuite.Core.Diagram;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
@@ -27,7 +28,7 @@ namespace OSPSuite.Presentation.Diagram
       {
          CurrentInsertLocation = new PointF(10, 10);
          UpdateMethods = new Dictionary<Type, Action<IObjectBase, IBaseNode>>();
-         RegisterUpdateMethod< IContainer>(UpdateContainer);
+         RegisterUpdateMethod<IContainer>(UpdateContainer);
          RegisterUpdateMethod< INeighborhoodBase>(UpdateNeighborhoodBase);
       }
 
@@ -100,7 +101,7 @@ namespace OSPSuite.Presentation.Diagram
          foreach (var containerNode in DiagramModel.GetAllChildren<IContainerNode>())
          {
             containerNode.CalculateBounds();
-            // to adjust neighborhoodlinks to possibly smaller container node
+            // to adjust neighborhood links to possibly smaller container node
             containerNode.PostLayoutStep();
          }
 
@@ -192,7 +193,7 @@ namespace OSPSuite.Presentation.Diagram
       {
          var container = containerAsEntity as IContainer;
          var containerNode = containerNodeAsBaseNode as IContainerNode;
-         containerNode.IsLogical = (container.Mode == ContainerMode.Logical);
+         containerNode.IsLogical = container?.Mode == ContainerMode.Logical;
 
          if (!DiagramOptions.MoleculePropertiesVisible && containerNode.Name == Constants.MOLECULE_PROPERTIES)
             containerNode.IsVisible = false;
@@ -286,7 +287,17 @@ namespace OSPSuite.Presentation.Diagram
          if (container == null || container.GetType() != typeof(Container))
             return null;
 
+         parent = createOrGetParentForParentPath(container.ParentPath, parent);
+
          var containerNode = AddAndCoupleNode<IContainer, TContainerNode>(parent, container, coupleAll);
+
+         // Changes in a containers ParentPath will not be automatically accommodated if the diagram view is not initialized
+         // so the nodes have to be transferred after the parentPathContainer structures are created
+         if (containerNode.GetParent() != parent)
+         {
+            containerNode.GetParent().RemoveChildNode(containerNode);
+            parent.AddChildNode(containerNode);
+         }
 
          if (!recursive) 
             return containerNode;
@@ -297,6 +308,44 @@ namespace OSPSuite.Presentation.Diagram
          }
 
          return containerNode;
+      }
+
+      /// <summary>
+      /// Builds the container node structure for an object path and adds it to the diagram model
+      /// </summary>
+      /// <param name="objectPath">The structure that should be created if it doesn't exist in the model</param>
+      /// <param name="rootNode">The top level node that will be returned if the object path is empty</param>
+      /// <returns>The container node corresponding to the last item in the object path, <paramref name="rootNode"/> if the object path is
+      /// null or blank</returns>
+      private IContainerBase createOrGetParentForParentPath(ObjectPath objectPath, IContainerBase rootNode)
+      {
+         // the object path is empty so the parent container is the root
+         if (objectPath == null || string.IsNullOrEmpty(objectPath))
+            return rootNode;
+
+         // create a clone because the path will be modified
+         var parentPath = new ObjectPath(objectPath);
+         parentPath.RemoveAt(parentPath.Count - 1);
+
+         var parentNode = DiagramModel.GetNode<IContainerNode>(objectPath);
+         // the node for this path already exists so just return it
+         if (parentNode != null) 
+            return parentNode;
+         
+         parentNode = createNodeForParentPath(objectPath, rootNode, parentPath);
+
+         return parentNode;
+      }
+
+      private IContainerNode createNodeForParentPath(ObjectPath objectPath, IContainerBase rootNode, ObjectPath parentPath)
+      {
+         // The node is created if it doesn't already exist. That's a recursive call to create superior containers from the parentPath if they don't exist in the model
+         // or return existing ones if they do exist in the model.
+         // It's important that the node is created using the objectPath as the node ID so that it can be found by other containers that might be added in the same parentPath
+         var parentNode = DiagramModel.CreateNode<TContainerNode>(objectPath, CurrentInsertLocation, createOrGetParentForParentPath(parentPath, rootNode));
+         parentNode.Name = objectPath.Last();
+         parentNode.IsExpanded = true;
+         return parentNode;
       }
 
       protected virtual INeighborhoodNode AddNeighborhood(INeighborhoodBase neighborhood)
@@ -370,6 +419,12 @@ namespace OSPSuite.Presentation.Diagram
          RemoveObjectBase(objectBase, true);
          //because cannot undo this action, reset undo stack
          DiagramModel.ClearUndoStack();
+      }
+
+      public virtual void RefreshObjectBase(IObjectBase objectBase)
+      {
+         RemoveObjectBase(objectBase);
+         AddObjectBase(objectBase);
       }
 
       protected virtual bool RemoveObjectBase(IObjectBase objectBase, bool recursive)
