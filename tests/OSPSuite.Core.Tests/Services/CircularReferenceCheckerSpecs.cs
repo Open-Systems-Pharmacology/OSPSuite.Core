@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Services
       protected List<FormulaUsablePath> _objectPaths;
       protected IQuantity _testObject;
       protected IObjectPathFactory _objectPathFactory;
-      private IObjectTypeResolver _objectTypeResolver;
+      protected IObjectTypeResolver _objectTypeResolver;
 
       protected override void Context()
       {
@@ -186,6 +186,7 @@ namespace OSPSuite.Core.Services
       protected Parameter _parameter2;
       private SimulationConfiguration _simulationConfiguration;
       protected ValidationResult _results;
+      protected Container _eventContainer;
 
       protected override void Context()
       {
@@ -194,6 +195,8 @@ namespace OSPSuite.Core.Services
          _parameter2 = new Parameter().WithName("PARA2");
          _container = new Container().WithName("C");
          _model = new Model {Root = new ARootContainer {_container}.WithName("ROOT")};
+         _eventContainer = new Container().WithName("EventsContainer");
+         _model.Root.Add(_eventContainer);
          _container.Add(_parameter1);
          _container.Add(_parameter2);
          _simulationConfiguration = new SimulationConfiguration();
@@ -203,6 +206,57 @@ namespace OSPSuite.Core.Services
       {
          _results = sut.CheckCircularReferencesIn(new ModelConfiguration(_model, _simulationConfiguration, new SimulationBuilder(_simulationConfiguration)));
       }
+   }
+
+   internal abstract class When_validating_the_references_used_in_an_assignment : When_checking_circular_references_in_a_model
+   {
+      private EventAssignment _assignment;
+      private Event _event;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         _assignment = new EventAssignment { UseAsValue = UseAsValue, ChangedEntity = _parameter1 };
+         _event = new Event().WithName("The Event");
+         _event.AddAssignment(_assignment);
+         _eventContainer.Add(_event);
+         _assignment.ObjectPath = _parameter1.EntityPath().ToObjectPath();
+
+         var formula1 = new ExplicitFormula("PAR2");
+         formula1.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("ROOT", "C", "PARA2").WithAlias("PAR2"));
+         _assignment.Formula = formula1;
+
+         var formula2 = new ExplicitFormula("PAR1");
+         formula2.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("ROOT", "C", "PARA1").WithAlias("PAR1"));
+         _parameter2.Formula = formula2;
+
+         A.CallTo(() => _objectTypeResolver.TypeFor<IUsingFormula>(_parameter1)).Returns("Parameter");
+      }
+
+      public abstract bool UseAsValue { get; }
+   }
+
+   internal class When_validating_the_references_used_in_an_assignment_with_circular_references : When_validating_the_references_used_in_an_assignment
+   {
+      [Observation]
+      public void should_return_the_expected_results()
+      {
+         _results.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
+      }
+
+      public override bool UseAsValue => false;
+   }
+
+   internal class When_validating_the_references_used_in_an_assignment_with_use_as_value : When_validating_the_references_used_in_an_assignment
+   {
+      [Observation]
+      public void should_return_the_expected_results()
+      {
+         _results.ValidationState.ShouldBeEqualTo(ValidationState.Valid);
+      }
+
+      public override bool UseAsValue => true;
    }
 
    internal class When_validating_the_references_used_in_a_quantity_resulting_in_formula_with_circular_references : When_checking_circular_references_in_a_model
