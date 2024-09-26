@@ -127,7 +127,10 @@ namespace OSPSuite.Core.Domain
             return resolvedEntity;
 
          var root = refEntity.RootContainer;
-         var firstEntry = _pathEntries[0];
+
+         removeMatchingParentPath(root, usePath);
+
+         var firstEntry = usePath[0];
 
          //We have an absolute Path from the ref entity
          if (string.Equals(firstEntry, refEntity.Name))
@@ -144,6 +147,15 @@ namespace OSPSuite.Core.Domain
          }
 
          return resolvePath<T>(dependentObject, usePath);
+      }
+
+      private void removeMatchingParentPath(IContainer root, List<string> usePath)
+      {
+         var matchingElements = root?.ParentPath != null &&
+                                new ObjectPath(_pathEntries).StartsWith(root?.ParentPath);
+
+         if (matchingElements)
+            usePath.RemoveRange(0, root.ParentPath.Count);
       }
 
       public virtual T Clone<T>() where T : ObjectPath => new ObjectPath(_pathEntries).DowncastTo<T>();

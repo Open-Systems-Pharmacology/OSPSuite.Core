@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Core.Domain
 {
@@ -97,8 +100,8 @@ namespace OSPSuite.Core.Domain
 
    public class When_resolving_an_object_from_an_absolute_object_path_regarding_the_ref_entity : concern_for_ObjectPath
    {
-      private IContainer _organ;
-      private IParameter _parameter;
+      protected IContainer _organ;
+      protected IParameter _parameter;
 
       protected override void Context()
       {
@@ -107,6 +110,29 @@ namespace OSPSuite.Core.Domain
          _parameter = new Parameter().WithName("P1").WithParentContainer(comp);
          var objectPathFactory = new ObjectPathFactory(new AliasCreator());
          sut = objectPathFactory.CreateAbsoluteFormulaUsablePath(_parameter);
+      }
+
+      [Observation]
+      public void should_return_the_desired_entity()
+      {
+         sut.Resolve<IParameter>(_organ).ShouldBeEqualTo(_parameter);
+      }
+   }
+
+   public class When_resolving_an_object_from_an_entity_with_parent_path : When_resolving_an_object_from_an_absolute_object_path_regarding_the_ref_entity
+   {
+      protected override void Context()
+      {
+         base.Context();
+
+         var lstPaths = new List<string> { "Path1", "Path2", "Path3" };
+
+         _organ.RootContainer.ParentPath = new ObjectPath(lstPaths);
+         lstPaths.Reverse();
+         foreach (var path in lstPaths)
+         {
+            sut.AddAtFront(path);
+         }
       }
 
       [Observation]
