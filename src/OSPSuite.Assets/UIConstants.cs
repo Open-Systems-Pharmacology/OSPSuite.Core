@@ -1945,6 +1945,12 @@ namespace OSPSuite.Assets
          return $"Initial condition defined for molecule '{moleculeName}' in a container '{containerPath}' that cannot be resolved";
       }
 
+      public static string CircularReferenceFoundInEventAssignment(string eventName, string changeedEntityName, string entityType, string entityPath, IReadOnlyList<string> references)
+      {
+         var separator = "\n\t- ";
+         return $"A circular reference was found in assignment of a formula to {entityType.ToLower()} '{changeedEntityName}' with path '{entityPath}' in event '{eventName}'\nPlease check the direct or indirect references resulting from the assignment:{separator}{references.ToString(separator)}";
+      }
+
       public static string CircularReferenceFoundInFormula(string entity, string entityType, string entityPath, IReadOnlyList<string> references)
       {
          var separator = "\n\t- ";
