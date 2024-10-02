@@ -238,7 +238,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_be_able_to_construct_the_simulation()
       {
-         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Valid, _result.ValidationResult.Messages.Select(x=>x.Text).ToString("\n"));
+         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Valid, _result.ValidationResult.Messages.Select(x => x.Text).ToString("\n"));
       }
 
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder()
@@ -273,7 +273,6 @@ namespace OSPSuite.Core
             simulationConfiguration.AddModuleConfiguration(moduleConfiguration);
 
             return simulationConfiguration;
-
          };
       }
    }
@@ -297,10 +296,11 @@ namespace OSPSuite.Core
       {
          var eventGroup1 = _model.Root.EntityAt<EventGroup>("eventGroup1");
          var eventGroup2 = _model.Root.EntityAt<EventGroup>("eventGroup2");
-         eventGroup1.ShouldNotBeNull(); 
+         eventGroup1.ShouldNotBeNull();
          eventGroup2.ShouldNotBeNull();
       }
    }
+
    internal class When_running_the_case_study_for_module_integration_with_merge_behavior_overwrite_for_eventGroup : concern_for_ModuleIntegration
    {
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForOverrideMergeBehavior();
@@ -345,7 +345,7 @@ namespace OSPSuite.Core
          var eventGroup1 = _model.Root.EntityAt<EventGroup>("eventGroup1");
          eventGroup1.ShouldNotBeNull();
          eventGroup1.Events.Count().ShouldBeEqualTo(4);
-         eventGroup1.Events.FirstOrDefault(x=> x.Name == "eventBuilder1").ShouldNotBeNull();
+         eventGroup1.Events.FirstOrDefault(x => x.Name == "eventBuilder1").ShouldNotBeNull();
          eventGroup1.Events.FirstOrDefault(x => x.Name == "eventBuilder12").ShouldNotBeNull();
          eventGroup1.Events.FirstOrDefault(x => x.Name == "eventBuilder2").ShouldNotBeNull();
          eventGroup1.Events.FirstOrDefault(x => x.Name == "eventBuilder22").ShouldNotBeNull();

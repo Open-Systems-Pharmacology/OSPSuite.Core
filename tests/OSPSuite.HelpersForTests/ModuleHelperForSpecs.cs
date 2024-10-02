@@ -1,16 +1,12 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Domain.UnitSystem;
 using static OSPSuite.Core.Domain.Constants;
 using static OSPSuite.Helpers.ConstantsForSpecs;
-using static OSPSuite.Core.Domain.ObjectPath;
-using static OSPSuite.Core.Domain.ObjectPathKeywords;
-using static OSPSuite.Helpers.ConstantsForSpecs;
-using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Helpers
 {
@@ -81,6 +77,7 @@ namespace OSPSuite.Helpers
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
          return simulationConfiguration;
       }
+
       //1 module with 1 eventGroup with 2 events, other with 1 eventGroup with 2 events , the same name for events, 1 eventGroup with 2 events (last ones)? 
       public SimulationConfiguration CreateSimulationConfigurationForExtendMergeBehaviorOverridingModuleBehavior()
       {
@@ -93,11 +90,11 @@ namespace OSPSuite.Helpers
          var module2 = createModule2();
          module2.MergeBehavior = MergeBehavior.Extend;
 
-         module1.Add(getEventGroupsModule("EventForModule1", "eventGroup1", "eventBuilder1","eventAssignment1", "parameter1"));
+         module1.Add(getEventGroupsModule("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1"));
          module2.Add(getEventGroupsModule("EventForModule2", "eventGroup2", "eventBuilder1", "eventAssignment1", "parameter1"));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
-         
+
          return simulationConfiguration;
       }
 
@@ -157,7 +154,6 @@ namespace OSPSuite.Helpers
 
          return simulationConfiguration;
       }
-
 
       public SimulationConfiguration CreateSimulationConfigurationForExtendMergeBehaviorWithRecursiveContainers()
       {
@@ -219,7 +215,7 @@ namespace OSPSuite.Helpers
          var eventGroupBuilderCollection = _objectBaseFactory.Create<EventGroupBuildingBlock>().WithName(collectionName);
          if (createTwoEvents)
          {
-            var eventGroupBuilder = createBolusApplicationWithTwoEvents(eventGroupBuilderCollection.FormulaCache, eventGroupName,  eventBuilderName, eventAssignmentName, parameterName);
+            var eventGroupBuilder = createBolusApplicationWithTwoEvents(eventGroupBuilderCollection.FormulaCache, eventGroupName, eventBuilderName, eventAssignmentName, parameterName);
             eventGroupBuilderCollection.Add(eventGroupBuilder);
          }
          else
@@ -240,7 +236,7 @@ namespace OSPSuite.Helpers
          for (int i = 0; i < 2; i++)
          {
             var eventBuilder = _objectBaseFactory.Create<EventBuilder>()
-               .WithName(i == 0 ? eventBuilderName : eventBuilderName +"2")
+               .WithName(i == 0 ? eventBuilderName : eventBuilderName + "2")
                .WithFormula(conditionForBolusApp(cache));
             eventBuilder.OneTime = true;
 
@@ -248,12 +244,12 @@ namespace OSPSuite.Helpers
                .WithName(i == 0 ? eventAssignmentName : eventAssignmentName + "2")
                .WithFormula(createBolusDosisFormula(cache));
             eventAssignment.UseAsValue = true;
-            eventAssignment.ObjectPath = new ObjectPath(Constants.ORGANISM, ArterialBlood, Plasma, "A");
+            eventAssignment.ObjectPath = new ObjectPath(ORGANISM, ArterialBlood, Plasma, "A");
             eventBuilder.AddAssignment(eventAssignment);
             eventBuilder.AddParameter(NewConstantParameter(parameterName, 10));
             eventGroup.Add(eventBuilder);
          }
-         
+
          return eventGroup;
       }
 
@@ -271,7 +267,7 @@ namespace OSPSuite.Helpers
             .WithName(eventAssignmentName)
             .WithFormula(createBolusDosisFormula(cache));
          eventAssignment.UseAsValue = true;
-         eventAssignment.ObjectPath = new ObjectPath(Constants.ORGANISM, ArterialBlood, Plasma, "A");
+         eventAssignment.ObjectPath = new ObjectPath(ORGANISM, ArterialBlood, Plasma, "A");
          eventBuilder.AddAssignment(eventAssignment);
          eventBuilder.AddParameter(NewConstantParameter(parameterName, 10));
          eventGroup.Add(eventBuilder);
@@ -284,7 +280,7 @@ namespace OSPSuite.Helpers
             .WithFormulaString("A+10")
             .WithName("BolusDosis");
          dosisFormula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(
-            Constants.ORGANISM, ArterialBlood,
+            ORGANISM, ArterialBlood,
             Plasma, "A").WithAlias("A"));
          cache.Add(dosisFormula);
          return dosisFormula;
@@ -341,7 +337,7 @@ namespace OSPSuite.Helpers
          //      - pH
          //   - Q
          //   - P
-         
+
          //set the container to being physical. It will become logical after update
          var lung = createContainerWithName(Lung, ContainerMode.Logical);
          lung.AddTag("Tag1");
@@ -474,7 +470,7 @@ namespace OSPSuite.Helpers
          var lngInt = createContainerWithName(Interstitial, ContainerMode.Physical);
          lngInt.Add(NewConstantParameter(Volume, 10));
          lngInt.Add(NewConstantParameter(pH, 2));
-         
+
          var lungQ = NewConstantParameter(Q, 5);
          lungQ.AddTag("ParamTag2");
          lung.Add(lungQ);

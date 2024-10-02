@@ -2,7 +2,6 @@
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
-using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
@@ -16,13 +15,12 @@ namespace OSPSuite.Core.Domain.Services
 
    internal class EventGroupMerger : IEventGroupMerger
    {
-      
       private readonly IEventGroupBuilderToEventGroupMapper _eventGroupMapper;
       private readonly IContainerMergeTask _containerMergeTask;
       private readonly IEventBuilderTask _eventBuilderTask;
-      
+
       public EventGroupMerger(
-         IContainerMergeTask containerMergeTask, 
+         IContainerMergeTask containerMergeTask,
          IEventBuilderTask eventBuilderTask,
          IEventGroupBuilderToEventGroupMapper eventGroupMapper)
       {
@@ -54,7 +52,7 @@ namespace OSPSuite.Core.Domain.Services
          root.AddChildren(firstEventGroupBuildingBlock.Select(mapToModelContainer));
 
          allOtherSpatialStructuresWithMergeBehavior
-            .Select(x => new {MergeBehavior = x.mergeBehavior, eventGroups = x.eventGroupBuildingBlock.Select(mapToModelContainer), buildingBlock = x.eventGroupBuildingBlock})
+            .Select(x => new { MergeBehavior = x.mergeBehavior, eventGroups = x.eventGroupBuildingBlock.Select(mapToModelContainer), buildingBlock = x.eventGroupBuildingBlock })
             .Each(x => x.eventGroups.Each(eventGroup => tryMergeEventGroupInContainer(root, eventGroup, x.MergeBehavior, x.buildingBlock)));
       }
 
@@ -91,7 +89,7 @@ namespace OSPSuite.Core.Domain.Services
          if (parentContainer == null)
             throw new Exception();
 
-         replaceOrMergeContainerIntoParent(parentContainer,topContainer  ,mergeBehavior);
+         replaceOrMergeContainerIntoParent(parentContainer, topContainer, mergeBehavior);
       }
 
       private void replaceOrMergeContainerIntoParent(IContainer parentContainer, IContainer containerToMerge, MergeBehavior mergeBehavior)
@@ -100,7 +98,7 @@ namespace OSPSuite.Core.Domain.Services
          if (mergeBehavior == MergeBehavior.Extend)
             _containerMergeTask.AddOrMergeContainer(parentContainer, containerToMerge);
          else
-            _containerMergeTask.AddOrReplaceInContainer(parentContainer,containerToMerge);
+            _containerMergeTask.AddOrReplaceInContainer(parentContainer, containerToMerge);
       }
-   } 
+   }
 }
