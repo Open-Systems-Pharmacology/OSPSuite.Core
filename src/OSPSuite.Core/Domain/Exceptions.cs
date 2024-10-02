@@ -44,6 +44,11 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class CancelCommandRunException : OSPSuiteException
+   {
+
+   }
+
    public class NotFoundException : OSPSuiteException
    {
       public NotFoundException(string notFoundObjectName)

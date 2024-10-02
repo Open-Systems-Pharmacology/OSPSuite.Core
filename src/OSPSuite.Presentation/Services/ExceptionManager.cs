@@ -1,6 +1,7 @@
 ﻿using System;
 using OSPSuite.Assets;
 using OSPSuite.Core;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Views;
@@ -27,7 +28,11 @@ namespace OSPSuite.Presentation.Services
 
       public override void LogException(Exception ex)
       {
-         if (ex.IsInfoException())
+         if (ex is CancelCommandRunException)
+         {
+            // empty clause here because we simply are unwinding the call stack
+         }
+         else if (ex.IsInfoException())
          {
             var message = ex.ExceptionMessage();
             _dialogCreator.MessageBoxInfo(message);

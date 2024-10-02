@@ -3,6 +3,7 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views;
@@ -11,7 +12,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presentation
 {
-   public abstract class concern_for_ExceptionManager : ContextSpecification<IExceptionManager>
+   public abstract class concern_for_ExceptionManager : ContextSpecification<ExceptionManager>
    {
       protected IDialogCreator _dialogCreator;
       protected IExceptionView _exceptionView;
@@ -25,6 +26,29 @@ namespace OSPSuite.Presentation.Presentation
          _configuration = A.Fake<IApplicationConfiguration>();
          _logger= A.Fake<IOSPSuiteLogger>();
          sut = new ExceptionManager(_dialogCreator, _exceptionView, _configuration, _logger);
+      }
+   }
+
+   public class When_showing_an_cancel_command_exception : concern_for_ExceptionManager
+   {
+      private Exception _exceptionToShow;
+
+      protected override void Context()
+      {
+         base.Context();
+         _exceptionToShow = new CancelCommandRunException();
+      }
+
+      protected override void Because()
+      {
+         sut.LogException(_exceptionToShow);
+      }
+
+      [Observation]
+      public void should_ignore_silently()
+      {
+         A.CallTo(() => _dialogCreator.MessageBoxInfo(A<string>._)).MustNotHaveHappened();
+         A.CallTo(() => _exceptionView.Display(A<string>._, A<string>._, A<string>._)).MustNotHaveHappened();
       }
    }
 
@@ -49,7 +73,7 @@ namespace OSPSuite.Presentation.Presentation
       }
 
       [Observation]
-      public void should_leverage_the_dialog_creator_to_display_an_error_message_containg_the_exception_message()
+      public void should_leverage_the_dialog_creator_to_display_an_error_message_containing_the_exception_message()
       {
          _message.Contains("ParentMessageError").ShouldBeTrue();
          _message.Contains("ChildMessageError").ShouldBeTrue();

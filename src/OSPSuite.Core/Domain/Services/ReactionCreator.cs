@@ -50,11 +50,7 @@ namespace OSPSuite.Core.Domain.Services
       private void createReactionPropertiesContainer(ReactionBuilder reactionBuilder, ModelConfiguration modelConfiguration)
       {
          var (model, simulationBuilder, replacementContext) = modelConfiguration;
-
-         //Do we have non local parameters in this container? If not, no need to create a global container
-         if (reactionBuilder.Parameters.All(x => x.BuildMode == ParameterBuildMode.Local))
-            return;
-
+         
          var globalReactionContainer = _containerTask.CreateOrRetrieveSubContainerByName(model.Root, reactionBuilder.Name)
             .WithContainerType(ContainerType.Reaction)
             .WithIcon(reactionBuilder.Icon)

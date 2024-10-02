@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
@@ -65,18 +66,80 @@ namespace OSPSuite.Core.Services
       public ValidationResult CheckCircularReferencesIn(ModelConfiguration modelConfiguration)
       {
          var validationResult = new ValidationResult();
+         var (model, simulationBuilder) = modelConfiguration;
 
+         checkFormulas(model, simulationBuilder, validationResult);
+         checkEvents(model, simulationBuilder, validationResult);
+
+         return validationResult;
+      }
+
+      private void checkEvents(IModel model, SimulationBuilder simulationBuilder, ValidationResult validationResult)
+      {
          try
          {
-            var (model, simulationBuilder) = modelConfiguration;
-            var allUsingFormulas = model.Root.GetAllChildren<IUsingFormula>();
-            allUsingFormulas.Each(buildEntityReferenceCache);
-            allUsingFormulas.Each(x => checkCircularReferencesIn(x, simulationBuilder, validationResult));
-            return validationResult;
+            checkReferencesInEvents(model, simulationBuilder, validationResult);
          }
          finally
          {
             _entityReferenceCache.Clear();
+         }
+      }
+
+      private void checkFormulas(IModel model, SimulationBuilder simulationBuilder, ValidationResult validationResult)
+      {
+         try
+         {
+            checkReferencesInAllFormulas(model, simulationBuilder, validationResult);
+         }
+         finally
+         {
+            _entityReferenceCache.Clear();
+         }
+      }
+
+      private void checkReferencesInAllFormulas(IModel model, SimulationBuilder simulationBuilder, ValidationResult validationResult)
+      {
+         var allUsingFormulas = model.Root.GetAllChildren<IUsingFormula>();
+         allUsingFormulas.Each(buildEntityReferenceCache);
+         allUsingFormulas.Each(x => checkCircularReferencesIn(x, simulationBuilder, validationResult, (entityType, entityAbsolutePath, allReferencesName) => Validation.CircularReferenceFoundInFormula(x.Name, entityType, entityAbsolutePath, allReferencesName)));
+      }
+
+      private void checkReferencesInEvents(IModel model, SimulationBuilder simulationBuilder, ValidationResult validationResult)
+      {
+         model.Root.GetAllChildren<Event>().Each(@event => checkCircularReferencesInEventAssignments(simulationBuilder, validationResult, @event));
+      }
+
+      private void checkCircularReferencesInEventAssignments(SimulationBuilder simulationBuilder, ValidationResult validationResult, Event @event)
+      {
+         var allEventAssignments = @event.GetAllChildren<EventAssignment>().Where(x => !x.UseAsValue).ToList();
+         allEventAssignments.Each(assignment => buildAssignmentEntityCache(assignment, assignment.ObjectPath.TryResolve<IUsingFormula>(assignment)));
+         allEventAssignments.Each(x => checkCircularReferencesInEventAssignment(simulationBuilder, validationResult, @event, x));
+      }
+
+      private void checkCircularReferencesInEventAssignment(SimulationBuilder simulationBuilder, ValidationResult validationResult, Event @event, EventAssignment x)
+      {
+         var changedEntity = x.ObjectPath.TryResolve<IUsingFormula>(x);
+         checkCircularReferencesIn(changedEntity, simulationBuilder, validationResult, (entityType, entityAbsolutePath, allReferencesName) => Validation.CircularReferenceFoundInEventAssignment(@event.Name, changedEntity.Name, entityType, entityAbsolutePath, allReferencesName));
+      }
+
+      private void buildAssignmentEntityCache(EventAssignment assignment, IEntity changedEntity)
+      {
+         var references = _entityReferenceCache.Contains(changedEntity) ? _entityReferenceCache[changedEntity] : new List<IEntity>();
+         _entityReferenceCache[changedEntity] = references;
+
+         foreach (var objectPath in assignment.Formula.ObjectPaths)
+         {
+            // formula references will be resolved before assignment, so after assignment, the path will not be  used
+            // that means the referenced object will only resolve relevant to the assignment
+            var referencedObject = objectPath.TryResolve<IUsingFormula>(assignment);
+
+            if (referencedObject == null)
+               continue;
+
+            references.Add(referencedObject);
+            buildEntityReferenceCache(referencedObject);
+            _entityReferenceCache[changedEntity].AddRange(_entityReferenceCache[referencedObject]);
          }
       }
 
@@ -103,7 +166,7 @@ namespace OSPSuite.Core.Services
          }
       }
 
-      private void checkCircularReferencesIn(IUsingFormula usingFormula, SimulationBuilder simulationBuilder, ValidationResult validationResult)
+      private void checkCircularReferencesIn(IUsingFormula usingFormula, SimulationBuilder simulationBuilder, ValidationResult validationResult, Func<string, string, IReadOnlyList<string>, string> circularReferenceFoundIn)
       {
          var references = _entityReferenceCache[usingFormula];
          if (!references.Contains(usingFormula))
@@ -114,7 +177,7 @@ namespace OSPSuite.Core.Services
          var objectWithError = builder ?? usingFormula;
          var entityType = _objectTypeResolver.TypeFor(usingFormula);
          var allReferencesName = references.Distinct().AllNames();
-         validationResult.AddMessage(NotificationType.Error, objectWithError, Validation.CircularReferenceFoundInFormula(usingFormula.Name, entityType, entityAbsolutePath, allReferencesName));
+         validationResult.AddMessage(NotificationType.Error, objectWithError, circularReferenceFoundIn(entityType, entityAbsolutePath, allReferencesName));
       }
    }
 }

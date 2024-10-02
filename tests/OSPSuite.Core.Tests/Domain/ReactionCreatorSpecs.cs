@@ -5,7 +5,6 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
@@ -39,10 +38,12 @@ namespace OSPSuite.Core.Domain
          _model = A.Fake<IModel>();
          _simulationConfiguration = new SimulationConfiguration();
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
-         _reactionBuilder = new ReactionBuilder();
-         _reactionBuilder.ContainerCriteria = new DescriptorCriteria();
-         _reactionBuilder.Description = "A great description";
-         _reactionBuilder.Name = "Reaction";
+         _reactionBuilder = new ReactionBuilder
+         {
+            ContainerCriteria = new DescriptorCriteria(),
+            Description = "A great description",
+            Name = "Reaction"
+         };
          _educt1 = new ReactionPartnerBuilder
          {
             MoleculeName = "sp1"
@@ -80,9 +81,9 @@ namespace OSPSuite.Core.Domain
    internal class When_creating_the_reaction_based_on_a_given_builder_in_a_container_hierarchy_without_global_parameters_in_the_reaction : When_creating_the_reaction_based_on_a_given_builder_in_a_container_hierarchy
    {
       [Observation]
-      public void the_global_container_is_not_created()
+      public void the_global_container_is_created()
       {
-         A.CallTo(() => _containerTask.CreateOrRetrieveSubContainerByName(_rootContainer, _reactionBuilder.Name)).MustNotHaveHappened();
+         A.CallTo(() => _containerTask.CreateOrRetrieveSubContainerByName(_rootContainer, _reactionBuilder.Name)).MustHaveHappened();
       }
    }
 
