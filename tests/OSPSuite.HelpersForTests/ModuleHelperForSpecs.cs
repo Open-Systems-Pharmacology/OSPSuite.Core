@@ -2,32 +2,43 @@
 using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using static OSPSuite.Core.Domain.Constants;
 using static OSPSuite.Helpers.ConstantsForSpecs;
+using static OSPSuite.Core.Domain.ObjectPath;
+using static OSPSuite.Core.Domain.ObjectPathKeywords;
+using static OSPSuite.Helpers.ConstantsForSpecs;
+using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Helpers
 {
    public class ModuleHelperForSpecs
    {
+      private readonly IObjectPathFactory _objectPathFactory;
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly ISolverSettingsFactory _solverSettingsFactory;
       private readonly IOutputSchemaFactory _outputSchemaFactory;
       private readonly ISpatialStructureFactory _spatialStructureFactory;
       private readonly INeighborhoodBuilderFactory _neighborhoodFactory;
       private readonly IInitialConditionsCreator _initialConditionsCreator;
+      private readonly IDimensionFactory _dimensionFactory;
       private readonly ModelHelperForSpecs _modelHelper;
 
       public ModuleHelperForSpecs(
+         IObjectPathFactory objectPathFactory,
          IObjectBaseFactory objectBaseFactory,
          ISolverSettingsFactory solverSettingsFactory,
          IOutputSchemaFactory outputSchemaFactory,
          ISpatialStructureFactory spatialStructureFactory,
          INeighborhoodBuilderFactory neighborhoodFactory,
          IInitialConditionsCreator initialConditionsCreator,
+         IDimensionFactory dimensionFactory,
          ModelHelperForSpecs modelHelper)
       {
+         _dimensionFactory = dimensionFactory;
+         _objectPathFactory = objectPathFactory;
          _objectBaseFactory = objectBaseFactory;
          _solverSettingsFactory = solverSettingsFactory;
          _outputSchemaFactory = outputSchemaFactory;
@@ -70,7 +81,7 @@ namespace OSPSuite.Helpers
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
          return simulationConfiguration;
       }
-
+      //1 module with 1 eventGroup with 2 events, other with 1 eventGroup with 2 events , the same name for events, 1 eventGroup with 2 events (last ones)? 
       public SimulationConfiguration CreateSimulationConfigurationForExtendMergeBehaviorOverridingModuleBehavior()
       {
          var simulationConfiguration = new SimulationConfiguration
@@ -82,10 +93,71 @@ namespace OSPSuite.Helpers
          var module2 = createModule2();
          module2.MergeBehavior = MergeBehavior.Extend;
 
+         module1.Add(getEventGroupsModule("EventForModule1", "eventGroup1", "eventBuilder1","eventAssignment1", "parameter1"));
+         module2.Add(getEventGroupsModule("EventForModule2", "eventGroup2", "eventBuilder1", "eventAssignment1", "parameter1"));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
+         
          return simulationConfiguration;
       }
+
+      public SimulationConfiguration CreateSimulationConfigurationForOverrideMergeBehavior()
+      {
+         var simulationConfiguration = new SimulationConfiguration
+         {
+            SimulationSettings = CreateSimulationSettings(),
+         };
+
+         var module1 = createModule1();
+         var module2 = createModule2();
+         module2.MergeBehavior = MergeBehavior.Overwrite;
+
+         module1.Add(getEventGroupsModule("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1"));
+         module2.Add(getEventGroupsModule("EventForModule1", "eventGroup1", "eventBuilder2", "eventAssignment1", "parameter1"));
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
+
+         return simulationConfiguration;
+      }
+
+      public SimulationConfiguration CreateSimulationConfigurationForExtendMergeBehaviorSameEventGroupName()
+      {
+         var simulationConfiguration = new SimulationConfiguration
+         {
+            SimulationSettings = CreateSimulationSettings(),
+         };
+
+         var module1 = createModule1();
+         var module2 = createModule2();
+         module2.MergeBehavior = MergeBehavior.Extend;
+
+         module1.Add(getEventGroupsModule("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1", true));
+         module2.Add(getEventGroupsModule("EventForModule1", "eventGroup1", "eventBuilder2", "eventAssignment1", "parameter1", true));
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
+
+         return simulationConfiguration;
+      }
+
+      public SimulationConfiguration CreateSimulationConfigurationForOverrideMergeBehaviorSameEventGroupName()
+      {
+         var simulationConfiguration = new SimulationConfiguration
+         {
+            SimulationSettings = CreateSimulationSettings(),
+         };
+
+         var module1 = createModule1();
+         var module2 = createModule2();
+         module2.MergeBehavior = MergeBehavior.Overwrite;
+
+         module1.Add(getEventGroupsModule("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1", true));
+         module2.Add(getEventGroupsModule("EventForModule1", "eventGroup1", "eventBuilder2", "eventAssignment1", "parameter1", true));
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
+
+         return simulationConfiguration;
+      }
+
 
       public SimulationConfiguration CreateSimulationConfigurationForExtendMergeBehaviorWithRecursiveContainers()
       {
@@ -140,6 +212,93 @@ namespace OSPSuite.Helpers
          return _objectBaseFactory.Create<IContainer>()
             .WithName(ORGANISM)
             .WithMode(ContainerMode.Logical);
+      }
+
+      private EventGroupBuildingBlock getEventGroupsModule(string collectionName, string eventGroupName, string eventBuilderName, string eventAssignmentName, string parameterName, bool createTwoEvents = false)
+      {
+         var eventGroupBuilderCollection = _objectBaseFactory.Create<EventGroupBuildingBlock>().WithName(collectionName);
+         if (createTwoEvents)
+         {
+            var eventGroupBuilder = createBolusApplicationWithTwoEvents(eventGroupBuilderCollection.FormulaCache, eventGroupName,  eventBuilderName, eventAssignmentName, parameterName);
+            eventGroupBuilderCollection.Add(eventGroupBuilder);
+         }
+         else
+         {
+            var eventGroupBuilder = createBolusApplication(eventGroupBuilderCollection.FormulaCache, eventGroupName, eventBuilderName, eventAssignmentName, parameterName);
+            eventGroupBuilderCollection.Add(eventGroupBuilder);
+         }
+
+         return eventGroupBuilderCollection;
+      }
+
+      private EventGroupBuilder createBolusApplicationWithTwoEvents(IFormulaCache cache, string eventGroupName, string eventBuilderName, string eventAssignmentName, string parameterName)
+      {
+         var eventGroup = new EventGroupBuilder();
+         eventGroup = _objectBaseFactory.Create<EventGroupBuilder>().WithName(eventGroupName);
+         eventGroup.SourceCriteria = Create.Criteria(x => x.With(ArterialBlood).And.With(Plasma));
+
+         for (int i = 0; i < 2; i++)
+         {
+            var eventBuilder = _objectBaseFactory.Create<EventBuilder>()
+               .WithName(i == 0 ? eventBuilderName : eventBuilderName +"2")
+               .WithFormula(conditionForBolusApp(cache));
+            eventBuilder.OneTime = true;
+
+            var eventAssignment = _objectBaseFactory.Create<EventAssignmentBuilder>()
+               .WithName(i == 0 ? eventAssignmentName : eventAssignmentName + "2")
+               .WithFormula(createBolusDosisFormula(cache));
+            eventAssignment.UseAsValue = true;
+            eventAssignment.ObjectPath = new ObjectPath(Constants.ORGANISM, ArterialBlood, Plasma, "A");
+            eventBuilder.AddAssignment(eventAssignment);
+            eventBuilder.AddParameter(NewConstantParameter(parameterName, 10));
+            eventGroup.Add(eventBuilder);
+         }
+         
+         return eventGroup;
+      }
+
+      private EventGroupBuilder createBolusApplication(IFormulaCache cache, string eventGroupName, string eventBuilderName, string eventAssignmentName, string parameterName)
+      {
+         var eventGroup = _objectBaseFactory.Create<EventGroupBuilder>().WithName(eventGroupName);
+         eventGroup.SourceCriteria = Create.Criteria(x => x.With(ArterialBlood).And.With(Plasma));
+
+         var eventBuilder = _objectBaseFactory.Create<EventBuilder>()
+            .WithName(eventBuilderName)
+            .WithFormula(conditionForBolusApp(cache));
+         eventBuilder.OneTime = true;
+
+         var eventAssignment = _objectBaseFactory.Create<EventAssignmentBuilder>()
+            .WithName(eventAssignmentName)
+            .WithFormula(createBolusDosisFormula(cache));
+         eventAssignment.UseAsValue = true;
+         eventAssignment.ObjectPath = new ObjectPath(Constants.ORGANISM, ArterialBlood, Plasma, "A");
+         eventBuilder.AddAssignment(eventAssignment);
+         eventBuilder.AddParameter(NewConstantParameter(parameterName, 10));
+         eventGroup.Add(eventBuilder);
+         return eventGroup;
+      }
+
+      private IFormula createBolusDosisFormula(IFormulaCache cache)
+      {
+         var dosisFormula = _objectBaseFactory.Create<ExplicitFormula>()
+            .WithFormulaString("A+10")
+            .WithName("BolusDosis");
+         dosisFormula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom(
+            Constants.ORGANISM, ArterialBlood,
+            Plasma, "A").WithAlias("A"));
+         cache.Add(dosisFormula);
+         return dosisFormula;
+      }
+
+      private IFormula conditionForBolusApp(IFormulaCache cache)
+      {
+         var conditionFormula = _objectBaseFactory.Create<ExplicitFormula>()
+            .WithFormulaString("Time = StartTime")
+            .WithName("StartCondition");
+         conditionFormula.AddObjectPath(_objectPathFactory.CreateTimePath(_dimensionFactory.Dimension(Constants.Dimension.TIME)));
+         conditionFormula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("StartTime").WithAlias("StartTime"));
+         cache.Add(conditionFormula);
+         return conditionFormula;
       }
 
       private SpatialStructure getSpatialStructureModule1()

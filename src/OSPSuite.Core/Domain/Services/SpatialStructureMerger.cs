@@ -97,7 +97,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             mergeTopContainerInStructure(topContainer, root, mergeBehavior);
          }
-         catch (ContainerNotFoundException)
+         catch (Exception)
          {
             throw new OSPSuiteException(Error.CannotFindParentContainerWithPath(topContainer.ParentPath.PathAsString, topContainer.Name, spatialStructure.Name, spatialStructure.Module.Name));
          }
