@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSPSuite.Utility" Version="4.1.0.5" />
+    <PackageReference Include="OSPSuite.Utility" Version="4.1.0.6" />
   </ItemGroup>
 
 </Project>
