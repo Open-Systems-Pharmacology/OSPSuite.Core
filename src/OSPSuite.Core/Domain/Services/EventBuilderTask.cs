@@ -51,6 +51,12 @@ namespace OSPSuite.Core.Domain.Services
             _sourceCriteriaTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
             _applicationTransportTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
 
+            //This is how we get the container to add the eventGroupBuilder
+            //But then, when merging, I might have more than one. 
+            //private EntityDescriptorMapList<IContainer> _allModelContainerDescriptors;
+            //_allModelContainerDescriptors = model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
+            //_allModelContainerDescriptors.AllSatisfiedBy(eventGroupBuilder.SourceCriteria)
+            //
             //Cache all containers where the event group builder will be created using the source criteria
             foreach (var eventGroupBuilder in simulationBuilder.EventGroups)
             {
