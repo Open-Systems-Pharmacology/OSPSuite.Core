@@ -111,6 +111,12 @@ namespace OSPSuite.Core.Domain.Services
          parameter = _parameterValueToParameterMapper.MapFrom(parameterValue);
 
          simulationBuilder.AddBuilderReference(parameter, parameterValue);
+
+         //now we remove the parameter by name form the parent container just in case it already exists but with a different type (distributed vs not distributed)
+         var potentialParameter = parentContainer.Parameter(parameterValue.Name);
+         parentContainer.RemoveChild(potentialParameter);
+
+         //for sure it's not there. Add it
          return parameter.WithParentContainer(parentContainer);
       }
 
@@ -118,17 +124,31 @@ namespace OSPSuite.Core.Domain.Services
       {
          var (model, _, replacementContext) = modelConfiguration;
          var pathInModel = _keywordReplacerTask.CreateModelPathFor(pathAndValueEntity.Path, replacementContext);
-         return pathInModel.Resolve<IParameter>(model.Root);
+         var parameter =  pathInModel.Resolve<IParameter>(model.Root);
+
+         //parameter does not exist, we return
+         if(parameter == null)
+            return null;
+
+         //parameter exists, we need to check that it matches the type of the pathAndValEntity coming along
+         //one is distributed and the other one is not
+         if (pathAndValueEntity.IsDistributed() && !parameter.IsDistributed())
+            return null;
+
+         if (parameter.IsDistributed() && !pathAndValueEntity.IsDistributed())
+            return null;
+
+         return parameter;
       }
 
       private Action<ParameterValue> addOrUpdateParameterFromParameterValue(ValueUpdaterParams valueUpdater) => parameterValue =>
       {
          var parameter = getOrAddModelParameter(valueUpdater, parameterValue);
-         //this can happen if the parameter does not exist in the model
+         //this can happen if the parameter structure does not exist in the model
          if (parameter == null)
             return;
 
-         var (model, _, replacementContext) = valueUpdater.ModelConfiguration;
+         var (_, _, replacementContext) = valueUpdater.ModelConfiguration;
 
          //Formula is defined, we update in the parameter instance
          if (parameterValue.Formula != null)
