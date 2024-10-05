@@ -112,7 +112,7 @@ namespace OSPSuite.Core.Domain.Services
 
          simulationBuilder.AddBuilderReference(parameter, parameterValue);
 
-         //now we remove the parameter by name form the parent container just in case it already exists but with a different type (distributed vs not distributed)
+         //now we remove the parameter by name from the parent container just in case it already exists but with a different type (distributed vs not distributed)
          var potentialParameter = parentContainer.Parameter(parameterValue.Name);
          parentContainer.RemoveChild(potentialParameter);
 
