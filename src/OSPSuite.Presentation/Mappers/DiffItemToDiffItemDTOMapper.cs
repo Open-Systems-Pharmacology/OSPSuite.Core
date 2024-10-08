@@ -108,6 +108,7 @@ namespace OSPSuite.Presentation.Mappers
             displayIf<ObjectPath>(diffItem, x => ancestorDisplayName(diffItem)) ??
             displayIf<ValuePoint>(diffItem, x => ancestorDisplayName(diffItem)) ??
             displayIf<PathAndValueEntity>(diffItem, x => x.Name) ??
+            displayIf<ExtendedProperty<string>>(diffItem, x => x.DisplayName) ??
             _displayNameProvider.DisplayNameFor(diffItem.Object1);
       }
 
