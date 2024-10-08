@@ -64,7 +64,30 @@ namespace OSPSuite.Presentation.Presentation
       {
          A.CallTo(() => _pathAndValueEntityToPathElementsMapper.MapFrom(_diffItem.Object1 as InitialCondition)).MustHaveHappened();
       }
+   }
 
+   public class When_mapping_an_extended_property : concern_for_DiffItemToDiffItemDTOMapper
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _diffItem = new PropertyValueDiffItem
+         {
+            Object1 = new ExtendedProperty<string> { Name = "Name1", Value = "vale1" },
+            Object2 = new ExtendedProperty<string> { Name = "Name1", Value = "vale2" },
+            FormattedValue1 = "xx",
+            FormattedValue2 = "yy",
+            CommonAncestor = _container,
+            PropertyName = "ABC"
+         };
+      }
+
+      [Observation]
+      public void the_extended_property_shows_the_displayName()
+      {
+         _dto.PathElements.ShouldBeEqualTo(_pathElements);
+         _dto.ObjectName.ShouldBeEqualTo("Name1");
+      }
    }
 
    public class When_mapping_a_property_diff_item_for_an_entity_to_a_diff_item_dto : concern_for_DiffItemToDiffItemDTOMapper
