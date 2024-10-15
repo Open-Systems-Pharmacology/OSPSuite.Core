@@ -112,6 +112,15 @@ namespace OSPSuite.Core
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehaviorOverridingModuleBehavior();
 
       [Observation]
+      public void should_have_merged_the_events_with_both_present()
+      {
+         var eventGroup1 = _model.Root.EntityAt<EventGroup>("Organism", "ArterialBlood", "Plasma", "eventGroup1");
+         var eventGroup2 = _model.Root.EntityAt<EventGroup>("Organism", "ArterialBlood", "Plasma", "eventGroup2");
+         eventGroup1.ShouldNotBeNull();
+         eventGroup2.ShouldNotBeNull();
+      }
+
+      [Observation]
       public void should_have_added_the_missing_parameters_to_lung()
       {
          var lung = _model.Root.EntityAt<Container>(Constants.ORGANISM, Lung);
@@ -277,48 +286,14 @@ namespace OSPSuite.Core
       }
    }
 
-   internal class When_running_the_case_study_for_module_integration_with_merge_behavior_extend_for_eventGroup : concern_for_ModuleIntegration
-   {
-      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehaviorOverridingModuleBehavior();
-
-      protected override void Because()
-      {
-         sut = IoC.Resolve<IModelConstructor>();
-         var moduleHelper = IoC.Resolve<ModuleHelperForSpecs>();
-         _simulationConfiguration = SimulationConfigurationBuilder()(moduleHelper);
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
-         _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
-         _model = _result.Model;
-      }
-
-      [Observation]
-      public void should_have_merged_the_events_with_both_present()
-      {
-         var eventGroup1 = _model.Root.EntityAt<EventGroup>("eventGroup1");
-         var eventGroup2 = _model.Root.EntityAt<EventGroup>("eventGroup2");
-         eventGroup1.ShouldNotBeNull();
-         eventGroup2.ShouldNotBeNull();
-      }
-   }
-
    internal class When_running_the_case_study_for_module_integration_with_merge_behavior_overwrite_for_eventGroup : concern_for_ModuleIntegration
    {
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForOverrideMergeBehavior();
 
-      protected override void Because()
-      {
-         sut = IoC.Resolve<IModelConstructor>();
-         var moduleHelper = IoC.Resolve<ModuleHelperForSpecs>();
-         _simulationConfiguration = SimulationConfigurationBuilder()(moduleHelper);
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
-         _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
-         _model = _result.Model;
-      }
-
       [Observation]
       public void should_have_merged_the_events_with_second_present_only()
       {
-         var eventGroup1 = _model.Root.EntityAt<EventGroup>("eventGroup1");
+         var eventGroup1 = _model.Root.EntityAt<EventGroup>("Organism", "ArterialBlood", "Plasma", "eventGroup1");
          eventGroup1.ShouldNotBeNull();
          eventGroup1.Events.Count().ShouldBeEqualTo(1);
          eventGroup1.Events.First().Name.ShouldBeEqualTo("eventBuilder2");
@@ -329,20 +304,10 @@ namespace OSPSuite.Core
    {
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehaviorSameEventGroupName();
 
-      protected override void Because()
-      {
-         sut = IoC.Resolve<IModelConstructor>();
-         var moduleHelper = IoC.Resolve<ModuleHelperForSpecs>();
-         _simulationConfiguration = SimulationConfigurationBuilder()(moduleHelper);
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
-         _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
-         _model = _result.Model;
-      }
-
       [Observation]
       public void should_have_merged_the_events_with_second_present_but_four_events()
       {
-         var eventGroup1 = _model.Root.EntityAt<EventGroup>("eventGroup1");
+         var eventGroup1 = _model.Root.EntityAt<EventGroup>("Organism", "ArterialBlood", "Plasma", "eventGroup1");
          eventGroup1.ShouldNotBeNull();
          eventGroup1.Events.Count().ShouldBeEqualTo(4);
          eventGroup1.Events.FirstOrDefault(x => x.Name == "eventBuilder1").ShouldNotBeNull();
@@ -356,20 +321,10 @@ namespace OSPSuite.Core
    {
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForOverrideMergeBehaviorSameEventGroupName();
 
-      protected override void Because()
-      {
-         sut = IoC.Resolve<IModelConstructor>();
-         var moduleHelper = IoC.Resolve<ModuleHelperForSpecs>();
-         _simulationConfiguration = SimulationConfigurationBuilder()(moduleHelper);
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
-         _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
-         _model = _result.Model;
-      }
-
       [Observation]
       public void should_have_merged_the_events_with_second_present_but_two_events()
       {
-         var eventGroup1 = _model.Root.EntityAt<EventGroup>("eventGroup1");
+         var eventGroup1 = _model.Root.EntityAt<EventGroup>("Organism", "ArterialBlood", "Plasma", "eventGroup1");
          eventGroup1.ShouldNotBeNull();
          eventGroup1.Events.Count().ShouldBeEqualTo(2);
          eventGroup1.Events.FirstOrDefault(x => x.Name == "eventBuilder2").ShouldNotBeNull();

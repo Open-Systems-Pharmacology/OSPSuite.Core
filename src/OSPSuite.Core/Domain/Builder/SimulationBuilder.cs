@@ -12,7 +12,6 @@ namespace OSPSuite.Core.Domain.Builder
 
       private readonly ObjectBaseCache<TransportBuilder> _passiveTransports = new ObjectBaseCache<TransportBuilder>();
       private readonly ObjectBaseCache<ReactionBuilder> _reactions = new ObjectBaseCache<ReactionBuilder>();
-      private readonly ObjectBaseCache<EventGroupBuilder> _eventGroups = new ObjectBaseCache<EventGroupBuilder>();
       private readonly ObjectBaseCache<ObserverBuilder> _observers = new ObjectBaseCache<ObserverBuilder>();
       private readonly ObjectBaseCache<MoleculeBuilder> _molecules = new ObjectBaseCache<MoleculeBuilder>();
       private readonly PathAndValueEntityCache<ParameterValue> _parameterValues = new PathAndValueEntityCache<ParameterValue>();
@@ -89,7 +88,6 @@ namespace OSPSuite.Core.Domain.Builder
       {
          cacheMoleculeDependentBuilders(x => x.PassiveTransports, _passiveTransports);
          _reactions.AddRange(allBuilder(x => x.Reactions));
-         _eventGroups.AddRange(allBuilder(x => x.EventGroups));
          cacheMoleculeDependentBuilders(x => x.Observers, _observers);
          _molecules.AddRange(allBuilder(x => x.Molecules));
          _parameterValues.AddRange(allStartValueBuilder(x => x.SelectedParameterValues));
@@ -130,7 +128,6 @@ namespace OSPSuite.Core.Domain.Builder
 
       internal IReadOnlyCollection<TransportBuilder> PassiveTransports => _passiveTransports;
       internal IReadOnlyCollection<ReactionBuilder> Reactions => _reactions;
-      internal IReadOnlyCollection<EventGroupBuilder> EventGroups => _eventGroups;
       internal IReadOnlyCollection<ObserverBuilder> Observers => _observers;
       internal IReadOnlyCollection<MoleculeBuilder> Molecules => _molecules;
       internal IReadOnlyCollection<ParameterValue> ParameterValues => _parameterValues;

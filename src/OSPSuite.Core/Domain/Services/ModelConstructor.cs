@@ -43,7 +43,6 @@ namespace OSPSuite.Core.Domain.Services
          IMoleculePropertiesContainerTask moleculePropertiesContainerTask,
          IMoleculeBuilderToMoleculeAmountMapper moleculeMapper,
          IReferencesResolver referencesResolver,
-         IEventBuilderTask eventBuilderTask,
          IKeywordReplacerTask keywordReplacerTask,
          ITransportCreator transportCreator,
          IProgressManager progressManager,

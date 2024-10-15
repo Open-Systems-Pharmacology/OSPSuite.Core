@@ -78,7 +78,6 @@ namespace OSPSuite.Helpers
          return simulationConfiguration;
       }
 
-      //1 module with 1 eventGroup with 2 events, other with 1 eventGroup with 2 events , the same name for events, 1 eventGroup with 2 events (last ones)? 
       public SimulationConfiguration CreateSimulationConfigurationForExtendMergeBehaviorOverridingModuleBehavior()
       {
          var simulationConfiguration = new SimulationConfiguration
@@ -90,8 +89,8 @@ namespace OSPSuite.Helpers
          var module2 = createModule2();
          module2.MergeBehavior = MergeBehavior.Extend;
 
-         module1.Add(getEventGroupsModule("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1"));
-         module2.Add(getEventGroupsModule("EventForModule2", "eventGroup2", "eventBuilder1", "eventAssignment1", "parameter1"));
+         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1"));
+         module2.Add(createEventGroupBuildingBlock("EventForModule2", "eventGroup2", "eventBuilder1", "eventAssignment1", "parameter1"));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
 
@@ -109,8 +108,8 @@ namespace OSPSuite.Helpers
          var module2 = createModule2();
          module2.MergeBehavior = MergeBehavior.Overwrite;
 
-         module1.Add(getEventGroupsModule("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1"));
-         module2.Add(getEventGroupsModule("EventForModule1", "eventGroup1", "eventBuilder2", "eventAssignment1", "parameter1"));
+         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1"));
+         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2", "eventAssignment1", "parameter1"));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
 
@@ -128,8 +127,8 @@ namespace OSPSuite.Helpers
          var module2 = createModule2();
          module2.MergeBehavior = MergeBehavior.Extend;
 
-         module1.Add(getEventGroupsModule("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1", true));
-         module2.Add(getEventGroupsModule("EventForModule1", "eventGroup1", "eventBuilder2", "eventAssignment1", "parameter1", true));
+         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1", true));
+         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2", "eventAssignment1", "parameter1", true));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
 
@@ -147,8 +146,8 @@ namespace OSPSuite.Helpers
          var module2 = createModule2();
          module2.MergeBehavior = MergeBehavior.Overwrite;
 
-         module1.Add(getEventGroupsModule("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1", true));
-         module2.Add(getEventGroupsModule("EventForModule1", "eventGroup1", "eventBuilder2", "eventAssignment1", "parameter1", true));
+         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1", true));
+         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2", "eventAssignment1", "parameter1", true));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
 
@@ -210,38 +209,29 @@ namespace OSPSuite.Helpers
             .WithMode(ContainerMode.Logical);
       }
 
-      private EventGroupBuildingBlock getEventGroupsModule(string collectionName, string eventGroupName, string eventBuilderName, string eventAssignmentName, string parameterName, bool createTwoEvents = false)
+      private EventGroupBuildingBlock createEventGroupBuildingBlock(string collectionName, string eventGroupName, string eventBuilderName, string eventAssignmentName, string parameterName, bool createTwoEvents = false)
       {
          var eventGroupBuilderCollection = _objectBaseFactory.Create<EventGroupBuildingBlock>().WithName(collectionName);
-         if (createTwoEvents)
-         {
-            var eventGroupBuilder = createBolusApplicationWithTwoEvents(eventGroupBuilderCollection.FormulaCache, eventGroupName, eventBuilderName, eventAssignmentName, parameterName);
-            eventGroupBuilderCollection.Add(eventGroupBuilder);
-         }
-         else
-         {
-            var eventGroupBuilder = createBolusApplication(eventGroupBuilderCollection.FormulaCache, eventGroupName, eventBuilderName, eventAssignmentName, parameterName);
-            eventGroupBuilderCollection.Add(eventGroupBuilder);
-         }
+         var eventGroupBuilder = createBolusApplication(eventGroupBuilderCollection.FormulaCache, eventGroupName, eventBuilderName, eventAssignmentName, parameterName, eventCount: createTwoEvents ? 2 : 1);
+         eventGroupBuilderCollection.Add(eventGroupBuilder);
 
          return eventGroupBuilderCollection;
       }
 
-      private EventGroupBuilder createBolusApplicationWithTwoEvents(IFormulaCache cache, string eventGroupName, string eventBuilderName, string eventAssignmentName, string parameterName)
+      private EventGroupBuilder createBolusApplication(IFormulaCache cache, string eventGroupName, string eventBuilderName, string eventAssignmentName, string parameterName, int eventCount = 1)
       {
-         var eventGroup = new EventGroupBuilder();
-         eventGroup = _objectBaseFactory.Create<EventGroupBuilder>().WithName(eventGroupName);
+         var eventGroup = _objectBaseFactory.Create<EventGroupBuilder>().WithName(eventGroupName);
          eventGroup.SourceCriteria = Create.Criteria(x => x.With(ArterialBlood).And.With(Plasma));
 
-         for (int i = 0; i < 2; i++)
+         for (var i = 0; i < eventCount; i++)
          {
             var eventBuilder = _objectBaseFactory.Create<EventBuilder>()
-               .WithName(i == 0 ? eventBuilderName : eventBuilderName + "2")
+               .WithName(i == 0 ? eventBuilderName : eventBuilderName + (i + 1))
                .WithFormula(conditionForBolusApp(cache));
             eventBuilder.OneTime = true;
 
             var eventAssignment = _objectBaseFactory.Create<EventAssignmentBuilder>()
-               .WithName(i == 0 ? eventAssignmentName : eventAssignmentName + "2")
+               .WithName(i == 0 ? eventAssignmentName : eventAssignmentName + (i + 1))
                .WithFormula(createBolusDosisFormula(cache));
             eventAssignment.UseAsValue = true;
             eventAssignment.ObjectPath = new ObjectPath(ORGANISM, ArterialBlood, Plasma, "A");
@@ -250,27 +240,6 @@ namespace OSPSuite.Helpers
             eventGroup.Add(eventBuilder);
          }
 
-         return eventGroup;
-      }
-
-      private EventGroupBuilder createBolusApplication(IFormulaCache cache, string eventGroupName, string eventBuilderName, string eventAssignmentName, string parameterName)
-      {
-         var eventGroup = _objectBaseFactory.Create<EventGroupBuilder>().WithName(eventGroupName);
-         eventGroup.SourceCriteria = Create.Criteria(x => x.With(ArterialBlood).And.With(Plasma));
-
-         var eventBuilder = _objectBaseFactory.Create<EventBuilder>()
-            .WithName(eventBuilderName)
-            .WithFormula(conditionForBolusApp(cache));
-         eventBuilder.OneTime = true;
-
-         var eventAssignment = _objectBaseFactory.Create<EventAssignmentBuilder>()
-            .WithName(eventAssignmentName)
-            .WithFormula(createBolusDosisFormula(cache));
-         eventAssignment.UseAsValue = true;
-         eventAssignment.ObjectPath = new ObjectPath(ORGANISM, ArterialBlood, Plasma, "A");
-         eventBuilder.AddAssignment(eventAssignment);
-         eventBuilder.AddParameter(NewConstantParameter(parameterName, 10));
-         eventGroup.Add(eventBuilder);
          return eventGroup;
       }
 
@@ -320,6 +289,8 @@ namespace OSPSuite.Helpers
          var art = createContainerWithName(ArterialBlood);
 
          var artPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
+         artPlasma.AddTag(new Tag(ArterialBlood));
+         artPlasma.AddTag(new Tag(Plasma));
          artPlasma.Add(NewConstantParameter(Volume, 2));
          art.Add(artPlasma);
          art.Add(NewConstantParameter(Q, 2));
