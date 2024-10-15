@@ -1,20 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
-using OSPSuite.Core.Domain.Mappers;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Descriptors;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Collections;
-using System.Collections.Generic;
+using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
    internal interface IEventBuilderTask
    {
-      void MergeEventGroupsContainer(ModelConfiguration modelConfiguration);
+      void MergeEventGroups(ModelConfiguration modelConfiguration);
    }
 
    internal class EventBuilderTask : IEventBuilderTask
@@ -26,7 +26,9 @@ namespace OSPSuite.Core.Domain.Services
 
       public EventBuilderTask(
          IContainerMergeTask containerMergeTask,
-         IEventGroupBuilderToEventGroupMapper eventGroupMapper, IKeywordReplacerTask keywordReplacerTask, ITransportBuilderToTransportMapper transportMapper)
+         IEventGroupBuilderToEventGroupMapper eventGroupMapper,
+         IKeywordReplacerTask keywordReplacerTask,
+         ITransportBuilderToTransportMapper transportMapper)
       {
          _eventGroupMapper = eventGroupMapper;
          _keywordReplacerTask = keywordReplacerTask;
@@ -34,10 +36,11 @@ namespace OSPSuite.Core.Domain.Services
          _containerMergeTask = containerMergeTask;
       }
 
-      public void MergeEventGroupsContainer(ModelConfiguration modelConfiguration)
+      public void MergeEventGroups(ModelConfiguration modelConfiguration)
       {
          createMergedContainerStructureInRoot(modelConfiguration);
       }
+
       private ICache<DescriptorCriteria, IEnumerable<IContainer>> _sourceCriteriaTargetContainerCache;
       private Cache<DescriptorCriteria, IEnumerable<IContainer>> _applicationTransportTargetContainerCache;
       private EntityDescriptorMapList<IContainer> _allModelContainerDescriptors;
@@ -51,9 +54,8 @@ namespace OSPSuite.Core.Domain.Services
             _allModelContainerDescriptors = model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
             _sourceCriteriaTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
             _applicationTransportTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
-            var allEventGroupAndMergeBehaviors = simulationBuilder.EventGroupAndMergeBehaviors;
 
-            allEventGroupAndMergeBehaviors.Each(eventGroupBuildingBlockAndMerge =>
+            simulationBuilder.EventGroupAndMergeBehaviors.Each(eventGroupBuildingBlockAndMerge =>
             {
                var (buildingBlock, mergeBehavior) = eventGroupBuildingBlockAndMerge;
                mergeEventGroups(modelConfiguration, buildingBlock, mergeBehavior);
@@ -101,7 +103,7 @@ namespace OSPSuite.Core.Domain.Services
          //this creates recursively all event groups for the given builder
          var (_, simulationBuilder, replacementContext) = modelConfiguration;
          var eventGroup = _eventGroupMapper.MapFrom(eventGroupBuilder, simulationBuilder);
-         
+
          tryMergeEventGroupInContainer(sourceContainer, eventGroup, mergeBehavior, eventGroupBuildingBlock);
 
          //needs to add the required transport into model only for the added event group

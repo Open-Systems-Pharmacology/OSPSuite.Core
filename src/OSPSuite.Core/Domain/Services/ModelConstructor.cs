@@ -246,7 +246,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private ValidationResult createObserversAndEvents(ModelConfiguration modelConfiguration)
       {
-         _eventBuilderTask.MergeEventGroupsContainer(modelConfiguration);
+         _eventBuilderTask.MergeEventGroups(modelConfiguration);
 
          // Observers needs to be created last as they might reference parameters defined in the event builder
          _observerBuilderTask.CreateObservers(modelConfiguration);
