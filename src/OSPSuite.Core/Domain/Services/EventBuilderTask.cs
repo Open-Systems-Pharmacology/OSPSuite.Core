@@ -12,19 +12,19 @@ using System.Collections.Generic;
 
 namespace OSPSuite.Core.Domain.Services
 {
-   internal interface IEventGroupMerger
+   internal interface IEventBuilderTask
    {
       void MergeEventGroupsContainer(ModelConfiguration modelConfiguration);
    }
 
-   internal class EventGroupMerger : IEventGroupMerger
+   internal class EventBuilderTask : IEventBuilderTask
    {
       private readonly IEventGroupBuilderToEventGroupMapper _eventGroupMapper;
       private readonly IContainerMergeTask _containerMergeTask;
       private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly ITransportBuilderToTransportMapper _transportMapper;
 
-      public EventGroupMerger(
+      public EventBuilderTask(
          IContainerMergeTask containerMergeTask,
          IEventGroupBuilderToEventGroupMapper eventGroupMapper, IKeywordReplacerTask keywordReplacerTask, ITransportBuilderToTransportMapper transportMapper)
       {

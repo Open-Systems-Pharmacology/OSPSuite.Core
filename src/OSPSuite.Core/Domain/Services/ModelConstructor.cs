@@ -34,7 +34,7 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IModelValidatorFactory _modelValidatorFactory;
       private readonly IModelCircularReferenceChecker _circularReferenceChecker;
       private readonly ISpatialStructureMerger _spatialStructureMerger;
-      private readonly IEventGroupMerger _eventGroupMerger;
+      private readonly IEventBuilderTask _eventBuilderTask;
 
       public ModelConstructor(
          IObjectBaseFactory objectBaseFactory,
@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain.Services
          IModelValidatorFactory modelValidatorFactory,
          IModelCircularReferenceChecker circularReferenceChecker,
          ISpatialStructureMerger spatialStructureMerger,
-         IEventGroupMerger eventGroupMerger)
+         IEventBuilderTask eventBuilderTask)
       {
          _objectBaseFactory = objectBaseFactory;
          _simulationConfigurationValidator = simulationConfigurationValidator;
@@ -73,7 +73,7 @@ namespace OSPSuite.Core.Domain.Services
          _progressManager = progressManager;
          _formulaTask = formulaTask;
          _calculationMethodTask = calculationMethodTask;
-         _eventGroupMerger = eventGroupMerger;
+         _eventBuilderTask = eventBuilderTask;
       }
 
       public CreationResult CreateModelFrom(SimulationConfiguration simulationConfiguration, string modelName)
@@ -246,7 +246,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private ValidationResult createObserversAndEvents(ModelConfiguration modelConfiguration)
       {
-         _eventGroupMerger.MergeEventGroupsContainer(modelConfiguration);
+         _eventBuilderTask.MergeEventGroupsContainer(modelConfiguration);
 
          // Observers needs to be created last as they might reference parameters defined in the event builder
          _observerBuilderTask.CreateObservers(modelConfiguration);
