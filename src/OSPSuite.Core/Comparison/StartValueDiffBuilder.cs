@@ -1,4 +1,5 @@
-﻿using OSPSuite.Core.Domain;
+﻿using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Comparison
@@ -30,7 +31,9 @@ namespace OSPSuite.Core.Comparison
          // of a distributed PathAndValueEntity is not fully calculated until  it is turned into
          // a parameter
          if(!comparison.Object1.DistributionType.Equals(comparison.Object2.DistributionType))
-            CompareValues(x => x.DistributionType, x => x.DistributionType, comparison);
+            CompareValues(x => x.DistributionType, x => x.DistributionType, comparison, 
+               areEquals: (type1, type2) => Equals(type2, type1), 
+               formatter: (entity, type) => type == null ? Captions.NotDistributed : type.ToString());
          else
          {
             // Always Compare Value and Formula, independent of settings as these are two different properties of a start value
