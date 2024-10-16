@@ -218,13 +218,19 @@ namespace OSPSuite.Core.Domain
             new ParameterValuesBuildingBlock(),
             new EventGroupBuildingBlock()
          };
-
+         sut.IsPKSimModule = true;
          _preAddVersion = sut.Version;
       }
 
       protected override void Because()
       {
          sut.Remove(_initialConditionsBuildingBlock);
+      }
+
+      [Observation]
+      public void the_module_is_not_pk_sim()
+      {
+         sut.IsPKSimModule.ShouldBeFalse();
       }
 
       [Observation]
