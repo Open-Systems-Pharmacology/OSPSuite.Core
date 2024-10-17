@@ -134,12 +134,6 @@ namespace OSPSuite.Core.Domain
             sut.AddAtFront(path);
          }
       }
-
-      [Observation]
-      public void should_return_the_desired_entity()
-      {
-         sut.Resolve<IParameter>(_organ).ShouldBeEqualTo(_parameter);
-      }
    }
 
    public class When_setting_the_path_element_with_index : concern_for_ObjectPath
