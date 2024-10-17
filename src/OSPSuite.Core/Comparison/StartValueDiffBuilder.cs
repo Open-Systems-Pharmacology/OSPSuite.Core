@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Comparison
          // a parameter
          if(!comparison.Object1.DistributionType.Equals(comparison.Object2.DistributionType))
             CompareValues(x => x.DistributionType, x => x.DistributionType, comparison, 
-               areEquals: (type1, type2) => Equals(type2, type1), 
+               areEqual: (type1, type2) => Equals(type2, type1), 
                formatter: (entity, type) => type == null ? Captions.NotDistributed : type.ToString());
          else
          {
