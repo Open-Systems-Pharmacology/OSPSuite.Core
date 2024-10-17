@@ -226,6 +226,7 @@ namespace OSPSuite.Assets
       public static readonly string DoNotShowThisAgainUntilRestart = "Do not show this again until restart";
       public static readonly string AddPoint = "Add Point";
       public static readonly string UseDerivedValues = "Use derivative values";
+      public static readonly string NotDistributed = "Not Distributed";
 
       public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
 
