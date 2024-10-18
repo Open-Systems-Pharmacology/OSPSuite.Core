@@ -85,18 +85,22 @@ namespace OSPSuite.Core.Domain.Services
       }
 
       public IReadOnlyList<ParameterValue> CreateFrom(SpatialStructure spatialStructure, IReadOnlyList<MoleculeBuilder> molecules) =>
-         spatialStructure.PhysicalContainers.SelectMany(container => createFrom(container, molecules, isLocalWithConstantFormula)).ToList();
+         spatialStructure.PhysicalContainers.SelectMany(container => createFrom(container, molecules,
+            (x, c) => isLocalWithConstantFormula(x) && satisfiesContainerCriteria(x, c))).ToList();
 
       public IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, IReadOnlyList<MoleculeBuilder> molecules) =>
-         physicalContainer.GetAllContainersAndSelf<IContainer>(x => x.Mode.Is(ContainerMode.Physical)).SelectMany(container => createFrom(container, molecules, x => x.IsExpression())).ToList();
+         physicalContainer.GetAllContainersAndSelf<IContainer>(x => x.Mode.Is(ContainerMode.Physical)).SelectMany(container => createFrom(container, molecules,
+            (x, c) => x.IsExpression() && satisfiesContainerCriteria(x, c))).ToList();
 
-      private IEnumerable<ParameterValue> createFrom(IContainer container, IReadOnlyList<MoleculeBuilder> molecules, Func<IParameter, bool> createFor) =>
+      private IEnumerable<ParameterValue> createFrom(IContainer container, IReadOnlyList<MoleculeBuilder> molecules, Func<IParameter, IContainer, bool> createFor) =>
          molecules.SelectMany(x => createFrom(container, x, createFor));
 
-      private IEnumerable<ParameterValue> createFrom(IContainer container, MoleculeBuilder molecule, Func<IParameter, bool> createFor) =>
-         molecule.Parameters.Where(createFor).Select(x => CreateParameterValue(objectPathForParameterInContainer(container, x.Name, molecule.Name), x));
+      private IEnumerable<ParameterValue> createFrom(IContainer container, MoleculeBuilder molecule, Func<IParameter, IContainer, bool> createFor) =>
+         molecule.Parameters.Where(x => createFor(x, container)).Select(x => CreateParameterValue(objectPathForParameterInContainer(container, x.Name, molecule.Name), x));
 
-      private static bool isLocalWithConstantFormula(IParameter x) => x.BuildMode == ParameterBuildMode.Local && x.Formula.IsConstant();
+      private static bool isLocalWithConstantFormula(IParameter parameter) => parameter.BuildMode == ParameterBuildMode.Local && parameter.Formula.IsConstant();
+
+      private static bool satisfiesContainerCriteria(IParameter parameter, IContainer container) => parameter.ContainerCriteria?.IsSatisfiedBy(container) ?? false;
 
       private ObjectPath objectPathForParameterInContainer(IContainer container, string parameterName, string moleculeName)
       {
