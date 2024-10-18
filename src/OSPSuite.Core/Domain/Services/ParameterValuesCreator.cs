@@ -100,7 +100,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private static bool isLocalWithConstantFormula(IParameter parameter) => parameter.BuildMode == ParameterBuildMode.Local && parameter.Formula.IsConstant();
 
-      private static bool satisfiesContainerCriteria(IParameter parameter, IContainer container) => parameter.ContainerCriteria?.IsSatisfiedBy(container) ?? false;
+      private static bool satisfiesContainerCriteria(IParameter parameter, IContainer container) => parameter.ContainerCriteria?.IsSatisfiedBy(container) ?? true;
 
       private ObjectPath objectPathForParameterInContainer(IContainer container, string parameterName, string moleculeName)
       {
