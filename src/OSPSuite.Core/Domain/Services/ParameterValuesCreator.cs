@@ -154,6 +154,7 @@ namespace OSPSuite.Core.Domain.Services
          var parameterValues = molecule.Parameters.Where(x => isLocalExpressionAndSatisfiesCriteria(x, container, expressionParameterNames))
             .Select(x => CreateParameterValue(objectPathForParameterInContainer(container, x.Name, molecule.Name), x)).ToList();
 
+         // For newly created parameterValues that do not already have formulas, check for formulas in similar expression parameters
          initializeFormulasFor(parameterValues.Where(shouldCloneFormulaFor).ToList(), expressionParameters);
 
          return parameterValues;
