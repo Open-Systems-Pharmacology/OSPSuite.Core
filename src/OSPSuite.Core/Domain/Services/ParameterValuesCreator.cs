@@ -125,11 +125,20 @@ namespace OSPSuite.Core.Domain.Services
 
       private static string compartmentFor(ParameterValue formulaTarget) => formulaTarget.Path[compartmentIndex(formulaTarget)];
 
-      private static int compartmentIndex(PathAndValueEntity x) => x.Path.Count - 3;
-
       private static ExpressionParameter pathMatchedExpressionParameterFor(List<ExpressionParameter> nameMatchedExpressionParameters, ParameterValue formulaTarget) =>
          nameMatchedExpressionParameters.FirstOrDefault(x => Equals(x.Path, formulaTarget.Path));
 
+      /// <summary>
+      /// When dealing with ExpressionParameters, the path takes the form "Organism|ArterialBlood|Plasma|GABRG2|Initial concentration" for local parameters.
+      /// The compartment is always third last.
+      /// </summary>
+      /// <returns>index of the third-to-last object path</returns>
+      private static int compartmentIndex(PathAndValueEntity x) => x.Path.Count - 3;
+
+      /// <summary>
+      /// When dealing with ExpressionParameters, the path takes the form "Organism|ArterialBlood|Plasma|GABRG2|Initial concentration" for local parameters.
+      /// </summary>
+      /// <returns>True if the path has more than 5 elements, indicating that compartment is present</returns>
       private static bool hasCompartment(ParameterValue formulaTarget) => formulaTarget.Path.Count >= 5;
 
       private IEnumerable<ParameterValue> createLocalFrom(IContainer container, IReadOnlyList<MoleculeBuilder> molecules) =>
