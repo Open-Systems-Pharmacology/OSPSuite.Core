@@ -25,7 +25,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          foreach (var usingFormula in entityUsingFormulas)
          {
-            usingFormula.Formula.ResolveObjectPathsFor(usingFormula);
+            usingFormula.Formula?.ResolveObjectPathsFor(usingFormula);
             resolveReferenceFor(usingFormula as IParameter);
             resolveReferenceFor(usingFormula as EventAssignment);
          }

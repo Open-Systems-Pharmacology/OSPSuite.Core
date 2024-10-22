@@ -50,4 +50,16 @@ namespace OSPSuite.Core.Serializers
          AssertForSpecs.AreEqualEvent(x2, x1);
       }
    }
+
+   public class ResolveReferencesInSpecs : MiniEnvironmentSerializerBaseSpecs
+   {
+      [Test]
+      public void TestSerializationEvent()
+      {
+         Event x1 = CreateObject<Event>().WithName("Eve").WithDimension(DimensionLength);
+         x1.ParentContainer = C0;
+         var refResolver = new ReferencesResolver();
+         Assert.DoesNotThrow(() => refResolver.ResolveReferencesIn(x1));
+      }
+   }
 }
