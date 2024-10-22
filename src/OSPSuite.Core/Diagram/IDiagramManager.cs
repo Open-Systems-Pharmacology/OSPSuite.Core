@@ -17,6 +17,14 @@ namespace OSPSuite.Core.Diagram
       void RefreshObjectBase(IObjectBase objectBase);
       void AddObjectBase(IObjectBase objectBase);
       void UpdateInsertLocation();
+
+      /// <summary>
+      /// Normally a diagram node corresponds to a domain entity. For some containers, they can be represented
+      /// in the diagram without an entity. In that case, path can still be determined
+      /// </summary>
+      /// <param name="containerNode">A container node that has already been determined to not correspond to an entity</param>
+      /// <returns>The intended entity path</returns>
+      ObjectPath PathForNodeWithoutEntity(IContainerNode containerNode);
    }
 
    public interface IDiagramManager<TModel> : IDiagramManager where TModel : IWithDiagramFor<TModel>

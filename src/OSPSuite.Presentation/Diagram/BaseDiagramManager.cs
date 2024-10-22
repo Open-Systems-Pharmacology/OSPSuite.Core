@@ -5,6 +5,7 @@ using System.Linq;
 using OSPSuite.Core.Diagram;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Diagram.Elements;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Utility.Extensions;
@@ -208,7 +209,15 @@ namespace OSPSuite.Presentation.Diagram
          if (!string.IsNullOrEmpty(neighborhoodBase.Description))
             neighborhoodBaseNode.Description += Environment.NewLine + neighborhoodBase.Description;
          else
-            neighborhoodBaseNode.Description += Environment.NewLine + "Neighborhood between " + neighborhoodBase.FirstNeighbor.EntityPath() + " and " + neighborhoodBase.SecondNeighbor.EntityPath();
+         {
+            var (firstNeighborPath, secondNeighborPath) = PathsForNeighborhood(neighborhoodBase);
+            neighborhoodBaseNode.Description += Environment.NewLine + "Neighborhood between " + firstNeighborPath + " and " + secondNeighborPath;
+         }
+      }
+
+      protected virtual (string, string) PathsForNeighborhood(INeighborhoodBase neighborhoodBase)
+      {
+         return (neighborhoodBase.FirstNeighbor.EntityPath(), neighborhoodBase.SecondNeighbor.EntityPath());
       }
 
       protected void RegisterUpdateMethod<T>(Action<IObjectBase, IBaseNode> updateMethod)
@@ -348,13 +357,22 @@ namespace OSPSuite.Presentation.Diagram
          return parentNode;
       }
 
+      public ObjectPath PathForNodeWithoutEntity(IContainerNode containerNode)
+      {
+         return new ObjectPath(containerNode.Id.ToPathArray());
+      }
+
+      protected virtual (IContainerNode firstNeighborContainerNode, IContainerNode secondNeighborContainerNode) GetNeighborHoodNodes(INeighborhoodBase neighborhoodBase)
+      {
+         return (NodeFor<IContainerNode>(neighborhoodBase.FirstNeighbor), NodeFor<IContainerNode>(neighborhoodBase.SecondNeighbor));
+      }
+
       protected virtual INeighborhoodNode AddNeighborhood(INeighborhoodBase neighborhood)
       {
          if (neighborhood == null)
             return null;
 
-         var firstNeighborContainerNode = NodeFor<IContainerNode>(neighborhood.FirstNeighbor);
-         var secondNeighborContainerNode = NodeFor<IContainerNode>(neighborhood.SecondNeighbor);
+         var (firstNeighborContainerNode, secondNeighborContainerNode) = GetNeighborHoodNodes(neighborhood);
 
          if (firstNeighborContainerNode == null || secondNeighborContainerNode == null)
             return null;
