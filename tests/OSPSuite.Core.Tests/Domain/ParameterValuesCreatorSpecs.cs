@@ -3,6 +3,7 @@ using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
 
@@ -62,6 +63,7 @@ namespace OSPSuite.Core.Domain
          _molecules = new List<MoleculeBuilder>();
 
          var constantFormulaParameter = DomainHelperForSpecs.ConstantParameterWithValue(5).WithDimension(DomainHelperForSpecs.FractionDimensionForSpecs()).WithName("constantFormulaParameterName");
+         constantFormulaParameter.ContainerCriteria = new DescriptorCriteria { new MatchTagCondition("physicalContainer") };
          var normalDistributionParameter = DomainHelperForSpecs.NormalDistributedParameter().WithDimension(DomainHelperForSpecs.FractionDimensionForSpecs()).WithName("normalDistributionParameterName");
          var molecule = new MoleculeBuilder().WithName("Molecule1");
          molecule.AddParameter(constantFormulaParameter);
@@ -76,9 +78,46 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void parameter_values_should_only_be_created_for_each_constant_formula_parameter_in_each_physical_container()
+      public void parameter_values_should_only_be_created_for_each_constant_formula_parameter_in_each_physical_container_matching_tags()
       {
-         _parameterValues.Select(x => x.Path.ToString()).ShouldOnlyContain("Top|physicalContainer|Molecule1|constantFormulaParameterName", "Top|Molecule1|constantFormulaParameterName");
+         _parameterValues.Select(x => x.Path.ToString()).ShouldOnlyContain("Top|physicalContainer|Molecule1|constantFormulaParameterName");
+      }
+   }
+
+   public class When_creating_parameters_without_criteria_from_proteins_and_organ : concern_for_ParameterValuesCreator
+   {
+      private IContainer _organContainer;
+      private IReadOnlyList<MoleculeBuilder> _molecules;
+      private MoleculeBuilder _protein;
+      private IReadOnlyList<ParameterValue> _parameterValues;
+      private Container _compartmentContainer;
+
+      protected override void Context()
+      {
+         base.Context();
+         _protein = new MoleculeBuilder().WithName("protein");
+         _protein.QuantityType = QuantityType.Transporter;
+         var expressionParameter = new Parameter().WithName(Constants.Parameters.REL_EXP);
+         _protein.AddParameter(expressionParameter);
+         var anotherParameter = new Parameter().WithName("some other parameter");
+
+         _protein.AddParameter(anotherParameter);
+
+         _molecules = new[] { _protein };
+         _organContainer = new Container().WithName("organ").WithMode(ContainerMode.Physical);
+         _compartmentContainer = new Container().WithName("compartment").WithMode(ContainerMode.Physical);
+         _organContainer.Add(_compartmentContainer);
+      }
+
+      protected override void Because()
+      {
+         _parameterValues = sut.CreateExpressionFrom(_organContainer, _molecules);
+      }
+
+      [Observation]
+      public void the_parameter_values_should_include_expression_parameters_for_all_containers()
+      {
+         _parameterValues.Select(x => x.Path.ToString()).ShouldOnlyContain($"organ|compartment|protein|{Constants.Parameters.REL_EXP}", $"organ|compartment|protein|{Constants.Parameters.REL_EXP}");
       }
    }
 
@@ -95,8 +134,12 @@ namespace OSPSuite.Core.Domain
          base.Context();
          _protein = new MoleculeBuilder().WithName("protein");
          _protein.QuantityType = QuantityType.Transporter;
-         _protein.AddParameter(new Parameter().WithName(Constants.Parameters.REL_EXP));
-         _protein.AddParameter(new Parameter().WithName("some other parameter"));
+         var expressionParameter = new Parameter().WithName(Constants.Parameters.REL_EXP);
+         expressionParameter.ContainerCriteria = new DescriptorCriteria { new MatchTagCondition("compartment") };
+         _protein.AddParameter(expressionParameter);
+         var anotherParameter = new Parameter().WithName("some other parameter");
+
+         _protein.AddParameter(anotherParameter);
 
          _molecules = new[] { _protein };
          _organContainer = new Container().WithName("organ").WithMode(ContainerMode.Physical);
@@ -110,9 +153,9 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void the_parameter_values_should_include_expression_parameters_for_the_organ()
+      public void the_parameter_values_should_include_expression_parameters_for_the_compartment()
       {
-         _parameterValues.Select(x => x.Path.ToString()).ShouldOnlyContain($"organ|protein|{Constants.Parameters.REL_EXP}", $"organ|compartment|protein|{Constants.Parameters.REL_EXP}");
+         _parameterValues.Select(x => x.Path.ToString()).ShouldOnlyContain($"organ|compartment|protein|{Constants.Parameters.REL_EXP}");
       }
    }
 }

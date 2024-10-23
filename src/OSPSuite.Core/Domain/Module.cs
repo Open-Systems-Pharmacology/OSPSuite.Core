@@ -134,6 +134,9 @@ namespace OSPSuite.Core.Domain
 
       public void Remove(IBuildingBlock buildingBlock)
       {
+         // If a PKSim module is cloned and some building blocks removed
+         // it is no longer a PK-Sim module.
+         IsPKSimModule = false;
          buildingBlock.Module = null;
          _buildingBlocks.Remove(buildingBlock);
       }

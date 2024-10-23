@@ -72,9 +72,9 @@ namespace OSPSuite.Core.Comparison
       }
 
       protected void CompareValues<TInput, TOutput>(Func<TInput, TOutput> funcEvaluation, Expression<Func<TInput, TOutput>> propertyNameExpression, IComparison<TInput> comparison,
-         Func<TOutput, TOutput, bool> areEquals, Func<TInput, TOutput, string> formatter) where TInput : class
+         Func<TOutput, TOutput, bool> areEqual, Func<TInput, TOutput, string> formatter) where TInput : class
       {
-         CompareValues(funcEvaluation, nameFrom(propertyNameExpression), comparison, areEquals, formatter);
+         CompareValues(funcEvaluation, nameFrom(propertyNameExpression), comparison, areEqual, formatter);
       }
 
       private string nameFrom<TInput, TOutput>(Expression<Func<TInput, TOutput>> propertyNameExpression)

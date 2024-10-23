@@ -30,6 +30,8 @@ namespace OSPSuite.Core.Domain.Mappers
             ? _parameterFactory.CreateParameter(name, dimension: dimension, displayUnit: displayUnit)
             : _parameterFactory.CreateDistributedParameter(name, distributionType.Value, dimension: dimension, displayUnit: displayUnit);
 
+         parameter.ValueOrigin.UpdateAllFrom(parameterValue.ValueOrigin);
+
          return parameter.WithUpdatedMetaFrom(parameterValue);
       }
    }

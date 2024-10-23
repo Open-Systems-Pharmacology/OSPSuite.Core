@@ -77,8 +77,8 @@ namespace OSPSuite.Core.Domain.Builder
       private void resolveReferenceIfRequired(IContainer container)
       {
          //only update if undefined
-         FirstNeighbor = FirstNeighbor ?? FirstNeighborPath.Resolve<IContainer>(container);
-         SecondNeighbor = SecondNeighbor ?? SecondNeighborPath.Resolve<IContainer>(container);
+         FirstNeighbor = FirstNeighbor ?? FirstNeighborPath.TryResolve<IContainer>(container);
+         SecondNeighbor = SecondNeighbor ?? SecondNeighborPath.TryResolve<IContainer>(container);
       }
 
       /// <summary>

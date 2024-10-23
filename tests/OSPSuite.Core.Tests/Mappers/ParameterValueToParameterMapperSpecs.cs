@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
@@ -22,6 +23,7 @@ namespace OSPSuite.Core.Mappers
    public class When_mapping_a_distributed_parameter_value_to_parameter_value : concern_for_ParameterValueToParameterMapper
    {
       private IndividualParameter _individualParameter;
+      private IParameter _parameter;
 
       protected override void Context()
       {
@@ -29,13 +31,20 @@ namespace OSPSuite.Core.Mappers
          _individualParameter = new IndividualParameter
          {
             Name = "name",
-            DistributionType = DistributionType.Discrete,
+            DistributionType = DistributionType.Discrete
          };
+         _individualParameter.UpdateValueOriginFrom(ValueOrigin.Unknown);
       }
 
       protected override void Because()
       {
-         sut.MapFrom(_individualParameter);
+         _parameter = sut.MapFrom(_individualParameter);
+      }
+
+      [Observation]
+      public void the_value_origin_should_be_updated()
+      {
+         _parameter.ValueOrigin.ShouldBeEqualTo(ValueOrigin.Unknown);
       }
 
       [Observation]
