@@ -23,6 +23,9 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IContainerMergeTask _containerMergeTask;
       private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly ITransportBuilderToTransportMapper _transportMapper;
+      private ICache<DescriptorCriteria, IEnumerable<IContainer>> _sourceCriteriaTargetContainerCache;
+      private Cache<DescriptorCriteria, IEnumerable<IContainer>> _applicationTransportTargetContainerCache;
+      private EntityDescriptorMapList<IContainer> _allModelContainerDescriptors;
 
       public EventBuilderTask(
          IContainerMergeTask containerMergeTask,
@@ -40,10 +43,6 @@ namespace OSPSuite.Core.Domain.Services
       {
          createMergedContainerStructureInRoot(modelConfiguration);
       }
-
-      private ICache<DescriptorCriteria, IEnumerable<IContainer>> _sourceCriteriaTargetContainerCache;
-      private Cache<DescriptorCriteria, IEnumerable<IContainer>> _applicationTransportTargetContainerCache;
-      private EntityDescriptorMapList<IContainer> _allModelContainerDescriptors;
 
       private void createMergedContainerStructureInRoot(ModelConfiguration modelConfiguration)
       {
