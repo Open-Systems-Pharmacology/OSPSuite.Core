@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -60,11 +60,15 @@ namespace OSPSuite.Core.Domain.Services
    {
       private readonly IIdGenerator _idGenerator;
       private readonly IEntityPathResolver _entityPathResolver;
+      private readonly IProjectRetriever _projectRetriever;
+      private readonly ICloneManagerForBuildingBlock _cloneManager;
 
-      public ParameterValuesCreator(IIdGenerator idGenerator, IEntityPathResolver entityPathResolver)
+      public ParameterValuesCreator(IIdGenerator idGenerator, IEntityPathResolver entityPathResolver, IProjectRetriever projectRetriever, ICloneManagerForBuildingBlock cloneManager)
       {
          _idGenerator = idGenerator;
          _entityPathResolver = entityPathResolver;
+         _projectRetriever = projectRetriever;
+         _cloneManager = cloneManager;
       }
 
       public ParameterValue CreateParameterValue(ObjectPath parameterPath, double value, IDimension dimension,
@@ -85,18 +89,82 @@ namespace OSPSuite.Core.Domain.Services
       }
 
       public IReadOnlyList<ParameterValue> CreateFrom(SpatialStructure spatialStructure, IReadOnlyList<MoleculeBuilder> molecules) =>
-         spatialStructure.PhysicalContainers.SelectMany(container => createFrom(container, molecules,
-            (x, c) => isLocalWithConstantFormula(x) && satisfiesContainerCriteria(x, c))).ToList();
+         spatialStructure.PhysicalContainers.SelectMany(container => createLocalFrom(container, molecules)).ToList();
 
-      public IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, IReadOnlyList<MoleculeBuilder> molecules) =>
-         physicalContainer.GetAllContainersAndSelf<IContainer>(x => x.Mode.Is(ContainerMode.Physical)).SelectMany(container => createFrom(container, molecules,
-            (x, c) => x.IsExpression() && satisfiesContainerCriteria(x, c))).ToList();
+      public IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, IReadOnlyList<MoleculeBuilder> molecules) => 
+         physicalContainer.GetAllContainersAndSelf<IContainer>(x => x.Mode.Is(ContainerMode.Physical)).SelectMany(container => createExpressionFrom(container, molecules)).ToList();
 
-      private IEnumerable<ParameterValue> createFrom(IContainer container, IReadOnlyList<MoleculeBuilder> molecules, Func<IParameter, IContainer, bool> createFor) =>
-         molecules.SelectMany(x => createFrom(container, x, createFor));
+      private IEnumerable<ParameterValue> createExpressionFrom(IContainer container, IReadOnlyList<MoleculeBuilder> molecules) => molecules.SelectMany(x => createExpressionFrom(container, x));
 
-      private IEnumerable<ParameterValue> createFrom(IContainer container, MoleculeBuilder molecule, Func<IParameter, IContainer, bool> createFor) =>
-         molecule.Parameters.Where(x => createFor(x, container)).Select(x => CreateParameterValue(objectPathForParameterInContainer(container, x.Name, molecule.Name), x));
+      private void initializeFormulasFor(IReadOnlyList<ParameterValue> parameterValues, IReadOnlyList<ExpressionParameter> expressionParameters)
+      {
+         var formulaCache = new FormulaCache();
+         parameterValues.Each(formulaTarget =>
+         {
+            var formulaSource = formulaSourceFor(expressionParameters.AllByName(formulaTarget.Name).ToList(), formulaTarget);
+
+            if (formulaSource != null)
+               formulaTarget.Formula = _cloneManager.Clone(formulaSource.Formula, formulaCache);
+         });
+      }
+
+      private bool shouldCloneFormulaFor(ParameterValue parameterValue) => parameterValue.Formula == null || parameterValue.Formula.IsConstant();
+
+      private static ExpressionParameter formulaSourceFor(List<ExpressionParameter> nameMatchedExpressionParameters, ParameterValue formulaTarget)
+      {
+         var formulaSource = pathMatchedExpressionParameterFor(nameMatchedExpressionParameters, formulaTarget);
+
+         if (formulaSource == null && hasCompartment(formulaTarget))
+            formulaSource = compartmentMatchedExpressionParameterFor(formulaTarget, nameMatchedExpressionParameters);
+
+         return formulaSource;
+      }
+
+      private static ExpressionParameter compartmentMatchedExpressionParameterFor(ParameterValue formulaTarget, List<ExpressionParameter> nameMatchedExpressionParameters) =>
+         nameMatchedExpressionParameters.Where(hasCompartment).FirstOrDefault(x => Equals(compartmentFor(x), compartmentFor(formulaTarget)));
+
+      private static string compartmentFor(ParameterValue formulaTarget) => formulaTarget.Path[compartmentIndex(formulaTarget)];
+
+      private static ExpressionParameter pathMatchedExpressionParameterFor(List<ExpressionParameter> nameMatchedExpressionParameters, ParameterValue formulaTarget) =>
+         nameMatchedExpressionParameters.FirstOrDefault(x => Equals(x.Path, formulaTarget.Path));
+
+      /// <summary>
+      /// When dealing with ExpressionParameters, the path takes the form "Organism|ArterialBlood|Plasma|GABRG2|Initial concentration" for local parameters.
+      /// The compartment is always third last.
+      /// </summary>
+      /// <returns>index of the third-to-last object path</returns>
+      private static int compartmentIndex(PathAndValueEntity x) => x.Path.Count - 3;
+
+      /// <summary>
+      /// When dealing with ExpressionParameters, the path takes the form "Organism|ArterialBlood|Plasma|GABRG2|Initial concentration" for local parameters.
+      /// </summary>
+      /// <returns>True if the path has more than 5 elements, indicating that compartment is present</returns>
+      private static bool hasCompartment(ParameterValue formulaTarget) => formulaTarget.Path.Count >= 5;
+
+      private IEnumerable<ParameterValue> createLocalFrom(IContainer container, IReadOnlyList<MoleculeBuilder> molecules) =>
+         molecules.SelectMany(x => createLocalFrom(container, x));
+
+      private IEnumerable<ParameterValue> createLocalFrom(IContainer container, MoleculeBuilder molecule) => 
+         molecule.Parameters.Where(x => isLocalAndSatisfiesCriteria(x, container)).Select(x => CreateParameterValue(objectPathForParameterInContainer(container, x.Name, molecule.Name), x));
+
+      private IEnumerable<ParameterValue> createExpressionFrom(IContainer container, MoleculeBuilder molecule)
+      {
+         var expressionParameters = _projectRetriever.CurrentProject.All<ExpressionProfileBuildingBlock>().Where(x => string.Equals(x.MoleculeName, molecule.Name)).SelectMany(x => x.ExpressionParameters).ToList();
+         var expressionParameterNames = expressionParameters.AllNames().Distinct().ToList();
+         var parameterValues = molecule.Parameters.Where(x => isLocalExpressionAndSatisfiesCriteria(x, container, expressionParameterNames))
+            .Select(x => CreateParameterValue(objectPathForParameterInContainer(container, x.Name, molecule.Name), x)).ToList();
+
+         // For newly created parameterValues that do not already have formulas, check for formulas in similar expression parameters
+         initializeFormulasFor(parameterValues.Where(shouldCloneFormulaFor).ToList(), expressionParameters);
+
+         return parameterValues;
+      }
+
+      private bool isLocalExpressionAndSatisfiesCriteria(IParameter parameter, IContainer container, List<string> expressionParameterNames) => 
+         parameter.BuildMode == ParameterBuildMode.Local && satisfiesContainerCriteria(parameter, container) && expressionParameterNames.Contains(parameter.Name);
+
+      private bool isLocalAndSatisfiesCriteria(IParameter parameter, IContainer container) => 
+         isLocalWithConstantFormula(parameter) && satisfiesContainerCriteria(parameter, container);
 
       private static bool isLocalWithConstantFormula(IParameter parameter) => parameter.BuildMode == ParameterBuildMode.Local && parameter.Formula.IsConstant();
 
@@ -111,8 +179,15 @@ namespace OSPSuite.Core.Domain.Services
 
       public ParameterValue CreateParameterValue(ObjectPath parameterPath, IParameter parameter)
       {
-         return CreateParameterValue(parameterPath, parameter.Value, parameter.Dimension, parameter.DisplayUnit, parameter.ValueOrigin,
+         var parameterValue = CreateParameterValue(parameterPath, 0.0, parameter.Dimension, parameter.DisplayUnit, parameter.ValueOrigin,
             parameter.IsDefault);
+
+         if (parameter.Formula != null && !parameter.Formula.IsConstant())
+            parameterValue.Formula = _cloneManager.Clone(parameter.Formula, new FormulaCache());
+         else
+            parameterValue.Value = parameter.Value;
+
+         return parameterValue;
       }
 
       public ParameterValue CreateEmptyStartValue(IDimension dimension) => CreateParameterValue(ObjectPath.Empty, 0.0, dimension);

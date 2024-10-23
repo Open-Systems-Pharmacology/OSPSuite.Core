@@ -48,16 +48,6 @@ namespace OSPSuite.Core.Domain
          return parameter.IsFixedValue || parameter.Formula.IsConstant() || parameter.Formula.IsDistributed();
       }
 
-      public static bool IsExpression(this IParameter parameter)
-      {
-         return parameter.HasExpressionName();
-      }
-
-      public static bool IsGlobalExpression(this IParameter parameter)
-      {
-         return parameter.HasGlobalExpressionName();
-      }
-
       public static IParameter WithUpdatedMetaFrom(this IParameter parameter, ParameterValue parameterValue)
       {
          parameter.Origin.UpdatePropertiesFrom(parameterValue.Origin);
