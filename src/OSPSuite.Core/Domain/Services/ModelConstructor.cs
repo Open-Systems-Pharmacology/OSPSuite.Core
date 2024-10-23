@@ -23,7 +23,6 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IObserverBuilderTask _observerBuilderTask;
       private readonly IReactionCreator _reactionCreator;
       private readonly IReferencesResolver _referencesResolver;
-      private readonly IEventBuilderTask _eventBuilderTask;
       private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly ITransportCreator _transportCreator;
       private readonly IProgressManager _progressManager;
@@ -35,6 +34,7 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IModelValidatorFactory _modelValidatorFactory;
       private readonly IModelCircularReferenceChecker _circularReferenceChecker;
       private readonly ISpatialStructureMerger _spatialStructureMerger;
+      private readonly IEventBuilderTask _eventBuilderTask;
 
       public ModelConstructor(
          IObjectBaseFactory objectBaseFactory,
@@ -43,7 +43,6 @@ namespace OSPSuite.Core.Domain.Services
          IMoleculePropertiesContainerTask moleculePropertiesContainerTask,
          IMoleculeBuilderToMoleculeAmountMapper moleculeMapper,
          IReferencesResolver referencesResolver,
-         IEventBuilderTask eventBuilderTask,
          IKeywordReplacerTask keywordReplacerTask,
          ITransportCreator transportCreator,
          IProgressManager progressManager,
@@ -54,7 +53,8 @@ namespace OSPSuite.Core.Domain.Services
          IQuantityValuesUpdater quantityValuesUpdater,
          IModelValidatorFactory modelValidatorFactory,
          IModelCircularReferenceChecker circularReferenceChecker,
-         ISpatialStructureMerger spatialStructureMerger)
+         ISpatialStructureMerger spatialStructureMerger,
+         IEventBuilderTask eventBuilderTask)
       {
          _objectBaseFactory = objectBaseFactory;
          _simulationConfigurationValidator = simulationConfigurationValidator;
@@ -68,12 +68,12 @@ namespace OSPSuite.Core.Domain.Services
          _moleculePropertiesContainerTask = moleculePropertiesContainerTask;
          _moleculeMapper = moleculeMapper;
          _referencesResolver = referencesResolver;
-         _eventBuilderTask = eventBuilderTask;
          _keywordReplacerTask = keywordReplacerTask;
          _transportCreator = transportCreator;
          _progressManager = progressManager;
          _formulaTask = formulaTask;
          _calculationMethodTask = calculationMethodTask;
+         _eventBuilderTask = eventBuilderTask;
       }
 
       public CreationResult CreateModelFrom(SimulationConfiguration simulationConfiguration, string modelName)
@@ -246,7 +246,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private ValidationResult createObserversAndEvents(ModelConfiguration modelConfiguration)
       {
-         _eventBuilderTask.CreateEvents(modelConfiguration);
+         _eventBuilderTask.MergeEventGroups(modelConfiguration);
 
          // Observers needs to be created last as they might reference parameters defined in the event builder
          _observerBuilderTask.CreateObservers(modelConfiguration);
