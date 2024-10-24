@@ -86,7 +86,7 @@ namespace OSPSuite.Core.Domain.Services
          }
 
          //in all other cases, we check the object path used in the formula
-         formulaToCheck.ObjectPaths.Each(checkPathInEntity);
+         formulaToCheck?.ObjectPaths.Each(checkPathInEntity);
       }
 
       protected void CheckPath(IUsingFormula entity, ObjectPath objectPathToCheck, ResolveErrorBehavior resolveErrorBehavior)
