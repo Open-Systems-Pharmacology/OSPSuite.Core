@@ -176,17 +176,10 @@ namespace OSPSuite.Core.Domain.Services
          if (mergeContainer == null)
             return;
 
-         try
-         {
-            if (mergeBehavior == MergeBehavior.Extend)
-               _containerMergeTask.AddOrMergeContainer(mergeContainer, eventGroup);
-            else
-               _containerMergeTask.AddOrReplaceInContainer(mergeContainer, eventGroup);
-         }
-         catch (Exception)
-         {
-            throw new OSPSuiteException(Error.CannotFindParentContainerWithPath(mergeContainer.ParentPath.PathAsString, mergeContainer.Name, eventGroupBuildingBlock.Name, eventGroupBuildingBlock.Module.Name));
-         }
+         if (mergeBehavior == MergeBehavior.Extend)
+            _containerMergeTask.AddOrMergeContainer(mergeContainer, eventGroup);
+         else
+            _containerMergeTask.AddOrReplaceInContainer(mergeContainer, eventGroup);
       }
    }
 }
