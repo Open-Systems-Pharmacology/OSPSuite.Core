@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
@@ -11,56 +12,53 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
-   /// <summary>
-   ///    Creates events in model using events-building block configuration
-   /// </summary>
    internal interface IEventBuilderTask
    {
-      /// <summary>
-      ///    Adds events defined by build configuration to the given model
-      /// </summary>
-      void CreateEvents(ModelConfiguration modelConfiguration);
+      void MergeEventGroups(ModelConfiguration modelConfiguration);
    }
 
    internal class EventBuilderTask : IEventBuilderTask
    {
+      private readonly IEventGroupBuilderToEventGroupMapper _eventGroupMapper;
+      private readonly IContainerMergeTask _containerMergeTask;
       private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly ITransportBuilderToTransportMapper _transportMapper;
-      private readonly IEventGroupBuilderToEventGroupMapper _eventGroupMapper;
-      private EntityDescriptorMapList<IContainer> _allModelContainerDescriptors;
       private ICache<DescriptorCriteria, IEnumerable<IContainer>> _sourceCriteriaTargetContainerCache;
-      private ICache<DescriptorCriteria, IEnumerable<IContainer>> _applicationTransportTargetContainerCache;
+      private Cache<DescriptorCriteria, IEnumerable<IContainer>> _applicationTransportTargetContainerCache;
+      private EntityDescriptorMapList<IContainer> _allModelContainerDescriptors;
 
       public EventBuilderTask(
+         IContainerMergeTask containerMergeTask,
+         IEventGroupBuilderToEventGroupMapper eventGroupMapper,
          IKeywordReplacerTask keywordReplacerTask,
-         ITransportBuilderToTransportMapper transportMapper,
-         IEventGroupBuilderToEventGroupMapper eventGroupMapper)
+         ITransportBuilderToTransportMapper transportMapper)
       {
+         _eventGroupMapper = eventGroupMapper;
          _keywordReplacerTask = keywordReplacerTask;
          _transportMapper = transportMapper;
-         _eventGroupMapper = eventGroupMapper;
+         _containerMergeTask = containerMergeTask;
       }
 
-      public void CreateEvents(ModelConfiguration modelConfiguration)
+      public void MergeEventGroups(ModelConfiguration modelConfiguration)
+      {
+         createMergedContainerStructureInRoot(modelConfiguration);
+      }
+
+      private void createMergedContainerStructureInRoot(ModelConfiguration modelConfiguration)
       {
          try
          {
             var (model, simulationBuilder) = modelConfiguration;
-            _allModelContainerDescriptors = model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
 
+            _allModelContainerDescriptors = model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
             _sourceCriteriaTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
             _applicationTransportTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
 
-            //Cache all containers where the event group builder will be created using the source criteria
-            foreach (var eventGroupBuilder in simulationBuilder.EventGroups)
+            simulationBuilder.EventGroupAndMergeBehaviors.Each(eventGroupBuildingBlockAndMerge =>
             {
-               if (_sourceCriteriaTargetContainerCache.Contains(eventGroupBuilder.SourceCriteria))
-                  continue;
-
-               _sourceCriteriaTargetContainerCache.Add(eventGroupBuilder.SourceCriteria, _allModelContainerDescriptors.AllSatisfiedBy(eventGroupBuilder.SourceCriteria));
-            }
-
-            simulationBuilder.EventGroups.Each(x => createEventGroupFrom(x, modelConfiguration));
+               var (buildingBlock, mergeBehavior) = eventGroupBuildingBlockAndMerge;
+               mergeEventGroups(modelConfiguration, buildingBlock, mergeBehavior);
+            });
          }
          finally
          {
@@ -72,26 +70,40 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
+      private void mergeEventGroups(ModelConfiguration modelConfiguration, EventGroupBuildingBlock buildingBlock, MergeBehavior mergeBehavior)
+      {
+         foreach (var eventGroupBuilder in buildingBlock)
+         {
+            if (_sourceCriteriaTargetContainerCache.Contains(eventGroupBuilder.SourceCriteria))
+               continue;
+
+            _sourceCriteriaTargetContainerCache.Add(eventGroupBuilder.SourceCriteria, _allModelContainerDescriptors.AllSatisfiedBy(eventGroupBuilder.SourceCriteria));
+         }
+
+         buildingBlock.Each(x => createEventGroupFrom(x, modelConfiguration, buildingBlock, mergeBehavior));
+      }
+
       /// <summary>
       ///    Adds event group to all model containers with defined criteria
       /// </summary>
-      private void createEventGroupFrom(EventGroupBuilder eventGroupBuilder, ModelConfiguration modelConfiguration)
+      private void createEventGroupFrom(EventGroupBuilder eventGroupBuilder, ModelConfiguration modelConfiguration, EventGroupBuildingBlock eventGroupBuildingBlock, MergeBehavior mergeBehavior)
       {
          foreach (var sourceContainer in _sourceCriteriaTargetContainerCache[eventGroupBuilder.SourceCriteria])
          {
-            createEventGroupInContainer(eventGroupBuilder, sourceContainer, modelConfiguration);
+            createEventGroupInContainer(eventGroupBuilder, sourceContainer, modelConfiguration, eventGroupBuildingBlock, mergeBehavior);
          }
       }
 
       /// <summary>
       ///    Adds event group to source container where event takes place
       /// </summary>
-      private void createEventGroupInContainer(EventGroupBuilder eventGroupBuilder, IContainer sourceContainer, ModelConfiguration modelConfiguration)
+      private void createEventGroupInContainer(EventGroupBuilder eventGroupBuilder, IContainer sourceContainer, ModelConfiguration modelConfiguration, EventGroupBuildingBlock eventGroupBuildingBlock, MergeBehavior mergeBehavior)
       {
          //this creates recursively all event groups for the given builder
          var (_, simulationBuilder, replacementContext) = modelConfiguration;
          var eventGroup = _eventGroupMapper.MapFrom(eventGroupBuilder, simulationBuilder);
-         sourceContainer.Add(eventGroup);
+
+         tryMergeEventGroupInContainer(sourceContainer, eventGroup, mergeBehavior, eventGroupBuildingBlock);
 
          //needs to add the required transport into model only for the added event group
          foreach (var childEventGroup in eventGroup.GetAllContainersAndSelf<EventGroup>())
@@ -156,6 +168,18 @@ namespace OSPSuite.Core.Domain.Services
       private IEnumerable<IContainer> sourceContainersFor(TransportBuilder transport, EntityDescriptorMapList<IContainer> allEventGroupParentChildContainers)
       {
          return allEventGroupParentChildContainers.AllSatisfiedBy(transport.SourceCriteria);
+      }
+
+      private void tryMergeEventGroupInContainer(IContainer mergeContainer, EventGroup eventGroup, MergeBehavior mergeBehavior, EventGroupBuildingBlock eventGroupBuildingBlock)
+      {
+         //probably should never happen
+         if (mergeContainer == null)
+            return;
+
+         if (mergeBehavior == MergeBehavior.Extend)
+            _containerMergeTask.AddOrMergeContainer(mergeContainer, eventGroup);
+         else
+            _containerMergeTask.AddOrReplaceInContainer(mergeContainer, eventGroup);
       }
    }
 }
