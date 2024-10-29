@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Utility.Events;
 using OSPSuite.Core.Domain;
@@ -55,7 +56,10 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 
       private void showNoResultsAvailable()
       {
-         _view.HideResultsView();
+         if (_sensitivityAnalysis.Results.Errors.Any())
+            _view.ShowErrors(_sensitivityAnalysis.Results.Errors.Select(x => x.ErrorMessage).ToList());
+         else
+            _view.HideResultsView();
       }
 
       public void Handle(SensitivityAnalysisResultsUpdatedEvent eventToHandle)
