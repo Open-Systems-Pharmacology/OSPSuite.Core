@@ -1257,7 +1257,7 @@ namespace OSPSuite.Assets
             return $"Number of selected parameters: {numberOfParameters}";
          }
 
-         public static string SensitivityAnalsysisErrorMessage(IReadOnlyList<string> errorMessages)
+         public static string SensitivityAnalysisErrorMessage(IReadOnlyList<string> errorMessages)
          {
             var stringBuilder = new StringBuilder();
             errorMessages.Each(message =>

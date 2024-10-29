@@ -115,7 +115,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
       {
          showResult = false;
          _lblInfo.Visible = false;
-         var text = Captions.SensitivityAnalysis.SensitivityAnalsysisErrorMessage(errorMessages);
+         var text = Captions.SensitivityAnalysis.SensitivityAnalysisErrorMessage(errorMessages);
          lblError.Text = text;
          errorLayoutControl.Visible = true;
       }
