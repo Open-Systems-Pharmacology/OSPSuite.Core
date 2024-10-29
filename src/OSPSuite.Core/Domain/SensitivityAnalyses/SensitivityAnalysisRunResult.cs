@@ -118,5 +118,7 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
       public string[] AllParameterPaths => _allPKParameterSensitivities.Select(x => x.ParameterPath).Distinct().ToArray();
 
       public virtual int Count => _allPKParameterSensitivities.Count;
+
+      public IReadOnlyList<IndividualRunInfo> Errors { get; set; } = new List<IndividualRunInfo>();
    }
 }

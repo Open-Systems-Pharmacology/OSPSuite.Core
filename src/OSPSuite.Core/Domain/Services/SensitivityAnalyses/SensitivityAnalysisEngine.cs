@@ -77,7 +77,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 
       private Task<SensitivityAnalysisRunResult> calculateSensitivityBasedOn(SensitivityAnalysis sensitivityAnalysis, VariationData variationData, PopulationRunResults runResults, SensitivityAnalysisRunOptions sensitivityAnalysisRunOptions)
       {
-         return Task.Run(() => _runResultCalculator.CreateFor(sensitivityAnalysis, variationData, runResults.Results, sensitivityAnalysisRunOptions.ReturnOutputValues));
+         return Task.Run(() => _runResultCalculator.CreateFor(sensitivityAnalysis, variationData, runResults.Results, runResults.Errors, sensitivityAnalysisRunOptions.ReturnOutputValues));
       }
 
       private void simulationProgress(object sender, MultipleSimulationsProgressEventArgs eventArgs)

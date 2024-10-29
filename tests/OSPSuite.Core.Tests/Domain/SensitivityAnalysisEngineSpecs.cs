@@ -73,7 +73,7 @@ namespace OSPSuite.Core.Domain
          A.CallTo(() => _populationRunner.RunPopulationAsync(_modelCoreSimulation, _runOptions,  _dataTable, null, null)).ReturnsAsync(_populationRunResult);
 
          _sensitivityAnalysisResults=new SensitivityAnalysisRunResult();
-         A.CallTo(() => _runResultCalculator.CreateFor(_sensitivityAnalysis, _variationData, _populationRunResult.Results, false)).Returns(_sensitivityAnalysisResults);
+         A.CallTo(() => _runResultCalculator.CreateFor(_sensitivityAnalysis, _variationData, _populationRunResult.Results, A<IReadOnlyList<IndividualRunInfo>>._, false)).Returns(_sensitivityAnalysisResults);
 
       }
 

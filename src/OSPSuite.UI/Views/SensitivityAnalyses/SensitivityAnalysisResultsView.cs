@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using DevExpress.Data.PivotGrid;
 using DevExpress.Utils;
 using DevExpress.XtraEditors;
@@ -25,7 +26,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
       {
          _toolTipCreator = toolTipCreator;
          InitializeComponent();
-         _lblInfo = new LabelControl {Parent = this};
+         _lblInfo = new LabelControl { Parent = this };
          pivotGrid.ToolTipController = new ToolTipController();
 
          configureFields();
@@ -110,12 +111,22 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          return pivotGrid.GetCellsSummary();
       }
 
+      public void ShowErrors(IReadOnlyList<string> errorMessages)
+      {
+         showResult = false;
+         _lblInfo.Visible = false;
+         var text = Captions.SensitivityAnalysis.SensitivityAnalsysisErrorMessage(errorMessages);
+         lblError.Text = text;
+         errorLayoutControl.Visible = true;
+      }
+
       private bool showResult
       {
          set
          {
             layoutControl.Visible = value;
             _lblInfo.Visible = !layoutControl.Visible;
+            errorLayoutControl.Visible = false;
          }
       }
 
@@ -123,6 +134,11 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
       {
          base.InitializeResources();
          _lblInfo.AsFullViewText(Captions.SensitivityAnalysis.NoResultsAvailable);
+         errorLayoutControl.Visible = false;
+         errorLayoutItem.TextVisible = true;
+         errorLayoutItem.TextLocation = Locations.Top;
+         errorLayoutItem.AllowHtmlStringInCaption = true;
+         errorLayoutItem.Text = Captions.SensitivityAnalysis.ErrorsDuringPreviousRun;
          layoutItemParameters.TextVisible = false;
          btnExportToExcel.InitWithImage(ApplicationIcons.Excel, text: Captions.SensitivityAnalysis.ExportPKAnalysesSensitivityToExcel);
          layoutItemExportToExcel.AdjustLargeButtonSize(layoutControl);

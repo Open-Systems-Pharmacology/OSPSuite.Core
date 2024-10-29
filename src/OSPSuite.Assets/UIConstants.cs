@@ -302,7 +302,7 @@ namespace OSPSuite.Assets
          return $"Do you want to delete the directory '{newDirectoryName}' and continue?";
       }
 
-      public static void AppendListItem(StringBuilder sb, bool html, string listItem, int index)
+      public static void AppendOrderedListItem(StringBuilder sb, bool html, string listItem, int index)
       {
          if (html)
             sb.Append($"<li>{listItem}</li>");
@@ -326,7 +326,7 @@ namespace OSPSuite.Assets
          list.Each((item, i) =>
          {
             //index in list item should start at 1
-            AppendListItem(sb, html, item, i + 1);
+            AppendOrderedListItem(sb, html, item, i + 1);
          });
 
          if (html)
@@ -1196,6 +1196,7 @@ namespace OSPSuite.Assets
          public static readonly string ParameterSelection = "Parameters";
          public static readonly string Results = "Results";
          public static readonly string NoResultsAvailable = "No result available. Please start sensitivity analysis";
+         public static readonly string ErrorsDuringPreviousRun = "<b>The last run resulted in one or more errors:</b>";
 
          public static string SensitivityAnalysisFinished(string duration)
          {
@@ -1254,6 +1255,19 @@ namespace OSPSuite.Assets
          public static string NumberOfSelectedParameters(int numberOfParameters)
          {
             return $"Number of selected parameters: {numberOfParameters}";
+         }
+
+         public static string SensitivityAnalsysisErrorMessage(IReadOnlyList<string> errorMessages)
+         {
+            var stringBuilder = new StringBuilder();
+            errorMessages.Each(message =>
+            {
+               stringBuilder.AppendLine($"{message}");
+               stringBuilder.AppendLine();
+               stringBuilder.AppendLine();
+            });
+            
+            return stringBuilder.ToString();
          }
       }
 

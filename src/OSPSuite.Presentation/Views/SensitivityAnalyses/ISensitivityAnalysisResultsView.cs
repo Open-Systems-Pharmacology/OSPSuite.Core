@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using OSPSuite.Presentation.Presenters.SensitivityAnalyses;
 
 namespace OSPSuite.Presentation.Views.SensitivityAnalyses
@@ -8,5 +9,6 @@ namespace OSPSuite.Presentation.Views.SensitivityAnalyses
       void HideResultsView();
       void BindTo(DataTable dataTable);
       DataTable GetSummaryData();
+      void ShowErrors(IReadOnlyList<string> errorMessages);
    }
 }
