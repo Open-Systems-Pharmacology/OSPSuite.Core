@@ -104,26 +104,33 @@ namespace OSPSuite.Core.Comparison
 
       protected void CompareDoubleValues<TInput>(Func<TInput, double> funcEvaluation, string propertyName, IComparison<TInput> comparison, Func<TInput, Unit> displayUnitFunc = null) where TInput : class
       {
-         // Determine the display unit to use for both values (based on object1)
-         var standardDisplayUnit = comparison.Object1 is IWithDimension && displayUnitFunc != null ? displayUnitFunc(comparison.Object1) : null;
-
-         string ConsistentUnitFormatter(TInput input, double value)
+         try
          {
-                if (!(input is IWithDimension withDimension) || standardDisplayUnit == null || withDimension.Dimension == null)
-                    return _numericFormatter.Format(value);
+            // Determine the display unit to use for both values (based on object1)
+            var standardDisplayUnit = comparison.Object1 is IWithDimension && displayUnitFunc != null ? displayUnitFunc(comparison.Object1) : null;
 
-                // Convert the value to object1's unit for consistent display
-                var valueInStandardUnit = withDimension.ConvertToUnit(value, standardDisplayUnit);
-            return _numericFormatter.Format(valueInStandardUnit, standardDisplayUnit);
+            string ConsistentUnitFormatter(TInput input, double value)
+            {
+               if (!(input is IWithDimension withDimension) || standardDisplayUnit == null || withDimension.Dimension == null)
+                  return _numericFormatter.Format(value);
+
+               // Convert the value to object1's unit for consistent display
+               var valueInStandardUnit = withDimension.ConvertToUnit(value, standardDisplayUnit);
+               return _numericFormatter.Format(valueInStandardUnit, standardDisplayUnit);
+            }
+
+            CompareValues(
+               funcEvaluation,
+               propertyName,
+               comparison,
+               (x, y) => ValueComparer.AreValuesEqual(x, y, comparison.Settings.RelativeTolerance),
+               ConsistentUnitFormatter
+            );
          }
-
-         CompareValues(
-            funcEvaluation,
-            propertyName,
-            comparison,
-            (x, y) => ValueComparer.AreValuesEqual(x, y, comparison.Settings.RelativeTolerance),
-            ConsistentUnitFormatter
-         );
+         catch (OSPSuiteException)
+         {
+            //in that case formula could not be evaluated for the given objects (can happen in pksim with parameters within alternatives)
+         }
       }
 
       /// <summary>

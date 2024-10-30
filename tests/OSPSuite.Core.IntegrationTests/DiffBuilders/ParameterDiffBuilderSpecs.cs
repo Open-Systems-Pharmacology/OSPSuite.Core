@@ -191,7 +191,7 @@ namespace OSPSuite.Core.DiffBuilders
          _report.Count.ShouldBeEqualTo(1);
          var propertyDiffItem = _report[0].DowncastTo<PropertyValueDiffItem>();
          propertyDiffItem.FormattedValue1.ShouldBeEqualTo("1.000 m");
-         propertyDiffItem.FormattedValue2.ShouldBeEqualTo("1.000 mm");
+         propertyDiffItem.FormattedValue2.ShouldBeEqualTo("1.000E-3 m");
       }
    }
 
