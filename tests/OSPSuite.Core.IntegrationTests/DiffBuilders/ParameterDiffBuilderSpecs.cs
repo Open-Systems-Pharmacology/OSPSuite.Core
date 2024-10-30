@@ -162,7 +162,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_parameters_having_the_different_base_values_but_the_same_display_value : concern_for_ObjectComparer
+   public class When_comparing_parameters_with_different_unit_representations : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -186,7 +186,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
 
       [Observation]
-      public void should_have_some_differences()
+      public void should_present_values_in_consistent_base_unit()
       {
          _report.Count.ShouldBeEqualTo(1);
          var propertyDiffItem = _report[0].DowncastTo<PropertyValueDiffItem>();
