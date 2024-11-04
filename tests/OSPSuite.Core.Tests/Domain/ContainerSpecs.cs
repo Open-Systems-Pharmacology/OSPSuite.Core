@@ -261,6 +261,29 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_adding_a_container_to_a_parent_container : concern_for_Container
+   {
+      private Container _subContainer;
+
+      protected override void Context()
+      {
+         base.Context();
+         _subContainer = new Container().WithName("subcontainer");
+         _subContainer.ParentPath = new ObjectPath("the", "path");
+      }
+
+      protected override void Because()
+      {
+         sut.Add(_subContainer);
+      }
+
+      [Observation]
+      public void the_child_container_should_have_parent_path_cleared()
+      {
+         _subContainer.ParentPath.ShouldBeNull();
+      }
+   }
+
    public class When_updating_properties_from_another_container : concern_for_Container
    {
       [Observation]

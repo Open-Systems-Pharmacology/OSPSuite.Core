@@ -98,9 +98,9 @@ namespace OSPSuite.Core.Domain
    public class Container : Entity, IContainer
    {
       private readonly List<IEntity> _children = new List<IEntity>();
-      
+
       private ContainerMode _mode = ContainerMode.Logical;
-      
+
       private ContainerType _containerType;
 
       //Path to parent container is null by default. In this case, it will be evaluated from container structure
@@ -128,8 +128,12 @@ namespace OSPSuite.Core.Domain
             return;
          }
 
+         if (newChild is IContainer childContainer)
+            childContainer.ParentPath = null;
+
          _children.Add(newChild);
          newChild.ParentContainer = this;
+
          OnChanged();
       }
 
@@ -143,7 +147,7 @@ namespace OSPSuite.Core.Domain
 
       public ObjectPath ParentPath
       {
-         get => _parentPath;
+         get => ParentContainer == null ? _parentPath : null;
          set => SetProperty(ref _parentPath, value);
       }
 
