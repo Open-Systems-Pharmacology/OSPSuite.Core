@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
@@ -164,8 +165,6 @@ namespace OSPSuite.Core.Domain.Services
          ExpandLumenSegmentReferencesIn(rootContainer);
       }
 
-  
-
       private bool referencesNeighborhood(ObjectPath path) => path.Contains(NBH);
 
       /// <summary>
@@ -234,7 +233,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateLumenSegmentReferencingPath(EntityFormulaPath entityFormulaPath, IContainer rootContainer)
       {
-         var (entity,  path) = entityFormulaPath;
+         var (entity, path) = entityFormulaPath;
          var pathAsList = path.ToList();
          var firstIndex = pathAsList.IndexOf(LUMEN_SEGMENT);
          var lastIndex = pathAsList.LastIndexOf(LUMEN_SEGMENT);
@@ -311,7 +310,7 @@ namespace OSPSuite.Core.Domain.Services
 
       public void ExpandDynamicFormulaIn(IContainer rootContainer)
       {
-         var allFormulaUsable = rootContainer.GetAllChildren<IFormulaUsable>().ToEntityDescriptorMapList();
+         var allFormulaUsable = rootContainer.GetAllChildren<IFormulaUsable>();
          var allEntityUsingDynamicFormula = rootContainer.GetAllChildren<IUsingFormula>(x => x.Formula.IsDynamic());
 
          allEntityUsingDynamicFormula.Each(entityUsingFormula =>
@@ -322,31 +321,66 @@ namespace OSPSuite.Core.Domain.Services
                throw new CircularReferenceInSumFormulaException(dynamicFormula.Name, entityUsingFormula.Name);
 
             dynamicFormula.Criteria = updateDynamicFormulaCriteria(dynamicFormula, entityUsingFormula);
-            entityUsingFormula.Formula = dynamicFormula.ExpandUsing(allFormulaUsable, _objectPathFactory, _objectBaseFactory);
+
+            //this needs to be done after updating the criteria as dynamic tags might be added to the criteria and would 
+            //render the descriptor map list invalid
+            var allFormulaUsableDescriptor = allFormulaUsable.ToEntityDescriptorMapList();
+            entityUsingFormula.Formula = dynamicFormula.ExpandUsing(allFormulaUsableDescriptor, _objectPathFactory, _objectBaseFactory);
          });
       }
 
       private DescriptorCriteria updateDynamicFormulaCriteria(DynamicFormula formula, IUsingFormula usingFormula)
       {
-         //we need to replace IN PARENT criteria with actual criteria matching the parent of the usingFormula
          var criteria = formula.Criteria;
-         var allInParentTags = criteria.Where(x => x.IsAnImplementationOf<InParentCondition>()).ToList();
          var parent = usingFormula.ParentContainer;
-         if (!allInParentTags.Any() || parent == null)
+         if (parent == null)
             return criteria;
+
+
+         var modifiedCriteria = modifyInParentFormulaCriteria(criteria, parent);
+         modifiedCriteria = modifyInChildrenFormulaCriteria(modifiedCriteria, parent);
+
+         return modifiedCriteria;
+      }
+
+      private DescriptorCriteria modifyInParentFormulaCriteria(DescriptorCriteria criteria, IContainer parent) => modifyDynamicCriteria<InParentCondition>(criteria, parent).criteria;
+
+      private DescriptorCriteria modifyInChildrenFormulaCriteria(DescriptorCriteria criteria, IContainer parent) {
+         var (modifyCriteria, modified) = modifyDynamicCriteria<InChildrenCondition>(criteria, parent);
+         if(!modified)
+            return criteria;
+
+         //in case of IN CHILDREN, we need to exclude the direct children from the parent from the search.
+         //The only way to do this is to add a condition to exclude the children explicitly. We create a random string as tag
+         //to avoid collision and set it in all DIRECT only children  so that they will be excluded 
+
+         var uniqueTag = ShortGuid.NewGuid();
+         parent.GetChildren<IFormulaUsable>().Each(x => x.AddTag(uniqueTag));
+         modifyCriteria.Add(new NotMatchTagCondition(uniqueTag));
+
+         return modifyCriteria;
+      }
+
+      private (DescriptorCriteria criteria, bool modified) modifyDynamicCriteria<T>(DescriptorCriteria criteria, IContainer parent) where T : TagCondition
+      {
+         var allDynamicTags = criteria.Where(x => x.IsAnImplementationOf<T>()).ToList();
+
+         if (!allDynamicTags.Any())
+            return (criteria, false);
 
          //because we need to restrict operations by adding criteria automatically, only AND makes sense
          if (criteria.Operator != CriteriaOperator.And)
             throw new OSPSuiteException(Error.InParentTagCanOnlyBeUsedWithAndOperator);
 
-         //we clone the criteria and remove all instances of InParentCondition. Then we add the criteria to the parent specifically
+         //we clone the criteria and remove all instances of the dynamic condition. Then we add the criteria to the parent specifically
          var modifiedCriteria = criteria.Clone();
-         allInParentTags.Each(x => modifiedCriteria.RemoveByTag<InParentCondition>(x.Tag));
+         allDynamicTags.Each(x => modifiedCriteria.RemoveByTag<T>(x.Tag));
 
          //add to the formula the link to parent. We use the consolidated path here so that we do not deal with the root container as criteria
          var parentPath = _entityPathResolver.PathFor(parent).ToPathArray();
          parentPath.Each(x => modifiedCriteria.Add(new InContainerCondition(x)));
-         return modifiedCriteria;
+
+         return (modifiedCriteria, true);
       }
 
       public string AddParentVolumeReferenceToFormula(IFormula formula)
