@@ -116,7 +116,7 @@ namespace OSPSuite.Core.Domain.Services
          var potentialParameter = parentContainer.Parameter(parameterValue.Name);
          parentContainer.RemoveChild(potentialParameter);
 
-         //for sure it's not there. Add itIn
+         //for sure it's not there. Add it
          return parameter.WithParentContainer(parentContainer);
       }
 
