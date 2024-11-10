@@ -668,6 +668,7 @@ namespace OSPSuite.Core.Domain
       public const string IN_CONTAINER = "In container";
       public const string NOT_IN_CONTAINER = "Not in container";
       public const string IN_PARENT = "In parent";
+      public const string IN_CHILDREN = "In children";
       public const string LLOQ = "LLOQ";
 
       public static string NameWithUnitFor(string name, IDimension dimension) => NameWithUnitFor(name, dimension?.DefaultUnit);

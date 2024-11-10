@@ -366,6 +366,92 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   internal class When_expanding_all_dynamic_formula_in_a_model_using_in_children_criteria : concern_for_FormulaTask
+   {
+      private IModel _model;
+      private IParameter _sumVolume;
+      private IParameter _volume1_1;
+      private IParameter _volume1_2;
+      private IParameter _volume2_1;
+      private Container _container1;
+      private Container _container2;
+      private Container _subContainer1_1;
+      private Container _subContainer1_2;
+      private Container _subContainer2_1;
+      private Parameter _volume1;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _objectBaseFactory.Create<ExplicitFormula>()).Returns(new ExplicitFormula());
+         _model = new Model();
+         _container1 = new Container().WithName("Container1");
+         _container2 = new Container().WithName("Container2");
+         _subContainer1_1 = new Container().WithName("SubContainer1_1").WithParentContainer(_container1);
+         _subContainer1_2 = new Container().WithName("SubContainer1_2").WithParentContainer(_container1);
+         _subContainer2_1 = new Container().WithName("SubContainer2_1").WithParentContainer(_container2);
+
+         _volume1_1 = new Parameter().WithName("volume").WithFormula(new ConstantFormula(1));
+         _volume1_2 = new Parameter().WithName("volume").WithFormula(new ConstantFormula(2));
+         _volume2_1 = new Parameter().WithName("volume").WithFormula(new ConstantFormula(3));
+         _volume1 = new Parameter().WithName("volume").WithFormula(new ConstantFormula(4));
+         _sumVolume = new Parameter().WithName("dynamic").WithFormula(new ConstantFormula(3));
+
+         //simulate a real ROOT Container
+         var root = new Container().WithContainerType(ContainerType.Simulation).WithName("root");
+         _model.Root = root;
+
+         //creating the following structure
+         //root
+         //  |Container1
+         //  |  |Dynamic = sum of all volume in children of Container 1
+         //  |  |volume = 4 (this parameter should not be used)
+         //  |  |SubContainer1_1
+         //  |  |  |volume = 1
+         //  |  |SubContainer1_2
+         //  |  |  |volume = 2
+         //  |Container2
+         //  |  |SubContainer2_2
+         //  |  |  |volume = 3 (this parameter should not be used)
+
+
+         root.Add(_container1);
+         root.Add(_container2);
+
+         _container1.Add(_sumVolume);
+         _container1.Add(_volume1);
+         _subContainer1_1.Add(_volume1_1);
+         _subContainer1_2.Add(_volume1_2);
+         //this parameter is not in the same parent and should not be used
+         _subContainer2_1.Add(_volume2_1);
+         var sumFormula = new SumFormula
+         {
+            Criteria = Create.Criteria(x => x.With("volume").InChildren())
+         };
+         _sumVolume.Formula = sumFormula;
+      }
+
+      protected override void Because()
+      {
+         sut.ExpandDynamicFormulaIn(_model);
+      }
+
+      [Observation]
+      public void should_replace_all_dynamic_formula_with_the_corresponding_explicit_formula()
+      {
+         _sumVolume.Formula.IsExplicit().ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_have_created_an_explicit_formula_that_is_the_sum_of_the_defined_parameters()
+      {
+         var explicitFormula = _sumVolume.Formula.DowncastTo<ExplicitFormula>();
+         //volume_1_1 + volume_1_2 but not volume_2_1 and not volume1
+         explicitFormula.FormulaString.ShouldBeEqualTo("P_1 + P_2");
+         explicitFormula.ObjectPaths.Count().ShouldBeEqualTo(2);
+      }
+   }
+
    internal class When_replacing_the_neighborhood_keyword_in_a_well_defined_path : concern_for_FormulaTask
    {
       private IParameter _liverCellParameter;
