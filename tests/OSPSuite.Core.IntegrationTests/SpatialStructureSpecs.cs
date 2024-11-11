@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -87,6 +89,21 @@ namespace OSPSuite.Core
       {
          sut.Neighborhoods.Each(neighbor => neighbor.FirstNeighborPath.ShouldNotBeNull());
          sut.Neighborhoods.Each(neighbor => neighbor.SecondNeighborPath.ShouldNotBeNull());
+      }
+
+      [Observation]
+      public void neighbor_paths_should_be_cloned_not_shared()
+      {
+         var sourceNeighborhood = _sourceSpatialStructure.Neighborhoods.First();
+         var clonedNeighborhood = sut.Neighborhoods.First();
+
+         // Check that paths are different instances
+         clonedNeighborhood.FirstNeighborPath.ShouldNotBeEqualTo(sourceNeighborhood.FirstNeighborPath);
+         clonedNeighborhood.SecondNeighborPath.ShouldNotBeEqualTo(sourceNeighborhood.SecondNeighborPath);
+
+         // Check that path values remain the same
+         clonedNeighborhood.FirstNeighborPath.PathAsString.ShouldBeEqualTo(sourceNeighborhood.FirstNeighborPath.PathAsString);
+         clonedNeighborhood.SecondNeighborPath.PathAsString.ShouldBeEqualTo(sourceNeighborhood.SecondNeighborPath.PathAsString);
       }
 
       [Observation]

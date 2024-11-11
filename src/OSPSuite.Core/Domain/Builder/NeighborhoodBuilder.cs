@@ -95,8 +95,8 @@ namespace OSPSuite.Core.Domain.Builder
          if (sourceNeighborhood == null)
             return;
 
-         FirstNeighborPath = sourceNeighborhood.FirstNeighborPath;
-         SecondNeighborPath = sourceNeighborhood.SecondNeighborPath;
+         FirstNeighborPath = sourceNeighborhood.FirstNeighborPath.Clone<ObjectPath>();
+         SecondNeighborPath = sourceNeighborhood.SecondNeighborPath.Clone<ObjectPath>();
       }
    }
 }
