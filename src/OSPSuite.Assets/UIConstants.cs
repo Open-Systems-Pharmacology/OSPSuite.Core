@@ -1845,6 +1845,16 @@ namespace OSPSuite.Assets
       public static string TypeNotSupported(string typeName) => $"{typeName} is not currently been handled";
 
       public static string CannotAccessValueByPathUsingWildCard(string path) => $"Accessing value by path is not supported for path containing wildcard ({path})";
+
+      public static string EquivalentNeighborhoodsAreDefinedFor(string firstNeighbor, string secondNeighbor)
+      {
+         return $"More than one neighborhood is defined connecting '{firstNeighbor}' and '{secondNeighbor}'";
+      }
+
+      public static string NeighborhoodDefinition(string neighborhoodName, string firstNeighbor, string secondNeighbor, string spatialStructure)
+      {
+         return $"Neighborhood '{neighborhoodName}' connects '{firstNeighbor}' and '{secondNeighbor}' in '{spatialStructure}'";
+      }
    }
 
    public static class Validation
