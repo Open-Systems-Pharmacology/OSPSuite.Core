@@ -16,6 +16,45 @@ namespace OSPSuite.Core.Services
       }
    }
 
+   internal class When_validating_a_simulation_configuration_with_colliding_neighborhoods : concern_for_SimulationConfigurationValidator
+   {
+      private SimulationConfiguration _simulationConfiguration;
+      private ValidationResult _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulationConfiguration = new SimulationConfiguration();
+         _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(moduleWithNeighborhood("name1")));
+         _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(moduleWithNeighborhood("name2")));
+      }
+
+      private Module moduleWithNeighborhood(string neighborhoodName)
+      {
+         var spatialStructure = new SpatialStructure { NeighborhoodsContainer = new Container() };
+         spatialStructure.AddNeighborhood(new NeighborhoodBuilder { FirstNeighborPath = new ObjectPath("path1"), SecondNeighborPath = new ObjectPath("path2") }.WithName(neighborhoodName));
+
+         return new Module { spatialStructure };
+      }
+
+      protected override void Because()
+      {
+         _result = sut.Validate(_simulationConfiguration);
+      }
+
+      [Observation]
+      public void the_result_should_be_invalid()
+      {
+         _result.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
+      }
+
+      [Observation]
+      public void the_error_should_only_be_reported_once_instead_of_for_both_neighborhoods()
+      {
+         _result.Messages.Count().ShouldBeEqualTo(1);
+      }
+   }
+
    internal class When_validating_a_simulation_configuration_with_an_incorrect_application : concern_for_SimulationConfigurationValidator
    {
       private SimulationConfiguration _simulationConfiguration;
