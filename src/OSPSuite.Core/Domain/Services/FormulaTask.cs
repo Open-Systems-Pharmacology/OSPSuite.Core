@@ -336,7 +336,6 @@ namespace OSPSuite.Core.Domain.Services
          if (parent == null)
             return criteria;
 
-
          var modifiedCriteria = modifyInParentFormulaCriteria(criteria, parent);
          modifiedCriteria = modifyInChildrenFormulaCriteria(modifiedCriteria, parent);
 
@@ -345,9 +344,10 @@ namespace OSPSuite.Core.Domain.Services
 
       private DescriptorCriteria modifyInParentFormulaCriteria(DescriptorCriteria criteria, IContainer parent) => modifyDynamicCriteria<InParentCondition>(criteria, parent).criteria;
 
-      private DescriptorCriteria modifyInChildrenFormulaCriteria(DescriptorCriteria criteria, IContainer parent) {
+      private DescriptorCriteria modifyInChildrenFormulaCriteria(DescriptorCriteria criteria, IContainer parent)
+      {
          var (modifyCriteria, modified) = modifyDynamicCriteria<InChildrenCondition>(criteria, parent);
-         if(!modified)
+         if (!modified)
             return criteria;
 
          //in case of IN CHILDREN, we need to exclude the direct children from the parent from the search.
