@@ -1872,7 +1872,8 @@ namespace OSPSuite.Assets
 
       public static string FormulaIsBlackBoxIn(string entity, string entityPath)
       {
-         return $"A black box formula is still in use in entity '{entity}' with path '{entityPath}'";
+         return $"A formula, which should be replaced during simulation creation, was not replaced. These types of formulas are known as Black Box Formulas. Check parameter definitions for the following entity '{entityPath}'." +
+                "See https://tinyurl.com/BlackBoxFormula for more information.";
       }
 
       public static string PathContainsReservedKeywords(string entity, string entityType, string entityPath, string reference)
