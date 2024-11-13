@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Domain
       public ValidationResult(IEnumerable<ValidationMessage> messages)
       {
          _messages = new Cache<IObjectBase, ValidationMessage>(x => x.Object);
-         _messages.AddRange(messages);
+         addMessages(messages);
       }
 
       public ValidationResult(params ValidationResult[] validationResults) : this(validationResults.SelectMany(x => x.Messages))
@@ -30,8 +30,13 @@ namespace OSPSuite.Core.Domain
 
       public ValidationResult AddMessagesFrom(ValidationResult validationResult)
       {
-         validationResult.Messages.Each(message => AddMessage(message.NotificationType, message.Object, message.Text, message.BuildingBlock, message.Details));
+         addMessages(validationResult.Messages);
          return this;
+      }
+
+      private void addMessages(IEnumerable<ValidationMessage> validationResultMessages)
+      {
+         validationResultMessages.Each(message => AddMessage(message.NotificationType, message.Object, message.Text, message.BuildingBlock, message.Details));
       }
 
       public virtual void AddMessage(NotificationType notificationType, IObjectBase invalidObject, string notification, IBuildingBlock buildingBlock = null, IEnumerable<string> details = null)
