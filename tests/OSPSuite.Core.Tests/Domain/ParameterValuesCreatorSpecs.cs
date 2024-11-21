@@ -29,6 +29,38 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   internal class When_creating_a_parameter_value_for_a_parameter_with_formula_and_object_path : concern_for_ParameterValuesCreator
+   {
+      private ObjectPath _objectPath;
+      private IParameter _parameter;
+      private ParameterValue _psv;
+
+      protected override void Context()
+      {
+         base.Context();
+         _objectPath = new ObjectPath("A", "B", "C");
+         _parameter = new Parameter().WithDimension(DomainHelperForSpecs.FractionDimensionForSpecs());
+         _parameter.Formula = new ExplicitFormula("t");
+      }
+
+      protected override void Because()
+      {
+         _psv = sut.CreateParameterValue(_objectPath, _parameter);
+      }
+
+      [Observation]
+      public void the_value_should_be_null()
+      {
+         _psv.Value.ShouldBeNull();
+      }
+
+      [Observation]
+      public void the_formula_should_be_set()
+      {
+         _psv.Formula.IsExplicit().ShouldBeTrue();
+      }
+   }
+
    internal class When_creating_a_parameter_value_for_a_parameter_and_object_path : concern_for_ParameterValuesCreator
    {
       private ObjectPath _objectPath;
@@ -40,11 +72,18 @@ namespace OSPSuite.Core.Domain
          base.Context();
          _objectPath = new ObjectPath("A", "B", "C");
          _parameter = DomainHelperForSpecs.ConstantParameterWithValue(5).WithDimension(DomainHelperForSpecs.FractionDimensionForSpecs());
+         _parameter.Formula = new ExplicitFormula("5");
       }
 
       protected override void Because()
       {
          _psv = sut.CreateParameterValue(_objectPath, _parameter);
+      }
+
+      [Observation]
+      public void the_formula_should_be_null()
+      {
+         _psv.Formula.ShouldBeNull();
       }
 
       [Observation]
