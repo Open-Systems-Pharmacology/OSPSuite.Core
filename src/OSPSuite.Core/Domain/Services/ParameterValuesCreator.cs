@@ -182,12 +182,22 @@ namespace OSPSuite.Core.Domain.Services
          var parameterValue = CreateParameterValue(parameterPath, 0.0, parameter.Dimension, parameter.DisplayUnit, parameter.ValueOrigin,
             parameter.IsDefault);
 
-         if (parameter.Formula != null && !parameter.Formula.IsConstant())
-            parameterValue.Formula = _cloneManager.Clone(parameter.Formula, new FormulaCache());
-         else
+         if (shouldSetValue(parameter))
+         {
             parameterValue.Value = parameter.Value;
-
+            parameterValue.Formula = null;
+         }
+         else
+         {
+            parameterValue.Formula = _cloneManager.Clone(parameter.Formula, new FormulaCache());
+            parameterValue.Value = null;
+         }
          return parameterValue;
+      }
+
+      private static bool shouldSetValue(IParameter parameter)
+      {
+         return parameter.IsFixedValue || parameter.Formula == null || parameter.Formula.IsConstant();
       }
 
       public ParameterValue CreateEmptyStartValue(IDimension dimension) => CreateParameterValue(ObjectPath.Empty, 0.0, dimension);
