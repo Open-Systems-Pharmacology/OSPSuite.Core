@@ -103,8 +103,11 @@ namespace OSPSuite.Core.Domain.Services
          {
             var formulaSource = formulaSourceFor(expressionParameters.AllByName(formulaTarget.Name).ToList(), formulaTarget);
 
-            if (formulaSource != null)
-               formulaTarget.Formula = _cloneManager.Clone(formulaSource.Formula, formulaCache);
+            if (formulaSource == null) 
+               return;
+
+            formulaTarget.Formula = _cloneManager.Clone(formulaSource.Formula, formulaCache);
+            formulaTarget.Value = null;
          });
       }
 
