@@ -235,6 +235,12 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
+      public void the_parameter_value_should_have_null_value()
+      {
+         _parameterValues.First().Value.ShouldBeNull();
+      }
+
+      [Observation]
       public void the_parameter_values_should_include_expression_parameters_for_the_compartment()
       {
          _parameterValues.Select(x => x.Path.ToString()).ShouldOnlyContain($"Organism|VenousBlood|Plasma|protein|{Constants.Parameters.REL_EXP}");
