@@ -159,4 +159,42 @@ namespace OSPSuite.Core.Mappers
          _processRateParameter.Persistable.ShouldBeTrue();
       }
    }
+
+   internal class When_mapping_a_reaction_builder_to_a_reaction_for_which_all_parameter_rates_should_be_generated : concern_for_ReactionBuilderToReactionMapper
+   {
+      private IFormula _kinetic;
+      private IParameter _processRateParameter;
+
+      protected override void Context()
+      {
+         base.Context();
+         _kinetic = A.Fake<IFormula>();
+         _reactionBuilder.CreateProcessRateParameter = false;
+         A.CallTo(() => _formulaMapper.MapFrom(_kinetic, _simulationBuilder)).ReturnsLazily(x => new ExplicitFormula("clone"));
+         _reactionBuilder.Name = "Reaction";
+         _reactionBuilder.Formula = _kinetic;
+         A.CallTo(() => _parameterMapper.MapFrom(_reactionBuilder.Parameters, _simulationBuilder)).Returns(new List<IParameter>());
+         _processRateParameter = new Parameter();
+         A.CallTo(() => _objectBaseFactory.Create<IParameter>()).Returns(_processRateParameter);
+         _simulationConfiguration.CreateAllProcessRateParameters = true;
+      }
+
+      protected override void Because()
+      {
+         _reaction = sut.MapFromLocal(_reactionBuilder, _container, _simulationBuilder);
+         _processRateParameter = _reaction.GetSingleChildByName<IParameter>(Constants.Parameters.PROCESS_RATE);
+      }
+
+      [Observation]
+      public void should_have_created_the_parameter()
+      {
+         _processRateParameter.ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void created_Parameter_should_not_be_persistable()
+      {
+         _processRateParameter.Persistable.ShouldBeFalse();
+      }
+   }
 }

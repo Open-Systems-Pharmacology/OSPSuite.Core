@@ -46,7 +46,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
          reaction.AddChildren(_parameterMapper.MapLocalFrom(reactionBuilder, simulationBuilder));
 
-         if (reactionBuilder.CreateProcessRateParameter)
+         if (reactionBuilder.CreateProcessRateParameter || simulationBuilder.CreateAllProcessRateParameters)
             reaction.Add(processRateParameterFor(reactionBuilder, simulationBuilder));
 
          simulationBuilder.AddBuilderReference(reaction, reactionBuilder);

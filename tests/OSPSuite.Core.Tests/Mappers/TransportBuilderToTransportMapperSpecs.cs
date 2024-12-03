@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
@@ -7,7 +6,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
-using OSPSuite.Helpers;
+using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Mappers
@@ -260,6 +259,49 @@ namespace OSPSuite.Core.Mappers
          A.CallTo(() => _parameterMapper.MapFrom(_transportBuilder.Parameters, _simulationBuilder)).Returns(new List<IParameter>());
          _processRateParameter = new Parameter();
          A.CallTo(() => _objectBaseFactory.Create<IParameter>()).Returns(_processRateParameter);
+      }
+
+      protected override void Because()
+      {
+         _transport = sut.MapFrom(_transportBuilder, _simulationBuilder);
+         _processRateParameter = _transport.GetSingleChildByName<IParameter>(Constants.Parameters.PROCESS_RATE);
+      }
+
+      [Observation]
+      public void should_have_set_the_tag_passive()
+      {
+         _processRateParameter.Tags.Contains(Constants.PASSIVE).ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_not_have_set_the_tag_active()
+      {
+         _processRateParameter.Tags.Contains(Constants.ACTIVE).ShouldBeFalse();
+      }
+   }
+
+   internal class When_mapping_a_passive_builder_to_a_transport_for_which_all_parameter_rates_should_be_generated : concern_for_TransportBuilderToTransportMapper
+   {
+      private TransportBuilder _transportBuilder;
+      private IFormula _kinetic;
+      private Transport _transport;
+      private IParameter _processRateParameter;
+
+      protected override void Context()
+      {
+         base.Context();
+         _transportBuilder = new TransportBuilder();
+         _kinetic = A.Fake<IFormula>();
+         _transportBuilder.CreateProcessRateParameter = false;
+         A.CallTo(() => _formulaBuilderToFormulaMapper.MapFrom(_kinetic, _simulationBuilder)).ReturnsLazily(x => new ExplicitFormula("clone"));
+
+         _transportBuilder.TransportType = TransportType.Diffusion;
+         _transportBuilder.Name = "PassiveTransport";
+         _transportBuilder.Formula = _kinetic;
+         A.CallTo(() => _parameterMapper.MapFrom(_transportBuilder.Parameters, _simulationBuilder)).Returns(new List<IParameter>());
+         _processRateParameter = new Parameter();
+         A.CallTo(() => _objectBaseFactory.Create<IParameter>()).Returns(_processRateParameter);
+         _simulationConfiguration.CreateAllProcessRateParameters = true;
       }
 
       protected override void Because()
