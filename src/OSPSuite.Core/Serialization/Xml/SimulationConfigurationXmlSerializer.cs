@@ -16,6 +16,7 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          Map(x => x.Individual);
          Map(x => x.SimulationSettings);
+         Map(x => x.CreateAllProcessRateParameters);
          MapEnumerable(x => x.ModuleConfigurations, x => x.AddModuleConfiguration);
          MapEnumerable(x => x.ExpressionProfiles, x => x.AddExpressionProfile);
          MapEnumerable(x => x.AllCalculationMethods, x => x.AddCalculationMethod);

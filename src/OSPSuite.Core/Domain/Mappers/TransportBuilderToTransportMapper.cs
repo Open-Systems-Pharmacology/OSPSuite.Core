@@ -45,7 +45,7 @@ namespace OSPSuite.Core.Domain.Mappers
          addLocalParameters(transport, transportBuilder, simulationBuilder);
 
          //lastly, add parameter rate transporter if required
-         if (transportBuilder.CreateProcessRateParameter)
+         if (transportBuilder.CreateProcessRateParameter || simulationBuilder.CreateAllProcessRateParameters)
             transport.Add(processRateParameterFor(transportBuilder, simulationBuilder));
 
          return transport;

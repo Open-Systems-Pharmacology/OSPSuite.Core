@@ -17,6 +17,7 @@ namespace OSPSuite.Core.Domain.Builder
       public bool ShouldValidate { get; set; } = true;
       public bool ShowProgress { get; set; } = true;
       public bool PerformCircularReferenceCheck { get; set; } = true;
+      public bool CreateAllProcessRateParameters { get; set; }
 
       public virtual IndividualBuildingBlock Individual { get; set; }
       public virtual SimulationSettings SimulationSettings { get; set; }
@@ -55,6 +56,7 @@ namespace OSPSuite.Core.Domain.Builder
          sourceConfiguration.ModuleConfigurations.Each(x => AddModuleConfiguration(cloneManager.Clone(x)));
          SimulationSettings = cloneManager.Clone(sourceConfiguration.SimulationSettings);
          Individual = cloneManager.Clone(sourceConfiguration.Individual);
+         CreateAllProcessRateParameters = sourceConfiguration.CreateAllProcessRateParameters;
       }
 
       /// <summary>

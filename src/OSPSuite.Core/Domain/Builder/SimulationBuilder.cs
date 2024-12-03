@@ -26,6 +26,8 @@ namespace OSPSuite.Core.Domain.Builder
          performMerge();
       }
 
+      public bool CreateAllProcessRateParameters => _simulationConfiguration.CreateAllProcessRateParameters;
+
       public IObjectBase BuilderFor(IObjectBase modelObject) => _builderCache[modelObject];
 
       internal void AddBuilderReference(IObjectBase modelObject, IObjectBase builder)
