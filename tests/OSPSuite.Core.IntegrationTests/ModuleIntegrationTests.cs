@@ -331,4 +331,39 @@ namespace OSPSuite.Core
          eventGroup1.Events.FirstOrDefault(x => x.Name == "eventBuilder22").ShouldNotBeNull();
       }
    }
+
+   internal class When_constructing_a_simulation_spatial_structure_must_contain_event_container : concern_for_ModuleIntegration
+   {
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder()
+      {
+         return helper =>
+         {
+            var objectBaseFactory = IoC.Resolve<IObjectBaseFactory>();
+            var simulationConfiguration = new SimulationConfiguration
+            {
+               SimulationSettings = helper.CreateSimulationSettings()
+            };
+
+            var module = objectBaseFactory.Create<Module>();
+            var spatialStructure = helper.CreateSpatialStructure();
+            var organism = helper.CreateOrganism();
+            spatialStructure.AddTopContainer(organism);
+
+            module.Add(spatialStructure);
+
+            var moduleConfiguration = new ModuleConfiguration(module);
+            simulationConfiguration.AddModuleConfiguration(moduleConfiguration);
+
+            return simulationConfiguration;
+         };
+      }
+
+      [Observation]
+      public void spatial_structure_should_have_events_container_present()
+      {
+         var organism = _simulationConfiguration.ModuleConfigurations[0].Module.BuildingBlocks.FirstOrDefault() as SpatialStructure;
+         organism.ShouldNotBeNull();
+         organism.TopContainers.FindByName("Events").ShouldNotBeNull();
+      }
+   }
 }
