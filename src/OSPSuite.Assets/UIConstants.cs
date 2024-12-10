@@ -1369,6 +1369,36 @@ namespace OSPSuite.Assets
 
          }
       }
+
+      private static string numberDisplay(int version) => $"(#{version})";
+
+      private static string projectNameAndVersionAsString(string versionDisplay, int version) => $"V{versionDisplay} {numberDisplay(version)}";
+
+      public static string ProjectVersionCannotBeLoaded(int projectVersion, 
+         string oldestSupportedDisplayVersion, int oldestSupportedVersion, 
+         string currentSupportedDisplayVersion,int currentSupportedVersion,
+         bool projectIsTooOld, 
+         string downloadUrl)
+      {
+         var compositeOldestVersion = projectNameAndVersionAsString(oldestSupportedDisplayVersion, oldestSupportedVersion);
+         var compositeCurrentVersion = projectNameAndVersionAsString(currentSupportedDisplayVersion, currentSupportedVersion);
+         var preamble = $"This application is compatible with projects created between {compositeOldestVersion} and {compositeCurrentVersion}";
+         if (projectIsTooOld)
+         {
+            return $"{preamble}.\n\n" +
+                   $"The version of this project {numberDisplay(projectVersion)} is too old and cannot be loaded.\n\n" +
+                   $"Visit our download page at {downloadUrl} to download an older version of the software compatible with this project.";
+         }
+
+         if (projectVersion > currentSupportedVersion)
+         {
+            return $"{preamble}.\n\n" +
+                   $"The version of this project {numberDisplay(projectVersion)} is newer and cannot be loaded.\n\n" +
+                   $"Visit our download page at {downloadUrl}";
+         }
+
+         return $"Work in progress.\nThis project file is too old {numberDisplay(projectVersion)} and cannot be loaded.\nSorry :-(";
+      }
    }
 
    public static class Error
