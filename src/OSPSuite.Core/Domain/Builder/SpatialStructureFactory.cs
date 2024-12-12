@@ -31,6 +31,12 @@ namespace OSPSuite.Core.Domain.Builder
 
          spatialStructure.GlobalMoleculeDependentProperties = moleculeProperties;
 
+         var eventContainer = _objectBaseFactory.Create<IContainer>()
+            .WithName(Constants.EVENTS)
+            .WithMode(ContainerMode.Logical);
+
+         spatialStructure.Add(eventContainer);
+
          return spatialStructure;
       }
 
