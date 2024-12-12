@@ -361,9 +361,9 @@ namespace OSPSuite.Core
       [Observation]
       public void spatial_structure_should_have_events_container_present()
       {
-         var organism = _simulationConfiguration.ModuleConfigurations[0].Module.BuildingBlocks.FirstOrDefault() as SpatialStructure;
-         organism.ShouldNotBeNull();
-         organism.TopContainers.FindByName("Events").ShouldNotBeNull();
+         var spatialStructure = _simulationConfiguration.ModuleConfigurations[0].Module.SpatialStructure;
+         spatialStructure.ShouldNotBeNull();
+         spatialStructure.TopContainers.FindByName("Events").ShouldNotBeNull();
       }
    }
 }
