@@ -29,7 +29,7 @@ namespace OSPSuite.Presentation.Presenters
       /// <summary>
       ///    returns true is the <paramref name="dragNode" /> can be dragged under <paramref name="targetNode" /> otherwise false
       /// </summary>
-      bool CanDrop(ITreeNode dragNode, ITreeNode targetNode);
+      bool CanDrop(ITreeNode dragNode, ITreeNode targetNode, DragDropKeyFlags keyFlags);
 
       /// <summary>
       ///    Moves the <paramref name="dragNode" /> under the <paramref name="targetNode" />
@@ -38,6 +38,11 @@ namespace OSPSuite.Presentation.Presenters
       /// <param name="targetNode">Node under which the dragged node should be attached</param>
       /// <param name="keyFlags">enum representing keyState on the drop action</param>
       void DropNode(ITreeNode dragNode, ITreeNode targetNode, DragDropKeyFlags keyFlags = DragDropKeyFlags.None);
+
+      /// <summary>
+      ///   Returns <c>true</c> if the presenter supports separate copy and move operations, otherwise <c>false</c> for only move operations
+      /// </summary>
+      bool CopyAllowed();
    }
 
    public interface IExplorerPresenter :
@@ -377,6 +382,8 @@ namespace OSPSuite.Presentation.Presenters
          _classificationPresenter.MoveNode(classifiableNode, classificationNode);
       }
 
+      public abstract bool CopyAllowed();
+
       public virtual void RemoveNode(ITreeNode nodeToRemove)
       {
          _view.RemoveNode(nodeToRemove);
@@ -397,7 +404,7 @@ namespace OSPSuite.Presentation.Presenters
          _view.DestroyNode(nodeToDestroy);
       }
 
-      public virtual bool CanDrop(ITreeNode dragNode, ITreeNode targetNode)
+      public virtual bool CanDrop(ITreeNode dragNode, ITreeNode targetNode, DragDropKeyFlags keyFlags)
       {
          var targetClassificationNode = targetNode as ITreeNode<IClassification>;
          if (targetClassificationNode == null)

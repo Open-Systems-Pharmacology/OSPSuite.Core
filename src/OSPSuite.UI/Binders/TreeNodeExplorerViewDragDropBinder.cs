@@ -21,6 +21,7 @@ namespace OSPSuite.UI.Binders
       private TreeListHitInfo _hitInfo;
       private ICanDragDropPresenter _presenter;
       private DragDropInfo _dragDropInfo;
+      private DragDropEffects _supportedEffects;
 
       public TreeNodeExplorerViewDragDropBinder(UxTreeView treeView)
       {
@@ -37,6 +38,10 @@ namespace OSPSuite.UI.Binders
 
          _treeView.DragOver += (o, e) => onEvent(treeViewDragOver, e);
          _treeView.DragDrop += (o, e) => onEvent(treeViewDragDrop, e);
+
+         _supportedEffects = DragDropEffects.Move;
+         if (_presenter.CopyAllowed())
+            _supportedEffects = DragDropEffects.Copy;
       }
 
       private void treeViewDragDrop(DragEventArgs e)
@@ -65,17 +70,33 @@ namespace OSPSuite.UI.Binders
       private void treeViewDragOver(DragEventArgs e)
       {
          var draggedNodes = getDraggedNodesFrom(e);
-         e.Effect = getDragDropEffect(draggedNodes);
+         e.Effect = getDragDropEffect(draggedNodes, e.AsKeyFlags());
       }
 
       private void calcNodeDragImageIndex(CalcNodeDragImageIndexEventArgs e)
       {
          var selectedNodes = getSelectedTreeNodes();
 
-         if (getDragDropEffect(selectedNodes) == DragDropEffects.None)
-            e.ImageIndex = -1; // no icon
-         else
-            e.ImageIndex = 2; // the reorder icon (a curved arrow)
+         var dragDropEffects = getDragDropEffect(selectedNodes, e.DragArgs.AsKeyFlags());
+         switch (dragDropEffects)
+         {
+            case DragDropEffects.None:
+               e.ImageIndex = -1; // no icon
+               break;
+            case DragDropEffects.Copy:
+               e.ImageIndex = presenterSupportsCopy() ? 
+                  1 : // the copy icon (a plus sign)
+                  2; // ctrl key has no effect
+               break;
+            default:
+               e.ImageIndex = 2; // the reorder icon (a curved arrow)
+               break;
+         }
+      }
+
+      private bool presenterSupportsCopy()
+      {
+         return _supportedEffects.HasFlag(DragDropEffects.Copy);
       }
 
       private IReadOnlyList<ITreeNode> getSelectedTreeNodes()
@@ -84,10 +105,9 @@ namespace OSPSuite.UI.Binders
       }
 
       /// <summary>
-      ///    Retrieve the desire node effect depending on the current mouse position
+      ///    Retrieve the desired node effect depending on the current mouse position
       /// </summary>
-      /// <param name="dragNodes">Node being dragged</param>
-      private DragDropEffects getDragDropEffect(IEnumerable<ITreeNode> dragNodes)
+      private DragDropEffects getDragDropEffect(IEnumerable<ITreeNode> dragNodes, DragDropKeyFlags keyFlags)
       {
          if (dragNodes == null)
             return DragDropEffects.None;
@@ -100,8 +120,8 @@ namespace OSPSuite.UI.Binders
          if (!treeNodes.All(_presenter.CanDrag))
             return DragDropEffects.None;
 
-         if (treeNodes.All(node => _presenter.CanDrop(node, nodeFrom(targetNode))))
-            return DragDropEffects.Move;
+         if (treeNodes.All(node => _presenter.CanDrop(node, nodeFrom(targetNode), keyFlags)))
+            return keyFlags.HasFlag(DragDropKeyFlags.CtrlKey) && presenterSupportsCopy() ? DragDropEffects.Copy : DragDropEffects.Move;
 
          return DragDropEffects.None;
       }
@@ -131,7 +151,7 @@ namespace OSPSuite.UI.Binders
          _dragDropInfo = new DragDropInfo(getSelectedTreeNodes());
          try
          {
-            _treeView.DoDragDrop(_dragDropInfo, DragDropEffects.Move);
+            _treeView.DoDragDrop(_dragDropInfo, _supportedEffects);
             DXMouseEventArgs.GetMouseArgs(e).Handled = true;
          }
          finally
