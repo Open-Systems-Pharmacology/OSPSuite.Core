@@ -49,7 +49,6 @@ skip_commits:
 branches:
   only:
     - develop
-    - 12.Next
 
 test:
   assemblies:
