@@ -31,7 +31,7 @@ for:
   branches:
     only:
     - develop
-- 
+
     build:
       publish_nuget: true
       verbosity: minimal
@@ -41,7 +41,7 @@ for:
   branches:
     only:
     - 12.Next
-- 
+ 
     build:
       publish_nuget: false
       verbosity: minimal
