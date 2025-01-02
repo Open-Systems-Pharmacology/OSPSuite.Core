@@ -59,4 +59,16 @@ test:
     - OSPSuite.R.Tests.dll
     - OSPSuite.UI.Tests.dll
   
+# here we are going to override common configuration
+for:
 
+# override settings for `12.Next` branch
+-
+  branches:
+    only:
+      - 12.Next
+    build:
+      publish_nuget: false
+      verbosity: minimal
+      publish_nuget_symbols: false
+      project: OSPSuite.Core.sln
