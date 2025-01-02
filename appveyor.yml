@@ -27,29 +27,29 @@ before_build:
   - nuget restore
 
 branches:
-    only:
-    - 12.Next
+  only:
+  - 12.Next
 
 # TODO Re-enable publish_nuget and publish_nuget_symbols when merging to develop
 build:
-    publish_nuget: false
-    verbosity: minimal
-    publish_nuget_symbols: false
-    project: OSPSuite.Core.sln
+  publish_nuget: false
+  verbosity: minimal
+  publish_nuget_symbols: false
+  project: OSPSuite.Core.sln
 
 skip_branch_with_pr: true
 
 pull_requests: 
-    do_not_increment_build_number: true
+  do_not_increment_build_number: true
 
 nuget: 
-    disable_publish_on_pr: false 
+  disable_publish_on_pr: false 
 
 skip_tags: true
 
 skip_commits:
-    files:
-    - '*.md'
+  files:
+  - '*.md'
 
 test:
   assemblies:
