@@ -26,40 +26,29 @@ before_build:
   - nuget sources add -name cvodes -source https://ci.appveyor.com/nuget/ospsuite-simmodel-solver-cvodes
   - nuget restore
 
-for:
--
-  branches:
-    only:
-    - develop
-
-    build:
-      publish_nuget: true
-      verbosity: minimal
-      publish_nuget_symbols: true
-      project: OSPSuite.Core.sln
--
-  branches:
+branches:
     only:
     - 12.Next
- 
-    build:
-      publish_nuget: false
-      verbosity: minimal
-      publish_nuget_symbols: false
-      project: OSPSuite.Core.sln
+
+# TODO Re-enable publish_nuget and publish_nuget_symbols when merging to develop
+build:
+    publish_nuget: false
+    verbosity: minimal
+    publish_nuget_symbols: false
+    project: OSPSuite.Core.sln
 
 skip_branch_with_pr: true
 
 pull_requests: 
-  do_not_increment_build_number: true
+    do_not_increment_build_number: true
 
 nuget: 
-  disable_publish_on_pr: false 
+    disable_publish_on_pr: false 
 
 skip_tags: true
 
 skip_commits:
-  files:
+    files:
     - '*.md'
 
 test:
