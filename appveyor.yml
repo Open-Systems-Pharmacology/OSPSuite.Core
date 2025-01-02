@@ -26,11 +26,27 @@ before_build:
   - nuget sources add -name cvodes -source https://ci.appveyor.com/nuget/ospsuite-simmodel-solver-cvodes
   - nuget restore
 
-build:
-  publish_nuget: true
-  verbosity: minimal
-  publish_nuget_symbols: true
-  project: OSPSuite.Core.sln
+for:
+-
+  branches:
+    only:
+    - develop
+- 
+    build:
+      publish_nuget: true
+      verbosity: minimal
+      publish_nuget_symbols: true
+      project: OSPSuite.Core.sln
+-
+  branches:
+    only:
+    - 12.Next
+- 
+    build:
+      publish_nuget: false
+      verbosity: minimal
+      publish_nuget_symbols: false
+      project: OSPSuite.Core.sln
 
 skip_branch_with_pr: true
 
@@ -45,10 +61,6 @@ skip_tags: true
 skip_commits:
   files:
     - '*.md'
-
-branches:
-  only:
-    - develop
 
 test:
   assemblies:
