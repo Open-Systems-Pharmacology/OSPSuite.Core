@@ -298,11 +298,10 @@ namespace OSPSuite.Core.Domain.Services
 
       private IContainer getContainerOrThrow(IReadOnlyList<string> path, IEntity entity)
       {
-         var entityPath = _entityPathResolver.FullPathFor(entity);
          //we use resolve to that an exception is thrown
          var container = new ObjectPath(path).Resolve<IContainer>(entity);
          if (container == null)
-            throw new OSPSuiteException(Error.CouldNotFindContainerWithPath(path.ToPathString(), entityPath));
+            throw new OSPSuiteException(Error.CouldNotFindContainerWithPath(path.ToPathString(), _entityPathResolver.FullPathFor(entity)));
 
          return container;
       }
