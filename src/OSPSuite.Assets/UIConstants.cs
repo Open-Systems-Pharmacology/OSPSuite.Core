@@ -1776,6 +1776,7 @@ namespace OSPSuite.Assets
       public static string DuplicatedPKParameterSensitivityFor(string id) => $"PKParameter sensitivity results for '{id}' were defined more than once!";
 
       public static string CouldNotFindQuantityWithPath(string quantityPath) => $"Could not find quantity with path '{quantityPath}'.";
+      public static string CouldNotFindContainerWithPath(string quantityPath, string referringEntityPath) => $"Could not find container with path '{quantityPath}'.\n\nReferenced by '{referringEntityPath}'.";
 
       public static string IndividualResultsDoesNotHaveTheExpectedQuantity(int individualId, IReadOnlyList<string> expectedQuantities, IReadOnlyList<string> foundQuantities)
       {
