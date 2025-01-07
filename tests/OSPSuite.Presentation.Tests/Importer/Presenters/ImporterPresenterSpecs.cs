@@ -208,6 +208,81 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
+   public class When_setting_data_source_with_empty_rows : concern_for_ImporterPresenter
+   {
+      private RandomDataSourceFile _dataSourceFile;
+      protected Cache<string, DataSheet> _sheets;
+
+      protected override void Context()
+      {
+         base.Context();
+         _sheets = new Cache<string, DataSheet>();
+         _sheets.Add("Sheet1", A.Fake<DataSheet>());
+
+         _dataSourceFile = new RandomDataSourceFile(A.Fake<IImportLogger>());
+         _dataSourceFile.Format = A.Fake<IDataFormat>();
+         _dataSourceFile.Path = "FakePath";
+         A.CallTo(() => _importerDataPresenter.SetDataSource(A<string>.Ignored)).Returns(_dataSourceFile);
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs()
+            { Filter = "", DataSourceFile = _dataSourceFile, SheetNames = _sheets.Keys.ToList() });
+      }
+
+      [Observation]
+      public void should_not_throw_an_ImporterParsingException()
+      {
+         sut.LoadConfiguration(_importerConfiguration, "");
+      }
+
+      //This class needs to be added to create a random data source file
+      //With the empty rows that we need to test
+      public class RandomDataSourceFile : DataSourceFile
+      {
+         public RandomDataSourceFile(IImportLogger logger) : base(logger)
+         {
+         }
+
+         protected override void LoadFromFile(string path)
+         {
+            Console.WriteLine($"Loading data from file: {path} (simulated random data)");
+
+            var random = new Random();
+            int numberOfSheets = 1;
+
+            for (int i = 0; i < numberOfSheets; i++)
+            {
+               var dataSheet = new DataSheet
+               {
+                  SheetName = $"Sheet{i + 1}"
+               };
+
+               int numberOfRows = 5;
+               int numberOfColumns = 3;
+
+               for (int c = 0; c < numberOfColumns; c++)
+               {
+                  dataSheet.AddColumn($"Column{c + 1}", c);
+               }
+
+               var emptyRow = new List<string>(Enumerable.Repeat(string.Empty, numberOfColumns));
+               dataSheet.AddRow(emptyRow);
+
+               for (int r = 0; r < numberOfRows; r++)
+               {
+                  var row = new List<string>();
+                  for (int c = 0; c < numberOfColumns; c++)
+                  {
+                     row.Add($"Data_{i + 1}_{r + 1}_{c + 1}");
+                  }
+
+                  dataSheet.AddRow(row);
+               }
+
+               DataSheets.AddSheet(dataSheet);
+            }
+         }
+      }
+   }
+
    public class When_import_data : concern_for_ImporterPresenter
    {
       protected bool triggered = false;

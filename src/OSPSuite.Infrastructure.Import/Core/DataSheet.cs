@@ -173,7 +173,7 @@ namespace OSPSuite.Infrastructure.Import.Core
          }
       }
 
-      public void RemoveEmptyRows()
+      public void RemoveEmptyRowsAtTheEnd()
       {
          for (var i = _rawDataTable.Count - 1; i >= 0; i--)
          {
@@ -181,6 +181,15 @@ namespace OSPSuite.Infrastructure.Import.Core
                _rawDataTable.RemoveAt(i);
             else
                break;
+         }
+      }
+
+      public void RemoveEmptyRows()
+      {
+         for (var i = _rawDataTable.Count - 1; i >= 0; i--)
+         {
+            if (_rawDataTable[i].All(x => x.IsNullOrEmpty()))
+               _rawDataTable.RemoveAt(i);
          }
       }
 
