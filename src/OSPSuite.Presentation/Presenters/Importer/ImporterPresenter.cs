@@ -210,7 +210,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       }
 
       private void loadSheets(IDataSourceFile dataSourceFile, IReadOnlyList<string> sheetNames, string filter, string selectedNamingConvention = null)
-      {
+      {  
          if (!sheetNames.Any())
          {
             View.DisableConfirmationView();
