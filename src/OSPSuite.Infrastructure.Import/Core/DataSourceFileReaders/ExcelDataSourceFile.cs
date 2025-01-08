@@ -51,7 +51,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                }
 
                rawSheetData.RemoveEmptyColumns();
-               rawSheetData.RemoveEmptyRowsAtTheEnd();
+               rawSheetData.RemoveEmptyRows();
 
                DataSheets.AddSheet(rawSheetData);
             }
