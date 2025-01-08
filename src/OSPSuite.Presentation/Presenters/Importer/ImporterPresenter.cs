@@ -210,7 +210,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       }
 
       private void loadSheets(IDataSourceFile dataSourceFile, IReadOnlyList<string> sheetNames, string filter, string selectedNamingConvention = null)
-      {  
+      {
          if (!sheetNames.Any())
          {
             View.DisableConfirmationView();
@@ -218,7 +218,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
 
          var sheets = dataSourceFile.DataSheets.GetDataSheetsByName(sheetNames);
-
          var dataMappings = dataSourceFile.Format.GetParameters<MetaDataFormatParameter>().Where(p => p.ColumnName != null).Select(md =>
             new MetaDataMappingConverter()
             {
