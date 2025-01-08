@@ -218,7 +218,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
 
          var sheets = dataSourceFile.DataSheets.GetDataSheetsByName(sheetNames);
-         sheets.Each(sheet => sheet.RemoveEmptyRows());
 
          var dataMappings = dataSourceFile.Format.GetParameters<MetaDataFormatParameter>().Where(p => p.ColumnName != null).Select(md =>
             new MetaDataMappingConverter()
