@@ -41,7 +41,7 @@ namespace OSPSuite.UI.Binders
 
          _supportedEffects = DragDropEffects.Move;
          if (_presenter.CopyAllowed())
-            _supportedEffects = DragDropEffects.Copy;
+            _supportedEffects |= DragDropEffects.Copy;
       }
 
       private void treeViewDragDrop(DragEventArgs e)
