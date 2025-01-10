@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
@@ -12,6 +13,7 @@ using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
 using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
@@ -205,6 +207,31 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void sets_column_mapping_presenter_settings()
       {
          A.CallTo(() => _dialogCreator.MessageBoxError(A<string>.Ignored)).MustNotHaveHappened();
+      }
+   }
+
+   public class When_setting_data_source_with_empty_rows : concern_for_ImporterPresenter
+   {
+      protected Cache<string, DataSheet> _sheets;
+
+      protected override void Context()
+      {
+         base.Context();
+         _sheets = new Cache<string, DataSheet>();
+         _sheets.Add("Sheet1", A.Fake<DataSheet>());
+
+         _dataSourceFile = new ExcelDataSourceFile(A.Fake<IImportLogger>());
+         _dataSourceFile.Format = A.Fake<IDataFormat>();
+         _dataSourceFile.Path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "IntegrationSampleUnitFromColumn.xlsx");
+         A.CallTo(() => _importerDataPresenter.SetDataSource(A<string>.Ignored)).Returns(_dataSourceFile);
+         _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs()
+            { Filter = "", DataSourceFile = _dataSourceFile, SheetNames = _sheets.Keys.ToList() });
+      }
+
+      [Observation]
+      public void should_not_throw_an_ImporterParsingException()
+      {
+         sut.LoadConfiguration(_importerConfiguration, "");
       }
    }
 
