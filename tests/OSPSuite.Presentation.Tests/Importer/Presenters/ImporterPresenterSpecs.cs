@@ -336,7 +336,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          base.Context();
          _sheets = new Cache<string, DataSheet> { { "sheet1", A.Fake<DataSheet>() } };
          _columnInfo = new ColumnInfo();
-         var dto = new DimensionSelectionDTO("sheet", _columnInfo, new List<IDimension> { DomainHelperForSpecs.ConcentrationDimensionForSpecs(), DomainHelperForSpecs.ConcentrationMassDimensionForSpecs() });
+         var dto = new DimensionSelectionDTO("sheet", new[] { string.Empty }, _columnInfo, new List<IDimension> { DomainHelperForSpecs.ConcentrationDimensionForSpecs(), DomainHelperForSpecs.ConcentrationMassDimensionForSpecs() });
 
          A.CallTo(() => _dataSourceToDimensionSelectionDTOMapper.MapFrom(A<IDataSource>._)).Returns(new List<DimensionSelectionDTO> { dto });
          A.CallTo(() => _dimensionMappingPresenter.EditUnitToDimensionMap(A<IReadOnlyList<DimensionSelectionDTO>>._)).Invokes(x => dto.SelectedDimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs());
