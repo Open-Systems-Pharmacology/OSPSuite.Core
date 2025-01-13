@@ -47,7 +47,6 @@ namespace OSPSuite.UI.Views.Importer
          base.InitializeResources();
          Caption = Captions.Importer.DimensionSelect;
          descriptionLabel.Text = Captions.Importer.SetDimensionsForAmbiguousUnits;
-         CancelVisible = false;
       }
 
       public override void InitializeBinding()
