@@ -19,9 +19,9 @@ using OSPSuite.Presentation.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {
-   public partial class ImportConfirmationView : BaseUserControl, IImportConfirmationView
+   public partial class ImportPreviewView : BaseUserControl, IImportPreviewView
    {
-      private IImportConfirmationPresenter _presenter;
+      private IImportPreviewPresenter _presenter;
       private bool _selectingDataSetsEnabled = true;
       private List<string> _namingConventionOptions = new List<string>();
       public string SelectedSeparator
@@ -46,7 +46,7 @@ namespace OSPSuite.UI.Views.Importer
          labelControlError.Text = errorMessage;
       }
 
-      public ImportConfirmationView()
+      public ImportPreviewView()
       {
          InitializeComponent();
 
@@ -88,7 +88,7 @@ namespace OSPSuite.UI.Views.Importer
          namingPatternPanelLabelControl.AutoSizeMode = LabelAutoSizeMode.Vertical;
       }
 
-      public void AttachPresenter(IImportConfirmationPresenter presenter)
+      public void AttachPresenter(IImportPreviewPresenter presenter)
       {
          _presenter = presenter;
       }
@@ -165,7 +165,7 @@ namespace OSPSuite.UI.Views.Importer
       public override void InitializeResources()
       {
          base.InitializeResources();
-         Caption = Captions.Importer.Confirmation;
+         Caption = Captions.Importer.ImportPreview;
          ApplicationIcon = ApplicationIcons.Parameter;
       }
    }

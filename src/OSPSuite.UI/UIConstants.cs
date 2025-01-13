@@ -51,6 +51,7 @@ namespace OSPSuite.UI
          public static readonly int EMPTY_SPACE_HEIGHT = ScaleForScreenDPI(20);
          public static readonly int RADIO_GROUP_HEIGHT = ScaleForScreenDPI(24);
          public static readonly int ADD_REMOVE_BUTTON_WIDTH = ScaleForScreenDPI(100);
+         public static readonly int APPLY_TO_ALL_BUTTON_WIDTH = ScaleForScreenDPI(100);
          public static readonly int ADD_REMOVE_BUTTON_HEIGHT = ScaleForScreenDPI(60);
 
          public const double SCREEN_RESIZE_FRACTION = 0.9;

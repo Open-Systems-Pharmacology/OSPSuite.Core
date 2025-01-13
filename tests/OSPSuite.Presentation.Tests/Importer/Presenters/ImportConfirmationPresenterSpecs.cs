@@ -10,16 +10,16 @@ using OSPSuite.Presentation.Presenters.ObservedData;
 
 namespace OSPSuite.Presentation.Importer.Presenters 
 {
-   public abstract class concern_for_ImportConfirmationPresenter : ContextSpecification<ImportConfirmationPresenter>
+   public abstract class concern_for_ImportConfirmationPresenter : ContextSpecification<ImportPreviewPresenter>
    {
-      protected IImportConfirmationView _view;
+      protected IImportPreviewView _view;
       protected IDataRepositoryChartPresenter _dataRepositoryChartPresenter;
       protected IDataRepositoryDataPresenter _dataRepositoryDataPresenter;
       public override void GlobalContext()
       {
          base.GlobalContext();
 
-         _view = A.Fake<IImportConfirmationView>();
+         _view = A.Fake<IImportPreviewView>();
          _dataRepositoryChartPresenter = A.Fake<IDataRepositoryChartPresenter>();
          _dataRepositoryDataPresenter = A.Fake<IDataRepositoryDataPresenter>();
       }
@@ -28,7 +28,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       {
          base.Context();
 
-         sut = new ImportConfirmationPresenter(_view, _dataRepositoryChartPresenter, _dataRepositoryDataPresenter);
+         sut = new ImportPreviewPresenter(_view, _dataRepositoryChartPresenter, _dataRepositoryDataPresenter);
       }
    }
 
