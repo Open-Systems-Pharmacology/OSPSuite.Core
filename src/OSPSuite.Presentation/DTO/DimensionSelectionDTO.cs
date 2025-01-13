@@ -8,10 +8,12 @@ namespace OSPSuite.Presentation.DTO
    public class DimensionSelectionDTO
    {
       private readonly string _sheetName;
+      private readonly string _description;
 
-      public DimensionSelectionDTO(string sheetName, ColumnInfo columnInfo, IReadOnlyList<IDimension> supportingDimensions)
+      public DimensionSelectionDTO(string sheetName, IReadOnlyList<string> description, ColumnInfo columnInfo, IReadOnlyList<IDimension> supportingDimensions)
       {
          _sheetName = sheetName;
+         _description = string.Join(" - ", description);
          Dimensions = supportingDimensions;
          Column = columnInfo;
 
@@ -23,6 +25,15 @@ namespace OSPSuite.Presentation.DTO
 
       public IReadOnlyList<IDimension> Dimensions { get; }
       public IDimension SelectedDimension { get; set; }
-      public string DisplayName => $"{_sheetName} - {Column.Name}";
+
+      public string DisplayName
+      {
+         get
+         {
+            if (string.IsNullOrEmpty(_description))
+               return $"{_sheetName} - {Column.Name}";
+            return $"{_sheetName} - {Column.Name} - {_description}";
+         }
+      }
    }
 }

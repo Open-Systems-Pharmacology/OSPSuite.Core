@@ -32,12 +32,12 @@ namespace OSPSuite.Presentation.Services
       private IEnumerable<DimensionSelectionDTO> dimensionsSupporting(string sheetName, ParsedDataSet parsedDataSet)
       {
          return parsedDataSet.Data.Keys.Select(extendedColumn => 
-            dimensionsSupporting(parsedDataSet.Data[extendedColumn].Select(point => point.Unit).Distinct().ToList(), extendedColumn, sheetName));
+            dimensionsSupporting(parsedDataSet.Data[extendedColumn].Select(point => point.Unit).Distinct().ToList(), extendedColumn, sheetName, parsedDataSet.Description.Select(x =>x.Value).ToList()));
       }
 
-      private DimensionSelectionDTO dimensionsSupporting(IReadOnlyList<string> units, ExtendedColumn extendedColumn, string sheetName)
+      private DimensionSelectionDTO dimensionsSupporting(IReadOnlyList<string> units, ExtendedColumn extendedColumn, string sheetName, IReadOnlyList<string> description)
       {
-         return new DimensionSelectionDTO(sheetName, extendedColumn.ColumnInfo, 
+         return new DimensionSelectionDTO(sheetName, description, extendedColumn.ColumnInfo, 
             extendedColumn.Column.Dimension != null ? 
                new List<IDimension> { extendedColumn.Column.Dimension } : 
                extendedColumn.ColumnInfo.SupportedDimensions.Where(dimension => supportsAllUnits(dimension, units)).ToList());
