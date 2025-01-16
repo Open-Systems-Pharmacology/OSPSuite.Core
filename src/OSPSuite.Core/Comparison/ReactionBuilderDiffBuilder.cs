@@ -24,6 +24,7 @@ namespace OSPSuite.Core.Comparison
          _enumerableComparer.CompareEnumerables(comparison, x => x.Products, item => item.MoleculeName);
          _enumerableComparer.CompareEnumerables(comparison, x => x.ModifierNames, item => item, missingItemType: ObjectTypes.Modifier);
          CompareValues(x => x.ContainerCriteria, x => x.ContainerCriteria, comparison);
+         CompareValues(x => x.CreateProcessRateParameter, x => x.CreateProcessRateParameter, comparison);
          _objectComparer.Compare(comparison.DimensionComparison());
       }
    }
