@@ -30,10 +30,17 @@ namespace OSPSuite.Presentation.DTO
       {
          get
          {
+            var sheetAndColumn = sheetAndColumnName();
             if (string.IsNullOrEmpty(_description))
-               return $"{_sheetName} - {Column.Name}";
-            return $"{_sheetName} - {Column.Name} - {_description}";
+               return sheetAndColumn;
+
+            return $"{sheetAndColumn} - {_description}";
          }
+      }
+
+      private string sheetAndColumnName()
+      {
+         return string.IsNullOrEmpty(_sheetName) ? Column.Name : $"{_sheetName} - {Column.Name}";
       }
    }
 }
