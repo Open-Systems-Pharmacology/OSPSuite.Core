@@ -44,6 +44,35 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
+   public class When_comparing_reactions_having_different_create_process_rate_parameter_values : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var f1 = new ExplicitFormula("CL*conc").WithName("formula");
+         var r1 = new ReactionBuilder().WithName("Reaction").WithFormula(f1);
+         r1.AddEduct(new ReactionPartnerBuilder("Drug", 1));
+         r1.AddEduct(new ReactionPartnerBuilder("Metab", 1));
+         var p11 = new Parameter().WithName("P1").WithFormula(new ConstantFormula(2)).WithParentContainer(r1);
+         r1.CreateProcessRateParameter = true;
+
+         var f2 = new ExplicitFormula("CL*conc").WithName("formula");
+         var r2 = new ReactionBuilder().WithName("Reaction").WithFormula(f2);
+         r2.AddEduct(new ReactionPartnerBuilder("Drug", 1));
+         r2.AddEduct(new ReactionPartnerBuilder("Metab", 1));
+         var p12 = new Parameter().WithName("P1").WithFormula(new ConstantFormula(2)).WithParentContainer(r2);
+
+         _object1 = r1;
+         _object2 = r2;
+      }
+
+      [Observation]
+      public void should_report_the_differences_accordingly()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
    public class When_comparing_reactions_having_the_same_formula_but_different_modifiers : concern_for_ObjectComparer
    {
       protected override void Context()
