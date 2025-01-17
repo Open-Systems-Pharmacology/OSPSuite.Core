@@ -1,13 +1,13 @@
 ﻿using System.Data;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Events;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Events;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Mappers.SensitivityAnalyses;
 using OSPSuite.Presentation.Views.SensitivityAnalyses;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 {
@@ -56,7 +56,7 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 
       private void showNoResultsAvailable()
       {
-         if (_sensitivityAnalysis.Results.Errors.Any())
+         if (_sensitivityAnalysis.Results != null && _sensitivityAnalysis.Results.Errors.Any())
             _view.ShowErrors(_sensitivityAnalysis.Results.Errors.Select(x => x.ErrorMessage).ToList());
          else
             _view.HideResultsView();
@@ -73,7 +73,8 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
       public void ExportToExcel()
       {
          var fileName = _dialogCreator.AskForFileToSave(Captions.SensitivityAnalysis.ExportPKAnalysesSensitivityToExcelTitle, Constants.Filter.EXCEL_SAVE_FILE_FILTER, Constants.DirectoryKey.REPORT, _sensitivityAnalysis.Name);
-         if (string.IsNullOrEmpty(fileName)) return;
+         if (string.IsNullOrEmpty(fileName))
+            return;
 
          _exportToExcelTask.ExportDataTableToExcel(mapResultsToTable(), fileName, openExcel: true);
       }
