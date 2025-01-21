@@ -53,7 +53,11 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
                await parameterIdentificationEngine.StartAsync(parameterIdentification);
                var end = SystemTime.UtcNow();
                var timeSpent = end - begin;
-               _dialogCreator.MessageBoxInfo(Captions.ParameterIdentification.ParameterIdentificationFinished(parameterIdentification.Name, timeSpent.ToDisplay()));
+
+               var faultedRunResults = parameterIdentification.Results.Where(x => x.Status == RunStatus.SensitivityCalculationFailed).ToList();
+               _dialogCreator.MessageBoxInfo(faultedRunResults.Any() ? 
+                  Captions.ParameterIdentification.SensitivityCalculationFailed(parameterIdentification.Name, faultedRunResults.Select(x => x.Message).ToList(), timeSpent.ToDisplay()) : 
+                  Captions.ParameterIdentification.ParameterIdentificationFinished(parameterIdentification.Name, timeSpent.ToDisplay()));
             }
          }
          catch (OperationCanceledException)

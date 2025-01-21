@@ -12,7 +12,8 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
       RanToCompletion,
       Canceled,
       Faulted,
-      CalculatingSensitivity
+      CalculatingSensitivity,
+      SensitivityCalculationFailed
    }
 
    public class RunStatus: IWithIcon
@@ -42,6 +43,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
       public static RunStatus Canceled = create(RunStatusId.Canceled, IconNames.STOP);
       public static RunStatus Faulted = create(RunStatusId.Faulted, IconNames.ERROR);
       public static RunStatus CalculatingSensitivity = create(RunStatusId.CalculatingSensitivity, IconNames.SOLVER);
+      public static RunStatus SensitivityCalculationFailed = create(RunStatusId.SensitivityCalculationFailed, IconNames.WARNING);
 
       private static RunStatus create(RunStatusId id, string icon, string displayName = null)
       {

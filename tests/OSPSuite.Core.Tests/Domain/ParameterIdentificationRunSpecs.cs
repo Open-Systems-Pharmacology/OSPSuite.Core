@@ -13,6 +13,7 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
+using OSPSuite.SimModel;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
@@ -24,7 +25,7 @@ namespace OSPSuite.Core.Domain
       protected ITimeGridUpdater _timeGridUpdater;
       protected ISimModelBatchFactory _simModelBatchFactory;
       protected ParameterIdentification _parameterIdentification;
-      protected ISimulation _simulation;
+      private ISimulation _simulation;
       protected IModelCoreSimulation _modelCoreSimulation;
       protected OutputMapping _outputMapping;
       protected ISimModelBatch _simModelBatch;
@@ -66,9 +67,14 @@ namespace OSPSuite.Core.Domain
          _parameter2.Value = 35;
          _parameter2.Dimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
 
-         _parameterIdentification = new ParameterIdentification();
-         _parameterIdentification.Configuration.LLOQMode = LLOQModes.OnlyObservedData;
-         _parameterIdentification.Configuration.RemoveLLOQMode = RemoveLLOQModes.NoTrailing;
+         _parameterIdentification = new ParameterIdentification
+         {
+            Configuration =
+            {
+               LLOQMode = LLOQModes.OnlyObservedData,
+               RemoveLLOQMode = RemoveLLOQModes.NoTrailing
+            }
+         };
 
          _parameterIdentification.AddSimulation(_simulation);
 
@@ -148,7 +154,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_initialize_a_new_instance_per_simulation_of_a_sim_model_batch_and_pass_it_all_variable_parmaeters()
+      public void should_initialize_a_new_instance_per_simulation_of_a_sim_model_batch_and_pass_it_all_variable_parameters()
       {
          _parameters.ShouldContain(_parameterSelection1.Path, _parameterSelection2.Path);
       }
@@ -167,8 +173,7 @@ namespace OSPSuite.Core.Domain
    }
 
    public class
-      When_initializing_the_parameter_indentification_run_with_a_parameter_identification_with_multiple_simulations :
-         concern_for_ParameterIdentificationRun
+      When_initializing_the_parameter_identification_run_with_a_parameter_identification_with_multiple_simulations : concern_for_ParameterIdentificationRun
    {
       private OutputMapping _outputMapping2;
       private ISimulation _simulation2;
@@ -283,7 +288,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _objectiveFunction(new[] {_optimizedParameterValue});
+         _objectiveFunction(new[] { _optimizedParameterValue });
       }
 
       [Observation]
@@ -312,7 +317,7 @@ namespace OSPSuite.Core.Domain
    public class When_the_parameter_identification_run_is_running_multiple_simulations : concern_for_ParameterIdentificationRun
    {
       private Func<OptimizedParameterValue[], OptimizationRunResult> _objectiveFunction;
-      private int _counter = 0;
+      private int _counter;
       private ResidualsResult _runResult1;
       private ResidualsResult _runResult2;
       private ResidualsResult _runResult3;
@@ -329,7 +334,7 @@ namespace OSPSuite.Core.Domain
          A.CallTo(() => _runResult1.TotalError).Returns(10);
          A.CallTo(() => _runResult2.TotalError).Returns(5);
          A.CallTo(() => _runResult3.TotalError).Returns(20);
-         _runResults = new[] {_runResult1, _runResult2, _runResult3};
+         _runResults = new[] { _runResult1, _runResult2, _runResult3 };
 
          A.CallTo(_algorithm).WithReturnType<OptimizationRunProperties>()
             .Invokes(x => { _objectiveFunction = x.GetArgument<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>(1); })
@@ -351,8 +356,8 @@ namespace OSPSuite.Core.Domain
       protected override void Because()
       {
          _counter = 0;
-         //Call the objective function as many time as we have results
-         _runResults.Each(x => { _objectiveFunction(new[] {new OptimizedParameterValue("P", 100.0, 50d, 10, 200, Scalings.Linear)}); });
+         //Call the objective function as many times as we have results
+         _runResults.Each(x => { _objectiveFunction(new[] { new OptimizedParameterValue("P", 100.0, 50d, 10, 200, Scalings.Linear) }); });
       }
 
       [Observation]
@@ -364,7 +369,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_save_the_error_history()
       {
-         _lastArgs.State.ErrorHistory.ShouldBeEqualTo(new[] {_runResult1.TotalError, _runResult2.TotalError, _runResult2.TotalError}.ToFloatArray());
+         _lastArgs.State.ErrorHistory.ShouldBeEqualTo(new[] { _runResult1.TotalError, _runResult2.TotalError, _runResult2.TotalError }.ToFloatArray());
       }
 
       [Observation]
@@ -377,7 +382,7 @@ namespace OSPSuite.Core.Domain
 
    public class
       When_the_parameter_identification_run_is_running_the_simulations_and_updating_an_identification_parameter_using_factor :
-         concern_for_ParameterIdentificationRun
+      concern_for_ParameterIdentificationRun
    {
       private Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult> _objectiveFunction;
 
@@ -395,7 +400,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _objectiveFunction(new[] {new OptimizedParameterValue("P1", 5d, 5d,0, 10, Scalings.Linear)});
+         _objectiveFunction(new[] { new OptimizedParameterValue("P1", 5d, 5d, 0, 10, Scalings.Linear) });
       }
 
       [Observation]
@@ -464,9 +469,8 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class
-      When_the_parameter_identification_run_is_running_a_parameter_identification_where_the_jacobian_should_be_calculated :
-         concern_for_ParameterIdentificationRun
+   public class When_the_parameter_identification_run_is_running_a_parameter_identification_where_the_jacobian_should_be_calculated :
+      concern_for_ParameterIdentificationRun
    {
       private ParameterIdentificationRunResult _result;
       private JacobianMatrix _jacobianMatrix;
@@ -474,7 +478,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         _jacobianMatrix = new JacobianMatrix(new[] {"A"});
+         _jacobianMatrix = new JacobianMatrix(new[] { "A" });
          _parameterIdentification.Configuration.CalculateJacobian = true;
          A.CallTo(_jacobianMatrixCalculator).WithReturnType<JacobianMatrix>().Returns(_jacobianMatrix);
          A.CallTo(() => _algorithm.Optimize(A<OptimizedParameterConstraint[]>._,
@@ -482,7 +486,7 @@ namespace OSPSuite.Core.Domain
             .Invokes(x =>
             {
                var objectiveFunction = x.GetArgument<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>(1);
-               objectiveFunction(new[] {new OptimizedParameterValue("P1", 5d, 5d, 0, 10, Scalings.Linear)});
+               objectiveFunction(new[] { new OptimizedParameterValue("P1", 5d, 5d, 0, 10, Scalings.Linear) });
             });
       }
 
@@ -501,6 +505,54 @@ namespace OSPSuite.Core.Domain
       public void should_initialize_the_sim_model_batch_for_sensitivity()
       {
          A.CallTo(() => _simModelBatch.InitializeForSensitivity()).MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_return_run_completed_status()
+      {
+         _result.Status.ShouldBeEqualTo(RunStatus.RanToCompletion);
+      }
+   }
+
+   public class When_the_parameter_identification_run_is_running_a_parameter_identification_where_the_jacobian_calculation_fails :
+      concern_for_ParameterIdentificationRun
+   {
+      private ParameterIdentificationRunResult _result;
+      private JacobianMatrix _jacobianMatrix;
+
+      protected override void Context()
+      {
+         base.Context();
+         _jacobianMatrix = new JacobianMatrix(new[] { "A" });
+         _parameterIdentification.Configuration.CalculateJacobian = true;
+         A.CallTo(_jacobianMatrixCalculator).WithReturnType<JacobianMatrix>().Returns(_jacobianMatrix);
+         A.CallTo(() => _algorithm.Optimize(A<OptimizedParameterConstraint[]>._,
+               A<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>._))
+            .Invokes(x =>
+            {
+               var objectiveFunction = x.GetArgument<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>(1);
+               objectiveFunction(new[] { new OptimizedParameterValue("P1", 5d, 5d, 0, 10, Scalings.Linear) });
+            });
+
+         var simulationRunResults = new SimulationRunResults(Array.Empty<SolverWarning>(), "error");
+         A.CallTo(() => _simModelBatch.RunSimulation()).Returns(simulationRunResults);
+      }
+
+      protected override void Because()
+      {
+         _result = sut.Run(_cancellationToken);
+      }
+
+      [Observation]
+      public void the_result_should_have_an_error_message()
+      {
+         string.IsNullOrEmpty(_result.Message).ShouldBeFalse();
+      }
+
+      [Observation]
+      public void should_return_the_failed_status()
+      {
+         _result.Status.ShouldBeEqualTo(RunStatus.SensitivityCalculationFailed);
       }
    }
 
@@ -543,7 +595,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _objectiveFunction(new[] {new OptimizedParameterValue("A", 100.0, 50d, 0, 200, Scalings.Log)});
+         _objectiveFunction(new[] { new OptimizedParameterValue("A", 100.0, 50d, 0, 200, Scalings.Log) });
       }
 
       [Observation]
