@@ -1025,6 +1025,14 @@ namespace OSPSuite.Assets
             return $"Parameter identification '{parameterIdentificationName}' finished in {duration}";
          }
 
+
+         public static string SensitivityCalculationFailed(string parameterIdentificationName, IReadOnlyList<string> errorMessages, string duration = null)
+         {
+            return string.IsNullOrEmpty(duration) ? 
+               $"Parameter identification '{parameterIdentificationName}' finished but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}" : 
+               $"Parameter identification '{parameterIdentificationName}' finished in {duration} but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}";
+         }
+
          public static string LinkedParametersIn(string name)
          {
             return $"{LinkedParameters} in {name}";
@@ -1884,6 +1892,21 @@ namespace OSPSuite.Assets
       public static string NeighborhoodDefinition(string neighborhoodName, string firstNeighbor, string secondNeighbor, string spatialStructure)
       {
          return $"Neighborhood '{neighborhoodName}' connects '{firstNeighbor}' and '{secondNeighbor}' in '{spatialStructure}'";
+      }
+
+      public static string CouldNotCalculateSensitivity(IReadOnlyList<string> runResultErrorMessages)
+      {
+         return $"Error calculating sensitivity\n{listErrorMessages(runResultErrorMessages)}";
+      }
+
+      private static string listErrorMessages(IReadOnlyList<string> runResultErrorMessages)
+      {
+         var sb = new StringBuilder();
+         foreach (var errorMessage in runResultErrorMessages)
+         {
+            sb.AppendLine($"- {errorMessage}");
+         }
+         return sb.ToString();
       }
    }
 
