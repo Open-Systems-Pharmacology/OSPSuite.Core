@@ -31,7 +31,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
    public interface IParameterIdentificationOutputMappingPresenter : IPresenter<IParameterIdentificationOutputMappingView>, IParameterIdentificationPresenter, ILatchable
    {
       void AddOutputMapping();
-      IEnumerable<OutputMapping> OutputMappings { get; }
       IEnumerable<SimulationQuantitySelectionDTO> AllAvailableOutputs { get; }
       IEnumerable<DataRepository> AllObservedDataFor(OutputMappingDTO dto);
       void ObservedDataSelectionChanged(OutputMappingDTO dto, DataRepository newObservedData, DataRepository oldObservedData);
@@ -110,11 +109,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _parameterIdentification.AddOutputMapping(newOutputMapping);
          _allOutputMappingDTOs.Add(mapFrom(newOutputMapping));
          OnStatusChanged();
-      }
-
-      public IEnumerable<OutputMapping> OutputMappings
-      {
-         get { return _parameterIdentification.AllOutputMappings; }
       }
 
       private void updateOutputMappingList()
