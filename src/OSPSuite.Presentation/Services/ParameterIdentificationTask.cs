@@ -242,6 +242,34 @@ namespace OSPSuite.Presentation.Services
          return _simulationSelector.SimulationCanBeUsedForIdentification(simulation);
       }
 
+      public void UpdateParameterIdentificationsUsing(IEnumerable<DataRepository> observedData)
+      {
+         var updatedMappingsInfo = new List<(string ParameterName, string OutputPath)>();
+         observedData.Each(data =>
+         {
+            ParameterIdentificationsUsingObservedData(data).Each(parameterIdentification =>
+            {
+               parameterIdentification.OutputMappingsUsingDataRepository(data).Each(outputMapping =>
+               {
+                  var existingDataCount = outputMapping.WeightedObservedData?.Count ?? 0;
+                  var newDataCount = data.BaseGrid.Count;
+                  if (existingDataCount != newDataCount)
+                  {
+                     outputMapping.WeightedObservedData = new WeightedObservedData(data);
+                     updatedMappingsInfo.Add((parameterIdentification.Name, outputMapping.FullOutputPath));
+                     _executionContext.PublishEvent(new WeightObservedDataChangedEvent(outputMapping));
+                  }
+               });
+            });
+         });
+
+         if (updatedMappingsInfo.Any())
+         {
+            var strPaths = Captions.Importer.UpdatedMappingsMessage(updatedMappingsInfo);
+            _dialogCreator.MessageBoxInfo(strPaths);
+         }
+      }
+
       public ParameterIdentification Clone(ParameterIdentification parameterIdentification)
       {
          loadParameterIdentification(parameterIdentification);

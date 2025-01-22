@@ -15,6 +15,8 @@ using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
+using static OSPSuite.Assets.Captions;
+using ParameterIdentification = OSPSuite.Core.Domain.ParameterIdentifications.ParameterIdentification;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
@@ -31,6 +33,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
    public interface IParameterIdentificationOutputMappingPresenter : IPresenter<IParameterIdentificationOutputMappingView>, IParameterIdentificationPresenter, ILatchable
    {
       void AddOutputMapping();
+      IEnumerable<OutputMapping> OutputMappings { get; }
       IEnumerable<SimulationQuantitySelectionDTO> AllAvailableOutputs { get; }
       IEnumerable<DataRepository> AllObservedDataFor(OutputMappingDTO dto);
       void ObservedDataSelectionChanged(OutputMappingDTO dto, DataRepository newObservedData, DataRepository oldObservedData);
@@ -109,6 +112,14 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _parameterIdentification.AddOutputMapping(newOutputMapping);
          _allOutputMappingDTOs.Add(mapFrom(newOutputMapping));
          OnStatusChanged();
+      }
+
+      public IEnumerable<OutputMapping> OutputMappings
+      {
+         get
+         {
+            return _parameterIdentification.AllOutputMappings;
+         }
       }
 
       private void updateOutputMappingList()

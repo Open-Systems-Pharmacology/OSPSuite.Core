@@ -581,6 +581,30 @@ namespace OSPSuite.Assets
          }
 
          public static readonly string ImportFileFilter = "Excel Files (*.xls, *.xlsx)|*.xls;*.xlsx|Comma Separated Value Files (*.csv)|*.csv|NonMem Files (*.NMdat)|*.NMdat|All Files (*.*)|*.*";
+
+         public static string UpdatedMappingsMessage(IEnumerable<(string ParameterName, string OutputPath)> updatedMappingsInfo)
+         {
+            var sb = new StringBuilder();
+            sb.AppendLine("The following parameter identifications and their output mappings were modified:");
+            sb.AppendLine();
+
+            var groupedMappings = updatedMappingsInfo
+               .GroupBy(mapping => mapping.ParameterName)
+               .OrderBy(group => group.Key);
+
+            foreach (var group in groupedMappings)
+            {
+               sb.AppendLine($"- {group.Key}");
+               foreach (var mapping in group)
+               {
+                  sb.AppendLine($"    - Output Path: {mapping.OutputPath}");
+               }
+               sb.AppendLine();
+            }
+
+            return sb.ToString();
+         }
+
       }
 
       public static class Diff

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Events;
@@ -12,7 +13,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       IListener<ObservedDataRemovedFromAnalysableEvent>,
       IListener<RenamedEvent>,
       IListener<SimulationRemovedEvent>,
-      IListener<SimulationReplacedInParameterAnalyzableEvent>
+      IListener<SimulationReplacedInParameterAnalyzableEvent>,
+      IListener<WeightObservedDataChangedEvent>
    {
       event EventHandler<SimulationEventArgs> SimulationAdded;
       event EventHandler<SimulationEventArgs> SimulationRemoved;
@@ -127,5 +129,16 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       }
 
       private bool canHandle(SimulationReplacedInParameterAnalyzableEvent eventToHandle) => Equals(eventToHandle.ParameterAnalysable, _parameterIdentification);
+
+      public void Handle(WeightObservedDataChangedEvent eventToHandle)
+      {
+         var existingMapping = _outputMappingPresenter.OutputMappings.Where(x => x.OutputPath == eventToHandle.OutputMapping.OutputPath).FirstOrDefault();
+
+         if (existingMapping == null)
+            return;
+
+         _weightedObservedDataPresenter.Edit(eventToHandle.OutputMapping.WeightedObservedData);
+      }
+
    }
 }
