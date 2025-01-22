@@ -40,7 +40,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       event EventHandler<OutputMappingEventArgs> ObservedDataSelected;
 
       /// <summary>
-      ///    Ensures that the cached list are updated (usuful when a simulation was added to the PI)
+      ///    Ensures that the cached list are updated (useful when a simulation was added to the PI)
       /// </summary>
       void UpdateCache();
 
