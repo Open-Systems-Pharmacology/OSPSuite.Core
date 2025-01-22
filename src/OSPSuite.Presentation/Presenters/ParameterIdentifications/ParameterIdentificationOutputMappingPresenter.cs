@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
@@ -15,8 +14,7 @@ using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
-using static OSPSuite.Assets.Captions;
-using ParameterIdentification = OSPSuite.Core.Domain.ParameterIdentifications.ParameterIdentification;
+using OSPSuite.Core.Domain.ParameterIdentifications;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
@@ -116,10 +114,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public IEnumerable<OutputMapping> OutputMappings
       {
-         get
-         {
-            return _parameterIdentification.AllOutputMappings;
-         }
+         get { return _parameterIdentification.AllOutputMappings; }
       }
 
       private void updateOutputMappingList()
