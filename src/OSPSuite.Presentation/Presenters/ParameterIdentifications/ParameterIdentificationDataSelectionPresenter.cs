@@ -13,8 +13,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       IListener<ObservedDataRemovedFromAnalysableEvent>,
       IListener<RenamedEvent>,
       IListener<SimulationRemovedEvent>,
-      IListener<SimulationReplacedInParameterAnalyzableEvent>,
-      IListener<WeightObservedDataChangedEvent>
+      IListener<SimulationReplacedInParameterAnalyzableEvent>
    {
       event EventHandler<SimulationEventArgs> SimulationAdded;
       event EventHandler<SimulationEventArgs> SimulationRemoved;
@@ -45,16 +44,16 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _simulationSelectionPresenter.SimulationAdded += (o, e) => simulationAdded(e);
          _simulationSelectionPresenter.SimulationRemoved += (o, e) => simulationRemoved(e);
 
-         _outputMappingPresenter.ObservedDataMapped += (o, e) => observedDataMapped(e.WeightedObservedData);
-         _outputMappingPresenter.ObservedDataUnmapped += (o, e) => observedDataUnmapped(e.WeightedObservedData);
-         _outputMappingPresenter.ObservedDataSelected += (o, e) => observedDataSelected(e.WeightedObservedData);
+         _outputMappingPresenter.ObservedDataMapped += (o, e) => observedDataMapped(e.OutputMapping);
+         _outputMappingPresenter.ObservedDataUnmapped += (o, e) => observedDataUnmapped(e.OutputMapping.WeightedObservedData);
+         _outputMappingPresenter.ObservedDataSelected += (o, e) => observedDataSelected(e.OutputMapping);
       }
 
       private void observedDataUnmapped(WeightedObservedData weightedObservedData) => _weightedObservedDataPresenter.Clear(weightedObservedData);
 
-      private void observedDataSelected(WeightedObservedData weightedObservedData) => _weightedObservedDataPresenter.Edit(weightedObservedData);
+      private void observedDataSelected(OutputMapping outputMapping) => _weightedObservedDataPresenter.Edit(outputMapping);
 
-      private void observedDataMapped(WeightedObservedData weightedObservedData) => _weightedObservedDataPresenter.Edit(weightedObservedData);
+      private void observedDataMapped(OutputMapping outputMapping) => _weightedObservedDataPresenter.Edit(outputMapping);
 
       private void simulationAdded(SimulationEventArgs e)
       {
@@ -129,16 +128,5 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       }
 
       private bool canHandle(SimulationReplacedInParameterAnalyzableEvent eventToHandle) => Equals(eventToHandle.ParameterAnalysable, _parameterIdentification);
-
-      public void Handle(WeightObservedDataChangedEvent eventToHandle)
-      {
-         var existingMapping = _outputMappingPresenter.OutputMappings.Where(x => x.OutputPath == eventToHandle.OutputMapping.OutputPath).FirstOrDefault();
-
-         if (existingMapping == null)
-            return;
-
-         _weightedObservedDataPresenter.Edit(eventToHandle.OutputMapping.WeightedObservedData);
-      }
-
    }
 }
