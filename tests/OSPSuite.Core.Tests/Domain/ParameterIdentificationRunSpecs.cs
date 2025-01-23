@@ -166,8 +166,39 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_canceling_a_run : concern_for_ParameterIdentificationRun
+   {
+      private IReadOnlyList<string> _parameters;
+      private List<DataRepository> _observedDataList;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _simModelBatch.InitializeWith(_modelCoreSimulation,
+               A<IReadOnlyList<string>>._,
+               A<IReadOnlyList<string>>._, A<bool>._, A<string>._))
+            .Invokes(x => _parameters = x.GetArgument<IReadOnlyList<string>>(1));
+
+         A.CallTo(() => _timeGridUpdater.UpdateSimulationTimeGrid(_modelCoreSimulation, RemoveLLOQModes.NoTrailing, A<IEnumerable<DataRepository>>._))
+            .Invokes(x => _observedDataList = x.GetArgument<IEnumerable<DataRepository>>(2).ToList());
+
+         sut.Run(_cancellationToken);
+      }
+
+      protected override void Because()
+      {
+         sut.Cancel();
+      }
+
+      [Observation]
+      public void the_batch_must_be_stopped()
+      {
+         A.CallTo(() => _simModelBatch.StopSimulation()).MustHaveHappened();
+      }
+   }
+
    public class
-      When_initializing_the_parameter_indentification_run_with_a_parameter_identification_with_multiple_simulations :
+      When_initializing_the_parameter_identification_run_with_a_parameter_identification_with_multiple_simulations :
          concern_for_ParameterIdentificationRun
    {
       private OutputMapping _outputMapping2;
