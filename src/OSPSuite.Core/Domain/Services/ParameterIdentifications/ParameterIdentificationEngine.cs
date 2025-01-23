@@ -71,6 +71,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          {
             _parameterIdentificationRuns.Each(x => x.Dispose());
             _eventPublisher.PublishEvent(new ParameterIdentificationTerminatedEvent(parameterIdentification));
+            _parameterIdentificationRuns.Clear();
          }
       }
 
