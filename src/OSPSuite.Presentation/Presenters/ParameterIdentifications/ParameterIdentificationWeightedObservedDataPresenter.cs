@@ -24,7 +24,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
    {
       private readonly IWeightedDataRepositoryDataPresenter _dataPresenter;
       private readonly ISimpleChartPresenter _chartPresenter;
-      private WeightedObservedData observedData => _outputMapping.WeightedObservedData;
+      private WeightedObservedData observedData => _outputMapping?.WeightedObservedData;
       private OutputMapping _outputMapping;
 
       public ParameterIdentificationWeightedObservedDataPresenter(IParameterIdentificationWeightedObservedDataView view, IWeightedDataRepositoryDataPresenter dataPresenter, ISimpleChartPresenter chartPresenter) : base(view)
@@ -41,7 +41,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Edit(OutputMapping outputMapping)
       {
-         if (_outputMapping == outputMapping || outputMapping == null)
+         if (outputMapping?.WeightedObservedData == null)
             return;
 
          _view.SetTitle(outputMapping.WeightedObservedData.DisplayName);
@@ -90,8 +90,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void Handle(WeightObservedDataChangedEvent eventToHandle)
       {
-         if(Equals(_outputMapping, eventToHandle.OutputMapping))
-            Edit(eventToHandle.OutputMapping);
+         if (!Equals(_outputMapping, eventToHandle.OutputMapping))
+            return;
+
+         Edit(eventToHandle.OutputMapping);
       }
    }
 }
