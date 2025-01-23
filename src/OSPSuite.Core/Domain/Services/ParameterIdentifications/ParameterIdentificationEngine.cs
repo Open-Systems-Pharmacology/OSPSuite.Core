@@ -25,7 +25,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private readonly ICoreUserSettings _coreUserSettings;
       private ParameterIdentification _parameterIdentification;
       private readonly CancellationTokenSource _cancellationTokenSource;
-      private List<IParameterIdentificationRun> _parameterIdentificationRuns;
+      private readonly List<IParameterIdentificationRun> _parameterIdentificationRuns;
 
       public ParameterIdentificationEngine(
          IEventPublisher eventPublisher, 
@@ -36,6 +36,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          _parameterIdentificationRunFactory = parameterIdentificationRunFactory;
          _coreUserSettings = coreUserSettings;
          _cancellationTokenSource = new CancellationTokenSource();
+         _parameterIdentificationRuns = new List<IParameterIdentificationRun>();
       }
 
       public async Task StartAsync(ParameterIdentification parameterIdentification)
@@ -45,7 +46,6 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          _eventPublisher.PublishEvent(new ParameterIdentificationStartedEvent(parameterIdentification));
 
          var results = new ConcurrentBag<ParameterIdentificationRunResult>();
-         _parameterIdentificationRuns = new List<IParameterIdentificationRun>();
          try
          {
             _parameterIdentificationRuns.AddRange(await createParameterIdentificationRuns(token));
@@ -71,7 +71,6 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          {
             _parameterIdentificationRuns.Each(x => x.Dispose());
             _eventPublisher.PublishEvent(new ParameterIdentificationTerminatedEvent(parameterIdentification));
-            _parameterIdentificationRuns = null;
          }
       }
 
@@ -104,7 +103,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       public void Stop()
       {
          _cancellationTokenSource.Cancel();
-         _parameterIdentificationRuns?.Each(x => x.Cancel());
+         _parameterIdentificationRuns.Each(x => x.Cancel());
+         _parameterIdentificationRuns.Clear();
       }
 
       private async Task<IReadOnlyList<IParameterIdentificationRun>> createParameterIdentificationRuns(CancellationToken cancellationToken)
