@@ -6,10 +6,10 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.ParameterIdentifications;
-using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Events;
 using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -25,7 +25,7 @@ namespace OSPSuite.Core.Domain
          _eventPublisher = A.Fake<IEventPublisher>();
          _parameterIdentificationRunFactory = A.Fake<IParameterIdentificationRunFactory>();
          _parameterIdentification = new ParameterIdentification().WithId("PI");
-         _coreUserSettings= A.Fake<ICoreUserSettings>();
+         _coreUserSettings = A.Fake<ICoreUserSettings>();
          A.CallTo(() => _coreUserSettings.MaximumNumberOfCoresToUse).Returns(2);
          sut = new ParameterIdentificationEngine(_eventPublisher, _parameterIdentificationRunFactory, _coreUserSettings);
       }
@@ -42,7 +42,7 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _parameterIdentificationRun = A.Fake<IParameterIdentificationRun>();
-         _parameterIdentificationsRuns = new List<IParameterIdentificationRun> {_parameterIdentificationRun};
+         _parameterIdentificationsRuns = new List<IParameterIdentificationRun> { _parameterIdentificationRun };
          A.CallTo(() => _parameterIdentificationRunFactory.CreateFor(_parameterIdentification, A<CancellationToken>._)).Returns(_parameterIdentificationsRuns);
 
          A.CallTo(() => _eventPublisher.PublishEvent(A<ParameterIdentificationStartedEvent>._))
@@ -89,7 +89,7 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _parameterIdentificationRun = A.Fake<IParameterIdentificationRun>();
-         _parameterIdentificationsRuns = new List<IParameterIdentificationRun> {_parameterIdentificationRun};
+         _parameterIdentificationsRuns = new List<IParameterIdentificationRun> { _parameterIdentificationRun };
          A.CallTo(() => _parameterIdentificationRunFactory.CreateFor(_parameterIdentification, A<CancellationToken>._)).Returns(_parameterIdentificationsRuns);
          _runState = A.Fake<ParameterIdentificationRunState>();
 
@@ -114,35 +114,35 @@ namespace OSPSuite.Core.Domain
 
    public class When_the_parameter_identification_engine_is_notified_that_the_parameter_identification_run_was_canceled : concern_for_ParameterIdentificationEngine
    {
+      private List<IParameterIdentificationRun> _parameterIdentificationRuns;
+
       protected override void Context()
       {
          base.Context();
-         var runStatus = new[] {RunStatus.RanToCompletion, RunStatus.Canceled, RunStatus.Faulted, RunStatus.Created};
+         var runStatus = new[] { RunStatus.RanToCompletion, RunStatus.Canceled, RunStatus.Faulted, RunStatus.Created };
 
-         var parameterIdentificationRuns = new List<IParameterIdentificationRun>();
+         _parameterIdentificationRuns = new List<IParameterIdentificationRun>();
 
          //set to 1 to ensure that we execute the run in the expected order
          A.CallTo(() => _coreUserSettings.MaximumNumberOfCoresToUse).Returns(1);
 
          A.CallTo(() => _parameterIdentificationRunFactory.CreateFor(_parameterIdentification, A<CancellationToken>._))
-            .Returns(parameterIdentificationRuns);
+            .Returns(_parameterIdentificationRuns);
 
          for (int i = 0; i < runStatus.Length; i++)
          {
-            var run = A.Fake<ParameterIdentificationRun>();
+            var run = A.Fake<IParameterIdentificationRun>();
             var runResult = A.Fake<ParameterIdentificationRunResult>();
             A.CallTo(() => runResult.Status).Returns(runStatus[i]);
             A.CallTo(() => run.Run(A<CancellationToken>._)).Returns(runResult);
 
             if (runResult.Status == RunStatus.Faulted)
             {
-               A.CallTo(() => run.Run(A<CancellationToken>._)).Invokes(r =>
-                  {
-                     sut.Stop();
-                  })
+               A.CallTo(() => run.Run(A<CancellationToken>._)).Invokes(r => { sut.Stop(); })
                   .Returns(runResult);
             }
-            parameterIdentificationRuns.Add(run);
+
+            _parameterIdentificationRuns.Add(run);
          }
       }
 
@@ -155,6 +155,12 @@ namespace OSPSuite.Core.Domain
          catch (AggregateException)
          {
          }
+      }
+
+      [Observation]
+      public void the_run_should_be_stopped()
+      {
+         _parameterIdentificationRuns.Each(x => A.CallTo(() => x.Cancel()).MustHaveHappened());
       }
 
       [Observation]
