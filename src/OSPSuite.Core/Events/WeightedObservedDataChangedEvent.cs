@@ -6,11 +6,11 @@ using System.Text;
 
 namespace OSPSuite.Core.Events
 {
-   public class WeightObservedDataChangedEvent
+   public class WeightedObservedDataChangedEvent
    {
       public OutputMapping OutputMapping { get; private set; }
 
-      public WeightObservedDataChangedEvent(OutputMapping outputMapping)
+      public WeightedObservedDataChangedEvent(OutputMapping outputMapping)
       {
          OutputMapping = outputMapping;
       }

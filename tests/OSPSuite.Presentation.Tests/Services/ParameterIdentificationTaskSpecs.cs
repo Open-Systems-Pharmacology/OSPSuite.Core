@@ -639,7 +639,7 @@ namespace OSPSuite.Presentation.Services
       {
 
          base.Context();
-         A.CallTo(() => _executionContext.PublishEvent(A<WeightObservedDataChangedEvent>.Ignored)).DoesNothing();
+         A.CallTo(() => _executionContext.PublishEvent(A<WeightedObservedDataChangedEvent>.Ignored)).DoesNothing();
          var baseGrid = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
          baseGrid.Insert(1);
          baseGrid.Insert(2);
@@ -708,7 +708,7 @@ namespace OSPSuite.Presentation.Services
       [Observation]
       public void it_should_update_mappings_with_different_counts()
       {
-         A.CallTo(() => _executionContext.PublishEvent(A<WeightObservedDataChangedEvent>.Ignored)).MustHaveHappened();
+         A.CallTo(() => _executionContext.PublishEvent(A<WeightedObservedDataChangedEvent>.Ignored)).MustHaveHappened();
       }
 
       [Observation]

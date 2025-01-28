@@ -8,7 +8,7 @@ using OSPSuite.Utility.Events;
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
    public interface IParameterIdentificationWeightedObservedDataPresenter : IPresenter<IParameterIdentificationWeightedObservedDataView>, IListener<ObservedDataValueChangedEvent>,
-      IListener<WeightObservedDataChangedEvent>
+      IListener<WeightedObservedDataChangedEvent>
    {
       void Edit(OutputMapping outputMapping);
 
@@ -88,7 +88,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          Edit(_outputMapping);
       }
 
-      public void Handle(WeightObservedDataChangedEvent eventToHandle)
+      public void Handle(WeightedObservedDataChangedEvent eventToHandle)
       {
          if (!Equals(_outputMapping, eventToHandle.OutputMapping))
             return;

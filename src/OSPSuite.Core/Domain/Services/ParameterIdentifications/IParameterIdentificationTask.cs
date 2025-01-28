@@ -83,8 +83,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 
       /// <summary>
       /// Updates the <see cref="ParameterIdentification"/>s using the <paramref name="observedData"/>
-      /// Returns an Ienumerable of <see cref="OutputMapping"/> that have been updated
       /// </summary>
-      void UpdateParameterIdentificationsUsing(IEnumerable<DataRepository> observedData);
+      void UpdateParameterIdentificationsUsing(IReadOnlyList<DataRepository> observedData);
    }
 }
