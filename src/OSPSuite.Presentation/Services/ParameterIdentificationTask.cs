@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NPOI.POIFS.Crypt.Dsig;
 using OSPSuite.Assets;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
@@ -259,7 +258,6 @@ namespace OSPSuite.Presentation.Services
       private void updateParameterMappingsForData(DataRepository data, List<(string ParameterName, string OutputPath)> updatedMappingsInfo) =>
          ParameterIdentificationsUsingObservedData(data).Each(parameterIdentification => updateOutputMappings(parameterIdentification, data, updatedMappingsInfo));
 
-
       private void updateOutputMappings(ParameterIdentification parameterIdentification, DataRepository data, List<(string ParameterName, string OutputPath)> updatedMappingsInfo)
       {
          foreach (var outputMapping in parameterIdentification.OutputMappingsUsingDataRepository(data))
@@ -284,7 +282,6 @@ namespace OSPSuite.Presentation.Services
             _executionContext.PublishEvent(new WeightedObservedDataChangedEvent(outputMapping));
          }
       }
-
 
       public ParameterIdentification Clone(ParameterIdentification parameterIdentification)
       {
