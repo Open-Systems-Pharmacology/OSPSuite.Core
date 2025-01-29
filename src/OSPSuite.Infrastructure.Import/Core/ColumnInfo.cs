@@ -65,9 +65,11 @@ namespace OSPSuite.Infrastructure.Import.Core
          get => !IsBase && !IsAuxiliary;
       }
 
+      public IDimension MappedDimension { get; set; }
+
       public IDimension DimensionForUnit(string unitName)
       {
-         return SupportedDimensions.DimensionForUnit(unitName);
+         return MappedDimension ?? SupportedDimensions.DimensionForUnit(unitName);
       }
    }
 

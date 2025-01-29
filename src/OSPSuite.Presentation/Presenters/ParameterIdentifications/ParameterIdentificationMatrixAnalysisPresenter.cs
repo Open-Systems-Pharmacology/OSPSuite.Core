@@ -59,6 +59,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       protected virtual void UpdateAnalysis()
       {
+         var parameterIdentificationRunResults = _parameterIdentification.Results.Where(x => x.Status == RunStatus.SensitivityCalculationFailed).ToList();
+         if(parameterIdentificationRunResults.Any())
+         {
+            _matrixPresenter.ShowCalculationError(Captions.ParameterIdentification.SensitivityCalculationFailed(_parameterIdentification.Name, parameterIdentificationRunResults.Select(x => x.Message).ToList()));
+            return;
+         }
          try
          {
             var matrix = CalculateMatrix();
@@ -79,7 +85,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          AllRunResults = _parameterIdentification.Results.OrderBy(x => x.TotalError).ToList();
          _view.CanSelectRunResults = AllRunResults.Count > 1;
 
-         if (!AllRunResults.Any()) return;
+         if (!AllRunResults.Any()) 
+            return;
 
          SelectedRunResults = AllRunResults.First();
 

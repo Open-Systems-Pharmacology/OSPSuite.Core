@@ -33,6 +33,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       ParameterIdentificationRunResult RunResult { get; }
       IReadOnlyList<float> TotalErrorHistory { get; }
       IReadOnlyCollection<IdentificationParameterHistory> ParametersHistory { get; }
+      void Cancel();
    }
 
    public class ParameterIdentificationRun : IParameterIdentificationRun
@@ -54,6 +55,11 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       public ParameterIdentificationRunResult RunResult { get; } = new ParameterIdentificationRunResult();
       public IReadOnlyList<float> TotalErrorHistory => _totalErrorHistory;
       public IReadOnlyCollection<IdentificationParameterHistory> ParametersHistory => _parametersHistory;
+
+      public void Cancel()
+      {
+         _allSimModelBatches.Values.Each(x => x.StopSimulation());
+      }
 
       public event EventHandler<ParameterIdentificationRunStatusEventArgs> RunStatusChanged = delegate { };
 
@@ -136,7 +142,9 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
             var variableParameterConstraints = retrieveVariableParameterConstraints();
             RunResult.Properties = _optimizationAlgorithm.Optimize(variableParameterConstraints, performRun);
             calculateJacobian();
-            RunResult.Status = RunStatus.RanToCompletion;
+            if(RunResult.Status != RunStatus.SensitivityCalculationFailed)
+               RunResult.Status = RunStatus.RanToCompletion;
+
             return RunResult;
          }
          catch (OperationCanceledException)
@@ -178,8 +186,14 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          raiseRunStatusChanged(BestResult);
 
          _allSimModelBatches.Values.Each(x => x.InitializeForSensitivity());
-         updateValuesAndCalculate(RunResult.BestResult.Values);
-         RunResult.JacobianMatrix = _jacobianMatrixCalculator.CalculateFor(_parameterIdentification, RunResult.BestResult, _allSimModelBatches);
+         var runResult = updateValuesAndCalculate(RunResult.BestResult.Values);
+         if(runResult.ErrorMessages.All(string.IsNullOrEmpty))
+            RunResult.JacobianMatrix = _jacobianMatrixCalculator.CalculateFor(_parameterIdentification, RunResult.BestResult, _allSimModelBatches);
+         else
+         {
+            RunResult.Message = Error.CouldNotCalculateSensitivity(runResult.ErrorMessages);
+            RunResult.Status = RunStatus.SensitivityCalculationFailed;
+         }
       }
 
       private OptimizationRunResult performRun(IReadOnlyList<OptimizedParameterValue> values)
@@ -205,7 +219,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          {
             ResidualsResult = _residualCalculator.Calculate(simulationResults, _parameterIdentification.AllOutputMappings),
             Values = values,
-            SimulationResults = simulationResults.Select(x => x.Results).ToList()
+            SimulationResults = simulationResults.Select(x => x.Results).ToList(),
+            ErrorMessages = simulationResults.Select(x => x.Error).ToList()
          };
       }
 
