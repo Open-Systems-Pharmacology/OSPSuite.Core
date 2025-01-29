@@ -27,12 +27,12 @@ namespace OSPSuite.Core.Events
       {
       }
    }
+
    public class ObservedDataMetaDataAddedEvent : ObservedDataEvent
    {
       public ObservedDataMetaDataAddedEvent(DataRepository observedData)
          : base(observedData)
       {
-
       }
    }
 
@@ -41,7 +41,6 @@ namespace OSPSuite.Core.Events
       public ObservedDataMetaDataRemovedEvent(DataRepository observedData)
          : base(observedData)
       {
-
       }
    }
 

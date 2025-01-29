@@ -301,7 +301,7 @@ namespace OSPSuite.Core.Domain.Services
          //we use resolve to that an exception is thrown
          var container = new ObjectPath(path).Resolve<IContainer>(entity);
          if (container == null)
-            throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path.ToPathString()));
+            throw new OSPSuiteException(Error.CouldNotFindContainerWithPath(path.ToPathString(), _entityPathResolver.FullPathFor(entity)));
 
          return container;
       }

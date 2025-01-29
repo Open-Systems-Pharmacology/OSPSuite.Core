@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands;
@@ -15,6 +16,7 @@ using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Services
@@ -77,10 +79,10 @@ namespace OSPSuite.Presentation.Services
          base.Context();
          _dataRepository = A.Fake<DataRepository>();
          _parameterIdentification = new ParameterIdentification();
-         _parameterIdentifications = new List<ParameterIdentification> {_parameterIdentification, new ParameterIdentification()};
+         _parameterIdentifications = new List<ParameterIdentification> { _parameterIdentification, new ParameterIdentification() };
          A.CallTo(() => _executionContext.Project.AllParameterIdentifications).Returns(_parameterIdentifications);
 
-         _parameterIdentification.AddOutputMapping(new OutputMapping {WeightedObservedData = new WeightedObservedData(_dataRepository)});
+         _parameterIdentification.AddOutputMapping(new OutputMapping { WeightedObservedData = new WeightedObservedData(_dataRepository) });
       }
 
       protected override void Because()
@@ -112,7 +114,7 @@ namespace OSPSuite.Presentation.Services
          _parameterIdentification = A.Fake<ParameterIdentification>();
 
          A.CallTo(() => _applicationController.Start<IValidationMessagesPresenter>()).Returns(_validationMessagesPresenter);
-         _validationResult = new ValidationResult(new[] {new ValidationMessage(NotificationType.Warning, "", _parameterIdentification, null)});
+         _validationResult = new ValidationResult(new[] { new ValidationMessage(NotificationType.Warning, "", _parameterIdentification, null) });
          A.CallTo(() => _simulationSwapValidator.ValidateSwap(_parameterIdentification, _oldSimulation, _newSimulation)).Returns(_validationResult);
          A.CallTo(() => _validationMessagesPresenter.Display(_validationResult)).Returns(false);
 
@@ -172,7 +174,7 @@ namespace OSPSuite.Presentation.Services
          _parameterIdentification = A.Fake<ParameterIdentification>();
 
          A.CallTo(() => _applicationController.Start<IValidationMessagesPresenter>()).Returns(_validationMessagesPresenter);
-         _validationResult = new ValidationResult(new[] {new ValidationMessage(NotificationType.Warning, "", _parameterIdentification, null)});
+         _validationResult = new ValidationResult(new[] { new ValidationMessage(NotificationType.Warning, "", _parameterIdentification, null) });
          A.CallTo(() => _simulationSwapValidator.ValidateSwap(_parameterIdentification, _oldSimulation, _newSimulation)).Returns(_validationResult);
          A.CallTo(() => _validationMessagesPresenter.Display(_validationResult)).Returns(true);
 
@@ -290,24 +292,24 @@ namespace OSPSuite.Presentation.Services
 
          _output1 = A.Fake<IQuantity>();
 
-         var allOutputs = new PathCacheForSpecs<IQuantity> {{_outputPath, _output1}};
+         var allOutputs = new PathCacheForSpecs<IQuantity> { { _outputPath, _output1 } };
          A.CallTo(() => _entitiesInSimulationRetriever.OutputsFrom(_simulation)).Returns(allOutputs);
 
          _observedData1 = DomainHelperForSpecs.ObservedData("OBS1");
          _observedData2 = DomainHelperForSpecs.ObservedData("OBS2");
          _observedData3 = DomainHelperForSpecs.ObservedData("OBS3");
 
-         A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(_simulation)).Returns(new[] { _observedData2, _observedData3});
+         A.CallTo(() => _observedDataRepository.AllObservedDataUsedBy(_simulation)).Returns(new[] { _observedData2, _observedData3 });
 
          var simulationQuantitySelection = A.Fake<SimulationQuantitySelection>();
          A.CallTo(() => simulationQuantitySelection.Path).Returns(_outputPath);
-         _parameterIdentification.AddOutputMapping(new OutputMapping {WeightedObservedData = new WeightedObservedData(_observedData2), OutputSelection = simulationQuantitySelection});
+         _parameterIdentification.AddOutputMapping(new OutputMapping { WeightedObservedData = new WeightedObservedData(_observedData2), OutputSelection = simulationQuantitySelection });
 
-         _observedData1.ExtendedProperties.Add(new ExtendedProperty<string> {Name = Constants.ObservedData.MOLECULE, Value = "Drug"});
-         _observedData1.ExtendedProperties.Add(new ExtendedProperty<string> {Name = Constants.ObservedData.ORGAN, Value = "Liver"});
-         _observedData1.ExtendedProperties.Add(new ExtendedProperty<string> {Name = Constants.ObservedData.COMPARTMENT, Value = "Cell"});
+         _observedData1.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.ObservedData.MOLECULE, Value = "Drug" });
+         _observedData1.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.ObservedData.ORGAN, Value = "Liver" });
+         _observedData1.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.ObservedData.COMPARTMENT, Value = "Cell" });
 
-         _observedData3.ExtendedProperties.Add(new ExtendedProperty<string> {Name = Constants.ObservedData.ORGAN, Value = "Kidney"});
+         _observedData3.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.ObservedData.ORGAN, Value = "Kidney" });
 
          _outputMapping = new OutputMapping
          {
@@ -443,7 +445,7 @@ namespace OSPSuite.Presentation.Services
 
       protected override void Because()
       {
-         _result = sut.CreateParameterIdentificationBasedOn(new[] {_parameter});
+         _result = sut.CreateParameterIdentificationBasedOn(new[] { _parameter });
       }
 
       [Observation]
@@ -489,9 +491,9 @@ namespace OSPSuite.Presentation.Services
          A.CallTo(() => _parameterIdentificationFactory.Create()).Returns(new ParameterIdentification());
          A.CallTo(() => _executionContext.Project).Returns(A.Fake<IProject>());
 
-         var parameterCache = new PathCacheForSpecs<IParameter> {{_parameterPath1, _parameter1}, {_parameterPath2, _parameter2}};
+         var parameterCache = new PathCacheForSpecs<IParameter> { { _parameterPath1, _parameter1 }, { _parameterPath2, _parameter2 } };
          A.CallTo(() => _entitiesInSimulationRetriever.ParametersFrom(_simulation)).Returns(parameterCache);
-         A.CallTo(() => _favoriteRepository.All()).Returns(new[] {_parameterPath1, _parameterPath2,});
+         A.CallTo(() => _favoriteRepository.All()).Returns(new[] { _parameterPath1, _parameterPath2, });
          A.CallTo(() => _entityPathResolver.PathFor(_parameter1)).Returns(_parameterPath1);
          A.CallTo(() => _entityPathResolver.PathFor(_parameter2)).Returns(_parameterPath2);
          A.CallTo(() => _parameterAnalysableParameterSelector.CanUseParameter(_parameter1)).Returns(true);
@@ -503,7 +505,7 @@ namespace OSPSuite.Presentation.Services
 
       protected override void Because()
       {
-         _result = sut.CreateParameterIdentificationBasedOn(new[] {_simulation});
+         _result = sut.CreateParameterIdentificationBasedOn(new[] { _simulation });
       }
 
       [Observation]
@@ -543,7 +545,7 @@ namespace OSPSuite.Presentation.Services
 
       protected override void Because()
       {
-         sut.Delete(new[] {_parameterIdentification});
+         sut.Delete(new[] { _parameterIdentification });
       }
 
       [Observation]
@@ -588,7 +590,7 @@ namespace OSPSuite.Presentation.Services
 
       protected override void Because()
       {
-         sut.Delete(new[] {_parameterIdentification});
+         sut.Delete(new[] { _parameterIdentification });
       }
 
       [Observation]
@@ -606,7 +608,7 @@ namespace OSPSuite.Presentation.Services
       protected override void Context()
       {
          base.Context();
-         _parameterIdentification = new ParameterIdentification {IsLoaded = false};
+         _parameterIdentification = new ParameterIdentification { IsLoaded = false };
          _cloneObjectBasePresenter = A.Fake<ICloneObjectBasePresenter<ParameterIdentification>>();
          A.CallTo(_applicationController).WithReturnType<ICloneObjectBasePresenter<ParameterIdentification>>().Returns(_cloneObjectBasePresenter);
       }
@@ -628,4 +630,93 @@ namespace OSPSuite.Presentation.Services
          A.CallTo(() => _cloneObjectBasePresenter.CreateCloneFor(_parameterIdentification)).MustHaveHappened();
       }
    }
+
+   public class When_updating_a_parameter_identification_from_task : concern_for_ParameterIdentificationTask
+   {
+     private List<DataRepository> _observedData;
+
+      protected override void Context()
+      {
+
+         base.Context();
+         A.CallTo(() => _executionContext.PublishEvent(A<WeightedObservedDataChangedEvent>.Ignored)).DoesNothing();
+         var baseGrid = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
+         baseGrid.Insert(1);
+         baseGrid.Insert(2);
+         var baseGrid2 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
+         baseGrid2.Insert(1);
+         var baseGrid3 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
+         baseGrid3.Insert(1);
+         baseGrid3.Insert(2);
+
+         var standardColumn = new DataColumn("Standard", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid)
+         {
+            DataInfo = new DataInfo(ColumnOrigins.Observation),
+         };
+         var standardColumn2 = new DataColumn("Standard_2", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid2)
+         {
+            DataInfo = new DataInfo(ColumnOrigins.Observation),
+         };
+         var standardColumn3 = new DataColumn("Standard_3", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid3)
+         {
+            DataInfo = new DataInfo(ColumnOrigins.Observation),
+         };
+
+         var dataRepository1 = new DataRepository { standardColumn };
+         var dataRepository2 = new DataRepository { standardColumn2 };
+         var dataRepository3 = new DataRepository { standardColumn3 };
+
+         dataRepository1.ExtendedProperties.Add(new ExtendedProperty<int> { Name = "ID", Value = 1 });
+         dataRepository2.ExtendedProperties.Add(new ExtendedProperty<int> { Name = "ID", Value = 2 });
+         dataRepository3.ExtendedProperties.Add(new ExtendedProperty<int> { Name = "ID", Value = 3 });
+
+         dataRepository1.ExtendedProperties.Add(new ExtendedProperty<string> { Name = "Species", Value = "Human" });
+         dataRepository2.ExtendedProperties.Add(new ExtendedProperty<string> { Name = "Species", Value = "Human" });
+         dataRepository2.ExtendedProperties.Add(new ExtendedProperty<string> { Name = "NotCommonMetaData", Value = "test" });
+         dataRepository3.ExtendedProperties.Add(new ExtendedProperty<string> { Name = "Species", Value = "Dog" });
+
+         _observedData = new List<DataRepository> { dataRepository1, dataRepository2, dataRepository3 };
+
+         var noDimensionOutputMapping = new OutputMapping
+         {
+            WeightedObservedData = new WeightedObservedData(dataRepository1)
+         };
+         
+         var concentrationOutputMapping = new OutputMapping
+         {
+            WeightedObservedData = new WeightedObservedData(dataRepository2)
+         };
+
+         var outputMappings = new OutputMappings { noDimensionOutputMapping, concentrationOutputMapping };
+
+         var parameterIdentification = A.Fake<ParameterIdentification>();
+
+         A.CallTo(() => _executionContext.Project.AllParameterIdentifications)
+             .Returns(new List<ParameterIdentification> { parameterIdentification });
+
+         A.CallTo(() => parameterIdentification.OutputMappingsUsingDataRepository(A<DataRepository>.Ignored))
+             .ReturnsLazily(call => outputMappings);
+
+         A.CallTo(() => _executionContext.Load(A<ParameterIdentification>.Ignored)).DoesNothing();
+      }
+
+      protected override void Because()
+      { 
+         sut.UpdateParameterIdentificationsUsing(_observedData);
+      }
+
+      [Observation]
+      public void it_should_update_mappings_with_different_counts()
+      {
+         A.CallTo(() => _executionContext.PublishEvent(A<WeightedObservedDataChangedEvent>.Ignored)).MustHaveHappened();
+      }
+
+      [Observation]
+      public void it_should_display_a_message_box_with_updated_mappings()
+      {
+         A.CallTo(() => _dialogCreator.MessageBoxInfo(A<string>.Ignored))
+             .MustHaveHappened();
+      }
+   }
+
 }

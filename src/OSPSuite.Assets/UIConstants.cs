@@ -583,6 +583,30 @@ namespace OSPSuite.Assets
          }
 
          public static readonly string ImportFileFilter = "Excel Files (*.xls, *.xlsx)|*.xls;*.xlsx|Comma Separated Value Files (*.csv)|*.csv|NonMem Files (*.NMdat)|*.NMdat|All Files (*.*)|*.*";
+
+         public static string UpdatedMappingsMessage(IEnumerable<(string ParameterName, string OutputPath)> updatedMappingsInfo)
+         {
+            var sb = new StringBuilder();
+            sb.AppendLine("The following parameter identifications and their output mappings were modified:");
+            sb.AppendLine();
+
+            var groupedMappings = updatedMappingsInfo
+               .GroupBy(mapping => mapping.ParameterName)
+               .OrderBy(group => group.Key);
+
+            foreach (var group in groupedMappings)
+            {
+               sb.AppendLine($"- {group.Key}");
+               foreach (var mapping in group)
+               {
+                  sb.AppendLine($"    - Output Path: {mapping.OutputPath}");
+               }
+               sb.AppendLine();
+            }
+
+            return sb.ToString();
+         }
+
       }
 
       public static class Diff
@@ -1786,6 +1810,7 @@ namespace OSPSuite.Assets
       public static string DuplicatedPKParameterSensitivityFor(string id) => $"PKParameter sensitivity results for '{id}' were defined more than once!";
 
       public static string CouldNotFindQuantityWithPath(string quantityPath) => $"Could not find quantity with path '{quantityPath}'.";
+      public static string CouldNotFindContainerWithPath(string containerPath, string referringEntityPath) => $"Could not find container with path '{containerPath}'.\n\nReferenced by '{referringEntityPath}'.";
 
       public static string IndividualResultsDoesNotHaveTheExpectedQuantity(int individualId, IReadOnlyList<string> expectedQuantities, IReadOnlyList<string> foundQuantities)
       {
