@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
@@ -15,16 +14,17 @@ using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
+using OSPSuite.Core.Domain.ParameterIdentifications;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
-   public class ObservedDataEventArgs : EventArgs
+   public class OutputMappingEventArgs : EventArgs
    {
-      public WeightedObservedData WeightedObservedData { get; }
+      public OutputMapping OutputMapping { get; }
 
-      public ObservedDataEventArgs(WeightedObservedData weightedObservedData)
+      public OutputMappingEventArgs(OutputMapping outputMapping)
       {
-         WeightedObservedData = weightedObservedData;
+         OutputMapping = outputMapping;
       }
    }
 
@@ -35,12 +35,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       IEnumerable<DataRepository> AllObservedDataFor(OutputMappingDTO dto);
       void ObservedDataSelectionChanged(OutputMappingDTO dto, DataRepository newObservedData, DataRepository oldObservedData);
       void RemoveOutputMapping(OutputMappingDTO outputMappingDTO);
-      event EventHandler<ObservedDataEventArgs> ObservedDataMapped;
-      event EventHandler<ObservedDataEventArgs> ObservedDataUnmapped;
-      event EventHandler<ObservedDataEventArgs> ObservedDataSelected;
+      event EventHandler<OutputMappingEventArgs> ObservedDataMapped;
+      event EventHandler<OutputMappingEventArgs> ObservedDataUnmapped;
+      event EventHandler<OutputMappingEventArgs> ObservedDataSelected;
 
       /// <summary>
-      ///    Ensures that the cached list are updated (usuful when a simulation was added to the PI)
+      ///    Ensures that the cached list are updated (useful when a simulation was added to the PI)
       /// </summary>
       void UpdateCache();
 
@@ -64,9 +64,9 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private readonly List<SimulationQuantitySelectionDTO> _allAvailableOutputs = new List<SimulationQuantitySelectionDTO>();
 
       private readonly NotifyList<OutputMappingDTO> _allOutputMappingDTOs;
-      public event EventHandler<ObservedDataEventArgs> ObservedDataMapped = delegate { };
-      public event EventHandler<ObservedDataEventArgs> ObservedDataUnmapped = delegate { };
-      public event EventHandler<ObservedDataEventArgs> ObservedDataSelected = delegate { };
+      public event EventHandler<OutputMappingEventArgs> ObservedDataMapped = delegate { };
+      public event EventHandler<OutputMappingEventArgs> ObservedDataUnmapped = delegate { };
+      public event EventHandler<OutputMappingEventArgs> ObservedDataSelected = delegate { };
       public bool IsLatched { get; set; }
 
       public ParameterIdentificationOutputMappingPresenter(
@@ -167,10 +167,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
             Id = nextUniqueIdFor(allOutputsUsingObservedData)
          };
 
-         raiseObservedDataUnmappedFor(dto.WeightedObservedData);
+         raiseObservedDataUnmappedFor(dto.Mapping);
          dto.Mapping.WeightedObservedData = weightedObservedData;
          View.CloseEditor();
-         raiseObservedDataMappedFor(dto.WeightedObservedData);
+         raiseObservedDataMappedFor(dto.Mapping);
       }
 
       private int? nextUniqueIdFor(List<OutputMappingDTO> outputMappings)
@@ -199,23 +199,23 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          dto.Scaling = _parameterIdentificationTask.DefaultScalingFor(newOutput.Quantity);
       }
 
-      public void Select(OutputMappingDTO outputMappingDTO) => this.DoWithinLatch(() => ObservedDataSelected(this, new ObservedDataEventArgs(outputMappingDTO.WeightedObservedData)));
+      public void Select(OutputMappingDTO outputMappingDTO) => this.DoWithinLatch(() => ObservedDataSelected(this, new OutputMappingEventArgs(outputMappingDTO.Mapping)));
 
       public void RemoveOutputMapping(OutputMappingDTO outputMappingDTO)
       {
          _allOutputMappingDTOs.Remove(outputMappingDTO);
          _parameterIdentification.RemoveOutputMapping(outputMappingDTO.Mapping);
-         raiseObservedDataUnmappedFor(outputMappingDTO.WeightedObservedData);
+         raiseObservedDataUnmappedFor(outputMappingDTO.Mapping);
 
          OnStatusChanged();
       }
 
-      private void raiseObservedDataUnmappedFor(WeightedObservedData weightedObservedData)
+      private void raiseObservedDataUnmappedFor(OutputMapping outputMapping)
       {
-         if (weightedObservedData != null)
-            ObservedDataUnmapped(this, new ObservedDataEventArgs(weightedObservedData));
+         if (outputMapping.WeightedObservedData != null)
+            ObservedDataUnmapped(this, new OutputMappingEventArgs(outputMapping));
       }
 
-      private void raiseObservedDataMappedFor(WeightedObservedData weightedObservedData) => ObservedDataMapped(this, new ObservedDataEventArgs(weightedObservedData));
+      private void raiseObservedDataMappedFor(OutputMapping weightedObservedData) => ObservedDataMapped(this, new OutputMappingEventArgs(weightedObservedData));
    }
 }

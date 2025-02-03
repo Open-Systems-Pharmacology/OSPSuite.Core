@@ -5,7 +5,7 @@ using OSPSuite.Presentation.Views.ObservedData;
 
 namespace OSPSuite.Presentation.Views.Importer
 {
-   public interface IImportConfirmationView : IView<IImportConfirmationPresenter> //IModalView<IImportConfirmationPresenter>
+   public interface IImportPreviewView : IView<IImportPreviewPresenter>
    {
       void SetDataSetNames(IEnumerable<string> names);
       void SetNamingConventions(IEnumerable<string> options, string selected = null);

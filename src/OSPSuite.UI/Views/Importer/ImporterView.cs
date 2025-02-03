@@ -1,6 +1,7 @@
 ﻿using DevExpress.XtraTab;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
+using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
@@ -10,9 +11,10 @@ namespace OSPSuite.UI.Views.Importer
    public partial class ImporterView : BaseUserControl, IImporterView
    {
       private IImporterPresenter _presenter;
-      private XtraTabPage _confirmationTabPage;
+      private XtraTabPage _previewTabPage;
       private const int DATA_PAGE_INDEX = 0;
-      private const int CONFIRMATION_PAGE_INDEX = 1;
+      private const int DIMENSION_PAGE_INDEX = 1;
+      private const int CONFIRMATION_PAGE_INDEX = 2;
 
       public ImporterView()
       {
@@ -69,25 +71,25 @@ namespace OSPSuite.UI.Views.Importer
          columnMappingPanelControl.FillWith(columnMappingView);
       }
 
-      public void AddConfirmationView(IImportConfirmationView confirmationView)
+      public void AddPreviewView(IImportPreviewView previewView)
       {
-         _confirmationTabPage = previewXtraTabControl.AddPageFrom(confirmationView, CONFIRMATION_PAGE_INDEX);
+         _previewTabPage = previewXtraTabControl.AddPageFrom(previewView, CONFIRMATION_PAGE_INDEX);
       }
 
-      public void EnableConfirmationView()
+      public void EnablePreviewView()
       {
-         if (_confirmationTabPage.PageEnabled)
+         if (_previewTabPage.PageEnabled)
             return;
 
-         _confirmationTabPage.PageEnabled = true;
-         _confirmationTabPage.PageVisible = true;
-         previewXtraTabControl.SelectedTabPage = _confirmationTabPage;
+         _previewTabPage.PageEnabled = true;
+         _previewTabPage.PageVisible = true;
+         previewXtraTabControl.SelectedTabPage = _previewTabPage;
       }
 
       public void DisableConfirmationView()
       {
-         _confirmationTabPage.PageEnabled = false;
-         _confirmationTabPage.PageVisible = false;
+         _previewTabPage.PageEnabled = false;
+         _previewTabPage.PageVisible = false;
       }
 
       public void AddNanView(INanView nanView)

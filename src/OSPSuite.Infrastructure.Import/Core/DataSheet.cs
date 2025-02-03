@@ -179,8 +179,6 @@ namespace OSPSuite.Infrastructure.Import.Core
          {
             if (_rawDataTable[i].All(x => x.IsNullOrEmpty()))
                _rawDataTable.RemoveAt(i);
-            else
-               break;
          }
       }
 
