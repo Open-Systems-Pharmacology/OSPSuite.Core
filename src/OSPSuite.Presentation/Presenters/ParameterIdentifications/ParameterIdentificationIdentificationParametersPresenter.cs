@@ -36,8 +36,12 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public event EventHandler NoIdentificationParameterSelected = delegate { };
       private readonly IEventPublisher _eventPublisher;
 
-      public ParameterIdentificationIdentificationParametersPresenter(IParameterIdentificationIdentificationParametersView view, IIdentificationParameterFactory identificationParameterFactory,
-         IIdentificationParameterToIdentificationParameterDTOMapper identificationParameterDTOMapper, IIdentificationParameterTask identificationParameterTask, IEventPublisher eventPublisher) : base(view)
+      public ParameterIdentificationIdentificationParametersPresenter(
+         IParameterIdentificationIdentificationParametersView view, 
+         IIdentificationParameterFactory identificationParameterFactory,
+         IIdentificationParameterToIdentificationParameterDTOMapper identificationParameterDTOMapper, 
+         IIdentificationParameterTask identificationParameterTask, 
+         IEventPublisher eventPublisher) : base(view)
       {
          _identificationParameterFactory = identificationParameterFactory;
          _identificationParameterDTOMapper = identificationParameterDTOMapper;
