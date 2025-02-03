@@ -172,8 +172,29 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_canceling_a_run : concern_for_ParameterIdentificationRun
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Run(_cancellationToken);
+      }
+
+      protected override void Because()
+      {
+         sut.Cancel();
+      }
+
+      [Observation]
+      public void the_batch_must_be_stopped()
+      {
+         A.CallTo(() => _simModelBatch.StopSimulation()).MustHaveHappened();
+      }
+   }
+
    public class
-      When_initializing_the_parameter_identification_run_with_a_parameter_identification_with_multiple_simulations : concern_for_ParameterIdentificationRun
+      When_initializing_the_parameter_identification_run_with_a_parameter_identification_with_multiple_simulations :
+         concern_for_ParameterIdentificationRun
    {
       private OutputMapping _outputMapping2;
       private ISimulation _simulation2;

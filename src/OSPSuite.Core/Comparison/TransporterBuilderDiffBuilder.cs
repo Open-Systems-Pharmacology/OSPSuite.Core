@@ -22,6 +22,7 @@ namespace OSPSuite.Core.Comparison
          CompareValues(x => x.TargetCriteria, x => x.TargetCriteria, comparison);
          _objectComparer.Compare(comparison.DimensionComparison());
          _moleculeDependentBuilderDiffBuilder.Compare(comparison);
+         CompareValues(x => x.CreateProcessRateParameter, x => x.CreateProcessRateParameter, comparison);
          _objectComparer.Compare(comparison.FormulaComparison());
       }
    }
