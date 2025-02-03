@@ -95,22 +95,43 @@ namespace OSPSuite.Core.Domain.Services
 
          lloq = convertToBaseUnit(mergedDimension, currentObservedDataUnit, lloq);
 
+         var simulationMaxTime = simulationColumn.BaseGrid.Values.Max();
          foreach (var index in observedTimeIndices)
          {
+            var observedTime = observedTimeColumn[index];
+
+            if (simulationMaxTime < observedTime)
+               continue;
+
             var weight = outputMapping.Weight * outputMapping.WeightedObservedData.Weights[index];
             var observedValue = convertToBaseUnit(mergedDimension, currentObservedDataUnit, observedValueColumn[index]);
-            if (!observedValue.IsValid())
+
+            if(observationShouldBeIgnored(observedValue))
                continue;
 
-            var observedTime = observedTimeColumn[index];
             var simulatedValue = simulationColumn.GetValue(observedTime);
-            if (!simulatedValue.IsValid())
-               continue;
 
-            outputResiduals.Add(new Residual(observedTime, weight * residualCalculatorFunc(simulatedValue, observedValue, lloq), weight));
+            outputResiduals.Add(simulatedValue.IsValid() ?
+               new Residual(observedTime, weight * residualCalculatorFunc(simulatedValue, observedValue, lloq), weight) : 
+               new Residual(observedTime, residualValueForInvalidSimulationValue(simulatedValue), weight));
          }
 
          return outputResiduals;
+      }
+
+      private static bool observationShouldBeIgnored(float observedValue)
+      {
+         return !observedValue.IsValid();
+      }
+
+      private static double residualValueForInvalidSimulationValue(float simulatedValue)
+      {
+         if (float.IsNaN(simulatedValue))
+            return double.NaN;
+         if (float.IsPositiveInfinity(simulatedValue))
+            return double.PositiveInfinity;
+
+         return double.NegativeInfinity;
       }
 
       private static float convertToBaseUnit(IDimension mergedDimension, Unit currentUnit, float value)
