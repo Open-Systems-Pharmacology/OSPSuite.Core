@@ -99,18 +99,43 @@ namespace OSPSuite.Core.Domain.Services
          {
             var weight = outputMapping.Weight * outputMapping.WeightedObservedData.Weights[index];
             var observedValue = convertToBaseUnit(mergedDimension, currentObservedDataUnit, observedValueColumn[index]);
-            if (!observedValue.IsValid())
-               continue;
 
             var observedTime = observedTimeColumn[index];
-            var simulatedValue = simulationColumn.GetValue(observedTime);
-            if (!simulatedValue.IsValid())
+
+            if(simulationTimeIsTooShort(simulationColumn, observedTime))
                continue;
 
-            outputResiduals.Add(new Residual(observedTime, weight * residualCalculatorFunc(simulatedValue, observedValue, lloq), weight));
+            if(observationShouldBeIgnored(observedValue))
+               continue;
+
+            var simulatedValue = simulationColumn.GetValue(observedTime);
+
+            outputResiduals.Add(!simulatedValue.IsValid() ? 
+               new Residual(observedTime, residualValueForInvalidSimulationValue(simulatedValue), weight) : 
+               new Residual(observedTime, weight * residualCalculatorFunc(simulatedValue, observedValue, lloq), weight));
          }
 
          return outputResiduals;
+      }
+
+      private static bool observationShouldBeIgnored(float observedValue)
+      {
+         return !observedValue.IsValid();
+      }
+
+      private static bool simulationTimeIsTooShort(DataColumn simulationColumn, float observedTime)
+      {
+         return simulationColumn.BaseGrid.Values.Max() < observedTime;
+      }
+
+      private static double residualValueForInvalidSimulationValue(float simulatedValue)
+      {
+         if (float.IsNaN(simulatedValue))
+            return double.NaN;
+         if (float.IsPositiveInfinity(simulatedValue))
+            return double.PositiveInfinity;
+
+         return double.NegativeInfinity;
       }
 
       private static float convertToBaseUnit(IDimension mergedDimension, Unit currentUnit, float value)
