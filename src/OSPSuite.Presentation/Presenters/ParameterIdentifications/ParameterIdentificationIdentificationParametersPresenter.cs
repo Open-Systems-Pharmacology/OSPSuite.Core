@@ -117,17 +117,18 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       public void ChangeName(IdentificationParameterDTO identificationParameterDTO, string oldName, string newName)
       {
-         var matchedParameter = _parameterIdentification.AllIdentificationParameters.Single(x => x.Name == oldName);
-         matchedParameter.Name = newName;
+         identificationParameterDTO.IdentificationParameter.Name = newName;
 
-         renameParameterAndPublishEvent(oldName, newName);
+         if(renameResult(oldName, newName))
+            _eventPublisher.PublishEvent(new ParameterIdentificationResultsUpdatedEvent(_parameterIdentification));
 
          identificationParameterDTO.IdentificationParameter.Name = newName;
          SelectIdentificationParameter(identificationParameterDTO);
       }
 
-      private void renameParameterAndPublishEvent(string oldName, string newName)
+      private bool renameResult(string oldName, string newName)
       {
+         var renameResult = false;
          if (_parameterIdentification.Results.Any())
          {
             var resultParameter = _parameterIdentification.Results[0].BestResult.Values.SingleOrDefault(x => x.Name == oldName);
@@ -135,9 +136,10 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
             if (resultParameter != null)
             {
                resultParameter.Name = newName;
-               _eventPublisher.PublishEvent(new ParameterIdentificationResultsUpdatedEvent(_parameterIdentification));
+               renameResult = true;
             }
          }
+         return renameResult;
       }
 
       private void updateView()
