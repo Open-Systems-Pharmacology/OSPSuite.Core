@@ -95,24 +95,25 @@ namespace OSPSuite.Core.Domain.Services
 
          lloq = convertToBaseUnit(mergedDimension, currentObservedDataUnit, lloq);
 
+         var simulationMaxTime = simulationColumn.BaseGrid.Values.Max();
          foreach (var index in observedTimeIndices)
          {
-            var weight = outputMapping.Weight * outputMapping.WeightedObservedData.Weights[index];
-            var observedValue = convertToBaseUnit(mergedDimension, currentObservedDataUnit, observedValueColumn[index]);
-
             var observedTime = observedTimeColumn[index];
 
-            if(simulationTimeIsTooShort(simulationColumn, observedTime))
+            if (simulationMaxTime < observedTime)
                continue;
+
+            var weight = outputMapping.Weight * outputMapping.WeightedObservedData.Weights[index];
+            var observedValue = convertToBaseUnit(mergedDimension, currentObservedDataUnit, observedValueColumn[index]);
 
             if(observationShouldBeIgnored(observedValue))
                continue;
 
             var simulatedValue = simulationColumn.GetValue(observedTime);
 
-            outputResiduals.Add(!simulatedValue.IsValid() ? 
-               new Residual(observedTime, residualValueForInvalidSimulationValue(simulatedValue), weight) : 
-               new Residual(observedTime, weight * residualCalculatorFunc(simulatedValue, observedValue, lloq), weight));
+            outputResiduals.Add(simulatedValue.IsValid() ?
+               new Residual(observedTime, weight * residualCalculatorFunc(simulatedValue, observedValue, lloq), weight) : 
+               new Residual(observedTime, residualValueForInvalidSimulationValue(simulatedValue), weight));
          }
 
          return outputResiduals;
@@ -121,11 +122,6 @@ namespace OSPSuite.Core.Domain.Services
       private static bool observationShouldBeIgnored(float observedValue)
       {
          return !observedValue.IsValid();
-      }
-
-      private static bool simulationTimeIsTooShort(DataColumn simulationColumn, float observedTime)
-      {
-         return simulationColumn.BaseGrid.Values.Max() < observedTime;
       }
 
       private static double residualValueForInvalidSimulationValue(float simulatedValue)

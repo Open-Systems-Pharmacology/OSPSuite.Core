@@ -543,8 +543,6 @@ namespace OSPSuite.Core.Services
       {
          base.Context();
          sut = new ResidualCalculatorForOnlyObservedData(new TimeGridRestrictor(), _dimensionFactory);
-         sut.Initialize(RemoveLLOQModes.Always);
-         _outputMapping.Scaling = Scalings.Linear;
          
       }
 
