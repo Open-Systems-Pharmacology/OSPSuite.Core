@@ -24,7 +24,12 @@ namespace OSPSuite.Core.Serialization.Xml
 
       private Action<IExtendedProperty> addFunction(DataRepository dataRepository)
       {
-         return dataRepository.ExtendedProperties.Add;
+         return x =>
+         {
+            if (string.IsNullOrEmpty(x.Name))
+               x.Name = $"Unnamed Property {dataRepository.ExtendedProperties.Count}";
+            dataRepository.ExtendedProperties.Add(x);
+         };
       }
 
       protected override void TypedDeserialize(DataRepository dataRepository, XElement outputToDeserialize, SerializationContext serializationContext)
