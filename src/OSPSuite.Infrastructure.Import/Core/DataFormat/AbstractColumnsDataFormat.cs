@@ -219,23 +219,33 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          ref double rank)
       {
          var matchingHeaders = getMatchingHeaders(keys, metaDataCategories);
+
          foreach (var header in matchingHeaders)
          {
             var key = findHeaderInMetaDataCategories(header, metaDataCategories);
-
-            // Prevent duplicates in the parameters by MetaDataId
-            if (!Parameters.OfType<MetaDataFormatParameter>().Any(x => x.MetaDataId.Equals(key)))
-            {
-               keys.Remove(header);
-               Parameters.Add(new MetaDataFormatParameter(header, key));
-            }
+            addParameterIfNew(header, key, keys);
          }
       }
 
-      private IEnumerable<string> getMatchingHeaders(List<string> keys, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      private IEnumerable<string> getMatchingHeaders(IEnumerable<string> keys, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          var metaDataCategoryNames = metaDataCategories.Select(c => c.Name).ToList();
          return keys.Where(header => metaDataCategoryNames.FindHeader(header) != null);
+      }
+
+
+      private void addParameterIfNew(string header, string key, List<string> keys)
+      {
+         if (!isMetaDataParameterExisting(key))
+         {
+            keys.Remove(header);
+            Parameters.Add(new MetaDataFormatParameter(header, key));
+         }
+      }
+
+      private bool isMetaDataParameterExisting(string key)
+      {
+         return Parameters.OfType<MetaDataFormatParameter>().Any(x => x.MetaDataId.Equals(key));
       }
 
       private string findHeaderInMetaDataCategories(string header, IReadOnlyList<MetaDataCategory> metaDataCategories)
