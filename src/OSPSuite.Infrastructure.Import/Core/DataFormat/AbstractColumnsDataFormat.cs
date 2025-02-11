@@ -218,8 +218,13 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var columnsCopy = keys.ToList();
          foreach (var header in columnsCopy.Where(h => metaDataCategories.Select(c => c.Name).FindHeader(h) != null))
          {
-            keys.Remove(header);
-            Parameters.Add(new MetaDataFormatParameter(header, metaDataCategories.Select(c => c.Name).FindHeader(header)));
+            var key = metaDataCategories.Select(c => c.Name).FindHeader(header);
+            //prevent duplicates in the parameters by metadataId
+            if (Parameters.OfType<MetaDataFormatParameter>().Any(x => x.MetaDataId.Equals(key)) == false)
+            {
+               keys.Remove(header);
+               Parameters.Add(new MetaDataFormatParameter(header, key));
+            }
          }
       }
 
