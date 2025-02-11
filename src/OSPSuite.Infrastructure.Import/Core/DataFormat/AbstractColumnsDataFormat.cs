@@ -227,10 +227,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          }
       }
 
-      private IEnumerable<string> getMatchingHeaders(IEnumerable<string> keys, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      private List<string> getMatchingHeaders(IEnumerable<string> keys, IReadOnlyList<MetaDataCategory> metaDataCategories)
       {
          var metaDataCategoryNames = metaDataCategories.Select(c => c.Name).ToList();
-         return keys.Where(header => metaDataCategoryNames.FindHeader(header) != null);
+         return keys.Where(header => metaDataCategoryNames.FindHeader(header) != null).ToList();
       }
 
 
