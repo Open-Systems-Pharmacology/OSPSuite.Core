@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="Layer_1"
+   data-name="Layer 1"
+   viewBox="0 0 128.16 128.16"
+   version="1.1"
+   sodipodi:docname="ProteinGreen.svg"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview6"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="14.770599"
+     inkscape:cx="64.080002"
+     inkscape:cy="64.080002"
+     inkscape:window-width="3840"
+     inkscape:window-height="2089"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Layer_1" />
+  <defs
+     id="defs1">
+    <style
+       id="style1">.cls-1,.cls-3{fill:#62bb46;}.cls-1{stroke:#62bb46;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.39px;}.cls-2{fill:#00aeef;}</style>
+  </defs>
+  <path
+     class="cls-1"
+     d="M39.62,74l-.23-.39C35,65.9,31.5,59.59,30.7,57.65a10.36,10.36,0,0,1-.6-2.36s0-.16,0-.16L61.59,73.55l.16.29,9.77,17.6.16.29Z"
+     id="path1" />
+  <path
+     class="cls-1"
+     d="M66.52,47l-.22-.39c-4.39-7.66-7.89-14-8.7-15.9A11.11,11.11,0,0,1,57,28.38l0-.16L88.5,46.64l.16.29,9.77,17.6.16.3Z"
+     id="path2" />
+  <path
+     class="cls-2"
+     d="M70.37,11.58,57.18,24.77l-.55.55S89.87,43.69,96.69,47.38c14.47,7.82,30.92-16.62,30.92-16.62S119.55,37.57,105,30C91.48,23,70.37,11.58,70.37,11.58Z"
+     id="path3" />
+  <path
+     class="cls-2"
+     d="M31,52c5.78,3.42,47.84,28.33,53.44,30.64,4.14,1.71,6.22.35,8.07-1.5l9.79-9.79a.6.6,0,0,0-.13-1L44.29,38.27a.59.59,0,0,0-.71.1L30.9,51.05A.59.59,0,0,0,31,52Z"
+     id="path4" />
+  <path
+     class="cls-2"
+     d="M3.29,78.66s48.08,28.55,54.1,31c4.14,1.7,6.22.34,8.07-1.51L75.81,97.84l-59-32.72Z"
+     id="path5" />
+  <path
+     class="cls-3"
+     d="M17.16,116.58S3.64,95.07,1.15,89.05a7.65,7.65,0,0,1,.73-7.29L19.61,92.23s4.57,6.18,5.32,12.42S17.16,116.58,17.16,116.58Z"
+     id="path6" />
+  <circle
+     class="cls-8"
+     cx="26.683201"
+     cy="101.48327"
+     r="26.5"
+     id="circle5"
+     style="opacity:0.9;isolation:isolate;fill:#6dbd45" />
+  <path
+     class="cls-9"
+     d="m 44.543201,95.393261 a 4.09,4.09 0 0 0 -5.78,-5.78 l -16.73,16.739999 -7.32,-7.319999 a 4.09,4.09 0 0 0 -5.77,5.789999 v 0 l 11.17,11.18001 a 2.69,2.69 0 0 0 3.8,0 v 0 l 20.6,-20.600009 z"
+     id="path6-7"
+     style="fill:#ffffff" />
+</svg>

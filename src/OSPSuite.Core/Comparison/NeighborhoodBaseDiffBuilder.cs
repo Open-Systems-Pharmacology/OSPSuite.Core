@@ -1,45 +1,75 @@
 ﻿using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Comparison
 {
-   public class NeighborhoodBaseDiffBuilder : DiffBuilder<INeighborhoodBase>
+   public abstract class NeighborhoodBaseDiffBuilder<TNeighborhood> : DiffBuilder<TNeighborhood> where TNeighborhood : class, IContainer
    {
       private readonly ContainerDiffBuilder _containerDiffBuilder;
-      private readonly IEntityPathResolver _entityPathResolver;
 
-      public NeighborhoodBaseDiffBuilder(ContainerDiffBuilder containerDiffBuilder, IEntityPathResolver entityPathResolver)
+      protected NeighborhoodBaseDiffBuilder(ContainerDiffBuilder containerDiffBuilder)
       {
          _containerDiffBuilder = containerDiffBuilder;
-         _entityPathResolver = entityPathResolver;
       }
 
-      public override void Compare(IComparison<INeighborhoodBase> comparison)
+      public override void Compare(IComparison<TNeighborhood> comparison)
       {
          _containerDiffBuilder.Compare(comparison);
          compareNeighbors(comparison);
       }
 
-      private void compareNeighbors(IComparison<INeighborhoodBase> comparison)
+      private void compareNeighbors(IComparison<TNeighborhood> comparison)
       {
-         var firstNeigbor1Path = _entityPathResolver.PathFor(comparison.Object1.FirstNeighbor);
-         var secondNeigbor1Path = _entityPathResolver.PathFor(comparison.Object1.SecondNeighbor);
-         var firstNeigbor2Path = _entityPathResolver.PathFor(comparison.Object2.FirstNeighbor);
-         var secondNeigbor2Path = _entityPathResolver.PathFor(comparison.Object2.SecondNeighbor);
+         var (firstNeighbor1Path, secondNeighbor1Path, firstNeighbor2Path, secondNeighbor2Path) = GetNeighborsComparisonPath(comparison);
 
-         if (firstNeigbor1Path.Equals(firstNeigbor2Path) && secondNeigbor1Path.Equals(secondNeigbor2Path) ||
-             firstNeigbor1Path.Equals(secondNeigbor2Path) && secondNeigbor1Path.Equals(firstNeigbor2Path))
+         if (firstNeighbor1Path.Equals(firstNeighbor2Path) && secondNeighbor1Path.Equals(secondNeighbor2Path) ||
+             firstNeighbor1Path.Equals(secondNeighbor2Path) && secondNeighbor1Path.Equals(firstNeighbor2Path))
             return;
 
          comparison.Add(new PropertyValueDiffItem
          {
             CommonAncestor = comparison.Object1,
-            FormattedValue1 = Captions.Diff.ConnectionBetween(firstNeigbor1Path, secondNeigbor1Path),
-            FormattedValue2 = Captions.Diff.ConnectionBetween(firstNeigbor2Path, secondNeigbor2Path),
+            FormattedValue1 = Captions.Diff.ConnectionBetween(firstNeighbor1Path, secondNeighbor1Path),
+            FormattedValue2 = Captions.Diff.ConnectionBetween(firstNeighbor2Path, secondNeighbor2Path),
             PropertyName = Captions.Diff.Connection,
-            Description = Captions.Diff.PropertyDiffers(Captions.Diff.Connection, Captions.Diff.ConnectionBetween(firstNeigbor1Path, secondNeigbor1Path), Captions.Diff.ConnectionBetween(firstNeigbor2Path, secondNeigbor2Path))
+            Description = Captions.Diff.PropertyDiffers(Captions.Diff.Connection, Captions.Diff.ConnectionBetween(firstNeighbor1Path, secondNeighbor1Path), Captions.Diff.ConnectionBetween(firstNeighbor2Path, secondNeighbor2Path))
          });
+      }
+
+      protected abstract (ObjectPath firstNeighbor1Path, ObjectPath secondNeighbor1Path, ObjectPath firstNeighbor2Path, ObjectPath secondNeighbor2Path) GetNeighborsComparisonPath(IComparison<TNeighborhood> comparison);
+   }
+
+   public class NeighborhoodBuilderDiffBuilder : NeighborhoodBaseDiffBuilder<NeighborhoodBuilder>
+   {
+      public NeighborhoodBuilderDiffBuilder(ContainerDiffBuilder containerDiffBuilder) : base(containerDiffBuilder)
+      {
+      }
+
+      protected override (ObjectPath firstNeighbor1Path, ObjectPath secondNeighbor1Path, ObjectPath firstNeighbor2Path, ObjectPath secondNeighbor2Path) GetNeighborsComparisonPath(IComparison<NeighborhoodBuilder> comparison)
+      {
+         return (comparison.Object1.FirstNeighborPath, comparison.Object1.SecondNeighborPath, comparison.Object2.FirstNeighborPath, comparison.Object2.SecondNeighborPath);
+      }
+   }
+
+   public class NeighborhoodDiffBuilder : NeighborhoodBaseDiffBuilder<Neighborhood>
+   {
+      private readonly IEntityPathResolver _entityPathResolver;
+
+      public NeighborhoodDiffBuilder(ContainerDiffBuilder containerDiffBuilder, IEntityPathResolver entityPathResolver) : base(containerDiffBuilder)
+      {
+         _entityPathResolver = entityPathResolver;
+      }
+
+      protected override (ObjectPath firstNeighbor1Path, ObjectPath secondNeighbor1Path, ObjectPath firstNeighbor2Path, ObjectPath secondNeighbor2Path) GetNeighborsComparisonPath(IComparison<Neighborhood> comparison)
+      {
+         var firstNeighbor1Path = _entityPathResolver.ObjectPathFor(comparison.Object1.FirstNeighbor);
+         var secondNeighbor1Path = _entityPathResolver.ObjectPathFor(comparison.Object1.SecondNeighbor);
+         var firstNeighbor2Path = _entityPathResolver.ObjectPathFor(comparison.Object2.FirstNeighbor);
+         var secondNeighbor2Path = _entityPathResolver.ObjectPathFor(comparison.Object2.SecondNeighbor);
+
+         return (firstNeighbor1Path, secondNeighbor1Path, firstNeighbor2Path, secondNeighbor2Path);
       }
    }
 }

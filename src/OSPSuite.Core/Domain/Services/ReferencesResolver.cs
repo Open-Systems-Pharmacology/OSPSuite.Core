@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             usingFormula.Formula.ResolveObjectPathsFor(usingFormula);
             resolveReferenceFor(usingFormula as IParameter);
-            resolveReferenceFor(usingFormula as IEventAssignment);
+            resolveReferenceFor(usingFormula as EventAssignment);
          }
       }
 
@@ -36,7 +36,7 @@ namespace OSPSuite.Core.Domain.Services
          parameter?.RHSFormula?.ResolveObjectPathsFor(parameter);
       }
 
-      private void resolveReferenceFor(IEventAssignment eventAssignment)
+      private void resolveReferenceFor(EventAssignment eventAssignment)
       {
          eventAssignment?.ResolveChangedEntity();
       }

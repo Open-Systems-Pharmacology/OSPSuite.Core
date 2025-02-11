@@ -60,7 +60,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.XDimension).WithMappingName(Constants.Serialization.Attribute.X_DIMENSION);
          Map(x => x.XName);
          Map(x => x.YName);
-         MapEnumerable(x => x.AllPoints(), addPoint);
+         MapEnumerable(x => x.AllPoints, addPoint);
          Map(x => x.UseDerivedValues);
       }
 
@@ -106,6 +106,16 @@ namespace OSPSuite.Core.Serialization.Xml
          base.PerformMapping();
          Map(x => x.TableObjectAlias);
          Map(x => x.OffsetObjectAlias);
+      }
+   }
+
+   public class DistributedTableFormulaXmlSerializer : TableFormulaXmlSerializerBase<DistributedTableFormula>
+   {
+      public override void PerformMapping()
+      {
+         base.PerformMapping();
+         Map(x => x.Percentile);
+         MapEnumerable(x => x.AllDistributionMetaData(), x => x.AddDistributionMetaData);
       }
    }
 

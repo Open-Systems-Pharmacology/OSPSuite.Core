@@ -21,10 +21,10 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         sut.AxisBy(AxisTypes.Y).Dimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
+         sut.YAxis.Dimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
          sut.AxisBy(AxisTypes.Y2).Dimension = DomainHelperForSpecs.FractionDimensionForSpecs();
          sut.AxisBy(AxisTypes.Y3).Dimension = DomainHelperForSpecs.LengthDimensionForSpecs();
-         sut.AxisBy(AxisTypes.X).Dimension = sut.AxisBy(AxisTypes.Y3).Dimension;
+         sut.XAxis.Dimension = sut.AxisBy(AxisTypes.Y3).Dimension;
       }
 
       protected override void Because()
@@ -35,7 +35,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void the_x_axis_should_be_visible()
       {
-         sut.AxisBy(AxisTypes.X).Visible.ShouldBeTrue();
+         sut.XAxis.Visible.ShouldBeTrue();
       }
 
       [Observation]
@@ -48,7 +48,7 @@ namespace OSPSuite.Core.Domain
       public void axes_with_other_dimensions_are_not_visible()
       {
          sut.AxisBy(AxisTypes.Y2).Visible.ShouldBeFalse();
-         sut.AxisBy(AxisTypes.Y).Visible.ShouldBeFalse();
+         sut.YAxis.Visible.ShouldBeFalse();
       }
    }
 }

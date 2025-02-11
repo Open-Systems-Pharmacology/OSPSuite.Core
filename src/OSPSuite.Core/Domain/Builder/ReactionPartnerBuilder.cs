@@ -4,24 +4,9 @@ using OSPSuite.Core.Domain.UnitSystem;
 namespace OSPSuite.Core.Domain.Builder
 {
    /// <summary>
-   ///    Contains information necessary for the <see cref="IModelConstructor" />  to create a <see cref="IReactionPartner" />
+   ///    Contains information necessary for the <see cref="IModelConstructor" />  to create a <see cref="ReactionPartner" />
    /// </summary>
-   public interface IReactionPartnerBuilder : IWithDimension
-   {
-      string MoleculeName { get; set; }
-      double StoichiometricCoefficient { get; set; }
-
-      /// <summary>
-      ///    Return clone of reaction partner
-      /// </summary>
-      /// <returns></returns>
-      IReactionPartnerBuilder Clone();
-   }
-
-   /// <summary>
-   ///    Contains information necessary for the <see cref="IModelConstructor" />  to create a <see cref="IReactionPartner" />
-   /// </summary>
-   public class ReactionPartnerBuilder : IReactionPartnerBuilder
+   public class ReactionPartnerBuilder : IWithDimension
    {
       public IDimension Dimension { get; set; }
       public string MoleculeName { get; set; }
@@ -38,7 +23,7 @@ namespace OSPSuite.Core.Domain.Builder
          StoichiometricCoefficient = stoichiometricCoefficient;
       }
 
-      public IReactionPartnerBuilder Clone()
+      public ReactionPartnerBuilder Clone()
       {
          return new ReactionPartnerBuilder(MoleculeName, StoichiometricCoefficient);
       }

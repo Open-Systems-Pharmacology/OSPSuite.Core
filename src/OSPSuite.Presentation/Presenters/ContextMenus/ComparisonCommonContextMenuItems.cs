@@ -1,22 +1,23 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.UICommands;
+using OSPSuite.Utility.Extensions;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
    public static class ComparisonCommonContextMenuItems
    {
-      public static IMenuBarButton CompareObjectsMenu(IReadOnlyList<IObjectBase> objectsToCompare, IOSPSuiteExecutionContext context)
+      public static IMenuBarButton CompareObjectsMenu(IReadOnlyList<IObjectBase> objectsToCompare, IOSPSuiteExecutionContext context, IContainer container)
       {
-         return CompareObjectsMenu(objectsToCompare, objectsToCompare.AllNames(), context);
+         return CompareObjectsMenu(objectsToCompare, objectsToCompare.AllNames(), context, container);
       }
 
-      public static IMenuBarButton CompareObjectsMenu(IReadOnlyList<IObjectBase> objectsToCompare, IReadOnlyList<string> objectNames, IOSPSuiteExecutionContext context)
+      public static IMenuBarButton CompareObjectsMenu(IReadOnlyList<IObjectBase> objectsToCompare, IReadOnlyList<string> objectNames, IOSPSuiteExecutionContext context, IContainer container)
       {
          if (objectsToCompare.Count != 2)
             return null;
@@ -24,8 +25,8 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
          if (objectsToCompare.Count != objectNames.Count)
             return null;
 
-         var menu =  CreateMenuButton.WithCaption(MenuNames.CompareObjects(context.TypeFor(objectsToCompare[0])))
-            .WithCommandFor<CompareObjectsUICommand, IReadOnlyList<IObjectBase>>(objectsToCompare)
+         var menu = CreateMenuButton.WithCaption(MenuNames.CompareObjects(context.TypeFor(objectsToCompare[0])))
+            .WithCommandFor<CompareObjectsUICommand, IReadOnlyList<IObjectBase>>(objectsToCompare, container)
             .WithIcon(ApplicationIcons.Comparison);
 
          var compareObjectCommand = menu.Command.DowncastTo<CompareObjectsUICommand>();

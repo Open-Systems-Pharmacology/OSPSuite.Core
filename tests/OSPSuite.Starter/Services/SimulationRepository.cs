@@ -33,13 +33,13 @@ namespace OSPSuite.Starter.Services
 
       private TestSimulation createSimulation()
       {
-         var buildConfiguration = _modelHelper.CreateBuildConfiguration();
-         var result = _modelConstructor.CreateModelFrom(buildConfiguration, "Test");
+         var simulationConfiguration = _modelHelper.CreateSimulationConfiguration();
+         var result = _modelConstructor.CreateModelFrom(simulationConfiguration, "Test");
          var simulation = new TestSimulation
          {
-            BuildConfiguration = buildConfiguration,
+            Configuration = simulationConfiguration,
             Model = result.Model,
-            Name = "Test"
+            Name = "Test",
          };
 
          var allPersistable = simulation.All<IQuantity>().Where(x => x.Persistable).ToList();

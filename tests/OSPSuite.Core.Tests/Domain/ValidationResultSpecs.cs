@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -78,7 +79,35 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_adding_a_validation_message_for_an_obkect_for_which_a_validation_was_already_present : concern_for_ValidationResult
+   public class When_constructing_a_validation_message_with_messages_for_object_from_different_lists : concern_for_ValidationResult
+   {
+      private ValidationResult _validationResult1, _validationResult2;
+      private IObjectBase _invalidObject;
+
+      protected override void Context()
+      {
+         base.Context();
+         _invalidObject = A.Fake<IObjectBase>();
+         _validationResult1 = new ValidationResult();
+         _validationResult1.AddMessage(NotificationType.Error, _invalidObject, "Object Invalid", details: new[] { "Detail1", "Detail2" });
+
+         _validationResult2 = new ValidationResult();
+         _validationResult2.AddMessage(NotificationType.Error, _invalidObject, "It's invalid for another reason", details: new[] { "Detail3", "Detail4" });
+      }
+      protected override void Because()
+      {
+         sut = new ValidationResult(_validationResult1, _validationResult2);
+      }
+
+      [Observation]
+      public void should_add_the_details_of_the_new_message()
+      {
+         var message = sut.Messages.Find(x => x.Object == _invalidObject);
+         message.Details.ShouldOnlyContainInOrder("Detail1", "Detail2", "It's invalid for another reason", "Detail3", "Detail4");
+      }
+   }
+
+   public class When_adding_a_validation_message_for_an_object_for_which_a_validation_was_already_present : concern_for_ValidationResult
    {
       private ValidationResult _validationResult;
       private IObjectBase _invalidObject;

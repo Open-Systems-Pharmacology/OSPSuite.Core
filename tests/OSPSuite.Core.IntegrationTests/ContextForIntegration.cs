@@ -55,6 +55,7 @@ namespace OSPSuite.Core
 
          container.Register<SimulationHelperForSpecs, SimulationHelperForSpecs>();
          container.Register<ModelHelperForSpecs, ModelHelperForSpecs>();
+         container.Register<ModuleHelperForSpecs, ModuleHelperForSpecs>();
          container.Register<IDisplayNameProvider, DisplayNameProvider>();
          container.Register<ConcentrationBaseModelHelperForSpecs, ConcentrationBaseModelHelperForSpecs>();
          container.Register<IReactionDimensionRetriever, ReactionDimensionRetrieverForSpecs>(LifeStyle.Singleton);
@@ -158,7 +159,7 @@ namespace OSPSuite.Core
       {
          var simulationTransfer = LoadPKMLFile(pkmlName);
          var modelConstructor = IoC.Resolve<IModelConstructor>();
-         var result = modelConstructor.CreateModelFrom(simulationTransfer.Simulation.BuildConfiguration, pkmlName);
+         var result = modelConstructor.CreateModelFrom(simulationTransfer.Simulation.Configuration, pkmlName);
          return result;
       }
    }

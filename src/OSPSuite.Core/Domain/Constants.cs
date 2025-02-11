@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -24,7 +25,6 @@ namespace OSPSuite.Core.Domain
       public const string NEIGHBORHOODS = "Neighborhoods";
       public const string EVENTS = "Events";
       public const string ORGANISM = "Organism";
-      public const string APPLICATIONS = "Applications";
       public const string ROOT = "ROOT";
       public const string NAME_PROPERTY = "Name";
       public const int NOT_FOUND_INDEX = -1;
@@ -69,10 +69,9 @@ namespace OSPSuite.Core.Domain
 
       //Max suggested output points. User can decide to still go ahead with the simulation
       public const float MAX_NUMBER_OF_SUGGESTED_OUTPUT_POINTS = 50000;
-      
+
       public const float FLOAT_RELATIVE_EPSILON = 0.00001f;
       public const double CONFIDENCE_INTERVAL_ALPHA = 0.05;
-
 
       public const string PROJECT_UNDEFINED = "Undefined";
       public const string DISPLAY_PATH_SEPARATOR = "-";
@@ -101,8 +100,7 @@ namespace OSPSuite.Core.Domain
       public const byte RANGE_AREA_TRANSPARENCY = 255 - RANGE_AREA_OPACITY;
       public const int FEEDBACK_REFRESH_TIME = 1000; //refresh time in ms
       public const int DEFAULT_SENSITIVITY_NUMBER_OF_STEPS = 2;
-      public const double DEFAULT_SENSITIVITY_VARIATION_RANGE = 0.1; 
-
+      public const double DEFAULT_SENSITIVITY_VARIATION_RANGE = 0.1;
 
       //sensitivity values below this value will be set to zero
       public const double SENSITIVITY_THRESHOLD = 1.0e-4;
@@ -118,7 +116,6 @@ namespace OSPSuite.Core.Domain
       public const int RELATIVE_ITEM_MAX_FILE_SIZE_IN_BYTES = 50 * MB_TO_BYTES;
       public const string RELATIVE_ITEM_FILE_ITEM_TYPE = "File";
 
-   
       public static class Files
       {
          public const string LICENSE_AGREEMENT_FILE_NAME = "Open Systems Pharmacology Suite License.pdf";
@@ -129,8 +126,61 @@ namespace OSPSuite.Core.Domain
          public const string TEX_TEMPLATE_FOLDER_NAME = "TeXTemplates";
       }
 
+      public static class Organ
+      {
+         public const string LUMEN = "Lumen";
+         public const string MUCOSA = "Mucosa";
+      }
+
+      public static class Compartment
+      {
+         public const string STOMACH = "Stomach";
+         public const string DUODENUM = "Duodenum";
+         public const string UPPER_JEJUNUM = "UpperJejunum";
+         public const string LOWER_JEJUNUM = "LowerJejunum";
+         public const string UPPER_ILEUM = "UpperIleum";
+         public const string LOWER_ILEUM = "LowerIleum";
+         public const string CAECUM = "Caecum";
+         public const string COLON_ASCENDENS = "ColonAscendens";
+         public const string COLON_TRANSVERSUM = "ColonTransversum";
+         public const string COLON_DESCENDENS = "ColonDescendens";
+         public const string COLON_SIGMOID = "ColonSigmoid";
+         public const string RECTUM = "Rectum";
+
+         public static readonly IReadOnlyList<string> LumenSegmentsDuodenumToLowerIleum = new List<string>
+         {
+            DUODENUM,
+            UPPER_JEJUNUM,
+            LOWER_JEJUNUM,
+            UPPER_ILEUM,
+            LOWER_ILEUM
+         };
+
+         public static readonly IReadOnlyList<string> LumenSegmentsDuodenumToCaecum = new List<string>(LumenSegmentsDuodenumToLowerIleum)
+         {
+            CAECUM
+         };
+
+         public static readonly IReadOnlyList<string> LumenSegmentsDuodenumToRectum = new List<string>(LumenSegmentsDuodenumToCaecum)
+         {
+            COLON_ASCENDENS,
+            COLON_TRANSVERSUM,
+            COLON_DESCENDENS,
+            COLON_SIGMOID,
+            RECTUM
+         };
+
+         public static readonly IReadOnlyList<string> AllLumenSegments =
+            new List<string>(new[] {STOMACH}.Concat(LumenSegmentsDuodenumToRectum));
+      }
+
       public static class Parameters
       {
+         public const string REL_EXP = "Relative expression";
+         public const string REL_EXP_BLOOD_CELLS = "Relative expression in blood cells";
+         public const string REL_EXP_PLASMA = "Relative expression in plasma";
+         public const string REL_EXP_VASCULAR_ENDOTHELIUM = "Relative expression in vascular endothelium";
+
          public const string RESOLUTION = "Resolution";
          public const string START_VALUE = "Start value";
          public const string START_TIME = "Start time";
@@ -164,6 +214,7 @@ namespace OSPSuite.Core.Domain
          public const string ENABLE_SUPERSATURATION = "Enable supersaturation";
          public const string URINE_EMPTYING_ENABLE = "Urine emptying enabled";
          public const string PARTICLE_SIZE_DISTRIBUTION = "Particle size distribution";
+         public const string CHILD_PUGH_SCORE = "Child-Pugh score";
          public const string NUMBER_OF_BINS = "Number of bins";
          public const string TOTAL_DRUG_MASS = "Total drug mass";
          public const string ParameterCompoundTypeBase = "Compound type ";
@@ -210,13 +261,13 @@ namespace OSPSuite.Core.Domain
             TRANS_ABSORPTION_SINK,
             PARA_ABSORPTION_SINK,
             GESTATIONAL_AGE,
-            PLASMA_PROTEIN_BINDING_PARTNER
+            PLASMA_PROTEIN_BINDING_PARTNER,
+            CHILD_PUGH_SCORE
          };
 
          public static readonly IReadOnlyCollection<string> AllWithListOfValues = new List<string>(Halogens.Union(AllCategorialParameters));
-
-         //end of  delete
       }
+      //end of  delete
 
       public static class RegistryPaths
       {
@@ -305,6 +356,7 @@ namespace OSPSuite.Core.Domain
       {
          public const string VOLUME = "Volume";
          public const string MOLAR_CONCENTRATION = "Concentration (molar)";
+         public const string LENGTH = "Length";
          public const string MASS_CONCENTRATION = "Concentration (mass)";
          public const string DIMENSIONLESS = "Dimensionless";
          public const string MOLAR_AMOUNT = "Amount";
@@ -323,7 +375,7 @@ namespace OSPSuite.Core.Domain
          public const string VOLUME_PER_BODY_WEIGHT = "Volume per body weight";
 
          public static readonly IDimension NO_DIMENSION = new UnitSystem.Dimension(new BaseDimensionRepresentation(), DIMENSIONLESS, string.Empty);
-         
+
          public static class Units
          {
             public const string Seconds = "s";
@@ -345,7 +397,6 @@ namespace OSPSuite.Core.Domain
          public const string VALUE = "Value";
          public const string UNIT = "Unit";
       }
-
 
       public static class SensitivityAnalysisResults
       {
@@ -445,7 +496,7 @@ namespace OSPSuite.Core.Domain
          public const string DEFAULT = MPFIT;
       }
 
-      public class CategoryOptimizations
+      public static class CategoryOptimizations
       {
          public const string COMPOUND = "Compound";
          public const string CATEGORY = "Category";
@@ -486,8 +537,44 @@ namespace OSPSuite.Core.Domain
          public const string ALWAYS = "Always";
       }
 
+      public static class ContainerName
+      {
+         public static string ExpressionProfileName(string moleculeName, string species, string category)
+            => compositeNameFor(char.Parse(ObjectPath.PATH_DELIMITER), moleculeName, species, category);
+
+         public static (string moleculeName, string speciesName, string category) NamesFromExpressionProfileName(string expressionProfileName)
+         {
+            var names = NamesFromCompositeName(expressionProfileName, char.Parse(ObjectPath.PATH_DELIMITER));
+            if (names.Count != 3)
+               return (string.Empty, string.Empty, string.Empty);
+
+            return (names[0], names[1], names[2]);
+         }
+      }
+
+      public const char COMPOSITE_SEPARATOR = '-';
+
+      public static IReadOnlyList<string> NamesFromCompositeName(string compositeName, char separator = COMPOSITE_SEPARATOR)
+      {
+         return compositeName.Split(separator);
+      }
+
+      private static string compositeNameFor(char separator, params string[] names)
+      {
+         if (names == null || names.Length == 0)
+            return string.Empty;
+
+         var nonEmptyNames = names.ToList();
+         nonEmptyNames.RemoveAll(string.IsNullOrEmpty);
+
+         return nonEmptyNames.Select(x => x.Trim()).ToString($"{separator}");
+      }
+
+      public static string CompositeNameFor(params string[] names) => compositeNameFor(COMPOSITE_SEPARATOR, names);
+
       public static class Serialization
       {
+         public const string INITIAL_CONDITIONS = "InitialConditions";
          public const string MACRO_COMMAND = "MacroCommand";
          public const string SIMPLE_COMMAND = "SimpleCommand";
          public const string LABEL_COMMAND = "LabelCommand";
@@ -521,6 +608,7 @@ namespace OSPSuite.Core.Domain
          public const string KEYS = "Keys";
          public const string VALUE_ORIGIN = "ValueOrigin";
          public const string PERCENTILES = "Percentiles";
+         public const string SIMULATION_CONFIGURATION = "SimulationConfiguration";
 
          public static class Attribute
          {
@@ -579,12 +667,11 @@ namespace OSPSuite.Core.Domain
       public const string OR = "Or";
       public const string IN_CONTAINER = "In container";
       public const string NOT_IN_CONTAINER = "Not in container";
+      public const string IN_PARENT = "In parent";
+      public const string IN_CHILDREN = "In children";
       public const string LLOQ = "LLOQ";
 
-      public static string NameWithUnitFor(string name, IDimension dimension)
-      {
-         return NameWithUnitFor(name, dimension?.DefaultUnit);
-      }
+      public static string NameWithUnitFor(string name, IDimension dimension) => NameWithUnitFor(name, dimension?.DefaultUnit);
 
       public static string NameWithUnitFor(string name, Unit unit)
       {
@@ -610,9 +697,8 @@ namespace OSPSuite.Core.Domain
 
       public static class ChartFontOptions
       {
-
          public const string DEFAULT_FONT_FAMILY_NAME = "Microsoft Sans Serif";
-         
+
          public const int DEFAULT_FONT_SIZE_LEGEND = 8;
          public const int DEFAULT_FONT_SIZE_AXIS = 10;
          public const int DEFAULT_FONT_SIZE_TITLE = 16;
@@ -622,22 +708,21 @@ namespace OSPSuite.Core.Domain
          public const int DEFAULT_FONT_SIZE_TITLE_FOR_PARAMETER_IDENTIFICATION_FEEDBACK = 12;
 
          //IMPORTANT: Default font sizes need to be in the list of AllFontSizes otherwise UI binding won't work
-         public static readonly IReadOnlyList<int> AllFontSizes = new[] { DEFAULT_FONT_SIZE_LEGEND, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
+         public static readonly IReadOnlyList<int> AllFontSizes = new[] {DEFAULT_FONT_SIZE_LEGEND, 9, 10, 11, 12, 14, 16, 18, 20, 24, 32, 40, 48, 60};
 
-         public static readonly IReadOnlyList<string> AllFontFamilies = new[] { "Arial", "Helvetica", "Tahoma", "Times New Roman", DEFAULT_FONT_FAMILY_NAME };
-
+         public static readonly IReadOnlyList<string> AllFontFamilies = new[] {"Arial", "Helvetica", "Tahoma", "Times New Roman", DEFAULT_FONT_FAMILY_NAME};
 
          public static readonly Color DEFAULT_FONT_COLOR_WATERMARK = Color.Black;
       }
 
       public static class MultiCurveOptions
       {
-         public static readonly IReadOnlyList<bool?> AllBooleanOptions= new bool?[] { null, false, true };
+         public static readonly IReadOnlyList<bool?> AllBooleanOptions = new bool?[] {null, false, true};
       }
 
       public static class ImporterConstants
       {
-         public static readonly string[] NAMING_PATTERN_SEPARATORS = { ".", ",", "-", "_" };
+         public static readonly string[] NAMING_PATTERN_SEPARATORS = {".", ",", "-", "_"};
          public static readonly string Undefined = "Undefined";
          public static readonly string GroupingBySuffix = "_GroupBy";
       }

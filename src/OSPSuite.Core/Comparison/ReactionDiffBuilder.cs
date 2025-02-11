@@ -3,7 +3,7 @@ using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Core.Comparison
 {
-   public class ReactionDiffBuilder : DiffBuilder<IReaction>
+   public class ReactionDiffBuilder : DiffBuilder<Reaction>
    {
       private readonly ContainerDiffBuilder _containerDiffBuilder;
       private readonly EnumerableComparer _enumerableComparer;
@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Comparison
          _objectComparer = objectComparer;
       }
 
-      public override void Compare(IComparison<IReaction> comparison)
+      public override void Compare(IComparison<Reaction> comparison)
       {
          _containerDiffBuilder.Compare(comparison);
          _objectComparer.Compare(comparison.FormulaComparison());

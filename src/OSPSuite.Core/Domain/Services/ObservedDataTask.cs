@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Commands.Core;
@@ -10,7 +8,11 @@ using OSPSuite.Core.Import;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Command = OSPSuite.Assets.Command;
+using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -65,15 +67,18 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IDataRepositoryExportTask _dataRepositoryExportTask;
       private readonly IContainerTask _containerTask;
       private readonly IObjectTypeResolver _objectTypeResolver;
+      private readonly IConfirmationManager _confirmationManager;
 
       protected ObservedDataTask(IDialogCreator dialogCreator, IOSPSuiteExecutionContext executionContext,
-         IDataRepositoryExportTask dataRepositoryExportTask, IContainerTask containerTask, IObjectTypeResolver objectTypeResolver)
+         IDataRepositoryExportTask dataRepositoryExportTask, IContainerTask containerTask,
+         IObjectTypeResolver objectTypeResolver, IConfirmationManager confirmationManager)
       {
          _dialogCreator = dialogCreator;
          _executionContext = executionContext;
          _dataRepositoryExportTask = dataRepositoryExportTask;
          _containerTask = containerTask;
          _objectTypeResolver = objectTypeResolver;
+         _confirmationManager = confirmationManager;
       }
 
       public bool Delete(DataRepository observedData)
@@ -148,7 +153,16 @@ namespace OSPSuite.Core.Domain.Services
             Constants.DirectoryKey.OBSERVED_DATA, observedData.Name);
          if (string.IsNullOrEmpty(file)) return;
 
-         _dataRepositoryExportTask.ExportToExcel(observedData, file, launchExcel: true);
+         var lloqColumns = createLloqColumns(observedData);
+            
+         _dataRepositoryExportTask.ExportToExcel(observedData.Columns.Concat(lloqColumns), file, launchExcel: true);
+      }
+
+      private IEnumerable<DataColumn> createLloqColumns(DataRepository observedData)
+      {
+         return observedData.Columns
+            .Where(c => c.DataInfo.LLOQ != null)
+            .Select(c => new DataColumn($"LLOQ_{c.Name}", c.Dimension, c.BaseGrid) { Value = Convert.ToDouble(c.DataInfo.LLOQ) });
       }
 
       private bool observedDataAlreadyExistsInProject(DataRepository observedData)
@@ -178,6 +192,11 @@ namespace OSPSuite.Core.Domain.Services
          _executionContext.AddToHistory(new AddImporterConfigurationToProjectCommand(configuration).Run(_executionContext));
       }
 
+      public void SuppressWarningOnRemovingObservedDataEntryFromSimulation()
+      {
+         _confirmationManager.SuppressConfirmation(ConfirmationFlags.ObservedDataEntryRemoved);
+      }
+
       public void RemoveUsedObservedDataFromSimulation(IReadOnlyList<UsedObservedData> usedObservedDataList)
       {
          if (!usedObservedDataList.Any())
@@ -195,9 +214,13 @@ namespace OSPSuite.Core.Domain.Services
             return;
          }
 
-         var viewResult = _dialogCreator.MessageBoxYesNo(Captions.ReallyRemoveObservedDataFromSimulation);
-         if (viewResult == ViewResult.No)
-            return;
+         if (!_confirmationManager.IsConfirmationSuppressed(ConfirmationFlags.ObservedDataEntryRemoved))
+         {
+            var viewResult = _dialogCreator.MessageBoxConfirm(Captions.ReallyRemoveObservedDataFromSimulation,
+               SuppressWarningOnRemovingObservedDataEntryFromSimulation);
+            if (viewResult != ViewResult.Yes)
+               return; 
+         }
 
          usedObservedDataList.GroupBy(x => x.Simulation).Each(x => removeUsedObservedDataFromSimulation(x, x.Key));
       }

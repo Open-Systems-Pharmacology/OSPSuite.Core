@@ -14,15 +14,24 @@ namespace OSPSuite.Core.Domain
       protected IContainerTask _containerTask;
       protected IContainer _rootContainer;
       protected IKeywordReplacerTask _keywordReplacer;
-      protected IBuildConfiguration _buildConfiguration;
+      protected SimulationConfiguration _simulationConfiguration;
+      protected SimulationBuilder _simulationBuilder;
+      protected ModelConfiguration _modelConfiguration;
+      private Model _model;
 
       protected override void Context()
       {
          _containerTask = A.Fake<IContainerTask>();
-         _buildConfiguration = A.Fake<IBuildConfiguration>();
+         _simulationConfiguration = new SimulationConfiguration();
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _rootContainer = new Container();
          _parameterCollectionMapper = A.Fake<IParameterBuilderCollectionToParameterCollectionMapper>();
          _keywordReplacer = A.Fake<IKeywordReplacerTask>();
+         _model = new Model
+         {
+            Root = _rootContainer
+         };
+         _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder);
          sut = new MoleculePropertiesContainerTask(_containerTask, _parameterCollectionMapper, _keywordReplacer);
       }
    }
@@ -47,7 +56,7 @@ namespace OSPSuite.Core.Domain
    internal class When_creating_the_global_molecule_container_for_a_given_molecule_builder : concern_for_MoleculePropertiesContainerTask
    {
       private IContainer _result;
-      private IMoleculeBuilder _moleculeBuilder;
+      private MoleculeBuilder _moleculeBuilder;
       private IContainer _moleculeContainer;
       private IParameter _para1;
       private IParameter _para2;
@@ -69,27 +78,32 @@ namespace OSPSuite.Core.Domain
 
          _globalMoleculeDependentProperties = new Container();
 
-         A.CallTo(() => _parameterCollectionMapper.MapGlobalOrPropertyFrom(_moleculeBuilder, _buildConfiguration))
+         A.CallTo(() => _parameterCollectionMapper.MapGlobalOrPropertyFrom(_moleculeBuilder, _simulationBuilder))
             .Returns(new[] {_para1, _para2});
 
-
-      
          _globalMoleculeDepParam1 = new Parameter().WithName("GMDP1");
          _globalMoleculeDepParam2 = new Parameter().WithName("GMDP2");
 
          _globalMoleculeDependentProperties.Add(_globalMoleculeDepParam1);
          _globalMoleculeDependentProperties.Add(_globalMoleculeDepParam2);
 
-         A.CallTo(() => _parameterCollectionMapper.MapAllFrom(_globalMoleculeDependentProperties, _buildConfiguration))
+         A.CallTo(() => _parameterCollectionMapper.MapAllFrom(_globalMoleculeDependentProperties, _simulationBuilder))
             .Returns(new[] {_globalMoleculeDepParam1, _globalMoleculeDepParam2});
 
-         _buildConfiguration.SpatialStructure = A.Fake<ISpatialStructure>();
-         A.CallTo(() => _buildConfiguration.SpatialStructure.GlobalMoleculeDependentProperties).Returns(_globalMoleculeDependentProperties);
+         var spatialStructure = new SpatialStructure
+         {
+            GlobalMoleculeDependentProperties = _globalMoleculeDependentProperties
+         };
+         var module = new Module
+         {
+            spatialStructure
+         };
+         _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module));
       }
 
       protected override void Because()
       {
-         _result = sut.CreateGlobalMoleculeContainerFor(_rootContainer, _moleculeBuilder, _buildConfiguration);
+         _result = sut.CreateGlobalMoleculeContainerFor(_moleculeBuilder, _modelConfiguration);
       }
 
       [Observation]
@@ -104,19 +118,12 @@ namespace OSPSuite.Core.Domain
          A.CallTo(() => _moleculeContainer.Add(_para1)).MustHaveHappened();
          A.CallTo(() => _moleculeContainer.Add(_para2)).MustHaveHappened();
       }
-
-      [Observation]
-      public void should_add_all_global_molecule_dependent_parameters_to_molecule_container()
-      {
-         A.CallTo(() => _moleculeContainer.Add(_globalMoleculeDepParam1)).MustHaveHappened();
-         A.CallTo(() => _moleculeContainer.Add(_globalMoleculeDepParam2)).MustHaveHappened();
-      }
    }
 
    internal class When_creating_the_global_molecule_container_for_a_given_molecule_builder_with_interaction_containers : concern_for_MoleculePropertiesContainerTask
    {
       private IContainer _result;
-      private IMoleculeBuilder _moleculeBuilder;
+      private MoleculeBuilder _moleculeBuilder;
       private IParameter _para;
 
       protected override void Context()
@@ -141,7 +148,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _result = sut.CreateGlobalMoleculeContainerFor(_rootContainer, _moleculeBuilder, _buildConfiguration);
+         _result = sut.CreateGlobalMoleculeContainerFor(_moleculeBuilder, _modelConfiguration);
       }
 
       [Observation]
@@ -160,7 +167,7 @@ namespace OSPSuite.Core.Domain
    internal class When_creating_the_global_molecule_container_for_a_given_xenobiotic_molecule_builder : concern_for_MoleculePropertiesContainerTask
    {
       private IContainer _result;
-      private IMoleculeBuilder _moleculeBuilder;
+      private MoleculeBuilder _moleculeBuilder;
       private IContainer _moleculeContainer;
       private IParameter _para1;
       private IContainer _globalMoleculeDependentProperties;
@@ -169,14 +176,14 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         _moleculeBuilder = A.Fake<IMoleculeBuilder>().WithName("tralal");
+         _moleculeBuilder = new MoleculeBuilder().WithName("tralala");
          _moleculeBuilder.IsFloating = true;
          _moleculeBuilder.IsXenobiotic = false;
          _moleculeContainer = A.Fake<IContainer>();
          _para1 = new Parameter().WithName("Para1");
          A.CallTo(() => _containerTask.CreateOrRetrieveSubContainerByName(_rootContainer, _moleculeBuilder.Name)).Returns(_moleculeContainer);
 
-         A.CallTo(() => _parameterCollectionMapper.MapGlobalOrPropertyFrom(_moleculeBuilder, _buildConfiguration))
+         A.CallTo(() => _parameterCollectionMapper.MapGlobalOrPropertyFrom(_moleculeBuilder, _simulationBuilder))
             .Returns(new[] {_para1});
 
          _globalMoleculeDependentProperties = new Container();
@@ -184,16 +191,23 @@ namespace OSPSuite.Core.Domain
          _globalMoleculeDepParam1 = new Parameter().WithName("GMDP1");
 
          _globalMoleculeDependentProperties.Add(_globalMoleculeDepParam1);
-         A.CallTo(() => _parameterCollectionMapper.MapGlobalOrPropertyFrom(_globalMoleculeDependentProperties, _buildConfiguration))
+         A.CallTo(() => _parameterCollectionMapper.MapGlobalOrPropertyFrom(_globalMoleculeDependentProperties, _simulationBuilder))
             .Returns(new[] {_globalMoleculeDepParam1});
 
-         _buildConfiguration.SpatialStructure = A.Fake<ISpatialStructure>();
-         A.CallTo(() => _buildConfiguration.SpatialStructure.GlobalMoleculeDependentProperties).Returns(_globalMoleculeDependentProperties);
+         var spatialStructure = new SpatialStructure
+         {
+            GlobalMoleculeDependentProperties = _globalMoleculeDependentProperties
+         };
+         var module = new Module
+         {
+            spatialStructure
+         };
+         _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module));
       }
 
       protected override void Because()
       {
-         _result = sut.CreateGlobalMoleculeContainerFor(_rootContainer, _moleculeBuilder, _buildConfiguration);
+         _result = sut.CreateGlobalMoleculeContainerFor(_moleculeBuilder, _modelConfiguration);
       }
 
       [Observation]

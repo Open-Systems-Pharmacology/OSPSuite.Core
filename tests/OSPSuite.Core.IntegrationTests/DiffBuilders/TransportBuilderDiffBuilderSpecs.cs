@@ -29,6 +29,26 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
+   public class When_comparing_Transports_with_different_for_create_process_rate : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var t1 = new TransportBuilder().WithName("Passive");
+         var t2 = new TransportBuilder().WithName("Passive");
+         t1.CreateProcessRateParameter = true;
+
+         _object1 = t1;
+         _object2 = t2;
+      }
+
+      [Observation]
+      public void should_report_the_differences_accordingly()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
    public class When_comparing_Transports_with_different_for_all_settings : concern_for_ObjectComparer
    {
       protected override void Context()

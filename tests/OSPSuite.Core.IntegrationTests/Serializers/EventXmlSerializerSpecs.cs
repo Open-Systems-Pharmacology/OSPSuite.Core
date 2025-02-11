@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Serializers
          x1.Formula = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(23.4);
          x1.ResolveChangedEntity();
 
-         IEventAssignment x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
          x2.ParentContainer = C0;
          x2.ResolveChangedEntity();
          AssertForSpecs.AreEqualEventAssignment(x2, x1);
@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Serializers
          x1.AddAssignment(ea1);
          ea1.ResolveChangedEntity();
 
-         IEvent x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
          x2.ParentContainer = C0;
 
          var refResolver = new ReferencesResolver();

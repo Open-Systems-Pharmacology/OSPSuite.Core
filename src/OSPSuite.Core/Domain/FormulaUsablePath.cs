@@ -1,20 +1,19 @@
 using System.Collections.Generic;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IFormulaUsablePath : IWithDimension, IObjectPath
-   {
-      string Alias { get; set; }
-   }
-
-   public class FormulaUsablePath : ObjectPath, IFormulaUsablePath
+   public class FormulaUsablePath : ObjectPath, IWithDimension
    {
       public string Alias { get; set; }
-      public IDimension Dimension { get; set; }
+      public virtual IDimension Dimension { get; set; }
 
       public FormulaUsablePath()
+      {
+      }
+
+      public FormulaUsablePath(ObjectPath from) : base(from)
       {
       }
 
@@ -32,8 +31,7 @@ namespace OSPSuite.Core.Domain
          {
             Alias = Alias,
             Dimension = Dimension
-         }
-            .DowncastTo<T>();
+         }.DowncastTo<T>();
       }
 
       public bool Equals(FormulaUsablePath other)

@@ -5,9 +5,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Core;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Nodes
 {
@@ -19,7 +19,7 @@ namespace OSPSuite.Presentation.Nodes
       public event Action<ITreeNode> ForeColorChanged = delegate { };
       public abstract string Id { get; }
       public IList<ToolTipPart> ToolTip { get; set; }
-      
+
       public abstract object TagAsObject { get; }
       public virtual ITreeNode ParentNode { get; set; }
       private ApplicationIcon _icon;
@@ -33,21 +33,19 @@ namespace OSPSuite.Presentation.Nodes
          ToolTip = new List<ToolTipPart>();
       }
 
-      public ITreeNode RootNode
-      {
-         get { return ParentNode == null ? this : ParentNode.RootNode; }
-      }
+      public ITreeNode RootNode => ParentNode == null ? this : ParentNode.RootNode;
 
       public void AddToolTipPart(ToolTipPart toolTipPart)
       {
-         if(ToolTip==null)
+         if (ToolTip == null)
             ToolTip = new List<ToolTipPart>();
+
          ToolTip.Add(toolTipPart);
       }
 
       public ApplicationIcon Icon
       {
-         get { return _icon; }
+         get => _icon;
          set
          {
             _icon = value;
@@ -55,10 +53,9 @@ namespace OSPSuite.Presentation.Nodes
          }
       }
 
-
-      public  string Text
+      public string Text
       {
-         get { return _text; }
+         get => _text;
          set
          {
             _text = value;
@@ -68,7 +65,7 @@ namespace OSPSuite.Presentation.Nodes
 
       public Color ForeColor
       {
-         get { return _color; }
+         get => _color;
          set
          {
             _color = value;
@@ -89,6 +86,7 @@ namespace OSPSuite.Presentation.Nodes
             {
                allChildren.AddRange(node.AllLeafNodes);
             }
+
             return allChildren;
          }
       }
@@ -102,14 +100,12 @@ namespace OSPSuite.Presentation.Nodes
             {
                allChildren.AddRange(node.AllNodes);
             }
+
             return allChildren;
          }
       }
 
-      public bool HasChildren
-      {
-         get { return _children.Count > 0; }
-      }
+      public bool HasChildren => _children.Count > 0;
 
       public string FullPath()
       {
@@ -120,18 +116,16 @@ namespace OSPSuite.Presentation.Nodes
       {
          var sb = new StringBuilder(Text);
          var parentNode = this.ParentNode;
-         while (parentNode!=null)
+         while (parentNode != null)
          {
-            sb.Insert(0, string.Format("{0}{1}", parentNode.Text, delimiter));
+            sb.Insert(0, $"{parentNode.Text}{delimiter}");
             parentNode = parentNode.ParentNode;
          }
+
          return sb.ToString();
       }
 
-      public virtual IEnumerable<ITreeNode> Children
-      {
-         get { return _children; }
-      }
+      public virtual IEnumerable<ITreeNode> Children => _children;
 
       public void AddChild(ITreeNode childNode)
       {
@@ -155,10 +149,13 @@ namespace OSPSuite.Presentation.Nodes
 
       public virtual void Delete()
       {
-         if (ParentNode != null)
-            ParentNode.RemoveChild(this);
-
+         ParentNode?.RemoveChild(this);
          ParentNode = null;
+         DeleteChildren();
+      }
+
+      public virtual void DeleteChildren()
+      {
          _children.ToList().Each(child => child.Delete());
       }
 
@@ -188,9 +185,8 @@ namespace OSPSuite.Presentation.Nodes
       {
          Tag = tag;
          var propertyChanged = tag as INotifyPropertyChanged;
-         if(propertyChanged!=null)
+         if (propertyChanged != null)
             propertyChanged.PropertyChanged += propertyNameChanged;
-
       }
 
       private void propertyNameChanged(object sender, PropertyChangedEventArgs e)
@@ -206,10 +202,7 @@ namespace OSPSuite.Presentation.Nodes
 
       public T Tag { get; protected set; }
 
-      public override object TagAsObject
-      {
-         get { return Tag; }
-      }
+      public override object TagAsObject => Tag;
 
       public override void Delete()
       {

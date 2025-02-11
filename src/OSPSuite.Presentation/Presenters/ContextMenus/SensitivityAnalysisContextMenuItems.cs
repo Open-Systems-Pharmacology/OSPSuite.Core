@@ -5,70 +5,70 @@ using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.UICommands;
-using MenuBarItemExtensions = OSPSuite.Presentation.MenuAndBars.MenuBarItemExtensions;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
    public static class SensitivityAnalysisContextMenuItems
    {
-      public static IMenuBarItem CreateSensitivityAnalysis()
+      public static IMenuBarItem CreateSensitivityAnalysis(IContainer container)
       {
-         return MenuBarItemExtensions.WithDescription(CreateMenuButton.WithCaption(MenuNames.AddSensitivityAnalysis), MenuDescriptions.CreateSensitivityAnalysis)
+         return CreateMenuButton.WithCaption(MenuNames.AddSensitivityAnalysis).WithDescription(MenuDescriptions.CreateSensitivityAnalysis)
             .WithIcon(ApplicationIcons.SensitivityAnalysis)
-            .WithCommand<CreateSensitivityAnalysisUICommand>();
+            .WithCommand<CreateSensitivityAnalysisUICommand>(container);
       }
 
-      public static IMenuBarItem CreateSensitivityAnalysisFor(ISimulation simulation)
+      public static IMenuBarItem CreateSensitivityAnalysisFor(ISimulation simulation, IContainer container)
       {
          return CreateMenuButton.WithCaption(MenuNames.StartSensitivityAnalysis)
             .WithIcon(ApplicationIcons.SensitivityAnalysis)
-            .WithCommandFor<CreateSensisitivityAnalysisBasedOnSimulationUICommand, ISimulation>(simulation);
+            .WithCommandFor<CreateSensisitivityAnalysisBasedOnSimulationUICommand, ISimulation>(simulation, container);
       }
 
-      public static IEnumerable<IMenuBarItem> ContextMenuItemsFor(SensitivityAnalysis sensitivityAnalysis)
+      public static IEnumerable<IMenuBarItem> ContextMenuItemsFor(SensitivityAnalysis sensitivityAnalysis, IContainer container)
       {
-         yield return Edit(sensitivityAnalysis);
-         yield return Rename(sensitivityAnalysis);
-         yield return Clone(sensitivityAnalysis).AsGroupStarter();
-         yield return AddToJournal(sensitivityAnalysis);
-         yield return Delete(sensitivityAnalysis).AsGroupStarter();
+         yield return Edit(sensitivityAnalysis, container);
+         yield return Rename(sensitivityAnalysis, container);
+         yield return Clone(sensitivityAnalysis, container).AsGroupStarter();
+         yield return AddToJournal(sensitivityAnalysis, container);
+         yield return Delete(sensitivityAnalysis, container).AsGroupStarter();
       }
 
-      public static IMenuBarItem Clone(SensitivityAnalysis sensitivityAnalysis)
+      public static IMenuBarItem Clone(SensitivityAnalysis sensitivityAnalysis, IContainer container)
       {
          return CreateMenuButton.WithCaption(MenuNames.Clone)
             .WithIcon(ApplicationIcons.Clone)
-            .WithCommandFor<CloneSensitivityAnalysisCommand, SensitivityAnalysis>(sensitivityAnalysis);
+            .WithCommandFor<CloneSensitivityAnalysisCommand, SensitivityAnalysis>(sensitivityAnalysis, container);
       }
 
-      public static IMenuBarItem Delete(SensitivityAnalysis sensitivityAnalysis)
+      public static IMenuBarItem Delete(SensitivityAnalysis sensitivityAnalysis, IContainer container)
       {
          return CreateMenuButton.WithCaption(MenuNames.Delete)
             .WithIcon(ApplicationIcons.Delete)
-            .WithCommandFor<DeleteSensitivityAnalysisUICommand, SensitivityAnalysis>(sensitivityAnalysis);
+            .WithCommandFor<DeleteSensitivityAnalysisUICommand, SensitivityAnalysis>(sensitivityAnalysis, container);
       }
 
-      public static IMenuBarItem AddToJournal(SensitivityAnalysis sensitivityAnalysis)
+      public static IMenuBarItem AddToJournal(SensitivityAnalysis sensitivityAnalysis, IContainer container)
       {
          return CreateMenuButton.WithCaption(Captions.Journal.AddToJournal)
-            .WithCommandFor<AddParameterAnalysableToActiveJournalPageUICommand, IParameterAnalysable>(sensitivityAnalysis)
+            .WithCommandFor<AddParameterAnalysableToActiveJournalPageUICommand, IParameterAnalysable>(sensitivityAnalysis, container)
             .WithIcon(ApplicationIcons.AddToJournal);
       }
 
-      public static IMenuBarItem Rename(SensitivityAnalysis sensitivityAnalysis)
+      public static IMenuBarItem Rename(SensitivityAnalysis sensitivityAnalysis, IContainer container)
       {
          return CreateMenuButton
             .WithCaption(MenuNames.Rename)
             .WithIcon(ApplicationIcons.Rename)
-            .WithCommandFor<RenameSensitivityAnalysisUICommand, SensitivityAnalysis>(sensitivityAnalysis);
+            .WithCommandFor<RenameSensitivityAnalysisUICommand, SensitivityAnalysis>(sensitivityAnalysis, container);
       }
 
-      public static IMenuBarItem Edit(SensitivityAnalysis sensitivityAnalysis)
+      public static IMenuBarItem Edit(SensitivityAnalysis sensitivityAnalysis, IContainer container)
       {
          return CreateMenuButton
             .WithCaption(MenuNames.Edit)
             .WithIcon(ApplicationIcons.Edit)
-            .WithCommandFor<EditSensitivityAnalysisUICommand, SensitivityAnalysis>(sensitivityAnalysis);
+            .WithCommandFor<EditSensitivityAnalysisUICommand, SensitivityAnalysis>(sensitivityAnalysis, container);
       }
    }
 }

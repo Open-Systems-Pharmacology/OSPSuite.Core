@@ -4,6 +4,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.Services
@@ -20,9 +21,9 @@ namespace OSPSuite.Core.Domain.Services
       Delete
    }
 
-   public interface IModelValidator
+   internal interface IModelValidator
    {
-      ValidationResult Validate(IObjectBase objectToValidate, IBuildConfiguration buildConfiguration);
+      ValidationResult Validate(ModelConfiguration modelConfiguration);
    }
 
    /// <summary>
@@ -33,8 +34,8 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IObjectTypeResolver _objectTypeResolver;
       private readonly IObjectPathFactory _objectPathFactory;
       private readonly IEnumerable<string> _keywords;
-      private IBuildConfiguration _buildConfiguration;
-      private ValidationResult _result;
+      private SimulationBuilder _simulationBuilder;
+      protected ValidationResult _result;
 
       protected ModelValidator(IObjectTypeResolver objectTypeResolver, IObjectPathFactory objectPathFactory)
       {
@@ -64,29 +65,33 @@ namespace OSPSuite.Core.Domain.Services
       protected void CheckFormulaIn(IUsingFormula entity, IFormula formulaToCheck, ResolveErrorBehavior resolveErrorBehavior)
       {
          var entityAbsolutePath = _objectPathFactory.CreateAbsoluteObjectPath(entity).ToPathString();
-         var builder = _buildConfiguration.BuilderFor(entity);
+         var builder = _simulationBuilder?.BuilderFor(entity);
          var objectWithError = builder ?? entity;
+         void checkPathInEntity(ObjectPath objectPath) => CheckPath(entity, objectPath, resolveErrorBehavior);
 
-         // Dynamic formula may contain object path that will be resolved per instance. It cannot be checked here
-         if (formulaToCheck.IsDynamic())
-            return;
-
-
-         if (formulaToCheck.IsBlackBox())
+         switch (formulaToCheck)
          {
-            addNotificationType(NotificationType.Error, objectWithError, Validation.FormulaIsBlackBoxIn(entity.Name, entityAbsolutePath));
-            return;
+            // Dynamic formula may contain object path that will be resolved per instance. It cannot be checked here
+            case DynamicFormula _:
+               return;
+            case BlackBoxFormula _:
+               addNotificationType(NotificationType.Error, objectWithError, Validation.FormulaIsBlackBoxIn(entity.Name, entityAbsolutePath));
+               return;
+
+            //Table formula with offset may use an x argument that is not defined. A dynamic check will be done in the formula itself
+            //so in this case, we only check the path to the table that should be defined
+            case TableFormulaWithXArgument formulaWithXArgument:
+               checkPathInEntity(formulaWithXArgument.FormulaUsablePathBy(formulaWithXArgument.TableObjectAlias));
+               return;
          }
 
-         foreach (var objectPath in formulaToCheck.ObjectPaths)
-         {
-            CheckPath(entity, objectPath, resolveErrorBehavior);
-         }
+         //in all other cases, we check the object path used in the formula
+         formulaToCheck.ObjectPaths.Each(checkPathInEntity);
       }
 
-      protected void CheckPath(IUsingFormula entity, IObjectPath objectPathToCheck, ResolveErrorBehavior resolveErrorBehavior)
+      protected void CheckPath(IUsingFormula entity, ObjectPath objectPathToCheck, ResolveErrorBehavior resolveErrorBehavior)
       {
-         var builder = _buildConfiguration.BuilderFor(entity);
+         var builder = _simulationBuilder?.BuilderFor(entity);
          var objectWithError = builder ?? entity;
          var entityAbsolutePath = _objectPathFactory.CreateAbsoluteObjectPath(entity).ToString();
          var entityType = _objectTypeResolver.TypeFor(entity);
@@ -116,10 +121,10 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private void addNotificationType(NotificationType notificationType, IObjectBase builder, string notification)
+      private void addNotificationType(NotificationType notificationType, IObjectBase invalidObject, string notification)
       {
-         //Although the builder is defined in the configuration, we do not know (yet) from which building block it is coming from=>hence nulls
-         _result.AddMessage(notificationType, builder, notification);
+         var builder = invalidObject as IBuilder;
+         _result.AddMessage(notificationType, invalidObject, notification, builder?.BuildingBlock);
       }
 
       private bool containsKeyWords(IEnumerable<string> reference) => _keywords.Any(reference.Contains);
@@ -127,20 +132,41 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Starts a validation run for the specified object to validate.
       /// </summary>
-      /// <param name="objectToValidate">The object to validate.</param>
-      /// <param name="buildConfiguration">Build configuration used to create the model</param>
-      public ValidationResult Validate(IObjectBase objectToValidate, IBuildConfiguration buildConfiguration)
+      public ValidationResult Validate(ModelConfiguration modelConfiguration)
       {
          try
          {
+            var (model, simulationBuilder) = modelConfiguration;
             _result = new ValidationResult();
-            _buildConfiguration = buildConfiguration;
-            objectToValidate.AcceptVisitor(this);
+            _simulationBuilder = simulationBuilder;
+            model.AcceptVisitor(this);
             return _result;
          }
          finally
          {
-            _buildConfiguration = null;
+            _simulationBuilder = null;
+            _result = null;
+         }
+      }
+   }
+
+   internal class ValidatorForForFormula : ModelValidator
+   {
+      public ValidatorForForFormula(IObjectTypeResolver objectTypeResolver, IObjectPathFactory objectPathFactory)
+         : base(objectTypeResolver, objectPathFactory)
+      {
+      }
+
+      public bool IsFormulaValid(IUsingFormula usingFormulaToCheck)
+      {
+         try
+         {
+            _result = new ValidationResult();
+            CheckReferences(usingFormulaToCheck);
+            return _result.ValidationState == ValidationState.Valid;
+         }
+         finally
+         {
             _result = null;
          }
       }
@@ -165,46 +191,46 @@ namespace OSPSuite.Core.Domain.Services
    }
 
    internal class ValidatorForReactionsAndTransports : ModelValidator,
-      IVisitor<IReaction>,
-      IVisitor<ITransport>
+      IVisitor<Reaction>,
+      IVisitor<Transport>
    {
       public ValidatorForReactionsAndTransports(IObjectTypeResolver objectTypeResolver, IObjectPathFactory objectPathFactory)
          : base(objectTypeResolver, objectPathFactory)
       {
       }
 
-      public void Visit(IReaction reaction)
+      public void Visit(Reaction reaction)
       {
          CheckReferences(reaction);
       }
 
-      public void Visit(ITransport transport)
+      public void Visit(Transport transport)
       {
          CheckReferences(transport);
       }
    }
 
    internal class ValidatorForObserversAndEvents : ModelValidator,
-      IVisitor<IEvent>,
-      IVisitor<IObserver>,
-      IVisitor<IEventAssignment>
+      IVisitor<Event>,
+      IVisitor<Observer>,
+      IVisitor<EventAssignment>
    {
       public ValidatorForObserversAndEvents(IObjectTypeResolver objectTypeResolver, IObjectPathFactory objectPathFactory)
          : base(objectTypeResolver, objectPathFactory)
       {
       }
 
-      public void Visit(IEvent oneEvent)
+      public void Visit(Event oneEvent)
       {
          CheckReferences(oneEvent);
       }
 
-      public void Visit(IObserver observer)
+      public void Visit(Observer observer)
       {
          CheckReferences(observer, ResolveErrorBehavior.DeleteAndWarning);
       }
 
-      public void Visit(IEventAssignment eventAssignment)
+      public void Visit(EventAssignment eventAssignment)
       {
          CheckReferences(eventAssignment);
          CheckPath(eventAssignment, eventAssignment.ObjectPath, ResolveErrorBehavior.Error);
@@ -213,18 +239,16 @@ namespace OSPSuite.Core.Domain.Services
 
    internal class ModelNameValidator : IModelValidator
    {
-      public ValidationResult Validate(IObjectBase objectToValidate, IBuildConfiguration buildConfiguration)
+      public ValidationResult Validate(ModelConfiguration modelConfiguration)
       {
-         var model = objectToValidate as IModel;
+         var (model, _) = modelConfiguration;
          var result = new ValidationResult();
-         if (model == null)
-            return result;
 
          var allTopContainerNames = model.Root.GetChildren<IContainer>().AllNames();
          if (!allTopContainerNames.Contains(model.Name))
             return result;
 
-         result.AddMessage(NotificationType.Error, objectToValidate, Validation.ModelNameCannotBeNamedLikeATopContainer(allTopContainerNames));
+         result.AddMessage(NotificationType.Error, model, Validation.ModelNameCannotBeNamedLikeATopContainer(allTopContainerNames));
          return result;
       }
    }

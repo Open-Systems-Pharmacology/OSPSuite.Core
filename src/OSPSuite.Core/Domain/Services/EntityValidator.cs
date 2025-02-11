@@ -48,7 +48,7 @@ namespace OSPSuite.Core.Domain.Services
          if (simulation != null)
          {
             objectsToValidate.Add(simulation.Model.Root);
-            objectsToValidate.Add(simulation.SimulationSettings);
+            objectsToValidate.Add(simulation.Settings);
          }
          else
             objectsToValidate.Add(objectBase);

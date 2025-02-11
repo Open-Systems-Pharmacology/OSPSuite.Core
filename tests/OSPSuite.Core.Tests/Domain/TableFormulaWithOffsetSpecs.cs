@@ -11,7 +11,7 @@ namespace OSPSuite.Core.Domain
       protected IDimension _dimensionLength;
       protected TableFormula _tableFormula;
       protected IParameter _offsetObject, _tableObject;
-      protected IMoleculeAmount _dependentObject;
+      protected MoleculeAmount _dependentObject;
       protected const string _tableObjectAlias = "T1";
       protected const string _offsetObjectAlias = "P1";
 

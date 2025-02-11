@@ -75,6 +75,8 @@ namespace OSPSuite.Core.Chart
 
       public Axis XAxis => AxisBy(AxisTypes.X);
 
+      public Axis YAxis => AxisBy(AxisTypes.Y);
+
       public Axis YAxisFor(Curve curve) => AxisBy(curve.yAxisType);
 
       public IReadOnlyCollection<Curve> Curves => _curves;
@@ -255,7 +257,7 @@ namespace OSPSuite.Core.Chart
          removeCurves(curve => curve.xData == dataColumn || curve.yData == dataColumn);
       }
 
-      public void RemoveCurvesForColumns(IEnumerable<DataColumn> dataColumns) => dataColumns.Each(RemoveCurvesForColumn);
+      public void RemoveCurvesForColumns(IEnumerable<DataColumn> dataColumns) => dataColumns?.Each(RemoveCurvesForColumn);
 
       public void RemoveCurvesForDataRepository(DataRepository dataRepository) => RemoveCurvesForColumns(dataRepository);
 

@@ -6,14 +6,13 @@ using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IExtendedProperty : INotifier, IWithName
+   public interface IExtendedProperty : INotifier, IWithName, IWithDescription
    {
       bool ReadOnly { get; set; }
       object ValueAsObject { get; set; }
       IReadOnlyList<object> ListOfValuesAsObjects { get; }
       IExtendedProperty Clone();
       Type Type { get; }
-      string Description { set; get; }
       string FullName { get; set; }
       string DisplayName { get; }
    }
@@ -38,7 +37,7 @@ namespace OSPSuite.Core.Domain
          set => SetProperty(ref _description, value);
       }
 
-      public string DisplayName => FullName?? Name;
+      public string DisplayName => FullName ?? Name;
 
       public string FullName
       {
@@ -58,7 +57,7 @@ namespace OSPSuite.Core.Domain
          {
             _name = value;
             OnPropertyChanged();
-            if(string.IsNullOrEmpty(FullName))
+            if (string.IsNullOrEmpty(FullName))
                OnPropertyChanged(() => DisplayName);
          }
       }
@@ -80,17 +79,17 @@ namespace OSPSuite.Core.Domain
 
       public IExtendedProperty Clone()
       {
-         var extendedProperty = new ExtendedProperty<T> { Name = Name, Value = Value, ReadOnly = ReadOnly, Description = Description, FullName = FullName};
+         var extendedProperty = new ExtendedProperty<T> {Name = Name, Value = Value, ReadOnly = ReadOnly, Description = Description, FullName = FullName};
          ListOfValues.Each(property => extendedProperty.AddToListOfValues(property));
          return extendedProperty;
       }
 
-      public Type Type => typeof (T);
+      public Type Type => typeof(T);
 
       public bool ReadOnly
       {
          get => _readOnly;
-         set => SetProperty(ref _readOnly,  value);
+         set => SetProperty(ref _readOnly, value);
       }
 
       private T _value;

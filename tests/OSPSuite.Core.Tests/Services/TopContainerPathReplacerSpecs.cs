@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Services
    public abstract class concern_for_TopContainerPathReplacer : ContextSpecification<TopContainerPathReplacer>
    {
       protected string _modelName;
-      protected IObjectPath _objectPath;
+      protected ObjectPath _objectPath;
       private IReadOnlyList<string> _topContainerNames;
 
       protected override void Context()
@@ -63,13 +63,13 @@ namespace OSPSuite.Core.Services
 
    public class When_replacing_a_path_that_does_not_start_with_a_key_word_or_a_relative_path_marker : concern_for_TopContainerPathReplacer
    {
-      private IObjectPath _pathWithModelNameFirst;
+      private ObjectPath _pathWithModelNameFirst;
 
       protected override void Context()
       {
          base.Context();
          _objectPath = new ObjectPath("root2", "B");
-         _pathWithModelNameFirst = _objectPath.Clone<IObjectPath>();
+         _pathWithModelNameFirst = _objectPath.Clone<ObjectPath>();
          _pathWithModelNameFirst.AddAtFront(_modelName);
       }
 

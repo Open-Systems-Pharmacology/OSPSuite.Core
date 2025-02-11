@@ -4,6 +4,7 @@ using FakeItEasy;
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Repositories;
@@ -42,7 +43,8 @@ namespace OSPSuite.Presentation.Presentation
       protected IQuantityToSimulationQuantitySelectionDTOMapper _simulationQuantitySelectionDTOMapper;
       protected IObservedDataTask _observedDataTask;
       protected IEventPublisher _eventPublisher;
-      private IOutputMappingMatchingTask _outputMappingMatchingTask;
+      protected IOutputMappingMatchingTask _outputMappingMatchingTask;
+      protected IOSPSuiteExecutionContext _executionContext;
 
       protected override void Context()
       {
@@ -54,10 +56,10 @@ namespace OSPSuite.Presentation.Presentation
          _simulationQuantitySelectionDTOMapper = A.Fake<IQuantityToSimulationQuantitySelectionDTOMapper>();
          _observedDataTask = A.Fake<IObservedDataTask>();
          _eventPublisher = A.Fake<IEventPublisher>();
-
+         _executionContext= A.Fake<IOSPSuiteExecutionContext>();
 
          sut = new SimulationOutputMappingPresenter(_view, _entitiesInSimulationRetriever, _observedDataRepository, _outputMappingDTOMapper,
-            _simulationQuantitySelectionDTOMapper, _observedDataTask, _eventPublisher, _outputMappingMatchingTask);
+            _simulationQuantitySelectionDTOMapper, _observedDataTask, _eventPublisher, _outputMappingMatchingTask, _executionContext);
 
 
          _observedData1 = DomainHelperForSpecs.ObservedData("Obs1").WithName("Obs1");
@@ -235,6 +237,12 @@ namespace OSPSuite.Presentation.Presentation
       public void the_event_for_output_mapping_changes_must_have_been_published()
       {
          A.CallTo(() => _eventPublisher.PublishEvent(A<SimulationOutputMappingsChangedEvent>._)).MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_mark_the_project_as_changed()
+      {
+         A.CallTo(() => _executionContext.ProjectChanged()).MustHaveHappened();
       }
    }
 

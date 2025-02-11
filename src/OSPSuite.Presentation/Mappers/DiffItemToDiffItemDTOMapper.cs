@@ -8,6 +8,7 @@ using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Presentation.Mappers
@@ -25,16 +26,18 @@ namespace OSPSuite.Presentation.Mappers
       private readonly IPathToPathElementsMapper _pathElementsMapper;
       private readonly IDisplayNameProvider _displayNameProvider;
       private DiffItemDTO _diffItemDTO;
+      private readonly IPathAndValueEntityToPathElementsMapper _pathAndValueEntityToPathElementsMapper;
 
-      public DiffItemToDiffItemDTOMapper(IPathToPathElementsMapper pathElementsMapper, IDisplayNameProvider displayNameProvider)
+      public DiffItemToDiffItemDTOMapper(IPathToPathElementsMapper pathElementsMapper, IDisplayNameProvider displayNameProvider, IPathAndValueEntityToPathElementsMapper pathAndValueEntityToPathElementsMapper)
       {
          _pathElementsMapper = pathElementsMapper;
          _displayNameProvider = displayNameProvider;
+         _pathAndValueEntityToPathElementsMapper = pathAndValueEntityToPathElementsMapper;
       }
 
       public DiffItemDTO MapFrom(DiffItem diffItem)
       {
-         _diffItemDTO = new DiffItemDTO {Description = diffItem.Description};
+         _diffItemDTO = new DiffItemDTO { Description = diffItem.Description };
          try
          {
             this.Visit(diffItem);
@@ -46,15 +49,15 @@ namespace OSPSuite.Presentation.Mappers
          }
       }
 
-      private void updateDiffItem(string value1, string value2, string propertyName, string objectName, object parent, bool itemIsMissing)
+      private void updateDiffItem(string value1, string value2, string propertyName, string objectName, bool itemIsMissing, Func<PathElements> mapPathElements)
       {
          _diffItemDTO.Value1 = value1;
          _diffItemDTO.Value2 = value2;
          _diffItemDTO.Property = propertyName;
          _diffItemDTO.ObjectName = objectName;
          _diffItemDTO.ItemIsMissing = itemIsMissing;
-         var entity = parent as IEntity;
-         _diffItemDTO.PathElements = entity == null ? new PathElements() : _pathElementsMapper.MapFrom(entity);
+
+         _diffItemDTO.PathElements = mapPathElements();
       }
 
       public void Visit(MissingDiffItem missingDiffItem)
@@ -73,7 +76,7 @@ namespace OSPSuite.Presentation.Mappers
             value2 = Captions.Comparisons.Absent;
          }
 
-         updateDiffItem(value1, value2, missingDiffItem.MissingObjectType, missingDiffItem.MissingObjectName, missingDiffItem.CommonAncestor, itemIsMissing: true);
+         updateDiffItem(value1, value2, missingDiffItem.MissingObjectType, missingDiffItem.MissingObjectName, itemIsMissing: true, () => mapPathElementsAsIEntity(missingDiffItem.CommonAncestor));
       }
 
       private string presentWithDetails(string presentDetails)
@@ -86,19 +89,26 @@ namespace OSPSuite.Presentation.Mappers
 
       public void Visit(PropertyValueDiffItem propertyDiffItem)
       {
-         updateDiffItem(propertyDiffItem.FormattedValue1, propertyDiffItem.FormattedValue2, propertyDiffItem.PropertyName, objectNameFrom(propertyDiffItem), propertyDiffItem.CommonAncestor, itemIsMissing: false);
+         Func<PathElements> pathElementsMapper = () => mapPathElementsAsIEntity(propertyDiffItem.CommonAncestor);
+
+         if (propertyDiffItem.Object1.IsAnImplementationOf<PathAndValueEntity>())
+            pathElementsMapper = () => _pathAndValueEntityToPathElementsMapper.MapFrom(propertyDiffItem.Object1.DowncastTo<PathAndValueEntity>());
+
+         updateDiffItem(propertyDiffItem.FormattedValue1, propertyDiffItem.FormattedValue2, propertyDiffItem.PropertyName, objectNameFrom(propertyDiffItem), itemIsMissing: false, pathElementsMapper);
       }
 
       private string objectNameFrom(DiffItem diffItem)
       {
          return
             displayIf<IFormula>(diffItem, x => ancestorDisplayName(diffItem)) ??
-            displayIf<IReactionPartner>(diffItem, x => x.Partner.Name) ??
-            displayIf<IReactionPartnerBuilder>(diffItem, x => x.MoleculeName) ??
+            displayIf<ReactionPartner>(diffItem, x => x.Partner.Name) ??
+            displayIf<ReactionPartnerBuilder>(diffItem, x => x.MoleculeName) ??
             displayIf<UsedCalculationMethod>(diffItem, x => x.Category) ??
-            displayIf<CalculationMethod>(diffItem, x => displayNameFor(new Category<CalculationMethod> {Name = x.Category})) ??
-            displayIf<IObjectPath>(diffItem, x => ancestorDisplayName(diffItem)) ??
+            displayIf<CalculationMethod>(diffItem, x => displayNameFor(new Category<CalculationMethod> { Name = x.Category })) ??
+            displayIf<ObjectPath>(diffItem, x => ancestorDisplayName(diffItem)) ??
             displayIf<ValuePoint>(diffItem, x => ancestorDisplayName(diffItem)) ??
+            displayIf<PathAndValueEntity>(diffItem, x => x.Name) ??
+            displayIf<ExtendedProperty<string>>(diffItem, x => x.DisplayName) ??
             _displayNameProvider.DisplayNameFor(diffItem.Object1);
       }
 
@@ -110,13 +120,19 @@ namespace OSPSuite.Presentation.Mappers
 
       private string ancestorDisplayName(DiffItem propertyDiffItem) => displayNameFor(propertyDiffItem.CommonAncestor);
 
-      private string displayNameFor(object objecToDisplay) => _displayNameProvider.DisplayNameFor(objecToDisplay);
+      private string displayNameFor(object objectToDisplay) => _displayNameProvider.DisplayNameFor(objectToDisplay);
 
       public void Visit(MismatchDiffItem mismatchDiffItem)
       {
          var ancestor = mismatchDiffItem.CommonAncestor;
          var ancestorName = displayNameFor(ancestor);
-         updateDiffItem(displayNameFor(mismatchDiffItem.Object1), displayNameFor(mismatchDiffItem.Object2), mismatchDiffItem.Description, ancestorName, ancestor, itemIsMissing: false);
+         updateDiffItem(displayNameFor(mismatchDiffItem.Object1), displayNameFor(mismatchDiffItem.Object2), mismatchDiffItem.Description, ancestorName, itemIsMissing: false, () => mapPathElementsAsIEntity(ancestor));
+      }
+
+      private PathElements mapPathElementsAsIEntity(object ancestor)
+      {
+         var entity = ancestor as IEntity;
+         return entity == null ? new PathElements() : _pathElementsMapper.MapFrom(entity);
       }
    }
 }

@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Comparison
 {
-   public class ObserverBuilderDiffBuilder : DiffBuilder<IObserverBuilder>
+   public class ObserverBuilderDiffBuilder : DiffBuilder<ObserverBuilder>
    {
       private readonly EntityDiffBuilder _entityDiffBuilder;
       private readonly MoleculeDependentBuilderDiffBuilder _moleculeDependentDiffBuilder;
@@ -15,12 +15,12 @@ namespace OSPSuite.Core.Comparison
          _objectComparer = objectComparer;
       }
 
-      public override void Compare(IComparison<IObserverBuilder> comparison)
+      public override void Compare(IComparison<ObserverBuilder> comparison)
       {
          _entityDiffBuilder.Compare(comparison);
          _moleculeDependentDiffBuilder.Compare(comparison);
          CompareValues(x => x.ContainerCriteria, x => x.ContainerCriteria, comparison);
-         CompareValues(x => x.Dimension, x => x.Dimension, comparison);
+         _objectComparer.Compare(comparison.DimensionComparison());
          _objectComparer.Compare(comparison.FormulaComparison());
       }
    }

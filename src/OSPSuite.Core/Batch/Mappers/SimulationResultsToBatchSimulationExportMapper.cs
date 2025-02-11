@@ -27,10 +27,10 @@ namespace OSPSuite.Core.Batch.Mappers
          var simulationExport = new BatchSimulationExport
          {
             Name = simulation.Name,
-            Times = displayValuesFor(results.BaseGrid),
+            Times = timeValuesFrom(results.BaseGrid),
             ParameterValues = parameterValuesFor(simulation.Model),
-            AbsTol = simulation.SimulationSettings.Solver.AbsTol,
-            RelTol = simulation.SimulationSettings.Solver.RelTol,
+            AbsTol = simulation.Settings.Solver.AbsTol,
+            RelTol = simulation.Settings.Solver.RelTol,
          };
 
          results.AllButBaseGrid().Each(c => simulationExport.OutputValues.Add(quantityResultsFrom(c)));
@@ -47,17 +47,24 @@ namespace OSPSuite.Core.Batch.Mappers
          }).ToList();
       }
 
-      private BatchOutputValues quantityResultsFrom(DataColumn column)
-      {
-         return new BatchOutputValues
+      private BatchValues timeValuesFrom(BaseGrid baseGrid) =>
+         new BatchValues
+         {
+            Unit = baseGrid.DisplayUnitName(),
+            Values = displayValuesFor(baseGrid),
+            Dimension = baseGrid.DimensionName()
+         };
+
+      private BatchOutputValues quantityResultsFrom(DataColumn column) =>
+         new BatchOutputValues
          {
             Path = consolidatedPathFor(column),
-            //ComparisonThreshold should alwyas have a value. If for some reason it is not set, using 0 ensures that value should be compared exactly
+            //ComparisonThreshold should always have a value. If for some reason it is not set, using 0 ensures that value should be compared exactly
             ComparisonThreshold = column.DataInfo.ComparisonThreshold.GetValueOrDefault(0),
             Values = displayValuesFor(column),
-            Dimension = column.Dimension.Name
+            Dimension = column.Dimension.Name,
+            Unit = column.DisplayUnitName()
          };
-      }
 
       private static string consolidatedPathFor(DataColumn column)
       {

@@ -4,6 +4,7 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Presenters.Charts;
+using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
@@ -20,8 +21,8 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
    public class CurveChartContextMenu : ContextMenu<CurveChart, IChartDisplayPresenter>
    {
-      public CurveChartContextMenu(CurveChart curveChart, IChartDisplayPresenter context)
-         : base(curveChart, context)
+      public CurveChartContextMenu(CurveChart curveChart, IChartDisplayPresenter context, IContainer container)
+         : base(curveChart, context, container)
       {
       }
 
@@ -50,9 +51,16 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
    public class CurveChartContextMenuFactory : IContextMenuSpecificationFactory<IViewItem>
    {
+      private readonly IContainer _container;
+
+      public CurveChartContextMenuFactory(IContainer container)
+      {
+         _container = container;
+      }
+
       public IContextMenu CreateFor(IViewItem viewItem, IPresenterWithContextMenu<IViewItem> presenter)
       {
-         return new CurveChartContextMenu(viewItem.DowncastTo<CurveChartViewItem>().Chart, presenter.DowncastTo<IChartDisplayPresenter>());
+         return new CurveChartContextMenu(viewItem.DowncastTo<CurveChartViewItem>().Chart, presenter.DowncastTo<IChartDisplayPresenter>(), _container);
       }
 
       public bool IsSatisfiedBy(IViewItem viewItem, IPresenterWithContextMenu<IViewItem> presenter)

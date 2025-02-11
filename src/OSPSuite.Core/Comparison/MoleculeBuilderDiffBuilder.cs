@@ -3,7 +3,7 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Comparison
 {
-   internal class MoleculeBuilderDiffBuilder : DiffBuilder<IMoleculeBuilder>
+   internal class MoleculeBuilderDiffBuilder : DiffBuilder<MoleculeBuilder>
    {
       private readonly ContainerDiffBuilder _containerDiffBuilder;
       private readonly IObjectComparer _objectComparer;
@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Comparison
          _enumerableComparerComparer = enumerableComparer;
       }
 
-      public override void Compare(IComparison<IMoleculeBuilder> comparison)
+      public override void Compare(IComparison<MoleculeBuilder> comparison)
       {
          _containerDiffBuilder.Compare(comparison);
          CompareValues(x=>!x.IsFloating,Captions.Diff.Stationary,comparison);

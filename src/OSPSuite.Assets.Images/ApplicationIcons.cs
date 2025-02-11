@@ -113,7 +113,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ExpertParameters = AddNamedIcon("Parameters", "ExpertParameters");
       public static readonly ApplicationIcon PopulationExportToCSV = AddNamedIcon("PopulationExportToCSV");
       public static readonly ApplicationIcon ExportToPDF = AddNamedIcon("PDF", "ExportToPDF");
-      public static readonly ApplicationIcon ExtendParameterStartValues = AddNamedIcon("ExtendParameterStartValues");
+      public static readonly ApplicationIcon ExtendParameterValues = AddNamedIcon("ExtendParameterValues");
       public static readonly ApplicationIcon ExtracellularMembrane = AddNamedIcon("ExtracellularMembrane");
       public static readonly ApplicationIcon Fat = AddNamedIcon("Fat");
       public static readonly ApplicationIcon Favorites = AddNamedIcon("Favorites");
@@ -138,8 +138,8 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon HumanGreen = AddNamedIcon("HumanGreen");
       public static readonly ApplicationIcon HumanRed = AddNamedIcon("HumanRed");
       public static readonly ApplicationIcon Import = AddNamedIcon("ObservedData", "Import");
-      public static readonly ApplicationIcon MoleculeStartValuesImport = AddNamedIcon("MoleculeStartValuesImport");
-      public static readonly ApplicationIcon ParameterStartValuesImport = AddNamedIcon("ParameterStartValuesImport");
+      public static readonly ApplicationIcon InitialConditionsImport = AddNamedIcon("InitialConditionsImport");
+      public static readonly ApplicationIcon ParameterValuesImport = AddNamedIcon("ParameterValuesImport");
       public static readonly ApplicationIcon ImportPopulation = AddNamedIcon("ImportPopulation");
       public static readonly ApplicationIcon PopulationSimulationLoad = AddNamedIcon("PopulationSimulationLoad");
       public static readonly ApplicationIcon ResultsImportFromCSV = AddNamedIcon("ResultsImportFromCSV", IconNames.RESULTS_IMPORT_FROM_CSV);
@@ -216,10 +216,10 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon MoleculeFolder = AddNamedIcon("MoleculeFolder");
       public static readonly ApplicationIcon MoleculeGreen = AddNamedIcon("MoleculeGreen");
       public static readonly ApplicationIcon MoleculeRed = AddNamedIcon("MoleculeRed");
-      public static readonly ApplicationIcon MoleculeStartValues = AddNamedIcon("MoleculeStartValues", IconNames.MOLECULE_START_VALUES);
-      public static readonly ApplicationIcon MoleculeStartValuesFolder = AddNamedIcon("MoleculeStartValuesFolder");
-      public static readonly ApplicationIcon MoleculeStartValuesGreen = AddNamedIcon("MoleculeStartValuesGreen");
-      public static readonly ApplicationIcon MoleculeStartValuesRed = AddNamedIcon("MoleculeStartValuesRed");
+      public static readonly ApplicationIcon InitialConditions = AddNamedIcon("InitialConditions", IconNames.INITIAL_CONDITIONS);
+      public static readonly ApplicationIcon InitialConditionsFolder = AddNamedIcon("InitialConditionsFolder");
+      public static readonly ApplicationIcon InitialConditionsGreen = AddNamedIcon("InitialConditionsGreen");
+      public static readonly ApplicationIcon InitialConditionsRed = AddNamedIcon("InitialConditionsRed");
       public static readonly ApplicationIcon Monkey = AddNamedIcon("Monkey");
       public static readonly ApplicationIcon MonkeyGreen = AddNamedIcon("MonkeyGreen");
       public static readonly ApplicationIcon MonkeyRed = AddNamedIcon("MonkeyRed");
@@ -257,10 +257,10 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ParameterDistribution = AddNamedIcon("Histogram", "ParameterDistribution");
       public static readonly ApplicationIcon Parameters = AddNamedIcon("Parameters");
       public static readonly ApplicationIcon ParametersError = AddNamedIcon("ParametersError");
-      public static readonly ApplicationIcon ParameterStartValueGreen = AddNamedIcon("ParameterStartValuesGreen");
-      public static readonly ApplicationIcon ParameterStartValues = AddNamedIcon("ParameterStartValues", IconNames.PARAMETER_START_VALUES);
-      public static readonly ApplicationIcon ParameterStartValuesFolder = AddNamedIcon("ParameterStartValuesFolder");
-      public static readonly ApplicationIcon ParameterStartValuesRed = AddNamedIcon("ParameterStartValuesRed");
+      public static readonly ApplicationIcon ParameterValueGreen = AddNamedIcon("ParameterValuesGreen");
+      public static readonly ApplicationIcon ParameterValues = AddNamedIcon("ParameterValues", IconNames.PARAMETER_VALUES);
+      public static readonly ApplicationIcon ParameterValuesFolder = AddNamedIcon("ParameterValuesFolder");
+      public static readonly ApplicationIcon ParameterValuesRed = AddNamedIcon("ParameterValuesRed");
       public static readonly ApplicationIcon PassiveTransport = AddNamedIcon("PassiveTransport", IconNames.PASSIVE_TRANSPORT);
       public static readonly ApplicationIcon PassiveTransportFolder = AddNamedIcon("PassiveTransportFolder");
       public static readonly ApplicationIcon PassiveTransportGreen = AddNamedIcon("PassiveTransportGreen");
@@ -403,13 +403,13 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon SaveFormulation = AddNamedIcon("FormulationSave");
       public static readonly ApplicationIcon MoleculeError = AddNamedIcon("MoleculeError");
       public static readonly ApplicationIcon SaveMolecule = AddNamedIcon("MoleculeSave");
-      public static readonly ApplicationIcon AddMoleculeStartValues = AddNamedIcon("MoleculeStartValuesAdd");
-      public static readonly ApplicationIcon MoleculeStartValuesLoad = AddNamedIcon("MoleculeStartValuesLoad");
-      public static readonly ApplicationIcon SaveMoleculeStartValues = AddNamedIcon("MoleculeStartValuesSave");
+      public static readonly ApplicationIcon AddInitialConditions = AddNamedIcon("InitialConditionsAdd");
+      public static readonly ApplicationIcon InitialConditionsLoad = AddNamedIcon("InitialConditionsLoad");
+      public static readonly ApplicationIcon SaveInitialConditions = AddNamedIcon("InitialConditionsSave");
       public static readonly ApplicationIcon SaveObserver = AddNamedIcon("ObserverSave");
-      public static readonly ApplicationIcon AddParameterStartValues = AddNamedIcon("ParameterStartValuesAdd");
-      public static readonly ApplicationIcon ParameterStartValuesLoad = AddNamedIcon("ParameterStartValuesLoad");
-      public static readonly ApplicationIcon SaveParameterStartValues = AddNamedIcon("ParameterStartValuesSave");
+      public static readonly ApplicationIcon AddParameterValues = AddNamedIcon("ParameterValuesAdd");
+      public static readonly ApplicationIcon ParameterValuesLoad = AddNamedIcon("ParameterValuesLoad");
+      public static readonly ApplicationIcon SaveParameterValues = AddNamedIcon("ParameterValuesSave");
       public static readonly ApplicationIcon SaveReaction = AddNamedIcon("ReactionSave");
       public static readonly ApplicationIcon SaveSpatialStructure = AddNamedIcon("SpatialStructureSave");
       public static readonly ApplicationIcon ParameterIdentificationFolder = AddNamedIcon("ParameterIdentificationFolder");
@@ -434,7 +434,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon CovarianceAnalysisRed = AddNamedIcon("CovarianceAnalysisRed");
       public static readonly ApplicationIcon DeleteSelected = AddNamedIcon("DeleteSelected");
       public static readonly ApplicationIcon DeleteSourceNotDefined = AddNamedIcon("DeleteSourceNotDefined");
-      public static readonly ApplicationIcon ExtendMoleculeStartValues = AddNamedIcon("ExtendMoleculeStartValues");
+      public static readonly ApplicationIcon ExtendInitialConditions = AddNamedIcon("ExtendInitialConditions");
       public static readonly ApplicationIcon MoleculeObserver = AddNamedIcon("MoleculeObserver");
       public static readonly ApplicationIcon OutputSelection = AddNamedIcon("OutputSelection");
       public static readonly ApplicationIcon PreviewOriginData = AddNamedIcon("PreviewOriginData");
@@ -493,6 +493,23 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ExpressionProfileFolder = AddNamedIcon("ExpressionProfileFolder");
       public static readonly ApplicationIcon OSPSuite = AddNamedIcon("OSPSuite");
       public static readonly ApplicationIcon RedCross = AddNamedIcon("RedCross");
+      public static readonly ApplicationIcon ModuleExplorer = AddNamedIcon("ModuleExplorer");
+      public static readonly ApplicationIcon ModulesFolder = AddNamedIcon("ModulesFolder");
+      public static readonly ApplicationIcon Module = AddNamedIcon("Module");
+      public static readonly ApplicationIcon Neighborhood = AddNamedIcon( "Neighborhood");
+      public static readonly ApplicationIcon Neighbor = AddNamedIcon("Neighbor");
+      public static readonly ApplicationIcon TransporterRed = AddNamedIcon("TransporterRed", "TransporterRed");
+      public static readonly ApplicationIcon TransporterGreen = AddNamedIcon("TransporterGreen", "TransporterGreen");
+      public static readonly ApplicationIcon EnzymeRed = AddNamedIcon("EnzymeRed", "EnzymeRed");
+      public static readonly ApplicationIcon EnzymeGreen = AddNamedIcon("EnzymeGreen", "EnzymeGreen");
+      public static readonly ApplicationIcon ProteinRed = AddNamedIcon("ProteinRed", "ProteinRed");
+      public static readonly ApplicationIcon ProteinGreen = AddNamedIcon("ProteinGreen", "ProteinGreen");
+      public static readonly ApplicationIcon ModuleGreen = AddNamedIcon("ModuleGreen");
+      public static readonly ApplicationIcon ModuleRed = AddNamedIcon("ModuleRed");
+      public static readonly ApplicationIcon PKSimModule = AddNamedIcon("PKSimModule");
+      public static readonly ApplicationIcon PKSimModuleGreen = AddNamedIcon("PKSimModuleGreen");
+      public static readonly ApplicationIcon PKSimModuleRed = AddNamedIcon("PKSimModuleRed");
+
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
       private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((SvgImage) null);
@@ -530,7 +547,7 @@ namespace OSPSuite.Assets
       {
          var name = (iconName ?? resName).ToUpperInvariant();
          var iconAsBytes = getIcon(resName);
-
+         
          var appIcon = new ApplicationIcon(iconAsBytes)
          {
             IconName = name,

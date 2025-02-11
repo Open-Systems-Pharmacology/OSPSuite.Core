@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Domain
 {
@@ -21,15 +21,25 @@ namespace OSPSuite.Core.Domain
       public ValidationResult(IEnumerable<ValidationMessage> messages)
       {
          _messages = new Cache<IObjectBase, ValidationMessage>(x => x.Object);
-         _messages.AddRange(messages);
+         addMessages(messages);
       }
 
-      public void AddMessagesFrom(ValidationResult validationResult)
+      public ValidationResult(params ValidationResult[] validationResults) : this(validationResults.SelectMany(x => x.Messages))
       {
-         validationResult.Messages.Each(message => AddMessage(message.NotificationType, message.Object, message.Text, message.BuildingBlock, message.Details));
       }
 
-      public virtual void  AddMessage(NotificationType notificationType, IObjectBase invalidObject, string notification, IBuildingBlock buildingBlock = null, IEnumerable<string> details = null)
+      public ValidationResult AddMessagesFrom(ValidationResult validationResult)
+      {
+         addMessages(validationResult.Messages);
+         return this;
+      }
+
+      private void addMessages(IEnumerable<ValidationMessage> validationResultMessages)
+      {
+         validationResultMessages.Each(message => AddMessage(message.NotificationType, message.Object, message.Text, message.BuildingBlock, message.Details));
+      }
+
+      public virtual void AddMessage(NotificationType notificationType, IObjectBase invalidObject, string notification, IBuildingBlock buildingBlock = null, IEnumerable<string> details = null)
       {
          if (!_messages.Contains(invalidObject))
          {
@@ -46,6 +56,7 @@ namespace OSPSuite.Core.Domain
                existingNotification.Text = Validation.MultipleNotificationsFor(notificationType.ToString(), invalidObject.Name);
                existingNotification.AddDetail(oldNotification);
             }
+
             existingNotification.AddDetail(notification);
             addDetailsToMessage(existingNotification, details);
          }

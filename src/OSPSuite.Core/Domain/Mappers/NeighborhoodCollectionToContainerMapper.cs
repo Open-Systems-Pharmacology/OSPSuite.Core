@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
@@ -11,88 +14,118 @@ namespace OSPSuite.Core.Domain.Mappers
    ///    <para></para>
    ///    Creates Top-Container named "NEIGHBORHOODS", all mapped neighborhoods
    ///    <para></para>
-   ///    are added as childs of this top container
+   ///    are added as children of this top container
    /// </summary>
-   public interface INeighborhoodCollectionToContainerMapper : IBuilderMapper<IModel, IContainer>
+   internal interface INeighborhoodCollectionToContainerMapper : IMapper<ModelConfiguration, IContainer>
    {
    }
 
-   public class NeighborhoodCollectionToContainerMapper : INeighborhoodCollectionToContainerMapper
+   internal class NeighborhoodCollectionToContainerMapper : INeighborhoodCollectionToContainerMapper
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly INeighborhoodBuilderToNeighborhoodMapper _neighborhoodMapper;
-      private readonly IObjectPathFactory _objectPathFactory;
+      private readonly IContainerMergeTask _containerMergeTask;
 
-      public NeighborhoodCollectionToContainerMapper(IObjectBaseFactory objectBaseFactory,
+      public NeighborhoodCollectionToContainerMapper(
+         IObjectBaseFactory objectBaseFactory,
          INeighborhoodBuilderToNeighborhoodMapper neighborhoodMapper,
-         IObjectPathFactory objectPathFactory)
+         IContainerMergeTask containerMergeTask)
       {
          _objectBaseFactory = objectBaseFactory;
          _neighborhoodMapper = neighborhoodMapper;
-         _objectPathFactory = objectPathFactory;
+         _containerMergeTask = containerMergeTask;
       }
 
-      public IContainer MapFrom(IModel model, IBuildConfiguration buildConfiguration)
+      public IContainer MapFrom(ModelConfiguration modelConfiguration)
       {
-         var moleculeNames = buildConfiguration.AllPresentFloatingMoleculeNames();
+         var (_, simulationBuilder) = modelConfiguration;
 
          var neighborhoodsParentContainer = _objectBaseFactory.Create<IContainer>()
             .WithMode(ContainerMode.Logical)
             .WithName(Constants.NEIGHBORHOODS);
 
-         var startValuesForFloatingMolecules = presentMoleculesCachedByContainerPath(moleculeNames, buildConfiguration);
+         var allSpatialStructureAndMergeBehaviors = simulationBuilder.SpatialStructureAndMergeBehaviors;
+         if (!allSpatialStructureAndMergeBehaviors.Any())
+            return neighborhoodsParentContainer;
 
-         var moleculeNamesCopyProperties = buildConfiguration.AllPresentXenobioticFloatingMoleculeNames();
+         var mapToNeighborhood = mapToNeighborhoodDef(modelConfiguration);
 
-         buildConfiguration.SpatialStructure.Neighborhoods.Each(nb =>
-            neighborhoodsParentContainer.Add(_neighborhoodMapper.MapFrom(nb,
-               model,
-               buildConfiguration,
-               moleculeNamesFor(nb, startValuesForFloatingMolecules),
-               moleculeNamesCopyProperties)));
+         IReadOnlyList<Neighborhood> mapNeighborhoods(SpatialStructure spatialStructure) =>
+            spatialStructure.Neighborhoods.Select(mapToNeighborhood).Where(x => x != null).ToList();
+
+         //we use a cache to ensure that we are replacing neighborhoods defined in multiple structures
+         var firstSpatialStructure = allSpatialStructureAndMergeBehaviors[0].spatialStructure;
+         var allOtherSpatialStructuresWithMergeBehavior = allSpatialStructureAndMergeBehaviors.Skip(1).ToList();
+
+
+         //first step: Add the neighborhoods from the first structure
+         neighborhoodsParentContainer.AddChildren(mapNeighborhoods(firstSpatialStructure));
+
+         //now merge all other neighborhoods
+         allOtherSpatialStructuresWithMergeBehavior
+            .Select(x => new {x.mergeBehavior, neighborhoods = mapNeighborhoods(x.spatialStructure)})
+            .Each(x => mergeNeighborhoodsInStructure(neighborhoodsParentContainer, x.neighborhoods, x.mergeBehavior));
 
          return neighborhoodsParentContainer;
       }
 
-      private ICache<string, IList<string>> presentMoleculesCachedByContainerPath(IEnumerable<string> namesOfFloatingMolecules, IBuildConfiguration buildConfiguration)
+      private void mergeNeighborhoodsInStructure(IContainer neighborhoods, IReadOnlyList<Neighborhood> neighborhoodsToMerge, MergeBehavior mergeBehavior)
       {
-         var startValues =
-            buildConfiguration.MoleculeStartValues.Where(msv => (msv.IsPresent &&
-                                                                 namesOfFloatingMolecules.Contains(msv.MoleculeName))).ToList();
-
-         var moleculeStartValuesPerContainer = new Cache<string, IList<string>>();
-
-         foreach (var msv in startValues)
+         neighborhoodsToMerge.Each(neighborhoodToMerge =>
          {
-            IList<string> moleculeNames;
-            var path = msv.ContainerPath.ToString();
+            if (mergeBehavior == MergeBehavior.Extend)
+               _containerMergeTask.AddOrMergeContainer(neighborhoods, neighborhoodToMerge);
+            else
+               _containerMergeTask.AddOrReplaceInContainer(neighborhoods, neighborhoodToMerge);
+         });
+      }
 
-            if (moleculeStartValuesPerContainer.Contains(path))
+      private Func<NeighborhoodBuilder, Neighborhood> mapToNeighborhoodDef(ModelConfiguration modelConfiguration)
+      {
+         var (_, simulationBuilder) = modelConfiguration;
+         var moleculeNames = simulationBuilder.AllPresentFloatingMoleculeNames();
+         var startValuesForFloatingMolecules = presentMoleculesCachedByContainerPath(moleculeNames, simulationBuilder);
+         var moleculeNamesCopyProperties = simulationBuilder.AllPresentXenobioticFloatingMoleculeNames();
+
+         return neighborhoodBuilder => _neighborhoodMapper.MapFrom(neighborhoodBuilder, moleculeNamesFor(neighborhoodBuilder, startValuesForFloatingMolecules), moleculeNamesCopyProperties, modelConfiguration);
+      }
+
+      private ICache<string, List<string>> presentMoleculesCachedByContainerPath(IEnumerable<string> namesOfFloatingMolecules, SimulationBuilder simulationBuilder)
+      {
+         var initialConditions = simulationBuilder.AllPresentMoleculeValuesFor(namesOfFloatingMolecules).ToList();
+
+         var initialConditionsPerContainer = new Cache<string, List<string>>();
+
+         foreach (var initialCondition in initialConditions)
+         {
+            List<string> moleculeNames;
+            var path = initialCondition.ContainerPath.ToString();
+
+            if (initialConditionsPerContainer.Contains(path))
             {
-               moleculeNames = moleculeStartValuesPerContainer[path];
+               moleculeNames = initialConditionsPerContainer[path];
             }
             else
             {
                moleculeNames = new List<string>();
-               moleculeStartValuesPerContainer.Add(path, moleculeNames);
+               initialConditionsPerContainer.Add(path, moleculeNames);
             }
 
-            moleculeNames.Add(msv.MoleculeName);
+            moleculeNames.Add(initialCondition.MoleculeName);
          }
 
-         return moleculeStartValuesPerContainer;
+         return initialConditionsPerContainer;
       }
 
       /// <summary>
-      ///    Returns molecules which will be created in both neighbours of the neighbourhood
+      ///    Returns molecules which will be created in both neighbors of the neighborhood
       /// </summary>
-      private IEnumerable<string> moleculeNamesFor(INeighborhoodBuilder neighborhoodBuilder,
-         ICache<string, IList<string>> moleculesStartValuesForFloatingMolecules)
+      private IReadOnlyList<string> moleculeNamesFor(NeighborhoodBuilder neighborhoodBuilder, ICache<string, List<string>> moleculesStartValuesForFloatingMolecules)
       {
-         var pathToFirstNeighbor = _objectPathFactory.CreateAbsoluteObjectPath(neighborhoodBuilder.FirstNeighbor).ToString();
-         var pathToSecondNeighbor = _objectPathFactory.CreateAbsoluteObjectPath(neighborhoodBuilder.SecondNeighbor).ToString();
+         var pathToFirstNeighbor = neighborhoodBuilder.FirstNeighborPath.PathAsString;
+         var pathToSecondNeighbor = neighborhoodBuilder.SecondNeighborPath.PathAsString;
 
-         // check if both neighbours has at least 1 molecule (if not - return empty list)
+         // check if both neighbors has at least 1 molecule (if not - return empty list)
          if (!moleculesStartValuesForFloatingMolecules.Contains(pathToFirstNeighbor) ||
              !moleculesStartValuesForFloatingMolecules.Contains(pathToSecondNeighbor))
             return new List<string>();

@@ -9,7 +9,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
 {
-   internal class FormulaUsablePathsTeXBuilder : TeXChunkBuilder<IEnumerable<IFormulaUsablePath>>
+   internal class FormulaUsablePathsTeXBuilder : TeXChunkBuilder<IEnumerable<FormulaUsablePath>>
    {
       private const string PATH = "Path";
       private const string ALIAS = "Alias";
@@ -23,17 +23,17 @@ namespace OSPSuite.Infrastructure.Reporting.TeXBuilder
          _builderRepository = builderRepository;
       }
 
-      public override void Build(IEnumerable<IFormulaUsablePath> formulaUsablePaths, BuildTracker buildTracker)
+      public override void Build(IEnumerable<FormulaUsablePath> formulaUsablePaths, BuildTracker buildTracker)
       {
          _builderRepository.Report(tableFor(formulaUsablePaths), buildTracker);
       }
 
-      public override string TeXChunk(IEnumerable<IFormulaUsablePath> formulaUsablePaths)
+      public override string TeXChunk(IEnumerable<FormulaUsablePath> formulaUsablePaths)
       {
          return _builderRepository.ChunkFor(tableFor(formulaUsablePaths));
       }
 
-      private static SimpleTable tableFor(IEnumerable<IFormulaUsablePath> formulaUsablePaths)
+      private static SimpleTable tableFor(IEnumerable<FormulaUsablePath> formulaUsablePaths)
       {
          var dataTable = new DataTable(REFERENCES);
          dataTable.AddColumn(ALIAS);

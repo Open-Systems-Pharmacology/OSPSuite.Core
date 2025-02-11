@@ -44,7 +44,7 @@ namespace OSPSuite.Core
       {
          base.Context();
          _simulation = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
-         _simulation.BuildConfiguration.SimulationSettings.OutputSchema.AddTimePoint(10);
+         _simulation.Settings.OutputSchema.AddTimePoint(10);
       }
 
       protected override void Because()

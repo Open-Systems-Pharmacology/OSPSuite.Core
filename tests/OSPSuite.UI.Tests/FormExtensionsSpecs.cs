@@ -20,7 +20,7 @@ namespace OSPSuite.UI
 
       protected override void Because()
       {
-         FormExtensions.ReziseForCurrentScreen(_view, _boundaries, fractionWidth: 0.5, fractionHeight: 0.5, resizeOnlyIfOutOfBound: false);
+         FormExtensions.ResizeForCurrentScreen(_view, _boundaries, fractionWidth: 0.5, fractionHeight: 0.5, resizeOnlyIfOutOfBound: false);
       }
 
       [Observation]
@@ -45,7 +45,7 @@ namespace OSPSuite.UI
 
       protected override void Because()
       {
-         FormExtensions.ReziseForCurrentScreen(_view, _boundaries, fractionWidth: 1, fractionHeight: 0.5, resizeOnlyIfOutOfBound: true);
+         FormExtensions.ResizeForCurrentScreen(_view, _boundaries, fractionWidth: 1, fractionHeight: 0.5, resizeOnlyIfOutOfBound: true);
       }
 
       [Observation]

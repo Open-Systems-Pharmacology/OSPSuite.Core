@@ -3,16 +3,9 @@
 namespace OSPSuite.Core.Domain.Builder
 {
    /// <summary>
-   /// Collection of passiveTransportBuilders 
+   ///    Collection of passiveTransportBuilders
    /// </summary>
-   public interface IPassiveTransportBuildingBlock : IBuildingBlock<ITransportBuilder>
-   {
-   }
-
-   /// <summary>
-   /// Collection of passiveTransportBuilders 
-   /// </summary>
-   public class PassiveTransportBuildingBlock : BuildingBlock<ITransportBuilder>, IPassiveTransportBuildingBlock
+   public class PassiveTransportBuildingBlock : BuildingBlock<TransportBuilder>
    {
       public PassiveTransportBuildingBlock()
       {

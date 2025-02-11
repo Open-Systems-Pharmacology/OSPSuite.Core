@@ -4,7 +4,7 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_ReactionBuilder : ContextSpecification<IReactionBuilder>
+   public abstract class concern_for_ReactionBuilder : ContextSpecification<ReactionBuilder>
    {
       protected override void Context()
       {

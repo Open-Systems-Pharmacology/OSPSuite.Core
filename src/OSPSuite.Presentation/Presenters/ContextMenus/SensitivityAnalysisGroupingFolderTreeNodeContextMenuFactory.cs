@@ -1,25 +1,29 @@
 ﻿using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Presenters.Nodes;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
-   internal class SensitivityAnalysisClassificationNodeContextMenu : ClassificationNodeContextMenu<IExplorerPresenter>
+   internal class SensitivityAnalysisClassificationNodeContextMenu : ExplorerClassificationNodeContextMenu
    {
-      public SensitivityAnalysisClassificationNodeContextMenu(ClassificationNode classificationNode, IExplorerPresenter presenter)
-         : base(classificationNode, presenter)
+      public SensitivityAnalysisClassificationNodeContextMenu(ClassificationNode classificationNode, IExplorerPresenter presenter, IContainer container)
+         : base(classificationNode, presenter, container)
       {
       }
    }
 
    public class SensitivityAnalysisGroupingFolderTreeNodeContextMenuFactory : ClassificationNodeContextMenuFactory
    {
-      public SensitivityAnalysisGroupingFolderTreeNodeContextMenuFactory() : base(ClassificationType.SensitiviyAnalysis)
+      private readonly IContainer _container;
+
+      public SensitivityAnalysisGroupingFolderTreeNodeContextMenuFactory(IContainer container) : base(ClassificationType.SensitiviyAnalysis)
       {
+         _container = container;
       }
 
       protected override IContextMenu CreateFor(ClassificationNode classificationNode, IExplorerPresenter presenter)
       {
-         return new SensitivityAnalysisClassificationNodeContextMenu(classificationNode, presenter);
+         return new SensitivityAnalysisClassificationNodeContextMenu(classificationNode, presenter, _container);
       }
    }
 }

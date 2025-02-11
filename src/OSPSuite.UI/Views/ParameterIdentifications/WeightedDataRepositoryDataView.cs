@@ -4,7 +4,6 @@ using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
-using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 using OSPSuite.UI.Services;
@@ -71,7 +70,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          if (gridViewColumn == null)
             return;
          gridViewColumn.OptionsColumn.AllowEdit = false;
-         gridViewColumn.AppearanceCell.BackColor = Colors.Disabled;
+         gridViewColumn.AppearanceCell.BackColor = UIConstants.Colors.Disabled;
       }
 
       private GridColumn gridViewColumnFromDataColumn(DataColumn column) => gridView.Columns[column.ColumnName];

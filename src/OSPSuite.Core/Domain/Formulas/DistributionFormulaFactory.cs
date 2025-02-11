@@ -1,4 +1,9 @@
-﻿namespace OSPSuite.Core.Domain.Formulas
+﻿using System;
+using OSPSuite.Core.Domain.UnitSystem;
+using static OSPSuite.Core.Domain.Constants.Dimension;
+using static OSPSuite.Core.Domain.Constants.Distribution;
+
+namespace OSPSuite.Core.Domain.Formulas
 {
    public interface IDistributionFormulaFactory
    {
@@ -21,6 +26,7 @@
          IParameter minParameter,
          IParameter maxParameter);
 
+      DistributionFormula CreateFor(DistributionType distributionType, IDimension dimension);
    }
 
    public class DistributionFormulaFactory : IDistributionFormulaFactory
@@ -28,61 +34,77 @@
       private readonly IObjectPathFactory _objectPathFactory;
       private readonly IObjectBaseFactory _objectBaseFactory;
 
-      public DistributionFormulaFactory(IObjectPathFactory objectPathFactory,IObjectBaseFactory objectBaseFactory)
+      public DistributionFormulaFactory(IObjectPathFactory objectPathFactory, IObjectBaseFactory objectBaseFactory)
       {
          _objectPathFactory = objectPathFactory;
          _objectBaseFactory = objectBaseFactory;
       }
 
-      public NormalDistributionFormula CreateNormalDistributionFormulaFor(IDistributedParameter distributedParameter, IParameter meanParameter, IParameter deviationParameter)
+      public NormalDistributionFormula CreateNormalDistributionFormulaFor(IDistributedParameter distributedParameter, IParameter meanParameter, IParameter deviationParameter) =>
+         createDistribution<NormalDistributionFormula>(meanParameter.Dimension, configureNormalDistribution(meanParameter.Name, deviationParameter.Name));
+
+      private Action<DistributionFormula, IDimension> configureNormalDistribution(string meanParameterName = MEAN, string deviationParameterName = DEVIATION) => (distributionFormula, dimension) =>
       {
-         var distribution = createDistribution<NormalDistributionFormula>();
-         distribution.Dimension = meanParameter.Dimension;
-         addObjectPathToDistributionFormula(distribution, distributedParameter,meanParameter,Constants.Distribution.MEAN);
-         addObjectPathToDistributionFormula(distribution, distributedParameter,deviationParameter,Constants.Distribution.DEVIATION);
+         addObjectPathToDistributionFormula(distributionFormula, meanParameterName, MEAN, dimension);
+         addObjectPathToDistributionFormula(distributionFormula, deviationParameterName, DEVIATION, dimension);
+      };
+
+      public DiscreteDistributionFormula CreateDiscreteDistributionFormulaFor(IDistributedParameter distributedParameter, IParameter meanParameter) =>
+         createDistribution<DiscreteDistributionFormula>(meanParameter.Dimension, configureDiscreteDistribution(meanParameter.Name));
+
+      private Action<DistributionFormula, IDimension> configureDiscreteDistribution(string meanParameterName = MEAN) => (distributionFormula, dimension) =>
+         addObjectPathToDistributionFormula(distributionFormula, meanParameterName, MEAN, dimension);
+
+      public LogNormalDistributionFormula CreateLogNormalDistributionFormulaFor(IDistributedParameter distributedParameter, IParameter meanParameter, IParameter deviationParameter) =>
+         createDistribution<LogNormalDistributionFormula>(meanParameter.Dimension, configureLogNormalDistribution(meanParameter.Name, deviationParameter.Name));
+
+      private Action<DistributionFormula, IDimension> configureLogNormalDistribution(string meanParameterName = MEAN, string deviationParameter = GEOMETRIC_DEVIATION) => (distributionFormula, dimension) =>
+      {
+         addObjectPathToDistributionFormula(distributionFormula, meanParameterName, MEAN, dimension);
+         addObjectPathToDistributionFormula(distributionFormula, deviationParameter, GEOMETRIC_DEVIATION, NO_DIMENSION);
+      };
+
+      public UniformDistributionFormula CreateUniformDistributionFormulaFor(IDistributedParameter distributedParameter, IParameter minParameter, IParameter maxParameter) =>
+         createDistribution<UniformDistributionFormula>(minParameter.Dimension, configureUniformDistribution(minParameter.Name, maxParameter.Name));
+
+      private Action<DistributionFormula, IDimension> configureUniformDistribution(string minParameterName = MINIMUM, string maxParameterName = MAXIMUM) => (distributionFormula, dimension) =>
+      {
+         addObjectPathToDistributionFormula(distributionFormula, minParameterName, MINIMUM, dimension);
+         addObjectPathToDistributionFormula(distributionFormula, maxParameterName, MAXIMUM, dimension);
+      };
+
+      public DistributionFormula CreateFor(DistributionType distributionType, IDimension dimension)
+      {
+         switch (distributionType)
+         {
+            case DistributionType.Normal:
+               return createDistribution<NormalDistributionFormula>(dimension, configureNormalDistribution());
+            case DistributionType.LogNormal:
+               return createDistribution<LogNormalDistributionFormula>(dimension, configureLogNormalDistribution());
+            case DistributionType.Uniform:
+               return createDistribution<UniformDistributionFormula>(dimension, configureUniformDistribution());
+            case DistributionType.Discrete:
+               return createDistribution<DiscreteDistributionFormula>(dimension, configureDiscreteDistribution());
+            default:
+               throw new ArgumentOutOfRangeException(nameof(distributionType), distributionType, null);
+         }
+      }
+
+      private TDistribution createDistribution<TDistribution>(IDimension dimension, Action<DistributionFormula, IDimension> configure) where TDistribution : DistributionFormula
+      {
+         var distribution = _objectBaseFactory.CreateObjectBaseFrom<TDistribution>(typeof(TDistribution))
+            .WithDimension(dimension);
+
+         configure(distribution, dimension);
          return distribution;
       }
 
-      public DiscreteDistributionFormula CreateDiscreteDistributionFormulaFor(IDistributedParameter distributedParameter, IParameter meanParameter)
+      private void addObjectPathToDistributionFormula(DistributionFormula distribution, string parameterName, string alias, IDimension dimension)
       {
-         var distribution = createDistribution<DiscreteDistributionFormula>();
-         distribution.Dimension = meanParameter.Dimension;
-         addObjectPathToDistributionFormula(distribution, distributedParameter,meanParameter,Constants.Distribution.MEAN);
-         return distribution;
-      }
-
-      public LogNormalDistributionFormula CreateLogNormalDistributionFormulaFor(IDistributedParameter distributedParameter, IParameter meanParameter, IParameter deviationParameter)
-      {
-         var distribution = createDistribution<LogNormalDistributionFormula>();
-         distribution.Dimension = meanParameter.Dimension;
-         addObjectPathToDistributionFormula(distribution, distributedParameter,meanParameter,Constants.Distribution.MEAN);
-         addObjectPathToDistributionFormula(distribution, distributedParameter, deviationParameter, Constants.Distribution.GEOMETRIC_DEVIATION);
-         return distribution;
-      }
-
-      public UniformDistributionFormula CreateUniformDistributionFormulaFor(IDistributedParameter distributedParameter, IParameter minParameter, IParameter maxParameter)
-      {
-         var distribution = createDistribution<UniformDistributionFormula>();
-         distribution.Dimension = minParameter.Dimension;
-         addObjectPathToDistributionFormula(distribution, distributedParameter,minParameter,Constants.Distribution.MINIMUM);
-         addObjectPathToDistributionFormula(distribution, distributedParameter,maxParameter,Constants.Distribution.MAXIMUM);
-         return distribution;
-      }
-
-      private TDistribution createDistribution<TDistribution>() where TDistribution:IDistributionFormula
-      {
-         return _objectBaseFactory.CreateObjectBaseFrom<TDistribution>(typeof (TDistribution));
-      }
-
-      private void addObjectPathToDistributionFormula(IDistributionFormula distribution,
-                                                      IDistributedParameter distributedParameter,
-                                                      IParameter usedParameter,
-                                                      string alias)
-      {
-         var usedParameterPath = _objectPathFactory.CreateRelativeFormulaUsablePath(distributedParameter, usedParameter);
-
-         usedParameterPath.Alias = alias;
-         usedParameterPath.Dimension = usedParameter.Dimension;
+         var usedParameterPath = _objectPathFactory
+            .CreateFormulaUsablePathFrom(parameterName)
+            .WithAlias(alias)
+            .WithDimension(dimension ?? NO_DIMENSION);
 
          distribution.AddObjectPath(usedParameterPath);
       }

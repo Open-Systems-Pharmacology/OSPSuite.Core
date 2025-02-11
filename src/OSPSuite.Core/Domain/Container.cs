@@ -24,6 +24,11 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       IReadOnlyList<IEntity> Children { get; }
 
+      /// <summary>
+      /// Returns the path to the parent container.
+      /// It should only be set if the container has no parent in the hierarchy. Otherwise, it will be null
+      /// </summary>
+      ObjectPath ParentPath { get; set; }
 
       /// <summary>
       ///    Add the given child to the container
@@ -64,15 +69,15 @@ namespace OSPSuite.Core.Domain
       IEnumerable<T> GetChildren<T>(Func<T, bool> predicate) where T : class, IEntity;
 
       /// <summary>
-      ///    returns the neighbors from the container connected by the given neigborhoods.
+      ///    returns the neighbors from the container connected by the given neighborhoods.
       /// </summary>
-      IEnumerable<IContainer> GetNeighborsFrom(IEnumerable<INeighborhood> neighborhoods);
+      IReadOnlyList<IContainer> GetNeighborsFrom(IReadOnlyList<Neighborhood> neighborhoods);
 
       /// <summary>
       ///    returns the neighborhoods connecting the container with its neighbors.
       /// </summary>
       /// <param name="neighborhoods"> The possible neighborhoods. </param>
-      IEnumerable<INeighborhood> GetNeighborhoods(IEnumerable<INeighborhood> neighborhoods);
+      IReadOnlyList<Neighborhood> GetNeighborhoods(IReadOnlyList<Neighborhood> neighborhoods);
 
       /// <summary>
       ///    Returns all children containers defined and the container itself, if the container is form type
@@ -92,15 +97,14 @@ namespace OSPSuite.Core.Domain
 
    public class Container : Entity, IContainer
    {
-      private readonly List<IEntity> _children;
-      private ContainerMode _mode;
+      private readonly List<IEntity> _children = new List<IEntity>();
+
+      private ContainerMode _mode = ContainerMode.Logical;
+
       private ContainerType _containerType;
 
-      public Container()
-      {
-         _children = new List<IEntity>();
-         Mode = ContainerMode.Logical;
-      }
+      //Path to parent container is null by default. In this case, it will be evaluated from container structure
+      private ObjectPath _parentPath;
 
       public virtual IReadOnlyList<IEntity> Children => _children;
 
@@ -124,8 +128,12 @@ namespace OSPSuite.Core.Domain
             return;
          }
 
+         if (newChild is IContainer childContainer)
+            childContainer.ParentPath = null;
+
          _children.Add(newChild);
          newChild.ParentContainer = this;
+
          OnChanged();
       }
 
@@ -135,6 +143,12 @@ namespace OSPSuite.Core.Domain
       {
          get => _mode;
          set => SetProperty(ref _mode, value);
+      }
+
+      public ObjectPath ParentPath
+      {
+         get => ParentContainer == null ? _parentPath : null;
+         set => SetProperty(ref _parentPath, value);
       }
 
       public ContainerType ContainerType
@@ -190,10 +204,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Returns all children of type <typeparamref name="T" />
       /// </summary>
-      public virtual IEnumerable<T> GetChildren<T>() where T : class, IEntity
-      {
-         return GetChildren<T>(x => true);
-      }
+      public virtual IEnumerable<T> GetChildren<T>() where T : class, IEntity => GetChildren<T>(x => true);
 
       public virtual IEnumerable<T> GetChildren<T>(Func<T, bool> predicate) where T : class, IEntity
       {
@@ -204,30 +215,30 @@ namespace OSPSuite.Core.Domain
                 select castChild;
       }
 
-      public virtual IEnumerable<IContainer> GetNeighborsFrom(IEnumerable<INeighborhood> neighborhoods)
+      public virtual IReadOnlyList<IContainer> GetNeighborsFrom(IReadOnlyList<Neighborhood> neighborhoods)
       {
-         var allNeighborhoods = neighborhoods.ToList();
-         var first = from neighborhood in GetNeighborhoods(allNeighborhoods)
+         var first = from neighborhood in GetNeighborhoods(neighborhoods)
                      where neighborhood.FirstNeighbor != this
                      select neighborhood.FirstNeighbor;
 
-         var second = from neighborhood in GetNeighborhoods(allNeighborhoods)
+         var second = from neighborhood in GetNeighborhoods(neighborhoods)
                       where neighborhood.SecondNeighbor != this
                       select neighborhood.SecondNeighbor;
-         return first.Union(second);
+
+         return first.Union(second).ToList();
       }
 
-      public virtual IEnumerable<INeighborhood> GetNeighborhoods(IEnumerable<INeighborhood> neighborhoods)
+      public virtual IReadOnlyList<Neighborhood> GetNeighborhoods(IReadOnlyList<Neighborhood> neighborhoods)
       {
-         var allNeighborhoods = neighborhoods.ToList();
-         var first = from neighborhood in allNeighborhoods
+         var first = from neighborhood in neighborhoods
                      where neighborhood.FirstNeighbor == this
                      select neighborhood;
 
-         var second = from neighborhood in allNeighborhoods
+         var second = from neighborhood in neighborhoods
                       where neighborhood.SecondNeighbor == this
                       select neighborhood;
-         return first.Union(second);
+
+         return first.Union(second).ToList();
       }
 
       public IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>() where TContainer : class, IContainer => GetAllContainersAndSelf<TContainer>(x => true);
@@ -250,6 +261,7 @@ namespace OSPSuite.Core.Domain
 
          Mode = container.Mode;
          ContainerType = container.ContainerType;
+         ParentPath = container.ParentPath?.Clone<ObjectPath>();
       }
 
       public IEnumerator<IEntity> GetEnumerator()

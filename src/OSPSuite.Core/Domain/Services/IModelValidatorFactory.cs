@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Domain.Services
 {
-   public interface IModelValidatorFactory
+   internal interface IModelValidatorFactory
    {
       T Create<T>() where T : IModelValidator;
    }

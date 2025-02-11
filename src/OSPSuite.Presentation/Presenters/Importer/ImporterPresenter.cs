@@ -130,7 +130,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          catch (TimeNotStrictlyMonotoneException timeNonMonotoneException)
          {
             var errors = new ParseErrors();
-            errors.Add(_dataSource.DataSetAt(e.Index), new NonMonotonicalTimeParseErrorDescription(Error.ErrorWhenPlottingDataRepository(e.Index, timeNonMonotoneException.Message)));
+            errors.Add(_dataSource.DataSetAt(e.Index),
+               new NonMonotonicalTimeParseErrorDescription(Error.ErrorWhenPlottingDataRepository(e.Index, timeNonMonotoneException.Message)));
             _importerDataPresenter.SetTabMarks(errors);
             _confirmationPresenter.SetViewingStateToError(timeNonMonotoneException.Message);
          }
@@ -184,7 +185,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          var configuration = UpdateAndGetConfiguration();
          configuration.Id = id;
-         OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs {DataRepositories = dataRepositories});
+         OnTriggerImport.Invoke(this, new ImportTriggeredEventArgs { DataRepositories = dataRepositories });
       }
 
       private void loadSheetsFromDataPresenter(object sender, ImportSheetsEventArgs args)
@@ -217,16 +218,17 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
 
          var sheets = dataSourceFile.DataSheets.GetDataSheetsByName(sheetNames);
-         var dataMappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Where(p => p.ColumnName != null).Select(md =>
+         var dataMappings = dataSourceFile.Format.GetParameters<MetaDataFormatParameter>().Where(p => p.ColumnName != null).Select(md =>
             new MetaDataMappingConverter()
             {
                Id = md.MetaDataId,
-               Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets.GetDataSheetByName(sheetName).GetColumnDescription(md.ColumnName).Index : -1
+               Index = sheetName =>
+                  md.IsColumn ? dataSourceFile.DataSheets.GetDataSheetByName(sheetName).GetColumnDescription(md.ColumnName).Index : -1
             }).ToList();
 
          var mappings = dataMappings.Union
          (
-            dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+            dataSourceFile.Format.GetParameters<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
                //in case of a duplicate name coming from an excel column used as a grouping by with the same name as a metaData, we add a suffix 
                Id = dataMappings.ExistsById(md.ColumnName) ? md.ColumnName + Constants.ImporterConstants.GroupingBySuffix : md.ColumnName,
@@ -336,7 +338,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void SaveConfiguration()
       {
-         var fileName = _dialogCreator.AskForFileToSave(Captions.Importer.SaveConfiguration, Constants.Filter.XML_FILE_FILTER, Constants.DirectoryKey.OBSERVED_DATA);
+         var fileName = _dialogCreator.AskForFileToSave(Captions.Importer.SaveConfiguration, Constants.Filter.XML_FILE_FILTER,
+            Constants.DirectoryKey.OBSERVED_DATA);
 
          if (string.IsNullOrEmpty(fileName))
             return;
@@ -361,11 +364,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private void applyConfiguration(ImporterConfiguration configuration)
       {
          var excelColumnNames = _columnMappingPresenter.GetAllAvailableExcelColumns();
-         var listOfNonExistingColumns = configuration.Parameters.Where(parameter => !excelColumnNames.Contains(parameter.ColumnName) && parameter.ComesFromColumn()).ToList();
+         var listOfNonExistingColumns = configuration.Parameters
+            .Where(parameter => !excelColumnNames.Contains(parameter.ColumnName) && parameter.ComesFromColumn()).ToList();
 
          if (listOfNonExistingColumns.Any())
          {
-            var confirm = _dialogCreator.MessageBoxYesNo(Captions.Importer.ConfirmDroppingExcelColumns(string.Join("\n", listOfNonExistingColumns.Select(x => x.ColumnName))));
+            var confirm = _dialogCreator.MessageBoxYesNo(
+               Captions.Importer.ConfirmDroppingExcelColumns(string.Join("\n", listOfNonExistingColumns.Select(x => x.ColumnName))));
 
             if (confirm == ViewResult.No)
                return;
@@ -377,7 +382,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
          }
 
          var mappings = configuration.Parameters.OfType<MappingDataFormatParameter>();
-         var listOfNonExistingUnitColumns = mappings.Where(parameter => !parameter.MappedColumn.Unit.ColumnName.IsNullOrEmpty() && !excelColumnNames.Contains(parameter.MappedColumn.Unit.ColumnName)).ToList();
+         var listOfNonExistingUnitColumns = mappings.Where(parameter =>
+            !parameter.MappedColumn.Unit.ColumnName.IsNullOrEmpty() && !excelColumnNames.Contains(parameter.MappedColumn.Unit.ColumnName)).ToList();
          foreach (var element in listOfNonExistingUnitColumns)
          {
             element.MappedColumn.Unit = new UnitDescription();

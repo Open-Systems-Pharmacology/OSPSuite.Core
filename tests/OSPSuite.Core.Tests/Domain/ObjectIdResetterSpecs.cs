@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Domain
       private IContainer _container;
       private string _individualId;
       private IEntity _parameter;
-      private string _parmeterId;
+      private string _parameterId;
       private IFormula _constantFormula;
       private SpatialStructure _spStructure;
 
@@ -30,13 +30,13 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _individualId = "_oldIndividualId";
-         _parmeterId = "_oldParmeterId";
+         _parameterId = "_oldparameterId";
          _constantFormula = new ExplicitFormula().WithId("TOTO");
          _container = new Container().WithId(_individualId);
          _spStructure = new SpatialStructure().WithId("STRUCT");
          _spStructure.AddTopContainer(_container);
          _spStructure.AddFormula(_constantFormula);
-         _parameter = new Parameter().WithId(_parmeterId).WithFormula(_constantFormula);
+         _parameter = new Parameter().WithId(_parameterId).WithFormula(_constantFormula);
          _container.Add(_parameter);
       }
 
@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_reset_the_id_of_all_children_if_the_object_is_a_container_object()
       {
-         _parameter.Id.ShouldNotBeEqualTo(_parmeterId);
+         _parameter.Id.ShouldNotBeEqualTo(_parameterId);
       }
 
       [Observation]

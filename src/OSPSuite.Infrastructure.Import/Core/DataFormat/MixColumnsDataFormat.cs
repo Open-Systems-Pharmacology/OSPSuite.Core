@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Extensions;
 using OSPSuite.Infrastructure.Import.Services;
@@ -10,7 +9,9 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
    public class MixColumnsDataFormat : AbstractColumnsDataFormat
    {
       public override string Name => "Mixin";
-      public override string Description => "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/639\rhttps://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/797";
+
+      public override string Description =>
+         "https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/639\rhttps://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/797";
 
       protected override string ExtractLLOQ(string description, DataSheet dataSheet, List<string> keys, ref double rank)
       {
@@ -31,13 +32,14 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          return lloqKey;
       }
 
-      protected override UnitDescription ExtractUnits(string description, DataSheet dataSheet, List<string> keys, IReadOnlyList<IDimension> supportedDimensions, ref double rank)
+      protected override UnitDescription ExtractUnits(string description, DataSheet dataSheet, List<string> keys,
+         ColumnInfo columnInfo, ref double rank)
       {
          var (_, unit) = UnitExtractor.ExtractNameAndUnit(description);
 
          if (!string.IsNullOrEmpty(unit))
          {
-            unit = ValidateUnit(unit, supportedDimensions);
+            unit = ValidateUnit(unit, columnInfo);
             rank++;
             return new UnitDescription(unit);
          }

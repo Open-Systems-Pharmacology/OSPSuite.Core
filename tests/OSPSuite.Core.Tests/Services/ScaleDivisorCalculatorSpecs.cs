@@ -18,8 +18,8 @@ namespace OSPSuite.Core.Services
    public abstract class concern_for_ScaleDivisorCalculator : ContextSpecification<IScaleDivisorCalculator>
    {
       protected IModelCoreSimulation _simulation;
-      private IMoleculeAmount _moleculeAmount1;
-      private IMoleculeAmount _moleculeAmount2;
+      private MoleculeAmount _moleculeAmount1;
+      private MoleculeAmount _moleculeAmount2;
       protected DataRepository _originalResults;
       protected DataColumn _originalDataColumn;
       protected string _molecule1Path;
@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Services
       private ISimModelManager _simModelManager;
       private IContainerTask _containerTask;
       protected ScaleDivisorOptions _options;
-      protected PathCache<IMoleculeAmount> _moleculeAmountCache;
+      protected PathCache<MoleculeAmount> _moleculeAmountCache;
       private IObjectPathFactory _objectPathFactory;
 
       protected override void Context()
@@ -38,7 +38,7 @@ namespace OSPSuite.Core.Services
          _simModelManager = A.Fake<ISimModelManager>();
          _containerTask = A.Fake<IContainerTask>();
          _options = new ScaleDivisorOptions();
-         _moleculeAmountCache = new PathCache<IMoleculeAmount>(entityPathFactory);
+         _moleculeAmountCache = new PathCache<MoleculeAmount>(entityPathFactory);
          var rootContainer = new ARootContainer().WithName(_simulation.Name)
             .WithContainerType(ContainerType.Simulation);
 
@@ -62,7 +62,7 @@ namespace OSPSuite.Core.Services
          _originalDataColumn.QuantityInfo.Path = _objectPathFactory.CreateAbsoluteObjectPath(_moleculeAmount1);
          _originalResults.Add(_originalDataColumn);
 
-         A.CallTo(_containerTask).WithReturnType<PathCache<IMoleculeAmount>>().Returns(_moleculeAmountCache);
+         A.CallTo(_containerTask).WithReturnType<PathCache<MoleculeAmount>>().Returns(_moleculeAmountCache);
          var simResults = new DataRepository();
          var baseGrid2 = new BaseGrid("Time", Constants.Dimension.NO_DIMENSION) {Values = new[] {0f, 1f, 2f, 3f}};
          var res1 = new DataColumn("M1", Constants.Dimension.NO_DIMENSION, baseGrid2) {Values = new[] {0f, 10f, 20f, 30f}};
@@ -75,7 +75,7 @@ namespace OSPSuite.Core.Services
 
          var simulationRunResults = new SimulationRunResults(Enumerable.Empty<SolverWarning>(), simResults);
          A.CallTo(() => _simModelManager.RunSimulation(_simulation, null)).Returns(simulationRunResults);
-         sut = new ScaleDivisorCalculator(_simModelManager, _containerTask, _objectPathFactory);
+         sut = new ScaleDivisorCalculator(_simModelManager, _containerTask);
       }
    }
 

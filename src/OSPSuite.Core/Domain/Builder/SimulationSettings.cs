@@ -10,26 +10,17 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public interface ISimulationSettings : IBuildingBlock, IWithChartTemplates
-   {
-      SolverSettings Solver { get; set; }
-
-      OutputSchema OutputSchema { get; set; }
-
-      double RandomSeed { get; }
-
-      /// <summary>
-      ///    Quantities selected that will be exported by the simulation engine
-      /// </summary>
-      OutputSelections OutputSelections { get; set; }
-   }
-
-   public class SimulationSettings : BuildingBlock, ISimulationSettings
+ 
+   public class SimulationSettings : BuildingBlock, IWithChartTemplates
    {
       private readonly ICache<string, CurveChartTemplate> _chartTemplates;
       public virtual SolverSettings Solver { get; set; }
       public virtual OutputSchema OutputSchema { get; set; }
       public double RandomSeed { get; set; }
+
+      /// <summary>
+      ///    Quantities selected that will be exported by the simulation engine
+      /// </summary>
       public virtual OutputSelections OutputSelections { get;  set; }
 
       public SimulationSettings()
@@ -70,7 +61,7 @@ namespace OSPSuite.Core.Domain.Builder
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
-         var sourceSimulationSettings = source as ISimulationSettings;
+         var sourceSimulationSettings = source as SimulationSettings;
          if (sourceSimulationSettings == null) return;
          Solver = cloneManager.Clone(sourceSimulationSettings.Solver);
          OutputSchema = cloneManager.Clone(sourceSimulationSettings.OutputSchema);

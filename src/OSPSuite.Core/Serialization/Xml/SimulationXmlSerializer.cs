@@ -1,4 +1,6 @@
 ﻿using OSPSuite.Core.Domain;
+using OSPSuite.Serializer;
+using static OSPSuite.Core.Domain.Constants.Serialization;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -15,7 +17,7 @@ namespace OSPSuite.Core.Serialization.Xml
       public override void PerformMapping()
       {
          base.PerformMapping();
-         Map(x => x.BuildConfiguration);
+         Map(x => x.Configuration).WithMappingName(SIMULATION_CONFIGURATION);
          Map(x => x.Model);
          Map(x => x.Creation);
       }

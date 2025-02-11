@@ -4,11 +4,11 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Mappers
 {
-   public interface IEventGroupBuilderToEventGroupMapper : IBuilderMapper<IEventGroupBuilder, IEventGroup>
+   internal interface IEventGroupBuilderToEventGroupMapper : IBuilderMapper<EventGroupBuilder, EventGroup>
    {
    }
 
-   public class EventGroupBuilderToEventGroupMapper : IEventGroupBuilderToEventGroupMapper
+   internal class EventGroupBuilderToEventGroupMapper : IEventGroupBuilderToEventGroupMapper
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly ICloneManagerForModel _cloneManagerForModel;
@@ -39,17 +39,17 @@ namespace OSPSuite.Core.Domain.Mappers
          _parameterFactory = parameterFactory;
       }
 
-      public IEventGroup MapFrom(IEventGroupBuilder eventGroupBuilder, IBuildConfiguration buildConfiguration)
+      public EventGroup MapFrom(EventGroupBuilder eventGroupBuilder, SimulationBuilder simulationBuilder)
       {
-         var eventGroup = _objectBaseFactory.Create<IEventGroup>();
-         buildConfiguration.AddBuilderReference(eventGroup, eventGroupBuilder);
+         var eventGroup = _objectBaseFactory.Create<EventGroup>();
+         simulationBuilder.AddBuilderReference(eventGroup, eventGroupBuilder);
          eventGroup.UpdatePropertiesFrom(eventGroupBuilder, _cloneManagerForModel);
          eventGroup.EventGroupType = eventGroupBuilder.EventGroupType;
-         createEventGroupStructure(eventGroupBuilder, eventGroup, buildConfiguration);
+         createEventGroupStructure(eventGroupBuilder, eventGroup, simulationBuilder);
          return eventGroup;
       }
 
-      private void createEventGroupStructure(IEventGroupBuilder eventGroupBuilder, IEventGroup eventGroup, IBuildConfiguration buildConfiguration)
+      private void createEventGroupStructure(EventGroupBuilder eventGroupBuilder, EventGroup eventGroup, SimulationBuilder simulationBuilder)
       {
          foreach (var childBuilder in eventGroupBuilder.Children)
          {
@@ -57,23 +57,23 @@ namespace OSPSuite.Core.Domain.Mappers
             if (doesNotBelongIntoModel(childBuilder))
                continue;
 
-            if (childBuilder.IsAnImplementationOf<IEventGroupBuilder>())
+            if (childBuilder.IsAnImplementationOf<EventGroupBuilder>())
             {
-               var childEventGroup = MapFrom(childBuilder.DowncastTo<IEventGroupBuilder>(), buildConfiguration);
+               var childEventGroup = MapFrom(childBuilder.DowncastTo<EventGroupBuilder>(), simulationBuilder);
                eventGroup.Add(childEventGroup);
 
-               if (childBuilder.IsAnImplementationOf<IApplicationBuilder>())
-                  createApplication(childBuilder.DowncastTo<IApplicationBuilder>(), childEventGroup, buildConfiguration);
+               if (childBuilder.IsAnImplementationOf<ApplicationBuilder>())
+                  createApplication(childBuilder.DowncastTo<ApplicationBuilder>(), childEventGroup, simulationBuilder);
             }
 
-            else if (childBuilder.IsAnImplementationOf<IEventBuilder>())
-               eventGroup.Add(_eventMapper.MapFrom(childBuilder.DowncastTo<IEventBuilder>(), buildConfiguration));
+            else if (childBuilder.IsAnImplementationOf<EventBuilder>())
+               eventGroup.Add(_eventMapper.MapFrom(childBuilder.DowncastTo<EventBuilder>(), simulationBuilder));
 
             else if (childBuilder.IsAnImplementationOf<IParameter>())
-               eventGroup.Add(_parameterMapper.MapFrom(childBuilder.DowncastTo<IParameter>(), buildConfiguration));
+               eventGroup.Add(_parameterMapper.MapFrom(childBuilder.DowncastTo<IParameter>(), simulationBuilder));
 
             else if (childBuilder.IsAnImplementationOf<IContainer>())
-               eventGroup.Add(_containerMapper.MapFrom(childBuilder.DowncastTo<IContainer>(), buildConfiguration));
+               eventGroup.Add(_containerMapper.MapFrom(childBuilder.DowncastTo<IContainer>(), simulationBuilder));
 
             else
                eventGroup.Add(_cloneManagerForModel.Clone(childBuilder));
@@ -82,21 +82,19 @@ namespace OSPSuite.Core.Domain.Mappers
 
       private static bool doesNotBelongIntoModel(IEntity childBuilder)
       {
-         return childBuilder.IsAnImplementationOf<ITransportBuilder>() || childBuilder.IsAnImplementationOf<IApplicationMoleculeBuilder>();
+         return childBuilder.IsAnImplementationOf<TransportBuilder>() || childBuilder.IsAnImplementationOf<ApplicationMoleculeBuilder>();
       }
 
-      private void createApplication(IApplicationBuilder applicationBuilder, IEventGroup eventGroup, IBuildConfiguration buildConfiguration)
+      private void createApplication(ApplicationBuilder applicationBuilder, EventGroup eventGroup, SimulationBuilder simulationBuilder)
       {
-         var molecules = buildConfiguration.Molecules;
-
          //---- add molecule amounts
          foreach (var appMolecule in applicationBuilder.Molecules)
          {
             //get container for the molecule
             var moleculeContainer = appMolecule.RelativeContainerPath.Resolve<IContainer>(eventGroup);
 
-            var molecule = _moleculeMapper.MapFrom(molecules[applicationBuilder.MoleculeName], moleculeContainer, buildConfiguration);
-            molecule.Formula = _formulaMapper.MapFrom(appMolecule.Formula, buildConfiguration);
+            var molecule = _moleculeMapper.MapFrom(simulationBuilder.MoleculeByName(applicationBuilder.MoleculeName), moleculeContainer, simulationBuilder);
+            molecule.Formula = _formulaMapper.MapFrom(appMolecule.Formula, simulationBuilder);
 
             moleculeContainer.Add(molecule);
 

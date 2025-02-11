@@ -80,12 +80,6 @@ namespace OSPSuite.UI.Extensions
          control.Controls.Clear();
       }
 
-      public static void HideBorderIfRequired(this LayoutControlGroup layoutControlGroup)
-      {
-         /*hide the border if the selected skin is one that does not support border layout*/
-         if (UIConstants.Skins.SkinsWithoutBorder.Contains(UserLookAndFeel.Default.SkinName))
-            layoutControlGroup.GroupBordersVisible = false;
-      }
 
       public static void DoWithinSuspendedLayout(this Control control, Action actionToBatch)
       {

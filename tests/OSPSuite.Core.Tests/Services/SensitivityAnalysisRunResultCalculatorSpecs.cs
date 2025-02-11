@@ -1,4 +1,5 @@
-﻿using FakeItEasy;
+﻿using System.Collections.Generic;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -89,7 +90,7 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         _result = sut.CreateFor(_sensitivityAnalysis, _variationData, _simulationResults, addOutputParameterSensitivitiesToResult: false);
+         _result = sut.CreateFor(_sensitivityAnalysis, _variationData, _simulationResults, new List<IndividualRunInfo>(), addOutputParameterSensitivitiesToResult: false);
       }
 
       [Observation]
@@ -206,7 +207,7 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         _result = sut.CreateFor(_sensitivityAnalysis, _variationData, _simulationResults, addOutputParameterSensitivitiesToResult: true);
+         _result = sut.CreateFor(_sensitivityAnalysis, _variationData, _simulationResults, new List<IndividualRunInfo>(), addOutputParameterSensitivitiesToResult: true);
       }
 
       [Observation]

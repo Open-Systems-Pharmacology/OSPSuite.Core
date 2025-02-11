@@ -224,7 +224,7 @@ namespace OSPSuite.Core.Domain
       public void should_resolve_the_container_with_the_accurate_predicate_and_return_the_container_as_well()
       {
          _results.Count.ShouldBeEqualTo(3);
-         _results.Any(x=>x.IsNamed("TATA")).ShouldBeTrue();
+         _results.Any(x => x.IsNamed("TATA")).ShouldBeTrue();
          _results.Any(x => x.IsNamed("TITI")).ShouldBeTrue();
          _results.Any(x => x.IsNamed("TOTO")).ShouldBeFalse();
          _results.Contains(sut).ShouldBeTrue();
@@ -258,6 +258,48 @@ namespace OSPSuite.Core.Domain
          _results.Any(x => x.IsNamed("TITI")).ShouldBeTrue();
          _results.Any(x => x.IsNamed("TOTO")).ShouldBeFalse();
          _results.Contains(sut).ShouldBeFalse();
+      }
+   }
+
+   public class When_adding_a_container_to_a_parent_container : concern_for_Container
+   {
+      private Container _subContainer;
+
+      protected override void Context()
+      {
+         base.Context();
+         _subContainer = new Container().WithName("subcontainer");
+         _subContainer.ParentPath = new ObjectPath("the", "path");
+      }
+
+      protected override void Because()
+      {
+         sut.Add(_subContainer);
+      }
+
+      [Observation]
+      public void the_child_container_should_have_parent_path_cleared()
+      {
+         _subContainer.ParentPath.ShouldBeNull();
+      }
+   }
+
+   public class When_updating_properties_from_another_container : concern_for_Container
+   {
+      [Observation]
+      public void should_have_set_the_parent_type_to_null_if_not_set_in_the_other_container()
+      {
+         var container = new Container();
+         sut.UpdatePropertiesFrom(container, null);
+         sut.ParentPath.ShouldBeNull();
+      }
+
+      [Observation]
+      public void should_have_set_a_clone_otherwise()
+      {
+         var container = new Container {ParentPath = new ObjectPath("TOTO", "TATA")};
+         sut.UpdatePropertiesFrom(container, null);
+         sut.ParentPath.ShouldOnlyContainInOrder("TOTO", "TATA");
       }
    }
 }

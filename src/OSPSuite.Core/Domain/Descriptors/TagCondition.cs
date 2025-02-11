@@ -1,6 +1,8 @@
+using OSPSuite.Utility;
+
 namespace OSPSuite.Core.Domain.Descriptors
 {
-   public interface ITagCondition : IDescriptorCondition
+   public interface ITagCondition : ISpecification<EntityDescriptor>
    {
       /// <summary>
       ///    Returns the underlying tag associated with the condition
@@ -11,6 +13,11 @@ namespace OSPSuite.Core.Domain.Descriptors
       ///    Returns the semantic display of the condition for the tag
       /// </summary>
       string Condition { get; }
+
+
+      ITagCondition CloneCondition();
+
+      void Replace(string keyword, string replacement);
    }
 
    public abstract class TagCondition : ITagCondition
@@ -31,7 +38,7 @@ namespace OSPSuite.Core.Domain.Descriptors
 
       public virtual string Condition => $"{_type.ToUpper()} {Tag}";
 
-      public abstract IDescriptorCondition CloneCondition();
+      public abstract ITagCondition CloneCondition();
 
       public virtual void Replace(string keyword, string replacement)
       {

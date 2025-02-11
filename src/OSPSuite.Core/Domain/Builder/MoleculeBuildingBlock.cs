@@ -4,37 +4,31 @@ using OSPSuite.Assets;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public interface IMoleculeBuildingBlock : IBuildingBlock<IMoleculeBuilder>
-   {
-      IMoleculeBuilder this[string moleculeName] { get; }
-      IEnumerable<IMoleculeBuilder> AllFloating();
-      IEnumerable<IMoleculeBuilder> AllPresentFor(IMoleculeStartValuesBuildingBlock moleculesStartValues);
-   }
-
-   public class MoleculeBuildingBlock : BuildingBlock<IMoleculeBuilder>, IMoleculeBuildingBlock
+   public class MoleculeBuildingBlock : BuildingBlock<MoleculeBuilder>
    {
       public MoleculeBuildingBlock()
       {
          Icon = IconNames.MOLECULE;
       }
-      public IMoleculeBuilder this[string moleculeName]
-      {
-         get { return this.FirstOrDefault(moleculeBuilder => moleculeBuilder.Name == moleculeName); }
-      }
 
-      public IEnumerable<IMoleculeBuilder> AllFloating()
-      {
-         return this.Where(x => x.IsFloating);
-      }
+      public MoleculeBuilder this[string moleculeName] => this.FindByName(moleculeName);
 
-      public IEnumerable<IMoleculeBuilder> AllPresentFor(IMoleculeStartValuesBuildingBlock moleculesStartValues)
+      public IEnumerable<MoleculeBuilder> AllFloating() => this.Where(x => x.IsFloating);
+
+      public IEnumerable<MoleculeBuilder> AllPresentFor(IEnumerable<InitialConditionsBuildingBlock> initialConditions)
       {
-         var moleculeNames = (from moleculeStartValue in moleculesStartValues
-                              where moleculeStartValue.IsPresent
-                              select moleculeStartValue.MoleculeName).Distinct();
+         var moleculeNames = initialConditions.SelectMany(x => x)
+            .Where(initialCondition => initialCondition.IsPresent)
+            .Select(initialCondition => initialCondition.MoleculeName)
+            .Distinct();
 
 
          return moleculeNames.Select(moleculeName => this[moleculeName]).Where(m => m != null);
+      }
+
+      public IEnumerable<MoleculeBuilder> AllPresentFor(InitialConditionsBuildingBlock moleculesStartValues)
+      {
+         return AllPresentFor(new[] {moleculesStartValues});
       }
    }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Data;
 using System.IO;
 using System.Linq;
-using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Services;
@@ -28,22 +27,29 @@ namespace OSPSuite.Infrastructure.Export
             File.Delete(_exportExcelFilePath);
          }
 
-         _dataTable = new DataTable(); ;
-         _dataTable.Columns.Add("Column1");
-         _dataTable.Columns.Add("Column2");
+         _dataTable = CreateDataTable();
+      }
 
-         var row1 = _dataTable.NewRow();
+      protected DataTable CreateDataTable(string name = "TestSheet")
+      {
+         var dataTable = new DataTable();
+
+         dataTable.Columns.Add("Column1");
+         dataTable.Columns.Add("Column2");
+
+         var row1 = dataTable.NewRow();
          row1["Column1"] = "str1";
          row1["Column2"] = "str2";
 
-         var row2 = _dataTable.NewRow();
+         var row2 = dataTable.NewRow();
          row2["Column1"] = "str3";
          row2["Column2"] = "str4";
 
-         _dataTable.Rows.Add(row1);
-         _dataTable.Rows.Add(row2);
+         dataTable.Rows.Add(row1);
+         dataTable.Rows.Add(row2);
 
-         _dataTable.TableName = "TestSheet";
+         dataTable.TableName = name;
+         return dataTable;
       }
 
       public override void Cleanup()
@@ -55,13 +61,11 @@ namespace OSPSuite.Infrastructure.Export
          }
 */
       }
-
    }
 
    public class When_exporting_a_dataTable : concern_for_ExportDataTableToExcelTask
    {
-
-      [Test]
+      [Observation]
       public void should_create_export_file()
       {
          sut.ExportDataTableToExcel(_dataTable, _exportExcelFilePath, false);
@@ -69,7 +73,7 @@ namespace OSPSuite.Infrastructure.Export
          File.Exists(_exportExcelFilePath).ShouldBeTrue();
       }
 
-      [Test]
+      [Observation]
       public void should_have_created_sheet()
       {
          sut.ExportDataTableToExcel(_dataTable, _exportExcelFilePath, false);
@@ -79,7 +83,25 @@ namespace OSPSuite.Infrastructure.Export
          reader.CurrentSheet.SheetName.ShouldBeEqualTo("TestSheet");
       }
 
-      [Test]
+      [Observation]
+      public void should_have_renamed_the_excel_sheet_having_a_long_name_to_something_unique()
+      {
+         var dataTable1 = CreateDataTable("A_VERY_LONG_NAME_REQUIRING_THE_CUT_TO_HAPPEN_BECAUSE_EXCEL_IS_STUPID_1");
+         var dataTable2 = CreateDataTable("A_VERY_LONG_NAME_REQUIRING_THE_CUT_TO_HAPPEN_BECAUSE_EXCEL_IS_STUPID_2");
+         var dataTable3 = CreateDataTable("A_VERY_LONG_NAME_REQUIRING_THE_CUT_TO_HAPPEN_BECAUSE_EXCEL_IS_STUPID_3");
+         sut.ExportDataTablesToExcel(new[]{dataTable1, dataTable2, dataTable3 }, _exportExcelFilePath, false);
+
+         var reader = new ExcelReader(_exportExcelFilePath);
+         reader.MoveToNextSheet();
+         reader.CurrentSheet.SheetName.ShouldBeEqualTo("A_VERY_LONG_NAME_REQUIRING__1");
+         reader.MoveToNextSheet();
+         reader.CurrentSheet.SheetName.ShouldBeEqualTo("A_VERY_LONG_NAME_REQUIRING__2");
+         reader.MoveToNextSheet();
+         //This one does not have a number because it's unique in the list now
+         reader.CurrentSheet.SheetName.ShouldBeEqualTo("A_VERY_LONG_NAME_REQUIRING_");
+      }
+
+      [Observation]
       public void should_have_created_data()
       {
          sut.ExportDataTableToExcel(_dataTable, _exportExcelFilePath, false);

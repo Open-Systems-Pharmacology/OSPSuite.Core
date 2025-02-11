@@ -26,8 +26,8 @@ namespace OSPSuite.Core.Domain.Mappers
          var baseGrid = new BaseGrid(_idGenerator.NewId(), tableFormula.XDimension.Name, tableFormula.XDimension) {DataInfo = {DisplayUnitName = tableFormula.XDisplayUnit.Name}};
          var value = new DataColumn(_idGenerator.NewId(), tableFormula.Name, tableFormula.Dimension, baseGrid) {DataInfo = {DisplayUnitName = tableFormula.YDisplayUnit.Name}};
 
-         baseGrid.Values = tableFormula.AllPoints().Select(x => x.X).ToFloatArray();
-         value.Values = tableFormula.AllPoints().Select(x => x.Y).ToFloatArray();
+         baseGrid.Values = tableFormula.AllPoints.Select(x => x.X).ToFloatArray();
+         value.Values = tableFormula.AllPoints.Select(x => x.Y).ToFloatArray();
 
          dataRepository.Add(value);
          return dataRepository;

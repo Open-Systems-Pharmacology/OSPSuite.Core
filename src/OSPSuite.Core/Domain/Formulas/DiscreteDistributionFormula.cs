@@ -6,22 +6,27 @@ namespace OSPSuite.Core.Domain.Formulas
 {
    public class DiscreteDistributionFormula : DistributionFormula
    {
+      public DiscreteDistributionFormula() : base(DistributionType.Discrete)
+      {
+      }
+
       protected override double CalculateFor(IReadOnlyList<IObjectReference> usedObjects, IUsingFormula dependentObject)
       {
          var distributedParameter = dependentObject.ConvertedTo<IDistributedParameter>();
-         return CalculateValueFromPercentile(distributedParameter.Percentile, distributedParameter);
+         //percentile not used in this formula
+         return CalculateValueFromPercentile(Constants.DEFAULT_PERCENTILE, distributedParameter);
       }
 
       public override double CalculatePercentileForValue(double value, IUsingFormula refObject)
       {
-         return value < Mean(refObject) ? 0 : 0.5; 
+         return 0.5; 
       }
 
       public override double CalculateValueFromPercentile(double percentile, IUsingFormula refObject)
       {
-         return percentile >= 0.5 ? Mean(refObject) : 0; 
+         return Mean(refObject); 
       }
-
+         
       public override double ProbabilityDensityFor(double value, IUsingFormula refObject)
       {
          return value == Mean(refObject) ? 1 : 0;

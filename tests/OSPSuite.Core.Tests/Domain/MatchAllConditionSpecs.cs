@@ -6,8 +6,6 @@ namespace OSPSuite.Core.Domain
 {
    public abstract class concern_for_MatchAllCondition : ContextSpecification<MatchAllCondition>
    {
-      protected IDescriptorCondition _match;
-      protected IDescriptorCondition _doNotMatch;
       protected EntityDescriptor _entityCriteria;
 
       protected override void Context()

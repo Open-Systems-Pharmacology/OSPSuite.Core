@@ -14,8 +14,7 @@ namespace OSPSuite.Core.Domain
       protected IDimension _dimensionLength;
       protected TableFormula _tableFormula;
       protected IParameter _xArgumentObject, _tableObject;
-      protected IMoleculeAmount _dependentObject;
-      private Container _container;
+      protected MoleculeAmount _dependentObject;
       protected IParameter _parameter;
       protected const string _tableObjectAlias = "T1";
       protected const string _xArgumentObjectAlias = "P1";
@@ -39,7 +38,7 @@ namespace OSPSuite.Core.Domain
 
          _parameter = new Parameter().WithFormula(sut);
 
-         _container = new Container {_tableObject, _xArgumentObject, _parameter};
+         var container = new Container {_tableObject, _xArgumentObject, _parameter};
 
          var tableObjectPath = new FormulaUsablePath(ObjectPath.PARENT_CONTAINER, _tableObjectAlias).WithAlias(_tableObjectAlias);
          sut.AddTableObjectPath(tableObjectPath);
@@ -75,7 +74,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_retun_the_interpolated_value_if_the_argument_is_not_one_of_the_defined_sample()
+      public void should_return_the_interpolated_value_if_the_argument_is_not_one_of_the_defined_sample()
       {
          _xArgumentObject.Value = 1.5;
          _parameter.Value.ShouldBeEqualTo(15);
@@ -97,6 +96,22 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_resolving_the_reference_to_objects_and_the_x_arguments_is_not_found : concern_for_TableFormulaWithXArgument
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _xArgumentObject.Name = "Another parameter not found";
+      }
+
+      [Observation]
+      public void should_not_crash()
+      {
+         sut.ResolveObjectPathsFor(_parameter);
+      }
+   }
+
+
    public class When_calculating_values_for_a_table_formula_object_that_is_not_a_found_by_alias : concern_for_TableFormulaWithXArgument
    {
       protected override void Context()
@@ -115,7 +130,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_a_parameter_is_usung_a_table_formula_with_x_argument_and_resolved_object_and_the_x_argument_changes : concern_for_TableFormulaWithXArgument
+   public class When_a_parameter_is_using_a_table_formula_with_x_argument_and_resolved_object_and_the_x_argument_changes : concern_for_TableFormulaWithXArgument
    {
       protected override void Context()
       {
@@ -138,7 +153,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_a_parameter_is_usung_a_table_formula_with_x_argument_and_resolved_object_and_the_table_formula_changes : concern_for_TableFormulaWithXArgument
+   public class When_a_parameter_is_using_a_table_formula_with_x_argument_and_resolved_object_and_the_table_formula_changes : concern_for_TableFormulaWithXArgument
    {
       private ICloneManager _cloneManager;
       private TableFormula _anotherTableFormula;

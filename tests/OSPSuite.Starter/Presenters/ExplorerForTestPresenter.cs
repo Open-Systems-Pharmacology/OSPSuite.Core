@@ -29,6 +29,8 @@ namespace OSPSuite.Starter.Presenters
          return true;
       }
 
+      public override bool CopyAllowed() => false;
+
       public override void NodeDoubleClicked(ITreeNode node)
       {
       }

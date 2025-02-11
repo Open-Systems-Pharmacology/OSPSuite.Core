@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using MathNet.Numerics;
 using OSPSuite.Assets;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Import;
@@ -51,7 +50,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public void ImportDataForConfirmation()
       {
          var sheets = ImportedSheets.AddNotExistingSheets(_dataSourceFile.DataSheets);
- 
+
          if (sheets.Count == 0)
             return;
 
@@ -82,7 +81,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
             return;
 
          OnImportSheets.Invoke(this,
-            new ImportSheetsEventArgs { DataSourceFile = _dataSourceFile, SheetNames = sheets.GetDataSheetNames(), Filter = GetActiveFilterCriteria() });
+            new ImportSheetsEventArgs
+               { DataSourceFile = _dataSourceFile, SheetNames = sheets.GetDataSheetNames(), Filter = GetActiveFilterCriteria() });
       }
 
       public string GetFilter()
@@ -147,16 +147,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
             if (!metaData.AllowsManualInput)
                continue;
 
-            var parameter = _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().FirstOrDefault(p => p.ColumnName == metaData.Name);
+            var parameter = _dataSourceFile.Format.GetColumnByName<MetaDataFormatParameter>(metaData.Name);
 
             if (parameter != null)
                continue;
 
             parameter = new MetaDataFormatParameter(null, metaData.Name, false);
 
-            if (_dataSourceFile.Format.Parameters.Any(p => (p as MetaDataFormatParameter)?.MetaDataId == parameter.MetaDataId))
-               if (_dataSourceFile.Format.Parameters.Any(p => (p as MetaDataFormatParameter)?.MetaDataId == parameter.MetaDataId))
-                  continue;
+            if (_dataSourceFile.Format.GetParameters<MetaDataFormatParameter>().Any(p => p.MetaDataId == parameter.MetaDataId))
+               continue;
 
             _dataSourceFile.Format.Parameters.Add(parameter);
             return;
@@ -168,7 +167,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          foreach (var metaData in _metaDataCategories)
          {
             if (!metaData.SelectDefaultValue || metaData.DefaultValue == null) continue;
-            var parameter = _dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().FirstOrDefault(p => p.ColumnName == metaData.Name);
+            var parameter = _dataSourceFile.Format.GetColumnByName<MetaDataFormatParameter>(metaData.Name);
             if (parameter == null)
             {
                parameter = new MetaDataFormatParameter(metaData.DefaultValue.ToString(), metaData.Name, false);

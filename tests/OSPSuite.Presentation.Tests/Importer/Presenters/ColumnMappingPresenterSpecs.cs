@@ -27,6 +27,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       protected IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       protected IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
       protected ColumnInfoCache _columnInfos;
+      protected IDimensionFactory _dimensionFactory;
       protected IReadOnlyList<MetaDataCategory> _metaDataCategories;
 
       protected List<DataFormatParameter> _parameters = new List<DataFormatParameter>()
@@ -50,6 +51,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _basicFormat = A.Fake<IDataFormat>();
          _view = A.Fake<IColumnMappingView>();
          _importer = A.Fake<IImporter>();
+         _dimensionFactory = new DimensionFactoryForIntegrationTests();
       }
 
       protected void UpdateSettings()
@@ -100,7 +102,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             A<IEnumerable<DataFormatParameter>>.Ignored)).Returns(new MappingProblem()
             { MissingMapping = new List<string>(), MissingUnit = new List<string>() });
 
-         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter);
+         sut = new ColumnMappingPresenter(_view, _importer, _mappingParameterEditorPresenter, _metaDataParameterEditorPresenter, _dimensionFactory);
       }
 
       protected List<DataFormatParameter> CreateParameters(MappingDataFormatParameter concentration, MappingDataFormatParameter error)
@@ -156,14 +158,15 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_unit_is_properly_set()
       {
-         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Observation").MappedColumn.Unit
-            .ShouldBeEqualTo(_basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit);
+         _basicFormat.GetColumnByName<MappingDataFormatParameter>("Observation").MappedColumn.Unit
+            .ShouldBeEqualTo(_basicFormat.GetColumnByName<MappingDataFormatParameter>("Error").MappedColumn.Unit);
       }
    }
 
    public class When_initializing_geometric_error_unit : concern_for_ColumnMappingPresenter
    {
       private List<DataFormatParameter> _errorUnitParameters;
+
       protected override void Context()
       {
          base.Context();
@@ -173,6 +176,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             new Column() { Name = "Error", Unit = new UnitDescription("g/l"), ErrorStdDev = Constants.STD_DEV_GEOMETRIC });
          _errorUnitParameters = CreateParameters(concentration, error);
          A.CallTo(() => _basicFormat.Parameters).Returns(_errorUnitParameters);
+         A.CallTo(() => _basicFormat.GetColumnByName<MappingDataFormatParameter>("Error")).Returns(error);
          UpdateSettings();
       }
 
@@ -184,7 +188,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_unit_is_properly_set()
       {
-         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit.SelectedUnit
+         _basicFormat.GetColumnByName<MappingDataFormatParameter>("Error").MappedColumn.Unit.SelectedUnit
             .ShouldBeEmpty();
       }
    }
@@ -202,6 +206,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             new Column() { Name = "Error", Unit = new UnitDescription("g/l"), ErrorStdDev = Constants.STD_DEV_ARITHMETIC });
          _errorUnitParameters = CreateParameters(concentration, error);
          A.CallTo(() => _basicFormat.Parameters).Returns(_errorUnitParameters);
+         A.CallTo(() => _basicFormat.GetColumnByName<MappingDataFormatParameter>("Error")).Returns(error);
          UpdateSettings();
       }
 
@@ -213,7 +218,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_unit_is_not_changed()
       {
-         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit.SelectedUnit
+         _basicFormat.GetColumnByName<MappingDataFormatParameter>("Error").MappedColumn.Unit.SelectedUnit
             .ShouldBeEqualTo("g/l");
       }
    }
@@ -231,7 +236,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
             new Column() { Name = "Error", Unit = new UnitDescription("ng/l"), ErrorStdDev = null });
          _errorUnitParameters = CreateParameters(concentration, error);
          A.CallTo(() => _basicFormat.Parameters).Returns(_errorUnitParameters);
-         
+         A.CallTo(() => _basicFormat.GetColumnByName<MappingDataFormatParameter>("Error")).Returns(error);
       }
 
       protected override void Because()
@@ -242,14 +247,14 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_unit_should_be_set()
       {
-         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.Unit.SelectedUnit
+         _basicFormat.GetColumnByName<MappingDataFormatParameter>("Error").MappedColumn.Unit.SelectedUnit
             .ShouldBeEqualTo("ng/l");
       }
 
       [Observation]
       public void the_standard_deviation_should_be_arithmetic()
       {
-         _basicFormat.Parameters.OfType<MappingDataFormatParameter>().First(p => p.ColumnName == "Error").MappedColumn.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_ARITHMETIC);
+         _basicFormat.GetColumnByName<MappingDataFormatParameter>("Error").MappedColumn.ErrorStdDev.ShouldBeEqualTo(Constants.STD_DEV_ARITHMETIC);
       }
    }
 
@@ -618,7 +623,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          }
 
          _model = new ColumnMappingDTO(ColumnMappingDTO.ColumnType.Mapping, "Concentration", mappingSource, 0);
-         A.CallTo(() => _basicFormat.ExtractUnitDescriptions(A<string>.Ignored, A<IReadOnlyList<IDimension>>.Ignored))
+         A.CallTo(() => _basicFormat.ExtractUnitDescriptions(A<string>.Ignored, A<ColumnInfo>.Ignored))
             .Returns(new UnitDescription(newUnitDescription));
 
          //Act

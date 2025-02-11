@@ -32,21 +32,24 @@ namespace OSPSuite.Core.Domain
 
       private static IReadOnlyList<IContainer> allApplicationsForMolecule(IModelCoreSimulation simulation, string moleculeName)
       {
-         var applicationEventGroup = simulation.Model.Root.GetChildren<IEventGroup>().ToList();
-         if (!applicationEventGroup.Any())
-            return new List<IContainer>();
-
-         var allApplications = applicationEventGroup.SelectMany(x => x.GetAllChildren<IContainer>(c => c.ContainerType == ContainerType.Application))
+         // Exclude organism containers since they will not contain applications and represent the majority of containers in a simulation
+         var containers = simulation.Model.Root.GetChildren<IContainer>(x => x.ContainerType != ContainerType.Organism);
+         var allApplications = containers.SelectMany(x => x.GetAllChildren<IContainer>(c => c.ContainerType == ContainerType.Application))
             .ToList();
 
-         return getApplicationsForAppliedAncestorMolecule(simulation.Reactions, moleculeName, allApplications, new List<string>());
+         if (!allApplications.Any())
+            return new List<IContainer>();
+
+         var reactionCache = new ObjectBaseCache<ReactionBuilder>();
+         reactionCache.AddRange(simulation.Reactions.SelectMany(x => x));
+         return getApplicationsForAppliedAncestorMolecule(reactionCache, moleculeName, allApplications, new List<string>());
       }
 
-      private static IReadOnlyList<IContainer> getApplicationsForAppliedAncestorMolecule(IEnumerable<IReactionBuilder> reactions, string moleculeName,
+      private static IReadOnlyList<IContainer> getApplicationsForAppliedAncestorMolecule(IEnumerable<ReactionBuilder> reactions, string moleculeName,
          IReadOnlyList<IContainer> allApplications, List<string> alreadyCalculatedMolecules)
       {
          var applicationsForAppliedAncestorMolecule =
-            allApplications.Where(c => c.GetSingleChildByName<IMoleculeAmount>(moleculeName) != null).ToList();
+            allApplications.Where(c => c.GetSingleChildByName<MoleculeAmount>(moleculeName) != null).ToList();
 
          // If there are any applications of this molecule, use them
          if (applicationsForAppliedAncestorMolecule.Any())
@@ -69,7 +72,7 @@ namespace OSPSuite.Core.Domain
          return getApplicationsForAppliedAncestorMolecule(reactionsList, distinctEductsFromReactions[0], allApplications, alreadyCalculatedMolecules).ToList();
       }
 
-      private static IReadOnlyList<string> eductNamesFromReactions(IEnumerable<IReactionBuilder> reactions)
+      private static IReadOnlyList<string> eductNamesFromReactions(IEnumerable<ReactionBuilder> reactions)
       {
          return reactions
             .Where(reaction => reaction.Educts.Count() == 1)
@@ -78,7 +81,7 @@ namespace OSPSuite.Core.Domain
             .ToList();
       }
 
-      private static IReadOnlyList<IReactionBuilder> reactionsProducingMolecule(IEnumerable<IReactionBuilder> reactions, string moleculeName)
+      private static IReadOnlyList<ReactionBuilder> reactionsProducingMolecule(IEnumerable<ReactionBuilder> reactions, string moleculeName)
       {
          return reactions
             .Where(reaction => reaction.Products.Count() == 1 && string.Equals(reaction.Products.First().MoleculeName, moleculeName))

@@ -28,8 +28,8 @@ namespace OSPSuite.Core.Services
       private Unit _myDefaultUnit;
       private IDimension _dimension1;
       private Parameter _parameter;
-      private IMoleculeStartValue _moleculeStartValue;
-      private MoleculeStartValuesBuildingBlock _moleculeStartValueBuildingBlock;
+      private InitialCondition _initialCondition;
+      private InitialConditionsBuildingBlock _initialConditionBuildingBlock;
       private Container _topContainer;
 
       protected override void Context()
@@ -43,24 +43,24 @@ namespace OSPSuite.Core.Services
          _topContainer.Add(_parameter);
          A.CallTo(() => _displayUnitRetriever.PreferredUnitFor(_parameter)).Returns(_myDefaultUnit);
 
-         _moleculeStartValueBuildingBlock = new MoleculeStartValuesBuildingBlock();
-         _moleculeStartValue = new MoleculeStartValue {Path = new ObjectPath(new[] {"A", "B", "Molecule"}), Dimension = _dimension1};
-         _moleculeStartValue.DisplayUnit = _dimension1.DefaultUnit;
-         _moleculeStartValueBuildingBlock.Add(_moleculeStartValue);
-         A.CallTo(() => _displayUnitRetriever.PreferredUnitFor(_moleculeStartValue)).Returns(_myDefaultUnit);
+         _initialConditionBuildingBlock = new InitialConditionsBuildingBlock();
+         _initialCondition = new InitialCondition {Path = new ObjectPath(new[] {"A", "B", "Molecule"}), Dimension = _dimension1};
+         _initialCondition.DisplayUnit = _dimension1.DefaultUnit;
+         _initialConditionBuildingBlock.Add(_initialCondition);
+         A.CallTo(() => _displayUnitRetriever.PreferredUnitFor(_initialCondition)).Returns(_myDefaultUnit);
       }
 
       protected override void Because()
       {
          sut.UpdateDisplayUnitsIn(_topContainer);
-         sut.UpdateDisplayUnitsIn(_moleculeStartValueBuildingBlock);
+         sut.UpdateDisplayUnitsIn(_initialConditionBuildingBlock);
       }
 
       [Observation]
       public void should_retrieve_all_object_with_display_units_and_update_their_units_according_to_the_user_mapping()
       {
          _parameter.DisplayUnit.ShouldBeEqualTo(_myDefaultUnit);
-         _moleculeStartValue.DisplayUnit.ShouldBeEqualTo(_myDefaultUnit);
+         _initialCondition.DisplayUnit.ShouldBeEqualTo(_myDefaultUnit);
       }
    }
 
@@ -163,9 +163,9 @@ namespace OSPSuite.Core.Services
          _curveChart = new CurveChart().WithAxes();
          _unit1 = new Unit("XX", 1, 0);
 
-         _axisX = _curveChart.AxisBy(AxisTypes.X);
+         _axisX = _curveChart.XAxis;
          _axisX.UnitName = "OldX";
-         _axisY = _curveChart.AxisBy(AxisTypes.Y);
+         _axisY = _curveChart.YAxis;
          _axisY.UnitName = "OldY";
 
          A.CallTo(() => _displayUnitRetriever.PreferredUnitFor(_axisX, _axisX.Unit)).Returns(_unit1);

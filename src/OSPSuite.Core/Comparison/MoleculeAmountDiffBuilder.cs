@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Comparison
 {
-   public class MoleculeAmountDiffBuilder:DiffBuilder<IMoleculeAmount>
+   public class MoleculeAmountDiffBuilder:DiffBuilder<MoleculeAmount>
    {
       private readonly QuantityDiffBuilder _quantityDiffBuilder;
       private readonly ContainerDiffBuilder _containerDiffBuilder;
@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Comparison
          _containerDiffBuilder = containerDiffBuilder;
       }
 
-      public override void Compare(IComparison<IMoleculeAmount> comparison)
+      public override void Compare(IComparison<MoleculeAmount> comparison)
       {
          _quantityDiffBuilder.Compare(comparison);
          _containerDiffBuilder.Compare(comparison);

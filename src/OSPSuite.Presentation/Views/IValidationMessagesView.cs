@@ -6,6 +6,6 @@ namespace OSPSuite.Presentation.Views
 {
    public interface IValidationMessagesView : IModalView<IValidationMessagesPresenter>
    {
-      void BindTo(IEnumerable<ValidationMessageDTO> validationMessageDtos);
+      void BindTo(IEnumerable<ValidationMessageDTO> validationMessageDTOs);
    }
 }

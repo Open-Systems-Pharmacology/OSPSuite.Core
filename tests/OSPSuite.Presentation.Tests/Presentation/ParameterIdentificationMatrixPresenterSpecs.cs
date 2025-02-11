@@ -48,14 +48,14 @@ namespace OSPSuite.Presentation.Presentation
       }
 
       [Observation]
-      public void should_reset_the_notification_messsage_in_the_view()
+      public void should_reset_the_notification_message_in_the_view()
       {
          A.CallTo(() => _view.DeleteBinding()).MustHaveHappened();
          sut.NotificationMessage.ShouldBeEqualTo(_defaultNotificationMessage);
       }
    }
 
-   public class When_showing_the_error_that_occured_during_some_matrix_claculation : concern_for_ParameterIdentificationMatrixPresenter
+   public class When_showing_the_error_that_occurred_during_some_matrix_calculation : concern_for_ParameterIdentificationMatrixPresenter
    {
       protected override void Because()
       {

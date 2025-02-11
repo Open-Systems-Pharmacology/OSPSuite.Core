@@ -95,12 +95,13 @@ namespace OSPSuite.Core.Services
 
       public void ConfigureAxesDimensionAndTitle(IReadOnlyList<DataColumn> observationColumns, PredictedVsObservedChart chart)
       {
-         var xAxis = chart.AxisBy(AxisTypes.X);
-         var yAxis = chart.AxisBy(AxisTypes.Y);
+         var xAxis = chart.XAxis;
+         var yAxis = chart.YAxis;
 
          var defaultDimension = mostFrequentDimension(observationColumns);
 
          setAxisDimension(defaultDimension, chart, xAxis);
+         //we should also check this for consistency
          xAxis.Caption = $"{ObservedChartAxis} {defaultDimension}";
          yAxis.Caption = $"{SimulatedChartAxis}  {defaultDimension}";
          chart.UpdateAxesVisibility();
@@ -226,8 +227,8 @@ namespace OSPSuite.Core.Services
          if (dimension != null)
             axis.Dimension = dimension;
 
-         axis.Scaling = chart.AxisBy(AxisTypes.Y).Scaling;
-         axis.UnitName = chart.AxisBy(AxisTypes.Y).UnitName;
+         axis.Scaling = chart.YAxis.Scaling;
+         axis.UnitName = chart.YAxis.UnitName;
       }
 
       private IDimension mostFrequentDimension(IReadOnlyList<DataColumn> columns)
@@ -291,7 +292,7 @@ namespace OSPSuite.Core.Services
 
       private void adjustAxes(DataColumn calculationColumn, PredictedVsObservedChart chart)
       {
-         chart.AxisBy(AxisTypes.Y).UnitName = _displayUnitRetriever.PreferredUnitFor(calculationColumn).Name;
+         chart.YAxis.UnitName = _displayUnitRetriever.PreferredUnitFor(calculationColumn).Name;
       }
 
       private static float getIdentityMinimum(IEnumerable<DataColumn> allObservationColumns, IDimension mergedDimension)

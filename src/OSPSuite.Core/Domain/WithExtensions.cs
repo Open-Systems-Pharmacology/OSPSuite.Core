@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain
@@ -13,7 +14,7 @@ namespace OSPSuite.Core.Domain
       }
 
       public static T WithValue<T>(this T withValue, double value) where T : IWithValue
-      {
+      { 
          withValue.Value = value;
          return withValue;
       }

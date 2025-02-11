@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Domain.Services
    public class ObjectIdResetter : IObjectIdResetter,
                                    IVisitor<IWithId>,
                                    IVisitor<IUsingFormula>,
-                                   IVisitor<IMoleculeBuilder>,
+                                   IVisitor<MoleculeBuilder>,
                                    IVisitor<DataRepository>
    {
       private readonly IIdGenerator _idGenerator;
@@ -45,8 +45,9 @@ namespace OSPSuite.Core.Domain.Services
          if (buildingBlock != null)
             resetFormulaCacheIn(buildingBlock);
 
-         var buildConfiguration = objectWithId as IBuildConfiguration;
-         buildConfiguration?.AllBuildingBlocks.Each(resetFormulaCacheIn);
+         //TODO WE SHOULD DO SOMETHING WITH MODULE HERE?!?
+         // var buildConfiguration = objectWithId as IBuildConfiguration;
+         // buildConfiguration?.AllBuildingBlocks.Each(resetFormulaCacheIn);
       }
 
       private void resetFormulaCacheIn(IBuildingBlock buildingBlock)
@@ -61,7 +62,7 @@ namespace OSPSuite.Core.Domain.Services
          Visit(usingFormula.Formula);
       }
 
-      public void Visit(IMoleculeBuilder moleculeBuilder)
+      public void Visit(MoleculeBuilder moleculeBuilder)
       {
          if (moleculeBuilder == null) return;
          Visit(moleculeBuilder as IWithId);

@@ -2,10 +2,21 @@
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core.DiffBuilders
 {
-   public class When_comparring_two_similar_neighborhood_builder : concern_for_ObjectComparer
+   public abstract class concern_for_NeighborhoodBuilderDiffBuilder  : concern_for_ObjectComparer
+   {
+      protected IObjectPathFactory _objectPathFactory;
+
+      protected override void Context()
+      {
+         base.Context();
+         _objectPathFactory = IoC.Resolve<IObjectPathFactory>();
+      }
+   }
+   public class When_comparing_two_similar_neighborhood_builder : concern_for_NeighborhoodBuilderDiffBuilder
    {
       protected override void Context()
       {
@@ -16,14 +27,14 @@ namespace OSPSuite.Core.DiffBuilders
          var tc1 = new Container().WithName("Root");
          var cell1 = new Container().WithName("Cell").WithParentContainer(tc1);
          var int1 = new Container().WithName("int").WithParentContainer(tc1);
-         n1.FirstNeighbor = cell1;
-         n1.SecondNeighbor = int1;
+         n1.FirstNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(cell1);
+         n1.SecondNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(int1);
 
          var tc2 = new Container().WithName("Root");
          var cell2 = new Container().WithName("Cell").WithParentContainer(tc2);
          var int2 = new Container().WithName("int").WithParentContainer(tc2);
-         n2.FirstNeighbor = cell2;
-         n2.SecondNeighbor = int2;
+         n2.FirstNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(cell2);
+         n2.SecondNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(int2);
 
          _object1 = n1;
          _object2 = n2;
@@ -36,7 +47,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparring_two_neighborhood_builder_with_swapped_neighbors : concern_for_ObjectComparer
+   public class When_comparing_two_neighborhood_builder_with_swapped_neighbors : concern_for_NeighborhoodBuilderDiffBuilder
    {
       protected override void Context()
       {
@@ -47,14 +58,15 @@ namespace OSPSuite.Core.DiffBuilders
          var tc1 = new Container().WithName("Root");
          var cell1 = new Container().WithName("Cell").WithParentContainer(tc1);
          var int1 = new Container().WithName("int").WithParentContainer(tc1);
-         n1.FirstNeighbor = cell1;
-         n1.SecondNeighbor = int1;
+         n1.FirstNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(cell1);
+         n1.SecondNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(int1);
 
          var tc2 = new Container().WithName("Root");
          var cell2 = new Container().WithName("Cell").WithParentContainer(tc2);
          var int2 = new Container().WithName("int").WithParentContainer(tc2);
-         n2.FirstNeighbor = int2;
-         n2.SecondNeighbor = cell2;
+
+         n2.FirstNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(int2);
+         n2.SecondNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(cell2);
 
          _object1 = n1;
          _object2 = n2;
@@ -66,7 +78,7 @@ namespace OSPSuite.Core.DiffBuilders
          _report.ShouldBeEmpty();
       }
    }
-   public class When_comparring_two_neighborhood_builder_with_different_neighbors : concern_for_ObjectComparer
+   public class When_comparing_two_neighborhood_builder_with_different_neighbors : concern_for_NeighborhoodBuilderDiffBuilder
    {
       protected override void Context()
       {
@@ -77,14 +89,14 @@ namespace OSPSuite.Core.DiffBuilders
          var tc1 = new Container().WithName("Root");
          var cell1 = new Container().WithName("Cell").WithParentContainer(tc1);
          var int1 = new Container().WithName("int").WithParentContainer(tc1);
-         n1.FirstNeighbor = cell1;
-         n1.SecondNeighbor = int1;
+         n1.FirstNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(cell1);
+         n1.SecondNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(int1);
 
          var tc2 = new Container().WithName("Root");
          var cell2 = new Container().WithName("Cell").WithParentContainer(tc2);
          var int2 = new Container().WithName("pls").WithParentContainer(tc2);
-         n2.FirstNeighbor = int2;
-         n2.SecondNeighbor = cell2;
+         n2.FirstNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(int2);
+         n2.SecondNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(cell2);
 
          _object1 = n1;
          _object2 = n2;

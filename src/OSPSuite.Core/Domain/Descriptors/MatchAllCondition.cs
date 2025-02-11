@@ -10,7 +10,7 @@
 
       public override bool IsSatisfiedBy(EntityDescriptor item) => true;
 
-      public override IDescriptorCondition CloneCondition() => new MatchAllCondition();
+      public override ITagCondition CloneCondition() => new MatchAllCondition();
 
       public override void Replace(string keyword, string replacement)
       {

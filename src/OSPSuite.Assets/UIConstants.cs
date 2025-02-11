@@ -16,8 +16,27 @@ namespace OSPSuite.Assets
       public static Size SensitivityFeedbackEditorSize = new Size(350, 120);
    }
 
+   public static class DefaultNames
+   {
+      public static readonly string MoleculeBuildingBlock = "Molecules";
+      public static readonly string Module = "Module";
+      public static readonly string ReactionBuildingBlock = "Reaction";
+      public static readonly string SpatialStructure = "Organism";
+      public static readonly string PassiveTransportBuildingBlock = "Passive Transports";
+      public static readonly string EventBuildingBlock = "Events";
+      public static readonly string ObserverBuildingBlock = "Observer";
+      public static readonly string SimulationSettings = "Simulation Settings";
+      public static readonly string ParameterValues = "Parameter Values";
+      public static readonly string InitialConditions = "Initial Conditions";
+   }
+
    public static class Captions
    {
+      public static readonly string Transporter = "Transporter";
+      public static readonly string Protein = "Protein";
+      public static readonly string MetabolizingEnzyme = "Metabolizing Enzyme";
+      public static readonly string Species = "Species";
+      public static readonly string Phenotype = "Phenotype";
       public static readonly string ConfirmationDialog = "Confirmation";
       public static readonly string Excel = "Excel®";
       public static readonly string EmptyColumn = " ";
@@ -204,6 +223,12 @@ namespace OSPSuite.Assets
       public static readonly string ReallyRemoveObservedDataFromSimulation = $"Really remove {ObjectTypes.ObservedData} from the simulation?\nHint: {ObjectTypes.ObservedData} will not be deleted from the project";
       public static readonly string SimulationWasCanceled = "Simulation was canceled";
       public static readonly string SelectMappingToShowObservedData = "Select mapping to show observed data";
+      public static readonly string DoNotShowThisAgainUntilRestart = "Do not show this again until restart";
+      public static readonly string AddPoint = "Add Point";
+      public static readonly string UseDerivedValues = "Use derivative values";
+      public static readonly string NotDistributed = "Not Distributed";
+
+      public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
 
       public static string ShouldWatermarkBeUsedForChartExportToClipboard(string applicationName, string optionLocation)
       {
@@ -277,7 +302,7 @@ namespace OSPSuite.Assets
          return $"Do you want to delete the directory '{newDirectoryName}' and continue?";
       }
 
-      public static void AppendListItem(StringBuilder sb, bool html, string listItem, int index)
+      public static void AppendOrderedListItem(StringBuilder sb, bool html, string listItem, int index)
       {
          if (html)
             sb.Append($"<li>{listItem}</li>");
@@ -301,7 +326,7 @@ namespace OSPSuite.Assets
          list.Each((item, i) =>
          {
             //index in list item should start at 1
-            AppendListItem(sb, html, item, i + 1);
+            AppendOrderedListItem(sb, html, item, i + 1);
          });
 
          if (html)
@@ -565,16 +590,16 @@ namespace OSPSuite.Assets
          public static readonly string ObjectPath = "Path";
          public static readonly string ExcludeMolecule = "Exclude Molecule";
          public static readonly string IncludeMolecule = "Include Molecule";
+         public static readonly string Count = "Number of item";
          public static readonly string Assignment = "Assignment";
          public static readonly string OneObjectIsNull = "One object used in the comparison is null";
          public static readonly string Connection = "Connection";
          public static readonly string SourceAmount = "Source Amount";
          public static readonly string TargetAmount = "Target Amount";
 
-         public static string PropertyDiffers(string propertyName, string value1, string value2)
-         {
-            return $"{propertyName.Pluralize()} are not equal ({value1} ≠ {value2})";
-         }
+         public static string PropertyDiffers(string propertyName, int value1, int value2) => PropertyDiffers(propertyName, $"{value1}", $"{value2}");
+
+         public static string PropertyDiffers(string propertyName, string value1, string value2) => $"{propertyName.Pluralize()} are not equal ({value1} ≠ {value2})";
 
          public static string DifferentTypes(string type1, string type2)
          {
@@ -1171,6 +1196,7 @@ namespace OSPSuite.Assets
          public static readonly string ParameterSelection = "Parameters";
          public static readonly string Results = "Results";
          public static readonly string NoResultsAvailable = "No result available. Please start sensitivity analysis";
+         public static readonly string ErrorsDuringPreviousRun = "<b>The last run resulted in one or more errors:</b>";
 
          public static string SensitivityAnalysisFinished(string duration)
          {
@@ -1229,6 +1255,19 @@ namespace OSPSuite.Assets
          public static string NumberOfSelectedParameters(int numberOfParameters)
          {
             return $"Number of selected parameters: {numberOfParameters}";
+         }
+
+         public static string SensitivityAnalysisErrorMessage(IReadOnlyList<string> errorMessages)
+         {
+            var stringBuilder = new StringBuilder();
+            errorMessages.Each(message =>
+            {
+               stringBuilder.AppendLine($"{message}");
+               stringBuilder.AppendLine();
+               stringBuilder.AppendLine();
+            });
+            
+            return stringBuilder.ToString();
          }
       }
 
@@ -1330,6 +1369,34 @@ namespace OSPSuite.Assets
 
          }
       }
+
+      private static string numberDisplay(int version) => $"(#{version})";
+
+      private static string projectNameAndVersionAsString(string versionDisplay, int version) => $"V{versionDisplay} {numberDisplay(version)}";
+
+      public static string ProjectVersionCannotBeLoaded(
+         int projectVersion, 
+         string oldestSupportedDisplayVersion, 
+         int oldestSupportedVersion, 
+         string currentSupportedDisplayVersion,
+         int currentSupportedVersion,
+         string downloadUrl)
+      {
+         var compositeOldestVersion = projectNameAndVersionAsString(oldestSupportedDisplayVersion, oldestSupportedVersion);
+         var compositeCurrentVersion = projectNameAndVersionAsString(currentSupportedDisplayVersion, currentSupportedVersion);
+         var preamble = $"This application is compatible with projects created between {compositeOldestVersion} and {compositeCurrentVersion}";
+
+         if (projectVersion > currentSupportedVersion)
+         {
+            return $"{preamble}.\n\n" +
+                   $"The version of this project {numberDisplay(projectVersion)} is newer and cannot be loaded.\n\n" +
+                   $"Visit our download page at {downloadUrl}";
+         }
+
+         return $"{preamble}.\n\n" +
+                $"The version of this project {numberDisplay(projectVersion)} is too old and cannot be loaded.\n\n" +
+                $"Visit our download page at {downloadUrl} to download an older version of the software compatible with this project.";
+      }
    }
 
    public static class Error
@@ -1362,6 +1429,9 @@ namespace OSPSuite.Assets
       public static readonly string SimpleParseErrorMessage = "There were errors while parsing your data. Navigate to the sheets to read the concrete error.";
       public static readonly string FoldValueMustBeGreaterThanOne = "Fold value must be a number greater than one.";
       public static readonly string ImporterEmptyFile = "The file you are trying to load is empty.";
+
+      public static string CannotFindParentContainerWithPath(string parentPath, string containerName, string buildingBlockName, string moduleName) => 
+         $"Cannot find parent container '{parentPath}' defined as target of container '{containerName}' in building block '{buildingBlockName}' in module '{moduleName}'";
 
       public static  string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
 
@@ -1434,8 +1504,16 @@ namespace OSPSuite.Assets
          return $"Number of processor to use should greater than 0 and less than or equal to  the number of processor on the machine ({processorCount} processors)";
       }
 
+      public static string NameAlreadyExists(string name)
+      {
+         return $"'{name}' already exists.";
+      }
+
       public static string NameAlreadyExistsInContainerType(string name, string containerType)
       {
+         if(string.IsNullOrEmpty(containerType))
+            return NameAlreadyExists(name);
+
          return $"'{name}' already exists in {containerType}.";
       }
 
@@ -1534,9 +1612,9 @@ namespace OSPSuite.Assets
 
       public static readonly string UnknownParameterBuildMode = "Unknown molecule parameter build mode";
       public static readonly string ConstMoleculeParameterInNeighborhood = "Constant parameters are not allowed in the molecule properties container of the neighborhood";
-      public static readonly string NullParameter = "Cannot create parameter start value: parameter not found in target container";
-      public static readonly string NullMoleculeAmount = "Cannot create molecule amount start value: molecule amount not found in target container";
-      public static readonly string NullMoleculeStartValue = "Cannot create molecule amount start value: molecule container not found";
+      public static readonly string NullParameter = "Cannot create parameter value: parameter not found in target container";
+      public static readonly string NullMoleculeAmount = "Cannot create molecule initial condition: molecule amount not found in target container";
+      public static readonly string NullInitialCondition = "Cannot create molecule initial condition: molecule container not found";
       public static readonly string NullFormulaCachePassedToClone = "Formula cache passed to clone function is null";
       public static readonly string EmptyMoleculeName = "Molecule name is empty";
       public static readonly string TransportMoleculeNamesNotSet = "Transport molecule names object passed is not set";
@@ -1559,11 +1637,6 @@ namespace OSPSuite.Assets
          return $"Cannot add help parameter '{parameterName}' with an undefined formula (null) in calculation method '{calculationMethod}' for category '{category}'";
       }
 
-      public static string TwoDifferentFormulaForSameParameter(string parameter, string parameterPath)
-      {
-         return $"Formula in parameter '{parameter}' with path '{parameterPath}' was described inconsistently by more than one calculation.";
-      }
-
       public static string HelpParameterAlreadyDefinedWithAnotherFormula(string calculationMethod, string parameterPath)
       {
          return $"There is another parameter defined at '{calculationMethod}' with another formula. Help parameter for calculation method {parameterPath} cannot be created";
@@ -1580,6 +1653,7 @@ namespace OSPSuite.Assets
       {
          return $"Cannot add molecule '{moleculeName}' into both molecules to include and molecules to exclude lists";
       }
+      public static string BuildingBlockTypeAlreadyAddedToModule(string objectName, string type) => $"BuildingBlock '{type}' for '{objectName}' was already added to module";
 
       public const string NotImplemented = "This feature is not implemented yet";
 
@@ -1695,13 +1769,14 @@ namespace OSPSuite.Assets
          }
       }
 
-      public static string SimulationDidNotProduceResults = "Simulation did not produce results";
+      public const string SimulationDidNotProduceResults = "Simulation did not produce results";
 
       public static string DuplicatedIndividualResultsForId(int individualId) => $"Individual results for individual with id '{individualId}' were defined more than once!";
 
       public static string DuplicatedPKParameterSensitivityFor(string id) => $"PKParameter sensitivity results for '{id}' were defined more than once!";
 
       public static string CouldNotFindQuantityWithPath(string quantityPath) => $"Could not find quantity with path '{quantityPath}'.";
+      public static string CouldNotFindContainerWithPath(string containerPath, string referringEntityPath) => $"Could not find container with path '{containerPath}'.\n\nReferenced by '{referringEntityPath}'.";
 
       public static string IndividualResultsDoesNotHaveTheExpectedQuantity(int individualId, IReadOnlyList<string> expectedQuantities, IReadOnlyList<string> foundQuantities)
       {
@@ -1725,6 +1800,26 @@ namespace OSPSuite.Assets
       public static string CouldNotFindDimensionWithUnit(string unit) => $"Could not find dimension containing unit '{unit}'.";
 
       public static string UnitIsNotDefinedInDimension(string unit, string dimension) => $"Unit '{unit}' is not defined in dimension '{dimension}'.";
+
+      public static string CouldNotFindNeighborhoodBetween(string container1, string container2, string formulaName, string usingFormulaPath) => 
+         $"Could not find neighborhood between '{container1}' and '{container2}' referenced by formula '{formulaName}' used by '{usingFormulaPath}'";
+
+      public static string FirstNeighborNotDefinedFor(string neighborhoodName) => $"First neighbor is undefined for neighborhood '{neighborhoodName}'";
+      
+      public static string SecondNeighborNotDefinedFor(string neighborhoodName) => $"Second neighbor is undefined for neighborhood '{neighborhoodName}'";
+
+      public const string InParentTagCanOnlyBeUsedWithAndOperator = "IN PARENT tag can only be used with AND operator";
+
+      public static string KeywordCannotBeInFirstPosition(string keyword, string path) => $"Keyword '{keyword}' cannot be used in first position in '{path}'";
+
+      public static string KeywordCanOnlyBeUsedOnce(string keyword, string path) => $"Keyword '{keyword}' can only be used once in '{path}'";
+
+      public static string LumenNavigationKeywordLCanOnlyBeUsedOnce(string path) => $"Only one lumen navigation keyword can be used once in '{path}'";
+
+      public static string ContainerIsNotLumenSegment(string path) => $"Container '{path}' is not a lumen segment";
+
+      public static string CannotNavigateBeyondLumenSegment(string keyword, string path) => $"Usage of keyword '{keyword}' is not valid for '{path}'";
+
 
       public static class SensitivityAnalysis
       {
@@ -1779,6 +1874,16 @@ namespace OSPSuite.Assets
       public static string TypeNotSupported(string typeName) => $"{typeName} is not currently been handled";
 
       public static string CannotAccessValueByPathUsingWildCard(string path) => $"Accessing value by path is not supported for path containing wildcard ({path})";
+
+      public static string EquivalentNeighborhoodsAreDefinedFor(string firstNeighbor, string secondNeighbor)
+      {
+         return $"More than one neighborhood is defined connecting '{firstNeighbor}' and '{secondNeighbor}'";
+      }
+
+      public static string NeighborhoodDefinition(string neighborhoodName, string firstNeighbor, string secondNeighbor, string spatialStructure)
+      {
+         return $"Neighborhood '{neighborhoodName}' connects '{firstNeighbor}' and '{secondNeighbor}' in '{spatialStructure}'";
+      }
    }
 
    public static class Validation
@@ -1796,7 +1901,8 @@ namespace OSPSuite.Assets
 
       public static string FormulaIsBlackBoxIn(string entity, string entityPath)
       {
-         return $"A black box formula is still in use in entity '{entity}' with path '{entityPath}'";
+         return $"A formula, which should be replaced during simulation creation, was not replaced. These types of formulas are known as Black Box Formulas. Check parameter definitions for the following entity '{entityPath}'." +
+                "See https://tinyurl.com/BlackBoxFormula for more information.";
       }
 
       public static string PathContainsReservedKeywords(string entity, string entityType, string entityPath, string reference)
@@ -1854,9 +1960,9 @@ namespace OSPSuite.Assets
          return $"Multiple {notificationType}s were found for '{builderName}'";
       }
 
-      public static string ApplicatedMoleculeNotPresent(string moleculeName, string applicationBuilderName, string moleculeBuildingBlock)
+      public static string ApplicatedMoleculeNotPresent(string moleculeName, string applicationBuilderName)
       {
-         return $"Molecule: '{moleculeName}' applicated by Application builder {applicationBuilderName} is not definde in Molecules Building Block {moleculeBuildingBlock}";
+         return $"Molecule: '{moleculeName}' applicated by Application builder {applicationBuilderName} is not present in simulation";
       }
 
       public static string ValueGreaterThanMinSizeInPixelAndLessThanMaxSizeIsRequiredOrEmpty(int minSizeInPixel, int maxSizeInPixel)
@@ -1886,12 +1992,18 @@ namespace OSPSuite.Assets
 
       public static string StartValueDefinedForNonPhysicalContainer(string moleculeName, string containerPath)
       {
-         return $"Molecule start value defined for molecule '{moleculeName}' in non-physical container '{containerPath}'";
+         return $"Initial condition defined for molecule '{moleculeName}' in non-physical container '{containerPath}'";
       }
 
       public static string StartValueDefinedForContainerThatCannotBeResolved(string moleculeName, string containerPath)
       {
-         return $"Molecule start value defined for molecule '{moleculeName}' in a container '{containerPath}' that cannot be resolved";
+         return $"Initial condition defined for molecule '{moleculeName}' in a container '{containerPath}' that cannot be resolved";
+      }
+
+      public static string CircularReferenceFoundInEventAssignment(string eventName, string changeedEntityName, string entityType, string entityPath, IReadOnlyList<string> references)
+      {
+         var separator = "\n\t- ";
+         return $"A circular reference was found in assignment of a formula to {entityType.ToLower()} '{changeedEntityName}' with path '{entityPath}' in event '{eventName}'\nPlease check the direct or indirect references resulting from the assignment:{separator}{references.ToString(separator)}";
       }
 
       public static string CircularReferenceFoundInFormula(string entity, string entityType, string entityPath, IReadOnlyList<string> references)
@@ -1923,6 +2035,8 @@ namespace OSPSuite.Assets
          public static readonly string MaxGreaterThanMin = "Maximum value should be greater than minimum value.";
          public static readonly string ValueShouldBeBetweenMinAndMax = "Value should be greater than minimum value and smaller than maximum value.";
          public static readonly string MinShouldBeStrictlyGreaterThanZeroForLogScale = "Minimum value should be greater than zero or the scaling should be set to linear.";
+
+         public static string ValueShouldBeGreaterThanOrEqualToZero(string parameterName) => $"{parameterName} value should be greater than or equal to 0.";
 
          public static string MinimumMustBeGreaterThanOrEqualTo(string minDisplayValue, string displayUnit, string fullQuantityPath)
          {
@@ -1974,10 +2088,13 @@ namespace OSPSuite.Assets
 
       public static string ParameterWithPathNotFoundInBaseIndividual(string parameterPath) => $"Parameter '{parameterPath}' was not found in individual and will be ignored.";
 
+      public static string ContainerNotFoundParameterWillNotBeCreated(string containerPath, string parameterName) => $" Container '{containerPath}' was not found. Parameter '{parameterName}' will be ignored.";
+
       public static string UserDefinedPKParameterAlreadyExistsAndWillBeReplaced(string pkParameterName) => $"User Defined PK-Parameter '{pkParameterName}' already exists and will be replaced.";
 
       public static string LargeNumberOfOutputPoints(int numberOfPoints) =>
          $"The selected output resolution will generate {numberOfPoints} points and may severely impact the software performance.\nAre you sure you want to run with these setting? If not, consider changing output resolution in simulations settings";
+
    }
 
    public static class RibbonCategories
@@ -2006,6 +2123,7 @@ namespace OSPSuite.Assets
    {
       public static string AsDeveloperOnly(string menuName) => $"{menuName} (Developer only)...";
 
+      public static readonly string NewExpressionProfile = "Add &Expression Profile";
       public static readonly string ExportToExcel = "Export to Excel...";
       public static readonly string CopyToClipboard = "Copy to Clipboard";
       public static readonly string ResetZoom = "Reset Zoom";
@@ -2078,6 +2196,7 @@ namespace OSPSuite.Assets
 
    public static class MenuDescriptions
    {
+      public static readonly string NewExpressionProfileDescription = "Create a new expression profile...";
       public static readonly string UpdateChartTemplateFromCurrentSettings = "Updates the template from current chart settings";
       public static readonly string ApplyTemplateToCurrentChart = "Applies the template to the current chart";
       public static readonly string CreateNewTemplateFromCurrentChartSettings = "Create new template from current chart settings";
@@ -2139,6 +2258,8 @@ namespace OSPSuite.Assets
       public static readonly string CommandTypeReset = "Reset";
       public static readonly string CommandTypeConfigure = "Configure";
       public static readonly string CommandTypeRename = "Rename";
+      public static readonly string CommandTypeMove = "Move";
+      public static readonly string CommandTypeCopy = "Copy";
 
       public static readonly string MetaDataAddedToDataRepositories = "Meta Data added to multiple repositories";
       public static readonly string MetaDataRemovedFromDataRepositories = "Meta Data removed from multiple repositories";
@@ -2243,8 +2364,8 @@ namespace OSPSuite.Assets
       public static readonly string PassiveTransportBuildingBlock = "Passive Transport Building Block";
       public static readonly string ObserverBuildingBlock = "Observer Building Block";
       public static readonly string EventGroupBuildingBlock = "Event Group Building Block";
-      public static readonly string ParameterStartValuesBuildingBlock = "Parameter Start Values Building Block";
-      public static readonly string MoleculeStartValuesBuildingBlock = "Molecule Start Values Building Block";
+      public static readonly string ParameterValuesBuildingBlock = "Parameter Values Building Block";
+      public static readonly string InitialConditionsBuildingBlock = "Initial Conditions Building Block";
       public static readonly string Molecule = "Molecule";
       public static readonly string TransporterMoleculeContainer = "Transporter Molecule";
       public static readonly string ActiveTransport = "Active Transport";
@@ -2263,7 +2384,7 @@ namespace OSPSuite.Assets
       public static readonly string Formula = "Formula";
       public static readonly string Simulation = "Simulation";
       public static readonly string ExplicitFormula = "Formula";
-      public static readonly string NeighborhoodBuilder = "Neighborhood";
+      public static readonly string Neighborhood = "Neighborhood";
       public static readonly string PassiveTransportBuilder = "Passive Transport";
       public static readonly string ActiveTransportBuilder = "Active Transport";
       public static readonly string TransportBuilder = "Transport";
@@ -2274,15 +2395,15 @@ namespace OSPSuite.Assets
       public static readonly string Default = "Default";
       public static readonly string ReactionPartnerBuilder = "Reaction Partner";
       public static readonly string ConstantFormula = "Constant Formula";
-      public static readonly string ParameterStartValue = "Parameter Start Value";
-      public static readonly string MoleculeStartValue = "Molecule Start Value";
+      public static readonly string ParameterValue = "Parameter Value";
+      public static readonly string InitialCondition = "Initial Condition";
       public static readonly string ValuePoint = "Value Point";
       public static readonly string TableFormula = "Table";
       public static readonly string BlackBoxFormula = "Calculation Method";
       public static readonly string SumFormula = "Sum Formula";
       public static readonly string Quantities = "Quantities";
       public static readonly string Model = "Model";
-      public static readonly string MoleculeList = "Moleculelist";
+      public static readonly string MoleculeList = "Molecule List";
       public static readonly string SolverProperty = "Solver Property";
       public static readonly string SimulationSettings = "Simulation Settings";
       public static readonly string OutputSelections = "Output Selections";
@@ -2309,6 +2430,7 @@ namespace OSPSuite.Assets
       public static readonly string Formulation = "Formulation";
       public static readonly string SensitivityParameter = "Sensitivity Parameter";
       public static readonly string SensitivityAnalysis = "Sensitivity Analysis";
+      public static readonly string ExpressionProfileBuildingBlock = "Expression Profile Building Block";
    }
 
    public static class ToolTips
@@ -2330,6 +2452,8 @@ namespace OSPSuite.Assets
       public static readonly string DefaultLineStyleTitle = "Default Line Style for Curve";
       public static readonly string DoNotShowVersionUpdate = "Ignore this update";
       public static readonly string ClearHistory = "Clear the project history. This action is irreversible";
+      public static readonly string UseDerivedValues = "If checked, the first derivative of the entered table values is used";
+      public static readonly string RestartSolver = "Select to mark solver restart at t=X. Increases numerical accuracy  but may reduce solver speed";
 
       public static string ToolTipForLLOQ(string seriesName, string lloq)
       {
@@ -2452,8 +2576,6 @@ namespace OSPSuite.Assets
       ///    Color used for a diagram back color
       /// </summary>
       public static Color ChartDiagramBack = Color.White;
-
-      public static Color Disabled = Color.FromArgb(255, 247, 247, 249);
 
       public static Color BelowLLOQ => Color.LightSkyBlue;
       public static Color DefaultRowColor => Color.White;

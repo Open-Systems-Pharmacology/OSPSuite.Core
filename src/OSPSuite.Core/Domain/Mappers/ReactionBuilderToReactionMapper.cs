@@ -1,10 +1,10 @@
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Mappers
 {
-   public interface IReactionBuilderToReactionMapper : ILocalMapper<IReactionBuilder, IReaction, IContainer>
+   public interface IReactionBuilderToReactionMapper : ILocalMapper<ReactionBuilder, IContainer, Reaction>
    {
    }
 
@@ -32,35 +32,35 @@ namespace OSPSuite.Core.Domain.Mappers
          _processRateParameterCreator = processRateParameterCreator;
       }
 
-      public IReaction MapFromLocal(IReactionBuilder reactionBuilder, IContainer container, IBuildConfiguration buildConfiguration)
+      public Reaction MapFromLocal(ReactionBuilder reactionBuilder, IContainer container, SimulationBuilder simulationBuilder)
       {
-         var reaction = _objectBaseFactory.Create<IReaction>()
+         var reaction = _objectBaseFactory.Create<Reaction>()
             .WithName(reactionBuilder.Name)
             .WithDescription(reactionBuilder.Description)
             .WithIcon(reactionBuilder.Icon)
             .WithDimension(reactionBuilder.Dimension)
-            .WithFormula(createReactionKinetic(reactionBuilder, buildConfiguration));
-         reactionBuilder.Educts.Each(reactionPartnerBuilder => reaction.AddEduct(_reactionPartnerMapper.MapFromLocal(reactionPartnerBuilder, container, buildConfiguration)));
-         reactionBuilder.Products.Each(reactionPartnerBuilder => reaction.AddProduct(_reactionPartnerMapper.MapFromLocal(reactionPartnerBuilder, container, buildConfiguration)));
+            .WithFormula(createReactionKinetic(reactionBuilder, simulationBuilder));
+         reactionBuilder.Educts.Each(reactionPartnerBuilder => reaction.AddEduct(_reactionPartnerMapper.MapFromLocal(reactionPartnerBuilder, container, simulationBuilder)));
+         reactionBuilder.Products.Each(reactionPartnerBuilder => reaction.AddProduct(_reactionPartnerMapper.MapFromLocal(reactionPartnerBuilder, container, simulationBuilder)));
          reactionBuilder.ModifierNames.Each(reaction.AddModifier);
-         
-         reaction.AddChildren(_parameterMapper.MapLocalFrom(reactionBuilder, buildConfiguration));
-   
-         if (reactionBuilder.CreateProcessRateParameter)
-            reaction.Add(processRateParameterFor(reactionBuilder, buildConfiguration));
 
-         buildConfiguration.AddBuilderReference(reaction, reactionBuilder);
+         reaction.AddChildren(_parameterMapper.MapLocalFrom(reactionBuilder, simulationBuilder));
+
+         if (reactionBuilder.CreateProcessRateParameter || simulationBuilder.CreateAllProcessRateParameters)
+            reaction.Add(processRateParameterFor(reactionBuilder, simulationBuilder));
+
+         simulationBuilder.AddBuilderReference(reaction, reactionBuilder);
          return reaction;
       }
 
-      private IFormula createReactionKinetic(IReactionBuilder reactionBuilder, IBuildConfiguration buildConfiguration)
+      private IFormula createReactionKinetic(ReactionBuilder reactionBuilder, SimulationBuilder simulationBuilder)
       {
-         return _formulaMapper.MapFrom(reactionBuilder.Formula, buildConfiguration);
+         return _formulaMapper.MapFrom(reactionBuilder.Formula, simulationBuilder);
       }
 
-      private IParameter processRateParameterFor(IReactionBuilder reactionBuilder, IBuildConfiguration buildConfiguration)
+      private IParameter processRateParameterFor(ReactionBuilder reactionBuilder, SimulationBuilder simulationBuilder)
       {
-         return _processRateParameterCreator.CreateProcessRateParameterFor(reactionBuilder, buildConfiguration);
+         return _processRateParameterCreator.CreateProcessRateParameterFor(reactionBuilder, simulationBuilder);
       }
    }
 }

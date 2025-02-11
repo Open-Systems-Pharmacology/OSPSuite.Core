@@ -1,4 +1,5 @@
-﻿using FakeItEasy;
+﻿using System.Linq;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
@@ -29,10 +30,9 @@ namespace OSPSuite.Presentation.Presentation
          _view = A.Fake<ISimpleChartView>();
          _chartFactory = A.Fake<IChartFactory>();
          _chartDisplayPresenter = A.Fake<IChartDisplayPresenter>();
-         _eventPublisher = A.Fake<IEventPublisher>();
          _dimensionFactory= A.Fake<IDimensionFactory>();
          _presentationUserSettings = A.Fake<IPresentationUserSettings>();
-         sut = new SimpleChartPresenter(_view, _chartDisplayPresenter, _chartFactory,_eventPublisher, _presentationUserSettings, _dimensionFactory);
+         sut = new SimpleChartPresenter(_view, _chartDisplayPresenter, _chartFactory, _presentationUserSettings, _dimensionFactory);
 
          _presentationUserSettings.DefaultChartYScaling = Scalings.Log;
          A.CallTo(() => _chartFactory.Create<CurveChart>()).ReturnsLazily(() => new CurveChart {DefaultYAxisScaling = _presentationUserSettings.DefaultChartYScaling});
@@ -71,7 +71,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void chart_scale_should_be_using_the_default_chart_y_scaling()
       {
-         sut.Chart.AxisBy(AxisTypes.Y).Scaling.ShouldBeEqualTo(_presentationUserSettings.DefaultChartYScaling);
+         sut.Chart.YAxis.Scaling.ShouldBeEqualTo(_presentationUserSettings.DefaultChartYScaling);
       }
    }
 
@@ -119,13 +119,36 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void chart_axis_set_to_log()
       {
-         sut.Chart.AxisBy(AxisTypes.Y).Scaling.ShouldBeEqualTo(Scalings.Log);
+         sut.Chart.YAxis.Scaling.ShouldBeEqualTo(Scalings.Log);
       }
 
       [Observation]
       public void should_refresh_the_chart_display()
       {
          A.CallTo(() => _chartDisplayPresenter.Refresh()).MustHaveHappened();
+      }
+   }
+
+   public class When_plotting_observed_data : concern_for_SimpleChartPresenter
+   {
+      private DataRepository _dataRepository;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dataRepository = DomainHelperForSpecs.ObservedData();
+      }
+
+      protected override void Because()
+      {
+         sut.PlotObservedData(_dataRepository);
+      }
+
+      [Observation]
+      public void the_chart_should_have_axis_scaling_set_to_log()
+      {
+         sut.Chart.XAxis.Caption.ShouldBeEqualTo(_dataRepository.BaseGrid.Name);
+         sut.Chart.YAxis.Caption.ShouldBeEqualTo(_dataRepository.AllButBaseGridAsArray.First().Name);
       }
    }
 
@@ -147,7 +170,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_chart_should_have_axis_scaling_set_to_log()
       {
-         sut.Chart.AxisBy(AxisTypes.Y).Scaling.ShouldBeEqualTo(Scalings.Log);
+         sut.Chart.YAxis.Scaling.ShouldBeEqualTo(Scalings.Log);
       }
    }
 
@@ -170,7 +193,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_chart_should_have_axis_scaling_set_to_linear()
       {
-         sut.Chart.AxisBy(AxisTypes.Y).Scaling.ShouldBeEqualTo(Scalings.Linear);
+         sut.Chart.YAxis.Scaling.ShouldBeEqualTo(Scalings.Linear);
       }
    }
 

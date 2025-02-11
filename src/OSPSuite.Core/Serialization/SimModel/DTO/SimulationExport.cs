@@ -73,7 +73,7 @@ namespace OSPSuite.Core.Serialization.SimModel.DTO
          return parameterExport;
       }
 
-      public void AddSimulationConfiguration(ISimulationSettings simulationSettings)
+      public void AddSimulationConfiguration(SimulationSettings simulationSettings)
       {
          addSolverSettings(simulationSettings.Solver);
          addOutputSchema(simulationSettings.OutputSchema);

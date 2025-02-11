@@ -6,7 +6,6 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
@@ -26,8 +25,8 @@ namespace OSPSuite.Core.Domain
          _dimensionFactory = A.Fake<IDimensionFactory>();
          sut = new CurveChart().WithAxes();
 
-         _xAxis = sut.AxisBy(AxisTypes.X);
-         _yAxis = sut.AxisBy(AxisTypes.Y);
+         _xAxis = sut.XAxis;
+         _yAxis = sut.YAxis;
 
          _obsData1 = DomainHelperForSpecs.ObservedData();
          _obsData2 = DomainHelperForSpecs.ObservedData();
@@ -197,7 +196,7 @@ namespace OSPSuite.Core.Domain
          base.Context();
          _dimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
          _y2Axis = sut.AddNewAxisFor(AxisTypes.Y2);
-         _yAxis = sut.AxisBy(AxisTypes.Y);
+         _yAxis = sut.YAxis;
          _yAxis.Dimension = _dimension;
          _yAxis.UnitName = _dimension.DefaultUnitName;
          _yAxis.SetRange(10, 20);
@@ -285,6 +284,15 @@ namespace OSPSuite.Core.Domain
          sut.Name.ShouldBeEqualTo(_other.Name);
          sut.Title.ShouldBeEqualTo(_other.Title);
          sut.Description.ShouldBeEqualTo(_other.Description);
+      }
+   }
+
+   public class When_removing_a_data_repository_from_a_chart_that_is_null : concern_for_CurveChart
+   {
+      [Observation]
+      public void should_not_crash()
+      {
+         sut.RemoveCurvesForDataRepository(null);
       }
    }
 }

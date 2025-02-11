@@ -23,7 +23,7 @@ namespace OSPSuite.Core.Services
          _observedData = DomainHelperForSpecs.ObservedDataWithLLOQ();
          _coreSimulation = A.Fake<IModelCoreSimulation>();
 
-         var outputSchema = _coreSimulation.SimulationSettings.OutputSchema;
+         var outputSchema = _coreSimulation.Settings.OutputSchema;
          A.CallTo(() => outputSchema.AddTimePoints(A<IReadOnlyList<double>>._))
             .Invokes(x => _addedPoints = x.GetArgument<IReadOnlyList<double>>(0));
       }

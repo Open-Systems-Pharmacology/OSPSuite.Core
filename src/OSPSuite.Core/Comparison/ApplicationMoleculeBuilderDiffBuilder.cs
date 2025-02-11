@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Comparison
 {
-   public class ApplicationMoleculeBuilderDiffBuilder : DiffBuilder<IApplicationMoleculeBuilder>
+   public class ApplicationMoleculeBuilderDiffBuilder : DiffBuilder<ApplicationMoleculeBuilder>
    {
       private readonly EntityDiffBuilder _entityDiffBuilder;
       private readonly IObjectComparer _objectComparer;
@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Comparison
          _objectComparer = objectComparer;
       }
 
-      public override void Compare(IComparison<IApplicationMoleculeBuilder> comparison)
+      public override void Compare(IComparison<ApplicationMoleculeBuilder> comparison)
       {
          _entityDiffBuilder.Compare(comparison);
          CompareValues(x => x.RelativeContainerPath, x => x.RelativeContainerPath, comparison, Equals, (molecule, path) => path.PathAsString);

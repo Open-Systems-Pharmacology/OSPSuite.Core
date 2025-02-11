@@ -12,12 +12,18 @@ namespace OSPSuite.UI.Extensions
          toolTipController.ShowBeak = false;
          toolTipController.AllowHtmlText = true;
          toolTipController.ImageList = imageListRetriever.AllImages16x16;
-         toolTipController.AutoPopDelay = 10000;
          toolTipController.InitialDelay = delayInMilliseconds;
+         toolTipController.Initialize();
          return toolTipController;
       }
 
-      public static ToolTipController For(this ToolTipController toolTipController, EditorContainer editorContainer)
+      public static ToolTipController Initialize(this ToolTipController toolTipController)
+      {
+          toolTipController.AutoPopDelay = 300000;
+          return toolTipController;
+      }
+
+        public static ToolTipController For(this ToolTipController toolTipController, EditorContainer editorContainer)
       {
          editorContainer.ToolTipController = toolTipController;
          return toolTipController;

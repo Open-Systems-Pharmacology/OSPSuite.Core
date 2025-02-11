@@ -73,7 +73,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
       {
          var simulationExportCreator = _simulationExportCreatorFactory.Create();
          var simulationExport = simulationExportCreator.CreateExportFor(simulation.Model, simModelExportMode, variableMoleculePaths);
-         simulationExport.AddSimulationConfiguration(simulation.SimulationSettings);
+         simulationExport.AddSimulationConfiguration(simulation.Settings);
          return simulationExport;
       }
    }

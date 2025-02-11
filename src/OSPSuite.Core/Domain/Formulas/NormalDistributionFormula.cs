@@ -1,12 +1,16 @@
 ﻿using System.Collections.Generic;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Maths.Random;
 using OSPSuite.Core.Maths.Statistics;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Formulas
 {
    public class NormalDistributionFormula : DistributionFormula
    {
+      public NormalDistributionFormula() : base(DistributionType.Normal)
+      {
+      }
+
       protected override double CalculateFor(IReadOnlyList<IObjectReference> usedObjects, IUsingFormula dependentObject)
       {
          var locDependentObject = dependentObject.ConvertedTo<IDistributedParameter>();
@@ -43,6 +47,5 @@ namespace OSPSuite.Core.Domain.Formulas
       {
          return new NormalDistribution(Mean(dependentObject), Deviation(dependentObject));
       }
-
    }
 }

@@ -5,10 +5,11 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
-   public abstract class concern_for_container_builder_to_container : ContextSpecification<IContainerBuilderToContainerMapper>
+   internal abstract class concern_for_container_builder_to_container : ContextSpecification<IContainerBuilderToContainerMapper>
    {
       protected ICloneManagerForModel _cloneManagerForModel;
 
@@ -20,14 +21,15 @@ namespace OSPSuite.Core.Mappers
    }
 
    
-   public class When_mapping_a_container_from_a_container_builder : concern_for_container_builder_to_container
+   internal class When_mapping_a_container_from_a_container_builder : concern_for_container_builder_to_container
    {
       private IContainer _containerBuilder;
       private IContainer _clonedContainer;
-      private IBuildConfiguration _buildConfiguration;
+      private SimulationConfiguration _simulationConfiguration;
       private IParameter _parameterBuilder;
       private IParameter _clonedParameter;
       private IContainer _result;
+      private SimulationBuilder _simulationBuilder;
 
       protected override void Context()
       {
@@ -38,13 +40,14 @@ namespace OSPSuite.Core.Mappers
          _clonedContainer = new Container();
          _clonedParameter = new Parameter().WithName("toto");
          _clonedContainer.Add(_clonedParameter);
-         _buildConfiguration = A.Fake<IBuildConfiguration>();
+         _simulationConfiguration = new SimulationConfiguration();
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          A.CallTo(() => _cloneManagerForModel.Clone(_containerBuilder)).Returns(_clonedContainer);
       }
 
       protected override void Because()
       {
-         _result = sut.MapFrom(_containerBuilder, _buildConfiguration);
+         _result = sut.MapFrom(_containerBuilder, _simulationBuilder);
       }
 
       [Observation]
@@ -54,9 +57,9 @@ namespace OSPSuite.Core.Mappers
       }
 
       [Observation]
-      public void should_have_referenced_the_parameter_with_the_parmaeter_builder()
+      public void should_have_referenced_the_parameter_with_the_parameter_builder()
       {
-         A.CallTo(() => _buildConfiguration.AddBuilderReference(_clonedParameter,_parameterBuilder)).MustHaveHappened();
+         _simulationBuilder.BuilderFor(_clonedParameter).ShouldBeEqualTo(_parameterBuilder);
       }
    }
 }	

@@ -1,8 +1,6 @@
-﻿using System;
-using OSPSuite.Core.Domain.Formulas;
+﻿using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -31,9 +29,9 @@ namespace OSPSuite.Core.Domain
       QuantityType QuantityType { get; set; }
 
       /// <summary>
-      ///   Returns the <see cref="QuantityType"/> as a string
+      ///    Returns the <see cref="QuantityType" /> as a string
       /// </summary>
-      string QuantityTypeAsString { get;  }
+      string QuantityTypeAsString { get; }
 
       /// <summary>
       ///    The value in the displayed unit
@@ -49,6 +47,7 @@ namespace OSPSuite.Core.Domain
       ///    The value in the displayed unit
       /// </summary>
       (double value, bool success) TryGetValue();
+
       /// <summary>
       ///    Specifies whether negative values are allowed or not for this quantity
       /// </summary>
@@ -72,8 +71,6 @@ namespace OSPSuite.Core.Domain
 
       /// <inheritdoc />
       public QuantityType QuantityType { get; set; }
-
-    
 
       /// <inheritdoc />
       public bool NegativeValuesAllowed { get; set; }
@@ -167,8 +164,8 @@ namespace OSPSuite.Core.Domain
          }
 
          return (value, success);
-
       }
+
       public virtual (double value, bool success) TryGetValueInDisplayUnit()
       {
          var (value, success) = TryGetValue();

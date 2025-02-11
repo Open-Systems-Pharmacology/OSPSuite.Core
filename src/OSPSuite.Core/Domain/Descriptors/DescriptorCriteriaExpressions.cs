@@ -41,6 +41,18 @@ namespace OSPSuite.Core.Domain.Descriptors
          return this;
       }
 
+      public DescriptorCriteriaBuilder InParent()
+      {
+         _criteria.Add(new InParentCondition());
+         return this;
+      }
+
+      public DescriptorCriteriaBuilder InChildren()
+      {
+         _criteria.Add(new InChildrenCondition());
+         return this;
+      }
+
       public DescriptorCriteriaBuilder NotInContainer(string containerName)
       {
          _criteria.Add(new NotInContainerCondition(containerName));

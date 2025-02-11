@@ -13,11 +13,9 @@ namespace OSPSuite.Core.Domain.Services
    internal interface IObserverBuilderTask
    {
       /// <summary>
-      ///    Adds observers defined by buildConfiguration to the given model
+      ///    Adds observers defined by simulationConfiguration to the given model
       /// </summary>
-      /// <param name="buildConfiguration">the build configuration</param>
-      /// <param name="model">the model where the observers should be defined</param>
-      void CreateObservers(IBuildConfiguration buildConfiguration, IModel model);
+      void CreateObservers(ModelConfiguration modelConfiguration);
    }
 
    internal class ObserverBuilderTask : IObserverBuilderTask
@@ -28,11 +26,11 @@ namespace OSPSuite.Core.Domain.Services
 
       //cache only used to speed up task
       private EntityDescriptorMapList<IContainer> _allContainerDescriptors;
-      private IBuildConfiguration _buildConfiguration;
+      private SimulationBuilder _simulationBuilder;
 
       public ObserverBuilderTask(
-         IObserverBuilderToObserverMapper observerMapper, 
-         IContainerTask containerTask, 
+         IObserverBuilderToObserverMapper observerMapper,
+         IContainerTask containerTask,
          IKeywordReplacerTask keywordReplacerTask)
       {
          _observerMapper = observerMapper;
@@ -40,32 +38,33 @@ namespace OSPSuite.Core.Domain.Services
          _keywordReplacerTask = keywordReplacerTask;
       }
 
-      public void CreateObservers(IBuildConfiguration buildConfiguration, IModel model)
+      public void CreateObservers(ModelConfiguration modelConfiguration)
       {
+         var (model, simulationBuilder, replacementContext) = modelConfiguration;
          _allContainerDescriptors = model.Root.GetAllChildren<IContainer>().ToEntityDescriptorMapList();
-         _buildConfiguration = buildConfiguration;
-         var observers = buildConfiguration.Observers;
-         var presentMolecules = buildConfiguration.AllPresentMolecules().ToList();
+         _simulationBuilder = simulationBuilder;
+         var observers = simulationBuilder.Observers;
+         var presentMolecules = simulationBuilder.AllPresentMolecules().ToList();
          try
          {
-            foreach (var observerBuilder in observers.AmountObserverBuilders)
-               createAmountObserver(observerBuilder, model, presentMolecules);
+            foreach (var observerBuilder in observers.OfType<AmountObserverBuilder>())
+               createAmountObserver(observerBuilder, presentMolecules, replacementContext, simulationBuilder);
 
 
-            foreach (var observerBuilder in observers.ContainerObserverBuilders)
-               createContainerObserver(observerBuilder, model, presentMolecules);
+            foreach (var observerBuilder in observers.OfType<ContainerObserverBuilder>())
+               createContainerObserver(observerBuilder, presentMolecules, replacementContext, simulationBuilder);
          }
          finally
          {
-              _allContainerDescriptors = null;
-            _buildConfiguration = null;
+            _allContainerDescriptors = null;
+            _simulationBuilder = null;
          }
       }
 
       /// <summary>
       ///    Retrieves molecules for which the given observer can be created
       /// </summary>
-      private IEnumerable<IMoleculeBuilder> moleculeBuildersValidFor(MoleculeList moleculeList, IEnumerable<IMoleculeBuilder> allMolecules)
+      private IEnumerable<MoleculeBuilder> moleculeBuildersValidFor(MoleculeList moleculeList, IEnumerable<MoleculeBuilder> allMolecules)
       {
          if (moleculeList.ForAll)
             return allMolecules.Where(molecule => !moleculeList.MoleculeNamesToExclude.Contains(molecule.Name));
@@ -78,19 +77,19 @@ namespace OSPSuite.Core.Domain.Services
       ///    in the spatial structure of the model.
       ///    Typical example: "Concentration"-Observer (M/V)
       /// </summary>
-      private void createAmountObserver(IAmountObserverBuilder observerBuilder, IModel model, IEnumerable<IMoleculeBuilder> presentMolecules)
+      private void createAmountObserver(AmountObserverBuilder observerBuilder, IEnumerable<MoleculeBuilder> presentMolecules, ReplacementContext replacementContext, SimulationBuilder simulationBuilder)
       {
-         var moleculeNamesForObserver = moleculeBuildersValidFor(observerBuilder.MoleculeList, presentMolecules)
+         var moleculeNamesForObserver = moleculeBuildersValidFor(simulationBuilder.MoleculeListFor(observerBuilder), presentMolecules)
             .Select(x => x.Name).ToList();
 
          foreach (var container in _allContainerDescriptors.AllSatisfiedBy(observerBuilder.ContainerCriteria))
          {
-            var amountsForObserver = container.GetChildren<IMoleculeAmount>(ma => moleculeNamesForObserver.Contains(ma.Name));
+            var amountsForObserver = container.GetChildren<MoleculeAmount>(ma => moleculeNamesForObserver.Contains(ma.Name));
 
             foreach (var amount in amountsForObserver)
             {
                var observer = addObserverInContainer(observerBuilder, amount, amount.QuantityType);
-               _keywordReplacerTask.ReplaceIn(observer, model.Root, amount.Name);
+               _keywordReplacerTask.ReplaceIn(observer, amount.Name, replacementContext);
             }
          }
       }
@@ -101,9 +100,9 @@ namespace OSPSuite.Core.Domain.Services
       ///    of the model.
       ///    Typical example is average drug concentration in an organ
       /// </summary>
-      private void createContainerObserver(IContainerObserverBuilder observerBuilder, IModel model, IEnumerable<IMoleculeBuilder> presentMolecules)
+      private void createContainerObserver(ContainerObserverBuilder observerBuilder, IEnumerable<MoleculeBuilder> presentMolecules, ReplacementContext replacementContext, SimulationBuilder simulationBuilder)
       {
-         var moleculeBuildersForObserver = moleculeBuildersValidFor(observerBuilder.MoleculeList, presentMolecules).ToList();
+         var moleculeBuildersForObserver = moleculeBuildersValidFor(simulationBuilder.MoleculeListFor(observerBuilder), presentMolecules).ToList();
          //retrieve a list here to avoid endless loop if observers criteria is not well defined
          foreach (var container in _allContainerDescriptors.AllSatisfiedBy(observerBuilder.ContainerCriteria))
          {
@@ -115,17 +114,18 @@ namespace OSPSuite.Core.Domain.Services
                {
                   //should only happen for a logical container.
                   moleculeContainer = _containerTask.CreateOrRetrieveSubContainerByName(container, moleculeBuilder.Name).WithContainerType(ContainerType.Molecule);
-                  _buildConfiguration.AddBuilderReference(moleculeContainer, observerBuilder);
+                  _simulationBuilder.AddBuilderReference(moleculeContainer, observerBuilder);
                }
+
                var observer = addObserverInContainer(observerBuilder, moleculeContainer, moleculeBuilder.QuantityType);
-               _keywordReplacerTask.ReplaceIn(observer, model.Root, moleculeBuilder.Name);
+               _keywordReplacerTask.ReplaceIn(observer, moleculeBuilder.Name, replacementContext);
             }
          }
       }
 
-      private IObserver addObserverInContainer(IObserverBuilder observerBuilder, IContainer observerContainer, QuantityType moleculeType)
+      private Observer addObserverInContainer(ObserverBuilder observerBuilder, IContainer observerContainer, QuantityType moleculeType)
       {
-         var observer = _observerMapper.MapFrom(observerBuilder, _buildConfiguration);
+         var observer = _observerMapper.MapFrom(observerBuilder, _simulationBuilder);
          observer.QuantityType = QuantityType.Observer | moleculeType;
          observerContainer.Add(observer);
          return observer;

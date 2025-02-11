@@ -5,6 +5,7 @@ using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Descriptors;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Serialization.Chart;
@@ -53,13 +54,17 @@ namespace OSPSuite.Core.Serialization.Xml
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<ColumnOrigins, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<AuxiliaryType, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<CriteriaOperator, SerializationContext>());
+         AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<DistributionType, SerializationContext>());
+         AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<MergeBehavior, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new LLOQModeXmlAttributeMapper<SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new LLOQUsageXmlAttributeMapper<SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new ValueOriginSourceXmlAttributeMapper<SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new ValueOriginDeterminationMethodXmlAttributeMapper<SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new RunStatusXmlAttributeMapper());
+         AttributeMapperRepository.AddAttributeMapper(new ExpressionTypeXmlAttributeMapper());
+         AttributeMapperRepository.AddAttributeMapper(new DistributionTypeXmlSerializer());
 
- 
+
          AttributeMapperRepository.ReferenceMapper = new ObjectReferenceMapper();
       }
 

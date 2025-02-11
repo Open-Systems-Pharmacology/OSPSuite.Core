@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -31,7 +32,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <remarks> No unregister at a repository is performed</remarks>
       /// <param name="spatialStructure">The spatial structure.</param>
       /// <param name="containerToRemove">The container to remove.</param>
-      void RemoveContainerFrom(ISpatialStructure spatialStructure, IContainer containerToRemove);
+      void RemoveContainerFrom(SpatialStructure spatialStructure, IContainer containerToRemove);
 
       /// <summary>
       ///    Returns a unique child name in the parent container with the suffix baseName.
@@ -60,8 +61,6 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       string CreateUniqueName(IEnumerable<IWithName> usedNames, string baseName, bool canUseBaseName = false);
 
-      IEnumerable<INeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ISpatialStructure spatialStructure, IContainer container);
-
       /// <summary>
       ///    Returns a cache of all children satisfying <paramref name="predicate" /> by path defined in the
       ///    <paramref name="parentContainer" />
@@ -74,7 +73,7 @@ namespace OSPSuite.Core.Domain.Services
       PathCache<TChildren> CacheAllChildren<TChildren>(IContainer parentContainer) where TChildren : class, IEntity;
 
       /// <summary>
-      /// Returns a cache of all elements in the <paramref name="enumerable"/>
+      ///    Returns a cache of all elements in the <paramref name="enumerable" />
       /// </summary>
       /// <typeparam name="T"></typeparam>
       /// <param name="enumerable"></param>
@@ -85,15 +84,17 @@ namespace OSPSuite.Core.Domain.Services
    public class ContainerTask : IContainerTask
    {
       private readonly IEntityPathResolver _entityPathResolver;
+      private readonly IObjectPathFactory _objectPathFactory;
       private readonly IObjectBaseFactory _objectBaseFactory;
 
       //format used to generate the unique name
-      private readonly string _uniqueNameFormat = "{0} ";
+      private const string _uniqueNameSeparator = " ";
 
-      public ContainerTask(IObjectBaseFactory objectBaseFactory, IEntityPathResolver entityPathResolver)
+      public ContainerTask(IObjectBaseFactory objectBaseFactory, IEntityPathResolver entityPathResolver, IObjectPathFactory objectPathFactory)
       {
          _objectBaseFactory = objectBaseFactory;
          _entityPathResolver = entityPathResolver;
+         _objectPathFactory = objectPathFactory;
       }
 
       public IContainer CreateOrRetrieveSubContainerByName(IContainer parentContainer, string subContainerName)
@@ -111,33 +112,24 @@ namespace OSPSuite.Core.Domain.Services
          return parentContainer.GetSingleChildByName<IContainer>(subContainerName);
       }
 
-      public void RemoveContainerFrom(ISpatialStructure spatialStructure, IContainer containerToRemove)
+      public void RemoveContainerFrom(SpatialStructure spatialStructure, IContainer containerToRemove)
       {
-         var neighborhoodBuilderToRemove = AllNeighborhoodBuildersConnectedWith(spatialStructure, containerToRemove);
-         foreach (var neighborhoodBuilder in neighborhoodBuilderToRemove.ToList())
-         {
-            spatialStructure.RemoveNeighborhood(neighborhoodBuilder);
-         }
-
+         var containerPath = _objectPathFactory.CreateAbsoluteObjectPath(containerToRemove);
+         spatialStructure.AllNeighborhoodBuildersConnectedWith(containerPath).Each(spatialStructure.RemoveNeighborhood);
          containerToRemove.ParentContainer.RemoveChild(containerToRemove);
       }
-
-      public IEnumerable<INeighborhoodBuilder> AllNeighborhoodBuildersConnectedWith(ISpatialStructure spatialStructure, IContainer container)
-      {
-         return spatialStructure.Neighborhoods.Where(neighborhood => neighborhood.IsConnectedTo(container));
-      }
-
-      public string CreateUniqueName(IEnumerable<IWithName> usedNames, string baseName, bool canUseBaseName = false)
-      {
-         return CreateUniqueName(usedNames.Select(x => x.Name).ToList(), baseName, canUseBaseName);
-      }
-
-      public string CreateUniqueName(IReadOnlyList<string> usedNames, string baseName, bool canUseBaseName = false)
+      /// <summary>
+      ///    Returns a unique child name with the suffix baseName.
+      ///    e.g baseName_* where * is a number so that the returned value does not exist in <paramref name="usedNames" />.
+      ///    if <paramref name="canUseBaseName" /> is true, the provided base name can be used as returned value if the name does
+      ///    not  exist in <paramref name="usedNames" />.
+      /// </summary>
+      public static string RetrieveUniqueName(IReadOnlyList<string> usedNames, string baseName, bool canUseBaseName = false, string uniqueNameSeparator = _uniqueNameSeparator)
       {
          if (!usedNames.Contains(baseName) && canUseBaseName)
             return baseName;
 
-         string baseFormat = string.Format(_uniqueNameFormat, baseName);
+         var baseFormat = $"{baseName}{uniqueNameSeparator}";
 
          //get all endings
          var allUsedNamesMatchingBaseFormat = usedNames.Where(n => n.StartsWith(baseFormat))
@@ -147,14 +139,16 @@ namespace OSPSuite.Core.Domain.Services
          return $"{baseFormat}{getNextAvailableIndexBasedOn(allUsedNamesMatchingBaseFormat)}";
       }
 
-      private int getNextAvailableIndexBasedOn(IEnumerable<string> allUsedNamesMatchingBaseFormat)
+      public string CreateUniqueName(IEnumerable<IWithName> usedNames, string baseName, bool canUseBaseName = false) => CreateUniqueName(usedNames.Select(x => x.Name).ToList(), baseName, canUseBaseName);
+
+      public string CreateUniqueName(IReadOnlyList<string> usedNames, string baseName, bool canUseBaseName = false) => RetrieveUniqueName(usedNames, baseName, canUseBaseName);
+
+      private static int getNextAvailableIndexBasedOn(IEnumerable<string> allUsedNamesMatchingBaseFormat)
       {
          var allValues = new List<int>();
          foreach (var suffix in allUsedNamesMatchingBaseFormat)
-         {
             if (int.TryParse(suffix, out var value))
                allValues.Add(value);
-         }
 
          if (allValues.Count == 0)
             return 1;

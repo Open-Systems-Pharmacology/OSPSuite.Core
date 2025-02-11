@@ -1,9 +1,10 @@
 ﻿using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Core.Commands
 {
-   public interface IOSPSuiteExecutionContext 
+   public interface IOSPSuiteExecutionContext
    {
       string TypeFor<T>(T obj) where T : class;
       void Register(IWithId objectToRegister);
@@ -24,12 +25,14 @@ namespace OSPSuite.Core.Commands
       T Clone<T>(T objectToClone) where T : class, IObjectBase;
 
       /// <summary>
-      /// Loads the object <paramref name="objectBase"/> if the object is lazy loaded. 
+      ///    Loads the object <paramref name="objectBase" /> if the object is lazy loaded.
       /// </summary>
       void Load(IObjectBase objectBase);
+
+      IContainer Container { get; }
    }
 
-   public interface IOSPSuiteExecutionContext<out TProject> :IOSPSuiteExecutionContext where TProject:IProject
+   public interface IOSPSuiteExecutionContext<out TProject> : IOSPSuiteExecutionContext where TProject : IProject
    {
       TProject CurrentProject { get; }
    }

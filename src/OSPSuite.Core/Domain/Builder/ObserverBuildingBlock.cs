@@ -4,24 +4,18 @@ using OSPSuite.Assets;
 
 namespace OSPSuite.Core.Domain.Builder
 {
-   public interface IObserverBuildingBlock : IBuildingBlock<IObserverBuilder>
-   {
-      IEnumerable<IAmountObserverBuilder> AmountObserverBuilders { get; }
-      IEnumerable<IContainerObserverBuilder> ContainerObserverBuilders { get; }
-   }
-
-   public class ObserverBuildingBlock : BuildingBlock<IObserverBuilder>, IObserverBuildingBlock
+   public class ObserverBuildingBlock : BuildingBlock<ObserverBuilder>
    {
       public ObserverBuildingBlock()
       {
          Icon = IconNames.OBSERVER;
       }
 
-      public IEnumerable<IAmountObserverBuilder> AmountObserverBuilders => getTypedObserverBuilder<IAmountObserverBuilder>();
+      public IEnumerable<AmountObserverBuilder> AmountObserverBuilders => getTypedObserverBuilder<AmountObserverBuilder>();
 
-      public IEnumerable<IContainerObserverBuilder> ContainerObserverBuilders => getTypedObserverBuilder<IContainerObserverBuilder>();
+      public IEnumerable<ContainerObserverBuilder> ContainerObserverBuilders => getTypedObserverBuilder<ContainerObserverBuilder>();
 
-      private IEnumerable<T> getTypedObserverBuilder<T>() where T : class, IObserverBuilder
+      private IEnumerable<T> getTypedObserverBuilder<T>() where T : ObserverBuilder
       {
          return from observerBuilder in this
             let amountObserverBuilder = observerBuilder as T

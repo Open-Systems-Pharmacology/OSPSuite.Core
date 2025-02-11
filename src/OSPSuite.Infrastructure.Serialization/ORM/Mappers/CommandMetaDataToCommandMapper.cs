@@ -37,7 +37,7 @@ namespace OSPSuite.Infrastructure.Serialization.ORM.Mappers
          return command;
       }
 
-      private IOSPSuiteCommmand<IOSPSuiteExecutionContext> commandFrom(string descriminator)
+      private IOSPSuiteCommand<IOSPSuiteExecutionContext> commandFrom(string descriminator)
       {
          //This commands are create from the command manager and needs to be cast to pksim types afterwards
          if (string.Equals(descriminator, Constants.Serialization.MACRO_COMMAND))

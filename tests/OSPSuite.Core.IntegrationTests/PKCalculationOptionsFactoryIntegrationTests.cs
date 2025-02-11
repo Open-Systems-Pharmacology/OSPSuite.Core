@@ -22,7 +22,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_treat_the_application_has_multiple_application_when_setting_the_end_time_to_start_time_of_last_application()
       {
-         _simulation.SimulationSettings.OutputSchema.Intervals.Last().EndTime.Value = 48 * 60; //48 hours
+         _simulation.Settings.OutputSchema.Intervals.Last().EndTime.Value = 48 * 60; //48 hours
          var pkOptions = new PKCalculationOptionsFactory().CreateFor(_simulation, "drug");
          pkOptions.SingleDosing.ShouldBeFalse();
       }
@@ -30,7 +30,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_treat_the_application_has_multiple_application_when_setting_the_end_time_before_the_start_time_of_last_application()
       {
-         _simulation.SimulationSettings.OutputSchema.Intervals.Last().EndTime.Value = 47 * 60; //47 hours
+         _simulation.Settings.OutputSchema.Intervals.Last().EndTime.Value = 47 * 60; //47 hours
          var pkOptions = new PKCalculationOptionsFactory().CreateFor(_simulation, "drug");
          pkOptions.SingleDosing.ShouldBeFalse();
       }

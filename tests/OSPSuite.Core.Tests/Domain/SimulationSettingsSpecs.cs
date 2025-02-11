@@ -5,7 +5,7 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_SimulationSettings : ContextSpecification<ISimulationSettings>
+   public abstract class concern_for_SimulationSettings : ContextSpecification<SimulationSettings>
    {
       protected override void Context()
       {

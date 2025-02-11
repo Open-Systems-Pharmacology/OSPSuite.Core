@@ -186,7 +186,7 @@ namespace OSPSuite.Core.Domain
          if (type.Equals(typeof(NormalDistributionFormula))) return false;
          if (type.Equals(typeof(MoleculeBuildingBlock))) return false;
          if (type.Equals(typeof(LogNormalDistributionFormula))) return false;
-         if (type.Equals(typeof(MoleculeStartValuesBuildingBlock))) return false;
+         if (type.Equals(typeof(InitialConditionsBuildingBlock))) return false;
          if (type.Equals(typeof(NeighborhoodBuilder))) return false;
          if (type.Equals(typeof(ObserverBuildingBlock))) return false;
          if (type.Equals(typeof(DiscreteDistributionFormula))) return false;

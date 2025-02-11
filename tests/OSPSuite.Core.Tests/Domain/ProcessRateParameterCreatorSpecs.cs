@@ -4,10 +4,11 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_ProcessRateParameterCreatorSpecs : ContextSpecification<IProcessRateParameterCreator>
+   internal abstract class concern_for_ProcessRateParameterCreatorSpecs : ContextSpecification<IProcessRateParameterCreator>
    {
       protected IObjectBaseFactory _objectBaseFactory;
       protected IFormulaBuilderToFormulaMapper _formulaMapper;
@@ -19,35 +20,37 @@ namespace OSPSuite.Core.Domain
          sut = new ProcessRateParameterCreator(_objectBaseFactory,_formulaMapper);
       }
    }
-   public class When_creating_a_parameter_rate_for_a_process_builder : concern_for_ProcessRateParameterCreatorSpecs
+   internal class When_creating_a_parameter_rate_for_a_process_builder : concern_for_ProcessRateParameterCreatorSpecs
    {
       private IFormula _kinetic;
       private IParameter _processRateParameter;
-      private IProcessBuilder _processBuilder;
-      private IBuildConfiguration _buildConfiguration;
-      private IFormulaUsablePath _formulaUsablePathB;
-      private IFormulaUsablePath _formulaUsablePathA;
-      private IFormulaUsablePath _formulaUsablePathFU;
+      private ProcessBuilder _processBuilder;
+      private SimulationConfiguration _simulationConfiguration;
+      private FormulaUsablePath _formulaUsablePathB;
+      private FormulaUsablePath _formulaUsablePathA;
+      private FormulaUsablePath _formulaUsablePathFU;
       private FormulaUsablePath _formulaUsablePathBW;
+      private SimulationBuilder _simulationBuilder;
 
       protected override void Context()
       {
          base.Context();
-         _buildConfiguration = A.Fake<IBuildConfiguration>();
+         _simulationConfiguration = new SimulationConfiguration();
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _processBuilder = new ReactionBuilder();
          _processBuilder.CreateProcessRateParameter = true;
          _kinetic = new ExplicitFormula("(A+B)*fu/BW");
-         _formulaUsablePathA = new FormulaUsablePath(new[] {ObjectPath.PARENT_CONTAINER, "A"}).WithAlias("A");
+         _formulaUsablePathA = new FormulaUsablePath(ObjectPath.PARENT_CONTAINER, "A").WithAlias("A");
          _kinetic.AddObjectPath(_formulaUsablePathA);
-         _formulaUsablePathB = new FormulaUsablePath(new[] { "B" }).WithAlias("B");
+         _formulaUsablePathB = new FormulaUsablePath("B").WithAlias("B");
          _kinetic.AddObjectPath(_formulaUsablePathB);
-         _formulaUsablePathFU = new FormulaUsablePath(new[] {ObjectPathKeywords.MOLECULE, "fu"}).WithAlias("fu");
+         _formulaUsablePathFU = new FormulaUsablePath(ObjectPathKeywords.MOLECULE, "fu").WithAlias("fu");
          _kinetic.AddObjectPath(_formulaUsablePathFU);
-         _formulaUsablePathBW = new FormulaUsablePath(new[] { "Organism", "BW" }).WithAlias("BW");
+         _formulaUsablePathBW = new FormulaUsablePath("Organism", "BW").WithAlias("BW");
          _kinetic.AddObjectPath(_formulaUsablePathBW);
          _processBuilder.CreateProcessRateParameter = true;
          _processBuilder.ProcessRateParameterPersistable = true;
-         A.CallTo(() => _formulaMapper.MapFrom(_kinetic, _buildConfiguration)).Returns(_kinetic);
+         A.CallTo(() => _formulaMapper.MapFrom(_kinetic, _simulationBuilder)).Returns(_kinetic);
          _processBuilder.Name = "Reaction";
          _processBuilder.Formula = _kinetic;
          _processRateParameter = new Parameter();
@@ -57,7 +60,7 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _processRateParameter = sut.CreateProcessRateParameterFor(_processBuilder, _buildConfiguration);
+         _processRateParameter = sut.CreateProcessRateParameterFor(_processBuilder, _simulationBuilder);
       }
 
       [Observation]
@@ -79,14 +82,14 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_update_reative_paths()
+      public void should_update_relative_paths()
       {
          _formulaUsablePathA.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER,ObjectPath.PARENT_CONTAINER,"A");
          _formulaUsablePathB.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER,  "B");
       }
 
       [Observation]
-      public void should_leave_absolutPaths_unchanged()
+      public void should_leave_absolute_paths_unchanged()
       {
          _formulaUsablePathBW.ShouldOnlyContainInOrder("Organism", "BW");
          _formulaUsablePathFU.ShouldOnlyContainInOrder(ObjectPathKeywords.MOLECULE, "fu");

@@ -25,6 +25,15 @@ namespace OSPSuite.UI.Controls
       }
    }
 
+   public class UxAddRemoveAndEditButtonRepository : UxAddButtonRepository
+   {
+      public UxAddRemoveAndEditButtonRepository()
+      {
+         AddButton(ButtonPredefines.Delete, Captions.DeleteEntry, ButtonType.Remove);
+         AddButton(ButtonPredefines.Ellipsis, Captions.Edit, ButtonType.Update);
+      }
+   }
+
    public class UxAddAndRemoveButtonRepository : UxAddButtonRepository
    {
       public UxAddAndRemoveButtonRepository()

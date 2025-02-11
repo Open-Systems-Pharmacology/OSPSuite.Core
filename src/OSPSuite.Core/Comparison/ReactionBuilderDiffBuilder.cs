@@ -3,7 +3,7 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Comparison
 {
-   public class ReactionBuilderDiffBuilder : DiffBuilder<IReactionBuilder>
+   public class ReactionBuilderDiffBuilder : DiffBuilder<ReactionBuilder>
    {
       private readonly ContainerDiffBuilder _containerDiffBuilder;
       private readonly EnumerableComparer _enumerableComparer;
@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Comparison
          _objectComparer = objectComparer;
       }
 
-      public override void Compare(IComparison<IReactionBuilder> comparison)
+      public override void Compare(IComparison<ReactionBuilder> comparison)
       {
          _containerDiffBuilder.Compare(comparison);
          _objectComparer.Compare(comparison.FormulaComparison());
@@ -24,7 +24,8 @@ namespace OSPSuite.Core.Comparison
          _enumerableComparer.CompareEnumerables(comparison, x => x.Products, item => item.MoleculeName);
          _enumerableComparer.CompareEnumerables(comparison, x => x.ModifierNames, item => item, missingItemType: ObjectTypes.Modifier);
          CompareValues(x => x.ContainerCriteria, x => x.ContainerCriteria, comparison);
-         CompareValues(x => x.Dimension, x => x.Dimension, comparison);
+         CompareValues(x => x.CreateProcessRateParameter, x => x.CreateProcessRateParameter, comparison);
+         _objectComparer.Compare(comparison.DimensionComparison());
       }
    }
 }

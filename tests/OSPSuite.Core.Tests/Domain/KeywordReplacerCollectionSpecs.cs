@@ -5,7 +5,7 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_KeywordReplacerCollection : ContextSpecification<IKeywordReplacerCollection>
+   public abstract class concern_for_KeywordReplacerCollection : ContextSpecification<KeywordReplacerCollection>
    {
       protected override void Context()
       {
@@ -13,14 +13,13 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   
    public class When_replacing_the_keywords_in_an_entity : concern_for_KeywordReplacerCollection
    {
       private IParameter _parameter;
       private IKeywordInObjectPathReplacer _replacement;
       private IKeywordInTagsReplacer _replacementTag;
-      private IFormulaUsablePath _objectPath1;
-      private IFormulaUsablePath _objectPath2;
+      private FormulaUsablePath _objectPath1;
+      private FormulaUsablePath _objectPath2;
 
       protected override void Context()
       {
@@ -42,10 +41,11 @@ namespace OSPSuite.Core.Domain
       {
          sut.ReplaceIn(_parameter);
       }
+
       [Observation]
       public void should_replace_the_keywords_in_its_underlying_formula()
       {
-        A.CallTo(() =>  _replacement.ReplaceIn(_objectPath1)).MustHaveHappened();
+         A.CallTo(() => _replacement.ReplaceIn(_objectPath1)).MustHaveHappened();
       }
 
       [Observation]

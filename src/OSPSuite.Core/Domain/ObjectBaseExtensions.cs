@@ -30,6 +30,11 @@ namespace OSPSuite.Core.Domain
          return enumerable.Find(item => string.Equals(item.Name, objectName));
       }
 
+      public static IEnumerable<T> AllByName<T>(this IEnumerable<T> enumerable, string name) where T : IWithName
+      {
+         return enumerable.Where(x => string.Equals(x.Name, name));
+      }
+
       public static bool ExistsByName<T>(this IEnumerable<T> enumerable, string objectName) where T : IWithName
       {
          return enumerable.Any(item => string.Equals(item.Name, objectName));

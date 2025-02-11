@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Extensions;
 using OSPSuite.Utility.Collections;
@@ -24,6 +23,16 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             return 0;
 
          return 1 + setParameters(rawDataSheet, columnInfos, metaDataCategories);
+      }
+
+      public IEnumerable<T> GetParameters<T>() where T : DataFormatParameter
+      {
+         return Parameters.OfType<T>();
+      }
+
+      public T GetColumnByName<T>(string columnName) where T : DataFormatParameter
+      {
+         return Parameters.OfType<T>().FirstOrDefault(x => x.ColumnName == columnName);
       }
 
       protected bool NotCompatible(DataSheet dataSheet, ColumnInfoCache columnInfos)
@@ -52,7 +61,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       private void setDimensionsForMappings(ColumnInfoCache columnInfos)
       {
-         foreach (var parameter in Parameters.OfType<MappingDataFormatParameter>())
+         foreach (var parameter in GetParameters<MappingDataFormatParameter>())
          {
             var mappedColumn = parameter.MappedColumn;
 
@@ -74,8 +83,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
                mappedColumn.Dimension = null;
             else
             {
-               var supportedDimensions = concreteColumnInfo.SupportedDimensions;
-               var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.SupportsUnit(mappedColumn.Unit.SelectedUnit, ignoreCase: true));
+               var dimensionForUnit = concreteColumnInfo.DimensionForUnit(mappedColumn.Unit.SelectedUnit);
 
                if (dimensionForUnit == null)
                   mappedColumn.Unit = new UnitDescription(UnitDescription.InvalidUnit);
@@ -87,7 +95,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
 
       private void setSecondaryColumnUnit(ColumnInfoCache columnInfos)
       {
-         var mappings = Parameters.OfType<MappingDataFormatParameter>().ToList();
+         var mappings = GetParameters<MappingDataFormatParameter>().ToList();
          foreach (var column in columnInfos.Where(c => !c.IsAuxiliary))
          {
             foreach (var relatedColumn in columnInfos.RelatedColumnsFrom(column.Name))
@@ -109,12 +117,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
       protected abstract string ExtractLLOQ(string description, DataSheet dataSheet, List<string> keys, ref double rank);
 
       protected abstract UnitDescription ExtractUnits(string description, DataSheet dataSheet, List<string> keys,
-         IReadOnlyList<IDimension> supportedDimensions, ref double rank);
+         ColumnInfo columnInfo, ref double rank);
 
-      public UnitDescription ExtractUnitDescriptions(string description, IReadOnlyList<IDimension> supportedDimensions)
+      public UnitDescription ExtractUnitDescriptions(string description, ColumnInfo columnInfo)
       {
          var rank = 0.0;
-         return ExtractUnits(description, dataSheet: null, keys: null, supportedDimensions, ref rank);
+         return ExtractUnits(description, dataSheet: null, keys: null, columnInfo, ref rank);
       }
 
       protected virtual void ExtractQualifiedHeadings(List<string> keys, List<string> missingKeys, Cache<string, ColumnInfo> columnInfos,
@@ -127,7 +135,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             if (headerKey != null)
             {
                keys.Remove(headerKey);
-               var units = ExtractUnits(headerKey, dataSheet, keys, header.SupportedDimensions, ref rank);
+               var units = ExtractUnits(headerKey, dataSheet, keys, header, ref rank);
 
                var col = new Column
                {
@@ -156,9 +164,10 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          }
       }
 
-      protected string ValidateUnit(string unit, IReadOnlyList<IDimension> supportedDimensions)
+      protected string ValidateUnit(string unit, ColumnInfo columnInfo)
       {
-         var dimensionForUnit = supportedDimensions.FirstOrDefault(x => x.SupportsUnit(unit, ignoreCase: true));
+         var dimensionForUnit = columnInfo.DimensionForUnit(unit);
+
          if (dimensionForUnit == null)
             return UnitDescription.InvalidUnit;
 
@@ -174,13 +183,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             var headerKey = keys.FirstOrDefault
             (h =>
                dataSheet.GetColumnDescription(h).Level == ColumnDescription.MeasurementLevel.Numeric &&
-               Parameters
-                  .OfType<MappingDataFormatParameter>()
+               GetParameters<MappingDataFormatParameter>()
                   .All(m => m.ColumnName != h)
             );
             if (headerKey == null) continue;
             keys.Remove(headerKey);
-            var units = ExtractUnits(headerKey, dataSheet, keys, columnInfos[header].SupportedDimensions, ref rank);
+            var units = ExtractUnits(headerKey, dataSheet, keys, columnInfos[header], ref rank);
 
             var col = new Column()
             {
@@ -272,7 +280,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          var dictionary = new Dictionary<ExtendedColumn, IList<SimulationPoint>>();
 
          //Add time mapping
-         var mappingParameters = Parameters.OfType<MappingDataFormatParameter>().ToList();
+         var mappingParameters = GetParameters<MappingDataFormatParameter>().ToList();
 
          var dataSet = rawDataSet.ToList();
          foreach (var columnInfo in columnInfos)
@@ -281,7 +289,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             if (currentParameter == null) continue;
             Func<MappingDataFormatParameter, DataSheet, UnformattedRow, SimulationPoint> mappingsParser =
                currentParameter.MappedColumn.LloqColumn == null
-                  ? (Func<MappingDataFormatParameter, DataSheet, UnformattedRow, SimulationPoint>) parseMappingOnSameColumn
+                  ? (Func<MappingDataFormatParameter, DataSheet, UnformattedRow, SimulationPoint>)parseMappingOnSameColumn
                   : parseMappingOnSameGivenColumn;
 
             dictionary.Add

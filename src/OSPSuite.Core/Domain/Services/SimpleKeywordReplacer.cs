@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Domain.Services
       /// Replaces the Keyword in the given <paramref name="objectPath"/> list.
       /// </summary>
       /// <param name="objectPath">The objectPath entries.</param>
-      public void ReplaceIn(IObjectPath objectPath)
+      public void ReplaceIn(ObjectPath objectPath)
       {
          objectPath.Replace(_keyword, _replacement);
       }
@@ -36,7 +36,7 @@ namespace OSPSuite.Core.Domain.Services
          tags.Replace(_keyword, _replacement);
       }
 
-      public void ReplaceIn(IDescriptorCondition descriptorCondition)
+      public void ReplaceIn(ITagCondition descriptorCondition)
       {
          descriptorCondition.Replace(_keyword, _replacement);
       }

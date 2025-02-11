@@ -33,6 +33,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       ParameterIdentificationRunResult RunResult { get; }
       IReadOnlyList<float> TotalErrorHistory { get; }
       IReadOnlyCollection<IdentificationParameterHistory> ParametersHistory { get; }
+      void Cancel();
    }
 
    public class ParameterIdentificationRun : IParameterIdentificationRun
@@ -54,6 +55,11 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       public ParameterIdentificationRunResult RunResult { get; } = new ParameterIdentificationRunResult();
       public IReadOnlyList<float> TotalErrorHistory => _totalErrorHistory;
       public IReadOnlyCollection<IdentificationParameterHistory> ParametersHistory => _parametersHistory;
+
+      public void Cancel()
+      {
+         _allSimModelBatches.Values.Each(x => x.StopSimulation());
+      }
 
       public event EventHandler<ParameterIdentificationRunStatusEventArgs> RunStatusChanged = delegate { };
 

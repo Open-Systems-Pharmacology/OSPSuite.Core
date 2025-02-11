@@ -3,9 +3,9 @@ using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Core.Comparison
 {
-   public class ReactionPartnerDiffBuilder : DiffBuilder<IReactionPartner>
+   public class ReactionPartnerDiffBuilder : DiffBuilder<ReactionPartner>
    {
-      public override void Compare(IComparison<IReactionPartner> comparison)
+      public override void Compare(IComparison<ReactionPartner> comparison)
       {
          CompareStringValues(x => x.Partner.Name,Captions.Diff.ReactionPartnerName, comparison);
          CompareValues(x => x.StoichiometricCoefficient, x => x.StoichiometricCoefficient, comparison);

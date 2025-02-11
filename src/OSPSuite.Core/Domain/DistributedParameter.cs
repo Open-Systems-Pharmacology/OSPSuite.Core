@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Domain
    public interface IDistributedParameter : IParameter, IQuantityAndContainer
    {
       double Percentile { get; set; }
-      new IDistributionFormula Formula { get; set; }
+      new DistributionFormula Formula { get; set; }
       IParameter MeanParameter { get; }
       IParameter DeviationParameter { get; }
       IParameter PercentileParameter { get; }
@@ -56,9 +56,9 @@ namespace OSPSuite.Core.Domain
          set
          {
             _cachedValue = value;
-            if (Formula.IsAnImplementationOf<IDistributionFormula>())
+            if (Formula.IsAnImplementationOf<DistributionFormula>())
             {
-               percentile = Formula.DowncastTo<IDistributionFormula>().CalculatePercentileForValue(value, this);
+               percentile = Formula.DowncastTo<DistributionFormula>().CalculatePercentileForValue(value, this);
             }
 
             _cachedValueValid = true;
@@ -66,9 +66,9 @@ namespace OSPSuite.Core.Domain
          }
       }
 
-      public new IDistributionFormula Formula
+      public new DistributionFormula Formula
       {
-         get => base.Formula as IDistributionFormula;
+         get => base.Formula as DistributionFormula;
          set => base.Formula = value;
       }
 
@@ -132,9 +132,14 @@ namespace OSPSuite.Core.Domain
          set
          {
             //percentile set first so that correct value is available if a value event is raised
-            PercentileParameter.IsFixedValue = value;
+            //Note: Percentile parameter may be null when constructing the distributed parameter dynamically
+            if (PercentileParameter != null)
+               PercentileParameter.IsFixedValue = value;
+
             base.IsFixedValue = value;
-            OnPropertyChanged(() => Percentile);
+
+            if (PercentileParameter != null)
+               OnPropertyChanged(() => Percentile);
          }
       }
 

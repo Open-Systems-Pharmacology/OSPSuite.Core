@@ -7,13 +7,13 @@ namespace OSPSuite.Core.Domain
 {
    public abstract class concern_for_ObjectPathExtensions : StaticContextSpecification
    {
-      protected IObjectPath _objectPath;
+      protected ObjectPath _objectPath;
       protected string _entryToAdd;
 
       protected override void Context()
       {
          _entryToAdd = "toto";
-         _objectPath = A.Fake<IObjectPath>();
+         _objectPath = A.Fake<ObjectPath>();
       }
    }
 

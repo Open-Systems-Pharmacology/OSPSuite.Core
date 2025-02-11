@@ -9,17 +9,17 @@ using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.DiffBuilders
 {
-   public class When_comparing_two_molecule_start_values_with_same_properties : concern_for_ObjectComparer
+   public class When_comparing_two_initial_conditions_with_same_properties : concern_for_ObjectComparer
    {
       protected override void Context()
       {
          base.Context();
 
-         var msv1 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv1 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv1.IsPresent = true;
          msv1.ScaleDivisor = 10;
-         var msv2 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv2 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv2.IsPresent = true;
          msv2.ScaleDivisor = 10;
@@ -35,16 +35,16 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_molecule_start_values_with_different_is_present_setting : concern_for_ObjectComparer
+   public class When_comparing_two_initial_conditions_with_different_is_present_setting : concern_for_ObjectComparer
    {
       protected override void Context()
       {
          base.Context();
 
-         var msv1 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv1 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv1.IsPresent = true;
-         var msv2 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv2 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv2.IsPresent = false;
 
@@ -59,17 +59,17 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_molecule_start_values_with_different_scale_divisor : concern_for_ObjectComparer
+   public class When_comparing_two_initial_conditions_with_different_scale_divisor : concern_for_ObjectComparer
    {
       protected override void Context()
       {
          base.Context();
 
-         var msv1 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv1 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv1.IsPresent = true;
          msv1.ScaleDivisor = 1;
-         var msv2 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv2 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv2.IsPresent = true;
          msv2.ScaleDivisor = 10;
@@ -85,18 +85,18 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_molecule_start_values_with_different_scale_divisor_and_the_value_origin_should_be_visible : concern_for_ObjectComparer
+   public class When_comparing_two_initial_conditions_with_different_scale_divisor_and_the_value_origin_should_be_visible : concern_for_ObjectComparer
    {
       protected override void Context()
       {
          base.Context();
 
-         var msv1 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv1 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv1.IsPresent = true;
          msv1.ScaleDivisor = 1;
          msv1.ValueOrigin.Description = "DESC1";
-         var msv2 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv2 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv2.IsPresent = true;
          msv2.ScaleDivisor = 10;
@@ -115,18 +115,18 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_molecule_start_values_with_different_scale_divisor_and_the_value_origin_should_not_be_visible : concern_for_ObjectComparer
+   public class When_comparing_two_initial_conditions_with_different_scale_divisor_and_the_value_origin_should_not_be_visible : concern_for_ObjectComparer
    {
       protected override void Context()
       {
          base.Context();
 
-         var msv1 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv1 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv1.IsPresent = true;
          msv1.ScaleDivisor = 1;
          msv1.ValueOrigin.Description = "DESC1";
-         var msv2 = new MoleculeStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv2 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          msv2.IsPresent = true;
          msv2.ScaleDivisor = 10;
@@ -145,16 +145,16 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_parmeter_start_values_with_different_formulas : concern_for_ObjectComparer
+   public class When_comparing_two_parameter_values_with_different_formulas : concern_for_ObjectComparer
    {
       protected override void Context()
       {
          base.Context();
 
-         var msv1 = new ParameterStartValue().WithName("Tada").WithFormula(new ConstantFormula(2));
+         var msv1 = new ParameterValue().WithName("Tada").WithFormula(new ConstantFormula(2));
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
 
-         var msv2 = new ParameterStartValue().WithName("Tada").WithFormula(new ExplicitFormula("2"));
+         var msv2 = new ParameterValue().WithName("Tada").WithFormula(new ExplicitFormula("2"));
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
 
 
@@ -169,19 +169,19 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_parmeter_start_values_with_different_values : concern_for_ObjectComparer
+   public class When_comparing_two_parameter_values_with_different_values : concern_for_ObjectComparer
    {
       protected override void Context()
       {
          base.Context();
 
-         var msv1 = new ParameterStartValue().WithName("Tada");
+         var msv1 = new ParameterValue().WithName("Tada");
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
-         msv1.StartValue = 2;
+         msv1.Value = 2;
 
-         var msv2 = new ParameterStartValue().WithName("Tada");
+         var msv2 = new ParameterValue().WithName("Tada");
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
-         msv1.StartValue = 3;
+         msv1.Value = 3;
 
          _object1 = msv1;
          _object2 = msv2;
@@ -194,19 +194,19 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_parameter_start_values_with_two_null_values : concern_for_ObjectComparer
+   public class When_comparing_two_parameter_values_with_two_null_values : concern_for_ObjectComparer
    {
       protected override void Context()
       {
          base.Context();
 
-         var msv1 = new ParameterStartValue().WithName("Tada");
+         var msv1 = new ParameterValue().WithName("Tada");
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
-         msv1.StartValue = null;
+         msv1.Value = null;
 
-         var msv2 = new ParameterStartValue().WithName("Tada");
+         var msv2 = new ParameterValue().WithName("Tada");
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
-         msv2.StartValue = null;
+         msv2.Value = null;
 
          _object1 = msv1;
          _object2 = msv2;
@@ -219,19 +219,19 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_parameter_start_values_with_one_null_values : concern_for_ObjectComparer
+   public class When_comparing_two_parameter_values_with_one_null_values : concern_for_ObjectComparer
    {
       protected override void Context()
       {
          base.Context();
 
-         var msv1 = new ParameterStartValue().WithName("Tada");
+         var msv1 = new ParameterValue().WithName("Tada");
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
-         msv1.StartValue = 5;
+         msv1.Value = 5;
 
-         var msv2 = new ParameterStartValue().WithName("Tada");
+         var msv2 = new ParameterValue().WithName("Tada");
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
-         msv2.StartValue = null;
+         msv2.Value = null;
 
          _object1 = msv1;
          _object2 = msv2;
@@ -245,7 +245,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_parmeter_start_values_with_different_formulas_and_only_value_compare :concern_for_ObjectComparer
+   public class When_comparing_two_parameter_values_with_different_formulas_and_only_value_compare :concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -253,10 +253,10 @@ namespace OSPSuite.Core.DiffBuilders
 
          _comparerSettings.FormulaComparison = FormulaComparison.Value;
 
-         var msv1 = new ParameterStartValue().WithName("Tada").WithFormula(new ExplicitFormula("1+1"));
+         var msv1 = new ParameterValue().WithName("Tada").WithFormula(new ExplicitFormula("1+1"));
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
 
-         var msv2 = new ParameterStartValue().WithName("Tada").WithFormula(new ExplicitFormula("2"));
+         var msv2 = new ParameterValue().WithName("Tada").WithFormula(new ExplicitFormula("2"));
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          _object1 = msv1;
          _object2 = msv2;
@@ -269,7 +269,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_two_parmeter_start_values_with_different_dimensions : concern_for_ObjectComparer
+   public class When_comparing_two_parameter_values_with_different_dimensions : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -278,10 +278,10 @@ namespace OSPSuite.Core.DiffBuilders
          _comparerSettings.FormulaComparison = FormulaComparison.Value;
 
          var dim = A.Fake<IDimension>();
-         var msv1 = new ParameterStartValue().WithName("Tada").WithFormula(new ConstantFormula(2)).WithDimension(dim);
+         var msv1 = new ParameterValue().WithName("Tada").WithFormula(new ConstantFormula(2)).WithDimension(dim);
          msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
-         var dim2 = A.Fake<IDimension>();
-         var msv2 = new ParameterStartValue().WithName("Tada").WithFormula(new ConstantFormula(2)).WithDimension(dim2);
+         var dim2 = new Dimension(new BaseDimensionRepresentation(), "name", "name");
+         var msv2 = new ParameterValue().WithName("Tada").WithFormula(new ConstantFormula(2)).WithDimension(dim2);
          msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
          _object1 = msv1;
          _object2 = msv2;
@@ -289,6 +289,35 @@ namespace OSPSuite.Core.DiffBuilders
 
       [Observation]
       public void should_report_the_differences()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_comparing_two_initial_conditions_with_different_distribution_type : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+
+         var msv1 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
+         msv1.Path = new ObjectPath("Root", "Liver", "Plasma");
+         msv1.IsPresent = true;
+         msv1.ScaleDivisor = 10;
+         
+         var msv2 = new InitialCondition().WithName("Tada").WithFormula(new ConstantFormula(2));
+         msv2.Path = new ObjectPath("Root", "Liver", "Plasma");
+         msv2.IsPresent = true;
+         msv2.ScaleDivisor = 10;
+
+         msv2.DistributionType = DistributionType.Normal;
+
+         _object1 = msv1;
+         _object2 = msv2;
+      }
+
+      [Observation]
+      public void should_not_report_any_differences()
       {
          _report.Count.ShouldBeEqualTo(1);
       }

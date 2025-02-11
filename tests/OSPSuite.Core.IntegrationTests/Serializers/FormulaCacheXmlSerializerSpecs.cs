@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Serializers
       {
          IFormula f1 = CreateObject<ConstantFormula>().WithName("F.Constantin").WithDimension(DimensionLength).WithValue(2.1);
          IFormula f2 = CreateObject<ExplicitFormula>().WithName("F.Erika").WithDimension(DimensionLength).WithFormulaString("A * 2");
-         IFormulaUsablePath fup = new FormulaUsablePath(new[] {"aa", "bb"}).WithAlias("b").WithDimension(DimensionLength);
+         var fup = new FormulaUsablePath(new[] {"aa", "bb"}).WithAlias("b").WithDimension(DimensionLength);
          f2.AddObjectPath(fup);
 
          FormulaCache x1 = new FormulaCache();

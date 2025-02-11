@@ -3,7 +3,6 @@
    public enum ParameterBuildMode
    {
       Local,
-      Global,
-      Property,
+      Global
    }
 }

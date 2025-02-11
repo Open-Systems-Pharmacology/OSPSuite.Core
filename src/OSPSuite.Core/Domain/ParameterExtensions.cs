@@ -1,3 +1,4 @@
+using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Utility.Extensions;
 
@@ -45,6 +46,14 @@ namespace OSPSuite.Core.Domain
       public static bool IsConstantParameter(this IParameter parameter)
       {
          return parameter.IsFixedValue || parameter.Formula.IsConstant() || parameter.Formula.IsDistributed();
+      }
+
+      public static IParameter WithUpdatedMetaFrom(this IParameter parameter, ParameterValue parameterValue)
+      {
+         parameter.Origin.UpdatePropertiesFrom(parameterValue.Origin);
+         parameter.Info.UpdatePropertiesFrom(parameterValue.Info);
+         parameter.IsDefault = parameterValue.IsDefault;
+         return parameter;
       }
    }
 }

@@ -43,8 +43,18 @@ namespace OSPSuite.Core
       public virtual string LicenseAgreementFilePath { get; } = Constants.Files.LICENSE_AGREEMENT_FILE_NAME;
       private readonly bool _isReleasedVersion;
       private readonly Version _assemblyVersion;
+      private readonly string _localFolder;
 
-      protected OSPSuiteConfiguration(Version assemblyVersion = null)
+      /// <summary>
+      ///    Creates a configuration using the executing assembly and version
+      /// </summary>
+      /// <param name="executingAssembly">
+      ///    Call this method System.Reflection.Assembly.GetExecutingAssembly() to generate the
+      ///    <paramref name="executingAssembly" />.
+      ///    This code must execute in the caller, do not pull up
+      /// </param>
+      /// <param name="assemblyVersion"></param>
+      protected OSPSuiteConfiguration(Assembly executingAssembly, Version assemblyVersion = null)
       {
          _assemblyVersion = assemblyVersion ?? AssemblyVersion;
          Major = _assemblyVersion.Major;
@@ -52,6 +62,7 @@ namespace OSPSuite.Core
          Version = combineVersions(Major, Minor);
          Build = _assemblyVersion.Build;
          FullVersion = combineVersions(Version, Build);
+         _localFolder = new FileInfo((executingAssembly ?? Assembly.GetExecutingAssembly()).Location).DirectoryName;
 
          ReleaseDescription = retrieveReleaseDescription();
          _isReleasedVersion = string.Equals(FullVersion, ReleaseDescription);
@@ -144,16 +155,7 @@ namespace OSPSuite.Core
       /// </summary>
       protected string LocalPathFor(string fileName)
       {
-         var localFolder = AppDomain.CurrentDomain.BaseDirectory;
-
-         // Potentially null in Mono
-         if (string.IsNullOrEmpty(localFolder))
-            localFolder = new FileInfo(Assembly.GetExecutingAssembly().Location).DirectoryName;
-
-         if (string.IsNullOrEmpty(localFolder))
-            return null;
-
-         return Path.Combine(localFolder, fileName);
+         return Path.Combine(_localFolder, fileName);
       }
 
       private string getLocalPathOrAllUsersPathFor(string appDataName, string localName, Func<string, bool> existsFunc)

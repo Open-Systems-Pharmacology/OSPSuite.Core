@@ -14,8 +14,8 @@ namespace OSPSuite.Core.Domain
       protected BaseGrid _baseGrid1, _baseGrid2;
       protected IDimension _length;
       protected IDimension _mass;
-      protected IObserver _obsB;
-      protected IMoleculeAmount _spA;
+      protected Observer _obsB;
+      protected MoleculeAmount _spA;
       protected IDimension _time;
 
       protected override void Context()

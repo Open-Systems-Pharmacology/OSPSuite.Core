@@ -13,7 +13,7 @@ namespace OSPSuite.UI.Extensions
       /// <param name="view">The view to resize</param>
       /// <param name="fractionWidth">
       ///    A value in ]0;1] representing the fraction of the current screen width that should be used
-      ///    as witdh for the given view
+      ///    as width for the given view
       /// </param>
       /// <param name="fractionHeight">
       ///    A value in ]0;1] representing the fraction of the current screen height that should be
@@ -24,13 +24,13 @@ namespace OSPSuite.UI.Extensions
       ///    dimension.
       ///    If set to <c>false</c> the view will always be resized
       /// </param>
-      public static void ReziseForCurrentScreen(this Form view, double fractionWidth = 1, double fractionHeight = 1, bool resizeOnlyIfOutOfBound = true)
+      public static void ResizeForCurrentScreen(this Form view, double fractionWidth = 1, double fractionHeight = 1, bool resizeOnlyIfOutOfBound = true)
       {
          var workingArea = Screen.PrimaryScreen.WorkingArea;
-         ReziseForCurrentScreen(view, workingArea, fractionWidth, fractionHeight, resizeOnlyIfOutOfBound);
+         ResizeForCurrentScreen(view, workingArea, fractionWidth, fractionHeight, resizeOnlyIfOutOfBound);
       }
 
-      internal static void ReziseForCurrentScreen(Form view, Rectangle workingArea, double fractionWidth, double fractionHeight, bool resizeOnlyIfOutOfBound)
+      internal static void ResizeForCurrentScreen(Form view, Rectangle workingArea, double fractionWidth, double fractionHeight, bool resizeOnlyIfOutOfBound)
       {
          int resizedWidth = Convert.ToInt32(workingArea.Width * fractionWidth);
          int resizeHeight = Convert.ToInt32(workingArea.Height * fractionHeight);
@@ -54,7 +54,7 @@ namespace OSPSuite.UI.Extensions
       }
 
       /// <summary>
-      /// Ensures that the view is brought to the front of the screen, even it was minimized or is hidden behing another view of the application
+      /// Ensures that the view is brought to the front of the screen, even it was minimized or is hidden behind another view of the application
       /// </summary>
       public static void EnsureVisible(this Form view)
       {

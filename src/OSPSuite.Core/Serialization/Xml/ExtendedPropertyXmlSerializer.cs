@@ -45,7 +45,7 @@ namespace OSPSuite.Core.Serialization.Xml
 
    public class NullableDoubleExtendedPropertyXmlSerializer : ExtendedPropertyXmlSerializer<double?>
    {
-      protected NullableDoubleExtendedPropertyXmlSerializer() : base($"{"NullableDouble"}ExtendedProperty")
+      protected NullableDoubleExtendedPropertyXmlSerializer() : base("NullableDoubleExtendedProperty")
       {
       }
    }

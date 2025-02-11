@@ -111,10 +111,20 @@ namespace OSPSuite.Presentation.Services
 
       public override bool AreFromSameMetaDataCombination(DataRepository sourceDataRepository, DataRepository targetDataRepository)
       {
-         return targetDataRepository.ExtendedProperties.KeyValues.All(keyValuePair =>
-            keyValuePair.Key == Constants.FILE || //Ignore source file
-            Equals(sourceDataRepository.ExtendedProperties[keyValuePair.Key].ValueAsObject, keyValuePair.Value.ValueAsObject)
+         return compareMetaData(sourceDataRepository, targetDataRepository) && compareMetaData(targetDataRepository, sourceDataRepository);
+      }
+
+      private static bool compareMetaData(DataRepository firstRepository, DataRepository secondRepository)
+      {
+         // do not compare the file name when checking for equivalent metadata
+         return secondRepository.ExtendedProperties.KeyValues.Where(x => !Equals(x.Key, Constants.FILE)).All(keyValuePair =>
+            hasEquivalentMetaData(firstRepository.ExtendedProperties, keyValuePair)
          );
+      }
+
+      private static bool hasEquivalentMetaData(ExtendedProperties sourceExtendedProperties, KeyValuePair<string, IExtendedProperty> keyValuePair)
+      {
+         return sourceExtendedProperties.Contains(keyValuePair.Key) && Equals(sourceExtendedProperties[keyValuePair.Key].ValueAsObject, keyValuePair.Value.ValueAsObject);
       }
 
       private bool repositoryExistsInList(IEnumerable<DataRepository> dataRepositoryList, DataRepository targetDataRepository)

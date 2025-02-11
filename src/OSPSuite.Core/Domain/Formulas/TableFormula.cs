@@ -5,7 +5,6 @@ using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Maths.Interpolations;
-using OSPSuite.Utility;
 
 namespace OSPSuite.Core.Domain.Formulas
 {
@@ -52,7 +51,7 @@ namespace OSPSuite.Core.Domain.Formulas
    public class TableFormula : Formula
    {
       private readonly IInterpolation _interpolation;
-      private readonly IList<ValuePoint> _allPoints;
+      private readonly List<ValuePoint> _allPoints;
       private Unit _xDisplayUnit;
       private Unit _yDisplayUnit;
 
@@ -88,9 +87,9 @@ namespace OSPSuite.Core.Domain.Formulas
          UseDerivedValues = true;
       }
 
-      public virtual IEnumerable<ValuePoint> AllPoints() => _allPoints;
+      public virtual IReadOnlyList<ValuePoint> AllPoints => _allPoints;
 
-      public virtual ValuePoint[] AllPointsAsArray() => AllPoints().ToArray();
+      public virtual ValuePoint[] AllPointsAsArray() => AllPoints.ToArray();
 
       /// <summary>
       ///    Returns the yValue defined for the xValue in base unit given as parameter. If the table contains no point, 0 is
@@ -283,7 +282,7 @@ namespace OSPSuite.Core.Domain.Formulas
          _yDisplayUnit = tableFormula._yDisplayUnit;
 
          ClearPoints();
-         tableFormula.AllPoints().Each(p => AddPoint(p.Clone()));
+         tableFormula.AllPoints.Each(p => AddPoint(p.Clone()));
       }
    }
 }

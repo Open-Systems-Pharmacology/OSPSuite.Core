@@ -88,15 +88,15 @@ namespace OSPSuite.Core.Domain.Services
 
       private void reportFor(IContainer container)
       {
-         if (container.IsAnImplementationOf<INeighborhood>())
+         if (container.IsAnImplementationOf<Neighborhood>())
             return;
-         if (container.IsAnImplementationOf<ITransport>())
+         if (container.IsAnImplementationOf<Transport>())
             return;
-         if (container.IsAnImplementationOf<IReaction>())
+         if (container.IsAnImplementationOf<Reaction>())
             return;
          if (container.IsAnImplementationOf<IParameter>())
             return;
-         if (container.IsAnImplementationOf<IMoleculeAmount>())
+         if (container.IsAnImplementationOf<MoleculeAmount>())
             return;
 
          if (container.Name.Equals(Constants.MOLECULE_PROPERTIES) || container.ParentContainer.Name.Equals(Constants.MOLECULE_PROPERTIES))
@@ -127,7 +127,7 @@ namespace OSPSuite.Core.Domain.Services
          _report.AppendLine();
       }
 
-      private void reportFor(INeighborhood neighborhood)
+      private void reportFor(Neighborhood neighborhood)
       {
          _report.AppendFormat("Neighborhood: {0}", neighborhood.Name);
          _report.AppendLine();
@@ -141,7 +141,7 @@ namespace OSPSuite.Core.Domain.Services
          _report.AppendLine();
       }
 
-      private void reportFor(IMoleculeAmount moleculeAmount)
+      private void reportFor(MoleculeAmount moleculeAmount)
       {
          if (moleculeAmount.Formula.IsAnImplementationOf<ConstantFormula>() && (moleculeAmount.Value == 0))
             return;
@@ -155,7 +155,7 @@ namespace OSPSuite.Core.Domain.Services
          _report.AppendLine();
       }
 
-      private void reportFor(IObserver observer)
+      private void reportFor(Observer observer)
       {
          _report.AppendFormat("Observer: {0}", observer.Name);
          _report.AppendLine();
@@ -202,7 +202,7 @@ namespace OSPSuite.Core.Domain.Services
          _report.AppendLine();
       }
 
-      private void reportFor(IEvent modelEvent)
+      private void reportFor(Event modelEvent)
       {
          _report.AppendFormat("Event: {0}", modelEvent.Name);
          _report.AppendLine();
@@ -223,7 +223,7 @@ namespace OSPSuite.Core.Domain.Services
          _report.AppendLine();
       }
 
-      private void reportFor(IReaction reaction)
+      private void reportFor(Reaction reaction)
       {
          _report.AppendFormat("Reaction: {0}", reaction.Name);
          _report.AppendLine();
@@ -248,7 +248,7 @@ namespace OSPSuite.Core.Domain.Services
          _report.AppendLine();
       }
 
-      private void reportFor(ITransport transport)
+      private void reportFor(Transport transport)
       {
          _report.AppendFormat("Transport: {0}", transport.Name);
          _report.AppendLine();
@@ -290,7 +290,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private void reportFor(TableFormula tableFormula, int noOfTabs)
       {
-         foreach (var valuePoint in tableFormula.AllPoints())
+         foreach (var valuePoint in tableFormula.AllPoints)
          {
             _report.AppendFormat("{0}{1}; {2}   RestartSolver = {3}", tabs(noOfTabs), valuePoint.X, valuePoint.Y, valuePoint.RestartSolver);
             _report.AppendLine();
@@ -380,7 +380,7 @@ namespace OSPSuite.Core.Domain.Services
          if (model == null) return;
          addSeparatorFor("NEIGHBORHOODS");
 
-         foreach (var neighborhood in model.Neighborhoods.GetAllChildren<INeighborhood>())
+         foreach (var neighborhood in model.Neighborhoods.GetAllChildren<Neighborhood>())
          {
             reportFor(neighborhood);
          }
@@ -388,32 +388,32 @@ namespace OSPSuite.Core.Domain.Services
 
       private void moleculesStartValuesReport()
       {
-         createEntityReport<IMoleculeAmount>("MOLECULE_START_FORMULAS (Non zero only)", reportFor);
+         createEntityReport<MoleculeAmount>("MOLECULE_START_FORMULAS (Non zero only)", reportFor);
       }
 
       private void transportsReport()
       {
-         createEntityReport<ITransport>("TRANSPORTS", reportFor);
+         createEntityReport<Transport>("TRANSPORTS", reportFor);
       }
 
       private void observersReport()
       {
-         createEntityReport<IObserver>("OBSERVER (Non zero only)", reportFor);
+         createEntityReport<Observer>("OBSERVER (Non zero only)", reportFor);
       }
 
       private void parametersReport()
       {
-         createEntityReport<IParameter>("PARAMETER", reportFor);
+         createEntityReport<Parameter>("PARAMETER", reportFor);
       }
 
       private void eventsReport()
       {
-         createEntityReport<IEvent>("SWITCHES", reportFor);
+         createEntityReport<Event>("SWITCHES", reportFor);
       }
 
       private void reactionsReport()
       {
-         createEntityReport<IReaction>("REACTIONS", reportFor);
+         createEntityReport<Reaction>("REACTIONS", reportFor);
       }
 
       private void createEntityReport<T>(string separatorName, Action<T> reportFor)

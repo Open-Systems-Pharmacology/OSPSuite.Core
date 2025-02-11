@@ -7,7 +7,7 @@ using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
-   public class ObjectPathXmlSerializer<T> : OSPSuiteXmlSerializer<T> where T : class, IObjectPath
+   public class ObjectPathXmlSerializer<T> : OSPSuiteXmlSerializer<T> where T : ObjectPath
    {
       public ObjectPathXmlSerializer()
       {

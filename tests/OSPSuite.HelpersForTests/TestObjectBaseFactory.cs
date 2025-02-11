@@ -12,10 +12,10 @@ namespace OSPSuite.Helpers
       public T Create<T>() where T : class,  IObjectBase
       {
 
-         if (typeof(T).IsAnImplementationOf<IMoleculeAmount>())
+         if (typeof(T).IsAnImplementationOf<MoleculeAmount>())
             return new MoleculeAmount().DowncastTo<T>();
          
-         if (typeof(T).IsAnImplementationOf<INeighborhoodBuilder>())
+         if (typeof(T).IsAnImplementationOf<NeighborhoodBuilder>())
             return new NeighborhoodBuilder().DowncastTo<T>();
 
          return A.Fake<T>();

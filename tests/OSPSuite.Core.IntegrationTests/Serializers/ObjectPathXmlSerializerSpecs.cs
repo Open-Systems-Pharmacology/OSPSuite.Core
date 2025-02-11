@@ -1,7 +1,6 @@
 using NUnit.Framework;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Helpers;
-using OSPSuite.Helpers;
 using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core.Serializers
@@ -11,8 +10,7 @@ namespace OSPSuite.Core.Serializers
       [Test]
       public void TestSerialization()
       {
-         var objectPathFactory = IoC.Resolve<IObjectPathFactory>();
-         var x1 = objectPathFactory.CreateObjectPathFrom(new[] {"aa", "bb"}) as ObjectPath;
+         var x1 = new[] {"aa", "bb"}.ToObjectPath();
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualObjectPath(x2, x1);
       }
@@ -24,7 +22,7 @@ namespace OSPSuite.Core.Serializers
       public void TestSerialization()
       {
          var objectPathFactory = IoC.Resolve<IObjectPathFactory>();
-         var x1 = objectPathFactory.CreateFormulaUsablePathFrom(new[] {"..", "aa", "bb"}).WithAlias("FUP").WithDimension(DimensionLength) as FormulaUsablePath;
+         var x1 = objectPathFactory.CreateFormulaUsablePathFrom("..", "aa", "bb").WithAlias("FUP").WithDimension(DimensionLength) as FormulaUsablePath;
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualFormulaUsablePath(x2, x1);
       }

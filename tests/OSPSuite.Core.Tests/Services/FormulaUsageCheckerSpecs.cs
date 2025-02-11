@@ -11,8 +11,8 @@ namespace OSPSuite.Core.Services
    public abstract class concern_for_FormulaUsageChecker : ContextSpecification<FormulaUsageChecker>
    {
       protected IFormula _formula;
-      protected IMoleculeBuildingBlock _buildingBlock;
-      protected IMoleculeBuilder _moleculeBuilder;
+      protected MoleculeBuildingBlock _buildingBlock;
+      protected MoleculeBuilder _moleculeBuilder;
 
       protected override void Context()
       {

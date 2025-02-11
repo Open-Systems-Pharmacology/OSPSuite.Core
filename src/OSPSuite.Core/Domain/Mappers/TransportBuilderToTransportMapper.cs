@@ -5,16 +5,16 @@ using OSPSuite.Utility.Extensions;
 namespace OSPSuite.Core.Domain.Mappers
 {
    /// <summary>
-   ///    Mapper for the creation of a Transport in the model from <see cref="ITransportBuilder" />.
+   ///    Mapper for the creation of a Transport in the model from <see cref="TransportBuilder" />.
    /// </summary>
-   public interface ITransportBuilderToTransportMapper : IBuilderMapper<ITransportBuilder, ITransport>
+   internal interface ITransportBuilderToTransportMapper : IBuilderMapper<TransportBuilder, Transport>
    {
    }
 
    /// <summary>
-   ///    Mapper for the creation of a Transport in the model from <see cref="ITransportBuilder" />.
+   ///    Mapper for the creation of a Transport in the model from <see cref="TransportBuilder" />.
    /// </summary>
-   public class TransportBuilderToTransportMapper : ITransportBuilderToTransportMapper
+   internal class TransportBuilderToTransportMapper : ITransportBuilderToTransportMapper
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IFormulaBuilderToFormulaMapper _formulaMapper;
@@ -32,33 +32,33 @@ namespace OSPSuite.Core.Domain.Mappers
          _processRateParameterCreator = processRateParameterCreator;
       }
 
-      public ITransport MapFrom(ITransportBuilder transportBuilder, IBuildConfiguration buildConfiguration)
+      public Transport MapFrom(TransportBuilder transportBuilder, SimulationBuilder simulationBuilder)
       {
-         var transport = _objectBaseFactory.Create<ITransport>()
+         var transport = _objectBaseFactory.Create<Transport>()
             .WithName(transportBuilder.Name)
             .WithIcon(transportBuilder.Icon)
             .WithDimension(transportBuilder.Dimension)
-            .WithFormula(_formulaMapper.MapFrom(transportBuilder.Formula, buildConfiguration));
+            .WithFormula(_formulaMapper.MapFrom(transportBuilder.Formula, simulationBuilder));
 
-         buildConfiguration.AddBuilderReference(transport, transportBuilder);
+         simulationBuilder.AddBuilderReference(transport, transportBuilder);
 
-         addLocalParameters(transport, transportBuilder, buildConfiguration);
+         addLocalParameters(transport, transportBuilder, simulationBuilder);
 
          //lastly, add parameter rate transporter if required
-         if (transportBuilder.CreateProcessRateParameter)
-            transport.Add(processRateParameterFor(transportBuilder, buildConfiguration));
+         if (transportBuilder.CreateProcessRateParameter || simulationBuilder.CreateAllProcessRateParameters)
+            transport.Add(processRateParameterFor(transportBuilder, simulationBuilder));
 
          return transport;
       }
 
-      private void addLocalParameters(ITransport transport, ITransportBuilder transportBuilder, IBuildConfiguration buildConfiguration)
+      private void addLocalParameters(Transport transport, TransportBuilder transportBuilder, SimulationBuilder simulationBuilder)
       {
-         transport.AddChildren(_parameterMapper.MapLocalFrom(transportBuilder, buildConfiguration));
+         transport.AddChildren(_parameterMapper.MapLocalFrom(transportBuilder, simulationBuilder));
       }
 
-      private IParameter processRateParameterFor(ITransportBuilder transportBuilder, IBuildConfiguration buildConfiguration)
+      private IParameter processRateParameterFor(TransportBuilder transportBuilder, SimulationBuilder simulationBuilder)
       {
-         var parameter = _processRateParameterCreator.CreateProcessRateParameterFor(transportBuilder, buildConfiguration);
+         var parameter = _processRateParameterCreator.CreateProcessRateParameterFor(transportBuilder, simulationBuilder);
 
          parameter.AddTag(ObjectPathKeywords.MOLECULE);
          parameter.AddTag(ObjectPathKeywords.NEIGHBORHOOD);
@@ -66,7 +66,7 @@ namespace OSPSuite.Core.Domain.Mappers
          return parameter;
       }
 
-      private IReadOnlyList<string> transportTypeTagsFor(ITransportBuilder transportBuilder)
+      private IReadOnlyList<string> transportTypeTagsFor(TransportBuilder transportBuilder)
       {
          if (!transportBuilder.TransportType.Is(TransportType.Active))
             return new[] {Constants.PASSIVE};

@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Serializers
       {
          base.GlobalContext();
          var dimensionFactory = IoC.Resolve<IDimensionFactory>();
-         DimensionLength = dimensionFactory.Dimension("Length");
+         DimensionLength = dimensionFactory.Dimension(Constants.Dimension.LENGTH);
          DimensionTime = dimensionFactory.Dimension(Constants.Dimension.TIME);
          DimensionMolarConcentration = dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
          DimensionMassConcentration = dimensionFactory.Dimension(Constants.Dimension.MASS_CONCENTRATION);
@@ -37,15 +37,17 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public abstract class ModellingXmlSerializerWithModelBaseSpecs : ModellingXmlSerializerBaseSpecs
+   internal abstract class ModellingXmlSerializerWithModelBaseSpecs : ModellingXmlSerializerBaseSpecs
    {
-      protected IBuildConfiguration _buildConfiguration;
+      protected SimulationConfiguration _simulationConfiguration;
       protected IObjectPathFactory _objectPathFactory;
-      protected IMoleculeStartValuesCreator _moleculeStartValuesCreator;
+      protected IInitialConditionsCreator _initialConditionsCreator;
       protected CreationResult _result;
       protected IModel _model;
       protected IModelCoreSimulation _simulation;
       protected IModelConstructor _modelConstructor;
+      protected Module _module;
+      protected SimulationBuilder _simulationBuilder;
 
       public override void GlobalContext()
       {
@@ -56,15 +58,17 @@ namespace OSPSuite.Core.Serializers
       protected virtual void InitializeSimulation()
       {
          _objectPathFactory = IoC.Resolve<IObjectPathFactory>();
-         _moleculeStartValuesCreator = IoC.Resolve<IMoleculeStartValuesCreator>();
-         _buildConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateBuildConfiguration();
+         _initialConditionsCreator = IoC.Resolve<IInitialConditionsCreator>();
+         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _module = _simulationConfiguration.ModuleConfigurations[0].Module;
          _modelConstructor = IoC.Resolve<IModelConstructor>();
-         _result = _modelConstructor.CreateModelFrom(_buildConfiguration, "MyModel");
+         _result = _modelConstructor.CreateModelFrom(_simulationConfiguration, "MyModel");
          _model = _result.Model;
          _simulation = new ModelCoreSimulation
          {
             Id = "SimulationId",
-            BuildConfiguration = _buildConfiguration,
+            Configuration = _simulationConfiguration,
             Model = _model
          };
       }

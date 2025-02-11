@@ -1,36 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FakeItEasy;
-using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Helpers;
 using OSPSuite.SimModel;
 using OSPSuite.Utility.Container;
-using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core
 {
    public abstract class concern_for_SimModelBatch : ContextForIntegration<ISimModelBatch>
    {
       protected IDataFactory _dataFactory;
-      protected ISimModelExporter _simModelExporter;
 
       protected string[] _variableParameterPaths;
-      protected string[]_variableSpeciesPath;
-
-      protected ISimModelSimulationFactory _simModelSimulationFactory;
+      protected string[] _variableSpeciesPath;
       protected Simulation _simModelSimulation;
-      protected string _simModelXmlString;
-      private IObjectPathFactory _objectPathFactory;
       protected IModelCoreSimulation _modelCoreSimulation;
       private SimModelManagerForSpecs _simModelManagerForSpecs;
 
@@ -38,7 +28,6 @@ namespace OSPSuite.Core
       {
          base.GlobalContext();
 
-         _objectPathFactory = IoC.Resolve<IObjectPathFactory>();
          _modelCoreSimulation = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
          var simModelExporter = IoC.Resolve<ISimModelExporter>();
          var simModelSimulationFactory = A.Fake<ISimModelSimulationFactory>();
@@ -49,14 +38,14 @@ namespace OSPSuite.Core
          _dataFactory = A.Fake<IDataFactory>();
          _variableParameterPaths = new[]
          {
-            _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.BW).PathAsString,
-            _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.TableParameter1).PathAsString,
+            new ObjectPath(Constants.ORGANISM, ConstantsForSpecs.BW).PathAsString,
+            new ObjectPath(Constants.ORGANISM, ConstantsForSpecs.TableParameter1).PathAsString,
          };
 
-         _variableSpeciesPath = new []
+         _variableSpeciesPath = new[]
          {
-            _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.ArterialBlood, ConstantsForSpecs.Plasma, "A").PathAsString,
-            _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "B").PathAsString,
+            new ObjectPath(Constants.ORGANISM, ConstantsForSpecs.ArterialBlood, ConstantsForSpecs.Plasma, "A").PathAsString,
+            new ObjectPath(Constants.ORGANISM, ConstantsForSpecs.VenousBlood, ConstantsForSpecs.Plasma, "B").PathAsString,
          };
 
          sut = new SimModelBatch(simModelExporter, simModelSimulationFactory, _dataFactory);
@@ -65,7 +54,6 @@ namespace OSPSuite.Core
 
    public class When_initializing_the_sim_model_batch_with_a_simulation_and_a_list_of_variable_parameters : concern_for_SimModelBatch
    {
-
       protected override void Because()
       {
          sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths, _variableSpeciesPath);
@@ -96,7 +84,7 @@ namespace OSPSuite.Core
       {
          base.Context();
          _simulationResultsName = "TTT";
-         sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths,_variableSpeciesPath,  false, _simulationResultsName);
+         sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths, _variableSpeciesPath, false, _simulationResultsName);
 
          _variableParameters = _simModelSimulation.VariableParameters;
          sut.UpdateParameterValue(_variableParameterPaths[0], 10);
@@ -160,7 +148,5 @@ namespace OSPSuite.Core
       {
          File.Exists(Path.Combine(_exportFolder, "Standard.cpp")).ShouldBeTrue();
       }
-
    }
-
 }

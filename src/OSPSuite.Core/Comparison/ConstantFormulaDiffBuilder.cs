@@ -5,10 +5,12 @@ namespace OSPSuite.Core.Comparison
 {
    public class ConstantFormulaDiffBuilder : DiffBuilder<ConstantFormula>
    {
+      private readonly IObjectComparer _objectComparer;
       private readonly IDisplayUnitRetriever _displayUnitRetriever;
 
-      public ConstantFormulaDiffBuilder(IDisplayUnitRetriever displayUnitRetriever)
+      public ConstantFormulaDiffBuilder(IObjectComparer objectComparer, IDisplayUnitRetriever displayUnitRetriever)
       {
+         _objectComparer = objectComparer;
          _displayUnitRetriever = displayUnitRetriever;
       }
 
@@ -16,7 +18,7 @@ namespace OSPSuite.Core.Comparison
       {
          if (!comparison.Settings.CompareHiddenEntities) return;
          CompareDoubleValues(x => x.Value, x => x.Value, comparison,x=> _displayUnitRetriever.PreferredUnitFor(x));
-         CompareValues(x => x.Dimension, x => x.Dimension, comparison);
+         _objectComparer.Compare(comparison.DimensionComparison());
       }
    }
 }

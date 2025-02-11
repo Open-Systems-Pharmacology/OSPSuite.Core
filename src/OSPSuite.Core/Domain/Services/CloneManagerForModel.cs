@@ -17,7 +17,7 @@ namespace OSPSuite.Core.Domain.Services
    public interface ICloneManagerForModel : ICloneManager
    {
       /// <summary>
-      /// Clones the <paramref name="model "/> and ensure that all references are finalized
+      ///    Clones the <paramref name="model " /> and ensure that all references are finalized
       /// </summary>
       IModel CloneModel(IModel model);
    }

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Domain
 {
@@ -12,6 +11,8 @@ namespace OSPSuite.Core.Domain
          parent?.Add(entity);
          return entity;
       }
+
+      public static T Under<T>(this T entity, IContainer parent) where T : IEntity => WithParentContainer(entity, parent);
 
       public static string EntityPath(this IEntity entity)
       {

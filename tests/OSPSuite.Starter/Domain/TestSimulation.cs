@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
 
 namespace OSPSuite.Starter.Domain
@@ -18,8 +17,9 @@ namespace OSPSuite.Starter.Domain
          get { yield break; }
       }
 
-      public OutputMappings OutputMappings { get; set; }
+      public OutputMappings OutputMappings { get; set; } = new OutputMappings();
       public DataRepository ResultsDataRepository { get; set; }
+
       public void RemoveUsedObservedData(DataRepository dataRepository)
       {
       }
@@ -29,22 +29,20 @@ namespace OSPSuite.Starter.Domain
       }
 
       public OutputSchema OutputSchema => Settings.OutputSchema;
-      public ISimulationSettings Settings => BuildConfiguration.SimulationSettings;
-
 
       public void AddChartTemplate(CurveChartTemplate chartTemplate)
       {
-         SimulationSettings.AddChartTemplate(chartTemplate);
+         Settings.AddChartTemplate(chartTemplate);
       }
 
       public void RemoveChartTemplate(string chartTemplateName)
       {
-         SimulationSettings.RemoveChartTemplate(chartTemplateName);
+         Settings.RemoveChartTemplate(chartTemplateName);
       }
 
-      public IEnumerable<CurveChartTemplate> ChartTemplates => SimulationSettings.ChartTemplates;
+      public IEnumerable<CurveChartTemplate> ChartTemplates => Settings.ChartTemplates;
 
-      public CurveChartTemplate DefaultChartTemplate => SimulationSettings.DefaultChartTemplate;
+      public CurveChartTemplate DefaultChartTemplate => Settings.DefaultChartTemplate;
 
       public bool IsLoaded { get; set; }
 

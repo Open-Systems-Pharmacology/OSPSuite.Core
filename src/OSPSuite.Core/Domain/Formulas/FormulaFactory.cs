@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Domain.Formulas
       ///    <see cref="MoleculeAmount" />.
       ///    The <see cref="MoleculeAmount" /> should be defined in a <see cref="IContainer" /> containing a
       ///    <see cref="IParameter" /> named Volume.
-      ///    Only then can the created formula be succesfully computed.
+      ///    Only then can the created formula be successfully computed.
       /// </summary>
       /// <remarks>
       ///    If a formula named <see cref="Constants.CONCENTRATION_FORMULA" /> already exists in the
@@ -101,7 +101,7 @@ namespace OSPSuite.Core.Domain.Formulas
             .WithFormulaString(formulaString);
       }
 
-      private IFormulaUsablePath createVolumeReferencePath(params string[] pathToVolumeParameter)
+      private FormulaUsablePath createVolumeReferencePath(params string[] pathToVolumeParameter)
       {
          return _objectPathFactory.CreateFormulaUsablePathFrom(pathToVolumeParameter)
             .WithAlias(Constants.VOLUME_ALIAS)

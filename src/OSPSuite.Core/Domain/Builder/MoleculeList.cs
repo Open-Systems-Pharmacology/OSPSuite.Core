@@ -1,49 +1,36 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Builder
 {
    public class MoleculeList : IUpdatable
    {
-      private readonly List<string> _moleculeNamesToInclude;
-      private readonly List<string> _moleculeNamesToExclude;
+      private readonly List<string> _moleculeNamesToInclude = new List<string>();
+      private readonly List<string> _moleculeNamesToExclude = new List<string>();
 
       /// <summary>
       ///    If true, all molecules (with exception of those in <see cref="MoleculeNamesToExclude" />) will be used
       ///    If false, only the molecules in <see cref="MoleculeNames" /> will be used
       /// </summary>
-      public bool ForAll { get; set; }
-
-      public MoleculeList()
-      {
-         ForAll = true;
-         _moleculeNamesToInclude = new List<string>();
-         _moleculeNamesToExclude = new List<string>();
-      }
+      public bool ForAll { get; set; } = true;
 
       /// <summary>
       ///    If <see cref="ForAll" /> is set to false, only molecules from this list will be used.
       ///    <para />
       ///    Otherwise (<see cref="ForAll" />=true) not relevant
       /// </summary>
-      public virtual IEnumerable<string> MoleculeNames
-      {
-         get { return _moleculeNamesToInclude; }
-      }
+      public virtual IReadOnlyList<string> MoleculeNames => _moleculeNamesToInclude;
 
       /// <summary>
-      ///    If <see cref="ForAll" /> is set to true, molecules from this liost will be excluded from use.
+      ///    If <see cref="ForAll" /> is set to true, molecules from this list will be excluded from use.
       ///    <para />
       ///    Otherwise (<see cref="ForAll" />=false) not relevant
       /// </summary>
-      public virtual IEnumerable<string> MoleculeNamesToExclude
-      {
-         get { return _moleculeNamesToExclude; }
-      }
+      public virtual IReadOnlyList<string> MoleculeNamesToExclude => _moleculeNamesToExclude;
 
       /// <summary>
       ///    Add molecule name to use. If molecule name already exists in the list or in
@@ -123,10 +110,7 @@ namespace OSPSuite.Core.Domain.Builder
          sourceMoleculeDependentBuilder.MoleculeNamesToExclude.Each(AddMoleculeNameToExclude);
       }
 
-      public virtual void Update(MoleculeList moleculeList)
-      {
-         UpdatePropertiesFrom(moleculeList, null);
-      }
+      public virtual void Update(MoleculeList moleculeList) => UpdatePropertiesFrom(moleculeList, null);
 
       public virtual MoleculeList Clone()
       {
@@ -153,16 +137,13 @@ namespace OSPSuite.Core.Domain.Builder
       }
 
       /// <summary>
-      ///    Replaces any occurence of <paramref name="templateName" /> with <paramref name="moleculeName" /> in both lists to
+      ///    Replaces any occurrence of <paramref name="templateName" /> with <paramref name="moleculeName" /> in both lists to
       ///    include and exclude
       /// </summary>
-      public virtual void ReplaceMoleculeName(string templateName, string moleculeName)
-      {
-         ReplaceMoleculeName(templateName, new[] {moleculeName});
-      }
+      public virtual void ReplaceMoleculeName(string templateName, string moleculeName) => ReplaceMoleculeName(templateName, new[] { moleculeName });
 
       /// <summary>
-      ///    Replaces each occurence of <paramref name="templateName" /> with one entry for each name in
+      ///    Replaces each occurrence of <paramref name="templateName" /> with one entry for each name in
       ///    <paramref name="moleculeNames" /> in both lists to include and exclude
       /// </summary>
       public virtual void ReplaceMoleculeName(string templateName, IReadOnlyList<string> moleculeNames)

@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using OSPSuite.Utility.Extensions;
+using System.Linq;
 using OSPSuite.Core.Diagram;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Diagram.Elements;
 using OSPSuite.Presentation.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Diagram
 {
@@ -26,13 +29,13 @@ namespace OSPSuite.Presentation.Diagram
       {
          CurrentInsertLocation = new PointF(10, 10);
          UpdateMethods = new Dictionary<Type, Action<IObjectBase, IBaseNode>>();
-         RegisterUpdateMethod(typeof (IContainer), UpdateContainer);
-         RegisterUpdateMethod(typeof (INeighborhoodBase), UpdateNeighborhoodBase);
+         RegisterUpdateMethod<IContainer>(UpdateContainer);
+         RegisterUpdateMethod< INeighborhoodBase>(UpdateNeighborhoodBase);
       }
 
       public PointF CurrentInsertLocation
       {
-         get { return _currentInsertLocation; }
+         get => _currentInsertLocation;
          set
          {
             _previousInsertLocation = _currentInsertLocation;
@@ -57,7 +60,7 @@ namespace OSPSuite.Presentation.Diagram
          return CurrentInsertLocation == PreviousInsertLocation;
       }
 
-      public bool MustHandleExisting(string id) 
+      public bool MustHandleExisting(string id)
       {
          if (string.IsNullOrEmpty(id) || PkModel == null)
             return false;
@@ -82,6 +85,7 @@ namespace OSPSuite.Presentation.Diagram
          {
             DiagramModel.EndUpdate();
          }
+
          IsInitialized = true;
       }
 
@@ -98,8 +102,8 @@ namespace OSPSuite.Presentation.Diagram
          foreach (var containerNode in DiagramModel.GetAllChildren<IContainerNode>())
          {
             containerNode.CalculateBounds();
-            // to adjust neighborhoodlinks to possibly smaller container node
-            containerNode.PostLayoutStep();         
+            // to adjust neighborhood links to possibly smaller container node
+            containerNode.PostLayoutStep();
          }
 
          foreach (var node in DiagramModel.GetAllChildren<IBaseNode>())
@@ -108,13 +112,13 @@ namespace OSPSuite.Presentation.Diagram
          }
       }
 
-      public void RefreshDiagramFromModel() 
+      public void RefreshDiagramFromModel()
       {
          try
          {
             DiagramModel.BeginUpdate();
             // do not couple already existing nodes again
-            UpdateDiagramModel(PkModel, DiagramModel, coupleAll: false); 
+            UpdateDiagramModel(PkModel, DiagramModel, coupleAll: false);
          }
          finally
          {
@@ -152,7 +156,7 @@ namespace OSPSuite.Presentation.Diagram
          if (entity?.ParentContainer != null)
          {
             parentContainerBase = (IContainerBase) DiagramModel.GetNode(entity.ParentContainer.Id);
-            if (parentContainerBase == null) 
+            if (parentContainerBase == null)
                return; //do not add container or parameter in containers not shown, e.g. in globalmoleculedependentproperties
 
             // therefore the node for neighborhoodsContainer has to be created (see InitializeWith)
@@ -166,16 +170,17 @@ namespace OSPSuite.Presentation.Diagram
 
       protected virtual bool DecoupleObjectBase(IObjectBase objectBase, bool recursive)
       {
-         if (objectBase.GetType() == typeof (Container))
+         if (objectBase.GetType() == typeof(Container))
          {
             var container = objectBase.DowncastTo<IContainer>();
             if (recursive)
             {
                foreach (var child in container.Children)
                {
-                  DecoupleObjectBase(child,recursive: true);
+                  DecoupleObjectBase(child, recursive: true);
                }
             }
+
             return Decouple<IContainer, IContainerNode>(container);
          }
 
@@ -189,7 +194,7 @@ namespace OSPSuite.Presentation.Diagram
       {
          var container = containerAsEntity as IContainer;
          var containerNode = containerNodeAsBaseNode as IContainerNode;
-         containerNode.IsLogical = (container.Mode == ContainerMode.Logical);
+         containerNode.IsLogical = container?.Mode == ContainerMode.Logical;
 
          if (!DiagramOptions.MoleculePropertiesVisible && containerNode.Name == Constants.MOLECULE_PROPERTIES)
             containerNode.IsVisible = false;
@@ -200,24 +205,33 @@ namespace OSPSuite.Presentation.Diagram
          var neighborhoodBase = neighborhoodBaseAsEntity as INeighborhoodBase;
          var neighborhoodBaseNode = neighborhoodNodeAsBaseNode as INeighborhoodNode;
          neighborhoodBaseNode.Description = neighborhoodBase.Name;
-         
+
          if (!string.IsNullOrEmpty(neighborhoodBase.Description))
             neighborhoodBaseNode.Description += Environment.NewLine + neighborhoodBase.Description;
          else
-            neighborhoodBaseNode.Description += Environment.NewLine + "Neighborhood between " + neighborhoodBase.FirstNeighbor.EntityPath() + " and " + neighborhoodBase.SecondNeighbor.EntityPath();
+         {
+            var (firstNeighborPath, secondNeighborPath) = PathsForNeighborhood(neighborhoodBase);
+            neighborhoodBaseNode.Description += Environment.NewLine + "Neighborhood between " + firstNeighborPath + " and " + secondNeighborPath;
+         }
       }
 
-      protected void RegisterUpdateMethod(Type entityType, Action<IObjectBase, IBaseNode> updateMethod)
+      protected virtual (string, string) PathsForNeighborhood(INeighborhoodBase neighborhoodBase)
       {
-         UpdateMethods.Add(entityType, updateMethod);
+         return (neighborhoodBase.FirstNeighbor.EntityPath(), neighborhoodBase.SecondNeighbor.EntityPath());
+      }
+
+      protected void RegisterUpdateMethod<T>(Action<IObjectBase, IBaseNode> updateMethod)
+      {
+         UpdateMethods.Add(typeof(T), updateMethod);
       }
 
       protected virtual IBaseNode AddObjectBase(IContainerBase parent, IObjectBase objectBase, bool recursive, bool coupleAll)
       {
-         IBaseNode node = AddNeighborhood(objectBase as INeighborhoodBase);
-         if (node != null) return node;
-         node = AddContainer(parent, objectBase as IContainer, recursive, coupleAll);
-         return node;
+         var node = AddNeighborhood(objectBase as INeighborhoodBase);
+         if (node != null)
+            return node;
+
+         return AddContainer(parent, objectBase as IContainer, recursive, coupleAll);
       }
 
       protected TNode Update<TObject, TNode>(TObject objectBase)
@@ -236,30 +250,36 @@ namespace OSPSuite.Presentation.Diagram
             node.Description += "\n" + objectBase.Description;
 
          // update further properties, if available);
-         if (UpdateMethods.ContainsKey(typeof (TObject)))
-            UpdateMethods[typeof (TObject)](objectBase, node);
+         if (UpdateMethods.ContainsKey(typeof(TObject)))
+            UpdateMethods[typeof(TObject)](objectBase, node);
 
          node.SetColorFrom(DiagramOptions.DiagramColors);
          return node;
       }
 
+      /// <summary>
+      ///    Returns the node corresponding to the param <paramref name="withId" /> or null if not found of if
+      ///    <paramref name="withId" /> is null
+      /// </summary>
       protected TNode NodeFor<TNode>(IWithId withId) where TNode : class, IBaseNode
       {
-         return DiagramModel.GetNode<TNode>(withId.Id);
+         return withId == null ? null : DiagramModel.GetNode<TNode>(withId.Id);
       }
 
       protected TNode AddAndCoupleNode<TObject, TNode>(IContainerBase parentContainerBase, TObject objectBase, bool coupleAll)
          where TObject : class, IObjectBase
          where TNode : class, IBaseNode, new()
       {
-         if (objectBase == null) return null;
+         if (objectBase == null) 
+            return null;
+
          var node = NodeFor<TNode>(objectBase);
          if (node == null)
          {
             node = DiagramModel.CreateNode<TNode>(objectBase.Id, CurrentInsertLocation, parentContainerBase);
             Update<TObject, TNode>(objectBase);
             // couple only once at creation
-            Couple(objectBase, node); 
+            Couple(objectBase, node);
          }
          else
          {
@@ -267,23 +287,84 @@ namespace OSPSuite.Presentation.Diagram
             if (coupleAll)
                Couple(objectBase, node); // if called by InitializeWith
          }
+
          return node;
       }
 
       protected virtual TContainerNode AddContainer(IContainerBase parent, IContainer container, bool recursive, bool coupleAll)
       {
-         if (container == null || container.GetType() != typeof (Container))
+         if (container == null || container.GetType() != typeof(Container))
             return null;
+
+         parent = createOrGetParentForParentPath(container.ParentPath, parent);
 
          var containerNode = AddAndCoupleNode<IContainer, TContainerNode>(parent, container, coupleAll);
 
-         if (recursive)
-            foreach (var child in container.Children)
-            {
-               AddObjectBase(containerNode, child, true, coupleAll);
-            }
+         // Changes in a containers ParentPath will not be automatically accommodated if the diagram view is not initialized
+         // so the nodes have to be transferred after the parentPathContainer structures are created
+         if (containerNode.GetParent() != parent)
+         {
+            containerNode.GetParent().RemoveChildNode(containerNode);
+            parent.AddChildNode(containerNode);
+         }
+
+         if (!recursive) 
+            return containerNode;
+
+         foreach (var child in container.Children)
+         {
+            AddObjectBase(containerNode, child, true, coupleAll);
+         }
 
          return containerNode;
+      }
+
+      /// <summary>
+      /// Builds the container node structure for an object path and adds it to the diagram model
+      /// </summary>
+      /// <param name="objectPath">The structure that should be created if it doesn't exist in the model</param>
+      /// <param name="rootNode">The top level node that will be returned if the object path is empty</param>
+      /// <returns>The container node corresponding to the last item in the object path, <paramref name="rootNode"/> if the object path is
+      /// null or blank</returns>
+      private IContainerBase createOrGetParentForParentPath(ObjectPath objectPath, IContainerBase rootNode)
+      {
+         // the object path is empty so the parent container is the root
+         if (objectPath == null || string.IsNullOrEmpty(objectPath))
+            return rootNode;
+
+         // create a clone because the path will be modified
+         var parentPath = new ObjectPath(objectPath);
+         parentPath.RemoveAt(parentPath.Count - 1);
+
+         var parentNode = DiagramModel.GetNode<IContainerNode>(objectPath);
+         // the node for this path already exists so just return it
+         if (parentNode != null) 
+            return parentNode;
+         
+         parentNode = createNodeForParentPath(objectPath, rootNode, parentPath);
+
+         return parentNode;
+      }
+
+      private IContainerNode createNodeForParentPath(ObjectPath objectPath, IContainerBase rootNode, ObjectPath parentPath)
+      {
+         // The node is created if it doesn't already exist. That's a recursive call to create superior containers from the parentPath if they don't exist in the model
+         // or return existing ones if they do exist in the model.
+         // It's important that the node is created using the objectPath as the node ID so that it can be found by other containers that might be added in the same parentPath
+         var parentNode = DiagramModel.CreateNode<TContainerNode>(objectPath, CurrentInsertLocation, createOrGetParentForParentPath(parentPath, rootNode));
+         parentNode.Name = objectPath.Last();
+         parentNode.IsExpanded = true;
+         return parentNode;
+      }
+
+      public ObjectPath PathForNodeWithoutEntity(IContainerNode containerNode)
+      {
+         return new ObjectPath(containerNode.Id.ToPathArray());
+      }
+
+      protected virtual (IContainerNode firstNeighborContainerNode, IContainerNode secondNeighborContainerNode) GetNeighborHoodNodes(INeighborhoodBase neighborhoodBase)
+      {
+         return (NodeFor<IContainerNode>(neighborhoodBase.FirstNeighbor), NodeFor<IContainerNode>(neighborhoodBase.SecondNeighbor));
       }
 
       protected virtual INeighborhoodNode AddNeighborhood(INeighborhoodBase neighborhood)
@@ -291,11 +372,10 @@ namespace OSPSuite.Presentation.Diagram
          if (neighborhood == null)
             return null;
 
-         var firstNeighborContainerNode = NodeFor<IContainerNode>(neighborhood.FirstNeighbor);
-         var secondNeighborContainerNode = NodeFor <IContainerNode>(neighborhood.SecondNeighbor);
+         var (firstNeighborContainerNode, secondNeighborContainerNode) = GetNeighborHoodNodes(neighborhood);
 
          if (firstNeighborContainerNode == null || secondNeighborContainerNode == null)
-            return null; 
+            return null;
 
          var neighborhoodNode = NodeFor<TNeighborhoodNode>(neighborhood);
 
@@ -356,7 +436,13 @@ namespace OSPSuite.Presentation.Diagram
          if (!MustHandleExisting(objectBase.Id)) return;
          RemoveObjectBase(objectBase, true);
          //because cannot undo this action, reset undo stack
-         DiagramModel.ClearUndoStack(); 
+         DiagramModel.ClearUndoStack();
+      }
+
+      public virtual void RefreshObjectBase(IObjectBase objectBase)
+      {
+         RemoveObjectBase(objectBase);
+         AddObjectBase(objectBase);
       }
 
       protected virtual bool RemoveObjectBase(IObjectBase objectBase, bool recursive)

@@ -74,11 +74,11 @@ namespace OSPSuite.Presentation.Presentation
          _curveChart.AddAxis(new Axis(AxisTypes.X) {Dimension = _curve.xDimension});
          _curveChart.AddAxis(new Axis(AxisTypes.Y) {Dimension = _curve.yDimension});
 
-         _xAxisBinder = createAxisBinderFor(_curveChart.AxisBy(AxisTypes.X));
-         _yAxisBinder = createAxisBinderFor(_curveChart.AxisBy(AxisTypes.Y));
+         _xAxisBinder = createAxisBinderFor(_curveChart.XAxis);
+         _yAxisBinder = createAxisBinderFor(_curveChart.YAxis);
 
-         A.CallTo(() => _axisBinderFactory.Create(_curveChart.AxisBy(AxisTypes.X), _chartDisplayView.ChartControl, _curveChart)).Returns(_xAxisBinder);
-         A.CallTo(() => _axisBinderFactory.Create(_curveChart.AxisBy(AxisTypes.Y), _chartDisplayView.ChartControl, _curveChart)).Returns(_yAxisBinder);
+         A.CallTo(() => _axisBinderFactory.Create(_curveChart.XAxis, _chartDisplayView.ChartControl, _curveChart)).Returns(_xAxisBinder);
+         A.CallTo(() => _axisBinderFactory.Create(_curveChart.YAxis, _chartDisplayView.ChartControl, _curveChart)).Returns(_yAxisBinder);
 
          SetupChart();
          sut.Edit(_curveChart);
@@ -148,8 +148,8 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void axis_returned_should_be_correct()
       {
-         _resultX.ShouldBeEqualTo(_curveChart.AxisBy(AxisTypes.X));
-         _resultY.ShouldBeEqualTo(_curveChart.AxisBy(AxisTypes.Y));
+         _resultX.ShouldBeEqualTo(_curveChart.XAxis);
+         _resultY.ShouldBeEqualTo(_curveChart.YAxis);
       }
    }
 
@@ -359,15 +359,21 @@ namespace OSPSuite.Presentation.Presentation
 
    public class When_the_chart_display_presenter_is_exporting_the_displayed_chart_to_excel : concern_for_ChartDisplayPresenter
    {
+      protected override void Context()
+      {
+         base.Context();
+         sut.PreExportHook = x => x;
+      }
+
       protected override void Because()
       {
          sut.ExportToExcel();
       }
 
       [Observation]
-      public void should_use_the_chart_export_task_to_expor_the_char_to_excel()
+      public void should_use_the_chart_export_task_to_export_the_char_to_excel()
       {
-         A.CallTo(() => _chartExportTask.ExportToExcel(_curveChart)).MustHaveHappened();
+         A.CallTo(() => _chartExportTask.ExportToExcel(_curveChart, sut.PreExportHook)).MustHaveHappened();
       }
    }
 }

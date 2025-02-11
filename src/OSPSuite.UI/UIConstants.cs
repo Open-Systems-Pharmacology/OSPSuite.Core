@@ -1,12 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using DevExpress.Skins;
 using OSPSuite.Assets;
 
 namespace OSPSuite.UI
 {
    public static class UIConstants
    {
+      public static class Colors
+      {
+         // These colors change with the skin, so we use a method to read the latest up-to-date value from the skin
+         public static Color Disabled => skinColorFor("ReadOnly");
+
+         private static Color skinColorFor(string state)
+         {
+            return CommonSkins.GetSkin(DevExpress.LookAndFeel.UserLookAndFeel.Default).Colors[state];
+         }
+      }
+
       public const int TOOL_TIP_INITIAL_DELAY = 500;
       public const int TOOL_TIP_INITIAL_DELAY_LONG = 1500;
       public const string EMPTY_COLUMN = " ";

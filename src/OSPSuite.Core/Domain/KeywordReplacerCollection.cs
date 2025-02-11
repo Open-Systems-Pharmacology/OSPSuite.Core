@@ -1,52 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
-using OSPSuite.Utility.Extensions;
+using System.Linq;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
-   public interface IKeywordReplacerCollection : IEnumerable<IKeywordReplacer>
+   public class KeywordReplacerCollection : IEnumerable<IKeywordReplacer>
    {
-      /// <summary>
-      ///    replace the keywords used in the given object path. This should only be call for object path that do not represent a
-      ///    formula. For formula, used ReplaceReferences Returns true if the object path was changed otherwise false
-      /// </summary>
-      /// <param name="objectPath"> </param>
-      void ReplaceIn(IObjectPath objectPath);
-
-      /// <summary>
-      ///    Adds the replacement.
-      /// </summary>
-      /// <param name="replacement"> The replacement. </param>
-      void AddReplacement(IKeywordReplacer replacement);
-
-      void ReplaceIn(IUsingFormula usingFormula);
-
-      /// <summary>
-      ///    Replace the tag value with all possible replacement induced by a IKeywordInTagReplacer
-      /// </summary>
-      /// <param name="tag"></param>
-      void ReplaceIn(Tags tag);
-
-      /// <summary>
-      ///    Replace the criteria value with all possible replacement induced by a IKeywordInTagReplacer
-      /// </summary>
-      void ReplaceIn(IDescriptorCondition descriptorCondition);
-   }
-
-   public class KeywordReplacerCollection : IKeywordReplacerCollection
-   {
-      private readonly IList<IKeywordReplacer> _allKeywordReplacer;
-      private readonly IList<IKeywordInObjectPathReplacer> _allObjectPathReplacer;
-      private readonly IList<IKeywordInTagsReplacer> _allTagReplacer;
+      private readonly List<IKeywordReplacer> _allKeywordReplacer;
 
       public KeywordReplacerCollection()
       {
          _allKeywordReplacer = new List<IKeywordReplacer>();
-         _allObjectPathReplacer = new List<IKeywordInObjectPathReplacer>();
-         _allTagReplacer = new List<IKeywordInTagsReplacer>();
       }
 
       public KeywordReplacerCollection(IEnumerable<IKeywordReplacer> keywordReplacements) : this()
@@ -54,43 +22,45 @@ namespace OSPSuite.Core.Domain
          keywordReplacements.Each(AddReplacement);
       }
 
-      public void AddReplacement(IKeywordReplacer replacer)
+      public void AddReplacement(IKeywordReplacer replacer) => _allKeywordReplacer.Add(replacer);
+
+      public void AddReplacements(params IKeywordReplacer[] replacers) => replacers.Each(AddReplacement);
+
+      /// <summary>
+      ///    replace the keywords used in the given object path. This should only be call for object path that do not represent a
+      ///    formula. For formula, used ReplaceReferences Returns true if the object path was changed otherwise false
+      /// </summary>
+      public void ReplaceIn(ObjectPath objectPath)
       {
-         _allKeywordReplacer.Add(replacer);
-
-         if (replacer.IsAnImplementationOf<IKeywordInObjectPathReplacer>())
-            _allObjectPathReplacer.Add(replacer.DowncastTo<IKeywordInObjectPathReplacer>());
-
-         if (replacer.IsAnImplementationOf<IKeywordInTagsReplacer>())
-            _allTagReplacer.Add(replacer.DowncastTo<IKeywordInTagsReplacer>());
+         _allKeywordReplacer.OfType<IKeywordInObjectPathReplacer>().Each(r => r.ReplaceIn(objectPath));
       }
 
       public void ReplaceIn(IUsingFormula usingFormula)
       {
          replaceInFormula(usingFormula.Formula);
 
-         var parameter = usingFormula as IParameter;
-         if (parameter == null) return;
+         if (!(usingFormula is IParameter parameter))
+            return;
 
          replaceInFormula(parameter.RHSFormula);
 
          replaceTagsIn(usingFormula);
       }
 
-      public void ReplaceIn(Tags tags)
-      {
-         _allTagReplacer.Each(r => r.ReplaceIn(tags));
-      }
+      /// <summary>
+      ///    Replace the tag value with all possible replacement induced by a IKeywordInTagReplacer
+      /// </summary>
+      public void ReplaceIn(Tags tags) => allTagReplacers.Each(r => r.ReplaceIn(tags));
 
-      public void ReplaceIn(IDescriptorCondition descriptorCondition)
-      {
-         _allTagReplacer.Each(r => r.ReplaceIn(descriptorCondition));
-      }
+      /// <summary>
+      ///    Replace the criteria value with all possible replacement induced by a IKeywordInTagReplacer
+      /// </summary>
+      public void ReplaceIn(ITagCondition tagCondition)
+         => _allKeywordReplacer.OfType<IKeywordInTagsReplacer>().Each(r => r.ReplaceIn(tagCondition));
 
-      private void replaceTagsIn(IEntity entity)
-      {
-         ReplaceIn(entity.Tags);
-      }
+      private IEnumerable<IKeywordInTagsReplacer> allTagReplacers => _allKeywordReplacer.OfType<IKeywordInTagsReplacer>();
+
+      private void replaceTagsIn(IEntity entity) => ReplaceIn(entity.Tags);
 
       private void replaceInFormula(IFormula formula)
       {
@@ -100,15 +70,7 @@ namespace OSPSuite.Core.Domain
          replaceInDynamicFormula(formula as DynamicFormula);
       }
 
-      private void replaceInDynamicFormula(DynamicFormula dynamicFormula)
-      {
-         dynamicFormula?.Criteria.Each(ReplaceIn);
-      }
-
-      public void ReplaceIn(IObjectPath objectPath)
-      {
-         _allObjectPathReplacer.Each(r => r.ReplaceIn(objectPath));
-      }
+      private void replaceInDynamicFormula(DynamicFormula dynamicFormula) => dynamicFormula?.Criteria.Each(ReplaceIn);
 
       public IEnumerator<IKeywordReplacer> GetEnumerator()
       {

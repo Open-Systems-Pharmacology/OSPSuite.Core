@@ -27,10 +27,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    {
       private List<ParsedDataSet> _data { get; } = new List<ParsedDataSet>();
 
-      public IReadOnlyList<ParsedDataSet> Data
-      {
-         get => _data;
-      }
+      public IReadOnlyList<ParsedDataSet> Data => _data;
 
       public void AddData(IEnumerable<ParsedDataSet> range)
       {

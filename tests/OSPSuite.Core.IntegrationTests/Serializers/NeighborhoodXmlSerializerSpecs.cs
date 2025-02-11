@@ -12,16 +12,16 @@ namespace OSPSuite.Core.Serializers
       public void TestSerializationEmptyNeighborhood()
       {
          //Neighborhood x1 = new Neighborhood().WithName("otto"); Does not help, because ObjectBaseFactory is used in Deserialization
-         Neighborhood x1 = CreateObject<Neighborhood>().WithName("Nele");
+         var x1 = CreateObject<Neighborhood>().WithName("Nele");
          Assert.IsNull(x1.FirstNeighbor);
          Assert.IsNull(x1.SecondNeighbor);
 
-         INeighborhood x2 = SerializeAndDeserialize(x1);
+         var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualNeighborhood(x2, x1);
       }
 
       [Test]
-      public void TestSerializationNeigborhoodWithContainers()
+      public void TestSerializationNeighborhoodWithContainers()
       {
          Neighborhood x1 = CreateObject<Neighborhood>().WithName("Nele");
 

@@ -5,7 +5,6 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Visitor;
 
@@ -22,6 +21,7 @@ namespace OSPSuite.R.Domain
       public IEnumerable<CurveChart> Charts { get; } = new List<CurveChart>();
       public OutputMappings OutputMappings { get; set; }
       public DataRepository ResultsDataRepository { get; set; }
+
       public void RemoveUsedObservedData(DataRepository dataRepository)
       {
          // nothing to do in R
@@ -47,7 +47,10 @@ namespace OSPSuite.R.Domain
       public Simulation(IModelCoreSimulation modelCoreSimulation)
       {
          CoreSimulation = modelCoreSimulation;
+         BuildConfiguration = new SimulationBuilder(Configuration);
       }
+
+      public SimulationBuilder BuildConfiguration { get; }
 
       public string Name
       {
@@ -104,19 +107,19 @@ namespace OSPSuite.R.Domain
          set => CoreSimulation.Model = value;
       }
 
-      public IBuildConfiguration BuildConfiguration
-      {
-         get => CoreSimulation.BuildConfiguration;
-         set => CoreSimulation.BuildConfiguration = value;
-      }
-
       public OutputSelections OutputSelections => CoreSimulation.OutputSelections;
 
       public double? EndTime => CoreSimulation.EndTime;
 
-      public ISimulationSettings SimulationSettings => CoreSimulation.SimulationSettings;
+      public SimulationSettings Settings => CoreSimulation.Settings;
 
-      public IReactionBuildingBlock Reactions => CoreSimulation.Reactions;
+      public SimulationConfiguration Configuration
+      {
+         get => CoreSimulation.Configuration;
+         set => CoreSimulation.Configuration = value;
+      }
+
+      public IReadOnlyList<ReactionBuildingBlock> Reactions => CoreSimulation.Reactions;
 
       public IReadOnlyList<string> CompoundNames => CoreSimulation.CompoundNames;
 

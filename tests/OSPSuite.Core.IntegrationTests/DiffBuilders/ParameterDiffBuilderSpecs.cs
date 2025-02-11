@@ -162,40 +162,73 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_comparing_parameters_having_the_different_base_values_but_the_same_display_value : concern_for_ObjectComparer
+   public class When_comparing_parameters_with_different_values_in_same_units : concern_for_ObjectComparer
    {
       protected override void Context()
       {
          base.Context();
          var dimension = DomainHelperForSpecs.LengthDimensionForSpecs();
-         var c1 = new Container {Name = "O"};
-         var p11 = new Parameter {Name = "P1"}.WithParentContainer(c1);
+         var c1 = new Container { Name = "O" };
+         var p11 = new Parameter { Name = "P1" }.WithParentContainer(c1);
          p11.DisplayUnit = dimension.Units.First();
          p11.Formula = new ConstantFormula(1);
          NumericFormatterOptions.Instance.DecimalPlace = 3;
 
-         var c2 = new Container {Name = "O"};
-         var p21 = new Parameter {Name = "P1"}.WithParentContainer(c2);
+         var c2 = new Container { Name = "O" };
+         var p21 = new Parameter { Name = "P1" }.WithParentContainer(c2);
+         p21.DisplayUnit = dimension.Units.First();
+         p21.Formula = new ConstantFormula(1.1);
+
+         _object1 = c1;
+         _object2 = c2;
+
+         _comparerSettings = new ComparerSettings { FormulaComparison = FormulaComparison.Value, OnlyComputingRelevant = true };
+      }
+
+      [Observation]
+      public void should_present_differences()
+      {
+         _report.Count.ShouldBeEqualTo(1);
+         var propertyDiffItem = _report[0].DowncastTo<PropertyValueDiffItem>();
+         propertyDiffItem.FormattedValue1.ShouldBeEqualTo("1.000 m");
+         propertyDiffItem.FormattedValue2.ShouldBeEqualTo("1.100 m");
+      }
+   }
+
+   public class When_comparing_parameters_with_different_unit_representations : concern_for_ObjectComparer
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var dimension = DomainHelperForSpecs.LengthDimensionForSpecs();
+         var c1 = new Container { Name = "O" };
+         var p11 = new Parameter { Name = "P1" }.WithParentContainer(c1);
+         p11.DisplayUnit = dimension.Units.First();
+         p11.Formula = new ConstantFormula(1);
+         NumericFormatterOptions.Instance.DecimalPlace = 3;
+
+         var c2 = new Container { Name = "O" };
+         var p21 = new Parameter { Name = "P1" }.WithParentContainer(c2);
          p21.DisplayUnit = dimension.Units.Last();
          p21.Formula = new ConstantFormula(0.001);
 
          _object1 = c1;
          _object2 = c2;
 
-         _comparerSettings = new ComparerSettings {FormulaComparison = FormulaComparison.Value, OnlyComputingRelevant = true};
+         _comparerSettings = new ComparerSettings { FormulaComparison = FormulaComparison.Value, OnlyComputingRelevant = true };
       }
 
       [Observation]
-      public void should_have_some_differences()
+      public void should_present_differences_in_consistent_base_unit()
       {
          _report.Count.ShouldBeEqualTo(1);
          var propertyDiffItem = _report[0].DowncastTo<PropertyValueDiffItem>();
          propertyDiffItem.FormattedValue1.ShouldBeEqualTo("1.000 m");
-         propertyDiffItem.FormattedValue2.ShouldBeEqualTo("1.000 mm");
+         propertyDiffItem.FormattedValue2.ShouldBeEqualTo("1.000E-3 m");
       }
    }
 
-   public class When_comparing_parameters_having_the_same_formula_but_depending_on_parameters_having_different_values_and_we_are_validating_using_formula_check : concern_for_ObjectComparer
+    public class When_comparing_parameters_having_the_same_formula_but_depending_on_parameters_having_different_values_and_we_are_validating_using_formula_check : concern_for_ObjectComparer
    {
       protected override void Context()
       {

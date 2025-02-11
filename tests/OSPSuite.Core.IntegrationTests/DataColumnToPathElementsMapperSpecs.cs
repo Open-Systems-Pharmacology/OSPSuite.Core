@@ -10,7 +10,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core
 {
-   public class concern_for_DataColumnToPathElementsMapper : ContextForIntegration<DataColumnToPathElementsMapper>
+   public abstract class concern_for_DataColumnToPathElementsMapper : ContextForIntegration<DataColumnToPathElementsMapper>
    {
       protected override void Context()
       {

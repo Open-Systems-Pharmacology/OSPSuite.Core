@@ -34,6 +34,7 @@ namespace OSPSuite.Presentation.Services
       protected DataImporterSettings _dataImporterSettings;
       protected IReadOnlyList<ColumnInfo> _columnInfos;
       protected IDimension _molarConcentrationDimension;
+      protected IDimension _lengthDimension;
       protected IDimension _massConcentrationDimension;
       protected IDimension _timeConcentrationDimension;
       protected IDimension _fractionConcentrationDimension;
@@ -43,6 +44,7 @@ namespace OSPSuite.Presentation.Services
          base.GlobalContext();
          _dimensionFactory = IoC.Container.Resolve<IDimensionFactory>();
          _molarConcentrationDimension = _dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
+         _lengthDimension = _dimensionFactory.Dimension(Constants.Dimension.LENGTH);
          _massConcentrationDimension = _dimensionFactory.Dimension(Constants.Dimension.MASS_CONCENTRATION);
          _timeConcentrationDimension = _dimensionFactory.Dimension(Constants.Dimension.TIME);
          _fractionConcentrationDimension = _dimensionFactory.Dimension(Constants.Dimension.FRACTION);
@@ -112,6 +114,23 @@ namespace OSPSuite.Presentation.Services
                }),
             new MetaDataFormatParameter("VenousBlood", "Organ", false),
             new MetaDataFormatParameter(moleculeColumnName, "Molecule", false)
+         };
+         return parameterList;
+      }
+
+      protected List<DataFormatParameter> createParametersForUnitsFromColumn()
+      {
+         var parameterList = new List<DataFormatParameter>
+         {
+            new MappingDataFormatParameter("Time",
+               new Column() { Name = "Time",
+               Unit = new UnitDescription("h", "Time_unit")}),
+            new MappingDataFormatParameter("Measurement",
+               new Column()
+               {
+                  Name = "Concentration",
+                  Unit = new UnitDescription("µm", "Measurement_unit")
+               })
          };
          return parameterList;
       }
@@ -191,6 +210,7 @@ namespace OSPSuite.Presentation.Services
             BaseGridName = timeColumn.Name
          };
 
+         concentrationInfo.SupportedDimensions.Add(_lengthDimension);
          concentrationInfo.SupportedDimensions.Add(_molarConcentrationDimension);
          concentrationInfo.SupportedDimensions.Add(_massConcentrationDimension);
          concentrationInfo.SupportedDimensions.Add(_fractionConcentrationDimension);
@@ -495,6 +515,26 @@ namespace OSPSuite.Presentation.Services
       {
          A.CallTo(() => _dialogCreator.MessageBoxError(A<string>.That.Contains("In sheet Sheet1 the headers"))).MustHaveHappened();
          A.CallTo(() => _dialogCreator.MessageBoxError(A<string>.That.Contains("Dose"))).MustHaveHappened();
+      }
+   }
+
+   public class When_importing_data_with_unit_from_column_data : concern_for_DataImporter
+   {
+      private ImporterConfiguration _importerConfigurationUnitsFromColumn;
+      protected override void Because()
+      {
+         _importerConfigurationUnitsFromColumn = new ImporterConfiguration
+            { FileName = "IntegrationSampleUnitFromColumn.xlsx", NamingConventions = "{Source}.{Sheet}.{Organ}.{Molecule}" };
+         var parameterList = createParametersForUnitsFromColumn();
+         _importerConfigurationUnitsFromColumn.CloneParametersFrom(parameterList);
+      }
+
+      [Observation]
+      public void should_correctly_assign_the_dimension()
+      {
+         var result = sut.ImportFromConfiguration(_importerConfigurationUnitsFromColumn, _metaDataCategories, _columnInfos, _dataImporterSettings,
+            getFileFullName("IntegrationSampleUnitFromColumn.xlsx")); 
+         result.First().AllButBaseGridAsArray.First().Dimension.ShouldBeEqualTo(_lengthDimension);
       }
    }
 }

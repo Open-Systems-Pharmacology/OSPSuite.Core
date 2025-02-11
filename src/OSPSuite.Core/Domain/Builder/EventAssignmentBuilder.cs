@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Domain.Builder
       /// <summary>
       ///    Path to IUsingFormulaEntity object, whose formula will be changed
       /// </summary>
-      IObjectPath ObjectPath { get; set; }
+      ObjectPath ObjectPath { get; set; }
 
       /// <summary>
       ///    Defines whether the formula itself or the VALUE of the formula
@@ -19,16 +19,9 @@ namespace OSPSuite.Core.Domain.Builder
       bool UseAsValue { get; set; }
    }
 
-   /// <summary>
-   ///    Defines new formula for a using formula object
-   /// </summary>
-   public interface IEventAssignmentBuilder : IAssignment
+   public class EventAssignmentBuilder : Entity, IAssignment
    {
-   }
-
-   public class EventAssignmentBuilder : Entity, IEventAssignmentBuilder
-   {
-      public IObjectPath ObjectPath { get; set; }
+      public ObjectPath ObjectPath { get; set; }
 
       /// <summary>
       ///    New formula to be set when event fires
@@ -42,13 +35,13 @@ namespace OSPSuite.Core.Domain.Builder
       {
          base.UpdatePropertiesFrom(source, cloneManager);
 
-         var srcEventAssignmentBuilder = source as IEventAssignmentBuilder;
+         var srcEventAssignmentBuilder = source as EventAssignmentBuilder;
          if (srcEventAssignmentBuilder == null) return;
 
          UseAsValue = srcEventAssignmentBuilder.UseAsValue;
          Dimension = srcEventAssignmentBuilder.Dimension;
 
-         ObjectPath = srcEventAssignmentBuilder.ObjectPath.Clone<IObjectPath>();
+         ObjectPath = srcEventAssignmentBuilder.ObjectPath.Clone<ObjectPath>();
       }
    }
 }

@@ -1,15 +1,15 @@
-﻿using FakeItEasy;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FakeItEasy;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Helpers;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
-using System.Collections.Generic;
-using System.Linq;
-using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Infrastructure.Import
 {
@@ -24,7 +24,7 @@ namespace OSPSuite.Infrastructure.Import
       protected Dictionary<ExtendedColumn, IList<SimulationPoint>> _parsedDataSetInconsistentLLOQ;
       protected Dictionary<ExtendedColumn, IList<SimulationPoint>> _parsedDataSetUnitFromColumn;
       protected DataSetToDataRepositoryMappingResult _result;
-      
+
       protected override void Context()
       {
          _dataSourceLLOQ = A.Fake<IDataSource>();
@@ -32,11 +32,12 @@ namespace OSPSuite.Infrastructure.Import
          _dataSourceUnitFromColumn = A.Fake<IDataSource>();
          var timeDimension = DomainHelperForSpecs.TimeDimensionForSpecs();
          _concentrationDimensionLLOQ = DomainHelperForSpecs.ConcentrationDimensionForSpecs();
-         _concentrationDimensionUnitFromColumn = new Dimension(new BaseDimensionRepresentation {AmountExponent = 3, LengthExponent = -1}, Constants.Dimension.AMOUNT_PER_TIME, "µmol/min");
+         _concentrationDimensionUnitFromColumn = new Dimension(new BaseDimensionRepresentation { AmountExponent = 3, LengthExponent = -1 },
+            Constants.Dimension.AMOUNT_PER_TIME, "µmol/min");
 
          _parsedDataSetLLOQ = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
          {
-                      {
+            {
                new ExtendedColumn()
                {
                   Column = new Column()
@@ -110,11 +111,10 @@ namespace OSPSuite.Infrastructure.Import
                   }
                }
             }
-
          };
          _parsedDataSetUnitFromColumn = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
          {
-                {
+            {
                new ExtendedColumn()
                {
                   Column = new Column()
@@ -188,15 +188,17 @@ namespace OSPSuite.Infrastructure.Import
                   }
                }
             }
-
          };
 
 
          //adding supported dimensions
          _parsedDataSetLLOQ.First(x => x.Key.ColumnInfo.Name == "Concentration").Key.ColumnInfo.SupportedDimensions.Add(_concentrationDimensionLLOQ);
-         _parsedDataSetLLOQ.First(x => x.Key.ColumnInfo.Name == "Concentration").Key.ColumnInfo.SupportedDimensions.Add(_concentrationDimensionUnitFromColumn);
-         _parsedDataSetUnitFromColumn.First(x => x.Key.ColumnInfo.Name == "Concentration").Key.ColumnInfo.SupportedDimensions.Add(_concentrationDimensionLLOQ);
-         _parsedDataSetUnitFromColumn.First(x => x.Key.ColumnInfo.Name == "Concentration").Key.ColumnInfo.SupportedDimensions.Add(_concentrationDimensionUnitFromColumn);
+         _parsedDataSetLLOQ.First(x => x.Key.ColumnInfo.Name == "Concentration").Key.ColumnInfo.SupportedDimensions
+            .Add(_concentrationDimensionUnitFromColumn);
+         _parsedDataSetUnitFromColumn.First(x => x.Key.ColumnInfo.Name == "Concentration").Key.ColumnInfo.SupportedDimensions
+            .Add(_concentrationDimensionLLOQ);
+         _parsedDataSetUnitFromColumn.First(x => x.Key.ColumnInfo.Name == "Concentration").Key.ColumnInfo.SupportedDimensions
+            .Add(_concentrationDimensionUnitFromColumn);
          _parsedDataSetInconsistentLLOQ = _parsedDataSetLLOQ;
          _parsedDataSetInconsistentLLOQ.First(x => x.Key.ColumnInfo.Name == "Concentration").Value.ElementAt(0).Lloq = 2;
 

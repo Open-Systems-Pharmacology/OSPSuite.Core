@@ -44,7 +44,8 @@ namespace OSPSuite.Presentation.Services
 
          foreach (var valueColumn in dataRepository.AllButBaseGrid().OrderByDescending(x => x.RelatedColumns.Count()))
          {
-            var curve = chart.CreateCurve(valueColumn.BaseGrid, valueColumn, dataRepository.Name, _dimensionFactory);
+            //it's fair to assume that we want the curves to be named after the underlying data
+            var curve = chart.CreateCurve(valueColumn.BaseGrid, valueColumn, valueColumn.Name, _dimensionFactory);
             chart.AddCurve(curve);
          }
          return chart;

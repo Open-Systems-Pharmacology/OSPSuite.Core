@@ -6,7 +6,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_FormulaUsablePath : ContextSpecification<IFormulaUsablePath>
+   public abstract class concern_for_FormulaUsablePath : ContextSpecification<FormulaUsablePath>
    {
       protected IContainer _comp;
       protected IContainer _organ;
@@ -76,8 +76,8 @@ namespace OSPSuite.Core.Domain
 
    public class When_cloning_a_formula_usable_path : concern_for_FormulaUsablePath
    {
-      private IObjectPath _objectPath;
-      private IObjectPath _clonePath;
+      private ObjectPath _objectPath;
+      private ObjectPath _clonePath;
 
       protected override void Context()
       {
@@ -86,25 +86,25 @@ namespace OSPSuite.Core.Domain
 
       protected override void Because()
       {
-         _clonePath = _objectPath.Clone<IObjectPath>();
+         _clonePath = _objectPath.Clone<ObjectPath>();
       }
 
       [Observation]
       public void should_return_a_formula_usable_path()
       {
-         _clonePath.ShouldBeAnInstanceOf<IFormulaUsablePath>();
+         _clonePath.ShouldBeAnInstanceOf<FormulaUsablePath>();
       }
 
       [Observation]
       public void should_have_updated_the_alias()
       {
-         _clonePath.DowncastTo<IFormulaUsablePath>().Alias.ShouldBeEqualTo("C");
+         _clonePath.DowncastTo<FormulaUsablePath>().Alias.ShouldBeEqualTo("C");
       }
    }
 
    public class When_comparing_equal_paths : concern_for_FormulaUsablePath
    {
-      private IFormulaUsablePath _equalPath;
+      private FormulaUsablePath _equalPath;
 
       protected override void Context()
       {
@@ -122,7 +122,7 @@ namespace OSPSuite.Core.Domain
 
    public class When_comparing_different_paths : concern_for_FormulaUsablePath
    {
-      private IFormulaUsablePath _differentPath;
+      private FormulaUsablePath _differentPath;
 
       protected override void Context()
       {
@@ -138,10 +138,10 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_comparing_path_diffeering_only_by_dimension : concern_for_FormulaUsablePath
+   public class When_comparing_path_differing_only_by_dimension : concern_for_FormulaUsablePath
    {
-      private IFormulaUsablePath _differentPath;
-
+      private FormulaUsablePath _differentPath;
+         
       protected override void Context()
       {
          base.Context();

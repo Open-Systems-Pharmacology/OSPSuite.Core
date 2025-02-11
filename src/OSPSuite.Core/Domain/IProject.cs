@@ -14,11 +14,6 @@ namespace OSPSuite.Core.Domain
       string FilePath { get; set; }
 
       /// <summary>
-      ///    Return true if the project has changed since it was saved
-      /// </summary>
-      bool HasChanged { get; set; }
-
-      /// <summary>
       ///    Returns all the building block of a given type <typeparamref name="T" />
       /// </summary>
       /// <typeparam name="T">Type if building block</typeparam>

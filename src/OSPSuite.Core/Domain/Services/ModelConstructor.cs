@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
-using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility.Events;
@@ -13,96 +12,101 @@ namespace OSPSuite.Core.Domain.Services
 {
    public interface IModelConstructor
    {
-      CreationResult CreateModelFrom(IBuildConfiguration buildConfiguration, string modelName);
+      CreationResult CreateModelFrom(SimulationConfiguration simulationConfiguration, string modelName);
    }
 
    internal class ModelConstructor : IModelConstructor
    {
-      private readonly IContainerBuilderToContainerMapper _containerMapper;
       private readonly IMoleculePropertiesContainerTask _moleculePropertiesContainerTask;
       private readonly IMoleculeBuilderToMoleculeAmountMapper _moleculeMapper;
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IObserverBuilderTask _observerBuilderTask;
       private readonly IReactionCreator _reactionCreator;
-      private readonly INeighborhoodCollectionToContainerMapper _neighborhoodsMapper;
       private readonly IReferencesResolver _referencesResolver;
-      private readonly IEventBuilderTask _eventBuilderTask;
       private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly ITransportCreator _transportCreator;
       private readonly IProgressManager _progressManager;
       private readonly IFormulaTask _formulaTask;
       private readonly ICalculationMethodTask _calculationMethodTask;
-      private readonly IBuildConfigurationValidator _buildConfigurationValidator;
+      private readonly ISimulationConfigurationValidator _simulationConfigurationValidator;
       private readonly IParameterBuilderToParameterMapper _parameterMapper;
       private readonly IQuantityValuesUpdater _quantityValuesUpdater;
       private readonly IModelValidatorFactory _modelValidatorFactory;
-      private readonly ICircularReferenceChecker _circularReferenceChecker;
+      private readonly IModelCircularReferenceChecker _circularReferenceChecker;
+      private readonly ISpatialStructureMerger _spatialStructureMerger;
+      private readonly IEventBuilderTask _eventBuilderTask;
 
-      public ModelConstructor(IObjectBaseFactory objectBaseFactory, IObserverBuilderTask observerBuilderTask,
-         IReactionCreator reactionCreator, IMoleculePropertiesContainerTask moleculePropertiesContainerTask,
-         IContainerBuilderToContainerMapper containerMapper, INeighborhoodCollectionToContainerMapper neighborhoodsMapper,
-         IMoleculeBuilderToMoleculeAmountMapper moleculeMapper, IReferencesResolver referencesResolver,
-         IEventBuilderTask eventBuilderTask, IKeywordReplacerTask keywordReplacerTask,
-         ITransportCreator transportCreator, IProgressManager progressManager, IFormulaTask formulaTask, ICalculationMethodTask calculationMethodTask,
-         IBuildConfigurationValidator buildConfigurationValidator, IParameterBuilderToParameterMapper parameterMapper,
-         IQuantityValuesUpdater quantityValuesUpdater, IModelValidatorFactory modelValidatorFactory,
-         ICircularReferenceChecker circularReferenceChecker)
+      public ModelConstructor(
+         IObjectBaseFactory objectBaseFactory,
+         IObserverBuilderTask observerBuilderTask,
+         IReactionCreator reactionCreator,
+         IMoleculePropertiesContainerTask moleculePropertiesContainerTask,
+         IMoleculeBuilderToMoleculeAmountMapper moleculeMapper,
+         IReferencesResolver referencesResolver,
+         IKeywordReplacerTask keywordReplacerTask,
+         ITransportCreator transportCreator,
+         IProgressManager progressManager,
+         IFormulaTask formulaTask,
+         ICalculationMethodTask calculationMethodTask,
+         ISimulationConfigurationValidator simulationConfigurationValidator,
+         IParameterBuilderToParameterMapper parameterMapper,
+         IQuantityValuesUpdater quantityValuesUpdater,
+         IModelValidatorFactory modelValidatorFactory,
+         IModelCircularReferenceChecker circularReferenceChecker,
+         ISpatialStructureMerger spatialStructureMerger,
+         IEventBuilderTask eventBuilderTask)
       {
          _objectBaseFactory = objectBaseFactory;
-         _buildConfigurationValidator = buildConfigurationValidator;
+         _simulationConfigurationValidator = simulationConfigurationValidator;
          _parameterMapper = parameterMapper;
          _quantityValuesUpdater = quantityValuesUpdater;
          _modelValidatorFactory = modelValidatorFactory;
          _circularReferenceChecker = circularReferenceChecker;
+         _spatialStructureMerger = spatialStructureMerger;
          _observerBuilderTask = observerBuilderTask;
          _reactionCreator = reactionCreator;
          _moleculePropertiesContainerTask = moleculePropertiesContainerTask;
-         _containerMapper = containerMapper;
-         _neighborhoodsMapper = neighborhoodsMapper;
          _moleculeMapper = moleculeMapper;
          _referencesResolver = referencesResolver;
-         _eventBuilderTask = eventBuilderTask;
          _keywordReplacerTask = keywordReplacerTask;
          _transportCreator = transportCreator;
          _progressManager = progressManager;
          _formulaTask = formulaTask;
          _calculationMethodTask = calculationMethodTask;
+         _eventBuilderTask = eventBuilderTask;
       }
 
-      public CreationResult CreateModelFrom(IBuildConfiguration buildConfiguration, string modelName)
+      public CreationResult CreateModelFrom(SimulationConfiguration simulationConfiguration, string modelName)
       {
-         try
-         {
-            var model = _objectBaseFactory.Create<IModel>().WithName(modelName);
+         var model = _objectBaseFactory.Create<IModel>().WithName(modelName);
+         var simulationBuilder = new SimulationBuilder(simulationConfiguration);
+         var modelConfiguration = new ModelConfiguration(model, simulationConfiguration, simulationBuilder);
+         var creationResult = buildProcess(modelConfiguration,
+            //One function per process step
+            checkSimulationConfiguration,
+            createModelStructure,
+            validateModelName,
+            createProcesses,
+            createObserversAndEvents,
+            setQuantitiesValues);
 
-            var creationResult = buildProcess(model, buildConfiguration,
-               //One function per process step
-               checkBuildConfiguration,
-               createModelStructure,
-               validateModelName,
-               createProcesses,
-               createObserversAndEvents,
-               setQuantitiesValues);
-
-            if (creationResult.State == ValidationState.Invalid)
-               return creationResult;
-
-            //replace all keywords define in the model structure once all build processes have been executed
-            _keywordReplacerTask.ReplaceIn(model.Root);
-
-            creationResult.Add(validateModel(model, buildConfiguration));
-
-            if (creationResult.State == ValidationState.Invalid)
-               return creationResult;
-
-            finalizeModel(model);
-
+         if (creationResult.State == ValidationState.Invalid)
             return creationResult;
-         }
-         finally
-         {
-            buildConfiguration.ClearCache();
-         }
+
+         //replace all keywords define in the model structure once all build processes have been executed
+         _keywordReplacerTask.ReplaceIn(modelConfiguration);
+
+         //This needs to be done before we validate the model to ensure that all references can be found
+         _formulaTask.ExpandDynamicReferencesIn(model);
+
+         creationResult.Add(validateModel(modelConfiguration));
+
+         if (creationResult.State == ValidationState.Invalid)
+            return creationResult;
+
+         finalizeModel(model);
+
+         return creationResult;
       }
 
       private void finalizeModel(IModel model)
@@ -132,28 +136,33 @@ namespace OSPSuite.Core.Domain.Services
          allNaNParametersFromMolecules.Each(x => x.ParentContainer.RemoveChild(x));
       }
 
-      private ValidationResult validateModel(IModel model, IBuildConfiguration buildConfiguration)
+      private ValidationResult validateModel(ModelConfiguration modelConfiguration)
       {
-         if (!buildConfiguration.ShouldValidate)
+         if (!modelConfiguration.ShouldValidate)
             return new ValidationResult();
 
-         var modelValidation = validate<ValidatorForQuantities>(model, buildConfiguration);
-         if (!buildConfiguration.PerformCircularReferenceCheck)
-            return new ValidationResult(modelValidation.Messages);
+         //Validation needs to happen at the very end of the process
+         var reactionAndTransportValidation = validate<ValidatorForReactionsAndTransports>(modelConfiguration);
+         var observersAndEventsValidation = validate<ValidatorForObserversAndEvents>(modelConfiguration);
+         var modelValidation = validate<ValidatorForQuantities>(modelConfiguration);
 
-         var circularReferenceValidation = checkCircularReferences(model, buildConfiguration);
-         return new ValidationResult(modelValidation.Messages.Union(circularReferenceValidation.Messages));
+         var validation = new ValidationResult(reactionAndTransportValidation, observersAndEventsValidation, modelValidation);
+         if (!modelConfiguration.SimulationConfiguration.PerformCircularReferenceCheck)
+            return validation;
+
+         var circularReferenceValidation = checkCircularReferences(modelConfiguration);
+         return new ValidationResult(validation, circularReferenceValidation);
       }
 
-      private CreationResult buildProcess(IModel model, IBuildConfiguration buildConfiguration,
-         params Func<IModel, IBuildConfiguration, ValidationResult>[] steps)
+      private CreationResult buildProcess(ModelConfiguration modelConfiguration,
+         params Func<ModelConfiguration, ValidationResult>[] steps)
       {
-         var result = new CreationResult(model);
+         var result = new CreationResult(modelConfiguration.Model, modelConfiguration.SimulationBuilder);
          IProgressUpdater progress = null;
 
          try
          {
-            if (buildConfiguration.ShowProgress)
+            if (modelConfiguration.SimulationConfiguration.ShowProgress)
             {
                progress = _progressManager.Create();
                progress.Initialize(steps.Length, Messages.CreatingModel);
@@ -161,8 +170,8 @@ namespace OSPSuite.Core.Domain.Services
 
             foreach (var step in steps)
             {
-               //call each build process with the model and the buildconfiguration 
-               result.Add(step(model, buildConfiguration));
+               //call each build process with the model and the simulationConfiguration 
+               result.Add(step(modelConfiguration));
 
                progress?.IncrementProgress();
 
@@ -179,149 +188,157 @@ namespace OSPSuite.Core.Domain.Services
          return result;
       }
 
-      private ValidationResult checkBuildConfiguration(IModel model, IBuildConfiguration buildConfiguration)
+      private ValidationResult checkSimulationConfiguration(ModelConfiguration modelConfiguration)
       {
-         if (!buildConfiguration.ShouldValidate)
+         if (!modelConfiguration.ShouldValidate)
             return new ValidationResult();
 
-         return _buildConfigurationValidator.Validate(buildConfiguration);
+         return _simulationConfigurationValidator.Validate(modelConfiguration.SimulationConfiguration);
       }
 
-      private ValidationResult createModelStructure(IModel model, IBuildConfiguration buildConfiguration)
+      private ValidationResult createModelStructure(ModelConfiguration modelConfiguration)
       {
          // copy spatial structure with neighborhoods 
-         copySpatialStructure(model, buildConfiguration);
+         var spatialStructureValidation = copySpatialStructure(modelConfiguration);
 
          // add molecules with IsPresent=true
-         var moleculeMessages = createMoleculeAmounts(model.Root, buildConfiguration);
+         var moleculeAmountValidation = createMoleculeAmounts(modelConfiguration);
 
          // create local molecule properties container in the spatial structure
-         addLocalParametersToMolecule(model, buildConfiguration);
+         addLocalParametersToMolecule(modelConfiguration);
 
          // create global molecule properties container in the spatial structure
-         createGlobalMoleculeContainers(model, buildConfiguration);
+         createGlobalMoleculeContainers(modelConfiguration);
 
          // create calculation methods dependent formula and parameters
-         createMoleculeCalculationMethodsFormula(model, buildConfiguration);
+         createMoleculeCalculationMethodsFormula(modelConfiguration);
 
-         // replace all keywords define in the model structure
-         _keywordReplacerTask.ReplaceIn(model.Root);
+         var validation = new ValidationResult(spatialStructureValidation, moleculeAmountValidation);
 
-         return new ValidationResult(moleculeMessages);
-      }
-
-      private ValidationResult validateModelName(IModel model, IBuildConfiguration buildConfiguration)
-      {
-         return validate<ModelNameValidator>(model, buildConfiguration);
-      }
-
-      private void createMoleculeCalculationMethodsFormula(IModel model, IBuildConfiguration buildConfiguration)
-      {
-         _calculationMethodTask.MergeCalculationMethodInModel(model, buildConfiguration);
-      }
-
-      private ValidationResult createProcesses(IModel model, IBuildConfiguration buildConfiguration)
-      {
-         _transportCreator.CreateActiveTransport(model, buildConfiguration);
-         var reactionMessages = createReactions(model, buildConfiguration);
-
-         createPassiveTransports(model, buildConfiguration);
-
-         var validationResult = validate<ValidatorForReactionsAndTransports>(model, buildConfiguration);
-         return new ValidationResult(reactionMessages.Union(validationResult.Messages));
-      }
-
-      private ValidationResult createObserversAndEvents(IModel model, IBuildConfiguration buildConfiguration)
-      {
-         _eventBuilderTask.CreateEvents(buildConfiguration, model);
-
-         // Observers needs to be created last as they might reference parameters defined in the event builder
-         _observerBuilderTask.CreateObservers(buildConfiguration, model);
-
-         return validate<ValidatorForObserversAndEvents>(model, buildConfiguration);
-      }
-
-      private ValidationResult validate<TValidationVisitor>(IModel model, IBuildConfiguration buildConfiguration)
-         where TValidationVisitor : IModelValidator
-      {
-         if (!buildConfiguration.ShouldValidate)
-            return new ValidationResult();
-
-         return _modelValidatorFactory.Create<TValidationVisitor>().Validate(model, buildConfiguration);
-      }
-
-      private void copySpatialStructure(IModel model, IBuildConfiguration buildConfiguration)
-      {
-         // Create Root Container for the model with the name of the model
-         model.Root = _objectBaseFactory.Create<IContainer>()
-            .WithName(model.Name)
-            .WithMode(ContainerMode.Logical)
-            .WithContainerType(ContainerType.Simulation);
-
-         model.Root.AddTag(new Tag(Constants.ROOT_CONTAINER_TAG));
-
-         //Add each container defined in the spatial strucutre and direct child of the root container
-         foreach (var topContainer in buildConfiguration.SpatialStructure.TopContainers)
+         if (validation.ValidationState != ValidationState.Invalid)
          {
-            model.Root.Add(_containerMapper.MapFrom(topContainer, buildConfiguration));
+            // replace all keywords define in the model structure
+            _keywordReplacerTask.ReplaceIn(modelConfiguration);
          }
 
-         // Add the neibghborhoods
-         model.Neighborhoods = _neighborhoodsMapper.MapFrom(model, buildConfiguration);
+         return validation;
       }
 
-      private ValidationResult checkCircularReferences(IModel model, IBuildConfiguration buildConfiguration)
+      private ValidationResult validateModelName(ModelConfiguration modelConfiguration)
       {
-         if (!buildConfiguration.ShouldValidate)
-            return new ValidationResult();
-
-         return _circularReferenceChecker.CheckCircularReferencesIn(model, buildConfiguration);
+         return validate<ModelNameValidator>(modelConfiguration);
       }
 
-      private ValidationResult setQuantitiesValues(IModel model, IBuildConfiguration buildConfiguration)
+      private void createMoleculeCalculationMethodsFormula(ModelConfiguration modelConfiguration)
       {
-         _quantityValuesUpdater.UpdateQuantitiesValues(model, buildConfiguration);
+         _calculationMethodTask.MergeCalculationMethodInModel(modelConfiguration);
+      }
+
+      private ValidationResult createProcesses(ModelConfiguration modelConfiguration)
+      {
+         _transportCreator.CreateActiveTransport(modelConfiguration);
+         var reactionMessages = createReactions(modelConfiguration);
+
+         createPassiveTransports(modelConfiguration);
+
+         return new ValidationResult(reactionMessages);
+      }
+
+      private ValidationResult createObserversAndEvents(ModelConfiguration modelConfiguration)
+      {
+         _eventBuilderTask.MergeEventGroups(modelConfiguration);
+
+         // Observers needs to be created last as they might reference parameters defined in the event builder
+         _observerBuilderTask.CreateObservers(modelConfiguration);
+
          return new ValidationResult();
       }
 
-      private void createPassiveTransports(IModel model, IBuildConfiguration buildConfiguration)
+      private ValidationResult validate<TValidationVisitor>(ModelConfiguration modelConfiguration)
+         where TValidationVisitor : IModelValidator
       {
-         buildConfiguration.PassiveTransports.Each(t => _transportCreator.CreatePassiveTransport(model, t, buildConfiguration));
+         if (!modelConfiguration.ShouldValidate)
+            return new ValidationResult();
+
+         return _modelValidatorFactory.Create<TValidationVisitor>().Validate(modelConfiguration);
       }
 
-      private IEnumerable<ValidationMessage> createReactions(IModel model, IBuildConfiguration buildConfiguration)
+      private ValidationResult copySpatialStructure(ModelConfiguration modelConfiguration)
       {
-         var messages = buildConfiguration.Reactions
-            .Where(r => !_reactionCreator.CreateReaction(r, model, buildConfiguration))
+         var model = modelConfiguration.Model;
+         model.Root = _spatialStructureMerger.MergeContainerStructure(modelConfiguration);
+         //we update the replacement context first when the root container is created so that we can replace keywords from the root container
+         modelConfiguration.UpdateReplacementContext();
+
+         model.Neighborhoods = _spatialStructureMerger.MergeNeighborhoods(modelConfiguration);
+
+         return validate<SpatialStructureValidator>(modelConfiguration);
+      }
+
+      private ValidationResult checkCircularReferences(ModelConfiguration modelConfiguration)
+      {
+         if (!modelConfiguration.ShouldValidate)
+            return new ValidationResult();
+
+         return _circularReferenceChecker.CheckCircularReferencesIn(modelConfiguration);
+      }
+
+      private ValidationResult setQuantitiesValues(ModelConfiguration modelConfiguration)
+      {
+         return _quantityValuesUpdater.UpdateQuantitiesValues(modelConfiguration);
+      }
+
+      private void createPassiveTransports(ModelConfiguration modelConfiguration)
+      {
+         modelConfiguration.SimulationBuilder.PassiveTransports.Each(t => _transportCreator.CreatePassiveTransport(t, modelConfiguration));
+      }
+
+      private IEnumerable<ValidationMessage> createReactions(ModelConfiguration modelConfiguration)
+      {
+         var (model, simulationConfiguration, replacementContext) = modelConfiguration;
+         var messages = simulationConfiguration.Reactions
+            .Where(x => !_reactionCreator.CreateReaction(x, modelConfiguration))
             .Select(
-               r => new ValidationMessage(NotificationType.Warning, Validation.WarningNoReactionCreated(r.Name), r, buildConfiguration.Reactions))
+               x => new ValidationMessage(NotificationType.Warning, Validation.WarningNoReactionCreated(x.Name), x, x.BuildingBlock))
             .ToList();
 
          model.Root.GetAllContainersAndSelf<IContainer>(x => x.ContainerType == ContainerType.Reaction)
-            .Each(x => _keywordReplacerTask.ReplaceInReactionContainer(x, model.Root));
+            .Each(x => _keywordReplacerTask.ReplaceInReactionContainer(x, replacementContext));
 
          return messages;
       }
 
-      private void createGlobalMoleculeContainers(IModel model, IBuildConfiguration buildConfiguration)
+      private void createGlobalMoleculeContainers(ModelConfiguration modelConfiguration)
       {
-         buildConfiguration.AllPresentMolecules()
-            .Each(m => _moleculePropertiesContainerTask.CreateGlobalMoleculeContainerFor(model.Root, m, buildConfiguration));
+         var (model, simulationConfiguration) = modelConfiguration;
+
+         void createGlobalContainer(MoleculeBuilder moleculeBuilder) =>
+            _moleculePropertiesContainerTask.CreateGlobalMoleculeContainerFor(moleculeBuilder, modelConfiguration);
+
+         simulationConfiguration.AllPresentMolecules().Each(createGlobalContainer);
+
+         //once the global properties have been created, we can remove the global container only used as template
+         var globalMoleculeContainer = model.Root.Container(Constants.MOLECULE_PROPERTIES);
+         if (globalMoleculeContainer != null)
+            model.Root.RemoveChild(globalMoleculeContainer);
       }
 
-      private void addLocalParametersToMolecule(IModel model, IBuildConfiguration buildConfiguration)
+      private void addLocalParametersToMolecule(ModelConfiguration modelConfiguration)
       {
-         // retrieve all molecules container defined int the spatial structure
-         var allMoleculePropertiesContainer = model.Root.GetAllChildren<IContainer>(x => x.IsNamed(Constants.MOLECULE_PROPERTIES)).ToList();
+         var (model, simulationConfiguration) = modelConfiguration;
+         // retrieve all molecules container defined in the spatial structure
+         // We filter our the global molecule container that is created under root. Only interested in LOCAL Containers
+         var allMoleculePropertiesContainer = model.Root.GetAllChildren<IContainer>(x => x.ParentContainer != model.Root && x.IsNamed(Constants.MOLECULE_PROPERTIES)).ToList();
 
-         var allPresentMolecules = buildConfiguration.AllPresentXenobioticFloatingMoleculeNames();
-         var allEndogenous = buildConfiguration.AllPresentEndogenousStationaryMoleculeNames();
+         var allPresentMolecules = simulationConfiguration.AllPresentXenobioticFloatingMoleculeNames();
+         var allEndogenous = simulationConfiguration.AllPresentEndogenousStationaryMoleculeNames();
 
          foreach (var moleculePropertiesContainer in allMoleculePropertiesContainer)
          {
-            addLocalStructureMoleculeParametersToMoleculeAmount(allPresentMolecules, moleculePropertiesContainer, buildConfiguration, model,
+            addLocalStructureMoleculeParametersToMoleculeAmount(allPresentMolecules, moleculePropertiesContainer, modelConfiguration,
                x => !isEndogenousParameter(x));
-            addLocalStructureMoleculeParametersToMoleculeAmount(allEndogenous, moleculePropertiesContainer, buildConfiguration, model,
+
+            addLocalStructureMoleculeParametersToMoleculeAmount(allEndogenous, moleculePropertiesContainer, modelConfiguration,
                isEndogenousParameter);
 
             // remove the molecule properties container only used as template
@@ -335,92 +352,91 @@ namespace OSPSuite.Core.Domain.Services
       }
 
       private void addLocalStructureMoleculeParametersToMoleculeAmount(IEnumerable<string> moleculeNames,
-         IContainer moleculePropertiesContainerTemplate,
-         IBuildConfiguration buildConfiguration, IModel model, Func<IParameter, bool> query)
+         IContainer moleculePropertiesContainerTemplate, ModelConfiguration modelConfiguration, Func<IParameter, bool> query)
       {
+         var (model, simulationConfiguration, replacementContext) = modelConfiguration;
          foreach (var moleculeName in moleculeNames)
          {
             // check if molecule amount already exists
-            var moleculeAmount = moleculePropertiesContainerTemplate.ParentContainer.GetSingleChildByName<IMoleculeAmount>(moleculeName);
+            var moleculeAmount = moleculePropertiesContainerTemplate.ParentContainer.GetSingleChildByName<MoleculeAmount>(moleculeName);
             if (moleculeAmount == null)
                continue;
 
 
             moleculePropertiesContainerTemplate.GetChildren<IParameter>().Where(query)
-               .Each(parameter => moleculeAmount.Add(_parameterMapper.MapFrom(parameter, buildConfiguration)));
+               .Each(parameter => moleculeAmount.Add(_parameterMapper.MapFrom(parameter, simulationConfiguration)));
 
-            _keywordReplacerTask.ReplaceIn(moleculeAmount, model.Root, moleculeName);
+            _keywordReplacerTask.ReplaceIn(moleculeAmount, moleculeName, replacementContext);
          }
       }
 
-      private IEnumerable<ValidationMessage> createMoleculeAmounts(IContainer root, IBuildConfiguration buildConfiguration)
+      private ValidationResult createMoleculeAmounts(ModelConfiguration modelConfiguration)
       {
-         var molecules = buildConfiguration.Molecules;
-         var presentMolecules = allPresentMoleculesInContainers(root, buildConfiguration).ToList();
+         var (_, simulationBuilder) = modelConfiguration;
+         var presentMolecules = allPresentMoleculesInContainers(modelConfiguration).ToList();
 
          var moleculesWithPhysicalContainers = presentMolecules.Where(containerIsPhysical);
-         moleculesWithPhysicalContainers.Each(x => addMoleculeToContainer(buildConfiguration, x.Container, molecules[x.MoleculeStartValue.MoleculeName]));
+         moleculesWithPhysicalContainers.Each(x => { addMoleculeToContainer(simulationBuilder, x.Container, simulationBuilder.MoleculeByName(x.InitialCondition.MoleculeName)); });
 
-         return new MoleculeBuildingBlockValidator().Validate(molecules).Messages
-            .Concat(createValidationMessagesForPresentMolecules(presentMolecules, buildConfiguration.MoleculeStartValues));
+         return new MoleculeBuildingBlockValidator().Validate(simulationBuilder.Molecules)
+            .AddMessagesFrom(createValidationMessagesForPresentMolecules(presentMolecules));
       }
 
-      private static bool containerIsPhysical(StartValueAndContainer startValueAndContainer)
+      private static bool containerIsPhysical(InitialConditionAndContainer initialConditionAndContainer)
       {
-         return startValueAndContainer.Container != null && startValueAndContainer.Container.Mode == ContainerMode.Physical;
+         return initialConditionAndContainer.Container != null && initialConditionAndContainer.Container.Mode == ContainerMode.Physical;
       }
 
-      private void addMoleculeToContainer(IBuildConfiguration buildConfiguration, IContainer container, IMoleculeBuilder moleculeBuilder)
+      private void addMoleculeToContainer(SimulationBuilder simulationBuilder, IContainer container, MoleculeBuilder moleculeBuilder)
       {
-         container.Add(_moleculeMapper.MapFrom(moleculeBuilder, container, buildConfiguration));
+         container.Add(_moleculeMapper.MapFrom(moleculeBuilder, container, simulationBuilder));
       }
 
-      private IEnumerable<ValidationMessage> createValidationMessagesForPresentMolecules(List<StartValueAndContainer> presentMolecules,
-         IBuildingBlock buildingBlock)
+      private ValidationResult createValidationMessagesForPresentMolecules(List<InitialConditionAndContainer> presentMolecules)
       {
          var moleculesWithoutPhysicalContainers = presentMolecules.Where(x => !containerIsPhysical(x));
-         return moleculesWithoutPhysicalContainers.Select(x =>
+         var messages = moleculesWithoutPhysicalContainers.Select(x =>
             x.Container == null
-               ? createValidationMessageForNullContainer(x, buildingBlock)
-               : createValidationMessageForMoleculesWithNonPhysicalContainer(x, buildingBlock));
+               ? createValidationMessageForNullContainer(x)
+               : createValidationMessageForMoleculesWithNonPhysicalContainer(x));
+
+         return new ValidationResult(messages);
       }
 
-      private ValidationMessage createValidationMessageForMoleculesWithNonPhysicalContainer(StartValueAndContainer startValueAndContainer,
-         IBuildingBlock buildingBlock)
+      private ValidationMessage createValidationMessageForMoleculesWithNonPhysicalContainer(InitialConditionAndContainer initialConditionAndContainer)
       {
-         var moleculeStartValue = startValueAndContainer.MoleculeStartValue;
-         return buildValidationMessage(buildingBlock, moleculeStartValue,
-            Validation.StartValueDefinedForNonPhysicalContainer(moleculeStartValue.MoleculeName, moleculeStartValue.ContainerPath.PathAsString));
+         var initialCondition = initialConditionAndContainer.InitialCondition;
+         var message = Validation.StartValueDefinedForNonPhysicalContainer(initialCondition.MoleculeName, initialCondition.ContainerPath.PathAsString);
+         return buildValidationMessage(initialCondition, message);
       }
 
-      private static ValidationMessage buildValidationMessage(IBuildingBlock buildingBlock, IMoleculeStartValue moleculeStartValue,
-         string validationDescription)
+      private static ValidationMessage buildValidationMessage(InitialCondition initialCondition, string validationDescription)
       {
-         return new ValidationMessage(NotificationType.Warning, validationDescription, moleculeStartValue, buildingBlock);
+         return new ValidationMessage(NotificationType.Warning, validationDescription, initialCondition, initialCondition.BuildingBlock);
       }
 
-      private ValidationMessage createValidationMessageForNullContainer(StartValueAndContainer startValueAndContainer, IBuildingBlock buildingBlock)
+      private ValidationMessage createValidationMessageForNullContainer(InitialConditionAndContainer initialConditionAndContainer)
       {
-         var moleculeStartValue = startValueAndContainer.MoleculeStartValue;
-         return buildValidationMessage(buildingBlock, moleculeStartValue,
-            Validation.StartValueDefinedForContainerThatCannotBeResolved(moleculeStartValue.MoleculeName,
-               moleculeStartValue.ContainerPath.PathAsString));
+         var initialCondition = initialConditionAndContainer.InitialCondition;
+         var message = Validation.StartValueDefinedForContainerThatCannotBeResolved(initialCondition.MoleculeName, initialCondition.ContainerPath.PathAsString);
+         return buildValidationMessage(initialCondition, message);
       }
 
-      private static IEnumerable<StartValueAndContainer> allPresentMoleculesInContainers(IContainer root, IBuildConfiguration buildConfiguration)
+      private static IEnumerable<InitialConditionAndContainer> allPresentMoleculesInContainers(ModelConfiguration modelConfiguration)
       {
-         return from moleculeStartValue in buildConfiguration.AllPresentMoleculeValues()
-            let container = moleculeStartValue.ContainerPath.Resolve<IContainer>(root)
-            select new StartValueAndContainer
+         var (model, simulationConfiguration) = modelConfiguration;
+         var root = model.Root;
+         return from initialCondition in simulationConfiguration.AllPresentMoleculeValues()
+            select new InitialConditionAndContainer
             {
-               MoleculeStartValue = moleculeStartValue,
-               Container = container
+               InitialCondition = initialCondition,
+               Container = initialCondition.ContainerPath.Resolve<IContainer>(root)
             };
       }
 
-      private class StartValueAndContainer
+      private class InitialConditionAndContainer
       {
-         public IMoleculeStartValue MoleculeStartValue { get; set; }
+         public InitialCondition InitialCondition { get; set; }
          public IContainer Container { get; set; }
       }
    }

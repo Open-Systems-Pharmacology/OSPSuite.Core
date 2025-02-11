@@ -19,9 +19,8 @@ namespace OSPSuite.Core
       protected DataTable _populationData;
       protected DataTable _initialValuesData;
       protected const int _numberOfCores = 2;
-      protected string _nonAgingPath = new[] {ConstantsForSpecs.Organism, ConstantsForSpecs.BW}.ToPathString();
+      protected string _nonAgingPath = new[] {Constants.ORGANISM, ConstantsForSpecs.BW}.ToPathString();
       private IModelCoreSimulation _simulation;
-      protected IObjectPathFactory _objectPathFactory;
       protected Simulation _simModelSimulation;
       protected IReadOnlyList<ParameterProperties> _variableParameters;
       protected IReadOnlyList<SpeciesProperties> _variableSpecies;
@@ -32,7 +31,6 @@ namespace OSPSuite.Core
       {
          base.GlobalContext();
 
-         _objectPathFactory = IoC.Resolve<IObjectPathFactory>();
          _simulation = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
          var simModelExporter = IoC.Resolve<ISimModelExporter>();
          var simModelSimulationFactory = IoC.Resolve<ISimModelSimulationFactory>();
@@ -55,13 +53,13 @@ namespace OSPSuite.Core
 
          dt.Columns.Add(Constants.Population.INDIVIDUAL_ID_COLUMN);
 
-         var path = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
+         var path = new ObjectPath(Constants.ORGANISM,
             ConstantsForSpecs.ArterialBlood,
             ConstantsForSpecs.Plasma,
             "A").PathAsString;
          dt.Columns.Add(path);
 
-         path = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
+         path = new ObjectPath(Constants.ORGANISM,
             ConstantsForSpecs.VenousBlood,
             ConstantsForSpecs.Plasma,
             "A").PathAsString;
@@ -84,10 +82,10 @@ namespace OSPSuite.Core
          dt.Columns.Add(Constants.Population.TIME_COLUMN);
          dt.Columns.Add(Constants.Population.VALUE_COLUMN);
 
-         var path1 = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
+         var path1 = new ObjectPath(Constants.ORGANISM,
             ConstantsForSpecs.TableParameter1).PathAsString;
 
-         var path2 = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
+         var path2 = new ObjectPath(Constants.ORGANISM,
             ConstantsForSpecs.TableParameter2).PathAsString;
 
          int individualId = 0;
@@ -119,13 +117,13 @@ namespace OSPSuite.Core
       {
          var dt = new DataTable("PopParams");
 
-         var path = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
+         var path = new ObjectPath(Constants.ORGANISM,
             ConstantsForSpecs.BW).PathAsString;
          dt.Columns.Add(Constants.Population.INDIVIDUAL_ID_COLUMN);
          dt.Columns.Add(path);
 
          //test model has event, which sets "Organism|ArterialBlood|Plasma|A" += 10 at t=StartTime
-         path = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
+         path = new ObjectPath(Constants.ORGANISM,
             ConstantsForSpecs.ArterialBlood,
             ConstantsForSpecs.Plasma,
             ConstantsForSpecs.BolusApplication,
@@ -133,7 +131,7 @@ namespace OSPSuite.Core
             ConstantsForSpecs.StartTime).PathAsString;
          dt.Columns.Add(path);
 
-         path = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,
+         path = new ObjectPath(Constants.ORGANISM,
             ConstantsForSpecs.Lung,
             ConstantsForSpecs.Plasma,
             ConstantsForSpecs.pH).PathAsString;
@@ -177,7 +175,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_fill_correct_value_for_nonTableParameters_in_case_of_corresponding_parameter_in_basis_individual_is_table()
       {
-         var nonAgingPath  = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.BW).PathAsString;
+         var nonAgingPath  = new ObjectPath(Constants.ORGANISM, ConstantsForSpecs.BW).PathAsString;
          var nonTableParameters = _variableParameters.Where(x => x.Path.Equals(nonAgingPath)).ToList();
          nonTableParameters.Count.ShouldBeEqualTo(1);
 
@@ -188,9 +186,9 @@ namespace OSPSuite.Core
       [Observation]
       public void should_fill_correct_values_for_table_parameters()
       {
-         var agingPath1 = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism, ConstantsForSpecs.TableParameter1).PathAsString;
+         var agingPath1 = new ObjectPath(Constants.ORGANISM, ConstantsForSpecs.TableParameter1).PathAsString;
 
-         var agingPath2 = _objectPathFactory.CreateObjectPathFrom(ConstantsForSpecs.Organism,  ConstantsForSpecs.TableParameter2).PathAsString;
+         var agingPath2 = new ObjectPath(Constants.ORGANISM, ConstantsForSpecs.TableParameter2).PathAsString;
 
 
          var tableParameter1 = _variableParameters.First(x => x.Path.Equals(agingPath1));

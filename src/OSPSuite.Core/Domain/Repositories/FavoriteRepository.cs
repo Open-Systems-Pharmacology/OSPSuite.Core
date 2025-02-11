@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Domain.Repositories
          Favorites.Remove(parameterPath);
       }
 
-      public bool Contains(IObjectPath parameterPath)
+      public bool Contains(ObjectPath parameterPath)
       {
          return Favorites.Contains(parameterPath.PathAsString);
       }

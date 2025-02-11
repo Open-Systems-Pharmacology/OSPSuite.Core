@@ -1,33 +1,42 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters.Nodes;
+using OSPSuite.Utility.Extensions;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
    public abstract class ClassificationNodeContextMenu<TPresenter> : ContextMenu<ClassificationNode, TPresenter> where TPresenter : IExplorerPresenter
    {
-      protected ClassificationNodeContextMenu(ClassificationNode objectRequestingContextMenu, TPresenter presenter)
-         : base(objectRequestingContextMenu, presenter)
+      protected ClassificationNodeContextMenu(ClassificationNode objectRequestingContextMenu, TPresenter presenter, IContainer container)
+         : base(objectRequestingContextMenu, presenter, container)
       {
       }
 
       protected override IEnumerable<IMenuBarItem> AllMenuItemsFor(ClassificationNode classificationNode, TPresenter presenter)
       {
-         yield return RenameGroupMenuFor(classificationNode, presenter);
-         yield return CreateGroupMenuFor(classificationNode, presenter);
-
+         var allMenuItems = new List<IMenuBarItem>(AllCustomMenuItemsFor(classificationNode, presenter));
+         allMenuItems.AddRange(new[]
+         {
+            RenameGroupMenuFor(classificationNode, presenter, allMenuItems.Any()),
+            CreateGroupMenuFor(classificationNode, presenter),
+         });
          var groupMenu = AddClassificationMenu(classificationNode, presenter);
-
          if (groupMenu.AllItems().Any())
-            yield return groupMenu;
+            allMenuItems.Add(groupMenu);
 
-         yield return ClassificationCommonContextMenuItems.RemoveClassificationMainMenu(classificationNode, presenter);
+         allMenuItems.Add(ClassificationCommonContextMenuItems.RemoveClassificationMainMenu(classificationNode, presenter));
+         return allMenuItems;
+      }
+
+      protected virtual IEnumerable<IMenuBarItem> AllCustomMenuItemsFor(ClassificationNode classificationNode, TPresenter presenter)
+      {
+         return Enumerable.Empty<IMenuBarItem>();
       }
 
       protected IMenuBarButton CreateGroupMenuFor(ClassificationNode classificationNode, TPresenter presenter)
@@ -35,13 +44,18 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
          return ClassificationCommonContextMenuItems.CreateClassificationUnderMenu(classificationNode, presenter);
       }
 
-      protected IMenuBarButton RenameGroupMenuFor(ClassificationNode classificationNode, TPresenter presenter)
+      protected IMenuBarButton RenameGroupMenuFor(ClassificationNode classificationNode, TPresenter presenter, bool asGroupStarter)
       {
-         return CreateMenuButton.WithCaption(MenuNames.Rename)
+         var menu =  CreateMenuButton.WithCaption(MenuNames.Rename)
             .WithActionCommand(() => presenter.RenameClassification(classificationNode))
             .WithIcon(ApplicationIcons.Rename);
+
+         if (asGroupStarter)
+            menu.AsGroupStarter();
+
+         return menu;
       }
-    
+
       protected static IMenuBarSubMenu AddClassificationMenu(ClassificationNode classificationNode, TPresenter presenter)
       {
          var groupMenu = CreateSubMenu.WithCaption(MenuNames.GroupBy);
@@ -73,7 +87,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
       public bool IsSatisfiedBy(ITreeNode treeNode, IPresenterWithContextMenu<ITreeNode> presenter)
       {
-         return isSatisifiedBy(treeNode, presenter);
+         return isSatisfiedBy(treeNode, presenter);
       }
 
       public IContextMenu CreateFor(IViewItem viewItem, IPresenterWithContextMenu<IViewItem> presenter)
@@ -85,10 +99,10 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
       public bool IsSatisfiedBy(IViewItem viewItem, IPresenterWithContextMenu<IViewItem> presenter)
       {
-         return isSatisifiedBy(viewItem,presenter);
+         return isSatisfiedBy(viewItem, presenter);
       }
 
-      private bool isSatisifiedBy(object obj, IPresenter presenter)
+      private bool isSatisfiedBy(object obj, IPresenter presenter)
       {
          if (!obj.IsAnImplementationOf<ClassificationNode>()) return false;
 
@@ -96,6 +110,4 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
          return node.Tag.ClassificationType == _classificationType && presenter.IsAnImplementationOf<IExplorerPresenter>();
       }
    }
-
-
 }

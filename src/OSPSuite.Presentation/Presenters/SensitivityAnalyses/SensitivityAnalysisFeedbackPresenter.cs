@@ -44,6 +44,7 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
       public void Handle(SensitivityAnalysisTerminatedEvent eventToHandle)
       {
          _view.ResetFeedback();
+         _view.Hide();
       }
 
       public void Handle(SensitivityAnalysisProgressEvent eventToHandle)

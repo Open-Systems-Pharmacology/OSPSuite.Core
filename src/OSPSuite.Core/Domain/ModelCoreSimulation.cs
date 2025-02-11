@@ -9,9 +9,9 @@ namespace OSPSuite.Core.Domain
    public interface IModelCoreSimulation : IObjectBase, IWithCreationMetaData, IWithModel, IMolWeightFinder
    {
       /// <summary>
-      ///    Build configuration used to create the simulation. May be null
+      ///    Simulation configuration used to create the simulation. May be null
       /// </summary>
-      IBuildConfiguration BuildConfiguration { get; set; }
+      SimulationConfiguration Configuration { get; set; }
 
       OutputSelections OutputSelections { get; }
 
@@ -20,13 +20,13 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       double? EndTime { get; }
 
-      ISimulationSettings SimulationSettings { get; }
+      SimulationSettings Settings { get; }
 
       /// <summary>
-      ///    The reaction building block used to create the simulation. This is only use as meta information
+      ///    The reactions used to create the simulation. This is only use as meta information
       ///    on model creation for now. Adding <see cref="Reaction" /> to the building block will not change the model structure
       /// </summary>
-      IReactionBuildingBlock Reactions { get; }
+      IReadOnlyList<ReactionBuildingBlock> Reactions { get; }
 
       /// <summary>
       ///    Name of all compounds used in the simulation
@@ -41,7 +41,8 @@ namespace OSPSuite.Core.Domain
       IParameter BodyWeight { get; }
 
       /// <summary>
-      ///    Returns the Total drug mass parameter applied for a molecule <see cref="IParameter" /> if available in the model otherwise null.
+      ///    Returns the Total drug mass parameter applied for a molecule <see cref="IParameter" /> if available in the model
+      ///    otherwise null.
       /// </summary>
       IParameter TotalDrugMassFor(string moleculeName);
    }
@@ -50,17 +51,17 @@ namespace OSPSuite.Core.Domain
    {
       public IModel Model { get; set; }
 
-      public IBuildConfiguration BuildConfiguration { get; set; }
+      public SimulationConfiguration Configuration { get; set; }
 
-      public double? EndTime => SimulationSettings?.OutputSchema?.EndTime;
+      public double? EndTime => Settings?.OutputSchema?.EndTime;
 
-      public OutputSelections OutputSelections => SimulationSettings?.OutputSelections;
+      public OutputSelections OutputSelections => Settings?.OutputSelections;
 
-      public ISimulationSettings SimulationSettings => BuildConfiguration?.SimulationSettings;
+      public SimulationSettings Settings => Configuration?.SimulationSettings;
 
-      public IReactionBuildingBlock Reactions => BuildConfiguration?.Reactions;
+      public IReadOnlyList<ReactionBuildingBlock> Reactions => Configuration?.All<ReactionBuildingBlock>();
 
-      public IReadOnlyList<string> CompoundNames => BuildConfiguration?.AllPresentMolecules().AllNames();
+      public IReadOnlyList<string> CompoundNames => Model?.AllPresentMoleculeNames;
 
       public IEnumerable<T> All<T>() where T : class, IEntity => Model?.Root.GetAllChildren<T>().Union(allFromSettings<T>()) ?? Enumerable.Empty<T>();
 
@@ -74,11 +75,11 @@ namespace OSPSuite.Core.Domain
 
       private IEnumerable<TEntity> allFromSettings<TEntity>() where TEntity : class, IEntity
       {
-         if (SimulationSettings?.OutputSchema == null || SimulationSettings?.Solver == null)
+         if (Settings?.OutputSchema == null || Settings?.Solver == null)
             return Enumerable.Empty<TEntity>();
 
-         return SimulationSettings.OutputSchema.GetAllChildren<TEntity>()
-            .Union(SimulationSettings.Solver.GetAllChildren<TEntity>());
+         return Settings.OutputSchema.GetAllChildren<TEntity>()
+            .Union(Settings.Solver.GetAllChildren<TEntity>());
       }
 
       public CreationMetaData Creation { get; set; }
@@ -93,9 +94,11 @@ namespace OSPSuite.Core.Domain
       {
          base.AcceptVisitor(visitor);
 
+         Settings?.AcceptVisitor(visitor);
+
          Model?.AcceptVisitor(visitor);
 
-         BuildConfiguration?.AcceptVisitor(visitor);
+         Configuration?.AcceptVisitor(visitor);
       }
    }
 }

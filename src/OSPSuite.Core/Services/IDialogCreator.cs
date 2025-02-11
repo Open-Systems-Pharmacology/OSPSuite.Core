@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace OSPSuite.Core.Services
@@ -25,6 +26,14 @@ namespace OSPSuite.Core.Services
       ViewResult MessageBoxYesNoCancel(string message, string yes, string no, string cancel, ViewResult defaultButton = ViewResult.Yes);
 
       ViewResult MessageBoxYesNo(string message, ViewResult defaultButton = ViewResult.Yes);
+
+      /// <summary>
+      /// Displays a dialog prompting the user for confirmation on an action with significant impact. The dialog includes 'Yes' and 'Cancel' buttons and an option for a 'Do Not Show Again' checkbox.
+      /// </summary>
+      /// <param name="message">The message to be displayed in the dialog.</param>
+      /// <param name="doNotShowAgain">The action to execute if the user opts for the 'Do Not Show Again' checkbox.</param>
+      /// <param name="defaultButton">The button set as the default selection. Defaults to 'Yes'.</param>
+      ViewResult MessageBoxConfirm(string message, Action doNotShowAgain, ViewResult defaultButton = ViewResult.Yes);
 
       /// <summary>
       ///    Customize a yes no cancel message box by allowing to change caption for yes, no

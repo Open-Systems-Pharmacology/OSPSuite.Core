@@ -72,9 +72,9 @@ namespace OSPSuite.Core.Comparison
       }
 
       protected void CompareValues<TInput, TOutput>(Func<TInput, TOutput> funcEvaluation, Expression<Func<TInput, TOutput>> propertyNameExpression, IComparison<TInput> comparison,
-         Func<TOutput, TOutput, bool> areEquals, Func<TInput, TOutput, string> formatter) where TInput : class
+         Func<TOutput, TOutput, bool> areEqual, Func<TInput, TOutput, string> formatter) where TInput : class
       {
-         CompareValues(funcEvaluation, nameFrom(propertyNameExpression), comparison, areEquals, formatter);
+         CompareValues(funcEvaluation, nameFrom(propertyNameExpression), comparison, areEqual, formatter);
       }
 
       private string nameFrom<TInput, TOutput>(Expression<Func<TInput, TOutput>> propertyNameExpression)
@@ -102,12 +102,30 @@ namespace OSPSuite.Core.Comparison
          CompareDoubleValues(x => funcEvaluation(x).GetValueOrDefault(double.NaN), propertyName, comparison, displayUnitFunc);
       }
 
-    
       protected void CompareDoubleValues<TInput>(Func<TInput, double> funcEvaluation, string propertyName, IComparison<TInput> comparison, Func<TInput, Unit> displayUnitFunc = null) where TInput : class
       {
          try
          {
-            CompareValues(funcEvaluation, propertyName, comparison, (x, y) => ValueComparer.AreValuesEqual(x, y, comparison.Settings.RelativeTolerance), (input, output) => numericFormatter(input, output, displayUnitFunc));
+            // Determine the display unit to use for both values (based on object1)
+            var standardDisplayUnit = comparison.Object1 is IWithDimension && displayUnitFunc != null ? displayUnitFunc(comparison.Object1) : null;
+
+            string ConsistentUnitFormatter(TInput input, double value)
+            {
+               if (!(input is IWithDimension withDimension) || standardDisplayUnit == null || withDimension.Dimension == null)
+                  return _numericFormatter.Format(value);
+
+               // Convert the value to object1's unit for consistent display
+               var valueInStandardUnit = withDimension.ConvertToUnit(value, standardDisplayUnit);
+               return _numericFormatter.Format(valueInStandardUnit, standardDisplayUnit);
+            }
+
+            CompareValues(
+               funcEvaluation,
+               propertyName,
+               comparison,
+               (x, y) => ValueComparer.AreValuesEqual(x, y, comparison.Settings.RelativeTolerance),
+               ConsistentUnitFormatter
+            );
          }
          catch (OSPSuiteException)
          {

@@ -176,7 +176,7 @@ namespace OSPSuite.Presentation.Presentation
       {
          var bestCurve = sut.Chart.Curves.Find(x => x.xData.Repository.IsNamed(Captions.ParameterIdentification.Best));
          var currentCurve = sut.Chart.Curves.Find(x => x.xData.Repository.IsNamed(Captions.ParameterIdentification.Current));
-         sut.Chart.AxisBy(AxisTypes.Y).Dimension.ShouldBeEqualTo(_outputMapping3.Dimension);
+         sut.Chart.YAxis.Dimension.ShouldBeEqualTo(_outputMapping3.Dimension);
          bestCurve.yDimension.ShouldBeEqualTo(_outputMapping3.Dimension);
          currentCurve.yDimension.ShouldBeEqualTo(_outputMapping3.Dimension);
       }

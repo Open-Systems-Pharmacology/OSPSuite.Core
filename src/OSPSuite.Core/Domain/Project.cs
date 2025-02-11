@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Utility.Collections;
@@ -45,11 +46,6 @@ namespace OSPSuite.Core.Domain
       public virtual void AddObservedData(DataRepository dataRepositoryToAdd)
       {
          _allObservedData.Add(dataRepositoryToAdd);
-      }
-
-      public virtual void AddOImporterConfiguration(ImporterConfiguration importerConfiguration)
-      {
-         _allImporterConfigurations.Add(importerConfiguration);
       }
 
       public virtual void RemoveObservedData(DataRepository dataRepositoryToRemove)

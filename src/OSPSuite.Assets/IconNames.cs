@@ -13,9 +13,9 @@
       public const string EVENT_GROUP = "EventGroup";
       public const string EVENT = "Event";
       public const string MOLECULE = "Molecule";
-      public const string MOLECULE_START_VALUES = "MoleculeStartValues";
+      public const string INITIAL_CONDITIONS = "InitialConditions";
       public const string OBSERVER = "Observer";
-      public const string PARAMETER_START_VALUES = "ParameterStartValues";
+      public const string PARAMETER_VALUES = "ParameterValues";
       public const string REACTION = "Reaction";
       public const string PASSIVE_TRANSPORT = "PassiveTransport";
       public const string PARAMETER = "Parameter";
@@ -55,5 +55,10 @@
       public const string MOBI = "MoBi";
       public const string PARAMETER_IDENTIFICATION = "ParameterIdentification";
       public const string SENSITIVITY_ANALYSIS = "SensitivityAnalysis";
+      public static string Transporter = "Transporter";
+      public static string Protein = "Protein";
+      public static string Enzyme = "Enzyme";
+      public const string Module = "Module";
+      public const string PKSimModule = "PKSimModule";
    }
 }

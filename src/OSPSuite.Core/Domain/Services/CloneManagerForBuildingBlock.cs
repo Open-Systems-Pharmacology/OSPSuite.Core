@@ -38,14 +38,6 @@ namespace OSPSuite.Core.Domain.Services
       ///    needs to be used.
       /// </summary>
       IFormulaCache FormulaCache { get; set; }
-
-      /// <summary>
-      /// Clones the given building block adding all cloned formulas into the <see cref="FormulaCache"/> of the clone.
-      /// </summary>
-      /// <typeparam name="T">Type of building block to clone</typeparam>
-      /// <param name="buildingBlock">The building block to clone</param>
-      /// <returns>The cloned building block</returns>
-      T CloneBuildingBlock<T>(T buildingBlock) where T : class, IBuildingBlock;
    }
 
    public class CloneManagerForBuildingBlock : CloneManagerStrategy, ICloneManagerForBuildingBlock
@@ -60,19 +52,24 @@ namespace OSPSuite.Core.Domain.Services
          _clonedFormulasByOriginalFormulaId = new Cache<string, IFormula>();
       }
 
+      public override T Clone<T>(T objectToClone)
+      {
+         if(objectToClone is IBuildingBlock buildingBlock)
+            return cloneBuildingBlock(buildingBlock) as T;
+         
+         return base.Clone(objectToClone);
+      }
+
       public T Clone<T>(T objectToClone, IFormulaCache formulaCache) where T : class, IObjectBase
       {
-         if (formulaCache == null)
-            throw new ArgumentNullException(Error.NullFormulaCachePassedToClone);
+         FormulaCache = formulaCache ?? throw new ArgumentNullException(Error.NullFormulaCachePassedToClone);
 
-         FormulaCache = formulaCache;
-
-         return Clone(objectToClone);
-      }
+         return base.Clone(objectToClone);
+      }  
 
       public IFormulaCache FormulaCache
       {
-         get { return _formulaCache; }
+         get => _formulaCache;
          set
          {
             if (Equals(value, _formulaCache))
@@ -83,7 +80,7 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      public T CloneBuildingBlock<T>(T buildingBlock) where T : class, IBuildingBlock
+      private T cloneBuildingBlock<T>(T buildingBlock) where T : class, IBuildingBlock
       {
          var formulaCache = new FormulaCache();
          var clone = Clone(buildingBlock, formulaCache);
@@ -110,7 +107,7 @@ namespace OSPSuite.Core.Domain.Services
          if (_clonedFormulasByOriginalFormulaId.Contains(srcFormula.Id))
             return _clonedFormulasByOriginalFormulaId[srcFormula.Id];
 
-         // Formula is neither present in the passed formula cahce nor
+         // Formula is neither present in the passed formula cache nor
          // was already cloned. So create a new clone and insert it 
          // in both target formula cache and the cache of all cloned formulas
          var clonedFormula = CloneFormula(srcFormula);

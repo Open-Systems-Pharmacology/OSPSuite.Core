@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using OSPSuite.Utility.Container;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.ContextMenus;
+using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
@@ -32,8 +32,8 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
    {
       protected readonly IContextMenuView _view;
 
-      protected ContextMenu()
-         : this(IoC.Resolve<IContextMenuView>())
+      protected ContextMenu(IContainer container)
+         : this(container.Resolve<IContextMenuView>())
       {
       }
 
@@ -55,9 +55,12 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
    public abstract class ContextMenu<T> : ContextMenu
    {
-      protected ContextMenu(T objectRequestingContextMenu)
+      protected readonly IContainer _container;
+
+      protected ContextMenu(T objectRequestingContextMenu, IContainer container) : base(container)
       {
-         AllMenuItemsFor(objectRequestingContextMenu).Each(_view.AddMenuItem);
+         _container = container;
+         AllMenuItemsFor(objectRequestingContextMenu).Where(x => x != null).Each(_view.AddMenuItem);
       }
 
       protected abstract IEnumerable<IMenuBarItem> AllMenuItemsFor(T objectRequestingContextMenu);
@@ -65,9 +68,12 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
    public abstract class ContextMenu<TObject, TContext> : ContextMenu
    {
-      protected ContextMenu(TObject objectRequestingContextMenu, TContext context)
+      protected readonly IContainer _container;
+
+      protected ContextMenu(TObject objectRequestingContextMenu, TContext context, IContainer container) : base(container)
       {
-         AllMenuItemsFor(objectRequestingContextMenu, context).Each(_view.AddMenuItem);
+         _container = container;
+         AllMenuItemsFor(objectRequestingContextMenu, context).Where(x => x != null).Each(_view.AddMenuItem);
       }
 
       protected abstract IEnumerable<IMenuBarItem> AllMenuItemsFor(TObject objectRequestingContextMenu, TContext context);

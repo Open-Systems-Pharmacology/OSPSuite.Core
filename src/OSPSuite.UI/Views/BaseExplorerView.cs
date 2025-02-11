@@ -101,15 +101,20 @@ namespace OSPSuite.UI.Views
          var previouslySelectedNode = selectedNodes;
          var canClearSelection = previouslySelectedNode.Count == 1 || !showingPopup;
 
+         //when a node is clicked, we reset the active classification. This ensures that there is no 
+         // active classification hanging around for too long. Application will be responsible to set the active classification 
+         // where required
+         _presenter.NodeClick(selectedNode);
+
          //this call may  reset the current selection of node
          manageSelectedNodes(selectedNode, canClearSelection);
 
          if (!showingPopup)
             return;
 
-         var currentlySelectedNode = selectedNodes;
-         if (currentlySelectedNode.Count > 1)
-            _presenter.CreatePopupMenuFor(currentlySelectedNode).At(e.Location);
+         var currentlySelectedNodes = selectedNodes;
+         if (currentlySelectedNodes.Count > 1)
+            _presenter.CreatePopupMenuFor(currentlySelectedNodes).At(e.Location);
          else
             _presenter.CreatePopupMenuFor(selectedNode).At(e.Location);
       }

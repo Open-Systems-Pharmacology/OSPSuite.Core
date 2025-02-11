@@ -2,7 +2,12 @@
 using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Converters.v12;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Serialization.Exchange;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core
 {
@@ -13,7 +18,7 @@ namespace OSPSuite.Core
 
    public class When_creating_simulation_with_many_floating_molecules_and_nested_applications_and_nonapplication_eventgroups : concern_for_EventBuilderTask
    {
-      private List<IEventGroup> _allEventGroups;
+      private List<EventGroup> _allEventGroups;
       private const string C1 = "C1";
       private const string C2 = "C2";
       private const string C3 = "C3";
@@ -24,7 +29,7 @@ namespace OSPSuite.Core
       {
          base.GlobalContext();
          _creationResult = CreateFrom("EventsAppKeywordReplacement");
-         _allEventGroups = _creationResult.Model.Root.GetAllChildren<IEventGroup>().ToList();
+         _allEventGroups = _creationResult.Model.Root.GetAllChildren<EventGroup>().ToList();
       }
 
       [Observation]
@@ -49,13 +54,13 @@ namespace OSPSuite.Core
 
    public class When_creating_simulation_using_an_event_with_a_keyword_all_floating : concern_for_EventBuilderTask
    {
-      private List<IEventGroup> _allEventGroups;
+      private List<EventGroup> _allEventGroups;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
          _creationResult = CreateFrom("simulation_with_urine_emptying");
-         _allEventGroups = _creationResult.Model.Root.GetAllChildren<IEventGroup>().ToList();
+         _allEventGroups = _creationResult.Model.Root.GetAllChildren<EventGroup>().ToList();
       }
 
       [Observation]
@@ -66,6 +71,32 @@ namespace OSPSuite.Core
          urineEmptyingStartEvent.Assignments.Count().ShouldBeEqualTo(2);
          urineEmptyingStartEvent.Assignments.Find(x => x.ObjectPath.PathAsString.Contains("C1")).ShouldNotBeNull();
          urineEmptyingStartEvent.Assignments.Find(x => x.ObjectPath.PathAsString.Contains("C2")).ShouldNotBeNull();
+      }
+   }
+
+   public class concern_for_Converter110To120 : ContextWithLoadedSimulation<Converter110To120>
+   {
+      private CreationResult _result;
+      private SimulationTransfer _simulationTransfer;
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulationTransfer = LoadPKMLFile("simulation_with_urine_emptying");
+         var modelConstructor = IoC.Resolve<IModelConstructor>();
+         _result = modelConstructor.CreateModelFrom(_simulationTransfer.Simulation.Configuration, "simulation_with_urine_emptying");
+      }
+
+      [Observation]
+      public void all_parameter_values_have_only_formula_or_value_not_both()
+      {
+         _result.SimulationBuilder.ParameterValues.Where(x => x.Value.HasValue).All(x => x.Formula == null).ShouldBeTrue();
+      }
+
+      [Observation]
+      public void all_event_group_should_have_icon_name_changed()
+      {
+         _simulationTransfer.Simulation.Configuration.ModuleConfigurations.Select(x => x.BuildingBlock<EventGroupBuildingBlock>()).All(x => x.Icon == "Event").ShouldBeTrue();
       }
    }
 }

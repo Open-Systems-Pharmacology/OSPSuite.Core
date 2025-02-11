@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Exceptions;
+using static OSPSuite.Core.Domain.Constants.Parameters;
 
 namespace OSPSuite.R.Services
 {
@@ -32,6 +33,7 @@ namespace OSPSuite.R.Services
       protected ISimulation _simulation;
       protected IParameter _paramWithRHS;
       protected IParameter _liverRelExp;
+      protected IParameter _volumeLiverCellOtherEntity;
 
       public override void GlobalContext()
       {
@@ -47,15 +49,16 @@ namespace OSPSuite.R.Services
          _liverIntracellular = new Container().WithName(INTRACELLULAR);
          _kidneyIntracellular = new Container().WithName(INTRACELLULAR);
          _liverRelExp = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName("Relative expression (normalized)");
-         _volumeLiver = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName(Constants.Parameters.VOLUME);
+         _volumeLiver = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName(VOLUME);
 
          _volumeLiver.Formula = new ExplicitFormula("1+2");
-         _volumeOrganism = DomainHelperForSpecs.ConstantParameterWithValue(20).WithName(Constants.Parameters.VOLUME);
-         _volumeLiverCell = DomainHelperForSpecs.ConstantParameterWithValue(5).WithName(Constants.Parameters.VOLUME);
+         _volumeOrganism = DomainHelperForSpecs.ConstantParameterWithValue(20).WithName(VOLUME);
+         _volumeLiverCell = DomainHelperForSpecs.ConstantParameterWithValue(5).WithName(VOLUME);
+         _volumeLiverCellOtherEntity = DomainHelperForSpecs.ConstantParameterWithValue(5).WithName($"ANOTHER_ENTITY-{VOLUME}");
          _liverIntracellularSubContainer = new Container().WithName("Intracellular Sub Container");
-         _volumeKidneyCell = DomainHelperForSpecs.ConstantParameterWithValue(3).WithName(Constants.Parameters.VOLUME);
+         _volumeKidneyCell = DomainHelperForSpecs.ConstantParameterWithValue(3).WithName(VOLUME);
          _gfr = DomainHelperForSpecs.NormalDistributedParameter(3).WithName("GFR");
-         _volumeKidney = DomainHelperForSpecs.ConstantParameterWithValue(14).WithName(Constants.Parameters.VOLUME);
+         _volumeKidney = DomainHelperForSpecs.ConstantParameterWithValue(14).WithName(VOLUME);
          _height = DomainHelperForSpecs.ConstantParameterWithValue(175).WithName("Height");
          _weight = DomainHelperForSpecs.ConstantParameterWithValue(75).WithName("Weight");
          _paramWithRHS = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName("RHSParam");
@@ -65,7 +68,7 @@ namespace OSPSuite.R.Services
 
          _organism.AddChildren(_liver, _kidney, _height, _weight, _volumeOrganism, _paramWithRHS);
          _liver.AddChildren(_liverIntracellular, _volumeLiver);
-         _liverIntracellular.AddChildren(_volumeLiverCell, _liverIntracellularSubContainer, _liverRelExp);
+         _liverIntracellular.AddChildren(_volumeLiverCell, _liverIntracellularSubContainer, _liverRelExp, _volumeLiverCellOtherEntity);
          _liverIntracellularSubContainer.Add(_clearance);
 
          _kidney.AddChildren(_kidneyIntracellular, _volumeKidney);
@@ -86,11 +89,11 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_one_parameter_if_it_exists()
       {
-         sut.AllParametersMatching(_organism, pathFrom(_liver.Name, INTRACELLULAR, Constants.Parameters.VOLUME)).ShouldOnlyContain(_volumeLiverCell);
-         sut.AllParametersMatching(_organism, pathFrom(_liver.Name, Constants.Parameters.VOLUME)).ShouldOnlyContain(_volumeLiver);
-         sut.AllParametersMatching(_organism, pathFrom(_kidney.Name, Constants.Parameters.VOLUME)).ShouldOnlyContain(_volumeKidney);
+         sut.AllParametersMatching(_organism, pathFrom(_liver.Name, INTRACELLULAR, VOLUME)).ShouldOnlyContain(_volumeLiverCell);
+         sut.AllParametersMatching(_organism, pathFrom(_liver.Name, VOLUME)).ShouldOnlyContain(_volumeLiver);
+         sut.AllParametersMatching(_organism, pathFrom(_kidney.Name, VOLUME)).ShouldOnlyContain(_volumeKidney);
 
-         sut.AllParametersMatching(_kidney, Constants.Parameters.VOLUME).ShouldOnlyContain(_volumeKidney);
+         sut.AllParametersMatching(_kidney, VOLUME).ShouldOnlyContain(_volumeKidney);
          sut.AllParametersMatching(_kidney, pathFrom(INTRACELLULAR, _gfr.Name)).ShouldOnlyContain(_gfr);
       }
 
@@ -106,8 +109,8 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_matching_parameters()
       {
-         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD, INTRACELLULAR, Constants.Parameters.VOLUME)).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell);
-         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD, Constants.Parameters.VOLUME)).ShouldOnlyContain(_volumeLiver, _volumeKidney);
+         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD, INTRACELLULAR, VOLUME)).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell);
+         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD, VOLUME)).ShouldOnlyContain(_volumeLiver, _volumeKidney);
          sut.AllParametersMatching(_kidney, pathFrom(Constants.WILD_CARD, _gfr.Name)).ShouldOnlyContain(_gfr);
          sut.AllParametersMatching(_kidney, pathFrom(Constants.WILD_CARD, _clearance.Name)).ShouldBeEmpty();
       }
@@ -129,7 +132,8 @@ namespace OSPSuite.R.Services
       public void should_return_the_matching_parameters()
       {
          sut.AllParametersMatching(_organism, pathFrom($"Liv{Constants.WILD_CARD}", INTRACELLULAR, $"Vol{Constants.WILD_CARD}")).ShouldOnlyContain(_volumeLiverCell);
-         sut.AllParametersMatching(_organism, pathFrom($"{Constants.WILD_CARD}Liv", INTRACELLULAR, Constants.Parameters.VOLUME)).ShouldBeEmpty();
+         sut.AllParametersMatching(_organism, pathFrom($"{Constants.WILD_CARD}Liv", INTRACELLULAR, VOLUME)).ShouldBeEmpty();
+         sut.AllParametersMatching(_organism, pathFrom(_liver.Name, Constants.WILD_CARD_RECURSIVE, $"{VOLUME}{Constants.WILD_CARD}")).ShouldOnlyContain(_volumeLiver, _volumeLiverCell);
       }
    }
 
@@ -138,9 +142,9 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_matching_parameters()
       {
-         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, INTRACELLULAR, Constants.Parameters.VOLUME)).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell);
-         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, Constants.Parameters.VOLUME)).ShouldOnlyContain(_volumeLiver, _volumeKidney, _volumeKidneyCell, _volumeLiverCell, _volumeOrganism);
-         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, _clearance.Name)).ShouldOnlyContain(_clearance);
+         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, INTRACELLULAR, VOLUME)).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell);
+         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, VOLUME)).ShouldOnlyContain(_volumeLiver, _volumeKidney, _volumeKidneyCell, _volumeLiverCell, _volumeOrganism);
+          sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, _clearance.Name)).ShouldOnlyContain(_clearance);
       }
    }
 
@@ -149,14 +153,14 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_matching_parameters()
       {
-         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, Constants.WILD_CARD, Constants.Parameters.VOLUME)).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _volumeLiver, _volumeKidney);
-         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, INTRACELLULAR, Constants.WILD_CARD)).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _gfr, _liverRelExp);
-         sut.AllParametersMatching(_organism, pathFrom(_liver.Name, Constants.WILD_CARD_RECURSIVE, "Volume")).ShouldOnlyContain(_volumeLiverCell, _volumeLiver);
+         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, Constants.WILD_CARD, VOLUME)).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _volumeLiver, _volumeKidney);
+         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, INTRACELLULAR, Constants.WILD_CARD)).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _gfr, _liverRelExp, _volumeLiverCellOtherEntity);
+         sut.AllParametersMatching(_organism, pathFrom(_liver.Name, Constants.WILD_CARD_RECURSIVE, VOLUME)).ShouldOnlyContain(_volumeLiverCell, _volumeLiver);
 
-         sut.AllParametersMatching(_liver, pathFrom(Constants.WILD_CARD_RECURSIVE, Constants.WILD_CARD)).ShouldOnlyContain(_volumeLiver, _volumeLiverCell, _clearance, _liverRelExp);
-         sut.AllParametersMatching(_organism, pathFrom($"Liv{Constants.WILD_CARD}", $"{Constants.WILD_CARD}INTR{Constants.WILD_CARD}", $"{Constants.WILD_CARD}ol{Constants.WILD_CARD}")).ShouldOnlyContain(_volumeLiverCell);
-         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, $"INTR{Constants.WILD_CARD}", Constants.WILD_CARD)).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _clearance, _gfr, _liverRelExp);
-         sut.AllParametersMatching(_organism, pathFrom($"Liv{Constants.WILD_CARD}", $"INTRA{Constants.WILD_CARD}", $"{Constants.WILD_CARD}u*")).ShouldOnlyContain(_volumeLiverCell);
+         sut.AllParametersMatching(_liver, pathFrom(Constants.WILD_CARD_RECURSIVE, Constants.WILD_CARD)).ShouldOnlyContain(_volumeLiver, _volumeLiverCell, _clearance, _liverRelExp, _volumeLiverCellOtherEntity);
+         sut.AllParametersMatching(_organism, pathFrom($"Liv{Constants.WILD_CARD}", $"{Constants.WILD_CARD}INTR{Constants.WILD_CARD}", $"{Constants.WILD_CARD}ol{Constants.WILD_CARD}")).ShouldOnlyContain(_volumeLiverCell, _volumeLiverCellOtherEntity);
+         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, $"INTR{Constants.WILD_CARD}", Constants.WILD_CARD)).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell, _clearance, _gfr, _liverRelExp, _volumeLiverCellOtherEntity);
+         sut.AllParametersMatching(_organism, pathFrom($"Liv{Constants.WILD_CARD}", $"INTRA{Constants.WILD_CARD}", $"Vol{Constants.WILD_CARD}")).ShouldOnlyContain(_volumeLiverCell);
       }
    }
 
@@ -165,8 +169,8 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_matching_parameters()
       {
-         sut.AllParametersMatching(_organism, Constants.WILD_CARD_RECURSIVE).ShouldOnlyContain(_organism.GetAllChildren<IParameter>());
-         sut.AllParametersMatching(_liver, Constants.WILD_CARD_RECURSIVE).ShouldOnlyContain(_liver.GetAllChildren<IParameter>());
+         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, Constants.WILD_CARD)).ShouldOnlyContain(_organism.GetAllChildren<IParameter>());
+         sut.AllParametersMatching(_liver, pathFrom(Constants.WILD_CARD_RECURSIVE, Constants.WILD_CARD)).ShouldOnlyContain(_liver.GetAllChildren<IParameter>());
          sut.AllParametersMatching(_organism, Constants.WILD_CARD).ShouldOnlyContain(_organism.GetChildren<IParameter>());
          sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE)).ShouldOnlyContain(_organism.GetAllChildren<IParameter>());
       }
@@ -208,7 +212,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_matching_molecule_amounts()
       {
-         sut.AllMoleculesMatching(_organism, Constants.WILD_CARD_RECURSIVE).ShouldOnlyContain(_liverIntracellularMoleculeAmount);
+         sut.AllMoleculesMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, Constants.WILD_CARD)).ShouldOnlyContain(_liverIntracellularMoleculeAmount);
          sut.AllMoleculesMatching(_organism, pathFrom(_liver.Name, INTRACELLULAR, $"{Constants.WILD_CARD}")).ShouldOnlyContain(_liverIntracellularMoleculeAmount);
          sut.AllMoleculesMatching(_organism, pathFrom(_liver.Name, _liverIntracellularMoleculeAmount.Name)).ShouldBeEmpty();
       }
@@ -228,7 +232,7 @@ namespace OSPSuite.R.Services
       {
          var parameters = new[]
          {
-            _volumeLiver, _volumeOrganism, _volumeLiverCell, _volumeKidneyCell, _gfr, _volumeKidney, _height, _weight, _clearance, _gfr.MeanParameter, _gfr.DeviationParameter, _gfr.PercentileParameter, _paramWithRHS, _liverRelExp
+            _volumeLiver, _volumeOrganism, _volumeLiverCell, _volumeKidneyCell, _gfr, _volumeKidney, _height, _weight, _clearance, _gfr.MeanParameter, _gfr.DeviationParameter, _gfr.PercentileParameter, _paramWithRHS, _liverRelExp, _volumeLiverCellOtherEntity,
          };
          var expected = parameters.Select(x => x.EntityPath()).ToArray();
          _result.ShouldOnlyContain(expected);
@@ -249,7 +253,7 @@ namespace OSPSuite.R.Services
       {
          var parameters = new[]
          {
-            _volumeLiver, _volumeOrganism, _volumeLiverCell, _volumeKidneyCell, _gfr, _volumeKidney, _height, _weight, _clearance, _gfr.MeanParameter, _gfr.DeviationParameter, _gfr.PercentileParameter, _paramWithRHS, _liverRelExp
+            _volumeLiver, _volumeOrganism, _volumeLiverCell, _volumeKidneyCell, _gfr, _volumeKidney, _height, _weight, _clearance, _gfr.MeanParameter, _gfr.DeviationParameter, _gfr.PercentileParameter, _paramWithRHS, _liverRelExp, _volumeLiverCellOtherEntity
          };
          var expected = parameters.Select(x => x.EntityPath()).ToArray();
          _result.ShouldOnlyContain(expected);
@@ -279,7 +283,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_expected_path()
       {
-         var quantities = new IQuantity[] {_volumeLiver, _volumeLiverCell, _clearance, _liverIntracellularMoleculeAmount, _liverRelExp};
+         var quantities = new IQuantity[] {_volumeLiver, _volumeLiverCell, _clearance, _liverIntracellularMoleculeAmount, _liverRelExp, _volumeLiverCellOtherEntity};
          var expected = quantities.Select(x => x.EntityPath()).ToArray();
          _result.ShouldOnlyContain(expected);
       }
@@ -330,11 +334,11 @@ namespace OSPSuite.R.Services
 
          The.Action(() => sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "NOPE"), throwIfNotFound: true)).ShouldThrowAn<OSPSuiteException>();
 
-         sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, Constants.Parameters.VOLUME), throwIfNotFound: true).ShouldBeFalse();
-         sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, Constants.Parameters.VOLUME), throwIfNotFound: true).ShouldBeTrue();
+         sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, VOLUME), throwIfNotFound: true).ShouldBeFalse();
+         sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, VOLUME), throwIfNotFound: true).ShouldBeTrue();
 
          //do not exist
-         sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "NOPE"), throwIfNotFound:false).ShouldBeFalse();
+         sut.IsExplicitFormulaByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "NOPE"), throwIfNotFound: false).ShouldBeFalse();
       }
    }
 
@@ -343,7 +347,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_expected_entries()
       {
-         sut.BaseUnitNameByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, Constants.Parameters.VOLUME), throwIfNotFound: true).ShouldBeEqualTo(_volumeLiverCell.Dimension.BaseUnit.Name);
+         sut.BaseUnitNameByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, VOLUME), throwIfNotFound: true).ShouldBeEqualTo(_volumeLiverCell.Dimension.BaseUnit.Name);
          sut.BaseUnitNameByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "NOPE"), throwIfNotFound: false).ShouldBeNullOrEmpty();
          The.Action(() => sut.BaseUnitNameByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "NOPE"), throwIfNotFound: true)).ShouldThrowAn<OSPSuiteException>();
       }
@@ -354,7 +358,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_expected_entries()
       {
-         sut.DimensionNameByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, Constants.Parameters.VOLUME), throwIfNotFound: true).ShouldBeEqualTo(_volumeLiverCell.Dimension.Name);
+         sut.DimensionNameByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, VOLUME), throwIfNotFound: true).ShouldBeEqualTo(_volumeLiverCell.Dimension.Name);
          sut.DimensionNameByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "NOPE"), throwIfNotFound: false).ShouldBeNullOrEmpty();
          The.Action(() => sut.DimensionNameByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "NOPE"), throwIfNotFound: true)).ShouldThrowAn<OSPSuiteException>();
       }
@@ -387,6 +391,7 @@ namespace OSPSuite.R.Services
          _volumeLiverCell.Value.ShouldBeEqualTo(666);
       }
    }
+
    public class When_getting_a_value_by_path : concern_for_ContainerTask
    {
       [Observation]

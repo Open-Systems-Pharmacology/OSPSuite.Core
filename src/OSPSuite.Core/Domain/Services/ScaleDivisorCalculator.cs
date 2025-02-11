@@ -45,65 +45,63 @@ namespace OSPSuite.Core.Domain.Services
    public interface IScaleDivisorCalculator
    {
       /// <summary>
-      ///    Calculates the scale divisior for all <see cref="IMoleculeAmount" /> defined in the <paramref name="simulation" />.
+      ///    Calculates the scale divisor for all <see cref="MoleculeAmount" /> defined in the <paramref name="simulation" />.
       /// </summary>
       /// <remarks>
       ///    We have to keep in mind that the simulation may not contain results for all quantities defined in the model. Hence
       ///    the following strategy is implemented:
       ///    1 - Run the simulation and save up the results for all <see cref="MoleculeAmount" /> defined in the simulation
-      ///    2 - Calculate the scale divisiors
+      ///    2 - Calculate the scale divisors
       ///    3 - Set the previous results and output selection back to original
       /// </remarks>
-      /// <param name="simulation">Simulation for which the scale divisior should be calculated</param>
-      /// <param name="scaleDivisorOptions">Options used to compute the scale divisiors</param>
-      /// <returns>A collection of all scale divisiors</returns>
+      /// <param name="simulation">Simulation for which the scale divisor should be calculated</param>
+      /// <param name="scaleDivisorOptions">Options used to compute the scale divisors</param>
+      /// <returns>A collection of all scale divisors</returns>
       Task<IReadOnlyCollection<ScaleDivisor>> CalculateScaleDivisorsAsync(IModelCoreSimulation simulation, ScaleDivisorOptions scaleDivisorOptions);
 
       /// <summary>
-      ///    Calculates the scale divisior for the <paramref name="allMoleculeAmounts" /> defined in the
+      ///    Calculates the scale divisor for the <paramref name="allMoleculeAmounts" /> defined in the
       ///    <paramref name="simulation" />.
       /// </summary>
       /// <remarks>
       ///    We have to keep in mind that the simulation may not contain results for all quantities defined in the model. Hence
       ///    the following strategy is implemented:
       ///    1 - Run the simulation and save up the results for all <see cref="MoleculeAmount" /> defined in the simulation
-      ///    2 - Calculate the scale divisiors
+      ///    2 - Calculate the scale divisors
       ///    3 - Set the previous results and output selection back to original
       /// </remarks>
-      /// <param name="simulation">Simulation for which the scale divisior should be calculated</param>
-      /// <param name="scaleDivisorOptions">Options used to compute the scale divisiors</param>
+      /// <param name="simulation">Simulation for which the scale divisor should be calculated</param>
+      /// <param name="scaleDivisorOptions">Options used to compute the scale divisors</param>
       /// <param name="allMoleculeAmounts"></param>
-      /// <returns>A collection of all scale divisiors</returns>
-      Task<IReadOnlyCollection<ScaleDivisor>> CalculateScaleDivisorsAsync(IModelCoreSimulation simulation, ScaleDivisorOptions scaleDivisorOptions, PathCache<IMoleculeAmount> allMoleculeAmounts);
+      /// <returns>A collection of all scale divisors</returns>
+      Task<IReadOnlyCollection<ScaleDivisor>> CalculateScaleDivisorsAsync(IModelCoreSimulation simulation, ScaleDivisorOptions scaleDivisorOptions, PathCache<MoleculeAmount> allMoleculeAmounts);
 
       /// <summary>
       ///    Resets the scale divisors for the <paramref name="allMoleculeAmounts" /> to 1
       /// </summary>
-      IReadOnlyCollection<ScaleDivisor> ResetScaleDivisors(PathCache<IMoleculeAmount> allMoleculeAmounts);
+      IReadOnlyCollection<ScaleDivisor> ResetScaleDivisors(PathCache<MoleculeAmount> allMoleculeAmounts);
    }
 
    public class ScaleDivisorCalculator : IScaleDivisorCalculator
    {
       private readonly ISimModelManager _simModelManager;
       private readonly IContainerTask _containerTask;
-      private readonly IObjectPathFactory _objectPathFactory;
-      private PathCache<IMoleculeAmount> _allMoleculeAmounts;
+      private PathCache<MoleculeAmount> _allMoleculeAmounts;
       private ScaleDivisorOptions _scaleDivisorOptions;
       private string _simulationName;
 
-      public ScaleDivisorCalculator(ISimModelManager simModelManager, IContainerTask containerTask, IObjectPathFactory objectPathFactory)
+      public ScaleDivisorCalculator(ISimModelManager simModelManager, IContainerTask containerTask)
       {
          _simModelManager = simModelManager;
          _containerTask = containerTask;
-         _objectPathFactory = objectPathFactory;
       }
 
       public async Task<IReadOnlyCollection<ScaleDivisor>> CalculateScaleDivisorsAsync(IModelCoreSimulation simulation, ScaleDivisorOptions scaleDivisorOptions)
       {
-         return await CalculateScaleDivisorsAsync(simulation, scaleDivisorOptions, _containerTask.CacheAllChildren<IMoleculeAmount>(simulation.Model.Root));
+         return await CalculateScaleDivisorsAsync(simulation, scaleDivisorOptions, _containerTask.CacheAllChildren<MoleculeAmount>(simulation.Model.Root));
       }
 
-      public async Task<IReadOnlyCollection<ScaleDivisor>> CalculateScaleDivisorsAsync(IModelCoreSimulation simulation, ScaleDivisorOptions scaleDivisorOptions, PathCache<IMoleculeAmount> allMoleculeAmounts)
+      public async Task<IReadOnlyCollection<ScaleDivisor>> CalculateScaleDivisorsAsync(IModelCoreSimulation simulation, ScaleDivisorOptions scaleDivisorOptions, PathCache<MoleculeAmount> allMoleculeAmounts)
       {
          _simulationName = simulation.Name;
          var previousSelections = outputSelectionsFor(simulation);
@@ -129,7 +127,7 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      public IReadOnlyCollection<ScaleDivisor> ResetScaleDivisors(PathCache<IMoleculeAmount> allMoleculeAmounts)
+      public IReadOnlyCollection<ScaleDivisor> ResetScaleDivisors(PathCache<MoleculeAmount> allMoleculeAmounts)
       {
          return allMoleculeAmounts.Keys
             .Select(x => new ScaleDivisor {QuantityPath = x, Value = 1})
@@ -169,7 +167,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private string pathWithoutSimulationName(string simulationPath)
       {
-         var quantityPath = _objectPathFactory.CreateObjectPathFrom(simulationPath.ToPathArray());
+         var quantityPath = simulationPath.ToObjectPath();
          quantityPath.Remove(_simulationName);
          return quantityPath.PathAsString;
       }
@@ -206,10 +204,7 @@ namespace OSPSuite.Core.Domain.Services
          return outputSelection;
       }
 
-      private ISimulationSettings settingsFor(IModelCoreSimulation simulation)
-      {
-         return simulation.SimulationSettings;
-      }
+      private SimulationSettings settingsFor(IModelCoreSimulation simulation) => simulation.Settings;
 
       private OutputSelections outputSelectionsFor(IModelCoreSimulation simulation)
       {

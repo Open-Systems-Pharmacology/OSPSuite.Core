@@ -17,7 +17,7 @@ namespace OSPSuite.Core.Domain.Mappers
    {
    }
 
-   public class FormulaBuilderToFormulaMapper : IFormulaBuilderToFormulaMapper
+   internal class FormulaBuilderToFormulaMapper : IFormulaBuilderToFormulaMapper
    {
       private readonly ICloneManagerForModel _cloneManagerForModel;
 
@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Domain.Mappers
          _cloneManagerForModel = cloneManagerForModel;
       }
 
-      public IFormula MapFrom(IFormula formulaBuilder, IBuildConfiguration buildConfiguration)
+      public IFormula MapFrom(IFormula formulaBuilder, SimulationBuilder _)
       {
          return _cloneManagerForModel.Clone(formulaBuilder);
       }

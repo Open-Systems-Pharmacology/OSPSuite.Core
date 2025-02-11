@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Extensions;
 using DevExpress.LookAndFeel;
 using DevExpress.Utils;
 using DevExpress.XtraTreeList;
@@ -16,7 +13,11 @@ using OSPSuite.Assets;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Views;
+using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Mappers;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Controls
 {
@@ -64,6 +65,7 @@ namespace OSPSuite.UI.Controls
          ToolTipForNode = node => node.ToolTip;
          ToolTipController = new ToolTipController();
          ToolTipController.GetActiveObjectInfo += (o, e) => ShowToolTip(e);
+         ToolTipController.Initialize();
          OptionsMenu.ShowExpandCollapseItems = false;
       }
 
@@ -182,12 +184,12 @@ namespace OSPSuite.UI.Controls
 
       public void DestroyAllNodes()
       {
-         removeAllNodes(true);
+         removeAllNodes(deleteNodes: true);
       }
 
       public void Clear()
       {
-         removeAllNodes(false);
+         removeAllNodes(deleteNodes: false);
       }
 
       private void removeAllNodes(bool deleteNodes)
@@ -200,6 +202,7 @@ namespace OSPSuite.UI.Controls
                {
                   removeNode(NodeFrom(Nodes[i]), deleteNodes);
                }
+
                _allNodes.Clear();
             }));
       }
@@ -208,6 +211,30 @@ namespace OSPSuite.UI.Controls
       {
          var node = NodeFrom(treeNode);
          return node != null && node.Expanded;
+      }
+
+      /// <summary>
+      ///    The idea of this method is to keep the position of the node within the tree but update the node data.
+      ///    It only does something if the node exists.
+      /// </summary>
+      public void RefreshNode(ITreeNode treeNode)
+      {
+         var node = NodeFrom(treeNode);
+         if (node == null)
+            return;
+
+         //Removing all children node and adding them back again
+         DoWithinBatchUpdate(() =>
+         {
+            //this is removing the one that might be obsolete
+            node.Nodes.ToList().Each(removeNode);
+
+            //this is adding the new ones
+            //Add children nodes
+            if (shouldAddChildren(node))
+               treeNode.Children.Each(AddNode);
+
+         });
       }
 
       public void AddNode(ITreeNode nodeToAdd)
@@ -333,19 +360,19 @@ namespace OSPSuite.UI.Controls
       public void RemoveNode(ITreeNode treeNode)
       {
          if (treeNode == null) return;
-         DoWithinBatchUpdate(() => removeNode(treeNode, false));
+         DoWithinBatchUpdate(() => removeNode(treeNode, deleteNode: false));
       }
 
       /// <summary>
       ///    This will remove treeNode and associated controls from the local cache.
-      ///    It will also unlink and remove the descendants of the treeNode being removed. To keep the descendency in tact,
-      ///    use <seealso cref="RemoveNode" />
+      ///    It will also unlink and remove the descendants of the treeNode being removed. To keep the tree node object structure
+      ///    intact use <seealso cref="RemoveNode" />
       /// </summary>
       /// <param name="treeNode">The ITreeNode that will be removed from cache</param>
       public void DestroyNode(ITreeNode treeNode)
       {
          if (treeNode == null) return;
-         DoWithinBatchUpdate(() => removeNode(treeNode, true));
+         DoWithinBatchUpdate(() => removeNode(treeNode, deleteNode: true));
       }
 
       private void removeNode(ITreeNode treeNode, bool deleteNode)
@@ -357,15 +384,11 @@ namespace OSPSuite.UI.Controls
             treeNode.Delete();
       }
 
-      public void DestroyNode(string id)
-      {
-         removeNode(treeListNodeById(id));
-      }
+      public void DestroyNode(string id) => destroyNode(treeListNodeById(id));
 
-      private void removeNode(TreeListNode node)
-      {
-         DestroyNode(NodeFrom(node));
-      }
+      private void destroyNode(TreeListNode node) => DestroyNode(NodeFrom(node));
+
+      private void removeNode(TreeListNode node) => RemoveNode(NodeFrom(node));
 
       private bool nodeExists(ITreeNode node)
       {

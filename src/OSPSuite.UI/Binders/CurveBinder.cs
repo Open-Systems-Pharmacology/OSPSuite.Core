@@ -42,7 +42,7 @@ namespace OSPSuite.UI.Binders
          _axisView = yAxisView;
          _dataMode = dataMode;
          Curve = curve;
-         _xAxis = chart.AxisBy(AxisTypes.X);
+         _xAxis = chart.XAxis;
          _yAxis = chart.AxisBy(curve.yAxisType);
          _yAxisType = curve.yAxisType;
          _dataTable = new DataTable(Curve.Id);

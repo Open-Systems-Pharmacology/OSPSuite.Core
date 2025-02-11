@@ -9,6 +9,7 @@ namespace OSPSuite.Core.Serialization.Xml
          base.PerformMapping();
          Map(x => x.Mode);
          Map(x => x.ContainerType);
+         Map(x => x.ParentPath);
          MapEnumerable(x => x.Children,x => x.Add);
       }
    }

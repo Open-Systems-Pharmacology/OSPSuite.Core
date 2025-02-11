@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright © 2017 - present - Open Systems Pharmacology Community")]
 [assembly: ComVisible(false)]
 [assembly: InternalsVisibleTo("OSPSuite.Core.Tests")]
+[assembly: InternalsVisibleTo("OSPSuite.HelperForTests")]
 [assembly: InternalsVisibleTo("OSPSuite.UI.Tests")]
 [assembly: InternalsVisibleTo("OSPSuite.Presentation.Tests")]
 [assembly: InternalsVisibleTo("OSPSuite.R.Tests")]

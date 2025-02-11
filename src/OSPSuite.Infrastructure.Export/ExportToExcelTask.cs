@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Export
 {
@@ -29,22 +31,38 @@ namespace OSPSuite.Infrastructure.Export
       /// <param name="fileName">Target file</param>
       /// <param name="openExcel">If set to true, excel will be launched with the exported file</param>
       /// <param name="workBookConfiguration"></param>
-      public static void ExportDataTablesToExcel(IEnumerable<DataTable> dataTables, string fileName, bool openExcel, IWorkbookConfiguration workBookConfiguration = null)
+      public static void ExportDataTablesToExcel(IReadOnlyList<DataTable> dataTables, string fileName, bool openExcel, IWorkbookConfiguration workBookConfiguration = null)
       {
-         var tables = dataTables.ToList();
-         if (workBookConfiguration == null)
-            workBookConfiguration = new WorkbookConfiguration();
+         var workBookConfigurationToUse = workBookConfiguration ?? new WorkbookConfiguration();
+         updateTableNamesToMaxAllowedLengthAndUnicity(dataTables);
 
-         for (var i = 0; i < tables.Count(); i++)
-         {
-            var dataTable = tables.ElementAt(i);
-            exportDataTableToWorkBook(workBookConfiguration, dataTable);
-         }
+         dataTables.Each(x => exportDataTableToWorkBook(x, workBookConfigurationToUse));
 
-         saveWorkbook(fileName, workBookConfiguration.WorkBook);
+         saveWorkbook(fileName, workBookConfigurationToUse.WorkBook);
 
          if (openExcel)
             FileHelper.TryOpenFile(fileName);
+      }
+
+      private static void updateTableNamesToMaxAllowedLengthAndUnicity(IReadOnlyList<DataTable> dataTables)
+      {
+         //31 is max allowed by excel, we remove some more to allow for uniqueness (we assume we won't have more than 100 number and one extra space for the separator => 4)
+         const int maxTableNameLength = 31 - 4;
+
+         //Make sure we have a name for each table
+         dataTables.Where(x => string.IsNullOrEmpty(x.TableName)).ToList().Each(x => x.TableName = "Sheet");
+
+         //Simply max the length to what's allowed and remove 2 chars to add the number if required 
+         dataTables.Where(x => x.TableName.Length > maxTableNameLength).ToList()
+            .Each(x => x.TableName = x.TableName.Substring(0, maxTableNameLength));
+
+         //all names are now conformed to excel max length. But we may have doubled now. So we need to check for uniqueness
+         foreach (var dataTable in dataTables)
+         {
+            //we cannot save the list outside of the loop
+            var allOtherTableNames = dataTables.Except(new[] {dataTable}).Select(x => x.TableName).ToList();
+            dataTable.TableName = ContainerTask.RetrieveUniqueName(allOtherTableNames, dataTable.TableName, canUseBaseName: true, "_");
+         }
       }
 
       private static void saveWorkbook(string fileName, XSSFWorkbook workBook)
@@ -58,36 +76,21 @@ namespace OSPSuite.Infrastructure.Export
          });
       }
 
-      private static void exportDataTableToWorkBook(IWorkbookConfiguration workBookConfiguration, DataTable dataTable)
+      private static void exportDataTableToWorkBook(DataTable dataTable, IWorkbookConfiguration workBookConfiguration)
       {
-         // Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator = ".";
-
          var workBook = workBookConfiguration.WorkBook;
-
-         ISheet sheet;
-
-         if (!dataTable.TableName.Equals(""))
-         {
-            sheet = workBook.CreateSheet(dataTable.TableName);
-         }
-         else
-         {
-            sheet = workBook.CreateSheet("Sheet1");
-         }
-
+         var sheet = workBook.CreateSheet(dataTable.TableName);
          var rowCount = dataTable.Rows.Count;
          var columnCount = dataTable.Columns.Count;
 
          var row = sheet.CreateRow(0);
 
-         for (var c = 0; c < columnCount; c++)
+         for (var j = 0; j < columnCount; j++)
          {
-            var cell = row.CreateCell(c);
-            cell.SetCellValue(dataTable.Columns[c].ColumnName);
+            var cell = row.CreateCell(j);
+            cell.SetCellValue(dataTable.Columns[j].ColumnName);
             cell.CellStyle = workBookConfiguration.HeadersStyle;
          }
-
-         //        row.RowStyle = style;
 
          for (var i = 0; i < rowCount; i++)
          {
@@ -110,9 +113,9 @@ namespace OSPSuite.Infrastructure.Export
             }
          }
 
-         for (var c = 0; c < columnCount; c++)
+         for (var j = 0; j < columnCount; j++)
          {
-            sheet.AutoSizeColumn(c);
+            sheet.AutoSizeColumn(j);
          }
       }
    }

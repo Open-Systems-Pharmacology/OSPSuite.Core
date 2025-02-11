@@ -10,7 +10,7 @@ using OSPSuite.Presentation.Views;
 
 namespace OSPSuite.Presentation.Presentation
 {
-   public abstract class concern_for_QuantitySelectionPresenter : ContextSpecification<IQuantitySelectionPresenter>
+   public abstract class concern_for_QuantitySelectionPresenter : ContextSpecification<QuantitySelectionPresenter>
    {
       protected IQuantitySelectionView _view;
       protected IContainer _simulation;
@@ -36,20 +36,20 @@ namespace OSPSuite.Presentation.Presentation
    public class When_the_simulation_quantity_selection_presenter_is_editing_the_settings_based_on_the_available_molecules_in_a_simulation : concern_for_QuantitySelectionPresenter
    {
       private List<IQuantity> _allQuantities;
-      private IObserver _observer1;
-      private IObserver _observer2;
-      private IObserver _observer3;
+      private Observer _observer1;
+      private Observer _observer2;
+      private Observer _observer3;
       private QuantitySelectionDTO _dto;
       private List<QuantitySelectionDTO> _selectedQuantitiesDTO;
 
       protected override void Context()
       {
          base.Context();
-         _observer1 = A.Fake<IObserver>();
+         _observer1 = new Observer();
          _observer1.Persistable = true;
-         _observer2 = A.Fake<IObserver>();
+         _observer2 = new Observer();
          _observer2.Persistable = true;
-         _observer3 = A.Fake<IObserver>();
+         _observer3 = new Observer();
          _observer3.Persistable = false;
          _dto = new QuantitySelectionDTO();
          _quantities.AddRange(new[] {_observer1, _observer2, _observer3});
@@ -85,7 +85,7 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_the_simulation_quantity_selection_presenter_is_being_notifed_that_the_selection_has_changed : concern_for_QuantitySelectionPresenter
+   public class When_the_simulation_quantity_selection_presenter_is_being_notified_that_the_selection_has_changed : concern_for_QuantitySelectionPresenter
    {
       private QuantitySelectionDTO _quantityDTO1;
       private QuantitySelectionDTO _quantityDTO2;
@@ -157,6 +157,42 @@ namespace OSPSuite.Presentation.Presentation
       public void should_expand_the_groups_in_all_sub_presenters()
       {
          _allQuantityPresenter.ExpandAllGroups.ShouldBeTrue();
+      }
+   }
+
+   public class When_updating_selections_from_a_list : concern_for_QuantitySelectionPresenter
+   {
+      private IReadOnlyList<QuantitySelection> _quantityList;
+      private QuantitySelectionDTO _dto;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dto = new QuantitySelectionDTO();
+         var toto = new QuantitySelection("toto", QuantityType.Drug);
+         _quantityList = new List<QuantitySelection>
+         {
+            toto
+         };
+
+         A.CallTo(() => _allQuantityPresenter.QuantityDTOByPath(toto.Path)).Returns(_dto);
+      }
+
+      protected override void Because()
+      {
+         sut.UpdateSelection(_quantityList);
+      }
+
+      [Observation]
+      public void the_quantity_must_be_selected()
+      {
+         A.CallTo(() => _selectedQuantityPresenter.Add(_dto)).MustHaveHappened();
+      }
+
+      [Observation]
+      public void the_existing_selections_are_cleared()
+      {
+         A.CallTo(() => _selectedQuantityPresenter.UpdateSelection(A<IReadOnlyList<QuantitySelectionDTO>>._, false)).MustHaveHappened();
       }
    }
 }

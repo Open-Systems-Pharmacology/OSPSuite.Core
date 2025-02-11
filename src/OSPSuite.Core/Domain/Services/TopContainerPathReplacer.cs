@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Domain.Services
          _topContainerNames = topContainerNames;
       }
 
-      public void ReplaceIn(IObjectPath objectPath)
+      public void ReplaceIn(ObjectPath objectPath)
       {
          //no element 
          if (!objectPath.Any())

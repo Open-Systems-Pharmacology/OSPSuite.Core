@@ -79,14 +79,14 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_have_set_the_chart_axis_captions_as_expected()
       {
-         sut.Chart.AxisBy(AxisTypes.X).Caption.ShouldBeEqualTo(Captions.ParameterIdentification.NumberOfEvaluations);
-         sut.Chart.AxisBy(AxisTypes.Y).Caption.ShouldBeEqualTo(Captions.ParameterIdentification.TotalError);
+         sut.Chart.XAxis.Caption.ShouldBeEqualTo(Captions.ParameterIdentification.NumberOfEvaluations);
+         sut.Chart.YAxis.Caption.ShouldBeEqualTo(Captions.ParameterIdentification.TotalError);
       }
 
       [Observation]
       public void should_have_set_the_y_axis_as_linear_scale()
       {
-         sut.Chart.AxisBy(AxisTypes.Y).Scaling.ShouldBeEqualTo(Scalings.Linear);
+         sut.Chart.YAxis.Scaling.ShouldBeEqualTo(Scalings.Linear);
       }
    }
 

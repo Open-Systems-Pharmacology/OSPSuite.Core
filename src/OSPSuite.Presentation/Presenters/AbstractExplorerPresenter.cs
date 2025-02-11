@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
 using OSPSuite.Presentation.Core;
+using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters.Classifications;
 using OSPSuite.Presentation.Presenters.Nodes;
@@ -17,9 +18,37 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters
 {
+   public interface ICanDragDropPresenter
+   {
+      /// <summary>
+      ///    returns true is the <paramref name="node" /> can be dragged otherwise false
+      /// </summary>
+      /// <param name="node">node to drag</param>
+      bool CanDrag(ITreeNode node);
+
+      /// <summary>
+      ///    returns true is the <paramref name="dragNode" /> can be dragged under <paramref name="targetNode" /> otherwise false
+      /// </summary>
+      bool CanDrop(ITreeNode dragNode, ITreeNode targetNode, DragDropKeyFlags keyFlags);
+
+      /// <summary>
+      ///    Moves the <paramref name="dragNode" /> under the <paramref name="targetNode" />
+      /// </summary>
+      /// <param name="dragNode">Node being dragged</param>
+      /// <param name="targetNode">Node under which the dragged node should be attached</param>
+      /// <param name="keyFlags">enum representing keyState on the drop action</param>
+      void DropNode(ITreeNode dragNode, ITreeNode targetNode, DragDropKeyFlags keyFlags = DragDropKeyFlags.None);
+
+      /// <summary>
+      ///   Returns <c>true</c> if the presenter supports separate copy and move operations, otherwise <c>false</c> for only move operations
+      /// </summary>
+      bool CopyAllowed();
+   }
+
    public interface IExplorerPresenter :
       IPresenterWithContextMenu<ITreeNode>,
       IPresenterWithContextMenu<IReadOnlyList<ITreeNode>>,
+      ICanDragDropPresenter,
       IListener<ProjectCreatedEvent>,
       IListener<ProjectClosedEvent>
 
@@ -81,24 +110,6 @@ namespace OSPSuite.Presentation.Presenters
       void RemoveEmptyClassifications();
 
       /// <summary>
-      ///    returns true is the <paramref name="node" /> can be dragged otherwise false
-      /// </summary>
-      /// <param name="node">node to drag</param>
-      bool CanDrag(ITreeNode node);
-
-      /// <summary>
-      ///    returns true is the <paramref name="dragNode" /> can be dragged under <paramref name="targetNode" /> otherwise false
-      /// </summary>
-      bool CanDrop(ITreeNode dragNode, ITreeNode targetNode);
-
-      /// <summary>
-      ///    Moves the <paramref name="dragNode" /> under the <paramref name="targetNode" />
-      /// </summary>
-      /// <param name="dragNode">Node being dragged</param>
-      /// <param name="targetNode">Node under which the dragged node should be attached</param>
-      void MoveNode(ITreeNode dragNode, ITreeNode targetNode);
-
-      /// <summary>
       ///    Removes node from the view. The node won't be destroyed
       /// </summary>
       void RemoveNode(ITreeNode nodeToRemove);
@@ -156,6 +167,22 @@ namespace OSPSuite.Presentation.Presenters
       ///    directly in the view otherwise
       /// </summary>
       void AddClassifiableNodeToView(ITreeNode classifiableNode, ITreeNode<IClassification> classificationNode = null);
+
+      /// <summary>
+      ///    Returns a list of app specific menu items to be display under a given classification node
+      /// </summary>
+      IEnumerable<IMenuBarItem> AllCustomMenuItemsFor(ClassificationNode classificationNode);
+
+      /// <summary>
+      ///    Ensure that the last selected classification is reset
+      /// </summary>
+      void ResetActiveClassification();
+
+      /// <summary>
+      ///    This is called whenever a node is selected
+      /// </summary>
+      /// <param name="node"></param>
+      void NodeClick(ITreeNode node);
    }
 
    public abstract class AbstractExplorerPresenter<TView, TPresenter> : AbstractPresenter<TView, TPresenter>, IExplorerPresenter
@@ -169,6 +196,7 @@ namespace OSPSuite.Presentation.Presenters
       protected readonly IProjectRetriever _projectRetriever;
       protected readonly IClassificationPresenter _classificationPresenter;
       private bool _initialized;
+      private IClassification _activeClassification;
 
       protected AbstractExplorerPresenter(TView view, IRegionResolver regionResolver,
          IClassificationPresenter classificationPresenter, IToolTipPartCreator toolTipPartCreator, RegionName regionName, IProjectRetriever projectRetriever)
@@ -188,6 +216,26 @@ namespace OSPSuite.Presentation.Presenters
       public abstract bool RemoveDataUnderClassification(ITreeNode<IClassification> classificationNode);
 
       protected abstract void AddProjectToTree(IProject project);
+
+      private void addClassifiableUnderActiveClassification(IClassifiable classifiable)
+      {
+         //If we have an active classification, of th right type and our classifiable was not under a parent already,
+         //we add it under the active classification
+         if ((_activeClassification?.ClassificationType == classifiable.ClassificationType) && classifiable.Parent == null)
+            classifiable.Parent = _activeClassification;
+      }
+
+      public void ResetActiveClassification() => SetActiveClassification(null);
+
+      public virtual void NodeClick(ITreeNode node)
+      {
+         if (node is ClassificationNode classificationNode)
+            SetActiveClassification(classificationNode.Tag);
+         else
+            ResetActiveClassification();
+      }
+
+      protected void SetActiveClassification(IClassification classification) => _activeClassification = classification;
 
       public virtual void CreateClassificationUnder(ITreeNode<IClassification> parentClassificationNode)
       {
@@ -210,20 +258,13 @@ namespace OSPSuite.Presentation.Presenters
          _view.DestroyNode(node);
       }
 
-      public virtual void RemoveNodesFor(IEnumerable<IWithId> removedObjects)
-      {
-         removedObjects.Each(RemoveNodeFor);
-      }
+      public virtual void RemoveNodesFor(IEnumerable<IWithId> removedObjects) => removedObjects.Each(RemoveNodeFor);
 
-      public virtual void ToggleVisibility()
-      {
-         _region.ToggleVisibility();
-      }
+      public virtual void ToggleVisibility() => _region.ToggleVisibility();
 
-      protected virtual bool IsFolderNode(ITreeNode node)
-      {
-         return node.IsAnImplementationOf<RootNode>() || node.IsAnImplementationOf<ClassificationNode>();
-      }
+      protected virtual bool IsModuleNode(ITreeNode treeNode) => treeNode.IsAnImplementationOf<ModuleNode>();
+
+      protected virtual bool IsFolderNode(ITreeNode node) => node.IsAnImplementationOf<RootNode>() || node.IsAnImplementationOf<ClassificationNode>();
 
       public virtual ITreeNode NodeFor(IWithId objectWithId)
       {
@@ -251,13 +292,16 @@ namespace OSPSuite.Presentation.Presenters
       }
 
       public abstract void ShowContextMenu(ITreeNode node, Point popupLocation);
+
       public abstract void ShowContextMenu(IReadOnlyList<ITreeNode> treeNodes, Point popupLocation);
 
       public virtual void NodeDoubleClicked(ITreeNode node)
       {
-         if (IsFolderNode(node))
+         if (IsExpandable(node))
             View.ToggleExpandState(node);
       }
+
+      protected virtual bool IsExpandable(ITreeNode node) => IsFolderNode(node) || IsModuleNode(node);
 
       /// <summary>
       ///    Removes a classification tree node from the view
@@ -270,6 +314,8 @@ namespace OSPSuite.Presentation.Presenters
 
       public virtual void RemoveChildrenClassifications(ITreeNode<IClassification> parentClassificationNode, bool removeParent = false, bool removeData = false)
       {
+         ResetActiveClassification();
+
          if (removeData)
          {
             if (!RemoveDataUnderClassification(parentClassificationNode))
@@ -294,6 +340,8 @@ namespace OSPSuite.Presentation.Presenters
 
       public virtual ITreeNode AddClassifiableToTree<T>(T classifiable, RootNodeType rootNodeType, Func<ITreeNode<IClassification>, T, ITreeNode> addClassifiableToTree) where T : IClassifiable
       {
+         addClassifiableUnderActiveClassification(classifiable);
+
          var parent = classifiable.Parent ?? rootNodeType;
          var parentNode = NodeFor(parent).DowncastTo<ITreeNode<IClassification>>();
          return addClassifiableToTree(parentNode, classifiable);
@@ -310,6 +358,12 @@ namespace OSPSuite.Presentation.Presenters
             _view.AddNode(classifiableNode);
       }
 
+      public virtual IEnumerable<IMenuBarItem> AllCustomMenuItemsFor(ClassificationNode classificationNode)
+      {
+         //by default, no custom menus
+         return Enumerable.Empty<IMenuBarItem>();
+      }
+
       public virtual void RenameClassification(ITreeNode<IClassification> classificationNode)
       {
          _classificationPresenter.RenameClassification(classificationNode);
@@ -321,12 +375,14 @@ namespace OSPSuite.Presentation.Presenters
          _classificationPresenter.RemoveEmptyClassifcations();
       }
 
-      public virtual void MoveNode(ITreeNode dragNode, ITreeNode targetNode)
+      public virtual void DropNode(ITreeNode dragNode, ITreeNode targetNode, DragDropKeyFlags keyFlags = DragDropKeyFlags.None)
       {
          var classificationNode = targetNode as ITreeNode<IClassification>;
          var classifiableNode = dragNode as ITreeNode<IClassifiable>;
          _classificationPresenter.MoveNode(classifiableNode, classificationNode);
       }
+
+      public abstract bool CopyAllowed();
 
       public virtual void RemoveNode(ITreeNode nodeToRemove)
       {
@@ -348,7 +404,7 @@ namespace OSPSuite.Presentation.Presenters
          _view.DestroyNode(nodeToDestroy);
       }
 
-      public virtual bool CanDrop(ITreeNode dragNode, ITreeNode targetNode)
+      public virtual bool CanDrop(ITreeNode dragNode, ITreeNode targetNode, DragDropKeyFlags keyFlags)
       {
          var targetClassificationNode = targetNode as ITreeNode<IClassification>;
          if (targetClassificationNode == null)

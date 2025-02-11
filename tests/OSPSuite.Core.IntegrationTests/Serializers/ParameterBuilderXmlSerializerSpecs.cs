@@ -3,7 +3,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Helpers;
-using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
@@ -33,15 +32,14 @@ namespace OSPSuite.Core.Serializers
          AssertForSpecs.AreEqualParameterBuilder(x2, x1);
       }
 
-
       [Test]
       public void TestSerializationParameterBuilderWithParameterWithConstantFormula()
       {
          IFormula f1 = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(2.3);
          Parameter x1 = CreateObject<Parameter>().WithName("Patricia").WithFormula(f1).WithDimension(DimensionLength);
-         x1.BuildMode = ParameterBuildMode.Property;
-         x1.Visible  = false;
-         x1.CanBeVaried  = false;
+         x1.BuildMode = ParameterBuildMode.Global;
+         x1.Visible = false;
+         x1.CanBeVaried = false;
          var x2 = SerializeAndDeserialize(x1);
          AssertForSpecs.AreEqualParameterBuilder(x1, x2);
       }
@@ -53,7 +51,7 @@ namespace OSPSuite.Core.Serializers
          Parameter x1 = CreateObject<Parameter>().WithName("Peter").WithFormula(f1);
          x1.BuildMode = ParameterBuildMode.Local;
 
-         IFormulaUsablePath fup = new FormulaUsablePath(new[] {"Patricia"}).WithAlias("Patty").WithDimension(DimensionLength);
+         var fup = new FormulaUsablePath(new[] { "Patricia" }).WithAlias("Patty").WithDimension(DimensionLength);
          f1.AddObjectPath(fup);
 
          x1.Value = 3.4;

@@ -2,6 +2,7 @@
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
+using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.R.MinimalImplementations
 {
@@ -70,5 +71,7 @@ namespace OSPSuite.R.MinimalImplementations
       {
          //nothing to do
       }
+
+      public IContainer Container => throw new NotImplementedException();
    }
 }

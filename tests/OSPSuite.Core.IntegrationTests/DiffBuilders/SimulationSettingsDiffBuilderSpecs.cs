@@ -1,10 +1,10 @@
-﻿using System.Drawing;
-using OSPSuite.BDDHelper;
+﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Utility.Container;
+using System.Drawing;
 
 namespace OSPSuite.Core.DiffBuilders
 {
@@ -130,7 +130,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
 
       [Observation]
-      public void Shoukld_return_the_differences()
+      public void Should_return_the_differences()
       {
          _report.Count.ShouldBeEqualTo(2);
       }

@@ -46,11 +46,11 @@ namespace OSPSuite.Core.Domain
          if (initialLength == 0)
             return;
 
-         var detlaToUse = delta % initialLength;
+         var deltaToUse = delta % initialLength;
 
          var favoritesToMoves = entriesToMove.Select(x => _favorites.IndexOf(x))
             .Where(index => index >= 0)
-            .Select(index => new {index, favorite = _favorites[index], targetIndex = targetIndexFor(index, detlaToUse, initialLength)})
+            .Select(index => new {index, favorite = _favorites[index], targetIndex = targetIndexFor(index, deltaToUse, initialLength)})
             .OrderBy(x => x.targetIndex)
             .ToList();
          

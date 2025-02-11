@@ -23,18 +23,21 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private MappingProblem _mappingProblem = new MappingProblem() { MissingMapping = new List<string>(), MissingUnit = new List<string>() };
       private readonly IMappingParameterEditorPresenter _mappingParameterEditorPresenter;
       private readonly IMetaDataParameterEditorPresenter _metaDataParameterEditorPresenter;
+      private readonly IDimensionFactory _dimensionFactory;
 
       public ColumnMappingPresenter
       (
          IColumnMappingView view,
          IImporter importer,
          IMappingParameterEditorPresenter mappingParameterEditorPresenter,
-         IMetaDataParameterEditorPresenter metaDataParameterEditorPresenter
+         IMetaDataParameterEditorPresenter metaDataParameterEditorPresenter,
+         IDimensionFactory dimensionFactory
       ) : base(view)
       {
          _importer = importer;
          _mappingParameterEditorPresenter = mappingParameterEditorPresenter;
          _metaDataParameterEditorPresenter = metaDataParameterEditorPresenter;
+         _dimensionFactory = dimensionFactory;
          View.FillMappingView(_mappingParameterEditorPresenter.BaseView);
          View.FillMetaDataView(_metaDataParameterEditorPresenter.BaseView);
       }
@@ -540,10 +543,10 @@ namespace OSPSuite.Presentation.Presenters.Importer
             .Where
             (
                cn =>
-                  _format.Parameters.OfType<MappingDataFormatParameter>().All(p =>
+                  _format.GetParameters<MappingDataFormatParameter>().All(p =>
                      p.ColumnName != cn && p.MappedColumn?.Unit?.ColumnName != cn && p.MappedColumn?.LloqColumn != cn) &&
-                  _format.Parameters.OfType<MetaDataFormatParameter>().All(p => p.ColumnName != cn) &&
-                  _format.Parameters.OfType<GroupByDataFormatParameter>().All(p => p.ColumnName != cn)
+                  _format.GetParameters<MetaDataFormatParameter>().All(p => p.ColumnName != cn) &&
+                  _format.GetParameters<GroupByDataFormatParameter>().All(p => p.ColumnName != cn)
             );
       }
 
@@ -580,14 +583,14 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void setUnitAndDimension(ColumnMappingDTO model)
       {
-         var supportedDimensions = _columnInfos[model.MappingName].SupportedDimensions;
-         var unit = _format.ExtractUnitDescriptions(model.ExcelColumn, supportedDimensions);
+         var unit = _format.ExtractUnitDescriptions(model.ExcelColumn, _columnInfos[model.MappingName]);
          if (unit.SelectedUnit == UnitDescription.InvalidUnit)
             return;
 
          var mappingDataFormatParameter = (model.Source as MappingDataFormatParameter);
          mappingDataFormatParameter.MappedColumn.Unit = unit;
-         mappingDataFormatParameter.MappedColumn.Dimension = supportedDimensions.FirstOrDefault(x => x.HasUnit(unit.SelectedUnit));
+
+         mappingDataFormatParameter.MappedColumn.Dimension = _columnInfos[model.MappingName].DimensionForUnit(unit.SelectedUnit);
       }
 
       //ToDo: this big switch statement here underneath should be refactored, probably broken to more than one functions.

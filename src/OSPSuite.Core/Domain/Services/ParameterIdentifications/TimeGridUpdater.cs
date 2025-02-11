@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       public void UpdateSimulationTimeGrid(IModelCoreSimulation modelCoreSimulation, RemoveLLOQMode removeLLOQMode, IEnumerable<DataRepository> observedDataUsedInMapping)
       {
          var times = timeGridFromObservedData(observedDataUsedInMapping, removeLLOQMode);
-         modelCoreSimulation.SimulationSettings.OutputSchema.AddTimePoints(convertToDoubleArray(times));
+         modelCoreSimulation.Settings.OutputSchema.AddTimePoints(convertToDoubleArray(times));
       }
 
       //We are not using the ToDoubleArray method here because of some precisions issue when converting value from float to double

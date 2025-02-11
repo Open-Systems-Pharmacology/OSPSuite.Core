@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Descriptors;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
 
@@ -58,9 +59,9 @@ namespace OSPSuite.Core.Domain
       /// <param name="neighborhood">parent neighborhood container</param>
       /// <param name="criteriaForFirstContainer">criteria that should be met by the first container of the neighborhood</param>
       /// <param name="criteriaForSecondContainer">criteria that should be met by the second container of the neighborhood</param>
-      internal static IEnumerable<INeighborhood> AllNeighborhoodsFor(this IContainer neighborhood, DescriptorCriteria criteriaForFirstContainer, DescriptorCriteria criteriaForSecondContainer)
+      internal static IEnumerable<Neighborhood> AllNeighborhoodsFor(this IContainer neighborhood, DescriptorCriteria criteriaForFirstContainer, DescriptorCriteria criteriaForSecondContainer)
       {
-         return neighborhood.GetChildren<INeighborhood>(n => n.StrictlySatisfies(criteriaForFirstContainer, criteriaForSecondContainer));
+         return neighborhood.GetChildren<Neighborhood>(n => n.StrictlySatisfies(criteriaForFirstContainer, criteriaForSecondContainer));
       }
 
       /// <summary>
@@ -183,6 +184,28 @@ namespace OSPSuite.Core.Domain
       public static TChild GetSingleChild<TChild>(this IContainer container) where TChild : class, IEntity
       {
          return container?.GetSingleChild<TChild>(x => true);
+      }
+
+      /// <summary>
+      ///    Returns the formula,  using formula referencing and corresponding path entries fulfilling the given
+      ///    <paramref name="predicate" /> within the container
+      /// </summary>
+      /// <param name="container">Container where paths used in formula will be checked against predicate</param>
+      /// <param name="predicate">The predicate to check formula path against</param>
+      /// <returns></returns>
+      public static IEnumerable<EntityFormulaPath> GetPathsReferencing(this IContainer container, Func<FormulaUsablePath, bool> predicate)
+      {
+         return getAllPathReferencing<IUsingFormula>(container, predicate, x => x.Formula)
+            .Union(getAllPathReferencing<IParameter>(container, predicate, x => x.RHSFormula));
+      }
+
+      private static IEnumerable<EntityFormulaPath> getAllPathReferencing<T>(IContainer container, Func<FormulaUsablePath, bool> predicate, Func<T, IFormula> formulaFunc) where T : class, IEntity
+      {
+         return container.GetAllChildren<T>(x => formulaFunc(x) != null)
+            .Select(x => (entity: x, formula: formulaFunc(x)))
+            .Where(x => x.formula.ObjectPaths.Any(predicate))
+            .SelectMany(x => x.formula.ObjectPaths.Where(predicate)
+               .Select(path => new EntityFormulaPath(x.entity, path, x.formula)));
       }
    }
 }

@@ -316,13 +316,13 @@ namespace OSPSuite.Infrastructure.Import.Services
          }
 
          dataSourceFile.Format.CopyParametersFromConfiguration(configuration);
-         var mappings = dataSourceFile.Format.Parameters.OfType<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+         var mappings = dataSourceFile.Format.GetParameters<MetaDataFormatParameter>().Select(md => new MetaDataMappingConverter()
          {
             Id = md.MetaDataId,
             Index = sheetName => md.IsColumn ? dataSourceFile.DataSheets.GetDataSheetByName(sheetName).GetColumnDescription(md.ColumnName).Index : -1
          }).Union
          (
-            dataSourceFile.Format.Parameters.OfType<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
+            dataSourceFile.Format.GetParameters<GroupByDataFormatParameter>().Select(md => new MetaDataMappingConverter()
             {
                Id = md.ColumnName,
                Index = sheetName => dataSourceFile.DataSheets.GetDataSheetByName(sheetName).GetColumnDescription(md.ColumnName).Index

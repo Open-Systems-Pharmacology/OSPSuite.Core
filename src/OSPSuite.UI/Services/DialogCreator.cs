@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
@@ -12,6 +8,12 @@ using OSPSuite.Presentation.Services;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Mappers;
 using OSPSuite.Utility;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using OSPSuite.Assets;
 
 namespace OSPSuite.UI.Services
 {
@@ -35,7 +37,7 @@ namespace OSPSuite.UI.Services
 
       public void MessageBoxInfo(string message)
       {
-         showMessageBox(message, new[] {DialogResult.OK}, getIcon(SystemIcons.Information));
+         showMessageBox(message, new[] { DialogResult.OK }, getIcon(SystemIcons.Information));
       }
 
       private void showMessageBox(string message, DialogResult[] buttons, Icon icon)
@@ -43,7 +45,7 @@ namespace OSPSuite.UI.Services
          XtraMessageBox.Show(createMessageBoxArgs(message, buttons, icon));
       }
 
-      private XtraMessageBoxArgs createMessageBoxArgs(string message, DialogResult[] buttons, Icon icon, int defaultButtonIndex = 0)
+      private XtraMessageBoxArgs createMessageBoxArgs(string message, DialogResult[] buttons, Icon icon, int defaultButtonIndex = 0, bool doNotShowAgainCheckBoxVisible = false)
       {
          var args = new XtraMessageBoxArgs
          {
@@ -52,16 +54,18 @@ namespace OSPSuite.UI.Services
             Buttons = buttons,
             Icon = icon,
             DefaultButtonIndex = defaultButtonIndex,
-            AllowHtmlText = DefaultBoolean.True
+            AllowHtmlText = DefaultBoolean.True,
+            DoNotShowAgainCheckBoxVisible = doNotShowAgainCheckBoxVisible,
+            DoNotShowAgainCheckBoxText = Captions.DoNotShowThisAgainUntilRestart
          };
 
          if (containsHyperlink(message))
-            args.HyperlinkClick += (o,e) => { System.Diagnostics.Process.Start(e.Link); };
-         
+            args.HyperlinkClick += (o, e) => { System.Diagnostics.Process.Start(e.Link); };
+
          return args;
       }
 
-      public ViewResult MessageBoxYesNoCancel(string message, ViewResult defaultButton= ViewResult.Yes)
+      public ViewResult MessageBoxYesNoCancel(string message, ViewResult defaultButton = ViewResult.Yes)
       {
          return MessageBoxYesNoCancel(message, string.Empty, string.Empty, string.Empty, defaultButton);
       }
@@ -79,21 +83,43 @@ namespace OSPSuite.UI.Services
 
       public ViewResult MessageBoxYesNo(string message, string yes, string no, ViewResult defaultButton = ViewResult.Yes)
       {
-         return showQuestionMessageBox(message, new [] {
-            DialogResult.Yes, DialogResult.No}, yes, no, string.Empty, defaultButton);
+         return showQuestionMessageBox(message, new[]
+         {
+            DialogResult.Yes, DialogResult.No
+         }, yes, no, string.Empty, defaultButton);
       }
 
-      private ViewResult showQuestionMessageBox(string message, IReadOnlyList<DialogResult> buttons, string yes, string no, string cancel, ViewResult defaultButton)
+      public ViewResult MessageBoxConfirm(string message, Action doNotShowAgain, ViewResult defaultButton = ViewResult.Yes)
+      {
+         return showQuestionMessageBox(message, new[]
+         {
+            DialogResult.Yes, DialogResult.Cancel
+         }, string.Empty, string.Empty, string.Empty, defaultButton, doNotShowAgain);
+      }
+
+      private ViewResult showQuestionMessageBox(string message, IReadOnlyList<DialogResult> buttons, string yes, string no, string cancel, ViewResult defaultButton, Action doNotShowAgain = null)
       {
          var currentLocalizer = Localizer.Active;
          try
          {
             Localizer.Active = new XtraMessageBoxLocalizer(yes, no, cancel);
-            return _mapper.MapFrom(XtraMessageBox.Show(createMessageBoxArgs(message, buttons.ToArray(), getIcon(SystemIcons.Question), defaultButtonFrom(defaultButton))));
+            var args = createMessageBoxArgs(message, buttons.ToArray(), getIcon(SystemIcons.Question), defaultButtonFrom(defaultButton), doNotShowAgain != null);
+            args.Closed += (sender, e) => onMessageBoxClosed(e, doNotShowAgain);
+            DialogResult input = XtraMessageBox.Show(args);
+            return _mapper.MapFrom(input);
          }
          finally
          {
             Localizer.Active = currentLocalizer;
+         }
+      }
+
+      private void onMessageBoxClosed(XtraMessageBoxClosedArgs e, Action doNotShowAgain)
+      {
+         // e.Visible gets whether the user checked the 'Do not show this message again' checkbox. Checked makes e.Visible = false 
+         if (!e.Visible && e.DialogResult == DialogResult.Yes)
+         {
+            doNotShowAgain?.Invoke();
          }
       }
 
@@ -124,13 +150,13 @@ namespace OSPSuite.UI.Services
 
       public string AskForFileToOpen(string title, string filter, string directoryKey, string defaultFileName = null, string defaultDirectory = null)
       {
-         var frmDialog = new OpenFileDialog {Multiselect = false};
+         var frmDialog = new OpenFileDialog { Multiselect = false };
          return selectionFor(frmDialog, title, filter, directoryKey, defaultFileName, defaultDirectory);
       }
 
       public string AskForFileToSave(string title, string filter, string directoryKey, string defaultFileName = null, string defaultDirectory = null)
       {
-         var frmDialog = new SaveFileDialog {OverwritePrompt = true};
+         var frmDialog = new SaveFileDialog { OverwritePrompt = true };
          return selectionFor(frmDialog, title, filter, directoryKey, defaultFileName, defaultDirectory);
       }
 
@@ -165,7 +191,7 @@ namespace OSPSuite.UI.Services
 
       public string AskForFolder(string title, string directoryKey, string defaultDirectory = null)
       {
-         using (var folderDialog = new CommonOpenFileDialog {Title = title, InitialDirectory = getInitialDirectory(directoryKey, defaultDirectory)})
+         using (var folderDialog = new CommonOpenFileDialog { Title = title, InitialDirectory = getInitialDirectory(directoryKey, defaultDirectory) })
          {
             folderDialog.IsFolderPicker = true;
             if (folderDialog.ShowDialog() != CommonFileDialogResult.Ok)
@@ -206,6 +232,7 @@ namespace OSPSuite.UI.Services
                case StringId.XtraMessageBoxNoButtonText:
                   return _no;
             }
+
             return string.Empty;
          }
       }

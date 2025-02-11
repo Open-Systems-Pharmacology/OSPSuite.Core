@@ -22,7 +22,7 @@ using OSPSuite.Infrastructure.Import.Services;
 
       protected override void Because()
       {
-         _result = sut.RetrieveExcelSheets(DomainHelperForSpecs.ExcelImportFilePathFor("psv"), true);
+         _result = sut.RetrieveExcelSheets(DomainHelperForSpecs.ExcelImportFilePathFor("pv"), true);
       }
 
       [Observation]
@@ -39,7 +39,7 @@ using OSPSuite.Infrastructure.Import.Services;
 
       protected override void Because()
       {
-         _result = sut.RetrieveExcelSheets(DomainHelperForSpecs.ExcelImportFilePathFor("psv"), false);
+         _result = sut.RetrieveExcelSheets(DomainHelperForSpecs.ExcelImportFilePathFor("pv"), false);
       }
 
       [Observation]
@@ -56,7 +56,7 @@ using OSPSuite.Infrastructure.Import.Services;
 
       protected override void Because()
       {
-         _results = sut.GetAllDataTables(DomainHelperForSpecs.ExcelImportFilePathFor("psv"), true);
+         _results = sut.GetAllDataTables(DomainHelperForSpecs.ExcelImportFilePathFor("pv"), true);
       }
 
       [Observation]
@@ -72,7 +72,7 @@ using OSPSuite.Infrastructure.Import.Services;
 
       protected override void Because()
       {
-         _results = sut.GetDataTables(DomainHelperForSpecs.ExcelImportFilePathFor("psv"), "not_a_table", true);
+         _results = sut.GetDataTables(DomainHelperForSpecs.ExcelImportFilePathFor("pv"), "not_a_table", true);
       }
 
       [Observation]
@@ -88,7 +88,7 @@ using OSPSuite.Infrastructure.Import.Services;
 
       protected override void Because()
       {
-         _results = sut.GetDataTables(DomainHelperForSpecs.ExcelImportFilePathFor("psv"), "Tabelle1", true);
+         _results = sut.GetDataTables(DomainHelperForSpecs.ExcelImportFilePathFor("pv"), "Tabelle1", true);
       }
 
       [Observation]

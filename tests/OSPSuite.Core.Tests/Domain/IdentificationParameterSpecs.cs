@@ -407,7 +407,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_return_the_optimized_parameter_value_multiply_by_the_parameter_start_value_otherwise()
+      public void should_return_the_optimized_parameter_value_multiply_by_the_parameter_value_otherwise()
       {
          sut.UseAsFactor = true;
          _parameterSelection.Parameter.Value = 50;

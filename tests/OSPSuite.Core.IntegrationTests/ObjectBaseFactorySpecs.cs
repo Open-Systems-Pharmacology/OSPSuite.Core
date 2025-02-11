@@ -134,7 +134,7 @@ namespace OSPSuite.Core
 
    public class When_creating_an_object_that_implemented_the_with_creation_meta_data_interface : concern_for_ObjectBaseFactory
    {
-      private IObserverBuildingBlock _result;
+      private ObserverBuildingBlock _result;
       private CreationMetaData _creation;
 
       protected override void Context()
@@ -146,7 +146,7 @@ namespace OSPSuite.Core
 
       protected override void Because()
       {
-         _result = sut.Create<IObserverBuildingBlock>();
+         _result = sut.Create<ObserverBuildingBlock>();
       }
 
       [Observation]

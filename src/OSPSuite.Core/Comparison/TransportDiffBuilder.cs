@@ -4,7 +4,7 @@ using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Comparison
 {
-   public class TransportDiffBuilder : DiffBuilder<ITransport>
+   public class TransportDiffBuilder : DiffBuilder<Transport>
    {
       private readonly ContainerDiffBuilder _containerDiffBuilder;
       private readonly IObjectComparer _objectComparer;
@@ -17,7 +17,7 @@ namespace OSPSuite.Core.Comparison
          _entityPathResolver = entityPathResolver;
       }
 
-      public override void Compare(IComparison<ITransport> comparison)
+      public override void Compare(IComparison<Transport> comparison)
       {
          _containerDiffBuilder.Compare(comparison);
          CompareValues(x => _entityPathResolver.PathFor(x.TargetAmount), Captions.Diff.TargetAmount, comparison);

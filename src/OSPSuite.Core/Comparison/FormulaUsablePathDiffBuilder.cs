@@ -4,10 +4,12 @@ namespace OSPSuite.Core.Comparison
 {
    public class FormulaUsablePathDiffBuilder : DiffBuilder<FormulaUsablePath>
    {
+      private readonly IObjectComparer _objectComparer;
       private readonly ObjectPathDiffBuilder _objectPathDiffBuilder;
 
-      public FormulaUsablePathDiffBuilder(ObjectPathDiffBuilder objectPathDiffBuilder)
+      public FormulaUsablePathDiffBuilder(IObjectComparer objectComparer, ObjectPathDiffBuilder objectPathDiffBuilder)
       {
+         _objectComparer = objectComparer;
          _objectPathDiffBuilder = objectPathDiffBuilder;
       }
 
@@ -15,7 +17,7 @@ namespace OSPSuite.Core.Comparison
       {
          _objectPathDiffBuilder.Compare(comparison);
          CompareStringValues(x => x.Alias, x => x.Alias, comparison);
-         CompareValues(x => x.Dimension, x => x.Dimension, comparison);
+         _objectComparer.Compare(comparison.DimensionComparison());
       }
    }
 }

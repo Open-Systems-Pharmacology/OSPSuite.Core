@@ -13,11 +13,11 @@ using OSPSuite.Utility.Extensions;
 namespace OSPSuite.UI.Diagram.Managers
 {
    public class ReactionDiagramManager<T> : BaseDiagramManager<MultiPortContainerNode, SimpleNeighborhoodNode, T>, IReactionDiagramManager<T>
-      where T : class, IWithDiagramFor<T>, IEnumerable<IReactionBuilder>
+      where T : class, IWithDiagramFor<T>, IEnumerable<ReactionBuilder>
    {
       public ReactionDiagramManager()
       {
-         RegisterUpdateMethod(typeof (IReactionBuilder), UpdateReactionBuilder);
+         RegisterUpdateMethod<ReactionBuilder>(UpdateReactionBuilder);
       }
 
       protected override void UpdateDiagramModel(T reactionBuildingBlock, IDiagramModel diagramModel, bool coupleAll)
@@ -58,7 +58,7 @@ namespace OSPSuite.UI.Diagram.Managers
 
       protected override bool DecoupleObjectBase(IObjectBase objectBase, bool recursive)
       {
-         return Decouple<IReactionBuilder, ReactionNode>(objectBase as IReactionBuilder);
+         return Decouple<ReactionBuilder, ReactionNode>(objectBase as ReactionBuilder);
       }
 
       protected override bool MustHandleNew(IObjectBase obj)
@@ -66,10 +66,10 @@ namespace OSPSuite.UI.Diagram.Managers
          if (obj == null || PkModel == null)
             return false;
 
-         return obj.IsAnImplementationOf<IReactionBuilder>() && PkModel.Contains(obj.DowncastTo<IReactionBuilder>());
+         return obj.IsAnImplementationOf<ReactionBuilder>() && PkModel.Contains(obj.DowncastTo<ReactionBuilder>());
       }
 
-      public void AddMolecule(IReactionBuilder reactionBuilder, string moleculeName)
+      public void AddMolecule(ReactionBuilder reactionBuilder, string moleculeName)
       {
          var reactionNode = ReactionNodeFor(reactionBuilder);
          // insert new Modifier node above reaction
@@ -81,12 +81,12 @@ namespace OSPSuite.UI.Diagram.Managers
          UpdateReactionBuilder(reactionBuilder);
       }
 
-      public void RemoveMolecule(IReactionBuilder reactionBuilder, string moleculeName)
+      public void RemoveMolecule(ReactionBuilder reactionBuilder, string moleculeName)
       {
          UpdateReactionBuilder(reactionBuilder);
       }
 
-      public void RenameMolecule(IReactionBuilder reactionBuilder, string oldMoleculeName, string newMoleculeName)
+      public void RenameMolecule(ReactionBuilder reactionBuilder, string oldMoleculeName, string newMoleculeName)
       {
          // try to keep same location of renamed molecule
          var reactionNode = ReactionNodeFor(reactionBuilder);
@@ -109,7 +109,7 @@ namespace OSPSuite.UI.Diagram.Managers
 
       protected override IBaseNode AddObjectBase(IContainerBase parent, IObjectBase objectBase, bool recursive, bool coupleAll)
       {
-         var node = AddAndCoupleNode<IReactionBuilder, ReactionNode>(parent, objectBase as IReactionBuilder, coupleAll);
+         var node = AddAndCoupleNode<ReactionBuilder, ReactionNode>(parent, objectBase as ReactionBuilder, coupleAll);
          if (node != null)
             return node;
 
@@ -118,7 +118,7 @@ namespace OSPSuite.UI.Diagram.Managers
 
       protected override bool RemoveObjectBase(IObjectBase objectBase, bool recursive)
       {
-         if (RemoveAndDecoupleNode<IReactionBuilder, ReactionNode>(objectBase as IReactionBuilder))
+         if (RemoveAndDecoupleNode<ReactionBuilder, ReactionNode>(objectBase as ReactionBuilder))
             return true;
 
          return base.RemoveObjectBase(objectBase, recursive);
@@ -127,7 +127,7 @@ namespace OSPSuite.UI.Diagram.Managers
       // signature is necessary for use as argument in RegisterUpdateMethod
       public void UpdateReactionBuilder(IObjectBase reactionAsObjectBase, IBaseNode reactionNodeAsBaseNode)
       {
-         var reactionBuilder = reactionAsObjectBase.DowncastTo<IReactionBuilder>();
+         var reactionBuilder = reactionAsObjectBase.DowncastTo<ReactionBuilder>();
          var reactionNode = reactionNodeAsBaseNode.DowncastTo<ReactionNode>();
 
          reactionNode.ClearLinks();
@@ -150,14 +150,14 @@ namespace OSPSuite.UI.Diagram.Managers
          reactionNode.SetColorFrom(DiagramOptions.DiagramColors);
       }
 
-      public void UpdateReactionBuilder(IReactionBuilder reactionBuilder)
+      public void UpdateReactionBuilder(ReactionBuilder reactionBuilder)
       {
          var reactionNode = ReactionNodeFor(reactionBuilder);
          if (reactionNode == null) return;
          UpdateReactionBuilder(reactionBuilder, reactionNode);
       }
 
-      public IReactionNode ReactionNodeFor(IReactionBuilder reactionBuilder)
+      public IReactionNode ReactionNodeFor(ReactionBuilder reactionBuilder)
       {
          return NodeFor<ReactionNode>(reactionBuilder);
       }
@@ -190,6 +190,7 @@ namespace OSPSuite.UI.Diagram.Managers
                UpdateReactionBuilder(PkModel.First(node => node.Id == reactionNode.Id), reactionNode);
             }
          }
+
          return newMoleculeNode;
       }
 

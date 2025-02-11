@@ -1,6 +1,7 @@
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Extensions;
@@ -32,7 +33,7 @@ namespace OSPSuite.Core.Domain
    
    public class When_we_create_an_absolute_path_to_a_top_container : concern_for_ObjectPathFactory
    {
-      private IObjectPath _objectPath;
+      private ObjectPath _objectPath;
 
       protected override void Because()
       {
@@ -54,7 +55,7 @@ namespace OSPSuite.Core.Domain
    
    public class When_we_create_an_absolute_path_to_an_entity_without_a_parent_container : concern_for_ObjectPathFactory
    {
-      private IObjectPath _objectPath;
+      private ObjectPath _objectPath;
       private IEntity _aParameter;
 
       protected override void Context()
@@ -72,14 +73,11 @@ namespace OSPSuite.Core.Domain
       {
          _objectPath.PathAsString.ShouldBeEqualTo(_aParameter.Name);
       }
-
-    
    }
-
    
    public class When_we_create_an_absolute_path_to_a_root_container : concern_for_ObjectPathFactory
    {
-      private IObjectPath _objectPath;
+      private ObjectPath _objectPath;
       private IEntity _rootContainer;
 
       protected override void Context()
@@ -104,7 +102,7 @@ namespace OSPSuite.Core.Domain
    
    public class When_we_create_an_absolute_path_to_parameter : concern_for_ObjectPathFactory
    {
-      private IFormulaUsablePath _formulaUsablePath;
+      private FormulaUsablePath _formulaUsablePath;
 
       protected override void Because()
       {
@@ -128,7 +126,7 @@ namespace OSPSuite.Core.Domain
    
    public class When_creating_a_time_path_object_path : concern_for_ObjectPathFactory
    {
-      private IFormulaUsablePath _timePath;
+      private FormulaUsablePath _timePath;
       private IDimension _timeDimension;
 
       protected override void Context()
@@ -156,7 +154,7 @@ namespace OSPSuite.Core.Domain
    
    public class When_creating_a_relative_path_to_ourself:concern_for_ObjectPathFactory
    {
-      private IObjectPath _path;
+      private ObjectPath _path;
       protected override void Because()
       {
          _path = sut.CreateRelativeObjectPath(_parameter, _parameter);
@@ -170,6 +168,66 @@ namespace OSPSuite.Core.Domain
       public void resolved_path_should_return_ourself()
       {
          _path.Resolve<IUsingFormula>(_parameter).ShouldBeEqualTo(_parameter);
+      }
+   }
+
+   public class When_we_create_an_absolute_path_to_an_entity_with_parentPath : concern_for_ObjectPathFactory
+   {
+      private ObjectPath _objectPath;
+      private MoleculeBuilder _molecule;
+      private Container _container;
+
+      protected override void Context()
+      {
+         base.Context();
+         _molecule = new MoleculeBuilder().WithName("moleculeName").WithDimension(Constants.Dimension.NO_DIMENSION);
+         _container = new Container
+         {
+            ContainerType = ContainerType.Organ,
+            Mode = ContainerMode.Physical,
+            Name = "topContainer",
+            ParentPath = new ObjectPath("ItGoesSomewhere", "Else")
+         };
+
+      }
+      protected override void Because()
+      {
+         _objectPath = sut.CreateAbsoluteObjectPath(_container);
+      }
+
+      [Observation]
+      public void should_return_path_to_itself()
+      {
+         _objectPath.PathAsString.ShouldBeEqualTo($"{_container.ParentPath.PathAsString}|{_container.Name}");
+      }
+   }
+   public class When_we_create_an_absolute_path_to_an_entity_without_parentPath : concern_for_ObjectPathFactory
+   {
+      private ObjectPath _objectPath;
+      private MoleculeBuilder _molecule;
+      private Container _container;
+
+      protected override void Context()
+      {
+         base.Context();
+         _molecule = new MoleculeBuilder().WithName("moleculeName").WithDimension(Constants.Dimension.NO_DIMENSION);
+         _container = new Container
+         {
+            ContainerType = ContainerType.Organ,
+            Mode = ContainerMode.Physical,
+            Name = "topContainer"
+         };
+
+      }
+      protected override void Because()
+      {
+         _objectPath = sut.CreateAbsoluteObjectPath(_container);
+      }
+
+      [Observation]
+      public void should_return_path_to_itself()
+      {
+         _objectPath.PathAsString.ShouldBeEqualTo($"{_container.Name}");
       }
    }
 }

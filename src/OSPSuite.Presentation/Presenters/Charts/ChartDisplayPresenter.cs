@@ -15,6 +15,7 @@ using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Extensions;
+using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
 namespace OSPSuite.Presentation.Presenters.Charts
 {
@@ -184,6 +185,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       void OnDragOver(IDragEvent dragEvent);
       void AddDeviationLines();
+
+      Func<IEnumerable<DataColumn>, IEnumerable<DataColumn>> PreExportHook { get; set; }
    }
 
    public class ChartDisplayPresenter : AbstractPresenter<IChartDisplayView, IChartDisplayPresenter>, IChartDisplayPresenter
@@ -210,6 +213,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
       }
 
       public event EventHandler<AddDeviationLinesEventArgs> AddDeviationLinesEvent = delegate { };
+
+      //by default, don't modify anything
+      public Func<IEnumerable<DataColumn>, IEnumerable<DataColumn>> PreExportHook { get; set; } = x => x;
 
       public ChartDisplayPresenter(IChartDisplayView chartDisplayView,
          ICurveBinderFactory curveBinderFactory,
@@ -273,6 +279,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          }
       }
 
+  
       public void Refresh()
       {
          updateChart();
@@ -319,8 +326,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
             }
          });
 
-         Chart.AxisBy(AxisTypes.X).SetRange(xMin, xMax);
-         Chart.AxisBy(AxisTypes.Y).SetRange(yMin, yMax);
+         Chart.XAxis.SetRange(xMin, xMax);
+         Chart.YAxis.SetRange(yMin, yMax);
 
          RefreshAxisBinders();
       }
@@ -334,7 +341,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public virtual void ExportToExcel()
       {
-         _chartExportTask.ExportToExcel(Chart);
+         _chartExportTask.ExportToExcel(Chart, PreExportHook);
       }
 
       public void ResetZoom()
