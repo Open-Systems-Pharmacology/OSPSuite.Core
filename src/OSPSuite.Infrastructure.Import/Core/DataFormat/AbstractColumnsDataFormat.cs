@@ -212,20 +212,35 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          }
       }
 
-      protected virtual void ExtractGeneralParameters(List<string> keys, DataSheet dataSheet, IReadOnlyList<MetaDataCategory> metaDataCategories,
+      protected virtual void ExtractGeneralParameters(
+         List<string> keys,
+         DataSheet dataSheet,
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
          ref double rank)
       {
-         var columnsCopy = keys.ToList();
-         foreach (var header in columnsCopy.Where(h => metaDataCategories.Select(c => c.Name).FindHeader(h) != null))
+         var matchingHeaders = getMatchingHeaders(keys, metaDataCategories);
+         foreach (var header in matchingHeaders)
          {
-            var key = metaDataCategories.Select(c => c.Name).FindHeader(header);
-            //prevent duplicates in the parameters by metadataId
-            if (Parameters.OfType<MetaDataFormatParameter>().Any(x => x.MetaDataId.Equals(key)) == false)
+            var key = findHeaderInMetaDataCategories(header, metaDataCategories);
+
+            // Prevent duplicates in the parameters by MetaDataId
+            if (!Parameters.OfType<MetaDataFormatParameter>().Any(x => x.MetaDataId.Equals(key)))
             {
                keys.Remove(header);
                Parameters.Add(new MetaDataFormatParameter(header, key));
             }
          }
+      }
+
+      private IEnumerable<string> getMatchingHeaders(List<string> keys, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      {
+         var metaDataCategoryNames = metaDataCategories.Select(c => c.Name).ToList();
+         return keys.Where(header => metaDataCategoryNames.FindHeader(header) != null);
+      }
+
+      private string findHeaderInMetaDataCategories(string header, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      {
+         return metaDataCategories.Select(c => c.Name).FindHeader(header);
       }
 
       public IEnumerable<ParsedDataSet> Parse(DataSheet dataSheet, ColumnInfoCache columnInfos)
