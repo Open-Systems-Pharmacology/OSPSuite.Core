@@ -1,10 +1,10 @@
 configuration: Debug
 image: Visual Studio 2022
 
-ospsuite_version: '12.1'
-
 init: 
-  - cmd: if DEFINED APPVEYOR_PULL_REQUEST_NUMBER (Set build_number=1) ELSE (Set build_number=%APPVEYOR_BUILD_NUMBER%)
+  - cmd: |
+     Set ospsuite_version=12.1
+     if DEFINED APPVEYOR_PULL_REQUEST_NUMBER (Set build_number=1) ELSE (Set build_number=%APPVEYOR_BUILD_NUMBER%)
   
 version: '{ospsuite_version}.{build_number}'
 
