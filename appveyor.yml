@@ -1,7 +1,7 @@
 configuration: Debug
 image: Visual Studio 2022
 
-version: '$($env:ospsuite_version).$($env:appveyor_build_version)'
+version: '12.1.{build}'
 
 dotnet_csproj:
   patch: true
