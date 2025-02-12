@@ -474,7 +474,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       }
    }
 
-   public class When_measurement_unit_is_manually_set_to_a_diferent_dimension : concern_for_ColumnMappingPresenter
+   public class When_measurement_unit_is_manually_set_to_a_different_dimension : concern_for_ColumnMappingPresenter
    {
       protected MappingDataFormatParameter _mappingSource;
 
@@ -766,6 +766,64 @@ namespace OSPSuite.Presentation.Importer.Presenters
       public void the_dimension_is_not_changed()
       {
          _mappingSource.MappedColumn.Dimension.ShouldNotBeNull();
+      }
+   }
+
+   public class When_switching_fraction_to_dimensionless : concern_for_ColumnMappingPresenter
+   {
+      protected MappingDataFormatParameter _mappingSource;
+
+      protected override void Context()
+      {
+         base.Context();
+         var observation = _parameters[1] as MappingDataFormatParameter;
+         observation.MappedColumn.Dimension = DomainHelperForSpecs.FractionDimensionForSpecs();
+         observation.MappedColumn.Unit = new UnitDescription("");
+         _columnInfos["Error"].SupportedDimensions.Add(DomainHelperForSpecs.FractionDimensionForSpecs());
+         _mappingSource = _parameters[1] as MappingDataFormatParameter;
+         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
+         A.CallTo(() => _mappingParameterEditorPresenter.Dimension).Returns(Constants.Dimension.NO_DIMENSION);
+         UpdateSettings();
+      }
+
+      protected override void Because()
+      {
+         sut.UpdateDescriptionForModel(_mappingSource);
+      }
+
+      [Observation]
+      public void the_dimension_is_changed()
+      {
+         _mappingSource.MappedColumn.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.DIMENSIONLESS);
+      }
+   }
+
+   public class When_switching_dimensionless_to_fraction : concern_for_ColumnMappingPresenter
+   {
+      protected MappingDataFormatParameter _mappingSource;
+
+      protected override void Context()
+      {
+         base.Context();
+         var observation = _parameters[1] as MappingDataFormatParameter;
+         observation.MappedColumn.Dimension = Constants.Dimension.NO_DIMENSION;
+         observation.MappedColumn.Unit = new UnitDescription("");
+         _columnInfos["Error"].SupportedDimensions.Add(Constants.Dimension.NO_DIMENSION);
+         _mappingSource = _parameters[1] as MappingDataFormatParameter;
+         A.CallTo(() => _mappingParameterEditorPresenter.Unit).Returns(new UnitDescription(""));
+         A.CallTo(() => _mappingParameterEditorPresenter.Dimension).Returns(DomainHelperForSpecs.FractionDimensionForSpecs());
+         UpdateSettings();
+      }
+
+      protected override void Because()
+      {
+         sut.UpdateDescriptionForModel(_mappingSource);
+      }
+
+      [Observation]
+      public void the_dimension_is_changed()
+      {
+         _mappingSource.MappedColumn.Dimension.Name.ShouldBeEqualTo(Constants.Dimension.FRACTION);
       }
    }
 }

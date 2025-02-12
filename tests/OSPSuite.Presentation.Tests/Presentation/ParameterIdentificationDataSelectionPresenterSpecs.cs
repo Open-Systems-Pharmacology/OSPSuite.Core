@@ -65,23 +65,23 @@ namespace OSPSuite.Presentation.Presentation
 
    public class When_the_parameter_identification_data_presenter_is_notified_that_a_weighted_observed_data_was_selected : concern_for_ParameterIdentificationDataSelectionPresenter
    {
-      private WeightedObservedData _weightedObservedData;
+      private OutputMapping _outputMapping;
 
       protected override void Context()
       {
          base.Context();
-         _weightedObservedData = A.Fake<WeightedObservedData>();
+         _outputMapping = A.Fake<OutputMapping>();
       }
 
       protected override void Because()
       {
-         _outputMappingPresenter.ObservedDataSelected += Raise.With(new ObservedDataEventArgs(_weightedObservedData));
+         _outputMappingPresenter.ObservedDataSelected += Raise.With(new OutputMappingEventArgs(_outputMapping));
       }
 
       [Observation]
       public void should_select_the_corresponding_observed_data()
       {
-         A.CallTo(() => _weightedObservedDataPresenter.Edit(_weightedObservedData)).MustHaveHappened();
+         A.CallTo(() => _weightedObservedDataPresenter.Edit(_outputMapping)).MustHaveHappened();
       }
    }
 

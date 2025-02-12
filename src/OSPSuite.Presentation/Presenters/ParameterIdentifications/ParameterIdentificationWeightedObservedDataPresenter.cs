@@ -7,9 +7,10 @@ using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
-   public interface IParameterIdentificationWeightedObservedDataPresenter : IPresenter<IParameterIdentificationWeightedObservedDataView>, IListener<ObservedDataValueChangedEvent>
+   public interface IParameterIdentificationWeightedObservedDataPresenter : IPresenter<IParameterIdentificationWeightedObservedDataView>, IListener<ObservedDataValueChangedEvent>,
+      IListener<WeightedObservedDataChangedEvent>
    {
-      void Edit(WeightedObservedData weightedObservedData);
+      void Edit(OutputMapping outputMapping);
 
       string Caption { get; set; }
 
@@ -23,7 +24,8 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
    {
       private readonly IWeightedDataRepositoryDataPresenter _dataPresenter;
       private readonly ISimpleChartPresenter _chartPresenter;
-      private WeightedObservedData _observedData;
+      private WeightedObservedData observedData => _outputMapping?.WeightedObservedData;
+      private OutputMapping _outputMapping;
 
       public ParameterIdentificationWeightedObservedDataPresenter(IParameterIdentificationWeightedObservedDataView view, IWeightedDataRepositoryDataPresenter dataPresenter, ISimpleChartPresenter chartPresenter) : base(view)
       {
@@ -37,24 +39,24 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          clear();
       }
 
-      public void Edit(WeightedObservedData weightedObservedData)
+      public void Edit(OutputMapping outputMapping)
       {
-         if (_observedData == weightedObservedData || weightedObservedData == null)
+         if (outputMapping?.WeightedObservedData == null)
             return;
 
-         _view.SetTitle(weightedObservedData.DisplayName);
+         _view.SetTitle(outputMapping.WeightedObservedData.DisplayName);
 
-         _observedData = weightedObservedData;
-         _dataPresenter.EditObservedData(weightedObservedData);
-         _chartPresenter.PlotObservedData(weightedObservedData);
+         _outputMapping = outputMapping;
+         _dataPresenter.EditObservedData(outputMapping.WeightedObservedData);
+         _chartPresenter.PlotObservedData(outputMapping.WeightedObservedData);
          _chartPresenter.LogLinSelectionEnabled = true;
          _chartPresenter.HotTracked = hotTracked;
-         Caption = weightedObservedData.DisplayName;
+         Caption = outputMapping.WeightedObservedData.DisplayName;
       }
 
       public void Clear(WeightedObservedData weightedObservedData)
       {
-         if (_observedData != weightedObservedData)
+         if (observedData != weightedObservedData)
             return;
 
          clear();
@@ -63,7 +65,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private void clear()
       {
          _view.SetTitle(Captions.SelectMappingToShowObservedData);
-         _observedData = null;
+         _outputMapping = null;
          _chartPresenter.Clear();
          _dataPresenter.Clear();
       }
@@ -76,14 +78,22 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       private void hotTracked(int rowIndex) => _dataPresenter.SelectRow(rowIndex);
 
-      private bool shouldHandleEvent(ObservedDataEvent eventToHandle) => Equals(eventToHandle.ObservedData, _observedData.ObservedData);
+      private bool shouldHandleEvent(ObservedDataEvent eventToHandle) => Equals(eventToHandle.ObservedData, observedData.ObservedData);
 
       public void Handle(ObservedDataValueChangedEvent eventToHandle)
       {
          if (!shouldHandleEvent(eventToHandle))
             return;
 
-         Edit(_observedData);
+         Edit(_outputMapping);
+      }
+
+      public void Handle(WeightedObservedDataChangedEvent eventToHandle)
+      {
+         if (!Equals(_outputMapping, eventToHandle.OutputMapping))
+            return;
+
+         Edit(eventToHandle.OutputMapping);
       }
    }
 }

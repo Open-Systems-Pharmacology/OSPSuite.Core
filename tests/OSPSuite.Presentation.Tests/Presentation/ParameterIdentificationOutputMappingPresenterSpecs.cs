@@ -168,7 +168,7 @@ namespace OSPSuite.Presentation.Presentation
 
    public class When_the_user_is_mapping_an_output_not_mapped_with_any_previous_data_with_observed_data_not_used_yet : concern_for_ParameterIdentificationOutputMappingPresenter
    {
-      private WeightedObservedData _eventObservedData;
+      private OutputMapping _outputMapping;
       private bool _unmappedRaised;
 
       protected override void Context()
@@ -179,7 +179,7 @@ namespace OSPSuite.Presentation.Presentation
          _parameterIdentification.AddOutputMapping(_outputMapping2);
          sut.EditParameterIdentification(_parameterIdentification);
 
-         sut.ObservedDataMapped += (o, e) => { _eventObservedData = e.WeightedObservedData; };
+         sut.ObservedDataMapped += (o, e) => { _outputMapping = e.OutputMapping; };
          sut.ObservedDataUnmapped += (o, e) => { _unmappedRaised = true; };
       }
 
@@ -197,7 +197,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_notify_the_observed_data_mapped_event()
       {
-         _eventObservedData.ObservedData.ShouldBeEqualTo(_observedData1);
+         _outputMapping.WeightedObservedData.ObservedData.ShouldBeEqualTo(_observedData1);
       }
 
       [Observation]
@@ -209,7 +209,7 @@ namespace OSPSuite.Presentation.Presentation
 
    public class When_the_user_is_mapping_an_output_mapped_with_previous_data_with_observed_data_not_used_yet : concern_for_ParameterIdentificationOutputMappingPresenter
    {
-      private DataRepository _eventObservedData;
+      private OutputMapping _outputMapping;
       private bool _unmappedRaised;
 
       protected override void Context()
@@ -218,7 +218,7 @@ namespace OSPSuite.Presentation.Presentation
          _parameterIdentification.AddOutputMapping(_outputMapping1);
          _parameterIdentification.AddOutputMapping(_outputMapping2);
          sut.EditParameterIdentification(_parameterIdentification);
-         sut.ObservedDataMapped += (o, e) => { _eventObservedData = e.WeightedObservedData; };
+         sut.ObservedDataMapped += (o, e) => { _outputMapping = e.OutputMapping; };
          sut.ObservedDataUnmapped += (o, e) => { _unmappedRaised = true; };
       }
 
@@ -236,7 +236,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_notify_the_observed_data_mapped_event()
       {
-         _eventObservedData.ShouldBeEqualTo(_observedData1);
+         _outputMapping.WeightedObservedData.ObservedData.ShouldBeEqualTo(_observedData1);
       }
 
       [Observation]
@@ -288,7 +288,7 @@ namespace OSPSuite.Presentation.Presentation
 
    public class When_the_user_is_mapping_an_output_with_observed_data_already_used_by_another_output : concern_for_ParameterIdentificationOutputMappingPresenter
    {
-      private DataRepository _eventObservedData;
+      private OutputMapping _outputMapping;
       private bool _unmappedRaised;
 
       protected override void Context()
@@ -304,7 +304,7 @@ namespace OSPSuite.Presentation.Presentation
          _outputMappingDTO1.ObservedData = _observedData1;
          _outputMappingDTO2.ObservedData = _observedData1;
 
-         sut.ObservedDataMapped += (o, e) => { _eventObservedData = e.WeightedObservedData; };
+         sut.ObservedDataMapped += (o, e) => { _outputMapping = e.OutputMapping; };
          sut.ObservedDataUnmapped += (o, e) => { _unmappedRaised = true; };
       }
 
@@ -317,7 +317,7 @@ namespace OSPSuite.Presentation.Presentation
       public void should_have_updated_the_observed_data()
       {
          _outputMappingDTO2.ObservedData.ShouldBeEqualTo(_observedData1);
-         _eventObservedData.ShouldNotBeNull();
+         _outputMapping.ShouldNotBeNull();
          _unmappedRaised.ShouldBeTrue();
       }
 
@@ -330,7 +330,7 @@ namespace OSPSuite.Presentation.Presentation
 
    public class When_the_user_is_mapping_an_output_with_observed_data_already_used_by_the_same_output : concern_for_ParameterIdentificationOutputMappingPresenter
    {
-      private DataRepository _eventObservedData;
+      private OutputMapping _outputMapping;
       private bool _unmappedRaised;
 
       protected override void Context()
@@ -348,7 +348,7 @@ namespace OSPSuite.Presentation.Presentation
          _outputMappingDTO1.ObservedData = _observedData1;
          _outputMappingDTO2.ObservedData = _observedData1;
 
-         sut.ObservedDataMapped += (o, e) => { _eventObservedData = e.WeightedObservedData; };
+         sut.ObservedDataMapped += (o, e) => { _outputMapping = e.OutputMapping; };
          sut.ObservedDataUnmapped += (o, e) => { _unmappedRaised = true; };
       }
 
@@ -358,7 +358,7 @@ namespace OSPSuite.Presentation.Presentation
          The.Action(() => sut.ObservedDataSelectionChanged(_outputMappingDTO2, _observedData1, _observedData2)).ShouldThrowAn<CannotSelectTheObservedDataMoreThanOnceException>();
          _outputMappingDTO2.ObservedData.ShouldBeEqualTo(_observedData2);
          _outputMapping2.WeightedObservedData.ShouldBeEqualTo(_weightedObservedData2);
-         _eventObservedData.ShouldBeNull();
+         _outputMapping.ShouldBeNull();
          _unmappedRaised.ShouldBeFalse();
       }
    }

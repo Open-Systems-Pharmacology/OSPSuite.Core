@@ -14,12 +14,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       public string NamingConvention { get; set; }
    }
-   public interface IImportConfirmationPresenter : IPresenter<IImportConfirmationView>
+   public interface IImportPreviewPresenter : IPresenter<IImportPreviewView>
    {
       void TriggerNamingConventionChanged(string namingConvention);
       //void SetSelectedNamingConvention(string namingConvention);
       void SetKeys(IReadOnlyList<string> keys);
-      void SetNamingConventions(IReadOnlyList<string> namingConventionsm, string selectedNamingConvention);
+      void SetNamingConventions(IReadOnlyList<string> namingConventions, string selectedNamingConvention);
       void ImportData();
       void DataSetSelected(int index);
       void PlotDataRepository(DataRepository dataRepository);

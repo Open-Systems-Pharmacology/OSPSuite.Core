@@ -414,7 +414,7 @@ namespace OSPSuite.Assets
          public static readonly string Mappings = "Mappings";
          public static readonly string FormatPlain = "Format";
          public static readonly string DataMapping = "Data Mapping";
-         public static readonly string Confirmation = "Import preview";
+         public static readonly string ImportPreview = "Import preview";
          public static readonly string ThreeDots = "...";
          public static readonly string File = "File:";
          public static readonly string ManualInput = "Manual input";
@@ -481,6 +481,8 @@ namespace OSPSuite.Assets
          public static readonly string SeparatorSelection = "Separator Selection";
          public static readonly string DecimalSeparator = "Decimal Separator";
          public static readonly string ColumnSeparator = "Column Separator";
+         public static readonly string DimensionSelect = "Dimension Select";
+         public static readonly string SetDimensionsForAmbiguousUnits = "One or more column dimensions cannot be determined uniquely from the units.\n\nPlease set the dimension from the possible supporting dimensions";
 
          public static string LLOQInconsistentValuesAt(string dataRepositoryName) => $"There were different LLOQ values detected for the data from a single source. Please check data under name {dataRepositoryName}. Are you sure you want to continue with import?";
          public static string CsvSeparatorInstructions(string fileName) => $"Please select the separators for '{fileName}':";
@@ -581,6 +583,30 @@ namespace OSPSuite.Assets
          }
 
          public static readonly string ImportFileFilter = "Excel Files (*.xls, *.xlsx)|*.xls;*.xlsx|Comma Separated Value Files (*.csv)|*.csv|NonMem Files (*.NMdat)|*.NMdat|All Files (*.*)|*.*";
+
+         public static string UpdatedMappingsMessage(IEnumerable<(string ParameterName, string OutputPath)> updatedMappingsInfo)
+         {
+            var sb = new StringBuilder();
+            sb.AppendLine("The following parameter identifications and their output mappings were modified:");
+            sb.AppendLine();
+
+            var groupedMappings = updatedMappingsInfo
+               .GroupBy(mapping => mapping.ParameterName)
+               .OrderBy(group => group.Key);
+
+            foreach (var group in groupedMappings)
+            {
+               sb.AppendLine($"- {group.Key}");
+               foreach (var mapping in group)
+               {
+                  sb.AppendLine($"    - Output Path: {mapping.OutputPath}");
+               }
+               sb.AppendLine();
+            }
+
+            return sb.ToString();
+         }
+
       }
 
       public static class Diff
@@ -1021,6 +1047,14 @@ namespace OSPSuite.Assets
          public static string ParameterIdentificationFinished(string parameterIdentificationName, string duration)
          {
             return $"Parameter identification '{parameterIdentificationName}' finished in {duration}";
+         }
+
+
+         public static string SensitivityCalculationFailed(string parameterIdentificationName, IReadOnlyList<string> errorMessages, string duration = null)
+         {
+            return string.IsNullOrEmpty(duration) ? 
+               $"Parameter identification '{parameterIdentificationName}' finished but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}" : 
+               $"Parameter identification '{parameterIdentificationName}' finished in {duration} but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}";
          }
 
          public static string LinkedParametersIn(string name)
@@ -1883,6 +1917,21 @@ namespace OSPSuite.Assets
       public static string NeighborhoodDefinition(string neighborhoodName, string firstNeighbor, string secondNeighbor, string spatialStructure)
       {
          return $"Neighborhood '{neighborhoodName}' connects '{firstNeighbor}' and '{secondNeighbor}' in '{spatialStructure}'";
+      }
+
+      public static string CouldNotCalculateSensitivity(IReadOnlyList<string> runResultErrorMessages)
+      {
+         return $"Error calculating sensitivity\n{listErrorMessages(runResultErrorMessages)}";
+      }
+
+      private static string listErrorMessages(IReadOnlyList<string> runResultErrorMessages)
+      {
+         var sb = new StringBuilder();
+         foreach (var errorMessage in runResultErrorMessages)
+         {
+            sb.AppendLine($"- {errorMessage}");
+         }
+         return sb.ToString();
       }
    }
 
