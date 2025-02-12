@@ -6,7 +6,7 @@ init:
      Set ospsuite_version=12.1
      if DEFINED APPVEYOR_PULL_REQUEST_NUMBER (Set build_number=1) ELSE (Set build_number=%APPVEYOR_BUILD_NUMBER%)
   
-version: '{ospsuite_version}.{build_number}'
+version: '${ospsuite_version}.${build_number}'
 
 dotnet_csproj:
   patch: true
