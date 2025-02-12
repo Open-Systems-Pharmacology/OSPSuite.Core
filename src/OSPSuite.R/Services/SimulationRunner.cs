@@ -131,7 +131,8 @@ namespace OSPSuite.R.Services
          return new Core.Domain.SimulationRunOptions
          {
             CheckForNegativeValues = options.CheckForNegativeValues,
-            SimModelExportMode = SimModelExportMode.Optimized
+            SimModelExportMode = SimModelExportMode.Optimized,
+            AutoReduceTolerances = options.AutoReduceTolerances
          };
       }
 

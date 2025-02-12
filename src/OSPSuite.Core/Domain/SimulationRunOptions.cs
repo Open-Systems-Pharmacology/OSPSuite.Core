@@ -17,6 +17,11 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public bool CheckForNegativeValues { get; set; }
 
+      /// <summary>
+      ///   Specifies whether auto reduce tolerance should be applied
+      /// </summary>
+      public bool AutoReduceTolerances { get; set; }
+
       public SimulationRunOptions()
       {
          SimModelExportMode = SimModelExportMode.Full;

@@ -92,6 +92,7 @@ namespace OSPSuite.Core.Domain.Services
          options.ShowProgress = true;
          options.ExecutionTimeLimit = _executionTimeLimit;
          options.CheckForNegativeValues = _simulationRunOptions.CheckForNegativeValues;
+         options.AutoReduceTolerances = _simulationRunOptions.AutoReduceTolerances;
 
          try
          {
