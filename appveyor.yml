@@ -1,20 +1,18 @@
 configuration: Debug
 image: Visual Studio 2022
 
+version: '12.1.{build}'
+
 init: 
-  - cmd: |
-     Set ospsuite_version=12.1
-     if DEFINED APPVEYOR_PULL_REQUEST_NUMBER (Set build_number=1) ELSE (Set build_number=%APPVEYOR_BUILD_NUMBER%)
-  
-version: '${ospsuite_version}.${build_number}'
+  - cmd: if DEFINED APPVEYOR_PULL_REQUEST_NUMBER (Set patch_version=12.1.1) ELSE (Set patch_version=%APPVEYOR_BUILD_VERSION%)
 
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
-  version: '$(ospsuite_version).$(build_number)'
-  assembly_version: '$(ospsuite_version).$(build_number)'
-  file_version: '$(ospsuite_version).$(build_number)'
-  informational_version: '$(ospsuite_version).$(build_number)'
+  version: '$(patch_version)'
+  assembly_version: '$(patch_version)'
+  file_version: '$(patch_version)'
+  informational_version: '$(patch_version)'
 
 before_build:
   - nuget sources add -name bddhelper -source https://ci.appveyor.com/nuget/ospsuite-bddhelper 
@@ -40,7 +38,7 @@ pull_requests:
   do_not_increment_build_number: true
 
 nuget: 
-  disable_publish_on_pr: false 
+  disable_publish_on_pr: true 
 
 skip_tags: true
 
