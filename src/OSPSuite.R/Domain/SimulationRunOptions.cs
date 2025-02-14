@@ -13,5 +13,10 @@ namespace OSPSuite.R.Domain
       ///    Specifies whether progress bar should be shown during simulation run. Default is <c>true</c>
       /// </summary>
       public bool ShowProgress { get; set; } = true;
+
+      /// <summary>
+      ///   Specifies whether auto reduce tolerance should be applied
+      /// </summary>
+      public bool AutoReduceTolerances { get; set; }
    }
 }
