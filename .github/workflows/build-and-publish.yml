@@ -59,7 +59,7 @@ jobs:
           echo "new build number: ${new_build_id}"
           build_id="${new_build_id}"
         else
-          build_id="999${{ env.RUN }}"
+          build_id="9${{ env.RUN }}"
         fi
         
         echo "New Build ID: ${build_id}"
