@@ -33,7 +33,7 @@ jobs:
 
         
       - name: Cover and report
-        uses: ./.github/actions/dotcover
+        uses: Open-Systems-Pharmacology/Workflows/.github/actions/dotCover
         with:
           xml-configuration: dotcover.xml
           token: ${{ secrets.CODECOV_TOKEN }}
