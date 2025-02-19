@@ -6,7 +6,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
-using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Mappers
