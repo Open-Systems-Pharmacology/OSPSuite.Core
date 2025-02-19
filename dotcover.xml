@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CoverageParams>
+  <TargetArguments>
+  Tests\OSPSuite.Core.Tests\bin\Debug\net472\OSPSuite.Core.Tests.dll
+  Tests\OSPSuite.Core.IntegrationTests\bin\Debug\net472\OSPSuite.Core.IntegrationTests.dll
+  Tests\OSPSuite.Presentation.Tests\bin\Debug\net472\OSPSuite.Presentation.Tests.dll
+  Tests\OSPSuite.Infrastructure.Tests\bin\Debug\net472\OSPSuite.Infrastructure.Tests.dll
+  Tests\OSPSuite.R.Tests\bin\Debug\net472\OSPSuite.R.Tests.dll
+  Tests\OSPSuite.UI.Tests\bin\Debug\net472\OSPSuite.UI.Tests.dll
+  </TargetArguments>
+  <TargetWorkingDir>./</TargetWorkingDir>
+ 
+  <ExcludeFileMasks>
+    <Mask>src/**/*.Designer.cs</Mask>
+    <Mask>src/OSPSuite.UI/Views/**</Mask>
+    <Mask>src/OSPSuite.UI/Controls/**</Mask>
+  </ExcludeFileMasks>
+
+  <Filters>
+    <ExcludeFilters>
+      <FilterEntry>
+        <ModuleMask>FakeItEasy</ModuleMask>
+      </FilterEntry>
+    </ExcludeFilters>
+  </Filters>
+</CoverageParams>

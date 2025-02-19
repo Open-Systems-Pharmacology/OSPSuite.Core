@@ -17,7 +17,7 @@ using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Utility.Extensions;
 using ParameterValue = OSPSuite.Core.Domain.Builder.ParameterValue;
 
-namespace OSPSuite.Core.Helpers
+namespace OSPSuite.Helpers
 {
    public static class AssertForSpecs
    {
@@ -105,7 +105,7 @@ namespace OSPSuite.Core.Helpers
 
          if (x1.IsAnImplementationOf<IParameter>())
          {
-            AreEqualParameterBuilder((IParameter) x1, (IParameter) x2);
+            AreEqualParameterBuilder((IParameter)x1, (IParameter)x2);
             return;
          }
 
@@ -195,14 +195,14 @@ namespace OSPSuite.Core.Helpers
 
          if (x1.IsAnImplementationOf<IProcess>())
          {
-            AreEqualProcess((IProcess) x1, (IProcess) x2);
+            AreEqualProcess((IProcess)x1, (IProcess)x2);
             return;
          }
 
          // Types derived from QuantityAndContainer
          if (x1.IsAnImplementationOf<IDistributedParameter>())
          {
-            AreEqualDistributedParameter((IDistributedParameter) x1, (IDistributedParameter) x2);
+            AreEqualDistributedParameter((IDistributedParameter)x1, (IDistributedParameter)x2);
             return;
          }
 
@@ -214,14 +214,14 @@ namespace OSPSuite.Core.Helpers
 
          if (x1.IsAnImplementationOf<IQuantityAndContainer>())
          {
-            AreEqualQuantityAndContainer((IQuantityAndContainer) x1, (IQuantityAndContainer) x2);
+            AreEqualQuantityAndContainer((IQuantityAndContainer)x1, (IQuantityAndContainer)x2);
             return;
          }
 
          // Types derived from Quantity
          if (x1.IsAnImplementationOf<IParameter>())
          {
-            AreEqualParameter((IParameter) x1, (IParameter) x2);
+            AreEqualParameter((IParameter)x1, (IParameter)x2);
             return;
          }
 
@@ -233,13 +233,13 @@ namespace OSPSuite.Core.Helpers
 
          if (x1.IsAnImplementationOf<IQuantity>())
          {
-            AreEqualQuantity((IQuantity) x1, (IQuantity) x2);
+            AreEqualQuantity((IQuantity)x1, (IQuantity)x2);
             return;
          }
 
          if (x1.IsAnImplementationOf<IFormulaUsable>())
          {
-            AreEqualFormulaUsable((IFormulaUsable) x1, (IFormulaUsable) x2);
+            AreEqualFormulaUsable((IFormulaUsable)x1, (IFormulaUsable)x2);
             return;
          }
 
@@ -276,7 +276,7 @@ namespace OSPSuite.Core.Helpers
 
          if (x1.IsAnImplementationOf<IFormula>())
          {
-            AreEqualFormula((IFormula) x1, (IFormula) x2);
+            AreEqualFormula((IFormula)x1, (IFormula)x2);
             return;
          }
 
@@ -289,19 +289,19 @@ namespace OSPSuite.Core.Helpers
 
          if (x1.IsAnImplementationOf<IContainer>())
          {
-            AreEqualContainer((IContainer) x1, (IContainer) x2);
+            AreEqualContainer((IContainer)x1, (IContainer)x2);
             return;
          }
 
          if (x1.IsAnImplementationOf<IEntity>())
          {
-            AreEqualEntity((IEntity) x1, (IEntity) x2);
+            AreEqualEntity((IEntity)x1, (IEntity)x2);
             return;
          }
 
          if (x1.IsAnImplementationOf<IObjectBase>())
          {
-            AreEqualObjectBase((IObjectBase) x1, (IObjectBase) x2);
+            AreEqualObjectBase((IObjectBase)x1, (IObjectBase)x2);
             return;
          }
 
@@ -314,7 +314,7 @@ namespace OSPSuite.Core.Helpers
 
          if (x1.IsAnImplementationOf<IObjectReference>())
          {
-            AreEqualObjectReference((IObjectReference) x1, (IObjectReference) x2);
+            AreEqualObjectReference((IObjectReference)x1, (IObjectReference)x2);
             return;
          }
 
@@ -503,8 +503,8 @@ namespace OSPSuite.Core.Helpers
 
       public static void AreEqualDistributedTableFormula(DistributedTableFormula x1, DistributedTableFormula x2)
       {
-
       }
+
       public static void AreEqualAxis(Axis x1, Axis x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
@@ -1152,14 +1152,14 @@ namespace OSPSuite.Core.Helpers
       public static void AreEqualBuildingBlock<TBuilder>(IBuildingBlock<TBuilder> x1, IBuildingBlock<TBuilder> x2) where TBuilder : class, IBuilder
       {
          if (!AssertBothNotNull(x1, x2)) return;
-         AreEqualBuildingBlock((IBuildingBlock) x1, x2);
+         AreEqualBuildingBlock((IBuildingBlock)x1, x2);
          AreEqualEnumerableOfNamedObjects(x1, x2, x => x.Id);
       }
 
       public static void AreEqualSpatialStructure(SpatialStructure x1, SpatialStructure x2)
       {
          if (!AssertBothNotNull(x1, x2)) return;
-         AreEqualBuildingBlock((IBuildingBlock) x1, x2);
+         AreEqualBuildingBlock((IBuildingBlock)x1, x2);
          AreEqualContainer(x1.GlobalMoleculeDependentProperties, x2.GlobalMoleculeDependentProperties);
          AreEqualEnumerableOfNamedObjects(x1.TopContainers, x2.TopContainers, x => x.Id);
          AreEqualEnumerableOfNamedObjects(x1.Neighborhoods, x2.Neighborhoods, x => x.Id);

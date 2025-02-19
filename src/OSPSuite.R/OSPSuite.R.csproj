@@ -3,11 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>OSPSuite.R</AssemblyName>
-    <Version>1.0.0</Version>
-    <PackageVersion>1.0.0</PackageVersion>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0</FileVersion>
-    <InformationalVersion>1.0.0.0</InformationalVersion>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <PackageProjectUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</PackageProjectUrl>
