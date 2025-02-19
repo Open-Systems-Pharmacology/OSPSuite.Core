@@ -6,7 +6,6 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Helpers;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Helpers;
 using OSPSuite.Utility;

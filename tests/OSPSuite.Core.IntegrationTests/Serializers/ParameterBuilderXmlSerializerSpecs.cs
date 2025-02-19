@@ -2,7 +2,7 @@
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
-using OSPSuite.Core.Helpers;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {

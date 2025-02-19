@@ -46,7 +46,6 @@
     <ProjectReference Include="..\..\src\OSPSuite.Assets\OSPSuite.Assets.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
-    <ProjectReference Include="..\OSPSuite.Core.IntegrationTests\OSPSuite.Core.IntegrationTests.csproj" />
     <ProjectReference Include="..\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
   </ItemGroup>
 

@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using OSPSuite.Core.Domain.Populations;
 using OSPSuite.Core.Helpers;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
