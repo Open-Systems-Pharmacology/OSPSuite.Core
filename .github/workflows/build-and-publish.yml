@@ -100,8 +100,8 @@ jobs:
 
       - name: define env variables
         run: |
-          echo "APP_VERSION=${{needs.get-version.outputs.APP_VERSION}}" >> $GITHUB_ENV
-          echo "BUILD_ID=${{needs.get-version.outputs.BUILD_ID}}" >> $GITHUB_ENV
+          echo "APP_VERSION=${{needs.get-version.outputs.APP_VERSION}}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "BUILD_ID=${{needs.get-version.outputs.BUILD_ID}}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Build Debug and Release
         run: msbuild OSPSuite.Core.sln /p:Version=${{env.APP_VERSION}}
