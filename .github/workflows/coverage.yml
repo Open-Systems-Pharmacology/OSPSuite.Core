@@ -36,3 +36,4 @@ jobs:
         uses: ./.github/actions/dotcover
         with:
           xml-configuration: dotcover.xml
+          token: ${{ secrets.CODECOV_TOKEN }}

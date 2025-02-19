@@ -2,17 +2,13 @@ name: 'Cover with JetBrains dotCover'
 description: 'Install and run JetBrains dotcover with an xml configuration'
 author: 'Robert McIntosh'
 
-on:
-    workflow_call:
-      secrets:
-        CODECOV_TOKEN:
-            required: true
-
 inputs:
   xml-configuration:
     description: 'The xml file that configures the dotCover covearage'
     required: true
-
+  token:
+    description: the codecov.io upload token
+    required: true
 
 runs:
   steps:
@@ -30,5 +26,5 @@ runs:
       with:
         fail_ci_if_error: true
         files: ./coverageReport.xml
-        token: ${{ secrets.CODECOV_TOKEN }}
+        token: ${{ inputs.token }}
         verbose: true
