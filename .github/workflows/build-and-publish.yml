@@ -86,8 +86,8 @@ jobs:
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
-        
-      - name: define env variables
+
+      - name: Restore dependencies
         run: |
           nuget sources add -username Open-Systems-Pharmacology -password ${{ secrets.GITHUB_TOKEN }} -name OSP-GitHub-Packages -source "https://nuget.pkg.github.com/Open-Systems-Pharmacology/index.json"
           nuget sources add -name bddhelper -source https://ci.appveyor.com/nuget/ospsuite-bddhelper 
@@ -96,6 +96,10 @@ jobs:
           nuget sources add -name databinding -source https://ci.appveyor.com/nuget/ospsuite-databinding 
           nuget sources add -name texreporting -source https://ci.appveyor.com/nuget/ospsuite-texreporting 
           nuget sources add -name databinding-devexpress -source https://ci.appveyor.com/nuget/ospsuite-databinding-devexpress 
+          dotnet restore
+
+      - name: define env variables
+        run: |
           echo "APP_VERSION=${{needs.get-version.outputs.APP_VERSION}}" >> $GITHUB_ENV
           echo "BUILD_ID=${{needs.get-version.outputs.BUILD_ID}}" >> $GITHUB_ENV
 
