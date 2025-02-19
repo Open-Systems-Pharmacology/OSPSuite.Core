@@ -38,7 +38,7 @@ jobs:
           # Check if the response indicates a package not found error or is not valid JSON
           if echo "$response" | jq -e '.message == "Package not found." or (.[0].name // empty | length == 0)' >/dev/null 2>&1; then
             # Set the build number to 15 if no package is found or response is invalid (since the last build was 12.1.14)
-            new_build_id=15
+            new_build_id=16
           else
             latest_version=$(echo "$response" | jq -r '.[0].name // empty')
             
@@ -110,7 +110,7 @@ jobs:
         run: dotnet test .\tests\**\bin\Debug\net472\OSPSuite*Tests.dll -v normal --no-build  --logger:"html;LogFileName=../testLog_Windows.html"
 
       - name: Pack the project
-        run: dotnet pack .\OSPSuite.Core.sln --no-build --no-restore -o ./ -p:PackageVersion=${{env.APP_VERSION}} --configuration=Debug --include-symbols --no-build
+        run: dotnet pack .\OSPSuite.Core.sln --no-build --no-restore -o ./ -p:PackageVersion=${{env.APP_VERSION}} --configuration=Debug --no-build
 
       - name: Push nupkg as artifact
         # if it is a push to a branch
