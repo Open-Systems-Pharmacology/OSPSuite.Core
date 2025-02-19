@@ -1,9 +1,8 @@
 name: Code Coverage
 
 on:
-  push:
-    branches:
-    - 2426-build-on-github-actions-instead-of-appveyor
+  schedule:
+    - cron: '0 1 * * 4'
 
 jobs:
   cover:
