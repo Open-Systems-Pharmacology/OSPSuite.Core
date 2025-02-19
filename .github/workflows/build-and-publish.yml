@@ -84,6 +84,9 @@ jobs:
         with:
           submodules: 'true'
 
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        
       - name: define env variables
         run: |
           nuget sources add -username Open-Systems-Pharmacology -password ${{ secrets.GITHUB_TOKEN }} -name OSP-GitHub-Packages -source "https://nuget.pkg.github.com/Open-Systems-Pharmacology/index.json"
