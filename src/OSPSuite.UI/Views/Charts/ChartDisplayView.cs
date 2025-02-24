@@ -395,6 +395,9 @@ namespace OSPSuite.UI.Views.Charts
          if (axisToConvertTo == null)
             return PointF.Empty;
 
+         if (primaryYAxisCoordinate.GetAxisValue(axisToConvertTo) == null)
+            return PointF.Empty;
+
          return new PointF(Convert.ToSingle(primaryYAxisCoordinate.NumericalArgument), Convert.ToSingle(primaryYAxisCoordinate.GetAxisValue(axisToConvertTo).NumericalValue));
       }
 
