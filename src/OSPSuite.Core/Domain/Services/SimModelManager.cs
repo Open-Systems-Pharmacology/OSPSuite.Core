@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Domain.Services
             _canceled = false;
             doIfNotCanceled(() => loadSimulation(simulation));
             doIfNotCanceled(() => FinalizeSimulation(_simModelSimulation));
-            doIfNotCanceled(simulate);
+            doIfNotCanceled(() => simulate(simulation));
 
             if(!_canceled)
                return new SimulationRunResults(WarningsFrom( _simModelSimulation), getResults(simulation));
@@ -86,12 +86,13 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Starts a CoreSimulation run
       /// </summary>
-      private void simulate()
+      private void simulate(IModelCoreSimulation simulation)
       {
          var options = _simModelSimulation.Options;
          options.ShowProgress = true;
          options.ExecutionTimeLimit = _executionTimeLimit;
-         options.CheckForNegativeValues = _simulationRunOptions.CheckForNegativeValues;
+         options.CheckForNegativeValues = simulation.Settings.Solver.CheckForNegativeValues;
+         options.AutoReduceTolerances = simulation.Settings.Solver.AutoReduceTolerances;
 
          try
          {

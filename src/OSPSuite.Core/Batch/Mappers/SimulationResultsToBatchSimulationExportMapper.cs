@@ -31,6 +31,8 @@ namespace OSPSuite.Core.Batch.Mappers
             ParameterValues = parameterValuesFor(simulation.Model),
             AbsTol = simulation.Settings.Solver.AbsTol,
             RelTol = simulation.Settings.Solver.RelTol,
+            CheckForNegativeValues = simulation.Settings.Solver.CheckForNegativeValues,
+            AutoReduceTolerances = simulation.Settings.Solver.AutoReduceTolerances
          };
 
          results.AllButBaseGrid().Each(c => simulationExport.OutputValues.Add(quantityResultsFrom(c)));

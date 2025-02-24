@@ -15,8 +15,10 @@ namespace OSPSuite.Core.Serialization.SimModel.DTO
       public int H0 { get; set; }
       public int HMin { get; set; }
       public int HMax { get; set; }
-      public int    MxStep { get; set; }
+      public int MxStep { get; set; }
       public int UseJacobian { get; set; }
+      public int CheckForNegativeValues { get; set; }
+      public int AutoReduceTolerances { get; set; }
       //For Solver Specific Options
       public IEnumerable<SolverOptionExport> SolverOptions { get; set; }
    }

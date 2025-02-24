@@ -32,6 +32,8 @@
          solverSettings.Add(newSimulationSolverParameter(Constants.Parameters.H_MIN, 0));
          solverSettings.Add(newSimulationSolverParameter(Constants.Parameters.H_MAX, 60));
          solverSettings.Add(newSimulationSolverParameter(Constants.Parameters.MX_STEP, 100000));
+         solverSettings.Add(newSimulationSolverParameter(Constants.Parameters.CHECK_FOR_NEGATIVE_VALUES, 1));
+         solverSettings.Add(newSimulationSolverParameter(Constants.Parameters.AUTO_REDUCE_TOLERANCE, 0));
          return solverSettings;
       }
 

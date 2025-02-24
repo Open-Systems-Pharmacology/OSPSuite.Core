@@ -121,17 +121,19 @@ namespace OSPSuite.R.Services
       private SimulationResults run(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions)
       {
          _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
-         var simulationResults = _simModelManager.RunSimulation(simulation, coreSimulationRunOptionsFrom(simulationRunOptions));
+         var simulationResults = _simModelManager.RunSimulation(simulation, coreSimulationRunOptionsFrom(simulationRunOptions, simulation));
          return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
       }
 
-      private Core.Domain.SimulationRunOptions coreSimulationRunOptionsFrom(SimulationRunOptions simulationRunOptions)
+      private Core.Domain.SimulationRunOptions coreSimulationRunOptionsFrom(SimulationRunOptions simulationRunOptions, IModelCoreSimulation simulation)
       {
          var options = simulationRunOptions ?? new SimulationRunOptions();
          return new Core.Domain.SimulationRunOptions
          {
-            CheckForNegativeValues = options.CheckForNegativeValues,
-            SimModelExportMode = SimModelExportMode.Optimized
+            SimModelExportMode = SimModelExportMode.Optimized,
+            //TODO remember to remove this once PR 1717 is merged
+            //AutoReduceTolerances = simulation.Settings.Solver.AutoReduceTolerances
+            CheckForNegativeValues = simulation.Settings.Solver.CheckForNegativeValues,
          };
       }
 
