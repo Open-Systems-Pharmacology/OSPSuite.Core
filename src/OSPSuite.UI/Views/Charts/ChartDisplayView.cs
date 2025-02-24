@@ -395,10 +395,11 @@ namespace OSPSuite.UI.Views.Charts
          if (axisToConvertTo == null)
             return PointF.Empty;
 
-         if (primaryYAxisCoordinate.GetAxisValue(axisToConvertTo) == null)
+         var axisCoordinate = primaryYAxisCoordinate.GetAxisValue(axisToConvertTo);
+         if (axisCoordinate == null)
             return PointF.Empty;
 
-         return new PointF(Convert.ToSingle(primaryYAxisCoordinate.NumericalArgument), Convert.ToSingle(primaryYAxisCoordinate.GetAxisValue(axisToConvertTo).NumericalValue));
+         return new PointF(Convert.ToSingle(primaryYAxisCoordinate.NumericalArgument), Convert.ToSingle(axisCoordinate.NumericalValue));
       }
 
       private DiagramCoordinates getPrimaryYAxisCoordinate(float x, float y)
