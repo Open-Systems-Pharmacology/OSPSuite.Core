@@ -7,7 +7,6 @@ using DevExpress.Charts.Native;
 using DevExpress.Utils;
 using DevExpress.XtraBars;
 using DevExpress.XtraCharts;
-using DevExpress.XtraCharts.Native;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
@@ -164,7 +163,6 @@ namespace OSPSuite.UI.Views.Charts
          var seriesBeingMoved = dragDropEventArgs.Data.GetData(typeof(Series)).DowncastTo<Series>();
          if (seriesBeingMoved != null)
             dropLegendHere(hitInfo.Series.DowncastTo<Series>(), seriesBeingMoved);
-
       }
 
       protected override void OnDragOver(DragEventArgs dragOverEventArgs)
@@ -284,19 +282,16 @@ namespace OSPSuite.UI.Views.Charts
          if (topLeftCoord == null || bottomRightCoord == null)
             return;
 
-         // Zoom X-axis
          xyDiagram.AxisX.VisualRange.Auto = false;
          xyDiagram.AxisX.VisualRange.SetMinMaxValues(
             Math.Min(topLeftCoord.NumericalArgument, bottomRightCoord.NumericalArgument),
             Math.Max(topLeftCoord.NumericalArgument, bottomRightCoord.NumericalArgument));
 
-         // Now Zoom primary and secondary Y axes consistently
          zoomAxis(AxisTypes.Y, topLeftCoord, bottomRightCoord);
          zoomAxis(AxisTypes.Y2, rectangle);
          zoomAxis(AxisTypes.Y3, rectangle);
       }
 
-      // Helper method to zoom a specific Y axis
       private void zoomAxis(AxisTypes axisType, DiagramCoordinates topLeftCoord, DiagramCoordinates bottomRightCoord)
       {
          var axis = getAxisFromType(axisType);
@@ -310,7 +305,6 @@ namespace OSPSuite.UI.Views.Charts
          axis.VisualRange.SetMinMaxValues(minY, maxY);
       }
 
-      // Overload specifically for secondary axes, as they have different coordinate systems
       private void zoomAxis(AxisTypes axisType, Rectangle rectangle)
       {
          var axis = getAxisFromType(axisType);
@@ -329,7 +323,6 @@ namespace OSPSuite.UI.Views.Charts
 
          axis.VisualRange.SetMinMaxValues(minY, maxY);
       }
-
 
       private Color diagramBackColor
       {
