@@ -720,7 +720,6 @@ namespace OSPSuite.UI.Views.Charts
             return;
 
          this.FillWith(_chartControl);
-         _presenter.ResetZoom();
       }
 
       public void ShowHint()
