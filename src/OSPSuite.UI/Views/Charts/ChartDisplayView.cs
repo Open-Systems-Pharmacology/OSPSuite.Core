@@ -287,14 +287,9 @@ namespace OSPSuite.UI.Views.Charts
             Math.Min(topLeftCoord.NumericalArgument, bottomRightCoord.NumericalArgument),
             Math.Max(topLeftCoord.NumericalArgument, bottomRightCoord.NumericalArgument));
 
-         zoomAxis(AxisTypes.Y, topLeftCoord, bottomRightCoord);
+         setAxisVisualRange(AxisTypes.Y, topLeftCoord?.NumericalValue, bottomRightCoord?.NumericalValue);
          zoomAxis(AxisTypes.Y2, rectangle);
          zoomAxis(AxisTypes.Y3, rectangle);
-      }
-
-      private void zoomAxis(AxisTypes axisType, DiagramCoordinates topLeftCoord, DiagramCoordinates bottomRightCoord)
-      {
-         SetAxisVisualRange(axisType, topLeftCoord?.NumericalValue, bottomRightCoord?.NumericalValue);
       }
 
       private void zoomAxis(AxisTypes axisType, Rectangle rectangle)
@@ -308,10 +303,10 @@ namespace OSPSuite.UI.Views.Charts
          if (topLeftCoord == null || bottomRightCoord == null)
             return;
 
-         SetAxisVisualRange(axisType, topLeftCoord.NumericalValue, bottomRightCoord.NumericalValue);
+         setAxisVisualRange(axisType, topLeftCoord.NumericalValue, bottomRightCoord.NumericalValue);
       }
 
-      private void SetAxisVisualRange(AxisTypes axisType, double? minValue, double? maxValue)
+      private void setAxisVisualRange(AxisTypes axisType, double? minValue, double? maxValue)
       {
          var axis = getAxisFromType(axisType);
          if (axis == null || minValue == null || maxValue == null) return;
