@@ -294,15 +294,7 @@ namespace OSPSuite.UI.Views.Charts
 
       private void zoomAxis(AxisTypes axisType, DiagramCoordinates topLeftCoord, DiagramCoordinates bottomRightCoord)
       {
-         var axis = getAxisFromType(axisType);
-         if (axis == null) return;
-
-         axis.VisualRange.Auto = false;
-
-         var minY = Math.Min(topLeftCoord.NumericalValue, bottomRightCoord.NumericalValue);
-         var maxY = Math.Max(topLeftCoord.NumericalValue, bottomRightCoord.NumericalValue);
-
-         axis.VisualRange.SetMinMaxValues(minY, maxY);
+         SetAxisVisualRange(axisType, topLeftCoord?.NumericalValue, bottomRightCoord?.NumericalValue);
       }
 
       private void zoomAxis(AxisTypes axisType, Rectangle rectangle)
@@ -316,12 +308,16 @@ namespace OSPSuite.UI.Views.Charts
          if (topLeftCoord == null || bottomRightCoord == null)
             return;
 
+         SetAxisVisualRange(axisType, topLeftCoord.NumericalValue, bottomRightCoord.NumericalValue);
+      }
+
+      private void SetAxisVisualRange(AxisTypes axisType, double? minValue, double? maxValue)
+      {
+         var axis = getAxisFromType(axisType);
+         if (axis == null || minValue == null || maxValue == null) return;
+
          axis.VisualRange.Auto = false;
-
-         double minY = Math.Min(topLeftCoord.NumericalValue, bottomRightCoord.NumericalValue);
-         double maxY = Math.Max(topLeftCoord.NumericalValue, bottomRightCoord.NumericalValue);
-
-         axis.VisualRange.SetMinMaxValues(minY, maxY);
+         axis.VisualRange.SetMinMaxValues(Math.Min(minValue.Value, maxValue.Value), Math.Max(minValue.Value, maxValue.Value));
       }
 
       private Color diagramBackColor
