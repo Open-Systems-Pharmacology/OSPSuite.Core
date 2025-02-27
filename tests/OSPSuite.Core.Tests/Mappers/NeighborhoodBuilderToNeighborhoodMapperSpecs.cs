@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
@@ -54,7 +55,7 @@ namespace OSPSuite.Core.Mappers
          _simulationConfiguration = new SimulationConfiguration();
          _model = A.Fake<IModel>();
          _model.Root = _rootContainer;
-         _neighborhoodBuilder =new NeighborhoodBuilder().WithName("tralala");
+         _neighborhoodBuilder = new NeighborhoodBuilder().WithName("tralala");
          _neighborhoodBuilder.Add(new Container().WithName(Constants.MOLECULE_PROPERTIES));
 
          var para1 = new Parameter().WithName("Para1");
@@ -69,28 +70,48 @@ namespace OSPSuite.Core.Mappers
          var secondNeighborModelPath = A.Fake<ObjectPath>();
          _firstNeighborInModel = A.Fake<IContainer>();
          _secondNeighborInModel = A.Fake<IContainer>();
+
          A.CallTo(() => firstNeighborModelPath.Resolve<IContainer>(_rootContainer)).Returns(_firstNeighborInModel);
          A.CallTo(() => secondNeighborModelPath.Resolve<IContainer>(_rootContainer)).Returns(_secondNeighborInModel);
+
          _moleculeContainer = A.Fake<IContainer>();
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          A.CallTo(() => _containerMapper.MapFrom(_neighborhoodBuilder.MoleculeProperties, _simulationBuilder)).Returns(_moleculeContainer);
          _molecule1 = "molecule1";
          _molecule2 = "molecule2";
-         _moleculeNames = new List<string> {_molecule1, _molecule2};
+         _moleculeNames = new List<string> { _molecule1, _molecule2 };
          A.CallTo(() => _objectBaseFactory.Create<Neighborhood>()).Returns(new Neighborhood());
-         A.CallTo(() => _parameterMapper.MapFrom(para1, _simulationBuilder)).Returns(_clonePara1);
-         A.CallTo(() => _parameterMapper.MapFrom(para2, _simulationBuilder)).Returns(_clonePara2);
+
+         A.CallTo(() => _parameterMapper.MapFrom(A<IParameter>._, A<SimulationBuilder>._)).ReturnsLazily((IParameter parameter, SimulationBuilder simulationBuilder) =>
+         {
+            if (ReferenceEquals(parameter, para1))
+               return _clonePara1;
+            if(ReferenceEquals(parameter, para2))
+               return _clonePara2;
+
+            throw new NotSupportedException();
+         });
 
          _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder);
          _modelConfiguration.UpdateReplacementContext();
 
-         A.CallTo(() => _keywordReplacerTask.CreateModelPathFor(_neighborhoodBuilder.FirstNeighborPath, _modelConfiguration.ReplacementContext)).Returns(firstNeighborModelPath);
-         A.CallTo(() => _keywordReplacerTask.CreateModelPathFor(_neighborhoodBuilder.SecondNeighborPath, _modelConfiguration.ReplacementContext)).Returns(secondNeighborModelPath);
+
+         A.CallTo(() => _keywordReplacerTask.CreateModelPathFor(A<ObjectPath>._, A<ReplacementContext>._)).ReturnsLazily((ObjectPath path, ReplacementContext context) =>
+         {
+            if (ReferenceEquals(path, _neighborhoodBuilder.FirstNeighborPath))
+               return firstNeighborModelPath;
+            if (ReferenceEquals(path, _neighborhoodBuilder.SecondNeighborPath))
+               return secondNeighborModelPath;
+
+            throw new NotSupportedException();
+         });
       }
+
+
 
       protected override void Because()
       {
-         _neighborhood = sut.MapFrom(_neighborhoodBuilder,  _moleculeNames, _moleculeNames, _modelConfiguration);
+         _neighborhood = sut.MapFrom(_neighborhoodBuilder, _moleculeNames, _moleculeNames, _modelConfiguration);
       }
 
       [Observation]

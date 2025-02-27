@@ -33,12 +33,9 @@ namespace OSPSuite.Core.Domain
          _aNonExistingCriteria = A.Fake<DescriptorCriteria>();
          _criteriaForSecondNeighbor = A.Fake<DescriptorCriteria>();
          _criteriaForBothNeighbors = A.Fake<DescriptorCriteria>();
-         A.CallTo(() => _aNonExistingCriteria.IsSatisfiedBy(_firstNeighbor)).Returns(false);
-         A.CallTo(() => _aNonExistingCriteria.IsSatisfiedBy(_secondNeighbor)).Returns(false);
-         A.CallTo(() => _criteriaForSecondNeighbor.IsSatisfiedBy(_firstNeighbor)).Returns(false);
-         A.CallTo(() => _criteriaForSecondNeighbor.IsSatisfiedBy(_secondNeighbor)).Returns(true);
-         A.CallTo(() => _criteriaForBothNeighbors.IsSatisfiedBy(_firstNeighbor)).Returns(true);
-         A.CallTo(() => _criteriaForBothNeighbors.IsSatisfiedBy(_secondNeighbor)).Returns(true);
+         A.CallTo(() => _aNonExistingCriteria.IsSatisfiedBy(A<IEntity>._)).Returns(false);
+         A.CallTo(() => _criteriaForSecondNeighbor.IsSatisfiedBy(A<IEntity>._)).ReturnsLazily((IEntity x) => x.Equals(_secondNeighbor));
+         A.CallTo(() => _criteriaForBothNeighbors.IsSatisfiedBy(A<IEntity>._)).Returns(true);
       }
 
       [Observation]
@@ -74,14 +71,11 @@ namespace OSPSuite.Core.Domain
          _criteriaForSecondNeighbor = A.Fake<DescriptorCriteria>();
          _criteriaForFirstNeighbor = A.Fake<DescriptorCriteria>();
          _criteriaForBothNeighbors = A.Fake<DescriptorCriteria>();
-         A.CallTo(() => _aNonExistingCriteria.IsSatisfiedBy(_firstNeighbor)).Returns(false);
-         A.CallTo(() => _aNonExistingCriteria.IsSatisfiedBy(_secondNeighbor)).Returns(false);
-         A.CallTo(() => _criteriaForSecondNeighbor.IsSatisfiedBy(_firstNeighbor)).Returns(false);
-         A.CallTo(() => _criteriaForSecondNeighbor.IsSatisfiedBy(_secondNeighbor)).Returns(true);
-         A.CallTo(() => _criteriaForFirstNeighbor.IsSatisfiedBy(_firstNeighbor)).Returns(true);
-         A.CallTo(() => _criteriaForFirstNeighbor.IsSatisfiedBy(_secondNeighbor)).Returns(false);
-         A.CallTo(() => _criteriaForBothNeighbors.IsSatisfiedBy(_firstNeighbor)).Returns(true);
-         A.CallTo(() => _criteriaForBothNeighbors.IsSatisfiedBy(_secondNeighbor)).Returns(true);
+         
+         A.CallTo(() => _aNonExistingCriteria.IsSatisfiedBy(A<IEntity>._)).Returns(false);
+         A.CallTo(() => _criteriaForSecondNeighbor.IsSatisfiedBy(A<IEntity>._)).ReturnsLazily((IEntity x) => x.Equals(_secondNeighbor));
+         A.CallTo(() => _criteriaForFirstNeighbor.IsSatisfiedBy(A<IEntity>._)).ReturnsLazily((IEntity x) => x.Equals(_firstNeighbor));
+         A.CallTo(() => _criteriaForBothNeighbors.IsSatisfiedBy(A<IEntity>._)).Returns(true);
       }
 
       [Observation]
@@ -121,14 +115,11 @@ namespace OSPSuite.Core.Domain
          _criteriaForSecondNeighbor = A.Fake<DescriptorCriteria>();
          _criteriaForFirstNeighbor = A.Fake<DescriptorCriteria>();
          _criteriaForBothNeighbors = A.Fake<DescriptorCriteria>();
-         A.CallTo(() => _aNonExistingCriteria.IsSatisfiedBy(_firstNeighbor)).Returns(false);
-         A.CallTo(() => _aNonExistingCriteria.IsSatisfiedBy(_secondNeighbor)).Returns(false);
-         A.CallTo(() => _criteriaForSecondNeighbor.IsSatisfiedBy(_firstNeighbor)).Returns(false);
-         A.CallTo(() => _criteriaForSecondNeighbor.IsSatisfiedBy(_secondNeighbor)).Returns(true);
-         A.CallTo(() => _criteriaForFirstNeighbor.IsSatisfiedBy(_firstNeighbor)).Returns(true);
-         A.CallTo(() => _criteriaForFirstNeighbor.IsSatisfiedBy(_secondNeighbor)).Returns(false);
-         A.CallTo(() => _criteriaForBothNeighbors.IsSatisfiedBy(_firstNeighbor)).Returns(true);
-         A.CallTo(() => _criteriaForBothNeighbors.IsSatisfiedBy(_secondNeighbor)).Returns(true);
+
+         A.CallTo(() => _aNonExistingCriteria.IsSatisfiedBy(A<IEntity>._)).Returns(false);
+         A.CallTo(() => _criteriaForSecondNeighbor.IsSatisfiedBy(A<IEntity>._)).ReturnsLazily((IEntity x) => x.Equals(_secondNeighbor));
+         A.CallTo(() => _criteriaForFirstNeighbor.IsSatisfiedBy(A<IEntity>._)).ReturnsLazily((IEntity x) => x.Equals(_firstNeighbor));
+         A.CallTo(() => _criteriaForBothNeighbors.IsSatisfiedBy(A<IEntity>._)).Returns(true);
       }
 
       [Observation]

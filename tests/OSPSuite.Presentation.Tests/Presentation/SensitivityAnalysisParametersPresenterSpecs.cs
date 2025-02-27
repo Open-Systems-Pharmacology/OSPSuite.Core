@@ -53,8 +53,8 @@ namespace OSPSuite.Presentation.Presentation
          _sensitivityParameterDTO = new SensitivityParameterDTO(_selectedSensitivityParameter); 
          A.CallTo(() => _sensitivityAnalysisParametersView.SelectedParameters()).Returns(new[] { _sensitivityParameterDTO });
 
-         A.CallTo(() => _sensitivityParameterToSensitivityParameterDTOMapper.MapFrom(_selectedSensitivityParameter)).Returns(_sensitivityParameterDTO);
-         A.CallTo(() => _sensitivityParameterToSensitivityParameterDTOMapper.MapFrom(_unSelectedSensitivityParameter)).Returns(new SensitivityParameterDTO(_unSelectedSensitivityParameter));
+         A.CallTo(() => _sensitivityParameterToSensitivityParameterDTOMapper.MapFrom(A<SensitivityParameter>._)).
+            ReturnsLazily((SensitivityParameter parameter) => ReferenceEquals(parameter, _selectedSensitivityParameter) ? _sensitivityParameterDTO : new SensitivityParameterDTO(_unSelectedSensitivityParameter));
       }
    }
 
@@ -74,8 +74,8 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_number_of_steps_presenter_should_change_all()
       {
-         _selectedSensitivityParameter.NumberOfStepsParameter.Value.ShouldBeEqualTo(4);
          _unSelectedSensitivityParameter.NumberOfStepsParameter.Value.ShouldBeEqualTo(4);
+         _selectedSensitivityParameter.NumberOfStepsParameter.Value.ShouldBeEqualTo(4);
       }
    }
 

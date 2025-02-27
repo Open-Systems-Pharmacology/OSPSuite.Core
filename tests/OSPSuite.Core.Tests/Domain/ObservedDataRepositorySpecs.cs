@@ -1,4 +1,5 @@
-﻿using FakeItEasy;
+﻿using System.Linq;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Data;
@@ -60,8 +61,7 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _simulation = A.Fake<IUsesObservedData>();
-         A.CallTo(() => _simulation.UsesObservedData(_obs1)).Returns(false);
-         A.CallTo(() => _simulation.UsesObservedData(_obs2)).Returns(true);
+         A.CallTo(() => _simulation.UsesObservedData(A<DataRepository>._)).ReturnsLazily((DataRepository x) => x.Equals(_obs2));
       }
       [Observation]
       public void should_return_all_observed_data_from_the_underlying_project_used_by_the_simulation()
@@ -69,7 +69,6 @@ namespace OSPSuite.Core.Domain
          sut.AllObservedDataUsedBy(_simulation).ShouldOnlyContain(_obs2);
       }
    }
-
 
    public class When_retrieving_all_observed_data_used_by_a_set_of_simulations : concern_for_ObservedDataRepository
    {

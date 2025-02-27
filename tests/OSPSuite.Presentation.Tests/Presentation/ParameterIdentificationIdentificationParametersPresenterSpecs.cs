@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
@@ -76,7 +77,15 @@ namespace OSPSuite.Presentation.Presentation
          _newIdentificationParameter = new IdentificationParameter();
          _newIdentificationParameterDTO = new IdentificationParameterDTO(_newIdentificationParameter);
          A.CallTo(() => _identificationParameterFactory.CreateFor(_parameters, _parameterIdentification)).Returns(_newIdentificationParameter);
-         A.CallTo(() => _identificationParameterDTOMapper.MapFrom(_newIdentificationParameter)).Returns(_newIdentificationParameterDTO);
+         A.CallTo(() => _identificationParameterDTOMapper.MapFrom(A<IdentificationParameter>._)).ReturnsLazily((IdentificationParameter x) =>
+         {
+            if (ReferenceEquals(x, _newIdentificationParameter))
+               return _newIdentificationParameterDTO;
+            if (ReferenceEquals(x, _identificationParameter))
+               return _identificationParameterDTO;
+
+            throw new NotSupportedException();
+         });
          sut.EditParameterIdentification(_parameterIdentification);
       }
 
