@@ -11,7 +11,7 @@ env:
   RUN: ${{ github.run_number }}
 
 jobs:
-  build:
+  build-test-publish:
     runs-on: windows-latest
     steps:
       - name: Checkout code
