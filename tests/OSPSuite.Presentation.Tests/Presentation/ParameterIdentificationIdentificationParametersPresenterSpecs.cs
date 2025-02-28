@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
@@ -50,7 +49,7 @@ namespace OSPSuite.Presentation.Presentation
             .Invokes(x => _allIdentificationParameterDTO = x.GetArgument<IEnumerable<IdentificationParameterDTO>>(0).ToList());
       }
    }
-      public class When_the_identification_parameter_presenter_is_editiing_a_parameter_identification : concern_for_ParameterIdentificationIdentificationParametersPresenter
+      public class When_the_identification_parameter_presenter_is_editing_a_parameter_identification : concern_for_ParameterIdentificationIdentificationParametersPresenter
    {
       protected override void Because()
       {
@@ -77,15 +76,7 @@ namespace OSPSuite.Presentation.Presentation
          _newIdentificationParameter = new IdentificationParameter();
          _newIdentificationParameterDTO = new IdentificationParameterDTO(_newIdentificationParameter);
          A.CallTo(() => _identificationParameterFactory.CreateFor(_parameters, _parameterIdentification)).Returns(_newIdentificationParameter);
-         A.CallTo(() => _identificationParameterDTOMapper.MapFrom(A<IdentificationParameter>._)).ReturnsLazily((IdentificationParameter x) =>
-         {
-            if (ReferenceEquals(x, _newIdentificationParameter))
-               return _newIdentificationParameterDTO;
-            if (ReferenceEquals(x, _identificationParameter))
-               return _identificationParameterDTO;
-
-            throw new NotSupportedException();
-         });
+         A.CallTo(() => _identificationParameterDTOMapper.MapFrom(_newIdentificationParameter)).Returns(_newIdentificationParameterDTO);
          sut.EditParameterIdentification(_parameterIdentification);
       }
 
@@ -260,7 +251,6 @@ namespace OSPSuite.Presentation.Presentation
       {
          base.Context();
          _newDisplayUnit = A.Fake<Unit>();
-         ;
          _minValueDTO = A.Fake<IParameterDTO>();
          _minValueDTO.Value = 5;
       }
@@ -275,6 +265,14 @@ namespace OSPSuite.Presentation.Presentation
       {
          _minValueDTO.Parameter.DisplayUnit.ShouldBeEqualTo(_newDisplayUnit);
          _minValueDTO.Parameter.ValueInDisplayUnit.ShouldBeEqualTo(5);
+      }
+   }
+
+   public class IdentificationParameterArgumentEqualityComparer : ArgumentEqualityComparer<IdentificationParameter>
+   {
+      protected override bool AreEqual(IdentificationParameter expectedValue, IdentificationParameter argumentValue)
+      {
+         return ReferenceEquals(expectedValue, argumentValue);
       }
    }
 }

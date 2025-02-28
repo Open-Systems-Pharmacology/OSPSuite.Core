@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
@@ -7,7 +6,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -64,8 +62,8 @@ namespace OSPSuite.Core.Mappers
          _neighborhoodBuilder.AddParameter(para2);
          _clonePara1 = new Parameter().WithName("Para1");
          _clonePara2 = new Parameter().WithName("Para2");
-         _neighborhoodBuilder.FirstNeighborPath = A.Fake<ObjectPath>();
-         _neighborhoodBuilder.SecondNeighborPath = A.Fake<ObjectPath>();
+         _neighborhoodBuilder.FirstNeighborPath = new ObjectPath("First");
+         _neighborhoodBuilder.SecondNeighborPath = new ObjectPath("Second");
          var firstNeighborModelPath = A.Fake<ObjectPath>();
          var secondNeighborModelPath = A.Fake<ObjectPath>();
          _firstNeighborInModel = A.Fake<IContainer>();
@@ -82,32 +80,15 @@ namespace OSPSuite.Core.Mappers
          _moleculeNames = new List<string> { _molecule1, _molecule2 };
          A.CallTo(() => _objectBaseFactory.Create<Neighborhood>()).Returns(new Neighborhood());
 
-         A.CallTo(() => _parameterMapper.MapFrom(A<IParameter>._, A<SimulationBuilder>._)).ReturnsLazily((IParameter parameter, SimulationBuilder simulationBuilder) =>
-         {
-            if (ReferenceEquals(parameter, para1))
-               return _clonePara1;
-            if(ReferenceEquals(parameter, para2))
-               return _clonePara2;
-
-            throw new NotSupportedException();
-         });
+         A.CallTo(() => _parameterMapper.MapFrom(para1, _simulationBuilder)).Returns(_clonePara1);
+         A.CallTo(() => _parameterMapper.MapFrom(para2, _simulationBuilder)).Returns(_clonePara2);
 
          _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder);
          _modelConfiguration.UpdateReplacementContext();
 
-
-         A.CallTo(() => _keywordReplacerTask.CreateModelPathFor(A<ObjectPath>._, A<ReplacementContext>._)).ReturnsLazily((ObjectPath path, ReplacementContext context) =>
-         {
-            if (ReferenceEquals(path, _neighborhoodBuilder.FirstNeighborPath))
-               return firstNeighborModelPath;
-            if (ReferenceEquals(path, _neighborhoodBuilder.SecondNeighborPath))
-               return secondNeighborModelPath;
-
-            throw new NotSupportedException();
-         });
+         A.CallTo(() => _keywordReplacerTask.CreateModelPathFor(_neighborhoodBuilder.FirstNeighborPath, _modelConfiguration.ReplacementContext)).Returns(firstNeighborModelPath);
+         A.CallTo(() => _keywordReplacerTask.CreateModelPathFor(_neighborhoodBuilder.SecondNeighborPath, _modelConfiguration.ReplacementContext)).Returns(secondNeighborModelPath);
       }
-
-
 
       protected override void Because()
       {
