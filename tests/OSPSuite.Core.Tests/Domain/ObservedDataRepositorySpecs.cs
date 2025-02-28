@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Domain
          _obs1 = new DataRepository("OBS1");
          _obs2 = new DataRepository("OBS2");
 
-         A.CallTo(() => _project.AllObservedData).Returns(new[] {_obs1, _obs2});
+         A.CallTo(() => _project.AllObservedData).Returns(new[] { _obs1, _obs2 });
       }
    }
 
@@ -63,13 +63,13 @@ namespace OSPSuite.Core.Domain
          A.CallTo(() => _simulation.UsesObservedData(_obs1)).Returns(false);
          A.CallTo(() => _simulation.UsesObservedData(_obs2)).Returns(true);
       }
+
       [Observation]
       public void should_return_all_observed_data_from_the_underlying_project_used_by_the_simulation()
       {
          sut.AllObservedDataUsedBy(_simulation).ShouldOnlyContain(_obs2);
       }
    }
-
 
    public class When_retrieving_all_observed_data_used_by_a_set_of_simulations : concern_for_ObservedDataRepository
    {
@@ -86,10 +86,19 @@ namespace OSPSuite.Core.Domain
          A.CallTo(() => _simulation2.UsesObservedData(_obs1)).Returns(true);
          A.CallTo(() => _simulation2.UsesObservedData(_obs2)).Returns(true);
       }
+
       [Observation]
       public void should_return_all_distinct_observed_data_from_the_underlying_project_used_by_the_simulations()
       {
-         sut.AllObservedDataUsedBy(new []{_simulation1, _simulation2, }).ShouldOnlyContain(_obs1, _obs2);
+         sut.AllObservedDataUsedBy(new[] { _simulation1, _simulation2, }).ShouldOnlyContain(_obs1, _obs2);
+      }
+   }
+
+   public class DataRepositoryArgumentEqualityComparer : ArgumentEqualityComparer<DataRepository>
+   {
+      protected override bool AreEqual(DataRepository expectedValue, DataRepository argumentValue)
+      {
+         return ReferenceEquals(expectedValue, argumentValue);
       }
    }
 }

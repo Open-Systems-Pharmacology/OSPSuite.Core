@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSPSuite.Serializer" Version="3.0.0.1" />
+    <PackageReference Include="OSPSuite.Serializer" Version="3.0.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,8 +37,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath=""/>
-    <None Include="..\..\logo.png" Pack="true" Link="logo.png" PackagePath="\logo.png"/>
+    <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath="" />
+    <None Include="..\..\logo.png" Pack="true" Link="logo.png" PackagePath="\logo.png" />
   </ItemGroup>
 
 </Project>

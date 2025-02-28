@@ -37,7 +37,7 @@ namespace OSPSuite.Core.Domain.Repositories
 
       public IEnumerable<DataRepository> AllObservedDataUsedBy(IUsesObservedData observedDataUser)
       {
-         return observedDataUser == null ? Enumerable.Empty<DataRepository>() : All().Where(observedDataUser.UsesObservedData);
+         return observedDataUser == null ? Enumerable.Empty<DataRepository>() : All().Where(observedDataUser.UsesObservedData).ToList();
       }
 
       public IEnumerable<DataRepository> AllObservedDataUsedBy(IEnumerable<IUsesObservedData> observedDataUsers)

@@ -23,8 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NPOI" Version="2.5.5" />
-    <PackageReference Include="OSPSuite.Utility" Version="4.1.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.2" />
+    <PackageReference Include="NPOI" Version="2.7.2" />
+    <PackageReference Include="OSPSuite.Utility" Version="4.1.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,8 +38,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath=""/>
-    <None Include="..\..\logo.png" Pack="true" Link="logo.png" PackagePath="\logo.png"/>
+    <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath="" />
+    <None Include="..\..\logo.png" Pack="true" Link="logo.png" PackagePath="\logo.png" />
   </ItemGroup>
 
 </Project>

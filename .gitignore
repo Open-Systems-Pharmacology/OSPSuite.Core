@@ -264,3 +264,4 @@ paket-files/
 licenses.licx
 *.DotSettings
 /OSPSuite.Core.v3.ncrunchsolution
+*.ncrunchproject

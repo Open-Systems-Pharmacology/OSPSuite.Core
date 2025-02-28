@@ -13,15 +13,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.123" />
-    <PackageReference Include="FakeItEasy" Version="7.3.1" />
-    <PackageReference Include="nunit" Version="3.13.3" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.4.2">
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="FakeItEasy" Version="8.3.0" />
+    <PackageReference Include="nunit" Version="3.14.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="5.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.0.1" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.112" />
+    <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.1.1" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,5 +38,16 @@
     <Folder Include="Data\PKAnalysesFiles\" />
     <Folder Include="Data\SensitivityAnalysisResultsFiles\" />
   </ItemGroup>
-
+  <PropertyGroup>
+   <ContentSQLiteInteropFiles>true</ContentSQLiteInteropFiles>
+   <CopySQLiteInteropFiles>false</CopySQLiteInteropFiles>
+   <CleanSQLiteInteropFiles>false</CleanSQLiteInteropFiles>
+   <CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
+  </PropertyGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+   <ItemGroup>
+     <WindowsFiles Include="$(TargetDir)x64/SQLite.Interop.dll" />
+   </ItemGroup>
+   <Copy SourceFiles="@(WindowsFiles);" DestinationFolder="$(TargetFolder)" DestinationFiles="@(WindowsFiles-&gt;Replace('x64/SQLite.Interop.dll', 'SQLite.Interop.dll'))" />
+  </Target>
 </Project>

@@ -19,13 +19,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath=""/>
-    <None Include="..\..\logo.png" Pack="true" Link="logo.png" PackagePath="\logo.png"/>
+    <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath="" />
+    <None Include="..\..\logo.png" Pack="true" Link="logo.png" PackagePath="\logo.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Castle.Windsor" Version="5.0.1" />
-    <PackageReference Include="OSPSuite.Utility" Version="4.1.0.6" />
+    <PackageReference Include="Castle.Windsor" Version="6.0.0" />
+    <PackageReference Include="OSPSuite.Utility" Version="4.1.1.1" />
   </ItemGroup>
 
   <ItemGroup>

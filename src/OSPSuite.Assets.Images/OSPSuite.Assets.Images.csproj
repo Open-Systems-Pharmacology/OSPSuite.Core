@@ -41,9 +41,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSPSuite.Utility" Version="4.1.0.6" />
-    <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
-    <PackageReference Include="DevExpress.Data" Version="21.2.3" />
+    <PackageReference Include="OSPSuite.Utility" Version="4.1.1.1" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.2" />
+    <PackageReference Include="DevExpress.Data" Version="21.2.15" />
   </ItemGroup>
   
   <ItemGroup>
