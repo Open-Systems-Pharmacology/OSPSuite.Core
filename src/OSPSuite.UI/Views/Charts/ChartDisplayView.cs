@@ -7,7 +7,6 @@ using DevExpress.Charts.Native;
 using DevExpress.Utils;
 using DevExpress.XtraBars;
 using DevExpress.XtraCharts;
-using DevExpress.XtraCharts.Native;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
@@ -47,7 +46,7 @@ namespace OSPSuite.UI.Views.Charts
          _doubleFormatter = new DoubleFormatter();
          _hintControl = new LabelControl();
          _toolTipController = new ToolTipController();
-         PopupBarManager = new BarManager {Form = this, Images = imageListRetriever.AllImagesForContextMenu};
+         PopupBarManager = new BarManager { Form = this, Images = imageListRetriever.AllImagesForContextMenu };
          SetDockStyle(Presentation.Views.Dock.Fill);
       }
 
@@ -164,7 +163,6 @@ namespace OSPSuite.UI.Views.Charts
          var seriesBeingMoved = dragDropEventArgs.Data.GetData(typeof(Series)).DowncastTo<Series>();
          if (seriesBeingMoved != null)
             dropLegendHere(hitInfo.Series.DowncastTo<Series>(), seriesBeingMoved);
-
       }
 
       protected override void OnDragOver(DragEventArgs dragOverEventArgs)
@@ -275,9 +273,46 @@ namespace OSPSuite.UI.Views.Charts
 
       private void zoomAction(Control control, Rectangle rectangle)
       {
-         var cc = control as IChartContainer;
-         if (cc != null && cc.Chart != null && !rectangle.IsEmpty)
-            cc.Chart.PerformZoomIn(rectangle);
+         if (rectangle.IsEmpty || xyDiagram == null)
+            return;
+
+         var topLeftCoord = xyDiagram.PointToDiagram(rectangle.Location);
+         var bottomRightCoord = xyDiagram.PointToDiagram(new Point(rectangle.Right, rectangle.Bottom));
+
+         if (topLeftCoord == null || bottomRightCoord == null)
+            return;
+
+         xyDiagram.AxisX.VisualRange.Auto = false;
+         xyDiagram.AxisX.VisualRange.SetMinMaxValues(
+            Math.Min(topLeftCoord.NumericalArgument, bottomRightCoord.NumericalArgument),
+            Math.Max(topLeftCoord.NumericalArgument, bottomRightCoord.NumericalArgument));
+
+         setAxisVisualRange(AxisTypes.Y, topLeftCoord?.NumericalValue, bottomRightCoord?.NumericalValue);
+         zoomAxis(AxisTypes.Y2, rectangle);
+         zoomAxis(AxisTypes.Y3, rectangle);
+      }
+
+      private void zoomAxis(AxisTypes axisType, Rectangle rectangle)
+      {
+         var axis = getAxisFromType(axisType);
+         if (axis == null) return;
+
+         var topLeftCoord = xyDiagram.PointToDiagram(rectangle.Location).GetAxisValue(axis);
+         var bottomRightCoord = xyDiagram.PointToDiagram(new Point(rectangle.Right, rectangle.Bottom)).GetAxisValue(axis);
+
+         if (topLeftCoord == null || bottomRightCoord == null)
+            return;
+
+         setAxisVisualRange(axisType, topLeftCoord.NumericalValue, bottomRightCoord.NumericalValue);
+      }
+
+      private void setAxisVisualRange(AxisTypes axisType, double? minValue, double? maxValue)
+      {
+         var axis = getAxisFromType(axisType);
+         if (axis == null || minValue == null || maxValue == null) return;
+
+         axis.VisualRange.Auto = false;
+         axis.VisualRange.SetMinMaxValues(Math.Min(minValue.Value, maxValue.Value), Math.Max(minValue.Value, maxValue.Value));
       }
 
       private Color diagramBackColor
