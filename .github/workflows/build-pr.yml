@@ -1,17 +1,17 @@
-name: Build and Publish
+name: Build PR
 
 on:
-  push:
+  pull_request:
     branches:
     - develop
 
 env:
   MAJOR: 12
   MINOR: 1
-  RUN: ${{ github.run_number }}
+  RUN: 9999
 
 jobs:
-  build-test-publish:
+  build-and-test:
     runs-on: windows-latest
     steps:
       - name: Checkout code
@@ -40,13 +40,14 @@ jobs:
       - name: Pack the project
         run: dotnet pack .\OSPSuite.Core.sln --no-build --no-restore -o ./ -p:PackageVersion=${{env.APP_VERSION}} --configuration=Debug --no-build
 
+      - name: Push nupkg as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OSPSuite.Core
+          path: ./*.nupkg
+
       - name: Push test log as artifact
         uses: actions/upload-artifact@v4
         with:
           name: testLog_Windows
           path: ./testLog*.html
-
-      - name: Publish to GitHub registry
-        # if it is a merge to default branch
-        if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
-        run: dotnet nuget push *.nupkg --source https://nuget.pkg.github.com/${{github.repository_owner}}/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
