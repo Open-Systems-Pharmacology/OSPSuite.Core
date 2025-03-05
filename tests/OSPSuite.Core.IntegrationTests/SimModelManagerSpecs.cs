@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +7,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
-using OSPSuite.SimModel;
 using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core
@@ -43,7 +40,6 @@ namespace OSPSuite.Core
       }
    }
 
-
    public abstract class concern_for_SimModelManagerAsync : ContextForIntegrationAsync<ISimModelManager>
    {
       private readonly BaseConcernForSimModelManager _baseConcern = new BaseConcernForSimModelManager();
@@ -60,14 +56,12 @@ namespace OSPSuite.Core
       }
    }
 
-
    public class When_run_simulation_is_called : concern_for_SimModelManager
    {
       private SimulationRunResults _res;
 
       protected override void Because()
       {
-
          _res = sut.RunSimulation(_simulation);
       }
 
@@ -171,6 +165,7 @@ namespace OSPSuite.Core
       protected IModelCoreSimulation _simulation2;
       private SimulationRunResults _runResults1;
       private SimulationRunResults _runResults2;
+
       protected override async Task Context()
       {
          await base.Context();
@@ -196,6 +191,7 @@ namespace OSPSuite.Core
       protected IModelCoreSimulation _simulation2;
       private SimulationRunResults _runResults1;
       private SimulationRunResults _runResults2;
+
       protected override async Task Context()
       {
          await base.Context();
@@ -216,6 +212,4 @@ namespace OSPSuite.Core
          _runResults2.Success.ShouldBeTrue();
       }
    }
-
-
 }

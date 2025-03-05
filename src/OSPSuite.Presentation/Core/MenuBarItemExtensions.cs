@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.UICommands;
 using OSPSuite.Utility.Container;
@@ -24,7 +23,6 @@ namespace OSPSuite.Presentation.Core
 
    public static class MenuBarItemExtensions
    {
-      
       public static IMenuBarButton WithCommand<TCommand>(this IMenuBarButton menuBarItem, IContainer container) where TCommand : IUICommand
       {
          return menuBarItem.WithCommand(container.Resolve<TCommand>());

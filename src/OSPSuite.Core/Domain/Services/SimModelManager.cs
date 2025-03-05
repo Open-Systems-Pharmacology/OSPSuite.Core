@@ -17,13 +17,12 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       private readonly double _executionTimeLimit;
 
-      private readonly System.Timers.Timer _timer;
+      private readonly Timer _timer;
       private readonly IDataFactory _dataFactory;
       private Simulation _simModelSimulation;
       private SimulationRunOptions _simulationRunOptions;
       private static CancellationTokenSource _globalCancellationTokenSource = new CancellationTokenSource();
-      private static readonly object _lock = new object(); 
-
+      private static readonly object _lock = new object();
 
       public event EventHandler<SimulationProgressEventArgs> SimulationProgress = delegate { };
 
@@ -33,7 +32,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             _globalCancellationTokenSource.Cancel();
             _globalCancellationTokenSource.Dispose();
-            _globalCancellationTokenSource = new CancellationTokenSource(); 
+            _globalCancellationTokenSource = new CancellationTokenSource();
          }
       }
 
@@ -125,7 +124,6 @@ namespace OSPSuite.Core.Domain.Services
 
                cancellationToken.ThrowIfCancellationRequested();
             }, cancellationToken);
-
          }
          catch (TaskCanceledException)
          {

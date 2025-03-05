@@ -48,7 +48,6 @@ namespace OSPSuite.Core
       }
    }
 
-
    [IntegrationTests]
    public abstract class ContextForIntegrationAsync<T> : ContextSpecificationAsync<T>
    {
@@ -65,7 +64,6 @@ namespace OSPSuite.Core
          await Task.Run(() => _baseContext.Cleanup());
       }
    }
-
 
    public abstract class ContextWithLoadedSimulation<T> : ContextForIntegration<T>
    {
@@ -98,6 +96,7 @@ namespace OSPSuite.Core
          InitPKParameters();
          Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
       }
+
       public void RegisterComponents(CastleWindsorContainer container)
       {
          IoC.InitializeWith(container);
@@ -146,7 +145,7 @@ namespace OSPSuite.Core
 
          var csvSeparatorSelector = A.Fake<ICsvSeparatorSelector>();
          A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>.Ignored))
-             .Returns(new CSVSeparators { ColumnSeparator = ';', DecimalSeparator = '.' });
+            .Returns(new CSVSeparators { ColumnSeparator = ';', DecimalSeparator = '.' });
          container.RegisterImplementationOf(csvSeparatorSelector);
 
          using (container.OptimizeDependencyResolution())
@@ -192,7 +191,4 @@ namespace OSPSuite.Core
          withIdRepository.Clear();
       }
    }
-
-
-
 }

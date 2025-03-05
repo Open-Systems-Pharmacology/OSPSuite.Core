@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 
 namespace OSPSuite.Presentation.MenuAndBars
 {
@@ -16,7 +15,11 @@ namespace OSPSuite.Presentation.MenuAndBars
 
       public bool Checked
       {
-         set { _checked = value; CheckedChanged(value); }
+         set
+         {
+            _checked = value;
+            CheckedChanged(value);
+         }
          get { return _checked; }
       }
 
