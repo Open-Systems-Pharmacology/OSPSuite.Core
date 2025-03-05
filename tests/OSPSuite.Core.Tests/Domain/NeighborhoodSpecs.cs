@@ -8,14 +8,14 @@ namespace OSPSuite.Core.Domain
 {
    public abstract class concern_for_Neighborhood : ContextSpecification<Neighborhood>
    {
-      protected IContainer _firstNeighbor;
-      protected IContainer _secondNeighbor;
+      protected Container _firstNeighbor;
+      protected Container _secondNeighbor;
 
       protected override void Context()
       {
          sut = new Neighborhood();
-         _firstNeighbor = A.Fake<IContainer>();
-         _secondNeighbor = A.Fake<IContainer>();
+         _firstNeighbor = new Container();
+         _secondNeighbor = new Container();
          sut.FirstNeighbor = _firstNeighbor;
          sut.SecondNeighbor = _secondNeighbor;
       }
@@ -74,6 +74,7 @@ namespace OSPSuite.Core.Domain
          _criteriaForSecondNeighbor = A.Fake<DescriptorCriteria>();
          _criteriaForFirstNeighbor = A.Fake<DescriptorCriteria>();
          _criteriaForBothNeighbors = A.Fake<DescriptorCriteria>();
+
          A.CallTo(() => _aNonExistingCriteria.IsSatisfiedBy(_firstNeighbor)).Returns(false);
          A.CallTo(() => _aNonExistingCriteria.IsSatisfiedBy(_secondNeighbor)).Returns(false);
          A.CallTo(() => _criteriaForSecondNeighbor.IsSatisfiedBy(_firstNeighbor)).Returns(false);
@@ -121,6 +122,7 @@ namespace OSPSuite.Core.Domain
          _criteriaForSecondNeighbor = A.Fake<DescriptorCriteria>();
          _criteriaForFirstNeighbor = A.Fake<DescriptorCriteria>();
          _criteriaForBothNeighbors = A.Fake<DescriptorCriteria>();
+
          A.CallTo(() => _aNonExistingCriteria.IsSatisfiedBy(_firstNeighbor)).Returns(false);
          A.CallTo(() => _aNonExistingCriteria.IsSatisfiedBy(_secondNeighbor)).Returns(false);
          A.CallTo(() => _criteriaForSecondNeighbor.IsSatisfiedBy(_firstNeighbor)).Returns(false);
@@ -167,6 +169,14 @@ namespace OSPSuite.Core.Domain
          sut.FirstNeighbor = sut.SecondNeighbor;
          sut.SecondNeighbor = null;
          sut.IsDefined.ShouldBeFalse();
+      }
+   }
+
+   public class ContainerArgumentEqualityComparer : ArgumentEqualityComparer<Container>
+   {
+      protected override bool AreEqual(Container expectedValue, Container argumentValue)
+      {
+         return ReferenceEquals(expectedValue, argumentValue);
       }
    }
 }
