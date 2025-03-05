@@ -41,12 +41,15 @@ namespace OSPSuite.UI.Mappers
       protected void UpdateBarButtonItem(IMenuBarButton menuBarItem, BarItem buttonItem)
       {
          base.UpdateBarButtonItem(menuBarItem, buttonItem);
-         buttonItem.ItemClick += (o, e) =>
+         buttonItem.ItemClick += async (o, e) =>
          {
             if (menuBarItem.Locked)
                return;
 
-            menuBarItem.Click();
+            if (!(menuBarItem.AsyncCommand is NotImplementedCommandAsync))
+               await menuBarItem.ClickAsync();
+            else
+               menuBarItem.Click();
          };
       }
    }

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -39,5 +40,13 @@ namespace OSPSuite.Core.Domain.Services
       ///    Event raised when simulation is terminated (either after normal termination or cancel)
       /// </summary>
       event EventHandler Terminated;
+
+      /// <summary>
+      /// Run simulaiton asynchronously
+      /// </summary>
+      /// <param name="simulation"></param>
+      /// <param name="simulationRunOptions"></param>
+      /// <returns></returns>
+      Task<SimulationRunResults> RunSimulationAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null);
    }
 }

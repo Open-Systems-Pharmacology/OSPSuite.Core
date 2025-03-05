@@ -14,20 +14,52 @@ using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core
 {
+   public class BaseConcernForSimModelManager
+   {
+      public IWithIdRepository WithIdRepository { get; private set; }
+      public IModelCoreSimulation Simulation { get; private set; }
+
+      public void Initialize()
+      {
+         WithIdRepository = IoC.Resolve<IWithIdRepository>();
+         Simulation = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
+         new RegisterTaskForSpecs(WithIdRepository).RegisterAllIn(Simulation.Model.Root);
+      }
+   }
+
    public abstract class concern_for_SimModelManager : ContextForIntegration<ISimModelManager>
    {
-      private IWithIdRepository _withIdRepository;
+      private readonly BaseConcernForSimModelManager _baseConcern = new BaseConcernForSimModelManager();
+      protected IWithIdRepository _withIdRepository;
       protected IModelCoreSimulation _simulation;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
-         _withIdRepository = IoC.Resolve<IWithIdRepository>();
-         _simulation = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
-         new RegisterTaskForSpecs(_withIdRepository).RegisterAllIn(_simulation.Model.Root);
+         _baseConcern.Initialize();
+         _withIdRepository = _baseConcern.WithIdRepository;
+         _simulation = _baseConcern.Simulation;
          sut = IoC.Resolve<ISimModelManager>();
       }
    }
+
+
+   public abstract class concern_for_SimModelManagerAsync : ContextForIntegrationAsync<ISimModelManager>
+   {
+      private readonly BaseConcernForSimModelManager _baseConcern = new BaseConcernForSimModelManager();
+      protected IWithIdRepository _withIdRepository;
+      protected IModelCoreSimulation _simulation;
+
+      public override async Task GlobalContext()
+      {
+         base.GlobalContext();
+         await Task.Run(() => _baseConcern.Initialize());
+         _withIdRepository = _baseConcern.WithIdRepository;
+         _simulation = _baseConcern.Simulation;
+         sut = IoC.Resolve<ISimModelManager>();
+      }
+   }
+
 
    public class When_run_simulation_is_called : concern_for_SimModelManager
    {
@@ -133,4 +165,57 @@ namespace OSPSuite.Core
          _runResults.Success.ShouldBeFalse();
       }
    }
+
+   public class When_running_two_simulations_concurrently : concern_for_SimModelManagerAsync
+   {
+      protected IModelCoreSimulation _simulation2;
+      private SimulationRunResults _runResults1;
+      private SimulationRunResults _runResults2;
+      protected override async Task Context()
+      {
+         await base.Context();
+         _simulation2 = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
+      }
+
+      protected override async Task Because()
+      {
+         _runResults1 = await sut.RunSimulationAsync(_simulation);
+         _runResults2 = await sut.RunSimulationAsync(_simulation2);
+      }
+
+      [Observation]
+      public void should_be_successful()
+      {
+         _runResults1.Success.ShouldBeTrue();
+         _runResults2.Success.ShouldBeTrue();
+      }
+   }
+
+   public class When_running_two_simulations_concurrently_and_cancelling : concern_for_SimModelManagerAsync
+   {
+      protected IModelCoreSimulation _simulation2;
+      private SimulationRunResults _runResults1;
+      private SimulationRunResults _runResults2;
+      protected override async Task Context()
+      {
+         await base.Context();
+         _simulation2 = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
+      }
+
+      protected override async Task Because()
+      {
+         _runResults1 = await sut.RunSimulationAsync(_simulation);
+         _runResults2 = await sut.RunSimulationAsync(_simulation2);
+         sut.StopSimulation();
+      }
+
+      [Observation]
+      public void should_be_successful()
+      {
+         _runResults1.Success.ShouldBeTrue();
+         _runResults2.Success.ShouldBeTrue();
+      }
+   }
+
+
 }

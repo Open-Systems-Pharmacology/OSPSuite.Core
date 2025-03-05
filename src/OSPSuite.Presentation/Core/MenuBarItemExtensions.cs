@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.UICommands;
 using OSPSuite.Utility.Container;
@@ -23,6 +24,7 @@ namespace OSPSuite.Presentation.Core
 
    public static class MenuBarItemExtensions
    {
+      
       public static IMenuBarButton WithCommand<TCommand>(this IMenuBarButton menuBarItem, IContainer container) where TCommand : IUICommand
       {
          return menuBarItem.WithCommand(container.Resolve<TCommand>());
@@ -38,6 +40,14 @@ namespace OSPSuite.Presentation.Core
          where TObject : class
       {
          return menuBarItem.WithCommand(container.Resolve<TCommand>().For(entity));
+      }
+
+      public static IMenuBarButton WithCommandForAsync<TCommand, TObject>(this IMenuBarButton menuBarItem, TObject entity, IContainer container)
+         where TCommand : IObjectUICommand<TObject>
+         where TObject : class
+      {
+         var command = container.Resolve<TCommand>().For(entity);
+         return menuBarItem.WithCommandAsync(new ExecuteActionUICommandAsync(() => command.ExecuteAsync()));
       }
 
       public static IMenuBarButton WithEnabled(this IMenuBarButton menuBarItem, bool enabled)

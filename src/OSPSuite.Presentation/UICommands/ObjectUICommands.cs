@@ -1,8 +1,9 @@
-﻿using OSPSuite.Presentation.MenuAndBars;
+﻿using System.Threading.Tasks;
+using OSPSuite.Presentation.MenuAndBars;
 
 namespace OSPSuite.Presentation.UICommands
 {
-   public interface IObjectUICommand<T> : IUICommand where T : class
+   public interface IObjectUICommand<T> : IUICommand, IUICommandAsync where T : class
    {
       IObjectUICommand<T> For(T objectForCommand);
       T Subject { get; set; }
@@ -16,6 +17,18 @@ namespace OSPSuite.Presentation.UICommands
       {
          PerformExecute();
          Subject = null;
+      }
+
+      public virtual async Task ExecuteAsync()
+      {
+         await PerformExecuteAsync();
+         Subject = null;
+      }
+
+      protected virtual Task PerformExecuteAsync()
+      {
+         PerformExecute();
+         return Task.CompletedTask;
       }
 
       protected abstract void PerformExecute();
