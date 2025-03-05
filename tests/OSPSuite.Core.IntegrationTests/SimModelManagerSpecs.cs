@@ -132,19 +132,19 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_canceling_a_simulation_run : concern_for_SimModelManager
+   public class When_canceling_a_simulation_run : concern_for_SimModelManagerAsync
    {
       private SimulationRunResults _runResults;
 
-      protected override void Context()
+      protected override async Task Context()
       {
-         base.Context();
+         await base.Context();
          var interval = _simulation.Settings.OutputSchema.Intervals.ElementAt(0);
          interval.GetSingleChildByName<IParameter>(Constants.Parameters.END_TIME).Value = 5000000;
          interval.GetSingleChildByName<IParameter>(Constants.Parameters.RESOLUTION).Value = 10000;
       }
 
-      protected override void Because()
+      protected override async Task Because()
       {
          var task = Task.Run(() => sut.RunSimulation(_simulation));
          //needs to sleep so that the action actually starts

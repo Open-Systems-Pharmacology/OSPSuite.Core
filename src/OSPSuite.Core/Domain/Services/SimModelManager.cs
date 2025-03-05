@@ -63,7 +63,7 @@ namespace OSPSuite.Core.Domain.Services
       public async Task<SimulationRunResults> RunSimulationAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null)
       {
          var cancellationToken = _globalCancellationTokenSource.Token;
-
+         _simulationRunOptions = simulationRunOptions ?? new SimulationRunOptions();
          try
          {
             _simulationRunOptions = simulationRunOptions ?? new SimulationRunOptions();
@@ -75,6 +75,10 @@ namespace OSPSuite.Core.Domain.Services
             if (!cancellationToken.IsCancellationRequested)
                return new SimulationRunResults(WarningsFrom(_simModelSimulation), getResults(simulation));
 
+            return new SimulationRunResults(WarningsFrom(_simModelSimulation), SimulationWasCanceled);
+         }
+         catch (OperationCanceledException)
+         {
             return new SimulationRunResults(WarningsFrom(_simModelSimulation), SimulationWasCanceled);
          }
          finally
@@ -125,7 +129,7 @@ namespace OSPSuite.Core.Domain.Services
                cancellationToken.ThrowIfCancellationRequested();
             }, cancellationToken);
          }
-         catch (TaskCanceledException)
+         catch (OperationCanceledException)
          {
          }
          finally
