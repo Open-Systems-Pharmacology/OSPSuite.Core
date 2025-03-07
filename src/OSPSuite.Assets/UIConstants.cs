@@ -227,6 +227,7 @@ namespace OSPSuite.Assets
       public static readonly string AddPoint = "Add Point";
       public static readonly string UseDerivedValues = "Use derivative values";
       public static readonly string NotDistributed = "Not Distributed";
+      public static readonly string ModulesFolder = "Modules";
 
       public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
 

@@ -46,9 +46,9 @@ namespace OSPSuite.Presentation.Presenters.Classifications
       ///    <see cref="IClassifiable" /> children (e.g. empty folder structure).
       ///    The corresponding  <see cref="IClassification" /> will be removed from the <see cref="IProject" />
       /// </summary>
-      void RemoveEmptyClassifcations();
+      void RemoveEmptyClassifications();
 
-      void CreateClassificationFolderUnder(ITreeNode<IClassification> parentClassificatonNode);
+      void CreateClassificationFolderUnder(ITreeNode<IClassification> parentClassificationNode);
 
       /// <summary>
       ///    Renames the <see cref="IClassification" /> associated to the <paramref name="classificationNode" />.
@@ -198,7 +198,7 @@ namespace OSPSuite.Presentation.Presenters.Classifications
          return classificationNode;
       }
 
-      public void RemoveEmptyClassifcations()
+      public void RemoveEmptyClassifications()
       {
          List<ITreeNode<IClassification>> emptyClassificationNodes;
          do
@@ -293,9 +293,9 @@ namespace OSPSuite.Presentation.Presenters.Classifications
       }
 
       /// <summary>
-      ///    Recurisively creates a node up to the top most ancestor of  for the given <paramref name="classification" />.
+      ///    Recursively creates a node up to the top most ancestor of  for the given <paramref name="classification" />.
       /// </summary>
-      /// <remarks>The created nodes will not be added to the view! This is the responsability of the caller</remarks>
+      /// <remarks>The created nodes will not be added to the view! This is the responsibility of the caller</remarks>
       private ITreeNode<IClassification> createClassificationNodeFor(IClassification classification)
       {
          if (classification == null)
@@ -308,9 +308,9 @@ namespace OSPSuite.Presentation.Presenters.Classifications
             .Under(parentNode);
       }
 
-      public void CreateClassificationFolderUnder(ITreeNode<IClassification> parentClassificatonNode)
+      public void CreateClassificationFolderUnder(ITreeNode<IClassification> parentClassificationNode)
       {
-         var parentClassification = parentClassificatonNode.Tag;
+         var parentClassification = parentClassificationNode.Tag;
 
          using (var nameClassificationPresenter = _applicationController.Start<INameClassificationPresenter>())
          {

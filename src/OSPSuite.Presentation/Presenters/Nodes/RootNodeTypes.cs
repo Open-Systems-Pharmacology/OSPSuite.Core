@@ -11,5 +11,6 @@ namespace OSPSuite.Presentation.Presenters.Nodes
       public static readonly RootNodeType ParameterIdentificationFolder = new RootNodeType(Captions.ParameterIdentificationFolder, ApplicationIcons.ParameterIdentificationFolder, ClassificationType.ParameterIdentification);
       public static readonly RootNodeType SensitivityAnalysisFolder = new RootNodeType(Captions.SensitivityAnalysisFolder, ApplicationIcons.SensitivityAnalysisFolder, ClassificationType.SensitiviyAnalysis);
       public static readonly RootNodeType QualificationPlanFolder = new RootNodeType(Captions.QualificationPlanFolder, ApplicationIcons.Folder, ClassificationType.QualificationPlan);
+      public static readonly RootNodeType ModulesFolder = new RootNodeType(Captions.ModulesFolder, ApplicationIcons.ModulesFolder, ClassificationType.Module);
    }
 }
