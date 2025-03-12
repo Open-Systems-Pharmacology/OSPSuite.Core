@@ -42,14 +42,17 @@ namespace OSPSuite.Presentation.Presentation
 
          _parameterDTO = A.Fake<IParameterDTO>();
          A.CallTo(() => _parameterDTO.Value).Returns(4.0);
-         _selectedSensitivityParameter = A.Fake<SensitivityParameter>();
-         _unSelectedSensitivityParameter = A.Fake<SensitivityParameter>();
+         _selectedSensitivityParameter = new SensitivityParameter();
+         _unSelectedSensitivityParameter = new SensitivityParameter();
          _sensitivityAnalysis.AddSensitivityParameter(_selectedSensitivityParameter);
          _sensitivityAnalysis.AddSensitivityParameter(_unSelectedSensitivityParameter);
-         A.CallTo(() => _selectedSensitivityParameter.NumberOfStepsParameter).Returns(new Parameter());
-         A.CallTo(() => _selectedSensitivityParameter.VariationRangeParameter).Returns(new Parameter());
-         A.CallTo(() => _unSelectedSensitivityParameter.NumberOfStepsParameter).Returns(new Parameter());
-         A.CallTo(() => _unSelectedSensitivityParameter.VariationRangeParameter).Returns(new Parameter());
+
+         _selectedSensitivityParameter.Add(new Parameter().WithName(Constants.Parameters.NUMBER_OF_STEPS));
+         _selectedSensitivityParameter.Add(new Parameter().WithName(Constants.Parameters.VARIATION_RANGE));
+
+         _unSelectedSensitivityParameter.Add(new Parameter().WithName(Constants.Parameters.NUMBER_OF_STEPS));
+         _unSelectedSensitivityParameter.Add(new Parameter().WithName(Constants.Parameters.VARIATION_RANGE));
+
          _sensitivityParameterDTO = new SensitivityParameterDTO(_selectedSensitivityParameter); 
          A.CallTo(() => _sensitivityAnalysisParametersView.SelectedParameters()).Returns(new[] { _sensitivityParameterDTO });
 
@@ -74,8 +77,8 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_number_of_steps_presenter_should_change_all()
       {
-         _selectedSensitivityParameter.NumberOfStepsParameter.Value.ShouldBeEqualTo(4);
          _unSelectedSensitivityParameter.NumberOfStepsParameter.Value.ShouldBeEqualTo(4);
+         _selectedSensitivityParameter.NumberOfStepsParameter.Value.ShouldBeEqualTo(4);
       }
    }
 
@@ -159,6 +162,14 @@ namespace OSPSuite.Presentation.Presentation
       public void should_leverage_the_sensitivity_analysis_task_to_rename_the_parameter_in_the_edited_sensitivity_analysis()
       {
          A.CallTo(() => _sensitivityAnalysisTask.UpdateSensitivityParameterName(_sensitivityAnalysis, _selectedSensitivityParameter, "NEW NAME")).MustHaveHappened();
+      }
+   }
+
+   public class SensitivityParameterArgumentEqualityComparer : ArgumentEqualityComparer<SensitivityParameter>
+   {
+      protected override bool AreEqual(SensitivityParameter expectedValue, SensitivityParameter argumentValue)
+      {
+         return ReferenceEquals(expectedValue, argumentValue);
       }
    }
 }

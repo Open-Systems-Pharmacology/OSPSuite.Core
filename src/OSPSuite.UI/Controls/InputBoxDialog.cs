@@ -25,6 +25,7 @@ namespace OSPSuite.UI.Controls
          InitializeComponent();
          InitializeResources();
          Load += onLoad;
+         Shown += onShown;
       }
 
       public override void InitializeResources()
@@ -73,7 +74,6 @@ namespace OSPSuite.UI.Controls
          cbInput.SelectionLength = cbInput.Text.Length;
          cbInput.EditValueChanging += validateInput;
          cbInput.EditValue = _defaultValue;
-         cbInput.Focus();
       }
 
       private void validateInput(object sender, ChangingEventArgs e)
@@ -97,6 +97,11 @@ namespace OSPSuite.UI.Controls
       {
          _hasError = true;
          base.OnValidationError(control, error);
+      }
+
+      private void onShown(object sender, EventArgs e)
+      {
+         cbInput.Focus();
       }
    }
 }
