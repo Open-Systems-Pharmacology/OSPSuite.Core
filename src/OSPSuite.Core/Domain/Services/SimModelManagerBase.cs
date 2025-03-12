@@ -43,6 +43,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          simModelSimulation.FinalizeSimulation();
       }
+
       protected async Task FinalizeSimulationAsync(Simulation simModelSimulation)
       {
          await Task.Run(() => simModelSimulation.FinalizeSimulation());

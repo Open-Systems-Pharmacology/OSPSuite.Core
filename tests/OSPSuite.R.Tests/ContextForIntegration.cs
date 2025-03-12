@@ -18,8 +18,6 @@ namespace OSPSuite.R
          });
 
          Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-
       }
-
    }
 }
