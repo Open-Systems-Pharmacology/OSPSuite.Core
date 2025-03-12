@@ -2,12 +2,6 @@ namespace OSPSuite.Presentation.MenuAndBars
 {
    public static class MenuBarButtonExtensions
    {
-      public static T WithCommandAsync<T>(this T menuBarItem, IUICommandAsync command) where T : IMenuBarButton
-      {
-         menuBarItem.AsyncCommand = command;
-         return menuBarItem;
-      }
-
       public static T WithCommand<T>(this T menuBarItem, IUICommand command) where T : IMenuBarButton
       {
          menuBarItem.Command = command;

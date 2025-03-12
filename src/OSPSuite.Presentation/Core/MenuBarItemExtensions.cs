@@ -40,14 +40,6 @@ namespace OSPSuite.Presentation.Core
          return menuBarItem.WithCommand(container.Resolve<TCommand>().For(entity));
       }
 
-      public static IMenuBarButton WithCommandForAsync<TCommand, TObject>(this IMenuBarButton menuBarItem, TObject entity, IContainer container)
-         where TCommand : IObjectUICommand<TObject>
-         where TObject : class
-      {
-         var command = container.Resolve<TCommand>().For(entity);
-         return menuBarItem.WithCommandAsync(new ExecuteActionUICommandAsync(() => command.ExecuteAsync()));
-      }
-
       public static IMenuBarButton WithEnabled(this IMenuBarButton menuBarItem, bool enabled)
       {
          menuBarItem.Enabled = enabled;
