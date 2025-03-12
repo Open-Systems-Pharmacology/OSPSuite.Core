@@ -41,12 +41,6 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       event EventHandler Terminated;
 
-      /// <summary>
-      /// Run simulaiton asynchronously
-      /// </summary>
-      /// <param name="simulation"></param>
-      /// <param name="simulationRunOptions"></param>
-      /// <returns></returns>
       Task<SimulationRunResults> RunSimulationAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null);
    }
 }

@@ -68,12 +68,11 @@ namespace OSPSuite.Core.Domain.Services
          {
             _simulationRunOptions = simulationRunOptions ?? new SimulationRunOptions();
 
-            await doIfNotCanceledAsync(() => loadSimulationAsync(simulation), cancellationToken);
-            await doIfNotCanceledAsync(() => FinalizeSimulationAsync(_simModelSimulation), cancellationToken);
-            await doIfNotCanceledAsync(() => simulateAsync(cancellationToken), cancellationToken);
+            await loadAndRunSimulationAsync(simulation, cancellationToken);
 
             if (!cancellationToken.IsCancellationRequested)
-               return new SimulationRunResults(WarningsFrom(_simModelSimulation), getResults(simulation));
+               return new SimulationRunResults(WarningsFrom(_simModelSimulation), _dataFactory.CreateRepository(simulation, _simModelSimulation));
+
 
             return new SimulationRunResults(WarningsFrom(_simModelSimulation), SimulationWasCanceled);
          }
@@ -89,6 +88,13 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
+      private async Task loadAndRunSimulationAsync(IModelCoreSimulation simulation, CancellationToken cancellationToken)
+      {
+         await doIfNotCanceledAsync(() => loadSimulationAsync(simulation), cancellationToken);
+         await doIfNotCanceledAsync(() => FinalizeSimulationAsync(_simModelSimulation), cancellationToken);
+         await doIfNotCanceledAsync(() => simulateAsync(cancellationToken), cancellationToken);
+      }
+
       private void loadSimulation(IModelCoreSimulation simulation)
       {
          var xml = CreateSimulationExport(simulation, _simulationRunOptions.SimModelExportMode);
@@ -98,13 +104,6 @@ namespace OSPSuite.Core.Domain.Services
       private async Task loadSimulationAsync(IModelCoreSimulation simulation)
       {
          await Task.Run(() => loadSimulation(simulation)); // No need for a token here, it's a lightweight operation
-      }
-
-      private DataRepository getResults(IModelCoreSimulation simulation)
-      {
-         return _globalCancellationTokenSource.IsCancellationRequested
-            ? new DataRepository()
-            : _dataFactory.CreateRepository(simulation, _simModelSimulation);
       }
 
       /// <summary>
@@ -128,9 +127,6 @@ namespace OSPSuite.Core.Domain.Services
 
                cancellationToken.ThrowIfCancellationRequested();
             }, cancellationToken);
-         }
-         catch (OperationCanceledException)
-         {
          }
          finally
          {
