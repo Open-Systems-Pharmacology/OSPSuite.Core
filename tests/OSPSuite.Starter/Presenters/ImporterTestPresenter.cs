@@ -111,7 +111,7 @@ namespace OSPSuite.Starter.Presenters
 
             if (fileName.IsNullOrEmpty()) return;
 
-            var xel = XElement.Load(fileName); // We have to correctly handle the case of cancellation
+            var xel = XElementSerializer.PermissiveLoad(fileName); // We have to correctly handle the case of cancellation
             var configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
 
             dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
@@ -143,7 +143,7 @@ namespace OSPSuite.Starter.Presenters
 
             if (fileName.IsNullOrEmpty()) return;
 
-            var xel = XElement.Load(fileName); // We have to correctly handle the case of cancellation
+            var xel = XElementSerializer.PermissiveLoad(fileName); // We have to correctly handle the case of cancellation
             var configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
 
             dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";

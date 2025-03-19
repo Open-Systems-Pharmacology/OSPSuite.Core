@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Helpers;
 using OSPSuite.Core.Serialization.Exchange;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Serializers;
@@ -37,12 +37,30 @@ namespace OSPSuite.Core
       }
    }
 
+   internal class When_serializing_and_deserializing_an_entity_with_illegal_xml_characters : concern_for_SimulationPersistor
+   {
+      [Observation]
+      public void should_return_a_simulation_transfer_containing_a_valid_simulation()
+      {
+         var x1 = new SimulationTransfer { Simulation = _simulation };
+         var illegalXmlString = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes("F1").Concat(new byte[] { 0x1F }).ToArray());
+         x1.Favorites.Add(illegalXmlString);
+
+         _simulationPersistor.Save(x1, _filePath);
+         File.Exists(_filePath).ShouldBeTrue();
+         var deserializationObjectBaseRepository = IoC.Resolve<IWithIdRepository>();
+
+         var x2 = _simulationPersistor.Load(_filePath, deserializationObjectBaseRepository);
+         x2.Favorites.First().ShouldBeEqualTo(illegalXmlString);
+      }
+   }
+
    internal class When_deserializing_a_valid_simulation_file_containing_some_licenses : concern_for_SimulationPersistor
    {
       [Observation]
       public void should_return_a_simulation_transfer_containing_a_valid_simulation()
       {
-         var x1 = new SimulationTransfer {Simulation = _simulation};
+         var x1 = new SimulationTransfer { Simulation = _simulation };
          x1.Favorites.Add("F1");
          x1.Favorites.Add("F2");
          _simulationPersistor.Save(x1, _filePath);
@@ -90,12 +108,12 @@ namespace OSPSuite.Core
             WeightedObservedData = new WeightedObservedData(_obsData),
             OutputSelection = new SimulationQuantitySelection(_simulation, new QuantitySelection("A|B|C", QuantityType.Complex))
          };
-         _outputMappings = new OutputMappings {_outputMapping};
+         _outputMappings = new OutputMappings { _outputMapping };
 
-         _simulationTransfer =   new SimulationTransfer
+         _simulationTransfer = new SimulationTransfer
          {
             Simulation = _simulation,
-            AllObservedData = new List<DataRepository>{ _obsData },
+            AllObservedData = new List<DataRepository> { _obsData },
             OutputMappings = _outputMappings
          };
       }
