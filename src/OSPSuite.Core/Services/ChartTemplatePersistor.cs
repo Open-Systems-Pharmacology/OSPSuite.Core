@@ -102,7 +102,7 @@ namespace OSPSuite.Core.Services
       {
          try
          {
-            return Deserialize(XElement.Load(fileFullPath));
+            return Deserialize(XElementSerializer.PermissiveLoad(fileFullPath));
          }
          catch (XmlException)
          {
@@ -164,7 +164,7 @@ namespace OSPSuite.Core.Services
       private void saveTemplateToFile(XElement element, string fileFullPath)
       {
          element.AddAttribute(Constants.Serialization.Attribute.VERSION, PKMLVersion.CURRENT);
-         element.Save(fileFullPath);
+         element.PermissiveSave(fileFullPath);
       }
    }
 }

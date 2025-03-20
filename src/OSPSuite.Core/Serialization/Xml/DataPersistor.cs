@@ -43,7 +43,7 @@ namespace OSPSuite.Core.Serialization.Xml
          using (var serializationContext = SerializationTransaction.Create(_container))
          {
             var xel = Serialize(obj, serializationContext);
-            xel.Save(fileName);
+            xel.PermissiveSave(fileName);
          }
       }
 
@@ -51,7 +51,7 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          using (var serializationContext = SerializationTransaction.Create(_container, dimensionFactory, dataRepositories: dataRepositories))
          {
-            var xel = XElement.Load(fileName);
+            var xel = XElementSerializer.PermissiveLoad(fileName);
             return Deserialize<T>(xel, serializationContext);
          }
       }
