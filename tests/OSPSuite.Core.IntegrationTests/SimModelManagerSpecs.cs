@@ -45,7 +45,7 @@ namespace OSPSuite.Core
       private readonly BaseConcernForSimModelManager _baseConcern = new BaseConcernForSimModelManager();
       protected IWithIdRepository _withIdRepository;
       protected IModelCoreSimulation _simulation;
-
+      protected CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
       public override async Task GlobalContext()
       {
          base.GlobalContext();
@@ -168,14 +168,14 @@ namespace OSPSuite.Core
 
       protected override async Task Context()
       {
-         await base.Context();
-         _simulation2 = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
+      await base.Context();
+      _simulation2 = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
       }
 
       protected override async Task Because()
       {
-         _runResults1 = await sut.RunSimulationAsync(_simulation);
-         _runResults2 = await sut.RunSimulationAsync(_simulation2);
+         _runResults1 = await sut.RunSimulationAsync(_simulation, _cancellationTokenSource);
+         _runResults2 = await sut.RunSimulationAsync(_simulation2, _cancellationTokenSource);
       }
 
       [Observation]
@@ -200,8 +200,8 @@ namespace OSPSuite.Core
 
       protected override async Task Because()
       {
-         _runResults1 = await sut.RunSimulationAsync(_simulation);
-         _runResults2 = await sut.RunSimulationAsync(_simulation2);
+         _runResults1 = await sut.RunSimulationAsync(_simulation, _cancellationTokenSource);
+         _runResults2 = await sut.RunSimulationAsync(_simulation2, _cancellationTokenSource);
          sut.StopSimulation();
       }
 

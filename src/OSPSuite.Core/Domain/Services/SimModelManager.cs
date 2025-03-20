@@ -11,29 +11,14 @@ namespace OSPSuite.Core.Domain.Services
 {
    public class SimModelManager : SimModelManagerBase, ISimModelManager
    {
-      /// <summary>
-      ///    Maximum Time that one simulation run should need to
-      /// </summary>
       private readonly double _executionTimeLimit;
-
       private readonly Timer _timer;
       private readonly IDataFactory _dataFactory;
       private Simulation _simModelSimulation;
       private SimulationRunOptions _simulationRunOptions;
-      private static CancellationTokenSource _globalCancellationTokenSource = new CancellationTokenSource();
-      private static readonly object _lock = new object();
+      private CancellationTokenSource _cancellationTokenSource;
 
       public event EventHandler<SimulationProgressEventArgs> SimulationProgress = delegate { };
-
-      public void StopSimulation()
-      {
-         lock (_lock)
-         {
-            _globalCancellationTokenSource.Cancel();
-            _globalCancellationTokenSource.Dispose();
-            _globalCancellationTokenSource = new CancellationTokenSource();
-         }
-      }
 
       public SimModelManager(ISimModelExporter simModelExporter, ISimModelSimulationFactory simModelSimulationFactory, IDataFactory dataFactory) : base(simModelExporter, simModelSimulationFactory)
       {
@@ -43,9 +28,16 @@ namespace OSPSuite.Core.Domain.Services
          _timer.Elapsed += onTimeElapsed;
       }
 
+      public void StopSimulation()
+      {
+         _cancellationTokenSource?.Cancel();
+      }
+
       private void onTimeElapsed(object sender, ElapsedEventArgs e)
       {
-         if (_globalCancellationTokenSource.IsCancellationRequested) return;
+         if (_simModelSimulation == null)
+            return;
+
          raiseSimulationProgress(_simModelSimulation.Progress);
       }
 
@@ -56,22 +48,28 @@ namespace OSPSuite.Core.Domain.Services
 
       public SimulationRunResults RunSimulation(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null)
       {
-         return RunSimulationAsync(simulation, simulationRunOptions).GetAwaiter().GetResult();
-      }
-
-      public async Task<SimulationRunResults> RunSimulationAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null)
-      {
-         var cancellationToken = _globalCancellationTokenSource.Token;
-         _simulationRunOptions = simulationRunOptions ?? new SimulationRunOptions();
+         var cts = new CancellationTokenSource();
          try
          {
-            _simulationRunOptions = simulationRunOptions ?? new SimulationRunOptions();
+            return RunSimulationAsync(simulation, cts, simulationRunOptions).GetAwaiter().GetResult();
+         }
+         finally
+         {
+            cts.Dispose();
+         }
+      }
 
+      public async Task<SimulationRunResults> RunSimulationAsync(IModelCoreSimulation simulation, CancellationTokenSource cts, SimulationRunOptions simulationRunOptions = null)
+      {
+         _simulationRunOptions = simulationRunOptions ?? new SimulationRunOptions();
+         _cancellationTokenSource = cts;
+         var cancellationToken = cts.Token;
+         try
+         {
             await loadAndRunSimulationAsync(simulation, cancellationToken);
 
             if (!cancellationToken.IsCancellationRequested)
                return new SimulationRunResults(WarningsFrom(_simModelSimulation), _dataFactory.CreateRepository(simulation, _simModelSimulation));
-
 
             return new SimulationRunResults(WarningsFrom(_simModelSimulation), SimulationWasCanceled);
          }
@@ -102,12 +100,14 @@ namespace OSPSuite.Core.Domain.Services
 
       private async Task loadSimulationAsync(IModelCoreSimulation simulation)
       {
-         await Task.Run(() => loadSimulation(simulation)); // No need for a token here, it's a lightweight operation
+         await Task.Run(() => loadSimulation(simulation));
       }
 
-      /// <summary>
-      ///    Starts a CoreSimulation run asynchronously
-      /// </summary>
+      protected async Task FinalizeSimulationAsync(Simulation simModelSimulation)
+      {
+         await Task.Run(() => simModelSimulation.FinalizeSimulation());
+      }
+
       private async Task simulateAsync(CancellationToken cancellationToken)
       {
          var options = _simModelSimulation.Options;

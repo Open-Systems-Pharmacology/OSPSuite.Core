@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OSPSuite.Core.Domain.Services
@@ -41,6 +42,6 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       event EventHandler Terminated;
 
-      Task<SimulationRunResults> RunSimulationAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null);
+      Task<SimulationRunResults> RunSimulationAsync(IModelCoreSimulation simulation, CancellationTokenSource cts, SimulationRunOptions simulationRunOptions = null);
    }
 }
