@@ -32,7 +32,8 @@ namespace OSPSuite.Core.Serialization.Exchange
          {
             var serializer = _xmlSerializerRepository.SerializerFor(simulationTransfer);
             var element = serializer.Serialize(simulationTransfer, serializationContext);
-            element.Save(fileName);
+
+            element.PermissiveSave(fileName);
          }
       }
 

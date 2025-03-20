@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Serialization.Xml
          {
             var serializer = _serializerRepository.SerializerFor(objectToSerialize);
             var xel = serializer.Serialize(objectToSerialize, serializationContext);
-            xel.Save(fileName);
+            xel.PermissiveSave(fileName);
          }
       }
 
@@ -36,7 +36,7 @@ namespace OSPSuite.Core.Serialization.Xml
          using (var serializationContext = SerializationTransaction.Create(_container))
          {
             var serializer = _serializerRepository.SerializerFor(objectToLoad);
-            var element = XElement.Load(fileName);
+            var element = XElementSerializer.PermissiveLoad(fileName);
             serializer.Deserialize(objectToLoad, element, serializationContext);
          }
       }
