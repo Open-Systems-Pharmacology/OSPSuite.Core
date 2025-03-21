@@ -490,7 +490,7 @@ namespace OSPSuite.R.Services
          }
          catch (Exception exception)
          {
-            _fullMessage = exception.FullMessage();
+            _fullMessage = exception.InnerException.FullMessage();
          }
       }
 

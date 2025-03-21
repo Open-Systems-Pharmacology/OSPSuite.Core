@@ -24,13 +24,9 @@ namespace OSPSuite.Core.Domain.Services
    {
       /// <summary>
       ///    Run simulation using given options or the default if not specified
+      ///    Once triggered, the simulation can`t be stopped, so if a stop is needed please use the RunSimulationAsync method
       /// </summary>
       SimulationRunResults RunSimulation(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null);
-
-      /// <summary>
-      ///    Stops SimModelSimulation run
-      /// </summary>
-      void StopSimulation();
 
       /// <summary>
       ///    Progress event returns the percent representing the progress of a simulation
@@ -42,6 +38,6 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       event EventHandler Terminated;
 
-      Task<SimulationRunResults> RunSimulationAsync(IModelCoreSimulation simulation, CancellationTokenSource cts, SimulationRunOptions simulationRunOptions = null);
+      Task<SimulationRunResults> RunSimulationAsync(IModelCoreSimulation simulation, CancellationToken cancellationToken = default, SimulationRunOptions simulationRunOptions = null);
    }
 }

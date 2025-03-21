@@ -132,34 +132,6 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_canceling_a_simulation_run : concern_for_SimModelManagerAsync
-   {
-      private SimulationRunResults _runResults;
-
-      protected override async Task Context()
-      {
-         await base.Context();
-         var interval = _simulation.Settings.OutputSchema.Intervals.ElementAt(0);
-         interval.GetSingleChildByName<IParameter>(Constants.Parameters.END_TIME).Value = 5000000;
-         interval.GetSingleChildByName<IParameter>(Constants.Parameters.RESOLUTION).Value = 10000;
-      }
-
-      protected override async Task Because()
-      {
-         var task = Task.Run(() => sut.RunSimulation(_simulation));
-         //needs to sleep so that the action actually starts
-         Thread.Sleep(100);
-         sut.StopSimulation();
-         _runResults = task.Result;
-      }
-
-      [Observation]
-      public void should_not_crash()
-      {
-         _runResults.Success.ShouldBeFalse();
-      }
-   }
-
    public class When_running_two_simulations_concurrently : concern_for_SimModelManagerAsync
    {
       protected IModelCoreSimulation _simulation2;
@@ -174,35 +146,8 @@ namespace OSPSuite.Core
 
       protected override async Task Because()
       {
-         _runResults1 = await sut.RunSimulationAsync(_simulation, _cancellationTokenSource);
-         _runResults2 = await sut.RunSimulationAsync(_simulation2, _cancellationTokenSource);
-      }
-
-      [Observation]
-      public void should_be_successful()
-      {
-         _runResults1.Success.ShouldBeTrue();
-         _runResults2.Success.ShouldBeTrue();
-      }
-   }
-
-   public class When_running_two_simulations_concurrently_and_cancelling : concern_for_SimModelManagerAsync
-   {
-      protected IModelCoreSimulation _simulation2;
-      private SimulationRunResults _runResults1;
-      private SimulationRunResults _runResults2;
-
-      protected override async Task Context()
-      {
-         await base.Context();
-         _simulation2 = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
-      }
-
-      protected override async Task Because()
-      {
-         _runResults1 = await sut.RunSimulationAsync(_simulation, _cancellationTokenSource);
-         _runResults2 = await sut.RunSimulationAsync(_simulation2, _cancellationTokenSource);
-         sut.StopSimulation();
+         _runResults1 = await sut.RunSimulationAsync(_simulation, _cancellationTokenSource.Token);
+         _runResults2 = await sut.RunSimulationAsync(_simulation2, _cancellationTokenSource.Token);
       }
 
       [Observation]
