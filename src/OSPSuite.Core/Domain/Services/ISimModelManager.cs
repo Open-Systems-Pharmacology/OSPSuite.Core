@@ -38,6 +38,18 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       event EventHandler Terminated;
 
+      /// <summary>
+      /// Runs Simulation Async.
+      /// Executes the simulation asynchronously with the provided options.
+      /// </summary>
+      /// <param name="simulation">The simulation model to be executed.</param>
+      /// <param name="cancellationToken">
+      /// Token used to cancel the simulation run if needed. 
+      /// If not provided (defaults to <see cref="CancellationToken.None"/>), the simulation will run to completion unless an internal failure occurs.
+      /// </param>
+      /// <param name="simulationRunOptions">Optional parameters to customize the simulation run behavior.</param>
+      /// <returns>Returns a <see cref="SimulationRunResults"/> object containing the results of the simulation.</returns>
       Task<SimulationRunResults> RunSimulationAsync(IModelCoreSimulation simulation, CancellationToken cancellationToken = default, SimulationRunOptions simulationRunOptions = null);
+
    }
 }

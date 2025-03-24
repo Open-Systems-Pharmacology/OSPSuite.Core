@@ -44,7 +44,7 @@ namespace OSPSuite.Core
       public override void GlobalCleanup()
       {
          base.GlobalCleanup();
-         _baseContext.Cleanup();
+         _baseContext.GlobalCleanup();
       }
    }
 
@@ -61,7 +61,7 @@ namespace OSPSuite.Core
 
       public override async Task GlobalCleanup()
       {
-         await Task.Run(() => _baseContext.Cleanup());
+         await Task.Run(() => _baseContext.GlobalCleanup());
       }
    }
 
@@ -185,7 +185,7 @@ namespace OSPSuite.Core
          pKParameterLoader.Load(pkParameterRepository, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Files.PK_PARAMETERS_FILE_NAME));
       }
 
-      public void Cleanup()
+      public void GlobalCleanup()
       {
          var withIdRepository = IoC.Resolve<IWithIdRepository>();
          withIdRepository.Clear();

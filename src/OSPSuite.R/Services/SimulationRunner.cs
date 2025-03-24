@@ -31,8 +31,7 @@ namespace OSPSuite.R.Services
          agingData = AgingData;
       }
    }
-   //TODO REFACTOR THIS 
-   //
+
    public interface ISimulationRunner
    {
       Task<SimulationResults> RunAsync(SimulationRunArgs simulationRunArgs);

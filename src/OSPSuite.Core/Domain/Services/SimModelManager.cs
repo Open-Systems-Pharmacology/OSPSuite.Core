@@ -52,10 +52,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             await loadAndRunSimulationAsync(simulation, cancellationToken);
 
-            if (!cancellationToken.IsCancellationRequested)
-               return new SimulationRunResults(WarningsFrom(_simModelSimulation), _dataFactory.CreateRepository(simulation, _simModelSimulation));
-
-            return new SimulationRunResults(WarningsFrom(_simModelSimulation), SimulationWasCanceled);
+            return new SimulationRunResults(WarningsFrom(_simModelSimulation), _dataFactory.CreateRepository(simulation, _simModelSimulation));
          }
          catch (OperationCanceledException)
          {
