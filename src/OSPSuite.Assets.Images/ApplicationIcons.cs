@@ -113,6 +113,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ExpertParameters = AddNamedIcon("Parameters", "ExpertParameters");
       public static readonly ApplicationIcon PopulationExportToCSV = AddNamedIcon("PopulationExportToCSV");
       public static readonly ApplicationIcon ExportToPDF = AddNamedIcon("PDF", "ExportToPDF");
+      public static readonly ApplicationIcon ExportToPNG = AddNamedIcon("ExportToPNG");
       public static readonly ApplicationIcon ExtendParameterValues = AddNamedIcon("ExtendParameterValues");
       public static readonly ApplicationIcon ExtracellularMembrane = AddNamedIcon("ExtracellularMembrane");
       public static readonly ApplicationIcon Fat = AddNamedIcon("Fat");
@@ -496,7 +497,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ModuleExplorer = AddNamedIcon("ModuleExplorer");
       public static readonly ApplicationIcon ModulesFolder = AddNamedIcon("ModulesFolder");
       public static readonly ApplicationIcon Module = AddNamedIcon("Module");
-      public static readonly ApplicationIcon Neighborhood = AddNamedIcon( "Neighborhood");
+      public static readonly ApplicationIcon Neighborhood = AddNamedIcon("Neighborhood");
       public static readonly ApplicationIcon Neighbor = AddNamedIcon("Neighbor");
       public static readonly ApplicationIcon TransporterRed = AddNamedIcon("TransporterRed", "TransporterRed");
       public static readonly ApplicationIcon TransporterGreen = AddNamedIcon("TransporterGreen", "TransporterGreen");
@@ -510,9 +511,8 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon PKSimModuleGreen = AddNamedIcon("PKSimModuleGreen");
       public static readonly ApplicationIcon PKSimModuleRed = AddNamedIcon("PKSimModuleRed");
 
-
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
-      private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((SvgImage) null);
+      private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((SvgImage)null);
 
       public static readonly ApplicationIcon EmptyIcon = createEmptyIcon();
 
@@ -547,7 +547,7 @@ namespace OSPSuite.Assets
       {
          var name = (iconName ?? resName).ToUpperInvariant();
          var iconAsBytes = getIcon(resName);
-         
+
          var appIcon = new ApplicationIcon(iconAsBytes)
          {
             IconName = name,
@@ -562,7 +562,7 @@ namespace OSPSuite.Assets
       {
          var assembly = Assembly.GetExecutingAssembly();
          var resourceName = typeof(ApplicationIcon).Namespace + ".Icons." + iconName + ".svg";
-         
+
          using (var stream = assembly.GetManifestResourceStream(resourceName))
          {
             if (stream == null)

@@ -35,6 +35,7 @@ namespace OSPSuite.Presentation.Presentation
       protected ICurveChartExportTask _chartExportTask;
       protected IApplicationSettings _applicationSettings;
       protected IApplicationController _applicationController;
+      protected IDialogCreator _dialogCreator;
 
       protected override void Context()
       {
@@ -48,8 +49,9 @@ namespace OSPSuite.Presentation.Presentation
          _chartExportTask = A.Fake<ICurveChartExportTask>();
          _applicationSettings = A.Fake<IApplicationSettings>();
          _applicationController = A.Fake<IApplicationController>();
+         _dialogCreator = A.Fake<IDialogCreator>();
 
-         sut = new ChartDisplayPresenter(_chartDisplayView, _curveBinderFactory, _contextMenuFactory, _axisBinderFactory, _dataModeMapper, _chartExportTask, _applicationSettings, _applicationController);
+         sut = new ChartDisplayPresenter(_chartDisplayView, _curveBinderFactory, _contextMenuFactory, _axisBinderFactory, _dataModeMapper, _chartExportTask, _applicationSettings, _applicationController, _dialogCreator);
          var dataRepository = DomainHelperForSpecs.SimulationDataRepositoryFor("Sim");
 
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(A<DataColumn>._)).ReturnsLazily(x => x.GetArgument<DataColumn>(0).Dimension);
@@ -374,6 +376,28 @@ namespace OSPSuite.Presentation.Presentation
       public void should_use_the_chart_export_task_to_export_the_char_to_excel()
       {
          A.CallTo(() => _chartExportTask.ExportToExcel(_curveChart, sut.PreExportHook)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_chart_display_presenter_is_exporting_the_displayed_chart_to_png : concern_for_ChartDisplayPresenter
+   {
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _dialogCreator.AskForFileToSave(A<string>.Ignored, A<string>.Ignored, A<string>.Ignored, A<string>.Ignored, null)).Returns("File.png");
+      }
+
+      
+      protected override void Because()
+      {
+         sut.ExportToPng();
+      }
+
+      [Observation]
+      public void should_use_the_chart_export_task_to_export_the_char_to_png()
+      {
+         A.CallTo(() => _chartDisplayView.ExportToPng(A<string>.Ignored)).MustHaveHappened();
       }
    }
 }

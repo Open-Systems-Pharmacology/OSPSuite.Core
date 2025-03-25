@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Mappers;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.ContextMenus;
@@ -15,6 +17,7 @@ using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Extensions;
+using static OSPSuite.Assets.Captions;
 using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
 namespace OSPSuite.Presentation.Presenters.Charts
@@ -187,6 +190,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void AddDeviationLines();
 
       Func<IEnumerable<DataColumn>, IEnumerable<DataColumn>> PreExportHook { get; set; }
+
+      void ExportToPng();
    }
 
    public class ChartDisplayPresenter : AbstractPresenter<IChartDisplayView, IChartDisplayPresenter>, IChartDisplayPresenter
@@ -203,6 +208,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly Cache<string, ICurveBinder> _quickCurveBinderCache;
       private bool _isLLOQVisible;
       private ChartFontAndSizeSettings _displayChartFontAndSizeSettings;
+      private readonly IDialogCreator _dialogCreator;
 
       public event EventHandler<IDragEvent> DragOver = delegate { };
       public event EventHandler<IDragEvent> DragDrop = delegate { };
@@ -224,7 +230,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
          ICurveToDataModeMapper dataModeMapper,
          ICurveChartExportTask chartExportTask,
          IApplicationSettings applicationSettings,
-         IApplicationController applicationController)
+         IApplicationController applicationController,
+         IDialogCreator dialogCreator)
          : base(chartDisplayView)
       {
          _curveBinderFactory = curveBinderFactory;
@@ -238,6 +245,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _quickCurveBinderCache = new Cache<string, ICurveBinder>(onMissingKey: key => null);
          _displayChartFontAndSizeSettings = new ChartFontAndSizeSettings();
          _applicationController = applicationController;
+         _dialogCreator = dialogCreator;
       }
 
       public CurveChart Chart { get; private set; }
@@ -278,7 +286,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
             AddDeviationLinesEvent(this, new AddDeviationLinesEventArgs(foldValue.GetValueOrDefault()));
          }
       }
-
   
       public void Refresh()
       {
@@ -623,5 +630,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private IViewItem viewItemFor(Curve curve) => new CurveViewItem(Chart, curve);
       private IViewItem viewItemFor(Axis axis) => new AxisViewItem(Chart, axis);
+
+      public void ExportToPng()
+      {
+         var fileName = _dialogCreator.AskForFileToSave(Captions.ExportChartToPng, Constants.Filter.PNG_SAVE_FILE_FILTER , Constants.DirectoryKey.REPORT, Chart.Name);
+         if (string.IsNullOrEmpty(fileName))
+            return;
+
+         _view.ExportToPng(fileName);
+      }
    }
 }
