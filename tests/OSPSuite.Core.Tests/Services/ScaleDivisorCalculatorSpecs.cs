@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
@@ -74,7 +75,7 @@ namespace OSPSuite.Core.Services
          simResults.Add(res2);
 
          var simulationRunResults = new SimulationRunResults(Enumerable.Empty<SolverWarning>(), simResults);
-         A.CallTo(() => _simModelManager.RunSimulation(_simulation, null)).Returns(simulationRunResults);
+         A.CallTo(() => _simModelManager.RunSimulationAsync(_simulation, CancellationToken.None, null)).ReturnsAsync(simulationRunResults);
          sut = new ScaleDivisorCalculator(_simModelManager, _containerTask);
       }
    }
