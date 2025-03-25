@@ -45,7 +45,6 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithActionCommand(chartDisplayPresenter.ExportToPng)
             .WithIcon(ApplicationIcons.GreenOverlayFor(ApplicationIcons.ExportToPNG));
 
-
          if (curveChart.IsAnImplementationOf<PredictedVsObservedChart>())
          {
             yield return CreateMenuButton.WithCaption(MenuNames.AddDeviationLines)

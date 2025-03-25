@@ -17,7 +17,6 @@ using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Extensions;
-using static OSPSuite.Assets.Captions;
 using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
 namespace OSPSuite.Presentation.Presenters.Charts
@@ -286,7 +285,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
             AddDeviationLinesEvent(this, new AddDeviationLinesEventArgs(foldValue.GetValueOrDefault()));
          }
       }
-  
+
       public void Refresh()
       {
          updateChart();
@@ -633,7 +632,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void ExportToPng()
       {
-         var fileName = _dialogCreator.AskForFileToSave(Captions.ExportChartToPng, Constants.Filter.PNG_SAVE_FILE_FILTER , Constants.DirectoryKey.REPORT, Chart.Name);
+         var fileName = _dialogCreator.AskForFileToSave(Captions.ExportChartToPng, Constants.Filter.PNG_SAVE_FILE_FILTER, Constants.DirectoryKey.REPORT, Chart.Name);
          if (string.IsNullOrEmpty(fileName))
             return;
 
