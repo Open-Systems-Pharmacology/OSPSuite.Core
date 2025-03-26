@@ -341,7 +341,7 @@ namespace OSPSuite.Core
    public class When_calculating_pk_values_for_a_column_with_few_values : concern_for_PKValuesCalculator
    {
       private PKValues _pk;
-      private DataColumn _emptyColumns;
+      private DataColumn _dataColumn;
       private PKCalculationOptions _pkOptions;
       private BaseGrid _baseGrid;
 
@@ -349,7 +349,7 @@ namespace OSPSuite.Core
       {
          base.Context();
          _baseGrid = new BaseGrid("BaseGrid", NO_DIMENSION) { Values = new[] { 0f, 1f, 2f } };
-         _emptyColumns = new DataColumn("TEST", NO_DIMENSION, _baseGrid) { Values = new[] { 3f, 2f, 0.1f } };
+         _dataColumn = new DataColumn("TEST", NO_DIMENSION, _baseGrid) { Values = new[] { 3f, 2f, 0.1f } };
          _pkOptions = new PKCalculationOptions
          {
             TotalDrugMassPerBodyWeight = 10,
@@ -358,11 +358,11 @@ namespace OSPSuite.Core
 
       protected override void Because()
       {
-         _pk = sut.CalculatePK(_emptyColumns, _pkOptions);
+         _pk = sut.CalculatePK(_dataColumn, _pkOptions);
       }
 
       [Observation]
-      public void should_return_an_empty_pk_calculation()
+      public void should_have_non_infinity_value_for_Thalf()
       {
          _pk.ValueFor(Thalf).ShouldNotBeEqualTo(float.PositiveInfinity);
       }
