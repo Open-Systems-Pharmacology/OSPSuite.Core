@@ -632,7 +632,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void ExportToPng()
       {
-         var fileName = _dialogCreator.AskForFileToSave(Captions.ExportChartToPng, Constants.Filter.PNG_SAVE_FILE_FILTER, Constants.DirectoryKey.REPORT, Chart.Name);
+         var fileName = _dialogCreator.AskForFileToSave(Captions.ExportChartToPng, Constants.Filter.DIAGRAM_IMAGE_FILTER, Constants.DirectoryKey.REPORT, Chart.Name);
          if (string.IsNullOrEmpty(fileName))
             return;
 
