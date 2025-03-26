@@ -173,7 +173,7 @@ namespace OSPSuite.Core.Domain.Services
 
          //only one interval, return the full range
          if (options.SingleDosing)
-            return new[] {fullRange};
+            return new[] { fullRange };
 
          //Two or more intervals
          var intervals = new[]
@@ -408,14 +408,18 @@ namespace OSPSuite.Core.Domain.Services
          }
 
          /// <summary>
-         ///    Creates a polynomial fit of order 1 for the last 10% of the data.
-         ///    and returns the two coefficient (c_0 and C_1 of the fit)
+         ///    Creates a polynomial fit of order 1 for the last 10% or last 4 points
+         ///    of the data whichever is greater and returns the two coefficient
+         ///    (c_0 and C_1 of the fit)
          /// </summary>
          private Tuple<double, double> straightLineFit()
          {
             var errorResult = new Tuple<double, double>(0, 0);
 
-            int numOfPoints = (int) Math.Floor(_time.Count / 10.0);
+            int numOfPoints = (int)Math.Floor(_time.Count / 10.0);
+            if (numOfPoints < 3 && _time.Count >= 3)
+               numOfPoints = 3;
+
             //the number of point is zero. We return a slope of 0. this should never happen
             if (numOfPoints == 0)
                return errorResult;
