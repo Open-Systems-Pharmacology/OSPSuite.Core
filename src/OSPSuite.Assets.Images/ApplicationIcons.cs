@@ -113,7 +113,6 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ExpertParameters = AddNamedIcon("Parameters", "ExpertParameters");
       public static readonly ApplicationIcon PopulationExportToCSV = AddNamedIcon("PopulationExportToCSV");
       public static readonly ApplicationIcon ExportToPDF = AddNamedIcon("PDF", "ExportToPDF");
-      public static readonly ApplicationIcon ExportToPNG = AddNamedIcon("ExportToPNG");
       public static readonly ApplicationIcon ExtendParameterValues = AddNamedIcon("ExtendParameterValues");
       public static readonly ApplicationIcon ExtracellularMembrane = AddNamedIcon("ExtracellularMembrane");
       public static readonly ApplicationIcon Fat = AddNamedIcon("Fat");
@@ -510,6 +509,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon PKSimModule = AddNamedIcon("PKSimModule");
       public static readonly ApplicationIcon PKSimModuleGreen = AddNamedIcon("PKSimModuleGreen");
       public static readonly ApplicationIcon PKSimModuleRed = AddNamedIcon("PKSimModuleRed");
+      public static readonly ApplicationIcon ExportToPNG = AddNamedIcon("ExportToPNG");
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
       private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((SvgImage)null);
