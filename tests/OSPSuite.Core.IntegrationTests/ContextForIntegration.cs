@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Castle.Facilities.TypedFactory;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
@@ -30,13 +31,74 @@ namespace OSPSuite.Core
    [IntegrationTests]
    public abstract class ContextForIntegration<T> : ContextSpecification<T>
    {
+      private readonly BaseContextForIntegration _baseContext = new BaseContextForIntegration();
+
       public override void GlobalContext()
       {
          if (IoC.Container != null) return;
 
          base.GlobalContext();
-         var container = new CastleWindsorContainer();
+         _baseContext.InitializeContainer();
+      }
 
+      public override void GlobalCleanup()
+      {
+         base.GlobalCleanup();
+         _baseContext.GlobalCleanup();
+      }
+   }
+
+   [IntegrationTests]
+   public abstract class ContextForIntegrationAsync<T> : ContextSpecificationAsync<T>
+   {
+      private readonly BaseContextForIntegration _baseContext = new BaseContextForIntegration();
+
+      public override async Task GlobalContext()
+      {
+         if (IoC.Container != null) return;
+         _baseContext.InitializeContainer();
+      }
+
+      public override async Task GlobalCleanup()
+      {
+         await Task.Run(() => _baseContext.GlobalCleanup());
+      }
+   }
+
+   public abstract class ContextWithLoadedSimulation<T> : ContextForIntegration<T>
+   {
+      public SimulationTransfer LoadPKMLFile(string pkmlName)
+      {
+         var projectFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"Data\\{pkmlName}.pkml");
+         return SerializationHelperForSpecs.Load(projectFile);
+      }
+   }
+
+   public abstract class ContextForModelConstructorIntegration : ContextWithLoadedSimulation<CreationResult>
+   {
+      public CreationResult CreateFrom(string pkmlName)
+      {
+         var simulationTransfer = LoadPKMLFile(pkmlName);
+         var modelConstructor = IoC.Resolve<IModelConstructor>();
+         var result = modelConstructor.CreateModelFrom(simulationTransfer.Simulation.Configuration, pkmlName);
+         return result;
+      }
+   }
+
+   public class BaseContextForIntegration
+   {
+      public void InitializeContainer()
+      {
+         var container = new CastleWindsorContainer();
+         RegisterComponents(container);
+         InitGroupRepository();
+         InitializeDimensions();
+         InitPKParameters();
+         Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+      }
+
+      public void RegisterComponents(CastleWindsorContainer container)
+      {
          IoC.InitializeWith(container);
          IoC.RegisterImplementationOf(IoC.Container);
 
@@ -77,16 +139,14 @@ namespace OSPSuite.Core
          A.CallTo(() => applicationConfiguration.Product).Returns(Origins.Other);
          container.RegisterImplementationOf(applicationConfiguration);
 
-         initGroupRepository();
-
          var progressManager = A.Fake<IProgressManager>();
          A.CallTo(() => progressManager.Create()).Returns(A.Fake<IProgressUpdater>());
          container.RegisterImplementationOf(progressManager);
 
          var csvSeparatorSelector = A.Fake<ICsvSeparatorSelector>();
-         A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>.Ignored)).Returns(new CSVSeparators { ColumnSeparator = ';', DecimalSeparator = '.' });
+         A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>.Ignored))
+            .Returns(new CSVSeparators { ColumnSeparator = ';', DecimalSeparator = '.' });
          container.RegisterImplementationOf(csvSeparatorSelector);
-
 
          using (container.OptimizeDependencyResolution())
          {
@@ -96,26 +156,17 @@ namespace OSPSuite.Core
             container.AddRegister(x => x.FromInstance(register));
             register.PerformMappingForSerializerIn(container);
          }
-
-
-         initializeDimensions();
-         initPKParameters();
-
-         Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
       }
 
-      private static void initGroupRepository()
+      public void InitGroupRepository()
       {
          var groupRepository = IoC.Resolve<IGroupRepository>();
-         var moBiGroup = new Group { Name = Constants.Groups.MOBI, Id = "1" };
-         var undefinedGroup = new Group { Name = Constants.Groups.UNDEFINED, Id = "0" };
-         var solverSettingsGroup = new Group { Name = Constants.Groups.SOLVER_SETTINGS, Id = "2" };
-         groupRepository.AddGroup(moBiGroup);
-         groupRepository.AddGroup(solverSettingsGroup);
-         groupRepository.AddGroup(undefinedGroup);
+         groupRepository.AddGroup(new Group { Name = Constants.Groups.MOBI, Id = "1" });
+         groupRepository.AddGroup(new Group { Name = Constants.Groups.UNDEFINED, Id = "0" });
+         groupRepository.AddGroup(new Group { Name = Constants.Groups.SOLVER_SETTINGS, Id = "2" });
       }
 
-      private static void initializeDimensions()
+      public void InitializeDimensions()
       {
          var dimensionFactory = IoC.Resolve<IDimensionFactory>();
          var persistor = IoC.Resolve<IDimensionFactoryPersistor>();
@@ -124,43 +175,20 @@ namespace OSPSuite.Core
 
          var molarConcentrationDimension = dimensionFactory.Dimension(Constants.Dimension.MOLAR_CONCENTRATION);
          var massConcentrationDimension = dimensionFactory.Dimension(Constants.Dimension.MASS_CONCENTRATION);
-
-         var concentrationDimensionsMergingInformation = new SimpleDimensionMergingInformation(molarConcentrationDimension, massConcentrationDimension);
-         dimensionFactory.AddMergingInformation(concentrationDimensionsMergingInformation);
+         dimensionFactory.AddMergingInformation(new SimpleDimensionMergingInformation(molarConcentrationDimension, massConcentrationDimension));
       }
 
-      private void initPKParameters()
+      public void InitPKParameters()
       {
          var pkParameterRepository = IoC.Resolve<IPKParameterRepository>();
          var pKParameterLoader = IoC.Resolve<IPKParameterRepositoryLoader>();
          pKParameterLoader.Load(pkParameterRepository, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Files.PK_PARAMETERS_FILE_NAME));
       }
 
-      public override void GlobalCleanup()
+      public void GlobalCleanup()
       {
-         base.GlobalCleanup();
          var withIdRepository = IoC.Resolve<IWithIdRepository>();
          withIdRepository.Clear();
-      }
-   }
-
-   public abstract class ContextWithLoadedSimulation<T> : ContextForIntegration<T>
-   {
-      public SimulationTransfer LoadPKMLFile(string pkmlName)
-      {
-         var projectFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"Data\\{pkmlName}.pkml");
-         return SerializationHelperForSpecs.Load(projectFile);
-      }
-   }
-
-   public abstract class ContextForModelConstructorIntegration : ContextWithLoadedSimulation<CreationResult>
-   {
-      public CreationResult CreateFrom(string pkmlName)
-      {
-         var simulationTransfer = LoadPKMLFile(pkmlName);
-         var modelConstructor = IoC.Resolve<IModelConstructor>();
-         var result = modelConstructor.CreateModelFrom(simulationTransfer.Simulation.Configuration, pkmlName);
-         return result;
       }
    }
 }

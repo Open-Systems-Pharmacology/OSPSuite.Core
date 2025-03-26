@@ -63,6 +63,7 @@ namespace OSPSuite.Assets
       public static readonly string LinearScale = "Linear Scale";
       public static readonly string LogScale = "Logarithmic Scale";
       public static readonly string ExportChartToExcel = "Export selected curves...";
+      public static readonly string ExportChartToPng = "Export chart to Png...";
       public static readonly string ExportComparisonToExcel = "Export comparison to Excel...";
       public static readonly string CloseButton = "&Close";
       public static readonly string Folder = "Folder";
@@ -2174,6 +2175,7 @@ namespace OSPSuite.Assets
 
       public static readonly string NewExpressionProfile = "Add &Expression Profile";
       public static readonly string ExportToExcel = "Export to Excel...";
+      public static readonly string ExportToPng = "Export to Png...";
       public static readonly string CopyToClipboard = "Copy to Clipboard";
       public static readonly string ResetZoom = "Reset Zoom";
       public static readonly string Delete = "Delete...";

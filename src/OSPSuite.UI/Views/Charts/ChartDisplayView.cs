@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
 using DevExpress.Charts.Native;
@@ -121,6 +122,11 @@ namespace OSPSuite.UI.Views.Charts
          _hintControl.Font = new Font(_chartControl.Legend.Font.FontFamily, 20);
          _hintControl.Appearance.TextOptions.HAlignment = HorzAlignment.Center;
          _hintControl.Dock = DockStyle.Fill;
+      }
+
+      public void ExportToPng(string filePath)
+      {
+         _chartControl.ExportToImage(filePath, ImageFormat.Png);
       }
 
       private static bool canDropMovingLegendHere(ChartHitInfo hitInfo)

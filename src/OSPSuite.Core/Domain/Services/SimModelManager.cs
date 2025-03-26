@@ -1,43 +1,37 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
-using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.SimModel;
 using static OSPSuite.Assets.Captions;
+using Timer = System.Timers.Timer;
 
 namespace OSPSuite.Core.Domain.Services
 {
    public class SimModelManager : SimModelManagerBase, ISimModelManager
    {
-      /// <summary>
-      ///    Maximum Time that one simulation run should need to
-      /// </summary>
       private readonly double _executionTimeLimit;
-
       private readonly Timer _timer;
       private readonly IDataFactory _dataFactory;
       private Simulation _simModelSimulation;
       private SimulationRunOptions _simulationRunOptions;
-      protected bool _canceled;
-      public event EventHandler<SimulationProgressEventArgs> SimulationProgress = delegate { };
 
-      public void StopSimulation()
-      {
-         _canceled = true;
-         _simModelSimulation?.Cancel();
-      }
+      public event EventHandler<SimulationProgressEventArgs> SimulationProgress = delegate { };
 
       public SimModelManager(ISimModelExporter simModelExporter, ISimModelSimulationFactory simModelSimulationFactory, IDataFactory dataFactory) : base(simModelExporter, simModelSimulationFactory)
       {
          _dataFactory = dataFactory;
          _executionTimeLimit = 0;
-         _timer = new Timer {Interval = 1000};
+         _timer = new Timer { Interval = 1000 };
          _timer.Elapsed += onTimeElapsed;
       }
 
       private void onTimeElapsed(object sender, ElapsedEventArgs e)
       {
-         if (_canceled) return;
+         if (_simModelSimulation == null)
+            return;
+
          raiseSimulationProgress(_simModelSimulation.Progress);
       }
 
@@ -48,17 +42,20 @@ namespace OSPSuite.Core.Domain.Services
 
       public SimulationRunResults RunSimulation(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null)
       {
+         return RunSimulationAsync(simulation, simulationRunOptions: simulationRunOptions).GetAwaiter().GetResult();
+      }
+
+      public async Task<SimulationRunResults> RunSimulationAsync(IModelCoreSimulation simulation, CancellationToken cancellationToken = default, SimulationRunOptions simulationRunOptions = null)
+      {
+         _simulationRunOptions = simulationRunOptions ?? new SimulationRunOptions();
          try
          {
-            _simulationRunOptions = simulationRunOptions ?? new SimulationRunOptions();
-            _canceled = false;
-            doIfNotCanceled(() => loadSimulation(simulation));
-            doIfNotCanceled(() => FinalizeSimulation(_simModelSimulation));
-            doIfNotCanceled(simulate);
+            await loadAndRunSimulationAsync(simulation, cancellationToken);
 
-            if(!_canceled)
-               return new SimulationRunResults(WarningsFrom( _simModelSimulation), getResults(simulation));
-
+            return new SimulationRunResults(WarningsFrom(_simModelSimulation), _dataFactory.CreateRepository(simulation, _simModelSimulation));
+         }
+         catch (OperationCanceledException)
+         {
             return new SimulationRunResults(WarningsFrom(_simModelSimulation), SimulationWasCanceled);
          }
          finally
@@ -69,23 +66,24 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
+      private Task loadAndRunSimulationAsync(IModelCoreSimulation simulation, CancellationToken cancellationToken) =>
+      Task.Run(() =>
+         {
+            cancellationToken.ThrowIfCancellationRequested();
+            loadSimulation(simulation);
+            cancellationToken.ThrowIfCancellationRequested();
+            FinalizeSimulation(_simModelSimulation);
+            cancellationToken.ThrowIfCancellationRequested();
+            simulate();
+            cancellationToken.ThrowIfCancellationRequested();
+         }, cancellationToken);
+      
       private void loadSimulation(IModelCoreSimulation simulation)
       {
          var xml = CreateSimulationExport(simulation, _simulationRunOptions.SimModelExportMode);
          _simModelSimulation = CreateSimulation(xml);
       }
 
-      private DataRepository getResults(IModelCoreSimulation simulation)
-      {
-         if (_canceled)
-            return new DataRepository();
-
-         return _dataFactory.CreateRepository(simulation, _simModelSimulation);
-      }
-
-      /// <summary>
-      ///    Starts a CoreSimulation run
-      /// </summary>
       private void simulate()
       {
          var options = _simModelSimulation.Options;
@@ -104,12 +102,6 @@ namespace OSPSuite.Core.Domain.Services
             _timer.Close();
             raiseSimulationProgress(100);
          }
-      }
-
-      protected void doIfNotCanceled(Action actionToExecute)
-      {
-         if (_canceled) return;
-         actionToExecute();
       }
    }
 }

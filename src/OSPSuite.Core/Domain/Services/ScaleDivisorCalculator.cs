@@ -114,7 +114,7 @@ namespace OSPSuite.Core.Domain.Services
             settingsFor(simulation).OutputSelections = createOutputSelectionWithAllMoleculeAmountSelected();
             updateSelectedMoleculeAmount(simulation);
 
-            var results = await runSimulation(simulation);
+            var results = await _simModelManager.RunSimulationAsync(simulation);
             return computerScaleDivisorBasedOn(results);
          }
          finally
@@ -188,12 +188,7 @@ namespace OSPSuite.Core.Domain.Services
 
          return scaleDivisor;
       }
-
-      private Task<SimulationRunResults> runSimulation(IModelCoreSimulation simulation)
-      {
-         return Task.Run(() => _simModelManager.RunSimulation(simulation));
-      }
-
+       
       private OutputSelections createOutputSelectionWithAllMoleculeAmountSelected()
       {
          var outputSelection = new OutputSelections();
