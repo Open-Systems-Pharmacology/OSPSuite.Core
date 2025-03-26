@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using FakeItEasy;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
@@ -50,7 +51,7 @@ namespace OSPSuite.R.Services
          _simulationRunResults = new SimulationRunResults(Enumerable.Empty<SolverWarning>(),
             DomainHelperForSpecs.IndividualSimulationDataRepositoryFor("Sim"));
          _simulation = new ModelCoreSimulation();
-         A.CallTo(_simModelManager).WithReturnType<SimulationRunResults>().Returns(_simulationRunResults);
+         A.CallTo(_simModelManager).WithReturnType<Task<SimulationRunResults>>().Returns(_simulationRunResults);
       }
 
       protected override void Because()

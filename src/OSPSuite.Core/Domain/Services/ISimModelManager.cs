@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -22,13 +24,9 @@ namespace OSPSuite.Core.Domain.Services
    {
       /// <summary>
       ///    Run simulation using given options or the default if not specified
+      ///    Once triggered, the simulation can`t be stopped, so if a stop is needed please use the RunSimulationAsync method
       /// </summary>
       SimulationRunResults RunSimulation(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions = null);
-
-      /// <summary>
-      ///    Stops SimModelSimulation run
-      /// </summary>
-      void StopSimulation();
 
       /// <summary>
       ///    Progress event returns the percent representing the progress of a simulation
@@ -39,5 +37,19 @@ namespace OSPSuite.Core.Domain.Services
       ///    Event raised when simulation is terminated (either after normal termination or cancel)
       /// </summary>
       event EventHandler Terminated;
+
+      /// <summary>
+      /// Runs Simulation Async.
+      /// Executes the simulation asynchronously with the provided options.
+      /// </summary>
+      /// <param name="simulation">The simulation model to be executed.</param>
+      /// <param name="cancellationToken">
+      /// Token used to cancel the simulation run if needed. 
+      /// If not provided (defaults to <see cref="CancellationToken.None"/>), the simulation will run to completion unless an internal failure occurs.
+      /// </param>
+      /// <param name="simulationRunOptions">Optional parameters to customize the simulation run behavior.</param>
+      /// <returns>Returns a <see cref="SimulationRunResults"/> object containing the results of the simulation.</returns>
+      Task<SimulationRunResults> RunSimulationAsync(IModelCoreSimulation simulation, CancellationToken cancellationToken = default, SimulationRunOptions simulationRunOptions = null);
+
    }
 }
