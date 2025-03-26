@@ -408,7 +408,7 @@ namespace OSPSuite.Core.Domain.Services
          }
 
          /// <summary>
-         ///    Creates a polynomial fit of order 1 for the last 10% or last 4 points
+         ///    Creates a polynomial fit of order 1 for the last 10% or last 3 points
          ///    of the data whichever is greater and returns the two coefficient
          ///    (c_0 and C_1 of the fit)
          /// </summary>
