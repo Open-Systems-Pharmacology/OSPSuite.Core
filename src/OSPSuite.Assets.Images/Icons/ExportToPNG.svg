@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128.16 128.16">
+  <defs>
+    <style>
+      .file-outline { fill: #ffffff; stroke: #aaaaaa; stroke-width: 2; }
+      .label-text { fill: #555555; font-family: Arial, sans-serif; font-size: 30px; font-weight: bold; }
+      .arrow-circle { fill: #f18a00; }
+      .arrow { fill: #ffffff; }
+    </style>
+  </defs>
+
+  <!-- White file -->
+  <rect x="8" y="8" width="85" height="110" rx="6" ry="6" class="file-outline"/>
+
+  <!-- Larger "PNG" label -->
+  <text x="14" y="42" class="label-text">PNG</text>
+
+  <!-- Orange export circle -->
+  <circle class="arrow-circle" cx="90.56" cy="90.37" r="35.72"/>
+
+  <!-- Wide, centered white arrow -->
+  <path class="arrow" d="
+    M68,88 
+    H83 
+    V72 
+    H98 
+    V88 
+    H113 
+    L90.5,114 
+    L68,88 
+    Z" />
+</svg>
