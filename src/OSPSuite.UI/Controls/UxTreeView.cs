@@ -198,13 +198,24 @@ namespace OSPSuite.UI.Controls
          DoWithinBatchUpdate(() =>
             this.DoWithinLatch(() =>
             {
-               for (int i = Nodes.Count - 1; i >= 0; i--)
-               {
-                  removeNode(NodeFrom(Nodes[i]), deleteNodes);
-               }
+               for (var i = Nodes.Count - 1; i >= 0; i--) 
+                  detachTreeNodeEvents(i, deleteNodes);
 
+               ClearNodes();
                _allNodes.Clear();
             }));
+      }
+
+      private void detachTreeNodeEvents(int nodeIndex, bool deleteNodes)
+      {
+         var treeNode = NodeFrom(Nodes[nodeIndex]);
+         treeNode.TextChanged -= nodeTextChanged;
+         treeNode.IconChanged -= iconChanged;
+
+         Nodes[nodeIndex].Tag = null;
+                  
+         if (deleteNodes)
+            treeNode.Delete();
       }
 
       public bool IsNodeExpanded(ITreeNode treeNode)
