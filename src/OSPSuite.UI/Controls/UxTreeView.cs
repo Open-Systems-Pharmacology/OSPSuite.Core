@@ -198,11 +198,13 @@ namespace OSPSuite.UI.Controls
          DoWithinBatchUpdate(() =>
             this.DoWithinLatch(() =>
             {
-               for (int i = Nodes.Count - 1; i >= 0; i--)
+               for (var i = Nodes.Count - 1; i >= 0; i--)
                {
-                  removeNode(NodeFrom(Nodes[i]), deleteNodes);
+                  removeEvents(NodeFrom(Nodes[i]), deleteNodes);
+                  Nodes[i].Tag = null;
                }
 
+               ClearNodes();
                _allNodes.Clear();
             }));
       }
@@ -378,6 +380,11 @@ namespace OSPSuite.UI.Controls
       private void removeNode(ITreeNode treeNode, bool deleteNode)
       {
          deleteTreeListNode(NodeFrom(treeNode));
+         removeEvents(treeNode, deleteNode);
+      }
+
+      private void removeEvents(ITreeNode treeNode, bool deleteNode)
+      {
          treeNode.TextChanged -= nodeTextChanged;
          treeNode.IconChanged -= iconChanged;
          if (deleteNode)
