@@ -198,24 +198,15 @@ namespace OSPSuite.UI.Controls
          DoWithinBatchUpdate(() =>
             this.DoWithinLatch(() =>
             {
-               for (var i = Nodes.Count - 1; i >= 0; i--) 
-                  detachTreeNodeEvents(i, deleteNodes);
+               for (var i = Nodes.Count - 1; i >= 0; i--)
+               {
+                  removeEvents(NodeFrom(Nodes[i]), deleteNodes);
+                  Nodes[i].Tag = null;
+               }
 
                ClearNodes();
                _allNodes.Clear();
             }));
-      }
-
-      private void detachTreeNodeEvents(int nodeIndex, bool deleteNodes)
-      {
-         var treeNode = NodeFrom(Nodes[nodeIndex]);
-         treeNode.TextChanged -= nodeTextChanged;
-         treeNode.IconChanged -= iconChanged;
-
-         Nodes[nodeIndex].Tag = null;
-                  
-         if (deleteNodes)
-            treeNode.Delete();
       }
 
       public bool IsNodeExpanded(ITreeNode treeNode)
@@ -389,6 +380,11 @@ namespace OSPSuite.UI.Controls
       private void removeNode(ITreeNode treeNode, bool deleteNode)
       {
          deleteTreeListNode(NodeFrom(treeNode));
+         removeEvents(treeNode, deleteNode);
+      }
+
+      private void removeEvents(ITreeNode treeNode, bool deleteNode)
+      {
          treeNode.TextChanged -= nodeTextChanged;
          treeNode.IconChanged -= iconChanged;
          if (deleteNode)
