@@ -236,7 +236,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _sheets = new Cache<string, DataSheet>();
          _sheets.Add("Sheet1", A.Fake<DataSheet>());
 
-         s_dataSourceFile = new ExcelDataSourceFile(A.Fake<IImportLogger>(), A.Fake<IHeavyWorkManager>());
+         _dataSourceFile = new ExcelDataSourceFile(A.Fake<IImportLogger>(), A.Fake<IHeavyWorkManager>());
          _dataSourceFile.Format = A.Fake<IDataFormat>();
          _dataSourceFile.Path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "IntegrationSampleUnitFromColumn.xlsx");
          A.CallTo(() => _importerDataPresenter.SetDataSource(A<string>.Ignored)).Returns(_dataSourceFile);
