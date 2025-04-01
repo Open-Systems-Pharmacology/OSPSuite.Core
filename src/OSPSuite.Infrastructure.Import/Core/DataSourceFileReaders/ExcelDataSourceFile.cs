@@ -13,11 +13,8 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
    public class ExcelDataSourceFile : DataSourceFile, IExcelDataSourceFile
    {
-      private readonly IHeavyWorkManager _heavyWorkManager;
-
-      public ExcelDataSourceFile(IImportLogger logger, IHeavyWorkManager heavyWorkManager) : base(logger)
+      public ExcelDataSourceFile(IImportLogger logger) : base(logger)
       {
-         _heavyWorkManager = heavyWorkManager;
       }
 
       protected override void LoadFromFile(string path)
@@ -45,16 +42,13 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                for (var j = 0; j < headers.Count; j++)
                   rawSheetData.AddColumn(headers[j], j);
 
-               _heavyWorkManager.Start(() =>
+               while (reader.MoveToNextRow())
                {
-                  while (reader.MoveToNextRow())
-                  {
-                     // The first two lines could be optimized outside the loop if appropriate
-                     var levels = reader.GetMeasurementLevels(headers.Count);
-                     rawSheetData.CalculateColumnDescription(levels);
-                     rawSheetData.AddRow(reader.CurrentRow);
-                  }
-               });
+                  // The first two lines could be optimized outside the loop if appropriate
+                  var levels = reader.GetMeasurementLevels(headers.Count);
+                  rawSheetData.CalculateColumnDescription(levels);
+                  rawSheetData.AddRow(reader.CurrentRow);
+               }
 
                rawSheetData.RemoveEmptyColumns();
                rawSheetData.RemoveEmptyRows();

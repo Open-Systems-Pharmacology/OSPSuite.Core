@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading;
 using OSPSuite.Assets;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Presenters;
@@ -26,12 +27,12 @@ namespace OSPSuite.Presentation.Services
          _backgroundWorker.DoWork += (o, e) => doWork();
       }
 
-      public bool Start(Action heavyWorkAction)
+      public bool Start(Action heavyWorkAction, CancellationToken ct = default)
       {
          return Start(heavyWorkAction, Captions.PleaseWait);
       }
 
-      public bool Start(Action heavyWorkAction, string caption)
+      public bool Start(Action heavyWorkAction, string caption, CancellationToken ct = default)
       {
          _success = true;
 

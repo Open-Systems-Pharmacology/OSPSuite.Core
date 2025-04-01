@@ -21,7 +21,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 
       protected override void Context()
       {
-         sut = new ExcelDataSourceFile(A.Fake<IImportLogger>(), A.Fake<IHeavyWorkManager>())
+         sut = new ExcelDataSourceFile(A.Fake<IImportLogger>())
          {
             Path = _excelFilePath
          };
