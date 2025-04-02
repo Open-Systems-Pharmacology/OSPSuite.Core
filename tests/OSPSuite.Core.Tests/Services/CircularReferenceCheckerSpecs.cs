@@ -212,6 +212,7 @@ namespace OSPSuite.Core.Services
    {
       private EventAssignment _assignment;
       private Event _event;
+      private EventAssignment _notWorkingAssignment;
 
       protected override void Context()
       {
@@ -222,6 +223,13 @@ namespace OSPSuite.Core.Services
          _event.AddAssignment(_assignment);
          _eventContainer.Add(_event);
          _assignment.ObjectPath = _parameter1.EntityPath().ToObjectPath();
+
+         _notWorkingAssignment = new EventAssignment { UseAsValue = UseAsValue }.WithName("notworking");
+         var formula = new ExplicitFormula("notworking");
+         formula.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("ROOT", "C", "notworking").WithAlias("PAR2"));
+         _notWorkingAssignment.Formula = formula;
+
+         _event.AddAssignment(_notWorkingAssignment);
 
          var formula1 = new ExplicitFormula("PAR2");
          formula1.AddObjectPath(_objectPathFactory.CreateFormulaUsablePathFrom("ROOT", "C", "PARA2").WithAlias("PAR2"));
@@ -234,18 +242,19 @@ namespace OSPSuite.Core.Services
          A.CallTo(() => _objectTypeResolver.TypeFor<IUsingFormula>(_parameter1)).Returns("Parameter");
       }
 
-      public abstract bool UseAsValue { get; }
+      protected abstract bool UseAsValue { get; }
    }
 
    internal class When_validating_the_references_used_in_an_assignment_with_circular_references : When_validating_the_references_used_in_an_assignment
    {
+
       [Observation]
       public void should_return_the_expected_results()
       {
          _results.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
       }
 
-      public override bool UseAsValue => false;
+      protected override bool UseAsValue => false;
    }
 
    internal class When_validating_the_references_used_in_an_assignment_with_use_as_value : When_validating_the_references_used_in_an_assignment
@@ -256,7 +265,7 @@ namespace OSPSuite.Core.Services
          _results.ValidationState.ShouldBeEqualTo(ValidationState.Valid);
       }
 
-      public override bool UseAsValue => true;
+      protected override bool UseAsValue => true;
    }
 
    internal class When_validating_the_references_used_in_a_quantity_resulting_in_formula_with_circular_references : When_checking_circular_references_in_a_model
