@@ -13,23 +13,17 @@ namespace OSPSuite.Core
 {
    public abstract class concern_for_SimModelManagerAsync : ContextForIntegrationAsync<ISimModelManager>
    {
-      public IWithIdRepository WithIdRepository { get; private set; }
-      public IModelCoreSimulation Simulation { get; private set; }
-
       protected IWithIdRepository _withIdRepository;
       protected IModelCoreSimulation _simulation;
       protected CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
       public override async Task GlobalContext()
       {
-         base.GlobalContext();
+         await base.GlobalContext();
 
-         await Task.Run(() =>
-         {
-            _withIdRepository = IoC.Resolve<IWithIdRepository>();
-            _simulation = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
-            new RegisterTaskForSpecs(_withIdRepository).RegisterAllIn(_simulation.Model.Root);
-         });
+         _withIdRepository = IoC.Resolve<IWithIdRepository>();
+         _simulation = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
+         new RegisterTaskForSpecs(_withIdRepository).RegisterAllIn(_simulation.Model.Root);
 
          sut = IoC.Resolve<ISimModelManager>();
       }
@@ -70,9 +64,9 @@ namespace OSPSuite.Core
       [Observation]
       public void should_return_repository_with_number_of_amounts_and_observers_and_persistent_parameter_plus_one_extra_column_for_time()
       {
-         int numberOfAmounts = _simulation.Model.Root.GetAllChildren<MoleculeAmount>().Count();
-         int numberOfObservers = _simulation.Model.Root.GetAllChildren<Observer>().Count();
-         int numberOfPersistentParameter = _simulation.Model.Root.GetAllChildren<IParameter>(parameter => parameter.Persistable).Count();
+         int numberOfAmounts = _simulation.Model.Root.GetAllChildren<MoleculeAmount>().Count;
+         int numberOfObservers = _simulation.Model.Root.GetAllChildren<Observer>().Count;
+         int numberOfPersistentParameter = _simulation.Model.Root.GetAllChildren<IParameter>(parameter => parameter.Persistable).Count ;
          _results.Count().ShouldBeEqualTo(numberOfAmounts + numberOfObservers + numberOfPersistentParameter + 1);
       }
 
@@ -119,8 +113,8 @@ namespace OSPSuite.Core
 
       protected override async Task Context()
       {
-      await base.Context();
-      _simulation2 = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
+         await base.Context();
+         _simulation2 = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
       }
 
       protected override async Task Because()

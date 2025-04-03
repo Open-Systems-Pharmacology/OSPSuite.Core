@@ -55,13 +55,15 @@ namespace OSPSuite.Core
 
       public override async Task GlobalContext()
       {
+         await base.GlobalContext();
          if (IoC.Container != null) return;
          _baseContext.InitializeContainer();
       }
 
       public override async Task GlobalCleanup()
       {
-         await Task.Run(() => _baseContext.GlobalCleanup());
+         await base.GlobalCleanup();
+         _baseContext.GlobalCleanup();
       }
    }
 
