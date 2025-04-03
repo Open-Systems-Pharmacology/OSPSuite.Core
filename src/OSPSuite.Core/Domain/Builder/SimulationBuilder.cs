@@ -19,10 +19,14 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly Cache<IMoleculeDependentBuilder, MoleculeList> _moleculeListCache = new Cache<IMoleculeDependentBuilder, MoleculeList>();
 
       private readonly Cache<IObjectBase, IObjectBase> _builderCache = new Cache<IObjectBase, IObjectBase>(onMissingKey: x => null);
+      internal ObjectSources ObjectSources { get; } = new ObjectSources();
+
+      private readonly Cache<string, BuilderSource> _builderSources = new Cache<string, BuilderSource>(x => x.Source.Id, x => null);
 
       public SimulationBuilder(SimulationConfiguration simulationConfiguration)
       {
          _simulationConfiguration = simulationConfiguration;
+
          performMerge();
       }
 
@@ -35,11 +39,17 @@ namespace OSPSuite.Core.Domain.Builder
          _builderCache[modelObject] = builder;
       }
 
-      private IReadOnlyList<T> all<T>(Func<Module, T> propAccess) where T : IBuildingBlock =>
-         _simulationConfiguration.ModuleConfigurations.Select(x => propAccess(x.Module)).Where(x => x != null).ToList();
+      private IReadOnlyList<(T BuildingBlock, Module Module)> all<T>(Func<Module, T> propAccess) where T : IBuildingBlock =>
+         _simulationConfiguration.ModuleConfigurations
+            .Select(x => (BuildingBlock: propAccess(x.Module), x.Module))
+            .Where(x => x.BuildingBlock != null)
+            .ToList();
 
-      private IEnumerable<T> allBuilder<T>(Func<Module, IBuildingBlock<T>> propAccess) where T : IBuilder =>
-         all(propAccess).SelectMany(x => x);
+      private IReadOnlyList<(T Builder, IBuildingBlock<T> BuildingBlock, Module Module)> allBuilderSource<T>(Func<Module, IBuildingBlock<T>> propAccess) where T : IBuilder =>
+         all(propAccess)
+            .SelectMany(x => x.BuildingBlock.Select(builder =>
+               (builder, x.BuildingBlock, x.Module)))
+            .ToList();
 
       private IEnumerable<T> allStartValueBuilder<T>(Func<ModuleConfiguration, IBuildingBlock<T>> propAccess) where T : PathAndValueEntity =>
          _simulationConfiguration.ModuleConfigurations.Select(propAccess).Where(x => x != null).SelectMany(x => x);
@@ -89,9 +99,9 @@ namespace OSPSuite.Core.Domain.Builder
       private void performMerge()
       {
          cacheMoleculeDependentBuilders(x => x.PassiveTransports, _passiveTransports);
-         _reactions.AddRange(allBuilder(x => x.Reactions));
+         cacheBuilders(x => x.Reactions, _reactions);
          cacheMoleculeDependentBuilders(x => x.Observers, _observers);
-         _molecules.AddRange(allBuilder(x => x.Molecules));
+         cacheBuilders(x => x.Molecules, _molecules);
          _parameterValues.AddRange(allStartValueBuilder(x => x.SelectedParameterValues));
 
          // Concat order is important so that the values from expression profiles are overwritten if duplicated
@@ -101,9 +111,28 @@ namespace OSPSuite.Core.Domain.Builder
 
       private void cacheMoleculeDependentBuilders<T>(Func<Module, IBuildingBlock<T>> propAccess, ObjectBaseCache<T> cache) where T : class, IMoleculeDependentBuilder
       {
-         var builders = allBuilder(propAccess).ToList();
-         cache.AddRange(builders);
+         var builders = cacheBuilders(propAccess, cache);
          cacheMoleculeLists(builders, cache);
+      }
+
+      private IReadOnlyList<T> cacheBuilders<T>(Func<Module, IBuildingBlock<T>> propAccess, ObjectBaseCache<T> cache) where T : class, IBuilder
+      {
+         var builderSources = allBuilderSource(propAccess);
+         var builders = builderSources.Select(x => x.Builder).ToList();
+         cache.AddRange(builders);
+         addToBuilderSource(builderSources, cache);
+         return builders;
+      }
+
+      private void addToBuilderSource<T>(IReadOnlyList<(T Builder, IBuildingBlock<T> BuildingBlock, Module Module)> builderSources, ObjectBaseCache<T> cache) where T : class, IBuilder
+      {
+         cache.Each(builder =>
+         {
+            //use first because the cache was created from the builder source. We have to find it
+            var builderSource = builderSources.First(x => x.Builder == builder);
+            var source = new BuilderSource(builderSource.Builder, builderSource.BuildingBlock, builderSource.Module);
+            _builderSources[source.Builder.Id] = source;
+         });
       }
 
       private void cacheMoleculeLists<T>(IReadOnlyList<T> allBuilders, ObjectBaseCache<T> builderCache) where T : class, IMoleculeDependentBuilder
@@ -138,5 +167,19 @@ namespace OSPSuite.Core.Domain.Builder
       internal MoleculeList MoleculeListFor(IMoleculeDependentBuilder builder) => _moleculeListCache[builder];
 
       internal MoleculeBuilder MoleculeByName(string name) => _molecules[name];
+
+      private class BuilderSource
+      {
+         public IObjectBase Builder { get; }
+         public IBuildingBlock BuildingBlock { get; }
+         public Module Module { get; }
+
+         public BuilderSource(IObjectBase builder, IBuildingBlock buildingBlock, Module module)
+         {
+            Builder = builder;
+            BuildingBlock = buildingBlock;
+            Module = module;
+         }
+      }
    }
 }

@@ -45,6 +45,11 @@ namespace OSPSuite.Core.Domain
       ///    otherwise null.
       /// </summary>
       IParameter TotalDrugMassFor(string moleculeName);
+
+      /// <summary>
+      ///    Tracks objects used to create the simulation. (may be null)
+      /// </summary>
+      ObjectSources ObjectSources { get; set; }
    }
 
    public class ModelCoreSimulation : ObjectBase, IModelCoreSimulation
@@ -52,6 +57,10 @@ namespace OSPSuite.Core.Domain
       public IModel Model { get; set; }
 
       public SimulationConfiguration Configuration { get; set; }
+
+      public CreationMetaData Creation { get; set; }
+
+      public ObjectSources ObjectSources { get; set; }
 
       public double? EndTime => Settings?.OutputSchema?.EndTime;
 
@@ -82,8 +91,6 @@ namespace OSPSuite.Core.Domain
             .Union(Settings.Solver.GetAllChildren<TEntity>());
       }
 
-      public CreationMetaData Creation { get; set; }
-
       public ModelCoreSimulation()
       {
          Creation = new CreationMetaData();
@@ -99,6 +106,8 @@ namespace OSPSuite.Core.Domain
          Model?.AcceptVisitor(visitor);
 
          Configuration?.AcceptVisitor(visitor);
+
+         ObjectSources?.AcceptVisitor(visitor);
       }
    }
 }
