@@ -88,7 +88,7 @@ namespace OSPSuite.Core.Serialization.Xml
 
       public override void PerformMapping()
       {
-         //Nothing to do, a new timepath object is enough
+         Map(x => x.Alias);
       }
    }
 }
