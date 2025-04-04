@@ -19,13 +19,15 @@ namespace OSPSuite.Core.Domain.Services
       private readonly ITransportBuilderToTransportMapper _transportMapper;
       private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly IMoleculePropertiesContainerTask _moleculePropertiesContainerTask;
+      private readonly IObjectTracker _objectTracker;
 
       public TransportCreator(ITransportBuilderToTransportMapper transportMapper, IKeywordReplacerTask keywordReplacerTask,
-         IMoleculePropertiesContainerTask moleculePropertiesContainerTask)
+         IMoleculePropertiesContainerTask moleculePropertiesContainerTask, IObjectTracker objectTracker)
       {
          _transportMapper = transportMapper;
          _keywordReplacerTask = keywordReplacerTask;
          _moleculePropertiesContainerTask = moleculePropertiesContainerTask;
+         _objectTracker = objectTracker;
       }
 
       public void CreatePassiveTransport(TransportBuilder passiveTransportBuilder, ModelConfiguration modelConfiguration)
@@ -91,6 +93,7 @@ namespace OSPSuite.Core.Domain.Services
                addActiveTransportToNeighborhood(neighborhood, activeTransport, transporterMolecule, molecule.Name, simulationBuilder);
 
             simulationBuilder.AddBuilderReference(activeTransportInMolecule, activeTransportBuilder);
+            _objectTracker.TrackObject(activeTransportInMolecule, activeTransportBuilder, simulationBuilder);
             _keywordReplacerTask.ReplaceIn(activeTransport, molecule.Name, neighborhood, transporterMolecule.TransportName, transporterMolecule.Name, replacementContext);
          }
       }

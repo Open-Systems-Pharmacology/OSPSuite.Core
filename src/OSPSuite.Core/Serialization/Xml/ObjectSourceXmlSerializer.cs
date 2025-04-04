@@ -7,7 +7,6 @@ namespace OSPSuite.Core.Serialization.Xml
       public override void PerformMapping()
       {
          Map(x => x.ObjectId);
-         Map(x => x.ModuleId);
          Map(x => x.BuildingBlockId);
          Map(x => x.SourceId);
          Map(x => x.SourceType);

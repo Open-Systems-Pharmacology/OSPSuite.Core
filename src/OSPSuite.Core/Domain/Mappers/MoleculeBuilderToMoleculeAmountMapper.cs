@@ -107,6 +107,7 @@ namespace OSPSuite.Core.Domain.Mappers
          //create a start value parameter that will be referenced in the molecule formula 
          var startValueParameter = _parameterFactory.CreateStartValueParameter(moleculeAmount, modelFormula, moleculeBuilder.DisplayUnit);
          simulationBuilder.AddBuilderReference(startValueParameter, moleculeBuilder);
+         _objectTracker.TrackObject(startValueParameter, moleculeBuilder, simulationBuilder);
          moleculeAmount.Add(startValueParameter);
          moleculeAmount.Formula = _formulaFactory.CreateMoleculeAmountReferenceToStartValue(startValueParameter);
       }

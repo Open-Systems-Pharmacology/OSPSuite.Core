@@ -152,6 +152,7 @@ namespace OSPSuite.Core.Domain.Services
             return;
 
          var (_, simulationBuilder, replacementContext) = valueUpdater.ModelConfiguration;
+         _objectTracker.TrackObject(parameter, parameterValue, simulationBuilder);
 
          //Formula is defined, we update in the parameter instance
          if (parameterValue.Formula != null)
@@ -161,7 +162,6 @@ namespace OSPSuite.Core.Domain.Services
             //ensures that the parameter is seen as using the formula
             parameter.IsFixedValue = false;
             _keywordReplacerTask.ReplaceIn(parameter, replacementContext);
-            _objectTracker.TrackObject(parameter, parameterValue, simulationBuilder);
          }
 
          //If the value is defined, this will be used instead of the formula (even if set previously)
@@ -177,8 +177,6 @@ namespace OSPSuite.Core.Domain.Services
          //Otherwise, we will create a new constant formula with the value
          else
             parameter.Formula = _formulaFactory.ConstantFormula(actualParameterValue, parameter.Dimension);
-
-         _objectTracker.TrackObject(parameter, parameterValue, simulationBuilder);
       };
 
       private void updateMoleculeAmountFromInitialConditions(ModelConfiguration modelConfiguration)

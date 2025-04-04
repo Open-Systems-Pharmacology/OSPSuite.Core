@@ -21,7 +21,6 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public string ObjectId { get; }
 
-      public string ModuleId { get; }
       public string BuildingBlockId { get; }
 
       /// <summary>
@@ -39,14 +38,13 @@ namespace OSPSuite.Core.Domain
       {
       }
 
-      public ObjectSource(string objectId, ObjectSource originalSource) : this(objectId, originalSource.ModuleId, originalSource.BuildingBlockId, originalSource.SourceType, originalSource.SourceId)
+      public ObjectSource(string objectId, ObjectSource originalSource) : this(objectId, originalSource.BuildingBlockId, originalSource.SourceType, originalSource.SourceId)
       {
       }
 
-      public ObjectSource(string objectId, string moduleId, string buildingBlockId, string sourceType, string sourceId)
+      public ObjectSource(string objectId, string buildingBlockId, string sourceType, string sourceId)
       {
          ObjectId = objectId;
-         ModuleId = moduleId;
          BuildingBlockId = buildingBlockId;
          SourceType = sourceType;
          SourceId = sourceId;

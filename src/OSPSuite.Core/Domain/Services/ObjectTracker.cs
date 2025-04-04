@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Domain.Services
          var builderSource = simulationBuilder.BuilderSourceFor(sourceBuilder);
          if (builderSource != null)
          {
-            var objectSource = new ObjectSource(objectToTrack.Id, builderSource.BuildingBlock.Module?.Id, builderSource.BuildingBlock.Id,  sourceType, sourceBuilder.Id);
+            var objectSource = new ObjectSource(objectToTrack.Id, builderSource.BuildingBlock.Id, sourceType, sourceBuilder.Id);
             simulationBuilder.AddObjectSource(objectSource);
             return;
          }
