@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly Cache<string, BuilderSource> _builderSources = new Cache<string, BuilderSource>(x => x.Builder.Id, x => null);
 
       //This will be saved in the simulation at the end of the construction process
-      internal ObjectSources ObjectSources { get; } = new ObjectSources();
+      internal EntitySources EntitySources { get; } = new EntitySources();
 
       public SimulationBuilder(SimulationConfiguration simulationConfiguration)
       {
@@ -32,11 +32,11 @@ namespace OSPSuite.Core.Domain.Builder
 
       public bool CreateAllProcessRateParameters => _simulationConfiguration.CreateAllProcessRateParameters;
 
-      public IEntity BuilderFor(IEntity modelObject) => ObjectSources.SourceFor(modelObject)?.Source;
+      public IEntity BuilderFor(IEntity modelObject) => EntitySources.SourceFor(modelObject)?.Source;
 
       internal void AddObjectSource(EntitySource entitySource)
       {
-         ObjectSources.Add(entitySource);
+         EntitySources.Add(entitySource);
       }
 
       internal IEnumerable<MoleculeBuilder> AllPresentMolecules()

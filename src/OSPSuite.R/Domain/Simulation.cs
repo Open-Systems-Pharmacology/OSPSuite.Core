@@ -19,7 +19,7 @@ namespace OSPSuite.R.Domain
       public bool ComesFromPKSim { get; } = false;
       public bool UsesObservedData(DataRepository observedData) => false;
       public IEnumerable<CurveChart> Charts { get; } = new List<CurveChart>();
-      public ObjectSources ObjectSources { get; set; } = new ObjectSources();
+      public EntitySources EntitySources { get; set; } = new EntitySources();
       public OutputMappings OutputMappings { get; set; }
       public DataRepository ResultsDataRepository { get; set; }
 

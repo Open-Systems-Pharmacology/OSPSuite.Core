@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Domain.Services
          }
 
          //in this case, we might have clone the object. We need to find the source of the source
-         var objectSourceOrigin = simulationBuilder.ObjectSources.SourceById(sourceBuilder.Id);
+         var objectSourceOrigin = simulationBuilder.EntitySources.SourceById(sourceBuilder.Id);
          if (objectSourceOrigin != null)
          {
             var newObjectSource = new EntitySource(entityToTrack.Id, objectSourceOrigin);

@@ -58,7 +58,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class ObjectSources : IReadOnlyCollection<EntitySource>, IVisitable<IVisitor>
+   public class EntitySources : IReadOnlyCollection<EntitySource>, IVisitable<IVisitor>
    {
       private readonly Cache<string, EntitySource> _sources = new Cache<string, EntitySource>(x => x.EntityId, x => null);
 
