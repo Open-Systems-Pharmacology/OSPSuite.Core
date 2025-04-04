@@ -61,7 +61,7 @@ namespace OSPSuite.Core
 
       public override async Task GlobalCleanup()
       {
-         await Task.Run(() => _baseContext.GlobalCleanup());
+         _baseContext.GlobalCleanup();
       }
    }
 

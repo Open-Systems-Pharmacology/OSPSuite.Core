@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using FakeItEasy;
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
@@ -15,12 +16,13 @@ namespace OSPSuite.Presentation.Presentation
       protected IHeavyWorkPresenterFactory _heavyWorkPresenterFactory;
       protected IExceptionManager _exceptionManager;
       protected IHeavyWorkPresenter _heavyWorkPresenter;
+      protected IHeavyWorkCancellablePresenter _heavyWorkCancellablePresenter;
 
       protected override void Context()
       {
          _heavyWorkPresenterFactory = A.Fake<IHeavyWorkPresenterFactory>();
          _heavyWorkPresenter = A.Fake<IHeavyWorkPresenter>();
-         A.CallTo(() => _heavyWorkPresenterFactory.Create()).Returns(_heavyWorkPresenter);
+         A.CallTo(() => _heavyWorkPresenterFactory.Create(false)).Returns(_heavyWorkPresenter);
          _exceptionManager = A.Fake<IExceptionManager>();
          sut = new HeavyWorkManager(_heavyWorkPresenterFactory, _exceptionManager);
       }
@@ -132,6 +134,44 @@ namespace OSPSuite.Presentation.Presentation
       public void should_dispose_of_the_presenter_when_the_action_is_completed()
       {
          A.CallTo(() => _heavyWorkPresenter.Dispose()).MustHaveHappened();
+      }
+
+      public class When_the_heavy_work_manager_is_starting_an_action : concern_for_HeavyWorkManager
+      {
+         private Action _action;
+         private bool _result;
+
+         protected override void Context()
+         {
+            _heavyWorkPresenterFactory = A.Fake<IHeavyWorkPresenterFactory>();
+            _heavyWorkCancellablePresenter = A.Fake<IHeavyWorkCancellablePresenter>();
+            A.CallTo(() => _heavyWorkPresenterFactory.Create(true)).Returns(_heavyWorkCancellablePresenter);
+            _exceptionManager = A.Fake<IExceptionManager>();
+            sut = new HeavyWorkManager(_heavyWorkPresenterFactory, _exceptionManager);
+
+         }
+         protected override void Because()
+         {
+            _result = sut.Start(_action, new CancellationTokenSource());
+         }
+
+         [Observation]
+         public void should_retrieve_a_new_heavy_work_cancellable_presenter_and_start_it()
+         {
+            A.CallTo(() => _heavyWorkCancellablePresenter.Start(Captions.PleaseWait)).MustHaveHappened();
+         }
+
+         [Observation]
+         public void should_set_cancellation_source_on_cancellable_presenter()
+         {
+            A.CallTo(() => _heavyWorkCancellablePresenter.SetCancellationSource(A<CancellationTokenSource>.Ignored)).MustHaveHappened();
+         }
+
+         [Observation]
+         public void should_dispose_of_the_cancellable_presenter_when_the_action_is_completed()
+         {
+            A.CallTo(() => _heavyWorkCancellablePresenter.Dispose()).MustHaveHappened();
+         }
       }
    }
 }

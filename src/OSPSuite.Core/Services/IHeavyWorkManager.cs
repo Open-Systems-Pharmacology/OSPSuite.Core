@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Services
       ///    action was canceled
       /// </summary>
       /// <param name="heavyWorkAction">Action that need to be performed</param>
-      bool Start(Action heavyWorkAction, CancellationToken ct = default);
+      bool Start(Action heavyWorkAction, CancellationTokenSource cts = default);
 
       /// <summary>
       ///    run the heavy work action. Returns true if the action ran successfully, and false, if an exception was thrown or the
@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Services
       /// </summary>
       /// <param name="heavyWorkAction">Action that need to be performed</param>
       /// <param name="caption">Caption that will be displayed</param>
-      bool Start(Action heavyWorkAction, string caption, CancellationToken ct = default);
+      bool Start(Action heavyWorkAction, string caption, CancellationTokenSource cts = default);
 
       /// <summary>
       ///    run the heavy work action and returns to the called immediately

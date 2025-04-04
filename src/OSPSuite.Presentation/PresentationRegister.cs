@@ -1,13 +1,10 @@
 ﻿using OSPSuite.Core;
-using OSPSuite.Core.Domain.Mappers;
-using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Charts;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.Commands;
 using OSPSuite.Presentation.Presenters.ContextMenus;
-using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Presenters.Journal;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Regions;
@@ -58,20 +55,19 @@ namespace OSPSuite.Presentation
             scan.ExcludeType(typeof(CloneObjectBasePresenter<>));
             scan.ExcludeType(typeof(ParameterToParameterDTOInContainerMapper<>));
             scan.ExcludeType(typeof(SubPresenterItemManager<>));
-
          });
 
          registerUICommands(container);
 
          registerContextMenus(container);
-         
+
          registerSingleStartPresenters(container);
 
          //OPEN TYPES
          container.Register(typeof(ISubPresenterItemManager<>), typeof(SubPresenterItemManager<>));
          container.Register(typeof(IParameterToParameterDTOInContainerMapper<>), typeof(ParameterToParameterDTOInContainerMapper<>));
          container.Register(typeof(ICloneObjectBasePresenter<>), typeof(CloneObjectBasePresenter<>));
-         
+
 
          //SINGLETONS
          container.Register<IJournalPageEditorFormPresenter, JournalPageEditorFormPresenter>(LifeStyle.Singleton);
@@ -84,6 +80,10 @@ namespace OSPSuite.Presentation
          container.Register<ChartEditorAndDisplaySettings, ChartEditorAndDisplaySettings>();
          container.Register<ChartEditorSettings, ChartEditorSettings>();
          container.Register<ChartPresenterContext, ChartPresenterContext>();
+         // These registrations need to be provided since
+         // the Factory needs the actual Implementation now, not the Interface.
+         container.Register<HeavyWorkPresenter, HeavyWorkPresenter>();
+         container.Register<HeavyWorkCancellablePresenter, HeavyWorkCancellablePresenter>();
       }
 
       private static void registerContextMenus(IContainer container)

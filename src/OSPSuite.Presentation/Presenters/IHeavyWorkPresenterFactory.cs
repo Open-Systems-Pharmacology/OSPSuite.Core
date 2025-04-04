@@ -5,13 +5,18 @@ namespace OSPSuite.Presentation.Presenters
 {
    public interface IHeavyWorkPresenterFactory
    {
-      IHeavyWorkPresenter Create();
+      IHeavyWorkPresenter Create(bool supportsCancellation = false);
    }
 
    internal class HeavyWorkPresenterFactory : DynamicFactory<IHeavyWorkPresenter>, IHeavyWorkPresenterFactory
    {
-      public HeavyWorkPresenterFactory(IContainer container) : base(container)
+      public HeavyWorkPresenterFactory(IContainer container) : base(container) { }
+
+      public IHeavyWorkPresenter Create(bool supportsCancellation = false)
       {
+         if (supportsCancellation)
+            return Create<HeavyWorkCancellablePresenter>();  
+         return Create<HeavyWorkPresenter>();  
       }
    }
 }
