@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Mappers
@@ -13,12 +14,14 @@ namespace OSPSuite.Core.Mappers
    {
       protected IObjectBaseFactory _objectBaseFactory;
       protected IFormulaBuilderToFormulaMapper _formulaMapper;
+      protected IObjectTracker _objectTracker;
 
       protected override void Context()
       {
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          _formulaMapper = A.Fake<IFormulaBuilderToFormulaMapper>();
-         sut = new ObserverBuilderToObserverMapper(_objectBaseFactory, _formulaMapper);
+         _objectTracker = A.Fake<IObjectTracker>();
+         sut = new ObserverBuilderToObserverMapper(_objectBaseFactory, _formulaMapper, _objectTracker);
       }
    }
 
@@ -35,7 +38,7 @@ namespace OSPSuite.Core.Mappers
          base.Context();
          _simulationConfiguration = new SimulationConfiguration();
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
-         _observerBuilder =new ObserverBuilder().WithName("toto").WithDimension(A.Fake<IDimension>());
+         _observerBuilder = new ObserverBuilder().WithName("toto").WithDimension(A.Fake<IDimension>());
          _observerBuilder.Formula = A.Fake<IFormula>();
          _mappedFormula = A.Fake<IFormula>();
          A.CallTo(() => _objectBaseFactory.Create<Observer>()).Returns(A.Fake<Observer>());

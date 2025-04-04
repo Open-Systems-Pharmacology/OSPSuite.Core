@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Mappers
@@ -18,6 +19,7 @@ namespace OSPSuite.Core.Mappers
       protected SimulationConfiguration _simulationConfiguration;
       protected IProcessRateParameterCreator _processRateParameterCreator;
       protected SimulationBuilder _simulationBuilder;
+      protected IObjectTracker _objectTracker;
 
       protected override void Context()
       {
@@ -27,8 +29,9 @@ namespace OSPSuite.Core.Mappers
          A.CallTo(() => _objectBaseFactory.Create<Transport>()).Returns(new Transport());
          _formulaBuilderToFormulaMapper = A.Fake<IFormulaBuilderToFormulaMapper>();
          _parameterMapper = A.Fake<IParameterBuilderCollectionToParameterCollectionMapper>();
+         _objectTracker = A.Fake<IObjectTracker>();
          _processRateParameterCreator = new ProcessRateParameterCreator(_objectBaseFactory, _formulaBuilderToFormulaMapper);
-         sut = new TransportBuilderToTransportMapper(_objectBaseFactory, _formulaBuilderToFormulaMapper, _parameterMapper, _processRateParameterCreator);
+         sut = new TransportBuilderToTransportMapper(_objectBaseFactory, _formulaBuilderToFormulaMapper, _parameterMapper, _processRateParameterCreator, _objectTracker);
       }
    }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Visitor;
@@ -20,16 +21,6 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public string ObjectId { get; }
 
-      /// <summary>
-      ///    Consolidated path of the object in the simulation (if entity)
-      /// </summary>
-      public string Path { get; }
-
-      /// <summary>
-      ///    Type of the source object. Might be useful for filtering
-      /// </summary>
-      public string SourceObjectType { get; }
-
       public string ModuleId { get; }
       public string BuildingBlockId { get; }
 
@@ -38,13 +29,32 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public string SourceId { get; }
 
-      public ObjectSource(string objectId, string path, string moduleId, string buildingBlockId, string sourceObjectType, string sourceId)
+      /// <summary>
+      ///    Absolute path of the source object
+      /// </summary>
+      public string SourcePath { get; }
+
+      /// <summary>
+      ///    Type of the source object. Might be useful for filtering
+      /// </summary>
+      public string SourceType { get; }
+
+      [Obsolete("For serialization")]
+      public ObjectSource()
+      {
+      }
+
+      public ObjectSource(string objectId, ObjectSource originalSource) : this(objectId, originalSource.ModuleId, originalSource.BuildingBlockId, originalSource.SourcePath, originalSource.SourceType, originalSource.SourceId)
+      {
+      }
+
+      public ObjectSource(string objectId, string moduleId, string buildingBlockId, string sourcePath, string sourceType, string sourceId)
       {
          ObjectId = objectId;
-         Path = path;
+         SourcePath = sourcePath;
          ModuleId = moduleId;
          BuildingBlockId = buildingBlockId;
-         SourceObjectType = sourceObjectType;
+         SourceType = sourceType;
          SourceId = sourceId;
       }
    }
@@ -55,14 +65,14 @@ namespace OSPSuite.Core.Domain
 
       public void Add(ObjectSource objectSource)
       {
-         _sources[objectSource.Path] = objectSource;
+         _sources[objectSource.ObjectId] = objectSource;
       }
 
       public ObjectSource SourceFor(IEntity entity) => SourceById(entity.Id);
 
       public ObjectSource SourceById(string objectId) => _sources[objectId];
 
-      public ObjectSource SourceByPath(string consolidatedPath) => _sources.Find(x => string.Equals(x.Path, consolidatedPath));
+      public ObjectSource SourceByPath(string consolidatedPath) => _sources.Find(x => string.Equals(x.SourcePath, consolidatedPath));
 
       public IEnumerator<ObjectSource> GetEnumerator() => _sources.GetEnumerator();
 

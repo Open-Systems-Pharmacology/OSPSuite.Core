@@ -6,7 +6,7 @@ using OSPSuite.Core.Domain.Formulas;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class DistributedTableFormulaSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class DistributedTableFormulaSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Observation]
       public void TestSerialization()

@@ -6,7 +6,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class TransportXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class TransportXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerializationTransport()

@@ -6,7 +6,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class MoleculeBuilderXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class MoleculeBuilderXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()

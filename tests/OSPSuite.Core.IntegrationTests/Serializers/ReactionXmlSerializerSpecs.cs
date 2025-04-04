@@ -6,7 +6,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class ReactionXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class ReactionXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerializationEmptyReaction()

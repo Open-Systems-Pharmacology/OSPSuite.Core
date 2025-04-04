@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
@@ -40,19 +41,22 @@ namespace OSPSuite.Core.Domain.Mappers
       private readonly IFormulaFactory _formulaFactory;
       private readonly IParameterFactory _parameterFactory;
       private readonly IDimension _amountDimension;
+      private readonly IObjectTracker _objectTracker;
 
       public MoleculeBuilderToMoleculeAmountMapper(IObjectBaseFactory objectBaseFactory,
          IFormulaBuilderToFormulaMapper formulaMapper,
          IParameterBuilderToParameterMapper parameterMapper,
          IDimensionFactory dimensionFactory, 
          IFormulaFactory formulaFactory,
-         IParameterFactory parameterFactory)
+         IParameterFactory parameterFactory,
+         IObjectTracker objectTracker)
       {
          _objectBaseFactory = objectBaseFactory;
          _formulaMapper = formulaMapper;
          _parameterMapper = parameterMapper;
          _formulaFactory = formulaFactory;
          _parameterFactory = parameterFactory;
+         _objectTracker = objectTracker;
          _amountDimension = dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
       }
 
@@ -69,6 +73,7 @@ namespace OSPSuite.Core.Domain.Mappers
             .WithDisplayUnit(_amountDimension.UnitOrDefault(_amountDimension.DefaultUnit.Name));
 
          simulationBuilder.AddBuilderReference(moleculeAmount, moleculeBuilder);
+         _objectTracker.TrackObject(moleculeAmount, moleculeBuilder, simulationBuilder);
 
          createMoleculeAmountDefaultFormula(moleculeBuilder, simulationBuilder, moleculeAmount);
 

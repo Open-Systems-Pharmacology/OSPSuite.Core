@@ -1,5 +1,6 @@
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Mappers
@@ -18,11 +19,14 @@ namespace OSPSuite.Core.Domain.Mappers
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IParameterBuilderCollectionToParameterCollectionMapper _parameterMapper;
       private readonly IProcessRateParameterCreator _processRateParameterCreator;
+      private readonly IObjectTracker _objectTracker;
 
       public ReactionBuilderToReactionMapper(IObjectBaseFactory objectBaseFactory,
          IReactionPartnerBuilderToReactionPartnerMapper reactionPartnerMapper,
-         IFormulaBuilderToFormulaMapper formulaMapper, IParameterBuilderCollectionToParameterCollectionMapper parameterMapper,
-         IProcessRateParameterCreator processRateParameterCreator)
+         IFormulaBuilderToFormulaMapper formulaMapper,
+         IParameterBuilderCollectionToParameterCollectionMapper parameterMapper,
+         IProcessRateParameterCreator processRateParameterCreator,
+         IObjectTracker objectTracker)
       {
          _reactionPartnerMapper = reactionPartnerMapper;
          _formulaMapper = formulaMapper;
@@ -30,6 +34,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
          _parameterMapper = parameterMapper;
          _processRateParameterCreator = processRateParameterCreator;
+         _objectTracker = objectTracker;
       }
 
       public Reaction MapFromLocal(ReactionBuilder reactionBuilder, IContainer container, SimulationBuilder simulationBuilder)
@@ -50,6 +55,8 @@ namespace OSPSuite.Core.Domain.Mappers
             reaction.Add(processRateParameterFor(reactionBuilder, simulationBuilder));
 
          simulationBuilder.AddBuilderReference(reaction, reactionBuilder);
+         _objectTracker.TrackObject(reaction, reactionBuilder, simulationBuilder);
+
          return reaction;
       }
 

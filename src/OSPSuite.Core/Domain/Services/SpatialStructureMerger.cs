@@ -56,6 +56,9 @@ namespace OSPSuite.Core.Domain.Services
          if (!allSpatialStructureAndMergeBehaviors.Any())
             return;
 
+         //Cache all entities in the spatial structures 
+         allSpatialStructureAndMergeBehaviors.Each(x => addToBuilderSource(x.spatialStructure, simulationBuilder));
+
          var firstSpatialStructure = allSpatialStructureAndMergeBehaviors[0].spatialStructure;
          var allOtherSpatialStructuresWithMergeBehavior = allSpatialStructureAndMergeBehaviors.Skip(1).ToList();
          var mapToModelContainer = mapContainerDef(simulationBuilder);
@@ -80,7 +83,6 @@ namespace OSPSuite.Core.Domain.Services
             .Select(mapToModelContainer)
             .ToList();
 
-
          var firstGlobalMoleculeContainer = allGlobalMoleculeContainers.FirstOrDefault();
          var otherGlobalMoleculeContainer = allGlobalMoleculeContainers.Skip(1).ToList();
 
@@ -89,6 +91,16 @@ namespace OSPSuite.Core.Domain.Services
             otherGlobalMoleculeContainer.Each(x => _containerMergeTask.MergeContainers(firstGlobalMoleculeContainer, x));
             root.Add(firstGlobalMoleculeContainer);
          }
+      }
+
+      private void addToBuilderSource(SpatialStructure spatialStructure, SimulationBuilder simulationBuilder)
+      {
+         //Add top containers
+         spatialStructure.Each(x => simulationBuilder.AddToBuilderSource(x, spatialStructure));
+
+         spatialStructure.SelectMany(x => x.GetAllChildren<IEntity>())
+            .Each(x => simulationBuilder.AddToBuilderSource(x, spatialStructure));
+
       }
 
       private void tryMergeTopContainerInStructure(IContainer root, IContainer topContainer, MergeBehavior mergeBehavior, SpatialStructure spatialStructure)

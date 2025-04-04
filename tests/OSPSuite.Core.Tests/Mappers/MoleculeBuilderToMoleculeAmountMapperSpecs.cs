@@ -21,6 +21,7 @@ namespace OSPSuite.Core.Mappers
       protected IDimensionFactory _dimensionFactory;
       protected IParameterFactory _parameterFactory;
       protected SimulationConfiguration _simulationConfiguration;
+      protected IObjectTracker _objectTracker;
 
       protected override void Context()
       {
@@ -30,7 +31,8 @@ namespace OSPSuite.Core.Mappers
          _formulaFactory = A.Fake<IFormulaFactory>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _parameterFactory = A.Fake<IParameterFactory>();
-         sut = new MoleculeBuilderToMoleculeAmountMapper(_objectBaseFactory, _formulaMapper, _parameterMapper, _dimensionFactory, _formulaFactory, _parameterFactory);
+         _objectTracker = A.Fake<IObjectTracker>();
+         sut = new MoleculeBuilderToMoleculeAmountMapper(_objectBaseFactory, _formulaMapper, _parameterMapper, _dimensionFactory, _formulaFactory, _parameterFactory, _objectTracker);
 
          _simulationConfiguration = new SimulationConfiguration();
       }
@@ -44,7 +46,7 @@ namespace OSPSuite.Core.Mappers
       private IParameter _para1;
       private IParameter _para2;
       private IParameter _para3;
-       private IDimension _amountDimension;
+      private IDimension _amountDimension;
       private IContainer _targetContainer;
       private IParameter _parameterBuilder1;
       private IParameter _parameterBuilder2;
@@ -129,7 +131,7 @@ namespace OSPSuite.Core.Mappers
          _concentrationDimension = A.Fake<IDimension>();
          _startValueReferenceFormula = A.Fake<IFormula>();
          A.CallTo(() => _concentrationDimension.Name).Returns(Constants.Dimension.MOLAR_CONCENTRATION);
-         _moleculeBuilder =new MoleculeBuilder().WithDimension(_concentrationDimension);
+         _moleculeBuilder = new MoleculeBuilder().WithDimension(_concentrationDimension);
          _moleculeBuilder.DisplayUnit = A.Fake<Unit>();
          _mappedFormula = A.Fake<IFormula>();
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
