@@ -19,8 +19,11 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly Cache<IMoleculeDependentBuilder, MoleculeList> _moleculeListCache = new Cache<IMoleculeDependentBuilder, MoleculeList>();
 
       private readonly Cache<IObjectBase, IObjectBase> _builderCache = new Cache<IObjectBase, IObjectBase>(onMissingKey: x => null);
+
+      //Contains a temp  cache of builder and their corresponding building blocks
       private readonly Cache<string, BuilderSource> _builderSources = new Cache<string, BuilderSource>(x => x.Builder.Id, x => null);
 
+      //This will be saved in the simulation at the end of the construction process
       internal ObjectSources ObjectSources { get; } = new ObjectSources();
 
       public SimulationBuilder(SimulationConfiguration simulationConfiguration)
@@ -101,6 +104,10 @@ namespace OSPSuite.Core.Domain.Builder
          cacheContainers(_reactions);
          cacheContainers(_molecules);
          cacheContainers(_passiveTransports);
+
+         //also add individual if any to source
+         AddToBuilderSource(_simulationConfiguration.Individual);
+         _simulationConfiguration.ExpressionProfiles.Each(AddToBuilderSource);
       }
 
       private void cacheContainers(IEnumerable<IContainer> containers)
@@ -128,7 +135,7 @@ namespace OSPSuite.Core.Domain.Builder
          cacheParameterValueBuilders(x => x.SelectedInitialConditions, initialConditionsFromConfigurationsCache);
          var expressionProfileInitialConditions = allInitialConditionsFromExpressionProfileSources();
          expressionProfileInitialConditionsCache.AddRange(expressionProfileInitialConditions.Select(x => x.InitialCondition));
-         addToBuilderSource(expressionProfileInitialConditions, expressionProfileInitialConditionsCache);
+         addToBuilderSource(expressionProfileInitialConditions);
 
          // Concat order is important so that the values from expression profiles are overwritten if duplicated
          _initialConditions.AddRange(expressionProfileInitialConditionsCache.Concat(initialConditionsFromConfigurationsCache));
@@ -145,7 +152,7 @@ namespace OSPSuite.Core.Domain.Builder
          var builderSources = allBuilderSources(propAccess);
          var builders = builderSources.Select(x => x.Builder).ToList();
          cache.AddRange(builders);
-         addToBuilderSource(builderSources, cache);
+         addToBuilderSource(builderSources);
          return builders;
       }
 
@@ -154,7 +161,12 @@ namespace OSPSuite.Core.Domain.Builder
          var builderSources = allParameterValueBuilderSources(propAccess);
          var builders = builderSources.Select(x => x.Builder).ToList();
          cache.AddRange(builders);
-         addToBuilderSource(builderSources, cache);
+         addToBuilderSource(builderSources);
+      }
+
+      public void AddToBuilderSource<TBuilder>(PathAndValueEntityBuildingBlock<TBuilder> buildingBlock) where TBuilder : PathAndValueEntity
+      {
+         buildingBlock?.Each(x => AddToBuilderSource(x, buildingBlock));
       }
 
       public void AddToBuilderSource<TBuilder>(IBuildingBlock<TBuilder> buildingBlock) where TBuilder : IBuilder, IContainer
@@ -168,14 +180,9 @@ namespace OSPSuite.Core.Domain.Builder
          _builderSources[source.Builder.Id] = source;
       }
 
-      private void addToBuilderSource<T>(IReadOnlyList<(T Builder, IBuildingBlock BuildingBlock)> builderSources, IEnumerable<T> cache) where T : class, IBuilder, IEntity
+      private void addToBuilderSource<T>(IEnumerable<(T Builder, IBuildingBlock BuildingBlock)> builderSources) where T : class, IBuilder, IEntity
       {
-         cache.Each(builder =>
-         {
-            //use first because the cache was created from the builder source. We have to find it
-            var builderSource = builderSources.First(x => x.Builder == builder);
-            AddToBuilderSource(builder, builderSource.BuildingBlock);
-         });
+         builderSources.Each(x => AddToBuilderSource(x.Builder, x.BuildingBlock));
       }
 
       private void cacheMoleculeLists<T>(IReadOnlyList<T> allBuilders, ObjectBaseCache<T> builderCache) where T : class, IMoleculeDependentBuilder

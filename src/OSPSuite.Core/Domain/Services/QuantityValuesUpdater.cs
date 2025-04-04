@@ -32,6 +32,7 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IFormulaFactory _formulaFactory;
       private readonly IConcentrationBasedFormulaUpdater _concentrationBasedFormulaUpdater;
       private readonly IParameterValueToParameterMapper _parameterValueToParameterMapper;
+      private readonly IObjectTracker _objectTracker;
       private readonly ValidatorForForFormula _formulaValidator;
 
       public QuantityValuesUpdater(
@@ -40,6 +41,7 @@ namespace OSPSuite.Core.Domain.Services
          IFormulaFactory formulaFactory,
          IConcentrationBasedFormulaUpdater concentrationBasedFormulaUpdater,
          IParameterValueToParameterMapper parameterValueToParameterMapper,
+         IObjectTracker objectTracker,
          ValidatorForForFormula formulaValidator)
       {
          _keywordReplacerTask = keywordReplacerTask;
@@ -47,6 +49,7 @@ namespace OSPSuite.Core.Domain.Services
          _formulaFactory = formulaFactory;
          _concentrationBasedFormulaUpdater = concentrationBasedFormulaUpdater;
          _parameterValueToParameterMapper = parameterValueToParameterMapper;
+         _objectTracker = objectTracker;
          _formulaValidator = formulaValidator;
       }
 
@@ -124,10 +127,10 @@ namespace OSPSuite.Core.Domain.Services
       {
          var (model, _, replacementContext) = modelConfiguration;
          var pathInModel = _keywordReplacerTask.CreateModelPathFor(pathAndValueEntity.Path, replacementContext);
-         var parameter =  pathInModel.Resolve<IParameter>(model.Root);
+         var parameter = pathInModel.Resolve<IParameter>(model.Root);
 
          //parameter does not exist, we return
-         if(parameter == null)
+         if (parameter == null)
             return null;
 
          //parameter exists, we need to check that it matches the type of the pathAndValEntity coming along
@@ -148,7 +151,7 @@ namespace OSPSuite.Core.Domain.Services
          if (parameter == null)
             return;
 
-         var (_, _, replacementContext) = valueUpdater.ModelConfiguration;
+         var (_, simulationBuilder, replacementContext) = valueUpdater.ModelConfiguration;
 
          //Formula is defined, we update in the parameter instance
          if (parameterValue.Formula != null)
@@ -158,6 +161,7 @@ namespace OSPSuite.Core.Domain.Services
             //ensures that the parameter is seen as using the formula
             parameter.IsFixedValue = false;
             _keywordReplacerTask.ReplaceIn(parameter, replacementContext);
+            _objectTracker.TrackObject(parameter, parameterValue, simulationBuilder);
          }
 
          //If the value is defined, this will be used instead of the formula (even if set previously)
@@ -166,18 +170,15 @@ namespace OSPSuite.Core.Domain.Services
 
          var actualParameterValue = parameterValue.Value.Value;
          if (parameter.Formula is ConstantFormula constantFormula)
-         {
             constantFormula.Value = actualParameterValue;
-            return;
-         }
-
          //now we have a non constant formula. Let's try to see if the reference can be resolved. If yes, we will simply set the value of the parameter
-         //Otherwise, we will create a new constant formula with the value
-
-         if (_formulaValidator.IsFormulaValid(parameter))
+         else if (_formulaValidator.IsFormulaValid(parameter))
             parameter.Value = actualParameterValue;
+         //Otherwise, we will create a new constant formula with the value
          else
             parameter.Formula = _formulaFactory.ConstantFormula(actualParameterValue, parameter.Dimension);
+
+         _objectTracker.TrackObject(parameter, parameterValue, simulationBuilder);
       };
 
       private void updateMoleculeAmountFromInitialConditions(ModelConfiguration modelConfiguration)
@@ -198,11 +199,13 @@ namespace OSPSuite.Core.Domain.Services
             {
                //use a clone here because we want a different instance for each molecule
                updateMoleculeAmountFormula(molecule, _cloneManagerForModel.Clone(initialCondition.Formula));
+               _objectTracker.TrackObject(molecule, initialCondition, simulationBuilder);
                _keywordReplacerTask.ReplaceIn(molecule, replacementContext);
             }
             else if (startValueShouldBeSetAsConstantFormula(initialCondition, molecule))
             {
                updateMoleculeAmountFormula(molecule, createConstantFormula(initialCondition));
+               _objectTracker.TrackObject(molecule, initialCondition, simulationBuilder);
             }
 
             molecule.ScaleDivisor = initialCondition.ScaleDivisor;

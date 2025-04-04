@@ -11,12 +11,13 @@ namespace OSPSuite.Core.Mappers
    internal abstract class concern_for_ContainerBuilderToContainerMapper : ContextSpecification<IContainerBuilderToContainerMapper>
    {
       protected ICloneManagerForModel _cloneManagerForModel;
+      protected IObjectTracker _objectTracker;
 
       protected override void Context()
       {
          _cloneManagerForModel = A.Fake<ICloneManagerForModel>();
-
-         sut = new ContainerBuilderToContainerMapper(_cloneManagerForModel);
+         _objectTracker= A.Fake<IObjectTracker>();
+         sut = new ContainerBuilderToContainerMapper(_cloneManagerForModel, _objectTracker);
       }
    }
 
