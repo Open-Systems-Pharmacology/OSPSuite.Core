@@ -30,11 +30,6 @@ namespace OSPSuite.Core.Domain
       public string SourceId { get; }
 
       /// <summary>
-      ///    Absolute path of the source object
-      /// </summary>
-      public string SourcePath { get; }
-
-      /// <summary>
       ///    Type of the source object. Might be useful for filtering
       /// </summary>
       public string SourceType { get; }
@@ -44,14 +39,13 @@ namespace OSPSuite.Core.Domain
       {
       }
 
-      public ObjectSource(string objectId, ObjectSource originalSource) : this(objectId, originalSource.ModuleId, originalSource.BuildingBlockId, originalSource.SourcePath, originalSource.SourceType, originalSource.SourceId)
+      public ObjectSource(string objectId, ObjectSource originalSource) : this(objectId, originalSource.ModuleId, originalSource.BuildingBlockId, originalSource.SourceType, originalSource.SourceId)
       {
       }
 
-      public ObjectSource(string objectId, string moduleId, string buildingBlockId, string sourcePath, string sourceType, string sourceId)
+      public ObjectSource(string objectId, string moduleId, string buildingBlockId, string sourceType, string sourceId)
       {
          ObjectId = objectId;
-         SourcePath = sourcePath;
          ModuleId = moduleId;
          BuildingBlockId = buildingBlockId;
          SourceType = sourceType;
@@ -71,8 +65,6 @@ namespace OSPSuite.Core.Domain
       public ObjectSource SourceFor(IEntity entity) => SourceById(entity.Id);
 
       public ObjectSource SourceById(string objectId) => _sources[objectId];
-
-      public ObjectSource SourceByPath(string consolidatedPath) => _sources.Find(x => string.Equals(x.SourcePath, consolidatedPath));
 
       public IEnumerator<ObjectSource> GetEnumerator() => _sources.GetEnumerator();
 
