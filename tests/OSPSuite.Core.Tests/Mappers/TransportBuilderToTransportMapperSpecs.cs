@@ -19,7 +19,7 @@ namespace OSPSuite.Core.Mappers
       protected SimulationConfiguration _simulationConfiguration;
       protected IProcessRateParameterCreator _processRateParameterCreator;
       protected SimulationBuilder _simulationBuilder;
-      protected IObjectTracker _objectTracker;
+      protected IEntityTracker _entityTracker;
 
       protected override void Context()
       {
@@ -29,9 +29,9 @@ namespace OSPSuite.Core.Mappers
          A.CallTo(() => _objectBaseFactory.Create<Transport>()).Returns(new Transport());
          _formulaBuilderToFormulaMapper = A.Fake<IFormulaBuilderToFormulaMapper>();
          _parameterMapper = A.Fake<IParameterBuilderCollectionToParameterCollectionMapper>();
-         _objectTracker = A.Fake<IObjectTracker>();
-         _processRateParameterCreator = new ProcessRateParameterCreator(_objectBaseFactory, _formulaBuilderToFormulaMapper);
-         sut = new TransportBuilderToTransportMapper(_objectBaseFactory, _formulaBuilderToFormulaMapper, _parameterMapper, _processRateParameterCreator, _objectTracker);
+         _entityTracker = A.Fake<IEntityTracker>();
+         _processRateParameterCreator = new ProcessRateParameterCreator(_objectBaseFactory, _formulaBuilderToFormulaMapper, _entityTracker);
+         sut = new TransportBuilderToTransportMapper(_objectBaseFactory, _formulaBuilderToFormulaMapper, _parameterMapper, _processRateParameterCreator, _entityTracker);
       }
    }
 
@@ -72,7 +72,7 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_have_added_the_transport_builder_as_reference_to_the_transport()
       {
-         _simulationBuilder.BuilderFor(_transport).ShouldBeEqualTo(_passiveTransportBuilder);
+         A.CallTo(() => _entityTracker.Track(_transport, _passiveTransportBuilder, _simulationBuilder)).MustHaveHappened();
       }
    }
 

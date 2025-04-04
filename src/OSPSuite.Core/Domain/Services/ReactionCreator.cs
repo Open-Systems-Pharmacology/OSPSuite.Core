@@ -18,17 +18,17 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly IContainerTask _containerTask;
       private readonly IParameterBuilderCollectionToParameterCollectionMapper _parameterMapper;
-      private readonly IObjectTracker _objectTracker;
+      private readonly IEntityTracker _entityTracker;
 
       public ReactionCreator(IReactionBuilderToReactionMapper reactionMapper, IKeywordReplacerTask keywordReplacerTask,
          IContainerTask containerTask,
-         IParameterBuilderCollectionToParameterCollectionMapper parameterMapper, IObjectTracker objectTracker)
+         IParameterBuilderCollectionToParameterCollectionMapper parameterMapper, IEntityTracker entityTracker)
       {
          _reactionMapper = reactionMapper;
          _keywordReplacerTask = keywordReplacerTask;
          _containerTask = containerTask;
          _parameterMapper = parameterMapper;
-         _objectTracker = objectTracker;
+         _entityTracker = entityTracker;
       }
 
       public bool CreateReaction(ReactionBuilder reactionBuilder, ModelConfiguration modelConfiguration)
@@ -58,8 +58,7 @@ namespace OSPSuite.Core.Domain.Services
             .WithIcon(reactionBuilder.Icon)
             .WithDescription(reactionBuilder.Description);
 
-         simulationBuilder.AddBuilderReference(globalReactionContainer, reactionBuilder);
-         _objectTracker.TrackObject(globalReactionContainer, reactionBuilder, simulationBuilder);
+         _entityTracker.Track(globalReactionContainer, reactionBuilder, simulationBuilder);
 
          //"Local"-Parameters will be filled in elsewhere (by the Reaction-Mapper)
          _parameterMapper.MapGlobalOrPropertyFrom(reactionBuilder, simulationBuilder).Each(globalReactionContainer.Add);

@@ -14,14 +14,20 @@ namespace OSPSuite.Core.Domain
    ///    Each source is unique by path. It will store the id of the module, potentially the id of the building block, the
    ///    type of the building block
    /// </summary>
-   public class ObjectSource
+   public class EntitySource
    {
       /// <summary>
-      ///    Id of the object in the simulation.
+      ///    Id of the entity in the simulation.
       /// </summary>
-      public string ObjectId { get; }
+      public string EntityId { get; }
 
       public string BuildingBlockId { get; }
+
+      /// <summary>
+      ///    Actual reference to the source of the entity. This will not be serialized and is just used to retrieve during
+      ///    simulation construction
+      /// </summary>
+      public IEntity Source { get; }
 
       /// <summary>
       ///    Id of the actual source of the object.
@@ -34,37 +40,38 @@ namespace OSPSuite.Core.Domain
       public string SourceType { get; }
 
       [Obsolete("For serialization")]
-      public ObjectSource()
+      public EntitySource()
       {
       }
 
-      public ObjectSource(string objectId, ObjectSource originalSource) : this(objectId, originalSource.BuildingBlockId, originalSource.SourceType, originalSource.SourceId)
+      public EntitySource(string entityId, EntitySource originalSource) : this(entityId, originalSource.BuildingBlockId, originalSource.SourceType, originalSource.SourceId, originalSource.Source)
       {
       }
 
-      public ObjectSource(string objectId, string buildingBlockId, string sourceType, string sourceId)
+      public EntitySource(string entityId, string buildingBlockId, string sourceType, string sourceId, IEntity source)
       {
-         ObjectId = objectId;
+         EntityId = entityId;
          BuildingBlockId = buildingBlockId;
          SourceType = sourceType;
          SourceId = sourceId;
+         Source = source;
       }
    }
 
-   public class ObjectSources : IReadOnlyCollection<ObjectSource>, IVisitable<IVisitor>
+   public class ObjectSources : IReadOnlyCollection<EntitySource>, IVisitable<IVisitor>
    {
-      private readonly Cache<string, ObjectSource> _sources = new Cache<string, ObjectSource>(x => x.ObjectId, x => null);
+      private readonly Cache<string, EntitySource> _sources = new Cache<string, EntitySource>(x => x.EntityId, x => null);
 
-      public void Add(ObjectSource objectSource)
+      public void Add(EntitySource entitySource)
       {
-         _sources[objectSource.ObjectId] = objectSource;
+         _sources[entitySource.EntityId] = entitySource;
       }
 
-      public ObjectSource SourceFor(IEntity entity) => SourceById(entity.Id);
+      public EntitySource SourceFor(IEntity entity) => SourceById(entity.Id);
 
-      public ObjectSource SourceById(string objectId) => _sources[objectId];
+      public EntitySource SourceById(string entityId) => _sources[entityId];
 
-      public IEnumerator<ObjectSource> GetEnumerator() => _sources.GetEnumerator();
+      public IEnumerator<EntitySource> GetEnumerator() => _sources.GetEnumerator();
 
       IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

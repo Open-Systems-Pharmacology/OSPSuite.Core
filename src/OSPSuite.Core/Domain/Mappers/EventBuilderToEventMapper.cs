@@ -18,20 +18,20 @@ namespace OSPSuite.Core.Domain.Mappers
       private readonly IParameterBuilderToParameterMapper _parameterMapper;
       private readonly IFormulaBuilderToFormulaMapper _formulaMapper;
       private readonly IEventAssignmentBuilderToEventAssignmentMapper _assignmentMapper;
-      private readonly IObjectTracker _objectTracker;
+      private readonly IEntityTracker _entityTracker;
 
       public EventBuilderToEventMapper(IObjectBaseFactory objectBaseFactory,
          IParameterBuilderToParameterMapper parameterMapper,
          IFormulaBuilderToFormulaMapper formulaMapper,
          IEventAssignmentBuilderToEventAssignmentMapper assignmentMapper,
-         IObjectTracker objectTracker
+         IEntityTracker entityTracker
          )
       {
          _objectBaseFactory = objectBaseFactory;
          _parameterMapper = parameterMapper;
          _formulaMapper = formulaMapper;
          _assignmentMapper = assignmentMapper;
-         _objectTracker = objectTracker;
+         _entityTracker = entityTracker;
       }
 
       public Event MapFrom(EventBuilder eventBuilder, SimulationBuilder simulationBuilder)
@@ -42,8 +42,7 @@ namespace OSPSuite.Core.Domain.Mappers
             .WithDescription(eventBuilder.Description)
             .WithFormula(_formulaMapper.MapFrom(eventBuilder.Formula, simulationBuilder));
 
-         simulationBuilder.AddBuilderReference(modelEvent, eventBuilder);
-         _objectTracker.TrackObject(modelEvent, eventBuilder, simulationBuilder);
+         _entityTracker.Track(modelEvent, eventBuilder, simulationBuilder);
 
          eventBuilder.Assignments
             .SelectMany(x => _assignmentMapper.MapFrom(x, simulationBuilder))

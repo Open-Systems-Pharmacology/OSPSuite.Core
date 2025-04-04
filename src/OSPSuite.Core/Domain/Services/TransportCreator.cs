@@ -19,15 +19,15 @@ namespace OSPSuite.Core.Domain.Services
       private readonly ITransportBuilderToTransportMapper _transportMapper;
       private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly IMoleculePropertiesContainerTask _moleculePropertiesContainerTask;
-      private readonly IObjectTracker _objectTracker;
+      private readonly IEntityTracker _entityTracker;
 
       public TransportCreator(ITransportBuilderToTransportMapper transportMapper, IKeywordReplacerTask keywordReplacerTask,
-         IMoleculePropertiesContainerTask moleculePropertiesContainerTask, IObjectTracker objectTracker)
+         IMoleculePropertiesContainerTask moleculePropertiesContainerTask, IEntityTracker entityTracker)
       {
          _transportMapper = transportMapper;
          _keywordReplacerTask = keywordReplacerTask;
          _moleculePropertiesContainerTask = moleculePropertiesContainerTask;
-         _objectTracker = objectTracker;
+         _entityTracker = entityTracker;
       }
 
       public void CreatePassiveTransport(TransportBuilder passiveTransportBuilder, ModelConfiguration modelConfiguration)
@@ -92,8 +92,7 @@ namespace OSPSuite.Core.Domain.Services
             var activeTransportInMolecule =
                addActiveTransportToNeighborhood(neighborhood, activeTransport, transporterMolecule, molecule.Name, simulationBuilder);
 
-            simulationBuilder.AddBuilderReference(activeTransportInMolecule, activeTransportBuilder);
-            _objectTracker.TrackObject(activeTransportInMolecule, activeTransportBuilder, simulationBuilder);
+            _entityTracker.Track(activeTransportInMolecule, activeTransportBuilder, simulationBuilder);
             _keywordReplacerTask.ReplaceIn(activeTransport, molecule.Name, neighborhood, transporterMolecule.TransportName, transporterMolecule.Name, replacementContext);
          }
       }
@@ -159,7 +158,7 @@ namespace OSPSuite.Core.Domain.Services
          var transport = _transportMapper.MapFrom(transportBuilder, simulationBuilder);
          transport.SourceAmount = neighborhood.GetNeighborSatisfying(transportBuilder.SourceCriteria)
             .GetSingleChildByName<MoleculeAmount>(moleculeName);
-        
+
          transport.TargetAmount = neighborhood.GetNeighborSatisfying(transportBuilder.TargetCriteria)
             .GetSingleChildByName<MoleculeAmount>(moleculeName);
          return transport;

@@ -14,13 +14,14 @@ namespace OSPSuite.Core.Domain.Mappers
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IFormulaBuilderToFormulaMapper _formulaMapper;
-      private readonly IObjectTracker _objectTracker;
+      private readonly IEntityTracker _entityTracker
+         ;
 
-      public ProcessRateParameterCreator(IObjectBaseFactory objectBaseFactory, IFormulaBuilderToFormulaMapper formulaMapper, IObjectTracker objectTracker)
+      public ProcessRateParameterCreator(IObjectBaseFactory objectBaseFactory, IFormulaBuilderToFormulaMapper formulaMapper, IEntityTracker entityTracker)
       {
          _objectBaseFactory = objectBaseFactory;
          _formulaMapper = formulaMapper;
-         _objectTracker = objectTracker;
+         _entityTracker = entityTracker;
       }
 
       public IParameter CreateProcessRateParameterFor(IProcessBuilder processBuilder, SimulationBuilder simulationBuilder)
@@ -37,8 +38,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
          addAdditionalParentReference(parameter.Formula);
 
-         simulationBuilder.AddBuilderReference(parameter, processBuilder);
-         _objectTracker.TrackObject(parameter, processBuilder, simulationBuilder);
+         _entityTracker.Track(parameter, processBuilder, simulationBuilder);
 
          if (processBuilder.ProcessRateParameterPersistable)
             parameter.Persistable = true;

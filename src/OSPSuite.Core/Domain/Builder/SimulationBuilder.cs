@@ -18,8 +18,6 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly PathAndValueEntityCache<InitialCondition> _initialConditions = new PathAndValueEntityCache<InitialCondition>();
       private readonly Cache<IMoleculeDependentBuilder, MoleculeList> _moleculeListCache = new Cache<IMoleculeDependentBuilder, MoleculeList>();
 
-      private readonly Cache<IObjectBase, IObjectBase> _builderCache = new Cache<IObjectBase, IObjectBase>(onMissingKey: x => null);
-
       //Contains a temp  cache of builder and their corresponding building blocks
       private readonly Cache<string, BuilderSource> _builderSources = new Cache<string, BuilderSource>(x => x.Builder.Id, x => null);
 
@@ -34,16 +32,11 @@ namespace OSPSuite.Core.Domain.Builder
 
       public bool CreateAllProcessRateParameters => _simulationConfiguration.CreateAllProcessRateParameters;
 
-      public IObjectBase BuilderFor(IObjectBase modelObject) => _builderCache[modelObject];
+      public IEntity BuilderFor(IEntity modelObject) => ObjectSources.SourceFor(modelObject)?.Source;
 
-      internal void AddBuilderReference(IObjectBase modelObject, IObjectBase builder)
+      internal void AddObjectSource(EntitySource entitySource)
       {
-         _builderCache[modelObject] = builder;
-      }
-
-      internal void AddObjectSource(ObjectSource objectSource)
-      {
-         ObjectSources.Add(objectSource);
+         ObjectSources.Add(entitySource);
       }
 
       internal IEnumerable<MoleculeBuilder> AllPresentMolecules()
@@ -168,7 +161,7 @@ namespace OSPSuite.Core.Domain.Builder
          buildingBlock?.Each(x => AddToBuilderSource(x, buildingBlock));
 
       public void AddToBuilderSource<TBuilder>(IBuildingBlock<TBuilder> buildingBlock) where TBuilder : IBuilder, IContainer =>
-         buildingBlock.SelectMany(builder => builder.GetAllChildren<IEntity>()).Each(x => AddToBuilderSource(x, buildingBlock));
+         buildingBlock.SelectMany(builder => builder.GetAllChildrenAndSelf<IEntity>()).Each(x => AddToBuilderSource(x, buildingBlock));
 
       public void AddToBuilderSource(IEntity builder, IBuildingBlock buildingBlock)
       {

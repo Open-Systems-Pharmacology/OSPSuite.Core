@@ -16,16 +16,16 @@ namespace OSPSuite.Core.Domain.Mappers
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IFormulaBuilderToFormulaMapper _formulaMapper;
-      private readonly IObjectTracker _objectTracker;
+      private readonly IEntityTracker _entityTracker;
 
       public EventAssignmentBuilderToEventAssignmentMapper(
          IObjectBaseFactory objectBaseFactory, 
          IFormulaBuilderToFormulaMapper formulaMapper,
-         IObjectTracker objectTracker)
+         IEntityTracker entityTracker)
       {
          _objectBaseFactory = objectBaseFactory;
          _formulaMapper = formulaMapper;
-         _objectTracker = objectTracker;
+         _entityTracker = entityTracker;
       }
 
       public IReadOnlyList<EventAssignment> MapFrom(EventAssignmentBuilder assignmentBuilder, SimulationBuilder simulationBuilder)
@@ -58,8 +58,7 @@ namespace OSPSuite.Core.Domain.Mappers
          assignment.ObjectPath = assignmentBuilder.ObjectPath.Clone<ObjectPath>();
          assignment.UseAsValue = assignmentBuilder.UseAsValue;
 
-         simulationBuilder.AddBuilderReference(assignment, assignmentBuilder);
-         _objectTracker.TrackObject(assignment, assignmentBuilder, simulationBuilder);
+         _entityTracker.Track(assignment, assignmentBuilder, simulationBuilder);
 
          return assignment;
       }

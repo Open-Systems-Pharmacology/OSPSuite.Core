@@ -21,7 +21,7 @@ namespace OSPSuite.Core.Mappers
       protected IDimensionFactory _dimensionFactory;
       protected IParameterFactory _parameterFactory;
       protected SimulationConfiguration _simulationConfiguration;
-      protected IObjectTracker _objectTracker;
+      protected IEntityTracker _entityTracker;
 
       protected override void Context()
       {
@@ -31,8 +31,8 @@ namespace OSPSuite.Core.Mappers
          _formulaFactory = A.Fake<IFormulaFactory>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _parameterFactory = A.Fake<IParameterFactory>();
-         _objectTracker = A.Fake<IObjectTracker>();
-         sut = new MoleculeBuilderToMoleculeAmountMapper(_objectBaseFactory, _formulaMapper, _parameterMapper, _dimensionFactory, _formulaFactory, _parameterFactory, _objectTracker);
+         _entityTracker = A.Fake<IEntityTracker>();
+         sut = new MoleculeBuilderToMoleculeAmountMapper(_objectBaseFactory, _formulaMapper, _parameterMapper, _dimensionFactory, _formulaFactory, _parameterFactory, _entityTracker);
 
          _simulationConfiguration = new SimulationConfiguration();
       }
@@ -110,7 +110,7 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_add_the_builder_to_the_build_configuration_cache()
       {
-         _simulationBuilder.BuilderFor(_moleculeAmount).ShouldBeEqualTo(_moleculeBuilder);
+         A.CallTo(() => _entityTracker.Track(_moleculeAmount, _moleculeBuilder, _simulationBuilder)).MustHaveHappened();
       }
    }
 

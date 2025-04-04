@@ -33,17 +33,17 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IContainerTask _containerTask;
       private readonly IParameterBuilderCollectionToParameterCollectionMapper _parameterCollectionMapper;
       private readonly IKeywordReplacerTask _keywordReplacer;
-      private readonly IObjectTracker _objectTracker;
+      private readonly IEntityTracker _entityTracker;
 
       public MoleculePropertiesContainerTask(
          IContainerTask containerTask,
          IParameterBuilderCollectionToParameterCollectionMapper parameterCollectionMapper,
-         IKeywordReplacerTask keywordReplacer, IObjectTracker objectTracker)
+         IKeywordReplacerTask keywordReplacer, IEntityTracker entityTracker)
       {
          _containerTask = containerTask;
          _parameterCollectionMapper = parameterCollectionMapper;
          _keywordReplacer = keywordReplacer;
-         _objectTracker = objectTracker;
+         _entityTracker = entityTracker;
       }
 
       public IContainer NeighborhoodMoleculeContainerFor(Neighborhood neighborhood, string moleculeName)
@@ -90,8 +90,7 @@ namespace OSPSuite.Core.Domain.Services
       private IContainer addContainerUnder(IContainer parentContainer, IContainer templateContainer, string newContainerName, SimulationBuilder simulationBuilder)
       {
          var instanceContainer = _containerTask.CreateOrRetrieveSubContainerByName(parentContainer, newContainerName);
-         simulationBuilder.AddBuilderReference(instanceContainer, templateContainer);
-         _objectTracker.TrackObject(instanceContainer, templateContainer, simulationBuilder);
+         _entityTracker.Track(instanceContainer, templateContainer, simulationBuilder);
          instanceContainer.Icon = templateContainer.Icon;
          instanceContainer.Description = templateContainer.Description;
          return instanceContainer;

@@ -21,19 +21,19 @@ namespace OSPSuite.Core.Domain.Mappers
       private readonly IFormulaBuilderToFormulaMapper _formulaMapper;
       private readonly IParameterBuilderCollectionToParameterCollectionMapper _parameterMapper;
       private readonly IProcessRateParameterCreator _processRateParameterCreator;
-      private readonly IObjectTracker _objectTracker;
+      private readonly IEntityTracker _entityTracker;
 
       public TransportBuilderToTransportMapper(IObjectBaseFactory objectBaseFactory,
          IFormulaBuilderToFormulaMapper formulaMapper,
          IParameterBuilderCollectionToParameterCollectionMapper parameterMapper,
          IProcessRateParameterCreator processRateParameterCreator,
-         IObjectTracker objectTracker)
+         IEntityTracker entityTracker)
       {
          _objectBaseFactory = objectBaseFactory;
          _formulaMapper = formulaMapper;
          _parameterMapper = parameterMapper;
          _processRateParameterCreator = processRateParameterCreator;
-         _objectTracker = objectTracker;
+         _entityTracker = entityTracker;
       }
 
       public Transport MapFrom(TransportBuilder transportBuilder, SimulationBuilder simulationBuilder)
@@ -44,8 +44,7 @@ namespace OSPSuite.Core.Domain.Mappers
             .WithDimension(transportBuilder.Dimension)
             .WithFormula(_formulaMapper.MapFrom(transportBuilder.Formula, simulationBuilder));
 
-         simulationBuilder.AddBuilderReference(transport, transportBuilder);
-         _objectTracker.TrackObject(transport, transportBuilder, simulationBuilder);
+         _entityTracker.Track(transport, transportBuilder, simulationBuilder);
 
          addLocalParameters(transport, transportBuilder, simulationBuilder);
 

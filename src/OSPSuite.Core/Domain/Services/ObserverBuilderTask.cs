@@ -27,17 +27,17 @@ namespace OSPSuite.Core.Domain.Services
       //cache only used to speed up task
       private EntityDescriptorMapList<IContainer> _allContainerDescriptors;
       private SimulationBuilder _simulationBuilder;
-      private readonly IObjectTracker _objectTracker;
+      private readonly IEntityTracker _entityTracker;
 
       public ObserverBuilderTask(
          IObserverBuilderToObserverMapper observerMapper,
          IContainerTask containerTask,
-         IKeywordReplacerTask keywordReplacerTask, IObjectTracker objectTracker)
+         IKeywordReplacerTask keywordReplacerTask, IEntityTracker entityTracker)
       {
          _observerMapper = observerMapper;
          _containerTask = containerTask;
          _keywordReplacerTask = keywordReplacerTask;
-         _objectTracker = objectTracker;
+         _entityTracker = entityTracker;
       }
 
       public void CreateObservers(ModelConfiguration modelConfiguration)
@@ -116,8 +116,7 @@ namespace OSPSuite.Core.Domain.Services
                {
                   //should only happen for a logical container.
                   moleculeContainer = _containerTask.CreateOrRetrieveSubContainerByName(container, moleculeBuilder.Name).WithContainerType(ContainerType.Molecule);
-                  _simulationBuilder.AddBuilderReference(moleculeContainer, observerBuilder);
-                  _objectTracker.TrackObject(moleculeContainer, observerBuilder, _simulationBuilder);
+                  _entityTracker.Track(moleculeContainer, observerBuilder, _simulationBuilder);
                }
 
                var observer = addObserverInContainer(observerBuilder, moleculeContainer, moleculeBuilder.QuantityType);

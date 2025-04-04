@@ -3,23 +3,23 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Domain.Services
 {
-   public interface IObjectTracker
+   public interface IEntityTracker
    {
-      void TrackObject(IEntity objectToTrack, IEntity sourceBuilder, SimulationBuilder simulationBuilder);
+      void Track(IEntity entityToTrack, IEntity sourceBuilder, SimulationBuilder simulationBuilder);
    }
 
-   public class ObjectTracker : IObjectTracker
+   public class EntityTracker : IEntityTracker
    {
       private readonly IObjectPathFactory _objectPathFactory;
       private readonly IObjectTypeResolver _objectTypeResolver;
 
-      public ObjectTracker(IObjectPathFactory objectPathFactory, IObjectTypeResolver objectTypeResolver)
+      public EntityTracker(IObjectPathFactory objectPathFactory, IObjectTypeResolver objectTypeResolver)
       {
          _objectPathFactory = objectPathFactory;
          _objectTypeResolver = objectTypeResolver;
       }
 
-      public void TrackObject(IEntity objectToTrack, IEntity sourceBuilder, SimulationBuilder simulationBuilder)
+      public void Track(IEntity entityToTrack, IEntity sourceBuilder, SimulationBuilder simulationBuilder)
       {
          var sourcePath = _objectPathFactory.CreateAbsoluteObjectPath(sourceBuilder).ToString();
          var sourceType = _objectTypeResolver.TypeFor(sourceBuilder);
@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Domain.Services
          var builderSource = simulationBuilder.BuilderSourceFor(sourceBuilder);
          if (builderSource != null)
          {
-            var objectSource = new ObjectSource(objectToTrack.Id, builderSource.BuildingBlock.Id, sourceType, sourceBuilder.Id);
+            var objectSource = new EntitySource(entityToTrack.Id, builderSource.BuildingBlock.Id, sourceType, sourceBuilder.Id, sourceBuilder);
             simulationBuilder.AddObjectSource(objectSource);
             return;
          }
@@ -36,7 +36,7 @@ namespace OSPSuite.Core.Domain.Services
          var objectSourceOrigin = simulationBuilder.ObjectSources.SourceById(sourceBuilder.Id);
          if (objectSourceOrigin != null)
          {
-            var newObjectSource = new ObjectSource(objectToTrack.Id, objectSourceOrigin);
+            var newObjectSource = new EntitySource(entityToTrack.Id, objectSourceOrigin);
             simulationBuilder.AddObjectSource(newObjectSource);
             return;
          }
@@ -44,5 +44,6 @@ namespace OSPSuite.Core.Domain.Services
          //Error. This should never happen. Log for now
          Console.WriteLine($"Cannot find builder source for {sourcePath}");
       }
+
    }
 }

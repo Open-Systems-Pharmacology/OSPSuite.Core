@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IFormulaFactory _formulaFactory;
       private readonly IConcentrationBasedFormulaUpdater _concentrationBasedFormulaUpdater;
       private readonly IParameterValueToParameterMapper _parameterValueToParameterMapper;
-      private readonly IObjectTracker _objectTracker;
+      private readonly IEntityTracker _entityTracker;
       private readonly ValidatorForForFormula _formulaValidator;
 
       public QuantityValuesUpdater(
@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Domain.Services
          IFormulaFactory formulaFactory,
          IConcentrationBasedFormulaUpdater concentrationBasedFormulaUpdater,
          IParameterValueToParameterMapper parameterValueToParameterMapper,
-         IObjectTracker objectTracker,
+         IEntityTracker entityTracker,
          ValidatorForForFormula formulaValidator)
       {
          _keywordReplacerTask = keywordReplacerTask;
@@ -49,7 +49,7 @@ namespace OSPSuite.Core.Domain.Services
          _formulaFactory = formulaFactory;
          _concentrationBasedFormulaUpdater = concentrationBasedFormulaUpdater;
          _parameterValueToParameterMapper = parameterValueToParameterMapper;
-         _objectTracker = objectTracker;
+         _entityTracker = entityTracker;
          _formulaValidator = formulaValidator;
       }
 
@@ -99,7 +99,7 @@ namespace OSPSuite.Core.Domain.Services
          if (parameter != null)
             return parameter.WithUpdatedMetaFrom(parameterValue);
 
-         var (model, simulationBuilder, replacementContext) = modelConfiguration;
+         var (model, _, replacementContext) = modelConfiguration;
          //Parameter does not exist in the model. We will create it if possible
          var parentContainerPathInModel = _keywordReplacerTask.CreateModelPathFor(parameterValue.ContainerPath, replacementContext);
          var parentContainer = parentContainerPathInModel.Resolve<IContainer>(model.Root);
@@ -112,8 +112,6 @@ namespace OSPSuite.Core.Domain.Services
          }
 
          parameter = _parameterValueToParameterMapper.MapFrom(parameterValue);
-
-         simulationBuilder.AddBuilderReference(parameter, parameterValue);
 
          //now we remove the parameter by name from the parent container just in case it already exists but with a different type (distributed vs not distributed)
          var potentialParameter = parentContainer.Parameter(parameterValue.Name);
@@ -152,7 +150,7 @@ namespace OSPSuite.Core.Domain.Services
             return;
 
          var (_, simulationBuilder, replacementContext) = valueUpdater.ModelConfiguration;
-         _objectTracker.TrackObject(parameter, parameterValue, simulationBuilder);
+         _entityTracker.Track(parameter, parameterValue, simulationBuilder);
 
          //Formula is defined, we update in the parameter instance
          if (parameterValue.Formula != null)
@@ -197,13 +195,13 @@ namespace OSPSuite.Core.Domain.Services
             {
                //use a clone here because we want a different instance for each molecule
                updateMoleculeAmountFormula(molecule, _cloneManagerForModel.Clone(initialCondition.Formula));
-               _objectTracker.TrackObject(molecule, initialCondition, simulationBuilder);
+               _entityTracker.Track(molecule, initialCondition, simulationBuilder);
                _keywordReplacerTask.ReplaceIn(molecule, replacementContext);
             }
             else if (startValueShouldBeSetAsConstantFormula(initialCondition, molecule))
             {
                updateMoleculeAmountFormula(molecule, createConstantFormula(initialCondition));
-               _objectTracker.TrackObject(molecule, initialCondition, simulationBuilder);
+               _entityTracker.Track(molecule, initialCondition, simulationBuilder);
             }
 
             molecule.ScaleDivisor = initialCondition.ScaleDivisor;

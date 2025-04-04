@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Domain.Mappers
       private readonly IMoleculeBuilderToMoleculeAmountMapper _moleculeMapper;
       private readonly IFormulaBuilderToFormulaMapper _formulaMapper;
       private readonly IParameterFactory _parameterFactory;
-      private readonly IObjectTracker _objectTracker;
+      private readonly IEntityTracker _entityTracker;
 
       public EventGroupBuilderToEventGroupMapper(
          IObjectBaseFactory objectBaseFactory,
@@ -29,7 +29,7 @@ namespace OSPSuite.Core.Domain.Mappers
          IMoleculeBuilderToMoleculeAmountMapper moleculeMapper,
          IFormulaBuilderToFormulaMapper formulaMapper,
          IParameterFactory parameterFactory, 
-         IObjectTracker objectTracker)
+         IEntityTracker entityTracker)
       {
          _objectBaseFactory = objectBaseFactory;
          _cloneManagerForModel = cloneManagerForModel;
@@ -39,14 +39,13 @@ namespace OSPSuite.Core.Domain.Mappers
          _moleculeMapper = moleculeMapper;
          _formulaMapper = formulaMapper;
          _parameterFactory = parameterFactory;
-         _objectTracker = objectTracker;
+         _entityTracker = entityTracker;
       }
 
       public EventGroup MapFrom(EventGroupBuilder eventGroupBuilder, SimulationBuilder simulationBuilder)
       {
          var eventGroup = _objectBaseFactory.Create<EventGroup>();
-         simulationBuilder.AddBuilderReference(eventGroup, eventGroupBuilder);
-         _objectTracker.TrackObject(eventGroup, eventGroupBuilder, simulationBuilder);
+         _entityTracker.Track(eventGroup, eventGroupBuilder, simulationBuilder);
          eventGroup.UpdatePropertiesFrom(eventGroupBuilder, _cloneManagerForModel);
          eventGroup.EventGroupType = eventGroupBuilder.EventGroupType;
          createEventGroupStructure(eventGroupBuilder, eventGroup, simulationBuilder);

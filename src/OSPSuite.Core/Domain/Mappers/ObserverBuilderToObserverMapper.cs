@@ -14,13 +14,13 @@ namespace OSPSuite.Core.Domain.Mappers
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IFormulaBuilderToFormulaMapper _formulaMapper;
-      private readonly IObjectTracker _objectTracker;
+      private readonly IEntityTracker _entityTracker;
 
-      public ObserverBuilderToObserverMapper(IObjectBaseFactory objectBaseFactory, IFormulaBuilderToFormulaMapper formulaMapper, IObjectTracker objectTracker)
+      public ObserverBuilderToObserverMapper(IObjectBaseFactory objectBaseFactory, IFormulaBuilderToFormulaMapper formulaMapper, IEntityTracker entityTracker)
       {
          _objectBaseFactory = objectBaseFactory;
          _formulaMapper = formulaMapper;
-         _objectTracker = objectTracker;
+         _entityTracker = entityTracker;
       }
 
       public Observer MapFrom(ObserverBuilder observerBuilder, SimulationBuilder simulationBuilder)
@@ -32,8 +32,7 @@ namespace OSPSuite.Core.Domain.Mappers
             .WithDimension(observerBuilder.Dimension)
             .WithFormula(_formulaMapper.MapFrom(observerBuilder.Formula, simulationBuilder));
 
-         simulationBuilder.AddBuilderReference(observer, observerBuilder);
-         _objectTracker.TrackObject(observer, observerBuilder, simulationBuilder);
+         _entityTracker.Track(observer, observerBuilder, simulationBuilder);
 
          return observer;
       }

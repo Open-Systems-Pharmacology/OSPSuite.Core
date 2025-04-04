@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
@@ -12,12 +13,14 @@ namespace OSPSuite.Core.Domain
    {
       protected IObjectBaseFactory _objectBaseFactory;
       protected IFormulaBuilderToFormulaMapper _formulaMapper;
+      protected IEntityTracker _entityTracker;
 
       protected override void Context()
       {
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          _formulaMapper = A.Fake<IFormulaBuilderToFormulaMapper>();
-         sut = new ProcessRateParameterCreator(_objectBaseFactory,_formulaMapper);
+         _entityTracker = A.Fake<IEntityTracker>();
+         sut = new ProcessRateParameterCreator(_objectBaseFactory,_formulaMapper,_entityTracker);
       }
    }
    internal class When_creating_a_parameter_rate_for_a_process_builder : concern_for_ProcessRateParameterCreatorSpecs
