@@ -125,6 +125,9 @@ namespace OSPSuite.Core.Services
 
       private void buildAssignmentEntityCache(EventAssignment assignment, IEntity changedEntity)
       {
+         if (changedEntity == null)
+            return;
+
          var references = _entityReferenceCache.Contains(changedEntity) ? _entityReferenceCache[changedEntity] : new List<IEntity>();
          _entityReferenceCache[changedEntity] = references;
 
