@@ -8,7 +8,7 @@ namespace OSPSuite.Presentation.Presenters
       IHeavyWorkPresenter Create(bool supportsCancellation = false);
    }
 
-   internal class HeavyWorkPresenterFactory : DynamicFactory<IHeavyWorkPresenter>, IHeavyWorkPresenterFactory
+   public class HeavyWorkPresenterFactory : DynamicFactory<IHeavyWorkPresenter>, IHeavyWorkPresenterFactory
    {
       public HeavyWorkPresenterFactory(IContainer container) : base(container) { }
 

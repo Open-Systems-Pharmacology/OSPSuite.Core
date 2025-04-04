@@ -8,9 +8,11 @@ using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Services;
+using OSPSuite.Helpers;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Presentation.Services;
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
@@ -18,10 +20,12 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
    {
       protected string _excelFilePath;
       protected string _excelFile = "sample1.xlsx";
-
+      protected IHeavyWorkManager workManager;
       protected override void Context()
       {
-         sut = new ExcelDataSourceFile(A.Fake<IImportLogger>(), A.Fake<IHeavyWorkManager>())
+         workManager = new HeavyWorkManagerForSpecs();
+
+         sut = new ExcelDataSourceFile(A.Fake<IImportLogger>(), workManager)
          {
             Path = _excelFilePath
          };

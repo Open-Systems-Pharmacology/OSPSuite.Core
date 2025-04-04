@@ -121,6 +121,7 @@ namespace OSPSuite.Core
          container.Register<IDisplayNameProvider, DisplayNameProvider>();
          container.Register<ConcentrationBaseModelHelperForSpecs, ConcentrationBaseModelHelperForSpecs>();
          container.Register<IReactionDimensionRetriever, ReactionDimensionRetrieverForSpecs>(LifeStyle.Singleton);
+         container.Register<IHeavyWorkManager, HeavyWorkManagerForSpecs>();
          container.RegisterImplementationOf(A.Fake<IStartOptions>());
 
          container.RegisterImplementationOf(A.Fake<IApplicationController>());
@@ -134,6 +135,7 @@ namespace OSPSuite.Core
          container.RegisterImplementationOf(A.Fake<ICoreUserSettings>());
          container.RegisterImplementationOf(A.Fake<ICoreSimulationFactory>());
          container.RegisterImplementationOf(A.Fake<IFullPathDisplayResolver>());
+         container.RegisterImplementationOf(A.Fake<IHeavyWorkManager>());
 
          var applicationConfiguration = A.Fake<IApplicationConfiguration>();
          A.CallTo(() => applicationConfiguration.Product).Returns(Origins.Other);
