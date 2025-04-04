@@ -164,26 +164,19 @@ namespace OSPSuite.Core.Domain.Builder
          addToBuilderSource(builderSources);
       }
 
-      public void AddToBuilderSource<TBuilder>(PathAndValueEntityBuildingBlock<TBuilder> buildingBlock) where TBuilder : PathAndValueEntity
-      {
+      public void AddToBuilderSource<TBuilder>(PathAndValueEntityBuildingBlock<TBuilder> buildingBlock) where TBuilder : PathAndValueEntity =>
          buildingBlock?.Each(x => AddToBuilderSource(x, buildingBlock));
-      }
 
-      public void AddToBuilderSource<TBuilder>(IBuildingBlock<TBuilder> buildingBlock) where TBuilder : IBuilder, IContainer
-      {
+      public void AddToBuilderSource<TBuilder>(IBuildingBlock<TBuilder> buildingBlock) where TBuilder : IBuilder, IContainer =>
          buildingBlock.SelectMany(builder => builder.GetAllChildren<IEntity>()).Each(x => AddToBuilderSource(x, buildingBlock));
-      }
 
       public void AddToBuilderSource(IEntity builder, IBuildingBlock buildingBlock)
       {
-         var source = new BuilderSource(builder, buildingBlock);
-         _builderSources[source.Builder.Id] = source;
+         _builderSources[builder.Id] = new BuilderSource(builder, buildingBlock);
       }
 
-      private void addToBuilderSource<T>(IEnumerable<(T Builder, IBuildingBlock BuildingBlock)> builderSources) where T : class, IBuilder, IEntity
-      {
+      private void addToBuilderSource<T>(IEnumerable<(T Builder, IBuildingBlock BuildingBlock)> builderSources) where T : class, IBuilder, IEntity =>
          builderSources.Each(x => AddToBuilderSource(x.Builder, x.BuildingBlock));
-      }
 
       private void cacheMoleculeLists<T>(IReadOnlyList<T> allBuilders, ObjectBaseCache<T> builderCache) where T : class, IMoleculeDependentBuilder
       {
