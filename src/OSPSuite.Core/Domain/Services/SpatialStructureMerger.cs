@@ -100,7 +100,6 @@ namespace OSPSuite.Core.Domain.Services
 
          spatialStructure.SelectMany(x => x.GetAllChildren<IEntity>())
             .Each(x => simulationBuilder.AddToBuilderSource(x, spatialStructure));
-
       }
 
       private void tryMergeTopContainerInStructure(IContainer root, IContainer topContainer, MergeBehavior mergeBehavior, SpatialStructure spatialStructure)

@@ -66,7 +66,7 @@ namespace OSPSuite.Core
       {
          int numberOfAmounts = _simulation.Model.Root.GetAllChildren<MoleculeAmount>().Count;
          int numberOfObservers = _simulation.Model.Root.GetAllChildren<Observer>().Count;
-         int numberOfPersistentParameter = _simulation.Model.Root.GetAllChildren<IParameter>(parameter => parameter.Persistable).Count ;
+         int numberOfPersistentParameter = _simulation.Model.Root.GetAllChildren<IParameter>(parameter => parameter.Persistable).Count;
          _results.Count().ShouldBeEqualTo(numberOfAmounts + numberOfObservers + numberOfPersistentParameter + 1);
       }
 
