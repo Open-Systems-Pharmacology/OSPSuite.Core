@@ -20,6 +20,7 @@ namespace OSPSuite.Core.Services
       ///    action was canceled
       /// </summary>
       /// <param name="heavyWorkAction">Action that need to be performed</param>
+      /// <param name="cts">Cancellation Token Source, provide if cancellable action</param>
       bool Start(Action heavyWorkAction, CancellationTokenSource cts = default);
 
       /// <summary>
@@ -28,6 +29,7 @@ namespace OSPSuite.Core.Services
       /// </summary>
       /// <param name="heavyWorkAction">Action that need to be performed</param>
       /// <param name="caption">Caption that will be displayed</param>
+      /// <param name="cts">Cancellation Token Source, provide if cancellable action</param>
       bool Start(Action heavyWorkAction, string caption, CancellationTokenSource cts = default);
 
       /// <summary>

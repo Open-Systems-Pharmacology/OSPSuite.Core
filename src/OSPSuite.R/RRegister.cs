@@ -4,14 +4,10 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Presentation.Presenters;
-using OSPSuite.Presentation.Services;
-using OSPSuite.Presentation.Views;
 using OSPSuite.R.Domain;
 using OSPSuite.R.Mapper;
 using OSPSuite.R.MinimalImplementations;
 using OSPSuite.R.Services;
-using OSPSuite.UI.Views;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Events;
 using DisplayUnitRetriever = OSPSuite.R.MinimalImplementations.DisplayUnitRetriever;
@@ -46,12 +42,6 @@ namespace OSPSuite.R
          container.Register<SimulationBatch, SimulationBatch>();
          container.Register<ISimulationBatchFactory, SimulationBatchFactory>();
          container.Register<IObjectTypeResolver, RObjectTypeResolver>();
-         container.Register<HeavyWorkManager, HeavyWorkManager>();
-         container.Register<IHeavyWorkManager, HeavyWorkManager>();
-         container.Register<IHeavyWorkPresenterFactory, HeavyWorkPresenterFactory>();
-         container.Register<HeavyWorkPresenter, HeavyWorkPresenter>();
-         container.Register<HeavyWorkCancellablePresenter, HeavyWorkCancellablePresenter>();
-         container.Register<IHeavyWorkCancellableView, HeavyWorkCancellableView>();
          
          //Singletons
          container.Register<IGroupRepository, RGroupRepository>(LifeStyle.Singleton);

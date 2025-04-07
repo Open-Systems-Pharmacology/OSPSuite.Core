@@ -138,9 +138,6 @@ namespace OSPSuite.Presentation.Presentation
 
       public class When_the_heavy_work_manager_is_starting_an_action : concern_for_HeavyWorkManager
       {
-         private Action _action;
-         private bool _result;
-
          protected override void Context()
          {
             _heavyWorkPresenterFactory = A.Fake<IHeavyWorkPresenterFactory>();
@@ -152,7 +149,7 @@ namespace OSPSuite.Presentation.Presentation
          }
          protected override void Because()
          {
-            _result = sut.Start(_action, new CancellationTokenSource());
+            sut.Start(() => { }, new CancellationTokenSource());
          }
 
          [Observation]

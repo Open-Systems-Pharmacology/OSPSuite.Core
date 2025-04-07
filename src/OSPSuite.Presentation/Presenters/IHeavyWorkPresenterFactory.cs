@@ -15,8 +15,8 @@ namespace OSPSuite.Presentation.Presenters
       public IHeavyWorkPresenter Create(bool supportsCancellation = false)
       {
          if (supportsCancellation)
-            return Create<HeavyWorkCancellablePresenter>();  
-         return Create<HeavyWorkPresenter>();  
+            return Create<IHeavyWorkCancellablePresenter>();  
+         return Create<IHeavyWorkPresenter>();  
       }
    }
 }

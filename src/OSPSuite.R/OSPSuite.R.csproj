@@ -27,8 +27,6 @@
     <ProjectReference Include="..\OSPSuite.Infrastructure.Autofac\OSPSuite.Infrastructure.Autofac.csproj" />
     <ProjectReference Include="..\OSPSuite.Infrastructure.Import\OSPSuite.Infrastructure.Import.csproj" />
     <ProjectReference Include="..\OSPSuite.Infrastructure\OSPSuite.Infrastructure.csproj" />
-    <ProjectReference Include="..\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
-    <ProjectReference Include="..\OSPSuite.UI\OSPSuite.UI.csproj" />
   </ItemGroup>
 
   <ItemGroup>

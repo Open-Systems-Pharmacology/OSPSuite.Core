@@ -80,10 +80,6 @@ namespace OSPSuite.Presentation
          container.Register<ChartEditorAndDisplaySettings, ChartEditorAndDisplaySettings>();
          container.Register<ChartEditorSettings, ChartEditorSettings>();
          container.Register<ChartPresenterContext, ChartPresenterContext>();
-         // These registrations need to be provided since
-         // the Factory needs the actual Implementation now, not the Interface.
-         container.Register<HeavyWorkPresenter, HeavyWorkPresenter>();
-         container.Register<HeavyWorkCancellablePresenter, HeavyWorkCancellablePresenter>();
       }
 
       private static void registerContextMenus(IContainer container)
