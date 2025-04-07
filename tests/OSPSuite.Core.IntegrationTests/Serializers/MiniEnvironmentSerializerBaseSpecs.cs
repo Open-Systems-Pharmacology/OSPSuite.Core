@@ -4,7 +4,7 @@ using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core.Serializers
 {
-   public abstract class MiniEnvironmentSerializerBaseSpecs : ModellingXmlSerializerBaseSpecs
+   public abstract class MiniEnvironmentSerializerBaseSpecs : ModelingXmlSerializerBaseSpecs
    {
       protected internal IObjectPathFactory ObjectPathFactory { get; private set; }
 

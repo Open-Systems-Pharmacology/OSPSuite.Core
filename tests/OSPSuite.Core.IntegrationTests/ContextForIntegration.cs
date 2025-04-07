@@ -55,13 +55,15 @@ namespace OSPSuite.Core
 
       public override async Task GlobalContext()
       {
+         await base.GlobalContext();
          if (IoC.Container != null) return;
          _baseContext.InitializeContainer();
       }
 
       public override async Task GlobalCleanup()
       {
-         await Task.Run(() => _baseContext.GlobalCleanup());
+         await base.GlobalCleanup();
+         _baseContext.GlobalCleanup();
       }
    }
 
@@ -145,7 +147,7 @@ namespace OSPSuite.Core
 
          var csvSeparatorSelector = A.Fake<ICsvSeparatorSelector>();
          A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>.Ignored))
-            .Returns(new CSVSeparators { ColumnSeparator = ';', DecimalSeparator = '.' });
+            .Returns(new CSVSeparators {ColumnSeparator = ';', DecimalSeparator = '.'});
          container.RegisterImplementationOf(csvSeparatorSelector);
 
          using (container.OptimizeDependencyResolution())
@@ -161,9 +163,9 @@ namespace OSPSuite.Core
       public void InitGroupRepository()
       {
          var groupRepository = IoC.Resolve<IGroupRepository>();
-         groupRepository.AddGroup(new Group { Name = Constants.Groups.MOBI, Id = "1" });
-         groupRepository.AddGroup(new Group { Name = Constants.Groups.UNDEFINED, Id = "0" });
-         groupRepository.AddGroup(new Group { Name = Constants.Groups.SOLVER_SETTINGS, Id = "2" });
+         groupRepository.AddGroup(new Group {Name = Constants.Groups.MOBI, Id = "1"});
+         groupRepository.AddGroup(new Group {Name = Constants.Groups.UNDEFINED, Id = "0"});
+         groupRepository.AddGroup(new Group {Name = Constants.Groups.SOLVER_SETTINGS, Id = "2"});
       }
 
       public void InitializeDimensions()

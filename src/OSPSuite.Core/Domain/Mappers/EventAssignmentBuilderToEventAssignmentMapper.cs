@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Mappers
 {
@@ -15,11 +16,16 @@ namespace OSPSuite.Core.Domain.Mappers
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IFormulaBuilderToFormulaMapper _formulaMapper;
+      private readonly IEntityTracker _entityTracker;
 
-      public EventAssignmentBuilderToEventAssignmentMapper(IObjectBaseFactory objectBaseFactory, IFormulaBuilderToFormulaMapper formulaMapper)
+      public EventAssignmentBuilderToEventAssignmentMapper(
+         IObjectBaseFactory objectBaseFactory, 
+         IFormulaBuilderToFormulaMapper formulaMapper,
+         IEntityTracker entityTracker)
       {
          _objectBaseFactory = objectBaseFactory;
          _formulaMapper = formulaMapper;
+         _entityTracker = entityTracker;
       }
 
       public IReadOnlyList<EventAssignment> MapFrom(EventAssignmentBuilder assignmentBuilder, SimulationBuilder simulationBuilder)
@@ -52,7 +58,7 @@ namespace OSPSuite.Core.Domain.Mappers
          assignment.ObjectPath = assignmentBuilder.ObjectPath.Clone<ObjectPath>();
          assignment.UseAsValue = assignmentBuilder.UseAsValue;
 
-         simulationBuilder.AddBuilderReference(assignment, assignmentBuilder);
+         _entityTracker.Track(assignment, assignmentBuilder, simulationBuilder);
 
          return assignment;
       }

@@ -6,7 +6,7 @@ using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core.Serializers
 {
-   internal class TimePathXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   internal class TimePathXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()

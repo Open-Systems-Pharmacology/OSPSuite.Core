@@ -4,7 +4,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class QuantityPKParameterSpecs : ModellingXmlSerializerBaseSpecs
+   public class QuantityPKParameterSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Observation]
       public void TestSerialization()

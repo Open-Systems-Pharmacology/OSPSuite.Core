@@ -10,10 +10,12 @@ namespace OSPSuite.Core.Domain.Mappers
    internal class ParameterBuilderToParameterMapper : IParameterBuilderToParameterMapper
    {
       private readonly ICloneManagerForModel _cloneManagerForModel;
+      private readonly IEntityTracker _entityTracker;
 
-      public ParameterBuilderToParameterMapper(ICloneManagerForModel cloneManagerForModel)
+      public ParameterBuilderToParameterMapper(ICloneManagerForModel cloneManagerForModel, IEntityTracker entityTracker)
       {
          _cloneManagerForModel = cloneManagerForModel;
+         _entityTracker = entityTracker;
       }
 
       public IParameter MapFrom(IParameter parameterBuilder, SimulationBuilder simulationBuilder)
@@ -21,7 +23,8 @@ namespace OSPSuite.Core.Domain.Mappers
          var parameter = _cloneManagerForModel.Clone(parameterBuilder);
          //We reset the container criteria explicitly in the model instance 
          parameter.ContainerCriteria = null;
-         simulationBuilder.AddBuilderReference(parameter, parameterBuilder);
+         _entityTracker.Track(parameter, parameterBuilder, simulationBuilder);
+
          return parameter;
       }
    }

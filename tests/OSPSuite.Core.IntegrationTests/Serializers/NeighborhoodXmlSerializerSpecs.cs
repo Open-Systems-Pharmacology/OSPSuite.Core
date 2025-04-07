@@ -6,7 +6,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class NeighborhoodXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class NeighborhoodXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerializationEmptyNeighborhood()

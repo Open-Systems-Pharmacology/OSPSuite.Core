@@ -29,9 +29,9 @@ namespace OSPSuite.Core
          sut = IoC.Resolve<IModelConstructor>();
          var moduleHelper = IoC.Resolve<ModuleHelperForSpecs>();
          _simulationConfiguration = SimulationConfigurationBuilder()(moduleHelper);
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
          _model = _result.Model;
+         _simulationBuilder = _result.SimulationBuilder;
       }
    }
 
@@ -77,6 +77,26 @@ namespace OSPSuite.Core
          moleculeAGlobalContainer.Parameter("P1").Value.ShouldBeEqualTo(100);
          moleculeAGlobalContainer.Parameter("P2").Value.ShouldBeEqualTo(20);
          moleculeAGlobalContainer.Parameter("P3").Value.ShouldBeEqualTo(30);
+      }
+
+      [Observation]
+      public void should_track_the_parameter_accordingly()
+      {
+         var moleculeAGlobalContainer = _model.Root.Container("A");
+         var parameter1 = moleculeAGlobalContainer.Parameter("P1");
+         var parameter2 = moleculeAGlobalContainer.Parameter("P2");
+         var parameter3 = moleculeAGlobalContainer.Parameter("P3");
+         var module1 = _simulationConfiguration.ModuleConfigurations.Find(x => x.Module.IsNamed("Module1"));
+         var module2 = _simulationConfiguration.ModuleConfigurations.Find(x => x.Module.IsNamed("Module2"));
+         var module1Global = module1.Module.SpatialStructure.GlobalMoleculeDependentProperties;
+         var module2Global = module2.Module.SpatialStructure.GlobalMoleculeDependentProperties;
+         var parameter2Module1 = module1Global.Parameter("P2");
+         var parameter1Module2 = module2Global.Parameter("P1");
+         var parameter3Module2 = module2Global.Parameter("P3");
+
+         _simulationBuilder.EntitySources.SourceById(parameter1.Id).SourceId.ShouldBeEqualTo(parameter1Module2.Id);
+         _simulationBuilder.EntitySources.SourceById(parameter2.Id).SourceId.ShouldBeEqualTo(parameter2Module1.Id);
+         _simulationBuilder.EntitySources.SourceById(parameter3.Id).SourceId.ShouldBeEqualTo(parameter3Module2.Id);
       }
 
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfiguration();

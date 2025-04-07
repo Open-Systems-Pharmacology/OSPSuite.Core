@@ -34,19 +34,21 @@ namespace OSPSuite.Core.Domain.Mappers
       private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly ICloneManagerForModel _cloneManagerForModel;
       private readonly IParameterBuilderToParameterMapper _parameterMapper;
+      private readonly IEntityTracker _entityTracker;
 
       public NeighborhoodBuilderToNeighborhoodMapper(
          IObjectBaseFactory objectBaseFactory,
          IContainerBuilderToContainerMapper containerMapper,
          IKeywordReplacerTask keywordReplacerTask,
          ICloneManagerForModel cloneManagerForModel, 
-         IParameterBuilderToParameterMapper parameterMapper)
+         IParameterBuilderToParameterMapper parameterMapper, IEntityTracker entityTracker)
       {
          _objectBaseFactory = objectBaseFactory;
          _containerMapper = containerMapper;
          _keywordReplacerTask = keywordReplacerTask;
          _cloneManagerForModel = cloneManagerForModel;
          _parameterMapper = parameterMapper;
+         _entityTracker = entityTracker;
       }
 
       public Neighborhood MapFrom(NeighborhoodBuilder neighborhoodBuilder, IReadOnlyList<string> moleculeNames,
@@ -56,7 +58,8 @@ namespace OSPSuite.Core.Domain.Mappers
 
          var neighborhood = _objectBaseFactory.Create<Neighborhood>();
          neighborhood.UpdatePropertiesFrom(neighborhoodBuilder, _cloneManagerForModel);
-         simulationBuilder.AddBuilderReference(neighborhood, neighborhoodBuilder);
+         _entityTracker.Track(neighborhood, neighborhoodBuilder, simulationBuilder);
+
          neighborhood.FirstNeighbor = resolveReference(model, neighborhoodBuilder.FirstNeighborPath, replacementContext);
          neighborhood.SecondNeighbor = resolveReference(model, neighborhoodBuilder.SecondNeighborPath, replacementContext);
 

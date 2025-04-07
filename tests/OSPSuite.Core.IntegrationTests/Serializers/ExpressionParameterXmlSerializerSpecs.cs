@@ -8,7 +8,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class ExpressionParameterXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class ExpressionParameterXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Observation]
       public void TestSerialization()

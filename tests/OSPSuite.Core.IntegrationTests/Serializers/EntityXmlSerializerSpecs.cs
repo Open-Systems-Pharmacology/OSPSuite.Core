@@ -5,7 +5,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class EntityXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class EntityXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()

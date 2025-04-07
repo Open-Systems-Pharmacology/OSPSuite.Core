@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
-using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain
 {
@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Domain
       ContainerType ContainerType { set; get; }
 
       /// <summary>
-      ///   Returns the <see cref="ContainerType"/> as a string
+      ///    Returns the <see cref="ContainerType" /> as a string
       /// </summary>
       string ContainerTypeAsString { get; }
 
@@ -25,8 +25,8 @@ namespace OSPSuite.Core.Domain
       IReadOnlyList<IEntity> Children { get; }
 
       /// <summary>
-      /// Returns the path to the parent container.
-      /// It should only be set if the container has no parent in the hierarchy. Otherwise, it will be null
+      ///    Returns the path to the parent container.
+      ///    It should only be set if the container has no parent in the hierarchy. Otherwise, it will be null
       /// </summary>
       ObjectPath ParentPath { get; set; }
 
@@ -87,12 +87,25 @@ namespace OSPSuite.Core.Domain
       IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>() where TContainer : class, IContainer;
 
       /// <summary>
-      ///    Returns all children containers defined in the container satisfying the predicate and the container itself, if the container is form type
+      ///    Returns all children containers defined in the container satisfying the predicate and the container itself, if the
+      ///    container is form type
       ///    <typeparamref
       ///       name="TContainer" />
       ///    and satisfies the predicate
       /// </summary>
       IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>(Func<TContainer, bool> predicate) where TContainer : class, IContainer;
+
+      /// <summary>
+      ///    Returns all children recursively of the container of type <typeparamref name="TEntity" /> including the container
+      ///    itself if it satisfies the type
+      /// </summary>
+      IReadOnlyList<TEntity> GetAllChildrenAndSelf<TEntity>() where TEntity : class, IEntity;
+
+      /// <summary>
+      ///    Returns all children recursively of the container of type <typeparamref name="TEntity" /> including the container
+      ///    itself if it satisfies the type and predicate
+      /// </summary>
+      IReadOnlyList<TEntity> GetAllChildrenAndSelf<TEntity>(Func<TEntity, bool> predicate) where TEntity : class, IEntity;
    }
 
    public class Container : Entity, IContainer
@@ -172,6 +185,7 @@ namespace OSPSuite.Core.Domain
          {
             allChildren.AddRange(containerChild.GetAllChildren(predicate));
          }
+
          return allChildren;
       }
 
@@ -209,21 +223,21 @@ namespace OSPSuite.Core.Domain
       public virtual IEnumerable<T> GetChildren<T>(Func<T, bool> predicate) where T : class, IEntity
       {
          return from childEntity in Children
-                let castChild = childEntity as T
-                where castChild != null
-                where predicate(castChild)
-                select castChild;
+            let castChild = childEntity as T
+            where castChild != null
+            where predicate(castChild)
+            select castChild;
       }
 
       public virtual IReadOnlyList<IContainer> GetNeighborsFrom(IReadOnlyList<Neighborhood> neighborhoods)
       {
          var first = from neighborhood in GetNeighborhoods(neighborhoods)
-                     where neighborhood.FirstNeighbor != this
-                     select neighborhood.FirstNeighbor;
+            where neighborhood.FirstNeighbor != this
+            select neighborhood.FirstNeighbor;
 
          var second = from neighborhood in GetNeighborhoods(neighborhoods)
-                      where neighborhood.SecondNeighbor != this
-                      select neighborhood.SecondNeighbor;
+            where neighborhood.SecondNeighbor != this
+            select neighborhood.SecondNeighbor;
 
          return first.Union(second).ToList();
       }
@@ -231,12 +245,12 @@ namespace OSPSuite.Core.Domain
       public virtual IReadOnlyList<Neighborhood> GetNeighborhoods(IReadOnlyList<Neighborhood> neighborhoods)
       {
          var first = from neighborhood in neighborhoods
-                     where neighborhood.FirstNeighbor == this
-                     select neighborhood;
+            where neighborhood.FirstNeighbor == this
+            select neighborhood;
 
          var second = from neighborhood in neighborhoods
-                      where neighborhood.SecondNeighbor == this
-                      select neighborhood;
+            where neighborhood.SecondNeighbor == this
+            select neighborhood;
 
          return first.Union(second).ToList();
       }
@@ -244,10 +258,19 @@ namespace OSPSuite.Core.Domain
       public IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>() where TContainer : class, IContainer => GetAllContainersAndSelf<TContainer>(x => true);
 
       public IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>(Func<TContainer, bool> predicate) where TContainer : class, IContainer
+         => GetAllChildrenAndSelf(predicate);
+
+      public virtual IReadOnlyList<TEntity> GetAllChildrenAndSelf<TEntity>() where TEntity : class, IEntity => GetAllChildrenAndSelf<TEntity>(child => true);
+
+      /// <summary>
+      ///    Returns all children recursively of the container of type <typeparamref name="TEntity" /> including the container
+      ///    itself if it satisfies the type and predicate
+      /// </summary>
+      public virtual IReadOnlyList<TEntity> GetAllChildrenAndSelf<TEntity>(Func<TEntity, bool> predicate) where TEntity : class, IEntity
       {
          var allChildren = GetAllChildren(predicate).ToList();
-         if (this is TContainer container && predicate(container))
-            allChildren.Add(container);
+         if (this is TEntity entity && predicate(entity))
+            allChildren.Add(entity);
 
          return allChildren;
       }
