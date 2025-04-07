@@ -29,29 +29,44 @@
       private void InitializeComponent()
       {
          this.progressBar = new DevExpress.XtraEditors.MarqueeProgressBarControl();
+         this.btnCancel = new OSPSuite.UI.Controls.UxSimpleButton();
+         ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.progressBar.Properties)).BeginInit();
          this.SuspendLayout();
          // 
          // progressBar
          // 
-         this.progressBar.Dock = System.Windows.Forms.DockStyle.Fill;
          this.progressBar.EditValue = 0;
-         this.progressBar.Location = new System.Drawing.Point(0, 0);
+         this.progressBar.Location = new System.Drawing.Point(1, 5);
+         this.progressBar.Margin = new System.Windows.Forms.Padding(4);
          this.progressBar.Name = "progressBar";
-         this.progressBar.Size = new System.Drawing.Size(144, 20);
+         this.progressBar.Size = new System.Drawing.Size(161, 25);
          this.progressBar.TabIndex = 1;
+         // 
+         // btnCancel
+         // 
+         this.btnCancel.Location = new System.Drawing.Point(68, 32);
+         this.btnCancel.Manager = null;
+         this.btnCancel.Name = "btnCancel";
+         this.btnCancel.Shortcut = System.Windows.Forms.Keys.None;
+         this.btnCancel.Size = new System.Drawing.Size(94, 29);
+         this.btnCancel.TabIndex = 3;
+         this.btnCancel.Text = "simpleButton1";
          // 
          // HeavyWorkView
          // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+         this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.Caption = "HeavyWorkView";
-         this.ClientSize = new System.Drawing.Size(144, 20);
+         this.Caption = "Processing...";
+         this.ClientSize = new System.Drawing.Size(172, 110);
+         this.Controls.Add(this.btnCancel);
          this.Controls.Add(this.progressBar);
          this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-         this.MaximumSize = new System.Drawing.Size(144, 20);
+         this.Margin = new System.Windows.Forms.Padding(5);
+         this.MaximumSize = new System.Drawing.Size(180, 110);
          this.Name = "HeavyWorkView";
-         this.Text = "HeavyWorkView";
+         this.Text = "Processing...";
+         ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.progressBar.Properties)).EndInit();
          this.ResumeLayout(false);
 
@@ -60,6 +75,6 @@
       #endregion
 
       private DevExpress.XtraEditors.MarqueeProgressBarControl progressBar;
-
+      private Controls.UxSimpleButton btnCancel;
    }
 }

@@ -41,15 +41,13 @@ namespace OSPSuite.Presentation.Services
          _cts = cts ?? new CancellationTokenSource();
           
          var supportsCancellation = cts != null;
-         using (var presenter = _heavyWorkPresenterFactory.Create(supportsCancellation))
+         using (var presenter = _heavyWorkPresenterFactory.Create())
          {
             _presenter = presenter;
 
-            //Create without the bool, only one presenter and view.
-            //Here set the cancellationSource
-            //If we have it, then show the button and the cancellation etc.
-            if (supportsCancellation && presenter is IHeavyWorkCancellablePresenter cancelablePresenter)
-               cancelablePresenter.SetCancellationSource(_cts);
+            
+            if (supportsCancellation)
+               presenter.SetCancellationSource(_cts);
 
             StartAsync(heavyWorkAction);
 
