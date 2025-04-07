@@ -314,6 +314,8 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_throw_meaningful_exception_not_null_reference_exception()
       {
+         // This sheet has a column configuration where the dimension cannot be determined, but an error column
+         // where the dimension can be determined. It should error with an appropriate exception and message
          var fileFullName = getFileFullName("CompiledDataSet.xlsx");
          var configuration = sut.CreateConfigurationFor(fileFullName, "TestSheet_1_withMW");
          sut.SetAllLoadedSheet(configuration, "TestSheet_1_withMW");
