@@ -42,7 +42,8 @@ namespace OSPSuite.R
          container.Register<SimulationBatch, SimulationBatch>();
          container.Register<ISimulationBatchFactory, SimulationBatchFactory>();
          container.Register<IObjectTypeResolver, RObjectTypeResolver>();
-         
+         container.Register<IHeavyWorkManager, HeavyWorkManager>();
+
          //Singletons
          container.Register<IGroupRepository, RGroupRepository>(LifeStyle.Singleton);
          container.Register<IOSPSuiteExecutionContext, RExecutionContext>(LifeStyle.Singleton);

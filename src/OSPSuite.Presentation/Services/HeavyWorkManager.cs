@@ -45,6 +45,9 @@ namespace OSPSuite.Presentation.Services
          {
             _presenter = presenter;
 
+            //Create without the bool, only one presenter and view.
+            //Here set the cancellationSource
+            //If we have it, then show the button and the cancellation etc.
             if (supportsCancellation && presenter is IHeavyWorkCancellablePresenter cancelablePresenter)
                cancelablePresenter.SetCancellationSource(_cts);
 

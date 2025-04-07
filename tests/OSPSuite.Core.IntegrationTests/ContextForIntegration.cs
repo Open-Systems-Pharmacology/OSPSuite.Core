@@ -135,7 +135,6 @@ namespace OSPSuite.Core
          container.RegisterImplementationOf(A.Fake<ICoreUserSettings>());
          container.RegisterImplementationOf(A.Fake<ICoreSimulationFactory>());
          container.RegisterImplementationOf(A.Fake<IFullPathDisplayResolver>());
-         container.RegisterImplementationOf(A.Fake<IHeavyWorkManager>());
 
          var applicationConfiguration = A.Fake<IApplicationConfiguration>();
          A.CallTo(() => applicationConfiguration.Product).Returns(Origins.Other);
