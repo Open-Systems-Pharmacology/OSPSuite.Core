@@ -19,6 +19,7 @@ namespace OSPSuite.R.Domain
       public bool ComesFromPKSim { get; } = false;
       public bool UsesObservedData(DataRepository observedData) => false;
       public IEnumerable<CurveChart> Charts { get; } = new List<CurveChart>();
+      public EntitySources EntitySources { get; set; } = new EntitySources();
       public OutputMappings OutputMappings { get; set; }
       public DataRepository ResultsDataRepository { get; set; }
 
@@ -128,7 +129,7 @@ namespace OSPSuite.R.Domain
       public IParameter BodyWeight => CoreSimulation.BodyWeight;
 
       public IParameter TotalDrugMassFor(string moleculeName) => CoreSimulation.TotalDrugMassFor(moleculeName);
-
+   
       public double? MolWeightFor(IQuantity quantity) => CoreSimulation.MolWeightFor(quantity);
 
       public double? MolWeightFor(string quantityPath) => CoreSimulation.MolWeightFor(quantityPath);

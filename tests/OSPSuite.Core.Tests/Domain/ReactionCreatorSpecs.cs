@@ -26,14 +26,16 @@ namespace OSPSuite.Core.Domain
       protected bool _result;
       protected SimulationBuilder _simulationBuilder;
       private ModelConfiguration _modelConfiguration;
-      
+      private IEntityTracker _entityTracker;
+
       protected override void Context()
       {
          _reactionMapper = A.Fake<IReactionBuilderToReactionMapper>();
          _keywordReplacerTask = A.Fake<IKeywordReplacerTask>();
          _containerTask = A.Fake<IContainerTask>();
          _parameterMapper = A.Fake<IParameterBuilderCollectionToParameterCollectionMapper>();
-         sut = new ReactionCreator(_reactionMapper, _keywordReplacerTask, _containerTask, _parameterMapper);
+         _entityTracker = A.Fake<IEntityTracker>();
+         sut = new ReactionCreator(_reactionMapper, _keywordReplacerTask, _containerTask, _parameterMapper, _entityTracker);
 
          _model = A.Fake<IModel>();
          _simulationConfiguration = new SimulationConfiguration();
@@ -178,7 +180,6 @@ namespace OSPSuite.Core.Domain
          _rootContainer.ContainsName(_reactionBuilder.Name).ShouldBeTrue();
          _subLiver.ContainsName(_reactionBuilder.Name).ShouldBeTrue();
       }
-
 
       [Observation]
       public void should_not_create_the_reaction_in_any_container_for_which_at_least_one_educt_or_one_product()

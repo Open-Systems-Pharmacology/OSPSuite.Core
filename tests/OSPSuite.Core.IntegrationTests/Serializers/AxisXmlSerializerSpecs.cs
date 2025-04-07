@@ -7,7 +7,7 @@ using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class AxisXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class AxisXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       
       [Observation]

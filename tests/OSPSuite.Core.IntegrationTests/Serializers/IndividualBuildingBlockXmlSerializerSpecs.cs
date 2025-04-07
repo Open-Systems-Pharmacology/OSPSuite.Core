@@ -7,7 +7,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class IndividualBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class IndividualBuildingBlockXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Observation]
       public void TestSerializationIndividualBuildingBlock()

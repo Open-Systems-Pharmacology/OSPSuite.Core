@@ -6,7 +6,7 @@ using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class ObjectPathXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class ObjectPathXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
@@ -17,7 +17,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class FormulaUsablePathXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class FormulaUsablePathXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()

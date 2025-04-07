@@ -8,7 +8,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class ProcessBuilderXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class ProcessBuilderXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class ActiveTransportBuilderXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class ActiveTransportBuilderXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class PassiveTransportBuilderXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class PassiveTransportBuilderXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
@@ -78,7 +78,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class ReactionPartnerBuilderXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class ReactionPartnerBuilderXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
@@ -89,7 +89,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class ReactionBuilderXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class ReactionBuilderXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()

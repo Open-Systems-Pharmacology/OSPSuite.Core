@@ -8,7 +8,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class ObserverBuilderXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class ObserverBuilderXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerializationObserverBuilderWithoutFormula()
@@ -63,7 +63,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class AmountObserverBuilderXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class AmountObserverBuilderXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerializationWithoutFormula()
@@ -77,7 +77,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class MatchTagConditionXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class MatchTagConditionXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
@@ -90,7 +90,7 @@ namespace OSPSuite.Core.Serializers
    }
 
    [TestFixture]
-   public class NotMatchTagConditionXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class NotMatchTagConditionXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
@@ -103,7 +103,7 @@ namespace OSPSuite.Core.Serializers
    }
 
    [TestFixture]
-   public class InContainerConditionXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class InContainerConditionXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
@@ -116,7 +116,7 @@ namespace OSPSuite.Core.Serializers
    }
 
    [TestFixture]
-   public class NotInContainerConditionXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class NotInContainerConditionXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()

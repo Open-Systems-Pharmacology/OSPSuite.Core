@@ -8,7 +8,7 @@ using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class SimulationSettingsXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class SimulationSettingsXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()

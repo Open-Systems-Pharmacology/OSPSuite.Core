@@ -16,7 +16,7 @@ using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core
 {
-   internal abstract class concern_for_SimulationPersistor : ModellingXmlSerializerWithModelBaseSpecs
+   internal abstract class concern_for_SimulationPersistor : ModelingXmlSerializerWithModelBaseSpecs
    {
       protected ISimulationPersistor _simulationPersistor;
       protected string _filePath;

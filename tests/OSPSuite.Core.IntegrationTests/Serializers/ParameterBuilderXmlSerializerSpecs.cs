@@ -6,7 +6,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class ParameterBuilderXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class ParameterBuilderXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerializationParameterBuilderWithoutParameter()
