@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly Cache<string, BuilderSource> _builderSources = new Cache<string, BuilderSource>(x => x.Builder.Id, x => null);
 
       //This will be saved in the simulation at the end of the construction process
-      internal EntitySources EntitySources { get; } = new EntitySources();
+      public EntitySources EntitySources { get; } = new EntitySources();
 
       public SimulationBuilder(SimulationConfiguration simulationConfiguration)
       {
