@@ -21,8 +21,8 @@ namespace OSPSuite.Core.Domain.Builder
       //Contains a temp  cache of builder and their corresponding building blocks
       private readonly Cache<string, BuilderSource> _builderSources = new Cache<string, BuilderSource>(x => x.Builder.Id, x => null);
 
-      //This will be saved in the simulation at the end of the construction process
-      public EntitySources EntitySources { get; } = new EntitySources();
+      //Cache of entity source by id and not by path. It is required because the path is not available at time of construction in the entity
+      private readonly Cache<string, EntitySource> _entitySources = new Cache<string, EntitySource>(onMissingKey: x => null);
 
       public SimulationBuilder(SimulationConfiguration simulationConfiguration)
       {
@@ -32,11 +32,13 @@ namespace OSPSuite.Core.Domain.Builder
 
       public bool CreateAllProcessRateParameters => _simulationConfiguration.CreateAllProcessRateParameters;
 
-      public IEntity BuilderFor(IEntity modelObject) => EntitySources.SourceFor(modelObject)?.Source;
+      public IEntity BuilderFor(IEntity modelObject) => EntitySourceFor(modelObject)?.Source;
 
-      internal void AddObjectSource(EntitySource entitySource)
+      internal EntitySource EntitySourceFor(IEntity entity) => _entitySources[entity.Id];
+
+      internal void AddEntitySource(string entityId, EntitySource entitySource)
       {
-         EntitySources.Add(entitySource);
+         _entitySources[entityId] = entitySource;
       }
 
       internal IEnumerable<MoleculeBuilder> AllPresentMolecules()
@@ -200,6 +202,8 @@ namespace OSPSuite.Core.Domain.Builder
       internal IReadOnlyCollection<MoleculeBuilder> Molecules => _molecules;
       internal IReadOnlyCollection<ParameterValue> ParameterValues => _parameterValues;
       internal IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
+
+      public IReadOnlyCollection<EntitySource> EntitySources => _entitySources;
 
       internal MoleculeList MoleculeListFor(IMoleculeDependentBuilder builder) => _moleculeListCache[builder];
 

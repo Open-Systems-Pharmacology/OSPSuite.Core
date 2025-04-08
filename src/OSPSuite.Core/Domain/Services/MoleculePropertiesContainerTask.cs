@@ -63,7 +63,7 @@ namespace OSPSuite.Core.Domain.Services
 
          //this is the container that will be used to create all the local molecule containers
          var spatialStructureGlobalMoleculeContainer = model.Root.Container(Constants.MOLECULE_PROPERTIES);
-                  
+
          //Add global molecule dependent parameters
          if (moleculeBuilder.IsFloatingXenobiotic && spatialStructureGlobalMoleculeContainer != null)
             globalMoleculeContainer.AddChildren(addAllParametersFrom(spatialStructureGlobalMoleculeContainer, simulationBuilder));
