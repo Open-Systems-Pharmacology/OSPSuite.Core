@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Import;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Exceptions;
@@ -308,6 +309,18 @@ namespace OSPSuite.R.Services
          configuration.Parameters.Any(x => (x as MappingDataFormatParameter).ColumnName == "Time [h]").ShouldBeTrue();
          configuration.Parameters.Any(x => (x as MappingDataFormatParameter).ColumnName == "Measurement [mg/l]").ShouldBeTrue();
          configuration.Parameters.Any(x => (x as MappingDataFormatParameter).ColumnName == "Error [mg/l]").ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_throw_meaningful_exception_not_null_reference_exception()
+      {
+         // This sheet has a column configuration where the dimension cannot be determined, but an error column
+         // where the dimension can be determined. It should error with an appropriate exception and message
+         var fileFullName = getFileFullName("CompiledDataSet.xlsx");
+         var configuration = sut.CreateConfigurationFor(fileFullName, "TestSheet_1_withMW");
+         sut.SetAllLoadedSheet(configuration, "TestSheet_1_withMW");
+         sut.IgnoreSheetNamesAtImport = false;
+         The.Action(() => sut.ImportExcelFromConfiguration(configuration, fileFullName)).ShouldThrowAn<InvalidArgumentException>();
       }
    }
 }
