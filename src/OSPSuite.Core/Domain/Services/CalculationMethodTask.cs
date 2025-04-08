@@ -74,6 +74,7 @@ namespace OSPSuite.Core.Domain.Services
          foreach (var helpParameter in calculationMethod.AllHelpParameters())
          {
             var containerDescriptor = calculationMethod.DescriptorFor(helpParameter);
+            _simulationBuilder.AddToBuilderSource(helpParameter, calculationMethod);
             foreach (var molecule in allMoleculesUsingMethod)
             {
                foreach (var container in allMoleculeContainersFor(containerDescriptor, molecule))

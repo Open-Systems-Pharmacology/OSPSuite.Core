@@ -376,7 +376,7 @@ namespace OSPSuite.Core.Domain.Services
          var presentMolecules = allPresentMoleculesInContainers(modelConfiguration).ToList();
 
          var moleculesWithPhysicalContainers = presentMolecules.Where(containerIsPhysical);
-         moleculesWithPhysicalContainers.Each(x => { addMoleculeToContainer(simulationBuilder, x.Container, simulationBuilder.MoleculeByName(x.InitialCondition.MoleculeName)); });
+         moleculesWithPhysicalContainers.Each(x => addMoleculeToContainer(simulationBuilder, x.Container, simulationBuilder.MoleculeByName(x.InitialCondition.MoleculeName)));
 
          return new MoleculeBuildingBlockValidator().Validate(simulationBuilder.Molecules)
             .AddMessagesFrom(createValidationMessagesForPresentMolecules(presentMolecules));

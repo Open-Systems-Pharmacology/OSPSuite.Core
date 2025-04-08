@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
@@ -23,8 +22,8 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IContainerMergeTask _containerMergeTask;
       private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly ITransportBuilderToTransportMapper _transportMapper;
-      private ICache<DescriptorCriteria, IEnumerable<IContainer>> _sourceCriteriaTargetContainerCache;
-      private Cache<DescriptorCriteria, IEnumerable<IContainer>> _applicationTransportTargetContainerCache;
+      private readonly Cache<DescriptorCriteria, IEnumerable<IContainer>> _sourceCriteriaTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
+      private readonly Cache<DescriptorCriteria, IEnumerable<IContainer>> _applicationTransportTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
       private EntityDescriptorMapList<IContainer> _allModelContainerDescriptors;
 
       public EventBuilderTask(
@@ -51,27 +50,23 @@ namespace OSPSuite.Core.Domain.Services
             var (model, simulationBuilder) = modelConfiguration;
 
             _allModelContainerDescriptors = model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
-            _sourceCriteriaTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
-            _applicationTransportTargetContainerCache = new Cache<DescriptorCriteria, IEnumerable<IContainer>>();
 
-            simulationBuilder.EventGroupAndMergeBehaviors.Each(eventGroupBuildingBlockAndMerge =>
-            {
-               var (buildingBlock, mergeBehavior) = eventGroupBuildingBlockAndMerge;
-               mergeEventGroups(modelConfiguration, buildingBlock, mergeBehavior);
-            });
+            simulationBuilder.EventGroupAndMergeBehaviors.Each(eventGroupBuildingBlockAndMerge => { mergeEventGroups(modelConfiguration, eventGroupBuildingBlockAndMerge); });
          }
          finally
          {
             _allModelContainerDescriptors = null;
             _sourceCriteriaTargetContainerCache.Clear();
-            _sourceCriteriaTargetContainerCache = null;
             _applicationTransportTargetContainerCache.Clear();
-            _applicationTransportTargetContainerCache = null;
          }
       }
 
-      private void mergeEventGroups(ModelConfiguration modelConfiguration, EventGroupBuildingBlock buildingBlock, MergeBehavior mergeBehavior)
+      private void mergeEventGroups(ModelConfiguration modelConfiguration, (EventGroupBuildingBlock buildingBlock, MergeBehavior mergeBehavior) eventGroupBuildingBlockAndMerge)
       {
+         var (buildingBlock, mergeBehavior) = eventGroupBuildingBlockAndMerge;
+         var (_, simulationBuilder) = modelConfiguration;
+
+         simulationBuilder.AddToBuilderSource(buildingBlock);
          foreach (var eventGroupBuilder in buildingBlock)
          {
             if (_sourceCriteriaTargetContainerCache.Contains(eventGroupBuilder.SourceCriteria))

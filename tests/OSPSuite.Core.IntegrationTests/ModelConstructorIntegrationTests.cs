@@ -457,6 +457,16 @@ namespace OSPSuite.Core
       }
 
       [Observation]
+      public void should_track_the_parameter_updated_by_a_formula_accordingly()
+      {
+         var bone_cell = _model.ModelOrganCompartment(Bone, Cell);
+         var parameter = bone_cell.Parameter("FormulaParameterOverwritten");
+         var parameterValues = _simulationConfiguration.ModuleConfigurations[0].SelectedParameterValues;
+         var parameterValue = parameterValues.First(x => x.Name == parameter.Name);
+         _simulationBuilder.EntitySources.SourceById(parameter.Id).SourceId.ShouldBeEqualTo(parameterValue.Id);
+      }
+
+      [Observation]
       public void should_be_able_to_resolve_global_parameters_defined_in_reaction_referencing_other_global_parameters_from_another_reaction()
       {
          var r2k2Global = _model.Root.EntityAt<IParameter>("R2", "k2");
@@ -608,6 +618,15 @@ namespace OSPSuite.Core
          var parameter = _model.Root.EntityAt<IParameter>(ORGANISM, "NewParameterAddedFromParameterValues");
          parameter.ShouldNotBeNull();
          parameter.Value.ShouldBeEqualTo(10);
+      }
+
+      [Observation]
+      public void should_track_the_parameter_accordingly()
+      {
+         var parameter = _model.Root.EntityAt<IParameter>(ORGANISM, "NewParameterAddedFromParameterValues");
+         var parameterValues = _simulationConfiguration.ModuleConfigurations[0].SelectedParameterValues;
+         var parameterValue = parameterValues.First(x => x.Name == parameter.Name);
+         _simulationBuilder.EntitySources.SourceById(parameter.Id).SourceId.ShouldBeEqualTo(parameterValue.Id);
       }
    }
 }

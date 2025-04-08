@@ -6,7 +6,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class QuantityAndContainerXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class QuantityAndContainerXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerializationEmptyQuantityAndContainer()
@@ -47,7 +47,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class MoleculeAmountXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class MoleculeAmountXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerializationMoleculeAmountWithFixedValue()
@@ -62,7 +62,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class DistributedParameterXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class DistributedParameterXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       private DistributedParameter _dp;
 

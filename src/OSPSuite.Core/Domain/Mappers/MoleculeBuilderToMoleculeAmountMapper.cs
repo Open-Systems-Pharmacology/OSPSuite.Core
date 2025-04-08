@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
@@ -40,19 +41,22 @@ namespace OSPSuite.Core.Domain.Mappers
       private readonly IFormulaFactory _formulaFactory;
       private readonly IParameterFactory _parameterFactory;
       private readonly IDimension _amountDimension;
+      private readonly IEntityTracker _entityTracker;
 
       public MoleculeBuilderToMoleculeAmountMapper(IObjectBaseFactory objectBaseFactory,
          IFormulaBuilderToFormulaMapper formulaMapper,
          IParameterBuilderToParameterMapper parameterMapper,
          IDimensionFactory dimensionFactory, 
          IFormulaFactory formulaFactory,
-         IParameterFactory parameterFactory)
+         IParameterFactory parameterFactory,
+         IEntityTracker entityTracker)
       {
          _objectBaseFactory = objectBaseFactory;
          _formulaMapper = formulaMapper;
          _parameterMapper = parameterMapper;
          _formulaFactory = formulaFactory;
          _parameterFactory = parameterFactory;
+         _entityTracker = entityTracker;
          _amountDimension = dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
       }
 
@@ -68,7 +72,7 @@ namespace OSPSuite.Core.Domain.Mappers
             .WithDimension(_amountDimension)
             .WithDisplayUnit(_amountDimension.UnitOrDefault(_amountDimension.DefaultUnit.Name));
 
-         simulationBuilder.AddBuilderReference(moleculeAmount, moleculeBuilder);
+         _entityTracker.Track(moleculeAmount, moleculeBuilder, simulationBuilder);
 
          createMoleculeAmountDefaultFormula(moleculeBuilder, simulationBuilder, moleculeAmount);
 
@@ -101,7 +105,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
          //create a start value parameter that will be referenced in the molecule formula 
          var startValueParameter = _parameterFactory.CreateStartValueParameter(moleculeAmount, modelFormula, moleculeBuilder.DisplayUnit);
-         simulationBuilder.AddBuilderReference(startValueParameter, moleculeBuilder);
+         _entityTracker.Track(startValueParameter, moleculeBuilder, simulationBuilder);
          moleculeAmount.Add(startValueParameter);
          moleculeAmount.Formula = _formulaFactory.CreateMoleculeAmountReferenceToStartValue(startValueParameter);
       }

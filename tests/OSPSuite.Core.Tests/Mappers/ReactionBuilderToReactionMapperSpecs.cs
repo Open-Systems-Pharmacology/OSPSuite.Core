@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Mappers
@@ -31,6 +32,7 @@ namespace OSPSuite.Core.Mappers
       protected IDimension _amountPerTimeDimension;
       protected IDimension _concentrationPerTimeDimension;
       protected SimulationBuilder _simulationBuilder;
+      protected IEntityTracker _entityTracker;
 
       protected override void Context()
       {
@@ -44,6 +46,7 @@ namespace OSPSuite.Core.Mappers
          _formulaMapper = A.Fake<IFormulaBuilderToFormulaMapper>();
          _parameterMapper = A.Fake<IParameterBuilderCollectionToParameterCollectionMapper>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
+         _entityTracker = A.Fake<IEntityTracker>();
          _modifier = "MOD";
          _reactionBuilder = new ReactionBuilder().WithName("MyReaction");
          _reactionBuilder.Dimension = _amountPerTimeDimension;
@@ -72,8 +75,8 @@ namespace OSPSuite.Core.Mappers
          _reactionBuilder.AddModifier(_modifier);
          A.CallTo(() => _objectBaseFactory.Create<Reaction>()).Returns(new Reaction());
          A.CallTo(() => _parameterMapper.MapFrom(_reactionBuilder.Parameters, _simulationBuilder, ParameterBuildMode.Local)).Returns(new List<IParameter>());
-         _processRateParameterCreator = new ProcessRateParameterCreator(_objectBaseFactory, _formulaMapper);
-         sut = new ReactionBuilderToReactionMapper(_objectBaseFactory, _reactionPartnerMapper, _formulaMapper, _parameterMapper, _processRateParameterCreator);
+         _processRateParameterCreator = new ProcessRateParameterCreator(_objectBaseFactory, _formulaMapper, _entityTracker);
+         sut = new ReactionBuilderToReactionMapper(_objectBaseFactory, _reactionPartnerMapper, _formulaMapper, _parameterMapper, _processRateParameterCreator, _entityTracker);
       }
    }
 

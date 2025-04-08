@@ -6,7 +6,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   internal class ModelXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class ModelXmlSerializerSpecs : ModelingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestSimpleModelContainer()

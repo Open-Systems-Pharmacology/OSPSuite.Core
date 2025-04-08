@@ -16,7 +16,7 @@ using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core.Serializers
 {
-   public abstract class concern_for_DataRepositoryXmlSerializer : ModellingXmlSerializerBaseSpecs
+   public abstract class concern_for_DataRepositoryXmlSerializer : ModelingXmlSerializerBaseSpecs
    {
       protected BaseGrid _baseGrid;
       protected DataColumn _col1;

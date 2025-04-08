@@ -6,7 +6,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class FormulaCacheXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class FormulaCacheXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
