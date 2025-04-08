@@ -178,10 +178,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          return warningFlag;
       }
 
-      private static bool unitIsValid(string unit)
-      {
-         return !string.IsNullOrEmpty(unit) && unit != UnitDescription.InvalidUnit;
-      }
+      private static bool unitIsValid(string unit) => !string.IsNullOrEmpty(unit) && unit != UnitDescription.InvalidUnit;
 
       private double truncateUsingLLOQ(SimulationPoint value)
       {
