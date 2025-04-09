@@ -1,10 +1,12 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+using DevExpress.XtraBars.Ribbon.Gallery;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
+using Padding = DevExpress.XtraLayout.Utils.Padding;
 
 namespace OSPSuite.UI.Views
 {
@@ -15,16 +17,13 @@ namespace OSPSuite.UI.Views
       public HeavyWorkView()
       {
          InitializeComponent();
-
-         FormBorderStyle = FormBorderStyle.FixedToolWindow;
+         FormBorderStyle = FormBorderStyle.None;
          StartPosition = FormStartPosition.CenterParent;
-         MaximizeBox = false;
-         MaximizeBox = false;
-         ShowInTaskbar = false;
          Opacity = 0.7;
          btnCancel.InitWithImage(ApplicationIcons.Cancel, Captions.CancelButton, ImageLocation.MiddleRight);
          btnCancel.Text = Captions.CancelButton;
          btnCancel.Click += (o, e) => OnEvent(btnCancel_click);
+         uxLayoutControl.Root.Padding = new Padding(0);
       }
 
       public void AttachPresenter(IHeavyWorkPresenter presenter)
@@ -34,19 +33,23 @@ namespace OSPSuite.UI.Views
          _presenter = presenter;
       }
 
-      public void Display()
+      private void SetLayout()
       {
-         CloseBox = false;
-         btnCancel.Visible = CancelVisible;
          if (CancelVisible)
          {
-            Padding = new Padding(1);
-            this.Paint += (s, e) =>
-            {
-               ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle,
-                  Color.Gray, ButtonBorderStyle.Solid);
-            };
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            MaximizeBox = false;
+            MaximizeBox = false;
+            ShowInTaskbar = false;
+            this.Height = this.MaximumSize.Height;
          }
+            
+         layoutControlItemCancelButton.ContentVisible = CancelVisible;
+      }
+
+      public void Display()
+      {
+         SetLayout();
          ShowDialog();
       }
 
