@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain
@@ -42,12 +43,12 @@ namespace OSPSuite.Core.Domain
       {
       }
 
-      public EntitySource(EntitySource originalSource) : this(originalSource.BuildingBlockId, originalSource.SourceType, originalSource.SourceId, originalSource.Source)
+      internal EntitySource(EntitySource originalSource) : this(originalSource.BuildingBlockId, originalSource.SourceType, originalSource.SourceId, originalSource.Source)
       {
          EntityPath = originalSource.EntityPath;
       }
 
-      public EntitySource(string buildingBlockId, string sourceType, string sourceId, IEntity source)
+      internal EntitySource(string buildingBlockId, string sourceType, string sourceId, IEntity source)
       {
          BuildingBlockId = buildingBlockId;
          SourceType = sourceType;
@@ -55,7 +56,17 @@ namespace OSPSuite.Core.Domain
          Source = source;
       }
 
-      public EntitySource Clone() => new EntitySource(this);
+      /// <summary>
+      ///    Returns a clone of the object without the reference to the source
+      /// </summary>
+      /// <returns></returns>
+      public EntitySource Clone()
+      {
+         return new EntitySource(BuildingBlockId, SourceType, SourceId, null)
+         {
+            EntityPath = EntityPath
+         };
+      }
    }
 
    public class EntitySources : IReadOnlyCollection<EntitySource>, IVisitable<IVisitor>
@@ -64,6 +75,9 @@ namespace OSPSuite.Core.Domain
 
       public void Add(EntitySource entitySource)
       {
+         if (entitySource.EntityPath == null)
+            return;
+
          _sources[entitySource.EntityPath] = entitySource;
       }
 
@@ -80,6 +94,13 @@ namespace OSPSuite.Core.Domain
       public virtual void AcceptVisitor(IVisitor visitor)
       {
          visitor.Visit(this);
+      }
+
+      public EntitySources Clone()
+      {
+         var clone = new EntitySources();
+         _sources.Each(x => clone.Add(x.Clone()));
+         return clone;
       }
    }
 }
