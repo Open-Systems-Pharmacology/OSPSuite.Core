@@ -35,7 +35,7 @@ namespace OSPSuite.Core.Services
       [Observation]
       public void should_not_crash()
       {
-         sut.UpdateEntityPath(_model, _simulationBuilder);
+         sut.UpdateEntityPaths(_model, _simulationBuilder);
       }
    }
 
@@ -55,7 +55,7 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         sut.UpdateEntityPath(_model, _simulationBuilder);
+         sut.UpdateEntityPaths(_model, _simulationBuilder);
       }
 
       [Observation]

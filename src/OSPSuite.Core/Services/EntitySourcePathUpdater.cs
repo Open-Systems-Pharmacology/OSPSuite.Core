@@ -1,5 +1,4 @@
-﻿using System;
-using OSPSuite.Core.Domain;
+﻿using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Extensions;
@@ -8,7 +7,7 @@ namespace OSPSuite.Core.Services
 {
    public interface IEntitySourcePathUpdater
    {
-      void UpdateEntityPath(IModel model, SimulationBuilder simulationBuilder);
+      void UpdateEntityPaths(IModel model, SimulationBuilder simulationBuilder);
    }
 
    public class EntitySourcePathUpdater : IEntitySourcePathUpdater
@@ -20,7 +19,7 @@ namespace OSPSuite.Core.Services
          _entityPathResolver = entityPathResolver;
       }
 
-      public void UpdateEntityPath(IModel model, SimulationBuilder simulationBuilder)
+      public void UpdateEntityPaths(IModel model, SimulationBuilder simulationBuilder)
       {
          var allEntitiesInModel = model.Root.GetAllChildrenAndSelf<IEntity>();
 

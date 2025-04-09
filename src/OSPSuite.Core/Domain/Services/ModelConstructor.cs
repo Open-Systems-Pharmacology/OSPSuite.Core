@@ -129,7 +129,7 @@ namespace OSPSuite.Core.Domain.Services
          _referencesResolver.ResolveReferencesIn(model);
 
          //last, we need to update the path of entity in the EntitySource
-         _entitySourcePathUpdater.UpdateEntityPath(model, simulationBuilder);
+         _entitySourcePathUpdater.UpdateEntityPaths(model, simulationBuilder);
       }
 
       private void removeUndefinedLocalMoleculeParametersIn(IModel model)
