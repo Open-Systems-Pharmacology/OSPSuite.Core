@@ -95,7 +95,7 @@ namespace OSPSuite.Core.Domain
             .Where(x => x.IsNamed(parameterName));
       }
 
-      public static void AddObjectSources(this IModelCoreSimulation simulation, EntitySources entitySources)
+      public static void AddEntitySources(this IModelCoreSimulation simulation, IEnumerable<EntitySource> entitySources)
       {
          entitySources?.Each(simulation.EntitySources.Add);
       }
