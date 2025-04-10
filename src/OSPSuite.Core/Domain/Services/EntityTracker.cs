@@ -27,23 +27,22 @@ namespace OSPSuite.Core.Domain.Services
          var builderSource = simulationBuilder.BuilderSourceFor(sourceBuilder);
          if (builderSource != null)
          {
-            var objectSource = new EntitySource(entityToTrack.Id, builderSource.BuildingBlock.Id, sourceType, sourceBuilder.Id, sourceBuilder);
-            simulationBuilder.AddObjectSource(objectSource);
+            var objectSource = new EntitySource(builderSource.BuildingBlock.Id, sourceType, sourceBuilder.Id, sourceBuilder);
+            simulationBuilder.AddEntitySource(entityToTrack.Id, objectSource);
             return;
          }
 
          //in this case, we might have clone the object. We need to find the source of the source
-         var objectSourceOrigin = simulationBuilder.EntitySources.SourceById(sourceBuilder.Id);
+         var objectSourceOrigin = simulationBuilder.EntitySourceFor(sourceBuilder);
          if (objectSourceOrigin != null)
          {
-            var newObjectSource = new EntitySource(entityToTrack.Id, objectSourceOrigin);
-            simulationBuilder.AddObjectSource(newObjectSource);
+            var newObjectSource = new EntitySource(objectSourceOrigin);
+            simulationBuilder.AddEntitySource(entityToTrack.Id, newObjectSource);
             return;
          }
 
          //Error. This should never happen. Log for now
          Console.WriteLine($"Cannot find builder source for {sourcePath}");
       }
-
    }
 }

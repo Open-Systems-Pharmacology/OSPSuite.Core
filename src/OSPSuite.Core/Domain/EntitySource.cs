@@ -2,31 +2,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain
 {
    /// <summary>
    ///    Tracks the origin of specific entities in the simulation (such as parameters, initial conditions, parameter values
-   ///    and formulas).
-   ///    The origin building block will be the one that last modified the entity (e.g a parameter might be created by multiple
-   ///    building blocks. This will be the one that created the entity)
-   ///    Each source is unique by path. It will store the id of the building block (if defined)
+   ///    and formulas).The origin building block will be the one that last modified the entity (e.g a parameter might be
+   ///    created by multiple building blocks. This will be the one that created the entity). Each source is unique by path.
+   ///    It will store the id of the building block (if defined)
    /// </summary>
    public class EntitySource
    {
       /// <summary>
-      ///    Id of the entityM in the simulation.
+      ///    Consolidated path of the entity in the simulation
       /// </summary>
-      public string EntityId { get; }
+      public string EntityPath { get; internal set; }
 
       public string BuildingBlockId { get; }
-
-      /// <summary>
-      ///    Actual reference to the source of the entity. This will not be serialized and is just used to retrieve during
-      ///    simulation construction
-      /// </summary>
-      public IEntity Source { get; }
 
       /// <summary>
       ///    Id of the actual source of the object.
@@ -38,37 +32,58 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public string SourceType { get; }
 
+      /// <summary>
+      ///    Actual reference to the source of the entity. This will not be serialized and is just used to retrieve during
+      ///    simulation construction
+      /// </summary>
+      internal IEntity Source { get; }
+
       [Obsolete("For serialization")]
       public EntitySource()
       {
       }
 
-      public EntitySource(string entityId, EntitySource originalSource) : this(entityId, originalSource.BuildingBlockId, originalSource.SourceType, originalSource.SourceId, originalSource.Source)
+      internal EntitySource(EntitySource originalSource) : this(originalSource.BuildingBlockId, originalSource.SourceType, originalSource.SourceId, originalSource.Source)
       {
+         EntityPath = originalSource.EntityPath;
       }
 
-      public EntitySource(string entityId, string buildingBlockId, string sourceType, string sourceId, IEntity source)
+      internal EntitySource(string buildingBlockId, string sourceType, string sourceId, IEntity source)
       {
-         EntityId = entityId;
          BuildingBlockId = buildingBlockId;
          SourceType = sourceType;
          SourceId = sourceId;
          Source = source;
       }
+
+      /// <summary>
+      ///    Returns a clone of the object without the reference to the source
+      /// </summary>
+      /// <returns></returns>
+      public EntitySource Clone()
+      {
+         return new EntitySource(BuildingBlockId, SourceType, SourceId, null)
+         {
+            EntityPath = EntityPath
+         };
+      }
    }
 
    public class EntitySources : IReadOnlyCollection<EntitySource>, IVisitable<IVisitor>
    {
-      private readonly Cache<string, EntitySource> _sources = new Cache<string, EntitySource>(x => x.EntityId, x => null);
+      private readonly Cache<string, EntitySource> _sources = new Cache<string, EntitySource>(x => x.EntityPath, x => null);
 
       public void Add(EntitySource entitySource)
       {
-         _sources[entitySource.EntityId] = entitySource;
+         if (entitySource.EntityPath == null)
+            return;
+
+         _sources[entitySource.EntityPath] = entitySource;
       }
 
-      public EntitySource SourceFor(IEntity entity) => SourceById(entity.Id);
+      public EntitySource SourceFor(IEntity entity) => SourceByPath(entity.Id);
 
-      public EntitySource SourceById(string entityId) => _sources[entityId];
+      public EntitySource SourceByPath(string path) => _sources[path];
 
       public IEnumerator<EntitySource> GetEnumerator() => _sources.GetEnumerator();
 
@@ -79,6 +94,13 @@ namespace OSPSuite.Core.Domain
       public virtual void AcceptVisitor(IVisitor visitor)
       {
          visitor.Visit(this);
+      }
+
+      public EntitySources Clone()
+      {
+         var clone = new EntitySources();
+         _sources.Each(x => clone.Add(x.Clone()));
+         return clone;
       }
    }
 }
