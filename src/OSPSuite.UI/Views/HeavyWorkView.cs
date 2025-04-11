@@ -22,7 +22,7 @@ namespace OSPSuite.UI.Views
          Opacity = 0.7;
          btnCancel.InitWithImage(ApplicationIcons.Cancel, Captions.CancelButton, ImageLocation.MiddleRight);
          btnCancel.Text = Captions.CancelButton;
-         btnCancel.Click += (o, e) => OnEvent(btnCancel_click);
+         btnCancel.Click += (o, e) => OnEvent(cancelButtonClick);
       }
 
       public void AttachPresenter(IHeavyWorkPresenter presenter)
@@ -75,7 +75,7 @@ namespace OSPSuite.UI.Views
       public bool ExtraVisible { get; set; }
       public bool CancelVisible { get; set; }
 
-      private void btnCancel_click()
+      private void cancelButtonClick()
       {
          _presenter.Cancel();
       }
