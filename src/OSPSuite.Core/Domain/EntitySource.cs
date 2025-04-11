@@ -12,7 +12,6 @@ namespace OSPSuite.Core.Domain
    ///    Tracks the origin of specific entities in the simulation (such as parameters, initial conditions, parameter values
    ///    and formulas).The origin building block will be the one that last modified the entity (e.g a parameter might be
    ///    created by multiple building blocks. This will be the one that created the entity). Each source is unique by path.
-   ///    It will store the id of the building block (if defined)
    /// </summary>
    public class EntitySource
    {
@@ -27,9 +26,6 @@ namespace OSPSuite.Core.Domain
 
       public string ModuleName { get; }
 
-      /// <summary>
-      ///    Id of the actual source of the object.
-      /// </summary>
       public string SourcePath { get; }
 
       /// <summary>
@@ -85,8 +81,6 @@ namespace OSPSuite.Core.Domain
 
          _sources[entitySource.EntityPath] = entitySource;
       }
-
-      public EntitySource SourceFor(IEntity entity) => SourceByPath(entity.Id);
 
       public EntitySource SourceByPath(string path) => _sources[path];
 
