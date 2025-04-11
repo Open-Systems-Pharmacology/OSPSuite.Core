@@ -23,7 +23,6 @@ namespace OSPSuite.UI.Views
          btnCancel.InitWithImage(ApplicationIcons.Cancel, Captions.CancelButton, ImageLocation.MiddleRight);
          btnCancel.Text = Captions.CancelButton;
          btnCancel.Click += (o, e) => OnEvent(btnCancel_click);
-         uxLayoutControl.Root.Padding = new Padding(0);
       }
 
       public void AttachPresenter(IHeavyWorkPresenter presenter)

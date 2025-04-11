@@ -29,18 +29,18 @@
       private void InitializeComponent()
       {
          this.uxLayoutControl = new OSPSuite.UI.Controls.UxLayoutControl();
-         this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
-         this.progressBar = new DevExpress.XtraEditors.MarqueeProgressBarControl();
-         this.layoutControlItemProgressBar = new DevExpress.XtraLayout.LayoutControlItem();
          this.btnCancel = new DevExpress.XtraEditors.SimpleButton();
+         this.progressBar = new DevExpress.XtraEditors.MarqueeProgressBarControl();
+         this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
+         this.layoutControlItemProgressBar = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutControlItemCancelButton = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.uxLayoutControl)).BeginInit();
          this.uxLayoutControl.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.progressBar.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItemProgressBar)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItemCancelButton)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
@@ -62,6 +62,26 @@
          this.uxLayoutControl.TabIndex = 4;
          this.uxLayoutControl.Text = "uxLayoutControl1";
          // 
+         // btnCancel
+         // 
+         this.btnCancel.Location = new System.Drawing.Point(47, 68);
+         this.btnCancel.MinimumSize = new System.Drawing.Size(0, 30);
+         this.btnCancel.Name = "btnCancel";
+         this.btnCancel.Size = new System.Drawing.Size(113, 30);
+         this.btnCancel.StyleController = this.uxLayoutControl;
+         this.btnCancel.TabIndex = 5;
+         this.btnCancel.Text = "btnCancel";
+         // 
+         // progressBar
+         // 
+         this.progressBar.EditValue = 0;
+         this.progressBar.Location = new System.Drawing.Point(12, 12);
+         this.progressBar.MinimumSize = new System.Drawing.Size(0, 25);
+         this.progressBar.Name = "progressBar";
+         this.progressBar.Size = new System.Drawing.Size(148, 25);
+         this.progressBar.StyleController = this.uxLayoutControl;
+         this.progressBar.TabIndex = 4;
+         // 
          // Root
          // 
          this.Root.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
@@ -75,15 +95,6 @@
          this.Root.Size = new System.Drawing.Size(172, 110);
          this.Root.TextVisible = false;
          // 
-         // progressBar
-         // 
-         this.progressBar.Location = new System.Drawing.Point(12, 12);
-         this.progressBar.MinimumSize = new System.Drawing.Size(0, 25);
-         this.progressBar.Name = "progressBar";
-         this.progressBar.Size = new System.Drawing.Size(148, 25);
-         this.progressBar.StyleController = this.uxLayoutControl;
-         this.progressBar.TabIndex = 4;
-         // 
          // layoutControlItemProgressBar
          // 
          this.layoutControlItemProgressBar.Control = this.progressBar;
@@ -92,16 +103,6 @@
          this.layoutControlItemProgressBar.Size = new System.Drawing.Size(152, 29);
          this.layoutControlItemProgressBar.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItemProgressBar.TextVisible = false;
-         // 
-         // btnCancel
-         // 
-         this.btnCancel.Location = new System.Drawing.Point(47, 68);
-         this.btnCancel.MinimumSize = new System.Drawing.Size(0, 30);
-         this.btnCancel.Name = "btnCancel";
-         this.btnCancel.Size = new System.Drawing.Size(113, 30);
-         this.btnCancel.StyleController = this.uxLayoutControl;
-         this.btnCancel.TabIndex = 5;
-         this.btnCancel.Text = "btnCancel";
          // 
          // layoutControlItemCancelButton
          // 
@@ -139,14 +140,14 @@
          this.Controls.Add(this.uxLayoutControl);
          this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
          this.Margin = new System.Windows.Forms.Padding(5);
-         this.MaximumSize = new System.Drawing.Size(250, 135);
+         this.MaximumSize = new System.Drawing.Size(250, 155);
          this.Name = "HeavyWorkView";
          this.Text = "Processing...";
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.uxLayoutControl)).EndInit();
          this.uxLayoutControl.ResumeLayout(false);
-         ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.progressBar.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItemProgressBar)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItemCancelButton)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
