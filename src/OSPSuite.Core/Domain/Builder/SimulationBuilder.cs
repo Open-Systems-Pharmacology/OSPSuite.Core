@@ -222,7 +222,7 @@ namespace OSPSuite.Core.Domain.Builder
 
          public override string ToString()
          {
-            return $"{Builder} - {BuildingBlock}";
+            return $"{Builder.EntityPath()} - {BuildingBlock.Name}";
          }
       }
 
