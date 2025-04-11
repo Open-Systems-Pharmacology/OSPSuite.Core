@@ -43,13 +43,15 @@ namespace OSPSuite.Core.Services
    {
       private Parameter _parameter;
       private EntitySource _entitySource;
+      private IBuildingBlock _buildingBlock;
 
       protected override void Context()
       {
          base.Context();
          _parameter = new Parameter().WithName("P1").WithId("ParamId");
          _root.Add(new Container().WithName(ORGANISM).WithChild(_parameter));
-         _entitySource = new EntitySource("BBId", "Parameter", "sourceId", null);
+         _buildingBlock = new ObserverBuildingBlock().WithName("BBName").WithId("BBId");
+         _entitySource = new EntitySource(_buildingBlock, "ORGANISM|P1", null);
          _simulationBuilder.AddEntitySource(_parameter.Id, _entitySource);
       }
 

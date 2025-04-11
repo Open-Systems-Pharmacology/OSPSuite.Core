@@ -94,9 +94,10 @@ namespace OSPSuite.Core
          var parameter1Module2 = module2Global.Parameter("P1");
          var parameter3Module2 = module2Global.Parameter("P3");
 
-         _simulationBuilder.EntitySourceFor(parameter1).SourceId.ShouldBeEqualTo(parameter1Module2.Id);
-         _simulationBuilder.EntitySourceFor(parameter2).SourceId.ShouldBeEqualTo(parameter2Module1.Id);
-         _simulationBuilder.EntitySourceFor(parameter3).SourceId.ShouldBeEqualTo(parameter3Module2.Id);
+         //we use entity path here because we are not dealing with simulations and we do not want ot remove the first entry
+         _simulationBuilder.EntitySourceFor(parameter1).SourcePath.ShouldBeEqualTo(parameter1Module2.EntityPath());
+         _simulationBuilder.EntitySourceFor(parameter2).SourcePath.ShouldBeEqualTo(parameter2Module1.EntityPath());
+         _simulationBuilder.EntitySourceFor(parameter3).SourcePath.ShouldBeEqualTo(parameter3Module2.EntityPath());
       }
 
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfiguration();

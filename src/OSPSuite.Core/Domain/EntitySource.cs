@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Visitor;
@@ -20,39 +21,44 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public string EntityPath { get; internal set; }
 
-      public string BuildingBlockId { get; }
+      public string BuildingBlockName { get; }
+
+      public string BuildingBlockType { get; }
+
+      public string ModuleName { get; }
 
       /// <summary>
       ///    Id of the actual source of the object.
       /// </summary>
-      public string SourceId { get; }
-
-      /// <summary>
-      ///    Type of the source object. Might be useful for filtering
-      /// </summary>
-      public string SourceType { get; }
+      public string SourcePath { get; }
 
       /// <summary>
       ///    Actual reference to the source of the entity. This will not be serialized and is just used to retrieve during
       ///    simulation construction
       /// </summary>
-      internal IEntity Source { get; }
+      internal IEntity Source { get; set; }
 
       [Obsolete("For serialization")]
       public EntitySource()
       {
       }
 
-      internal EntitySource(EntitySource originalSource) : this(originalSource.BuildingBlockId, originalSource.SourceType, originalSource.SourceId, originalSource.Source)
+      internal EntitySource(EntitySource originalSource)
       {
          EntityPath = originalSource.EntityPath;
+         BuildingBlockName = originalSource.BuildingBlockName;
+         BuildingBlockType = originalSource.BuildingBlockType;
+         ModuleName = originalSource.ModuleName;
+         SourcePath = originalSource.SourcePath;
+         Source = originalSource.Source;
       }
 
-      internal EntitySource(string buildingBlockId, string sourceType, string sourceId, IEntity source)
+      internal EntitySource(IBuildingBlock buildingBlock, string sourcePath, IEntity source)
       {
-         BuildingBlockId = buildingBlockId;
-         SourceType = sourceType;
-         SourceId = sourceId;
+         BuildingBlockName = buildingBlock.Name;
+         BuildingBlockType = buildingBlock.GetType().Name;
+         ModuleName = buildingBlock.Module?.Name ?? string.Empty;
+         SourcePath = sourcePath;
          Source = source;
       }
 
@@ -60,12 +66,11 @@ namespace OSPSuite.Core.Domain
       ///    Returns a clone of the object without the reference to the source
       /// </summary>
       /// <returns></returns>
-      public EntitySource Clone()
+      public EntitySource Clone() => new EntitySource(this) {Source = null};
+
+      public override string ToString()
       {
-         return new EntitySource(BuildingBlockId, SourceType, SourceId, null)
-         {
-            EntityPath = EntityPath
-         };
+         return $"{BuildingBlockName} ({BuildingBlockType}) - {ModuleName} - {SourcePath}";
       }
    }
 
