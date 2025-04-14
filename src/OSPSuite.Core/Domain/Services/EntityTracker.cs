@@ -20,12 +20,6 @@ namespace OSPSuite.Core.Domain.Services
       public void Track(IEntity entityToTrack, IEntity sourceBuilder, SimulationBuilder simulationBuilder)
       {
          var sourcePath = sourcePathFor(sourceBuilder);
-
-         if (entityToTrack.Name == "Ontogeny factor")
-         {
-            entityToTrack.Name = entityToTrack.Name;
-         }
-
          var builderSource = simulationBuilder.BuilderSourceFor(sourceBuilder);
          if (builderSource != null)
          {
