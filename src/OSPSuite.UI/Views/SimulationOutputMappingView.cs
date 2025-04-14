@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using DevExpress.Utils;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
@@ -30,6 +31,7 @@ namespace OSPSuite.UI.Views
       {
          InitializeComponent();
          gridView.AllowsFiltering = false;
+         gridView.MultiDelete = true;
          _gridViewBinder = new GridViewBinder<SimulationOutputMappingDTO>(gridView);
          _outputRepository = new UxRepositoryItemComboBox(gridView)
          {
@@ -43,6 +45,15 @@ namespace OSPSuite.UI.Views
       public void AttachPresenter(ISimulationOutputMappingPresenter presenter)
       {
          _presenter = presenter;
+         gridView.OnDeleteSelectedRows = selectedItems =>
+         {
+            var selectedDTOs = selectedItems
+               .OfType<SimulationOutputMappingDTO>()
+               .ToList();
+
+            _presenter.RemoveMultipleObservedData(selectedDTOs);
+         };
+
       }
 
       public void BindTo(IEnumerable<SimulationOutputMappingDTO> outputMappingList)
@@ -90,7 +101,7 @@ namespace OSPSuite.UI.Views
 
          _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.RemoveObservedData(_gridViewBinder.FocusedElement));
       }
-
+      
       private void onOutputMappingEdited()
       {
          _presenter.MarkSimulationAsChanged();

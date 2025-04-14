@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -33,6 +34,7 @@ namespace OSPSuite.UI.Controls
    {
       private IClipboardTask _clipboardCopyTask;
       private IGridViewToDataTableMapper _gridViewToDataTableMapper;
+      private bool _multiDelete;
 
       private DataTable rowSelectionOnlyTable => _gridViewToDataTableMapper.MapFrom(this, GetSelectedRows());
       private DataTable table => _gridViewToDataTableMapper.MapFrom(this);
@@ -92,6 +94,11 @@ namespace OSPSuite.UI.Controls
          set => OptionsView.ShowIndicator = value;
          get => OptionsView.ShowIndicator;
       }
+
+
+      [Browsable(false)]
+      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+      public Action<IList<object>> OnDeleteSelectedRows { get; set; }
 
       protected virtual void DoInit()
       {
@@ -429,6 +436,11 @@ namespace OSPSuite.UI.Controls
          if (GetSelectedRows().Length == 0)
             return;
 
+         if (MultiDelete)
+         {
+            addCopyMenuItemForRowDelete(gridViewMenu);
+         }
+
          addCommonCopyMenuItems(gridViewMenu);
 
          if (gridIsCellSelectMode())
@@ -439,6 +451,24 @@ namespace OSPSuite.UI.Controls
          {
             addCopyMenuItemsForRowSelect(gridViewMenu);
          }
+      }
+
+      private void addCopyMenuItemForRowDelete(GridViewMenu gridViewMenu)
+      {
+         var deleteRowMenu = new DXMenuItem(Captions.DeleteSelected, (o, args) =>
+         {
+            var selectedItems = GetSelectedRows()
+               .Select(rowHandle => GetRow(rowHandle))
+               .ToList();
+
+            OnDeleteSelectedRows?.Invoke(selectedItems);
+         })
+         {
+            Shortcut = Shortcut.Del,
+            SvgImage = ApplicationIcons.DeleteSelected
+         };
+
+         gridViewMenu.Items.Insert(0, deleteRowMenu);
       }
 
       private void addCopyMenuItemsForRowSelect(GridViewMenu gridViewMenu)
@@ -483,6 +513,12 @@ namespace OSPSuite.UI.Controls
       {
          set => OptionsMenu.EnableColumnMenu = value;
          get => OptionsMenu.EnableColumnMenu;
+      }
+
+      public bool MultiDelete
+      {
+         get => MultiSelect && _multiDelete;
+         set { _multiDelete = value; }
       }
 
       public bool MultiSelect

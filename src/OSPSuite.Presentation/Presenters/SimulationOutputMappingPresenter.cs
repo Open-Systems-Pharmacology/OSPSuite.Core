@@ -26,7 +26,7 @@ namespace OSPSuite.Presentation.Presenters
       void EditSimulation(ISimulation simulation);
       IReadOnlyList<SimulationQuantitySelectionDTO> AllAvailableOutputs { get; }
       void RemoveObservedData(SimulationOutputMappingDTO outputMappingDTO);
-
+      void RemoveMultipleObservedData(IEnumerable<SimulationOutputMappingDTO> lstOutputMappingDTO);
       /// <summary>
       ///    Completely rebinds the view to the content of the data source
       /// </summary>
@@ -190,6 +190,22 @@ namespace OSPSuite.Presentation.Presenters
       {
          if (Equals(eventToHandle.Simulation, _simulation))
             Refresh();
+      }
+
+      public void RemoveMultipleObservedData(IEnumerable<SimulationOutputMappingDTO> lstOutputMappingDTO)
+      {
+
+         var usedObservedDataList = lstOutputMappingDTO
+            .Select(outputMappingDTO => new UsedObservedData
+            {
+               Id = outputMappingDTO.ObservedData.Id,
+               Simulation = _simulation
+            })
+            .ToList();
+
+
+         _observedDataTask.RemoveUsedObservedDataFromSimulation(usedObservedDataList);
+         MarkSimulationAsChanged();
       }
    }
 }
