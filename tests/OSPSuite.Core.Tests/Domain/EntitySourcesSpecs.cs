@@ -1,15 +1,18 @@
 ﻿using System.Linq;
-using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Domain
 {
    public abstract class concern_for_EntitySources : ContextSpecification<EntitySources>
    {
+      protected IBuildingBlock _buildingBlock;
+
       protected override void Context()
       {
          sut = new EntitySources();
+         _buildingBlock = new ObserverBuildingBlock().WithName("BBName").WithId("BBId");
       }
    }
 
@@ -17,7 +20,7 @@ namespace OSPSuite.Core.Domain
    {
       protected override void Because()
       {
-         sut.Add(new EntitySource("BBId", "parameter", "sourceId", null));
+         sut.Add(new EntitySource(_buildingBlock, "sourcePath", null));
       }
 
       [Observation]
@@ -34,13 +37,13 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         sut.Add(new EntitySource("BB", "TYPE", "ID1", new Parameter()){EntityPath = "A"});
-         sut.Add(new EntitySource("BB", "TYPE", "ID2", new Parameter()){EntityPath = "B"});
+         sut.Add(new EntitySource(_buildingBlock, "sourcePath1", new Parameter()) {EntityPath = "A"});
+         sut.Add(new EntitySource(_buildingBlock, "sourcePath2", new Parameter()) {EntityPath = "B"});
       }
 
       protected override void Because()
       {
-         _clone  =sut.Clone();
+         _clone = sut.Clone();
       }
 
       [Observation]
