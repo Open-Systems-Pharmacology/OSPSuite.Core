@@ -254,7 +254,7 @@ namespace OSPSuite.Presentation.Presentation
          _simulation1.OutputMappings.Add(_outputMapping1);
          _simulation1.OutputMappings.All[0].Scaling = Scalings.Linear;
          sut.EditSimulation(_simulation1);
-         sut.RemoveObservedData(_outputMappingDTO1);
+         sut.RemoveObservedData(new List<SimulationOutputMappingDTO> { _outputMappingDTO1});
       }
 
       [Observation]

@@ -3,6 +3,8 @@ using System.Linq;
 using DevExpress.Utils;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
+using DevExpress.XtraGrid.Views.Grid;
+using DevExpress.XtraGrid.Views.Grid.ViewInfo;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.DataBinding.DevExpress;
@@ -31,8 +33,8 @@ namespace OSPSuite.UI.Views
       {
          InitializeComponent();
          gridView.AllowsFiltering = false;
-         gridView.MultiDelete = true;
          _gridViewBinder = new GridViewBinder<SimulationOutputMappingDTO>(gridView);
+         gridView.PopupMenuShowing += onPopupMenuShowing;
          _outputRepository = new UxRepositoryItemComboBox(gridView)
          {
             AllowNullInput = DefaultBoolean.True,
@@ -45,15 +47,28 @@ namespace OSPSuite.UI.Views
       public void AttachPresenter(ISimulationOutputMappingPresenter presenter)
       {
          _presenter = presenter;
-         gridView.OnDeleteSelectedRows = selectedItems =>
-         {
-            var selectedDTOs = selectedItems
-               .OfType<SimulationOutputMappingDTO>()
-               .ToList();
+      }
 
-            _presenter.RemoveMultipleObservedData(selectedDTOs);
+      private void onPopupMenuShowing(object sender, PopupMenuShowingEventArgs e)
+      {
+         if (e.Menu == null || e.HitInfo.HitTest != GridHitTest.RowIndicator)
+            return;
+         
+         var selectedDTOs = gridView.GetSelectedRows().SelectMany(x => _gridViewBinder.SelectedItems(x)).ToList();
+
+         if (!selectedDTOs.Any())
+            return;
+
+         var deleteItem = new DevExpress.Utils.Menu.DXMenuItem(
+            Captions.DeleteSelected,
+            (o, args) => _presenter.RemoveObservedData(selectedDTOs)
+         )
+         {
+            Shortcut = System.Windows.Forms.Shortcut.Del,
+            SvgImage = ApplicationIcons.DeleteSelected
          };
 
+         e.Menu.Items.Insert(0, deleteItem);
       }
 
       public void BindTo(IEnumerable<SimulationOutputMappingDTO> outputMappingList)
@@ -99,7 +114,7 @@ namespace OSPSuite.UI.Views
 
          _gridViewBinder.Changed += NotifyViewChanged;
 
-         _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.RemoveObservedData(_gridViewBinder.FocusedElement));
+         _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.RemoveObservedData(new List<SimulationOutputMappingDTO> { _gridViewBinder.FocusedElement }));
       }
       
       private void onOutputMappingEdited()

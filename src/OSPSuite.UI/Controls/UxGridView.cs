@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -34,14 +33,13 @@ namespace OSPSuite.UI.Controls
    {
       private IClipboardTask _clipboardCopyTask;
       private IGridViewToDataTableMapper _gridViewToDataTableMapper;
-      private bool _multiDelete;
 
       private DataTable rowSelectionOnlyTable => _gridViewToDataTableMapper.MapFrom(this, GetSelectedRows());
       private DataTable table => _gridViewToDataTableMapper.MapFrom(this);
       private DataTable rectangularSelectionOnlyTable => _gridViewToDataTableMapper.MapFrom(this, GetSelectedRows(), GetSelectedCells);
 
       protected override string ViewName => "UxGridView";
-      
+
       public UxGridView(GridControl gridControl) : base(gridControl)
       {
          DoInit();
@@ -94,11 +92,6 @@ namespace OSPSuite.UI.Controls
          set => OptionsView.ShowIndicator = value;
          get => OptionsView.ShowIndicator;
       }
-
-
-      [Browsable(false)]
-      [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-      public Action<IList<object>> OnDeleteSelectedRows { get; set; }
 
       protected virtual void DoInit()
       {
@@ -212,7 +205,7 @@ namespace OSPSuite.UI.Controls
          if (ehi.HitTest == EditHitTest.Button)
          {
             edit.PerformClick(ehi.HitObject.DowncastTo<EditorButtonObjectInfoArgs>().Button);
-            ((DXMouseEventArgs) e).Handled = true;
+            ((DXMouseEventArgs)e).Handled = true;
          }
       }
 
@@ -308,7 +301,7 @@ namespace OSPSuite.UI.Controls
       {
          get
          {
-            var viewInfo = (GridViewInfo) GetViewInfo();
+            var viewInfo = (GridViewInfo)GetViewInfo();
             FieldInfo fi = typeof(GridView).GetField("scrollInfo", BindingFlags.Instance | BindingFlags.NonPublic);
             Rectangle oldBounds = viewInfo.Bounds;
 
@@ -317,7 +310,7 @@ namespace OSPSuite.UI.Controls
                int height = viewInfo.CalcRealViewHeight(new Rectangle(0, 0, MaxValue, MaxValue));
                viewInfo.CalcRealViewHeight(oldBounds);
 
-               var scrollInfo = (ScrollInfo) fi.GetValue(this);
+               var scrollInfo = (ScrollInfo)fi.GetValue(this);
                if (scrollInfo.HScrollVisible)
                   height += scrollInfo.HScrollSize;
 
@@ -436,11 +429,6 @@ namespace OSPSuite.UI.Controls
          if (GetSelectedRows().Length == 0)
             return;
 
-         if (MultiDelete)
-         {
-            addCopyMenuItemForRowDelete(gridViewMenu);
-         }
-
          addCommonCopyMenuItems(gridViewMenu);
 
          if (gridIsCellSelectMode())
@@ -453,41 +441,23 @@ namespace OSPSuite.UI.Controls
          }
       }
 
-      private void addCopyMenuItemForRowDelete(GridViewMenu gridViewMenu)
-      {
-         var deleteRowMenu = new DXMenuItem(Captions.DeleteSelected, (o, args) =>
-         {
-            var selectedItems = GetSelectedRows()
-               .Select(rowHandle => GetRow(rowHandle))
-               .ToList();
-
-            OnDeleteSelectedRows?.Invoke(selectedItems);
-         })
-         {
-            Shortcut = Shortcut.Del,
-            SvgImage = ApplicationIcons.DeleteSelected
-         };
-
-         gridViewMenu.Items.Insert(0, deleteRowMenu);
-      }
-
       private void addCopyMenuItemsForRowSelect(GridViewMenu gridViewMenu)
       {
-         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) {Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection};
+         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection };
          gridViewMenu.Items.Insert(0, copyRowMenu);
       }
 
       private void addCopyMenuItemsForCellSelect(GridViewMenu gridViewMenu)
       {
-         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) {SvgImage = ApplicationIcons.CopySelection};
-         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, (o, args) => processSelectiveCopyToClipboard()) {Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection};
+         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) { SvgImage = ApplicationIcons.CopySelection };
+         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, (o, args) => processSelectiveCopyToClipboard()) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection };
          gridViewMenu.Items.Insert(0, copyRowMenu);
          gridViewMenu.Items.Insert(0, copySelectionMenu);
       }
 
       private void addCommonCopyMenuItems(GridViewMenu gridViewMenu)
       {
-         var copyAllMenu = new DXMenuItem(Captions.CopyTable, (o, args) => copyEntireGridToClipboard()) {Shortcut = Shortcut.CtrlShiftC, SvgImage = ApplicationIcons.Copy};
+         var copyAllMenu = new DXMenuItem(Captions.CopyTable, (o, args) => copyEntireGridToClipboard()) { Shortcut = Shortcut.CtrlShiftC, SvgImage = ApplicationIcons.Copy };
          gridViewMenu.Items.Insert(0, copyAllMenu);
       }
 
@@ -513,12 +483,6 @@ namespace OSPSuite.UI.Controls
       {
          set => OptionsMenu.EnableColumnMenu = value;
          get => OptionsMenu.EnableColumnMenu;
-      }
-
-      public bool MultiDelete
-      {
-         get => MultiSelect && _multiDelete;
-         set { _multiDelete = value; }
       }
 
       public bool MultiSelect
@@ -558,7 +522,7 @@ namespace OSPSuite.UI.Controls
          var firstRow = selectedRows.First();
          var firstRowColumnsSelected = GetSelectedCells(firstRow);
 
-         return selectedRows.Except(new[] {firstRow}).Select(GetSelectedCells).All(currentRowSelectedColumns => allColumnsAreCommon(firstRowColumnsSelected, currentRowSelectedColumns));
+         return selectedRows.Except(new[] { firstRow }).Select(GetSelectedCells).All(currentRowSelectedColumns => allColumnsAreCommon(firstRowColumnsSelected, currentRowSelectedColumns));
       }
 
       private static bool allColumnsAreCommon(GridColumn[] firstRowColumnsSelected, GridColumn[] currentRowSelectedColumns)

@@ -25,8 +25,7 @@ namespace OSPSuite.Presentation.Presenters
    {
       void EditSimulation(ISimulation simulation);
       IReadOnlyList<SimulationQuantitySelectionDTO> AllAvailableOutputs { get; }
-      void RemoveObservedData(SimulationOutputMappingDTO outputMappingDTO);
-      void RemoveMultipleObservedData(IEnumerable<SimulationOutputMappingDTO> lstOutputMappingDTO);
+      void RemoveObservedData(IReadOnlyList<SimulationOutputMappingDTO> lstOutputMappingDTO);
       /// <summary>
       ///    Completely rebinds the view to the content of the data source
       /// </summary>
@@ -164,18 +163,6 @@ namespace OSPSuite.Presentation.Presenters
          _eventPublisher.PublishEvent(new SimulationOutputMappingsChangedEvent(_simulation));
       }
 
-      public void RemoveObservedData(SimulationOutputMappingDTO outputMappingDTO)
-      {
-         var usedObservedData = new UsedObservedData
-         {
-            Id = outputMappingDTO.ObservedData.Id,
-            Simulation = _simulation
-         };
-
-         _observedDataTask.RemoveUsedObservedDataFromSimulation(new List<UsedObservedData>() {usedObservedData});
-         MarkSimulationAsChanged();
-      }
-
       public void Handle(ObservedDataAddedToAnalysableEvent eventToHandle)
       {
          Refresh();
@@ -192,7 +179,7 @@ namespace OSPSuite.Presentation.Presenters
             Refresh();
       }
 
-      public void RemoveMultipleObservedData(IEnumerable<SimulationOutputMappingDTO> lstOutputMappingDTO)
+      public void RemoveObservedData(IReadOnlyList<SimulationOutputMappingDTO> lstOutputMappingDTO)
       {
 
          var usedObservedDataList = lstOutputMappingDTO
