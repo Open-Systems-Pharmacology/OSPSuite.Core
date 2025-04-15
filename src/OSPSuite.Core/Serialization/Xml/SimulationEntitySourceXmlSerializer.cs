@@ -2,7 +2,7 @@
 
 namespace OSPSuite.Core.Serialization.Xml
 {
-   public class EntitySourceXmlSerializer : OSPSuiteXmlSerializer<EntitySource>
+   public class SimulationEntitySourceXmlSerializer : OSPSuiteXmlSerializer<SimulationEntitySource>
    {
       public override void PerformMapping()
       {

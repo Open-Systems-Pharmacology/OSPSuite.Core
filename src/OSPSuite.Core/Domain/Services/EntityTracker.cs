@@ -23,17 +23,17 @@ namespace OSPSuite.Core.Domain.Services
          var builderSource = simulationBuilder.BuilderSourceFor(sourceBuilder);
          if (builderSource != null)
          {
-            var objectSource = new EntitySource(builderSource.BuildingBlock, sourcePath, sourceBuilder);
-            simulationBuilder.AddEntitySource(entityToTrack.Id, objectSource);
+            var objectSource = new SimulationEntitySource(builderSource.BuildingBlock, sourcePath, sourceBuilder);
+            simulationBuilder.AddSimulationEntitySource(entityToTrack.Id, objectSource);
             return;
          }
 
          //in this case, we might have clone the object. We need to find the source of the source
-         var objectSourceOrigin = simulationBuilder.EntitySourceFor(sourceBuilder);
+         var objectSourceOrigin = simulationBuilder.SimulationEntitySourceFor(sourceBuilder);
          if (objectSourceOrigin != null)
          {
-            var newObjectSource = new EntitySource(objectSourceOrigin);
-            simulationBuilder.AddEntitySource(entityToTrack.Id, newObjectSource);
+            var newObjectSource = new SimulationEntitySource(objectSourceOrigin);
+            simulationBuilder.AddSimulationEntitySource(entityToTrack.Id, newObjectSource);
             return;
          }
 

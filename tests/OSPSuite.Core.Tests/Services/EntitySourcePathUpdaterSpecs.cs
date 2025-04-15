@@ -42,7 +42,7 @@ namespace OSPSuite.Core.Services
    public class When_updating_the_entity_path_for_an_entity_that_was_tracked : concern_for_EntitySourcePathUpdater
    {
       private Parameter _parameter;
-      private EntitySource _entitySource;
+      private SimulationEntitySource _simulationEntitySource;
       private IBuildingBlock _buildingBlock;
 
       protected override void Context()
@@ -51,8 +51,8 @@ namespace OSPSuite.Core.Services
          _parameter = new Parameter().WithName("P1").WithId("ParamId");
          _root.Add(new Container().WithName(ORGANISM).WithChild(_parameter));
          _buildingBlock = new ObserverBuildingBlock().WithName("BBName").WithId("BBId");
-         _entitySource = new EntitySource(_buildingBlock, "ORGANISM|P1", null);
-         _simulationBuilder.AddEntitySource(_parameter.Id, _entitySource);
+         _simulationEntitySource = new SimulationEntitySource(_buildingBlock, "ORGANISM|P1", null);
+         _simulationBuilder.AddSimulationEntitySource(_parameter.Id, _simulationEntitySource);
       }
 
       protected override void Because()
@@ -63,7 +63,7 @@ namespace OSPSuite.Core.Services
       [Observation]
       public void should_return_the_expected_path()
       {
-         _entitySource.EntityPath.ShouldBeEqualTo(new[] {ORGANISM, _parameter.Name}.ToPathString());
+         _simulationEntitySource.EntityPath.ShouldBeEqualTo(new[] {ORGANISM, _parameter.Name}.ToPathString());
       }
    }
 }

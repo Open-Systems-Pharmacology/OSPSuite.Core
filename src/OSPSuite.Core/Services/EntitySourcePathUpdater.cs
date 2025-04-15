@@ -25,7 +25,7 @@ namespace OSPSuite.Core.Services
 
          allEntitiesInModel.Each(x =>
          {
-            var entitySource = simulationBuilder.EntitySourceFor(x);
+            var entitySource = simulationBuilder.SimulationEntitySourceFor(x);
             if (entitySource == null)
                return;
 

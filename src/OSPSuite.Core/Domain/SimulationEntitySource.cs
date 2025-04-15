@@ -13,7 +13,7 @@ namespace OSPSuite.Core.Domain
    ///    and formulas).The origin building block will be the one that last modified the entity (e.g a parameter might be
    ///    created by multiple building blocks. This will be the one that created the entity). Each source is unique by path.
    /// </summary>
-   public class EntitySource
+   public class SimulationEntitySource
    {
       /// <summary>
       ///    Consolidated path of the entity in the simulation
@@ -35,11 +35,11 @@ namespace OSPSuite.Core.Domain
       internal IEntity Source { get; set; }
 
       [Obsolete("For serialization")]
-      public EntitySource()
+      public SimulationEntitySource()
       {
       }
 
-      internal EntitySource(EntitySource originalSource)
+      internal SimulationEntitySource(SimulationEntitySource originalSource)
       {
          EntityPath = originalSource.EntityPath;
          BuildingBlockName = originalSource.BuildingBlockName;
@@ -49,7 +49,7 @@ namespace OSPSuite.Core.Domain
          Source = originalSource.Source;
       }
 
-      internal EntitySource(IBuildingBlock buildingBlock, string sourcePath, IEntity source)
+      internal SimulationEntitySource(IBuildingBlock buildingBlock, string sourcePath, IEntity source)
       {
          BuildingBlockName = buildingBlock.Name;
          BuildingBlockType = buildingBlock.GetType().Name;
@@ -62,7 +62,7 @@ namespace OSPSuite.Core.Domain
       ///    Returns a clone of the object without the reference to the source
       /// </summary>
       /// <returns></returns>
-      public EntitySource Clone() => new EntitySource(this) {Source = null};
+      public SimulationEntitySource Clone() => new SimulationEntitySource(this) {Source = null};
 
       public override string ToString()
       {
@@ -70,21 +70,21 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class EntitySources : IReadOnlyCollection<EntitySource>, IVisitable<IVisitor>
+   public class SimulationEntitySources : IReadOnlyCollection<SimulationEntitySource>, IVisitable<IVisitor>
    {
-      private readonly Cache<string, EntitySource> _sources = new Cache<string, EntitySource>(x => x.EntityPath, x => null);
+      private readonly Cache<string, SimulationEntitySource> _sources = new Cache<string, SimulationEntitySource>(x => x.EntityPath, x => null);
 
-      public void Add(EntitySource entitySource)
+      public void Add(SimulationEntitySource simulationEntitySource)
       {
-         if (entitySource.EntityPath == null)
+         if (simulationEntitySource.EntityPath == null)
             return;
 
-         _sources[entitySource.EntityPath] = entitySource;
+         _sources[simulationEntitySource.EntityPath] = simulationEntitySource;
       }
 
-      public EntitySource SourceByPath(string path) => _sources[path];
+      public SimulationEntitySource SourceByPath(string path) => _sources[path];
 
-      public IEnumerator<EntitySource> GetEnumerator() => _sources.GetEnumerator();
+      public IEnumerator<SimulationEntitySource> GetEnumerator() => _sources.GetEnumerator();
 
       IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -95,9 +95,9 @@ namespace OSPSuite.Core.Domain
          visitor.Visit(this);
       }
 
-      public EntitySources Clone()
+      public SimulationEntitySources Clone()
       {
-         var clone = new EntitySources();
+         var clone = new SimulationEntitySources();
          _sources.Each(x => clone.Add(x.Clone()));
          return clone;
       }
