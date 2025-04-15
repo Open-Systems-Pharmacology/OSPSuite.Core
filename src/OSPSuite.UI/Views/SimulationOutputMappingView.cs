@@ -161,7 +161,7 @@ namespace OSPSuite.UI.Views
             SvgImage = ApplicationIcons.DeleteSelected
          };
 
-         e.Menu.Items.Insert(2, deleteItem);
+         e.Menu.Items.Insert(e.Menu.Items.Count, deleteItem);
       }
    }
 }
