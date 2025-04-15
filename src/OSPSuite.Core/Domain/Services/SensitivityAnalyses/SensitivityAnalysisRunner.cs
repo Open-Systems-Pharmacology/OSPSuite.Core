@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
       private readonly IOSPSuiteExecutionContext _executionContext;
       private readonly ICoreUserSettings _coreUserSettings;
       private ISensitivityAnalysisEngine _sensitivityAnalysisEngine;
-      private readonly ConcurrentDictionary<SensitivityAnalysis, CancellationTokenSource> _cancellationTokenSources = new ConcurrentDictionary<SensitivityAnalysis, CancellationTokenSource>();
+      private CancellationTokenSource _cancellationTokenSource;
 
       public bool IsRunning => _sensitivityAnalysisEngine != null;
 
@@ -54,15 +54,16 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 
          try
          {
-            var cts = new CancellationTokenSource();
-            if (IsRunning || !_cancellationTokenSources.TryAdd(sensitivityAnalysis, cts))
+            if (IsRunning)
                throw new OSPSuiteException(Error.CannotStartTwoConcurrentSensitivityAnalyses);
+
+            _cancellationTokenSource = new CancellationTokenSource();
 
             var options = runOptions ?? new SensitivityAnalysisRunOptions { NumberOfCoresToUse = _coreUserSettings.MaximumNumberOfCoresToUse };
             using (_sensitivityAnalysisEngine = _sensitivityAnalysisEngineFactory.Create())
             {
                var begin = SystemTime.UtcNow();
-               await _sensitivityAnalysisEngine.StartAsync(sensitivityAnalysis, options, cts.Token);
+               await _sensitivityAnalysisEngine.StartAsync(sensitivityAnalysis, options, _cancellationTokenSource.Token);
                var end = SystemTime.UtcNow();
                var timeSpent = end - begin;
                _dialogCreator.MessageBoxInfo(Captions.SensitivityAnalysis.SensitivityAnalysisFinished(timeSpent.ToDisplay()));
@@ -81,13 +82,11 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 
       public void Stop()
       {
-         foreach (var sensitivityAnalysis in _cancellationTokenSources.Keys.ToList())
+         if (_cancellationTokenSource != null)
          {
-            if (_cancellationTokenSources.TryRemove(sensitivityAnalysis, out var cts))
-            {
-               cts.Cancel();
-               cts.Dispose();
-            }
+            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Dispose();
+            _cancellationTokenSource = null;
          }
       }
    }
