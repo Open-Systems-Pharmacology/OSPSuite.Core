@@ -55,10 +55,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
          try
          {
             var cts = new CancellationTokenSource();
-            if (IsRunning)
-               throw new OSPSuiteException(Error.CannotStartTwoConcurrentSensitivityAnalyses);
-
-            if (!_cancellationTokenSources.TryAdd(sensitivityAnalysis, cts)) //this will prevent from running one that is already running
+            if (IsRunning || !_cancellationTokenSources.TryAdd(sensitivityAnalysis, cts))
                throw new OSPSuiteException(Error.CannotStartTwoConcurrentSensitivityAnalyses);
 
             var options = runOptions ?? new SensitivityAnalysisRunOptions { NumberOfCoresToUse = _coreUserSettings.MaximumNumberOfCoresToUse };
