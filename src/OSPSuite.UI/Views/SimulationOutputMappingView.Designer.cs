@@ -31,78 +31,61 @@ namespace OSPSuite.UI.Views
       /// </summary>
       private void InitializeComponent()
       {
-         DevExpress.XtraEditors.Controls.EditorButtonImageOptions editorButtonImageOptions1 = new DevExpress.XtraEditors.Controls.EditorButtonImageOptions();
-         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SimulationOutputMappingView));
-         DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject1 = new DevExpress.Utils.SerializableAppearanceObject();
-         DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject2 = new DevExpress.Utils.SerializableAppearanceObject();
-         DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject3 = new DevExpress.Utils.SerializableAppearanceObject();
-         DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject4 = new DevExpress.Utils.SerializableAppearanceObject();
-         DevExpress.XtraEditors.Controls.EditorButtonImageOptions editorButtonImageOptions2 = new DevExpress.XtraEditors.Controls.EditorButtonImageOptions();
-         DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject5 = new DevExpress.Utils.SerializableAppearanceObject();
-         DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject6 = new DevExpress.Utils.SerializableAppearanceObject();
-         DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject7 = new DevExpress.Utils.SerializableAppearanceObject();
-         DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject8 = new DevExpress.Utils.SerializableAppearanceObject();
-         this.repositoryItemRibbonSearchEdit1 = new DevExpress.XtraBars.Ribbon.Internal.RepositoryItemRibbonSearchEdit();
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
+         this.deleteButton = new DevExpress.XtraEditors.SimpleButton();
          this.gridControl = new OSPSuite.UI.Controls.UxGridControl();
          this.gridView = new OSPSuite.UI.Controls.UxGridView();
-         this.ribbonControl = new DevExpress.XtraBars.Ribbon.RibbonControl();
-         this.barDockControlTop1 = new DevExpress.XtraBars.BarDockControl();
-         this.btnDelete = new DevExpress.XtraBars.BarButtonItem();
-         this.ribbonPage = new DevExpress.XtraBars.Ribbon.RibbonPage();
-         this.ribbonGroupEdit1 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
          this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
-         this.layoutItemRibbon = new DevExpress.XtraLayout.LayoutControlItem();
+         this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
+         this.barDockControlTop1 = new DevExpress.XtraBars.BarDockControl();
          this.barDockControlTop = new DevExpress.XtraBars.BarDockControl();
          this.ribbonGroupEdit = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
          this.btnRefresh = new DevExpress.XtraBars.BarButtonItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.repositoryItemRibbonSearchEdit1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.gridControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.gridView)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.ribbonControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemRibbon)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          this.SuspendLayout();
-         // 
-         // repositoryItemRibbonSearchEdit1
-         // 
-         this.repositoryItemRibbonSearchEdit1.AllowFocused = false;
-         this.repositoryItemRibbonSearchEdit1.AutoHeight = false;
-         this.repositoryItemRibbonSearchEdit1.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder;
-         editorButtonImageOptions1.AllowGlyphSkinning = DevExpress.Utils.DefaultBoolean.True;
-         editorButtonImageOptions1.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("editorButtonImageOptions1.SvgImage")));
-         this.repositoryItemRibbonSearchEdit1.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Glyph, "", -1, true, true, true, editorButtonImageOptions1, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject1, serializableAppearanceObject2, serializableAppearanceObject3, serializableAppearanceObject4, "", null, null, DevExpress.Utils.ToolTipAnchor.Default),
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Clear, "", -1, true, false, false, editorButtonImageOptions2, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject5, serializableAppearanceObject6, serializableAppearanceObject7, serializableAppearanceObject8, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
-         this.repositoryItemRibbonSearchEdit1.Name = "repositoryItemRibbonSearchEdit1";
-         this.repositoryItemRibbonSearchEdit1.NullText = "Search";
          // 
          // layoutControl
          // 
+         this.layoutControl.Controls.Add(this.deleteButton);
          this.layoutControl.Controls.Add(this.gridControl);
-         this.layoutControl.Controls.Add(this.ribbonControl);
          this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
          this.layoutControl.Location = new System.Drawing.Point(0, 0);
          this.layoutControl.Margin = new System.Windows.Forms.Padding(1);
          this.layoutControl.Name = "layoutControl";
+         this.layoutControl.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(1414, -904, 812, 500);
          this.layoutControl.Root = this.Root;
          this.layoutControl.Size = new System.Drawing.Size(920, 811);
          this.layoutControl.TabIndex = 0;
          this.layoutControl.Text = "layoutControl";
          // 
+         // deleteButton
+         // 
+         this.deleteButton.Dock = System.Windows.Forms.DockStyle.Left;
+         this.deleteButton.Location = new System.Drawing.Point(12, 12);
+         this.deleteButton.Name = "deleteButton";
+         this.deleteButton.Size = new System.Drawing.Size(83, 27);
+         this.deleteButton.StyleController = this.layoutControl;
+         this.deleteButton.TabIndex = 5;
+         this.deleteButton.Text = "deleteButton";
+         // 
          // gridControl
          // 
          this.gridControl.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(0);
-         this.gridControl.Location = new System.Drawing.Point(12, 76);
+         this.gridControl.Location = new System.Drawing.Point(12, 43);
          this.gridControl.MainView = this.gridView;
          this.gridControl.Margin = new System.Windows.Forms.Padding(1);
          this.gridControl.Name = "gridControl";
-         this.gridControl.Size = new System.Drawing.Size(896, 723);
+         this.gridControl.Size = new System.Drawing.Size(896, 756);
          this.gridControl.TabIndex = 4;
          this.gridControl.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridView});
@@ -124,38 +107,43 @@ namespace OSPSuite.UI.Views
          this.gridView.RowHeight = 0;
          this.gridView.ViewCaptionHeight = 0;
          // 
-         // ribbonControl
+         // Root
          // 
-         this.ribbonControl.AllowMinimizeRibbon = false;
-         this.ribbonControl.AllowTrimPageText = false;
-         this.ribbonControl.ApplicationButtonDropDownControl = this.barDockControlTop1;
-         this.ribbonControl.ApplicationButtonText = null;
-         this.ribbonControl.AutoSizeItems = true;
-         this.ribbonControl.Dock = System.Windows.Forms.DockStyle.None;
-         this.ribbonControl.ExpandCollapseItem.Id = 0;
-         this.ribbonControl.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
-            this.ribbonControl.ExpandCollapseItem,
-            this.btnDelete,
-            this.ribbonControl.SearchEditItem});
-         this.ribbonControl.Location = new System.Drawing.Point(12, 12);
-         this.ribbonControl.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
-         this.ribbonControl.MaximumSize = new System.Drawing.Size(896, 60);
-         this.ribbonControl.MaxItemId = 8;
-         this.ribbonControl.Name = "ribbonControl";
-         this.ribbonControl.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
-            this.ribbonPage});
-         this.ribbonControl.RepositoryItems.AddRange(new DevExpress.XtraEditors.Repository.RepositoryItem[] {
-            this.repositoryItemRibbonSearchEdit1});
-         this.ribbonControl.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonControlStyle.MacOffice;
-         this.ribbonControl.ShowApplicationButton = DevExpress.Utils.DefaultBoolean.False;
-         this.ribbonControl.ShowDisplayOptionsMenuButton = DevExpress.Utils.DefaultBoolean.False;
-         this.ribbonControl.ShowExpandCollapseButton = DevExpress.Utils.DefaultBoolean.False;
-         this.ribbonControl.ShowItemCaptionsInCaptionBar = true;
-         this.ribbonControl.ShowPageHeadersInFormCaption = DevExpress.Utils.DefaultBoolean.False;
-         this.ribbonControl.ShowPageHeadersMode = DevExpress.XtraBars.Ribbon.ShowPageHeadersMode.Hide;
-         this.ribbonControl.ShowQatLocationSelector = false;
-         this.ribbonControl.Size = new System.Drawing.Size(896, 100);
-         this.ribbonControl.ToolbarLocation = DevExpress.XtraBars.Ribbon.RibbonQuickAccessToolbarLocation.Hidden;
+         this.Root.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
+         this.Root.GroupBordersVisible = false;
+         this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.layoutControlItem,
+            this.layoutControlItem1,
+            this.emptySpaceItem1});
+         this.Root.Name = "Root";
+         this.Root.Size = new System.Drawing.Size(920, 811);
+         this.Root.TextVisible = false;
+         // 
+         // layoutControlItem
+         // 
+         this.layoutControlItem.Control = this.gridControl;
+         this.layoutControlItem.Location = new System.Drawing.Point(0, 31);
+         this.layoutControlItem.Name = "layoutControlItem";
+         this.layoutControlItem.Size = new System.Drawing.Size(900, 760);
+         this.layoutControlItem.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem.TextVisible = false;
+         // 
+         // layoutControlItem1
+         // 
+         this.layoutControlItem1.Control = this.deleteButton;
+         this.layoutControlItem1.Location = new System.Drawing.Point(0, 0);
+         this.layoutControlItem1.Name = "layoutControlItem1";
+         this.layoutControlItem1.Size = new System.Drawing.Size(87, 31);
+         this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItem1.TextVisible = false;
+         // 
+         // emptySpaceItem1
+         // 
+         this.emptySpaceItem1.AllowHotTrack = false;
+         this.emptySpaceItem1.Location = new System.Drawing.Point(87, 0);
+         this.emptySpaceItem1.Name = "emptySpaceItem1";
+         this.emptySpaceItem1.Size = new System.Drawing.Size(813, 31);
+         this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // barDockControlTop1
          // 
@@ -166,56 +154,6 @@ namespace OSPSuite.UI.Views
          this.barDockControlTop1.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
          this.barDockControlTop1.Size = new System.Drawing.Size(1898, 0);
          this.barDockControlTop1.Visible = false;
-         // 
-         // btnDelete
-         // 
-         this.btnDelete.Caption = "btnDelete";
-         this.btnDelete.Id = 1;
-         this.btnDelete.Name = "btnDelete";
-         this.btnDelete.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnDeleteItemClick);
-         // 
-         // ribbonPage
-         // 
-         this.ribbonPage.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
-            this.ribbonGroupEdit1});
-         this.ribbonPage.Name = "ribbonPage";
-         // 
-         // ribbonGroupEdit1
-         // 
-         this.ribbonGroupEdit1.ItemLinks.Add(this.btnDelete);
-         this.ribbonGroupEdit1.Name = "ribbonGroupEdit1";
-         // 
-         // Root
-         // 
-         this.Root.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
-         this.Root.GroupBordersVisible = false;
-         this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
-            this.layoutControlItem,
-            this.layoutItemRibbon});
-         this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(920, 811);
-         this.Root.TextVisible = false;
-         // 
-         // layoutControlItem
-         // 
-         this.layoutControlItem.Control = this.gridControl;
-         this.layoutControlItem.Location = new System.Drawing.Point(0, 64);
-         this.layoutControlItem.Name = "layoutControlItem";
-         this.layoutControlItem.Size = new System.Drawing.Size(900, 727);
-         this.layoutControlItem.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem.TextVisible = false;
-         // 
-         // layoutItemRibbon
-         // 
-         this.layoutItemRibbon.Control = this.ribbonControl;
-         this.layoutItemRibbon.ControlAlignment = System.Drawing.ContentAlignment.TopLeft;
-         this.layoutItemRibbon.CustomizationFormText = "layoutItemRibbon";
-         this.layoutItemRibbon.Location = new System.Drawing.Point(0, 0);
-         this.layoutItemRibbon.Name = "layoutItemRibbon";
-         this.layoutItemRibbon.Size = new System.Drawing.Size(900, 64);
-         this.layoutItemRibbon.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.SupportHorzAlignment;
-         this.layoutItemRibbon.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutItemRibbon.TextVisible = false;
          // 
          // barDockControlTop
          // 
@@ -247,16 +185,14 @@ namespace OSPSuite.UI.Views
          this.Name = "SimulationOutputMappingView";
          this.Size = new System.Drawing.Size(920, 811);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.repositoryItemRibbonSearchEdit1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
          this.layoutControl.ResumeLayout(false);
-         this.layoutControl.PerformLayout();
          ((System.ComponentModel.ISupportInitialize)(this.gridControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.gridView)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.ribbonControl)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutItemRibbon)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -268,15 +204,12 @@ namespace OSPSuite.UI.Views
       private UxGridControl gridControl;
       private UxGridView gridView;
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem;
-      private DevExpress.XtraBars.Ribbon.RibbonControl ribbonControl;
       private DevExpress.XtraBars.BarDockControl barDockControlTop1;
-      private DevExpress.XtraBars.BarButtonItem btnDelete;
-      private DevExpress.XtraBars.Ribbon.RibbonPage ribbonPage;
-      private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonGroupEdit1;
-      private DevExpress.XtraLayout.LayoutControlItem layoutItemRibbon;
       private DevExpress.XtraBars.BarDockControl barDockControlTop;
       private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonGroupEdit;
       private DevExpress.XtraBars.BarButtonItem btnRefresh;
-      private DevExpress.XtraBars.Ribbon.Internal.RepositoryItemRibbonSearchEdit repositoryItemRibbonSearchEdit1;
+      private DevExpress.XtraEditors.SimpleButton deleteButton;
+      private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
+      private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
    }
 }

@@ -21,6 +21,7 @@ using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.RepositoryItems;
 using OSPSuite.Utility.Format;
+using PopupMenuShowingEventArgs = DevExpress.XtraGrid.Views.Grid.PopupMenuShowingEventArgs;
 
 namespace OSPSuite.UI.Views
 {
@@ -46,13 +47,9 @@ namespace OSPSuite.UI.Views
          _singleObservedDataRepository = new UxRepositoryItemComboBox(gridView);
          _scalingRepository = new UxRepositoryItemScalings(gridView);
          gridView.MultiSelect = true;
-
-         ribbonControl.ShowPageHeadersMode = ShowPageHeadersMode.Hide;
-         ribbonControl.ShowQatLocationSelector = false;
-         ribbonControl.Minimized = true;
-
-         btnDelete.ImageOptions.SetImage(ApplicationIcons.Delete);
-
+         gridView.PopupMenuShowing += onPopupMenuShowing;
+         deleteButton.InitWithImage(ApplicationIcons.Delete, "Delete");
+         deleteButton.Click += (o, e) => OnEvent(btnDeleteItemClick);
       }
 
       public void AttachPresenter(ISimulationOutputMappingPresenter presenter)
@@ -103,13 +100,6 @@ namespace OSPSuite.UI.Views
 
          _gridViewBinder.Changed += NotifyViewChanged;
 
-         btnDelete.RibbonStyle = RibbonItemStyles.SmallWithText;
-         btnDelete.Caption = Captions.Delete;
-
-         layoutItemRibbon.SizeConstraintsType = SizeConstraintsType.Custom;
-         layoutItemRibbon.MaxSize = new Size(0, ribbonControl.Size.Height);
-         layoutItemRibbon.MinSize = new Size(0, ribbonControl.Size.Height);
-
          _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.RemoveObservedData(new List<SimulationOutputMappingDTO> { _gridViewBinder.FocusedElement }));
       }
       
@@ -142,7 +132,7 @@ namespace OSPSuite.UI.Views
 
       public override ApplicationIcon ApplicationIcon => ApplicationIcons.ObservedData;
 
-      private void btnDeleteItemClick(object sender, ItemClickEventArgs e)
+      private void btnDeleteItemClick()
       {
          var selectedDTOs = gridView.GetSelectedRows().SelectMany(x => _gridViewBinder.SelectedItems(x)).ToList();
 
@@ -150,6 +140,28 @@ namespace OSPSuite.UI.Views
             return;
 
          _presenter.RemoveObservedData(selectedDTOs);
+      }
+
+      private void onPopupMenuShowing(object sender, PopupMenuShowingEventArgs e)
+      {
+         if (e.Menu == null || e.HitInfo.HitTest != GridHitTest.RowIndicator)
+            return;
+
+         var selectedDTOs = gridView.GetSelectedRows().SelectMany(x => _gridViewBinder.SelectedItems(x)).ToList();
+
+         if (!selectedDTOs.Any())
+            return;
+
+         var deleteItem = new DevExpress.Utils.Menu.DXMenuItem(
+            Captions.DeleteSelected,
+            (o, args) => _presenter.RemoveObservedData(selectedDTOs)
+         )
+         {
+            Shortcut = System.Windows.Forms.Shortcut.Del,
+            SvgImage = ApplicationIcons.DeleteSelected
+         };
+
+         e.Menu.Items.Insert(2, deleteItem);
       }
    }
 }
