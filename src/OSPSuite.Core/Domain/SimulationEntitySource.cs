@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Consolidated path of the entity in the simulation
       /// </summary>
-      public string EntityPath { get; internal set; }
+      public string SimulationEntityPath { get; internal set; }
 
       public string BuildingBlockName { get; }
 
@@ -41,7 +41,7 @@ namespace OSPSuite.Core.Domain
 
       internal SimulationEntitySource(SimulationEntitySource originalSource)
       {
-         EntityPath = originalSource.EntityPath;
+         SimulationEntityPath = originalSource.SimulationEntityPath;
          BuildingBlockName = originalSource.BuildingBlockName;
          BuildingBlockType = originalSource.BuildingBlockType;
          ModuleName = originalSource.ModuleName;
@@ -72,14 +72,14 @@ namespace OSPSuite.Core.Domain
 
    public class SimulationEntitySources : IReadOnlyCollection<SimulationEntitySource>, IVisitable<IVisitor>
    {
-      private readonly Cache<string, SimulationEntitySource> _sources = new Cache<string, SimulationEntitySource>(x => x.EntityPath, x => null);
+      private readonly Cache<string, SimulationEntitySource> _sources = new Cache<string, SimulationEntitySource>(x => x.SimulationEntityPath, x => null);
 
       public void Add(SimulationEntitySource simulationEntitySource)
       {
-         if (simulationEntitySource.EntityPath == null)
+         if (simulationEntitySource.SimulationEntityPath == null)
             return;
 
-         _sources[simulationEntitySource.EntityPath] = simulationEntitySource;
+         _sources[simulationEntitySource.SimulationEntityPath] = simulationEntitySource;
       }
 
       public SimulationEntitySource SourceByPath(string path) => _sources[path];

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
@@ -11,7 +10,11 @@ namespace OSPSuite.Core.Domain
 {
    public interface ISimulationEntitySourceReferenceFactory
    {
-      IReadOnlyList<SimulationEntitySourceReference> CreateFor(IEnumerable<SimulationEntitySource> entitySources);
+      /// <summary>
+      ///    Returns the simulation entity source reference cache for the given simulation and entity sources. If entity sources
+      ///    are not provided, all entity sources in the simulation will be used.
+      /// </summary>
+      SimulationEntitySourceReferenceCache CreateFor(IModelCoreSimulation simulation, IEnumerable<SimulationEntitySource> entitySources = null);
    }
 
    public class SimulationEntitySourceReferenceFactory : ISimulationEntitySourceReferenceFactory
@@ -25,26 +28,36 @@ namespace OSPSuite.Core.Domain
          _containerTask = containerTask;
       }
 
-      public IReadOnlyList<SimulationEntitySourceReference> CreateFor(IEnumerable<SimulationEntitySource> entitySources)
+      public SimulationEntitySourceReferenceCache CreateFor(IModelCoreSimulation simulation, IEnumerable<SimulationEntitySource> entitySources = null)
       {
          //cache all building blocks by module, type and name for each retrieval
-         var cache = new Cache<string, IBuildingBlock>(onMissingKey: x => null);
-         _buildingBlockRepository.All().Each(bb => cache[uniqueKeyFor(bb)] = bb);
-         var spStrCache = createSpatialStructureCache();
-         var getEntityByPathIn = getEntityByPathInDef(spStrCache);
-         return entitySources.Select(entitySource =>
+         var buildingBlockCache = new Cache<string, IBuildingBlock>(onMissingKey: x => null);
+         var entitySourcesToUse = entitySources ?? simulation.EntitySources;
+         var simulationEntityCache = _containerTask.CacheAllChildren<IEntity>(simulation.Model.Root);
+         _buildingBlockRepository.All().Each(bb => buildingBlockCache[uniqueKeyFor(bb)] = bb);
+         var spatialStructureCache = createSpatialStructureCache();
+         var getEntityByPathIn = getEntityByPathInDef(spatialStructureCache);
+         var sourceReferenceCache = new SimulationEntitySourceReferenceCache();
+
+         entitySourcesToUse.Each(entitySource =>
          {
-            var buildingBlock = cache[uniqueKeyFor(entitySource)];
+            var entity = simulationEntityCache[entitySource.SimulationEntityPath];
+            if (entity == null)
+               return;
+
+            var buildingBlock = buildingBlockCache[uniqueKeyFor(entitySource)];
             //we return null if the building block is not found to keep the same cardinality
             if (buildingBlock == null)
-               return null;
+               return;
 
-            var entity = getEntityByPathIn(entitySource, buildingBlock);
-            if (entity == null)
-               return null;
+            var source = getEntityByPathIn(entitySource, buildingBlock);
+            if (source == null)
+               return;
+            
+            sourceReferenceCache.Add(new SimulationEntitySourceReference(source, buildingBlock, buildingBlock.Module, entity));
+         });
 
-            return new SimulationEntitySourceReference(entity, buildingBlock, buildingBlock.Module);
-         }).ToList();
+         return sourceReferenceCache;
       }
 
       private Cache<SpatialStructure, PathCache<IEntity>> createSpatialStructureCache()
@@ -54,7 +67,7 @@ namespace OSPSuite.Core.Domain
          return cache;
       }
 
-      private Func<SimulationEntitySource, IBuildingBlock, IObjectBase> getEntityByPathInDef(Cache<SpatialStructure, PathCache<IEntity>> spStrCache) =>
+      private Func<SimulationEntitySource, IBuildingBlock, IEntity> getEntityByPathInDef(Cache<SpatialStructure, PathCache<IEntity>> spStrCache) =>
          (entitySource, buildingBlock) =>
          {
             var sourcePath = entitySource.SourcePath;

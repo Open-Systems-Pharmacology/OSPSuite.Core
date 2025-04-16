@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -19,6 +18,7 @@ namespace OSPSuite.Core
       private IBuildingBlockRepository _buildingBlockRepository;
       protected IModel _model;
       protected SimulationBuilder _simulationBuilder;
+      private IModelCoreSimulation _simulation;
 
       protected virtual Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehavior();
 
@@ -36,7 +36,8 @@ namespace OSPSuite.Core
          var result = modelConstructor.CreateModelFrom(simulationConfiguration, "model");
          _model = result.Model;
          _simulationBuilder = result.SimulationBuilder;
-
+         _simulation = A.Fake<IModelCoreSimulation>();
+         _simulation.Model = _model;
 
          _buildingBlockRepository = A.Fake<IBuildingBlockRepository>();
          A.CallTo(() => _buildingBlockRepository.All()).Returns(simulationConfiguration.All<IBuildingBlock>());
@@ -45,13 +46,13 @@ namespace OSPSuite.Core
          sut = new SimulationEntitySourceReferenceFactory(_buildingBlockRepository, IoC.Resolve<IContainerTask>());
       }
 
-      protected SimulationEntitySourceReference SourceReferenceFor(SimulationEntitySource source) =>
-         sut.CreateFor(new[] {source}).FirstOrDefault();
+      protected SimulationEntitySourceReferenceCache SourceReferenceFor(SimulationEntitySource source) =>
+         sut.CreateFor(_simulation, new[] {source});
 
       protected SimulationEntitySourceReference SourceReferenceFor(IEntity entity)
       {
          var entitySource = _simulationBuilder.SimulationEntitySourceFor(entity);
-         return SourceReferenceFor(entitySource);
+         return SourceReferenceFor(entitySource)[entity];
       }
 
       protected SimulationEntitySourceReference ValidateSourceReferenceFor(IEntity entity, bool noModule = false)

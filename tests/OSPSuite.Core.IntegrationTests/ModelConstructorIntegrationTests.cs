@@ -466,7 +466,7 @@ namespace OSPSuite.Core
          var parameterValue = parameterValues.First(x => x.Name == parameter.Name);
          var entitySource = _simulationBuilder.SimulationEntitySourceFor(parameter);
          entitySource.SourcePath.ShouldBeEqualTo(parameterValue.Path);
-         entitySource.EntityPath.ShouldBeEqualTo(new[] {ORGANISM, Bone, Cell, "FormulaParameterOverwritten"}.ToPathString());
+         entitySource.SimulationEntityPath.ShouldBeEqualTo(new[] {ORGANISM, Bone, Cell, "FormulaParameterOverwritten"}.ToPathString());
       }
 
       [Observation]

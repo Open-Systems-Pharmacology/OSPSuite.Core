@@ -37,8 +37,8 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         sut.Add(new SimulationEntitySource(_buildingBlock, "sourcePath1", new Parameter()) {EntityPath = "A"});
-         sut.Add(new SimulationEntitySource(_buildingBlock, "sourcePath2", new Parameter()) {EntityPath = "B"});
+         sut.Add(new SimulationEntitySource(_buildingBlock, "sourcePath1", new Parameter()) {SimulationEntityPath = "A"});
+         sut.Add(new SimulationEntitySource(_buildingBlock, "sourcePath2", new Parameter()) {SimulationEntityPath = "B"});
       }
 
       protected override void Because()

@@ -29,7 +29,7 @@ namespace OSPSuite.Core.Services
             if (entitySource == null)
                return;
 
-            entitySource.EntityPath = _entityPathResolver.PathFor(x);
+            entitySource.SimulationEntityPath = _entityPathResolver.PathFor(x);
          });
       }
    }

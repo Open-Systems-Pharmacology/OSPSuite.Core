@@ -6,7 +6,7 @@ namespace OSPSuite.Core.Serialization.Xml
    {
       public override void PerformMapping()
       {
-         Map(x => x.EntityPath);
+         Map(x => x.SimulationEntityPath);
          Map(x => x.BuildingBlockName);
          Map(x => x.BuildingBlockType);
          Map(x => x.ModuleName);

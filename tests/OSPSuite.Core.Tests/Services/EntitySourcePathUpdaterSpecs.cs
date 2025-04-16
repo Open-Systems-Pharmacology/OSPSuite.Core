@@ -63,7 +63,7 @@ namespace OSPSuite.Core.Services
       [Observation]
       public void should_return_the_expected_path()
       {
-         _simulationEntitySource.EntityPath.ShouldBeEqualTo(new[] {ORGANISM, _parameter.Name}.ToPathString());
+         _simulationEntitySource.SimulationEntityPath.ShouldBeEqualTo(new[] {ORGANISM, _parameter.Name}.ToPathString());
       }
    }
 }
