@@ -175,6 +175,7 @@ namespace OSPSuite.Assets
       public const string RemoveButtonText = "Remove";
       public static readonly string EnterAValue = "<enter a value>";
       public static readonly string NaN = "<NaN>";
+      public static readonly string NA = "<NA>";
       public static readonly string Analysis = "Analysis";
       public static readonly string CopyAsImage = "Copy as image";
       public static readonly string InvalidObject = "Invalid Object";
@@ -229,6 +230,7 @@ namespace OSPSuite.Assets
       public static readonly string UseDerivedValues = "Use derivative values";
       public static readonly string NotDistributed = "Not Distributed";
       public static readonly string DeleteSelected = "Delete Selected Records";
+      public static readonly string ModulesFolder = "Modules";
 
       public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
 
@@ -955,6 +957,7 @@ namespace OSPSuite.Assets
          public static readonly string ResidualCount = "# of Residuals";
          public static readonly string Results = "Results";
          public static readonly string NumberOfEvaluations = "Number of Evaluations";
+         public static readonly string CompletedDate = "Completed Date";
          public static readonly string TotalError = "Total Error";
          public static readonly string Status = "Status";
          public static readonly string RunMessage = "Message";

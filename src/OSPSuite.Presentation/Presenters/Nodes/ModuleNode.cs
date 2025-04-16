@@ -3,11 +3,11 @@ using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Presentation.Presenters.Nodes
 {
-   public class ModuleNode : ObjectWithIdAndNameNode<Module>
+   public class ModuleNode : ObjectWithIdAndNameNode<ClassifiableModule>
    {
-      public ModuleNode(Module module) : base(module)
+      public ModuleNode(ClassifiableModule classifiable) : base(classifiable)
       {
-         Icon = ApplicationIcons.IconByName(module.Icon);
+         Icon = ApplicationIcons.IconByName(classifiable.Icon);
       }
    }
 }
