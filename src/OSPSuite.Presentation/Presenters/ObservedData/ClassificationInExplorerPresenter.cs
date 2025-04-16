@@ -80,7 +80,6 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       protected abstract ITreeNode CreateNodeFor(TClassifiable classifiable);
 
-
       private IExplorerView view => _explorerPresenter.BaseView.DowncastTo<IExplorerView>();
    }
 }
