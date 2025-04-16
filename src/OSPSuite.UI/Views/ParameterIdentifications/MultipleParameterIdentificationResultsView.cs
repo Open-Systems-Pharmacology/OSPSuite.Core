@@ -9,6 +9,7 @@ using DevExpress.XtraGrid;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
+using OSPSuite.Core.Services;
 using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
@@ -210,6 +211,9 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 
          bind(x => x.NumberOfEvaluations)
             .WithCaption(Captions.ParameterIdentification.NumberOfEvaluations);
+
+         bind(x => x.DateTimeCompleted)
+            .WithCaption(Captions.ParameterIdentification.CompletedDate).WithFormat(new DateTimeFormatter(displayTime:true));
 
          bind(x => x.Duration)
             .WithFormat(x => _timeSpanFormatter)

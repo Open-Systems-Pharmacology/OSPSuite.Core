@@ -5,13 +5,13 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Domain
 {
-   public abstract class concern_for_EntitySources : ContextSpecification<EntitySources>
+   public abstract class concern_for_EntitySources : ContextSpecification<SimulationEntitySources>
    {
       protected IBuildingBlock _buildingBlock;
 
       protected override void Context()
       {
-         sut = new EntitySources();
+         sut = new SimulationEntitySources();
          _buildingBlock = new ObserverBuildingBlock().WithName("BBName").WithId("BBId");
       }
    }
@@ -20,7 +20,7 @@ namespace OSPSuite.Core.Domain
    {
       protected override void Because()
       {
-         sut.Add(new EntitySource(_buildingBlock, "sourcePath", null));
+         sut.Add(new SimulationEntitySource(_buildingBlock, "sourcePath", null));
       }
 
       [Observation]
@@ -32,13 +32,13 @@ namespace OSPSuite.Core.Domain
 
    public class When_cloning_an_entity_sources : concern_for_EntitySources
    {
-      private EntitySources _clone;
+      private SimulationEntitySources _clone;
 
       protected override void Context()
       {
          base.Context();
-         sut.Add(new EntitySource(_buildingBlock, "sourcePath1", new Parameter()) {EntityPath = "A"});
-         sut.Add(new EntitySource(_buildingBlock, "sourcePath2", new Parameter()) {EntityPath = "B"});
+         sut.Add(new SimulationEntitySource(_buildingBlock, "sourcePath1", new Parameter()) {SimulationEntityPath = "A"});
+         sut.Add(new SimulationEntitySource(_buildingBlock, "sourcePath2", new Parameter()) {SimulationEntityPath = "B"});
       }
 
       protected override void Because()

@@ -35,7 +35,15 @@ namespace OSPSuite.Core.Domain.Builder
 
       public IReadOnlyList<T> All<T>() where T : class, IBuildingBlock
       {
+         if (typeof(T) == typeof(IBuildingBlock))
+            return All().OfType<T>().ToList();
+
          return ModuleConfigurations.Select(x => x.BuildingBlock<T>()).Where(x => x != null).ToList();
+      }
+
+      public IReadOnlyList<IBuildingBlock> All()
+      {
+         return ModuleConfigurations.SelectMany(x => x.All()).Where(x => x != null).ToList();
       }
 
       public virtual void AcceptVisitor(IVisitor visitor)
@@ -60,8 +68,8 @@ namespace OSPSuite.Core.Domain.Builder
       }
 
       /// <summary>
-      /// Copies the properties from <paramref name="sourceConfiguration"/> but does not clone any of the building blocks
-      /// or module configurations.
+      ///    Copies the properties from <paramref name="sourceConfiguration" /> but does not clone any of the building blocks
+      ///    or module configurations.
       /// </summary>
       /// <param name="sourceConfiguration"></param>
       public void CopyPropertiesFrom(SimulationConfiguration sourceConfiguration)

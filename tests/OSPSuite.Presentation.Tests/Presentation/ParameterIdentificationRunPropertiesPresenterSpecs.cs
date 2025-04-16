@@ -7,6 +7,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Core.Services;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Formatters;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
@@ -52,7 +53,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_create_one_run_property_dto_per_property_to_be_displayed()
       {
-         _allRunPropertyDTO.Count.ShouldBeEqualTo(4);
+         _allRunPropertyDTO.Count.ShouldBeEqualTo(5);
          _allRunPropertyDTO[0].Name.ShouldBeEqualTo(Captions.ParameterIdentification.TotalError);
          _allRunPropertyDTO[0].FormattedValue.ShouldBeEqualTo(new DoubleFormatter().Format(_runResult.TotalError));
          _allRunPropertyDTO[0].Icon.ShouldBeNull();
@@ -68,6 +69,10 @@ namespace OSPSuite.Presentation.Presentation
          _allRunPropertyDTO[3].Name.ShouldBeEqualTo(Captions.ParameterIdentification.Status);
          _allRunPropertyDTO[3].FormattedValue.ShouldBeEqualTo(_runResult.Status.DisplayName);
          _allRunPropertyDTO[3].Icon.ShouldBeEqualTo(ApplicationIcons.OK);
+
+         _allRunPropertyDTO[4].Name.ShouldBeEqualTo(Captions.ParameterIdentification.CompletedDate);
+         _allRunPropertyDTO[4].FormattedValue.ShouldBeEqualTo(new DateTimeFormatter(displayTime:true).Format(_runResult.DateTimeCompleted));
+         _allRunPropertyDTO[4].Icon.ShouldBeNull();
       }
    }
 }	
