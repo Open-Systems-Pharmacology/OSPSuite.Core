@@ -24,11 +24,6 @@ namespace OSPSuite.Core.Domain.Builder
          return _initialConditions[path];
       }
 
-      public InitialCondition ByPath(string objectPath)
-      {
-         throw new System.NotImplementedException();
-      }
-
       public override string Name
       {
          get => ExpressionProfileName(MoleculeName, Species, Category);
