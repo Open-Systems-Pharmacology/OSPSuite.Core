@@ -1,7 +1,7 @@
 ﻿namespace OSPSuite.Core.Domain
 {
    /// <summary>
-   ///    A wrapper for Module which can resolve a classification tree
+   ///    A wrapper for <see cref="Module"/> which can resolve a classification tree
    /// </summary>
    public class ClassifiableModule : Classifiable<Module>, IWithId
    {
