@@ -55,7 +55,7 @@ namespace OSPSuite.Presentation.Nodes
       {
          return new SensitivityAnalysisNode(classifiableSensitivityAnalysis);
       }
-      
+
       public ITreeNode<TObjectBase> CreateFor<TObjectBase>(TObjectBase entity) where TObjectBase : class, IObjectBase
       {
          var node = CreateObjectBaseNode(entity);
@@ -87,17 +87,17 @@ namespace OSPSuite.Presentation.Nodes
 
       public ITreeNode CreateFor(ClassifiableObservedData observedData)
       {
-         return new ObservedDataNode(observedData) {ToolTip = _toolTipPartCreator.ToolTipFor(observedData.Repository)};
+         return new ObservedDataNode(observedData) { ToolTip = _toolTipPartCreator.ToolTipFor(observedData.Repository) };
       }
 
       protected ITreeNode<TObjectBase> CreateObjectBaseNode<TObjectBase>(TObjectBase objectBase) where TObjectBase : class, IObjectBase
       {
-         return new ObjectWithIdAndNameNode<TObjectBase>(objectBase);
+         return new ObjectWithIdAndNameNode<TObjectBase>(objectBase) { Icon = ApplicationIcons.IconByName(objectBase.Icon) };
       }
 
       public ITreeNode<IGroup> CreateFor(IGroup group)
       {
-         return new GroupNode(group) {ToolTip = _toolTipPartCreator.ToolTipFor(group.Description)};
+         return new GroupNode(group) { ToolTip = _toolTipPartCreator.ToolTipFor(group.Description) };
       }
    }
 }
