@@ -25,11 +25,11 @@ namespace OSPSuite.Core.Services
 
          allEntitiesInModel.Each(x =>
          {
-            var entitySource = simulationBuilder.EntitySourceFor(x);
+            var entitySource = simulationBuilder.SimulationEntitySourceFor(x);
             if (entitySource == null)
                return;
 
-            entitySource.EntityPath = _entityPathResolver.PathFor(x);
+            entitySource.SimulationEntityPath = _entityPathResolver.PathFor(x);
          });
       }
    }

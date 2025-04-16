@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly Cache<string, BuilderSource> _builderSources = new Cache<string, BuilderSource>(x => x.Builder.Id, x => null);
 
       //Cache of entity source by id and not by path. It is required because the path is not available at time of construction in the entity
-      private readonly Cache<string, EntitySource> _entitySources = new Cache<string, EntitySource>(onMissingKey: x => null);
+      private readonly Cache<string, SimulationEntitySource> _entitySources = new Cache<string, SimulationEntitySource>(onMissingKey: x => null);
 
       public SimulationBuilder(SimulationConfiguration simulationConfiguration)
       {
@@ -32,13 +32,13 @@ namespace OSPSuite.Core.Domain.Builder
 
       public bool CreateAllProcessRateParameters => _simulationConfiguration.CreateAllProcessRateParameters;
 
-      public IEntity BuilderFor(IEntity modelObject) => EntitySourceFor(modelObject)?.Source;
+      public IEntity BuilderFor(IEntity modelObject) => SimulationEntitySourceFor(modelObject)?.Source;
 
-      internal EntitySource EntitySourceFor(IEntity entity) => _entitySources[entity.Id];
+      internal SimulationEntitySource SimulationEntitySourceFor(IEntity entity) => _entitySources[entity.Id];
 
-      internal void AddEntitySource(string entityId, EntitySource entitySource)
+      internal void AddSimulationEntitySource(string entityId, SimulationEntitySource simulationEntitySource)
       {
-         _entitySources[entityId] = entitySource;
+         _entitySources[entityId] = simulationEntitySource;
       }
 
       internal IEnumerable<MoleculeBuilder> AllPresentMolecules()
@@ -203,7 +203,7 @@ namespace OSPSuite.Core.Domain.Builder
       internal IReadOnlyCollection<ParameterValue> ParameterValues => _parameterValues;
       internal IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
 
-      public IReadOnlyCollection<EntitySource> EntitySources => _entitySources;
+      public IReadOnlyCollection<SimulationEntitySource> EntitySources => _entitySources;
 
       internal MoleculeList MoleculeListFor(IMoleculeDependentBuilder builder) => _moleculeListCache[builder];
 

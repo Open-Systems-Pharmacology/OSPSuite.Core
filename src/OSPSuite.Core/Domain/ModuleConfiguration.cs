@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
@@ -6,7 +7,6 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain
 {
-
    public class ModuleConfiguration : IVisitable<IVisitor>, IUpdatable
    {
       public Module Module { get; private set; }
@@ -22,7 +22,7 @@ namespace OSPSuite.Core.Domain
       public ParameterValuesBuildingBlock SelectedParameterValues { get; set; }
 
       /// <summary>
-      /// Merge behavior for merging spatial structures from different modules.
+      ///    Merge behavior for merging spatial structures from different modules.
       /// </summary>
       public MergeBehavior MergeBehavior => Module.MergeBehavior;
 
@@ -91,6 +91,13 @@ namespace OSPSuite.Core.Domain
          Module = cloneManager.Clone(sourceConfiguration.Module);
          SelectedInitialConditions = Module.InitialConditionsCollection.FindByName(sourceConfiguration.SelectedInitialConditions?.Name);
          SelectedParameterValues = Module.ParameterValuesCollection.FindByName(sourceConfiguration.SelectedParameterValues?.Name);
+      }
+
+      public IReadOnlyList<IBuildingBlock> All()
+      {
+         return Module.BuildingBlocks.Union(new IBuildingBlock[] {SelectedInitialConditions, SelectedParameterValues})
+            .Where(x => x != null)
+            .ToList();
       }
    }
 }

@@ -464,9 +464,9 @@ namespace OSPSuite.Core
          var parameter = bone_cell.Parameter("FormulaParameterOverwritten");
          var parameterValues = _simulationConfiguration.ModuleConfigurations[0].SelectedParameterValues;
          var parameterValue = parameterValues.First(x => x.Name == parameter.Name);
-         var entitySource = _simulationBuilder.EntitySourceFor(parameter);
+         var entitySource = _simulationBuilder.SimulationEntitySourceFor(parameter);
          entitySource.SourcePath.ShouldBeEqualTo(parameterValue.Path);
-         entitySource.EntityPath.ShouldBeEqualTo(new[] {ORGANISM, Bone, Cell, "FormulaParameterOverwritten"}.ToPathString());
+         entitySource.SimulationEntityPath.ShouldBeEqualTo(new[] {ORGANISM, Bone, Cell, "FormulaParameterOverwritten"}.ToPathString());
       }
 
       [Observation]
@@ -629,7 +629,7 @@ namespace OSPSuite.Core
          var parameter = _model.Root.EntityAt<IParameter>(ORGANISM, "NewParameterAddedFromParameterValues");
          var parameterValues = _simulationConfiguration.ModuleConfigurations[0].SelectedParameterValues;
          var parameterValue = parameterValues.First(x => x.Name == parameter.Name);
-         _simulationBuilder.EntitySourceFor(parameter).SourcePath.ShouldBeEqualTo(parameterValue.Path);
+         _simulationBuilder.SimulationEntitySourceFor(parameter).SourcePath.ShouldBeEqualTo(parameterValue.Path);
       }
    }
 }
