@@ -5,23 +5,24 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Helpers;
+using System;
 
 namespace OSPSuite.Core.Mappers
 {
-   internal abstract class concern_for_container_builder_to_container : ContextSpecification<IContainerBuilderToContainerMapper>
+   internal abstract class concern_for_ContainerBuilderToContainerMapper : ContextSpecification<IContainerBuilderToContainerMapper>
    {
       protected ICloneManagerForModel _cloneManagerForModel;
+      protected IEntityTracker _entityTracker;
 
       protected override void Context()
       {
          _cloneManagerForModel = A.Fake<ICloneManagerForModel>();
-         sut = new ContainerBuilderToContainerMapper(_cloneManagerForModel);
+         _entityTracker= A.Fake<IEntityTracker>();
+         sut = new ContainerBuilderToContainerMapper(_cloneManagerForModel, _entityTracker);
       }
    }
 
-   
-   internal class When_mapping_a_container_from_a_container_builder : concern_for_container_builder_to_container
+   internal class When_mapping_a_container_from_a_container_builder : concern_for_ContainerBuilderToContainerMapper
    {
       private IContainer _containerBuilder;
       private IContainer _clonedContainer;
@@ -59,7 +60,7 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_have_referenced_the_parameter_with_the_parameter_builder()
       {
-         _simulationBuilder.BuilderFor(_clonedParameter).ShouldBeEqualTo(_parameterBuilder);
+         A.CallTo(() => _entityTracker.Track(_clonedParameter, _parameterBuilder, _simulationBuilder)).MustHaveHappened();
       }
    }
-}	
+}

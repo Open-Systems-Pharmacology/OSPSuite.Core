@@ -6,7 +6,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class InitialConditionXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class InitialConditionXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class ParameterValueXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class ParameterValueXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()

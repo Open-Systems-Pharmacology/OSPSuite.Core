@@ -20,11 +20,11 @@ namespace OSPSuite.Assets
    {
       public static readonly string MoleculeBuildingBlock = "Molecules";
       public static readonly string Module = "Module";
-      public static readonly string ReactionBuildingBlock = "Reaction";
+      public static readonly string ReactionBuildingBlock = "Reactions";
       public static readonly string SpatialStructure = "Organism";
       public static readonly string PassiveTransportBuildingBlock = "Passive Transports";
       public static readonly string EventBuildingBlock = "Events";
-      public static readonly string ObserverBuildingBlock = "Observer";
+      public static readonly string ObserverBuildingBlock = "Observers";
       public static readonly string SimulationSettings = "Simulation Settings";
       public static readonly string ParameterValues = "Parameter Values";
       public static readonly string InitialConditions = "Initial Conditions";
@@ -63,6 +63,7 @@ namespace OSPSuite.Assets
       public static readonly string LinearScale = "Linear Scale";
       public static readonly string LogScale = "Logarithmic Scale";
       public static readonly string ExportChartToExcel = "Export selected curves...";
+      public static readonly string ExportChartToPng = "Export chart to Png...";
       public static readonly string ExportComparisonToExcel = "Export comparison to Excel...";
       public static readonly string CloseButton = "&Close";
       public static readonly string Folder = "Folder";
@@ -2175,6 +2176,7 @@ namespace OSPSuite.Assets
 
       public static readonly string NewExpressionProfile = "Add &Expression Profile";
       public static readonly string ExportToExcel = "Export to Excel...";
+      public static readonly string ExportToPng = "Export to Png...";
       public static readonly string CopyToClipboard = "Copy to Clipboard";
       public static readonly string ResetZoom = "Reset Zoom";
       public static readonly string Delete = "Delete...";

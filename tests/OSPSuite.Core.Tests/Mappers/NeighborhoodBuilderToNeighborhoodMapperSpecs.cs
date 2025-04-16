@@ -16,6 +16,7 @@ namespace OSPSuite.Core.Mappers
       protected ICloneManagerForModel _cloneManagerForModel;
       protected IKeywordReplacerTask _keywordReplacerTask;
       protected IParameterBuilderToParameterMapper _parameterMapper;
+      protected IEntityTracker _entityTracker;
 
       protected override void Context()
       {
@@ -24,7 +25,9 @@ namespace OSPSuite.Core.Mappers
          _cloneManagerForModel = A.Fake<ICloneManagerForModel>();
          _keywordReplacerTask = A.Fake<IKeywordReplacerTask>();
          _parameterMapper = A.Fake<IParameterBuilderToParameterMapper>();
-         sut = new NeighborhoodBuilderToNeighborhoodMapper(_objectBaseFactory, _containerMapper, _keywordReplacerTask, _cloneManagerForModel, _parameterMapper);
+         _entityTracker = A.Fake<IEntityTracker>();
+
+         sut = new NeighborhoodBuilderToNeighborhoodMapper(_objectBaseFactory, _containerMapper, _keywordReplacerTask, _cloneManagerForModel, _parameterMapper, _entityTracker);
       }
    }
 
@@ -77,7 +80,7 @@ namespace OSPSuite.Core.Mappers
          A.CallTo(() => _containerMapper.MapFrom(_neighborhoodBuilder.MoleculeProperties, _simulationBuilder)).Returns(_moleculeContainer);
          _molecule1 = "molecule1";
          _molecule2 = "molecule2";
-         _moleculeNames = new List<string> { _molecule1, _molecule2 };
+         _moleculeNames = new List<string> {_molecule1, _molecule2};
          A.CallTo(() => _objectBaseFactory.Create<Neighborhood>()).Returns(new Neighborhood());
 
          A.CallTo(() => _parameterMapper.MapFrom(para1, _simulationBuilder)).Returns(_clonePara1);

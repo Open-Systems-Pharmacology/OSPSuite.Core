@@ -35,6 +35,7 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IModelCircularReferenceChecker _circularReferenceChecker;
       private readonly ISpatialStructureMerger _spatialStructureMerger;
       private readonly IEventBuilderTask _eventBuilderTask;
+      private readonly IEntitySourcePathUpdater _entitySourcePathUpdater;
 
       public ModelConstructor(
          IObjectBaseFactory objectBaseFactory,
@@ -54,7 +55,9 @@ namespace OSPSuite.Core.Domain.Services
          IModelValidatorFactory modelValidatorFactory,
          IModelCircularReferenceChecker circularReferenceChecker,
          ISpatialStructureMerger spatialStructureMerger,
-         IEventBuilderTask eventBuilderTask)
+         IEventBuilderTask eventBuilderTask,
+         IEntitySourcePathUpdater entitySourcePathUpdater
+         )
       {
          _objectBaseFactory = objectBaseFactory;
          _simulationConfigurationValidator = simulationConfigurationValidator;
@@ -74,6 +77,7 @@ namespace OSPSuite.Core.Domain.Services
          _formulaTask = formulaTask;
          _calculationMethodTask = calculationMethodTask;
          _eventBuilderTask = eventBuilderTask;
+         _entitySourcePathUpdater = entitySourcePathUpdater;
       }
 
       public CreationResult CreateModelFrom(SimulationConfiguration simulationConfiguration, string modelName)
@@ -104,12 +108,12 @@ namespace OSPSuite.Core.Domain.Services
          if (creationResult.State == ValidationState.Invalid)
             return creationResult;
 
-         finalizeModel(model);
+         finalizeModel(model, simulationBuilder);
 
          return creationResult;
       }
 
-      private void finalizeModel(IModel model)
+      private void finalizeModel(IModel model, SimulationBuilder simulationBuilder)
       {
          _formulaTask.CheckFormulaOriginIn(model);
 
@@ -123,6 +127,9 @@ namespace OSPSuite.Core.Domain.Services
 
          //now that we have removed potential nan parameters, let's make sure that no formula was actually using them
          _referencesResolver.ResolveReferencesIn(model);
+
+         //last, we need to update the path of entity in the EntitySource
+         _entitySourcePathUpdater.UpdateEntityPaths(model, simulationBuilder);
       }
 
       private void removeUndefinedLocalMoleculeParametersIn(IModel model)
@@ -354,7 +361,7 @@ namespace OSPSuite.Core.Domain.Services
       private void addLocalStructureMoleculeParametersToMoleculeAmount(IEnumerable<string> moleculeNames,
          IContainer moleculePropertiesContainerTemplate, ModelConfiguration modelConfiguration, Func<IParameter, bool> query)
       {
-         var (model, simulationConfiguration, replacementContext) = modelConfiguration;
+         var (_, simulationConfiguration, replacementContext) = modelConfiguration;
          foreach (var moleculeName in moleculeNames)
          {
             // check if molecule amount already exists
@@ -376,7 +383,7 @@ namespace OSPSuite.Core.Domain.Services
          var presentMolecules = allPresentMoleculesInContainers(modelConfiguration).ToList();
 
          var moleculesWithPhysicalContainers = presentMolecules.Where(containerIsPhysical);
-         moleculesWithPhysicalContainers.Each(x => { addMoleculeToContainer(simulationBuilder, x.Container, simulationBuilder.MoleculeByName(x.InitialCondition.MoleculeName)); });
+         moleculesWithPhysicalContainers.Each(x => addMoleculeToContainer(simulationBuilder, x.Container, simulationBuilder.MoleculeByName(x.InitialCondition.MoleculeName)));
 
          return new MoleculeBuildingBlockValidator().Validate(simulationBuilder.Molecules)
             .AddMessagesFrom(createValidationMessagesForPresentMolecules(presentMolecules));

@@ -4,7 +4,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
-using OSPSuite.Helpers;
+using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain
 {
@@ -12,14 +12,17 @@ namespace OSPSuite.Core.Domain
    {
       protected IObjectBaseFactory _objectBaseFactory;
       protected IFormulaBuilderToFormulaMapper _formulaMapper;
+      protected IEntityTracker _entityTracker;
 
       protected override void Context()
       {
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          _formulaMapper = A.Fake<IFormulaBuilderToFormulaMapper>();
-         sut = new ProcessRateParameterCreator(_objectBaseFactory,_formulaMapper);
+         _entityTracker = A.Fake<IEntityTracker>();
+         sut = new ProcessRateParameterCreator(_objectBaseFactory, _formulaMapper, _entityTracker);
       }
    }
+
    internal class When_creating_a_parameter_rate_for_a_process_builder : concern_for_ProcessRateParameterCreatorSpecs
    {
       private IFormula _kinetic;
@@ -55,7 +58,6 @@ namespace OSPSuite.Core.Domain
          _processBuilder.Formula = _kinetic;
          _processRateParameter = new Parameter();
          A.CallTo(() => _objectBaseFactory.Create<IParameter>()).Returns(_processRateParameter);
-
       }
 
       protected override void Because()
@@ -84,8 +86,8 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_update_relative_paths()
       {
-         _formulaUsablePathA.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER,ObjectPath.PARENT_CONTAINER,"A");
-         _formulaUsablePathB.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER,  "B");
+         _formulaUsablePathA.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER, ObjectPath.PARENT_CONTAINER, "A");
+         _formulaUsablePathB.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER, "B");
       }
 
       [Observation]
@@ -95,5 +97,4 @@ namespace OSPSuite.Core.Domain
          _formulaUsablePathFU.ShouldOnlyContainInOrder(ObjectPathKeywords.MOLECULE, "fu");
       }
    }
-   
-}	
+}

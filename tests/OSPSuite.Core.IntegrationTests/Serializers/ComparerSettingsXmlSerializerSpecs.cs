@@ -5,7 +5,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class ComparerSettingsXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class ComparerSettingsXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerializationComparerSettings()

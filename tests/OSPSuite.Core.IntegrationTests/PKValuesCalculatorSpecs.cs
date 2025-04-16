@@ -48,9 +48,9 @@ namespace OSPSuite.Core
          {
             TotalDrugMassPerBodyWeight = 10,
          };
-         _pkOptions.AddInterval(new DosingInterval {StartValue = 0, EndValue = 8, DrugMassPerBodyWeight = _firstDose});
-         _pkOptions.AddInterval(new DosingInterval {StartValue = 8, EndValue = 16, DrugMassPerBodyWeight = _oneMinusLastDose});
-         _pkOptions.AddInterval(new DosingInterval {StartValue = 16, EndValue = 48, DrugMassPerBodyWeight = _lastDose});
+         _pkOptions.AddInterval(new DosingInterval { StartValue = 0, EndValue = 8, DrugMassPerBodyWeight = _firstDose });
+         _pkOptions.AddInterval(new DosingInterval { StartValue = 8, EndValue = 16, DrugMassPerBodyWeight = _oneMinusLastDose });
+         _pkOptions.AddInterval(new DosingInterval { StartValue = 16, EndValue = 48, DrugMassPerBodyWeight = _lastDose });
       }
 
       protected override void Because()
@@ -140,24 +140,24 @@ namespace OSPSuite.Core
          {
             TotalDrugMassPerBodyWeight = 10,
          };
-         _pkOptions.AddInterval(new DosingInterval {StartValue = 0, EndValue = 8, DrugMassPerBodyWeight = _firstDose});
-         _pkOptions.AddInterval(new DosingInterval {StartValue = 8, EndValue = 16, DrugMassPerBodyWeight = _oneMinusLastDose});
-         _pkOptions.AddInterval(new DosingInterval {StartValue = 16, EndValue = 48, DrugMassPerBodyWeight = _lastDose});
+         _pkOptions.AddInterval(new DosingInterval { StartValue = 0, EndValue = 8, DrugMassPerBodyWeight = _firstDose });
+         _pkOptions.AddInterval(new DosingInterval { StartValue = 8, EndValue = 16, DrugMassPerBodyWeight = _oneMinusLastDose });
+         _pkOptions.AddInterval(new DosingInterval { StartValue = 16, EndValue = 48, DrugMassPerBodyWeight = _lastDose });
 
-         _cmax_tD1_tD2 = new UserDefinedPKParameter {StartApplicationIndex = 0, EndApplicationIndex = 1, StandardPKParameter = StandardPKParameter.C_max, Name = "MyCmaxD1D2"};
-         _cmax_tD1_tD2_DOSE_BW = new UserDefinedPKParameter {StartApplicationIndex = 0, EndApplicationIndex = 1, StandardPKParameter = StandardPKParameter.C_max, Name = "MyCmaxD1D2_Normalized", NormalizationFactor = _firstDose};
-         _cmax_tD1_tD2_DOSE_BW_auto = new UserDefinedPKParameter {StartApplicationIndex = 0, EndApplicationIndex = 1, StandardPKParameter = StandardPKParameter.C_max_norm, Name = "MyCmaxD1D2_Normalized_auto"};
+         _cmax_tD1_tD2 = new UserDefinedPKParameter { StartApplicationIndex = 0, EndApplicationIndex = 1, StandardPKParameter = StandardPKParameter.C_max, Name = "MyCmaxD1D2" };
+         _cmax_tD1_tD2_DOSE_BW = new UserDefinedPKParameter { StartApplicationIndex = 0, EndApplicationIndex = 1, StandardPKParameter = StandardPKParameter.C_max, Name = "MyCmaxD1D2_Normalized", NormalizationFactor = _firstDose };
+         _cmax_tD1_tD2_DOSE_BW_auto = new UserDefinedPKParameter { StartApplicationIndex = 0, EndApplicationIndex = 1, StandardPKParameter = StandardPKParameter.C_max_norm, Name = "MyCmaxD1D2_Normalized_auto" };
 
-         _tmax_tD1_tD2 = new UserDefinedPKParameter {StartApplicationIndex = 0, EndApplicationIndex = 1, StandardPKParameter = StandardPKParameter.t_max, Name = "MyTmaxD1D2"};
+         _tmax_tD1_tD2 = new UserDefinedPKParameter { StartApplicationIndex = 0, EndApplicationIndex = 1, StandardPKParameter = StandardPKParameter.t_max, Name = "MyTmaxD1D2" };
 
-         _cmax_t1_t2 = new UserDefinedPKParameter {StartTime = 0, EndTime = 8, StandardPKParameter = StandardPKParameter.C_max, Name = "MyCmaxT1T2"};
-         _cmax_t1_t2_offset = new UserDefinedPKParameter {StartTime = 0, StartTimeOffset = 16, EndTime = 48, StandardPKParameter = StandardPKParameter.C_max, Name = "MyCmaxT1T2offset"};
-         _cmax_t1_offset_no_end = new UserDefinedPKParameter {StartTime = 0, StartTimeOffset = 16, StandardPKParameter = StandardPKParameter.C_max, Name = "MyCmaxT1offset_no_end"};
-         _tThreshold = new UserDefinedPKParameter {StartApplicationIndex = 0, StandardPKParameter = StandardPKParameter.Tthreshold, Name = "Threshold", ConcentrationThreshold = 4};
-         _tThreshold_last = new UserDefinedPKParameter {StartApplicationIndex = 2, StandardPKParameter = StandardPKParameter.Tthreshold, Name = "Threshold_last", ConcentrationThreshold = 5};
+         _cmax_t1_t2 = new UserDefinedPKParameter { StartTime = 0, EndTime = 8, StandardPKParameter = StandardPKParameter.C_max, Name = "MyCmaxT1T2" };
+         _cmax_t1_t2_offset = new UserDefinedPKParameter { StartTime = 0, StartTimeOffset = 16, EndTime = 48, StandardPKParameter = StandardPKParameter.C_max, Name = "MyCmaxT1T2offset" };
+         _cmax_t1_offset_no_end = new UserDefinedPKParameter { StartTime = 0, StartTimeOffset = 16, StandardPKParameter = StandardPKParameter.C_max, Name = "MyCmaxT1offset_no_end" };
+         _tThreshold = new UserDefinedPKParameter { StartApplicationIndex = 0, StandardPKParameter = StandardPKParameter.Tthreshold, Name = "Threshold", ConcentrationThreshold = 4 };
+         _tThreshold_last = new UserDefinedPKParameter { StartApplicationIndex = 2, StandardPKParameter = StandardPKParameter.Tthreshold, Name = "Threshold_last", ConcentrationThreshold = 5 };
 
 
-         _allDynamicPkParameters = new[] {_cmax_tD1_tD2, _tmax_tD1_tD2, _cmax_t1_t2, _cmax_t1_t2_offset, _cmax_t1_offset_no_end, _cmax_tD1_tD2_DOSE_BW, _tThreshold, _tThreshold_last, _cmax_tD1_tD2_DOSE_BW_auto};
+         _allDynamicPkParameters = new[] { _cmax_tD1_tD2, _tmax_tD1_tD2, _cmax_t1_t2, _cmax_t1_t2_offset, _cmax_t1_offset_no_end, _cmax_tD1_tD2_DOSE_BW, _tThreshold, _tThreshold_last, _cmax_tD1_tD2_DOSE_BW_auto };
       }
 
       protected override void Because()
@@ -170,7 +170,7 @@ namespace OSPSuite.Core
       {
          _pk[C_max].Value.ShouldBeEqualTo(23.07205582f, 1e-2);
          _pk[C_max_tD1_tD2].Value.ShouldBeEqualTo(_pk[_cmax_tD1_tD2.Name].Value, 1e-2);
-         _pk[_cmax_tD1_tD2_DOSE_BW.Name].Value.ShouldBeEqualTo((float) (_pk[_cmax_tD1_tD2.Name].Value / _firstDose), 1e-2);
+         _pk[_cmax_tD1_tD2_DOSE_BW.Name].Value.ShouldBeEqualTo((float)(_pk[_cmax_tD1_tD2.Name].Value / _firstDose), 1e-2);
          _pk[_cmax_tD1_tD2_DOSE_BW_auto.Name].Value.ShouldBeEqualTo(_pk[_cmax_tD1_tD2_DOSE_BW.Name].Value, 1e-2);
          _pk[C_max_tD1_tD2].Value.ShouldBeEqualTo(_pk[_cmax_t1_t2.Name].Value, 1e-2);
          _pk[Tmax_tD1_tD2].Value.ShouldBeEqualTo(_pk[_tmax_tD1_tD2.Name].Value, 1e-2);
@@ -276,9 +276,9 @@ namespace OSPSuite.Core
             TotalDrugMassPerBodyWeight = 10,
          };
 
-         _pkOptions.AddInterval(new DosingInterval {StartValue = 0, EndValue = 8.1f, DrugMassPerBodyWeight = _firstDose});
-         _pkOptions.AddInterval(new DosingInterval {StartValue = 8.1f, EndValue = 16f, DrugMassPerBodyWeight = _oneMinusLastDose});
-         _pkOptions.AddInterval(new DosingInterval {StartValue = 16, EndValue = 48, DrugMassPerBodyWeight = _lastDose});
+         _pkOptions.AddInterval(new DosingInterval { StartValue = 0, EndValue = 8.1f, DrugMassPerBodyWeight = _firstDose });
+         _pkOptions.AddInterval(new DosingInterval { StartValue = 8.1f, EndValue = 16f, DrugMassPerBodyWeight = _oneMinusLastDose });
+         _pkOptions.AddInterval(new DosingInterval { StartValue = 16, EndValue = 48, DrugMassPerBodyWeight = _lastDose });
       }
 
       protected override void Because()
@@ -318,8 +318,8 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _baseGrid = new BaseGrid("BaseGrid", NO_DIMENSION) {Values = Array.Empty<float>()};
-         _emptyColumns = new DataColumn("TEST", NO_DIMENSION, _baseGrid) {Values = Array.Empty<float>()};
+         _baseGrid = new BaseGrid("BaseGrid", NO_DIMENSION) { Values = Array.Empty<float>() };
+         _emptyColumns = new DataColumn("TEST", NO_DIMENSION, _baseGrid) { Values = Array.Empty<float>() };
          _pkOptions = new PKCalculationOptions
          {
             TotalDrugMassPerBodyWeight = 10,
@@ -335,6 +335,36 @@ namespace OSPSuite.Core
       public void should_return_an_empty_pk_calculation()
       {
          _pk.HasValueFor(C_max).ShouldBeFalse();
+      }
+   }
+
+   public class When_calculating_pk_values_for_a_column_with_few_values : concern_for_PKValuesCalculator
+   {
+      private PKValues _pk;
+      private DataColumn _dataColumn;
+      private PKCalculationOptions _pkOptions;
+      private BaseGrid _baseGrid;
+
+      protected override void Context()
+      {
+         base.Context();
+         _baseGrid = new BaseGrid("BaseGrid", NO_DIMENSION) { Values = new[] { 0f, 1f, 2f } };
+         _dataColumn = new DataColumn("TEST", NO_DIMENSION, _baseGrid) { Values = new[] { 3f, 2f, 0.1f } };
+         _pkOptions = new PKCalculationOptions
+         {
+            TotalDrugMassPerBodyWeight = 10,
+         };
+      }
+
+      protected override void Because()
+      {
+         _pk = sut.CalculatePK(_dataColumn, _pkOptions);
+      }
+
+      [Observation]
+      public void should_have_non_infinity_value_for_Thalf()
+      {
+         _pk.ValueFor(Thalf).ShouldNotBeEqualTo(float.PositiveInfinity);
       }
    }
 }

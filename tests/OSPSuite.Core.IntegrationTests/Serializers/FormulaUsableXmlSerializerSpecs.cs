@@ -5,7 +5,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class FormulaUsableXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class FormulaUsableXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerializationEmptyFormulaUsable()

@@ -20,6 +20,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.Configuration).WithMappingName(SIMULATION_CONFIGURATION);
          Map(x => x.Model);
          Map(x => x.Creation);
+         MapEnumerable(x => x.EntitySources, x => x.EntitySources.Add);
       }
    }
 

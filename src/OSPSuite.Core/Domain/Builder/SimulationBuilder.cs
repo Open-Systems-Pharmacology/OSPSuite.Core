@@ -18,7 +18,11 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly PathAndValueEntityCache<InitialCondition> _initialConditions = new PathAndValueEntityCache<InitialCondition>();
       private readonly Cache<IMoleculeDependentBuilder, MoleculeList> _moleculeListCache = new Cache<IMoleculeDependentBuilder, MoleculeList>();
 
-      private readonly Cache<IObjectBase, IObjectBase> _builderCache = new Cache<IObjectBase, IObjectBase>(onMissingKey: x => null);
+      //Contains a temp  cache of builder and their corresponding building blocks
+      private readonly Cache<string, BuilderSource> _builderSources = new Cache<string, BuilderSource>(x => x.Builder.Id, x => null);
+
+      //Cache of entity source by id and not by path. It is required because the path is not available at time of construction in the entity
+      private readonly Cache<string, EntitySource> _entitySources = new Cache<string, EntitySource>(onMissingKey: x => null);
 
       public SimulationBuilder(SimulationConfiguration simulationConfiguration)
       {
@@ -28,21 +32,14 @@ namespace OSPSuite.Core.Domain.Builder
 
       public bool CreateAllProcessRateParameters => _simulationConfiguration.CreateAllProcessRateParameters;
 
-      public IObjectBase BuilderFor(IObjectBase modelObject) => _builderCache[modelObject];
+      public IEntity BuilderFor(IEntity modelObject) => EntitySourceFor(modelObject)?.Source;
 
-      internal void AddBuilderReference(IObjectBase modelObject, IObjectBase builder)
+      internal EntitySource EntitySourceFor(IEntity entity) => _entitySources[entity.Id];
+
+      internal void AddEntitySource(string entityId, EntitySource entitySource)
       {
-         _builderCache[modelObject] = builder;
+         _entitySources[entityId] = entitySource;
       }
-
-      private IReadOnlyList<T> all<T>(Func<Module, T> propAccess) where T : IBuildingBlock =>
-         _simulationConfiguration.ModuleConfigurations.Select(x => propAccess(x.Module)).Where(x => x != null).ToList();
-
-      private IEnumerable<T> allBuilder<T>(Func<Module, IBuildingBlock<T>> propAccess) where T : IBuilder =>
-         all(propAccess).SelectMany(x => x);
-
-      private IEnumerable<T> allStartValueBuilder<T>(Func<ModuleConfiguration, IBuildingBlock<T>> propAccess) where T : PathAndValueEntity =>
-         _simulationConfiguration.ModuleConfigurations.Select(propAccess).Where(x => x != null).SelectMany(x => x);
 
       internal IEnumerable<MoleculeBuilder> AllPresentMolecules()
       {
@@ -88,23 +85,93 @@ namespace OSPSuite.Core.Domain.Builder
 
       private void performMerge()
       {
+         cacheBuilders(x => x.Reactions, _reactions);
+         cacheBuilders(x => x.Molecules, _molecules);
          cacheMoleculeDependentBuilders(x => x.PassiveTransports, _passiveTransports);
-         _reactions.AddRange(allBuilder(x => x.Reactions));
          cacheMoleculeDependentBuilders(x => x.Observers, _observers);
-         _molecules.AddRange(allBuilder(x => x.Molecules));
-         _parameterValues.AddRange(allStartValueBuilder(x => x.SelectedParameterValues));
+         cacheParameterValueBuilders(x => x.SelectedParameterValues, _parameterValues);
+         cacheInitialConditions();
+         cacheEntities();
+      }
+
+      private void cacheEntities()
+      {
+         cacheContainers(_reactions);
+         cacheContainers(_molecules);
+         cacheContainers(_passiveTransports);
+
+         //also add individual if any to source
+         AddToBuilderSource(_simulationConfiguration.Individual);
+         _simulationConfiguration.ExpressionProfiles.Each(AddToBuilderSource);
+      }
+
+      private void cacheContainers(IEnumerable<IContainer> containers)
+      {
+         containers.Each(container =>
+         {
+            var containerSource = BuilderSourceFor(container);
+            //this should never happen since we just created it
+            if (containerSource == null)
+            {
+               Console.WriteLine($"Cannot find container source for {container.EntityPath()}");
+               return;
+            }
+
+            var allEntities = container.GetAllChildren<IEntity>();
+            allEntities.Each(entity => AddToBuilderSource(entity, containerSource.BuildingBlock));
+         });
+      }
+
+      private void cacheInitialConditions()
+      {
+         var expressionProfileInitialConditionsCache = new PathAndValueEntityCache<InitialCondition>();
+         var initialConditionsFromConfigurationsCache = new PathAndValueEntityCache<InitialCondition>();
+
+         cacheParameterValueBuilders(x => x.SelectedInitialConditions, initialConditionsFromConfigurationsCache);
+         var expressionProfileInitialConditions = allInitialConditionsFromExpressionProfileSources();
+         expressionProfileInitialConditionsCache.AddRange(expressionProfileInitialConditions.Select(x => x.InitialCondition));
+         addToBuilderSource(expressionProfileInitialConditions);
 
          // Concat order is important so that the values from expression profiles are overwritten if duplicated
-         _initialConditions.AddRange(_simulationConfiguration.ExpressionProfiles.SelectMany(x => x.InitialConditions)
-            .Concat(allStartValueBuilder(x => x.SelectedInitialConditions)));
+         _initialConditions.AddRange(expressionProfileInitialConditionsCache.Concat(initialConditionsFromConfigurationsCache));
       }
 
       private void cacheMoleculeDependentBuilders<T>(Func<Module, IBuildingBlock<T>> propAccess, ObjectBaseCache<T> cache) where T : class, IMoleculeDependentBuilder
       {
-         var builders = allBuilder(propAccess).ToList();
-         cache.AddRange(builders);
+         var builders = cacheBuilders(propAccess, cache);
          cacheMoleculeLists(builders, cache);
       }
+
+      private IReadOnlyList<T> cacheBuilders<T>(Func<Module, IBuildingBlock<T>> propAccess, ObjectBaseCache<T> cache) where T : class, IBuilder, IEntity
+      {
+         var builderSources = allBuilderSources(propAccess);
+         var builders = builderSources.Select(x => x.Builder).ToList();
+         cache.AddRange(builders);
+         addToBuilderSource(builderSources);
+         return builders;
+      }
+
+      private void cacheParameterValueBuilders<T>(Func<ModuleConfiguration, IBuildingBlock<T>> propAccess, PathAndValueEntityCache<T> cache) where T : PathAndValueEntity
+      {
+         var builderSources = allParameterValueBuilderSources(propAccess);
+         var builders = builderSources.Select(x => x.Builder).ToList();
+         cache.AddRange(builders);
+         addToBuilderSource(builderSources);
+      }
+
+      public void AddToBuilderSource<TBuilder>(PathAndValueEntityBuildingBlock<TBuilder> buildingBlock) where TBuilder : PathAndValueEntity =>
+         buildingBlock?.Each(x => AddToBuilderSource(x, buildingBlock));
+
+      public void AddToBuilderSource<TBuilder>(IBuildingBlock<TBuilder> buildingBlock) where TBuilder : IBuilder, IContainer =>
+         buildingBlock.SelectMany(builder => builder.GetAllChildrenAndSelf<IEntity>()).Each(x => AddToBuilderSource(x, buildingBlock));
+
+      public void AddToBuilderSource(IEntity builder, IBuildingBlock buildingBlock)
+      {
+         _builderSources[builder.Id] = new BuilderSource(builder, buildingBlock);
+      }
+
+      private void addToBuilderSource<T>(IEnumerable<(T Builder, IBuildingBlock BuildingBlock)> builderSources) where T : class, IBuilder, IEntity =>
+         builderSources.Each(x => AddToBuilderSource(x.Builder, x.BuildingBlock));
 
       private void cacheMoleculeLists<T>(IReadOnlyList<T> allBuilders, ObjectBaseCache<T> builderCache) where T : class, IMoleculeDependentBuilder
       {
@@ -135,8 +202,51 @@ namespace OSPSuite.Core.Domain.Builder
       internal IReadOnlyCollection<MoleculeBuilder> Molecules => _molecules;
       internal IReadOnlyCollection<ParameterValue> ParameterValues => _parameterValues;
       internal IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
+
+      public IReadOnlyCollection<EntitySource> EntitySources => _entitySources;
+
       internal MoleculeList MoleculeListFor(IMoleculeDependentBuilder builder) => _moleculeListCache[builder];
 
       internal MoleculeBuilder MoleculeByName(string name) => _molecules[name];
+
+      internal class BuilderSource
+      {
+         public IEntity Builder { get; }
+         public IBuildingBlock BuildingBlock { get; }
+
+         public BuilderSource(IEntity builder, IBuildingBlock buildingBlock)
+         {
+            Builder = builder;
+            BuildingBlock = buildingBlock;
+         }
+
+         public override string ToString()
+         {
+            return $"{Builder.EntityPath()} - {BuildingBlock.Name}";
+         }
+      }
+
+      internal BuilderSource BuilderSourceFor(IEntity sourceEntity) => _builderSources[sourceEntity.Id];
+
+      private IReadOnlyList<(T Builder, IBuildingBlock BuildingBlock)> allBuilderSources<T>(Func<Module, IBuildingBlock<T>> propAccess) where T : IBuilder =>
+         _simulationConfiguration.ModuleConfigurations
+            .Select(x => propAccess(x.Module))
+            .Where(x => x != null)
+            .SelectMany(x => x.Select(builder => (builder, (IBuildingBlock) x)))
+            .ToList();
+
+      private IReadOnlyList<(T Builder, IBuildingBlock BuildingBlock)> allParameterValueBuilderSources<T>(Func<ModuleConfiguration, IBuildingBlock<T>> propAccess) where T : PathAndValueEntity =>
+         _simulationConfiguration.ModuleConfigurations
+            .Select(propAccess)
+            .Where(x => x != null)
+            .SelectMany(x => x.Select(builder => (builder, (IBuildingBlock) x)))
+            .ToList();
+
+      private IReadOnlyList<(InitialCondition InitialCondition, IBuildingBlock BuildingBlock)> allInitialConditionsFromExpressionProfileSources() =>
+         _simulationConfiguration.ExpressionProfiles
+            .Select(x => (BuildingBlock: x, x.InitialConditions))
+            //null because these conditions do not belong in a module
+            .SelectMany(x => x.InitialConditions.Select(ic => (ic, (IBuildingBlock) x.BuildingBlock)))
+            .ToList();
    }
 }

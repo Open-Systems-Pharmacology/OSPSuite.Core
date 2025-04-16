@@ -8,7 +8,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class QuantityInfoXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class QuantityInfoXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()

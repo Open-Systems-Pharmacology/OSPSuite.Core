@@ -9,7 +9,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class DataColumnXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class DataColumnXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerializationWithoutRelatedColumn()

@@ -9,7 +9,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   internal class BuildingBlockWithFormulaCacheXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class BuildingBlockWithFormulaCacheXmlSerializerSpecs : ModelingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestSimpleBB()
@@ -62,7 +62,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   internal class MoleculeBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class MoleculeBuildingBlockXmlSerializerSpecs : ModelingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexMoleculeBB()
@@ -73,7 +73,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   internal class PassiveTransportBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class PassiveTransportBuildingBlockXmlSerializerSpecs : ModelingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexPassiveTransportBB()
@@ -84,7 +84,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   internal class ReactionBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class ReactionBuildingBlockXmlSerializerSpecs : ModelingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexReactionBB()
@@ -95,7 +95,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   internal class EventGroupBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class EventGroupBuildingBlockXmlSerializerSpecs : ModelingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexEventGroupBB()
@@ -113,7 +113,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   internal class SpatialStructureXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class SpatialStructureXmlSerializerSpecs : ModelingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexSpatialStructure()
@@ -124,7 +124,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   internal class InitialConditionsBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class InitialConditionsBuildingBlockXmlSerializerSpecs : ModelingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexInitialConditionsBuildingBlock()
@@ -135,7 +135,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   internal class ParameterValuesBuildingBlockXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class ParameterValuesBuildingBlockXmlSerializerSpecs : ModelingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexParameterValuesBuildingBlock()
@@ -146,7 +146,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   internal class SimulationConfigurationXmlSerializerSpecs : ModellingXmlSerializerWithModelBaseSpecs
+   internal class SimulationConfigurationXmlSerializerSpecs : ModelingXmlSerializerWithModelBaseSpecs
    {
       [Test]
       public void TestComplexBuildConfiguration()

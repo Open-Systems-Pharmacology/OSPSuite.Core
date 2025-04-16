@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Mappers
@@ -13,12 +14,14 @@ namespace OSPSuite.Core.Mappers
    {
       protected IObjectBaseFactory _objectBaseFactory;
       protected IFormulaBuilderToFormulaMapper _formulaMapper;
+      protected IEntityTracker _entityTracker;
 
       protected override void Context()
       {
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          _formulaMapper = A.Fake<IFormulaBuilderToFormulaMapper>();
-         sut = new ObserverBuilderToObserverMapper(_objectBaseFactory, _formulaMapper);
+         _entityTracker = A.Fake<IEntityTracker>();
+         sut = new ObserverBuilderToObserverMapper(_objectBaseFactory, _formulaMapper, _entityTracker);
       }
    }
 
@@ -35,7 +38,7 @@ namespace OSPSuite.Core.Mappers
          base.Context();
          _simulationConfiguration = new SimulationConfiguration();
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
-         _observerBuilder =new ObserverBuilder().WithName("toto").WithDimension(A.Fake<IDimension>());
+         _observerBuilder = new ObserverBuilder().WithName("toto").WithDimension(A.Fake<IDimension>());
          _observerBuilder.Formula = A.Fake<IFormula>();
          _mappedFormula = A.Fake<IFormula>();
          A.CallTo(() => _objectBaseFactory.Create<Observer>()).Returns(A.Fake<Observer>());
@@ -68,7 +71,7 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_have_added_a_reference_to_the_observer_builder_for_the_created_observer()
       {
-         _simulationBuilder.BuilderFor(_observer).ShouldBeEqualTo(_observerBuilder);
+         A.CallTo(() => _entityTracker.Track(_observer, _observerBuilder, _simulationBuilder)).MustHaveHappened();
       }
    }
 }

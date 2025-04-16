@@ -18,10 +18,12 @@ namespace OSPSuite.Core.Domain.Mappers
    internal class ContainerBuilderToContainerMapper : IContainerBuilderToContainerMapper
    {
       private readonly ICloneManagerForModel _cloneManagerForModel;
+      private readonly IEntityTracker _entityTracker;
 
-      public ContainerBuilderToContainerMapper(ICloneManagerForModel cloneManagerForModel)
+      public ContainerBuilderToContainerMapper(ICloneManagerForModel cloneManagerForModel, IEntityTracker entityTracker)
       {
          _cloneManagerForModel = cloneManagerForModel;
+         _entityTracker = entityTracker;
       }
 
       public IContainer MapFrom(IContainer containerBuilder, SimulationBuilder simulationBuilder)
@@ -35,15 +37,16 @@ namespace OSPSuite.Core.Domain.Mappers
       {
          if (container == null || containerBuilder == null) return;
 
-         simulationBuilder.AddBuilderReference(container, containerBuilder);
-
+         _entityTracker.Track(container, containerBuilder, simulationBuilder);
          foreach (var childBuilder in containerBuilder.Children)
          {
             var child = container.GetSingleChildByName(childBuilder.Name);
             if (child.IsAnImplementationOf<IContainer>())
                addBuilderReference(child.DowncastTo<IContainer>(), childBuilder as IContainer, simulationBuilder);
             else
-               simulationBuilder.AddBuilderReference(child, childBuilder);
+            {
+               _entityTracker.Track(child, childBuilder, simulationBuilder);
+            }
          }
       }
    }
