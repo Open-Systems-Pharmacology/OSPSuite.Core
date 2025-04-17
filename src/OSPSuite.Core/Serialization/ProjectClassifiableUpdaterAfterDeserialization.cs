@@ -18,7 +18,8 @@ namespace OSPSuite.Core.Serialization
    {
       public void Update(IProject project)
       {
-         if (project == null) return;
+         if (project == null) 
+            return;
 
          project.AllClassifiablesByType<IClassifiableWrapper>().ToList().Each(x =>
          {

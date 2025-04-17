@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Core.Services;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Formatters;
-using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
@@ -38,6 +38,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _allProperties.Add(new RunPropertyDTO<int>(Captions.ParameterIdentification.NumberOfEvaluations, runResult.NumberOfEvaluations, new IntFormatter()));
          _allProperties.Add(new RunPropertyDTO<TimeSpan>(Captions.ParameterIdentification.Duration, runResult.Duration, new TimeSpanFormatter()));
          _allProperties.Add(new RunPropertyDTO<RunStatus>(Captions.ParameterIdentification.Status, runResult.Status, icon: icon));
+         _allProperties.Add(new RunPropertyDTO<DateTime>(Captions.ParameterIdentification.CompletedDate, runResult.DateTimeCompleted, new DateTimeFormatter(displayTime: true)));
 
          if (!string.IsNullOrEmpty(runResult.Message))
             _allProperties.Add(new RunPropertyDTO<string>(Captions.ParameterIdentification.RunMessage, runResult.Message, icon: icon));
