@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using OSPSuite.Core.Services;
 
@@ -26,15 +24,6 @@ namespace OSPSuite.R.MinimalImplementations
       {
          heavyWorkAction();
          HeavyWorkedFinished(this, new HeavyWorkEventArgs(true));
-      }
-   }
-
-   public class HeavyWorkManagerFailingForSpecs : HeavyWorkManager
-   {
-      public override bool Start(Action heavyWorkAction, string caption, CancellationTokenSource cts = default)
-      {
-         base.Start(heavyWorkAction, caption);
-         return false;
       }
    }
 }
