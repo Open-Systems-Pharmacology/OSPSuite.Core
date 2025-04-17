@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FakeItEasy;
 using NUnit.Framework;
@@ -105,7 +106,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_run_the_simulation_using_the_population_data()
       {
-         A.CallTo(() => _populationRunner.RunPopulationAsync(_simulation, _simulationRunOptions, _populationData, null, null)).MustHaveHappened();
+         A.CallTo(() => _populationRunner.RunPopulationAsync(_simulation, _simulationRunOptions, _populationData, null, null, CancellationToken.None)).MustHaveHappened();
       }
    }
 
@@ -150,7 +151,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_run_the_simulation_using_the_population_data()
       {
-         A.CallTo(() => _populationRunner.RunPopulationAsync(_simulation, _simulationRunOptions, _populationData, A<DataTable>._, null))
+         A.CallTo(() => _populationRunner.RunPopulationAsync(_simulation, _simulationRunOptions, _populationData, A<DataTable>._, null, CancellationToken.None))
             .MustHaveHappened();
       }
    }

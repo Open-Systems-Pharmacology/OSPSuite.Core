@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using OSPSuite.Utility.Events;
 using OSPSuite.Core.Domain.Mappers;
@@ -9,9 +10,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 {
    public interface ISensitivityAnalysisEngine : IDisposable
    {
-      Task StartAsync(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions);
-
-      void Stop();
+      Task StartAsync(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions, CancellationToken cancellationToken = default);
 
       /// <summary>
       ///    Progress event returns the percent representing the progress of a simulation
@@ -54,7 +53,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
          _populationRunner.SimulationProgress += simulationProgress;
       }
 
-      public async Task StartAsync(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions)
+      public async Task StartAsync(SensitivityAnalysis sensitivityAnalysis, SensitivityAnalysisRunOptions runOptions, CancellationToken cancellationToken = default)
       {
          _sensitivityAnalysis = sensitivityAnalysis;
          _eventPublisher.PublishEvent(new SensitivityAnalysisStartedEvent(sensitivityAnalysis));
@@ -64,7 +63,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
             var modelCoreSimulation = _modelCoreSimulationMapper.MapFrom(sensitivityAnalysis.Simulation, shouldCloneModel: true);
             _simulationPersistableUpdater.UpdateSimulationPersistable(modelCoreSimulation);
             var variationData = _sensitivityAnalysisVariationDataCreator.CreateForRun(sensitivityAnalysis);
-            var runResults = await _populationRunner.RunPopulationAsync(modelCoreSimulation, runOptions,  variationData.ToDataTable());
+            var runResults = await _populationRunner.RunPopulationAsync(modelCoreSimulation, runOptions,  variationData.ToDataTable(), cancellationToken: cancellationToken);
             sensitivityAnalysis.Results = await calculateSensitivityBasedOn(sensitivityAnalysis, variationData, runResults, runOptions);
             _eventPublisher.PublishEvent(new SensitivityAnalysisResultsUpdatedEvent(sensitivityAnalysis));
          }
@@ -91,11 +90,6 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
          _populationRunner.Terminated -= terminated;
          _populationRunner.SimulationProgress -= simulationProgress;
          Terminated(this, e);
-      }
-
-      public void Stop()
-      {
-         _populationRunner.StopSimulation();
       }
 
       protected virtual void Cleanup()

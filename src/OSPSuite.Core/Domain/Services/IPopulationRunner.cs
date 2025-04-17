@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OSPSuite.Core.Domain.Services
@@ -40,12 +41,7 @@ namespace OSPSuite.Core.Domain.Services
       ///    <para></para>
       ///    For failed individuals, pairs {IndividualId, ErrorMessage} are stored
       /// </returns>
-      Task<PopulationRunResults> RunPopulationAsync(IModelCoreSimulation simulation, RunOptions runOptions, DataTable populationData, DataTable agingData = null, DataTable initialValues = null);
-
-      /// <summary>
-      ///    Stops SimModelSimulation run
-      /// </summary>
-      void StopSimulation();
+      Task<PopulationRunResults> RunPopulationAsync(IModelCoreSimulation simulation, RunOptions runOptions, DataTable populationData, DataTable agingData = null, DataTable initialValues = null, CancellationToken cancellationToken = default);
 
       /// <summary>
       ///    Progress event returns the percent representing the progress of a simulation
