@@ -123,6 +123,7 @@ namespace OSPSuite.Core
          container.Register<IDisplayNameProvider, DisplayNameProvider>();
          container.Register<ConcentrationBaseModelHelperForSpecs, ConcentrationBaseModelHelperForSpecs>();
          container.Register<IReactionDimensionRetriever, ReactionDimensionRetrieverForSpecs>(LifeStyle.Singleton);
+         container.Register<IHeavyWorkManager, HeavyWorkManagerForSpecs>();
          container.RegisterImplementationOf(A.Fake<IStartOptions>());
 
          container.RegisterImplementationOf(A.Fake<IApplicationController>());

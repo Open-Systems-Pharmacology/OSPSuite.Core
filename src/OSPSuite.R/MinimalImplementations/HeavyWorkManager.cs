@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Threading;
 using OSPSuite.Core.Services;
 
-namespace OSPSuite.Helpers
+namespace OSPSuite.R.MinimalImplementations
 {
-   public class HeavyWorkManagerForSpecs : IHeavyWorkManager
+
+   public class HeavyWorkManager : IHeavyWorkManager
    {
       public event EventHandler<HeavyWorkEventArgs> HeavyWorkedFinished = delegate { };
 
@@ -25,13 +26,5 @@ namespace OSPSuite.Helpers
          HeavyWorkedFinished(this, new HeavyWorkEventArgs(true));
       }
    }
-
-   public class HeavyWorkManagerFailingForSpecs : HeavyWorkManagerForSpecs
-   {
-      public override bool Start(Action heavyWorkAction, string caption, CancellationTokenSource cts = default)
-      {
-         base.Start(heavyWorkAction, caption);
-         return false;
-      }
-   }
 }
+
