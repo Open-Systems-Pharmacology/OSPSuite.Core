@@ -17,4 +17,9 @@ namespace OSPSuite.Core.Serialization.Xml
    public class ClassifiableDataRepositoryXmlSerializer : ClassifiableXmlSerializer<ClassifiableObservedData, DataRepository>
    {
    }
+
+   public class ClassifiableModuleXmlSerializer : ClassifiableXmlSerializer<ClassifiableModule, Module>
+   {
+
+   }
 }

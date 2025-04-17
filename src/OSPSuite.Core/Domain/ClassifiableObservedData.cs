@@ -3,7 +3,7 @@
 namespace OSPSuite.Core.Domain
 {
    /// <summary>
-   ///    A wrapper for Datarepository which can resolve a classification tree
+   ///    A wrapper for <see cref="DataRepository"/>  which can resolve a classification tree
    /// </summary>
    public class ClassifiableObservedData : Classifiable<DataRepository>
    {

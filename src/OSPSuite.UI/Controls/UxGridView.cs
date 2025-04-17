@@ -39,7 +39,7 @@ namespace OSPSuite.UI.Controls
       private DataTable rectangularSelectionOnlyTable => _gridViewToDataTableMapper.MapFrom(this, GetSelectedRows(), GetSelectedCells);
 
       protected override string ViewName => "UxGridView";
-      
+
       public UxGridView(GridControl gridControl) : base(gridControl)
       {
          DoInit();
@@ -205,7 +205,7 @@ namespace OSPSuite.UI.Controls
          if (ehi.HitTest == EditHitTest.Button)
          {
             edit.PerformClick(ehi.HitObject.DowncastTo<EditorButtonObjectInfoArgs>().Button);
-            ((DXMouseEventArgs) e).Handled = true;
+            ((DXMouseEventArgs)e).Handled = true;
          }
       }
 
@@ -301,7 +301,7 @@ namespace OSPSuite.UI.Controls
       {
          get
          {
-            var viewInfo = (GridViewInfo) GetViewInfo();
+            var viewInfo = (GridViewInfo)GetViewInfo();
             FieldInfo fi = typeof(GridView).GetField("scrollInfo", BindingFlags.Instance | BindingFlags.NonPublic);
             Rectangle oldBounds = viewInfo.Bounds;
 
@@ -310,7 +310,7 @@ namespace OSPSuite.UI.Controls
                int height = viewInfo.CalcRealViewHeight(new Rectangle(0, 0, MaxValue, MaxValue));
                viewInfo.CalcRealViewHeight(oldBounds);
 
-               var scrollInfo = (ScrollInfo) fi.GetValue(this);
+               var scrollInfo = (ScrollInfo)fi.GetValue(this);
                if (scrollInfo.HScrollVisible)
                   height += scrollInfo.HScrollSize;
 
@@ -443,21 +443,21 @@ namespace OSPSuite.UI.Controls
 
       private void addCopyMenuItemsForRowSelect(GridViewMenu gridViewMenu)
       {
-         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) {Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection};
+         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection };
          gridViewMenu.Items.Insert(0, copyRowMenu);
       }
 
       private void addCopyMenuItemsForCellSelect(GridViewMenu gridViewMenu)
       {
-         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) {SvgImage = ApplicationIcons.CopySelection};
-         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, (o, args) => processSelectiveCopyToClipboard()) {Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection};
+         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) { SvgImage = ApplicationIcons.CopySelection };
+         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, (o, args) => processSelectiveCopyToClipboard()) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection };
          gridViewMenu.Items.Insert(0, copyRowMenu);
          gridViewMenu.Items.Insert(0, copySelectionMenu);
       }
 
       private void addCommonCopyMenuItems(GridViewMenu gridViewMenu)
       {
-         var copyAllMenu = new DXMenuItem(Captions.CopyTable, (o, args) => copyEntireGridToClipboard()) {Shortcut = Shortcut.CtrlShiftC, SvgImage = ApplicationIcons.Copy};
+         var copyAllMenu = new DXMenuItem(Captions.CopyTable, (o, args) => copyEntireGridToClipboard()) { Shortcut = Shortcut.CtrlShiftC, SvgImage = ApplicationIcons.Copy };
          gridViewMenu.Items.Insert(0, copyAllMenu);
       }
 
@@ -522,7 +522,7 @@ namespace OSPSuite.UI.Controls
          var firstRow = selectedRows.First();
          var firstRowColumnsSelected = GetSelectedCells(firstRow);
 
-         return selectedRows.Except(new[] {firstRow}).Select(GetSelectedCells).All(currentRowSelectedColumns => allColumnsAreCommon(firstRowColumnsSelected, currentRowSelectedColumns));
+         return selectedRows.Except(new[] { firstRow }).Select(GetSelectedCells).All(currentRowSelectedColumns => allColumnsAreCommon(firstRowColumnsSelected, currentRowSelectedColumns));
       }
 
       private static bool allColumnsAreCommon(GridColumn[] firstRowColumnsSelected, GridColumn[] currentRowSelectedColumns)

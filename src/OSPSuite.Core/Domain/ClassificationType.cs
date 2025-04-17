@@ -8,6 +8,7 @@ namespace OSPSuite.Core.Domain
       Comparison,
       ParameterIdentification,
       SensitiviyAnalysis,
-      QualificationPlan
+      QualificationPlan,
+      Module
    }
 }

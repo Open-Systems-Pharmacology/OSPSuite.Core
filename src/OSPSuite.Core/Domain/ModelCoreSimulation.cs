@@ -49,7 +49,7 @@ namespace OSPSuite.Core.Domain
       /// <summary>
       ///    Tracks objects used to create the simulation. (may be null)
       /// </summary>
-      EntitySources EntitySources { get; }
+      SimulationEntitySources EntitySources { get; }
    }
 
    public class ModelCoreSimulation : ObjectBase, IModelCoreSimulation
@@ -60,7 +60,7 @@ namespace OSPSuite.Core.Domain
 
       public CreationMetaData Creation { get; set; }
 
-      public EntitySources EntitySources { get; } = new EntitySources();
+      public SimulationEntitySources EntitySources { get; } = new SimulationEntitySources();
 
       public double? EndTime => Settings?.OutputSchema?.EndTime;
 
