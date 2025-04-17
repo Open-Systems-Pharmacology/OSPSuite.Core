@@ -18,7 +18,6 @@ namespace OSPSuite.Core.Domain.Services
 
       private PopulationRunResults _populationRunResults;
       private PopulationDataSplitter _populationDataSplitter;
-      private CancellationTokenSource _cancellationTokenSource;
       private int _numberOfSimulationsToRun;
       private int _numberOfProcessedSimulations;
       private string _simulationName;
@@ -31,8 +30,9 @@ namespace OSPSuite.Core.Domain.Services
       {
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
       }
+      
 
-      public async Task<PopulationRunResults> RunPopulationAsync(IModelCoreSimulation simulation, RunOptions runOptions, DataTable populationData, DataTable agingData = null, DataTable initialValues = null)
+      public async Task<PopulationRunResults> RunPopulationAsync(IModelCoreSimulation simulation, RunOptions runOptions, DataTable populationData, DataTable agingData = null, DataTable initialValues = null, CancellationToken cancellationToken = default)
       {
          try
          {
@@ -41,7 +41,6 @@ namespace OSPSuite.Core.Domain.Services
                numberOfCoresToUse = 1;
 
             _populationDataSplitter = new PopulationDataSplitter(numberOfCoresToUse, populationData, agingData, initialValues);
-            _cancellationTokenSource = new CancellationTokenSource();
             _populationRunResults = new PopulationRunResults();
 
             _numberOfSimulationsToRun = _populationDataSplitter.NumberOfIndividuals;
@@ -51,11 +50,11 @@ namespace OSPSuite.Core.Domain.Services
             _parameterCache = _entitiesInSimulationRetriever.ParametersFrom(simulation);
 
             //create simmodel-XML
-            var simulationExport = await CreateSimulationExportAsync(simulation, SimModelExportMode.Optimized);
+            var simulationExport = await CreateSimulationExportAsync(simulation, SimModelExportMode.Optimized, cancellationToken: cancellationToken);
 
             //Starts one task per core
             var tasks = Enumerable.Range(0, numberOfCoresToUse)
-               .Select(coreIndex => runSimulation(coreIndex, simulationExport, _cancellationTokenSource.Token)).ToList();
+               .Select(coreIndex => runSimulation(coreIndex, simulationExport, cancellationToken)).ToList();
 
             await Task.WhenAll(tasks);
             //all tasks are completed. Can return results
@@ -202,7 +201,5 @@ namespace OSPSuite.Core.Domain.Services
       {
          SetVariableMolecules(simulation, _populationDataSplitter.InitialValuesPathsToBeVaried());
       }
-
-      public void StopSimulation() => _cancellationTokenSource.Cancel();
    }
 }
