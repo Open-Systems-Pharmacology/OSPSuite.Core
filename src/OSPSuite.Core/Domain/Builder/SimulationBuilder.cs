@@ -203,7 +203,7 @@ namespace OSPSuite.Core.Domain.Builder
       internal IReadOnlyCollection<ParameterValue> ParameterValues => _parameterValues;
       internal IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
 
-      public IReadOnlyCollection<SimulationEntitySource> EntitySources => _entitySources;
+      public virtual IReadOnlyCollection<SimulationEntitySource> EntitySources => _entitySources;
 
       internal MoleculeList MoleculeListFor(IMoleculeDependentBuilder builder) => _moleculeListCache[builder];
 
