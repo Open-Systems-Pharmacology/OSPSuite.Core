@@ -101,5 +101,7 @@ namespace OSPSuite.Core.Domain
          _sources.Each(x => clone.Add(x.Clone()));
          return clone;
       }
+
+      public IReadOnlyCollection<SimulationEntitySource> All => _sources;
    }
 }
