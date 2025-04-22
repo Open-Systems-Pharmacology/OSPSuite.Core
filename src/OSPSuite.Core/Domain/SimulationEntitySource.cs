@@ -39,13 +39,18 @@ namespace OSPSuite.Core.Domain
       {
       }
 
-      internal SimulationEntitySource(SimulationEntitySource originalSource)
+      public SimulationEntitySource(string simulationEntityPath, string buildingBlockName, string buildingBlockType, string moduleName, string sourcePath)
       {
-         SimulationEntityPath = originalSource.SimulationEntityPath;
-         BuildingBlockName = originalSource.BuildingBlockName;
-         BuildingBlockType = originalSource.BuildingBlockType;
-         ModuleName = originalSource.ModuleName;
-         SourcePath = originalSource.SourcePath;
+         SimulationEntityPath = simulationEntityPath;
+         BuildingBlockName = buildingBlockName;
+         BuildingBlockType = buildingBlockType;
+         ModuleName = moduleName;
+         SourcePath = sourcePath;
+      }
+
+      internal SimulationEntitySource(SimulationEntitySource originalSource) : 
+         this(originalSource.SimulationEntityPath, originalSource.BuildingBlockName, originalSource.BuildingBlockType, originalSource.ModuleName, originalSource.SourcePath)
+      {
          Source = originalSource.Source;
       }
 
