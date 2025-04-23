@@ -53,7 +53,7 @@ namespace OSPSuite.Core.Domain
             var source = getEntityByPathIn(entitySource, buildingBlock);
             if (source == null)
                return;
-            
+
             sourceReferenceCache.Add(new SimulationEntitySourceReference(source, buildingBlock, buildingBlock.Module, entity));
          });
 
@@ -84,8 +84,17 @@ namespace OSPSuite.Core.Domain
                case SpatialStructure spatialStructure:
                   var pathCache = spStrCache[spatialStructure];
                   return pathCache[sourcePath];
-               case IBuildingBlock<IBuilder> bb:
-                  return bb.FindByName(sourcePath);
+               case IEnumerable<IBuilder> bb:
+               {
+                  //The path could potentially be the name of the source or a parameter in the source
+                  var sourcePathArray = sourcePath.ToObjectPath();
+                  var container = bb.FindByName(sourcePathArray[0]);
+                  if (sourcePathArray.Count == 1)
+                     return container;
+
+                  sourcePathArray.RemoveFirst();
+                  return sourcePathArray.TryResolve<IEntity>(container);
+               }
                default:
                   return null;
             }

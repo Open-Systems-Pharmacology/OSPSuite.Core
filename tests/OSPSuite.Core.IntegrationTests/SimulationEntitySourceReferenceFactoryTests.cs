@@ -150,5 +150,21 @@ namespace OSPSuite.Core
          var parameter1SourceReference = ValidateSourceReferenceFor(parameter);
          parameter1SourceReference.Module.Name.ShouldBeEqualTo("Module");
       }
+
+      [Observation]
+      public void should_be_able_to_retrieve_source_coming_from_parameter_in_molecules()
+      {
+         var parameter = _model.Root.EntityAt<IParameter>("A", "oneGlobalParameter");
+         var parameterReference = ValidateSourceReferenceFor(parameter);
+         parameterReference.Module.Name.ShouldBeEqualTo("Module");
+      }
+
+      [Observation]
+      public void should_be_able_to_retrieve_source_coming_from_molecules()
+      {
+         var globalMoleculeContainer = _model.Root.EntityAt<IContainer>("A");
+         var containerReference = ValidateSourceReferenceFor(globalMoleculeContainer);
+         containerReference.Module.Name.ShouldBeEqualTo("Module");
+      }
    }
 }
