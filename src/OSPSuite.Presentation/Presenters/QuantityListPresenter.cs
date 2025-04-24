@@ -71,6 +71,11 @@ namespace OSPSuite.Presentation.Presenters
       bool AutomaticallyHideEmptyColumns { get; set; }
 
       /// <summary>
+      ///    Hides the simulation column if true
+      /// </summary>
+      bool HideSimulationColumn { get; set; }
+
+      /// <summary>
       ///    Returns true if the column for the path with element <paramref name="pathElementId" /> contains only empty value
       /// </summary>
       bool PathElementIsEmpty(PathElementId pathElementId);
@@ -92,6 +97,7 @@ namespace OSPSuite.Presentation.Presenters
       public bool IsLatched { get; set; }
       public bool ExpandAllGroups { get; set; }
       public bool AutomaticallyHideEmptyColumns { get; set; }
+      public bool HideSimulationColumn { get; set; }
 
       public QuantityListPresenter(IQuantityListView view, IQuantityToQuantitySelectionDTOMapper quantitySelectionDTOMapper) : base(view)
       {
@@ -148,8 +154,10 @@ namespace OSPSuite.Presentation.Presenters
 
       public void UpdatePathColumnsVisibility()
       {
-         if (!AutomaticallyHideEmptyColumns) return;
-         EnumHelper.AllValuesFor<PathElementId>().Each(updateColumnVisibility);
+         if (AutomaticallyHideEmptyColumns) 
+            EnumHelper.AllValuesFor<PathElementId>().Each(updateColumnVisibility);
+
+         _view.SetVisibility(PathElementId.Simulation, !HideSimulationColumn);
       }
 
       private void updateColumnVisibility(PathElementId pathElementId)

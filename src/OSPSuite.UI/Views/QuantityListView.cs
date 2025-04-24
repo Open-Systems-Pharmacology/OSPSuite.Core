@@ -101,10 +101,7 @@ namespace OSPSuite.UI.Views
          _gridViewBinder.BindToSource(quantitySelectionDTOs);
       }
 
-      public void SetCaption(PathElementId pathElementId, string caption)
-      {
-         _pathElementsBinder.SetCaption(pathElementId, caption);
-      }
+      public void SetCaption(PathElementId pathElementId, string caption) => _pathElementsBinder.SetCaption(pathElementId, caption);
 
       private void sortByColumn()
       {
@@ -118,10 +115,7 @@ namespace OSPSuite.UI.Views
          xtraColumnBy(GroupPathElementId).GroupIndex = 0;
       }
 
-      private GridColumn xtraColumnBy(PathElementId pathElementId)
-      {
-         return _pathElementsBinder.ColumnAt(pathElementId).XtraColumn;
-      }
+      private GridColumn xtraColumnBy(PathElementId pathElementId) => _pathElementsBinder.ColumnAt(pathElementId).XtraColumn;
 
       public IEnumerable<QuantitySelectionDTO> SelectedQuantities
       {
@@ -147,10 +141,7 @@ namespace OSPSuite.UI.Views
          }
       }
 
-      public void SetVisibility(PathElementId pathElementId, bool visible)
-      {
-         _pathElementsBinder.SetVisibility(pathElementId, visible);
-      }
+      public void SetVisibility(PathElementId pathElementId, bool visible) => _pathElementsBinder.SetVisibility(pathElementId, visible);
 
       public override bool HasError => _gridViewBinder.HasError;
 

@@ -40,12 +40,6 @@ jobs:
       - name: Pack the project
         run: dotnet pack .\OSPSuite.Core.sln --no-build --no-restore -o ./ -p:PackageVersion=${{env.APP_VERSION}} --configuration=Debug --no-build
 
-      - name: Push nupkg as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: OSPSuite.Core
-          path: ./*.nupkg
-
       - name: Push test log as artifact
         uses: actions/upload-artifact@v4
         with:
