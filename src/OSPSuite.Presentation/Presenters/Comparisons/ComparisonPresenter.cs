@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Comparison;
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Views.Comparisons;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Comparisons
 {
@@ -50,8 +50,14 @@ namespace OSPSuite.Presentation.Presenters.Comparisons
 
          //Always hide name
          _view.SetVisibility(PathElementId.Name, visible: false);
+
+         if (isSimulationComparison(leftObject, rightObject))
+            _view.SetVisibility(PathElementId.Simulation, visible: false);
+
          _view.DifferenceTableVisible = _allDiffItemDTO.Any();
       }
+
+      private bool isSimulationComparison(IObjectBase leftObject, IObjectBase rightObject) => leftObject is ModelCoreSimulation && rightObject is ModelCoreSimulation;
 
       public DataTable ComparisonAsTable()
       {
