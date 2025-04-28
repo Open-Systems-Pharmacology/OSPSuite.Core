@@ -94,20 +94,24 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       private void createEventGroupInContainer(EventGroupBuilder eventGroupBuilder, IContainer sourceContainer, ModelConfiguration modelConfiguration, EventGroupBuildingBlock eventGroupBuildingBlock, MergeBehavior mergeBehavior)
       {
+         modelConfiguration.UpdateReplacementContext();
+         var (_, simulationBuilder, _) = modelConfiguration;
+
          //this creates recursively all event groups for the given builder
-         var (_, simulationBuilder, replacementContext) = modelConfiguration;
          var eventGroup = _eventGroupMapper.MapFrom(eventGroupBuilder, simulationBuilder);
 
          tryMergeEventGroupInContainer(sourceContainer, eventGroup, mergeBehavior, eventGroupBuildingBlock);
 
-         //needs to add the required transport into model only for the added event group
+         // after the Applications container is added to the model, update the replacement context
+         modelConfiguration.UpdateReplacementContext();
+         // needs to add the required transport into model only for the added event group
          foreach (var childEventGroup in eventGroup.GetAllContainersAndSelf<EventGroup>())
          {
             var childEventGroupBuilder = simulationBuilder.BuilderFor(childEventGroup).DowncastTo<EventGroupBuilder>();
             if (childEventGroupBuilder is ApplicationBuilder applicationBuilder)
                addApplicationTransports(applicationBuilder, childEventGroup, modelConfiguration);
 
-            _keywordReplacerTask.ReplaceIn(childEventGroup, childEventGroupBuilder, replacementContext);
+            _keywordReplacerTask.ReplaceIn(childEventGroup, childEventGroupBuilder, modelConfiguration.ReplacementContext);
          }
       }
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
@@ -11,7 +10,7 @@ namespace OSPSuite.Core.Domain.Services
    public class ReplacementContext
    {
       public IContainer RootContainer { get; }
-      public IReadOnlyList<string> TopContainerNames => RootContainer == null ? Array.Empty<string>() : RootContainer.GetChildren<IContainer>().AllNames();
+      public IReadOnlyList<string> TopContainerNames { get; set; }
       public string RootContainerName => RootContainer.Name;
 
       public ReplacementContext(IModel model) : this(model.Root)
@@ -21,6 +20,7 @@ namespace OSPSuite.Core.Domain.Services
       public ReplacementContext(IContainer rootContainer)
       {
          RootContainer = rootContainer;
+         TopContainerNames = rootContainer?.GetChildren<IContainer>().AllNames();
       }
    }
 
