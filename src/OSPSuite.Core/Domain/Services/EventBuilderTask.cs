@@ -94,7 +94,6 @@ namespace OSPSuite.Core.Domain.Services
       /// </summary>
       private void createEventGroupInContainer(EventGroupBuilder eventGroupBuilder, IContainer sourceContainer, ModelConfiguration modelConfiguration, EventGroupBuildingBlock eventGroupBuildingBlock, MergeBehavior mergeBehavior)
       {
-         modelConfiguration.UpdateReplacementContext();
          var (_, simulationBuilder, _) = modelConfiguration;
 
          //this creates recursively all event groups for the given builder
