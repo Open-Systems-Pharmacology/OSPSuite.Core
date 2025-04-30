@@ -34,6 +34,7 @@ namespace OSPSuite.Core.Domain.Services
       /// <param name="populationData">Data table with non-table parameter values for variation</param>
       /// <param name="agingData">Data table with table parameter values for variation</param>
       /// <param name="initialValues">Data table with (molecule) initial values</param>
+      /// <param name="cancellationToken"></param>
       /// <returns>
       ///    Simulation results.
       ///    <para></para>
