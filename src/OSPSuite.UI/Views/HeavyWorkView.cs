@@ -42,9 +42,7 @@ namespace OSPSuite.UI.Views
          else
          {
             this.FormBorderStyle = FormBorderStyle.None;
-            //set the transparencyKey to a color different from the one used on the controls
-            this.BackColor = Color.Black;
-            this.TransparencyKey = Color.Black;
+            this.TransparencyKey = this.BackColor;
          }
 
          layoutControlItemCancelButton.ContentVisible = CancelVisible;
