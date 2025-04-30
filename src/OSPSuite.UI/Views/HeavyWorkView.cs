@@ -1,12 +1,10 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
-using DevExpress.XtraBars.Ribbon.Gallery;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
-using Padding = DevExpress.XtraLayout.Utils.Padding;
 
 namespace OSPSuite.UI.Views
 {
@@ -34,15 +32,21 @@ namespace OSPSuite.UI.Views
 
       private void SetLayout()
       {
+         ShowInTaskbar = false;
          if (CancelVisible)
          {
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;
-            MaximizeBox = false;
-            ShowInTaskbar = false;
             this.Height = this.MaximumSize.Height;
          }
-            
+         else
+         {
+            this.FormBorderStyle = FormBorderStyle.None;
+            //set the transparencyKey to a color different from the one used on the controls
+            this.BackColor = Color.Black;
+            this.TransparencyKey = Color.Black;
+         }
+
          layoutControlItemCancelButton.ContentVisible = CancelVisible;
       }
 
@@ -65,6 +69,7 @@ namespace OSPSuite.UI.Views
             progressBar.Text = value;
          }
       }
+
       public bool Canceled
       {
          get { return false; }
