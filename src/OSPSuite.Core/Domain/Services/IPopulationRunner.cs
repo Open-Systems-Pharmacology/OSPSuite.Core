@@ -29,12 +29,12 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Runs population and returns the results.
       /// </summary>
-      /// <param name="simulation"></param>
+      /// <param name="simulation">simulation being run</param>
       /// <param name="runOptions">Options for the run</param>
       /// <param name="populationData">Data table with non-table parameter values for variation</param>
       /// <param name="agingData">Data table with table parameter values for variation</param>
       /// <param name="initialValues">Data table with (molecule) initial values</param>
-      /// <param name="cancellationToken"></param>
+      /// <param name="cancellationToken">cancellation token to cancel the running process</param>
       /// <returns>
       ///    Simulation results.
       ///    <para></para>
