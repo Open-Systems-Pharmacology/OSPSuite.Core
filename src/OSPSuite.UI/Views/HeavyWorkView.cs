@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters;
@@ -30,19 +29,19 @@ namespace OSPSuite.UI.Views
          _presenter = presenter;
       }
 
-      private void SetLayout()
+      private void setLayout()
       {
          ShowInTaskbar = false;
          if (CancelVisible)
          {
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;
-            this.Height = this.MaximumSize.Height;
+            Height = MaximumSize.Height;
          }
          else
          {
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.TransparencyKey = this.BackColor;
+            FormBorderStyle = FormBorderStyle.None;
+            TransparencyKey = BackColor;
          }
 
          layoutControlItemCancelButton.ContentVisible = CancelVisible;
@@ -50,7 +49,7 @@ namespace OSPSuite.UI.Views
 
       public void Display()
       {
-         SetLayout();
+         setLayout();
          ShowDialog();
       }
 
