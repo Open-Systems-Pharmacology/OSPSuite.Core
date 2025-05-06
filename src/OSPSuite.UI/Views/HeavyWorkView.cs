@@ -1,12 +1,9 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
-using DevExpress.XtraBars.Ribbon.Gallery;
+﻿using System.Windows.Forms;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Extensions;
-using Padding = DevExpress.XtraLayout.Utils.Padding;
 
 namespace OSPSuite.UI.Views
 {
@@ -32,23 +29,27 @@ namespace OSPSuite.UI.Views
          _presenter = presenter;
       }
 
-      private void SetLayout()
+      private void setLayout()
       {
+         ShowInTaskbar = false;
          if (CancelVisible)
          {
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;
-            MaximizeBox = false;
-            ShowInTaskbar = false;
-            this.Height = this.MaximumSize.Height;
+            Height = MaximumSize.Height;
          }
-            
+         else
+         {
+            FormBorderStyle = FormBorderStyle.None;
+            TransparencyKey = BackColor;
+         }
+
          layoutControlItemCancelButton.ContentVisible = CancelVisible;
       }
 
       public void Display()
       {
-         SetLayout();
+         setLayout();
          ShowDialog();
       }
 
@@ -65,6 +66,7 @@ namespace OSPSuite.UI.Views
             progressBar.Text = value;
          }
       }
+
       public bool Canceled
       {
          get { return false; }
