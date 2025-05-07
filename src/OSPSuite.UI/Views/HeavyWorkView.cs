@@ -16,7 +16,6 @@ namespace OSPSuite.UI.Views
          InitializeComponent();
          FormBorderStyle = FormBorderStyle.None;
          StartPosition = FormStartPosition.CenterParent;
-         
          btnCancel.InitWithImage(ApplicationIcons.Cancel, Captions.CancelButton, ImageLocation.MiddleRight);
          btnCancel.Text = Captions.CancelButton;
          btnCancel.Click += (o, e) => OnEvent(cancelButtonClick);
