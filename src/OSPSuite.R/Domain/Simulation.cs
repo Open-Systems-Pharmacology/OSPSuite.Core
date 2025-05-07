@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.R.MinimalImplementations;
 using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.R.Domain
@@ -56,7 +58,11 @@ namespace OSPSuite.R.Domain
       public string Name
       {
          get => CoreSimulation.Name;
-         set => CoreSimulation.Name = value;
+         set
+         {
+            CoreSimulation.Name = value;
+            new RenameModelCommand(CoreSimulation.Model, value).Execute(new RExecutionContext());
+         }
       }
 
       public string Id
@@ -129,7 +135,7 @@ namespace OSPSuite.R.Domain
       public IParameter BodyWeight => CoreSimulation.BodyWeight;
 
       public IParameter TotalDrugMassFor(string moleculeName) => CoreSimulation.TotalDrugMassFor(moleculeName);
-   
+
       public double? MolWeightFor(IQuantity quantity) => CoreSimulation.MolWeightFor(quantity);
 
       public double? MolWeightFor(string quantityPath) => CoreSimulation.MolWeightFor(quantityPath);
