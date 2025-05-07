@@ -3,11 +3,11 @@ name: Build PR
 on:
   pull_request:
     branches:
-    - develop
+    - V13
 
 env:
-  MAJOR: 12
-  MINOR: 1
+  MAJOR: 13
+  MINOR: 0
   RUN: 9999
 
 jobs:
