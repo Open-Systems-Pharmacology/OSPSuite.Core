@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Mappers;
@@ -21,17 +22,17 @@ namespace OSPSuite.R.Bootstrap
    {
       private static IContainer _container;
 
-      public static IContainer Initialize(ApiConfig apiConfig)
+      public static IContainer Initialize(ApiConfig apiConfig, Action<IContainer> registerFunction = null)
       {
          if (_container != null)
             return _container;
 
-         _container = new ApplicationStartup().performInitialization(apiConfig);
+         _container = new ApplicationStartup().performInitialization(apiConfig, registerFunction);
 
          return _container;
       }
 
-      private IContainer performInitialization(ApiConfig apiConfig)
+      private IContainer performInitialization(ApiConfig apiConfig, Action<IContainer> registerAction =null)
       {
          var container = new AutofacContainer();
 
@@ -41,6 +42,9 @@ namespace OSPSuite.R.Bootstrap
 
          using (container.OptimizeDependencyResolution())
          {
+            if(registerAction != null)
+               registerAction(container);
+
             container.RegisterImplementationOf(new SynchronizationContext());
             container.AddRegister(x => x.FromType<CoreRegister>());
             container.AddRegister(x => x.FromType<InfrastructureRegister>());

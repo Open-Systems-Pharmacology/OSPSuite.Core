@@ -24,9 +24,9 @@ namespace OSPSuite.R
    {
       public static IContainer Container { get; private set; }
 
-      public static void InitializeOnce(ApiConfig apiConfig)
+      public static void InitializeOnce(ApiConfig apiConfig, Action<IContainer> registerFunction = null)
       {
-         Container = ApplicationStartup.Initialize(apiConfig);
+         Container = ApplicationStartup.Initialize(apiConfig, registerFunction);
       }
 
       public static IContainerTask GetContainerTask() => resolveTask<IContainerTask>();
