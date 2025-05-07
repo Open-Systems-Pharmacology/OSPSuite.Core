@@ -66,14 +66,13 @@ namespace OSPSuite.Core.Commands
          path.AddAtFront(_newName);
       }
 
-      protected override ICommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context)
-      {
-         throw new NotImplementedException();
-      }
+      protected override ICommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context) =>
+         new RenameModelCommand(_model, _oldName).AsInverseFor(this);
+      
 
       public override void RestoreExecutionData(IOSPSuiteExecutionContext context)
       {
-         throw new NotImplementedException();
+         _model = context.Get<IModel>(_modelId);
       }
    }
 }
