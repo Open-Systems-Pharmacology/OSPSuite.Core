@@ -16,7 +16,7 @@ namespace OSPSuite.UI.Views
          InitializeComponent();
          FormBorderStyle = FormBorderStyle.None;
          StartPosition = FormStartPosition.CenterParent;
-         Opacity = 0.7;
+         
          btnCancel.InitWithImage(ApplicationIcons.Cancel, Captions.CancelButton, ImageLocation.MiddleRight);
          btnCancel.Text = Captions.CancelButton;
          btnCancel.Click += (o, e) => OnEvent(cancelButtonClick);
@@ -37,11 +37,13 @@ namespace OSPSuite.UI.Views
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;
             Height = MaximumSize.Height;
+            Opacity = 1.0;
          }
          else
          {
             FormBorderStyle = FormBorderStyle.None;
             TransparencyKey = BackColor;
+            Opacity = 0.7;
          }
 
          layoutControlItemCancelButton.ContentVisible = CancelVisible;
@@ -67,10 +69,7 @@ namespace OSPSuite.UI.Views
          }
       }
 
-      public bool Canceled
-      {
-         get { return false; }
-      }
+      public bool Canceled => false;
 
       public bool OkEnabled { get; set; }
       public bool ExtraEnabled { get; set; }
