@@ -22,12 +22,12 @@ namespace OSPSuite.R.Bootstrap
    {
       private static IContainer _container;
 
-      public static IContainer Initialize(ApiConfig apiConfig, Action<IContainer> registerFunction = null)
+      public static IContainer Initialize(ApiConfig apiConfig, Action<IContainer> registerAction = null)
       {
          if (_container != null)
             return _container;
 
-         _container = new ApplicationStartup().performInitialization(apiConfig, registerFunction);
+         _container = new ApplicationStartup().performInitialization(apiConfig, registerAction);
 
          return _container;
       }
