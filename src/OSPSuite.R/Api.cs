@@ -1,6 +1,4 @@
 ﻿using System;
-using DevExpress.Utils.IoC;
-using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
