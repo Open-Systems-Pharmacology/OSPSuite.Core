@@ -2396,10 +2396,8 @@ namespace OSPSuite.Assets
          return $"Renamed observed data from '{oldName}' to '{newName}'";
       }
 
-      public static string RenameSimulation(string oldName, string newName)
-      {
-         return $"Renamed simulation from '{oldName}' to '{newName}'";
-      }
+      public static string RenameSimulation(string oldName, string newName) =>
+         $"Renamed simulation from '{oldName}' to '{newName}'";
 
       public static string UpdateValueOriginFrom(string oldValueOrigin, string newValueOrigin, string withValueOriginType, string withValueOriginDisplay, string containerType, string containerDisplay)
       {

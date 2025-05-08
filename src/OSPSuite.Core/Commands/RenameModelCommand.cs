@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
@@ -61,14 +60,15 @@ namespace OSPSuite.Core.Commands
 
       private void updateObjectPath(ObjectPath path)
       {
-         if (!path.First().Equals(_oldName)) return;
+         if (!path.First().Equals(_oldName))
+            return;
+
          path.Remove(_oldName);
          path.AddAtFront(_newName);
       }
 
       protected override ICommand<IOSPSuiteExecutionContext> GetInverseCommand(IOSPSuiteExecutionContext context) =>
          new RenameModelCommand(_model, _oldName).AsInverseFor(this);
-      
 
       public override void RestoreExecutionData(IOSPSuiteExecutionContext context)
       {
