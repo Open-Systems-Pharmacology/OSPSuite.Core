@@ -1,7 +1,6 @@
 ﻿using DevExpress.XtraTab;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters.Importer;
-using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
@@ -12,9 +11,9 @@ namespace OSPSuite.UI.Views.Importer
    {
       private IImporterPresenter _presenter;
       private XtraTabPage _previewTabPage;
+
       private const int DATA_PAGE_INDEX = 0;
-      private const int DIMENSION_PAGE_INDEX = 1;
-      private const int CONFIRMATION_PAGE_INDEX = 2;
+      private const int CONFIRMATION_PAGE_INDEX = 1;
 
       public ImporterView()
       {
