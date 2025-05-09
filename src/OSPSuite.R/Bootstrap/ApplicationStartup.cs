@@ -32,17 +32,17 @@ namespace OSPSuite.R.Bootstrap
          return _container;
       }
 
-      private IContainer performInitialization(ApiConfig apiConfig, Action<IContainer> registerAction =null)
+      private IContainer performInitialization(ApiConfig apiConfig, Action<IContainer> registerAction)
       {
          var container = new AutofacContainer();
 
-         container.RegisterImplementationOf((IContainer) container);
+         container.RegisterImplementationOf((IContainer)container);
 
          var serializerRegister = new CoreSerializerRegister();
 
          using (container.OptimizeDependencyResolution())
          {
-            if(registerAction != null)
+            if (registerAction != null)
                registerAction(container);
 
             container.RegisterImplementationOf(new SynchronizationContext());
