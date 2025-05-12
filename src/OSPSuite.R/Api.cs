@@ -1,5 +1,4 @@
 ﻿using System;
-using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -24,9 +23,9 @@ namespace OSPSuite.R
    {
       public static IContainer Container { get; private set; }
 
-      public static void InitializeOnce(ApiConfig apiConfig)
+      public static void InitializeOnce(ApiConfig apiConfig, Action<IContainer> registerAction = null)
       {
-         Container = ApplicationStartup.Initialize(apiConfig);
+         Container = ApplicationStartup.Initialize(apiConfig, registerAction);
       }
 
       public static IContainerTask GetContainerTask() => resolveTask<IContainerTask>();
