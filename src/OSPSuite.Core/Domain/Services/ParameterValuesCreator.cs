@@ -96,24 +96,37 @@ namespace OSPSuite.Core.Domain.Services
 
       private IEnumerable<ParameterValue> createExpressionFrom(IContainer container, IReadOnlyList<MoleculeBuilder> molecules) => molecules.SelectMany(x => createExpressionFrom(container, x));
 
-      private void initializeFormulasFor(IReadOnlyList<ParameterValue> parameterValues, IReadOnlyList<ExpressionParameter> expressionParameters)
+      private void updateFromExpression(IReadOnlyList<ParameterValue> parameterValues, IReadOnlyList<ExpressionParameter> expressionParameters)
       {
          var formulaCache = new FormulaCache();
-         parameterValues.Each(formulaTarget =>
+         parameterValues.Each(parameterValue =>
          {
-            var formulaSource = formulaSourceFor(expressionParameters.AllByName(formulaTarget.Name).ToList(), formulaTarget);
+            var expressionParameter = expressionSourceFor(expressionParameters.AllByName(parameterValue.Name).ToList(), parameterValue);
 
-            if (formulaSource == null) 
-               return;
-
-            formulaTarget.Formula = _cloneManager.Clone(formulaSource.Formula, formulaCache);
-            formulaTarget.Value = null;
+            updateFromExpression(expressionParameter, parameterValue, formulaCache);
          });
+      }
+
+      private void updateFromExpression(ExpressionParameter expressionParameter, ParameterValue parameterValue, FormulaCache formulaCache)
+      {
+         if (expressionParameter == null)
+            return;
+
+         if (expressionParameter.Value.HasValue)
+         {
+            parameterValue.Value = expressionParameter.Value.Value;
+            parameterValue.Formula = null;
+         }
+         else if (shouldCloneFormulaFor(parameterValue))
+         {
+            parameterValue.Formula = _cloneManager.Clone(expressionParameter.Formula, formulaCache);
+            parameterValue.Value = null;
+         }
       }
 
       private bool shouldCloneFormulaFor(ParameterValue parameterValue) => parameterValue.Formula == null || parameterValue.Formula.IsConstant();
 
-      private static ExpressionParameter formulaSourceFor(List<ExpressionParameter> nameMatchedExpressionParameters, ParameterValue formulaTarget)
+      private static ExpressionParameter expressionSourceFor(List<ExpressionParameter> nameMatchedExpressionParameters, ParameterValue formulaTarget)
       {
          var formulaSource = pathMatchedExpressionParameterFor(nameMatchedExpressionParameters, formulaTarget);
 
@@ -158,7 +171,7 @@ namespace OSPSuite.Core.Domain.Services
             .Select(x => CreateParameterValue(objectPathForParameterInContainer(container, x.Name, molecule.Name), x)).ToList();
 
          // For newly created parameterValues that do not already have formulas, check for formulas in similar expression parameters
-         initializeFormulasFor(parameterValues.Where(shouldCloneFormulaFor).ToList(), expressionParameters);
+         updateFromExpression(parameterValues, expressionParameters);
 
          return parameterValues;
       }
