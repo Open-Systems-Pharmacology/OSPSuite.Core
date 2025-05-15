@@ -17,6 +17,7 @@
       public const int V10_0 = 15;
       public const int V11_0 = 16;
       public const int V12_0 = 17;
-      public const int CURRENT = V12_0;
+      public const int V12_1 = 18;
+      public const int CURRENT = V12_1;
    }
 }

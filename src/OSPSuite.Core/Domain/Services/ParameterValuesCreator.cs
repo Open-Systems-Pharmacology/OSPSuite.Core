@@ -96,24 +96,56 @@ namespace OSPSuite.Core.Domain.Services
 
       private IEnumerable<ParameterValue> createExpressionFrom(IContainer container, IReadOnlyList<MoleculeBuilder> molecules) => molecules.SelectMany(x => createExpressionFrom(container, x));
 
-      private void initializeFormulasFor(IReadOnlyList<ParameterValue> parameterValues, IReadOnlyList<ExpressionParameter> expressionParameters)
+      private void updateFromExpression(IReadOnlyList<ParameterValue> parameterValues, IReadOnlyList<ExpressionParameter> expressionParameters)
       {
          var formulaCache = new FormulaCache();
-         parameterValues.Each(formulaTarget =>
+         parameterValues.Each(parameterValue =>
          {
-            var formulaSource = formulaSourceFor(expressionParameters.AllByName(formulaTarget.Name).ToList(), formulaTarget);
+            var expressionParameter = expressionSourceFor(expressionParameters.AllByName(parameterValue.Name).ToList(), parameterValue);
 
-            if (formulaSource == null) 
-               return;
-
-            formulaTarget.Formula = _cloneManager.Clone(formulaSource.Formula, formulaCache);
-            formulaTarget.Value = null;
+            updateFromExpression(expressionParameter, parameterValue, formulaCache);
          });
+      }
+
+      private void updateFromExpression(ExpressionParameter expressionParameter, ParameterValue parameterValue, FormulaCache formulaCache)
+      {
+         if (expressionParameter == null)
+            return;
+
+         if (expressionParameter.Value.HasValue)
+            setParameterValueValue(expressionParameter.Value.Value, parameterValue);
+         else if (shouldCloneFormulaFor(parameterValue)) 
+            setParameterValueFormula(expressionParameter.Formula, parameterValue);
+      }
+
+      public ParameterValue CreateParameterValue(ObjectPath parameterPath, IParameter parameter)
+      {
+         var parameterValue = CreateParameterValue(parameterPath, 0.0, parameter.Dimension, parameter.DisplayUnit, parameter.ValueOrigin,
+            parameter.IsDefault);
+
+         if (shouldSetValue(parameter))
+            setParameterValueValue(parameter.Value, parameterValue);
+         else
+            setParameterValueFormula(parameter.Formula, parameterValue);
+
+         return parameterValue;
+      }
+
+      private void setParameterValueFormula(IFormula formula, ParameterValue parameterValue)
+      {
+         parameterValue.Formula = _cloneManager.Clone(formula, new FormulaCache());
+         parameterValue.Value = null;
+      }
+
+      private static void setParameterValueValue(double value, ParameterValue parameterValue)
+      {
+         parameterValue.Value = value;
+         parameterValue.Formula = null;
       }
 
       private bool shouldCloneFormulaFor(ParameterValue parameterValue) => parameterValue.Formula == null || parameterValue.Formula.IsConstant();
 
-      private static ExpressionParameter formulaSourceFor(List<ExpressionParameter> nameMatchedExpressionParameters, ParameterValue formulaTarget)
+      private static ExpressionParameter expressionSourceFor(List<ExpressionParameter> nameMatchedExpressionParameters, ParameterValue formulaTarget)
       {
          var formulaSource = pathMatchedExpressionParameterFor(nameMatchedExpressionParameters, formulaTarget);
 
@@ -158,7 +190,7 @@ namespace OSPSuite.Core.Domain.Services
             .Select(x => CreateParameterValue(objectPathForParameterInContainer(container, x.Name, molecule.Name), x)).ToList();
 
          // For newly created parameterValues that do not already have formulas, check for formulas in similar expression parameters
-         initializeFormulasFor(parameterValues.Where(shouldCloneFormulaFor).ToList(), expressionParameters);
+         updateFromExpression(parameterValues, expressionParameters);
 
          return parameterValues;
       }
@@ -180,23 +212,7 @@ namespace OSPSuite.Core.Domain.Services
          return pathForParameterInContainer;
       }
 
-      public ParameterValue CreateParameterValue(ObjectPath parameterPath, IParameter parameter)
-      {
-         var parameterValue = CreateParameterValue(parameterPath, 0.0, parameter.Dimension, parameter.DisplayUnit, parameter.ValueOrigin,
-            parameter.IsDefault);
-
-         if (shouldSetValue(parameter))
-         {
-            parameterValue.Value = parameter.Value;
-            parameterValue.Formula = null;
-         }
-         else
-         {
-            parameterValue.Formula = _cloneManager.Clone(parameter.Formula, new FormulaCache());
-            parameterValue.Value = null;
-         }
-         return parameterValue;
-      }
+      
 
       private static bool shouldSetValue(IParameter parameter)
       {
