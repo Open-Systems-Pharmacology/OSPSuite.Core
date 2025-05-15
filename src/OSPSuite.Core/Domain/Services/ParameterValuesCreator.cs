@@ -113,15 +113,34 @@ namespace OSPSuite.Core.Domain.Services
             return;
 
          if (expressionParameter.Value.HasValue)
-         {
-            parameterValue.Value = expressionParameter.Value.Value;
-            parameterValue.Formula = null;
-         }
-         else if (shouldCloneFormulaFor(parameterValue))
-         {
-            parameterValue.Formula = _cloneManager.Clone(expressionParameter.Formula, formulaCache);
-            parameterValue.Value = null;
-         }
+            setParameterValueValue(expressionParameter.Value.Value, parameterValue);
+         else if (shouldCloneFormulaFor(parameterValue)) 
+            setParameterValueFormula(expressionParameter.Formula, parameterValue);
+      }
+
+      public ParameterValue CreateParameterValue(ObjectPath parameterPath, IParameter parameter)
+      {
+         var parameterValue = CreateParameterValue(parameterPath, 0.0, parameter.Dimension, parameter.DisplayUnit, parameter.ValueOrigin,
+            parameter.IsDefault);
+
+         if (shouldSetValue(parameter))
+            setParameterValueValue(parameter.Value, parameterValue);
+         else
+            setParameterValueFormula(parameter.Formula, parameterValue);
+
+         return parameterValue;
+      }
+
+      private void setParameterValueFormula(IFormula formula, ParameterValue parameterValue)
+      {
+         parameterValue.Formula = _cloneManager.Clone(formula, new FormulaCache());
+         parameterValue.Value = null;
+      }
+
+      private static void setParameterValueValue(double value, ParameterValue parameterValue)
+      {
+         parameterValue.Value = value;
+         parameterValue.Formula = null;
       }
 
       private bool shouldCloneFormulaFor(ParameterValue parameterValue) => parameterValue.Formula == null || parameterValue.Formula.IsConstant();
@@ -193,23 +212,7 @@ namespace OSPSuite.Core.Domain.Services
          return pathForParameterInContainer;
       }
 
-      public ParameterValue CreateParameterValue(ObjectPath parameterPath, IParameter parameter)
-      {
-         var parameterValue = CreateParameterValue(parameterPath, 0.0, parameter.Dimension, parameter.DisplayUnit, parameter.ValueOrigin,
-            parameter.IsDefault);
-
-         if (shouldSetValue(parameter))
-         {
-            parameterValue.Value = parameter.Value;
-            parameterValue.Formula = null;
-         }
-         else
-         {
-            parameterValue.Formula = _cloneManager.Clone(parameter.Formula, new FormulaCache());
-            parameterValue.Value = null;
-         }
-         return parameterValue;
-      }
+      
 
       private static bool shouldSetValue(IParameter parameter)
       {
