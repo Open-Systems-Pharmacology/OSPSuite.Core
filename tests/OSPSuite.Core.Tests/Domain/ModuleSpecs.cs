@@ -388,19 +388,12 @@ namespace OSPSuite.Core.Domain
          base.Context();
          sut.PKSimVersion = "1";
          sut.ModuleImportVersion = "someString";
-         sut.Snapshot = "a snapshot";
       }
 
       [Observation]
       public void the_module_indicates_it_is_not_a_pk_sim_module()
       {
          sut.IsPKSimModule.ShouldBeFalse();
-      }
-
-      [Observation]
-      public void the_module_does_not_have_a_snapshot_when_not_pk_sim_module()
-      {
-         sut.Snapshot.ShouldBeNullOrEmpty();
       }
    }
 
