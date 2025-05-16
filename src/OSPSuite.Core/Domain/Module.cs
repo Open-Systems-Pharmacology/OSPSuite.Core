@@ -73,7 +73,7 @@ namespace OSPSuite.Core.Domain
 
       public string Version => versionCalculation(BuildingBlocks);
 
-      public bool HasSnapshot => string.IsNullOrEmpty(Snapshot);
+      public bool HasSnapshot => !string.IsNullOrEmpty(Snapshot);
 
       public string VersionWith(ParameterValuesBuildingBlock selectedParameterValues, InitialConditionsBuildingBlock selectedInitialConditions)
       {
