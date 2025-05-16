@@ -36,6 +36,7 @@ namespace OSPSuite.Core.Domain
    public class Module : ObjectBase, IEnumerable<IBuildingBlock>
    {
       private readonly List<IBuildingBlock> _buildingBlocks = new List<IBuildingBlock>();
+      private string _snapshot;
       private T buildingBlockByType<T>() where T : IBuildingBlock => _buildingBlocks.OfType<T>().SingleOrDefault();
       private IReadOnlyList<T> buildingBlocksByType<T>() where T : IBuildingBlock => _buildingBlocks.OfType<T>().ToList();
 
@@ -43,6 +44,15 @@ namespace OSPSuite.Core.Domain
       ///    Module is a PKSim module if created in PKSim 
       /// </summary>
       public bool IsPKSimModule { get; set; }
+
+      /// <summary>
+      /// Holds a snapshot of everything required to recreate the module in PK-sim
+      /// </summary>
+      public string Snapshot
+      {
+         set => _snapshot = value;
+         get => !IsPKSimModule ? string.Empty : _snapshot;
+      }
 
       public string ModuleImportVersion { get; set; }
 
@@ -114,6 +124,7 @@ namespace OSPSuite.Core.Domain
          ModuleImportVersion = sourceModule.ModuleImportVersion;
          MergeBehavior = sourceModule.MergeBehavior;
          IsPKSimModule = sourceModule.IsPKSimModule;
+         Snapshot = sourceModule.Snapshot;
       }
 
       public void Add(IBuildingBlock buildingBlock)

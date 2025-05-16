@@ -22,6 +22,7 @@ namespace OSPSuite.Core.Serializers
 
          module1.Add(CreateObject<InitialConditionsBuildingBlock>().WithName("ICBB"));
          module1.Add(CreateObject<ParameterValuesBuildingBlock>().WithName("PVBB"));
+         module1.Snapshot = "a snapshot";
 
          var module2 = SerializeAndDeserialize(module1);
 
