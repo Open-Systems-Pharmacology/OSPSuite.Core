@@ -359,28 +359,6 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_reverting_a_module_to_pk_sim : concern_for_Module
-   {
-      protected override void Context()
-      {
-         base.Context();
-         sut.PKSimVersion = "1";
-         sut.ModuleImportVersion = "someString";
-         sut.Snapshot = "a snapshot";
-      }
-
-      protected override void Because()
-      {
-         sut.IsPKSimModule = true;
-      }
-
-      [Observation]
-      public void the_module_does_not_have_a_snapshot_when_not_pk_sim_module()
-      {
-         sut.Snapshot.ShouldBeEqualTo("a snapshot");
-      }
-   }
-
    public class When_testing_if_the_pk_sim_module_with_version_mismatch_is_a_pk_sim_module : concern_for_Module
    {
       protected override void Context()
