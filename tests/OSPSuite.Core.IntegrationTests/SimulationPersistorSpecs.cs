@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -21,12 +22,16 @@ namespace OSPSuite.Core
       protected ISimulationPersistor _simulationPersistor;
       protected string _filePath;
       protected IPKMLPersistor _pkmlPersistor;
+      protected SerializationContext _context;
+      protected IOSPSuiteXmlSerializerRepository _serializerRepository;
 
       protected override void Context()
       {
          base.Context();
          _simulationPersistor = IoC.Resolve<ISimulationPersistor>();
          _pkmlPersistor = IoC.Resolve<IPKMLPersistor>();
+         _serializerRepository = IoC.Resolve<IOSPSuiteXmlSerializerRepository>();
+         _context = NewDeserializationContext();
          _filePath = FileHelper.GenerateTemporaryFileName();
       }
 
@@ -34,6 +39,24 @@ namespace OSPSuite.Core
       {
          base.Cleanup();
          FileHelper.DeleteFile(_filePath);
+      }
+   }
+
+   internal class When_serializing_and_deserializing_without_files : concern_for_SimulationPersistor
+   {
+      [Observation]
+      public void the_simulation_can_be_serialized_and_deserialized()
+      {
+         var serializer = _serializerRepository.SerializerFor<SimulationTransfer>();
+         var simulationTransfer = serializer.Deserialize<SimulationTransfer>(
+            XElement.Parse(_simulationPersistor.Serialize(new SimulationTransfer
+               {
+                  Simulation = _simulation
+               })), 
+            _context);
+
+         ReferenceEquals(simulationTransfer.Simulation, _simulation).ShouldBeFalse();
+         AssertForSpecs.AreEqual(simulationTransfer.Simulation, _simulation);
       }
    }
 
