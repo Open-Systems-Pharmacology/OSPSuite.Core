@@ -41,9 +41,7 @@ namespace OSPSuite.Core.Serialization.Exchange
          }
       }
 
-      public SimulationTransfer Load(string pkmlFileFullPath, IWithIdRepository withIdRepository = null)
-      {
-         return _pkmlPersistor.Load<SimulationTransfer>(pkmlFileFullPath, withIdRepository: withIdRepository);
-      }
+      public SimulationTransfer Load(string pkmlFileFullPath, IWithIdRepository withIdRepository = null) => 
+         _pkmlPersistor.Load<SimulationTransfer>(pkmlFileFullPath, withIdRepository: withIdRepository);
    }
 }

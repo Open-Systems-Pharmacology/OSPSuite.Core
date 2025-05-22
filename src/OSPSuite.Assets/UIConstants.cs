@@ -1708,10 +1708,7 @@ namespace OSPSuite.Assets
 
       public static string CouldNotLoadSimulationFromFile(string pkmlFileFullPath) => CouldNotLoadObjectFromFile(pkmlFileFullPath, ObjectTypes.Simulation);
 
-      public static string CouldNotLoadObjectElement(string objectType)
-      {
-         return $"Could not load {objectType.ToLowerInvariant()} from element";
-      }
+      public static string CouldNotLoadObjectElement(string objectType) => $"Could not load {objectType.ToLowerInvariant()} from element";
 
       public static string CouldNotLoadObjectFromFile(string pkmlFileFullPath, string objectType)
       {
