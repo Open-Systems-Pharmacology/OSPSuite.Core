@@ -52,15 +52,15 @@ namespace OSPSuite.Core.Extensions
 
       public static float[] ConvertToLogArray(this IReadOnlyList<float> array)
       {
-         return convertToLog10Array(array, Math.Log);
+         return convertToLogarithmicArray(array, Math.Log);
       }
 
       public static float[] ConvertToLog10Array(this IReadOnlyList<float> array)
       {
-         return convertToLog10Array(array, Math.Log10);
+         return convertToLogarithmicArray(array, Math.Log10);
       }
 
-      private static float[] convertToLog10Array(IReadOnlyList<float> array, Func<double, double> logFunc)
+      private static float[] convertToLogarithmicArray(IReadOnlyList<float> array, Func<double, double> logFunc)
       {
          var logValues = new float[array.Count];
          for (int i = 0; i < array.Count; i++)

@@ -51,7 +51,7 @@ namespace OSPSuite.Starter.Views
 
          NumberOfObservations = 10;
          NumberOfCalculations = 10;
-         PointsPerCalculation = 200;
+         PointsPerCalculation = 10000;
          PointsPerObservation = 15;
 
          _screenBinder.Bind(x => x.NumberOfCalculations).To(numberOfCalculationsTextEdit);

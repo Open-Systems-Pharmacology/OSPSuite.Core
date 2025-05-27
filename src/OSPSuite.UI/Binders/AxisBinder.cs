@@ -1,7 +1,4 @@
-﻿using System;
-using System.Drawing;
-using System.Linq;
-using DevExpress.Utils;
+﻿using DevExpress.Utils;
 using DevExpress.XtraCharts;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Mappers;
@@ -13,6 +10,9 @@ using OSPSuite.UI.Extensions;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Format;
+using System;
+using System.Drawing;
+using System.Linq;
 using DevExpressAxis = DevExpress.XtraCharts.Axis;
 using OSPAxis = OSPSuite.Core.Chart.Axis;
 
