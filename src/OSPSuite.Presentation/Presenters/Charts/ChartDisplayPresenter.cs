@@ -433,15 +433,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
             RefreshAxisBinders();
       }
 
-      public void RefreshAxisBinders()
-      {
-         refreshAxisBinders(View.GetDiagramSize());
-      }
+      public void RefreshAxisBinders() => refreshAxisBinders(View.GetDiagramSize());
 
-      private void refreshAxisBinders(Size diagramSize)
-      {
-         _axisBinders.Each(x => x.RefreshRange(Chart.ChartSettings.SideMarginsEnabled, diagramSize));
-      }
+      private void refreshAxisBinders(Size diagramSize) => _axisBinders.Each(x => x.RefreshRange(Chart.ChartSettings.SideMarginsEnabled, diagramSize));
 
       private void updateViewLayout()
       {
