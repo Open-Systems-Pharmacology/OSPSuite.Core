@@ -98,6 +98,7 @@ namespace OSPSuite.UI.Views.Charts
          _chartControl.DragOver += (o, e) => OnEvent(() => OnDragOver(e));
          _chartControl.DragDrop += (o, e) => OnEvent(() => OnDragDrop(e));
          _chartControl.SizeChanged += (o, e) => OnEvent(onSizeChanged);
+         _chartControl.CacheToMemory = true;
 
          initializeHintControl();
       }
@@ -362,10 +363,8 @@ namespace OSPSuite.UI.Views.Charts
          {
             var (xAxisMin, xAxisMax) = rangeFrom(xyDiagram.AxisX);
             var (yAxisMin, yAxisMax) = rangeFrom(xyDiagram.AxisY);
-
             var minPoint = pointAt(xAxisMin, yAxisMin);
             var maxPoint = pointAt(xAxisMax, yAxisMax);
-
             return new Size(maxPoint.X - minPoint.X, maxPoint.Y - minPoint.Y);
          }
          catch
@@ -695,8 +694,10 @@ namespace OSPSuite.UI.Views.Charts
          finally
          {
             _chartControl.EndInit();
+            _chartControl.Invalidate(true);
             _dummySeries = null;
          }
+         
       }
 
       public void DisableCurveEdit()

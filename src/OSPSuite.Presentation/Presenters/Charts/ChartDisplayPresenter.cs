@@ -410,6 +410,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void updateChart()
       {
+         var diagramSize = View.GetDiagramSize();
          using (new BatchUpdate(View))
          {
             updateAxes();
@@ -426,8 +427,15 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          updateViewLayout();
 
-         RefreshAxisBinders();
+         if(!diagramSize.IsEmpty)
+            refreshAxisBinders(diagramSize);
+         else
+            RefreshAxisBinders();
       }
+
+      public void RefreshAxisBinders() => refreshAxisBinders(View.GetDiagramSize());
+
+      private void refreshAxisBinders(Size diagramSize) => _axisBinders.Each(x => x.RefreshRange(Chart.ChartSettings.SideMarginsEnabled, diagramSize));
 
       private void updateViewLayout()
       {
@@ -522,12 +530,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private void removeAdapterFromQuickCache(ICurveBinder curveBinder)
       {
          curveBinder.SeriesIds.Each(seriesId => _quickCurveBinderCache.Remove(seriesId));
-      }
-
-      public void RefreshAxisBinders()
-      {
-         var diagramSize = View.GetDiagramSize();
-         _axisBinders.Each(x => x.RefreshRange(Chart.ChartSettings.SideMarginsEnabled, diagramSize));
       }
 
       private void updateYAxesVisibility()
