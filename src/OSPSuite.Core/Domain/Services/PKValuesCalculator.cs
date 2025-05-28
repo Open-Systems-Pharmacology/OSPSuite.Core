@@ -14,8 +14,9 @@ namespace OSPSuite.Core.Domain.Services
    public class PKValuesCalculator : IPKValuesCalculator
    {
       /// <summary>
-      ///    3 intervals: TStart=>TD2, TLast=>TEnd and TStart=>TEnd, where TD2 is the second application and TLast the last
-      ///    application
+      ///    4 intervals: TStart=>TD2, TLastMinusOne=>TLast, TLast=>TEnd, and TStart=>TEnd,
+      ///    where TD2 is the second application, TLastMinusOne is the last but one application,
+      ///    TLast is the last application, and TEnd is the end of the simulation.
       /// </summary>
 
       //First interval is either the full range for a single dosing or the first dosing interval
@@ -77,7 +78,7 @@ namespace OSPSuite.Core.Domain.Services
 
          //Last Interval
          setCmaxAndTmax(pk, lastInterval, C_max_tDLast_tDEnd, Tmax_tDLast_tDEnd);
-         setValue(pk, Ctrough_tDLast, lastInterval, x => x.CTrough);
+         setValue(pk, Ctrough_tDLast, lastMinusOneInterval, x => x.CTrough);
          setValue(pk, Thalf_tDLast_tEnd, lastInterval, x => x.Thalf);
          setValueAndNormalize(pk, AUC_inf_tDLast, lastInterval, x => x.AucInf);
 

@@ -94,7 +94,12 @@ namespace OSPSuite.Core
          _pk[Thalf].Value.ShouldBeEqualTo(10.2978867324386f, 0.05);
          _pk[Thalf_tDLast_tEnd].Value.ShouldBeEqualTo(10.8489508986824f, 1e-2);
          _pk[Ctrough_tD2].Value.ShouldBeEqualTo(2.89605998992919f, 1e-2);
-         _pk[Ctrough_tDLast].Value.ShouldBeEqualTo(1.210245967f, 1e-2);
+
+         var indexOfEndTimePointOfLastButOneInterval =
+            _multipleDosingColumn.BaseGrid.IndexOf(_pkOptions.LastMinusOneInterval.EndValue.Value);
+         var lastValueBeforeLastDose = _multipleDosingColumn.Values[indexOfEndTimePointOfLastButOneInterval];
+         _pk[Ctrough_tDLast].Value.ShouldBeEqualTo(lastValueBeforeLastDose, 1e-2);
+         
          _pk[AUC_inf_tDLast].Value.ShouldBeEqualTo(152.2143635f, 1e-2);
          _pk[AUC_inf_tLast_norm].Value.ShouldBeEqualTo(NormalizeValue(_pk[AUC_inf_tDLast], _lastDose), 1e-2);
          _pk[AUC_tEnd].Value.ShouldBeEqualTo(224.402f, 1e-2);
