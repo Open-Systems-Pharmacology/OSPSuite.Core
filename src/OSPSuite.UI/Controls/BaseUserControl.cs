@@ -22,7 +22,6 @@ namespace OSPSuite.UI.Controls
          InitializeComponent();
          initializeHelp();
          ApplicationIcon = ApplicationIcons.DefaultIcon;
-         DoubleBuffered = true;
       }
 
       public virtual void InitializeBinding()
