@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using FakeItEasy;
-using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
@@ -12,7 +10,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
-using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Collections;
@@ -185,6 +182,7 @@ namespace OSPSuite.Presentation.Presentation
          _newCurve.CurveOptions.LineStyle.ShouldBeEqualTo(LineStyles.DashDot);
       }
    }
+
    public class When_adding_a_curve_for_a_columns_grouped_for_the_same_color : concern_for_ChartEditorPresenter
    {
       protected override void Context()
@@ -322,7 +320,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         sut.Handle(new CurveChartUpdatedEvent(_anotherCurveChart, null, curveDataChanged:true, propagateChartChangeEvent:true));
+         sut.Handle(new CurveChartUpdatedEvent(_anotherCurveChart, null, curveDataChanged: true, propagateChartChangeEvent: true));
       }
 
       [Observation]
@@ -547,7 +545,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, false, null, true)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true, null, true)).MustHaveHappened();
       }
    }
 
@@ -581,7 +579,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.Update(_chart, false, A<Func<CurveChart, IReadOnlyCollection<Curve>>>._)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.Update(_chart, true, A<Func<CurveChart, IReadOnlyCollection<Curve>>>._)).MustHaveHappened();
       }
    }
 
@@ -607,7 +605,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, false, null, true)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true, null, true)).MustHaveHappened();
       }
    }
 
@@ -705,13 +703,12 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.Update(_chart, false, A<Func<CurveChart, IReadOnlyCollection<Curve>>>._)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.Update(_chart, true, A<Func<CurveChart, IReadOnlyCollection<Curve>>>._)).MustHaveHappened();
       }
    }
 
    public class When_setting_metadata_for_color_grouping : concern_for_ChartEditorPresenter
    {
-
       private IReadOnlyList<string> _commonMetaData;
       private IReadOnlyList<string> _calculatedCommonMetaData;
       private DataRepository _dataRepository1;
@@ -736,7 +733,8 @@ namespace OSPSuite.Presentation.Presentation
 
          sut.AddDataRepositories(_dataRepositoryList);
 
-         _commonMetaData = new List<string> { "ID", "Species" }; ;
+         _commonMetaData = new List<string> { "ID", "Species" };
+         ;
 
          A.CallTo(() => _dataBrowserPresenter.GetAllUsedDataColumns()).Returns(new[] { _standardColumn, _standardColumn2, _standardColumn3 });
 
@@ -749,13 +747,13 @@ namespace OSPSuite.Presentation.Presentation
       {
          sut.Handle(new CurveChartUpdatedEvent(_chart, null, true, true));
       }
+
       [Observation]
       public void should_set_common_meta_data_correctly()
       {
          _calculatedCommonMetaData.ShouldBeEqualTo(_commonMetaData);
       }
    }
-
 
    public class When_the_chart_editor_presenter_is_notified_that_color_grouping_should_be_applied : concern_for_ChartEditorPresenter
    {
@@ -800,7 +798,6 @@ namespace OSPSuite.Presentation.Presentation
                x.GetArgument<Curve>(0).Color = x.GetArgument<Color>(1);
                _colorsForCurveName.Add(x.GetArgument<Curve>(0).Id, x.GetArgument<Color>(1));
             });
-
       }
 
       protected override void Because()
