@@ -373,7 +373,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void onAxisAdded()
       {
-         using (_chartUpdater.UpdateTransaction(Chart, curveDataChanged: false))
+         using (_chartUpdater.UpdateTransaction(Chart, curveDataChanged: true))
          {
             Chart.AddNewAxis();
          }
@@ -384,7 +384,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (axis.AxisType >= AxisTypes.Y2 && Chart.HasAxis(axis.AxisType + 1))
             throw new OSPSuiteException(Error.RemoveHigherAxisTypeFirst((axis.AxisType + 1).ToString()));
 
-         using (_chartUpdater.UpdateTransaction(Chart, curveDataChanged:false))
+         using (_chartUpdater.UpdateTransaction(Chart, curveDataChanged:true))
          {
             Chart.RemoveAxis(axis);
          }
@@ -392,7 +392,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void updateCurveProperty(Curve changedCurve) => _chartUpdater.Update(Chart, curveDataChanged:false, x => new[] { changedCurve });
 
-      private void updateChart() => _chartUpdater.Update(Chart, curveDataChanged:false);
+      private void updateChart() => _chartUpdater.Update(Chart, curveDataChanged:true);
 
       private void onChartPropertiesChanged()
       {
