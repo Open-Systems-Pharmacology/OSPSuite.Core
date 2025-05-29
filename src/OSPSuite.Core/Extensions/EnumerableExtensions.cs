@@ -50,5 +50,15 @@ namespace OSPSuite.Core.Extensions
       {
          return new EntityDescriptorMapList<T>(entities.Select(x => new EntityDescriptorMap<T>(x)));
       }
+
+      /// <summary>
+      /// Returns the items that are not in both sets <paramref name="enumeration1"/> and <paramref name="enumeration2"/>
+      /// </summary>
+      public static IEnumerable<T> Complement<T>(this IEnumerable<T> enumeration1, IEnumerable<T> enumeration2)
+      {
+         var list1 = enumeration1.ToList();
+         var list2 = enumeration2.ToList();
+         return list1.Union(list2).Except(list1.Intersect(list2)).ToList();
+      }
    }
 }

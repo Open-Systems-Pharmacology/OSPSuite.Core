@@ -23,6 +23,7 @@ namespace OSPSuite.Core.Chart
       private string _title;
       private string _originText;
       public Scalings DefaultYAxisScaling { get; set; }
+      public bool BatchUpdateEnabled { get; set; }
 
       public CurveChart()
       {

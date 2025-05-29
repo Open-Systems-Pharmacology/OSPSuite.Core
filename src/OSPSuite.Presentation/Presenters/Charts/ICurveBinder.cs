@@ -16,8 +16,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
       double? LLOQ { get; }
       bool HasLLOQ { get; }
       IEnumerable<string> SeriesIds { get; }
-      void Refresh();
+      void Refresh(bool shouldRefreshData = true);
       void ShowAllSeries();
+      void HideAllSeries();
       void ShowCurveInLegend(bool showInLegend);
       bool ContainsSeries(string seriesId);
 
@@ -30,5 +31,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       int OriginalCurveIndexForRow(DataRow row);
 
       bool IsValidFor(DataMode dataMode, AxisTypes curveAxisType);
+      
    }
 }

@@ -231,6 +231,7 @@ namespace OSPSuite.Assets
       public static readonly string NotDistributed = "Not Distributed";
       public static readonly string DeleteSelected = "Delete Selected Records";
       public static readonly string ModulesFolder = "Modules";
+      public static readonly string RefreshChartToUpdate = "Refresh chart to update";
 
       public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
 
@@ -2247,6 +2248,9 @@ namespace OSPSuite.Assets
       {
          return $"Compare {objectType}s";
       }
+
+      public static readonly string EnableBatchUpdates = "Enable batch updates";
+      public static readonly string RefreshChart = "Refresh chart";
    }
 
    public static class MenuDescriptions

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using FakeItEasy;
@@ -30,7 +32,7 @@ namespace OSPSuite.Presentation.Presentation
       protected ICurveColorGroupingPresenter _curveColorGroupingPresenter;
       protected IDataBrowserPresenter _dataBrowserPresenter;
       protected IChartTemplateMenuPresenter _chartTemplateMenuPresenter;
-      protected IChartUpdater _chartUpdater;
+      protected ICurveChartUpdater _chartUpdater;
       protected IEventPublisher _eventPublisher;
       private IDimensionFactory _dimensionFactory;
       protected CurveChart _chart;
@@ -51,7 +53,7 @@ namespace OSPSuite.Presentation.Presentation
          _curveSettingsPresenter = A.Fake<ICurveSettingsPresenter>();
          _dataBrowserPresenter = A.Fake<IDataBrowserPresenter>();
          _chartTemplateMenuPresenter = A.Fake<IChartTemplateMenuPresenter>();
-         _chartUpdater = A.Fake<IChartUpdater>();
+         _chartUpdater = A.Fake<ICurveChartUpdater>();
          _eventPublisher = A.Fake<IEventPublisher>();
          _dimensionFactory = A.Fake<IDimensionFactory>();
          _curveColorGroupingPresenter = A.Fake<ICurveColorGroupingPresenter>();
@@ -112,7 +114,7 @@ namespace OSPSuite.Presentation.Presentation
          };
 
 
-         _dataRepository = new DataRepository {_hiddenColumn, _internalColumn, _auxiliaryObservedDataColumn, _standardColumn};
+         _dataRepository = new DataRepository { _hiddenColumn, _internalColumn, _auxiliaryObservedDataColumn, _standardColumn };
 
          sut.SetShowDataColumnInDataBrowserDefinition(x => x.Name != _hiddenColumn.Name);
 
@@ -122,7 +124,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         sut.AddDataRepositories(new[] {_dataRepository});
+         sut.AddDataRepositories(new[] { _dataRepository });
       }
 
       [Observation]
@@ -188,7 +190,7 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          base.Context();
-         sut.AddCurvesWithSameColorForColumn(new List<DataColumn>() {_standardColumn, _standardColumn2});
+         sut.AddCurvesWithSameColorForColumn(new List<DataColumn>() { _standardColumn, _standardColumn2 });
       }
 
       [Observation]
@@ -267,15 +269,15 @@ namespace OSPSuite.Presentation.Presentation
             DataInfo = new DataInfo(ColumnOrigins.Calculation),
          };
 
-         _dataRepository = new DataRepository {_columnThatWillBeInternal, _columnThatWillBeRemoved, _standardColumn};
+         _dataRepository = new DataRepository { _columnThatWillBeInternal, _columnThatWillBeRemoved, _standardColumn };
 
          sut.SetShowDataColumnInDataBrowserDefinition(x => true);
-         sut.AddDataRepositories(new[] {_dataRepository});
+         sut.AddDataRepositories(new[] { _dataRepository });
 
          _columnThatWillBeInternal.IsInternal = true;
          _dataRepository.Remove(_columnThatWillBeRemoved);
 
-         A.CallTo(() => _dataBrowserPresenter.AllDataColumns).Returns(new[] {_columnThatWillBeInternal, _columnThatWillBeRemoved, _standardColumn});
+         A.CallTo(() => _dataBrowserPresenter.AllDataColumns).Returns(new[] { _columnThatWillBeInternal, _columnThatWillBeRemoved, _standardColumn });
 
          A.CallTo(() => _dataBrowserPresenter.RemoveDataColumns(A<IReadOnlyList<DataColumn>>._))
             .Invokes(x => _dataColumnsRemoved = x.GetArgument<IReadOnlyList<DataColumn>>(0).ToList());
@@ -307,20 +309,20 @@ namespace OSPSuite.Presentation.Presentation
 
    public class When_the_chart_editor_presenter_is_notififed_of_a_chart_updated_event_for_a_chart_that_is_not_edited : concern_for_ChartEditorPresenter
    {
-      private IChart _anotherCurveChart;
+      private CurveChart _anotherCurveChart;
       private CurveChart _curveChart;
 
       protected override void Context()
       {
          base.Context();
-         _curveChart = new CurveChart {Id = "TOTO"};
-         _anotherCurveChart = new CurveChart {Id = "HELLO"};
+         _curveChart = new CurveChart { Id = "TOTO" };
+         _anotherCurveChart = new CurveChart { Id = "HELLO" };
          sut.Edit(_curveChart);
       }
 
       protected override void Because()
       {
-         sut.Handle(new ChartUpdatedEvent(_anotherCurveChart, true));
+         sut.Handle(new CurveChartUpdatedEvent(_anotherCurveChart, null, curveDataChanged:true, propagateChartChangeEvent:true));
       }
 
       [Observation]
@@ -330,7 +332,7 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_the_chart_editor_presenter_is_notififed_of_a_chart_updated_event_for_a_chart_that_is_being_edited : concern_for_ChartEditorPresenter
+   public class When_the_chart_editor_presenter_is_notified_of_a_chart_updated_event_for_a_chart_that_is_being_edited : concern_for_ChartEditorPresenter
    {
       private CurveChart _curveChart;
       private bool _notified;
@@ -338,14 +340,14 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          base.Context();
-         _curveChart = new CurveChart {Id = "TOTO"};
+         _curveChart = new CurveChart { Id = "TOTO" };
          sut.Edit(_curveChart);
          sut.ChartChanged += () => _notified = true;
       }
 
       protected override void Because()
       {
-         sut.Handle(new ChartUpdatedEvent(_curveChart, propagateChartChangeEvent: true));
+         sut.Handle(new CurveChartUpdatedEvent(_curveChart, null, curveDataChanged: true, propagateChartChangeEvent: true));
       }
 
       [Observation]
@@ -361,7 +363,7 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_the_chart_editor_presenter_is_notififed_of_a_chart_updated_event_for_a_chart_that_is_being_edited_and_no_chart_changed_event_should_be_propagated : concern_for_ChartEditorPresenter
+   public class When_the_chart_editor_presenter_is_notified_of_a_chart_updated_event_for_a_chart_that_is_being_edited_and_no_chart_changed_event_should_be_propagated : concern_for_ChartEditorPresenter
    {
       private CurveChart _curveChart;
       private bool _notified;
@@ -369,14 +371,14 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          base.Context();
-         _curveChart = new CurveChart {Id = "TOTO"};
+         _curveChart = new CurveChart { Id = "TOTO" };
          sut.Edit(_curveChart);
          sut.ChartChanged += () => _notified = true;
       }
 
       protected override void Because()
       {
-         sut.Handle(new ChartUpdatedEvent(_curveChart, propagateChartChangeEvent: false));
+         sut.Handle(new CurveChartUpdatedEvent(_curveChart, null, curveDataChanged: true, propagateChartChangeEvent: false));
       }
 
       [Observation]
@@ -414,7 +416,7 @@ namespace OSPSuite.Presentation.Presentation
    {
       protected override void Because()
       {
-         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] {_standardColumn,}, true));
+         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] { _standardColumn, }, true));
       }
 
       [Observation]
@@ -426,7 +428,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true, A<Func<CurveChart, IReadOnlyCollection<Curve>>>._, true)).MustHaveHappened();
       }
    }
 
@@ -441,7 +443,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         _dataBrowserPresenter.SelectionChanged += Raise.With(new ColumnsEventArgs(new[] {_standardColumn, _baseGrid,}));
+         _dataBrowserPresenter.SelectionChanged += Raise.With(new ColumnsEventArgs(new[] { _standardColumn, _baseGrid, }));
       }
 
       [Observation]
@@ -462,7 +464,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         _dataBrowserPresenter.SelectionChanged += Raise.With(new ColumnsEventArgs(new[] {_standardColumn, _baseGrid,}));
+         _dataBrowserPresenter.SelectionChanged += Raise.With(new ColumnsEventArgs(new[] { _standardColumn, _baseGrid, }));
       }
 
       [Observation]
@@ -483,7 +485,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         _dataBrowserPresenter.SelectionChanged += Raise.With(new ColumnsEventArgs(new[] {_standardColumn, _baseGrid,}));
+         _dataBrowserPresenter.SelectionChanged += Raise.With(new ColumnsEventArgs(new[] { _standardColumn, _baseGrid, }));
       }
 
       [Observation]
@@ -503,7 +505,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] {_standardColumn,}, false));
+         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] { _standardColumn, }, false));
       }
 
       [Observation]
@@ -515,7 +517,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true, A<Func<CurveChart, IReadOnlyCollection<Curve>>>._, true)).MustHaveHappened();
       }
    }
 
@@ -545,7 +547,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, false, null, true)).MustHaveHappened();
       }
    }
 
@@ -579,7 +581,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.Update(_chart)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.Update(_chart, false, A<Func<CurveChart, IReadOnlyCollection<Curve>>>._)).MustHaveHappened();
       }
    }
 
@@ -605,7 +607,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, false, null, true)).MustHaveHappened();
       }
    }
 
@@ -647,7 +649,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, false, A<Func<CurveChart, IReadOnlyCollection<Curve>>>._, true)).MustHaveHappened();
       }
    }
 
@@ -655,7 +657,7 @@ namespace OSPSuite.Presentation.Presentation
    {
       protected override void Because()
       {
-         _curveSettingsPresenter.AddCurves += Raise.With(new ColumnsEventArgs(new[] {_standardColumn,}));
+         _curveSettingsPresenter.AddCurves += Raise.With(new ColumnsEventArgs(new[] { _standardColumn, }));
       }
 
       [Observation]
@@ -667,7 +669,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true, A<Func<CurveChart, IReadOnlyCollection<Curve>>>._, true)).MustHaveHappened();
       }
    }
 
@@ -689,7 +691,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.Update(_chart)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.Update(_chart, false, A<Func<CurveChart, IReadOnlyCollection<Curve>>>._)).MustHaveHappened();
       }
    }
 
@@ -703,7 +705,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.Update(_chart)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.Update(_chart, false, A<Func<CurveChart, IReadOnlyCollection<Curve>>>._)).MustHaveHappened();
       }
    }
 
@@ -730,7 +732,7 @@ namespace OSPSuite.Presentation.Presentation
          _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Human" });
          _dataRepository2.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "NotCommonMetaData", Value = "test" });
          _dataRepository3.ExtendedProperties.Add(new ExtendedProperty<string>() { Name = "Species", Value = "Dog" });
-         _dataRepositoryList = new List<DataRepository>(){_dataRepository1, _dataRepository2, _dataRepository3 };
+         _dataRepositoryList = new List<DataRepository>() { _dataRepository1, _dataRepository2, _dataRepository3 };
 
          sut.AddDataRepositories(_dataRepositoryList);
 
@@ -745,7 +747,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         sut.Handle(new ChartUpdatedEvent(_chart, true));
+         sut.Handle(new CurveChartUpdatedEvent(_chart, null, true, true));
       }
       [Observation]
       public void should_set_common_meta_data_correctly()
@@ -788,7 +790,7 @@ namespace OSPSuite.Presentation.Presentation
 
          A.CallTo(() => _dataBrowserPresenter.GetAllUsedDataColumns()).Returns(new[] { _standardColumn, _standardColumn2, _standardColumn3 });
          sut.AddDataRepositories(_dataRepositoryList);
-         
+
 
          A.CallTo(() => _curveSettingsPresenter.UpdateColorForCurve(A<Curve>._, A<Color>._))
             .Invokes(x =>
@@ -798,12 +800,12 @@ namespace OSPSuite.Presentation.Presentation
                x.GetArgument<Curve>(0).Color = x.GetArgument<Color>(1);
                _colorsForCurveName.Add(x.GetArgument<Curve>(0).Id, x.GetArgument<Color>(1));
             });
-         
+
       }
 
       protected override void Because()
       {
-         sut.Handle(new ChartUpdatedEvent(_chart, true));
+         sut.Handle(new CurveChartUpdatedEvent(_chart, null, true, true));
       }
 
       [Observation]

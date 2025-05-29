@@ -11,6 +11,7 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
@@ -53,13 +54,13 @@ namespace OSPSuite.Starter.Presenters
       private readonly IChartFromTemplateService _chartFromTemplateService;
       private readonly IChartTemplatePersistor _chartTemplatePersistor;
       private readonly IDimensionFactory _dimensionFactory;
-      private readonly IChartUpdater _chartUpdater;
+      private readonly ICurveChartUpdater _chartUpdater;
       private readonly IWithChartTemplates _simulationSettings;
       private readonly Cache<string, DataRepository> _dataRepositories;
 
       public ChartTestPresenter(IChartTestView view, IChartEditorAndDisplayPresenter chartEditorAndDisplayPresenter, TestEnvironment testEnvironment, IDataColumnToPathElementsMapper dataColumnToPathColumnValuesMapper,
          IDataRepositoryCreator dataRepositoryCreator, IOSPSuiteXmlSerializerRepository ospSuiteXmlSerializerRepository, IChartFromTemplateService chartFromTemplateService,
-         IChartTemplatePersistor chartTemplatePersistor, IDimensionFactory dimensionFactory, IChartUpdater chartUpdater) : base(view)
+         IChartTemplatePersistor chartTemplatePersistor, IDimensionFactory dimensionFactory, ICurveChartUpdater chartUpdater) : base(view)
       {
          _model = testEnvironment.Model.Root;
          _dataRepositories = new Cache<string, DataRepository>(repository => repository.Name);
@@ -147,7 +148,8 @@ namespace OSPSuite.Starter.Presenters
 
       private void addNewCurvesToChart(IEnumerable<DataRepository> newRepositories)
       {
-         using (_chartUpdater.UpdateTransaction(Chart))
+         var existingCurves = Chart.Curves.ToList();
+         using (_chartUpdater.UpdateTransaction(Chart, curveDataChanged:true, x => x.Curves.Complement(existingCurves).ToList()))
          {
             newRepositories.Each(repository => repository.AllButBaseGrid().Each(addColumnToChart));
          }
@@ -172,7 +174,7 @@ namespace OSPSuite.Starter.Presenters
 
       public void ClearChart()
       {
-         using (_chartUpdater.UpdateTransaction(Chart))
+         using (_chartUpdater.UpdateTransaction(Chart, curveDataChanged:false))
          {
             ChartEditorPresenter.RemoveDataRepositories(_dataRepositories);
             _dataRepositories.Clear();
@@ -238,7 +240,7 @@ namespace OSPSuite.Starter.Presenters
 
       public void RefreshDisplay()
       {
-         _chartUpdater.Update(Chart);
+         _chartUpdater.Update(Chart, curveDataChanged:true);
       }
 
       public void ReloadMenus()

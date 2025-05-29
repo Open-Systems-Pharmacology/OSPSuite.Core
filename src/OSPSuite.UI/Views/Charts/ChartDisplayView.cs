@@ -697,7 +697,6 @@ namespace OSPSuite.UI.Views.Charts
             _chartControl.Invalidate(true);
             _dummySeries = null;
          }
-         
       }
 
       public void DisableCurveEdit()

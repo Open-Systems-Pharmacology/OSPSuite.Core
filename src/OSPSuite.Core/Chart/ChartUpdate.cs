@@ -1,24 +1,47 @@
 ﻿using System;
+using System.Collections.Generic;
 using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Core.Chart
 {
-   public class ChartUpdate : IDisposable
+   public abstract class ChartUpdate<TChart> : IDisposable
    {
-      private readonly IEventPublisher _eventPublisher;
-      private readonly IChart _chart;
-      private readonly bool _propagateChartChangeEvent;
+      protected readonly TChart _chart;
+      protected readonly IEventPublisher _eventPublisher;
+      protected readonly bool _propagateChartChangeEvent;
 
-      public ChartUpdate(IEventPublisher eventPublisher, IChart chart, bool propagateChartChangeEvent)
+      protected ChartUpdate(IEventPublisher eventPublisher, TChart chart, bool propagateChartChangeEvent)
       {
          _eventPublisher = eventPublisher;
          _chart = chart;
          _propagateChartChangeEvent = propagateChartChangeEvent;
       }
 
-      public void Dispose()
+      public abstract void Dispose();
+   }
+
+   public class ChartUpdate : ChartUpdate<IChart>
+   {
+      public ChartUpdate(IEventPublisher eventPublisher, IChart chart, bool propagateChartChangeEvent) : base(eventPublisher, chart, propagateChartChangeEvent)
       {
-         _eventPublisher.PublishEvent(new ChartUpdatedEvent(_chart,_propagateChartChangeEvent));
       }
+
+      public override void Dispose() => 
+         _eventPublisher.PublishEvent(new ChartUpdatedEvent(_chart, _propagateChartChangeEvent));
+   }
+
+   public class CurveChartUpdate : ChartUpdate<CurveChart>
+   {
+      private readonly Func<CurveChart, IReadOnlyCollection<Curve>> _calculateModifiedCurves;
+      private readonly bool _curveDataChanged;
+
+      public CurveChartUpdate(IEventPublisher eventPublisher, CurveChart chart, Func<CurveChart, IReadOnlyCollection<Curve>> calculateModifiedCurves, bool curveDataChanged, bool propagateChartChangeEvent) : base(eventPublisher, chart, propagateChartChangeEvent)
+      {
+         _calculateModifiedCurves = calculateModifiedCurves;
+         _curveDataChanged = curveDataChanged;
+      }
+
+      public override void Dispose() => 
+         _eventPublisher.PublishEvent(new CurveChartUpdatedEvent(_chart, _calculateModifiedCurves(_chart), _curveDataChanged, _propagateChartChangeEvent));
    }
 }

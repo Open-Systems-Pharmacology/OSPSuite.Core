@@ -45,11 +45,29 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithActionCommand(chartDisplayPresenter.ExportToPng)
             .WithIcon(ApplicationIcons.GreenOverlayFor(ApplicationIcons.ExportToPNG));
 
+         if(curveChart.BatchUpdateEnabled)
+         {
+            yield return CreateMenuButton.WithCaption(MenuNames.RefreshChart)
+               .WithActionCommand(chartDisplayPresenter.Refresh)
+               .WithIcon(ApplicationIcons.Refresh);
+         }
+
+         yield return CreateMenuCheckButton.WithCaption(MenuNames.EnableBatchUpdates)
+            .WithChecked(curveChart.BatchUpdateEnabled)
+            .WithCheckedAction(enabled => updateBatchEditMode(curveChart, chartDisplayPresenter, enabled));
+
          if (curveChart.IsAnImplementationOf<PredictedVsObservedChart>())
          {
             yield return CreateMenuButton.WithCaption(MenuNames.AddDeviationLines)
                .WithActionCommand(chartDisplayPresenter.AddDeviationLines);
          }
+      }
+
+      private static void updateBatchEditMode(CurveChart curveChart, IChartDisplayPresenter chartDisplayPresenter, bool enabled)
+      {
+         curveChart.BatchUpdateEnabled = enabled;
+         if (!curveChart.BatchUpdateEnabled)
+            chartDisplayPresenter.Refresh();
       }
    }
 

@@ -153,7 +153,7 @@ namespace OSPSuite.UI.Binders
 
       protected Series CreateSeries<TSeriesView>(string name, ViewType viewType, string valueDataMember, Action<TSeriesView> configuration = null) where TSeriesView : SeriesViewBase
       {
-         return CreateSeries(name, viewType, new[] {valueDataMember}, configuration);
+         return CreateSeries(name, viewType, new[] { valueDataMember }, configuration);
       }
 
       protected Series CreateSeries<TSeriesView>(string name, ViewType viewType, IReadOnlyList<string> valueDataMembers, Action<TSeriesView> configuration = null) where TSeriesView : SeriesViewBase
@@ -195,9 +195,11 @@ namespace OSPSuite.UI.Binders
 
       public string Id => Curve.Id;
 
-      public void Refresh()
+      public void Refresh(bool shouldRefreshData = true)
       {
-         refreshData();
+         if (shouldRefreshData)
+            refreshData();
+
          refreshView();
       }
 
@@ -224,7 +226,7 @@ namespace OSPSuite.UI.Binders
       {
          updateSeriesVisibility(visible: Curve.Visible);
 
-         foreach (var s in _series.Except(new[] {mainSeries}))
+         foreach (var s in _series.Except(new[] { mainSeries }))
          {
             var xySeriesView = s.View as XYDiagramSeriesViewBase;
             if (xySeriesView != null)
@@ -250,7 +252,6 @@ namespace OSPSuite.UI.Binders
          }
       }
 
-   
       private bool seriesIsScatterLine(Series series) => seriesIs<ScatterLineSeriesView>(series);
       private bool seriesIsPoint(Series series) => seriesIs<PointSeriesView>(series);
 
@@ -303,67 +304,73 @@ namespace OSPSuite.UI.Binders
 
       private void refreshData()
       {
-         _dataTable.Clear();
-
-         //show no values
-         if (!dimensionsConsistentToAxisUnits())
-            return;
-
-         var xDimension = Curve.xDimension;
-         var yDimension = Curve.yDimension;
-         var xUnit = xDimension.Unit(_xAxis.UnitName);
-         var yUnit = yDimension.Unit(_yAxis.UnitName);
-         var xData = Curve.xData;
-         var yData = ActiveYData;
-         var baseGrid = activeBaseGrid(xData, yData);
-
-         // works for different base grids
-         _dataTable.BeginLoadData();
-         baseGrid.Values.Each((baseValue, baseIndex) =>
+         try
          {
-            try
+            _dataTable.BeginLoadData();
+            _dataTable.Clear();
+
+            //show no values
+            if (!dimensionsConsistentToAxisUnits())
+               return;
+
+            var xDimension = Curve.xDimension;
+            var yDimension = Curve.yDimension;
+            var xUnit = xDimension.Unit(_xAxis.UnitName);
+            var yUnit = yDimension.Unit(_yAxis.UnitName);
+            var xData = Curve.xData;
+            var yData = ActiveYData;
+            var baseGrid = activeBaseGrid(xData, yData);
+
+            // works for different base grids
+            baseGrid.Values.Each((baseValue, baseIndex) =>
             {
-               double x = xDimension.BaseUnitValueToUnitValue(xUnit, ValueInBaseUnit(xData, baseGrid, baseIndex));
-               double y = yDimension.BaseUnitValueToUnitValue(yUnit, ValueInBaseUnit(yData, baseGrid, baseIndex));
+               try
+               {
+                  double x = xDimension.BaseUnitValueToUnitValue(xUnit, ValueInBaseUnit(xData, baseGrid, baseIndex));
+                  double y = yDimension.BaseUnitValueToUnitValue(yUnit, ValueInBaseUnit(yData, baseGrid, baseIndex));
 
-               if (!isValidXValue(x) || !IsValidYValue(y))
-                  return;
+                  if (!isValidXValue(x) || !IsValidYValue(y))
+                     return;
 
-               var row = _dataTable.NewRow();
-               row[X] = x;
-               row[Y] = y;
-               row[INDEX_OF_VALUE_IN_CURVE] = baseIndex;
+                  var row = _dataTable.NewRow();
+                  row[X] = x;
+                  row[Y] = y;
+                  row[INDEX_OF_VALUE_IN_CURVE] = baseIndex;
 
-               if (HasLLOQ)
-                  row[LLOQ_SUFFIX] = LLOQ;
+                  if (HasLLOQ)
+                     row[LLOQ_SUFFIX] = LLOQ;
 
-               AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseGrid, baseIndex);
+                  AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseGrid, baseIndex);
 
-               _dataTable.Rows.Add(row);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-               //can  happen when plotting X vs Y and using different base grid
-            }
-         });
-         if (_xAxis.NumberMode == NumberModes.Relative)
-            setRelativeValues(X);
+                  _dataTable.Rows.Add(row);
+               }
+               catch (ArgumentOutOfRangeException)
+               {
+                  //can  happen when plotting X vs Y and using different base grid
+               }
+            });
+            if (_xAxis.NumberMode == NumberModes.Relative)
+               setRelativeValues(X);
 
-         if (_yAxis.NumberMode == NumberModes.Relative)
-            setRelativeValues(Y);
-
-         _dataTable.EndLoadData();
+            if (_yAxis.NumberMode == NumberModes.Relative)
+               setRelativeValues(Y);
+         }
+         finally
+         {
+            _dataTable.EndLoadData();
+         }
       }
 
       /// <summary>
-      /// If the <paramref name="dataColumn"/> BaseGrid is the same as <paramref name="baseGrid"/> then return the value
-      /// of <paramref name="dataColumn"/> at <paramref name="baseGridIndex"/>. Otherwise interpolate from the <paramref name="baseGrid"/> at <paramref name="baseGridIndex"/>
+      ///    If the <paramref name="dataColumn" /> BaseGrid is the same as <paramref name="baseGrid" /> then return the value
+      ///    of <paramref name="dataColumn" /> at <paramref name="baseGridIndex" />. Otherwise interpolate from the
+      ///    <paramref name="baseGrid" /> at <paramref name="baseGridIndex" />
       /// </summary>
       protected static float ValueInBaseUnit(DataColumn dataColumn, BaseGrid baseGrid, int baseGridIndex)
       {
          if (baseGrid == dataColumn.BaseGrid)
             return dataColumn.Values[baseGridIndex];
-         
+
          return dataColumn.GetValue(baseGrid[baseGridIndex]);
       }
 
@@ -424,7 +431,7 @@ namespace OSPSuite.UI.Binders
       protected void ScaleValue(DataRow row, float max, string value)
       {
          if (row[value] != DBNull.Value)
-            row[value] = (float) row[value] / max;
+            row[value] = (float)row[value] / max;
       }
 
       protected abstract void SetRelatedRelativeValuesForRow(DataRow row, float max);
@@ -438,7 +445,7 @@ namespace OSPSuite.UI.Binders
             if (row[columnName] == DBNull.Value)
                continue;
 
-            var value = (float) row[columnName];
+            var value = (float)row[columnName];
             if (!float.IsNaN(value) && value > max)
             {
                max = value;
@@ -459,6 +466,11 @@ namespace OSPSuite.UI.Binders
       {
          return Curve.xDimension.CanConvertToUnit(_xAxis.UnitName) &&
                 Curve.yDimension.CanConvertToUnit(_yAxis.UnitName);
+      }
+
+      public void HideAllSeries()
+      {
+         updateSeriesVisibility(visible: false);
       }
 
       public void ShowAllSeries()
@@ -485,7 +497,7 @@ namespace OSPSuite.UI.Binders
 
       public int OriginalCurveIndexForRow(DataRow row)
       {
-         return (int) row[INDEX_OF_VALUE_IN_CURVE];
+         return (int)row[INDEX_OF_VALUE_IN_CURVE];
       }
 
       public bool IsValidFor(DataMode dataMode, AxisTypes yAxisType)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using NPOI.SS.Formula.PTG;
 using OSPSuite.Assets;
 using OSPSuite.Core;
 using OSPSuite.Core.Chart;
@@ -39,6 +40,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ICanCopyToClipboard,
       IPresenterWithContextMenu<IViewItem>,
       IListener<ChartUpdatedEvent>,
+      IListener<CurveChartUpdatedEvent>,
       IListener<ChartPropertiesChangedEvent>
    {
       /// <summary>
@@ -410,12 +412,18 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void updateChart()
       {
+         // Without context to determined what changed, refresh everything and all data
+         updateChart(Chart.Curves, curveDataChanged: true);
+      }
+
+      private void updateChart(IReadOnlyCollection<Curve> curvesToUpdate, bool curveDataChanged)
+      {
          var diagramSize = View.GetDiagramSize();
          using (new BatchUpdate(View))
          {
             updateAxes();
 
-            updateCurves();
+            updateCurves(curvesToUpdate, curveDataChanged);
 
             rebuildQuickCurveBinderCache();
 
@@ -427,10 +435,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          updateViewLayout();
 
-         if(!diagramSize.IsEmpty)
+         if (!diagramSize.IsEmpty)
             refreshAxisBinders(diagramSize);
          else
             RefreshAxisBinders();
+
+         View.ShowWatermark(normalWatermark);
       }
 
       public void RefreshAxisBinders() => refreshAxisBinders(View.GetDiagramSize());
@@ -464,11 +474,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _axisBinders.Remove(axisBinder.AxisType);
       }
 
-      private void updateCurves()
+      private void updateCurves(IReadOnlyCollection<Curve> curvesToRefresh, bool curveDataChanged)
       {
          pruneCurves();
 
-         Chart.Curves.Each(refreshCurveBinderFor);
+         Chart.Curves.Where(curvesToRefresh.Contains).Each(curve => refreshCurveBinderFor(curve, curveDataChanged));
 
          _isLLOQVisible = _curveBinders.Any(x => x.LLOQ.HasValue && x.Curve.ShowLLOQ);
       }
@@ -482,7 +492,29 @@ namespace OSPSuite.Presentation.Presenters.Charts
          binders.Where(x => !boundObjects.Contains(retrieveBoundObjectFunc(x))).ToList().Each(removeBinderAction);
       }
 
-      private void refreshCurveBinderFor(Curve curve) => getOrCreateCurveBinderFor(curve).Refresh();
+      private void refreshCurveBinderFor(Curve curve, bool curveDataChanged)
+      {
+         var curveBinder = curveBinderFor(curve);
+         var yAxisBinder = _axisBinders[curve.yAxisType];
+
+         if (curveBinder != null)
+         {
+            if (curveBinder.IsValidFor(_dataModeMapper.MapFrom(curve), curve.yAxisType))
+            {
+               curveBinder.Refresh(curve.Visible && curveDataChanged);
+               return;
+            }
+
+            removeCurveBinder(curveBinder);
+         }
+
+
+         curveBinder = _curveBinderFactory.CreateFor(curve, View.ChartControl, Chart, yAxisBinder);
+         _curveBinders.Add(curveBinder);
+
+         // Refresh data is implied when creating new binder
+         curveBinder.Refresh(shouldRefreshData: false);
+      }
 
       private IAxisBinder getOrCreateAxisBinderFor(Axis axis)
       {
@@ -494,25 +526,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
          }
 
          return axisBinder;
-      }
-
-      private ICurveBinder getOrCreateCurveBinderFor(Curve curve)
-      {
-         var curveBinder = curveBinderFor(curve);
-         var yAxisBinder = _axisBinders[curve.yAxisType];
-
-         if (curveBinder != null)
-         {
-            if (curveBinder.IsValidFor(_dataModeMapper.MapFrom(curve), curve.yAxisType))
-               return curveBinder;
-
-            removeCurveBinder(curveBinder);
-         }
-
-         curveBinder = _curveBinderFactory.CreateFor(curve, View.ChartControl, Chart, yAxisBinder);
-         _curveBinders.Add(curveBinder);
-
-         return curveBinder;
       }
 
       private void removeCurveBinder(ICurveBinder curveBinder)
@@ -557,7 +570,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void MoveSeriesInLegend(Curve movingCurve, Curve targetCurve)
       {
          Chart.MoveCurvesInLegend(movingCurve, targetCurve);
-         updateChart();
+         View.ReOrderLegend();
       }
 
       public void SetNoCurvesSelectedHint(string hint)
@@ -565,12 +578,23 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _view.SetNoCurvesSelectedHint(hint);
       }
 
-      public void Handle(ChartUpdatedEvent chartUpdatedEvent)
+      public void Handle(ChartUpdatedEvent chartUpdatedEvent) => handleChartUpdate(chartUpdatedEvent, Chart.Curves, curveDataChanged: true);
+
+      public void Handle(CurveChartUpdatedEvent chartUpdatedEvent) => handleChartUpdate(chartUpdatedEvent, chartUpdatedEvent.CurvesToUpdate, chartUpdatedEvent.CurveDataChanged);
+
+      private void handleChartUpdate(ChartUpdatedEvent chartUpdatedEvent, IReadOnlyCollection<Curve> curvesToUpdate, bool curveDataChanged)
       {
          if (!canHandle(chartUpdatedEvent))
             return;
 
-         updateChart();
+         if (Chart.BatchUpdateEnabled)
+         {
+            _curveBinders.Each(x => x.HideAllSeries());
+            View.ShowWatermark(Captions.RefreshChartToUpdate);
+            return;
+         }
+
+         updateChart(curvesToUpdate, curveDataChanged);
       }
 
       public void Handle(ChartPropertiesChangedEvent eventToHandle)
@@ -593,20 +617,22 @@ namespace OSPSuite.Presentation.Presenters.Charts
          var areChartWidthAndHeightDefined = Chart.FontAndSize.SizeIsDefined;
 
          if (Chart.PreviewSettings)
-            setDisplay(areChartWidthAndHeightDefined ? Dock.None : Dock.Fill, Chart.FontAndSize, showingPreview: true);
+            setDisplay(areChartWidthAndHeightDefined ? Dock.None : Dock.Fill, Chart.FontAndSize);
          else
-            setDisplay(Dock.Fill, _displayChartFontAndSizeSettings, showingPreview: false);
+            setDisplay(Dock.Fill, _displayChartFontAndSizeSettings);
       }
 
-      private void setDisplay(Dock dockStyle, ChartFontAndSizeSettings fontAndSizeSettings, bool showingPreview)
+      private void setDisplay(Dock dockStyle, ChartFontAndSizeSettings fontAndSizeSettings)
       {
          View.SetDockStyle(dockStyle);
          View.SetFontAndSizeSettings(fontAndSizeSettings);
-         var showOriginText = showingPreview && Chart.IncludeOriginData;
+         var showOriginText = Chart.PreviewSettings && Chart.IncludeOriginData;
          View.ShowOriginText = showOriginText;
-         var watermark = showingPreview ? _applicationSettings.WatermarkTextToUse : null;
+         var watermark = normalWatermark;
          View.ShowWatermark(watermark);
       }
+
+      private string normalWatermark => Chart.PreviewSettings ? _applicationSettings.WatermarkTextToUse : null;
 
       private bool canHandle(ChartEvent chartEvent)
       {

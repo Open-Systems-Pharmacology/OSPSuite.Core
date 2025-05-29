@@ -1,4 +1,6 @@
-﻿namespace OSPSuite.Core.Chart
+﻿using System.Collections.Generic;
+
+namespace OSPSuite.Core.Chart
 {
    public abstract class ChartEvent
    {
@@ -17,6 +19,18 @@
       public ChartUpdatedEvent(IChart chart, bool propagateChartChangeEvent) : base(chart)
       {
          PropagateChartChangeEvent = propagateChartChangeEvent;
+      }
+   }
+
+   public class CurveChartUpdatedEvent : ChartUpdatedEvent
+   {
+      public IReadOnlyCollection<Curve> CurvesToUpdate { get; }
+      public bool CurveDataChanged { get; }
+
+      public CurveChartUpdatedEvent(CurveChart chart, IReadOnlyCollection<Curve> curvesToUpdate, bool curveDataChanged, bool propagateChartChangeEvent) : base(chart, propagateChartChangeEvent)
+      {
+         CurvesToUpdate = curvesToUpdate;
+         CurveDataChanged = curveDataChanged;
       }
    }
 
