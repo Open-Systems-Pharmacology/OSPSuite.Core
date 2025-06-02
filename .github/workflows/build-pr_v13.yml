@@ -5,11 +5,6 @@ on:
     branches:
     - V13
 
-env:
-  MAJOR: 13
-  MINOR: 0
-  RUN: 9999
-
 jobs:
   build-and-test:
     runs-on: windows-latest
@@ -19,26 +14,16 @@ jobs:
         with:
           submodules: 'true'
 
-      - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v2
-
       - name: Restore dependencies
         run: |
           nuget sources add -username Open-Systems-Pharmacology -password ${{ secrets.GITHUB_TOKEN }} -name OSP-GitHub-Packages -source "https://nuget.pkg.github.com/Open-Systems-Pharmacology/index.json"
           dotnet restore
 
-      - name: define env variables
-        run: |
-          echo "APP_VERSION=${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.RUN }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-
       - name: Build
-        run: msbuild OSPSuite.Core.sln /p:Version=${{env.APP_VERSION}}
+        run: dotnet build OSPSuite.Core.sln /p:Version=12.1.9999
 
       - name : Test
         run: dotnet test .\tests\**\bin\Debug\net472\OSPSuite*Tests.dll -v normal --no-build  --logger:"html;LogFileName=../testLog_Windows.html"
-
-      - name: Pack the project
-        run: dotnet pack .\OSPSuite.Core.sln --no-build --no-restore -o ./ -p:PackageVersion=${{env.APP_VERSION}} --configuration=Debug --no-build
 
       - name: Push test log as artifact
         uses: actions/upload-artifact@v4
