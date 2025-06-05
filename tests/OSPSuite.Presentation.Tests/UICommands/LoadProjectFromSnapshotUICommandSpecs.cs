@@ -1,0 +1,31 @@
+﻿using FakeItEasy;
+using OSPSuite.BDDHelper;
+using OSPSuite.Presentation.Services;
+
+namespace OSPSuite.Presentation.UICommands
+{
+   public abstract class concern_for_LoadProjectFromSnapshotCommand : ContextSpecification<LoadProjectFromSnapshotUICommand>
+   {
+      protected IProjectTask _projectTask;
+
+      protected override void Context()
+      {
+         _projectTask = A.Fake<IProjectTask>();
+         sut = new LoadProjectFromSnapshotUICommand(_projectTask);
+      }
+   }
+
+   public class When_executing_the_load_project_from_snapshot_command : concern_for_LoadProjectFromSnapshotCommand
+   {
+      protected override void Because()
+      {
+         sut.Execute();
+      }
+
+      [Observation]
+      public void should_leverage_the_project_task_to_load_the_project_snapshot_in_the_current_project()
+      {
+         A.CallTo(() => _projectTask.LoadProjectFromSnapshot()).MustHaveHappened();
+      }
+   }
+}
