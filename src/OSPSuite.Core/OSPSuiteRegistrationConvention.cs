@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Container.Conventions;
@@ -45,6 +47,9 @@ namespace OSPSuite.Core
             serviceTypes.Add(concreteType);
 
          if (!serviceTypes.Any())
+            return false;
+
+         if (concreteType.GetCustomAttribute<CompilerGeneratedAttribute>() != null)
             return false;
 
          if (concreteType.IsAnImplementationOf<IStartable>())

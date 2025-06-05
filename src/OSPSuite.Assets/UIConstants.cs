@@ -1,10 +1,10 @@
-﻿using OSPSuite.Assets.Extensions;
-using OSPSuite.Utility.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using OSPSuite.Assets.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Assets
 {
@@ -231,6 +231,12 @@ namespace OSPSuite.Assets
       public static readonly string NotDistributed = "Not Distributed";
       public static readonly string DeleteSelected = "Delete Selected Records";
       public static readonly string ModulesFolder = "Modules";
+      public static readonly string LoadFromSnapshot = "Load Snapshot";
+      public static readonly string RunSimulations = "Run Simulations";
+      public static readonly string StartImport = "Start Import";
+      public static readonly string SnapshotFile = "Select snapshot file";
+      public static readonly string ExportProjectToSnapshotDescription = "Export project to snapshot...";
+      public static readonly string LoadProjectFromSnapshotDescription = "Load project from snapshot...";
 
       public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
 
@@ -1436,10 +1442,34 @@ namespace OSPSuite.Assets
                 $"The version of this project {numberDisplay(projectVersion)} is too old and cannot be loaded.\n\n" +
                 $"Visit our download page at {downloadUrl} to download an older version of the software compatible with this project.";
       }
+
+      public static string LoadObjectFromSnapshot(string objectType) => $"Load {objectType.ToLowerInvariant()} from snapshot";
+      public static string SelectSnapshotExportFile(string objectName, string objectType) => $"Export snapshot for {objectType.ToLowerInvariant()} '{objectName}'";
+      public static string DoYouWantToProceed(params string[] messages) => $"WARNING:\n{messages.ToString("\n")}\n\nDo you wish to continue?";
+      
+      public static readonly string SnapshotOfProjectWithChangedSimulationText = "Some simulations are in a changed state (red icon) and may not be re-imported correctly.";
+      public static readonly string SnapshotOfProjectWithChangedSimulation = DoYouWantToProceed(SnapshotOfProjectWithChangedSimulationText);
+
+      public static string Starting(string type, string name) => $"Starting {type.ToLower()} '{name}'...";
+      
+      public static string LoadingSnapshot(string snapshotFile, string type) => $"Loading {type} from {ObjectTypes.Snapshot.ToLower()} file '{snapshotFile}'";
+
+      public static string SnapshotLoaded(string typeToLoad) => $"{typeToLoad} loaded from {ObjectTypes.Snapshot.ToLower()}";
+
+      public static string LoadingSimulation(string simulationName, int count, int total) => $"Loading simulation '{simulationName}' ({count}/{total})...";
+
+      public static string StartingQualificationPlan(string qualificationPlan) => Starting(ObjectTypes.QualificationPlan, qualificationPlan);
+
+      public static string StartingQualificationStep(string qualificationStep) => Starting(ObjectTypes.QualificationStep, qualificationStep);
+
    }
 
    public static class Error
    {
+      public static string UnableToFindAQualificationStepRunnerFor(string qualificationStep) => $"Cannot find {ObjectTypes.QualificationStep} runner for '{qualificationStep}'";
+      public static string CouldNotFind(string objectType, string objectName) => $"Cannot find {objectType.ToLower()} '{objectName}'";
+      public static string CouldNotFindQualificationStep(string qualificationStepType) => CouldNotFind(ObjectTypes.QualificationStep, qualificationStepType);
+      public static string NotMappingDefinedForQualificationStep(string qualificationStepType) => $"No mapping defined for {ObjectTypes.QualificationStep.ToLower()} '{qualificationStepType}'";
       public static readonly string NameIsRequired = "Name is required.";
       public static readonly string ValueIsRequired = "Value is required.";
       public static readonly string DescriptionIsRequired = "Description is required";
@@ -1468,6 +1498,9 @@ namespace OSPSuite.Assets
       public static readonly string SimpleParseErrorMessage = "There were errors while parsing your data. Navigate to the sheets to read the concrete error.";
       public static readonly string FoldValueMustBeGreaterThanOne = "Fold value must be a number greater than one.";
       public static readonly string ImporterEmptyFile = "The file you are trying to load is empty.";
+      public static readonly string SnapshotIsOutdated = "Snapshot is outdated and cannot be loaded for the following reason: ";
+      
+      public static string SnapshotFileMismatch(string desiredType) => $"Snapshot file cannot be used to load a {desiredType.ToLowerInvariant()}.";
 
       public static string CannotFindParentContainerWithPath(string parentPath, string containerName, string buildingBlockName, string moduleName) => 
          $"Cannot find parent container '{parentPath}' defined as target of container '{containerName}' in building block '{buildingBlockName}' in module '{moduleName}'";
@@ -1940,6 +1973,12 @@ namespace OSPSuite.Assets
          }
          return sb.ToString();
       }
+
+      public static string SnapshotNotFoundFor(string modelTypeName) => $"Snapshot not found for '{modelTypeName}'.";
+
+      public static string MapToModelNotSupportedWithoutContext(string modelType, string contextType) => $"{modelType} should not be created from snapshot directly. Instead use the overload with {contextType}.";
+
+      public static string MapToSnapshotNotSupportedWithoutContext(string snapshotType, string contextType) => $"{snapshotType} should not be created from model directly. Instead use the overload with {contextType}.";
    }
 
    public static class Validation
@@ -2179,6 +2218,10 @@ namespace OSPSuite.Assets
    {
       public static string AsDeveloperOnly(string menuName) => $"{menuName} (Developer only)...";
 
+      public static readonly string ExportProjectToSnapshot = "Export to Snapshot";
+      public static readonly string LoadProjectFromSnapshot = "Load from Snapshot";
+      public static readonly string ExportProjectToSnapshotMenu = $"&{ExportProjectToSnapshot}...";
+      public static readonly string LoadProjectFromSnapshotMenu = $"{LoadProjectFromSnapshot}...";
       public static readonly string NewExpressionProfile = "Add &Expression Profile";
       public static readonly string ExportToExcel = "Export to Excel...";
       public static readonly string ExportToPng = "Export to Png...";
@@ -2417,6 +2460,9 @@ namespace OSPSuite.Assets
 
    public static class ObjectTypes
    {
+      public static readonly string QualificationStep = "Qualification Step";
+      public static readonly string QualificationPlan = "Qualification Plan";
+      public static readonly string Snapshot = "Snapshot";
       public static readonly string CalculationMethod = "Calculation Method";
       public static readonly string MoleculeBuildingBlock = "Molecule Building Block";
       public static readonly string ReactionBuildingBlock = "Reaction Building Block";

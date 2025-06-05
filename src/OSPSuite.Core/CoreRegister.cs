@@ -13,6 +13,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
+using OSPSuite.Core.Snapshots.Mappers;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Container;
 using IContainer = OSPSuite.Utility.Container.IContainer;
@@ -56,6 +57,7 @@ namespace OSPSuite.Core
             scan.ExcludeType<ParameterIdentificationRunner>();
             scan.ExcludeType<SensitivityAnalysisRunner>();
             scan.ExcludeType<ConfirmationManager>();
+            scan.ExcludeType<SnapshotMapper>();
 
             scan.ExcludeType(typeof(ExtendedProperty<>));
             scan.ExcludeType(typeof(HistoryManager<>));
@@ -91,6 +93,7 @@ namespace OSPSuite.Core
          container.Register<IParameterIdentificationRunner, ParameterIdentificationRunner>(LifeStyle.Singleton);
          container.Register<ISensitivityAnalysisRunner, SensitivityAnalysisRunner>(LifeStyle.Singleton);
          container.Register<IConfirmationManager, ConfirmationManager>(LifeStyle.Singleton);
+         container.Register<ISnapshotMapper, SnapshotMapper>(LifeStyle.Singleton);
 
          registerComparers(container);
 
