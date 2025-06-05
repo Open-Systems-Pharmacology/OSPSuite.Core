@@ -22,10 +22,7 @@ namespace OSPSuite.Presentation.DTO
          set => SetProperty(ref _runSimulations, value);
       }
 
-      public LoadFromSnapshotDTO()
-      {
-         Rules.Add(AllRules.FileExists);
-      }
+      public LoadFromSnapshotDTO() => Rules.Add(AllRules.FileExists);
 
       private static class AllRules
       {

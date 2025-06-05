@@ -12,9 +12,6 @@ namespace OSPSuite.Presentation.UICommands
          _projectTask = projectTask;
       }
 
-      public void Execute()
-      {
-         _projectTask.LoadProjectFromSnapshot();
-      }
+      public void Execute() => _projectTask.LoadProjectFromSnapshot();
    }
 }

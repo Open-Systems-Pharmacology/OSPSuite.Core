@@ -64,11 +64,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
 
       public Task<object> MapToModel(object snapshot, SnapshotContext snapshotContext) => MapperFor(snapshot).MapToModel(snapshot, snapshotContext);
 
-      public Type SnapshotTypeFor<T>()
-      {
-         var modelType = typeof(T);
-         return MapperFor(modelType).SnapshotTypeFor<T>();
-      }
+      public Type SnapshotTypeFor<T>() => MapperFor(typeof(T)).SnapshotTypeFor<T>();
 
       public ISnapshotMapper MapperFor(object modelOrSnapshotObject) => MapperFor(modelOrSnapshotObject.GetType());
 

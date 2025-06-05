@@ -13,9 +13,6 @@ namespace OSPSuite.Presentation.UICommands
          _projectTask = projectTask;
       }
 
-      public async void Execute()
-      {
-         await _projectTask.SecureAwait(x => x.ExportCurrentProjectToSnapshot());
-      }
+      public async void Execute() => await _projectTask.SecureAwait(x => x.ExportCurrentProjectToSnapshot());
    }
 }

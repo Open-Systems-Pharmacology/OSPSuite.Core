@@ -152,10 +152,7 @@ namespace OSPSuite.Presentation.Presenters
          /*override if something needs to be done for specific loading case*/
       }
 
-      protected virtual Task<IEnumerable<T>> LoadModelAsync(LoadFromSnapshotDTO loadFromSnapshotDTO)
-      {
-         return _snapshotTask.LoadModelsFromSnapshotFileAsync<T>(loadFromSnapshotDTO.SnapshotFile);
-      }
+      protected virtual Task<IEnumerable<T>> LoadModelAsync(LoadFromSnapshotDTO loadFromSnapshotDTO) => _snapshotTask.LoadModelsFromSnapshotFileAsync<T>(loadFromSnapshotDTO.SnapshotFile);
 
       protected override void Cleanup()
       {

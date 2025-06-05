@@ -20,17 +20,12 @@ namespace OSPSuite.Infrastructure.Serialization.Json
          writer.WriteValue(hexString);
       }
 
-      public override object ReadJson(JsonReader reader, Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer)
-      {
+      public override object ReadJson(JsonReader reader, Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer) =>
          //this will never be called as default color reader will take precedence
-         return existingValue;
-      }
+         existingValue;
 
       public override bool CanRead => false;
 
-      public override bool CanConvert(Type objectType)
-      {
-         return objectType.IsOneOf(typeof(Color), typeof(Color?));
-      }
+      public override bool CanConvert(Type objectType) => objectType.IsOneOf(typeof(Color), typeof(Color?));
    }
 }

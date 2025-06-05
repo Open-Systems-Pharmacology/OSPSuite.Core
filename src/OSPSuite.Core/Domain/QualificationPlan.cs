@@ -7,19 +7,13 @@ namespace OSPSuite.Core.Domain
    {
       private readonly List<IQualificationStep> _allQualificationSteps = new List<IQualificationStep>();
 
-      public void Add(IQualificationStep qualificationStep)
-      {
-         _allQualificationSteps.Add(qualificationStep);
-      }
+      public void Add(IQualificationStep qualificationStep) => _allQualificationSteps.Add(qualificationStep);
 
       public IReadOnlyList<IQualificationStep> Steps => _allQualificationSteps;
 
       public IEnumerator<IQualificationStep> GetEnumerator() => _allQualificationSteps.GetEnumerator();
 
-      IEnumerator IEnumerable.GetEnumerator()
-      {
-         return GetEnumerator();
-      }
+      IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
    }
 
    public interface IQualificationStep

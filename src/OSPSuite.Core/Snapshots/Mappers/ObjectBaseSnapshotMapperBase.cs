@@ -38,9 +38,6 @@ namespace OSPSuite.Core.Snapshots.Mappers
    {
       public abstract Task<TSnapshot> MapToSnapshot(TModel model, TModelContext context);
 
-      public sealed override Task<TSnapshot> MapToSnapshot(TModel model)
-      {
-         return Task.FromException<TSnapshot>(new ModelMapToSnapshotNotSupportedException<TSnapshot, TSnapshotContext>());
-      }
+      public sealed override Task<TSnapshot> MapToSnapshot(TModel model) => Task.FromException<TSnapshot>(new ModelMapToSnapshotNotSupportedException<TSnapshot, TSnapshotContext>());
    }
 }

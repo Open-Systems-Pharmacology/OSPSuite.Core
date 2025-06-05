@@ -45,10 +45,7 @@ namespace OSPSuite.Core.Services
          _disposed = true;
       }
 
-      ~QualificationStepRunner()
-      {
-         Cleanup();
-      }
+      ~QualificationStepRunner() => Cleanup();
 
       #endregion
    }

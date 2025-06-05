@@ -12,10 +12,7 @@ namespace OSPSuite.Core.Services
    {
       protected readonly IContainer _container;
 
-      protected QualificationStepRunnerFactory(IContainer container)
-      {
-         _container = container;
-      }
+      protected QualificationStepRunnerFactory(IContainer container) => _container = container;
 
       public abstract IQualificationStepRunner CreateFor(IQualificationStep qualificationStep);
    }

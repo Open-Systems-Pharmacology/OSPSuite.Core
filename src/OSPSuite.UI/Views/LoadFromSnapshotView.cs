@@ -1,10 +1,10 @@
 ﻿using OSPSuite.Assets;
 using OSPSuite.DataBinding;
+using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.Presentation.DTO;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
-using OSPSuite.DataBinding.DevExpress;
-using OSPSuite.Presentation.Extensions;
 using OSPSuite.UI.Extensions;
 
 namespace OSPSuite.UI.Views
@@ -41,20 +41,11 @@ namespace OSPSuite.UI.Views
          RegisterValidationFor(_screenBinder);
       }
 
-      public void AttachPresenter(ILoadFromSnapshotPresenter presenter)
-      {
-         _presenter = presenter;
-      }
+      public void AttachPresenter(ILoadFromSnapshotPresenter presenter) => _presenter = presenter;
 
-      public void AddLogView(IView view)
-      {
-         logPanel.FillWith(view);
-      }
+      public void AddLogView(IView view) => logPanel.FillWith(view);
 
-      public void BindTo(LoadFromSnapshotDTO loadFromSnapshotDTO)
-      {
-         _screenBinder.BindToSource(loadFromSnapshotDTO);
-      }
+      public void BindTo(LoadFromSnapshotDTO loadFromSnapshotDTO) => _screenBinder.BindToSource(loadFromSnapshotDTO);
 
       public void EnableButtons(bool cancelEnabled, bool okEnabled = false, bool startEnabled = false)
       {

@@ -27,17 +27,12 @@ namespace OSPSuite.Infrastructure.Serialization.Json
          writer.WriteValue(roundedFromString);
       }
 
-      public override object ReadJson(JsonReader reader, Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer)
-      {
+      public override object ReadJson(JsonReader reader, Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer) =>
          //this will never be called for nullable as double reader will take precedence
-         return 0;
-      }
+         0;
 
       public override bool CanRead => false;
 
-      public override bool CanConvert(Type objectType)
-      {
-         return objectType == typeof(double?);
-      }
+      public override bool CanConvert(Type objectType) => objectType == typeof(double?);
    }
 }

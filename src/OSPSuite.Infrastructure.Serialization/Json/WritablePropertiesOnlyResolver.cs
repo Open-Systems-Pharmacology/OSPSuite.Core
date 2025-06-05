@@ -8,10 +8,6 @@ namespace OSPSuite.Infrastructure.Serialization.Json
 {
    public class WritablePropertiesOnlyResolver : DefaultContractResolver
    {
-      protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-      {
-         var props = base.CreateProperties(type, memberSerialization);
-         return props.Where(p => p.Writable).ToList();
-      }
+      protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization) => base.CreateProperties(type, memberSerialization).Where(p => p.Writable).ToList();
    }
 }

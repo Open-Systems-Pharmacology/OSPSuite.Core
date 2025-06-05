@@ -22,15 +22,9 @@ namespace OSPSuite.Core
       {
       }
 
-      public OSPSuiteRegistrationConvention(bool registerConcreteType)
-      {
-         _registerConcreteType = registerConcreteType;
-      }
+      public OSPSuiteRegistrationConvention(bool registerConcreteType) => _registerConcreteType = registerConcreteType;
 
-      public virtual void Process(Type concreteType, IContainer container, LifeStyle lifeStyle)
-      {
-         Register(concreteType, container, lifeStyle);
-      }
+      public virtual void Process(Type concreteType, IContainer container, LifeStyle lifeStyle) => Register(concreteType, container, lifeStyle);
 
       /// <summary>
       ///    Returns <c>true</c> if the <paramref name="concreteType" /> was registered with at least one interface in the
