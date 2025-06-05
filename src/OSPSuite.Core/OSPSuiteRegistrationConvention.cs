@@ -43,6 +43,7 @@ namespace OSPSuite.Core
          if (!serviceTypes.Any())
             return false;
 
+         // Do not register compiler generated types, only user generated types
          if (concreteType.GetCustomAttribute<CompilerGeneratedAttribute>() != null)
             return false;
 
