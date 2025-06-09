@@ -45,16 +45,15 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithActionCommand(chartDisplayPresenter.ExportToPng)
             .WithIcon(ApplicationIcons.GreenOverlayFor(ApplicationIcons.ExportToPNG));
 
-         if(curveChart.BatchUpdateEnabled)
+         if(!curveChart.AutoUpdateEnabled)
          {
             yield return CreateMenuButton.WithCaption(MenuNames.RefreshChart)
-               .WithActionCommand(chartDisplayPresenter.Refresh)
-               .WithIcon(ApplicationIcons.Refresh);
+               .WithActionCommand(chartDisplayPresenter.Refresh);
          }
 
-         yield return CreateMenuCheckButton.WithCaption(MenuNames.EnableBatchUpdates)
-            .WithChecked(curveChart.BatchUpdateEnabled)
-            .WithCheckedAction(enabled => updateBatchEditMode(curveChart, chartDisplayPresenter, enabled));
+         yield return CreateMenuCheckButton.WithCaption(MenuNames.AutoUpdateChart)
+            .WithChecked(curveChart.AutoUpdateEnabled)
+            .WithCheckedAction(enabled => updateAutoUpdateMode(curveChart, chartDisplayPresenter, enabled));
 
          if (curveChart.IsAnImplementationOf<PredictedVsObservedChart>())
          {
@@ -63,10 +62,10 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
          }
       }
 
-      private static void updateBatchEditMode(CurveChart curveChart, IChartDisplayPresenter chartDisplayPresenter, bool enabled)
+      private static void updateAutoUpdateMode(CurveChart curveChart, IChartDisplayPresenter chartDisplayPresenter, bool enabled)
       {
-         curveChart.BatchUpdateEnabled = enabled;
-         if (!curveChart.BatchUpdateEnabled)
+         curveChart.AutoUpdateEnabled = enabled;
+         if (curveChart.AutoUpdateEnabled)
             chartDisplayPresenter.Refresh();
       }
    }

@@ -448,7 +448,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          _dataBrowserPresenter.RemoveOutputMappings(outputMappings);
       }
-
+      
       public void AddLinkSimDataMenuItem() => _view.AddLinkSimulationObservedMenuItemCheckBox();
 
       public void SetLinkSimDataMenuItemVisibility(bool isVisible) => _view.SetlinkSimDataMenuItemVisisbility(isVisible);

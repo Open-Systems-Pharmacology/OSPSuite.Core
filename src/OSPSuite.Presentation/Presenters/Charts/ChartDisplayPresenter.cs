@@ -587,7 +587,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (!canHandle(chartUpdatedEvent))
             return;
 
-         if (Chart.BatchUpdateEnabled)
+         if (!Chart.AutoUpdateEnabled)
          {
             _curveBinders.Each(x => x.HideAllSeries());
             View.ShowWatermark(Captions.RefreshChartToUpdate);

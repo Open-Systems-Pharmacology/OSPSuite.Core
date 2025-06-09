@@ -4,7 +4,7 @@ using OSPSuite.Utility.Extensions;
 using DevExpress.Utils;
 using DevExpress.XtraBars;
 using DevExpress.XtraEditors;
-using DevExpress.XtraEditors.Repository;
+using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Presenters.Charts;
@@ -19,11 +19,10 @@ namespace OSPSuite.UI.Views.Charts
 {
    public partial class ChartEditorView : BaseUserControl, IChartEditorView
    {
+      private const int CHECKEDIT_WIDTH = 160;
       private readonly IMenuBarItemToBarItemMapper _barItemMapper;
       private IChartEditorPresenter _presenter;
       private readonly SvgImageCollection _allImages;
-      private readonly BarEditItem _barEditItemForUsedIn;
-      private readonly BarEditItem _barEditItemLinkSimulationObserved;
 
       public ChartEditorView(IMenuBarItemToBarItemMapper barItemMapper, IImageListRetriever imageListRetriever)
       {
@@ -37,62 +36,6 @@ namespace OSPSuite.UI.Views.Charts
          _barManager.MainMenu = null;
          _barManager.TransparentEditors = true;
          _barMenu.OptionsBar.AllowQuickCustomization = false;
-         var repositoryItemCheckEditForUsedIn = new RepositoryItemCheckEdit
-         {
-            UseParentBackground = true, 
-            Caption = string.Empty,
-            GlyphAlignment = HorzAlignment.Near,
-            AutoWidth = false
-         };
-
-         var repositoryItemCheckEditLinkSimulationAndObserved = CreateLinkSimulationAndObservedRepositoryItem();
-
-         _barEditItemForUsedIn = new BarEditItem(_barManager)
-         {
-            Edit = repositoryItemCheckEditForUsedIn,
-            Alignment = BarItemLinkAlignment.Right,
-            AutoFillWidth = false,
-            Width = 20, 
-            Caption = Captions.UseSelected,
-            CaptionAlignment = HorzAlignment.Near,
-            PaintStyle = BarItemPaintStyle.Caption
-         };
-
-         _barEditItemForUsedIn.SuperTip = new SuperToolTip().WithText(ToolTips.UseSelectedCurvesToolTip);
-
-         _barEditItemLinkSimulationObserved = new BarEditItem(_barManager)
-         {
-            Edit = repositoryItemCheckEditLinkSimulationAndObserved,
-            Alignment = BarItemLinkAlignment.Right,
-            AutoFillWidth = false,
-            Width = 20,
-            Caption = Captions.LinkDataToSimulations,
-            CaptionAlignment = HorzAlignment.Near,
-            PaintStyle = BarItemPaintStyle.Caption
-         };
-
-         _barEditItemLinkSimulationObserved.SuperTip = new SuperToolTip().WithText(ToolTips.LinkSimulationObservedToolTip);
-
-         repositoryItemCheckEditForUsedIn.EditValueChanged += (o, e) => OnEvent(() => changeUsed(o));
-
-         repositoryItemCheckEditLinkSimulationAndObserved.EditValueChanged += (o, e) => OnEvent(() => changeLinkSimulationToData(o));
-
-         repositoryItemCheckEditForUsedIn.ValueGrayed = null;
-
-         _barEditItemLinkSimulationObserved.EditValue = false;
-         _barEditItemLinkSimulationObserved.Visibility = BarItemVisibility.Never;
-      }
-
-      private static RepositoryItemCheckEdit CreateLinkSimulationAndObservedRepositoryItem()
-      {
-         var repositoryItemCheckEditLinkSimulationAndObserved = new RepositoryItemCheckEdit
-         {
-            UseParentBackground = true,
-            Caption = string.Empty,
-            GlyphAlignment = HorzAlignment.Near,
-            AutoWidth = false
-         };
-         return repositoryItemCheckEditLinkSimulationAndObserved;
       }
 
       private void changeUsed(object sender)
@@ -179,22 +122,22 @@ namespace OSPSuite.UI.Views.Charts
 
       public void AddUsedInMenuItemCheckBox()
       {
-         _barMenu.AddItem(_barEditItemForUsedIn);
+         layoutControlItemUsedIn.Visibility = LayoutVisibility.Always;
       }
 
       public void AddLinkSimulationObservedMenuItemCheckBox()
       {
-         _barMenu.AddItem(_barEditItemLinkSimulationObserved);
+         layoutControlItemLink.Visibility = LayoutVisibility.Always;
       }
 
       public void SetlinkSimDataMenuItemVisisbility(bool isVisible)
       {
-         _barEditItemLinkSimulationObserved.Visibility = isVisible ? BarItemVisibility.Always : BarItemVisibility.Never;
+         layoutControlItemLink.Visibility = isVisible ? LayoutVisibility.Always : LayoutVisibility.Never;
       }
 
       public void SetSelectAllCheckBox(bool? checkedState)
       {
-         _barEditItemForUsedIn.EditValue = checkedState;
+         chkUsedIn.EditValue = checkedState;
       }
 
       public void AttachPresenter(IChartEditorPresenter presenter)
@@ -239,6 +182,37 @@ namespace OSPSuite.UI.Views.Charts
          layoutChartExportOptions.Text = Captions.ChartExportOptions;
          layoutChartOptions.Text = Captions.ChartOptions;
          layoutCurveAndChartSettings.Text = Captions.CurveAndAxisSettings;
+
+         btnApplyChartUpdates.Text = Captions.Apply;
+         chkAutoUpdateCharts.Text = Captions.AutoUpdateChart;
+         chkAutoUpdateCharts.SuperTip = new SuperToolTip().WithText(ToolTips.EnableOrDisableAutomaticUpdateOfTheChartForEachEdit);
+         chkUsedIn.Text = Captions.UseSelected;
+         chkUsedIn.SuperTip = new SuperToolTip().WithText(ToolTips.UseSelectedCurvesToolTip);
+         chkLinkSimulationObserved.Text = Captions.LinkDataToSimulations;
+         chkLinkSimulationObserved.SuperTip = new SuperToolTip().WithText(ToolTips.LinkSimulationObservedToolTip);
+         
+         chkUsedIn.EditValueChanged += (o, e) => OnEvent(() => changeUsed(o));
+         chkLinkSimulationObserved.EditValueChanged += (o, e) => OnEvent(() => changeLinkSimulationToData(o));
+         
+         layoutControlItemUsedIn.AdjustSize(CHECKEDIT_WIDTH, layoutControlItemUsedIn.Height, layoutControl);
+         layoutControlItemLink.AdjustSize(CHECKEDIT_WIDTH, layoutControlItemLink.Height, layoutControl);
+         layoutControlItemAutoUpdateCharts.AdjustSize(CHECKEDIT_WIDTH, layoutControlItemAutoUpdateCharts.Height, layoutControl);
+         layoutControlItemApplyButton.AdjustButtonSize();
+
+         layoutControlItemLink.Visibility = LayoutVisibility.Never;
       }
+
+      // private void newMethod()
+      // {
+      //    layoutControlItemUsedIn.Visibility = LayoutVisibility.Always;
+      //    layoutControlItemLink.Visibility = LayoutVisibility.Always;
+      //    layoutControlItemAutoUpdateCharts.Visibility = LayoutVisibility.Always;
+      //    layoutControlItemApplyButton.Visibility = LayoutVisibility.Always;
+      //
+      //    layoutControlItemUsedIn.AdjustSize(CHECKEDIT_WIDTH, layoutControlItemUsedIn.Height, layoutControl);
+      //    layoutControlItemLink.AdjustSize(CHECKEDIT_WIDTH, layoutControlItemLink.Height, layoutControl);
+      //    layoutControlItemAutoUpdateCharts.AdjustSize(CHECKEDIT_WIDTH, layoutControlItemAutoUpdateCharts.Height, layoutControl);
+      //    layoutControlItemApplyButton.AdjustButtonSize();
+      // }
    }
 }
