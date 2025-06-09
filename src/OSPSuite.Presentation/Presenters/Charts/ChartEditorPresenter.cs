@@ -216,6 +216,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Removes all the saved OutputMappings from the DataBrowser list
       /// </summary>
       void RemoveAllOutputMappings();
+
+      void UpdateAutoUpdateChartMode(bool autoMode);
+      
+      void UpdateChartDisplay();
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -458,6 +462,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _dataBrowserPresenter.RemoveAllOutputMappings();
       }
 
+      public void UpdateAutoUpdateChartMode(bool autoMode) => Chart.AutoUpdateEnabled = autoMode;
+
+      public void UpdateChartDisplay() => _eventPublisher.PublishEvent(new ApplyChangesEvent(Chart));
+
       public void OnDragDrop(IDragEvent dropEvent) => DragDrop(this, dropEvent);
 
       public void OnDragOver(IDragEvent dragEvent) => DragOver(this, dragEvent);
@@ -486,6 +494,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _chartSettingsPresenter.Edit(Chart);
          _chartExportSettingsPresenter.Edit(Chart);
          _axisSettingsPresenter.Edit(Chart.Axes);
+         _view.SetAutoUpdateModeCheckBox(Chart.AutoUpdateEnabled);
       }
 
       public void Clear()

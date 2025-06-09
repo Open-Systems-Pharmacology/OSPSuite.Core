@@ -40,7 +40,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       IPresenterWithContextMenu<IViewItem>,
       IListener<ChartUpdatedEvent>,
       IListener<CurveChartUpdatedEvent>,
-      IListener<ChartPropertiesChangedEvent>
+      IListener<ChartPropertiesChangedEvent>,
+      IListener<ApplyChangesEvent>
    {
       /// <summary>
       ///    Displayed Chart.
@@ -616,6 +617,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
             return;
 
          _view.ExportToPng(fileName);
+      }
+
+      public void Handle(ApplyChangesEvent eventToHandle)
+      {
+         if(canHandle(eventToHandle))
+            Refresh();
       }
    }
 }

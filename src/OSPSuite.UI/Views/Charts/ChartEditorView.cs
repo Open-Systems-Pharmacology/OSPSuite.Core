@@ -38,6 +38,35 @@ namespace OSPSuite.UI.Views.Charts
          _barMenu.OptionsBar.AllowQuickCustomization = false;
       }
 
+      public override void InitializeResources()
+      {
+         base.InitializeResources();
+         layoutColorGrouping.Text = Captions.CurvesColorGrouping;
+         layoutChartExportOptions.Text = Captions.ChartExportOptions;
+         layoutChartOptions.Text = Captions.ChartOptions;
+         layoutCurveAndChartSettings.Text = Captions.CurveAndAxisSettings;
+
+         btnApplyChartUpdates.Text = Captions.Apply;
+         chkAutoUpdateCharts.Text = Captions.AutoUpdateChart;
+         chkAutoUpdateCharts.SuperTip = new SuperToolTip().WithText(ToolTips.EnableOrDisableAutomaticUpdateOfTheChartForEachEdit);
+         chkUsedIn.Text = Captions.UseSelected;
+         chkUsedIn.SuperTip = new SuperToolTip().WithText(ToolTips.UseSelectedCurvesToolTip);
+         chkLinkSimulationObserved.Text = Captions.LinkDataToSimulations;
+         chkLinkSimulationObserved.SuperTip = new SuperToolTip().WithText(ToolTips.LinkSimulationObservedToolTip);
+
+         chkUsedIn.EditValueChanged += (o, e) => OnEvent(() => changeUsed(o));
+         chkLinkSimulationObserved.EditValueChanged += (o, e) => OnEvent(() => changeLinkSimulationToData(o));
+         chkAutoUpdateCharts.EditValueChanged += (o, e) => OnEvent(() => changeAutoUpdateCharts(o));
+         btnApplyChartUpdates.Click += (o, e) => OnEvent(() => _presenter.UpdateChartDisplay());
+
+         layoutControlItemUsedIn.AdjustSize(CHECKEDIT_WIDTH, layoutControlItemUsedIn.Height, layoutControl);
+         layoutControlItemLink.AdjustSize(CHECKEDIT_WIDTH, layoutControlItemLink.Height, layoutControl);
+         layoutControlItemAutoUpdateCharts.AdjustSize(CHECKEDIT_WIDTH, layoutControlItemAutoUpdateCharts.Height, layoutControl);
+         layoutControlItemApplyButton.AdjustButtonSize();
+
+         layoutControlItemLink.Visibility = LayoutVisibility.Never;
+      }
+
       private void changeUsed(object sender)
       {
          var checkEdit = sender as CheckEdit;
@@ -45,6 +74,16 @@ namespace OSPSuite.UI.Views.Charts
 
          _presenter.UpdateUsedForSelection(checkEdit.Checked);
       }
+
+      private void changeAutoUpdateCharts(object sender)
+      {
+         var checkEdit = sender as CheckEdit;
+         if (checkEdit == null) return;
+
+         _presenter.UpdateAutoUpdateChartMode(autoMode: checkEdit.Checked);
+         btnApplyChartUpdates.Enabled = !checkEdit.Checked;
+      }
+      
       private void changeLinkSimulationToData(object sender)
       {
          var checkEdit = sender as CheckEdit;
@@ -120,87 +159,29 @@ namespace OSPSuite.UI.Views.Charts
          _barMenu.LinksPersistInfo.Clear();
       }
 
-      public void AddUsedInMenuItemCheckBox()
-      {
-         layoutControlItemUsedIn.Visibility = LayoutVisibility.Always;
-      }
+      public void AddUsedInMenuItemCheckBox() => layoutControlItemUsedIn.Visibility = LayoutVisibility.Always;
 
-      public void AddLinkSimulationObservedMenuItemCheckBox()
-      {
-         layoutControlItemLink.Visibility = LayoutVisibility.Always;
-      }
+      public void AddLinkSimulationObservedMenuItemCheckBox() => layoutControlItemLink.Visibility = LayoutVisibility.Always;
 
-      public void SetlinkSimDataMenuItemVisisbility(bool isVisible)
-      {
-         layoutControlItemLink.Visibility = isVisible ? LayoutVisibility.Always : LayoutVisibility.Never;
-      }
+      public void SetlinkSimDataMenuItemVisisbility(bool isVisible) => layoutControlItemLink.Visibility = isVisible ? LayoutVisibility.Always : LayoutVisibility.Never;
 
-      public void SetSelectAllCheckBox(bool? checkedState)
-      {
-         chkUsedIn.EditValue = checkedState;
-      }
+      public void SetSelectAllCheckBox(bool? checkedState) => chkUsedIn.EditValue = checkedState;
 
-      public void AttachPresenter(IChartEditorPresenter presenter)
-      {
-         _presenter = presenter;
-      }
+      public void SetAutoUpdateModeCheckBox(bool? checkedState) => chkAutoUpdateCharts.EditValue = checkedState;
 
-      public void SetDataBrowserView(IView view)
-      {
-         panelDataBrowser.FillWith(view);
-      }
+      public void AttachPresenter(IChartEditorPresenter presenter) => _presenter = presenter;
 
-      public void SetCurveSettingsView(IView view)
-      {
-         panelCurveOptions.FillWith(view);
-      }
+      public void SetDataBrowserView(IView view) => panelDataBrowser.FillWith(view);
 
-      public void SetAxisSettingsView(IView view)
-      {
-         panelAxisOptions.FillWith(view);
-      }
+      public void SetCurveSettingsView(IView view) => panelCurveOptions.FillWith(view);
 
-      public void SetChartSettingsView(IView view)
-      {
-         panelChartSettings.FillWith(view);
-      }
+      public void SetAxisSettingsView(IView view) => panelAxisOptions.FillWith(view);
 
-      public void SetCurveColorGroupingView(IView view)
-      {
-         panelCurveColorGrouping.FillWith(view);
-      }
+      public void SetChartSettingsView(IView view) => panelChartSettings.FillWith(view);
 
-      public void SetChartExportSettingsView(IView view)
-      {
-         panelChartExportSettings.FillWith(view);
-      }
+      public void SetCurveColorGroupingView(IView view) => panelCurveColorGrouping.FillWith(view);
 
-      public override void InitializeResources()
-      {
-         base.InitializeResources();
-         layoutColorGrouping.Text = Captions.CurvesColorGrouping;
-         layoutChartExportOptions.Text = Captions.ChartExportOptions;
-         layoutChartOptions.Text = Captions.ChartOptions;
-         layoutCurveAndChartSettings.Text = Captions.CurveAndAxisSettings;
-
-         btnApplyChartUpdates.Text = Captions.Apply;
-         chkAutoUpdateCharts.Text = Captions.AutoUpdateChart;
-         chkAutoUpdateCharts.SuperTip = new SuperToolTip().WithText(ToolTips.EnableOrDisableAutomaticUpdateOfTheChartForEachEdit);
-         chkUsedIn.Text = Captions.UseSelected;
-         chkUsedIn.SuperTip = new SuperToolTip().WithText(ToolTips.UseSelectedCurvesToolTip);
-         chkLinkSimulationObserved.Text = Captions.LinkDataToSimulations;
-         chkLinkSimulationObserved.SuperTip = new SuperToolTip().WithText(ToolTips.LinkSimulationObservedToolTip);
-         
-         chkUsedIn.EditValueChanged += (o, e) => OnEvent(() => changeUsed(o));
-         chkLinkSimulationObserved.EditValueChanged += (o, e) => OnEvent(() => changeLinkSimulationToData(o));
-         
-         layoutControlItemUsedIn.AdjustSize(CHECKEDIT_WIDTH, layoutControlItemUsedIn.Height, layoutControl);
-         layoutControlItemLink.AdjustSize(CHECKEDIT_WIDTH, layoutControlItemLink.Height, layoutControl);
-         layoutControlItemAutoUpdateCharts.AdjustSize(CHECKEDIT_WIDTH, layoutControlItemAutoUpdateCharts.Height, layoutControl);
-         layoutControlItemApplyButton.AdjustButtonSize();
-
-         layoutControlItemLink.Visibility = LayoutVisibility.Never;
-      }
+      public void SetChartExportSettingsView(IView view) => panelChartExportSettings.FillWith(view);
 
    }
 }
