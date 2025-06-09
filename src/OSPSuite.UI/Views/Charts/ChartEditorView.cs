@@ -202,17 +202,5 @@ namespace OSPSuite.UI.Views.Charts
          layoutControlItemLink.Visibility = LayoutVisibility.Never;
       }
 
-      // private void newMethod()
-      // {
-      //    layoutControlItemUsedIn.Visibility = LayoutVisibility.Always;
-      //    layoutControlItemLink.Visibility = LayoutVisibility.Always;
-      //    layoutControlItemAutoUpdateCharts.Visibility = LayoutVisibility.Always;
-      //    layoutControlItemApplyButton.Visibility = LayoutVisibility.Always;
-      //
-      //    layoutControlItemUsedIn.AdjustSize(CHECKEDIT_WIDTH, layoutControlItemUsedIn.Height, layoutControl);
-      //    layoutControlItemLink.AdjustSize(CHECKEDIT_WIDTH, layoutControlItemLink.Height, layoutControl);
-      //    layoutControlItemAutoUpdateCharts.AdjustSize(CHECKEDIT_WIDTH, layoutControlItemAutoUpdateCharts.Height, layoutControl);
-      //    layoutControlItemApplyButton.AdjustButtonSize();
-      // }
    }
 }
