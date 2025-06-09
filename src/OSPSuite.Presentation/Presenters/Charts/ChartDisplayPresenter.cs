@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using NPOI.SS.Formula.PTG;
 using OSPSuite.Assets;
 using OSPSuite.Core;
 using OSPSuite.Core.Chart;
@@ -251,10 +250,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public CurveChart Chart { get; private set; }
 
-      public virtual void Edit(CurveChart chart)
-      {
-         Edit(chart, _displayChartFontAndSizeSettings);
-      }
+      public virtual void Edit(CurveChart chart) => Edit(chart, _displayChartFontAndSizeSettings);
 
       public virtual void Edit(CurveChart chart, ChartFontAndSizeSettings displayChartFontAndSizeSettings)
       {
@@ -288,10 +284,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          }
       }
 
-      public void Refresh()
-      {
-         updateChart();
-      }
+      public void Refresh() => updateChart();
 
       private void rebuildQuickCurveBinderCache()
       {
@@ -305,10 +298,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          RefreshAxisBinders();
       }
 
-      private ICurveBinder curveBinderFromSeriesId(string seriesId)
-      {
-         return _quickCurveBinderCache[seriesId];
-      }
+      private ICurveBinder curveBinderFromSeriesId(string seriesId) => _quickCurveBinderCache[seriesId];
 
       public string DisplayUnitsFor(string seriesId)
       {
@@ -347,25 +337,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
          Chart.AxisBy(axisType).SetRange(secondaryMin.Y, secondaryMax.Y);
       }
 
-      public virtual void ExportToExcel()
-      {
-         _chartExportTask.ExportToExcel(Chart, PreExportHook);
-      }
+      public virtual void ExportToExcel() => _chartExportTask.ExportToExcel(Chart, PreExportHook);
 
-      public void ResetZoom()
-      {
-         ResetVisibleRange();
-      }
+      public void ResetZoom() => ResetVisibleRange();
 
-      public void CopyToClipboard()
-      {
-         _view.CopyToClipboard(_applicationSettings.WatermarkTextToUse);
-      }
+      public void CopyToClipboard() => _view.CopyToClipboard(_applicationSettings.WatermarkTextToUse);
 
-      public string CurveDescriptionFromSeriesId(string seriesId)
-      {
-         return CurveFromSeriesId(seriesId)?.Description;
-      }
+      public string CurveDescriptionFromSeriesId(string seriesId) => CurveFromSeriesId(seriesId)?.Description;
 
       public bool IsSeriesLLOQ(string seriesId)
       {
@@ -392,10 +370,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          return curveBinder?.OriginalCurveIndexForRow(row) ?? 0;
       }
 
-      public Curve CurveFromSeriesId(string seriesId)
-      {
-         return curveBinderFromSeriesId(seriesId)?.Curve;
-      }
+      public Curve CurveFromSeriesId(string seriesId) => curveBinderFromSeriesId(seriesId)?.Curve;
 
       public int LegendIndexFromSeriesId(string id)
       {
@@ -535,20 +510,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          removeAdapterFromQuickCache(curveBinder);
       }
 
-      private void addCurvesToQuickCacheAdapter(ICurveBinder curveBinder)
-      {
-         curveBinder.SeriesIds.Each(seriesId => _quickCurveBinderCache[seriesId] = curveBinder);
-      }
+      private void addCurvesToQuickCacheAdapter(ICurveBinder curveBinder) => curveBinder.SeriesIds.Each(seriesId => _quickCurveBinderCache[seriesId] = curveBinder);
 
-      private void removeAdapterFromQuickCache(ICurveBinder curveBinder)
-      {
-         curveBinder.SeriesIds.Each(seriesId => _quickCurveBinderCache.Remove(seriesId));
-      }
+      private void removeAdapterFromQuickCache(ICurveBinder curveBinder) => curveBinder.SeriesIds.Each(seriesId => _quickCurveBinderCache.Remove(seriesId));
 
-      private void updateYAxesVisibility()
-      {
-         Chart.AllUsedYAxisTypes.Each(updateYAxisVisibility);
-      }
+      private void updateYAxesVisibility() => Chart.AllUsedYAxisTypes.Each(updateYAxisVisibility);
 
       private void updateYAxisVisibility(AxisTypes yAxisType)
       {
@@ -573,10 +539,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          View.ReOrderLegend();
       }
 
-      public void SetNoCurvesSelectedHint(string hint)
-      {
-         _view.SetNoCurvesSelectedHint(hint);
-      }
+      public void SetNoCurvesSelectedHint(string hint) => _view.SetNoCurvesSelectedHint(hint);
 
       public void Handle(ChartUpdatedEvent chartUpdatedEvent) => handleChartUpdate(chartUpdatedEvent, Chart.Curves, curveDataChanged: true);
 
@@ -590,7 +553,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (!Chart.AutoUpdateEnabled)
          {
             _curveBinders.Each(x => x.HideAllSeries());
-            View.ShowWatermark(Captions.RefreshChartToUpdate);
+            View.ShowWatermark(Captions.ApplyChangesToUpdateChart);
             return;
          }
 
@@ -605,10 +568,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          bindChartToView();
       }
 
-      private ICurveBinder curveBinderFor(Curve curve)
-      {
-         return _curveBinders[curve.Id];
-      }
+      private ICurveBinder curveBinderFor(Curve curve) => _curveBinders[curve.Id];
 
       private void bindChartToView()
       {
@@ -634,20 +594,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private string normalWatermark => Chart.PreviewSettings ? _applicationSettings.WatermarkTextToUse : null;
 
-      private bool canHandle(ChartEvent chartEvent)
-      {
-         return Equals(Chart, chartEvent.Chart);
-      }
+      private bool canHandle(ChartEvent chartEvent) => Equals(Chart, chartEvent.Chart);
 
-      public void ActivateFirstContextMenuEntryFor(Axis axis)
-      {
-         _contextMenuFactory.CreateFor(viewItemFor(axis), this).ActivateFirstMenu();
-      }
+      public void ActivateFirstContextMenuEntryFor(Axis axis) => _contextMenuFactory.CreateFor(viewItemFor(axis), this).ActivateFirstMenu();
 
-      public void ActivateFirstContextMenuEntryFor(Curve curve)
-      {
-         _contextMenuFactory.CreateFor(viewItemFor(curve), this).ActivateFirstMenu();
-      }
+      public void ActivateFirstContextMenuEntryFor(Curve curve) => _contextMenuFactory.CreateFor(viewItemFor(curve), this).ActivateFirstMenu();
 
       public void ShowContextMenu(IViewItem viewItem, Point popupLocation)
       {

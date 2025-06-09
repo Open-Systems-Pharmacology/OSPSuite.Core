@@ -47,7 +47,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 
          if(!curveChart.AutoUpdateEnabled)
          {
-            yield return CreateMenuButton.WithCaption(MenuNames.RefreshChart)
+            yield return CreateMenuButton.WithCaption(MenuNames.ApplyUpdates)
                .WithActionCommand(chartDisplayPresenter.Refresh);
          }
 

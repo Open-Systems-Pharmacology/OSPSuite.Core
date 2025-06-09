@@ -304,61 +304,56 @@ namespace OSPSuite.UI.Binders
 
       private void refreshData()
       {
-         try
+         _dataTable.Clear();
+
+         //show no values
+         if (!dimensionsConsistentToAxisUnits())
+            return;
+
+         var xDimension = Curve.xDimension;
+         var yDimension = Curve.yDimension;
+         var xUnit = xDimension.Unit(_xAxis.UnitName);
+         var yUnit = yDimension.Unit(_yAxis.UnitName);
+         var xData = Curve.xData;
+         var yData = ActiveYData;
+         var baseGrid = activeBaseGrid(xData, yData);
+
+         // works for different base grids
+         _dataTable.BeginLoadData();
+         baseGrid.Values.Each((baseValue, baseIndex) =>
          {
-            _dataTable.BeginLoadData();
-            _dataTable.Clear();
-
-            //show no values
-            if (!dimensionsConsistentToAxisUnits())
-               return;
-
-            var xDimension = Curve.xDimension;
-            var yDimension = Curve.yDimension;
-            var xUnit = xDimension.Unit(_xAxis.UnitName);
-            var yUnit = yDimension.Unit(_yAxis.UnitName);
-            var xData = Curve.xData;
-            var yData = ActiveYData;
-            var baseGrid = activeBaseGrid(xData, yData);
-
-            // works for different base grids
-            baseGrid.Values.Each((baseValue, baseIndex) =>
+            try
             {
-               try
-               {
-                  double x = xDimension.BaseUnitValueToUnitValue(xUnit, ValueInBaseUnit(xData, baseGrid, baseIndex));
-                  double y = yDimension.BaseUnitValueToUnitValue(yUnit, ValueInBaseUnit(yData, baseGrid, baseIndex));
+               double x = xDimension.BaseUnitValueToUnitValue(xUnit, ValueInBaseUnit(xData, baseGrid, baseIndex));
+               double y = yDimension.BaseUnitValueToUnitValue(yUnit, ValueInBaseUnit(yData, baseGrid, baseIndex));
 
-                  if (!isValidXValue(x) || !IsValidYValue(y))
-                     return;
+               if (!isValidXValue(x) || !IsValidYValue(y))
+                  return;
 
-                  var row = _dataTable.NewRow();
-                  row[X] = x;
-                  row[Y] = y;
-                  row[INDEX_OF_VALUE_IN_CURVE] = baseIndex;
+               var row = _dataTable.NewRow();
+               row[X] = x;
+               row[Y] = y;
+               row[INDEX_OF_VALUE_IN_CURVE] = baseIndex;
 
-                  if (HasLLOQ)
-                     row[LLOQ_SUFFIX] = LLOQ;
+               if (HasLLOQ)
+                  row[LLOQ_SUFFIX] = LLOQ;
 
-                  AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseGrid, baseIndex);
+               AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseGrid, baseIndex);
 
-                  _dataTable.Rows.Add(row);
-               }
-               catch (ArgumentOutOfRangeException)
-               {
-                  //can  happen when plotting X vs Y and using different base grid
-               }
-            });
-            if (_xAxis.NumberMode == NumberModes.Relative)
-               setRelativeValues(X);
+               _dataTable.Rows.Add(row);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+               //can  happen when plotting X vs Y and using different base grid
+            }
+         });
+         if (_xAxis.NumberMode == NumberModes.Relative)
+            setRelativeValues(X);
 
-            if (_yAxis.NumberMode == NumberModes.Relative)
-               setRelativeValues(Y);
-         }
-         finally
-         {
-            _dataTable.EndLoadData();
-         }
+         if (_yAxis.NumberMode == NumberModes.Relative)
+            setRelativeValues(Y);
+
+         _dataTable.EndLoadData();
       }
 
       /// <summary>
@@ -389,15 +384,9 @@ namespace OSPSuite.UI.Binders
 
       protected abstract DataColumn ActiveYData { get; }
 
-      private bool isValidXValue(double x)
-      {
-         return isValidAxisValue(x, _xAxis);
-      }
+      private bool isValidXValue(double x) => isValidAxisValue(x, _xAxis);
 
-      protected bool IsValidYValue(double y)
-      {
-         return isValidAxisValue(y, _yAxis);
-      }
+      protected bool IsValidYValue(double y) => isValidAxisValue(y, _yAxis);
 
       private bool isValidAxisValue(double value, Axis axis)
       {
@@ -407,10 +396,7 @@ namespace OSPSuite.UI.Binders
          return axis.Scaling == Scalings.Linear || value > 0;
       }
 
-      protected static bool IsValidValue(double value)
-      {
-         return !double.IsInfinity(value) && !double.IsNaN(value);
-      }
+      protected static bool IsValidValue(double value) => !double.IsInfinity(value) && !double.IsNaN(value);
 
       private void setRelativeValues(string columnName)
       {
@@ -468,43 +454,23 @@ namespace OSPSuite.UI.Binders
                 Curve.yDimension.CanConvertToUnit(_yAxis.UnitName);
       }
 
-      public void HideAllSeries()
-      {
-         updateSeriesVisibility(visible: false);
-      }
+      public void HideAllSeries() => updateSeriesVisibility(visible: false);
 
-      public void ShowAllSeries()
-      {
-         updateSeriesVisibility(visible: true);
-      }
+      public void ShowAllSeries() => updateSeriesVisibility(visible: true);
 
-      private void updateSeriesVisibility(bool visible)
-      {
-         _series.Each(s => s.Visible = visible);
-      }
+      private void updateSeriesVisibility(bool visible) => _series.Each(s => s.Visible = visible);
 
       public abstract void ShowCurveInLegend(bool showInLegend);
 
-      public bool ContainsSeries(string seriesId)
-      {
-         return _series.Any(s => string.Equals(s.Name, seriesId));
-      }
+      public bool ContainsSeries(string seriesId) => _series.Any(s => string.Equals(s.Name, seriesId));
 
-      public bool IsSeriesLLOQ(string seriesId)
-      {
-         return string.Equals(_LLOQSeriesId, seriesId);
-      }
+      public bool IsSeriesLLOQ(string seriesId) => string.Equals(_LLOQSeriesId, seriesId);
 
-      public int OriginalCurveIndexForRow(DataRow row)
-      {
-         return (int)row[INDEX_OF_VALUE_IN_CURVE];
-      }
+      public int OriginalCurveIndexForRow(DataRow row) => (int)row[INDEX_OF_VALUE_IN_CURVE];
 
-      public bool IsValidFor(DataMode dataMode, AxisTypes yAxisType)
-      {
-         return _dataMode == dataMode &&
-                _yAxisType == yAxisType;
-      }
+      public bool IsValidFor(DataMode dataMode, AxisTypes yAxisType) =>
+         _dataMode == dataMode &&
+         _yAxisType == yAxisType;
 
       private static MarkerKind mapFrom(Symbols symbol)
       {

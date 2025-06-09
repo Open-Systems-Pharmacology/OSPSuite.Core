@@ -231,7 +231,7 @@ namespace OSPSuite.Assets
       public static readonly string NotDistributed = "Not Distributed";
       public static readonly string DeleteSelected = "Delete Selected Records";
       public static readonly string ModulesFolder = "Modules";
-      public static readonly string RefreshChartToUpdate = "Refresh chart to update";
+      public static readonly string ApplyChangesToUpdateChart = "Apply changes to update chart";
       public static readonly string Apply = "Apply";
       public static readonly string AutoUpdateChart = "Auto-update chart";
 
@@ -2252,7 +2252,7 @@ namespace OSPSuite.Assets
       }
 
       public static readonly string AutoUpdateChart = "Autoupdate chart";
-      public static readonly string RefreshChart = "Refresh chart";
+      public static readonly string ApplyUpdates = "Apply updates";
    }
 
    public static class MenuDescriptions
