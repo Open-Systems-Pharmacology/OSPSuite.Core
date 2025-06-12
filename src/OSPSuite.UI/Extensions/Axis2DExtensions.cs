@@ -47,13 +47,20 @@ namespace OSPSuite.UI.Extensions
 
       public static void ResetVisualRange(this Axis axis)
       {
-         var wholeRange = axis.WholeRange;
-         wholeRange.Auto = true;
-         
-         // Sometimes the axis MinValue can be set to Double.Epsilon when the diagram is not visible
-         // in the pane. DevExpress throws an exception because min > max is not allowed.
-         if(Convert.ToDouble(wholeRange.MinValue) <= Convert.ToDouble(wholeRange.MaxValue))
-            axis.VisualRange.SetMinMaxValues(wholeRange.MinValue, wholeRange.MaxValue);
+         try
+         {
+            var wholeRange = axis.WholeRange;
+            wholeRange.Auto = true;
+
+            // Sometimes the axis MinValue can be set to Double.Epsilon when the diagram is not visible
+            // in the pane. DevExpress throws an exception because min > max is not allowed.
+            if (Convert.ToDouble(wholeRange.MinValue) <= Convert.ToDouble(wholeRange.MaxValue))
+               axis.VisualRange.SetMinMaxValues(wholeRange.MinValue, wholeRange.MaxValue);
+         }
+         catch (Exception)
+         {
+
+         }
       }
    }
 }

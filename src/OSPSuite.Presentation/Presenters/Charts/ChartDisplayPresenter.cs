@@ -389,17 +389,17 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private void updateChart()
       {
          // Without context to determined what changed, refresh everything and all data
-         updateChart(Chart.Curves, curveDataChanged: true);
+         updateChart(Chart.Curves, refreshCurveData: true);
       }
 
-      private void updateChart(IReadOnlyCollection<Curve> curvesToUpdate, bool curveDataChanged)
+      private void updateChart(IReadOnlyCollection<Curve> curvesToUpdate, bool refreshCurveData)
       {
          var diagramSize = View.GetDiagramSize();
          using (new BatchUpdate(View))
          {
             updateAxes();
 
-            updateCurves(curvesToUpdate, curveDataChanged);
+            updateCurves(curvesToUpdate, refreshCurveData);
 
             rebuildQuickCurveBinderCache();
 
@@ -450,11 +450,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _axisBinders.Remove(axisBinder.AxisType);
       }
 
-      private void updateCurves(IReadOnlyCollection<Curve> curvesToRefresh, bool curveDataChanged)
+      private void updateCurves(IReadOnlyCollection<Curve> curvesToRefresh, bool refreshCurveData)
       {
          pruneCurves();
 
-         Chart.Curves.Where(curvesToRefresh.Contains).Each(curve => refreshCurveBinderFor(curve, curveDataChanged));
+         Chart.Curves.Where(curvesToRefresh.Contains).Each(curve => refreshCurveBinderFor(curve, refreshCurveData));
 
          _isLLOQVisible = _curveBinders.Any(x => x.LLOQ.HasValue && x.Curve.ShowLLOQ);
       }
@@ -468,7 +468,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          binders.Where(x => !boundObjects.Contains(retrieveBoundObjectFunc(x))).ToList().Each(removeBinderAction);
       }
 
-      private void refreshCurveBinderFor(Curve curve, bool curveDataChanged)
+      private void refreshCurveBinderFor(Curve curve, bool refreshCurveData)
       {
          var curveBinder = curveBinderFor(curve);
          var yAxisBinder = _axisBinders[curve.yAxisType];
@@ -477,7 +477,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          {
             if (curveBinder.IsValidFor(_dataModeMapper.MapFrom(curve), curve.yAxisType))
             {
-               curveBinder.Refresh(curve.Visible && curveDataChanged);
+               curveBinder.Refresh(curve.Visible && refreshCurveData);
                return;
             }
 
@@ -542,11 +542,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void SetNoCurvesSelectedHint(string hint) => _view.SetNoCurvesSelectedHint(hint);
 
-      public void Handle(ChartUpdatedEvent chartUpdatedEvent) => handleChartUpdate(chartUpdatedEvent, Chart.Curves, curveDataChanged: true);
+      public void Handle(ChartUpdatedEvent chartUpdatedEvent) => handleChartUpdate(chartUpdatedEvent, Chart.Curves, refreshCurveData: true);
 
-      public void Handle(CurveChartUpdatedEvent chartUpdatedEvent) => handleChartUpdate(chartUpdatedEvent, chartUpdatedEvent.CurvesToUpdate, chartUpdatedEvent.CurveDataChanged);
+      public void Handle(CurveChartUpdatedEvent chartUpdatedEvent) => handleChartUpdate(chartUpdatedEvent, chartUpdatedEvent.CurvesToUpdate, chartUpdatedEvent.RefreshCurveData);
 
-      private void handleChartUpdate(ChartUpdatedEvent chartUpdatedEvent, IReadOnlyCollection<Curve> curvesToUpdate, bool curveDataChanged)
+      private void handleChartUpdate(ChartUpdatedEvent chartUpdatedEvent, IReadOnlyCollection<Curve> curvesToUpdate, bool refreshCurveData)
       {
          if (!canHandle(chartUpdatedEvent))
             return;
@@ -558,7 +558,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
             return;
          }
 
-         updateChart(curvesToUpdate, curveDataChanged);
+         updateChart(curvesToUpdate, refreshCurveData);
       }
 
       public void Handle(ChartPropertiesChangedEvent eventToHandle)

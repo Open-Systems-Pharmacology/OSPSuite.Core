@@ -25,12 +25,12 @@ namespace OSPSuite.Core.Chart
    public class CurveChartUpdatedEvent : ChartUpdatedEvent
    {
       public IReadOnlyCollection<Curve> CurvesToUpdate { get; }
-      public bool CurveDataChanged { get; }
+      public bool RefreshCurveData { get; }
 
-      public CurveChartUpdatedEvent(CurveChart chart, IReadOnlyCollection<Curve> curvesToUpdate, bool curveDataChanged, bool propagateChartChangeEvent) : base(chart, propagateChartChangeEvent)
+      public CurveChartUpdatedEvent(CurveChart chart, IReadOnlyCollection<Curve> curvesToUpdate, bool refreshCurveData, bool propagateChartChangeEvent) : base(chart, propagateChartChangeEvent)
       {
          CurvesToUpdate = curvesToUpdate;
-         CurveDataChanged = curveDataChanged;
+         RefreshCurveData = refreshCurveData;
       }
    }
 

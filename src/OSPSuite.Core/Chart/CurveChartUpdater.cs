@@ -1,22 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using OSPSuite.Core.Domain;
 using OSPSuite.Utility.Events;
+using System;
+using System.Collections.Generic;
 
 namespace OSPSuite.Core.Chart
 {
    public interface ICurveChartUpdater
    {
       /// <summary>
-      /// Use to prevent <paramref name="chart"/> from updating during the transaction. If <paramref name="calculateModifiedCurves"/> is given, it will be used to calculate modified curves to be updated
-      /// If not given, all curves will be updated.
+      /// Use to prevent <paramref name="chart"/> from updating during the transaction.
       /// </summary>
-      CurveChartUpdate UpdateTransaction(CurveChart chart, bool curveDataChanged, Func<CurveChart, IReadOnlyCollection<Curve>> calculateModifiedCurves = null, bool propagateChartChangeEvent = true);
+      CurveChartUpdate UpdateTransaction(CurveChart chart, bool refreshCurveData, CurveChartUpdateModes mode = CurveChartUpdateModes.All, bool propagateChartChangeEvent = true);
+      
+      /// <summary>
+      /// Use to prevent <paramref name="chart"/> from updating during the transaction.
+      /// </summary>
+      CurveChartUpdate UpdateTransaction(CurveChart chart, bool refreshCurveData, IReadOnlyList<Curve> updatedCurves, bool propagateChartChangeEvent = true);
+      
+      /// <summary>
+      /// The <paramref name="chart"/> being updated will not recalculate and repaint during the update.
+      /// </summary>
+      void Update(CurveChart chart, bool refreshCurveData, CurveChartUpdateModes mode = CurveChartUpdateModes.All);
 
       /// <summary>
-      /// The <paramref name="chart"/> being updated will not recalculate and repaint during the update. Specific curves that need to be recalculated should be specified
-      /// by <paramref name="calculateModifiedCurves"/>. If the parameter is not given, then all curves will be recalculated
+      /// The <paramref name="chart"/> being updated will not recalculate and repaint during the update.
       /// </summary>
-      void Update(CurveChart chart, bool curveDataChanged, Func<CurveChart, IReadOnlyCollection<Curve>> calculateModifiedCurves = null);
+      void Update(CurveChart chart, bool refreshCurveData, IReadOnlyList<Curve> updatedCurves);
    }
 
    public class CurveChartUpdater : ICurveChartUpdater
@@ -28,20 +37,38 @@ namespace OSPSuite.Core.Chart
          _eventPublisher = eventPublisher;
       }
 
-      public CurveChartUpdate UpdateTransaction(CurveChart chart, bool curveDataChanged, Func<CurveChart, IReadOnlyCollection<Curve>> calculateModifiedCurves = null, bool propagateChartChangeEvent = true)
+      public CurveChartUpdate UpdateTransaction(CurveChart chart, bool refreshCurveData, CurveChartUpdateModes mode = CurveChartUpdateModes.All, bool propagateChartChangeEvent = true)
       {
-         // default update all curves
-         if (calculateModifiedCurves == null)
-            calculateModifiedCurves = x => x.Curves;
-
-         return new CurveChartUpdate(_eventPublisher, chart, calculateModifiedCurves, curveDataChanged, propagateChartChangeEvent);
+         switch(mode)
+         {
+            case CurveChartUpdateModes.Add:
+               return new CurveChartAddUpdate(_eventPublisher, chart, refreshCurveData, propagateChartChangeEvent);
+            case CurveChartUpdateModes.Remove:
+               return new CurveChartRemoveUpdate(_eventPublisher, chart, refreshCurveData, propagateChartChangeEvent);
+            default:
+               return new CurveChartAllUpdate(_eventPublisher, chart, refreshCurveData, propagateChartChangeEvent);
+         }
       }
 
-      public void Update(CurveChart chart, bool curveDataChanged, Func<CurveChart, IReadOnlyCollection<Curve>> calculateModifiedCurves)
+      public CurveChartUpdate UpdateTransaction(CurveChart chart, bool refreshCurveData, IReadOnlyList<Curve> updatedCurves, bool propagateChartChangeEvent = true)
       {
-         using (UpdateTransaction(chart, curveDataChanged, calculateModifiedCurves))
+         return new CurveChartSelectedUpdate(_eventPublisher, chart, refreshCurveData, propagateChartChangeEvent, updatedCurves);
+      }
+
+      public void Update(CurveChart chart, bool refreshCurveData, CurveChartUpdateModes mode = CurveChartUpdateModes.All)
+      {
+         using (UpdateTransaction(chart, refreshCurveData, mode))
          {
          }
       }
+
+      public void Update(CurveChart chart, bool refreshCurveData, IReadOnlyList<Curve> updatedCurves)
+      {
+         using (UpdateTransaction(chart, refreshCurveData, updatedCurves))
+         {
+         }
+      }
+
+
    }
 }

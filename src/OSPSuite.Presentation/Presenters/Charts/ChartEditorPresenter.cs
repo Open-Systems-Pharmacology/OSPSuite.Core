@@ -218,7 +218,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void RemoveAllOutputMappings();
 
       void UpdateAutoUpdateChartMode(bool autoMode);
-      
+
       void UpdateChartDisplay();
    }
 
@@ -377,7 +377,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void onAxisAdded()
       {
-         using (_chartUpdater.UpdateTransaction(Chart, curveDataChanged: true))
+         using (_chartUpdater.UpdateTransaction(Chart, refreshCurveData: true))
          {
             Chart.AddNewAxis();
          }
@@ -388,15 +388,15 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (axis.AxisType >= AxisTypes.Y2 && Chart.HasAxis(axis.AxisType + 1))
             throw new OSPSuiteException(Error.RemoveHigherAxisTypeFirst((axis.AxisType + 1).ToString()));
 
-         using (_chartUpdater.UpdateTransaction(Chart, curveDataChanged:true))
+         using (_chartUpdater.UpdateTransaction(Chart, refreshCurveData: true))
          {
             Chart.RemoveAxis(axis);
          }
       }
 
-      private void updateCurveProperty(Curve changedCurve) => _chartUpdater.Update(Chart, curveDataChanged:false, x => new[] { changedCurve });
+      private void updateCurveProperty(Curve changedCurve) => _chartUpdater.Update(Chart, refreshCurveData: false, new[] { changedCurve });
 
-      private void updateChart() => _chartUpdater.Update(Chart, curveDataChanged:true);
+      private void updateChart() => _chartUpdater.Update(Chart, refreshCurveData: true);
 
       private void onChartPropertiesChanged()
       {
@@ -406,7 +406,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void onDataBrowserUsedChanged(UsedColumnsEventArgs e)
       {
-         doAsCurveComplementUpdate(() => updateColumnUsedProperty(e.Columns, e.Used), curveDataChanged:true);
+         using (_chartUpdater.UpdateTransaction(Chart, refreshCurveData: true, e.Used ? CurveChartUpdateModes.Add : CurveChartUpdateModes.Remove))
+         {
+            updateColumnUsedProperty(e.Columns, e.Used);
+         }
       }
 
       private void updateColumnUsedProperty(IReadOnlyList<DataColumn> columns, bool used)
@@ -418,20 +421,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
             else
                Chart.RemoveCurvesForColumn(column);
          });
-      }
-
-      /// <summary>
-      ///    Encapsulates a chart update where the curves that should be recalculated are the complement of the curves before and
-      ///    after the <paramref name="updateAction" />
-      /// </summary>
-      private void doAsCurveComplementUpdate(Action updateAction, bool curveDataChanged)
-      {
-         // We need ToList so that a new list is created in memory and not a reference to the existing Chart.Curves list
-         var existingCurves = Chart.Curves.ToList();
-         using (_chartUpdater.UpdateTransaction(Chart, curveDataChanged, x => x.Curves.Complement(existingCurves).ToList()))
-         {
-            updateAction();
-         }
       }
 
       public void ApplyAllColumnSettings() => _presentersWithColumnSettings.Each(x => x.ApplyAllColumnSettings());
@@ -452,7 +441,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          _dataBrowserPresenter.RemoveOutputMappings(outputMappings);
       }
-      
+
       public void AddLinkSimDataMenuItem() => _view.AddLinkSimulationObservedMenuItemCheckBox();
 
       public void SetLinkSimDataMenuItemVisibility(bool isVisible) => _view.SetlinkSimDataMenuItemVisisbility(isVisible);
@@ -462,7 +451,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _dataBrowserPresenter.RemoveAllOutputMappings();
       }
 
-      public void UpdateAutoUpdateChartMode(bool autoMode) => Chart.AutoUpdateEnabled = autoMode;
+      public void UpdateAutoUpdateChartMode(bool autoMode)
+      {
+         Chart.AutoUpdateEnabled = autoMode;
+         if (Chart.AutoUpdateEnabled)
+            UpdateChartDisplay();
+      }
 
       public void UpdateChartDisplay() => _eventPublisher.PublishEvent(new ApplyChangesEvent(Chart));
 
@@ -706,12 +700,18 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void addCurvesForColumns(IEnumerable<DataColumn> columns, CurveOptions defaultCurveOptions = null)
       {
-         doAsCurveComplementUpdate(() => columns.Each(x => AddCurveForColumn(x, defaultCurveOptions)), curveDataChanged:true);
+         using (_chartUpdater.UpdateTransaction(Chart, refreshCurveData: true, CurveChartUpdateModes.Add))
+         {
+            columns.Each(x => AddCurveForColumn(x, defaultCurveOptions));
+         }
       }
 
       private void removeCurve(Curve curve)
       {
-         doAsCurveComplementUpdate(() => Chart.RemoveCurve(curve), curveDataChanged: false);
+         using (_chartUpdater.UpdateTransaction(Chart, refreshCurveData: false, CurveChartUpdateModes.Remove))
+         {
+            Chart.RemoveCurve(curve);
+         }
       }
 
       public void AddButton(IMenuBarItem menuBarItem)

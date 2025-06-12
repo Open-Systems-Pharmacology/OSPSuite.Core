@@ -145,7 +145,7 @@ namespace OSPSuite.Starter.Presenters
       private void addNewCurvesToChart(IEnumerable<DataRepository> newRepositories)
       {
          var existingCurves = Chart.Curves.ToList();
-         using (_chartUpdater.UpdateTransaction(Chart, curveDataChanged:true, x => x.Curves.Complement(existingCurves).ToList()))
+         using (_chartUpdater.UpdateTransaction(Chart, refreshCurveData:true, CurveChartUpdateModes.All))
          {
             newRepositories.Each(repository => repository.AllButBaseGrid().Each(addColumnToChart));
          }
@@ -170,7 +170,7 @@ namespace OSPSuite.Starter.Presenters
 
       public void ClearChart()
       {
-         using (_chartUpdater.UpdateTransaction(Chart, curveDataChanged:false))
+         using (_chartUpdater.UpdateTransaction(Chart, refreshCurveData: false))
          {
             ChartEditorPresenter.RemoveDataRepositories(_dataRepositories);
             _dataRepositories.Clear();
@@ -236,7 +236,7 @@ namespace OSPSuite.Starter.Presenters
 
       public void RefreshDisplay()
       {
-         _chartUpdater.Update(Chart, curveDataChanged:true);
+         _chartUpdater.Update(Chart, refreshCurveData: true);
       }
 
       public void ReloadMenus()

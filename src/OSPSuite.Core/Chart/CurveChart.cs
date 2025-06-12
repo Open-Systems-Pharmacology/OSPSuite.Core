@@ -88,11 +88,11 @@ namespace OSPSuite.Core.Chart
 
       public IEnumerable<AxisTypes> AllUsedAxisTypes => _axes.Select(x => x.AxisType);
 
-      public IEnumerable<AxisTypes> AllUsedYAxisTypes => AllUsedAxisTypes.Except(new[] {AxisTypes.X});
+      public IEnumerable<AxisTypes> AllUsedYAxisTypes => AllUsedAxisTypes.Except(new[] { AxisTypes.X });
 
       public IEnumerable<Axis> AllUsedYAxis => _axes.Where(x => x.AxisType != AxisTypes.X);
 
-      public IEnumerable<AxisTypes> AllUsedSecondaryAxisTypes => AllUsedYAxisTypes.Except(new[] {AxisTypes.Y});
+      public IEnumerable<AxisTypes> AllUsedSecondaryAxisTypes => AllUsedYAxisTypes.Except(new[] { AxisTypes.Y });
 
       public bool HasCurve(string curveId) => _curves.Contains(curveId);
 
@@ -122,7 +122,7 @@ namespace OSPSuite.Core.Chart
          if (curve != null)
             return curve;
 
-         curve = new Curve {Name = curveName};
+         curve = new Curve { Name = curveName };
          curve.SetxData(columnX, dimensionFactory);
          curve.SetyData(columnY, dimensionFactory);
          return curve;

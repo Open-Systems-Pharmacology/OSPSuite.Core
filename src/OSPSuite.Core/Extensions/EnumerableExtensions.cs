@@ -54,7 +54,7 @@ namespace OSPSuite.Core.Extensions
       /// <summary>
       /// Returns the items that are not in both sets <paramref name="enumeration1"/> and <paramref name="enumeration2"/>
       /// </summary>
-      public static IEnumerable<T> Complement<T>(this IEnumerable<T> enumeration1, IEnumerable<T> enumeration2)
+      public static IReadOnlyList<T> Complement<T>(this IEnumerable<T> enumeration1, IEnumerable<T> enumeration2)
       {
          var list1 = enumeration1.ToList();
          var list2 = enumeration2.ToList();

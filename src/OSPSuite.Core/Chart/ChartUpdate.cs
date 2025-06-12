@@ -1,9 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Core.Chart
 {
+   public enum CurveChartUpdateModes
+   {
+      All,
+      Add,
+      Remove
+   }
+
    public abstract class ChartUpdate<TChart> : IDisposable
    {
       protected readonly TChart _chart;
@@ -26,22 +34,77 @@ namespace OSPSuite.Core.Chart
       {
       }
 
-      public override void Dispose() => 
+      public override void Dispose() =>
          _eventPublisher.PublishEvent(new ChartUpdatedEvent(_chart, _propagateChartChangeEvent));
    }
 
-   public class CurveChartUpdate : ChartUpdate<CurveChart>
+   public class CurveChartAddUpdate : CurveChartUpdate
    {
-      private readonly Func<CurveChart, IReadOnlyCollection<Curve>> _calculateModifiedCurves;
-      private readonly bool _curveDataChanged;
-
-      public CurveChartUpdate(IEventPublisher eventPublisher, CurveChart chart, Func<CurveChart, IReadOnlyCollection<Curve>> calculateModifiedCurves, bool curveDataChanged, bool propagateChartChangeEvent) : base(eventPublisher, chart, propagateChartChangeEvent)
+      public CurveChartAddUpdate(IEventPublisher eventPublisher, CurveChart chart, bool refreshCurveData, bool propagateChartChangeEvent) : base(eventPublisher, chart, refreshCurveData, propagateChartChangeEvent)
       {
-         _calculateModifiedCurves = calculateModifiedCurves;
-         _curveDataChanged = curveDataChanged;
       }
 
-      public override void Dispose() => 
-         _eventPublisher.PublishEvent(new CurveChartUpdatedEvent(_chart, _calculateModifiedCurves(_chart), _curveDataChanged, _propagateChartChangeEvent));
+      protected override IReadOnlyCollection<Curve> GetModifiedCurves()
+      {
+         return _chart.Curves.Except(_originalCurves).ToList();
+      }
+   }
+
+   public class CurveChartRemoveUpdate : CurveChartUpdate
+   {
+      public CurveChartRemoveUpdate(IEventPublisher eventPublisher, CurveChart chart, bool refreshCurveData, bool propagateChartChangeEvent) : base(eventPublisher, chart, refreshCurveData, propagateChartChangeEvent)
+      {
+      }
+
+      protected override IReadOnlyCollection<Curve> GetModifiedCurves()
+      {
+         return _originalCurves.Except(_chart.Curves).ToList();
+      }
+   }
+
+   public class CurveChartAllUpdate : CurveChartUpdate
+   {
+      public CurveChartAllUpdate(IEventPublisher eventPublisher, CurveChart chart, bool refreshCurveData, bool propagateChartChangeEvent) : base(eventPublisher, chart, refreshCurveData, propagateChartChangeEvent)
+      {
+      }
+
+      protected override IReadOnlyCollection<Curve> GetModifiedCurves()
+      {
+         return _chart.Curves;
+      }
+   }
+
+   public class CurveChartSelectedUpdate : CurveChartUpdate
+   {
+      private readonly IReadOnlyList<Curve> _updatedCurves;
+
+      public CurveChartSelectedUpdate(IEventPublisher eventPublisher, CurveChart chart, bool refreshCurveData, bool propagateChartChangeEvent, IReadOnlyList<Curve> updatedCurves) : base(eventPublisher, chart, refreshCurveData, propagateChartChangeEvent)
+      {
+         _updatedCurves = updatedCurves;
+      }
+
+      protected override IReadOnlyCollection<Curve> GetModifiedCurves()
+      {
+         return _updatedCurves;
+      }
+   }
+
+   public abstract class CurveChartUpdate : ChartUpdate<CurveChart>
+   {
+      private readonly bool _refreshCurveData;
+      protected readonly List<Curve> _originalCurves;
+
+      public CurveChartUpdate(IEventPublisher eventPublisher, CurveChart chart, bool refreshCurveData, bool propagateChartChangeEvent) : base(eventPublisher, chart, propagateChartChangeEvent)
+      {
+         _originalCurves = chart.Curves.ToList();
+         _refreshCurveData = refreshCurveData;
+      }
+
+      public override void Dispose()
+      {
+         _eventPublisher.PublishEvent(new CurveChartUpdatedEvent(_chart, GetModifiedCurves(), _refreshCurveData, _propagateChartChangeEvent));
+      }
+
+      protected abstract IReadOnlyCollection<Curve> GetModifiedCurves();
    }
 }
