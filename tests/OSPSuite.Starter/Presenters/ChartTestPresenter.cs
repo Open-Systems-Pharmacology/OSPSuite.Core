@@ -144,8 +144,7 @@ namespace OSPSuite.Starter.Presenters
 
       private void addNewCurvesToChart(IEnumerable<DataRepository> newRepositories)
       {
-         var existingCurves = Chart.Curves.ToList();
-         using (_chartUpdater.UpdateTransaction(Chart, refreshCurveData:true, CurveChartUpdateModes.All))
+         using (_chartUpdater.UpdateTransaction(Chart, refreshCurveData:true, CurveChartUpdateModes.Add))
          {
             newRepositories.Each(repository => repository.AllButBaseGrid().Each(addColumnToChart));
          }
