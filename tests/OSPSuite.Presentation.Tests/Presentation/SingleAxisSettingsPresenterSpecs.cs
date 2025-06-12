@@ -54,13 +54,13 @@ namespace OSPSuite.Presentation.Presentation
       }
 
       [Observation]
-      public void shoudld_edit_the_settings_of_a_clone_of_the_axis()
+      public void should_edit_the_settings_of_a_clone_of_the_axis()
       {
          _editedAxis.ShouldNotBeNull();
       }
 
       [Observation]
-      public void should_udate_the_axis_with_the_edited_properties()
+      public void should_update_the_axis_with_the_edited_properties()
       {
          _axis.Max.ShouldBeEqualTo(_editedAxis.Max);
       }
@@ -103,13 +103,13 @@ namespace OSPSuite.Presentation.Presentation
       }
 
       [Observation]
-      public void shoudld_edit_the_settings_of_a_clone_of_the_axis()
+      public void should_edit_the_settings_of_a_clone_of_the_axis()
       {
          _editedAxis.ShouldNotBeNull();
       }
 
       [Observation]
-      public void should_not_udate_the_axis_with_the_edited_properties()
+      public void should_not_update_the_axis_with_the_edited_properties()
       {
          _axis.Max.ShouldBeEqualTo(20);
       }
