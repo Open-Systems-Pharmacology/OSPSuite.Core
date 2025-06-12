@@ -9,7 +9,8 @@ namespace OSPSuite.Core.Chart
    {
       All,
       Add,
-      Remove
+      Remove,
+      Property
    }
 
    public abstract class ChartUpdate<TChart> : IDisposable
@@ -40,7 +41,7 @@ namespace OSPSuite.Core.Chart
 
    public class CurveChartAddUpdate : CurveChartUpdate
    {
-      public CurveChartAddUpdate(IEventPublisher eventPublisher, CurveChart chart, bool refreshCurveData, bool propagateChartChangeEvent) : base(eventPublisher, chart, refreshCurveData, propagateChartChangeEvent)
+      public CurveChartAddUpdate(IEventPublisher eventPublisher, CurveChart chart, bool propagateChartChangeEvent) : base(eventPublisher, chart, refreshCurveData: true, propagateChartChangeEvent)
       {
       }
 
@@ -49,10 +50,10 @@ namespace OSPSuite.Core.Chart
          return _chart.Curves.Except(_originalCurves).ToList();
       }
    }
-
+   
    public class CurveChartRemoveUpdate : CurveChartUpdate
    {
-      public CurveChartRemoveUpdate(IEventPublisher eventPublisher, CurveChart chart, bool refreshCurveData, bool propagateChartChangeEvent) : base(eventPublisher, chart, refreshCurveData, propagateChartChangeEvent)
+      public CurveChartRemoveUpdate(IEventPublisher eventPublisher, CurveChart chart, bool propagateChartChangeEvent) : base(eventPublisher, chart, refreshCurveData: false, propagateChartChangeEvent)
       {
       }
 
@@ -64,7 +65,7 @@ namespace OSPSuite.Core.Chart
 
    public class CurveChartAllUpdate : CurveChartUpdate
    {
-      public CurveChartAllUpdate(IEventPublisher eventPublisher, CurveChart chart, bool refreshCurveData, bool propagateChartChangeEvent) : base(eventPublisher, chart, refreshCurveData, propagateChartChangeEvent)
+      public CurveChartAllUpdate(IEventPublisher eventPublisher, CurveChart chart, bool propagateChartChangeEvent) : base(eventPublisher, chart, refreshCurveData: true, propagateChartChangeEvent)
       {
       }
 
@@ -78,7 +79,7 @@ namespace OSPSuite.Core.Chart
    {
       private readonly IReadOnlyList<Curve> _updatedCurves;
 
-      public CurveChartSelectedUpdate(IEventPublisher eventPublisher, CurveChart chart, bool refreshCurveData, bool propagateChartChangeEvent, IReadOnlyList<Curve> updatedCurves) : base(eventPublisher, chart, refreshCurveData, propagateChartChangeEvent)
+      public CurveChartSelectedUpdate(IEventPublisher eventPublisher, CurveChart chart, bool propagateChartChangeEvent, IReadOnlyList<Curve> updatedCurves, CurveChartUpdateModes mode) : base(eventPublisher, chart, mode != CurveChartUpdateModes.Property , propagateChartChangeEvent)
       {
          _updatedCurves = updatedCurves;
       }

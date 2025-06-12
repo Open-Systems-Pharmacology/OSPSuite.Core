@@ -377,7 +377,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void onAxisAdded()
       {
-         using (_chartUpdater.UpdateTransaction(Chart, refreshCurveData: true))
+         using (_chartUpdater.UpdateTransaction(Chart, CurveChartUpdateModes.All))
          {
             Chart.AddNewAxis();
          }
@@ -388,15 +388,15 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (axis.AxisType >= AxisTypes.Y2 && Chart.HasAxis(axis.AxisType + 1))
             throw new OSPSuiteException(Error.RemoveHigherAxisTypeFirst((axis.AxisType + 1).ToString()));
 
-         using (_chartUpdater.UpdateTransaction(Chart, refreshCurveData: true))
+         using (_chartUpdater.UpdateTransaction(Chart, CurveChartUpdateModes.All))
          {
             Chart.RemoveAxis(axis);
          }
       }
 
-      private void updateCurveProperty(Curve changedCurve) => _chartUpdater.Update(Chart, refreshCurveData: false, new[] { changedCurve });
+      private void updateCurveProperty(Curve changedCurve) => _chartUpdater.Update(Chart, new[] { changedCurve }, CurveChartUpdateModes.Property);
 
-      private void updateChart() => _chartUpdater.Update(Chart, refreshCurveData: true);
+      private void updateChart() => _chartUpdater.Update(Chart, CurveChartUpdateModes.All);
 
       private void onChartPropertiesChanged()
       {
@@ -406,7 +406,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void onDataBrowserUsedChanged(UsedColumnsEventArgs e)
       {
-         using (_chartUpdater.UpdateTransaction(Chart, refreshCurveData: true, e.Used ? CurveChartUpdateModes.Add : CurveChartUpdateModes.Remove))
+         using (_chartUpdater.UpdateTransaction(Chart, e.Used ? CurveChartUpdateModes.Add : CurveChartUpdateModes.Remove))
          {
             updateColumnUsedProperty(e.Columns, e.Used);
          }
@@ -700,7 +700,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void addCurvesForColumns(IEnumerable<DataColumn> columns, CurveOptions defaultCurveOptions = null)
       {
-         using (_chartUpdater.UpdateTransaction(Chart, refreshCurveData: true, CurveChartUpdateModes.Add))
+         using (_chartUpdater.UpdateTransaction(Chart, CurveChartUpdateModes.Add))
          {
             columns.Each(x => AddCurveForColumn(x, defaultCurveOptions));
          }
@@ -708,7 +708,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void removeCurve(Curve curve)
       {
-         using (_chartUpdater.UpdateTransaction(Chart, refreshCurveData: false, CurveChartUpdateModes.Remove))
+         using (_chartUpdater.UpdateTransaction(Chart, CurveChartUpdateModes.Remove))
          {
             Chart.RemoveCurve(curve);
          }

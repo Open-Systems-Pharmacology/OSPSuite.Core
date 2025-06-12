@@ -426,7 +426,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true, CurveChartUpdateModes.Add, true)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, CurveChartUpdateModes.Add, true)).MustHaveHappened();
       }
    }
 
@@ -515,7 +515,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true, CurveChartUpdateModes.Remove, true)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, CurveChartUpdateModes.Remove, true)).MustHaveHappened();
       }
    }
 
@@ -545,7 +545,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true, CurveChartUpdateModes.All, true)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, CurveChartUpdateModes.All, true)).MustHaveHappened();
       }
    }
 
@@ -579,7 +579,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.Update(_chart, true, CurveChartUpdateModes.All)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.Update(_chart, CurveChartUpdateModes.All)).MustHaveHappened();
       }
    }
 
@@ -605,7 +605,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true, CurveChartUpdateModes.All, true)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, CurveChartUpdateModes.All, true)).MustHaveHappened();
       }
    }
 
@@ -647,7 +647,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, false, CurveChartUpdateModes.Remove, true)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, CurveChartUpdateModes.Remove, true)).MustHaveHappened();
       }
    }
 
@@ -667,7 +667,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, true, CurveChartUpdateModes.Add, true)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, CurveChartUpdateModes.Add, true)).MustHaveHappened();
       }
    }
 
@@ -689,7 +689,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.Update(_chart, false, A<IReadOnlyList<Curve>>._)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.Update(_chart, A<IReadOnlyList<Curve>>._, CurveChartUpdateModes.Property)).MustHaveHappened();
       }
    }
 
@@ -703,7 +703,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_chart()
       {
-         A.CallTo(() => _chartUpdater.Update(_chart, true, CurveChartUpdateModes.All)).MustHaveHappened();
+         A.CallTo(() => _chartUpdater.Update(_chart, CurveChartUpdateModes.All)).MustHaveHappened();
       }
    }
 

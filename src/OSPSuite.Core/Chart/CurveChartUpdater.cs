@@ -1,6 +1,4 @@
-﻿using OSPSuite.Core.Domain;
-using OSPSuite.Utility.Events;
-using System;
+﻿using OSPSuite.Utility.Events;
 using System.Collections.Generic;
 
 namespace OSPSuite.Core.Chart
@@ -10,22 +8,22 @@ namespace OSPSuite.Core.Chart
       /// <summary>
       /// Use to prevent <paramref name="chart"/> from updating during the transaction.
       /// </summary>
-      CurveChartUpdate UpdateTransaction(CurveChart chart, bool refreshCurveData, CurveChartUpdateModes mode = CurveChartUpdateModes.All, bool propagateChartChangeEvent = true);
+      CurveChartUpdate UpdateTransaction(CurveChart chart, CurveChartUpdateModes mode, bool propagateChartChangeEvent = true);
       
       /// <summary>
       /// Use to prevent <paramref name="chart"/> from updating during the transaction.
       /// </summary>
-      CurveChartUpdate UpdateTransaction(CurveChart chart, bool refreshCurveData, IReadOnlyList<Curve> updatedCurves, bool propagateChartChangeEvent = true);
+      CurveChartUpdate UpdateTransaction(CurveChart chart, IReadOnlyList<Curve> updatedCurves, CurveChartUpdateModes mode, bool propagateChartChangeEvent = true);
       
       /// <summary>
       /// The <paramref name="chart"/> being updated will not recalculate and repaint during the update.
       /// </summary>
-      void Update(CurveChart chart, bool refreshCurveData, CurveChartUpdateModes mode = CurveChartUpdateModes.All);
+      void Update(CurveChart chart, CurveChartUpdateModes mode);
 
       /// <summary>
       /// The <paramref name="chart"/> being updated will not recalculate and repaint during the update.
       /// </summary>
-      void Update(CurveChart chart, bool refreshCurveData, IReadOnlyList<Curve> updatedCurves);
+      void Update(CurveChart chart, IReadOnlyList<Curve> updatedCurves, CurveChartUpdateModes mode);
    }
 
    public class CurveChartUpdater : ICurveChartUpdater
@@ -37,38 +35,36 @@ namespace OSPSuite.Core.Chart
          _eventPublisher = eventPublisher;
       }
 
-      public CurveChartUpdate UpdateTransaction(CurveChart chart, bool refreshCurveData, CurveChartUpdateModes mode = CurveChartUpdateModes.All, bool propagateChartChangeEvent = true)
+      public CurveChartUpdate UpdateTransaction(CurveChart chart, CurveChartUpdateModes mode, bool propagateChartChangeEvent = true)
       {
          switch(mode)
          {
             case CurveChartUpdateModes.Add:
-               return new CurveChartAddUpdate(_eventPublisher, chart, refreshCurveData, propagateChartChangeEvent);
+               return new CurveChartAddUpdate(_eventPublisher, chart, propagateChartChangeEvent);
             case CurveChartUpdateModes.Remove:
-               return new CurveChartRemoveUpdate(_eventPublisher, chart, refreshCurveData, propagateChartChangeEvent);
+               return new CurveChartRemoveUpdate(_eventPublisher, chart, propagateChartChangeEvent);
             default:
-               return new CurveChartAllUpdate(_eventPublisher, chart, refreshCurveData, propagateChartChangeEvent);
+               return new CurveChartAllUpdate(_eventPublisher, chart, propagateChartChangeEvent);
          }
       }
 
-      public CurveChartUpdate UpdateTransaction(CurveChart chart, bool refreshCurveData, IReadOnlyList<Curve> updatedCurves, bool propagateChartChangeEvent = true)
+      public CurveChartUpdate UpdateTransaction(CurveChart chart, IReadOnlyList<Curve> updatedCurves, CurveChartUpdateModes mode, bool propagateChartChangeEvent = true)
       {
-         return new CurveChartSelectedUpdate(_eventPublisher, chart, refreshCurveData, propagateChartChangeEvent, updatedCurves);
+         return new CurveChartSelectedUpdate(_eventPublisher, chart, propagateChartChangeEvent, updatedCurves, mode);
       }
 
-      public void Update(CurveChart chart, bool refreshCurveData, CurveChartUpdateModes mode = CurveChartUpdateModes.All)
+      public void Update(CurveChart chart, CurveChartUpdateModes mode)
       {
-         using (UpdateTransaction(chart, refreshCurveData, mode))
+         using (UpdateTransaction(chart, mode))
          {
          }
       }
 
-      public void Update(CurveChart chart, bool refreshCurveData, IReadOnlyList<Curve> updatedCurves)
+      public void Update(CurveChart chart, IReadOnlyList<Curve> updatedCurves, CurveChartUpdateModes mode)
       {
-         using (UpdateTransaction(chart, refreshCurveData, updatedCurves))
+         using (UpdateTransaction(chart, updatedCurves, mode))
          {
          }
       }
-
-
    }
 }
