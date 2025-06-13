@@ -153,7 +153,7 @@ namespace OSPSuite.UI.Binders
 
       protected Series CreateSeries<TSeriesView>(string name, ViewType viewType, string valueDataMember, Action<TSeriesView> configuration = null) where TSeriesView : SeriesViewBase
       {
-         return CreateSeries(name, viewType, new[] {valueDataMember}, configuration);
+         return CreateSeries(name, viewType, new[] { valueDataMember }, configuration);
       }
 
       protected Series CreateSeries<TSeriesView>(string name, ViewType viewType, IReadOnlyList<string> valueDataMembers, Action<TSeriesView> configuration = null) where TSeriesView : SeriesViewBase
@@ -195,9 +195,11 @@ namespace OSPSuite.UI.Binders
 
       public string Id => Curve.Id;
 
-      public void Refresh()
+      public void Refresh(bool shouldRefreshData = true)
       {
-         refreshData();
+         if (shouldRefreshData)
+            refreshData();
+
          refreshView();
       }
 
@@ -224,7 +226,7 @@ namespace OSPSuite.UI.Binders
       {
          updateSeriesVisibility(visible: Curve.Visible);
 
-         foreach (var s in _series.Except(new[] {mainSeries}))
+         foreach (var s in _series.Except(new[] { mainSeries }))
          {
             var xySeriesView = s.View as XYDiagramSeriesViewBase;
             if (xySeriesView != null)
@@ -250,7 +252,6 @@ namespace OSPSuite.UI.Binders
          }
       }
 
-   
       private bool seriesIsScatterLine(Series series) => seriesIs<ScatterLineSeriesView>(series);
       private bool seriesIsPoint(Series series) => seriesIs<PointSeriesView>(series);
 
@@ -356,14 +357,15 @@ namespace OSPSuite.UI.Binders
       }
 
       /// <summary>
-      /// If the <paramref name="dataColumn"/> BaseGrid is the same as <paramref name="baseGrid"/> then return the value
-      /// of <paramref name="dataColumn"/> at <paramref name="baseGridIndex"/>. Otherwise interpolate from the <paramref name="baseGrid"/> at <paramref name="baseGridIndex"/>
+      ///    If the <paramref name="dataColumn" /> BaseGrid is the same as <paramref name="baseGrid" /> then return the value
+      ///    of <paramref name="dataColumn" /> at <paramref name="baseGridIndex" />. Otherwise interpolate from the
+      ///    <paramref name="baseGrid" /> at <paramref name="baseGridIndex" />
       /// </summary>
       protected static float ValueInBaseUnit(DataColumn dataColumn, BaseGrid baseGrid, int baseGridIndex)
       {
          if (baseGrid == dataColumn.BaseGrid)
             return dataColumn.Values[baseGridIndex];
-         
+
          return dataColumn.GetValue(baseGrid[baseGridIndex]);
       }
 
@@ -382,15 +384,9 @@ namespace OSPSuite.UI.Binders
 
       protected abstract DataColumn ActiveYData { get; }
 
-      private bool isValidXValue(double x)
-      {
-         return isValidAxisValue(x, _xAxis);
-      }
+      private bool isValidXValue(double x) => isValidAxisValue(x, _xAxis);
 
-      protected bool IsValidYValue(double y)
-      {
-         return isValidAxisValue(y, _yAxis);
-      }
+      protected bool IsValidYValue(double y) => isValidAxisValue(y, _yAxis);
 
       private bool isValidAxisValue(double value, Axis axis)
       {
@@ -400,10 +396,7 @@ namespace OSPSuite.UI.Binders
          return axis.Scaling == Scalings.Linear || value > 0;
       }
 
-      protected static bool IsValidValue(double value)
-      {
-         return !double.IsInfinity(value) && !double.IsNaN(value);
-      }
+      protected static bool IsValidValue(double value) => !double.IsInfinity(value) && !double.IsNaN(value);
 
       private void setRelativeValues(string columnName)
       {
@@ -424,7 +417,7 @@ namespace OSPSuite.UI.Binders
       protected void ScaleValue(DataRow row, float max, string value)
       {
          if (row[value] != DBNull.Value)
-            row[value] = (float) row[value] / max;
+            row[value] = (float)row[value] / max;
       }
 
       protected abstract void SetRelatedRelativeValuesForRow(DataRow row, float max);
@@ -438,7 +431,7 @@ namespace OSPSuite.UI.Binders
             if (row[columnName] == DBNull.Value)
                continue;
 
-            var value = (float) row[columnName];
+            var value = (float)row[columnName];
             if (!float.IsNaN(value) && value > max)
             {
                max = value;
@@ -461,38 +454,23 @@ namespace OSPSuite.UI.Binders
                 Curve.yDimension.CanConvertToUnit(_yAxis.UnitName);
       }
 
-      public void ShowAllSeries()
-      {
-         updateSeriesVisibility(visible: true);
-      }
+      public void HideAllSeries() => updateSeriesVisibility(visible: false);
 
-      private void updateSeriesVisibility(bool visible)
-      {
-         _series.Each(s => s.Visible = visible);
-      }
+      public void ShowAllSeries() => updateSeriesVisibility(visible: true);
+
+      private void updateSeriesVisibility(bool visible) => _series.Each(s => s.Visible = visible);
 
       public abstract void ShowCurveInLegend(bool showInLegend);
 
-      public bool ContainsSeries(string seriesId)
-      {
-         return _series.Any(s => string.Equals(s.Name, seriesId));
-      }
+      public bool ContainsSeries(string seriesId) => _series.Any(s => string.Equals(s.Name, seriesId));
 
-      public bool IsSeriesLLOQ(string seriesId)
-      {
-         return string.Equals(_LLOQSeriesId, seriesId);
-      }
+      public bool IsSeriesLLOQ(string seriesId) => string.Equals(_LLOQSeriesId, seriesId);
 
-      public int OriginalCurveIndexForRow(DataRow row)
-      {
-         return (int) row[INDEX_OF_VALUE_IN_CURVE];
-      }
+      public int OriginalCurveIndexForRow(DataRow row) => (int)row[INDEX_OF_VALUE_IN_CURVE];
 
-      public bool IsValidFor(DataMode dataMode, AxisTypes yAxisType)
-      {
-         return _dataMode == dataMode &&
-                _yAxisType == yAxisType;
-      }
+      public bool IsValidFor(DataMode dataMode, AxisTypes yAxisType) =>
+         _dataMode == dataMode &&
+         _yAxisType == yAxisType;
 
       private static MarkerKind mapFrom(Symbols symbol)
       {

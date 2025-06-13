@@ -5,7 +5,6 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Core;
@@ -13,7 +12,6 @@ using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Settings;
 using OSPSuite.Presentation.Views.Charts;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
@@ -59,7 +57,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void AddDataRepositories(IEnumerable<DataRepository> dataRepositories);
 
       /// <summary>
-      /// sets the group row format in the gridView of the DataBrowserView to the specified string.
+      ///    sets the group row format in the gridView of the DataBrowserView to the specified string.
       /// </summary>
       void SetGroupRowFormat(GridGroupRowFormats format);
 
@@ -195,12 +193,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void Refresh();
 
       /// <summary>
-      /// Adds the output mappings to to the underlying data browser presenter (used for linking)
+      ///    Adds the output mappings to to the underlying data browser presenter (used for linking)
       /// </summary>
       void AddOutputMappings(OutputMappings outputMappings);
 
       /// <summary>
-      /// Removes the specified  output mappings from the underlying data browser presenter (used for linking)
+      ///    Removes the specified  output mappings from the underlying data browser presenter (used for linking)
       /// </summary>
       void RemoveOutputMappings(OutputMappings outputMappings);
 
@@ -210,7 +208,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void AddLinkSimDataMenuItem();
 
       /// <summary>
-      ///    Sets the visibility of the control for linking the (de)selection of outputs and observed data 
+      ///    Sets the visibility of the control for linking the (de)selection of outputs and observed data
       /// </summary>
       void SetLinkSimDataMenuItemVisibility(bool isVisible);
 
@@ -218,6 +216,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Removes all the saved OutputMappings from the DataBrowser list
       /// </summary>
       void RemoveAllOutputMappings();
+
+      void UpdateAutoUpdateChartMode(bool autoMode);
+
+      void UpdateChartDisplay();
    }
 
    public class ChartEditorPresenter : AbstractCommandCollectorPresenter<IChartEditorView, IChartEditorPresenter>, IChartEditorPresenter
@@ -231,7 +233,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly ICurveColorGroupingPresenter _curveColorGroupingPresenter;
       private readonly IDataBrowserPresenter _dataBrowserPresenter;
       private readonly IChartTemplateMenuPresenter _chartTemplateMenuPresenter;
-      private readonly IChartUpdater _chartUpdater;
+      private readonly ICurveChartUpdater _chartUpdater;
       private readonly IEventPublisher _eventPublisher;
       private readonly IDimensionFactory _dimensionFactory;
       private Func<DataColumn, string> _curveNameDefinition;
@@ -250,7 +252,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          ICurveSettingsPresenter curveSettingsPresenter,
          IDataBrowserPresenter dataBrowserPresenter,
          IChartTemplateMenuPresenter chartTemplateMenuPresenter,
-         IChartUpdater chartUpdater,
+         ICurveChartUpdater chartUpdater,
          IEventPublisher eventPublisher,
          IDimensionFactory dimensionFactory,
          ICurveColorGroupingPresenter curveColorGroupingPresenter)
@@ -280,7 +282,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          _curveSettingsPresenter.AddCurves += (o, e) => addCurvesForColumns(e.Columns);
          _curveSettingsPresenter.RemoveCurve += (o, e) => removeCurve(e.Curve);
-         _curveSettingsPresenter.CurvePropertyChanged += (o, e) => updateChart();
+         _curveSettingsPresenter.CurvePropertyChanged += (o, e) => updateCurveProperty(e.Curve);
 
          _axisSettingsPresenter.AxisRemoved += (o, e) => onAxisRemoved(e.Axis);
          _axisSettingsPresenter.AxisAdded += (o, e) => onAxisAdded();
@@ -375,7 +377,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void onAxisAdded()
       {
-         using (_chartUpdater.UpdateTransaction(Chart))
+         using (_chartUpdater.UpdateTransaction(Chart, CurveChartUpdateModes.All))
          {
             Chart.AddNewAxis();
          }
@@ -386,16 +388,15 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (axis.AxisType >= AxisTypes.Y2 && Chart.HasAxis(axis.AxisType + 1))
             throw new OSPSuiteException(Error.RemoveHigherAxisTypeFirst((axis.AxisType + 1).ToString()));
 
-         using (_chartUpdater.UpdateTransaction(Chart))
+         using (_chartUpdater.UpdateTransaction(Chart, CurveChartUpdateModes.All))
          {
             Chart.RemoveAxis(axis);
          }
       }
 
-      private void updateChart()
-      {
-         _chartUpdater.Update(Chart);
-      }
+      private void updateCurveProperty(Curve changedCurve) => _chartUpdater.Update(Chart, new[] { changedCurve }, CurveChartUpdateModes.Property);
+
+      private void updateChart() => _chartUpdater.Update(Chart, CurveChartUpdateModes.All);
 
       private void onChartPropertiesChanged()
       {
@@ -405,16 +406,21 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void onDataBrowserUsedChanged(UsedColumnsEventArgs e)
       {
-         using (_chartUpdater.UpdateTransaction(Chart))
+         using (_chartUpdater.UpdateTransaction(Chart, e.Used ? CurveChartUpdateModes.Add : CurveChartUpdateModes.Remove))
          {
-            e.Columns.Each(column =>
-            {
-               if (e.Used)
-                  AddCurveForColumn(column);
-               else
-                  Chart.RemoveCurvesForColumn(column);
-            });
+            updateColumnUsedProperty(e.Columns, e.Used);
          }
+      }
+
+      private void updateColumnUsedProperty(IReadOnlyList<DataColumn> columns, bool used)
+      {
+         columns.Each(column =>
+         {
+            if (used)
+               AddCurveForColumn(column);
+            else
+               Chart.RemoveCurvesForColumn(column);
+         });
       }
 
       public void ApplyAllColumnSettings() => _presentersWithColumnSettings.Each(x => x.ApplyAllColumnSettings());
@@ -430,6 +436,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          _dataBrowserPresenter.AddOutputMappings(outputMappings);
       }
+
       public void RemoveOutputMappings(OutputMappings outputMappings)
       {
          _dataBrowserPresenter.RemoveOutputMappings(outputMappings);
@@ -438,10 +445,20 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public void AddLinkSimDataMenuItem() => _view.AddLinkSimulationObservedMenuItemCheckBox();
 
       public void SetLinkSimDataMenuItemVisibility(bool isVisible) => _view.SetlinkSimDataMenuItemVisisbility(isVisible);
+
       public void RemoveAllOutputMappings()
       {
          _dataBrowserPresenter.RemoveAllOutputMappings();
       }
+
+      public void UpdateAutoUpdateChartMode(bool autoMode)
+      {
+         Chart.AutoUpdateEnabled = autoMode;
+         if (Chart.AutoUpdateEnabled)
+            UpdateChartDisplay();
+      }
+
+      public void UpdateChartDisplay() => _eventPublisher.PublishEvent(new ApplyChangesEvent(Chart));
 
       public void OnDragDrop(IDragEvent dropEvent) => DragDrop(this, dropEvent);
 
@@ -471,6 +488,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _chartSettingsPresenter.Edit(Chart);
          _chartExportSettingsPresenter.Edit(Chart);
          _axisSettingsPresenter.Edit(Chart.Axes);
+         _view.SetAutoUpdateModeCheckBox(Chart.AutoUpdateEnabled);
       }
 
       public void Clear()
@@ -674,15 +692,15 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          var curve = Chart.FindCurveWithSameData(dataColumn.BaseGrid, dataColumn);
          if (curve != null)
-            return (exists:true, Chart.CurveBy(curve.Id));
+            return (exists: true, Chart.CurveBy(curve.Id));
 
          curve = Chart.CreateCurve(dataColumn.BaseGrid, dataColumn, _curveNameDefinition(dataColumn), _dimensionFactory);
-         return (exists:false, curve);
+         return (exists: false, curve);
       }
 
       private void addCurvesForColumns(IEnumerable<DataColumn> columns, CurveOptions defaultCurveOptions = null)
       {
-         using (_chartUpdater.UpdateTransaction(Chart))
+         using (_chartUpdater.UpdateTransaction(Chart, CurveChartUpdateModes.Add))
          {
             columns.Each(x => AddCurveForColumn(x, defaultCurveOptions));
          }
@@ -690,7 +708,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void removeCurve(Curve curve)
       {
-         using (_chartUpdater.UpdateTransaction(Chart))
+         using (_chartUpdater.UpdateTransaction(Chart, CurveChartUpdateModes.Remove))
          {
             Chart.RemoveCurve(curve);
          }

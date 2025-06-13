@@ -112,7 +112,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       protected void AddAllButtons()
       {
          addTemplateButtons();
-
          ChartEditorPresenter.AddUsedInMenuItem();
          ChartEditorPresenter.AddLinkSimDataMenuItem();
       }
