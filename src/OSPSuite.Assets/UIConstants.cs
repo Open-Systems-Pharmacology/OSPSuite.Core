@@ -231,6 +231,9 @@ namespace OSPSuite.Assets
       public static readonly string NotDistributed = "Not Distributed";
       public static readonly string DeleteSelected = "Delete Selected Records";
       public static readonly string ModulesFolder = "Modules";
+      public static readonly string ApplyChangesToUpdateChart = "Apply changes to update chart";
+      public static readonly string Apply = "Apply";
+      public static readonly string AutoUpdateChart = "Auto-update chart";
       public static readonly string LoadFromSnapshot = "Load Snapshot";
       public static readonly string RunSimulations = "Run Simulations";
       public static readonly string StartImport = "Start Import";
@@ -2301,6 +2304,9 @@ namespace OSPSuite.Assets
       {
          return $"Compare {objectType}s";
       }
+
+      public static readonly string AutoUpdateChart = "Autoupdate chart";
+      public static readonly string ApplyUpdates = "Apply updates";
    }
 
    public static class MenuDescriptions
@@ -2552,6 +2558,7 @@ namespace OSPSuite.Assets
    {
       public static readonly string ToolTipForAxis = "Double click to edit axis";
       public static readonly string UseSelectedCurvesToolTip = "Adds or removes all the selected curves at once.";
+      public static readonly string EnableOrDisableAutomaticUpdateOfTheChartForEachEdit = "Enable or Disable automatic update of the chart for each edit.";
       public static readonly string LinkSimulationObservedToolTip = "Links the simulation outputs to their mapped observed data, so that when a simulation output is (de)selected the corresponding observed data gets (de)selected as well.";
       public static readonly string AddUnitMap = "Add new default unit for a specific dimension";
       public static readonly string LoadUnits = "Load default units from file";

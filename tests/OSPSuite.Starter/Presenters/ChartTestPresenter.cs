@@ -11,12 +11,11 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Core;
-using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Extensions;
-using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.MenuAndBars;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.Charts;
@@ -49,23 +48,21 @@ namespace OSPSuite.Starter.Presenters
       private readonly IChartEditorAndDisplayPresenter _chartEditorAndDisplayPresenter;
       private readonly IContainer _model;
       private readonly IDataRepositoryCreator _dataRepositoryCreator;
-      private readonly IOSPSuiteXmlSerializerRepository _ospSuiteXmlSerializerRepository;
       private readonly IChartFromTemplateService _chartFromTemplateService;
       private readonly IChartTemplatePersistor _chartTemplatePersistor;
       private readonly IDimensionFactory _dimensionFactory;
-      private readonly IChartUpdater _chartUpdater;
+      private readonly ICurveChartUpdater _chartUpdater;
       private readonly IWithChartTemplates _simulationSettings;
       private readonly Cache<string, DataRepository> _dataRepositories;
 
       public ChartTestPresenter(IChartTestView view, IChartEditorAndDisplayPresenter chartEditorAndDisplayPresenter, TestEnvironment testEnvironment, IDataColumnToPathElementsMapper dataColumnToPathColumnValuesMapper,
-         IDataRepositoryCreator dataRepositoryCreator, IOSPSuiteXmlSerializerRepository ospSuiteXmlSerializerRepository, IChartFromTemplateService chartFromTemplateService,
-         IChartTemplatePersistor chartTemplatePersistor, IDimensionFactory dimensionFactory, IChartUpdater chartUpdater) : base(view)
+         IDataRepositoryCreator dataRepositoryCreator, IChartFromTemplateService chartFromTemplateService,
+         IChartTemplatePersistor chartTemplatePersistor, IDimensionFactory dimensionFactory, ICurveChartUpdater chartUpdater) : base(view)
       {
          _model = testEnvironment.Model.Root;
          _dataRepositories = new Cache<string, DataRepository>(repository => repository.Name);
          _chartEditorAndDisplayPresenter = chartEditorAndDisplayPresenter;
          _dataRepositoryCreator = dataRepositoryCreator;
-         _ospSuiteXmlSerializerRepository = ospSuiteXmlSerializerRepository;
          _chartFromTemplateService = chartFromTemplateService;
          _chartTemplatePersistor = chartTemplatePersistor;
          _dimensionFactory = dimensionFactory;
@@ -147,7 +144,7 @@ namespace OSPSuite.Starter.Presenters
 
       private void addNewCurvesToChart(IEnumerable<DataRepository> newRepositories)
       {
-         using (_chartUpdater.UpdateTransaction(Chart))
+         using (_chartUpdater.UpdateTransaction(Chart, CurveChartUpdateModes.Add))
          {
             newRepositories.Each(repository => repository.AllButBaseGrid().Each(addColumnToChart));
          }
@@ -172,7 +169,7 @@ namespace OSPSuite.Starter.Presenters
 
       public void ClearChart()
       {
-         using (_chartUpdater.UpdateTransaction(Chart))
+         using (_chartUpdater.UpdateTransaction(Chart, CurveChartUpdateModes.All))
          {
             ChartEditorPresenter.RemoveDataRepositories(_dataRepositories);
             _dataRepositories.Clear();
@@ -238,7 +235,7 @@ namespace OSPSuite.Starter.Presenters
 
       public void RefreshDisplay()
       {
-         _chartUpdater.Update(Chart);
+         _chartUpdater.Update(Chart, CurveChartUpdateModes.All);
       }
 
       public void ReloadMenus()
@@ -258,7 +255,8 @@ namespace OSPSuite.Starter.Presenters
          ChartEditorPresenter.AddButton(groupMenu);
 
          ChartEditorPresenter.AddUsedInMenuItem();
-
+         ChartEditorPresenter.AddLinkSimDataMenuItem();
+         ChartEditorPresenter.AddButton(_chartEditorAndDisplayPresenter.ChartLayoutButton);
          ChartEditorPresenter.AddChartTemplateMenu(_simulationSettings, template => loadFromTemplate(template));
       }
 
