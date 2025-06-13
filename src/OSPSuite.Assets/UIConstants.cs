@@ -1466,6 +1466,7 @@ namespace OSPSuite.Assets
 
    public static class Error
    {
+      public static string SnapshotParameterNotFoundInContainer(string parameterName, string container) => $"Snapshot parameter '{parameterName}' was not found in '{container}'.";
       public static string UnableToFindAQualificationStepRunnerFor(string qualificationStep) => $"Cannot find {ObjectTypes.QualificationStep} runner for '{qualificationStep}'";
       public static string CouldNotFind(string objectType, string objectName) => $"Cannot find {objectType.ToLower()} '{objectName}'";
       public static string CouldNotFindQualificationStep(string qualificationStepType) => CouldNotFind(ObjectTypes.QualificationStep, qualificationStepType);
@@ -1499,6 +1500,9 @@ namespace OSPSuite.Assets
       public static readonly string FoldValueMustBeGreaterThanOne = "Fold value must be a number greater than one.";
       public static readonly string ImporterEmptyFile = "The file you are trying to load is empty.";
       public static readonly string SnapshotIsOutdated = "Snapshot is outdated and cannot be loaded for the following reason: ";
+
+      public static string SnapshotDuplicateEntryByName(string name, string type) =>
+         $"Another {type} named '{name}' already exists in the project. Snapshot file is corrupted.";
       
       public static string SnapshotFileMismatch(string desiredType) => $"Snapshot file cannot be used to load a {desiredType.ToLowerInvariant()}.";
 
@@ -2189,6 +2193,11 @@ namespace OSPSuite.Assets
 
       public static string LargeNumberOfOutputPoints(int numberOfPoints) =>
          $"The selected output resolution will generate {numberOfPoints} points and may severely impact the software performance.\nAre you sure you want to run with these setting? If not, consider changing output resolution in simulations settings";
+
+      public static string UnitNotFoundInDimensionForParameter(string unit, string dimension, string parameterName)
+      {
+         return $"Unit '{unit}' not found for parameter {parameterName} with dimension '{dimension}'";
+      }
 
    }
 
