@@ -23,6 +23,7 @@ namespace OSPSuite.Helpers
 
          var lengthDimension = new Dimension(new BaseDimensionRepresentation(), DimensionNames.Length, "m");
          lengthDimension.AddUnit(new Unit("um", 0.00001, 0));
+         lengthDimension.AddUnit(new Unit("cm", 0.01, 0));
 
          factory.AddDimension(massDimension);
          factory.AddDimension(concentrationDimension);

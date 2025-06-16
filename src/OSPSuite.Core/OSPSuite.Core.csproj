@@ -37,10 +37,12 @@
     <PackageReference Include="csmpfit" Version="1.1.1" />
     <PackageReference Include="MathNet.Numerics.signed" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="OSPSuite.Serializer" Version="4.0.1.3" />
     <PackageReference Include="OSPSuite.FuncParser" Version="4.0.0.73" GeneratePathProperty="true" />
     <PackageReference Include="OSPSuite.SimModel" Version="4.0.0.75" GeneratePathProperty="true" />
     <PackageReference Include="OSPSuite.Utility" Version="4.1.1.1" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
