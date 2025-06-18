@@ -9,7 +9,7 @@ using SnapshotExtendedProperty = OSPSuite.Core.Snapshots.ExtendedProperty;
 
 namespace OSPSuite.Core.Snapshots.Mappers
 {
-   public abstract class ExtendedPropertyMapper<TProject> : SnapshotMapperBase<ModelExtendedProperty, SnapshotExtendedProperty, SnapshotContext<TProject>> where TProject : Project
+   public class ExtendedPropertyMapper : SnapshotMapperBase<ModelExtendedProperty, SnapshotExtendedProperty, SnapshotContext>
    {
       public override Task<SnapshotExtendedProperty> MapToSnapshot(ModelExtendedProperty extendedProperty)
       {
@@ -53,7 +53,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
          return ExtendedPropertyType.String;
       }
 
-      public override Task<ModelExtendedProperty> MapToModel(SnapshotExtendedProperty snapshot, SnapshotContext<TProject> snapshotContext)
+      public override Task<ModelExtendedProperty> MapToModel(SnapshotExtendedProperty snapshot, SnapshotContext snapshotContext)
       {
          if (snapshot?.Value == null)
             return Task.FromResult<ModelExtendedProperty>(null);

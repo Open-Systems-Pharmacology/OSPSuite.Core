@@ -12,25 +12,27 @@ using ModelDataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 
 namespace OSPSuite.Core.Snapshots.Mappers
 {
-   public class SnapshotContextWithDataRepository<TProject> : SnapshotContext<TProject> where TProject : Project
+   public class SnapshotContextWithDataRepository : SnapshotContext
    {
       public ModelDataRepository DataRepository { get; }
 
-      public SnapshotContextWithDataRepository(ModelDataRepository dataRepository, SnapshotContext<TProject> baseContext, int version) : base(baseContext.Project, version)
+      public SnapshotContextWithDataRepository(ModelDataRepository dataRepository, SnapshotContext baseContext) : base(baseContext.Project, baseContext.Version)
       {
          DataRepository = dataRepository;
       }
    }
 
-   public abstract class DataColumnMapper<TProject> : SnapshotMapperBase<ModelDataColumn, SnapshotDataColumn, SnapshotContextWithDataRepository<TProject>> where TProject : Project
+   public class DataColumnMapper : SnapshotMapperBase<ModelDataColumn, SnapshotDataColumn, SnapshotContextWithDataRepository>
    {
-      private readonly DataInfoMapper<TProject> _dataInfoMapper;
-      private readonly QuantityInfoMapper<TProject> _quantityInfoMapper;
+      private readonly DataInfoMapper _dataInfoMapper;
+      private readonly QuantityInfoMapper _quantityInfoMapper;
+      private readonly IDimensionFactory _dimensionFactory;
 
-      public DataColumnMapper(DataInfoMapper<TProject> dataInfoMapper, QuantityInfoMapper<TProject> quantityInfoMapper)
+      public DataColumnMapper(DataInfoMapper dataInfoMapper, QuantityInfoMapper quantityInfoMapper, IDimensionFactory dimensionFactory)
       {
          _dataInfoMapper = dataInfoMapper;
          _quantityInfoMapper = quantityInfoMapper;
+         _dimensionFactory = dimensionFactory;
       }
 
       public override async Task<SnapshotDataColumn> MapToSnapshot(ModelDataColumn dataColumn)
@@ -59,11 +61,11 @@ namespace OSPSuite.Core.Snapshots.Mappers
          return dataColumn.ConvertToDisplayValues(dataColumn.Values).ToList();
       }
 
-      public override async Task<ModelDataColumn> MapToModel(SnapshotDataColumn snapshot, SnapshotContextWithDataRepository<TProject> snapshotContext)
+      public override async Task<ModelDataColumn> MapToModel(SnapshotDataColumn snapshot, SnapshotContextWithDataRepository snapshotContext)
       {
          var dataRepository = snapshotContext.DataRepository;
          var dataInfo = await _dataInfoMapper.MapToModel(snapshot.DataInfo, snapshotContext);
-         var dimension = DimensionFrom(snapshot);
+         var dimension = dimensionFrom(snapshot);
          var dataColumn = dataInfo.Origin == ColumnOrigins.BaseGrid ? new BaseGrid(snapshot.Name, dimension) : new ModelDataColumn(snapshot.Name, dimension, dataRepository.BaseGrid);
          //this needs to be set after DATA Info to be sure that we are using the value from the snapshot
          dataColumn.DataInfo = dataInfo;
@@ -77,7 +79,13 @@ namespace OSPSuite.Core.Snapshots.Mappers
          return dataColumn;
       }
 
-      protected abstract IDimension DimensionFrom(SnapshotDataColumn snapshot);
+      private IDimension dimensionFrom(SnapshotDataColumn snapshot)
+      {
+         if (!_dimensionFactory.Has(snapshot.Dimension))
+            return _dimensionFactory.NoDimension;
+
+         return _dimensionFactory.Dimension(snapshot.Dimension);
+      }
 
       private Unit displayUnitFor(IDimension dimension, string snapshotUnit) => dimension.UnitOrDefault(snapshotUnit);
    }

@@ -2,8 +2,9 @@
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
-using OSPSuite.Helpers.Snapshots;
-using SnapshotContext = OSPSuite.Helpers.Snapshots.SnapshotContext;
+using OSPSuite.Core.Snapshots;
+using OSPSuite.Core.Snapshots.Mappers;
+using OSPSuite.Helpers;
 using SnapshotQuantityInfo = OSPSuite.Core.Snapshots.QuantityInfo;
 using ModelQuantityInfo = OSPSuite.Core.Domain.Data.QuantityInfo;
 
@@ -34,7 +35,7 @@ namespace OSPSuite.Core.Mappers
 
       protected override async Task Because()
       {
-         _result = await sut.MapToModel(_snapshot, new SnapshotContext());
+         _result = await sut.MapToModel(_snapshot, new SnapshotContext(new TestProject(), SnapshotVersions.Current));
       }
 
       [Observation]

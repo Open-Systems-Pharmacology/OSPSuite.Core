@@ -219,5 +219,7 @@ namespace OSPSuite.Core.Domain
 
 
       public abstract IEnumerable<IUsesObservedData> AllUsersOfObservedData { get; }
+
+      public virtual IReadOnlyCollection<DataRepository> AllDataRepositories() => AllObservedData;
    }
 }

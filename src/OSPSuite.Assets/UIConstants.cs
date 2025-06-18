@@ -240,6 +240,8 @@ namespace OSPSuite.Assets
       public static readonly string SnapshotFile = "Select snapshot file";
       public static readonly string ExportProjectToSnapshotDescription = "Export project to snapshot...";
       public static readonly string LoadProjectFromSnapshotDescription = "Load project from snapshot...";
+      public static readonly string RenalClearance = "Renal Clearance";
+      public static readonly string GlomerularFiltration = "Glomerular Filtration";
 
       public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
 
@@ -1986,6 +1988,13 @@ namespace OSPSuite.Assets
       public static string MapToModelNotSupportedWithoutContext(string modelType, string contextType) => $"{modelType} should not be created from snapshot directly. Instead use the overload with {contextType}.";
 
       public static string MapToSnapshotNotSupportedWithoutContext(string snapshotType, string contextType) => $"{snapshotType} should not be created from model directly. Instead use the overload with {contextType}.";
+
+      public static string CannotCreateIdentificationParameter(string parameterPath, string parameterIdentificationName)
+         => $"Cannot create identification parameter '{parameterPath}' for parameter identification '{parameterIdentificationName}'.";
+
+      public static string CouldNotFindSimulation(string simulationName) => CouldNotFind(ObjectTypes.Simulation, simulationName);
+
+      public static string CouldNotFindOutputInSimulation(string outputFullPath, string simulationName) => $"Cannot find output '{outputFullPath}' in simulation '{simulationName}'";
    }
 
    public static class Validation

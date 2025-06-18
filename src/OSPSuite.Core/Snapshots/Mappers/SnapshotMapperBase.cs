@@ -2,32 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using OSPSuite.Core.Domain;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Snapshots.Mappers
 {
-   public abstract class SnapshotContext
-   {
-      protected SnapshotContext(int version)
-      {
-         Version = version;
-      }
-
-      public int Version { get; }
-   }
-
-   public abstract class SnapshotContext<TProject> : SnapshotContext where TProject : Project
-   {
-      public TProject Project { get; }
-
-      protected SnapshotContext(TProject project, int version) : base(version)
-      {
-         Project = project;
-      }
-   }
-
    public interface ISnapshotMapperSpecification : ISnapshotMapper, ISpecification<Type>
    {
    }

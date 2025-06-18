@@ -6,15 +6,14 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Snapshots;
 using OSPSuite.Core.Snapshots.Mappers;
 using OSPSuite.Helpers;
-using OSPSuite.Helpers.Snapshots;
 using DataInfo = OSPSuite.Core.Domain.Data.DataInfo;
 using DataRepository = OSPSuite.Core.Domain.Data.DataRepository;
 using SnapshotDataColumn = OSPSuite.Core.Snapshots.DataColumn;
 using ModelDataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 using QuantityInfo = OSPSuite.Core.Domain.Data.QuantityInfo;
-using SnapshotContext = OSPSuite.Helpers.Snapshots.SnapshotContext;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -51,6 +50,8 @@ namespace OSPSuite.Core.Mappers
          _dataInfoSnapshot = new Snapshots.DataInfo();
          A.CallTo(() => _quantityInfoMapper.MapToSnapshot(_dataColumn.QuantityInfo)).Returns(_quantityInfoSnapshot);
          A.CallTo(() => _dataInfoMapper.MapToSnapshot(_dataColumn.DataInfo)).Returns(_dataInfoSnapshot);
+         A.CallTo(() => _dimensionFactory.Has(_dataColumn.Dimension.Name)).Returns(true);
+         A.CallTo(() => _dimensionFactory.Has(_baseGrid.Dimension.Name)).Returns(true);
          A.CallTo(() => _dimensionFactory.Dimension(_dataColumn.Dimension.Name)).Returns(_dataColumn.Dimension);
          A.CallTo(() => _dimensionFactory.Dimension(_baseGrid.Dimension.Name)).Returns(_baseGrid.Dimension);
 
@@ -73,13 +74,13 @@ namespace OSPSuite.Core.Mappers
          _dataInfo = new DataInfo(ColumnOrigins.BaseGrid);
          _quantityInfo = new QuantityInfo(new[] { "path" }, QuantityType.Undefined);
 
-         A.CallTo(() => _dataInfoMapper.MapToModel(_snapshot.DataInfo, A<SnapshotContext<TestProject>>._)).Returns(_dataInfo);
-         A.CallTo(() => _quantityInfoMapper.MapToModel(_snapshot.QuantityInfo, A<SnapshotContext<TestProject>>._)).Returns(_quantityInfo);
+         A.CallTo(() => _dataInfoMapper.MapToModel(_snapshot.DataInfo, A<SnapshotContext>._)).Returns(_dataInfo);
+         A.CallTo(() => _quantityInfoMapper.MapToModel(_snapshot.QuantityInfo, A<SnapshotContext>._)).Returns(_quantityInfo);
       }
 
       protected override async Task Because()
       {
-         _result = await sut.MapToModel(_snapshot, new SnapshotContextWithDataRepository(_contextDataRepository, new SnapshotContext()));
+         _result = await sut.MapToModel(_snapshot, new SnapshotContextWithDataRepository(_contextDataRepository, new SnapshotContext(new TestProject(), SnapshotVersions.Current)));
       }
 
       [Observation]
@@ -109,13 +110,13 @@ namespace OSPSuite.Core.Mappers
          _snapshot.Unit = "µmol/l";
          _quantityInfo = new QuantityInfo(new[] { "path" }, QuantityType.Undefined);
 
-         A.CallTo(() => _dataInfoMapper.MapToModel(_snapshot.DataInfo, A<SnapshotContext<TestProject>>._)).Returns(_dataInfo);
-         A.CallTo(() => _quantityInfoMapper.MapToModel(_snapshot.QuantityInfo, A<SnapshotContext<TestProject>>._)).Returns(_quantityInfo);
+         A.CallTo(() => _dataInfoMapper.MapToModel(_snapshot.DataInfo, A<SnapshotContext>._)).Returns(_dataInfo);
+         A.CallTo(() => _quantityInfoMapper.MapToModel(_snapshot.QuantityInfo, A<SnapshotContext>._)).Returns(_quantityInfo);
       }
 
       protected override async Task Because()
       {
-         _result = await sut.MapToModel(_snapshot, new SnapshotContextWithDataRepository(_contextDataRepository, new SnapshotContext()));
+         _result = await sut.MapToModel(_snapshot, new SnapshotContextWithDataRepository(_contextDataRepository, new SnapshotContext(new TestProject(), SnapshotVersions.Current)));
       }
 
       [Observation]

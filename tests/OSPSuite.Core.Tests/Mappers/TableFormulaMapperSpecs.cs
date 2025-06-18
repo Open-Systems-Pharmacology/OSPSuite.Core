@@ -5,8 +5,10 @@ using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Helpers;
 using System.Linq;
 using System.Threading.Tasks;
-using OSPSuite.Helpers.Snapshots;
-using SnapshotContext = OSPSuite.Helpers.Snapshots.SnapshotContext;
+using OSPSuite.Core.Snapshots;
+using OSPSuite.Core.Snapshots.Mappers;
+using TableFormula = OSPSuite.Core.Domain.Formulas.TableFormula;
+using TableFormulaMapper = OSPSuite.Helpers.Snapshots.TableFormulaMapper;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -88,7 +90,7 @@ namespace OSPSuite.Core.Mappers
 
       protected override async Task Because()
       {
-         _newTableFormula = await sut.MapToModel(_snapshot, new SnapshotContext());
+         _newTableFormula = await sut.MapToModel(_snapshot, new SnapshotContext(new TestProject(), SnapshotVersions.Current));
       }
 
       [Observation]
