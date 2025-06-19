@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
    {
       public ModelDataRepository DataRepository { get; }
 
-      public SnapshotContextWithDataRepository(ModelDataRepository dataRepository, SnapshotContext baseContext) : base(baseContext.Project, baseContext.Version)
+      public SnapshotContextWithDataRepository(ModelDataRepository dataRepository, SnapshotContext baseContext) : base(baseContext)
       {
          DataRepository = dataRepository;
       }

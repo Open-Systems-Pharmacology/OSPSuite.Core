@@ -73,9 +73,9 @@ namespace OSPSuite.Core.Snapshots.Mappers
          return AwaitAs<TSnapshot>(tasks);
       }
 
-      protected virtual async Task<ParameterIdentification[]> MapParameterIdentificationToSnapshots(IReadOnlyCollection<ModelParameterIdentification> allParameterIdentifications)
+      protected virtual Task<ParameterIdentification[]> MapParameterIdentificationToSnapshots(IReadOnlyCollection<ModelParameterIdentification> allParameterIdentifications)
       {
-         return await _parameterIdentificationMapper.MapToSnapshots(allParameterIdentifications);
+         return _parameterIdentificationMapper.MapToSnapshots(allParameterIdentifications);
       }
 
       protected Task<SnapshotDataRepository[]> MapObservedDataToSnapshots(IReadOnlyCollection<ModelDataRepository> allObservedData) =>

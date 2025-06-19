@@ -9,7 +9,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
 {
    public class ClassificationSnapshotContext : SnapshotContext
    {
-      public ClassificationSnapshotContext(ClassificationType classificationType, SnapshotContext baseContext) : base(baseContext.Project, baseContext.Version)
+      public ClassificationSnapshotContext(ClassificationType classificationType, SnapshotContext baseContext) : base(baseContext)
       {
          ClassificationType = classificationType;
       }

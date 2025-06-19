@@ -19,6 +19,9 @@ namespace OSPSuite.Core.Snapshots.Mappers
 {
    public class ParameterMapper : ObjectBaseSnapshotMapperBase<IParameter, SnapshotParameter, ParameterSnapshotContext>
    {
+      //only use for conversion of older snapshot. Do not use in code otherwise
+      public const string Applications = "Applications";
+      
       private readonly TableFormulaMapper _tableFormulaMapper;
       private readonly ValueOriginMapper _valueOriginMapper;
       private readonly IEntityPathResolver _entityPathResolver;
@@ -157,10 +160,10 @@ namespace OSPSuite.Core.Snapshots.Mappers
             return localizedParameter.Path;
 
          //for V11 or earlier, we may have to convert the path if it starts with Applications which was removed for Events
-         if (localizedParameter.Path.StartsWith(Constants.ContainerName.Applications))
+         if (localizedParameter.Path.StartsWith(Applications))
          {
             var path = new ObjectPath(localizedParameter.Path.ToPathArray());
-            path.Replace(Constants.ContainerName.Applications, Constants.EVENTS);
+            path.Replace(Applications, Constants.EVENTS);
             return path.ToString();
          }
 

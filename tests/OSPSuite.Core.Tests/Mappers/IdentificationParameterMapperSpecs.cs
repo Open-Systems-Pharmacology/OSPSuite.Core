@@ -76,7 +76,7 @@ namespace OSPSuite.Core.Mappers
          {
             _parameter1,
             _parameter2,
-            new Container { _parameter3 }.WithName(Constants.ContainerName.Applications),
+            new Container { _parameter3 }.WithName(ParameterMapper.Applications),
             new Container
             {
                new Container
@@ -93,7 +93,7 @@ namespace OSPSuite.Core.Mappers
          _identificationParameter.Scaling = Scalings.Linear;
          _parameterSelection1 = new ParameterSelection(_simulation, _parameter1.Name);
          _parameterSelection2 = new ParameterSelection(_simulation, _parameter2.Name);
-         _parameterSelection3 = new ParameterSelection(_simulation, new ObjectPath(Constants.ContainerName.Applications, _parameter3.Name));
+         _parameterSelection3 = new ParameterSelection(_simulation, new ObjectPath(ParameterMapper.Applications, _parameter3.Name));
          _gfrSelection = new ParameterSelection(_simulation, new ObjectPath("Alprazolam", "Glomerular Filtration-GFR", _gfrFraction.Name));
          _renalSelection = new ParameterSelection(_simulation, new ObjectPath("Alprazolam", "Renal Clearances-test", _renalClearances.Name));
          _identificationParameter.AddLinkedParameter(_parameterSelection1);
@@ -252,7 +252,7 @@ namespace OSPSuite.Core.Mappers
       {
          model.Root.GetAllChildren<IContainer>().Each(container =>
          {
-            if (container.Name.Equals(Constants.ContainerName.Applications))
+            if (container.Name.Equals(ParameterMapper.Applications))
                container.Name = "Events";
          });
       }

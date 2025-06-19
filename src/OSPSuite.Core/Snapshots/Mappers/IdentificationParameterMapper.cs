@@ -97,7 +97,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
 
       private static void updatePathsForV12(ObjectPath parameterPath)
       {
-         parameterPath.Replace(ContainerName.Applications, EVENTS);
+         parameterPath.Replace(ParameterMapper.Applications, EVENTS);
 
          replaceRenalClearanceName(parameterPath, Captions.GlomerularFiltration);
          replaceRenalClearanceName(parameterPath, Captions.RenalClearance);
@@ -110,7 +110,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
          if (string.IsNullOrEmpty(processContainerName))
             return;
 
-         var compoundName = parameterPath.ElementAt(parameterPath.IndexOf(processContainerName) - 1);
+         var compoundName = parameterPath.ElementAt(parameterPath.ToList().IndexOf(processContainerName) - 1);
          parameterPath.Replace(processContainerName, CompositeNameFor(processContainerName, compoundName));
       }
    }
