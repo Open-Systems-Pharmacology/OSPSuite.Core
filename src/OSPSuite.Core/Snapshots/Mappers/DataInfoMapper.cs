@@ -4,20 +4,20 @@ using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
-using SnapshotDataInfo = OSPSuite.Core.Snapshots.DataInfo;
 using ModelDataInfo = OSPSuite.Core.Domain.Data.DataInfo;
+using SnapshotDataInfo = OSPSuite.Core.Snapshots.DataInfo;
 
 namespace OSPSuite.Core.Snapshots.Mappers
 {
-   public abstract class DataInfoMapper<TProject> : SnapshotMapperBase<ModelDataInfo, SnapshotDataInfo, SnapshotContext<TProject>> where TProject : Project
+   public class DataInfoMapper : SnapshotMapperBase<ModelDataInfo, SnapshotDataInfo, SnapshotContext>
    {
-      private readonly ExtendedPropertyMapper<TProject> _extendedPropertyMapper;
+      private readonly ExtendedPropertyMapper _extendedPropertyMapper;
       private readonly IDimension _molWeightDimension;
 
-      protected DataInfoMapper(ExtendedPropertyMapper<TProject> extendedPropertyMapper, IDimension molWeightDimension)
+      public DataInfoMapper(ExtendedPropertyMapper extendedPropertyMapper, IDimensionFactory dimensionFactory)
       {
          _extendedPropertyMapper = extendedPropertyMapper;
-         _molWeightDimension = molWeightDimension;
+         _molWeightDimension = dimensionFactory.Dimension(Constants.Parameters.MOL_WEIGHT);
       }
 
       public override async Task<SnapshotDataInfo> MapToSnapshot(ModelDataInfo dataInfo)
@@ -42,7 +42,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
          return null;
       }
 
-      public override async Task<ModelDataInfo> MapToModel(SnapshotDataInfo snapshot, SnapshotContext<TProject> snapshotContext)
+      public override async Task<ModelDataInfo> MapToModel(SnapshotDataInfo snapshot, SnapshotContext snapshotContext)
       {
          var origin = ModelValueFor(snapshot.Origin, ColumnOrigins.Undefined);
          var dataInfo = new ModelDataInfo(origin)

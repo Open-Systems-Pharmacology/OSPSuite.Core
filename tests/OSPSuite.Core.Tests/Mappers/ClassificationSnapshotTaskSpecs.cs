@@ -4,11 +4,11 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Snapshots;
 using OSPSuite.Core.Snapshots.Mappers;
 using OSPSuite.Helpers;
-using OSPSuite.Helpers.Snapshots;
-using SnapshotContext = OSPSuite.Helpers.Snapshots.SnapshotContext;
+using Classification = OSPSuite.Core.Domain.Classification;
+using DataRepository = OSPSuite.Core.Domain.Data.DataRepository;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -46,7 +46,7 @@ namespace OSPSuite.Core.Mappers
 
          _project = new TestProject();
 
-         _snapshotContext = new SnapshotContext(_project, 0);
+         _snapshotContext = new SnapshotContext(_project, SnapshotVersions.Current);
          return _completed;
       }
    }

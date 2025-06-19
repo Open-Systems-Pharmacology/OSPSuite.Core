@@ -72,6 +72,8 @@ namespace OSPSuite.Core
             scan.ExcludeType<QuantityPathToQuantityDisplayPathMapper>();
             scan.ExcludeType<DataColumnToPathElementsMapper>();
 
+            scan.ExcludeNamespaceContainingType<DataColumnMapper>();
+
             if (!RegisterParameter)
             {
                scan.ExcludeType<Parameter>();
@@ -102,6 +104,15 @@ namespace OSPSuite.Core
          registerParameterIdentificationRunFactories(container);
 
          registerThirdPartyComponents(container);
+
+         // Registered to satisfy the repository of ISnapshotMapperSpecification
+         container.AddScanner(scan =>
+         {
+            scan.AssemblyContainingType<CoreRegister>();
+            scan.ExcludeType<SnapshotMapper>();
+            scan.IncludeNamespaceContainingType<DataColumnMapper>();
+            scan.WithConvention<RegisterTypeConvention<ISnapshotMapperSpecification>>();
+         });
 
          container.RegisterFactory<IStartableProcessFactory>();
 

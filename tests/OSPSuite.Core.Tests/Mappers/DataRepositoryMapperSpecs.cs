@@ -6,11 +6,10 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Snapshots;
+using OSPSuite.Core.Snapshots.Mappers;
 using OSPSuite.Helpers;
-using OSPSuite.Helpers.Snapshots;
 using DataColumn = OSPSuite.Core.Domain.Data.DataColumn;
 using DataRepository = OSPSuite.Core.Domain.Data.DataRepository;
-using SnapshotContext = OSPSuite.Helpers.Snapshots.SnapshotContext;
 using SnapshotDataRepository = OSPSuite.Core.Snapshots.DataRepository;
 
 namespace OSPSuite.Core.Mappers
@@ -83,7 +82,7 @@ namespace OSPSuite.Core.Mappers
 
       protected override async Task Because()
       {
-         _result = await sut.MapToModel(_snapshot, new SnapshotContext());
+         _result = await sut.MapToModel(_snapshot, new SnapshotContext(new TestProject(), SnapshotVersions.Current));
       }
 
       [Observation]

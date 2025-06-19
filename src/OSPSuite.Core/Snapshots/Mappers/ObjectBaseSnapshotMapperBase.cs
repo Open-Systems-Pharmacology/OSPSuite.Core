@@ -40,4 +40,10 @@ namespace OSPSuite.Core.Snapshots.Mappers
 
       public sealed override Task<TSnapshot> MapToSnapshot(TModel model) => Task.FromException<TSnapshot>(new ModelMapToSnapshotNotSupportedException<TSnapshot, TSnapshotContext>());
    }
+
+   public abstract class ObjectBaseSnapshotMapperBase<TModel, TSnapshot> : ObjectBaseSnapshotMapperBase<TModel, TSnapshot, SnapshotContext>
+      where TModel : IWithName, IWithDescription
+      where TSnapshot : IWithName, IWithDescription, new()
+   {
+   }
 }

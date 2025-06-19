@@ -6,7 +6,7 @@ using SnapshotQuantityInfo = OSPSuite.Core.Snapshots.QuantityInfo;
 
 namespace OSPSuite.Core.Snapshots.Mappers
 {
-   public abstract class QuantityInfoMapper<TProject> : SnapshotMapperBase<ModelQuantityInfo, SnapshotQuantityInfo, SnapshotContext<TProject>> where TProject : Project
+   public class QuantityInfoMapper : SnapshotMapperBase<ModelQuantityInfo, SnapshotQuantityInfo, SnapshotContext>
    {
       public override Task<SnapshotQuantityInfo> MapToSnapshot(ModelQuantityInfo quantityInfo)
       {
@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
          });
       }
 
-      public override Task<ModelQuantityInfo> MapToModel(SnapshotQuantityInfo snapshot, SnapshotContext<TProject> snapshotContext)
+      public override Task<ModelQuantityInfo> MapToModel(SnapshotQuantityInfo snapshot, SnapshotContext snapshotContext)
       {
          var type = ModelValueFor(snapshot.Type, QuantityType.Undefined);
          var path = ModelValueFor(snapshot.Path);

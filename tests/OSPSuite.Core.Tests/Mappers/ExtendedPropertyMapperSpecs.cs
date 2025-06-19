@@ -4,7 +4,8 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Snapshots;
-using OSPSuite.Helpers.Snapshots;
+using OSPSuite.Core.Snapshots.Mappers;
+using OSPSuite.Helpers;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Mappers
@@ -139,7 +140,7 @@ namespace OSPSuite.Core.Mappers
 
       protected override async Task Because()
       {
-         _extendedProperty = await sut.MapToModel(_snapshot, new SnapshotContext());
+         _extendedProperty = await sut.MapToModel(_snapshot, new SnapshotContext(new TestProject(), SnapshotVersions.Current));
       }
 
       [Observation]

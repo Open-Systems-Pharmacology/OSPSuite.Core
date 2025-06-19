@@ -9,7 +9,7 @@ using SnapshotClassification = OSPSuite.Core.Snapshots.Classification;
 
 namespace OSPSuite.Core.Snapshots.Mappers
 {
-   public interface IClassificationSnapshotTask<TProject> where TProject : Project
+   public interface IClassificationSnapshotTask
    {
       /// <summary>
       ///    Maps the <paramref name="snapshots" /> into classifications and adds them to the project defined in
@@ -22,22 +22,22 @@ namespace OSPSuite.Core.Snapshots.Mappers
       ///    created classification />
       /// </typeparam>
       /// <typeparam name="TSubject">This is the type of the subject for the classifiable</typeparam>
-      Task UpdateProjectClassifications<TClassifiable, TSubject>(SnapshotClassification[] snapshots, SnapshotContext<TProject> snapshotContext, IReadOnlyCollection<TSubject> subjects)
+      Task UpdateProjectClassifications<TClassifiable, TSubject>(SnapshotClassification[] snapshots, SnapshotContext snapshotContext, IReadOnlyCollection<TSubject> subjects)
          where TClassifiable : Classifiable<TSubject>, new() where TSubject : IObjectBase;
 
-      Task<SnapshotClassification[]> MapClassificationsToSnapshots<TClassifiable>(TProject project) where TClassifiable : class, IClassifiableWrapper, new();
+      Task<SnapshotClassification[]> MapClassificationsToSnapshots<TClassifiable>(Project project) where TClassifiable : class, IClassifiableWrapper, new();
    }
 
-   public abstract class ClassificationSnapshotTask<TProject> where TProject : Project
+   public class ClassificationSnapshotTask : IClassificationSnapshotTask
    {
-      private readonly ClassificationMapper<TProject> _classificationMapper;
+      private readonly ClassificationMapper _classificationMapper;
 
-      protected ClassificationSnapshotTask(ClassificationMapper<TProject> classificationMapper)
+      public ClassificationSnapshotTask(ClassificationMapper classificationMapper)
       {
          _classificationMapper = classificationMapper;
       }
 
-      public Task UpdateProjectClassifications<TClassifiable, TSubject>(SnapshotClassification[] snapshots, SnapshotContext<TProject> snapshotContext, IReadOnlyCollection<TSubject> subjects)
+      public Task UpdateProjectClassifications<TClassifiable, TSubject>(SnapshotClassification[] snapshots, SnapshotContext snapshotContext, IReadOnlyCollection<TSubject> subjects)
          where TClassifiable : Classifiable<TSubject>, new() where TSubject : IObjectBase
       {
          if (snapshots == null)
@@ -47,10 +47,10 @@ namespace OSPSuite.Core.Snapshots.Mappers
          return Task.WhenAll(tasks);
       }
 
-      private async Task updateProjectFor<TClassifiable, TSubject>(SnapshotClassification snapshot, IReadOnlyCollection<TSubject> subjects, SnapshotContext<TProject> snapshotContext, ModelClassification parent = null)
+      private async Task updateProjectFor<TClassifiable, TSubject>(SnapshotClassification snapshot, IReadOnlyCollection<TSubject> subjects, SnapshotContext snapshotContext, ModelClassification parent = null)
          where TClassifiable : Classifiable<TSubject>, new() where TSubject : IObjectBase
       {
-         var classification = await _classificationMapper.MapToModel(snapshot, ContextFor<TClassifiable, TSubject>(snapshotContext));
+         var classification = await _classificationMapper.MapToModel(snapshot, contextFor<TClassifiable, TSubject>(snapshotContext));
          classification.Parent = parent;
          var project = snapshotContext.Project;
          project.AddClassification(classification);
@@ -72,9 +72,12 @@ namespace OSPSuite.Core.Snapshots.Mappers
          }
       }
 
-      protected abstract ClassificationSnapshotContext<TProject> ContextFor<TClassifiable, TSubject>(SnapshotContext<TProject> snapshotContext) where TClassifiable : Classifiable<TSubject>, new() where TSubject : IObjectBase;
+      private ClassificationSnapshotContext contextFor<TClassifiable, TSubject>(SnapshotContext snapshotContext) where TClassifiable : Classifiable<TSubject>, new() where TSubject : IObjectBase
+      {
+         return new ClassificationSnapshotContext(ClassificationTypeFor<TClassifiable>(), snapshotContext);
+      }
 
-      public Task<SnapshotClassification[]> MapClassificationsToSnapshots<TClassifiable>(TProject project) where TClassifiable : class, IClassifiableWrapper, new()
+      public Task<SnapshotClassification[]> MapClassificationsToSnapshots<TClassifiable>(Project project) where TClassifiable : class, IClassifiableWrapper, new()
       {
          var classifications = project.AllClassificationsByType(ClassificationTypeFor<TClassifiable>()).OfType<ModelClassification>().ToList();
          var classifiables = project.AllClassifiablesByType<TClassifiable>();

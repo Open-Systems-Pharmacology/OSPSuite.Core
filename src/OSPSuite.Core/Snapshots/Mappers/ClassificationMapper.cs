@@ -7,9 +7,9 @@ using SnapshotClassification = OSPSuite.Core.Snapshots.Classification;
 
 namespace OSPSuite.Core.Snapshots.Mappers
 {
-   public abstract class ClassificationSnapshotContext<TProject> : SnapshotContext<TProject> where TProject : Project
+   public class ClassificationSnapshotContext : SnapshotContext
    {
-      protected ClassificationSnapshotContext(ClassificationType classificationType, SnapshotContext<TProject> baseContext, int version) : base(baseContext.Project, version)
+      public ClassificationSnapshotContext(ClassificationType classificationType, SnapshotContext baseContext) : base(baseContext)
       {
          ClassificationType = classificationType;
       }
@@ -17,9 +17,9 @@ namespace OSPSuite.Core.Snapshots.Mappers
       public ClassificationType ClassificationType { get; }
    }
 
-   public abstract class ClassificationMapper<TProject> : SnapshotMapperBase<ModelClassification, SnapshotClassification, ClassificationSnapshotContext<TProject>, ClassificationContext> where TProject : Project
+   public class ClassificationMapper : SnapshotMapperBase<ModelClassification, SnapshotClassification, ClassificationSnapshotContext, ClassificationContext>
    {
-      public override Task<ModelClassification> MapToModel(SnapshotClassification snapshot, ClassificationSnapshotContext<TProject> snapshotContext)
+      public override Task<ModelClassification> MapToModel(SnapshotClassification snapshot, ClassificationSnapshotContext snapshotContext)
       {
          var classification = new ModelClassification
          {

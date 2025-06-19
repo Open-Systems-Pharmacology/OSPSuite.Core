@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
@@ -9,12 +8,12 @@ using SnapshotDataRepository = OSPSuite.Core.Snapshots.DataRepository;
 
 namespace OSPSuite.Core.Snapshots.Mappers
 {
-   public abstract class DataRepositoryMapper<TProject, TSnapshotContext> : ObjectBaseSnapshotMapperBase<Domain.Data.DataRepository, SnapshotDataRepository, TSnapshotContext> where TProject : Project where TSnapshotContext : SnapshotContext<TProject>
+   public class DataRepositoryMapper : ObjectBaseSnapshotMapperBase<Domain.Data.DataRepository, SnapshotDataRepository, SnapshotContext>
    {
-      private readonly ExtendedPropertyMapper<TProject> _extendedPropertyMapper;
-      private readonly DataColumnMapper<TProject> _dataColumnMapper;
+      private readonly ExtendedPropertyMapper _extendedPropertyMapper;
+      private readonly DataColumnMapper _dataColumnMapper;
 
-      public DataRepositoryMapper(ExtendedPropertyMapper<TProject> extendedPropertyMapper, DataColumnMapper<TProject> dataColumnMapper)
+      public DataRepositoryMapper(ExtendedPropertyMapper extendedPropertyMapper, DataColumnMapper dataColumnMapper)
       {
          _extendedPropertyMapper = extendedPropertyMapper;
          _dataColumnMapper = dataColumnMapper;
@@ -32,10 +31,10 @@ namespace OSPSuite.Core.Snapshots.Mappers
 
       private Task<DataColumn[]> mapColumns(IEnumerable<Domain.Data.DataColumn> dataRepositoryColumns) => _dataColumnMapper.MapToSnapshots(dataRepositoryColumns);
 
-      public override async Task<Domain.Data.DataRepository> MapToModel(SnapshotDataRepository snapshot, TSnapshotContext snapshotContext)
+      public override async Task<Domain.Data.DataRepository> MapToModel(SnapshotDataRepository snapshot, SnapshotContext snapshotContext)
       {
          var dataRepository = new Domain.Data.DataRepository();
-         var contextWithDataRepository = ContextFor(snapshotContext, dataRepository);
+         var contextWithDataRepository = contextFor(snapshotContext, dataRepository);
          MapSnapshotPropertiesToModel(snapshot, dataRepository);
 
          var mapToModel = await _dataColumnMapper.MapToModel(snapshot.BaseGrid, contextWithDataRepository);
@@ -49,6 +48,9 @@ namespace OSPSuite.Core.Snapshots.Mappers
          return dataRepository;
       }
 
-      protected abstract SnapshotContextWithDataRepository<TProject> ContextFor(TSnapshotContext snapshotContext, Domain.Data.DataRepository dataRepository);
+      private SnapshotContextWithDataRepository contextFor(SnapshotContext snapshotContext, Domain.Data.DataRepository dataRepository)
+      {
+         return new SnapshotContextWithDataRepository(dataRepository, snapshotContext);
+      }
    }
 }

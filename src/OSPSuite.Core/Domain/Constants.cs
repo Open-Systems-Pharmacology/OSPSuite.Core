@@ -540,6 +540,8 @@ namespace OSPSuite.Core.Domain
 
       public static class ContainerName
       {
+
+         
          public static string ExpressionProfileName(string moleculeName, string species, string category)
             => compositeNameFor(char.Parse(ObjectPath.PATH_DELIMITER), moleculeName, species, category);
 

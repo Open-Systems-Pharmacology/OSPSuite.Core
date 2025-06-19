@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -7,9 +6,9 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Snapshots;
-using OSPSuite.Helpers.Snapshots;
+using OSPSuite.Core.Snapshots.Mappers;
+using OSPSuite.Helpers;
 using ModelDataInfo = OSPSuite.Core.Domain.Data.DataInfo;
-using SnapshotContext = OSPSuite.Helpers.Snapshots.SnapshotContext;
 using SnapshotDataInfo = OSPSuite.Core.Snapshots.DataInfo;
 
 namespace OSPSuite.Core.Mappers
@@ -19,14 +18,17 @@ namespace OSPSuite.Core.Mappers
       protected ExtendedPropertyMapper _extendedPropertyMapper;
       protected ExtendedProperty _extendedPropertySnapshot;
       protected ModelDataInfo _dataInfo;
-      protected DateTime _dateTime;
       protected IExtendedProperty _extendedProperty;
 
       protected override Task Context()
       {
          var molWeightDimension = A.Fake<IDimension>();
          _extendedPropertyMapper = A.Fake<ExtendedPropertyMapper>();
-         sut = new DataInfoMapper(_extendedPropertyMapper, molWeightDimension);
+         var dimensionFactory = A.Fake<IDimensionFactory>();
+
+         A.CallTo(() => dimensionFactory.Dimension(Constants.Parameters.MOL_WEIGHT)).Returns(molWeightDimension);
+
+         sut = new DataInfoMapper(_extendedPropertyMapper, dimensionFactory);
 
          _extendedPropertySnapshot = new ExtendedProperty();
 
@@ -56,7 +58,7 @@ namespace OSPSuite.Core.Mappers
 
       protected override async Task Because()
       {
-         _result = await sut.MapToModel(_snapshot, new SnapshotContext());
+         _result = await sut.MapToModel(_snapshot, new SnapshotContext(new TestProject(), SnapshotVersions.Current));
       }
 
       [Observation]

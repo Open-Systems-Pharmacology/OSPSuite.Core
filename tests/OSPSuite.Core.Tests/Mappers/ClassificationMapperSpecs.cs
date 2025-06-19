@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Snapshots;
 using OSPSuite.Core.Snapshots.Mappers;
-using OSPSuite.Helpers.Snapshots;
+using OSPSuite.Helpers;
 using Classification = OSPSuite.Core.Snapshots.Classification;
 using DataRepository = OSPSuite.Core.Domain.Data.DataRepository;
-using SnapshotContext = OSPSuite.Helpers.Snapshots.SnapshotContext;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -47,7 +47,7 @@ namespace OSPSuite.Core.Mappers
 
       protected override async Task Because()
       {
-         _result = await sut.MapToModel(_child, new ClassificationSnapshotContext(ClassificationType.ObservedData, new SnapshotContext()));
+         _result = await sut.MapToModel(_child, new ClassificationSnapshotContext(ClassificationType.ObservedData, new SnapshotContext(new TestProject(), SnapshotVersions.Current)));
       }
 
       [Observation]
