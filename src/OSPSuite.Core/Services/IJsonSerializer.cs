@@ -22,5 +22,9 @@ namespace OSPSuite.Core.Services
       Task<T> DeserializeFromString<T>(string jsonString) where T : class;
       
       string Serialize(object objectToSerialize);
+      
+      Task<T> DeserializeFromBase64String<T>(string base64String) where T : class;
+      
+      string SerializeToBase64String(object objectToSerialize);
    }
 }
