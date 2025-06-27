@@ -8,7 +8,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Snapshots.Mappers
 {
-   public abstract class CurveChartMapper<TCurveChart> : ObjectBaseSnapshotMapperBase<TCurveChart, CurveChart, SimulationAnalysisContext> where TCurveChart : Core.Chart.CurveChart
+   public abstract class CurveChartMapper<TCurveChart, TSnapshot> : ObjectBaseSnapshotMapperBase<TCurveChart, TSnapshot, SimulationAnalysisContext> where TCurveChart : Core.Chart.CurveChart where TSnapshot : CurveChart, new()
    {
       private readonly ChartMapper _chartMapper;
       private readonly AxisMapper _axisMapper;
@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
          _idGenerator = idGenerator;
       }
 
-      public override async Task<CurveChart> MapToSnapshot(TCurveChart curveChart)
+      public override async Task<TSnapshot> MapToSnapshot(TCurveChart curveChart)
       {
          var snapshot = await SnapshotFrom(curveChart);
          await _chartMapper.MapToSnapshot(curveChart, snapshot);
@@ -33,7 +33,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
          return snapshot;
       }
 
-      public override async Task<TCurveChart> MapToModel(CurveChart snapshot, SimulationAnalysisContext simulationAnalysisContext)
+      public override async Task<TCurveChart> MapToModel(TSnapshot snapshot, SimulationAnalysisContext simulationAnalysisContext)
       {
          var curveChart = ChartFactoryFunc().WithId(_idGenerator.NewId());
          MapSnapshotPropertiesToModel(snapshot, curveChart);
@@ -53,6 +53,13 @@ namespace OSPSuite.Core.Snapshots.Mappers
       {
          var curves = await _curveMapper.MapToModels(snapshotCurves, simulationAnalysisContext);
          curves?.Each(x => curveChart.AddCurve(x, useAxisDefault: false));
+      }
+   }
+
+   public abstract class CurveChartMapper<TCurveChart> : CurveChartMapper<TCurveChart, CurveChart> where TCurveChart : Core.Chart.CurveChart
+   {
+      protected CurveChartMapper(ChartMapper chartMapper, AxisMapper axisMapper, CurveMapper curveMapper, IIdGenerator idGenerator) : base(chartMapper, axisMapper, curveMapper, idGenerator)
+      {
       }
    }
 

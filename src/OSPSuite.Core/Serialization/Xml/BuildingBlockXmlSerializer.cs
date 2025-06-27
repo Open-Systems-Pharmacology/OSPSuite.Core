@@ -100,6 +100,7 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          base.PerformMapping();
          Map(x => x.PKSimVersion);
+         Map(x => x.SnapshotOriginModuleId);
       }
    }
 

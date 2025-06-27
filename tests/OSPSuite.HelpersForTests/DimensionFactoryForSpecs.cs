@@ -32,6 +32,7 @@ namespace OSPSuite.Helpers
          factory.AddDimension(new Dimension(new BaseDimensionRepresentation(), Constants.Dimension.AMOUNT_PER_TIME, "mol/min"));
          factory.AddDimension(new Dimension(new BaseDimensionRepresentation(), Constants.Dimension.VOLUME, "l"));
          factory.AddDimension(Constants.Dimension.NO_DIMENSION);
+         factory.AddDimension(new Dimension(new BaseDimensionRepresentation(), Constants.Dimension.RESOLUTION, ""));
 
          var timeDimension = new Dimension(new BaseDimensionRepresentation(), Constants.Dimension.TIME, Constants.Dimension.Units.Minutes);
          timeDimension.AddUnit(new Unit(Constants.Dimension.Units.Days, 60 * 24, 0));
