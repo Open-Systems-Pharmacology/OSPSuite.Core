@@ -14,11 +14,11 @@ namespace OSPSuite.Core.Snapshots.Mappers
             return null;
 
          var snapshot = await SnapshotFrom(runMode);
-         await MapRunModeParameters(snapshot, runMode);
+         MapRunModeParameters(snapshot, runMode);
          return snapshot;
       }
 
-      protected virtual async Task MapRunModeParameters(SnapshotParameterIdentificationRunMode snapshot, ModelParameterIdentificationRunMode runMode)
+      protected virtual void MapRunModeParameters(SnapshotParameterIdentificationRunMode snapshot, ModelParameterIdentificationRunMode runMode)
       {
          switch (runMode)
          {

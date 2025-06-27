@@ -32,11 +32,18 @@ namespace OSPSuite.Core.Snapshots.Mappers
       }
    }
 
-   public abstract class NewableCurveChartMapper<TCurveChart> : CurveChartMapper<TCurveChart> where TCurveChart : Core.Chart.CurveChart, new()
+   public abstract class NewableCurveChartMapper<TCurveChart, TSnapshot> : CurveChartMapper<TCurveChart, TSnapshot> where TCurveChart : Core.Chart.CurveChart, new() where TSnapshot : CurveChart, new()
    {
       protected NewableCurveChartMapper(ChartMapper chartMapper, AxisMapper axisMapper, CurveMapper curveMapper, IIdGenerator idGenerator) : base(chartMapper, axisMapper, curveMapper, idGenerator)
       {
          ChartFactoryFunc = () => new TCurveChart();
+      }
+   }
+
+   public abstract class NewableCurveChartMapper<TCurveChart> : NewableCurveChartMapper<TCurveChart, CurveChart> where TCurveChart : Core.Chart.CurveChart, new()
+   {
+      protected NewableCurveChartMapper(ChartMapper chartMapper, AxisMapper axisMapper, CurveMapper curveMapper, IIdGenerator idGenerator) : base(chartMapper, axisMapper, curveMapper, idGenerator)
+      {
       }
    }
 }

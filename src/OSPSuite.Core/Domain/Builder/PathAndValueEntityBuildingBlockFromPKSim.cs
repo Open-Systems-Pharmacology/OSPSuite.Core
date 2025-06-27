@@ -5,6 +5,7 @@ namespace OSPSuite.Core.Domain.Builder
    public abstract class PathAndValueEntityBuildingBlockFromPKSim<T> : PathAndValueEntityBuildingBlock<T> where T : PathAndValueEntity
    {
       public string PKSimVersion { set; get; }
+      public string SnapshotOriginModuleId { set; get; }
 
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
