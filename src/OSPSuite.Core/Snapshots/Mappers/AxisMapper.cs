@@ -1,5 +1,5 @@
-﻿using OSPSuite.Core.Domain.UnitSystem;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Snapshots.Mappers
 {
