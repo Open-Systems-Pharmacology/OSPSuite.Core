@@ -277,9 +277,25 @@ namespace OSPSuite.Core.Domain.Services
          //we update the replacement context first when the root container is created so that we can replace keywords from the root container
          modelConfiguration.UpdateReplacementContext();
 
-         model.Neighborhoods = _spatialStructureMerger.MergeNeighborhoods(modelConfiguration);
+         IReadOnlyList<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> ignoredNeighborhoods;
+         (model.Neighborhoods, ignoredNeighborhoods) = _spatialStructureMerger.MergeNeighborhoods(modelConfiguration);
 
-         return validate<SpatialStructureValidator>(modelConfiguration);
+
+         var validationResult = validate<SpatialStructureValidator>(modelConfiguration);
+         if (modelConfiguration.ShouldValidate)
+            validationResult.AddMessagesFrom(warnMissingNeighborhoods(ignoredNeighborhoods));
+
+         return validationResult;
+      }
+
+      private ValidationResult warnMissingNeighborhoods(IReadOnlyList<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> ignoredNeighborhoods)
+      {
+         return new ValidationResult(ignoredNeighborhoods.Select(x => messageForMissingNeighborhood(x.builder, x.buildingBlock)));
+      }
+
+      private ValidationMessage messageForMissingNeighborhood(NeighborhoodBuilder builder, SpatialStructure buildingBlock)
+      {
+         return new ValidationMessage(NotificationType.Warning, Warning.NeighborhoodWasNotFoundInModel(builder.Name, buildingBlock.DisplayName), builder, buildingBlock);
       }
 
       private ValidationResult checkCircularReferences(ModelConfiguration modelConfiguration)

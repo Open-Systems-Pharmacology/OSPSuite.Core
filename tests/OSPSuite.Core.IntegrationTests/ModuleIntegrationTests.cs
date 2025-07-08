@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -38,9 +39,10 @@ namespace OSPSuite.Core
    internal class When_running_the_case_study_for_module_integration : concern_for_ModuleIntegration
    {
       [Observation]
-      public void should_return_a_successful_validation()
+      public void should_return_a_successful_validation_with_warning()
       {
-         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Valid, _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
+         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.ValidWithWarnings, _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
+         _result.ValidationResult.Messages.Single().Text.ShouldBeEqualTo(Warning.NeighborhoodWasNotFoundInModel("does_not_match_existing", "Module1 - SPATIAL STRUCTURE MODULE 1"));
       }
 
       [Observation]
