@@ -145,13 +145,13 @@ namespace OSPSuite.Core.Domain.Mappers
 
    internal class NeighborhoodMapResult
    {
-      private readonly List<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> _ignoredNeighborHoods;
+      private readonly List<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> _ignoredNeighborhoods;
       private readonly IContainer _container;
 
       public NeighborhoodMapResult(IContainer container)
       {
          _container = container;
-         _ignoredNeighborHoods = new List<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)>();
+         _ignoredNeighborhoods = new List<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)>();
       }
 
       /// <summary>
@@ -160,13 +160,13 @@ namespace OSPSuite.Core.Domain.Mappers
       /// </summary>
       public void Add(NeighborhoodBuilder builder, SpatialStructure buildingBlock)
       {
-         _ignoredNeighborHoods.Add((builder, buildingBlock));
+         _ignoredNeighborhoods.Add((builder, buildingBlock));
       }
 
       internal void Deconstruct(out IContainer container, out IReadOnlyList<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> ignoredNeighborhoods)
       {
          container = _container;
-         ignoredNeighborhoods = _ignoredNeighborHoods;
+         ignoredNeighborhoods = _ignoredNeighborhoods;
       }
    }
 }
