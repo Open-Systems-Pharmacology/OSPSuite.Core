@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Domain.Services
    internal interface ISpatialStructureMerger
    {
       IContainer MergeContainerStructure(ModelConfiguration modelConfiguration);
-      IContainer MergeNeighborhoods(ModelConfiguration modelConfiguration);
+      NeighborhoodMapResult MergeNeighborhoods(ModelConfiguration modelConfiguration);
    }
 
    internal class SpatialStructureMerger : ISpatialStructureMerger
@@ -147,7 +147,7 @@ namespace OSPSuite.Core.Domain.Services
             _containerMergeTask.AddOrReplaceInContainer(parentContainer, containerToMerge);
       }
 
-      public IContainer MergeNeighborhoods(ModelConfiguration modelConfiguration) => _neighborhoodsMapper.MapFrom(modelConfiguration);
+      public NeighborhoodMapResult MergeNeighborhoods(ModelConfiguration modelConfiguration) => _neighborhoodsMapper.MapFrom(modelConfiguration);
    }
 
    internal class ContainerNotFoundException : OSPSuiteException
