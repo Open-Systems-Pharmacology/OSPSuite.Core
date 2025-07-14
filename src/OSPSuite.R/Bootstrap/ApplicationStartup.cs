@@ -12,7 +12,7 @@ using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Container.Autofac;
 using OSPSuite.Infrastructure.Import;
 using OSPSuite.R.Domain.UnitSystem;
-using OSPSuite.R.MinimalImplementations;
+using OSPSuite.MinimalImplementations;
 using OSPSuite.Utility.Container;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 

@@ -6,11 +6,11 @@ using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.R.Domain;
 using OSPSuite.R.Mapper;
-using OSPSuite.R.MinimalImplementations;
+using OSPSuite.MinimalImplementations;
 using OSPSuite.R.Services;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Events;
-using DisplayUnitRetriever = OSPSuite.R.MinimalImplementations.DisplayUnitRetriever;
+using DisplayUnitRetriever = OSPSuite.MinimalImplementations.DisplayUnitRetriever;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.R

@@ -59,6 +59,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Infrastructure.Aut
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.R.Performance", "tests\OSPSuite.R.Performance\OSPSuite.R.Performance.csproj", "{806D7CE1-C84C-4731-AE66-498B4950A52F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.MinimalImplementations", "src\OSPSuite.MinimalImplementations\OSPSuite.MinimalImplementations.csproj", "{0047566B-5ECC-4C75-89BE-921C1C82C315}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -157,6 +159,10 @@ Global
 		{806D7CE1-C84C-4731-AE66-498B4950A52F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{806D7CE1-C84C-4731-AE66-498B4950A52F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{806D7CE1-C84C-4731-AE66-498B4950A52F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0047566B-5ECC-4C75-89BE-921C1C82C315}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0047566B-5ECC-4C75-89BE-921C1C82C315}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0047566B-5ECC-4C75-89BE-921C1C82C315}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0047566B-5ECC-4C75-89BE-921C1C82C315}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

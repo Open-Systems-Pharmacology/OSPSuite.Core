@@ -7,7 +7,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.R.MinimalImplementations;
+using OSPSuite.MinimalImplementations;
 using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.R.Domain
