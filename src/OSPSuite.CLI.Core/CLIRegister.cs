@@ -20,7 +20,6 @@ namespace OSPSuite.CLI.Core
             //Register Minimal implementations
             scan.IncludeNamespaceContainingType<DisplayUnitRetriever>();
 
-
             // This will be registered as singleton
             scan.ExcludeType<RGroupRepository>();
             scan.WithConvention<OSPSuiteRegistrationConvention>();
