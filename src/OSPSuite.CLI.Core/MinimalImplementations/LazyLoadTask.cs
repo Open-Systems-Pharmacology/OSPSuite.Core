@@ -1,7 +1,7 @@
 ﻿using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 
-namespace OSPSuite.MinimalImplementations
+namespace OSPSuite.CLI.Core.MinimalImplementations
 {
     public class LazyLoadTask : ILazyLoadTask
     {

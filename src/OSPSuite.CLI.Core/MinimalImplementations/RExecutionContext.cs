@@ -4,7 +4,7 @@ using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
-namespace OSPSuite.MinimalImplementations
+namespace OSPSuite.CLI.Core.MinimalImplementations
 {
     public class RExecutionContext : IOSPSuiteExecutionContext
     {

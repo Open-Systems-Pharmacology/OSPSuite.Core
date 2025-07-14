@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using OSPSuite.BDDHelper;
+using OSPSuite.CLI.Core.MinimalImplementations;
 using OSPSuite.Core.Domain;
-using OSPSuite.MinimalImplementations;
 
 namespace OSPSuite.R.Services
 {

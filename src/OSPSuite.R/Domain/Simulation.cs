@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using OSPSuite.CLI.Core.MinimalImplementations;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.MinimalImplementations;
 using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.R.Domain

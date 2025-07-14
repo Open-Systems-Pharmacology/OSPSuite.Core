@@ -8,8 +8,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{25A7357D-0812-44F3-AF90-244FD752FAE2}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build-and-publish_v13.yml = .github\workflows\build-and-publish_v13.yml
-		.github\workflows\coverage.yml = .github\workflows\coverage.yml
 		.github\workflows\build-pr_v13.yml = .github\workflows\build-pr_v13.yml
+		.github\workflows\coverage.yml = .github\workflows\coverage.yml
 		logo.png = logo.png
 		rakefile.rb = rakefile.rb
 		SolutionInfo.cs = SolutionInfo.cs
@@ -59,7 +59,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Infrastructure.Aut
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.R.Performance", "tests\OSPSuite.R.Performance\OSPSuite.R.Performance.csproj", "{806D7CE1-C84C-4731-AE66-498B4950A52F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.MinimalImplementations", "src\OSPSuite.MinimalImplementations\OSPSuite.MinimalImplementations.csproj", "{0047566B-5ECC-4C75-89BE-921C1C82C315}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.CLI.Core", "src\OSPSuite.CLI.Core\OSPSuite.CLI.Core.csproj", "{0047566B-5ECC-4C75-89BE-921C1C82C315}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

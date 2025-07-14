@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using OSPSuite.Core.Services;
 
-namespace OSPSuite.MinimalImplementations
+namespace OSPSuite.CLI.Core.MinimalImplementations
 {
     public class DialogCreator : IDialogCreator
     {

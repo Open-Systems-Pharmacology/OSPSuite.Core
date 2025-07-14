@@ -2,9 +2,8 @@
 using System.Threading;
 using OSPSuite.Core.Services;
 
-namespace OSPSuite.MinimalImplementations
+namespace OSPSuite.CLI.Core.MinimalImplementations
 {
-
     public class HeavyWorkManager : IHeavyWorkManager
     {
         public event EventHandler<HeavyWorkEventArgs> HeavyWorkedFinished = delegate { };

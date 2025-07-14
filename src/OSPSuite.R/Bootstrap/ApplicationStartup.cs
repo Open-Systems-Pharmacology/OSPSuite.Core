@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading;
+using OSPSuite.CLI.Core;
+using OSPSuite.CLI.Core.MinimalImplementations;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Mappers;
@@ -12,7 +14,6 @@ using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Container.Autofac;
 using OSPSuite.Infrastructure.Import;
 using OSPSuite.R.Domain.UnitSystem;
-using OSPSuite.MinimalImplementations;
 using OSPSuite.Utility.Container;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
@@ -50,6 +51,7 @@ namespace OSPSuite.R.Bootstrap
             container.AddRegister(x => x.FromType<InfrastructureRegister>());
             container.AddRegister(x => x.FromType<InfrastructureImportRegister>());
             container.AddRegister(x => x.FromType<RRegister>());
+            container.AddRegister(x => x.FromType<CLIRegister>());
 
             registerCoreDependencies(container);
 

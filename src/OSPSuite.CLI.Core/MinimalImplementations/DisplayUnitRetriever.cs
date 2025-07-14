@@ -2,7 +2,7 @@
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
 
-namespace OSPSuite.MinimalImplementations
+namespace OSPSuite.CLI.Core.MinimalImplementations
 {
     public class DisplayUnitRetriever : IDisplayUnitRetriever
     {

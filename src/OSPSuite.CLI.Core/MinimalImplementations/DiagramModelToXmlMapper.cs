@@ -1,9 +1,8 @@
-﻿using System.Xml;
-using OSPSuite.Core.Diagram;
+﻿using OSPSuite.Core.Diagram;
 using OSPSuite.Core.Serialization.Diagram;
-using OSPSuite.MinimalImplementations;
+using System.Xml;
 
-namespace OSPSuite.MinimalImplementations
+namespace OSPSuite.CLI.Core.MinimalImplementations
 {
    public class DiagramModelToXmlMapper : IDiagramModelToXmlMapper
    {
@@ -26,7 +25,7 @@ namespace OSPSuite.MinimalImplementations
 
       public IDiagramModel XmlDocumentToDiagramModel(XmlDocument xmlDoc)
       {
-         return new DiagramModelMinimalImplementation();
+         return new CLIDiagramModel();
       }
    }
 }

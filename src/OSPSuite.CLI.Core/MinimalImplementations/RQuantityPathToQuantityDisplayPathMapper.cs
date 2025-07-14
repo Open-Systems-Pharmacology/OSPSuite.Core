@@ -2,7 +2,7 @@
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Mappers;
 
-namespace OSPSuite.MinimalImplementations
+namespace OSPSuite.CLI.Core.MinimalImplementations
 {
     public class RQuantityPathToQuantityDisplayPathMapper : QuantityPathToQuantityDisplayPathMapper
     {

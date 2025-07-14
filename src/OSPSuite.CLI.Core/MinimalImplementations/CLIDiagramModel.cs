@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Linq;
 using OSPSuite.Core.Diagram;
 
-namespace OSPSuite.MinimalImplementations
+namespace OSPSuite.CLI.Core.MinimalImplementations
 {
-   public class DiagramModelMinimalImplementation : IDiagramModel
+   public class CLIDiagramModel : IDiagramModel
    {
       public PointF Location { get; set; }
       public PointF Center { get; set; }
@@ -89,7 +89,7 @@ namespace OSPSuite.MinimalImplementations
 
       public IDiagramModel CreateCopy(string containerId = null)
       {
-         return new DiagramModelMinimalImplementation();
+         return new CLIDiagramModel();
       }
 
       public void ReplaceNodeIds(IDictionary<string, string> changedIds)
@@ -167,7 +167,7 @@ namespace OSPSuite.MinimalImplementations
 
       public IDiagramModel Create()
       {
-         return new DiagramModelMinimalImplementation();
+         return new CLIDiagramModel();
       }
    }
 }

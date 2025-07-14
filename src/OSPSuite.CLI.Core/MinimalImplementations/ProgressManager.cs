@@ -1,6 +1,6 @@
 ﻿using OSPSuite.Utility.Events;
 
-namespace OSPSuite.MinimalImplementations
+namespace OSPSuite.CLI.Core.MinimalImplementations
 {
     public class ProgressManager : IProgressManager
     {

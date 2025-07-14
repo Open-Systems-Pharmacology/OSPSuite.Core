@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using OSPSuite.Core.Domain;
 
-namespace OSPSuite.MinimalImplementations
+namespace OSPSuite.CLI.Core.MinimalImplementations
 {
     public class RGroupRepository : IGroupRepository
     {

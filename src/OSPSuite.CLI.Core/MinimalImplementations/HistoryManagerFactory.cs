@@ -2,7 +2,7 @@
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Infrastructure.Serialization.ORM.History;
 
-namespace OSPSuite.MinimalImplementations
+namespace OSPSuite.CLI.Core.MinimalImplementations
 {
    public class HistoryManagerFactory : IHistoryManagerFactory
    {
