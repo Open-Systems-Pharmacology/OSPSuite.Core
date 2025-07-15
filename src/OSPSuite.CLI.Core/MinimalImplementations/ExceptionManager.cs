@@ -1,5 +1,6 @@
 ﻿using System;
 using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.CLI.Core.MinimalImplementations
 {
@@ -7,7 +8,7 @@ namespace OSPSuite.CLI.Core.MinimalImplementations
    {
       public override void LogException(Exception ex)
       {
-         throw ex;
+         Console.WriteLine(ex.FullMessage());
       }
    }
 }
