@@ -4,7 +4,7 @@ using OSPSuite.Core.Domain;
 
 namespace OSPSuite.CLI.Core.MinimalImplementations
 {
-    public class RProject : Project
+    public class Project : OSPSuite.Core.Domain.Project
     {
         public override bool HasChanged { get; set; }
 

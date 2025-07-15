@@ -21,17 +21,17 @@ namespace OSPSuite.CLI.Core
             scan.IncludeNamespaceContainingType<DisplayUnitRetriever>();
 
             // This will be registered as singleton
-            scan.ExcludeType<RGroupRepository>();
+            scan.ExcludeType<GroupRepository>();
             scan.WithConvention<OSPSuiteRegistrationConvention>();
          });
 
          //Add specific implementations that are not registered automatically
-         container.Register<IObjectTypeResolver, RObjectTypeResolver>();
+         container.Register<IObjectTypeResolver, ObjectTypeResolver>();
          container.Register<IDiagramModel, CLIDiagramModel>();
 
          //Singletons
-         container.Register<IGroupRepository, RGroupRepository>(LifeStyle.Singleton);
-         container.Register<IOSPSuiteExecutionContext, RExecutionContext>(LifeStyle.Singleton);
+         container.Register<IGroupRepository, GroupRepository>(LifeStyle.Singleton);
+         container.Register<IOSPSuiteExecutionContext, ExecutionContext>(LifeStyle.Singleton);
       }
    }
 }

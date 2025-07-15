@@ -2,7 +2,7 @@
 
 namespace OSPSuite.CLI.Core.MinimalImplementations
 {
-    public class RObjectTypeResolver : IObjectTypeResolver
+    public class ObjectTypeResolver : IObjectTypeResolver
     {
         public string TypeFor<T>(T objectRequiringType) where T : class
         {

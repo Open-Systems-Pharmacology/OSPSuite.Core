@@ -4,7 +4,7 @@ using OSPSuite.Core.Domain;
 
 namespace OSPSuite.CLI.Core.MinimalImplementations
 {
-    public class RGroupRepository : IGroupRepository
+    public class GroupRepository : IGroupRepository
     {
         private readonly ConcurrentDictionary<string, IGroup> _allGroups = new ConcurrentDictionary<string, IGroup>();
 

@@ -61,7 +61,7 @@ namespace OSPSuite.R.Domain
          set
          {
             CoreSimulation.Name = value;
-            new RenameModelCommand(CoreSimulation.Model, value).Execute(new RExecutionContext());
+            new RenameModelCommand(CoreSimulation.Model, value).Execute(new ExecutionContext());
          }
       }
 

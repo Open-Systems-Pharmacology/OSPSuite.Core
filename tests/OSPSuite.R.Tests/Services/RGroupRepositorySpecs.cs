@@ -9,7 +9,7 @@ namespace OSPSuite.R.Services
    {
       protected override void Context()
       {
-         sut = new RGroupRepository();
+         sut = new GroupRepository();
       }
    }
 

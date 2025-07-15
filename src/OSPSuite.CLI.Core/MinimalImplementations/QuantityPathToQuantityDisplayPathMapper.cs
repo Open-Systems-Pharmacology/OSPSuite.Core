@@ -4,9 +4,9 @@ using OSPSuite.Core.Domain.Mappers;
 
 namespace OSPSuite.CLI.Core.MinimalImplementations
 {
-    public class RQuantityPathToQuantityDisplayPathMapper : QuantityPathToQuantityDisplayPathMapper
+    public class QuantityPathToQuantityDisplayPathMapper : OSPSuite.Core.Domain.Mappers.QuantityPathToQuantityDisplayPathMapper
     {
-        public RQuantityPathToQuantityDisplayPathMapper(IObjectPathFactory objectPathFactory, IPathToPathElementsMapper pathToPathElementsMapper,
+        public QuantityPathToQuantityDisplayPathMapper(IObjectPathFactory objectPathFactory, IPathToPathElementsMapper pathToPathElementsMapper,
            IDataColumnToPathElementsMapper dataColumnToPathElementsMapper) : base(objectPathFactory, pathToPathElementsMapper,
            dataColumnToPathElementsMapper)
         {

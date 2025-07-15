@@ -6,7 +6,7 @@ using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.CLI.Core.MinimalImplementations
 {
-    public class RExecutionContext : IOSPSuiteExecutionContext
+    public class ExecutionContext : IOSPSuiteExecutionContext
     {
         public string TypeFor<T>(T obj) where T : class => obj?.GetType().Name;
 
@@ -60,7 +60,7 @@ namespace OSPSuite.CLI.Core.MinimalImplementations
             //nothing to do
         }
 
-        public IProject Project { get; } = new RProject();
+        public IProject Project { get; } = new Project();
 
         public T Clone<T>(T objectToClone) where T : class, IObjectBase
         {
