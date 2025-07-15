@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
+    <ProjectReference Include="..\OSPSuite.CLI.Core\OSPSuite.CLI.Core.csproj" />
     <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj" />
     <ProjectReference Include="..\OSPSuite.Infrastructure.Autofac\OSPSuite.Infrastructure.Autofac.csproj" />
     <ProjectReference Include="..\OSPSuite.Infrastructure.Import\OSPSuite.Infrastructure.Import.csproj" />

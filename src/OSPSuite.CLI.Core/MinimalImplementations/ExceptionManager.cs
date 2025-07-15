@@ -2,7 +2,7 @@
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
-namespace OSPSuite.R.MinimalImplementations
+namespace OSPSuite.CLI.Core.MinimalImplementations
 {
    public class ExceptionManager : ExceptionManagerBase
    {
