@@ -3,7 +3,6 @@ using OSPSuite.Core;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Diagram;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Container;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
@@ -25,8 +24,6 @@ namespace OSPSuite.CLI.Core
             scan.WithConvention<OSPSuiteRegistrationConvention>();
          });
 
-         //Add specific implementations that are not registered automatically
-         container.Register<IObjectTypeResolver, ObjectTypeResolver>();
          container.Register<IDiagramModel, CLIDiagramModel>();
 
          //Singletons
