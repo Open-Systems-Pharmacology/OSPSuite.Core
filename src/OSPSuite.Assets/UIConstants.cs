@@ -1903,6 +1903,19 @@ namespace OSPSuite.Assets
 
       public static string CannotNavigateBeyondLumenSegment(string keyword, string path) => $"Usage of keyword '{keyword}' is not valid for '{path}'";
 
+      public static string CannotFindBuildingBlockInSnapshot(string buildingBlockType, string buildingBlockName, string project) => $"Could not find {buildingBlockType} '{buildingBlockName}' in snapshot '{project}'.";
+
+      public static string CannotFindSimulationInSnapshot(string simulationName, string project) => CannotFindBuildingBlockInSnapshot(ObjectTypes.Simulation, simulationName, project);
+
+      public static string CannotLoadSnapshotFromFile(string fileFullPath) => $"Cannot load snapshot from file '{fileFullPath}'. Please make sure that the file exists and that it is a valid snapshot file.";
+
+      public static string FileDoesNotExist(string fileFullPath) => $"File '{fileFullPath}' does not exist.";
+
+      public static string UnableToLoadQualificationConfigurationFromFile(string fileFullPath) => $"Unable to read configuration from file '{fileFullPath}'";
+
+      public static string SimulationUsedInPlotsAreNotExported(IReadOnlyList<string> simulationNames, string project)
+         => $"{ObjectTypes.Simulation.PluralizeIf(simulationNames)} {simulationNames.ToString(", ", "'")} used in plots {"is".PluralizeIf(simulationNames)} not found in the list of exported simulations for {ObjectTypes.Project} {project}";
+
 
       public static class SensitivityAnalysis
       {

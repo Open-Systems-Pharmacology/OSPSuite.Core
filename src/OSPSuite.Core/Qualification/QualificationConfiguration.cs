@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using OSPSuite.Assets;
+﻿using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Core.Qualification
 {
-   public class QualifcationConfiguration : IValidatable
+   public class QualificationConfiguration : IValidatable
    {
       /// <summary>
       /// Typically name of the project as referenced in the configuration fie
@@ -67,15 +66,15 @@ namespace OSPSuite.Core.Qualification
 
       public IBusinessRuleSet Rules { get; } = new BusinessRuleSet();
 
-      public QualifcationConfiguration()
+      public QualificationConfiguration()
       {
          Rules.AddRange(new[]
          {
-            GenericRules.FileExists<QualifcationConfiguration>(x => x.SnapshotFile),
-            GenericRules.NonEmptyRule<QualifcationConfiguration>(x => x.OutputFolder, Error.QualificationOutputFolderNotDefined),
-            GenericRules.NonEmptyRule<QualifcationConfiguration>(x => x.MappingFile, Error.QualificationMappingFileNotDefined),
-            GenericRules.NonEmptyRule<QualifcationConfiguration>(x => x.ReportConfigurationFile, Error.QualificationReportConfigurationFileNotDefined),
-            GenericRules.NonEmptyRule<QualifcationConfiguration>(x => x.ObservedDataFolder, Error.QualificationObservedDataFolderNotDefined)
+            GenericRules.FileExists<QualificationConfiguration>(x => x.SnapshotFile),
+            GenericRules.NonEmptyRule<QualificationConfiguration>(x => x.OutputFolder, Error.QualificationOutputFolderNotDefined),
+            GenericRules.NonEmptyRule<QualificationConfiguration>(x => x.MappingFile, Error.QualificationMappingFileNotDefined),
+            GenericRules.NonEmptyRule<QualificationConfiguration>(x => x.ReportConfigurationFile, Error.QualificationReportConfigurationFileNotDefined),
+            GenericRules.NonEmptyRule<QualificationConfiguration>(x => x.ObservedDataFolder, Error.QualificationObservedDataFolderNotDefined)
          });
       }
    }

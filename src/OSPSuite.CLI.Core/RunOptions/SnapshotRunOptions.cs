@@ -1,10 +1,9 @@
-﻿using OSPSuite.CLI.Core.Services;
+﻿using System.Collections.Generic;
+using System.Text;
+using OSPSuite.CLI.Core.Services;
 using OSPSuite.Core.Domain;
 using OSPSuite.Utility.Reflection;
 using OSPSuite.Utility.Validation;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace OSPSuite.CLI.Core.RunOptions
 {
