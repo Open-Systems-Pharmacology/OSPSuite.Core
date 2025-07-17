@@ -13,4 +13,13 @@ namespace OSPSuite.Core.Reporting
          return DisplayName;
       }
    }
+
+   public static class ReportPartExtensions
+   {
+      public static T WithTitle<T>(this T reportPart, string title) where T : ReportPart
+      {
+         reportPart.Title = title;
+         return reportPart;
+      }
+   }
 }
