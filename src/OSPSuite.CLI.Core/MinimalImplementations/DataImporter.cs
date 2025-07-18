@@ -1,48 +1,65 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Utility.Exceptions;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.CLI.Core.MinimalImplementations
 {
-   public class DataImporter : IDataImporter
+   public class DataImporter : AbstractDataImporter
    {
-      public (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings, string dataFileName)
+      private readonly IOSPSuiteLogger _logger;
+
+      public DataImporter(IImporter importer, IOSPSuiteLogger logger, IDimensionFactory dimensionFactory) : base(importer, dimensionFactory)
+      {
+         _logger = logger;
+      }
+
+      public override bool AreFromSameMetaDataCombination(
+         DataRepository sourceDataRepository,
+         DataRepository targetDataRepository)
       {
          throw new NotImplementedException();
       }
 
-      public IReadOnlyList<DataRepository> ImportFromConfiguration(ImporterConfiguration configuration, IReadOnlyList<MetaDataCategory> metaDataCategories, IReadOnlyList<ColumnInfo> columnInfos, DataImporterSettings dataImporterSettings, string dataFileName)
+      public override ReloadDataSets CalculateReloadDataSetsFromConfiguration(
+         IReadOnlyList<DataRepository> dataSetsToImport,
+         IReadOnlyList<DataRepository> existingDataSets)
       {
          throw new NotImplementedException();
       }
 
-      public ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport, IReadOnlyList<DataRepository> existingDataSets)
+      public override (IReadOnlyList<DataRepository> DataRepositories, ImporterConfiguration Configuration) ImportDataSets(
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
+         IReadOnlyList<ColumnInfo> columnInfos,
+         DataImporterSettings dataImporterSettings,
+         string dataFileName)
       {
          throw new NotImplementedException();
       }
 
-      public IReadOnlyList<MetaDataCategory> DefaultMetaDataCategoriesForObservedData()
+      public override IReadOnlyList<DataRepository> ImportFromConfiguration(
+         ImporterConfiguration configuration,
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
+         IReadOnlyList<ColumnInfo> columnInfos,
+         DataImporterSettings dataImporterSettings,
+         string dataFileName)
       {
-         throw new NotImplementedException();
-      }
+         if (string.IsNullOrEmpty(dataFileName) || !File.Exists(dataFileName))
+            throw new OSPSuiteException(Error.InvalidFile);
 
-
-      public IReadOnlyList<ColumnInfo> ColumnInfosForObservedData()
-      {
-         throw new NotImplementedException();
-      }
-
-      public bool AreFromSameMetaDataCombination(DataRepository sourceDataRepository, DataRepository targetDataRepository)
-      {
-         throw new NotImplementedException();
-      }
-
-      public ImporterConfiguration ConfigurationFromData(string dataPath, IReadOnlyList<ColumnInfo> columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories, string sheetName = null)
-      {
-         throw new NotImplementedException();
+         var columnInfoCache = new ColumnInfoCache(columnInfos);
+         var importedData = _importer.ImportFromConfiguration(configuration, columnInfoCache, dataFileName, metaDataCategories, dataImporterSettings);
+         if (importedData.MissingSheets.Count != 0)
+            _logger.AddWarning(Captions.Importer.SheetsNotFound(importedData.MissingSheets));
+         return importedData.DataRepositories.Select(drm => drm.DataRepository).ToList();
       }
    }
 }
