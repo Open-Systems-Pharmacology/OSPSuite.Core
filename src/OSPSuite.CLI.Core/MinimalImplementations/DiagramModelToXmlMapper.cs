@@ -25,7 +25,7 @@ namespace OSPSuite.CLI.Core.MinimalImplementations
 
       public IDiagramModel XmlDocumentToDiagramModel(XmlDocument xmlDoc)
       {
-         return new CLIDiagramModel();
+         return new DiagramModel();
       }
    }
 }

@@ -24,8 +24,6 @@ namespace OSPSuite.CLI.Core
             scan.WithConvention<OSPSuiteRegistrationConvention>();
          });
 
-         container.Register<IDiagramModel, CLIDiagramModel>();
-
          //Singletons
          container.Register<IGroupRepository, GroupRepository>(LifeStyle.Singleton);
          container.Register<IOSPSuiteExecutionContext, ExecutionContext>(LifeStyle.Singleton);
