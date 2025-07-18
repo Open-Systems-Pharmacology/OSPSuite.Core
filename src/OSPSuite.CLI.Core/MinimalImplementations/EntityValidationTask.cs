@@ -6,13 +6,13 @@ using OSPSuite.Core.Services;
 
 namespace OSPSuite.CLI.Core.MinimalImplementations
 {
-   public class CLIEntityValidationTask : IEntityValidationTask
+   public class EntityValidationTask : IEntityValidationTask
    {
       private readonly IEntityValidator _entityValidator;
       private readonly IOSPSuiteExecutionContext _executionContext;
       private readonly IOSPSuiteLogger _logger;
 
-      public CLIEntityValidationTask(IEntityValidator entityValidator, IOSPSuiteExecutionContext executionContext, IOSPSuiteLogger logger)
+      public EntityValidationTask(IEntityValidator entityValidator, IOSPSuiteExecutionContext executionContext, IOSPSuiteLogger logger)
       {
          _entityValidator = entityValidator;
          _executionContext = executionContext;
