@@ -1506,6 +1506,9 @@ namespace OSPSuite.Assets
       public static readonly string ImporterEmptyFile = "The file you are trying to load is empty.";
       public static readonly string SnapshotIsOutdated = "Snapshot is outdated and cannot be loaded for the following reason: ";
 
+      public static string CannotFindSimulationParameterInSnapshot(string parameterPath, string simulationName, string project) =>
+         $"Could not find {ObjectTypes.Parameter} with path '{parameterPath}' in {ObjectTypes.Simulation} '{simulationName}' defined in snapshot {project}.";
+
       public static string SnapshotDuplicateEntryByName(string name, string type) =>
          $"Another {type} named '{name}' already exists in the project. Snapshot file is corrupted.";
       
