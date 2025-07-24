@@ -542,7 +542,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void SetNoCurvesSelectedHint(string hint) => _view.SetNoCurvesSelectedHint(hint);
 
-      public void Handle(ChartUpdatedEvent chartUpdatedEvent) => handleChartUpdate(chartUpdatedEvent, Chart.Curves, refreshCurveData: true);
+      public void Handle(ChartUpdatedEvent chartUpdatedEvent)
+      {
+         if (Chart != null)
+            handleChartUpdate(chartUpdatedEvent, Chart.Curves, refreshCurveData: true);
+      }
 
       public void Handle(CurveChartUpdatedEvent chartUpdatedEvent) => handleChartUpdate(chartUpdatedEvent, chartUpdatedEvent.CurvesToUpdate, chartUpdatedEvent.RefreshCurveData);
 
@@ -621,7 +625,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void Handle(ApplyChangesEvent eventToHandle)
       {
-         if(canHandle(eventToHandle))
+         if (canHandle(eventToHandle))
             Refresh();
       }
    }
