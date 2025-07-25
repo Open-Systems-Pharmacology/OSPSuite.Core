@@ -31,27 +31,42 @@ namespace OSPSuite.UI.Extensions
          setFontAndSizeSettings(chartControl, width, height, fontTitle, fontDescription, fontAxis, fontLegend);
       }
 
-      /// <summary>
-      ///    Copies the chart to clipboard as an image using export settings if defined
-      ///    Otherwise uses current visual settings
-      /// </summary>
       public static void CopyToClipboard(this UxChartControl chartControl, IChart chart, string watermark)
       {
-         using (var cloneOfChartControl = (ChartControl)chartControl.Clone())
+         using (var preparedChart = PrepareChartForExport(chartControl, chart, watermark))
          {
-            cloneOfChartControl.SetFontAndSizeSettings(chart.FontAndSize, chartControl.Size);
-
-            if (chart.IncludeOriginData)
-               AddOriginData(cloneOfChartControl, chart);
-
-            prepareChartForCopying(cloneOfChartControl);
-
-            if (!string.IsNullOrEmpty(watermark))
-               AddWatermark(cloneOfChartControl, watermark, chart); 
-
-            cloneOfChartControl.CopyChartToClipboard();
+            preparedChart.CopyChartToClipboard();
          }
       }
+
+      public static void ExportChartToImageFile(this UxChartControl chartControl, IChart chart, string watermark, string filePath, ImageFormat format)
+      {
+         if (string.IsNullOrWhiteSpace(filePath))
+            throw new ArgumentException("File path must be provided", nameof(filePath));
+
+         using (var preparedChart = PrepareChartForExport(chartControl, chart, watermark))
+         {
+            preparedChart.ExportToImage(filePath, format);
+         }
+      }
+
+      // Shared logic extracted
+      private static ChartControl PrepareChartForExport(UxChartControl chartControl, IChart chart, string watermark)
+      {
+         var cloneOfChartControl = (ChartControl)chartControl.Clone();
+         cloneOfChartControl.SetFontAndSizeSettings(chart.FontAndSize, chartControl.Size);
+
+         if (chart.IncludeOriginData)
+            AddOriginData(cloneOfChartControl, chart);
+
+         prepareChartForCopying(cloneOfChartControl);
+
+         if (!string.IsNullOrEmpty(watermark))
+            AddWatermark(cloneOfChartControl, watermark, chart);
+
+         return cloneOfChartControl;
+      }
+
 
       public static void CopyChartToClipboard(this ChartControl chartControl)
       {

@@ -10,6 +10,7 @@ using DevExpress.XtraBars;
 using DevExpress.XtraCharts;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
+using OSPSuite.Core;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Presenters.Charts;
@@ -37,11 +38,12 @@ namespace OSPSuite.UI.Views.Charts
       private bool _axisHotTrackingEnabled;
       private Series _dummySeries;
       private readonly ToolTipController _toolTipController;
+      private readonly IApplicationSettings _applicationSettings;
       public bool Updating { get; private set; }
       private XYDiagram xyDiagram => _chartControl.XYDiagram;
       public BarManager PopupBarManager { get; }
 
-      public ChartDisplayView(IImageListRetriever imageListRetriever)
+      public ChartDisplayView(IImageListRetriever imageListRetriever, IApplicationSettings applicationSettings)
       {
          InitializeComponent();
          _doubleFormatter = new DoubleFormatter();
@@ -49,6 +51,7 @@ namespace OSPSuite.UI.Views.Charts
          _toolTipController = new ToolTipController();
          PopupBarManager = new BarManager { Form = this, Images = imageListRetriever.AllImagesForContextMenu };
          SetDockStyle(Presentation.Views.Dock.Fill);
+         _applicationSettings = applicationSettings;
       }
 
       public override Color BackColor
@@ -127,7 +130,7 @@ namespace OSPSuite.UI.Views.Charts
 
       public void ExportToPng(string filePath)
       {
-         _chartControl.ExportToImage(filePath, ImageFormat.Png);
+         _chartControl.ExportChartToImageFile(_presenter.Chart, _applicationSettings.WatermarkTextToUse, filePath, ImageFormat.Png);
       }
 
       private static bool canDropMovingLegendHere(ChartHitInfo hitInfo)
