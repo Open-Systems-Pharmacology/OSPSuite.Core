@@ -33,7 +33,7 @@ namespace OSPSuite.UI.Extensions
 
       public static void CopyToClipboard(this UxChartControl chartControl, IChart chart, string watermark)
       {
-         using (var preparedChart = PrepareChartForExport(chartControl, chart, watermark))
+         using (var preparedChart = prepareChartForExport(chartControl, chart, watermark))
          {
             preparedChart.CopyChartToClipboard();
          }
@@ -44,14 +44,13 @@ namespace OSPSuite.UI.Extensions
          if (string.IsNullOrWhiteSpace(filePath))
             throw new ArgumentException("File path must be provided", nameof(filePath));
 
-         using (var preparedChart = PrepareChartForExport(chartControl, chart, watermark))
+         using (var preparedChart = prepareChartForExport(chartControl, chart, watermark))
          {
             preparedChart.ExportToImage(filePath, format);
          }
       }
 
-      // Shared logic extracted
-      private static ChartControl PrepareChartForExport(UxChartControl chartControl, IChart chart, string watermark)
+      private static ChartControl prepareChartForExport(UxChartControl chartControl, IChart chart, string watermark)
       {
          var cloneOfChartControl = (ChartControl)chartControl.Clone();
          cloneOfChartControl.SetFontAndSizeSettings(chart.FontAndSize, chartControl.Size);
@@ -66,7 +65,6 @@ namespace OSPSuite.UI.Extensions
 
          return cloneOfChartControl;
       }
-
 
       public static void CopyChartToClipboard(this ChartControl chartControl)
       {
