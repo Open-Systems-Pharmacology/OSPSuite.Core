@@ -66,6 +66,8 @@ namespace OSPSuite.Core.Qualification
 
       public IBusinessRuleSet Rules { get; } = new BusinessRuleSet();
 
+      public ApplicationType Application { get; set; } = ApplicationType.PKSim;
+
       public QualificationConfiguration()
       {
          Rules.AddRange(new[]
@@ -77,5 +79,10 @@ namespace OSPSuite.Core.Qualification
             GenericRules.NonEmptyRule<QualificationConfiguration>(x => x.ObservedDataFolder, Error.QualificationObservedDataFolderNotDefined)
          });
       }
+   }
+   public enum ApplicationType
+   {
+      PKSim,
+      MoBi
    }
 }
