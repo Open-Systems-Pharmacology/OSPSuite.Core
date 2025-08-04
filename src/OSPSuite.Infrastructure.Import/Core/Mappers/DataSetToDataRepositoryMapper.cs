@@ -39,7 +39,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
          foreach (var metaDataDescription in dataSet.MetaDataDescription)
          {
-            if (!metaDataDescription.Value.IsNullOrEmpty())
+            if (!metaDataDescription.Value.IsNullOrEmpty() && !dataRepository.ExtendedProperties.Contains(metaDataDescription.Name))
                dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>()
                   { Name = metaDataDescription.Name, Value = metaDataDescription.Value });
          }
