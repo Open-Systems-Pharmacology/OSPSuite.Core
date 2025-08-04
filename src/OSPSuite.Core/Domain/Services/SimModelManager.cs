@@ -44,15 +44,17 @@ namespace OSPSuite.Core.Domain.Services
       {
          return RunSimulationAsync(simulation, simulationRunOptions: simulationRunOptions).GetAwaiter().GetResult();
       }
-
       public async Task<SimulationRunResults> RunSimulationAsync(IModelCoreSimulation simulation, CancellationToken cancellationToken = default, SimulationRunOptions simulationRunOptions = null)
       {
          _simulationRunOptions = simulationRunOptions ?? new SimulationRunOptions();
+
          try
          {
             await loadAndRunSimulationAsync(simulation, cancellationToken);
 
-            return new SimulationRunResults(WarningsFrom(_simModelSimulation), _dataFactory.CreateRepository(simulation, _simModelSimulation));
+            return new SimulationRunResults(
+                WarningsFrom(_simModelSimulation),
+                _dataFactory.CreateRepository(simulation, _simModelSimulation));
          }
          catch (OperationCanceledException)
          {
@@ -66,18 +68,22 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private Task loadAndRunSimulationAsync(IModelCoreSimulation simulation, CancellationToken cancellationToken) =>
-      Task.Run(() =>
+      private async Task loadAndRunSimulationAsync(IModelCoreSimulation simulation, CancellationToken cancellationToken)
+      {
+         cancellationToken.ThrowIfCancellationRequested();
+         loadSimulation(simulation);
+         cancellationToken.ThrowIfCancellationRequested();
+         FinalizeSimulation(_simModelSimulation);
+         cancellationToken.ThrowIfCancellationRequested();
+
+         using (cancellationToken.Register(() => _simModelSimulation?.Cancel()))
          {
-            cancellationToken.ThrowIfCancellationRequested();
-            loadSimulation(simulation);
-            cancellationToken.ThrowIfCancellationRequested();
-            FinalizeSimulation(_simModelSimulation);
-            cancellationToken.ThrowIfCancellationRequested();
-            simulate();
-            cancellationToken.ThrowIfCancellationRequested();
-         }, cancellationToken);
-      
+            await Task.Run(simulate, cancellationToken);
+         }
+
+         cancellationToken.ThrowIfCancellationRequested();
+      }
+
       private void loadSimulation(IModelCoreSimulation simulation)
       {
          var xml = CreateSimulationExport(simulation, _simulationRunOptions.SimModelExportMode);
@@ -94,7 +100,7 @@ namespace OSPSuite.Core.Domain.Services
          try
          {
             _timer.Start();
-            _simModelSimulation.RunSimulation();
+            _simModelSimulation.RunSimulation();  
          }
          finally
          {
@@ -103,5 +109,6 @@ namespace OSPSuite.Core.Domain.Services
             raiseSimulationProgress(100);
          }
       }
+
    }
 }
