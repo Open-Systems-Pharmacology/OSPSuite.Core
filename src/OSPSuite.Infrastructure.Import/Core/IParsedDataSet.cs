@@ -35,19 +35,36 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public string NameFromConvention(IReadOnlyList<MetaDataMappingConverter> mappings, string convention, string fileName, string sheetName)
       {
-         var result = convention.Replace($"{{{Constants.FILE}}}", fileName).Replace($"{{{Constants.SHEET}}}", sheetName);
-         for (var i = 0; i < mappings.Count(); i++)
+         var result = convention;
+
+         var descriptionList = Description.ToList(); // we are assuming the description list has the same number of elements as mappings
+         for (int i = 0; i < mappings.Count && i < descriptionList.Count; i++)
          {
-            result = result.Replace($"{{{mappings.ElementAt(i).Id}}}", $"{Description.ElementAt(i).Value}");
+            result = result.Replace($"{{{mappings[i].Id}}}", descriptionList[i].Value);
          }
+
+         result = result
+            .Replace($"{{{Constants.FILE}}}", fileName)
+            .Replace($"{{{Constants.SHEET}}}", sheetName);
 
          return result;
       }
 
       public IReadOnlyList<MetaDataInstance> EnumerateMetaData(IEnumerable<MetaDataMappingConverter> mappings)
       {
-         return mappings.Select((m, i) => new MetaDataInstance(m.Id, Description.ElementAt(i).Value)).ToList();
+         var descriptionList = Description.ToList();
+         var mappingList = mappings.ToList();
+
+         return mappingList.Select((m, i) =>
+         {
+            var value = i < descriptionList.Count && descriptionList[i] != null
+               ? descriptionList[i].Value
+               : string.Empty;
+
+            return new MetaDataInstance(m.Id, value);
+         }).ToList();
       }
+
 
       public string ValueForColumn(int columnId)
       {
