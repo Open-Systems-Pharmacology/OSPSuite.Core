@@ -141,10 +141,8 @@ namespace OSPSuite.Infrastructure.Import.Services
       {
          fileName = Path.GetFileNameWithoutExtension(fileName);
          var counters = new Dictionary<string, int>();
-         // Iterate over the list of datasets to generate a unique name for each one based on the naming convention
          return dataSets.KeyValues.SelectMany(ds => ds.Value.Data.Select(s =>
          {
-            // Obtain the key first before checking if it already is taken by any other dataset
             var key = s.NameFromConvention(mappings, namingConvention, fileName, ds.Key);
             int counter;
             if (counters.ContainsKey(key))
@@ -158,7 +156,6 @@ namespace OSPSuite.Infrastructure.Import.Services
             }
 
             counters[key]++;
-            // Only add a number (for making it unique) to the name if the key already existed in the counters
             return key + (counter > 0 ? $"_{counter}" : "");
          })).ToList();
       }
