@@ -15,7 +15,7 @@ namespace OSPSuite.Core.Comparison
 
       public override void Compare(IComparison<FormulaWithFormulaString> comparison)
       {
-         _objectComparer.Compare(comparison.DimensionComparison());
+         CompareValues(x => x.Dimension, x => x.Dimension, comparison);
          CompareStringValues(x => x.FormulaString, x => x.FormulaString, comparison);
          _enumerableComparer.CompareEnumerables(comparison, x => x.ObjectPaths, x => x.Alias);
       }

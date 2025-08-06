@@ -25,7 +25,7 @@ namespace OSPSuite.Core.Comparison
       private void compareQuantities(IComparison<IQuantity> comparison)
       {
          _entityDiffBuilder.Compare(comparison);
-         _objectComparer.Compare(comparison.DimensionComparison());
+         CompareValues(x => x.Dimension, x => x.Dimension, comparison);
          CompareValues(x => x.QuantityType, x => x.QuantityType, comparison);
          CompareValues(x => x.NegativeValuesAllowed, x => x.NegativeValuesAllowed, comparison);
 
