@@ -65,7 +65,6 @@ namespace OSPSuite.Infrastructure.Import.Core
          }).ToList();
       }
 
-
       public string ValueForColumn(int columnId)
       {
          return Description.FirstOrDefault(md => md.Id == columnId)?.Value;
