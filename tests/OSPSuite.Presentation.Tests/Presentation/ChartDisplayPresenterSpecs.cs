@@ -395,7 +395,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_use_the_chart_export_task_to_export_the_char_to_png()
       {
-         A.CallTo(() => _chartDisplayView.ExportToPng(A<string>.Ignored)).MustHaveHappened();
+         A.CallTo(() => _chartDisplayView.ExportToPng(A<string>.Ignored, A<string>.Ignored)).MustHaveHappened();
       }
    }
 }
