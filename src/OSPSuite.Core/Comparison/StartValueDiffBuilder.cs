@@ -23,7 +23,7 @@ namespace OSPSuite.Core.Comparison
       protected virtual void ComparePathAndEntityValues(IComparison<T> comparison)
       {
          _entityDiffBuilder.Compare(comparison);
-         _objectComparer.Compare(comparison.DimensionComparison());
+         CompareValues(x => x.Dimension, x => x.Dimension, comparison);
 
          CompareValues(x => x.ContainerPath, x => x.ContainerPath, comparison);
 

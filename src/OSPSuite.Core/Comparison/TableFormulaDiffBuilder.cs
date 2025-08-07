@@ -19,7 +19,7 @@ namespace OSPSuite.Core.Comparison
       public override void Compare(IComparison<TableFormula> comparison)
       {
          _objectBaseDiffBuilder.Compare(comparison);
-         _objectComparer.Compare(comparison.DimensionComparison());
+         CompareValues(x => x.Dimension, x => x.Dimension, comparison);
          CompareStringValues(x => x.XName, x => x.XName, comparison);
          CompareStringValues(x => x.YName, x => x.YName, comparison);
          CompareValues(x => x.UseDerivedValues, x => x.UseDerivedValues, comparison);

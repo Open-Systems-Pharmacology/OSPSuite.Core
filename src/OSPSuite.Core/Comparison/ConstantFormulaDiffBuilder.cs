@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Comparison
       {
          if (!comparison.Settings.CompareHiddenEntities) return;
          CompareDoubleValues(x => x.Value, x => x.Value, comparison,x=> _displayUnitRetriever.PreferredUnitFor(x));
-         _objectComparer.Compare(comparison.DimensionComparison());
+         CompareValues(x => x.Dimension, x => x.Dimension, comparison);
       }
    }
 }
