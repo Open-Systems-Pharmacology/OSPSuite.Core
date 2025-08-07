@@ -1,17 +1,11 @@
 ﻿using System;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Formulas;
-using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Comparison
 {
    public static class ComparisonExtensions
    {
-      public static IComparison<IDimension> DimensionComparison<TObject>(this IComparison<TObject> comparison) where TObject : class, IWithDimension
-      {
-         return ChildComparison(comparison, x => x.Dimension);
-      }
-
       public static IComparison<IFormula> FormulaComparison<TObject>(this IComparison<TObject> comparison) where TObject : class, IUsingFormula
       {
          return ChildComparison(comparison, x => x.Formula);
