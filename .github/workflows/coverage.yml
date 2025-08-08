@@ -19,7 +19,7 @@ jobs:
           dotnet restore
 
       - name: Build
-        run: dotnet build OSPSuite.Core.sln /p:Version=13.0.999
+        run: dotnet build OSPSuite.Core.sln -p:Version=13.0.999 -p:ExcludeDesigner=true
         
       - name: Cover and report
         uses: Open-Systems-Pharmacology/Workflows/.github/actions/dotCover@main
