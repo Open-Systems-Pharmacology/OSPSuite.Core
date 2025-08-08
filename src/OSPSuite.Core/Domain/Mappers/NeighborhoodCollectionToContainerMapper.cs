@@ -82,10 +82,22 @@ namespace OSPSuite.Core.Domain.Mappers
          neighborhoodsToMerge.Each(neighborhoodToMerge =>
          {
             if (mergeBehavior == MergeBehavior.Extend)
-               _containerMergeTask.AddOrMergeContainer(neighborhoods, neighborhoodToMerge);
+            {
+               var mergeNeighbor = _containerMergeTask.AddOrMergeContainer(neighborhoods, neighborhoodToMerge) as Neighborhood;
+               updateNeighbors(mergeNeighbor, neighborhoodToMerge);
+            }
             else
                _containerMergeTask.AddOrReplaceInContainer(neighborhoods, neighborhoodToMerge);
          });
+      }
+
+      private void updateNeighbors(Neighborhood neighborhoodToUpdate, Neighborhood neighborhoodToMerge)
+      {
+         if (neighborhoodToUpdate == null)
+            return;
+
+         neighborhoodToUpdate.FirstNeighbor = neighborhoodToMerge.FirstNeighbor;
+         neighborhoodToUpdate.SecondNeighbor = neighborhoodToMerge.SecondNeighbor;
       }
 
       private Func<NeighborhoodBuilder, Neighborhood> mapToNeighborhoodDef(ModelConfiguration modelConfiguration)

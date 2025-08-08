@@ -11,6 +11,7 @@ using OSPSuite.Helpers;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 using static OSPSuite.Helpers.ConstantsForSpecs;
+using IContainer = OSPSuite.Core.Domain.IContainer;
 
 namespace OSPSuite.Core
 {
@@ -306,6 +307,48 @@ namespace OSPSuite.Core
 
             return simulationConfiguration;
          };
+      }
+   }
+
+   internal class When_overriding_neighbors_in_neighborhood : concern_for_ModuleIntegration
+   {
+      private INeighborhoodBuilderFactory _neighborhoodFactory;
+      private Module _module1;
+      private Module _module2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _neighborhoodFactory = IoC.Resolve<INeighborhoodBuilderFactory>();
+      }
+
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x =>
+      {
+         var configuration = x.CreateSimulationConfigurationForExtendMergeBehavior();
+         _module1 = configuration.ModuleConfigurations.ToArray()[0].Module;
+         _module2 = configuration.ModuleConfigurations.ToArray()[1].Module;
+
+         // reverse the neighbors to test that updating neighbors in a neighborhood works
+         var neighborhoodToUpdate = _module1.SpatialStructure.Neighborhoods.FindByName("art_pls_to_bon_pls");
+         var neighborhood = _neighborhoodFactory.CreateBetween(neighborhoodToUpdate.SecondNeighbor, neighborhoodToUpdate.FirstNeighbor);
+         neighborhood.Name = neighborhoodToUpdate.Name;
+         _module2.SpatialStructure.AddNeighborhood(neighborhood);
+
+         return configuration;
+      };
+
+      [Observation]
+      public void the_simulation_neighborhood_neighbors_should_be_updated()
+      {
+         var simulationNeighborhood = _model.Root.GetAllChildren<IContainer>().FindByName("Neighborhoods").GetAllChildren<Neighborhood>().FindByName("art_pls_to_bon_pls");
+         var originalNeighborhoodBuilder = _module1.SpatialStructure.Neighborhoods.FindByName("art_pls_to_bon_pls");
+         var changedNeighborhoodBuilder = _module2.SpatialStructure.Neighborhoods.FindByName("art_pls_to_bon_pls");
+
+         simulationNeighborhood.FirstNeighbor.ConsolidatedPath().ShouldBeEqualTo(changedNeighborhoodBuilder.FirstNeighborPath);
+         simulationNeighborhood.SecondNeighbor.ConsolidatedPath().ShouldBeEqualTo(changedNeighborhoodBuilder.SecondNeighborPath);
+
+         simulationNeighborhood.FirstNeighbor.ConsolidatedPath().ShouldBeEqualTo(originalNeighborhoodBuilder.SecondNeighborPath);
+         simulationNeighborhood.SecondNeighbor.ConsolidatedPath().ShouldBeEqualTo(originalNeighborhoodBuilder.FirstNeighborPath);
       }
    }
 

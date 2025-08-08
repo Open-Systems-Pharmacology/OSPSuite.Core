@@ -72,6 +72,6 @@ namespace OSPSuite.Presentation.Views.Charts
       /// </summary>
       void ShowWatermark(string watermark);
 
-      void ExportToPng(string filePath);
+      void ExportToPng(string filePath, string watermark);
    }
 }

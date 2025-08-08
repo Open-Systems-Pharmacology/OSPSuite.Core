@@ -10,6 +10,7 @@ using DevExpress.XtraBars;
 using DevExpress.XtraCharts;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
+using OSPSuite.Core;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Presenters.Charts;
@@ -125,9 +126,9 @@ namespace OSPSuite.UI.Views.Charts
          _hintControl.Dock = DockStyle.Fill;
       }
 
-      public void ExportToPng(string filePath)
+      public void ExportToPng(string filePath, string watermark)
       {
-         _chartControl.ExportToImage(filePath, ImageFormat.Png);
+         _chartControl.ExportChartToImageFile(_presenter.Chart, watermark, filePath, ImageFormat.Png);
       }
 
       private static bool canDropMovingLegendHere(ChartHitInfo hitInfo)

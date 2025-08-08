@@ -620,7 +620,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          if (string.IsNullOrEmpty(fileName))
             return;
 
-         _view.ExportToPng(fileName);
+         _view.ExportToPng(fileName, _applicationSettings.WatermarkTextToUse);
       }
 
       public void Handle(ApplyChangesEvent eventToHandle)
