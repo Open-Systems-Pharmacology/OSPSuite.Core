@@ -22,10 +22,10 @@ jobs:
         run: dotnet build OSPSuite.Core.sln -p:Version=12.1.9999 -p:ExcludeDesigner=true
 
       - name : Test
-        run: dotnet test OSPSuite.Core.sln -v normal --no-build  --logger:"html;LogFileName=../testLog_Windows.html"
+        run: dotnet test OSPSuite.Core.sln -v normal --no-build  --logger:"html;LogFileName=/testLog_Windows.html"
 
       - name: Push test log as artifact
         uses: actions/upload-artifact@v4
         with:
           name: testLog_Windows
-          path: ./testLog*.html
+          path: /testLog*.html
