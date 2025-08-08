@@ -13,10 +13,9 @@ jobs:
         with:
           submodules: 'true'
 
-      - name: Restore dependencies
+      - name: Add GitHub feed
         run: |
           nuget sources add -username Open-Systems-Pharmacology -password ${{ secrets.GITHUB_TOKEN }} -name OSP-GitHub-Packages -source "https://nuget.pkg.github.com/Open-Systems-Pharmacology/index.json"
-          dotnet restore
 
       - name: Build
         run: dotnet build OSPSuite.Core.sln -p:Version=13.0.999 -p:ExcludeDesigner=true
