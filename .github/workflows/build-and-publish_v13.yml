@@ -36,7 +36,7 @@ jobs:
         run: dotnet build OSPSuite.Core.sln /p:Version=${{env.APP_VERSION}}
 
       - name : Test
-        run: dotnet test .\tests\**\bin\Debug\net472\OSPSuite*Tests.dll -v normal --no-build  --logger:"html;LogFileName=../testLog_Windows.html"
+        run: dotnet test .\tests\**\bin\Debug\net8.0*\OSPSuite*Tests.dll -v normal --no-build  --logger:"html;LogFileName=../testLog_Windows.html"
 
       - name: Pack the project
         run: dotnet pack .\OSPSuite.Core.sln --no-build --no-restore -o ./ -p:PackageVersion=${{env.APP_VERSION}} --configuration=Debug --no-build

@@ -1,17 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
-
+    <TargetFramework>net8.0-windows</TargetFramework>
     <IsPackable>false</IsPackable>
-
     <RootNamespace>OSPSuite.UI</RootNamespace>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="8.3.0" />
     <PackageReference Include="nunit" Version="3.14.0" />
@@ -21,18 +16,12 @@
     </PackageReference>
     <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.1.1" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.UI\OSPSuite.UI.csproj" />
     <ProjectReference Include="..\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-
   <ItemGroup>
     <None Update="Data\Test1.xls">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -50,5 +39,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
 </Project>
