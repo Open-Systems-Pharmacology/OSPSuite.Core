@@ -1477,7 +1477,7 @@ namespace OSPSuite.Assets
 
       public static  string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
 
-      public static string ParseErrorMessage(IEnumerable<string> errors) => $"There were errors while parsing your data: {string.Join(". ", errors)}";
+      public static string ParseErrorMessage(string errors) => $"There were errors while parsing your data: {string.Join(". ", errors)}";
 
       public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) =>
          $"It was not possible to plot the data sets. Please, check your configuration for any missing grouping or meta data parameter. An error occur while plotting data set number:{sheetName + 1} produced the following error: {exceptionMessage}";
@@ -1520,6 +1520,7 @@ namespace OSPSuite.Assets
 
       public static string MissingColumnException(string sheetName, IReadOnlyList<string> missingColumns) => $"The mapped column(s) \n \n '{missingColumns.ToString("\n")}' \n \n is missing at least from the sheet \n \n '{sheetName}' \n \n that you are trying to load.";
 
+      public static string DimensionCannotBeDeterminedFor(string sheetName, string mappingName) => $"The dimension for mapping '{mappingName}' could not be determined in the sheet '{sheetName}'";
       public static string InvalidDimensionException(string invalidUnit, string mappingName) => $"The unit '{invalidUnit}' you are trying to assign to the mapping '{mappingName}' does not belong to a supported dimension of this mapping.";
       public static string InconsistentDimensionBetweenUnitsException(string mappingName) => $"For the mapping '{mappingName}' not all units in the mapped column belong to the same dimension.";
       public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification parameter '{identificationParameterName}'";

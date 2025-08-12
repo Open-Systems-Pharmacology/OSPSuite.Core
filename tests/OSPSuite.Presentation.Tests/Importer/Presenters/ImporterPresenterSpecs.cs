@@ -338,7 +338,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _columnInfo = new ColumnInfo();
          var dto = new DimensionSelectionDTO("sheet", new[] { string.Empty }, _columnInfo, new List<IDimension> { DomainHelperForSpecs.ConcentrationDimensionForSpecs(), DomainHelperForSpecs.ConcentrationMassDimensionForSpecs() });
 
-         A.CallTo(() => _dataSourceToDimensionSelectionDTOMapper.MapFrom(A<IDataSource>._)).Returns(new List<DimensionSelectionDTO> { dto });
+         A.CallTo(() => _dataSourceToDimensionSelectionDTOMapper.MapFrom(A<IDataSource>._, A<IReadOnlyList<string>>._)).Returns(new List<DimensionSelectionDTO> { dto });
          A.CallTo(() => _dimensionMappingPresenter.EditUnitToDimensionMap(A<IReadOnlyList<DimensionSelectionDTO>>._)).Invokes(x => dto.SelectedDimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs());
          _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs
             { Filter = "", DataSourceFile = _dataSourceFile, SheetNames = _sheets.Keys.ToList() });
@@ -360,7 +360,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_dimension_mapping_task_is_used_to_auto_map_the_dimensions()
       {
-         A.CallTo(() => _dataSourceToDimensionSelectionDTOMapper.MapFrom(A<IDataSource>._)).MustHaveHappened();
+         A.CallTo(() => _dataSourceToDimensionSelectionDTOMapper.MapFrom(A<IDataSource>._, A<IReadOnlyList<string>>._)).MustHaveHappened();
       }
 
       [Observation]
