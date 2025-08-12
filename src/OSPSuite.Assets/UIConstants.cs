@@ -1477,7 +1477,7 @@ namespace OSPSuite.Assets
 
       public static  string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
 
-      public static string ParseErrorMessage(string errors) => $"There were errors while parsing your data: {string.Join(". ", errors)}";
+      public static string ParseErrorMessage(string errors) => $"There were errors while parsing your data: {errors}";
 
       public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) =>
          $"It was not possible to plot the data sets. Please, check your configuration for any missing grouping or meta data parameter. An error occur while plotting data set number:{sheetName + 1} produced the following error: {exceptionMessage}";
