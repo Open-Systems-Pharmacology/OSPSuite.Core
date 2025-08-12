@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using OSPSuite.Utility.Extensions;
+using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraBars;
 using DevExpress.XtraEditors;
@@ -14,6 +14,7 @@ using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Mappers;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Views.Charts
 {
@@ -50,6 +51,7 @@ namespace OSPSuite.UI.Views.Charts
          chkAutoUpdateCharts.Text = Captions.AutoUpdateChart;
          chkAutoUpdateCharts.SuperTip = new SuperToolTip().WithText(ToolTips.EnableOrDisableAutomaticUpdateOfTheChartForEachEdit);
          chkUsedIn.Text = Captions.UseSelected;
+         chkUsedIn.Properties.AllowGrayed = true;
          chkUsedIn.SuperTip = new SuperToolTip().WithText(ToolTips.UseSelectedCurvesToolTip);
          chkLinkSimulationObserved.Text = Captions.LinkDataToSimulations;
          chkLinkSimulationObserved.SuperTip = new SuperToolTip().WithText(ToolTips.LinkSimulationObservedToolTip);
@@ -72,7 +74,9 @@ namespace OSPSuite.UI.Views.Charts
          var checkEdit = sender as CheckEdit;
          if (checkEdit == null) return;
 
-         _presenter.UpdateUsedForSelection(checkEdit.Checked);
+         // Do not update selection for indeterminate state
+         if (checkEdit.CheckState == CheckState.Checked || checkEdit.CheckState == CheckState.Unchecked)
+            _presenter.UpdateUsedForSelection(checkEdit.Checked);
       }
 
       private void changeAutoUpdateCharts(object sender)
@@ -83,7 +87,7 @@ namespace OSPSuite.UI.Views.Charts
          _presenter.UpdateAutoUpdateChartMode(autoMode: checkEdit.Checked);
          btnApplyChartUpdates.Enabled = !checkEdit.Checked;
       }
-      
+
       private void changeLinkSimulationToData(object sender)
       {
          var checkEdit = sender as CheckEdit;
@@ -165,7 +169,13 @@ namespace OSPSuite.UI.Views.Charts
 
       public void SetlinkSimDataMenuItemVisisbility(bool isVisible) => layoutControlItemLink.Visibility = isVisible ? LayoutVisibility.Always : LayoutVisibility.Never;
 
-      public void SetSelectAllCheckBox(bool? checkedState) => chkUsedIn.EditValue = checkedState;
+      public void SetSelectAllCheckBox(bool? checkedState)
+      {
+         if (checkedState.HasValue)
+            chkUsedIn.CheckState = checkedState.Value ? CheckState.Checked : CheckState.Unchecked;
+         else
+            chkUsedIn.CheckState = CheckState.Indeterminate;
+      }
 
       public void SetAutoUpdateModeCheckBox(bool? checkedState) => chkAutoUpdateCharts.EditValue = checkedState;
 
@@ -182,6 +192,5 @@ namespace OSPSuite.UI.Views.Charts
       public void SetCurveColorGroupingView(IView view) => panelCurveColorGrouping.FillWith(view);
 
       public void SetChartExportSettingsView(IView view) => panelChartExportSettings.FillWith(view);
-
    }
 }
