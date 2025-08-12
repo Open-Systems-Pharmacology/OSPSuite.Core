@@ -296,15 +296,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          return errors;
       }
 
-      private static void addError(IDataSource dataSource, ParseErrors errors, DimensionSelectionDTO dto)
-      {
-         errors.Add(dataSource.DataSets[dto.SheetName], new NoMappedDimensionForColumn(dto.SheetName, dto.Column.DisplayName));
-      }
+      private static void addError(IDataSource dataSource, ParseErrors errors, DimensionSelectionDTO dto) => errors.Add(dataSource.DataSets[dto.SheetName], new NoMappedDimensionForColumn(dto.SheetName, dto.Column.DisplayName));
 
-      private static bool dimensionNotMapped(DimensionSelectionDTO x)
-      {
-         return x.Column.MappedDimension == null;
-      }
+      private static bool dimensionNotMapped(DimensionSelectionDTO x) => x.Column.MappedDimension == null;
 
       private void onFormatChanged(object sender, FormatChangedEventArgs e)
       {
