@@ -2,7 +2,6 @@
 using System.Linq;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.DTO;
-using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Extensions;
 
@@ -27,7 +26,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dimensionDTOs = ambiguousDimensionDTOs;
          _view.BindTo(_dimensionDTOs);
          _view.Display();
-         if(_view.Canceled)
+         if (_view.Canceled)
             _dimensionDTOs.Each(x => x.SelectedDimension = null);
       }
 

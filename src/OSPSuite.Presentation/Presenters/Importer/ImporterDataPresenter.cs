@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using OSPSuite.Assets;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
@@ -289,12 +292,21 @@ namespace OSPSuite.Presentation.Presenters.Importer
          foreach (var loadedDataSet in loadedDataSets.KeyValues)
          {
             var errorsForDataSet = errors.ErrorsFor(loadedDataSet.Value);
-            var errorMessage = errorsForDataSet.Any() ? Error.ParseErrorMessage(errorsForDataSet.Select(x => x.Message)) : null;
+            var errorMessage = errorsForDataSet.Any() ? Error.ParseErrorMessage(formattedMessageFor(errorsForDataSet)) : null;
             var info = new TabMarkInfo(errorMessage: errorMessage, isLoaded: true);
             tabMarkInfos.Add(loadedDataSet.Key, info);
          }
 
          View.SetTabMarks(tabMarkInfos);
+      }
+
+      private static string formattedMessageFor(IEnumerable<ParseErrorDescription> errorsForDataSet)
+      {
+         var sb = new StringBuilder();
+         sb.AppendLine();
+         sb.AppendLine();
+         errorsForDataSet.Each(x => sb.AppendLine(x.Message));
+         return sb.ToString();
       }
 
       public void SetTabMarks(ParseErrors errors)

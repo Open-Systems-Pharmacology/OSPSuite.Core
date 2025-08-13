@@ -9,6 +9,14 @@ namespace OSPSuite.Infrastructure.Import.Core.Exceptions
       public string Message { get; protected set; }
    }
 
+   public class NoMappedDimensionForColumn : ParseErrorDescription
+   {
+      public NoMappedDimensionForColumn(string sheetName, string columnName)
+      {
+         Message = Error.DimensionCannotBeDeterminedFor(sheetName, columnName);
+      }
+   }
+
    public class InvalidDimensionParseErrorDescription : ParseErrorDescription
    {
       public InvalidDimensionParseErrorDescription(string invalidUnit, string mappingName)

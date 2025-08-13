@@ -11,6 +11,7 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Extensions;
@@ -250,7 +251,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          var errors = _dataSource.AddSheets(sheets, _columnInfos, filter);
 
 
-         var dimensionDTOs = _dataSourceToDimensionSelectionDTOMapper.MapFrom(_dataSource);
+         var dimensionDTOs = _dataSourceToDimensionSelectionDTOMapper.MapFrom(_dataSource, sheetNames);
 
          var ambiguousDimensionDTOs = dimensionDTOs.Where(x => x.Dimensions.Count > 1).ToList();
          if (ambiguousDimensionDTOs.Any())
@@ -261,13 +262,15 @@ namespace OSPSuite.Presentation.Presenters.Importer
          dimensionDTOs.Each(dto => dto.Column.MappedDimension = dto.SelectedDimension);
 
          errors.Add(validateDataSource(_dataSource));
+         errors.Add(validateAmbiguousDimensions(ambiguousDimensionDTOs, _dataSource));
+
          _importerDataPresenter.SetTabMarks(errors, _dataSource.DataSets);
          if (errors.Any())
          {
             throw new ImporterParsingException(errors);
          }
 
-         var keys = new List<string>()
+         var keys = new List<string>
          {
             Constants.FILE,
             Constants.SHEET
@@ -281,6 +284,21 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _previewPresenter.SetViewingStateToNormal();
          _previewPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions.ToList(), selectedNamingConvention);
       }
+
+      private ParseErrors validateAmbiguousDimensions(List<DimensionSelectionDTO> ambiguousDimensionDTOs, IDataSource dataSource)
+      {
+         var errors = new ParseErrors();
+
+         ambiguousDimensionDTOs
+            .Where(dimensionNotMapped)
+            .Each(x => addError(dataSource, errors, x));
+
+         return errors;
+      }
+
+      private static void addError(IDataSource dataSource, ParseErrors errors, DimensionSelectionDTO dto) => errors.Add(dataSource.DataSets[dto.SheetName], new NoMappedDimensionForColumn(dto.SheetName, dto.Column.DisplayName));
+
+      private static bool dimensionNotMapped(DimensionSelectionDTO x) => x.Column.MappedDimension == null;
 
       private void onFormatChanged(object sender, FormatChangedEventArgs e)
       {
