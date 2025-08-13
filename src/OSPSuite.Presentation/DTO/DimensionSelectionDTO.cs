@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Core.Import;
 
 namespace OSPSuite.Presentation.DTO
 {
@@ -10,18 +10,18 @@ namespace OSPSuite.Presentation.DTO
       public string SheetName { get; }
       private readonly string _description;
 
-      public DimensionSelectionDTO(string sheetName, IReadOnlyList<string> description, ColumnInfo columnInfo, IReadOnlyList<IDimension> supportingDimensions)
+      public DimensionSelectionDTO(string sheetName, IReadOnlyList<string> description, Column column, IReadOnlyList<IDimension> supportingDimensions)
       {
          SheetName = sheetName;
          _description = string.Join(" - ", description);
          Dimensions = supportingDimensions;
-         Column = columnInfo;
+         Column = column;
 
-         if(supportingDimensions.Count == 1)
+         if (supportingDimensions.Count == 1)
             SelectedDimension = supportingDimensions.Single();
       }
 
-      public ColumnInfo Column { get; }
+      public Column Column { get; }
 
       public IReadOnlyList<IDimension> Dimensions { get; }
       public IDimension SelectedDimension { get; set; }

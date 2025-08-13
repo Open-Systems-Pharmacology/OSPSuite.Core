@@ -259,7 +259,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             _dimensionMappingPresenter.EditUnitToDimensionMap(ambiguousDimensionDTOs);
          }
 
-         dimensionDTOs.Each(dto => dto.Column.MappedDimension = dto.SelectedDimension);
+         dimensionDTOs.Each(dto => dto.Column.Dimension = dto.SelectedDimension);
 
          errors.Add(validateDataSource(_dataSource));
          errors.Add(validateAmbiguousDimensions(ambiguousDimensionDTOs, _dataSource));
@@ -296,9 +296,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          return errors;
       }
 
-      private static void addError(IDataSource dataSource, ParseErrors errors, DimensionSelectionDTO dto) => errors.Add(dataSource.DataSets[dto.SheetName], new NoMappedDimensionForColumn(dto.SheetName, dto.Column.DisplayName));
+      private static void addError(IDataSource dataSource, ParseErrors errors, DimensionSelectionDTO dto) => errors.Add(dataSource.DataSets[dto.SheetName], new NoMappedDimensionForColumn(dto.SheetName, dto.Column.Name));
 
-      private static bool dimensionNotMapped(DimensionSelectionDTO x) => x.Column.MappedDimension == null;
+      private static bool dimensionNotMapped(DimensionSelectionDTO x) => x.Column.Dimension == null;
 
       private void onFormatChanged(object sender, FormatChangedEventArgs e)
       {

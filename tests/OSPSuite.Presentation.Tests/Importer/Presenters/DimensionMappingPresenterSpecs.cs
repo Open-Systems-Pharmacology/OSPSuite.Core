@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Core.Import;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.Importer;
@@ -27,7 +26,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       private List<DimensionSelectionDTO> _dimensionDTOs;
       private IReadOnlyList<IDimension> _possibleDimensions;
-      private ColumnInfo _column;
+      private Column _column;
       private IDimension _pickedDimension;
 
       protected override void Context()
@@ -35,7 +34,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          base.Context();
          _pickedDimension = new Dimension(new BaseDimensionRepresentation(), "Mass", "mg");
          _possibleDimensions = new List<IDimension>();
-         _column = new ColumnInfo();
+         _column = new Column();
          _dimensionDTOs = new List<DimensionSelectionDTO> { new DimensionSelectionDTO("sheet", new[] { string.Empty }, _column, _possibleDimensions) };
 
          A.CallTo(() => _view.BindTo(_dimensionDTOs)).Invokes(x => _dimensionDTOs.Single().SelectedDimension = _pickedDimension);
@@ -59,7 +58,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       private List<DimensionSelectionDTO> _dimensionDTOs;
       private IReadOnlyList<IDimension> _possibleDimensions;
-      private ColumnInfo _column;
+      private Column _column;
       private IDimension _pickedDimension;
 
       protected override void Context()
@@ -67,7 +66,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          base.Context();
          _pickedDimension = new Dimension(new BaseDimensionRepresentation(), "Mass", "mg");
          _possibleDimensions = new List<IDimension>();
-         _column = new ColumnInfo();
+         _column = new Column();
          _dimensionDTOs = new List<DimensionSelectionDTO> { new DimensionSelectionDTO("sheet", new [] {string.Empty}, _column, _possibleDimensions) };
 
          A.CallTo(() => _view.BindTo(_dimensionDTOs)).Invokes(x => _dimensionDTOs.Single().SelectedDimension = _pickedDimension);
@@ -90,7 +89,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
    {
       
       private List<IDimension> _possibleDimensions;
-      private ColumnInfo _column;
+      private Column _column;
       private List<DimensionSelectionDTO> _dimensionDTOs;
       private DimensionSelectionDTO _dimensionSelect1;
       private DimensionSelectionDTO _dimensionSelect2;
@@ -113,7 +112,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          };
 
          _otherPossibleDimensions = new List<IDimension> { _doseDimension, _massDimension, new Dimension(new BaseDimensionRepresentation(), "Time", "h") };
-         _column = new ColumnInfo();
+         _column = new Column();
          
          _dimensionSelect1 = new DimensionSelectionDTO("sheet", new[] { string.Empty }, _column, _possibleDimensions);
          _dimensionSelect2 = new DimensionSelectionDTO("sheet", new[] { string.Empty }, _column, _possibleDimensions);

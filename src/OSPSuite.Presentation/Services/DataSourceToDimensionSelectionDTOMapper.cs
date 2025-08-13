@@ -42,7 +42,7 @@ namespace OSPSuite.Presentation.Services
 
       private DimensionSelectionDTO dimensionsSupporting(IReadOnlyList<string> units, ExtendedColumn extendedColumn, string sheetName, IReadOnlyList<string> description)
       {
-         return new DimensionSelectionDTO(sheetName, description, extendedColumn.ColumnInfo, 
+         return new DimensionSelectionDTO(sheetName, description, extendedColumn.Column, 
             extendedColumn.Column.Dimension != null ? 
                new List<IDimension> { extendedColumn.Column.Dimension } : 
                extendedColumn.ColumnInfo.SupportedDimensions.Where(dimension => supportsAllUnits(dimension, units)).ToList());

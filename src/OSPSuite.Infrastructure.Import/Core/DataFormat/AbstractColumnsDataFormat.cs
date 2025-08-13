@@ -326,7 +326,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             (
                new ExtendedColumn
                {
-                  Column = currentParameter.MappedColumn,
+                  Column = new Column(currentParameter.MappedColumn),
                   ColumnInfo = columnInfo,
                   ErrorDeviation = currentParameter.MappedColumn.ErrorStdDev
                },
