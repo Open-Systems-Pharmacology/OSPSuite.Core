@@ -75,7 +75,7 @@ namespace OSPSuite.UI.Views.Charts
          if (checkEdit == null) return;
 
          // Do not update selection for indeterminate state
-         if (checkEdit.CheckState == CheckState.Checked || checkEdit.CheckState == CheckState.Unchecked)
+         if (checkEdit.CheckState != CheckState.Indeterminate)
             _presenter.UpdateUsedForSelection(checkEdit.Checked);
       }
 
