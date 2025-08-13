@@ -7,12 +7,12 @@ namespace OSPSuite.Presentation.DTO
 {
    public class DimensionSelectionDTO
    {
-      private readonly string _sheetName;
+      public string SheetName { get; }
       private readonly string _description;
 
       public DimensionSelectionDTO(string sheetName, IReadOnlyList<string> description, ColumnInfo columnInfo, IReadOnlyList<IDimension> supportingDimensions)
       {
-         _sheetName = sheetName;
+         SheetName = sheetName;
          _description = string.Join(" - ", description);
          Dimensions = supportingDimensions;
          Column = columnInfo;
@@ -40,7 +40,7 @@ namespace OSPSuite.Presentation.DTO
 
       private string sheetAndColumnName()
       {
-         return string.IsNullOrEmpty(_sheetName) ? Column.Name : $"{_sheetName} - {Column.Name}";
+         return string.IsNullOrEmpty(SheetName) ? Column.Name : $"{SheetName} - {Column.Name}";
       }
    }
 }
