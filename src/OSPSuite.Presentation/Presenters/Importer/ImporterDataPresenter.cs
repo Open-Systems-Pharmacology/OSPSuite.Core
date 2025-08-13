@@ -208,10 +208,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
       {
          _dataSourceFile.DataSheets.Remove(tabName);
 
-         if (!ImportedSheets.Contains(tabName))
-            return;
-
-         ImportedSheets.Remove(tabName);
+         if (ImportedSheets.Contains(tabName))
+            ImportedSheets.Remove(tabName);
+         
          TriggerOnDataChanged();
       }
 
