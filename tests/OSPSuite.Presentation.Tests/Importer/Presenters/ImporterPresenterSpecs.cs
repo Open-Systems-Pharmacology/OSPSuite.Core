@@ -329,13 +329,13 @@ namespace OSPSuite.Presentation.Importer.Presenters
    public class When_mapping_completed_with_loaded_data : concern_for_ImporterPresenter
    {
       protected Cache<string, DataSheet> _sheets;
-      private ColumnInfo _columnInfo;
+      private Column _columnInfo;
 
       protected override void Context()
       {
          base.Context();
          _sheets = new Cache<string, DataSheet> { { "sheet1", A.Fake<DataSheet>() } };
-         _columnInfo = new ColumnInfo();
+         _columnInfo = new Column();
          var dto = new DimensionSelectionDTO("sheet", new[] { string.Empty }, _columnInfo, new List<IDimension> { DomainHelperForSpecs.ConcentrationDimensionForSpecs(), DomainHelperForSpecs.ConcentrationMassDimensionForSpecs() });
 
          A.CallTo(() => _dataSourceToDimensionSelectionDTOMapper.MapFrom(A<IDataSource>._, A<IReadOnlyList<string>>._)).Returns(new List<DimensionSelectionDTO> { dto });
@@ -348,7 +348,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_column_dimension_should_be_set_to_the_selected_dimension_of_the_dto()
       {
-         _columnInfo.MappedDimension.ShouldBeEqualTo(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
+         _columnInfo.Dimension.ShouldBeEqualTo(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
       }
 
       [Observation]
