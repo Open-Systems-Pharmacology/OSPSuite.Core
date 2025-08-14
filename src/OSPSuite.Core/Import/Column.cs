@@ -10,7 +10,8 @@ namespace OSPSuite.Core.Import
    {
       public static readonly string InvalidUnit = "?";
 
-      public string SelectedUnit { get; }
+      // This setter is needed by R
+      public string SelectedUnit { get; private set; }
 
       public string ColumnName { get; }
 
