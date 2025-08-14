@@ -1,27 +1,27 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Infrastructure.Import.Core;
+using OSPSuite.Core.Import;
 
 namespace OSPSuite.Presentation.DTO
 {
    public class DimensionSelectionDTO
    {
-      private readonly string _sheetName;
+      public string SheetName { get; }
       private readonly string _description;
 
-      public DimensionSelectionDTO(string sheetName, IReadOnlyList<string> description, ColumnInfo columnInfo, IReadOnlyList<IDimension> supportingDimensions)
+      public DimensionSelectionDTO(string sheetName, IReadOnlyList<string> description, Column column, IReadOnlyList<IDimension> supportingDimensions)
       {
-         _sheetName = sheetName;
+         SheetName = sheetName;
          _description = string.Join(" - ", description);
          Dimensions = supportingDimensions;
-         Column = columnInfo;
+         Column = column;
 
-         if(supportingDimensions.Count == 1)
+         if (supportingDimensions.Count == 1)
             SelectedDimension = supportingDimensions.Single();
       }
 
-      public ColumnInfo Column { get; }
+      public Column Column { get; }
 
       public IReadOnlyList<IDimension> Dimensions { get; }
       public IDimension SelectedDimension { get; set; }
@@ -40,7 +40,7 @@ namespace OSPSuite.Presentation.DTO
 
       private string sheetAndColumnName()
       {
-         return string.IsNullOrEmpty(_sheetName) ? Column.Name : $"{_sheetName} - {Column.Name}";
+         return string.IsNullOrEmpty(SheetName) ? Column.Name : $"{SheetName} - {Column.Name}";
       }
    }
 }

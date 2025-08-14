@@ -329,16 +329,16 @@ namespace OSPSuite.Presentation.Importer.Presenters
    public class When_mapping_completed_with_loaded_data : concern_for_ImporterPresenter
    {
       protected Cache<string, DataSheet> _sheets;
-      private ColumnInfo _columnInfo;
+      private Column _columnInfo;
 
       protected override void Context()
       {
          base.Context();
          _sheets = new Cache<string, DataSheet> { { "sheet1", A.Fake<DataSheet>() } };
-         _columnInfo = new ColumnInfo();
+         _columnInfo = new Column();
          var dto = new DimensionSelectionDTO("sheet", new[] { string.Empty }, _columnInfo, new List<IDimension> { DomainHelperForSpecs.ConcentrationDimensionForSpecs(), DomainHelperForSpecs.ConcentrationMassDimensionForSpecs() });
 
-         A.CallTo(() => _dataSourceToDimensionSelectionDTOMapper.MapFrom(A<IDataSource>._)).Returns(new List<DimensionSelectionDTO> { dto });
+         A.CallTo(() => _dataSourceToDimensionSelectionDTOMapper.MapFrom(A<IDataSource>._, A<IReadOnlyList<string>>._)).Returns(new List<DimensionSelectionDTO> { dto });
          A.CallTo(() => _dimensionMappingPresenter.EditUnitToDimensionMap(A<IReadOnlyList<DimensionSelectionDTO>>._)).Invokes(x => dto.SelectedDimension = DomainHelperForSpecs.ConcentrationDimensionForSpecs());
          _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs
             { Filter = "", DataSourceFile = _dataSourceFile, SheetNames = _sheets.Keys.ToList() });
@@ -348,7 +348,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_column_dimension_should_be_set_to_the_selected_dimension_of_the_dto()
       {
-         _columnInfo.MappedDimension.ShouldBeEqualTo(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
+         _columnInfo.Dimension.ShouldBeEqualTo(DomainHelperForSpecs.ConcentrationDimensionForSpecs());
       }
 
       [Observation]
@@ -360,7 +360,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
       [Observation]
       public void the_dimension_mapping_task_is_used_to_auto_map_the_dimensions()
       {
-         A.CallTo(() => _dataSourceToDimensionSelectionDTOMapper.MapFrom(A<IDataSource>._)).MustHaveHappened();
+         A.CallTo(() => _dataSourceToDimensionSelectionDTOMapper.MapFrom(A<IDataSource>._, A<IReadOnlyList<string>>._)).MustHaveHappened();
       }
 
       [Observation]

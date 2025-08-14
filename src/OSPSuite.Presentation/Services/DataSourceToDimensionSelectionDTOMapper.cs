@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using NPOI.POIFS.NIO;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.DTO;
@@ -10,6 +9,7 @@ namespace OSPSuite.Presentation.Services
 {
    public interface IDataSourceToDimensionSelectionDTOMapper : IMapper<IDataSource, IReadOnlyList<DimensionSelectionDTO>>
    {
+      IReadOnlyList<DimensionSelectionDTO> MapFrom(IDataSource dataSource, IReadOnlyList<string> sheetNames);
    }
 
    public class DataSourceToDimensionSelectionDTOMapper : IDataSourceToDimensionSelectionDTOMapper
@@ -17,6 +17,11 @@ namespace OSPSuite.Presentation.Services
       public IReadOnlyList<DimensionSelectionDTO> MapFrom(IDataSource dataSource)
       {
          return dimensionsSupporting(dataSource).ToList();
+      }
+
+      public IReadOnlyList<DimensionSelectionDTO> MapFrom(IDataSource dataSource, IReadOnlyList<string> sheetNames)
+      {
+         return sheetNames.SelectMany(x => dimensionsSupporting(x, dataSource.DataSets[x])).ToList();
       }
 
       private IEnumerable<DimensionSelectionDTO> dimensionsSupporting(IDataSource dataSource)
@@ -37,7 +42,7 @@ namespace OSPSuite.Presentation.Services
 
       private DimensionSelectionDTO dimensionsSupporting(IReadOnlyList<string> units, ExtendedColumn extendedColumn, string sheetName, IReadOnlyList<string> description)
       {
-         return new DimensionSelectionDTO(sheetName, description, extendedColumn.ColumnInfo, 
+         return new DimensionSelectionDTO(sheetName, description, extendedColumn.Column, 
             extendedColumn.Column.Dimension != null ? 
                new List<IDimension> { extendedColumn.Column.Dimension } : 
                extendedColumn.ColumnInfo.SupportedDimensions.Where(dimension => supportsAllUnits(dimension, units)).ToList());
