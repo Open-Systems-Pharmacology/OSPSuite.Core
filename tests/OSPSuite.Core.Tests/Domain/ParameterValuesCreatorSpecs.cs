@@ -150,13 +150,32 @@ namespace OSPSuite.Core.Domain
 
          _expressionProfile = new ExpressionProfileBuildingBlock
          {
-            new ExpressionParameter().WithName(Constants.Parameters.REL_EXP),
             new ExpressionParameter().WithName("thalf")
          }.WithName("protein|something|something");
+
+
+         var expressionParameter = new ExpressionParameter().WithName(Constants.Parameters.REL_EXP);
+         expressionParameter.ContainerPath = new ObjectPath("organ", "Top", "compartment", "protein");
+         expressionParameter.Value = 5.0;
+         
+         _expressionProfile.Add(expressionParameter);
+
+         expressionParameter = new ExpressionParameter().WithName(Constants.Parameters.REL_EXP);
+         expressionParameter.ContainerPath = new ObjectPath("organ", "org", "compartment", "protein");
+         expressionParameter.Value = 4.0;
+
+         _expressionProfile.Add(expressionParameter);
+
+         expressionParameter = new ExpressionParameter().WithName(Constants.Parameters.REL_EXP);
+         expressionParameter.ContainerPath = new ObjectPath("organ", "org2", "compartment", "protein");
+         expressionParameter.Value = 4.0;
+
+         _expressionProfile.Add(expressionParameter);
+
          A.CallTo(() => _currentProject.All<ExpressionProfileBuildingBlock>()).Returns(new List<ExpressionProfileBuildingBlock> { _expressionProfile });
          _protein = new MoleculeBuilder().WithName("protein");
          _protein.QuantityType = QuantityType.Transporter;
-         var parameter = new Parameter().WithName(Constants.Parameters.REL_EXP);
+         var parameter = new Parameter().WithName(Constants.Parameters.REL_EXP).WithFormula(new ExplicitFormula("99"));
          _protein.AddParameter(parameter);
          var globalParameter = new Parameter().WithName("thalf");
          globalParameter.BuildMode = ParameterBuildMode.Global;
@@ -179,9 +198,22 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
+      public void the_parameter_values_with_compartment_match_should_use_the_best_match_expression_value()
+      {
+         _parameterValues.Single(x => x.Path.ToString().Equals($"Top|organ|compartment|protein|{Constants.Parameters.REL_EXP}")).Value.ShouldBeEqualTo(4.0);
+      }
+
+      [Observation]
+      public void the_parameter_values_without_compartment_match_should_have_value_from_molecule_parameter()
+      {
+         var formula = _parameterValues.Single(x => x.Path.ToString().Equals($"Top|organ|protein|{Constants.Parameters.REL_EXP}")).Formula as ExplicitFormula;
+         formula.ToString().ShouldBeEqualTo("99");
+      }
+
+      [Observation]
       public void the_parameter_values_should_include_local_expression_parameters_for_all_containers()
       {
-         _parameterValues.Select(x => x.Path.ToString()).ShouldOnlyContain($"Top|organ|compartment|protein|{Constants.Parameters.REL_EXP}", $"Top|organ|compartment|protein|{Constants.Parameters.REL_EXP}");
+         _parameterValues.Select(x => x.Path.ToString()).ShouldOnlyContain($"Top|organ|compartment|protein|{Constants.Parameters.REL_EXP}", $"Top|organ|protein|{Constants.Parameters.REL_EXP}");
       }
    }
 
