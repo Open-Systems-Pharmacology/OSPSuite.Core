@@ -148,14 +148,26 @@ namespace OSPSuite.Core.Domain.Services
       {
          var formulaSource = pathMatchedExpressionParameterFor(nameMatchedExpressionParameters, formulaTarget);
 
-         if (formulaSource == null && hasCompartment(formulaTarget))
-            formulaSource = compartmentMatchedExpressionParameterFor(formulaTarget, nameMatchedExpressionParameters);
-
-         return formulaSource;
+         if (formulaSource != null || !hasCompartment(formulaTarget)) 
+            return formulaSource;
+         
+         var potentialSources = compartmentMatchedExpressionParametersFor(formulaTarget, nameMatchedExpressionParameters);
+         return !potentialSources.Any() ? null : mostFrequentFormulaExpression(potentialSources);
       }
 
-      private static ExpressionParameter compartmentMatchedExpressionParameterFor(ParameterValue formulaTarget, List<ExpressionParameter> nameMatchedExpressionParameters) =>
-         nameMatchedExpressionParameters.Where(hasCompartment).FirstOrDefault(x => Equals(compartmentFor(x), compartmentFor(formulaTarget)));
+      private static ExpressionParameter mostFrequentFormulaExpression(IReadOnlyList<ExpressionParameter> potentialSources)
+      {
+         // Group the potential sources by formula name, order the groups by the count, flatten the groups, take the first expression parameter
+         return potentialSources.GroupBy(formulaGroupingName).OrderByDescending(x => x.Count()).SelectMany(x => x).First();
+      }
+
+      /// <summary>
+      /// Returns a name for the <paramref name="expressionParameter"/> formula. Expression parameters with value return the value as string
+      /// </summary>
+      private static string formulaGroupingName(ExpressionParameter expressionParameter) => expressionParameter.Formula == null ? expressionParameter.Value.ToString() : expressionParameter.Formula.Name;
+
+      private static IReadOnlyList<ExpressionParameter> compartmentMatchedExpressionParametersFor(ParameterValue formulaTarget, List<ExpressionParameter> nameMatchedExpressionParameters) =>
+         nameMatchedExpressionParameters.Where(x => hasCompartment(x) && Equals(compartmentFor(x), compartmentFor(formulaTarget))).ToList();
 
       private static string compartmentFor(ParameterValue formulaTarget) => formulaTarget.Path[compartmentIndex(formulaTarget)];
 
