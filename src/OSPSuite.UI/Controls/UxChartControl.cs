@@ -67,6 +67,11 @@ namespace OSPSuite.UI.Controls
          return AddPopupMenu(Captions.CopyToClipboard, canCopyToClipboard.CopyToClipboard, ApplicationIcons.Copy, beginGroup);
       }
 
+      public BarItemLink AddExportToImagePopupMenu(ICanExportToImage canExportToImage, ImageFormat imageFormat, bool beginGroup = false)
+      {
+         return AddPopupMenu(Captions.ExportChartToPng, canExportToImage.ExportToImage, ApplicationIcons.ExportToPNG, beginGroup);
+      }
+
       public virtual string Title
       {
          get => _title.Text;
