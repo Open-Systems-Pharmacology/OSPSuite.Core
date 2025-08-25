@@ -320,7 +320,6 @@ namespace OSPSuite.Infrastructure.Import
       }
 
       private ImportedDataSet _importedDataSet;
-      private DataSetToDataRepositoryMappingResult _result;
 
       protected override void Because()
       {
