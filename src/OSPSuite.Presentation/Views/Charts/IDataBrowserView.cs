@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using OSPSuite.Core.Chart;
 using OSPSuite.Presentation.Presenters.Charts;
 
@@ -10,17 +9,13 @@ namespace OSPSuite.Presentation.Views.Charts
       void BindTo(IEnumerable<DataColumnDTO> dataColumnDTOs);
 
       /// <summary>
-      /// Returns all selected <see cref="DataColumnDTO"/>
+      ///    Returns all selected <see cref="DataColumnDTO" />.
+      ///    All DTOs from a group are returned when the group is selected
       /// </summary>
       IReadOnlyList<DataColumnDTO> SelectedColumns { get; }
 
       /// <summary>
-      /// Returns all selected <see cref="DataColumnDTO"/> and their descendants.
-      /// </summary>
-      IReadOnlyList<DataColumnDTO> SelectedDescendantColumns { get; }
-
-      /// <summary>
-      /// sets the group row format of the gridView to the specified string.
+      ///    sets the group row format of the gridView to the specified string.
       /// </summary>
       void SetGroupRowFormat(GridGroupRowFormats format);
    }
