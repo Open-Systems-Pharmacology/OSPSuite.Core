@@ -73,7 +73,6 @@ namespace OSPSuite.Helpers
 
          module2.MergeBehavior = MergeBehavior.Extend;
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
-         // Using this constructor to validate that the merge behavior is set correctly
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
          return simulationConfiguration;
       }
