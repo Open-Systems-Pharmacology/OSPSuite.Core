@@ -53,7 +53,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       /// <param name="dataColumnDTOs">The list of columns</param>
       /// <param name="used">true if the columns should be used, otherwise false</param>
-      void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used);
+      /// <param name="isLinkedDataToSimulations">true if the columns should be linked to the simulation, so same color should be applied</param>
+      void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used, bool isLinkedDataToSimulations = false);
 
       /// <summary>
       ///    Returns all <see cref="DataColumn" /> currently selected by the user
@@ -78,11 +79,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       /// <summary>
       ///    Is called from the view when the column selection is changed by the user
-      /// </summary>s
+      /// </summary>
+      /// s
       void SelectedDataColumnsChanged();
 
       /// <summary>
-      /// Adds the output mappings (reference used to link observed data to output)
+      ///    Adds the output mappings (reference used to link observed data to output)
       /// </summary>
       void AddOutputMappings(OutputMappings outputMappings);
 
@@ -90,25 +92,25 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Returns all the DataColumns for the curves that are visible in the chart
       /// </summary>
       IReadOnlyList<DataColumn> GetAllUsedDataColumns();
-      
+
       /// <summary>
-      /// Changes the bool that defines whether the corresponding observed data used state
-      /// should be updated when their linked output used state is updated
+      ///    Changes the bool that defines whether the corresponding observed data used state
+      ///    should be updated when their linked output used state is updated
       /// </summary>
       void OutputObservedDataLinkingChanged(bool isLinkedMappedOutputs);
 
       /// <summary>
-      /// sets the group row format of the gridView to the specified string.
+      ///    sets the group row format of the gridView to the specified string.
       /// </summary>
       void SetGroupRowFormat(GridGroupRowFormats format);
 
       /// <summary>
-      /// Removed the specified output mappings from the list the DataBrowser keeps.
+      ///    Removed the specified output mappings from the list the DataBrowser keeps.
       /// </summary>
       void RemoveOutputMappings(OutputMappings outputMappings);
 
       /// <summary>
-      /// Removed all the output mappings from the list the DataBrowser keeps.
+      ///    Removed all the output mappings from the list the DataBrowser keeps.
       /// </summary>
       void RemoveAllOutputMappings();
    }
@@ -122,7 +124,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly HashSet<OutputMappings> _allOutputMappings = new HashSet<OutputMappings>();
       public event EventHandler<ColumnsEventArgs> SelectionChanged = delegate { };
       public event EventHandler<UsedColumnsEventArgs> UsedChanged = delegate { };
-      
+
       public DataBrowserPresenter(IDataBrowserView view) : base(view)
       {
       }
@@ -185,14 +187,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private void updateLinkedObservedData(DataColumn dataColumn, bool used)
       {
          if (!_isLinkedMappedOutputs) return;
-         
+
          var linkedObservedData = getLinkedObservedDataFromOutputPath(dataColumn.PathAsString);
          SetUsedState(linkedObservedData, used);
       }
 
       private IReadOnlyList<DataColumnDTO> getLinkedObservedDataFromOutputPath(string outputPath)
       {
-         var linkedObservedDataRepositories = _allOutputMappings.SelectMany(x=>x.AllDataRepositoryMappedTo(outputPath));
+         var linkedObservedDataRepositories = _allOutputMappings.SelectMany(x => x.AllDataRepositoryMappedTo(outputPath));
          return getDataColumnDTOsFromDataRepositories(linkedObservedDataRepositories);
       }
 
@@ -239,7 +241,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          {
             var outputColumnUsed = dataColumnDTO.Used;
             var linkedObservedData = getLinkedObservedDataFromOutputPath(dataColumnDTO.DataColumn.PathAsString);
-            SetUsedState(linkedObservedData, outputColumnUsed);
+            SetUsedState(linkedObservedData, outputColumnUsed, true);
          }
       }
 
@@ -248,10 +250,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _view.SetGroupRowFormat(format);
       }
 
-      public void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used)
+      public void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used, bool isLinkedDataToSimulations = false)
       {
          updateUsedStateForColumns(dataColumnDTOs, used);
-         raiseUsedChanged(columnsFrom(dataColumnDTOs), used);
+         raiseUsedChanged(columnsFrom(dataColumnDTOs), used, isLinkedDataToSimulations);
          updateDataSelection(_view.SelectedColumns);
       }
 
@@ -272,14 +274,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
          dataColumnDTOs.Each(dto => dto.Used = used);
       }
 
-      private void raiseUsedChanged(IReadOnlyList<DataColumn> dataColumns, bool used)
+      private void raiseUsedChanged(IReadOnlyList<DataColumn> dataColumns, bool used, bool isLinkedDataToSimulations = false)
       {
-         UsedChanged(this, new UsedColumnsEventArgs(dataColumns, used));
+         UsedChanged(this, new UsedColumnsEventArgs(dataColumns, used, isLinkedDataToSimulations));
       }
 
-      private void raiseUsedChanged(DataColumn dataColumn, bool used)
+      private void raiseUsedChanged(DataColumn dataColumn, bool used, bool isLinkedDataToSimulations = false)
       {
-         raiseUsedChanged(new[] {dataColumn}, used);
+         raiseUsedChanged(new[] { dataColumn }, used, isLinkedDataToSimulations);
       }
 
       private void updateDataSelection(IReadOnlyList<DataColumnDTO> selectedDataColumnDTOs)

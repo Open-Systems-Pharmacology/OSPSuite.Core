@@ -28,10 +28,14 @@ namespace OSPSuite.Presentation.Extensions
          return colors[newIndex];
       }
 
-      public static void UpdateCurveColorAndStyle(this CurveChart chart, Curve curve, DataColumn dataColumn, IReadOnlyCollection<DataColumn> dataColumns)
+      public static void UpdateCurveColorAndStyle(this CurveChart chart, Curve curve, DataColumn dataColumn, IReadOnlyCollection<DataColumn> dataColumns, bool isLinkedDataToSimulation = false)
       {
          // Finds color from a related column
-         if (dataColumnContainsRelatedColumns(dataColumn))
+
+         if (isLinkedDataToSimulation)
+            curve.Color = chart.Curves.FirstOrDefault()?.Color ?? chart.SelectNewColor();
+
+         else if (dataColumnContainsRelatedColumns(dataColumn))
             curve.Color = getColorFromRelatedColumn(chart, dataColumn);
 
          // Finds color from a column which dataColumn is related

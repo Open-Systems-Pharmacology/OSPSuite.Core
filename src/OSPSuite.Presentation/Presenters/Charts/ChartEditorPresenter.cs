@@ -120,7 +120,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <returns>
       ///    The new curve or existing if chart already contains a curve for the specified <paramref name="dataColumn" />
       /// </returns>
-      Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null);
+      Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null, bool isLinkedDataToSimulation = false);
 
       /// <summary>
       ///    Adds a curves to the chart for all dataColumns in <paramref name="dataColumnList" /> if they do not already exist.
@@ -408,16 +408,16 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          using (_chartUpdater.UpdateTransaction(Chart, e.Used ? CurveChartUpdateModes.Add : CurveChartUpdateModes.Remove))
          {
-            updateColumnUsedProperty(e.Columns, e.Used);
+            updateColumnUsedProperty(e.Columns, e.Used, e.IsLinkedDataToSimulations);
          }
       }
 
-      private void updateColumnUsedProperty(IReadOnlyList<DataColumn> columns, bool used)
+      private void updateColumnUsedProperty(IReadOnlyList<DataColumn> columns, bool used, bool isLinkedDataToSimulations)
       {
          columns.Each(column =>
          {
             if (used)
-               AddCurveForColumn(column);
+               AddCurveForColumn(column, isLinkedDataToSimulation: isLinkedDataToSimulations);
             else
                Chart.RemoveCurvesForColumn(column);
          });
@@ -672,13 +672,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
          }
       }
 
-      public Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null)
+      public Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null, bool isLinkedDataToSimulation = false)
       {
          var (exists, curve) = createAndConfigureCurve(dataColumn, defaultCurveOptions);
 
          if (exists) return curve;
 
-         Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns);
+         Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns, isLinkedDataToSimulation);
 
          if (defaultCurveOptions != null)
             curve.CurveOptions.UpdateFrom(defaultCurveOptions);
