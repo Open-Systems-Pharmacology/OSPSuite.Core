@@ -13,7 +13,7 @@ internal class SnapshotVersionsSpecs : StaticContextSpecification
       {
          SnapshotVersions.CanLoadVersion(i).ShouldBeTrue();
          if(i <= SnapshotVersions.V9)
-            SnapshotVersions.FindBy(i).ShouldBeEqualTo(SnapshotVersions.V9);
+            SnapshotVersions.FindByPKSimProjectVersion(i).ShouldBeEqualTo(SnapshotVersions.V9);
       }
    }
 
@@ -26,6 +26,6 @@ internal class SnapshotVersionsSpecs : StaticContextSpecification
    [Observation]
    public void the_project_version_mapped_to_snapshot_version_should_cap_at_current()
    {
-      SnapshotVersions.FindBy(SnapshotVersions.Current + 1).ShouldBeEqualTo(SnapshotVersions.Current);
+      SnapshotVersions.FindByPKSimProjectVersion(SnapshotVersions.Current + 1).ShouldBeEqualTo(SnapshotVersions.Current);
    }
 }
