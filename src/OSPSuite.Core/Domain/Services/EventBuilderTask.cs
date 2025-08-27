@@ -63,6 +63,9 @@ namespace OSPSuite.Core.Domain.Services
 
       private void mergeEventGroups(ModelConfiguration modelConfiguration, EventGroupBuildingBlock eventGroupBuildingBlock, MergeBehavior mergeBehavior)
       {
+         var (_, simulationBuilder) = modelConfiguration;
+         simulationBuilder.AddToBuilderSource(eventGroupBuildingBlock);
+
          foreach (var eventGroupBuilder in eventGroupBuildingBlock)
          {
             if (_sourceCriteriaTargetContainerCache.Contains(eventGroupBuilder.SourceCriteria))

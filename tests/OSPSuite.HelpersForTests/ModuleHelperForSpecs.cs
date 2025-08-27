@@ -74,11 +74,13 @@ namespace OSPSuite.Helpers
          module2.MergeBehavior = MergeBehavior.Extend;
          module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1"));
          module2.Add(createEventGroupBuildingBlock("EventForModule2", "eventGroup2", "eventBuilder1"));
+
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
          return simulationConfiguration;
       }
 
+      //TODO REMOVE. This method is called extend and override at the same time!
       public SimulationConfiguration CreateSimulationConfigurationForExtendMergeBehaviorOverridingModuleBehavior()
       {
          var simulationConfiguration = new SimulationConfiguration
@@ -89,6 +91,9 @@ namespace OSPSuite.Helpers
          var module1 = createModule1();
          var module2 = createModule2();
          module2.MergeBehavior = MergeBehavior.Extend;
+
+         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1"));
+         module2.Add(createEventGroupBuildingBlock("EventForModule2", "eventGroup2", "eventBuilder1"));
 
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
@@ -146,7 +151,7 @@ namespace OSPSuite.Helpers
          module2.MergeBehavior = MergeBehavior.Overwrite;
 
          module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", eventCount: 2));
-         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2",eventCount: 2));
+         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2", eventCount: 2));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
 
@@ -236,7 +241,7 @@ namespace OSPSuite.Helpers
             eventAssignment.UseAsValue = true;
             eventAssignment.ObjectPath = new ObjectPath(ORGANISM, ArterialBlood, Plasma, "A");
             eventBuilder.AddAssignment(eventAssignment);
-            // eventBuilder.AddParameter(NewConstantParameter(parameterName, 10));
+            eventBuilder.AddParameter(NewConstantParameter("Parameter1", 10));
             eventGroup.Add(eventBuilder);
          }
 
