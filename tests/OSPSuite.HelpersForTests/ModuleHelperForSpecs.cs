@@ -72,6 +72,8 @@ namespace OSPSuite.Helpers
          var module2 = createModule2();
 
          module2.MergeBehavior = MergeBehavior.Extend;
+         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1"));
+         module2.Add(createEventGroupBuildingBlock("EventForModule2", "eventGroup2", "eventBuilder1"));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
          return simulationConfiguration;
@@ -88,8 +90,6 @@ namespace OSPSuite.Helpers
          var module2 = createModule2();
          module2.MergeBehavior = MergeBehavior.Extend;
 
-         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1"));
-         module2.Add(createEventGroupBuildingBlock("EventForModule2", "eventGroup2", "eventBuilder1", "eventAssignment1", "parameter1"));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
 
@@ -107,8 +107,8 @@ namespace OSPSuite.Helpers
          var module2 = createModule2();
          module2.MergeBehavior = MergeBehavior.Overwrite;
 
-         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1"));
-         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2", "eventAssignment1", "parameter1"));
+         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1"));
+         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2"));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
 
@@ -126,8 +126,8 @@ namespace OSPSuite.Helpers
          var module2 = createModule2();
          module2.MergeBehavior = MergeBehavior.Extend;
 
-         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1", true));
-         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2", "eventAssignment1", "parameter1", true));
+         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", eventCount: 2));
+         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2", eventCount: 2));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
 
@@ -145,8 +145,8 @@ namespace OSPSuite.Helpers
          var module2 = createModule2();
          module2.MergeBehavior = MergeBehavior.Overwrite;
 
-         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1", true));
-         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2", "eventAssignment1", "parameter1", true));
+         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", eventCount: 2));
+         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2",eventCount: 2));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
 
@@ -208,18 +208,19 @@ namespace OSPSuite.Helpers
             .WithMode(ContainerMode.Logical);
       }
 
-      private EventGroupBuildingBlock createEventGroupBuildingBlock(string collectionName, string eventGroupName, string eventBuilderName, string eventAssignmentName, string parameterName, bool createTwoEvents = false)
+      private EventGroupBuildingBlock createEventGroupBuildingBlock(string buildingBlockName, string eventGroupName, string eventBuilderName, int eventCount = 1)
       {
-         var eventGroupBuilderCollection = _objectBaseFactory.Create<EventGroupBuildingBlock>().WithName(collectionName);
-         var eventGroupBuilder = createBolusApplication(eventGroupBuilderCollection.FormulaCache, eventGroupName, eventBuilderName, eventAssignmentName, parameterName, eventCount: createTwoEvents ? 2 : 1);
+         var eventGroupBuilderCollection = _objectBaseFactory.Create<EventGroupBuildingBlock>().WithName(buildingBlockName);
+         var eventGroupBuilder = createBolusApplication(eventGroupBuilderCollection.FormulaCache, eventGroupName, eventBuilderName, eventCount);
          eventGroupBuilderCollection.Add(eventGroupBuilder);
 
          return eventGroupBuilderCollection;
       }
 
-      private EventGroupBuilder createBolusApplication(IFormulaCache cache, string eventGroupName, string eventBuilderName, string eventAssignmentName, string parameterName, int eventCount = 1)
+      private EventGroupBuilder createBolusApplication(IFormulaCache cache, string eventGroupName, string eventBuilderName, int eventCount = 1)
       {
          var eventGroup = _objectBaseFactory.Create<EventGroupBuilder>().WithName(eventGroupName);
+         var eventAssignmentName = "EventAssignment";
          eventGroup.SourceCriteria = Create.Criteria(x => x.With(ArterialBlood).And.With(Plasma));
 
          for (var i = 0; i < eventCount; i++)
@@ -235,7 +236,7 @@ namespace OSPSuite.Helpers
             eventAssignment.UseAsValue = true;
             eventAssignment.ObjectPath = new ObjectPath(ORGANISM, ArterialBlood, Plasma, "A");
             eventBuilder.AddAssignment(eventAssignment);
-            eventBuilder.AddParameter(NewConstantParameter(parameterName, 10));
+            // eventBuilder.AddParameter(NewConstantParameter(parameterName, 10));
             eventGroup.Add(eventBuilder);
          }
 
@@ -510,7 +511,7 @@ namespace OSPSuite.Helpers
 
       public SimulationSettings CreateSimulationSettings()
       {
-         return new SimulationSettings { Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = _outputSchemaFactory.CreateDefault(), OutputSelections = new OutputSelections() };
+         return new SimulationSettings {Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = _outputSchemaFactory.CreateDefault(), OutputSelections = new OutputSelections()};
       }
 
       public SpatialStructure CreateSpatialStructure(string name = "SPATIAL STRUCTURE")
