@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSPSuite.Serializer" Version="4.0.1.3" />
+    <PackageReference Include="OSPSuite.Serializer" Version="4.0.1.4" />
   </ItemGroup>
 
   <ItemGroup>
