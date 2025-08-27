@@ -11,12 +11,12 @@ namespace OSPSuite.Core.Converters.v12
 
       public (int convertedToVersion, bool conversionHappened) Convert(object objectToUpdate)
       {
-         return (PKMLVersion.V12_1, true);
+         return (PKMLVersion.V12_1, false);
       }
 
       public (int convertedToVersion, bool conversionHappened) ConvertXml(XElement element)
       {
-         return (PKMLVersion.V12_1, true);
+         return (PKMLVersion.V12_1, false);
       }
    }
 }
