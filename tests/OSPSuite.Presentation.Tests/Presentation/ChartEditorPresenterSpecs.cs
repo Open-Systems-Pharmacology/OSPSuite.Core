@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using FakeItEasy;
@@ -413,7 +414,7 @@ namespace OSPSuite.Presentation.Presentation
    {
       protected override void Because()
       {
-         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] { _standardColumn, }, true, false));
+         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] { _standardColumn, }, true));
       }
 
       [Observation]
@@ -502,7 +503,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] { _standardColumn, }, false, false));
+         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] { _standardColumn, }, false));
       }
 
       [Observation]
@@ -515,27 +516,6 @@ namespace OSPSuite.Presentation.Presentation
       public void should_update_the_chart()
       {
          A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, CurveChartUpdateModes.Remove, true)).MustHaveHappened();
-      }
-   }
-
-   public class When_the_chart_editor_presenter_is_notified_that_the_data_is_linked_to_simulation : concern_for_ChartEditorPresenter
-   {
-      protected override void Context()
-      {
-         base.Context();
-         sut.AddCurveForColumn(_standardColumn, isLinkedDataToSimulation: false);
-      }
-
-      protected override void Because()
-      {
-         sut.AddCurveForColumn(_standardColumn2, isLinkedDataToSimulation: true);
-      }
-
-      [Observation]
-      public void should_add_curve_with_same_color()
-      {
-         sut.Chart.Curves.Count().ShouldBeEqualTo(2);
-         sut.Chart.Curves.First().Color.ShouldBeEqualTo(sut.Chart.Curves.ToList()[1].Color); 
       }
    }
 
