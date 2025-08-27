@@ -394,6 +394,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void updateChart(IReadOnlyCollection<Curve> curvesToUpdate, bool refreshCurveData)
       {
+         // Make sure binders for curves that were removed are pruned so that their axes are not considered when calculating diagram size
+         pruneCurves();
+         
          var diagramSize = View.GetDiagramSize();
          using (new BatchUpdate(View))
          {
