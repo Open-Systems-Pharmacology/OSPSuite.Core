@@ -256,6 +256,7 @@ namespace OSPSuite.UI.Views.Importer
       public void ClearTabs()
       {
          importerTabControl.TabPages.Clear();
+         _tabMarks.Clear();
       }
 
       public void DisableImportCurrentSheet()
