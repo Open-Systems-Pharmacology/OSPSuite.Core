@@ -247,7 +247,7 @@ namespace OSPSuite.Presentation.Presentation
          base.Context();
          sut.AddDataColumns(new[] {_column1, _column2,});
          sut.UsedChanged += (o, e) => _usedStateChangedColumns = e.Columns;
-         A.CallTo(() => _view.SelectedDescendantColumns).Returns(new []{_allDataColumnDTOs[1]});
+         A.CallTo(() => _view.SelectedColumns).Returns(new []{_allDataColumnDTOs[1]});
       }
 
       protected override void Because()
@@ -278,7 +278,7 @@ namespace OSPSuite.Presentation.Presentation
          base.Context();
          sut.AddDataColumns(new[] {_column1, _column2,});
          sut.SelectionChanged += (o,e) => _selectedColumns = e.Columns;
-         A.CallTo(() => _view.SelectedDescendantColumns).Returns(_allDataColumnDTOs);
+         A.CallTo(() => _view.SelectedColumns).Returns(_allDataColumnDTOs);
       }
 
       protected override void Because()
