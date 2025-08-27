@@ -1,7 +1,7 @@
 ﻿using OSPSuite.Core.Serialization;
 using System.Xml.Linq;
 
-namespace OSPSuite.Core.Converters._13
+namespace OSPSuite.Core.Converters.v13
 {
    public class Converter121To130 : IObjectConverter
    {
@@ -9,12 +9,12 @@ namespace OSPSuite.Core.Converters._13
 
       public (int convertedToVersion, bool conversionHappened) Convert(object objectToUpdate)
       {
-         return (PKMLVersion.V13_0, true);
+         return (PKMLVersion.V13_0, false);
       }
 
       public (int convertedToVersion, bool conversionHappened) ConvertXml(XElement element)
       {
-         return (PKMLVersion.V13_0, true);
+         return (PKMLVersion.V13_0, false);
       }
    }
 }
