@@ -29,13 +29,22 @@ namespace OSPSuite.Core.Snapshots
          return snapshotVersion <= Current.Version;
       }
 
-      public static SnapshotVersion FindBy(int version)
+      public static SnapshotVersion FindByPKSimProjectVersion(int projectVersion)
       {
          // All snapshots up to V9 are compatible.
-         if (version < V9)
+         if (projectVersion < V9)
             return V9;
+
+         // if project version increases, return the current snapshot version
+         if (projectVersion > Current)
+            return Current;
          
-         return _knownVersions[version];
+         return _knownVersions[projectVersion];
+      }
+
+      public static SnapshotVersion FindByMoBiProjectVersion(int projectVersion)
+      {
+         return Current;
       }
    }
 }
