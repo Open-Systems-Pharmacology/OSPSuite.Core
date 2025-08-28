@@ -36,7 +36,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
    /// </summary>
    public interface IChartDisplayPresenter :
       IPresenter<IChartDisplayView>,
-      ICanCopyToClipboard,
+      ICanExportCharts,
       IPresenterWithContextMenu<IViewItem>,
       IListener<ChartUpdatedEvent>,
       IListener<CurveChartUpdatedEvent>,
@@ -191,8 +191,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void AddDeviationLines();
 
       Func<IEnumerable<DataColumn>, IEnumerable<DataColumn>> PreExportHook { get; set; }
-
-      void ExportToPng();
    }
 
    public class ChartDisplayPresenter : AbstractPresenter<IChartDisplayView, IChartDisplayPresenter>, IChartDisplayPresenter

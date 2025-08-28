@@ -18,8 +18,8 @@ using OSPSuite.Presentation.Views.SensitivityAnalyses;
 
 namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 {
-   public interface ISensitivityAnalysisPKParameterAnalysisPresenter : 
-      ICanCopyToClipboard,
+   public interface ISensitivityAnalysisPKParameterAnalysisPresenter :
+      ICanExportCharts,
       IPresenter<ISensitivityAnalysisPKParameterAnalysisView>, 
       ISimulationAnalysisPresenter,
       IListener<SensitivityAnalysisResultsUpdatedEvent>
@@ -40,16 +40,19 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
       private readonly string _nameProperty;
       private readonly IPKParameterRepository _pkParameterRepository;
       private readonly IApplicationSettings _applicationSettings;
+      private readonly IDialogCreator _dialogCreator;
 
       public SensitivityAnalysisPKParameterAnalysisPresenter(
          ISensitivityAnalysisPKParameterAnalysisView view, 
          IPresentationSettingsTask presentationSettingsTask, 
          IPKParameterRepository pkParameterRepository,
-         IApplicationSettings applicationSettings) : base(view)
+         IApplicationSettings applicationSettings, 
+         IDialogCreator dialogCreator) : base(view)
       {
          _presentationSettingsTask = presentationSettingsTask;
          _pkParameterRepository = pkParameterRepository;
          _applicationSettings = applicationSettings;
+         _dialogCreator = dialogCreator;
          _nameProperty = ReflectionHelper.PropertyFor<SensitivityAnalysisPKParameterAnalysis, string>(x => x.Name).Name;
       }
 
@@ -84,7 +87,9 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 
       protected virtual void AddChartEventHandlers()
       {
-         if (Chart == null) return;
+         if (Chart == null) 
+            return;
+         
          Chart.PropertyChanged += chartPropertyChanged;
       }
 
@@ -101,19 +106,14 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
 
       protected virtual void RemoveChartEventHandlers()
       {
-         if (Chart == null) return;
+         if (Chart == null) 
+            return;
          Chart.PropertyChanged -= chartPropertyChanged;
       }
 
-      public void Clear()
-      {
-         RemoveChartEventHandlers();
-      }
+      public void Clear() => RemoveChartEventHandlers();
 
-      public string DisplayValueForPKParameter(string pkParameterName)
-      {
-         return _pkParameterRepository.DisplayNameFor(pkParameterName);
-      }
+      public string DisplayValueForPKParameter(string pkParameterName) => _pkParameterRepository.DisplayNameFor(pkParameterName);
 
       public string ActivePKParameter
       {
@@ -154,14 +154,17 @@ namespace OSPSuite.Presentation.Presenters.SensitivityAnalyses
          updateView();
       }
 
-      private bool canHandle(SensitivityAnalysisEvent eventToHandle)
-      {
-         return Equals(_sensitivityAnalysis, eventToHandle.SensitivityAnalysis);
-      }
+      private bool canHandle(SensitivityAnalysisEvent eventToHandle) => Equals(_sensitivityAnalysis, eventToHandle.SensitivityAnalysis);
 
-      public void CopyToClipboard()
+      public void CopyToClipboard() => _view.CopyToClipboard(_applicationSettings.WatermarkTextToUse);
+
+      public void ExportToPng()
       {
-         _view.CopyToClipboard(_applicationSettings.WatermarkTextToUse);
+         var fileName = _dialogCreator.AskForFileToSave(Captions.ExportChartToPng, Constants.Filter.DIAGRAM_IMAGE_FILTER, Constants.DirectoryKey.REPORT, Chart.Name);
+         if (string.IsNullOrEmpty(fileName))
+            return;
+
+         _view.ExportToPng(fileName, _applicationSettings.WatermarkTextToUse);
       }
    }
 }

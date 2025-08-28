@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using DevExpress.Utils;
 using DevExpress.XtraCharts;
@@ -130,6 +131,7 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
       {
          _presenter = presenter;
          chartControl.AddCopyToClipboardPopupMenu(presenter);
+         chartControl.AddExportToPngPopupMenu(presenter);
       }
 
       public void BindTo(SensitivityAnalysisPKParameterAnalysisPresenter sensitivityAnalysisPKParameterAnalysisPresenter)
@@ -201,20 +203,18 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          {
             // -1 so that the lowest sensitivity is yValue = 0
             var yValue = allPKParameterSensitivities.Count - i - 1;
-            var seriesPoint = new SeriesPoint(x.Value, yValue) {ToolTipHint = createPointLabel(x.Value, x.ParameterName)};
+            var seriesPoint = new SeriesPoint(x.Value, yValue) { ToolTipHint = createPointLabel(x.Value, x.ParameterName) };
             points.Add(seriesPoint);
-            xyDiagram.AxisY.CustomLabels.Add(new CustomAxisLabel(x.ParameterName) {AxisValue = yValue});
+            xyDiagram.AxisY.CustomLabels.Add(new CustomAxisLabel(x.ParameterName) { AxisValue = yValue });
          });
 
          return points.ToArray();
       }
 
-      public void CopyToClipboard(string watermark)
-      {
-         chartControl.CopyToClipboard(watermark);
-      }
+      public void CopyToClipboard(string watermark) => chartControl.CopyToClipboard(watermark);
+
+      public void ExportToPng(string filePath, string watermark) => chartControl.ExportChartToImageFile(watermark, filePath, ImageFormat.Png);
 
       private string createPointLabel(double value, string parameterName) => $"{parameterName}: {value}";
-
    }
 }
