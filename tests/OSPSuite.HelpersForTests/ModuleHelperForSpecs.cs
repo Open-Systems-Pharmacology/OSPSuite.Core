@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Net.Configuration;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
@@ -43,6 +44,8 @@ namespace OSPSuite.Helpers
          _initialConditionsCreator = initialConditionsCreator;
          _modelHelper = modelHelper;
       }
+
+      private IDimension amountPerTimeDimension => _dimensionFactory.Dimension(Constants.Dimension.AMOUNT_PER_TIME);
 
       public SimulationConfiguration CreateSimulationConfiguration()
       {
@@ -180,6 +183,7 @@ namespace OSPSuite.Helpers
          var module = _objectBaseFactory.Create<Module>().WithName("Module1");
          module.Add(getSpatialStructureModule1());
          module.Add(getMoleculesModule1());
+         module.Add(getPassiveTransportModule1());
 
          var initialConditions = _initialConditionsCreator.CreateFrom(module.SpatialStructure, module.Molecules.ToList());
          module.Add(initialConditions);
@@ -187,23 +191,64 @@ namespace OSPSuite.Helpers
          return module;
       }
 
+      private PassiveTransportBuildingBlock getPassiveTransportModule1()
+      {
+         var passiveTransport = _objectBaseFactory.Create<PassiveTransportBuildingBlock>().WithName("PassiveTransportModule1");
+         var pt1 = _objectBaseFactory.Create<TransportBuilder>().WithName("PT1").WithDimension(amountPerTimeDimension);
+         pt1.SourceCriteria = Create.Criteria(x => x.With(Kidney).And.With(Plasma));
+         pt1.TargetCriteria = Create.Criteria(x => x.With(Kidney).And.With(Urine));
+         pt1.MoleculeList.ForAll = true;
+         pt1.MoleculeList.AddMoleculeName("A");
+         //For all and exclude A. This should be all but A even if in the include list
+         pt1.MoleculeList.AddMoleculeNameToExclude("A");
+         passiveTransport.Add(pt1);
+         return passiveTransport;
+      }
+
+      private PassiveTransportBuildingBlock getPassiveTransportModule2()
+      {
+         var passiveTransport = _objectBaseFactory.Create<PassiveTransportBuildingBlock>().WithName("PassiveTransportModule1");
+         var pt1 = _objectBaseFactory.Create<TransportBuilder>().WithName("PT1").WithDimension(amountPerTimeDimension);
+         pt1.SourceCriteria = Create.Criteria(x => x.With(Kidney).And.With(Plasma));
+         pt1.TargetCriteria = Create.Criteria(x => x.With(Kidney).And.With(Urine));
+         pt1.MoleculeList.ForAll = true;
+         pt1.MoleculeList.AddMoleculeName("A");
+         //For all and exclude A. This should be all but A even if in the include list
+         pt1.MoleculeList.AddMoleculeNameToExclude("A");
+         passiveTransport.Add(pt1);
+         return passiveTransport;
+      }
+
       private MoleculeBuildingBlock getMoleculesModule1()
       {
          var molecules = _objectBaseFactory.Create<MoleculeBuildingBlock>();
          molecules.Add(createMoleculeA(molecules.FormulaCache));
+         molecules.Add(createMoleculeB(molecules.FormulaCache));
          return molecules;
       }
 
       private MoleculeBuilder createMoleculeA(IFormulaCache formulaCache)
       {
-         var moleculeC = _modelHelper.DefaultMolecule("A", 3, 3, QuantityType.Drug, formulaCache);
+         var moleculeA = _modelHelper.DefaultMolecule("A", 3, 3, QuantityType.Drug, formulaCache);
          var globalParameter = NewConstantParameter("A_Global", 5, ParameterBuildMode.Global);
          var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("A_Global_Formula").WithFormulaString("2+2");
          globalParameter.Formula = formula;
          formulaCache.Add(formula);
-         moleculeC.Add(globalParameter);
-         moleculeC.IsFloating = true;
-         return moleculeC;
+         moleculeA.Add(globalParameter);
+         moleculeA.IsFloating = true;
+         return moleculeA;
+      }
+
+      private MoleculeBuilder createMoleculeB(IFormulaCache formulaCache)
+      {
+         var moleculeB = _modelHelper.DefaultMolecule("B", 3, 3, QuantityType.Drug, formulaCache);
+         var globalParameter = NewConstantParameter("B_Global", 5, ParameterBuildMode.Global);
+         var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("B_Global_Formula").WithFormulaString("2+2");
+         globalParameter.Formula = formula;
+         formulaCache.Add(formula);
+         moleculeB.Add(globalParameter);
+         moleculeB.IsFloating = true;
+         return moleculeB;
       }
 
       public IContainer CreateOrganism()
@@ -352,7 +397,7 @@ namespace OSPSuite.Helpers
 
          //VEN
          var ven = createContainerWithName(VenousBlood);
-         var venPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
+         var venPlasma = createContainerWithName(Plasma, ContainerMode.Physical);`
          venPlasma.Add(NewConstantParameter(Volume, 2));
          ven.Add(venPlasma);
          ven.Add(NewConstantParameter(Q, 2));
@@ -487,6 +532,9 @@ namespace OSPSuite.Helpers
          spatialStructure.AddNeighborhood(neighborhood3);
 
          module.Add(spatialStructure);
+
+         //add a set of passive transport that will have different base on merge behavior
+         module.Add(getPassiveTransportModule2());
          return module;
       }
 
