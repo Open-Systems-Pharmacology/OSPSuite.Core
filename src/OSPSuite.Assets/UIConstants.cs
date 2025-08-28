@@ -1694,7 +1694,7 @@ namespace OSPSuite.Assets
 
       public static string MoleculeNameExistsInAnotherList(string moleculeName)
       {
-         return $"Cannot add molecule '{moleculeName}' into both molecules to include and molecules to exclude lists";
+         return $"Cannot add molecule '{moleculeName}' to both the include list AND exclude list";
       }
       public static string BuildingBlockTypeAlreadyAddedToModule(string objectName, string type) => $"BuildingBlock '{type}' for '{objectName}' was already added to module";
 

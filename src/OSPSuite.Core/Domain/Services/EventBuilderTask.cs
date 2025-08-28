@@ -51,7 +51,7 @@ namespace OSPSuite.Core.Domain.Services
 
             _allModelContainerDescriptors = model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
 
-            simulationBuilder.EventGroupAndMergeBehaviors.Each(eventGroupBuildingBlockAndMerge => { mergeEventGroups(modelConfiguration, eventGroupBuildingBlockAndMerge); });
+            simulationBuilder.EventGroupAndMergeBehaviors.Each(x => mergeEventGroups(modelConfiguration, x.eventGroupBuildingBlock, x.mergeBehavior));
          }
          finally
          {
@@ -61,13 +61,12 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private void mergeEventGroups(ModelConfiguration modelConfiguration, (EventGroupBuildingBlock buildingBlock, MergeBehavior mergeBehavior) eventGroupBuildingBlockAndMerge)
+      private void mergeEventGroups(ModelConfiguration modelConfiguration, EventGroupBuildingBlock eventGroupBuildingBlock, MergeBehavior mergeBehavior)
       {
-         var (buildingBlock, mergeBehavior) = eventGroupBuildingBlockAndMerge;
          var (_, simulationBuilder) = modelConfiguration;
+         simulationBuilder.AddToBuilderSource(eventGroupBuildingBlock);
 
-         simulationBuilder.AddToBuilderSource(buildingBlock);
-         foreach (var eventGroupBuilder in buildingBlock)
+         foreach (var eventGroupBuilder in eventGroupBuildingBlock)
          {
             if (_sourceCriteriaTargetContainerCache.Contains(eventGroupBuilder.SourceCriteria))
                continue;
@@ -75,7 +74,7 @@ namespace OSPSuite.Core.Domain.Services
             _sourceCriteriaTargetContainerCache.Add(eventGroupBuilder.SourceCriteria, _allModelContainerDescriptors.AllSatisfiedBy(eventGroupBuilder.SourceCriteria));
          }
 
-         buildingBlock.Each(x => createEventGroupFrom(x, modelConfiguration, buildingBlock, mergeBehavior));
+         eventGroupBuildingBlock.Each(x => createEventGroupFrom(x, modelConfiguration, eventGroupBuildingBlock, mergeBehavior));
       }
 
       /// <summary>

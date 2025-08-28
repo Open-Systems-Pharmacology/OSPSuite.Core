@@ -16,30 +16,24 @@ namespace OSPSuite.Core.Domain.Services
 
    internal class CalculationMethodTask : ICalculationMethodTask
    {
-      private readonly IFormulaTask _formulaTask;
       private readonly IKeywordReplacerTask _keywordReplacerTask;
       private readonly IFormulaBuilderToFormulaMapper _formulaMapper;
       private readonly IParameterBuilderToParameterMapper _parameterMapper;
-      private readonly IObjectPathFactory _objectPathFactory;
       private EntityDescriptorMapList<IContainer> _allContainers;
       private IList<IParameter> _allBlackBoxParameters;
       private IModel _model;
-      private SimulationConfiguration _simulationConfiguration;
       private SimulationBuilder _simulationBuilder;
       private ReplacementContext _replacementContext;
 
       public CalculationMethodTask(
-         IFormulaTask formulaTask,
          IKeywordReplacerTask keywordReplacerTask,
          IFormulaBuilderToFormulaMapper formulaMapper,
-         IParameterBuilderToParameterMapper parameterMapper,
-         IObjectPathFactory objectPathFactory)
+         IParameterBuilderToParameterMapper parameterMapper
+      )
       {
-         _formulaTask = formulaTask;
          _keywordReplacerTask = keywordReplacerTask;
          _formulaMapper = formulaMapper;
          _parameterMapper = parameterMapper;
-         _objectPathFactory = objectPathFactory;
       }
 
       public void MergeCalculationMethodInModel(ModelConfiguration modelConfiguration)
@@ -47,10 +41,10 @@ namespace OSPSuite.Core.Domain.Services
          try
          {
             (_model, _simulationBuilder, _replacementContext) = modelConfiguration;
-            _simulationConfiguration = modelConfiguration.SimulationConfiguration;
+            var simulationConfiguration = modelConfiguration.SimulationConfiguration;
             _allContainers = _model.Root.GetAllContainersAndSelf<IContainer>().ToEntityDescriptorMapList();
             _allBlackBoxParameters = _model.Root.GetAllChildren<IParameter>().Where(p => p.Formula.IsBlackBox()).ToList();
-            foreach (var calculationMethod in _simulationConfiguration.AllCalculationMethods)
+            foreach (var calculationMethod in simulationConfiguration.AllCalculationMethods)
             {
                var allMoleculesUsingMethod = allMoleculesUsing(calculationMethod, _simulationBuilder.Molecules).ToList();
 
@@ -61,7 +55,6 @@ namespace OSPSuite.Core.Domain.Services
          }
          finally
          {
-            _simulationConfiguration = null;
             _simulationBuilder = null;
             _allContainers.Clear();
             _allBlackBoxParameters.Clear();

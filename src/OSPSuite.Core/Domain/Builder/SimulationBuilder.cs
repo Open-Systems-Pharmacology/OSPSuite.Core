@@ -151,6 +151,23 @@ namespace OSPSuite.Core.Domain.Builder
          return builders;
       }
 
+      private void cacheMoleculeLists<T>(IReadOnlyList<T> allBuilders, ObjectBaseCache<T> builderCache) where T : class, IMoleculeDependentBuilder
+      {
+         builderCache.Each(builderUsedInSimulation => combineMoleculeLists(allBuilders.Where(x => x.IsNamed(builderUsedInSimulation.Name)), builderUsedInSimulation));
+      }
+
+      private void combineMoleculeLists(IEnumerable<IMoleculeDependentBuilder> builders, IMoleculeDependentBuilder builderUsedInSimulation)
+      {
+         _moleculeListCache[builderUsedInSimulation] = builderUsedInSimulation.MoleculeList.Clone();
+         builders.Each(x => addMolecules(x, _moleculeListCache[builderUsedInSimulation]));
+      }
+
+      private void addMolecules(IMoleculeDependentBuilder builder, MoleculeList moleculeList)
+      {
+         builder.MoleculeList.MoleculeNames.Each(moleculeList.AddMoleculeName);
+         builder.MoleculeList.MoleculeNamesToExclude.Each(moleculeList.AddMoleculeNameToExclude);
+      }
+
       private void cacheParameterValueBuilders<T>(Func<ModuleConfiguration, IBuildingBlock<T>> propAccess, PathAndValueEntityCache<T> cache) where T : PathAndValueEntity
       {
          var builderSources = allParameterValueBuilderSources(propAccess);
@@ -172,23 +189,6 @@ namespace OSPSuite.Core.Domain.Builder
 
       private void addToBuilderSource<T>(IEnumerable<(T Builder, IBuildingBlock BuildingBlock)> builderSources) where T : class, IBuilder, IEntity =>
          builderSources.Each(x => AddToBuilderSource(x.Builder, x.BuildingBlock));
-
-      private void cacheMoleculeLists<T>(IReadOnlyList<T> allBuilders, ObjectBaseCache<T> builderCache) where T : class, IMoleculeDependentBuilder
-      {
-         builderCache.Each(builderUsedInSimulation => combineMoleculeLists(allBuilders.Where(x => x.IsNamed(builderUsedInSimulation.Name)), builderUsedInSimulation));
-      }
-
-      private void combineMoleculeLists(IEnumerable<IMoleculeDependentBuilder> builders, IMoleculeDependentBuilder builderUsedInSimulation)
-      {
-         _moleculeListCache[builderUsedInSimulation] = builderUsedInSimulation.MoleculeList.Clone();
-         builders.Each(x => addMolecules(x, _moleculeListCache[builderUsedInSimulation]));
-      }
-
-      private void addMolecules(IMoleculeDependentBuilder builder, MoleculeList moleculeList)
-      {
-         builder.MoleculeList.MoleculeNames.Each(moleculeList.AddMoleculeName);
-         builder.MoleculeList.MoleculeNamesToExclude.Each(moleculeList.AddMoleculeNameToExclude);
-      }
 
       internal IReadOnlyList<(SpatialStructure spatialStructure, MergeBehavior mergeBehavior)> SpatialStructureAndMergeBehaviors =>
          _simulationConfiguration.ModuleConfigurations.Where(x => x.Module.SpatialStructure != null).Select(x => (x.Module.SpatialStructure, x.MergeBehavior)).ToList();

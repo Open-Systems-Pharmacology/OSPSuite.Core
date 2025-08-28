@@ -2,6 +2,7 @@
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -50,8 +51,8 @@ namespace OSPSuite.Core.Domain
          base.Context();
          sut.AddMoleculeName("A_OLD");
          sut.AddMoleculeNameToExclude("B_OLD");
-
       }
+
       protected override void Because()
       {
          sut.ReplaceMoleculeName("A_OLD", new[]{"A1","A2"});
@@ -72,6 +73,56 @@ namespace OSPSuite.Core.Domain
          sut.MoleculeNamesToExclude.ShouldContain("B1");
          sut.MoleculeNamesToExclude.ShouldContain("B2");
          sut.MoleculeNamesToExclude.Contains("B_OLD").ShouldBeFalse();
+      }
+   }
+
+   public class When_adding_a_molecule_in_the_exclude_list_and_it_is_already_in_the_include_list_with_for_all : concern_for_MoleculeList
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.ForAll = true;
+         sut.AddMoleculeName("A");
+      }
+
+      [Observation]
+      public void should_accept_the_change()
+      {
+         sut.AddMoleculeNameToExclude("A");         
+         sut.MoleculeNamesToExclude.ShouldContain("A");
+      }
+   }
+
+   public class When_adding_a_molecule_in_the_exclude_list_and_it_is_already_in_the_include_list_without_for_all : concern_for_MoleculeList
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.ForAll = false;
+         sut.AddMoleculeName("A");
+      }
+
+      [Observation]
+      public void should_throw_an_exception()
+      {
+         The.Action(()=>sut.AddMoleculeNameToExclude("A")).ShouldThrowAn<OSPSuiteException>()
+      }
+   }
+
+   public class When_adding_a_molecule_in_the_include_list_and_it_is_already_in_the_exclude_list_with_for_all : concern_for_MoleculeList
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.ForAll = true;
+         sut.AddMoleculeNameToExclude("A");
+      }
+
+      [Observation]
+      public void should_accept_the_change()
+      {
+         sut.AddMoleculeName("A");
+         sut.MoleculeNames.ShouldContain("A");
       }
    }
 }	
