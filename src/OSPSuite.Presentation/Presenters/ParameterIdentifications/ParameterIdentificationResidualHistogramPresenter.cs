@@ -21,7 +21,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {
    public interface IParameterIdentificationResidualHistogramPresenter : 
       IParameterIdentificationSingleRunAnalysisPresenter,
-      ICanCopyToClipboard
+      ICanExportCharts
    {
    }
 
@@ -38,6 +38,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       private readonly DistributionSettings _distributionSettings;
       private ParameterIdentificationRunResult _selectedRunResults;
       private readonly IParameterIdentificationResidualHistogramView _histogramView;
+      private readonly IDialogCreator _dialogCreator;
       public IReadOnlyList<ParameterIdentificationRunResult> AllRunResults { get; private set; }
 
       public string PresentationKey => PresenterConstants.PresenterKeys.ParameterIdentificationResidualHistogramPresenter;
@@ -49,13 +50,15 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          IPresentationSettingsTask presentationSettingsTask,
          IResidualDistibutionDataCreator residualDistibutionDataCreator, 
          INormalDistributionDataCreator normalDistributionDataCreator, 
-         IApplicationSettings applicationSettings) : base(view)
+         IApplicationSettings applicationSettings, 
+         IDialogCreator dialogCreator) : base(view)
       {
          _presentationSettingsTask = presentationSettingsTask;
          _histogramView = histogramView;
          _residualDistibutionDataCreator = residualDistibutionDataCreator;
          _normalDistributionDataCreator = normalDistributionDataCreator;
          _applicationSettings = applicationSettings;
+         _dialogCreator = dialogCreator;
          _nameProperty = ReflectionHelper.PropertyFor<ParameterIdentificationResidualHistogram, string>(x => x.Name).Name;
          view.ApplicationIcon = ApplicationIcons.ResidualHistogramAnalysis;
          _distributionSettings = new DistributionSettings
@@ -66,7 +69,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
             YAxisTitle = Captions.ParameterIdentification.ResidualCount
          };
          _view.SetAnalysisView(histogramView);
-         _histogramView.CopyToClipboardManager = this;
+         _histogramView.ChartExportManager = this;
       }
 
       public void UpdateAnalysisBasedOn(IAnalysable analysable)
@@ -131,24 +134,29 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 
       protected virtual void AddChartEventHandlers()
       {
-         if (Chart == null) return;
+         if (Chart == null) 
+            return;
          Chart.PropertyChanged += chartPropertyChanged;
       }
 
       protected virtual void RemoveChartEventHandlers()
       {
-         if (Chart == null) return;
+         if (Chart == null) 
+            return;
          Chart.PropertyChanged -= chartPropertyChanged;
       }
 
-      public void Clear()
-      {
-         RemoveChartEventHandlers();
-      }
+      public void Clear() => RemoveChartEventHandlers();
 
-      public void CopyToClipboard()
+      public void CopyToClipboard() => _histogramView.CopyToClipboard(_applicationSettings.WatermarkTextToUse);
+
+      public void ExportToPng()
       {
-         _histogramView.CopyToClipboard(_applicationSettings.WatermarkTextToUse);
+         var fileName = _dialogCreator.AskForFileToSave(Captions.ExportChartToPng, Constants.Filter.DIAGRAM_IMAGE_FILTER, Constants.DirectoryKey.REPORT, Chart.Name);
+         if (string.IsNullOrEmpty(fileName))
+            return;
+
+         _histogramView.ExportToPng(fileName, _applicationSettings.WatermarkTextToUse);
       }
    }
 }

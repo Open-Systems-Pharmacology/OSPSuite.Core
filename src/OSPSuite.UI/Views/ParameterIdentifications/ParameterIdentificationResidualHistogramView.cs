@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using OSPSuite.Utility.Extensions;
 using DevExpress.XtraCharts;
 using OSPSuite.Core.Chart;
@@ -15,7 +16,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
 {
    public partial class ParameterIdentificationResidualHistogramView : BaseUserControl, IParameterIdentificationResidualHistogramView
    {
-      private ICanCopyToClipboard _clipboardManager;
+      private ICanExportCharts _chartExportManager;
 
       public ParameterIdentificationResidualHistogramView(IImageListRetriever imageListRetriever, IToolTipCreator toolTipCreator)
       {
@@ -28,7 +29,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          chart.Series.Clear();
          var gaussSeries = createGaussSeriesFor(gaussData);
 
-         //need to add it before creating the seconday axis. Need to be added BEFORE the distribution to be put in the front
+         //need to add it before creating the secondary axis. Need to be added BEFORE the distribution to be put in the front
          chart.Series.Add(gaussSeries);
 
          var secondaryAxis = getOrCreateSecondaryAxis();
@@ -40,13 +41,14 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          chart.Series.Add(gaussSeries);
       }
 
-      public ICanCopyToClipboard CopyToClipboardManager
+      public ICanExportCharts ChartExportManager
       {
-         get => _clipboardManager;
+         get => _chartExportManager;
          set
          {
-            _clipboardManager = value;
+            _chartExportManager = value;
             chart.AddCopyToClipboardPopupMenu(value);
+            chart.AddExportToPngPopupMenu(value);
          }
       }
 
@@ -77,11 +79,9 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          lineSeriesView.Color = Color.Black;
          lineSeriesView.AxisY = secondaryAxis;
       }
-
-      public void CopyToClipboard(string watermark)
-      {
-         chart.CopyToClipboard(watermark);
-      }
-
+      
+      public void ExportToPng(string filePath, string watermark) => chart.ExportChartToImageFile(watermark, filePath, ImageFormat.Png);
+      
+      public void CopyToClipboard(string watermark) => chart.CopyToClipboard(watermark);
    }
 }

@@ -10,7 +10,7 @@ namespace OSPSuite.Core.Import
    {
       public static readonly string InvalidUnit = "?";
 
-      // This setter is needed by R
+      // The private set is needed by OSPSuite-R
       public string SelectedUnit { get; private set; }
 
       public string ColumnName { get; }
