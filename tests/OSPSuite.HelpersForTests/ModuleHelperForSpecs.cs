@@ -287,6 +287,7 @@ namespace OSPSuite.Helpers
 
          //ART
          var art = createContainerWithName(ArterialBlood);
+         var logicalContainer = createContainerWithName(Plasma, ContainerMode.Logical);
 
          var artPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
          artPlasma.AddTag(new Tag(ArterialBlood));
@@ -380,6 +381,10 @@ namespace OSPSuite.Helpers
          var neighborhood7 = _neighborhoodFactory.CreateBetween(bonePlasma, boneCell).WithName("does_not_match_existing");
          neighborhood7.FirstNeighborPath = new ObjectPath("Organism", "NOPE");
          spatialStructure.AddNeighborhood(neighborhood7);
+
+         var neighborhood8 = _neighborhoodFactory.CreateBetween(bonePlasma, logicalContainer).WithName("not_physical");
+         neighborhood8.FirstNeighborPath = new ObjectPath("Organism", "NOPE");
+         spatialStructure.AddNeighborhood(neighborhood8);
 
          spatialStructure.ResolveReferencesInNeighborhoods();
          return spatialStructure;

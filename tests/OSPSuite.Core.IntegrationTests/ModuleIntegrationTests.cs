@@ -43,7 +43,8 @@ namespace OSPSuite.Core
       public void should_return_a_successful_validation_with_warning()
       {
          _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.ValidWithWarnings, _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
-         _result.ValidationResult.Messages.Single().Text.ShouldBeEqualTo(Warning.NeighborhoodWasNotFoundInModel("does_not_match_existing", "Module1 - SPATIAL STRUCTURE MODULE 1"));
+         _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Warning.NeighborhoodWasNotFoundInModel("does_not_match_existing", "Module1 - SPATIAL STRUCTURE MODULE 1"))).ShouldNotBeNull();
+         _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Warning.NeighborhoodWasNotFoundInModel("not_physical", "Module1 - SPATIAL STRUCTURE MODULE 1"))).ShouldNotBeNull();
       }
 
       [Observation]

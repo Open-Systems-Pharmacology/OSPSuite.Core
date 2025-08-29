@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
@@ -40,7 +39,7 @@ namespace OSPSuite.Core.Domain.Mappers
          IObjectBaseFactory objectBaseFactory,
          IContainerBuilderToContainerMapper containerMapper,
          IKeywordReplacerTask keywordReplacerTask,
-         ICloneManagerForModel cloneManagerForModel, 
+         ICloneManagerForModel cloneManagerForModel,
          IParameterBuilderToParameterMapper parameterMapper, IEntityTracker entityTracker)
       {
          _objectBaseFactory = objectBaseFactory;
@@ -64,7 +63,7 @@ namespace OSPSuite.Core.Domain.Mappers
          neighborhood.SecondNeighbor = resolveReference(model, neighborhoodBuilder.SecondNeighborPath, replacementContext);
 
          //At least one neighbor cannot be found. We are ignoring this neighborhood
-         if (!neighborhood.IsDefined)
+         if (!neighborhood.IsDefined || !neighborhood.IsPhysical)
             return null;
 
          if (neighborhoodBuilder.MoleculeProperties != null)
