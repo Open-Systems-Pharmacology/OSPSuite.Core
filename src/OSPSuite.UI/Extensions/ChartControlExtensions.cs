@@ -41,8 +41,7 @@ namespace OSPSuite.UI.Extensions
 
       public static void ExportChartToImageFile(this UxChartControl chartControl, IChart chart, string watermark, string filePath, ImageFormat format)
       {
-         if (string.IsNullOrWhiteSpace(filePath))
-            throw new ArgumentException("File path must be provided", nameof(filePath));
+         validateFilePath(filePath, nameof(filePath));
 
          using (var preparedChart = prepareChartForExport(chartControl, chart, watermark))
          {
@@ -111,22 +110,47 @@ namespace OSPSuite.UI.Extensions
          xyDiagram.GetAllAxesY().Each(axis => axis.Label.Font = fontAxis);
          xyDiagram.GetAllAxesY().Each(axis => axis.Title.Font = fontAxis);
       }
+      
+      private static void validateFilePath(string filePath, string propertyName)
+      {
+         if (string.IsNullOrWhiteSpace(filePath))
+            throw new ArgumentException("File path must be provided", propertyName);
+      }
+
+      public static void ExportChartToImageFile(this UxChartControl chartControl, string watermark, string filePath, ImageFormat format)
+      {
+         validateFilePath(filePath, nameof(filePath));
+
+         exportTo(chartControl, watermark, x => x.ExportToImage(filePath, format));
+      }
 
       public static void CopyToClipboard(this UxChartControl chartControl, string watermark)
       {
-         if (string.IsNullOrEmpty(watermark))
-         {
-            //Bug in devexpress that does not keep the color in bar charts
-            chartControl.CopyChartToClipboard();
-            return;
-         }
+         exportTo(chartControl, watermark, x => x.CopyChartToClipboard());
+      }
 
-         //We need to use watermak in the chart. Create a clone
+      private static void exportTo(UxChartControl chartControl, string watermark, Action<ChartControl> exportAction)
+      {
          using (var cloneOfChartControl = (ChartControl)chartControl.Clone())
          {
             copyFontAndSizeSettings(chartControl, cloneOfChartControl);
-            AddWatermark(cloneOfChartControl, watermark);
-            cloneOfChartControl.CopyChartToClipboard();
+            copyBarColors(chartControl, cloneOfChartControl);
+            
+            if(!string.IsNullOrEmpty(watermark))
+               AddWatermark(cloneOfChartControl, watermark);
+            
+            exportAction(cloneOfChartControl);
+         }
+      }
+
+      // Bug in devexpress that does not keep the color in bar charts during clone
+      // manually copy series colors for all series in both source and target
+      private static void copyBarColors(UxChartControl source, ChartControl target)
+      {
+         for (var i = 0; i < source.Series.Count && i < target.Series.Count; i++)
+         {
+            if (source.Series[i].View is BarSeriesView sourceView && target.Series[i].View is BarSeriesView targetView) 
+               targetView.Color = sourceView.Color;
          }
       }
 

@@ -1,8 +1,5 @@
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Windows.Forms;
 using DevExpress.Utils;
 using DevExpress.XtraBars;
 using DevExpress.XtraCharts;
@@ -36,7 +33,7 @@ namespace OSPSuite.UI.Controls
          Titles.Add(_title);
          Titles.Add(_description);
 
-         _barManager = new BarManager {Form = this};
+         _barManager = new BarManager { Form = this };
          PopupMenu = new PopupMenu(_barManager);
 
          if (useDefaultPopupMechanism)
@@ -45,7 +42,7 @@ namespace OSPSuite.UI.Controls
 
       private ChartTitle createTitle(int fontSize, StringAlignment alignment, ChartTitleDockStyle dockStyle)
       {
-         return new ChartTitle {Text = string.Empty, Font = new Font("Arial", fontSize), Alignment = alignment, Dock = dockStyle, WordWrap = true};
+         return new ChartTitle { Text = string.Empty, Font = new Font("Arial", fontSize), Alignment = alignment, Dock = dockStyle, WordWrap = true };
       }
 
       public SvgImageCollection Images
@@ -62,7 +59,12 @@ namespace OSPSuite.UI.Controls
          return link;
       }
 
-      public BarItemLink AddCopyToClipboardPopupMenu(ICanCopyToClipboard canCopyToClipboard, bool beginGroup = false)
+      public BarItemLink AddExportToPngPopupMenu(ICanExportCharts canExportChartsToPng, bool beginGroup = false)
+      {
+         return AddPopupMenu(MenuNames.ExportToPng, canExportChartsToPng.ExportToPng, ApplicationIcons.ExportToPNG);
+      }
+
+      public BarItemLink AddCopyToClipboardPopupMenu(ICanExportCharts canCopyToClipboard, bool beginGroup = false)
       {
          return AddPopupMenu(Captions.CopyToClipboard, canCopyToClipboard.CopyToClipboard, ApplicationIcons.Copy, beginGroup);
       }

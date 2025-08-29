@@ -11,5 +11,6 @@ namespace OSPSuite.Presentation.Views.SensitivityAnalyses
    {
       void BindTo(SensitivityAnalysisPKParameterAnalysisPresenter sensitivityAnalysisPKParameterAnalysisPresenter);
       void UpdateChart(IReadOnlyList<PKParameterSensitivity> allPKParameterSensitivities, string pkParameterSelection);
+      void ExportToPng(string filePath, string watermark);
    }
 }
