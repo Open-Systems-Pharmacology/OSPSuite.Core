@@ -62,8 +62,8 @@ namespace OSPSuite.Core.Domain.Mappers
          neighborhood.FirstNeighbor = resolveReference(model, neighborhoodBuilder.FirstNeighborPath, replacementContext);
          neighborhood.SecondNeighbor = resolveReference(model, neighborhoodBuilder.SecondNeighborPath, replacementContext);
 
-         //At least one neighbor cannot be found. We are ignoring this neighborhood
-         if (!neighborhood.IsDefined || !neighborhood.IsPhysical)
+         //At least one neighbor cannot be found or is a logical container. We are ignoring this neighborhood
+         if (!neighborhood.IsDefined || !neighborhood.HasOnlyPhysicalNeighbors)
             return null;
 
          if (neighborhoodBuilder.MoleculeProperties != null)
