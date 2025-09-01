@@ -52,8 +52,14 @@ namespace OSPSuite.Core.Domain
          _neighborhood1.FirstNeighbor = _liver;
          _neighborhood1.SecondNeighbor = _kidney;
 
+         _neighborhood1.FirstNeighbor.Mode = ContainerMode.Physical;
+         _neighborhood1.SecondNeighbor.Mode = ContainerMode.Physical;
+
          _neighborhood2.FirstNeighbor = _kidney;
          _neighborhood2.SecondNeighbor = _heart;
+         _neighborhood2.FirstNeighbor.Mode = ContainerMode.Physical;
+         _neighborhood2.SecondNeighbor.Mode = ContainerMode.Physical;
+
       }
 
       protected override void Because()
@@ -91,6 +97,38 @@ namespace OSPSuite.Core.Domain
       public void should_return_an_valid_validation_result()
       {
          _result.ValidationState.ShouldBeEqualTo(ValidationState.Invalid);
+      }
+   }
+
+   internal class When_validating_a_model_for_which_some_neighborhoods_are_not_physical : concern_for_SpatialStructureValidator
+   {
+      private ValidationResult _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         _neighborhood1.FirstNeighbor = _liver;
+         _neighborhood1.SecondNeighbor = _kidney;
+
+         _neighborhood1.FirstNeighbor.Mode = ContainerMode.Logical;
+         _neighborhood1.SecondNeighbor.Mode = ContainerMode.Physical;
+
+         _neighborhood2.FirstNeighbor = _kidney;
+         _neighborhood2.SecondNeighbor = _heart;
+         _neighborhood2.FirstNeighbor.Mode = ContainerMode.Physical;
+         _neighborhood2.SecondNeighbor.Mode = ContainerMode.Physical;
+
+      }
+
+      protected override void Because()
+      {
+         _result = sut.Validate(_modelConfiguration);
+      }
+
+      [Observation]
+      public void should_return_an_valid_validation_result()
+      {
+         _result.ValidationState.ShouldBeEqualTo(ValidationState.Valid);
       }
    }
 }
