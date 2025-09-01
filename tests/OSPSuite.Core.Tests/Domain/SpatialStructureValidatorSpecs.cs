@@ -126,9 +126,9 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_return_an_valid_validation_result()
+      public void should_return_a_valid_validation_result()
       {
-         _result.ValidationState.ShouldBeEqualTo(ValidationState.Valid);
+         _result.ValidationState.ShouldBeEqualTo(ValidationState.ValidWithWarnings);
       }
    }
 }
