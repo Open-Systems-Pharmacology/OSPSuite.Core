@@ -535,8 +535,11 @@ namespace OSPSuite.Core
          var initialCondition = simulationBuilder.InitialConditions.First();
          var physicalContainer = simulationBuilder.SpatialStructureAndMergeBehaviors.SelectMany(x => x.spatialStructure.TopContainers)
             .Select(x => initialCondition.ContainerPath.TryResolve<IContainer>(x)).First(x => x != null);
-
          physicalContainer.Mode = ContainerMode.Logical;
+         
+         simulationBuilder.SpatialStructureAndMergeBehaviors.FirstOrDefault().spatialStructure.FormulaCache.Clear();
+         var containerWithFormula = physicalContainer.Children.FirstOrDefault(x => x.Name == "RefParam") as Parameter;
+         physicalContainer.RemoveChild(containerWithFormula);
       }
 
       [Observation]
