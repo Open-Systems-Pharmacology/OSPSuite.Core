@@ -103,22 +103,22 @@ namespace OSPSuite.Core.Domain.Services
          //This needs to be done before we validate the model to ensure that all references can be found
          _formulaTask.ExpandDynamicReferencesIn(model);
 
+         _formulaTask.ExpandDynamicFormulaIn(model);
+         
          creationResult.Add(validateModel(modelConfiguration));
 
          if (creationResult.State == ValidationState.Invalid)
             return creationResult;
 
          finalizeModel(model, simulationBuilder);
-
+         
          return creationResult;
       }
 
       private void finalizeModel(IModel model, SimulationBuilder simulationBuilder)
       {
          _formulaTask.CheckFormulaOriginIn(model);
-
-         _formulaTask.ExpandDynamicFormulaIn(model);
-
+         
          //now we should be able to resolve all references
          _referencesResolver.ResolveReferencesIn(model);
 
