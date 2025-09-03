@@ -111,7 +111,7 @@ namespace OSPSuite.Core.Domain.Services
             return creationResult;
 
          finalizeModel(model, simulationBuilder);
-         
+
          return creationResult;
       }
 
