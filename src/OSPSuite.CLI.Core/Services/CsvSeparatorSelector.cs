@@ -1,6 +1,6 @@
 ﻿using OSPSuite.Infrastructure.Import.Services;
 
-namespace OSPSuite.R.Services
+namespace OSPSuite.CLI.Core.Services
 {
    public interface ICsvDynamicSeparatorSelector : ICsvSeparatorSelector
    {
@@ -8,7 +8,7 @@ namespace OSPSuite.R.Services
    }
 
    /// <summary>
-   ///    This class is used by the CsvDataSourceFile ro correctly parse csv files
+   ///    This class is used by the CsvDataSourceFile to correctly parse csv files
    /// </summary>
    public class CsvSeparatorSelector : ICsvDynamicSeparatorSelector
    {

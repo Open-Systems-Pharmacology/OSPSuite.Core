@@ -1,6 +1,5 @@
 ﻿using OSPSuite.Core;
 using OSPSuite.Core.Services;
-using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.R.Domain;
 using OSPSuite.R.Mapper;
 using OSPSuite.R.Services;
@@ -24,7 +23,6 @@ namespace OSPSuite.R
             //Register Mappers
             scan.IncludeNamespaceContainingType<ISensitivityAnalysisToCoreSensitivityAnalysisMapper>();
 
-            scan.ExcludeType<CsvSeparatorSelector>();
             scan.WithConvention<OSPSuiteRegistrationConvention>();
          });
 
@@ -34,7 +32,6 @@ namespace OSPSuite.R
 
          container.Register<IOSPSuiteLogger, RLogger, RLogger>(LifeStyle.Singleton);
          container.Register<IEventPublisher, EventPublisher>(LifeStyle.Singleton);
-         container.Register<ICsvDynamicSeparatorSelector, ICsvSeparatorSelector, CsvSeparatorSelector>(LifeStyle.Singleton);
       }
    }
 }

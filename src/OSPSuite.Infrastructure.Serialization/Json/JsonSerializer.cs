@@ -9,8 +9,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using OSPSuite.Assets.Extensions;
 
 namespace OSPSuite.Infrastructure.Serialization.Json
 {
@@ -33,7 +33,7 @@ namespace OSPSuite.Infrastructure.Serialization.Json
 
       public string Serialize(object objectToSerialize) => JsonConvert.SerializeObject(objectToSerialize, Formatting.Indented, _settings);
 
-      public string SerializeToBase64String(object objectToSerialize) => Convert.ToBase64String(Encoding.UTF8.GetBytes(Serialize(objectToSerialize)));
+      public string SerializeToBase64String(object objectToSerialize) => Serialize(objectToSerialize).ToBase64String();
 
       public async Task<object[]> DeserializeAsArray(string fileName, Type objectType)
       {
@@ -94,7 +94,7 @@ namespace OSPSuite.Infrastructure.Serialization.Json
 
       public async Task<T> DeserializeFromBase64String<T>(string base64String) where T : class
       {
-         var jsonString = Encoding.UTF8.GetString(Convert.FromBase64String(base64String));
+         var jsonString = base64String.FromBase64String();
          var deserializedObject = await DeserializeFromString(jsonString, typeof(T));
          return deserializedObject as T;
       }

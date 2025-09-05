@@ -68,41 +68,6 @@ namespace OSPSuite.CLI.Core.Services
          return projectOutputFolder;
       }
 
-      private InputMapping exportInput(TModelProject project, QualificationConfiguration configuration, Input input)
-      {
-         var buildingBlock = BuildingBlockBy(project, input);
-
-         var inputsFolder = configuration.InputsFolder;
-         var projectName = FileHelper.RemoveIllegalCharactersFrom(project.Name);
-         var buildingBlockName = FileHelper.RemoveIllegalCharactersFrom(input.Name);
-         var targetFolder = Path.Combine(inputsFolder, projectName, input.Type.ToString());
-         DirectoryHelper.CreateDirectory(targetFolder);
-
-         var fileFullPath = Path.Combine(targetFolder, $"{buildingBlockName}{Constants.Filter.MARKDOWN_EXTENSION}");
-
-         ExportToMarkdown(buildingBlock, fileFullPath, input.SectionLevel).Wait();
-         _logger.AddDebug($"Input data for {input.Type} '{input.Name}' exported to '{fileFullPath}'", project.Name);
-
-         return new InputMapping
-         {
-            SectionId = input.SectionId,
-            SectionReference = input.SectionReference,
-            Path = relativePath(fileFullPath, configuration.OutputFolder)
-         };
-      }
-
-      private InputMapping[] exportInputs(TModelProject project, QualificationConfiguration configuration)
-      {
-         if (configuration.Inputs == null)
-            return Array.Empty<InputMapping>();
-         //            return Task.FromResult(Array.Empty<InputMapping>());
-
-         //TODO Enable parallel runs once https://github.com/Open-Systems-Pharmacology/OSPSuite.Utility/issues/26 is fixed
-         //  return Task.WhenAll(configuration.Inputs.Select(x => exportInput(project, configuration, x)));
-
-         return configuration.Inputs.Select(x => exportInput(project, configuration, x)).ToArray();
-      }
-
       private string relativePath(string path, string relativeTo) => FileHelper.CreateRelativePath(path, relativeTo, useUnixPathSeparator: true);
 
       public async Task RunBatchAsync(QualificationRunOptions runOptions)
@@ -126,7 +91,7 @@ namespace OSPSuite.CLI.Core.Services
          }
 
          var begin = DateTime.UtcNow;
-         var project = await loadProject(runOptions, snapshot);
+         var (project, inputMappings) = await LoadProjectAndExportInputs(runOptions, snapshot, config);
          LoadProjectContext(project);
 
          var projectOutputFolder = createProjectOutputFolder(config.OutputFolder, project.Name);
@@ -150,8 +115,6 @@ namespace OSPSuite.CLI.Core.Services
          simulationMappings.Each(x => x.Path = relativePath(x.Path, config.OutputFolder));
 
          var observedDataMappings = await exportAllObservedData(project, config);
-
-         var inputMappings = exportInputs(project, config);
 
          var mapping = new QualificationMapping
          {
@@ -264,11 +227,9 @@ namespace OSPSuite.CLI.Core.Services
          throw new QualificationRunException(SimulationUsedInPlotsAreNotExported(unmappedSimulations, snapshotProject.Name));
       }
 
-      private Task<TModelProject> loadProject(QualificationRunOptions runOptions, TSnapshotProject snapshot) => _snapshotTask.LoadProjectFromSnapshotAsync(snapshot, runOptions.Run);
+      protected abstract Task<(TModelProject, InputMapping[])> LoadProjectAndExportInputs(QualificationRunOptions runOptions, TSnapshotProject snapshot, QualificationConfiguration config);
 
       protected abstract SimulationExportMode ExportMode(QualificationRunOptions runOptions);
-
-      protected abstract Task ExportToMarkdown(object buildingBlock, string fileFullPath, int? inputSectionLevel);
 
       protected abstract Task<SimulationMapping[]> ExportSimulationsIn(TModelProject project, ExportRunOptions exportRunOptions);
 
