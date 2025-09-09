@@ -179,7 +179,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void UsedChangedFor(DataColumnDTO dataColumnDTO, bool used)
       {
-         raiseUsedChanged(dataColumnDTO.DataColumn, used);
+         raiseUsedChanged(dataColumnDTO.DataColumn, used, false);
          updateDataSelection(_view.SelectedColumns);
          updateLinkedObservedData(dataColumnDTO.DataColumn, used);
       }
@@ -274,12 +274,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
          dataColumnDTOs.Each(dto => dto.Used = used);
       }
 
-      private void raiseUsedChanged(IReadOnlyList<DataColumn> dataColumns, bool used, bool isLinkedDataToSimulations = false)
+      private void raiseUsedChanged(IReadOnlyList<DataColumn> dataColumns, bool used, bool isLinkedDataToSimulations)
       {
          UsedChanged(this, new UsedColumnsEventArgs(dataColumns, used, isLinkedDataToSimulations));
       }
 
-      private void raiseUsedChanged(DataColumn dataColumn, bool used, bool isLinkedDataToSimulations = false)
+      private void raiseUsedChanged(DataColumn dataColumn, bool used, bool isLinkedDataToSimulations)
       {
          raiseUsedChanged(new[] { dataColumn }, used, isLinkedDataToSimulations);
       }
