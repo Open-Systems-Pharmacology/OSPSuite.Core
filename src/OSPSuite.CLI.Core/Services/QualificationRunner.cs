@@ -20,7 +20,10 @@ using ModelDataRepository = OSPSuite.Core.Domain.Data.DataRepository;
 
 namespace OSPSuite.CLI.Core.Services
 {
-   public abstract class QualificationRunner<TSnapshotProject, TModelProject> : IBatchRunner<QualificationRunOptions> where TSnapshotProject : SnapshotBase, IWithName where TModelProject : Project
+   public abstract class QualificationRunner<TSnapshotProject, TModelProject, TRunOptions> : IBatchRunner<TRunOptions> 
+      where TSnapshotProject : SnapshotBase, IWithName 
+      where TModelProject : Project
+      where TRunOptions : QualificationRunOptions
    {
       protected readonly Cache<string, TSnapshotProject> _snapshotProjectCache = new Cache<string, TSnapshotProject>();
       protected readonly IDataRepositoryExportTask _dataRepositoryExportTask;
@@ -47,7 +50,7 @@ namespace OSPSuite.CLI.Core.Services
          return _snapshotProjectCache[snapshotPath];
       }
 
-      private Task<QualificationConfiguration> readConfigurationFrom(QualificationRunOptions runOptions)
+      private Task<QualificationConfiguration> readConfigurationFrom(TRunOptions runOptions)
       {
          if (!FileHelper.FileExists(runOptions.ConfigurationFile))
             throw new QualificationRunException(FileDoesNotExist(runOptions.ConfigurationFile));
@@ -70,7 +73,7 @@ namespace OSPSuite.CLI.Core.Services
 
       private string relativePath(string path, string relativeTo) => FileHelper.CreateRelativePath(path, relativeTo, useUnixPathSeparator: true);
 
-      public async Task RunBatchAsync(QualificationRunOptions runOptions)
+      public virtual async Task RunBatchAsync(TRunOptions runOptions)
       {
          _snapshotProjectCache.Clear();
          var (snapshot, config) = await readSnapshot(runOptions);
@@ -174,7 +177,7 @@ namespace OSPSuite.CLI.Core.Services
          };
       }
 
-      private async Task<(TSnapshotProject, QualificationConfiguration)> readSnapshot(QualificationRunOptions runOptions)
+      private async Task<(TSnapshotProject, QualificationConfiguration)> readSnapshot(TRunOptions runOptions)
       {
          _logger.AddInfo(runOptions.Validate ? "Starting validation run..." : "Starting qualification run...");
 
@@ -227,9 +230,9 @@ namespace OSPSuite.CLI.Core.Services
          throw new QualificationRunException(SimulationUsedInPlotsAreNotExported(unmappedSimulations, snapshotProject.Name));
       }
 
-      protected abstract Task<(TModelProject, InputMapping[])> LoadProjectAndExportInputs(QualificationRunOptions runOptions, TSnapshotProject snapshot, QualificationConfiguration config);
+      protected abstract Task<(TModelProject, InputMapping[])> LoadProjectAndExportInputs(TRunOptions runOptions, TSnapshotProject snapshot, QualificationConfiguration config);
 
-      protected abstract SimulationExportMode ExportMode(QualificationRunOptions runOptions);
+      protected abstract SimulationExportMode ExportMode(TRunOptions runOptions);
 
       protected abstract Task<SimulationMapping[]> ExportSimulationsIn(TModelProject project, ExportRunOptions exportRunOptions);
 
