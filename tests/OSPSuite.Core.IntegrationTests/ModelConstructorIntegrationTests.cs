@@ -466,7 +466,7 @@ namespace OSPSuite.Core
          var parameterValue = parameterValues.First(x => x.Name == parameter.Name);
          var entitySource = _simulationBuilder.SimulationEntitySourceFor(parameter);
          entitySource.SourcePath.ShouldBeEqualTo(parameterValue.Path);
-         entitySource.SimulationEntityPath.ShouldBeEqualTo(new[] {ORGANISM, Bone, Cell, "FormulaParameterOverwritten"}.ToPathString());
+         entitySource.SimulationEntityPath.ShouldBeEqualTo(new[] { ORGANISM, Bone, Cell, "FormulaParameterOverwritten" }.ToPathString());
       }
 
       [Observation]
@@ -536,10 +536,14 @@ namespace OSPSuite.Core
          var physicalContainer = simulationBuilder.SpatialStructureAndMergeBehaviors.SelectMany(x => x.spatialStructure.TopContainers)
             .Select(x => initialCondition.ContainerPath.TryResolve<IContainer>(x)).First(x => x != null);
          physicalContainer.Mode = ContainerMode.Logical;
-         
-         simulationBuilder.SpatialStructureAndMergeBehaviors.FirstOrDefault().spatialStructure.FormulaCache.Clear();
-         var containerWithFormula = physicalContainer.Children.FirstOrDefault(x => x.Name == "RefParam") as Parameter;
-         physicalContainer.RemoveChild(containerWithFormula);
+
+         // "Organism|ArterialBlood|Plasma" -> is being set to Logical explicitly on the previous line,
+         // as we now are not creating neighborhoods from logical containers, a further validation ends up on this exception:
+         // Could not find neighborhood between 'MyModel|Organism|ArterialBlood|Plasma' and 'MyModel|Organism|Bone|Plasma'
+         // referenced by formula 'FormulaReferencingNBH' used by 'MyModel|Organism|ArterialBlood|Plasma|RefParam'
+         // This parameter has to be removed since the validation will make this fail before testing the initial condition.
+         var parameterWithFormula = physicalContainer.Children.FirstOrDefault(x => x.Name == "RefParam") as Parameter;
+         physicalContainer.RemoveChild(parameterWithFormula);
       }
 
       [Observation]
