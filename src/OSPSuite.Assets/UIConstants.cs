@@ -240,7 +240,7 @@ namespace OSPSuite.Assets
       public static readonly string SnapshotFile = "Select snapshot file";
       public static readonly string ExportProjectToSnapshotDescription = "Export project to snapshot...";
       public static readonly string LoadProjectFromSnapshotDescription = "Load project from snapshot...";
-      public static readonly string RenalClearance = "Renal Clearance";
+      public static readonly string RenalClearances = "Renal Clearances";
       public static readonly string GlomerularFiltration = "Glomerular Filtration";
 
       public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
