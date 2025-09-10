@@ -99,8 +99,8 @@ namespace OSPSuite.Core.Snapshots.Mappers
       {
          parameterPath.Replace(ParameterMapper.Applications, EVENTS);
 
-         replaceRenalClearanceName(parameterPath, Captions.GlomerularFiltration);
-         replaceRenalClearanceName(parameterPath, Captions.RenalClearances);
+         replaceRenalClearanceName(parameterPath, Processes.GlomerularFiltration);
+         replaceRenalClearanceName(parameterPath, Processes.RenalClearances);
       }
 
       // renal clearances container names have been modified to append the name of the compound
