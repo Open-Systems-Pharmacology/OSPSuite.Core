@@ -207,7 +207,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          {
             var curve = Chart.CreateCurve(c.BaseGrid, c, observedData.Name, _dimensionFactory);
 
-            Chart.UpdateCurveColorAndStyle(curve, c, allObservations);
+            Chart.UpdateCurveColorAndStyle(curve, c, allObservations, false);
             Chart.AddCurve(curve);
          });
 

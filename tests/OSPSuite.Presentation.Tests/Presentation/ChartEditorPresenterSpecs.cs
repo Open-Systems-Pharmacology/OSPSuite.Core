@@ -9,6 +9,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
+using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Collections;
@@ -31,6 +32,7 @@ namespace OSPSuite.Presentation.Presentation
       protected ICurveChartUpdater _chartUpdater;
       protected IEventPublisher _eventPublisher;
       private IDimensionFactory _dimensionFactory;
+      private ISimulationOutputMappingPresenter _simulationOutputMappingPresenter;
       protected CurveChart _chart;
       protected BaseGrid _baseGrid;
       protected DataColumn _standardColumn;
@@ -39,6 +41,7 @@ namespace OSPSuite.Presentation.Presentation
       protected List<DataRepository> _dataRepositoryList;
       protected BaseGrid _baseGrid2;
       protected BaseGrid _baseGrid3;
+      protected readonly string _bottomCompartment = "Plasma";
 
       protected override void Context()
       {
@@ -76,7 +79,8 @@ namespace OSPSuite.Presentation.Presentation
          {
             DataInfo = new DataInfo(ColumnOrigins.Observation),
          };
-
+         _standardColumn.BottomCompartment = _bottomCompartment;
+         _standardColumn2.BottomCompartment = _bottomCompartment;
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(_baseGrid)).Returns(_baseGrid.Dimension);
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(_standardColumn)).Returns(_standardColumn.Dimension);
       }
@@ -232,7 +236,6 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_curve_options_should_not_have_been_updated_to_the_second_specified_values()
       {
-         _curve.CurveOptions.Color.ShouldBeEqualTo(Color.Black);
          _curve.CurveOptions.LineThickness.ShouldBeEqualTo(1);
          _curve.CurveOptions.VisibleInLegend.ShouldBeEqualTo(true);
       }
@@ -535,7 +538,7 @@ namespace OSPSuite.Presentation.Presentation
       public void should_add_curve_with_same_color()
       {
          sut.Chart.Curves.Count().ShouldBeEqualTo(2);
-         sut.Chart.Curves.First().Color.ShouldBeEqualTo(sut.Chart.Curves.ToList()[1].Color); 
+         sut.Chart.Curves.First().Color.ShouldBeEqualTo(sut.Chart.Curves.ToList()[1].Color);
       }
    }
 

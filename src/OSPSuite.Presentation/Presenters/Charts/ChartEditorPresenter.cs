@@ -676,9 +676,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          var (exists, curve) = createAndConfigureCurve(dataColumn, defaultCurveOptions);
 
-         if (exists) return curve;
-
          Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns, isLinkedDataToSimulation);
+
+         if (exists) return curve;
 
          if (defaultCurveOptions != null)
             curve.CurveOptions.UpdateFrom(defaultCurveOptions);

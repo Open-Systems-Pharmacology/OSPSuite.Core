@@ -53,7 +53,10 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       /// <param name="dataColumnDTOs">The list of columns</param>
       /// <param name="used">true if the columns should be used, otherwise false</param>
-      /// <param name="isLinkedDataToSimulations">true if the columns should be linked to the simulation, so same color should be applied</param>
+      /// <param name="isLinkedDataToSimulations">
+      ///    true if the columns should be linked to the simulation, so same color should be
+      ///    applied
+      /// </param>
       void SetUsedState(IReadOnlyList<DataColumnDTO> dataColumnDTOs, bool used, bool isLinkedDataToSimulations = false);
 
       /// <summary>
@@ -113,6 +116,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Removed all the output mappings from the list the DataBrowser keeps.
       /// </summary>
       void RemoveAllOutputMappings();
+
+      HashSet<OutputMappings> GetOutputMappings();
    }
 
    public class DataBrowserPresenter : PresenterWithColumnSettings<IDataBrowserView, IDataBrowserPresenter>, IDataBrowserPresenter
@@ -313,6 +318,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
          AddColumnSettings(BrowserColumns.Category).WithCaption(Category).WithVisible(false);
          AddColumnSettings(BrowserColumns.Source).WithCaption(Source).WithVisible(false);
          AddColumnSettings(BrowserColumns.Used).WithCaption(Used).WithVisible(true);
+      }
+
+      public HashSet<OutputMappings> GetOutputMappings()
+      {
+         return _allOutputMappings;
       }
    }
 }
