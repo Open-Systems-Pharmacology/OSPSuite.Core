@@ -54,19 +54,6 @@ namespace OSPSuite.Presentation.Extensions
          curve.UpdateStyleForObservedData();
       }
 
-      private static string extractCurveKey(string curveName)
-      {
-         if (string.IsNullOrWhiteSpace(curveName))
-            return string.Empty;
-
-         var parts = curveName.Split('-');
-
-         if (parts.Length >= 4)
-            return string.Join("-", parts.Skip(parts.Length - 4).Take(3));
-
-         return curveName;
-      }
-
       private static Color? tryGetMatchingCurveColor(CurveChart chart, Curve newCurve)
       {
          var compartment = newCurve.yData.BottomCompartment;
