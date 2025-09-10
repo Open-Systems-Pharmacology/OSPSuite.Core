@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using FakeItEasy;
@@ -10,6 +9,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
+using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Collections;
@@ -32,6 +32,7 @@ namespace OSPSuite.Presentation.Presentation
       protected ICurveChartUpdater _chartUpdater;
       protected IEventPublisher _eventPublisher;
       private IDimensionFactory _dimensionFactory;
+      private ISimulationOutputMappingPresenter _simulationOutputMappingPresenter;
       protected CurveChart _chart;
       protected BaseGrid _baseGrid;
       protected DataColumn _standardColumn;
@@ -40,6 +41,7 @@ namespace OSPSuite.Presentation.Presentation
       protected List<DataRepository> _dataRepositoryList;
       protected BaseGrid _baseGrid2;
       protected BaseGrid _baseGrid3;
+      protected readonly string _bottomCompartment = "Plasma";
 
       protected override void Context()
       {
@@ -77,7 +79,8 @@ namespace OSPSuite.Presentation.Presentation
          {
             DataInfo = new DataInfo(ColumnOrigins.Observation),
          };
-
+         _standardColumn.BottomCompartment = _bottomCompartment;
+         _standardColumn2.BottomCompartment = _bottomCompartment;
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(_baseGrid)).Returns(_baseGrid.Dimension);
          A.CallTo(() => _dimensionFactory.MergedDimensionFor(_standardColumn)).Returns(_standardColumn.Dimension);
       }
@@ -233,7 +236,6 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_curve_options_should_not_have_been_updated_to_the_second_specified_values()
       {
-         _curve.CurveOptions.Color.ShouldBeEqualTo(Color.Black);
          _curve.CurveOptions.LineThickness.ShouldBeEqualTo(1);
          _curve.CurveOptions.VisibleInLegend.ShouldBeEqualTo(true);
       }
@@ -414,7 +416,7 @@ namespace OSPSuite.Presentation.Presentation
    {
       protected override void Because()
       {
-         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] { _standardColumn, }, true));
+         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] { _standardColumn, }, true, false));
       }
 
       [Observation]
@@ -503,7 +505,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] { _standardColumn, }, false));
+         _dataBrowserPresenter.UsedChanged += Raise.With(new UsedColumnsEventArgs(new[] { _standardColumn, }, false, false));
       }
 
       [Observation]
@@ -516,6 +518,27 @@ namespace OSPSuite.Presentation.Presentation
       public void should_update_the_chart()
       {
          A.CallTo(() => _chartUpdater.UpdateTransaction(_chart, CurveChartUpdateModes.Remove, true)).MustHaveHappened();
+      }
+   }
+
+   public class When_the_chart_editor_presenter_is_notified_that_the_data_is_linked_to_simulation : concern_for_ChartEditorPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.AddCurveForColumn(_standardColumn, isLinkedDataToSimulation: false);
+      }
+
+      protected override void Because()
+      {
+         sut.AddCurveForColumn(_standardColumn2, isLinkedDataToSimulation: true);
+      }
+
+      [Observation]
+      public void should_add_curve_with_same_color()
+      {
+         sut.Chart.Curves.Count().ShouldBeEqualTo(2);
+         sut.Chart.Curves.First().Color.ShouldBeEqualTo(sut.Chart.Curves.ToList()[1].Color);
       }
    }
 

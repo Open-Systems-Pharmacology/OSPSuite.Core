@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Presentation.DTO;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Presentation.Presenters.Charts
@@ -88,6 +85,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          DataColumn = dataColumn;
          Used = false;
          _pathElements = displayQuantityPathFunc(dataColumn);
+         DataColumn.BottomCompartment = BottomCompartment;
       }
 
       private string displayNameFor(PathElementId pathElementId) => _pathElements[pathElementId].DisplayName;

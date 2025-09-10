@@ -27,6 +27,7 @@ namespace OSPSuite.Core.Domain.Data
       private WeakRef<DataRepository> _repository;
       protected List<float> _values;
       public IDimension Dimension { get; set; }
+      public string BottomCompartment { get; set; }
 
       internal Cache<AuxiliaryType, DataColumn> RelatedColumnsCache { get; } = new Cache<AuxiliaryType, DataColumn>(x => x.DataInfo.AuxiliaryType);
 
@@ -54,7 +55,7 @@ namespace OSPSuite.Core.Domain.Data
          BaseGrid = baseGrid;
          QuantityInfo = new QuantityInfo(new List<string>(), QuantityType.Undefined);
          var defaultUnitName = dimension != null ? dimension.DefaultUnitName : string.Empty;
-         DataInfo = new DataInfo(ColumnOrigins.Undefined) {DisplayUnitName = defaultUnitName};
+         DataInfo = new DataInfo(ColumnOrigins.Undefined) { DisplayUnitName = defaultUnitName };
          IsInternal = false;
       }
 
@@ -142,7 +143,7 @@ namespace OSPSuite.Core.Domain.Data
       /// </summary>
       public virtual double Value
       {
-         set => ValuesAsArray = new[] {value};
+         set => ValuesAsArray = new[] { value };
       }
 
       /// <summary>
