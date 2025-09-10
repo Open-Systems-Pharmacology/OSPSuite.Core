@@ -616,12 +616,12 @@ namespace OSPSuite.Assets
                {
                   sb.AppendLine($"    - Output Path: {mapping.OutputPath}");
                }
+
                sb.AppendLine();
             }
 
             return sb.ToString();
          }
-
       }
 
       public static class Diff
@@ -1065,12 +1065,9 @@ namespace OSPSuite.Assets
             return $"Parameter identification '{parameterIdentificationName}' finished in {duration}";
          }
 
-
          public static string SensitivityCalculationFailed(string parameterIdentificationName, IReadOnlyList<string> errorMessages, string duration = null)
          {
-            return string.IsNullOrEmpty(duration) ? 
-               $"Parameter identification '{parameterIdentificationName}' finished but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}" : 
-               $"Parameter identification '{parameterIdentificationName}' finished in {duration} but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}";
+            return string.IsNullOrEmpty(duration) ? $"Parameter identification '{parameterIdentificationName}' finished but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}" : $"Parameter identification '{parameterIdentificationName}' finished in {duration} but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}";
          }
 
          public static string LinkedParametersIn(string name)
@@ -1316,7 +1313,7 @@ namespace OSPSuite.Assets
                stringBuilder.AppendLine();
                stringBuilder.AppendLine();
             });
-            
+
             return stringBuilder.ToString();
          }
       }
@@ -1407,7 +1404,7 @@ namespace OSPSuite.Assets
             public static string Time = "Time";
             public static string Observation = "Observation";
             public static string DeviationLine = "Deviation Lines";
-            public static string Undefined = "Undefined"; 
+            public static string Undefined = "Undefined";
          }
 
          public static class DeviationLines
@@ -1416,7 +1413,6 @@ namespace OSPSuite.Assets
             public static string DeviationLineDescription = "Will create two deviation lines according to the given fold value which has to be greater than 1 (foldValue >1). An x-fold deviation range includes simulated values within x-fold and 1/x-fold of observed values.";
             public static string DeviationLineNameUpper(float foldValue) => $"{foldValue}-fold deviation";
             public static string DeviationLineNameLower(float foldValue) => $"{foldValue}-fold deviation Lower";
-
          }
       }
 
@@ -1425,9 +1421,9 @@ namespace OSPSuite.Assets
       private static string projectNameAndVersionAsString(string versionDisplay, int version) => $"V{versionDisplay} {numberDisplay(version)}";
 
       public static string ProjectVersionCannotBeLoaded(
-         int projectVersion, 
-         string oldestSupportedDisplayVersion, 
-         int oldestSupportedVersion, 
+         int projectVersion,
+         string oldestSupportedDisplayVersion,
+         int oldestSupportedVersion,
          string currentSupportedDisplayVersion,
          int currentSupportedVersion,
          string downloadUrl)
@@ -1451,12 +1447,12 @@ namespace OSPSuite.Assets
       public static string LoadObjectFromSnapshot(string objectType) => $"Load {objectType.ToLowerInvariant()} from snapshot";
       public static string SelectSnapshotExportFile(string objectName, string objectType) => $"Export snapshot for {objectType.ToLowerInvariant()} '{objectName}'";
       public static string DoYouWantToProceed(params string[] messages) => $"WARNING:\n{messages.ToString("\n")}\n\nDo you wish to continue?";
-      
+
       public static readonly string SnapshotOfProjectWithChangedSimulationText = "Some simulations are in a changed state (red icon) and may not be re-imported correctly.";
       public static readonly string SnapshotOfProjectWithChangedSimulation = DoYouWantToProceed(SnapshotOfProjectWithChangedSimulationText);
 
       public static string Starting(string type, string name) => $"Starting {type.ToLower()} '{name}'...";
-      
+
       public static string LoadingSnapshot(string snapshotFile, string type) => $"Loading {type} from {ObjectTypes.Snapshot.ToLower()} file '{snapshotFile}'";
 
       public static string SnapshotLoaded(string typeToLoad) => $"{typeToLoad} loaded from {ObjectTypes.Snapshot.ToLower()}";
@@ -1466,7 +1462,6 @@ namespace OSPSuite.Assets
       public static string StartingQualificationPlan(string qualificationPlan) => Starting(ObjectTypes.QualificationPlan, qualificationPlan);
 
       public static string StartingQualificationStep(string qualificationStep) => Starting(ObjectTypes.QualificationStep, qualificationStep);
-
    }
 
    public static class Error
@@ -1511,13 +1506,13 @@ namespace OSPSuite.Assets
 
       public static string SnapshotDuplicateEntryByName(string name, string type) =>
          $"Another {type} named '{name}' already exists in the project. Snapshot file is corrupted.";
-      
+
       public static string SnapshotFileMismatch(string desiredType) => $"Snapshot file cannot be used to load a {desiredType.ToLowerInvariant()}.";
 
-      public static string CannotFindParentContainerWithPath(string parentPath, string containerName, string buildingBlockName, string moduleName) => 
+      public static string CannotFindParentContainerWithPath(string parentPath, string containerName, string buildingBlockName, string moduleName) =>
          $"Cannot find parent container '{parentPath}' defined as target of container '{containerName}' in building block '{buildingBlockName}' in module '{moduleName}'";
 
-      public static  string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
+      public static string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
 
       public static string ParseErrorMessage(string errors) => $"There were errors while parsing your data: {errors}";
 
@@ -1596,7 +1591,7 @@ namespace OSPSuite.Assets
 
       public static string NameAlreadyExistsInContainerType(string name, string containerType)
       {
-         if(string.IsNullOrEmpty(containerType))
+         if (string.IsNullOrEmpty(containerType))
             return NameAlreadyExists(name);
 
          return $"'{name}' already exists in {containerType}.";
@@ -1738,6 +1733,7 @@ namespace OSPSuite.Assets
       {
          return $"Cannot add molecule '{moleculeName}' into both molecules to include and molecules to exclude lists";
       }
+
       public static string BuildingBlockTypeAlreadyAddedToModule(string objectName, string type) => $"BuildingBlock '{type}' for '{objectName}' was already added to module";
 
       public const string NotImplemented = "This feature is not implemented yet";
@@ -1888,11 +1884,11 @@ namespace OSPSuite.Assets
 
       public static string UnitIsNotDefinedInDimension(string unit, string dimension) => $"Unit '{unit}' is not defined in dimension '{dimension}'.";
 
-      public static string CouldNotFindNeighborhoodBetween(string container1, string container2, string formulaName, string usingFormulaPath) => 
+      public static string CouldNotFindNeighborhoodBetween(string container1, string container2, string formulaName, string usingFormulaPath) =>
          $"Could not find neighborhood between '{container1}' and '{container2}' referenced by formula '{formulaName}' used by '{usingFormulaPath}'";
 
       public static string FirstNeighborNotDefinedFor(string neighborhoodName) => $"First neighbor is undefined for neighborhood '{neighborhoodName}'";
-      
+
       public static string SecondNeighborNotDefinedFor(string neighborhoodName) => $"Second neighbor is undefined for neighborhood '{neighborhoodName}'";
 
       public const string InParentTagCanOnlyBeUsedWithAndOperator = "IN PARENT tag can only be used with AND operator";
@@ -1920,6 +1916,7 @@ namespace OSPSuite.Assets
       public static string SimulationUsedInPlotsAreNotExported(IReadOnlyList<string> simulationNames, string project)
          => $"{ObjectTypes.Simulation.PluralizeIf(simulationNames)} {simulationNames.ToString(", ", "'")} used in plots {"is".PluralizeIf(simulationNames)} not found in the list of exported simulations for {ObjectTypes.Project} {project}";
 
+      public static string NeighborIsLogical(string neighborName, string neighborhoodName) => $"Container {neighborName} is defined as logical for neighborhood '{neighborhoodName}'";
 
       public static class SensitivityAnalysis
       {
@@ -1997,6 +1994,7 @@ namespace OSPSuite.Assets
          {
             sb.AppendLine($"- {errorMessage}");
          }
+
          return sb.ToString();
       }
 
@@ -2223,13 +2221,12 @@ namespace OSPSuite.Assets
       public static string LargeNumberOfOutputPoints(int numberOfPoints) =>
          $"The selected output resolution will generate {numberOfPoints} points and may severely impact the software performance.\nAre you sure you want to run with these setting? If not, consider changing output resolution in simulations settings";
 
-      public static string NeighborhoodWasNotFoundInModel(string neighborhoodName, string buildingBlockName) => $"The neighborhood '{neighborhoodName}' from building block '{buildingBlockName}' was not added to the simulation";
+      public static string NeighborhoodWasNotFoundInModel(string neighborhoodName, string buildingBlockName) => $"The neighborhood '{neighborhoodName}' from building block '{buildingBlockName}' was not added to the simulation because it is not defined or at least one of the containers is logical";
 
       public static string UnitNotFoundInDimensionForParameter(string unit, string dimension, string parameterName)
       {
          return $"Unit '{unit}' not found for parameter {parameterName} with dimension '{dimension}'";
       }
-
    }
 
    public static class RibbonCategories

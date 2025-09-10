@@ -43,7 +43,8 @@ namespace OSPSuite.Core
       public void should_return_a_successful_validation_with_warning()
       {
          _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.ValidWithWarnings, _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
-         _result.ValidationResult.Messages.Single().Text.ShouldBeEqualTo(Warning.NeighborhoodWasNotFoundInModel("does_not_match_existing", "Module1 - SPATIAL STRUCTURE MODULE 1"));
+         _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Warning.NeighborhoodWasNotFoundInModel("does_not_match_existing", "Module1 - SPATIAL STRUCTURE MODULE 1"))).ShouldNotBeNull();
+         _result.ValidationResult.Messages.FirstOrDefault(x => x.Text.Equals(Warning.NeighborhoodWasNotFoundInModel("not_physical", "Module1 - SPATIAL STRUCTURE MODULE 1"))).ShouldNotBeNull();
       }
 
       [Observation]
@@ -103,7 +104,7 @@ namespace OSPSuite.Core
          _simulationBuilder.SimulationEntitySourceFor(parameter3).SourcePath.ShouldBeEqualTo(parameter3Module2.EntityPath());
       }
 
-      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfiguration();
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationWithLogicalNeighborhood();
    }
 
    internal class When_running_the_case_study_for_module_integration_with_merge_behavior_extend_for_neighborhood : concern_for_ModuleIntegration

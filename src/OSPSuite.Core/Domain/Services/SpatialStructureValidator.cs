@@ -35,9 +35,14 @@ namespace OSPSuite.Core.Domain.Services
          if (neighborhood.FirstNeighbor == null)
             _result.AddMessage(NotificationType.Error, neighborhood, Error.FirstNeighborNotDefinedFor(neighborhood.Name));
 
-
          if (neighborhood.SecondNeighbor == null)
             _result.AddMessage(NotificationType.Error, neighborhood, Error.SecondNeighborNotDefinedFor(neighborhood.Name));
+
+         if (neighborhood.FirstNeighbor?.Mode == ContainerMode.Logical)
+            _result.AddMessage(NotificationType.Warning, neighborhood, Error.NeighborIsLogical(neighborhood.FirstNeighbor.Name, neighborhood.Name));
+
+         if (neighborhood.SecondNeighbor?.Mode == ContainerMode.Logical)
+            _result.AddMessage(NotificationType.Warning, neighborhood, Error.NeighborIsLogical(neighborhood.SecondNeighbor.Name, neighborhood.Name));
       }
    }
 }

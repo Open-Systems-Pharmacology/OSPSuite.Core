@@ -61,6 +61,31 @@ namespace OSPSuite.Helpers
          return simulationConfiguration;
       }
 
+      public SimulationConfiguration CreateSimulationConfigurationWithLogicalNeighborhood()
+      {
+         var simulationConfiguration = new SimulationConfiguration
+         {
+            SimulationSettings = CreateSimulationSettings(),
+         };
+
+         var module1 = createModule1();
+         var bonePlasma = module1.SpatialStructure.TopContainers
+            .FindByName(ORGANISM)
+            .FindByName(Bone)
+            .WithName(Plasma);
+
+         var logicalContainer = createContainerWithName(Plasma, ContainerMode.Logical);
+         addLogicalNeighborhood(module1.SpatialStructure,(IContainer)bonePlasma, logicalContainer);
+         var module2 = createModule2();
+         var module3 = createModule3();
+
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+         simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module3));
+         return simulationConfiguration;
+      }
+
+
       public SimulationConfiguration CreateSimulationConfigurationForExtendMergeBehavior()
       {
          var simulationConfiguration = new SimulationConfiguration
@@ -383,6 +408,13 @@ namespace OSPSuite.Helpers
 
          spatialStructure.ResolveReferencesInNeighborhoods();
          return spatialStructure;
+      }
+
+      private void addLogicalNeighborhood(SpatialStructure spatialStructure, IContainer bonePlasma, IContainer logicalContainer)
+      {
+         var neighborhood8 = _neighborhoodFactory.CreateBetween(bonePlasma, logicalContainer).WithName("not_physical");
+         neighborhood8.FirstNeighborPath = new ObjectPath("Organism", "NOPE");
+         spatialStructure.AddNeighborhood(neighborhood8);
       }
 
       private IContainer createContainerWithName(string containerName, ContainerMode containerMode = ContainerMode.Logical)
