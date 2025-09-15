@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using FakeItEasy;
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -25,12 +26,14 @@ namespace OSPSuite.Core
 
       protected string _modelName = "MyModel";
       protected SimulationBuilder _simulationBuilder;
+      protected IReactionMerger _reactionMerger;
 
       protected override void Context()
       {
          base.Context();
          //we create the simulation in context as some tests are modifying it
          _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
+         _reactionMerger = IoC.Resolve<IReactionMerger>();
       }
 
       protected override void Because()
@@ -504,11 +507,12 @@ namespace OSPSuite.Core
    internal class When_a_parameter_value_is_defined_with_formula_and_nan_value : concern_for_ModelConstructor
    {
       private ParameterValue _parameterValue;
-
+      private IReactionMerger _reactionMerger;
       protected override void Context()
       {
          base.Context();
-         var simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _reactionMerger = A.Fake<IReactionMerger>();
+         var simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
 
          _parameterValue = simulationBuilder.ParameterValues.First(x => x.Name.Equals("FormulaParameterOverwritten"));
          _parameterValue.Value = double.NaN;
@@ -530,7 +534,7 @@ namespace OSPSuite.Core
       {
          base.Context();
          //we use a sim builder here to modify the configuration on the fly
-         var simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         var simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
 
          var initialCondition = simulationBuilder.InitialConditions.First();
          var physicalContainer = simulationBuilder.SpatialStructureAndMergeBehaviors.SelectMany(x => x.spatialStructure.TopContainers)
@@ -552,7 +556,7 @@ namespace OSPSuite.Core
       {
          base.Context();
          //we use a sim builder here to modify the configuration on the fly
-         var simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         var simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
          var molecule = simulationBuilder.MoleculeByName("A");
          var paraToRemove = molecule.Parameters.SingleOrDefault(para => para.Name == "logMA");
          molecule.RemoveParameter(paraToRemove);

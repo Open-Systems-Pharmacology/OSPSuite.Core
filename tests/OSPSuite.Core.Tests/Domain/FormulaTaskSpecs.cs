@@ -609,6 +609,7 @@ namespace OSPSuite.Core.Domain
       protected IParameter _height;
       private Container _root;
       protected ModelConfiguration _modelConfiguration;
+      protected IReactionMerger _reactionMerger;
 
       protected override void Context()
       {
@@ -621,6 +622,7 @@ namespace OSPSuite.Core.Domain
          _mucosa = new Container().WithName(MUCOSA).Under(_smallIntestine);
          _duodenumMucosa = new Container().WithName(Compartment.DUODENUM).Under(_mucosa);
          _duodenumMucosaIntracellular = new Container().WithName("Intracellular").Under(_duodenumMucosa);
+         _reactionMerger = A.Fake<IReactionMerger>();
 
          _lumen = new Container().WithName(LUMEN).Under(_organism);
          _duodenumLumen = new Container().WithName(Compartment.DUODENUM).Under(_lumen);
@@ -629,7 +631,7 @@ namespace OSPSuite.Core.Domain
 
          _model.Root = _root;
          var simulationConfiguration =  new SimulationConfiguration();
-         _modelConfiguration = new ModelConfiguration(_model, simulationConfiguration, new SimulationBuilder(simulationConfiguration));
+         _modelConfiguration = new ModelConfiguration(_model, simulationConfiguration, new SimulationBuilder(simulationConfiguration, _reactionMerger));
       }
    }
 

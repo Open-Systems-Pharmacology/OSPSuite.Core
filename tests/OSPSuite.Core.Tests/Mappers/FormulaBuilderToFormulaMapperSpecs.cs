@@ -26,12 +26,13 @@ namespace OSPSuite.Core.Mappers
       private IFormula _clonedFormula;
       private SimulationConfiguration _simulationConfiguration;
       private SimulationBuilder _simulationBuilder;
-
+      private IReactionMerger _reactionMerger;
       protected override void Context()
       {
          base.Context();
+         _reactionMerger = A.Fake<IReactionMerger>();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
          _formula = A.Fake<IFormula>();
          _clonedFormula = A.Fake<IFormula>();
          A.CallTo(() => _cloneManagerForModel.Clone(_formula)).Returns(_clonedFormula);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
@@ -17,6 +18,7 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly PathAndValueEntityCache<ParameterValue> _parameterValues = new PathAndValueEntityCache<ParameterValue>();
       private readonly PathAndValueEntityCache<InitialCondition> _initialConditions = new PathAndValueEntityCache<InitialCondition>();
       private readonly Cache<IMoleculeDependentBuilder, MoleculeList> _moleculeListCache = new Cache<IMoleculeDependentBuilder, MoleculeList>();
+      private readonly IReactionMerger _reactionMerger;
 
       //Contains a temp  cache of builder and their corresponding building blocks
       private readonly Cache<string, BuilderSource> _builderSources = new Cache<string, BuilderSource>(x => x.Builder.Id, x => null);
@@ -24,10 +26,12 @@ namespace OSPSuite.Core.Domain.Builder
       //Cache of entity source by id and not by path. It is required because the path is not available at time of construction in the entity
       private readonly Cache<string, SimulationEntitySource> _entitySources = new Cache<string, SimulationEntitySource>(onMissingKey: x => null);
 
-      public SimulationBuilder(SimulationConfiguration simulationConfiguration)
+      public SimulationBuilder(SimulationConfiguration simulationConfiguration, IReactionMerger reactionMerger)
       {
          _simulationConfiguration = simulationConfiguration;
+         _reactionMerger = reactionMerger;
          performMerge();
+         
       }
 
       public bool CreateAllProcessRateParameters => _simulationConfiguration.CreateAllProcessRateParameters;
@@ -85,7 +89,9 @@ namespace OSPSuite.Core.Domain.Builder
 
       private void performMerge()
       {
-         cacheBuilders(x => x.Reactions, _reactions);
+         var mergedReactions = _reactionMerger.Merge(ReactionAndMergeBehaviors);
+         _reactions.AddRange(mergedReactions);
+
          cacheBuilders(x => x.Molecules, _molecules);
          cacheMoleculeDependentBuilders(x => x.PassiveTransports, _passiveTransports);
          cacheMoleculeDependentBuilders(x => x.Observers, _observers);
@@ -195,6 +201,9 @@ namespace OSPSuite.Core.Domain.Builder
 
       internal IReadOnlyList<(EventGroupBuildingBlock eventGroupBuildingBlock, MergeBehavior mergeBehavior)> EventGroupAndMergeBehaviors =>
          _simulationConfiguration.ModuleConfigurations.Where(x => x.Module.EventGroups != null).Select(x => (x.Module.EventGroups, x.MergeBehavior)).ToList();
+
+      internal IReadOnlyList<(ReactionBuildingBlock reactionBuildingBlock, MergeBehavior mergeBehavior)> ReactionAndMergeBehaviors =>
+         _simulationConfiguration.ModuleConfigurations.Where(x => x.Module.Reactions != null).Select(x => (x.Module.Reactions, x.MergeBehavior)).ToList();
 
       internal IReadOnlyCollection<TransportBuilder> PassiveTransports => _passiveTransports;
       internal IReadOnlyCollection<ReactionBuilder> Reactions => _reactions;

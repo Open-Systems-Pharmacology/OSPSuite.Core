@@ -1,4 +1,5 @@
-﻿using OSPSuite.BDDHelper;
+﻿using FakeItEasy;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
@@ -72,6 +73,7 @@ namespace OSPSuite.Core.Services
       private ModuleConfiguration _moduleConfiguration;
       private ParameterValue _meanParameterValue;
       private ParameterValue _distributedParameterValue;
+      private IReactionMerger _reactionMerger;
 
       protected override void Context()
       {
@@ -94,9 +96,10 @@ namespace OSPSuite.Core.Services
          _parameterValues.Add(_distributedParameterValue);
          _parameterValues.Add(_meanParameterValue);
 
+         _reactionMerger = A.Fake<IReactionMerger>();
          _moduleConfiguration = new ModuleConfiguration(_module, null, _parameterValues);
          _simulationConfiguration.AddModuleConfiguration(_moduleConfiguration);
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
          _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder);
       }
 
@@ -121,6 +124,7 @@ namespace OSPSuite.Core.Services
       private ParameterValue _distributedParameterValue;
       private ParameterValue _deviationParameterValue;
       private ParameterValue _percentileParameter;
+      private IReactionMerger _reactionMerger;
 
       protected override void Context()
       {
@@ -159,9 +163,10 @@ namespace OSPSuite.Core.Services
          _parameterValues.Add(_deviationParameterValue);
          _parameterValues.Add(_percentileParameter);
 
+         _reactionMerger = A.Fake<IReactionMerger>();
          _moduleConfiguration = new ModuleConfiguration(_module, null, _parameterValues);
          _simulationConfiguration.AddModuleConfiguration(_moduleConfiguration);
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
          _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder);
       }
 

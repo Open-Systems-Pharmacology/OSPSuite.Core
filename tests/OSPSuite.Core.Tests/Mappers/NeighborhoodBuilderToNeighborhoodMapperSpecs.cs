@@ -48,10 +48,11 @@ namespace OSPSuite.Core.Mappers
       private IContainer _moleculeContainer;
       private SimulationBuilder _simulationBuilder;
       private ModelConfiguration _modelConfiguration;
-
+      private IReactionMerger _reactionMerger;
       protected override void Context()
       {
          base.Context();
+         _reactionMerger = A.Fake<IReactionMerger>();
          _rootContainer = A.Fake<IContainer>().WithName("ROOT");
          _simulationConfiguration = new SimulationConfiguration();
          _model = A.Fake<IModel>();
@@ -76,7 +77,7 @@ namespace OSPSuite.Core.Mappers
          A.CallTo(() => secondNeighborModelPath.Resolve<IContainer>(_rootContainer)).Returns(_secondNeighborInModel);
 
          _moleculeContainer = A.Fake<IContainer>();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
          A.CallTo(() => _containerMapper.MapFrom(_neighborhoodBuilder.MoleculeProperties, _simulationBuilder)).Returns(_moleculeContainer);
          _molecule1 = "molecule1";
          _molecule2 = "molecule2";

@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Domain
       protected SimulationBuilder _simulationBuilder;
       private ModelConfiguration _modelConfiguration;
       private IEntityTracker _entityTracker;
-
+      protected IReactionMerger _reactionMerger;
       protected override void Context()
       {
          _reactionMapper = A.Fake<IReactionBuilderToReactionMapper>();
@@ -35,11 +35,12 @@ namespace OSPSuite.Core.Domain
          _containerTask = A.Fake<IContainerTask>();
          _parameterMapper = A.Fake<IParameterBuilderCollectionToParameterCollectionMapper>();
          _entityTracker = A.Fake<IEntityTracker>();
+         _reactionMerger = A.Fake<IReactionMerger>();
          sut = new ReactionCreator(_reactionMapper, _keywordReplacerTask, _containerTask, _parameterMapper, _entityTracker);
 
          _model = A.Fake<IModel>();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
          _reactionBuilder = new ReactionBuilder
          {
             ContainerCriteria = new DescriptorCriteria(),

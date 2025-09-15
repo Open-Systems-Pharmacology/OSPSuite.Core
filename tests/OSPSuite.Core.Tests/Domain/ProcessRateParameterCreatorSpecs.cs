@@ -34,12 +34,14 @@ namespace OSPSuite.Core.Domain
       private FormulaUsablePath _formulaUsablePathFU;
       private FormulaUsablePath _formulaUsablePathBW;
       private SimulationBuilder _simulationBuilder;
+      protected IReactionMerger _reactionMerger;
 
       protected override void Context()
       {
          base.Context();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _reactionMerger = A.Fake<IReactionMerger>();
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
          _processBuilder = new ReactionBuilder();
          _processBuilder.CreateProcessRateParameter = true;
          _kinetic = new ExplicitFormula("(A+B)*fu/BW");

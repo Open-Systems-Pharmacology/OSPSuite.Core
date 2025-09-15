@@ -19,13 +19,14 @@ namespace OSPSuite.Core.Domain
       protected ModelConfiguration _modelConfiguration;
       private Model _model;
       private IEntityTracker _entityTracker;
-
+      protected IReactionMerger _reactionMerger;
       protected override void Context()
       {
          _containerTask = A.Fake<IContainerTask>();
          _entityTracker= A.Fake<IEntityTracker>();
+         _reactionMerger = A.Fake<IReactionMerger>();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
          _rootContainer = new Container();
          _parameterCollectionMapper = A.Fake<IParameterBuilderCollectionToParameterCollectionMapper>();
          _keywordReplacer = A.Fake<IKeywordReplacerTask>();

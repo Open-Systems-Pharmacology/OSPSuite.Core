@@ -33,9 +33,10 @@ namespace OSPSuite.Core.Mappers
       protected IDimension _concentrationPerTimeDimension;
       protected SimulationBuilder _simulationBuilder;
       protected IEntityTracker _entityTracker;
-
+      protected IReactionMerger _reactionMerger;
       protected override void Context()
       {
+         _reactionMerger = A.Fake<IReactionMerger>();
          _amountPerTimeDimension = A.Fake<IDimension>();
          _concentrationPerTimeDimension = A.Fake<IDimension>();
          A.CallTo(() => _amountPerTimeDimension.Name).Returns(Constants.Dimension.AMOUNT_PER_TIME);
@@ -61,7 +62,7 @@ namespace OSPSuite.Core.Mappers
          _educt2 = A.Fake<ReactionPartner>();
          _prod2 = A.Fake<ReactionPartner>();
          _container = A.Fake<IContainer>();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
          A.CallTo(() => _dimensionFactory.Dimension(Constants.Dimension.AMOUNT_PER_TIME)).Returns(_amountPerTimeDimension);
          A.CallTo(() => _reactionPartnerMapper.MapFromLocal(edPartner1, _container, _simulationBuilder)).Returns(_educt1);
          A.CallTo(() => _reactionPartnerMapper.MapFromLocal(edPartner2, _container, _simulationBuilder)).Returns(_educt2);

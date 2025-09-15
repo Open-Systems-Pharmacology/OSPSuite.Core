@@ -1,4 +1,5 @@
-﻿using OSPSuite.BDDHelper;
+﻿using FakeItEasy;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
@@ -18,7 +19,7 @@ namespace OSPSuite.Core.Domain
       protected IContainer _kidney;
       protected IContainer _heart;
       protected ObjectPathFactoryForSpecs _objectPathFactory;
-
+      protected IReactionMerger _reactionMerger;
       protected override void Context()
       {
          _model = new Model();
@@ -35,7 +36,8 @@ namespace OSPSuite.Core.Domain
          _model.Neighborhoods.Add(_neighborhood1);
          _model.Neighborhoods.Add(_neighborhood2);
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _reactionMerger = A.Fake<IReactionMerger>();
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
          _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder);
          _objectPathFactory = new ObjectPathFactoryForSpecs();
          sut = new SpatialStructureValidator();

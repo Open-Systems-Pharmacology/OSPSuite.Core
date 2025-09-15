@@ -52,10 +52,11 @@ namespace OSPSuite.Core.Mappers
       private IParameter _parameterBuilder2;
       private IParameter _parameterBuilder3;
       private SimulationBuilder _simulationBuilder;
-
+      private IReactionMerger _reactionMerger;
       protected override void Context()
       {
          base.Context();
+         _reactionMerger = A.Fake<IReactionMerger>();
          _amountDimension = A.Fake<IDimension>();
          _targetContainer = new Container().WithName("TOTO");
          A.CallTo(() => _amountDimension.Name).Returns(Constants.Dimension.MOLAR_AMOUNT);
@@ -76,7 +77,7 @@ namespace OSPSuite.Core.Mappers
          _para3 = new Parameter().WithName("P3");
          A.CallTo(() => _objectBaseFactory.Create<MoleculeAmount>()).Returns(new MoleculeAmount());
          A.CallTo(() => _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT)).Returns(_amountDimension);
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
          A.CallTo(() => _formulaMapper.MapFrom(_moleculeBuilder.DefaultStartFormula, _simulationBuilder)).Returns(_mappedFormula);
          A.CallTo(() => _parameterMapper.MapFrom(_parameterBuilder1, _simulationBuilder)).Returns(_para1);
          A.CallTo(() => _parameterMapper.MapFrom(_parameterBuilder2, _simulationBuilder)).Returns(_para2);
@@ -123,10 +124,12 @@ namespace OSPSuite.Core.Mappers
       private IFormula _startValueReferenceFormula;
       private IContainer _targetContainer;
       private SimulationBuilder _simulationBuilder;
+      private IReactionMerger _reactionMerger;
 
       protected override void Context()
       {
          base.Context();
+         _reactionMerger = A.Fake<IReactionMerger>();
          _targetContainer = new Container();
          _concentrationDimension = A.Fake<IDimension>();
          _startValueReferenceFormula = A.Fake<IFormula>();
@@ -134,7 +137,7 @@ namespace OSPSuite.Core.Mappers
          _moleculeBuilder = new MoleculeBuilder().WithDimension(_concentrationDimension);
          _moleculeBuilder.DisplayUnit = A.Fake<Unit>();
          _mappedFormula = A.Fake<IFormula>();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
          A.CallTo(() => _formulaMapper.MapFrom(_moleculeBuilder.DefaultStartFormula, _simulationBuilder)).Returns(_mappedFormula);
          A.CallTo(() => _objectBaseFactory.Create<MoleculeAmount>()).ReturnsLazily(() => new MoleculeAmount());
          var startValueParameter = new Parameter().WithName(Constants.Parameters.START_VALUE);

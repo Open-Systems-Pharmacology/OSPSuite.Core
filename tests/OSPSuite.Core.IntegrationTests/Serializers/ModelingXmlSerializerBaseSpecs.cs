@@ -1,3 +1,4 @@
+using FakeItEasy;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
@@ -48,6 +49,7 @@ namespace OSPSuite.Core.Serializers
       protected IModelConstructor _modelConstructor;
       protected Module _module;
       protected SimulationBuilder _simulationBuilder;
+      private IReactionMerger _reactionMerger;
 
       public override void GlobalContext()
       {
@@ -57,10 +59,11 @@ namespace OSPSuite.Core.Serializers
 
       protected virtual void InitializeSimulation()
       {
+         _reactionMerger = IoC.Resolve<IReactionMerger>();
          _objectPathFactory = IoC.Resolve<IObjectPathFactory>();
          _initialConditionsCreator = IoC.Resolve<IInitialConditionsCreator>();
          _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
          _module = _simulationConfiguration.ModuleConfigurations[0].Module;
          _modelConstructor = IoC.Resolve<IModelConstructor>();
          _result = _modelConstructor.CreateModelFrom(_simulationConfiguration, "MyModel");

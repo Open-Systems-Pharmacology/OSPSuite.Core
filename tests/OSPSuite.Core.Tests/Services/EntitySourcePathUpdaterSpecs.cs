@@ -1,10 +1,12 @@
-﻿using OSPSuite.BDDHelper;
+﻿using FakeItEasy;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
+using OSPSuite.Utility.Container;
 using static OSPSuite.Core.Domain.Constants;
 
 namespace OSPSuite.Core.Services
@@ -15,9 +17,11 @@ namespace OSPSuite.Core.Services
       protected Model _model;
       protected SimulationBuilder _simulationBuilder;
       protected Container _root;
+      private IReactionMerger _reactionMerger;
 
       protected override void Context()
       {
+         _reactionMerger = A.Fake<IReactionMerger>();
          _entityPathResolver = new EntityPathResolverForSpecs();
          sut = new EntitySourcePathUpdater(_entityPathResolver);
          _root = new Container().WithName("Sim`")
@@ -26,7 +30,7 @@ namespace OSPSuite.Core.Services
 
          _model = new Model {Root = _root};
 
-         _simulationBuilder = new SimulationBuilder(new SimulationConfiguration());
+         _simulationBuilder = new SimulationBuilder(new SimulationConfiguration(),_reactionMerger);
       }
    }
 

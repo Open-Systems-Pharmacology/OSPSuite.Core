@@ -31,10 +31,11 @@ namespace OSPSuite.Core.Mappers
       private IParameter _clonedParameter;
       private IContainer _result;
       private SimulationBuilder _simulationBuilder;
-
+      private IReactionMerger _reactionMerger;
       protected override void Context()
       {
          base.Context();
+         _reactionMerger = new ReactionMerger();
          _containerBuilder = new Container();
          _parameterBuilder = new Parameter().WithName("toto");
          _containerBuilder.Add(_parameterBuilder);
@@ -42,7 +43,7 @@ namespace OSPSuite.Core.Mappers
          _clonedParameter = new Parameter().WithName("toto");
          _clonedContainer.Add(_clonedParameter);
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
          A.CallTo(() => _cloneManagerForModel.Clone(_containerBuilder)).Returns(_clonedContainer);
       }
 
