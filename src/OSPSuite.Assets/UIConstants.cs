@@ -1203,6 +1203,11 @@ namespace OSPSuite.Assets
             }
          }
 
+         public static string ParameterIdentificationsAreRunning(IReadOnlyList<string> names)
+         {
+            return $"There are some running {ObjectTypes.ParameterIdentification.ToLowerInvariant().PluralizeIf(names)} {names.ToString(", ", "'")}, please stop them before deleting.";
+         }
+
          public static string ReallyDeleteParameterIdentifications(IReadOnlyList<string> names)
          {
             return $"Really delete {ObjectTypes.ParameterIdentification.ToLowerInvariant().PluralizeIf(names)} {names.ToString(", ", "'")}?";

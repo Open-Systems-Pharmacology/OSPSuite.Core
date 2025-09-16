@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using OSPSuite.Assets;
 using OSPSuite.Utility;
@@ -16,6 +17,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       Task Run(ParameterIdentification parameterIdentification);
       void Stop(ParameterIdentification parameterIdentification);
       bool IsRunning { get; }
+      bool IsAnyRunning(IReadOnlyList<ParameterIdentification> parameterIdentifications);
    }
 
    public class ParameterIdentificationRunner : IParameterIdentificationRunner
@@ -75,5 +77,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       {
          _parameterIdentificationEngines[parameterIdentification]?.Stop();
       }
+
+      public bool IsAnyRunning(IReadOnlyList<ParameterIdentification> parameterIdentifications) =>
+         parameterIdentifications.Any(pi => _parameterIdentificationEngines.Contains(pi));
    }
 }
