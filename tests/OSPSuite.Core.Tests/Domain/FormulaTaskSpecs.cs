@@ -621,7 +621,7 @@ namespace OSPSuite.Core.Domain
          _mucosa = new Container().WithName(MUCOSA).Under(_smallIntestine);
          _duodenumMucosa = new Container().WithName(Compartment.DUODENUM).Under(_mucosa);
          _duodenumMucosaIntracellular = new Container().WithName("Intracellular").Under(_duodenumMucosa);
-     
+
          _lumen = new Container().WithName(LUMEN).Under(_organism);
          _duodenumLumen = new Container().WithName(Compartment.DUODENUM).Under(_lumen);
          _volumeDuodenumLumen = DomainHelperForSpecs.ConstantParameterWithValue(10).WithName(VOLUME).Under(_duodenumLumen);

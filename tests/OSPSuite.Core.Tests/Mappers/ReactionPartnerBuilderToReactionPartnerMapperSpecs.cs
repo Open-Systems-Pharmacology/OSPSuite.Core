@@ -4,7 +4,6 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
-using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -24,6 +23,7 @@ namespace OSPSuite.Core.Mappers
       private MoleculeAmount _moleculeAmount;
       private SimulationConfiguration _simulationConfiguration;
       private SimulationBuilder _simulationBuilder;
+
       protected override void Context()
       {
          base.Context();

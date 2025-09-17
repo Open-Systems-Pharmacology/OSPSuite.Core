@@ -23,6 +23,7 @@ namespace OSPSuite.Core
       protected string _modelName = "MyModel";
       protected SimulationBuilder _simulationBuilder;
       protected SimulationConfiguration _simulationConfiguration;
+
       protected abstract Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder();
 
       protected override void Because()

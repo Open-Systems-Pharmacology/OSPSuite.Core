@@ -36,6 +36,7 @@ namespace OSPSuite.Core.Domain
          _validContainer.Add(new Reaction().WithName("REACTION").WithFormula(_validFormula));
          _validContainer.Add(new Transport().WithName("TRANSPORT").WithFormula(_validFormula));
          _invalidContainer = new Container().WithName("INVALID");
+
          _invalidContainer.Add(new Parameter().WithName("PARA1").WithFormula(new ConstantFormula(1)));
          _invalidContainer.Add(new Parameter().WithName("PARA2").WithFormula(_invalidFormula));
          _invalidContainer.Add(new Reaction().WithName("REACTION").WithFormula(_invalidFormula));

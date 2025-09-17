@@ -48,6 +48,7 @@ namespace OSPSuite.Core.Mappers
       private IContainer _moleculeContainer;
       private SimulationBuilder _simulationBuilder;
       private ModelConfiguration _modelConfiguration;
+
       protected override void Context()
       {
          base.Context();

@@ -32,6 +32,7 @@ namespace OSPSuite.Core.Mappers
       private Observer _observer;
       private SimulationConfiguration _simulationConfiguration;
       private SimulationBuilder _simulationBuilder;
+
       protected override void Context()
       {
          base.Context();

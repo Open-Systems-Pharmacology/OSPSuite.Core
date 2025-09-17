@@ -1,5 +1,4 @@
-﻿using FakeItEasy;
-using OSPSuite.BDDHelper;
+﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
@@ -19,6 +18,7 @@ namespace OSPSuite.Core.Domain
       protected IContainer _kidney;
       protected IContainer _heart;
       protected ObjectPathFactoryForSpecs _objectPathFactory;
+
       protected override void Context()
       {
          _model = new Model();

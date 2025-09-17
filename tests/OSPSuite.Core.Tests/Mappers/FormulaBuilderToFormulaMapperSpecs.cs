@@ -26,6 +26,7 @@ namespace OSPSuite.Core.Mappers
       private IFormula _clonedFormula;
       private SimulationConfiguration _simulationConfiguration;
       private SimulationBuilder _simulationBuilder;
+
       protected override void Context()
       {
          base.Context();

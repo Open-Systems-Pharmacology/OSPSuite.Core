@@ -3,7 +3,6 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
-using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Utility.Extensions;
 
@@ -39,6 +38,7 @@ namespace OSPSuite.Core.Domain
          _simulationConfiguration = new SimulationConfiguration();
          _simulationConfiguration.AddModuleConfiguration(_moduleConfiguration1);
          _simulationConfiguration.AddModuleConfiguration(_moduleConfiguration2);
+
          _moduleConfiguration1.Module.Observers.AmountObserverBuilders.Each(x => x.MoleculeList.AddMoleculeName("molecule1"));
          _moduleConfiguration2.Module.Observers.AmountObserverBuilders.Each(x => x.MoleculeList.AddMoleculeName("molecule2"));
 

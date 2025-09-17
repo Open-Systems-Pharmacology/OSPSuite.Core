@@ -1,12 +1,10 @@
-﻿using FakeItEasy;
-using OSPSuite.BDDHelper;
+﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
-using OSPSuite.Utility.Container;
 using static OSPSuite.Core.Domain.Constants;
 
 namespace OSPSuite.Core.Services

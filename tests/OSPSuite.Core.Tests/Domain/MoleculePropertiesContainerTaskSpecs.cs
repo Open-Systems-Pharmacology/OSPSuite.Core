@@ -19,6 +19,7 @@ namespace OSPSuite.Core.Domain
       protected ModelConfiguration _modelConfiguration;
       private Model _model;
       private IEntityTracker _entityTracker;
+
       protected override void Context()
       {
          _containerTask = A.Fake<IContainerTask>();

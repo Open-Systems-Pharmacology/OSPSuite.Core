@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using FakeItEasy;
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -505,6 +504,7 @@ namespace OSPSuite.Core
    internal class When_a_parameter_value_is_defined_with_formula_and_nan_value : concern_for_ModelConstructor
    {
       private ParameterValue _parameterValue;
+
       protected override void Context()
       {
          base.Context();
