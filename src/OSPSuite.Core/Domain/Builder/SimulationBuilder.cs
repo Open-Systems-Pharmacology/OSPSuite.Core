@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
@@ -18,7 +17,7 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly PathAndValueEntityCache<ParameterValue> _parameterValues = new PathAndValueEntityCache<ParameterValue>();
       private readonly PathAndValueEntityCache<InitialCondition> _initialConditions = new PathAndValueEntityCache<InitialCondition>();
       private readonly Cache<IMoleculeDependentBuilder, MoleculeList> _moleculeListCache = new Cache<IMoleculeDependentBuilder, MoleculeList>();
-      
+
       //Contains a temp  cache of builder and their corresponding building blocks
       private readonly Cache<string, BuilderSource> _builderSources = new Cache<string, BuilderSource>(x => x.Builder.Id, x => null);
 
@@ -29,7 +28,6 @@ namespace OSPSuite.Core.Domain.Builder
       {
          _simulationConfiguration = simulationConfiguration;
          performMerge();
-         
       }
 
       public bool CreateAllProcessRateParameters => _simulationConfiguration.CreateAllProcessRateParameters;
@@ -239,25 +237,25 @@ namespace OSPSuite.Core.Domain.Builder
          _simulationConfiguration.ModuleConfigurations
             .Select(x => propAccess(x.Module))
             .Where(x => x != null)
-            .SelectMany(x => x.Select(builder => (builder, (IBuildingBlock) x)))
+            .SelectMany(x => x.Select(builder => (builder, (IBuildingBlock)x)))
             .ToList();
 
       private IReadOnlyList<(T Builder, IBuildingBlock BuildingBlock)> allParameterValueBuilderSources<T>(Func<ModuleConfiguration, IBuildingBlock<T>> propAccess) where T : PathAndValueEntity =>
          _simulationConfiguration.ModuleConfigurations
             .Select(propAccess)
             .Where(x => x != null)
-            .SelectMany(x => x.Select(builder => (builder, (IBuildingBlock) x)))
+            .SelectMany(x => x.Select(builder => (builder, (IBuildingBlock)x)))
             .ToList();
 
       private IReadOnlyList<(InitialCondition InitialCondition, IBuildingBlock BuildingBlock)> allInitialConditionsFromExpressionProfileSources() =>
          _simulationConfiguration.ExpressionProfiles
             .Select(x => (BuildingBlock: x, x.InitialConditions))
             //null because these conditions do not belong in a module
-            .SelectMany(x => x.InitialConditions.Select(ic => (ic, (IBuildingBlock) x.BuildingBlock)))
+            .SelectMany(x => x.InitialConditions.Select(ic => (ic, (IBuildingBlock)x.BuildingBlock)))
             .ToList();
 
       private IReadOnlyCollection<ReactionBuilder> mergeReactions(
-        IReadOnlyList<(ReactionBuildingBlock block, MergeBehavior behavior)> sources)
+         IReadOnlyList<(ReactionBuildingBlock block, MergeBehavior behavior)> sources)
       {
          var result = new Dictionary<string, ReactionBuilder>(StringComparer.OrdinalIgnoreCase);
          if (sources == null || sources.Count == 0)
@@ -269,13 +267,15 @@ namespace OSPSuite.Core.Domain.Builder
             {
                if (!result.TryGetValue(incoming.Name, out var current))
                {
-                  result[incoming.Name].UpdatePropertiesFrom(incoming, null);
+                  result[incoming.Name] = new ReactionBuilder();
+                  result[incoming.Name] = createCopyFrom(incoming);
                   continue;
                }
 
                if (behavior == MergeBehavior.Overwrite)
                {
-                   result[incoming.Name].UpdatePropertiesFrom(incoming, null);
+                  result[incoming.Name] = new ReactionBuilder();
+                  result[incoming.Name] = createCopyFrom(incoming);
                }
                else
                {
@@ -286,7 +286,23 @@ namespace OSPSuite.Core.Domain.Builder
 
          return result.Values.ToList();
       }
-       
+
+      private static ReactionBuilder createCopyFrom(ReactionBuilder incoming)
+      {
+         var copy = new ReactionBuilder();
+         copy.UpdatePropertiesFrom(incoming, null);
+
+         foreach (var prm in incoming.Parameters)
+            copy.AddParameter(prm);
+
+         copy.Formula = incoming.Formula;
+
+         copy.CreateProcessRateParameter = incoming.CreateProcessRateParameter;
+         copy.ProcessRateParameterPersistable = incoming.ProcessRateParameterPersistable;
+
+         return copy;
+      }
+
       private static void extendReaction(ReactionBuilder target, ReactionBuilder incoming)
       {
          var byNameParam = target.Parameters.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
