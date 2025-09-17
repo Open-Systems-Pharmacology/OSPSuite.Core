@@ -10,7 +10,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {
-   public class ImportConfirmationPresenter : AbstractPresenter<IImportConfirmationView, IImportConfirmationPresenter>, IImportConfirmationPresenter
+   public class ImportPreviewPresenter : AbstractPresenter<IImportPreviewView, IImportPreviewPresenter>, IImportPreviewPresenter
    {
       private readonly IDataRepositoryChartPresenter _chartPresenter;
       private readonly IDataRepositoryDataPresenter _dataPresenter;
@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private List<string> _conventions;
       private IReadOnlyList<string> _keys;
 
-      public ImportConfirmationPresenter(IImportConfirmationView view,
+      public ImportPreviewPresenter(IImportPreviewView view,
          IDataRepositoryChartPresenter chartPresenter, IDataRepositoryDataPresenter dataPresenter) : base(view)
       {
          _chartPresenter = chartPresenter;

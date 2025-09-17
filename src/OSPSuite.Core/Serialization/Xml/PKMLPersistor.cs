@@ -62,7 +62,7 @@ namespace OSPSuite.Core.Serialization.Xml
          {
             var xElement = serializeModelPart(entityToSerialize, serializationContext);
             xElement.AddAttribute(Constants.Serialization.Attribute.VERSION, Constants.PKML_VERSION.ToString());
-            xElement.Save(fileName);
+            xElement.PermissiveSave(fileName);
          }
       }
 
@@ -81,7 +81,7 @@ namespace OSPSuite.Core.Serialization.Xml
                    withIdRepository ?? new WithIdRepository(),
                    cloneManagerForModel ?? _cloneManagerForModel))
          {
-            var element = XElement.Load(pkmlFileFullPath);
+            var element = XElementSerializer.PermissiveLoad(pkmlFileFullPath);
             version = element.GetPKMLVersion();
 
             convertXml(element, version);

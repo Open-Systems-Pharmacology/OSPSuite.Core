@@ -23,7 +23,7 @@ namespace OSPSuite.Core.Serialization.Xml
          using (var serializationContext = SerializationTransaction.Create(_container, withIdRepository: new WithIdRepository()))
          {
             var serializer = _serializerRepository.SerializerFor(groupRepository);
-            var element = XElement.Load(fileName);
+            var element = XElementSerializer.PermissiveLoad(fileName);
             serializer.Deserialize(groupRepository, element, serializationContext);
          }
 

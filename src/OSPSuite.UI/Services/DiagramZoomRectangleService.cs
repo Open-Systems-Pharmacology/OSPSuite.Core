@@ -55,7 +55,7 @@ namespace OSPSuite.UI.Services
       public void OnMouseDown(object sender, MouseEventArgs e)
       {
          if (!isZooming(e)) return;
-         if (!mouseIsOverChart(e)) return;
+         if (!mouseIsOverDiagram(e)) return;
          if (isInLegend(e)) return;
 
          _firstSelectionCorner = _lastSelectionCorner = e.Location;
@@ -70,7 +70,7 @@ namespace OSPSuite.UI.Services
 
       public void OnMouseMove(object sender, MouseEventArgs e)
       {
-         if (isInLegend(e) || !mouseIsOverChart(e))
+         if (isInLegend(e) || !mouseIsOverDiagram(e))
          {
             _chartControl.Cursor = Cursors.Default;
             return;
@@ -107,25 +107,10 @@ namespace OSPSuite.UI.Services
          return !_selectionRectangle.IsEmpty && _selectionRectangle.Height > 3 && _selectionRectangle.Width > 3;
       }
 
-      private bool mouseIsOverChart(MouseEventArgs e)
+      private bool mouseIsOverDiagram(MouseEventArgs e)
       {
-         var pointLocation = pointLocationAt(e);
-         return pointLocation != null && !pointLocation.IsEmpty;
-      }
-
-      private DiagramCoordinates pointLocationAt(MouseEventArgs e)
-      {
-         if (_chartControl.XYDiagram == null)
-            return null;
-
-         try
-         {
-            return _chartControl.XYDiagram.PointToDiagram(new Point(e.X, e.Y));
-         }
-         catch (Exception)
-         {
-            return null;
-         }
+         var hitInfo = _chartControl.CalcHitInfo(e.Location);
+         return hitInfo.InDiagram;
       }
 
       private bool isZooming(MouseEventArgs e)

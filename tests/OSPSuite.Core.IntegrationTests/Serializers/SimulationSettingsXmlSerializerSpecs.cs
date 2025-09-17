@@ -3,11 +3,12 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Helpers;
+using OSPSuite.Helpers;
 using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class SimulationSettingsXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class SimulationSettingsXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()

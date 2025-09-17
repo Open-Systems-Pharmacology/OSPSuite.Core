@@ -4,7 +4,7 @@ namespace OSPSuite.Core.Chart
 {
    public interface IChartUpdater
    {
-      ChartUpdate UpdateTransaction(IChart chart, bool propagateChartChangeEvent =true);
+      ChartUpdate UpdateTransaction(IChart chart, bool propagateChartChangeEvent = true);
       void Update(IChart chart);
    }
 

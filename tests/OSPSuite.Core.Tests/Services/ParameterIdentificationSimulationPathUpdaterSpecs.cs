@@ -8,7 +8,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Extensions;
 
@@ -41,14 +40,14 @@ namespace OSPSuite.Core.Services
          _simulation = A.Fake<ISimulation>();
          _project = A.Fake<IProject>();
          _parameterIdentification = new ParameterIdentification();
-         
+
          A.CallTo(() => _executionContext.Project).Returns(_project);
-         A.CallTo(() => _project.AllParameterIdentifications).Returns(new[] { _parameterIdentification });
+         A.CallTo(() => _project.AllParameterIdentifications).Returns(new[] {_parameterIdentification});
 
          _parameterIdentification.AddSimulation(_simulation);
 
          _initialObjectPath = new ObjectPath("oldName", "path");
-         var parameterIdentificationRunResult = new ParameterIdentificationRunResult { BestResult = new OptimizationRunResult() };
+         var parameterIdentificationRunResult = new ParameterIdentificationRunResult {BestResult = new OptimizationRunResult()};
          _simulationDataRepository = DomainHelperForSpecs.SimulationDataRepositoryFor("oldName");
          _observationDataRepository = DomainHelperForSpecs.ObservedData();
 
@@ -57,7 +56,7 @@ namespace OSPSuite.Core.Services
 
          parameterIdentificationRunResult.BestResult.AddResult(_simulationDataRepository);
          _residualsResult = new ResidualsResult();
-         _residualsResult.AddOutputResiduals(_initialObjectPath.PathAsString, _observationDataRepository, new List<Residual> { new Residual(0, 1, 1) });
+         _residualsResult.AddOutputResiduals(_initialObjectPath.PathAsString, _observationDataRepository, new List<Residual> {new Residual(0, 1, 1)});
 
          parameterIdentificationRunResult.BestResult.ResidualsResult = _residualsResult;
          _parameterIdentification.AddResult(parameterIdentificationRunResult);

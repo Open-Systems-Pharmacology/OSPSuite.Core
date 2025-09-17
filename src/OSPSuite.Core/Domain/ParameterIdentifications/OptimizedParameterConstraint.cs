@@ -4,7 +4,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 {
    public class OptimizedParameterValue
    {
-      public string Name { get; }
+      public string Name { get; set; }
       public double Value { get; set; }
       public double StartValue { get; }
       public double Min { get; internal set; }

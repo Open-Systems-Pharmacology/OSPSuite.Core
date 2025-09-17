@@ -42,6 +42,59 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
+   public class When_starting_the_comparison_between_two_simulations : concern_for_ComparisonPresenter
+   {
+      private DiffItem _diffItem1;
+      private DiffItem _diffItem2;
+      private DiffItemDTO _dto1;
+      private DiffItemDTO _dto2;
+      private List<DiffItemDTO> _allDiffItemDTO;
+
+      protected override void Context()
+      {
+         base.Context();
+         _diffItem1 = new PropertyValueDiffItem();
+         _diffItem2 = new PropertyValueDiffItem();
+         _dto1 = new DiffItemDTO();
+         _dto2 = new DiffItemDTO();
+
+         _dto1.PathElements[PathElementId.Name] = new PathElement { DisplayName = "A" };
+         _dto2.PathElements[PathElementId.Name] = new PathElement { DisplayName = "B" };
+
+         _dto1.PathElements[PathElementId.Molecule] = new PathElement { DisplayName = "Mol" };
+         _dto2.PathElements[PathElementId.Molecule] = new PathElement { DisplayName = "Mol2" };
+
+         _dto1.PathElements[PathElementId.TopContainer] = new PathElement { DisplayName = "A" };
+         _dto2.PathElements[PathElementId.TopContainer] = new PathElement { DisplayName = "A" };
+
+         _dto1.PathElements[PathElementId.BottomCompartment] = new PathElement { DisplayName = "" };
+         _dto2.PathElements[PathElementId.BottomCompartment] = new PathElement { DisplayName = "" };
+
+
+         _report.Add(_diffItem1);
+         _report.Add(_diffItem2);
+         A.CallTo(() => _diffItemDTOMapper.MapFrom(_diffItem1)).Returns(_dto1);
+         A.CallTo(() => _diffItemDTOMapper.MapFrom(_diffItem2)).Returns(_dto2);
+
+         A.CallTo(() => _view.BindTo(A<IEnumerable<DiffItemDTO>>._))
+            .Invokes(x => _allDiffItemDTO = x.GetArgument<IEnumerable<DiffItemDTO>>(0).ToList());
+
+         _object1 = new ModelCoreSimulation().WithName("sim1");
+         _object2 = new ModelCoreSimulation().WithName("sim2");
+      }
+
+      protected override void Because()
+      {
+         sut.StartComparison(_object1, _object2, _caption1, _caption2, _settings);
+      }
+
+      [Observation]
+      public void should_hide_the_simulation_column()
+      {
+         A.CallTo(() => _view.SetVisibility(PathElementId.Simulation, false)).MustHaveHappened();
+      }
+   }
+
    public class When_starting_the_comparison_between_two_objects : concern_for_ComparisonPresenter
    {
       private DiffItem _diffItem1;

@@ -10,6 +10,7 @@ using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
@@ -26,18 +27,19 @@ namespace OSPSuite.Presentation.Presentation
       protected ParameterIdentificationResidualHistogram _residualHistogram;
       private IParameterIdentificationSingleRunAnalysisView _view;
       private IApplicationSettings _applicationSettings;
-
+      private IDialogCreator _dialogCreator;
 
       protected override void Context()
       {
          _view= A.Fake<IParameterIdentificationSingleRunAnalysisView>();
          _histogramView = A.Fake<IParameterIdentificationResidualHistogramView>();
+         _dialogCreator = A.Fake<IDialogCreator>();
          _presentationSettingsTask = A.Fake<IPresentationSettingsTask>();
          _residualDataCreator = A.Fake<IResidualDistibutionDataCreator>();
          _normalDistributionDataCreator = A.Fake<INormalDistributionDataCreator>();
          _applicationSettings= A.Fake<IApplicationSettings>();
 
-         sut = new ParameterIdentificationResidualHistogramPresenter(_view, _histogramView,_presentationSettingsTask, _residualDataCreator, _normalDistributionDataCreator, _applicationSettings);
+         sut = new ParameterIdentificationResidualHistogramPresenter(_view, _histogramView,_presentationSettingsTask, _residualDataCreator, _normalDistributionDataCreator, _applicationSettings, _dialogCreator);
 
          _parameterIdentification = new ParameterIdentification();
          _residualHistogram = new ParameterIdentificationResidualHistogram();
@@ -90,7 +92,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_update_the_clibpard_manager_in_the_histogram_view()
       {
-         _histogramView.CopyToClipboardManager.ShouldBeEqualTo(sut);
+         _histogramView.ChartExportManager.ShouldBeEqualTo(sut);
       }
 
       [Observation]

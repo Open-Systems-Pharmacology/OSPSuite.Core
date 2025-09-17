@@ -3,7 +3,7 @@ using OSPSuite.Assets;
 
 namespace OSPSuite.UI.Views.Importer
 {
-   partial class ImportConfirmationView
+   partial class ImportPreviewView
    {
       /// <summary> 
       /// Required designer variable.
@@ -33,6 +33,7 @@ namespace OSPSuite.UI.Views.Importer
       {
          this.namesListBox = new DevExpress.XtraEditors.ListBoxControl();
          this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+         this.labelControlError = new DevExpress.XtraEditors.LabelControl();
          this.namingPatternPanelLabelControl = new DevExpress.XtraEditors.LabelControl();
          this.namingPatternDropDownLabelControl = new DevExpress.XtraEditors.LabelControl();
          this.keysListBox = new DevExpress.XtraEditors.ListBoxControl();
@@ -50,6 +51,7 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutControlItem6 = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
+         this.layoutControlItemError = new DevExpress.XtraLayout.LayoutControlItem();
          this.importButton = new OSPSuite.UI.Controls.UxSimpleButton();
          this.layoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.dataPanelControl = new DevExpress.XtraEditors.PanelControl();
@@ -62,8 +64,6 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutControlItem4 = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem3 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.importButtonLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
-         this.labelControlError = new DevExpress.XtraEditors.LabelControl();
-         this.layoutControlItemError = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.namesListBox)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
@@ -82,6 +82,7 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem6)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItemError)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).BeginInit();
          this.layoutControl.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.dataPanelControl)).BeginInit();
@@ -94,15 +95,14 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem3)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.importButtonLayoutControlItem)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItemError)).BeginInit();
          this.SuspendLayout();
          // 
          // namesListBox
          // 
-         this.namesListBox.Location = new System.Drawing.Point(4, 1194);
-         this.namesListBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+         this.namesListBox.Location = new System.Drawing.Point(1, 472);
+         this.namesListBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
          this.namesListBox.Name = "namesListBox";
-         this.namesListBox.Size = new System.Drawing.Size(1476, 357);
+         this.namesListBox.Size = new System.Drawing.Size(597, 148);
          this.namesListBox.StyleController = this.layoutControl1;
          this.namesListBox.TabIndex = 4;
          // 
@@ -116,74 +116,86 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutControl1.Controls.Add(this.separatorComboBoxEdit);
          this.layoutControl1.Controls.Add(this.namingConventionComboBoxEdit);
          this.layoutControl1.Controls.Add(this.buttonAdd);
-         this.layoutControl1.Location = new System.Drawing.Point(25, 25);
-         this.layoutControl1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+         this.layoutControl1.Location = new System.Drawing.Point(5, 5);
+         this.layoutControl1.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
          this.layoutControl1.Name = "layoutControl1";
          this.layoutControl1.Root = this.layoutControlGroup1;
-         this.layoutControl1.Size = new System.Drawing.Size(1484, 1555);
+         this.layoutControl1.Size = new System.Drawing.Size(599, 621);
          this.layoutControl1.TabIndex = 45;
          this.layoutControl1.Text = "layoutControl1";
          // 
+         // labelControlError
+         // 
+         this.labelControlError.Appearance.ForeColor = System.Drawing.Color.Red;
+         this.labelControlError.Appearance.Options.UseForeColor = true;
+         this.labelControlError.Location = new System.Drawing.Point(1, 408);
+         this.labelControlError.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
+         this.labelControlError.Name = "labelControlError";
+         this.labelControlError.Size = new System.Drawing.Size(81, 13);
+         this.labelControlError.StyleController = this.layoutControl1;
+         this.labelControlError.TabIndex = 45;
+         this.labelControlError.Text = "labelControlError";
+         // 
          // namingPatternPanelLabelControl
          // 
-         this.namingPatternPanelLabelControl.Location = new System.Drawing.Point(29, 864);
-         this.namingPatternPanelLabelControl.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+         this.namingPatternPanelLabelControl.Location = new System.Drawing.Point(7, 350);
+         this.namingPatternPanelLabelControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
          this.namingPatternPanelLabelControl.Name = "namingPatternPanelLabelControl";
-         this.namingPatternPanelLabelControl.Size = new System.Drawing.Size(386, 33);
+         this.namingPatternPanelLabelControl.Size = new System.Drawing.Size(156, 13);
          this.namingPatternPanelLabelControl.StyleController = this.layoutControl1;
          this.namingPatternPanelLabelControl.TabIndex = 44;
          this.namingPatternPanelLabelControl.Text = "namingPatternPanelLabelControl";
          // 
          // namingPatternDropDownLabelControl
          // 
-         this.namingPatternDropDownLabelControl.Location = new System.Drawing.Point(4, 986);
-         this.namingPatternDropDownLabelControl.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+         this.namingPatternDropDownLabelControl.Location = new System.Drawing.Point(1, 393);
+         this.namingPatternDropDownLabelControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
          this.namingPatternDropDownLabelControl.Name = "namingPatternDropDownLabelControl";
-         this.namingPatternDropDownLabelControl.Size = new System.Drawing.Size(448, 33);
+         this.namingPatternDropDownLabelControl.Size = new System.Drawing.Size(180, 13);
          this.namingPatternDropDownLabelControl.StyleController = this.layoutControl1;
          this.namingPatternDropDownLabelControl.TabIndex = 43;
          this.namingPatternDropDownLabelControl.Text = "namingPatternDropDownLabelControl";
          // 
          // keysListBox
          // 
-         this.keysListBox.Location = new System.Drawing.Point(460, 82);
-         this.keysListBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+         this.keysListBox.Location = new System.Drawing.Point(174, 28);
+         this.keysListBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
          this.keysListBox.Name = "keysListBox";
          this.keysListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-         this.keysListBox.Size = new System.Drawing.Size(995, 660);
+         this.keysListBox.Size = new System.Drawing.Size(418, 276);
          this.keysListBox.StyleController = this.layoutControl1;
          this.keysListBox.TabIndex = 9;
          // 
          // separatorComboBoxEdit
          // 
-         this.separatorComboBoxEdit.Location = new System.Drawing.Point(460, 750);
-         this.separatorComboBoxEdit.Margin = new System.Windows.Forms.Padding(6, 4, 6, 4);
+         this.separatorComboBoxEdit.Location = new System.Drawing.Point(174, 306);
+         this.separatorComboBoxEdit.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
          this.separatorComboBoxEdit.Name = "separatorComboBoxEdit";
          this.separatorComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.separatorComboBoxEdit.Size = new System.Drawing.Size(995, 48);
+         this.separatorComboBoxEdit.Size = new System.Drawing.Size(418, 20);
          this.separatorComboBoxEdit.StyleController = this.layoutControl1;
          this.separatorComboBoxEdit.TabIndex = 42;
          // 
          // namingConventionComboBoxEdit
          // 
-         this.namingConventionComboBoxEdit.Location = new System.Drawing.Point(435, 930);
-         this.namingConventionComboBoxEdit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+         this.namingConventionComboBoxEdit.Location = new System.Drawing.Point(168, 371);
+         this.namingConventionComboBoxEdit.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
          this.namingConventionComboBoxEdit.Name = "namingConventionComboBoxEdit";
          this.namingConventionComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.namingConventionComboBoxEdit.Size = new System.Drawing.Size(1045, 48);
+         this.namingConventionComboBoxEdit.Size = new System.Drawing.Size(430, 20);
          this.namingConventionComboBoxEdit.StyleController = this.layoutControl1;
          this.namingConventionComboBoxEdit.TabIndex = 8;
          // 
          // buttonAdd
          // 
-         this.buttonAdd.Location = new System.Drawing.Point(746, 806);
+         this.buttonAdd.Location = new System.Drawing.Point(300, 328);
          this.buttonAdd.Manager = null;
-         this.buttonAdd.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+         this.buttonAdd.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
          this.buttonAdd.Name = "buttonAdd";
          this.buttonAdd.Shortcut = System.Windows.Forms.Keys.None;
-         this.buttonAdd.Size = new System.Drawing.Size(709, 50);
+         this.buttonAdd.Size = new System.Drawing.Size(292, 20);
          this.buttonAdd.StyleController = this.layoutControl1;
          this.buttonAdd.TabIndex = 10;
          // 
@@ -200,25 +212,25 @@ namespace OSPSuite.UI.Views.Importer
             this.layoutControlItemError});
          this.layoutControlGroup1.Name = "layoutControlGroup1";
          this.layoutControlGroup1.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
-         this.layoutControlGroup1.Size = new System.Drawing.Size(1484, 1555);
+         this.layoutControlGroup1.Size = new System.Drawing.Size(599, 621);
          this.layoutControlGroup1.TextVisible = false;
          // 
          // dataSetsLayoutControlItem
          // 
          this.dataSetsLayoutControlItem.Control = this.namesListBox;
-         this.dataSetsLayoutControlItem.Location = new System.Drawing.Point(0, 1151);
+         this.dataSetsLayoutControlItem.Location = new System.Drawing.Point(0, 457);
          this.dataSetsLayoutControlItem.Name = "dataSetsLayoutControlItem";
-         this.dataSetsLayoutControlItem.Size = new System.Drawing.Size(1484, 404);
+         this.dataSetsLayoutControlItem.Size = new System.Drawing.Size(599, 164);
          this.dataSetsLayoutControlItem.TextLocation = DevExpress.Utils.Locations.Top;
-         this.dataSetsLayoutControlItem.TextSize = new System.Drawing.Size(405, 33);
+         this.dataSetsLayoutControlItem.TextSize = new System.Drawing.Size(162, 13);
          // 
          // namingConventionLayout
          // 
          this.namingConventionLayout.Control = this.namingConventionComboBoxEdit;
-         this.namingConventionLayout.Location = new System.Drawing.Point(0, 926);
+         this.namingConventionLayout.Location = new System.Drawing.Point(0, 370);
          this.namingConventionLayout.Name = "namingConventionLayout";
-         this.namingConventionLayout.Size = new System.Drawing.Size(1484, 56);
-         this.namingConventionLayout.TextSize = new System.Drawing.Size(405, 33);
+         this.namingConventionLayout.Size = new System.Drawing.Size(599, 22);
+         this.namingConventionLayout.TextSize = new System.Drawing.Size(162, 13);
          // 
          // namingPatternLayoutControlGroup
          // 
@@ -232,78 +244,88 @@ namespace OSPSuite.UI.Views.Importer
             this.layoutControlItem6});
          this.namingPatternLayoutControlGroup.Location = new System.Drawing.Point(0, 0);
          this.namingPatternLayoutControlGroup.Name = "namingPatternLayoutControlGroup";
-         this.namingPatternLayoutControlGroup.Size = new System.Drawing.Size(1484, 926);
+         this.namingPatternLayoutControlGroup.Size = new System.Drawing.Size(599, 370);
          // 
          // namingElementLayoutControlItem
          // 
          this.namingElementLayoutControlItem.Control = this.keysListBox;
          this.namingElementLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.namingElementLayoutControlItem.Name = "namingElementLayoutControlItem";
-         this.namingElementLayoutControlItem.Size = new System.Drawing.Size(1434, 668);
-         this.namingElementLayoutControlItem.TextSize = new System.Drawing.Size(405, 33);
+         this.namingElementLayoutControlItem.Size = new System.Drawing.Size(587, 278);
+         this.namingElementLayoutControlItem.TextSize = new System.Drawing.Size(162, 13);
          // 
          // separatorControlItem
          // 
          this.separatorControlItem.Control = this.separatorComboBoxEdit;
-         this.separatorControlItem.Location = new System.Drawing.Point(0, 668);
+         this.separatorControlItem.Location = new System.Drawing.Point(0, 278);
          this.separatorControlItem.Name = "separatorControlItem";
-         this.separatorControlItem.Size = new System.Drawing.Size(1434, 56);
-         this.separatorControlItem.TextSize = new System.Drawing.Size(405, 33);
+         this.separatorControlItem.Size = new System.Drawing.Size(587, 22);
+         this.separatorControlItem.TextSize = new System.Drawing.Size(162, 13);
          // 
          // buttonAddLayoutControlItem
          // 
          this.buttonAddLayoutControlItem.Control = this.buttonAdd;
-         this.buttonAddLayoutControlItem.Location = new System.Drawing.Point(717, 724);
+         this.buttonAddLayoutControlItem.Location = new System.Drawing.Point(293, 300);
          this.buttonAddLayoutControlItem.Name = "buttonAddLayoutControlItem";
-         this.buttonAddLayoutControlItem.Size = new System.Drawing.Size(717, 58);
+         this.buttonAddLayoutControlItem.Size = new System.Drawing.Size(294, 22);
          this.buttonAddLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.buttonAddLayoutControlItem.TextVisible = false;
          // 
          // emptySpaceItem4
          // 
          this.emptySpaceItem4.AllowHotTrack = false;
-         this.emptySpaceItem4.Location = new System.Drawing.Point(0, 724);
+         this.emptySpaceItem4.Location = new System.Drawing.Point(0, 300);
          this.emptySpaceItem4.Name = "emptySpaceItem4";
-         this.emptySpaceItem4.Size = new System.Drawing.Size(717, 58);
+         this.emptySpaceItem4.Size = new System.Drawing.Size(293, 22);
          this.emptySpaceItem4.TextSize = new System.Drawing.Size(0, 0);
          // 
          // layoutControlItem6
          // 
          this.layoutControlItem6.Control = this.namingPatternPanelLabelControl;
-         this.layoutControlItem6.Location = new System.Drawing.Point(0, 782);
+         this.layoutControlItem6.Location = new System.Drawing.Point(0, 322);
          this.layoutControlItem6.Name = "layoutControlItem6";
-         this.layoutControlItem6.Size = new System.Drawing.Size(1434, 41);
+         this.layoutControlItem6.Size = new System.Drawing.Size(587, 15);
          this.layoutControlItem6.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem6.TextVisible = false;
          // 
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 1064);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 422);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(1484, 87);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(599, 35);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // layoutControlItem1
          // 
          this.layoutControlItem1.Control = this.namingPatternDropDownLabelControl;
-         this.layoutControlItem1.Location = new System.Drawing.Point(0, 982);
+         this.layoutControlItem1.Location = new System.Drawing.Point(0, 392);
          this.layoutControlItem1.Name = "layoutControlItem1";
-         this.layoutControlItem1.Size = new System.Drawing.Size(1484, 41);
+         this.layoutControlItem1.Size = new System.Drawing.Size(599, 15);
          this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem1.TextVisible = false;
          // 
+         // layoutControlItemError
+         // 
+         this.layoutControlItemError.Control = this.labelControlError;
+         this.layoutControlItemError.Location = new System.Drawing.Point(0, 407);
+         this.layoutControlItemError.Name = "layoutControlItemError";
+         this.layoutControlItemError.Size = new System.Drawing.Size(599, 15);
+         this.layoutControlItemError.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutControlItemError.TextVisible = false;
+         this.layoutControlItemError.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+         // 
          // importButton
          // 
-         this.importButton.Location = new System.Drawing.Point(2348, 1526);
+         this.importButton.Location = new System.Drawing.Point(940, 604);
          this.importButton.Manager = null;
-         this.importButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+         this.importButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
          this.importButton.Name = "importButton";
          this.importButton.Shortcut = System.Windows.Forms.Keys.None;
-         this.importButton.Size = new System.Drawing.Size(803, 54);
+         this.importButton.Size = new System.Drawing.Size(325, 22);
          this.importButton.StyleController = this.layoutControl;
          this.importButton.TabIndex = 40;
-         this.importButton.Text = Captions.Importer.Import;
+         this.importButton.Text = "Import";
          // 
          // layoutControl
          // 
@@ -312,29 +334,29 @@ namespace OSPSuite.UI.Views.Importer
          this.layoutControl.Controls.Add(this.dataPanelControl);
          this.layoutControl.Controls.Add(this.chartPanelControl);
          this.layoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.layoutControl.Location = new System.Drawing.Point(4, 4);
-         this.layoutControl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+         this.layoutControl.Location = new System.Drawing.Point(2, 2);
+         this.layoutControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
          this.layoutControl.Name = "layoutControl";
          this.layoutControl.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(1252, 575, 650, 400);
          this.layoutControl.Root = this.Root;
-         this.layoutControl.Size = new System.Drawing.Size(3176, 1605);
+         this.layoutControl.Size = new System.Drawing.Size(1270, 631);
          this.layoutControl.TabIndex = 38;
          // 
          // dataPanelControl
          // 
-         this.dataPanelControl.Location = new System.Drawing.Point(1542, 25);
-         this.dataPanelControl.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.dataPanelControl.Location = new System.Drawing.Point(616, 5);
+         this.dataPanelControl.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
          this.dataPanelControl.Name = "dataPanelControl";
-         this.dataPanelControl.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
-         this.dataPanelControl.Size = new System.Drawing.Size(1609, 685);
+         this.dataPanelControl.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
+         this.dataPanelControl.Size = new System.Drawing.Size(649, 274);
          this.dataPanelControl.TabIndex = 44;
          // 
          // chartPanelControl
          // 
-         this.chartPanelControl.Location = new System.Drawing.Point(1542, 743);
-         this.chartPanelControl.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+         this.chartPanelControl.Location = new System.Drawing.Point(616, 291);
+         this.chartPanelControl.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
          this.chartPanelControl.Name = "chartPanelControl";
-         this.chartPanelControl.Size = new System.Drawing.Size(1609, 775);
+         this.chartPanelControl.Size = new System.Drawing.Size(649, 311);
          this.chartPanelControl.TabIndex = 43;
          // 
          // Root
@@ -350,99 +372,78 @@ namespace OSPSuite.UI.Views.Importer
             this.emptySpaceItem3,
             this.importButtonLayoutControlItem});
          this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(3176, 1605);
+         this.Root.Size = new System.Drawing.Size(1270, 631);
          this.Root.TextVisible = false;
          // 
          // layoutControlItem2
          // 
          this.layoutControlItem2.Control = this.chartPanelControl;
-         this.layoutControlItem2.Location = new System.Drawing.Point(1517, 718);
+         this.layoutControlItem2.Location = new System.Drawing.Point(611, 286);
          this.layoutControlItem2.Name = "layoutControlItem2";
-         this.layoutControlItem2.Size = new System.Drawing.Size(1617, 783);
+         this.layoutControlItem2.Size = new System.Drawing.Size(651, 313);
          this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem2.TextVisible = false;
          // 
          // layoutControlItem3
          // 
          this.layoutControlItem3.Control = this.dataPanelControl;
-         this.layoutControlItem3.Location = new System.Drawing.Point(1517, 0);
+         this.layoutControlItem3.Location = new System.Drawing.Point(611, 0);
          this.layoutControlItem3.Name = "layoutControlItem3";
-         this.layoutControlItem3.Size = new System.Drawing.Size(1617, 693);
+         this.layoutControlItem3.Size = new System.Drawing.Size(651, 276);
          this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem3.TextVisible = false;
          // 
          // splitterItem1
          // 
          this.splitterItem1.AllowHotTrack = true;
-         this.splitterItem1.Location = new System.Drawing.Point(1517, 693);
+         this.splitterItem1.Location = new System.Drawing.Point(611, 276);
          this.splitterItem1.Name = "splitterItem1";
          this.splitterItem1.ShowSplitGlyph = DevExpress.Utils.DefaultBoolean.True;
-         this.splitterItem1.Size = new System.Drawing.Size(1617, 25);
+         this.splitterItem1.Size = new System.Drawing.Size(651, 10);
          // 
          // splitterItem2
          // 
          this.splitterItem2.AllowHotTrack = true;
-         this.splitterItem2.Location = new System.Drawing.Point(1492, 0);
+         this.splitterItem2.Location = new System.Drawing.Point(601, 0);
          this.splitterItem2.Name = "splitterItem2";
          this.splitterItem2.ShowSplitGlyph = DevExpress.Utils.DefaultBoolean.True;
-         this.splitterItem2.Size = new System.Drawing.Size(25, 1563);
+         this.splitterItem2.Size = new System.Drawing.Size(10, 623);
          // 
          // layoutControlItem4
          // 
          this.layoutControlItem4.Control = this.layoutControl1;
          this.layoutControlItem4.Location = new System.Drawing.Point(0, 0);
          this.layoutControlItem4.Name = "layoutControlItem4";
-         this.layoutControlItem4.Size = new System.Drawing.Size(1492, 1563);
+         this.layoutControlItem4.Size = new System.Drawing.Size(601, 623);
          this.layoutControlItem4.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem4.TextVisible = false;
          // 
          // emptySpaceItem3
          // 
          this.emptySpaceItem3.AllowHotTrack = false;
-         this.emptySpaceItem3.Location = new System.Drawing.Point(1517, 1501);
+         this.emptySpaceItem3.Location = new System.Drawing.Point(611, 599);
          this.emptySpaceItem3.Name = "emptySpaceItem3";
-         this.emptySpaceItem3.Size = new System.Drawing.Size(806, 62);
+         this.emptySpaceItem3.Size = new System.Drawing.Size(324, 24);
          this.emptySpaceItem3.TextSize = new System.Drawing.Size(0, 0);
          // 
          // importButtonLayoutControlItem
          // 
          this.importButtonLayoutControlItem.Control = this.importButton;
-         this.importButtonLayoutControlItem.Location = new System.Drawing.Point(2323, 1501);
+         this.importButtonLayoutControlItem.Location = new System.Drawing.Point(935, 599);
          this.importButtonLayoutControlItem.Name = "importButtonLayoutControlItem";
-         this.importButtonLayoutControlItem.Size = new System.Drawing.Size(811, 62);
+         this.importButtonLayoutControlItem.Size = new System.Drawing.Size(327, 24);
          this.importButtonLayoutControlItem.TextSize = new System.Drawing.Size(0, 0);
          this.importButtonLayoutControlItem.TextVisible = false;
          // 
-         // labelControlError
+         // ImportPreviewView
          // 
-         this.labelControlError.Appearance.ForeColor = System.Drawing.Color.Red;
-         this.labelControlError.Appearance.Options.UseForeColor = true;
-         this.labelControlError.Location = new System.Drawing.Point(4, 1027);
-         this.labelControlError.Name = "labelControlError";
-         this.labelControlError.Size = new System.Drawing.Size(201, 33);
-         this.labelControlError.StyleController = this.layoutControl1;
-         this.labelControlError.TabIndex = 45;
-         this.labelControlError.Text = "labelControlError";
-         // 
-         // layoutControlItemError
-         // 
-         this.layoutControlItemError.Control = this.labelControlError;
-         this.layoutControlItemError.Location = new System.Drawing.Point(0, 1023);
-         this.layoutControlItemError.Name = "layoutControlItemError";
-         this.layoutControlItemError.Size = new System.Drawing.Size(1484, 41);
-         this.layoutControlItemError.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItemError.TextVisible = false;
-         this.layoutControlItemError.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
-         // 
-         // ImportConfirmationView
-         // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
+         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Controls.Add(this.layoutControl);
-         this.Margin = new System.Windows.Forms.Padding(17, 14, 17, 14);
-         this.Name = "ImportConfirmationView";
-         this.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-         this.Size = new System.Drawing.Size(3184, 1613);
+         this.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+         this.Name = "ImportPreviewView";
+         this.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+         this.Size = new System.Drawing.Size(1274, 635);
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.namesListBox)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
@@ -461,6 +462,7 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem6)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItemError)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutControl)).EndInit();
          this.layoutControl.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.dataPanelControl)).EndInit();
@@ -473,7 +475,6 @@ namespace OSPSuite.UI.Views.Importer
          ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem3)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.importButtonLayoutControlItem)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItemError)).EndInit();
          this.ResumeLayout(false);
 
       }

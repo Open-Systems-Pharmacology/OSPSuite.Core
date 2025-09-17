@@ -9,6 +9,7 @@ namespace OSPSuite.Presentation.Views.ParameterIdentifications
       ICanCopyToClipboardWithWatermark
    {
       void BindTo(DataTable gaussData, ContinuousDistributionData distributionData, DistributionSettings settings);
-      ICanCopyToClipboard CopyToClipboardManager { get; set; }
+      ICanExportCharts ChartExportManager { get; set; }
+      void ExportToPng(string filePath, string watermark);
    }
 }

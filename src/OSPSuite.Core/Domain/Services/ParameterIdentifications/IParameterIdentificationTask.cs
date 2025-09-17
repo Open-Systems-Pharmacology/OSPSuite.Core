@@ -80,5 +80,10 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       /// Returns a clone of the <paramref name="parameterIdentification"/> or null if the user cancels the clone action
       /// </summary>
       ParameterIdentification Clone(ParameterIdentification parameterIdentification);
+
+      /// <summary>
+      /// Updates the <see cref="ParameterIdentification"/>s using the <paramref name="observedData"/>
+      /// </summary>
+      void UpdateParameterIdentificationsUsing(IReadOnlyList<DataRepository> observedData);
    }
 }

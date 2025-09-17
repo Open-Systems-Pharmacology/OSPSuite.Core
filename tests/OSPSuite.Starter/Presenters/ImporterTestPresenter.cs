@@ -3,6 +3,7 @@ using System.Linq;
 using System.Xml.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Serialization;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Core.Services;
@@ -38,7 +39,7 @@ namespace OSPSuite.Starter.Presenters
       private readonly IContainer _container;
       private readonly IOSPSuiteXmlSerializerRepository _modelingXmlSerializerRepository;
       public ImporterTestPresenter(IImporterTestView view, IImporterConfigurationDataGenerator dataGenerator, IDialogCreator dialogCreator, IDataImporter dataImporter,
-         IContainer container, IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository)
+         IContainer container, IOSPSuiteXmlSerializerRepository modelingXmlSerializerRepository, IDimensionFactory dimensionFactory)
          : base(view)
       {
          _dataGenerator = dataGenerator;
@@ -46,6 +47,8 @@ namespace OSPSuite.Starter.Presenters
          _dataImporter = dataImporter;
          _container = container;
          _modelingXmlSerializerRepository = modelingXmlSerializerRepository;
+         if(!dimensionFactory.Has("Input Dose"))
+            dimensionFactory.AddDimension(new BaseDimensionRepresentation(), "Input Dose", "mg");
       }
 
       private void StartImporterExcelView(IReadOnlyList<MetaDataCategory> categories, IReadOnlyList<ColumnInfo> columns, DataImporterSettings settings)
@@ -108,7 +111,7 @@ namespace OSPSuite.Starter.Presenters
 
             if (fileName.IsNullOrEmpty()) return;
 
-            var xel = XElement.Load(fileName); // We have to correctly handle the case of cancellation
+            var xel = XElementSerializer.PermissiveLoad(fileName); // We have to correctly handle the case of cancellation
             var configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
 
             dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";
@@ -140,7 +143,7 @@ namespace OSPSuite.Starter.Presenters
 
             if (fileName.IsNullOrEmpty()) return;
 
-            var xel = XElement.Load(fileName); // We have to correctly handle the case of cancellation
+            var xel = XElementSerializer.PermissiveLoad(fileName); // We have to correctly handle the case of cancellation
             var configuration = serializer.Deserialize<ImporterConfiguration>(xel, serializationContext);
 
             dataImporterSettings.NameOfMetaDataHoldingMoleculeInformation = "Molecule";

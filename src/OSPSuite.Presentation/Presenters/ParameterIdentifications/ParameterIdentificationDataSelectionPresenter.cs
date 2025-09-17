@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Events;
@@ -43,16 +44,16 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          _simulationSelectionPresenter.SimulationAdded += (o, e) => simulationAdded(e);
          _simulationSelectionPresenter.SimulationRemoved += (o, e) => simulationRemoved(e);
 
-         _outputMappingPresenter.ObservedDataMapped += (o, e) => observedDataMapped(e.WeightedObservedData);
-         _outputMappingPresenter.ObservedDataUnmapped += (o, e) => observedDataUnmapped(e.WeightedObservedData);
-         _outputMappingPresenter.ObservedDataSelected += (o, e) => observedDataSelected(e.WeightedObservedData);
+         _outputMappingPresenter.ObservedDataMapped += (o, e) => observedDataMapped(e.OutputMapping);
+         _outputMappingPresenter.ObservedDataUnmapped += (o, e) => observedDataUnmapped(e.OutputMapping.WeightedObservedData);
+         _outputMappingPresenter.ObservedDataSelected += (o, e) => observedDataSelected(e.OutputMapping);
       }
 
       private void observedDataUnmapped(WeightedObservedData weightedObservedData) => _weightedObservedDataPresenter.Clear(weightedObservedData);
 
-      private void observedDataSelected(WeightedObservedData weightedObservedData) => _weightedObservedDataPresenter.Edit(weightedObservedData);
+      private void observedDataSelected(OutputMapping outputMapping) => _weightedObservedDataPresenter.Edit(outputMapping);
 
-      private void observedDataMapped(WeightedObservedData weightedObservedData) => _weightedObservedDataPresenter.Edit(weightedObservedData);
+      private void observedDataMapped(OutputMapping outputMapping) => _weightedObservedDataPresenter.Edit(outputMapping);
 
       private void simulationAdded(SimulationEventArgs e)
       {

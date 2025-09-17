@@ -4,7 +4,7 @@ using OSPSuite.BDDHelper.Extensions;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class SizeXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class SizeXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestForSizeSerializer()

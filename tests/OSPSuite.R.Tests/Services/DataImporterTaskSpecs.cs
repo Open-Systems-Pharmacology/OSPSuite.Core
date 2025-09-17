@@ -1,12 +1,13 @@
-﻿using OSPSuite.BDDHelper;
+﻿using System;
+using System.IO;
+using System.Linq;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Import;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
-using System;
-using System.IO;
-using System.Linq;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
 
 namespace OSPSuite.R.Services
@@ -27,11 +28,10 @@ namespace OSPSuite.R.Services
 
    public class When_importing_data_from_r : concern_for_DataImporter
    {
-
       [Observation]
       public void should_throw_on_invalid_file_name()
       {
-         The.Action(() => 
+         The.Action(() =>
             sut.ImportExcelFromConfiguration(getFileFullName("importerConfiguration1.xml"), getFileFullName("sample_non_existent.xlsx"))
          ).ShouldThrowAn<OSPSuiteException>();
       }
@@ -55,7 +55,6 @@ namespace OSPSuite.R.Services
       {
          The.Action(() => sut.ImportExcelFromConfiguration(sut.CreateConfiguration(), getFileFullName("simple.pkml")).Count.ShouldBeEqualTo(0)).ShouldThrowAn<OSPSuiteException>();
       }
-
 
       [Observation]
       public void should_import_simple_data_from_csv()
@@ -87,7 +86,6 @@ namespace OSPSuite.R.Services
       {
          sut.ImportExcelFromConfiguration(sut.GetConfiguration(getFileFullName("importerConfiguration1.xml")), getFileFullName("sample1.xlsx")).Count.ShouldBeEqualTo(1);
       }
-
 
       [Observation]
       public void should_import_simple_data_from_csv_with_configuration_object()
@@ -122,6 +120,14 @@ namespace OSPSuite.R.Services
       }
 
       [Observation]
+      public void should_create_configuration_from_data_with_duplicated_column()
+      {
+         var configuration = sut.CreateConfigurationFor(getFileFullName("duplicatedDoseCol.xlsx"));
+         configuration.Parameters.OfType<MetaDataFormatParameter>().Count(x => x.MetaDataId.Equals("Dose")).ShouldBeEqualTo(1);
+         configuration.Parameters.Count(x => x.ColumnName.Equals("DOSE")).ShouldBeEqualTo(1);
+      }
+
+      [Observation]
       public void should_create_configuration_from_data_and_sheet_name()
       {
          var configuration = sut.CreateConfigurationFor(getFileFullName("sample2.xlsx"));
@@ -146,7 +152,6 @@ namespace OSPSuite.R.Services
          configuration.Parameters.OfType<MetaDataFormatParameter>().Any(p => p.MetaDataId == "Organ" && p.ColumnName == "Organ").ShouldBeTrue();
          configuration.Parameters.OfType<MetaDataFormatParameter>().Any(p => p.MetaDataId == "Study Id" && p.ColumnName == "Study Id").ShouldBeTrue();
          configuration.Parameters.OfType<MetaDataFormatParameter>().Any(p => p.MetaDataId == "Subject Id" && p.ColumnName == "Subject Id").ShouldBeTrue();
-
       }
 
       [Observation]
@@ -260,7 +265,6 @@ namespace OSPSuite.R.Services
          sut.GetAllGroupingColumns(_configuration).Count().ShouldBeEqualTo(1);
          sut.AddGroupingColumn(_configuration, groupingColumn);
          sut.GetAllGroupingColumns(_configuration).Count().ShouldBeEqualTo(1);
-
       }
 
       [Observation]
@@ -274,7 +278,6 @@ namespace OSPSuite.R.Services
          sut.GetAllGroupingColumns(_configuration).Count().ShouldBeEqualTo(1);
          sut.RemoveGroupingColumn(_configuration, groupingColumn);
          sut.GetAllGroupingColumns(_configuration).Count().ShouldBeEqualTo(0);
-
       }
 
       [Observation]
@@ -306,6 +309,18 @@ namespace OSPSuite.R.Services
          configuration.Parameters.Any(x => (x as MappingDataFormatParameter).ColumnName == "Time [h]").ShouldBeTrue();
          configuration.Parameters.Any(x => (x as MappingDataFormatParameter).ColumnName == "Measurement [mg/l]").ShouldBeTrue();
          configuration.Parameters.Any(x => (x as MappingDataFormatParameter).ColumnName == "Error [mg/l]").ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_throw_meaningful_exception_not_null_reference_exception()
+      {
+         // This sheet has a column configuration where the dimension cannot be determined, but an error column
+         // where the dimension can be determined. It should error with an appropriate exception and message
+         var fileFullName = getFileFullName("CompiledDataSet.xlsx");
+         var configuration = sut.CreateConfigurationFor(fileFullName, "TestSheet_1_withMW");
+         sut.SetAllLoadedSheet(configuration, "TestSheet_1_withMW");
+         sut.IgnoreSheetNamesAtImport = false;
+         The.Action(() => sut.ImportExcelFromConfiguration(configuration, fileFullName)).ShouldThrowAn<InvalidArgumentException>();
       }
    }
 }

@@ -242,6 +242,47 @@ namespace OSPSuite.Presentation.Services
          return _simulationSelector.SimulationCanBeUsedForIdentification(simulation);
       }
 
+      public void UpdateParameterIdentificationsUsing(IReadOnlyList<DataRepository> observedData)
+      {
+         var updatedMappingsInfo = new List<(string ParameterName, string OutputPath)>();
+
+         observedData.Each(data => updateParameterMappingsForData(data, updatedMappingsInfo));
+
+         if (updatedMappingsInfo.Any())
+         {
+            var strPaths = Captions.Importer.UpdatedMappingsMessage(updatedMappingsInfo);
+            _dialogCreator.MessageBoxInfo(strPaths);
+         }
+      }
+
+      private void updateParameterMappingsForData(DataRepository data, List<(string ParameterName, string OutputPath)> updatedMappingsInfo) =>
+         ParameterIdentificationsUsingObservedData(data).Each(parameterIdentification => updateOutputMappings(parameterIdentification, data, updatedMappingsInfo));
+
+      private void updateOutputMappings(ParameterIdentification parameterIdentification, DataRepository data, List<(string ParameterName, string OutputPath)> updatedMappingsInfo)
+      {
+         foreach (var outputMapping in parameterIdentification.OutputMappingsUsingDataRepository(data))
+         {
+            updateWeightedObservedData(parameterIdentification, outputMapping, data, updatedMappingsInfo);
+         }
+      }
+
+      private void updateWeightedObservedData(
+         ParameterIdentification parameterIdentification,
+         OutputMapping outputMapping,
+         DataRepository data,
+         List<(string ParameterName, string OutputPath)> updatedMappingsInfo)
+      {
+         var existingDataCount = outputMapping.WeightedObservedData?.Count ?? 0;
+         var newDataCount = data.BaseGrid.Count;
+
+         if (existingDataCount != newDataCount)
+         {
+            outputMapping.WeightedObservedData = new WeightedObservedData(data);
+            updatedMappingsInfo.Add((parameterIdentification.Name, outputMapping.FullOutputPath));
+            _executionContext.PublishEvent(new WeightedObservedDataChangedEvent(outputMapping));
+         }
+      }
+
       public ParameterIdentification Clone(ParameterIdentification parameterIdentification)
       {
          loadParameterIdentification(parameterIdentification);

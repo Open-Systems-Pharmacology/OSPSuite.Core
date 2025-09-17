@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.SimModel;
@@ -31,9 +32,9 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Create the xml for simmodel based on the <paramref name="simulation" />
       /// </summary>
-      protected Task<string> CreateSimulationExportAsync(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode, IReadOnlyList<string> variableMoleculePaths = null)
+      protected Task<string> CreateSimulationExportAsync(IModelCoreSimulation simulation, SimModelExportMode simModelExportMode, IReadOnlyList<string> variableMoleculePaths = null, CancellationToken cancellationToken = default)
       {
-         return Task.Run(() => _simModelExporter.ExportSimModelXml(simulation, simModelExportMode, variableMoleculePaths));
+         return Task.Run(() => _simModelExporter.ExportSimModelXml(simulation, simModelExportMode, variableMoleculePaths), cancellationToken);
       }
 
       /// <summary>

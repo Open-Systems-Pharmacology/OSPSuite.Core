@@ -1,19 +1,11 @@
-﻿using FakeItEasy;
-using OSPSuite.BDDHelper;
-using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Core.Chart;
+﻿using OSPSuite.BDDHelper;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Helpers;
-using OSPSuite.Core.Serializers;
-using OSPSuite.Utility.Container;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-
-   public class QuantityPKParameterSpecs : ModellingXmlSerializerBaseSpecs
+   public class QuantityPKParameterSpecs : ModelingXmlSerializerBaseSpecs
    {
-
       [Observation]
       public void TestSerialization()
       {

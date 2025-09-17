@@ -20,11 +20,11 @@ namespace OSPSuite.Assets
    {
       public static readonly string MoleculeBuildingBlock = "Molecules";
       public static readonly string Module = "Module";
-      public static readonly string ReactionBuildingBlock = "Reaction";
+      public static readonly string ReactionBuildingBlock = "Reactions";
       public static readonly string SpatialStructure = "Organism";
       public static readonly string PassiveTransportBuildingBlock = "Passive Transports";
       public static readonly string EventBuildingBlock = "Events";
-      public static readonly string ObserverBuildingBlock = "Observer";
+      public static readonly string ObserverBuildingBlock = "Observers";
       public static readonly string SimulationSettings = "Simulation Settings";
       public static readonly string ParameterValues = "Parameter Values";
       public static readonly string InitialConditions = "Initial Conditions";
@@ -63,6 +63,7 @@ namespace OSPSuite.Assets
       public static readonly string LinearScale = "Linear Scale";
       public static readonly string LogScale = "Logarithmic Scale";
       public static readonly string ExportChartToExcel = "Export selected curves...";
+      public static readonly string ExportChartToPng = "Export chart to Png...";
       public static readonly string ExportComparisonToExcel = "Export comparison to Excel...";
       public static readonly string CloseButton = "&Close";
       public static readonly string Folder = "Folder";
@@ -174,6 +175,7 @@ namespace OSPSuite.Assets
       public const string RemoveButtonText = "Remove";
       public static readonly string EnterAValue = "<enter a value>";
       public static readonly string NaN = "<NaN>";
+      public static readonly string NA = "<NA>";
       public static readonly string Analysis = "Analysis";
       public static readonly string CopyAsImage = "Copy as image";
       public static readonly string InvalidObject = "Invalid Object";
@@ -227,6 +229,11 @@ namespace OSPSuite.Assets
       public static readonly string AddPoint = "Add Point";
       public static readonly string UseDerivedValues = "Use derivative values";
       public static readonly string NotDistributed = "Not Distributed";
+      public static readonly string DeleteSelected = "Delete Selected Records";
+      public static readonly string ModulesFolder = "Modules";
+      public static readonly string ApplyChangesToUpdateChart = "Apply changes to update chart";
+      public static readonly string Apply = "Apply";
+      public static readonly string AutoUpdateChart = "Auto-update chart";
 
       public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
 
@@ -414,7 +421,7 @@ namespace OSPSuite.Assets
          public static readonly string Mappings = "Mappings";
          public static readonly string FormatPlain = "Format";
          public static readonly string DataMapping = "Data Mapping";
-         public static readonly string Confirmation = "Import preview";
+         public static readonly string ImportPreview = "Import preview";
          public static readonly string ThreeDots = "...";
          public static readonly string File = "File:";
          public static readonly string ManualInput = "Manual input";
@@ -481,6 +488,8 @@ namespace OSPSuite.Assets
          public static readonly string SeparatorSelection = "Separator Selection";
          public static readonly string DecimalSeparator = "Decimal Separator";
          public static readonly string ColumnSeparator = "Column Separator";
+         public static readonly string DimensionSelect = "Dimension Select";
+         public static readonly string SetDimensionsForAmbiguousUnits = "One or more column dimensions cannot be determined uniquely from the units.\n\nPlease set the dimension from the possible supporting dimensions";
 
          public static string LLOQInconsistentValuesAt(string dataRepositoryName) => $"There were different LLOQ values detected for the data from a single source. Please check data under name {dataRepositoryName}. Are you sure you want to continue with import?";
          public static string CsvSeparatorInstructions(string fileName) => $"Please select the separators for '{fileName}':";
@@ -581,6 +590,30 @@ namespace OSPSuite.Assets
          }
 
          public static readonly string ImportFileFilter = "Excel Files (*.xls, *.xlsx)|*.xls;*.xlsx|Comma Separated Value Files (*.csv)|*.csv|NonMem Files (*.NMdat)|*.NMdat|All Files (*.*)|*.*";
+
+         public static string UpdatedMappingsMessage(IEnumerable<(string ParameterName, string OutputPath)> updatedMappingsInfo)
+         {
+            var sb = new StringBuilder();
+            sb.AppendLine("The following parameter identifications and their output mappings were modified:");
+            sb.AppendLine();
+
+            var groupedMappings = updatedMappingsInfo
+               .GroupBy(mapping => mapping.ParameterName)
+               .OrderBy(group => group.Key);
+
+            foreach (var group in groupedMappings)
+            {
+               sb.AppendLine($"- {group.Key}");
+               foreach (var mapping in group)
+               {
+                  sb.AppendLine($"    - Output Path: {mapping.OutputPath}");
+               }
+               sb.AppendLine();
+            }
+
+            return sb.ToString();
+         }
+
       }
 
       public static class Diff
@@ -927,6 +960,7 @@ namespace OSPSuite.Assets
          public static readonly string ResidualCount = "# of Residuals";
          public static readonly string Results = "Results";
          public static readonly string NumberOfEvaluations = "Number of Evaluations";
+         public static readonly string CompletedDate = "Completed Date";
          public static readonly string TotalError = "Total Error";
          public static readonly string Status = "Status";
          public static readonly string RunMessage = "Message";
@@ -1021,6 +1055,14 @@ namespace OSPSuite.Assets
          public static string ParameterIdentificationFinished(string parameterIdentificationName, string duration)
          {
             return $"Parameter identification '{parameterIdentificationName}' finished in {duration}";
+         }
+
+
+         public static string SensitivityCalculationFailed(string parameterIdentificationName, IReadOnlyList<string> errorMessages, string duration = null)
+         {
+            return string.IsNullOrEmpty(duration) ? 
+               $"Parameter identification '{parameterIdentificationName}' finished but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}" : 
+               $"Parameter identification '{parameterIdentificationName}' finished in {duration} but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}";
          }
 
          public static string LinkedParametersIn(string name)
@@ -1435,7 +1477,7 @@ namespace OSPSuite.Assets
 
       public static  string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
 
-      public static string ParseErrorMessage(IEnumerable<string> errors) => $"There were errors while parsing your data: {string.Join(". ", errors)}";
+      public static string ParseErrorMessage(string errors) => $"There were errors while parsing your data: {errors}";
 
       public static string ErrorWhenPlottingDataRepository(int sheetName, string exceptionMessage) =>
          $"It was not possible to plot the data sets. Please, check your configuration for any missing grouping or meta data parameter. An error occur while plotting data set number:{sheetName + 1} produced the following error: {exceptionMessage}";
@@ -1478,6 +1520,7 @@ namespace OSPSuite.Assets
 
       public static string MissingColumnException(string sheetName, IReadOnlyList<string> missingColumns) => $"The mapped column(s) \n \n '{missingColumns.ToString("\n")}' \n \n is missing at least from the sheet \n \n '{sheetName}' \n \n that you are trying to load.";
 
+      public static string DimensionCannotBeDeterminedFor(string sheetName, string mappingName) => $"The dimension for mapping '{mappingName}' could not be determined in the sheet '{sheetName}'";
       public static string InvalidDimensionException(string invalidUnit, string mappingName) => $"The unit '{invalidUnit}' you are trying to assign to the mapping '{mappingName}' does not belong to a supported dimension of this mapping.";
       public static string InconsistentDimensionBetweenUnitsException(string mappingName) => $"For the mapping '{mappingName}' not all units in the mapped column belong to the same dimension.";
       public static string LinkedParameterIsNotValidInIdentificationParameter(string identificationParameterName) => $"At least one linked parameter is invalid in identification parameter '{identificationParameterName}'";
@@ -1884,6 +1927,21 @@ namespace OSPSuite.Assets
       {
          return $"Neighborhood '{neighborhoodName}' connects '{firstNeighbor}' and '{secondNeighbor}' in '{spatialStructure}'";
       }
+
+      public static string CouldNotCalculateSensitivity(IReadOnlyList<string> runResultErrorMessages)
+      {
+         return $"Error calculating sensitivity\n{listErrorMessages(runResultErrorMessages)}";
+      }
+
+      private static string listErrorMessages(IReadOnlyList<string> runResultErrorMessages)
+      {
+         var sb = new StringBuilder();
+         foreach (var errorMessage in runResultErrorMessages)
+         {
+            sb.AppendLine($"- {errorMessage}");
+         }
+         return sb.ToString();
+      }
    }
 
    public static class Validation
@@ -2095,6 +2153,7 @@ namespace OSPSuite.Assets
       public static string LargeNumberOfOutputPoints(int numberOfPoints) =>
          $"The selected output resolution will generate {numberOfPoints} points and may severely impact the software performance.\nAre you sure you want to run with these setting? If not, consider changing output resolution in simulations settings";
 
+      public static string NeighborhoodWasNotFoundInModel(string neighborhoodName, string buildingBlockName) => $"The neighborhood '{neighborhoodName}' from building block '{buildingBlockName}' was not added to the simulation";
    }
 
    public static class RibbonCategories
@@ -2125,6 +2184,7 @@ namespace OSPSuite.Assets
 
       public static readonly string NewExpressionProfile = "Add &Expression Profile";
       public static readonly string ExportToExcel = "Export to Excel...";
+      public static readonly string ExportToPng = "Export to Png...";
       public static readonly string CopyToClipboard = "Copy to Clipboard";
       public static readonly string ResetZoom = "Reset Zoom";
       public static readonly string Delete = "Delete...";
@@ -2192,6 +2252,9 @@ namespace OSPSuite.Assets
       {
          return $"Compare {objectType}s";
       }
+
+      public static readonly string AutoUpdateChart = "Autoupdate chart";
+      public static readonly string ApplyUpdates = "Apply updates";
    }
 
    public static class MenuDescriptions
@@ -2341,6 +2404,9 @@ namespace OSPSuite.Assets
          return $"Renamed observed data from '{oldName}' to '{newName}'";
       }
 
+      public static string RenameSimulation(string oldName, string newName) =>
+         $"Renamed simulation from '{oldName}' to '{newName}'";
+
       public static string UpdateValueOriginFrom(string oldValueOrigin, string newValueOrigin, string withValueOriginType, string withValueOriginDisplay, string containerType, string containerDisplay)
       {
          string withObjectTypeInfo = $"for {withValueOriginType} '{withValueOriginDisplay}' in {containerType} '{containerDisplay}'";
@@ -2437,6 +2503,7 @@ namespace OSPSuite.Assets
    {
       public static readonly string ToolTipForAxis = "Double click to edit axis";
       public static readonly string UseSelectedCurvesToolTip = "Adds or removes all the selected curves at once.";
+      public static readonly string EnableOrDisableAutomaticUpdateOfTheChartForEachEdit = "Enable or Disable automatic update of the chart for each edit.";
       public static readonly string LinkSimulationObservedToolTip = "Links the simulation outputs to their mapped observed data, so that when a simulation output is (de)selected the corresponding observed data gets (de)selected as well.";
       public static readonly string AddUnitMap = "Add new default unit for a specific dimension";
       public static readonly string LoadUnits = "Load default units from file";

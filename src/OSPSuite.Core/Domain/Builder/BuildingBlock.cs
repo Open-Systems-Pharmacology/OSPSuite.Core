@@ -80,8 +80,6 @@ namespace OSPSuite.Core.Domain.Builder
       }
    }
 
- 
-
    public interface IBuildingBlock<TBuilder> : IBuildingBlock, IEnumerable<TBuilder> where TBuilder : IBuilder
    {
       /// <summary>

@@ -6,7 +6,7 @@ using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class concern_for_PopulationSimulationPKAnalyses : ModellingXmlSerializerBaseSpecs
+   public class concern_for_PopulationSimulationPKAnalyses : ModelingXmlSerializerBaseSpecs
    {
       private readonly int _numberOfIndividuals = 100000;
       private readonly Random _random = new Random();

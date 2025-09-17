@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using OSPSuite.Assets;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 {
@@ -25,16 +28,17 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
       private readonly IOSPSuiteExecutionContext _executionContext;
       private readonly ICoreUserSettings _coreUserSettings;
       private ISensitivityAnalysisEngine _sensitivityAnalysisEngine;
+      private CancellationTokenSource _cancellationTokenSource;
 
       public bool IsRunning => _sensitivityAnalysisEngine != null;
 
       public SensitivityAnalysisRunner(
-         ISensitivityAnalysisEngineFactory sensitivityAnalysisEngineFactory,  
+         ISensitivityAnalysisEngineFactory sensitivityAnalysisEngineFactory,
          IDialogCreator dialogCreator,
-         IEntityValidationTask entityValidationTask, 
+         IEntityValidationTask entityValidationTask,
          IOSPSuiteExecutionContext executionContext,
          ICoreUserSettings coreUserSettings
-         )
+      )
       {
          _sensitivityAnalysisEngineFactory = sensitivityAnalysisEngineFactory;
          _dialogCreator = dialogCreator;
@@ -53,11 +57,13 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
             if (IsRunning)
                throw new OSPSuiteException(Error.CannotStartTwoConcurrentSensitivityAnalyses);
 
-            var options = runOptions ?? new SensitivityAnalysisRunOptions { NumberOfCoresToUse = _coreUserSettings.MaximumNumberOfCoresToUse};
+            _cancellationTokenSource = new CancellationTokenSource();
+
+            var options = runOptions ?? new SensitivityAnalysisRunOptions { NumberOfCoresToUse = _coreUserSettings.MaximumNumberOfCoresToUse };
             using (_sensitivityAnalysisEngine = _sensitivityAnalysisEngineFactory.Create())
             {
                var begin = SystemTime.UtcNow();
-               await _sensitivityAnalysisEngine.StartAsync(sensitivityAnalysis, options);
+               await _sensitivityAnalysisEngine.StartAsync(sensitivityAnalysis, options, _cancellationTokenSource.Token);
                var end = SystemTime.UtcNow();
                var timeSpent = end - begin;
                _dialogCreator.MessageBoxInfo(Captions.SensitivityAnalysis.SensitivityAnalysisFinished(timeSpent.ToDisplay()));
@@ -76,7 +82,12 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 
       public void Stop()
       {
-         _sensitivityAnalysisEngine?.Stop();
+         if (_cancellationTokenSource != null)
+         {
+            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Dispose();
+            _cancellationTokenSource = null;
+         }
       }
    }
 }

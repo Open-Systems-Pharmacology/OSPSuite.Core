@@ -5,6 +5,7 @@ using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Import;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core.Mappers
@@ -38,7 +39,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
          foreach (var metaDataDescription in dataSet.MetaDataDescription)
          {
-            if (!metaDataDescription.Value.IsNullOrEmpty())
+            if (!metaDataDescription.Value.IsNullOrEmpty() && !dataRepository.ExtendedProperties.Contains(metaDataDescription.Name))
                dataRepository.ExtendedProperties.Add(new ExtendedProperty<string>()
                   { Name = metaDataDescription.Name, Value = metaDataDescription.Value });
          }
@@ -71,7 +72,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          KeyValuePair<ExtendedColumn, IList<SimulationPoint>> columnAndData, string fileName)
       {
          DataColumn dataColumn;
-         var unitName = columnAndData.Value.FirstOrDefault(x => !string.IsNullOrEmpty(x.Unit))?.Unit ??
+         var unitName = columnAndData.Value.FirstOrDefault(x => unitIsValid(x.Unit))?.Unit ??
                         Constants.Dimension.NO_DIMENSION.DefaultUnitName;
          var warningFlag = false;
 
@@ -117,7 +118,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             var adjustedValue = truncateUsingLLOQ(value);
             if (double.IsNaN(adjustedValue))
                values[i++] = float.NaN;
-            else if (unitName != null && !string.IsNullOrEmpty(value.Unit))
+            else if (unitIsValid(unitName) && !string.IsNullOrEmpty(value.Unit))
                values[i++] = (float)dataColumn.Dimension.UnitValueToBaseUnitValue(dimension?.FindUnit(value.Unit, ignoreCase: true), adjustedValue);
             else
                values[i++] = (float)adjustedValue;
@@ -176,6 +177,8 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          dataRepository.Add(dataColumn);
          return warningFlag;
       }
+
+      private static bool unitIsValid(string unit) => !string.IsNullOrEmpty(unit) && unit != UnitDescription.InvalidUnit;
 
       private double truncateUsingLLOQ(SimulationPoint value)
       {

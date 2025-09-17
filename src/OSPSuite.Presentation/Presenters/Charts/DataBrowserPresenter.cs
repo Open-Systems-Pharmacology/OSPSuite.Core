@@ -215,12 +215,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void UpdateUsedStateForSelection(bool used)
       {
-         SetUsedState(_view.SelectedDescendantColumns, used);
+         SetUsedState(_view.SelectedColumns, used);
       }
 
       public void SelectedDataColumnsChanged()
       {
-         updateDataSelection(_view.SelectedDescendantColumns);
+         updateDataSelection(_view.SelectedColumns);
       }
 
       public IReadOnlyList<DataColumn> GetAllUsedDataColumns()

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System.Threading;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -70,7 +71,7 @@ namespace OSPSuite.Core.Domain
          A.CallTo(() => _variationData.ToDataTable()).Returns(_dataTable);
          A.CallTo(() => _sensitivityAnalysisVariationDataCreator.CreateForRun(_sensitivityAnalysis)).Returns(_variationData);
          _populationRunResult = new PopulationRunResults {Results = new SimulationResults()};
-         A.CallTo(() => _populationRunner.RunPopulationAsync(_modelCoreSimulation, _runOptions,  _dataTable, null, null)).ReturnsAsync(_populationRunResult);
+         A.CallTo(() => _populationRunner.RunPopulationAsync(_modelCoreSimulation, _runOptions,  _dataTable, null, null, CancellationToken.None)).ReturnsAsync(_populationRunResult);
 
          _sensitivityAnalysisResults=new SensitivityAnalysisRunResult();
          A.CallTo(() => _runResultCalculator.CreateFor(_sensitivityAnalysis, _variationData, _populationRunResult.Results, A<IReadOnlyList<IndividualRunInfo>>._, false)).Returns(_sensitivityAnalysisResults);

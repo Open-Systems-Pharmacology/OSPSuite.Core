@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using OSPSuite.Utility.Extensions;
 using DevExpress.XtraEditors.Controls;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Presenters;

@@ -212,15 +212,45 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
          }
       }
 
-      protected virtual void ExtractGeneralParameters(List<string> keys, DataSheet dataSheet, IReadOnlyList<MetaDataCategory> metaDataCategories,
+      protected virtual void ExtractGeneralParameters(
+         List<string> keys,
+         DataSheet dataSheet,
+         IReadOnlyList<MetaDataCategory> metaDataCategories,
          ref double rank)
       {
-         var columnsCopy = keys.ToList();
-         foreach (var header in columnsCopy.Where(h => metaDataCategories.Select(c => c.Name).FindHeader(h) != null))
+         var matchingHeaders = getMatchingHeaders(keys, metaDataCategories);
+
+         foreach (var header in matchingHeaders)
+         {
+            var key = findHeaderInMetaDataCategories(header, metaDataCategories);
+            addParameterIfNew(header, key, keys);
+         }
+      }
+
+      private List<string> getMatchingHeaders(IEnumerable<string> keys, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      {
+         var metaDataCategoryNames = metaDataCategories.Select(c => c.Name).ToList();
+         return keys.Where(header => metaDataCategoryNames.FindHeader(header) != null).ToList();
+      }
+
+
+      private void addParameterIfNew(string header, string key, List<string> keys)
+      {
+         if (!isMetaDataParameterExisting(key))
          {
             keys.Remove(header);
-            Parameters.Add(new MetaDataFormatParameter(header, metaDataCategories.Select(c => c.Name).FindHeader(header)));
+            Parameters.Add(new MetaDataFormatParameter(header, key));
          }
+      }
+
+      private bool isMetaDataParameterExisting(string key)
+      {
+         return Parameters.OfType<MetaDataFormatParameter>().Any(x => x.MetaDataId.Equals(key));
+      }
+
+      private string findHeaderInMetaDataCategories(string header, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      {
+         return metaDataCategories.Select(c => c.Name).FindHeader(header);
       }
 
       public IEnumerable<ParsedDataSet> Parse(DataSheet dataSheet, ColumnInfoCache columnInfos)
@@ -296,7 +326,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataFormat
             (
                new ExtendedColumn
                {
-                  Column = currentParameter.MappedColumn,
+                  Column = new Column(currentParameter.MappedColumn),
                   ColumnInfo = columnInfo,
                   ErrorDeviation = currentParameter.MappedColumn.ErrorStdDev
                },

@@ -372,7 +372,7 @@ namespace OSPSuite.Presentation.Presenters
 
       public virtual void RemoveEmptyClassifications()
       {
-         _classificationPresenter.RemoveEmptyClassifcations();
+         _classificationPresenter.RemoveEmptyClassifications();
       }
 
       public virtual void DropNode(ITreeNode dragNode, ITreeNode targetNode, DragDropKeyFlags keyFlags = DragDropKeyFlags.None)

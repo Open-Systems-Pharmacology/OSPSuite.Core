@@ -11,6 +11,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
       public virtual double TotalError => BestResult.TotalError;
       public virtual int NumberOfEvaluations => Properties.NumberOfEvaluations;
+      public virtual DateTime DateTimeCompleted => Properties.DateTimeCompleted;
       public virtual RunStatus Status { get; set; }
       public virtual string Message { get; set; }
       public virtual JacobianMatrix JacobianMatrix { get; set; }

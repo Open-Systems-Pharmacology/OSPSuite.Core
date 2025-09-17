@@ -46,4 +46,16 @@ namespace OSPSuite.Core.Domain
          _enumeration.ContainsAny(new[] { "D", "E" }).ShouldBeFalse();
       }
    }
+
+   public class when_calculating_the_complement_of_two_enumerations : concern_for_EnumerableExtensions
+   {
+      [Observation]
+      public void The_list_includes_only_the_elements_not_in_both_sets()
+      {
+         _enumeration.Complement(new List<string> { "A", "B", "C" }).ShouldBeEmpty();
+         _enumeration.Complement(new List<string> { "A", "B" }).ShouldOnlyContain("C");
+         _enumeration.Complement(new List<string> { "A", "B", "C", "D"}).ShouldOnlyContain("D");
+         _enumeration.Complement(new List<string> { "A", "B", "D"}).ShouldOnlyContain("D", "C");
+      }
+   }
 }	

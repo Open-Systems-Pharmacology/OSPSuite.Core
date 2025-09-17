@@ -1,24 +1,111 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Core.Chart
 {
-   public class ChartUpdate : IDisposable
+   public enum CurveChartUpdateModes
    {
-      private readonly IEventPublisher _eventPublisher;
-      private readonly IChart _chart;
-      private readonly bool _propagateChartChangeEvent;
+      All,
+      Add,
+      Remove,
+      Property
+   }
 
-      public ChartUpdate(IEventPublisher eventPublisher, IChart chart, bool propagateChartChangeEvent)
+   public abstract class ChartUpdate<TChart> : IDisposable
+   {
+      protected readonly TChart _chart;
+      protected readonly IEventPublisher _eventPublisher;
+      protected readonly bool _propagateChartChangeEvent;
+
+      protected ChartUpdate(IEventPublisher eventPublisher, TChart chart, bool propagateChartChangeEvent)
       {
          _eventPublisher = eventPublisher;
          _chart = chart;
          _propagateChartChangeEvent = propagateChartChangeEvent;
       }
 
-      public void Dispose()
+      public abstract void Dispose();
+   }
+
+   public class ChartUpdate : ChartUpdate<IChart>
+   {
+      public ChartUpdate(IEventPublisher eventPublisher, IChart chart, bool propagateChartChangeEvent) : base(eventPublisher, chart, propagateChartChangeEvent)
       {
-         _eventPublisher.PublishEvent(new ChartUpdatedEvent(_chart,_propagateChartChangeEvent));
       }
+
+      public override void Dispose() =>
+         _eventPublisher.PublishEvent(new ChartUpdatedEvent(_chart, _propagateChartChangeEvent));
+   }
+
+   public class CurveChartAddUpdate : CurveChartUpdate
+   {
+      public CurveChartAddUpdate(IEventPublisher eventPublisher, CurveChart chart, bool propagateChartChangeEvent) : base(eventPublisher, chart, refreshCurveData: true, propagateChartChangeEvent)
+      {
+      }
+
+      protected override IReadOnlyCollection<Curve> GetModifiedCurves()
+      {
+         return _chart.Curves.Except(_originalCurves).ToList();
+      }
+   }
+   
+   public class CurveChartRemoveUpdate : CurveChartUpdate
+   {
+      public CurveChartRemoveUpdate(IEventPublisher eventPublisher, CurveChart chart, bool propagateChartChangeEvent) : base(eventPublisher, chart, refreshCurveData: false, propagateChartChangeEvent)
+      {
+      }
+
+      protected override IReadOnlyCollection<Curve> GetModifiedCurves()
+      {
+         return _originalCurves.Except(_chart.Curves).ToList();
+      }
+   }
+
+   public class CurveChartAllUpdate : CurveChartUpdate
+   {
+      public CurveChartAllUpdate(IEventPublisher eventPublisher, CurveChart chart, bool propagateChartChangeEvent) : base(eventPublisher, chart, refreshCurveData: true, propagateChartChangeEvent)
+      {
+      }
+
+      protected override IReadOnlyCollection<Curve> GetModifiedCurves()
+      {
+         return _chart.Curves;
+      }
+   }
+
+   public class CurveChartSelectedUpdate : CurveChartUpdate
+   {
+      private readonly IReadOnlyList<Curve> _updatedCurves;
+
+      public CurveChartSelectedUpdate(IEventPublisher eventPublisher, CurveChart chart, bool propagateChartChangeEvent, IReadOnlyList<Curve> updatedCurves, CurveChartUpdateModes mode) : base(eventPublisher, chart, mode != CurveChartUpdateModes.Property , propagateChartChangeEvent)
+      {
+         _updatedCurves = updatedCurves;
+      }
+
+      protected override IReadOnlyCollection<Curve> GetModifiedCurves()
+      {
+         return _updatedCurves;
+      }
+   }
+
+   public abstract class CurveChartUpdate : ChartUpdate<CurveChart>
+   {
+      private readonly bool _refreshCurveData;
+      protected readonly List<Curve> _originalCurves;
+
+      public CurveChartUpdate(IEventPublisher eventPublisher, CurveChart chart, bool refreshCurveData, bool propagateChartChangeEvent) : base(eventPublisher, chart, propagateChartChangeEvent)
+      {
+         _originalCurves = chart.Curves.ToList();
+         _refreshCurveData = refreshCurveData;
+      }
+
+      public override void Dispose()
+      {
+         _eventPublisher.PublishEvent(new CurveChartUpdatedEvent(_chart, GetModifiedCurves(), _refreshCurveData, _propagateChartChangeEvent));
+      }
+
+      protected abstract IReadOnlyCollection<Curve> GetModifiedCurves();
    }
 }

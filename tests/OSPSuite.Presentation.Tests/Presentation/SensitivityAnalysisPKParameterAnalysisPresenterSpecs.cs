@@ -7,6 +7,7 @@ using OSPSuite.Core;
 using OSPSuite.Core.Chart.SensitivityAnalyses;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
+using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Presenters.SensitivityAnalyses;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views.SensitivityAnalyses;
@@ -23,10 +24,12 @@ namespace OSPSuite.Presentation.Presentation
       protected PKParameterSensitivity _pkParameterSensitivity2;
       protected PKParameterSensitivity _pkParameterSensitivity3;
       protected IApplicationSettings _applicationSettings;
+      private IDialogCreator _dialogCreator;
 
       protected override void Context()
       {
          _applicationSettings= A.Fake<IApplicationSettings>();
+         _dialogCreator = A.Fake<IDialogCreator>();
          _sensitivityAnalysis = new SensitivityAnalysis();
          _sensitivityAnalysisPKParameterAnalysis = new SensitivityAnalysisPKParameterAnalysis();
          _sensitivityAnalysis.Results = new SensitivityAnalysisRunResult();
@@ -60,7 +63,7 @@ namespace OSPSuite.Presentation.Presentation
          _presentationSettingsTask = A.Fake<IPresentationSettingsTask>();
 
          var pkParameterRepository = A.Fake<IPKParameterRepository>();
-         sut = new SensitivityAnalysisPKParameterAnalysisPresenter(_view, _presentationSettingsTask, pkParameterRepository, _applicationSettings);
+         sut = new SensitivityAnalysisPKParameterAnalysisPresenter(_view, _presentationSettingsTask, pkParameterRepository, _applicationSettings, _dialogCreator);
       }
    }
 

@@ -8,7 +8,7 @@ using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core.Serializers
 {
-   public abstract class ModellingXmlSerializerBaseSpecs : XmlSerializerBaseSpecs<IOSPSuiteXmlSerializerRepository>
+   public abstract class ModelingXmlSerializerBaseSpecs : XmlSerializerBaseSpecs<IOSPSuiteXmlSerializerRepository>
    {
       protected IDimension DimensionLength { get; private set; }
       protected IDimension DimensionTime { get; private set; }
@@ -37,7 +37,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   internal abstract class ModellingXmlSerializerWithModelBaseSpecs : ModellingXmlSerializerBaseSpecs
+   internal abstract class ModelingXmlSerializerWithModelBaseSpecs : ModelingXmlSerializerBaseSpecs
    {
       protected SimulationConfiguration _simulationConfiguration;
       protected IObjectPathFactory _objectPathFactory;

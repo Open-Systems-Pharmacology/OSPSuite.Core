@@ -1,4 +1,5 @@
 ﻿using System;
+using OSPSuite.Assets;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Format;
 
@@ -15,7 +16,7 @@ namespace OSPSuite.Core.Services
 
       public string Format(DateTime dateTime)
       {
-         return dateTime.ToIsoFormat(withTime: _displayTime);
+         return dateTime == default ? Captions.NA : dateTime.ToIsoFormat(withTime: _displayTime);
       }
    }
 }

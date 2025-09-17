@@ -41,11 +41,32 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithActionCommand(chartDisplayPresenter.ExportToExcel)
             .WithIcon(ApplicationIcons.Excel);
 
+         yield return CreateMenuButton.WithCaption(MenuNames.ExportToPng)
+            .WithActionCommand(chartDisplayPresenter.ExportToPng)
+            .WithIcon(ApplicationIcons.GreenOverlayFor(ApplicationIcons.ExportToPNG));
+
+         if(!curveChart.AutoUpdateEnabled)
+         {
+            yield return CreateMenuButton.WithCaption(MenuNames.ApplyUpdates)
+               .WithActionCommand(chartDisplayPresenter.Refresh);
+         }
+
+         yield return CreateMenuCheckButton.WithCaption(MenuNames.AutoUpdateChart)
+            .WithChecked(curveChart.AutoUpdateEnabled)
+            .WithCheckedAction(enabled => updateAutoUpdateMode(curveChart, chartDisplayPresenter, enabled));
+
          if (curveChart.IsAnImplementationOf<PredictedVsObservedChart>())
          {
             yield return CreateMenuButton.WithCaption(MenuNames.AddDeviationLines)
                .WithActionCommand(chartDisplayPresenter.AddDeviationLines);
          }
+      }
+
+      private static void updateAutoUpdateMode(CurveChart curveChart, IChartDisplayPresenter chartDisplayPresenter, bool enabled)
+      {
+         curveChart.AutoUpdateEnabled = enabled;
+         if (curveChart.AutoUpdateEnabled)
+            chartDisplayPresenter.Refresh();
       }
    }
 

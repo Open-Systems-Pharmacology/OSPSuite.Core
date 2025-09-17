@@ -1,6 +1,7 @@
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Core.Domain.Services;
 
 namespace OSPSuite.Core.Domain.Mappers
 {
@@ -13,11 +14,14 @@ namespace OSPSuite.Core.Domain.Mappers
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IFormulaBuilderToFormulaMapper _formulaMapper;
+      private readonly IEntityTracker _entityTracker
+         ;
 
-      public ProcessRateParameterCreator(IObjectBaseFactory objectBaseFactory, IFormulaBuilderToFormulaMapper formulaMapper)
+      public ProcessRateParameterCreator(IObjectBaseFactory objectBaseFactory, IFormulaBuilderToFormulaMapper formulaMapper, IEntityTracker entityTracker)
       {
          _objectBaseFactory = objectBaseFactory;
          _formulaMapper = formulaMapper;
+         _entityTracker = entityTracker;
       }
 
       public IParameter CreateProcessRateParameterFor(IProcessBuilder processBuilder, SimulationBuilder simulationBuilder)
@@ -34,7 +38,7 @@ namespace OSPSuite.Core.Domain.Mappers
 
          addAdditionalParentReference(parameter.Formula);
 
-         simulationBuilder.AddBuilderReference(parameter, processBuilder);
+         _entityTracker.Track(parameter, processBuilder, simulationBuilder);
 
          if (processBuilder.ProcessRateParameterPersistable)
             parameter.Persistable = true;

@@ -25,6 +25,8 @@ namespace OSPSuite.Presentation.Presentation
          sut.MapFrom(ClassificationType.Comparison).ShouldBeEqualTo(RootNodeTypes.ComparisonFolder);
          sut.MapFrom(ClassificationType.ParameterIdentification).ShouldBeEqualTo(RootNodeTypes.ParameterIdentificationFolder);
          sut.MapFrom(ClassificationType.SensitiviyAnalysis).ShouldBeEqualTo(RootNodeTypes.SensitivityAnalysisFolder);
+         sut.MapFrom(ClassificationType.Module).ShouldBeEqualTo(RootNodeTypes.ModulesFolder);
+         sut.MapFrom(ClassificationType.QualificationPlan).ShouldBeEqualTo(RootNodeTypes.QualificationPlanFolder);
       }
 
       [Observation]

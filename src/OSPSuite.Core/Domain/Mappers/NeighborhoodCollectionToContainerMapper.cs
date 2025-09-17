@@ -10,13 +10,11 @@ using OSPSuite.Utility.Extensions;
 namespace OSPSuite.Core.Domain.Mappers
 {
    /// <summary>
-   ///    Maps collection of neighborhood builder objects.
-   ///    <para></para>
-   ///    Creates Top-Container named "NEIGHBORHOODS", all mapped neighborhoods
-   ///    <para></para>
-   ///    are added as children of this top container
+   ///    Returns a result that includes a top container named "NEIGHBORHOODS" with all mapped neighborhoods
+   ///    and a list of all neighborhoods that were not included because one or both neighbors were not found in the
+   ///    simulation spatial structure
    /// </summary>
-   internal interface INeighborhoodCollectionToContainerMapper : IMapper<ModelConfiguration, IContainer>
+   internal interface INeighborhoodCollectionToContainerMapper : IMapper<ModelConfiguration, NeighborhoodMapResult>
    {
    }
 
@@ -36,37 +34,47 @@ namespace OSPSuite.Core.Domain.Mappers
          _containerMergeTask = containerMergeTask;
       }
 
-      public IContainer MapFrom(ModelConfiguration modelConfiguration)
+      public NeighborhoodMapResult MapFrom(ModelConfiguration modelConfiguration)
       {
          var (_, simulationBuilder) = modelConfiguration;
 
          var neighborhoodsParentContainer = _objectBaseFactory.Create<IContainer>()
             .WithMode(ContainerMode.Logical)
             .WithName(Constants.NEIGHBORHOODS);
+         var neighborhoodMapResult = new NeighborhoodMapResult(neighborhoodsParentContainer);
 
          var allSpatialStructureAndMergeBehaviors = simulationBuilder.SpatialStructureAndMergeBehaviors;
          if (!allSpatialStructureAndMergeBehaviors.Any())
-            return neighborhoodsParentContainer;
+            return neighborhoodMapResult;
 
          var mapToNeighborhood = mapToNeighborhoodDef(modelConfiguration);
 
-         IReadOnlyList<Neighborhood> mapNeighborhoods(SpatialStructure spatialStructure) =>
-            spatialStructure.Neighborhoods.Select(mapToNeighborhood).Where(x => x != null).ToList();
+         IReadOnlyList<(NeighborhoodBuilder builder, Neighborhood neighborhood)> allNeighborHoodsFrom(SpatialStructure spatialStructure) =>
+            spatialStructure.Neighborhoods.Select(x => (builder: x, neighborhood: mapToNeighborhood(x))).ToList();
+
+         IReadOnlyList<Neighborhood> definedNeighborhoods(IReadOnlyList<(NeighborhoodBuilder builder, Neighborhood neighborhood)> allNeighborhoods) => allNeighborhoods.Where(x => x.neighborhood != null).Select(x => x.neighborhood).ToList();
+         IReadOnlyList<NeighborhoodBuilder> notDefinedNeighborhoods(IReadOnlyList<(NeighborhoodBuilder builder, Neighborhood neighborhood)> allNeighborhoods) => allNeighborhoods.Where(x => x.neighborhood == null).Select(x => x.builder).ToList();
 
          //we use a cache to ensure that we are replacing neighborhoods defined in multiple structures
          var firstSpatialStructure = allSpatialStructureAndMergeBehaviors[0].spatialStructure;
          var allOtherSpatialStructuresWithMergeBehavior = allSpatialStructureAndMergeBehaviors.Skip(1).ToList();
 
-
          //first step: Add the neighborhoods from the first structure
-         neighborhoodsParentContainer.AddChildren(mapNeighborhoods(firstSpatialStructure));
+         var allNeighbors = allNeighborHoodsFrom(firstSpatialStructure);
+         neighborhoodsParentContainer.AddChildren(definedNeighborhoods(allNeighbors));
+
+         notDefinedNeighborhoods(allNeighbors).Each(x => neighborhoodMapResult.Add(x, firstSpatialStructure));
 
          //now merge all other neighborhoods
          allOtherSpatialStructuresWithMergeBehavior
-            .Select(x => new {x.mergeBehavior, neighborhoods = mapNeighborhoods(x.spatialStructure)})
-            .Each(x => mergeNeighborhoodsInStructure(neighborhoodsParentContainer, x.neighborhoods, x.mergeBehavior));
+            .Select(x => new { x.mergeBehavior, neighborhoods = allNeighborHoodsFrom(x.spatialStructure), x.spatialStructure })
+            .Each(x =>
+            {
+               mergeNeighborhoodsInStructure(neighborhoodsParentContainer, definedNeighborhoods(x.neighborhoods), x.mergeBehavior);
+               notDefinedNeighborhoods(x.neighborhoods).Each(n => neighborhoodMapResult.Add(n, x.spatialStructure));
+            });
 
-         return neighborhoodsParentContainer;
+         return neighborhoodMapResult;
       }
 
       private void mergeNeighborhoodsInStructure(IContainer neighborhoods, IReadOnlyList<Neighborhood> neighborhoodsToMerge, MergeBehavior mergeBehavior)
@@ -74,10 +82,22 @@ namespace OSPSuite.Core.Domain.Mappers
          neighborhoodsToMerge.Each(neighborhoodToMerge =>
          {
             if (mergeBehavior == MergeBehavior.Extend)
-               _containerMergeTask.AddOrMergeContainer(neighborhoods, neighborhoodToMerge);
+            {
+               var mergeNeighbor = _containerMergeTask.AddOrMergeContainer(neighborhoods, neighborhoodToMerge) as Neighborhood;
+               updateNeighbors(mergeNeighbor, neighborhoodToMerge);
+            }
             else
                _containerMergeTask.AddOrReplaceInContainer(neighborhoods, neighborhoodToMerge);
          });
+      }
+
+      private void updateNeighbors(Neighborhood neighborhoodToUpdate, Neighborhood neighborhoodToMerge)
+      {
+         if (neighborhoodToUpdate == null)
+            return;
+
+         neighborhoodToUpdate.FirstNeighbor = neighborhoodToMerge.FirstNeighbor;
+         neighborhoodToUpdate.SecondNeighbor = neighborhoodToMerge.SecondNeighbor;
       }
 
       private Func<NeighborhoodBuilder, Neighborhood> mapToNeighborhoodDef(ModelConfiguration modelConfiguration)
@@ -132,6 +152,33 @@ namespace OSPSuite.Core.Domain.Mappers
 
          return moleculesStartValuesForFloatingMolecules[pathToFirstNeighbor]
             .Intersect(moleculesStartValuesForFloatingMolecules[pathToSecondNeighbor]).ToList();
+      }
+   }
+
+   internal class NeighborhoodMapResult
+   {
+      private readonly List<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> _ignoredNeighborhoods;
+      private readonly IContainer _container;
+
+      public NeighborhoodMapResult(IContainer container)
+      {
+         _container = container;
+         _ignoredNeighborhoods = new List<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)>();
+      }
+
+      /// <summary>
+      ///    Adds the ignored <paramref name="builder" /> and the source <paramref name="buildingBlock" /> to the list of ignored
+      ///    neighborhoods
+      /// </summary>
+      public void Add(NeighborhoodBuilder builder, SpatialStructure buildingBlock)
+      {
+         _ignoredNeighborhoods.Add((builder, buildingBlock));
+      }
+
+      internal void Deconstruct(out IContainer container, out IReadOnlyList<(NeighborhoodBuilder builder, SpatialStructure buildingBlock)> ignoredNeighborhoods)
+      {
+         container = _container;
+         ignoredNeighborhoods = _ignoredNeighborhoods;
       }
    }
 }
