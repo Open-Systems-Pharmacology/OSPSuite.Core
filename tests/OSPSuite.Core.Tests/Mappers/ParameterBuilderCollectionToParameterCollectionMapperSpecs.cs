@@ -30,13 +30,11 @@ namespace OSPSuite.Core.Mappers
       private IParameter _mappedPara3;
       private SimulationConfiguration _simulationConfiguration;
       private SimulationBuilder _simulationBuilder;
-      private IReactionMerger _reactionMerger;
       protected override void Context()
       {
          base.Context();
-         _reactionMerger = A.Fake<IReactionMerger>();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _para1 = A.Fake<IParameter>().WithMode(ParameterBuildMode.Local);
          _para3 = A.Fake<IParameter>().WithMode(ParameterBuildMode.Global);
          _allParameterBuilders = new List<IParameter> { _para1, _para3 };

@@ -20,13 +20,11 @@ namespace OSPSuite.Core.Mappers
       protected IProcessRateParameterCreator _processRateParameterCreator;
       protected SimulationBuilder _simulationBuilder;
       protected IEntityTracker _entityTracker;
-      private IReactionMerger _reactionMerger;
 
       protected override void Context()
       {
-         _reactionMerger = A.Fake<IReactionMerger>();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          A.CallTo(() => _objectBaseFactory.Create<Transport>()).Returns(new Transport());
          _formulaBuilderToFormulaMapper = A.Fake<IFormulaBuilderToFormulaMapper>();

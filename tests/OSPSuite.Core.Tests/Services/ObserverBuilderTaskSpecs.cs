@@ -31,11 +31,9 @@ namespace OSPSuite.Core.Services
       private InitialConditionsBuildingBlock _initialConditions;
       protected SimulationBuilder _simulationBuilder;
       private IEntityTracker _entityTracker;
-      private IReactionMerger _reactionMerger;
 
       protected override void Context()
       {
-         _reactionMerger = A.Fake<IReactionMerger>();
          _observerMapper = A.Fake<IObserverBuilderToObserverMapper>();
          _entityTracker= A.Fake<IEntityTracker>();
          _observerBuildingBlock = new ObserverBuildingBlock();
@@ -78,7 +76,7 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          sut.CreateObservers(new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder));
       }
    }

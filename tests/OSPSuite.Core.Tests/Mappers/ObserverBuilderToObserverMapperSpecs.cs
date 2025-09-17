@@ -32,13 +32,11 @@ namespace OSPSuite.Core.Mappers
       private Observer _observer;
       private SimulationConfiguration _simulationConfiguration;
       private SimulationBuilder _simulationBuilder;
-      private IReactionMerger _reactionMerger;
       protected override void Context()
       {
          base.Context();
-         _reactionMerger = A.Fake<IReactionMerger>();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _observerBuilder = new ObserverBuilder().WithName("toto").WithDimension(A.Fake<IDimension>());
          _observerBuilder.Formula = A.Fake<IFormula>();
          _mappedFormula = A.Fake<IFormula>();

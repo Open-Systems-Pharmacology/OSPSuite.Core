@@ -17,11 +17,9 @@ namespace OSPSuite.Core.Services
       protected Model _model;
       protected SimulationBuilder _simulationBuilder;
       protected Container _root;
-      private IReactionMerger _reactionMerger;
 
       protected override void Context()
       {
-         _reactionMerger = A.Fake<IReactionMerger>();
          _entityPathResolver = new EntityPathResolverForSpecs();
          sut = new EntitySourcePathUpdater(_entityPathResolver);
          _root = new Container().WithName("Sim`")
@@ -30,7 +28,7 @@ namespace OSPSuite.Core.Services
 
          _model = new Model {Root = _root};
 
-         _simulationBuilder = new SimulationBuilder(new SimulationConfiguration(),_reactionMerger);
+         _simulationBuilder = new SimulationBuilder(new SimulationConfiguration());
       }
    }
 

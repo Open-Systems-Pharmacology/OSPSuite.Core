@@ -23,13 +23,11 @@ namespace OSPSuite.Core
       protected string _modelName = "MyModel";
       protected SimulationBuilder _simulationBuilder;
       protected SimulationConfiguration _simulationConfiguration;
-      protected IReactionMerger _reactionMerger;
       protected abstract Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder();
 
       protected override void Because()
       {
          sut = IoC.Resolve<IModelConstructor>();
-         _reactionMerger = IoC.Resolve<IReactionMerger>();
          var moduleHelper = IoC.Resolve<ModuleHelperForSpecs>();
          _simulationConfiguration = SimulationConfigurationBuilder()(moduleHelper);
          _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
@@ -116,7 +114,7 @@ namespace OSPSuite.Core
          sut = IoC.Resolve<IModelConstructor>();
          var moduleHelper = IoC.Resolve<ModuleHelperForSpecs>();
          _simulationConfiguration = SimulationConfigurationBuilder()(moduleHelper);
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
          _model = _result.Model;
       }

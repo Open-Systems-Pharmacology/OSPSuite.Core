@@ -18,18 +18,16 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly PathAndValueEntityCache<ParameterValue> _parameterValues = new PathAndValueEntityCache<ParameterValue>();
       private readonly PathAndValueEntityCache<InitialCondition> _initialConditions = new PathAndValueEntityCache<InitialCondition>();
       private readonly Cache<IMoleculeDependentBuilder, MoleculeList> _moleculeListCache = new Cache<IMoleculeDependentBuilder, MoleculeList>();
-      private readonly IReactionMerger _reactionMerger;
-
+      
       //Contains a temp  cache of builder and their corresponding building blocks
       private readonly Cache<string, BuilderSource> _builderSources = new Cache<string, BuilderSource>(x => x.Builder.Id, x => null);
 
       //Cache of entity source by id and not by path. It is required because the path is not available at time of construction in the entity
       private readonly Cache<string, SimulationEntitySource> _entitySources = new Cache<string, SimulationEntitySource>(onMissingKey: x => null);
 
-      public SimulationBuilder(SimulationConfiguration simulationConfiguration, IReactionMerger reactionMerger)
+      public SimulationBuilder(SimulationConfiguration simulationConfiguration)
       {
          _simulationConfiguration = simulationConfiguration;
-         _reactionMerger = reactionMerger;
          performMerge();
          
       }
@@ -89,7 +87,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       private void performMerge()
       {
-         var mergedReactions = _reactionMerger.Merge(ReactionAndMergeBehaviors);
+         var mergedReactions = mergeReactions(ReactionAndMergeBehaviors);
          _reactions.AddRange(mergedReactions);
 
          cacheBuilders(x => x.Molecules, _molecules);
@@ -257,5 +255,114 @@ namespace OSPSuite.Core.Domain.Builder
             //null because these conditions do not belong in a module
             .SelectMany(x => x.InitialConditions.Select(ic => (ic, (IBuildingBlock) x.BuildingBlock)))
             .ToList();
+
+      private IReadOnlyCollection<ReactionBuilder> mergeReactions(
+        IReadOnlyList<(ReactionBuildingBlock block, MergeBehavior behavior)> sources)
+      {
+         var result = new Dictionary<string, ReactionBuilder>(StringComparer.OrdinalIgnoreCase);
+         if (sources == null || sources.Count == 0)
+            return Array.Empty<ReactionBuilder>();
+
+         foreach (var (block, behavior) in sources.Where(s => s.block != null))
+         {
+            foreach (var incoming in block)
+            {
+               if (!result.TryGetValue(incoming.Name, out var current))
+               {
+                  result[incoming.Name].UpdatePropertiesFrom(incoming, null);
+                  continue;
+               }
+
+               if (behavior == MergeBehavior.Overwrite)
+               {
+                   result[incoming.Name].UpdatePropertiesFrom(incoming, null);
+               }
+               else
+               {
+                  extendReaction(current, incoming);
+               }
+            }
+         }
+
+         return result.Values.ToList();
+      }
+       
+      private static void extendReaction(ReactionBuilder target, ReactionBuilder incoming)
+      {
+         var byNameParam = target.Parameters.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
+         foreach (var p in incoming.Parameters)
+         {
+            if (byNameParam.TryGetValue(p.Name, out var existing))
+               target.RemoveParameter(existing);
+
+            target.AddParameter(p);
+         }
+
+         if (incoming.Formula != null)
+            target.Formula = incoming.Formula;
+
+         upsertEducts(target, incoming);
+         upsertProducts(target, incoming);
+
+         var mods = new HashSet<string>(target.ModifierNames, StringComparer.OrdinalIgnoreCase);
+         foreach (var m in incoming.ModifierNames)
+            if (mods.Add(m))
+               target.AddModifier(m);
+
+         target.Icon = incoming.Icon ?? target.Icon;
+         target.Description = string.IsNullOrEmpty(incoming.Description) ? target.Description : incoming.Description;
+         target.Dimension = incoming.Dimension ?? target.Dimension;
+
+         if (incoming.ContainerCriteria != null)
+            target.ContainerCriteria = incoming.ContainerCriteria;
+      }
+
+      private static void upsertEducts(ReactionBuilder target, ReactionBuilder incoming) =>
+         upsertPartners(target, incoming, isEduct: true);
+
+      private static void upsertProducts(ReactionBuilder target, ReactionBuilder incoming) =>
+         upsertPartners(target, incoming, isEduct: false);
+
+      private static void upsertPartners(ReactionBuilder target, ReactionBuilder incoming, bool isEduct)
+      {
+         IEnumerable<ReactionPartnerBuilder> targetPartners;
+         IEnumerable<ReactionPartnerBuilder> incomingPartners;
+         Action<ReactionPartnerBuilder> addPartner;
+         Action<ReactionPartnerBuilder> removePartner;
+
+         if (isEduct)
+         {
+            targetPartners = target.Educts;
+            incomingPartners = incoming.Educts;
+            addPartner = target.AddEduct;
+            removePartner = target.RemoveEduct;
+         }
+         else
+         {
+            targetPartners = target.Products;
+            incomingPartners = incoming.Products;
+            addPartner = target.AddProduct;
+            removePartner = target.RemoveProduct;
+         }
+
+         var targetByMolecule = targetPartners.ToDictionary(
+            x => x.MoleculeName,
+            StringComparer.OrdinalIgnoreCase);
+
+         foreach (var incomingPartner in incomingPartners)
+         {
+            if (targetByMolecule.TryGetValue(incomingPartner.MoleculeName, out var existingPartner))
+               removePartner(existingPartner);
+
+            var newPartner = new ReactionPartnerBuilder(
+               incomingPartner.MoleculeName,
+               incomingPartner.StoichiometricCoefficient)
+            {
+               Dimension = incomingPartner.Dimension
+            };
+
+            addPartner(newPartner);
+         }
+      }
    }
 }

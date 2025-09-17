@@ -36,7 +36,7 @@ namespace OSPSuite.Core.Domain.Services
       private readonly ISpatialStructureMerger _spatialStructureMerger;
       private readonly IEventBuilderTask _eventBuilderTask;
       private readonly IEntitySourcePathUpdater _entitySourcePathUpdater;
-      private readonly IReactionMerger _reactionMerger;
+
       public ModelConstructor(
          IObjectBaseFactory objectBaseFactory,
          IObserverBuilderTask observerBuilderTask,
@@ -56,8 +56,7 @@ namespace OSPSuite.Core.Domain.Services
          IModelCircularReferenceChecker circularReferenceChecker,
          ISpatialStructureMerger spatialStructureMerger,
          IEventBuilderTask eventBuilderTask,
-         IEntitySourcePathUpdater entitySourcePathUpdater,
-         IReactionMerger reactionMerger
+         IEntitySourcePathUpdater entitySourcePathUpdater
          )
       {
          _objectBaseFactory = objectBaseFactory;
@@ -79,13 +78,12 @@ namespace OSPSuite.Core.Domain.Services
          _calculationMethodTask = calculationMethodTask;
          _eventBuilderTask = eventBuilderTask;
          _entitySourcePathUpdater = entitySourcePathUpdater;
-         _reactionMerger = reactionMerger;
       }
 
       public CreationResult CreateModelFrom(SimulationConfiguration simulationConfiguration, string modelName)
       {
          var model = _objectBaseFactory.Create<IModel>().WithName(modelName);
-         var simulationBuilder = new SimulationBuilder(simulationConfiguration, _reactionMerger);
+         var simulationBuilder = new SimulationBuilder(simulationConfiguration);
          var modelConfiguration = new ModelConfiguration(model, simulationConfiguration, simulationBuilder);
          var creationResult = buildProcess(modelConfiguration,
             //One function per process step

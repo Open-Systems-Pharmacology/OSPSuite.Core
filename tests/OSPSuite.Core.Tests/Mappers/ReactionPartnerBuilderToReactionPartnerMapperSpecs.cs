@@ -24,14 +24,12 @@ namespace OSPSuite.Core.Mappers
       private MoleculeAmount _moleculeAmount;
       private SimulationConfiguration _simulationConfiguration;
       private SimulationBuilder _simulationBuilder;
-      private IReactionMerger _reactionMerger;
       protected override void Context()
       {
          base.Context();
-         _reactionMerger = A.Fake<IReactionMerger>();
          _reactionPartnerBuilder = new ReactionPartnerBuilder();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _container = new Container();
          _reactionPartnerBuilder.MoleculeName = "Drug";
          _moleculeAmount = new MoleculeAmount().WithName("Drug");
@@ -63,16 +61,14 @@ namespace OSPSuite.Core.Mappers
       private IContainer _container;
       private SimulationConfiguration _simulationConfiguration;
       private SimulationBuilder _simulationBuilder;
-      private IReactionMerger _reactionMerger;
 
       protected override void Context()
       {
          base.Context();
-         _reactionMerger = A.Fake<IReactionMerger>();
          _reactionPartnerBuilder = new ReactionPartnerBuilder();
          _container = new Container();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _reactionPartnerBuilder.MoleculeName = "Drug";
          _reactionPartnerBuilder.StoichiometricCoefficient = 1.1;
       }

@@ -113,20 +113,18 @@ namespace OSPSuite.Core.Services
       private Container _container;
       private Model _model;
       protected ValidationResult _result;
-      private IReactionMerger _reactionMerger;
 
       protected override void Context()
       {
          base.Context();
          _container = new Container().WithName("Container");
          _model = new Model {Root = _container};
-         _reactionMerger = A.Fake<IReactionMerger>();
       }
 
       protected override void Because()
       {
          var simulationConfiguration = new SimulationConfiguration();
-         _result = sut.CheckCircularReferencesIn(new ModelConfiguration(_model, simulationConfiguration, new SimulationBuilder(simulationConfiguration, _reactionMerger)));
+         _result = sut.CheckCircularReferencesIn(new ModelConfiguration(_model, simulationConfiguration, new SimulationBuilder(simulationConfiguration)));
       }
 
       protected Parameter CreateParameter(string name, string objectPath)
@@ -189,12 +187,10 @@ namespace OSPSuite.Core.Services
       private SimulationConfiguration _simulationConfiguration;
       protected ValidationResult _results;
       protected Container _eventContainer;
-      private IReactionMerger _reactionMerger;
 
       protected override void Context()
       {
          base.Context();
-         _reactionMerger = A.Fake<IReactionMerger>();
          _parameter1 = new Parameter().WithName("PARA1");
          _parameter2 = new Parameter().WithName("PARA2");
          _container = new Container().WithName("C");
@@ -208,7 +204,7 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         _results = sut.CheckCircularReferencesIn(new ModelConfiguration(_model, _simulationConfiguration, new SimulationBuilder(_simulationConfiguration, _reactionMerger)));
+         _results = sut.CheckCircularReferencesIn(new ModelConfiguration(_model, _simulationConfiguration, new SimulationBuilder(_simulationConfiguration)));
       }
    }
 

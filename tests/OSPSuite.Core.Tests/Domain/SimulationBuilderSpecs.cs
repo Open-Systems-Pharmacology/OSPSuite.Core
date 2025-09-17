@@ -30,7 +30,6 @@ namespace OSPSuite.Core.Domain
       private ObserverBuilder _observerBuilder;
       private ExpressionProfileBuildingBlock _expressionProfileBuildingBlock;
       private InitialConditionsBuildingBlock _initialConditionsBuildingBlock;
-      private IReactionMerger _reactionMerger;
 
       protected override void Context()
       {
@@ -40,7 +39,6 @@ namespace OSPSuite.Core.Domain
          _simulationConfiguration = new SimulationConfiguration();
          _simulationConfiguration.AddModuleConfiguration(_moduleConfiguration1);
          _simulationConfiguration.AddModuleConfiguration(_moduleConfiguration2);
-         _reactionMerger = A.Fake<IReactionMerger>();
          _moduleConfiguration1.Module.Observers.AmountObserverBuilders.Each(x => x.MoleculeList.AddMoleculeName("molecule1"));
          _moduleConfiguration2.Module.Observers.AmountObserverBuilders.Each(x => x.MoleculeList.AddMoleculeName("molecule2"));
 
@@ -58,7 +56,7 @@ namespace OSPSuite.Core.Domain
          _moduleConfiguration2.Module.Add(_initialConditionsBuildingBlock);
          _moduleConfiguration2.SelectedInitialConditions = _initialConditionsBuildingBlock;
 
-         sut = new SimulationBuilder(_simulationConfiguration, _reactionMerger);
+         sut = new SimulationBuilder(_simulationConfiguration);
          _observerBuilder = _moduleConfiguration2.Module.Observers.AmountObserverBuilders.First();
       }
 

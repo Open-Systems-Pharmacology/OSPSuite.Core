@@ -11,7 +11,6 @@ namespace OSPSuite.Core.Domain.Builder
    /// </summary>
    public class ReactionBuilder : ProcessBuilder
    {
-      //Maybe those 2 by name. The list should be an UNION (not all) 
       private readonly List<ReactionPartnerBuilder> _educts;
       private readonly List<ReactionPartnerBuilder> _products;
       private readonly List<string> _modifier;
