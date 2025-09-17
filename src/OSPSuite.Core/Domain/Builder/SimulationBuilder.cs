@@ -267,15 +267,13 @@ namespace OSPSuite.Core.Domain.Builder
             {
                if (!result.TryGetValue(incoming.Name, out var current))
                {
-                  result[incoming.Name] = new ReactionBuilder();
-                  result[incoming.Name] = createCopyFrom(incoming);
+                  cloneAndAddToBuilderSource(result, incoming, block);
                   continue;
                }
 
                if (behavior == MergeBehavior.Overwrite)
                {
-                  result[incoming.Name] = new ReactionBuilder();
-                  result[incoming.Name] = createCopyFrom(incoming);
+                  cloneAndAddToBuilderSource(result, incoming, block);
                }
                else
                {
@@ -285,6 +283,13 @@ namespace OSPSuite.Core.Domain.Builder
          }
 
          return result.Values.ToList();
+      }
+
+      private void cloneAndAddToBuilderSource(Dictionary<string, ReactionBuilder> result, ReactionBuilder incoming, ReactionBuildingBlock block)
+      {
+         result[incoming.Name] = new ReactionBuilder();
+         result[incoming.Name] = createCopyFrom(incoming);
+         AddToBuilderSource(result[incoming.Name], block);
       }
 
       private static ReactionBuilder createCopyFrom(ReactionBuilder incoming)
@@ -299,6 +304,7 @@ namespace OSPSuite.Core.Domain.Builder
 
          copy.CreateProcessRateParameter = incoming.CreateProcessRateParameter;
          copy.ProcessRateParameterPersistable = incoming.ProcessRateParameterPersistable;
+         copy.Id = incoming.Id;
 
          return copy;
       }
