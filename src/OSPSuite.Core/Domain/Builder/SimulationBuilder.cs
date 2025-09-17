@@ -85,7 +85,9 @@ namespace OSPSuite.Core.Domain.Builder
 
       private void performMerge()
       {
-         cacheBuilders(x => x.Reactions, _reactions);
+         var mergedReactions = mergeReactions(ReactionAndMergeBehaviors);
+         _reactions.AddRange(mergedReactions);
+
          cacheBuilders(x => x.Molecules, _molecules);
          cacheMoleculeDependentBuilders(x => x.PassiveTransports, _passiveTransports);
          cacheMoleculeDependentBuilders(x => x.Observers, _observers);
@@ -196,6 +198,9 @@ namespace OSPSuite.Core.Domain.Builder
       internal IReadOnlyList<(EventGroupBuildingBlock eventGroupBuildingBlock, MergeBehavior mergeBehavior)> EventGroupAndMergeBehaviors =>
          _simulationConfiguration.ModuleConfigurations.Where(x => x.Module.EventGroups != null).Select(x => (x.Module.EventGroups, x.MergeBehavior)).ToList();
 
+      internal IReadOnlyList<(ReactionBuildingBlock reactionBuildingBlock, MergeBehavior mergeBehavior)> ReactionAndMergeBehaviors =>
+         _simulationConfiguration.ModuleConfigurations.Where(x => x.Module.Reactions != null).Select(x => (x.Module.Reactions, x.MergeBehavior)).ToList();
+
       internal IReadOnlyCollection<TransportBuilder> PassiveTransports => _passiveTransports;
       internal IReadOnlyCollection<ReactionBuilder> Reactions => _reactions;
       internal IReadOnlyCollection<ObserverBuilder> Observers => _observers;
@@ -232,21 +237,154 @@ namespace OSPSuite.Core.Domain.Builder
          _simulationConfiguration.ModuleConfigurations
             .Select(x => propAccess(x.Module))
             .Where(x => x != null)
-            .SelectMany(x => x.Select(builder => (builder, (IBuildingBlock) x)))
+            .SelectMany(x => x.Select(builder => (builder, (IBuildingBlock)x)))
             .ToList();
 
       private IReadOnlyList<(T Builder, IBuildingBlock BuildingBlock)> allParameterValueBuilderSources<T>(Func<ModuleConfiguration, IBuildingBlock<T>> propAccess) where T : PathAndValueEntity =>
          _simulationConfiguration.ModuleConfigurations
             .Select(propAccess)
             .Where(x => x != null)
-            .SelectMany(x => x.Select(builder => (builder, (IBuildingBlock) x)))
+            .SelectMany(x => x.Select(builder => (builder, (IBuildingBlock)x)))
             .ToList();
 
       private IReadOnlyList<(InitialCondition InitialCondition, IBuildingBlock BuildingBlock)> allInitialConditionsFromExpressionProfileSources() =>
          _simulationConfiguration.ExpressionProfiles
             .Select(x => (BuildingBlock: x, x.InitialConditions))
             //null because these conditions do not belong in a module
-            .SelectMany(x => x.InitialConditions.Select(ic => (ic, (IBuildingBlock) x.BuildingBlock)))
+            .SelectMany(x => x.InitialConditions.Select(ic => (ic, (IBuildingBlock)x.BuildingBlock)))
             .ToList();
+
+      private IReadOnlyCollection<ReactionBuilder> mergeReactions(
+         IReadOnlyList<(ReactionBuildingBlock block, MergeBehavior behavior)> sources)
+      {
+         var result = new Dictionary<string, ReactionBuilder>(StringComparer.OrdinalIgnoreCase);
+         if (sources == null || sources.Count == 0)
+            return Array.Empty<ReactionBuilder>();
+
+         foreach (var (block, behavior) in sources.Where(s => s.block != null))
+         {
+            foreach (var incoming in block)
+            {
+               if (!result.TryGetValue(incoming.Name, out var current))
+               {
+                  cloneAndAddToBuilderSource(result, incoming, block);
+                  continue;
+               }
+
+               if (behavior == MergeBehavior.Overwrite)
+               {
+                  cloneAndAddToBuilderSource(result, incoming, block);
+               }
+               else
+               {
+                  extendReaction(current, incoming);
+               }
+            }
+         }
+
+         return result.Values.ToList();
+      }
+
+      private void cloneAndAddToBuilderSource(Dictionary<string, ReactionBuilder> result, ReactionBuilder incoming, ReactionBuildingBlock block)
+      {
+         result[incoming.Name] = new ReactionBuilder();
+         result[incoming.Name] = createCopyFrom(incoming);
+         AddToBuilderSource(result[incoming.Name], block);
+      }
+
+      private static ReactionBuilder createCopyFrom(ReactionBuilder incoming)
+      {
+         var copy = new ReactionBuilder();
+         copy.UpdatePropertiesFrom(incoming, null);
+
+         foreach (var prm in incoming.Parameters)
+            copy.AddParameter(prm);
+
+         copy.Formula = incoming.Formula;
+
+         copy.CreateProcessRateParameter = incoming.CreateProcessRateParameter;
+         copy.ProcessRateParameterPersistable = incoming.ProcessRateParameterPersistable;
+         copy.Id = incoming.Id;
+
+         return copy;
+      }
+
+      private static void extendReaction(ReactionBuilder target, ReactionBuilder incoming)
+      {
+         var byNameParam = target.Parameters.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
+         foreach (var p in incoming.Parameters)
+         {
+            if (byNameParam.TryGetValue(p.Name, out var existing))
+               target.RemoveParameter(existing);
+
+            target.AddParameter(p);
+         }
+
+         if (incoming.Formula != null)
+            target.Formula = incoming.Formula;
+
+         upsertEducts(target, incoming);
+         upsertProducts(target, incoming);
+
+         var mods = new HashSet<string>(target.ModifierNames, StringComparer.OrdinalIgnoreCase);
+         foreach (var m in incoming.ModifierNames)
+            if (mods.Add(m))
+               target.AddModifier(m);
+
+         target.Icon = incoming.Icon ?? target.Icon;
+         target.Description = string.IsNullOrEmpty(incoming.Description) ? target.Description : incoming.Description;
+         target.Dimension = incoming.Dimension ?? target.Dimension;
+
+         if (incoming.ContainerCriteria != null)
+            target.ContainerCriteria = incoming.ContainerCriteria;
+      }
+
+      private static void upsertEducts(ReactionBuilder target, ReactionBuilder incoming) =>
+         upsertPartners(target, incoming, isEduct: true);
+
+      private static void upsertProducts(ReactionBuilder target, ReactionBuilder incoming) =>
+         upsertPartners(target, incoming, isEduct: false);
+
+      private static void upsertPartners(ReactionBuilder target, ReactionBuilder incoming, bool isEduct)
+      {
+         IEnumerable<ReactionPartnerBuilder> targetPartners;
+         IEnumerable<ReactionPartnerBuilder> incomingPartners;
+         Action<ReactionPartnerBuilder> addPartner;
+         Action<ReactionPartnerBuilder> removePartner;
+
+         if (isEduct)
+         {
+            targetPartners = target.Educts;
+            incomingPartners = incoming.Educts;
+            addPartner = target.AddEduct;
+            removePartner = target.RemoveEduct;
+         }
+         else
+         {
+            targetPartners = target.Products;
+            incomingPartners = incoming.Products;
+            addPartner = target.AddProduct;
+            removePartner = target.RemoveProduct;
+         }
+
+         var targetByMolecule = targetPartners.ToDictionary(
+            x => x.MoleculeName,
+            StringComparer.OrdinalIgnoreCase);
+
+         foreach (var incomingPartner in incomingPartners)
+         {
+            if (targetByMolecule.TryGetValue(incomingPartner.MoleculeName, out var existingPartner))
+               removePartner(existingPartner);
+
+            var newPartner = new ReactionPartnerBuilder(
+               incomingPartner.MoleculeName,
+               incomingPartner.StoichiometricCoefficient)
+            {
+               Dimension = incomingPartner.Dimension
+            };
+
+            addPartner(newPartner);
+         }
+      }
    }
 }
