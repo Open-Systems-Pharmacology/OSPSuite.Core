@@ -3,6 +3,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Serialization.Xml.Extensions;
 using OSPSuite.Serializer;
+using OSPSuite.Serializer.Xml;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Serialization.Xml
@@ -100,7 +101,7 @@ namespace OSPSuite.Core.Serialization.Xml
       {
          base.PerformMapping();
          Map(x => x.PKSimVersion);
-         Map(x => x.SnapshotOriginModuleId);
+         Map(x => x.Snapshot).AsNode();
       }
    }
 

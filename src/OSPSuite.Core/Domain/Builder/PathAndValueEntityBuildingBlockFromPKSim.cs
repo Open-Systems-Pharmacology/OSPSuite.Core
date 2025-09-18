@@ -7,11 +7,13 @@ namespace OSPSuite.Core.Domain.Builder
       public string PKSimVersion { set; get; }
 
       /// <summary>
-      /// When a building block is created from PKSim module snapshot, this will give the origin module where the snapshot is kept.
-      /// If this value is null, the building block was not imported with snapshot, or it has been changed since it was created from snapshot.
+      /// Holds a snapshot of everything required to recreate the building block in PK-sim.
+      /// Will be empty or null if the building block was not part of a SimulationTransfer
       /// </summary>
-      public string SnapshotOriginModuleId { set; get; }
+      public string Snapshot { set; get; } = string.Empty;
 
+      public bool HasSnapshot => !string.IsNullOrEmpty(Snapshot);
+      
       public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
       {
          base.UpdatePropertiesFrom(source, cloneManager);
@@ -20,6 +22,7 @@ namespace OSPSuite.Core.Domain.Builder
          if (pathAndValueEntityBuildingBlock == null)
             return;
 
+         Snapshot = pathAndValueEntityBuildingBlock.Snapshot;
          PKSimVersion = pathAndValueEntityBuildingBlock.PKSimVersion;
       }
    }
