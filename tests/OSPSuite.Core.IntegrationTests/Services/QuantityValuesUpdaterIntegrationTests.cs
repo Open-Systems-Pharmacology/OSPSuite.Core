@@ -77,9 +77,9 @@ namespace OSPSuite.Core.Services
       private ValidationResult _result;
       private ExpressionProfileBuildingBlock _expressionProfileBuildingBlock;
 
-      protected override void Context()
+      public override void GlobalContext()
       {
-         base.Context();
+         base.GlobalContext();
 
          _distributedParameterValue = new ParameterValue
          {
