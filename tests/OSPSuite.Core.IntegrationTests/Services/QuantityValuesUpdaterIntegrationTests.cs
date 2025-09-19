@@ -1,4 +1,6 @@
-﻿using OSPSuite.BDDHelper;
+﻿using System.Linq;
+using OSPSuite.Assets;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
@@ -72,10 +74,12 @@ namespace OSPSuite.Core.Services
       private ModuleConfiguration _moduleConfiguration;
       private ParameterValue _meanParameterValue;
       private ParameterValue _distributedParameterValue;
+      private ValidationResult _result;
+      private ExpressionProfileBuildingBlock _expressionProfileBuildingBlock;
 
-      protected override void Context()
+      public override void GlobalContext()
       {
-         base.Context();
+         base.GlobalContext();
 
          _distributedParameterValue = new ParameterValue
          {
@@ -96,13 +100,21 @@ namespace OSPSuite.Core.Services
 
          _moduleConfiguration = new ModuleConfiguration(_module, null, _parameterValues);
          _simulationConfiguration.AddModuleConfiguration(_moduleConfiguration);
+         _expressionProfileBuildingBlock = new ExpressionProfileBuildingBlock().WithName("molecule|species|category");
+         _simulationConfiguration.AddExpressionProfile(_expressionProfileBuildingBlock);
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder);
       }
 
       protected override void Because()
       {
-         sut.UpdateQuantitiesValues(_modelConfiguration);
+         _result = sut.UpdateQuantitiesValues(_modelConfiguration);
+      }
+
+      [Observation]
+      public void the_validation_result_indicates_missing_protein_for_present_expression()
+      {
+         _result.Messages.Single(x => x.BuildingBlock.Equals(_expressionProfileBuildingBlock)).Text.ShouldBeEqualTo(Warning.ExpressionMoleculeNotFoundInSimulation(_expressionProfileBuildingBlock.MoleculeName));
       }
 
       [Observation]
