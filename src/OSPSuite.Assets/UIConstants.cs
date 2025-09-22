@@ -232,7 +232,7 @@ namespace OSPSuite.Assets
       public static readonly string DeleteSelected = "Delete Selected Records";
       public static readonly string ModulesFolder = "Modules";
       public static readonly string ApplyChangesToUpdateChart = "Apply changes to update chart";
-      public static readonly string Apply = "Apply";
+      public static readonly string Apply = "Apply updates";
       public static readonly string AutoUpdateChart = "Auto-update chart";
 
       public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
@@ -2253,7 +2253,7 @@ namespace OSPSuite.Assets
          return $"Compare {objectType}s";
       }
 
-      public static readonly string AutoUpdateChart = "Autoupdate chart";
+      public static readonly string AutoUpdateChart = "Auto-update chart";
       public static readonly string ApplyUpdates = "Apply updates";
    }
 
