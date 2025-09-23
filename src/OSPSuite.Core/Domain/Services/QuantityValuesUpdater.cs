@@ -75,26 +75,22 @@ namespace OSPSuite.Core.Domain.Services
          var (modelConfiguration, validationResult) = valueUpdater;
 
          var allPresentMoleculeNames = allMoleculeNames(modelConfiguration.SimulationConfiguration);
-
          var expressionProfiles = modelConfiguration.SimulationConfiguration.ExpressionProfiles;
-         var absentProteins = expressionProfiles.Where(x => !proteinIsInModel(x, allPresentMoleculeNames)).ToList();
+         var expressionsOfAbsentMolecules = expressionProfiles.Where(x => !allPresentMoleculeNames.Contains(x.MoleculeName)).ToList();
 
-         addMessagesForMissingProteins(absentProteins, validationResult);
+         addMessagesForMissingExpressionMolecules(expressionsOfAbsentMolecules, validationResult);
 
          var addOrUpdateParameter = addOrUpdateParameterFromParameterValue(valueUpdater);
 
-         expressionProfiles.Except(absentProteins).SelectMany(x => x.ExpressionParameters)
+         expressionProfiles.Except(expressionsOfAbsentMolecules).SelectMany(x => x.ExpressionParameters)
             .Each(addOrUpdateParameter);
       }
 
-      private void addMessagesForMissingProteins(IEnumerable<ExpressionProfileBuildingBlock> absentProteins, ValidationResult validationResult) =>
-         absentProteins.Each(x => validationResult.AddMessage(NotificationType.Warning, x, Warning.ExpressionMoleculeNotFoundInSimulation(x.MoleculeName), x));
+      private void addMessagesForMissingExpressionMolecules(IReadOnlyList<ExpressionProfileBuildingBlock> absentExpressionProfiles, ValidationResult validationResult) =>
+         absentExpressionProfiles.Each(x => validationResult.AddMessage(NotificationType.Warning, x, Warning.ExpressionMoleculeNotFoundInSimulation(x.MoleculeName), x));
 
       private IReadOnlyList<string> allMoleculeNames(SimulationConfiguration configuration) =>
          configuration.ModuleConfigurations.Where(x => x.Module.Molecules != null).SelectMany(x => x.Module.Molecules.AllNames()).Distinct().ToList();
-
-      private bool proteinIsInModel(ExpressionProfileBuildingBlock expressionProfileBuildingBlock, IReadOnlyList<string> allMoleculeNames) =>
-         allMoleculeNames.Contains(expressionProfileBuildingBlock.MoleculeName);
 
       private void updateParameterFromIndividualValues(ValueUpdaterParams valueUpdater)
       {
