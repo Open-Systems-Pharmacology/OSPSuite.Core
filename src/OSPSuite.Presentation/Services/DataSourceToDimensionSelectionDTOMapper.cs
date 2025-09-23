@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
@@ -52,8 +53,8 @@ namespace OSPSuite.Presentation.Services
       private bool supportsAllUnits(Column extendedColumn, IDimension dimension, IReadOnlyList<string> units)
       {
          // For GeoStd, the only supporting dimension is NO_DIMENSION
-         // if (extendedColumn.ErrorStdDev == Constants.STD_DEV_GEOMETRIC)
-         //    return dimension == Constants.Dimension.NO_DIMENSION;
+         if (extendedColumn.ErrorStdDev == Constants.STD_DEV_GEOMETRIC)
+            return dimension == Constants.Dimension.NO_DIMENSION;
          
          return units.All(x => dimension.SupportsUnit(x));
       }
