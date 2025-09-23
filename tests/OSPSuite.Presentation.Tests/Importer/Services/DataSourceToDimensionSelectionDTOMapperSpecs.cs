@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
-using NPOI.POIFS.NIO;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -10,6 +9,7 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Importer.Services
 {
@@ -34,7 +34,11 @@ namespace OSPSuite.Presentation.Importer.Services
       protected override void Context()
       {
          base.Context();
-         _columns = new List<ExtendedColumn> { new ExtendedColumn { ColumnInfo = new ColumnInfo {SupportedDimensions = { Constants.Dimension.NO_DIMENSION }}, Column = new Column()} };
+         _columns = new List<ExtendedColumn>
+         {
+            new ExtendedColumn { ColumnInfo = new ColumnInfo {SupportedDimensions = { Constants.Dimension.NO_DIMENSION }}, Column = new Column() },
+            new ExtendedColumn { ColumnInfo = new ColumnInfo {SupportedDimensions = { Constants.Dimension.NO_DIMENSION }}, Column = new Column {ErrorStdDev = Constants.STD_DEV_GEOMETRIC} }
+         };
          var dataSet = A.Fake<IDataSet>();
          _datasets = new Cache<string, IDataSet>
          {
@@ -42,8 +46,8 @@ namespace OSPSuite.Presentation.Importer.Services
          };
          var dictionary = new Dictionary<ExtendedColumn, IList<SimulationPoint>>
          {
-            { _columns.First(), new List<SimulationPoint>() }
-
+            { _columns[0], new List<SimulationPoint>() },
+            { _columns[1], new List<SimulationPoint>() }
          };
 
          _parsedData = new ParsedDataSet(new List<string>(), new DataSheet(), new List<UnformattedRow>(), dictionary);
@@ -57,9 +61,16 @@ namespace OSPSuite.Presentation.Importer.Services
       }
 
       [Observation]
+      public void the_dimension_for_geo_std_should_be_no_dimension()
+      {
+         _dtos.Where(x => x.Column.ErrorStdDev == Constants.STD_DEV_GEOMETRIC).Each(x => x.SelectedDimension.ShouldBeEqualTo(Constants.Dimension.NO_DIMENSION));
+         _dtos.Count(x => x.Column.ErrorStdDev == Constants.STD_DEV_GEOMETRIC).ShouldBeEqualTo(1);
+      }
+
+      [Observation]
       public void the_dimension_map_should_contain_the_columns_and_dimensions()
       {
-         _dtos.Single().SelectedDimension.ShouldBeEqualTo(Constants.Dimension.NO_DIMENSION);
+         _dtos[0].SelectedDimension.ShouldBeEqualTo(Constants.Dimension.NO_DIMENSION);
       }
 
       [Observation]
