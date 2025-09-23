@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Utility;
@@ -45,11 +46,15 @@ namespace OSPSuite.Presentation.Services
          return new DimensionSelectionDTO(sheetName, description, extendedColumn.Column, 
             extendedColumn.Column.Dimension != null ? 
                new List<IDimension> { extendedColumn.Column.Dimension } : 
-               extendedColumn.ColumnInfo.SupportedDimensions.Where(dimension => supportsAllUnits(dimension, units)).ToList());
+               extendedColumn.ColumnInfo.SupportedDimensions.Where(dimension => supportsAllUnits(extendedColumn.Column, dimension, units)).ToList());
       }
 
-      private bool supportsAllUnits(IDimension dimension, IReadOnlyList<string> units)
+      private bool supportsAllUnits(Column extendedColumn, IDimension dimension, IReadOnlyList<string> units)
       {
+         // For GeoStd, the only supporting dimension is NO_DIMENSION
+         // if (extendedColumn.ErrorStdDev == Constants.STD_DEV_GEOMETRIC)
+         //    return dimension == Constants.Dimension.NO_DIMENSION;
+         
          return units.All(x => dimension.SupportsUnit(x));
       }
    }
