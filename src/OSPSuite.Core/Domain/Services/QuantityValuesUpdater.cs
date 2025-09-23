@@ -90,7 +90,7 @@ namespace OSPSuite.Core.Domain.Services
          absentExpressionProfiles.Each(x => validationResult.AddMessage(NotificationType.Warning, x, Warning.ExpressionMoleculeNotFoundInSimulation(x.MoleculeName), x));
 
       private IReadOnlyList<string> allMoleculeNames(SimulationConfiguration configuration) =>
-         configuration.ModuleConfigurations.Where(x => x.Module.Molecules != null).SelectMany(x => x.Module.Molecules.AllNames()).Distinct().ToList();
+         configuration.All<MoleculeBuildingBlock>().SelectMany(x => x.AllNames()).Distinct().ToList();
 
       private void updateParameterFromIndividualValues(ValueUpdaterParams valueUpdater)
       {
