@@ -1,11 +1,12 @@
-name: Code Coverage
+name: Build PR 12.2
 
 on:
-  schedule:
-    - cron: '0 1 * * 4'
+  pull_request:
+    branches:
+    - develop
 
 jobs:
-  cover:
+  build-and-test:
     runs-on: windows-latest
     steps:
       - name: Checkout code
@@ -19,11 +20,13 @@ jobs:
           dotnet restore
 
       - name: Build
-        run: dotnet build OSPSuite.Core.sln /p:Version=12.1.999
+        run: dotnet build OSPSuite.Core.sln /p:Version=12.2.9999
 
-        
-      - name: Cover and report
-        uses: Open-Systems-Pharmacology/Workflows/.github/actions/dotCover@main
+      - name : Test
+        run: dotnet test .\tests\**\bin\Debug\net472\OSPSuite*Tests.dll -v normal --no-build  --logger:"html;LogFileName=../testLog_Windows.html"
+
+      - name: Push test log as artifact
+        uses: actions/upload-artifact@v4
         with:
-          xml-configuration: dotcover.xml
-          token: ${{ secrets.CODECOV_TOKEN }}
+          name: testLog_Windows
+          path: ./testLog*.html
