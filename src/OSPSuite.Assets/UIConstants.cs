@@ -2159,6 +2159,8 @@ namespace OSPSuite.Assets
          $"The selected output resolution will generate {numberOfPoints} points and may severely impact the software performance.\nAre you sure you want to run with these setting? If not, consider changing output resolution in simulations settings";
 
       public static string NeighborhoodWasNotFoundInModel(string neighborhoodName, string buildingBlockName) => $"The neighborhood '{neighborhoodName}' from building block '{buildingBlockName}' was not added to the simulation";
+
+      public static string ExpressionMoleculeNotFoundInSimulation(string moleculeName) => $"The molecule '{moleculeName}' is not part of the simulation structure";
    }
 
    public static class RibbonCategories

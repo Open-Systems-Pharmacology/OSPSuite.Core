@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
@@ -71,10 +72,25 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateParameterFromExpressionProfiles(ValueUpdaterParams valueUpdater)
       {
+         var (modelConfiguration, validationResult) = valueUpdater;
+
+         var allPresentMoleculeNames = allMoleculeNames(modelConfiguration.SimulationConfiguration);
+         var expressionProfiles = modelConfiguration.SimulationConfiguration.ExpressionProfiles;
+         var expressionsOfAbsentMolecules = expressionProfiles.Where(x => !allPresentMoleculeNames.Contains(x.MoleculeName)).ToList();
+
+         addMessagesForMissingExpressionMolecules(expressionsOfAbsentMolecules, validationResult);
+
          var addOrUpdateParameter = addOrUpdateParameterFromParameterValue(valueUpdater);
-         valueUpdater.ModelConfiguration.SimulationConfiguration.ExpressionProfiles?.SelectMany(x => x.ExpressionParameters)
+
+         expressionProfiles.Except(expressionsOfAbsentMolecules).SelectMany(x => x.ExpressionParameters)
             .Each(addOrUpdateParameter);
       }
+
+      private void addMessagesForMissingExpressionMolecules(IReadOnlyList<ExpressionProfileBuildingBlock> absentExpressionProfiles, ValidationResult validationResult) =>
+         absentExpressionProfiles.Each(x => validationResult.AddMessage(NotificationType.Warning, x, Warning.ExpressionMoleculeNotFoundInSimulation(x.MoleculeName), x));
+
+      private IReadOnlyList<string> allMoleculeNames(SimulationConfiguration configuration) =>
+         configuration.All<MoleculeBuildingBlock>().SelectMany(x => x.AllNames()).Distinct().ToList();
 
       private void updateParameterFromIndividualValues(ValueUpdaterParams valueUpdater)
       {
