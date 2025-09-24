@@ -96,6 +96,9 @@ namespace OSPSuite.Infrastructure.Import.Services
                alreadyExisting.DataSets.Add(key, current);
             }
 
+            // current is an IDataSet that may have already existing data from a previous attempt importing a sheet.
+            // It should be emptied before the new data sets from the sheet are added, perhaps with a revised configuration
+            current.ClearData();
             current.AddData(dataSets[key].Data);
          }
       }
