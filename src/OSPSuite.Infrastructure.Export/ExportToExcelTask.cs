@@ -12,6 +12,8 @@ namespace OSPSuite.Infrastructure.Export
 {
    public static class ExportToExcelTask
    {
+      private const int ROWS_FOR_AUTO_SIZE = 3;
+
       /// <summary>
       ///    Exports the given dataTable to the file given as parameter.
       /// </summary>
@@ -110,13 +112,19 @@ namespace OSPSuite.Infrastructure.Export
                   cell.SetCellValue(dataTable.Rows[i][j].ToString());
                   cell.CellStyle = workBookConfiguration.BodyStyle;
                }
+
+               if (shouldAutoSizeColumns(i, rowCount))
+               {
+                  sheet.AutoSizeColumn(j);
+               }
             }
          }
+      }
 
-         for (var j = 0; j < columnCount; j++)
-         {
-            sheet.AutoSizeColumn(j);
-         }
+      private static bool shouldAutoSizeColumns(int currentRowIndex, int totalRowCount)
+      {
+         // After ROWS_FOR_AUTO_SIZE have been added, or if this is the last row and the total number of rows is less than the ROWS_FOR_AUTO_SIZE
+         return currentRowIndex == ROWS_FOR_AUTO_SIZE || (totalRowCount < ROWS_FOR_AUTO_SIZE && currentRowIndex == totalRowCount - 1);
       }
    }
 }
