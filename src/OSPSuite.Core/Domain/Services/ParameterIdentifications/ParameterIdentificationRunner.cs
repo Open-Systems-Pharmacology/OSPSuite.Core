@@ -18,6 +18,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       void Stop(ParameterIdentification parameterIdentification);
       bool IsRunning { get; }
       bool IsAnyRunning(IReadOnlyList<ParameterIdentification> parameterIdentifications);
+      IEnumerable<ParameterIdentification> RunningParameterIdentifications { get; }
    }
 
    public class ParameterIdentificationRunner : IParameterIdentificationRunner
@@ -29,6 +30,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private readonly Cache<ParameterIdentification, IParameterIdentificationEngine> _parameterIdentificationEngines = new Cache<ParameterIdentification, IParameterIdentificationEngine>(onMissingKey: x => null);
 
       public bool IsRunning => _parameterIdentificationEngines.Any();
+
+      public IEnumerable<ParameterIdentification> RunningParameterIdentifications => _parameterIdentificationEngines.Keys;
 
       public ParameterIdentificationRunner(IParameterIdentificationEngineFactory parameterIdentificationEngineFactory,  IDialogCreator dialogCreator, 
          IEntityValidationTask entityValidationTask, IOSPSuiteExecutionContext executionContext)
