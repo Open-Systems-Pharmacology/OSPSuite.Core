@@ -1205,7 +1205,7 @@ namespace OSPSuite.Assets
 
          public static string SimulationsAreRunning(IReadOnlyList<string> names)
          {
-            return $"The following Simulations are some running: {ObjectTypes.ParameterIdentification.ToLowerInvariant().PluralizeIf(names)} {names.ToString(", ", "'")}, action cannot be performed.";
+            return $"The following Simulations are some running: {names.ToString(", ", "'")}, action cannot be performed.";
          }
 
          public static string ParameterIdentificationsAreRunning(IReadOnlyList<string> names)
