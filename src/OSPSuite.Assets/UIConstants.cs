@@ -1205,12 +1205,12 @@ namespace OSPSuite.Assets
 
          public static string SimulationsAreRunning(IReadOnlyList<string> names)
          {
-            return $"The following Simulations are some running: {names.ToString(", ", "'")}, action cannot be performed.";
+            return $"The following Simulations are some running: {names.ToString(", ", "'")}, action cannot be performed until they are stopped.";
          }
 
          public static string ParameterIdentificationsAreRunning(IReadOnlyList<string> names)
          {
-            return $"The following Parameter Identifications are some running: {ObjectTypes.ParameterIdentification.ToLowerInvariant().PluralizeIf(names)} {names.ToString(", ", "'")}, action cannot be performed.";
+            return $"The following Parameter Identifications are some running: {ObjectTypes.ParameterIdentification.ToLowerInvariant().PluralizeIf(names)} {names.ToString(", ", "'")}, action cannot be performed  until they are stopped.";
          }
 
          public static string ReallyDeleteParameterIdentifications(IReadOnlyList<string> names)
