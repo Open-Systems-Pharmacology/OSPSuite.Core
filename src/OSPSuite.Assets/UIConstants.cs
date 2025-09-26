@@ -1205,7 +1205,7 @@ namespace OSPSuite.Assets
 
          public static string SimulationsAreRunning(IReadOnlyList<string> names)
          {
-            return $"The following Simulations are some running: {names.ToString(", ", "'")}, action cannot be performed until they are stopped.";
+            return $"The following Simulations are currently running: {names.ToString(", ", "'")}, action cannot be performed until they are stopped.";
          }
 
          public static string ParameterIdentificationsAreRunning(IReadOnlyList<string> names)
