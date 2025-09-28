@@ -5,6 +5,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -34,7 +35,7 @@ namespace OSPSuite.Core.Mappers
       {
          base.Context();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          _para1 = A.Fake<IParameter>().WithMode(ParameterBuildMode.Local);
          _para3 = A.Fake<IParameter>().WithMode(ParameterBuildMode.Global);
          _allParameterBuilders = new List<IParameter> { _para1, _para3 };

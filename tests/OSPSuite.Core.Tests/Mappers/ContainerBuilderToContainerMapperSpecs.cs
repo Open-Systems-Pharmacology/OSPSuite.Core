@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
 using System;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -42,7 +43,7 @@ namespace OSPSuite.Core.Mappers
          _clonedParameter = new Parameter().WithName("toto");
          _clonedContainer.Add(_clonedParameter);
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          A.CallTo(() => _cloneManagerForModel.Clone(_containerBuilder)).Returns(_clonedContainer);
       }
 

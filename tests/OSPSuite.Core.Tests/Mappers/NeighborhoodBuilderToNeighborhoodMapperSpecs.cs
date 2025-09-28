@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -76,7 +77,7 @@ namespace OSPSuite.Core.Mappers
          A.CallTo(() => secondNeighborModelPath.Resolve<IContainer>(_rootContainer)).Returns(_secondNeighborInModel);
 
          _moleculeContainer = A.Fake<IContainer>();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          A.CallTo(() => _containerMapper.MapFrom(_neighborhoodBuilder.MoleculeProperties, _simulationBuilder)).Returns(_moleculeContainer);
          _molecule1 = "molecule1";
          _molecule2 = "molecule2";

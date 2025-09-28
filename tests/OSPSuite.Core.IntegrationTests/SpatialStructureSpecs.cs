@@ -21,7 +21,7 @@ namespace OSPSuite.Core
       {
          base.GlobalContext();
          _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
       }
 
       protected override void Context()

@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -37,7 +38,7 @@ namespace OSPSuite.Core.Mappers
       {
          base.Context();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          _observerBuilder = new ObserverBuilder().WithName("toto").WithDimension(A.Fake<IDimension>());
          _observerBuilder.Formula = A.Fake<IFormula>();
          _mappedFormula = A.Fake<IFormula>();

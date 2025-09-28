@@ -46,7 +46,7 @@ namespace OSPSuite.Core.Domain
          _rootContainer.Add(_invalidContainer);
          _objectTypeResolver = A.Fake<IObjectTypeResolver>();
          _model = new Model();
-         _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, new SimulationBuilder(_simulationConfiguration));
+         _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, new SimulationBuilderForSpecs(_simulationConfiguration));
       }
    }
 

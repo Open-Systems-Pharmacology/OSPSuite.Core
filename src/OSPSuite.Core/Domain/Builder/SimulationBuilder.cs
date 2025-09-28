@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
@@ -8,15 +9,16 @@ namespace OSPSuite.Core.Domain.Builder
 {
    public class SimulationBuilder
    {
-      private readonly SimulationConfiguration _simulationConfiguration;
+      private readonly ICloneManagerForModel _cloneManager;
+      private readonly IContainerMergeTask _containerMergeTask;
+      private SimulationConfiguration _simulationConfiguration;
 
-      private readonly ObjectBaseCache<TransportBuilder> _passiveTransports = new ObjectBaseCache<TransportBuilder>();
-      private readonly ObjectBaseCache<ReactionBuilder> _reactions = new ObjectBaseCache<ReactionBuilder>();
-      private readonly ObjectBaseCache<ObserverBuilder> _observers = new ObjectBaseCache<ObserverBuilder>();
-      private readonly ObjectBaseCache<MoleculeBuilder> _molecules = new ObjectBaseCache<MoleculeBuilder>();
+      private readonly CacheByName<TransportBuilder> _passiveTransports = new CacheByName<TransportBuilder>();
+      private readonly CacheByName<ReactionBuilder> _reactions = new CacheByName<ReactionBuilder>();
+      private readonly CacheByName<ObserverBuilder> _observers = new CacheByName<ObserverBuilder>();
+      private readonly CacheByName<MoleculeBuilder> _molecules = new CacheByName<MoleculeBuilder>();
       private readonly PathAndValueEntityCache<ParameterValue> _parameterValues = new PathAndValueEntityCache<ParameterValue>();
       private readonly PathAndValueEntityCache<InitialCondition> _initialConditions = new PathAndValueEntityCache<InitialCondition>();
-      private readonly Cache<IMoleculeDependentBuilder, MoleculeList> _moleculeListCache = new Cache<IMoleculeDependentBuilder, MoleculeList>();
 
       //Contains a temp  cache of builder and their corresponding building blocks
       private readonly Cache<string, BuilderSource> _builderSources = new Cache<string, BuilderSource>(x => x.Builder.Id, x => null);
@@ -24,7 +26,13 @@ namespace OSPSuite.Core.Domain.Builder
       //Cache of entity source by id and not by path. It is required because the path is not available at time of construction in the entity
       private readonly Cache<string, SimulationEntitySource> _entitySources = new Cache<string, SimulationEntitySource>(onMissingKey: x => null);
 
-      public SimulationBuilder(SimulationConfiguration simulationConfiguration)
+      public SimulationBuilder(ICloneManagerForModel cloneManager, IContainerMergeTask containerMergeTask)
+      {
+         _cloneManager = cloneManager;
+         _containerMergeTask = containerMergeTask;
+      }
+
+      protected internal void PerformMerge(SimulationConfiguration simulationConfiguration)
       {
          _simulationConfiguration = simulationConfiguration;
          performMerge();
@@ -85,13 +93,100 @@ namespace OSPSuite.Core.Domain.Builder
 
       private void performMerge()
       {
-         cacheBuilders(x => x.Reactions, _reactions);
-         cacheBuilders(x => x.Molecules, _molecules);
-         cacheMoleculeDependentBuilders(x => x.PassiveTransports, _passiveTransports);
-         cacheMoleculeDependentBuilders(x => x.Observers, _observers);
-         cacheParameterValueBuilders(x => x.SelectedParameterValues, _parameterValues);
-         cacheInitialConditions();
+         mergeBuilders(x => x.Reactions, _reactions, mergeReactions);
+         mergeBuilders(x => x.Molecules, _molecules, mergeMolecules);
+         mergeBuilders(x => x.PassiveTransports, _passiveTransports, mergeTransports);
+         mergeBuilders(x => x.Observers, _observers, mergeObservers);
+         mergeParameterValueBuilders(x => x.SelectedParameterValues, _parameterValues);
+         mergeInitialConditions();
          cacheEntities();
+      }
+
+      private void mergeBuilders<T>(Func<Module, IBuildingBlock<T>> propAccess, CacheByName<T> cache, Action<T, BuilderSource<T>> mergeStrategyAction) where T : class, IBuilder, IEntity
+      {
+         var analyzedMerges = analyzeBuilderMerges(propAccess);
+
+         foreach (var mergeInfo in analyzedMerges)
+         {
+            var (finalBuilder, buildingBlock) = mergeInfo.BaseBuilder;
+
+            if (mergeInfo.RequiresClone)
+            {
+               finalBuilder = cloneBuilder(finalBuilder);
+               foreach (var (sourceBuilder, sourceBuildingBlock) in mergeInfo.BuildersToMerge)
+               {
+                  //Clone the source builder if needed to prevent cross-contamination during sequential merges
+                  //When merging multiple builders, earlier merged builders could be affected by later merges through shared references
+                  var sourceBuilderToMerge = mergeInfo.RequiresMergeClone ? cloneBuilder(sourceBuilder) : sourceBuilder;
+                  var mergedBuilderSource = new BuilderSource<T>(sourceBuilderToMerge, sourceBuildingBlock);
+                  tryMergeContainers(finalBuilder, mergedBuilderSource);
+                  mergeStrategyAction(finalBuilder, mergedBuilderSource);
+               }
+            }
+
+            cache.Add(finalBuilder);
+            AddToBuilderSource(finalBuilder, buildingBlock);
+         }
+      }
+
+      private T cloneBuilder<T>(T builder) where T : class, IBuilder
+      {
+         //we will need to make sure we keep the Id the same somehow to ensure proper tracking of entities. TBD
+         return _cloneManager.Clone(builder);
+      }
+
+      private void tryMergeContainers<T>(T target, BuilderSource<T> builderSource) where T : IEntity
+      {
+         var targetContainer = target as IContainer;
+         var sourceContainer = builderSource.Builder as IContainer;
+         if (targetContainer == null || sourceContainer == null)
+            return;
+
+         mergeContainers(targetContainer, new BuilderSource<IContainer>(sourceContainer, builderSource.BuildingBlock));
+      }
+
+      private void mergeContainers<T>(T target, BuilderSource<T> source) where T : IContainer
+      {
+         var (sourceBuilder, sourceBuildingBlock) = source;
+         //Marking all entities in the source as coming from this source
+         var allEntities = sourceBuilder.GetAllChildren<IEntity>();
+         allEntities.Each(entity => AddToBuilderSource(entity, sourceBuildingBlock));
+
+         //at this step, all entities in the target should already be marked as coming from their respective source
+         _containerMergeTask.MergeContainers(target, sourceBuilder);
+      }
+
+      private void mergeReactions(ReactionBuilder target, BuilderSource<ReactionBuilder> source)
+      {
+         //TODO add reaction merge behavior
+      }
+
+      private void mergeTransports(TransportBuilder target, BuilderSource<TransportBuilder> source)
+      {
+         var (sourceBuilder, sourceBuildingBlock) = source;
+         mergeMoleculeLists(target, sourceBuilder);
+      }
+
+      private void mergeMoleculeLists(IMoleculeDependentBuilder target, IMoleculeDependentBuilder sourceToMerge)
+      {
+         //we clone just in case and then we will update
+
+         addMolecules(target.MoleculeList, sourceToMerge);
+      }
+
+      private void addMolecules(MoleculeList targetMoleculeList, IMoleculeDependentBuilder builderToMerge)
+      {
+         builderToMerge.MoleculeList.MoleculeNames.Each(targetMoleculeList.AddMoleculeName);
+         builderToMerge.MoleculeList.MoleculeNamesToExclude.Each(targetMoleculeList.AddMoleculeNameToExclude);
+      }
+
+      private void mergeObservers(ObserverBuilder target, BuilderSource<ObserverBuilder> source)
+      {
+         mergeMoleculeLists(target, source.Builder);
+      }
+
+      private void mergeMolecules(MoleculeBuilder target, BuilderSource<MoleculeBuilder> source)
+      {
       }
 
       private void cacheEntities()
@@ -122,12 +217,12 @@ namespace OSPSuite.Core.Domain.Builder
          });
       }
 
-      private void cacheInitialConditions()
+      private void mergeInitialConditions()
       {
          var expressionProfileInitialConditionsCache = new PathAndValueEntityCache<InitialCondition>();
          var initialConditionsFromConfigurationsCache = new PathAndValueEntityCache<InitialCondition>();
 
-         cacheParameterValueBuilders(x => x.SelectedInitialConditions, initialConditionsFromConfigurationsCache);
+         mergeParameterValueBuilders(x => x.SelectedInitialConditions, initialConditionsFromConfigurationsCache);
          var expressionProfileInitialConditions = allInitialConditionsFromExpressionProfileSources();
          expressionProfileInitialConditionsCache.AddRange(expressionProfileInitialConditions.Select(x => x.InitialCondition));
          addToBuilderSource(expressionProfileInitialConditions);
@@ -136,39 +231,7 @@ namespace OSPSuite.Core.Domain.Builder
          _initialConditions.AddRange(expressionProfileInitialConditionsCache.Concat(initialConditionsFromConfigurationsCache));
       }
 
-      private void cacheMoleculeDependentBuilders<T>(Func<Module, IBuildingBlock<T>> propAccess, ObjectBaseCache<T> cache) where T : class, IMoleculeDependentBuilder
-      {
-         var builders = cacheBuilders(propAccess, cache);
-         cacheMoleculeLists(builders, cache);
-      }
-
-      private IReadOnlyList<T> cacheBuilders<T>(Func<Module, IBuildingBlock<T>> propAccess, ObjectBaseCache<T> cache) where T : class, IBuilder, IEntity
-      {
-         var builderSources = allBuilderSources(propAccess);
-         var builders = builderSources.Select(x => x.Builder).ToList();
-         cache.AddRange(builders);
-         addToBuilderSource(builderSources);
-         return builders;
-      }
-
-      private void cacheMoleculeLists<T>(IReadOnlyList<T> allBuilders, ObjectBaseCache<T> builderCache) where T : class, IMoleculeDependentBuilder
-      {
-         builderCache.Each(builderUsedInModelBuilding => combineMoleculeLists(allBuilders.Where(x => x.IsNamed(builderUsedInModelBuilding.Name)), builderUsedInModelBuilding));
-      }
-
-      private void combineMoleculeLists(IEnumerable<IMoleculeDependentBuilder> builders, IMoleculeDependentBuilder builderUsedInModelBuilding)
-      {
-         _moleculeListCache[builderUsedInModelBuilding] = builderUsedInModelBuilding.MoleculeList.Clone();
-         builders.Each(x => addMolecules(x, _moleculeListCache[builderUsedInModelBuilding]));
-      }
-
-      private void addMolecules(IMoleculeDependentBuilder builder, MoleculeList moleculeList)
-      {
-         builder.MoleculeList.MoleculeNames.Each(moleculeList.AddMoleculeName);
-         builder.MoleculeList.MoleculeNamesToExclude.Each(moleculeList.AddMoleculeNameToExclude);
-      }
-
-      private void cacheParameterValueBuilders<T>(Func<ModuleConfiguration, IBuildingBlock<T>> propAccess, PathAndValueEntityCache<T> cache) where T : PathAndValueEntity
+      private void mergeParameterValueBuilders<T>(Func<ModuleConfiguration, IBuildingBlock<T>> propAccess, PathAndValueEntityCache<T> cache) where T : PathAndValueEntity
       {
          var builderSources = allParameterValueBuilderSources(propAccess);
          var builders = builderSources.Select(x => x.Builder).ToList();
@@ -191,10 +254,10 @@ namespace OSPSuite.Core.Domain.Builder
          builderSources.Each(x => AddToBuilderSource(x.Builder, x.BuildingBlock));
 
       internal IReadOnlyList<(SpatialStructure spatialStructure, MergeBehavior mergeBehavior)> SpatialStructureAndMergeBehaviors =>
-         _simulationConfiguration.ModuleConfigurations.Where(x => x.Module.SpatialStructure != null).Select(x => (x.Module.SpatialStructure, x.MergeBehavior)).ToList();
+         buildingBlockAndMergeBehaviors(x => x.SpatialStructure);
 
       internal IReadOnlyList<(EventGroupBuildingBlock eventGroupBuildingBlock, MergeBehavior mergeBehavior)> EventGroupAndMergeBehaviors =>
-         _simulationConfiguration.ModuleConfigurations.Where(x => x.Module.EventGroups != null).Select(x => (x.Module.EventGroups, x.MergeBehavior)).ToList();
+         buildingBlockAndMergeBehaviors(x => x.EventGroups);
 
       internal IReadOnlyCollection<TransportBuilder> PassiveTransports => _passiveTransports;
       internal IReadOnlyCollection<ReactionBuilder> Reactions => _reactions;
@@ -203,37 +266,130 @@ namespace OSPSuite.Core.Domain.Builder
       internal IReadOnlyCollection<ParameterValue> ParameterValues => _parameterValues;
       internal IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
 
+      private IReadOnlyList<(TBuildingBlock buildingBlock, MergeBehavior mergeBehavior)> buildingBlockAndMergeBehaviors<TBuildingBlock>(Func<Module, TBuildingBlock> propAccess) where TBuildingBlock : class, IBuildingBlock =>
+         _simulationConfiguration.ModuleConfigurations
+            .Where(x => propAccess(x.Module) != null)
+            .Select(x => (propAccess(x.Module), x.MergeBehavior))
+            .ToList();
+
       public virtual IReadOnlyCollection<SimulationEntitySource> EntitySources => _entitySources;
 
-      internal MoleculeList MoleculeListFor(IMoleculeDependentBuilder builder) => _moleculeListCache[builder];
+      internal MoleculeList MoleculeListFor(IMoleculeDependentBuilder builder) => builder.MoleculeList;
 
       internal MoleculeBuilder MoleculeByName(string name) => _molecules[name];
 
-      internal class BuilderSource
+      internal class BuilderSource : BuilderSource<IEntity>
       {
-         public IEntity Builder { get; }
-         public IBuildingBlock BuildingBlock { get; }
-
-         public BuilderSource(IEntity builder, IBuildingBlock buildingBlock)
+         public BuilderSource(IEntity builder, IBuildingBlock buildingBlock) : base(builder, buildingBlock)
          {
-            Builder = builder;
-            BuildingBlock = buildingBlock;
-         }
-
-         public override string ToString()
-         {
-            return $"{Builder.EntityPath()} - {BuildingBlock.Name}";
          }
       }
 
       internal BuilderSource BuilderSourceFor(IEntity sourceEntity) => _builderSources[sourceEntity.Id];
 
-      private IReadOnlyList<(T Builder, IBuildingBlock BuildingBlock)> allBuilderSources<T>(Func<Module, IBuildingBlock<T>> propAccess) where T : IBuilder =>
-         _simulationConfiguration.ModuleConfigurations
-            .Select(x => propAccess(x.Module))
-            .Where(x => x != null)
-            .SelectMany(x => x.Select(builder => (builder, (IBuildingBlock) x)))
+      internal class BuilderSource<T> where T : IEntity
+      {
+         public T Builder { get; }
+         public IBuildingBlock BuildingBlock { get; }
+
+         public BuilderSource(T builder, IBuildingBlock buildingBlock)
+         {
+            Builder = builder;
+            BuildingBlock = buildingBlock;
+         }
+
+         public void Deconstruct(out T builder, out IBuildingBlock buildingBlock)
+         {
+            builder = Builder;
+            buildingBlock = BuildingBlock;
+         }
+      }
+
+      internal class BuilderMergeInfo<T> where T : IBuilder
+      {
+         public BuilderSource<T> BaseBuilder { get; }
+         public IReadOnlyList<BuilderSource<T>> BuildersToMerge { get; }
+
+         /// <summary>
+         ///    Indicates that the base builder needs to be cloned before merging
+         /// </summary>
+         public bool RequiresClone => BuildersToMerge.Count > 0;
+
+         /// <summary>
+         ///    It is required to also clone each builder being merged if we have 2 or more builders to merge.
+         ///    This prevents cross-contamination between builders during sequential merges.
+         ///    Example: When merging B1, then B2 into finalBuilder:
+         ///    - Merge B1: B1's children/references are transferred to finalBuilder
+         ///    - Merge B2: B2's merge operations might modify children that came from B1
+         ///    - If B1 wasn't cloned, these modifications propagate back to the original building block through shared references
+         ///    With only 1 builder to merge, there are no subsequent merges to cause side effects, so cloning is not needed.
+         /// </summary>
+         public bool RequiresMergeClone => BuildersToMerge.Count >= 2;
+
+         public BuilderMergeInfo(BuilderSource<T> baseBuilder) : this(baseBuilder, Enumerable.Empty<BuilderSource<T>>())
+         {
+         }
+
+         public BuilderMergeInfo(BuilderSource<T> baseBuilder, IEnumerable<BuilderSource<T>> buildersToMerge)
+         {
+            BaseBuilder = baseBuilder;
+            BuildersToMerge = buildersToMerge.ToList();
+         }
+      }
+
+      private IReadOnlyList<BuilderMergeInfo<T>> analyzeBuilderMerges<T>(Func<Module, IBuildingBlock<T>> propAccess) where T : IBuilder
+      {
+         var buildingBlocksAndMergeBehaviors = buildingBlockAndMergeBehaviors(propAccess);
+
+         if (buildingBlocksAndMergeBehaviors.Count == 0)
+            return new List<BuilderMergeInfo<T>>();
+
+         var allBuildersWithBehaviors = buildingBlocksAndMergeBehaviors
+            .SelectMany(x => x.buildingBlock.Select(builder => (builder, x.buildingBlock, x.mergeBehavior)))
             .ToList();
+
+         var results = new List<BuilderMergeInfo<T>>();
+
+         foreach (var group in allBuildersWithBehaviors.GroupBy(x => x.builder.Name))
+         {
+            var builders = group.ToList();
+
+            //only one, we use it as is
+            if (builders.Count == 1)
+            {
+               var builderSource = new BuilderSource<T>(builders[0].builder, builders[0].buildingBlock);
+               results.Add(new BuilderMergeInfo<T>(builderSource));
+               continue;
+            }
+
+            //last one is overwrite. We will use it as is also
+            var (lastBuilder, lastBuildingBlock, mergeBehavior) = builders[builders.Count - 1];
+            if (mergeBehavior == MergeBehavior.Overwrite)
+            {
+               var builderSource = new BuilderSource<T>(lastBuilder, lastBuildingBlock);
+               results.Add(new BuilderMergeInfo<T>(builderSource));
+               continue;
+            }
+
+            //We find the last one that has an overwrite before the extend sequence. This will be the base. We will clone it and merge everything on top of it
+            //If no overwrite is found, baseIndex stays at 0 and we use the first builder as the base
+            int baseIndex = 0;
+            for (int i = builders.Count - 2; i >= 0; i--)
+            {
+               if (builders[i].mergeBehavior == MergeBehavior.Overwrite)
+               {
+                  baseIndex = i;
+                  break;
+               }
+            }
+
+            var baseBuilderSource = new BuilderSource<T>(builders[baseIndex].builder, builders[baseIndex].buildingBlock);
+            var buildersToMerge = builders.Skip(baseIndex + 1).Select(x => new BuilderSource<T>(x.builder, x.buildingBlock));
+            results.Add(new BuilderMergeInfo<T>(baseBuilderSource, buildersToMerge));
+         }
+
+         return results;
+      }
 
       private IReadOnlyList<(T Builder, IBuildingBlock BuildingBlock)> allParameterValueBuilderSources<T>(Func<ModuleConfiguration, IBuildingBlock<T>> propAccess) where T : PathAndValueEntity =>
          _simulationConfiguration.ModuleConfigurations

@@ -8,6 +8,7 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Helpers;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Services
@@ -76,7 +77,7 @@ namespace OSPSuite.Core.Services
 
       protected override void Because()
       {
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          sut.CreateObservers(new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder));
       }
    }

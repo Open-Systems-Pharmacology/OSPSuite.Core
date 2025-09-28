@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -31,7 +32,7 @@ namespace OSPSuite.Core.Mappers
       {
          base.Context();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          _formula = A.Fake<IFormula>();
          _clonedFormula = A.Fake<IFormula>();
          A.CallTo(() => _cloneManagerForModel.Clone(_formula)).Returns(_clonedFormula);

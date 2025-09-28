@@ -39,6 +39,10 @@ namespace OSPSuite.Core
       {
          var interfaceName = "I" + concreteType.Name;
 
+         if (concreteType.Name == "SimulationBuilder")
+         {
+            var t = "toto";
+         }
          var serviceTypes = concreteType.GetInterfaces().Where(t => t.Name == interfaceName).ToList();
 
          if (_registerConcreteType)

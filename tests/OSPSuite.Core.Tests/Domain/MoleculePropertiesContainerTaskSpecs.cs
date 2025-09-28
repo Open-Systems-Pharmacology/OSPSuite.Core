@@ -5,6 +5,7 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
@@ -25,7 +26,7 @@ namespace OSPSuite.Core.Domain
          _containerTask = A.Fake<IContainerTask>();
          _entityTracker= A.Fake<IEntityTracker>();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          _rootContainer = new Container();
          _parameterCollectionMapper = A.Fake<IParameterBuilderCollectionToParameterCollectionMapper>();
          _keywordReplacer = A.Fake<IKeywordReplacerTask>();

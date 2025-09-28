@@ -629,7 +629,7 @@ namespace OSPSuite.Core.Domain
 
          _model.Root = _root;
          var simulationConfiguration =  new SimulationConfiguration();
-         _modelConfiguration = new ModelConfiguration(_model, simulationConfiguration, new SimulationBuilder(simulationConfiguration));
+         _modelConfiguration = new ModelConfiguration(_model, simulationConfiguration, new SimulationBuilderForSpecs(simulationConfiguration));
       }
    }
 

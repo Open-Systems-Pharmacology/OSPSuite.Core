@@ -9,6 +9,7 @@ using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -61,7 +62,7 @@ namespace OSPSuite.Core.Mappers
          _educt2 = A.Fake<ReactionPartner>();
          _prod2 = A.Fake<ReactionPartner>();
          _container = A.Fake<IContainer>();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          A.CallTo(() => _dimensionFactory.Dimension(Constants.Dimension.AMOUNT_PER_TIME)).Returns(_amountPerTimeDimension);
          A.CallTo(() => _reactionPartnerMapper.MapFromLocal(edPartner1, _container, _simulationBuilder)).Returns(_educt1);
          A.CallTo(() => _reactionPartnerMapper.MapFromLocal(edPartner2, _container, _simulationBuilder)).Returns(_educt2);

@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Helpers;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
@@ -56,7 +57,7 @@ namespace OSPSuite.Core.Domain
          _moduleConfiguration2.Module.Add(_initialConditionsBuildingBlock);
          _moduleConfiguration2.SelectedInitialConditions = _initialConditionsBuildingBlock;
 
-         sut = new SimulationBuilder(_simulationConfiguration);
+         sut = new SimulationBuilderForSpecs(_simulationConfiguration);
          _observerBuilder = _moduleConfiguration2.Module.Observers.AmountObserverBuilders.First();
       }
 

@@ -26,7 +26,7 @@ namespace OSPSuite.Core.Services
 
          _model = new Model {Root = _root};
 
-         _simulationBuilder = new SimulationBuilder(new SimulationConfiguration());
+         _simulationBuilder = new SimulationBuilderForSpecs(new SimulationConfiguration());
       }
    }
 

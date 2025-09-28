@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Domain
 {
@@ -39,7 +40,7 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          _processBuilder = new ReactionBuilder();
          _processBuilder.CreateProcessRateParameter = true;
          _kinetic = new ExplicitFormula("(A+B)*fu/BW");

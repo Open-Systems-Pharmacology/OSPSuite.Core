@@ -29,7 +29,7 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         //we create the simulation in context as some tests are modifying it
+         //we create the simulation configuration in context as some tests are modifying it
          _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
       }
 
@@ -508,7 +508,7 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         var simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         var simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
 
          _parameterValue = simulationBuilder.ParameterValues.First(x => x.Name.Equals("FormulaParameterOverwritten"));
          _parameterValue.Value = double.NaN;
@@ -530,7 +530,7 @@ namespace OSPSuite.Core
       {
          base.Context();
          //we use a sim builder here to modify the configuration on the fly
-         var simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         var simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
 
          var initialCondition = simulationBuilder.InitialConditions.First();
          var physicalContainer = simulationBuilder.SpatialStructureAndMergeBehaviors.SelectMany(x => x.spatialStructure.TopContainers)
@@ -552,7 +552,7 @@ namespace OSPSuite.Core
       {
          base.Context();
          //we use a sim builder here to modify the configuration on the fly
-         var simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         var simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          var molecule = simulationBuilder.MoleculeByName("A");
          var paraToRemove = molecule.Parameters.SingleOrDefault(para => para.Name == "logMA");
          molecule.RemoveParameter(paraToRemove);

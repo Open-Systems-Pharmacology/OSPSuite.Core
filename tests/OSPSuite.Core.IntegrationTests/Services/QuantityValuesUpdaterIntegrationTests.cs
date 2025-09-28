@@ -96,7 +96,7 @@ namespace OSPSuite.Core.Services
 
          _moduleConfiguration = new ModuleConfiguration(_module, null, _parameterValues);
          _simulationConfiguration.AddModuleConfiguration(_moduleConfiguration);
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder);
       }
 
@@ -161,7 +161,7 @@ namespace OSPSuite.Core.Services
 
          _moduleConfiguration = new ModuleConfiguration(_module, null, _parameterValues);
          _simulationConfiguration.AddModuleConfiguration(_moduleConfiguration);
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder);
       }
 

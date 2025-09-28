@@ -92,6 +92,9 @@ namespace OSPSuite.Core
          container.Register<ISensitivityAnalysisRunner, SensitivityAnalysisRunner>(LifeStyle.Singleton);
          container.Register<IConfirmationManager, ConfirmationManager>(LifeStyle.Singleton);
 
+         //TODO no idea why I need to register this manually. I don't see where it's being excluded 
+         container.Register<SimulationBuilder, SimulationBuilder>();
+
          registerComparers(container);
 
          registerConverters(container);

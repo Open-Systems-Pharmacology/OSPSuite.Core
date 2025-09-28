@@ -7,6 +7,7 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Helpers;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Mappers
@@ -24,7 +25,7 @@ namespace OSPSuite.Core.Mappers
       protected override void Context()
       {
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          A.CallTo(() => _objectBaseFactory.Create<Transport>()).Returns(new Transport());
          _formulaBuilderToFormulaMapper = A.Fake<IFormulaBuilderToFormulaMapper>();
