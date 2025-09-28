@@ -35,7 +35,7 @@ namespace OSPSuite.Core.Mappers
       {
          base.Context();
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
+         _simulationBuilder= A.Fake<SimulationBuilder>();
          _para1 = A.Fake<IParameter>().WithMode(ParameterBuildMode.Local);
          _para3 = A.Fake<IParameter>().WithMode(ParameterBuildMode.Global);
          _allParameterBuilders = new List<IParameter> { _para1, _para3 };

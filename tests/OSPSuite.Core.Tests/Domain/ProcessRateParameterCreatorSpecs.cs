@@ -29,7 +29,6 @@ namespace OSPSuite.Core.Domain
       private IFormula _kinetic;
       private IParameter _processRateParameter;
       private ProcessBuilder _processBuilder;
-      private SimulationConfiguration _simulationConfiguration;
       private FormulaUsablePath _formulaUsablePathB;
       private FormulaUsablePath _formulaUsablePathA;
       private FormulaUsablePath _formulaUsablePathFU;
@@ -39,8 +38,7 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
+         _simulationBuilder = A.Fake<SimulationBuilder>();
          _processBuilder = new ReactionBuilder();
          _processBuilder.CreateProcessRateParameter = true;
          _kinetic = new ExplicitFormula("(A+B)*fu/BW");

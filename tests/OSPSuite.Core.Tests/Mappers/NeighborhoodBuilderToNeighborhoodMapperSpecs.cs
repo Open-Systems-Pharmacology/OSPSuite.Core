@@ -77,7 +77,7 @@ namespace OSPSuite.Core.Mappers
          A.CallTo(() => secondNeighborModelPath.Resolve<IContainer>(_rootContainer)).Returns(_secondNeighborInModel);
 
          _moleculeContainer = A.Fake<IContainer>();
-         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
+         _simulationBuilder = A.Fake<SimulationBuilder>();
          A.CallTo(() => _containerMapper.MapFrom(_neighborhoodBuilder.MoleculeProperties, _simulationBuilder)).Returns(_moleculeContainer);
          _molecule1 = "molecule1";
          _molecule2 = "molecule2";

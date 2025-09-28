@@ -76,7 +76,7 @@ namespace OSPSuite.Core.Mappers
          _para3 = new Parameter().WithName("P3");
          A.CallTo(() => _objectBaseFactory.Create<MoleculeAmount>()).Returns(new MoleculeAmount());
          A.CallTo(() => _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT)).Returns(_amountDimension);
-         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
+         _simulationBuilder = A.Fake<SimulationBuilder>();
          A.CallTo(() => _formulaMapper.MapFrom(_moleculeBuilder.DefaultStartFormula, _simulationBuilder)).Returns(_mappedFormula);
          A.CallTo(() => _parameterMapper.MapFrom(_parameterBuilder1, _simulationBuilder)).Returns(_para1);
          A.CallTo(() => _parameterMapper.MapFrom(_parameterBuilder2, _simulationBuilder)).Returns(_para2);
@@ -134,7 +134,7 @@ namespace OSPSuite.Core.Mappers
          _moleculeBuilder = new MoleculeBuilder().WithDimension(_concentrationDimension);
          _moleculeBuilder.DisplayUnit = A.Fake<Unit>();
          _mappedFormula = A.Fake<IFormula>();
-         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
+         _simulationBuilder = A.Fake<SimulationBuilder>();
          A.CallTo(() => _formulaMapper.MapFrom(_moleculeBuilder.DefaultStartFormula, _simulationBuilder)).Returns(_mappedFormula);
          A.CallTo(() => _objectBaseFactory.Create<MoleculeAmount>()).ReturnsLazily(() => new MoleculeAmount());
          var startValueParameter = new Parameter().WithName(Constants.Parameters.START_VALUE);

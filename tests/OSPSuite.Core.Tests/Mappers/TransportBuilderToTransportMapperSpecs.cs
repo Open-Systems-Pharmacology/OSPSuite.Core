@@ -7,7 +7,6 @@ using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Helpers;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Mappers
@@ -25,7 +24,7 @@ namespace OSPSuite.Core.Mappers
       protected override void Context()
       {
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
+         _simulationBuilder = A.Fake<SimulationBuilder>();
          _objectBaseFactory = A.Fake<IObjectBaseFactory>();
          A.CallTo(() => _objectBaseFactory.Create<Transport>()).Returns(new Transport());
          _formulaBuilderToFormulaMapper = A.Fake<IFormulaBuilderToFormulaMapper>();
@@ -304,7 +303,7 @@ namespace OSPSuite.Core.Mappers
          A.CallTo(() => _parameterMapper.MapFrom(_transportBuilder.Parameters, _simulationBuilder)).Returns(new List<IParameter>());
          _processRateParameter = new Parameter();
          A.CallTo(() => _objectBaseFactory.Create<IParameter>()).Returns(_processRateParameter);
-         _simulationConfiguration.CreateAllProcessRateParameters = true;
+         A.CallTo(() => _simulationBuilder.CreateAllProcessRateParameters).Returns(true);
       }
 
       protected override void Because()

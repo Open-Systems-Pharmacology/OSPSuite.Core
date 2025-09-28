@@ -38,7 +38,7 @@ namespace OSPSuite.Core.Domain.Builder
          performMerge();
       }
 
-      public bool CreateAllProcessRateParameters => _simulationConfiguration.CreateAllProcessRateParameters;
+      public virtual bool CreateAllProcessRateParameters => _simulationConfiguration.CreateAllProcessRateParameters;
 
       public IEntity BuilderFor(IEntity modelObject) => SimulationEntitySourceFor(modelObject)?.Source;
 
