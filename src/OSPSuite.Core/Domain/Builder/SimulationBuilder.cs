@@ -153,13 +153,13 @@ namespace OSPSuite.Core.Domain.Builder
 
       private void cacheMoleculeLists<T>(IReadOnlyList<T> allBuilders, ObjectBaseCache<T> builderCache) where T : class, IMoleculeDependentBuilder
       {
-         builderCache.Each(builderUsedInSimulation => combineMoleculeLists(allBuilders.Where(x => x.IsNamed(builderUsedInSimulation.Name)), builderUsedInSimulation));
+         builderCache.Each(builderUsedInModelBuilding => combineMoleculeLists(allBuilders.Where(x => x.IsNamed(builderUsedInModelBuilding.Name)), builderUsedInModelBuilding));
       }
 
-      private void combineMoleculeLists(IEnumerable<IMoleculeDependentBuilder> builders, IMoleculeDependentBuilder builderUsedInSimulation)
+      private void combineMoleculeLists(IEnumerable<IMoleculeDependentBuilder> builders, IMoleculeDependentBuilder builderUsedInModelBuilding)
       {
-         _moleculeListCache[builderUsedInSimulation] = builderUsedInSimulation.MoleculeList.Clone();
-         builders.Each(x => addMolecules(x, _moleculeListCache[builderUsedInSimulation]));
+         _moleculeListCache[builderUsedInModelBuilding] = builderUsedInModelBuilding.MoleculeList.Clone();
+         builders.Each(x => addMolecules(x, _moleculeListCache[builderUsedInModelBuilding]));
       }
 
       private void addMolecules(IMoleculeDependentBuilder builder, MoleculeList moleculeList)

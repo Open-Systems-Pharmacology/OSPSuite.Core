@@ -106,6 +106,62 @@ namespace OSPSuite.Core
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfiguration();
    }
 
+
+   internal class When_running_the_case_study_for_module_integration_with_merge_behavior_overwrite_for_passive_transport : concern_for_ModuleIntegration
+   {
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehavior();
+
+      protected override void Because()
+      {
+         sut = IoC.Resolve<IModelConstructor>();
+         var moduleHelper = IoC.Resolve<ModuleHelperForSpecs>();
+         _simulationConfiguration = SimulationConfigurationBuilder()(moduleHelper);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
+         _model = _result.Model;
+      }
+
+      [Observation]
+      public void it_should_not_have_merged_the_molecule_list()
+      {
+         var lng_pls_to_lng_cell = _model.Root.EntityAt<Neighborhood>(Constants.NEIGHBORHOODS, "lng_pls_to_lng_cell");
+         var passiveTransportA = lng_pls_to_lng_cell.EntityAt<Transport>("A", "PT1");
+         var passiveTransportB = lng_pls_to_lng_cell.EntityAt<Transport>("B", "PT1");
+         var passiveTransportC = lng_pls_to_lng_cell.EntityAt<Transport>("C", "PT1");
+         //it was not in the used module which only has B and C
+         passiveTransportA.ShouldBeNull();
+         passiveTransportB.ShouldNotBeNull();
+         passiveTransportC.ShouldNotBeNull();
+      }
+   }
+
+
+   internal class When_running_the_case_study_for_module_integration_with_merge_behavior_extent_for_passive_transport : concern_for_ModuleIntegration
+   {
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehavior();
+
+      protected override void Because()
+      {
+         sut = IoC.Resolve<IModelConstructor>();
+         var moduleHelper = IoC.Resolve<ModuleHelperForSpecs>();
+         _simulationConfiguration = SimulationConfigurationBuilder()(moduleHelper);
+         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
+         _model = _result.Model;
+      }
+
+      [Observation]
+      public void it_should_have_merged_the_molecule_list()
+      {
+         var lng_pls_to_lng_cell = _model.Root.EntityAt<Neighborhood>(Constants.NEIGHBORHOODS, "lng_pls_to_lng_cell");
+         var tags = lng_pls_to_lng_cell.Tags.Select(x => x.Value).ToString(", ");
+
+         lng_pls_to_lng_cell.Tags.Contains("NeighborhoodTag1").ShouldBeTrue(tags);
+         lng_pls_to_lng_cell.Tags.Contains("NeighborhoodTag2").ShouldBeTrue(tags);
+      }
+   }
+
+
    internal class When_running_the_case_study_for_module_integration_with_merge_behavior_extend_for_neighborhood : concern_for_ModuleIntegration
    {
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehavior();

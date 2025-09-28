@@ -105,7 +105,7 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_throw_an_exception()
       {
-         The.Action(()=>sut.AddMoleculeNameToExclude("A")).ShouldThrowAn<OSPSuiteException>()
+         The.Action(() => sut.AddMoleculeNameToExclude("A")).ShouldThrowAn<OSPSuiteException>();
       }
    }
 
