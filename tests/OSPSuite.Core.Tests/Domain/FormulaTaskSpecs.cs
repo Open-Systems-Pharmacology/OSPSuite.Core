@@ -591,7 +591,7 @@ namespace OSPSuite.Core.Domain
       public void should_throw_an_exception()
       {
          The.Action(() => sut.ExpandNeighborhoodReferencesIn(_model.Root)).ShouldThrowAn<OSPSuiteException>();
-      }  
+      }
    }
 
    internal abstract class concern_for_lumen_segment_path_resolution : concern_for_FormulaTask
@@ -628,8 +628,10 @@ namespace OSPSuite.Core.Domain
 
 
          _model.Root = _root;
-         var simulationConfiguration =  new SimulationConfiguration();
-         _modelConfiguration = new ModelConfiguration(_model, simulationConfiguration, new SimulationBuilderForSpecs(simulationConfiguration));
+         var simulationConfiguration = new SimulationConfiguration();
+         var simulationBuilder = A.Fake<SimulationBuilder>();
+
+         _modelConfiguration = new ModelConfiguration(_model, simulationConfiguration, simulationBuilder);
       }
    }
 
@@ -905,7 +907,7 @@ namespace OSPSuite.Core.Domain
          _parameterReferencingRelativeLumenNextSegment.WithFormula(new ConstantFormula(5));
          _parameterReferencingRelativeLumenNextSegment.RHSFormula = new ExplicitFormula("V+10");
          //..|LUMEN_PREVIOUS_SEGMENT|V
-         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, LUMEN_PREVIOUS_SEGMENT, _volumeDuodenumLumen.Name) { Alias = "V" };
+         _objectPath = new FormulaUsablePath(PARENT_CONTAINER, LUMEN_PREVIOUS_SEGMENT, _volumeDuodenumLumen.Name) {Alias = "V"};
          _parameterReferencingRelativeLumenNextSegment.RHSFormula.AddObjectPath(_objectPath);
       }
 
@@ -920,7 +922,6 @@ namespace OSPSuite.Core.Domain
          _parameterReferencingRelativeLumenNextSegment.RHSFormula.Calculate(_parameterReferencingRelativeLumenNextSegment).ShouldBeEqualTo(20);
       }
    }
-
 
    internal class When_replacing_the_lumen_next_segment_keyword_in_a_container_that_has_no_next_segment_such_as_rectum : concern_for_lumen_next_previous_segment_path_resolution
    {

@@ -127,6 +127,10 @@ namespace OSPSuite.Core
          var passiveTransportA = lng_pls_to_lng_cell.EntityAt<Transport>("A", "PT1");
          var passiveTransportB = lng_pls_to_lng_cell.EntityAt<Transport>("B", "PT1");
          var passiveTransportC = lng_pls_to_lng_cell.EntityAt<Transport>("C", "PT1");
+         //Module 1 is ALL EXCEPT B
+         //Module 2 B and C
+         //Result should be B and C only
+
          //it was not in the used module which only has B and C
          passiveTransportA.ShouldBeNull();
          passiveTransportB.ShouldNotBeNull();

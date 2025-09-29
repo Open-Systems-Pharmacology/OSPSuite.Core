@@ -195,6 +195,7 @@ namespace OSPSuite.Helpers
       {
          var passiveTransport = _objectBaseFactory.Create<PassiveTransportBuildingBlock>().WithName("PassiveTransportModule1");
          var pt1 = _objectBaseFactory.Create<TransportBuilder>().WithName("PT1").WithDimension(amountPerTimeDimension);
+         pt1.Formula = new ConstantFormula(1);
          //We have a neighborhood lng_pls_to_lng_cell
          pt1.SourceCriteria = Create.Criteria(x => x.With(Lung).And.With(Plasma));
          pt1.TargetCriteria = Create.Criteria(x => x.With(Lung).And.With(Cell));
@@ -210,6 +211,7 @@ namespace OSPSuite.Helpers
          var pt1 = _objectBaseFactory.Create<TransportBuilder>().WithName("PT1").WithDimension(amountPerTimeDimension);
          pt1.SourceCriteria = Create.Criteria(x => x.With(Lung).And.With(Plasma));
          pt1.TargetCriteria = Create.Criteria(x => x.With(Lung).And.With(Cell));
+         pt1.Formula = new ConstantFormula(2);
          //no molecule in the include list
          pt1.MoleculeList.ForAll = false;
          pt1.MoleculeList.AddMoleculeName("B");
@@ -353,12 +355,14 @@ namespace OSPSuite.Helpers
          var lngPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
          lngPlasma.Add(NewConstantParameter(Volume, 2));
          lngPlasma.Add(NewConstantParameter(pH, 7.5));
+         lngPlasma.AddTag(new Tag(lung.Name));
          lung.Add(lngPlasma);
 
          var lngCell = createContainerWithName(Cell, ContainerMode.Physical);
          lngCell.Add(NewConstantParameter(Volume, 1));
          lngCell.Add(NewConstantParameter(pH, 7));
          lung.Add(lngCell);
+         lngCell.AddTag(new Tag(lung.Name));
 
          var lungQ = NewConstantParameter(Q, 3);
          lungQ.AddTag("ParamTag1");
@@ -470,12 +474,14 @@ namespace OSPSuite.Helpers
          lngPlasma.Add(NewConstantParameter(pH, 2));
          lung.Add(lngPlasma);
          lung.AddTag("Tag2");
+         lngPlasma.AddTag(new Tag(lung.Name));
 
          var lngCell = createContainerWithName(Cell, ContainerMode.Physical);
          lngCell.Add(NewConstantParameter(Volume, 10));
          lngCell.Add(NewConstantParameter(pH, 2));
          lung.Add(lngCell);
-
+         lngCell.AddTag(new Tag(lung.Name));
+         
          var lngInt = createContainerWithName(Interstitial, ContainerMode.Physical);
          lngInt.Add(NewConstantParameter(Volume, 10));
          lngInt.Add(NewConstantParameter(pH, 2));

@@ -27,7 +27,7 @@ namespace OSPSuite.Core.Domain
       private SimulationConfiguration _simulationConfiguration;
       private ModuleConfiguration _moduleConfiguration1;
       private ModuleConfiguration _moduleConfiguration2;
-      private ObserverBuilder _observerBuilder;
+
       private ExpressionProfileBuildingBlock _expressionProfileBuildingBlock;
       private InitialConditionsBuildingBlock _initialConditionsBuildingBlock;
       private ICloneManagerForModel _cloneManagerForModel;
@@ -57,13 +57,20 @@ namespace OSPSuite.Core.Domain
          };
          _simulationConfiguration.AddExpressionProfile(_expressionProfileBuildingBlock);
          _moduleConfiguration2.Module.Add(_initialConditionsBuildingBlock);
+         _moduleConfiguration2.Module.MergeBehavior = MergeBehavior.Extend;
          _moduleConfiguration2.SelectedInitialConditions = _initialConditionsBuildingBlock;
 
          _cloneManagerForModel = A.Fake<ICloneManagerForModel>();
          _containerMergeTask = A.Fake<IContainerMergeTask>();
 
+         var obs1 = _moduleConfiguration1.Module.Observers.AmountObserverBuilders.ElementAt(0);
+         var obs2 = _moduleConfiguration2.Module.Observers.AmountObserverBuilders.ElementAt(0);
+
+         //only testing the molecule extend behavior. No need to really clone
+         A.CallTo(() => _cloneManagerForModel.Clone<ObserverBuilder>(obs1)).Returns(obs1);
+         A.CallTo(() => _cloneManagerForModel.Clone<ObserverBuilder>(obs2)).Returns(obs2);
+     
          sut = new SimulationBuilder(_cloneManagerForModel, _containerMergeTask);
-         _observerBuilder = _moduleConfiguration2.Module.Observers.AmountObserverBuilders.First();
       }
 
       protected override void Because()
@@ -80,8 +87,9 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void the_observer_should_be_created_for_both()
       {
-         sut.MoleculeListFor(_observerBuilder).MoleculeNames.ShouldContain("molecule1");
-         sut.MoleculeListFor(_observerBuilder).MoleculeNames.ShouldContain("molecule2");
+         var observedBuilder = sut.Observers.ElementAt(0);
+         sut.MoleculeListFor(observedBuilder).MoleculeNames.ShouldContain("molecule1");
+         sut.MoleculeListFor(observedBuilder).MoleculeNames.ShouldContain("molecule2");
       }
    }
 }

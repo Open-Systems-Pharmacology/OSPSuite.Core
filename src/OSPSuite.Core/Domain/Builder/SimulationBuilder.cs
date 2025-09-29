@@ -163,21 +163,26 @@ namespace OSPSuite.Core.Domain.Builder
 
       private void mergeTransports(TransportBuilder target, BuilderSource<TransportBuilder> source)
       {
-         var (sourceBuilder, sourceBuildingBlock) = source;
-         mergeMoleculeLists(target, sourceBuilder);
+         mergeMoleculeLists(target, source.Builder);
       }
 
       private void mergeMoleculeLists(IMoleculeDependentBuilder target, IMoleculeDependentBuilder sourceToMerge)
       {
-         //we clone just in case and then we will update
+         var sourceMoleculeList = sourceToMerge.MoleculeList;
+         var targetMoleculeList = target.MoleculeList;
+         //copy property forAll from merged list
+         targetMoleculeList.ForAll = sourceMoleculeList.ForAll;
+         sourceMoleculeList.MoleculeNames.Each(m =>
+         {
+            targetMoleculeList.RemoveMoleculeNameToExclude(m);
+            targetMoleculeList.AddMoleculeName(m);
+         });
 
-         addMolecules(target.MoleculeList, sourceToMerge);
-      }
-
-      private void addMolecules(MoleculeList targetMoleculeList, IMoleculeDependentBuilder builderToMerge)
-      {
-         builderToMerge.MoleculeList.MoleculeNames.Each(targetMoleculeList.AddMoleculeName);
-         builderToMerge.MoleculeList.MoleculeNamesToExclude.Each(targetMoleculeList.AddMoleculeNameToExclude);
+         sourceMoleculeList.MoleculeNamesToExclude.Each(m =>
+         {
+            targetMoleculeList.RemoveMoleculeName(m);
+            targetMoleculeList.AddMoleculeNameToExclude(m);
+         });
       }
 
       private void mergeObservers(ObserverBuilder target, BuilderSource<ObserverBuilder> source)
