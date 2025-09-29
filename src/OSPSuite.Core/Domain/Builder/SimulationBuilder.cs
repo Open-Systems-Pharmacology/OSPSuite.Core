@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
@@ -161,9 +162,22 @@ namespace OSPSuite.Core.Domain.Builder
          //TODO add reaction merge behavior
       }
 
-      private void mergeTransports(TransportBuilder target, BuilderSource<TransportBuilder> source)
+      private void mergeTransports(TransportBuilder target, BuilderSource<TransportBuilder> builderSource)
       {
-         mergeMoleculeLists(target, source.Builder);
+         var source = builderSource.Builder;
+         mergeMoleculeLists(target, source);
+         mergeDescriptorCriteria(target.SourceCriteria, source.SourceCriteria);
+         mergeDescriptorCriteria(target.TargetCriteria, source.TargetCriteria);
+         target.CreateProcessRateParameter = source.CreateProcessRateParameter;
+         target.ProcessRateParameterPersistable = source.ProcessRateParameterPersistable;
+         //TODO: do we need to clone?
+         target.Formula = _cloneManager.Clone(source.Formula);
+      }
+
+      private void mergeDescriptorCriteria(DescriptorCriteria target, DescriptorCriteria source)
+      {
+         target.Operator = source.Operator;
+         source.Each(t => target.Add(t.CloneCondition()));
       }
 
       private void mergeMoleculeLists(IMoleculeDependentBuilder target, IMoleculeDependentBuilder sourceToMerge)

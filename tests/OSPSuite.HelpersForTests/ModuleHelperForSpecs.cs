@@ -210,12 +210,18 @@ namespace OSPSuite.Helpers
          var passiveTransport = _objectBaseFactory.Create<PassiveTransportBuildingBlock>().WithName("PassiveTransportModule1");
          var pt1 = _objectBaseFactory.Create<TransportBuilder>().WithName("PT1").WithDimension(amountPerTimeDimension);
          pt1.SourceCriteria = Create.Criteria(x => x.With(Lung).And.With(Plasma));
-         pt1.TargetCriteria = Create.Criteria(x => x.With(Lung).And.With(Cell));
+         pt1.SourceCriteria.Operator = CriteriaOperator.And;
+
+         pt1.TargetCriteria = Create.Criteria(x => x.With("LUNG_CELL"));
+         pt1.TargetCriteria.Operator = CriteriaOperator.And;
+         pt1.CreateProcessRateParameter = true;
+         pt1.ProcessRateParameterPersistable = true;
          pt1.Formula = new ConstantFormula(2);
          //no molecule in the include list
          pt1.MoleculeList.ForAll = false;
          pt1.MoleculeList.AddMoleculeName("B");
          pt1.MoleculeList.AddMoleculeName("C");
+         pt1.AddParameter(NewConstantParameter("P_Extended", 10));
          passiveTransport.Add(pt1);
          return passiveTransport;
       }
@@ -481,7 +487,8 @@ namespace OSPSuite.Helpers
          lngCell.Add(NewConstantParameter(pH, 2));
          lung.Add(lngCell);
          lngCell.AddTag(new Tag(lung.Name));
-         
+         lngCell.AddTag(new Tag("LUNG_CELL"));
+
          var lngInt = createContainerWithName(Interstitial, ContainerMode.Physical);
          lngInt.Add(NewConstantParameter(Volume, 10));
          lngInt.Add(NewConstantParameter(pH, 2));

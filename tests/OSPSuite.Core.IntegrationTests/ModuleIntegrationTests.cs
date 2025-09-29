@@ -5,6 +5,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
@@ -106,7 +107,6 @@ namespace OSPSuite.Core
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfiguration();
    }
 
-
    internal class When_running_the_case_study_for_module_integration_with_merge_behavior_overwrite_for_passive_transport : concern_for_ModuleIntegration
    {
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehavior();
@@ -138,7 +138,6 @@ namespace OSPSuite.Core
       }
    }
 
-
    internal class When_running_the_case_study_for_module_integration_with_merge_behavior_extent_for_passive_transport : concern_for_ModuleIntegration
    {
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfigurationForExtendMergeBehavior();
@@ -161,8 +160,58 @@ namespace OSPSuite.Core
          lng_pls_to_lng_cell.Tags.Contains("NeighborhoodTag1").ShouldBeTrue(tags);
          lng_pls_to_lng_cell.Tags.Contains("NeighborhoodTag2").ShouldBeTrue(tags);
       }
-   }
 
+      [Observation]
+      public void the_equation_of_the_kinetic_tab_is_overwritten()
+      {
+         var lng_pls_to_lng_cell = _model.Root.EntityAt<Neighborhood>(Constants.NEIGHBORHOODS, "lng_pls_to_lng_cell");
+         var passiveTransportB = lng_pls_to_lng_cell.EntityAt<Transport>("B", "PT1");
+         //Value of the equation in module extending
+         passiveTransportB.Formula.Calculate(passiveTransportB).ShouldBeEqualTo(2);
+      }
+
+      [Observation]
+      public void the_parameter_list_is_extended()
+      {
+         var lng_pls_to_lng_cell = _model.Root.EntityAt<Neighborhood>(Constants.NEIGHBORHOODS, "lng_pls_to_lng_cell");
+         var passiveTransportB = lng_pls_to_lng_cell.EntityAt<Transport>("B", "PT1");
+         var parameter = passiveTransportB.Parameter("P_Extended");
+         parameter.ShouldNotBeNull();
+         parameter.Value.ShouldBeEqualTo(10);
+      }
+
+      [Observation]
+      public void the_source_and_target_lists_are_extended()
+      {
+         // new conditions are added. It is not possible to remove source/target conditions.
+         var passiveTransport = _result.SimulationBuilder.PassiveTransports.FindByName("PT1");
+         passiveTransport.TargetCriteria.ToString().Contains("LUNG_CELL").ShouldBeTrue();
+      }
+
+      [Observation]
+      public void include_exclude_list_for_molecules_are_extended()
+      {
+         var passiveTransport = _result.SimulationBuilder.PassiveTransports.FindByName("PT1");
+         passiveTransport.MoleculeList.MoleculeNames.ShouldContain("B");
+         passiveTransport.MoleculeList.MoleculeNames.ShouldContain("C");
+         passiveTransport.MoleculeList.MoleculeNamesToExclude.ShouldNotContain("B");
+      }
+
+      [Observation]
+      public void behavior_of_all_is_overwritten()
+      {
+         var passiveTransport = _result.SimulationBuilder.PassiveTransports.FindByName("PT1");
+         passiveTransport.MoleculeList.ForAll.ShouldBeFalse();
+      }
+
+      [Observation]
+      public void simple_properties_of_the_transporter_such_as_crate_process_rate_or_plot_process_rate_are_overwritten()
+      {
+         var passiveTransport = _result.SimulationBuilder.PassiveTransports.FindByName("PT1");
+         passiveTransport.CreateProcessRateParameter.ShouldBeTrue();
+         passiveTransport.ProcessRateParameterPersistable.ShouldBeTrue();
+      }
+   }
 
    internal class When_running_the_case_study_for_module_integration_with_merge_behavior_extend_for_neighborhood : concern_for_ModuleIntegration
    {
