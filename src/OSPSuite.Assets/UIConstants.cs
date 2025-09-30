@@ -1203,6 +1203,16 @@ namespace OSPSuite.Assets
             }
          }
 
+         public static string SimulationsAreRunning(IReadOnlyList<string> names)
+         {
+            return $"The following Simulations are currently running: {names.ToString(", ", "'")}, action cannot be performed until they are stopped.";
+         }
+
+         public static string ParameterIdentificationsAreRunning(IReadOnlyList<string> names)
+         {
+            return $"The following Parameter Identifications are currently running: {ObjectTypes.ParameterIdentification.ToLowerInvariant().PluralizeIf(names)} {names.ToString(", ", "'")}, action cannot be performed until they are stopped.";
+         }
+
          public static string ReallyDeleteParameterIdentifications(IReadOnlyList<string> names)
          {
             return $"Really delete {ObjectTypes.ParameterIdentification.ToLowerInvariant().PluralizeIf(names)} {names.ToString(", ", "'")}?";

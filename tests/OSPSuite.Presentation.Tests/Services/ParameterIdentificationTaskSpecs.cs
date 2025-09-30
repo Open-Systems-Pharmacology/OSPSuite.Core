@@ -39,6 +39,7 @@ namespace OSPSuite.Presentation.Services
       private IHeavyWorkManager _heavyWorkManager;
       protected IParameterAnalysableParameterSelector _parameterAnalysableParameterSelector;
       protected IOutputMappingMatchingTask _outputMappingMatchingTask;
+      protected IParameterIdentificationRunner _parameterIdentificationRunner;
       private IEventPublisher _eventPublisher;
 
       protected override void Context()
@@ -59,11 +60,14 @@ namespace OSPSuite.Presentation.Services
          _simulationSelector = A.Fake<ISimulationSelector>();
          _parameterAnalysableParameterSelector = A.Fake<IParameterAnalysableParameterSelector>();
          _outputMappingMatchingTask = new OutputMappingMatchingTask(_entitiesInSimulationRetriever, _eventPublisher);
+         _parameterIdentificationRunner = A.Fake<IParameterIdentificationRunner>();
+
 
          _heavyWorkManager = new HeavyWorkManagerForSpecs();
          sut = new ParameterIdentificationTask(_parameterIdentificationFactory, _withIdRepository, _entitiesInSimulationRetriever, _observedDataRepository,
             _entityPathResolver, _identificationParameterFactory, _executionContext, _favoriteRepository, _simulationSwapValidator, _applicationController,
-            _simulationSwapCorrector, _dialogCreator, _simulationSelector, _heavyWorkManager, _parameterAnalysableParameterSelector, _outputMappingMatchingTask);
+            _simulationSwapCorrector, _dialogCreator, _simulationSelector, _heavyWorkManager, _parameterAnalysableParameterSelector, _outputMappingMatchingTask,
+            _parameterIdentificationRunner);
       }
    }
 
@@ -81,7 +85,8 @@ namespace OSPSuite.Presentation.Services
          _parameterIdentification = new ParameterIdentification();
          _parameterIdentifications = new List<ParameterIdentification> { _parameterIdentification, new ParameterIdentification() };
          A.CallTo(() => _executionContext.Project.AllParameterIdentifications).Returns(_parameterIdentifications);
-
+         A.CallTo(() => _parameterIdentificationRunner.IsAnyRunning(A<IReadOnlyList<ParameterIdentification>>.Ignored)).Returns(false);
+         
          _parameterIdentification.AddOutputMapping(new OutputMapping { WeightedObservedData = new WeightedObservedData(_dataRepository) });
       }
 
@@ -570,6 +575,44 @@ namespace OSPSuite.Presentation.Services
       public void should_publish_the_parameter_identification_deleted_event()
       {
          A.CallTo(() => _executionContext.PublishEvent(A<ParameterIdentificationDeletedEvent>._)).MustHaveHappened();
+      }
+   }
+
+   public class When_executing_the_delete_parameter_identification_ui_command_while_running : concern_for_ParameterIdentificationTask
+   {
+      private ParameterIdentification _parameterIdentification;
+      private TestProject _project;
+
+      protected override void Context()
+      {
+         base.Context();
+         _parameterIdentification = new ParameterIdentification();
+         _project = new TestProject();
+         _project.AddParameterIdentification(_parameterIdentification);
+         A.CallTo(() => _executionContext.Project).Returns(_project);
+         A.CallTo(() => _parameterIdentificationRunner.IsAnyRunning(A<IReadOnlyList<ParameterIdentification>>.Ignored)).Returns(true);
+      }
+      protected override void Because()
+      {
+         sut.Delete(new[] { _parameterIdentification });
+      }
+
+      [Observation]
+      public void should_not_remove_the_parameter_identification_from_the_project()
+      {
+         _project.AllParameterIdentifications.ShouldContain(_parameterIdentification);
+      }
+
+      [Observation]
+      public void should_not_unregister_the_parameter_identification()
+      {
+         A.CallTo(() => _executionContext.Unregister(_parameterIdentification)).MustNotHaveHappened();
+      }
+
+      [Observation]
+      public void should_not_publish_the_parameter_identification_deleted_event()
+      {
+         A.CallTo(() => _executionContext.PublishEvent(A<ParameterIdentificationDeletedEvent>._)).MustNotHaveHappened();
       }
    }
 
