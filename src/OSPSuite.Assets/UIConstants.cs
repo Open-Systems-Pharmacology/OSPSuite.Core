@@ -1210,7 +1210,7 @@ namespace OSPSuite.Assets
 
          public static string ParameterIdentificationsAreRunning(IReadOnlyList<string> names)
          {
-            return $"The following Parameter Identifications are some running: {ObjectTypes.ParameterIdentification.ToLowerInvariant().PluralizeIf(names)} {names.ToString(", ", "'")}, action cannot be performed  until they are stopped.";
+            return $"The following Parameter Identifications are currently running: {ObjectTypes.ParameterIdentification.ToLowerInvariant().PluralizeIf(names)} {names.ToString(", ", "'")}, action cannot be performed until they are stopped.";
          }
 
          public static string ReallyDeleteParameterIdentifications(IReadOnlyList<string> names)
