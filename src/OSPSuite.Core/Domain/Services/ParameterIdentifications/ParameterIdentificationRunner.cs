@@ -82,6 +82,6 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       }
 
       public bool IsAnyRunning(IReadOnlyList<ParameterIdentification> parameterIdentifications) =>
-         parameterIdentifications.Any(pi => _parameterIdentificationEngines.ContainsKey(pi));
+         parameterIdentifications.Any(pi => _parameterIdentificationEngines.Contains(pi));
    }
 }
