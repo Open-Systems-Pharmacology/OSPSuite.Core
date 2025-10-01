@@ -406,7 +406,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void onDataBrowserUsedChanged(UsedColumnsEventArgs e)
       {
-         using (_chartUpdater.UpdateTransaction(Chart, e.Used ? CurveChartUpdateModes.Add : CurveChartUpdateModes.Remove))
+         using (_chartUpdater.UpdateTransaction(Chart, e.Used ? CurveChartUpdateModes.Add : CurveChartUpdateModes.Remove, false))
          {
             updateColumnUsedProperty(e.Columns, e.Used);
          }
