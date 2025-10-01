@@ -22,14 +22,8 @@ namespace OSPSuite.Core.Domain.Services
       ValidationResult Validate(IObjectBase objectBase);
    }
 
-   public class EntityValidator : IEntityValidator,
-      IVisitor<IEntity>,
-      IVisitor<IParameter>,
-      IVisitor<OutputSchema>,
-      IVisitor<ParameterIdentification>,
-      IVisitor<SensitivityAnalysis>
+   public class EntityValidator : IEntityValidator
    {
-      protected ValidationResult _validationResult;
       private readonly IParameterIdentificationValidator _parameterIdentificationValidator;
       private readonly ISensitivityAnalysisValidator _sensitivityAnalysisValidator;
 
@@ -43,76 +37,68 @@ namespace OSPSuite.Core.Domain.Services
 
       public ValidationResult Validate(IObjectBase objectBase)
       {
-         var objectsToValidate = new List<IObjectBase>();
-         var simulation = objectBase as IModelCoreSimulation;
-         if (simulation != null)
+         var toValidate = new List<IObjectBase>();
+         if (objectBase is IModelCoreSimulation sim)
          {
-            objectsToValidate.Add(simulation.Model.Root);
-            objectsToValidate.Add(simulation.Settings);
+            toValidate.Add(sim.Model.Root);
+            toValidate.Add(sim.Settings);
          }
          else
-            objectsToValidate.Add(objectBase);
-
-         return validateEntities(objectsToValidate);
-      }
-
-      private ValidationResult validateEntities(IReadOnlyList<IObjectBase> entities)
-      {
-         try
          {
-            _validationResult = new ValidationResult();
-            entities.Each(entity => entity.AcceptVisitor(this));
-            return _validationResult;
+            toValidate.Add(objectBase);
          }
-         finally
+
+         var collector = new Collector(_parameterIdentificationValidator, _sensitivityAnalysisValidator);
+
+         foreach (var entity in toValidate)
+            entity.AcceptVisitor(collector);
+
+         return collector.Result;
+      }
+       
+      private sealed class Collector :
+         IVisitor<IEntity>,
+         IVisitor<IParameter>,
+         IVisitor<OutputSchema>,
+         IVisitor<ParameterIdentification>,
+         IVisitor<SensitivityAnalysis>
+      {
+         private readonly IParameterIdentificationValidator _piv;
+         private readonly ISensitivityAnalysisValidator _sav;
+
+         public ValidationResult Result { get; } = new ValidationResult();
+
+         public Collector(IParameterIdentificationValidator piv, ISensitivityAnalysisValidator sav)
          {
-            _validationResult = null;
+            _piv = piv;
+            _sav = sav;
          }
-      }
 
-      public void Visit(IEntity entity)
-      {
-         var brokenRules = entity.Validate();
-         if (brokenRules.IsEmpty) return;
+         public void Visit(IEntity entity)
+         {
+            var broken = entity.Validate();
+            if (broken.IsEmpty) return;
+            broken.All().Each(rule => Result.AddMessage(NotificationType.Error, entity, rule.Description));
+         }
 
-         brokenRules.All().Each(rule => addRuleToValidation(rule, entity));
-      }
+         public void Visit(IParameter parameter)
+         {
+            if (parameter.Visible)
+               Visit((IEntity)parameter);
+         }
 
-      public void Visit(IParameter parameter)
-      {
-         //only validate visible parameter
-         if (!parameter.Visible)
-            return;
+         public void Visit(OutputSchema outputSchema)
+         {
+            var points = Convert.ToInt32(outputSchema.Intervals.Sum(x => x.Resolution.Value * (x.EndTime.Value - x.StartTime.Value)));
+            if (points > Constants.MAX_NUMBER_OF_SUGGESTED_OUTPUT_POINTS)
+               Result.AddMessage(NotificationType.Warning, outputSchema, Warning.LargeNumberOfOutputPoints(points));
+         }
 
-         Visit((IEntity) parameter);
-      }
+         public void Visit(ParameterIdentification pi)
+            => Result.AddMessagesFrom(_piv.Validate(pi));
 
-      public void Visit(OutputSchema outputSchema)
-      {
-         //For output schema, we calculate the number of overall generated points and if it's bigger than the max suggested, warning
-         var numberOfGeneratedPoints = Convert.ToInt32(outputSchema.Intervals.Sum(x => x.Resolution.Value * (x.EndTime.Value - x.StartTime.Value)));
-         if (numberOfGeneratedPoints > Constants.MAX_NUMBER_OF_SUGGESTED_OUTPUT_POINTS)
-            addValidationMessage(NotificationType.Warning, outputSchema, Warning.LargeNumberOfOutputPoints(numberOfGeneratedPoints));
-      }
-
-      private void addRuleToValidation(IBusinessRule rule, IObjectBase objectBase)
-      {
-         addValidationMessage(NotificationType.Error, objectBase, rule.Description);
-      }
-
-      private void addValidationMessage(NotificationType type, IObjectBase objectBase, string message)
-      {
-         _validationResult.AddMessage(type, objectBase, message);
-      }
-
-      public void Visit(ParameterIdentification parameterIdentification)
-      {
-         _validationResult.AddMessagesFrom(_parameterIdentificationValidator.Validate(parameterIdentification));
-      }
-
-      public void Visit(SensitivityAnalysis sensitivityAnalysis)
-      {
-         _validationResult.AddMessagesFrom(_sensitivityAnalysisValidator.Validate(sensitivityAnalysis));
+         public void Visit(SensitivityAnalysis sa)
+            => Result.AddMessagesFrom(_sav.Validate(sa));
       }
    }
 }
