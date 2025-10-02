@@ -38,7 +38,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Removes all columns of all <paramref name="dataRepositories" /> from DataBrowser. This does not trigger a redraw of
       ///    the chart
       /// </summary>
-      void RemoveDataRepositories(IEnumerable<DataRepository> dataRepositories);
+      void RemoveDataRepositories(IEnumerable<DataRepository> dataRepositories, bool isLoading = false);
 
       /// <summary>
       ///    Remove all data repositories used from DataBrowser. This does not trigger a redraw of the chart
@@ -243,6 +243,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public event Action<IReadOnlyCollection<GridColumnSettings>> ColumnSettingsChanged = delegate { };
       public event EventHandler<IDragEvent> DragOver = delegate { };
       public event EventHandler<IDragEvent> DragDrop = delegate { };
+      private int _suppressPropagationDepth;
+      private bool isPropagationSuppressed => _suppressPropagationDepth > 0;
 
       public ChartEditorPresenter(
          IChartEditorView view,
@@ -406,7 +408,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void onDataBrowserUsedChanged(UsedColumnsEventArgs e)
       {
-         using (_chartUpdater.UpdateTransaction(Chart, e.Used ? CurveChartUpdateModes.Add : CurveChartUpdateModes.Remove, false))
+         var propagate = !isPropagationSuppressed;
+         using (_chartUpdater.UpdateTransaction(Chart, e.Used ? CurveChartUpdateModes.Add : CurveChartUpdateModes.Remove, propagate))
          {
             updateColumnUsedProperty(e.Columns, e.Used);
          }
@@ -556,7 +559,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void RemoveAllDataRepositories() => _dataBrowserPresenter.Clear();
 
-      public void RemoveUnusedColumns() => removeColumns(unusedColumns);
+      public void RemoveUnusedColumns() => removeColumns(unusedColumns, false);
 
       private IReadOnlyList<DataColumn> unusedColumns
       {
@@ -570,17 +573,28 @@ namespace OSPSuite.Presentation.Presenters.Charts
                 !_showDataColumnInDataBrowserDefinition(dataColumn);
       }
 
-      public void RemoveDataRepositories(IEnumerable<DataRepository> dataRepositories)
+      public void RemoveDataRepositories(IEnumerable<DataRepository> dataRepositories, bool isLoading)
       {
          if (dataRepositories == null) return;
-         removeColumns(dataRepositories.SelectMany(x => x.Columns));
+         removeColumns(dataRepositories.SelectMany(x => x.Columns), isLoading);
       }
 
-      private void removeColumns(IEnumerable<DataColumn> dataColumns)
+      private void removeColumns(IEnumerable<DataColumn> dataColumns, bool isLoading)
       {
-         var columnsToRemove = dataColumns.ToList();
-         _dataBrowserPresenter.RemoveDataColumns(columnsToRemove);
-         Chart?.RemoveCurvesForColumns(columnsToRemove);
+         if (isLoading)
+            _suppressPropagationDepth++;
+
+         try
+         {
+            var columnsToRemove = dataColumns.ToList();
+            _dataBrowserPresenter.RemoveDataColumns(columnsToRemove);
+            Chart?.RemoveCurvesForColumns(columnsToRemove);
+         }
+         finally
+         {
+            if (isLoading)
+               _suppressPropagationDepth--;
+         }
       }
 
       public IReadOnlyList<DataColumn> AllDataColumns => _dataBrowserPresenter.AllDataColumns;
