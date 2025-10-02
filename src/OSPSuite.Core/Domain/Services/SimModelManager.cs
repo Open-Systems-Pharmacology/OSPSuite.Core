@@ -11,8 +11,6 @@ namespace OSPSuite.Core.Domain.Services
 {
    public class SimModelManager : SimModelManagerBase, ISimModelManager
    {
-      private static readonly SemaphoreSlim NativeGate = new SemaphoreSlim(1, 1);
-
       private readonly double _executionTimeLimit;
       private readonly Timer _timer;
       private readonly IDataFactory _dataFactory;
@@ -31,18 +29,10 @@ namespace OSPSuite.Core.Domain.Services
 
       private void onTimeElapsed(object sender, ElapsedEventArgs e)
       {
-         var sim = _simModelSimulation;
-         if (sim == null) return;
+         if (_simModelSimulation == null)
+            return;
 
-         if (!NativeGate.Wait(0)) return; // skip if we cannot get the gate immediately (to avoid overlapping calls)
-         try
-         {
-            raiseSimulationProgress(sim.Progress);
-         }
-         finally
-         {
-            NativeGate.Release();
-         }
+         raiseSimulationProgress(_simModelSimulation.Progress);
       }
 
       private void raiseSimulationProgress(int progress)
@@ -54,7 +44,6 @@ namespace OSPSuite.Core.Domain.Services
       {
          return RunSimulationAsync(simulation, simulationRunOptions: simulationRunOptions).GetAwaiter().GetResult();
       }
-
       public async Task<SimulationRunResults> RunSimulationAsync(IModelCoreSimulation simulation, CancellationToken cancellationToken = default, SimulationRunOptions simulationRunOptions = null)
       {
          _simulationRunOptions = simulationRunOptions ?? new SimulationRunOptions();
@@ -64,8 +53,8 @@ namespace OSPSuite.Core.Domain.Services
             await loadAndRunSimulationAsync(simulation, cancellationToken);
 
             return new SimulationRunResults(
-               WarningsFrom(_simModelSimulation),
-               _dataFactory.CreateRepository(simulation, _simModelSimulation));
+                WarningsFrom(_simModelSimulation),
+                _dataFactory.CreateRepository(simulation, _simModelSimulation));
          }
          catch (OperationCanceledException)
          {
@@ -79,28 +68,20 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      private async Task loadAndRunSimulationAsync(IModelCoreSimulation simulation, CancellationToken ct)
+      private async Task loadAndRunSimulationAsync(IModelCoreSimulation simulation, CancellationToken cancellationToken)
       {
-         await NativeGate.WaitAsync(ct).ConfigureAwait(false);
-         try
-         {
-            ct.ThrowIfCancellationRequested();
-            loadSimulation(simulation);
-            ct.ThrowIfCancellationRequested();
-            FinalizeSimulation(_simModelSimulation);
-            ct.ThrowIfCancellationRequested();
+         cancellationToken.ThrowIfCancellationRequested();
+         loadSimulation(simulation);
+         cancellationToken.ThrowIfCancellationRequested();
+         FinalizeSimulation(_simModelSimulation);
+         cancellationToken.ThrowIfCancellationRequested();
 
-            using (ct.Register(() => _simModelSimulation?.Cancel()))
-            {
-               await Task.Run(simulate, ct).ConfigureAwait(false);
-            }
-
-            ct.ThrowIfCancellationRequested();
-         }
-         finally
+         using (cancellationToken.Register(() => _simModelSimulation?.Cancel()))
          {
-            NativeGate.Release();
+            await Task.Run(simulate, cancellationToken);
          }
+
+         cancellationToken.ThrowIfCancellationRequested();
       }
 
       private void loadSimulation(IModelCoreSimulation simulation)
@@ -119,15 +100,15 @@ namespace OSPSuite.Core.Domain.Services
          try
          {
             _timer.Start();
-            _simModelSimulation.RunSimulation();
+            _simModelSimulation.RunSimulation();  
          }
          finally
          {
-            _timer.Elapsed -= onTimeElapsed;
             _timer.Stop();
-            _timer.Dispose();
+            _timer.Close();
             raiseSimulationProgress(100);
          }
       }
+
    }
 }
