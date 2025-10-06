@@ -26,8 +26,6 @@ namespace OSPSuite.Presentation.Services
          if (validationResult.ValidationState == ValidationState.Valid)
             return true;
 
-         return true;
-
          using (var validationMessagesPresenter = _applicationController.Start<IValidationMessagesPresenter>())
          {
             validationMessagesPresenter.Caption = Error.EntityIsInvalid(_executionContext.TypeFor(objectToValidate), objectToValidate.Name);
