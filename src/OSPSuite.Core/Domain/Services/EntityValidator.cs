@@ -12,18 +12,17 @@ namespace OSPSuite.Core.Domain.Services
 {
    /// <summary>
    ///    Is responsible to perform a validation of all rules defined in an entity. If the entity is a container, validate all
-   ///    its children as well
+   ///    its children as well.
+   ///    This class is not thread-safe. See <seealso cref="IEntityValidatorFactory" /> to create thread instances
    /// </summary>
-   public interface IEntityValidator
+   public class EntityValidator :
+      IVisitor<IEntity>,
+      IVisitor<IParameter>,
+      IVisitor<OutputSchema>,
+      IVisitor<ParameterIdentification>,
+      IVisitor<SensitivityAnalysis>
    {
-      /// <summary>
-      ///    Validates the given entity (for a container, all its children as well).
-      /// </summary>
-      ValidationResult Validate(IObjectBase objectBase);
-   }
-
-   public class EntityValidator : IEntityValidator
-   {
+      private ValidationResult _validationResult;
       private readonly IParameterIdentificationValidator _parameterIdentificationValidator;
       private readonly ISensitivityAnalysisValidator _sensitivityAnalysisValidator;
 
@@ -37,68 +36,76 @@ namespace OSPSuite.Core.Domain.Services
 
       public ValidationResult Validate(IObjectBase objectBase)
       {
-         var toValidate = new List<IObjectBase>();
-         if (objectBase is IModelCoreSimulation sim)
+         var objectsToValidate = new List<IObjectBase>();
+
+         if (objectBase is IModelCoreSimulation simulation)
          {
-            toValidate.Add(sim.Model.Root);
-            toValidate.Add(sim.Settings);
+            objectsToValidate.Add(simulation.Model.Root);
+            objectsToValidate.Add(simulation.Settings);
          }
          else
-         {
-            toValidate.Add(objectBase);
-         }
+            objectsToValidate.Add(objectBase);
 
-         var collector = new Collector(_parameterIdentificationValidator, _sensitivityAnalysisValidator);
-
-         foreach (var entity in toValidate)
-            entity.AcceptVisitor(collector);
-
-         return collector.Result;
+         return validateEntities(objectsToValidate);
       }
-       
-      private sealed class Collector :
-         IVisitor<IEntity>,
-         IVisitor<IParameter>,
-         IVisitor<OutputSchema>,
-         IVisitor<ParameterIdentification>,
-         IVisitor<SensitivityAnalysis>
+
+      private ValidationResult validateEntities(IReadOnlyList<IObjectBase> entities)
       {
-         private readonly IParameterIdentificationValidator _piv;
-         private readonly ISensitivityAnalysisValidator _sav;
-
-         public ValidationResult Result { get; } = new ValidationResult();
-
-         public Collector(IParameterIdentificationValidator piv, ISensitivityAnalysisValidator sav)
+         try
          {
-            _piv = piv;
-            _sav = sav;
+            _validationResult = new ValidationResult();
+            entities.Each(entity => entity.AcceptVisitor(this));
+            return _validationResult;
          }
-
-         public void Visit(IEntity entity)
+         finally
          {
-            var broken = entity.Validate();
-            if (broken.IsEmpty) return;
-            broken.All().Each(rule => Result.AddMessage(NotificationType.Error, entity, rule.Description));
+            _validationResult = null;
          }
+      }
 
-         public void Visit(IParameter parameter)
-         {
-            if (parameter.Visible)
-               Visit((IEntity)parameter);
-         }
+      public void Visit(IEntity entity)
+      {
+         var brokenRules = entity.Validate();
+         if (brokenRules.IsEmpty) return;
 
-         public void Visit(OutputSchema outputSchema)
-         {
-            var points = Convert.ToInt32(outputSchema.Intervals.Sum(x => x.Resolution.Value * (x.EndTime.Value - x.StartTime.Value)));
-            if (points > Constants.MAX_NUMBER_OF_SUGGESTED_OUTPUT_POINTS)
-               Result.AddMessage(NotificationType.Warning, outputSchema, Warning.LargeNumberOfOutputPoints(points));
-         }
+         brokenRules.All().Each(rule => addRuleToValidation(rule, entity));
+      }
 
-         public void Visit(ParameterIdentification pi)
-            => Result.AddMessagesFrom(_piv.Validate(pi));
+      public void Visit(IParameter parameter)
+      {
+         //only validate visible parameter
+         if (!parameter.Visible)
+            return;
 
-         public void Visit(SensitivityAnalysis sa)
-            => Result.AddMessagesFrom(_sav.Validate(sa));
+         Visit((IEntity)parameter);
+      }
+
+      public void Visit(OutputSchema outputSchema)
+      {
+         //For output schema, we calculate the number of overall generated points and if it's bigger than the max suggested, warning
+         var numberOfGeneratedPoints = Convert.ToInt32(outputSchema.Intervals.Sum(x => x.Resolution.Value * (x.EndTime.Value - x.StartTime.Value)));
+         if (numberOfGeneratedPoints > Constants.MAX_NUMBER_OF_SUGGESTED_OUTPUT_POINTS)
+            addValidationMessage(NotificationType.Warning, outputSchema, Warning.LargeNumberOfOutputPoints(numberOfGeneratedPoints));
+      }
+
+      private void addRuleToValidation(IBusinessRule rule, IObjectBase objectBase)
+      {
+         addValidationMessage(NotificationType.Error, objectBase, rule.Description);
+      }
+
+      private void addValidationMessage(NotificationType type, IObjectBase objectBase, string message)
+      {
+         _validationResult.AddMessage(type, objectBase, message);
+      }
+
+      public void Visit(ParameterIdentification parameterIdentification)
+      {
+         _validationResult.AddMessagesFrom(_parameterIdentificationValidator.Validate(parameterIdentification));
+      }
+
+      public void Visit(SensitivityAnalysis sensitivityAnalysis)
+      {
+         _validationResult.AddMessagesFrom(_sensitivityAnalysisValidator.Validate(sensitivityAnalysis));
       }
    }
 }

@@ -10,13 +10,13 @@ namespace OSPSuite.Core
    public abstract class concern_for_EntityValidator : ContextForModelConstructorIntegration
    {
       protected IModelCoreSimulation _simulation;
-      protected IEntityValidator _entityValidator;
+      protected EntityValidator _entityValidator;
 
       public override void GlobalContext()
       {
          base.GlobalContext();
          _simulation = LoadPKMLFile("simple").Simulation;
-         _entityValidator = IoC.Resolve<IEntityValidator>();
+         _entityValidator = IoC.Resolve<IEntityValidatorFactory>().Create();
       }
    }
 

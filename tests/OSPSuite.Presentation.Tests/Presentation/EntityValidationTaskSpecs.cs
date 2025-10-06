@@ -12,28 +12,30 @@ namespace OSPSuite.Presentation.Presentation
 {
    public abstract class concern_for_EntityValidationTask : ContextSpecification<IEntityValidationTask>
    {
-      protected IOSPSuiteExecutionContext _executionContext;
-      protected IEntityValidator _entityValidator;
+      private IOSPSuiteExecutionContext _executionContext;
+      private EntityValidator _entityValidator;
       protected IApplicationController _applicationController;
       protected IEntity _entity;
+      private IEntityValidatorFactory _entityValidatorFactory;
 
       protected override void Context()
       {
          _executionContext = A.Fake<IOSPSuiteExecutionContext>();
-         _entityValidator = A.Fake<IEntityValidator>();
+         _entityValidator = A.Fake<EntityValidator>();
+         _entityValidatorFactory = A.Fake<IEntityValidatorFactory>();
          _applicationController = A.Fake<IApplicationController>();
-         sut = new EntityValidationTask(_entityValidator,_applicationController,_executionContext);
+
+         A.CallTo(() => _entityValidatorFactory.Create()).Returns(_entityValidator);
+         sut = new EntityValidationTask(_entityValidatorFactory,_applicationController,_executionContext);
       }
    }
 
    public class When_validating_a_valid_entity : concern_for_EntityValidationTask
    {
-
       protected override void Context()
       {
          base.Context();
-         _entity = new Container();
-         A.CallTo(() => _entityValidator.Validate(_entity)).Returns(new ValidationResult());
+         _entity = new Container().WithName("container");
       }
 
       [Observation]
@@ -47,18 +49,14 @@ namespace OSPSuite.Presentation.Presentation
    public class When_validating_a_invalid_entity_and_the_user_does_not_accept_the_error : concern_for_EntityValidationTask
    {
       private IValidationMessagesPresenter _presenter;
-      private ValidationResult _validationResult;
-
+      
       protected override void Context()
       {
          base.Context();
+         // containers without names are invalid
          _entity = new Container();
-         _validationResult = A.Fake<ValidationResult>();
-         A.CallTo(() => _validationResult.ValidationState).Returns(ValidationState.Invalid);
          _presenter = A.Fake<IValidationMessagesPresenter>();
          A.CallTo(() => _applicationController.Start<IValidationMessagesPresenter>()).Returns(_presenter);
-         A.CallTo(() => _entityValidator.Validate(_entity)).Returns(_validationResult);
-         A.CallTo(() => _presenter.Display(_validationResult)).Returns(false);
       }
 
       [Observation]
@@ -71,18 +69,14 @@ namespace OSPSuite.Presentation.Presentation
    public class When_validating_a_invalid_entity_and_the_user_accepts_the_error : concern_for_EntityValidationTask
    {
       private IValidationMessagesPresenter _presenter;
-      private ValidationResult _validationResult;
 
       protected override void Context()
       {
          base.Context();
          _entity = new Container();
-         _validationResult = A.Fake<ValidationResult>();
-         A.CallTo(() => _validationResult.ValidationState).Returns(ValidationState.Invalid);
          _presenter = A.Fake<IValidationMessagesPresenter>();
          A.CallTo(() => _applicationController.Start<IValidationMessagesPresenter>()).Returns(_presenter);
-         A.CallTo(() => _entityValidator.Validate(_entity)).Returns(_validationResult);
-         A.CallTo(() => _presenter.Display(_validationResult)).Returns(true);
+         A.CallTo(() => _presenter.Display(A<ValidationResult>._)).Returns(true);
       }
 
       [Observation]

@@ -9,22 +9,24 @@ namespace OSPSuite.Presentation.Services
 {
    public class EntityValidationTask : IEntityValidationTask
    {
-      private readonly IEntityValidator _entityValidator;
+      private readonly IEntityValidatorFactory _entityValidatorFactory;
       private readonly IApplicationController _applicationController;
       private readonly IOSPSuiteExecutionContext _executionContext;
 
-      public EntityValidationTask(IEntityValidator entityValidator, IApplicationController applicationController, IOSPSuiteExecutionContext executionContext)
+      public EntityValidationTask(IEntityValidatorFactory entityValidatorFactory, IApplicationController applicationController, IOSPSuiteExecutionContext executionContext)
       {
-         _entityValidator = entityValidator;
+         _entityValidatorFactory = entityValidatorFactory;
          _applicationController = applicationController;
          _executionContext = executionContext;
       }
 
       public bool Validate(IObjectBase objectToValidate)
       {
-         var validationResult = _entityValidator.Validate(objectToValidate);
+         var validationResult = _entityValidatorFactory.Create().Validate(objectToValidate);
          if (validationResult.ValidationState == ValidationState.Valid)
             return true;
+
+         return true;
 
          using (var validationMessagesPresenter = _applicationController.Start<IValidationMessagesPresenter>())
          {
