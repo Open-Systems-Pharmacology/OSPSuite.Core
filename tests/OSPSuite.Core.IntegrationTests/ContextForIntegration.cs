@@ -105,7 +105,6 @@ namespace OSPSuite.Core
          IoC.RegisterImplementationOf(IoC.Container);
 
          container.WindsorContainer.AddFacility<TypedFactoryFacility>();
-         container.Register<IEntityValidatorFactory, EntityValidatorFactory>();
          container.Register<IObjectBaseFactory, ObjectBaseFactory>(LifeStyle.Singleton);
          container.Register<IDimensionFactory, DimensionFactoryForIntegrationTests>(LifeStyle.Singleton);
          container.Register<IGroupRepository, GroupRepositoryForSpecs>(LifeStyle.Singleton);

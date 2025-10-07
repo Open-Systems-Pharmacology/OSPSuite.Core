@@ -22,7 +22,7 @@ namespace OSPSuite.Presentation.Services
 
       public bool Validate(IObjectBase objectToValidate)
       {
-         var validationResult = _entityValidatorFactory.Create().Validate(objectToValidate);
+         var validationResult = _entityValidatorFactory.Validate(objectToValidate);
          if (validationResult.ValidationState == ValidationState.Valid)
             return true;
 

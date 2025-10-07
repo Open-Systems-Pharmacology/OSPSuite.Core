@@ -10,12 +10,20 @@ using OSPSuite.Utility.Visitor;
 
 namespace OSPSuite.Core.Domain.Services
 {
+   public interface IEntityValidator
+   {
+      /// <summary>
+      ///    Validates the given entity (for a container, all its children as well).
+      /// </summary>
+      ValidationResult Validate(IObjectBase objectBase);
+   }
+   
    /// <summary>
    ///    Is responsible to perform a validation of all rules defined in an entity. If the entity is a container, validate all
    ///    its children as well.
    ///    This class is not thread-safe. See <seealso cref="IEntityValidatorFactory" /> to create thread instances
    /// </summary>
-   public class EntityValidator :
+   public class EntityValidator : IEntityValidator,
       IVisitor<IEntity>,
       IVisitor<IParameter>,
       IVisitor<OutputSchema>,

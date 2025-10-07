@@ -4,13 +4,18 @@ namespace OSPSuite.Core.Domain.Services
 {
    public interface IEntityValidatorFactory
    {
-      EntityValidator Create();
+      ValidationResult Validate(IObjectBase objectBase);
    }
    
-   public class EntityValidatorFactory : DynamicFactory<EntityValidator>, IEntityValidatorFactory
+   public class EntityValidatorFactory : DynamicFactory<IEntityValidator>, IEntityValidatorFactory
    {
       public EntityValidatorFactory(Utility.Container.IContainer container) : base(container)
       {
+      }
+
+      public ValidationResult Validate(IObjectBase objectBase)
+      {
+         return Create().Validate(objectBase);
       }
    }
 }
