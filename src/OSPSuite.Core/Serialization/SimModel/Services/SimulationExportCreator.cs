@@ -329,6 +329,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
 
             default:
                // We need to use the G15 format specifier to revert to the behavior of .NET Framework for compatibility
+               // https://devblogs.microsoft.com/dotnet/floating-point-parsing-and-formatting-improvements-in-net-core-3-0/#potential-impact-to-existing-code
                return new ExplicitFormulaExport {Equation = formula.Calculate(usingFormula).ToString("G15", NumberFormatInfo.InvariantInfo)};
          }
       }
