@@ -328,7 +328,8 @@ namespace OSPSuite.Core.Serialization.SimModel.Services
                return _tableFormulaExportMapper.MapFrom(tableFormula);
 
             default:
-               return new ExplicitFormulaExport {Equation = formula.Calculate(usingFormula).ToString(NumberFormatInfo.InvariantInfo)};
+               // We need to use the G15 format specifier to revert to the behavior of .NET Framework for compatibility
+               return new ExplicitFormulaExport {Equation = formula.Calculate(usingFormula).ToString("G15", NumberFormatInfo.InvariantInfo)};
          }
       }
 
