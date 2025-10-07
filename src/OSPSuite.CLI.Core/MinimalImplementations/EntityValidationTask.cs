@@ -8,20 +8,20 @@ namespace OSPSuite.CLI.Core.MinimalImplementations
 {
    public class EntityValidationTask : IEntityValidationTask
    {
-      private readonly IEntityValidator _entityValidator;
+      private readonly IEntityValidatorFactory _entityValidatorFactory;
       private readonly IOSPSuiteExecutionContext _executionContext;
       private readonly IOSPSuiteLogger _logger;
 
-      public EntityValidationTask(IEntityValidator entityValidator, IOSPSuiteExecutionContext executionContext, IOSPSuiteLogger logger)
+      public EntityValidationTask(IEntityValidatorFactory entityValidatorFactory, IOSPSuiteExecutionContext executionContext, IOSPSuiteLogger logger)
       {
-         _entityValidator = entityValidator;
+         _entityValidatorFactory = entityValidatorFactory;
          _executionContext = executionContext;
          _logger = logger;
       }
 
       public bool Validate(IObjectBase objectToValidate)
       {
-         var validationResult = _entityValidator.Validate(objectToValidate);
+         var validationResult = _entityValidatorFactory.Validate(objectToValidate);
          if (validationResult.ValidationState == ValidationState.Valid)
             return true;
 
