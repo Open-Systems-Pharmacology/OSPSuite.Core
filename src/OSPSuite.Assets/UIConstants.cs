@@ -232,7 +232,7 @@ namespace OSPSuite.Assets
       public static readonly string DeleteSelected = "Delete Selected Records";
       public static readonly string ModulesFolder = "Modules";
       public static readonly string ApplyChangesToUpdateChart = "Apply changes to update chart";
-      public static readonly string Apply = "Apply";
+      public static readonly string ApplyUpdates = "Apply updates";
       public static readonly string AutoUpdateChart = "Auto-update chart";
       public static readonly string LoadFromSnapshot = "Load Snapshot";
       public static readonly string RunSimulations = "Run Simulations";
@@ -1204,6 +1204,16 @@ namespace OSPSuite.Assets
                public static readonly string BreakCondition = "Termination occurs when the relative improvement of the error evaluation is less than the break condition.";
                public static readonly string InitialAlpha = "Start value for projection degree. Termination occurs when the minimal alpha is larger than 10 times alpha.";
             }
+         }
+
+         public static string SimulationsAreRunning(IReadOnlyList<string> names)
+         {
+            return $"The following Simulations are currently running: {names.ToString(", ", "'")}, action cannot be performed until they are stopped.";
+         }
+
+         public static string ParameterIdentificationsAreRunning(IReadOnlyList<string> names)
+         {
+            return $"The following Parameter Identifications are currently running: {ObjectTypes.ParameterIdentification.ToLowerInvariant().PluralizeIf(names)} {names.ToString(", ", "'")}, action cannot be performed until they are stopped.";
          }
 
          public static string ReallyDeleteParameterIdentifications(IReadOnlyList<string> names)
@@ -2225,6 +2235,8 @@ namespace OSPSuite.Assets
       {
          return $"Unit '{unit}' not found for parameter {parameterName} with dimension '{dimension}'";
       }
+
+      public static string ExpressionMoleculeNotFoundInSimulation(string moleculeName) => $"The molecule '{moleculeName}' is not part of the simulation structure";
    }
 
    public static class RibbonCategories
@@ -2328,7 +2340,7 @@ namespace OSPSuite.Assets
          return $"Compare {objectType}s";
       }
 
-      public static readonly string AutoUpdateChart = "Autoupdate chart";
+      public static readonly string AutoUpdateChart = "Auto-update chart";
       public static readonly string ApplyUpdates = "Apply updates";
    }
 

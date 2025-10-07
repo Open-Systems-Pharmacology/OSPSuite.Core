@@ -47,7 +47,7 @@ namespace OSPSuite.UI.Views.Charts
          layoutChartOptions.Text = Captions.ChartOptions;
          layoutCurveAndChartSettings.Text = Captions.CurveAndAxisSettings;
 
-         btnApplyChartUpdates.Text = Captions.Apply;
+         btnApplyChartUpdates.Text = Captions.ApplyUpdates;
          chkAutoUpdateCharts.Text = Captions.AutoUpdateChart;
          chkAutoUpdateCharts.SuperTip = new SuperToolTip().WithText(ToolTips.EnableOrDisableAutomaticUpdateOfTheChartForEachEdit);
          chkUsedIn.Text = Captions.UseSelected;
