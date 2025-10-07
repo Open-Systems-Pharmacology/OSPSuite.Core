@@ -55,7 +55,7 @@ namespace OSPSuite.Core.Services
          }
 
          [Observation]
-         public void the_serialized_value_should_be_equal_to_the_initial_string()
+         public void the_serialized_value_should_drop_precision()
          {
             var formulaExport = _modelExport.FormulaList.First() as ExplicitFormulaExport;
             // we are testing that precision beyond 15 significant digits is not preserved during serialization
