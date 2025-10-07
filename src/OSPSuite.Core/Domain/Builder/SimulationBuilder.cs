@@ -287,6 +287,7 @@ namespace OSPSuite.Core.Domain.Builder
 
       private void cloneAndAddToBuilderSource(Dictionary<string, ReactionBuilder> result, ReactionBuilder incoming, ReactionBuildingBlock block)
       {
+
          result[incoming.Name] = new ReactionBuilder();
          result[incoming.Name] = createCopyFrom(incoming);
          AddToBuilderSource(result[incoming.Name], block);
@@ -298,7 +299,12 @@ namespace OSPSuite.Core.Domain.Builder
          copy.UpdatePropertiesFrom(incoming, null);
 
          foreach (var prm in incoming.Parameters)
-            copy.AddParameter(prm);
+         {
+            var parameter = new Parameter();
+            parameter.UpdatePropertiesFrom(prm, null);
+            copy.AddParameter(parameter);
+         }
+            
 
          copy.Formula = incoming.Formula;
 
@@ -320,8 +326,7 @@ namespace OSPSuite.Core.Domain.Builder
             target.AddParameter(p);
          }
 
-         if (incoming.Formula != null)
-            target.Formula = incoming.Formula;
+         target.Formula = incoming.Formula;
 
          upsertEducts(target, incoming);
          upsertProducts(target, incoming);
