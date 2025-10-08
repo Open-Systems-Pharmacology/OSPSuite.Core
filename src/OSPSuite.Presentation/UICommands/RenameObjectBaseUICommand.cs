@@ -31,6 +31,7 @@ namespace OSPSuite.Presentation.UICommands
             loadSubjectBeforeRenaming();
             Subject.Name = newName;
             _eventPublisher.PublishEvent(new RenamedEvent(Subject));
+            _context.ProjectChanged();
          }
 
       }
