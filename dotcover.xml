@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CoverageParams>
   <TargetArguments>
-  Tests\OSPSuite.Core.Tests\bin\Debug\net472\OSPSuite.Core.Tests.dll
+  Tests\OSPSuite.Core.Tests\bin\Debug\net8\OSPSuite.Core.Tests.dll
   Tests\OSPSuite.Core.IntegrationTests\bin\Debug\net472\OSPSuite.Core.IntegrationTests.dll
   Tests\OSPSuite.Presentation.Tests\bin\Debug\net472\OSPSuite.Presentation.Tests.dll
   Tests\OSPSuite.Infrastructure.Tests\bin\Debug\net472\OSPSuite.Infrastructure.Tests.dll
