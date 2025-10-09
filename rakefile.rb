@@ -41,7 +41,7 @@ end
 
 private
 def find_token(file, regex)
-  file_content = str = IO.read(file)
+  file_content = str = File.read(file)
   matches = file_content.match(regex)
 
   if(matches.nil?)
