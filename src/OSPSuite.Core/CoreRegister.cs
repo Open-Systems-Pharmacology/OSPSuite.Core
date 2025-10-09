@@ -92,6 +92,9 @@ namespace OSPSuite.Core
          container.Register<ISensitivityAnalysisRunner, SensitivityAnalysisRunner>(LifeStyle.Singleton);
          container.Register<IConfirmationManager, ConfirmationManager>(LifeStyle.Singleton);
 
+         //Register specifically since this object does not implement ANY interface besides its own
+         container.Register<SimulationBuilder, SimulationBuilder>();
+
          registerComparers(container);
 
          registerConverters(container);

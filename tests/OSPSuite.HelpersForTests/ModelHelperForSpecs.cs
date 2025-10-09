@@ -8,10 +8,12 @@ using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 using static OSPSuite.Core.Domain.ObjectPath;
 using static OSPSuite.Core.Domain.ObjectPathKeywords;
 using static OSPSuite.Helpers.ConstantsForSpecs;
+using IContainer = OSPSuite.Core.Domain.IContainer;
 
 namespace OSPSuite.Helpers
 {
@@ -1233,6 +1235,14 @@ namespace OSPSuite.Helpers
       public ObjectPathFactoryForSpecs()
          : base(new AliasCreator())
       {
+      }
+   }
+
+   public class SimulationBuilderForSpecs: SimulationBuilder
+   {
+      public SimulationBuilderForSpecs(SimulationConfiguration simulationConfiguration) : base(IoC.Resolve<ICloneManagerForModel>(), new ContainerMergeTask())
+      {
+         PerformMerge(simulationConfiguration);
       }
    }
 

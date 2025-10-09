@@ -44,6 +44,8 @@ namespace OSPSuite.Helpers
          _modelHelper = modelHelper;
       }
 
+      private IDimension amountPerTimeDimension => _dimensionFactory.Dimension(Constants.Dimension.AMOUNT_PER_TIME);
+
       public SimulationConfiguration CreateSimulationConfiguration()
       {
          var simulationConfiguration = new SimulationConfiguration
@@ -72,12 +74,16 @@ namespace OSPSuite.Helpers
          var module2 = createModule2();
 
          module2.MergeBehavior = MergeBehavior.Extend;
+         //TODO Add back when event issue is fixed
+         // module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1"));
+         // module2.Add(createEventGroupBuildingBlock("EventForModule2", "eventGroup2", "eventBuilder1"));
+
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
-         // Using this constructor to validate that the merge behavior is set correctly
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
          return simulationConfiguration;
       }
 
+      //TODO REMOVE. This method is called extend and override at the same time!
       public SimulationConfiguration CreateSimulationConfigurationForExtendMergeBehaviorOverridingModuleBehavior()
       {
          var simulationConfiguration = new SimulationConfiguration
@@ -89,8 +95,9 @@ namespace OSPSuite.Helpers
          var module2 = createModule2();
          module2.MergeBehavior = MergeBehavior.Extend;
 
-         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1"));
-         module2.Add(createEventGroupBuildingBlock("EventForModule2", "eventGroup2", "eventBuilder1", "eventAssignment1", "parameter1"));
+         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1"));
+         module2.Add(createEventGroupBuildingBlock("EventForModule2", "eventGroup2", "eventBuilder1"));
+
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
 
@@ -108,8 +115,8 @@ namespace OSPSuite.Helpers
          var module2 = createModule2();
          module2.MergeBehavior = MergeBehavior.Overwrite;
 
-         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1"));
-         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2", "eventAssignment1", "parameter1"));
+         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1"));
+         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2"));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
 
@@ -127,8 +134,8 @@ namespace OSPSuite.Helpers
          var module2 = createModule2();
          module2.MergeBehavior = MergeBehavior.Extend;
 
-         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1", true));
-         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2", "eventAssignment1", "parameter1", true));
+         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", eventCount: 2));
+         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2", eventCount: 2));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
 
@@ -146,8 +153,8 @@ namespace OSPSuite.Helpers
          var module2 = createModule2();
          module2.MergeBehavior = MergeBehavior.Overwrite;
 
-         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", "eventAssignment1", "parameter1", true));
-         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2", "eventAssignment1", "parameter1", true));
+         module1.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder1", eventCount: 2));
+         module2.Add(createEventGroupBuildingBlock("EventForModule1", "eventGroup1", "eventBuilder2", eventCount: 2));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
          simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2, null, null));
 
@@ -176,6 +183,7 @@ namespace OSPSuite.Helpers
          var module = _objectBaseFactory.Create<Module>().WithName("Module1");
          module.Add(getSpatialStructureModule1());
          module.Add(getMoleculesModule1());
+         module.Add(getPassiveTransportModule1());
 
          var initialConditions = _initialConditionsCreator.CreateFrom(module.SpatialStructure, module.Molecules.ToList());
          module.Add(initialConditions);
@@ -183,23 +191,60 @@ namespace OSPSuite.Helpers
          return module;
       }
 
+      private PassiveTransportBuildingBlock getPassiveTransportModule1()
+      {
+         var passiveTransport = _objectBaseFactory.Create<PassiveTransportBuildingBlock>().WithName("PassiveTransportModule1");
+         var pt1 = _objectBaseFactory.Create<TransportBuilder>().WithName("PT1").WithDimension(amountPerTimeDimension);
+         pt1.Formula = new ConstantFormula(1);
+         //We have a neighborhood lng_pls_to_lng_cell
+         pt1.SourceCriteria = Create.Criteria(x => x.With(Lung).And.With(Plasma));
+         pt1.TargetCriteria = Create.Criteria(x => x.With(Lung).And.With(Cell));
+         pt1.MoleculeList.ForAll = true;
+         pt1.MoleculeList.AddMoleculeNameToExclude("B");
+         passiveTransport.Add(pt1);
+         return passiveTransport;
+      }
+
+      private PassiveTransportBuildingBlock getPassiveTransportModule2()
+      {
+         var passiveTransport = _objectBaseFactory.Create<PassiveTransportBuildingBlock>().WithName("PassiveTransportModule1");
+         var pt1 = _objectBaseFactory.Create<TransportBuilder>().WithName("PT1").WithDimension(amountPerTimeDimension);
+         pt1.SourceCriteria = Create.Criteria(x => x.With(Lung).And.With(Plasma));
+         pt1.SourceCriteria.Operator = CriteriaOperator.And;
+
+         pt1.TargetCriteria = Create.Criteria(x => x.With("LUNG_CELL"));
+         pt1.TargetCriteria.Operator = CriteriaOperator.And;
+         pt1.CreateProcessRateParameter = true;
+         pt1.ProcessRateParameterPersistable = true;
+         pt1.Formula = new ConstantFormula(2);
+         //no molecule in the include list
+         pt1.MoleculeList.ForAll = false;
+         pt1.MoleculeList.AddMoleculeName("B");
+         pt1.MoleculeList.AddMoleculeName("C");
+         pt1.AddParameter(NewConstantParameter("P_Extended", 10));
+         passiveTransport.Add(pt1);
+         return passiveTransport;
+      }
+
       private MoleculeBuildingBlock getMoleculesModule1()
       {
          var molecules = _objectBaseFactory.Create<MoleculeBuildingBlock>();
-         molecules.Add(createMoleculeA(molecules.FormulaCache));
+         molecules.Add(createMolecule(molecules.FormulaCache, "A"));
+         molecules.Add(createMolecule(molecules.FormulaCache, "B"));
+         molecules.Add(createMolecule(molecules.FormulaCache, "C"));
          return molecules;
       }
 
-      private MoleculeBuilder createMoleculeA(IFormulaCache formulaCache)
+      private MoleculeBuilder createMolecule(IFormulaCache formulaCache, string moleculeName)
       {
-         var moleculeC = _modelHelper.DefaultMolecule("A", 3, 3, QuantityType.Drug, formulaCache);
-         var globalParameter = NewConstantParameter("A_Global", 5, ParameterBuildMode.Global);
-         var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString("A_Global_Formula").WithFormulaString("2+2");
+         var molecule = _modelHelper.DefaultMolecule(moleculeName, 3, 3, QuantityType.Drug, formulaCache);
+         var globalParameter = NewConstantParameter($"{moleculeName}_Global", 5, ParameterBuildMode.Global);
+         var formula = _objectBaseFactory.Create<ExplicitFormula>().WithFormulaString($"{moleculeName}_Global_Formula").WithFormulaString("2+2");
          globalParameter.Formula = formula;
          formulaCache.Add(formula);
-         moleculeC.Add(globalParameter);
-         moleculeC.IsFloating = true;
-         return moleculeC;
+         molecule.Add(globalParameter);
+         molecule.IsFloating = true;
+         return molecule;
       }
 
       public IContainer CreateOrganism()
@@ -209,18 +254,19 @@ namespace OSPSuite.Helpers
             .WithMode(ContainerMode.Logical);
       }
 
-      private EventGroupBuildingBlock createEventGroupBuildingBlock(string collectionName, string eventGroupName, string eventBuilderName, string eventAssignmentName, string parameterName, bool createTwoEvents = false)
+      private EventGroupBuildingBlock createEventGroupBuildingBlock(string buildingBlockName, string eventGroupName, string eventBuilderName, int eventCount = 1)
       {
-         var eventGroupBuilderCollection = _objectBaseFactory.Create<EventGroupBuildingBlock>().WithName(collectionName);
-         var eventGroupBuilder = createBolusApplication(eventGroupBuilderCollection.FormulaCache, eventGroupName, eventBuilderName, eventAssignmentName, parameterName, eventCount: createTwoEvents ? 2 : 1);
+         var eventGroupBuilderCollection = _objectBaseFactory.Create<EventGroupBuildingBlock>().WithName(buildingBlockName);
+         var eventGroupBuilder = createBolusApplication(eventGroupBuilderCollection.FormulaCache, eventGroupName, eventBuilderName, eventCount);
          eventGroupBuilderCollection.Add(eventGroupBuilder);
 
          return eventGroupBuilderCollection;
       }
 
-      private EventGroupBuilder createBolusApplication(IFormulaCache cache, string eventGroupName, string eventBuilderName, string eventAssignmentName, string parameterName, int eventCount = 1)
+      private EventGroupBuilder createBolusApplication(IFormulaCache cache, string eventGroupName, string eventBuilderName, int eventCount = 1)
       {
          var eventGroup = _objectBaseFactory.Create<EventGroupBuilder>().WithName(eventGroupName);
+         var eventAssignmentName = "EventAssignment";
          eventGroup.SourceCriteria = Create.Criteria(x => x.With(ArterialBlood).And.With(Plasma));
 
          for (var i = 0; i < eventCount; i++)
@@ -236,7 +282,7 @@ namespace OSPSuite.Helpers
             eventAssignment.UseAsValue = true;
             eventAssignment.ObjectPath = new ObjectPath(ORGANISM, ArterialBlood, Plasma, "A");
             eventBuilder.AddAssignment(eventAssignment);
-            eventBuilder.AddParameter(NewConstantParameter(parameterName, 10));
+            eventBuilder.AddParameter(NewConstantParameter("Parameter1", 10));
             eventGroup.Add(eventBuilder);
          }
 
@@ -315,12 +361,14 @@ namespace OSPSuite.Helpers
          var lngPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
          lngPlasma.Add(NewConstantParameter(Volume, 2));
          lngPlasma.Add(NewConstantParameter(pH, 7.5));
+         lngPlasma.AddTag(new Tag(lung.Name));
          lung.Add(lngPlasma);
 
          var lngCell = createContainerWithName(Cell, ContainerMode.Physical);
          lngCell.Add(NewConstantParameter(Volume, 1));
          lngCell.Add(NewConstantParameter(pH, 7));
          lung.Add(lngCell);
+         lngCell.AddTag(new Tag(lung.Name));
 
          var lungQ = NewConstantParameter(Q, 3);
          lungQ.AddTag("ParamTag1");
@@ -432,11 +480,14 @@ namespace OSPSuite.Helpers
          lngPlasma.Add(NewConstantParameter(pH, 2));
          lung.Add(lngPlasma);
          lung.AddTag("Tag2");
+         lngPlasma.AddTag(new Tag(lung.Name));
 
          var lngCell = createContainerWithName(Cell, ContainerMode.Physical);
          lngCell.Add(NewConstantParameter(Volume, 10));
          lngCell.Add(NewConstantParameter(pH, 2));
          lung.Add(lngCell);
+         lngCell.AddTag(new Tag(lung.Name));
+         lngCell.AddTag(new Tag("LUNG_CELL"));
 
          var lngInt = createContainerWithName(Interstitial, ContainerMode.Physical);
          lngInt.Add(NewConstantParameter(Volume, 10));
@@ -482,6 +533,9 @@ namespace OSPSuite.Helpers
          spatialStructure.AddNeighborhood(neighborhood3);
 
          module.Add(spatialStructure);
+
+         //add a set of passive transport that will have different base on merge behavior
+         module.Add(getPassiveTransportModule2());
          return module;
       }
 
@@ -511,7 +565,7 @@ namespace OSPSuite.Helpers
 
       public SimulationSettings CreateSimulationSettings()
       {
-         return new SimulationSettings { Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = _outputSchemaFactory.CreateDefault(), OutputSelections = new OutputSelections() };
+         return new SimulationSettings {Solver = _solverSettingsFactory.CreateCVODE(), OutputSchema = _outputSchemaFactory.CreateDefault(), OutputSelections = new OutputSelections()};
       }
 
       public SpatialStructure CreateSpatialStructure(string name = "SPATIAL STRUCTURE")
