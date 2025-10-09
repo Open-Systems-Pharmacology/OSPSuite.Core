@@ -94,40 +94,42 @@ namespace OSPSuite.Core.Domain.Builder
 
       private void performMerge()
       {
-         mergeBuilders(x => x.Reactions, _reactions, mergeReactions);
-         mergeBuilders(x => x.Molecules, _molecules, mergeMolecules);
-         mergeBuilders(x => x.PassiveTransports, _passiveTransports, mergeTransports);
-         mergeBuilders(x => x.Observers, _observers, mergeObservers);
+         _reactions.AddRange(mergeBuilders(x => x.Reactions, mergeReactions));
+         _molecules.AddRange(mergeBuilders(x => x.Molecules, mergeMolecules));
+         _passiveTransports.AddRange(mergeBuilders(x => x.PassiveTransports, mergeTransports));
+         _observers.AddRange(mergeBuilders(x => x.Observers, mergeObservers));
          mergeParameterValueBuilders(x => x.SelectedParameterValues, _parameterValues);
          mergeInitialConditions();
          cacheEntities();
       }
 
-      private void mergeBuilders<T>(Func<Module, IBuildingBlock<T>> propAccess, CacheByName<T> cache, Action<T, BuilderSource<T>> mergeStrategyAction) where T : class, IBuilder, IEntity
+      private IReadOnlyList<T> mergeBuilders<T>(Func<Module, IBuildingBlock<T>> propAccess, Action<T, BuilderSource<T>> mergeStrategyAction) where T : class, IBuilder, IEntity
       {
          var analyzedMerges = analyzeBuilderMerges(propAccess);
-
+         var results = new List<T>();
          foreach (var mergeInfo in analyzedMerges)
          {
-            var (finalBuilder, buildingBlock) = mergeInfo.BaseBuilder;
+            var (baseBuilder, buildingBlock) = mergeInfo.BaseBuilder;
 
-            if (mergeInfo.RequiresClone)
+            if (mergeInfo.RequiresBaseClone)
             {
-               finalBuilder = cloneBuilder(finalBuilder);
-               foreach (var (sourceBuilder, sourceBuildingBlock) in mergeInfo.BuildersToMerge)
+               baseBuilder = cloneBuilder(baseBuilder);
+               foreach (var sourceBuilderThatExtend in mergeInfo.BuildersThatExtend)
                {
                   //Clone the source builder if needed to prevent cross-contamination during sequential merges
                   //When merging multiple builders, earlier merged builders could be affected by later merges through shared references
-                  var sourceBuilderToMerge = mergeInfo.RequiresMergeClone ? cloneBuilder(sourceBuilder) : sourceBuilder;
-                  var mergedBuilderSource = new BuilderSource<T>(sourceBuilderToMerge, sourceBuildingBlock);
-                  tryMergeContainers(finalBuilder, mergedBuilderSource);
-                  mergeStrategyAction(finalBuilder, mergedBuilderSource);
+                  var finalBuilderThatExtend = mergeInfo.RequiresExtensionClone ? cloneBuilder(sourceBuilderThatExtend.Builder) : sourceBuilderThatExtend.Builder;
+                  var finalSourceBuilderThatExtend = new BuilderSource<T>(finalBuilderThatExtend, sourceBuilderThatExtend.BuildingBlock);
+                  tryMergeContainers(baseBuilder, finalSourceBuilderThatExtend);
+                  mergeStrategyAction(baseBuilder, finalSourceBuilderThatExtend);
                }
             }
 
-            cache.Add(finalBuilder);
-            AddToBuilderSource(finalBuilder, buildingBlock);
+            results.Add(baseBuilder);
+            AddToBuilderSource(baseBuilder, buildingBlock);
          }
+
+         return results;
       }
 
       private T cloneBuilder<T>(T builder) where T : class, IBuilder
@@ -170,7 +172,7 @@ namespace OSPSuite.Core.Domain.Builder
          mergeDescriptorCriteria(target.TargetCriteria, source.TargetCriteria);
          target.CreateProcessRateParameter = source.CreateProcessRateParameter;
          target.ProcessRateParameterPersistable = source.ProcessRateParameterPersistable;
-         //TODO: do we need to clone?
+         //no need to clone the formula. it's either use as is or already a clone
          target.Formula = _cloneManager.Clone(source.Formula);
       }
 
@@ -327,12 +329,16 @@ namespace OSPSuite.Core.Domain.Builder
       internal class BuilderMergeInfo<T> where T : IBuilder
       {
          public BuilderSource<T> BaseBuilder { get; }
-         public IReadOnlyList<BuilderSource<T>> BuildersToMerge { get; }
+
+         /// <summary>
+         /// List of builders to EXTEND on top of the base builder
+         /// </summary>
+         public IReadOnlyList<BuilderSource<T>> BuildersThatExtend { get; }
 
          /// <summary>
          ///    Indicates that the base builder needs to be cloned before merging
          /// </summary>
-         public bool RequiresClone => BuildersToMerge.Count > 0;
+         public bool RequiresBaseClone => BuildersThatExtend.Count > 0;
 
          /// <summary>
          ///    It is required to also clone each builder being merged if we have 2 or more builders to merge.
@@ -343,7 +349,7 @@ namespace OSPSuite.Core.Domain.Builder
          ///    - If B1 wasn't cloned, these modifications propagate back to the original building block through shared references
          ///    With only 1 builder to merge, there are no subsequent merges to cause side effects, so cloning is not needed.
          /// </summary>
-         public bool RequiresMergeClone => BuildersToMerge.Count >= 2;
+         public bool RequiresExtensionClone => BuildersThatExtend.Count >= 2;
 
          public BuilderMergeInfo(BuilderSource<T> baseBuilder) : this(baseBuilder, Enumerable.Empty<BuilderSource<T>>())
          {
@@ -352,7 +358,7 @@ namespace OSPSuite.Core.Domain.Builder
          public BuilderMergeInfo(BuilderSource<T> baseBuilder, IEnumerable<BuilderSource<T>> buildersToMerge)
          {
             BaseBuilder = baseBuilder;
-            BuildersToMerge = buildersToMerge.ToList();
+            BuildersThatExtend = buildersToMerge.ToList();
          }
       }
 
