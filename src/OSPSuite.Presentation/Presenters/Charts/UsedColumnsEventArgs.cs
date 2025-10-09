@@ -14,12 +14,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
    public class UsedColumnsEventArgs : ColumnsEventArgs
    {
       public bool Used { get; }
-      public bool IsLinkedDataToSimulations { get; }
+      public bool IsLinkedDataToSimulation { get; }
 
-      public UsedColumnsEventArgs(IReadOnlyList<DataColumn> columns, bool used, bool isLinkedDataToSimulations) : base(columns)
+      public UsedColumnsEventArgs(IReadOnlyList<DataColumn> columns, bool used, bool isLinkedDataToSimulation) : base(columns)
       {
          Used = used;
-         IsLinkedDataToSimulations = isLinkedDataToSimulations;
+         IsLinkedDataToSimulation = isLinkedDataToSimulation;
       }
    }
 }

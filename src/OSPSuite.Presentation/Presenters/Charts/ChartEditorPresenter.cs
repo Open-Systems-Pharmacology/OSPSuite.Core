@@ -408,7 +408,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          using (_chartUpdater.UpdateTransaction(Chart, e.Used ? CurveChartUpdateModes.Add : CurveChartUpdateModes.Remove))
          {
-            updateColumnUsedProperty(e.Columns, e.Used, e.IsLinkedDataToSimulations);
+            updateColumnUsedProperty(e.Columns, e.Used, e.IsLinkedDataToSimulation);
          }
       }
 
@@ -676,6 +676,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          var (exists, curve) = createAndConfigureCurve(dataColumn, defaultCurveOptions);
 
+         //Make sure color and style are updated to match linked data to simulation or observed data
          Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns, isLinkedDataToSimulation);
 
          if (exists) return curve;
