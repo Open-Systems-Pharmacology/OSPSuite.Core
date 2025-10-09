@@ -69,5 +69,11 @@ namespace OSPSuite.Presentation.UICommands
       {
          A.CallTo(() => _executionContext.Load(_parameterIdentification)).MustHaveHappened();
       }
+
+      [Observation]
+      public void the_project_should_be_marked_as_changed()
+      {
+         A.CallTo(() => _executionContext.ProjectChanged()).MustHaveHappened();
+      }
    }
 }
