@@ -67,8 +67,8 @@ namespace OSPSuite.Core.Domain
          var obs2 = _moduleConfiguration2.Module.Observers.AmountObserverBuilders.ElementAt(0);
 
          //only testing the molecule extend behavior. No need to really clone
-         A.CallTo(() => _cloneManagerForModel.Clone<ObserverBuilder>(obs1)).Returns(obs1);
-         A.CallTo(() => _cloneManagerForModel.Clone<ObserverBuilder>(obs2)).Returns(obs2);
+         A.CallTo(() => _cloneManagerForModel.CloneAndKeepId<ObserverBuilder>(obs1)).Returns(obs1);
+         A.CallTo(() => _cloneManagerForModel.CloneAndKeepId<ObserverBuilder>(obs2)).Returns(obs2);
      
          sut = new SimulationBuilder(_cloneManagerForModel, _containerMergeTask);
       }

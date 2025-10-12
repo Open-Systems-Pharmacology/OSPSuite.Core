@@ -1,6 +1,6 @@
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Formulas;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
 {
@@ -17,24 +17,21 @@ namespace OSPSuite.Core.Domain.Services
          _dataRepositoryTask = dataRepositoryTask;
       }
 
-      public virtual T Clone<T>(T objectToClone) where T : class, IUpdatable
+      protected T CloneObject<T>(T objectToClone, bool keepId) where T : class, IUpdatable
       {
          if (objectToClone == null)
             return null;
 
          if (objectToClone is DataRepository repository)
-         {
-            return cloneDataRepository(repository) as T;
-         }
+            return cloneDataRepository(repository, keepId) as T;
 
          if (objectToClone is IFormula formulaToClone)
-            return CreateFormulaCloneFor(formulaToClone).DowncastTo<T>();
+            return CreateFormulaCloneFor(formulaToClone, keepId).DowncastTo<T>();
 
          var clone = _objectBaseFactory.CreateObjectBaseFrom(objectToClone);
-         copyContainerStructure(objectToClone as IContainer, clone as IContainer);
-
-         updateUsingFormula(objectToClone as IUsingFormula, clone as IUsingFormula);
-         updateParameter(objectToClone as IParameter, clone as IParameter);
+         copyContainerStructure(objectToClone as IContainer, clone as IContainer, keepId);
+         updateUsingFormula(objectToClone as IUsingFormula, clone as IUsingFormula, keepId);
+         updateParameter(objectToClone as IParameter, clone as IParameter, keepId);
 
          //it is necessary to update  the formula before the properties, since UpdatePropertiesFrom might use formula
          clone.UpdatePropertiesFrom(objectToClone, this);
@@ -42,37 +39,55 @@ namespace OSPSuite.Core.Domain.Services
          if (clone is IWithHasChanged withHasChanged)
             withHasChanged.HasChanged = true;
 
+         return WithUpdatedId(objectToClone, clone, keepId);
+      }
+
+      public virtual T Clone<T>(T objectToClone) where T : class, IUpdatable
+      {
+         //Standard clone strategy: We overwrite
+         return CloneObject(objectToClone, keepId: false);
+      }
+
+      private DataRepository cloneDataRepository(DataRepository objectToClone, bool keepId)
+      {
+         var clone = _dataRepositoryTask.Clone(objectToClone);
+         return WithUpdatedId(objectToClone, clone, keepId);
+      }
+
+      protected T WithUpdatedId<T>(T objectToClone, T clone, bool keepId)
+      {
+         if (objectToClone == null || clone == null)
+            return clone;
+
+         if (objectToClone is IWithId objectWithId && clone is IWithId cloneWithId && keepId)
+            cloneWithId.Id = objectWithId.Id;
+
          return clone;
       }
 
-      private DataRepository cloneDataRepository(DataRepository objectToClone)
-      {
-         return _dataRepositoryTask.Clone(objectToClone);
-      }
-
-      private void updateParameter(IParameter sourceParameter, IParameter targetParameter)
+      private void updateParameter(IParameter sourceParameter, IParameter targetParameter, bool keepId)
       {
          if (sourceParameter == null || targetParameter == null) return;
          if (sourceParameter.RHSFormula == null) return;
-         targetParameter.RHSFormula = CreateFormulaCloneFor(sourceParameter.RHSFormula);
+         targetParameter.RHSFormula = CreateFormulaCloneFor(sourceParameter.RHSFormula, keepId);
       }
 
-      private void updateUsingFormula(IUsingFormula sourceUsingFormula, IUsingFormula targetUsingFormula)
+      private void updateUsingFormula(IUsingFormula sourceUsingFormula, IUsingFormula targetUsingFormula, bool keepId)
       {
          if (sourceUsingFormula == null || targetUsingFormula == null) return;
          var sourceFormula = sourceUsingFormula.Formula;
          if (sourceFormula == null) return;
 
-         targetUsingFormula.Formula = CreateFormulaCloneFor(sourceFormula);
+         targetUsingFormula.Formula = CreateFormulaCloneFor(sourceFormula, keepId);
       }
 
-      private void copyContainerStructure(IContainer sourceContainer, IContainer targetContainer)
+      private void copyContainerStructure(IContainer sourceContainer, IContainer targetContainer, bool keepId)
       {
          if (sourceContainer == null || targetContainer == null) return;
 
          foreach (var child in sourceContainer.Children)
          {
-            targetContainer.Add(Clone(child));
+            targetContainer.Add(CloneObject(child, keepId));
          }
       }
 
@@ -82,9 +97,9 @@ namespace OSPSuite.Core.Domain.Services
          targetFormula.OriginId = sourceFormula.Id;
       }
 
-      protected abstract IFormula CreateFormulaCloneFor(IFormula sourceFormula);
+      protected abstract IFormula CreateFormulaCloneFor(IFormula sourceFormula, bool keepId);
 
-      protected TFormula CloneFormula<TFormula>(TFormula formulaToClone) where TFormula : IFormula
+      protected TFormula CloneFormula<TFormula>(TFormula formulaToClone, bool keepId) where TFormula : IFormula
       {
          var clone = _objectBaseFactory.CreateObjectBaseFrom(formulaToClone);
 
@@ -95,7 +110,8 @@ namespace OSPSuite.Core.Domain.Services
             //this has to be done last since update properties from might have updated the value of origin 
             updateFormulaOrigin(formulaToClone as ExplicitFormula, clone as ExplicitFormula);
 
-         return clone;
+
+         return WithUpdatedId(formulaToClone, clone, keepId);
       }
    }
 }
