@@ -39,7 +39,7 @@ namespace OSPSuite.Core.Domain.Services
          if (clone is IWithHasChanged withHasChanged)
             withHasChanged.HasChanged = true;
 
-         return WithUpdatedId(objectToClone, clone, keepId);
+         return withUpdatedId(objectToClone, clone, keepId);
       }
 
       public virtual T Clone<T>(T objectToClone) where T : class, IUpdatable
@@ -51,10 +51,10 @@ namespace OSPSuite.Core.Domain.Services
       private DataRepository cloneDataRepository(DataRepository objectToClone, bool keepId)
       {
          var clone = _dataRepositoryTask.Clone(objectToClone);
-         return WithUpdatedId(objectToClone, clone, keepId);
+         return withUpdatedId(objectToClone, clone, keepId);
       }
 
-      protected T WithUpdatedId<T>(T objectToClone, T clone, bool keepId)
+      private T withUpdatedId<T>(T objectToClone, T clone, bool keepId)
       {
          if (objectToClone == null || clone == null)
             return clone;
@@ -111,7 +111,7 @@ namespace OSPSuite.Core.Domain.Services
             updateFormulaOrigin(formulaToClone as ExplicitFormula, clone as ExplicitFormula);
 
 
-         return WithUpdatedId(formulaToClone, clone, keepId);
+         return withUpdatedId(formulaToClone, clone, keepId);
       }
    }
 }
