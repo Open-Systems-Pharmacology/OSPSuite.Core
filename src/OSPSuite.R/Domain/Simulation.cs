@@ -50,11 +50,7 @@ namespace OSPSuite.R.Domain
       public Simulation(IModelCoreSimulation modelCoreSimulation)
       {
          CoreSimulation = modelCoreSimulation;
-         //TODO!!
-         // BuildConfiguration = new SimulationBuilder(Configuration);
       }
-
-      public SimulationBuilder BuildConfiguration { get; }
 
       public string Name
       {
