@@ -13,17 +13,26 @@ namespace OSPSuite.R.Services
       /// </summary>
       /// <param name="simulation">Simulation to clone</param>
       IModelCoreSimulation CloneForBatchRun(IModelCoreSimulation simulation);
+
+      /// <summary>
+      /// Returns a fully configure simulation builder that can be used in R to retrieve simulation characteristics
+      /// </summary>
+      /// <param name="simulation"></param>
+      /// <returns>A fully configured simulation builder</returns>
+      SimulationBuilder CreateSimulationBuilderFor(IModelCoreSimulation simulation);
    }
 
    public class SimulationTask : ISimulationTask
    {
       private readonly ICloneManagerForModel _cloneManagerForModel;
       private readonly ISimulationPersistableUpdater _simulationPersistableUpdater;
+      private readonly ISimulationBuilderFactory _simulationBuilderFactory;
 
-      public SimulationTask(ICloneManagerForModel cloneManagerForModel, ISimulationPersistableUpdater simulationPersistableUpdater)
+      public SimulationTask(ICloneManagerForModel cloneManagerForModel, ISimulationPersistableUpdater simulationPersistableUpdater, ISimulationBuilderFactory simulationBuilderFactory)
       {
          _cloneManagerForModel = cloneManagerForModel;
          _simulationPersistableUpdater = simulationPersistableUpdater;
+         _simulationBuilderFactory = simulationBuilderFactory;
       }
 
       public IModelCoreSimulation CloneForBatchRun(IModelCoreSimulation simulationToClone)
@@ -45,6 +54,11 @@ namespace OSPSuite.R.Services
          _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
 
          return simulation;
+      }
+
+      public SimulationBuilder CreateSimulationBuilderFor(IModelCoreSimulation simulation)
+      {
+         return _simulationBuilderFactory.CreateFor(simulation.Configuration);
       }
    }
 }
