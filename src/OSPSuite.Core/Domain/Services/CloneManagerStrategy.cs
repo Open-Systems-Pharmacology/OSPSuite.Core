@@ -56,10 +56,10 @@ namespace OSPSuite.Core.Domain.Services
 
       private T withUpdatedId<T>(T objectToClone, T clone, bool keepId)
       {
-         if (objectToClone == null || clone == null)
+         if (objectToClone == null || clone == null || !keepId)
             return clone;
 
-         if (objectToClone is IWithId objectWithId && clone is IWithId cloneWithId && keepId)
+         if (objectToClone is IWithId objectWithId && clone is IWithId cloneWithId)
             cloneWithId.Id = objectWithId.Id;
 
          return clone;
