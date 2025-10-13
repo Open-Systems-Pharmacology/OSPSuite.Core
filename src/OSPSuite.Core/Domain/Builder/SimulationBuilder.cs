@@ -134,8 +134,8 @@ namespace OSPSuite.Core.Domain.Builder
 
       private T cloneBuilder<T>(T builder) where T : class, IBuilder
       {
-         //we will need to make sure we keep the Id the same somehow to ensure proper tracking of entities. TBD
-         return _cloneManager.Clone(builder);
+         //we need to make sure we keep the Id the same to ensure to keep tracking the same
+         return _cloneManager.CloneAndKeepId(builder);
       }
 
       private void tryMergeContainers<T>(T target, BuilderSource<T> builderSource) where T : IEntity
@@ -173,7 +173,7 @@ namespace OSPSuite.Core.Domain.Builder
          target.CreateProcessRateParameter = source.CreateProcessRateParameter;
          target.ProcessRateParameterPersistable = source.ProcessRateParameterPersistable;
          //no need to clone the formula. it's either use as is or already a clone
-         target.Formula = _cloneManager.Clone(source.Formula);
+         target.Formula = source.Formula;
       }
 
       private void mergeDescriptorCriteria(DescriptorCriteria target, DescriptorCriteria source)
