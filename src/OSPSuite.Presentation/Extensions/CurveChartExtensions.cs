@@ -37,8 +37,9 @@ namespace OSPSuite.Presentation.Extensions
          // Finds color from a column which dataColumn is related
          else if (otherColumnsContainColumnAsRelated(dataColumns))
             curve.Color = getColorFromColumnRelatedTo(chart, dataColumn, dataColumns);
-
-         else
+         
+         // For a ResidualVsTimeChart, do not select a color for the Zero curve.
+         else if(!(chart is ResidualsVsTimeChart) || !string.Equals(curve.Name, ResidualsVsTimeChart.ZERO))
             curve.Color = chart.SelectNewColor();
 
          curve.UpdateStyleForObservedData();

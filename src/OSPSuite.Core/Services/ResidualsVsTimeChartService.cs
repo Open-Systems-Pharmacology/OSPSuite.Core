@@ -8,7 +8,6 @@ using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
-using OSPSuite.Utility.Extensions;
 using static OSPSuite.Assets.Captions.ParameterIdentification;
 
 namespace OSPSuite.Core.Services
@@ -43,7 +42,6 @@ namespace OSPSuite.Core.Services
 
    public class ResidualsVsTimeChartService : IResidualsVsTimeChartService
    {
-      private const string ZERO = "Zero";
       private readonly IDimensionFactory _dimensionFactory;
 
       public ResidualsVsTimeChartService(IDimensionFactory dimensionFactory)
@@ -51,20 +49,20 @@ namespace OSPSuite.Core.Services
          _dimensionFactory = dimensionFactory;
       }
 
-      public string Zero => ZERO;
+      public string Zero => ResidualsVsTimeChart.ZERO;
 
       public DataRepository AddZeroMarkerCurveToChart(AnalysisChartWithLocalRepositories chart, float minObservedDataTime, float maxObservedDataTime)
       {
          var markerRepository = createMarkerRepository(minObservedDataTime, maxObservedDataTime, chart);
-         AddCurvesFor(markerRepository, (column, curve) => { curve.UpdateMarkerCurve(ZERO); }, chart);
+         AddCurvesFor(markerRepository, (column, curve) => { curve.UpdateMarkerCurve(Zero); }, chart);
 
          return markerRepository;
       }
 
       private DataRepository createMarkerRepository(float minObservedDataTime, float maxObservedDataTime, AnalysisChartWithLocalRepositories chart)
       {
-         var id = $"{chart.Id}-{ZERO}";
-         var dataRepository = createEmptyRepository(id, ZERO, ZERO);
+         var id = $"{chart.Id}-{Zero}";
+         var dataRepository = createEmptyRepository(id, Zero, Zero);
          
          var times = new List<float>{minObservedDataTime};
          var values = new List<float> { 0f};
@@ -112,6 +110,7 @@ namespace OSPSuite.Core.Services
       {
          chart.YAxis.Caption = Residuals;
          chart.YAxis.Scaling = Scalings.Linear;
+         chart.YAxis.DefaultLineStyle = LineStyles.Dash;
       }
 
       public DataRepository GetOrCreateScatterDataRepositoryInChart(AnalysisChartWithLocalRepositories chart, OutputResiduals outputResidual, int? runIndex = null)
