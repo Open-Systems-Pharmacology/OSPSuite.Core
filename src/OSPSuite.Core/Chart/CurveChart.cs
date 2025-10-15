@@ -116,7 +116,7 @@ namespace OSPSuite.Core.Chart
          updateAxesForRemovedCurve(yAxisType);
       }
 
-      public Curve CreateCurve(DataColumn columnX, DataColumn columnY, string curveName, IDimensionFactory dimensionFactory)
+      public virtual Curve CreateCurve(DataColumn columnX, DataColumn columnY, string curveName, IDimensionFactory dimensionFactory)
       {
          var curve = FindCurveWithSameData(columnX, columnY);
          if (curve != null)
