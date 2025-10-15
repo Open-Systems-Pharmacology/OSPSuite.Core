@@ -25,8 +25,10 @@ namespace OSPSuite.Core.Serialization.SimModel.Serializer
          //remove double attribute mapper since we need a special implementation in order to export nan, and inf 
          //properly
          attributeMapperRepository.RemoveAttributeMapperFor<double>();
+         attributeMapperRepository.RemoveAttributeMapperFor<double?>();
 
          attributeMapperRepository.AddAttributeMapper(new SimModelDoubleAttributeMapper());
+         attributeMapperRepository.AddAttributeMapper(new SimModelNullableDoubleAttributeMapper());
 
          //register all available serializer
          this.AddSerializers(x =>
