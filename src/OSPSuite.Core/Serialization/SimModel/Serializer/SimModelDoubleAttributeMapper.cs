@@ -18,7 +18,7 @@ namespace OSPSuite.Core.Serialization.SimModel.Serializer
 
          // We need to use the G15 format specifier to revert to the behavior of .NET Framework for compatibility
          // https://devblogs.microsoft.com/dotnet/floating-point-parsing-and-formatting-improvements-in-net-core-3-0/#potential-impact-to-existing-code
-         return valueToConvert.ToString("G15", NumberFormatInfo.InvariantInfo); ;
+         return valueToConvert.ToString("G15", NumberFormatInfo.InvariantInfo);
       }
    }
 
