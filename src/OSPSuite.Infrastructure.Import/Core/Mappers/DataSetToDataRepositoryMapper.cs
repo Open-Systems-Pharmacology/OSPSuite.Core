@@ -128,7 +128,15 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             dataInfo.LLOQ =
                Convert.ToSingle(dimension?.UnitValueToBaseUnitValue(dimension.FindUnit(lloqValue.Unit, ignoreCase: true), lloqValue.Lloq));
 
-         dataColumn.Values = values;
+         try
+         {
+            dataColumn.Values = values;
+         }
+         catch (TimeNotStrictlyMonotoneException ex)
+         {
+            // Catch and throw to add the repository name
+            throw new TimeNotStrictlyMonotoneException(ex, dataRepository.Name);
+         }
 
          var propInfo = dataInfo.GetType().GetProperty(Constants.AUXILIARY_TYPE);
          var errorType = AuxiliaryType.Undefined;
