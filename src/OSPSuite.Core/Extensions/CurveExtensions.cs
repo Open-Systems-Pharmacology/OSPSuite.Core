@@ -38,7 +38,6 @@ namespace OSPSuite.Core.Extensions
          curve.Color = Color.Black;
          curve.Name = curveName;
          curve.LineThickness = 2;
-         curve.Name = curveName;
          curve.Symbol = Symbols.None;
       }
 
