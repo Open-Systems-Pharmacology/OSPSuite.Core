@@ -16,6 +16,14 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
+   public class When_converting_numbers_with_too_much_precision : concern_for_SimModelDoubleAttributeMapper
+   {
+      [Observation]
+      public void the_precision_should_be_reduced()
+      {
+         sut.Convert(0.11704000000000003, _context).ShouldBeEqualTo("0.11704");
+      }
+   }
    
    public class When_converting : concern_for_SimModelDoubleAttributeMapper
    {
