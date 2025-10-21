@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using OSPSuite.Assets;
 using OSPSuite.Utility;
@@ -16,6 +17,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       Task Run(ParameterIdentification parameterIdentification);
       void Stop(ParameterIdentification parameterIdentification);
       bool IsRunning { get; }
+      bool IsAnyRunning(IReadOnlyList<ParameterIdentification> parameterIdentifications);
+      IEnumerable<ParameterIdentification> RunningParameterIdentifications { get; }
    }
 
    public class ParameterIdentificationRunner : IParameterIdentificationRunner
@@ -27,6 +30,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private readonly Cache<ParameterIdentification, IParameterIdentificationEngine> _parameterIdentificationEngines = new Cache<ParameterIdentification, IParameterIdentificationEngine>(onMissingKey: x => null);
 
       public bool IsRunning => _parameterIdentificationEngines.Any();
+
+      public IEnumerable<ParameterIdentification> RunningParameterIdentifications => _parameterIdentificationEngines.Keys;
 
       public ParameterIdentificationRunner(IParameterIdentificationEngineFactory parameterIdentificationEngineFactory,  IDialogCreator dialogCreator, 
          IEntityValidationTask entityValidationTask, IOSPSuiteExecutionContext executionContext)
@@ -53,7 +58,11 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
                await parameterIdentificationEngine.StartAsync(parameterIdentification);
                var end = SystemTime.UtcNow();
                var timeSpent = end - begin;
-               _dialogCreator.MessageBoxInfo(Captions.ParameterIdentification.ParameterIdentificationFinished(parameterIdentification.Name, timeSpent.ToDisplay()));
+
+               var faultedRunResults = parameterIdentification.Results.Where(x => x.Status == RunStatus.SensitivityCalculationFailed).ToList();
+               _dialogCreator.MessageBoxInfo(faultedRunResults.Any() ? 
+                  Captions.ParameterIdentification.SensitivityCalculationFailed(parameterIdentification.Name, faultedRunResults.Select(x => x.Message).ToList(), timeSpent.ToDisplay()) : 
+                  Captions.ParameterIdentification.ParameterIdentificationFinished(parameterIdentification.Name, timeSpent.ToDisplay()));
             }
          }
          catch (OperationCanceledException)
@@ -71,5 +80,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       {
          _parameterIdentificationEngines[parameterIdentification]?.Stop();
       }
+
+      public bool IsAnyRunning(IReadOnlyList<ParameterIdentification> parameterIdentifications) =>
+         parameterIdentifications.Any(pi => _parameterIdentificationEngines.Contains(pi));
    }
 }

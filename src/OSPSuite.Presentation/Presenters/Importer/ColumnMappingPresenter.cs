@@ -229,11 +229,13 @@ namespace OSPSuite.Presentation.Presenters.Importer
             //The dimension is the first from the supported dimension which
             //has the selected unit.
             column.Unit = _mappingParameterEditorPresenter.Unit;
-            if (column.Dimension == null || !column.Dimension.HasUnit(column.Unit.SelectedUnit))
+            if (shouldSetDimension(column))
             {
-               column.Dimension = _columnInfos[model.MappingName]
+               var possibleDimensions = _columnInfos[model.MappingName]
                   .SupportedDimensions
-                  .FirstOrDefault(x => x.HasUnit(column.Unit.SelectedUnit));
+                  .Where(x => x.HasUnit(column.Unit.SelectedUnit)).ToList();
+
+               column.Dimension = _mappingParameterEditorPresenter.Dimension ?? possibleDimensions.FirstOrDefault();
                updateErrorDescriptionAfterMeasurementDimensionChanged(model, column);
             }
          }
@@ -263,6 +265,11 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
          ValidateMapping();
          _view.CloseEditor();
+      }
+
+      private bool shouldSetDimension(Column column)
+      {
+         return column.Dimension == null || !column.Dimension.HasUnit(column.Unit.SelectedUnit) || column.Dimension != _mappingParameterEditorPresenter.Dimension;
       }
 
       public bool ShouldManualInputOnMetaDataBeEnabled(ColumnMappingDTO model)

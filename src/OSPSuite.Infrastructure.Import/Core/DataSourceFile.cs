@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using OSPSuite.Core.Services;
 using OSPSuite.Infrastructure.Import.Services;
 
 namespace OSPSuite.Infrastructure.Import.Core
@@ -24,6 +27,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    public abstract class DataSourceFile : IDataSourceFile
    {
       protected readonly IImportLogger _logger; //ToDo: not sure this is the correct logger implementation - could be we need to write our own
+      private readonly IHeavyWorkManager _heavyWorkManager;
 
       public IDataFormat Format { get; set; }
 
@@ -42,9 +46,10 @@ namespace OSPSuite.Infrastructure.Import.Core
       public string FormatCalculatedFrom { get; set; }
       public DataSheetCollection DataSheets { get; } = new DataSheetCollection();
 
-      protected DataSourceFile(IImportLogger logger)
+      protected DataSourceFile(IImportLogger logger, IHeavyWorkManager heavyWorkManager)
       {
          _logger = logger;
+         _heavyWorkManager = heavyWorkManager;
       }
 
       private string _path;
@@ -55,10 +60,21 @@ namespace OSPSuite.Infrastructure.Import.Core
          set
          {
             _path = value;
-            LoadFromFile(value);
+            var cts = new CancellationTokenSource();
+            _heavyWorkManager.Start(() =>
+            {
+               try
+               {
+                  LoadFromFile(_path, cts.Token);
+               }
+               catch (OperationCanceledException)
+               {
+                  //Nothing to do, just not throw exception.
+               }
+            }, "Importing data...", cts);
          }
       }
 
-      protected abstract void LoadFromFile(string path);
+      protected abstract void LoadFromFile(string path, CancellationToken cancellationToken = default);
    }
 }

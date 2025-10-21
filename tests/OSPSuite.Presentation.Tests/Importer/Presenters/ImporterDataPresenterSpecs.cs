@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -42,7 +43,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
          _sheetsCollection.AddSheet(_dataSheet);
          _sheetsCollection.AddSheet(_dataSheet2);
          _sheetsCollection.AddSheet(_dataSheet3);
-         A.CallTo(() => _importer.LoadFile(A<ColumnInfoCache>._, A<string>._, A<IReadOnlyList<MetaDataCategory>>._)).Returns(_dataSourceFile);
+         A.CallTo(() => _importer.LoadFile(A<ColumnInfoCache>._, A<string>._, A<IReadOnlyList<MetaDataCategory>>._, CancellationToken.None)).Returns(_dataSourceFile);
          A.CallTo(() => _view.GetActiveFilterCriteria()).Returns("active_filter_criteria");
          A.CallTo(() => _dataSourceFile.DataSheets).Returns(_sheetsCollection);
       }

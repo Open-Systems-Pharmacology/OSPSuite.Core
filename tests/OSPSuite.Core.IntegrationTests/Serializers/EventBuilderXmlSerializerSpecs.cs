@@ -7,7 +7,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class EventAssignmentBuilderXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class EventAssignmentBuilderXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
@@ -24,7 +24,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class EventBuilderXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class EventBuilderXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
@@ -56,7 +56,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class EventGroupBuilderXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class EventGroupBuilderXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
@@ -95,7 +95,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class ApplicationBuilderXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class ApplicationBuilderXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
@@ -132,7 +132,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class ApplicationMoleculeBuilderXMLSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class ApplicationMoleculeBuilderXMLSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()

@@ -490,7 +490,11 @@ namespace OSPSuite.R.Services
          }
          catch (Exception exception)
          {
-            _fullMessage = exception.FullMessage();
+            //Given that this was changed to an Async Task, if an exception occurs, it gets wrapped inside an AggregateException.
+            //The message of that exception is "One or more errors occurred."(or localized: "1 error(s) occurred.").
+            //while the inner exception contains the actual exception.
+            //So this needs to catch the exception and display the InnerException Message to prevent this overhead.
+            _fullMessage = exception.InnerException.FullMessage();
          }
       }
 

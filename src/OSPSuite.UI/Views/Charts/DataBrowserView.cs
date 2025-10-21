@@ -95,17 +95,13 @@ namespace OSPSuite.UI.Views.Charts
          return column;
       }
 
-      public IReadOnlyList<DataColumnDTO> SelectedColumns => dtoListFrom(gridView.GetSelectedRows());
-
-      public IReadOnlyList<DataColumnDTO> SelectedDescendantColumns => selectDescendentDataRows(gridView.GetSelectedRows());
+      public IReadOnlyList<DataColumnDTO> SelectedColumns => selectDescendantDataRows(gridView.GetSelectedRows());
       public void SetGroupRowFormat(GridGroupRowFormats format)
       {
          gridView.GroupFormat = format.GetFormatString();
       }
 
-      private IReadOnlyList<DataColumnDTO> dtoListFrom(IEnumerable<int> rowHandles) => rowHandles.Select(_gridViewBinder.ElementAt).ToList();
-
-      private IReadOnlyList<DataColumnDTO> selectDescendentDataRows(IEnumerable<int> selectedRowHandles)
+      private IReadOnlyList<DataColumnDTO> selectDescendantDataRows(IEnumerable<int> selectedRowHandles)
       {
          return selectedRowHandles.SelectMany(rowHandle => _gridViewBinder.SelectedItems(rowHandle)).ToList();
       }

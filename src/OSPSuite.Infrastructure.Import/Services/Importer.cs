@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -19,7 +20,7 @@ namespace OSPSuite.Infrastructure.Import.Services
 {
    public interface IImporter
    {
-      IDataSourceFile LoadFile(ColumnInfoCache columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories);
+      IDataSourceFile LoadFile(ColumnInfoCache columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories, CancellationToken cancellationToken = default);
       void AddFromFile(IDataFormat format, DataSheetCollection dataSheets, ColumnInfoCache columnInfos, IDataSource alreadyExisting);
       IEnumerable<IDataFormat> AvailableFormats(DataSheet dataSheet, ColumnInfoCache columnInfos, IReadOnlyList<MetaDataCategory> metaDataCategories);
 
@@ -95,11 +96,14 @@ namespace OSPSuite.Infrastructure.Import.Services
                alreadyExisting.DataSets.Add(key, current);
             }
 
+            // current is an IDataSet that may have already existing data from a previous attempt importing a sheet.
+            // It should be emptied before the new data sets from the sheet are added, perhaps with a revised configuration
+            current.ClearData();
             current.AddData(dataSets[key].Data);
          }
       }
 
-      public IDataSourceFile LoadFile(ColumnInfoCache columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories)
+      public IDataSourceFile LoadFile(ColumnInfoCache columnInfos, string fileName, IReadOnlyList<MetaDataCategory> metaDataCategories, CancellationToken cancellationToken = default)
       {
          var dataSource = _parser.For(fileName);
 

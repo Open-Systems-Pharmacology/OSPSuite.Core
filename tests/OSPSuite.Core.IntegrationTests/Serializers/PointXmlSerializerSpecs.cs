@@ -4,7 +4,7 @@ using OSPSuite.BDDHelper.Extensions;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class PointXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class PointXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestForPointsSerializer()

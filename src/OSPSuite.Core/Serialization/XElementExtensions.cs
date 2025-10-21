@@ -15,5 +15,10 @@ namespace OSPSuite.Core.Serialization
 
          return versionString.ConvertedTo<int>();
       }
+
+      public static void PermissiveSave(this XElement element, string fileName)
+      {
+         XElementSerializer.PermissiveSave(element, fileName);
+      }
    }
 }

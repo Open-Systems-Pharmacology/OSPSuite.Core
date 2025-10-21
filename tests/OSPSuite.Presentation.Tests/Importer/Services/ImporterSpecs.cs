@@ -35,7 +35,7 @@ namespace OSPSuite.Presentation.Importer.Services
       }
    }
 
-   public abstract class ConcernForImporter : ContextSpecification<OSPSuite.Infrastructure.Import.Services.Importer>
+   public abstract class concern_for_Importer : ContextSpecification<OSPSuite.Infrastructure.Import.Services.Importer>
    {
       protected DataSheet _basicFormat;
       protected IContainer _container;
@@ -73,7 +73,7 @@ namespace OSPSuite.Presentation.Importer.Services
       }
    }
 
-   public class When_checking_data_format : ConcernForImporter
+   public class When_checking_data_format : concern_for_Importer
    {
       [TestCase]
       public void identify_basic_format()
@@ -83,7 +83,48 @@ namespace OSPSuite.Presentation.Importer.Services
       }
    }
 
-   public class When_getting_name_from_convention : ConcernForImporter
+   public class When_adding_parsed_data_and_the_sheet_data_is_already_present : concern_for_Importer
+   {
+      private IDataSource _dataSource;
+      private DataSheetCollection _dataSheets;
+      private IDataFormat _format;
+      private DataSheet _dataSheet;
+      private ParsedDataSet _parsedDataSet;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dataSheets = new DataSheetCollection();
+         _dataSource = new DataSource(sut);
+         _format = A.Fake<IDataFormat>();
+         _format.SetParameters(_basicFormat, _columnInfos, null);
+         _parsedDataSet = new ParsedDataSetTest();
+         _dataSheet = new DataSheet
+         {
+            SheetName = "sheet3",
+            
+         };
+
+         _dataSheets.AddSheet(_dataSheet);
+
+         A.CallTo(() => _format.Parse(_dataSheet, _columnInfos)).Returns(new[] { _parsedDataSet });
+
+         sut.AddFromFile(_format, _dataSheets, _columnInfos, _dataSource);
+      }
+
+      protected override void Because()
+      {
+         sut.AddFromFile(_format, _dataSheets, _columnInfos, _dataSource);
+      }
+
+      [Observation]
+      public void the_number_of_data_sets_should_not_be_doubled_after_second_add()
+      {
+         _dataSource.DataSets["sheet3"].Data.Count.ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_getting_name_from_convention : concern_for_Importer
    {
       private string _fileName;
       private string _fileExtension;
@@ -459,4 +500,81 @@ namespace OSPSuite.Presentation.Importer.Services
          sut.CheckWhetherAllDataColumnsAreMapped(_columnInfos, _parameterList).MissingUnit.First().ShouldBeEqualTo("Time");
       }
    }
+
+   public class When_description_and_mappings_have_different_lengths : concern_for_Importer
+   {
+      private string _fileName;
+      private Cache<string, IDataSet> _dataSets;
+      private string _prefix;
+      private string _postfix;
+
+      protected override void Because()
+      {
+         base.Because();
+         _fileName = "testfile";
+         _prefix = "prefix_";
+         _postfix = "_postfix";
+         _dataSets = new Cache<string, IDataSet>();
+
+         // Initialize dataset with a single ParsedDataSet
+         var dataSet = new DataSet();
+         _dataSets.Add("Sheet1", dataSet);
+      }
+
+      [TestCase]
+      public void when_more_mappings_than_description_then_unmatched_placeholders_remain()
+      {
+         var parsedDataSet = new ParsedDataSetTest();
+         parsedDataSet.SetDataAndDescription(
+            A.Fake<Dictionary<ExtendedColumn, IList<SimulationPoint>>>(),
+            new List<InstantiatedMetaData> // Only 1 description
+            {
+            new InstantiatedMetaData { Id = 0, Value = "Meta1" }
+            });
+
+         _dataSets["Sheet1"].AddData(new List<ParsedDataSet> { parsedDataSet });
+
+         var mappings = new List<MetaDataMappingConverter>
+      {
+         new MetaDataMappingConverter { Id = "Id1", Index = _ => 0 },
+         new MetaDataMappingConverter { Id = "Id2", Index = _ => 1 },
+         new MetaDataMappingConverter { Id = "Id3", Index = _ => 2 }
+      };
+
+         var namingConvention = $"{_prefix}{{Id1}}_{{Id2}}_{{Id3}}{_postfix}";
+         var names = sut.NamesFromConvention(namingConvention, _fileName, _dataSets, mappings);
+
+         names.Count().ShouldBeEqualTo(1);
+         names.First().ShouldBeEqualTo($"{_prefix}Meta1_{{Id2}}_{{Id3}}{_postfix}");
+      }
+
+      [TestCase]
+      public void when_more_descriptions_than_mappings_then_extra_descriptions_are_ignored()
+      {
+         var parsedDataSet = new ParsedDataSetTest();
+         parsedDataSet.SetDataAndDescription(
+            A.Fake<Dictionary<ExtendedColumn, IList<SimulationPoint>>>(),
+            new List<InstantiatedMetaData> // 3 descriptions, only 1 mapping
+            {
+            new InstantiatedMetaData { Id = 0, Value = "Meta1" },
+            new InstantiatedMetaData { Id = 1, Value = "Meta2" },
+            new InstantiatedMetaData { Id = 2, Value = "Meta3" }
+            });
+
+         _dataSets["Sheet1"] = new DataSet();
+         _dataSets["Sheet1"].AddData(new List<ParsedDataSet> { parsedDataSet });
+
+         var mappings = new List<MetaDataMappingConverter>
+      {
+         new MetaDataMappingConverter { Id = "Id1", Index = _ => 0 }
+      };
+
+         var namingConvention = $"{_prefix}{{Id1}}_{{Id2}}{_postfix}";
+         var names = sut.NamesFromConvention(namingConvention, _fileName, _dataSets, mappings);
+
+         names.Count().ShouldBeEqualTo(1);
+         names.First().ShouldBeEqualTo($"{_prefix}Meta1_{{Id2}}{_postfix}");
+      }
+   }
+
 }

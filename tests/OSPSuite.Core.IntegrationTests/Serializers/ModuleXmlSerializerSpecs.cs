@@ -1,11 +1,11 @@
 ﻿using NUnit.Framework;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
-using OSPSuite.Core.Helpers;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class ModuleXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class ModuleXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()

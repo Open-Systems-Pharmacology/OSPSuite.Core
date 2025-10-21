@@ -18,10 +18,12 @@ namespace OSPSuite.Core.Domain
       protected SimulationBuilder _simulationBuilder;
       protected ModelConfiguration _modelConfiguration;
       private Model _model;
+      private IEntityTracker _entityTracker;
 
       protected override void Context()
       {
          _containerTask = A.Fake<IContainerTask>();
+         _entityTracker= A.Fake<IEntityTracker>();
          _simulationConfiguration = new SimulationConfiguration();
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _rootContainer = new Container();
@@ -32,7 +34,7 @@ namespace OSPSuite.Core.Domain
             Root = _rootContainer
          };
          _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder);
-         sut = new MoleculePropertiesContainerTask(_containerTask, _parameterCollectionMapper, _keywordReplacer);
+         sut = new MoleculePropertiesContainerTask(_containerTask, _parameterCollectionMapper, _keywordReplacer,_entityTracker);
       }
    }
 

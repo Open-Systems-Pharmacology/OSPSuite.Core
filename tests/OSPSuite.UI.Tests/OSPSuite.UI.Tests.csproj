@@ -13,13 +13,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FakeItEasy" Version="7.3.1" />
-    <PackageReference Include="nunit" Version="3.13.3" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.4.2">
+    <PackageReference Include="FakeItEasy" Version="8.3.0" />
+    <PackageReference Include="nunit" Version="3.14.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="5.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.0.1" />
+    <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +27,10 @@
     <ProjectReference Include="..\..\src\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
     <ProjectReference Include="..\..\src\OSPSuite.UI\OSPSuite.UI.csproj" />
     <ProjectReference Include="..\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
   <ItemGroup>

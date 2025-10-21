@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
-using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters
 {
@@ -65,8 +64,13 @@ namespace OSPSuite.Presentation.Presenters
       bool AutomaticallyHideEmptyColumns { get; set; }
 
       /// <summary>
-      /// Clears the current selection and refreshes using any quantities from <paramref name="selections"/>
-      /// that are available in the simulation where the paths match
+      ///    Hides the simulation column in both lists if true
+      /// </summary>
+      bool HideSimulationColumn { get; set; }
+
+      /// <summary>
+      ///    Clears the current selection and refreshes using any quantities from <paramref name="selections" />
+      ///    that are available in the simulation where the paths match
       /// </summary>
       void UpdateSelection(IReadOnlyList<QuantitySelection> selections);
    }
@@ -131,7 +135,7 @@ namespace OSPSuite.Presentation.Presenters
       {
          var dto = _allQuantityListPresenter.QuantityDTOByPath(outputSelection.Path);
 
-         if (dto == null) 
+         if (dto == null)
             return;
 
          _selectedQuantityListPresenter.Add(dto);
@@ -180,14 +184,14 @@ namespace OSPSuite.Presentation.Presenters
 
       public string Info
       {
-         get { return _view.Info; }
-         set { _view.Info = value; }
+         get => _view.Info;
+         set => _view.Info = value;
       }
 
       public string Description
       {
-         get { return View.Description; }
-         set { View.Description = value; }
+         get => View.Description;
+         set => View.Description = value;
       }
 
       public void GroupBy(PathElementId pathElementId)
@@ -198,13 +202,23 @@ namespace OSPSuite.Presentation.Presenters
 
       public bool ExpandAllGroups
       {
-         get { return _allQuantityListPresenter.ExpandAllGroups; }
-         set { _allQuantityListPresenter.ExpandAllGroups = value; }
+         get => _allQuantityListPresenter.ExpandAllGroups;
+         set => _allQuantityListPresenter.ExpandAllGroups = value;
+      }
+
+      public bool HideSimulationColumn
+      {
+         set
+         {
+            _allQuantityListPresenter.HideSimulationColumn = value;
+            _selectedQuantityListPresenter.HideSimulationColumn = value;
+         }
+         get => _allQuantityListPresenter.HideSimulationColumn;
       }
 
       public bool AutomaticallyHideEmptyColumns
       {
-         get { return _allQuantityListPresenter.AutomaticallyHideEmptyColumns; }
+         get => _allQuantityListPresenter.AutomaticallyHideEmptyColumns;
          set
          {
             _allQuantityListPresenter.AutomaticallyHideEmptyColumns = value;

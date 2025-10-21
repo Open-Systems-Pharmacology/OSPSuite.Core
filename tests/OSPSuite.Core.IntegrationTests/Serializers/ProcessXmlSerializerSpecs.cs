@@ -6,7 +6,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers
 {
-   public class ProcessXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class ProcessXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerializationEmptyProcess()

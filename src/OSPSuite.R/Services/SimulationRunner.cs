@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
@@ -113,15 +114,10 @@ namespace OSPSuite.R.Services
          _progressUpdater = options.ShowProgress ? _progressManager.Create() : new NoneProgressUpdater();
       }
 
-      private Task<SimulationResults> runAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions)
-      {
-         return Task.Run(() => run(simulation, simulationRunOptions));
-      }
-
-      private SimulationResults run(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions)
+      private async Task<SimulationResults> runAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions)
       {
          _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
-         var simulationResults = _simModelManager.RunSimulation(simulation, coreSimulationRunOptionsFrom(simulationRunOptions, simulation));
+         var simulationResults = await _simModelManager.RunSimulationAsync(simulation, CancellationToken.None, coreSimulationRunOptionsFrom(simulationRunOptions));
          return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
       }
 
@@ -150,7 +146,7 @@ namespace OSPSuite.R.Services
          var (simulation, population, agingData, simulationRunOptions) = simulationRunArgs;
          if (population != null)
             return runAsync(simulation, population, agingData, simulationRunOptions).Result; //Not really without a task
-         return run(simulation, simulationRunOptions);
+         return runAsync(simulation, simulationRunOptions).Result;
       }
    }
 }

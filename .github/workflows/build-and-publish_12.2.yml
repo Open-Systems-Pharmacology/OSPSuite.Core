@@ -1,0 +1,53 @@
+name: Build and Publish 12.2
+run-name: Version 12.2.${{ github.run_number }} (${{ github.event.head_commit.message }})
+
+on:
+  push:
+    branches:
+    - develop
+
+permissions:
+  packages: write
+
+env:
+  MAJOR: 12
+  MINOR: 2
+  RUN: ${{ github.run_number }}
+
+jobs:
+  build-test-publish:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: Restore dependencies
+        run: |
+          nuget sources add -username Open-Systems-Pharmacology -password ${{ secrets.GITHUB_TOKEN }} -name OSP-GitHub-Packages -source "https://nuget.pkg.github.com/Open-Systems-Pharmacology/index.json"
+          dotnet restore
+
+      - name: define env variables
+        run: |
+          echo "APP_VERSION=${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.RUN }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Build
+        run: dotnet build OSPSuite.Core.sln /p:Version=${{env.APP_VERSION}}
+
+      - name : Test
+        run: dotnet test .\tests\**\bin\Debug\net472\OSPSuite*Tests.dll -v normal --no-build  --logger:"html;LogFileName=../testLog_Windows.html"
+
+      - name: Pack the project
+        run: dotnet pack .\OSPSuite.Core.sln --no-build --no-restore -o ./ -p:PackageVersion=${{env.APP_VERSION}} --configuration=Debug --no-build
+
+      - name: Push test log as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: testLog_Windows
+          path: ./testLog*.html
+
+      - name: Publish to GitHub registry
+        # if it is a merge to default branch
+        if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
+        run: dotnet nuget push *.nupkg --source https://nuget.pkg.github.com/${{github.repository_owner}}/index.json --api-key ${{ secrets.GITHUB_TOKEN }}

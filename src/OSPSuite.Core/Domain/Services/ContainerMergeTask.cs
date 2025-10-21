@@ -6,7 +6,7 @@ namespace OSPSuite.Core.Domain.Services
    public interface IContainerMergeTask
    {
       void MergeContainers(IContainer targetContainer, IContainer containerToMerge);
-      void AddOrMergeContainer(IContainer parentContainer, IContainer containerToMerge);
+      IContainer AddOrMergeContainer(IContainer parentContainer, IContainer containerToMerge);
 
       /// <summary>
       ///    If the entity exists, it will be removed and replace by the new one, otherwise simply added
@@ -16,13 +16,15 @@ namespace OSPSuite.Core.Domain.Services
 
    public class ContainerMergeTask : IContainerMergeTask
    {
-      public void AddOrMergeContainer(IContainer parentContainer, IContainer containerToMerge)
+      public IContainer AddOrMergeContainer(IContainer parentContainer, IContainer containerToMerge)
       {
          var existingContainer = parentContainer.Container(containerToMerge.Name);
          if (existingContainer == null)
             parentContainer.Add(containerToMerge);
          else
             MergeContainers(existingContainer, containerToMerge);
+
+         return existingContainer;
       }
 
       /// <summary>

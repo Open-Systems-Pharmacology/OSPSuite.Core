@@ -70,11 +70,15 @@ namespace OSPSuite.Core.Domain
 
       public IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>() where TContainer : class, IContainer => GetAllContainersAndSelf<TContainer>(x => true);
 
-      public IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>(Func<TContainer, bool> predicate) where TContainer : class, IContainer
+      public IReadOnlyList<TContainer> GetAllContainersAndSelf<TContainer>(Func<TContainer, bool> predicate) where TContainer : class, IContainer => GetAllChildrenAndSelf(predicate);
+
+      public IReadOnlyList<TEntity> GetAllChildrenAndSelf<TEntity>() where TEntity : class, IEntity => GetAllChildrenAndSelf<TEntity>(x => true);
+
+      public IReadOnlyList<TEntity> GetAllChildrenAndSelf<TEntity>(Func<TEntity, bool> predicate) where TEntity : class, IEntity
       {
          //needs to re-implement the method since we do not want to return the internal _container
          var allChildren = GetAllChildren(predicate).ToList();
-         var container = this as TContainer;
+         var container = this as TEntity;
          if (container != null && predicate(container))
             allChildren.Add(container);
 

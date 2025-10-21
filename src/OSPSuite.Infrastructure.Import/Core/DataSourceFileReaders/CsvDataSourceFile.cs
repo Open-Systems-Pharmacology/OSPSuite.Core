@@ -15,12 +15,12 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
    {
       private readonly ICsvSeparatorSelector _csvSeparatorSelector;
 
-      public CsvDataSourceFile(IImportLogger logger, ICsvSeparatorSelector csvSeparatorSelector) : base(logger)
+      public CsvDataSourceFile(IImportLogger logger, ICsvSeparatorSelector csvSeparatorSelector, IHeavyWorkManager heavyWorkManager) : base(logger, heavyWorkManager)
       {
          _csvSeparatorSelector = csvSeparatorSelector;
       }
 
-      protected override void LoadFromFile(string path)
+      protected override void LoadFromFile(string path, CancellationToken c)
       {
          var csvSeparators = _csvSeparatorSelector.GetCsvSeparator(path);
 

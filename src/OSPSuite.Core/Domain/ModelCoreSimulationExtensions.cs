@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -92,6 +93,11 @@ namespace OSPSuite.Core.Domain
       {
          return allApplicationContainers.SelectMany(x => x.GetAllChildren<IParameter>())
             .Where(x => x.IsNamed(parameterName));
+      }
+
+      public static void AddEntitySources(this IModelCoreSimulation simulation, IEnumerable<SimulationEntitySource> entitySources)
+      {
+         entitySources?.Each(simulation.EntitySources.Add);
       }
    }
 }

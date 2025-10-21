@@ -14,8 +14,9 @@ namespace OSPSuite.Core.Domain.Services
    public class PKValuesCalculator : IPKValuesCalculator
    {
       /// <summary>
-      ///    3 intervals: TStart=>TD2, TLast=>TEnd and TStart=>TEnd, where TD2 is the second application and TLast the last
-      ///    application
+      ///    4 intervals: TStart=>TD2, TLastMinusOne=>TLast, TLast=>TEnd, and TStart=>TEnd,
+      ///    where TD2 is the second application, TLastMinusOne is the last but one application,
+      ///    TLast is the last application, and TEnd is the end of the simulation.
       /// </summary>
 
       //First interval is either the full range for a single dosing or the first dosing interval
@@ -77,7 +78,7 @@ namespace OSPSuite.Core.Domain.Services
 
          //Last Interval
          setCmaxAndTmax(pk, lastInterval, C_max_tDLast_tDEnd, Tmax_tDLast_tDEnd);
-         setValue(pk, Ctrough_tDLast, lastInterval, x => x.CTrough);
+         setValue(pk, Ctrough_tDLast, lastMinusOneInterval, x => x.CTrough);
          setValue(pk, Thalf_tDLast_tEnd, lastInterval, x => x.Thalf);
          setValueAndNormalize(pk, AUC_inf_tDLast, lastInterval, x => x.AucInf);
 
@@ -173,7 +174,7 @@ namespace OSPSuite.Core.Domain.Services
 
          //only one interval, return the full range
          if (options.SingleDosing)
-            return new[] {fullRange};
+            return new[] { fullRange };
 
          //Two or more intervals
          var intervals = new[]
@@ -408,14 +409,18 @@ namespace OSPSuite.Core.Domain.Services
          }
 
          /// <summary>
-         ///    Creates a polynomial fit of order 1 for the last 10% of the data.
-         ///    and returns the two coefficient (c_0 and C_1 of the fit)
+         ///    Creates a polynomial fit of order 1 for the last 10% or last 3 points
+         ///    of the data whichever is greater and returns the two coefficient
+         ///    (c_0 and C_1 of the fit)
          /// </summary>
          private Tuple<double, double> straightLineFit()
          {
             var errorResult = new Tuple<double, double>(0, 0);
 
-            int numOfPoints = (int) Math.Floor(_time.Count / 10.0);
+            int numOfPoints = (int)Math.Floor(_time.Count / 10.0);
+            if (numOfPoints < 3 && _time.Count >= 3)
+               numOfPoints = 3;
+
             //the number of point is zero. We return a slope of 0. this should never happen
             if (numOfPoints == 0)
                return errorResult;

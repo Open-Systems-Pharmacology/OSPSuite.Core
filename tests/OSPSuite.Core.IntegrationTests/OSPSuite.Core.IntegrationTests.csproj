@@ -37,17 +37,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="nunit" Version="3.13.3" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.4.2">
+    <PackageReference Include="nunit" Version="3.14.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="5.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="FakeItEasy" Version="7.3.1" />
-    <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.0.1" />
-    <PackageReference Include="OSPSuite.Utility" Version="4.1.0.6" />
-    <PackageReference Include="OSPSuite.FuncParser" Version="4.0.0.68" GeneratePathProperty="true" />
-    <PackageReference Include="OSPSuite.SimModel" Version="4.0.0.68" GeneratePathProperty="true" />
-    <PackageReference Include="OSPSuite.SimModelSolver_CVODES" Version="4.1.0.10" GeneratePathProperty="true" />
+    <PackageReference Include="FakeItEasy" Version="8.3.0" />
+    <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.1.1" />
+    <PackageReference Include="OSPSuite.Utility" Version="4.1.1.1" />
+    <PackageReference Include="OSPSuite.FuncParser" Version="4.0.0.73" GeneratePathProperty="true" />
+    <PackageReference Include="OSPSuite.SimModel" Version="4.0.0.75" GeneratePathProperty="true" />
+    <PackageReference Include="OSPSuite.SimModelSolver_CVODES" Version="4.1.0.19" GeneratePathProperty="true" />
   </ItemGroup>
 
   <ItemGroup>
@@ -63,7 +63,37 @@
     <None Update="Data\BlackBox.pkml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Data\emptyFile.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Data\EventsAppKeywordReplacement.pkml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\integrationSample1.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\IntegrationSample1.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\IntegrationSampleDuplicateHeader.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\IntegrationSampleMissingColumn.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\IntegrationSampleMissingMapping.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\IntegrationSampleMissingMappingUnit.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\IntegrationSampleUnitFromColumn.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\IntegrationSampleWithGroupBy.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\invalid.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Data\multiple.pkml">

@@ -11,6 +11,8 @@ using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
 using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Presentation.DTO;
+using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Views.Importer;
 using OSPSuite.Utility.Extensions;
 using ImporterConfiguration = OSPSuite.Core.Import.ImporterConfiguration;
@@ -48,7 +50,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
    {
       private readonly IImporterDataPresenter _importerDataPresenter;
       private readonly IColumnMappingPresenter _columnMappingPresenter;
-      private readonly IImportConfirmationPresenter _confirmationPresenter;
+      private readonly IImportPreviewPresenter _previewPresenter;
       private readonly ISourceFilePresenter _sourceFilePresenter;
       private readonly IDataSetToDataRepositoryMapper _dataRepositoryMapper;
       private readonly IImporter _importer;
@@ -61,6 +63,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
       private IReadOnlyList<MetaDataCategory> _metaDataCategories;
       private readonly IDialogCreator _dialogCreator;
       private readonly IPKMLPersistor _pkmlPersistor;
+      private readonly IDimensionMappingPresenter _dimensionMappingPresenter;
+      private readonly IDataSourceToDimensionSelectionDTOMapper _dataSourceToDimensionSelectionDTOMapper;
 
       public ImporterPresenter(
          IImporterView view,
@@ -68,20 +72,24 @@ namespace OSPSuite.Presentation.Presenters.Importer
          IImporter importer,
          INanPresenter nanPresenter,
          IImporterDataPresenter importerDataPresenter,
-         IImportConfirmationPresenter confirmationPresenter,
+         IImportPreviewPresenter previewPresenter,
          IColumnMappingPresenter columnMappingPresenter,
          ISourceFilePresenter sourceFilePresenter,
          IDialogCreator dialogCreator,
-         IPKMLPersistor pkmlPersistor) : base(view)
+         IPKMLPersistor pkmlPersistor,
+         IDimensionMappingPresenter dimensionMappingPresenter, 
+         IDataSourceToDimensionSelectionDTOMapper dataSourceToDimensionSelectionDTOMapper) : base(view)
       {
          _importerDataPresenter = importerDataPresenter;
-         _confirmationPresenter = confirmationPresenter;
+         _previewPresenter = previewPresenter;
          _columnMappingPresenter = columnMappingPresenter;
          _nanPresenter = nanPresenter;
          _sourceFilePresenter = sourceFilePresenter;
          _dataRepositoryMapper = dataRepositoryMapper;
          _dataSource = new DataSource(importer);
          _pkmlPersistor = pkmlPersistor;
+         _dimensionMappingPresenter = dimensionMappingPresenter;
+         _dataSourceToDimensionSelectionDTOMapper = dataSourceToDimensionSelectionDTOMapper;
          _importer = importer;
          _dialogCreator = dialogCreator;
 
@@ -95,12 +103,12 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _view.AddColumnMappingControl(columnMappingPresenter.View);
          _view.AddSourceFileControl(sourceFilePresenter.View);
          _view.AddNanView(nanPresenter.View);
-         _confirmationPresenter.OnImportData += ImportData;
-         _confirmationPresenter.OnDataSetSelected += plotDataSet;
-         _confirmationPresenter.OnNamingConventionChanged += (s, a) =>
+         _previewPresenter.OnImportData += ImportData;
+         _previewPresenter.OnDataSetSelected += plotDataSet;
+         _previewPresenter.OnNamingConventionChanged += (s, a) =>
          {
             _dataSource.SetNamingConvention(a.NamingConvention);
-            _confirmationPresenter.SetDataSetNames(_dataSource.NamesFromConvention());
+            _previewPresenter.SetDataSetNames(_dataSource.NamesFromConvention());
             _configuration.NamingConventions = a.NamingConvention;
          };
          _importerDataPresenter.OnImportSheets += loadSheetsFromDataPresenter;
@@ -109,9 +117,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
             _columnMappingPresenter.ValidateMapping();
             _configuration.NanSettings = _nanPresenter.Settings;
          };
-         _view.AddConfirmationView(_confirmationPresenter.View);
+         _view.AddPreviewView(_previewPresenter.View);
          _view.AddImporterView(_importerDataPresenter.View);
-         AddSubPresenters(_importerDataPresenter, _confirmationPresenter, _columnMappingPresenter, _sourceFilePresenter);
+         AddSubPresenters(_importerDataPresenter, _previewPresenter, _columnMappingPresenter, _sourceFilePresenter);
          _importerDataPresenter.OnFormatChanged += onFormatChanged;
          _importerDataPresenter.OnTabChanged += onTabChanged;
          _importerDataPresenter.OnDataChanged += onImporterDataChanged;
@@ -125,7 +133,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          try
          {
             var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.ImportedDataSetAt(e.Index));
-            _confirmationPresenter.PlotDataRepository(dataRepository.DataRepository);
+            _previewPresenter.PlotDataRepository(dataRepository.DataRepository);
          }
          catch (TimeNotStrictlyMonotoneException timeNonMonotoneException)
          {
@@ -133,7 +141,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
             errors.Add(_dataSource.DataSetAt(e.Index),
                new NonMonotonicalTimeParseErrorDescription(Error.ErrorWhenPlottingDataRepository(e.Index, timeNonMonotoneException.Message)));
             _importerDataPresenter.SetTabMarks(errors);
-            _confirmationPresenter.SetViewingStateToError(timeNonMonotoneException.Message);
+            _previewPresenter.SetViewingStateToError(timeNonMonotoneException.Message);
          }
       }
 
@@ -240,27 +248,57 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSource.SetMappings(dataSourceFile.Path, mappings);
          _dataSource.NanSettings = _nanPresenter.Settings;
          _dataSource.SetDataFormat(_columnMappingPresenter.GetDataFormat());
+
          var errors = _dataSource.AddSheets(sheets, _columnInfos, filter);
+         
+         var dimensionDTOs = _dataSourceToDimensionSelectionDTOMapper.MapFrom(_dataSource, sheetNames);
+
+         var ambiguousDimensionDTOs = dimensionDTOs.Where(x => x.Dimensions.Count > 1).ToList();
+         if (ambiguousDimensionDTOs.Any())
+         {
+            _dimensionMappingPresenter.EditUnitToDimensionMap(ambiguousDimensionDTOs);
+         }
+
+         dimensionDTOs.Each(dto => dto.Column.Dimension = dto.SelectedDimension);
 
          errors.Add(validateDataSource(_dataSource));
+         errors.Add(validateAmbiguousDimensions(ambiguousDimensionDTOs, _dataSource));
+
          _importerDataPresenter.SetTabMarks(errors, _dataSource.DataSets);
          if (errors.Any())
          {
             throw new ImporterParsingException(errors);
          }
 
-         var keys = new List<string>()
+         var keys = new List<string>
          {
             Constants.FILE,
             Constants.SHEET
          };
 
          keys.AddRange(_dataSource.GetMappings().Select(m => m.Id));
-         _confirmationPresenter.SetKeys(keys);
-         View.EnableConfirmationView();
-         _confirmationPresenter.SetViewingStateToNormal();
-         _confirmationPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions.ToList(), selectedNamingConvention);
+         _previewPresenter.SetKeys(keys);
+
+         View.EnablePreviewView();
+
+         _previewPresenter.SetViewingStateToNormal();
+         _previewPresenter.SetNamingConventions(_dataImporterSettings.NamingConventions.ToList(), selectedNamingConvention);
       }
+
+      private ParseErrors validateAmbiguousDimensions(List<DimensionSelectionDTO> ambiguousDimensionDTOs, IDataSource dataSource)
+      {
+         var errors = new ParseErrors();
+
+         ambiguousDimensionDTOs
+            .Where(dimensionNotMapped)
+            .Each(x => addError(dataSource, errors, x));
+
+         return errors;
+      }
+
+      private static void addError(IDataSource dataSource, ParseErrors errors, DimensionSelectionDTO dto) => errors.Add(dataSource.DataSets[dto.SheetName], new NoMappedDimensionForColumn(dto.SheetName, dto.Column.Name));
+
+      private static bool dimensionNotMapped(DimensionSelectionDTO x) => x.Column.Dimension == null;
 
       private void onFormatChanged(object sender, FormatChangedEventArgs e)
       {
@@ -396,7 +434,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _configuration = configuration;
 
          if (!_configuration.NamingConventions.IsNullOrEmpty())
-            _confirmationPresenter.TriggerNamingConventionChanged(_configuration.NamingConventions);
+            _previewPresenter.TriggerNamingConventionChanged(_configuration.NamingConventions);
 
          _dataSourceFile.Format.CopyParametersFromConfiguration(_configuration);
 
@@ -410,7 +448,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void loadImportedDataSetsFromConfiguration(ImporterConfiguration configuration)
       {
-         _confirmationPresenter.SetDataSetNames(_dataSource.NamesFromConvention()); //this could probably be in the apply
+         _previewPresenter.SetDataSetNames(_dataSource.NamesFromConvention()); //this could probably be in the apply
          //About NanSettings: we do actually read the nanSettings in import dataSheets
          //we just never update the editor on the view, which actually is a problem
 
@@ -423,7 +461,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          {
             var namingConvention = configuration.NamingConventions;
             loadSheets(_dataSourceFile, _importerDataPresenter.ImportedSheets.GetDataSheetNames(), configuration.FilterString, namingConvention);
-            _confirmationPresenter.TriggerNamingConventionChanged(namingConvention);
+            _previewPresenter.TriggerNamingConventionChanged(namingConvention);
          }
          catch (AbstractImporterException e)
          {

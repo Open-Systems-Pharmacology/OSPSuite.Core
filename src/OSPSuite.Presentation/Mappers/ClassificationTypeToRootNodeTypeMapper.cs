@@ -27,6 +27,8 @@ namespace OSPSuite.Presentation.Mappers
                return RootNodeTypes.SensitivityAnalysisFolder;
             case ClassificationType.QualificationPlan:
                return RootNodeTypes.QualificationPlanFolder;
+            case ClassificationType.Module:
+               return RootNodeTypes.ModulesFolder;
             default:
                throw new ArgumentOutOfRangeException(nameof(classificationType));
          }

@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Serialization.Xml
          using (var serializationContext = SerializationTransaction.Create(_container, _dimensionFactory))
          {
             var serializer = _modelingXmlSerializerRepository.SerializerFor(pkParameterMetaDataRepository);
-            var xel = XElement.Load(fileName);
+            var xel = XElementSerializer.PermissiveLoad(fileName);
             serializer.Deserialize(pkParameterMetaDataRepository, xel, serializationContext);
          }
       }

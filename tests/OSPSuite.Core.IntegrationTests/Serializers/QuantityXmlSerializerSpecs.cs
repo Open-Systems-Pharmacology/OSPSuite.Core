@@ -70,7 +70,7 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class ParameterXmlSerializerSpecs : ModellingXmlSerializerBaseSpecs
+   public class ParameterXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerializationParameterWithRHSConstantFormula()

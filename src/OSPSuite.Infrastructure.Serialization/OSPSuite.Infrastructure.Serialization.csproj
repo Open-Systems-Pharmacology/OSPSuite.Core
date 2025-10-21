@@ -2,11 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.0.0</Version>
-    <PackageVersion>1.0.0</PackageVersion>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0</FileVersion>
-    <InformationalVersion>1.0.0.0</InformationalVersion>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <PackageProjectUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</PackageProjectUrl>
@@ -28,9 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.123" />
-   <PackageReference Include="NHibernate" Version="5.2.5" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.112" />
+    <PackageReference Include="Dapper" Version="2.1.66" />
+   <PackageReference Include="NHibernate" Version="5.5.2" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,8 +37,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath=""/>
-    <None Include="..\..\logo.png" Pack="true" Link="logo.png" PackagePath="\logo.png"/>
+    <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath="" />
+    <None Include="..\..\logo.png" Pack="true" Link="logo.png" PackagePath="\logo.png" />
   </ItemGroup>
 
 </Project>

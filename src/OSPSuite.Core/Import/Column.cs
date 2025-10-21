@@ -10,6 +10,7 @@ namespace OSPSuite.Core.Import
    {
       public static readonly string InvalidUnit = "?";
 
+      // The private set is needed by OSPSuite-R
       public string SelectedUnit { get; private set; }
 
       public string ColumnName { get; }
@@ -18,13 +19,14 @@ namespace OSPSuite.Core.Import
       {
          ColumnName = "";
       }
+
       public UnitDescription(string defUnit, string columnName = "")
       {
          SelectedUnit = defUnit;
          ColumnName = columnName;
       }
 
-      public string ExtractUnit(Func<string,int> index, IEnumerable<string> row)
+      public string ExtractUnit(Func<string, int> index, IEnumerable<string> row)
       {
          if (string.IsNullOrEmpty(ColumnName))
          {
@@ -48,6 +50,19 @@ namespace OSPSuite.Core.Import
 
    public class Column
    {
+      public Column()
+      {
+      }
+
+      public Column(Column baseColumn)
+      {
+         Name = baseColumn.Name;
+         Unit = baseColumn.Unit;
+         Dimension = baseColumn.Dimension;
+         LloqColumn = baseColumn.LloqColumn;
+         ErrorStdDev = baseColumn.ErrorStdDev;
+      }
+
       public string Name { get; set; }
 
       public UnitDescription Unit { get; set; }
@@ -64,14 +79,14 @@ namespace OSPSuite.Core.Import
 
       public bool MissingUnitMapping()
       {
-         return 
+         return
             //manual selection: selected unit not set and the column is not a Geometric Standard Deviation
             (Unit.SelectedUnit == UnitDescription.InvalidUnit &&
-                  (ErrorStdDev == null || ErrorStdDev.Equals(Constants.STD_DEV_ARITHMETIC)))
+             (ErrorStdDev == null || ErrorStdDev.Equals(Constants.STD_DEV_ARITHMETIC)))
             ||
             //select from a column: selected unit is null (not set) and no column has been selected
-            (Unit.SelectedUnit == null  &&
-                  Unit.ColumnName == string.Empty);
+            (Unit.SelectedUnit == null &&
+             Unit.ColumnName == string.Empty);
       }
    }
 }

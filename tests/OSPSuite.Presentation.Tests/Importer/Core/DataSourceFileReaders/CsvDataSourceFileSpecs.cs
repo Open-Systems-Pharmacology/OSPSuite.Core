@@ -6,6 +6,8 @@ using FakeItEasy;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Services;
+using OSPSuite.Helpers;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
 using OSPSuite.Infrastructure.Import.Services;
@@ -22,7 +24,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
          var csvSeparatorSelector = A.Fake<ICsvSeparatorSelector>();
          A.CallTo(() => csvSeparatorSelector.GetCsvSeparator(A<string>._)).Returns(new CSVSeparators { ColumnSeparator = ',', DecimalSeparator = '.' });
 
-         sut = new CsvDataSourceFile(A.Fake<IImportLogger>(), csvSeparatorSelector);
+         sut = new CsvDataSourceFile(A.Fake<IImportLogger>(), csvSeparatorSelector, new HeavyWorkManagerForSpecs());
       }
 
       protected string getFileFullName(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", fileName);

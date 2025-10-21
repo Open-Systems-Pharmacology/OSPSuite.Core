@@ -37,5 +37,7 @@ namespace OSPSuite.Presentation.Views.Charts
       ///    Sets the visibility of the control for linking the (de)selection of outputs and observed data 
       /// </summary>
       void SetlinkSimDataMenuItemVisisbility(bool isVisible);
+
+      void SetAutoUpdateModeCheckBox(bool? checkedState);
    }
 }

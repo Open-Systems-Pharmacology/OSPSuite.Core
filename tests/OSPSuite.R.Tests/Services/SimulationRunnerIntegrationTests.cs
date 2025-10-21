@@ -51,7 +51,7 @@ namespace OSPSuite.R.Services
 
       protected override void Because()
       {
-         _results = sut.Run(new SimulationRunArgs {Simulation = _simulation, Population = _subPopulation });
+         _results = sut.Run(new SimulationRunArgs { Simulation = _simulation, Population = _subPopulation });
       }
 
       [Observation]
@@ -81,6 +81,32 @@ namespace OSPSuite.R.Services
       public void should_create_results_matching_the_individual_ids_in_the_population()
       {
          _results.AllIndividualIds().ShouldOnlyContain(Enumerable.Range(0, _population.Count));
+      }
+   }
+
+   public class When_performing_a_population_simulation_run_after_renaming : concern_for_SimulationRunnerIntegration
+   {
+      private IndividualValuesCache _population;
+      private SimulationResults _results;
+      private readonly string _newSimulationName = "New Name";
+
+      protected override void Context()
+      {
+         base.Context();
+         _population = _populationTask.ImportPopulation(_populationFile);
+      }
+
+      protected override void Because()
+      {
+         _simulation.Name = _newSimulationName;
+         _results = sut.Run(new SimulationRunArgs { Simulation = _simulation, Population = _population });
+      }
+
+      [Observation]
+      public void should_return_paths_with_new_simulation_name()
+      {
+         var paths = _results.AllQuantityPaths();
+         paths.Any(x => x.ToString().Contains(_newSimulationName)).ShouldBeFalse();
       }
    }
 }

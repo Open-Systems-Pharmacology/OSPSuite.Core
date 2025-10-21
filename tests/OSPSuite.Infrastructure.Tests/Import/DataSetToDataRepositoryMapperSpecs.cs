@@ -296,4 +296,43 @@ namespace OSPSuite.Infrastructure.Import
          _result.DataRepository.ObservationColumns().First().InternalValues[0].ShouldBeEqualTo(10);
       }
    }
+
+   public class When_metadata_has_duplicate_names : concern_for_DataSetToDataRepositoryMapperSpecs
+   {
+      protected override void Context()
+      {
+         base.Context();
+
+         var importedDataSet = new ImportedDataSet(
+            fileName: "test.xlsx",
+            sheetName: "Sheet1",
+            parsedDataSet: new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), _parsedDataSetInconsistentLLOQ),
+            name: "TestDataSet",
+            metaDataDescription: new List<MetaDataInstance>
+            {
+               new MetaDataInstance("Source", "InstrumentA"),
+               new MetaDataInstance("Source", "InstrumentA-Duplicate"),
+               new MetaDataInstance("Analyst", "John Doe"),
+            }
+         );
+
+         _importedDataSet = importedDataSet;
+      }
+
+      private ImportedDataSet _importedDataSet;
+
+      protected override void Because()
+      {
+         _result = sut.ConvertImportDataSet(_importedDataSet);
+      }
+
+      [Observation]
+      public void should_not_add_duplicate_metadata_properties()
+      {
+         var props = _result.DataRepository.ExtendedProperties.ToList();
+         props.Count(p => p.Name == "Source").ShouldBeEqualTo(1);
+         props.Count(p => p.Name == "Analyst").ShouldBeEqualTo(1);
+      }
+   }
+
 }

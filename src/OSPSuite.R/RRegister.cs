@@ -10,6 +10,7 @@ using OSPSuite.R.MinimalImplementations;
 using OSPSuite.R.Services;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Events;
+using DisplayUnitRetriever = OSPSuite.R.MinimalImplementations.DisplayUnitRetriever;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.R
@@ -41,6 +42,7 @@ namespace OSPSuite.R
          container.Register<SimulationBatch, SimulationBatch>();
          container.Register<ISimulationBatchFactory, SimulationBatchFactory>();
          container.Register<IObjectTypeResolver, RObjectTypeResolver>();
+         container.Register<IHeavyWorkManager, HeavyWorkManager>();
 
          //Singletons
          container.Register<IGroupRepository, RGroupRepository>(LifeStyle.Singleton);

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -11,7 +12,7 @@ using OSPSuite.Presentation.Views;
 
 namespace OSPSuite.Presentation.Presentation
 {
-   public abstract class concern_for_QuantityListPresenter : ContextSpecification<IQuantityListPresenter>
+   public abstract class concern_for_QuantityListPresenter : ContextSpecification<QuantityListPresenter>
    {
       protected IQuantityToQuantitySelectionDTOMapper _mapper;
       protected IQuantityListView _view;
@@ -57,9 +58,21 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
+   public class When_hiding_or_showing_the_simulation_column : concern_for_QuantityListPresenter
+   {
+      [TestCase(false)]
+      [TestCase(true)]
+      [Observation]
+      public void the_simulation_column_should_be_shown(bool hide)
+      {
+         sut.HideSimulationColumn = hide;
+         sut.Edit(new List<IQuantity>());
+         A.CallTo(() => _view.SetVisibility(PathElementId.Simulation, !hide)).MustHaveHappened();
+      }
+   }
+
    public class When_checking_if_a_path_column_is_empty: concern_for_QuantityListPresenter
    {
-
       protected override void Context()
       {
          base.Context();

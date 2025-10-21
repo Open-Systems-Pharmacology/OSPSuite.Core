@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using FakeItEasy;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain;
@@ -30,9 +31,9 @@ namespace OSPSuite.Presentation.Presentation
          _correlationCovarianceMatrix = A.Fake<ParameterIdentificationCorrelationMatrix>();
          _matrixPresenter = A.Fake<IParameterIdentificationMatrixPresenter>();
 
-         A.CallTo(() => _parameterIdentification.Results).Returns(new[] {new ParameterIdentificationRunResult {JacobianMatrix = new JacobianMatrix(new[] {"A"})}});
-         _matrix = new Matrix(new[] {"A"}, new[] {"A"});
-         _matrix.SetRow(0, new[] {1d});
+         A.CallTo(() => _parameterIdentification.Results).Returns(new[] { new ParameterIdentificationRunResult { JacobianMatrix = new JacobianMatrix(new[] { "A" }) } });
+         _matrix = new Matrix(new[] { "A" }, new[] { "A" });
+         _matrix.SetRow(0, new[] { 1d });
          sut = new ParameterIdentificationCorrelationAnalysisPresenter(_view, _matrixPresenter, _presentationSettingsTask, _matrixCalculator);
       }
    }
@@ -72,6 +73,31 @@ namespace OSPSuite.Presentation.Presentation
       public void should_bind_the_data_table_to_the_view()
       {
          A.CallTo(() => _matrixPresenter.Edit(_matrix)).MustHaveHappened();
+      }
+   }
+
+   public class When_displaying_a_correlation_analysis_for_a_parameter_identification_when_sensitivity_calculation_has_failed : concern_for_ParameterIdentificationCorrelationMatrixPresenter
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _parameterIdentification.Results.First().Status = RunStatus.SensitivityCalculationFailed;
+      }
+
+      protected override void Because()
+      {
+         sut.InitializeAnalysis(_correlationCovarianceMatrix, _parameterIdentification);
+      }
+
+      [Observation]
+      public void should_show_the_sensitivity_error_in_the_presenter()
+      {
+         A.CallTo(() => _matrixPresenter.ShowCalculationError(A<string>.That.Matches(x => errorMessageMatchesExpected(x)))).MustHaveHappened();
+      }
+
+      private bool errorMessageMatchesExpected(string s)
+      {
+         return s.Equals(Captions.ParameterIdentification.SensitivityCalculationFailed(_parameterIdentification.Name, new[] { _parameterIdentification.Results.First().Message }));
       }
    }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -10,6 +11,7 @@ using OSPSuite.Helpers;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 using static OSPSuite.Helpers.ConstantsForSpecs;
+using IContainer = OSPSuite.Core.Domain.IContainer;
 
 namespace OSPSuite.Core
 {
@@ -29,18 +31,19 @@ namespace OSPSuite.Core
          sut = IoC.Resolve<IModelConstructor>();
          var moduleHelper = IoC.Resolve<ModuleHelperForSpecs>();
          _simulationConfiguration = SimulationConfigurationBuilder()(moduleHelper);
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          _result = sut.CreateModelFrom(_simulationConfiguration, _modelName);
          _model = _result.Model;
+         _simulationBuilder = _result.SimulationBuilder;
       }
    }
 
    internal class When_running_the_case_study_for_module_integration : concern_for_ModuleIntegration
    {
       [Observation]
-      public void should_return_a_successful_validation()
+      public void should_return_a_successful_validation_with_warning()
       {
-         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.Valid, _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
+         _result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.ValidWithWarnings, _result.ValidationResult.Messages.Select(m => m.Text).ToString("\n"));
+         _result.ValidationResult.Messages.Single().Text.ShouldBeEqualTo(Warning.NeighborhoodWasNotFoundInModel("does_not_match_existing", "Module1 - SPATIAL STRUCTURE MODULE 1"));
       }
 
       [Observation]
@@ -77,6 +80,27 @@ namespace OSPSuite.Core
          moleculeAGlobalContainer.Parameter("P1").Value.ShouldBeEqualTo(100);
          moleculeAGlobalContainer.Parameter("P2").Value.ShouldBeEqualTo(20);
          moleculeAGlobalContainer.Parameter("P3").Value.ShouldBeEqualTo(30);
+      }
+
+      [Observation]
+      public void should_track_the_parameter_accordingly()
+      {
+         var moleculeAGlobalContainer = _model.Root.Container("A");
+         var parameter1 = moleculeAGlobalContainer.Parameter("P1");
+         var parameter2 = moleculeAGlobalContainer.Parameter("P2");
+         var parameter3 = moleculeAGlobalContainer.Parameter("P3");
+         var module1 = _simulationConfiguration.ModuleConfigurations.Find(x => x.Module.IsNamed("Module1"));
+         var module2 = _simulationConfiguration.ModuleConfigurations.Find(x => x.Module.IsNamed("Module2"));
+         var module1Global = module1.Module.SpatialStructure.GlobalMoleculeDependentProperties;
+         var module2Global = module2.Module.SpatialStructure.GlobalMoleculeDependentProperties;
+         var parameter2Module1 = module1Global.Parameter("P2");
+         var parameter1Module2 = module2Global.Parameter("P1");
+         var parameter3Module2 = module2Global.Parameter("P3");
+
+         //we use entity path here because we are not dealing with simulations and we do not want to remove the first entry
+         _simulationBuilder.SimulationEntitySourceFor(parameter1).SourcePath.ShouldBeEqualTo(parameter1Module2.EntityPath());
+         _simulationBuilder.SimulationEntitySourceFor(parameter2).SourcePath.ShouldBeEqualTo(parameter2Module1.EntityPath());
+         _simulationBuilder.SimulationEntitySourceFor(parameter3).SourcePath.ShouldBeEqualTo(parameter3Module2.EntityPath());
       }
 
       protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x => x.CreateSimulationConfiguration();
@@ -283,6 +307,48 @@ namespace OSPSuite.Core
 
             return simulationConfiguration;
          };
+      }
+   }
+
+   internal class When_overriding_neighbors_in_neighborhood : concern_for_ModuleIntegration
+   {
+      private INeighborhoodBuilderFactory _neighborhoodFactory;
+      private Module _module1;
+      private Module _module2;
+
+      protected override void Context()
+      {
+         base.Context();
+         _neighborhoodFactory = IoC.Resolve<INeighborhoodBuilderFactory>();
+      }
+
+      protected override Func<ModuleHelperForSpecs, SimulationConfiguration> SimulationConfigurationBuilder() => x =>
+      {
+         var configuration = x.CreateSimulationConfigurationForExtendMergeBehavior();
+         _module1 = configuration.ModuleConfigurations.ToArray()[0].Module;
+         _module2 = configuration.ModuleConfigurations.ToArray()[1].Module;
+
+         // reverse the neighbors to test that updating neighbors in a neighborhood works
+         var neighborhoodToUpdate = _module1.SpatialStructure.Neighborhoods.FindByName("art_pls_to_bon_pls");
+         var neighborhood = _neighborhoodFactory.CreateBetween(neighborhoodToUpdate.SecondNeighbor, neighborhoodToUpdate.FirstNeighbor);
+         neighborhood.Name = neighborhoodToUpdate.Name;
+         _module2.SpatialStructure.AddNeighborhood(neighborhood);
+
+         return configuration;
+      };
+
+      [Observation]
+      public void the_simulation_neighborhood_neighbors_should_be_updated()
+      {
+         var simulationNeighborhood = _model.Root.GetAllChildren<IContainer>().FindByName("Neighborhoods").GetAllChildren<Neighborhood>().FindByName("art_pls_to_bon_pls");
+         var originalNeighborhoodBuilder = _module1.SpatialStructure.Neighborhoods.FindByName("art_pls_to_bon_pls");
+         var changedNeighborhoodBuilder = _module2.SpatialStructure.Neighborhoods.FindByName("art_pls_to_bon_pls");
+
+         simulationNeighborhood.FirstNeighbor.ConsolidatedPath().ShouldBeEqualTo(changedNeighborhoodBuilder.FirstNeighborPath);
+         simulationNeighborhood.SecondNeighbor.ConsolidatedPath().ShouldBeEqualTo(changedNeighborhoodBuilder.SecondNeighborPath);
+
+         simulationNeighborhood.FirstNeighbor.ConsolidatedPath().ShouldBeEqualTo(originalNeighborhoodBuilder.SecondNeighborPath);
+         simulationNeighborhood.SecondNeighbor.ConsolidatedPath().ShouldBeEqualTo(originalNeighborhoodBuilder.FirstNeighborPath);
       }
    }
 

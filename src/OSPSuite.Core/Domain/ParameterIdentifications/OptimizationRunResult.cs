@@ -67,6 +67,8 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
          get { return AllOutputResiduals.SelectMany(y => y).Select(y => y.Value).ToArray(); }
       }
 
+      public IReadOnlyList<string> ErrorMessages { get; set; }
+
       public virtual DataColumn SimulationResultFor(string fullOutputPath)
       {
          return SimulationResults.SelectMany(x => x.Columns).FirstOrDefault(x => string.Equals(x.PathAsString, fullOutputPath));

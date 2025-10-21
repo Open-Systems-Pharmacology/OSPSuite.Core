@@ -62,7 +62,7 @@ namespace OSPSuite.Helpers
 
       public SimulationConfiguration CreateSimulationConfiguration()
       {
-         var module = _objectBaseFactory.Create<Module>();
+         var module = _objectBaseFactory.Create<Module>().WithName("Module");
          module.Add(getMolecules());
          module.Add(getReactions());
          module.Add(getPassiveTransports());

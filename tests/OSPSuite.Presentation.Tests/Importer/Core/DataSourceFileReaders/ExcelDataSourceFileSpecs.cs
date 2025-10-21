@@ -1,26 +1,31 @@
-﻿using FakeItEasy;
-using NUnit.Framework;
-using OSPSuite.BDDHelper;
-using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Infrastructure.Import.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using FakeItEasy;
+using NUnit.Framework;
+using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Services;
+using OSPSuite.Helpers;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
+using OSPSuite.Infrastructure.Import.Services;
+using OSPSuite.Presentation.Services;
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {
-
    public abstract class ConcernForExcelDataSourceFile : ContextSpecification<ExcelDataSourceFile>
    {
       protected string _excelFilePath;
       protected string _excelFile = "sample1.xlsx";
+      protected IHeavyWorkManager workManager;
       protected override void Context()
       {
-         sut = new ExcelDataSourceFile(A.Fake<IImportLogger>())
+         workManager = new HeavyWorkManagerForSpecs();
+
+         sut = new ExcelDataSourceFile(A.Fake<IImportLogger>(), workManager)
          {
             Path = _excelFilePath
          };
@@ -72,6 +77,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
             sut.DataSheets.GetDataSheetByName("Sheet2").GetHeaders().ElementAt(i - 1).ShouldBeEqualTo("sheet2_header" + i);
          }
       }
+
       [TestCase]
       public void body_is_read_first_sheet()
       {
@@ -112,7 +118,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void existing_values_are_read_third_sheet()
       {
-         sut.DataSheets.ElementAt(2).GetColumnDescription("string").ExistingValues.ShouldBeEqualTo(new List<string>(){ "str8", "str11" });
+         sut.DataSheets.ElementAt(2).GetColumnDescription("string").ExistingValues.ShouldBeEqualTo(new List<string>() { "str8", "str11" });
       }
 
       [TestCase]
@@ -130,21 +136,19 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void double_read_with_correct_precision()
       {
-         sut.DataSheets.ElementAt(2).GetColumn("Double").ShouldBeEqualTo(new List<string>(){ "0.000341012439638598" , 34.4399986267089.ToString(CultureInfo.CurrentCulture) });
+         sut.DataSheets.ElementAt(2).GetColumn("Double").ShouldBeEqualTo(new List<string>() { "0.000341012439638598", 34.4399986267089.ToString(CultureInfo.CurrentCulture) });
       }
-
 
       [TestCase]
       public void rightmost_column_with_empty_rows_read_correctly()
       {
-         sut.DataSheets.ElementAt(2).GetColumn("empty row").ShouldBeEqualTo(new List<string>() { "", "21"});
+         sut.DataSheets.ElementAt(2).GetColumn("empty row").ShouldBeEqualTo(new List<string>() { "", "21" });
       }
-
 
       [TestCase]
       public void excel_cell_read_correctly()
       {
-         sut.DataSheets.ElementAt(2).GetCell("Double",0).ShouldBeEqualTo("0.000341012439638598");
+         sut.DataSheets.ElementAt(2).GetCell("Double", 0).ShouldBeEqualTo("0.000341012439638598");
       }
    }
 }

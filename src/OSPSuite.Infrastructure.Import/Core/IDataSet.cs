@@ -21,6 +21,7 @@ namespace OSPSuite.Infrastructure.Import.Core
       void ClearNan(double indicator);
       bool NanValuesExist(double indicator);
       void AddData(IEnumerable<ParsedDataSet> range);
+      void ClearData();
    }
 
    public class DataSet : IDataSet
@@ -29,10 +30,9 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public IReadOnlyList<ParsedDataSet> Data => _data;
 
-      public void AddData(IEnumerable<ParsedDataSet> range)
-      {
-         _data.AddRange(range);
-      }
+      public void AddData(IEnumerable<ParsedDataSet> range) => _data.AddRange(range);
+
+      public void ClearData() => _data.Clear();
 
       public bool NanValuesExist(double indicator)
       {

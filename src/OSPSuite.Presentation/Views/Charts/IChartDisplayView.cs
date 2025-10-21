@@ -71,5 +71,7 @@ namespace OSPSuite.Presentation.Views.Charts
       ///  Shows the watermark if defined
       /// </summary>
       void ShowWatermark(string watermark);
+
+      void ExportToPng(string filePath, string watermark);
    }
 }

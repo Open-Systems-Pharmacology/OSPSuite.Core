@@ -310,7 +310,7 @@ namespace OSPSuite.Core.Domain
          public const string DOC_EXTENSION = ".doc";
          public const string MARKDOWN_EXTENSION = ".md";
          public const string ANY_EXTENSION = ".*";
-
+         
          public static readonly string DIAGRAM_IMAGE_FILTER = FileFilter("Diagram Image", PNG_EXTENSION);
          public static readonly string UNITS_FILE_FILTER = XmlFilter("Units");
          public static readonly string FAVORITES_FILE_FILTER = XmlFilter("Favorites");
@@ -332,6 +332,7 @@ namespace OSPSuite.Core.Domain
          public static readonly string MARKDOWN_FILE_FILTER = FileFilter("Markdown", MARKDOWN_EXTENSION);
          public static readonly string JSON_FILTER = filter(JSON_EXTENSION);
          public static readonly string XML_FILTER = filter(XML_EXTENSION);
+
          public static string XmlFilter(string caption) => FileFilter(caption, XML_EXTENSION);
 
          public static string FileFilter(string caption, string extension)

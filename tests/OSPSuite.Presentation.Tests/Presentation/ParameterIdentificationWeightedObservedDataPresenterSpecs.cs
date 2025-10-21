@@ -3,7 +3,6 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
@@ -17,6 +16,7 @@ namespace OSPSuite.Presentation.Presentation
       protected IWeightedDataRepositoryDataPresenter _weightedDataRepositoryDataPresenter;
       protected IParameterIdentificationWeightedObservedDataView _view;
       protected WeightedObservedData _weightedObservedData;
+      protected OutputMapping _outputMapping;
 
       protected override void Context()
       {
@@ -26,6 +26,8 @@ namespace OSPSuite.Presentation.Presentation
          var dataRepository = new DataRepository {Name = "weightedObservedData" };
          dataRepository.Add(new BaseGrid("name", DomainHelperForSpecs.TimeDimensionForSpecs()));
          _weightedObservedData = new WeightedObservedData(dataRepository);
+         _outputMapping = new OutputMapping();
+         _outputMapping.WeightedObservedData = _weightedObservedData;
 
          sut = new ParameterIdentificationWeightedObservedDataPresenter(_view, _weightedDataRepositoryDataPresenter, _simpleChartPresenter);
       }
@@ -35,7 +37,7 @@ namespace OSPSuite.Presentation.Presentation
    {
       protected override void Because()
       {
-         sut.Edit(_weightedObservedData);
+         sut.Edit(_outputMapping);
       }
 
       [Observation]

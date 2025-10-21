@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,34 +7,35 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Helpers;
-using OSPSuite.SimModel;
 using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core
 {
-   public abstract class concern_for_SimModelManager : ContextForIntegration<ISimModelManager>
+   public abstract class concern_for_SimModelManagerAsync : ContextForIntegrationAsync<ISimModelManager>
    {
-      private IWithIdRepository _withIdRepository;
+      protected IWithIdRepository _withIdRepository;
       protected IModelCoreSimulation _simulation;
+      protected CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-      public override void GlobalContext()
+      public override async Task GlobalContext()
       {
-         base.GlobalContext();
+         await base.GlobalContext();
+
          _withIdRepository = IoC.Resolve<IWithIdRepository>();
          _simulation = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
          new RegisterTaskForSpecs(_withIdRepository).RegisterAllIn(_simulation.Model.Root);
+
          sut = IoC.Resolve<ISimModelManager>();
       }
    }
 
-   public class When_run_simulation_is_called : concern_for_SimModelManager
+   public class When_run_simulation_is_called : concern_for_SimModelManagerAsync
    {
       private SimulationRunResults _res;
 
-      protected override void Because()
+      protected override async Task Because()
       {
-
-         _res = sut.RunSimulation(_simulation);
+         _res = await Task.Run(() => sut.RunSimulation(_simulation));
       }
 
       [Observation]
@@ -53,21 +52,21 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_retrieving_the_results_of_a_simulation : concern_for_SimModelManager
+   public class When_retrieving_the_results_of_a_simulation : concern_for_SimModelManagerAsync
    {
       private DataRepository _results;
 
-      protected override void Because()
+      protected override async Task Because()
       {
-         _results = sut.RunSimulation(_simulation).Results;
+         _results = (await Task.Run(() => sut.RunSimulation(_simulation))).Results;
       }
 
       [Observation]
       public void should_return_repository_with_number_of_amounts_and_observers_and_persistent_parameter_plus_one_extra_column_for_time()
       {
-         int numberOfAmounts = _simulation.Model.Root.GetAllChildren<MoleculeAmount>().Count();
-         int numberOfObservers = _simulation.Model.Root.GetAllChildren<Observer>().Count();
-         int numberOfPersistentParameter = _simulation.Model.Root.GetAllChildren<IParameter>(parameter => parameter.Persistable).Count();
+         int numberOfAmounts = _simulation.Model.Root.GetAllChildren<MoleculeAmount>().Count;
+         int numberOfObservers = _simulation.Model.Root.GetAllChildren<Observer>().Count;
+         int numberOfPersistentParameter = _simulation.Model.Root.GetAllChildren<IParameter>(parameter => parameter.Persistable).Count;
          _results.Count().ShouldBeEqualTo(numberOfAmounts + numberOfObservers + numberOfPersistentParameter + 1);
       }
 
@@ -106,31 +105,29 @@ namespace OSPSuite.Core
       }
    }
 
-   public class When_canceling_a_simulation_run : concern_for_SimModelManager
+   public class When_running_two_simulations_concurrently : concern_for_SimModelManagerAsync
    {
-      private SimulationRunResults _runResults;
+      protected IModelCoreSimulation _simulation2;
+      private SimulationRunResults _runResults1;
+      private SimulationRunResults _runResults2;
 
-      protected override void Context()
+      protected override async Task Context()
       {
-         base.Context();
-         var interval = _simulation.Settings.OutputSchema.Intervals.ElementAt(0);
-         interval.GetSingleChildByName<IParameter>(Constants.Parameters.END_TIME).Value = 5000000;
-         interval.GetSingleChildByName<IParameter>(Constants.Parameters.RESOLUTION).Value = 10000;
+         await base.Context();
+         _simulation2 = IoC.Resolve<SimulationHelperForSpecs>().CreateSimulation();
       }
 
-      protected override void Because()
+      protected override async Task Because()
       {
-         var task = Task.Run(() => sut.RunSimulation(_simulation));
-         //needs to sleep so that the action actually starts
-         Thread.Sleep(100);
-         sut.StopSimulation();
-         _runResults = task.Result;
+         _runResults1 = await sut.RunSimulationAsync(_simulation, _cancellationTokenSource.Token);
+         _runResults2 = await sut.RunSimulationAsync(_simulation2, _cancellationTokenSource.Token);
       }
 
       [Observation]
-      public void should_not_crash()
+      public void should_be_successful()
       {
-         _runResults.Success.ShouldBeFalse();
+         _runResults1.Success.ShouldBeTrue();
+         _runResults2.Success.ShouldBeTrue();
       }
    }
 }

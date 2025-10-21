@@ -462,7 +462,7 @@ namespace OSPSuite.Helpers
          spatialStructure.AddNeighborhood(neighborhood);
 
 
-         //LUNG with other parameters and interstitial compartment
+         //HEART with other parameters and interstitial compartment
          var heart = createContainerWithName(Heart);
          var heartPlasma = createContainerWithName(Plasma, ContainerMode.Physical);
          heart.Add(NewConstantParameter(Volume, 20));

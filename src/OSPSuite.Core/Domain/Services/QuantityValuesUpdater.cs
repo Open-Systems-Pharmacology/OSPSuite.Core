@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Builder;
@@ -32,6 +33,7 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IFormulaFactory _formulaFactory;
       private readonly IConcentrationBasedFormulaUpdater _concentrationBasedFormulaUpdater;
       private readonly IParameterValueToParameterMapper _parameterValueToParameterMapper;
+      private readonly IEntityTracker _entityTracker;
       private readonly ValidatorForForFormula _formulaValidator;
 
       public QuantityValuesUpdater(
@@ -40,6 +42,7 @@ namespace OSPSuite.Core.Domain.Services
          IFormulaFactory formulaFactory,
          IConcentrationBasedFormulaUpdater concentrationBasedFormulaUpdater,
          IParameterValueToParameterMapper parameterValueToParameterMapper,
+         IEntityTracker entityTracker,
          ValidatorForForFormula formulaValidator)
       {
          _keywordReplacerTask = keywordReplacerTask;
@@ -47,6 +50,7 @@ namespace OSPSuite.Core.Domain.Services
          _formulaFactory = formulaFactory;
          _concentrationBasedFormulaUpdater = concentrationBasedFormulaUpdater;
          _parameterValueToParameterMapper = parameterValueToParameterMapper;
+         _entityTracker = entityTracker;
          _formulaValidator = formulaValidator;
       }
 
@@ -68,10 +72,25 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateParameterFromExpressionProfiles(ValueUpdaterParams valueUpdater)
       {
+         var (modelConfiguration, validationResult) = valueUpdater;
+
+         var allPresentMoleculeNames = allMoleculeNames(modelConfiguration.SimulationConfiguration);
+         var expressionProfiles = modelConfiguration.SimulationConfiguration.ExpressionProfiles;
+         var expressionsOfAbsentMolecules = expressionProfiles.Where(x => !allPresentMoleculeNames.Contains(x.MoleculeName)).ToList();
+
+         addMessagesForMissingExpressionMolecules(expressionsOfAbsentMolecules, validationResult);
+
          var addOrUpdateParameter = addOrUpdateParameterFromParameterValue(valueUpdater);
-         valueUpdater.ModelConfiguration.SimulationConfiguration.ExpressionProfiles?.SelectMany(x => x.ExpressionParameters)
+
+         expressionProfiles.Except(expressionsOfAbsentMolecules).SelectMany(x => x.ExpressionParameters)
             .Each(addOrUpdateParameter);
       }
+
+      private void addMessagesForMissingExpressionMolecules(IReadOnlyList<ExpressionProfileBuildingBlock> absentExpressionProfiles, ValidationResult validationResult) =>
+         absentExpressionProfiles.Each(x => validationResult.AddMessage(NotificationType.Warning, x, Warning.ExpressionMoleculeNotFoundInSimulation(x.MoleculeName), x));
+
+      private IReadOnlyList<string> allMoleculeNames(SimulationConfiguration configuration) =>
+         configuration.All<MoleculeBuildingBlock>().SelectMany(x => x.AllNames()).Distinct().ToList();
 
       private void updateParameterFromIndividualValues(ValueUpdaterParams valueUpdater)
       {
@@ -96,7 +115,7 @@ namespace OSPSuite.Core.Domain.Services
          if (parameter != null)
             return parameter.WithUpdatedMetaFrom(parameterValue);
 
-         var (model, simulationBuilder, replacementContext) = modelConfiguration;
+         var (model, _, replacementContext) = modelConfiguration;
          //Parameter does not exist in the model. We will create it if possible
          var parentContainerPathInModel = _keywordReplacerTask.CreateModelPathFor(parameterValue.ContainerPath, replacementContext);
          var parentContainer = parentContainerPathInModel.Resolve<IContainer>(model.Root);
@@ -110,8 +129,6 @@ namespace OSPSuite.Core.Domain.Services
 
          parameter = _parameterValueToParameterMapper.MapFrom(parameterValue);
 
-         simulationBuilder.AddBuilderReference(parameter, parameterValue);
-
          //now we remove the parameter by name from the parent container just in case it already exists but with a different type (distributed vs not distributed)
          var potentialParameter = parentContainer.Parameter(parameterValue.Name);
          parentContainer.RemoveChild(potentialParameter);
@@ -124,10 +141,10 @@ namespace OSPSuite.Core.Domain.Services
       {
          var (model, _, replacementContext) = modelConfiguration;
          var pathInModel = _keywordReplacerTask.CreateModelPathFor(pathAndValueEntity.Path, replacementContext);
-         var parameter =  pathInModel.Resolve<IParameter>(model.Root);
+         var parameter = pathInModel.Resolve<IParameter>(model.Root);
 
          //parameter does not exist, we return
-         if(parameter == null)
+         if (parameter == null)
             return null;
 
          //parameter exists, we need to check that it matches the type of the pathAndValEntity coming along
@@ -148,7 +165,8 @@ namespace OSPSuite.Core.Domain.Services
          if (parameter == null)
             return;
 
-         var (_, _, replacementContext) = valueUpdater.ModelConfiguration;
+         var (_, simulationBuilder, replacementContext) = valueUpdater.ModelConfiguration;
+         _entityTracker.Track(parameter, parameterValue, simulationBuilder);
 
          //Formula is defined, we update in the parameter instance
          if (parameterValue.Formula != null)
@@ -166,16 +184,11 @@ namespace OSPSuite.Core.Domain.Services
 
          var actualParameterValue = parameterValue.Value.Value;
          if (parameter.Formula is ConstantFormula constantFormula)
-         {
             constantFormula.Value = actualParameterValue;
-            return;
-         }
-
          //now we have a non constant formula. Let's try to see if the reference can be resolved. If yes, we will simply set the value of the parameter
-         //Otherwise, we will create a new constant formula with the value
-
-         if (_formulaValidator.IsFormulaValid(parameter))
+         else if (_formulaValidator.IsFormulaValid(parameter))
             parameter.Value = actualParameterValue;
+         //Otherwise, we will create a new constant formula with the value
          else
             parameter.Formula = _formulaFactory.ConstantFormula(actualParameterValue, parameter.Dimension);
       };
@@ -198,11 +211,13 @@ namespace OSPSuite.Core.Domain.Services
             {
                //use a clone here because we want a different instance for each molecule
                updateMoleculeAmountFormula(molecule, _cloneManagerForModel.Clone(initialCondition.Formula));
+               _entityTracker.Track(molecule, initialCondition, simulationBuilder);
                _keywordReplacerTask.ReplaceIn(molecule, replacementContext);
             }
             else if (startValueShouldBeSetAsConstantFormula(initialCondition, molecule))
             {
                updateMoleculeAmountFormula(molecule, createConstantFormula(initialCondition));
+               _entityTracker.Track(molecule, initialCondition, simulationBuilder);
             }
 
             molecule.ScaleDivisor = initialCondition.ScaleDivisor;

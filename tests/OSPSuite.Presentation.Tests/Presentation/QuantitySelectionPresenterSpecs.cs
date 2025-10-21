@@ -195,4 +195,19 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _selectedQuantityPresenter.UpdateSelection(A<IReadOnlyList<QuantitySelectionDTO>>._, false)).MustHaveHappened();
       }
    }
+
+   public class When_hiding_the_simulation_column : concern_for_QuantitySelectionPresenter
+   {
+      protected override void Because()
+      {
+         sut.HideSimulationColumn = true;
+      }
+
+      [Observation]
+      public void both_list_presenters_should_hide_columns()
+      {
+         _allQuantityPresenter.HideSimulationColumn.ShouldBeEqualTo(true);
+         _selectedQuantityPresenter.HideSimulationColumn.ShouldBeEqualTo(true);
+      }
+   }
 }

@@ -6,7 +6,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
-using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -17,6 +16,7 @@ namespace OSPSuite.Core.Mappers
       protected ICloneManagerForModel _cloneManagerForModel;
       protected IKeywordReplacerTask _keywordReplacerTask;
       protected IParameterBuilderToParameterMapper _parameterMapper;
+      protected IEntityTracker _entityTracker;
 
       protected override void Context()
       {
@@ -25,7 +25,9 @@ namespace OSPSuite.Core.Mappers
          _cloneManagerForModel = A.Fake<ICloneManagerForModel>();
          _keywordReplacerTask = A.Fake<IKeywordReplacerTask>();
          _parameterMapper = A.Fake<IParameterBuilderToParameterMapper>();
-         sut = new NeighborhoodBuilderToNeighborhoodMapper(_objectBaseFactory, _containerMapper, _keywordReplacerTask, _cloneManagerForModel, _parameterMapper);
+         _entityTracker = A.Fake<IEntityTracker>();
+
+         sut = new NeighborhoodBuilderToNeighborhoodMapper(_objectBaseFactory, _containerMapper, _keywordReplacerTask, _cloneManagerForModel, _parameterMapper, _entityTracker);
       }
    }
 
@@ -54,7 +56,7 @@ namespace OSPSuite.Core.Mappers
          _simulationConfiguration = new SimulationConfiguration();
          _model = A.Fake<IModel>();
          _model.Root = _rootContainer;
-         _neighborhoodBuilder =new NeighborhoodBuilder().WithName("tralala");
+         _neighborhoodBuilder = new NeighborhoodBuilder().WithName("tralala");
          _neighborhoodBuilder.Add(new Container().WithName(Constants.MOLECULE_PROPERTIES));
 
          var para1 = new Parameter().WithName("Para1");
@@ -63,14 +65,16 @@ namespace OSPSuite.Core.Mappers
          _neighborhoodBuilder.AddParameter(para2);
          _clonePara1 = new Parameter().WithName("Para1");
          _clonePara2 = new Parameter().WithName("Para2");
-         _neighborhoodBuilder.FirstNeighborPath = A.Fake<ObjectPath>();
-         _neighborhoodBuilder.SecondNeighborPath = A.Fake<ObjectPath>();
+         _neighborhoodBuilder.FirstNeighborPath = new ObjectPath("First");
+         _neighborhoodBuilder.SecondNeighborPath = new ObjectPath("Second");
          var firstNeighborModelPath = A.Fake<ObjectPath>();
          var secondNeighborModelPath = A.Fake<ObjectPath>();
          _firstNeighborInModel = A.Fake<IContainer>();
          _secondNeighborInModel = A.Fake<IContainer>();
+
          A.CallTo(() => firstNeighborModelPath.Resolve<IContainer>(_rootContainer)).Returns(_firstNeighborInModel);
          A.CallTo(() => secondNeighborModelPath.Resolve<IContainer>(_rootContainer)).Returns(_secondNeighborInModel);
+
          _moleculeContainer = A.Fake<IContainer>();
          _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
          A.CallTo(() => _containerMapper.MapFrom(_neighborhoodBuilder.MoleculeProperties, _simulationBuilder)).Returns(_moleculeContainer);
@@ -78,6 +82,7 @@ namespace OSPSuite.Core.Mappers
          _molecule2 = "molecule2";
          _moleculeNames = new List<string> {_molecule1, _molecule2};
          A.CallTo(() => _objectBaseFactory.Create<Neighborhood>()).Returns(new Neighborhood());
+
          A.CallTo(() => _parameterMapper.MapFrom(para1, _simulationBuilder)).Returns(_clonePara1);
          A.CallTo(() => _parameterMapper.MapFrom(para2, _simulationBuilder)).Returns(_clonePara2);
 
@@ -90,7 +95,7 @@ namespace OSPSuite.Core.Mappers
 
       protected override void Because()
       {
-         _neighborhood = sut.MapFrom(_neighborhoodBuilder,  _moleculeNames, _moleculeNames, _modelConfiguration);
+         _neighborhood = sut.MapFrom(_neighborhoodBuilder, _moleculeNames, _moleculeNames, _modelConfiguration);
       }
 
       [Observation]

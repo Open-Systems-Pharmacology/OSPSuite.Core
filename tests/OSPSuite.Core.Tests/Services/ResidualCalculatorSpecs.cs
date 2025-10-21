@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -533,6 +534,34 @@ namespace OSPSuite.Core.Services
          _outputResiduals.Residuals[0].Value.ShouldBeEqualTo(Math.Log10(ToDouble(_simulationDataColumn.GetValue(_observedDataColumn.BaseGrid[1]))) - Math.Log10(ToDouble(_observedDataColumn[1])));
          _outputResiduals.Residuals[1].Value.ShouldBeEqualTo(Math.Log10(ToDouble(_simulationDataColumn.GetValue(_observedDataColumn.BaseGrid[2]))) - Math.Log10(ToDouble(_observedDataColumn[2])));
       }
+   }
+
+   public class When_calculating_the_residuals_with_invalid_simulation_values : concern_for_ResidualCalculator
+   {
+
+      protected override void Context()
+      {
+         base.Context();
+         sut = new ResidualCalculatorForOnlyObservedData(new TimeGridRestrictor(), _dimensionFactory);
+         
+      }
+
+      protected override void UpdateObservedDataValues()
+      {
+         _observedDataColumn.BaseGrid.Values = new[] { 1f, 2f, 3f };
+         _observedDataColumn.Values = new[] { 1.1f, 1.2f, 1.3f };
+      }
+
+      [TestCase(float.PositiveInfinity, double.PositiveInfinity)]
+      [TestCase(float.NegativeInfinity, double.NegativeInfinity)]
+      [TestCase(float.NaN, double.NaN)]
+      public void test_invalid_value(float simulationValue, double expectedResidualValue)
+      {
+         _simulationResults.FirstDataColumn()[1] = simulationValue;
+         var outputResiduals = sut.Calculate(_simulationRunResultsList, _outputMappings).AllOutputResidualsFor(_fullOutputPath).First();
+         outputResiduals.Residuals[0].Value.ShouldBeEqualTo(expectedResidualValue);
+      }
+
    }
 
    public class When_calculating_the_residuals_with_observed_data_containing_NaN_values : concern_for_ResidualCalculator

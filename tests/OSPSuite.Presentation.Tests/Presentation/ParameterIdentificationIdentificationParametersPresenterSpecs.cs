@@ -7,11 +7,13 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Core.Events;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.DTO.ParameterIdentifications;
 using OSPSuite.Presentation.Mappers.ParameterIdentifications;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
+using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Presentation
 {
@@ -25,17 +27,19 @@ namespace OSPSuite.Presentation.Presentation
       protected IdentificationParameterDTO _identificationParameterDTO;
       protected List<IdentificationParameterDTO> _allIdentificationParameterDTO;
       private IIdentificationParameterTask _identificationParameterTask;
+      protected IEventPublisher _eventPublisher;
 
       protected override void Context()
       {
          _identificationParameterDTOMapper = A.Fake<IIdentificationParameterToIdentificationParameterDTOMapper>();
          _view = A.Fake<IParameterIdentificationIdentificationParametersView>();
          _identificationParameterFactory = A.Fake<IIdentificationParameterFactory>();
-         _identificationParameterTask= A.Fake<IIdentificationParameterTask>();
+         _identificationParameterTask = A.Fake<IIdentificationParameterTask>();
+         _eventPublisher = A.Fake<IEventPublisher>();
 
-         sut = new ParameterIdentificationIdentificationParametersPresenter(_view, _identificationParameterFactory, _identificationParameterDTOMapper,_identificationParameterTask);
+         sut = new ParameterIdentificationIdentificationParametersPresenter(_view, _identificationParameterFactory, _identificationParameterDTOMapper, _identificationParameterTask, _eventPublisher);
 
-         _parameterIdentification = new ParameterIdentification();
+         _parameterIdentification = new ParameterIdentification().WithName("Parameter1");
          _identificationParameter = new IdentificationParameter();
          _parameterIdentification.AddIdentificationParameter(_identificationParameter);
          _identificationParameterDTO = new IdentificationParameterDTO(_identificationParameter);
@@ -45,8 +49,7 @@ namespace OSPSuite.Presentation.Presentation
             .Invokes(x => _allIdentificationParameterDTO = x.GetArgument<IEnumerable<IdentificationParameterDTO>>(0).ToList());
       }
    }
-
-   public class When_the_identification_parameter_presenter_is_editiing_a_parameter_identification : concern_for_ParameterIdentificationIdentificationParametersPresenter
+      public class When_the_identification_parameter_presenter_is_editing_a_parameter_identification : concern_for_ParameterIdentificationIdentificationParametersPresenter
    {
       protected override void Because()
       {
@@ -62,9 +65,9 @@ namespace OSPSuite.Presentation.Presentation
 
    public class When_the_identification_parameter_presenter_is_adding_some_parameters_to_the_parameter_identification : concern_for_ParameterIdentificationIdentificationParametersPresenter
    {
-      private IReadOnlyList<ParameterSelection> _parameters;
-      private IdentificationParameter _newIdentificationParameter;
-      private IdentificationParameterDTO _newIdentificationParameterDTO;
+      protected IReadOnlyList<ParameterSelection> _parameters;
+      protected IdentificationParameter _newIdentificationParameter;
+      protected IdentificationParameterDTO _newIdentificationParameterDTO;
 
       protected override void Context()
       {
@@ -98,6 +101,37 @@ namespace OSPSuite.Presentation.Presentation
       public void should_select_the_new_identification_parameter()
       {
          _view.SelectedIdentificationParameter.ShouldBeEqualTo(_newIdentificationParameterDTO);
+      }
+   }
+
+   public class When_the_identification_parameter_presenter_is_renaming_a_parameter_identification : When_the_identification_parameter_presenter_is_adding_some_parameters_to_the_parameter_identification
+   {
+      private OptimizationRunResult _bestResult;
+
+      protected override void Context()
+      {
+         base.Context();
+         _newIdentificationParameter.Name = "oldName";
+         sut.EditParameterIdentification(_parameterIdentification);
+         sut.AddParameters(_parameters);
+         _bestResult = new OptimizationRunResult();
+         _bestResult.AddValue(new OptimizedParameterValue("P1", 3, 4, 0, 10, Scalings.Linear));
+         _bestResult.AddValue(new OptimizedParameterValue("P2", 4, 4, 0, 10, Scalings.Linear));
+
+         var results = new ParameterIdentificationRunResult { Index = 1, BestResult = _bestResult };
+         results.BestResult.Values = new List<OptimizedParameterValue> { new OptimizedParameterValue(_newIdentificationParameter.Name, 3, 4, 0, 10, Scalings.Linear), new OptimizedParameterValue("P2", 4, 4, 0, 10, Scalings.Linear) };
+         _parameterIdentification.AddResult(results);
+      }
+
+      protected override void Because()
+      {
+         sut.ChangeName(_identificationParameterDTO, _newIdentificationParameter.Name, "newName");
+      }
+
+      [Observation]
+      public void should_trigger_the_parameterIdentification_results_updated_event()
+      {
+         A.CallTo(() => _eventPublisher.PublishEvent(A<ParameterIdentificationResultsUpdatedEvent>.Ignored)).MustHaveHappened();
       }
    }
 
@@ -139,7 +173,6 @@ namespace OSPSuite.Presentation.Presentation
          _view.SelectedIdentificationParameter.ShouldBeEqualTo(_identificationParameterDTO2);
       }
    }
-
 
    public class When_the_user_is_deleting_the_last_identification_parameter : concern_for_ParameterIdentificationIdentificationParametersPresenter
    {
@@ -194,13 +227,14 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          base.Context();
-         _minValueDTO= A.Fake<IParameterDTO>();
+         _minValueDTO = A.Fake<IParameterDTO>();
       }
 
       protected override void Because()
       {
-         sut.SetParameterValue(_minValueDTO,10);
+         sut.SetParameterValue(_minValueDTO, 10);
       }
+
       [Observation]
       public void should_set_the_value_in_display_unit_of_the_underlying_parameter()
       {
@@ -216,7 +250,7 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          base.Context();
-         _newDisplayUnit= A.Fake<Unit>();;
+         _newDisplayUnit = A.Fake<Unit>();
          _minValueDTO = A.Fake<IParameterDTO>();
          _minValueDTO.Value = 5;
       }
@@ -231,6 +265,14 @@ namespace OSPSuite.Presentation.Presentation
       {
          _minValueDTO.Parameter.DisplayUnit.ShouldBeEqualTo(_newDisplayUnit);
          _minValueDTO.Parameter.ValueInDisplayUnit.ShouldBeEqualTo(5);
+      }
+   }
+
+   public class IdentificationParameterArgumentEqualityComparer : ArgumentEqualityComparer<IdentificationParameter>
+   {
+      protected override bool AreEqual(IdentificationParameter expectedValue, IdentificationParameter argumentValue)
+      {
+         return ReferenceEquals(expectedValue, argumentValue);
       }
    }
 }

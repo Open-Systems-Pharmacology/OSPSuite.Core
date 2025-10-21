@@ -1,14 +1,22 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 using OSPSuite.BDDHelper;
+using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Helpers;
+using OSPSuite.Core.Serialization;
+using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Helpers;
+using OSPSuite.Serializer.Xml;
+using OSPSuite.Utility.Container;
 
 namespace OSPSuite.Core.Serializers
 {
-   public abstract class concern_for_DataRepositoryXmlSerializer : ModellingXmlSerializerBaseSpecs
+   public abstract class concern_for_DataRepositoryXmlSerializer : ModelingXmlSerializerBaseSpecs
    {
       protected BaseGrid _baseGrid;
       protected DataColumn _col1;
@@ -69,6 +77,63 @@ namespace OSPSuite.Core.Serializers
       public void deserialized_repository_should_be_equal_to_original()
       {
          AssertForSpecs.AreEqualDataRepository(_originalRepository, _deserializedRepository);
+      }
+   }
+
+   public class When_serializing_unnamed_extended_property : concern_for_DataRepositoryXmlSerializer
+   {
+      private DataRepository _originalDataRepository;
+      private DataRepository _deserializedDataRepository;
+
+      protected override void Context()
+      {
+         base.Context();
+         _originalDataRepository = new DataRepository
+         {
+            Name = "Rene",
+            Description = "The best Repository"
+         };
+         _originalDataRepository.Add(_col1);
+         _originalDataRepository.Add(_baseGrid);
+         _originalDataRepository.Add(_col2);
+         _originalDataRepository.Add(_relCol);
+         _originalDataRepository.Add(_col3);
+         _originalDataRepository.ExtendedProperties.Add(new ExtendedProperty<int> { Name = "MyProperty", Value = 34 });
+      }
+
+      protected override void Because()
+      {
+         _deserializedDataRepository = mySerializeAndDeserialize(_originalDataRepository);
+      }
+
+      [Observation]
+      public void the_unnamed_property_should_be_renamed_with_a_placeholder()
+      {
+         _deserializedDataRepository.ExtendedProperties.Single().Name.ShouldBeEqualTo("Unnamed Property 0");
+      }
+
+      private T mySerializeAndDeserialize<T>(T x1)
+      {
+         XElement xel;
+         XElement formulaCacheElement;
+         var formulaCacheSerializer = SerializerRepository.SerializerFor<IFormulaCache>();
+         IXmlSerializer<SerializationContext> serializer;
+
+         using (var serializationContext = SerializationTransaction.Create(IoC.Container))
+         {
+            serializer = SerializerRepository.SerializerFor(x1);
+            xel = serializer.Serialize(x1, serializationContext);
+            formulaCacheElement = formulaCacheSerializer.Serialize(serializationContext.Formulas, serializationContext);
+         }
+
+         var propertyElement = (xel.LastNode as XElement).LastNode as XElement;
+         propertyElement.SetAttributeValue("name", null);
+
+         using (var serializationContext = NewDeserializationContext())
+         {
+            formulaCacheSerializer.Deserialize(serializationContext.Formulas, formulaCacheElement, serializationContext);
+            return serializer.Deserialize<T>(xel, serializationContext);
+         }
       }
    }
 

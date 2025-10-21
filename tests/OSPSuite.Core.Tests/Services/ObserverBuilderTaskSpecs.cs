@@ -30,10 +30,12 @@ namespace OSPSuite.Core.Services
       private MoleculeBuildingBlock _moleculeBuildingBlock;
       private InitialConditionsBuildingBlock _initialConditions;
       protected SimulationBuilder _simulationBuilder;
+      private IEntityTracker _entityTracker;
 
       protected override void Context()
       {
          _observerMapper = A.Fake<IObserverBuilderToObserverMapper>();
+         _entityTracker= A.Fake<IEntityTracker>();
          _observerBuildingBlock = new ObserverBuildingBlock();
          _molecule1 = new MoleculeBuilder().WithName(_molecule1Name);
          _molecule2 = new MoleculeBuilder().WithName(_molecule2Name);
@@ -69,7 +71,7 @@ namespace OSPSuite.Core.Services
          _model.Neighborhoods = _rootNeighborhood;
          _keywordReplacerTask = A.Fake<IKeywordReplacerTask>();
          _containerTask = A.Fake<IContainerTask>();
-         sut = new ObserverBuilderTask(_observerMapper, _containerTask, _keywordReplacerTask);
+         sut = new ObserverBuilderTask(_observerMapper, _containerTask, _keywordReplacerTask,_entityTracker);
       }
 
       protected override void Because()
