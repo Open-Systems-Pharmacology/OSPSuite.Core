@@ -321,7 +321,7 @@ namespace OSPSuite.Core.Domain
          public static readonly string JOURNAL_FILE_FILTER = FileFilter("Journal File", JOURNAL_EXTENSION);
          public static readonly string WORD_SAVE_FILE_FILTER = FileFilter("Word", DOCX_EXTENSION);
          public static readonly string PKML_FILE_FILTER = FileFilter("Shared Modeling", PKML_EXTENSION);
-         public static readonly string HISTORY_FILE_FILTER = FileFilter("History Export", XLS_EXTENSION);
+         public static readonly string HISTORY_FILE_FILTER = FileFilter("History Export", XLSX_EXTENSION);
          public static readonly string TEXT_FILE_FILTER = FileFilter("Text", TEXT_EXTENSION);
          public static readonly string UNIT_FILE_FILTER = XmlFilter("Unit");
          public static readonly string MATLAB_FILTER = FileFilter("Matlab®", MATLAB_EXTENSION);
