@@ -4,7 +4,7 @@
    {
    }
 
-   public class SimulationResidualVsTimeChart : AnalysisChartWithLocalRepositories
+   public class SimulationResidualVsTimeChart : ResidualsVsTimeChart
    {
    }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace OSPSuite.Core.Chart.ParameterIdentifications
+﻿namespace OSPSuite.Core.Chart.ParameterIdentifications
 {
    public class ParameterIdentificationTimeProfileChart : AnalysisChart
    {
@@ -18,7 +16,7 @@ namespace OSPSuite.Core.Chart.ParameterIdentifications
    {
    }
 
-   public class ParameterIdentificationResidualVsTimeChart : AnalysisChartWithLocalRepositories
+   public class ParameterIdentificationResidualVsTimeChart : ResidualsVsTimeChart
    {
    }
 

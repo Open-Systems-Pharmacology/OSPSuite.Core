@@ -60,7 +60,7 @@ namespace OSPSuite.Starter.Presenters
             categories,
             columns,
             settings,
-            _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
+            _dialogCreator.AskForFileToOpen(Captions.Importer.SelectFileToImport, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
          ).DataRepositories?.Count() + " data sets successfully imported");
       }
 
@@ -123,7 +123,7 @@ namespace OSPSuite.Starter.Presenters
                _dataImporter.DefaultMetaDataCategoriesForObservedData(),
                _dataImporter.ColumnInfosForObservedData(),
                dataImporterSettings,
-               _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
+               _dialogCreator.AskForFileToOpen(Captions.Importer.SelectFileToImport, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
             )?.Count() + " data sets successfully imported");
          }
       }
@@ -156,7 +156,7 @@ namespace OSPSuite.Starter.Presenters
                (IReadOnlyList<MetaDataCategory>) _dataImporter.DefaultMetaDataCategoriesForObservedData(),
                _dataImporter.ColumnInfosForObservedData(),
                dataImporterSettings,
-               _dialogCreator.AskForFileToOpen(Captions.Importer.OpenFile, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
+               _dialogCreator.AskForFileToOpen(Captions.Importer.SelectFileToImport, Captions.Importer.ImportFileFilter, Constants.DirectoryKey.OBSERVED_DATA)
             )?.Count() + " data sets successfully imported");
          }
       }

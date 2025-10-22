@@ -471,7 +471,7 @@ namespace OSPSuite.Assets
          public static readonly string SaveConfiguration = "Save Configuration";
          public static readonly string ApplyConfiguration = "Load Configuration";
          public static readonly string ActionWillEraseLoadedData = "This action will result in dropping all the loaded sheets. Do you want to continue?";
-         public static readonly string OpenFile = "Select the file you would like to apply configuration on";
+         public static readonly string SelectFileToImport = "Select the file to import";
          public static readonly string GroupByTitle = "Group By";
          public static readonly string SelectToAdd = "Select to add";
          public static readonly string MappingTitle = "Mapping";
@@ -1643,6 +1643,13 @@ namespace OSPSuite.Assets
       public static readonly string TableFormulaWithOffsetUsesNonTableFormulaObject = "Object used in table formula with offset must be based an a table formula";
       public static readonly string ScaleFactorShouldBeGreaterThanZero = "Scale factor should be greater than 0";
 
+      public static string TimeNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit, string repositoryName)
+      {
+         var hint = Equals(valueAfter, valueBefore) ? $"{valueBefore} {displayUnit} is duplicated" : $"{valueBefore} {displayUnit} is immediately followed by {valueAfter} {displayUnit}";
+
+         return $"The time column in data set {repositoryName} is not strictly monotonically increasing ({hint}).\nEnsure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
+      }
+      
       public static string TimeNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit)
       {
          var hint = Equals(valueAfter, valueBefore) ? $"{valueBefore} {displayUnit} is duplicated" : $"{valueBefore} {displayUnit} is immediately followed by {valueAfter} {displayUnit}";
