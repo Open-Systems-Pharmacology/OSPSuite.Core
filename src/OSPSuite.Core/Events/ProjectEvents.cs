@@ -1,4 +1,5 @@
-﻿using OSPSuite.Core.Domain;
+﻿using System.Collections.Generic;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 
 namespace OSPSuite.Core.Events
@@ -67,23 +68,23 @@ namespace OSPSuite.Core.Events
 
    public class ObservedDataAddedEvent : ProjectEvent
    {
-      public ObservedDataAddedEvent(DataRepository dataRepository, IProject project)
+      public ObservedDataAddedEvent(IReadOnlyList<DataRepository> dataRepositories, IProject project)
          : base(project)
       {
-         DataRepository = dataRepository;
+         DataRepositories = dataRepositories;
       }
 
-      public DataRepository DataRepository { get; private set; }
+      public IReadOnlyList<DataRepository> DataRepositories { get; private set; }
    }
 
    public class ObservedDataRemovedEvent : ProjectEvent
    {
-      public ObservedDataRemovedEvent(DataRepository dataRepository, IProject project)
+      public ObservedDataRemovedEvent(IReadOnlyList<DataRepository> dataRepositories, IProject project)
          : base(project)
       {
-         DataRepository = dataRepository;
+         DataRepositories = dataRepositories;
       }
 
-      public DataRepository DataRepository { get; private set; }
+      public IReadOnlyList<DataRepository> DataRepositories { get; private set; }
    }
 }
