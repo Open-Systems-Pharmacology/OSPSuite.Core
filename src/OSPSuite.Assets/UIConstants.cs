@@ -2365,6 +2365,16 @@ namespace OSPSuite.Assets
          return $"{parameterName} set from {oldValue} to {newValue} in {observedDataName}";
       }
 
+      public static string AddManyObservedDataToProjectDescription(IReadOnlyList<string> names, string projectName)
+      {
+         return $"Added observed data: \n\n{string.Join("\n", names)}\n\n to project '{projectName}'";
+      }
+
+      public static string RemoveManyObservedDataToProjectDescription(IReadOnlyList<string> names, string projectName)
+      {
+         return $"Removed observed data: \n\n{string.Join("\n", names)}\n\n from project '{projectName}'";
+      }
+
       public static string AddObservedDataToProjectDescription(string observedDataName, string projectName)
       {
          return AddEntityToContainer(ObjectTypes.ObservedData, observedDataName, ObjectTypes.Project, projectName);

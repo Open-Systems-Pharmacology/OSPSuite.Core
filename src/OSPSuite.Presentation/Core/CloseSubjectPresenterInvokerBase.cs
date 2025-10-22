@@ -1,5 +1,6 @@
 ﻿using OSPSuite.Utility.Events;
 using OSPSuite.Core.Events;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Core
 {
@@ -23,7 +24,7 @@ namespace OSPSuite.Presentation.Core
 
       protected void Close(object subject) => _applicationController.Close(subject);
 
-      public void Handle(ObservedDataRemovedEvent eventToHandle) => Close(eventToHandle.DataRepository);
+      public void Handle(ObservedDataRemovedEvent eventToHandle) => eventToHandle.DataRepositories.Each(Close);
 
       public void Handle(SensitivityAnalysisDeletedEvent eventToHandle) => Close(eventToHandle.SensitivityAnalysis);
    }

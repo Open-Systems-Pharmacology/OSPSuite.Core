@@ -121,7 +121,7 @@ namespace OSPSuite.Core.Domain.Services
          return Error.CannotDeleteObservedData(observedData.Name, typeNamesUsingObservedData);
       }
 
-      private bool deleteAll(IEnumerable<DataRepository> observedDataToDelete)
+      private bool deleteAll(IReadOnlyList<DataRepository> observedDataToDelete)
       {
          var macroCommand = new OSPSuiteMacroCommand<IOSPSuiteExecutionContext>
          {
@@ -130,7 +130,7 @@ namespace OSPSuite.Core.Domain.Services
             Description = Command.ObservedDataDeletedFromProject,
          };
 
-         observedDataToDelete.Each(x => macroCommand.Add(new RemoveObservedDataFromProjectCommand(x)));
+         macroCommand.Add(new RemoveObservedDataFromProjectCommand(observedDataToDelete));
          _executionContext.AddToHistory(macroCommand.Run(_executionContext));
          return true;
       }
@@ -181,7 +181,7 @@ namespace OSPSuite.Core.Domain.Services
             return;
 
          observedData.Name = _containerTask.CreateUniqueName(_executionContext.Project.AllObservedData, observedData.Name, canUseBaseName: true);
-         _executionContext.AddToHistory(new AddObservedDataToProjectCommand(observedData).Run(_executionContext));
+         _executionContext.AddToHistory(new AddObservedDataToProjectCommand(new[] { observedData }).Run(_executionContext));
       }
 
       public void AddImporterConfigurationToProject(ImporterConfiguration configuration)

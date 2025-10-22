@@ -12,7 +12,7 @@ namespace OSPSuite.Core.Commands
       protected override void Context()
       {
          _observedData = A.Fake<DataRepository>().WithId("Repository");
-         sut = new RemoveObservedDataFromProjectCommand(_observedData);
+         sut = new RemoveObservedDataFromProjectCommand([_observedData]);
       }
    }
 
