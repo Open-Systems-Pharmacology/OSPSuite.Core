@@ -1,17 +1,21 @@
-﻿using OSPSuite.Assets;
+﻿using System.Collections.Generic;
+using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Commands.Core;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Events;
+using OSPSuite.Utility.Extensions;
 using Command = OSPSuite.Assets.Command;
 
 namespace OSPSuite.Core.Commands
 {
    public class RemoveObservedDataFromProjectCommand : OSPSuiteReversibleCommand<IOSPSuiteExecutionContext>
    {
-      private DataRepository _observedData;
-      private byte[] _serializationStream;
+      private IReadOnlyList<DataRepository> _observedData;
+      private List<byte[]> _serializationStream;
 
-      public RemoveObservedDataFromProjectCommand(DataRepository observedData)
+      public RemoveObservedDataFromProjectCommand(IReadOnlyList<DataRepository> observedData)
       {
          _observedData = observedData;
          CommandType = Command.CommandTypeDelete;
@@ -21,10 +25,13 @@ namespace OSPSuite.Core.Commands
       protected override void ExecuteWith(IOSPSuiteExecutionContext context)
       {
          var project = context.Project;
-         project.RemoveObservedData(_observedData);
-         Description = Command.RemoveObservedDataFromProjectDescription(_observedData.Name, project.Name);
-         _serializationStream = context.Serialize(_observedData);
-         context.Unregister(_observedData);
+         _observedData.Each(project.RemoveObservedData);
+         Description = _observedData.Count == 1 ? 
+            Command.RemoveObservedDataFromProjectDescription(_observedData[0].Name, project.Name) : 
+            Command.RemoveManyObservedDataToProjectDescription(_observedData.AllNames(), project.Name);
+         
+         _serializationStream = _observedData.Select(context.Serialize).ToList();
+         _observedData.Each(context.Unregister);
          context.PublishEvent(new ObservedDataRemovedEvent(_observedData, project));
       }
 
@@ -40,7 +47,7 @@ namespace OSPSuite.Core.Commands
 
       public override void RestoreExecutionData(IOSPSuiteExecutionContext context)
       {
-         _observedData = context.Deserialize<DataRepository>(_serializationStream);
+         _observedData = _serializationStream.Select(context.Deserialize<DataRepository>).ToList();
       }
    }
 }
