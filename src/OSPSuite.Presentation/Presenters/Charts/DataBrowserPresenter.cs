@@ -83,7 +83,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// <summary>
       ///    Is called from the view when the column selection is changed by the user
       /// </summary>
-      /// s
       void SelectedDataColumnsChanged();
 
       /// <summary>
@@ -117,7 +116,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       /// </summary>
       void RemoveAllOutputMappings();
 
-      HashSet<OutputMappings> GetOutputMappings();
+      IReadOnlyList<OutputMappings> GetOutputMappings();
    }
 
    public class DataBrowserPresenter : PresenterWithColumnSettings<IDataBrowserView, IDataBrowserPresenter>, IDataBrowserPresenter
@@ -184,7 +183,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void UsedChangedFor(DataColumnDTO dataColumnDTO, bool used)
       {
-         raiseUsedChanged(dataColumnDTO.DataColumn, used, false);
+         raiseUsedChanged(dataColumnDTO.DataColumn, used, isLinkedDataToSimulations: false);
          updateDataSelection(_view.SelectedColumns);
          updateLinkedObservedData(dataColumnDTO.DataColumn, used);
       }
@@ -246,7 +245,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          {
             var outputColumnUsed = dataColumnDTO.Used;
             var linkedObservedData = getLinkedObservedDataFromOutputPath(dataColumnDTO.DataColumn.PathAsString);
-            SetUsedState(linkedObservedData, outputColumnUsed, true);
+            SetUsedState(linkedObservedData, outputColumnUsed,  isLinkedDataToSimulations: true);
          }
       }
 
@@ -320,9 +319,9 @@ namespace OSPSuite.Presentation.Presenters.Charts
          AddColumnSettings(BrowserColumns.Used).WithCaption(Used).WithVisible(true);
       }
 
-      public HashSet<OutputMappings> GetOutputMappings()
+      public IReadOnlyList<OutputMappings> GetOutputMappings()
       {
-         return _allOutputMappings;
+         return _allOutputMappings.ToList().AsReadOnly();
       }
    }
 }

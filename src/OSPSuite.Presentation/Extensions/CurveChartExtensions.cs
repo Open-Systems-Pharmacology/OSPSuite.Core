@@ -62,7 +62,7 @@ namespace OSPSuite.Presentation.Extensions
             return null;
 
          var match = chart.Curves
-            .FirstOrDefault(c => c.yData.BottomCompartment.Equals(compartment, StringComparison.CurrentCultureIgnoreCase));
+            .FirstOrDefault(c => c.yData.BottomCompartment?.Equals(compartment, StringComparison.CurrentCultureIgnoreCase) == true);
 
          return match?.Color;
       }
