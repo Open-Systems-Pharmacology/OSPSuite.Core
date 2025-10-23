@@ -76,14 +76,18 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
 
       public void Handle(ObservedDataAddedEvent eventToHandle)
       {
-         var node = addObservedDataToTree(eventToHandle.DataRepository);
-         if (node == null) return;
-         view.ExpandNode(node.ParentNode);
+         eventToHandle.DataRepositories.Each(x =>
+         {
+            var node = addObservedDataToTree(x);
+            if (node == null) 
+               return;
+            view.ExpandNode(node.ParentNode);
+         });
       }
 
       public void Handle(ObservedDataRemovedEvent eventToHandle)
       {
-         _explorerPresenter.RemoveNodeFor(eventToHandle.DataRepository);
+         eventToHandle.DataRepositories.Each(x => _explorerPresenter.RemoveNodeFor(x));
       }
 
       public IEnumerable<ClassificationTemplate> AvailableObservedDataCategoriesIn(ITreeNode<IClassification> parentClassificationNode)

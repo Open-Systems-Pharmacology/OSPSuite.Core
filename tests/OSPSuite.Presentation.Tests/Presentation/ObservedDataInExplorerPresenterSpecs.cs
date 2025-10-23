@@ -73,7 +73,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         sut.Handle(new ObservedDataAddedEvent(A.Fake<DataRepository>(), _project));
+         sut.Handle(new ObservedDataAddedEvent(new List<DataRepository> { A.Fake<DataRepository>() }, _project));
       }
 
       [Observation]
@@ -99,7 +99,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         sut.Handle(new ObservedDataAddedEvent(A.Fake<DataRepository>(), _project));
+         sut.Handle(new ObservedDataAddedEvent(new List<DataRepository> { A.Fake<DataRepository>() }, _project));
       }
 
       [Observation]
@@ -121,7 +121,7 @@ namespace OSPSuite.Presentation.Presentation
 
       protected override void Because()
       {
-         sut.Handle(new ObservedDataAddedEvent(_fakeRepository, _project));
+         sut.Handle(new ObservedDataAddedEvent(new[] { _fakeRepository }, _project));
       }
 
       [Observation]
@@ -174,8 +174,8 @@ namespace OSPSuite.Presentation.Presentation
          _anotherNode = A.Fake<ITreeNode>();
          _repo1 = new DataRepository().WithId("1");
          _repo2 = new DataRepository().WithId("2");
-         _observedDataFolder.AddChild(new ObservedDataNode(new ClassifiableObservedData {Subject = _repo1}));
-         _observedDataFolder.AddChild(new ObservedDataNode(new ClassifiableObservedData {Subject = _repo2}));
+         _observedDataFolder.AddChild(new ObservedDataNode(new ClassifiableObservedData { Subject = _repo1 }));
+         _observedDataFolder.AddChild(new ObservedDataNode(new ClassifiableObservedData { Subject = _repo2 }));
          _observedDataFolder.AddChild(_anotherNode);
 
          A.CallTo(() => _observedDataTask.Delete(A<IEnumerable<DataRepository>>._, false))
