@@ -2,7 +2,7 @@
 
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net8</TargetFramework>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <PackageProjectUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</PackageProjectUrl>
@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSPSuite.Utility" Version="4.1.1.4" />
+    <PackageReference Include="OSPSuite.Utility" Version="4.1.1.5" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
   </ItemGroup>
 

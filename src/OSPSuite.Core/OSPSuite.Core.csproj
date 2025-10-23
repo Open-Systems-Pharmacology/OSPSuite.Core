@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net8</TargetFramework>
     <AssemblyName>OSPSuite.Core</AssemblyName>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
@@ -41,7 +41,7 @@
     <PackageReference Include="OSPSuite.Serializer" Version="4.0.1.5" />
     <PackageReference Include="OSPSuite.FuncParser" Version="4.0.0.75" GeneratePathProperty="true" />
     <PackageReference Include="OSPSuite.SimModel" Version="4.0.0.77" GeneratePathProperty="true" />
-    <PackageReference Include="OSPSuite.Utility" Version="4.1.1.4" />
+    <PackageReference Include="OSPSuite.Utility" Version="4.1.1.5" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
 

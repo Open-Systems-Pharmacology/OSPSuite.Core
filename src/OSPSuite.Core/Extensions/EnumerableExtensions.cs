@@ -9,11 +9,6 @@ namespace OSPSuite.Core.Extensions
 {
    public static class EnumerableExtensions
    {
-      public static IEnumerable<TIn> DistinctBy<TIn, TCompare>(this IEnumerable<TIn> list, Func<TIn, TCompare> func)
-      {
-         return list.GroupBy(func).Select(grouping => grouping.First());
-      }
-
       /// <summary>
       ///    Returns true if the <paramref name="enumeration" /> contains ALL items defined in <paramref name="itemsToCheck" />
       ///    otherwise false.
