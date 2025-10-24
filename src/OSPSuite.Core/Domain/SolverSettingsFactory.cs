@@ -4,6 +4,8 @@
    {
       SolverSettings CreateCVODE();
       SolverSettings Create(string solverName);
+      void AddAutoReduceToleranceParameter(SolverSettings solverSettings);
+      void AddCheckNegativeValuesParameter(SolverSettings solverSettings);
    }
 
    public class SolverSettingsFactory : ISolverSettingsFactory
@@ -32,7 +34,19 @@
          solverSettings.Add(newSimulationSolverParameter(Constants.Parameters.H_MIN, 0));
          solverSettings.Add(newSimulationSolverParameter(Constants.Parameters.H_MAX, 60));
          solverSettings.Add(newSimulationSolverParameter(Constants.Parameters.MX_STEP, 100000));
+         AddCheckNegativeValuesParameter(solverSettings);
+         AddAutoReduceToleranceParameter(solverSettings);
          return solverSettings;
+      }
+
+      public void AddAutoReduceToleranceParameter(SolverSettings solverSettings)
+      {
+         solverSettings.Add(newSimulationSolverParameter(Constants.Parameters.AUTO_REDUCE_TOLERANCE, 0));
+      }
+
+      public void AddCheckNegativeValuesParameter(SolverSettings solverSettings)
+      {
+         solverSettings.Add(newSimulationSolverParameter(Constants.Parameters.CHECK_FOR_NEGATIVE_VALUES, 0));
       }
 
       private IParameter newSimulationSolverParameter(string name, double value)

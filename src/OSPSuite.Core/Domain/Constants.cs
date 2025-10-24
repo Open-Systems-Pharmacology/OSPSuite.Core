@@ -209,6 +209,8 @@ namespace OSPSuite.Core.Domain
          public const string INFUSION_TIME = "Infusion time";
          public const string WEIGHT = "Weight";
          public const string DRUG_MASS = "DrugMass";
+         public const string CHECK_FOR_NEGATIVE_VALUES = "CheckForNegativeValues";
+         public const string AUTO_REDUCE_TOLERANCE = "AutoReduceTolerance";
 
          //todo delete when flag is categorial is defined in core for parameter
          public const string HAS_HALOGENS = "Has halogens";

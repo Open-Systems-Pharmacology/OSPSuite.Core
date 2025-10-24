@@ -16,7 +16,7 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IDataFactory _dataFactory;
       private Simulation _simModelSimulation;
       private SimulationRunOptions _simulationRunOptions;
-
+      private IModelCoreSimulation _simulation;
       public event EventHandler<SimulationProgressEventArgs> SimulationProgress = delegate { };
 
       public SimModelManager(ISimModelExporter simModelExporter, ISimModelSimulationFactory simModelSimulationFactory, IDataFactory dataFactory) : base(simModelExporter, simModelSimulationFactory)
@@ -88,6 +88,7 @@ namespace OSPSuite.Core.Domain.Services
       {
          var xml = CreateSimulationExport(simulation, _simulationRunOptions.SimModelExportMode);
          _simModelSimulation = CreateSimulation(xml);
+         _simulation = simulation;
       }
 
       private void simulate()
@@ -95,7 +96,7 @@ namespace OSPSuite.Core.Domain.Services
          var options = _simModelSimulation.Options;
          options.ShowProgress = true;
          options.ExecutionTimeLimit = _executionTimeLimit;
-         options.CheckForNegativeValues = _simulationRunOptions.CheckForNegativeValues;
+         options.CheckForNegativeValues = _simulation.Settings.Solver.CheckForNegativeValues;
 
          try
          {

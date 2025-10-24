@@ -1,3 +1,5 @@
+using OSPSuite.Utility.Visitor;
+
 namespace OSPSuite.Core.Domain
 {
    public class SolverSettings : Container
@@ -42,6 +44,17 @@ namespace OSPSuite.Core.Domain
       {
          get => this.Parameter(Constants.Parameters.ABS_TOL).Value;
          set => this.Parameter(Constants.Parameters.ABS_TOL).Value = value;
+      }
+
+      public virtual bool CheckForNegativeValues
+      {
+         get => this.Parameter(Constants.Parameters.CHECK_FOR_NEGATIVE_VALUES).Value == 1;
+         set => this.Parameter(Constants.Parameters.CHECK_FOR_NEGATIVE_VALUES).Value = value ? 1 : 0;
+      }
+
+      public override void AcceptVisitor(IVisitor visitor)
+      {
+         base.AcceptVisitor(visitor);
       }
    }
 }
