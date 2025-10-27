@@ -14,6 +14,7 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly ObjectBaseCache<ReactionBuilder> _reactions = new ObjectBaseCache<ReactionBuilder>();
       private readonly ObjectBaseCache<ObserverBuilder> _observers = new ObjectBaseCache<ObserverBuilder>();
       private readonly ObjectBaseCache<MoleculeBuilder> _molecules = new ObjectBaseCache<MoleculeBuilder>();
+      private readonly ObjectBaseCache<EventGroupBuilder> _eventGroups = new ObjectBaseCache<EventGroupBuilder>();
       private readonly PathAndValueEntityCache<ParameterValue> _parameterValues = new PathAndValueEntityCache<ParameterValue>();
       private readonly PathAndValueEntityCache<InitialCondition> _initialConditions = new PathAndValueEntityCache<InitialCondition>();
       private readonly Cache<IMoleculeDependentBuilder, MoleculeList> _moleculeListCache = new Cache<IMoleculeDependentBuilder, MoleculeList>();
@@ -87,6 +88,7 @@ namespace OSPSuite.Core.Domain.Builder
       {
          cacheBuilders(x => x.Reactions, _reactions);
          cacheBuilders(x => x.Molecules, _molecules);
+         cacheBuilders(x => x.EventGroups, _eventGroups);
          cacheMoleculeDependentBuilders(x => x.PassiveTransports, _passiveTransports);
          cacheMoleculeDependentBuilders(x => x.Observers, _observers);
          cacheParameterValueBuilders(x => x.SelectedParameterValues, _parameterValues);
@@ -98,6 +100,7 @@ namespace OSPSuite.Core.Domain.Builder
       {
          cacheContainers(_reactions);
          cacheContainers(_molecules);
+         cacheContainers(_eventGroups);
          cacheContainers(_passiveTransports);
 
          //also add individual if any to source
@@ -200,6 +203,7 @@ namespace OSPSuite.Core.Domain.Builder
       internal IReadOnlyCollection<ReactionBuilder> Reactions => _reactions;
       internal IReadOnlyCollection<ObserverBuilder> Observers => _observers;
       internal IReadOnlyCollection<MoleculeBuilder> Molecules => _molecules;
+      internal IReadOnlyCollection<EventGroupBuilder> EventGroups => _eventGroups;
       internal IReadOnlyCollection<ParameterValue> ParameterValues => _parameterValues;
       internal IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
 
