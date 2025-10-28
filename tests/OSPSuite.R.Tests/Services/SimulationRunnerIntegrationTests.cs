@@ -31,6 +31,15 @@ namespace OSPSuite.R.Services
       }
    }
 
+   public class When_creating_a_simulation_with_a_file : concern_for_SimulationRunnerIntegration
+   {
+      [Observation]
+      public void should_create_the_solver_settings_with_check_for_negative_values()
+      {
+         _simulation.Settings.Solver.CheckForNegativeValues.ShouldNotBeNull();
+      }
+   }
+
    public class
       When_performing_a_population_simulation_run_with_a_file_containing_only_a_subset_of_the_individual : concern_for_SimulationRunnerIntegration
    {

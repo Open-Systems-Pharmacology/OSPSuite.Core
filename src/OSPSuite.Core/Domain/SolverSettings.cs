@@ -51,10 +51,5 @@ namespace OSPSuite.Core.Domain
          get => this.Parameter(Constants.Parameters.CHECK_FOR_NEGATIVE_VALUES).Value == 1;
          set => this.Parameter(Constants.Parameters.CHECK_FOR_NEGATIVE_VALUES).Value = value ? 1 : 0;
       }
-
-      public override void AcceptVisitor(IVisitor visitor)
-      {
-         base.AcceptVisitor(visitor);
-      }
    }
 }

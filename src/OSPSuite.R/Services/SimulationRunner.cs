@@ -121,13 +121,14 @@ namespace OSPSuite.R.Services
          return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
       }
 
-      private Core.Domain.SimulationRunOptions coreSimulationRunOptionsFrom(SimulationRunOptions simulationRunOptions)
+      private Core.Domain.SimulationRunOptions coreSimulationRunOptionsFrom(SimulationRunOptions simulationRunOptions, IModelCoreSimulation simulation)
       {
          var options = simulationRunOptions ?? new SimulationRunOptions();
+         options.CheckForNegativeValues = simulation.Settings?.Solver?.CheckForNegativeValues ?? false;
          return new Core.Domain.SimulationRunOptions
          {
             CheckForNegativeValues = options.CheckForNegativeValues,
-            SimModelExportMode = SimModelExportMode.Optimized
+            SimModelExportMode = SimModelExportMode.Optimized,
          };
       }
 
