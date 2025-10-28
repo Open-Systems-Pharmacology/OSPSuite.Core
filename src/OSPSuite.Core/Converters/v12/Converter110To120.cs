@@ -197,7 +197,6 @@ namespace OSPSuite.Core.Converters.v12
          spatialStructure.Neighborhoods.Each(updateNeighborsPathIn);
       }
 
-
       private void updateNeighborsPathIn(NeighborhoodBuilder neighborhoodBuilder)
       {
          neighborhoodBuilder.FirstNeighborPath = _objectPathFactory.CreateAbsoluteObjectPath(neighborhoodBuilder.FirstNeighbor);
