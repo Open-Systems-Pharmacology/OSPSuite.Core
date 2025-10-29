@@ -39,7 +39,7 @@
 
       public void AddCheckNegativeValuesParameter(SolverSettings solverSettings)
       {
-         solverSettings.Add(newSimulationSolverParameter(Constants.Parameters.CHECK_FOR_NEGATIVE_VALUES, 0));
+         solverSettings.Add(newSimulationSolverParameter(Constants.Parameters.CHECK_FOR_NEGATIVE_VALUES, 1));
       }
 
       private IParameter newSimulationSolverParameter(string name, double value)
