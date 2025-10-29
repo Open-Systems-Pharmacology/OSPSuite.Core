@@ -61,6 +61,6 @@ namespace OSPSuite.Core.Converters.v13
          _solverSettingsFactory.AddCheckNegativeValuesParameter(solverSettings);
 
          _converted = true;
-      }
+      }       
    }
 }
