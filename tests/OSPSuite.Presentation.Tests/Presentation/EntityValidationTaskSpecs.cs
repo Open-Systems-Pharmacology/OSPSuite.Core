@@ -7,33 +7,33 @@ using OSPSuite.Core.Domain.Services;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Services;
+using ValidationResult = OSPSuite.Core.Domain.ValidationResult;
 
 namespace OSPSuite.Presentation.Presentation
 {
    public abstract class concern_for_EntityValidationTask : ContextSpecification<IEntityValidationTask>
    {
-      protected IOSPSuiteExecutionContext _executionContext;
-      protected IEntityValidator _entityValidator;
+      private IOSPSuiteExecutionContext _executionContext;
       protected IApplicationController _applicationController;
       protected IEntity _entity;
+      protected IEntityValidatorFactory _entityValidatorFactory;
 
       protected override void Context()
       {
          _executionContext = A.Fake<IOSPSuiteExecutionContext>();
-         _entityValidator = A.Fake<IEntityValidator>();
+         _entityValidatorFactory = A.Fake<IEntityValidatorFactory>();
          _applicationController = A.Fake<IApplicationController>();
-         sut = new EntityValidationTask(_entityValidator,_applicationController,_executionContext);
+
+         sut = new EntityValidationTask(_entityValidatorFactory, _applicationController, _executionContext);
       }
    }
 
    public class When_validating_a_valid_entity : concern_for_EntityValidationTask
    {
-
       protected override void Context()
       {
          base.Context();
-         _entity = new Container();
-         A.CallTo(() => _entityValidator.Validate(_entity)).Returns(new ValidationResult());
+         _entity = new Container().WithName("container");
       }
 
       [Observation]
@@ -52,12 +52,14 @@ namespace OSPSuite.Presentation.Presentation
       protected override void Context()
       {
          base.Context();
+         // containers without names are invalid
          _entity = new Container();
          _validationResult = A.Fake<ValidationResult>();
-         A.CallTo(() => _validationResult.ValidationState).Returns(ValidationState.Invalid);
          _presenter = A.Fake<IValidationMessagesPresenter>();
+
+         A.CallTo(() => _entityValidatorFactory.Validate(_entity)).Returns(_validationResult);
          A.CallTo(() => _applicationController.Start<IValidationMessagesPresenter>()).Returns(_presenter);
-         A.CallTo(() => _entityValidator.Validate(_entity)).Returns(_validationResult);
+         A.CallTo(() => _validationResult.ValidationState).Returns(ValidationState.Invalid);
          A.CallTo(() => _presenter.Display(_validationResult)).Returns(false);
       }
 
@@ -77,12 +79,13 @@ namespace OSPSuite.Presentation.Presentation
       {
          base.Context();
          _entity = new Container();
-         _validationResult = A.Fake<ValidationResult>();
-         A.CallTo(() => _validationResult.ValidationState).Returns(ValidationState.Invalid);
          _presenter = A.Fake<IValidationMessagesPresenter>();
+         _validationResult = A.Fake<ValidationResult>();
+         
+         A.CallTo(() => _entityValidatorFactory.Validate(_entity)).Returns(_validationResult);
+         A.CallTo(() => _validationResult.ValidationState).Returns(ValidationState.Invalid);
          A.CallTo(() => _applicationController.Start<IValidationMessagesPresenter>()).Returns(_presenter);
-         A.CallTo(() => _entityValidator.Validate(_entity)).Returns(_validationResult);
-         A.CallTo(() => _presenter.Display(_validationResult)).Returns(true);
+         A.CallTo(() => _presenter.Display(A<ValidationResult>._)).Returns(true);
       }
 
       [Observation]
@@ -91,4 +94,4 @@ namespace OSPSuite.Presentation.Presentation
          sut.Validate(_entity).ShouldBeTrue();
       }
    }
-}	
+}

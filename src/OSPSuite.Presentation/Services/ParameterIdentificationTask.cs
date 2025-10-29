@@ -35,6 +35,7 @@ namespace OSPSuite.Presentation.Services
       private readonly IHeavyWorkManager _heavyWorkManager;
       private readonly IParameterAnalysableParameterSelector _parameterSelector;
       private readonly IOutputMappingMatchingTask _outputMappingMatchingTask;
+      private readonly IParameterIdentificationRunner _parameterIdentificationRunner;
 
       public ParameterIdentificationTask(
          IParameterIdentificationFactory parameterIdentificationFactory,
@@ -52,7 +53,8 @@ namespace OSPSuite.Presentation.Services
          ISimulationSelector simulationSelector,
          IHeavyWorkManager heavyWorkManager,
          IParameterAnalysableParameterSelector parameterSelector,
-         IOutputMappingMatchingTask outputMappingMatchingTask)
+         IOutputMappingMatchingTask outputMappingMatchingTask,
+         IParameterIdentificationRunner parameterIdentificationRunner)
       {
          _parameterIdentificationFactory = parameterIdentificationFactory;
          _withIdRepository = withIdRepository;
@@ -70,6 +72,7 @@ namespace OSPSuite.Presentation.Services
          _heavyWorkManager = heavyWorkManager;
          _parameterSelector = parameterSelector;
          _outputMappingMatchingTask = outputMappingMatchingTask;
+         _parameterIdentificationRunner = parameterIdentificationRunner;
       }
 
       public void AddToProject(ParameterIdentification parameterIdentification)
@@ -229,6 +232,12 @@ namespace OSPSuite.Presentation.Services
 
       public bool Delete(IReadOnlyList<ParameterIdentification> parameterIdentifications)
       {
+         if (_parameterIdentificationRunner.IsAnyRunning(parameterIdentifications))
+         {
+            _dialogCreator.MessageBoxInfo(Captions.ParameterIdentification.ParameterIdentificationsAreRunning(parameterIdentifications.AllNames()));
+            return false;
+         }
+
          var res = _dialogCreator.MessageBoxYesNo(Captions.ParameterIdentification.ReallyDeleteParameterIdentifications(parameterIdentifications.AllNames()));
          if (res == ViewResult.No)
             return false;

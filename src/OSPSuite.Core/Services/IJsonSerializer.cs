@@ -1,0 +1,30 @@
+﻿using System;
+using System.Threading.Tasks;
+
+namespace OSPSuite.Core.Services
+{
+   public interface IJsonSerializer
+   {
+      Task Serialize(object objectToSerialize, string fileName);
+      
+      Task<object[]> DeserializeAsArray(string fileName, Type objectType);
+      
+      Task<object[]> DeserializeAsArrayFromString(string jsonString, Type objectType);
+      
+      Task<T[]> DeserializeAsArrayFromString<T>(string jsonString);
+      
+      Task<object> Deserialize(string fileName, Type objectType);
+      
+      Task<T> Deserialize<T>(string fileName) where T : class;
+      
+      Task<object> DeserializeFromString(string jsonString, Type objectType);
+      
+      Task<T> DeserializeFromString<T>(string jsonString) where T : class;
+      
+      string Serialize(object objectToSerialize);
+      
+      Task<T> DeserializeFromBase64String<T>(string base64String) where T : class;
+      
+      string SerializeToBase64String(object objectToSerialize);
+   }
+}

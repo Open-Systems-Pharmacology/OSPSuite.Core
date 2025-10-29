@@ -81,8 +81,6 @@ namespace OSPSuite.Presentation.Presenters
                UpdateColorForPath(curve, fullOutputPath);
                curve.Name = NameForColumn(column);
                curve.Description = outputMapping.ObservedDataName;
-               curve.Symbol = Symbols.Circle;
-               curve.LineStyle = LineStyles.None;
                curve.VisibleInLegend = visibleInLegend;
             });
 

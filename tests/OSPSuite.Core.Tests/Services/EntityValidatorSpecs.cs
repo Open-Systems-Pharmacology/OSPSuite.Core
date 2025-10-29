@@ -9,7 +9,7 @@ using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Services
 {
-   public abstract class concern_for_EntityValidator : ContextSpecification<IEntityValidator>
+   public abstract class concern_for_EntityValidator : ContextSpecification<EntityValidator>
    {
       private ISensitivityAnalysisValidator _sensitivityAnalysisValidator;
 

@@ -351,6 +351,8 @@ namespace OSPSuite.Helpers
          m1.InitialConditionsCollection.Each((x, i) => AreEqualBuildingBlock(x, m2.InitialConditionsCollection[i]));
          m1.ParameterValuesCollection.Each((x, i) => AreEqualBuildingBlock(x, m2.ParameterValuesCollection[i]));
 
+         m1.Snapshot.ShouldBeEqualTo(m2.Snapshot);
+
          AreEqualObjectBase(m1, m2);
       }
 

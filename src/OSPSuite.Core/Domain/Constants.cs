@@ -174,6 +174,12 @@ namespace OSPSuite.Core.Domain
             new List<string>(new[] {STOMACH}.Concat(LumenSegmentsDuodenumToRectum));
       }
 
+      public static class Processes
+      {
+         public static readonly string RenalClearances = "Renal Clearances";
+         public static readonly string GlomerularFiltration = "Glomerular Filtration";
+      }
+
       public static class Parameters
       {
          public const string REL_EXP = "Relative expression";
@@ -321,7 +327,7 @@ namespace OSPSuite.Core.Domain
          public static readonly string JOURNAL_FILE_FILTER = FileFilter("Journal File", JOURNAL_EXTENSION);
          public static readonly string WORD_SAVE_FILE_FILTER = FileFilter("Word", DOCX_EXTENSION);
          public static readonly string PKML_FILE_FILTER = FileFilter("Shared Modeling", PKML_EXTENSION);
-         public static readonly string HISTORY_FILE_FILTER = FileFilter("History Export", XLS_EXTENSION);
+         public static readonly string HISTORY_FILE_FILTER = FileFilter("History Export", XLSX_EXTENSION);
          public static readonly string TEXT_FILE_FILTER = FileFilter("Text", TEXT_EXTENSION);
          public static readonly string UNIT_FILE_FILTER = XmlFilter("Unit");
          public static readonly string MATLAB_FILTER = FileFilter("Matlab®", MATLAB_EXTENSION);
@@ -540,6 +546,8 @@ namespace OSPSuite.Core.Domain
 
       public static class ContainerName
       {
+
+         
          public static string ExpressionProfileName(string moleculeName, string species, string category)
             => compositeNameFor(char.Parse(ObjectPath.PATH_DELIMITER), moleculeName, species, category);
 

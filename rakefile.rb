@@ -28,7 +28,7 @@ end
 
 task :create_local_nuget, [:arg1, :arg2, :arg3] do |t, args|
   FileUtils.rm_f Dir.glob("./nuget_repo/*.nupkg")
-  versionId = "12.1.0-" + generate_code(5)
+  versionId = "13.0.0-" + generate_code(5)
   puts("Your version is " + versionId.red)
   system("dotnet", "pack", "-p:PackageVersion="+ versionId, "--configuration", "Debug", "--output", "nuget_repo", "--no-build") 
   if args.to_hash.values.include? "m"
@@ -41,7 +41,7 @@ end
 
 private
 def find_token(file, regex)
-  file_content = str = IO.read(file)
+  file_content = str = File.read(file)
   matches = file_content.match(regex)
 
   if(matches.nil?)

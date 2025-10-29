@@ -1,10 +1,10 @@
-﻿using OSPSuite.Assets.Extensions;
-using OSPSuite.Utility.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using OSPSuite.Assets.Extensions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Assets
 {
@@ -232,8 +232,14 @@ namespace OSPSuite.Assets
       public static readonly string DeleteSelected = "Delete Selected Records";
       public static readonly string ModulesFolder = "Modules";
       public static readonly string ApplyChangesToUpdateChart = "Apply changes to update chart";
-      public static readonly string Apply = "Apply";
+      public static readonly string ApplyUpdates = "Apply updates";
       public static readonly string AutoUpdateChart = "Auto-update chart";
+      public static readonly string LoadFromSnapshot = "Load Snapshot";
+      public static readonly string RunSimulations = "Run Simulations";
+      public static readonly string StartImport = "Start Import";
+      public static readonly string SnapshotFile = "Select snapshot file";
+      public static readonly string ExportProjectToSnapshotDescription = "Export project to snapshot...";
+      public static readonly string LoadProjectFromSnapshotDescription = "Load project from snapshot...";
 
       public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
 
@@ -471,7 +477,7 @@ namespace OSPSuite.Assets
          public static readonly string SaveConfiguration = "Save Configuration";
          public static readonly string ApplyConfiguration = "Load Configuration";
          public static readonly string ActionWillEraseLoadedData = "This action will result in dropping all the loaded sheets. Do you want to continue?";
-         public static readonly string OpenFile = "Select the file you would like to apply configuration on";
+         public static readonly string SelectFileToImport = "Select the file to import";
          public static readonly string GroupByTitle = "Group By";
          public static readonly string SelectToAdd = "Select to add";
          public static readonly string MappingTitle = "Mapping";
@@ -608,12 +614,12 @@ namespace OSPSuite.Assets
                {
                   sb.AppendLine($"    - Output Path: {mapping.OutputPath}");
                }
+
                sb.AppendLine();
             }
 
             return sb.ToString();
          }
-
       }
 
       public static class Diff
@@ -1057,12 +1063,9 @@ namespace OSPSuite.Assets
             return $"Parameter identification '{parameterIdentificationName}' finished in {duration}";
          }
 
-
          public static string SensitivityCalculationFailed(string parameterIdentificationName, IReadOnlyList<string> errorMessages, string duration = null)
          {
-            return string.IsNullOrEmpty(duration) ? 
-               $"Parameter identification '{parameterIdentificationName}' finished but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}" : 
-               $"Parameter identification '{parameterIdentificationName}' finished in {duration} but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}";
+            return string.IsNullOrEmpty(duration) ? $"Parameter identification '{parameterIdentificationName}' finished but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}" : $"Parameter identification '{parameterIdentificationName}' finished in {duration} but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}";
          }
 
          public static string LinkedParametersIn(string name)
@@ -1203,6 +1206,16 @@ namespace OSPSuite.Assets
             }
          }
 
+         public static string SimulationsAreRunning(IReadOnlyList<string> names)
+         {
+            return $"The following Simulations are currently running: {names.ToString(", ", "'")}, action cannot be performed until they are stopped.";
+         }
+
+         public static string ParameterIdentificationsAreRunning(IReadOnlyList<string> names)
+         {
+            return $"The following Parameter Identifications are currently running: {ObjectTypes.ParameterIdentification.ToLowerInvariant().PluralizeIf(names)} {names.ToString(", ", "'")}, action cannot be performed until they are stopped.";
+         }
+
          public static string ReallyDeleteParameterIdentifications(IReadOnlyList<string> names)
          {
             return $"Really delete {ObjectTypes.ParameterIdentification.ToLowerInvariant().PluralizeIf(names)} {names.ToString(", ", "'")}?";
@@ -1308,7 +1321,7 @@ namespace OSPSuite.Assets
                stringBuilder.AppendLine();
                stringBuilder.AppendLine();
             });
-            
+
             return stringBuilder.ToString();
          }
       }
@@ -1399,7 +1412,7 @@ namespace OSPSuite.Assets
             public static string Time = "Time";
             public static string Observation = "Observation";
             public static string DeviationLine = "Deviation Lines";
-            public static string Undefined = "Undefined"; 
+            public static string Undefined = "Undefined";
          }
 
          public static class DeviationLines
@@ -1408,7 +1421,6 @@ namespace OSPSuite.Assets
             public static string DeviationLineDescription = "Will create two deviation lines according to the given fold value which has to be greater than 1 (foldValue >1). An x-fold deviation range includes simulated values within x-fold and 1/x-fold of observed values.";
             public static string DeviationLineNameUpper(float foldValue) => $"{foldValue}-fold deviation";
             public static string DeviationLineNameLower(float foldValue) => $"{foldValue}-fold deviation Lower";
-
          }
       }
 
@@ -1417,9 +1429,9 @@ namespace OSPSuite.Assets
       private static string projectNameAndVersionAsString(string versionDisplay, int version) => $"V{versionDisplay} {numberDisplay(version)}";
 
       public static string ProjectVersionCannotBeLoaded(
-         int projectVersion, 
-         string oldestSupportedDisplayVersion, 
-         int oldestSupportedVersion, 
+         int projectVersion,
+         string oldestSupportedDisplayVersion,
+         int oldestSupportedVersion,
          string currentSupportedDisplayVersion,
          int currentSupportedVersion,
          string downloadUrl)
@@ -1439,10 +1451,34 @@ namespace OSPSuite.Assets
                 $"The version of this project {numberDisplay(projectVersion)} is too old and cannot be loaded.\n\n" +
                 $"Visit our download page at {downloadUrl} to download an older version of the software compatible with this project.";
       }
+
+      public static string LoadObjectFromSnapshot(string objectType) => $"Load {objectType.ToLowerInvariant()} from snapshot";
+      public static string SelectSnapshotExportFile(string objectName, string objectType) => $"Export snapshot for {objectType.ToLowerInvariant()} '{objectName}'";
+      public static string DoYouWantToProceed(params string[] messages) => $"WARNING:\n{messages.ToString("\n")}\n\nDo you wish to continue?";
+
+      public static readonly string SnapshotOfProjectWithChangedSimulationText = "Some simulations are in a changed state (red icon) and may not be re-imported correctly.";
+      public static readonly string SnapshotOfProjectWithChangedSimulation = DoYouWantToProceed(SnapshotOfProjectWithChangedSimulationText);
+
+      public static string Starting(string type, string name) => $"Starting {type.ToLower()} '{name}'...";
+
+      public static string LoadingSnapshot(string snapshotFile, string type) => $"Loading {type} from {ObjectTypes.Snapshot.ToLower()} file '{snapshotFile}'";
+
+      public static string SnapshotLoaded(string typeToLoad) => $"{typeToLoad} loaded from {ObjectTypes.Snapshot.ToLower()}";
+
+      public static string LoadingSimulation(string simulationName, int count, int total) => $"Loading simulation '{simulationName}' ({count}/{total})...";
+
+      public static string StartingQualificationPlan(string qualificationPlan) => Starting(ObjectTypes.QualificationPlan, qualificationPlan);
+
+      public static string StartingQualificationStep(string qualificationStep) => Starting(ObjectTypes.QualificationStep, qualificationStep);
    }
 
    public static class Error
    {
+      public static string SnapshotParameterNotFoundInContainer(string parameterName, string container) => $"Snapshot parameter '{parameterName}' was not found in '{container}'.";
+      public static string UnableToFindAQualificationStepRunnerFor(string qualificationStep) => $"Cannot find {ObjectTypes.QualificationStep} runner for '{qualificationStep}'";
+      public static string CouldNotFind(string objectType, string objectName) => $"Cannot find {objectType.ToLower()} '{objectName}'";
+      public static string CouldNotFindQualificationStep(string qualificationStepType) => CouldNotFind(ObjectTypes.QualificationStep, qualificationStepType);
+      public static string NotMappingDefinedForQualificationStep(string qualificationStepType) => $"No mapping defined for {ObjectTypes.QualificationStep.ToLower()} '{qualificationStepType}'";
       public static readonly string NameIsRequired = "Name is required.";
       public static readonly string ValueIsRequired = "Value is required.";
       public static readonly string DescriptionIsRequired = "Description is required";
@@ -1471,11 +1507,20 @@ namespace OSPSuite.Assets
       public static readonly string SimpleParseErrorMessage = "There were errors while parsing your data. Navigate to the sheets to read the concrete error.";
       public static readonly string FoldValueMustBeGreaterThanOne = "Fold value must be a number greater than one.";
       public static readonly string ImporterEmptyFile = "The file you are trying to load is empty.";
+      public static readonly string SnapshotIsOutdated = "Snapshot is outdated and cannot be loaded for the following reason: ";
 
-      public static string CannotFindParentContainerWithPath(string parentPath, string containerName, string buildingBlockName, string moduleName) => 
+      public static string CannotFindSimulationParameterInSnapshot(string parameterPath, string simulationName, string project) =>
+         $"Could not find {ObjectTypes.Parameter} with path '{parameterPath}' in {ObjectTypes.Simulation} '{simulationName}' defined in snapshot {project}.";
+
+      public static string SnapshotDuplicateEntryByName(string name, string type) =>
+         $"Another {type} named '{name}' already exists in the project. Snapshot file is corrupted.";
+
+      public static string SnapshotFileMismatch(string desiredType) => $"Snapshot file cannot be used to load a {desiredType.ToLowerInvariant()}.";
+
+      public static string CannotFindParentContainerWithPath(string parentPath, string containerName, string buildingBlockName, string moduleName) =>
          $"Cannot find parent container '{parentPath}' defined as target of container '{containerName}' in building block '{buildingBlockName}' in module '{moduleName}'";
 
-      public static  string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
+      public static string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
 
       public static string ParseErrorMessage(string errors) => $"There were errors while parsing your data: {errors}";
 
@@ -1554,7 +1599,7 @@ namespace OSPSuite.Assets
 
       public static string NameAlreadyExistsInContainerType(string name, string containerType)
       {
-         if(string.IsNullOrEmpty(containerType))
+         if (string.IsNullOrEmpty(containerType))
             return NameAlreadyExists(name);
 
          return $"'{name}' already exists in {containerType}.";
@@ -1633,6 +1678,13 @@ namespace OSPSuite.Assets
       public static readonly string TableFormulaWithOffsetUsesNonTableFormulaObject = "Object used in table formula with offset must be based an a table formula";
       public static readonly string ScaleFactorShouldBeGreaterThanZero = "Scale factor should be greater than 0";
 
+      public static string TimeNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit, string repositoryName)
+      {
+         var hint = Equals(valueAfter, valueBefore) ? $"{valueBefore} {displayUnit} is duplicated" : $"{valueBefore} {displayUnit} is immediately followed by {valueAfter} {displayUnit}";
+
+         return $"The time column in data set {repositoryName} is not strictly monotonically increasing ({hint}).\nEnsure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
+      }
+      
       public static string TimeNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit)
       {
          var hint = Equals(valueAfter, valueBefore) ? $"{valueBefore} {displayUnit} is duplicated" : $"{valueBefore} {displayUnit} is immediately followed by {valueAfter} {displayUnit}";
@@ -1696,6 +1748,7 @@ namespace OSPSuite.Assets
       {
          return $"Cannot add molecule '{moleculeName}' to both the include list AND exclude list";
       }
+
       public static string BuildingBlockTypeAlreadyAddedToModule(string objectName, string type) => $"BuildingBlock '{type}' for '{objectName}' was already added to module";
 
       public const string NotImplemented = "This feature is not implemented yet";
@@ -1711,6 +1764,8 @@ namespace OSPSuite.Assets
       }
 
       public static string CouldNotLoadSimulationFromFile(string pkmlFileFullPath) => CouldNotLoadObjectFromFile(pkmlFileFullPath, ObjectTypes.Simulation);
+
+      public static string CouldNotLoadObjectElement(string objectType) => $"Could not load {objectType.ToLowerInvariant()} from element";
 
       public static string CouldNotLoadObjectFromFile(string pkmlFileFullPath, string objectType)
       {
@@ -1844,11 +1899,11 @@ namespace OSPSuite.Assets
 
       public static string UnitIsNotDefinedInDimension(string unit, string dimension) => $"Unit '{unit}' is not defined in dimension '{dimension}'.";
 
-      public static string CouldNotFindNeighborhoodBetween(string container1, string container2, string formulaName, string usingFormulaPath) => 
+      public static string CouldNotFindNeighborhoodBetween(string container1, string container2, string formulaName, string usingFormulaPath) =>
          $"Could not find neighborhood between '{container1}' and '{container2}' referenced by formula '{formulaName}' used by '{usingFormulaPath}'";
 
       public static string FirstNeighborNotDefinedFor(string neighborhoodName) => $"First neighbor is undefined for neighborhood '{neighborhoodName}'";
-      
+
       public static string SecondNeighborNotDefinedFor(string neighborhoodName) => $"Second neighbor is undefined for neighborhood '{neighborhoodName}'";
 
       public const string InParentTagCanOnlyBeUsedWithAndOperator = "IN PARENT tag can only be used with AND operator";
@@ -1863,6 +1918,20 @@ namespace OSPSuite.Assets
 
       public static string CannotNavigateBeyondLumenSegment(string keyword, string path) => $"Usage of keyword '{keyword}' is not valid for '{path}'";
 
+      public static string CannotFindBuildingBlockInSnapshot(string buildingBlockType, string buildingBlockName, string project) => $"Could not find {buildingBlockType} '{buildingBlockName}' in snapshot '{project}'.";
+
+      public static string CannotFindSimulationInSnapshot(string simulationName, string project) => CannotFindBuildingBlockInSnapshot(ObjectTypes.Simulation, simulationName, project);
+
+      public static string CannotLoadSnapshotFromFile(string fileFullPath) => $"Cannot load snapshot from file '{fileFullPath}'. Please make sure that the file exists and that it is a valid snapshot file.";
+
+      public static string FileDoesNotExist(string fileFullPath) => $"File '{fileFullPath}' does not exist.";
+
+      public static string UnableToLoadQualificationConfigurationFromFile(string fileFullPath) => $"Unable to read configuration from file '{fileFullPath}'";
+
+      public static string SimulationUsedInPlotsAreNotExported(IReadOnlyList<string> simulationNames, string project)
+         => $"{ObjectTypes.Simulation.PluralizeIf(simulationNames)} {simulationNames.ToString(", ", "'")} used in plots {"is".PluralizeIf(simulationNames)} not found in the list of exported simulations for {ObjectTypes.Project} {project}";
+
+      public static string NeighborIsLogical(string neighborName, string neighborhoodName) => $"Container {neighborName} is defined as logical for neighborhood '{neighborhoodName}'";
 
       public static class SensitivityAnalysis
       {
@@ -1940,8 +2009,22 @@ namespace OSPSuite.Assets
          {
             sb.AppendLine($"- {errorMessage}");
          }
+
          return sb.ToString();
       }
+
+      public static string SnapshotNotFoundFor(string modelTypeName) => $"Snapshot not found for '{modelTypeName}'.";
+
+      public static string MapToModelNotSupportedWithoutContext(string modelType, string contextType) => $"{modelType} should not be created from snapshot directly. Instead use the overload with {contextType}.";
+
+      public static string MapToSnapshotNotSupportedWithoutContext(string snapshotType, string contextType) => $"{snapshotType} should not be created from model directly. Instead use the overload with {contextType}.";
+
+      public static string CannotCreateIdentificationParameter(string parameterPath, string parameterIdentificationName)
+         => $"Cannot create identification parameter '{parameterPath}' for parameter identification '{parameterIdentificationName}'.";
+
+      public static string CouldNotFindSimulation(string simulationName) => CouldNotFind(ObjectTypes.Simulation, simulationName);
+
+      public static string CouldNotFindOutputInSimulation(string outputFullPath, string simulationName) => $"Cannot find output '{outputFullPath}' in simulation '{simulationName}'";
    }
 
    public static class Validation
@@ -2153,7 +2236,14 @@ namespace OSPSuite.Assets
       public static string LargeNumberOfOutputPoints(int numberOfPoints) =>
          $"The selected output resolution will generate {numberOfPoints} points and may severely impact the software performance.\nAre you sure you want to run with these setting? If not, consider changing output resolution in simulations settings";
 
-      public static string NeighborhoodWasNotFoundInModel(string neighborhoodName, string buildingBlockName) => $"The neighborhood '{neighborhoodName}' from building block '{buildingBlockName}' was not added to the simulation";
+      public static string NeighborhoodWasNotFoundInModel(string neighborhoodName, string buildingBlockName) => $"The neighborhood '{neighborhoodName}' from building block '{buildingBlockName}' was not added to the simulation because it is not defined or at least one of the containers is logical";
+
+      public static string UnitNotFoundInDimensionForParameter(string unit, string dimension, string parameterName)
+      {
+         return $"Unit '{unit}' not found for parameter {parameterName} with dimension '{dimension}'";
+      }
+
+      public static string ExpressionMoleculeNotFoundInSimulation(string moleculeName) => $"The molecule '{moleculeName}' is not part of the simulation structure";
    }
 
    public static class RibbonCategories
@@ -2182,6 +2272,10 @@ namespace OSPSuite.Assets
    {
       public static string AsDeveloperOnly(string menuName) => $"{menuName} (Developer only)...";
 
+      public static readonly string ExportProjectToSnapshot = "Export to Snapshot";
+      public static readonly string LoadProjectFromSnapshot = "Load from Snapshot";
+      public static readonly string ExportProjectToSnapshotMenu = $"&{ExportProjectToSnapshot}...";
+      public static readonly string LoadProjectFromSnapshotMenu = $"{LoadProjectFromSnapshot}...";
       public static readonly string NewExpressionProfile = "Add &Expression Profile";
       public static readonly string ExportToExcel = "Export to Excel...";
       public static readonly string ExportToPng = "Export to Png...";
@@ -2253,7 +2347,7 @@ namespace OSPSuite.Assets
          return $"Compare {objectType}s";
       }
 
-      public static readonly string AutoUpdateChart = "Autoupdate chart";
+      public static readonly string AutoUpdateChart = "Auto-update chart";
       public static readonly string ApplyUpdates = "Apply updates";
    }
 
@@ -2346,6 +2440,16 @@ namespace OSPSuite.Assets
          return $"{parameterName} set from {oldValue} to {newValue} in {observedDataName}";
       }
 
+      public static string AddManyObservedDataToProjectDescription(IReadOnlyList<string> names, string projectName)
+      {
+         return $"Added observed data: \n\n{string.Join("\n", names)}\n\n to project '{projectName}'";
+      }
+
+      public static string RemoveManyObservedDataToProjectDescription(IReadOnlyList<string> names, string projectName)
+      {
+         return $"Removed observed data: \n\n{string.Join("\n", names)}\n\n from project '{projectName}'";
+      }
+
       public static string AddObservedDataToProjectDescription(string observedDataName, string projectName)
       {
          return AddEntityToContainer(ObjectTypes.ObservedData, observedDataName, ObjectTypes.Project, projectName);
@@ -2423,6 +2527,9 @@ namespace OSPSuite.Assets
 
    public static class ObjectTypes
    {
+      public static readonly string QualificationStep = "Qualification Step";
+      public static readonly string QualificationPlan = "Qualification Plan";
+      public static readonly string Snapshot = "Snapshot";
       public static readonly string CalculationMethod = "Calculation Method";
       public static readonly string MoleculeBuildingBlock = "Molecule Building Block";
       public static readonly string ReactionBuildingBlock = "Reaction Building Block";
