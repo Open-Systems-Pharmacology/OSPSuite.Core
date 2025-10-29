@@ -124,7 +124,7 @@ namespace OSPSuite.R.Services
       private Core.Domain.SimulationRunOptions coreSimulationRunOptionsFrom(SimulationRunOptions simulationRunOptions, IModelCoreSimulation simulation)
       {
          var options = simulationRunOptions ?? new SimulationRunOptions();
-         options.CheckForNegativeValues = simulation.Settings?.Solver?.CheckForNegativeValues ?? false;
+         options.CheckForNegativeValues = simulation.Settings.Solver.CheckForNegativeValues;
          return new Core.Domain.SimulationRunOptions
          {
             CheckForNegativeValues = options.CheckForNegativeValues,

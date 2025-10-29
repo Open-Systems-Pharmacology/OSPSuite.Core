@@ -30,7 +30,7 @@ namespace OSPSuite.Core.Converters.v13
       public (int convertedToVersion, bool conversionHappened) Convert(object objectToUpdate)
       {
          _converted = false;
-         performConversion(objectToUpdate);
+         this.Visit(objectToUpdate);
          return (PKMLVersion.V13_0, _converted);
       }
 
@@ -38,8 +38,6 @@ namespace OSPSuite.Core.Converters.v13
       {
          return (PKMLVersion.V13_0, false);
       }
-
-      private void performConversion(object objectToUpdate) => this.Visit(objectToUpdate);
 
       public void Visit(SimulationTransfer simulationTransfer)
       {
