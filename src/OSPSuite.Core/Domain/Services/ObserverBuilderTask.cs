@@ -116,7 +116,7 @@ namespace OSPSuite.Core.Domain.Services
                {
                   //should only happen for a logical container.
                   moleculeContainer = _containerTask.CreateOrRetrieveSubContainerByName(container, moleculeBuilder.Name).WithContainerType(ContainerType.Molecule);
-                  _entityTracker.Track(moleculeContainer, observerBuilder, _simulationBuilder);
+                  _entityTracker.Track(moleculeContainer, observerBuilder, simulationBuilder);
                }
 
                var observer = addObserverInContainer(observerBuilder, moleculeContainer, moleculeBuilder.QuantityType);
