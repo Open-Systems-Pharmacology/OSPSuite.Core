@@ -23,9 +23,8 @@ namespace OSPSuite.Core.Comparison
       ///    two objects. It identifies objects that are present in one list but not the other and records these
       ///    differences in the provided <paramref name="comparison" /> context. The order is not a relevant difference
       /// </summary>
-      protected void AddPresentByNameDifference<TNamedObject>(Expression<Func<T, IReadOnlyList<TNamedObject>>> enumerationExpression, IComparison<T> comparison) where TNamedObject : class, IWithName
+      protected void AddPresentByNameDifference<TNamedObject>(Func<T, IReadOnlyList<TNamedObject>> func, IComparison<T> comparison) where TNamedObject : class, IWithName
       {
-         var func = enumerationExpression.Compile();
          var list1 = func(comparison.Object1);
          var list2 = func(comparison.Object2);
 
