@@ -34,32 +34,12 @@ namespace OSPSuite.Core.Comparison
 
          presentOnlyInList1.Each(x =>
          {
-            comparison.Add(new MissingDiffItem
-            {
-               Object1 = x,
-               Object2 = null,
-               MissingObject1 = x,
-               MissingObject2 = null,
-               MissingObjectType = _objectTypeResolver.TypeFor(x),
-               MissingObjectName = x.Name,
-               Description = Captions.Diff.OneObjectIsNull,
-               CommonAncestor = comparison.CommonAncestor
-            });
+            comparison.Add(missingDiffItem(x, null, comparison, x.Name));
          });
 
          presentOnlyInList2.Each(x =>
          {
-            comparison.Add(new MissingDiffItem
-            {
-               Object1 = null,
-               Object2 = x,
-               MissingObject1 = null,
-               MissingObject2 = x,
-               MissingObjectType = _objectTypeResolver.TypeFor(x),
-               MissingObjectName = x.Name,
-               Description = Captions.Diff.OneObjectIsNull,
-               CommonAncestor = comparison.CommonAncestor
-            });
+            comparison.Add(missingDiffItem(null, x, comparison, x.Name));
          });
       }
 
