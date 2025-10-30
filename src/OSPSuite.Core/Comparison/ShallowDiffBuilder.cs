@@ -58,11 +58,11 @@ namespace OSPSuite.Core.Comparison
          if ((namedElement1 == null) ^ (namedElement2 == null))
             comparison.Add(missingDiffItem(namedElement1, namedElement2, comparison, propertyName));
 
-         else if (shouldCompareNames(namedElement2, namedElement1))
+         else if (namesAreDifferent(namedElement2, namedElement1))
             comparison.Add(nameDiffItem(namedElement1, namedElement2, comparison, propertyName));
       }
 
-      private static bool shouldCompareNames<TNamedObject>(TNamedObject namedElement2, TNamedObject namedElement1) where TNamedObject : class, IWithName =>
+      private static bool namesAreDifferent<TNamedObject>(TNamedObject namedElement2, TNamedObject namedElement1) where TNamedObject : class, IWithName =>
          namedElement2 != null && namedElement1 != null && !string.Equals(namedElement1.Name, namedElement2.Name);
 
       private DiffItem missingDiffItem<TNamedObject>(TNamedObject namedElement1, TNamedObject namedElement2, IComparison<T> comparison, string objectName) where TNamedObject : class, IWithName
