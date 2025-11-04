@@ -9,7 +9,7 @@ namespace OSPSuite.Infrastructure.Serialization.Services
 {
    public class SessionFactoryProvider : ISessionFactoryProvider
    {
-      public ISessionFactory InitalizeSessionFactoryFor(string dataSource)
+      public ISessionFactory InitializeSessionFactoryFor(string dataSource)
       {
          var configuration = CreateConfiguration(dataSource);
          var sessionFactory = configuration.BuildSessionFactory();

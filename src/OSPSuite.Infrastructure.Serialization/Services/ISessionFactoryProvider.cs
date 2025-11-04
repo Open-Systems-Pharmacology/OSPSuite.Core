@@ -5,7 +5,7 @@ namespace OSPSuite.Infrastructure.Serialization.Services
 {
    public interface ISessionFactoryProvider
    {
-      ISessionFactory InitalizeSessionFactoryFor(string dataSource);
+      ISessionFactory InitializeSessionFactoryFor(string dataSource);
       ISessionFactory OpenSessionFactoryFor(string dataSource);
       SchemaExport GetSchemaExport(string dataSource);
    }
