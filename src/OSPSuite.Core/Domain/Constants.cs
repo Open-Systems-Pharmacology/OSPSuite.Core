@@ -174,6 +174,12 @@ namespace OSPSuite.Core.Domain
             new List<string>(new[] {STOMACH}.Concat(LumenSegmentsDuodenumToRectum));
       }
 
+      public static class Processes
+      {
+         public static readonly string RenalClearances = "Renal Clearances";
+         public static readonly string GlomerularFiltration = "Glomerular Filtration";
+      }
+
       public static class Parameters
       {
          public const string REL_EXP = "Relative expression";
@@ -540,6 +546,8 @@ namespace OSPSuite.Core.Domain
 
       public static class ContainerName
       {
+
+         
          public static string ExpressionProfileName(string moleculeName, string species, string category)
             => compositeNameFor(char.Parse(ObjectPath.PATH_DELIMITER), moleculeName, species, category);
 

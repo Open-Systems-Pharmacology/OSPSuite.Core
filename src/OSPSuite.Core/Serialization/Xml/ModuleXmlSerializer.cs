@@ -1,4 +1,5 @@
 ﻿using OSPSuite.Core.Domain;
+using OSPSuite.Serializer.Xml;
 
 namespace OSPSuite.Core.Serialization.Xml
 {
@@ -12,6 +13,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.ModuleImportVersion);
          Map(x => x.MergeBehavior);
          Map(x => x.IsPKSimModule);
+         Map(x => x.Snapshot).AsNode();
       }
    }
 }

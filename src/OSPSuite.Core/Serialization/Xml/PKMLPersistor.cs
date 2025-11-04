@@ -20,6 +20,7 @@ namespace OSPSuite.Core.Serialization.Xml
    public interface IPKMLPersistor
    {
       void SaveToPKML<T>(T entityToSerialize, string fileName);
+      string Serialize<T>(T entityToSerialize);
 
       T Load<T>(string pkmlFileFullPath,
          IDimensionFactory dimensionFactory = null,
@@ -56,14 +57,28 @@ namespace OSPSuite.Core.Serialization.Xml
          _cloneManagerForModel = cloneManagerForModel;
       }
 
+      public string Serialize<T>(T entityToSerialize)
+      {
+         using (var serializationContext = SerializationTransaction.Create(_container))
+         {
+            return xElementFor(entityToSerialize, serializationContext).ToString();
+         }
+      }
+
       public void SaveToPKML<T>(T entityToSerialize, string fileName)
       {
          using (var serializationContext = SerializationTransaction.Create(_container))
          {
-            var xElement = serializeModelPart(entityToSerialize, serializationContext);
-            xElement.AddAttribute(Constants.Serialization.Attribute.VERSION, Constants.PKML_VERSION.ToString());
+            var xElement = xElementFor(entityToSerialize, serializationContext);
             xElement.PermissiveSave(fileName);
          }
+      }
+
+      private XElement xElementFor<T>(T entityToSerialize, SerializationContext serializationContext)
+      {
+         var xElement = serializeModelPart(entityToSerialize, serializationContext);
+         xElement.AddAttribute(Constants.Serialization.Attribute.VERSION, Constants.PKML_VERSION.ToString());
+         return xElement;
       }
 
       public T Load<T>(string pkmlFileFullPath,
@@ -165,7 +180,7 @@ namespace OSPSuite.Core.Serialization.Xml
                   entityToSerialize.IsAnImplementationOf<IModelCoreSimulation>() ||
                   entityToSerialize.IsAnImplementationOf<SimulationConfiguration>() ||
                   entityToSerialize.IsAnImplementationOf<IModel>() ||
-                  entityToSerialize.IsAnImplementationOf<DataRepository>() || 
+                  entityToSerialize.IsAnImplementationOf<DataRepository>() ||
                   entityToSerialize.IsAnImplementationOf<ImporterConfiguration>());
       }
 

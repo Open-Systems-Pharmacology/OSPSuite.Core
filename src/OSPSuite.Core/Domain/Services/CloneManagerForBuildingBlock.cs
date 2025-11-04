@@ -88,11 +88,11 @@ namespace OSPSuite.Core.Domain.Services
          return clone;
       }
 
-      protected override IFormula CreateFormulaCloneFor(IFormula srcFormula)
+      protected override IFormula CreateFormulaCloneFor(IFormula srcFormula, bool keepId)
       {
          // constant formulas are always cloned
          if (srcFormula.IsConstant())
-            return CloneFormula(srcFormula);
+            return CloneFormula(srcFormula, keepId);
 
          // Check if target formula cache already contains the formula
          // to be cloned. This can happen if we are cloning
@@ -110,7 +110,7 @@ namespace OSPSuite.Core.Domain.Services
          // Formula is neither present in the passed formula cache nor
          // was already cloned. So create a new clone and insert it 
          // in both target formula cache and the cache of all cloned formulas
-         var clonedFormula = CloneFormula(srcFormula);
+         var clonedFormula = CloneFormula(srcFormula, keepId);
          _formulaCache.Add(clonedFormula);
 
          _clonedFormulasByOriginalFormulaId.Add(srcFormula.Id, clonedFormula);

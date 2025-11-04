@@ -29,7 +29,8 @@ namespace OSPSuite.Core.Domain.Data
          return dataRepositories.SelectMany(repository => repository.ExtendedProperties)
             .Distinct(new ExtendedPropertyComparer(ep => ep.Name))
             .Where(x => dataRepositories.All(repos => repos.ExtendedProperties.Contains(x.Name)))
-            .Select(x => new ExtendedProperty<string> {
+            .Select(x => new ExtendedProperty<string>
+            {
                Name = x.Name,
                Value = valueMapper(dataRepositories.SelectMany(repository => repository.ExtendedProperties)
                   .Where(ep => ep.IsNamed(x.Name)), x)
@@ -72,5 +73,9 @@ namespace OSPSuite.Core.Domain.Data
             return _funcDistinct(obj).GetHashCode();
          }
       }
+
+      public static void AddColumns(this DataRepository repository, IEnumerable<DataColumn> columns) => columns.Each(repository.Add);
+
+      public static bool ColumnIsInRelatedColumns(this DataRepository repository, DataColumn column) => repository.SelectMany(x => x.RelatedColumns).Contains(column);
    }
 }

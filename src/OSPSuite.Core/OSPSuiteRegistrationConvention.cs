@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using OSPSuite.Utility;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Container.Conventions;
@@ -20,15 +22,9 @@ namespace OSPSuite.Core
       {
       }
 
-      public OSPSuiteRegistrationConvention(bool registerConcreteType)
-      {
-         _registerConcreteType = registerConcreteType;
-      }
+      public OSPSuiteRegistrationConvention(bool registerConcreteType) => _registerConcreteType = registerConcreteType;
 
-      public virtual void Process(Type concreteType, IContainer container, LifeStyle lifeStyle)
-      {
-         Register(concreteType, container, lifeStyle);
-      }
+      public virtual void Process(Type concreteType, IContainer container, LifeStyle lifeStyle) => Register(concreteType, container, lifeStyle);
 
       /// <summary>
       ///    Returns <c>true</c> if the <paramref name="concreteType" /> was registered with at least one interface in the
@@ -45,6 +41,10 @@ namespace OSPSuite.Core
             serviceTypes.Add(concreteType);
 
          if (!serviceTypes.Any())
+            return false;
+
+         // Do not register compiler generated types, only user generated types
+         if (concreteType.GetCustomAttribute<CompilerGeneratedAttribute>() != null)
             return false;
 
          if (concreteType.IsAnImplementationOf<IStartable>())

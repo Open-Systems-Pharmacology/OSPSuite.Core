@@ -28,97 +28,108 @@
       /// </summary>
       private void InitializeComponent()
       {
-         this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
-         this.panel = new DevExpress.XtraEditors.PanelControl();
-         this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
-         this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
-         this.btnLoadViews = new DevExpress.XtraEditors.SimpleButton();
-         this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
-         ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
-         this.layoutControl1.SuspendLayout();
-         ((System.ComponentModel.ISupportInitialize)(this.panel)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
-         this.SuspendLayout();
+         layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+         btnLoadViews = new DevExpress.XtraEditors.SimpleButton();
+         panel = new DevExpress.XtraEditors.PanelControl();
+         Root = new DevExpress.XtraLayout.LayoutControlGroup();
+         layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
+         layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
+         ((System.ComponentModel.ISupportInitialize)tablePanel).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)_errorProvider).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)layoutControl1).BeginInit();
+         layoutControl1.SuspendLayout();
+         ((System.ComponentModel.ISupportInitialize)panel).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)Root).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)layoutControlItem1).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)layoutControlItem2).BeginInit();
+         SuspendLayout();
+         // 
+         // tablePanel
+         // 
+         tablePanel.Location = new System.Drawing.Point(0, 552);
+         tablePanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+         tablePanel.Size = new System.Drawing.Size(585, 35);
          // 
          // layoutControl1
          // 
-         this.layoutControl1.Controls.Add(this.btnLoadViews);
-         this.layoutControl1.Controls.Add(this.panel);
-         this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.layoutControl1.Location = new System.Drawing.Point(0, 0);
-         this.layoutControl1.Name = "layoutControl1";
-         this.layoutControl1.Root = this.Root;
-         this.layoutControl1.Size = new System.Drawing.Size(682, 665);
-         this.layoutControl1.TabIndex = 38;
-         this.layoutControl1.Text = "layoutControl1";
-         // 
-         // panel
-         // 
-         this.panel.Location = new System.Drawing.Point(12, 43);
-         this.panel.Name = "panel";
-         this.panel.Size = new System.Drawing.Size(658, 610);
-         this.panel.TabIndex = 4;
-         // 
-         // Root
-         // 
-         this.Root.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
-         this.Root.GroupBordersVisible = false;
-         this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
-            this.layoutControlItem1,
-            this.layoutControlItem2});
-         this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(682, 665);
-         this.Root.TextVisible = false;
-         // 
-         // layoutControlItem1
-         // 
-         this.layoutControlItem1.Control = this.panel;
-         this.layoutControlItem1.Location = new System.Drawing.Point(0, 31);
-         this.layoutControlItem1.Name = "layoutControlItem1";
-         this.layoutControlItem1.Size = new System.Drawing.Size(662, 614);
-         this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem1.TextVisible = false;
+         layoutControl1.Controls.Add(btnLoadViews);
+         layoutControl1.Controls.Add(panel);
+         layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+         layoutControl1.Location = new System.Drawing.Point(0, 0);
+         layoutControl1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+         layoutControl1.Name = "layoutControl1";
+         layoutControl1.Root = Root;
+         layoutControl1.Size = new System.Drawing.Size(585, 552);
+         layoutControl1.TabIndex = 38;
+         layoutControl1.Text = "layoutControl1";
          // 
          // btnLoadViews
          // 
-         this.btnLoadViews.Location = new System.Drawing.Point(12, 12);
-         this.btnLoadViews.Name = "btnLoadViews";
-         this.btnLoadViews.Size = new System.Drawing.Size(658, 27);
-         this.btnLoadViews.StyleController = this.layoutControl1;
-         this.btnLoadViews.TabIndex = 0;
-         this.btnLoadViews.Text = "btnLoadViews";
+         btnLoadViews.Location = new System.Drawing.Point(12, 12);
+         btnLoadViews.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+         btnLoadViews.Name = "btnLoadViews";
+         btnLoadViews.Size = new System.Drawing.Size(561, 22);
+         btnLoadViews.StyleController = layoutControl1;
+         btnLoadViews.TabIndex = 0;
+         btnLoadViews.Text = "btnLoadViews";
+         // 
+         // panel
+         // 
+         panel.Location = new System.Drawing.Point(12, 38);
+         panel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+         panel.Name = "panel";
+         panel.Size = new System.Drawing.Size(561, 502);
+         panel.TabIndex = 4;
+         // 
+         // Root
+         // 
+         Root.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
+         Root.GroupBordersVisible = false;
+         Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] { layoutControlItem1, layoutControlItem2 });
+         Root.Name = "Root";
+         Root.Size = new System.Drawing.Size(585, 552);
+         Root.TextVisible = false;
+         // 
+         // layoutControlItem1
+         // 
+         layoutControlItem1.Control = panel;
+         layoutControlItem1.Location = new System.Drawing.Point(0, 26);
+         layoutControlItem1.Name = "layoutControlItem1";
+         layoutControlItem1.Size = new System.Drawing.Size(565, 506);
+         layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
+         layoutControlItem1.TextVisible = false;
          // 
          // layoutControlItem2
          // 
-         this.layoutControlItem2.Control = this.btnLoadViews;
-         this.layoutControlItem2.Location = new System.Drawing.Point(0, 0);
-         this.layoutControlItem2.Name = "layoutControlItem2";
-         this.layoutControlItem2.Size = new System.Drawing.Size(662, 31);
-         this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
-         this.layoutControlItem2.TextVisible = false;
+         layoutControlItem2.Control = btnLoadViews;
+         layoutControlItem2.Location = new System.Drawing.Point(0, 0);
+         layoutControlItem2.Name = "layoutControlItem2";
+         layoutControlItem2.Size = new System.Drawing.Size(565, 26);
+         layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
+         layoutControlItem2.TextVisible = false;
          // 
          // DynamicTestView
          // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
-         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.Caption = "DynamicTestView";
-         this.ClientSize = new System.Drawing.Size(682, 722);
-         this.Controls.Add(this.layoutControl1);
-         this.Name = "DynamicTestView";
-         this.Text = "DynamicTestView";
-         this.Controls.SetChildIndex(this.layoutControl1, 0);
-         ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
-         this.layoutControl1.ResumeLayout(false);
-         ((System.ComponentModel.ISupportInitialize)(this.panel)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
-         this.ResumeLayout(false);
-         this.PerformLayout();
+         AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+         AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+         Caption = "DynamicTestView";
+         ClientSize = new System.Drawing.Size(585, 587);
+         Controls.Add(layoutControl1);
+         Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+         Name = "DynamicTestView";
+         Text = "DynamicTestView";
+         Controls.SetChildIndex(tablePanel, 0);
+         Controls.SetChildIndex(layoutControl1, 0);
+         ((System.ComponentModel.ISupportInitialize)tablePanel).EndInit();
+         ((System.ComponentModel.ISupportInitialize)_errorProvider).EndInit();
+         ((System.ComponentModel.ISupportInitialize)layoutControl1).EndInit();
+         layoutControl1.ResumeLayout(false);
+         ((System.ComponentModel.ISupportInitialize)panel).EndInit();
+         ((System.ComponentModel.ISupportInitialize)Root).EndInit();
+         ((System.ComponentModel.ISupportInitialize)layoutControlItem1).EndInit();
+         ((System.ComponentModel.ISupportInitialize)layoutControlItem2).EndInit();
+         ResumeLayout(false);
+         PerformLayout();
 
       }
 

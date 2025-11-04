@@ -98,16 +98,15 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateFromExpression(IReadOnlyList<ParameterValue> parameterValues, IReadOnlyList<ExpressionParameter> expressionParameters)
       {
-         var formulaCache = new FormulaCache();
          parameterValues.Each(parameterValue =>
          {
             var expressionParameter = expressionSourceFor(expressionParameters.AllByName(parameterValue.Name).ToList(), parameterValue);
 
-            updateFromExpression(expressionParameter, parameterValue, formulaCache);
+            updateFromExpression(expressionParameter, parameterValue);
          });
       }
 
-      private void updateFromExpression(ExpressionParameter expressionParameter, ParameterValue parameterValue, FormulaCache formulaCache)
+      private void updateFromExpression(ExpressionParameter expressionParameter, ParameterValue parameterValue)
       {
          if (expressionParameter == null)
             return;

@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using OSPSuite.BDDHelper;
+using OSPSuite.CLI.Core.MinimalImplementations;
 using OSPSuite.Core.Domain;
-using OSPSuite.R.MinimalImplementations;
 
 namespace OSPSuite.R.Services
 {
@@ -9,7 +9,7 @@ namespace OSPSuite.R.Services
    {
       protected override void Context()
       {
-         sut = new RGroupRepository();
+         sut = new GroupRepository();
       }
    }
 

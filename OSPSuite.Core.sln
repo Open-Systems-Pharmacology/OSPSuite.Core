@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
@@ -7,9 +6,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Core", "src\OSPSui
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{25A7357D-0812-44F3-AF90-244FD752FAE2}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\build-and-publish_12.2.yml = .github\workflows\build-and-publish_12.2.yml
-		.github\workflows\build-pr_12.2.yml = .github\workflows\build-pr_12.2.yml
-		.github\workflows\coverage_12.2.yml = .github\workflows\coverage_12.2.yml
+		.github\workflows\build-and-publish_v13.yml = .github\workflows\build-and-publish_v13.yml
+		.github\workflows\build-pr_v13.yml = .github\workflows\build-pr_v13.yml
+		.github\workflows\coverage_v13.yml = .github\workflows\coverage_v13.yml
 		dotcover.xml = dotcover.xml
 		logo.png = logo.png
 		rakefile.rb = rakefile.rb
@@ -59,6 +58,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.Infrastructure.Autofac", "src\OSPSuite.Infrastructure.Autofac\OSPSuite.Infrastructure.Autofac.csproj", "{E29CA1A8-7589-41DD-8280-4D0D9289DDB8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.R.Performance", "tests\OSPSuite.R.Performance\OSPSuite.R.Performance.csproj", "{806D7CE1-C84C-4731-AE66-498B4950A52F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSPSuite.CLI.Core", "src\OSPSuite.CLI.Core\OSPSuite.CLI.Core.csproj", "{0047566B-5ECC-4C75-89BE-921C1C82C315}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -158,6 +159,10 @@ Global
 		{806D7CE1-C84C-4731-AE66-498B4950A52F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{806D7CE1-C84C-4731-AE66-498B4950A52F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{806D7CE1-C84C-4731-AE66-498B4950A52F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0047566B-5ECC-4C75-89BE-921C1C82C315}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0047566B-5ECC-4C75-89BE-921C1C82C315}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0047566B-5ECC-4C75-89BE-921C1C82C315}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0047566B-5ECC-4C75-89BE-921C1C82C315}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,20 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>OSPSuite.HelpersForTests</AssemblyName>
     <RootNamespace>OSPSuite.Helpers</RootNamespace>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="8.3.0" />
     <PackageReference Include="NUnit" Version="3.14.0" />
     <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.1.1" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj" />
   </ItemGroup>
-
 </Project>

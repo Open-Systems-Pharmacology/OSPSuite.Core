@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net8</TargetFramework>
     <AssemblyName>OSPSuite.R</AssemblyName>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
@@ -18,11 +18,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSPSuite.Utility" Version="4.1.1.1" />
+    <PackageReference Include="OSPSuite.Utility" Version="4.1.1.5" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\tests\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
     <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
+    <ProjectReference Include="..\OSPSuite.CLI.Core\OSPSuite.CLI.Core.csproj" />
     <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj" />
     <ProjectReference Include="..\OSPSuite.Infrastructure.Autofac\OSPSuite.Infrastructure.Autofac.csproj" />
     <ProjectReference Include="..\OSPSuite.Infrastructure.Import\OSPSuite.Infrastructure.Import.csproj" />

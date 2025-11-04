@@ -79,8 +79,6 @@ namespace OSPSuite.Starter.Bootstrapping
 
       private static void initializeDependency()
       {
-//         var container = new AutofacContainer();
-//         container.AddActivationHook<EventRegistrationHook>();
          var container = new CastleWindsorContainer();
          container.AddFacility<EventRegisterFacility>();
          container.AddFacility<TypedFactoryFacility>();
@@ -115,18 +113,7 @@ namespace OSPSuite.Starter.Bootstrapping
 
 
             container.Register<DxContainer, DxContainer>(LifeStyle.Singleton);
-//            container.AutofacBuilder.Register(c => c.Resolve<DxContainer>().ApplicationMenu).As<ApplicationMenu>();
-//            container.AutofacBuilder.Register(c => c.Resolve<DxContainer>().BarManager).As<BarManager>();
-//            container.AutofacBuilder.Register(c => c.Resolve<DxContainer>().PanelControl).As<PanelControl>();
-//            container.AutofacBuilder.Register(c => c.Resolve<DxContainer>().RibbonControl).As<RibbonControl>();
-//            container.AutofacBuilder.Register(c => c.Resolve<DxContainer>().RibbonBarManager).As<RibbonBarManager>();
-//            container.AutofacBuilder.Register(c => c.Resolve<DxContainer>().UserLookAndFeel).As<UserLookAndFeel>();
-//            container.AutofacBuilder.Register(c => c.Resolve<DxContainer>().XtraTabbedMdiManager).As<XtraTabbedMdiManager>();
-
             container.Register<RegionsContainer, RegionsContainer>(LifeStyle.Singleton);
-//            container.AutofacBuilder.Register(c => c.Resolve<RegionsContainer>().Journal).Keyed<IRegion>(RegionNames.Journal.Name);
-//            container.AutofacBuilder.Register(c => c.Resolve<RegionsContainer>().Comparison).Keyed<IRegion>(RegionNames.Comparison.Name);
-//            container.AutofacBuilder.Register(c => c.Resolve<RegionsContainer>().Explorer).Keyed<IRegion>(RegionNames.Explorer.Name);
          }
 
 

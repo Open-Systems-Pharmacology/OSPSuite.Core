@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <AssemblyName>OSPSuite.UI</AssemblyName>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
@@ -19,28 +18,24 @@
     <DebugSymbols>true</DebugSymbols>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Services\MagnifierCursor.cur" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Include="..\..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Services\MagnifierCursor.cur" />
   </ItemGroup>
-
   <ItemGroup>
+    <PackageReference Include="DevExpress.Win.Design" Version="21.2.15" Condition="'$(ExcludeDesigner)' != 'true'" />     
     <PackageReference Include="Northwoods.GoWin" Version="5.2.0" />
-    <PackageReference Include="OSPSuite.DataBinding.DevExpress" Version="6.0.1.2" />
-    <PackageReference Include="OSPSuite.DevExpress" Version="21.2.15" />
-    <PackageReference Include="OSPSuite.Utility" Version="4.1.1.1" />
+    <PackageReference Include="OSPSuite.DataBinding.DevExpress" Version="6.0.1.5" />
+    <PackageReference Include="OSPSuite.DevExpress" Version="21.2.15.1" />
+    <PackageReference Include="OSPSuite.Utility" Version="4.1.1.5" />
     <PackageReference Include="System.Resources.Extensions" Version="9.0.5" />
-    <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
+    <PackageReference Include="WindowsAPICodePack.Shell.CommonFileDialogs" Version="1.1.5" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\OSPSuite.Assets.Images\OSPSuite.Assets.Images.csproj" />
     <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
@@ -49,14 +44,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath="" />
     <None Include="..\..\logo.png" Pack="true" Link="logo.png" PackagePath="\logo.png" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -71,13 +61,10 @@
     </Compile>
     <Compile Update="Views\Importer\MappingParameterEditorView.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
-
 </Project>

@@ -122,21 +122,23 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void adding_existing_molecule_name_to_exclude_should_not_add_the_molecule_tweice()
+      public void adding_existing_molecule_name_to_exclude_should_not_add_the_molecule_twice()
       {
          sut.AddMoleculeNameToExclude("B");
          sut.MoleculeNamesToExclude().Count().ShouldBeEqualTo(1);
       }
 
       [Observation]
-      public void adding_molecule_name_already_defined_in_exclude_list_should_throw_an_exception()
+      public void adding_molecule_name_already_defined_in_exclude_list_should_throw_an_exception_if_for_all()
       {
+         sut.ForAll = false;
          The.Action(() => sut.AddMoleculeName("B")).ShouldThrowAn<OSPSuiteException>();
       }
 
       [Observation]
-      public void adding_molecule_name_to_exclude_already_defined_in_include_list_should_throw_an_exception()
+      public void adding_molecule_name_to_exclude_already_defined_in_include_list_should_throw_an_exception_if_not_for_all()
       {
+         sut.ForAll = false;
          The.Action(() => sut.AddMoleculeNameToExclude("A")).ShouldThrowAn<OSPSuiteException>();
       }
    }

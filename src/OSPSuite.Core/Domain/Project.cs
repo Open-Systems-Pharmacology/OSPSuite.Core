@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Utility.Collections;
@@ -219,5 +218,7 @@ namespace OSPSuite.Core.Domain
 
 
       public abstract IEnumerable<IUsesObservedData> AllUsersOfObservedData { get; }
+
+      public virtual IReadOnlyCollection<DataRepository> AllDataRepositories() => AllObservedData;
    }
 }
