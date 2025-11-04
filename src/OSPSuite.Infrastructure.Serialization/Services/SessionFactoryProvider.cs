@@ -4,7 +4,6 @@ using NHibernate.Cfg;
 using NHibernate.Dialect;
 using NHibernate.Driver;
 using NHibernate.Tool.hbm2ddl;
-using Microsoft.Data.Sqlite;
 
 namespace OSPSuite.Infrastructure.Serialization.Services
 {
@@ -40,7 +39,7 @@ namespace OSPSuite.Infrastructure.Serialization.Services
             // Use the SQLite driver that works with Microsoft.Data.Sqlite
             db.Driver<NHibernate.Driver.SQLite20Driver>();
             db.Dialect<SQLiteDialect>();
-            db.ConnectionString = $"Data Source={dataSource}";
+            db.ConnectionString = $"Data Source={dataSource};Foreign Keys=True";
             db.Timeout = 20;
          });
 
@@ -50,6 +49,4 @@ namespace OSPSuite.Infrastructure.Serialization.Services
          return configuration;
       }
    }
-
 }
-
