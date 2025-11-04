@@ -85,8 +85,8 @@
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <ItemGroup>
-      <WindowsFiles Include="$(OutDir)x64/SQLite.Interop.dll" />
+      <WindowsFiles Include="$(TargetDir)x64/SQLite.Interop.dll" />
     </ItemGroup>
-    <Copy SourceFiles="@(WindowsFiles);" DestinationFolder="$(OutDir)" DestinationFiles="@(WindowsFiles-&gt;Replace('x64/SQLite.Interop.dll', 'SQLite.Interop.dll'))" />
+    <Copy SourceFiles="@(WindowsFiles);" DestinationFolder="$(TargetFolder)" DestinationFiles="@(WindowsFiles-&gt;Replace('x64/SQLite.Interop.dll', 'SQLite.Interop.dll'))" />
   </Target>
 </Project>
