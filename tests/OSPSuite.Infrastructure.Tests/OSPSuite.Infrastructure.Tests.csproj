@@ -19,8 +19,6 @@
     <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.1.1" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.8" GeneratePathProperty="true" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.2" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj" />
@@ -35,10 +33,4 @@
     <Folder Include="Data\SensitivityAnalysisResultsFiles\" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <ContentSQLiteInteropFiles>true</ContentSQLiteInteropFiles>
-    <CopySQLiteInteropFiles>false</CopySQLiteInteropFiles>
-    <CleanSQLiteInteropFiles>false</CleanSQLiteInteropFiles>
-    <CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
-  </PropertyGroup>
 </Project>
