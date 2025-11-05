@@ -48,7 +48,6 @@
     <PackageReference Include="OSPSuite.SimModel" Version="4.0.0.77" GeneratePathProperty="true" />
     <PackageReference Include="OSPSuite.SimModelSolver_CVODES" Version="4.1.0.19" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0" />
-    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.8" GeneratePathProperty="true" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\OSPSuite.Assets.Images\OSPSuite.Assets.Images.csproj" />
