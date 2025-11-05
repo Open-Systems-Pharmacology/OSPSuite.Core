@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\tests\OSPSuite.HelpersForTests\OSPSuite.HelpersForTests.csproj" />
     <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
     <ProjectReference Include="..\OSPSuite.CLI.Core\OSPSuite.CLI.Core.csproj" />
     <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj" />
