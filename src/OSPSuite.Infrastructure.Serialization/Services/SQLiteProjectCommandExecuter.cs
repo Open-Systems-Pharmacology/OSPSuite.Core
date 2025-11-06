@@ -10,7 +10,7 @@ namespace OSPSuite.Infrastructure.Serialization.Services
       public virtual void ExecuteCommand(string projectFile, Action<DbConnection> command )
       {
          string file = projectFile.ToUNCPath();
-         using (var sqlLite = new SqliteConnection($"Data Source={file};Foreign Keys=True"))
+         using (var sqlLite = new SqliteConnection($"Data Source={file}"))
          {
             sqlLite.Open();
             command(sqlLite);
@@ -20,7 +20,7 @@ namespace OSPSuite.Infrastructure.Serialization.Services
       public virtual TResult ExecuteCommand<TResult>(string projectFile, Func<DbConnection, TResult> command)
       {
          string file = projectFile.ToUNCPath();
-         using (var sqlLite = new SqliteConnection($"Data Source={file};Foreign Keys=True"))
+         using (var sqlLite = new SqliteConnection($"Data Source={file}"))
          {
             sqlLite.Open();
            return command(sqlLite);
