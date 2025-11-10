@@ -12,7 +12,7 @@ namespace OSPSuite.Infrastructure.Serialization.Journal
    {
       public IDbConnection CreateConnection(string databasePath)
       {
-         var connectionString = $"Data Source={databasePath};Foreign Keys=False;Pooling=False;Cache=Shared";
+         var connectionString = $"Data Source={databasePath};Foreign Keys=False;Pooling=False";
          var cn = new SqliteConnection(connectionString);
          cn.Open();
          return cn;
