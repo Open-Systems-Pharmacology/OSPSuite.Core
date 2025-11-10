@@ -2,29 +2,29 @@
 using System.Data.Common;
 using Microsoft.Data.Sqlite;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Infrastructure.Serialization.Extensions;
 
-namespace OSPSuite.Infrastructure.Serialization.Services
+namespace OSPSuite.Infrastructure.Serialization.Services;
+
+public class SQLiteProjectCommandExecuter
 {
-   public class SQLiteProjectCommandExecuter
+   public virtual void ExecuteCommand(string projectFile, Action<DbConnection> command )
    {
-      public virtual void ExecuteCommand(string projectFile, Action<DbConnection> command )
+      string file = projectFile.ToUNCPath();
+      using (var sqlLite = new SqliteConnection(ConnectionStringHelper.ConnectionStringFor(file)))
       {
-         string file = projectFile.ToUNCPath();
-         using (var sqlLite = new SqliteConnection($"Data Source={file};Foreign Keys=False;Pooling=False"))
-         {
-            sqlLite.Open();
-            command(sqlLite);
-         }
+         sqlLite.Open();
+         command(sqlLite);
       }
+   }
 
-      public virtual TResult ExecuteCommand<TResult>(string projectFile, Func<DbConnection, TResult> command)
+   public virtual TResult ExecuteCommand<TResult>(string projectFile, Func<DbConnection, TResult> command)
+   {
+      string file = projectFile.ToUNCPath();
+      using (var sqlLite = new SqliteConnection(ConnectionStringHelper.ConnectionStringFor(file)))
       {
-         string file = projectFile.ToUNCPath();
-         using (var sqlLite = new SqliteConnection($"Data Source={file};Foreign Keys=False;Pooling=False"))
-         {
-            sqlLite.Open();
-           return command(sqlLite);
-         }
+         sqlLite.Open();
+         return command(sqlLite);
       }
    }
 }
