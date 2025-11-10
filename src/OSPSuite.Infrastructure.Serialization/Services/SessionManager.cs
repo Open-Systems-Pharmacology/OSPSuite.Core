@@ -84,7 +84,7 @@ namespace OSPSuite.Infrastructure.Serialization.Services
          else
          {
             FileHelper.DeleteFile(fileName);
-            _sessionFactory = _sessionFactoryProvider.InitalizeSessionFactoryFor(fileName);
+            _sessionFactory = _sessionFactoryProvider.InitializeSessionFactoryFor(fileName);
          }
 
          _currentFileName = fileName;

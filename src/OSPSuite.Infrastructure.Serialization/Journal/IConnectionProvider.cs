@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 
 namespace OSPSuite.Infrastructure.Serialization.Journal
 {
@@ -12,8 +12,8 @@ namespace OSPSuite.Infrastructure.Serialization.Journal
    {
       public IDbConnection CreateConnection(string databasePath)
       {
-         var connectionString = $"Data Source={databasePath};Version=3;New=True;Compress=True;foreign keys=True";
-         var cn = new SQLiteConnection(connectionString);
+         var connectionString = $"Data Source={databasePath};Foreign Keys=True";
+         var cn = new SqliteConnection(connectionString);
          cn.Open();
          return cn;
       }

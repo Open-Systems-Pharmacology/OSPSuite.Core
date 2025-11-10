@@ -17,7 +17,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="OSPSuite.BDDHelper" Version="4.0.1.1" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\OSPSuite.Core\OSPSuite.Core.csproj" />
@@ -31,10 +30,5 @@
     <Folder Include="Data\PKAnalysesFiles\" />
     <Folder Include="Data\SensitivityAnalysisResultsFiles\" />
   </ItemGroup>
-  <PropertyGroup>
-    <ContentSQLiteInteropFiles>true</ContentSQLiteInteropFiles>
-    <CopySQLiteInteropFiles>false</CopySQLiteInteropFiles>
-    <CleanSQLiteInteropFiles>false</CleanSQLiteInteropFiles>
-    <CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
-  </PropertyGroup>
+
 </Project>
