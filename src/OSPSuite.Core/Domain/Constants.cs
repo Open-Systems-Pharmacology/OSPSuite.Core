@@ -253,7 +253,8 @@ namespace OSPSuite.Core.Domain
             IS_LIVER_ZONATED,
             USE_AS_SUSPENSION,
             ENABLE_SUPERSATURATION,
-            URINE_EMPTYING_ENABLE
+            URINE_EMPTYING_ENABLE,
+            CHECK_FOR_NEGATIVE_VALUES
          };
 
          public static readonly IReadOnlyCollection<string> AllCategorialParameters = new List<string>(AllBooleanParameters)
