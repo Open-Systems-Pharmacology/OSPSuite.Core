@@ -1,4 +1,5 @@
-﻿using OSPSuite.BDDHelper;
+﻿using FakeItEasy;
+using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Services;
@@ -11,7 +12,6 @@ namespace OSPSuite.Core.Domain
       protected ModelConfiguration _modelConfiguration;
       protected IModel _model;
       protected SimulationConfiguration _simulationConfiguration;
-      protected SimulationBuilder _simulationBuilder;
       protected Neighborhood _neighborhood1;
       protected Neighborhood _neighborhood2;
       protected IContainer _liver;
@@ -35,8 +35,8 @@ namespace OSPSuite.Core.Domain
          _model.Neighborhoods.Add(_neighborhood1);
          _model.Neighborhoods.Add(_neighborhood2);
          _simulationConfiguration = new SimulationConfiguration();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
-         _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, _simulationBuilder);
+         var simulationBuilder = A.Fake<SimulationBuilder>();
+         _modelConfiguration = new ModelConfiguration(_model, _simulationConfiguration, simulationBuilder);
          _objectPathFactory = new ObjectPathFactoryForSpecs();
          sut = new SpatialStructureValidator();
       }

@@ -97,6 +97,9 @@ namespace OSPSuite.Core
          container.Register<IConfirmationManager, ConfirmationManager>(LifeStyle.Singleton);
          container.Register<ISnapshotMapper, SnapshotMapper>(LifeStyle.Singleton);
 
+         //Register specifically since this object does not implement ANY interface besides its own
+         container.Register<SimulationBuilder, SimulationBuilder>();
+
          registerComparers(container);
 
          registerConverters(container);

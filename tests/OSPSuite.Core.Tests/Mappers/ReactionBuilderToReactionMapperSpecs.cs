@@ -9,6 +9,7 @@ using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {
@@ -26,7 +27,6 @@ namespace OSPSuite.Core.Mappers
       protected ReactionPartner _prod2;
       protected IContainer _container;
       protected string _modifier;
-      protected SimulationConfiguration _simulationConfiguration;
       protected IProcessRateParameterCreator _processRateParameterCreator;
       private IDimensionFactory _dimensionFactory;
       protected IDimension _amountPerTimeDimension;
@@ -50,7 +50,6 @@ namespace OSPSuite.Core.Mappers
          _modifier = "MOD";
          _reactionBuilder = new ReactionBuilder().WithName("MyReaction");
          _reactionBuilder.Dimension = _amountPerTimeDimension;
-         _simulationConfiguration = new SimulationConfiguration();
          _reactionBuilder.Formula = A.Fake<IFormula>();
          var edPartner1 = new ReactionPartnerBuilder();
          var edPartner2 = new ReactionPartnerBuilder();
@@ -61,7 +60,8 @@ namespace OSPSuite.Core.Mappers
          _educt2 = A.Fake<ReactionPartner>();
          _prod2 = A.Fake<ReactionPartner>();
          _container = A.Fake<IContainer>();
-         _simulationBuilder = new SimulationBuilder(_simulationConfiguration);
+         _simulationBuilder = A.Fake<SimulationBuilder>();
+
          A.CallTo(() => _dimensionFactory.Dimension(Constants.Dimension.AMOUNT_PER_TIME)).Returns(_amountPerTimeDimension);
          A.CallTo(() => _reactionPartnerMapper.MapFromLocal(edPartner1, _container, _simulationBuilder)).Returns(_educt1);
          A.CallTo(() => _reactionPartnerMapper.MapFromLocal(edPartner2, _container, _simulationBuilder)).Returns(_educt2);
@@ -179,7 +179,7 @@ namespace OSPSuite.Core.Mappers
          A.CallTo(() => _parameterMapper.MapFrom(_reactionBuilder.Parameters, _simulationBuilder)).Returns(new List<IParameter>());
          _processRateParameter = new Parameter();
          A.CallTo(() => _objectBaseFactory.Create<IParameter>()).Returns(_processRateParameter);
-         _simulationConfiguration.CreateAllProcessRateParameters = true;
+         A.CallTo(() => _simulationBuilder.CreateAllProcessRateParameters).Returns(true);
       }
 
       protected override void Because()
