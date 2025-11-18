@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using DevExpress.Utils;
-using DevExpress.XtraBars;
-using DevExpress.XtraBars.Ribbon;
+using DevExpress.Utils.Menu;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Views.Base;
-using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
-using DevExpress.XtraLayout;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.DataBinding.DevExpress;
@@ -99,10 +97,40 @@ namespace OSPSuite.UI.Views
             .WithFixedWidth(UIConstants.Size.EMBEDDED_BUTTON_WIDTH);
 
          _gridViewBinder.Changed += NotifyViewChanged;
-
-         _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.RemoveObservedData(new List<SimulationOutputMappingDTO> { _gridViewBinder.FocusedElement }));
+         _removeButtonRepository.ButtonClick += removeAndKeepFocus;
       }
-      
+
+      private void removeAndKeepFocus(object sender, EventArgs e)
+      {
+         var dtoToRemove = _gridViewBinder.FocusedElement;
+         if (dtoToRemove == null)
+            return;
+
+         var currentHandle = gridView.FocusedRowHandle;
+         var topRow = gridView.TopRowIndex;
+
+         OnEvent(() =>
+         {
+            _presenter.RemoveObservedData(new List<SimulationOutputMappingDTO> { dtoToRemove });
+
+            BeginInvoke(new Action(() =>
+            {
+               var newHandle = currentHandle;
+
+               if (newHandle >= gridView.DataRowCount)
+                  newHandle = gridView.DataRowCount - 1;
+
+               if (newHandle < 0)
+                  return;
+
+               gridView.TopRowIndex = topRow;
+               gridView.FocusedRowHandle = newHandle;
+               gridView.ClearSelection();
+               gridView.SelectRow(newHandle);
+            }));
+         });
+      }
+
       private void onOutputMappingEdited()
       {
          _presenter.MarkSimulationAsChanged();
@@ -152,12 +180,12 @@ namespace OSPSuite.UI.Views
          if (!selectedDTOs.Any())
             return;
 
-         var deleteItem = new DevExpress.Utils.Menu.DXMenuItem(
+         var deleteItem = new DXMenuItem(
             Captions.DeleteSelected,
             (o, args) => _presenter.RemoveObservedData(selectedDTOs)
          )
          {
-            Shortcut = System.Windows.Forms.Shortcut.Del,
+            Shortcut = Shortcut.Del,
             SvgImage = ApplicationIcons.DeleteSelected
          };
 
