@@ -50,6 +50,7 @@ namespace OSPSuite.UI.Views
          gridView.PopupMenuShowing += onPopupMenuShowing;
          deleteButton.InitWithImage(ApplicationIcons.Delete, "Delete");
          deleteButton.Click += (o, e) => OnEvent(btnDeleteItemClick);
+         deleteButtonControlItem.AdjustButtonSize();
       }
 
       public void AttachPresenter(ISimulationOutputMappingPresenter presenter)

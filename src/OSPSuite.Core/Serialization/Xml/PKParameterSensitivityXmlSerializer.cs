@@ -12,6 +12,7 @@ namespace OSPSuite.Core.Serialization.Xml
          Map(x => x.ParameterPath);
          Map(x => x.PKParameterName);
          Map(x => x.Value);
+         Map(x => x.State);
       }
    }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Utility.Extensions;
@@ -31,7 +32,7 @@ namespace OSPSuite.Presentation.Mappers.SensitivityAnalyses
          var dataTable = new DataTable(Captions.SensitivityAnalysis.Results);
          dataTable.AddColumns<string>(Captions.SensitivityAnalysis.Output, Captions.SensitivityAnalysis.PKParameterName, Captions.SensitivityAnalysis.ParameterName, Captions.SensitivityAnalysis.ParameterDisplayPath, Captions.SensitivityAnalysis.PKParameterDescription, Captions.SensitivityAnalysis.ParameterPath);
          dataTable.AddColumn<double>(Captions.SensitivityAnalysis.Value);
-         sensitivityAnalysisRunResult.AllPKParameterSensitivities.Each(x => addParameterSensitivity(x, dataTable, sensitivityAnalysis));
+         sensitivityAnalysisRunResult.AllPKParameterSensitivities.Where(x => x.State == PKParameterSensitivityState.Success).Each(x => addParameterSensitivity(x, dataTable, sensitivityAnalysis));
          return dataTable;
       }
 

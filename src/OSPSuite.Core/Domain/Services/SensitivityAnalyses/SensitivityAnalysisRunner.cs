@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +10,9 @@ using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 {
@@ -66,7 +69,12 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
                await _sensitivityAnalysisEngine.StartAsync(sensitivityAnalysis, options, _cancellationTokenSource.Token);
                var end = SystemTime.UtcNow();
                var timeSpent = end - begin;
-               _dialogCreator.MessageBoxInfo(Captions.SensitivityAnalysis.SensitivityAnalysisFinished(timeSpent.ToDisplay()));
+
+               var failedPKParameterCalculations = new Cache<string, IReadOnlyList<string>>();
+               
+               sensitivityAnalysis.Results.AllPKParameterSensitivities.Where(x => x.State == PKParameterSensitivityState.FailedToCalculateDefaultPKValue).GroupBy(x => x.PKParameterName).Each(x => failedPKParameterCalculations[x.Key] = x.Select(p => p.QuantityPath).Distinct().ToList());
+               
+               _dialogCreator.MessageBoxInfo(Captions.SensitivityAnalysis.SensitivityAnalysisFinished(timeSpent.ToDisplay(), failedPKParameterCalculations));
             }
          }
          catch (OperationCanceledException)

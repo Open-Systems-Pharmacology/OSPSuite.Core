@@ -63,6 +63,7 @@ namespace OSPSuite.Core.Serialization.Xml
          AttributeMapperRepository.AddAttributeMapper(new RunStatusXmlAttributeMapper());
          AttributeMapperRepository.AddAttributeMapper(new ExpressionTypeXmlAttributeMapper());
          AttributeMapperRepository.AddAttributeMapper(new DistributionTypeXmlSerializer());
+         AttributeMapperRepository.AddAttributeMapper(new PKParameterSensitivityStateXmlAttributeMapper());
 
 
          AttributeMapperRepository.ReferenceMapper = new ObjectReferenceMapper();
