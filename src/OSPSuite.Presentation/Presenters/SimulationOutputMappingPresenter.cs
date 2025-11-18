@@ -102,6 +102,47 @@ namespace OSPSuite.Presentation.Presenters
          Refresh();
       }
 
+
+      private void removeFromOutputMappingList(IReadOnlyList<DataRepository> itemsToRemove)
+      {
+         var idsToRemove = new HashSet<string>(
+             (itemsToRemove ?? Enumerable.Empty<DataRepository>())
+             .Where(item => item != null)
+             .Select(item => item.Id)
+         );
+
+         for (int i = _listOfOutputMappingDTOs.Count - 1; i >= 0; i--)
+         {
+            var dto = _listOfOutputMappingDTOs[i];
+            var observedData = dto.ObservedData;
+
+            if (observedData == null)
+               continue;
+
+            if (idsToRemove.Contains(observedData.Id))
+               _listOfOutputMappingDTOs.RemoveAt(i);
+         }
+
+         var mappedIds = new HashSet<string>(
+             _listOfOutputMappingDTOs
+                 .Where(dto => dto.ObservedData != null)
+                 .Select(dto => dto.ObservedData.Id)
+         );
+
+         foreach (var observedData in allAvailableObservedDataUsedBySimulation())
+         {
+            if (!mappedIds.Contains(observedData.Id))
+            {
+               var newOutputMapping = new OutputMapping
+               {
+                  WeightedObservedData = new WeightedObservedData(observedData)
+               };
+               var newOutputMappingDTO = mapFrom(newOutputMapping);
+               _listOfOutputMappingDTOs.Add(newOutputMappingDTO);
+            }
+         }
+      }
+
       private void updateOutputMappingList()
       {
          _listOfOutputMappingDTOs.Clear();
@@ -170,7 +211,7 @@ namespace OSPSuite.Presentation.Presenters
 
       public void Handle(ObservedDataRemovedFromAnalysableEvent eventToHandle)
       {
-         updateOutputMappingList();
+         removeFromOutputMappingList(eventToHandle.ObservedData);
       }
 
       public void Handle(SimulationOutputSelectionsChangedEvent eventToHandle)
@@ -181,7 +222,6 @@ namespace OSPSuite.Presentation.Presenters
 
       public void RemoveObservedData(IReadOnlyList<SimulationOutputMappingDTO> outputMappingDTOs)
       {
-
          var usedObservedDataList = outputMappingDTOs
             .Select(outputMappingDTO => new UsedObservedData
             {

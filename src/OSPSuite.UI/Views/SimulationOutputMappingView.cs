@@ -97,38 +97,7 @@ namespace OSPSuite.UI.Views
             .WithFixedWidth(UIConstants.Size.EMBEDDED_BUTTON_WIDTH);
 
          _gridViewBinder.Changed += NotifyViewChanged;
-         _removeButtonRepository.ButtonClick += removeAndKeepFocus;
-      }
-
-      private void removeAndKeepFocus(object sender, EventArgs e)
-      {
-         var dtoToRemove = _gridViewBinder.FocusedElement;
-         if (dtoToRemove == null)
-            return;
-
-         var currentHandle = gridView.FocusedRowHandle;
-         var topRow = gridView.TopRowIndex;
-
-         OnEvent(() =>
-         {
-            _presenter.RemoveObservedData(new List<SimulationOutputMappingDTO> { dtoToRemove });
-
-            BeginInvoke(new Action(() =>
-            {
-               var newHandle = currentHandle;
-
-               if (newHandle >= gridView.DataRowCount)
-                  newHandle = gridView.DataRowCount - 1;
-
-               if (newHandle < 0)
-                  return;
-
-               gridView.TopRowIndex = topRow;
-               gridView.FocusedRowHandle = newHandle;
-               gridView.ClearSelection();
-               gridView.SelectRow(newHandle);
-            }));
-         });
+         _removeButtonRepository.ButtonClick += (o, e) => OnEvent(() => _presenter.RemoveObservedData(new List<SimulationOutputMappingDTO> { _gridViewBinder.FocusedElement }));
       }
 
       private void onOutputMappingEdited()
