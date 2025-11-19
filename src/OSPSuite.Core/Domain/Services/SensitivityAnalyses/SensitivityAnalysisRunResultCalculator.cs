@@ -82,7 +82,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
          var defaultPKValue = pkParameter.ValueFor(variationData.DefaultVariationId);
          var allVariations = variationData.VariationsFor(sensitivityParameter.Name);
 
-         if (float.IsNaN(defaultPKValue) || defaultPKValue == 0 || defaultParameterValue == 0 || !allVariations.Any())
+         if (defaultParameterValue == 0 || !allVariations.Any())
             return null;
 
          var sensitivity = new PKParameterSensitivity
@@ -91,9 +91,16 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
             PKParameterName = pkParameter.Name,
             QuantityPath = pkParameter.QuantityPath,
             ParameterPath = sensitivityParameter.ParameterSelection.Path,
-            Value = double.NaN
+            Value = double.NaN,
+            State = PKParameterSensitivityState.Success
          };
 
+         if (float.IsNaN(defaultPKValue) || defaultPKValue == 0)
+         {
+            sensitivity.State = PKParameterSensitivityState.FailedToCalculateDefaultPKValue;
+            return sensitivity;
+         }
+         
          var delta = (from variation in allVariations
             let deltaP = difference(variation.ParameterValue, defaultParameterValue)
             let deltaPK = difference(pkParameter.ValueFor(variation.VariationId), defaultPKValue)

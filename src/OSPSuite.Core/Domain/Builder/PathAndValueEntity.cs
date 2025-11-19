@@ -27,9 +27,10 @@ namespace OSPSuite.Core.Domain.Builder
          if (fullPath.Any())
          {
             Name = fullPath.Last();
-            ContainerPath = fullPath.Clone<ObjectPath>();
-            if (ContainerPath.Count > 0)
-               ContainerPath.RemoveAt(ContainerPath.Count - 1);
+            var containerPath = fullPath.Clone<ObjectPath>();
+            if (containerPath.Count > 0)
+               containerPath.RemoveAt(containerPath.Count - 1);
+            ContainerPath = containerPath; //this fires
          }
          else
          {
