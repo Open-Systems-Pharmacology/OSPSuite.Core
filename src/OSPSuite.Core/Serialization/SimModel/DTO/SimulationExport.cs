@@ -98,6 +98,8 @@ namespace OSPSuite.Core.Serialization.SimModel.DTO
          solverSettingsExport.MxStep = solverPara.Id;
          solverPara = addSolverParameter("UseJacobian", settings.UseJacobian ? 1 : 0);
          solverSettingsExport.UseJacobian = solverPara.Id;
+         solverPara = addSolverParameter("CheckForNegativeValues", settings.CheckForNegativeValues ? 1 : 0);
+         solverSettingsExport.CheckForNegativeValues = solverPara.Id;
 
          var extraOptions = new List<SolverOptionExport>();
          solverSettingsExport.SolverOptions = extraOptions;

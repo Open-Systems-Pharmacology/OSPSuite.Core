@@ -7,6 +7,7 @@ using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Populations;
 using OSPSuite.Core.Domain.Services;
@@ -52,7 +53,27 @@ namespace OSPSuite.R.Services
          _simulationRunResults = new SimulationRunResults(Enumerable.Empty<SolverWarning>(),
             DomainHelperForSpecs.IndividualSimulationDataRepositoryFor("Sim"));
          _simulation = new ModelCoreSimulation();
+         addConfigurationWithSolverSettings();
          A.CallTo(_simModelManager).WithReturnType<Task<SimulationRunResults>>().Returns(_simulationRunResults);
+      }
+      private void addConfigurationWithSolverSettings()
+      {
+         _simulation.Configuration = new SimulationConfiguration();
+         _simulation.Configuration.SimulationSettings = new SimulationSettings();
+         _simulation.Configuration.SimulationSettings.Solver = new SolverSettings();
+         var parameter = new Parameter
+         {
+            Name = Constants.Parameters.CHECK_FOR_NEGATIVE_VALUES,
+            Value = 1,
+            GroupName = Constants.Groups.SOLVER_SETTINGS,
+            BuildingBlockType = PKSimBuildingBlockType.Simulation,
+            CanBeVaried = false,
+            CanBeVariedInPopulation = false,
+            Visible = true,
+            Editable = true,
+            IsDefault = true
+         };
+         _simulation.Configuration.SimulationSettings.Solver.Add(parameter);
       }
 
       protected override void Because()

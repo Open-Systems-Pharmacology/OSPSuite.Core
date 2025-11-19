@@ -117,18 +117,11 @@ namespace OSPSuite.R.Services
       private async Task<SimulationResults> runAsync(IModelCoreSimulation simulation, SimulationRunOptions simulationRunOptions)
       {
          _simulationPersistableUpdater.UpdateSimulationPersistable(simulation);
-         var simulationResults = await _simModelManager.RunSimulationAsync(simulation, CancellationToken.None, coreSimulationRunOptionsFrom(simulationRunOptions));
+         var simulationResults = await _simModelManager.RunSimulationAsync(
+            simulation,
+            CancellationToken.None,
+            new Core.Domain.SimulationRunOptions { SimModelExportMode = SimModelExportMode.Optimized });
          return _simulationResultsCreator.CreateResultsFrom(simulationResults.Results);
-      }
-
-      private Core.Domain.SimulationRunOptions coreSimulationRunOptionsFrom(SimulationRunOptions simulationRunOptions)
-      {
-         var options = simulationRunOptions ?? new SimulationRunOptions();
-         return new Core.Domain.SimulationRunOptions
-         {
-            CheckForNegativeValues = options.CheckForNegativeValues,
-            SimModelExportMode = SimModelExportMode.Optimized
-         };
       }
 
       public Task<SimulationResults> RunAsync(SimulationRunArgs simulationRunArgs)
