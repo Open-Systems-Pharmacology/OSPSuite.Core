@@ -30,7 +30,7 @@ namespace OSPSuite.Core.Domain.Builder
             var containerPath = fullPath.Clone<ObjectPath>();
             if (containerPath.Count > 0)
                containerPath.RemoveAt(containerPath.Count - 1);
-            ContainerPath = containerPath;
+            ContainerPath = containerPath; //this fires
          }
          else
          {
@@ -38,7 +38,6 @@ namespace OSPSuite.Core.Domain.Builder
             ContainerPath = ObjectPath.Empty;
          }
       }
-
 
       public ObjectPath ContainerPath
       {
