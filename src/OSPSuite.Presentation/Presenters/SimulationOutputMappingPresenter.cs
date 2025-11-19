@@ -26,6 +26,7 @@ namespace OSPSuite.Presentation.Presenters
       void EditSimulation(ISimulation simulation);
       IReadOnlyList<SimulationQuantitySelectionDTO> AllAvailableOutputs { get; }
       void RemoveObservedData(IReadOnlyList<SimulationOutputMappingDTO> outputMappingDTOs);
+
       /// <summary>
       ///    Completely rebinds the view to the content of the data source
       /// </summary>
@@ -60,8 +61,8 @@ namespace OSPSuite.Presentation.Presenters
          ISimulationOutputMappingToOutputMappingDTOMapper outputMappingDTOMapper,
          IQuantityToSimulationQuantitySelectionDTOMapper simulationQuantitySelectionDTOMapper,
          IObservedDataTask observedDataTask,
-         IEventPublisher eventPublisher, 
-         IOutputMappingMatchingTask outputMappingMatchingTask, 
+         IEventPublisher eventPublisher,
+         IOutputMappingMatchingTask outputMappingMatchingTask,
          IOSPSuiteExecutionContext executionContext) : base(view)
       {
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
@@ -102,46 +103,9 @@ namespace OSPSuite.Presentation.Presenters
          Refresh();
       }
 
-
-      private void removeFromOutputMappingList(IReadOnlyList<DataRepository> itemsToRemove)
-      {
-         var idsToRemove = new HashSet<string>(
-             (itemsToRemove ?? Enumerable.Empty<DataRepository>())
-             .Where(item => item != null)
-             .Select(item => item.Id)
-         );
-
-         for (int i = _listOfOutputMappingDTOs.Count - 1; i >= 0; i--)
-         {
-            var dto = _listOfOutputMappingDTOs[i];
-            var observedData = dto.ObservedData;
-
-            if (observedData == null)
-               continue;
-
-            if (idsToRemove.Contains(observedData.Id))
-               _listOfOutputMappingDTOs.RemoveAt(i);
-         }
-
-         var mappedIds = new HashSet<string>(
-             _listOfOutputMappingDTOs
-                 .Where(dto => dto.ObservedData != null)
-                 .Select(dto => dto.ObservedData.Id)
-         );
-
-         foreach (var observedData in allAvailableObservedDataUsedBySimulation())
-         {
-            if (!mappedIds.Contains(observedData.Id))
-            {
-               var newOutputMapping = new OutputMapping
-               {
-                  WeightedObservedData = new WeightedObservedData(observedData)
-               };
-               var newOutputMappingDTO = mapFrom(newOutputMapping);
-               _listOfOutputMappingDTOs.Add(newOutputMappingDTO);
-            }
-         }
-      }
+      private void removeFromOutputMappingList(IReadOnlyList<DataRepository> itemsToRemove) =>
+         _listOfOutputMappingDTOs.Where(x => itemsToRemove.Contains(x.ObservedData))
+            .ToList().Each(x => _listOfOutputMappingDTOs.Remove(x));
 
       private void updateOutputMappingList()
       {
