@@ -1251,7 +1251,7 @@ namespace OSPSuite.Assets
          public static readonly string NoResultsAvailable = "No result available. Please start sensitivity analysis";
          public static readonly string ErrorsDuringPreviousRun = "<b>The last run resulted in one or more errors:</b>";
 
-         public static string SensitivityAnalysisFinished(string duration, Cache<string, IReadOnlyList<string>> failedPKParameterCalculations)
+         public static string SensitivityAnalysisFinished(string duration, IReadOnlyList<string> failedPKParameterCalculations)
          {
             if (failedPKParameterCalculations.Any())
             {
@@ -1261,22 +1261,15 @@ namespace OSPSuite.Assets
             return $"Sensitivity analysis finished in {duration}";
          }
 
-         private static string buildNestedList(Cache<string, IReadOnlyList<string>> failedPKParameterCalculations)
+         private static string buildNestedList(IReadOnlyList<string> failedPKParameterCalculations)
          {
             var sb = new StringBuilder();
             sb.AppendLine();
             
-            failedPKParameterCalculations.KeyValues.Each(x =>
+            failedPKParameterCalculations.Each(x =>
             {
-               // sb.AppendLine();
                sb.Append(" - ");
-               sb.AppendLine($"{x.Key}");
-               // sb.AppendLine($"<b>{x.Key}</b>");
-               // x.Value.Each(v =>
-               // {
-               //    sb.Append("   - ");
-               //    sb.AppendLine(v);
-               // });
+               sb.AppendLine(x);
             });
             
             return sb.ToString();

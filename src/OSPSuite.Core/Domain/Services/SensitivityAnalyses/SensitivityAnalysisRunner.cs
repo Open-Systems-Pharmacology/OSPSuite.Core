@@ -70,11 +70,9 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
                var end = SystemTime.UtcNow();
                var timeSpent = end - begin;
 
-               var failedPKParameterCalculations = new Cache<string, IReadOnlyList<string>>();
+               var failedSensitivityCalculations = sensitivityAnalysis.Results.AllPKParameterSensitivities.Where(x => x.State == PKParameterSensitivityState.FailedToCalculateDefaultPKValue);
                
-               sensitivityAnalysis.Results.AllPKParameterSensitivities.Where(x => x.State == PKParameterSensitivityState.FailedToCalculateDefaultPKValue).GroupBy(x => x.PKParameterName).Each(x => failedPKParameterCalculations[x.Key] = x.Select(p => p.QuantityPath).Distinct().ToList());
-               
-               _dialogCreator.MessageBoxInfo(Captions.SensitivityAnalysis.SensitivityAnalysisFinished(timeSpent.ToDisplay(), failedPKParameterCalculations));
+               _dialogCreator.MessageBoxInfo(Captions.SensitivityAnalysis.SensitivityAnalysisFinished(timeSpent.ToDisplay(), failedSensitivityCalculations.Select(x => x.PKParameterName).Distinct().ToList()));
             }
          }
          catch (OperationCanceledException)
