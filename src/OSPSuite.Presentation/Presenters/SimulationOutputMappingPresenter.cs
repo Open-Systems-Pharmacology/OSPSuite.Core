@@ -103,9 +103,11 @@ namespace OSPSuite.Presentation.Presenters
          Refresh();
       }
 
-      private void removeFromOutputMappingList(IReadOnlyList<DataRepository> itemsToRemove) =>
+      private void removeFromOutputMappingList(IReadOnlyList<DataRepository> itemsToRemove)
+      {
          _listOfOutputMappingDTOs.Where(x => itemsToRemove.Contains(x.ObservedData))
             .ToList().Each(x => _listOfOutputMappingDTOs.Remove(x));
+      }
 
       private void updateOutputMappingList()
       {
