@@ -66,13 +66,13 @@ namespace OSPSuite.Core.DiffBuilders
       }
 
       [Observation]
-      public void Shoukld_return_the_differences()
+      public void Should_return_the_differences()
       {
          _report.Count.ShouldBeEqualTo(2);
       }
    }
 
-   public class When_compareing_simulation_settings_with_different_output_types : concern_for_ObjectComparer
+   public class When_comparing_simulation_settings_with_different_output_types : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -98,13 +98,13 @@ namespace OSPSuite.Core.DiffBuilders
       }
 
       [Observation]
-      public void Shoukld_return_the_differences()
+      public void Should_return_the_differences()
       {
          _report.Count.ShouldBeEqualTo(1);
       }
    }
 
-   public class When_compareing_simulation_settings_with_different_named_Templates : concern_for_ObjectComparer
+   public class When_comparing_simulation_settings_with_different_named_Templates : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -136,7 +136,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
    }
 
-   public class When_compareing_simulation_settings_with_different_Solver_Setting_options : concern_for_ObjectComparer
+   public class When_comparing_simulation_settings_with_different_Solver_Setting_options : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -164,13 +164,13 @@ namespace OSPSuite.Core.DiffBuilders
       }
 
       [Observation]
-      public void Shoukld_return_the_differences()
+      public void Should_return_the_differences()
       {
          _report.Count.ShouldBeEqualTo(1);
       }
    }
 
-   public class When_compareing_simulation_settings_with_different_Chart_Templates : concern_for_ObjectComparer
+   public class When_comparing_simulation_settings_with_different_Chart_Templates : concern_for_ObjectComparer
    {
       protected override void Context()
       {
@@ -204,7 +204,7 @@ namespace OSPSuite.Core.DiffBuilders
       }
 
       [Observation]
-      public void Shoukld_return_the_differences()
+      public void Should_return_the_differences()
       {
          _report.Count.ShouldBeEqualTo(2);
       }

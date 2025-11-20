@@ -3,6 +3,12 @@ using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Domain.SensitivityAnalyses
 {
+   public enum PKParameterSensitivityState
+   {
+      Success,
+      FailedToCalculateDefaultPKValue
+   }
+   
    public class PKParameterSensitivity
    {
       private string _quantityPath;
@@ -22,6 +28,8 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
             updateId();
          }
       }
+      
+      public PKParameterSensitivityState State { set; get; }
 
       /// <summary>
       ///    Name of PK Output (Cmax, Tmax etc...)
