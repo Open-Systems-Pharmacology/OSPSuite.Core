@@ -44,6 +44,8 @@ namespace OSPSuite.R.Bootstrap
 
          using (container.OptimizeDependencyResolution())
          {
+            // The application that supplies a custom registerAction will register its own 
+            // GroupRepository
             if (registerAction == null)
                container.Register<IGroupRepository, GroupRepository>();
             else
