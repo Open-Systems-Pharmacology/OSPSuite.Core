@@ -1,6 +1,6 @@
-﻿using System;
-using OSPSuite.BDDHelper;
+﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.CLI.Core.MinimalImplementations;
 using OSPSuite.Core.Domain;
 using OSPSuite.R.Domain;
 using OSPSuite.Utility;
@@ -42,6 +42,12 @@ namespace OSPSuite.R.Services
       {
          var parameter = _simulation.Model.Root.EntityAt<IParameter>(Constants.ORGANISM, Constants.Parameters.WEIGHT);
          parameter.GroupName.ShouldNotBeEqualTo(Constants.Groups.UNDEFINED);
+      }
+
+      [Observation]
+      public void the_group_repository_is_registered_correctly()
+      {
+         Api.Container.Resolve<IGroupRepository>().ShouldBeAnInstanceOf<GroupRepository>();
       }
    }
 
