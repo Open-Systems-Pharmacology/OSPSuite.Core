@@ -33,6 +33,7 @@ namespace OSPSuite.Core.Domain
       private FormulaUsablePath _formulaUsablePathFU;
       private FormulaUsablePath _formulaUsablePathBW;
       private SimulationBuilder _simulationBuilder;
+      private FormulaUsablePath _formulaUsablePathC;
 
       protected override void Context()
       {
@@ -40,7 +41,7 @@ namespace OSPSuite.Core.Domain
          _simulationBuilder = A.Fake<SimulationBuilder>();
          _processBuilder = new ReactionBuilder();
          _processBuilder.CreateProcessRateParameter = true;
-         _kinetic = new ExplicitFormula("(A+B)*fu/BW");
+         _kinetic = new ExplicitFormula("C*(A+B)*fu/BW");
          _formulaUsablePathA = new FormulaUsablePath(ObjectPath.PARENT_CONTAINER, "A").WithAlias("A");
          _kinetic.AddObjectPath(_formulaUsablePathA);
          _formulaUsablePathB = new FormulaUsablePath("B").WithAlias("B");
@@ -49,6 +50,8 @@ namespace OSPSuite.Core.Domain
          _kinetic.AddObjectPath(_formulaUsablePathFU);
          _formulaUsablePathBW = new FormulaUsablePath("Organism", "BW").WithAlias("BW");
          _kinetic.AddObjectPath(_formulaUsablePathBW);
+         _formulaUsablePathC = new FormulaUsablePath("Reaction", "C").WithAlias("C");
+         _kinetic.AddObjectPath(_formulaUsablePathC);
          _processBuilder.CreateProcessRateParameter = true;
          _processBuilder.ProcessRateParameterPersistable = true;
          A.CallTo(() => _formulaMapper.MapFrom(_kinetic, _simulationBuilder)).Returns(_kinetic);
@@ -86,6 +89,7 @@ namespace OSPSuite.Core.Domain
       {
          _formulaUsablePathA.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER, ObjectPath.PARENT_CONTAINER, "A");
          _formulaUsablePathB.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER, "B");
+         _formulaUsablePathC.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER, ObjectPath.PARENT_CONTAINER, "Reaction", "C");
       }
 
       [Observation]

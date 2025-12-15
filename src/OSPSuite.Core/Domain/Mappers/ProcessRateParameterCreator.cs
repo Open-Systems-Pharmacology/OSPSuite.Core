@@ -2,6 +2,7 @@ using System.Linq;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Mappers
 {
@@ -36,7 +37,7 @@ namespace OSPSuite.Core.Domain.Mappers
          parameter.Editable = false;
          parameter.IsDefault = true;
 
-         addAdditionalParentReference(parameter.Formula);
+         addAdditionalParentReference(parameter.Formula, processBuilder.Name);
 
          _entityTracker.Track(parameter, processBuilder, simulationBuilder);
 
@@ -49,27 +50,27 @@ namespace OSPSuite.Core.Domain.Mappers
          return parameter;
       }
 
-      private void addAdditionalParentReference(IFormula formula)
-      {
-         foreach (var objectPath in formula.ObjectPaths)
-         {
-            if (isRelativePath(objectPath))
-               objectPath.AddAtFront(ObjectPath.PARENT_CONTAINER);
-         }
-      }
+      private void addAdditionalParentReference(IFormula formula, string processName) => formula.ObjectPaths.Each(x => adjustRelativePath(x, processName));
 
-      private bool isRelativePath(ObjectPath objectPath)
+      private void adjustRelativePath(ObjectPath objectPath, string processName)
       {
          if (!objectPath.Any())
-            return false;
+            return;
 
-         if (objectPath[0] == ObjectPath.PARENT_CONTAINER)
-            return true;
+         // if the path starts with ".."  or if the objectPath only has the name of the reference then it
+         // should be adjusted to have an additional ".." at the front
+         if (objectPath[0] == ObjectPath.PARENT_CONTAINER || objectPath.Count == 1)
+         {
+            objectPath.AddAtFront(ObjectPath.PARENT_CONTAINER);
+            return;
+         }
 
-         if (objectPath.Count == 1)
-            return true;
-
-         return false;
+         // if the path contains two elements and the first one is the process name then we need to move up two containers at the front
+         // to compensate. That's because a container name can be ignored when a path is resolved from within that container
+         if (objectPath.Count == 2 && string.Equals(objectPath[0], processName))
+         {
+            objectPath.AddAtFront(new ObjectPath(ObjectPath.PARENT_CONTAINER, ObjectPath.PARENT_CONTAINER));
+         }
       }
    }
 }
