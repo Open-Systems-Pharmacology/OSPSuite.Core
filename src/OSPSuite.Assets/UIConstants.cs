@@ -1665,21 +1665,26 @@ namespace OSPSuite.Assets
 
       public static string TimeFromRepositoryNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit, string repositoryName)
       {
-         var hint = Equals(valueAfter, valueBefore) ? $"{valueBefore} {displayUnit} is duplicated" : $"{valueBefore} {displayUnit} is immediately followed by {valueAfter} {displayUnit}";
+         var hint = hintForNotStrictlyMonotone(valueBefore, valueAfter, displayUnit);
 
          return $"The time column in data set '{repositoryName}' is not strictly monotonically increasing ({hint}).\nEnsure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
       }
 
+      private static string hintForNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit)
+      {
+         return Equals(valueAfter, valueBefore) ? $"{valueBefore} {displayUnit} is duplicated" : $"{valueBefore} {displayUnit} is immediately followed by {valueAfter} {displayUnit}";
+      }
+
       public static string TimeFromSheetNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit, string sheetName)
       {
-         var hint = Equals(valueAfter, valueBefore) ? $"{valueBefore} {displayUnit} is duplicated" : $"{valueBefore} {displayUnit} is immediately followed by {valueAfter} {displayUnit}";
+         var hint = hintForNotStrictlyMonotone(valueBefore, valueAfter, displayUnit);
 
          return $"The time column in sheet '{sheetName}' is not strictly monotonically increasing ({hint}).\nEnsure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
       }
 
       public static string TimeNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit)
       {
-         var hint = Equals(valueAfter, valueBefore) ? $"{valueBefore} {displayUnit} is duplicated" : $"{valueBefore} {displayUnit} is immediately followed by {valueAfter} {displayUnit}";
+         var hint = hintForNotStrictlyMonotone(valueBefore, valueAfter, displayUnit);
 
          return $"The time column is not strictly monotonically increasing ({hint}).\nEnsure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
       }
