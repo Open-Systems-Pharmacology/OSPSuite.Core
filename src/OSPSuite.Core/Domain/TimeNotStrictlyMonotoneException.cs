@@ -11,14 +11,14 @@ namespace OSPSuite.Core.Domain
       public TimeNotStrictlyMonotoneException(double beforeValue, double afterValue, string displayUnit, string repositoryName) : 
          base(string.IsNullOrEmpty(repositoryName) ?
          Error.TimeNotStrictlyMonotone(beforeValue, afterValue, displayUnit) :
-         Error.TimeNotStrictlyMonotone(beforeValue, afterValue, displayUnit, repositoryName))
+         Error.TimeFromRepositoryNotStrictlyMonotone(beforeValue, afterValue, displayUnit, repositoryName))
       {
          _beforeValue = beforeValue;
          _afterValue = afterValue;
          _displayUnit = displayUnit;
       }
 
-      public TimeNotStrictlyMonotoneException(TimeNotStrictlyMonotoneException ex, string repositoryName) : base(Error.TimeNotStrictlyMonotone(ex._beforeValue, ex._afterValue, ex._displayUnit, repositoryName))
+      public TimeNotStrictlyMonotoneException(TimeNotStrictlyMonotoneException ex, string sheetName) : base(Error.TimeFromSheetNotStrictlyMonotone(ex._beforeValue, ex._afterValue, ex._displayUnit, sheetName))
       {
          _beforeValue = ex._beforeValue;
          _afterValue = ex._afterValue;

@@ -134,7 +134,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          }
          catch (TimeNotStrictlyMonotoneException ex)
          {
-            // Catch and throw to add the repository name
+            // Catch and throw to add the sheet name
             throw new TimeNotStrictlyMonotoneException(ex, sheetName);
          }
 
