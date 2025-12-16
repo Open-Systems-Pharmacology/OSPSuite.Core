@@ -8,7 +8,10 @@ namespace OSPSuite.Core.Domain
       private readonly double _afterValue;
       private readonly string _displayUnit;
 
-      public TimeNotStrictlyMonotoneException(double beforeValue, double afterValue, string displayUnit) : base(Error.TimeNotStrictlyMonotone(beforeValue, afterValue, displayUnit))
+      public TimeNotStrictlyMonotoneException(double beforeValue, double afterValue, string displayUnit, string repositoryName) : 
+         base(string.IsNullOrEmpty(repositoryName) ?
+         Error.TimeNotStrictlyMonotone(beforeValue, afterValue, displayUnit) :
+         Error.TimeNotStrictlyMonotone(beforeValue, afterValue, displayUnit, repositoryName))
       {
          _beforeValue = beforeValue;
          _afterValue = afterValue;
