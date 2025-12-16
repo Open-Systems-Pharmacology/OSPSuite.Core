@@ -47,7 +47,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          var warningFlag = false;
          foreach (var column in dataSet.ParsedDataSet.Data)
          {
-            warningFlag |= convertParsedDataColumnAndReturnWarningFlag(dataRepository, column, dataSet.FileName);
+            warningFlag |= convertParsedDataColumnAndReturnWarningFlag(dataRepository, column, dataSet.SheetName);
          }
 
          //associate columns
@@ -69,7 +69,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
       }
 
       private bool convertParsedDataColumnAndReturnWarningFlag(DataRepository dataRepository,
-         KeyValuePair<ExtendedColumn, IList<SimulationPoint>> columnAndData, string fileName)
+         KeyValuePair<ExtendedColumn, IList<SimulationPoint>> columnAndData, string sheetName)
       {
          DataColumn dataColumn;
          var unitName = columnAndData.Value.FirstOrDefault(x => unitIsValid(x.Unit))?.Unit ??
@@ -135,7 +135,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          catch (TimeNotStrictlyMonotoneException ex)
          {
             // Catch and throw to add the repository name
-            throw new TimeNotStrictlyMonotoneException(ex, dataRepository.Name);
+            throw new TimeNotStrictlyMonotoneException(ex, sheetName);
          }
 
          var propInfo = dataInfo.GetType().GetProperty(Constants.AUXILIARY_TYPE);
