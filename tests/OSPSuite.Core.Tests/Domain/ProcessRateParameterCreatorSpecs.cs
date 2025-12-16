@@ -90,7 +90,7 @@ namespace OSPSuite.Core.Domain
       {
          _formulaUsablePathA.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER, ObjectPath.PARENT_CONTAINER, "A");
          _formulaUsablePathB.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER, "B");
-         _formulaUsablePathC.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER, ObjectPath.PARENT_CONTAINER, _processBuilderName, "C");
+         _formulaUsablePathC.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER, "C");
       }
 
       [Observation]

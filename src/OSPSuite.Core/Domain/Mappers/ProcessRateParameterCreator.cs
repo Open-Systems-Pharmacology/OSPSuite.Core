@@ -57,19 +57,16 @@ namespace OSPSuite.Core.Domain.Mappers
          if (!objectPath.Any())
             return;
 
+         // if the path starts with the  process name then we need to replace the name with ".."
+         // to compensate. That's because a container name can be ignored when a path is resolved from within that container
+         if (objectPath.Count == 2 && string.Equals(objectPath[0], processName))
+            objectPath.RemoveAt(0);
+
          // if the path starts with ".."  or if the objectPath only has the name of the reference then it
          // should be adjusted to have an additional ".." at the front
          if (objectPath[0] == ObjectPath.PARENT_CONTAINER || objectPath.Count == 1)
          {
             objectPath.AddAtFront(ObjectPath.PARENT_CONTAINER);
-            return;
-         }
-
-         // if the path contains two elements and the first one is the process name then we need to move up two containers at the front
-         // to compensate. That's because a container name can be ignored when a path is resolved from within that container
-         if (objectPath.Count == 2 && string.Equals(objectPath[0], processName))
-         {
-            objectPath.AddAtFront(new ObjectPath(ObjectPath.PARENT_CONTAINER, ObjectPath.PARENT_CONTAINER));
          }
       }
    }
