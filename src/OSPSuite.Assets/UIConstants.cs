@@ -1667,14 +1667,14 @@ namespace OSPSuite.Assets
       {
          var hint = Equals(valueAfter, valueBefore) ? $"{valueBefore} {displayUnit} is duplicated" : $"{valueBefore} {displayUnit} is immediately followed by {valueAfter} {displayUnit}";
 
-         return $"The time column in data set {repositoryName} is not strictly monotonically increasing ({hint}).\nEnsure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
+         return $"The time column in data set '{repositoryName}' is not strictly monotonically increasing ({hint}).\nEnsure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
       }
 
       public static string TimeFromSheetNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit, string sheetName)
       {
          var hint = Equals(valueAfter, valueBefore) ? $"{valueBefore} {displayUnit} is duplicated" : $"{valueBefore} {displayUnit} is immediately followed by {valueAfter} {displayUnit}";
 
-         return $"The time column in sheet {sheetName} is not strictly monotonically increasing ({hint}).\nEnsure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
+         return $"The time column in sheet '{sheetName}' is not strictly monotonically increasing ({hint}).\nEnsure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
       }
 
       public static string TimeNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit)
