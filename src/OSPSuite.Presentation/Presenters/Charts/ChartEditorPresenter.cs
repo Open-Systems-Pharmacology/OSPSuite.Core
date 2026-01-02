@@ -417,10 +417,14 @@ namespace OSPSuite.Presentation.Presenters.Charts
          columns.Each(column =>
          {
             if (used)
-               AddCurveForColumn(column, isLinkedDataToSimulation: isLinkedDataToSimulations);
+            {
+               var curve = AddCurveForColumn(column, isLinkedDataToSimulation: isLinkedDataToSimulations);
+               updateCurveProperty(curve);
+            }
             else
                Chart.RemoveCurvesForColumn(column);
          });
+         
       }
 
       public void ApplyAllColumnSettings() => _presentersWithColumnSettings.Each(x => x.ApplyAllColumnSettings());
