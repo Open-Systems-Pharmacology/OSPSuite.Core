@@ -743,6 +743,27 @@ namespace OSPSuite.Helpers
          R1.AddEduct(new ReactionPartnerBuilder("A", 1));
          R1.AddProduct(new ReactionPartnerBuilder("C", 1));
 
+         var R3 = _objectBaseFactory.Create<ReactionBuilder>()
+            .WithName("R2")
+            .WithKinetic(R1Formula(reactions.FormulaCache))
+            .WithDimension(amountPerTimeDimension);
+
+         k1 = NewConstantParameter("k1", 22);
+         k1.BuildMode = ParameterBuildMode.Local;
+         R3.AddParameter(k1);
+
+         k2 = NewConstantParameter("k2", 1);
+         k2.BuildMode = ParameterBuildMode.Global;
+         R3.AddParameter(k2);
+
+         //Parameter k3 is a formula parameter referencing a global paramter in A
+         k3 = NewConstantParameter("k3", 1).WithFormula(R1_K3Formula(reactions.FormulaCache));
+         k3.BuildMode = ParameterBuildMode.Global;
+         R3.AddParameter(k3);
+
+         R3.AddEduct(new ReactionPartnerBuilder("A", 1));
+         R3.AddProduct(new ReactionPartnerBuilder("C", 1));
+
 
          var R2 = _objectBaseFactory.Create<ReactionBuilder>()
             .WithName("R2")
@@ -761,6 +782,7 @@ namespace OSPSuite.Helpers
          R2.AddParameter(k2);
          R2.AddEduct(new ReactionPartnerBuilder("A", 1));
          R2.AddProduct(new ReactionPartnerBuilder("C", 1));
+         reactions.Add(R3);
          reactions.Add(R2);
          reactions.Add(R1);
          return reactions;
