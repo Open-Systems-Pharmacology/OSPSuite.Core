@@ -19,16 +19,11 @@ namespace OSPSuite.Core
       protected SimulationConfiguration _simulationConfiguration;
       protected SimulationBuilder _simulationBuilder;
 
-      public override void GlobalContext()
-      {
-         base.GlobalContext();
-         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
-         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
-      }
-
       protected override void Context()
       {
          sut = new SpatialStructure();
+         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
       }
    }
 
@@ -37,6 +32,8 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
+         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          sut.Name = "spatialStructure";
       }
 
@@ -54,6 +51,8 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
+         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          sut.Name = "spatialStructure";
          _module = new Module().WithName("moduleName");
          _module.Add(sut);
@@ -76,6 +75,8 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
+         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          _sourceSpatialStructure = _simulationBuilder.SpatialStructureAndMergeBehaviors[0].spatialStructure;
          _sourceSpatialStructure.Version = _buildingBlockVersion;
          _cloneManager = IoC.Resolve<ICloneManagerForBuildingBlock>();
@@ -130,6 +131,8 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
+         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          _moduleConfigurationA = new ModuleConfiguration(new Module());
          var reactionsA = new ReactionBuildingBlock();
          _moduleConfigurationA.Module.Add(reactionsA);
@@ -220,6 +223,8 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
+         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
+         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
 
          var reactionsExtend = new ReactionBuildingBlock();
          var reactionsOverwrite = new ReactionBuildingBlock();
