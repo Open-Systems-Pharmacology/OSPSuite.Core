@@ -161,7 +161,88 @@ namespace OSPSuite.Core.Domain.Builder
 
       private void mergeReactions(ReactionBuilder target, BuilderSource<ReactionBuilder> source)
       {
-         //TODO add reaction merge behavior
+         var incoming = source.Builder;
+
+         var existingByName = target.Parameters.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
+
+         foreach (var prm in incoming.Parameters)
+         {
+            if (existingByName.TryGetValue(prm.Name, out var existing))
+               target.RemoveParameter(existing);
+
+            target.AddParameter(cloneParameter(prm));
+         }
+
+         target.Formula = incoming.Formula;
+         target.CreateProcessRateParameter = incoming.CreateProcessRateParameter;
+         target.ProcessRateParameterPersistable = incoming.ProcessRateParameterPersistable;
+
+         upsertPartners(target, incoming, isEduct: true);
+         upsertPartners(target, incoming, isEduct: false);
+
+         var mods = new HashSet<string>(target.ModifierNames, StringComparer.OrdinalIgnoreCase);
+         foreach (var m in incoming.ModifierNames)
+         {
+            if (mods.Add(m))
+               target.AddModifier(m);
+         }
+
+         target.Icon = incoming.Icon ?? target.Icon;
+         target.Description = string.IsNullOrEmpty(incoming.Description) ? target.Description : incoming.Description;
+         target.Dimension = incoming.Dimension ?? target.Dimension;
+
+         if (incoming.ContainerCriteria != null)
+            target.ContainerCriteria = incoming.ContainerCriteria;
+      }
+
+      private static Parameter cloneParameter(IParameter prm)
+      {
+         var copy = new Parameter();
+         copy.UpdatePropertiesFrom(prm, null);
+         copy.Id = prm.Id;
+         copy.Value = prm.Value;
+         copy.Formula = prm.Formula;
+         return copy;
+      }
+
+      private static void upsertPartners(ReactionBuilder target, ReactionBuilder incoming, bool isEduct)
+      {
+         IEnumerable<ReactionPartnerBuilder> targetPartners;
+         IEnumerable<ReactionPartnerBuilder> incomingPartners;
+         Action<ReactionPartnerBuilder> addPartner;
+         Action<ReactionPartnerBuilder> removePartner;
+
+         if (isEduct)
+         {
+            targetPartners = target.Educts;
+            incomingPartners = incoming.Educts;
+            addPartner = target.AddEduct;
+            removePartner = target.RemoveEduct;
+         }
+         else
+         {
+            targetPartners = target.Products;
+            incomingPartners = incoming.Products;
+            addPartner = target.AddProduct;
+            removePartner = target.RemoveProduct;
+         }
+
+         var targetByMolecule = targetPartners.ToDictionary(x => x.MoleculeName, StringComparer.OrdinalIgnoreCase);
+
+         foreach (var incomingPartner in incomingPartners)
+         {
+            if (targetByMolecule.TryGetValue(incomingPartner.MoleculeName, out var existingPartner))
+               removePartner(existingPartner);
+
+            var newPartner = new ReactionPartnerBuilder(
+               incomingPartner.MoleculeName,
+               incomingPartner.StoichiometricCoefficient)
+            {
+               Dimension = incomingPartner.Dimension
+            };
+
+            addPartner(newPartner);
+         }
       }
 
       private void mergeTransports(TransportBuilder target, BuilderSource<TransportBuilder> builderSource)
@@ -331,7 +412,7 @@ namespace OSPSuite.Core.Domain.Builder
          public BuilderSource<T> BaseBuilder { get; }
 
          /// <summary>
-         /// List of builders to EXTEND on top of the base builder
+         ///    List of builders to EXTEND on top of the base builder
          /// </summary>
          public IReadOnlyList<BuilderSource<T>> BuildersThatExtend { get; }
 
@@ -420,14 +501,14 @@ namespace OSPSuite.Core.Domain.Builder
          _simulationConfiguration.ModuleConfigurations
             .Select(propAccess)
             .Where(x => x != null)
-            .SelectMany(x => x.Select(builder => (builder, (IBuildingBlock) x)))
+            .SelectMany(x => x.Select(builder => (builder, (IBuildingBlock)x)))
             .ToList();
 
       private IReadOnlyList<(InitialCondition InitialCondition, IBuildingBlock BuildingBlock)> allInitialConditionsFromExpressionProfileSources() =>
          _simulationConfiguration.ExpressionProfiles
             .Select(x => (BuildingBlock: x, x.InitialConditions))
             //null because these conditions do not belong in a module
-            .SelectMany(x => x.InitialConditions.Select(ic => (ic, (IBuildingBlock) x.BuildingBlock)))
+            .SelectMany(x => x.InitialConditions.Select(ic => (ic, (IBuildingBlock)x.BuildingBlock)))
             .ToList();
    }
 }
