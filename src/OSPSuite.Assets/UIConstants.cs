@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Assets.Extensions;
 using OSPSuite.Utility.Extensions;
 
@@ -1253,9 +1254,28 @@ namespace OSPSuite.Assets
          public static readonly string NoResultsAvailable = "No result available. Please start sensitivity analysis";
          public static readonly string ErrorsDuringPreviousRun = "<b>The last run resulted in one or more errors:</b>";
 
-         public static string SensitivityAnalysisFinished(string duration)
+         public static string SensitivityAnalysisFinished(string duration, IReadOnlyList<string> failedPKParameterCalculations)
          {
+            if (failedPKParameterCalculations.Any())
+            {
+
+               return $"Sensitivity analysis finished in {duration} but failed to calculate sensitivities for:{Environment.NewLine}{buildNestedList(failedPKParameterCalculations)}";
+            }
             return $"Sensitivity analysis finished in {duration}";
+         }
+
+         private static string buildNestedList(IReadOnlyList<string> failedPKParameterCalculations)
+         {
+            var sb = new StringBuilder();
+            sb.AppendLine();
+            
+            failedPKParameterCalculations.Each(x =>
+            {
+               sb.Append(" - ");
+               sb.AppendLine(x);
+            });
+            
+            return sb.ToString();
          }
 
          public static readonly string SensitivityAnalysisCanceled = "Sensitivity analysis canceled";

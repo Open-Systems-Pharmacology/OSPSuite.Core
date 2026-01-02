@@ -19,7 +19,9 @@ namespace OSPSuite.Core.Batch
       /// <summary>
       /// Relative tolerance used in the simulation
       /// </summary>
-      public double RelTol { get; set; }  
+      public double RelTol { get; set; }
+
+      public bool CheckForNegativeValues { get; set; }
 
 
       public List<BatchOutputValues> OutputValues { get; set; } = new List<BatchOutputValues>();

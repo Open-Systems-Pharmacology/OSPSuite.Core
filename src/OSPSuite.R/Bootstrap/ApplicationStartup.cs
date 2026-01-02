@@ -44,7 +44,11 @@ namespace OSPSuite.R.Bootstrap
 
          using (container.OptimizeDependencyResolution())
          {
-            if (registerAction != null)
+            // The application that supplies a custom registerAction will register its own 
+            // GroupRepository
+            if (registerAction == null)
+               container.Register<IGroupRepository, GroupRepository>();
+            else
                registerAction(container);
 
             container.RegisterImplementationOf(new SynchronizationContext());
@@ -69,7 +73,7 @@ namespace OSPSuite.R.Bootstrap
 
          return container;
       }
-
+      
       private static void registerCoreDependencies(IContainer container)
       {
          container.Register<IObjectBaseFactory, ObjectBaseFactory>(LifeStyle.Singleton);

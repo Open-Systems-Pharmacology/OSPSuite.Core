@@ -99,5 +99,10 @@ namespace OSPSuite.Core.Domain
             .Where(x => x != null)
             .ToList();
       }
+
+      public override string ToString()
+      {
+         return Module == null ? string.Empty : Module.Name;
+      }
    }
 }

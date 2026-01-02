@@ -12,15 +12,9 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public SimModelExportMode SimModelExportMode { get; set; }
 
-      /// <summary>
-      ///    Specifies whether negative values check is on or off. Default is <c>true</c>
-      /// </summary>
-      public bool CheckForNegativeValues { get; set; }
-
       public SimulationRunOptions()
       {
          SimModelExportMode = SimModelExportMode.Full;
-         CheckForNegativeValues = true;
       }
    }
 }

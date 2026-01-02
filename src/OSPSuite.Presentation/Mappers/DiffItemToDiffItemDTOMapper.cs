@@ -100,6 +100,7 @@ namespace OSPSuite.Presentation.Mappers
       private string objectNameFrom(DiffItem diffItem)
       {
          return
+            displayIf<SimulationConfiguration>(diffItem, x => ancestorDisplayName(diffItem)) ??
             displayIf<IFormula>(diffItem, x => ancestorDisplayName(diffItem)) ??
             displayIf<ReactionPartner>(diffItem, x => x.Partner.Name) ??
             displayIf<ReactionPartnerBuilder>(diffItem, x => x.MoleculeName) ??

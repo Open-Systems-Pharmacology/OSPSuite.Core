@@ -22,8 +22,8 @@ namespace OSPSuite.Core.Comparison
          _objectComparer.Compare(comparison.ChildComparison(x => x.OutputSchema));
          _objectComparer.Compare(comparison.ChildComparison(x => x.Solver));
          _objectComparer.Compare(comparison.ChildComparison(x => x.OutputSelections));
-         // not normal usage, but OutputSelections is only a enumeration at this point
-         _enumerableComparer.CompareEnumerables(comparison, x => x.OutputSelections.AllOutputs, item => item.Path); 
+         // not normal usage, but OutputSelections is only an enumeration at this point
+         _enumerableComparer.CompareEnumerables(comparison, x => x.OutputSelections.AllOutputs, item => item.Path);
          _enumerableComparer.CompareEnumerables(comparison, x => x.ChartTemplates, item => item.Name);
       }
    }
