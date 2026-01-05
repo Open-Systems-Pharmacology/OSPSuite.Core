@@ -163,15 +163,13 @@ namespace OSPSuite.Core.Domain.Builder
       {
          var incoming = sourceReaction.Builder;
 
-         var existingByName = targetReaction.Parameters.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
-
          foreach (var parameter in incoming.Parameters)
          {
             var targetParameter = targetReaction.Parameter(parameter.Name);
             if (targetParameter != null)
                targetReaction.RemoveParameter(targetParameter);
 
-            targetReaction.AddParameter(cloneParameter(parameter));
+            targetReaction.AddParameter(_cloneManager.CloneAndKeepId(parameter));
          }
 
          targetReaction.Formula = incoming.Formula;
@@ -196,53 +194,23 @@ namespace OSPSuite.Core.Domain.Builder
             targetReaction.ContainerCriteria = incoming.ContainerCriteria;
       }
 
-      private static Parameter cloneParameter(IParameter prm)
-      {
-         var copy = new Parameter();
-         copy.UpdatePropertiesFrom(prm, null);
-         copy.Id = prm.Id;
-         copy.Value = prm.Value;
-         copy.Formula = prm.Formula;
-         return copy;
-      }
-
       private static void upsertPartners(ReactionBuilder target, ReactionBuilder incoming, bool isEduct)
       {
-         IEnumerable<ReactionPartnerBuilder> targetPartners;
-         IEnumerable<ReactionPartnerBuilder> incomingPartners;
-         Action<ReactionPartnerBuilder> addPartner;
-         Action<ReactionPartnerBuilder> removePartner;
-
          if (isEduct)
          {
-            targetPartners = target.Educts;
-            incomingPartners = incoming.Educts;
-            addPartner = target.AddEduct;
-            removePartner = target.RemoveEduct;
+            foreach (var existing in target.Educts.ToList())
+               target.RemoveEduct(existing);
+
+            foreach (var src in incoming.Educts)
+               target.AddEduct(src.Clone());
          }
          else
          {
-            targetPartners = target.Products;
-            incomingPartners = incoming.Products;
-            addPartner = target.AddProduct;
-            removePartner = target.RemoveProduct;
-         }
+            foreach (var existing in target.Products.ToList())
+               target.RemoveProduct(existing);
 
-         var targetByMolecule = targetPartners.ToDictionary(x => x.MoleculeName, StringComparer.OrdinalIgnoreCase);
-
-         foreach (var incomingPartner in incomingPartners)
-         {
-            if (targetByMolecule.TryGetValue(incomingPartner.MoleculeName, out var existingPartner))
-               removePartner(existingPartner);
-
-            var newPartner = new ReactionPartnerBuilder(
-               incomingPartner.MoleculeName,
-               incomingPartner.StoichiometricCoefficient)
-            {
-               Dimension = incomingPartner.Dimension
-            };
-
-            addPartner(newPartner);
+            foreach (var src in incoming.Products)
+               target.AddProduct(src.Clone());
          }
       }
 

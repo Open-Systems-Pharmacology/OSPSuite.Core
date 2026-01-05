@@ -125,16 +125,16 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
+         var factory = IoC.Resolve<IObjectBaseFactory>();
          _moduleConfigurationA = new ModuleConfiguration(new Module());
          var reactionsA = new ReactionBuildingBlock();
          _moduleConfigurationA.Module.Add(reactionsA);
-         _moduleConfigurationA.Module.MergeBehavior = MergeBehavior.Extend;
-
+         _moduleConfigurationA.Module.MergeBehavior = MergeBehavior.Extend; 
+         _r1Formula = factory.Create<ExplicitFormula>().WithFormulaString("k1");
+         _r1K3Formula = factory.Create<ExplicitFormula>().WithFormulaString("k3");
          var helpers = IoC.Resolve<ModelHelperForSpecs>();
          _amountPerTimeDimension = helpers.AmountPerTimeDimension;
-         _r1Formula = A.Fake<IFormula>();
-         _r1K3Formula = A.Fake<IFormula>();
-
+         
          _R2 = new ReactionBuilder()
             .WithName("R2")
             .WithKinetic(_r1Formula)
