@@ -198,19 +198,25 @@ namespace OSPSuite.Core.Domain.Builder
       {
          if (isEduct)
          {
-            foreach (var existing in target.Educts.ToList())
-               target.RemoveEduct(existing);
-
             foreach (var src in incoming.Educts)
+            {
+               var existing = target.EductBy(src.MoleculeName);
+               if (existing != null)
+                  target.RemoveEduct(existing);
+
                target.AddEduct(src.Clone());
+            }
          }
          else
          {
-            foreach (var existing in target.Products.ToList())
-               target.RemoveProduct(existing);
-
             foreach (var src in incoming.Products)
+            {
+               var existing = target.ProductBy(src.MoleculeName);
+               if (existing != null)
+                  target.RemoveProduct(existing);
+
                target.AddProduct(src.Clone());
+            }
          }
       }
 
