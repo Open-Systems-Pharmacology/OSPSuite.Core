@@ -159,40 +159,41 @@ namespace OSPSuite.Core.Domain.Builder
          _containerMergeTask.MergeContainers(target, sourceBuilder);
       }
 
-      private void mergeReactions(ReactionBuilder target, BuilderSource<ReactionBuilder> source)
+      private void mergeReactions(ReactionBuilder targetReaction, BuilderSource<ReactionBuilder> sourceReaction)
       {
-         var incoming = source.Builder;
+         var incoming = sourceReaction.Builder;
 
-         var existingByName = target.Parameters.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
+         var existingByName = targetReaction.Parameters.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
 
-         foreach (var prm in incoming.Parameters)
+         foreach (var parameter in incoming.Parameters)
          {
-            if (existingByName.TryGetValue(prm.Name, out var existing))
-               target.RemoveParameter(existing);
+            var targetParameter = targetReaction.Parameter(parameter.Name);
+            if (targetParameter != null)
+               targetReaction.RemoveParameter(targetParameter);
 
-            target.AddParameter(cloneParameter(prm));
+            targetReaction.AddParameter(cloneParameter(parameter));
          }
 
-         target.Formula = incoming.Formula;
-         target.CreateProcessRateParameter = incoming.CreateProcessRateParameter;
-         target.ProcessRateParameterPersistable = incoming.ProcessRateParameterPersistable;
+         targetReaction.Formula = incoming.Formula;
+         targetReaction.CreateProcessRateParameter = incoming.CreateProcessRateParameter;
+         targetReaction.ProcessRateParameterPersistable = incoming.ProcessRateParameterPersistable;
 
-         upsertPartners(target, incoming, isEduct: true);
-         upsertPartners(target, incoming, isEduct: false);
+         upsertPartners(targetReaction, incoming, isEduct: true);
+         upsertPartners(targetReaction, incoming, isEduct: false);
 
-         var mods = new HashSet<string>(target.ModifierNames, StringComparer.OrdinalIgnoreCase);
-         foreach (var m in incoming.ModifierNames)
+         var mods = new HashSet<string>(targetReaction.ModifierNames, StringComparer.OrdinalIgnoreCase);
+         foreach (var modifierName in incoming.ModifierNames)
          {
-            if (mods.Add(m))
-               target.AddModifier(m);
+            if (mods.Add(modifierName))
+               targetReaction.AddModifier(modifierName);
          }
 
-         target.Icon = incoming.Icon ?? target.Icon;
-         target.Description = string.IsNullOrEmpty(incoming.Description) ? target.Description : incoming.Description;
-         target.Dimension = incoming.Dimension ?? target.Dimension;
+         targetReaction.Icon = incoming.Icon ?? targetReaction.Icon;
+         targetReaction.Description = string.IsNullOrEmpty(incoming.Description) ? targetReaction.Description : incoming.Description;
+         targetReaction.Dimension = incoming.Dimension ?? targetReaction.Dimension;
 
          if (incoming.ContainerCriteria != null)
-            target.ContainerCriteria = incoming.ContainerCriteria;
+            targetReaction.ContainerCriteria = incoming.ContainerCriteria;
       }
 
       private static Parameter cloneParameter(IParameter prm)

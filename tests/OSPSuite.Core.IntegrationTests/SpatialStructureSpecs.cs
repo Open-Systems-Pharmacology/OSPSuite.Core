@@ -32,8 +32,6 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
-         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          sut.Name = "spatialStructure";
       }
 
@@ -51,8 +49,6 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
-         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          sut.Name = "spatialStructure";
          _module = new Module().WithName("moduleName");
          _module.Add(sut);
@@ -75,8 +71,6 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
-         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          _sourceSpatialStructure = _simulationBuilder.SpatialStructureAndMergeBehaviors[0].spatialStructure;
          _sourceSpatialStructure.Version = _buildingBlockVersion;
          _cloneManager = IoC.Resolve<ICloneManagerForBuildingBlock>();
@@ -121,7 +115,7 @@ namespace OSPSuite.Core
       private ModuleConfiguration _moduleConfigurationA;
       private IDimension _amountPerTimeDimension;
 
-      private ReactionBuilder _R3;
+      private ReactionBuilder _R2;
       private IParameter _k1;
       private IParameter _k2;
       private IParameter _k3;
@@ -131,8 +125,6 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
-         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          _moduleConfigurationA = new ModuleConfiguration(new Module());
          var reactionsA = new ReactionBuildingBlock();
          _moduleConfigurationA.Module.Add(reactionsA);
@@ -143,27 +135,27 @@ namespace OSPSuite.Core
          _r1Formula = A.Fake<IFormula>();
          _r1K3Formula = A.Fake<IFormula>();
 
-         _R3 = new ReactionBuilder()
+         _R2 = new ReactionBuilder()
             .WithName("R2")
             .WithKinetic(_r1Formula)
             .WithDimension(_amountPerTimeDimension);
 
          _k1 = helpers.NewConstantParameter("k1", 22);
          _k1.BuildMode = ParameterBuildMode.Local;
-         _R3.AddParameter(_k1);
+         _R2.AddParameter(_k1);
 
          _k2 = helpers.NewConstantParameter("k2", 1);
          _k2.BuildMode = ParameterBuildMode.Global;
-         _R3.AddParameter(_k2);
+         _R2.AddParameter(_k2);
 
          _k3 = helpers.NewConstantParameter("k3", 1).WithFormula(_r1K3Formula);
          _k3.BuildMode = ParameterBuildMode.Global;
-         _R3.AddParameter(_k3);
+         _R2.AddParameter(_k3);
 
-         _R3.AddEduct(new ReactionPartnerBuilder("A", 1));
-         _R3.AddProduct(new ReactionPartnerBuilder("C", 1));
+         _R2.AddEduct(new ReactionPartnerBuilder("A", 1));
+         _R2.AddProduct(new ReactionPartnerBuilder("C", 1));
 
-         reactionsA.Add(_R3);
+         reactionsA.Add(_R2);
 
          _simulationConfiguration.AddModuleConfiguration(_moduleConfigurationA);
 
@@ -223,8 +215,6 @@ namespace OSPSuite.Core
       protected override void Context()
       {
          base.Context();
-         _simulationConfiguration = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
-         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
 
          var reactionsExtend = new ReactionBuildingBlock();
          var reactionsOverwrite = new ReactionBuildingBlock();
@@ -272,7 +262,6 @@ namespace OSPSuite.Core
          _simulationConfiguration.AddModuleConfiguration(_moduleExtend);
          _simulationConfiguration.AddModuleConfiguration(_moduleOverwrite);
 
-         _simulationBuilder = new SimulationBuilderForSpecs(_simulationConfiguration);
          _simulationBuilder.PerformMerge(_simulationConfiguration);
       }
 
