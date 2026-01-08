@@ -12,4 +12,15 @@ public abstract class ParameterValueWithInitialState : ParameterValue
 
    public bool HasInitialState => InitialValue.HasValue || !string.IsNullOrEmpty(InitialFormulaId) || InitialUnit != null;
 
+   public override void UpdatePropertiesFrom(ParameterValue parameterValue)
+   {
+      base.UpdatePropertiesFrom(parameterValue);
+
+      if (parameterValue is not ParameterValueWithInitialState parameterWithInitialState)
+         return;
+
+      InitialValue = parameterWithInitialState.InitialValue;
+      InitialFormulaId = parameterWithInitialState.InitialFormulaId;
+      InitialUnit = parameterWithInitialState.InitialUnit;
+   }
 }
