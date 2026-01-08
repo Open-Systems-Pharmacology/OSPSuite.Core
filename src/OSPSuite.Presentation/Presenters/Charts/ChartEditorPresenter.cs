@@ -417,9 +417,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          columns.Each(column =>
          {
             if (used)
-            {
                AddCurveForColumn(column, isLinkedDataToSimulation: isLinkedDataToSimulations);
-            }
             else
                Chart.RemoveCurvesForColumn(column);
          });
