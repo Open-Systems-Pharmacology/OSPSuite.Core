@@ -680,19 +680,22 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          var (exists, curve) = createAndConfigureCurve(dataColumn, defaultCurveOptions);
 
-         //Make sure color and style are updated to match linked data to simulation or observed data
-         Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns, isLinkedDataToSimulation);
+         if (exists)
+         {
+            if (isLinkedDataToSimulation)
+               Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns, isLinkedDataToSimulation: true);
+            return curve;
+         }
 
-         if (exists) return curve;
+         Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns, isLinkedDataToSimulation);
 
          if (defaultCurveOptions != null)
             curve.CurveOptions.UpdateFrom(defaultCurveOptions);
 
          Chart.AddCurve(curve);
-
          return curve;
       }
-
+      
       private (bool exists, Curve curve) createAndConfigureCurve(DataColumn dataColumn, CurveOptions defaultCurveOptions)
       {
          var curve = Chart.FindCurveWithSameData(dataColumn.BaseGrid, dataColumn);
