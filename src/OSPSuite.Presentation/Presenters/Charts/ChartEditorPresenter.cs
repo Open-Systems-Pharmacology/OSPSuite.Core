@@ -418,8 +418,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          {
             if (used)
             {
-               var curve = AddCurveForColumn(column, isLinkedDataToSimulation: isLinkedDataToSimulations);
-               updateCurveProperty(curve);
+               AddCurveForColumn(column, isLinkedDataToSimulation: isLinkedDataToSimulations);
             }
             else
                Chart.RemoveCurvesForColumn(column);
