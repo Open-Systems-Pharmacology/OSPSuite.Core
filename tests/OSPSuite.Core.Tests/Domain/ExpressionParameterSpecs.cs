@@ -1,6 +1,7 @@
 ﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain
 {
@@ -30,6 +31,33 @@ namespace OSPSuite.Core.Domain
       public void parameter_path_should_be_equal_to_container_path_plus_parameter_name()
       {
          sut.Path.ShouldOnlyContainInOrder("Path1", "Path2", "Name");
+      }
+
+      [Observation]
+      public void the_initial_state_is_not_set()
+      {
+         sut.HasInitialState.ShouldBeFalse();
+      }
+
+      [Observation]
+      public void an_initial_value_sets_the_initial_state()
+      {
+         sut.InitialValue = 1;
+         sut.HasInitialState.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void an_initial_formula_sets_the_initial_state()
+      {
+         sut.InitialFormulaId = "formulaId";
+         sut.HasInitialState.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void an_initial_unit_sets_the_initial_state()
+      {
+         sut.InitialUnit = new Unit();
+         sut.HasInitialState.ShouldBeTrue();
       }
    }
 
