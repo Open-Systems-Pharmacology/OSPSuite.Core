@@ -1,22 +1,23 @@
-﻿using OSPSuite.Core.Domain.UnitSystem;
+﻿using OSPSuite.Core.Domain.Services;
+using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain.Builder;
 
 public abstract class ParameterValueWithInitialState : ParameterValue
 {
-   public string InitialFormulaId { set; get; }
+   public string InitialFormulaId { get; set; }
 
-   public double? InitialValue { set; get; }
+   public double? InitialValue { get; set; }
 
-   public Unit InitialUnit { set; get; }
+   public Unit InitialUnit { get; set; }
 
    public bool HasInitialState => InitialValue.HasValue || !string.IsNullOrEmpty(InitialFormulaId) || InitialUnit != null;
 
-   public override void UpdatePropertiesFrom(ParameterValue parameterValue)
+   public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
    {
-      base.UpdatePropertiesFrom(parameterValue);
+      base.UpdatePropertiesFrom(source, cloneManager);
 
-      if (parameterValue is not ParameterValueWithInitialState parameterWithInitialState)
+      if (source is not ParameterValueWithInitialState parameterWithInitialState)
          return;
 
       InitialValue = parameterWithInitialState.InitialValue;
