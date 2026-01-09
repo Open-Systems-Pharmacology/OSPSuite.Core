@@ -58,30 +58,4 @@ namespace OSPSuite.Core.Domain
          sut.Path.ShouldOnlyContainInOrder("Path1", "Path2", "Name2");
       }
    }
-
-   public class When_setting_initial_condition_name : concern_for_InitialCondition
-   {
-      protected override void Because()
-      {
-         sut.Name = "Name2";
-      }
-
-      [Observation]
-      public void parameter_name_should_be_updated()
-      {
-         sut.MoleculeName.ShouldBeEqualTo("Name2");
-      }
-
-      [Observation]
-      public void container_path_is_not_affected()
-      {
-         sut.ContainerPath.ShouldOnlyContainInOrder("Path1", "Path2");
-      }
-
-      [Observation]
-      public void parameter_path_should_reflect_new_name()
-      {
-         sut.Path.ShouldOnlyContainInOrder("Path1", "Path2", "Name2");
-      }
-   }
 }
