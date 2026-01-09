@@ -11,7 +11,7 @@ public abstract class ParameterValueWithInitialState : ParameterValue
 
    public Unit InitialUnit { get; set; }
 
-   public bool HasInitialState => InitialValue.HasValue || !string.IsNullOrEmpty(InitialFormulaId) || InitialUnit != null;
+   public bool HasInitialState => InitialValue.HasValue || !string.IsNullOrEmpty(InitialFormulaId);
 
    public override void UpdatePropertiesFrom(IUpdatable source, ICloneManager cloneManager)
    {

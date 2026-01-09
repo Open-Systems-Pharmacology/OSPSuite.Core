@@ -52,12 +52,5 @@ namespace OSPSuite.Core.Domain
          sut.InitialFormulaId = "formulaId";
          sut.HasInitialState.ShouldBeTrue();
       }
-
-      [Observation]
-      public void an_initial_unit_sets_the_initial_state()
-      {
-         sut.InitialUnit = new Unit();
-         sut.HasInitialState.ShouldBeTrue();
-      }
    }
 }
