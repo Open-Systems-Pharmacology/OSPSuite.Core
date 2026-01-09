@@ -1,6 +1,7 @@
 ﻿using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.UnitSystem;
 
 namespace OSPSuite.Core.Domain
 {
@@ -31,31 +32,25 @@ namespace OSPSuite.Core.Domain
       {
          sut.Path.ShouldOnlyContainInOrder("Path1", "Path2", "Name");
       }
-   }
 
-   public class When_setting_expression_parameter_name : concern_for_InitialCondition
-   {
-      protected override void Because()
+      [Observation]
+      public void the_initial_state_is_not_set()
       {
-         sut.Name = "Name2";
+         sut.HasInitialState.ShouldBeFalse();
       }
 
       [Observation]
-      public void parameter_name_should_be_updated()
+      public void an_initial_value_sets_the_initial_state()
       {
-         sut.MoleculeName.ShouldBeEqualTo("Name2");
+         sut.InitialValue = 1;
+         sut.HasInitialState.ShouldBeTrue();
       }
 
       [Observation]
-      public void container_path_is_not_affected()
+      public void an_initial_formula_sets_the_initial_state()
       {
-         sut.ContainerPath.ShouldOnlyContainInOrder("Path1", "Path2");
-      }
-
-      [Observation]
-      public void parameter_path_should_reflect_new_name()
-      {
-         sut.Path.ShouldOnlyContainInOrder("Path1", "Path2", "Name2");
+         sut.InitialFormulaId = "formulaId";
+         sut.HasInitialState.ShouldBeTrue();
       }
    }
 }
