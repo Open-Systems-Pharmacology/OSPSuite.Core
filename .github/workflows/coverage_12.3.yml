@@ -1,4 +1,4 @@
-name: Code Coverage 12.2
+name: Code Coverage 12.3
 
 on:
   schedule:
@@ -23,7 +23,7 @@ jobs:
           dotnet restore
 
       - name: Build
-        run: dotnet build OSPSuite.Core.sln /p:Version=12.2.999
+        run: dotnet build OSPSuite.Core.sln /p:Version=12.3.999
 
         
       - name: Cover and report
