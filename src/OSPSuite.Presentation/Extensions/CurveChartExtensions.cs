@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OSPSuite.Core.Chart;
@@ -24,24 +25,47 @@ namespace OSPSuite.Presentation.Extensions
 
          // if no unused color can be found, simply return the next color (repeating)
          // colors start with index 0
-         int newIndex = (chart.Curves.Count - 1) % colors.Count; 
+         int newIndex = (chart.Curves.Count - 1) % colors.Count;
          return colors[newIndex];
       }
 
-      public static void UpdateCurveColorAndStyle(this CurveChart chart, Curve curve, DataColumn dataColumn, IReadOnlyCollection<DataColumn> dataColumns)
+      public static void UpdateCurveColorAndStyle(this CurveChart chart, Curve curve, DataColumn dataColumn, IReadOnlyCollection<DataColumn> dataColumns, bool isLinkedDataToSimulation = false)
       {
          // Finds color from a related column
-         if (dataColumnContainsRelatedColumns(dataColumn))
+         if (isLinkedDataToSimulation)
+         {
+            var matchedColor = tryGetMatchingCurveColor(chart, curve);
+            if (matchedColor.HasValue)
+            {
+               curve.Color = matchedColor.Value;
+            }
+         }
+
+         else if (dataColumnContainsRelatedColumns(dataColumn))
             curve.Color = getColorFromRelatedColumn(chart, dataColumn);
 
          // Finds color from a column which dataColumn is related
          else if (otherColumnsContainColumnAsRelated(dataColumns))
             curve.Color = getColorFromColumnRelatedTo(chart, dataColumn, dataColumns);
-
-         else
+         
+         // For a ResidualVsTimeChart, do not select a color for the Zero curve.
+         else if(!(chart is ResidualsVsTimeChart) || !string.Equals(curve.Name, ResidualsVsTimeChart.ZERO))
             curve.Color = chart.SelectNewColor();
 
          curve.UpdateStyleForObservedData();
+      }
+
+      private static Color? tryGetMatchingCurveColor(CurveChart chart, Curve newCurve)
+      {
+         var compartment = newCurve.yData.BottomCompartment;
+
+         if (string.IsNullOrEmpty(compartment))
+            return null;
+
+         var match = chart.Curves
+            .FirstOrDefault(c => c.yData.BottomCompartment?.Equals(compartment, StringComparison.CurrentCultureIgnoreCase) == true);
+
+         return match?.Color;
       }
 
       private static bool otherColumnsContainColumnAsRelated(IReadOnlyCollection<DataColumn> dataColumns)
@@ -57,7 +81,7 @@ namespace OSPSuite.Presentation.Extensions
       private static Color getColorFromColumnRelatedTo(CurveChart chart, DataColumn relatedColumn, IReadOnlyCollection<DataColumn> dataColumns)
       {
          var column = findColumnsRelatedTo(AuxiliaryType.ArithmeticMeanPop, relatedColumn, dataColumns) ??
-                             findColumnsRelatedTo(AuxiliaryType.GeometricMeanPop, relatedColumn, dataColumns);
+                      findColumnsRelatedTo(AuxiliaryType.GeometricMeanPop, relatedColumn, dataColumns);
 
          return getColorOf(chart, column);
       }

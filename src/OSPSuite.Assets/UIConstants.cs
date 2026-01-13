@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Assets
 {
@@ -232,7 +233,7 @@ namespace OSPSuite.Assets
       public static readonly string DeleteSelected = "Delete Selected Records";
       public static readonly string ModulesFolder = "Modules";
       public static readonly string ApplyChangesToUpdateChart = "Apply changes to update chart";
-      public static readonly string Apply = "Apply";
+      public static readonly string ApplyUpdates = "Apply updates";
       public static readonly string AutoUpdateChart = "Auto-update chart";
 
       public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
@@ -471,7 +472,7 @@ namespace OSPSuite.Assets
          public static readonly string SaveConfiguration = "Save Configuration";
          public static readonly string ApplyConfiguration = "Load Configuration";
          public static readonly string ActionWillEraseLoadedData = "This action will result in dropping all the loaded sheets. Do you want to continue?";
-         public static readonly string OpenFile = "Select the file you would like to apply configuration on";
+         public static readonly string SelectFileToImport = "Select the file to import";
          public static readonly string GroupByTitle = "Group By";
          public static readonly string SelectToAdd = "Select to add";
          public static readonly string MappingTitle = "Mapping";
@@ -1203,6 +1204,16 @@ namespace OSPSuite.Assets
             }
          }
 
+         public static string SimulationsAreRunning(IReadOnlyList<string> names)
+         {
+            return $"The following Simulations are currently running: {names.ToString(", ", "'")}, action cannot be performed until they are stopped.";
+         }
+
+         public static string ParameterIdentificationsAreRunning(IReadOnlyList<string> names)
+         {
+            return $"The following Parameter Identifications are currently running: {ObjectTypes.ParameterIdentification.ToLowerInvariant().PluralizeIf(names)} {names.ToString(", ", "'")}, action cannot be performed until they are stopped.";
+         }
+
          public static string ReallyDeleteParameterIdentifications(IReadOnlyList<string> names)
          {
             return $"Really delete {ObjectTypes.ParameterIdentification.ToLowerInvariant().PluralizeIf(names)} {names.ToString(", ", "'")}?";
@@ -1240,9 +1251,28 @@ namespace OSPSuite.Assets
          public static readonly string NoResultsAvailable = "No result available. Please start sensitivity analysis";
          public static readonly string ErrorsDuringPreviousRun = "<b>The last run resulted in one or more errors:</b>";
 
-         public static string SensitivityAnalysisFinished(string duration)
+         public static string SensitivityAnalysisFinished(string duration, IReadOnlyList<string> failedPKParameterCalculations)
          {
+            if (failedPKParameterCalculations.Any())
+            {
+
+               return $"Sensitivity analysis finished in {duration} but failed to calculate sensitivities for:{Environment.NewLine}{buildNestedList(failedPKParameterCalculations)}";
+            }
             return $"Sensitivity analysis finished in {duration}";
+         }
+
+         private static string buildNestedList(IReadOnlyList<string> failedPKParameterCalculations)
+         {
+            var sb = new StringBuilder();
+            sb.AppendLine();
+            
+            failedPKParameterCalculations.Each(x =>
+            {
+               sb.Append(" - ");
+               sb.AppendLine(x);
+            });
+            
+            return sb.ToString();
          }
 
          public static readonly string SensitivityAnalysisCanceled = "Sensitivity analysis canceled";
@@ -1633,9 +1663,28 @@ namespace OSPSuite.Assets
       public static readonly string TableFormulaWithOffsetUsesNonTableFormulaObject = "Object used in table formula with offset must be based an a table formula";
       public static readonly string ScaleFactorShouldBeGreaterThanZero = "Scale factor should be greater than 0";
 
+      public static string TimeFromRepositoryNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit, string repositoryName)
+      {
+         var hint = hintForNotStrictlyMonotone(valueBefore, valueAfter, displayUnit);
+
+         return $"The time column in data set '{repositoryName}' is not strictly monotonically increasing ({hint}).\nEnsure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
+      }
+
+      private static string hintForNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit)
+      {
+         return Equals(valueAfter, valueBefore) ? $"{valueBefore} {displayUnit} is duplicated" : $"{valueBefore} {displayUnit} is immediately followed by {valueAfter} {displayUnit}";
+      }
+
+      public static string TimeFromSheetNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit, string sheetName)
+      {
+         var hint = hintForNotStrictlyMonotone(valueBefore, valueAfter, displayUnit);
+
+         return $"The time column in sheet '{sheetName}' is not strictly monotonically increasing ({hint}).\nEnsure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
+      }
+
       public static string TimeNotStrictlyMonotone(double valueBefore, double valueAfter, string displayUnit)
       {
-         var hint = Equals(valueAfter, valueBefore) ? $"{valueBefore} {displayUnit} is duplicated" : $"{valueBefore} {displayUnit} is immediately followed by {valueAfter} {displayUnit}";
+         var hint = hintForNotStrictlyMonotone(valueBefore, valueAfter, displayUnit);
 
          return $"The time column is not strictly monotonically increasing ({hint}).\nEnsure that time always increases (e.g. 0.5, 1, 2, 4 hours).";
       }
@@ -2154,6 +2203,8 @@ namespace OSPSuite.Assets
          $"The selected output resolution will generate {numberOfPoints} points and may severely impact the software performance.\nAre you sure you want to run with these setting? If not, consider changing output resolution in simulations settings";
 
       public static string NeighborhoodWasNotFoundInModel(string neighborhoodName, string buildingBlockName) => $"The neighborhood '{neighborhoodName}' from building block '{buildingBlockName}' was not added to the simulation";
+
+      public static string ExpressionMoleculeNotFoundInSimulation(string moleculeName) => $"The molecule '{moleculeName}' is not part of the simulation structure";
    }
 
    public static class RibbonCategories
@@ -2253,7 +2304,7 @@ namespace OSPSuite.Assets
          return $"Compare {objectType}s";
       }
 
-      public static readonly string AutoUpdateChart = "Autoupdate chart";
+      public static readonly string AutoUpdateChart = "Auto-update chart";
       public static readonly string ApplyUpdates = "Apply updates";
    }
 
@@ -2344,6 +2395,16 @@ namespace OSPSuite.Assets
       public static string SetObservedDataParameterCommandDescription(string oldValue, string newValue, string observedDataName, string parameterName)
       {
          return $"{parameterName} set from {oldValue} to {newValue} in {observedDataName}";
+      }
+
+      public static string AddManyObservedDataToProjectDescription(IReadOnlyList<string> names, string projectName)
+      {
+         return $"Added observed data: \n\n{string.Join("\n", names)}\n\n to project '{projectName}'";
+      }
+
+      public static string RemoveManyObservedDataToProjectDescription(IReadOnlyList<string> names, string projectName)
+      {
+         return $"Removed observed data: \n\n{string.Join("\n", names)}\n\n from project '{projectName}'";
       }
 
       public static string AddObservedDataToProjectDescription(string observedDataName, string projectName)

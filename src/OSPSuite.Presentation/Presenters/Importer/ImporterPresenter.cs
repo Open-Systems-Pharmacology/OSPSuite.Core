@@ -248,9 +248,9 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSource.SetMappings(dataSourceFile.Path, mappings);
          _dataSource.NanSettings = _nanPresenter.Settings;
          _dataSource.SetDataFormat(_columnMappingPresenter.GetDataFormat());
+
          var errors = _dataSource.AddSheets(sheets, _columnInfos, filter);
-
-
+         
          var dimensionDTOs = _dataSourceToDimensionSelectionDTOMapper.MapFrom(_dataSource, sheetNames);
 
          var ambiguousDimensionDTOs = dimensionDTOs.Where(x => x.Dimensions.Count > 1).ToList();

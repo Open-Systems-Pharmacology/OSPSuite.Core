@@ -1,9 +1,13 @@
-name: Build PR
+name: Build PR 12.2
 
 on:
   pull_request:
     branches:
     - develop
+
+permissions:
+  contents: read
+  packages: read
 
 jobs:
   build-and-test:
@@ -20,7 +24,7 @@ jobs:
           dotnet restore
 
       - name: Build
-        run: dotnet build OSPSuite.Core.sln /p:Version=12.1.9999
+        run: dotnet build OSPSuite.Core.sln /p:Version=12.2.9999
 
       - name : Test
         run: dotnet test .\tests\**\bin\Debug\net472\OSPSuite*Tests.dll -v normal --no-build  --logger:"html;LogFileName=../testLog_Windows.html"

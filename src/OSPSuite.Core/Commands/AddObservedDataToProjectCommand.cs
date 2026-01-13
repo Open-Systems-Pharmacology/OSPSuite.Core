@@ -1,21 +1,24 @@
-﻿using OSPSuite.Assets;
+﻿using System.Collections.Generic;
+using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Events;
+using OSPSuite.Utility.Extensions;
 using Command = OSPSuite.Assets.Command;
 
 namespace OSPSuite.Core.Commands
 {
    public class AddObservedDataToProjectCommand : OSPSuiteReversibleCommand<IOSPSuiteExecutionContext>
    {
-      private readonly string _dataRepositoryId;
-      private DataRepository _observedData;
+      private readonly List<string> _dataRepositoryId;
+      private IReadOnlyList<DataRepository> _observedData;
 
-      public AddObservedDataToProjectCommand(DataRepository observedData)
+      public AddObservedDataToProjectCommand(IReadOnlyList<DataRepository> observedData)
       {
          _observedData = observedData;
-         _dataRepositoryId = _observedData.Id;
+         _dataRepositoryId = _observedData.Select(x => x.Id).ToList();
          CommandType = Command.CommandTypeAdd;
          ObjectType = ObjectTypes.ObservedData;
       }
@@ -23,10 +26,14 @@ namespace OSPSuite.Core.Commands
       protected override void ExecuteWith(IOSPSuiteExecutionContext context)
       {
          var project = context.Project;
-         project.AddObservedData(_observedData);
-         project.GetOrCreateClassifiableFor<ClassifiableObservedData, DataRepository>(_observedData);
-         Description = Command.AddObservedDataToProjectDescription(_observedData.Name, project.Name);
-         context.Register(_observedData);
+         _observedData.Each(project.AddObservedData);
+         _observedData.Each(x => project.GetOrCreateClassifiableFor<ClassifiableObservedData, DataRepository>(x));
+         
+         Description = _observedData.Count == 1 ? 
+            Command.AddObservedDataToProjectDescription(_observedData[0].Name, project.Name) : 
+            Command.AddManyObservedDataToProjectDescription(_observedData.AllNames(), project.Name);
+
+         _observedData.Each(context.Register);
          context.PublishEvent(new ObservedDataAddedEvent(_observedData, project));
       }
 
@@ -42,7 +49,7 @@ namespace OSPSuite.Core.Commands
 
       public override void RestoreExecutionData(IOSPSuiteExecutionContext context)
       {
-         _observedData = context.Project.ObservedDataBy(_dataRepositoryId);
+         _observedData = _dataRepositoryId.Select(x => context.Project.ObservedDataBy(x)).ToList();
       }
    }
 }

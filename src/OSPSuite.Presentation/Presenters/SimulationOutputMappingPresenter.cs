@@ -26,6 +26,7 @@ namespace OSPSuite.Presentation.Presenters
       void EditSimulation(ISimulation simulation);
       IReadOnlyList<SimulationQuantitySelectionDTO> AllAvailableOutputs { get; }
       void RemoveObservedData(IReadOnlyList<SimulationOutputMappingDTO> outputMappingDTOs);
+
       /// <summary>
       ///    Completely rebinds the view to the content of the data source
       /// </summary>
@@ -60,8 +61,8 @@ namespace OSPSuite.Presentation.Presenters
          ISimulationOutputMappingToOutputMappingDTOMapper outputMappingDTOMapper,
          IQuantityToSimulationQuantitySelectionDTOMapper simulationQuantitySelectionDTOMapper,
          IObservedDataTask observedDataTask,
-         IEventPublisher eventPublisher, 
-         IOutputMappingMatchingTask outputMappingMatchingTask, 
+         IEventPublisher eventPublisher,
+         IOutputMappingMatchingTask outputMappingMatchingTask,
          IOSPSuiteExecutionContext executionContext) : base(view)
       {
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
@@ -100,6 +101,12 @@ namespace OSPSuite.Presentation.Presenters
       {
          _simulation = simulation;
          Refresh();
+      }
+
+      private void removeFromOutputMappingList(IReadOnlyList<DataRepository> itemsToRemove)
+      {
+         _listOfOutputMappingDTOs.Where(x => itemsToRemove.Contains(x.ObservedData))
+            .ToList().Each(x => _listOfOutputMappingDTOs.Remove(x));
       }
 
       private void updateOutputMappingList()
@@ -170,7 +177,7 @@ namespace OSPSuite.Presentation.Presenters
 
       public void Handle(ObservedDataRemovedFromAnalysableEvent eventToHandle)
       {
-         updateOutputMappingList();
+         removeFromOutputMappingList(eventToHandle.ObservedData);
       }
 
       public void Handle(SimulationOutputSelectionsChangedEvent eventToHandle)
@@ -181,7 +188,6 @@ namespace OSPSuite.Presentation.Presenters
 
       public void RemoveObservedData(IReadOnlyList<SimulationOutputMappingDTO> outputMappingDTOs)
       {
-
          var usedObservedDataList = outputMappingDTOs
             .Select(outputMappingDTO => new UsedObservedData
             {

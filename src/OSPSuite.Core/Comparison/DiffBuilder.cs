@@ -48,36 +48,36 @@ namespace OSPSuite.Core.Comparison
 
       internal void CompareValues<TInput, TOutput>(Func<TInput, TOutput> funcEvaluation, Expression<Func<TInput, TOutput>> propertyNameExpression, IComparison<TInput> comparison) where TInput : class
       {
-         CompareValues(funcEvaluation, nameFrom(propertyNameExpression), comparison);
+         CompareValues(funcEvaluation, NameFrom(propertyNameExpression), comparison);
       }
 
       protected void CompareValues<TInput, TOutput>(Func<TInput, TOutput> funcEvaluation, Expression<Func<TInput, TOutput>> propertyNameExpression, IComparison<TInput> comparison, Func<TOutput, TOutput, bool> areEquals) where TInput : class
       {
-         CompareValues(funcEvaluation, nameFrom(propertyNameExpression), comparison, areEquals);
+         CompareValues(funcEvaluation, NameFrom(propertyNameExpression), comparison, areEquals);
       }
 
       protected void CompareStringValues<TInput>(Func<TInput, string> funcEvaluation, Expression<Func<TInput, string>> propertyNameExpression, IComparison<TInput> comparison) where TInput : class
       {
-         CompareStringValues(funcEvaluation, nameFrom(propertyNameExpression), comparison);
+         CompareStringValues(funcEvaluation, NameFrom(propertyNameExpression), comparison);
       }
 
       protected void CompareNullableDoubleValues<TInput>(Func<TInput, double?> funcEvaluation, Expression<Func<TInput, double?>> propertyNameExpression, IComparison<TInput> comparison, Func<TInput, Unit> displayUnitFunc = null) where TInput : class
       {
-         CompareNullableDoubleValues(funcEvaluation, nameFrom(propertyNameExpression), comparison, displayUnitFunc);
+         CompareNullableDoubleValues(funcEvaluation, NameFrom(propertyNameExpression), comparison, displayUnitFunc);
       }
-      
+
       protected void CompareDoubleValues<TInput>(Func<TInput, double> funcEvaluation, Expression<Func<TInput, double>> propertyNameExpression, IComparison<TInput> comparison, Func<TInput, Unit> displayUnitFunc = null) where TInput : class
       {
-         CompareDoubleValues(funcEvaluation, nameFrom(propertyNameExpression), comparison, displayUnitFunc);
+         CompareDoubleValues(funcEvaluation, NameFrom(propertyNameExpression), comparison, displayUnitFunc);
       }
 
       protected void CompareValues<TInput, TOutput>(Func<TInput, TOutput> funcEvaluation, Expression<Func<TInput, TOutput>> propertyNameExpression, IComparison<TInput> comparison,
          Func<TOutput, TOutput, bool> areEqual, Func<TInput, TOutput, string> formatter) where TInput : class
       {
-         CompareValues(funcEvaluation, nameFrom(propertyNameExpression), comparison, areEqual, formatter);
+         CompareValues(funcEvaluation, NameFrom(propertyNameExpression), comparison, areEqual, formatter);
       }
 
-      private string nameFrom<TInput, TOutput>(Expression<Func<TInput, TOutput>> propertyNameExpression)
+      protected string NameFrom<TInput, TOutput>(Expression<Func<TInput, TOutput>> propertyNameExpression)
       {
          return propertyNameExpression.Name().SplitToUpperCase();
       }
