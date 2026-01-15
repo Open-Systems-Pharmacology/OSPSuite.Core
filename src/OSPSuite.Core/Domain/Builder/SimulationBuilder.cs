@@ -162,16 +162,7 @@ namespace OSPSuite.Core.Domain.Builder
       private void mergeReactions(ReactionBuilder targetReaction, BuilderSource<ReactionBuilder> sourceReaction)
       {
          var incoming = sourceReaction.Builder;
-
-         foreach (var parameter in incoming.Parameters)
-         {
-            var targetParameter = targetReaction.Parameter(parameter.Name);
-            if (targetParameter != null)
-               targetReaction.RemoveParameter(targetParameter);
-
-            targetReaction.AddParameter(_cloneManager.CloneAndKeepId(parameter));
-         }
-
+         tryMergeContainers(targetReaction, sourceReaction);
          targetReaction.Formula = incoming.Formula;
          targetReaction.CreateProcessRateParameter = incoming.CreateProcessRateParameter;
          targetReaction.ProcessRateParameterPersistable = incoming.ProcessRateParameterPersistable;
