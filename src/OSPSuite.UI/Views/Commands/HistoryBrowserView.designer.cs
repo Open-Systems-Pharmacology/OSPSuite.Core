@@ -43,11 +43,12 @@ namespace OSPSuite.UI.Views.Commands
          this.lblRollBack = new DevExpress.XtraBars.BarStaticItem();
          this.tbRollBackState = new DevExpress.XtraBars.BarEditItem();
          this.tbRollBackStateEditor = new DevExpress.XtraEditors.Repository.RepositoryItemButtonEdit();
+         this.btnClearHistory = new DevExpress.XtraBars.BarButtonItem();
          this.barDockControlTop = new DevExpress.XtraBars.BarDockControl();
          this.barDockControlBottom = new DevExpress.XtraBars.BarDockControl();
          this.barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
          this.barDockControlRight = new DevExpress.XtraBars.BarDockControl();
-         this.btnClearHistory = new DevExpress.XtraBars.BarButtonItem();
+         this.btnExportHistory = new DevExpress.XtraBars.BarButtonItem();
          ((System.ComponentModel.ISupportInitialize)(this.historyLayoutControl)).BeginInit();
          this.historyLayoutControl.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.historyTreeList)).BeginInit();
@@ -59,22 +60,27 @@ namespace OSPSuite.UI.Views.Commands
          // 
          // historyLayoutControl
          // 
+         this.historyLayoutControl.AllowCustomization = false;
          this.historyLayoutControl.Controls.Add(this.historyTreeList);
          this.historyLayoutControl.Dock = System.Windows.Forms.DockStyle.Fill;
-         this.historyLayoutControl.Location = new System.Drawing.Point(0, 29);
+         this.historyLayoutControl.Location = new System.Drawing.Point(0, 25);
+         this.historyLayoutControl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
          this.historyLayoutControl.Name = "historyLayoutControl";
          this.historyLayoutControl.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(1124, 253, 250, 350);
          this.historyLayoutControl.Root = this.layoutControlGroup1;
-         this.historyLayoutControl.Size = new System.Drawing.Size(792, 552);
+         this.historyLayoutControl.Size = new System.Drawing.Size(924, 690);
          this.historyLayoutControl.TabIndex = 6;
          this.historyLayoutControl.Text = "layoutControl1";
          // 
          // historyTreeList
          // 
          this.historyTreeList.Location = new System.Drawing.Point(3, 3);
+         this.historyTreeList.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+         this.historyTreeList.MinWidth = 23;
          this.historyTreeList.Name = "historyTreeList";
-         this.historyTreeList.Size = new System.Drawing.Size(786, 546);
+         this.historyTreeList.Size = new System.Drawing.Size(918, 684);
          this.historyTreeList.TabIndex = 5;
+         this.historyTreeList.TreeLevelWidth = 21;
          this.historyTreeList.FocusedNodeChanged += new DevExpress.XtraTreeList.FocusedNodeChangedEventHandler(this.historyTreeListFocusedNodeChanged);
          // 
          // layoutControlGroup1
@@ -82,10 +88,9 @@ namespace OSPSuite.UI.Views.Commands
          this.layoutControlGroup1.CustomizationFormText = "layoutControlGroup1";
          this.layoutControlGroup1.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutControlItem5});
-         this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup1.Name = "layoutControlGroup1";
          this.layoutControlGroup1.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
-         this.layoutControlGroup1.Size = new System.Drawing.Size(792, 552);
+         this.layoutControlGroup1.Size = new System.Drawing.Size(924, 690);
          this.layoutControlGroup1.TextVisible = false;
          // 
          // layoutControlItem5
@@ -94,7 +99,7 @@ namespace OSPSuite.UI.Views.Commands
          this.layoutControlItem5.CustomizationFormText = "layoutControlItem5";
          this.layoutControlItem5.Location = new System.Drawing.Point(0, 0);
          this.layoutControlItem5.Name = "layoutControlItem5";
-         this.layoutControlItem5.Size = new System.Drawing.Size(790, 550);
+         this.layoutControlItem5.Size = new System.Drawing.Size(922, 688);
          this.layoutControlItem5.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem5.TextVisible = false;
          // 
@@ -113,8 +118,9 @@ namespace OSPSuite.UI.Views.Commands
             this.btnEditComment,
             this.tbRollBackState,
             this.lblRollBack,
-            this.btnClearHistory});
-         this._barManager.MaxItemId = 7;
+            this.btnClearHistory,
+            this.btnExportHistory});
+         this._barManager.MaxItemId = 8;
          this._barManager.RepositoryItems.AddRange(new DevExpress.XtraEditors.Repository.RepositoryItem[] {
             this.tbRollBackStateEditor});
          // 
@@ -130,7 +136,8 @@ namespace OSPSuite.UI.Views.Commands
             new DevExpress.XtraBars.LinkPersistInfo(this.btnEditComment),
             new DevExpress.XtraBars.LinkPersistInfo(this.lblRollBack),
             new DevExpress.XtraBars.LinkPersistInfo(this.tbRollBackState),
-            new DevExpress.XtraBars.LinkPersistInfo(this.btnClearHistory)});
+            new DevExpress.XtraBars.LinkPersistInfo(this.btnClearHistory),
+            new DevExpress.XtraBars.LinkPersistInfo(this.btnExportHistory)});
          this.menuBar.OptionsBar.AllowQuickCustomization = false;
          this.menuBar.OptionsBar.DisableClose = true;
          this.menuBar.OptionsBar.DisableCustomization = true;
@@ -178,55 +185,65 @@ namespace OSPSuite.UI.Views.Commands
             new DevExpress.XtraEditors.Controls.EditorButton()});
          this.tbRollBackStateEditor.Name = "tbRollBackStateEditor";
          // 
-         // barDockControlTop
-         // 
-         this.barDockControlTop.CausesValidation = false;
-         this.barDockControlTop.Dock = System.Windows.Forms.DockStyle.Top;
-         this.barDockControlTop.Location = new System.Drawing.Point(0, 0);
-         this.barDockControlTop.Manager = this._barManager;
-         this.barDockControlTop.Size = new System.Drawing.Size(792, 29);
-         // 
-         // barDockControlBottom
-         // 
-         this.barDockControlBottom.CausesValidation = false;
-         this.barDockControlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-         this.barDockControlBottom.Location = new System.Drawing.Point(0, 581);
-         this.barDockControlBottom.Manager = this._barManager;
-         this.barDockControlBottom.Size = new System.Drawing.Size(792, 0);
-         // 
-         // barDockControlLeft
-         // 
-         this.barDockControlLeft.CausesValidation = false;
-         this.barDockControlLeft.Dock = System.Windows.Forms.DockStyle.Left;
-         this.barDockControlLeft.Location = new System.Drawing.Point(0, 29);
-         this.barDockControlLeft.Manager = this._barManager;
-         this.barDockControlLeft.Size = new System.Drawing.Size(0, 552);
-         // 
-         // barDockControlRight
-         // 
-         this.barDockControlRight.CausesValidation = false;
-         this.barDockControlRight.Dock = System.Windows.Forms.DockStyle.Right;
-         this.barDockControlRight.Location = new System.Drawing.Point(792, 29);
-         this.barDockControlRight.Manager = this._barManager;
-         this.barDockControlRight.Size = new System.Drawing.Size(0, 552);
-         // 
          // btnClearHistory
          // 
          this.btnClearHistory.Caption = "btnClearHistory";
          this.btnClearHistory.Id = 6;
          this.btnClearHistory.Name = "btnClearHistory";
          // 
+         // barDockControlTop
+         // 
+         this.barDockControlTop.CausesValidation = false;
+         this.barDockControlTop.Dock = System.Windows.Forms.DockStyle.Top;
+         this.barDockControlTop.Location = new System.Drawing.Point(0, 0);
+         this.barDockControlTop.Manager = this._barManager;
+         this.barDockControlTop.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+         this.barDockControlTop.Size = new System.Drawing.Size(924, 25);
+         // 
+         // barDockControlBottom
+         // 
+         this.barDockControlBottom.CausesValidation = false;
+         this.barDockControlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+         this.barDockControlBottom.Location = new System.Drawing.Point(0, 715);
+         this.barDockControlBottom.Manager = this._barManager;
+         this.barDockControlBottom.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+         this.barDockControlBottom.Size = new System.Drawing.Size(924, 0);
+         // 
+         // barDockControlLeft
+         // 
+         this.barDockControlLeft.CausesValidation = false;
+         this.barDockControlLeft.Dock = System.Windows.Forms.DockStyle.Left;
+         this.barDockControlLeft.Location = new System.Drawing.Point(0, 25);
+         this.barDockControlLeft.Manager = this._barManager;
+         this.barDockControlLeft.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+         this.barDockControlLeft.Size = new System.Drawing.Size(0, 690);
+         // 
+         // barDockControlRight
+         // 
+         this.barDockControlRight.CausesValidation = false;
+         this.barDockControlRight.Dock = System.Windows.Forms.DockStyle.Right;
+         this.barDockControlRight.Location = new System.Drawing.Point(924, 25);
+         this.barDockControlRight.Manager = this._barManager;
+         this.barDockControlRight.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+         this.barDockControlRight.Size = new System.Drawing.Size(0, 690);
+         // 
+         // btnExportHistory
+         // 
+         this.btnExportHistory.Caption = "btnExportHistory";
+         this.btnExportHistory.Id = 7;
+         this.btnExportHistory.Name = "btnExportHistory";
+         // 
          // HistoryBrowserView
          // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
          this.Controls.Add(this.historyLayoutControl);
          this.Controls.Add(this.barDockControlLeft);
          this.Controls.Add(this.barDockControlRight);
          this.Controls.Add(this.barDockControlBottom);
          this.Controls.Add(this.barDockControlTop);
+         this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
          this.Name = "HistoryBrowserView";
-         this.Size = new System.Drawing.Size(792, 581);
+         this.Size = new System.Drawing.Size(924, 715);
          ((System.ComponentModel.ISupportInitialize)(this.historyLayoutControl)).EndInit();
          this.historyLayoutControl.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.historyTreeList)).EndInit();
@@ -258,5 +275,6 @@ namespace OSPSuite.UI.Views.Commands
         private DevExpress.XtraBars.BarDockControl barDockControlLeft;
         private DevExpress.XtraBars.BarDockControl barDockControlRight;
         private DevExpress.XtraBars.BarButtonItem btnClearHistory;
+      private DevExpress.XtraBars.BarButtonItem btnExportHistory;
    }
 }

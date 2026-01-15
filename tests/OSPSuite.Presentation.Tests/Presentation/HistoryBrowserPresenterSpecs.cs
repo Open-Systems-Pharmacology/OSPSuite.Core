@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.DTO.Commands;
@@ -27,7 +28,9 @@ namespace OSPSuite.Presentation.Presentation
       private IHistoryItemDTOEnumerableToHistoryItemDTOList _historyItemDTOListMapper;
       protected IHistoryItemDTOList _historyItemDTOList;
       protected IHistoryTask _historyTask;
-
+      protected IHistoryExportTask _historyExportTask;
+      protected IProjectRetriever _projectRetriever;
+      protected IDialogCreator _dialogCreator;
       protected override void Context()
       {
          _view = A.Fake<IHistoryBrowserView>();
@@ -40,10 +43,13 @@ namespace OSPSuite.Presentation.Presentation
          _historyTask = A.Fake<IHistoryTask>();
          _historyItemDTOListMapper = A.Fake<IHistoryItemDTOEnumerableToHistoryItemDTOList>();
          _historyItemDTOList = A.Fake<IHistoryItemDTOList>();
+         _historyExportTask = A.Fake<IHistoryExportTask>();
+         _projectRetriever = A.Fake<IProjectRetriever>();
+         _dialogCreator = A.Fake<IDialogCreator>();
          A.CallTo(_historyItemDTOListMapper).WithReturnType<IHistoryItemDTOList>().Returns(_historyItemDTOList);
          _historyBrowserConfiguration = new HistoryBrowserConfiguration();
          A.CallTo(() => _historyManager.History).Returns(_historyList);
-         sut = new HistoryBrowserPresenter(_view, _labelTask, _commentTask, _mapper, _historyItemDTOListMapper, _historyTask);
+         sut = new HistoryBrowserPresenter(_view, _labelTask, _commentTask, _mapper, _historyItemDTOListMapper, _historyTask, _historyExportTask, _projectRetriever, _dialogCreator);
          sut.Initialize();
          sut.HistoryManager = _historyManager;
       }

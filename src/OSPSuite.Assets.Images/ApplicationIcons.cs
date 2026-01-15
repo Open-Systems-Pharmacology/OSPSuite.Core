@@ -386,7 +386,6 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon AnalysesSave = AddNamedIcon("AnalysesSave");
       public static readonly ApplicationIcon ObserverAdd = AddNamedIcon("ObserverAdd");
       public static readonly ApplicationIcon Report = AddNamedIcon("Report", IconNames.REPORT);
-      public static readonly ApplicationIcon ExportToCSV = AddNamedIcon("ExportToCSV");
       public static readonly ApplicationIcon ExportToExcel = AddNamedIcon("ExportToExcel");
       public static readonly ApplicationIcon PKAnalysesImportFromCSV = AddNamedIcon("PKAnalysesImportFromCSV");
       public static readonly ApplicationIcon Notifications = AddNamedIcon("Notifications");
