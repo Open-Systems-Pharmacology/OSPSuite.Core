@@ -1,4 +1,4 @@
-name: Build PR 12.3
+name: Build and Test 12.3
 
 on:
   pull_request:
@@ -15,4 +15,3 @@ jobs:
     secrets: inherit
     with:
       temp-version: "12.3.9999"
-      build-arguments: "/p:ExcludeDesigner=true"
