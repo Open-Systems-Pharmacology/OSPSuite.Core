@@ -163,7 +163,7 @@ namespace OSPSuite.Core.Domain.Builder
       {
          var incoming = sourceReaction.Builder;
          tryMergeContainers(targetReaction, sourceReaction);
-         targetReaction.Formula = incoming.Formula;
+         targetReaction.Formula = incoming.Formula != null ? incoming.Formula.Clone() : null;
          targetReaction.CreateProcessRateParameter = incoming.CreateProcessRateParameter;
          targetReaction.ProcessRateParameterPersistable = incoming.ProcessRateParameterPersistable;
 
