@@ -13,16 +13,9 @@ namespace OSPSuite.Infrastructure.Export
          dataTable.TableName = reportOptions.SheetName;
 
          if (reportOptions.ReportFullPath.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
-         {
             dataTable.ExportToCSV(reportOptions.ReportFullPath);
-         }
          else
-         {
-            ExportToExcelTask.ExportDataTableToExcel(
-               dataTable,
-               reportOptions.ReportFullPath,
-               true);
-         }
+            ExportToExcelTask.ExportDataTableToExcel(dataTable, reportOptions.ReportFullPath, true);
       }
    }
 }
