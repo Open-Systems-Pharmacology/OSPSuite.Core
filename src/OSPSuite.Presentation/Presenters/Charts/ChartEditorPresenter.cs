@@ -662,7 +662,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          var groupColor = Chart.SelectNewColor();
          foreach (var dataColumn in dataColumnList)
          {
-            var (exists, curve) = createAndConfigureCurve(dataColumn, defaultCurveOptions);
+            var (exists, curve) = createAndConfigureCurve(dataColumn);
 
             if (exists) continue;
 
@@ -678,25 +678,21 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null, bool isLinkedDataToSimulation = false)
       {
-         var (exists, curve) = createAndConfigureCurve(dataColumn, defaultCurveOptions);
-
-         if (exists)
-         {
-            if (isLinkedDataToSimulation)
-               Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns, isLinkedDataToSimulation: true);
-            return curve;
-         }
+         var (exists, curve) = createAndConfigureCurve(dataColumn);
 
          Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns, isLinkedDataToSimulation);
 
          if (defaultCurveOptions != null)
             curve.CurveOptions.UpdateFrom(defaultCurveOptions);
 
+         if (exists)
+            return curve;
+
          Chart.AddCurve(curve);
          return curve;
       }
       
-      private (bool exists, Curve curve) createAndConfigureCurve(DataColumn dataColumn, CurveOptions defaultCurveOptions)
+      private (bool exists, Curve curve) createAndConfigureCurve(DataColumn dataColumn)
       {
          var curve = Chart.FindCurveWithSameData(dataColumn.BaseGrid, dataColumn);
          if (curve != null)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Org.BouncyCastle.Math.EC.Rfc7748;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
@@ -239,12 +240,16 @@ namespace OSPSuite.Presentation.Presenters.Charts
          _isLinkedMappedOutputs = isLinkedMappedOutputs;
 
          if (!_isLinkedMappedOutputs) return;
-
          //loop only through the simulation outputs data columns
          foreach (var dataColumnDTO in _dataColumnDTOCache.Where(x => x.Category == Captions.Chart.GroupRowFormat.Simulation))
          {
             var outputColumnUsed = dataColumnDTO.Used;
             var linkedObservedData = getLinkedObservedDataFromOutputPath(dataColumnDTO.DataColumn.PathAsString);
+            //The bottom compartment also needs to be updated since it will take the value from the output data column
+            foreach (var columnDTO in linkedObservedData)
+            {
+               columnDTO.DataColumn.BottomCompartment = dataColumnDTO.BottomCompartment;
+            }
             SetUsedState(linkedObservedData, outputColumnUsed,  isLinkedDataToSimulations: true);
          }
       }
