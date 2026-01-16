@@ -330,7 +330,7 @@ namespace OSPSuite.Core.Domain
          public static readonly string MARKDOWN_FILE_FILTER = FileFilter("Markdown", MARKDOWN_EXTENSION);
          public static readonly string JSON_FILTER = filter(JSON_EXTENSION);
          public static readonly string XML_FILTER = filter(XML_EXTENSION);
-
+         public static readonly string EXPORT_HISTORY_FILE_FILTER = "Excel Files (*.xlsx)|*.xlsx|Comma Separated Value Files (*.csv)|*.csv";
          public static string XmlFilter(string caption) => FileFilter(caption, XML_EXTENSION);
 
          public static string FileFilter(string caption, string extension)

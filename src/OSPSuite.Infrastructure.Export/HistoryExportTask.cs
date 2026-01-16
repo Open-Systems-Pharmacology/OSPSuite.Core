@@ -1,5 +1,7 @@
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Extensions;
+using System;
 
 namespace OSPSuite.Infrastructure.Export
 {
@@ -10,7 +12,10 @@ namespace OSPSuite.Infrastructure.Export
          var dataTable = historyManager.ToDataTable();
          dataTable.TableName = reportOptions.SheetName;
 
-         ExportToExcelTask.ExportDataTableToExcel(dataTable,reportOptions.ReportFullPath, true);
+         if (reportOptions.ReportFullPath.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
+            dataTable.ExportToCSV(reportOptions.ReportFullPath);
+         else
+            ExportToExcelTask.ExportDataTableToExcel(dataTable, reportOptions.ReportFullPath, true);
       }
    }
 }
