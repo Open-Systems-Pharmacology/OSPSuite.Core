@@ -235,6 +235,8 @@ namespace OSPSuite.Assets
       public static readonly string ApplyChangesToUpdateChart = "Apply changes to update chart";
       public static readonly string ApplyUpdates = "Apply updates";
       public static readonly string AutoUpdateChart = "Auto-update chart";
+      public static readonly string Undefined = "Undefined";
+      public static readonly string ExportHistory = "Export History";
       public static readonly string LoadFromSnapshot = "Load Snapshot";
       public static readonly string RunSimulations = "Run Simulations";
       public static readonly string StartImport = "Start Import";
@@ -672,6 +674,7 @@ namespace OSPSuite.Assets
          public static readonly string Rollback = "Rollback";
          public static readonly string ExtendedDescription = "Extended Description";
          public static readonly string ClearHistory = "Clear History";
+         public static readonly string ExportHistory = "Export...";
 
          public static string CommentViewCaption(int historyItemState) => $"Edit comments for state '{historyItemState}' ...";
       }
@@ -2660,6 +2663,7 @@ namespace OSPSuite.Assets
       public static readonly string ClearHistory = "Clear the project history. This action is irreversible";
       public static readonly string UseDerivedValues = "If checked, the first derivative of the entered table values is used";
       public static readonly string RestartSolver = "Select to mark solver restart at t=X. Increases numerical accuracy  but may reduce solver speed";
+      public static readonly string ExportHistory = "Export the project history to Excel or CSV file";
 
       public static string ToolTipForLLOQ(string seriesName, string lloq)
       {
