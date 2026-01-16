@@ -159,9 +159,56 @@ namespace OSPSuite.Core.Domain.Builder
          _containerMergeTask.MergeContainers(target, sourceBuilder);
       }
 
-      private void mergeReactions(ReactionBuilder target, BuilderSource<ReactionBuilder> source)
+      private void mergeReactions(ReactionBuilder targetReaction, BuilderSource<ReactionBuilder> sourceReaction)
       {
-         //TODO add reaction merge behavior
+         var incoming = sourceReaction.Builder;
+         tryMergeContainers(targetReaction, sourceReaction);
+         targetReaction.Formula = incoming.Formula;
+         targetReaction.CreateProcessRateParameter = incoming.CreateProcessRateParameter;
+         targetReaction.ProcessRateParameterPersistable = incoming.ProcessRateParameterPersistable;
+
+         upsertPartners(targetReaction, incoming, isEduct: true);
+         upsertPartners(targetReaction, incoming, isEduct: false);
+
+         var mods = new HashSet<string>(targetReaction.ModifierNames, StringComparer.OrdinalIgnoreCase);
+         foreach (var modifierName in incoming.ModifierNames)
+         {
+            if (mods.Add(modifierName))
+               targetReaction.AddModifier(modifierName);
+         }
+
+         targetReaction.Icon = incoming.Icon ?? targetReaction.Icon;
+         targetReaction.Description = string.IsNullOrEmpty(incoming.Description) ? targetReaction.Description : incoming.Description;
+         targetReaction.Dimension = incoming.Dimension ?? targetReaction.Dimension;
+
+         if (incoming.ContainerCriteria != null)
+            targetReaction.ContainerCriteria = incoming.ContainerCriteria;
+      }
+
+      private static void upsertPartners(ReactionBuilder target, ReactionBuilder incoming, bool isEduct)
+      {
+         if (isEduct)
+         {
+            foreach (var src in incoming.Educts)
+            {
+               var existing = target.EductBy(src.MoleculeName);
+               if (existing != null)
+                  target.RemoveEduct(existing);
+
+               target.AddEduct(src.Clone());
+            }
+         }
+         else
+         {
+            foreach (var src in incoming.Products)
+            {
+               var existing = target.ProductBy(src.MoleculeName);
+               if (existing != null)
+                  target.RemoveProduct(existing);
+
+               target.AddProduct(src.Clone());
+            }
+         }
       }
 
       private void mergeTransports(TransportBuilder target, BuilderSource<TransportBuilder> builderSource)
@@ -331,7 +378,7 @@ namespace OSPSuite.Core.Domain.Builder
          public BuilderSource<T> BaseBuilder { get; }
 
          /// <summary>
-         /// List of builders to EXTEND on top of the base builder
+         ///    List of builders to EXTEND on top of the base builder
          /// </summary>
          public IReadOnlyList<BuilderSource<T>> BuildersThatExtend { get; }
 
@@ -420,14 +467,14 @@ namespace OSPSuite.Core.Domain.Builder
          _simulationConfiguration.ModuleConfigurations
             .Select(propAccess)
             .Where(x => x != null)
-            .SelectMany(x => x.Select(builder => (builder, (IBuildingBlock) x)))
+            .SelectMany(x => x.Select(builder => (builder, (IBuildingBlock)x)))
             .ToList();
 
       private IReadOnlyList<(InitialCondition InitialCondition, IBuildingBlock BuildingBlock)> allInitialConditionsFromExpressionProfileSources() =>
          _simulationConfiguration.ExpressionProfiles
             .Select(x => (BuildingBlock: x, x.InitialConditions))
             //null because these conditions do not belong in a module
-            .SelectMany(x => x.InitialConditions.Select(ic => (ic, (IBuildingBlock) x.BuildingBlock)))
+            .SelectMany(x => x.InitialConditions.Select(ic => (ic, (IBuildingBlock)x.BuildingBlock)))
             .ToList();
    }
 }

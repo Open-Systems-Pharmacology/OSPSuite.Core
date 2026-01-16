@@ -31,7 +31,7 @@ namespace OSPSuite.Helpers
       private readonly ISolverSettingsFactory _solverSettingsFactory;
       private readonly IParameterFactory _parameterFactory;
 
-      private IDimension amountPerTimeDimension => _dimensionFactory.Dimension(Constants.Dimension.AMOUNT_PER_TIME);
+      public IDimension AmountPerTimeDimension => _dimensionFactory.Dimension(Constants.Dimension.AMOUNT_PER_TIME);
 
       private IDimension amountDimension => _dimensionFactory.Dimension(Constants.Dimension.MOLAR_AMOUNT);
 
@@ -116,7 +116,7 @@ namespace OSPSuite.Helpers
             //new parameter that does not exist
             Path = new ObjectPath(Constants.ORGANISM, ArterialBlood, "NEW_PARAM"),
             Value = 10,
-            Dimension = amountPerTimeDimension
+            Dimension = AmountPerTimeDimension
          });
 
          //putting this one first to show that order does not matter
@@ -125,7 +125,7 @@ namespace OSPSuite.Helpers
             //new parameter that does not exist
             Path = new ObjectPath(Constants.ORGANISM, ArterialBlood, "NEW_PARAM_DISTRIBUTED", Constants.Distribution.MEAN),
             Value = 10,
-            Dimension = amountPerTimeDimension
+            Dimension = AmountPerTimeDimension
          });
 
          individual.Add(new IndividualParameter
@@ -133,7 +133,7 @@ namespace OSPSuite.Helpers
             //new parameter that does not exist
             Path = new ObjectPath(Constants.ORGANISM, ArterialBlood, "NEW_PARAM_DISTRIBUTED"),
             DistributionType = DistributionType.Normal,
-            Dimension = amountPerTimeDimension
+            Dimension = AmountPerTimeDimension
          });
 
          individual.Add(new IndividualParameter
@@ -141,7 +141,7 @@ namespace OSPSuite.Helpers
             //new parameter that does not exist
             Path = new ObjectPath(Constants.ORGANISM, ArterialBlood, "NEW_PARAM_DISTRIBUTED", Constants.Distribution.DEVIATION),
             Value = 2,
-            Dimension = amountPerTimeDimension
+            Dimension = AmountPerTimeDimension
          });
 
          individual.Add(new IndividualParameter
@@ -431,7 +431,7 @@ namespace OSPSuite.Helpers
          var realization1 =
             _objectBaseFactory.Create<TransportBuilder>().WithName("Transporter #1")
                .WithKinetic(MM1FormulaFrom(formulaCache))
-               .WithDimension(amountPerTimeDimension);
+               .WithDimension(AmountPerTimeDimension);
 
          realization1.CreateProcessRateParameter = true;
          realization1.AddParameter(NewConstantParameter("Km", 33));
@@ -448,7 +448,7 @@ namespace OSPSuite.Helpers
          var realization2 = _objectBaseFactory.Create<TransportBuilder>()
             .WithName("Transporter #2")
             .WithKinetic(MM1FormulaFrom(formulaCache))
-            .WithDimension(amountPerTimeDimension);
+            .WithDimension(AmountPerTimeDimension);
 
 
          realization2.AddParameter(NewConstantParameter("Km", 66));
@@ -474,7 +474,7 @@ namespace OSPSuite.Helpers
          var realization1 = _objectBaseFactory.Create<TransportBuilder>()
             .WithName("Transporter #1")
             .WithKinetic(MM2FormulaFrom(formulaCache))
-            .WithDimension(amountPerTimeDimension);
+            .WithDimension(AmountPerTimeDimension);
 
          realization1.AddParameter(NewConstantParameter("VmaxAbs", 1));
 
@@ -488,7 +488,7 @@ namespace OSPSuite.Helpers
             _objectBaseFactory.Create<TransportBuilder>()
                .WithName("Transporter #2")
                .WithKinetic(MM2FormulaFrom(formulaCache))
-               .WithDimension(amountPerTimeDimension);
+               .WithDimension(AmountPerTimeDimension);
 
 
          realization2.AddParameter(NewConstantParameter("VmaxAbs", 2));
@@ -727,7 +727,7 @@ namespace OSPSuite.Helpers
          var R1 = _objectBaseFactory.Create<ReactionBuilder>()
             .WithName("R1")
             .WithKinetic(R1Formula(reactions.FormulaCache))
-            .WithDimension(amountPerTimeDimension);
+            .WithDimension(AmountPerTimeDimension);
 
          var k1 = NewConstantParameter("k1", 22);
          k1.BuildMode = ParameterBuildMode.Local;
@@ -749,7 +749,7 @@ namespace OSPSuite.Helpers
          var R2 = _objectBaseFactory.Create<ReactionBuilder>()
             .WithName("R2")
             .WithKinetic(R1Formula(reactions.FormulaCache))
-            .WithDimension(amountPerTimeDimension);
+            .WithDimension(AmountPerTimeDimension);
          k1 = NewConstantParameter("k1", 22, ParameterBuildMode.Local);
          R2.AddParameter(k1);
 
@@ -774,7 +774,7 @@ namespace OSPSuite.Helpers
          //T1_1 "Blutfluss Arterial Blood=> Tissue Organ"
          var T1_1 = _objectBaseFactory.Create<TransportBuilder>()
             .WithName("T1_1")
-            .WithDimension(amountPerTimeDimension);
+            .WithDimension(AmountPerTimeDimension);
 
          T1_1.TransportType = TransportType.Convection;
          T1_1.SourceCriteria = Create.Criteria(x => x.With(Plasma)
@@ -794,7 +794,7 @@ namespace OSPSuite.Helpers
          //T1_2 "Blutfluss Tissue Organ => VenousBlood"
          var T1_2 = _objectBaseFactory.Create<TransportBuilder>()
             .WithName("T1_2")
-            .WithDimension(amountPerTimeDimension);
+            .WithDimension(AmountPerTimeDimension);
 
          T1_2.TransportType = TransportType.Convection;
          T1_2.SourceCriteria = Create.Criteria(x => x.With(Plasma)
@@ -811,7 +811,7 @@ namespace OSPSuite.Helpers
          //T1_3 "Blutfluss VenousBlood => Lung"
          var T1_3 = _objectBaseFactory.Create<TransportBuilder>()
             .WithName("T1_3")
-            .WithDimension(amountPerTimeDimension);
+            .WithDimension(AmountPerTimeDimension);
 
          T1_3.TransportType = TransportType.Convection;
          T1_3.SourceCriteria = Create.Criteria(x => x.With(Plasma)
@@ -826,7 +826,7 @@ namespace OSPSuite.Helpers
          //T1_4 "Blutfluss  Lung => ArterialBlood"
          var T1_4 = _objectBaseFactory.Create<TransportBuilder>()
             .WithName("T1_4")
-            .WithDimension(amountPerTimeDimension);
+            .WithDimension(AmountPerTimeDimension);
 
          T1_4.TransportType = TransportType.Convection;
          T1_4.SourceCriteria = Create.Criteria(x => x.With(Plasma)
@@ -841,7 +841,7 @@ namespace OSPSuite.Helpers
          //T2
          var T2 = _objectBaseFactory.Create<TransportBuilder>()
             .WithName("T2")
-            .WithDimension(amountPerTimeDimension);
+            .WithDimension(AmountPerTimeDimension);
 
          T2.TransportType = TransportType.Diffusion;
          T2.SourceCriteria = Create.Criteria(x => x.With(Plasma));
