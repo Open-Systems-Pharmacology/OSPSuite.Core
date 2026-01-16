@@ -112,7 +112,7 @@ namespace OSPSuite.Presentation.Presenters.Commands
       bool EnableHistoryPruning { set; }
 
       /// <summary>
-      /// Exports the history to a CSV file
+      /// Exports the history to a file
       /// </summary>
       void ExportHistory();
    }
