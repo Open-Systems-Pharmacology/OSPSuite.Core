@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Org.BouncyCastle.Math.EC.Rfc7748;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
