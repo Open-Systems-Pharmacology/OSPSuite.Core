@@ -1,6 +1,8 @@
-using ICSharpCode.SharpZipLib.Zip;
+using System.IO;
+using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Commands.Core;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
 using OSPSuite.Core.Services;
@@ -10,10 +12,6 @@ using OSPSuite.Presentation.Services.Commands;
 using OSPSuite.Presentation.Views.Commands;
 using OSPSuite.Utility.Events;
 using OSPSuite.Utility.Extensions;
-using System.IO;
-using System.Linq;
-using DevExpress.DataAccess.Wizard;
-using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Presentation.Presenters.Commands
 {
@@ -112,7 +110,7 @@ namespace OSPSuite.Presentation.Presenters.Commands
       bool EnableHistoryPruning { set; }
 
       /// <summary>
-      /// Exports the history to a file
+      ///    Exports the history to a file
       /// </summary>
       void ExportHistory();
    }
