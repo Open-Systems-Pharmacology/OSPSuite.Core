@@ -8,9 +8,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{25A7357D-0812-44F3-AF90-244FD752FAE2}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build-and-publish_12.3.yml = .github\workflows\build-and-publish_12.3.yml
-		.github\workflows\build-pr_12.3.yml = .github\workflows\build-pr_12.3.yml
-		dotcover.xml = dotcover.xml
+		.github\workflows\build-and-test.yml = .github\workflows\build-and-test.yml
 		.github\workflows\coverage.yml = .github\workflows\coverage.yml
+		dotcover.xml = dotcover.xml
 		logo.png = logo.png
 		rakefile.rb = rakefile.rb
 		SolutionInfo.cs = SolutionInfo.cs
