@@ -24,7 +24,7 @@ namespace OSPSuite.UI.Views
       private readonly PathElementsBinder<SimulationParameterSelectionDTO> _pathElementsBinder;
       private readonly GridViewBinder<SimulationParameterSelectionDTO> _gridViewBinder;
       private readonly ScreenBinder<ISimulationParametersPresenter> _screenBinder;
-      private readonly IFormatter<bool> _favoriteFormatter;
+      private readonly IFormatter<bool> _booleanAsStringFormatter;
       private readonly RepositoryItem _textRepository;
 
       public SimulationParametersView(IImageListRetriever imageListRetriever)
@@ -39,7 +39,7 @@ namespace OSPSuite.UI.Views
          gridView.OptionsFind.AlwaysVisible = true;
          gridView.GroupFormat = "[#image]{1}";
          _textRepository = new RepositoryItemTextEdit {Enabled = false};
-         _favoriteFormatter = new BooleanAsStringFormatter();
+         _booleanAsStringFormatter = new BooleanAsStringFormatter();
          _screenBinder = new ScreenBinder<ISimulationParametersPresenter>();
       }
 
@@ -76,12 +76,17 @@ namespace OSPSuite.UI.Views
          _gridViewBinder.AutoBind(x => x.IsFavorite)
             .WithRepository(x => _textRepository)
             .WithCaption(Captions.Favorite)
-            .WithFormat(_favoriteFormatter)
+            .WithFormat(_booleanAsStringFormatter)
             .AsReadOnly();
 
          _screenBinder.Bind(x => x.ParameterGroupingMode)
             .To(cbModeSelection)
             .WithValues(x => _presenter.AllGroupingModes);
+
+         _gridViewBinder.Bind(x => x.UserDefined)
+            .WithRepository(x => _textRepository)
+            .WithCaption(Captions.User)
+            .WithFormat(_booleanAsStringFormatter);
       }
 
       public override void InitializeResources()
