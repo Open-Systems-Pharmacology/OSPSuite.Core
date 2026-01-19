@@ -86,7 +86,8 @@ namespace OSPSuite.UI.Views
          _gridViewBinder.Bind(x => x.UserDefined)
             .WithRepository(x => _textRepository)
             .WithCaption(Captions.User)
-            .WithFormat(_booleanAsStringFormatter);
+            .WithFormat(_booleanAsStringFormatter)
+            .AsReadOnly();
       }
 
       public override void InitializeResources()
