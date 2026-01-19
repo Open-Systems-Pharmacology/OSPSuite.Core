@@ -235,7 +235,6 @@ namespace OSPSuite.Presentation.Presentation
       }
 
       [Observation]
-      [Ignore("Newly introduced failing tests should be fixed")]
       public void the_curve_options_should_not_have_been_updated_to_the_second_specified_values()
       {
          // TODO fix me

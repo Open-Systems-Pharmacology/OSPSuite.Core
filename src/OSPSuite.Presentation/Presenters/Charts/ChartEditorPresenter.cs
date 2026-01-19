@@ -682,11 +682,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns, isLinkedDataToSimulation);
 
-         if (defaultCurveOptions != null)
-            curve.CurveOptions.UpdateFrom(defaultCurveOptions);
 
          if (exists)
             return curve;
+
+         if (defaultCurveOptions != null)
+            curve.CurveOptions.UpdateFrom(defaultCurveOptions);
 
          Chart.AddCurve(curve);
          return curve;
