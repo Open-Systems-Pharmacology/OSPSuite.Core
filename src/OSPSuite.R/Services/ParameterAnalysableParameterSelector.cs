@@ -11,9 +11,8 @@ namespace OSPSuite.R.Services
                 && !parameter.Info.ReadOnly
                 && !ParameterIsTable(parameter)
                 && !ParameterIsCategorial(parameter);
-      
       }
 
-      public override ParameterGroupingMode DefaultParameterSelectionMode { get; } = ParameterGroupingModes.Simple;
+      public override ParameterGroupingModeForParameterAnalyzable DefaultParameterSelectionMode { get; } = ParameterGroupingModesForParameterAnalyzable.Simple;
    }
 }

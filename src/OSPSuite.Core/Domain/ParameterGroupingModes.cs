@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Utility.Collections;
 
@@ -11,6 +12,10 @@ namespace OSPSuite.Core.Domain
       Advanced
    }
 
+   /// <summary>
+   ///    Parameter grouping modes for all parameter presenters except parameter identification and sensitivity analysis.
+   ///    For those two, see <see cref="ParameterGroupingModesForParameterAnalyzable" />
+   /// </summary>
    public static class ParameterGroupingModes
    {
       private static readonly ICache<ParameterGroupingModeId, ParameterGroupingMode> _allGroupModes = new Cache<ParameterGroupingModeId, ParameterGroupingMode>(groupMode => groupMode.Id);
@@ -26,15 +31,9 @@ namespace OSPSuite.Core.Domain
          return groupMode;
       }
 
-      public static ParameterGroupingMode ById(ParameterGroupingModeId id)
-      {
-         return _allGroupModes[id];
-      }
+      public static ParameterGroupingMode ById(ParameterGroupingModeId id) => _allGroupModes[id];
 
-      public static IEnumerable<ParameterGroupingMode> All()
-      {
-         return _allGroupModes;
-      }
+      public static IReadOnlyList<ParameterGroupingMode> All() => _allGroupModes.ToList();
    }
 
    public class ParameterGroupingMode
@@ -48,9 +47,6 @@ namespace OSPSuite.Core.Domain
          DisplayName = displayName;
       }
 
-      public override string ToString()
-      {
-         return DisplayName;
-      }
+      public override string ToString() => DisplayName;
    }
 }
