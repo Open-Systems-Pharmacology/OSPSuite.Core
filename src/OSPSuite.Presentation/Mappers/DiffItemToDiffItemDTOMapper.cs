@@ -99,8 +99,7 @@ namespace OSPSuite.Presentation.Mappers
 
       private string objectNameFrom(DiffItem diffItem)
       {
-         var ancestorBuildingBlock = diffItem.CommonAncestor as IBuildingBlock;
-         if (ancestorBuildingBlock != null)
+         if (diffItem.CommonAncestor is IBuildingBlock ancestorBuildingBlock)
             return displayNameFor(ancestorBuildingBlock);
 
          return
