@@ -95,7 +95,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
             State = PKParameterSensitivityState.Success
          };
 
-         if (float.IsNaN(defaultPKValue) || defaultPKValue == 0)
+         if (float.IsNaN(defaultPKValue) || 0.0f.Equals(defaultPKValue))
          {
             sensitivity.State = PKParameterSensitivityState.FailedToCalculateDefaultPKValue;
             return sensitivity;
