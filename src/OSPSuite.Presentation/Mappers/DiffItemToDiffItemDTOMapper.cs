@@ -99,6 +99,10 @@ namespace OSPSuite.Presentation.Mappers
 
       private string objectNameFrom(DiffItem diffItem)
       {
+         var ancestorBuildingBlock = diffItem.CommonAncestor as IBuildingBlock;
+         if (ancestorBuildingBlock != null)
+            return displayNameFor(ancestorBuildingBlock);
+
          return
             displayIf<SimulationConfiguration>(diffItem, x => ancestorDisplayName(diffItem)) ??
             displayIf<IFormula>(diffItem, x => ancestorDisplayName(diffItem)) ??
