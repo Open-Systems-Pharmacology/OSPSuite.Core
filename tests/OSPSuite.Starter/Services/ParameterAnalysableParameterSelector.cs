@@ -10,6 +10,6 @@ namespace OSPSuite.Starter.Services
          return true;
       }
 
-      public override ParameterGroupingMode DefaultParameterSelectionMode => ParameterGroupingModes.Simple;
+      public override ParameterGroupingModeForParameterAnalyzable DefaultParameterSelectionMode => ParameterGroupingModesForParameterAnalyzable.Simple;
    }
 }
