@@ -343,6 +343,7 @@ namespace OSPSuite.Core.Chart
          FontAndSize.UpdatePropertiesFrom(sourceCurveChart.FontAndSize);
          ChartSettings.UpdatePropertiesFrom(sourceCurveChart.ChartSettings);
 
+         // Clears axes and curves. Even in a new chart two axes will be present.
          Clear();
          sourceCurveChart.Axes.Each(x => AddAxis(x.Clone()));
          sourceCurveChart.Curves.Each(x => AddCurve(x.Clone(), useAxisDefault: false));
