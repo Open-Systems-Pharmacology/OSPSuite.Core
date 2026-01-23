@@ -339,6 +339,13 @@ namespace OSPSuite.Core.Chart
          OriginText = sourceCurveChart.OriginText;
          IncludeOriginData = sourceCurveChart.IncludeOriginData;
          PreviewSettings = sourceCurveChart.PreviewSettings;
+
+         FontAndSize.UpdatePropertiesFrom(sourceCurveChart.FontAndSize);
+         ChartSettings.UpdatePropertiesFrom(sourceCurveChart.ChartSettings);
+
+         Clear();
+         sourceCurveChart.Axes.Each(x => AddAxis(x.Clone()));
+         sourceCurveChart.Curves.Each(x => AddCurve(x.Clone()));
       }
    }
 }
