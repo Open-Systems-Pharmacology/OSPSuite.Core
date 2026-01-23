@@ -345,7 +345,10 @@ namespace OSPSuite.Core.Chart
 
          Clear();
          sourceCurveChart.Axes.Each(x => AddAxis(x.Clone()));
-         sourceCurveChart.Curves.Each(x => AddCurve(x.Clone()));
+         sourceCurveChart.Curves.Each(x => AddCurve(x.Clone(), useAxisDefault: false));
+
+         DefaultYAxisScaling = sourceCurveChart.DefaultYAxisScaling;
+         AutoUpdateEnabled = sourceCurveChart.AutoUpdateEnabled;
       }
    }
 }

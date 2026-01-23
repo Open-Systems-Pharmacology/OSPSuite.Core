@@ -33,11 +33,11 @@ public abstract class concern_for_CurveChart : ContextSpecification<CurveChart>
       _obsData1 = DomainHelperForSpecs.ObservedData();
       _obsData2 = DomainHelperForSpecs.ObservedData();
 
-      _curveOnYAxis = new Curve {yAxisType = AxisTypes.Y};
+      _curveOnYAxis = new Curve { yAxisType = AxisTypes.Y };
       _curveOnYAxis.SetxData(_obsData1.BaseGrid, _dimensionFactory);
       _curveOnYAxis.SetyData(_obsData1.FirstDataColumn(), _dimensionFactory);
 
-      _curveOnY2Axis = new Curve {yAxisType = AxisTypes.Y2};
+      _curveOnY2Axis = new Curve { yAxisType = AxisTypes.Y2 };
       _curveOnY2Axis.SetxData(_obsData2.BaseGrid, _dimensionFactory);
       _curveOnY2Axis.SetyData(_obsData2.FirstDataColumn(), _dimensionFactory);
    }
@@ -66,7 +66,7 @@ public class When_moving_series_in_legend : concern_for_CurveChart
    }
 
    [Observation]
-   public void the_relative_legend_indicies_should_be_adjusted()
+   public void the_relative_legend_indices_should_be_adjusted()
    {
       _curveFour.LegendIndex.HasValue.ShouldBeTrue();
       (_curveFour.LegendIndex < _curveOne.LegendIndex).ShouldBeTrue();
@@ -106,7 +106,7 @@ public class When_adding_new_Y_axes : concern_for_CurveChart
 public class When_instantiating_a_new_CurveChart : concern_for_CurveChart
 {
    [Observation]
-   public void the_default_Y_axis_scale_should_be_logarigmic()
+   public void the_default_Y_axis_scale_should_be_logarithmic()
    {
       sut.DefaultYAxisScaling.ShouldBeEqualTo(Scalings.Log);
    }
@@ -272,7 +272,7 @@ public class When_updating_a_chart_from_another_chart : concern_for_CurveChart
    protected override void Context()
    {
       base.Context();
-      _other = new CurveChart {Name = "A", Title = "B", Description = "C"};
+      _other = new CurveChart { Name = "A", Title = "B", Description = "C", DefaultYAxisScaling = Scalings.Linear, AutoUpdateEnabled = false};
       _other.AddAxis(new Axis(AxisTypes.Y2));
       var curve = new Curve().WithName("curve");
       curve.SetxData(new BaseGrid("time", DimensionFactoryForSpecs.TimeDimension), DimensionFactoryForSpecs.Factory);
@@ -288,11 +288,13 @@ public class When_updating_a_chart_from_another_chart : concern_for_CurveChart
    }
 
    [Observation]
-   public void should_also_update_title_and_description()
+   public void should_update_simple_properties()
    {
       sut.Name.ShouldBeEqualTo(_other.Name);
       sut.Title.ShouldBeEqualTo(_other.Title);
       sut.Description.ShouldBeEqualTo(_other.Description);
+      sut.DefaultYAxisScaling.ShouldBeEqualTo(Scalings.Linear);
+      sut.AutoUpdateEnabled.ShouldBeEqualTo(false);
    }
 
    [Observation]
