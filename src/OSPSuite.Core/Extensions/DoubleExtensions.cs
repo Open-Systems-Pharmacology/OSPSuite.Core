@@ -28,7 +28,7 @@ namespace OSPSuite.Core.Extensions
          return Convert.ToSingle(doubleValue);
       }
 
-      public static bool IsValid(this double value)
+      public static bool IsFinite(this double value)
       {
          return !double.IsNaN(value) && !double.IsInfinity(value);
       }
@@ -84,9 +84,9 @@ namespace OSPSuite.Core.Extensions
          return EqualsByTolerance(value, equalValue, 1e-10);
       }
 
-      public static bool IsValid(this double? value)
+      public static bool IsFinite(this double? value)
       {
-         return value.HasValue && value.Value.IsValid();
+         return value.HasValue && value.Value.IsFinite();
       }
    }
 }
