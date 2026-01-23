@@ -339,6 +339,17 @@ namespace OSPSuite.Core.Chart
          OriginText = sourceCurveChart.OriginText;
          IncludeOriginData = sourceCurveChart.IncludeOriginData;
          PreviewSettings = sourceCurveChart.PreviewSettings;
+
+         FontAndSize.UpdatePropertiesFrom(sourceCurveChart.FontAndSize);
+         ChartSettings.UpdatePropertiesFrom(sourceCurveChart.ChartSettings);
+
+         // Clears axes and curves. Even in a new chart two axes will be present.
+         Clear();
+         sourceCurveChart.Axes.Each(x => AddAxis(x.Clone()));
+         sourceCurveChart.Curves.Each(x => AddCurve(x.Clone(), useAxisDefault: false));
+
+         DefaultYAxisScaling = sourceCurveChart.DefaultYAxisScaling;
+         AutoUpdateEnabled = sourceCurveChart.AutoUpdateEnabled;
       }
    }
 }
