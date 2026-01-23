@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using System.Linq;
 using FakeItEasy;
-using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
@@ -272,7 +271,7 @@ public class When_updating_a_chart_from_another_chart : concern_for_CurveChart
    protected override void Context()
    {
       base.Context();
-      _other = new CurveChart { Name = "A", Title = "B", Description = "C", DefaultYAxisScaling = Scalings.Linear, AutoUpdateEnabled = false};
+      _other = new CurveChart { Name = "A", Title = "B", Description = "C", DefaultYAxisScaling = Scalings.Linear, AutoUpdateEnabled = false };
       _other.AddAxis(new Axis(AxisTypes.Y2));
       var curve = new Curve().WithName("curve");
       curve.SetxData(new BaseGrid("time", DimensionFactoryForSpecs.TimeDimension), DimensionFactoryForSpecs.Factory);
