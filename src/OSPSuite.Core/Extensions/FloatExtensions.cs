@@ -19,5 +19,13 @@ namespace OSPSuite.Core.Extensions
       {
          return floats.Where(f => f.IsValid()).OrderBy(x => x).ToArray();
       }
+
+      /// <summary>
+      /// Returns true if <paramref name="f"/> is not NaN, PositiveInfinity or NegativeInfinity
+      /// </summary>
+      public static bool IsFinite(this float f)
+      {
+         return !float.IsNaN(f) && !float.IsInfinity(f);
+      }
    }
 }
