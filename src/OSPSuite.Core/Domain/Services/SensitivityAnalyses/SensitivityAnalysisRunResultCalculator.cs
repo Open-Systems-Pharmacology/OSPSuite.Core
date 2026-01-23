@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.SensitivityAnalyses;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
@@ -95,7 +96,7 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
             State = PKParameterSensitivityState.Success
          };
 
-         if (float.IsNaN(defaultPKValue) || defaultPKValue == 0)
+         if (!defaultPKValue.IsFinite() || Math.Abs(defaultPKValue) < float.Epsilon)
          {
             sensitivity.State = PKParameterSensitivityState.FailedToCalculateDefaultPKValue;
             return sensitivity;
