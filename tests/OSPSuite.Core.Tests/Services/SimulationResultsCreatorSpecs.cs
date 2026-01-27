@@ -82,4 +82,60 @@ namespace OSPSuite.Core.Services
          _simulationResults.Count.ShouldBeEqualTo(0);
       }
    }
+
+   public class When_creating_a_simulation_results_with_null_quantity_info : concern_for_SimulationResultsCreator
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _dataRepository = new DataRepository("Results");
+         var baseGrid = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs())
+         {
+            Values = new[] { 1.0f, 2.0f, 3.0f }
+         };
+         _dataRepository.Add(baseGrid);
+
+         // Create a column with null QuantityInfo to simulate corrupted data
+         var dataColumn = new DataColumn("Col", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid)
+         {
+            Values = new[] { 10f, 20f, 30f },
+            DataInfo = { Origin = ColumnOrigins.Calculation },
+            QuantityInfo = null
+         };
+
+         _dataRepository.Add(dataColumn);
+      }
+
+      protected override void Because()
+      {
+         _simulationResults = sut.CreateResultsFrom(_dataRepository);
+      }
+
+      [Observation]
+      public void should_not_crash()
+      {
+         _simulationResults.ShouldNotBeNull();
+      }
+
+      [Observation]
+      public void should_create_results_with_default_individual()
+      {
+         _simulationResults.Count.ShouldBeEqualTo(1);
+         _simulationResults.First().IndividualId.ShouldBeEqualTo(0);
+      }
+
+      [Observation]
+      public void should_create_quantity_values_with_empty_path()
+      {
+         var firstValue = _simulationResults.First().AllValues.First();
+         firstValue.QuantityPath.ShouldBeEqualTo(string.Empty);
+      }
+
+      [Observation]
+      public void should_preserve_values()
+      {
+         var firstValue = _simulationResults.First().AllValues.First();
+         firstValue.Values.ShouldOnlyContain(10f, 20f, 30f);
+      }
+   }
 }
