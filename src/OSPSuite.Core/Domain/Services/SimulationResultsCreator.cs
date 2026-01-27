@@ -56,7 +56,7 @@ namespace OSPSuite.Core.Domain.Services
          if (path.Count == 0)
             return string.Empty;
 
-         if (path.Last() == index.ConvertedTo<string>())
+         if (path.Count > 0 && path.Last() == index.ConvertedTo<string>())
             path.RemoveAt(path.Count - 1);
 
          //remove simulation name
@@ -92,7 +92,7 @@ namespace OSPSuite.Core.Domain.Services
          {
             ColumnId = dataColumn?.Id ?? string.Empty,
             QuantityPath = quantityPath ?? string.Empty,
-            Values = dataColumn?.Values?.ToArray() ?? new float[0],
+            Values = dataColumn?.Values?.ToArray() ?? System.Array.Empty<float>(),
             Sensitivities = parameters.ToDictionary(p => p, p => simModel?.SensitivityValuesFor(quantityPath, p))
          };
       }
