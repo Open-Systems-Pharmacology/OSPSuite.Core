@@ -44,7 +44,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
             return;
 
          if (Dimension != null && !Equals(parameterSelection.Dimension, Dimension))
-            throw new DimensionMismatchException(new[] {parameterSelection.Dimension, Dimension});
+            throw new DimensionMismatchException(new[] { parameterSelection.Dimension, Dimension });
 
          _allLinkedParameters.Add(parameterSelection);
       }
@@ -122,10 +122,23 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
       public double OptimizedParameterValueFor(double optimalValue, ParameterSelection linkedParameter)
       {
-         if (UseAsFactor)
-            return optimalValue * linkedParameter.Parameter.Value;
+         if (!UseAsFactor) 
+            return optimalValue;
+         
+         if (linkedParameter.InitialValue.HasValue)
+            return optimalValue * linkedParameter.InitialValue.Value;
 
-         return optimalValue;
+         // Fall back to the old method if the PI was last run before this feature
+         return optimalValue * linkedParameter.Parameter.Value;
+      }
+
+      public void CaptureLinkedParameterValues()
+      {
+         // the initial value is only needed if the identification parameter is used as a factor
+         if (!UseAsFactor)
+            return;
+
+         _allLinkedParameters.Each(x => x.InitialValue = x.Parameter.Value);
       }
    }
 }

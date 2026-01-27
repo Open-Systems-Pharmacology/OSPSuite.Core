@@ -84,6 +84,8 @@ namespace OSPSuite.Core.Domain
             _allValueOriginCommands.Add(command);
             return command;
          });
+
+         _parameterIdentification.CaptureIdentificationParameterInitialValues();
       }
    }
 
