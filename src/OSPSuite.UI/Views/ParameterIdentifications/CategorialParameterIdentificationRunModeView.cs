@@ -107,7 +107,7 @@ namespace OSPSuite.UI.Views.ParameterIdentifications
          pivotGridControl.DataSource = categorialRunModeDTO.CalculationMethodSelectionTable;
          displayCalculationMethodConfiguration(categorialRunModeDTO.ShouldShowSelection);
          _categorialRunModeScreenBinder.BindToSource(categorialRunModeDTO);
-         if(layoutItemPivotGrid.Visibility != LayoutVisibility.Never)
+         if (layoutItemPivotGrid.Visibility != LayoutVisibility.Never)
             pivotGridControl.MinimumSize = new Size(pivotGridControl.MinimumSize.Width, pivotGridControl.OptimalHeight);
       }
 
