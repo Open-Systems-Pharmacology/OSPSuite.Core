@@ -718,7 +718,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
             return null;
 
          var match = chart.Curves.Where(c => c.yData.IsCalculation())
-            .FirstOrDefault(c => c.yData.BottomCompartment?.Equals(compartment, StringComparison.CurrentCultureIgnoreCase) == true);
+            .FirstOrDefault(c => c.yData.BottomCompartment?.Equals(compartment, StringComparison.OrdinalIgnoreCase) == true);
 
          return match?.Color;
       }
