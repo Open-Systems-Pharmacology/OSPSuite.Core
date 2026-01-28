@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
@@ -424,7 +425,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
             else
                Chart.RemoveCurvesForColumn(column);
          });
-         
       }
 
       public void ApplyAllColumnSettings() => _presentersWithColumnSettings.Each(x => x.ApplyAllColumnSettings());
@@ -680,11 +680,19 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          var (exists, curve) = createAndConfigureCurve(dataColumn);
 
-         Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns, isLinkedDataToSimulation);
-
-
          if (exists)
+         {
+            // An existing curve that is linked to a simulation curve might need a color update to match the simulation curve
+            if (isLinkedDataToSimulation)
+               updateCurveColorForLinkedData(curve);
             return curve;
+         }
+
+         Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns);
+
+         // override new curve coloring when the curve is linked to a simulation curve
+         if (isLinkedDataToSimulation)
+            updateCurveColorForLinkedData(curve);
 
          if (defaultCurveOptions != null)
             curve.CurveOptions.UpdateFrom(defaultCurveOptions);
@@ -692,7 +700,29 @@ namespace OSPSuite.Presentation.Presenters.Charts
          Chart.AddCurve(curve);
          return curve;
       }
-      
+
+      private void updateCurveColorForLinkedData(Curve curve)
+      {
+         var matchedColor = colorForLinkedCurve(Chart, curve);
+         if (matchedColor.HasValue)
+         {
+            curve.Color = matchedColor.Value;
+         }
+      }
+
+      private static Color? colorForLinkedCurve(CurveChart chart, Curve newCurve)
+      {
+         var compartment = newCurve.yData.BottomCompartment;
+
+         if (string.IsNullOrEmpty(compartment))
+            return null;
+
+         var match = chart.Curves.Where(c => c.yData.IsCalculation())
+            .FirstOrDefault(c => c.yData.BottomCompartment?.Equals(compartment, StringComparison.CurrentCultureIgnoreCase) == true);
+
+         return match?.Color;
+      }
+
       private (bool exists, Curve curve) createAndConfigureCurve(DataColumn dataColumn)
       {
          var curve = Chart.FindCurveWithSameData(dataColumn.BaseGrid, dataColumn);
