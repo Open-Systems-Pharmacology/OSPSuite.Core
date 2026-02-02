@@ -3,18 +3,9 @@ using OSPSuite.Core.Domain.Builder;
 
 namespace OSPSuite.Core.Domain
 {
-   public class CreationResult
+   public class WithValidationResult
    {
-      public virtual IModel Model { get; }
-      public SimulationBuilder SimulationBuilder { get; }
-      public virtual ValidationResult ValidationResult { get; private set; }
-
-      public CreationResult(IModel model, SimulationBuilder simulationBuilder)
-      {
-         Model = model;
-         SimulationBuilder = simulationBuilder;
-         ValidationResult = new ValidationResult();
-      }
+      public virtual ValidationResult ValidationResult { get; private set; } = new ValidationResult();
 
       public virtual ValidationState State => ValidationResult.ValidationState;
 
@@ -24,11 +15,28 @@ namespace OSPSuite.Core.Domain
       {
          ValidationResult = new ValidationResult(validationResult.Messages.Union(ValidationResult.Messages));
       }
+   }
+
+   public class CreationResult : WithValidationResult
+   {
+      public virtual IModel Model { get; }
+      public SimulationBuilder SimulationBuilder { get; }
+
+      public CreationResult(IModel model, SimulationBuilder simulationBuilder)
+      {
+         Model = model;
+         SimulationBuilder = simulationBuilder;
+      }
 
       public void Deconstruct(out IModel model, out ValidationResult validationResult)
       {
          model = Model;
          validationResult = ValidationResult;
       }
+   }
+
+   public class RunValidationResult : WithValidationResult
+   {
+
    }
 }

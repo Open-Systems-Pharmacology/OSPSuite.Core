@@ -16,5 +16,10 @@
       /// Number of individuals per bin
       /// </summary>
       int NumberOfIndividualsPerBin { get; set; }
+
+      /// <summary>
+      /// Generate warnings when constructing or running a simulation with non-finite parameter values (NaN, +/- Infinity)
+      /// </summary>
+      bool WarnForNonFiniteQuantities { get; set; }
    }
 }
