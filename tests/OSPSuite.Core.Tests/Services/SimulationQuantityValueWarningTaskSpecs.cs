@@ -19,6 +19,14 @@ internal abstract class concern_for_SimulationQuantityWarningTask : ContextSpeci
    protected IBuildingBlock _buildingBlock;
    private IObjectTypeResolver _objectTypeResolver;
 
+   protected const string NAN_AMOUNT_ID = "nanAmount";
+   protected const string NAN_AMOUNT_NAME = "nan amount";
+   protected const string AMOUNT_BUILDER_NAME = "my amount";
+   protected const string NAN_PARAMETER_ID = "nanParameter";
+   protected const string NAN_PARAMETER_NAME = "nan parameter";
+   protected const string PARAMETER_BUILDER_ID = "parameter";
+   protected const string PARAMETER_BUILDER_NAME = "my parameter";
+
    protected class CoreUserSettings : ICoreUserSettings
    {
       public int MaximumNumberOfCoresToUse { get; set; }
@@ -85,12 +93,12 @@ internal class creating_warnings_during_simulation_run_for_non_finite_molecule_a
 
    protected override IQuantity NewSimulationQuantity()
    {
-      return new MoleculeAmount().WithValue(double.NaN).WithId("nanAmount").WithName("nan amount");
+      return new MoleculeAmount().WithValue(double.NaN).WithId(NAN_AMOUNT_ID).WithName(NAN_AMOUNT_NAME);
    }
 
    protected override IQuantity NewBuilder()
    {
-      return new MoleculeAmount().WithId("nanAmount").WithName("my amount");
+      return new MoleculeAmount().WithId(NAN_AMOUNT_ID).WithName(AMOUNT_BUILDER_NAME);
    }
 
    [Observation]
@@ -118,12 +126,12 @@ internal class creating_warnings_during_simulation_run_for_non_finite_molecule_a
 
    protected override IQuantity NewSimulationQuantity()
    {
-      return new MoleculeAmount().WithValue(double.NaN).WithId("nanAmount").WithName("nan amount");
+      return new MoleculeAmount().WithValue(double.NaN).WithId(NAN_AMOUNT_ID).WithName(NAN_AMOUNT_NAME);
    }
 
    protected override IQuantity NewBuilder()
    {
-      return new MoleculeAmount().WithId("nanAmount").WithName("my amount");
+      return new MoleculeAmount().WithId(NAN_AMOUNT_ID).WithName(AMOUNT_BUILDER_NAME);
    }
 
    [Observation]
@@ -144,12 +152,12 @@ internal class creating_warnings_during_simulation_creation_for_non_finite_molec
 
    protected override IQuantity NewSimulationQuantity()
    {
-      return new MoleculeAmount().WithValue(double.NaN).WithId("nanAmount").WithName("nan amount");
+      return new MoleculeAmount().WithValue(double.NaN).WithId(NAN_AMOUNT_ID).WithName(NAN_AMOUNT_NAME);
    }
 
    protected override IQuantity NewBuilder()
    {
-      return new MoleculeAmount().WithId("nanAmount").WithName("my amount");
+      return new MoleculeAmount().WithId(NAN_AMOUNT_ID).WithName(AMOUNT_BUILDER_NAME);
    }
 
    [Observation]
@@ -170,12 +178,12 @@ internal class creating_warnings_during_simulation_creation_for_non_finite_molec
 
    protected override IQuantity NewSimulationQuantity()
    {
-      return new MoleculeAmount().WithValue(double.NegativeInfinity).WithId("nanAmount").WithName("nan amount");
+      return new MoleculeAmount().WithValue(double.NegativeInfinity).WithId(NAN_AMOUNT_ID).WithName(NAN_AMOUNT_NAME);
    }
 
    protected override IQuantity NewBuilder()
    {
-      return new MoleculeAmount().WithId("nanAmount").WithName("my amount");
+      return new MoleculeAmount().WithId(NAN_AMOUNT_ID).WithName(AMOUNT_BUILDER_NAME);
    }
 
    [Observation]
@@ -204,14 +212,13 @@ internal class creating_warnings_during_simulation_run_for_non_finite_parameters
 
    protected override IQuantity NewSimulationQuantity()
    {
-      return new Parameter().WithValue(double.NaN).WithId("nanParameter").WithName("nan parameter");
+      return new Parameter().WithValue(double.NaN).WithId(NAN_PARAMETER_ID).WithName(NAN_PARAMETER_NAME);
    }
 
    protected override IQuantity NewBuilder()
    {
-      return new Parameter().WithId("parameter").WithName("my parameter");
+      return new Parameter().WithId(PARAMETER_BUILDER_ID).WithName(PARAMETER_BUILDER_NAME);
    }
-
 
    [Observation]
    public void should_add_a_warning_to_the_creation_result()
@@ -238,12 +245,12 @@ internal class creating_warnings_during_simulation_run_for_non_finite_parameters
 
    protected override IQuantity NewSimulationQuantity()
    {
-      return new Parameter().WithValue(double.NaN).WithId("nanParameter").WithName("nan parameter");
+      return new Parameter().WithValue(double.NaN).WithId(NAN_PARAMETER_ID).WithName(NAN_PARAMETER_NAME);
    }
 
    protected override IQuantity NewBuilder()
    {
-      return new Parameter().WithId("parameter").WithName("my parameter");
+      return new Parameter().WithId(PARAMETER_BUILDER_ID).WithName(PARAMETER_BUILDER_NAME);
    }
 
    [Observation]
@@ -264,12 +271,12 @@ internal class creating_warnings_during_simulation_creation_for_non_finite_param
 
    protected override IQuantity NewSimulationQuantity()
    {
-      return new Parameter().WithValue(double.NaN).WithId("nanParameter").WithName("nan parameter");
+      return new Parameter().WithValue(double.NaN).WithId(NAN_PARAMETER_ID).WithName(NAN_PARAMETER_NAME);
    }
 
    protected override IQuantity NewBuilder()
    {
-      return new Parameter().WithId("parameter").WithName("my parameter");
+      return new Parameter().WithId(PARAMETER_BUILDER_ID).WithName(PARAMETER_BUILDER_NAME);
    }
 
    [Observation]
@@ -290,12 +297,12 @@ internal class creating_warnings_during_simulation_creation_for_non_finite_param
 
    protected override IQuantity NewSimulationQuantity()
    {
-      return new Parameter().WithValue(double.NaN).WithId("nanParameter").WithName("nan parameter");
+      return new Parameter().WithValue(double.NaN).WithId(NAN_PARAMETER_ID).WithName(NAN_PARAMETER_NAME);
    }
 
    protected override IQuantity NewBuilder()
    {
-      return new Parameter().WithId("parameter").WithName("my parameter");
+      return new Parameter().WithId(PARAMETER_BUILDER_ID).WithName(PARAMETER_BUILDER_NAME);
    }
 
    [Observation]
@@ -312,8 +319,8 @@ internal class When_creating_warnings_for_optimized_and_removed_parameters_and_t
    protected override void Context()
    {
       base.Context();
-      var parameter = new Parameter().WithId("parameter");
-      var nanParameter = parameter.WithValue(double.NaN).WithId("nanParameter");
+      var parameter = new Parameter().WithId(PARAMETER_BUILDER_ID);
+      var nanParameter = parameter.WithValue(double.NaN).WithId(NAN_PARAMETER_ID);
       _optimizedParameters = new List<IParameter> { nanParameter };
       _userSettings.WarnForNonFiniteQuantities = true;
       _model.Root.AddChildren(_optimizedParameters);
@@ -341,8 +348,8 @@ internal class When_creating_warnings_for_optimized_and_removed_parameters_and_t
    protected override void Context()
    {
       base.Context();
-      var parameter = new Parameter().WithId("parameter");
-      var nanParameter = parameter.WithValue(double.NaN).WithId("nanParameter");
+      var parameter = new Parameter().WithId(PARAMETER_BUILDER_ID);
+      var nanParameter = parameter.WithValue(double.NaN).WithId(NAN_PARAMETER_ID);
       _optimizedParameters = new List<IParameter> { nanParameter };
       _userSettings.WarnForNonFiniteQuantities = false;
       _model.Root.AddChildren(_optimizedParameters);
