@@ -94,7 +94,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_not_update_paths_for_absolute_paths_resolving_local_parameters()
+      public void should_not_update_paths_for_absolute_paths_resolving_global_parameters()
       {
          _formulaUsablePathD.ShouldOnlyContainInOrder(_processBuilderName, "D");
       }
