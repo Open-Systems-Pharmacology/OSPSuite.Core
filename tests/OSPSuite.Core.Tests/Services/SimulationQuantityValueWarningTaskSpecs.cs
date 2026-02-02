@@ -322,7 +322,6 @@ internal class When_creating_warnings_for_optimized_and_removed_parameters_and_t
       var parameter = new Parameter().WithId(PARAMETER_BUILDER_ID);
       var nanParameter = parameter.WithValue(double.NaN).WithId(NAN_PARAMETER_ID);
       _optimizedParameters = new List<IParameter> { nanParameter };
-      _userSettings.WarnForNonFiniteQuantities = true;
       _model.Root.AddChildren(_optimizedParameters);
 
       _simulationBuilder.AddToBuilderSource(parameter, _buildingBlock);
@@ -338,34 +337,5 @@ internal class When_creating_warnings_for_optimized_and_removed_parameters_and_t
    public void should_add_a_warning_to_the_creation_result()
    {
       _creationResult.ValidationResult.Messages.Count().ShouldBeEqualTo(1);
-   }
-}
-
-internal class When_creating_warnings_for_optimized_and_removed_parameters_and_the_user_setting_disables_warnings : concern_for_SimulationQuantityWarningTask
-{
-   private IReadOnlyList<IParameter> _optimizedParameters;
-
-   protected override void Context()
-   {
-      base.Context();
-      var parameter = new Parameter().WithId(PARAMETER_BUILDER_ID);
-      var nanParameter = parameter.WithValue(double.NaN).WithId(NAN_PARAMETER_ID);
-      _optimizedParameters = new List<IParameter> { nanParameter };
-      _userSettings.WarnForNonFiniteQuantities = false;
-      _model.Root.AddChildren(_optimizedParameters);
-
-      _simulationBuilder.AddToBuilderSource(parameter, _buildingBlock);
-      _simulationBuilder.AddSimulationEntitySource(nanParameter.Id, new SimulationEntitySource(_simulationBuilder.BuilderSourceFor(parameter).BuildingBlock, parameter.EntityPath(), parameter));
-   }
-
-   protected override void Because()
-   {
-      sut.WarnForOptimizedLocalMoleculeParameters(_optimizedParameters, _creationResult);
-   }
-
-   [Observation]
-   public void should_not_add_a_warning_to_the_creation_result()
-   {
-      _creationResult.ValidationResult.Messages.Count().ShouldBeEqualTo(0);
    }
 }

@@ -43,9 +43,6 @@ namespace OSPSuite.Core.Domain.Services
 
       public void WarnForOptimizedLocalMoleculeParameters(IReadOnlyList<IParameter> optimizedParameters, CreationResult creationResult)
       {
-         if (!_userSettings.WarnForNonFiniteQuantities)
-            return;
-
          creationResult.Add(new ValidationResult(optimizedParameters.Select(x =>
          {
             var (builder, buildingBlock) = builderAndBuildingBlockFor(x, creationResult.SimulationBuilder);
@@ -65,10 +62,8 @@ namespace OSPSuite.Core.Domain.Services
          if (!_userSettings.WarnForNonFiniteQuantities)
             return;
 
-         creationResult.Add(new ValidationResult(allNanQuantities<IParameter>(model).Select(x => createValidationMessageForNan(x, simulationBuilder))));
-         creationResult.Add(new ValidationResult(allNanQuantities<MoleculeAmount>(model).Select(x => createValidationMessageForNan(x, simulationBuilder))));
-         creationResult.Add(new ValidationResult(allInfiniteQuantities<IParameter>(model).Select(x => createValidationMessageForInf(x, simulationBuilder))));
-         creationResult.Add(new ValidationResult(allInfiniteQuantities<MoleculeAmount>(model).Select(x => createValidationMessageForInf(x, simulationBuilder))));
+         creationResult.Add(new ValidationResult(allNanQuantities<IQuantity>(model).Select(x => createValidationMessageForNan(x, simulationBuilder))));
+         creationResult.Add(new ValidationResult(allInfiniteQuantities<IQuantity>(model).Select(x => createValidationMessageForInf(x, simulationBuilder))));
       }
 
       public void WarnForNonFiniteQuantities(IModel model, RunValidationResult runValidationResult) => warnForNonFiniteQuantities(model, runValidationResult);
