@@ -11,7 +11,6 @@ namespace OSPSuite.Core.Domain.Services
       /// <summary>
       ///    Adds warnings during simulation creation for all <paramref name="optimizedParameters" /> to the
       ///    <paramref name="creationResult" />
-      ///    if the <see cref="ICoreUserSettings" /> indicate enable warnings for non-finite parameters
       /// </summary>
       void WarnForOptimizedLocalMoleculeParameters(IReadOnlyList<IParameter> optimizedParameters, CreationResult creationResult);
 
