@@ -90,7 +90,7 @@ public class When_running_population : concern_for_PopulationRunner
 
 **Style:**
 - 3 spaces indentation (no tabs)
-- Always use braces for loops/conditionals
+- Always use braces for loops/conditionals, except when only a single line is nested
 - No Hungarian notation
 - English comments only
 - Use constants for magic numbers/strings
