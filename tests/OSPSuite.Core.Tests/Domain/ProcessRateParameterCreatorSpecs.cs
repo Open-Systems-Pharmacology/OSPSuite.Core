@@ -34,6 +34,7 @@ namespace OSPSuite.Core.Domain
       private FormulaUsablePath _formulaUsablePathBW;
       private SimulationBuilder _simulationBuilder;
       private FormulaUsablePath _formulaUsablePathC;
+      private FormulaUsablePath _formulaUsablePathD;
       private readonly string _processBuilderName = "Reaction";
 
       protected override void Context()
@@ -52,7 +53,9 @@ namespace OSPSuite.Core.Domain
          _formulaUsablePathBW = new FormulaUsablePath("Organism", "BW").WithAlias("BW");
          _kinetic.AddObjectPath(_formulaUsablePathBW);
          _formulaUsablePathC = new FormulaUsablePath(_processBuilderName, "C").WithAlias("C");
+         _formulaUsablePathD = new FormulaUsablePath(_processBuilderName, "D").WithAlias("D");
          _kinetic.AddObjectPath(_formulaUsablePathC);
+         _kinetic.AddObjectPath(_formulaUsablePathD);
          _processBuilder.CreateProcessRateParameter = true;
          _processBuilder.ProcessRateParameterPersistable = true;
          A.CallTo(() => _formulaMapper.MapFrom(_kinetic, _simulationBuilder)).Returns(_kinetic);
@@ -60,6 +63,11 @@ namespace OSPSuite.Core.Domain
          _processBuilder.Formula = _kinetic;
          _processRateParameter = new Parameter();
          A.CallTo(() => _objectBaseFactory.Create<IParameter>()).Returns(_processRateParameter);
+
+         var localParameter = new Parameter { BuildMode = ParameterBuildMode.Local }.WithName("C");
+         var globalParameter = new Parameter { BuildMode = ParameterBuildMode.Global }.WithName("D");
+         _processBuilder.AddParameter(localParameter);
+         _processBuilder.AddParameter(globalParameter);
       }
 
       protected override void Because()
@@ -86,11 +94,22 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
+      public void should_not_update_paths_for_absolute_paths_resolving_global_parameters()
+      {
+         _formulaUsablePathD.ShouldOnlyContainInOrder(_processBuilderName, "D");
+      }
+
+      [Observation]
+      public void should_update_paths_for_absolute_paths_resolving_local_parameters()
+      {
+         _formulaUsablePathC.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER, "C");
+      }
+
+      [Observation]
       public void should_update_relative_paths()
       {
          _formulaUsablePathA.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER, ObjectPath.PARENT_CONTAINER, "A");
          _formulaUsablePathB.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER, "B");
-         _formulaUsablePathC.ShouldOnlyContainInOrder(ObjectPath.PARENT_CONTAINER, "C");
       }
 
       [Observation]
