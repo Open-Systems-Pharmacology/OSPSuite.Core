@@ -47,8 +47,7 @@ internal abstract class concern_for_SimulationQuantityWarningTask : ContextSpeci
 
       _buildingBlock = new ReactionBuildingBlock();
 
-      A.CallTo(() => _objectTypeResolver.TypeFor<IParameter>()).Returns("Parameter");
-      A.CallTo(() => _objectTypeResolver.TypeFor<MoleculeAmount>()).Returns("MoleculeAmount");
+      A.CallTo(() => _objectTypeResolver.TypeFor(A<IQuantity>._)).ReturnsLazily(x => x.Arguments[0].GetType().ToString());
    }
 }
 

@@ -72,16 +72,16 @@ namespace OSPSuite.Core.Domain.Services
 
       private static IEnumerable<T> allNanQuantities<T>(IModel model) where T : class, IQuantity => model.Root.GetAllChildren<T>().Where(x => double.IsNaN(x.Value));
 
-      private ValidationMessage createValidationMessageForNan<T>(T quantity, SimulationBuilder simulationBuilder) where T : IQuantity
+      private ValidationMessage createValidationMessageForNan<T>(T quantity, SimulationBuilder simulationBuilder) where T : class, IQuantity
       {
          var (builder, buildingBlock) = builderAndBuildingBlockFor(quantity, simulationBuilder);
-         return new ValidationMessage(NotificationType.Warning, Warning.QuantityIsNanAtTimeZero(quantity.EntityPath(), _objectTypeResolver.TypeFor<T>().SplitToUpperCase()), builder, buildingBlock);
+         return new ValidationMessage(NotificationType.Warning, Warning.QuantityIsNanAtTimeZero(quantity.EntityPath(), _objectTypeResolver.TypeFor(quantity).SplitToUpperCase()), builder, buildingBlock);
       }
 
-      private ValidationMessage createValidationMessageForInf<T>(T quantity, SimulationBuilder simulationBuilder) where T : IQuantity
+      private ValidationMessage createValidationMessageForInf<T>(T quantity, SimulationBuilder simulationBuilder) where T : class, IQuantity
       {
          var (builder, buildingBlock) = builderAndBuildingBlockFor(quantity, simulationBuilder);
-         return new ValidationMessage(NotificationType.Warning, Warning.QuantityIsInfinityAtTimeZero(quantity.EntityPath(), _objectTypeResolver.TypeFor<T>().SplitToUpperCase()), builder, buildingBlock);
+         return new ValidationMessage(NotificationType.Warning, Warning.QuantityIsInfinityAtTimeZero(quantity.EntityPath(), _objectTypeResolver.TypeFor(quantity).SplitToUpperCase()), builder, buildingBlock);
       }
 
       private (IEntity builder, IBuildingBlock buildingBlock) builderAndBuildingBlockFor(IQuantity quantity, SimulationBuilder simulationBuilder)
