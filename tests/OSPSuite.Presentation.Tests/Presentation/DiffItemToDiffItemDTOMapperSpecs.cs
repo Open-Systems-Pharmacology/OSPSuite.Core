@@ -383,4 +383,34 @@ namespace OSPSuite.Presentation.Presentation
          _dto.PathElements.ShouldBeEmpty();
       }
    }
+
+   public class When_mapping_a_property_diff_item_with_a_building_block_ancestor_should_use_its_module_qualified_display_name : concern_for_DiffItemToDiffItemDTOMapper
+   {
+      private MoleculeBuildingBlock _bb;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         var module = new Module().WithName("ModA");
+         _bb = new MoleculeBuildingBlock().WithName("BB1");
+         _bb.Module = module;
+
+         _diffItem = new PropertyValueDiffItem
+         {
+            Object1 = new Parameter().WithName("P1"),
+            Object2 = new Parameter().WithName("P1"),
+            FormattedValue1 = "x",
+            FormattedValue2 = "y",
+            CommonAncestor = _bb,
+            PropertyName = "Value"
+         };
+      }
+
+      [Observation]
+      public void should_use_the_ancestor_building_block_display_name_including_module()
+      {
+         _dto.ObjectName.ShouldBeEqualTo("ModA - BB1");
+      }
+   }
 }

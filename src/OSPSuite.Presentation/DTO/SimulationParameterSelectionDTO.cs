@@ -7,6 +7,7 @@ namespace OSPSuite.Presentation.DTO
       public bool IsFavorite { get; set; }
       public IParameterDTO ValueParameter { get; set; }
       public double Value => ValueParameter.Value;
+      public bool UserDefined { get; set; }
 
       public SimulationParameterSelectionDTO(ISimulation simulation, QuantitySelectionDTO quantitySelectionDTO, string displayString) : base(simulation, quantitySelectionDTO, displayString)
       {

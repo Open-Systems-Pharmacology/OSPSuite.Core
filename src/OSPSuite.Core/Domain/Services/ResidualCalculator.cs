@@ -111,7 +111,7 @@ namespace OSPSuite.Core.Domain.Services
 
             var simulatedValue = simulationColumn.GetValue(observedTime);
 
-            outputResiduals.Add(simulatedValue.IsValid() ?
+            outputResiduals.Add(simulatedValue.IsFinite() ?
                new Residual(observedTime, weight * residualCalculatorFunc(simulatedValue, observedValue, lloq), weight) : 
                new Residual(observedTime, residualValueForInvalidSimulationValue(simulatedValue), weight));
          }
@@ -121,7 +121,7 @@ namespace OSPSuite.Core.Domain.Services
 
       private static bool observationShouldBeIgnored(float observedValue)
       {
-         return !observedValue.IsValid();
+         return !observedValue.IsFinite();
       }
 
       private static double residualValueForInvalidSimulationValue(float simulatedValue)

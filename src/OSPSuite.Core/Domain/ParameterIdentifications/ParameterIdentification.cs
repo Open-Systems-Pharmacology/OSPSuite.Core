@@ -246,5 +246,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
          base.AcceptVisitor(visitor);
          _allIdentificationParameters.ToList().Each(x => x.AcceptVisitor(visitor));
       }
+
+      public void CaptureIdentificationParameterInitialValues() => AllIdentificationParameters.Each(x => x.CaptureLinkedParameterValues());
    }
 }

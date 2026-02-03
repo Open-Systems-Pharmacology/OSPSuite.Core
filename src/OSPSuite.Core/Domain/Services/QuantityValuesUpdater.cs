@@ -179,7 +179,7 @@ namespace OSPSuite.Core.Domain.Services
          }
 
          //If the value is defined, this will be used instead of the formula (even if set previously)
-         if (!parameterValue.Value.IsValid())
+         if (!parameterValue.Value.IsFinite())
             return;
 
          var actualParameterValue = parameterValue.Value.Value;

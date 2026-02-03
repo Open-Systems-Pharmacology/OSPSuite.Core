@@ -18,6 +18,10 @@ namespace OSPSuite.Core.Serialization.Xml
 
    public class ParameterSelectionXmlSerializer : SimulationQuantitySelectionXmlSerializer<ParameterSelection>
    {
-      
+      public override void PerformMapping()
+      {
+         base.PerformMapping();
+         Map(x => x.InitialValue);
+      }
    }
 }

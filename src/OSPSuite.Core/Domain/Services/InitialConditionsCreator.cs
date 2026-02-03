@@ -50,7 +50,7 @@ namespace OSPSuite.Core.Domain.Services
       InitialCondition CreateInitialCondition(ObjectPath moleculeAmountPath, MoleculeAmount moleculeAmount);
    }
 
-   internal class InitialConditionsCreator : IInitialConditionsCreator
+   public class InitialConditionsCreator : IInitialConditionsCreator
    {
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IIdGenerator _idGenerator;
@@ -141,6 +141,7 @@ namespace OSPSuite.Core.Domain.Services
             Dimension = dimension,
             DisplayUnit = displayUnit ?? dimension.DefaultUnit,
             NegativeValuesAllowed = false,
+            Value = 0
          };
 
          initialCondition.ValueOrigin.UpdateAllFrom(valueOrigin);

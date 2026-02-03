@@ -46,6 +46,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          _eventPublisher.PublishEvent(new ParameterIdentificationStartedEvent(parameterIdentification));
 
          var results = new ConcurrentBag<ParameterIdentificationRunResult>();
+         _parameterIdentification.CaptureIdentificationParameterInitialValues();
          try
          {
             _parameterIdentificationRuns.AddRange(await createParameterIdentificationRuns(token));

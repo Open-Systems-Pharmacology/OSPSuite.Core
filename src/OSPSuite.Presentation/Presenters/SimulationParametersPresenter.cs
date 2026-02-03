@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters
 {
@@ -20,9 +20,9 @@ namespace OSPSuite.Presentation.Presenters
       /// <summary>
       ///    Indicates that the way the parameters are displayed has changed
       /// </summary>
-      ParameterGroupingMode ParameterGroupingMode { get; set; }
+      ParameterGroupingModeForParameterAnalyzable ParameterGroupingMode { get; set; }
 
-      IEnumerable<ParameterGroupingMode> AllGroupingModes { get; }
+      IEnumerable<ParameterGroupingModeForParameterAnalyzable> AllGroupingModes { get; }
 
       void EditParameterAnalysable(IParameterAnalysable parameterAnalysable);
    }
@@ -36,7 +36,7 @@ namespace OSPSuite.Presentation.Presenters
       private IParameterAnalysable _parameterAnalysable;
 
       private readonly List<SimulationParameterSelectionDTO> _allParameterDTOs = new List<SimulationParameterSelectionDTO>();
-      private ParameterGroupingMode _parameterGroupingMode;
+      private ParameterGroupingModeForParameterAnalyzable _parameterGroupingMode;
 
       public SimulationParametersPresenter(ISimulationParametersView view, IEntitiesInSimulationRetriever entitiesInSimulationRetriever,
          IQuantityToSimulationParameterSelectionDTOMapper simulationParameterSelectionDTOMapper, IGroupRepository groupRepository,
@@ -59,7 +59,7 @@ namespace OSPSuite.Presentation.Presenters
          _view.GroupBy(PathElementId.Name, groupIndex: 1);
       }
 
-      public ParameterGroupingMode ParameterGroupingMode
+      public ParameterGroupingModeForParameterAnalyzable ParameterGroupingMode
       {
          get => _parameterGroupingMode;
          set
@@ -77,12 +77,12 @@ namespace OSPSuite.Presentation.Presenters
          _view.Rebind();
       }
 
-      public IEnumerable<ParameterGroupingMode> AllGroupingModes
+      public IEnumerable<ParameterGroupingModeForParameterAnalyzable> AllGroupingModes
       {
          get
          {
-            yield return ParameterGroupingModes.Simple;
-            yield return ParameterGroupingModes.Advanced;
+            yield return ParameterGroupingModesForParameterAnalyzable.Simple;
+            yield return ParameterGroupingModesForParameterAnalyzable.Advanced;
          }
       }
 
@@ -103,7 +103,7 @@ namespace OSPSuite.Presentation.Presenters
          var parameterIsAdvanced = _groupRepository.GroupByName(parameter.GroupName).IsAdvanced;
          var canUseParameter = _parameterSelector.CanUseParameter(parameter);
 
-         if (_parameterGroupingMode == ParameterGroupingModes.Simple)
+         if (_parameterGroupingMode == ParameterGroupingModesForParameterAnalyzable.Simple)
             canUseParameter = canUseParameter && !parameterIsAdvanced;
 
          return canUseParameter;

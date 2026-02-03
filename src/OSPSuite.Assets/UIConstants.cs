@@ -1069,7 +1069,9 @@ namespace OSPSuite.Assets
 
          public static string SensitivityCalculationFailed(string parameterIdentificationName, IReadOnlyList<string> errorMessages, string duration = null)
          {
-            return string.IsNullOrEmpty(duration) ? $"Parameter identification '{parameterIdentificationName}' finished but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}" : $"Parameter identification '{parameterIdentificationName}' finished in {duration} but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}";
+            return string.IsNullOrEmpty(duration) ?
+               $"Parameter identification '{parameterIdentificationName}' finished but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}" :
+               $"Parameter identification '{parameterIdentificationName}' finished in {duration} but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}";
          }
 
          public static string LinkedParametersIn(string name)
@@ -1271,13 +1273,13 @@ namespace OSPSuite.Assets
          {
             var sb = new StringBuilder();
             sb.AppendLine();
-            
+
             failedPKParameterCalculations.Each(x =>
             {
                sb.Append(" - ");
                sb.AppendLine(x);
             });
-            
+
             return sb.ToString();
          }
 
@@ -1532,6 +1534,9 @@ namespace OSPSuite.Assets
       public static readonly string ImporterEmptyFile = "The file you are trying to load is empty.";
       public static readonly string SnapshotIsOutdated = "Snapshot is outdated and cannot be loaded for the following reason: ";
 
+      public static string CannotFindParentContainerWithPath(string parentPath, string containerName, string buildingBlockName, string moduleName) =>
+         $"Cannot find parent container '{parentPath}' defined as target of container '{containerName}' in building block '{buildingBlockName}' in module '{moduleName}'";
+
       public static string CannotFindSimulationParameterInSnapshot(string parameterPath, string simulationName, string project) =>
          $"Could not find {ObjectTypes.Parameter} with path '{parameterPath}' in {ObjectTypes.Simulation} '{simulationName}' defined in snapshot {project}.";
 
@@ -1539,9 +1544,6 @@ namespace OSPSuite.Assets
          $"Another {type} named '{name}' already exists in the project. Snapshot file is corrupted.";
 
       public static string SnapshotFileMismatch(string desiredType) => $"Snapshot file cannot be used to load a {desiredType.ToLowerInvariant()}.";
-
-      public static string CannotFindParentContainerWithPath(string parentPath, string containerName, string buildingBlockName, string moduleName) =>
-         $"Cannot find parent container '{parentPath}' defined as target of container '{containerName}' in building block '{buildingBlockName}' in module '{moduleName}'";
 
       public static string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
 
@@ -2279,6 +2281,10 @@ namespace OSPSuite.Assets
       }
 
       public static string ExpressionMoleculeNotFoundInSimulation(string moleculeName) => $"The molecule '{moleculeName}' is not part of the simulation structure";
+
+      public static string RemovedParameterDueToNanAtTimeZero(string pathForRemovedParameter) => $"The parameter '{pathForRemovedParameter}' was removed because it evaluates to NaN at time t=0";
+      public static string QuantityIsNanAtTimeZero(string pathForNanQuantity, string quantityType) => $"The {quantityType} with path '{pathForNanQuantity}' is NaN at time t=0";
+      public static string QuantityIsInfinityAtTimeZero(string pathForInfinityQuantity, string quantityType) => $"The {quantityType} with path '{pathForInfinityQuantity}' is infinite at time t=0";
    }
 
    public static class RibbonCategories
