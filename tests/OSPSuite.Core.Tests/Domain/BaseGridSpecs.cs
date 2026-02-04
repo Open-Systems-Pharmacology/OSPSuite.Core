@@ -79,7 +79,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void TestRightIndexOf()
+      public void TestIndexOfNextHighest()
       {
          sut.Values = new[] { -2.0F, 0.5F, 1.0F, 1.5F };
 
@@ -90,7 +90,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void TestLeftIndexOf()
+      public void TestIndexOfNextLowest()
       {
          sut.Values = new[] { -2.0F, 0.5F, 1.0F, 1.5F };
 
