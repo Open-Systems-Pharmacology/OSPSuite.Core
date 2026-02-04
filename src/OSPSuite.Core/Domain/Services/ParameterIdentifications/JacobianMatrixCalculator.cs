@@ -51,7 +51,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          var timeGrid = outputResult.BaseGrid;
 
          return from residual in runResult.AllResidualsFor(fullOutputPath).Where(x => x.Weight > 0)
-            let timeIndex = timeGrid.LeftIndexOf(Convert.ToSingle(residual.Time))
+            // We can use IndexOfNextLowest here since the calculation column will have monotonic increasing time values
+            let timeIndex = timeGrid.IndexOfNextLowest(Convert.ToSingle(residual.Time))
             let outputValue = outputResult[timeIndex]
             let derivativeValues = retrievePartialDerivativeFor(allIdentificationParameters, x => retrievePartialDerivativeForResiduals(x, outputMapping, simModelBatch, timeIndex, outputValue, residual.Weight))
             select new JacobianRow(fullOutputPath, residual.Time, derivativeValues);

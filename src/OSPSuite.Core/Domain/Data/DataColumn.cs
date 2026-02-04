@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Core.Domain.Data
@@ -218,10 +219,11 @@ namespace OSPSuite.Core.Domain.Data
 
          int index = BaseGrid.IndexOf(baseValue);
          if (index >= 0)
-            return Values[index];
+            return averageFor(index);
 
-         int leftIndex = BaseGrid.LeftIndexOf(baseValue);
-         int rightIndex = BaseGrid.RightIndexOf(baseValue);
+         // We can throw an exception here if the values are not monotonic?
+         int leftIndex = BaseGrid.IndexOfNextLowest(baseValue);
+         int rightIndex = BaseGrid.IndexOfNextHighest(baseValue);
 
          if (leftIndex < 0)
             return float.NaN;
@@ -232,9 +234,27 @@ namespace OSPSuite.Core.Domain.Data
          if (leftIndex == rightIndex)
             return float.NaN;
 
-         return Values[leftIndex] +
-                (Values[rightIndex] - Values[leftIndex]) * (baseValue - BaseGrid[leftIndex]) /
+         var averageLeft = averageFor(leftIndex);
+         return averageLeft +
+                (averageFor(rightIndex) - averageLeft) * (baseValue - BaseGrid[leftIndex]) /
                 (BaseGrid[rightIndex] - BaseGrid[leftIndex]);
+      }
+
+      private float averageFor(int index)
+      {
+         var baseGridAtIndex = BaseGrid[index];
+         var accumulator = 0f;
+         var count = 0;
+
+         BaseGrid.Values.Each((x, i) =>
+         {
+            if (x != baseGridAtIndex) 
+               return;
+            accumulator += Values[i];
+            count++;
+         });
+
+         return accumulator / count;
       }
 
       public override string ToString() => Name;

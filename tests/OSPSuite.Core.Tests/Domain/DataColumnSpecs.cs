@@ -18,20 +18,20 @@ namespace OSPSuite.Core.Domain
       protected override void Context()
       {
          base.Context();
-         _time = new Dimension(new BaseDimensionRepresentation {TimeExponent = 1}, "Time", "s");
+         _time = new Dimension(new BaseDimensionRepresentation { TimeExponent = 1 }, "Time", "s");
          _time.AddUnit("min", 60, 0);
          _time.AddUnit("h", 3600, 0);
 
-         _length = new Dimension(new BaseDimensionRepresentation {LengthExponent = 1}, "Length", "m");
+         _length = new Dimension(new BaseDimensionRepresentation { LengthExponent = 1 }, "Length", "m");
          _length.AddUnit("mm", 0.001, 0);
 
-         _mass = new Dimension(new BaseDimensionRepresentation {MassExponent = 1}, "Mass", "kg");
+         _mass = new Dimension(new BaseDimensionRepresentation { MassExponent = 1 }, "Mass", "kg");
          _mass.AddUnit("mg", 0.000001, 0.0);
 
          _dimensionless = new Dimension(new BaseDimensionRepresentation(), "Dimensionless", " ");
 
          _baseGrid = new BaseGrid("BaseGrid", _time);
-         _baseGrid.Values = new[] {-1.0F, 0.0F, 2.0F};
+         _baseGrid.Values = new[] { -1.0F, 0.0F, 2.0F, 0.0F };
          sut = new DataColumn("Colin", _length, _baseGrid);
       }
 
@@ -56,7 +56,8 @@ namespace OSPSuite.Core.Domain
          Assert.AreEqual(8F, sut[0]);
          Assert.AreEqual(5F, sut[1]);
          Assert.AreEqual(0F, sut[2]);
-         The.Action(() => v3 = sut[3]).ShouldThrowAn<ArgumentOutOfRangeException>();
+         Assert.AreEqual(0F, sut[3]);
+         The.Action(() => v3 = sut[4]).ShouldThrowAn<ArgumentOutOfRangeException>();
       }
 
       [Observation]
@@ -66,16 +67,17 @@ namespace OSPSuite.Core.Domain
          sut[0] = 8.0F;
          var values = sut.Values;
 
-         Assert.AreEqual(3, values.Count);
+         Assert.AreEqual(4, values.Count);
          Assert.AreEqual(8F, values[0]);
          Assert.AreEqual(5F, values[1]);
          Assert.AreEqual(0F, values[2]);
+         Assert.AreEqual(0F, values[3]);
       }
 
       [Observation]
       public void TestSetValues()
       {
-         sut.Values = new[] {8.0F, 0.0F, -5.0F};
+         sut.Values = new[] { 8.0F, 0.0F, -5.0F, 0.0F };
 
          Assert.AreEqual(8F, sut[0]);
          Assert.AreEqual(0F, sut[1]);
@@ -85,17 +87,25 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void TestSetValuesWithWrongLength()
       {
-         The.Action(() => sut.Values = new[] {8.0F, 0.0F}).ShouldThrowAn<ArgumentException>();
+         The.Action(() => sut.Values = new[] { 8.0F, 0.0F }).ShouldThrowAn<ArgumentException>();
       }
 
       [Observation]
       public void TestGetValue()
       {
-         sut.Values = new[] {4.0F, 2.0F, 3.0F};
+         // basegrid values are { -1.0F, 0.0F, 2.0F, 0.0F };
+         sut.Values = new[] { 4.0F, 2.0F, 3.0F, 4.0F };
 
-         Assert.AreEqual(2F, sut.GetValue(0F));
-         Assert.AreEqual(3F, sut.GetValue(-0.5F));
-         Assert.AreEqual(2.5F, sut.GetValue(1F));
+         // (Values[1] + Values[3]) / 2
+         Assert.AreEqual(3F, sut.GetValue(0F));
+
+         // (Values[0] + average of Values[1] and Values[3]) / 2
+         // = (4 + (2 + 4) / 2) / 2
+         Assert.AreEqual(3.5F, sut.GetValue(-0.5F));
+
+         // (average of Values[1] and Values[3] + Values[2]) / 2
+         // = ((2 + 4) / 2 + 3) / 2
+         Assert.AreEqual(3F, sut.GetValue(1F));
          Assert.AreEqual(4F, sut.GetValue(-1.0F));
          Assert.AreEqual(3F, sut.GetValue(2.0F));
          float.IsNaN(sut.GetValue(-1.1F)).ShouldBeTrue();
@@ -105,10 +115,10 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void TestAddRelatedColumn()
       {
-         sut.Values = new[] {8.0F, 0.0F, -5.0F};
+         sut.Values = new[] { 8.0F, 0.0F, -5.0F, 0.0F };
          var relatedColumn = new DataColumn("Regina", _dimensionless, _baseGrid);
          relatedColumn.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.GeometricStdDev, " ", "", 0);
-         relatedColumn.Values = new[] {0.1F, 0.2F, 0.1F};
+         relatedColumn.Values = new[] { 0.1F, 0.2F, 0.1F, 0.2F };
 
          sut.AddRelatedColumn(relatedColumn);
          Assert.AreEqual(relatedColumn, sut.GetRelatedColumn(AuxiliaryType.GeometricStdDev));
@@ -118,12 +128,12 @@ namespace OSPSuite.Core.Domain
       public void TestAddRelatedColumnWithWrongBaseGrid()
       {
          BaseGrid baseGrid2 = new BaseGrid("BaseGrid2", _time);
-         baseGrid2.Values = new[] {-1.0F, 0.0F, 3.0F};
+         baseGrid2.Values = new[] { -1.0F, 0.0F, 3.0F };
 
-         sut.Values = new[] {8.0F, 0.0F, -5.0F};
+         sut.Values = new[] { 8.0F, 0.0F, -5.0F, 0.0F };
          var relatedColumn = new DataColumn("Regina", _dimensionless, baseGrid2);
          relatedColumn.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.GeometricStdDev, " ", "", 0);
-         relatedColumn.Values = new[] {0.1F, 0.2F, 0.1F};
+         relatedColumn.Values = new[] { 0.1F, 0.2F, 0.1F };
 
          The.Action(() => sut.AddRelatedColumn(relatedColumn)).ShouldThrowAn<InvalidArgumentException>();
       }
@@ -131,10 +141,10 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void TestAddRelatedColumnArithmeticStdDevWithWrongDimension()
       {
-         sut.Values = new[] {8.0F, 0.0F, -5.0F};
+         sut.Values = new[] { 8.0F, 0.0F, -5.0F, 0.0F };
          var relatedColumn = new DataColumn("Regina", _dimensionless, _baseGrid);
          relatedColumn.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.ArithmeticStdDev, " ", "", 0);
-         relatedColumn.Values = new[] {0.1F, 0.2F, 0.1F};
+         relatedColumn.Values = new[] { 0.1F, 0.2F, 0.1F, 02F };
 
          The.Action(() => sut.AddRelatedColumn(relatedColumn)).ShouldThrowAn<InvalidArgumentException>();
       }
@@ -142,10 +152,10 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void TestAddRelatedColumnGeometricStdDevWithWrongDimension()
       {
-         sut.Values = new[] {8.0F, 0.0F, -5.0F};
+         sut.Values = new[] { 8.0F, 0.0F, -5.0F, 0.0F };
          var relatedColumn = new DataColumn("Regina", _length, _baseGrid);
          relatedColumn.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.GeometricStdDev, " ", "", 0);
-         relatedColumn.Values = new[] {0.1F, 0.2F, 0.1F};
+         relatedColumn.Values = new[] { 0.1F, 0.2F, 0.1F, 0.2F };
 
          The.Action(() => sut.AddRelatedColumn(relatedColumn)).ShouldThrowAn<InvalidArgumentException>();
       }
@@ -155,7 +165,7 @@ namespace OSPSuite.Core.Domain
       {
          const float constValue = 123.456F;
 
-         sut.Values = new[] {constValue};
+         sut.Values = new[] { constValue };
 
          var values = sut.Values;
 
@@ -170,7 +180,7 @@ namespace OSPSuite.Core.Domain
       {
          const float constValue = 123.456F;
 
-         sut.Values = new[] {constValue};
+         sut.Values = new[] { constValue };
 
          var values = sut.Values;
 
@@ -179,7 +189,7 @@ namespace OSPSuite.Core.Domain
          for (int i = 0; i < values.Count; i++)
             values[i].ShouldBeEqualTo(constValue);
 
-         sut.Values = new[] {1.0F};
+         sut.Values = new[] { 1.0F };
          values = sut.Values;
          for (int i = 0; i < values.Count; i++)
             values[i].ShouldBeEqualTo(1.0F);
@@ -195,17 +205,17 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void Retrieving_and_settings_values_as_array()
       {
-         sut.ValuesAsArray = new[] {1d, 2d, 3d};
-         sut.ValuesAsArray.ShouldBeEqualTo(new[] {1d, 2d, 3d});
+         sut.ValuesAsArray = new[] { 1d, 2d, 3d, 4d };
+         sut.ValuesAsArray.ShouldBeEqualTo(new[] { 1d, 2d, 3d, 4d });
       }
 
       [Observation]
       public void Retrieving_and_settings_single_value()
       {
          //set one value for the base grid so that setting a single value won't expend the array
-         _baseGrid.Values = new[] {2F};
+         _baseGrid.Values = new[] { 2F };
          sut.Value = 2.5;
-         sut.ValuesAsArray.ShouldBeEqualTo(new[] {2.5});
+         sut.ValuesAsArray.ShouldBeEqualTo(new[] { 2.5 });
       }
 
       [Observation]
