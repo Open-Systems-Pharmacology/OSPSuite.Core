@@ -240,6 +240,11 @@ namespace OSPSuite.Core.Domain.Data
                 (BaseGrid[rightIndex] - BaseGrid[leftIndex]);
       }
 
+      /// <summary>
+      /// There could be multiple instances of the same base grid value, so we need to average them
+      /// </summary>
+      /// <param name="index">the index of the basegrid value that we want to create an average for (eg t=0)</param>
+      /// <returns>The mean average of all values that have the same basegrid value as the <paramref name="index"/></returns>
       private float averageFor(int index)
       {
          var baseGridAtIndex = BaseGrid[index];
