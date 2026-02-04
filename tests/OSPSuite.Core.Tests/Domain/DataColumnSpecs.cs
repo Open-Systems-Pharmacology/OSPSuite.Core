@@ -144,7 +144,7 @@ namespace OSPSuite.Core.Domain
          sut.Values = new[] { 8.0F, 0.0F, -5.0F, 0.0F };
          var relatedColumn = new DataColumn("Regina", _dimensionless, _baseGrid);
          relatedColumn.DataInfo = new DataInfo(ColumnOrigins.ObservationAuxiliary, AuxiliaryType.ArithmeticStdDev, " ", "", 0);
-         relatedColumn.Values = new[] { 0.1F, 0.2F, 0.1F, 02F };
+         relatedColumn.Values = new[] { 0.1F, 0.2F, 0.1F, 0.2F };
 
          The.Action(() => sut.AddRelatedColumn(relatedColumn)).ShouldThrowAn<InvalidArgumentException>();
       }

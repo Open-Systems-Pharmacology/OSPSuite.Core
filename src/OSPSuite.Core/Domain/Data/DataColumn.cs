@@ -221,23 +221,22 @@ namespace OSPSuite.Core.Domain.Data
          if (index >= 0)
             return averageFor(index);
 
-         // We can throw an exception here if the values are not monotonic?
-         int leftIndex = BaseGrid.IndexOfNextLowest(baseValue);
-         int rightIndex = BaseGrid.IndexOfNextHighest(baseValue);
+         int indexOfNextLowest = BaseGrid.IndexOfNextLowest(baseValue);
+         int indexOfNextHighest = BaseGrid.IndexOfNextHighest(baseValue);
 
-         if (leftIndex < 0)
+         if (indexOfNextLowest < 0)
             return float.NaN;
 
-         if (rightIndex >= BaseGrid.Count)
+         if (indexOfNextHighest >= BaseGrid.Count)
             return float.NaN;
 
-         if (leftIndex == rightIndex)
+         if (indexOfNextLowest == indexOfNextHighest)
             return float.NaN;
 
-         var averageLeft = averageFor(leftIndex);
-         return averageLeft +
-                (averageFor(rightIndex) - averageLeft) * (baseValue - BaseGrid[leftIndex]) /
-                (BaseGrid[rightIndex] - BaseGrid[leftIndex]);
+         var averageOfNextLowest = averageFor(indexOfNextLowest);
+         return averageOfNextLowest +
+                (averageFor(indexOfNextHighest) - averageOfNextLowest) * (baseValue - BaseGrid[indexOfNextLowest]) /
+                (BaseGrid[indexOfNextHighest] - BaseGrid[indexOfNextLowest]);
       }
 
       /// <summary>
