@@ -1,3 +1,4 @@
+using System.Linq;
 using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -74,8 +75,8 @@ namespace OSPSuite.Core.Domain
       {
          sut.Values = new[] { -2.0F, 0.5F, 1.0F, 1.5F };
 
-         Assert.AreEqual(1, sut.IndexOf(0.5F));
-         Assert.AreEqual(-1, sut.IndexOf(0.6F));
+         Assert.AreEqual(1, sut.IndexesOf(0.5F).Single());
+         Assert.AreEqual(sut.IndexesOf(0.6F).Any(), false);
       }
 
       [Observation]

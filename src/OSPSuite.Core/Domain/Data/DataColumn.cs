@@ -217,9 +217,9 @@ namespace OSPSuite.Core.Domain.Data
          if (Values == null || !Values.Any())
             return float.NaN;
 
-         var index = BaseGrid.IndexOf(baseValue);
-         if (index >= 0)
-            return averageFor(BaseGrid[index]);
+         var indexes = BaseGrid.IndexesOf(baseValue);
+         if (indexes.Any())
+            return averageFor(indexes);
 
          var indexOfNextLowest = BaseGrid.IndexOfNextLowest(baseValue);
          var indexOfNextHighest = BaseGrid.IndexOfNextHighest(baseValue);
@@ -227,27 +227,30 @@ namespace OSPSuite.Core.Domain.Data
          if (indexOfNextLowest < 0 || indexOfNextHighest >= BaseGrid.Count || indexOfNextLowest == indexOfNextHighest)
             return float.NaN;
 
-         var averageOfNextLowest = averageFor(BaseGrid[indexOfNextLowest]);
+         var valueOfNextLowest = BaseGrid[indexOfNextLowest];
+         var valueOfNextHighest = BaseGrid[indexOfNextHighest];
+
+         var averageOfNextLowest = averageFor(BaseGrid.IndexesOf(valueOfNextLowest));
+         var averageOfNextHighest = averageFor(BaseGrid.IndexesOf(valueOfNextHighest));
+
          return averageOfNextLowest +
-                (averageFor(BaseGrid[indexOfNextHighest]) - averageOfNextLowest) * (baseValue - BaseGrid[indexOfNextLowest]) /
-                (BaseGrid[indexOfNextHighest] - BaseGrid[indexOfNextLowest]);
+                (averageOfNextHighest - averageOfNextLowest) * (baseValue - valueOfNextLowest) /
+                (valueOfNextHighest - valueOfNextLowest);
       }
 
       /// <summary>
-      /// There could be multiple instances of the same base grid value, so we need to average them
+      /// Averages the values for all indexes in <paramref name="indexesToAverage"/>
       /// </summary>
-      /// <param name="baseGridValue">the base grid value that we want to create an average for (eg t=0)</param>
-      /// <returns>The mean average of all values that have the same base grid value as the <paramref name="baseGridValue"/></returns>
-      private float averageFor(float baseGridValue)
+      /// <param name="indexesToAverage"></param>
+      /// <returns>The mean average value for all indexes</returns>
+      private float averageFor(IReadOnlyList<int> indexesToAverage)
       {
          var accumulator = 0f;
          var count = 0;
 
-         BaseGrid.Values.Each((x, i) =>
+         indexesToAverage.Each(x =>
          {
-            if (x != baseGridValue) 
-               return;
-            accumulator += Values[i];
+            accumulator += Values[x];
             count++;
          });
 

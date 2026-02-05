@@ -57,9 +57,16 @@ namespace OSPSuite.Core.Domain.Data
 
       public virtual int Count => _values.Count;
 
-      public virtual int IndexOf(float value)
+      public virtual IReadOnlyList<int> IndexesOf(float value)
       {
-         return _values.IndexOf(value);
+         var indexes = new List<int>();
+         _values.Each((x, i) =>
+         {
+            if (x == value)
+               indexes.Add(i);
+         });
+
+         return indexes;
       }
 
       public virtual int IndexOfNextLowest(float value)
@@ -67,7 +74,7 @@ namespace OSPSuite.Core.Domain.Data
          int nextLowestIndex = -1;
          Values.Each((x, i) =>
          {
-            if(x <= value && (nextLowestIndex < 0 || x > Values[nextLowestIndex]))
+            if (x <= value && (nextLowestIndex < 0 || x > Values[nextLowestIndex]))
                nextLowestIndex = i;
          });
 
