@@ -246,15 +246,13 @@ namespace OSPSuite.Core.Domain.Data
       private float averageFor(IReadOnlyList<int> indexesToAverage)
       {
          var accumulator = 0f;
-         var count = 0;
 
          indexesToAverage.Each(x =>
          {
             accumulator += Values[x];
-            count++;
          });
 
-         return accumulator / count;
+         return accumulator / indexesToAverage.Count;
       }
 
       public override string ToString() => Name;
