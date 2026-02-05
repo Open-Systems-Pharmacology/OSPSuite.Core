@@ -86,7 +86,7 @@ namespace OSPSuite.Presentation.Services
          _parameterIdentifications = new List<ParameterIdentification> { _parameterIdentification, new ParameterIdentification() };
          A.CallTo(() => _executionContext.Project.AllParameterIdentifications).Returns(_parameterIdentifications);
          A.CallTo(() => _parameterIdentificationRunner.IsAnyRunning(A<IReadOnlyList<ParameterIdentification>>.Ignored)).Returns(false);
-         
+
          _parameterIdentification.AddOutputMapping(new OutputMapping { WeightedObservedData = new WeightedObservedData(_dataRepository) });
       }
 
@@ -676,21 +676,25 @@ namespace OSPSuite.Presentation.Services
 
    public class When_updating_a_parameter_identification_from_task : concern_for_ParameterIdentificationTask
    {
-     private List<DataRepository> _observedData;
+      private List<DataRepository> _observedData;
 
       protected override void Context()
       {
 
          base.Context();
          A.CallTo(() => _executionContext.PublishEvent(A<WeightedObservedDataChangedEvent>.Ignored)).DoesNothing();
-         var baseGrid = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
-         baseGrid.Insert(1);
-         baseGrid.Insert(2);
-         var baseGrid2 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
-         baseGrid2.Insert(1);
-         var baseGrid3 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs());
-         baseGrid3.Insert(1);
-         baseGrid3.Insert(2);
+         var baseGrid = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs())
+         {
+            Values = new[] { 1.0f, 2.0f }
+         };
+         var baseGrid2 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs())
+         {
+            Values = new[] { 1.0f }
+         };
+         var baseGrid3 = new BaseGrid("Time", DomainHelperForSpecs.TimeDimensionForSpecs())
+         {
+            Values = new[] { 1.0f, 2.0f }
+         };
 
          var standardColumn = new DataColumn("Standard", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), baseGrid)
          {
@@ -724,7 +728,7 @@ namespace OSPSuite.Presentation.Services
          {
             WeightedObservedData = new WeightedObservedData(dataRepository1)
          };
-         
+
          var concentrationOutputMapping = new OutputMapping
          {
             WeightedObservedData = new WeightedObservedData(dataRepository2)
@@ -744,7 +748,7 @@ namespace OSPSuite.Presentation.Services
       }
 
       protected override void Because()
-      { 
+      {
          sut.UpdateParameterIdentificationsUsing(_observedData);
       }
 
