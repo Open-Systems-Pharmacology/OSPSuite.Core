@@ -149,59 +149,7 @@ namespace OSPSuite.Core.Domain.Data
          return hasExtendedPropertyFor(propertyName) ? ExtendedProperties[propertyName].ValueAsObject.ConvertedTo<string>() : null;
       }
 
-      /// <summary>
-      ///    Inserts the values defined in <paramref name="columnValues" /> at the index found in the base column for the value
-      ///    <paramref name="baseValue" />.
-      ///    Values will be either replaced (there is already an entry with the same time exactly) or inserted at the right index
-      ///    to prevent the required base grid monotony.
-      ///    In the case of an insertion, a <c>float.Nan</c> values will be inserted for columns using the base grid and for
-      ///    which a value was not provided in <paramref name="columnValues" />
-      /// </summary>
-      /// <param name="baseValue">Value (e.g. time value) in base unit for which column values should be updated/inserted</param>
-      /// <param name="columnValues">Cache containing the id of the columns to update as key and the corresponding value.</param>
-      public void InsertValues(float baseValue, Cache<string, float> columnValues)
-      {
-         var baseGrid = BaseGrid;
-         var index = baseGrid.InsertOrReplace(baseValue, out bool replaced);
-
-         foreach (var column in columnValues.KeyValues.Where(x => Contains(x.Key)).Select(x => GetColumn(x.Key)))
-         {
-            var value = columnValues[column.Id];
-            if (replaced)
-               column[index] = value;
-            else
-               column.InsertValueAt(index, columnValues[column.Id]);
-         }
-
-         if (replaced) return;
-
-         //we need to add a dummy values for all other columns not in column values using the basegrid
-         foreach (var column in columnsThatWereNotUpdated(columnValues))
-         {
-            column.InsertValueAt(index, float.NaN);
-         }
-      }
-
-      /// <summary>
-      ///    Swaps out  all values defined in the <see cref="DataRepository" /> at the index for the baseGrid
-      ///    <paramref name="oldBaseGridValue" /> and insert them back at the index for <paramref name="newBaseGridValue" />
-      /// </summary>
-      /// <param name="oldBaseGridValue">BaseGrid value that will be used to retrieve the index of values to swap out </param>
-      /// <param name="newBaseGridValue">BaseGrid value that will be used to retrieve the index where the values will be inserted</param>
-      public virtual void SwapValues(float oldBaseGridValue, float newBaseGridValue)
-      {
-         var index = BaseGrid.IndexOf(oldBaseGridValue);
-         if (index < 0) return;
-
-         var columnValues = new Cache<string, float>();
-         AllButBaseGrid().Each(c => columnValues.Add(c.Id, c[index]));
-         RemoveValuesAt(index);
-         InsertValues(newBaseGridValue, columnValues);
-      }
-
       public virtual void RemoveValuesAt(int index) => _allColumns.Each(c => c.RemoveValueAt(index));
-
-      private IEnumerable<DataColumn> columnsThatWereNotUpdated(Cache<string, float> columnValues) => AllButBaseGrid().Where(x => !columnValues.Contains(x.Id));
 
       public IEnumerable<DataColumn> AllButBaseGrid() => _allColumns.Where(x => !x.IsBaseGrid());
 

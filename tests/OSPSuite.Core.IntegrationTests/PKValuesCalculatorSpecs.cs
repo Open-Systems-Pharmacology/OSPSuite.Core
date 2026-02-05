@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
@@ -96,7 +97,7 @@ namespace OSPSuite.Core
          _pk[Ctrough_tD2].Value.ShouldBeEqualTo(2.89605998992919f, 1e-2);
 
          var indexOfEndTimePointOfLastButOneInterval =
-            _multipleDosingColumn.BaseGrid.IndexOf(_pkOptions.LastMinusOneInterval.EndValue.Value);
+            _multipleDosingColumn.BaseGrid.IndexesOf(_pkOptions.LastMinusOneInterval.EndValue.Value).Single();
          var lastValueBeforeLastDose = _multipleDosingColumn.Values[indexOfEndTimePointOfLastButOneInterval];
          _pk[Ctrough_tDLast].Value.ShouldBeEqualTo(lastValueBeforeLastDose, 1e-2);
          

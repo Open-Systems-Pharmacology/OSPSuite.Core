@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.Extensions;
 using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Core.Domain.Data
@@ -216,25 +217,42 @@ namespace OSPSuite.Core.Domain.Data
          if (Values == null || !Values.Any())
             return float.NaN;
 
-         int index = BaseGrid.IndexOf(baseValue);
-         if (index >= 0)
-            return Values[index];
+         var indexes = BaseGrid.IndexesOf(baseValue);
+         if (indexes.Any())
+            return averageFor(indexes);
 
-         int leftIndex = BaseGrid.LeftIndexOf(baseValue);
-         int rightIndex = BaseGrid.RightIndexOf(baseValue);
+         var indexOfNextLowest = BaseGrid.IndexOfNextLowest(baseValue);
+         var indexOfNextHighest = BaseGrid.IndexOfNextHighest(baseValue);
 
-         if (leftIndex < 0)
+         if (indexOfNextLowest < 0 || indexOfNextHighest >= BaseGrid.Count || indexOfNextLowest == indexOfNextHighest)
             return float.NaN;
 
-         if (rightIndex >= BaseGrid.Count)
-            return float.NaN;
+         var valueOfNextLowest = BaseGrid[indexOfNextLowest];
+         var valueOfNextHighest = BaseGrid[indexOfNextHighest];
 
-         if (leftIndex == rightIndex)
-            return float.NaN;
+         var averageOfNextLowest = averageFor(BaseGrid.IndexesOf(valueOfNextLowest));
+         var averageOfNextHighest = averageFor(BaseGrid.IndexesOf(valueOfNextHighest));
 
-         return Values[leftIndex] +
-                (Values[rightIndex] - Values[leftIndex]) * (baseValue - BaseGrid[leftIndex]) /
-                (BaseGrid[rightIndex] - BaseGrid[leftIndex]);
+         return averageOfNextLowest +
+                (averageOfNextHighest - averageOfNextLowest) * (baseValue - valueOfNextLowest) /
+                (valueOfNextHighest - valueOfNextLowest);
+      }
+
+      /// <summary>
+      /// Averages the values for all indexes in <paramref name="indexesToAverage"/>
+      /// </summary>
+      /// <param name="indexesToAverage"></param>
+      /// <returns>The mean average value for all indexes</returns>
+      private float averageFor(IReadOnlyList<int> indexesToAverage)
+      {
+         var accumulator = 0f;
+
+         indexesToAverage.Each(x =>
+         {
+            accumulator += Values[x];
+         });
+
+         return accumulator / indexesToAverage.Count;
       }
 
       public override string ToString() => Name;
