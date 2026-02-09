@@ -77,6 +77,7 @@ namespace OSPSuite.Presentation.Services
             chart.FontAndSize.UpdatePropertiesFrom(template.FontAndSize, _cloneManager);
             template.Axes.Each(axis => chart.AddAxis(axis.Clone()));
             bestTemplateForCurves.KeyValues.Each(kv => addCurvesToChart(kv.Key, kv.Value, chart));
+            chart.PreviewSettings = template.PreviewSettings;
          }
       }
 

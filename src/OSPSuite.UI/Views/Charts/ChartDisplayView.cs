@@ -191,6 +191,8 @@ namespace OSPSuite.UI.Views.Charts
       private void onSizeChanged()
       {
          _presenter?.RefreshAxisBinders();
+         if (_presenter?.Chart != null)
+            _presenter?.UpdateWatermark();
       }
 
       private void chartDoubleClick(MouseEventArgs mouseEventArgs)
@@ -568,7 +570,7 @@ namespace OSPSuite.UI.Views.Charts
                : null, editable: _curveEditEnabled, description: curveDescription);
       }
 
-      private SeriesPoint findPointInSeries(ChartHitInfo hitInfo, Series series) => 
+      private SeriesPoint findPointInSeries(ChartHitInfo hitInfo, Series series) =>
          hitInfo.SeriesPoint ?? findNextClosestSeriesPoint(hitInfo, series);
 
       private SeriesPoint findNextClosestSeriesPoint(ChartHitInfo hitInfo, Series series)
@@ -586,10 +588,10 @@ namespace OSPSuite.UI.Views.Charts
          return nextPoint;
       }
 
-      private void onObjectSelected(HotTrackEventArgs e) => 
+      private void onObjectSelected(HotTrackEventArgs e) =>
          e.Cancel = true;
 
-      public void SetFontAndSizeSettings(ChartFontAndSizeSettings fontAndSizeSettings) => 
+      public void SetFontAndSizeSettings(ChartFontAndSizeSettings fontAndSizeSettings) =>
          _chartControl.SetFontAndSizeSettings(fontAndSizeSettings, _chartControl.Size);
 
       public void CopyToClipboard(string watermark) => _chartControl.CopyToClipboard(_presenter.Chart, watermark);

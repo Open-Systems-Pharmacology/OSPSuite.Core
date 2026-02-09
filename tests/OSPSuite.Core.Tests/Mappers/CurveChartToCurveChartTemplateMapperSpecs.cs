@@ -45,6 +45,7 @@ namespace OSPSuite.Core.Mappers
          _curveChart.AddAxis(new Axis(AxisTypes.X));
          _curveChart.AddAxis(new Axis(AxisTypes.Y));
          _curveChart.AddAxis(new Axis(AxisTypes.Y2));
+         _curveChart.PreviewSettings = true;
          var curve = new Curve();
          curve.SetxData(_xData, _dimensionFactory);
          curve.SetyData(_yData, _dimensionFactory);
@@ -82,6 +83,12 @@ namespace OSPSuite.Core.Mappers
       public void should_have_updated_the_font_and_size()
       {
          _curveChartTemplate.FontAndSize.ChartHeight.ShouldBeEqualTo(500);
+      }
+
+      [Observation]
+      public void should_have_the_preview_settings_set()
+      {
+         _curveChart.PreviewSettings.ShouldBeEqualTo(_curveChart.PreviewSettings);
       }
    }
 

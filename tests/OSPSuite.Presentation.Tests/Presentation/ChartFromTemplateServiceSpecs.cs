@@ -103,6 +103,9 @@ namespace OSPSuite.Presentation.Presentation
             xData = {QuantityType = QuantityType.BaseGrid},
             yData = {QuantityType = _drugColumn.QuantityInfo.Type, Path = _drugTemplatePathArray.ToPathString()}
          });
+
+         _template.PreviewSettings = true;
+
          _propagateChartChangedEvent = false;
       }
 
@@ -111,6 +114,11 @@ namespace OSPSuite.Presentation.Presentation
          sut.InitializeChartFromTemplate(_chart, _dataColumns, _template, propogateChartChangeEvent:_propagateChartChangedEvent);
       }
 
+      [Observation]
+      public void should_update_the_export_preview_settings_from_the_template()
+      {
+         _chart.PreviewSettings.ShouldBeEqualTo(_template.PreviewSettings);
+      }
 
       [Observation]
       public void should_return_a_chart_with_the_curves_for_the_exact_data()
