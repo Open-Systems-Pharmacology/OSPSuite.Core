@@ -88,7 +88,7 @@ namespace OSPSuite.Core.Mappers
       [Observation]
       public void should_have_the_preview_settings_set()
       {
-         _curveChart.PreviewSettings.ShouldBeEqualTo(_curveChart.PreviewSettings);
+         _curveChart.PreviewSettings.ShouldBeEqualTo(_curveChartTemplate.PreviewSettings);
       }
    }
 
