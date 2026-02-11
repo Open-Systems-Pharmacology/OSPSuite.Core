@@ -191,6 +191,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       void AddDeviationLines();
 
       Func<IEnumerable<DataColumn>, IEnumerable<DataColumn>> PreExportHook { get; set; }
+
+      /// <summary>
+      /// Applies the watermark to the chart if the chart is in preview mode and auto update is enabled, otherwise does nothing
+      /// </summary>
+      void UpdateWatermark();
    }
 
    public class ChartDisplayPresenter : AbstractPresenter<IChartDisplayView, IChartDisplayPresenter>, IChartDisplayPresenter
@@ -221,6 +226,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       //by default, don't modify anything
       public Func<IEnumerable<DataColumn>, IEnumerable<DataColumn>> PreExportHook { get; set; } = x => x;
+
+      public void UpdateWatermark()
+      {
+         if (Chart.AutoUpdateEnabled)
+            _view.ShowWatermark(normalWatermark);
+      }
 
       public ChartDisplayPresenter(IChartDisplayView chartDisplayView,
          ICurveBinderFactory curveBinderFactory,
@@ -394,7 +405,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          // Make sure binders for curves that were removed are pruned so that their axes are not considered when calculating diagram size
          pruneCurves();
-         
+
          var diagramSize = View.GetDiagramSize();
          using (new BatchUpdate(View))
          {
