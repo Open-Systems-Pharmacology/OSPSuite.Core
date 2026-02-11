@@ -14,18 +14,21 @@ namespace OSPSuite.Core.Domain.Services
       InitialConditionsBuildingBlock CreateFrom(SpatialStructure spatialStructure, IReadOnlyList<MoleculeBuilder> molecules);
 
       /// <summary>
-      ///    Creates an initial condition
+      ///    Creates an initial condition with mandatory <paramref name="containerPath" />, <paramref name="moleculeName" /> and
+      ///    <paramref name="dimension" />. The other parameters are optional and will be set to default values if not supplied.
+      ///    default <paramref name="displayUnit"/> is the default unit of the <paramref name="dimension"/>
+      ///    The initial condition will not be added to any building block, this is the responsibility of the caller.
       /// </summary>
-      /// <param name="containerPath">The container path for the molecule</param>
-      /// <param name="moleculeName">The name of the molecule</param>
-      /// <param name="dimension">The dimension of the initial condition</param>
-      /// <param name="displayUnit">
-      ///    The display unit of the start value. If not set, the default unit of the
-      ///    <paramref name="dimension" />will be used
-      /// </param>
-      /// <param name="valueOrigin">The value origin for the value</param>
       /// <returns>an InitialCondition object</returns>
-      InitialCondition CreateInitialCondition(ObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null);
+      InitialCondition CreateInitialCondition(ObjectPath containerPath,
+         string moleculeName,
+         IDimension dimension,
+         Unit displayUnit = null,
+         ValueOrigin valueOrigin = null,
+         bool isPresent = true,
+         double valueInBaseUnit = 0,
+         double scaleDivisor = Constants.DEFAULT_SCALE_DIVISOR,
+         bool negativeValuesAllowed = false);
 
       /// <summary>
       ///    Creates a new initial conditions for the <paramref name="molecule" /> in the <paramref name="containers" /> and adds
@@ -130,18 +133,27 @@ namespace OSPSuite.Core.Domain.Services
             initialCondition.Formula = createFormulaFrom(formula);
       }
 
-      public InitialCondition CreateInitialCondition(ObjectPath containerPath, string moleculeName, IDimension dimension, Unit displayUnit = null, ValueOrigin valueOrigin = null)
+      public InitialCondition CreateInitialCondition(ObjectPath containerPath,
+         string moleculeName,
+         IDimension dimension,
+         Unit displayUnit = null,
+         ValueOrigin valueOrigin = null,
+         bool isPresent = true,
+         double valueInBaseUnit = 0,
+         double scaleDivisor = Constants.DEFAULT_SCALE_DIVISOR,
+         bool negativeValuesAllowed = false)
       {
          var initialCondition = new InitialCondition
          {
             Id = _idGenerator.NewId(),
-            IsPresent = true,
+            IsPresent = isPresent,
             ContainerPath = containerPath,
             Name = moleculeName,
             Dimension = dimension,
             DisplayUnit = displayUnit ?? dimension.DefaultUnit,
-            NegativeValuesAllowed = false,
-            Value = 0
+            NegativeValuesAllowed = negativeValuesAllowed,
+            Value = valueInBaseUnit,
+            ScaleDivisor = scaleDivisor
          };
 
          initialCondition.ValueOrigin.UpdateAllFrom(valueOrigin);
