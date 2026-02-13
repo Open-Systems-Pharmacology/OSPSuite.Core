@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using OSPSuite.Core.Domain;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Snapshots
@@ -62,18 +61,5 @@ namespace OSPSuite.Core.Snapshots
 
          calculationMethods?.Each(CalculationMethods.Add);
       }
-   }
-
-   public class DiseaseState : IWithName
-   {
-      /// <summary>
-      ///    Name of disease state associated with OriginData
-      /// </summary>
-      public string Name { get; set; }
-
-      /// <summary>
-      ///    List of disease state parameters associated with the selected disease state
-      /// </summary>
-      public Parameter[] Parameters { get; set; }
    }
 }
