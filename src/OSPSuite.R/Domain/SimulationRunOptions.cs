@@ -12,7 +12,7 @@ namespace OSPSuite.R.Domain
       /// <summary>
       ///    Specifies whether the solver should automatically reduce tolerances when a simulation run fails. Default is <c>false</c>
       /// </summary>
-      public bool AutoReduceTolerances { get; set; } = false;
+      public bool AutoReduceTolerances { get; set; } = true;
 
       /// <summary>
       ///    Specifies whether progress bar should be shown during simulation run. Default is <c>true</c>
