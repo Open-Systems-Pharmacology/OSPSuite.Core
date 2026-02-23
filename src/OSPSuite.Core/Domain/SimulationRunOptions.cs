@@ -26,6 +26,7 @@ namespace OSPSuite.Core.Domain
       {
          SimModelExportMode = SimModelExportMode.Full;
          CheckForNegativeValues = true;
+         AutoReduceTolerances = true;
       }
    }
 }
