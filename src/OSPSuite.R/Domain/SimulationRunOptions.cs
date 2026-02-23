@@ -10,7 +10,7 @@ namespace OSPSuite.R.Domain
       public bool CheckForNegativeValues { get; set; } = true;
 
       /// <summary>
-      ///    Specifies whether the solver should automatically reduce tolerances when a simulation run fails. Default is <c>false</c>
+      ///    Specifies whether the solver should automatically reduce tolerances when a simulation run fails. Default is <c>true</c>
       /// </summary>
       public bool AutoReduceTolerances { get; set; } = true;
 

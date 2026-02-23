@@ -21,9 +21,9 @@ namespace OSPSuite.Core.Tests.Domain
       }
 
       [Observation]
-      public void should_disable_auto_reduce_tolerances_by_default()
+      public void should_enable_auto_reduce_tolerances_by_default()
       {
-         sut.AutoReduceTolerances.ShouldBeFalse();
+         sut.AutoReduceTolerances.ShouldBeTrue();
       }
    }
 }
