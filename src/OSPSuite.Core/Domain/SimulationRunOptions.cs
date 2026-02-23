@@ -17,6 +17,11 @@ namespace OSPSuite.Core.Domain
       /// </summary>
       public bool CheckForNegativeValues { get; set; }
 
+      /// <summary>
+      ///    Specifies whether the solver should automatically reduce tolerances when a simulation run fails. Default is <c>false</c>
+      /// </summary>
+      public bool AutoReduceTolerances { get; set; }
+
       public SimulationRunOptions()
       {
          SimModelExportMode = SimModelExportMode.Full;
