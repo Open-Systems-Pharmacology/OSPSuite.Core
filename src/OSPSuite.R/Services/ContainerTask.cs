@@ -180,16 +180,16 @@ namespace OSPSuite.R.Services
       {
          var quantities = AllQuantitiesMatching(simulation, path);
          
-         if (quantities.Length == 0)
+         if (quantities.Length != 0)
          {
-            if (throwIfNotFound)
-               throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path));
-
-            _logger.AddWarning(Error.CouldNotFindQuantityWithPath(path));
+            quantities.Each(simulation.OutputSelections.AddQuantity);
             return;
          }
 
-         quantities.Each(simulation.OutputSelections.AddQuantity);
+         if (throwIfNotFound)
+            throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path));
+
+         _logger.AddWarning(Error.CouldNotFindQuantityWithPath(path));
       }
 
       public void SetValueByPath(IModelCoreSimulation simulation, string path, double value, bool throwIfNotFound)
