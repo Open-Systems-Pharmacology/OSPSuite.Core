@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
@@ -147,9 +148,23 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_throw_an_exception_with_the_existing_y_value_in_the_message()
       {
-         var exception = The.Action(() => sut.AddPoint(2, 30)).ShouldThrowAn<ValuePointAlreadyExistsForPointException>();
-         exception.Message.ShouldContain("x=2");
-         exception.Message.ShouldContain("y=20"); // The existing Y value, not the new one (30)
+         Exception exception = null;
+         The.Action(() =>
+         {
+            try
+            {
+               sut.AddPoint(2, 30);
+            }
+            catch (Exception e)
+            {
+               exception = e;
+               throw;
+            }
+            
+         }).ShouldThrowAn<ValuePointAlreadyExistsForPointException>();
+
+         exception.Message.Contains("x=2").ShouldBeTrue();
+         exception.Message.Contains("y=20").ShouldBeTrue(); // The existing Y value, not the new one (30)
       }
    }
 
