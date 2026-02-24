@@ -79,6 +79,7 @@ namespace OSPSuite.R.Services
 
          _simulation = A.Fake<ISimulation>();
          _simulation.Model.Root = _organism;
+         A.CallTo(() => _simulation.OutputSelections).Returns(new OutputSelections());
       }
 
       protected string pathFrom(params string[] paths) => paths.ToPathString();
