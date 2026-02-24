@@ -157,6 +157,7 @@ namespace OSPSuite.Core.Domain
             }
             catch (Exception e)
             {
+               // capture the message to verify that the new coordinate is used.
                exception = e;
                throw;
             }
