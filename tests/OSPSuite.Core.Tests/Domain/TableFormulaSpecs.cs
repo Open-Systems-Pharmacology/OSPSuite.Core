@@ -143,6 +143,20 @@ namespace OSPSuite.Core.Domain
       {
          The.Action(() => sut.AddPoint(2, 30)).ShouldThrowAn<ValuePointAlreadyExistsForPointException>();
       }
+
+      [Observation]
+      public void should_throw_an_exception_with_the_existing_y_value_in_the_message()
+      {
+         try
+         {
+            sut.AddPoint(2, 30);
+         }
+         catch (ValuePointAlreadyExistsForPointException ex)
+         {
+            ex.Message.ShouldContain("x=2");
+            ex.Message.ShouldContain("y=20"); // The existing Y value, not the new one (30)
+         }
+      }
    }
 
    public class When_clearing_all_points_from_a_table_formula : concern_for_TableFormula
