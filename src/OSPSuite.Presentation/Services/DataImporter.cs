@@ -88,6 +88,11 @@ namespace OSPSuite.Presentation.Services
       public override ReloadDataSets CalculateReloadDataSetsFromConfiguration(IReadOnlyList<DataRepository> dataSetsToImport,
          IReadOnlyList<DataRepository> existingDataSets)
       {
+         // If the import returned nothing (e.g. all sheets missing or a parsing exception), do not
+         // proceed with the reload dialog. The error was already shown and there is nothing to reload.
+         if (!dataSetsToImport.Any())
+            return new ReloadDataSets();
+
          var newDataSets = dataSetsToImport.Where(dataSet => !repositoryExistsInList(existingDataSets, dataSet)).ToList();
          var dataSetsToBeDeleted = existingDataSets.Where(dataSet => !repositoryExistsInList(dataSetsToImport, dataSet));
          var overwrittenDataSets = dataSetsToImport.Except(newDataSets);
