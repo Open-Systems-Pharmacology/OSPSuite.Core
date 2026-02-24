@@ -438,7 +438,7 @@ namespace OSPSuite.R.Services
       public void should_add_quantities_to_output_selections_when_path_is_found()
       {
          sut.AddQuantitiesToSimulationOutputByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, VOLUME), throwIfNotFound: true);
-         A.CallTo(() => _simulation.OutputSelections.AddQuantity(A<IQuantity>._)).MustHaveHappened(numberOfTimes:1, timesOption:Times.Exactly);
+         A.CallTo(() => _simulation.OutputSelections.AddQuantity(A<IQuantity>._)).MustHaveHappened(1, Times.Exactly);
       }
    }
 }
