@@ -419,4 +419,27 @@ namespace OSPSuite.R.Services
          sut.GetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, _volumeLiverCell.Name), throwIfNotFound: true).ShouldBeEqualTo(666);
       }
    }
+
+   public class When_adding_quantities_to_simulation_output_by_path : concern_for_ContainerTask
+   {
+      [Observation]
+      public void should_throw_an_exception_if_the_path_does_not_exist_and_throw_flag_is_true()
+      {
+         The.Action(() => sut.AddQuantitiesToSimulationOutputByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "TOTO"), throwIfNotFound: true)).ShouldThrowAn<OSPSuiteException>();
+      }
+
+      [Observation]
+      public void should_not_throw_an_exception_if_the_path_does_not_exist_and_the_throw_flag_is_set_to_false()
+      {
+         sut.AddQuantitiesToSimulationOutputByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "TOTO"), throwIfNotFound: false);
+      }
+
+      [Observation]
+      public void should_add_quantities_to_output_selections_when_path_is_found()
+      {
+         var initialCount = _simulation.OutputSelections.AllOutputs.Count();
+         sut.AddQuantitiesToSimulationOutputByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, VOLUME), throwIfNotFound: true);
+         _simulation.OutputSelections.AllOutputs.Count().ShouldBeEqualTo(initialCount + 1);
+      }
+   }
 }

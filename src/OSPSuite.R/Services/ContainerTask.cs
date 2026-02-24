@@ -72,7 +72,10 @@ namespace OSPSuite.R.Services
       /// <summary>
       ///    Adds quantities with given path (may contain wildcards) to output selections of the simulation.
       /// </summary>
-      void AddQuantitiesToSimulationOutputByPath(IModelCoreSimulation simulation, string path);
+      /// <param name="simulation">Simulation to use to find the quantity by path</param>
+      /// <param name="path">Absolute path of the quantity (may contain wildcards)</param>
+      /// <param name="throwIfNotFound">Should an error be thrown if the quantity by path is not found?</param>
+      void AddQuantitiesToSimulationOutputByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound);
 
       /// <summary>
       ///    Sets the value of the quantity by path
@@ -173,8 +176,21 @@ namespace OSPSuite.R.Services
 
       public bool IsExplicitFormulaByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound) => singleQuantityByPath(simulation, path, throwIfNotFound)?.Formula.IsExplicit() ?? false;
 
-      public void AddQuantitiesToSimulationOutputByPath(IModelCoreSimulation simulation, string path) =>
-         AllQuantitiesMatching(simulation, path).Each(simulation.OutputSelections.AddQuantity);
+      public void AddQuantitiesToSimulationOutputByPath(IModelCoreSimulation simulation, string path, bool throwIfNotFound)
+      {
+         var quantities = AllQuantitiesMatching(simulation, path);
+         
+         if (quantities.Length == 0)
+         {
+            if (throwIfNotFound)
+               throw new OSPSuiteException(Error.CouldNotFindQuantityWithPath(path));
+
+            _logger.AddWarning(Error.CouldNotFindQuantityWithPath(path));
+            return;
+         }
+
+         quantities.Each(simulation.OutputSelections.AddQuantity);
+      }
 
       public void SetValueByPath(IModelCoreSimulation simulation, string path, double value, bool throwIfNotFound)
       {
