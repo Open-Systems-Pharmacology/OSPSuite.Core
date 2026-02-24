@@ -147,15 +147,9 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_throw_an_exception_with_the_existing_y_value_in_the_message()
       {
-         try
-         {
-            sut.AddPoint(2, 30);
-         }
-         catch (ValuePointAlreadyExistsForPointException ex)
-         {
-            ex.Message.ShouldContain("x=2");
-            ex.Message.ShouldContain("y=20"); // The existing Y value, not the new one (30)
-         }
+         var exception = The.Action(() => sut.AddPoint(2, 30)).ShouldThrowAn<ValuePointAlreadyExistsForPointException>();
+         exception.Message.ShouldContain("x=2");
+         exception.Message.ShouldContain("y=20"); // The existing Y value, not the new one (30)
       }
    }
 
