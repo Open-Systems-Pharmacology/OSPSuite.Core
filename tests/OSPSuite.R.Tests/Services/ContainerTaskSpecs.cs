@@ -144,7 +144,7 @@ namespace OSPSuite.R.Services
       {
          sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, INTRACELLULAR, VOLUME)).ShouldOnlyContain(_volumeLiverCell, _volumeKidneyCell);
          sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, VOLUME)).ShouldOnlyContain(_volumeLiver, _volumeKidney, _volumeKidneyCell, _volumeLiverCell, _volumeOrganism);
-          sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, _clearance.Name)).ShouldOnlyContain(_clearance);
+         sut.AllParametersMatching(_organism, pathFrom(Constants.WILD_CARD_RECURSIVE, _clearance.Name)).ShouldOnlyContain(_clearance);
       }
    }
 
@@ -283,7 +283,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_expected_path()
       {
-         var quantities = new IQuantity[] {_volumeLiver, _volumeLiverCell, _clearance, _liverIntracellularMoleculeAmount, _liverRelExp, _volumeLiverCellOtherEntity};
+         var quantities = new IQuantity[] { _volumeLiver, _volumeLiverCell, _clearance, _liverIntracellularMoleculeAmount, _liverRelExp, _volumeLiverCellOtherEntity };
          var expected = quantities.Select(x => x.EntityPath()).ToArray();
          _result.ShouldOnlyContain(expected);
       }
@@ -301,7 +301,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_return_the_expected_path()
       {
-         var containers = new[] {_kidney, _liver, _liverIntracellular, _kidneyIntracellular, _liverIntracellularSubContainer,};
+         var containers = new[] { _kidney, _liver, _liverIntracellular, _kidneyIntracellular, _liverIntracellularSubContainer, };
          var expected = containers.Select(x => x.EntityPath()).ToArray();
          _result.ShouldOnlyContain(expected);
       }
@@ -319,7 +319,7 @@ namespace OSPSuite.R.Services
       [Observation]
       public void should_only_return_parameters_with_a_RHS_formula_defined()
       {
-         var parameters = new[] {_paramWithRHS};
+         var parameters = new[] { _paramWithRHS };
          var expected = parameters.Select(x => x.EntityPath()).ToArray();
          _result.ShouldOnlyContain(expected);
       }
@@ -417,6 +417,28 @@ namespace OSPSuite.R.Services
       {
          sut.SetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, _volumeLiverCell.Name), 666, throwIfNotFound: true);
          sut.GetValueByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, _volumeLiverCell.Name), throwIfNotFound: true).ShouldBeEqualTo(666);
+      }
+   }
+
+   public class When_adding_quantities_to_simulation_output_by_path : concern_for_ContainerTask
+   {
+      [Observation]
+      public void should_throw_an_exception_if_the_path_does_not_exist_and_throw_flag_is_true()
+      {
+         The.Action(() => sut.AddQuantitiesToSimulationOutputByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "TOTO"), throwIfNotFound: true)).ShouldThrowAn<OSPSuiteException>();
+      }
+
+      [Observation]
+      public void should_not_throw_an_exception_if_the_path_does_not_exist_and_the_throw_flag_is_set_to_false()
+      {
+         sut.AddQuantitiesToSimulationOutputByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, "TOTO"), throwIfNotFound: false);
+      }
+
+      [Observation]
+      public void should_add_quantities_to_output_selections_when_path_is_found()
+      {
+         sut.AddQuantitiesToSimulationOutputByPath(_simulation, pathFrom(_liver.Name, INTRACELLULAR, VOLUME), throwIfNotFound: true);
+         A.CallTo(() => _simulation.OutputSelections.AddQuantity(A<IQuantity>._)).MustHaveHappened(1, Times.Exactly);
       }
    }
 }
