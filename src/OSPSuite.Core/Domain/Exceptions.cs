@@ -42,11 +42,6 @@ namespace OSPSuite.Core.Domain
          : base($"A point for x={point.X} was already added with y={point.Y}")
       {
       }
-
-      public ValuePointAlreadyExistsForPointException(double x, double existingY)
-         : base($"A point for x={x} was already added with y={existingY}")
-      {
-      }
    }
 
    public class CancelCommandRunException : OSPSuiteException
