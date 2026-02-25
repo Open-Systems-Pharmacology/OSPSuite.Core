@@ -46,38 +46,22 @@ namespace OSPSuite.Infrastructure.Import.Services
 
       public IndividualValuesCache ImportFrom(string populationFileFullPath, IImportLogger logger, PathCache<IParameter> allParameters = null)
       {
-         try
-         {
-            foreach (var delimiter in ALLOWED_DELIMITERS)
-            {
-               var individualValuesCache = individualValuesCacheFromFile(populationFileFullPath, delimiter);
-               //we found at least one individual, this is a valid file for the delimiter and we can exit
-               if (individualValuesCache?.Count > 0)
-                  return withPathsContainingUnitsUpdated(individualValuesCache, allParameters, logger);
-            }
-
-            //no match. Log 
-            logger.AddError(Warning.PopulationFileFormatIsNotSupported);
-            return new IndividualValuesCache();
-         }
-         catch (Exception e)
-         {
-            logger.AddError(e.FullMessage());
-            return new IndividualValuesCache();
-         }
+         return importFromSource(() => individualValuesCacheFromFile(populationFileFullPath), logger, allParameters);
       }
 
       public IndividualValuesCache ImportFromCsvString(string csvContent, IImportLogger logger, PathCache<IParameter> allParameters = null)
       {
+         return importFromSource(() => individualValuesCacheFromString(csvContent), logger, allParameters);
+      }
+
+      private IndividualValuesCache importFromSource(Func<IndividualValuesCache> cacheProvider, IImportLogger logger, PathCache<IParameter> allParameters)
+      {
          try
          {
-            foreach (var delimiter in ALLOWED_DELIMITERS)
-            {
-               var individualValuesCache = individualValuesCacheFromString(csvContent, delimiter);
-               //we found at least one individual, this is a valid content for the delimiter and we can exit
-               if (individualValuesCache?.Count > 0)
-                  return withPathsContainingUnitsUpdated(individualValuesCache, allParameters, logger);
-            }
+            var individualValuesCache = cacheProvider();
+            //we found at least one individual, this is a valid source for the delimiter and we can exit
+            if (individualValuesCache?.Count > 0)
+               return withPathsContainingUnitsUpdated(individualValuesCache, allParameters, logger);
 
             //no match. Log 
             logger.AddError(Warning.PopulationFileFormatIsNotSupported);
@@ -118,28 +102,53 @@ namespace OSPSuite.Infrastructure.Import.Services
          return individualValuesCache;
       }
 
-      private IndividualValuesCache individualValuesCacheFromFile(string fileFullPath, char delimiter)
+      private IndividualValuesCache individualValuesCacheFromFile(string fileFullPath)
       {
-         using (var reader = new CsvReaderDisposer(fileFullPath, delimiter))
+         foreach (var delimiter in ALLOWED_DELIMITERS)
          {
-            var csv = reader.Csv;
-            var headers = csv.GetFieldHeaders();
-            if (headers.Contains(Constants.Population.INDIVIDUAL_ID_COLUMN))
-               return createIndividualPropertiesFromCSV(csv, headers);
+            var individualValuesCache = tryReadFromFile(fileFullPath, delimiter);
+            //we found at least one individual, this is a valid file for the delimiter and we can exit
+            if (individualValuesCache?.Count > 0)
+               return individualValuesCache;
          }
 
          return null;
       }
 
-      private IndividualValuesCache individualValuesCacheFromString(string csvContent, char delimiter)
+      private IndividualValuesCache individualValuesCacheFromString(string csvContent)
+      {
+         foreach (var delimiter in ALLOWED_DELIMITERS)
+         {
+            var individualValuesCache = tryReadFromString(csvContent, delimiter);
+            //we found at least one individual, this is a valid content for the delimiter and we can exit
+            if (individualValuesCache?.Count > 0)
+               return individualValuesCache;
+         }
+
+         return null;
+      }
+
+      private IndividualValuesCache tryReadFromFile(string fileFullPath, char delimiter)
+      {
+         using (var reader = new CsvReaderDisposer(fileFullPath, delimiter))
+         {
+            return tryReadFromCsv(reader.Csv);
+         }
+      }
+
+      private IndividualValuesCache tryReadFromString(string csvContent, char delimiter)
       {
          using (var reader = new CsvReaderFromString(csvContent, delimiter))
          {
-            var csv = reader.Csv;
-            var headers = csv.GetFieldHeaders();
-            if (headers.Contains(Constants.Population.INDIVIDUAL_ID_COLUMN))
-               return createIndividualPropertiesFromCSV(csv, headers);
+            return tryReadFromCsv(reader.Csv);
          }
+      }
+
+      private IndividualValuesCache tryReadFromCsv(CsvReader csv)
+      {
+         var headers = csv.GetFieldHeaders();
+         if (headers.Contains(Constants.Population.INDIVIDUAL_ID_COLUMN))
+            return createIndividualPropertiesFromCSV(csv, headers);
 
          return null;
       }
