@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
@@ -142,6 +143,29 @@ namespace OSPSuite.Core.Domain
       public void should_throw_an_exception()
       {
          The.Action(() => sut.AddPoint(2, 30)).ShouldThrowAn<ValuePointAlreadyExistsForPointException>();
+      }
+
+      [Observation]
+      public void should_throw_an_exception_with_the_existing_y_value_in_the_message()
+      {
+         Exception exception = null;
+         The.Action(() =>
+         {
+            try
+            {
+               sut.AddPoint(2, 30);
+            }
+            catch (Exception e)
+            {
+               // capture the message to verify that the new coordinate is used.
+               exception = e;
+               throw;
+            }
+            
+         }).ShouldThrowAn<ValuePointAlreadyExistsForPointException>();
+
+         exception.Message.Contains("x=2").ShouldBeTrue();
+         exception.Message.Contains("y=20").ShouldBeTrue(); // The existing Y value, not the new one (30)
       }
    }
 
