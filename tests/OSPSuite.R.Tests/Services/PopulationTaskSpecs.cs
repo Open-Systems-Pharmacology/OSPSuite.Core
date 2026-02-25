@@ -58,6 +58,38 @@ namespace OSPSuite.R.Services
       }
    }
 
+   public class When_importing_a_population_from_csv_string_that_matches_a_simulation_structure : concern_for_PopulationTask
+   {
+      private IndividualValuesCache _individualValuesCache;
+      private string _csvContent;
+
+      public override void GlobalContext()
+      {
+         base.GlobalContext();
+         _csvContent = File.ReadAllText(_populationFile);
+         _individualValuesCache = sut.ImportPopulationFromCsvString(_csvContent);
+      }
+
+      [Observation]
+      public void should_return_a_population_having_one_entry_per_individual_in_the_population()
+      {
+         _individualValuesCache.Count.ShouldBeEqualTo(10);
+      }
+
+      [Observation]
+      public void should_have_loaded_the_covariates_as_expected()
+      {
+         _individualValuesCache.AllCovariatesNames().ShouldOnlyContain("Gender", "RaceIndex", "Population Name");
+      }
+
+      [Observation]
+      public void should_be_able_to_retrieve_covariates_by_index()
+      {
+         var cov = _individualValuesCache.CovariateValuesFor("Gender");
+         cov.ValueAt(6).ShouldBeEqualTo("2");
+      }
+   }
+
    public class When_exporting_a_population_to_data_table_for_calculation : concern_for_PopulationTask
    {
       private IModelCoreSimulation _simulation;
