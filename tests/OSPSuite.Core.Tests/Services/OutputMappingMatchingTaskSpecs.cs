@@ -115,8 +115,6 @@ namespace OSPSuite.Core.Services
       {
          base.Context();
          _observedData.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.OUTPUT_PATH, Value = "TestCompartment|Brain|TestMolecule" });
-         // remove this so the default path matching is not a fallback.
-         _observedData.ExtendedProperties.Remove(Constants.ObservedData.MOLECULE);
       }
 
       protected override void Because()
@@ -130,6 +128,26 @@ namespace OSPSuite.Core.Services
          _simulation.OutputMappings.All.Count.ShouldBeEqualTo(1);
          _simulation.OutputMappings.All.First().Output.Name.ShouldBeEqualTo("TestMolecule");
          _simulation.OutputMappings.All.First().WeightedObservedData.Name.ShouldBeEqualTo("TestData");
+      }
+   }
+
+   public class When_adding_observed_data_with_output_path_metadata_not_matching_a_simulation_output : concern_for_OutputMappingMatchingTask
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _observedData.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.OUTPUT_PATH, Value = "TestCompartment|Bone|TestMolecule" });
+      }
+
+      protected override void Because()
+      {
+         sut.AddMatchingOutputMapping(_observedData, _simulation);
+      }
+
+      [Observation]
+      public void matching_simulation_output_mapping_should_not_have_been_added()
+      {
+         _simulation.OutputMappings.All.Count.ShouldBeEqualTo(0);
       }
    }
 }
