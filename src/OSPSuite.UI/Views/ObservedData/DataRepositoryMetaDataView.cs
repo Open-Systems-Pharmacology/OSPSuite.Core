@@ -99,6 +99,8 @@ namespace OSPSuite.UI.Views.ObservedData
             .WithFormat(dto => new UnitFormatter(dto.DisplayUnit));
 
          btnAddRow.Click += (o, e) => OnEvent(_presenter.NewMetaDataAdded);
+         btnAddOutputPath.Click += (o, e) => OnEvent(_presenter.AddOutputPathMetadata);
+
          _removeButtonRepository.ButtonClick += (o, e) => OnEvent(_presenter.RemoveMetaData, _gridViewBinder.FocusedElement);
       }
 
@@ -142,6 +144,11 @@ namespace OSPSuite.UI.Views.ObservedData
          _gridViewBinder.BindToSource(metaData);
       }
 
+      public bool AddOutputPathEnabled
+      {
+         set => btnAddOutputPath.Enabled = value;
+      }
+
       public void BindToLLOQ(IParameter lowerLimitsOfQuantification)
       {
          layoutItemLowerLimitOfQuantification.Visibility = LayoutVisibilityConvertor.FromBoolean(true);
@@ -174,10 +181,8 @@ namespace OSPSuite.UI.Views.ObservedData
          base.InitializeResources();
          Caption = Captions.MetaData;
          btnAddRow.InitWithImage(ApplicationIcons.Create, text: Captions.AddMetaData);
-         var dropDownControl = new DXPopupMenu();
-         btnAddRow.DropDownControl = dropDownControl;
-         dropDownControl.Items.Add(new DXMenuItem(Captions.AddOutputPath, (o, e) => OnEvent(() => _presenter.AddOutputPathMetadata())));
-
+         btnAddOutputPath.Text = Captions.AddOutputPath;
+         layoutItemAddOutputPath.AdjustLargeButtonSize(layoutControl1);
          layoutItemAddRow.AdjustLargeButtonSize(layoutControl1);
          layoutItemMolWeight.Text = Constants.Parameters.MOL_WEIGHT.FormatForLabel();
          layoutItemLowerLimitOfQuantification.Text = Captions.LLOQ.FormatForLabel(checkCase:false);

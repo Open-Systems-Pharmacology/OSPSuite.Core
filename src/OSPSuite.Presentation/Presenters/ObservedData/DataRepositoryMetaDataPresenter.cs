@@ -234,6 +234,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          _metaDataDTOList = new NotifyList<MetaDataDTO>();
          _allDataRepositories.ToList().IntersectingMetaData().Each(x => _metaDataDTOList.Add(createDTO(x)));
          _view.BindToMetaData(_metaDataDTOList);
+         _view.AddOutputPathEnabled = !_metaDataDTOList.Any(x => string.Equals(x.Name, Constants.OUTPUT_PATH));
 
          _view.MolWeightEditable = _observedDataConfiguration.MolWeightAlwaysEditable || !_allDataRepositories.Any(x => x.ExtendedProperties.Contains(Captions.Molecule));
 
