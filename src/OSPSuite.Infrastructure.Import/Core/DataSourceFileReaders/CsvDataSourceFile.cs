@@ -34,7 +34,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
 
          try
          {
-            using (var reader = new CsvReaderDisposer(path, csvSeparators.ColumnSeparator))
+            using (var reader = new CsvReaderFromFile(path, csvSeparators.ColumnSeparator))
             {
                var csv = reader.Csv;
                var headers = csv.GetFieldHeaders();

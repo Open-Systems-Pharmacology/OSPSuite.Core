@@ -46,7 +46,7 @@ namespace OSPSuite.Infrastructure.Import.Services
 
       private IReadOnlyList<PKParameterSensitivity> pkParameterSensitivitiesFrom(string fileFullPath, char delimiter)
       {
-         using (var reader = new CsvReaderDisposer(fileFullPath, delimiter))
+         using (var reader = new CsvReaderFromFile(fileFullPath, delimiter))
          {
             var pkParameterSensitivityList = new List<PKParameterSensitivity>();
             var csv = reader.Csv;

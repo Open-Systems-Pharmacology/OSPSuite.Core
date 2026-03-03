@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using LumenWorks.Framework.IO.Csv;
 
 namespace OSPSuite.Infrastructure.Import.Services
@@ -19,13 +18,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          if (_disposed) return;
 
          Cleanup();
-         GC.SuppressFinalize(this);
          _disposed = true;
-      }
-
-      ~CsvReaderBase()
-      {
-         Cleanup();
       }
 
       #endregion

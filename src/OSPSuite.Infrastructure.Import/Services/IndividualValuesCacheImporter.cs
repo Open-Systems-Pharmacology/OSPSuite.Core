@@ -107,7 +107,7 @@ namespace OSPSuite.Infrastructure.Import.Services
 
       private IndividualValuesCache individualValuesCacheFromFile(string fileFullPath, char delimiter)
       {
-         using (var reader = new CsvReaderDisposer(fileFullPath, delimiter))
+         using (var reader = new CsvReaderFromFile(fileFullPath, delimiter))
             return individualPropertiesFromCSV(reader.Csv);
       }
 
