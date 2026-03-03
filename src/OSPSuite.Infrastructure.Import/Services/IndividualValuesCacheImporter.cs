@@ -26,19 +26,31 @@ namespace OSPSuite.Infrastructure.Import.Services
       /// <param name="allParameters">Optional cache of parameters used to validate the imported parameters</param>
       /// <returns></returns>
       IndividualValuesCache ImportFrom(string populationFileFullPath, IImportLogger logger, PathCache<IParameter> allParameters = null);
+
+      /// <summary>
+      ///    Imports all parameters defined in the <paramref name="csvContent" />. If
+      ///    <paramref name="allParameters" /> is defined,
+      ///    the imported parameter path will be validated (unit removed, check for existence). Otherwise, parameters will be
+      ///    imported as is
+      /// </summary>
+      /// <param name="csvContent">CSV content string containing the population to import</param>
+      /// <param name="logger">Logger used to notify user of potential problem with the CSV content</param>
+      /// <param name="allParameters">Optional cache of parameters used to validate the imported parameters</param>
+      /// <returns></returns>
+      IndividualValuesCache ImportFromCsvString(string csvContent, IImportLogger logger, PathCache<IParameter> allParameters = null);
    }
 
    public class IndividualValuesCacheImporter : IIndividualValuesCacheImporter
    {
-      private static readonly char[] ALLOWED_DELIMITERS = {',', ';', '\t'};
+      private static readonly char[] ALLOWED_DELIMITERS = { ',', ';', '\t' };
 
-      public IndividualValuesCache ImportFrom(string populationFileFullPath, IImportLogger logger, PathCache<IParameter> allParameters = null)
+      private IndividualValuesCache importFromSource(Func<char, IndividualValuesCache> sourceFunc, IImportLogger logger, PathCache<IParameter> allParameters = null)
       {
          try
          {
             foreach (var delimiter in ALLOWED_DELIMITERS)
             {
-               var individualValuesCache = individualValuesCacheFrom(populationFileFullPath, delimiter);
+               var individualValuesCache = sourceFunc(delimiter);
                //we found at least one individual, this is a valid file for the delimiter and we can exit
                if (individualValuesCache?.Count > 0)
                   return withPathsContainingUnitsUpdated(individualValuesCache, allParameters, logger);
@@ -53,6 +65,16 @@ namespace OSPSuite.Infrastructure.Import.Services
             logger.AddError(e.FullMessage());
             return new IndividualValuesCache();
          }
+      }
+
+      public IndividualValuesCache ImportFrom(string populationFileFullPath, IImportLogger logger, PathCache<IParameter> allParameters = null)
+      {
+         return importFromSource(delimiter => individualValuesCacheFromFile(populationFileFullPath, delimiter), logger, allParameters);
+      }
+
+      public IndividualValuesCache ImportFromCsvString(string csvContent, IImportLogger logger, PathCache<IParameter> allParameters = null)
+      {
+         return importFromSource(delimiter => individualValuesCacheFromString(csvContent, delimiter), logger, allParameters);
       }
 
       private IndividualValuesCache withPathsContainingUnitsUpdated(IndividualValuesCache individualValuesCache, PathCache<IParameter> allParameters, IImportLogger logger)
@@ -83,17 +105,22 @@ namespace OSPSuite.Infrastructure.Import.Services
          return individualValuesCache;
       }
 
-      private IndividualValuesCache individualValuesCacheFrom(string fileFullPath, char delimiter)
+      private IndividualValuesCache individualValuesCacheFromFile(string fileFullPath, char delimiter)
       {
-         using (var reader = new CsvReaderDisposer(fileFullPath, delimiter))
-         {
-            var csv = reader.Csv;
-            var headers = csv.GetFieldHeaders();
-            if (headers.Contains(Constants.Population.INDIVIDUAL_ID_COLUMN))
-               return createIndividualPropertiesFromCSV(csv, headers);
-         }
+         using (var reader = new CsvReaderFromFile(fileFullPath, delimiter))
+            return individualPropertiesFromCSV(reader.Csv);
+      }
 
-         return null;
+      private IndividualValuesCache individualPropertiesFromCSV(CsvReader csv)
+      {
+         var headers = csv.GetFieldHeaders();
+         return headers.Contains(Constants.Population.INDIVIDUAL_ID_COLUMN) ? createIndividualPropertiesFromCSV(csv, headers) : null;
+      }
+
+      private IndividualValuesCache individualValuesCacheFromString(string csvContent, char delimiter)
+      {
+         using (var reader = new CsvReaderFromString(csvContent, delimiter))
+            return individualPropertiesFromCSV(reader.Csv);
       }
 
       private IndividualValuesCache createIndividualPropertiesFromCSV(CsvReader csv, string[] headers)

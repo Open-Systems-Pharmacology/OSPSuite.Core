@@ -17,6 +17,8 @@ namespace OSPSuite.R.Services
    {
       IndividualValuesCache ImportPopulation(string fileFullPath);
 
+      IndividualValuesCache ImportPopulationFromCsvString(string csvContent);
+
       DataTable PopulationTableFrom(IndividualValuesCache population, IModelCoreSimulation simulation = null);
 
       /// <summary>
@@ -48,6 +50,15 @@ namespace OSPSuite.R.Services
       {
          var importLogger = new ImportLogger();
          var parameterValuesCache = _individualValuesCacheImporter.ImportFrom(fileFullPath, importLogger);
+         importLogger.ThrowOnError();
+         _logger.Log(importLogger);
+         return parameterValuesCache;
+      }
+
+      public IndividualValuesCache ImportPopulationFromCsvString(string csvContent)
+      {
+         var importLogger = new ImportLogger();
+         var parameterValuesCache = _individualValuesCacheImporter.ImportFromCsvString(csvContent, importLogger);
          importLogger.ThrowOnError();
          _logger.Log(importLogger);
          return parameterValuesCache;
