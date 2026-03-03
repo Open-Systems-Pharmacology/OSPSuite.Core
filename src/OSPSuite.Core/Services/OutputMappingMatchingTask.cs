@@ -48,6 +48,7 @@ namespace OSPSuite.Core.Services
          simulation.OutputMappings.Add(newOutputMapping);
          _eventPublisher.PublishEvent(new SimulationOutputMappingsChangedEvent(simulation));
       }
+
       private OutputMapping mapMatchingOutput(DataRepository observedData, ISimulation simulation)
       {
          var newOutputMapping = new OutputMapping();
@@ -73,6 +74,9 @@ namespace OSPSuite.Core.Services
 
       public bool ObservedDataMatchesOutput(DataRepository observedData, string outputPath)
       {
+         if (string.Equals(outputPath, observedData.ExtendedPropertyValueFor(Constants.OUTPUT_PATH)))
+            return true;
+
          var organ = observedData.ExtendedPropertyValueFor(Constants.ObservedData.ORGAN);
          var compartment = observedData.ExtendedPropertyValueFor(Constants.ObservedData.COMPARTMENT);
          var molecule = observedData.ExtendedPropertyValueFor(Constants.ObservedData.MOLECULE);

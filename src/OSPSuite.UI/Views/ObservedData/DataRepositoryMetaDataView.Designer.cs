@@ -37,7 +37,7 @@ namespace OSPSuite.UI.Views.ObservedData
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemAddRow = new DevExpress.XtraLayout.LayoutControlItem();
-         this.btnAddRow = new DevExpress.XtraEditors.SimpleButton();
+         this.btnAddRow = new DevExpress.XtraEditors.DropDownButton();
          this.layoutControl1 = new UxLayoutControl();
          this.tbLowerLimitOfQuantification = new DevExpress.XtraEditors.TextEdit();
          this.tbMolWeight = new DevExpress.XtraEditors.TextEdit();
@@ -216,7 +216,7 @@ namespace OSPSuite.UI.Views.ObservedData
       private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
       private UxLayoutControl layoutControl1;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemAddRow;
-      private DevExpress.XtraEditors.SimpleButton btnAddRow;
+      private DevExpress.XtraEditors.DropDownButton btnAddRow;
       private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
       private DevExpress.XtraEditors.TextEdit tbMolWeight;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemMolWeight;

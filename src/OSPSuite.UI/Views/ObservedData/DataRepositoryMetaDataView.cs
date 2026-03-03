@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using DevExpress.Utils.Menu;
 using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
@@ -27,7 +28,7 @@ namespace OSPSuite.UI.Views.ObservedData
       private readonly GridViewBinder<MetaDataDTO> _gridViewBinder;
       private readonly UxRepositoryItemComboBox _repositoryForPredefinedValues;
       private readonly RepositoryItemTextEdit _readOnlyRepository;
-      private readonly RepositoryItemTextEdit _stantdardEditRepository = new RepositoryItemTextEdit();
+      private readonly RepositoryItemTextEdit _standardEditRepository = new RepositoryItemTextEdit();
       private IGridViewColumn _colName;
       private IGridViewColumn _colValue;
       private readonly RepositoryItem _disabledRemoveButtonRepository = new UxRemoveButtonRepository();
@@ -116,14 +117,14 @@ namespace OSPSuite.UI.Views.ObservedData
 
       private RepositoryItem nameRepository(MetaDataDTO dto)
       {
-         return dto.NameEditable ? _stantdardEditRepository : _readOnlyRepository;
+         return dto.NameEditable ? _standardEditRepository : _readOnlyRepository;
       }
 
       private RepositoryItem valueRepository(MetaDataDTO dto)
       {
          return dto.ValueReadOnly
             ? _readOnlyRepository
-            : dto.HasListOfValues ? _repositoryForPredefinedValues : _stantdardEditRepository;
+            : dto.HasListOfValues ? _repositoryForPredefinedValues : _standardEditRepository;
       }
 
       private void onNameChanged(MetaDataDTO metaDataDTO, PropertyValueSetEventArgs<string> e)
@@ -173,6 +174,10 @@ namespace OSPSuite.UI.Views.ObservedData
          base.InitializeResources();
          Caption = Captions.MetaData;
          btnAddRow.InitWithImage(ApplicationIcons.Create, text: Captions.AddMetaData);
+         var dropDownControl = new DXPopupMenu();
+         btnAddRow.DropDownControl = dropDownControl;
+         dropDownControl.Items.Add(new DXMenuItem(Captions.AddOutputPath, (o, e) => OnEvent(() => _presenter.AddOutputPathMetadata())));
+
          layoutItemAddRow.AdjustLargeButtonSize(layoutControl1);
          layoutItemMolWeight.Text = Constants.Parameters.MOL_WEIGHT.FormatForLabel();
          layoutItemLowerLimitOfQuantification.Text = Captions.LLOQ.FormatForLabel(checkCase:false);

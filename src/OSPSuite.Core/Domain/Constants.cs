@@ -109,6 +109,7 @@ namespace OSPSuite.Core.Domain
       public const string AUXILIARY_TYPE = "AuxiliaryType";
       public const string FILE = "Source";
       public const string SHEET = "Sheet";
+      public const string OUTPUT_PATH = "OutputPath";
       public const string DEFAULT_WATERMARK_TEXT = "DRAFT";
 
       public const int MB_TO_BYTES = 1024 * 1024; //1 MB = 1024 * 1024 bytes
