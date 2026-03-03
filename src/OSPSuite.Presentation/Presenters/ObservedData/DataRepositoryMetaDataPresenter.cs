@@ -188,8 +188,15 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       public Unit GetDefaultMolWeightUnit() => 
          _dimensionFactory.TryGetDimension(Constants.Dimension.MOLECULAR_WEIGHT, out var dimension) ? dimension.DefaultUnit : null;
 
-      public void AddOutputPathMetadata() => 
+      public void AddOutputPathMetadata()
+      {
+         if (hasOutputPath())
+            return;
+
          _metaDataDTOList.Add(createDTO(name: Constants.OUTPUT_PATH, value: string.Empty, nameEditable: false));
+      }
+
+      private bool hasOutputPath() => _metaDataDTOList.Any(x => string.Equals(x.Name, Constants.OUTPUT_PATH));
 
       private double molWeightValueInCoreUnit(double valueInDisplayUnit)
       {
@@ -234,7 +241,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          _metaDataDTOList = new NotifyList<MetaDataDTO>();
          _allDataRepositories.ToList().IntersectingMetaData().Each(x => _metaDataDTOList.Add(createDTO(x)));
          _view.BindToMetaData(_metaDataDTOList);
-         _view.AddOutputPathEnabled = !_metaDataDTOList.Any(x => string.Equals(x.Name, Constants.OUTPUT_PATH));
+         _view.AddOutputPathEnabled = !hasOutputPath();
 
          _view.MolWeightEditable = _observedDataConfiguration.MolWeightAlwaysEditable || !_allDataRepositories.Any(x => x.ExtendedProperties.Contains(Captions.Molecule));
 
