@@ -46,7 +46,7 @@ namespace OSPSuite.Infrastructure.Import.Services
             _importedPK = new Cache<string, QuantityPKParameter>(x => x.Id);
             //cache containing a list of tuple<individual Id, value in core unit>
             _valuesCache = new Cache<QuantityPKParameter, List<(int individualId, float value)>>();
-            using (var reader = new CsvReaderDisposer(fileFullPath))
+            using (var reader = new CsvReaderFromFile(fileFullPath))
             {
                var csv = reader.Csv;
                var headers = csv.GetFieldHeaders();

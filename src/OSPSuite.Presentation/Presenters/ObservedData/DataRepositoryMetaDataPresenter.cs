@@ -2,11 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility;
-using OSPSuite.Utility.Collections;
-using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Utility.Validation;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -16,6 +11,11 @@ using OSPSuite.Core.Events;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Views.ObservedData;
+using OSPSuite.Utility;
+using OSPSuite.Utility.Collections;
+using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Extensions;
+using OSPSuite.Utility.Validation;
 
 namespace OSPSuite.Presentation.Presenters.ObservedData
 {
@@ -65,6 +65,11 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       ///    Returns the default molecular weight unit
       /// </summary>
       Unit GetDefaultMolWeightUnit();
+
+      /// <summary>
+      ///    Adds a metadata named "OutputPath". This is a specially named metadata.
+      /// </summary>
+      void AddOutputPathMetadata();
    }
 
    public class DataRepositoryMetaDataPresenter : AbstractSubPresenter<IDataRepositoryMetaDataView, IDataRepositoryMetaDataPresenter>,
@@ -95,15 +100,11 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
       ///    Binds the <paramref name="observedData" /> with the view
       /// </summary>
       /// <param name="observedData">The dataSheet repository that will be edited</param>
-      public void EditObservedData(DataRepository observedData)
-      {
-         editObservedData(new List<DataRepository> {observedData}, MetaDataDTO.MetaDataDTORules.All());
-      }
+      public void EditObservedData(DataRepository observedData) => 
+         editObservedData(new List<DataRepository> { observedData }, MetaDataDTO.MetaDataDTORules.All());
 
-      public void EditObservedDataMetaData(IEnumerable<DataRepository> observedData)
-      {
+      public void EditObservedDataMetaData(IEnumerable<DataRepository> observedData) => 
          editObservedData(observedData, MetaDataDTO.MetaDataDTORules.AllForMultipleEdits());
-      }
 
       private void editObservedData(IEnumerable<DataRepository> observedData, IEnumerable<IBusinessRule> rules)
       {
@@ -132,35 +133,23 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          };
       }
 
-      public void NewMetaDataAdded()
-      {
+      public void NewMetaDataAdded() => 
          _metaDataDTOList.Add(createDTO(name: string.Empty, value: string.Empty));
-      }
 
-      public void MetaDataNameChanged(MetaDataDTO metaDataDTO, string oldName)
-      {
+      public void MetaDataNameChanged(MetaDataDTO metaDataDTO, string oldName) => 
          handleThisChange(metaDataNameChanged, metaDataDTO, oldName, oldName);
-      }
 
-      public void RemoveMetaData(MetaDataDTO metaDataDTO)
-      {
+      public void RemoveMetaData(MetaDataDTO metaDataDTO) => 
          AddCommand(_observedDataMetaDataTask.RemoveMetaData(_allDataRepositories, mapFrom(metaDataDTO)));
-      }
 
-      public IEnumerable<string> PredefinedValuesFor(MetaDataDTO metaDataDTO)
-      {
-         return _observedDataConfiguration.PredefinedValuesFor(metaDataDTO.Name);
-      }
+      public IEnumerable<string> PredefinedValuesFor(MetaDataDTO metaDataDTO) => 
+         _observedDataConfiguration.PredefinedValuesFor(metaDataDTO.Name);
 
-      private bool isPredefinedProperty(IExtendedProperty extendedProperty)
-      {
-         return _observedDataConfiguration.DefaultMetaDataCategories.Contains(extendedProperty.Name);
-      }
+      private bool isPredefinedProperty(IExtendedProperty extendedProperty) => 
+         _observedDataConfiguration.DefaultMetaDataCategories.Contains(extendedProperty.Name);
 
-      private MetaDataKeyValue mapFrom(MetaDataDTO dto)
-      {
-         return new MetaDataKeyValue {Key = dto.Name, Value = dto.Value};
-      }
+      private MetaDataKeyValue mapFrom(MetaDataDTO dto) => 
+         new MetaDataKeyValue { Key = dto.Name, Value = dto.Value };
 
       public void MetaDataValueChanged(MetaDataDTO metaDataDTO, string oldValue)
       {
@@ -178,32 +167,36 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
             metaDataAdded(metaDataDTO);
       }
 
-      private void metaDataAdded(MetaDataDTO metaDataDTO)
-      {
+      private void metaDataAdded(MetaDataDTO metaDataDTO) => 
          AddCommand(_observedDataMetaDataTask.AddMetaData(_allDataRepositories, mapFrom(metaDataDTO)));
-      }
 
       private void metaDataValueChanged(MetaDataDTO metaDataDTO, string oldValue)
       {
          AddCommand(_observedDataMetaDataTask.ChangeMetaData(_allDataRepositories,
-            new MetaDataChanged {NewName = metaDataDTO.Name, OldName = metaDataDTO.Name, OldValue = oldValue, NewValue = metaDataDTO.Value}));
+            new MetaDataChanged { NewName = metaDataDTO.Name, OldName = metaDataDTO.Name, OldValue = oldValue, NewValue = metaDataDTO.Value }));
       }
 
       private void metaDataNameChanged(MetaDataDTO metaDataDTO, string oldName)
       {
          AddCommand(_observedDataMetaDataTask.ChangeMetaData(_allDataRepositories,
-            new MetaDataChanged {NewName = metaDataDTO.Name, OldName = oldName, OldValue = metaDataDTO.Value, NewValue = metaDataDTO.Value}));
+            new MetaDataChanged { NewName = metaDataDTO.Name, OldName = oldName, OldValue = metaDataDTO.Value, NewValue = metaDataDTO.Value }));
       }
 
-      public void SetMolWeight(double oldMolWeightValueInDisplayUnit, double molWeightValueInDisplayUnit)
-      {
+      public void SetMolWeight(double oldMolWeightValueInDisplayUnit, double molWeightValueInDisplayUnit) => 
          this.DoWithinLatch(() => { AddCommand(_observedDataMetaDataTask.UpdateMolWeight(_allDataRepositories, molWeightValueInCoreUnit(oldMolWeightValueInDisplayUnit), molWeightValueInCoreUnit(molWeightValueInDisplayUnit))); });
+
+      public Unit GetDefaultMolWeightUnit() => 
+         _dimensionFactory.TryGetDimension(Constants.Dimension.MOLECULAR_WEIGHT, out var dimension) ? dimension.DefaultUnit : null;
+
+      public void AddOutputPathMetadata()
+      {
+         if (hasOutputPath())
+            return;
+
+         _metaDataDTOList.Add(createDTO(name: Constants.OUTPUT_PATH, value: string.Empty, nameEditable: false));
       }
 
-      public Unit GetDefaultMolWeightUnit()
-      {
-         return _dimensionFactory.TryGetDimension(Constants.Dimension.MOLECULAR_WEIGHT, out var dimension) ? dimension.DefaultUnit : null;
-      }
+      private bool hasOutputPath() => _metaDataDTOList.Any(x => string.Equals(x.Name, Constants.OUTPUT_PATH));
 
       private double molWeightValueInCoreUnit(double valueInDisplayUnit)
       {
@@ -248,6 +241,7 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          _metaDataDTOList = new NotifyList<MetaDataDTO>();
          _allDataRepositories.ToList().IntersectingMetaData().Each(x => _metaDataDTOList.Add(createDTO(x)));
          _view.BindToMetaData(_metaDataDTOList);
+         _view.AddOutputPathEnabled = !hasOutputPath();
 
          _view.MolWeightEditable = _observedDataConfiguration.MolWeightAlwaysEditable || !_allDataRepositories.Any(x => x.ExtendedProperties.Contains(Captions.Molecule));
 
@@ -271,10 +265,8 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
             .DistinctBy(x => x.Value);
       }
 
-      private IParameter createParameterForLLOQ(DataColumn dataColumn)
-      {
-         return _parameterFactory.CreateParameter(Captions.LLOQ, dataColumn.DataInfo.LLOQ, dataColumn.Dimension, displayUnit:dataColumn.DisplayUnit);
-      }
+      private IParameter createParameterForLLOQ(DataColumn dataColumn) => 
+         _parameterFactory.CreateParameter(Captions.LLOQ, dataColumn.DataInfo.LLOQ, dataColumn.Dimension, displayUnit: dataColumn.DisplayUnit);
 
       private IParameter retrieveUniqueMolWeightParameter()
       {
@@ -291,14 +283,10 @@ namespace OSPSuite.Presentation.Presenters.ObservedData
          return _parameterFactory.CreateParameter(Constants.Parameters.MOL_WEIGHT, molWeightValue, _molWeightDimension);
       }
 
-      private bool isReadOnly(IExtendedProperty extendedProperty)
-      {
-         return _observedDataConfiguration.ReadOnlyMetaDataCategories.Contains(extendedProperty.Name);
-      }
+      private bool isReadOnly(IExtendedProperty extendedProperty) => 
+         _observedDataConfiguration.ReadOnlyMetaDataCategories.Contains(extendedProperty.Name);
 
-      private bool canHandle(ObservedDataEvent eventToHandle)
-      {
-         return _allDataRepositories.Contains(eventToHandle.ObservedData);
-      }
+      private bool canHandle(ObservedDataEvent eventToHandle) => 
+         _allDataRepositories.Contains(eventToHandle.ObservedData);
    }
 }

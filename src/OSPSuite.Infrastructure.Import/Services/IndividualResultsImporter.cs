@@ -36,7 +36,7 @@ namespace OSPSuite.Infrastructure.Import.Services
          try
          {
             var individualResults = new Cache<int, IndividualResults>(x => x.IndividualId);
-            using (var reader = new CsvReaderDisposer(fileFullPath))
+            using (var reader = new CsvReaderFromFile(fileFullPath))
             {
                var csv = reader.Csv;
                var headers = csv.GetFieldHeaders();
