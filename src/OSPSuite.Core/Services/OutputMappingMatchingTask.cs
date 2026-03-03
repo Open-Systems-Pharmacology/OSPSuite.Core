@@ -32,7 +32,7 @@ namespace OSPSuite.Core.Services
       private readonly IEntitiesInSimulationRetriever _entitiesInSimulationRetriever;
       private readonly IEventPublisher _eventPublisher;
 
-      public OutputMappingMatchingTask (IEntitiesInSimulationRetriever entitiesInSimulationRetriever, IEventPublisher eventPublisher)
+      public OutputMappingMatchingTask(IEntitiesInSimulationRetriever entitiesInSimulationRetriever, IEventPublisher eventPublisher)
       {
          _eventPublisher = eventPublisher;
          _entitiesInSimulationRetriever = entitiesInSimulationRetriever;
@@ -42,12 +42,13 @@ namespace OSPSuite.Core.Services
       {
          var newOutputMapping = mapMatchingOutput(observedData, simulation);
 
-         if (newOutputMapping.Output == null) 
+         if (newOutputMapping.Output == null)
             return;
-         
+
          simulation.OutputMappings.Add(newOutputMapping);
          _eventPublisher.PublishEvent(new SimulationOutputMappingsChangedEvent(simulation));
       }
+
       private OutputMapping mapMatchingOutput(DataRepository observedData, ISimulation simulation)
       {
          var newOutputMapping = new OutputMapping();
@@ -73,6 +74,11 @@ namespace OSPSuite.Core.Services
 
       public bool ObservedDataMatchesOutput(DataRepository observedData, string outputPath)
       {
+         var observedOutputPath = observedData.ExtendedPropertyValueFor(Constants.OUTPUT_PATH);
+         // if present, use that as the matching objective rather than the organ/compartment/molecule properties
+         if (!string.IsNullOrWhiteSpace(observedOutputPath))
+            return string.Equals(outputPath, observedOutputPath, System.StringComparison.Ordinal);
+
          var organ = observedData.ExtendedPropertyValueFor(Constants.ObservedData.ORGAN);
          var compartment = observedData.ExtendedPropertyValueFor(Constants.ObservedData.COMPARTMENT);
          var molecule = observedData.ExtendedPropertyValueFor(Constants.ObservedData.MOLECULE);

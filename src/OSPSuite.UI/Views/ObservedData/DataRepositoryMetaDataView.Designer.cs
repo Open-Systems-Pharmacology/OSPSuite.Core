@@ -32,18 +32,20 @@ namespace OSPSuite.UI.Views.ObservedData
       /// </summary>
       private void InitializeComponent()
       {
-         this.gridControl = new UxGridControl();
-         this.gridView = new UxGridView();
+         this.gridControl = new OSPSuite.UI.Controls.UxGridControl();
+         this.gridView = new OSPSuite.UI.Controls.UxGridView();
          this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
          this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemAddRow = new DevExpress.XtraLayout.LayoutControlItem();
          this.btnAddRow = new DevExpress.XtraEditors.SimpleButton();
-         this.layoutControl1 = new UxLayoutControl();
+         this.layoutControl1 = new OSPSuite.UI.Controls.UxLayoutControl();
+         this.btnAddOutputPath = new OSPSuite.UI.Controls.UxSimpleButton();
          this.tbLowerLimitOfQuantification = new DevExpress.XtraEditors.TextEdit();
          this.tbMolWeight = new DevExpress.XtraEditors.TextEdit();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
          this.layoutItemMolWeight = new DevExpress.XtraLayout.LayoutControlItem();
          this.layoutItemLowerLimitOfQuantification = new DevExpress.XtraLayout.LayoutControlItem();
+         this.layoutItemAddOutputPath = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.gridControl)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.gridView)).BeginInit();
@@ -57,14 +59,15 @@ namespace OSPSuite.UI.Views.ObservedData
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemMolWeight)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemLowerLimitOfQuantification)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemAddOutputPath)).BeginInit();
          this.SuspendLayout();
          // 
          // gridControl
          // 
-         this.gridControl.Location = new System.Drawing.Point(2, 76);
+         this.gridControl.Location = new System.Drawing.Point(2, 102);
          this.gridControl.MainView = this.gridView;
          this.gridControl.Name = "gridControl";
-         this.gridControl.Size = new System.Drawing.Size(725, 530);
+         this.gridControl.Size = new System.Drawing.Size(725, 504);
          this.gridControl.TabIndex = 0;
          this.gridControl.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridView});
@@ -88,8 +91,8 @@ namespace OSPSuite.UI.Views.ObservedData
             this.layoutItemAddRow,
             this.emptySpaceItem1,
             this.layoutItemMolWeight,
-            this.layoutItemLowerLimitOfQuantification});
-         this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
+            this.layoutItemLowerLimitOfQuantification,
+            this.layoutItemAddOutputPath});
          this.layoutControlGroup1.Name = "layoutControlGroup1";
          this.layoutControlGroup1.Padding = new DevExpress.XtraLayout.Utils.Padding(0, 0, 0, 0);
          this.layoutControlGroup1.Size = new System.Drawing.Size(729, 608);
@@ -99,9 +102,9 @@ namespace OSPSuite.UI.Views.ObservedData
          // 
          this.layoutControlItem1.Control = this.gridControl;
          this.layoutControlItem1.CustomizationFormText = "layoutControlItem1";
-         this.layoutControlItem1.Location = new System.Drawing.Point(0, 74);
+         this.layoutControlItem1.Location = new System.Drawing.Point(0, 100);
          this.layoutControlItem1.Name = "layoutControlItem1";
-         this.layoutControlItem1.Size = new System.Drawing.Size(729, 534);
+         this.layoutControlItem1.Size = new System.Drawing.Size(729, 508);
          this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
          this.layoutControlItem1.TextVisible = false;
          // 
@@ -109,18 +112,18 @@ namespace OSPSuite.UI.Views.ObservedData
          // 
          this.layoutItemAddRow.Control = this.btnAddRow;
          this.layoutItemAddRow.CustomizationFormText = "layoutControlItem2";
-         this.layoutItemAddRow.Location = new System.Drawing.Point(364, 48);
+         this.layoutItemAddRow.Location = new System.Drawing.Point(401, 48);
          this.layoutItemAddRow.Name = "layoutItemAddRow";
-         this.layoutItemAddRow.Size = new System.Drawing.Size(365, 26);
+         this.layoutItemAddRow.Size = new System.Drawing.Size(328, 26);
          this.layoutItemAddRow.Text = "layoutControlItem2";
          this.layoutItemAddRow.TextSize = new System.Drawing.Size(0, 0);
          this.layoutItemAddRow.TextVisible = false;
          // 
          // btnAddRow
          // 
-         this.btnAddRow.Location = new System.Drawing.Point(366, 50);
+         this.btnAddRow.Location = new System.Drawing.Point(403, 50);
          this.btnAddRow.Name = "btnAddRow";
-         this.btnAddRow.Size = new System.Drawing.Size(361, 22);
+         this.btnAddRow.Size = new System.Drawing.Size(324, 22);
          this.btnAddRow.StyleController = this.layoutControl1;
          this.btnAddRow.TabIndex = 4;
          this.btnAddRow.Text = "btnAddRow";
@@ -128,6 +131,7 @@ namespace OSPSuite.UI.Views.ObservedData
          // layoutControl1
          // 
          this.layoutControl1.AllowCustomization = false;
+         this.layoutControl1.Controls.Add(this.btnAddOutputPath);
          this.layoutControl1.Controls.Add(this.tbLowerLimitOfQuantification);
          this.layoutControl1.Controls.Add(this.tbMolWeight);
          this.layoutControl1.Controls.Add(this.btnAddRow);
@@ -141,20 +145,31 @@ namespace OSPSuite.UI.Views.ObservedData
          this.layoutControl1.TabIndex = 1;
          this.layoutControl1.Text = "layoutControl1";
          // 
+         // btnAddOutputPath
+         // 
+         this.btnAddOutputPath.Location = new System.Drawing.Point(403, 76);
+         this.btnAddOutputPath.Manager = null;
+         this.btnAddOutputPath.Name = "btnAddOutputPath";
+         this.btnAddOutputPath.Shortcut = System.Windows.Forms.Keys.None;
+         this.btnAddOutputPath.Size = new System.Drawing.Size(324, 22);
+         this.btnAddOutputPath.StyleController = this.layoutControl1;
+         this.btnAddOutputPath.TabIndex = 8;
+         this.btnAddOutputPath.Text = "btnAddOutputPath";
+         // 
          // tbLowerLimitOfQuantification
          // 
          this.tbLowerLimitOfQuantification.Enabled = false;
-         this.tbLowerLimitOfQuantification.Location = new System.Drawing.Point(186, 26);
+         this.tbLowerLimitOfQuantification.Location = new System.Drawing.Point(195, 26);
          this.tbLowerLimitOfQuantification.Name = "tbLowerLimitOfQuantification";
-         this.tbLowerLimitOfQuantification.Size = new System.Drawing.Size(541, 20);
+         this.tbLowerLimitOfQuantification.Size = new System.Drawing.Size(532, 20);
          this.tbLowerLimitOfQuantification.StyleController = this.layoutControl1;
          this.tbLowerLimitOfQuantification.TabIndex = 6;
          // 
          // tbMolWeight
          // 
-         this.tbMolWeight.Location = new System.Drawing.Point(186, 2);
+         this.tbMolWeight.Location = new System.Drawing.Point(195, 2);
          this.tbMolWeight.Name = "tbMolWeight";
-         this.tbMolWeight.Size = new System.Drawing.Size(541, 20);
+         this.tbMolWeight.Size = new System.Drawing.Size(532, 20);
          this.tbMolWeight.StyleController = this.layoutControl1;
          this.tbMolWeight.TabIndex = 5;
          // 
@@ -164,7 +179,7 @@ namespace OSPSuite.UI.Views.ObservedData
          this.emptySpaceItem1.CustomizationFormText = "emptySpaceItem1";
          this.emptySpaceItem1.Location = new System.Drawing.Point(0, 48);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(364, 26);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(401, 52);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
          // 
          // layoutItemMolWeight
@@ -183,6 +198,15 @@ namespace OSPSuite.UI.Views.ObservedData
          this.layoutItemLowerLimitOfQuantification.Size = new System.Drawing.Size(729, 24);
          this.layoutItemLowerLimitOfQuantification.TextSize = new System.Drawing.Size(181, 13);
          this.layoutItemLowerLimitOfQuantification.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+         // 
+         // layoutItemAddOutputPath
+         // 
+         this.layoutItemAddOutputPath.Control = this.btnAddOutputPath;
+         this.layoutItemAddOutputPath.Location = new System.Drawing.Point(401, 74);
+         this.layoutItemAddOutputPath.Name = "layoutItemAddOutputPath";
+         this.layoutItemAddOutputPath.Size = new System.Drawing.Size(328, 26);
+         this.layoutItemAddOutputPath.TextSize = new System.Drawing.Size(0, 0);
+         this.layoutItemAddOutputPath.TextVisible = false;
          // 
          // DataRepositoryMetaDataView
          // 
@@ -204,6 +228,7 @@ namespace OSPSuite.UI.Views.ObservedData
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemMolWeight)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.layoutItemLowerLimitOfQuantification)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.layoutItemAddOutputPath)).EndInit();
          this.ResumeLayout(false);
 
       }
@@ -222,5 +247,7 @@ namespace OSPSuite.UI.Views.ObservedData
       private DevExpress.XtraLayout.LayoutControlItem layoutItemMolWeight;
       private DevExpress.XtraEditors.TextEdit tbLowerLimitOfQuantification;
       private DevExpress.XtraLayout.LayoutControlItem layoutItemLowerLimitOfQuantification;
+      private UxSimpleButton btnAddOutputPath;
+      private DevExpress.XtraLayout.LayoutControlItem layoutItemAddOutputPath;
    }
 }

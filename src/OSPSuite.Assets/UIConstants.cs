@@ -237,6 +237,7 @@ namespace OSPSuite.Assets
       public static readonly string AutoUpdateChart = "Auto-update chart";
       public static readonly string Undefined = "Undefined";
       public static readonly string ExportHistory = "Export History";
+      public static readonly string AddOutputPath = "Add Output Path";
 
       public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
 

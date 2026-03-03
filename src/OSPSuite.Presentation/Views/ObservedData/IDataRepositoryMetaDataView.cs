@@ -11,6 +11,7 @@ namespace OSPSuite.Presentation.Views.ObservedData
       void BindToMolWeight(IParameter molWeightParameter);
       bool MolWeightVisible { get;set; }
       bool MolWeightEditable { get; set; }
+      bool AddOutputPathEnabled { set; }
       void BindToLLOQ(IParameter lowerLimitsOfQuantification);
    }
 }
