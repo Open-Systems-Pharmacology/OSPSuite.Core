@@ -42,6 +42,29 @@ namespace OSPSuite.Core
       }
    }
 
+   internal class When_overriding_molecule_calculation_methods : concern_for_ModelConstructor
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _simulationConfiguration.AddCalculationMethodsOverridesFor("A", new List<UsedCalculationMethod> { new UsedCalculationMethod("PartitionCoeff", "CM2") });
+      }
+
+      [Observation]
+      public void should_have_used_the_calculation_method_CM2_for_the_molecule_A()
+      {
+         _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "A").GetSingleChildByName<IParameter>("K").Formula.Name.ShouldBeEqualTo("PartitionCoeff_2");
+         _model.MoleculeContainerInNeighborhood("bon_pls_to_bon_cell", "A").GetSingleChildByName<IParameter>("K").Formula.Name.ShouldBeEqualTo("PartitionCoeff_2");
+      }
+
+      [Observation]
+      public void should_have_used_the_calculation_method_CM2_for_the_molecule_B()
+      {
+         _model.MoleculeContainerInNeighborhood("lng_pls_to_lng_cell", "B").GetSingleChildByName<IParameter>("K").Formula.Name.ShouldBeEqualTo("PartitionCoeff_2");
+         _model.MoleculeContainerInNeighborhood("bon_pls_to_bon_cell", "B").GetSingleChildByName<IParameter>("K").Formula.Name.ShouldBeEqualTo("PartitionCoeff_2");
+      }
+   }
+
    internal class When_running_the_case_study : concern_for_ModelConstructor
    {
       [Observation]
