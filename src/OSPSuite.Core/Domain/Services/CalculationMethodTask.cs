@@ -5,6 +5,7 @@ using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Extensions;
+using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services
@@ -46,7 +47,7 @@ namespace OSPSuite.Core.Domain.Services
             _allBlackBoxParameters = _model.Root.GetAllChildren<IParameter>().Where(p => p.Formula.IsBlackBox()).ToList();
             foreach (var calculationMethod in simulationConfiguration.AllCalculationMethods)
             {
-               var allMoleculesUsingMethod = allMoleculesUsing(calculationMethod, _simulationBuilder.Molecules).ToList();
+               var allMoleculesUsingMethod = allMoleculesUsing(calculationMethod, _simulationBuilder.Molecules, simulationConfiguration).ToList();
 
                createFormulaForBlackBoxParameters(calculationMethod, allMoleculesUsingMethod);
 
@@ -127,13 +128,26 @@ namespace OSPSuite.Core.Domain.Services
 
       private bool parameterIsNotBlackBoxParameter(IParameter parameter) => !_allBlackBoxParameters.Contains(parameter);
 
-      private IEnumerable<MoleculeBuilder> allMoleculesUsing(CoreCalculationMethod calculationMethod, IReadOnlyCollection<MoleculeBuilder> molecules)
+      private IEnumerable<MoleculeBuilder> allMoleculesUsing(CoreCalculationMethod calculationMethod, IReadOnlyCollection<MoleculeBuilder> molecules, SimulationConfiguration simulationConfiguration)
       {
          return molecules
             .Where(molecule => molecule.IsFloatingXenobiotic)
-            .SelectMany(molecule => molecule.UsedCalculationMethods, (molecule, usedCalculationMethod) => new {molecule, usedCalculationMethod})
+            .SelectMany(molecule => usedCalculationMethodsFor(molecule, simulationConfiguration), (molecule, usedCalculationMethod) => new {molecule, usedCalculationMethod})
             .Where(x => x.usedCalculationMethod.CalculationMethod == calculationMethod.Name)
             .Select(x => x.molecule);
+      }
+
+      private static IReadOnlyCollection<UsedCalculationMethod> usedCalculationMethodsFor(MoleculeBuilder molecule, SimulationConfiguration simulationConfiguration)
+      {
+         var cache = new Cache<string, UsedCalculationMethod> (getKey: x => x.Category);
+
+         // use molecule defined calculation methods first
+         molecule.UsedCalculationMethods.Each(x => cache[x.Category] = x);
+
+         // override when a calculation method override is defined for the molecule in the simulation configuration
+         simulationConfiguration.CalculationMethodOverridesFor(molecule.Name).UsedCalculationMethods.Each(x => cache[x.Category] = x);
+         
+         return cache;
       }
 
       private IEnumerable<IContainer> allMoleculeContainersFor(DescriptorCriteria containerDescriptor, MoleculeBuilder molecule)
