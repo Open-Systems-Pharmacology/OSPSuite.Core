@@ -124,7 +124,7 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void the_first_method_should_be_overwritten_by_the_second()
+      public void the_overrides_list_should_be_empty()
       {
          var moleculeUsedCalculationMethods = sut.CalculationMethodOverridesFor("SomethingElse");
          moleculeUsedCalculationMethods.UsedCalculationMethods.Count.ShouldBeEqualTo(0);
