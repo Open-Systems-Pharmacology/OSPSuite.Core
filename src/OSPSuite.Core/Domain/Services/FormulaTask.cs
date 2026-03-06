@@ -310,8 +310,14 @@ namespace OSPSuite.Core.Domain.Services
 
       public void ExpandDynamicFormulaIn(IContainer rootContainer)
       {
-         var allFormulaUsable = rootContainer.GetAllChildren<IFormulaUsable>();
          var allEntityUsingDynamicFormula = rootContainer.GetAllChildren<IUsingFormula>(x => x.Formula.IsDynamic());
+
+         // No dynamic formulas to expand - avoid the additional tree traversal for formula usables
+         if (allEntityUsingDynamicFormula.Count == 0)
+            return;
+
+         var allFormulaUsable = rootContainer.GetAllChildren<IFormulaUsable>();
+         var allFormulaUsableDescriptor = allFormulaUsable.ToEntityDescriptorMapList();
 
          allEntityUsingDynamicFormula.Each(entityUsingFormula =>
          {
@@ -320,11 +326,14 @@ namespace OSPSuite.Core.Domain.Services
             if (dynamicFormula.Criteria.IsSatisfiedBy(entityUsingFormula))
                throw new CircularReferenceInSumFormulaException(dynamicFormula.Name, entityUsingFormula.Name);
 
+            // InChildrenCondition adds unique tags to direct children of the parent, which modifies the entity
+            // descriptors and requires the descriptor map list to be rebuilt to reflect the changes
+            var criteriaHasInChildrenCondition = dynamicFormula.Criteria.Any(x => x.IsAnImplementationOf<InChildrenCondition>());
             dynamicFormula.Criteria = updateDynamicFormulaCriteria(dynamicFormula, entityUsingFormula);
 
-            //this needs to be done after updating the criteria as dynamic tags might be added to the criteria and would 
-            //render the descriptor map list invalid
-            var allFormulaUsableDescriptor = allFormulaUsable.ToEntityDescriptorMapList();
+            if (criteriaHasInChildrenCondition)
+               allFormulaUsableDescriptor = allFormulaUsable.ToEntityDescriptorMapList();
+
             entityUsingFormula.Formula = dynamicFormula.ExpandUsing(allFormulaUsableDescriptor, _objectPathFactory, _objectBaseFactory);
          });
       }

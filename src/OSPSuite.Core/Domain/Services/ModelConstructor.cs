@@ -126,10 +126,11 @@ namespace OSPSuite.Core.Domain.Services
          _referencesResolver.ResolveReferencesIn(model);
 
          // This should be done after reference were resolved to ensure that we do not remove formula parameter that could not be evaluated
-         removeUndefinedLocalMoleculeParametersIn(model, creationResult);
+         var removedNaNParameters = removeUndefinedLocalMoleculeParametersIn(model, creationResult);
 
-         // now that we have removed potential nan parameters, let's make sure that no formula was actually using them
-         _referencesResolver.ResolveReferencesIn(model);
+         // Only re-resolve if parameters were actually removed to ensure no formula was using them
+         if (removedNaNParameters)
+            _referencesResolver.ResolveReferencesIn(model);
 
          // We need to update the path of entity in the EntitySource
          _entitySourcePathUpdater.UpdateEntityPaths(model, simulationBuilder);
@@ -138,7 +139,7 @@ namespace OSPSuite.Core.Domain.Services
          _simulationQuantityValueWarningTask.WarnForNonFiniteQuantities(model, creationResult);
       }
 
-      private void removeUndefinedLocalMoleculeParametersIn(IModel model, CreationResult creationResult)
+      private bool removeUndefinedLocalMoleculeParametersIn(IModel model, CreationResult creationResult)
       {
          var allNaNParametersFromMolecules = model.Root.GetAllChildren<IContainer>()
             .Where(c => c.ContainerType == ContainerType.Molecule)
@@ -149,6 +150,8 @@ namespace OSPSuite.Core.Domain.Services
          _simulationQuantityValueWarningTask.WarnForOptimizedLocalMoleculeParameters(allNaNParametersFromMolecules, creationResult);
 
          allNaNParametersFromMolecules.Each(x => x.ParentContainer.RemoveChild(x));
+
+         return allNaNParametersFromMolecules.Any();
       }
 
       private ValidationResult validateModel(ModelConfiguration modelConfiguration)
