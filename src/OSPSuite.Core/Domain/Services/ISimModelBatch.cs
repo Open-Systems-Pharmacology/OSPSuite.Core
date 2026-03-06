@@ -55,5 +55,7 @@ namespace OSPSuite.Core.Domain.Services
       bool KeepXMLNodeInSimModelSimulation { get; set; }
 
       bool CheckForNegativeValues { get; set; }
+
+      bool AutoReduceTolerances { get; set; }
    }
 }
