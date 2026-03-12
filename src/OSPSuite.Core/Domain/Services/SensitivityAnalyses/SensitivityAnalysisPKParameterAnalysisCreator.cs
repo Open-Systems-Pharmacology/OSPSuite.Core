@@ -11,8 +11,8 @@ namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 
    public class SensitivityAnalysisPKParameterAnalysisCreator : ParameterAnalysableAnalysisCreator, ISensitivityAnalysisPKParameterAnalysisCreator
    {
-      public SensitivityAnalysisPKParameterAnalysisCreator(IContainerTask containerTask, IOSPSuiteExecutionContext executionContext, IObjectIdResetter objectIdResetter, IIdGenerator idGenerator)
-         : base(containerTask, executionContext, objectIdResetter, idGenerator)
+      public SensitivityAnalysisPKParameterAnalysisCreator(IContainerTask containerTask, IOSPSuiteExecutionContext executionContext, ICloneManager cloneManager, IObjectIdResetter objectIdResetter, IIdGenerator idGenerator)
+         : base(containerTask, executionContext, cloneManager, objectIdResetter, idGenerator)
       {
       }
 

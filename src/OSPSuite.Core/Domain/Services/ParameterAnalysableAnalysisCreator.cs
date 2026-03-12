@@ -4,21 +4,20 @@ namespace OSPSuite.Core.Domain.Services
 {
    public abstract class ParameterAnalysableAnalysisCreator : SimulationAnalysisCreator
    {
-      private readonly IOSPSuiteExecutionContext _context;
+      private readonly ICloneManager _cloneManager;
       private readonly IObjectIdResetter _objectIdResetter;
       private readonly IIdGenerator _idGenerator;
 
       public override ISimulationAnalysis CreateAnalysisBasedOn(ISimulationAnalysis simulationAnalysis)
       {
-         var stream = _context.Serialize(simulationAnalysis);
-         var clone = _context.Deserialize<ISimulationAnalysis>(stream);
+         var clone = _cloneManager.Clone(simulationAnalysis as IUpdatable) as ISimulationAnalysis;
          _objectIdResetter.ResetIdFor(clone);
          return clone;
       }
 
-      protected ParameterAnalysableAnalysisCreator(IContainerTask containerTask, IOSPSuiteExecutionContext context, IObjectIdResetter objectIdResetter, IIdGenerator idGenerator) : base(containerTask, context)
+      protected ParameterAnalysableAnalysisCreator(IContainerTask containerTask, IOSPSuiteExecutionContext context, ICloneManager cloneManager, IObjectIdResetter objectIdResetter, IIdGenerator idGenerator) : base(containerTask, context)
       {
-         _context = context;
+         _cloneManager = cloneManager;
          _objectIdResetter = objectIdResetter;
          _idGenerator = idGenerator;
       }

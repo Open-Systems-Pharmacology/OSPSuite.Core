@@ -15,7 +15,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
    {
       private readonly IChartFactory _chartFactory;
 
-      public ParameterIdentificationAnalysisCreator(IChartFactory chartFactory, IOSPSuiteExecutionContext context,IContainerTask containerTask,  IIdGenerator idGenerator , IObjectIdResetter objectIdResetter) : base(containerTask, context, objectIdResetter, idGenerator)
+      public ParameterIdentificationAnalysisCreator(IChartFactory chartFactory, IOSPSuiteExecutionContext context, IContainerTask containerTask, ICloneManager cloneManager, IIdGenerator idGenerator, IObjectIdResetter objectIdResetter) : base(containerTask, context, cloneManager, objectIdResetter, idGenerator)
       {
          _chartFactory = chartFactory;
       }
