@@ -342,7 +342,7 @@ namespace OSPSuite.Core.Domain
          public static readonly string HISTORY_FILE_FILTER = FileFilter("History Export", XLSX_EXTENSION);
          public static readonly string TEXT_FILE_FILTER = FileFilter("Text", TEXT_EXTENSION);
          public static readonly string UNIT_FILE_FILTER = XmlFilter("Unit");
-         public static readonly string MATLAB_FILTER = FileFilter("Matlab�", MATLAB_EXTENSION);
+         public static readonly string MATLAB_FILTER = FileFilter("Matlab®", MATLAB_EXTENSION);
          public static readonly string CSV_FILE_FILTER = FileFilter("CSV", CSV_EXTENSION);
          public static readonly string JSON_FILE_FILTER = FileFilter("Json", JSON_EXTENSION);
          public static readonly string MARKDOWN_FILE_FILTER = FileFilter("Markdown", MARKDOWN_EXTENSION);
