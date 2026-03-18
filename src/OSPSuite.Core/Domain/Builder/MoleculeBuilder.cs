@@ -119,5 +119,7 @@ namespace OSPSuite.Core.Domain.Builder
          get => _displayUnit ?? Dimension?.DefaultUnit;
          set => SetProperty(ref _displayUnit, value);
       }
+
+      public void ClearUsedCalculationMethods() => _usedCalculationMethods.Clear();
    }
 }

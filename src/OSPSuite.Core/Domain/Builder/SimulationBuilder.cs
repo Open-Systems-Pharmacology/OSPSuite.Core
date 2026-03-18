@@ -103,7 +103,7 @@ namespace OSPSuite.Core.Domain.Builder
          cacheEntities();
       }
 
-      private IReadOnlyList<T> mergeBuilders<T>(Func<Module, IBuildingBlock<T>> propAccess, Action<T, BuilderSource<T>> mergeStrategyAction) where T : class, IBuilder, IEntity
+      private IReadOnlyList<T> mergeBuilders<T>(Func<Module, IBuildingBlock<T>> propAccess, Action<T, BuilderSource<T>> extendStrategyAction) where T : class, IBuilder, IEntity
       {
          var analyzedMerges = analyzeBuilderMerges(propAccess);
          var results = new List<T>();
@@ -120,8 +120,8 @@ namespace OSPSuite.Core.Domain.Builder
                   //When merging multiple builders, earlier merged builders could be affected by later merges through shared references
                   var finalBuilderThatExtend = mergeInfo.RequiresExtensionClone ? cloneBuilder(sourceBuilderThatExtend.Builder) : sourceBuilderThatExtend.Builder;
                   var finalSourceBuilderThatExtend = new BuilderSource<T>(finalBuilderThatExtend, sourceBuilderThatExtend.BuildingBlock);
-                  tryMergeContainers(baseBuilder, finalSourceBuilderThatExtend);
-                  mergeStrategyAction(baseBuilder, finalSourceBuilderThatExtend);
+                  tryExtendContainers(baseBuilder, finalSourceBuilderThatExtend);
+                  extendStrategyAction(baseBuilder, finalSourceBuilderThatExtend);
                }
             }
 
@@ -138,7 +138,7 @@ namespace OSPSuite.Core.Domain.Builder
          return _cloneManager.CloneAndKeepId(builder);
       }
 
-      private void tryMergeContainers<T>(T target, BuilderSource<T> builderSource) where T : IEntity
+      private void tryExtendContainers<T>(T target, BuilderSource<T> builderSource) where T : IEntity
       {
          var targetContainer = target as IContainer;
          var sourceContainer = builderSource.Builder as IContainer;
@@ -162,7 +162,7 @@ namespace OSPSuite.Core.Domain.Builder
       private void mergeReactions(ReactionBuilder targetReaction, BuilderSource<ReactionBuilder> sourceReaction)
       {
          var incoming = sourceReaction.Builder;
-         tryMergeContainers(targetReaction, sourceReaction);
+         tryExtendContainers(targetReaction, sourceReaction);
          targetReaction.Formula = incoming.Formula;
          targetReaction.CreateProcessRateParameter = incoming.CreateProcessRateParameter;
          targetReaction.ProcessRateParameterPersistable = incoming.ProcessRateParameterPersistable;
@@ -255,6 +255,17 @@ namespace OSPSuite.Core.Domain.Builder
 
       private void mergeMolecules(MoleculeBuilder target, BuilderSource<MoleculeBuilder> source)
       {
+         var incoming = source.Builder;
+         target.DefaultStartFormula = incoming.DefaultStartFormula;
+         target.Dimension = incoming.Dimension;
+         target.DisplayUnit = incoming.DisplayUnit;
+         target.IsFloating = incoming.IsFloating;
+         target.IsXenobiotic = incoming.IsXenobiotic;
+         target.QuantityType = incoming.QuantityType;
+
+         // calculation methods are replaced
+         target.ClearUsedCalculationMethods();
+         incoming.UsedCalculationMethods.Each(x => target.AddUsedCalculationMethod(x.Clone()));
       }
 
       private void cacheEntities()
