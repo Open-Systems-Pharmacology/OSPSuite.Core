@@ -303,7 +303,7 @@ namespace OSPSuite.UI.Binders
                pattern = $"V:E{_numericFormatterOptions.DecimalPlace}";
                break;
             case NumberModes.Normal:
-               pattern = "V:G";
+               pattern = "V:G15";
                break;
             case NumberModes.Relative:
                pattern = "V:P";
