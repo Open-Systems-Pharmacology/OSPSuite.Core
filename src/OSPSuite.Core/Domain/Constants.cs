@@ -244,6 +244,11 @@ namespace OSPSuite.Core.Domain
          public const string I = "I";
          public static readonly IReadOnlyCollection<string> Halogens = new List<string> {CL, BR, F, I};
 
+         public const string USE_EFFECTIVE_DIFFUSION = "Use Effective Diffusion";
+         public const string USE_HINTZ_JOHNSON = "Use Hintz-Johnson";
+         public const string USE_HYDRODYNAMIC_MODEL = "Use Hydrodynamic Model";
+         public const string USE_BIDIRECTIONAL_SURFACE_INTEGRATION_FACTOR = "Use bidirectional surface integration factor";
+
          public static readonly IReadOnlyCollection<string> AllBooleanParameters = new List<string>
          {
             USE_JACOBIAN,
@@ -255,7 +260,11 @@ namespace OSPSuite.Core.Domain
             USE_AS_SUSPENSION,
             ENABLE_SUPERSATURATION,
             URINE_EMPTYING_ENABLE,
-            CHECK_FOR_NEGATIVE_VALUES
+            CHECK_FOR_NEGATIVE_VALUES,
+            USE_EFFECTIVE_DIFFUSION,
+            USE_HINTZ_JOHNSON,
+            USE_HYDRODYNAMIC_MODEL,
+            USE_BIDIRECTIONAL_SURFACE_INTEGRATION_FACTOR
          };
 
          public static readonly IReadOnlyCollection<string> AllCategorialParameters = new List<string>(AllBooleanParameters)
@@ -333,7 +342,7 @@ namespace OSPSuite.Core.Domain
          public static readonly string HISTORY_FILE_FILTER = FileFilter("History Export", XLSX_EXTENSION);
          public static readonly string TEXT_FILE_FILTER = FileFilter("Text", TEXT_EXTENSION);
          public static readonly string UNIT_FILE_FILTER = XmlFilter("Unit");
-         public static readonly string MATLAB_FILTER = FileFilter("Matlab®", MATLAB_EXTENSION);
+         public static readonly string MATLAB_FILTER = FileFilter("MatlabÂ®", MATLAB_EXTENSION);
          public static readonly string CSV_FILE_FILTER = FileFilter("CSV", CSV_EXTENSION);
          public static readonly string JSON_FILE_FILTER = FileFilter("Json", JSON_EXTENSION);
          public static readonly string MARKDOWN_FILE_FILTER = FileFilter("Markdown", MARKDOWN_EXTENSION);
