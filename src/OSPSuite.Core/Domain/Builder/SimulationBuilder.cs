@@ -20,6 +20,7 @@ namespace OSPSuite.Core.Domain.Builder
       private readonly CacheByName<MoleculeBuilder> _molecules = new CacheByName<MoleculeBuilder>();
       private readonly PathAndValueEntityCache<ParameterValue> _parameterValues = new PathAndValueEntityCache<ParameterValue>();
       private readonly PathAndValueEntityCache<InitialCondition> _initialConditions = new PathAndValueEntityCache<InitialCondition>();
+      private readonly ObjectBaseCache<EventGroupBuilder> _eventGroups = new ObjectBaseCache<EventGroupBuilder>();
 
       //Contains a temp  cache of builder and their corresponding building blocks
       private readonly Cache<string, BuilderSource> _builderSources = new Cache<string, BuilderSource>(x => x.Builder.Id, x => null);
@@ -95,6 +96,7 @@ namespace OSPSuite.Core.Domain.Builder
       private void performMerge()
       {
          _reactions.AddRange(mergeBuilders(x => x.Reactions, mergeReactions));
+         _eventGroups.AddRange(mergeBuilders(x => x.EventGroups, mergeEvents));
          _molecules.AddRange(mergeBuilders(x => x.Molecules, mergeMolecules));
          _passiveTransports.AddRange(mergeBuilders(x => x.PassiveTransports, mergeTransports));
          _observers.AddRange(mergeBuilders(x => x.Observers, mergeObservers));
@@ -157,6 +159,14 @@ namespace OSPSuite.Core.Domain.Builder
 
          //at this step, all entities in the target should already be marked as coming from their respective source
          _containerMergeTask.MergeContainers(target, sourceBuilder);
+      }
+
+      private void mergeEvents(EventGroupBuilder targetBuilder, BuilderSource<EventGroupBuilder> source)
+      {
+         var sourceBuilder = source.Builder;
+         targetBuilder.EventGroupType = sourceBuilder.EventGroupType;
+
+         mergeDescriptorCriteria(targetBuilder.SourceCriteria, sourceBuilder.SourceCriteria);
       }
 
       private void mergeReactions(ReactionBuilder targetReaction, BuilderSource<ReactionBuilder> sourceReaction)
@@ -273,6 +283,7 @@ namespace OSPSuite.Core.Domain.Builder
          cacheContainers(_reactions);
          cacheContainers(_molecules);
          cacheContainers(_passiveTransports);
+         cacheContainers(_eventGroups);
 
          //also add individual if any to source
          AddToBuilderSource(_simulationConfiguration.Individual);
@@ -335,15 +346,13 @@ namespace OSPSuite.Core.Domain.Builder
       internal IReadOnlyList<(SpatialStructure spatialStructure, MergeBehavior mergeBehavior)> SpatialStructureAndMergeBehaviors =>
          buildingBlockAndMergeBehaviors(x => x.SpatialStructure);
 
-      internal IReadOnlyList<(EventGroupBuildingBlock eventGroupBuildingBlock, MergeBehavior mergeBehavior)> EventGroupAndMergeBehaviors =>
-         buildingBlockAndMergeBehaviors(x => x.EventGroups);
-
       internal IReadOnlyCollection<TransportBuilder> PassiveTransports => _passiveTransports;
       internal IReadOnlyCollection<ReactionBuilder> Reactions => _reactions;
       internal IReadOnlyCollection<ObserverBuilder> Observers => _observers;
       internal IReadOnlyCollection<MoleculeBuilder> Molecules => _molecules;
       internal IReadOnlyCollection<ParameterValue> ParameterValues => _parameterValues;
       internal IReadOnlyCollection<InitialCondition> InitialConditions => _initialConditions;
+      internal IReadOnlyCollection<EventGroupBuilder> EventGroups => _eventGroups;
 
       private IReadOnlyList<(TBuildingBlock buildingBlock, MergeBehavior mergeBehavior)> buildingBlockAndMergeBehaviors<TBuildingBlock>(Func<Module, TBuildingBlock> propAccess) where TBuildingBlock : class, IBuildingBlock =>
          _simulationConfiguration.ModuleConfigurations
