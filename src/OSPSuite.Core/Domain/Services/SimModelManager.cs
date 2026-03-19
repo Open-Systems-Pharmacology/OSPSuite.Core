@@ -96,6 +96,7 @@ namespace OSPSuite.Core.Domain.Services
          var options = _simModelSimulation.Options;
          options.ShowProgress = true;
          options.ExecutionTimeLimit = _executionTimeLimit;
+         options.AutoReduceTolerances = _simulationRunOptions.AutoReduceTolerances;
 
          try
          {
