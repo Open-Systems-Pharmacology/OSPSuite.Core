@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
+using OSPSuite.Core.Domain.Descriptors;
 using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
@@ -22,6 +23,8 @@ internal class concern_for_SimulationBuilder : ContextForIntegration<SimulationB
       _modelHelper = IoC.Resolve<ModelHelperForSpecs>();
    }
 }
+
+
 
 internal class When_overwriting_molecules_with_parameters_and_formula_reference : concern_for_SimulationBuilder
 {
@@ -445,5 +448,84 @@ internal class When_merging_reaction_with_overwrite_in_integration : concern_for
 
       rxn.Formula.ShouldBeEqualTo(_overwriteFormula);
       rxn.Dimension.ShouldBeEqualTo(_amountPerTimeDimOverwrite);
+   }
+}
+
+internal class When_extending_event_group_builder_with_different_event_group_type : concern_for_SimulationBuilder
+{
+   private EventGroupBuilder _eventGroup1;
+   private EventGroupBuilder _eventGroup2;
+
+   protected override void Context()
+   {
+      base.Context();
+
+      _eventGroup1 = new EventGroupBuilder().WithName("EG1");
+      _eventGroup1.EventGroupType = "TypeA";
+
+      var eventGroupBuildingBlock1 = new EventGroupBuildingBlock { _eventGroup1 };
+      var module1 = new Module { eventGroupBuildingBlock1 };
+
+      _eventGroup2 = new EventGroupBuilder().WithName("EG1");
+      _eventGroup2.EventGroupType = "TypeB";
+
+      var eventGroupBuildingBlock2 = new EventGroupBuildingBlock { _eventGroup2 };
+      var module2 = new Module { eventGroupBuildingBlock2 };
+      module2.MergeBehavior = MergeBehavior.Extend;
+
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+      sut = new SimulationBuilderForSpecs(_simulationConfiguration);
+   }
+
+   [Observation]
+   public void the_event_group_type_should_be_from_module_2()
+   {
+      var eventGroup = sut.EventGroups.Single(x => x.Name == "EG1");
+      eventGroup.EventGroupType.ShouldBeEqualTo("TypeB");
+   }
+}
+
+internal class When_extending_event_group_builder_with_source_criteria : concern_for_SimulationBuilder
+{
+   private EventGroupBuilder _eventGroup1;
+   private EventGroupBuilder _eventGroup2;
+
+   protected override void Context()
+   {
+      base.Context();
+
+      _eventGroup1 = new EventGroupBuilder().WithName("EG1");
+      _eventGroup1.SourceCriteria = Create.Criteria(x => x.With("TagA"));
+
+      var eventGroupBuildingBlock1 = new EventGroupBuildingBlock { _eventGroup1 };
+      var module1 = new Module { eventGroupBuildingBlock1 };
+
+      _eventGroup2 = new EventGroupBuilder().WithName("EG1");
+      _eventGroup2.SourceCriteria = Create.Criteria(x => x.With("TagB"));
+
+      var eventGroupBuildingBlock2 = new EventGroupBuildingBlock { _eventGroup2 };
+      var module2 = new Module { eventGroupBuildingBlock2 };
+      module2.MergeBehavior = MergeBehavior.Extend;
+
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module1));
+      _simulationConfiguration.AddModuleConfiguration(new ModuleConfiguration(module2));
+      sut = new SimulationBuilderForSpecs(_simulationConfiguration);
+   }
+
+   [Observation]
+   public void the_source_criteria_should_contain_conditions_from_both_modules()
+   {
+      var eventGroup = sut.EventGroups.Single(x => x.Name == "EG1");
+      eventGroup.SourceCriteria.Count.ShouldBeEqualTo(2);
+      eventGroup.SourceCriteria.OfType<MatchTagCondition>().Select(x => x.Tag).ShouldContain("TagA");
+      eventGroup.SourceCriteria.OfType<MatchTagCondition>().Select(x => x.Tag).ShouldContain("TagB");
+   }
+
+   [Observation]
+   public void the_source_criteria_operator_should_be_from_module_2()
+   {
+      var eventGroup = sut.EventGroups.Single(x => x.Name == "EG1");
+      eventGroup.SourceCriteria.Operator.ShouldBeEqualTo(CriteriaOperator.And);
    }
 }
