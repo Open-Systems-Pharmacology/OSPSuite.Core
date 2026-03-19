@@ -3,7 +3,7 @@ name: Build and Test 13.0
 on:
   pull_request:
     branches:
-    - develop
+    - V13
 
 permissions:
   contents: read
