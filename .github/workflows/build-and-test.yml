@@ -15,3 +15,4 @@ jobs:
     secrets: inherit
     with:
       temp-version: "13.0.9999"
+      build-arguments: "-p:ExcludeDesigner=true"
