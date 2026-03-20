@@ -340,6 +340,7 @@ namespace OSPSuite.Infrastructure.Import
    public class When_mapping_a_data_set_with_unresolvable_dimension : concern_for_DataSetToDataRepositoryMapperSpecs
    {
       private ImportedDataSet _importedDataSetWithBadUnit;
+      private const string _unsupportedUnit = "INVALID_UNIT";
 
       protected override void Context()
       {
@@ -375,7 +376,7 @@ namespace OSPSuite.Infrastructure.Import
                   Column = new Column()
                   {
                      Name = "Concentration",
-                     Unit = new UnitDescription("INVALID_UNIT"),
+                     Unit = new UnitDescription(_unsupportedUnit),
                      Dimension = null
                   },
                   ColumnInfo = new ColumnInfo()
@@ -386,8 +387,8 @@ namespace OSPSuite.Infrastructure.Import
                },
                new List<SimulationPoint>()
                {
-                  new SimulationPoint() { Unit = "INVALID_UNIT", Measurement = 10, Lloq = double.NaN },
-                  new SimulationPoint() { Unit = "INVALID_UNIT", Measurement = 20, Lloq = double.NaN }
+                  new SimulationPoint() { Unit = _unsupportedUnit, Measurement = 10, Lloq = double.NaN },
+                  new SimulationPoint() { Unit = _unsupportedUnit, Measurement = 20, Lloq = double.NaN }
                }
             }
          };
