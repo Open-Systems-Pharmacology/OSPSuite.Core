@@ -204,8 +204,8 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          //We clone the values here to ensure that we are not sharing the same parameter value instances as the PI algorithm
          var clonedValues = values.Select(x => x.Clone()).ToList();
 
-         _numberOfEvaluations++;
          var optimizationRunResult = updateValuesAndCalculate(clonedValues);
+         _numberOfEvaluations++;
 
          updateRunResult(optimizationRunResult);
 
