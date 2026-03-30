@@ -464,6 +464,47 @@ namespace OSPSuite.Core.Domain
       }
    }
 
+   public class When_the_parameter_identification_run_is_canceled_after_some_evaluations : concern_for_ParameterIdentificationRun
+   {
+      private ParameterIdentificationRunResult _result;
+      private const int NUMBER_OF_EVALUATIONS_BEFORE_CANCEL = 3;
+
+      protected override void Context()
+      {
+         base.Context();
+
+         A.CallTo(() => _algorithm.Optimize(A<OptimizedParameterConstraint[]>._,
+               A<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>._))
+            .Invokes(x =>
+            {
+               var objectiveFunction = x.GetArgument<Func<IReadOnlyList<OptimizedParameterValue>, OptimizationRunResult>>(1);
+               var parameterValue = new OptimizedParameterValue(_identificationParameter.Name, 15d, 15d, 10, 20, Scalings.Linear);
+               for (int i = 0; i < NUMBER_OF_EVALUATIONS_BEFORE_CANCEL; i++)
+                  objectiveFunction(new[] { parameterValue });
+
+               _cancellationTokenSource.Cancel();
+               throw new OperationCanceledException();
+            });
+      }
+
+      protected override void Because()
+      {
+         _result = sut.Run(_cancellationToken);
+      }
+
+      [Observation]
+      public void should_set_the_run_status_of_the_underlying_run_result_to_canceled()
+      {
+         _result.Status.ShouldBeEqualTo(RunStatus.Canceled);
+      }
+
+      [Observation]
+      public void should_report_the_number_of_evaluations_completed_before_cancellation()
+      {
+         _result.NumberOfEvaluations.ShouldBeEqualTo(NUMBER_OF_EVALUATIONS_BEFORE_CANCEL);
+      }
+   }
+
    public class When_the_parameter_identification_run_is_running_a_run_that_throws_an_exception : concern_for_ParameterIdentificationRun
    {
       private ParameterIdentificationRunResult _result;

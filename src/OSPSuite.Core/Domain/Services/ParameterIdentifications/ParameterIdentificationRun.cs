@@ -48,6 +48,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       private readonly IJacobianMatrixCalculator _jacobianMatrixCalculator;
       private readonly ConcurrentDictionary<IModelCoreSimulation, ISimModelBatch> _allSimModelBatches = new ConcurrentDictionary<IModelCoreSimulation, ISimModelBatch>();
       private readonly List<float> _totalErrorHistory = new List<float>();
+      private int _numberOfEvaluations;
 
       private readonly Cache<string, IdentificationParameterHistory> _parametersHistory =
          new Cache<string, IdentificationParameterHistory>(x => x.Name);
@@ -133,6 +134,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
       public virtual ParameterIdentificationRunResult Run(CancellationToken cancellationToken)
       {
          _cancellationToken = cancellationToken;
+         _numberOfEvaluations = 0;
          var begin = SystemTime.UtcNow();
          try
          {
@@ -149,6 +151,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          }
          catch (OperationCanceledException)
          {
+            RunResult.Properties = new OptimizationRunProperties(_numberOfEvaluations);
             RunResult.Status = RunStatus.Canceled;
             return RunResult;
          }
@@ -202,6 +205,7 @@ namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
          var clonedValues = values.Select(x => x.Clone()).ToList();
 
          var optimizationRunResult = updateValuesAndCalculate(clonedValues);
+         _numberOfEvaluations++;
 
          updateRunResult(optimizationRunResult);
 
