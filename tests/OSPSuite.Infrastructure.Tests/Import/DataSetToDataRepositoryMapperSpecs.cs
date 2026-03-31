@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
 using NUnit.Framework;
@@ -10,6 +11,7 @@ using OSPSuite.Core.Import;
 using OSPSuite.Helpers;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.Mappers;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Infrastructure.Import
 {
@@ -332,6 +334,80 @@ namespace OSPSuite.Infrastructure.Import
          var props = _result.DataRepository.ExtendedProperties.ToList();
          props.Count(p => p.Name == "Source").ShouldBeEqualTo(1);
          props.Count(p => p.Name == "Analyst").ShouldBeEqualTo(1);
+      }
+   }
+
+   public class When_mapping_a_data_set_with_unresolvable_dimension : concern_for_DataSetToDataRepositoryMapperSpecs
+   {
+      private ImportedDataSet _importedDataSetWithBadUnit;
+      private const string _unsupportedUnit = "INVALID_UNIT";
+
+      protected override void Context()
+      {
+         base.Context();
+         var timeDimension = DomainHelperForSpecs.TimeDimensionForSpecs();
+
+         var parsedData = new Dictionary<ExtendedColumn, IList<SimulationPoint>>()
+         {
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Time",
+                     Unit = new UnitDescription("min"),
+                     Dimension = timeDimension
+                  },
+                  ColumnInfo = new ColumnInfo()
+                  {
+                     BaseGridName = null,
+                     Name = "Time"
+                  }
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint() { Unit = "min", Measurement = 0, Lloq = double.NaN },
+                  new SimulationPoint() { Unit = "min", Measurement = 1, Lloq = double.NaN }
+               }
+            },
+            {
+               new ExtendedColumn()
+               {
+                  Column = new Column()
+                  {
+                     Name = "Concentration",
+                     Unit = new UnitDescription(_unsupportedUnit),
+                     Dimension = null
+                  },
+                  ColumnInfo = new ColumnInfo()
+                  {
+                     BaseGridName = "Time",
+                     Name = "Concentration"
+                  }
+               },
+               new List<SimulationPoint>()
+               {
+                  new SimulationPoint() { Unit = _unsupportedUnit, Measurement = 10, Lloq = double.NaN },
+                  new SimulationPoint() { Unit = _unsupportedUnit, Measurement = 20, Lloq = double.NaN }
+               }
+            }
+         };
+
+         // No supported dimensions added to ColumnInfo, so DimensionForUnit will return null
+         _importedDataSetWithBadUnit = new ImportedDataSet(
+            "file.xlsx",
+            "Sheet1",
+            new ParsedDataSet(new List<string>(), A.Fake<DataSheet>(), new List<UnformattedRow>(), parsedData),
+            "name",
+            new List<MetaDataInstance>()
+         );
+      }
+
+      [Observation]
+      public void should_throw_exception_with_meaningful_message()
+      {
+         The.Action(() => sut.ConvertImportDataSet(_importedDataSetWithBadUnit))
+            .ShouldThrowAn<OSPSuiteException>();
       }
    }
 
