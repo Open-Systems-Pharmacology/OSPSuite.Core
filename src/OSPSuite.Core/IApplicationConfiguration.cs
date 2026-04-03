@@ -15,11 +15,6 @@ namespace OSPSuite.Core
       string ChartLayoutTemplateFolderPath { get; }
 
       /// <summary>
-      ///    Folder path where report templates are being saved (for all users, installed by setup)
-      /// </summary>
-      string TeXTemplateFolderPath { get; }
-
-      /// <summary>
       ///    Path of the pk analyses file
       /// </summary>
       string PKParametersFilePath { get; set; }
