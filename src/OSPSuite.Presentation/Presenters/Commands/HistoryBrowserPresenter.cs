@@ -243,7 +243,7 @@ namespace OSPSuite.Presentation.Presenters.Commands
          if (string.IsNullOrEmpty(projectName))
             projectName = Captions.Undefined;
 
-         var reportFileName = _dialogCreator.AskForFileToSave(Captions.ExportHistory, Constants.Filter.EXPORT_HISTORY_FILE_FILTER, Captions.Reporting.DefaultTitle, projectName);
+         var reportFileName = _dialogCreator.AskForFileToSave(Captions.ExportHistory, Constants.Filter.EXPORT_HISTORY_FILE_FILTER, Constants.DirectoryKey.REPORT, projectName);
          if (reportFileName.IsNullOrEmpty()) return;
 
          var reportOptions = new ReportOptions { ReportFullPath = reportFileName, SheetName = projectName, OpenReport = true };

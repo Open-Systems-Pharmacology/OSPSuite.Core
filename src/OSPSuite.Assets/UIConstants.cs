@@ -856,39 +856,6 @@ namespace OSPSuite.Assets
          public static string Undefined = "";
       }
 
-      public static class Reporting
-      {
-         public static readonly string DefaultTitle = "Report";
-         public static readonly string SelectFile = "Select report file...";
-         public static readonly string ObservedData = "Observed Data";
-         public static readonly string Font = "Font";
-         public static readonly string CreateReport = "Create";
-         public static readonly string Verbose = "Extended output (descriptions, images etc...)";
-         public static readonly string OpenReportAfterCreation = "Open the report once created";
-         public static readonly string Draft = "Draft watermark";
-         public static readonly string SaveArtifacts = "Save reporting artifacts (exported in folder <report_name>_Files)";
-         public static readonly string FirstPageSettings = "First page settings";
-         public static readonly string Options = "Options";
-         public static readonly string Output = "Output settings";
-         public static readonly string TemplateSelection = "Template selection";
-         public static readonly string Author = "Author";
-         public static readonly string Title = "Title";
-         public static readonly string Type = "Type";
-         public static readonly string Subtitle = "Subtitle";
-         public static readonly string Template = "Template";
-         public static readonly string OutputFile = "File";
-         public static readonly string Color = "Color";
-         public static readonly string GrayScale = "Gray scale";
-         public static readonly string BlackAndWhite = "Black & White";
-         public static readonly string ReportToPDFTitle = "Create PDF Report...";
-         public static readonly string DeleteWorkingFolder = "Delete working folder (Developer only)";
-
-         public static string ReportFor(string objectType)
-         {
-            return $"{objectType} Report";
-         }
-      }
-
       public static class Comparisons
       {
          public static readonly string RelativeTolerance = "Comparison tolerance (relative) ";

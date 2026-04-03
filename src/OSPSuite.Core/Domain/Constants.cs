@@ -124,7 +124,6 @@ namespace OSPSuite.Core.Domain
          public const string COMPANY_FOLDER_NAME = "Open Systems Pharmacology";
          public const string DIMENSIONS_FILE_NAME = "OSPSuite.Dimensions.xml";
          public const string CHART_LAYOUT_FOLDER_NAME = "ChartLayouts";
-         public const string TEX_TEMPLATE_FOLDER_NAME = "TeXTemplates";
       }
 
       public static class Organ
