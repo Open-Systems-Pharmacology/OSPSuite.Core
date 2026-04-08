@@ -1,3 +1,4 @@
+using System;
 using OSPSuite.Presentation.Diagram.Elements;
 
 namespace OSPSuite.UI.Diagram.Elements
@@ -223,6 +224,39 @@ namespace OSPSuite.UI.Diagram.Elements
          {
             RelativeSpringStiffnessOf[NodeLayoutType.CONTAINER_NODE, NodeLayoutType.REMOTE_CONTAINER_BOUNDARY_NODE] = value;
             RelativeSpringStiffnessOf[NodeLayoutType.REMOTE_CONTAINER_BOUNDARY_NODE, NodeLayoutType.CONTAINER_NODE] = value;
+         }
+      }
+
+      public IForceLayoutConfiguration Clone()
+      {
+         var clone = new ForceLayoutConfiguration();
+         clone.UpdatePropertiesFrom(this);
+         return clone;
+      }
+
+      public void UpdatePropertiesFrom(IForceLayoutConfiguration source)
+      {
+         BaseGravitationalMass = source.BaseGravitationalMass;
+         BaseElectricalCharge = source.BaseElectricalCharge;
+         BaseSpringLength = source.BaseSpringLength;
+         BaseSpringStiffness = source.BaseSpringStiffness;
+         MaxIterations = source.MaxIterations;
+         Epsilon = source.Epsilon;
+         InfinityDistance = source.InfinityDistance;
+         ArrangementSpacingWidth = source.ArrangementSpacingWidth;
+         ArrangementSpacingHeight = source.ArrangementSpacingHeight;
+         LogPositions = source.LogPositions;
+
+         Array.Copy(source.RelativeGravitationalMassOf, RelativeGravitationalMassOf, NUMBER_OF_GROUPS);
+         Array.Copy(source.RelativeElectricalChargeOf, RelativeElectricalChargeOf, NUMBER_OF_GROUPS);
+
+         for (int i = 0; i < NUMBER_OF_GROUPS; i++)
+         {
+            for (int j = 0; j < NUMBER_OF_GROUPS; j++)
+            {
+               RelativeSpringLengthOf[i, j] = source.RelativeSpringLengthOf[i, j];
+               RelativeSpringStiffnessOf[i, j] = source.RelativeSpringStiffnessOf[i, j];
+            }
          }
       }
 

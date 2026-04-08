@@ -2,6 +2,9 @@ namespace OSPSuite.Presentation.Diagram.Elements
 {
    public interface IForceLayoutConfiguration
    {
+      IForceLayoutConfiguration Clone();
+      void UpdatePropertiesFrom(IForceLayoutConfiguration source);
+
       float BaseGravitationalMass { get; set; }
       float BaseElectricalCharge { get; set; }
       float BaseSpringLength { get; set; }

@@ -4,6 +4,9 @@ namespace OSPSuite.Core.Diagram
 {
    public interface IDiagramColors
    {
+      IDiagramColors Clone();
+      void UpdatePropertiesFrom(IDiagramColors source);
+
       Color DiagramBackground { get; set; } 
 
       Color BorderFixed { get; set; } 
