@@ -82,5 +82,45 @@ namespace OSPSuite.Presentation.Diagram.Elements
       public Color RelatedItemNode { get; set; }
       public Color RelatedItemLink { get; set; }
       public Color RelatedItemPort { get { return DiagramBackground; } }
+
+      public IDiagramColors Clone()
+      {
+         var clone = new DiagramColors();
+         clone.UpdatePropertiesFrom(this);
+         return clone;
+      }
+
+      public void UpdatePropertiesFrom(IDiagramColors source)
+      {
+         DiagramBackground = source.DiagramBackground;
+         BorderFixed = source.BorderFixed;
+         BorderUnfixed = source.BorderUnfixed;
+         ContainerLogical = source.ContainerLogical;
+         ContainerPhysical = source.ContainerPhysical;
+         ContainerOpacity = source.ContainerOpacity;
+         ContainerBorder = source.ContainerBorder;
+         ContainerHandle = source.ContainerHandle;
+         NodeSizeOpacity = source.NodeSizeOpacity;
+         PortOpacity = source.PortOpacity;
+         NeighborhoodNode = source.NeighborhoodNode;
+         NeighborhoodLink = source.NeighborhoodLink;
+         NeighborhoodPort = source.NeighborhoodPort;
+         TransportLink = source.TransportLink;
+         MoleculeNode = source.MoleculeNode;
+         ObserverNode = source.ObserverNode;
+         ObserverLink = source.ObserverLink;
+         ReactionNode = source.ReactionNode;
+         ReactionPortEduct = source.ReactionPortEduct;
+         ReactionLinkEduct = source.ReactionLinkEduct;
+         ReactionPortProduct = source.ReactionPortProduct;
+         ReactionLinkProduct = source.ReactionLinkProduct;
+         ReactionPortModifier = source.ReactionPortModifier;
+         ReactionLinkModifier = source.ReactionLinkModifier;
+         JournalPageNode = source.JournalPageNode;
+         JournalPageLink = source.JournalPageLink;
+         JournalPagePort = source.JournalPagePort;
+         RelatedItemNode = source.RelatedItemNode;
+         RelatedItemLink = source.RelatedItemLink;
+      }
    }
 }
