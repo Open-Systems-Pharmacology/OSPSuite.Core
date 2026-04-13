@@ -195,12 +195,13 @@ namespace OSPSuite.Starter.Presenters
       {
          var dataImporterSettings = new DataImporterSettings
          {
-            Caption = "PK-Sim - LoadCurrentSheet Ontogeny"
+            Caption = "PK-Sim - Load ontogeny from file..."
          };
+         dataImporterSettings.AddNamingPatternMetaData(Constants.FILE);
 
          StartImporterExcelView(
-            new List<MetaDataCategory>(), 
-            _dataGenerator.GetOntogenyColumnInfo(), 
+            new List<MetaDataCategory>(),
+            _dataGenerator.GetOntogenyColumnInfo(),
             dataImporterSettings
          );
       }
