@@ -76,6 +76,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon CompoundFolder = AddNamedIcon("MoleculeFolder", "CompoundFolder");
       public static readonly ApplicationIcon CompoundGreen = AddNamedIcon("MoleculeGreen", "CompoundGreen");
       public static readonly ApplicationIcon CompoundRed = AddNamedIcon("MoleculeRed", "CompoundRed");
+      public static readonly ApplicationIcon CompoundRedOrange = AddNamedIcon("MoleculeRedOrange", "CompoundRedOrange");
       public static readonly ApplicationIcon SimulationConfigure = AddNamedIcon("SimulationConfigure");
       public static readonly ApplicationIcon Container = AddNamedIcon("Container");
       public static readonly ApplicationIcon Copy = AddNamedIcon("Copy");
@@ -216,6 +217,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon MoleculeFolder = AddNamedIcon("MoleculeFolder");
       public static readonly ApplicationIcon MoleculeGreen = AddNamedIcon("MoleculeGreen");
       public static readonly ApplicationIcon MoleculeRed = AddNamedIcon("MoleculeRed");
+      public static readonly ApplicationIcon MoleculeRedOrange = AddNamedIcon("MoleculeRedOrange");
       public static readonly ApplicationIcon InitialConditions = AddNamedIcon("InitialConditions", IconNames.INITIAL_CONDITIONS);
       public static readonly ApplicationIcon InitialConditionsFolder = AddNamedIcon("InitialConditionsFolder");
       public static readonly ApplicationIcon InitialConditionsGreen = AddNamedIcon("InitialConditionsGreen");
