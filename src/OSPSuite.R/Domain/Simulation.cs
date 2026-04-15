@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using OSPSuite.CLI.Core.MinimalImplementations;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Commands;
@@ -136,6 +137,19 @@ namespace OSPSuite.R.Domain
       public double? MolWeightFor(IQuantity quantity) => CoreSimulation.MolWeightFor(quantity);
 
       public double? MolWeightFor(string quantityPath) => CoreSimulation.MolWeightFor(quantityPath);
+
+      /// <summary>
+      ///    Returns the name of the calculation method used for the given <paramref name="moleculeName" /> and
+      ///    <paramref name="category" />. Returns <c>null</c> if no override is defined for the combination.
+      /// </summary>
+      public string CalculationMethodFor(string moleculeName, string category)
+      {
+         return Configuration.CalculationMethodOverridesFor(moleculeName)
+            .UsedCalculationMethods
+            .FirstOrDefault(x => x.Category == category)
+            ?.CalculationMethod;
+      }
+
       public bool HasChanged { get; set; }
    }
 }
