@@ -102,9 +102,13 @@ namespace OSPSuite.Core.Domain.Services
       public IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, IReadOnlyList<MoleculeBuilder> molecules) =>
          physicalContainer.GetAllContainersAndSelf<IContainer>(x => x.Mode.Is(ContainerMode.Physical)).SelectMany(container => createExpressionFrom(container, molecules)).ToList();
 
-      public IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, MoleculeBuilder molecule, ExpressionProfileBuildingBlock referenceExpressionProfile) =>
-         physicalContainer.GetAllContainersAndSelf<IContainer>(x => x.Mode.Is(ContainerMode.Physical))
-            .SelectMany(container => createExpressionFrom(container, molecule, expressionParametersFor(molecule, referenceExpressionProfile))).ToList();
+      public IReadOnlyList<ParameterValue> CreateExpressionFrom(IContainer physicalContainer, MoleculeBuilder molecule, ExpressionProfileBuildingBlock referenceExpressionProfile)
+      {
+         var expressionParameters = expressionParametersFor(molecule, referenceExpressionProfile);
+         
+         return physicalContainer.GetAllContainersAndSelf<IContainer>(x => x.Mode.Is(ContainerMode.Physical))
+            .SelectMany(container => createExpressionFrom(container, molecule, expressionParameters)).ToList();
+      }
 
       private IEnumerable<ParameterValue> createExpressionFrom(IContainer container, IReadOnlyList<MoleculeBuilder> molecules) => molecules.SelectMany(x => createExpressionFrom(container, x));
 
