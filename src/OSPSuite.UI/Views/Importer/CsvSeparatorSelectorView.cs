@@ -3,6 +3,7 @@ using DevExpress.XtraEditors;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Importer;
+using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Importer;
 using static OSPSuite.Assets.Captions.Importer;
 
@@ -16,7 +17,7 @@ namespace OSPSuite.UI.Views.Importer
       private readonly List<char> _columnSeparatorList = new List<char> { Comma, ' ', ';', Period };
       private readonly List<char> _decimalSeparatorList = new List<char> { Period, Comma };
 
-      public CSVSeparatorSelectorView()
+      public CSVSeparatorSelectorView(IShell shell) : base(shell)
       {
          InitializeComponent();
          fillSeparatorComboBox();
