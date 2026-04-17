@@ -17,6 +17,11 @@ namespace OSPSuite.UI.Views.Importer
       private readonly List<char> _columnSeparatorList = new List<char> { Comma, ' ', ';', Period };
       private readonly List<char> _decimalSeparatorList = new List<char> { Period, Comma };
 
+      //only for design time
+      public CSVSeparatorSelectorView() : this(null)
+      {
+      }
+
       public CSVSeparatorSelectorView(IShell shell) : base(shell)
       {
          InitializeComponent();

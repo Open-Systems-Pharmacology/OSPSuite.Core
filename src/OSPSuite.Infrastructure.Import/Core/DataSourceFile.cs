@@ -63,9 +63,15 @@ namespace OSPSuite.Infrastructure.Import.Core
 
       public virtual void LoadFromFile(string path)
       {
-         Path = path;
+         
          var cts = new CancellationTokenSource();
-         _heavyWorkManager.Start(() =>
+         if(heavyWorkSucceeds(path, cts))
+            Path = path;
+      }
+
+      private bool heavyWorkSucceeds(string path, CancellationTokenSource cts)
+      {
+         return _heavyWorkManager.Start(() =>
          {
             try
             {
