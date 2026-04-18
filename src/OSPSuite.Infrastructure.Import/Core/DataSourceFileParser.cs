@@ -28,13 +28,13 @@ namespace OSPSuite.Infrastructure.Import.Core
          var lowerCasePath = path.ToLower();
          if (_csvExtensions.Any(lowerCasePath.EndsWith))
          {
-            _csvDataSourceFile.Path = path;
+            _csvDataSourceFile.LoadFromFile(path);
             return _csvDataSourceFile;
          }
 
          if (_excelExtensions.Any(lowerCasePath.EndsWith))
          {
-            _excelDataSourceFile.Path = path;
+            _excelDataSourceFile.LoadFromFile(path);
             return _excelDataSourceFile;
          }
 

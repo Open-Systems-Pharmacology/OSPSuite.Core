@@ -238,7 +238,7 @@ namespace OSPSuite.Presentation.Importer.Presenters
 
          _dataSourceFile = new ExcelDataSourceFile(A.Fake<IImportLogger>(), new HeavyWorkManagerForSpecs());
          _dataSourceFile.Format = A.Fake<IDataFormat>();
-         _dataSourceFile.Path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "IntegrationSampleUnitFromColumn.xlsx");
+         _dataSourceFile.LoadFromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "IntegrationSampleUnitFromColumn.xlsx"));
          A.CallTo(() => _importerDataPresenter.SetDataSource(A<string>.Ignored)).Returns(_dataSourceFile);
          _importerDataPresenter.OnImportSheets += Raise.With(new ImportSheetsEventArgs()
             { Filter = "", DataSourceFile = _dataSourceFile, SheetNames = _sheets.Keys.ToList() });

@@ -216,7 +216,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       public void ReopenAllSheets()
       {
-         _dataSourceFile.Path = _dataSourceFile.Path;
+         _dataSourceFile.LoadFromFile(_dataSourceFile.Path);
          RefreshTabs();
       }
 
