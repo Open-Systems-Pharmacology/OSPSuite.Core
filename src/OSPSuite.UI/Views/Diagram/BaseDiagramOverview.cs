@@ -15,30 +15,11 @@ namespace OSPSuite.UI.Views.Diagram
 
       public override bool DoContextClick(GoInputEventArgs evt)
       {
-         var obj = PickObject(true, false, evt.DocPoint, false);
-         if (obj == null)
-         {
-            RaiseBackgroundContextClicked(evt);
-            return false;
-         }
-
-         RaiseObjectContextClicked(obj, evt);
-         while (obj != null)
-         {
-            var strip = obj.GetContextMenuStrip(this);
-            if (strip != null)
-            {
-               strip.Show(this, evt.ViewPoint);
-               return true;
-            }
-
-            if (obj.OnContextClick(evt, this))
-               return true;
-
-            obj = obj.Parent;
-         }
-
-         return false;
+         return DiagramContextClick.Handle(
+            this,
+            evt,
+            RaiseObjectContextClicked,
+            RaiseBackgroundContextClicked);
       }
    }
 }

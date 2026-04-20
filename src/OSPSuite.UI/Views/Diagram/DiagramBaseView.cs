@@ -55,36 +55,13 @@ namespace OSPSuite.UI.Views.Diagram
          return s;
       }
 
-      // .NET 8 workaround: GoView.DoContextClick references the removed
-      // System.Windows.Forms.ContextMenu type, so JITing it throws TypeLoadException.
-      // Replicate the base logic while omitting the legacy ContextMenu branch
-      // (nothing in OSPSuite/MoBi/PK-Sim uses GoObject.GetContextMenu — only ContextMenuStrip).
       public override bool DoContextClick(GoInputEventArgs evt)
       {
-         var obj = PickObject(true, false, evt.DocPoint, false);
-         if (obj == null)
-         {
-            RaiseBackgroundContextClicked(evt);
-            return false;
-         }
-
-         RaiseObjectContextClicked(obj, evt);
-         while (obj != null)
-         {
-            var strip = obj.GetContextMenuStrip(this);
-            if (strip != null)
-            {
-               strip.Show(this, evt.ViewPoint);
-               return true;
-            }
-
-            if (obj.OnContextClick(evt, this))
-               return true;
-
-            obj = obj.Parent;
-         }
-
-         return false;
+         return DiagramContextClick.Handle(
+            this,
+            evt,
+            RaiseObjectContextClicked,
+            RaiseBackgroundContextClicked);
       }
    }
 
@@ -101,8 +78,13 @@ namespace OSPSuite.UI.Views.Diagram
 
       public override void Start()
       {
+         // Mirror the base Start() semantics minus the legacy ContextMenu branch:
+         // only latch CurrentObject when the View has a ContextMenuStrip set.
+         // OSPSuite never sets one, so in practice this is a no-op — which
+         // matches the base method's observable behaviour and means right-clicks
+         // do not alter selection state implicitly.
          var view = View;
-         if (view == null)
+         if (view?.ContextMenuStrip == null)
             return;
 
          CurrentObject = view.PickObject(true, false, LastInput.DocPoint, false);
