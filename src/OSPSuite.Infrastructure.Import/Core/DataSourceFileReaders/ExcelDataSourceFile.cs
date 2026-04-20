@@ -18,7 +18,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
       {
       }
 
-      protected override void LoadFromFile(string path, CancellationToken cancellationToken = default)
+      protected override void DoLoadWork(string path, CancellationToken cancellationToken = default)
       {
          //we keep a copy of the already loaded sheets, in case the reading fails
          var alreadyLoadedDataSheets = DataSheets.Clone();

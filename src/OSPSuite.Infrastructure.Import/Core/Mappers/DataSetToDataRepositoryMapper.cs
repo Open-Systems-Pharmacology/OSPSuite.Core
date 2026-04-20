@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Import;
+using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core.Mappers
@@ -77,6 +78,9 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
          var warningFlag = false;
 
          var dimension = columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.DimensionForUnit(unitName);
+
+         if (dimension == null)
+            throw new OSPSuiteException(Error.DimensionCannotBeDeterminedFor(sheetName, columnAndData.Key.ColumnInfo.Name));
 
          if (columnAndData.Key.ColumnInfo.IsBase)
             dataColumn = new BaseGrid(columnAndData.Key.ColumnInfo.Name, dimension);
