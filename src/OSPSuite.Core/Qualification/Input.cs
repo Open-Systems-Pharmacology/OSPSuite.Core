@@ -10,6 +10,12 @@ namespace OSPSuite.Core.Qualification
 
       public string Project { get; set; }
 
+      /// <summary>
+      ///    Optional. For MoBi qualification plans, the name of the PK-Sim module inside the
+      ///    MoBi project that this input should be resolved against.
+      /// </summary>
+      public string PKSimModule { get; set; }
+
       public int? SectionId { get; set; }
 
       public string SectionReference { get; set; }
