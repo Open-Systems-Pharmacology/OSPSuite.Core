@@ -1,225 +1,331 @@
-# MoBi Module Merge Behavior – Research Findings
+## Merge Behavior Documentation Verification
 
-This document summarises how the `MergeBehavior` property of a MoBi module affects the combination of each building block type during simulation creation.
+### 1. MergeBehavior Enum — `Domain/Module.cs`
 
-## Background
+**File:** `/src/OSPSuite.Core/Domain/Module.cs`, lines 18–34 & 56
 
-When creating a simulation from multiple modules, each module carries a `MergeBehavior` value (defined on the module, not on individual building blocks):
+✅ **Confirmed.** The enum is declared at the module level with exactly two values:
+- `Overwrite` (value 0, **default** — `MergeBehavior MergeBehavior { get; set; } = MergeBehavior.Overwrite;`, line 56)
+- `Extend` (value 1)
 
-| Value | Description |
-|---|---|
-| `Overwrite` | **Default.** Entities from this module replace entities with the same name that were contributed by earlier modules. |
-| `Extend` | Entities from this module are merged into entities with the same name from earlier modules; new entities are added without removing existing ones. |
-
-The merge logic is applied sequentially in the order the modules are selected for the simulation.
-
-### General merge algorithm for named builders (Reactions, Transports, Observers, Events, Molecules)
-
-The algorithm (`analyzeBuilderMerges` in `SimulationBuilder`) groups builders across all modules by **name**, then for each name group:
-
-1. If only **one** module contributes that name → use it as-is.
-2. If the **last** contributing module has `Overwrite` → use only that last builder, discard earlier ones.
-3. If the **last** contributing module has `Extend` → find the last `Overwrite` module in the sequence as the *base* (or the first module if no `Overwrite` precedes it), then apply each subsequent `Extend` module's builder on top in order.
+`ModuleConfiguration.MergeBehavior` (in `ModuleConfiguration.cs` line 27) delegates to `Module.MergeBehavior`, so the behavior is truly module-level.
 
 ---
 
-## Per Building-Block Findings
+### 2. SimulationBuilder.cs — Dispatch and Merge Methods
 
-### Spatial Structure
+**File:** `/src/OSPSuite.Core/Domain/Builder/SimulationBuilder.cs`
 
-Implemented in `SpatialStructureMerger` and `ContainerMergeTask`.
+**`performMerge()` (lines 96–106):** All five entity types are routed through the generic `mergeBuilders<T>` helper:
 
-#### Overwrite
+```
+_reactions     → mergeBuilders(x => x.Reactions,        mergeReactions)     // line 98
+_eventGroups   → mergeBuilders(x => x.EventGroups,      mergeEvents)        // line 99
+_molecules     → mergeBuilders(x => x.Molecules,        mergeMolecules)     // line 100
+_passiveTransports → mergeBuilders(x => x.PassiveTransports, mergeTransports) // line 101
+_observers     → mergeBuilders(x => x.Observers,        mergeObservers)     // line 102
+```
 
-- Each top-level container from the module **replaces** the container with the same path in the accumulated structure.
-- All descendants of the replaced container (sub-containers, parameters, formulas) that are not present in the overwriting module are **removed**.
+**`analyzeBuilderMerges<T>()` (lines 432–484):**
+- Groups all builders (across all modules) by **name**
+- If only one builder exists with that name → used as-is (no clone needed)
+- If the **last** builder in the chain is `Overwrite` → that entire builder is used as-is (preceding ones are discarded)
+- Otherwise, the last `Overwrite` in the chain (or the first builder if none) becomes the **base**; all subsequent builders are the "extend" list
 
-#### Extend
+**`mergeBuilders<T>()` (lines 108–135):**
+- For each `BuilderMergeInfo`, clones the base if extensions are present
+- Calls **`tryExtendContainers(baseBuilder, finalSourceBuilderThatExtend)`** (line 125) — handles container-level merging
+- Then calls the **type-specific** `extendStrategyAction` (line 126) — handles type-specific fields
 
-- Each top-level container from the module is **recursively merged** into the existing container tree:
-  - Sub-containers that do **not** exist in the target are **added**.
-  - Sub-containers that **do** exist are recursively merged (same rules apply).
-  - Non-container child entities (parameters, formulas, distributed parameters, …) are **added or replaced** by name.
-- **Container mode** (`Physical` / `Logical`) is **overwritten** by the incoming value.
-- **Container tags** are **extended** (tags from both modules are kept).
+**`tryExtendContainers<T>()` (lines 143–151):**  
+Casts both target and source to `IContainer`; if both are containers, calls `mergeContainers`, which caches entity sources and delegates to `ContainerMergeTask.MergeContainers`.
 
-#### Neighborhoods (part of Spatial Structure)
-
-| Property | Overwrite | Extend |
-|---|---|---|
-| Existing neighborhood with same name | Replaced entirely | Merged (parameters added/replaced) |
-| Neighbor references (FirstNeighbor, SecondNeighbor) | Replaced | Replaced |
-
----
-
-### Reactions
-
-Implemented in `SimulationBuilder.mergeReactions`.
-
-#### Overwrite
-
-The entire reaction from the overwriting module is used; the reaction as defined in earlier modules is discarded.
-
-#### Extend
-
-Starting from the base reaction, each extending module applies the following changes:
-
-| Property / Element | Extend behavior |
-|---|---|
-| **Educts** | Upsert by molecule name – replaced if the same molecule name exists, added otherwise. Existing educts for molecules not mentioned in the extending module are kept. |
-| **Products** | Same upsert-by-molecule-name logic as Educts. |
-| **Modifiers** | Set union – new modifier names are added; existing ones are not duplicated. Modifiers cannot be removed via Extend. |
-| **Parameters** (child container) | Recursively merged via `ContainerMergeTask.MergeContainers`: new parameters added, existing replaced by name. |
-| **Kinetic formula** | Overwritten by the incoming formula. |
-| **ContainerCriteria** | Overwritten **if** the incoming value is non-`null`; otherwise unchanged. |
-| **CreateProcessRateParameter** | Overwritten. |
-| **ProcessRateParameterPersistable** | Overwritten. |
-| **Icon** | Overwritten if the incoming value is non-`null`; otherwise unchanged. |
-| **Description** | Overwritten if the incoming string is non-empty; otherwise unchanged. |
-| **Dimension** | Overwritten if the incoming value is non-`null`; otherwise unchanged. |
-
-> **Note:** Educts/Products can only be *added or replaced* – they cannot be *removed* via the `Extend` mode. To functionally exclude an educt or product, set its stoichiometry to 0.
+✅ **Confirmed.** All five merge methods exist and the dispatch mechanism is exactly as described. One notable nuance: `mergeReactions` calls `tryExtendContainers` a **second time** (line 175), making it effectively a double container-merge for reactions (idempotent due to replace semantics, but worth noting).
 
 ---
 
-### Passive Transports
+### 3. Spatial Structure Merge — `SpatialStructureMerger.cs` & `ContainerMergeTask.cs`
 
-Implemented in `SimulationBuilder.mergeTransports`.
+**Files:**  
+- `/src/OSPSuite.Core/Domain/Services/SpatialStructureMerger.cs`  
+- `/src/OSPSuite.Core/Domain/Services/ContainerMergeTask.cs`
 
-#### Overwrite
+**MoleculeProperties always extended:**  
+`replaceOrMergeContainerIntoParent` (SpatialStructureMerger.cs line 141–148):
+```csharp
+if (mergeBehavior == MergeBehavior.Extend || containerToMerge.IsNamed(Constants.MOLECULE_PROPERTIES))
+    _containerMergeTask.AddOrMergeContainer(parentContainer, containerToMerge);
+else
+    _containerMergeTask.AddOrReplaceInContainer(parentContainer, containerToMerge);
+```
+Additionally, `GlobalMoleculeContainers` from **all** spatial structures are unconditionally merged (lines 81–93) regardless of `MergeBehavior`. ✅ **Confirmed — MoleculeProperties is always extended, even in Overwrite mode.**
 
-The entire transport from the overwriting module is used.
+**Parameters behavior (ContainerMergeTask.cs lines 42–63):**  
+`MergeContainers` splits children into sub-containers vs leaf entities. Leaf entities (parameters, formulas declared as child nodes) are all run through `AddOrReplaceInContainer` (line 62), which does a remove-then-add. ✅ **Confirmed — existing parameters are replaced by name in Extend mode.**
 
-#### Extend
+**Container mode (ContainerMergeTask.cs lines 65–68):**  
+```csharp
+targetContainer.Mode = containerToMerge.Mode;
+```
+✅ **Confirmed — the incoming container's Mode overwrites the existing one.**
 
-| Property / Element | Extend behavior |
-|---|---|
-| **MoleculeList.ForAll** | Overwritten by the incoming value. |
-| **Included molecule names** | Merged (union); names previously in the exclude list are moved back to the include list. |
-| **Excluded molecule names** | Merged (union); names previously in the include list are moved to the exclude list. |
-| **SourceCriteria.Operator** | Overwritten. |
-| **SourceCriteria conditions** | Accumulated (new conditions appended; existing conditions are NOT removed). |
-| **TargetCriteria.Operator** | Overwritten. |
-| **TargetCriteria conditions** | Accumulated (same rule as SourceCriteria). |
-| **Parameters** (child container) | Recursively merged: new parameters added, existing replaced by name. |
-| **Kinetic formula** | Overwritten. |
-| **CreateProcessRateParameter** | Overwritten. |
-| **ProcessRateParameterPersistable** | Overwritten. |
+**Tags (ContainerMergeTask.cs line 68):**  
+```csharp
+containerToMerge.Tags.Each(targetContainer.AddTag);
+```
+⚠️ **Nuanced.** Tags from the source are **added** to the target (additive/accumulative), not replaced. Existing tags are not removed.
 
----
+**Formulas:**  
+Formulas are not direct named children of containers in the model tree; they live in the building-block formula cache. `ContainerMergeTask` only handles `IEntity` children, so formula-cache merging is handled upstream (when building blocks are combined for simulation, not via ContainerMergeTask). ⚠️ **Nuanced — formula merging at the building-block level is outside ContainerMergeTask's scope.**
 
-### Observers
-
-Implemented in `SimulationBuilder.mergeObservers`.
-
-#### Overwrite
-
-The entire observer from the overwriting module is used.
-
-#### Extend
-
-| Property / Element | Extend behavior |
-|---|---|
-| **MoleculeList** (ForAll, included, excluded names) | Same logic as Passive Transports (see above). |
-| **Parameters** (child container) | Recursively merged: new parameters added, existing replaced by name. |
-
-> **Note:** The observer formula and `InContainer` criteria are **not** currently modified by the extend strategy action (`mergeObservers` only merges the molecule list). Container children (parameters) are merged by the generic `tryExtendContainers` step that runs before every specific strategy.
+**Neighborhoods:**  
+Handled separately in `NeighborhoodCollectionToContainerMapper` (see item 11).
 
 ---
 
-### Events (Event Groups)
+### 4. Molecules Merge — `mergeMolecules` (SimulationBuilder.cs lines 266–279)
 
-Implemented in `SimulationBuilder.mergeEvents`.
+```csharp
+target.DefaultStartFormula = incoming.DefaultStartFormula;  // line 269
+target.Dimension            = incoming.Dimension;           // line 270
+target.DisplayUnit          = incoming.DisplayUnit;         // line 271
+target.IsFloating           = incoming.IsFloating;          // line 272
+target.IsXenobiotic         = incoming.IsXenobiotic;        // line 273
+target.QuantityType         = incoming.QuantityType;        // line 274
+target.ClearUsedCalculationMethods();                        // line 277
+incoming.UsedCalculationMethods.Each(x => target.AddUsedCalculationMethod(x.Clone())); // line 278
+```
 
-#### Overwrite
+**`QuantityType` in Extend mode:** ❌ **Discrepancy.** The code at line 274 **does** set `target.QuantityType = incoming.QuantityType` in Extend mode. If documentation claims QuantityType is NOT changed in Extend, this is contradicted by the code.
 
-The entire event group from the overwriting module is used.
+**`IsFloating` (Stationary flag):** ⚠️ **Nuanced.** `IsFloating` IS overwritten (`target.IsFloating = incoming.IsFloating` line 272) in Extend mode — same observation as QuantityType.
 
-#### Extend
+**Calculation methods:** All previous methods are cleared (`ClearUsedCalculationMethods`, line 277) and replaced with clones of the incoming ones. ✅ **Confirmed — completely replaced.**
 
-| Property / Element | Extend behavior |
-|---|---|
-| **EventGroupType** | Overwritten. |
-| **SourceCriteria.Operator** | Overwritten. |
-| **SourceCriteria conditions** | Accumulated (new conditions appended). |
-| **Child containers / sub-events / parameters** | Recursively merged via `ContainerMergeTask`. |
+**Parameters:** Handled **before** `mergeMolecules` via `tryExtendContainers` (line 125 of `mergeBuilders`). Since `MoleculeBuilder extends Container`, parameter children are merged via `ContainerMergeTask.MergeContainers` — existing parameters (by name) are removed and replaced. ✅
 
----
+**Distributed parameters** (parameter type): `ContainerMergeTask.MergeContainers` line 46 explicitly excludes `IDistributedParameter` from the container list — distributed parameters are treated as leaf entities and replaced wholesale (including their sub-parameters). ✅
 
-### Molecules
-
-Implemented in `SimulationBuilder.mergeMolecules`.
-
-#### Overwrite
-
-The entire molecule definition from the overwriting module is used.
-
-#### Extend
-
-| Property / Element | Extend behavior |
-|---|---|
-| **DefaultStartFormula** | Overwritten. |
-| **Dimension** | Overwritten. |
-| **DisplayUnit** | Overwritten. |
-| **IsFloating** | Overwritten. |
-| **IsXenobiotic** | Overwritten. |
-| **QuantityType** | Overwritten. |
-| **UsedCalculationMethods** | Replaced entirely (cleared, then incoming methods added). |
-| **Parameters** (child container) | Recursively merged: new parameters added, existing replaced by name. |
+**Active transports / `TransporterMoleculeContainerCollection`:** These are `TransporterMoleculeContainer` objects — which extend `Container`, so they are included in `allChildrenContainerToMerge` and recursively merged by `ContainerMergeTask`. ✅ **Confirmed — active transports follow the recursive container-merge logic.**
 
 ---
 
-### Parameter Values (PV)
+### 5. Reactions Merge — `mergeReactions` (SimulationBuilder.cs lines 172–196)
 
-Implemented in `SimulationBuilder.mergeParameterValueBuilders`.
+```csharp
+tryExtendContainers(targetReaction, sourceReaction);         // line 175 (2nd call!)
+targetReaction.Formula = incoming.Formula;                   // line 176
+targetReaction.CreateProcessRateParameter = ...;             // line 177
+targetReaction.ProcessRateParameterPersistable = ...;        // line 178
+upsertPartners(targetReaction, incoming, isEduct: true);     // line 180 - educts
+upsertPartners(targetReaction, incoming, isEduct: false);    // line 181 - products
+// modifiers: additive (HashSet, lines 183–188)
+targetReaction.ContainerCriteria = incoming.ContainerCriteria; // line 195 (if non-null)
+```
 
-- The `MergeBehavior` property of a module has **no effect** on Parameter Values building blocks.
-- All PV entries from all selected modules are collected in module order. For the same parameter path, the **last** module's value wins (later module always overwrites earlier).
-- Individual and Expression Profile parameter values are applied before module PV BBs (see priority order in the concept documentation).
+**Educts/Products (`upsertPartners`, lines 198–222):** Upsert semantics — for each incoming partner, if one with the same molecule name exists it is removed first, then the incoming one (cloned) is added. ✅ **Confirmed — stoichiometry (from `ReactionPartnerBuilder.Clone()`) is preserved with the clone.**
+
+**Modifiers (lines 183–188):** Additive — new modifier names are added only if not already present (via `HashSet.Add`). Existing modifiers are never removed in Extend mode. ✅
+
+**Kinetic equation (formula):** Replaced unconditionally (`targetReaction.Formula = incoming.Formula`, line 176). ✅
+
+**Parameters:** Handled via `ContainerMergeTask` (first `tryExtendContainers` from `mergeBuilders` at line 125, then a **second** call at line 175 inside `mergeReactions` — redundant but idempotent). ✅
+
+**`ContainerCriteria`:** Replaced only if `incoming.ContainerCriteria != null` (lines 194–195). ✅
+
+**`CreateProcessRateParameter` / `ProcessRateParameterPersistable`:** Both set from incoming. ✅
 
 ---
 
-### Initial Conditions (IC)
+### 6. Passive Transports Merge — `mergeTransports` (SimulationBuilder.cs lines 224–234)
 
-Implemented in `SimulationBuilder.mergeInitialConditions`.
+```csharp
+mergeMoleculeLists(target, source);                              // line 227
+mergeDescriptorCriteria(target.SourceCriteria, source.SourceCriteria); // line 228
+mergeDescriptorCriteria(target.TargetCriteria, source.TargetCriteria); // line 229
+target.CreateProcessRateParameter = source.CreateProcessRateParameter; // line 230
+target.ProcessRateParameterPersistable = source.ProcessRateParameterPersistable; // line 231
+target.Formula = source.Formula;                                 // line 233
+```
 
-- The `MergeBehavior` property of a module has **no effect** on Initial Conditions building blocks.
-- Expression Profile IC entries are collected first; module IC entries are collected next. For the same molecule/container path, the **last** entry encountered wins (module IC overwrites Expression Profile IC if both define the same entry).
+**Kinetic equation:** Formula unconditionally replaced. ✅
+
+**Parameters:** Handled via `tryExtendContainers` in `mergeBuilders` (since `TransportBuilder extends ProcessBuilder extends Container`). Parameters replaced by name. ✅
+
+**Source/Target criteria (`mergeDescriptorCriteria`, lines 236–240):**
+```csharp
+target.Operator = source.Operator;       // operator replaced
+source.Each(t => target.Add(t.CloneCondition())); // conditions APPENDED
+```
+⚠️ **Nuanced.** The `Operator` is replaced by the source's, but conditions from the source are **appended** (not replacing existing ones). This is an additive accumulation of criteria conditions.
+
+**Molecule lists (`mergeMoleculeLists`, lines 242–259):**
+- `ForAll` (the "All checkbox") is taken from source
+- `MoleculeNames` from source are upserted (removed from exclude list, added to include list)
+- `MoleculeNamesToExclude` from source are upserted (removed from include list, added to exclude list)
+
+✅ **Confirmed — ForAll/Include/Exclude all handled.**
+
+---
+
+### 7. Observers Merge — `mergeObservers` (SimulationBuilder.cs lines 261–264)
+
+```csharp
+private void mergeObservers(ObserverBuilder target, BuilderSource<ObserverBuilder> source)
+{
+    mergeMoleculeLists(target, source.Builder);
+}
+```
+
+**Critical finding — `ObserverBuilder extends Entity` (NOT Container):**  
+`ObserverBuilder.cs` line 12: `public class ObserverBuilder : Entity, IUsingFormula, IMoleculeDependentBuilder`
+
+Since `ObserverBuilder` is NOT a `Container`, `tryExtendContainers` (called at line 125 of `mergeBuilders`) **returns early** — the cast `builderSource.Builder as IContainer` returns null.
+
+❌ **Discrepancy.** In Extend mode for observers:
+- **Only** `MoleculeList` (include/exclude/ForAll) is merged from the extending builder
+- `Formula` is **NOT** updated from the extending observer — it remains from the base builder
+- `ContainerCriteria` is **NOT** updated from the extending observer — it remains from the base builder
+
+If documentation claims formula and container criteria are updated in Extend mode for observers, this contradicts the code.
+
+---
+
+### 8. Events Merge — `mergeEvents` (SimulationBuilder.cs lines 164–170)
+
+```csharp
+private void mergeEvents(EventGroupBuilder targetBuilder, BuilderSource<EventGroupBuilder> source)
+{
+    var sourceBuilder = source.Builder;
+    targetBuilder.EventGroupType = sourceBuilder.EventGroupType;               // line 167
+    mergeDescriptorCriteria(targetBuilder.SourceCriteria, sourceBuilder.SourceCriteria); // line 169
+}
+```
+
+`EventGroupBuilder extends Container`, so `tryExtendContainers` IS active for events — the event tree (child `EventBuilder` objects, parameters, assignments) is merged via `ContainerMergeTask` as container children.
+
+**EventGroupType:** Unconditionally replaced. ✅
+
+**SourceCriteria:** `mergeDescriptorCriteria` — Operator replaced, conditions appended (see item 6). ⚠️ **Nuanced.**
+
+**Event tree (parameters, assignments, start condition formula):** These are child entities inside `EventGroupBuilder` (a Container). They are handled by `tryExtendContainers` → `ContainerMergeTask.MergeContainers`. Sub-containers are recursively merged; leaf entities (parameters, assignments) are replaced by name. ✅
+
+**Start condition formula:** `EventBuilder` children and their start condition formulas are leaf entities in the container hierarchy and are replaced by name. ✅
+
+---
+
+### 9. Parameter Values Application Order — `QuantityValuesUpdater.cs` lines 57–71
+
+```csharp
+public ValidationResult UpdateQuantitiesValues(ModelConfiguration modelConfiguration)
+{
+    updateMoleculeAmountFromInitialConditions(modelConfiguration);       // ICs (not PVs)
+    updateParameterFromExpressionProfiles(valueUpdater);                 // Expression Profiles
+    updateParameterFromIndividualValues(valueUpdater);                   // Individual
+    updateParameterValueFromParameterValues(valueUpdater);               // PV BBs last
+}
+```
+
+The code comment at line 62: *"Add expressions profile before individual as some settings might be overwritten in the individual for aging"*
+
+✅ **Confirmed order:** Expression Profiles → Individual → PV BBs (last wins for parameters)
+
+⚠️ **Nuanced.** Documentation may describe the order as "Individual → Expression Profiles → PV BBs" but the actual priority (last-wins) is the **reverse**: Expression Profiles can be overwritten by Individual values. The comment explicitly acknowledges this is intentional for aging scenarios.
+
+---
+
+### 10. Initial Conditions Application Order — `SimulationBuilder.cs` lines 310–322
+
+```csharp
+private void mergeInitialConditions()
+{
+    mergeParameterValueBuilders(x => x.SelectedInitialConditions, initialConditionsFromConfigurationsCache);
+    var expressionProfileInitialConditions = allInitialConditionsFromExpressionProfileSources();
+    expressionProfileInitialConditionsCache.AddRange(...);
+
+    // comment: "Concat order is important so that the values from expression profiles are overwritten if duplicated"
+    _initialConditions.AddRange(expressionProfileInitialConditionsCache.Concat(initialConditionsFromConfigurationsCache));
+}
+```
+
+`PathAndValueEntityCache` uses `MergeCache`, whose `Add` is `this[GetKey(value)] = value` (last writer wins). So in the concat:
+
+1. Expression Profile ICs are added first → **lower priority**
+2. IC BBs from module configurations are added second → **overwrite** EP ICs for duplicates
+
+**Pre-step (model construction):** `MoleculeBuilderToMoleculeAmountMapper.createMoleculeAmountDefaultFormula` (line 91) sets the initial formula from `moleculeBuilder.DefaultStartFormula` — the Molecules BB default — before any IC override.
+
+✅ **Confirmed.** The full priority chain is: **Molecules BB default → Expression Profile ICs → IC BBs** (each stage can overwrite the previous for duplicates).
+
+---
+
+### 11. NeighborhoodCollectionToContainerMapper — `NeighborhoodCollectionToContainerMapper.cs`
+
+**`mergeNeighborhoodsInStructure` (lines 80–101):**
+
+```csharp
+if (mergeBehavior == MergeBehavior.Extend)
+{
+    var mergeNeighbor = _containerMergeTask.AddOrMergeContainer(neighborhoods, neighborhoodToMerge) as Neighborhood;
+    updateNeighbors(mergeNeighbor, neighborhoodToMerge);  // updates FirstNeighbor/SecondNeighbor refs
+}
+else
+    _containerMergeTask.AddOrReplaceInContainer(neighborhoods, neighborhoodToMerge);
+```
+
+**Extend mode:** Neighborhood containers are merged recursively (including their molecule property sub-containers). After merge, `FirstNeighbor` and `SecondNeighbor` reference-properties are updated from the source. ✅
+
+**Overwrite mode:** Entire neighborhood replaced. ✅
+
+The first spatial structure's neighborhoods are always added directly (no merge or replace check) — only subsequent structures respect the merge behavior.
 
 ---
 
 ## Summary Table
 
-| Building Block | Overwrite behavior | Extend: new entity | Extend: existing entity – what is overwritten | Extend: existing entity – what is accumulated / kept |
+| # | Claim / Topic | File & Lines | Status | Notes |
 |---|---|---|---|---|
-| **Spatial Structure – containers** | Whole sub-tree replaced | Added | Container mode, non-container children (params/formulas) | Tags, sub-containers (merged recursively) |
-| **Spatial Structure – neighborhoods** | Neighborhood replaced by name | Added | Neighbor references, parameters replaced by name | — |
-| **Reactions** | Whole reaction replaced | Added | Formula, CreateProcessRateParameter, ProcessRateParameterPersistable, ContainerCriteria (if non-null), stoichiometry of existing educts/products, existing parameters | Educts/products for other molecules kept; modifier set is extended |
-| **Passive Transports** | Whole transport replaced | Added | ForAll, formula, CreateProcessRateParameter, criteria operators | Molecule include/exclude lists merged; criteria conditions accumulated; existing parameters merged |
-| **Observers** | Whole observer replaced | Added | ForAll | Molecule include/exclude lists merged; existing parameters merged |
-| **Events** | Whole event group replaced | Added | EventGroupType, SourceCriteria operator | SourceCriteria conditions accumulated; child parameters merged |
-| **Molecules** | Whole molecule replaced | Added | All scalar properties, UsedCalculationMethods (full replacement) | Existing parameters merged |
-| **Parameter Values** | N/A (last-value-wins regardless) | Added | Previous value for same path | — |
-| **Initial Conditions** | N/A (last-value-wins regardless) | Added | Previous value for same path | — |
+| 1 | `MergeBehavior` enum — two values, module-level, Overwrite default | `Module.cs` 18–34, 56 | ✅ Confirmed | Exactly two values; default = `Overwrite` |
+| 2 | `analyzeBuilderMerges` dispatch, `tryExtendContainers`, 5 type-specific methods | `SimulationBuilder.cs` 96–135, 143–151, 164/172/224/261/266 | ✅ Confirmed | All present; reactions call `tryExtendContainers` twice (idempotent) |
+| 3a | Spatial Structure — MoleculeProperties always extended (even in Overwrite) | `SpatialStructureMerger.cs` 81–93, 144 | ✅ Confirmed | Hard-coded special case for `MOLECULE_PROPERTIES` name |
+| 3b | Spatial Structure — parameters replaced by name in Extend | `ContainerMergeTask.cs` 62 | ✅ Confirmed | `AddOrReplaceInContainer` for all leaf entities |
+| 3c | Spatial Structure — container Mode overwritten | `ContainerMergeTask.cs` 67 | ✅ Confirmed | `targetContainer.Mode = containerToMerge.Mode` |
+| 3d | Spatial Structure — tags behavior | `ContainerMergeTask.cs` 68 | ⚠️ Nuanced | Tags are **additive** (source tags appended, existing not removed) |
+| 4a | Molecules — `QuantityType` NOT changed in Extend (doc claim) | `SimulationBuilder.cs` 274 | ❌ Discrepancy | Code **does** set `target.QuantityType = incoming.QuantityType` |
+| 4b | Molecules — `IsFloating` behavior | `SimulationBuilder.cs` 272 | ❌ Discrepancy (if doc claims unchanged) | Code **does** set `target.IsFloating = incoming.IsFloating` |
+| 4c | Molecules — calculation methods replaced | `SimulationBuilder.cs` 277–278 | ✅ Confirmed | Cleared then replaced wholesale |
+| 4d | Molecules — parameters merged by name | `SimulationBuilder.cs` 125 → `ContainerMergeTask.cs` 62 | ✅ Confirmed | Via `tryExtendContainers` + `AddOrReplaceInContainer` |
+| 4e | Molecules — distributed parameter type handling | `ContainerMergeTask.cs` 46 | ✅ Confirmed | Treated as leaf entity; replaced wholesale |
+| 4f | Molecules — active transports | `ContainerMergeTask.cs` 50–59 | ✅ Confirmed | `TransporterMoleculeContainer` (a Container) recursively merged |
+| 5a | Reactions — formula (kinetic equation) replaced | `SimulationBuilder.cs` 176 | ✅ Confirmed | Unconditional assignment |
+| 5b | Reactions — educts/products upserted by molecule name | `SimulationBuilder.cs` 198–222 | ✅ Confirmed | Remove-existing-then-add; stoichiometry cloned |
+| 5c | Reactions — modifiers additive | `SimulationBuilder.cs` 183–188 | ✅ Confirmed | HashSet union; no removals |
+| 5d | Reactions — ContainerCriteria replaced | `SimulationBuilder.cs` 194–195 | ✅ Confirmed | Replaced only if incoming non-null |
+| 5e | Reactions — CreateProcessRateParameter/Persistable | `SimulationBuilder.cs` 177–178 | ✅ Confirmed | Both set from incoming |
+| 6a | Passive Transports — formula replaced | `SimulationBuilder.cs` 233 | ✅ Confirmed | |
+| 6b | Passive Transports — source/target criteria | `SimulationBuilder.cs` 228–229, 236–240 | ⚠️ Nuanced | Operator replaced; conditions **appended** (additive) |
+| 6c | Passive Transports — molecule list (ForAll/include/exclude) | `SimulationBuilder.cs` 242–259 | ✅ Confirmed | ForAll taken from source; both lists upserted |
+| 7a | Observers — `ObserverBuilder extends Entity` (NOT Container) | `ObserverBuilder.cs` 12 | ✅ Confirmed | Critical — changes Extend semantics |
+| 7b | Observers — formula updated in Extend | `SimulationBuilder.cs` 261–264 | ❌ Discrepancy | Formula is **NOT** updated; `mergeObservers` only calls `mergeMoleculeLists` and ObserverBuilder is not a Container |
+| 7c | Observers — ContainerCriteria updated in Extend | `SimulationBuilder.cs` 261–264 | ❌ Discrepancy | ContainerCriteria is **NOT** updated; same reason as 7b |
+| 7d | Observers — molecule list behavior | `SimulationBuilder.cs` 262–263 | ✅ Confirmed | ForAll/include/exclude all handled via `mergeMoleculeLists` |
+| 8a | Events — event tree (parameters, assignments) merged | `SimulationBuilder.cs` 125 → `ContainerMergeTask.cs` | ✅ Confirmed | `EventGroupBuilder` is a Container; tree merged recursively |
+| 8b | Events — EventGroupType replaced | `SimulationBuilder.cs` 167 | ✅ Confirmed | |
+| 8c | Events — SourceCriteria behavior | `SimulationBuilder.cs` 169, 236–240 | ⚠️ Nuanced | Operator replaced; conditions appended (additive) |
+| 9 | Parameter Values — order Individual vs Expression Profiles vs PV BBs | `QuantityValuesUpdater.cs` 62–68 | ⚠️ Nuanced | Actual order: **ExpressionProfiles → Individual → PV BBs**; code comment confirms Individual can overwrite EP (for aging) |
+| 10 | Initial Conditions — Molecules BB → Expression Profiles → IC BBs | `SimulationBuilder.cs` 310–322; `MoleculeBuilderToMoleculeAmountMapper.cs` 91–111 | ✅ Confirmed | Three-stage override chain; last-writer-wins cache |
+| 11 | Neighborhood merge — Extend vs Overwrite | `NeighborhoodCollectionToContainerMapper.cs` 80–101 | ✅ Confirmed | Extend: container-merge + update neighbor refs; Overwrite: full replace |
 
 ---
 
-## Known Gaps / Issues
+### Key Discrepancies Found
 
-- **Reactions – Extend** was not implemented until recently (see [OSPSuite.Core#2640](https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/issues/2640)). The design specification in the OSMOSES documentation still states "Reactions are always overwritten by name", which no longer reflects the implemented behaviour.
-- **Parameter Values and Initial Conditions** do not respect the `MergeBehavior` setting; the last-value-wins rule applies unconditionally.
-- **Observers** – the `mergeObservers` strategy currently only merges the molecule list. The observer formula, `InContainer` criteria, and other observer properties are not touched by the extend action; they remain as defined in the base builder.
-- The OSMOSES concept document (section "Reactions") should be updated to reflect the new `Extend` behavior.
+1. **`QuantityType` (item 4a, `SimulationBuilder.cs` line 274):** Code unconditionally sets `target.QuantityType = incoming.QuantityType` in Extend mode. If documentation states this is NOT modified in Extend, the code contradicts it.
 
----
+2. **`IsFloating` (item 4b, line 272):** Same — unconditionally overwritten in Extend mode.
 
-## Source References
+3. **Observer Formula & ContainerCriteria (items 7b/7c):** Because `ObserverBuilder` inherits from `Entity` (not `Container`), `tryExtendContainers` is a no-op for observers, and `mergeObservers` only updates the molecule list. Formula and ContainerCriteria are left unchanged from the base builder in Extend mode.
 
-| File | Purpose |
-|---|---|
-| `src/OSPSuite.Core/Domain/Module.cs` | `MergeBehavior` enum and module definition |
-| `src/OSPSuite.Core/Domain/ModuleConfiguration.cs` | Exposes `MergeBehavior` per module configuration |
-| `src/OSPSuite.Core/Domain/Builder/SimulationBuilder.cs` | Core merge orchestration for all builder types |
-| `src/OSPSuite.Core/Domain/Services/SpatialStructureMerger.cs` | Spatial structure and neighborhood merging |
-| `src/OSPSuite.Core/Domain/Services/ContainerMergeTask.cs` | Low-level container merge logic |
-| `src/OSPSuite.Core/Domain/Mappers/NeighborhoodCollectionToContainerMapper.cs` | Neighborhood-specific merge |
+4. **Parameter Value application order (item 9):** The actual execution order is `ExpressionProfiles → Individual → PV BBs` — meaning Individual values override Expression Profile values for the same parameter (not the other way around). Depending on the documentation's phrasing, this may represent a subtle ordering discrepancy.
+
+5. **DescriptorCriteria accumulation (items 6b, 8c):** In `mergeDescriptorCriteria`, conditions are **appended** (never removed) from the incoming builder. The operator is replaced, but conditions accumulate across merges. This could lead to unintended criteria expansion if not documented as additive.
