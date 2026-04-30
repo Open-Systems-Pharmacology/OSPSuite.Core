@@ -324,4 +324,255 @@ namespace OSPSuite.Core.Domain
          sut.ShouldContain(_inContainerCondition);
       }
    }
+
+   public abstract class concern_for_DescriptorCriteria_with_compound : ContextSpecification<DescriptorCriteria>
+   {
+      protected override void Context()
+      {
+         //sut models: (VenousBlood AND Plasma) OR (Muscle AND Interstitial)
+         sut = new DescriptorCriteria { Operator = CriteriaOperator.Or };
+         sut.Add(buildCompound(CriteriaOperator.And, new MatchTagCondition("VenousBlood"), new MatchTagCondition("Plasma")));
+         sut.Add(buildCompound(CriteriaOperator.And, new MatchTagCondition("Muscle"), new MatchTagCondition("Interstitial")));
+      }
+
+      protected static CompoundCondition buildCompound(CriteriaOperator innerOperator, params ITagCondition[] innerConditions)
+      {
+         var compound = new CompoundCondition { Operator = innerOperator };
+         foreach (var condition in innerConditions)
+            compound.Add(condition);
+         return compound;
+      }
+
+      protected IEntity entityWithTags(params string[] tags)
+      {
+         var entity = new Parameter().WithName("para");
+         foreach (var tag in tags)
+            entity.AddTag(tag);
+         return entity;
+      }
+   }
+
+   public class When_outer_OR_of_two_AND_compounds_matches_the_first_branch : concern_for_DescriptorCriteria_with_compound
+   {
+      [Observation]
+      public void should_satisfy_for_an_entity_tagged_VenousBlood_and_Plasma()
+      {
+         sut.IsSatisfiedBy(entityWithTags("VenousBlood", "Plasma")).ShouldBeTrue();
+      }
+   }
+
+   public class When_outer_OR_of_two_AND_compounds_matches_the_second_branch : concern_for_DescriptorCriteria_with_compound
+   {
+      [Observation]
+      public void should_satisfy_for_an_entity_tagged_Muscle_and_Interstitial()
+      {
+         sut.IsSatisfiedBy(entityWithTags("Muscle", "Interstitial")).ShouldBeTrue();
+      }
+   }
+
+   public class When_outer_OR_of_two_AND_compounds_matches_neither_branch : concern_for_DescriptorCriteria_with_compound
+   {
+      [Observation]
+      public void should_not_satisfy_for_an_entity_with_one_tag_from_each_branch()
+      {
+         //hybrid: matches one tag from each branch, neither branch fully
+         sut.IsSatisfiedBy(entityWithTags("VenousBlood", "Interstitial")).ShouldBeFalse();
+      }
+   }
+
+   public class When_outer_AND_with_a_compound_OR_branch_satisfied : concern_for_DescriptorCriteria
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Operator = CriteriaOperator.And;
+         sut.Add(A.Fake<ITagCondition>());
+         A.CallTo(() => sut[0].IsSatisfiedBy(_entityCriteria)).Returns(true);
+
+         var compound = new CompoundCondition { Operator = CriteriaOperator.Or };
+         var firstInnerCondition = A.Fake<ITagCondition>();
+         A.CallTo(() => firstInnerCondition.IsSatisfiedBy(_entityCriteria)).Returns(false);
+         var secondInnerCondition = A.Fake<ITagCondition>();
+         A.CallTo(() => secondInnerCondition.IsSatisfiedBy(_entityCriteria)).Returns(true);
+         compound.Add(firstInnerCondition);
+         compound.Add(secondInnerCondition);
+         sut.Add(compound);
+      }
+
+      [Observation]
+      public void should_be_satisfied()
+      {
+         sut.IsSatisfiedBy(_entityCriteria).ShouldBeTrue();
+      }
+   }
+
+   public class When_outer_AND_with_a_compound_OR_branch_all_unsatisfied : concern_for_DescriptorCriteria
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Operator = CriteriaOperator.And;
+         sut.Add(A.Fake<ITagCondition>());
+         A.CallTo(() => sut[0].IsSatisfiedBy(_entityCriteria)).Returns(true);
+
+         var compound = new CompoundCondition { Operator = CriteriaOperator.Or };
+         var firstInnerCondition = A.Fake<ITagCondition>();
+         A.CallTo(() => firstInnerCondition.IsSatisfiedBy(_entityCriteria)).Returns(false);
+         var secondInnerCondition = A.Fake<ITagCondition>();
+         A.CallTo(() => secondInnerCondition.IsSatisfiedBy(_entityCriteria)).Returns(false);
+         compound.Add(firstInnerCondition);
+         compound.Add(secondInnerCondition);
+         sut.Add(compound);
+      }
+
+      [Observation]
+      public void should_not_be_satisfied()
+      {
+         sut.IsSatisfiedBy(_entityCriteria).ShouldBeFalse();
+      }
+   }
+
+   public class When_cloning_a_descriptor_criteria_containing_a_compound : concern_for_DescriptorCriteria
+   {
+      private DescriptorCriteria _clonedCriteria;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut.Operator = CriteriaOperator.Or;
+         var compound = new CompoundCondition();
+         compound.Add(new MatchTagCondition("VenousBlood"));
+         compound.Add(new MatchTagCondition("Plasma"));
+         sut.Add(compound);
+      }
+
+      protected override void Because()
+      {
+         _clonedCriteria = sut.Clone();
+      }
+
+      [Observation]
+      public void should_deep_clone_the_compound()
+      {
+         _clonedCriteria.Count.ShouldBeEqualTo(1);
+         _clonedCriteria[0].ShouldBeAnInstanceOf<CompoundCondition>();
+         var clonedCompound = _clonedCriteria[0].DowncastTo<CompoundCondition>();
+         clonedCompound.Operator.ShouldBeEqualTo(CriteriaOperator.And);
+         clonedCompound.Count.ShouldBeEqualTo(2);
+      }
+
+      [Observation]
+      public void clone_should_not_share_inner_list()
+      {
+         _clonedCriteria[0].DowncastTo<CompoundCondition>().Add(new MatchTagCondition("Other"));
+         sut[0].DowncastTo<CompoundCondition>().Count.ShouldBeEqualTo(2);
+      }
+   }
+
+   public class When_replacing_a_keyword_in_a_descriptor_criteria_containing_a_compound : concern_for_DescriptorCriteria
+   {
+      protected override void Context()
+      {
+         base.Context();
+         var compound = new CompoundCondition();
+         compound.Add(new MatchTagCondition("VenousBlood"));
+         compound.Add(new MatchTagCondition("Plasma"));
+         sut.Add(compound);
+         sut.Add(new MatchTagCondition("VenousBlood"));
+      }
+
+      protected override void Because()
+      {
+         sut.Replace("VenousBlood", "ArterialBlood");
+      }
+
+      [Observation]
+      public void should_replace_inside_the_compound()
+      {
+         var compound = sut[0].DowncastTo<CompoundCondition>();
+         compound[0].DowncastTo<MatchTagCondition>().Tag.ShouldBeEqualTo("ArterialBlood");
+      }
+
+      [Observation]
+      public void should_replace_at_the_outer_level()
+      {
+         sut[1].DowncastTo<MatchTagCondition>().Tag.ShouldBeEqualTo("ArterialBlood");
+      }
+   }
+
+   public class When_rendering_a_descriptor_criteria_with_compound_to_string : concern_for_DescriptorCriteria
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Operator = CriteriaOperator.Or;
+
+         var venousPlasma = new CompoundCondition();
+         venousPlasma.Add(new MatchTagCondition("VenousBlood"));
+         venousPlasma.Add(new MatchTagCondition("Plasma"));
+
+         var muscleInterstitial = new CompoundCondition();
+         muscleInterstitial.Add(new MatchTagCondition("Muscle"));
+         muscleInterstitial.Add(new MatchTagCondition("Interstitial"));
+
+         sut.Add(venousPlasma);
+         sut.Add(muscleInterstitial);
+      }
+
+      [Observation]
+      public void should_render_outer_OR_of_parenthesised_compound_groups()
+      {
+         sut.ToString().ShouldBeEqualTo("(VenousBlood AND Plasma) OR (Muscle AND Interstitial)");
+      }
+   }
+
+   public class When_comparing_two_descriptor_criteria_with_equivalent_compounds : concern_for_DescriptorCriteria
+   {
+      private DescriptorCriteria _equivalentCriteria;
+
+      protected override void Context()
+      {
+         base.Context();
+         var firstCompound = new CompoundCondition();
+         firstCompound.Add(new MatchTagCondition("A"));
+         firstCompound.Add(new MatchTagCondition("B"));
+         sut.Add(firstCompound);
+
+         var secondCompound = new CompoundCondition();
+         secondCompound.Add(new MatchTagCondition("A"));
+         secondCompound.Add(new MatchTagCondition("B"));
+         _equivalentCriteria = new DescriptorCriteria();
+         _equivalentCriteria.Add(secondCompound);
+      }
+
+      [Observation]
+      public void should_be_equal()
+      {
+         sut.Equals(_equivalentCriteria).ShouldBeTrue();
+      }
+   }
+
+   public class When_comparing_two_descriptor_criteria_with_compounds_differing_by_inner_operator : concern_for_DescriptorCriteria
+   {
+      private DescriptorCriteria _criteriaWithDifferentInnerOperator;
+
+      protected override void Context()
+      {
+         base.Context();
+         var compoundWithAnd = new CompoundCondition();
+         compoundWithAnd.Add(new MatchTagCondition("A"));
+         sut.Add(compoundWithAnd);
+
+         var compoundWithOr = new CompoundCondition { Operator = CriteriaOperator.Or };
+         compoundWithOr.Add(new MatchTagCondition("A"));
+         _criteriaWithDifferentInnerOperator = new DescriptorCriteria();
+         _criteriaWithDifferentInnerOperator.Add(compoundWithOr);
+      }
+
+      [Observation]
+      public void should_not_be_equal()
+      {
+         sut.Equals(_criteriaWithDifferentInnerOperator).ShouldBeFalse();
+      }
+   }
 }

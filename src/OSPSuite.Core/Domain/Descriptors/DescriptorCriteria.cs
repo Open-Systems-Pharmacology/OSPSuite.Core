@@ -63,6 +63,15 @@ namespace OSPSuite.Core.Domain.Descriptors
       }
 
       /// <summary>
+      ///    Replaces every occurrence of <paramref name="keyword" /> with <paramref name="replacement" /> across all
+      ///    conditions, recursing into compound conditions.
+      /// </summary>
+      public void Replace(string keyword, string replacement)
+      {
+         this.Each(x => x.Replace(keyword, replacement));
+      }
+
+      /// <summary>
       ///    Removes all tag conditions for the given <paramref name="tag" />
       /// </summary>
       /// <typeparam name="T">
@@ -82,7 +91,7 @@ namespace OSPSuite.Core.Domain.Descriptors
          conditionsToRemove.Each(condition => Remove(condition));
       }
 
-      public DescriptorCriteria Clone()
+      public virtual DescriptorCriteria Clone()
       {
          var clone = new DescriptorCriteria();
          this.Each(x => clone.Add(x.CloneCondition()));

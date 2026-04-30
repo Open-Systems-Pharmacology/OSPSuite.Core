@@ -109,4 +109,50 @@ namespace OSPSuite.Core.Serializers
          AssertForSpecs.AreEqualReactionBuilder(x1, x2);
       }
    }
+
+   public class ReactionBuilderWithCompoundCriteriaXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
+   {
+      [Test]
+      public void TestSerialization()
+      {
+         var reactionBuilder = CreateObject<ReactionBuilder>().WithName("CompoundCriteria.Builder");
+         reactionBuilder.Formula = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(23.4);
+         //(VenousBlood AND Plasma) OR (Muscle AND Interstitial)
+         reactionBuilder.ContainerCriteria = Create.Criteria(c => c
+            .Compound(g => g.With("VenousBlood").And.With("Plasma"))
+            .With(CriteriaOperator.Or)
+            .Compound(g => g.With("Muscle").And.With("Interstitial")));
+
+         reactionBuilder.AddEduct(new ReactionPartnerBuilder("H2", 2.0));
+         reactionBuilder.AddProduct(new ReactionPartnerBuilder("H2O", 2.0));
+
+         var deserializedReactionBuilder = SerializeAndDeserialize(reactionBuilder);
+
+         AssertForSpecs.AreEqualReactionBuilder(reactionBuilder, deserializedReactionBuilder);
+      }
+   }
+
+   public class PassiveTransportBuilderWithCompoundCriteriaXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
+   {
+      [Test]
+      public void TestSerialization()
+      {
+         var transportBuilder = CreateObject<TransportBuilder>().WithName("CompoundCriteria.Transport");
+         transportBuilder.Formula = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(23.4);
+
+         transportBuilder.SourceCriteria = Create.Criteria(c => c
+            .Compound(g => g.With("VenousBlood").And.With("Plasma"))
+            .With(CriteriaOperator.Or)
+            .Compound(g => g.With("Muscle").And.With("Interstitial")));
+         transportBuilder.TargetCriteria = new DescriptorCriteria { new NotMatchTagCondition("Venous") };
+
+         transportBuilder.TransportType = TransportType.Diffusion;
+         transportBuilder.MoleculeList.ForAll = !transportBuilder.MoleculeList.ForAll;
+         transportBuilder.AddMoleculeName("A");
+
+         var deserializedTransportBuilder = SerializeAndDeserialize(transportBuilder);
+
+         AssertForSpecs.AreEqualTransportBuilder(transportBuilder, deserializedTransportBuilder);
+      }
+   }
 }
