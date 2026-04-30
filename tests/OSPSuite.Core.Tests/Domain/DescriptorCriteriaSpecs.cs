@@ -325,22 +325,22 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public abstract class concern_for_DescriptorCriteria_with_compound : ContextSpecification<DescriptorCriteria>
+   public abstract class concern_for_DescriptorCriteria_with_condition_group : ContextSpecification<DescriptorCriteria>
    {
       protected override void Context()
       {
          //sut models: (VenousBlood AND Plasma) OR (Muscle AND Interstitial)
          sut = new DescriptorCriteria { Operator = CriteriaOperator.Or };
-         sut.Add(buildCompound(CriteriaOperator.And, new MatchTagCondition("VenousBlood"), new MatchTagCondition("Plasma")));
-         sut.Add(buildCompound(CriteriaOperator.And, new MatchTagCondition("Muscle"), new MatchTagCondition("Interstitial")));
+         sut.Add(buildGroup(CriteriaOperator.And, new MatchTagCondition("VenousBlood"), new MatchTagCondition("Plasma")));
+         sut.Add(buildGroup(CriteriaOperator.And, new MatchTagCondition("Muscle"), new MatchTagCondition("Interstitial")));
       }
 
-      protected static CompoundCondition buildCompound(CriteriaOperator innerOperator, params ITagCondition[] innerConditions)
+      protected static ConditionGroup buildGroup(CriteriaOperator innerOperator, params ITagCondition[] innerConditions)
       {
-         var compound = new CompoundCondition { Operator = innerOperator };
+         var group = new ConditionGroup { Operator = innerOperator };
          foreach (var condition in innerConditions)
-            compound.Add(condition);
-         return compound;
+            group.Add(condition);
+         return group;
       }
 
       protected IEntity entityWithTags(params string[] tags)
@@ -352,7 +352,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_outer_OR_of_two_AND_compounds_matches_the_first_branch : concern_for_DescriptorCriteria_with_compound
+   public class When_outer_OR_of_two_AND_groups_matches_the_first_branch : concern_for_DescriptorCriteria_with_condition_group
    {
       [Observation]
       public void should_satisfy_for_an_entity_tagged_VenousBlood_and_Plasma()
@@ -361,7 +361,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_outer_OR_of_two_AND_compounds_matches_the_second_branch : concern_for_DescriptorCriteria_with_compound
+   public class When_outer_OR_of_two_AND_groups_matches_the_second_branch : concern_for_DescriptorCriteria_with_condition_group
    {
       [Observation]
       public void should_satisfy_for_an_entity_tagged_Muscle_and_Interstitial()
@@ -370,7 +370,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_outer_OR_of_two_AND_compounds_matches_neither_branch : concern_for_DescriptorCriteria_with_compound
+   public class When_outer_OR_of_two_AND_groups_matches_neither_branch : concern_for_DescriptorCriteria_with_condition_group
    {
       [Observation]
       public void should_not_satisfy_for_an_entity_with_one_tag_from_each_branch()
@@ -380,7 +380,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_outer_AND_with_a_compound_OR_branch_satisfied : concern_for_DescriptorCriteria
+   public class When_outer_AND_with_a_group_OR_branch_satisfied : concern_for_DescriptorCriteria
    {
       protected override void Context()
       {
@@ -389,14 +389,14 @@ namespace OSPSuite.Core.Domain
          sut.Add(A.Fake<ITagCondition>());
          A.CallTo(() => sut[0].IsSatisfiedBy(_entityCriteria)).Returns(true);
 
-         var compound = new CompoundCondition { Operator = CriteriaOperator.Or };
+         var group = new ConditionGroup { Operator = CriteriaOperator.Or };
          var firstInnerCondition = A.Fake<ITagCondition>();
          A.CallTo(() => firstInnerCondition.IsSatisfiedBy(_entityCriteria)).Returns(false);
          var secondInnerCondition = A.Fake<ITagCondition>();
          A.CallTo(() => secondInnerCondition.IsSatisfiedBy(_entityCriteria)).Returns(true);
-         compound.Add(firstInnerCondition);
-         compound.Add(secondInnerCondition);
-         sut.Add(compound);
+         group.Add(firstInnerCondition);
+         group.Add(secondInnerCondition);
+         sut.Add(group);
       }
 
       [Observation]
@@ -406,7 +406,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_outer_AND_with_a_compound_OR_branch_all_unsatisfied : concern_for_DescriptorCriteria
+   public class When_outer_AND_with_a_group_OR_branch_all_unsatisfied : concern_for_DescriptorCriteria
    {
       protected override void Context()
       {
@@ -415,14 +415,14 @@ namespace OSPSuite.Core.Domain
          sut.Add(A.Fake<ITagCondition>());
          A.CallTo(() => sut[0].IsSatisfiedBy(_entityCriteria)).Returns(true);
 
-         var compound = new CompoundCondition { Operator = CriteriaOperator.Or };
+         var group = new ConditionGroup { Operator = CriteriaOperator.Or };
          var firstInnerCondition = A.Fake<ITagCondition>();
          A.CallTo(() => firstInnerCondition.IsSatisfiedBy(_entityCriteria)).Returns(false);
          var secondInnerCondition = A.Fake<ITagCondition>();
          A.CallTo(() => secondInnerCondition.IsSatisfiedBy(_entityCriteria)).Returns(false);
-         compound.Add(firstInnerCondition);
-         compound.Add(secondInnerCondition);
-         sut.Add(compound);
+         group.Add(firstInnerCondition);
+         group.Add(secondInnerCondition);
+         sut.Add(group);
       }
 
       [Observation]
@@ -432,7 +432,7 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_cloning_a_descriptor_criteria_containing_a_compound : concern_for_DescriptorCriteria
+   public class When_cloning_a_descriptor_criteria_containing_a_condition_group : concern_for_DescriptorCriteria
    {
       private DescriptorCriteria _clonedCriteria;
 
@@ -440,10 +440,10 @@ namespace OSPSuite.Core.Domain
       {
          base.Context();
          sut.Operator = CriteriaOperator.Or;
-         var compound = new CompoundCondition();
-         compound.Add(new MatchTagCondition("VenousBlood"));
-         compound.Add(new MatchTagCondition("Plasma"));
-         sut.Add(compound);
+         var group = new ConditionGroup();
+         group.Add(new MatchTagCondition("VenousBlood"));
+         group.Add(new MatchTagCondition("Plasma"));
+         sut.Add(group);
       }
 
       protected override void Because()
@@ -452,32 +452,32 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_deep_clone_the_compound()
+      public void should_deep_clone_the_group()
       {
          _clonedCriteria.Count.ShouldBeEqualTo(1);
-         _clonedCriteria[0].ShouldBeAnInstanceOf<CompoundCondition>();
-         var clonedCompound = _clonedCriteria[0].DowncastTo<CompoundCondition>();
-         clonedCompound.Operator.ShouldBeEqualTo(CriteriaOperator.And);
-         clonedCompound.Count.ShouldBeEqualTo(2);
+         _clonedCriteria[0].ShouldBeAnInstanceOf<ConditionGroup>();
+         var clonedGroup = _clonedCriteria[0].DowncastTo<ConditionGroup>();
+         clonedGroup.Operator.ShouldBeEqualTo(CriteriaOperator.And);
+         clonedGroup.Count.ShouldBeEqualTo(2);
       }
 
       [Observation]
       public void clone_should_not_share_inner_list()
       {
-         _clonedCriteria[0].DowncastTo<CompoundCondition>().Add(new MatchTagCondition("Other"));
-         sut[0].DowncastTo<CompoundCondition>().Count.ShouldBeEqualTo(2);
+         _clonedCriteria[0].DowncastTo<ConditionGroup>().Add(new MatchTagCondition("Other"));
+         sut[0].DowncastTo<ConditionGroup>().Count.ShouldBeEqualTo(2);
       }
    }
 
-   public class When_replacing_a_keyword_in_a_descriptor_criteria_containing_a_compound : concern_for_DescriptorCriteria
+   public class When_replacing_a_keyword_in_a_descriptor_criteria_containing_a_condition_group : concern_for_DescriptorCriteria
    {
       protected override void Context()
       {
          base.Context();
-         var compound = new CompoundCondition();
-         compound.Add(new MatchTagCondition("VenousBlood"));
-         compound.Add(new MatchTagCondition("Plasma"));
-         sut.Add(compound);
+         var group = new ConditionGroup();
+         group.Add(new MatchTagCondition("VenousBlood"));
+         group.Add(new MatchTagCondition("Plasma"));
+         sut.Add(group);
          sut.Add(new MatchTagCondition("VenousBlood"));
       }
 
@@ -487,10 +487,10 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_replace_inside_the_compound()
+      public void should_replace_inside_the_group()
       {
-         var compound = sut[0].DowncastTo<CompoundCondition>();
-         compound[0].DowncastTo<MatchTagCondition>().Tag.ShouldBeEqualTo("ArterialBlood");
+         var group = sut[0].DowncastTo<ConditionGroup>();
+         group[0].DowncastTo<MatchTagCondition>().Tag.ShouldBeEqualTo("ArterialBlood");
       }
 
       [Observation]
@@ -500,18 +500,18 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_rendering_a_descriptor_criteria_with_compound_to_string : concern_for_DescriptorCriteria
+   public class When_rendering_a_descriptor_criteria_with_condition_group_to_string : concern_for_DescriptorCriteria
    {
       protected override void Context()
       {
          base.Context();
          sut.Operator = CriteriaOperator.Or;
 
-         var venousPlasma = new CompoundCondition();
+         var venousPlasma = new ConditionGroup();
          venousPlasma.Add(new MatchTagCondition("VenousBlood"));
          venousPlasma.Add(new MatchTagCondition("Plasma"));
 
-         var muscleInterstitial = new CompoundCondition();
+         var muscleInterstitial = new ConditionGroup();
          muscleInterstitial.Add(new MatchTagCondition("Muscle"));
          muscleInterstitial.Add(new MatchTagCondition("Interstitial"));
 
@@ -520,29 +520,29 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_render_outer_OR_of_parenthesised_compound_groups()
+      public void should_render_outer_OR_of_parenthesised_groups()
       {
          sut.ToString().ShouldBeEqualTo("(VenousBlood AND Plasma) OR (Muscle AND Interstitial)");
       }
    }
 
-   public class When_comparing_two_descriptor_criteria_with_equivalent_compounds : concern_for_DescriptorCriteria
+   public class When_comparing_two_descriptor_criteria_with_equivalent_groups : concern_for_DescriptorCriteria
    {
       private DescriptorCriteria _equivalentCriteria;
 
       protected override void Context()
       {
          base.Context();
-         var firstCompound = new CompoundCondition();
-         firstCompound.Add(new MatchTagCondition("A"));
-         firstCompound.Add(new MatchTagCondition("B"));
-         sut.Add(firstCompound);
+         var firstGroup = new ConditionGroup();
+         firstGroup.Add(new MatchTagCondition("A"));
+         firstGroup.Add(new MatchTagCondition("B"));
+         sut.Add(firstGroup);
 
-         var secondCompound = new CompoundCondition();
-         secondCompound.Add(new MatchTagCondition("A"));
-         secondCompound.Add(new MatchTagCondition("B"));
+         var secondGroup = new ConditionGroup();
+         secondGroup.Add(new MatchTagCondition("A"));
+         secondGroup.Add(new MatchTagCondition("B"));
          _equivalentCriteria = new DescriptorCriteria();
-         _equivalentCriteria.Add(secondCompound);
+         _equivalentCriteria.Add(secondGroup);
       }
 
       [Observation]
@@ -552,21 +552,21 @@ namespace OSPSuite.Core.Domain
       }
    }
 
-   public class When_comparing_two_descriptor_criteria_with_compounds_differing_by_inner_operator : concern_for_DescriptorCriteria
+   public class When_comparing_two_descriptor_criteria_with_groups_differing_by_inner_operator : concern_for_DescriptorCriteria
    {
       private DescriptorCriteria _criteriaWithDifferentInnerOperator;
 
       protected override void Context()
       {
          base.Context();
-         var compoundWithAnd = new CompoundCondition();
-         compoundWithAnd.Add(new MatchTagCondition("A"));
-         sut.Add(compoundWithAnd);
+         var groupWithAnd = new ConditionGroup();
+         groupWithAnd.Add(new MatchTagCondition("A"));
+         sut.Add(groupWithAnd);
 
-         var compoundWithOr = new CompoundCondition { Operator = CriteriaOperator.Or };
-         compoundWithOr.Add(new MatchTagCondition("A"));
+         var groupWithOr = new ConditionGroup { Operator = CriteriaOperator.Or };
+         groupWithOr.Add(new MatchTagCondition("A"));
          _criteriaWithDifferentInnerOperator = new DescriptorCriteria();
-         _criteriaWithDifferentInnerOperator.Add(compoundWithOr);
+         _criteriaWithDifferentInnerOperator.Add(groupWithOr);
       }
 
       [Observation]

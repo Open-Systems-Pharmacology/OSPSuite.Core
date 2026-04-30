@@ -2,9 +2,9 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Descriptors;
 
-public class CompoundCondition : DescriptorCriteria, ITagCondition
+public class ConditionGroup : DescriptorCriteria, ITagCondition
 {
-   //compound conditions have no tag of their own; expose empty so RemoveByTag never matches
+   //condition groups have no tag of their own; expose empty so RemoveByTag never matches
    public string Tag => string.Empty;
 
    public string Condition => $"({base.ToString()})";
@@ -14,9 +14,9 @@ public class CompoundCondition : DescriptorCriteria, ITagCondition
       return cloneCondition();
    }
 
-   private CompoundCondition cloneCondition()
+   private ConditionGroup cloneCondition()
    {
-      var clone = new CompoundCondition { Operator = Operator };
+      var clone = new ConditionGroup { Operator = Operator };
       this.Each(c => clone.Add(c.CloneCondition()));
       return clone;
    }

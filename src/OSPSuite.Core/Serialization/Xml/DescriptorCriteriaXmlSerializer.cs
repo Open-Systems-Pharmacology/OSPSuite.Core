@@ -65,7 +65,7 @@ namespace OSPSuite.Core.Serialization.Xml
    {
    }
 
-   public class CompoundConditionXmlSerializer : DescriptorCriteriaXmlSerializerBase<CompoundCondition>
+   public class ConditionGroupXmlSerializer : DescriptorCriteriaXmlSerializerBase<ConditionGroup>
    {
    }
 

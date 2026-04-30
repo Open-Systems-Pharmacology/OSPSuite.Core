@@ -110,18 +110,18 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class ReactionBuilderWithCompoundCriteriaXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
+   public class ReactionBuilderWithConditionGroupCriteriaXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
       {
-         var reactionBuilder = CreateObject<ReactionBuilder>().WithName("CompoundCriteria.Builder");
+         var reactionBuilder = CreateObject<ReactionBuilder>().WithName("ConditionGroupCriteria.Builder");
          reactionBuilder.Formula = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(23.4);
          //(VenousBlood AND Plasma) OR (Muscle AND Interstitial)
          reactionBuilder.ContainerCriteria = Create.Criteria(c => c
-            .Compound(g => g.With("VenousBlood").And.With("Plasma"))
+            .ConditionGroup(g => g.With("VenousBlood").And.With("Plasma"))
             .With(CriteriaOperator.Or)
-            .Compound(g => g.With("Muscle").And.With("Interstitial")));
+            .ConditionGroup(g => g.With("Muscle").And.With("Interstitial")));
 
          reactionBuilder.AddEduct(new ReactionPartnerBuilder("H2", 2.0));
          reactionBuilder.AddProduct(new ReactionPartnerBuilder("H2O", 2.0));
@@ -132,18 +132,18 @@ namespace OSPSuite.Core.Serializers
       }
    }
 
-   public class PassiveTransportBuilderWithCompoundCriteriaXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
+   public class PassiveTransportBuilderWithConditionGroupCriteriaXmlSerializerSpecs : ModelingXmlSerializerBaseSpecs
    {
       [Test]
       public void TestSerialization()
       {
-         var transportBuilder = CreateObject<TransportBuilder>().WithName("CompoundCriteria.Transport");
+         var transportBuilder = CreateObject<TransportBuilder>().WithName("ConditionGroupCriteria.Transport");
          transportBuilder.Formula = CreateObject<ConstantFormula>().WithDimension(DimensionLength).WithValue(23.4);
 
          transportBuilder.SourceCriteria = Create.Criteria(c => c
-            .Compound(g => g.With("VenousBlood").And.With("Plasma"))
+            .ConditionGroup(g => g.With("VenousBlood").And.With("Plasma"))
             .With(CriteriaOperator.Or)
-            .Compound(g => g.With("Muscle").And.With("Interstitial")));
+            .ConditionGroup(g => g.With("Muscle").And.With("Interstitial")));
          transportBuilder.TargetCriteria = new DescriptorCriteria { new NotMatchTagCondition("Venous") };
 
          transportBuilder.TransportType = TransportType.Diffusion;

@@ -64,7 +64,7 @@ namespace OSPSuite.Core.Domain.Descriptors
 
       /// <summary>
       ///    Replaces every occurrence of <paramref name="keyword" /> with <paramref name="replacement" /> across all
-      ///    conditions, recursing into compound conditions.
+      ///    conditions, recursing into condition groups.
       /// </summary>
       public void Replace(string keyword, string replacement)
       {

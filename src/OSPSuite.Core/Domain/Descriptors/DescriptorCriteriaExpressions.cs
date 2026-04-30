@@ -65,15 +65,15 @@ namespace OSPSuite.Core.Domain.Descriptors
          return this;
       }
 
-      public DescriptorCriteriaBuilder Compound(Action<DescriptorCriteriaBuilder> innerAction)
+      public DescriptorCriteriaBuilder ConditionGroup(Action<DescriptorCriteriaBuilder> innerAction)
       {
          var innerBuilder = new DescriptorCriteriaBuilder();
          innerAction(innerBuilder);
          var innerCriteria = innerBuilder.Build();
-         var compound = new CompoundCondition { Operator = innerCriteria.Operator };
+         var group = new ConditionGroup { Operator = innerCriteria.Operator };
          foreach (var condition in innerCriteria)
-            compound.Add(condition);
-         _criteria.Add(compound);
+            group.Add(condition);
+         _criteria.Add(group);
          return this;
       }
 
