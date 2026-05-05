@@ -2039,6 +2039,7 @@ namespace OSPSuite.Assets
       public static readonly string OutputFileNotValid = "Please specify an output file with full path information.";
       public static readonly string StartTimeLessThanOrEqualToEndTime = "Start time value should be less than end time value.";
       public static readonly string EndTimeGreaterThanOrEqualToStartTime = "End time value should be greater than start time value.";
+      public static readonly string FormulaCannotBeEmpty = "Formula cannot be empty";
 
       public static string FileDoesNotExist(string fileFullPath)
       {
