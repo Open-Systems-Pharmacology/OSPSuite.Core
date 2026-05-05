@@ -261,6 +261,7 @@ namespace OSPSuite.Core.Domain.Builder
       private void mergeObservers(ObserverBuilder target, BuilderSource<ObserverBuilder> source)
       {
          mergeMoleculeLists(target, source.Builder);
+         target.Formula = source.Builder.Formula;
       }
 
       private void mergeMolecules(MoleculeBuilder target, BuilderSource<MoleculeBuilder> source)
