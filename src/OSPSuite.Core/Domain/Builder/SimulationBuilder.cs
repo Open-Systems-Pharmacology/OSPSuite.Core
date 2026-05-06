@@ -273,6 +273,7 @@ namespace OSPSuite.Core.Domain.Builder
          target.IsFloating = incoming.IsFloating;
          target.IsXenobiotic = incoming.IsXenobiotic;
          target.QuantityType = incoming.QuantityType;
+         target.Icon = incoming.Icon;
 
          // calculation methods are replaced
          target.ClearUsedCalculationMethods();

@@ -46,6 +46,7 @@ internal class When_overwriting_molecules_with_parameters_and_formula_reference 
       _molecule1.IsFloating = true;
       _molecule1.IsXenobiotic = true;
       _molecule1.QuantityType = QuantityType.Drug;
+      _molecule1.Icon = "Icon_M1";
       _molecule1.AddUsedCalculationMethod(new UsedCalculationMethod("SharedCategory", "Method_M1"));
       _molecule1.AddUsedCalculationMethod(new UsedCalculationMethod("M1OnlyCategory", "Method_M1Only"));
 
@@ -62,6 +63,7 @@ internal class When_overwriting_molecules_with_parameters_and_formula_reference 
       _molecule2.IsFloating = false;
       _molecule2.IsXenobiotic = false;
       _molecule2.QuantityType = QuantityType.Enzyme;
+      _molecule2.Icon = "Icon_M2";
       _molecule2.DisplayUnit = Constants.Dimension.NO_DIMENSION.DefaultUnit;
       _molecule2.AddUsedCalculationMethod(new UsedCalculationMethod("SharedCategory", "Method_M2"));
       _molecule2.AddUsedCalculationMethod(new UsedCalculationMethod("M2OnlyCategory", "Method_M2Only"));
@@ -148,6 +150,13 @@ internal class When_overwriting_molecules_with_parameters_and_formula_reference 
       var moleculeBuilder = sut.Molecules.Single(x => x.Name == "R1");
       moleculeBuilder.QuantityType.ShouldBeEqualTo(QuantityType.Enzyme);
    }
+
+   [Observation]
+   public void the_icon_should_be_from_module_2()
+   {
+      var moleculeBuilder = sut.Molecules.Single(x => x.Name == "R1");
+      moleculeBuilder.Icon.ShouldBeEqualTo("Icon_M2");
+   }
 }
 
 internal class When_extending_molecules_with_parameters_and_formula_reference : concern_for_SimulationBuilder
@@ -170,6 +179,7 @@ internal class When_extending_molecules_with_parameters_and_formula_reference : 
       _molecule1.IsFloating = true;
       _molecule1.IsXenobiotic = true;
       _molecule1.QuantityType = QuantityType.Drug;
+      _molecule1.Icon = "Icon_M1";
       _molecule1.AddUsedCalculationMethod(new UsedCalculationMethod("SharedCategory", "Method_M1"));
       _molecule1.AddUsedCalculationMethod(new UsedCalculationMethod("M1OnlyCategory", "Method_M1Only"));
 
@@ -186,6 +196,7 @@ internal class When_extending_molecules_with_parameters_and_formula_reference : 
       _molecule2.IsFloating = false;
       _molecule2.IsXenobiotic = false;
       _molecule2.QuantityType = QuantityType.Enzyme;
+      _molecule2.Icon = "Icon_M2";
       _molecule2.DisplayUnit = Constants.Dimension.NO_DIMENSION.DefaultUnit;
       _molecule2.AddUsedCalculationMethod(new UsedCalculationMethod("SharedCategory", "Method_M2"));
       _molecule2.AddUsedCalculationMethod(new UsedCalculationMethod("M2OnlyCategory", "Method_M2Only"));
@@ -270,6 +281,13 @@ internal class When_extending_molecules_with_parameters_and_formula_reference : 
    {
       var moleculeBuilder = sut.Molecules.Single(x => x.Name == "R1");
       moleculeBuilder.QuantityType.ShouldBeEqualTo(QuantityType.Enzyme);
+   }
+
+   [Observation]
+   public void the_icon_should_be_from_module_2()
+   {
+      var moleculeBuilder = sut.Molecules.Single(x => x.Name == "R1");
+      moleculeBuilder.Icon.ShouldBeEqualTo("Icon_M2");
    }
 }
 
