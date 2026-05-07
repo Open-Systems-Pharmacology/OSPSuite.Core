@@ -125,6 +125,11 @@ namespace OSPSuite.Core.Domain
          //The Percentile sub-parameter is required by the IDistributedParameter contract itself.
          addDistributionSubParametersTo((IDistributedParameter) distributedParameter, dimensionToUse);
 
+         //if a value is provided, apply it as a fixed value: the IDistributedParameter Value setter keeps the
+         //distribution formula intact, sets IsFixedValue=true and updates the percentile sub-parameter.
+         if (value.HasValue)
+            distributedParameter.Value = value.Value;
+
          return distributedParameter;
       }
 
