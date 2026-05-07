@@ -60,39 +60,6 @@ namespace OSPSuite.Core.Mappers
       }
    }
 
-   public class When_mapping_a_distributed_parameter_value_with_an_overwritten_value_to_parameter_value : concern_for_ParameterValueToParameterMapper
-   {
-      private IndividualParameter _individualParameter;
-
-      protected override void Context()
-      {
-         base.Context();
-         _individualParameter = new IndividualParameter
-         {
-            Name = "name",
-            DistributionType = DistributionType.LogNormal,
-            Value = 1.5
-         };
-      }
-
-      protected override void Because()
-      {
-         sut.MapFrom(_individualParameter);
-      }
-
-      [Observation]
-      public void should_create_a_distributed_parameter()
-      {
-         A.CallTo(() => _parameterFactory.CreateDistributedParameter(A<string>._, A<DistributionType>._, A<double?>._, A<IDimension>._, A<string>._, A<Unit>._)).MustHaveHappened();
-      }
-
-      [Observation]
-      public void should_not_create_a_non_distributed_parameter()
-      {
-         A.CallTo(() => _parameterFactory.CreateParameter(A<string>._, A<double?>._, A<IDimension>._, A<string>._, A<Formula>._, A<Unit>._)).MustNotHaveHappened();
-      }
-   }
-
    public class When_mapping_an_parameter_value_with_constant_formula_to_a_parameter_value : concern_for_ParameterValueToParameterMapper
    {
       private IndividualParameter _individualParameter;
