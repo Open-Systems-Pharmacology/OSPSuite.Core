@@ -899,6 +899,18 @@ namespace OSPSuite.Helpers
             new DistributionFormulaFactory(_objectPathFactory, _objectBaseFactory).CreateDiscreteDistributionFormulaFor(
                distributedParameter, mean);
 
+         var normalDistributedParameter = _objectBaseFactory.Create<IDistributedParameter>().WithName("NormalDistributed");
+         organism.Add(normalDistributedParameter);
+         var nMean = NewConstantParameter(Constants.Distribution.MEAN, 2);
+         var nDeviation = NewConstantParameter(Constants.Distribution.DEVIATION, 0.5);
+         var nPercentile = NewConstantParameter(Constants.Distribution.PERCENTILE, 0.5);
+         normalDistributedParameter.Add(nMean);
+         normalDistributedParameter.Add(nDeviation);
+         normalDistributedParameter.Add(nPercentile);
+         normalDistributedParameter.Formula =
+            new DistributionFormulaFactory(_objectPathFactory, _objectBaseFactory).CreateNormalDistributionFormulaFor(
+               normalDistributedParameter, nMean, nDeviation);
+
          //ART
          var art = CreateContainerWithName(ArterialBlood)
             .WithMode(ContainerMode.Logical);
