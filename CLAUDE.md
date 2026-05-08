@@ -89,7 +89,8 @@ public class When_running_population : concern_for_PopulationRunner
 - Interfaces: `I` prefix
 
 **Style:**
-- 3 spaces indentation (no tabs)
+- C# files (`.cs`): 3 spaces indentation (no tabs)
+- MSBuild project files (`.csproj`, `.props`, `.targets`): 2 spaces indentation (no tabs) — matches the existing convention across the suite
 - Always use braces for loops/conditionals, except when only a single line is nested
 - No Hungarian notation
 - English comments only
