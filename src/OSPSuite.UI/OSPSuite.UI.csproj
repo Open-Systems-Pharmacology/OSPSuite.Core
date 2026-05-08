@@ -1,6 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <AssemblyName>OSPSuite.UI</AssemblyName>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
@@ -17,6 +17,11 @@
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <!-- WFO1000: WinForms designer-serialization analyzer (new error in .NET 10).
+         These properties are exposed for runtime use, not designer authoring,
+         so suppress the diagnostic rather than add DesignerSerialization attributes
+         to every property. -->
+    <NoWarn>$(NoWarn);WFO1000</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Services\MagnifierCursor.cur" />
@@ -28,12 +33,12 @@
     <EmbeddedResource Include="Services\MagnifierCursor.cur" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DevExpress.Win.Design" Version="21.2.15" Condition="'$(ExcludeDesigner)' != 'true'" />     
+    <PackageReference Include="DevExpress.Win" Version="25.2.7" />
+    <PackageReference Include="DevExpress.Win.BonusSkins" Version="25.2.7" />
+    <PackageReference Include="DevExpress.Win.Design" Version="25.2.7" Condition="'$(ExcludeDesigner)' != 'true'" />
     <PackageReference Include="Northwoods.GoWin" Version="5.2.0" />
-    <PackageReference Include="OSPSuite.DataBinding.DevExpress" Version="6.0.1.5" />
-    <PackageReference Include="OSPSuite.DevExpress" Version="21.2.15.1" />
-    <PackageReference Include="OSPSuite.Utility" Version="4.1.1.5" />
-    <PackageReference Include="System.Resources.Extensions" Version="9.0.5" />
+    <PackageReference Include="OSPSuite.DataBinding.DevExpress" Version="7.0.0.6" />
+    <PackageReference Include="OSPSuite.Utility" Version="5.0.0.7" />
     <PackageReference Include="WindowsAPICodePack.Shell.CommonFileDialogs" Version="1.1.5" />
   </ItemGroup>
   <ItemGroup>

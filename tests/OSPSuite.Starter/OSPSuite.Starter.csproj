@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <IsPackable>false</IsPackable>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
@@ -9,7 +9,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <OutputPath>bin\$(Configuration)</OutputPath>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <NoWarn>1591, 3246</NoWarn>
+    <NoWarn>1591;3246;WFO1000</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
@@ -18,15 +18,6 @@
     <Compile Include="..\..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(PkgOSPSuite_FuncParser)\OSPSuite.FuncParserNative\bin\native\x64\Release\OSPSuite.FuncParserNative.dll" Link="OSPSuite.FuncParserNative.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(PkgOSPSuite_SimModel)\OSPSuite.SimModelNative\bin\native\x64\Release\OSPSuite.SimModelNative.dll" Link="OSPSuite.SimModelNative.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(PkgOSPSuite_SimModelSolver_CVODES)\OSPSuite.SimModelSolver_CVODES\bin\native\x64\Release\OSPSuite.SimModelSolver_CVODES.dll" Link="OSPSuite.SimModelSolver_CVODES.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="..\..\src\OSPSuite.PKParameters\OSPSuite.PKParameters.xml" Link="OSPSuite.PKParameters.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -42,11 +33,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DevExpress.Win.Design" Version="21.2.15" Condition="'$(ExcludeDesigner)' != 'true'" />
-    <PackageReference Include="OSPSuite.DevExpress" Version="21.2.15.1" />
-    <PackageReference Include="OSPSuite.FuncParser" Version="4.0.0.75" GeneratePathProperty="true" />
-    <PackageReference Include="OSPSuite.SimModel" Version="4.0.0.79" GeneratePathProperty="true" />
-    <PackageReference Include="OSPSuite.SimModelSolver_CVODES" Version="4.1.0.19" GeneratePathProperty="true" />
+    <PackageReference Include="DevExpress.Win.Design" Version="25.2.7" Condition="'$(ExcludeDesigner)' != 'true'" />
+    <PackageReference Include="OSPSuite.FuncParser" Version="5.0.0.3" />
+    <PackageReference Include="OSPSuite.SimModel" Version="5.0.0.76" />
+    <PackageReference Include="OSPSuite.SimModelSolver_CVODES" Version="5.0.0.53" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
