@@ -8,9 +8,6 @@ permissions:
   contents: read
   packages: read
 
-env:
-  DevExpress_License: ${{ secrets.DevExpressPipelineVariable }}
-
 jobs:
   cover:
     runs-on: ${{ vars.GHA_DEFAULT_RUNNER_WINDOWS }}
