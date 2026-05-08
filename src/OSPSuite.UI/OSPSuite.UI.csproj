@@ -35,6 +35,8 @@
   <ItemGroup>
     <PackageReference Include="DevExpress.Win" Version="25.2.7" />
     <PackageReference Include="DevExpress.Win.BonusSkins" Version="25.2.7" />
+    <PackageReference Include="DevExpress.Win.Charts" Version="25.2.7" />
+    <PackageReference Include="DevExpress.Win.RichEdit" Version="25.2.7" />
     <PackageReference Include="DevExpress.Win.Design" Version="25.2.7" Condition="'$(ExcludeDesigner)' != 'true'" />
     <PackageReference Include="Northwoods.GoWin" Version="5.2.0" />
     <PackageReference Include="OSPSuite.DataBinding.DevExpress" Version="7.0.0.6" />
