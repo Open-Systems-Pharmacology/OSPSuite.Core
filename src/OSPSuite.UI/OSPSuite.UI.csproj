@@ -1,77 +1,77 @@
 <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-      <TargetFramework>net10.0-windows</TargetFramework>
-      <AssemblyName>OSPSuite.UI</AssemblyName>
-      <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-      <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-      <PackageProjectUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</PackageProjectUrl>
-      <PackageIcon>logo.png</PackageIcon>
-      <PackageIconUrl>https://raw.githubusercontent.com/Open-Systems-Pharmacology/Suite/master/logo.png</PackageIconUrl>
-      <RepositoryUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</RepositoryUrl>
-      <PackageTags>open-systems-pharmacology, ospsuite-components</PackageTags>
-      <Description>User interface common components and functionalities for the Open Systems Pharmacology Suite</Description>
-      <Authors>Open-Systems-Pharmacology</Authors>
-      <PackageLicenseFile>LICENSE</PackageLicenseFile>
-      <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-      <NoWarn>1591</NoWarn>
-      <DebugType>full</DebugType>
-      <DebugSymbols>true</DebugSymbols>
-      <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
-      <!-- WFO1000: WinForms designer-serialization analyzer (new error in .NET 10).
-           These properties are exposed for runtime use, not designer authoring,
-           so suppress the diagnostic rather than add DesignerSerialization attributes
-           to every property. -->
-      <NoWarn>$(NoWarn);WFO1000</NoWarn>
-   </PropertyGroup>
-   <ItemGroup>
-      <None Remove="Services\MagnifierCursor.cur" />
-   </ItemGroup>
-   <ItemGroup>
-      <Compile Include="..\..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
-   </ItemGroup>
-   <ItemGroup>
-      <EmbeddedResource Include="Services\MagnifierCursor.cur" />
-   </ItemGroup>
-   <ItemGroup>
-      <PackageReference Include="DevExpress.Win" Version="25.2.7" />
-      <PackageReference Include="DevExpress.Win.BonusSkins" Version="25.2.7" />
-      <PackageReference Include="DevExpress.Win.Charts" Version="25.2.7" />
-      <PackageReference Include="DevExpress.Win.RichEdit" Version="25.2.7" />
-      <PackageReference Include="DevExpress.Win.Design" Version="25.2.7" Condition="'$(ExcludeDesigner)' != 'true'" />
-      <PackageReference Include="Northwoods.GoWin" Version="5.2.0" />
-      <PackageReference Include="OSPSuite.DataBinding.DevExpress" Version="7.0.0.6" />
-      <PackageReference Include="OSPSuite.Utility" Version="5.0.0.7" />
-      <PackageReference Include="WindowsAPICodePack.Shell.CommonFileDialogs" Version="1.1.5" />
-   </ItemGroup>
-   <ItemGroup>
-      <ProjectReference Include="..\OSPSuite.Assets.Images\OSPSuite.Assets.Images.csproj" />
-      <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
-      <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj" />
-      <ProjectReference Include="..\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
-   </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <AssemblyName>OSPSuite.UI</AssemblyName>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <PackageProjectUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</PackageProjectUrl>
+    <PackageIcon>logo.png</PackageIcon>
+    <PackageIconUrl>https://raw.githubusercontent.com/Open-Systems-Pharmacology/Suite/master/logo.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</RepositoryUrl>
+    <PackageTags>open-systems-pharmacology, ospsuite-components</PackageTags>
+    <Description>User interface common components and functionalities for the Open Systems Pharmacology Suite</Description>
+    <Authors>Open-Systems-Pharmacology</Authors>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <!-- WFO1000: WinForms designer-serialization analyzer (new error in .NET 10).
+         These properties are exposed for runtime use, not designer authoring,
+         so suppress the diagnostic rather than add DesignerSerialization attributes
+         to every property. -->
+    <NoWarn>$(NoWarn);WFO1000</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Services\MagnifierCursor.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Services\MagnifierCursor.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DevExpress.Win" Version="25.2.7" />
+    <PackageReference Include="DevExpress.Win.BonusSkins" Version="25.2.7" />
+    <PackageReference Include="DevExpress.Win.Charts" Version="25.2.7" />
+    <PackageReference Include="DevExpress.Win.RichEdit" Version="25.2.7" />
+    <PackageReference Include="DevExpress.Win.Design" Version="25.2.7" Condition="'$(ExcludeDesigner)' != 'true'" />
+    <PackageReference Include="Northwoods.GoWin" Version="5.2.0" />
+    <PackageReference Include="OSPSuite.DataBinding.DevExpress" Version="7.0.0.6" />
+    <PackageReference Include="OSPSuite.Utility" Version="5.0.0.7" />
+    <PackageReference Include="WindowsAPICodePack.Shell.CommonFileDialogs" Version="1.1.5" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OSPSuite.Assets.Images\OSPSuite.Assets.Images.csproj" />
+    <ProjectReference Include="..\OSPSuite.Assets\OSPSuite.Assets.csproj" />
+    <ProjectReference Include="..\OSPSuite.Core\OSPSuite.Core.csproj" />
+    <ProjectReference Include="..\OSPSuite.Presentation\OSPSuite.Presentation.csproj" />
+  </ItemGroup>
 
-   <ItemGroup>
-      <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath="" />
-      <None Include="..\..\logo.png" Pack="true" Link="logo.png" PackagePath="\logo.png" />
-   </ItemGroup>
-   <ItemGroup>
-      <Compile Update="Properties\Resources.Designer.cs">
-         <DesignTime>True</DesignTime>
-         <AutoGen>True</AutoGen>
-         <DependentUpon>Resources.resx</DependentUpon>
-      </Compile>
-      <Compile Update="Views\Importer\ModalImporterView.cs">
-         <SubType>Form</SubType>
-      </Compile>
-      <Compile Update="Views\Importer\MetaDataParameterEditorView.cs">
-         <SubType>UserControl</SubType>
-      </Compile>
-      <Compile Update="Views\Importer\MappingParameterEditorView.cs" />
-   </ItemGroup>
-   <ItemGroup>
-      <EmbeddedResource Update="Properties\Resources.resx">
-         <Generator>ResXFileCodeGenerator</Generator>
-         <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      </EmbeddedResource>
-   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath="" />
+    <None Include="..\..\logo.png" Pack="true" Link="logo.png" PackagePath="\logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Importer\ModalImporterView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\Importer\MetaDataParameterEditorView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Views\Importer\MappingParameterEditorView.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>
