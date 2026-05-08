@@ -604,6 +604,14 @@ namespace OSPSuite.Core
          var distributed = _model.Root.EntityAt<IParameter>(ORGANISM, ArterialBlood, _paramName);
          distributed.IsFixedValue.ShouldBeTrue();
       }
+
+      [Observation]
+      public void should_have_recomputed_the_percentile_against_the_individual_supplied_sub_parameter_values()
+      {
+         //value=5, mean=4, deviation=1 → percentile is normal CDF((5-4)/1) ≈ 0.8413
+         var distributed = (IDistributedParameter) _model.Root.EntityAt<IParameter>(ORGANISM, ArterialBlood, _paramName);
+         distributed.Percentile.ShouldBeEqualTo(0.8413, 1e-3);
+      }
    }
 
    internal class When_a_parameter_value_is_defined_with_formula_and_nan_value : concern_for_ModelConstructor
