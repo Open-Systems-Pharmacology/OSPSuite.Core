@@ -9,6 +9,9 @@ on:
 permissions:
   packages: write
 
+env:
+  DevExpress_License: ${{ secrets.DevExpressPipelineVariable }}
+
 jobs:
   build-test-publish:
     runs-on: ${{ vars.GHA_DEFAULT_RUNNER_WINDOWS }}
