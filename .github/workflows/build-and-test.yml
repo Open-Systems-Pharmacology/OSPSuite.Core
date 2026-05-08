@@ -16,3 +16,26 @@ jobs:
     with:
       temp-version: "13.0.9999"
       build-arguments: "-p:ExcludeDesigner=true"
+
+  # Temporary verification: confirm DEV_EXPRESS_KEY is wired correctly so the
+  # build runs without the DX1000 evaluation watermark. Remove this job once
+  # we have at least one successful run on master that exercises the license.
+  verify-devexpress-license:
+    runs-on: ${{ vars.GHA_DEFAULT_RUNNER_WINDOWS }}
+    env:
+      DevExpress_License: ${{ secrets.DEV_EXPRESS_KEY }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          submodules: 'true'
+
+      - name: Add GitHub feed
+        run: |
+          nuget sources add -username Open-Systems-Pharmacology -password ${{ secrets.GITHUB_TOKEN }} -name OSP-GitHub-Packages -source "https://nuget.pkg.github.com/Open-Systems-Pharmacology/index.json"
+
+      - name: Build
+        run: dotnet build OSPSuite.Core.sln -p:Version=13.0.9999 -p:ExcludeDesigner=true
+
+      - name : Test
+        run: dotnet test OSPSuite.Core.sln -v normal --no-build --logger:"html;LogFileName=testLog_Windows.html"
