@@ -10,7 +10,7 @@ permissions:
   packages: write
 
 env:
-  DevExpress_License: ${{ secrets.DevExpressPipelineVariable }}
+  DevExpress_License: ${{ secrets.DEV_EXPRESS_KEY }}
 
 jobs:
   build-test-publish:
