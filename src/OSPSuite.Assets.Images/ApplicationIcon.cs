@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.IO;
+using DevExpress.Utils;
 using DevExpress.Utils.Svg;
 
 namespace OSPSuite.Assets
@@ -7,7 +8,6 @@ namespace OSPSuite.Assets
    public class ApplicationIcon
    {
       private readonly SvgImage _image;
-      private readonly SvgBitmap _bitmap;
 
       public string IconName { get; set; }
       public int Index { get; set; }
@@ -19,7 +19,6 @@ namespace OSPSuite.Assets
       public ApplicationIcon(SvgImage image)
       {
          _image = image;
-         _bitmap = image == null ? null : new SvgBitmap(image);
          Index = -1;
       }
 
@@ -37,8 +36,8 @@ namespace OSPSuite.Assets
 
       public virtual Image ToImage(IconSize imageSize)
       {
-         return _bitmap?.Render(imageSize, null)
-            ?? new Bitmap(imageSize.Width, imageSize.Height);
+         return _image?.Render(imageSize, paletteProvider: null, useHighSpeedRendering: DefaultBoolean.Default, allowCache: DefaultBoolean.Default)
+                ?? new Bitmap(imageSize.Width, imageSize.Height);
       }
 
       public virtual SvgImage ToSvgImage() => _image;
