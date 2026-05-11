@@ -1,5 +1,6 @@
 ﻿using DevExpress.XtraEditors;
 using OSPSuite.Assets;
+using OSPSuite.UI.Extensions;
 
 namespace OSPSuite.UI.Controls
 {

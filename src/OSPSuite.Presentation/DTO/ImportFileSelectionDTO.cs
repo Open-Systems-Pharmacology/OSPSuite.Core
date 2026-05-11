@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
@@ -40,13 +39,11 @@ namespace OSPSuite.Presentation.DTO
 
       public bool FileDefined => !string.IsNullOrEmpty(FilePath);
 
-
       public virtual IEnumerable<string> Messages
       {
          get => _messages;
          set => SetProperty(ref _messages, value);
       }
-
 
       public virtual NotificationType Status
       {
@@ -54,10 +51,7 @@ namespace OSPSuite.Presentation.DTO
          set => SetProperty(ref _status, value);
       }
 
-
       public string Message => Messages.ToString("\n");
-
-      public Image Image => Icon.ToImage();
 
       public ApplicationIcon Icon => imageFrom(Status);
 

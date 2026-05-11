@@ -65,8 +65,7 @@ namespace OSPSuite.UI.Views
          set
          {
             _applicationIcon = value;
-            IconOptions.SvgImage = value;
-            IconOptions.SvgImageSize = IconSizes.Size16x16;
+            IconOptions.SetImage(value, IconSizes.Size16x16);
          }
       }
 

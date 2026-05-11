@@ -8,21 +8,20 @@ namespace OSPSuite.UI.Extensions
 {
    public static class ImageOptionsExtensions
    {
-      public static void SetImage(this XtraMdiTabPage owner, ApplicationIcon icon, IconSize iconSize = null) => 
+      public static void SetImage(this XtraMdiTabPage owner, ApplicationIcon icon, IconSize iconSize = null) =>
          SetImage(owner.ImageOptions, icon, iconSize);
 
-      public static void SetImage(this EditorButton owner, ApplicationIcon icon, IconSize iconSize = null) => 
+      public static void SetImage(this EditorButton owner, ApplicationIcon icon, IconSize iconSize = null) =>
          SetImage(owner.ImageOptions, icon, iconSize);
 
       public static void SetImage(this XtraTabPage owner, ApplicationIcon icon, IconSize iconSize = null) =>
          SetImage(owner.ImageOptions, icon, iconSize);
-      
 
-      public static void SetImage(this ImageCollectionImageOptions imageOptions, ApplicationIcon icon, IconSize iconSize = null)
+      public static void SetImage(this ImageOptions imageOptions, ApplicationIcon icon, IconSize iconSize = null)
       {
          var image = icon ?? ApplicationIcons.DefaultIcon;
-         imageOptions.SvgImage = image;
-         imageOptions.SvgImageSize = iconSize ?? IconSizes.Size16x16;
+         imageOptions.SvgImage = image.ToSvgImage();
+         imageOptions.SvgImageSize = (iconSize ?? IconSizes.Size16x16).ToDrawingSize();
       }
    }
 }
