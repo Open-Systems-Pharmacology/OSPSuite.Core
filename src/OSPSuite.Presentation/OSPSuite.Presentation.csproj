@@ -3,10 +3,12 @@
 
   <PropertyGroup>
     <!--
-      OSPSuite.Presentation targets net10.0-windows because it currently leaks Windows-only types
-      (System.Drawing.Bitmap/Image/Icon/StringAlignment) and DevExpress validation interfaces
-      (IDXDataErrorInfo via DxValidatableDTO base class). Cleaning these up is tracked in follow-up
-      issues for OSPSuite.Core, MoBi, and PK-Sim. Once those land, this can move back to net10.0.
+      OSPSuite.Presentation is a WinForms/DevExpress MVP layer; it owns System.Drawing types
+      (Bitmap/Image/Icon/StringAlignment), DevExpress validation interfaces (IDXDataErrorInfo via
+      DxValidatableDTO), and View interfaces over DevExpress controls. The net10.0-windows TFM is
+      honest. Cross-platform R support is solved by keeping OSPSuite.R's transitive closure
+      Presentation-free (tracked in #2861 and its PK-Sim / MoBi siblings), not by forcing this
+      assembly back to net10.0.
     -->
     <TargetFramework>net10.0-windows</TargetFramework>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
