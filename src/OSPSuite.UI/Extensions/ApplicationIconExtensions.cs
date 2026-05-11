@@ -1,28 +1,26 @@
+using System.Collections.Concurrent;
 using System.Drawing;
 using System.IO;
 using DevExpress.Utils;
 using DevExpress.Utils.Svg;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.UI.Extensions
 {
    public static class ApplicationIconExtensions
    {
-      private static readonly Cache<ApplicationIcon, SvgImage> _svgCache = new();
+      private static readonly ConcurrentDictionary<ApplicationIcon, SvgImage> _svgCache = new();
 
       public static SvgImage ToSvgImage(this ApplicationIcon icon)
       {
          if (icon?.IconBytes == null)
             return null;
 
-         if (!_svgCache.Contains(icon))
+         return _svgCache.GetOrAdd(icon, key =>
          {
-            using var ms = new MemoryStream(icon.IconBytes);
-            _svgCache[icon] = new SvgImage(ms);
-         }
-
-         return _svgCache[icon];
+            using (var ms = new MemoryStream(key.IconBytes))
+               return new SvgImage(ms);
+         });
       }
 
       public static Image ToImage(this ApplicationIcon icon) => icon.ToImage(IconSizes.Size16x16);
