@@ -1,5 +1,4 @@
 ﻿using DevExpress.Utils;
-using DevExpress.XtraBars;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraTab;
 using DevExpress.XtraTabbedMdi;
