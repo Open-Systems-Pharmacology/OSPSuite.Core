@@ -18,9 +18,6 @@ namespace OSPSuite.UI.Extensions
       public static void SetImage(this XtraTabPage owner, ApplicationIcon icon, IconSize iconSize = null) =>
          SetImage(owner.ImageOptions, icon, iconSize);
 
-      public static void SetImage(this BarItem owner, ApplicationIcon icon, IconSize iconSize = null) =>
-         SetImage(owner.ImageOptions, icon, iconSize);
-
       public static void SetImage(this ImageOptions imageOptions, ApplicationIcon icon, IconSize iconSize = null)
       {
          var image = icon ?? ApplicationIcons.DefaultIcon;
