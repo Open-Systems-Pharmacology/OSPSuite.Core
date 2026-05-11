@@ -37,8 +37,8 @@ namespace OSPSuite.UI.Services
             setupArgs.Title.Text = title;
 
          setupArgs.Contents.Text = convertHtml(content);
-         setupArgs.Contents.ImageOptions.SvgImage = imageToUse;
-         setupArgs.Contents.ImageOptions.SvgImageSize = IconSizes.Size16x16;
+         setupArgs.Contents.ImageOptions.SvgImage = imageToUse.ToSvgImage();
+         setupArgs.Contents.ImageOptions.SvgImageSize = IconSizes.Size16x16.ToDrawingSize();
 
          superToolTip.Setup(setupArgs);
          return superToolTip;
@@ -109,8 +109,8 @@ namespace OSPSuite.UI.Services
             foreach (var relatedItem in relatedItems)
             {
                var item = toolTip.Items.Add(relatedItem.Display);
-               item.ImageOptions.SvgImage = ApplicationIcons.IconByName(relatedItem.IconName);
-               item.ImageOptions.SvgImageSize = IconSizes.Size16x16;
+               item.ImageOptions.SvgImage = ApplicationIcons.IconByName(relatedItem.IconName).ToSvgImage();
+               item.ImageOptions.SvgImageSize = IconSizes.Size16x16.ToDrawingSize();
             }
          }
 

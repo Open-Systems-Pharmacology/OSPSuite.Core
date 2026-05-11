@@ -2,7 +2,13 @@
 
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <!--
+      OSPSuite.Presentation targets net10.0-windows because it currently leaks Windows-only types
+      (System.Drawing.Bitmap/Image/Icon/StringAlignment) and DevExpress validation interfaces
+      (IDXDataErrorInfo via DxValidatableDTO base class). Cleaning these up is tracked in follow-up
+      issues for OSPSuite.Core, MoBi, and PK-Sim. Once those land, this can move back to net10.0.
+    -->
+    <TargetFramework>net10.0-windows</TargetFramework>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <PackageProjectUrl>https://github.com/Open-Systems-Pharmacology/OSPSuite.Core</PackageProjectUrl>
@@ -29,6 +35,8 @@
 
   <ItemGroup>
     <PackageReference Include="OSPSuite.Utility" Version="5.0.0.7" />
+    <!-- DevExpress.Data brings IDXDataErrorInfo / ErrorInfo used by DxValidatableDTO. -->
+    <PackageReference Include="DevExpress.Data" Version="25.2.7" />
   </ItemGroup>
 
   <ItemGroup>

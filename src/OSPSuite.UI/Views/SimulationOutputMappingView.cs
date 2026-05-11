@@ -156,7 +156,7 @@ namespace OSPSuite.UI.Views
          )
          {
             Shortcut = Shortcut.Del,
-            SvgImage = ApplicationIcons.DeleteSelected
+            SvgImage = ApplicationIcons.DeleteSelected.ToSvgImage()
          };
 
          e.Menu.Items.Insert(e.Menu.Items.Count, deleteItem);

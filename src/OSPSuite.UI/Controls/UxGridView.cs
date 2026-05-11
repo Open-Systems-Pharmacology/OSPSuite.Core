@@ -21,6 +21,7 @@ using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
 using OSPSuite.Assets;
 using OSPSuite.Core.Extensions;
+using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Mappers;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;
@@ -443,21 +444,21 @@ namespace OSPSuite.UI.Controls
 
       private void addCopyMenuItemsForRowSelect(GridViewMenu gridViewMenu)
       {
-         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection };
+         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection.ToSvgImage()};
          gridViewMenu.Items.Insert(0, copyRowMenu);
       }
 
       private void addCopyMenuItemsForCellSelect(GridViewMenu gridViewMenu)
       {
-         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) { SvgImage = ApplicationIcons.CopySelection };
-         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, (o, args) => processSelectiveCopyToClipboard()) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection };
+         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) { SvgImage = ApplicationIcons.CopySelection.ToSvgImage()};
+         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, (o, args) => processSelectiveCopyToClipboard()) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection.ToSvgImage()};
          gridViewMenu.Items.Insert(0, copyRowMenu);
          gridViewMenu.Items.Insert(0, copySelectionMenu);
       }
 
       private void addCommonCopyMenuItems(GridViewMenu gridViewMenu)
       {
-         var copyAllMenu = new DXMenuItem(Captions.CopyTable, (o, args) => copyEntireGridToClipboard()) { Shortcut = Shortcut.CtrlShiftC, SvgImage = ApplicationIcons.Copy };
+         var copyAllMenu = new DXMenuItem(Captions.CopyTable, (o, args) => copyEntireGridToClipboard()) { Shortcut = Shortcut.CtrlShiftC, SvgImage = ApplicationIcons.Copy.ToSvgImage() };
          gridViewMenu.Items.Insert(0, copyAllMenu);
       }
 

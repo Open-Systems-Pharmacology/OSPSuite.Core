@@ -6,6 +6,7 @@ using DevExpress.Utils;
 using DevExpress.Utils.Menu;
 using DevExpress.XtraPivotGrid;
 using OSPSuite.Assets;
+using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Mappers;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;
@@ -105,8 +106,8 @@ namespace OSPSuite.UI.Controls
          if (e.MenuType != PivotGridMenuType.HeaderArea)
             return;
 
-         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, clickCopySelectionMenuItem) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection };
-         var copyAllMenu = new DXMenuItem(Captions.CopyTable, clickCopyTableMenuItem) { Shortcut = Shortcut.CtrlShiftC, SvgImage = ApplicationIcons.Copy };
+         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, clickCopySelectionMenuItem) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection.ToSvgImage() };
+         var copyAllMenu = new DXMenuItem(Captions.CopyTable, clickCopyTableMenuItem) { Shortcut = Shortcut.CtrlShiftC, SvgImage = ApplicationIcons.Copy.ToSvgImage() };
 
          e.Menu.Items.Clear();
          e.Menu.Items.Insert(0, copySelectionMenu);

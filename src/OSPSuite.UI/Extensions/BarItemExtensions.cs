@@ -18,7 +18,7 @@ namespace OSPSuite.UI.Extensions
 
       private static SvgImage transparentImage(ApplicationIcon icon, IconSize iconSize)
       {
-         return icon;
+         return icon.ToSvgImage();
       }
    }
 }

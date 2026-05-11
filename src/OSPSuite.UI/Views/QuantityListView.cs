@@ -187,8 +187,8 @@ namespace OSPSuite.UI.Views
             _gridViewBinder = gridViewBinder;
             _presenter = presenter;
             _groupRowHandle = groupRowHandle;
-            Items.Add(new DXMenuItem("Select all", (o, e) => updateSelection(selected: true)) {SvgImage = ApplicationIcons.CheckAll});
-            Items.Add(new DXMenuItem("Deselect all", (o, e) => updateSelection(selected: false)) {SvgImage = ApplicationIcons.UncheckAll});
+            Items.Add(new DXMenuItem("Select all", (o, e) => updateSelection(selected: true)) {SvgImage = ApplicationIcons.CheckAll.ToSvgImage()});
+            Items.Add(new DXMenuItem("Deselect all", (o, e) => updateSelection(selected: false)) {SvgImage = ApplicationIcons.UncheckAll.ToSvgImage()});
          }
 
          private void updateSelection(bool selected)

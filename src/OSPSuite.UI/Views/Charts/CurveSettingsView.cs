@@ -393,7 +393,7 @@ namespace OSPSuite.UI.Views.Charts
          if (gridView.GetSelectedRows().Length <= 1)
             return;
 
-         var copyAllMenu = new DXMenuItem(Captions.EditAllCurvesProperties, (o, args) => onEditProperties()) {SvgImage = ApplicationIcons.Edit};
+         var copyAllMenu = new DXMenuItem(Captions.EditAllCurvesProperties, (o, args) => onEditProperties()) {SvgImage = ApplicationIcons.Edit.ToSvgImage()};
          gridViewMenu.Items.Insert(0, copyAllMenu);
       }
 

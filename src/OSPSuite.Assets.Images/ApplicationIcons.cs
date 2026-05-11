@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using DevExpress.Utils.Svg;
 using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Extensions;
 
@@ -516,7 +515,7 @@ namespace OSPSuite.Assets
       public static readonly ApplicationIcon ExportToPNG = AddNamedIcon("ExportToPNG");
 
       // All icons should go at the end of the preceding list, before this delimiting icon - EmptyIcon
-      private static ApplicationIcon createEmptyIcon() => new ApplicationIcon((SvgImage)null);
+      private static ApplicationIcon createEmptyIcon() => new ApplicationIcon(bytes: null);
 
       public static readonly ApplicationIcon EmptyIcon = createEmptyIcon();
 

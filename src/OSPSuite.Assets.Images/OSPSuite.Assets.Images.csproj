@@ -42,8 +42,6 @@
 
   <ItemGroup>
     <PackageReference Include="OSPSuite.Utility" Version="5.0.0.7" />
-    <PackageReference Include="DevExpress.Data" Version="25.2.7" />
-    <PackageReference Include="DevExpress.Utils" Version="25.2.7" />
   </ItemGroup>
   
   <ItemGroup>
