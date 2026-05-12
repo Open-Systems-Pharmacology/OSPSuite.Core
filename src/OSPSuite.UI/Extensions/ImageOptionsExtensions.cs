@@ -3,6 +3,7 @@ using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraTab;
 using DevExpress.XtraTabbedMdi;
 using OSPSuite.Assets;
+using OSPSuite.Presentation.Extensions;
 
 namespace OSPSuite.UI.Extensions
 {

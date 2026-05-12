@@ -6,7 +6,7 @@ using DevExpress.Utils;
 using DevExpress.Utils.Menu;
 using DevExpress.XtraPivotGrid;
 using OSPSuite.Assets;
-using OSPSuite.UI.Extensions;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.UI.Mappers;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;

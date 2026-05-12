@@ -21,7 +21,7 @@ using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
 using OSPSuite.Assets;
 using OSPSuite.Core.Extensions;
-using OSPSuite.UI.Extensions;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.UI.Mappers;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;
@@ -444,14 +444,14 @@ namespace OSPSuite.UI.Controls
 
       private void addCopyMenuItemsForRowSelect(GridViewMenu gridViewMenu)
       {
-         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection.ToSvgImage()};
+         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection.ToSvgImage() };
          gridViewMenu.Items.Insert(0, copyRowMenu);
       }
 
       private void addCopyMenuItemsForCellSelect(GridViewMenu gridViewMenu)
       {
-         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) { SvgImage = ApplicationIcons.CopySelection.ToSvgImage()};
-         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, (o, args) => processSelectiveCopyToClipboard()) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection.ToSvgImage()};
+         var copyRowMenu = new DXMenuItem(Captions.CopySelectedRows, (o, args) => copyRowSelectionToClipboard()) { SvgImage = ApplicationIcons.CopySelection.ToSvgImage() };
+         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, (o, args) => processSelectiveCopyToClipboard()) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection.ToSvgImage() };
          gridViewMenu.Items.Insert(0, copyRowMenu);
          gridViewMenu.Items.Insert(0, copySelectionMenu);
       }

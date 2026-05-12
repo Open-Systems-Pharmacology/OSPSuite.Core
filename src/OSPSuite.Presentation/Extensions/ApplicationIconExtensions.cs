@@ -5,7 +5,7 @@ using DevExpress.Utils;
 using DevExpress.Utils.Svg;
 using OSPSuite.Assets;
 
-namespace OSPSuite.UI.Extensions
+namespace OSPSuite.Presentation.Extensions
 {
    public static class ApplicationIconExtensions
    {

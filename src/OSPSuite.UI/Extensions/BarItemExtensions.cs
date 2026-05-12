@@ -1,6 +1,7 @@
 ﻿using DevExpress.Utils.Svg;
 using DevExpress.XtraBars;
 using OSPSuite.Assets;
+using OSPSuite.Presentation.Extensions;
 
 namespace OSPSuite.UI.Extensions
 {

@@ -1,6 +1,6 @@
 ﻿using DevExpress.XtraEditors;
 using OSPSuite.Assets;
-using OSPSuite.UI.Extensions;
+using OSPSuite.Presentation.Extensions;
 
 namespace OSPSuite.UI.Controls
 {
@@ -17,7 +17,6 @@ namespace OSPSuite.UI.Controls
          set => panelNote.Text = value;
       }
 
-      
       public ApplicationIcon Image
       {
          set => panelNote.ArrowImage = value.ToImage(IconSizes.Size32x32);
