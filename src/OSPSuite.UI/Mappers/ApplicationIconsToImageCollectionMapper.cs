@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using DevExpress.Utils;
 using OSPSuite.Assets;
-using OSPSuite.UI.Extensions;
+using OSPSuite.Presentation.Extensions;
 
 namespace OSPSuite.UI.Mappers
 {
@@ -19,6 +19,7 @@ namespace OSPSuite.UI.Mappers
          {
             imageList.Add(icon.IconName, icon.ToSvgImage());
          }
+
          return imageList;
       }
    }

@@ -4,6 +4,7 @@ using DevExpress.XtraGrid.Menu;
 using OSPSuite.Assets;
 using OSPSuite.DataBinding.DevExpress.XtraGrid;
 using OSPSuite.Presentation.Presenters.Charts;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.UI.Extensions;
 
 namespace OSPSuite.UI.Views.Charts

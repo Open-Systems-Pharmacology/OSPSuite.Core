@@ -6,6 +6,7 @@ using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.UI.Extensions;
 
 namespace OSPSuite.UI.Views

@@ -40,6 +40,17 @@
     <PackageReference Include="OSPSuite.Utility" Version="5.0.0.7" />
     <!-- DevExpress.Data brings IDXDataErrorInfo / ErrorInfo used by DxValidatableDTO. -->
     <PackageReference Include="DevExpress.Data" Version="25.2.7" />
+    <!-- DevExpress.Utils brings SvgImage / DefaultBoolean used by Extensions/ApplicationIconExtensions. -->
+    <PackageReference Include="DevExpress.Utils" Version="25.2.7" />
+    <!--
+      Pin System.Drawing.Common to the 10.x branch so the assembly OSPSuite.Presentation compiles
+      against matches what its consumers (OSPSuite.Presentation.Tests, OSPSuite.Core.IntegrationTests,
+      downstream PKSim.Presentation / MoBi.Presentation) see at compile time. Without this pin,
+      DevExpress.* packages bring System.Drawing.Common 8.0.15 transitively while the WindowsDesktop
+      framework reference pulls 10.0 implicitly into Presentation itself, producing CS1705 version
+      mismatches in consumers.
+    -->
+    <PackageReference Include="System.Drawing.Common" Version="10.0.7" />
   </ItemGroup>
 
   <ItemGroup>
