@@ -46,4 +46,68 @@ namespace OSPSuite.Core.Domain
       {
          sut.AllSensitivityParameters.All(parameter => Equals(parameter.ParameterSelection.Simulation, _newSimulation)).ShouldBeTrue();
       }
-   } }
+   }
+
+   public class When_checking_if_a_sensitivity_analysis_has_results_and_no_results_are_set : concern_for_SensitivityAnalysis
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Results = null;
+      }
+
+      [Observation]
+      public void should_return_false()
+      {
+         sut.HasResults.ShouldBeFalse();
+      }
+   }
+
+   public class When_checking_if_a_sensitivity_analysis_has_results_and_results_contain_no_pk_parameter_sensitivities : concern_for_SensitivityAnalysis
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Results = new SensitivityAnalysisRunResult();
+      }
+
+      [Observation]
+      public void should_return_false()
+      {
+         sut.HasResults.ShouldBeFalse();
+      }
+   }
+
+   public class When_checking_if_a_sensitivity_analysis_has_results_and_results_contain_only_failed_pk_parameter_sensitivities : concern_for_SensitivityAnalysis
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Results = new SensitivityAnalysisRunResult();
+         sut.Results.AddPKParameterSensitivity(new PKParameterSensitivity {State = PKParameterSensitivityState.FailedToCalculateDefaultPKValue});
+      }
+
+      [Observation]
+      public void should_return_false()
+      {
+         sut.HasResults.ShouldBeFalse();
+      }
+   }
+
+   public class When_checking_if_a_sensitivity_analysis_has_results_and_at_least_one_pk_parameter_sensitivity_succeeded : concern_for_SensitivityAnalysis
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.Results = new SensitivityAnalysisRunResult();
+         sut.Results.AddPKParameterSensitivity(new PKParameterSensitivity {State = PKParameterSensitivityState.FailedToCalculateDefaultPKValue});
+         sut.Results.AddPKParameterSensitivity(new PKParameterSensitivity {State = PKParameterSensitivityState.Success});
+      }
+
+      [Observation]
+      public void should_return_true()
+      {
+         sut.HasResults.ShouldBeTrue();
+      }
+   }
+}

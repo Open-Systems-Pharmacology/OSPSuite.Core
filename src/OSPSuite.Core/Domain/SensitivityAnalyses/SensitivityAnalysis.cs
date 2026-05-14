@@ -37,7 +37,7 @@ namespace OSPSuite.Core.Domain.SensitivityAnalyses
 
       public IEnumerable<ISimulationAnalysis> Analyses => _allSimulationAnalyses;
 
-      public virtual bool HasResults => Results != null && Results.AllPKParameterSensitivities.Any();
+      public virtual bool HasResults => Results != null && Results.AllPKParameterSensitivities.Any(x => x.State.Equals(PKParameterSensitivityState.Success));
 
       public virtual bool HasUpToDateResults => Simulation != null && Simulation.HasUpToDateResults;
 
