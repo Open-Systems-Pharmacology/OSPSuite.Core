@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <Version Condition="'$(Version)' == ''">13.0.0</Version>
   </PropertyGroup>
 
 	<ItemGroup>

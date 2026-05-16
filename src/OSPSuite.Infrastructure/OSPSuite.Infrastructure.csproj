@@ -16,6 +16,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
+    <Version Condition="'$(Version)' == ''">13.0.0</Version>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>

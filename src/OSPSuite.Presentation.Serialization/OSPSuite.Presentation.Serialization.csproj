@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <!-- Inherits net10.0-windows from OSPSuite.Presentation. See note in OSPSuite.Presentation.csproj. -->
@@ -16,6 +16,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
+    <Version Condition="'$(Version)' == ''">13.0.0</Version>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
