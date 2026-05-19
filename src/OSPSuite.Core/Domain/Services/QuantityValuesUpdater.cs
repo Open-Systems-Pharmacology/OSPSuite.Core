@@ -94,11 +94,30 @@ namespace OSPSuite.Core.Domain.Services
 
       private void updateParameterFromIndividualValues(ValueUpdaterParams valueUpdater)
       {
+         var individual = valueUpdater.ModelConfiguration.SimulationConfiguration.Individual;
+         if (individual == null)
+            return;
+
          var addOrUpdateParameter = addOrUpdateParameterFromParameterValue(valueUpdater);
          //Order by distribution to ensure that distributed parameter are loaded BEFORE their sub parameters.
          //note: use descending otherwise parameter without distribution are returned fist
-         valueUpdater.ModelConfiguration.SimulationConfiguration.Individual?.OrderByDescending(x => x.DistributionType)
-            .Each(addOrUpdateParameter);
+         individual.OrderByDescending(x => x.DistributionType).Each(addOrUpdateParameter);
+
+         //A distributed parameter's value (and percentile) is applied before its sub-parameters
+         //(Mean/Deviation/...) are set above. Refresh the percentile of any distributed parameter that
+         //came from the individual so it reflects the now-correct sub-parameter values.
+         refreshPercentilesOf(valueUpdater, individual);
+      }
+
+      private void refreshPercentilesOf(ValueUpdaterParams valueUpdater, IndividualBuildingBlock individual)
+      {
+         var modelConfiguration = valueUpdater.ModelConfiguration;
+         foreach (var individualParameter in individual.Where(x => x.IsDistributed()))
+         {
+            var pathInModel = _keywordReplacerTask.CreateModelPathFor(individualParameter.Path, modelConfiguration.ReplacementContext);
+            if (pathInModel.Resolve<IDistributedParameter>(modelConfiguration.Model.Root) is IDistributedParameter distributedParameter && distributedParameter.IsFixedValue)
+               distributedParameter.RefreshPercentile();
+         }
       }
 
       private void updateParameterValueFromParameterValues(ValueUpdaterParams valueUpdater)

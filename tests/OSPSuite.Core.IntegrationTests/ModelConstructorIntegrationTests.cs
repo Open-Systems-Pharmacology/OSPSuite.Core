@@ -524,6 +524,119 @@ namespace OSPSuite.Core
       }
    }
 
+   internal class When_an_existing_normal_distributed_parameter_value_is_overwritten_via_an_individual_parameter : concern_for_ModelConstructor
+   {
+      private const double _overwrittenValue = 5;
+
+      protected override void Context()
+      {
+         base.Context();
+         //add an IndividualParameter that overwrites the existing distributed Organism|NormalDistributed parameter
+         _simulationConfiguration.Individual.Add(new IndividualParameter
+         {
+            Path = new ObjectPath(ORGANISM, "NormalDistributed"),
+            Value = _overwrittenValue,
+            DistributionType = DistributionType.Normal,
+         });
+      }
+
+      [Observation]
+      public void should_keep_the_parameter_distributed()
+      {
+         var distributed = _model.Root.EntityAt<IParameter>(ORGANISM, "NormalDistributed");
+         distributed.IsDistributed().ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_keep_a_distribution_formula_on_the_parameter()
+      {
+         var distributed = _model.Root.EntityAt<IParameter>(ORGANISM, "NormalDistributed");
+         distributed.Formula.ShouldBeAnInstanceOf<DistributionFormula>();
+      }
+
+      [Observation]
+      public void should_apply_the_overwritten_value()
+      {
+         var distributed = _model.Root.EntityAt<IParameter>(ORGANISM, "NormalDistributed");
+         distributed.Value.ShouldBeEqualTo(_overwrittenValue);
+      }
+
+      [Observation]
+      public void should_mark_the_parameter_as_fixed_value()
+      {
+         var distributed = _model.Root.EntityAt<IParameter>(ORGANISM, "NormalDistributed");
+         distributed.IsFixedValue.ShouldBeTrue();
+      }
+   }
+
+   //This reproduces the PK-Sim issue Open-Systems-Pharmacology/PK-Sim#3511: a distributed parameter that
+   //is NOT defined in the spatial structure (species-specific in PK-Sim) but is exported via the individual
+   //building block with both DistributionType and an overwritten Value must end up in the model as a
+   //distributed parameter with the overwritten value, not as a plain constant parameter.
+   internal class When_a_distributed_parameter_value_is_overwritten_via_an_individual_parameter_and_the_parameter_is_not_in_the_spatial_structure : concern_for_ModelConstructor
+   {
+      private const double _overwrittenValue = 5;
+      private const string _paramName = "OVERWRITTEN_DISTRIBUTED";
+
+      protected override void Context()
+      {
+         base.Context();
+         //the parameter does not exist in the spatial structure, only the individual building block
+         //provides it (with DistributionType set and an overwritten value plus its sub-parameters)
+         _simulationConfiguration.Individual.Add(new IndividualParameter
+         {
+            Path = new ObjectPath(ORGANISM, ArterialBlood, _paramName),
+            DistributionType = DistributionType.Normal,
+            Value = _overwrittenValue,
+         });
+         _simulationConfiguration.Individual.Add(new IndividualParameter
+         {
+            Path = new ObjectPath(ORGANISM, ArterialBlood, _paramName, OSPSuite.Core.Domain.Constants.Distribution.MEAN),
+            Value = 4,
+         });
+         _simulationConfiguration.Individual.Add(new IndividualParameter
+         {
+            Path = new ObjectPath(ORGANISM, ArterialBlood, _paramName, OSPSuite.Core.Domain.Constants.Distribution.DEVIATION),
+            Value = 1,
+         });
+         _simulationConfiguration.Individual.Add(new IndividualParameter
+         {
+            Path = new ObjectPath(ORGANISM, ArterialBlood, _paramName, OSPSuite.Core.Domain.Constants.Distribution.PERCENTILE),
+            Value = 0.84,
+         });
+      }
+
+      [Observation]
+      public void should_create_the_parameter_as_distributed_in_the_model()
+      {
+         var distributed = _model.Root.EntityAt<IParameter>(ORGANISM, ArterialBlood, _paramName);
+         distributed.IsDistributed().ShouldBeTrue();
+         distributed.Formula.ShouldBeAnInstanceOf<DistributionFormula>();
+      }
+
+      [Observation]
+      public void should_apply_the_overwritten_value()
+      {
+         var distributed = _model.Root.EntityAt<IParameter>(ORGANISM, ArterialBlood, _paramName);
+         distributed.Value.ShouldBeEqualTo(_overwrittenValue);
+      }
+
+      [Observation]
+      public void should_mark_the_parameter_as_fixed_value()
+      {
+         var distributed = _model.Root.EntityAt<IParameter>(ORGANISM, ArterialBlood, _paramName);
+         distributed.IsFixedValue.ShouldBeTrue();
+      }
+
+      [Observation]
+      public void should_have_recomputed_the_percentile_against_the_individual_supplied_sub_parameter_values()
+      {
+         //value=5, mean=4, deviation=1 → percentile is normal CDF((5-4)/1) ≈ 0.8413
+         var distributed = (IDistributedParameter) _model.Root.EntityAt<IParameter>(ORGANISM, ArterialBlood, _paramName);
+         distributed.Percentile.ShouldBeEqualTo(0.8413, 1e-3);
+      }
+   }
+
    internal class When_a_parameter_value_is_defined_with_formula_and_nan_value : concern_for_ModelConstructor
    {
       private ParameterValue _parameterValue;
