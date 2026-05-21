@@ -28,6 +28,7 @@
     <PackageReference Include="NPOI" Version="2.8.0" />
     <PackageReference Include="OSPSuite.Utility" Version="5.0.0.7" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.7" />
+    <PackageReference Include="SkiaSharp" Version="3.119.2" />
   </ItemGroup>
 
   <ItemGroup>
