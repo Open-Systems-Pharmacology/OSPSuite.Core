@@ -220,6 +220,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
                curveDTO.LineStyle = selectedValues.Style.GetValueOrDefault(curveDTO.LineStyle);
                curveDTO.Color = selectedValues.Color.GetValueOrDefault(curveDTO.Color);
                curveDTO.Symbol = selectedValues.Symbol.GetValueOrDefault(curveDTO.Symbol);
+               curveDTO.LineThickness = selectedValues.LineThickness.GetValueOrDefault(curveDTO.LineThickness);
                curveDTO.Visible = selectedValues.Visible.GetValueOrDefault(curveDTO.Visible);
                curveDTO.VisibleInLegend = selectedValues.VisibleInLegend.GetValueOrDefault(curveDTO.VisibleInLegend);
 

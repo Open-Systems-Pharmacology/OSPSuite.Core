@@ -37,4 +37,15 @@ namespace OSPSuite.Presentation.Formatters
          return valueToFormat.Value.ToString();
       }
    }
+
+   public class LineThicknessFormatter : IFormatter<int?>
+   {
+      public string Format(int? valueToFormat)
+      {
+         if (valueToFormat == null)
+            return Captions.Chart.MultiCurveOptions.CurrentValue;
+
+         return valueToFormat.Value.ToString();
+      }
+   }
 }

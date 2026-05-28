@@ -1,4 +1,4 @@
-﻿using OSPSuite.UI.Controls;
+using OSPSuite.UI.Controls;
 
 namespace OSPSuite.UI.Views.Charts
 {
@@ -34,6 +34,7 @@ namespace OSPSuite.UI.Views.Charts
          this.colorEditLayoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.inLegendComboBoxEdit = new UxComboBoxEdit();
          this.visibleComboBoxEdit = new UxComboBoxEdit();
+         this.lineThicknessComboBoxEdit = new UxComboBoxEdit();
          this.symbolComboBoxEdit = new UxComboBoxEdit();
          this.styleComboBoxEdit = new UxComboBoxEdit();
          this.colorPickEdit = new UxColorPickEditWithHistory();
@@ -42,6 +43,7 @@ namespace OSPSuite.UI.Views.Charts
          this.colorLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.styleLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.symbolLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.lineThicknessLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.visibleLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.inLegendLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
@@ -49,6 +51,7 @@ namespace OSPSuite.UI.Views.Charts
          this.colorEditLayoutControl.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.inLegendComboBoxEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.visibleComboBoxEdit.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.lineThicknessComboBoxEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.symbolComboBoxEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.styleComboBoxEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.colorPickEdit.Properties)).BeginInit();
@@ -57,14 +60,16 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.colorLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.styleLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.symbolLayoutControlItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.lineThicknessLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.visibleLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.inLegendLayoutControlItem)).BeginInit();
          this.SuspendLayout();
-         // 
+         //
          // colorEditLayoutControl
-         // 
+         //
          this.colorEditLayoutControl.Controls.Add(this.inLegendComboBoxEdit);
          this.colorEditLayoutControl.Controls.Add(this.visibleComboBoxEdit);
+         this.colorEditLayoutControl.Controls.Add(this.lineThicknessComboBoxEdit);
          this.colorEditLayoutControl.Controls.Add(this.symbolComboBoxEdit);
          this.colorEditLayoutControl.Controls.Add(this.styleComboBoxEdit);
          this.colorEditLayoutControl.Controls.Add(this.colorPickEdit);
@@ -72,67 +77,78 @@ namespace OSPSuite.UI.Views.Charts
          this.colorEditLayoutControl.Location = new System.Drawing.Point(0, 0);
          this.colorEditLayoutControl.Name = "colorEditLayoutControl";
          this.colorEditLayoutControl.Root = this.Root;
-         this.colorEditLayoutControl.Size = new System.Drawing.Size(1035, 431);
+         this.colorEditLayoutControl.Size = new System.Drawing.Size(414, 218);
          this.colorEditLayoutControl.TabIndex = 38;
-         // 
+         //
          // inLegendComboBoxEdit
-         // 
-         this.inLegendComboBoxEdit.Location = new System.Drawing.Point(134, 220);
+         //
+         this.inLegendComboBoxEdit.Location = new System.Drawing.Point(147, 132);
          this.inLegendComboBoxEdit.Name = "inLegendComboBoxEdit";
          this.inLegendComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
          this.inLegendComboBoxEdit.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-         this.inLegendComboBoxEdit.Size = new System.Drawing.Size(889, 48);
+         this.inLegendComboBoxEdit.Size = new System.Drawing.Size(255, 20);
          this.inLegendComboBoxEdit.StyleController = this.colorEditLayoutControl;
-         this.inLegendComboBoxEdit.TabIndex = 9;
-         // 
+         this.inLegendComboBoxEdit.TabIndex = 10;
+         //
          // visibleComboBoxEdit
-         // 
-         this.visibleComboBoxEdit.Location = new System.Drawing.Point(134, 168);
+         //
+         this.visibleComboBoxEdit.Location = new System.Drawing.Point(147, 108);
          this.visibleComboBoxEdit.Name = "visibleComboBoxEdit";
          this.visibleComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
          this.visibleComboBoxEdit.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-         this.visibleComboBoxEdit.Size = new System.Drawing.Size(889, 48);
+         this.visibleComboBoxEdit.Size = new System.Drawing.Size(255, 20);
          this.visibleComboBoxEdit.StyleController = this.colorEditLayoutControl;
-         this.visibleComboBoxEdit.TabIndex = 8;
-         // 
+         this.visibleComboBoxEdit.TabIndex = 9;
+         //
+         // lineThicknessComboBoxEdit
+         //
+         this.lineThicknessComboBoxEdit.Location = new System.Drawing.Point(147, 84);
+         this.lineThicknessComboBoxEdit.Name = "lineThicknessComboBoxEdit";
+         this.lineThicknessComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+         this.lineThicknessComboBoxEdit.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
+         this.lineThicknessComboBoxEdit.Size = new System.Drawing.Size(255, 20);
+         this.lineThicknessComboBoxEdit.StyleController = this.colorEditLayoutControl;
+         this.lineThicknessComboBoxEdit.TabIndex = 8;
+         //
          // symbolComboBoxEdit
-         // 
-         this.symbolComboBoxEdit.Location = new System.Drawing.Point(134, 116);
+         //
+         this.symbolComboBoxEdit.Location = new System.Drawing.Point(147, 60);
          this.symbolComboBoxEdit.Name = "symbolComboBoxEdit";
          this.symbolComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
          this.symbolComboBoxEdit.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-         this.symbolComboBoxEdit.Size = new System.Drawing.Size(889, 48);
+         this.symbolComboBoxEdit.Size = new System.Drawing.Size(255, 20);
          this.symbolComboBoxEdit.StyleController = this.colorEditLayoutControl;
          this.symbolComboBoxEdit.TabIndex = 7;
-         // 
+         //
          // styleComboBoxEdit
-         // 
-         this.styleComboBoxEdit.Location = new System.Drawing.Point(134, 64);
+         //
+         this.styleComboBoxEdit.Location = new System.Drawing.Point(147, 36);
          this.styleComboBoxEdit.Name = "styleComboBoxEdit";
          this.styleComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
          this.styleComboBoxEdit.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-         this.styleComboBoxEdit.Size = new System.Drawing.Size(889, 48);
+         this.styleComboBoxEdit.Size = new System.Drawing.Size(255, 20);
          this.styleComboBoxEdit.StyleController = this.colorEditLayoutControl;
          this.styleComboBoxEdit.TabIndex = 6;
-         // 
-         // colorPickEdit1
-         // 
+         //
+         // colorPickEdit
+         //
          this.colorPickEdit.EditValue = System.Drawing.Color.Empty;
-         this.colorPickEdit.Location = new System.Drawing.Point(134, 12);
+         this.colorPickEdit.Location = new System.Drawing.Point(147, 12);
          this.colorPickEdit.Name = "colorPickEdit";
          this.colorPickEdit.Properties.AutomaticColor = System.Drawing.Color.Black;
          this.colorPickEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.colorPickEdit.Size = new System.Drawing.Size(889, 48);
+         this.colorPickEdit.Size = new System.Drawing.Size(255, 20);
          this.colorPickEdit.StyleController = this.colorEditLayoutControl;
          this.colorPickEdit.TabIndex = 5;
-         // 
+         //
          // Root
-         // 
+         //
          this.Root.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
          this.Root.GroupBordersVisible = false;
          this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
@@ -140,79 +156,91 @@ namespace OSPSuite.UI.Views.Charts
             this.colorLayoutControlItem,
             this.styleLayoutControlItem,
             this.symbolLayoutControlItem,
+            this.lineThicknessLayoutControlItem,
             this.visibleLayoutControlItem,
             this.inLegendLayoutControlItem});
          this.Root.Name = "Root";
-         this.Root.Size = new System.Drawing.Size(1035, 431);
+         this.Root.Size = new System.Drawing.Size(414, 218);
          this.Root.TextVisible = false;
-         // 
+         //
          // emptySpaceItem1
-         // 
+         //
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 260);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 144);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
-         this.emptySpaceItem1.Size = new System.Drawing.Size(1015, 151);
+         this.emptySpaceItem1.Size = new System.Drawing.Size(394, 54);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
-         // 
+         //
          // colorLayoutControlItem
-         // 
+         //
          this.colorLayoutControlItem.Control = this.colorPickEdit;
          this.colorLayoutControlItem.Location = new System.Drawing.Point(0, 0);
          this.colorLayoutControlItem.Name = "colorLayoutControlItem";
-         this.colorLayoutControlItem.Size = new System.Drawing.Size(1015, 52);
+         this.colorLayoutControlItem.Size = new System.Drawing.Size(394, 24);
          this.colorLayoutControlItem.Text = "Color";
-         this.colorLayoutControlItem.TextSize = new System.Drawing.Size(119, 33);
-         // 
+         this.colorLayoutControlItem.TextSize = new System.Drawing.Size(131, 13);
+         //
          // styleLayoutControlItem
-         // 
+         //
          this.styleLayoutControlItem.Control = this.styleComboBoxEdit;
-         this.styleLayoutControlItem.Location = new System.Drawing.Point(0, 52);
+         this.styleLayoutControlItem.Location = new System.Drawing.Point(0, 24);
          this.styleLayoutControlItem.Name = "styleLayoutControlItem";
-         this.styleLayoutControlItem.Size = new System.Drawing.Size(1015, 52);
+         this.styleLayoutControlItem.Size = new System.Drawing.Size(394, 24);
          this.styleLayoutControlItem.Text = "Style";
-         this.styleLayoutControlItem.TextSize = new System.Drawing.Size(119, 33);
-         // 
+         this.styleLayoutControlItem.TextSize = new System.Drawing.Size(131, 13);
+         //
          // symbolLayoutControlItem
-         // 
+         //
          this.symbolLayoutControlItem.Control = this.symbolComboBoxEdit;
-         this.symbolLayoutControlItem.Location = new System.Drawing.Point(0, 104);
+         this.symbolLayoutControlItem.Location = new System.Drawing.Point(0, 48);
          this.symbolLayoutControlItem.Name = "symbolLayoutControlItem";
-         this.symbolLayoutControlItem.Size = new System.Drawing.Size(1015, 52);
+         this.symbolLayoutControlItem.Size = new System.Drawing.Size(394, 24);
          this.symbolLayoutControlItem.Text = "Symbol";
-         this.symbolLayoutControlItem.TextSize = new System.Drawing.Size(119, 33);
-         // 
+         this.symbolLayoutControlItem.TextSize = new System.Drawing.Size(131, 13);
+         //
+         // lineThicknessLayoutControlItem
+         //
+         this.lineThicknessLayoutControlItem.Control = this.lineThicknessComboBoxEdit;
+         this.lineThicknessLayoutControlItem.Location = new System.Drawing.Point(0, 72);
+         this.lineThicknessLayoutControlItem.Name = "lineThicknessLayoutControlItem";
+         this.lineThicknessLayoutControlItem.Size = new System.Drawing.Size(394, 24);
+         this.lineThicknessLayoutControlItem.Text = "Line Thickness";
+         this.lineThicknessLayoutControlItem.TextSize = new System.Drawing.Size(131, 13);
+         //
          // visibleLayoutControlItem
-         // 
+         //
          this.visibleLayoutControlItem.Control = this.visibleComboBoxEdit;
-         this.visibleLayoutControlItem.Location = new System.Drawing.Point(0, 156);
+         this.visibleLayoutControlItem.Location = new System.Drawing.Point(0, 96);
          this.visibleLayoutControlItem.Name = "visibleLayoutControlItem";
-         this.visibleLayoutControlItem.Size = new System.Drawing.Size(1015, 52);
+         this.visibleLayoutControlItem.Size = new System.Drawing.Size(394, 24);
          this.visibleLayoutControlItem.Text = "Visible";
-         this.visibleLayoutControlItem.TextSize = new System.Drawing.Size(119, 33);
-         // 
+         this.visibleLayoutControlItem.TextSize = new System.Drawing.Size(131, 13);
+         //
          // inLegendLayoutControlItem
-         // 
+         //
          this.inLegendLayoutControlItem.Control = this.inLegendComboBoxEdit;
-         this.inLegendLayoutControlItem.Location = new System.Drawing.Point(0, 208);
+         this.inLegendLayoutControlItem.Location = new System.Drawing.Point(0, 120);
          this.inLegendLayoutControlItem.Name = "inLegendLayoutControlItem";
-         this.inLegendLayoutControlItem.Size = new System.Drawing.Size(1015, 52);
+         this.inLegendLayoutControlItem.Size = new System.Drawing.Size(394, 24);
          this.inLegendLayoutControlItem.Text = "In Legend";
-         this.inLegendLayoutControlItem.TextSize = new System.Drawing.Size(119, 33);
-         // 
+         this.inLegendLayoutControlItem.TextSize = new System.Drawing.Size(131, 13);
+         //
          // CurveMultiItemEditorView
-         // 
-         this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 33F);
+         //
+         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
          this.Caption = "Edit Options";
-         this.ClientSize = new System.Drawing.Size(1035, 548);
+         this.ClientSize = new System.Drawing.Size(414, 261);
          this.Controls.Add(this.colorEditLayoutControl);
          this.Name = "CurveMultiItemEditorView";
          this.Text = "Edit Options";
+         this.Controls.SetChildIndex(this.colorEditLayoutControl, 0);
          ((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.colorEditLayoutControl)).EndInit();
          this.colorEditLayoutControl.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.inLegendComboBoxEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.visibleComboBoxEdit.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.lineThicknessComboBoxEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.symbolComboBoxEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.styleComboBoxEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.colorPickEdit.Properties)).EndInit();
@@ -221,6 +249,7 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.colorLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.styleLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.symbolLayoutControlItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.lineThicknessLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.visibleLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.inLegendLayoutControlItem)).EndInit();
          this.ResumeLayout(false);
@@ -239,6 +268,8 @@ namespace OSPSuite.UI.Views.Charts
       private OSPSuite.UI.Controls.UxComboBoxEdit styleComboBoxEdit;
       private DevExpress.XtraLayout.LayoutControlItem styleLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem symbolLayoutControlItem;
+      private OSPSuite.UI.Controls.UxComboBoxEdit lineThicknessComboBoxEdit;
+      private DevExpress.XtraLayout.LayoutControlItem lineThicknessLayoutControlItem;
       private OSPSuite.UI.Controls.UxComboBoxEdit inLegendComboBoxEdit;
       private OSPSuite.UI.Controls.UxComboBoxEdit visibleComboBoxEdit;
       private DevExpress.XtraLayout.LayoutControlItem visibleLayoutControlItem;
