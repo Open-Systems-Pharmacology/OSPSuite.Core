@@ -739,6 +739,7 @@ namespace OSPSuite.Core.Domain
       public static class MultiCurveOptions
       {
          public static readonly IReadOnlyList<bool?> AllBooleanOptions = new bool?[] {null, false, true};
+         public static readonly IReadOnlyList<int?> AllLineThicknesses = new int?[] {null, 1, 2, 3};
       }
 
       public static class ImporterConstants

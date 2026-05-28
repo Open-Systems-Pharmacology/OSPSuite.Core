@@ -16,6 +16,7 @@ namespace OSPSuite.UI.Views.Charts
       private readonly IFormatter<bool?> _boolFormatter = new BooleanYesNoFormatter();
       private readonly IFormatter<LineStyles?> _lineStylesFormatter = new LineStylesFormatter();
       private readonly IFormatter<Symbols?> _symbolsFormatter = new SymbolsFormatter();
+      private readonly IFormatter<int?> _lineThicknessFormatter = new LineThicknessFormatter();
       private readonly ScreenBinder<SelectedCurveValues> _screenBinder = new ScreenBinder<SelectedCurveValues> { BindingMode = BindingMode.TwoWay };
 
       public CurveMultiItemEditorView()
@@ -30,6 +31,7 @@ namespace OSPSuite.UI.Views.Charts
          colorLayoutControlItem.Text = Captions.Chart.CurveOptions.Color.FormatForLabel();
          styleLayoutControlItem.Text = Captions.Chart.CurveOptions.LineStyle.FormatForLabel();
          symbolLayoutControlItem.Text = Captions.Chart.CurveOptions.Symbol.FormatForLabel();
+         lineThicknessLayoutControlItem.Text = Captions.LineThickness.FormatForLabel();
          visibleLayoutControlItem.Text = Captions.Chart.CurveOptions.Visible.FormatForLabel();
          inLegendLayoutControlItem.Text = Captions.Chart.CurveOptions.VisibleInLegend.FormatForLabel();
       }
@@ -51,6 +53,11 @@ namespace OSPSuite.UI.Views.Charts
             .To(symbolComboBoxEdit)
             .WithValues(_presenter.AllSymbols)
             .WithFormat(_symbolsFormatter);
+
+         _screenBinder.Bind(x => x.LineThickness)
+            .To(lineThicknessComboBoxEdit)
+            .WithValues(_presenter.AllLineThicknesses)
+            .WithFormat(_lineThicknessFormatter);
 
          _screenBinder.Bind(x => x.Visible)
             .To(visibleComboBoxEdit)

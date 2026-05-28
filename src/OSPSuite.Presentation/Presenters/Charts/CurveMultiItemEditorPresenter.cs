@@ -14,6 +14,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       IEnumerable<bool?> AllBooleanOptions { get; }
       IEnumerable<LineStyles?> AllLineStyles { get; }
       IEnumerable<Symbols?> AllSymbols { get; }
+      IEnumerable<int?> AllLineThicknesses { get; }
    }
 
    public class SelectedCurveValues
@@ -21,6 +22,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public Color? Color { get; set; }
       public LineStyles? Style { get; set; }
       public Symbols? Symbol { get; set; }
+      public int? LineThickness { get; set; }
       public bool? Visible { get; set; }
       public bool? VisibleInLegend { get; set; }
    }
@@ -40,6 +42,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       public IEnumerable<LineStyles?> AllLineStyles { get; } = new List<LineStyles?>() {null}.Union(EnumHelper.AllValuesFor<LineStyles>().Cast<LineStyles?>());
 
       public IEnumerable<Symbols?> AllSymbols { get; } = new List<Symbols?>() {null}.Union(EnumHelper.AllValuesFor<Symbols>().Cast<Symbols?>());
+
+      public IEnumerable<int?> AllLineThicknesses { get; } = Constants.MultiCurveOptions.AllLineThicknesses;
 
       public SelectedCurveValues GetSelectedValues()
       {
