@@ -19,7 +19,7 @@ namespace OSPSuite.Presentation.Presenters
    {
    }
 
-   public abstract class SimulationVsObservedDataChartPresenter<TChart> : SimulationAnalysisChartPresenter<TChart, ISimulationVsObservedDataView, ISimulationVsObservedDataPresenter>, ISimulationVsObservedDataPresenter 
+   public abstract class SimulationVsObservedDataChartPresenter<TChart> : SimulationAnalysisChartPresenter<TChart, ISimulationVsObservedDataView, ISimulationVsObservedDataPresenter>, ISimulationVsObservedDataPresenter
       where TChart : ChartWithObservedData, ISimulationAnalysis
    {
       protected ISimulation _simulation;
@@ -39,8 +39,13 @@ namespace OSPSuite.Presentation.Presenters
       {
          _simulation = analysable.DowncastTo<ISimulation>();
 
-         ClearChartAndDataRepositories();
-         UpdateCacheColor();
+         if (ChartIsBeingUpdated)
+         {
+            UpdateTemplateFromChart();
+            ClearChartAndDataRepositories();
+         }
+         else
+            UpdateCacheColor();
 
          if (!_simulation.ResultsDataRepository.IsNull())
          {

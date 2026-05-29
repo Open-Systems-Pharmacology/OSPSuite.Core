@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
-using NPOI.HPSF;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
@@ -19,7 +19,6 @@ using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views;
-
 
 namespace OSPSuite.Presentation.Presentation
 {
@@ -72,8 +71,6 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _chartPresenterContext.EditorLayoutTask).Returns(_chartEditorLayoutTask);
          A.CallTo(() => _chartPresenterContext.ProjectRetriever).Returns(_projectRetriever);
          A.CallTo(() => _residualCalculatorFactory.CreateFor(A<ParameterIdentificationConfiguration>._)).Returns(_residualCalculator);
-
-
 
 
          _residualVsTimeChart = new SimulationResidualVsTimeChart().WithAxes();
@@ -136,7 +133,6 @@ namespace OSPSuite.Presentation.Presentation
       {
          _residualVsTimeChart.Curves.Count.ShouldBeEqualTo(_residualResults.AllOutputResiduals.Count + 1);
       }
-
    }
 
    public class When_clearing_the_simulation_residual_vs_time_chart_presenter : concern_for_SimulationResidualVsTimeChartPresenter
@@ -160,6 +156,40 @@ namespace OSPSuite.Presentation.Presentation
       {
          //zero marker removed
          _residualVsTimeChart.Curves.Count.ShouldBeEqualTo(_residualResults.AllOutputResiduals.Count);
+      }
+   }
+
+   public class When_a_simulation_residual_vs_time_chart_is_re_rendered_after_first_init : concern_for_SimulationResidualVsTimeChartPresenter
+   {
+      private CurveChartTemplate _capturedTemplate;
+
+      protected override void Context()
+      {
+         base.Context();
+         _capturedTemplate = new CurveChartTemplate();
+         sut.InitializeAnalysis(_residualVsTimeChart, _simulation);
+         A.CallTo(() => _chartPresenterContext.TemplatingTask.TemplateFrom(sut.Chart, false)).Returns(_capturedTemplate);
+      }
+
+      protected override void Because()
+      {
+         sut.UpdateAnalysisBasedOn(_simulation);
+      }
+
+      [Observation]
+      public void should_snapshot_the_chart_into_a_template_before_clearing()
+      {
+         A.CallTo(() => _chartPresenterContext.TemplatingTask.TemplateFrom(sut.Chart, false)).MustHaveHappened();
+      }
+
+      [Observation]
+      public void should_re_apply_the_captured_template_after_the_rebuild_so_user_color_edits_survive()
+      {
+         A.CallTo(() => _chartPresenterContext.TemplatingTask.InitializeChartFromTemplate(sut.Chart, A<IEnumerable<DataColumn>>._,
+            _capturedTemplate,
+            A<Func<DataColumn, string>>._,
+            false,
+            true)).MustHaveHappened();
       }
    }
 

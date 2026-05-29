@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
+using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
@@ -17,7 +19,6 @@ using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Services;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views.ParameterIdentifications;
-using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Presentation.Presentation
 {
@@ -125,7 +126,7 @@ namespace OSPSuite.Presentation.Presentation
 
          _parameterIdentification.Configuration.RunMode = new MultipleParameterIdentificationRunMode();
 
-         _allAddedDataRepositories = new List<DataRepository>();;
+         _allAddedDataRepositories = new List<DataRepository>();
          A.CallTo(() => ChartEditorPresenter.AddDataRepositories(A<IEnumerable<DataRepository>>._))
             .Invokes(x => _allAddedDataRepositories.AddRange(x.GetArgument<IEnumerable<DataRepository>>(0)));
       }
@@ -179,6 +180,53 @@ namespace OSPSuite.Presentation.Presentation
       {
          var observedDataCurve = _timeProfileAnalysis.FindCurveWithSameData(_firstObservedData1.BaseGrid, _firstObservedData1);
          observedDataCurve.VisibleInLegend.ShouldBeFalse();
+      }
+   }
+
+   public class When_a_second_time_profile_chart_is_initialized_for_a_parameter_identification_that_already_has_a_time_profile : concern_for_ParameterIdentificationTimeProfileChartPresenter
+   {
+      private static readonly Color CANONICAL_COLOR = Color.Magenta;
+      private ParameterIdentificationTimeProfileChart _existingTimeProfile;
+      private DataRepository _simulationResult;
+      private DataColumn _outputColumn;
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulationResult = DomainHelperForSpecs.IndividualSimulationDataRepositoryFor("SimulationResult");
+         _outputColumn = _simulationResult.AllButBaseGrid().First();
+
+         A.CallTo(() => _outputMapping1.FullOutputPath).Returns(_outputColumn.QuantityInfo.PathAsString);
+         A.CallTo(() => _outputMapping2.FullOutputPath).Returns(_outputColumn.QuantityInfo.PathAsString);
+         _optimizationRunResult.AddResult(_simulationResult);
+         _parameterIdentification.Configuration.RunMode = new MultipleParameterIdentificationRunMode();
+
+         _existingTimeProfile = new ParameterIdentificationTimeProfileChart();
+         var existingCurve = new Curve { Name = "PreviouslyColored" };
+         var dimensionFactory = A.Fake<IDimensionFactory>();
+         existingCurve.SetxData(_outputColumn.BaseGrid, dimensionFactory);
+         existingCurve.SetyData(_outputColumn, dimensionFactory);
+         existingCurve.Color = CANONICAL_COLOR;
+         _existingTimeProfile.AddCurve(existingCurve, useAxisDefault: false);
+
+         //AddAnalysis registers both charts on the PI and sets each chart's Analysable;
+         //real-world callers do this through the analysis creator before handing the chart
+         //to the presenter, so the chart can resolve its peers via Analysable.Analyses
+         _parameterIdentification.AddAnalysis(_existingTimeProfile);
+         _parameterIdentification.AddAnalysis(_timeProfileAnalysis);
+      }
+
+      protected override void Because()
+      {
+         sut.InitializeAnalysis(_timeProfileAnalysis, _parameterIdentification);
+      }
+
+      [Observation]
+      public void should_inherit_the_color_from_the_existing_time_profile_chart()
+      {
+         var outputCurve = _timeProfileAnalysis.FindCurveWithSameData(_outputColumn.BaseGrid, _outputColumn);
+         outputCurve.ShouldNotBeNull();
+         outputCurve.Color.ShouldBeEqualTo(CANONICAL_COLOR);
       }
    }
 }
