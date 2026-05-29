@@ -16,6 +16,8 @@ namespace OSPSuite.Core.Chart
       private readonly Cache<float, IReadOnlyList<DataRepository>> _deviationRepositoryCache = new Cache<float, IReadOnlyList<DataRepository>>(onMissingKey: x => null);
       public List<float> DeviationFoldValues { get; } = new List<float>();
 
+      public override AnalysisChartTypes AnalysisChartType => AnalysisChartTypes.PredictedVsObserved;
+
       protected PredictedVsObservedChart()
       {
          ChartSettings.LegendPosition = LegendPositions.BottomInside;

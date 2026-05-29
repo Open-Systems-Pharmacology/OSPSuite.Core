@@ -25,7 +25,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
 
       public virtual void AddSimulation(ISimulation simulation)
       {
-         if (simulation == null) 
+         if (simulation == null)
             return;
 
          if (_allSimulations.Contains(simulation))
@@ -191,7 +191,7 @@ namespace OSPSuite.Core.Domain.ParameterIdentifications
          HasChanged = true;
       }
 
-      public IEnumerable<ISimulationAnalysis> Analyses => _allSimulationAnalyses;
+      public virtual IEnumerable<ISimulationAnalysis> Analyses => _allSimulationAnalyses;
       public bool HasUpToDateResults => AllSimulations.All(x => x.HasUpToDateResults);
       public bool ComesFromPKSim => AllSimulations.All(x => x.ComesFromPKSim);
 
