@@ -1,7 +1,7 @@
-﻿using OSPSuite.Serializer;
-using OSPSuite.Serializer.Attributes;
-using OSPSuite.Core.Domain;
+﻿using OSPSuite.Core.Domain;
 using OSPSuite.Core.Serialization.Xml;
+using OSPSuite.Serializer;
+using OSPSuite.Serializer.Attributes;
 
 namespace OSPSuite.Presentation.Serialization.Extensions
 {
@@ -17,6 +17,7 @@ namespace OSPSuite.Presentation.Serialization.Extensions
          });
 
          serializerRepository.AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<ParameterGroupingModeId, SerializationContext>());
+         serializerRepository.AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<ParameterGroupingModeIdForParameterAnalyzable, SerializationContext>());
       }
    }
 }

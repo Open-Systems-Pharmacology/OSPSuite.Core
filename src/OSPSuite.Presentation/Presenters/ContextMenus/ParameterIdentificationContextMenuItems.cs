@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.ParameterIdentifications;
+using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.MenuAndBars;
@@ -12,11 +14,12 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
 {
    public static class ParameterIdentificationContextMenuItems
    {
-      public static IMenuBarItem DeleteParameterIdentification(ParameterIdentification parameterIdentification, IContainer container)
+      public static IMenuBarItem DeleteParameterIdentification(ParameterIdentification parameterIdentification, IContainer container, bool isRunning)
       {
          return CreateMenuButton.WithCaption(MenuNames.Delete)
             .WithIcon(ApplicationIcons.Delete)
-            .WithCommandFor<DeleteParameterIdentificationUICommand, ParameterIdentification>(parameterIdentification, container);
+            .WithCommandFor<DeleteParameterIdentificationUICommand, ParameterIdentification>(parameterIdentification, container)
+            .AsDisabledIf(isRunning);
       }
 
       public static IMenuBarItem CreateParameterIdentification(IContainer container)
@@ -41,11 +44,12 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithCommandFor<EditParameterIdentificationUICommand, ParameterIdentification>(parameterIdentification, container);
       }
 
-      public static IMenuBarItem RenameParameterIdentification(ParameterIdentification simulation, IContainer container)
+      public static IMenuBarItem RenameParameterIdentification(ParameterIdentification simulation, IContainer container, bool isRunning)
       {
          return CreateMenuButton.WithCaption(MenuNames.Rename)
             .WithCommandFor<RenameParameterIdentificationUICommand, ParameterIdentification>(simulation, container)
-            .WithIcon(ApplicationIcons.Rename);
+            .WithIcon(ApplicationIcons.Rename)
+            .AsDisabledIf(isRunning);
       }
 
       public static IMenuBarButton ExportParameterIdentificationToR(ParameterIdentification parameterIdentification, IContainer container)
@@ -76,22 +80,24 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
             .WithIcon(ApplicationIcons.AddToJournal);
       }
 
-      public static IMenuBarItem RunParameterIdentification(ParameterIdentification parameterIdentification, IContainer container)
+      public static IMenuBarItem RunParameterIdentification(ParameterIdentification parameterIdentification, IContainer container, bool isRunning)
       {
          return CreateMenuButton.WithCaption(MenuNames.RunParameterIdentification)
             .WithIcon(ApplicationIcons.Run)
-            .WithCommandFor<RunParameterIdentificationUICommand, ParameterIdentification>(parameterIdentification, container);
+            .WithCommandFor<RunParameterIdentificationUICommand, ParameterIdentification>(parameterIdentification, container)
+            .AsDisabledIf(isRunning);
       }
 
       public static IEnumerable<IMenuBarItem> ContextMenuItemsFor(ParameterIdentification parameterIdentification, IContainer container)
       {
+         var isRunning = container.Resolve<IParameterIdentificationRunner>().RunningParameterIdentifications.Contains(parameterIdentification);
+
          yield return EditParameterIdentification(parameterIdentification, container);
-            
 
-         yield return RunParameterIdentification(parameterIdentification, container)
-            .AsGroupStarter(); 
+         yield return RunParameterIdentification(parameterIdentification, container, isRunning)
+            .AsGroupStarter();
 
-         yield return RenameParameterIdentification(parameterIdentification, container);
+         yield return RenameParameterIdentification(parameterIdentification, container, isRunning);
 
          yield return CloneParameterIdentification(parameterIdentification, container)
             .AsGroupStarter();
@@ -101,7 +107,7 @@ namespace OSPSuite.Presentation.Presenters.ContextMenus
          yield return ExportParameterIdentificationToMatlab(parameterIdentification, container)
             .ForDeveloper();
 
-         yield return DeleteParameterIdentification(parameterIdentification, container)
+         yield return DeleteParameterIdentification(parameterIdentification, container, isRunning)
             .AsGroupStarter();
       }
    }

@@ -18,7 +18,6 @@ namespace OSPSuite.Core.Services
       protected PathCache<IQuantity> _pathCache;
       protected IQuantity _quantity1;
       protected IQuantity _quantity2;
-      protected IQuantity _compartment;
       protected DataRepository _observedData;
       protected ISimulation _simulation;
       protected IContainer _container;
@@ -46,7 +45,7 @@ namespace OSPSuite.Core.Services
 
          _quantity2 = new MoleculeAmount();
          _quantity2.QuantityType = QuantityType.Drug;
-         
+
          _simulation.Model.Root = _container;
 
          _pathCache = new PathCache<IQuantity>(_entityPathResolver)
@@ -73,12 +72,10 @@ namespace OSPSuite.Core.Services
       }
    }
 
-   
    public class When_adding_matching_observed_data_to_a_simulation : concern_for_OutputMappingMatchingTask
    {
-      protected override void Context()
+      protected override void Because()
       {
-         base.Context();
          sut.AddMatchingOutputMapping(_observedData, _simulation);
       }
 
@@ -98,6 +95,10 @@ namespace OSPSuite.Core.Services
          base.Context();
          _observedData.ExtendedProperties.Remove(Constants.ObservedData.MOLECULE);
          _observedData.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.ObservedData.MOLECULE, Value = "TestMolecule_2" });
+      }
+
+      protected override void Because()
+      {
          sut.AddMatchingOutputMapping(_observedData, _simulation);
       }
 
@@ -108,4 +109,45 @@ namespace OSPSuite.Core.Services
       }
    }
 
+   public class When_adding_observed_data_with_output_path_metadata_matching_a_simulation_output : concern_for_OutputMappingMatchingTask
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _observedData.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.OUTPUT_PATH, Value = "TestCompartment|Brain|TestMolecule" });
+      }
+
+      protected override void Because()
+      {
+         sut.AddMatchingOutputMapping(_observedData, _simulation);
+      }
+
+      [Observation]
+      public void matching_simulation_output_mapping_should_have_been_added()
+      {
+         _simulation.OutputMappings.All.Count.ShouldBeEqualTo(1);
+         _simulation.OutputMappings.All.First().Output.Name.ShouldBeEqualTo("TestMolecule");
+         _simulation.OutputMappings.All.First().WeightedObservedData.Name.ShouldBeEqualTo("TestData");
+      }
+   }
+
+   public class When_adding_observed_data_with_output_path_metadata_not_matching_a_simulation_output : concern_for_OutputMappingMatchingTask
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _observedData.ExtendedProperties.Add(new ExtendedProperty<string> { Name = Constants.OUTPUT_PATH, Value = "TestCompartment|Bone|TestMolecule" });
+      }
+
+      protected override void Because()
+      {
+         sut.AddMatchingOutputMapping(_observedData, _simulation);
+      }
+
+      [Observation]
+      public void matching_simulation_output_mapping_should_not_have_been_added()
+      {
+         _simulation.OutputMappings.All.Count.ShouldBeEqualTo(0);
+      }
+   }
 }

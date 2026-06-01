@@ -1,5 +1,9 @@
+using System.IO;
 using System.Linq;
+using OSPSuite.Assets;
 using OSPSuite.Core.Commands.Core;
+using OSPSuite.Core.Domain;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Events;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.DTO.Commands;
@@ -11,7 +15,7 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Presentation.Presenters.Commands
 {
-   public interface IHistoryBrowserPresenter : 
+   public interface IHistoryBrowserPresenter :
       IListener<HistoryClearedEvent>
    {
       /// <summary>
@@ -49,9 +53,8 @@ namespace OSPSuite.Presentation.Presenters.Commands
       /// </summary>
       void AddLabel();
 
-
       /// <summary>
-      /// Triggers the clear history command that will clear the history in the project
+      ///    Triggers the clear history command that will clear the history in the project
       /// </summary>
       void ClearHistory();
 
@@ -105,6 +108,11 @@ namespace OSPSuite.Presentation.Presenters.Commands
       ///    consuming for big projects
       /// </summary>
       bool EnableHistoryPruning { set; }
+
+      /// <summary>
+      ///    Exports the history to a file
+      /// </summary>
+      void ExportHistory();
    }
 
    public class HistoryBrowserPresenter : IHistoryBrowserPresenter
@@ -115,10 +123,14 @@ namespace OSPSuite.Presentation.Presenters.Commands
       private readonly IHistoryToHistoryDTOMapper _mapper;
       private readonly IHistoryItemDTOEnumerableToHistoryItemDTOList _historyItemDTOListMapper;
       private readonly IHistoryTask _historyTask;
+      private readonly IHistoryExportTask _historyExportTask;
+      private readonly IProjectRetriever _projectRetriever;
+      private readonly IDialogCreator _dialogCreator;
       private IHistoryItemDTOList _historyItemDtoList;
 
       public HistoryBrowserPresenter(IHistoryBrowserView view, ILabelTask labelTask, ICommentTask commentTask,
-         IHistoryToHistoryDTOMapper mapper, IHistoryItemDTOEnumerableToHistoryItemDTOList historyItemDTOListMapper, IHistoryTask historyTask)
+         IHistoryToHistoryDTOMapper mapper, IHistoryItemDTOEnumerableToHistoryItemDTOList historyItemDTOListMapper, IHistoryTask historyTask,
+         IHistoryExportTask historyExportTask, IProjectRetriever projectRetriever, IDialogCreator dialogCreator)
       {
          View = view;
          _labelTask = labelTask;
@@ -130,6 +142,9 @@ namespace OSPSuite.Presentation.Presenters.Commands
          EnableAutoFilterRow = true;
          EnableHistoryPruning = true;
          _historyItemDtoList = historyItemDTOListMapper.MapFrom(Enumerable.Empty<IHistoryItemDTO>());
+         _historyExportTask = historyExportTask;
+         _projectRetriever = projectRetriever;
+         _dialogCreator = dialogCreator;
       }
 
       public void Initialize()
@@ -220,6 +235,19 @@ namespace OSPSuite.Presentation.Presenters.Commands
       public void BestFitColumns()
       {
          View.BestFitColumns();
+      }
+
+      public void ExportHistory()
+      {
+         var projectName = Path.GetFileNameWithoutExtension(_projectRetriever.CurrentProject.FilePath);
+         if (string.IsNullOrEmpty(projectName))
+            projectName = Captions.Undefined;
+
+         var reportFileName = _dialogCreator.AskForFileToSave(Captions.ExportHistory, Constants.Filter.EXPORT_HISTORY_FILE_FILTER, Captions.Reporting.DefaultTitle, projectName);
+         if (reportFileName.IsNullOrEmpty()) return;
+
+         var reportOptions = new ReportOptions { ReportFullPath = reportFileName, SheetName = projectName, OpenReport = true };
+         _historyExportTask.CreateReport(HistoryManager, reportOptions);
       }
 
       public void RollBack(int state)

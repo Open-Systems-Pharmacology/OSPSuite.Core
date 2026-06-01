@@ -407,10 +407,13 @@ namespace OSPSuite.Core.Domain
       }
 
       [Observation]
-      public void should_return_the_optimized_parameter_value_multiply_by_the_parameter_value_otherwise()
+      public void should_return_the_optimized_parameter_value_multiplied_by_the_captured_parameter_value()
       {
          sut.UseAsFactor = true;
          _parameterSelection.Parameter.Value = 50;
+         sut.AddLinkedParameter(_parameterSelection);
+         sut.CaptureLinkedParameterValues();
+         _parameterSelection.Parameter.Value = 0;
          sut.OptimizedParameterValueFor(new OptimizedParameterValue("P" ,10, 120, 10, 200, Scalings.Linear), _parameterSelection)
             .ShouldBeEqualTo(500);
       }

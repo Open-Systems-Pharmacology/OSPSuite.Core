@@ -9,14 +9,14 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void should_evaluate_values()
       {
-         0.5F.IsValid().ShouldBeEqualTo(true);
-         0F.IsValid().ShouldBeEqualTo(true);
-         (-0.5F).IsValid().ShouldBeEqualTo(true);
-         float.NaN.IsValid().ShouldBeEqualTo(false);
-         float.NegativeInfinity.IsValid().ShouldBeEqualTo(false);
-         float.PositiveInfinity.IsValid().ShouldBeEqualTo(false);
-         float.MinValue.IsValid().ShouldBeEqualTo(true);
-         float.MaxValue.IsValid().ShouldBeEqualTo(true);
+         0.5F.IsFinite().ShouldBeEqualTo(true);
+         0F.IsFinite().ShouldBeEqualTo(true);
+         (-0.5F).IsFinite().ShouldBeEqualTo(true);
+         float.NaN.IsFinite().ShouldBeEqualTo(false);
+         float.NegativeInfinity.IsFinite().ShouldBeEqualTo(false);
+         float.PositiveInfinity.IsFinite().ShouldBeEqualTo(false);
+         float.MinValue.IsFinite().ShouldBeEqualTo(true);
+         float.MaxValue.IsFinite().ShouldBeEqualTo(true);
       }
    }
 

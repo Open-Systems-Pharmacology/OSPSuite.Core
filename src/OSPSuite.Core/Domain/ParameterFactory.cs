@@ -1,7 +1,9 @@
-﻿using OSPSuite.Core.Domain.Formulas;
+﻿using System.Linq;
+using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
@@ -111,12 +113,38 @@ namespace OSPSuite.Core.Domain
          var dimensionToUse = dimension ?? _dimensionFactory.NoDimension;
          var displayUnitToUse = displayUnit ?? _displayUnitRetriever.PreferredUnitFor(dimensionToUse);
 
-         return _objectBaseFactory.Create<IDistributedParameter>()
+         var distributedParameter = _objectBaseFactory.Create<IDistributedParameter>()
             .WithName(name)
             .WithDimension(dimensionToUse)
             .WithFormula(_distributionFormulaFactory.CreateFor(distributionType, dimensionToUse))
             .WithDisplayUnit(displayUnitToUse)
             .WithGroup(groupName ?? Constants.Groups.MOBI);
+
+         //the distribution formula references its sub-parameters by name (e.g. Mean, Deviation).
+         //Pre-create them so the formula references resolve and the parameter is operational.
+         //The Percentile sub-parameter is required by the IDistributedParameter contract itself.
+         addDistributionSubParametersTo((IDistributedParameter) distributedParameter, dimensionToUse);
+
+         //if a value is provided, apply it as a fixed value: the IDistributedParameter Value setter keeps the
+         //distribution formula intact, sets IsFixedValue=true and updates the percentile sub-parameter.
+         if (value.HasValue)
+            distributedParameter.Value = value.Value;
+
+         return distributedParameter;
+      }
+
+      private void addDistributionSubParametersTo(IDistributedParameter distributedParameter, IDimension dimension)
+      {
+         if (distributedParameter.Formula is DistributionFormula distributionFormula)
+         {
+            distributionFormula.ObjectPaths
+               .Select(path => path.Last())
+               .Where(subName => distributedParameter.GetSingleChildByName(subName) == null)
+               .Each(subName => distributedParameter.Add(CreateParameter(subName, dimension: dimension)));
+         }
+
+         if (distributedParameter.PercentileParameter == null)
+            distributedParameter.Add(CreateParameter(Constants.Distribution.PERCENTILE));
       }
    }
 }

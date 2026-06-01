@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
@@ -417,11 +418,13 @@ namespace OSPSuite.Presentation.Presenters.Charts
          columns.Each(column =>
          {
             if (used)
-               AddCurveForColumn(column, isLinkedDataToSimulation: isLinkedDataToSimulations);
+            {
+               var curve = AddCurveForColumn(column, isLinkedDataToSimulation: isLinkedDataToSimulations);
+               updateCurveProperty(curve);
+            }
             else
                Chart.RemoveCurvesForColumn(column);
          });
-         
       }
 
       public void ApplyAllColumnSettings() => _presentersWithColumnSettings.Each(x => x.ApplyAllColumnSettings());
@@ -659,7 +662,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          var groupColor = Chart.SelectNewColor();
          foreach (var dataColumn in dataColumnList)
          {
-            var (exists, curve) = createAndConfigureCurve(dataColumn, defaultCurveOptions);
+            var (exists, curve) = createAndConfigureCurve(dataColumn);
 
             if (exists) continue;
 
@@ -675,16 +678,21 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public Curve AddCurveForColumn(DataColumn dataColumn, CurveOptions defaultCurveOptions = null, bool isLinkedDataToSimulation = false)
       {
-         var (exists, curve) = createAndConfigureCurve(dataColumn, defaultCurveOptions);
+         var (exists, curve) = createAndConfigureCurve(dataColumn);
 
          if (exists)
          {
+            // An existing curve that is linked to a simulation curve might need a color update to match the simulation curve
             if (isLinkedDataToSimulation)
-               Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns, isLinkedDataToSimulation: true);
+               updateCurveColorForLinkedData(curve);
             return curve;
          }
 
-         Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns, isLinkedDataToSimulation);
+         Chart.UpdateCurveColorAndStyle(curve, dataColumn, AllDataColumns);
+
+         // override new curve coloring when the curve is linked to a simulation curve
+         if (isLinkedDataToSimulation)
+            updateCurveColorForLinkedData(curve);
 
          if (defaultCurveOptions != null)
             curve.CurveOptions.UpdateFrom(defaultCurveOptions);
@@ -692,8 +700,30 @@ namespace OSPSuite.Presentation.Presenters.Charts
          Chart.AddCurve(curve);
          return curve;
       }
-      
-      private (bool exists, Curve curve) createAndConfigureCurve(DataColumn dataColumn, CurveOptions defaultCurveOptions)
+
+      private void updateCurveColorForLinkedData(Curve curve)
+      {
+         var matchedColor = colorForLinkedCurve(Chart, curve);
+         if (matchedColor.HasValue)
+         {
+            curve.Color = matchedColor.Value;
+         }
+      }
+
+      private static Color? colorForLinkedCurve(CurveChart chart, Curve newCurve)
+      {
+         var compartment = newCurve.yData.BottomCompartment;
+
+         if (string.IsNullOrEmpty(compartment))
+            return null;
+
+         var match = chart.Curves.Where(c => c.yData.IsCalculation())
+            .FirstOrDefault(c => c.yData.BottomCompartment?.Equals(compartment, StringComparison.OrdinalIgnoreCase) == true);
+
+         return match?.Color;
+      }
+
+      private (bool exists, Curve curve) createAndConfigureCurve(DataColumn dataColumn)
       {
          var curve = Chart.FindCurveWithSameData(dataColumn.BaseGrid, dataColumn);
          if (curve != null)

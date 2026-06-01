@@ -3,7 +3,7 @@
 Core functionalities of the Open Systems Pharmacology Suite.
 
 ## Code Status
-[![Build status](https://img.shields.io/github/actions/workflow/status/Open-Systems-Pharmacology/OSPSuite.Core/build-and-publish_12.2.yml?logo=nuget&label=Build%20status)](https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/actions/workflows/build-and-publish_12.2.yml)
+[![Build status](https://img.shields.io/github/actions/workflow/status/Open-Systems-Pharmacology/OSPSuite.Core/build-and-publish_12.3.yml?logo=nuget&label=Build%20status)](https://github.com/Open-Systems-Pharmacology/OSPSuite.Core/actions/workflows/build-and-publish_12.3.yml)
 [![Coverage status](https://codecov.io/gh/Open-Systems-Pharmacology/OSPSuite.Core/branch/develop/graph/badge.svg)](https://codecov.io/gh/Open-Systems-Pharmacology/OSPSuite.Core)
 
 ## Code of conduct

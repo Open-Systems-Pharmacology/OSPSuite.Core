@@ -35,7 +35,8 @@ namespace OSPSuite.Presentation.Mappers
          return new SimulationParameterSelectionDTO(simulation, quantitySelectionDTO, displayString)
          {
             IsFavorite = _favoriteRepository.All().Contains(quantitySelectionDTO.QuantityPath),
-            ValueParameter = _parameterDTOMapper.MapFrom(parameter)
+            ValueParameter = _parameterDTOMapper.MapFrom(parameter),
+            UserDefined = !parameter.IsDefault
          };
       }
    }

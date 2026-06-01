@@ -30,6 +30,8 @@ namespace OSPSuite.Core.Domain.Services
 
       public bool CheckForNegativeValues { get; set; }
 
+      public bool AutoReduceTolerances { get; set; }
+
       public bool TreatConstantMoleculesAsParameters { get; set; } = true;
 
       public SimModelBatch(ISimModelExporter simModelExporter, ISimModelSimulationFactory simModelSimulationFactory, IDataFactory dataFactory) : base(
@@ -64,6 +66,7 @@ namespace OSPSuite.Core.Domain.Services
          var simulation = CreateSimulation(simulationExport, x =>
          {
             x.CheckForNegativeValues = CheckForNegativeValues;
+            x.AutoReduceTolerances = AutoReduceTolerances;
             x.KeepXMLNodeAsString = KeepXMLNodeInSimModelSimulation;
          });
          setVariableParameters(simulation, variableParameterPaths);

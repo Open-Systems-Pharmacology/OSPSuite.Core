@@ -125,6 +125,36 @@ namespace OSPSuite.Core
       }
    }
 
+   public class When_initializing_the_sim_model_batch_with_auto_reduce_tolerances_enabled : concern_for_SimModelBatch
+   {
+      protected override void Because()
+      {
+         sut.AutoReduceTolerances = true;
+         sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths, _variableSpeciesPath);
+      }
+
+      [Observation]
+      public void should_configure_the_simulation_with_auto_reduce_tolerances_enabled()
+      {
+         _simModelSimulation.Options.AutoReduceTolerances.ShouldBeTrue();
+      }
+   }
+
+   public class When_initializing_the_sim_model_batch_with_auto_reduce_tolerances_disabled : concern_for_SimModelBatch
+   {
+      protected override void Because()
+      {
+         sut.AutoReduceTolerances = false;
+         sut.InitializeWith(_modelCoreSimulation, _variableParameterPaths, _variableSpeciesPath);
+      }
+
+      [Observation]
+      public void should_configure_the_simulation_with_auto_reduce_tolerances_disabled()
+      {
+         _simModelSimulation.Options.AutoReduceTolerances.ShouldBeFalse();
+      }
+   }
+
    public class When_exporting_the_sim_model_simulation_to_c_plusplus_code : concern_for_SimModelBatch
    {
       private string _exportFolder;

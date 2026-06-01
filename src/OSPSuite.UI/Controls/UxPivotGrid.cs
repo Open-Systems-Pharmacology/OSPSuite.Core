@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Windows.Forms;
-using OSPSuite.Utility.Extensions;
 using DevExpress.Data.PivotGrid;
 using DevExpress.Utils;
 using DevExpress.Utils.Menu;
@@ -9,6 +8,7 @@ using DevExpress.XtraPivotGrid;
 using OSPSuite.Assets;
 using OSPSuite.UI.Mappers;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Controls
 {
@@ -35,7 +35,7 @@ namespace OSPSuite.UI.Controls
 
       public PivotGridField CreateDataAreaNamed(string name)
       {
-         return new PivotGridField(name, PivotArea.DataArea) {SummaryType = PivotSummaryType.Max};
+         return new PivotGridField(name, PivotArea.DataArea) { SummaryType = PivotSummaryType.Max };
       }
 
       public PivotGridField CreateRowAreaNamed(string name)
@@ -105,8 +105,8 @@ namespace OSPSuite.UI.Controls
          if (e.MenuType != PivotGridMenuType.HeaderArea)
             return;
 
-         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, clickCopySelectionMenuItem) {Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection};
-         var copyAllMenu = new DXMenuItem(Captions.CopyTable, clickCopyTableMenuItem) {Shortcut = Shortcut.CtrlShiftC, SvgImage = ApplicationIcons.Copy };
+         var copySelectionMenu = new DXMenuItem(Captions.CopySelection, clickCopySelectionMenuItem) { Shortcut = Shortcut.CtrlC, SvgImage = ApplicationIcons.CopySelection };
+         var copyAllMenu = new DXMenuItem(Captions.CopyTable, clickCopyTableMenuItem) { Shortcut = Shortcut.CtrlShiftC, SvgImage = ApplicationIcons.Copy };
 
          e.Menu.Items.Clear();
          e.Menu.Items.Insert(0, copySelectionMenu);
@@ -155,6 +155,22 @@ namespace OSPSuite.UI.Controls
       public void SetParameterDisplay(Func<string, string> parameterDisplayFunc)
       {
          _parameterDisplayFunc = parameterDisplayFunc;
+      }
+
+      public int OptimalHeight
+      {
+         get
+         {
+            EnsureViewInfoIsCalculated();
+            var viewInfo = Data.ViewInfo;
+
+            var height = viewInfo.RowAreaFields.Bounds.Height + viewInfo.FilterHeaders.Bounds.Height + viewInfo.RowHeaders.Bounds.Height +
+                         viewInfo.DataHeaders.Bounds.Height;
+
+            if (viewInfo.IsHScrollBarVisible)
+               height += viewInfo.ScrollBarSize.Height;
+            return height;
+         }
       }
    }
 }

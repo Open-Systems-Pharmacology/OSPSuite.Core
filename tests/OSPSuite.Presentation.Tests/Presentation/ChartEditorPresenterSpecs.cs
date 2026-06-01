@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using FakeItEasy;
+using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
@@ -236,6 +237,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void the_curve_options_should_not_have_been_updated_to_the_second_specified_values()
       {
+         // TODO fix me
          _curve.CurveOptions.LineThickness.ShouldBeEqualTo(1);
          _curve.CurveOptions.VisibleInLegend.ShouldBeEqualTo(true);
       }
@@ -521,12 +523,48 @@ namespace OSPSuite.Presentation.Presentation
       }
    }
 
-   public class When_the_chart_editor_presenter_is_notified_that_the_data_is_linked_to_simulation : concern_for_ChartEditorPresenter
+   public class When_the_chart_editor_presenter_is_updating_curves_that_are_linked_to_simulation : concern_for_ChartEditorPresenter
    {
       protected override void Context()
       {
          base.Context();
-         sut.AddCurveForColumn(_standardColumn, isLinkedDataToSimulation: false);
+         var calculationColumn = new DataColumn("Standard", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
+         {
+            DataInfo = new DataInfo(ColumnOrigins.Calculation),
+            BottomCompartment = _bottomCompartment
+         };
+
+         sut.AddCurveForColumn(calculationColumn, isLinkedDataToSimulation: false);
+         sut.AddCurveForColumn(_standardColumn2, isLinkedDataToSimulation: false);
+      }
+
+      protected override void Because()
+      {
+         sut.AddCurveForColumn(_standardColumn2, isLinkedDataToSimulation: true);
+      }
+
+      [Observation]
+      public void should_update_the_curve_with_same_color()
+      {
+         sut.Chart.Curves.Count.ShouldBeEqualTo(2);
+         sut.Chart.Curves.All(x => x.Color == sut.Chart.Curves.First().Color).ShouldBeTrue();
+      }
+   }
+
+   public class When_adding_curves_that_are_linked_to_simulation_curves : concern_for_ChartEditorPresenter
+   {
+      private DataColumn _calculationColumn;
+
+      protected override void Context()
+      {
+         base.Context();
+         _calculationColumn = new DataColumn("Standard", DomainHelperForSpecs.ConcentrationDimensionForSpecs(), _baseGrid)
+         {
+            DataInfo = new DataInfo(ColumnOrigins.Calculation),
+            BottomCompartment = _bottomCompartment
+         };
+
+         sut.AddCurveForColumn(_calculationColumn, isLinkedDataToSimulation: false);
       }
 
       protected override void Because()
@@ -537,8 +575,8 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_add_curve_with_same_color()
       {
-         sut.Chart.Curves.Count().ShouldBeEqualTo(2);
-         sut.Chart.Curves.First().Color.ShouldBeEqualTo(sut.Chart.Curves.ToList()[1].Color);
+         sut.Chart.Curves.Count.ShouldBeEqualTo(2);
+         sut.Chart.Curves.All(x => x.Color == sut.Chart.Curves.First().Color).ShouldBeTrue();
       }
    }
 

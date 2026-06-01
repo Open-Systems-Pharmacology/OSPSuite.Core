@@ -36,6 +36,7 @@ namespace OSPSuite.Core.Domain.Services
       private readonly ISpatialStructureMerger _spatialStructureMerger;
       private readonly IEventBuilderTask _eventBuilderTask;
       private readonly IEntitySourcePathUpdater _entitySourcePathUpdater;
+      private readonly ISimulationQuantityValueWarningTask _simulationQuantityValueWarningTask;
 
       public ModelConstructor(
          IObjectBaseFactory objectBaseFactory,
@@ -56,8 +57,9 @@ namespace OSPSuite.Core.Domain.Services
          IModelCircularReferenceChecker circularReferenceChecker,
          ISpatialStructureMerger spatialStructureMerger,
          IEventBuilderTask eventBuilderTask,
-         IEntitySourcePathUpdater entitySourcePathUpdater
-         )
+         IEntitySourcePathUpdater entitySourcePathUpdater,
+         ISimulationQuantityValueWarningTask simulationQuantityValueWarningTask
+      )
       {
          _objectBaseFactory = objectBaseFactory;
          _simulationConfigurationValidator = simulationConfigurationValidator;
@@ -78,6 +80,7 @@ namespace OSPSuite.Core.Domain.Services
          _calculationMethodTask = calculationMethodTask;
          _eventBuilderTask = eventBuilderTask;
          _entitySourcePathUpdater = entitySourcePathUpdater;
+         _simulationQuantityValueWarningTask = simulationQuantityValueWarningTask;
       }
 
       public CreationResult CreateModelFrom(SimulationConfiguration simulationConfiguration, string modelName)
@@ -108,37 +111,42 @@ namespace OSPSuite.Core.Domain.Services
          if (creationResult.State == ValidationState.Invalid)
             return creationResult;
 
-         finalizeModel(model, simulationBuilder);
+         finalizeModel(model, simulationBuilder, creationResult);
 
          return creationResult;
       }
 
-      private void finalizeModel(IModel model, SimulationBuilder simulationBuilder)
+      private void finalizeModel(IModel model, SimulationBuilder simulationBuilder, CreationResult creationResult)
       {
          _formulaTask.CheckFormulaOriginIn(model);
 
          _formulaTask.ExpandDynamicFormulaIn(model);
 
-         //now we should be able to resolve all references
+         // now we should be able to resolve all references
          _referencesResolver.ResolveReferencesIn(model);
 
-         //This should be done after reference were resolved to ensure that we do not remove formula parameter that could not be evaluated
-         removeUndefinedLocalMoleculeParametersIn(model);
+         // This should be done after reference were resolved to ensure that we do not remove formula parameter that could not be evaluated
+         removeUndefinedLocalMoleculeParametersIn(model, creationResult);
 
-         //now that we have removed potential nan parameters, let's make sure that no formula was actually using them
+         // now that we have removed potential nan parameters, let's make sure that no formula was actually using them
          _referencesResolver.ResolveReferencesIn(model);
 
-         //last, we need to update the path of entity in the EntitySource
+         // We need to update the path of entity in the EntitySource
          _entitySourcePathUpdater.UpdateEntityPaths(model, simulationBuilder);
+
+         // Warn for non-finite (NaN and +/- Infinity) parameter values at t=0
+         _simulationQuantityValueWarningTask.WarnForNonFiniteQuantities(model, creationResult);
       }
 
-      private void removeUndefinedLocalMoleculeParametersIn(IModel model)
+      private void removeUndefinedLocalMoleculeParametersIn(IModel model, CreationResult creationResult)
       {
          var allNaNParametersFromMolecules = model.Root.GetAllChildren<IContainer>()
             .Where(c => c.ContainerType == ContainerType.Molecule)
             .SelectMany(c => c.AllParameters(p => double.IsNaN(p.Value)))
             .Where(x => x.BuildMode == ParameterBuildMode.Local)
             .ToList();
+
+         _simulationQuantityValueWarningTask.WarnForOptimizedLocalMoleculeParameters(allNaNParametersFromMolecules, creationResult);
 
          allNaNParametersFromMolecules.Each(x => x.ParentContainer.RemoveChild(x));
       }
@@ -148,7 +156,7 @@ namespace OSPSuite.Core.Domain.Services
          if (!modelConfiguration.ShouldValidate)
             return new ValidationResult();
 
-         //Validation needs to happen at the very end of the process
+         // Validation needs to happen at the very end of the process
          var reactionAndTransportValidation = validate<ValidatorForReactionsAndTransports>(modelConfiguration);
          var observersAndEventsValidation = validate<ValidatorForObserversAndEvents>(modelConfiguration);
          var modelValidation = validate<ValidatorForQuantities>(modelConfiguration);
@@ -450,11 +458,11 @@ namespace OSPSuite.Core.Domain.Services
          var (model, simulationConfiguration) = modelConfiguration;
          var root = model.Root;
          return from initialCondition in simulationConfiguration.AllPresentMoleculeValues()
-            select new InitialConditionAndContainer
-            {
-               InitialCondition = initialCondition,
-               Container = initialCondition.ContainerPath.Resolve<IContainer>(root)
-            };
+                select new InitialConditionAndContainer
+                {
+                   InitialCondition = initialCondition,
+                   Container = initialCondition.ContainerPath.Resolve<IContainer>(root)
+                };
       }
 
       private class InitialConditionAndContainer

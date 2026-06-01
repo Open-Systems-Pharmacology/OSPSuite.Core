@@ -522,7 +522,7 @@ namespace OSPSuite.R.Services
          _simulation = _simulationPersister.LoadSimulation(HelperForSpecs.DataFile("not_ok_sim.pkml"));
 
          var containerTask = Api.GetContainerTask();
-         containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|skin_compartment|SC_skin_sublayer|comp10_1|layer1|permeant");
+         containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|skin_compartment|SC_skin_sublayer|comp10_1|layer1|permeant", throwIfNotFound: false);
 
          _simulationBatch = new ConcurrentRunSimulationBatch
          (
@@ -571,9 +571,9 @@ namespace OSPSuite.R.Services
          _simulationRunner = Api.GetSimulationRunner();
 
          _containerTask = Api.GetContainerTask();
-         _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Mass_balance_observer");
-         _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Stratum_corneum_observer");
-         _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Vehicle_observer");
+         _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Mass_balance_observer", throwIfNotFound: false);
+         _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Stratum_corneum_observer", throwIfNotFound: false);
+         _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Vehicle_observer", throwIfNotFound: false);
 
          _simulationBatch = new ConcurrentRunSimulationBatch
          (
@@ -632,9 +632,9 @@ namespace OSPSuite.R.Services
          _simulationRunner = Api.GetSimulationRunner();
 
          _containerTask = Api.GetContainerTask();
-         _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Mass_balance_observer");
-         _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Stratum_corneum_observer");
-         _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Vehicle_observer");
+         _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Mass_balance_observer", throwIfNotFound: false);
+         _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Stratum_corneum_observer", throwIfNotFound: false);
+         _containerTask.AddQuantitiesToSimulationOutputByPath(_simulation, "DERMAL_APPLICATION_AREA|permeant|Vehicle_observer", throwIfNotFound: false);
 
          _simulationBatch = new ConcurrentRunSimulationBatch
          (

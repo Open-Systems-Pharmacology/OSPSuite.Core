@@ -42,7 +42,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 
       protected override void Because()
       {
-         sut.Path = _csvFilePath;
+         sut.LoadFromFile(_csvFilePath);
       }
 
       [TestCase]
@@ -123,7 +123,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [Observation]
       public void duplicate_header_file_throws_exception()
       {
-         Assert.Throws<InvalidObservedDataFileException>(() => sut.Path = _csvFilePath);
+         Assert.Throws<InvalidObservedDataFileException>(() => sut.LoadFromFile(_csvFilePath));
       }
    }
 }

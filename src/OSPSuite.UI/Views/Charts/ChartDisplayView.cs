@@ -10,7 +10,6 @@ using DevExpress.XtraBars;
 using DevExpress.XtraCharts;
 using DevExpress.XtraEditors;
 using OSPSuite.Assets;
-using OSPSuite.Core;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Presenters.Charts;
@@ -192,6 +191,8 @@ namespace OSPSuite.UI.Views.Charts
       private void onSizeChanged()
       {
          _presenter?.RefreshAxisBinders();
+         if (_presenter?.Chart != null)
+            _presenter?.UpdateWatermark();
       }
 
       private void chartDoubleClick(MouseEventArgs mouseEventArgs)
@@ -510,7 +511,7 @@ namespace OSPSuite.UI.Views.Charts
          if (!e.HitInfo.InLegend)
          {
             raiseHotTrackAction(e);
-            _toolTipController.ShowHint(generateToolTipForSeriesPoint(series, e.HitInfo.HitPoint));
+            _toolTipController.ShowHint(generateToolTipForSeriesPoint(series, e.HitInfo));
          }
          else
          {
@@ -520,7 +521,7 @@ namespace OSPSuite.UI.Views.Charts
 
       private void raiseHotTrackAction(HotTrackEventArgs e)
       {
-         var seriesPoint = findPointInSeries(e.HitInfo.HitPoint, e.Series());
+         var seriesPoint = findPointInSeries(e.HitInfo, e.Series());
          var dataRowView = seriesPoint.Tag as DataRowView;
          if (dataRowView == null) return;
 
@@ -533,24 +534,24 @@ namespace OSPSuite.UI.Views.Charts
          return ToolTips.ToolTipForLegendEntry(legendText, editable: _curveEditEnabled);
       }
 
-      private string generateToolTipForSeriesPoint(Series series, Point hitPoint)
+      private string generateToolTipForSeriesPoint(Series series, ChartHitInfo hitInfo)
       {
          if (_presenter.IsSeriesLLOQ(series.Name))
-            return generateToolTipForLLOQ(series, hitPoint);
+            return generateToolTipForLLOQ(series, hitInfo);
 
-         return generateToolTipForSeriesDataPoint(series, hitPoint);
+         return generateToolTipForSeriesDataPoint(series, hitInfo);
       }
 
-      private string generateToolTipForLLOQ(Series series, Point hitPoint)
+      private string generateToolTipForLLOQ(Series series, ChartHitInfo hitInfo)
       {
          var legendText = series.LegendText;
-         var lowerLimitOfQuantification = _doubleFormatter.Format(findPointInSeries(hitPoint, series).Values[0]);
+         var lowerLimitOfQuantification = _doubleFormatter.Format(findPointInSeries(hitInfo, series).Values[0]);
          var displayUnit = _presenter.DisplayUnitsFor(series.Name);
 
          return ToolTips.ToolTipForLLOQ(legendText, $"{lowerLimitOfQuantification} {displayUnit}");
       }
 
-      private string generateToolTipForSeriesDataPoint(Series series, Point hitPoint)
+      private string generateToolTipForSeriesDataPoint(Series series, ChartHitInfo hitInfo)
       {
          var seriesView = series.View.DowncastTo<XYDiagramSeriesViewBase>();
          var xAxisTitle = seriesView.AxisX.Title.Text;
@@ -558,7 +559,7 @@ namespace OSPSuite.UI.Views.Charts
          var legendText = series.LegendText;
          var curveDescription = _presenter.CurveDescriptionFromSeriesId(series.Name);
 
-         var nextPoint = findPointInSeries(hitPoint, series);
+         var nextPoint = findPointInSeries(hitInfo, series);
          return ToolTips.ToolTipForSeriesPoint(
             legendText,
             xAxisTitle,
@@ -569,35 +570,31 @@ namespace OSPSuite.UI.Views.Charts
                : null, editable: _curveEditEnabled, description: curveDescription);
       }
 
-      private SeriesPoint findPointInSeries(Point hitPoint, Series series)
+      private SeriesPoint findPointInSeries(ChartHitInfo hitInfo, Series series) =>
+         hitInfo.SeriesPoint ?? findNextClosestSeriesPoint(hitInfo, series);
+
+      private SeriesPoint findNextClosestSeriesPoint(ChartHitInfo hitInfo, Series series)
       {
-         var hitPointCoord = xyDiagram.PointToDiagram(hitPoint);
+         var hitPointCoordinates = xyDiagram.PointToDiagram(hitInfo.HitPoint);
          // find next Point from Series
          var nextPoint = series.Points[0];
          foreach (SeriesPoint point in series.Points)
          {
-            if (Math.Abs(point.NumericalArgument - hitPointCoord.NumericalArgument)
-                < Math.Abs(nextPoint.NumericalArgument - hitPointCoord.NumericalArgument))
+            if (Math.Abs(point.NumericalArgument - hitPointCoordinates.NumericalArgument)
+                < Math.Abs(nextPoint.NumericalArgument - hitPointCoordinates.NumericalArgument))
                nextPoint = point;
          }
 
          return nextPoint;
       }
 
-      private void onObjectSelected(HotTrackEventArgs e)
-      {
+      private void onObjectSelected(HotTrackEventArgs e) =>
          e.Cancel = true;
-      }
 
-      public void SetFontAndSizeSettings(ChartFontAndSizeSettings fontAndSizeSettings)
-      {
+      public void SetFontAndSizeSettings(ChartFontAndSizeSettings fontAndSizeSettings) =>
          _chartControl.SetFontAndSizeSettings(fontAndSizeSettings, _chartControl.Size);
-      }
 
-      public void CopyToClipboard(string watermark)
-      {
-         _chartControl.CopyToClipboard(_presenter.Chart, watermark);
-      }
+      public void CopyToClipboard(string watermark) => _chartControl.CopyToClipboard(_presenter.Chart, watermark);
 
       public void ReOrderLegend()
       {
@@ -611,10 +608,7 @@ namespace OSPSuite.UI.Views.Charts
          _chartControl.Series.AddRange(sortedSeries);
       }
 
-      public void SetNoCurvesSelectedHint(string hint)
-      {
-         _hintControl.Text = hint;
-      }
+      public void SetNoCurvesSelectedHint(string hint) => _hintControl.Text = hint;
 
       public void UpdateSettings(CurveChart chart)
       {
@@ -626,10 +620,7 @@ namespace OSPSuite.UI.Views.Charts
          diagramBackColor = chart.ChartSettings.DiagramBackColor;
       }
 
-      public void ShowWatermark(string watermark)
-      {
-         _chartControl.AddWatermark(watermark, _presenter.Chart);
-      }
+      public void ShowWatermark(string watermark) => _chartControl.AddWatermark(watermark, _presenter.Chart);
 
       public bool ShowOriginText
       {
@@ -647,15 +638,9 @@ namespace OSPSuite.UI.Views.Charts
             _chartControl.Titles.Remove(_previewChartOrigin);
       }
 
-      public void DisableAxisEdit()
-      {
-         _axisEditEnabled = false;
-      }
+      public void DisableAxisEdit() => _axisEditEnabled = false;
 
-      public void DisableAxisHotTracking()
-      {
-         _axisHotTrackingEnabled = false;
-      }
+      public void DisableAxisHotTracking() => _axisHotTrackingEnabled = false;
 
       public object ChartControl => _chartControl;
 
@@ -700,10 +685,7 @@ namespace OSPSuite.UI.Views.Charts
          }
       }
 
-      public void DisableCurveEdit()
-      {
-         _curveEditEnabled = false;
-      }
+      public void DisableCurveEdit() => _curveEditEnabled = false;
 
       public void ShowChart()
       {

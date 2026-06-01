@@ -31,10 +31,10 @@ namespace OSPSuite.Presentation.Presentation
          _entitiesInSimulationRetriever = A.Fake<IEntitiesInSimulationRetriever>();
          _view = A.Fake<ISimulationParametersView>();
          _simulationParameterSelectionDTOMapper = A.Fake<IQuantityToSimulationParameterSelectionDTOMapper>();
-         _groupRepository= A.Fake<IGroupRepository>();
-         _parameterSelector= A.Fake<IParameterAnalysableParameterSelector>();
+         _groupRepository = A.Fake<IGroupRepository>();
+         _parameterSelector = A.Fake<IParameterAnalysableParameterSelector>();
 
-         sut = new SimulationParametersPresenter(_view, _entitiesInSimulationRetriever, _simulationParameterSelectionDTOMapper,_groupRepository, _parameterSelector);
+         sut = new SimulationParametersPresenter(_view, _entitiesInSimulationRetriever, _simulationParameterSelectionDTOMapper, _groupRepository, _parameterSelector);
 
          _allParameters = new PathCacheForSpecs<IParameter>();
          _parameterIdentification = new ParameterIdentification();
@@ -173,13 +173,12 @@ namespace OSPSuite.Presentation.Presentation
          A.CallTo(() => _entitiesInSimulationRetriever.ParametersFrom(_simulation, A<Func<IParameter, bool>>._))
             .Invokes(x => _canEditParameter = x.GetArgument<Func<IParameter, bool>>(1))
             .Returns(_allParameters);
-
       }
 
       [Observation]
       public void should_return_true_for_a_simple_parameter_in_simple_mode_and_false_for_an_advanced_parameter()
       {
-         sut.ParameterGroupingMode = ParameterGroupingModes.Simple;
+         sut.ParameterGroupingMode = ParameterGroupingModesForParameterAnalyzable.Simple;
          _canEditParameter(_parameter1).ShouldBeFalse();
          _canEditParameter(_parameter2).ShouldBeTrue();
       }
@@ -187,20 +186,18 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_return_true_for_a_simple_parameter_and_an_advanced_parameter_in_advanced_mode()
       {
-         sut.ParameterGroupingMode = ParameterGroupingModes.Advanced;
+         sut.ParameterGroupingMode = ParameterGroupingModesForParameterAnalyzable.Advanced;
          _canEditParameter(_parameter1).ShouldBeTrue();
          _canEditParameter(_parameter2).ShouldBeTrue();
       }
    }
 
-
    public class When_retrieving_the_available_grouping_mode_for_the_parameter_identification_simulation_parameters_presenter : concern_for_SimulationParametersPresenter
    {
       [Observation]
-      public void should_return_the_execpted_mode()
+      public void should_return_the_expected_mode()
       {
-         sut.AllGroupingModes.ShouldOnlyContainInOrder(ParameterGroupingModes.Simple, ParameterGroupingModes.Advanced);
+         sut.AllGroupingModes.ShouldOnlyContainInOrder(ParameterGroupingModesForParameterAnalyzable.Simple, ParameterGroupingModesForParameterAnalyzable.Advanced);
       }
    }
-
 }

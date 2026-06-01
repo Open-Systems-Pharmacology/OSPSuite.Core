@@ -224,7 +224,7 @@ namespace OSPSuite.Core.Domain.Formulas
             if (existingPoint.Y == point.Y)
                return index;
 
-            throw new ValuePointAlreadyExistsForPointException(point);
+            throw new ValuePointAlreadyExistsForPointException(existingPoint);
          }
 
          //does not exist

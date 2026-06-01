@@ -25,10 +25,8 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       {
          workManager = new HeavyWorkManagerForSpecs();
 
-         sut = new ExcelDataSourceFile(A.Fake<IImportLogger>(), workManager)
-         {
-            Path = _excelFilePath
-         };
+         sut = new ExcelDataSourceFile(A.Fake<IImportLogger>(), workManager);
+         sut.LoadFromFile(_excelFilePath);
       }
 
       public override void GlobalContext()
@@ -43,7 +41,7 @@ namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
       [TestCase]
       public void headers_are_adjusted_on_empty_columns()
       {
-         sut.Path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "sample2.xlsx");
+         sut.LoadFromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "sample2.xlsx"));
          var columns = sut.DataSheets.ElementAt(0).GetHeaders();
          columns.Count().ShouldBeEqualTo(4);
          for (var i = 0; i < 4; i++)

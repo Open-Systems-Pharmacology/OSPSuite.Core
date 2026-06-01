@@ -12,7 +12,7 @@ namespace OSPSuite.Infrastructure.Import.Core
    /// </summary>
    public interface IDataSourceFile
    {
-      string Path { get; set; }
+      string Path { get; }
       IDataFormat Format { get; set; }
 
       IList<IDataFormat> AvailableFormats { get; set; }
@@ -22,6 +22,11 @@ namespace OSPSuite.Infrastructure.Import.Core
       //as active when initialized
       string FormatCalculatedFrom { get; set; }
       DataSheetCollection DataSheets { get; }
+
+      /// <summary>
+      ///    Loads the file at <paramref name="path" /> into the data source.
+      /// </summary>
+      void LoadFromFile(string path);
    }
 
    public abstract class DataSourceFile : IDataSourceFile
@@ -52,29 +57,31 @@ namespace OSPSuite.Infrastructure.Import.Core
          _heavyWorkManager = heavyWorkManager;
       }
 
-      private string _path;
+      public string Path { get; private set; }
 
-      public string Path
+      protected abstract void DoLoadWork(string path, CancellationToken cancellationToken = default);
+
+      public virtual void LoadFromFile(string path)
       {
-         get => _path;
-         set
-         {
-            _path = value;
-            var cts = new CancellationTokenSource();
-            _heavyWorkManager.Start(() =>
-            {
-               try
-               {
-                  LoadFromFile(_path, cts.Token);
-               }
-               catch (OperationCanceledException)
-               {
-                  //Nothing to do, just not throw exception.
-               }
-            }, "Importing data...", cts);
-         }
+         
+         var cts = new CancellationTokenSource();
+         if(heavyWorkSucceeds(path, cts))
+            Path = path;
       }
 
-      protected abstract void LoadFromFile(string path, CancellationToken cancellationToken = default);
+      private bool heavyWorkSucceeds(string path, CancellationTokenSource cts)
+      {
+         return _heavyWorkManager.Start(() =>
+         {
+            try
+            {
+               DoLoadWork(path, cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+               //Nothing to do, just not throw exception.
+            }
+         }, "Importing data...", cts);
+      }
    }
 }

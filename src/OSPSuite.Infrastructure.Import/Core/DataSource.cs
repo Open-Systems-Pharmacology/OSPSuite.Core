@@ -1,12 +1,11 @@
-﻿using OSPSuite.Core.Domain;
+﻿using System.Collections.Generic;
+using System.Linq;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Core.Import;
 using OSPSuite.Infrastructure.Import.Core.Exceptions;
 using OSPSuite.Infrastructure.Import.Services;
 using OSPSuite.Utility.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using static Org.BouncyCastle.Bcpg.Attr.ImageAttrib;
 
 namespace OSPSuite.Infrastructure.Import.Core
 {
@@ -60,7 +59,6 @@ namespace OSPSuite.Infrastructure.Import.Core
       ImportedDataSet ImportedDataSetAt(int index);
       IDataSet DataSetAt(int index);
       ParseErrors ValidateDataSourceUnits(ColumnInfoCache columnInfos);
-      
    }
 
    public class DataSource : IDataSource
@@ -87,11 +85,11 @@ namespace OSPSuite.Infrastructure.Import.Core
       }
 
       public NanSettings NanSettings { get; set; }
-      
+
       public ParseErrors AddSheets(DataSheetCollection dataSheets, ColumnInfoCache columnInfos, string filter)
       {
          _importer.AddFromFile(_configuration.Format, dataSheets.Filter(filter), columnInfos, this);
-         
+
          if (NanSettings == null || !double.TryParse(NanSettings.Indicator, out var indicator))
             indicator = double.NaN;
          var errors = new ParseErrors();

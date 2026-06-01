@@ -6,6 +6,7 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Import;
+using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Infrastructure.Import.Core.Mappers
@@ -78,6 +79,9 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
 
          var dimension = columnAndData.Key.Column.Dimension ?? columnAndData.Key.ColumnInfo.DimensionForUnit(unitName);
 
+         if (dimension == null)
+            throw new OSPSuiteException(Error.DimensionCannotBeDeterminedFor(sheetName, columnAndData.Key.ColumnInfo.Name));
+
          if (columnAndData.Key.ColumnInfo.IsBase)
             dataColumn = new BaseGrid(columnAndData.Key.ColumnInfo.Name, dimension);
          else
@@ -128,15 +132,7 @@ namespace OSPSuite.Infrastructure.Import.Core.Mappers
             dataInfo.LLOQ =
                Convert.ToSingle(dimension?.UnitValueToBaseUnitValue(dimension.FindUnit(lloqValue.Unit, ignoreCase: true), lloqValue.Lloq));
 
-         try
-         {
-            dataColumn.Values = values;
-         }
-         catch (TimeNotStrictlyMonotoneException ex)
-         {
-            // Catch and throw to add the sheet name
-            throw new TimeNotStrictlyMonotoneException(ex, sheetName);
-         }
+         dataColumn.Values = values;
 
          var propInfo = dataInfo.GetType().GetProperty(Constants.AUXILIARY_TYPE);
          var errorType = AuxiliaryType.Undefined;

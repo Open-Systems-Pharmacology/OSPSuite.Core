@@ -77,7 +77,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          ISourceFilePresenter sourceFilePresenter,
          IDialogCreator dialogCreator,
          IPKMLPersistor pkmlPersistor,
-         IDimensionMappingPresenter dimensionMappingPresenter, 
+         IDimensionMappingPresenter dimensionMappingPresenter,
          IDataSourceToDimensionSelectionDTOMapper dataSourceToDimensionSelectionDTOMapper) : base(view)
       {
          _importerDataPresenter = importerDataPresenter;
@@ -130,19 +130,8 @@ namespace OSPSuite.Presentation.Presenters.Importer
 
       private void plotDataSet(object sender, DataSetSelectedEventArgs e)
       {
-         try
-         {
-            var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.ImportedDataSetAt(e.Index));
-            _previewPresenter.PlotDataRepository(dataRepository.DataRepository);
-         }
-         catch (TimeNotStrictlyMonotoneException timeNonMonotoneException)
-         {
-            var errors = new ParseErrors();
-            errors.Add(_dataSource.DataSetAt(e.Index),
-               new NonMonotonicalTimeParseErrorDescription(Error.ErrorWhenPlottingDataRepository(e.Index, timeNonMonotoneException.Message)));
-            _importerDataPresenter.SetTabMarks(errors);
-            _previewPresenter.SetViewingStateToError(timeNonMonotoneException.Message);
-         }
+         var dataRepository = _dataRepositoryMapper.ConvertImportDataSet(_dataSource.ImportedDataSetAt(e.Index));
+         _previewPresenter.PlotDataRepository(dataRepository.DataRepository);
       }
 
       public void SetSettings(IReadOnlyList<MetaDataCategory> metaDataCategories, ColumnInfoCache columnInfos,
@@ -250,7 +239,7 @@ namespace OSPSuite.Presentation.Presenters.Importer
          _dataSource.SetDataFormat(_columnMappingPresenter.GetDataFormat());
 
          var errors = _dataSource.AddSheets(sheets, _columnInfos, filter);
-         
+
          var dimensionDTOs = _dataSourceToDimensionSelectionDTOMapper.MapFrom(_dataSource, sheetNames);
 
          var ambiguousDimensionDTOs = dimensionDTOs.Where(x => x.Dimensions.Count > 1).ToList();

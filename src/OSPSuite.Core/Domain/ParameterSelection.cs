@@ -18,10 +18,15 @@ namespace OSPSuite.Core.Domain
       }
 
       public virtual IParameter Parameter => Quantity as IParameter;
-      
+
       public new ParameterSelection Clone()
       {
-         return new ParameterSelection(Simulation, QuantitySelection.Clone());
+         return new ParameterSelection(Simulation, QuantitySelection.Clone())
+         {
+            InitialValue = InitialValue
+         };
       }
+
+      public double? InitialValue { get; set; }
    }
 }

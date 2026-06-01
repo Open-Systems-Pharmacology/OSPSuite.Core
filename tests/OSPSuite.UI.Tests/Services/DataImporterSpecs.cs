@@ -229,4 +229,34 @@ namespace OSPSuite.UI.Services
          _result.DataSetsToBeDeleted.Any(x => x.Name == "repo2").ShouldBeTrue();
       }
    }
+
+   public class When_reloading_configuration_but_no_data_sets_were_imported : concern_for_DataImporter
+   {
+      private ReloadDataSets _result;
+
+      protected override void Context()
+      {
+         base.Context();
+         _dataSetsToImport = new List<DataRepository>();
+      }
+
+      protected override void Because()
+      {
+         _result = sut.CalculateReloadDataSetsFromConfiguration(_dataSetsToImport, _existingDataSets);
+      }
+
+      [Test]
+      public void should_return_empty_reload_result()
+      {
+         _result.DataSetsToBeDeleted.Count().ShouldBeEqualTo(0);
+         _result.NewDataSets.Count().ShouldBeEqualTo(0);
+         _result.OverwrittenDataSets.Count().ShouldBeEqualTo(0);
+      }
+
+      [Test]
+      public void should_not_show_the_reload_dialog()
+      {
+         A.CallTo(() => _applicationController.Start<IImporterReloadPresenter>()).MustNotHaveHappened();
+      }
+   }
 }

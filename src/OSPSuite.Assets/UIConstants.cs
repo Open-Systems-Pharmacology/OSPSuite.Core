@@ -235,6 +235,9 @@ namespace OSPSuite.Assets
       public static readonly string ApplyChangesToUpdateChart = "Apply changes to update chart";
       public static readonly string ApplyUpdates = "Apply updates";
       public static readonly string AutoUpdateChart = "Auto-update chart";
+      public static readonly string Undefined = "Undefined";
+      public static readonly string ExportHistory = "Export History";
+      public static readonly string AddOutputPath = "Add Output Path";
 
       public static string EditTableParameter(string parameter, bool editable) => $"{(editable ? "Edit" : "Show")} table parameter '{parameter}'";
 
@@ -666,6 +669,7 @@ namespace OSPSuite.Assets
          public static readonly string Rollback = "Rollback";
          public static readonly string ExtendedDescription = "Extended Description";
          public static readonly string ClearHistory = "Clear History";
+         public static readonly string ExportHistory = "Export...";
 
          public static string CommentViewCaption(int historyItemState) => $"Edit comments for state '{historyItemState}' ...";
       }
@@ -1061,8 +1065,8 @@ namespace OSPSuite.Assets
 
          public static string SensitivityCalculationFailed(string parameterIdentificationName, IReadOnlyList<string> errorMessages, string duration = null)
          {
-            return string.IsNullOrEmpty(duration) ? 
-               $"Parameter identification '{parameterIdentificationName}' finished but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}" : 
+            return string.IsNullOrEmpty(duration) ?
+               $"Parameter identification '{parameterIdentificationName}' finished but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}" :
                $"Parameter identification '{parameterIdentificationName}' finished in {duration} but sensitivity calculation failed.\n\n {string.Join("\n\n", errorMessages)}";
          }
 
@@ -1265,13 +1269,13 @@ namespace OSPSuite.Assets
          {
             var sb = new StringBuilder();
             sb.AppendLine();
-            
+
             failedPKParameterCalculations.Each(x =>
             {
                sb.Append(" - ");
                sb.AppendLine(x);
             });
-            
+
             return sb.ToString();
          }
 
@@ -1338,7 +1342,7 @@ namespace OSPSuite.Assets
                stringBuilder.AppendLine();
                stringBuilder.AppendLine();
             });
-            
+
             return stringBuilder.ToString();
          }
       }
@@ -1429,7 +1433,7 @@ namespace OSPSuite.Assets
             public static string Time = "Time";
             public static string Observation = "Observation";
             public static string DeviationLine = "Deviation Lines";
-            public static string Undefined = "Undefined"; 
+            public static string Undefined = "Undefined";
          }
 
          public static class DeviationLines
@@ -1447,9 +1451,9 @@ namespace OSPSuite.Assets
       private static string projectNameAndVersionAsString(string versionDisplay, int version) => $"V{versionDisplay} {numberDisplay(version)}";
 
       public static string ProjectVersionCannotBeLoaded(
-         int projectVersion, 
-         string oldestSupportedDisplayVersion, 
-         int oldestSupportedVersion, 
+         int projectVersion,
+         string oldestSupportedDisplayVersion,
+         int oldestSupportedVersion,
          string currentSupportedDisplayVersion,
          int currentSupportedVersion,
          string downloadUrl)
@@ -1502,10 +1506,10 @@ namespace OSPSuite.Assets
       public static readonly string FoldValueMustBeGreaterThanOne = "Fold value must be a number greater than one.";
       public static readonly string ImporterEmptyFile = "The file you are trying to load is empty.";
 
-      public static string CannotFindParentContainerWithPath(string parentPath, string containerName, string buildingBlockName, string moduleName) => 
+      public static string CannotFindParentContainerWithPath(string parentPath, string containerName, string buildingBlockName, string moduleName) =>
          $"Cannot find parent container '{parentPath}' defined as target of container '{containerName}' in building block '{buildingBlockName}' in module '{moduleName}'";
 
-      public static  string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
+      public static string NoUnitColumnValues(string mappingName) => $"No values for the unit were found in the excel column mapped for '{mappingName}' \n";
 
       public static string ParseErrorMessage(string errors) => $"There were errors while parsing your data: {errors}";
 
@@ -1584,7 +1588,7 @@ namespace OSPSuite.Assets
 
       public static string NameAlreadyExistsInContainerType(string name, string containerType)
       {
-         if(string.IsNullOrEmpty(containerType))
+         if (string.IsNullOrEmpty(containerType))
             return NameAlreadyExists(name);
 
          return $"'{name}' already exists in {containerType}.";
@@ -1893,11 +1897,11 @@ namespace OSPSuite.Assets
 
       public static string UnitIsNotDefinedInDimension(string unit, string dimension) => $"Unit '{unit}' is not defined in dimension '{dimension}'.";
 
-      public static string CouldNotFindNeighborhoodBetween(string container1, string container2, string formulaName, string usingFormulaPath) => 
+      public static string CouldNotFindNeighborhoodBetween(string container1, string container2, string formulaName, string usingFormulaPath) =>
          $"Could not find neighborhood between '{container1}' and '{container2}' referenced by formula '{formulaName}' used by '{usingFormulaPath}'";
 
       public static string FirstNeighborNotDefinedFor(string neighborhoodName) => $"First neighbor is undefined for neighborhood '{neighborhoodName}'";
-      
+
       public static string SecondNeighborNotDefinedFor(string neighborhoodName) => $"Second neighbor is undefined for neighborhood '{neighborhoodName}'";
 
       public const string InParentTagCanOnlyBeUsedWithAndOperator = "IN PARENT tag can only be used with AND operator";
@@ -2205,6 +2209,10 @@ namespace OSPSuite.Assets
       public static string NeighborhoodWasNotFoundInModel(string neighborhoodName, string buildingBlockName) => $"The neighborhood '{neighborhoodName}' from building block '{buildingBlockName}' was not added to the simulation";
 
       public static string ExpressionMoleculeNotFoundInSimulation(string moleculeName) => $"The molecule '{moleculeName}' is not part of the simulation structure";
+
+      public static string RemovedParameterDueToNanAtTimeZero(string pathForRemovedParameter) => $"The parameter '{pathForRemovedParameter}' was removed because it evaluates to NaN at time t=0";
+      public static string QuantityIsNanAtTimeZero(string pathForNanQuantity, string quantityType) => $"The {quantityType} with path '{pathForNanQuantity}' is NaN at time t=0";
+      public static string QuantityIsInfinityAtTimeZero(string pathForInfinityQuantity, string quantityType) => $"The {quantityType} with path '{pathForInfinityQuantity}' is infinite at time t=0";
    }
 
    public static class RibbonCategories
@@ -2582,6 +2590,7 @@ namespace OSPSuite.Assets
       public static readonly string ClearHistory = "Clear the project history. This action is irreversible";
       public static readonly string UseDerivedValues = "If checked, the first derivative of the entered table values is used";
       public static readonly string RestartSolver = "Select to mark solver restart at t=X. Increases numerical accuracy  but may reduce solver speed";
+      public static readonly string ExportHistory = "Export the project history to Excel or CSV file";
 
       public static string ToolTipForLLOQ(string seriesName, string lloq)
       {

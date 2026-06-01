@@ -14,27 +14,33 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
    public class CsvDataSourceFile : DataSourceFile, ICsvDataSourceFile
    {
       private readonly ICsvSeparatorSelector _csvSeparatorSelector;
+      private CSVSeparators _csvSeparators;
 
       public CsvDataSourceFile(IImportLogger logger, ICsvSeparatorSelector csvSeparatorSelector, IHeavyWorkManager heavyWorkManager) : base(logger, heavyWorkManager)
       {
          _csvSeparatorSelector = csvSeparatorSelector;
       }
 
-      protected override void LoadFromFile(string path, CancellationToken c)
+      public override void LoadFromFile(string path)
       {
-         var csvSeparators = _csvSeparatorSelector.GetCsvSeparator(path);
+         _csvSeparators = _csvSeparatorSelector.GetCsvSeparator(path);
 
          //if separator selection dialog was cancelled, abort
-         if (csvSeparators == null)
+         if (_csvSeparators == null)
             return;
 
+         base.LoadFromFile(path);
+      }
+      
+      protected override void DoLoadWork(string path, CancellationToken cancellationToken = default)
+      {
          //we keep a copy of the already loaded sheets, in case the reading fails
          var alreadyLoadedDataSheets = DataSheets.Clone();
          DataSheets.Clear();
 
          try
          {
-            using (var reader = new CsvReaderDisposer(path, csvSeparators.ColumnSeparator))
+            using (var reader = new CsvReaderFromFile(path, _csvSeparators.ColumnSeparator))
             {
                var csv = reader.Csv;
                var headers = csv.GetFieldHeaders();
@@ -52,7 +58,7 @@ namespace OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders
                {
                   csv.CopyCurrentRecordTo(currentRow);
                   var currentCultureDecimalSeparator = Convert.ToChar(Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator);
-                  var rowList = currentRow.Select(x => x.Replace(csvSeparators.DecimalSeparator, currentCultureDecimalSeparator)).ToList();
+                  var rowList = currentRow.Select(x => x.Replace(_csvSeparators.DecimalSeparator, currentCultureDecimalSeparator)).ToList();
                   var levels = getMeasurementLevels(rowList);
                   dataSheet.CalculateColumnDescription(levels);
                   dataSheet.AddRow(rowList);
