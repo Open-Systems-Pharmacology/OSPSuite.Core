@@ -33,10 +33,5 @@ namespace OSPSuite.Presentation.Nodes
       {
          childrenNodes.Each(parentNode.AddChild);
       }
-
-      public static bool HasParentNode(this ITreeNode node)
-      {
-         return (node.ParentNode != null);
-      }
    }
 }

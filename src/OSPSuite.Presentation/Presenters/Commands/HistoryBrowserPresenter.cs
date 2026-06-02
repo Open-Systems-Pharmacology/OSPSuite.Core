@@ -24,11 +24,6 @@ namespace OSPSuite.Presentation.Presenters.Commands
       void UpdateHistory();
 
       /// <summary>
-      ///    Adjust column width
-      /// </summary>
-      void BestFitColumns();
-
-      /// <summary>
       ///    Performs a roll back to the given state
       /// </summary>
       void RollBack(int state);
@@ -230,11 +225,6 @@ namespace OSPSuite.Presentation.Presenters.Commands
          var allhistoryItemsDTO = reversedHistory.MapAllUsing(_mapper).Where(dto => !dto.IsAnImplementationOf<NullHistoryItemDTO>());
          _historyItemDtoList = _historyItemDTOListMapper.MapFrom(allhistoryItemsDTO);
          View.BindTo(_historyItemDtoList);
-      }
-
-      public void BestFitColumns()
-      {
-         View.BestFitColumns();
       }
 
       public void ExportHistory()

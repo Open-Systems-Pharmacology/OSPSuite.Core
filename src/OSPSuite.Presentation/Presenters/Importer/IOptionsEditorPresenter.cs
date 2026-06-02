@@ -10,7 +10,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
    public interface IOptionsEditorPresenter : IDisposablePresenter
    {
       void SetOptions(IReadOnlyDictionary<string, IEnumerable<string>> options, string selected = null);
-      void Clear();
       int SelectedIndex { get; }
       string SelectedText { get; }
 
@@ -32,11 +31,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       public int SelectedIndex { get; private set; }
       public string SelectedText { get; private set; }
 
-      public void Clear()
-      {
-         View.Clear();
-      }
-
       private void optionsChanged( int selectedIndex, string selectedText)
       {
          SelectedIndex = selectedIndex; 
@@ -55,7 +49,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
    public interface IOptionsEditorView : IView<IOptionsEditorPresenter>
    {
       void SetOptions(IReadOnlyDictionary<string, IEnumerable<string>> options, string selected = null);
-      void Clear();
       event EventHandler<OptionChangedEventArgs> OnOptionChanged;
    }
 }

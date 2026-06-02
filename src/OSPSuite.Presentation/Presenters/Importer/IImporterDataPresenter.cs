@@ -63,7 +63,6 @@ namespace OSPSuite.Presentation.Presenters.Importer
       void GetFormatBasedOnCurrentSheet();
       void ResetLoadedSheets();
       void SetTabMarks(ParseErrors errors, Cache<string, IDataSet> loadedDataSets);
-      void SetTabMarks(ParseErrors errors);
       DataSheetCollection ImportedSheets { get; set; }
    }
 

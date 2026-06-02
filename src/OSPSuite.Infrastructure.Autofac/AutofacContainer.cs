@@ -153,10 +153,5 @@ namespace OSPSuite.Infrastructure.Container.Autofac
       {
          return new AutofacBuilderDisposer(this);
       }
-
-      public void AddActivationHook<T>() where T: IAutofacActivationHook, new()
-      {
-         _activationHooks.Add(new T());
-      }
    }
 }

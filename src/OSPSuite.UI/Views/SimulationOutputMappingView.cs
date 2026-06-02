@@ -62,11 +62,6 @@ namespace OSPSuite.UI.Views
          _gridViewBinder.BindToSource(outputMappingList);
       }
 
-      public void RefreshGrid()
-      {
-         gridView.RefreshData();
-      }
-
       public override void InitializeBinding()
       {
          base.InitializeBinding();

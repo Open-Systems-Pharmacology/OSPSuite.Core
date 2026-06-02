@@ -19,11 +19,6 @@ namespace OSPSuite.UI.Extensions
          FillComboBoxRepositoryWith(comboBoxEdit.Properties, listToAddToComboBoxRepository);
       }
 
-      public static void FillImageComboBoxEditorWith<T>(this BaseEdit activeEditor, IEnumerable<T> listToAddToComboBoxRepository, Func<T, int> imageIndexFor)
-      {
-         activeEditor.FillImageComboBoxEditorWith(listToAddToComboBoxRepository, imageIndexFor, x => x.ToString());
-      }
-
       public static void FillImageComboBoxEditorWith<T>(this BaseEdit activeEditor, IEnumerable<T> listToAddToComboBoxRepository, Func<T, int> imageIndexFor, Func<T, string> displayNames)
       {
          var imageComboBoxEdit = activeEditor as ImageComboBoxEdit;
@@ -40,17 +35,6 @@ namespace OSPSuite.UI.Extensions
       {
          repositoryItemImageComboBox.Items.Clear();
          listToAddToComboBoxRepository.Each(item => repositoryItemImageComboBox.Items.Add(new ImageComboBoxItem(displayNames(item), item, imageIndexFor(item))));
-      }
-
-      public static UxRepositoryItemImageComboBox FillImageComboBoxRepositoryWith<T>(this UxRepositoryItemImageComboBox repositoryItemImageComboBox, IEnumerable<T> listToAddToComboBoxRepository, Func<T, ApplicationIcon> iconFor)
-      {
-         return FillImageComboBoxRepositoryWith(repositoryItemImageComboBox, listToAddToComboBoxRepository, iconFor, x => x.ToString());
-      }
-
-      public static UxRepositoryItemImageComboBox FillImageComboBoxRepositoryWith<T>(this UxRepositoryItemImageComboBox repositoryItemImageComboBox, IEnumerable<T> listToAddToComboBoxRepository, Func<T, ApplicationIcon> iconFor, Func<T, string> displayFunc)
-      {
-         listToAddToComboBoxRepository.Each(item => { repositoryItemImageComboBox.AddItem(item, iconFor(item)); });
-         return repositoryItemImageComboBox;
       }
 
       public static void FillComboBoxRepositoryWith<T>(this RepositoryItemComboBox repositoryItemComboBox, IEnumerable<T> listToAddToComboBoxRepository)

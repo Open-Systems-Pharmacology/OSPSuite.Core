@@ -124,11 +124,6 @@ namespace OSPSuite.UI.Views
          this.DoWithinWaitCursor(() => _presenter.NodeDoubleClicked(node));
       }
 
-      public void Display()
-      {
-         //nothing to do
-      }
-
       public IUxTreeView TreeView => treeView;
 
       public virtual ITreeNode AddNode(ITreeNode nodeToAdd)

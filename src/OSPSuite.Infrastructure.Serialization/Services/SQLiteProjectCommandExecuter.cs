@@ -17,14 +17,4 @@ public class SQLiteProjectCommandExecuter
          command(sqlLite);
       }
    }
-
-   public virtual TResult ExecuteCommand<TResult>(string projectFile, Func<DbConnection, TResult> command)
-   {
-      string file = projectFile.ToUNCPath();
-      using (var sqlLite = new SqliteConnection(ConnectionStringHelper.ConnectionStringFor(file)))
-      {
-         sqlLite.Open();
-         return command(sqlLite);
-      }
-   }
 }

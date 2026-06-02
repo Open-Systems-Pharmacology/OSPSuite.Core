@@ -7,13 +7,11 @@ namespace OSPSuite.Presentation.Views.Commands
    {
       void AttachPresenter(IHistoryBrowserPresenter presenter);
       void BindTo(IHistoryItemDTOList historyItems);
-      void Unbind();
       void AddColumn(ColumnProperties columnToAdd);
       void RefreshView();
       void Clear();
       bool EnableFiltering { set; }
       bool EnableAutoFilterRow { set; }
       void UpdateColumnPosition();
-      void BestFitColumns();
    }
 }

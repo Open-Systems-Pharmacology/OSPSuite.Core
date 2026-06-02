@@ -54,12 +54,6 @@ namespace OSPSuite.Presentation.Settings
          return this;
       }
 
-      public GridColumnSettings WithSortColumnName(string sortColumnName)
-      {
-         SortColumnName = sortColumnName;
-         return this;
-      }
-
       public bool Visible
       {
          get => _visible;

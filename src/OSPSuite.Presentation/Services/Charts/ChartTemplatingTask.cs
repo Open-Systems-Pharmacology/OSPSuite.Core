@@ -44,11 +44,6 @@ namespace OSPSuite.Presentation.Services.Charts
       CurveChartTemplate LoadTemplateFromFile(string filePath, IReadOnlyList<CurveChartTemplate> existingTemplates);
 
       /// <summary>
-      ///    Returns the serialized chart from <paramref name="chart" />
-      /// </summary>
-      string TemplateStringFrom(CurveChart chart);
-
-      /// <summary>
       /// Initializes the given <paramref name="chart"/> from the <paramref name="template"/>.
       /// </summary>
       /// <param name="chart">Chart to initialize</param>
@@ -65,11 +60,6 @@ namespace OSPSuite.Presentation.Services.Charts
       ///    if the <paramref name="chart" /> does not have any curve.
       /// </summary>
       CurveChartTemplate TemplateFrom(CurveChart chart, bool validateTemplate = true);
-
-      /// <summary>
-      ///    Returns the deserialized chart from <paramref name="serializedChart" />
-      /// </summary>
-      CurveChartTemplate TemplateFrom(string serializedChart);
 
       /// <summary>
       ///    Returns a template based on the given <paramref name="chart" />. The user will be asked to enter a unique name for
@@ -242,10 +232,6 @@ namespace OSPSuite.Presentation.Services.Charts
       public abstract ICommand AddChartTemplateCommand(CurveChartTemplate template, IWithChartTemplates withChartTemplates);
 
       public abstract ICommand UpdateChartTemplateCommand(CurveChartTemplate template, IWithChartTemplates withChartTemplates, string templateName);
-
-      public string TemplateStringFrom(CurveChart chart) => _chartTemplatePersistor.SerializeAsStringBasedOn(chart);
-
-      public CurveChartTemplate TemplateFrom(string serializedChart) => _chartTemplatePersistor.DeserializeFromString(serializedChart);
 
       public CurveChartTemplate TemplateFrom(CurveChart chart, bool validateTemplate = true)
       {

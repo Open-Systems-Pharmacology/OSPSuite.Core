@@ -107,11 +107,6 @@ namespace OSPSuite.UI.Views.Journal
          _journalDiagramPresenter = presenter;
       }
 
-      public void RefreshDiagram()
-      {
-         _goView.Refresh();
-      }
-
       public void RemoveSelectionHandles()
       {
          _goView.Selection.RemoveAllSelectionHandles();

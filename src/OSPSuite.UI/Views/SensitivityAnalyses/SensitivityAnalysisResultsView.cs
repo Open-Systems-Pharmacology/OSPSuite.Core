@@ -106,11 +106,6 @@ namespace OSPSuite.UI.Views.SensitivityAnalyses
          pivotGrid.DataSource = dataTable;
       }
 
-      public DataTable GetSummaryData()
-      {
-         return pivotGrid.GetCellsSummary();
-      }
-
       public void ShowErrors(IReadOnlyList<string> errorMessages)
       {
          showResult = false;

@@ -62,10 +62,5 @@ namespace OSPSuite.UI.Extensions
          return longName;
       }
 
-      public static string GetLongNameId(this IBaseNode baseNode)
-      {
-         return GetLongName(baseNode) + "[" + baseNode.Id + "]"; ;
-      }
-
    }
 }

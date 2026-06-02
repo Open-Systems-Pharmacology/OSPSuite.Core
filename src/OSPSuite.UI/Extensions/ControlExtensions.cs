@@ -80,20 +80,6 @@ namespace OSPSuite.UI.Extensions
          control.Controls.Clear();
       }
 
-
-      public static void DoWithinSuspendedLayout(this Control control, Action actionToBatch)
-      {
-         try
-         {
-            control.SuspendLayout();
-            actionToBatch();
-         }
-         finally
-         {
-            control.ResumeLayout();
-         }
-      }
-
       public static void DoWithinWaitCursor(this Control control, Action actionToPerform)
       {
          var currentCursor = control.Cursor;

@@ -25,14 +25,6 @@ namespace OSPSuite.Infrastructure.Import.Core.Exceptions
       }
    }
 
-   public class NoUnitColumnValues : ParseErrorDescription
-   {
-      public NoUnitColumnValues(string mappingName)
-      {
-         Message = Error.NoUnitColumnValues(mappingName);
-      }
-   }
-
    public class NaNParseErrorDescription : ParseErrorDescription
    {
       public NaNParseErrorDescription()
@@ -46,14 +38,6 @@ namespace OSPSuite.Infrastructure.Import.Core.Exceptions
       public MismatchingArrayLengthsParseErrorDescription()
       {
          Message = Error.MismatchingArrayLengths;
-      }
-   }
-
-   public class InvalidMappingColumnParseErrorDescription : ParseErrorDescription
-   {
-      public InvalidMappingColumnParseErrorDescription()
-      {
-         Message = Error.InvalidMappingColumn;
       }
    }
 
@@ -81,11 +65,4 @@ namespace OSPSuite.Infrastructure.Import.Core.Exceptions
       }
    }
 
-   public class NonMonotonicalTimeParseErrorDescription : ParseErrorDescription
-   {
-      public NonMonotonicalTimeParseErrorDescription(string message)
-      {
-         Message = message;
-      }
-   }
 }

@@ -16,7 +16,6 @@ namespace OSPSuite.Presentation.Presenters.Journal
 
    {
       void Display();
-      void Edit(JournalPage journalPage);
       void FormClosing(Point location, Size size);
    }
 
@@ -64,11 +63,6 @@ namespace OSPSuite.Presentation.Presenters.Journal
       private void save()
       {
          _journalPageEditorPresenter.Save();
-      }
-
-      public void Edit(JournalPage journalPage)
-      {
-         _journalPageEditorPresenter.Edit(journalPage);
       }
 
       public void Handle(EditJournalPageStartedEvent eventToHandle)

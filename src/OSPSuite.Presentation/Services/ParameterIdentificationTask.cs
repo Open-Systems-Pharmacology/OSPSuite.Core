@@ -218,8 +218,6 @@ namespace OSPSuite.Presentation.Services
          return CreateParameterIdentificationBasedOn(Enumerable.Empty<IParameter>());
       }
 
-      public IEnumerable<DataRepository> AllObservedDataUsedBy(ISimulation simulation) => _observedDataRepository.AllObservedDataUsedBy(simulation);
-
       public IEnumerable<ParameterIdentification> ParameterIdentificationsUsingObservedData(DataRepository observedData)
       {
          return allParameterIdentifications().Where(parameterIdentification => parameterIdentification.OutputMappingsUsingDataRepository(observedData).Any());

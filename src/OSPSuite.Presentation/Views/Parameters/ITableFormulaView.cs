@@ -5,7 +5,6 @@ namespace OSPSuite.Presentation.Views.Parameters
 {
    public interface ITableFormulaView : IView<ITableFormulaPresenter>
    {
-      void Clear();
       void BindTo(TableFormulaDTO tableFormulaDTO);
       void EditPoint(ValuePointDTO pointToEdit);
       bool ImportVisible { set; }

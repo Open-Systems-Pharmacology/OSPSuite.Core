@@ -134,11 +134,6 @@ namespace OSPSuite.UI.Views.Commands
          RefreshView();
       }
 
-      public void Unbind()
-      {
-         BindTo(null);
-      }
-
       public void AddColumn(ColumnProperties columnToAdd)
       {
          _columnCache.Add(columnToAdd, addColumn(columnToAdd));
@@ -190,11 +185,6 @@ namespace OSPSuite.UI.Views.Commands
             var treeColumn = _columnCache[columnProperty];
             treeColumn.VisibleIndex = columnProperty.Position;
          }
-      }
-
-      public void BestFitColumns()
-      {
-         historyTreeList.BestFitColumns();
       }
 
       private void historyTreeListFocusedNodeChanged(object sender, FocusedNodeChangedEventArgs e)

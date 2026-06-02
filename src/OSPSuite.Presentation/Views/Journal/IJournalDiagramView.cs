@@ -7,7 +7,6 @@ namespace OSPSuite.Presentation.Views.Journal
 {
    public interface IJournalDiagramView : IView<IJournalDiagramPresenter>, IBaseDiagramView
    {
-      void RefreshDiagram();
 
       /// <summary>
       /// Removes the selection boxes that are painted around selected nodes

@@ -11,17 +11,6 @@ namespace OSPSuite.Presentation.Views
       }
 
       /// <summary>
-      ///    Determines if the node is already being shown by the view
-      /// </summary>
-      /// <param name="explorerView">The view being searched</param>
-      /// <param name="node">The node to search for in the view</param>
-      /// <returns>If the view contains this node, returns true, otherwise false</returns>
-      public static bool ContainsNode(this IExplorerView explorerView, ITreeNode node)
-      {
-         return explorerView.NodeById(node.Id) != null;
-      }
-
-      /// <summary>
       ///    This removes the node from the view without clearing any of its sub nodes or tag. That way the node can be
       ///    attached under another node
       /// </summary>
@@ -59,11 +48,6 @@ namespace OSPSuite.Presentation.Views
       public static void ExpandNode(this IExplorerView explorerView, ITreeNode nodeToExpand)
       {
          explorerView.TreeView.ExpandNode(nodeToExpand);
-      }
-
-      public static void CollapseNode(this IExplorerView explorerView, ITreeNode nodeToCollapse)
-      {
-         explorerView.TreeView.CollapseNode(nodeToCollapse);
       }
 
       public static void ExpandNodeIfRequired(this IExplorerView explorerView, ITreeNode nodeToExpand, bool shouldExpand)

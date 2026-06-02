@@ -29,11 +29,6 @@ namespace OSPSuite.Presentation.Mappers
          return _compoundCalculationMethodRepository.All().GroupBy(x => x.Category).Where(hasAlternatives).Select(mapFrom);
       }
 
-      public IReadOnlyList<CategoryDTO> MapFrom(IEnumerable<CalculationMethod> calculationMethods)
-      {
-         return calculationMethods.GroupBy(x => x.Category).Where(hasAlternatives).Select(mapFrom).ToList();
-      }
-
       private bool hasAlternatives(IGrouping<string, CalculationMethod> group)
       {
          return group.Count() > 1;

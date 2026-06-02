@@ -125,9 +125,6 @@ namespace OSPSuite.UI.Views.Importer
          _presenter.ImportData();
       }
 
-      public void SetDataValues()
-      { }
-
       private void onNamingConventionChanged(object sender, EventArgs e)
       {
          this.DoWithinExceptionHandler( () => _presenter.TriggerNamingConventionChanged(namingConventionComboBoxEdit.EditValue as string));
@@ -137,10 +134,6 @@ namespace OSPSuite.UI.Views.Importer
       {
          keysListBox.Items.Clear();
          keysListBox.Items.AddRange(keys.ToArray());
-      }
-
-      public void ShowSelectedDataSet(DataRepository dataRepository)
-      {
       }
 
       public void AddChartView(IView chartView)

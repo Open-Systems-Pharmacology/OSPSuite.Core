@@ -8,7 +8,6 @@ namespace OSPSuite.Presentation.Views.SensitivityAnalyses
    {
       void HideResultsView();
       void BindTo(DataTable dataTable);
-      DataTable GetSummaryData();
       void ShowErrors(IReadOnlyList<string> errorMessages);
    }
 }

@@ -299,11 +299,6 @@ namespace OSPSuite.UI.Diagram.Elements
          return linkedNodes;
       }
 
-      public void ClearLinks()
-      {
-         Port.ClearLinks();
-      }
-
       public bool LocationFixed
       {
          get { return _locationFixed; }

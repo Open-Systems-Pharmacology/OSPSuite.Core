@@ -82,12 +82,6 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
          Chart.AddCurvesFor(dataRepository.AllButBaseGrid(), NameForColumn, _chartPresenterContext.DimensionFactory, action);
       }
 
-      protected ParameterIdentificationRunResult RunResultWithBestError(
-         IReadOnlyList<ParameterIdentificationRunResult> parameterIdentificationResults)
-      {
-         return parameterIdentificationResults.MinimumBy(x => x.TotalError);
-      }
-
       protected void AddUsedObservedDataToChart()
       {
          _parameterIdentification.AllOutputMappings.GroupBy(x => x.FullOutputPath).Each(AddObservedDataForOutput);
