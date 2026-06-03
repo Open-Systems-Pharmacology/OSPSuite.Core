@@ -17,14 +17,4 @@ namespace OSPSuite.Core.Serialization.SimModel.DTO
       public string Equation { get; set; }
       public IDictionary<string, int> ReferenceList { get; private set; }
    }
-
-   public class DiscreteFormulaExport : FormulaExport
-   {
-      public DiscreteFormulaExport()
-      {
-         Points = new Dictionary<double, double>();
-      }
-
-      public IDictionary<double, double> Points { get; private set; }
-   }
 }

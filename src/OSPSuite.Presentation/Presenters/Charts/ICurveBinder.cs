@@ -17,7 +17,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       bool HasLLOQ { get; }
       IEnumerable<string> SeriesIds { get; }
       void Refresh(bool shouldRefreshData = true);
-      void ShowAllSeries();
       void HideAllSeries();
       void ShowCurveInLegend(bool showInLegend);
       bool ContainsSeries(string seriesId);

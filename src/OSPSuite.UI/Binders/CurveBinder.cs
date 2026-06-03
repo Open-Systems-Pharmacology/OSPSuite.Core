@@ -141,16 +141,6 @@ namespace OSPSuite.UI.Binders
          series.Visible = Curve.ShowLLOQ && Curve.Visible;
       }
 
-      protected Series CreateSeries(string name, ViewType viewType, string valueDataMember)
-      {
-         return CreateSeries<SeriesViewBase>(name, viewType, valueDataMember);
-      }
-
-      protected Series CreateSeries(string name, ViewType viewType, IReadOnlyList<string> valueDataMembers)
-      {
-         return CreateSeries<SeriesViewBase>(name, viewType, valueDataMembers);
-      }
-
       protected Series CreateSeries<TSeriesView>(string name, ViewType viewType, string valueDataMember, Action<TSeriesView> configuration = null) where TSeriesView : SeriesViewBase
       {
          return CreateSeries(name, viewType, new[] { valueDataMember }, configuration);
@@ -455,8 +445,6 @@ namespace OSPSuite.UI.Binders
       }
 
       public void HideAllSeries() => updateSeriesVisibility(visible: false);
-
-      public void ShowAllSeries() => updateSeriesVisibility(visible: true);
 
       private void updateSeriesVisibility(bool visible) => _series.Each(s => s.Visible = visible);
 

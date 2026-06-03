@@ -73,11 +73,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ChartEditorSettings CreateSettings();
 
       /// <summary>
-      ///    Copy settings of this presenter from a ChartEditorSettings object. Used for deserialization.
-      /// </summary>
-      void CopySettingsFrom(ChartEditorSettings settings);
-
-      /// <summary>
       ///    Initialize layout from the current settings. If <paramref name="loadEditorLayout" /> is set to true, editor layout
       ///    will be loaded.
       ///    if <paramref name="loadColumnSettings" /> is set to true, column settings will be loaded
@@ -464,10 +459,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void UpdateChartDisplay() => _eventPublisher.PublishEvent(new ApplyChangesEvent(Chart));
 
-      public void OnDragDrop(IDragEvent dropEvent) => DragDrop(this, dropEvent);
-
-      public void OnDragOver(IDragEvent dragEvent) => DragOver(this, dragEvent);
-
       public void UpdateUsedForSelection(bool? isUsed)
       {
          if (!isUsed.HasValue) return;
@@ -588,11 +579,6 @@ namespace OSPSuite.Presentation.Presenters.Charts
       }
 
       public IReadOnlyList<DataColumn> AllDataColumns => _dataBrowserPresenter.AllDataColumns;
-
-      public void CopySettingsFrom(ChartEditorSettings settings)
-      {
-         CopySettingsFrom(settings, loadEditorLayout: true, loadColumnSettings: true);
-      }
 
       private void copyColumnSettings(IEnumerable<GridColumnSettings> settings, Func<string, GridColumnSettings> columnSettingsInPresenterByName)
       {

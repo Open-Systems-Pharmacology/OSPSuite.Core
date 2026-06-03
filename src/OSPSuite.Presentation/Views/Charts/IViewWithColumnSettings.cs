@@ -7,6 +7,5 @@ namespace OSPSuite.Presentation.Views.Charts
    {
       void ApplyAllColumnSettings();
       void ApplyColumnSettings(GridColumnSettings columnSettings);
-      void Refresh();
    }
 }

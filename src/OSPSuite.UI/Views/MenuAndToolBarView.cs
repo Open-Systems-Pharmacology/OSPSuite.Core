@@ -57,11 +57,6 @@ namespace OSPSuite.UI.Views
          _barManager.Ribbon.PageCategories.Add(page);
       }
 
-      public void CreateDynamicPageCategory(string pageCategoryName)
-      {
-         CreateDynamicPageCategory(pageCategoryName, defaultPageColor);
-      }
-
       private void addButtonGroupToPage(IButtonGroup buttonGroup, RibbonPage page)
       {
          var pageGroup = _ribbonPageGroupMapper.MapFrom(buttonGroup);

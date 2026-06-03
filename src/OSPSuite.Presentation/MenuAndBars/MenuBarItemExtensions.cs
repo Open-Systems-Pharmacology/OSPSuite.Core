@@ -11,12 +11,6 @@ namespace OSPSuite.Presentation.MenuAndBars
          return uiElement;
       }
 
-      public static T WithName<T>(this T uiElement, string name) where T : IMenuBarItem
-      {
-         uiElement.Name = name;
-         return uiElement;
-      }
-
       public static T WithCaption<T>(this T uiElement, string caption) where T : IMenuBarItem
       {
          uiElement.Caption = caption;
@@ -44,12 +38,6 @@ namespace OSPSuite.Presentation.MenuAndBars
       public static T AsGroupStarter<T>(this T uiElement) where T : IMenuBarItem
       {
          uiElement.BeginGroup = true;
-         return uiElement;
-      }
-
-      public static T WithId<T>(this T uiElement, int id) where T : IMenuBarItem
-      {
-         uiElement.Id = id;
          return uiElement;
       }
    }

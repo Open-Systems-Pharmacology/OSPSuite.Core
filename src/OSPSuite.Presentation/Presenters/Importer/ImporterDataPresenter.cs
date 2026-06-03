@@ -308,10 +308,5 @@ namespace OSPSuite.Presentation.Presenters.Importer
          errorsForDataSet.Each(x => sb.AppendLine(x.Message));
          return sb.ToString();
       }
-
-      public void SetTabMarks(ParseErrors errors)
-      {
-         SetTabMarks(errors, _lastLoadedDataSets);
-      }
    }
 }

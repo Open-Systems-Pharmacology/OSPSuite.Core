@@ -4,21 +4,6 @@ using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Import
 {
-   public class ParameterConfiguration
-   {
-      public ParameterConfiguration(object data = null)
-      {
-         Data = data;
-      }
-
-      public object Data { get; private set; }
-
-      public override string ToString()
-      {
-         return Data?.ToString() ?? string.Empty;
-      }
-   }
-
    public abstract class DataFormatParameter
    {
       public string ColumnName { get; set; }

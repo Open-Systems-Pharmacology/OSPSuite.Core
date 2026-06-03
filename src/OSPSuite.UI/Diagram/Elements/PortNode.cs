@@ -106,16 +106,6 @@ namespace OSPSuite.UI.Diagram.Elements
          Port.AddDestinationLink(link as GoLink);
       }
 
-      public void AddSourceLink<T>(T link) where T : class
-      {
-         Port.AddSourceLink(link as GoLink);
-      }
-
-      public void RemoveLink<T>(T link) where T : class
-      {
-         Port.RemoveLink(link as GoLink);
-      }
-
       public virtual IEnumerable<T> GetLinkedNodes<T>() where T : class, IHasLayoutInfo
       {
          IList<T> linkedNodes = new List<T>();

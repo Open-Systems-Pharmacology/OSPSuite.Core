@@ -33,10 +33,5 @@ namespace OSPSuite.UI.Views.Importer
       {
          importerPanelControl.FillWith(view);
       }
-
-      public void SetBaseView(IView baseView)
-      {
-         importerPanelControl.FillWith(baseView);
-      }
    }
 }

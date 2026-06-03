@@ -47,17 +47,6 @@ namespace OSPSuite.Presentation.Extensions
 
       public static string InItalic(this string stringToFormat) => InHtml(stringToFormat, "i");
 
-      public static string InGreen(this string stringToFormat) => InColor(stringToFormat, Color.Green);
-
-      public static string InRed(this string stringToFormat) => InColor(stringToFormat, Color.Red);
-
-      public static string InOrange(this string stringToFormat) => InColor(stringToFormat, Color.Orange);
-
-      public static string InColor(this string stringToFormat, Color color)
-      {
-         return InHtml(stringToFormat, "span", $"color:rgb({color.R},{color.G},{color.B})");
-      }
-
       public static string InHtml(this string stringToFormat, string marker, string style = null)
       {
          var htmlStyle = string.IsNullOrEmpty(style) ? "" : $" style='{style}'";
@@ -69,14 +58,6 @@ namespace OSPSuite.Presentation.Extensions
          if (string.IsNullOrEmpty(stringToFormat))
             return stringToFormat;
          return stringToFormat.Replace("&", "&&");
-      }
-
-      /// <summary>
-      ///    Returns the string formated with the "\n" at the end
-      /// </summary>
-      public static string AsFullLine(this string stringToFormat)
-      {
-         return $"{stringToFormat}\n";
       }
 
       /// <summary>

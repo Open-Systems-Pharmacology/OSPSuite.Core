@@ -31,12 +31,6 @@ namespace OSPSuite.UI.Views.Importer
             _comboBoxEdit.SelectedIndex = list.FindIndex( o => o == selected);
       }
 
-      public void Clear()
-      {
-         _comboBoxEdit.Properties.Items.Clear();
-         _comboBoxEdit.SelectedText = "";
-      }
-
       public event EventHandler<OptionChangedEventArgs> OnOptionChanged = delegate { };
    }
 }

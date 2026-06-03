@@ -33,13 +33,6 @@ namespace OSPSuite.Core.Events
       }
    }
 
-   public class ParameterIdentificationSelectedEvent : ParameterIdentificationEvent
-   {
-      public ParameterIdentificationSelectedEvent(ParameterIdentification parameterIdentification) : base(parameterIdentification)
-      {
-      }
-   }
-
    public class ParameterIdentificationTerminatedEvent : ParameterIdentificationEvent
    {
       public ParameterIdentificationTerminatedEvent(ParameterIdentification parameterIdentification) : base(parameterIdentification)

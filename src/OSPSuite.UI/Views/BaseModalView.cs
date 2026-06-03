@@ -163,11 +163,6 @@ namespace OSPSuite.UI.Views
          get => tablePanel.ColumnFor(btnExtra).Visible;
       }
 
-      protected void SetItemVisibility(LayoutControlItem itemForButton, bool visible)
-      {
-         itemForButton.Visibility = LayoutVisibilityConvertor.FromBoolean(visible);
-      }
-
       protected void SetItemVisibility(SimpleButton button, bool visible)
       {
          tablePanel.ColumnFor(button).Visible = visible;

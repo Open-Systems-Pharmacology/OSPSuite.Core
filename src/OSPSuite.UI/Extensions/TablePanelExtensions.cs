@@ -7,10 +7,6 @@ namespace OSPSuite.UI.Extensions
 {
    public static class TablePanelExtensions
    {
-      public static void AdjustButtonWithImageOnly(this TablePanel tablePanel, SimpleButton button)
-      {
-         tablePanel.AdjustControlSize(button, UIConstants.Size.RADIO_GROUP_HEIGHT, UIConstants.Size.BUTTON_HEIGHT);
-      }
 
       public static void AdjustLongButtonWidth(this TablePanel tablePanel, SimpleButton button)
       {

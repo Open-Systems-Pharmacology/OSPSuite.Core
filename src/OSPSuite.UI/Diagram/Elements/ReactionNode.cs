@@ -181,33 +181,6 @@ namespace OSPSuite.UI.Diagram.Elements
          }
       }
 
-      public void RemoveLink(ReactionLink reactionLink)
-      {
-         var rbl = (ReactionLink) reactionLink;
-         switch (reactionLink.Type)
-         {
-            case ReactionLinkType.Educt:
-               _eductsPort.RemoveLink(rbl);
-               break;
-            case ReactionLinkType.Product:
-               _productsPort.RemoveLink(rbl);
-               break;
-            case ReactionLinkType.Modifier:
-               _modifiersPort.RemoveLink(rbl);
-               break;
-            default:
-               throw new OSPSuiteException("No valid ReactionLinkType = " + reactionLink.Type);
-         }
-      }
-
-      public void ReplaceReactionLink(MoleculeNode moleculeDefaultNode, MoleculeNode moleculeNode)
-      {
-         foreach (var link in Links.Where(x => x.MoleculeNode == moleculeDefaultNode))
-         {
-            link.MoleculeNode = moleculeNode;
-         }
-      }
-
       public void ClearLinks()
       {
          _eductsPort.ClearLinks();

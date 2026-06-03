@@ -46,12 +46,6 @@ namespace OSPSuite.UI.Binders
          base.Bind(source);
       }
 
-      public TokenEditBinder<TObjectType, TValue> WithDisplay(Func<TValue, string> displayFunc)
-      {
-         _displayFor = displayFunc;
-         return this;
-      }
-
       public override IEnumerable<TValue> GetValueFromControl()
       {
          return _tokenEdit.SelectedItems.OfType<TokenEditToken>().Select(x => x.Value).OfType<TValue>();

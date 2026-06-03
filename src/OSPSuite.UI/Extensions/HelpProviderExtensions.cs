@@ -11,10 +11,5 @@ namespace OSPSuite.UI.Extensions
          helpProvider.HelpNamespace = Constants.HELP_NAMESPACE;
          helpProvider.SetHelpNavigator(control, HelpNavigator.Topic);
       }
-
-      public static void SetTopicId(this HelpProvider helpProvider, Control control, int topicId)
-      {
-         helpProvider.SetHelpKeyword(control, topicId.ToString(CultureInfo.InvariantCulture));
-      }
    }
 }  

@@ -67,12 +67,6 @@ namespace OSPSuite.Presentation.Views
       void DestroyNode(ITreeNode treeNode);
 
       /// <summary>
-      ///    Destroy node by id
-      /// </summary>
-      /// <param name="id">id of the node to destroy</param>
-      void DestroyNode(string id);
-
-      /// <summary>
       ///    Remove a node from the tree. The node will not be destroyed. Simply removed from the tree
       /// </summary>
       /// <param name="treeNode">The node to be removed</param>

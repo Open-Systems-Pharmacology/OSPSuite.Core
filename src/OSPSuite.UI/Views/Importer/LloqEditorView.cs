@@ -41,12 +41,6 @@ namespace OSPSuite.UI.Views.Importer
             LloqColumnLayoutControlItem.Visibility = LayoutVisibility.Never;
          }
       }
-      public void FillComboBox(IEnumerable<string> columns, string defaultValue)
-      {
-         //ColumnsComboBox.Properties.Items.Clear();
-         //ColumnsComboBox.Properties.Items.AddRange(columns.ToArray());
-         //ColumnsComboBox.EditValue = defaultValue;
-      }
 
       public void FillLloqSelector(IView view)
       {

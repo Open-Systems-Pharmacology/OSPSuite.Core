@@ -326,17 +326,6 @@ namespace OSPSuite.UI.Controls
       }
 
       /// <summary>
-      ///    Returns a stream containing the layout of the grid view
-      /// </summary>
-      /// <returns></returns>
-      public Stream LayoutToStream()
-      {
-         var stream = new MemoryStream();
-         SaveLayoutToStream(stream);
-         return stream;
-      }
-
-      /// <summary>
       ///    Returns the grid hit info for a valid hit, null otherwise
       /// </summary>
       /// <returns></returns>
@@ -398,17 +387,6 @@ namespace OSPSuite.UI.Controls
       public GridColumn ColumnAt(GridHitInfo hi)
       {
          return hi == null ? null : hi.Column;
-      }
-
-      /// <summary>
-      ///    Load the grid view layout from the stream containing the serialized layout
-      /// </summary>
-      /// <param name="stream"></param>
-      public void LoadLayoutFromStream(Stream stream)
-      {
-         // Set the position to the beginning of the stream.
-         stream.Seek(0, SeekOrigin.Begin);
-         RestoreLayoutFromStream(stream);
       }
 
       private bool gridIsCellSelectMode()

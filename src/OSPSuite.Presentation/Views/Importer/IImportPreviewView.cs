@@ -10,7 +10,6 @@ namespace OSPSuite.Presentation.Views.Importer
       void SetDataSetNames(IEnumerable<string> names);
       void SetNamingConventions(IEnumerable<string> options, string selected = null);
       void SetNamingConventionKeys(IEnumerable<string> keys);
-      void ShowSelectedDataSet(DataRepository dataRepository);
       void AddChartView(IView chartView);
       void AddDataView(IDataRepositoryDataView dataView);
       string SelectedSeparator { get; }

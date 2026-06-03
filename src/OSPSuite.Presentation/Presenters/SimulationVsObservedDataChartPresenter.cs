@@ -80,11 +80,6 @@ namespace OSPSuite.Presentation.Presenters
          return _chartPresenterContext.CurveNamer.CurveNameForColumn(SimulationFor(dataColumn), dataColumn, addSimulationName: false);
       }
 
-      protected void AddUsedObservedDataToChart()
-      {
-         _simulation.OutputMappings.All.GroupBy(x => x.FullOutputPath).Each(AddObservedDataForOutput);
-      }
-
       public void Handle(SimulationOutputMappingsChangedEvent eventToHandle)
       {
          updateForAnalysableEvents(eventToHandle);
