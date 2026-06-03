@@ -23,7 +23,6 @@ namespace OSPSuite.Presentation.Presentation
       protected ILabelTask _labelTask;
       protected IHistoryToHistoryDTOMapper _mapper;
       protected ICommentTask _commentTask;
-      protected IHistoryBrowserProperties _historyBrowserProperties;
       protected IHistoryBrowserConfiguration _historyBrowserConfiguration;
       private IHistoryItemDTOEnumerableToHistoryItemDTOList _historyItemDTOListMapper;
       protected IHistoryItemDTOList _historyItemDTOList;
@@ -36,7 +35,6 @@ namespace OSPSuite.Presentation.Presentation
          _view = A.Fake<IHistoryBrowserView>();
          _historyList = new List<IHistoryItem>();
          _historyManager = A.Fake<IHistoryManager>();
-         _historyBrowserProperties = A.Fake<IHistoryBrowserProperties>();
          _labelTask = A.Fake<ILabelTask>();
          _mapper = A.Fake<IHistoryToHistoryDTOMapper>();
          _commentTask = A.Fake<ICommentTask>();
