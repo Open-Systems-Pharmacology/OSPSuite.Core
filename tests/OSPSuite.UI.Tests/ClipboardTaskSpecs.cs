@@ -5,7 +5,6 @@ using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Presentation.Mappers;
-using OSPSuite.UI.Mappers;
 using OSPSuite.UI.Services;
 
 namespace OSPSuite.UI

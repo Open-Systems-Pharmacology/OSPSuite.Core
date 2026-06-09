@@ -5,7 +5,6 @@ using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.SensitivityAnalyses;
 using OSPSuite.Core.Services;
-using OSPSuite.R.Domain;
 using OSPSuite.R.Mapper;
 using OSPSuite.Utility.Events;
 using SensitivityAnalysis = OSPSuite.R.Domain.SensitivityAnalysis;

@@ -1,7 +1,6 @@
 using System.Windows.Forms;
 using OSPSuite.Starter.Forms;
 using OSPSuite.UI.Binders;
-using OSPSuite.UI.Services;
 
 namespace OSPSuite.Starter.Tasks.Starters
 {

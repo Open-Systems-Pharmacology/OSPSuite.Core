@@ -5,8 +5,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
-using System;
-using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {

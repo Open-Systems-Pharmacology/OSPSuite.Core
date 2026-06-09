@@ -1,5 +1,4 @@
 using System.Data;
-using OSPSuite.Utility.Format;
 using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 
 namespace OSPSuite.Presentation.Views.ParameterIdentifications

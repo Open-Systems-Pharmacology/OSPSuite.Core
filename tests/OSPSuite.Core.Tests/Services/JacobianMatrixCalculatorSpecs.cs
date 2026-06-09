@@ -9,7 +9,6 @@ using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Helpers;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Core.Services

@@ -1,6 +1,5 @@
 ﻿using OSPSuite.Core;
 using OSPSuite.Helpers;
-using OSPSuite.Infrastructure;
 using OSPSuite.Infrastructure.Serialization.Journal;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Services;

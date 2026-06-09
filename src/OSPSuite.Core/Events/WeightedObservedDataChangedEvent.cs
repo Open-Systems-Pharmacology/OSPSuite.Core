@@ -1,8 +1,4 @@
 ﻿using OSPSuite.Core.Domain;
-using OSPSuite.Core.Domain.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace OSPSuite.Core.Events
 {

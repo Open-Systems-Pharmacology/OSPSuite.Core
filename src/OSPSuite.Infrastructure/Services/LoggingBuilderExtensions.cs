@@ -2,7 +2,6 @@
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Infrastructure.Services
 {

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
-using OSPSuite.Assets;
-using OSPSuite.UI.RepositoryItems;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Extensions

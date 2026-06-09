@@ -1,9 +1,7 @@
-﻿using NUnit.Framework;
-using OSPSuite.BDDHelper;
+﻿using OSPSuite.BDDHelper;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
-using OSPSuite.Core.Helpers;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers

@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using DevExpress.Utils;
-using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using OSPSuite.Assets;
 using OSPSuite.DataBinding.DevExpress;
@@ -9,7 +8,6 @@ using OSPSuite.Presentation.Presenters.ObservedData;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.ObservedData;
 using OSPSuite.UI.Controls;
-using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Extensions;
 

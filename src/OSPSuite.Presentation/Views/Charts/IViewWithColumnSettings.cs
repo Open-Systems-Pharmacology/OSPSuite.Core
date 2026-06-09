@@ -1,5 +1,4 @@
-﻿using System;
-using OSPSuite.Presentation.Settings;
+﻿using OSPSuite.Presentation.Settings;
 
 namespace OSPSuite.Presentation.Views.Charts
 {

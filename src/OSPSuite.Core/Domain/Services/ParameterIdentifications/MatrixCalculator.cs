@@ -4,7 +4,6 @@ using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
 using OSPSuite.Assets;
 using OSPSuite.Core.Domain.ParameterIdentifications;
-using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 {

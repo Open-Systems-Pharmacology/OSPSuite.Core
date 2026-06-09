@@ -1,20 +1,16 @@
-﻿using FakeItEasy;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using FakeItEasy;
+using Microsoft.Extensions.Logging;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Services;
+using OSPSuite.Core.Snapshots;
 using OSPSuite.Core.Snapshots.Mappers;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using OSPSuite.Core.Snapshots;
-using OSPSuite.SimModel;
 using IdentificationParameter = OSPSuite.Core.Domain.ParameterIdentifications.IdentificationParameter;
 using ParameterIdentification = OSPSuite.Core.Domain.ParameterIdentifications.ParameterIdentification;
 

@@ -1,4 +1,3 @@
-using System;
 using OSPSuite.Assets;
 
 namespace OSPSuite.Presentation.Views

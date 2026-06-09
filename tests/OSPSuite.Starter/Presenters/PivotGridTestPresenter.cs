@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Starter.Views;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Starter.Presenters
 {

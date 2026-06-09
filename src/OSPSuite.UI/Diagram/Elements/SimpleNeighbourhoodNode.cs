@@ -1,9 +1,8 @@
 ﻿using System.Drawing;
 using Northwoods.Go;
-using OSPSuite.Utility.Exceptions;
 using OSPSuite.Core.Diagram;
-using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Diagram.Elements;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.UI.Diagram.Elements
 {

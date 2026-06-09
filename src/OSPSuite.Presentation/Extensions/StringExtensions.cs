@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace OSPSuite.Presentation.Extensions
+﻿namespace OSPSuite.Presentation.Extensions
 {
    public static class StringExtensions
    {

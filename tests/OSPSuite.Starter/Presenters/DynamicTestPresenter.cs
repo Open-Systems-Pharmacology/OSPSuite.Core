@@ -2,7 +2,6 @@
 using OSPSuite.Core.Domain;
 using OSPSuite.Presentation.Mappers;
 using OSPSuite.Presentation.Presenters;
-using OSPSuite.Presentation.Presenters.ParameterIdentifications;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Starter.Views;
 using OSPSuite.Utility.Extensions;

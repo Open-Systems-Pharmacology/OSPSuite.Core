@@ -1,7 +1,3 @@
-using OSPSuite.Utility.Container;
-using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.FileLocker;
 using DevExpress.XtraBars;
 using OSPSuite.Core;
 using OSPSuite.Core.Domain;
@@ -10,8 +6,6 @@ using OSPSuite.Core.Domain.Repositories;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
-using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Infrastructure.Import.Core.DataFormat;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.Presentation.Presenters.Main;
 using OSPSuite.Presentation.Services;
@@ -21,11 +15,12 @@ using OSPSuite.Starter.Services;
 using OSPSuite.Starter.Tasks;
 using OSPSuite.Starter.Views;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Container;
+using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Exceptions;
+using OSPSuite.Utility.FileLocker;
 using ApplicationSettings = OSPSuite.Starter.Services.ApplicationSettings;
 using IContainer = OSPSuite.Utility.Container.IContainer;
-using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Presentation.Core;
-using OSPSuite.Presentation.Presenters.Importer;
 
 namespace OSPSuite.Starter
 {

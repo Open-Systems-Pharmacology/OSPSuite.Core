@@ -3,7 +3,6 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Serialization.Chart;
-using OSPSuite.Serializer;
 
 namespace OSPSuite.Core.Serialization.Xml
 {

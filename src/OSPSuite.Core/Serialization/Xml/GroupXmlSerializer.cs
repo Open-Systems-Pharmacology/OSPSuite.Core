@@ -1,5 +1,4 @@
 ﻿using System.Xml.Linq;
-using OSPSuite.Utility.Container;
 using OSPSuite.Core.Domain;
 
 namespace OSPSuite.Core.Serialization.Xml

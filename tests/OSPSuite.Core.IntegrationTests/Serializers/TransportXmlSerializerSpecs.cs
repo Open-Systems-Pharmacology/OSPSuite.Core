@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Helpers;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Extensions;
 

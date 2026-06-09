@@ -1,5 +1,4 @@
-﻿using System.Xml.Linq;
-using OSPSuite.Serializer.Xml;
+﻿using OSPSuite.Serializer.Xml;
 using IContainer = OSPSuite.Utility.Container.IContainer;
 
 namespace OSPSuite.Core.Serialization.Xml

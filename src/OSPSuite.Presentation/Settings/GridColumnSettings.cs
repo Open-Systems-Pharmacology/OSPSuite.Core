@@ -1,4 +1,3 @@
-using OSPSuite.Core;
 using OSPSuite.Utility.Reflection;
 
 namespace OSPSuite.Presentation.Settings

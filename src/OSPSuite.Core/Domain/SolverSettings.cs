@@ -1,5 +1,3 @@
-using OSPSuite.Utility.Visitor;
-
 namespace OSPSuite.Core.Domain
 {
    public class SolverSettings : Container

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using OSPSuite.Core.Domain.PKAnalyses;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Core.Services;
 using OSPSuite.Utility.Extensions;
 using static OSPSuite.Core.Domain.Constants.SimulationResults;
 

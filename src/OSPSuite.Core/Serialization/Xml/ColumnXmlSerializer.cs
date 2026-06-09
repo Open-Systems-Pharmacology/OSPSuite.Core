@@ -1,5 +1,4 @@
-﻿using System.Xml.Linq;
-using OSPSuite.Core.Import;
+﻿using OSPSuite.Core.Import;
 
 namespace OSPSuite.Core.Serialization.Xml
 {

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Drawing;
-using OSPSuite.Utility.Exceptions;
 using DevExpress.Utils;
 using DevExpress.XtraPivotGrid;
-using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.UI.Controls
 {

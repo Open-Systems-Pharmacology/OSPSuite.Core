@@ -1,7 +1,6 @@
 ﻿using OSPSuite.Assets;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Utility.Exceptions;
 
 namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
 {

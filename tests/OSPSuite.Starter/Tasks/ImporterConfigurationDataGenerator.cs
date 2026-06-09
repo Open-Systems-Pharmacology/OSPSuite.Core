@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Infrastructure.Import.Core;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
-
 
 namespace OSPSuite.Starter.Tasks
 {

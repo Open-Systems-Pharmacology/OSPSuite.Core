@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using OSPSuite.Presentation.Presenters.Importer;
+﻿using OSPSuite.Presentation.Presenters.Importer;
 
 namespace OSPSuite.Presentation.Views.Importer
 {

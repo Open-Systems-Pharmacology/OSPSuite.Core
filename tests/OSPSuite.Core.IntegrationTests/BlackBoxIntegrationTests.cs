@@ -1,13 +1,11 @@
-﻿using Castle.Components.DictionaryAdapter.Xml;
-using FakeItEasy;
+﻿using System;
+using System.IO;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Utility.Container;
-using System.IO;
-using System;
 
 namespace OSPSuite.Core
 {

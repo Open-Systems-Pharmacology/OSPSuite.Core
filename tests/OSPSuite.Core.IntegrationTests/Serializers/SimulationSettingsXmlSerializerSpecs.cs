@@ -2,7 +2,6 @@
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Formulas;
-using OSPSuite.Core.Helpers;
 using OSPSuite.Helpers;
 using OSPSuite.Utility.Container;
 

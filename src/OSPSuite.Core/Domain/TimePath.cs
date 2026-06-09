@@ -1,7 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Domain.UnitSystem;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain
 {
