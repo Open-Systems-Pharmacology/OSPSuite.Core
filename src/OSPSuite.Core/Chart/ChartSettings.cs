@@ -11,7 +11,11 @@ namespace OSPSuite.Core.Chart
       Right,
       RightInside,
       Bottom,
-      BottomInside
+      BottomInside,
+      TopLeftOutside,
+      TopLeftInside,
+      BottomLeftOutside,
+      BottomLeftInside
    }
 
    public enum GridGroupRowFormats

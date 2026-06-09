@@ -15,29 +15,40 @@ namespace OSPSuite.UI.Extensions
                legend.Visibility = DefaultBoolean.False;
                break;
             case LegendPositions.Right:
-               legend.Visibility = DefaultBoolean.True;
-               legend.AlignmentHorizontal = LegendAlignmentHorizontal.RightOutside;
-               legend.AlignmentVertical = LegendAlignmentVertical.Top;
-               break;
-            case LegendPositions.Bottom:
-               legend.Visibility = DefaultBoolean.True;
-               legend.AlignmentHorizontal = LegendAlignmentHorizontal.Right;
-               legend.AlignmentVertical = LegendAlignmentVertical.BottomOutside;
+               setLegend(legend, LegendAlignmentHorizontal.RightOutside, LegendAlignmentVertical.Top);
                break;
             case LegendPositions.RightInside:
-               legend.Visibility = DefaultBoolean.True;
-               legend.AlignmentHorizontal = LegendAlignmentHorizontal.Right;
-               legend.AlignmentVertical = LegendAlignmentVertical.Top;
+               setLegend(legend, LegendAlignmentHorizontal.Right, LegendAlignmentVertical.Top);
+               break;
+            case LegendPositions.Bottom:
+               setLegend(legend, LegendAlignmentHorizontal.Right, LegendAlignmentVertical.BottomOutside);
                break;
             case LegendPositions.BottomInside:
-               legend.Visibility = DefaultBoolean.True;
-               legend.AlignmentHorizontal = LegendAlignmentHorizontal.Right;
-               legend.AlignmentVertical = LegendAlignmentVertical.Bottom;
+               setLegend(legend, LegendAlignmentHorizontal.Right, LegendAlignmentVertical.Bottom);
+               break;
+            case LegendPositions.TopLeftOutside:
+               setLegend(legend, LegendAlignmentHorizontal.LeftOutside, LegendAlignmentVertical.Top);
+               break;
+            case LegendPositions.TopLeftInside:
+               setLegend(legend, LegendAlignmentHorizontal.Left, LegendAlignmentVertical.Top);
+               break;
+            case LegendPositions.BottomLeftOutside:
+               setLegend(legend, LegendAlignmentHorizontal.Left, LegendAlignmentVertical.BottomOutside);
+               break;
+            case LegendPositions.BottomLeftInside:
+               setLegend(legend, LegendAlignmentHorizontal.Left, LegendAlignmentVertical.Bottom);
                break;
 
             default:
                throw new ArgumentException("LegendPosition " + legendPosition + " not implemented.");
          }
+      }
+
+      private static void setLegend(Legend legend, LegendAlignmentHorizontal horizontal, LegendAlignmentVertical vertical)
+      {
+         legend.Visibility = DefaultBoolean.True;
+         legend.AlignmentHorizontal = horizontal;
+         legend.AlignmentVertical = vertical;
       }
    }
 }

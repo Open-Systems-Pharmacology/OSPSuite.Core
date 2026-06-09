@@ -108,7 +108,40 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_hide_the_name_in_the_view()
       {
-         _view.NameVisible.ShouldBeFalse();   
+         _view.NameVisible.ShouldBeFalse();
+      }
+   }
+
+   public class When_the_chart_settings_presenter_is_asked_for_the_display_string_of_a_legend_position : concern_for_ChartSettingsPresenter
+   {
+      [Observation]
+      public void should_describe_a_legacy_outside_position_with_its_vertical_horizontal_and_placement()
+      {
+         sut.LegendPositionDisplayFor(LegendPositions.Right).ShouldBeEqualTo("Top Right (Outside)");
+      }
+
+      [Observation]
+      public void should_describe_a_legacy_inside_position_with_its_vertical_horizontal_and_placement()
+      {
+         sut.LegendPositionDisplayFor(LegendPositions.BottomInside).ShouldBeEqualTo("Bottom Right (Inside)");
+      }
+
+      [Observation]
+      public void should_describe_a_new_left_outside_position()
+      {
+         sut.LegendPositionDisplayFor(LegendPositions.TopLeftOutside).ShouldBeEqualTo("Top Left (Outside)");
+      }
+
+      [Observation]
+      public void should_describe_a_new_left_inside_position()
+      {
+         sut.LegendPositionDisplayFor(LegendPositions.BottomLeftInside).ShouldBeEqualTo("Bottom Left (Inside)");
+      }
+
+      [Observation]
+      public void should_return_the_enum_name_when_the_legend_is_hidden()
+      {
+         sut.LegendPositionDisplayFor(LegendPositions.None).ShouldBeEqualTo("None");
       }
    }
 }

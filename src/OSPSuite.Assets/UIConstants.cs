@@ -113,6 +113,12 @@ namespace OSPSuite.Assets
       public static readonly string SideMarginsEnabled = "Side Margins Enabled";
       public static readonly string Edit = "Edit";
       public static readonly string LegendPosition = "Legend Position";
+      public static readonly string Top = "Top";
+      public static readonly string Bottom = "Bottom";
+      public static readonly string Left = "Left";
+      public static readonly string Right = "Right";
+      public static readonly string Inside = "Inside";
+      public static readonly string Outside = "Outside";
       public static readonly string Title = "Title";
       public static readonly string CurveAndAxisSettings = "Curve and Axis Settings";
       public static readonly string ChartSettings = "Chart Options";
