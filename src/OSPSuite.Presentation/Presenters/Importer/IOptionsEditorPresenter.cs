@@ -1,9 +1,6 @@
-﻿using NPOI.SS.Formula.Atp;
-using NPOI.SS.Formula.Functions;
-using OSPSuite.Presentation.Views;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using OSPSuite.Presentation.Views;
 
 namespace OSPSuite.Presentation.Presenters.Importer
 {

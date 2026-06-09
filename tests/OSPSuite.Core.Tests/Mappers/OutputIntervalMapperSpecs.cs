@@ -1,12 +1,11 @@
-﻿using FakeItEasy;
+﻿using System.Threading.Tasks;
+using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Snapshots;
 using OSPSuite.Core.Snapshots.Mappers;
 using OSPSuite.Helpers;
-using System.Threading.Tasks;
-using OSPSuite.Core.Domain.UnitSystem;
 using OutputInterval = OSPSuite.Core.Domain.OutputInterval;
 using Parameter = OSPSuite.Core.Snapshots.Parameter;
 

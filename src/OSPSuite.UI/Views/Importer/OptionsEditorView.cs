@@ -1,10 +1,9 @@
-﻿using OSPSuite.Presentation.Presenters.Importer;
-using OSPSuite.UI.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using DevExpress.Data.Extensions;
-using DevExpress.Utils.Extensions;
+using OSPSuite.Presentation.Presenters.Importer;
+using OSPSuite.UI.Controls;
 
 namespace OSPSuite.UI.Views.Importer
 {

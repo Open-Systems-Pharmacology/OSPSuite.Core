@@ -12,7 +12,6 @@ using OSPSuite.Helpers;
 using OSPSuite.Infrastructure.Import.Core;
 using OSPSuite.Infrastructure.Import.Core.DataSourceFileReaders;
 using OSPSuite.Infrastructure.Import.Services;
-using OSPSuite.Presentation.Services;
 
 namespace OSPSuite.Presentation.Importer.Core.DataSourceFileReaders
 {

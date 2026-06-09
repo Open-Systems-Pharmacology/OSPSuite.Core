@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Linq;
 using FakeItEasy;
-using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;

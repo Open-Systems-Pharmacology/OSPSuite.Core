@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using OSPSuite.Core.Comparison;
-using OSPSuite.Core.Helpers;
 using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Serializers

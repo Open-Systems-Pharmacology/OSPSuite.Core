@@ -12,7 +12,6 @@ using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Views;
 using OSPSuite.UI.Binders;
 using OSPSuite.UI.Controls;
-using OSPSuite.UI.Extensions;
 using OSPSuite.UI.Services;
 using OSPSuite.Utility.Format;
 

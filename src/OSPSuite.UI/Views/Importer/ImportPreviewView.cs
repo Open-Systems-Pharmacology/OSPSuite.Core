@@ -6,7 +6,8 @@ using System.Windows.Forms;
 using DevExpress.XtraEditors;
 using DevExpress.XtraLayout.Utils;
 using OSPSuite.Assets;
-using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain;
+using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views;
 using OSPSuite.Presentation.Views.Importer;
@@ -14,8 +15,6 @@ using OSPSuite.Presentation.Views.ObservedData;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Extensions;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Domain;
-using OSPSuite.Presentation.Extensions;
 
 namespace OSPSuite.UI.Views.Importer
 {

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Helpers;
 using OSPSuite.Core.Serialization.Xml;
 using OSPSuite.Helpers;
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Journal
 {

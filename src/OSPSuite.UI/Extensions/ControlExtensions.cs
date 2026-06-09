@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Forms;
-using OSPSuite.Utility.Extensions;
-using DevExpress.LookAndFeel;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
-using DevExpress.XtraLayout;
 using OSPSuite.Presentation.Views;
+using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.UI.Extensions
 {

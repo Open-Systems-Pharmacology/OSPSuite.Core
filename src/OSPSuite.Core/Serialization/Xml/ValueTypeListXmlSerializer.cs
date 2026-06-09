@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 using OSPSuite.Utility.Compression;
-using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Serialization.Xml

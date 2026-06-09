@@ -1,4 +1,3 @@
-using System.Drawing;
 using OSPSuite.Core.Domain;
 using OSPSuite.Utility.Reflection;
 

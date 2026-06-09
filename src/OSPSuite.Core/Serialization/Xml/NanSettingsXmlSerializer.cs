@@ -1,7 +1,4 @@
 ﻿using OSPSuite.Core.Import;
-using System;
-using System.Xml.Linq;
-using static OSPSuite.Core.Import.NanSettings;
 
 namespace OSPSuite.Core.Serialization.Xml
 {

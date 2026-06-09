@@ -5,7 +5,6 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Mappers;
-using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {

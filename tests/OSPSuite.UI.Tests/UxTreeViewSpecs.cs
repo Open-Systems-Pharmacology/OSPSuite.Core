@@ -1,6 +1,5 @@
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
-using OSPSuite.Helpers;
 using OSPSuite.Presentation.Nodes;
 using OSPSuite.UI.Controls;
 using OSPSuite.UI.Helpers;

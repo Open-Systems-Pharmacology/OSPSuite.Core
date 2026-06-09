@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Autofac;
-using OSPSuite.Core;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
 using IContainer = Autofac.IContainer;

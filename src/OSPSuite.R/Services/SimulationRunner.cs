@@ -10,7 +10,6 @@ using OSPSuite.Core.Serialization.SimModel.Services;
 using OSPSuite.Core.Services;
 using OSPSuite.R.Domain;
 using OSPSuite.Utility.Events;
-using OSPSuite.Utility.Exceptions;
 using SimulationRunOptions = OSPSuite.R.Domain.SimulationRunOptions;
 
 namespace OSPSuite.R.Services

@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Assets;
-using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain;
@@ -12,6 +10,7 @@ using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.ObservedData;
+using OSPSuite.Utility.Extensions;
 using Command = OSPSuite.Assets.Command;
 
 namespace OSPSuite.Presentation.Services

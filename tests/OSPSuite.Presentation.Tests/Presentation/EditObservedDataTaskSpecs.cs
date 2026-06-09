@@ -6,14 +6,12 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands;
 using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain.Data;
-using OSPSuite.Core.Domain.ParameterIdentifications;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Services;
-using OSPSuite.Utility.Exceptions;
 using Command = OSPSuite.Assets.Command;
 
 namespace OSPSuite.Presentation.Presentation

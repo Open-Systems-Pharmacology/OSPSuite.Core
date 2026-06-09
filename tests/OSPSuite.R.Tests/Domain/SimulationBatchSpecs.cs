@@ -6,7 +6,6 @@ using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Extensions;
 using OSPSuite.R.Services;
-using OSPSuite.SimModel;
 using OSPSuite.Utility.Exceptions;
 using OSPSuite.Utility.Extensions;
 

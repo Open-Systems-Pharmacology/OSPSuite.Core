@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.ParameterIdentifications;
-using OSPSuite.Core.Extensions;
 
 namespace OSPSuite.Core.Domain.Services.ParameterIdentifications
 {

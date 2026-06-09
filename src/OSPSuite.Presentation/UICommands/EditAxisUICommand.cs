@@ -1,5 +1,4 @@
-﻿using OSPSuite.Core.Chart;
-using OSPSuite.Presentation.Core;
+﻿using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters.Charts;
 using OSPSuite.Presentation.Presenters.ContextMenus;
 

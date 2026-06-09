@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Commands.Core;
+﻿using OSPSuite.Core.Commands.Core;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Events;
 using OSPSuite.Core.Services;

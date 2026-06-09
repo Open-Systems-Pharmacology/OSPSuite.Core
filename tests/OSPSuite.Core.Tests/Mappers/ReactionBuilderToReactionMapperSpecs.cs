@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using FakeItEasy;
 using OSPSuite.BDDHelper;
@@ -9,7 +8,6 @@ using OSPSuite.Core.Domain.Formulas;
 using OSPSuite.Core.Domain.Mappers;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Helpers;
 
 namespace OSPSuite.Core.Mappers
 {

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain;

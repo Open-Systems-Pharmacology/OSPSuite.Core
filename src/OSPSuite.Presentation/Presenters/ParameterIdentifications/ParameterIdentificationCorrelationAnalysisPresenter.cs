@@ -1,5 +1,4 @@
 using OSPSuite.Assets;
-using OSPSuite.Utility.Format;
 using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Services.ParameterIdentifications;

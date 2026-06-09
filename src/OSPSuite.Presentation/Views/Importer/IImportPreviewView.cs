@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using OSPSuite.Core.Domain.Data;
 using OSPSuite.Presentation.Presenters.Importer;
 using OSPSuite.Presentation.Views.ObservedData;
 

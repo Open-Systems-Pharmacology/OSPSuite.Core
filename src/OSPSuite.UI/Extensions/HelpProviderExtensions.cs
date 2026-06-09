@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using OSPSuite.Core.Domain;
 
 namespace OSPSuite.UI.Extensions

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,9 +8,7 @@ using OSPSuite.Core.Domain.SensitivityAnalyses;
 using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Exceptions;
-using OSPSuite.Utility.Extensions;
 
 namespace OSPSuite.Core.Domain.Services.SensitivityAnalyses
 {

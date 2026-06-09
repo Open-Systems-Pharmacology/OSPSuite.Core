@@ -5,7 +5,6 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
-using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Core.Domain
 {

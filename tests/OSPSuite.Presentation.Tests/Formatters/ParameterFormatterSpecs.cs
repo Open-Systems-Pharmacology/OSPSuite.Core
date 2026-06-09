@@ -6,7 +6,6 @@ using OSPSuite.Core.Domain;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.DTO;
 using OSPSuite.Presentation.Formatters;
-using OSPSuite.Presentation.Presentation;
 
 namespace a
 {

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using OSPSuite.Utility.Collections;
+﻿using OSPSuite.Utility.Collections;
 
 namespace OSPSuite.Core.Snapshots
 {

@@ -1,6 +1,5 @@
 ﻿using System;
 using OSPSuite.Core.Domain;
-using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Journal;
 using OSPSuite.Core.Services;
 using OSPSuite.Utility;

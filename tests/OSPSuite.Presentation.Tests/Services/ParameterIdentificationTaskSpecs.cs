@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FakeItEasy;
-using NUnit.Framework;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Commands;
@@ -16,7 +15,6 @@ using OSPSuite.Core.Services;
 using OSPSuite.Helpers;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Presenters;
-using OSPSuite.Utility.Collections;
 using OSPSuite.Utility.Events;
 
 namespace OSPSuite.Presentation.Services

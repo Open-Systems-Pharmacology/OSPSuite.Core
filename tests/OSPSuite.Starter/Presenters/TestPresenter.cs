@@ -1,14 +1,13 @@
-﻿using OSPSuite.Core.Domain;
+﻿using OSPSuite.Assets;
+using OSPSuite.Core.Domain;
+using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Starter.Tasks;
 using OSPSuite.Starter.Tasks.Starters;
 using OSPSuite.Starter.Views;
+using OSPSuite.UI.Views;
 using OSPSuite.Utility.Container;
 using OSPSuite.Utility.Extensions;
-using OSPSuite.Core.Services;
-using System.Linq;
-using OSPSuite.Assets;
-using OSPSuite.UI.Views;
 
 namespace OSPSuite.Starter.Presenters
 {

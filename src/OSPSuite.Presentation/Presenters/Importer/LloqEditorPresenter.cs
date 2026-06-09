@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using MathNet.Numerics.Financial;
 using OSPSuite.Presentation.Views.Importer;
 
 namespace OSPSuite.Presentation.Presenters.Importer
