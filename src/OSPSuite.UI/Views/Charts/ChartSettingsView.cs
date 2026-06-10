@@ -110,6 +110,7 @@ namespace OSPSuite.UI.Views.Charts
          _settingsBinder.Bind(c => c.LegendPosition)
             .To(legendPositionComboBoxEdit)
             .WithValues(EnumHelper.AllValuesFor<LegendPositions>())
+            .AndDisplays(_presenter.LegendPositionDisplayFor)
             .OnValueUpdated += notifyChartSettingsChanged;
 
          _settingsBinder.Bind(c => c.BackColor)
