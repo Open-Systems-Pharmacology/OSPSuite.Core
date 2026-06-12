@@ -69,12 +69,6 @@ namespace OSPSuite.Core.Domain
 
       void RemoveChartTemplate(string chartTemplateName);
 
-      /// <summary>
-      ///    Returns the default curve chart template if one is defined, otherwise the first chart template ordered
-      ///    alphabetically. If not template is defined, returns null
-      /// </summary>
-      CurveChartTemplate DefaultChartTemplate { get; }
-
       CurveChartTemplate ChartTemplateByName(string templateName);
 
       void RemoveAllChartTemplates();
