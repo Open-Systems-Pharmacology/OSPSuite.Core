@@ -1,7 +1,10 @@
-﻿using OSPSuite.Assets;
+﻿using System.Drawing;
+using DevExpress.LookAndFeel;
+using OSPSuite.Assets;
 using OSPSuite.Core.Chart;
 using OSPSuite.DataBinding;
 using OSPSuite.DataBinding.DevExpress;
+using OSPSuite.Presentation.DTO.Charts;
 using OSPSuite.Presentation.Extensions;
 using OSPSuite.Presentation.Formatters;
 using OSPSuite.Presentation.Presenters.Charts;
@@ -16,7 +19,6 @@ namespace OSPSuite.UI.Views.Charts
       private readonly IFormatter<bool?> _boolFormatter = new BooleanYesNoFormatter();
       private readonly IFormatter<LineStyles?> _lineStylesFormatter = new LineStylesFormatter();
       private readonly IFormatter<Symbols?> _symbolsFormatter = new SymbolsFormatter();
-      private readonly IFormatter<int?> _lineThicknessFormatter = new LineThicknessFormatter();
       private readonly ScreenBinder<SelectedCurveValues> _screenBinder = new ScreenBinder<SelectedCurveValues> { BindingMode = BindingMode.TwoWay };
 
       public CurveMultiItemEditorView()
@@ -32,6 +34,8 @@ namespace OSPSuite.UI.Views.Charts
          styleLayoutControlItem.Text = Captions.Chart.CurveOptions.LineStyle.FormatForLabel();
          symbolLayoutControlItem.Text = Captions.Chart.CurveOptions.Symbol.FormatForLabel();
          lineThicknessLayoutControlItem.Text = Captions.LineThickness.FormatForLabel();
+         lineThicknessTextEdit.Properties.NullValuePrompt = Captions.Chart.MultiCurveOptions.CurrentValue;
+         lineThicknessTextEdit.Properties.NullValuePromptForeColor = LookAndFeelHelper.GetSystemColor(lineThicknessTextEdit.LookAndFeel, SystemColors.WindowText);
          visibleLayoutControlItem.Text = Captions.Chart.CurveOptions.Visible.FormatForLabel();
          inLegendLayoutControlItem.Text = Captions.Chart.CurveOptions.VisibleInLegend.FormatForLabel();
       }
@@ -55,9 +59,7 @@ namespace OSPSuite.UI.Views.Charts
             .WithFormat(_symbolsFormatter);
 
          _screenBinder.Bind(x => x.LineThickness)
-            .To(lineThicknessComboBoxEdit)
-            .WithValues(_presenter.AllLineThicknesses)
-            .WithFormat(_lineThicknessFormatter);
+            .To(lineThicknessTextEdit);
 
          _screenBinder.Bind(x => x.Visible)
             .To(visibleComboBoxEdit)
@@ -68,6 +70,8 @@ namespace OSPSuite.UI.Views.Charts
             .To(inLegendComboBoxEdit)
             .WithValues(_presenter.AllBooleanOptions)
             .WithFormat(_boolFormatter);
+
+         RegisterValidationFor(_screenBinder);
       }
 
       public void AttachPresenter(ICurveMultiItemEditorPresenter presenter)
