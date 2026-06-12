@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using OSPSuite.Assets;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
@@ -773,6 +774,50 @@ namespace OSPSuite.Core
          var parameterValues = _simulationConfiguration.ModuleConfigurations[0].SelectedParameterValues;
          var parameterValue = parameterValues.First(x => x.Name == parameter.Name);
          _simulationBuilder.SimulationEntitySourceFor(parameter).SourcePath.ShouldBeEqualTo(parameterValue.Path);
+      }
+   }
+
+   internal class When_creating_models_in_parallel_using_a_shared_model_constructor_instance : ContextForIntegration<IModelConstructor>
+   {
+      private const int NUMBER_OF_PARALLEL_RUNS = 8;
+      private SimulationConfiguration[] _simulationConfigurations;
+      private CreationResult[] _results;
+      private int _expectedEntityCount;
+
+      protected override void Context()
+      {
+         base.Context();
+         sut = IoC.Resolve<IModelConstructor>();
+
+         //one configuration per run created sequentially so that only the model construction itself runs in parallel
+         _simulationConfigurations = new SimulationConfiguration[NUMBER_OF_PARALLEL_RUNS];
+         for (var i = 0; i < NUMBER_OF_PARALLEL_RUNS; i++)
+         {
+            _simulationConfigurations[i] = IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration();
+         }
+
+         //sequential baseline used to verify that the models created in parallel are complete
+         var baselineResult = sut.CreateModelFrom(IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration(), "MyModel");
+         _expectedEntityCount = baselineResult.Model.Root.GetAllChildren<IEntity>().Count;
+      }
+
+      protected override void Because()
+      {
+         _results = new CreationResult[NUMBER_OF_PARALLEL_RUNS];
+         Parallel.For(0, NUMBER_OF_PARALLEL_RUNS, i => { _results[i] = sut.CreateModelFrom(_simulationConfigurations[i], "MyModel"); });
+      }
+
+      [Observation]
+      public void should_create_a_valid_model_for_each_parallel_run()
+      {
+         //the case study creates a warning for a parameter not found
+         _results.Each(result => result.ValidationResult.ValidationState.ShouldBeEqualTo(ValidationState.ValidWithWarnings, result.ValidationResult.Messages.Select(m => m.Text).ToString("\n")));
+      }
+
+      [Observation]
+      public void should_create_models_with_the_same_structure_as_a_model_created_sequentially()
+      {
+         _results.Each(result => result.Model.Root.GetAllChildren<IEntity>().Count.ShouldBeEqualTo(_expectedEntityCount));
       }
    }
 }

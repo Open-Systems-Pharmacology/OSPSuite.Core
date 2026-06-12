@@ -23,10 +23,6 @@ namespace OSPSuite.Core.Domain.Services
       private readonly IObserverBuilderToObserverMapper _observerMapper;
       private readonly IContainerTask _containerTask;
       private readonly IKeywordReplacerTask _keywordReplacerTask;
-
-      //cache only used to speed up task
-      private EntityDescriptorMapList<IContainer> _allContainerDescriptors;
-      private SimulationBuilder _simulationBuilder;
       private readonly IEntityTracker _entityTracker;
 
       public ObserverBuilderTask(
@@ -43,24 +39,17 @@ namespace OSPSuite.Core.Domain.Services
       public void CreateObservers(ModelConfiguration modelConfiguration)
       {
          var (model, simulationBuilder, replacementContext) = modelConfiguration;
-         _allContainerDescriptors = model.Root.GetAllChildren<IContainer>().ToEntityDescriptorMapList();
-         _simulationBuilder = simulationBuilder;
+         //cache only used to speed up task
+         var allContainerDescriptors = model.Root.GetAllChildren<IContainer>().ToEntityDescriptorMapList();
          var observers = simulationBuilder.Observers;
          var presentMolecules = simulationBuilder.AllPresentMolecules().ToList();
-         try
-         {
-            foreach (var observerBuilder in observers.OfType<AmountObserverBuilder>())
-               createAmountObserver(observerBuilder, presentMolecules, replacementContext, simulationBuilder);
+
+         foreach (var observerBuilder in observers.OfType<AmountObserverBuilder>())
+            createAmountObserver(observerBuilder, presentMolecules, allContainerDescriptors, replacementContext, simulationBuilder);
 
 
-            foreach (var observerBuilder in observers.OfType<ContainerObserverBuilder>())
-               createContainerObserver(observerBuilder, presentMolecules, replacementContext, simulationBuilder);
-         }
-         finally
-         {
-            _allContainerDescriptors = null;
-            _simulationBuilder = null;
-         }
+         foreach (var observerBuilder in observers.OfType<ContainerObserverBuilder>())
+            createContainerObserver(observerBuilder, presentMolecules, allContainerDescriptors, replacementContext, simulationBuilder);
       }
 
       /// <summary>
@@ -79,18 +68,18 @@ namespace OSPSuite.Core.Domain.Services
       ///    in the spatial structure of the model.
       ///    Typical example: "Concentration"-Observer (M/V)
       /// </summary>
-      private void createAmountObserver(AmountObserverBuilder observerBuilder, IEnumerable<MoleculeBuilder> presentMolecules, ReplacementContext replacementContext, SimulationBuilder simulationBuilder)
+      private void createAmountObserver(AmountObserverBuilder observerBuilder, IEnumerable<MoleculeBuilder> presentMolecules, EntityDescriptorMapList<IContainer> allContainerDescriptors, ReplacementContext replacementContext, SimulationBuilder simulationBuilder)
       {
          var moleculeNamesForObserver = moleculeBuildersValidFor(simulationBuilder.MoleculeListFor(observerBuilder), presentMolecules)
             .Select(x => x.Name).ToList();
 
-         foreach (var container in _allContainerDescriptors.AllSatisfiedBy(observerBuilder.ContainerCriteria))
+         foreach (var container in allContainerDescriptors.AllSatisfiedBy(observerBuilder.ContainerCriteria))
          {
             var amountsForObserver = container.GetChildren<MoleculeAmount>(ma => moleculeNamesForObserver.Contains(ma.Name));
 
             foreach (var amount in amountsForObserver)
             {
-               var observer = addObserverInContainer(observerBuilder, amount, amount.QuantityType);
+               var observer = addObserverInContainer(observerBuilder, amount, amount.QuantityType, simulationBuilder);
                _keywordReplacerTask.ReplaceIn(observer, amount.Name, replacementContext);
             }
          }
@@ -102,11 +91,11 @@ namespace OSPSuite.Core.Domain.Services
       ///    of the model.
       ///    Typical example is average drug concentration in an organ
       /// </summary>
-      private void createContainerObserver(ContainerObserverBuilder observerBuilder, IEnumerable<MoleculeBuilder> presentMolecules, ReplacementContext replacementContext, SimulationBuilder simulationBuilder)
+      private void createContainerObserver(ContainerObserverBuilder observerBuilder, IEnumerable<MoleculeBuilder> presentMolecules, EntityDescriptorMapList<IContainer> allContainerDescriptors, ReplacementContext replacementContext, SimulationBuilder simulationBuilder)
       {
          var moleculeBuildersForObserver = moleculeBuildersValidFor(simulationBuilder.MoleculeListFor(observerBuilder), presentMolecules).ToList();
          //retrieve a list here to avoid endless loop if observers criteria is not well defined
-         foreach (var container in _allContainerDescriptors.AllSatisfiedBy(observerBuilder.ContainerCriteria))
+         foreach (var container in allContainerDescriptors.AllSatisfiedBy(observerBuilder.ContainerCriteria))
          {
             foreach (var moleculeBuilder in moleculeBuildersForObserver)
             {
@@ -119,15 +108,15 @@ namespace OSPSuite.Core.Domain.Services
                   _entityTracker.Track(moleculeContainer, observerBuilder, simulationBuilder);
                }
 
-               var observer = addObserverInContainer(observerBuilder, moleculeContainer, moleculeBuilder.QuantityType);
+               var observer = addObserverInContainer(observerBuilder, moleculeContainer, moleculeBuilder.QuantityType, simulationBuilder);
                _keywordReplacerTask.ReplaceIn(observer, moleculeBuilder.Name, replacementContext);
             }
          }
       }
 
-      private Observer addObserverInContainer(ObserverBuilder observerBuilder, IContainer observerContainer, QuantityType moleculeType)
+      private Observer addObserverInContainer(ObserverBuilder observerBuilder, IContainer observerContainer, QuantityType moleculeType, SimulationBuilder simulationBuilder)
       {
-         var observer = _observerMapper.MapFrom(observerBuilder, _simulationBuilder);
+         var observer = _observerMapper.MapFrom(observerBuilder, simulationBuilder);
          observer.QuantityType = QuantityType.Observer | moleculeType;
          observerContainer.Add(observer);
          return observer;
