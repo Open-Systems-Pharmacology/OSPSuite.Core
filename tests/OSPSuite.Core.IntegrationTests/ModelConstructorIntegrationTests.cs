@@ -782,7 +782,7 @@ namespace OSPSuite.Core
       private const int NUMBER_OF_PARALLEL_RUNS = 8;
       private SimulationConfiguration[] _simulationConfigurations;
       private CreationResult[] _results;
-      private int _expectedEntityCount;
+      private string _expectedModelFingerprint;
 
       protected override void Context()
       {
@@ -798,7 +798,25 @@ namespace OSPSuite.Core
 
          //sequential baseline used to verify that the models created in parallel are complete
          var baselineResult = sut.CreateModelFrom(IoC.Resolve<ModelHelperForSpecs>().CreateSimulationConfiguration(), "MyModel");
-         _expectedEntityCount = baselineResult.Model.Root.GetAllChildren<IEntity>().Count;
+         _expectedModelFingerprint = structuralFingerprintOf(baselineResult.Model);
+      }
+
+      /// <summary>
+      ///    Returns the sorted entity paths of all entities in the model together with the name of the formula they use.
+      ///    Comparing fingerprints catches races that would attach entities or formulas to the wrong nodes
+      /// </summary>
+      private static string structuralFingerprintOf(IModel model)
+      {
+         return model.Root.GetAllChildren<IEntity>()
+            .Select(entityFingerprint)
+            .OrderBy(x => x)
+            .ToString("\n");
+      }
+
+      private static string entityFingerprint(IEntity entity)
+      {
+         var formulaName = (entity as IUsingFormula)?.Formula?.Name;
+         return formulaName == null ? entity.EntityPath() : $"{entity.EntityPath()}|{formulaName}";
       }
 
       protected override void Because()
@@ -817,7 +835,7 @@ namespace OSPSuite.Core
       [Observation]
       public void should_create_models_with_the_same_structure_as_a_model_created_sequentially()
       {
-         _results.Each(result => result.Model.Root.GetAllChildren<IEntity>().Count.ShouldBeEqualTo(_expectedEntityCount));
+         _results.Each(result => structuralFingerprintOf(result.Model).ShouldBeEqualTo(_expectedModelFingerprint));
       }
    }
 }
