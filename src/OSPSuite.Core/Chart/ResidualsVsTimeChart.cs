@@ -8,7 +8,7 @@ namespace OSPSuite.Core.Chart
    {
       public const string ZERO = "Zero";
 
-      public override AnalysisChartTypes AnalysisChartType => AnalysisChartTypes.ResidualVsTime;
+      public override CurveChartTypes CurveChartType => CurveChartTypes.ResidualVsTime;
 
       public override Curve CreateCurve(DataColumn columnX, DataColumn columnY, string curveName, IDimensionFactory dimensionFactory)
       {

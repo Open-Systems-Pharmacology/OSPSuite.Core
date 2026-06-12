@@ -7,10 +7,17 @@ namespace OSPSuite.Presentation.Presenters
    public interface IChartTemplateManagerPresenter : IPresenter<IChartTemplateManagerView>,  IDisposablePresenter
    {
       /// <summary>
-      ///    Edits the chart templates <paramref name="chartTemplates" /> given as parameters and a brand new enumeration
+      ///    Edits the chart templates <paramref name="chartTemplates" /> given as parameters and a brand-new enumeration
       ///    containing the edited templates. Returns true if the edit was performed otherwise false
       /// </summary>
       void EditTemplates(IEnumerable<CurveChartTemplate> chartTemplates);
+
+      /// <summary>
+      ///    Edits the chart templates <paramref name="chartTemplates" /> created for charts of type
+      ///    <paramref name="managedChartType" />. The <paramref name="forbiddenNames" /> are taken into account when
+      ///    validating template names. Loading a template created for another chart type from file is rejected
+      /// </summary>
+      void EditTemplates(IEnumerable<CurveChartTemplate> chartTemplates, IReadOnlyList<string> forbiddenNames, CurveChartTypes managedChartType);
 
       /// <summary>
       ///    This method should be called to show the details of a <paramref name="chartTemplate" />
@@ -46,8 +53,8 @@ namespace OSPSuite.Presentation.Presenters
       bool HasChanged { get; }
 
       /// <summary>
-      /// Sets the <paramref name="template"/> DefaultTemplate to <paramref name="isDefault"/>. 
-      /// Also clears DefaultTemplate value for all other templates
+      /// Sets the <paramref name="template"/> DefaultTemplate to <paramref name="isDefault"/>.
+      /// Also clears DefaultTemplate value for all other templates of the same chart type
       /// </summary>
       void SetDefaultTemplateValue(CurveChartTemplate template, bool isDefault);
    }

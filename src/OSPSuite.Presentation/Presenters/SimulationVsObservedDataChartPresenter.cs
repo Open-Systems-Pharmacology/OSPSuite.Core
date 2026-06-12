@@ -37,6 +37,7 @@ namespace OSPSuite.Presentation.Presenters
       public override void UpdateAnalysisBasedOn(IAnalysable analysable)
       {
          _simulation = analysable.DowncastTo<ISimulation>();
+         UpdateTemplatesBasedOn(_simulation as IWithChartTemplates);
 
          if (ChartIsBeingUpdated)
          {

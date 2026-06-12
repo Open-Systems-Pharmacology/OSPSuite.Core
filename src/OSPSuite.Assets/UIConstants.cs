@@ -1627,6 +1627,11 @@ namespace OSPSuite.Assets
          return $"Could not load chart template. Make sure that the file '{templateFilePath}' is a template file.";
       }
 
+      public static string CannotLoadTemplateCreatedForAnotherChartType(string templateName, string templateChartType, string managedChartType)
+      {
+         return $"Cannot load the template '{templateName}'. The template was created for charts of type '{templateChartType}' and cannot be used for charts of type '{managedChartType}'.";
+      }
+
       public static string CannotFindResource(string resourceFullPath) => $"Cannot find resource located at '{resourceFullPath}'";
 
       public static string CannotFindSimulationParameterForIdentificationParameter(string fullQuantityPath, string name)

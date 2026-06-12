@@ -25,7 +25,7 @@ namespace OSPSuite.Presentation.Presentation
    public abstract class concern_for_ParameterIdentificationPredictedVsObservedChartPresenter : ContextSpecification<ParameterIdentificationPredictedVsObservedChartPresenter>
    {
       private IParameterIdentificationSingleRunAnalysisView _view;
-      private IChartEditorAndDisplayPresenter _chartEditorAndDisplayPresenter;
+      protected IChartEditorAndDisplayPresenter _chartEditorAndDisplayPresenter;
       private ICurveNamer _curveNamer;
       private IDataColumnToPathElementsMapper _dataColumnToPathElementsMapper;
       private IChartTemplatingTask _chartTemplatingTask;
@@ -40,7 +40,7 @@ namespace OSPSuite.Presentation.Presentation
       protected IPredictedVsObservedChartService _predictedVsObservedService;
       protected DataRepository _observationData;
       private IChartEditorLayoutTask _chartEditorLayoutTask;
-      private IProjectRetriever _projectRetreiver;
+      protected IProjectRetriever _projectRetreiver;
       protected ChartPresenterContext _chartPresenterContext;
       protected DataRepository _simulationData;
 
@@ -195,11 +195,34 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_reload_the_chart_from_template()
       {
-         A.CallTo(() => _chartPresenterContext.TemplatingTask.InitializeChartFromTemplate(sut.Chart, A<IEnumerable<DataColumn>>._, 
-            _template, 
+         A.CallTo(() => _chartPresenterContext.TemplatingTask.InitializeChartFromTemplate(sut.Chart, A<IEnumerable<DataColumn>>._,
+            _template,
             A<Func<DataColumn, string>>._,
             false,
             true)).MustHaveHappened();
+      }
+   }
+
+   public class When_initializing_the_predicted_vs_observed_analysis_for_a_parameter_identification : concern_for_ParameterIdentificationPredictedVsObservedChartPresenter
+   {
+      private IProject _project;
+
+      protected override void Context()
+      {
+         base.Context();
+         _project = A.Fake<IProject>();
+         A.CallTo(() => _projectRetreiver.CurrentProject).Returns(_project);
+      }
+
+      protected override void Because()
+      {
+         sut.InitializeAnalysis(_predictedVsObservedChart, _parameterIdentification);
+      }
+
+      [Observation]
+      public void should_add_the_chart_template_menu_based_on_the_chart_templates_defined_in_the_project()
+      {
+         A.CallTo(() => _chartEditorAndDisplayPresenter.EditorPresenter.AddChartTemplateMenu(_project, A<Action<CurveChartTemplate>>._)).MustHaveHappened();
       }
    }
 }

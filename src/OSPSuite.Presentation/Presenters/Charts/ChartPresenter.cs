@@ -4,6 +4,7 @@ using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Events;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Presentation.Core;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Settings;
@@ -86,7 +87,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          updateViewCaptionFromChart();
       }
 
-      protected CurveChartTemplate DefaultChartTemplate => _withChartTemplates?.DefaultChartTemplate;
+      protected CurveChartTemplate DefaultChartTemplate => _withChartTemplates?.DefaultChartTemplateFor(Chart.CurveChartType);
 
       protected void UpdateTemplatesBasedOn(IWithChartTemplates withChartTemplates)
       {

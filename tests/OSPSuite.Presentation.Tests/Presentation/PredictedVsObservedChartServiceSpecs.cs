@@ -322,6 +322,14 @@ namespace OSPSuite.Presentation.Presentation
       {
          _predictedVsObservedChart.Curves.Count.ShouldBeEqualTo(2);
       }
+
+      [Observation]
+      public void the_identity_curve_columns_should_have_paths_usable_in_chart_templates()
+      {
+         var identityCurve = _predictedVsObservedChart.Curves.Single(x => Equals(x.Name, "Identity"));
+         identityCurve.yData.QuantityInfo.PathAsString.ShouldBeEqualTo("Identity");
+         identityCurve.xData.QuantityInfo.PathAsString.ShouldBeEqualTo(_concentrationObservationColumn.Dimension.Name);
+      }
    }
 
    public class When_adding_deviation_lines_to_a_chart_with_fold_value_2 : concern_for_PredictedVsObservedChartService
@@ -372,6 +380,13 @@ namespace OSPSuite.Presentation.Presentation
          var lastObservationValue = _concentrationObservationColumn.Values.Last();
          _deviationLineRepository.AllButBaseGridAsArray[1].Values[0].ShouldBeEqualTo(firstObservationValue / 2);
          _deviationLineRepository.AllButBaseGridAsArray[1].Values.Last().ShouldBeEqualTo(lastObservationValue / 2);
+      }
+
+      [Observation]
+      public void the_deviation_line_columns_should_have_paths_matching_their_fold_specific_names()
+      {
+         _deviationLineRepository.AllButBaseGrid().Each(column => column.QuantityInfo.PathAsString.ShouldBeEqualTo(column.Name));
+         _deviationLineRepository.BaseGrid.QuantityInfo.PathAsString.ShouldBeEqualTo(_concentrationObservationColumn.Dimension.Name);
       }
    }
 

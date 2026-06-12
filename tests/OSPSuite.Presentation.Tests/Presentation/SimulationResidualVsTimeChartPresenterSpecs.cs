@@ -209,4 +209,27 @@ namespace OSPSuite.Presentation.Presentation
          sut.Clear();
       }
    }
+
+   public class When_initializing_the_residuals_vs_time_analysis_for_a_simulation_with_chart_templates : concern_for_SimulationResidualVsTimeChartPresenter
+   {
+      private ISimulation _simulationWithTemplates;
+
+      protected override void Context()
+      {
+         base.Context();
+         _simulationWithTemplates = A.Fake<ISimulation>(x => x.Implements<IWithChartTemplates>());
+         A.CallTo(() => _simulationWithTemplates.ResultsDataRepository).Returns(null);
+      }
+
+      protected override void Because()
+      {
+         sut.InitializeAnalysis(_residualVsTimeChart, _simulationWithTemplates);
+      }
+
+      [Observation]
+      public void should_add_the_chart_template_menu_based_on_the_chart_templates_defined_in_the_simulation()
+      {
+         A.CallTo(() => ChartEditorPresenter.AddChartTemplateMenu((IWithChartTemplates) _simulationWithTemplates, A<Action<CurveChartTemplate>>._)).MustHaveHappened();
+      }
+   }
 }

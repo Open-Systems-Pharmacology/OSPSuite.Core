@@ -17,6 +17,8 @@ namespace OSPSuite.Presentation.Presenters.Charts
       private readonly IChartTemplateDetailsPresenter _chartTemplateDetailsPresenter;
       private readonly IDialogCreator _dialogCreator;
       private List<CurveChartTemplate> _chartTemplatesToEdit;
+      private List<string> _forbiddenNames = new List<string>();
+      private CurveChartTypes? _managedChartType;
       public bool HasChanged { private set; get; }
 
       public ChartTemplateManagerPresenter(IChartTemplateManagerView view, IChartTemplatingTask chartTemplatingTask,
@@ -32,12 +34,24 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void SetDefaultTemplateValue(CurveChartTemplate template, bool isDefault)
       {
-         _chartTemplatesToEdit.Each(x => x.IsDefault = false);
+         _chartTemplatesToEdit.Where(x => x.ChartType == template.ChartType).Each(x => x.IsDefault = false);
          rebindAction(() => template.IsDefault = isDefault);
       }
 
       public void EditTemplates(IEnumerable<CurveChartTemplate> chartTemplates)
       {
+         editTemplates(chartTemplates, new List<string>(), managedChartType: null);
+      }
+
+      public void EditTemplates(IEnumerable<CurveChartTemplate> chartTemplates, IReadOnlyList<string> forbiddenNames, CurveChartTypes managedChartType)
+      {
+         editTemplates(chartTemplates, forbiddenNames, managedChartType);
+      }
+
+      private void editTemplates(IEnumerable<CurveChartTemplate> chartTemplates, IReadOnlyList<string> forbiddenNames, CurveChartTypes? managedChartType)
+      {
+         _managedChartType = managedChartType;
+         _forbiddenNames = forbiddenNames.ToList();
          _chartTemplatesToEdit = chartTemplates.OrderBy(x => x.Name).ToList();
          rebind();
          showFirstTemplateIfAvailable();
@@ -62,11 +76,21 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       public void CloneTemplate(CurveChartTemplate templateToClone)
       {
-         var newTemplate = _chartTemplatingTask.CloneTemplate(templateToClone, _chartTemplatesToEdit);
+         var newTemplate = _chartTemplatingTask.CloneTemplate(templateToClone, allForbiddenNames());
          if (newTemplate == null)
             return;
 
          addTemplate(newTemplate);
+      }
+
+      private IReadOnlyList<string> allForbiddenNames()
+      {
+         return _chartTemplatesToEdit.AllNames().Concat(_forbiddenNames).ToList();
+      }
+
+      private bool templateMatchesManagedChartType(CurveChartTemplate template)
+      {
+         return _managedChartType == null || template.ChartType == _managedChartType.Value;
       }
 
       public void DeleteTemplate(CurveChartTemplate chartTemplate)
@@ -89,9 +113,15 @@ namespace OSPSuite.Presentation.Presenters.Charts
          var file = _dialogCreator.AskForFileToOpen(Captions.LoadChartTemplateFromFile, Constants.Filter.CHART_TEMPLATE_FILTER, Constants.DirectoryKey.MODEL_PART);
          if (string.IsNullOrEmpty(file)) return;
 
-         var template = _chartTemplatingTask.LoadTemplateFromFile(file, _chartTemplatesToEdit);
+         var template = _chartTemplatingTask.LoadTemplateFromFile(file, allForbiddenNames());
          if (template == null)
             return;
+
+         if (!templateMatchesManagedChartType(template))
+         {
+            _dialogCreator.MessageBoxError(Error.CannotLoadTemplateCreatedForAnotherChartType(template.Name, template.ChartType.ToString(), _managedChartType.ToString()));
+            return;
+         }
 
          addTemplate(template);
       }

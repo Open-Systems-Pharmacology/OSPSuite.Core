@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using FakeItEasy;
@@ -41,7 +42,7 @@ namespace OSPSuite.Presentation.Presentation
       private IDisplayUnitRetriever _displayUnitRetriever;
       protected OptimizationRunResult _optimizationRunResult2;
       private IChartEditorLayoutTask _chartEditorLayoutTask;
-      private IProjectRetriever _projectRetreiver;
+      protected IProjectRetriever _projectRetreiver;
       private ChartPresenterContext _chartPresenterContext;
       private ICurveNamer _curveNamer;
 
@@ -227,6 +228,29 @@ namespace OSPSuite.Presentation.Presentation
          var outputCurve = _timeProfileAnalysis.FindCurveWithSameData(_outputColumn.BaseGrid, _outputColumn);
          outputCurve.ShouldNotBeNull();
          outputCurve.Color.ShouldBeEqualTo(CANONICAL_COLOR);
+      }
+   }
+
+   public class When_initializing_the_time_profile_analysis_for_a_parameter_identification : concern_for_ParameterIdentificationTimeProfileChartPresenter
+   {
+      private IProject _project;
+
+      protected override void Context()
+      {
+         base.Context();
+         _project = A.Fake<IProject>();
+         A.CallTo(() => _projectRetreiver.CurrentProject).Returns(_project);
+      }
+
+      protected override void Because()
+      {
+         sut.InitializeAnalysis(_timeProfileAnalysis, _parameterIdentification);
+      }
+
+      [Observation]
+      public void should_add_the_chart_template_menu_based_on_the_chart_templates_defined_in_the_project()
+      {
+         A.CallTo(() => ChartEditorPresenter.AddChartTemplateMenu(_project, A<Action<CurveChartTemplate>>._)).MustHaveHappened();
       }
    }
 }
