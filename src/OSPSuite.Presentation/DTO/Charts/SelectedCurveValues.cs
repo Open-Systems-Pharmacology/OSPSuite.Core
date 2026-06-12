@@ -18,6 +18,6 @@ public class SelectedCurveValues : IValidatable
 
    private static IBusinessRule lineThicknessUnsetOrWithinLimits { get; } = CreateRule.For<SelectedCurveValues>()
       .Property(x => x.LineThickness)
-      .WithRule((selectedValues, lineThickness) => lineThickness == null || lineThickness >= Constants.MIN_LINE_THICKNESS && lineThickness <= Constants.MAX_LINE_THICKNESS)
+      .WithRule((selectedValues, lineThickness) => lineThickness == null || (lineThickness >= Constants.MIN_LINE_THICKNESS && lineThickness <= Constants.MAX_LINE_THICKNESS))
       .WithError(Validation.LineThicknessShouldBeBetween(Constants.MIN_LINE_THICKNESS, Constants.MAX_LINE_THICKNESS));
 }

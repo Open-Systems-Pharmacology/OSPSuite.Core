@@ -49,4 +49,19 @@ namespace OSPSuite.Presentation.Presentation
          sut.IsValid().ShouldBeFalse();
       }
    }
+
+   public class When_validating_a_curve_template_dto_with_a_line_thickness_below_the_allowed_range : concern_for_CurveTemplateDTO
+   {
+      protected override void Context()
+      {
+         base.Context();
+         sut.LineThickness = Constants.MIN_LINE_THICKNESS - 1;
+      }
+
+      [Observation]
+      public void should_be_invalid()
+      {
+         sut.IsValid().ShouldBeFalse();
+      }
+   }
 }
