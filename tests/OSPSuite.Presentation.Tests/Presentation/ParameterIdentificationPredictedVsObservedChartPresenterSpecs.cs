@@ -26,6 +26,7 @@ namespace OSPSuite.Presentation.Presentation
    {
       private IParameterIdentificationSingleRunAnalysisView _view;
       protected IChartEditorAndDisplayPresenter _chartEditorAndDisplayPresenter;
+      protected IChartEditorPresenter _chartEditorPresenter;
       private ICurveNamer _curveNamer;
       private IDataColumnToPathElementsMapper _dataColumnToPathElementsMapper;
       private IChartTemplatingTask _chartTemplatingTask;
@@ -48,6 +49,8 @@ namespace OSPSuite.Presentation.Presentation
       {
          _view = A.Fake<IParameterIdentificationSingleRunAnalysisView>();
          _chartEditorAndDisplayPresenter = A.Fake<IChartEditorAndDisplayPresenter>();
+         _chartEditorPresenter = A.Fake<IChartEditorPresenter>();
+         A.CallTo(() => _chartEditorAndDisplayPresenter.EditorPresenter).Returns(_chartEditorPresenter);
          _curveNamer = A.Fake<ICurveNamer>();
          _dataColumnToPathElementsMapper = A.Fake<IDataColumnToPathElementsMapper>();
          _chartTemplatingTask = A.Fake<IChartTemplatingTask>();
@@ -222,7 +225,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_add_the_chart_template_menu_based_on_the_chart_templates_defined_in_the_project()
       {
-         A.CallTo(() => _chartEditorAndDisplayPresenter.EditorPresenter.AddChartTemplateMenu(_project, A<Action<CurveChartTemplate>>._)).MustHaveHappened();
+         A.CallTo(() => _chartEditorPresenter.AddChartTemplateMenu(_project, A<Action<CurveChartTemplate>>._)).MustHaveHappened();
       }
    }
 }

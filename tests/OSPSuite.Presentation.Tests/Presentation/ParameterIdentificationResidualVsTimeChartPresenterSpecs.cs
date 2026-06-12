@@ -43,7 +43,7 @@ namespace OSPSuite.Presentation.Presentation
       private ChartPresenterContext _chartPresenterContext;
       private ICurveNamer _curveNamer;
 
-      protected IChartEditorPresenter ChartEditorPresenter => _chartEditorAndDisplayPresenter.EditorPresenter;
+      protected IChartEditorPresenter ChartEditorPresenter { get; private set; }
 
       protected override void Context()
       {
@@ -51,6 +51,8 @@ namespace OSPSuite.Presentation.Presentation
          _residualsVsTimeChartService = A.Fake<ResidualsVsTimeChartService>();
          _view = A.Fake<IParameterIdentificationSingleRunAnalysisView>();
          _chartEditorAndDisplayPresenter = A.Fake<IChartEditorAndDisplayPresenter>();
+         ChartEditorPresenter = A.Fake<IChartEditorPresenter>();
+         A.CallTo(() => _chartEditorAndDisplayPresenter.EditorPresenter).Returns(ChartEditorPresenter);
          _curveNamer = A.Fake<ICurveNamer>();
          _pathElementsMapper = A.Fake<IDataColumnToPathElementsMapper>();
          _chartTemplatingTask = A.Fake<IChartTemplatingTask>();

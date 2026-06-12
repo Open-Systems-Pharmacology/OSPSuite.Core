@@ -5,6 +5,7 @@ using OSPSuite.Assets;
 using OSPSuite.Utility.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views;
@@ -119,7 +120,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
          if (!templateMatchesManagedChartType(template))
          {
-            _dialogCreator.MessageBoxError(Error.CannotLoadTemplateCreatedForAnotherChartType(template.Name, template.ChartType.ToString(), _managedChartType.ToString()));
+            _dialogCreator.MessageBoxError(Error.CannotLoadTemplateCreatedForAnotherChartType(template.Name, template.ChartType.ToString().SplitToUpperCase(), _managedChartType.ToString().SplitToUpperCase()));
             return;
          }
 

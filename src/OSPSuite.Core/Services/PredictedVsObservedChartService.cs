@@ -78,7 +78,7 @@ namespace OSPSuite.Core.Services
          {
             Values = identityValues
          };
-         baseGrid.QuantityInfo.Path = new[] {mergedDimension.Name};
+         baseGrid.QuantityInfo.Path = new[] {mergedDimension.DisplayName};
          var values = new DataColumn("Marker_Identity", mergedDimension, baseGrid)
          {
             Values = identityValues,
@@ -190,7 +190,7 @@ namespace OSPSuite.Core.Services
                {
                   Values = new List<float>() {identityMinimum, identityMaximum}
                };
-               baseGridDeviation.QuantityInfo.Path = new[] {mergedDimension.Name};
+               baseGridDeviation.QuantityInfo.Path = new[] {mergedDimension.DisplayName};
 
                var valuesUpper = new DataColumn(Captions.Chart.DeviationLines.DeviationLineNameUpper(foldValue), mergedDimension,
                   baseGridDeviation)

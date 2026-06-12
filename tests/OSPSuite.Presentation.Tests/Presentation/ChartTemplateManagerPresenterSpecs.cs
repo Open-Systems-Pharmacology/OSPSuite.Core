@@ -6,6 +6,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Domain;
+using OSPSuite.Core.Extensions;
 using OSPSuite.Core.Services;
 using OSPSuite.Presentation.Presenters;
 using OSPSuite.Presentation.Presenters.Charts;
@@ -193,7 +194,7 @@ namespace OSPSuite.Presentation.Presentation
       [Observation]
       public void should_notify_the_user_that_the_template_cannot_be_used_for_the_managed_chart_type()
       {
-         A.CallTo(() => _dialogCreator.MessageBoxError(Error.CannotLoadTemplateCreatedForAnotherChartType(_loadedTemplate.Name, CurveChartTypes.TimeProfile.ToString(), CurveChartTypes.PredictedVsObserved.ToString()))).MustHaveHappened();
+         A.CallTo(() => _dialogCreator.MessageBoxError(Error.CannotLoadTemplateCreatedForAnotherChartType(_loadedTemplate.Name, CurveChartTypes.TimeProfile.ToString().SplitToUpperCase(), CurveChartTypes.PredictedVsObserved.ToString().SplitToUpperCase()))).MustHaveHappened();
       }
 
       [Observation]

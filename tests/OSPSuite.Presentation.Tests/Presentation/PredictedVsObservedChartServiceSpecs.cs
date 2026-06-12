@@ -328,7 +328,7 @@ namespace OSPSuite.Presentation.Presentation
       {
          var identityCurve = _predictedVsObservedChart.Curves.Single(x => Equals(x.Name, "Identity"));
          identityCurve.yData.QuantityInfo.PathAsString.ShouldBeEqualTo("Identity");
-         identityCurve.xData.QuantityInfo.PathAsString.ShouldBeEqualTo(_concentrationObservationColumn.Dimension.Name);
+         identityCurve.xData.QuantityInfo.PathAsString.ShouldBeEqualTo(_concentrationObservationColumn.Dimension.DisplayName);
       }
    }
 
@@ -386,7 +386,7 @@ namespace OSPSuite.Presentation.Presentation
       public void the_deviation_line_columns_should_have_paths_matching_their_fold_specific_names()
       {
          _deviationLineRepository.AllButBaseGrid().Each(column => column.QuantityInfo.PathAsString.ShouldBeEqualTo(column.Name));
-         _deviationLineRepository.BaseGrid.QuantityInfo.PathAsString.ShouldBeEqualTo(_concentrationObservationColumn.Dimension.Name);
+         _deviationLineRepository.BaseGrid.QuantityInfo.PathAsString.ShouldBeEqualTo(_concentrationObservationColumn.Dimension.DisplayName);
       }
    }
 

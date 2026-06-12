@@ -51,6 +51,8 @@ namespace OSPSuite.Presentation.Presentation
          _presentationSettingsTask = A.Fake<IPresentationSettingsTask>();
          _view = A.Fake<IParameterIdentificationMultipleRunsAnalysisView>();
          _chartEditorAndDisplayPresenter = A.Fake<IChartEditorAndDisplayPresenter>();
+         ChartEditorPresenter = A.Fake<IChartEditorPresenter>();
+         A.CallTo(() => _chartEditorAndDisplayPresenter.EditorPresenter).Returns(ChartEditorPresenter);
          _curveNamer = A.Fake<ICurveNamer>();
          _pathElementsMapper = A.Fake<IDataColumnToPathElementsMapper>();
          _chartTemplatingTask = A.Fake<IChartTemplatingTask>();
@@ -96,7 +98,7 @@ namespace OSPSuite.Presentation.Presentation
          _parameterIdentificationRunResult.BestResult = _optimizationRunResult2;
       }
 
-      protected IChartEditorPresenter ChartEditorPresenter => _chartEditorAndDisplayPresenter.EditorPresenter;
+      protected IChartEditorPresenter ChartEditorPresenter { get; private set; }
    }
 
    public class When_displaying_the_results_of_a_given_parameter_identification_as_time_profile : concern_for_ParameterIdentificationTimeProfileChartPresenter
