@@ -518,6 +518,8 @@ namespace OSPSuite.Helpers
          AssertAreEqual(x1.GridLines, x2.GridLines);
          AssertAreEqual(x1.Min, x2.Min);
          AssertAreEqual(x1.Max, x2.Max);
+         AssertAreEqual(x1.MajorInterval, x2.MajorInterval);
+         AssertAreEqual(x1.MinorCount, x2.MinorCount);
          AssertAreEqual(x1.NumberMode, x2.NumberMode);
          AssertAreEqual(x1.Scaling, x2.Scaling);
          AssertAreEqual(x1.Visible, x2.Visible);

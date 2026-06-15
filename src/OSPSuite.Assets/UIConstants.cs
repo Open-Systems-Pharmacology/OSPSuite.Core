@@ -84,6 +84,8 @@ namespace OSPSuite.Assets
       public static readonly string Scaling = "Scaling";
       public static readonly string AxisMinimum = "Axis Minimum";
       public static readonly string AxisMaximum = "Axis Maximum";
+      public static readonly string AxisMajorInterval = "Major Interval";
+      public static readonly string AxisMinorCount = "Minor Count";
       public static readonly string GridLines = "Grid Lines";
       public static readonly string DefaultColor = "Default Color";
       public static readonly string DefaultLineStyle = "Default Line Style";
@@ -1274,6 +1276,8 @@ namespace OSPSuite.Assets
             public static string GridLines = "Grid";
             public static string Min = "Min";
             public static string Max = "Max";
+            public static string MajorInterval = "Major Interval";
+            public static string MinorCount = "Minor Count";
             public static string Caption = "Caption";
             public static string DefaultLinestyle = "Default Linestyle";
             public static string DefaultColor = "Default Color";
@@ -1978,6 +1982,10 @@ namespace OSPSuite.Assets
       }
 
       public static readonly string LogAxisMaxMustBeGreaterThanZero = "Loagarithmic axis maximum must be greater than 0";
+
+      public static readonly string AxisMajorIntervalMustBeGreaterThanZero = "The axis major interval must be greater than 0";
+
+      public static readonly string AxisMinorCountMustBeGreaterThanZeroAndLessThan100 = "The axis minor count must be greater than 0 and less than 100";
    }
 
    public static class Rules

@@ -35,6 +35,8 @@ namespace OSPSuite.Core.Mappers
             Visible = true,
             Min = 60, //min
             Max = 120,
+            MajorInterval = 30,
+            MinorCount = 5,
             DefaultColor = Color.AntiqueWhite,
             DefaultLineStyle = LineStyles.Solid
          };
@@ -69,6 +71,13 @@ namespace OSPSuite.Core.Mappers
       {
          _snapshot.Min.ShouldBeEqualTo(60);
          _snapshot.Max.ShouldBeEqualTo(120);
+      }
+
+      [Observation]
+      public void should_have_saved_the_major_interval_and_minor_count()
+      {
+         _snapshot.MajorInterval.ShouldBeEqualTo(30);
+         _snapshot.MinorCount.ShouldBeEqualTo(5);
       }
    }
 
@@ -153,6 +162,13 @@ namespace OSPSuite.Core.Mappers
       {
          _newAxis.Min.ShouldBeEqualTo(60);
          _newAxis.Max.ShouldBeEqualTo(120);
+      }
+
+      [Observation]
+      public void should_have_loaded_the_major_interval_and_minor_count_from_snapshot()
+      {
+         _newAxis.MajorInterval.ShouldBeEqualTo(30);
+         _newAxis.MinorCount.ShouldBeEqualTo(5);
       }
    }
 }

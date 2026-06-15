@@ -19,6 +19,8 @@ namespace OSPSuite.Core.Serialization.Chart
          Map(x => x.UnitName).WithMappingName(Constants.Serialization.Attribute.UNIT_NAME);
          Map(x => x.Min);
          Map(x => x.Max);
+         Map(x => x.MajorInterval);
+         Map(x => x.MinorCount);
          Map(x => x.Scaling);
          Map(x => x.NumberMode);
          Map(x => x.GridLines);
