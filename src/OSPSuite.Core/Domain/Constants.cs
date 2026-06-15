@@ -53,6 +53,8 @@ namespace OSPSuite.Core.Domain
       public const double DEFAULT_SCALE_DIVISOR_MIN_VALUE = 1e-15;
       public const string DEFAULT_CHART_LAYOUT = "Standard View";
       public const string DEFAULT_SIMULATION_RESULTS_NAME = "Simulation Results";
+      public const int MIN_LINE_THICKNESS = 1;
+      public const int MAX_LINE_THICKNESS = 10;
 
       public const string VOLUME_ALIAS = "V";
       public const string START_VALUE_ALIAS = "StartValue";
@@ -739,7 +741,6 @@ namespace OSPSuite.Core.Domain
       public static class MultiCurveOptions
       {
          public static readonly IReadOnlyList<bool?> AllBooleanOptions = new bool?[] {null, false, true};
-         public static readonly IReadOnlyList<int?> AllLineThicknesses = new int?[] {null, 1, 2, 3};
       }
 
       public static class ImporterConstants

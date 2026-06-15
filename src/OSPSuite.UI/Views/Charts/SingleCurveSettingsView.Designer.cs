@@ -41,7 +41,7 @@ namespace OSPSuite.UI.Views.Charts
          this.lineStyleControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.symbolComboBox = new OSPSuite.UI.Controls.UxSymbolEdit();
          this.symbolControlItem = new DevExpress.XtraLayout.LayoutControlItem();
-         this.lineThicknessComboBox = new OSPSuite.UI.Controls.UxLineThicknessEdit();
+         this.lineThicknessTextEdit = new DevExpress.XtraEditors.TextEdit();
          this.lineThicknessControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.visibleCheckEdit = new OSPSuite.UI.Controls.UxCheckEdit();
          this.visibleControlItem = new DevExpress.XtraLayout.LayoutControlItem();
@@ -61,7 +61,7 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.lineStyleControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.symbolComboBox.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.symbolControlItem)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.lineThicknessComboBox.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.lineThicknessTextEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.lineThicknessControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.visibleCheckEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.visibleControlItem)).BeginInit();
@@ -79,7 +79,7 @@ namespace OSPSuite.UI.Views.Charts
          this.uxLayoutControl1.Controls.Add(this.yAxisTypeComboBox);
          this.uxLayoutControl1.Controls.Add(this.lineStyleComboBox);
          this.uxLayoutControl1.Controls.Add(this.symbolComboBox);
-         this.uxLayoutControl1.Controls.Add(this.lineThicknessComboBox);
+         this.uxLayoutControl1.Controls.Add(this.lineThicknessTextEdit);
          this.uxLayoutControl1.Controls.Add(this.visibleCheckEdit);
          this.uxLayoutControl1.Controls.Add(this.visibleInLegendCheckEdit);
          this.uxLayoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -185,20 +185,18 @@ namespace OSPSuite.UI.Views.Charts
          this.symbolControlItem.Size = new System.Drawing.Size(342, 24);
          this.symbolControlItem.Text = "symbolControlItem";
          this.symbolControlItem.TextSize = new System.Drawing.Size(131, 13);
-         // 
-         // lineThicknessComboBox
-         // 
-         this.lineThicknessComboBox.Location = new System.Drawing.Point(147, 132);
-         this.lineThicknessComboBox.Name = "lineThicknessComboBox";
-         this.lineThicknessComboBox.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.lineThicknessComboBox.Size = new System.Drawing.Size(203, 20);
-         this.lineThicknessComboBox.StyleController = this.uxLayoutControl1;
-         this.lineThicknessComboBox.TabIndex = 11;
-         // 
+         //
+         // lineThicknessTextEdit
+         //
+         this.lineThicknessTextEdit.Location = new System.Drawing.Point(147, 132);
+         this.lineThicknessTextEdit.Name = "lineThicknessTextEdit";
+         this.lineThicknessTextEdit.Size = new System.Drawing.Size(203, 20);
+         this.lineThicknessTextEdit.StyleController = this.uxLayoutControl1;
+         this.lineThicknessTextEdit.TabIndex = 11;
+         //
          // lineThicknessControlItem
-         // 
-         this.lineThicknessControlItem.Control = this.lineThicknessComboBox;
+         //
+         this.lineThicknessControlItem.Control = this.lineThicknessTextEdit;
          this.lineThicknessControlItem.CustomizationFormText = "lineThicknessControlItem";
          this.lineThicknessControlItem.Location = new System.Drawing.Point(0, 120);
          this.lineThicknessControlItem.Name = "lineThicknessControlItem";
@@ -292,7 +290,7 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.lineStyleControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.symbolComboBox.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.symbolControlItem)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.lineThicknessComboBox.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.lineThicknessTextEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.lineThicknessControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.visibleCheckEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.visibleControlItem)).EndInit();
@@ -316,7 +314,7 @@ namespace OSPSuite.UI.Views.Charts
       private DevExpress.XtraLayout.LayoutControlItem lineStyleControlItem;
       private UxSymbolEdit symbolComboBox;
       private DevExpress.XtraLayout.LayoutControlItem symbolControlItem;
-      private UxLineThicknessEdit lineThicknessComboBox;
+      private DevExpress.XtraEditors.TextEdit lineThicknessTextEdit;
       private DevExpress.XtraLayout.LayoutControlItem lineThicknessControlItem;
       private UxCheckEdit visibleCheckEdit;
       private DevExpress.XtraLayout.LayoutControlItem visibleControlItem;

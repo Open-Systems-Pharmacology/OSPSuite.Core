@@ -3,6 +3,7 @@ using FakeItEasy;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
 using OSPSuite.Helpers;
@@ -135,6 +136,21 @@ namespace OSPSuite.Presentation.Presentation
       public void should_return_an_invalid_state_for_x_axis()
       {
          sut.Validate(x => x.xData).IsEmpty.ShouldBeFalse();
+      }
+   }
+
+   public class When_validating_a_curve_dto_with_a_line_thickness_outside_the_allowed_range : concern_for_CurveDTO
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _curve.LineThickness = Constants.MAX_LINE_THICKNESS + 1;
+      }
+
+      [Observation]
+      public void should_be_invalid_for_the_line_thickness()
+      {
+         sut.Validate(x => x.LineThickness).IsEmpty.ShouldBeFalse();
       }
    }
 

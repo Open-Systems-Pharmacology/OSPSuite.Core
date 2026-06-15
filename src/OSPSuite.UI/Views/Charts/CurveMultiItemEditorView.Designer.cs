@@ -34,7 +34,7 @@ namespace OSPSuite.UI.Views.Charts
          this.colorEditLayoutControl = new DevExpress.XtraLayout.LayoutControl();
          this.inLegendComboBoxEdit = new UxComboBoxEdit();
          this.visibleComboBoxEdit = new UxComboBoxEdit();
-         this.lineThicknessComboBoxEdit = new UxComboBoxEdit();
+         this.lineThicknessTextEdit = new DevExpress.XtraEditors.TextEdit();
          this.symbolComboBoxEdit = new UxComboBoxEdit();
          this.styleComboBoxEdit = new UxComboBoxEdit();
          this.colorPickEdit = new UxColorPickEditWithHistory();
@@ -51,7 +51,7 @@ namespace OSPSuite.UI.Views.Charts
          this.colorEditLayoutControl.SuspendLayout();
          ((System.ComponentModel.ISupportInitialize)(this.inLegendComboBoxEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.visibleComboBoxEdit.Properties)).BeginInit();
-         ((System.ComponentModel.ISupportInitialize)(this.lineThicknessComboBoxEdit.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.lineThicknessTextEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.symbolComboBoxEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.styleComboBoxEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.colorPickEdit.Properties)).BeginInit();
@@ -69,7 +69,7 @@ namespace OSPSuite.UI.Views.Charts
          //
          this.colorEditLayoutControl.Controls.Add(this.inLegendComboBoxEdit);
          this.colorEditLayoutControl.Controls.Add(this.visibleComboBoxEdit);
-         this.colorEditLayoutControl.Controls.Add(this.lineThicknessComboBoxEdit);
+         this.colorEditLayoutControl.Controls.Add(this.lineThicknessTextEdit);
          this.colorEditLayoutControl.Controls.Add(this.symbolComboBoxEdit);
          this.colorEditLayoutControl.Controls.Add(this.styleComboBoxEdit);
          this.colorEditLayoutControl.Controls.Add(this.colorPickEdit);
@@ -102,16 +102,13 @@ namespace OSPSuite.UI.Views.Charts
          this.visibleComboBoxEdit.StyleController = this.colorEditLayoutControl;
          this.visibleComboBoxEdit.TabIndex = 9;
          //
-         // lineThicknessComboBoxEdit
+         // lineThicknessTextEdit
          //
-         this.lineThicknessComboBoxEdit.Location = new System.Drawing.Point(147, 84);
-         this.lineThicknessComboBoxEdit.Name = "lineThicknessComboBoxEdit";
-         this.lineThicknessComboBoxEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-         this.lineThicknessComboBoxEdit.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-         this.lineThicknessComboBoxEdit.Size = new System.Drawing.Size(255, 20);
-         this.lineThicknessComboBoxEdit.StyleController = this.colorEditLayoutControl;
-         this.lineThicknessComboBoxEdit.TabIndex = 8;
+         this.lineThicknessTextEdit.Location = new System.Drawing.Point(147, 84);
+         this.lineThicknessTextEdit.Name = "lineThicknessTextEdit";
+         this.lineThicknessTextEdit.Size = new System.Drawing.Size(255, 20);
+         this.lineThicknessTextEdit.StyleController = this.colorEditLayoutControl;
+         this.lineThicknessTextEdit.TabIndex = 8;
          //
          // symbolComboBoxEdit
          //
@@ -200,7 +197,7 @@ namespace OSPSuite.UI.Views.Charts
          //
          // lineThicknessLayoutControlItem
          //
-         this.lineThicknessLayoutControlItem.Control = this.lineThicknessComboBoxEdit;
+         this.lineThicknessLayoutControlItem.Control = this.lineThicknessTextEdit;
          this.lineThicknessLayoutControlItem.Location = new System.Drawing.Point(0, 72);
          this.lineThicknessLayoutControlItem.Name = "lineThicknessLayoutControlItem";
          this.lineThicknessLayoutControlItem.Size = new System.Drawing.Size(394, 24);
@@ -240,7 +237,7 @@ namespace OSPSuite.UI.Views.Charts
          this.colorEditLayoutControl.ResumeLayout(false);
          ((System.ComponentModel.ISupportInitialize)(this.inLegendComboBoxEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.visibleComboBoxEdit.Properties)).EndInit();
-         ((System.ComponentModel.ISupportInitialize)(this.lineThicknessComboBoxEdit.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.lineThicknessTextEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.symbolComboBoxEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.styleComboBoxEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.colorPickEdit.Properties)).EndInit();
@@ -268,7 +265,7 @@ namespace OSPSuite.UI.Views.Charts
       private OSPSuite.UI.Controls.UxComboBoxEdit styleComboBoxEdit;
       private DevExpress.XtraLayout.LayoutControlItem styleLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem symbolLayoutControlItem;
-      private OSPSuite.UI.Controls.UxComboBoxEdit lineThicknessComboBoxEdit;
+      private DevExpress.XtraEditors.TextEdit lineThicknessTextEdit;
       private DevExpress.XtraLayout.LayoutControlItem lineThicknessLayoutControlItem;
       private OSPSuite.UI.Controls.UxComboBoxEdit inLegendComboBoxEdit;
       private OSPSuite.UI.Controls.UxComboBoxEdit visibleComboBoxEdit;

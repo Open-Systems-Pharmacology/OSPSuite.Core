@@ -1852,6 +1852,11 @@ namespace OSPSuite.Assets
       public static readonly string EndTimeGreaterThanOrEqualToStartTime = "End time value should be greater than start time value.";
       public static readonly string FormulaCannotBeEmpty = "Formula cannot be empty";
 
+      public static string LineThicknessShouldBeBetween(int min, int max)
+      {
+         return $"Line thickness should be a value between {min} and {max}";
+      }
+
       public static string FileDoesNotExist(string fileFullPath)
       {
          return $"File '{fileFullPath}' does not exist";
