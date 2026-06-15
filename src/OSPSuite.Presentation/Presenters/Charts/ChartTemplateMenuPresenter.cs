@@ -18,7 +18,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       ///    Creates the chart template menu button with all sub menus filled in according to the subject
       ///    <paramref name="withChartTemplates" />
       /// </summary>
-      /// <param name="withChartTemplates">This is the active simulation settings object containing the templates</param>
+      /// <param name="withChartTemplates">The object owning the curve chart templates (e.g. the project or a simulation)</param>
       /// <param name="retrieveActiveCurveChartFunc">retrieves the current CurveChart</param>
       /// <param name="applyTemplateAction">How to apply the template to the active curve chart</param>
       /// <returns>The menu button that should be added to the chart presenter</returns>
@@ -43,6 +43,11 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          return _withChartTemplates.ChartTemplates;
       }
+
+      private CurveChartTypes activeCurveChartType => _curveChart().CurveChartType;
+
+      private IEnumerable<CurveChartTemplate> allTemplatesForActiveChart() => 
+         allSimulationTemplates().Where(template => template.ChartType == activeCurveChartType);
 
       protected CurveChartTemplate CreateNewTemplateFromCurrent(IEnumerable<CurveChartTemplate> existingTemplates)
       {
@@ -125,7 +130,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void createUpdateMenu(IMenuBarSubMenu chartTemplate)
       {
-         var chartTemplates = allSimulationTemplates().ToList();
+         var chartTemplates = allTemplatesForActiveChart().ToList();
          if (chartTemplates.Any())
          {
             var overwrite = CreateSubMenu.WithCaption(MenuNames.UpdateExistingTemplate)
@@ -138,7 +143,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       private void manageTemplates()
       {
-         AddCommand(_chartTemplatingTask.ManageTemplates(_withChartTemplates));
+         AddCommand(_chartTemplatingTask.ManageTemplates(_withChartTemplates, activeCurveChartType));
       }
 
       private IMenuBarItem createLoadButton(Func<CurveChartTemplate, IMenuBarButton> loadMenuFor)
@@ -147,7 +152,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
             .WithIcon(ApplicationIcons.Load);
 
          var noTemplateAvailable = CreateMenuButton.WithCaption(MenuNames.NoTemplateAvailable).WithActionCommand(() => { });
-         var chartTemplates = _withChartTemplates.ChartTemplates.ToList();
+         var chartTemplates = allTemplatesForActiveChart().ToList();
          if (chartTemplates.Any())
             chartTemplates.Each(t => loadTemplate.AddItem(loadMenuFor(t)));
          else

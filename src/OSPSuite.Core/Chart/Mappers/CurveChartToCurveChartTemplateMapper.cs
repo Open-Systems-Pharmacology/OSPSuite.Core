@@ -26,6 +26,7 @@ namespace OSPSuite.Core.Chart.Mappers
 
          template.IncludeOriginData = curveChart.IncludeOriginData;
          template.PreviewSettings = curveChart.PreviewSettings;
+         template.ChartType = curveChart.CurveChartType;
          template.ChartSettings.UpdatePropertiesFrom(curveChart.ChartSettings, _cloneManager);
          template.FontAndSize.UpdatePropertiesFrom(curveChart.FontAndSize, _cloneManager);
          curveChart.Curves.Each(curve => template.Curves.Add(curveFrom(curve)));

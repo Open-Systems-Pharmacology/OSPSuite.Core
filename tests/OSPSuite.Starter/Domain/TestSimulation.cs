@@ -42,8 +42,6 @@ namespace OSPSuite.Starter.Domain
 
       public IEnumerable<CurveChartTemplate> ChartTemplates => Settings.ChartTemplates;
 
-      public CurveChartTemplate DefaultChartTemplate => Settings.DefaultChartTemplate;
-
       public bool IsLoaded { get; set; }
 
       public void RemoveAnalysis(ISimulationAnalysis simulationAnalysis)

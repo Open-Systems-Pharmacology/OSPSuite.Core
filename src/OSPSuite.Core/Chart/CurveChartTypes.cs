@@ -1,6 +1,6 @@
 namespace OSPSuite.Core.Chart;
 
-public enum AnalysisChartTypes
+public enum CurveChartTypes
 {
    TimeProfile,
    PredictedVsObserved,

@@ -160,11 +160,13 @@ namespace OSPSuite.Core.Domain
       public void AddChartTemplate(CurveChartTemplate chartTemplate)
       {
          _chartTemplates.Add(chartTemplate);
+         HasChanged = true;
       }
 
       public void RemoveChartTemplate(string chartTemplateName)
       {
-         _chartTemplates.Remove(chartTemplateName); ;
+         _chartTemplates.Remove(chartTemplateName);
+         HasChanged = true;
       }
 
       public CurveChartTemplate ChartTemplateByName(string templateName)
@@ -175,14 +177,10 @@ namespace OSPSuite.Core.Domain
       public void RemoveAllChartTemplates()
       {
          _chartTemplates.Clear();
+         HasChanged = true;
       }
 
       public IEnumerable<CurveChartTemplate> ChartTemplates => _chartTemplates;
-
-      public CurveChartTemplate DefaultChartTemplate
-      {
-         get { return ChartTemplates.FirstOrDefault(x => x.IsDefault) ?? ChartTemplates.OrderBy(x => x.Name).FirstOrDefault(); }
-      }
 
       public IReadOnlyCollection<ParameterIdentification> AllParameterIdentifications => _allParameterIdentifications;
 

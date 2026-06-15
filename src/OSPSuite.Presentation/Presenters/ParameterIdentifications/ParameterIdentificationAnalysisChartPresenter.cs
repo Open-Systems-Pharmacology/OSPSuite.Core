@@ -38,6 +38,7 @@ namespace OSPSuite.Presentation.Presenters.ParameterIdentifications
       public override void UpdateAnalysisBasedOn(IAnalysable analysable)
       {
          _parameterIdentification = analysable.DowncastTo<ParameterIdentification>();
+         UpdateTemplatesBasedOn(_chartPresenterContext.ProjectRetriever.CurrentProject);
 
          if (ChartIsBeingUpdated)
          {

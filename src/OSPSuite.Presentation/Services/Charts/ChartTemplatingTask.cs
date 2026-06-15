@@ -23,14 +23,24 @@ namespace OSPSuite.Presentation.Services.Charts
       /// <summary>
       ///    Starts the management interface for curve chart templates
       /// </summary>
-      /// <param name="withChartTemplates">An object which contains simulation settings, which contains curve chart templates</param>
+      /// <param name="withChartTemplates">The object owning the curve chart templates (e.g. the project or a simulation)</param>
       /// <returns>Any commands used to manipulate the templates</returns>
       ICommand ManageTemplates(IWithChartTemplates withChartTemplates);
 
       /// <summary>
-      ///    Returns a default template. The user will be asked to enter a unique name for the template
+      ///    Starts the management interface for the curve chart templates created for charts of type <paramref name="chartType" />.
+      ///    Templates created for other chart types are preserved unchanged
       /// </summary>
-      CurveChartTemplate CloneTemplate(CurveChartTemplate templateToClone, IEnumerable<CurveChartTemplate> existingTemplates);
+      /// <param name="withChartTemplates">The object owning the curve chart templates (e.g. the project or a simulation)</param>
+      /// <param name="chartType">Type of chart whose templates will be managed</param>
+      /// <returns>Any commands used to manipulate the templates</returns>
+      ICommand ManageTemplates(IWithChartTemplates withChartTemplates, CurveChartTypes chartType);
+
+      /// <summary>
+      ///    Returns a clone of the <paramref name="templateToClone" />. The user will be asked to enter a unique name for the
+      ///    template that is not part of the <paramref name="forbiddenNames" />
+      /// </summary>
+      CurveChartTemplate CloneTemplate(CurveChartTemplate templateToClone, IReadOnlyList<string> forbiddenNames);
 
       /// <summary>
       ///    Saves the given <paramref name="template" /> to the file with path <paramref name="filePath" />
@@ -39,9 +49,10 @@ namespace OSPSuite.Presentation.Services.Charts
 
       /// <summary>
       ///    Returns the template supposedly serialized in the file with path <paramref name="filePath" />.
-      ///    The user will be asked to enter a unique name for the template if the deserialized template name already exists.
+      ///    The user will be asked to enter a unique name for the template if the deserialized template name is part of the
+      ///    <paramref name="forbiddenNames" />
       /// </summary>
-      CurveChartTemplate LoadTemplateFromFile(string filePath, IReadOnlyList<CurveChartTemplate> existingTemplates);
+      CurveChartTemplate LoadTemplateFromFile(string filePath, IReadOnlyList<string> forbiddenNames);
 
       /// <summary>
       /// Initializes the given <paramref name="chart"/> from the <paramref name="template"/>.
@@ -113,33 +124,33 @@ namespace OSPSuite.Presentation.Services.Charts
          _chartTemplatePersistor.SerializeToFile(template, filePath);
       }
 
-      public CurveChartTemplate CloneTemplate(CurveChartTemplate templateToClone, IEnumerable<CurveChartTemplate> existingTemplates)
+      public CurveChartTemplate CloneTemplate(CurveChartTemplate templateToClone, IReadOnlyList<string> forbiddenNames)
       {
-         return createTemplate(existingTemplates, () => _cloneManager.Clone(templateToClone), Captions.CloneTemplate);
+         return createTemplate(forbiddenNames, () => _cloneManager.Clone(templateToClone), Captions.CloneTemplate);
       }
 
-      private CurveChartTemplate createTemplate(IEnumerable<CurveChartTemplate> existingTemplates, Func<CurveChartTemplate> createAction, string caption, string defaultName = null)
+      private CurveChartTemplate createTemplate(IReadOnlyList<string> forbiddenNames, Func<CurveChartTemplate> createAction, string caption, string defaultName = null)
       {
          var template = createAction();
          if (!template.Curves.Any())
             throw new OSPSuiteException(Error.TemplateShouldContainAtLeastOneCurve);
 
-         var newName = retrieveNewNamesForTemplate(existingTemplates, caption, defaultName);
+         var newName = retrieveNewNamesForTemplate(forbiddenNames, caption, defaultName);
          if (string.IsNullOrEmpty(newName))
             return null;
 
          return createAction().WithName(newName);
       }
 
-      public CurveChartTemplate LoadTemplateFromFile(string filePath, IReadOnlyList<CurveChartTemplate> existingTemplates)
+      public CurveChartTemplate LoadTemplateFromFile(string filePath, IReadOnlyList<string> forbiddenNames)
       {
          var template = _chartTemplatePersistor.DeserializeFromFile(filePath);
          if (template == null)
             return null;
 
-         if (existingTemplates.ExistsByName(template.Name))
+         if (forbiddenNames.Contains(template.Name))
          {
-            var newName = retrieveNewNamesForTemplate(existingTemplates, Captions.RenameTemplate, template.Name);
+            var newName = retrieveNewNamesForTemplate(forbiddenNames, Captions.RenameTemplate, template.Name);
             if (string.IsNullOrEmpty(newName))
                return null;
 
@@ -148,10 +159,9 @@ namespace OSPSuite.Presentation.Services.Charts
          return template;
       }
 
-      private string retrieveNewNamesForTemplate(IEnumerable<CurveChartTemplate> existingTemplates, string caption, string defaultName)
+      private string retrieveNewNamesForTemplate(IReadOnlyList<string> forbiddenNames, string caption, string defaultName)
       {
-         var usedNames = existingTemplates.Select(x => x.Name).ToList();
-         return AskForInput(Captions.NewName, caption, defaultName, usedNames);
+         return AskForInput(Captions.NewName, caption, defaultName, forbiddenNames.ToList());
       }
 
       protected string AskForInput(string caption, string text, string defaultName, List<string> usedNames)
@@ -163,9 +173,19 @@ namespace OSPSuite.Presentation.Services.Charts
 
       public ICommand ManageTemplates(IWithChartTemplates withChartTemplates)
       {
+         return manageTemplates(withChartTemplates, presenter => presenter.EditTemplates(withChartTemplates.ChartTemplates));
+      }
+
+      public ICommand ManageTemplates(IWithChartTemplates withChartTemplates, CurveChartTypes chartType)
+      {
+         return manageTemplates(withChartTemplates, presenter => presenter.EditTemplates(withChartTemplates.ChartTemplates, chartType));
+      }
+
+      private ICommand manageTemplates(IWithChartTemplates withChartTemplates, Action<IModalChartTemplateManagerPresenter> editTemplatesAction)
+      {
          using (var presenter = _applicationController.Start<IModalChartTemplateManagerPresenter>())
          {
-            presenter.EditTemplates(withChartTemplates.ChartTemplates);
+            editTemplatesAction(presenter);
 
             presenter.Display();
 
@@ -226,7 +246,7 @@ namespace OSPSuite.Presentation.Services.Charts
 
       public CurveChartTemplate CreateNewTemplateFromChart(CurveChart chart, IEnumerable<CurveChartTemplate> existingTemplates)
       {
-         return createTemplate(existingTemplates, () => TemplateFrom(chart), Captions.CreateNewTemplate, chart.Name);
+         return createTemplate(existingTemplates.AllNames(), () => TemplateFrom(chart), Captions.CreateNewTemplate, chart.Name);
       }
 
       public abstract ICommand AddChartTemplateCommand(CurveChartTemplate template, IWithChartTemplates withChartTemplates);

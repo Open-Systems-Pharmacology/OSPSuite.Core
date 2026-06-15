@@ -3,6 +3,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
 using OSPSuite.Core.Chart.Mappers;
+using OSPSuite.Core.Chart.ParameterIdentifications;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Services;
@@ -89,6 +90,28 @@ namespace OSPSuite.Core.Mappers
       public void should_have_the_preview_settings_set()
       {
          _curveChart.PreviewSettings.ShouldBeEqualTo(_curveChartTemplate.PreviewSettings);
+      }
+
+      [Observation]
+      public void should_mark_the_template_as_time_profile()
+      {
+         _curveChartTemplate.ChartType.ShouldBeEqualTo(CurveChartTypes.TimeProfile);
+      }
+   }
+
+   public class When_mapping_an_analysis_chart_to_a_curve_chart_template : concern_for_CurveChartToCurveChartTemplateMapper
+   {
+      private CurveChartTemplate _curveChartTemplate;
+
+      protected override void Because()
+      {
+         _curveChartTemplate = sut.MapFrom(new ParameterIdentificationPredictedVsObservedChart());
+      }
+
+      [Observation]
+      public void should_set_the_chart_type_of_the_template_to_the_chart_type_of_the_analysis_chart()
+      {
+         _curveChartTemplate.ChartType.ShouldBeEqualTo(CurveChartTypes.PredictedVsObserved);
       }
    }
 

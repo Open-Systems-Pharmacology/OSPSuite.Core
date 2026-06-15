@@ -61,4 +61,57 @@ namespace OSPSuite.Presentation.Presentation
          _editedTemplates.ShouldOnlyContain(_cloneTemplate1, _cloneTemplate2);
       }
    }
+
+   public class When_editing_templates_for_a_given_chart_type : concern_for_ModalChartTemplateManagerPresenter
+   {
+      private List<CurveChartTemplate> _editedTemplates;
+      private List<string> _forbiddenNames;
+      private CurveChartTemplate _timeProfileTemplate;
+      private CurveChartTemplate _predictedVsObservedTemplate;
+      private CurveChartTemplate _cloneTimeProfileTemplate;
+      private CurveChartTemplate _clonePredictedVsObservedTemplate;
+
+      protected override void Context()
+      {
+         base.Context();
+         A.CallTo(() => _chartTemplateManagerPresenter.EditTemplates(A<IEnumerable<CurveChartTemplate>>._, A<IReadOnlyList<string>>._, CurveChartTypes.PredictedVsObserved))
+            .Invokes(x =>
+            {
+               _editedTemplates = x.GetArgument<IEnumerable<CurveChartTemplate>>(0).ToList();
+               _forbiddenNames = x.GetArgument<IReadOnlyList<string>>(1).ToList();
+            });
+
+         _timeProfileTemplate = new CurveChartTemplate {Name = "TimeProfileTemplate", ChartType = CurveChartTypes.TimeProfile};
+         _predictedVsObservedTemplate = new CurveChartTemplate {Name = "PredictedVsObservedTemplate", ChartType = CurveChartTypes.PredictedVsObserved};
+         _cloneTimeProfileTemplate = new CurveChartTemplate {Name = "TimeProfileTemplate", ChartType = CurveChartTypes.TimeProfile};
+         _clonePredictedVsObservedTemplate = new CurveChartTemplate {Name = "PredictedVsObservedTemplate", ChartType = CurveChartTypes.PredictedVsObserved};
+         A.CallTo(() => _cloneManager.Clone(_timeProfileTemplate)).Returns(_cloneTimeProfileTemplate);
+         A.CallTo(() => _cloneManager.Clone(_predictedVsObservedTemplate)).Returns(_clonePredictedVsObservedTemplate);
+
+         A.CallTo(() => _chartTemplateManagerPresenter.EditedTemplates).Returns(new[] {_clonePredictedVsObservedTemplate});
+      }
+
+      protected override void Because()
+      {
+         sut.EditTemplates(new[] {_timeProfileTemplate, _predictedVsObservedTemplate}, CurveChartTypes.PredictedVsObserved);
+      }
+
+      [Observation]
+      public void should_only_edit_the_templates_matching_the_chart_type()
+      {
+         _editedTemplates.ShouldOnlyContain(_clonePredictedVsObservedTemplate);
+      }
+
+      [Observation]
+      public void should_pass_the_names_of_the_templates_of_other_chart_types_as_forbidden_names()
+      {
+         _forbiddenNames.ShouldOnlyContain(_cloneTimeProfileTemplate.Name);
+      }
+
+      [Observation]
+      public void should_return_the_templates_of_other_chart_types_unchanged_together_with_the_edited_templates()
+      {
+         sut.EditedTemplates.ShouldOnlyContain(_clonePredictedVsObservedTemplate, _cloneTimeProfileTemplate);
+      }
+   }
 }
