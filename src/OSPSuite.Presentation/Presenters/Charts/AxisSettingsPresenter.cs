@@ -19,7 +19,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
       Min,
       Max,
       MajorInterval,
-      MinorCount,
+      MinorTicks,
       Caption,
       DefaultLineStyle,
       DefaultColor
@@ -76,7 +76,7 @@ namespace OSPSuite.Presentation.Presenters.Charts
          AddColumnSettings(AxisOptionsColumns.Min).WithCaption(Captions.Chart.AxisOptions.Min);
          AddColumnSettings(AxisOptionsColumns.Max).WithCaption(Captions.Chart.AxisOptions.Max);
          AddColumnSettings(AxisOptionsColumns.MajorInterval).WithCaption(Captions.Chart.AxisOptions.MajorInterval);
-         AddColumnSettings(AxisOptionsColumns.MinorCount).WithCaption(Captions.Chart.AxisOptions.MinorCount);
+         AddColumnSettings(AxisOptionsColumns.MinorTicks).WithCaption(Captions.Chart.AxisOptions.MinorTicks);
          AddColumnSettings(AxisOptionsColumns.GridLines).WithCaption(Captions.Chart.AxisOptions.GridLines);
          AddColumnSettings(AxisOptionsColumns.DefaultLineStyle).WithCaption(Captions.Chart.AxisOptions.DefaultLinestyle);
          AddColumnSettings(AxisOptionsColumns.DefaultColor).WithCaption(Captions.Chart.AxisOptions.DefaultColor);

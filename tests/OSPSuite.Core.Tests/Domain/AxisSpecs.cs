@@ -48,19 +48,19 @@ namespace OSPSuite.Core.Domain
       [Observation]
       public void invalid_for_a_minor_count_of_zero()
       {
-         new Axis(AxisTypes.X) { MinorCount = 0 }.IsValid().ShouldBeFalse();
+         new Axis(AxisTypes.X) { MinorTicks = 0 }.IsValid().ShouldBeFalse();
       }
 
       [Observation]
       public void invalid_for_a_minor_count_of_one_hundred()
       {
-         new Axis(AxisTypes.X) { MinorCount = 100 }.IsValid().ShouldBeFalse();
+         new Axis(AxisTypes.X) { MinorTicks = 100 }.IsValid().ShouldBeFalse();
       }
 
       [Observation]
       public void valid_for_a_positive_major_interval_and_minor_count()
       {
-         new Axis(AxisTypes.X) { MajorInterval = 2.5F, MinorCount = 3 }.IsValid().ShouldBeTrue();
+         new Axis(AxisTypes.X) { MajorInterval = 2.5F, MinorTicks = 3 }.IsValid().ShouldBeTrue();
       }
    }
 
@@ -82,7 +82,7 @@ namespace OSPSuite.Core.Domain
             Min = -1,
             Max = 300,
             MajorInterval = 50,
-            MinorCount = 4,
+            MinorTicks = 4,
             DefaultLineStyle = LineStyles.DashDot,
             DefaultColor = Color.Azure,
             Visible = false
@@ -108,7 +108,7 @@ namespace OSPSuite.Core.Domain
          _sourceAxis.Min.ShouldBeEqualTo(sut.Min);
          _sourceAxis.Max.ShouldBeEqualTo(sut.Max);
          _sourceAxis.MajorInterval.ShouldBeEqualTo(sut.MajorInterval);
-         _sourceAxis.MinorCount.ShouldBeEqualTo(sut.MinorCount);
+         _sourceAxis.MinorTicks.ShouldBeEqualTo(sut.MinorTicks);
          _sourceAxis.DefaultLineStyle.ShouldBeEqualTo(sut.DefaultLineStyle);
          _sourceAxis.DefaultColor.ShouldBeEqualTo(sut.DefaultColor);
          _sourceAxis.Visible.ShouldBeEqualTo(sut.Visible);

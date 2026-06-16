@@ -90,7 +90,7 @@ namespace OSPSuite.UI.Views.Charts
 
          createColumn(x => x.MajorInterval, AxisOptionsColumns.MajorInterval);
 
-         createColumn(x => x.MinorCount, AxisOptionsColumns.MinorCount);
+         createColumn(x => x.MinorTicks, AxisOptionsColumns.MinorTicks);
 
          createColumn(x => x.GridLines, AxisOptionsColumns.GridLines, _gridLinesRepository);
 

@@ -125,7 +125,7 @@ namespace OSPSuite.UI.Binders
       {
          base.Context();
          _axis.MajorInterval = 2F;
-         _axis.MinorCount = 3;
+         _axis.MinorTicks = 3;
       }
 
       protected override void Because()
@@ -167,7 +167,7 @@ namespace OSPSuite.UI.Binders
       {
          base.Context();
          _axis.MajorInterval = 2F;
-         _axis.MinorCount = 0;
+         _axis.MinorTicks = 0;
       }
 
       protected override void Because()
@@ -209,7 +209,7 @@ namespace OSPSuite.UI.Binders
          base.Context();
          _axis.Scaling = Scalings.Log;
          _axis.MajorInterval = 2F;
-         _axis.MinorCount = 3;
+         _axis.MinorTicks = 3;
       }
 
       protected override void Because()

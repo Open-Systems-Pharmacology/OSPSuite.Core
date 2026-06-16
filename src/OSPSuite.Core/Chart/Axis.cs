@@ -27,15 +27,15 @@ namespace OSPSuite.Core.Chart
    public class Axis : Notifier, IWithDimension, IValidatable
    {
       // DevExpress only accepts a minor tick count that is greater than 0 and less than 100.
-      public const int MIN_MINOR_COUNT = 1;
-      public const int MAX_MINOR_COUNT = 99;
+      public const int MIN_MINOR_TICKS = 1;
+      public const int MAX_MINOR_TICKS = 99;
 
       private IDimension _dimension;
       private bool _gridLines;
       private float? _max;
       private float? _min;
       private float? _majorInterval;
-      private int? _minorCount;
+      private int? _minorTicks;
       private NumberModes _numberMode;
       private Scalings _scaling;
       private string _unitName;
@@ -63,7 +63,7 @@ namespace OSPSuite.Core.Chart
          _min = null;
          _max = null;
          _majorInterval = null;
-         _minorCount = null;
+         _minorTicks = null;
          Visible = true;
          _defaultLineStyle = defaultLineStyleForAxisType();
          _defaultColor = Color.White;
@@ -78,14 +78,14 @@ namespace OSPSuite.Core.Chart
             yield return minLessThanOrEqualToMax;
             yield return maxGreaterThanZero;
             yield return majorIntervalGreaterThanZero;
-            yield return minorCountWithinValidRange;
+            yield return minorTicksWithinValidRange;
          }
 
          private static IBusinessRule maxGreaterThanOrEqualToMin { get; } = createMaxGreaterThanOrEqualToMinRuleForAxis();
          private static IBusinessRule minLessThanOrEqualToMax { get; } = createMinLessThanOrEqualToMaxRuleForAxis();
          private static IBusinessRule maxGreaterThanZero { get; } = createMaxGreaterThanZeroRuleForLogarithmicAxis();
          private static IBusinessRule majorIntervalGreaterThanZero { get; } = createMajorIntervalGreaterThanZeroRuleForAxis();
-         private static IBusinessRule minorCountWithinValidRange { get; } = createMinorCountWithinValidRangeRuleForAxis();
+         private static IBusinessRule minorTicksWithinValidRange { get; } = createMinorTicksWithinValidRangeRuleForAxis();
 
          private static IBusinessRule createMinLessThanOrEqualToMaxRuleForAxis() => CreateRule.For<Axis>()
                .Property(axis => axis.Min)
@@ -107,11 +107,11 @@ namespace OSPSuite.Core.Chart
                .WithRule((axis, value) => !value.HasValue || value > 0F)
                .WithError((axis, value) => Validation.AxisMajorIntervalMustBeGreaterThanZero);
 
-         // The allowed range is dictated by DevExpress: its axis rejects a MinorCount outside [MIN_MINOR_COUNT, MAX_MINOR_COUNT].
-         private static IBusinessRule createMinorCountWithinValidRangeRuleForAxis() => CreateRule.For<Axis>()
-               .Property(axis => axis.MinorCount)
-               .WithRule((axis, value) => !value.HasValue || (value >= MIN_MINOR_COUNT && value <= MAX_MINOR_COUNT))
-               .WithError((axis, value) => Validation.AxisMinorCountMustBeGreaterThanZeroAndLessThan100);
+         // The allowed range is dictated by DevExpress: its axis rejects a minor tick count outside [MIN_MINOR_TICKS, MAX_MINOR_TICKS].
+         private static IBusinessRule createMinorTicksWithinValidRangeRuleForAxis() => CreateRule.For<Axis>()
+               .Property(axis => axis.MinorTicks)
+               .WithRule((axis, value) => !value.HasValue || (value >= MIN_MINOR_TICKS && value <= MAX_MINOR_TICKS))
+               .WithError((axis, value) => Validation.AxisMinorTicksMustBeGreaterThanZeroAndLessThan100);
       }
 
       private LineStyles defaultLineStyleForAxisType()
@@ -147,7 +147,7 @@ namespace OSPSuite.Core.Chart
          GridLines = axis.GridLines;
          SetRange(axis.Min, axis.Max);
          MajorInterval = axis.MajorInterval;
-         MinorCount = axis.MinorCount;
+         MinorTicks = axis.MinorTicks;
          DefaultLineStyle = axis.DefaultLineStyle;
          DefaultColor = axis.DefaultColor;
          Visible = axis.Visible;
@@ -268,10 +268,10 @@ namespace OSPSuite.Core.Chart
       ///    Number of minor ticks between two adjacent major ticks. When null, the count is calculated automatically.
       ///    Only applied for linearly scaled axes.
       /// </summary>
-      public int? MinorCount
+      public int? MinorTicks
       {
-         get => _minorCount;
-         set => SetProperty(ref _minorCount, value);
+         get => _minorTicks;
+         set => SetProperty(ref _minorTicks, value);
       }
 
       public Unit Unit => _dimension?.Unit(UnitName);

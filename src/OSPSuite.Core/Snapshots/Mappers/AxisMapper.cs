@@ -29,7 +29,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
             x.Min = axis.Min;
             x.Max = axis.Max;
             x.MajorInterval = axis.MajorInterval;
-            x.MinorCount = axis.MinorCount;
+            x.MinorTicks = axis.MinorTicks;
          });
       }
 
@@ -52,7 +52,7 @@ namespace OSPSuite.Core.Snapshots.Mappers
          axis.Min = snapshot.Min;
          axis.Max = snapshot.Max;
          axis.MajorInterval = snapshot.MajorInterval;
-         axis.MinorCount = snapshot.MinorCount;
+         axis.MinorTicks = snapshot.MinorTicks;
 
          return Task.FromResult(axis);
       }
