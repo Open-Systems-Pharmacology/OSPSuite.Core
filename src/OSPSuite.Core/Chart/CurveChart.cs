@@ -25,6 +25,8 @@ namespace OSPSuite.Core.Chart
       public Scalings DefaultYAxisScaling { get; set; }
       public bool AutoUpdateEnabled { get; set; } = true;
 
+      public virtual CurveChartTypes CurveChartType => CurveChartTypes.TimeProfile;
+
       public CurveChart()
       {
          Id = string.Empty;

@@ -31,11 +31,6 @@ namespace OSPSuite.Core.Domain.Builder
          OutputSelections = new OutputSelections();
       }
 
-      public CurveChartTemplate DefaultChartTemplate
-      {
-         get { return ChartTemplates.FirstOrDefault(x => x.IsDefault) ?? ChartTemplates.OrderBy(x => x.Name).FirstOrDefault(); }
-      }
-
       public CurveChartTemplate ChartTemplateByName(string templateName)
       {
          return _chartTemplates[templateName];

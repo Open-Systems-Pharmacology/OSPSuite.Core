@@ -1631,6 +1631,11 @@ namespace OSPSuite.Assets
          return $"Could not load chart template. Make sure that the file '{templateFilePath}' is a template file.";
       }
 
+      public static string CannotLoadTemplateCreatedForAnotherChartType(string templateName, string templateChartType, string managedChartType)
+      {
+         return $"Cannot load the template '{templateName}'. The template was created for charts of type '{templateChartType}' and cannot be used for charts of type '{managedChartType}'.";
+      }
+
       public static string CannotFindResource(string resourceFullPath) => $"Cannot find resource located at '{resourceFullPath}'";
 
       public static string CannotFindSimulationParameterForIdentificationParameter(string fullQuantityPath, string name)
@@ -1855,6 +1860,11 @@ namespace OSPSuite.Assets
       public static readonly string StartTimeLessThanOrEqualToEndTime = "Start time value should be less than end time value.";
       public static readonly string EndTimeGreaterThanOrEqualToStartTime = "End time value should be greater than start time value.";
       public static readonly string FormulaCannotBeEmpty = "Formula cannot be empty";
+
+      public static string LineThicknessShouldBeBetween(int min, int max)
+      {
+         return $"Line thickness should be a value between {min} and {max}";
+      }
 
       public static string FileDoesNotExist(string fileFullPath)
       {

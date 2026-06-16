@@ -63,6 +63,44 @@ namespace OSPSuite.Presentation.Presentation
          }
       }
 
+      public class When_getting_a_scatter_repository_that_was_persisted_in_the_chart_without_base_grid_path : concern_for_ResidualsVsTimeChartService
+      {
+         private OutputResiduals _outputResiduals;
+         private DataRepository _existingRepository;
+         private DataRepository _result;
+
+         protected override void Context()
+         {
+            base.Context();
+            _outputResiduals = A.Fake<OutputResiduals>();
+            A.CallTo(() => _outputResiduals.FullOutputPath).Returns("Output Path");
+            A.CallTo(() => _outputResiduals.Residuals).Returns(new[] {new Residual(1f, 2f, 1)});
+
+            var id = $"{_residualsVsTimeChart.Id}-{_outputResiduals.FullOutputPath}-{_outputResiduals.ObservedData.Id}";
+            _existingRepository = sut.CreateScatterDataRepository(id, "Simulation Results", _outputResiduals);
+            //simulates a repository persisted with the chart before the base grid path was introduced
+            _existingRepository.BaseGrid.QuantityInfo.Path = new string[0];
+            _residualsVsTimeChart.AddRepository(_existingRepository);
+         }
+
+         protected override void Because()
+         {
+            _result = sut.GetOrCreateScatterDataRepositoryInChart(_residualsVsTimeChart, _outputResiduals);
+         }
+
+         [Observation]
+         public void should_reuse_the_existing_repository()
+         {
+            _result.ShouldBeEqualTo(_existingRepository);
+         }
+
+         [Observation]
+         public void should_set_the_base_grid_path()
+         {
+            _result.BaseGrid.QuantityInfo.PathAsString.ShouldBeEqualTo("Time");
+         }
+      }
+
       public class When_generating_the_zero_marker : concern_for_ResidualsVsTimeChartService
       {
          private readonly float _minObservedDataTime = 1;
@@ -97,6 +135,14 @@ namespace OSPSuite.Presentation.Presentation
          {
             _residualsVsTimeChart.Curves.First().xData.InternalValues[0].ShouldBeEqualTo(1);
             _residualsVsTimeChart.Curves.First().xData.InternalValues[1].ShouldBeEqualTo(10);
+         }
+
+         [Observation]
+         public void the_zero_curve_columns_should_have_paths_usable_in_chart_templates()
+         {
+            var curve = _residualsVsTimeChart.Curves.First();
+            curve.yData.QuantityInfo.PathAsString.ShouldBeEqualTo("Zero");
+            curve.xData.QuantityInfo.PathAsString.ShouldBeEqualTo("Time");
          }
       }
 

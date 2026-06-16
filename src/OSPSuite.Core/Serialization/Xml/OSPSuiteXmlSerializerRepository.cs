@@ -40,6 +40,7 @@ namespace OSPSuite.Core.Serialization.Xml
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<ContainerType, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<PKParameterMode, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<AxisTypes, SerializationContext>());
+         AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<CurveChartTypes, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<Scalings, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<NumberModes, SerializationContext>());
          AttributeMapperRepository.AddAttributeMapper(new EnumAttributeMapper<LegendPositions, SerializationContext>());

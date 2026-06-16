@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using FakeItEasy;
@@ -38,11 +39,11 @@ namespace OSPSuite.Presentation.Presentation
       protected ResidualsResult _residualResults;
       protected ResidualsVsTimeChartService _residualsVsTimeChartService;
       private IChartEditorLayoutTask _chartEditorLayoutTask;
-      private IProjectRetriever _projectRetriever;
+      protected IProjectRetriever _projectRetriever;
       private ChartPresenterContext _chartPresenterContext;
       private ICurveNamer _curveNamer;
 
-      protected IChartEditorPresenter ChartEditorPresenter => _chartEditorAndDisplayPresenter.EditorPresenter;
+      protected IChartEditorPresenter ChartEditorPresenter { get; private set; }
 
       protected override void Context()
       {
@@ -50,6 +51,8 @@ namespace OSPSuite.Presentation.Presentation
          _residualsVsTimeChartService = A.Fake<ResidualsVsTimeChartService>();
          _view = A.Fake<IParameterIdentificationSingleRunAnalysisView>();
          _chartEditorAndDisplayPresenter = A.Fake<IChartEditorAndDisplayPresenter>();
+         ChartEditorPresenter = A.Fake<IChartEditorPresenter>();
+         A.CallTo(() => _chartEditorAndDisplayPresenter.EditorPresenter).Returns(ChartEditorPresenter);
          _curveNamer = A.Fake<ICurveNamer>();
          _pathElementsMapper = A.Fake<IDataColumnToPathElementsMapper>();
          _chartTemplatingTask = A.Fake<IChartTemplatingTask>();
@@ -245,6 +248,29 @@ namespace OSPSuite.Presentation.Presentation
       {
          //zero marker removed
          _residualVsTimeChart.Curves.Count.ShouldBeEqualTo(0);
+      }
+   }
+
+   public class When_initializing_the_residuals_vs_time_analysis_for_a_parameter_identification : concern_for_ParameterIdentificationResidualVsTimeChartPresenter
+   {
+      private IProject _project;
+
+      protected override void Context()
+      {
+         base.Context();
+         _project = A.Fake<IProject>();
+         A.CallTo(() => _projectRetriever.CurrentProject).Returns(_project);
+      }
+
+      protected override void Because()
+      {
+         sut.InitializeAnalysis(_residualVsTimeChart, _parameterIdentification);
+      }
+
+      [Observation]
+      public void should_add_the_chart_template_menu_based_on_the_chart_templates_defined_in_the_project()
+      {
+         A.CallTo(() => ChartEditorPresenter.AddChartTemplateMenu(_project, A<Action<CurveChartTemplate>>._)).MustHaveHappened();
       }
    }
 }

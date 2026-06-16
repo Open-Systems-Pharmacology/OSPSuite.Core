@@ -82,8 +82,10 @@ namespace OSPSuite.Core.Services
       {
          var dataRepository = new DataRepository(id) {Name = name};
          var baseGrid = new BaseGrid($"{id}-Time", "Time", _dimensionFactory.Dimension(Constants.Dimension.TIME));
+         baseGrid.QuantityInfo.Path = new[] {baseGrid.Name};
          var values = new DataColumn($"{id}-{valueName}", valueName, _dimensionFactory.NoDimension, baseGrid)
             {DataInfo = {Origin = ColumnOrigins.CalculationAuxiliary}};
+         values.QuantityInfo.Path = new[] {valueName};
          dataRepository.Add(values);
          return dataRepository;
       }
@@ -125,6 +127,11 @@ namespace OSPSuite.Core.Services
          {
             dataRepository = CreateScatterDataRepository(id, repositoryName, outputResidual);
             chart.AddRepository(dataRepository);
+         }
+         else
+         {
+            //repositories persisted with the chart may have been created before the base grid path was introduced
+            dataRepository.BaseGrid.QuantityInfo.Path = new[] {dataRepository.BaseGrid.Name};
          }
 
          dataRepository.BaseGrid.Values = residuals.Select(x => x.Time).ToFloatArray();

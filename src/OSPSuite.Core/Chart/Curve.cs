@@ -1,4 +1,5 @@
 using System.Drawing;
+using OSPSuite.Assets;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.UnitSystem;
@@ -28,8 +29,13 @@ namespace OSPSuite.Core.Chart
          _xData = null;
          _yData = null;
          CurveOptions = new CurveOptions();
-         Rules = new BusinessRuleSet();
+         Rules = new BusinessRuleSet(lineThicknessWithinLimits);
       }
+
+      private static IBusinessRule lineThicknessWithinLimits { get; } = CreateRule.For<Curve>()
+         .Property(x => x.LineThickness)
+         .WithRule((curve, lineThickness) => lineThickness >= Constants.MIN_LINE_THICKNESS && lineThickness <= Constants.MAX_LINE_THICKNESS)
+         .WithError(Validation.LineThicknessShouldBeBetween(Constants.MIN_LINE_THICKNESS, Constants.MAX_LINE_THICKNESS));
 
       public void SetxData(DataColumn column, IDimensionFactory dimensionFactory)
       {

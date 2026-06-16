@@ -17,6 +17,12 @@ namespace OSPSuite.Core.Chart
       public ChartSettings ChartSettings { set; get; }
       public ChartFontAndSizeSettings FontAndSize { get; set; }
       public bool IncludeOriginData { get; set; }
+
+      /// <summary>
+      ///    Type of chart the template was created from. Templates are only offered for charts of the same type.
+      ///    Defaults to <see cref="CurveChartTypes.TimeProfile" /> for templates created before the type was introduced.
+      /// </summary>
+      public CurveChartTypes ChartType { get; set; } = CurveChartTypes.TimeProfile;
       public IReadOnlyCollection<Axis> Axes => _axes;
 
       public Axis AxisBy(AxisTypes axisTypes) => _axes[axisTypes];
@@ -47,6 +53,7 @@ namespace OSPSuite.Core.Chart
          sourceChartTemplate.Curves.Each(curve => Curves.Add(cloneManager.Clone(curve)));
          IsDefault = sourceChartTemplate.IsDefault;
          PreviewSettings = sourceChartTemplate.PreviewSettings;
+         ChartType = sourceChartTemplate.ChartType;
       }
 
       public void AddAxis(Axis axis)
