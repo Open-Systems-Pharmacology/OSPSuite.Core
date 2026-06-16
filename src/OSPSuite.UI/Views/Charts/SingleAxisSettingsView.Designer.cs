@@ -44,6 +44,8 @@ namespace OSPSuite.UI.Views.Charts
          this.defaultColorColorEdit = new OSPSuite.UI.Controls.UxColorPickEditWithHistory();
          this.axisTypeTextBox = new DevExpress.XtraEditors.TextEdit();
          this.maxTextBox = new DevExpress.XtraEditors.TextEdit();
+         this.majorIntervalTextBox = new DevExpress.XtraEditors.TextEdit();
+         this.minorTicksTextBox = new DevExpress.XtraEditors.TextEdit();
          this.dimensionComboBox = new OSPSuite.UI.Controls.UxComboBoxEdit();
          this.axisTypeLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.defaultLineStyleLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
@@ -54,6 +56,8 @@ namespace OSPSuite.UI.Views.Charts
          this.captionLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.minLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.maxLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.majorIntervalLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
+         this.minorTicksLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.gridLinesLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.defaultColorLayoutControlItem = new DevExpress.XtraLayout.LayoutControlItem();
          this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
@@ -71,6 +75,8 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.defaultColorColorEdit.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.axisTypeTextBox.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.maxTextBox.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.majorIntervalTextBox.Properties)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.minorTicksTextBox.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.dimensionComboBox.Properties)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.axisTypeLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.defaultLineStyleLayoutControlItem)).BeginInit();
@@ -81,6 +87,8 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.captionLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.minLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.maxLayoutControlItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.majorIntervalLayoutControlItem)).BeginInit();
+         ((System.ComponentModel.ISupportInitialize)(this.minorTicksLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.gridLinesLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.defaultColorLayoutControlItem)).BeginInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
@@ -98,13 +106,15 @@ namespace OSPSuite.UI.Views.Charts
          this.uxLayoutControl1.Controls.Add(this.captionTextBox);
          this.uxLayoutControl1.Controls.Add(this.minTextBox);
          this.uxLayoutControl1.Controls.Add(this.maxTextBox);
+         this.uxLayoutControl1.Controls.Add(this.majorIntervalTextBox);
+         this.uxLayoutControl1.Controls.Add(this.minorTicksTextBox);
          this.uxLayoutControl1.Controls.Add(this.gridLinesCheckEdit);
          this.uxLayoutControl1.Controls.Add(this.defaultColorColorEdit);
          this.uxLayoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
          this.uxLayoutControl1.Location = new System.Drawing.Point(0, 0);
          this.uxLayoutControl1.Name = "uxLayoutControl1";
          this.uxLayoutControl1.Root = this.layoutControlGroup1;
-         this.uxLayoutControl1.Size = new System.Drawing.Size(337, 321);
+         this.uxLayoutControl1.Size = new System.Drawing.Size(337, 369);
          this.uxLayoutControl1.TabIndex = 38;
          this.uxLayoutControl1.Text = "uxLayoutControl1";
          // 
@@ -118,6 +128,8 @@ namespace OSPSuite.UI.Views.Charts
             this.gridLinesLayoutControlItem,
             this.maxLayoutControlItem,
             this.minLayoutControlItem,
+            this.majorIntervalLayoutControlItem,
+            this.minorTicksLayoutControlItem,
             this.scalingLayoutControlItem,
             this.unitLayoutControlItem,
             this.dimensionLayoutControlItem,
@@ -127,7 +139,7 @@ namespace OSPSuite.UI.Views.Charts
             this.emptySpaceItem1});
          this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
          this.layoutControlGroup1.Name = "layoutControlGroup1";
-         this.layoutControlGroup1.Size = new System.Drawing.Size(337, 321);
+         this.layoutControlGroup1.Size = new System.Drawing.Size(337, 369);
          this.layoutControlGroup1.TextVisible = false;
          // 
          // scalingComboBox
@@ -161,7 +173,7 @@ namespace OSPSuite.UI.Views.Charts
          // gridLinesCheckEdit
          // 
          this.gridLinesCheckEdit.AllowClicksOutsideControlArea = false;
-         this.gridLinesCheckEdit.Location = new System.Drawing.Point(216, 204);
+         this.gridLinesCheckEdit.Location = new System.Drawing.Point(216, 252);
          this.gridLinesCheckEdit.Name = "gridLinesCheckEdit";
          this.gridLinesCheckEdit.Properties.AllowFocused = false;
          this.gridLinesCheckEdit.Properties.Caption = "";
@@ -171,7 +183,7 @@ namespace OSPSuite.UI.Views.Charts
          // 
          // defaultLineSytleComboBox
          // 
-         this.defaultLineSytleComboBox.Location = new System.Drawing.Point(216, 251);
+         this.defaultLineSytleComboBox.Location = new System.Drawing.Point(216, 299);
          this.defaultLineSytleComboBox.Name = "defaultLineSytleComboBox";
          this.defaultLineSytleComboBox.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
@@ -200,7 +212,7 @@ namespace OSPSuite.UI.Views.Charts
          // defaultColorColorEdit
          // 
          this.defaultColorColorEdit.EditValue = System.Drawing.Color.Empty;
-         this.defaultColorColorEdit.Location = new System.Drawing.Point(216, 227);
+         this.defaultColorColorEdit.Location = new System.Drawing.Point(216, 275);
          this.defaultColorColorEdit.Name = "defaultColorColorEdit";
          this.defaultColorColorEdit.Properties.AutomaticColor = System.Drawing.Color.Black;
          this.defaultColorColorEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
@@ -226,9 +238,25 @@ namespace OSPSuite.UI.Views.Charts
          this.maxTextBox.Size = new System.Drawing.Size(109, 20);
          this.maxTextBox.StyleController = this.uxLayoutControl1;
          this.maxTextBox.TabIndex = 14;
-         // 
+         //
+         // majorIntervalTextBox
+         //
+         this.majorIntervalTextBox.Location = new System.Drawing.Point(216, 204);
+         this.majorIntervalTextBox.Name = "majorIntervalTextBox";
+         this.majorIntervalTextBox.Size = new System.Drawing.Size(109, 20);
+         this.majorIntervalTextBox.StyleController = this.uxLayoutControl1;
+         this.majorIntervalTextBox.TabIndex = 15;
+         //
+         // minorTicksTextBox
+         //
+         this.minorTicksTextBox.Location = new System.Drawing.Point(216, 228);
+         this.minorTicksTextBox.Name = "minorTicksTextBox";
+         this.minorTicksTextBox.Size = new System.Drawing.Size(109, 20);
+         this.minorTicksTextBox.StyleController = this.uxLayoutControl1;
+         this.minorTicksTextBox.TabIndex = 16;
+         //
          // dimensionComboBox
-         // 
+         //
          this.dimensionComboBox.Location = new System.Drawing.Point(216, 84);
          this.dimensionComboBox.Name = "dimensionComboBox";
          this.dimensionComboBox.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
@@ -251,7 +279,7 @@ namespace OSPSuite.UI.Views.Charts
          // 
          this.defaultLineStyleLayoutControlItem.Control = this.defaultLineSytleComboBox;
          this.defaultLineStyleLayoutControlItem.CustomizationFormText = "layoutControlItem2";
-         this.defaultLineStyleLayoutControlItem.Location = new System.Drawing.Point(0, 239);
+         this.defaultLineStyleLayoutControlItem.Location = new System.Drawing.Point(0, 287);
          this.defaultLineStyleLayoutControlItem.Name = "defaultLineStyleLayoutControlItem";
          this.defaultLineStyleLayoutControlItem.Size = new System.Drawing.Size(317, 24);
          this.defaultLineStyleLayoutControlItem.Text = "defaultLineStyleLayoutControlItem";
@@ -326,12 +354,32 @@ namespace OSPSuite.UI.Views.Charts
          this.maxLayoutControlItem.Size = new System.Drawing.Size(317, 24);
          this.maxLayoutControlItem.Text = "maxLayoutControlItem";
          this.maxLayoutControlItem.TextSize = new System.Drawing.Size(200, 13);
-         // 
+         //
+         // majorIntervalLayoutControlItem
+         //
+         this.majorIntervalLayoutControlItem.Control = this.majorIntervalTextBox;
+         this.majorIntervalLayoutControlItem.CustomizationFormText = "majorIntervalLayoutControlItem";
+         this.majorIntervalLayoutControlItem.Location = new System.Drawing.Point(0, 192);
+         this.majorIntervalLayoutControlItem.Name = "majorIntervalLayoutControlItem";
+         this.majorIntervalLayoutControlItem.Size = new System.Drawing.Size(317, 24);
+         this.majorIntervalLayoutControlItem.Text = "majorIntervalLayoutControlItem";
+         this.majorIntervalLayoutControlItem.TextSize = new System.Drawing.Size(200, 13);
+         //
+         // minorTicksLayoutControlItem
+         //
+         this.minorTicksLayoutControlItem.Control = this.minorTicksTextBox;
+         this.minorTicksLayoutControlItem.CustomizationFormText = "minorTicksLayoutControlItem";
+         this.minorTicksLayoutControlItem.Location = new System.Drawing.Point(0, 216);
+         this.minorTicksLayoutControlItem.Name = "minorTicksLayoutControlItem";
+         this.minorTicksLayoutControlItem.Size = new System.Drawing.Size(317, 24);
+         this.minorTicksLayoutControlItem.Text = "minorTicksLayoutControlItem";
+         this.minorTicksLayoutControlItem.TextSize = new System.Drawing.Size(200, 13);
+         //
          // gridLinesLayoutControlItem
-         // 
+         //
          this.gridLinesLayoutControlItem.Control = this.gridLinesCheckEdit;
          this.gridLinesLayoutControlItem.CustomizationFormText = "layoutControlItem8";
-         this.gridLinesLayoutControlItem.Location = new System.Drawing.Point(0, 192);
+         this.gridLinesLayoutControlItem.Location = new System.Drawing.Point(0, 240);
          this.gridLinesLayoutControlItem.Name = "gridLinesLayoutControlItem";
          this.gridLinesLayoutControlItem.Size = new System.Drawing.Size(317, 23);
          this.gridLinesLayoutControlItem.Text = "gridLinesLayoutControlItem";
@@ -341,7 +389,7 @@ namespace OSPSuite.UI.Views.Charts
          // 
          this.defaultColorLayoutControlItem.Control = this.defaultColorColorEdit;
          this.defaultColorLayoutControlItem.CustomizationFormText = "layoutControlItem7";
-         this.defaultColorLayoutControlItem.Location = new System.Drawing.Point(0, 215);
+         this.defaultColorLayoutControlItem.Location = new System.Drawing.Point(0, 263);
          this.defaultColorLayoutControlItem.Name = "defaultColorLayoutControlItem";
          this.defaultColorLayoutControlItem.Size = new System.Drawing.Size(317, 24);
          this.defaultColorLayoutControlItem.Text = "defaultColorLayoutControlItem";
@@ -350,7 +398,7 @@ namespace OSPSuite.UI.Views.Charts
          // emptySpaceItem1
          // 
          this.emptySpaceItem1.AllowHotTrack = false;
-         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 263);
+         this.emptySpaceItem1.Location = new System.Drawing.Point(0, 311);
          this.emptySpaceItem1.Name = "emptySpaceItem1";
          this.emptySpaceItem1.Size = new System.Drawing.Size(317, 38);
          this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
@@ -359,7 +407,7 @@ namespace OSPSuite.UI.Views.Charts
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.ClientSize = new System.Drawing.Size(337, 367);
+         this.ClientSize = new System.Drawing.Size(337, 415);
          this.Controls.Add(this.uxLayoutControl1);
          this.Margin = new System.Windows.Forms.Padding(0);
          this.Name = "SingleAxisSettingsView";
@@ -378,6 +426,8 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.defaultColorColorEdit.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.axisTypeTextBox.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.maxTextBox.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.majorIntervalTextBox.Properties)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.minorTicksTextBox.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.dimensionComboBox.Properties)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.axisTypeLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.defaultLineStyleLayoutControlItem)).EndInit();
@@ -388,6 +438,8 @@ namespace OSPSuite.UI.Views.Charts
          ((System.ComponentModel.ISupportInitialize)(this.captionLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.minLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.maxLayoutControlItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.majorIntervalLayoutControlItem)).EndInit();
+         ((System.ComponentModel.ISupportInitialize)(this.minorTicksLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.gridLinesLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.defaultColorLayoutControlItem)).EndInit();
          ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
@@ -408,6 +460,8 @@ namespace OSPSuite.UI.Views.Charts
       private TextEdit captionTextBox;
       private TextEdit minTextBox;
       private TextEdit maxTextBox;
+      private TextEdit majorIntervalTextBox;
+      private TextEdit minorTicksTextBox;
       private UxCheckEdit gridLinesCheckEdit;
       private UxColorPickEditWithHistory defaultColorColorEdit;
       private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
@@ -415,6 +469,8 @@ namespace OSPSuite.UI.Views.Charts
       private DevExpress.XtraLayout.LayoutControlItem defaultColorLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem gridLinesLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem maxLayoutControlItem;
+      private DevExpress.XtraLayout.LayoutControlItem majorIntervalLayoutControlItem;
+      private DevExpress.XtraLayout.LayoutControlItem minorTicksLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem minLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem scalingLayoutControlItem;
       private DevExpress.XtraLayout.LayoutControlItem unitLayoutControlItem;

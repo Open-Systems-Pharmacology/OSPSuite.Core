@@ -28,6 +28,8 @@ namespace OSPSuite.Core.Snapshots.Mappers
             x.DefaultLineStyle = axis.DefaultLineStyle;
             x.Min = axis.Min;
             x.Max = axis.Max;
+            x.MajorInterval = axis.MajorInterval;
+            x.MinorTicks = axis.MinorTicks;
          });
       }
 
@@ -49,6 +51,8 @@ namespace OSPSuite.Core.Snapshots.Mappers
          axis.UnitName = ModelValueFor(snapshot.Unit);
          axis.Min = snapshot.Min;
          axis.Max = snapshot.Max;
+         axis.MajorInterval = snapshot.MajorInterval;
+         axis.MinorTicks = snapshot.MinorTicks;
 
          return Task.FromResult(axis);
       }

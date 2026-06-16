@@ -3,6 +3,7 @@ using DevExpress.XtraCharts;
 using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Chart;
+using OSPSuite.Core.Domain;
 using OSPSuite.UI.Controls;
 using OSPSuite.Utility.Format;
 using Axis = OSPSuite.Core.Chart.Axis;
@@ -115,6 +116,111 @@ namespace OSPSuite.UI.Binders
       public void the_min_should_be_set_to_equal_the_max()
       {
          _axis.Min.ShouldBeEqualTo(_axis.Max);
+      }
+   }
+
+   public class When_refreshing_adapter_and_a_linear_axis_has_a_manual_major_interval_and_minor_count : concern_for_AxisBinder
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _axis.MajorInterval = 2F;
+         _axis.MinorTicks = 3;
+      }
+
+      protected override void Because()
+      {
+         sut.RefreshRange(sideMarginsEnabled: true, diagramSize: new Size(100, 100));
+      }
+
+      [Observation]
+      public void should_disable_the_auto_grid_and_apply_the_major_interval_as_grid_spacing()
+      {
+         _uxChartControl.XYDiagram.AxisY.NumericScaleOptions.AutoGrid.ShouldBeFalse();
+         _uxChartControl.XYDiagram.AxisY.NumericScaleOptions.GridSpacing.ShouldBeEqualTo(2);
+      }
+
+      [Observation]
+      public void should_apply_the_minor_count()
+      {
+         _uxChartControl.XYDiagram.AxisY.MinorCount.ShouldBeEqualTo(3);
+      }
+   }
+
+   public class When_refreshing_adapter_and_a_linear_axis_has_no_manual_tick_settings : concern_for_AxisBinder
+   {
+      protected override void Because()
+      {
+         sut.RefreshRange(sideMarginsEnabled: true, diagramSize: new Size(100, 100));
+      }
+
+      [Observation]
+      public void should_let_the_axis_calculate_the_grid_automatically()
+      {
+         _uxChartControl.XYDiagram.AxisY.NumericScaleOptions.AutoGrid.ShouldBeTrue();
+      }
+   }
+
+   public class When_refreshing_adapter_and_a_linear_axis_has_an_out_of_range_minor_count : concern_for_AxisBinder
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _axis.MajorInterval = 2F;
+         _axis.MinorTicks = 0;
+      }
+
+      protected override void Because()
+      {
+         sut.RefreshRange(sideMarginsEnabled: true, diagramSize: new Size(100, 100));
+      }
+
+      [Observation]
+      public void should_fall_back_to_the_default_minor_count_instead_of_throwing()
+      {
+         _uxChartControl.XYDiagram.AxisY.MinorCount.ShouldBeEqualTo(4);
+      }
+   }
+
+   public class When_refreshing_adapter_and_a_linear_axis_has_a_non_positive_major_interval : concern_for_AxisBinder
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _axis.MajorInterval = 0;
+      }
+
+      protected override void Because()
+      {
+         sut.RefreshRange(sideMarginsEnabled: true, diagramSize: new Size(100, 100));
+      }
+
+      [Observation]
+      public void should_fall_back_to_the_automatic_grid_instead_of_applying_an_invalid_spacing()
+      {
+         _uxChartControl.XYDiagram.AxisY.NumericScaleOptions.AutoGrid.ShouldBeTrue();
+      }
+   }
+
+   public class When_refreshing_adapter_and_a_logarithmic_axis_has_manual_tick_settings : concern_for_AxisBinder
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _axis.Scaling = Scalings.Log;
+         _axis.MajorInterval = 2F;
+         _axis.MinorTicks = 3;
+      }
+
+      protected override void Because()
+      {
+         sut.RefreshRange(sideMarginsEnabled: true, diagramSize: new Size(100, 100));
+      }
+
+      [Observation]
+      public void should_ignore_the_manual_tick_settings_and_keep_the_logarithmic_minor_count()
+      {
+         _uxChartControl.XYDiagram.AxisY.MinorCount.ShouldBeEqualTo(8);
       }
    }
 }

@@ -14,6 +14,8 @@ namespace OSPSuite.Core.Snapshots
       public bool Visible { get; set; }
       public float? Min { get; set; }
       public float? Max { get; set; }
+      public float? MajorInterval { get; set; }
+      public int? MinorTicks { get; set; }
       public Color DefaultColor { get; set; }
       public LineStyles DefaultLineStyle { get; set; }
       public Scalings Scaling { get; set; }
