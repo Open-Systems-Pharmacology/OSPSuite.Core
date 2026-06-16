@@ -61,16 +61,13 @@ namespace OSPSuite.Core.Domain.Services
       string AddParentVolumeReferenceToFormula(IFormula formula);
    }
 
-   public class FormulaTask : IFormulaTask,
-      IVisitor<IUsingFormula>,
-      IVisitor<IParameter>
+   public class FormulaTask : IFormulaTask
    {
       private readonly IObjectPathFactory _objectPathFactory;
       private readonly IObjectBaseFactory _objectBaseFactory;
       private readonly IAliasCreator _aliasCreator;
       private readonly IDimensionFactory _dimensionFactory;
       private readonly IEntityPathResolver _entityPathResolver;
-      private readonly ICache<string, IList<ExplicitFormula>> _originIdToFormulaCache = new Cache<string, IList<ExplicitFormula>>();
 
       public FormulaTask(
          IObjectPathFactory objectPathFactory,
@@ -88,17 +85,11 @@ namespace OSPSuite.Core.Domain.Services
 
       public void CheckFormulaOriginIn(IModel model)
       {
-         try
+         var formulaOriginVisitor = new FormulaOriginVisitor();
+         model.AcceptVisitor(formulaOriginVisitor);
+         foreach (var formulasWithSameOrigin in formulaOriginVisitor.OriginIdToFormulaCache)
          {
-            model.AcceptVisitor(this);
-            foreach (var formulasWithSameOrigin in _originIdToFormulaCache)
-            {
-               resetOriginIdIfFormulasAreNotTheSame(formulasWithSameOrigin);
-            }
-         }
-         finally
-         {
-            _originIdToFormulaCache.Clear();
+            resetOriginIdIfFormulasAreNotTheSame(formulasWithSameOrigin);
          }
       }
 
@@ -423,34 +414,42 @@ namespace OSPSuite.Core.Domain.Services
          }
       }
 
-      public void Visit(IUsingFormula usingFormula)
+      /// <summary>
+      ///    Collects all explicit formulas by origin id in one model. Created per call so that the task remains stateless
+      /// </summary>
+      private class FormulaOriginVisitor : IVisitor<IUsingFormula>, IVisitor<IParameter>
       {
-         addFormulaToCache(usingFormula?.Formula);
-      }
+         public ICache<string, IList<ExplicitFormula>> OriginIdToFormulaCache { get; } = new Cache<string, IList<ExplicitFormula>>();
 
-      private void addFormulaToCache(IFormula formula)
-      {
-         if (!(formula is ExplicitFormula explicitFormula))
-            return;
+         public void Visit(IUsingFormula usingFormula)
+         {
+            addFormulaToCache(usingFormula?.Formula);
+         }
 
-         if (string.IsNullOrEmpty(explicitFormula.OriginId))
-            return;
+         public void Visit(IParameter parameter)
+         {
+            Visit(parameter as IUsingFormula);
+            addFormulaToCache(parameter.RHSFormula);
+         }
 
-         listFor(explicitFormula.OriginId).Add(explicitFormula);
-      }
+         private void addFormulaToCache(IFormula formula)
+         {
+            if (!(formula is ExplicitFormula explicitFormula))
+               return;
 
-      private IList<ExplicitFormula> listFor(string originId)
-      {
-         if (!_originIdToFormulaCache.Contains(originId))
-            _originIdToFormulaCache.Add(originId, new List<ExplicitFormula>());
+            if (string.IsNullOrEmpty(explicitFormula.OriginId))
+               return;
 
-         return _originIdToFormulaCache[originId];
-      }
+            listFor(explicitFormula.OriginId).Add(explicitFormula);
+         }
 
-      public void Visit(IParameter parameter)
-      {
-         Visit(parameter as IUsingFormula);
-         addFormulaToCache(parameter.RHSFormula);
+         private IList<ExplicitFormula> listFor(string originId)
+         {
+            if (!OriginIdToFormulaCache.Contains(originId))
+               OriginIdToFormulaCache.Add(originId, new List<ExplicitFormula>());
+
+            return OriginIdToFormulaCache[originId];
+         }
       }
    }
 }
