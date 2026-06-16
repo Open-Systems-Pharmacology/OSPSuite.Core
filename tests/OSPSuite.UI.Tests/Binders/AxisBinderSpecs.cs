@@ -182,6 +182,26 @@ namespace OSPSuite.UI.Binders
       }
    }
 
+   public class When_refreshing_adapter_and_a_linear_axis_has_a_non_positive_major_interval : concern_for_AxisBinder
+   {
+      protected override void Context()
+      {
+         base.Context();
+         _axis.MajorInterval = 0;
+      }
+
+      protected override void Because()
+      {
+         sut.RefreshRange(sideMarginsEnabled: true, diagramSize: new Size(100, 100));
+      }
+
+      [Observation]
+      public void should_fall_back_to_the_automatic_grid_instead_of_applying_an_invalid_spacing()
+      {
+         _uxChartControl.XYDiagram.AxisY.NumericScaleOptions.AutoGrid.ShouldBeTrue();
+      }
+   }
+
    public class When_refreshing_adapter_and_a_logarithmic_axis_has_manual_tick_settings : concern_for_AxisBinder
    {
       protected override void Context()

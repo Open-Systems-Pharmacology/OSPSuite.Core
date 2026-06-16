@@ -214,7 +214,9 @@ namespace OSPSuite.UI.Binders
 
       // The manual tick override is only applied for linearly scaled axes. Logarithmic axes keep their
       // decade gridlines and the fixed minor count handled in setAxisRange.
-      private bool hasManualTickSettings => Axis.Scaling != Scalings.Log && (Axis.MajorInterval.HasValue || Axis.MinorCount.HasValue);
+      private bool hasManualTickSettings => Axis.Scaling != Scalings.Log && (hasValidMajorInterval || Axis.MinorCount.HasValue);
+
+      private bool hasValidMajorInterval => Axis.MajorInterval.HasValue && Axis.MajorInterval.Value > 0;
 
       // The charting component throws if MinorCount is outside [MIN_MINOR_COUNT, MAX_MINOR_COUNT]. An out-of-range
       // value is flagged to the user by the axis validation rules; here we simply fall back to the automatic count.
@@ -223,7 +225,7 @@ namespace OSPSuite.UI.Binders
 
       private void applyManualTickSettings()
       {
-         if (Axis.MajorInterval.HasValue)
+         if (hasValidMajorInterval)
          {
             _axisView.NumericScaleOptions.AutoGrid = false;
             _axisView.NumericScaleOptions.GridSpacing = Axis.MajorInterval.Value;
