@@ -25,14 +25,19 @@ namespace OSPSuite.Core.Domain.UnitSystem
       {
          var dimensionCache = new Cache<string, IDimension>();
 
-         if (defaultDimension != null)
-            dimensionCache[defaultDimension.DisplayName] = defaultDimension;
-
          foreach (var dimension in dimensionFactory.Dimensions)
          {
             var optimalDimension = OptimalDimension(dimensionFactory, dimension);
             dimensionCache[optimalDimension.DisplayName] = optimalDimension;
          }
+
+         // Add the axis's own dimension last so that its exact instance wins the DisplayName key.
+         // MergedDimensionFor mints a new merged dimension instance on every call, so the loop above
+         // produces a different instance with the same DisplayName for mergeable dimensions. Editors
+         // select the combo value by reference, so the list must contain the instance held by the axis
+         // for it to be selectable. See issue #2891.
+         if (defaultDimension != null)
+            dimensionCache[defaultDimension.DisplayName] = defaultDimension;
 
          return dimensionCache;
       }
