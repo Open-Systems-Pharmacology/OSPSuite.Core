@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSPSuite.Utility" Version="5.0.0.9" />
+    <PackageReference Include="OSPSuite.Utility" Version="5.0.0.10" />
   </ItemGroup>
 
   <ItemGroup>
