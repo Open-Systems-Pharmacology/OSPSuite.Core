@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSPSuite.Utility" Version="5.0.0.8" />
+    <PackageReference Include="OSPSuite.Utility" Version="5.0.0.9" />
     <!-- DevExpress.Data brings IDXDataErrorInfo / ErrorInfo used by DxValidatableDTO. -->
     <PackageReference Include="DevExpress.Data" Version="25.2.7" />
     <!-- DevExpress.Utils brings SvgImage / DefaultBoolean used by Extensions/ApplicationIconExtensions. -->
