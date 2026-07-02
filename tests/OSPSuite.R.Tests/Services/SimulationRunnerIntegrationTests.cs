@@ -4,6 +4,7 @@ using OSPSuite.BDDHelper;
 using OSPSuite.BDDHelper.Extensions;
 using OSPSuite.Core.Domain.Data;
 using OSPSuite.Core.Domain.Populations;
+using OSPSuite.Core.Domain.Services;
 using OSPSuite.R.Domain;
 using OSPSuite.Utility;
 
@@ -116,6 +117,65 @@ namespace OSPSuite.R.Services
       {
          var paths = _results.AllQuantityPaths();
          paths.Any(x => x.ToString().Contains(_newSimulationName)).ShouldBeFalse();
+      }
+   }
+
+   public class When_running_a_population_simulation_through_run_simulations : concern_for_SimulationRunnerIntegration
+   {
+      private IndividualValuesCache _population;
+      private ConcurrencyManagerResult<SimulationResults>[] _results;
+
+      protected override void Context()
+      {
+         base.Context();
+         _population = _populationTask.ImportPopulation(_populationFile);
+         _simulation.IndividualValuesCache = _population;
+      }
+
+      protected override void Because()
+      {
+         _results = sut.RunSimulations(new SimulationRunOptions(), _simulation);
+      }
+
+      [Observation]
+      public void should_run_the_cache_bearing_simulation_as_a_population()
+      {
+         _results.Length.ShouldBeEqualTo(1);
+         _results[0].Succeeded.ShouldBeTrue();
+         _results[0].Result.Count.ShouldBeEqualTo(_population.Count);
+         _results[0].Result.Count.ShouldBeGreaterThan(1);
+      }
+   }
+
+   public class When_running_a_mixed_list_of_individual_and_population_simulations_through_run_simulations : concern_for_SimulationRunnerIntegration
+   {
+      private IndividualValuesCache _population;
+      private Simulation _individualSimulation;
+      private Simulation _populationSimulation;
+      private ConcurrencyManagerResult<SimulationResults>[] _results;
+
+      protected override void Context()
+      {
+         base.Context();
+         _population = _populationTask.ImportPopulation(_populationFile);
+         _individualSimulation = _simulationPersister.LoadSimulation(_simulationFile);
+         _populationSimulation = _simulationPersister.LoadSimulation(_simulationFile);
+         _populationSimulation.Id = "population";
+         _populationSimulation.IndividualValuesCache = _population;
+      }
+
+      protected override void Because()
+      {
+         _results = sut.RunSimulations(new SimulationRunOptions(), _individualSimulation, _populationSimulation);
+      }
+
+      [Observation]
+      public void should_return_one_coherent_result_set_with_the_individual_and_the_population()
+      {
+         _results.Length.ShouldBeEqualTo(2);
+         _results.All(x => x.Succeeded).ShouldBeTrue();
+         _results.Single(x => x.Id == _individualSimulation.Id).Result.Count.ShouldBeEqualTo(1);
+         _results.Single(x => x.Id == "population").Result.Count.ShouldBeEqualTo(_population.Count);
       }
    }
 }

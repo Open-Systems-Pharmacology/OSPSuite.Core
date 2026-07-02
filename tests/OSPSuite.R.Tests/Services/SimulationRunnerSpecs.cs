@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ using OSPSuite.Helpers;
 using OSPSuite.R.Domain;
 using OSPSuite.SimModel;
 using OSPSuite.Utility.Events;
+using OSPSuite.Utility.Exceptions;
+using RSimulation = OSPSuite.R.Domain.Simulation;
 using SimulationRunOptions = OSPSuite.R.Domain.SimulationRunOptions;
 
 namespace OSPSuite.R.Services
@@ -27,6 +30,8 @@ namespace OSPSuite.R.Services
       protected IPopulationRunner _populationRunner;
       protected IPopulationTask _populationTask;
       protected IProgressManager _progressManager;
+      protected IConcurrencyManager _concurrencyManager;
+      protected ISimulationRunner _individualRunner;
 
       protected override void Context()
       {
@@ -35,10 +40,19 @@ namespace OSPSuite.R.Services
          _populationRunner = A.Fake<IPopulationRunner>();
          _populationTask = A.Fake<IPopulationTask>();
          _progressManager = A.Fake<IProgressManager>();
+         _concurrencyManager = new ConcurrencyManager(A.Fake<IObjectTypeResolver>());
+         _individualRunner = A.Fake<ISimulationRunner>();
+         A.CallTo(() => _progressManager.Create()).Returns(A.Fake<IProgressUpdater>());
          _simulationResultsCreator = new SimulationResultsCreator();
          sut = new SimulationRunner(_simModelManager, _populationRunner, _simulationResultsCreator, _simulationPersitableUpdater, _populationTask,
-            _progressManager);
+            _progressManager, _concurrencyManager, () => _individualRunner);
       }
+
+      protected static RSimulation PopulationSimulationWithId(string id, params int[] individualIds) =>
+         new RSimulation(new ModelCoreSimulation { Id = id })
+         {
+            IndividualValuesCache = new IndividualValuesCache(new ParameterValuesCache(), new CovariateValuesCache(), individualIds.ToList())
+         };
    }
 
    public class When_running_a_simulation : concern_for_SimulationRunner
@@ -174,6 +188,123 @@ namespace OSPSuite.R.Services
       {
          A.CallTo(() => _populationRunner.RunPopulationAsync(_simulation, _simulationRunOptions, _populationData, A<DataTable>._, null, CancellationToken.None))
             .MustHaveHappened();
+      }
+   }
+
+   public class When_running_a_mixed_list_of_individual_and_population_simulations : concern_for_SimulationRunner
+   {
+      private RSimulation _individual;
+      private RSimulation _population;
+      private SimulationResults _individualResults;
+      private SimulationResults _populationResults;
+      private ConcurrencyManagerResult<SimulationResults>[] _results;
+
+      protected override void Context()
+      {
+         base.Context();
+         _individual = new RSimulation(new ModelCoreSimulation { Id = "individual" });
+         _population = PopulationSimulationWithId("population", 0, 1);
+
+         _individualResults = new SimulationResults();
+         A.CallTo(() => _individualRunner.Run(A<SimulationRunArgs>._)).Returns(_individualResults);
+
+         var populationRunResults = new PopulationRunResults();
+         _populationResults = populationRunResults.Results;
+         A.CallTo(() => _populationRunner.RunPopulationAsync(_population.CoreSimulation, A<RunOptions>._, A<DataTable>._, A<DataTable>._, A<DataTable>._, A<CancellationToken>._))
+            .Returns(Task.FromResult(populationRunResults));
+      }
+
+      protected override void Because()
+      {
+         _results = sut.RunSimulations(new SimulationRunOptions(), _individual, _population);
+      }
+
+      [Observation]
+      public void should_return_one_result_per_simulation()
+      {
+         _results.Length.ShouldBeEqualTo(2);
+      }
+
+      [Observation]
+      public void should_run_the_individual_through_a_freshly_resolved_runner()
+      {
+         var result = _results.Single(x => x.Id == "individual");
+         result.Succeeded.ShouldBeTrue();
+         result.Result.ShouldBeEqualTo(_individualResults);
+      }
+
+      [Observation]
+      public void should_run_the_population_through_the_population_runner()
+      {
+         A.CallTo(() => _populationRunner.RunPopulationAsync(_population.CoreSimulation, A<RunOptions>._, A<DataTable>._, A<DataTable>._, A<DataTable>._, A<CancellationToken>._))
+            .MustHaveHappened();
+         var result = _results.Single(x => x.Id == "population");
+         result.Succeeded.ShouldBeTrue();
+         result.Result.ShouldBeEqualTo(_populationResults);
+      }
+   }
+
+   public class When_running_a_population_simulation_with_aging_data_through_run_simulations : concern_for_SimulationRunner
+   {
+      private RSimulation _population;
+      private ConcurrencyManagerResult<SimulationResults>[] _results;
+
+      protected override void Context()
+      {
+         base.Context();
+         _population = PopulationSimulationWithId("aging", 0, 1);
+         _population.AgingData = new AgingData
+         {
+            IndividualIds = new[] { 0, 1 },
+            ParameterPaths = new[] { "Organism|Liver|Volume", "Organism|Liver|Volume" },
+            Times = new[] { 10.0, 20.0 },
+            Values = new[] { 4.0, 5.0 },
+         };
+         A.CallTo(() => _populationRunner.RunPopulationAsync(_population.CoreSimulation, A<RunOptions>._, A<DataTable>._, A<DataTable>._, A<DataTable>._, A<CancellationToken>._))
+            .Returns(Task.FromResult(new PopulationRunResults()));
+      }
+
+      protected override void Because()
+      {
+         _results = sut.RunSimulations(new SimulationRunOptions(), _population);
+      }
+
+      [Observation]
+      public void should_forward_the_aging_data_to_the_population_runner()
+      {
+         A.CallTo(() => _populationRunner.RunPopulationAsync(_population.CoreSimulation, A<RunOptions>._, A<DataTable>._, A<DataTable>.That.Not.IsNull(), A<DataTable>._, A<CancellationToken>._))
+            .MustHaveHappened();
+      }
+   }
+
+   public class When_one_population_in_the_list_fails : concern_for_SimulationRunner
+   {
+      private RSimulation _goodPopulation;
+      private RSimulation _badPopulation;
+      private ConcurrencyManagerResult<SimulationResults>[] _results;
+
+      protected override void Context()
+      {
+         base.Context();
+         _goodPopulation = PopulationSimulationWithId("good", 0, 1);
+         _badPopulation = PopulationSimulationWithId("bad", 0, 1);
+
+         A.CallTo(() => _populationRunner.RunPopulationAsync(_goodPopulation.CoreSimulation, A<RunOptions>._, A<DataTable>._, A<DataTable>._, A<DataTable>._, A<CancellationToken>._))
+            .Returns(Task.FromResult(new PopulationRunResults()));
+         A.CallTo(() => _populationRunner.RunPopulationAsync(_badPopulation.CoreSimulation, A<RunOptions>._, A<DataTable>._, A<DataTable>._, A<DataTable>._, A<CancellationToken>._))
+            .Throws(new OSPSuiteException("the population blew up"));
+      }
+
+      protected override void Because()
+      {
+         _results = sut.RunSimulations(new SimulationRunOptions(), _goodPopulation, _badPopulation);
+      }
+
+      [Observation]
+      public void should_isolate_the_failure_and_still_complete_the_other_population()
+      {
+         _results.Single(x => x.Id == "good").Succeeded.ShouldBeTrue();
+         _results.Single(x => x.Id == "bad").Succeeded.ShouldBeFalse();
       }
    }
 }
