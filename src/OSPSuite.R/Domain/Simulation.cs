@@ -27,21 +27,10 @@ namespace OSPSuite.R.Domain
       public OutputMappings OutputMappings { get; set; }
       public DataRepository ResultsDataRepository { get; set; }
 
-      /// <summary>
-      ///    The complete per-individual parameter values that turn this simulation into a population run.
-      ///    When <c>null</c> the simulation runs as a single individual.
-      /// </summary>
       public IndividualValuesCache IndividualValuesCache { get; set; }
 
-      /// <summary>
-      ///    Optional time-varying (aging) parameter data. Only meaningful alongside an
-      ///    <see cref="IndividualValuesCache" />
-      /// </summary>
       public AgingData AgingData { get; set; }
 
-      /// <summary>
-      ///    <c>true</c> when this simulation carries a population and should be run as a population simulation.
-      /// </summary>
       public bool IsPopulation => IndividualValuesCache != null;
 
       public void RemoveUsedObservedData(DataRepository dataRepository)
