@@ -8,6 +8,7 @@ using OSPSuite.Core.Commands;
 using OSPSuite.Core.Domain;
 using OSPSuite.Core.Domain.Builder;
 using OSPSuite.Core.Domain.Data;
+using OSPSuite.Core.Domain.Populations;
 using OSPSuite.Core.Domain.Services;
 using OSPSuite.Utility.Visitor;
 
@@ -25,6 +26,12 @@ namespace OSPSuite.R.Domain
       public SimulationEntitySources EntitySources { get; set; } = new SimulationEntitySources();
       public OutputMappings OutputMappings { get; set; }
       public DataRepository ResultsDataRepository { get; set; }
+
+      public IndividualValuesCache IndividualValuesCache { get; set; }
+
+      public AgingData AgingData { get; set; }
+
+      public bool IsPopulation => IndividualValuesCache != null;
 
       public void RemoveUsedObservedData(DataRepository dataRepository)
       {
