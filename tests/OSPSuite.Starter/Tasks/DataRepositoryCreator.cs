@@ -168,10 +168,6 @@ namespace OSPSuite.Starter.Tasks
          return dataRepository;
       }
 
-      /// <summary>
-      ///    Creates a calculation curve that decays, stays at exactly 0 between 50h and 100h and then decays again.
-      ///    Used to verify that values equal to 0 are shown as a gap on a logarithmic y axis (see issue 2903).
-      /// </summary>
       public DataRepository CreateCalculationWithZeroValues(IContainer model, int index)
       {
          var dataRepository = new DataRepository().WithName($"Zero Values Repository {index}");
