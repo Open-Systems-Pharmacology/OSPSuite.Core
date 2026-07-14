@@ -461,6 +461,14 @@ namespace OSPSuite.UI.Binders
 
       public int OriginalCurveIndexForRow(DataRow row) => (int)row[INDEX_OF_VALUE_IN_CURVE];
 
+      public double YValueForRow(DataRow row)
+      {
+         var yData = ActiveYData;
+         var baseGrid = activeBaseGrid(Curve.xData, yData);
+         var yUnit = Curve.yDimension.Unit(_yAxis.UnitName);
+         return Curve.yDimension.BaseUnitValueToUnitValue(yUnit, ValueInBaseUnit(yData, baseGrid, OriginalCurveIndexForRow(row)));
+      }
+
       public bool IsValidFor(DataMode dataMode, AxisTypes yAxisType) =>
          _dataMode == dataMode &&
          _yAxisType == yAxisType;

@@ -565,9 +565,22 @@ namespace OSPSuite.UI.Views.Charts
             xAxisTitle,
             yAxisTitle,
             _doubleFormatter.Format(nextPoint.NumericalArgument),
-            _doubleFormatter.Format(nextPoint.Values[0]), nextPoint.Values.Length > 1
+            _doubleFormatter.Format(yValueFor(series, nextPoint)), nextPoint.Values.Length > 1 && !nextPoint.IsEmpty
                ? _doubleFormatter.Format(nextPoint.Values[1])
                : null, editable: _curveEditEnabled, description: curveDescription);
+      }
+
+      private double yValueFor(Series series, SeriesPoint seriesPoint)
+      {
+         if (!seriesPoint.IsEmpty)
+            return seriesPoint.Values[0];
+
+         //An empty point has no rendered value (e.g. 0 on a logarithmic scale) so the value is retrieved from the underlying data
+         var dataRowView = seriesPoint.Tag as DataRowView;
+         if (dataRowView == null)
+            return double.NaN;
+
+         return _presenter.GetYValueFromDataRow(series.Name, dataRowView.Row);
       }
 
       private SeriesPoint findPointInSeries(ChartHitInfo hitInfo, Series series) =>

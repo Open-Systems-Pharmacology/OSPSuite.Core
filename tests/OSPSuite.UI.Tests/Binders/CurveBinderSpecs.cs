@@ -118,6 +118,13 @@ namespace OSPSuite.UI.Binders
          //Ignore or Interpolate would connect the neighboring points across the gap.
          CurveSeries.View.DowncastTo<XYDiagramSeriesViewBase>().EmptyPointOptions.ProcessPoints.ShouldBeEqualTo(ProcessEmptyPointsMode.InsertZero);
       }
+
+      [Observation]
+      public void should_return_the_underlying_y_value_for_empty_rows_as_well_as_for_regular_rows()
+      {
+         sut.YValueForRow(DataTableForCurveSeries.Rows[0]).ShouldBeEqualTo(10.0);
+         sut.YValueForRow(DataTableForCurveSeries.Rows[1]).ShouldBeEqualTo(0.0);
+      }
    }
 
    public class When_binding_a_curve_containing_zero_values_to_a_linear_y_axis : concern_for_CurveBinder
