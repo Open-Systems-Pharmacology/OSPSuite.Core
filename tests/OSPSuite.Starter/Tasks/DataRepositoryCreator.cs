@@ -17,6 +17,7 @@ namespace OSPSuite.Starter.Tasks
       DataRepository CreateObservationWithGeometricDeviation(int numberOfObservations, IContainer model, int index, int pointsPerObservation, double? lloq);
       DataRepository CreateCalculationsWithGeometricMean(int numberOfCalculations, IContainer model, int index, int pointsPerCalculation);
       DataRepository CreateCalculationsWithArithmeticMean(int numberOfCalculations, IContainer model, int index, int pointsPerCalculation);
+      DataRepository CreateCalculationWithZeroValues(IContainer model, int index);
    }
 
    public class DataRepositoryCreator : IDataRepositoryCreator
@@ -165,6 +166,47 @@ namespace OSPSuite.Starter.Tasks
             });
 
          return dataRepository;
+      }
+
+      /// <summary>
+      ///    Creates a calculation curve that decays, stays at exactly 0 between 50h and 100h and then decays again.
+      ///    Used to verify that values equal to 0 are shown as a gap on a logarithmic y axis (see issue 2903).
+      /// </summary>
+      public DataRepository CreateCalculationWithZeroValues(IContainer model, int index)
+      {
+         var dataRepository = new DataRepository().WithName($"Zero Values Repository {index}");
+         var baseGrid = new BaseGrid("ZeroValuesGrid", _dimensionFactory.Dimension("Time"));
+         var baseGridPath = new List<string> {dataRepository.Name, baseGrid.Name};
+         baseGrid.QuantityInfo = new QuantityInfo(baseGridPath, QuantityType.Time);
+
+         //150 hours in minutes, one point every 15 minutes
+         const float totalTimeInMinutes = 150 * 60;
+         const float intervalInMinutes = 15;
+         var numberOfPoints = (int) (totalTimeInMinutes / intervalInMinutes) + 1;
+         baseGrid.Values = Enumerable.Range(0, numberOfPoints).Select(i => i * intervalInMinutes).ToArray();
+
+         var quantity = getOrganismFromModel(model).EntityAt<IQuantity>("VenousBlood", "Plasma", "A", "Concentration");
+         var column = new DataColumn("Values dropping to zero", quantity.Dimension, baseGrid)
+         {
+            DataInfo = new DataInfo(ColumnOrigins.Calculation),
+            QuantityInfo = Helper.CreateQuantityInfo(quantity),
+            Values = baseGrid.Values.Select(zeroValuesPointFor).ToArray()
+         };
+
+         dataRepository.Add(column);
+         return dataRepository;
+      }
+
+      private static float zeroValuesPointFor(float timeInMinutes)
+      {
+         var timeInHours = timeInMinutes / 60;
+         if (timeInHours < 50)
+            return (float) (10 * Math.Exp(-timeInHours / 10));
+
+         if (timeInHours <= 100)
+            return 0;
+
+         return (float) (10 * Math.Exp(-(timeInHours - 100) / 10));
       }
 
       public DataRepository CreateObservationWithArithmenticDeviation(int numberOfObservations, IContainer model, int index, int pointsPerObservation, double? lloq)

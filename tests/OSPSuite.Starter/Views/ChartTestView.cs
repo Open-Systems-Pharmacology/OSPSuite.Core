@@ -34,6 +34,7 @@ namespace OSPSuite.Starter.Views
 
          _calculationsDropDownControl.Items.Add(new DXMenuItem("With Arithmetic Population Mean", (o, e) => OnEvent(createCalculationsWithArithmeticMean)));
          _calculationsDropDownControl.Items.Add(new DXMenuItem("With Geometric Population Mean", (o, e) => OnEvent(createCalculationsWithGeometricMean)));
+         _calculationsDropDownControl.Items.Add(new DXMenuItem("With Values Dropping To Zero", (o, e) => OnEvent(createCalculationWithZeroValues)));
       }
 
       public override void InitializeBinding()
@@ -91,6 +92,11 @@ namespace OSPSuite.Starter.Views
       private void createCalculationsWithArithmeticMean()
       {
          _presenter.AddCalculationsWithArithmeticMean(NumberOfCalculations, PointsPerCalculation);
+      }
+
+      private void createCalculationWithZeroValues()
+      {
+         _presenter.AddCalculationWithZeroValues();
       }
 
       private void createObservationsWithArithmeticDeviation()

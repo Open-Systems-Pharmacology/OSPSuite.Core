@@ -317,18 +317,23 @@ namespace OSPSuite.UI.Binders
                double x = xDimension.BaseUnitValueToUnitValue(xUnit, ValueInBaseUnit(xData, baseGrid, baseIndex));
                double y = yDimension.BaseUnitValueToUnitValue(yUnit, ValueInBaseUnit(yData, baseGrid, baseIndex));
 
-               if (!isValidXValue(x) || !IsValidYValue(y))
+               if (!isValidXValue(x))
                   return;
 
                var row = _dataTable.NewRow();
                row[X] = x;
-               row[Y] = y;
                row[INDEX_OF_VALUE_IN_CURVE] = baseIndex;
 
                if (HasLLOQ)
                   row[LLOQ_SUFFIX] = LLOQ;
 
-               AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseGrid, baseIndex);
+               //A y value that cannot be plotted on the axis (e.g. 0 on a log scale) is kept as an empty point
+               //so that the curve shows a gap instead of a line connecting the neighboring valid points
+               if (IsValidYValue(y))
+               {
+                  row[Y] = y;
+                  AddRelatedValuesToRow(row, yData, yDimension, yUnit, y, baseGrid, baseIndex);
+               }
 
                _dataTable.Rows.Add(row);
             }
