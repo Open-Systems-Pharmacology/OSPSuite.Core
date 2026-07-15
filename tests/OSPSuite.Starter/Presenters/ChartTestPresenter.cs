@@ -39,6 +39,7 @@ namespace OSPSuite.Starter.Presenters
       void AddObservationsWithGeometricDeviation(int numberOfObservations, int pointsPerObservation, double? lloq);
       void AddCalculationsWithGeometricMean(int numberOfCalculations, int pointsPerCalculation);
       void AddCalculationsWithArithmeticMean(int numberOfCalculations, int pointsPerCalculation);
+      void AddCalculationWithZeroValues();
    }
 
    public class ChartTestPresenter : AbstractCommandCollectorPresenter<IChartTestView, IChartTestPresenter>, IChartTestPresenter
@@ -115,6 +116,11 @@ namespace OSPSuite.Starter.Presenters
       public void AddCalculationsWithArithmeticMean(int numberOfCalculations, int pointsPerCalculation)
       {
          addRepositoryToChart(_dataRepositoryCreator.CreateCalculationsWithArithmeticMean(numberOfCalculations, _model, _dataRepositories.Count, pointsPerCalculation));
+      }
+
+      public void AddCalculationWithZeroValues()
+      {
+         addRepositoryToChart(_dataRepositoryCreator.CreateCalculationWithZeroValues(_model, _dataRepositories.Count));
       }
 
       public void AddObservationsWithGeometricDeviation(int numberOfObservations, int pointsPerObservation, double? lloq)

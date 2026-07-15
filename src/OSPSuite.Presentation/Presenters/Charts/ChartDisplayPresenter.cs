@@ -170,6 +170,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       bool IsPointBelowLLOQ(double[] values, string seriesId);
       int GetSourceIndexFromDataRow(string seriesId, DataRow row);
 
+      /// <summary>
+      ///    Returns the y value of the underlying data for the given <paramref name="row" /> in the unit of the y axis.
+      ///    This is also available for rows representing empty points (e.g. a value of 0 on a logarithmic scale)
+      /// </summary>
+      double GetYValueFromDataRow(string seriesId, DataRow row);
+
       void Edit(CurveChart chart);
 
       /// <summary>
@@ -378,6 +384,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
       {
          var curveBinder = curveBinderFromSeriesId(seriesId);
          return curveBinder?.OriginalCurveIndexForRow(row) ?? 0;
+      }
+
+      public double GetYValueFromDataRow(string seriesId, DataRow row)
+      {
+         var curveBinder = curveBinderFromSeriesId(seriesId);
+         return curveBinder?.YValueForRow(row) ?? double.NaN;
       }
 
       public Curve CurveFromSeriesId(string seriesId) => curveBinderFromSeriesId(seriesId)?.Curve;

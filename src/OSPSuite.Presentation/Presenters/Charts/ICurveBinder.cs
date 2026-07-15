@@ -29,6 +29,12 @@ namespace OSPSuite.Presentation.Presenters.Charts
 
       int OriginalCurveIndexForRow(DataRow row);
 
+      /// <summary>
+      ///    Returns the y value of the underlying data for the given <paramref name="row" /> in the unit of the y axis.
+      ///    This is also available for rows representing empty points (e.g. a value of 0 on a logarithmic scale)
+      /// </summary>
+      double YValueForRow(DataRow row);
+
       bool IsValidFor(DataMode dataMode, AxisTypes curveAxisType);
       
    }

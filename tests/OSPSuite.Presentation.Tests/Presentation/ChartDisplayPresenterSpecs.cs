@@ -15,6 +15,8 @@ using OSPSuite.Presentation.Presenters.ContextMenus;
 using OSPSuite.Presentation.Services.Charts;
 using OSPSuite.Presentation.Views.Charts;
 using OSPSuite.Utility.Exceptions;
+using DataRow = System.Data.DataRow;
+using DataTable = System.Data.DataTable;
 
 namespace OSPSuite.Presentation.Presentation
 {
@@ -66,6 +68,7 @@ namespace OSPSuite.Presentation.Presentation
             var curveBinder = A.Fake<ICurveBinder>();
             A.CallTo(() => curveBinder.SeriesIds).Returns(SeriesIdsFor(curve));
             A.CallTo(() => curveBinder.LLOQ).Returns(LLOQFor(curve));
+            A.CallTo(() => curveBinder.YValueForRow(A<DataRow>._)).ReturnsLazily(() => YValueForRowFor(curve));
             A.CallTo(() => curveBinder.ContainsSeries(curve.Id)).Returns(true);
             A.CallTo(() => curveBinder.Id).Returns(curve.Id);
             A.CallTo(() => curveBinder.Curve).Returns(curve);
@@ -89,6 +92,11 @@ namespace OSPSuite.Presentation.Presentation
       protected virtual double? LLOQFor(Curve curve)
       {
          return null;
+      }
+
+      protected virtual double YValueForRowFor(Curve curve)
+      {
+         return double.NaN;
       }
 
       protected virtual string[] SeriesIdsFor(Curve curve)
@@ -396,6 +404,51 @@ namespace OSPSuite.Presentation.Presentation
       public void should_use_the_chart_export_task_to_export_the_char_to_png()
       {
          A.CallTo(() => _chartDisplayView.ExportToPng(A<string>.Ignored, A<string>.Ignored)).MustHaveHappened();
+      }
+   }
+
+   public class When_retrieving_the_y_value_from_a_data_row_of_a_known_series : concern_for_ChartDisplayPresenter
+   {
+      private DataRow _row;
+
+      protected override void SetupChart()
+      {
+         base.SetupChart();
+         _curveChart.AddCurve(_curve);
+      }
+
+      protected override void Context()
+      {
+         base.Context();
+         _row = new DataTable().NewRow();
+      }
+
+      protected override double YValueForRowFor(Curve curve)
+      {
+         return 5.0;
+      }
+
+      [Observation]
+      public void should_return_the_value_provided_by_the_curve_binder()
+      {
+         sut.GetYValueFromDataRow(_curve.Id, _row).ShouldBeEqualTo(5.0);
+      }
+   }
+
+   public class When_retrieving_the_y_value_from_a_data_row_of_an_unknown_series : concern_for_ChartDisplayPresenter
+   {
+      private DataRow _row;
+
+      protected override void Context()
+      {
+         base.Context();
+         _row = new DataTable().NewRow();
+      }
+
+      [Observation]
+      public void should_return_nan()
+      {
+         double.IsNaN(sut.GetYValueFromDataRow("unknown series", _row)).ShouldBeTrue();
       }
    }
 }
