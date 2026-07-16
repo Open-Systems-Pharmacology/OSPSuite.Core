@@ -266,4 +266,4 @@ licenses.licx
 /OSPSuite.Core.v3.ncrunchsolution
 *.ncrunchproject
 /Directory.Build.props
-.claude/
+.claude/settings.local.json
